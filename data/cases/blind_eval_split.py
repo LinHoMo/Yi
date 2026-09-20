@@ -90,6 +90,10 @@ def pattern_score(eng_tags, eng_chain, exp_key_points, exp_detail=""):
         "暗动": ["暗动"],
         "冲空": ["冲空", "填实", "出旬", "旬空"],
         "月破": ["月破"],
+        "用神多现": ["用神多现", "多现", "两现", "现于"],
+        "长生": ["长生"],
+        "化退神": ["化退神", "化退"],
+        "月破": ["月破"],
     }
     for p in needed:
         if p in detected:
@@ -107,17 +111,18 @@ def pattern_score(eng_tags, eng_chain, exp_key_points, exp_detail=""):
     return 0, "无格局识别"
 
 
-def time_score(eng_yingqi, exp_yingqi):
+def time_score(eng_yingqi, exp_yingqi, eng_branches=None):
     eng_yingqi = str(eng_yingqi or "")
     exp_yingqi = str(exp_yingqi or "")
+    eng_all = eng_yingqi + " " + " ".join(str(b) for b in (eng_branches or []))
     if not exp_yingqi:
         return 15, "空白基准"
-    if exp_yingqi in eng_yingqi:
+    if exp_yingqi in eng_all:
         return 15, f"应期完全匹配({exp_yingqi})"
     exp_days = [ch for ch in DAY_CHARS if ch in exp_yingqi]
-    if exp_days and all(ch in eng_yingqi for ch in exp_days):
+    if exp_days and all(ch in eng_all for ch in exp_days):
         return 15, f"应期地支全覆盖({','.join(exp_days)})"
-    shared = [ch for ch in exp_days if ch in eng_yingqi]
+    shared = [ch for ch in exp_days if ch in eng_all]
     vague = [
         (("次日", "当天", "当日"), ("应速", "次日", "当日", "快则")),
         (("年内", "月余", "年"), ("年内", "应迟", "旺相之月", "月余", "节奏偏慢")),
@@ -130,7 +135,7 @@ def time_score(eng_yingqi, exp_yingqi):
     ]
     vague_hit = False
     for exp_kws, eng_kws in vague:
-        if any(k in exp_yingqi for k in exp_kws) and any(k in eng_yingqi for k in eng_kws):
+        if any(k in exp_yingqi for k in exp_kws) and any(k in eng_all for k in eng_kws):
             vague_hit = True
             break
     if shared:
@@ -160,7 +165,7 @@ def evaluate(engine_file: Path, ids: list[str], label: str):
         cs = use_god_score(e, b)
         vs, vs_l = verdict_score(e.get("verdict"), b.get("verdict"))
         ps, ps_l = pattern_score(e.get("pattern_tags"), e.get("reasoning_chain"), b.get("key_points"), b.get("detail"))
-        ts, ts_l = time_score(e.get("yingqi"), b.get("yingqi"))
+        ts, ts_l = time_score(e.get("yingqi"), b.get("yingqi"), e.get("yingqi_branches"))
         total = cs[0] + cs[1] + cs[2] + vs + ps + ts
         rows.append((cid, total, f"verdict={vs_l}; 格局={ps_l}; 应期={ts_l}; dims={cs+(vs,ps,ts)}"))
         print(f"[{label}] {cid}: {total}/100  {vs_l} | {ps_l} | {ts_l}")
