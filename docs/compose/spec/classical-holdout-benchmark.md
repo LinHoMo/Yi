@@ -18,6 +18,8 @@ commits: 8ac4c41..985b353
 | `python scripts/run_blind_v5.py holdout` | 7/7 ok |
 | `python data/cases/blind_eval_split.py` | **TUNE=100.0%**（n=20）**HOLDOUT=97.7%**（n=7，最低 95） |
 
+修复前 holdout 基线：**85.9%**（分数 [95,85,55,92,95,82,97]，规则补丁前）；当前 summary 文件为修复后结果。
+
 **Journey log** —
 1. ZS021–030 不能直接当 holdout：残缺卦名与 tune 重复会污染指标。
 2. case_library 部分装卦/世应与纳甲冲突；基准须校正并写明，否则「扣引擎分」是假阴性。
@@ -106,10 +108,12 @@ commits: 8ac4c41..985b353
 
 ## Tasks
 
-- [ ] T1: 审计 ZS021–030 与 case_library 覆盖 — acceptance: 产出 `data/cases/holdout_audit.md`，每例给出 tune/holdout/excluded 建议及理由（covers: S1, S2）
-- [ ] T2: 写入 case_splits.json 并校正 holdout 用例字段 — acceptance: splits 文件合法 JSON；holdout 例均有 source/hexagram/expected；重复与残缺列入 excluded（covers: S2; depends: T1）
-- [ ] T3: 扩展盲评运行与评估脚本支持分集 — acceptance: 可对 tune/holdout 分别出分，结果文件分离（covers: S2; depends: T2）
-- [ ] T4: 补齐 case_library.md 中可结构化的未入库真例 — acceptance: 新增 HO 例进入数据文件并通过 T3 跑通（covers: S2; depends: T2）
-- [ ] T5: 跑 holdout 基线并记录 — acceptance: Report/审计文档写明 holdout 均分、各例得分、主要失分维度（covers: S2; depends: T3, T4）
-- [ ] T6: 仅修复 holdout 暴露的系统性逻辑缺口 — acceptance: 若无系统性失败则记录「无需补丁」；若有则补丁+前后 holdout 分与 tune 不回归（covers: S2; depends: T5）
-- [ ] T7: 文档与收尾 — acceptance: 更新 handoff/Report；两套均分可复现命令写入（covers: S2; depends: T5, T6）
+- [x] T1: 审计 ZS021–030 与 case_library 覆盖 — acceptance: 产出 `data/cases/holdout_audit.md`，每例给出 tune/holdout/excluded 建议及理由（covers: S1, S2）
+- [x] T2: 写入 case_splits.json 并校正 holdout 用例字段 — acceptance: splits 文件合法 JSON；holdout 例均有 source/hexagram/expected；重复与残缺列入 excluded（covers: S2; depends: T1）
+- [x] T3: 扩展盲评运行与评估脚本支持分集 — acceptance: 可对 tune/holdout 分别出分，结果文件分离（covers: S2; depends: T2）
+- [x] T4: 补齐 case_library.md 中可结构化的未入库真例 — acceptance: 新增 HO 例进入数据文件并通过 T3 跑通（covers: S2; depends: T2）
+- [x] T5: 跑 holdout 基线并记录 — acceptance: Report 写明 holdout 均分、各例得分、主要失分维度（covers: S2; depends: T3, T4）
+- [x] T6: 仅修复 holdout 暴露的系统性逻辑缺口 — acceptance: 行人归期/兄弟持世/世持财规则补丁；tune 不回归（covers: S2; depends: T5）
+- [x] T7: 文档与收尾 — acceptance: Report + splits/audit + 可复现命令（covers: S2; depends: T5, T6）
+
+> 评审结论（subagent，2026-09-20）：Spec 合规、无案例特判、travel/catch 分流正确、分数与 summary JSON 一致。非阻断：曾存在双份 Tasks 勾选（本节已统一）、`_debug_ho003.py` 已删除、修复前 holdout 基线 85.9% 仅存于 Report 叙事（当前 summary 为修复后 97.71%）。
