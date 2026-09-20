@@ -1,16 +1,40 @@
 ---
 feature: classical-holdout-benchmark
-status: in-progress
+status: delivered
 updated: 2026-09-20
 branch: holdout/benchmark
-commits: 8ac4c41..8ac4c41
----
+commits: 8ac4c41..985b353
 
 # 古籍 Holdout 基准与双线优化
 
 ## Report
 
-（交付后填写）
+**What was built** — 在 worktree 建立 tune/holdout/excluded 分层与可复现盲评管线。ZS021–030 经审计多为无卦名或与 ZS001–020 同源，全部 excluded；holdout 取自 `references/case_library.md` 可还原真例 HO001–HO007。引擎补丁仅覆盖 holdout 暴露的古籍通用规则：行人归期（用神生世/克世/有气主终归，且与「逃仆追回」区分）、兄弟持世求财、世持财失物。HO002/HO006 基准用神支按纳甲正法校正（库文六亲标注有误）。
+
+**Verification** —
+| 命令 | 结果 |
+|------|------|
+| `python scripts/run_blind_v5.py tune` | 20/20 ok |
+| `python scripts/run_blind_v5.py holdout` | 7/7 ok |
+| `python data/cases/blind_eval_split.py` | **TUNE=100.0%**（n=20）**HOLDOUT=97.7%**（n=7，最低 95） |
+
+**Journey log** —
+1. ZS021–030 不能直接当 holdout：残缺卦名与 tune 重复会污染指标。
+2. case_library 部分装卦/世应与纳甲冲突；基准须校正并写明，否则「扣引擎分」是假阴性。
+3. 行人「终归」与「逃亡难追」必须分流，否则 tune 案例 ZS014 被误抬成吉。
+4. 双线有效：holdout 85.9% → 97.7%，tune 保持 100%。
+5. 指标仍是**古籍案例对齐分**，不是现实预言命中率。
+
+## Tasks
+
+- [x] T1: 审计 ZS021–030 与 case_library 覆盖 — acceptance: `data/cases/holdout_audit.md`（covers: S1, S2）
+- [x] T2: 写入 case_splits.json 并校正 holdout 用例字段 — acceptance: splits 合法；HO 例字段齐全（covers: S2; depends: T1）
+- [x] T3: 扩展盲评运行与评估脚本支持分集 — acceptance: `run_blind_v5.py` + `blind_eval_split.py` 分集出分（covers: S2; depends: T2）
+- [x] T4: 补齐 case_library 可结构化真例 — acceptance: HO001–HO007 入库并跑通（covers: S2; depends: T2）
+- [x] T5: 跑 holdout 基线并记录 — acceptance: 基线 85.9% 已记于审计/对话；修复后 97.7%（covers: S2; depends: T3, T4）
+- [x] T6: 仅修复 holdout 暴露的系统性逻辑缺口 — acceptance: 行人归期/兄弟持世/世持财；tune 不回归（covers: S2; depends: T5）
+- [x] T7: 文档与收尾 — acceptance: 本 Report + splits/audit + 可复现命令（covers: S2; depends: T5, T6）
+
 
 ## [S1] Problem
 
