@@ -1,0 +1,78 @@
+{
+  "version": 1,
+  "note": "tune=ZS001-020 调参集；holdout=未参与词典调参的古籍真例；excluded=残缺或与tune重复，不计入均分",
+  "tune": [
+    "ZS001",
+    "ZS002",
+    "ZS003",
+    "ZS004",
+    "ZS005",
+    "ZS006",
+    "ZS007",
+    "ZS008",
+    "ZS009",
+    "ZS010",
+    "ZS011",
+    "ZS012",
+    "ZS013",
+    "ZS014",
+    "ZS015",
+    "ZS016",
+    "ZS017",
+    "ZS018",
+    "ZS019",
+    "ZS020"
+  ],
+  "holdout": [
+    "HO001",
+    "HO002",
+    "HO003",
+    "HO004",
+    "HO005",
+    "HO006",
+    "HO007"
+  ],
+  "excluded": [
+    {
+      "id": "ZS021",
+      "reason": "无卦名，无法复原装卦"
+    },
+    {
+      "id": "ZS022",
+      "reason": "无卦名；topic 与 question 不符（近病）"
+    },
+    {
+      "id": "ZS023",
+      "reason": "无卦名；topic 与 question 不符（功名）"
+    },
+    {
+      "id": "ZS024",
+      "reason": "无卦名；topic 与 question 不符（赌钱）"
+    },
+    {
+      "id": "ZS025",
+      "reason": "无卦名；topic 与 question 不符（生意）"
+    },
+    {
+      "id": "ZS026",
+      "reason": "与 ZS008 同源（屯之震·师尊官事），不重复计入 holdout"
+    },
+    {
+      "id": "ZS027",
+      "reason": "与 ZS003 同源（革·仆归）但断语相反，基准矛盾，excluded"
+    },
+    {
+      "id": "ZS028",
+      "reason": "与 ZS011 同源（巽之讼·失银）"
+    },
+    {
+      "id": "ZS029",
+      "reason": "与 ZS012 同源（否·婚姻合处逢冲）"
+    },
+    {
+      "id": "ZS030",
+      "reason": "与 ZS014 同源（蹇·逃仆伏神）"
+    }
+  ],
+  "holdout_policy": "禁止为单例新增仅对其命中的私有格局别名；通用古籍术语允许"
+}

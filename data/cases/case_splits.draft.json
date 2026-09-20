@@ -1,0 +1,94 @@
+{
+  "splits": {
+    "tune": [
+      "ZS001",
+      "ZS002",
+      "ZS003",
+      "ZS004",
+      "ZS005",
+      "ZS006",
+      "ZS007",
+      "ZS008",
+      "ZS009",
+      "ZS010",
+      "ZS011",
+      "ZS012",
+      "ZS013",
+      "ZS014",
+      "ZS015",
+      "ZS016",
+      "ZS017",
+      "ZS018",
+      "ZS019",
+      "ZS020"
+    ],
+    "holdout": [
+      "ZS026",
+      "ZS027",
+      "ZS028",
+      "ZS029"
+    ],
+    "excluded": [
+      {
+        "id": "ZS021",
+        "reason": "无卦名"
+      },
+      {
+        "id": "ZS022",
+        "reason": "topic=出行 但 question 更像 疾病；无卦名"
+      },
+      {
+        "id": "ZS023",
+        "reason": "topic=出行 但 question 更像 官司；无卦名"
+      },
+      {
+        "id": "ZS024",
+        "reason": "topic=疾病 但 question 更像 求财；无卦名"
+      },
+      {
+        "id": "ZS025",
+        "reason": "topic=疾病 但 question 更像 求财；无卦名"
+      },
+      {
+        "id": "ZS030",
+        "reason": "疑似重复 ZS014"
+      }
+    ]
+  },
+  "holdout_details": [
+    {
+      "id": "ZS026",
+      "fix_topic": []
+    },
+    {
+      "id": "ZS027",
+      "fix_topic": [
+        "topic=出行 但 question 更像 寻人"
+      ]
+    },
+    {
+      "id": "ZS028",
+      "fix_topic": [
+        "topic=出行 但 question 更像 寻人/求财"
+      ]
+    },
+    {
+      "id": "ZS029",
+      "fix_topic": [
+        "topic=出行 但 question 更像 婚姻"
+      ]
+    }
+  ],
+  "unstructured_library": [
+    "案例格式说明",
+    "案例一：占父病 — 用神多现与原神贪合忘克",
+    "案例四：占久病 — 逢冲即死",
+    "案例五：占投资求财 — 妻财与世应生克",
+    "案例七：论伏神得出 — 飞来生伏为佳",
+    "案例九：占行人 — 用神克世速至与用神生世迟归",
+    "案例十一：占官司 — 官鬼与世应之关系",
+    "案例十二：占失物 — 内卦不出园与用神取法",
+    "案例索引表",
+    "案例快速对照速查卡（Quick Reference Card）"
+  ]
+}
