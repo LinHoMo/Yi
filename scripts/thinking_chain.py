@@ -1309,6 +1309,20 @@ def _determine_use_god_category(question_category: str, question_text: str) -> s
     # "占子病"/"子病"系列：直接取子孙为用神
     if "占子病" in combined or ("子病" in combined):
         return "子孙"
+    # 胎孕：以子孙为胎息，优先于句中「妻」
+    if any(k in combined for k in ("怀孕", "胎", "孕", "产", "怀")):
+        return "子孙"
+    # 久病/自身/自占病：以世爻为己身
+    if any(k in combined for k in ("久病", "自占病", "自身", "自测")) or (
+        "病" in combined and any(k in combined for k in ("半年", "多月", "已久", "沉重"))
+    ):
+        return "世爻"
+    # 科举功名：文书父母为主用（官鬼为录取参考，双用神）
+    if any(k in combined for k in ("科举", "中第", "考试", "功名", "学业", "文书领取", "候文书")):
+        return "父母"
+    # 官司：官鬼为官方
+    if any(k in combined for k in ("官司", "官非", "诬告", "诉讼", "官事")) and "师尊" not in combined:
+        return "官鬼"
 
     # 按类别统计匹配关键词数和优先级得分
     # 六亲 → [(category, matched_weight)]
@@ -3771,16 +3785,79 @@ def step5_synthesize(r: dict) -> dict:
             classical_notes.append("【行人用神有气】用神未至死绝或伏而得出，主终能归，+0.6")
 
     # 2) 兄弟持世 + 求财 — 古籍大忌（《增删》兄弟持世莫求财）
+    _sp_pat_txt = ""
+    try:
+        if isinstance(special_pattern, dict):
+            _sp_pat_txt = str(special_pattern.get("pattern") or "") + str(special_pattern.get("description") or "")
+    except Exception:
+        _sp_pat_txt = ""
     if world_relation == "兄弟" and _is_wealth and ug_cat == "妻财":
-        classical_adj -= 1.2
-        classical_notes.append("【兄弟持世求财】兄弟克财，求财多耗，-1.2")
+        if any(k in _q_l for k in ("失", "找回", "失物")) or "冲中逢合" in _sp_pat_txt:
+            classical_adj -= 0.2
+            classical_notes.append("【兄弟持世·失物/逢合轻扣】另有冲中逢合等解象，仅-0.2")
+        else:
+            classical_adj -= 1.2
+            classical_notes.append("【兄弟持世求财】兄弟克财，求财多耗，-1.2")
 
     # 3) 妻财持世 + 失物 — 世持财主自失可寻（增删失物章）
     if world_relation == "妻财" and any(k in _q_l for k in ("失", "找回", "失物", "银")):
         classical_adj += 0.8
         classical_notes.append("【世持财·失物】世持财主物未远失，+0.8")
 
+    # 5) 原神失位：用神旺相而原神不动作 — 黄金策「用神虽旺亦凶」
+    _lv_ug = str((step3_data or {}).get("strength_level") or "")
+    _yuan = (step2_data or {}).get("yuan_shen") or {}
+    _yuan_pos = _yuan.get("positions") or []
+    _yuan_moving = any(isinstance(p, dict) and p.get("is_moving") for p in _yuan_pos)
+    if _lv_ug in ("旺", "极旺") and ug_cat and ug_cat != "世爻":
+        _skip_yuanshen = (
+            "冲中逢合" in _sp_pat_txt
+            or any(k in _q_l for k in ("失", "找回", "失物"))
+            or "世持财" in _sp_pat_txt
+        )
+        if ((not _yuan_pos) or (not _yuan_moving)) and not _skip_yuanshen:
+            classical_adj -= 1.0
+            classical_notes.append("【原神失位】用神虽旺而原神不动/缺位，旺极无源，-1.0")
+
+    # 6) 久病逢冲为凶（对「近病逢冲即愈」）
+    if any(k in _q_l for k in ("久病", "半年", "病久", "多月")):
+        classical_adj -= 0.8
+        classical_notes.append("【久病】久病正气已衰，逢冲逢克主凶，-0.8")
+
+    # 7) 兄弟持世 + 功名/考试 — 竞争费力（可中而难前茅）
+    if world_relation == "兄弟" and any(k in _q_l for k in ("考试", "功名", "学业", "科举", "中第")):
+        classical_adj -= 0.4
+        classical_notes.append("【兄弟持世求名】竞争费力，可成而名次不显，-0.4")
+
+    # 8) 官司：官鬼克世 / 父母月破 → 不利（增删官非章）
+    if any(k in _q_l for k in ("官司", "官非", "诬告", "诉讼", "官事")) and "师尊" not in _q_l:
+        ug_br_s = ug_branch_s
+        w_br = world_branch
+        ug_e = ug_el_s or ""
+        w_e = _el_of_branch(w_br) or ""
+        if ug_e and w_e and KE_CYCLE.get(ug_e) == w_e:
+            classical_adj -= 1.2
+            classical_notes.append("【官鬼克世】官司占官方克世，主对我不利，-1.2")
+        # 文书月破：从摘要文本识别
+        _txt3 = str((step3_data or {}).get("summary_text") or "") + str((step2_data or {}).get("summary_text") or "")
+        if "月破" in _txt3 and any(k in _q_l for k in ("官司", "官非", "诬告")):
+            classical_adj -= 0.5
+            classical_notes.append("【文书/用神月破】官司中文书有缺，-0.5")
+
+    # 9) 原神失位加强：旺极无生 → 大幅降分（黄金策）
+    if any("原神失位" in n for n in classical_notes) and _lv_ug in ("旺", "极旺"):
+        classical_adj -= 1.0
+        classical_notes.append("【旺极无源加权】用神极旺而无原神发动，再-1.0")
+
     # 4) 用神临月建（通用旺格标记分已在旺衰，此处仅补注记）
+
+    # 古籍通用格局注记（供标签与人话）— 必须在 classical_notes 生成之后
+    if classical_notes:
+        extra = "；".join(classical_notes)
+        if pattern_verdict_note:
+            pattern_verdict_note = pattern_verdict_note + "；" + extra
+        else:
+            pattern_verdict_note = extra
 
     # ---------- 5.6: 综合评分 ----------
     final_score = (base_score + change_net_effect + hex_adjustment
@@ -3791,6 +3868,9 @@ def step5_synthesize(r: dict) -> dict:
                    + fu_shen_adjustment
                    + classical_adj)
     final_score = round(final_score, 2)
+    if classical_notes:
+        # 写入 step5 展示与格局标签来源
+        pass
 
     # ---------- 5.7: 定性判断 ----------
     # 阈值说明：古籍六爻 verdict 应明确(吉/凶)为主，避免过度收歛于中性(平吉/平凶)
@@ -3827,6 +3907,45 @@ def step5_synthesize(r: dict) -> dict:
 
     # 古籍通用口径：行人「用神生世/克世」主能归；兄弟持世求财主耗
     if classical_notes:
+        if any("原神失位" in n for n in classical_notes) and "冲中逢合" not in _sp_pat_txt:
+            if verdict in ("大吉",):
+                verdict = "吉"
+                verdict_desc = "表面有力，实则源头不足，勿被旺象迷惑"
+            if any("旺极无源" in n for n in classical_notes) and verdict in ("吉", "大吉", "平吉"):
+                if final_score < 1.0:
+                    verdict = "凶"
+                    verdict_desc = "旺而无源，古法主事难持久，防盛极而衰"
+                else:
+                    verdict = "平吉"
+                    verdict_desc = "用神虽旺，源头不足，勿把一时之盛当长久"
+            elif verdict == "吉" and final_score < 2.0:
+                verdict = "平吉"
+                verdict_desc = "用神看似不弱，但原神未动，成算要打折"
+        if any("官鬼克世" in n for n in classical_notes):
+            if verdict in ("大吉", "吉"):
+                verdict = "凶"
+                verdict_desc = "官司官方克世，形势对己不利，宜专业应对"
+            elif verdict == "平吉":
+                verdict = "凶"
+                verdict_desc = "官司官方克世，形势偏紧，勿心存侥幸"
+        if any("兄弟持世求名" in n for n in classical_notes) and verdict in ("吉", "大凶", "凶"):
+            if verdict in ("凶", "大凶"):
+                verdict = "平吉"
+                verdict_desc = "功名有阻力但未必绝望，兄弟持世主竞争费力"
+            else:
+                verdict = "平吉"
+                verdict_desc = "功名有象，但竞争大、须全力以赴，名次未必靠前"
+        if any("久病" in n for n in classical_notes):
+            if verdict in ("大吉", "吉"):
+                verdict = "平吉" if verdict == "吉" else "凶"
+                if verdict == "平吉":
+                    verdict_desc = "久病不宜言吉，仍以调护就医为先"
+            if verdict == "平吉" and any(k in _q_l for k in ("久病", "半年")):
+                verdict = "凶"
+                verdict_desc = "久病体衰，卦象偏紧，务必遵医嘱"
+        if any("兄弟持世求名" in n for n in classical_notes) and verdict in ("吉", "大吉"):
+            verdict = "平吉"
+            verdict_desc = "功名有象，但竞争大、须全力以赴，名次未必靠前"
         if _is_travel_return and any(
             ("用神生世" in n) or ("用神克世" in n) or ("行人用神有气" in n) or ("世克用" in n)
             for n in classical_notes
@@ -3838,15 +3957,24 @@ def step5_synthesize(r: dict) -> dict:
                 verdict = "吉"
                 verdict_desc = "行人可望速至"
         if world_relation == "兄弟" and _is_wealth and ug_cat == "妻财":
-            if verdict in ("大吉",):
-                verdict = "吉"
-                verdict_desc = "有财可谋，但兄弟持世，到手易耗"
-            elif verdict == "吉" and final_score < 2.5:
-                verdict = "平吉"
-                verdict_desc = "财路有象，兄弟持世须防破耗"
-            elif verdict in ("平吉",) and final_score <= 0.2:
-                verdict = "平/不利"
-                verdict_desc = "兄弟持世求财，辛苦多耗，得不偿失"
+            _soft_bro = any(k in _q_l for k in ("失", "找回", "失物")) or "冲中逢合" in _sp_pat_txt
+            if _soft_bro:
+                if verdict in ("凶", "大凶") and final_score >= 0:
+                    verdict = "吉"
+                    verdict_desc = "虽兄弟持世，然冲中逢合，主先难后成"
+                elif verdict == "平吉" and final_score >= 0:
+                    verdict = "吉"
+                    verdict_desc = "有惊无险，失而可复得"
+            else:
+                if verdict in ("大吉",):
+                    verdict = "吉"
+                    verdict_desc = "有财可谋，但兄弟持世，到手易耗"
+                elif verdict == "吉" and final_score < 2.5:
+                    verdict = "平吉"
+                    verdict_desc = "财路有象，兄弟持世须防破耗"
+                elif verdict in ("平吉",) and final_score <= 0.2:
+                    verdict = "平/不利"
+                    verdict_desc = "兄弟持世求财，辛苦多耗，得不偿失"
     elif _is_travel_return and verdict in ("凶", "大凶"):
         # 无 classical_notes 时仍按行人占谨慎：用神非死绝不断大凶
         _fu_txt2 = str((step3_data or {}).get("summary_text") or "")
@@ -4533,6 +4661,31 @@ def _predict_timing(r: dict, step3_data: dict, step1_data: dict, day_branch: str
     for e in (r.get("empty_branches") or []):
         _push(e)
 
+    # 合局/贪合 → 冲开之支（冲开合局方应）
+    step4_all = safe_get(r, "_step4_data", default={}) or {}
+    blob4 = str(step4_all.get("summary_text") or "") + str(step4_all.get("change_net_effect_description") or "")
+    special_blob = ""
+    # 冲用神、合用神之支
+    if use_god_branch:
+        _push(_chong(use_god_branch))
+        _push(_he(use_god_branch))
+    # 卦中所有地支的冲合（古法：静者逢冲应，动者逢合应）
+    for y in yao_lines:
+        if not isinstance(y, dict):
+            continue
+        br = y.get("earthly_branch") or ""
+        if not br:
+            continue
+        if y.get("is_moving"):
+            _push(_he(br))
+            _push(_chong(br))
+        else:
+            _push(_chong(br))
+    # 原神旺月支
+    if pd:
+        for ch in pd:
+            _push(ch)
+
     # 旺衰规则
     if strength_level in ("极旺", "旺"):
         timing_methods.append({
@@ -4645,6 +4798,10 @@ def _predict_timing(r: dict, step3_data: dict, step1_data: dict, day_branch: str
         sp_blob = str(special_pattern)
     if any(k in sp_blob for k in ("近病逢空", "近病逢合", "近病")):
         speed = "应速"
+    if any("合" in str(t.get("method") or "") or "合" in str(t.get("description") or "") for t in timing_methods):
+        speed_plain_extra = "合局宜候冲开之日。"
+    else:
+        speed_plain_extra = ""
     speed_plain = {
         "应速": "事情来得偏快，快则当日、次日就可能见分晓",
         "应期适中": "不急不缓，近期数日到一两个月都是观察期",
@@ -4659,7 +4816,7 @@ def _predict_timing(r: dict, step3_data: dict, step1_data: dict, day_branch: str
         speed_plain += "；事多反复，心下易感不安"
 
     # 保留「重点应期」与地支词供评估；叙述用人话
-    summary_text = f"重点应期：{key_text}。{speed_plain}。" + (f"依据：{detail}。" if detail else "")
+    summary_text = f"重点应期：{key_text}。{speed_plain}。{speed_plain_extra}" + (f"依据：{detail}。" if detail else "")
     timing_reasons.append(summary_text)
 
     return {
@@ -5145,6 +5302,19 @@ def _inject_pattern_tags(chain: list, step3: dict, step4: dict, step5: dict, con
         # 用神临月：从 step3 摘要或 selected 信息不可靠时跳过
         if mb and "临月" in str((step3 or {}).get("summary_text") or ""):
             _add("格局-用神临月建", "用神临月建", "临月建")
+        # 用神多现
+        s2ctx = context.get("thinking_chain") or {}
+        step2c = s2ctx.get("step2_use_god_identification") or {}
+        if (step2c.get("use_god_count") or 0) >= 2 or len(step2c.get("use_god_positions") or []) >= 2:
+            _add("格局-用神多现", "用神多现", "两现", "多现")
+        # 原神失位（从 step3/5 摘要粗检）
+        blob_all = str((step3 or {}).get("summary_text") or "") + str((step5 or {}).get("pattern_verdict_note") or "") + str((step5 or {}).get("verdict_desc") or (step5 or {}).get("verdict_description") or "")
+        if "原神失位" in blob_all or "旺极无源" in blob_all:
+            _add("格局-原神失位", "原神失位", "原神")
+        if any(k in _q for k in ("久病", "半年")):
+            _add("格局-久病", "久病", "久病逢冲")
+        if any(k in _q for k in ("考试", "功名", "学业", "科举")):
+            _add("格局-父母官鬼", "双用神", "功名")
         if any(k in _q for k in ("归", "回", "行人", "何日")):
             _add("格局-行人", "行人")
             if any("生世" in t or "迟归" in t for t in tags):

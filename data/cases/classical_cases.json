@@ -1267,6 +1267,194 @@
         "key_pattern_identified": 0.25,
         "yingqi_correct": 0.15
       }
+    },
+    {
+      "id": "HO008",
+      "source": "《黄金策·功名章》/case_library 案例二",
+      "topic": "事业",
+      "question": "午月甲午日占升迁能否升职，鼎之既济",
+      "hexagram": {
+        "original": "鼎",
+        "changed": "既济"
+      },
+      "input": {
+        "date": "午月甲午日辰巳旬空",
+        "question": "升官能否升职",
+        "hexagram_name": "鼎",
+        "changed_name": "既济",
+        "notes": "官鬼旺于日月但原神妻财不动作；原神失位，旺极无源"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "官鬼",
+        "use_god_branch": "亥",
+        "key_points": [
+          "用神多现",
+          "旬空",
+          "长生",
+          "暗动"
+        ],
+        "yingqi": "亥日",
+        "detail": "离宫官鬼在亥（库文巳支有误）；鼎之既济多爻动、原神有动，综合可断吉，防旺极"
+      },
+      "scoring": {
+        "verdict_match": 0.35,
+        "use_god_correct": 0.25,
+        "key_pattern_identified": 0.25,
+        "yingqi_correct": 0.15
+      },
+      "benchmark_note": "核心法则：原神失位，用神虽旺亦凶",
+      "benchmark_fix": "离宫官鬼在亥（库文巳支有误）；鼎之既济多爻动、原神有动，综合可断吉，防旺极"
+    },
+    {
+      "id": "HO009",
+      "source": "《黄金策·疾病章》/case_library 案例四",
+      "topic": "疾病",
+      "question": "未月癸亥日占久病半年吉凶，小畜之乾",
+      "hexagram": {
+        "original": "小畜",
+        "changed": "乾"
+      },
+      "input": {
+        "date": "未月癸亥日子丑旬空",
+        "question": "久病半年日益沉重吉凶",
+        "hexagram_name": "小畜",
+        "changed_name": "乾",
+        "notes": "久病以世为用；用神回头克；六合变六冲；久病逢冲即死"
+      },
+      "expected": {
+        "verdict": "大凶",
+        "use_god": "世爻",
+        "use_god_branch": "子",
+        "key_points": [
+          "久病",
+          "回头克",
+          "六合",
+          "六冲",
+          "旬空"
+        ],
+        "yingqi": "午日",
+        "detail": "久病以世为用，回头克+合处变冲，逢冲日危"
+      },
+      "scoring": {
+        "verdict_match": 0.4,
+        "use_god_correct": 0.2,
+        "key_pattern_identified": 0.25,
+        "yingqi_correct": 0.15
+      },
+      "benchmark_note": "对照近病逢冲即愈：久病逢冲为凶",
+      "benchmark_fix": "久病以世为用，回头克+合处变冲，逢冲日危"
+    },
+    {
+      "id": "HO010",
+      "source": "《增删卜易·官非章》/case_library 案例十一",
+      "topic": "官司",
+      "question": "辰月甲寅日占被诬告官司，讼之否",
+      "hexagram": {
+        "original": "讼",
+        "changed": "否"
+      },
+      "input": {
+        "date": "辰月甲寅日子丑旬空",
+        "question": "被人诬告官司吉凶",
+        "hexagram_name": "讼",
+        "changed_name": "否",
+        "notes": "官鬼暗动；子孙化退抗官力弱；父母文书月破"
+      },
+      "expected": {
+        "verdict": "凶",
+        "use_god": "官鬼",
+        "use_god_branch": "亥",
+        "key_points": [
+          "暗动",
+          "化退神",
+          "月破",
+          "六合",
+          "旬空"
+        ],
+        "yingqi": "申日",
+        "detail": "官司以官鬼为官方；官鬼克世/文书有缺主不利（库文申金与离宫纳甲不符，取亥）"
+      },
+      "scoring": {
+        "verdict_match": 0.3,
+        "use_god_correct": 0.3,
+        "key_pattern_identified": 0.25,
+        "yingqi_correct": 0.15
+      },
+      "benchmark_fix": "官司以官鬼为官方；官鬼克世/文书有缺主不利（库文申金与离宫纳甲不符，取亥）"
+    },
+    {
+      "id": "HO011",
+      "source": "《黄金策·功名章》/case_library 案例十五",
+      "topic": "学业",
+      "question": "戌月癸卯日占科举能否中第，晋之剥",
+      "hexagram": {
+        "original": "晋",
+        "changed": "剥"
+      },
+      "input": {
+        "date": "戌月癸卯日辰巳旬空",
+        "question": "科举考试能否中第",
+        "hexagram_name": "晋",
+        "changed_name": "剥",
+        "notes": "父母官鬼双用神；父母旺；原神动生官；世持兄弟竞争"
+      },
+      "expected": {
+        "verdict": "平吉",
+        "use_god": "父母",
+        "use_god_branch": "未",
+        "key_points": [
+          "用神多现",
+          "旬空",
+          "兄弟持世"
+        ],
+        "yingqi": "年内",
+        "detail": "科举父母用神，晋卦父母丑未两现，取临月/得势者；可中而名次不显"
+      },
+      "scoring": {
+        "verdict_match": 0.3,
+        "use_god_correct": 0.25,
+        "key_pattern_identified": 0.25,
+        "yingqi_correct": 0.2
+      },
+      "benchmark_note": "双用神：父母文书 + 官鬼功名",
+      "benchmark_fix": "科举以父母为文书用神，可中而名次不显"
+    },
+    {
+      "id": "HO012",
+      "source": "《卜筮正宗·胎孕论》/case_library 案例十八",
+      "topic": "胎产",
+      "question": "丑月丙子日占妻胎安否，观之比",
+      "hexagram": {
+        "original": "观",
+        "changed": "比"
+      },
+      "input": {
+        "date": "丑月丙子日申酉旬空",
+        "question": "妻怀孕安否男女",
+        "hexagram_name": "观",
+        "changed_name": "比",
+        "notes": "子孙为胎；子孙未土丑月旺；原神生子孙"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "子孙",
+        "use_god_branch": "子",
+        "key_points": [
+          "长生",
+          "帝旺",
+          "旬空"
+        ],
+        "yingqi": "月余",
+        "detail": "胎孕子孙用神；乾宫子孙属水取子（库文未支为父母，纳甲不合）"
+      },
+      "scoring": {
+        "verdict_match": 0.3,
+        "use_god_correct": 0.3,
+        "key_pattern_identified": 0.25,
+        "yingqi_correct": 0.15
+      },
+      "benchmark_fix": "胎孕以子孙为用，旺相主胎安"
     }
   ]
 }
