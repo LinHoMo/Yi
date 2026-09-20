@@ -3,7 +3,7 @@ feature: classical-holdout-benchmark
 status: delivered
 updated: 2026-09-20
 branch: holdout/benchmark
-commits: 8ac4c41..985b353
+commits: 8ac4c41..985b353  # 实现评审区间；其后 docs 提交 7541ef9、61a0d02 为交付文档（范围外）
 
 # 古籍 Holdout 基准与双线优化
 
