@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>六爻思维链回归测试报告</title>
+<style>
+  body { font-family: "Microsoft YaHei", "SimHei", sans-serif; margin: 20px; background: #f5f5f5; }
+  h1 { color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px; }
+  h2 { color: #34495e; margin-top: 30px; }
+  .summary-box { background: #ecf0f1; padding: 15px; border-radius: 8px; margin: 15px 0; }
+  .metric { display: inline-block; margin: 5px 15px; padding: 8px 15px; border-radius: 5px; }
+  .metric.good { background: #2ecc71; color: white; }
+  .metric.warn { background: #f39c12; color: white; }
+  .metric.bad { background: #e74c3c; color: white; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  th { background: #3498db; color: white; padding: 10px 8px; text-align: center; font-size: 13px; }
+  td { padding: 8px; text-align: center; border-bottom: 1px solid #ddd; font-size: 13px; }
+  tr:hover { background: #f0f8ff; }
+  .pass { color: #27ae60; font-weight: bold; }
+  .fail { color: #e74c3c; font-weight: bold; }
+  .band-pass { color: #2ecc71; }
+  .band-fail { color: #e67e22; }
+  .diff-text { color: #7f8c8d; font-size: 12px; text-align: left; }
+  .source-text { color: #95a5a6; font-size: 11px; }
+  .section { margin: 20px 0; }
+</style>
+</head>
+<body>
+
+<h1>六爻思维链回归测试报告</h1>
+
+<div class="summary-box">
+  <h2 style="margin-top:0">概要</h2>
+  <div class="metric bad">总通过率: 9/18 (50%)</div>
+  <div class="metric warn">吉凶方向: 72%</div>
+  <div class="metric good">用神准确率: 89%</div>
+  <div class="metric good">区间可接受率: 83%</div>
+  <p><b>方向准确率13/18(72%) | 用神准确率16/18(89%) | 区间可接受率15/18(83%)</b></p>
+</div>
+
+
+<h2>案例明细</h2>
+<table>
+<tr>
+  <th>ID</th><th>卦名</th><th>案例名称</th><th>出处</th>
+  <th>用神(期/实)</th><th>吉凶(期/实)</th><th>古典</th><th>评分</th>
+  <th>区间</th><th>状态</th><th>差异</th>
+</tr>
+
+<tr>
+  <td>reg_01</td>
+  <td>乾</td>
+  <td style="text-align:left">占父病·用神多现·原神贪合忘克</td>
+  <td class="source-text">《黄金策·疾病章》</td>
+  <td class="pass">父母/父母</td>
+  <td class="pass">inauspicious/inauspicious</td>
+  <td>凶</td>
+  <td>0.54</td>
+  <td class="band-pass">inauspicious</td>
+  <td class="fail">FAIL</td>
+  <td class="diff-text">旺衰: 期望strong, 实际中和(2.73)</td>
+</tr>
+<tr>
+  <td>reg_02</td>
+  <td>鼎</td>
+  <td style="text-align:left">占升官·用神衰弱·原神缺位</td>
+  <td class="source-text">《黄金策·功名章》</td>
+  <td class="pass">官鬼/官鬼</td>
+  <td class="pass">inauspicious/inauspicious</td>
+  <td>凶</td>
+  <td>0.00</td>
+  <td class="band-pass">inauspicious</td>
+  <td class="pass">PASS</td>
+  <td class="diff-text"></td>
+</tr>
+<tr>
+  <td>reg_03</td>
+  <td>泰</td>
+  <td style="text-align:left">占近病·六合卦·用神极旺回头生</td>
+  <td class="source-text">《黄金策·疾病章》</td>
+  <td class="pass">子孙/子孙</td>
+  <td class="fail">auspicious/mixed-fav</td>
+  <td>吉</td>
+  <td>2.31</td>
+  <td class="band-pass">mixed-fav</td>
+  <td class="fail">FAIL</td>
+  <td class="diff-text">吉凶方向: 期望auspicious, 实际mixed-fav</td>
+</tr>
+<tr>
+  <td>reg_04</td>
+  <td>小畜</td>
+  <td style="text-align:left">占久病·回头克·六合冲双卦</td>
+  <td class="source-text">《卜筮正宗》</td>
+  <td class="pass">世爻/世爻</td>
+  <td class="pass">inauspicious/inauspicious</td>
+  <td>凶</td>
+  <td>0.00</td>
+  <td class="band-pass">inauspicious</td>
+  <td class="pass">PASS</td>
+  <td class="diff-text"></td>
+</tr>
+<tr>
+  <td>reg_05</td>
+  <td>屯</td>
+  <td style="text-align:left">占求财·妻财伏藏·飞神被冲出伏</td>
+  <td class="source-text">《增删卜易·求财章》</td>
+  <td class="pass">妻财/妻财</td>
+  <td class="pass">mixed-fav/mixed-fav</td>
+  <td>平</td>
+  <td>2.76</td>
+  <td class="band-pass">mixed-fav</td>
+  <td class="pass">PASS</td>
+  <td class="diff-text"></td>
+</tr>
+<tr>
+  <td>reg_06</td>
+  <td>豫</td>
+  <td style="text-align:left">占婚姻·六合卦·用神中和</td>
+  <td class="source-text">《黄金策·婚姻章》</td>
+  <td class="pass">妻财/妻财</td>
+  <td class="fail">mixed-fav/mixed-unfav</td>
+  <td>平</td>
+  <td>1.16</td>
+  <td class="band-fail">mixed-unfav</td>
+  <td class="fail">FAIL</td>
+  <td class="diff-text">吉凶方向: 期望mixed-fav, 实际mixed-unfav; 可接受区间: 期望['mixed-fav', 'auspicious'], 实际mixed-unfav</td>
+</tr>
+<tr>
+  <td>reg_07</td>
+  <td>解</td>
+  <td style="text-align:left">占行人·用神伏藏·合绊化退</td>
+  <td class="source-text">《黄金策·出行章》</td>
+  <td class="pass">父母/父母</td>
+  <td class="pass">inauspicious/inauspicious</td>
+  <td>凶</td>
+  <td>0.75</td>
+  <td class="band-pass">inauspicious</td>
+  <td class="pass">PASS</td>
+  <td class="diff-text"></td>
+</tr>
+<tr>
+  <td>reg_08</td>
+  <td>谦</td>
+  <td style="text-align:left">占子久病·子孙极弱·动变双凶</td>
+  <td class="source-text">《卜筮正宗》</td>
+  <td class="pass">子孙/子孙</td>
+  <td class="pass">inauspicious/inauspicious</td>
+  <td>凶</td>
+  <td>0.00</td>
+  <td class="band-pass">inauspicious</td>
+  <td class="pass">PASS</td>
+  <td class="diff-text"></td>
+</tr>
+<tr>
+  <td>reg_09</td>
+  <td>小过</td>
+  <td style="text-align:left">从格检测·用神极弱·原神无援</td>
+  <td class="source-text">《黄金策·功名章》</td>
+  <td class="pass">官鬼/官鬼</td>
+  <td class="pass">inauspicious/inauspicious</td>
+  <td>凶</td>
+  <td>0.76</td>
+  <td class="band-pass">inauspicious</td>
+  <td class="pass">PASS</td>
+  <td class="diff-text"></td>
+</tr>
+<tr>
+  <td>reg_10</td>
+  <td>坤</td>
+  <td style="text-align:left">占行人·伏吟极弱·静卦停滞</td>
+  <td class="source-text">《增删卜易》</td>
+  <td class="pass">官鬼/官鬼</td>
+  <td class="pass">inauspicious/inauspicious</td>
+  <td>凶</td>
+  <td>0.00</td>
+  <td class="band-pass">inauspicious</td>
+  <td class="pass">PASS</td>
+  <td class="diff-text"></td>
+</tr>
+<tr>
+  <td>reg_11</td>
+  <td>升</td>
+  <td style="text-align:left">占投资·反吟变卦·先成后败</td>
+  <td class="source-text">《卜筮正宗》</td>
+  <td class="pass">妻财/妻财</td>
+  <td class="pass">inauspicious/inauspicious</td>
+  <td>凶</td>
+  <td>0.00</td>
+  <td class="band-pass">inauspicious</td>
+  <td class="pass">PASS</td>
+  <td class="diff-text"></td>
+</tr>
+<tr>
+  <td>reg_12</td>
+  <td>小畜</td>
+  <td style="text-align:left">占生意·三刑齐全·六合中和·吉凶相战</td>
+  <td class="source-text">《黄金策》</td>
+  <td class="pass">妻财/妻财</td>
+  <td class="pass">mixed-unfav/mixed-unfav</td>
+  <td>凶</td>
+  <td>1.40</td>
+  <td class="band-pass">mixed-unfav</td>
+  <td class="pass">PASS</td>
+  <td class="diff-text"></td>
+</tr>
+<tr>
+  <td>reg_13</td>
+  <td>讼</td>
+  <td style="text-align:left">占子病·伏神得出·伏克飞为出</td>
+  <td class="source-text">《卜筮正宗·飞神伏神论》</td>
+  <td class="pass">子孙/子孙</td>
+  <td class="fail">mixed-fav/inauspicious</td>
+  <td>吉</td>
+  <td>0.56</td>
+  <td class="band-fail">inauspicious</td>
+  <td class="fail">FAIL</td>
+  <td class="diff-text">动变净效应: 期望neutral, 实际-1.00; 吉凶方向: 期望mixed-fav, 实际inauspicious; 可接受区间: 期望['mixed-fav', 'auspicious'], 实际inauspicious</td>
+</tr>
+<tr>
+  <td>reg_14</td>
+  <td>履</td>
+  <td style="text-align:left">占官司·官鬼暗动·世抗官化退</td>
+  <td class="source-text">《增删卜易·官非章》</td>
+  <td class="pass">官鬼/官鬼</td>
+  <td class="pass">inauspicious/inauspicious</td>
+  <td>凶</td>
+  <td>0.00</td>
+  <td class="band-pass">inauspicious</td>
+  <td class="fail">FAIL</td>
+  <td class="diff-text">动变净效应: 期望negative, 实际+0.30</td>
+</tr>
+<tr>
+  <td>reg_15</td>
+  <td>履</td>
+  <td style="text-align:left">占合伙·六冲卦·世应相冲</td>
+  <td class="source-text">《卜筮正宗·六冲论》</td>
+  <td class="fail">妻财/世爻</td>
+  <td class="fail">inauspicious/mixed-unfav</td>
+  <td>凶</td>
+  <td>1.00</td>
+  <td class="band-pass">mixed-unfav</td>
+  <td class="fail">FAIL</td>
+  <td class="diff-text">用神: 期望妻财, 实际世爻; 旺衰: 期望medium, 实际极弱(-0.71); 吉凶方向: 期望inauspicious, 实际mixed-unfav</td>
+</tr>
+<tr>
+  <td>reg_16</td>
+  <td>小畜</td>
+  <td style="text-align:left">占出行·六合卦·事阻延迟</td>
+  <td class="source-text">《卜筮正宗·六合论》</td>
+  <td class="pass">世爻/世爻</td>
+  <td class="pass">inauspicious/inauspicious</td>
+  <td>凶</td>
+  <td>0.00</td>
+  <td class="band-pass">inauspicious</td>
+  <td class="fail">FAIL</td>
+  <td class="diff-text">旺衰: 期望medium, 实际极弱(-1.60)</td>
+</tr>
+<tr>
+  <td>reg_17</td>
+  <td>乾</td>
+  <td style="text-align:left">占考试功名·父母旺相·官鬼得生</td>
+  <td class="source-text">《黄金策·功名章》</td>
+  <td class="fail">官鬼/父母</td>
+  <td class="fail">mixed-fav/inauspicious</td>
+  <td>平</td>
+  <td>0.67</td>
+  <td class="band-fail">inauspicious</td>
+  <td class="fail">FAIL</td>
+  <td class="diff-text">用神: 期望官鬼, 实际父母; 动变净效应: 期望positive, 实际-0.15; 吉凶方向: 期望mixed-fav, 实际inauspicious; 可接受区间: 期望['mixed-fav', 'auspicious'], 实际inauspicious</td>
+</tr>
+<tr>
+  <td>reg_18</td>
+  <td>乾</td>
+  <td style="text-align:left">占求财·兄弟持世·子孙通关不力</td>
+  <td class="source-text">《增删卜易·求财章》</td>
+  <td class="pass">妻财/妻财</td>
+  <td class="pass">inauspicious/inauspicious</td>
+  <td>凶</td>
+  <td>0.57</td>
+  <td class="band-pass">inauspicious</td>
+  <td class="fail">FAIL</td>
+  <td class="diff-text">动变净效应: 期望negative, 实际+0.30</td>
+</tr>
+</table>
+
+<h2>方向不一致案例详情</h2>
+<table>
+<tr><th>ID</th><th>案例</th><th>引擎Verdict</th><th>古典结论</th><th>差异说明</th><th>备注</th></tr>
+
+<tr>
+  <td>reg_06</td>
+  <td style="text-align:left">占婚姻·六合卦·用神中和</td>
+  <td>平凶(1.16)</td>
+  <td>平</td>
+  <td class="diff-text">吉凶方向: 期望mixed-fav, 实际mixed-unfav; 可接受区间: 期望['mixed-fav', 'auspicious'], 实际mixed-unfav</td>
+  <td class="source-text"></td>
+</tr>
+<tr>
+  <td>reg_13</td>
+  <td style="text-align:left">占子病·伏神得出·伏克飞为出</td>
+  <td>凶(0.56)</td>
+  <td>吉</td>
+  <td class="diff-text">动变净效应: 期望neutral, 实际-1.00; 吉凶方向: 期望mixed-fav, 实际inauspicious; 可接受区间: 期望['mixed-fav', 'auspicious'], 实际inauspicious</td>
+  <td class="source-text"></td>
+</tr>
+<tr>
+  <td>reg_17</td>
+  <td style="text-align:left">占考试功名·父母旺相·官鬼得生</td>
+  <td>凶(0.67)</td>
+  <td>平</td>
+  <td class="diff-text">用神: 期望官鬼, 实际父母; 动变净效应: 期望positive, 实际-0.15; 吉凶方向: 期望mixed-fav, 实际inauspicious; 可接受区间: 期望['mixed-fav', 'auspicious'], 实际inauspicious</td>
+  <td class="source-text"></td>
+</tr>
+</table>
+</body></html>

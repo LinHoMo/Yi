@@ -1,0 +1,1265 @@
+{
+  "question": "逃仆可追否",
+  "divination_time": {
+    "datetime": "2026-09-19 10:00",
+    "year_stem_branch": "丙午",
+    "month_stem_branch": "丁酉",
+    "day_stem_branch": "丙申",
+    "hour_stem_branch": "癸巳"
+  },
+  "method": "铜钱摇卦",
+  "empty_branches": [
+    "辰",
+    "巳"
+  ],
+  "trigram_interpretation": {
+    "nature": "水在上，山在下",
+    "symbol_meaning": "坎为水，艮为山",
+    "compound_name": "山水蒙",
+    "outer_trigram": "坎",
+    "inner_trigram": "艮",
+    "outer_nature": "水",
+    "inner_nature": "山",
+    "outer_element": "水",
+    "inner_element": "土",
+    "element_relation": "被克",
+    "outer_meaning": "陷/险/智",
+    "inner_meaning": "止/笃/静",
+    "outer_personality": "机智灵活、多疑善变、外柔内刚",
+    "inner_personality": "稳重踏实、保守固执、耐力持久",
+    "outer_symbols": [
+      "水/渎/沟/隐/矫/弓/盗/心病/耳痛",
+      "月/盗/北"
+    ],
+    "inner_symbols": [
+      "山/径路/小石/门阙/果/果蓏/阍寺/鼠/虎/鼻"
+    ],
+    "outer_direction": "北",
+    "inner_direction": "东北",
+    "outer_weather": "雨/雪/霜",
+    "inner_weather": "云止/雾气/寒冷",
+    "body_use": "下卦艮(土)为体，上卦坎(水)为用；体克用——我为主动，需费力争取",
+    "overview": "上水下山——外显水陷/险/智之象，内蕴山止/笃/静之质。体克用虽主动，然耗费心力。"
+  },
+  "original_hexagram": {
+    "name": "蹇",
+    "sequence": 39,
+    "upper_trigram": "坎",
+    "lower_trigram": "艮",
+    "palace": "兑",
+    "palace_element": "金",
+    "generation": "四世",
+    "judgment": "利西南，不利东北，利见大人，贞吉",
+    "yao_lines": [
+      {
+        "position": 1,
+        "name": "初九",
+        "nature": "yang",
+        "symbol": "━━━",
+        "heavenly_stem": "丙",
+        "earthly_branch": "辰",
+        "six_relation": "父母",
+        "six_spirit": "朱雀",
+        "is_moving": true,
+        "is_world": false,
+        "is_response": true,
+        "is_empty": true,
+        "line_text": "往蹇，来誉"
+      },
+      {
+        "position": 2,
+        "name": "六二",
+        "nature": "yin",
+        "symbol": "━ ━",
+        "heavenly_stem": "丙",
+        "earthly_branch": "午",
+        "six_relation": "官鬼",
+        "six_spirit": "勾陈",
+        "is_moving": false,
+        "is_world": false,
+        "is_response": false,
+        "is_empty": false,
+        "line_text": "王臣蹇蹇，匪躬之故"
+      },
+      {
+        "position": 3,
+        "name": "六三",
+        "nature": "yin",
+        "symbol": "━ ━",
+        "heavenly_stem": "丙",
+        "earthly_branch": "申",
+        "six_relation": "兄弟",
+        "six_spirit": "螣蛇",
+        "is_moving": false,
+        "is_world": false,
+        "is_response": false,
+        "is_empty": false,
+        "line_text": "往蹇，来反"
+      },
+      {
+        "position": 4,
+        "name": "六四",
+        "nature": "yin",
+        "symbol": "━ ━",
+        "heavenly_stem": "戊",
+        "earthly_branch": "申",
+        "six_relation": "兄弟",
+        "six_spirit": "白虎",
+        "is_moving": true,
+        "is_world": true,
+        "is_response": false,
+        "is_empty": false,
+        "line_text": "往蹇，来连"
+      },
+      {
+        "position": 5,
+        "name": "九五",
+        "nature": "yang",
+        "symbol": "━━━",
+        "heavenly_stem": "戊",
+        "earthly_branch": "戌",
+        "six_relation": "父母",
+        "six_spirit": "玄武",
+        "is_moving": false,
+        "is_world": false,
+        "is_response": false,
+        "is_empty": false,
+        "line_text": "大蹇，朋来"
+      },
+      {
+        "position": 6,
+        "name": "上六",
+        "nature": "yin",
+        "symbol": "━ ━",
+        "heavenly_stem": "戊",
+        "earthly_branch": "子",
+        "six_relation": "子孙",
+        "six_spirit": "青龙",
+        "is_moving": false,
+        "is_world": false,
+        "is_response": false,
+        "is_empty": false,
+        "line_text": "往蹇，来硕，吉，利见大人"
+      }
+    ]
+  },
+  "changed_hexagram": {
+    "name": "观",
+    "judgment": "盥而不荐，有孚颙若",
+    "changed_lines": [
+      1,
+      4
+    ]
+  },
+  "analysis_hints": {
+    "possible_use_gods": [
+      "通用：以世爻为主，兼看卦象整体生克"
+    ]
+  },
+  "advanced_analysis": {
+    "hidden_spirit_analysis": {
+      "has_hidden_spirit": true,
+      "details": [
+        {
+          "missing_relation": "妻财",
+          "hidden_spirit": {
+            "position": 2,
+            "name": "二爻",
+            "branch": "卯",
+            "six_relation": "妻财",
+            "element": "木"
+          },
+          "covering_spirit": {
+            "position": 2,
+            "name": "二爻",
+            "branch": "午",
+            "six_relation": "官鬼",
+            "element": "火"
+          },
+          "can_emerge": false,
+          "reason": "飞神囚；伏神死；日辰克伏神；伏神逢绝；伏神月破"
+        }
+      ],
+      "summary": "妻财伏藏（卯）飞神官鬼(午)→ 不得出"
+    },
+    "hidden_movement": {
+      "has_hidden_movement": false,
+      "details": [],
+      "summary": "本卦无暗动之爻"
+    },
+    "soul_hexagram": {
+      "is_soul_hexagram": false,
+      "soul_type": null,
+      "meaning": "本卦非游魂归魂主事卦，不以游魂归魂论断",
+      "travel": "无游魂归魂特征",
+      "residence": "无游魂归魂特征",
+      "mind": "无游魂归魂特征",
+      "summary": "非游魂归魂卦——事态以常规世应生克为断，不涉飘泊依附之象",
+      "score_adjustment": 0
+    },
+    "monthly_break": {
+      "has_monthly_break": false,
+      "details": [],
+      "summary": "本卦无月破之爻"
+    },
+    "triple_combo": {
+      "has_triple_combo": true,
+      "details": [
+        {
+          "element": "水",
+          "branches": [
+            "申",
+            "子",
+            "辰"
+          ],
+          "positions": [
+            1,
+            3,
+            6
+          ],
+          "completeness": "完整",
+          "formation_type": "1爻动+0暗动+2静",
+          "moving_count": 1,
+          "hidden_count": 0,
+          "static_count": 2,
+          "combo_status": "完整",
+          "combo_issues": [],
+          "combo_score_mod": 0,
+          "description": "申子辰成水局，位置三爻/上爻/初爻，构成方式：1爻动+0暗动+2静。水力大增"
+        }
+      ],
+      "summary": "申子辰成水局，位置三爻/上爻/初爻，构成方式：1爻动+0暗动+2静。水力大增"
+    },
+    "advance_retreat": {
+      "has_advance_retreat": true,
+      "details": [
+        {
+          "position": 1,
+          "name": "初九",
+          "original_branch": "辰",
+          "changed_branch": "未",
+          "type": "无进退",
+          "six_relation": "父母",
+          "six_spirit": "朱雀",
+          "advance_score": 0.0,
+          "advance_orig_strength": "中和",
+          "advance_chg_strength": "中和",
+          "description": "初爻(辰→未)不涉及进退神，需结合其他因素分析"
+        },
+        {
+          "position": 4,
+          "name": "六四",
+          "original_branch": "申",
+          "changed_branch": "未",
+          "type": "回头生",
+          "six_relation": "兄弟",
+          "six_spirit": "白虎",
+          "advance_score": 0.0,
+          "advance_orig_strength": "旺",
+          "advance_chg_strength": "中和",
+          "description": "四爻(申→未)回头生（有救济）"
+        }
+      ],
+      "summary": "初爻(辰→未)不涉及进退神，需结合其他因素分析；四爻(申→未)回头生（有救济）"
+    },
+    "twelve_growth": {
+      "day_branch": "申",
+      "day_element": "金",
+      "lines": [
+        {
+          "position": 1,
+          "name": "初九",
+          "branch": "辰",
+          "element": "土",
+          "six_relation": "父母",
+          "growth_stage": "长生",
+          "is_key_stage": true,
+          "stage_meaning": "新生之象，事有先机，力量初萌"
+        },
+        {
+          "position": 2,
+          "name": "六二",
+          "branch": "午",
+          "element": "火",
+          "six_relation": "官鬼",
+          "growth_stage": "病",
+          "is_key_stage": false,
+          "stage_meaning": "力不从心，内耗渐显，弊端初露"
+        },
+        {
+          "position": 3,
+          "name": "六三",
+          "branch": "申",
+          "element": "金",
+          "six_relation": "兄弟",
+          "growth_stage": "临官",
+          "is_key_stage": true,
+          "stage_meaning": "正当显达，力量充实，可担重任"
+        },
+        {
+          "position": 4,
+          "name": "六四",
+          "branch": "申",
+          "element": "金",
+          "six_relation": "兄弟",
+          "growth_stage": "临官",
+          "is_key_stage": true,
+          "stage_meaning": "正当显达，力量充实，可担重任"
+        },
+        {
+          "position": 5,
+          "name": "九五",
+          "branch": "戌",
+          "element": "土",
+          "six_relation": "父母",
+          "growth_stage": "长生",
+          "is_key_stage": true,
+          "stage_meaning": "新生之象，事有先机，力量初萌"
+        },
+        {
+          "position": 6,
+          "name": "上六",
+          "branch": "子",
+          "element": "水",
+          "six_relation": "子孙",
+          "growth_stage": "长生",
+          "is_key_stage": true,
+          "stage_meaning": "新生之象，事有先机，力量初萌"
+        }
+      ],
+      "summary": "得力之爻：初爻长生、三爻临官、四爻临官、五爻长生、上爻长生",
+      "key_lines": [
+        1,
+        3,
+        4,
+        5,
+        6
+      ],
+      "weak_lines": []
+    },
+    "clash_harmony": {
+      "hexagram_type": "无明确合冲",
+      "pairs": [
+        {
+          "positions": [
+            1,
+            4
+          ],
+          "branches": [
+            "辰",
+            "申"
+          ],
+          "relation": "无特殊",
+          "description": "位置初爻与四爻（辰与申）无合冲"
+        },
+        {
+          "positions": [
+            2,
+            5
+          ],
+          "branches": [
+            "午",
+            "戌"
+          ],
+          "relation": "无特殊",
+          "description": "位置二爻与五爻（午与戌）无合冲"
+        },
+        {
+          "positions": [
+            3,
+            6
+          ],
+          "branches": [
+            "申",
+            "子"
+          ],
+          "relation": "无特殊",
+          "description": "位置三爻与上爻（申与子）无合冲"
+        }
+      ],
+      "summary": "无明确合冲：位置初爻与四爻（辰与申）无合冲；位置二爻与五爻（午与戌）无合冲；位置三爻与上爻（申与子）无合冲",
+      "meaning": "本卦各对应爻位无合无冲，平顺之象，吉凶需依用神决断。"
+    },
+    "repetition": {
+      "repetition_type": "无",
+      "chong_pairs": [],
+      "fuyin_trigram": null,
+      "summary": "无反吟伏吟",
+      "meaning": "本卦变爻无反吟伏吟，卦象安定。"
+    },
+    "repetition_deep": {
+      "type": null,
+      "level": null,
+      "scope": null,
+      "interpretation": "",
+      "score_modifier": 0.0,
+      "classical_quote": ""
+    },
+    "hexagram_body": {
+      "body_position": 4,
+      "body_element": "金",
+      "body_relation": "兄弟",
+      "meaning": "卦身在四爻，代表事体核心与根基",
+      "classical_rule": "阳世子起顺推，阴世应起逆推",
+      "implications": [
+        "卦身临用神 → 事有主骨，终有所成",
+        "卦身临忌神 → 事有内患，防不胜防",
+        "卦身持世 → 一身系于此事",
+        "卦身逢空 → 事无本体，虚晃一枪"
+      ],
+      "body_is_world": true,
+      "body_is_empty": false,
+      "body_is_use_god": false,
+      "specific_notes": [
+        "卦身持世——一身系于此事，全身心投入"
+      ]
+    },
+    "element_strength": {
+      "month_branch": "酉",
+      "month_element": "金",
+      "day_branch": "申",
+      "day_element": "金",
+      "strength_description": "木死、火囚、土休、金旺、水相",
+      "palace_element": "金",
+      "details": [
+        {
+          "position": 1,
+          "name": "初九",
+          "branch": "辰",
+          "element": "土",
+          "six_relation": "父母",
+          "month_strength": "休",
+          "day_strength": "休",
+          "overall": "中和",
+          "growth_stage": "长生",
+          "special_markers": [
+            "旬空"
+          ]
+        },
+        {
+          "position": 2,
+          "name": "六二",
+          "branch": "午",
+          "element": "火",
+          "six_relation": "官鬼",
+          "month_strength": "囚",
+          "day_strength": "囚",
+          "overall": "偏弱",
+          "growth_stage": "病",
+          "special_markers": []
+        },
+        {
+          "position": 3,
+          "name": "六三",
+          "branch": "申",
+          "element": "金",
+          "six_relation": "兄弟",
+          "month_strength": "旺",
+          "day_strength": "旺",
+          "overall": "旺",
+          "growth_stage": "临官",
+          "special_markers": []
+        },
+        {
+          "position": 4,
+          "name": "六四",
+          "branch": "申",
+          "element": "金",
+          "six_relation": "兄弟",
+          "month_strength": "旺",
+          "day_strength": "旺",
+          "overall": "旺",
+          "growth_stage": "临官",
+          "special_markers": []
+        },
+        {
+          "position": 5,
+          "name": "九五",
+          "branch": "戌",
+          "element": "土",
+          "six_relation": "父母",
+          "month_strength": "休",
+          "day_strength": "休",
+          "overall": "中和",
+          "growth_stage": "长生",
+          "special_markers": []
+        },
+        {
+          "position": 6,
+          "name": "上六",
+          "branch": "子",
+          "element": "水",
+          "six_relation": "子孙",
+          "month_strength": "相",
+          "day_strength": "相",
+          "overall": "相",
+          "growth_stage": "长生",
+          "special_markers": []
+        }
+      ],
+      "summary": "月建酉(金)，日辰申(金)。当月旺衰：木死、火囚、土休、金旺、水相。旺相之爻：兄弟(申,旺/旺)、兄弟(申,旺/旺)、子孙(子,相/相)。休囚之爻：官鬼(午,囚/囚)"
+    },
+    "three_punishments": {
+      "has_punishment": true,
+      "punishments": [
+        {
+          "type": "无恩之刑",
+          "completeness": "待刑",
+          "branches_present": [
+            "巳",
+            "申"
+          ],
+          "missing": [
+            "寅"
+          ],
+          "formed_by": "待月日补齐",
+          "positions": [
+            "爻三爻",
+            "爻四爻",
+            "日辰(申)",
+            "变二爻(巳)",
+            "变五爻(巳)"
+          ],
+          "description": "无恩之刑（待刑）：巳、申相见，缺寅，待月日逢寅方成刑，目前刑伤未全，但有刑伤之象"
+        },
+        {
+          "type": "恃势之刑",
+          "completeness": "待刑",
+          "branches_present": [
+            "戌",
+            "未"
+          ],
+          "missing": [
+            "丑"
+          ],
+          "formed_by": "待月日补齐",
+          "positions": [
+            "爻五爻",
+            "变初爻(未)",
+            "变四爻(未)"
+          ],
+          "description": "恃势之刑（待刑）：戌、未相见，缺丑，待月日逢丑方成刑，目前刑伤未全，但有刑伤之象"
+        },
+        {
+          "type": "无礼之刑",
+          "completeness": "成刑",
+          "branches_present": [
+            "子",
+            "卯"
+          ],
+          "missing": [],
+          "formed_by": "卦内",
+          "positions": [
+            "爻上爻",
+            "变三爻(卯)",
+            "变上爻(卯)"
+          ],
+          "description": "无礼之刑（成刑）：子刑卯，见于爻上爻、变三爻(卯)、变上爻(卯)，主无礼刑伤、恩中之怨"
+        }
+      ],
+      "total_score": -1.1,
+      "summary": "无恩之刑（待刑）：巳、申相见，缺寅，待月日逢寅方成刑，目前刑伤未全，但有刑伤之象；恃势之刑（待刑）：戌、未相见，缺丑，待月日逢丑方成刑，目前刑伤未全，但有刑伤之象；无礼之刑（成刑）：子刑卯，见于爻上爻、变三爻(卯)、变上爻(卯)，主无礼刑伤、恩中之怨"
+    },
+    "hidden_spirit_scoring": {
+      "has_hidden_spirit": true,
+      "spirits": [
+        {
+          "missing_relation": "妻财",
+          "hidden_branch": "卯",
+          "covering_branch": "午",
+          "can_emerge": false,
+          "emerge_score": -8,
+          "emerge_level": "不得出",
+          "emerge_reasons": [
+            "飞神午休囚(囚)"
+          ],
+          "block_reasons": [
+            "伏神卯被月日双克",
+            "伏神卯逢绝地(日辰申)",
+            "伏神卯月破",
+            "伏神卯休囚无气(死)"
+          ],
+          "summary": "妻财伏卯于午之下，飞神囚，伏神死，得出评分=-8(不得出)"
+        }
+      ],
+      "summary": "妻财伏卯于午之下，飞神囚，伏神死，得出评分=-8(不得出)"
+    },
+    "day_month_bonding": {
+      "findings": [],
+      "use_god_branch": "",
+      "ji_shen_branches": [],
+      "day_branch": "申",
+      "month_branch": "酉",
+      "total_score_modifier": 0,
+      "summary": "无用神/忌神与日辰月建之合"
+    },
+    "six_breaks": {
+      "breaks": [
+        {
+          "branch": "子",
+          "vs": "月",
+          "vs_branch": "酉",
+          "position": 6,
+          "type": "纯破",
+          "severity": "轻",
+          "is_critical": false,
+          "score": -0.15,
+          "description": "上爻爻子与月建酉成纯破，微有损伤"
+        }
+      ],
+      "has_break": true,
+      "total_modifier": -0.15,
+      "description": "六破1处，皆主破损不遂",
+      "summary": "上爻爻子与月建酉成纯破，微有损伤"
+    },
+    "desperate_relief": {
+      "has_desperate_relief": false,
+      "stage": "",
+      "yuan_shen_moving": false,
+      "yuan_shen_strength": "",
+      "verdict": "",
+      "score_modifier": 0.0,
+      "description": ""
+    },
+    "transformation_pattern": {
+      "moving_positions": [
+        1,
+        4
+      ],
+      "moving_count": 2,
+      "patterns": [
+        "对爻齐动"
+      ],
+      "total_weight": 1.2,
+      "interpretation": "世应齐动，交涉必有变"
+    },
+    "flying_hidden_interaction": {
+      "has_interaction": true,
+      "interactions": [
+        {
+          "position": 2,
+          "fei_shen": "官鬼",
+          "fu_shen": "妻财",
+          "fei_branch": "午",
+          "fu_branch": "卯",
+          "relation": "伏生飞",
+          "can_emerge": false,
+          "description": "二爻：飞官鬼(火)与伏妻财(木)：伏生飞，伏难出"
+        }
+      ],
+      "overall_emerge": false,
+      "summary": "二爻：飞官鬼(火)与伏妻财(木)：伏生飞，伏难出"
+    },
+    "officer_tomb": {
+      "has_officer_tomb": true,
+      "severity": "mild",
+      "scenarios": [
+        "官鬼入墓"
+      ],
+      "officer_branches": [
+        "午"
+      ],
+      "tomb_branch": "戌",
+      "description": "检测到随官入墓格局（轻微）：官鬼入墓（鬼入墓中，凶象暗藏）。官鬼入墓，其力受困，吉凶需综合判断。",
+      "score_modifier": -0.3,
+      "classical_quote": "随官入墓最凶凶，世用临之祸不轻",
+      "details": [
+        {
+          "type": "官鬼入墓",
+          "officer_branch": "午",
+          "officer_element": "火",
+          "tomb_branch": "戌",
+          "description": "官鬼火(六二·午)入墓于戌（本卦/变卦/日月中）"
+        }
+      ]
+    },
+    "nayin": {
+      "year_nayin": "天河水",
+      "month_nayin": "山下火",
+      "day_nayin": "山下火",
+      "hour_nayin": "长流水",
+      "day_nayin_element": "火",
+      "description": "日柱丙申纳音山下火(火)"
+    },
+    "shi_yao_relation": {
+      "relation": "兄弟",
+      "general": "兄弟持世，多主争竞耗财",
+      "details": {
+        "general": "兄弟持世，多主争竞耗财"
+      },
+      "poem": "兄弟持世莫求财，官兴须是作祸灾。饮食朋友常来往，好事终难许汝来。",
+      "classical_rule": "兄弟者，兄弟持世，多主争竞耗财"
+    }
+  },
+  "thinking_chain": {
+    "step1_situational_reading": {
+      "hexagram_name": "蹇",
+      "palace": "兑",
+      "palace_element": "金",
+      "generation": "四世",
+      "upper_trigram": "坎",
+      "lower_trigram": "艮",
+      "upper_trigram_element": "水",
+      "lower_trigram_element": "土",
+      "world_position": 4,
+      "response_position": 1,
+      "world_name": "四爻",
+      "response_name": "初爻",
+      "month_stem_branch": "丁酉",
+      "day_stem_branch": "丙申",
+      "month_element": "金",
+      "day_element": "金",
+      "month_branch": "酉",
+      "day_branch": "申",
+      "empty_branches": [
+        "辰",
+        "巳"
+      ],
+      "moving_lines": [
+        {
+          "position": 1,
+          "name": "初爻",
+          "six_relation": "父母",
+          "earthly_branch": "辰",
+          "six_spirit": "朱雀"
+        },
+        {
+          "position": 4,
+          "name": "四爻",
+          "six_relation": "兄弟",
+          "earthly_branch": "申",
+          "six_spirit": "白虎"
+        }
+      ],
+      "moving_count": 2,
+      "changed_hexagram": "观",
+      "spirits_report": [
+        {
+          "position": 1,
+          "name": "初爻",
+          "six_spirit": "朱雀",
+          "six_relation": "父母",
+          "branch": "辰"
+        },
+        {
+          "position": 2,
+          "name": "二爻",
+          "six_spirit": "勾陈",
+          "six_relation": "官鬼",
+          "branch": "午"
+        },
+        {
+          "position": 3,
+          "name": "三爻",
+          "six_spirit": "螣蛇",
+          "six_relation": "兄弟",
+          "branch": "申"
+        },
+        {
+          "position": 4,
+          "name": "四爻",
+          "six_spirit": "白虎",
+          "six_relation": "兄弟",
+          "branch": "申"
+        },
+        {
+          "position": 5,
+          "name": "五爻",
+          "six_spirit": "玄武",
+          "six_relation": "父母",
+          "branch": "戌"
+        },
+        {
+          "position": 6,
+          "name": "上爻",
+          "six_spirit": "青龙",
+          "six_relation": "子孙",
+          "branch": "子"
+        }
+      ],
+      "yao_lines_detail": [
+        {
+          "position": 1,
+          "name": "初爻",
+          "earthly_branch": "辰",
+          "heavenly_stem": "丙",
+          "six_relation": "父母",
+          "six_spirit": "朱雀",
+          "is_moving": true,
+          "is_world": false,
+          "is_response": true,
+          "is_empty": true,
+          "is_month_break": false,
+          "nature": "yang"
+        },
+        {
+          "position": 2,
+          "name": "二爻",
+          "earthly_branch": "午",
+          "heavenly_stem": "丙",
+          "six_relation": "官鬼",
+          "six_spirit": "勾陈",
+          "is_moving": false,
+          "is_world": false,
+          "is_response": false,
+          "is_empty": false,
+          "is_month_break": false,
+          "nature": "yin"
+        },
+        {
+          "position": 3,
+          "name": "三爻",
+          "earthly_branch": "申",
+          "heavenly_stem": "丙",
+          "six_relation": "兄弟",
+          "six_spirit": "螣蛇",
+          "is_moving": false,
+          "is_world": false,
+          "is_response": false,
+          "is_empty": false,
+          "is_month_break": false,
+          "nature": "yin"
+        },
+        {
+          "position": 4,
+          "name": "四爻",
+          "earthly_branch": "申",
+          "heavenly_stem": "戊",
+          "six_relation": "兄弟",
+          "six_spirit": "白虎",
+          "is_moving": true,
+          "is_world": true,
+          "is_response": false,
+          "is_empty": false,
+          "is_month_break": false,
+          "nature": "yin"
+        },
+        {
+          "position": 5,
+          "name": "五爻",
+          "earthly_branch": "戌",
+          "heavenly_stem": "戊",
+          "six_relation": "父母",
+          "six_spirit": "玄武",
+          "is_moving": false,
+          "is_world": false,
+          "is_response": false,
+          "is_empty": false,
+          "is_month_break": false,
+          "nature": "yang"
+        },
+        {
+          "position": 6,
+          "name": "上爻",
+          "earthly_branch": "子",
+          "heavenly_stem": "戊",
+          "six_relation": "子孙",
+          "six_spirit": "青龙",
+          "is_moving": false,
+          "is_world": false,
+          "is_response": false,
+          "is_empty": false,
+          "is_month_break": false,
+          "nature": "yin"
+        }
+      ],
+      "summary_text": "本卦：蹇（兑，金），上坎下艮，世在蹇第4爻，应在第1爻。月建丁酉（金），日辰丙申（金），旬空辰、巳。动爻初爻(父母辰)、四爻(兄弟申)。变卦：观"
+    },
+    "step2_use_god_identification": {
+      "question_category": "逃仆可追否",
+      "use_god_category": "子孙",
+      "use_god_element": "水",
+      "use_god_positions": [
+        {
+          "position": 6,
+          "name": "上爻",
+          "earthly_branch": "子",
+          "element": "水",
+          "is_moving": false,
+          "is_empty": false,
+          "is_month_break": false,
+          "is_at_month": false,
+          "reason": ""
+        }
+      ],
+      "selected_use_god": {
+        "position": 6,
+        "name": "上爻",
+        "earthly_branch": "子",
+        "element": "水",
+        "is_moving": false,
+        "is_empty": false,
+        "is_month_break": false,
+        "is_at_month": false,
+        "reason": ""
+      },
+      "has_use_god_in_hexagram": true,
+      "use_god_count": 1,
+      "has_fu_cang": false,
+      "fu_cang_detail": null,
+      "yuan_shen": {
+        "category": "兄弟",
+        "element": "金",
+        "positions": [
+          {
+            "position": 3,
+            "name": "三爻",
+            "earthly_branch": "申",
+            "six_relation": "兄弟",
+            "six_spirit": "螣蛇",
+            "is_moving": false,
+            "is_empty": false
+          },
+          {
+            "position": 4,
+            "name": "四爻",
+            "earthly_branch": "申",
+            "six_relation": "兄弟",
+            "six_spirit": "白虎",
+            "is_moving": true,
+            "is_empty": false
+          }
+        ],
+        "fu_cang": null
+      },
+      "ji_shen": {
+        "category": "父母",
+        "element": "土",
+        "positions": [
+          {
+            "position": 1,
+            "name": "初爻",
+            "earthly_branch": "辰",
+            "six_relation": "父母",
+            "six_spirit": "朱雀",
+            "is_moving": true,
+            "is_empty": true
+          },
+          {
+            "position": 5,
+            "name": "五爻",
+            "earthly_branch": "戌",
+            "six_relation": "父母",
+            "six_spirit": "玄武",
+            "is_moving": false,
+            "is_empty": false
+          }
+        ],
+        "fu_cang": null
+      },
+      "chou_shen": {
+        "category": "官鬼",
+        "element": "火",
+        "positions": [
+          {
+            "position": 2,
+            "name": "二爻",
+            "earthly_branch": "午",
+            "six_relation": "官鬼",
+            "six_spirit": "勾陈",
+            "is_moving": false,
+            "is_empty": false
+          }
+        ],
+        "fu_cang": null
+      },
+      "world_position": 4,
+      "summary_text": "问题类型「逃仆可追否」→ 用神为子孙（五行属水）。用神现于6爻 。原神兄弟（金）现于3爻 4爻 ，忌神父母（土）现于1爻 5爻 ，仇神官鬼（火）现于2爻 。"
+    },
+    "step3_strength_analysis": {
+      "use_god_position": 6,
+      "use_god_name": "上爻",
+      "use_god_branch": "子",
+      "use_god_element": "水",
+      "parent_strength_god": "子孙",
+      "month_element": "金",
+      "day_element": "金",
+      "god_month_strength": "相",
+      "god_month_score": 4,
+      "god_day_strength": "相",
+      "god_day_score": 4,
+      "day_modifier": 1.0,
+      "day_modifier_reason": "日辰生用神",
+      "is_empty": false,
+      "empty_modifier": 1.0,
+      "empty_modifier_reason": "",
+      "is_month_break": false,
+      "month_break_modifier": 1.0,
+      "month_break_modifier_reason": "",
+      "is_an_dong": false,
+      "an_dong_modifier": 1.0,
+      "an_dong_modifier_reason": "",
+      "twelve_growth_stage": "长生",
+      "twelve_growth_modifier": 0.3,
+      "twelve_growth_reason": "用神临长生，得气之象",
+      "base_score": 4.0,
+      "adjusted_score": 5.0,
+      "effective_score": 3.9,
+      "strength_level": "极旺",
+      "modifiers": [
+        {
+          "type": "日辰",
+          "value": 1.0,
+          "reason": "日辰生用神"
+        },
+        {
+          "type": "十二长生",
+          "value": 0.3,
+          "reason": "用神临长生，得气之象"
+        },
+        {
+          "type": "三刑",
+          "value": -1.1,
+          "reason": "无恩之刑待刑(缺寅)、恃势之刑待刑(缺丑)、无礼之刑(成刑)"
+        }
+      ],
+      "summary_text": "用神子孙居上爻，五行水。月建酉（金）→ 相（4分），日辰申（金）→ 相（4分）。十二长生：用神临长生，得气之象，三刑：无恩之刑待刑(缺寅)、恃势之刑待刑(缺丑)、无礼之刑(成刑)（-1.1），综合评分：3.90（极旺）。",
+      "hidden_movement": [],
+      "hidden_movement_modifier": 0.0,
+      "hidden_movement_reason": "",
+      "three_punishment_modifier": -1.1,
+      "three_punishment_reason": "无恩之刑待刑(缺寅)、恃势之刑待刑(缺丑)、无礼之刑(成刑)",
+      "desperate_relief_modifier": 0.0,
+      "desperate_relief_info": null,
+      "officer_tomb": {
+        "severity": "mild",
+        "scenarios": [
+          "官鬼入墓"
+        ],
+        "description": "检测到随官入墓格局（轻微）：官鬼入墓（鬼入墓中，凶象暗藏）。官鬼入墓，其力受困，吉凶需综合判断。"
+      }
+    },
+    "step4_change_analysis": {
+      "has_moving_lines": true,
+      "moving_count": 2,
+      "details": [
+        {
+          "position": 1,
+          "name": "初爻",
+          "original_branch": "辰",
+          "original_element": "土",
+          "original_relation": "父母",
+          "original_spirit": "朱雀",
+          "line_role": "忌神",
+          "changed_branch": "未",
+          "changed_element": "土",
+          "changed_relation": "父母",
+          "change_type": "化合",
+          "change_detail": "辰→未，性质转变（土→土）",
+          "effect_on_usegod": "忌神动，有意克用",
+          "effect_score": -0.3
+        },
+        {
+          "position": 4,
+          "name": "四爻",
+          "original_branch": "申",
+          "original_element": "金",
+          "original_relation": "兄弟",
+          "original_spirit": "白虎",
+          "line_role": "原神",
+          "changed_branch": "未",
+          "changed_element": "土",
+          "changed_relation": "父母",
+          "change_type": "回头生",
+          "change_detail": "变爻土生动爻金，化进",
+          "effect_on_usegod": "原神动化回头生，源源不断生助用神",
+          "effect_score": 1.5
+        }
+      ],
+      "favorable_changes": [
+        {
+          "position": 4,
+          "name": "四爻",
+          "original_branch": "申",
+          "original_element": "金",
+          "original_relation": "兄弟",
+          "original_spirit": "白虎",
+          "line_role": "原神",
+          "changed_branch": "未",
+          "changed_element": "土",
+          "changed_relation": "父母",
+          "change_type": "回头生",
+          "change_detail": "变爻土生动爻金，化进",
+          "effect_on_usegod": "原神动化回头生，源源不断生助用神",
+          "effect_score": 1.5
+        }
+      ],
+      "unfavorable_changes": [
+        {
+          "position": 1,
+          "name": "初爻",
+          "original_branch": "辰",
+          "original_element": "土",
+          "original_relation": "父母",
+          "original_spirit": "朱雀",
+          "line_role": "忌神",
+          "changed_branch": "未",
+          "changed_element": "土",
+          "changed_relation": "父母",
+          "change_type": "化合",
+          "change_detail": "辰→未，性质转变（土→土）",
+          "effect_on_usegod": "忌神动，有意克用",
+          "effect_score": -0.3
+        }
+      ],
+      "favorable_count": 1,
+      "unfavorable_count": 1,
+      "tan_sheng_wan_ke": [],
+      "tan_he_wan_sheng_ke": [],
+      "greedy_harmony_issues": [
+        {
+          "type": "忌神贪合忘克",
+          "position": 1,
+          "name": "初爻",
+          "relation": "父母",
+          "branch": "辰",
+          "harmony_with": "月建酉",
+          "effect": "忌神与月合绊，暂不克用神（减凶）",
+          "benefit_or_loss": "favorable",
+          "score_effect": 0.15
+        }
+      ],
+      "greedy_harmony_score": 0.15,
+      "advance_score_total": 0.0,
+      "net_effect": 1.35,
+      "net_effect_description": "偏吉（动变总体有利）",
+      "summary_text": "共有2个动爻。有利变化1项，不利变化1项。日月合绊：忌神与月合绊，暂不克用神（减凶）；总体动变效应：1.35（偏吉（动变总体有利））。"
+    },
+    "step5_synthesis": {
+      "base_score": 3.9,
+      "strength_level": "极旺",
+      "change_net_effect": 1.35,
+      "hex_adjustment": -0.5,
+      "hex_adjustment_reason": "六冲卦，事主散离",
+      "spirit_adjustment": 0.36,
+      "spirit_adjustment_reasons": [
+        "青龙临用，阳日力增，吉上添吉(x1.2)"
+      ],
+      "special_pattern": {
+        "pattern": null,
+        "description": "无特殊格局，按常规断法",
+        "impact_on_verdict": "无调整",
+        "rule_applied": "常规旺衰断法",
+        "score_adjustment": 0.0
+      },
+      "pattern_adjustment": 0.0,
+      "pattern_verdict_note": "",
+      "final_score": 4.26,
+      "verdict": "大吉",
+      "verdict_description": "大吉之象，万事如意，顺应天时",
+      "confidence": 85,
+      "confidence_description": "高 — 信号清晰明确",
+      "timing": {
+        "timing_methods": [
+          {
+            "method": "逢值",
+            "description": "用神「子」临值之日应",
+            "type": "速应"
+          },
+          {
+            "method": "逢冲",
+            "description": "用神「子」逢冲之日（午日）应",
+            "type": "速应"
+          }
+        ],
+        "speed": "应速",
+        "summary_text": "应期判断：用神「子」临值之日应、用神「子」逢冲之日（午日）应。整体节奏：应速。"
+      },
+      "yingqi_dates": {
+        "dates": [
+          {
+            "rule": "速应(旺)",
+            "date": "2026-09-19",
+            "branch": "申",
+            "description": "用神旺相，当日可能应"
+          },
+          {
+            "rule": "速应(次日)",
+            "date": "2026-09-20",
+            "branch": "酉",
+            "description": "用神旺相，次日之应"
+          },
+          {
+            "rule": "三合成局",
+            "date": "2026-09-23",
+            "branch": "子",
+            "description": "申/子/辰合水局"
+          },
+          {
+            "rule": "三合成局",
+            "date": "2026-09-27",
+            "branch": "辰",
+            "description": "申/子/辰合水局"
+          },
+          {
+            "rule": "逢冲",
+            "date": "2026-09-29",
+            "branch": "午",
+            "description": "用神子逢冲(午)"
+          }
+        ],
+        "speed": "速应（当日或数日内）",
+        "summary_text": "应期（速应（当日或数日内））：2026-09-19(速应(旺))、2026-09-20(速应(次日))、2026-09-23(三合成局)、2026-09-27(三合成局)、2026-09-29(逢冲)",
+        "use_god_branch": "子",
+        "use_god_element": "水",
+        "strength_level": "极旺",
+        "method": "增删易/黄金策规则→日历日期"
+      },
+      "reasoning_chain": [
+        "[观局] 本卦：蹇（兑，金），上坎下艮，世在蹇第4爻，应在第1爻。月建丁酉（金），日辰丙申（金），旬空辰、巳。动爻初爻(父母辰)、四爻(兄弟申)。变卦：观",
+        "[定用] 问题类型「逃仆可追否」→ 用神为子孙（五行属水）。用神现于6爻 。原神兄弟（金）现于3爻 4爻 ，忌神父母（土）现于1爻 5爻 ，仇神官鬼（火）现于2爻 。",
+        "[断旺] 用神子孙居上爻，五行水。月建酉（金）→ 相（4分），日辰申（金）→ 相（4分）。十二长生：用神临长生，得气之象，三刑：无恩之刑待刑(缺寅)、恃势之刑待刑(缺丑)、无礼之刑(成刑)（-1.1），综合评分：3.90（极旺）。",
+        "[察变] 共有2个动爻。有利变化1项，不利变化1项。日月合绊：忌神与月合绊，暂不克用神（减凶）；总体动变效应：1.35（偏吉（动变总体有利））。",
+        "[综合] 大吉 — 评分4.26"
+      ],
+      "hidden_movement_count": 0,
+      "hidden_movement_modifier": 0.0,
+      "hidden_movement_reason": "",
+      "greedy_harmony_score": 0.15,
+      "greedy_harmony_reason": "忌神与月合绊，暂不克用神（减凶）",
+      "dmb_adjustment": -0.25,
+      "dmb_reason": "月合忌神（忌神缠月不解）",
+      "sb_adjustment": -0.3,
+      "sb_reason": "六破1处，皆主破损不遂",
+      "combo_break_adjustment": 0.0,
+      "combo_break_reason": "",
+      "officer_tomb_adjustment": -0.3,
+      "officer_tomb_reason": "随官入墓（官鬼入墓）",
+      "officer_tomb_severity": "mild",
+      "officer_tomb_verdict_note": "",
+      "summary_text": "【综合判断】用神旺衰：极旺（3.90分） + 动变效应：+1.35 + 卦体：六冲卦，事主散离（-0.5） + 六神：青龙临用，阳日力增，吉上添吉(x1.2)（+0.4） + 贪合：忌神与月合绊，暂不克用神（减凶）（+0.15） + 三刑：无恩之刑待刑(缺寅)、恃势之刑待刑(缺丑)、无礼之刑(成刑)（-1.1） + 日月合：月合忌神（忌神缠月不解）（-0.25） + 六破：六破1处，皆主破损不遂（-0.30） + 随官入墓：随官入墓（官鬼入墓）（-0.3） = 综合评分4.26 → 【大吉】大吉之象，万事如意，顺应天时。 日柱丙申纳音山下火(火)置信度85%。【经典引文】• 《卜筮正宗》：六冲卦者，行人不通，散离失群，百事乖张。• 《火珠林》：用神旺相，如春木之向荣，百事亨通。",
+      "hexagram_body_note": "卦身在四爻（兄弟）——卦身持世——一身系于此事，全身心投入",
+      "classical_quotes": [
+        {
+          "pattern": "六冲卦",
+          "source": "《卜筮正宗》",
+          "quote": "六冲卦者，行人不通，散离失群，百事乖张。"
+        },
+        {
+          "pattern": "用神旺",
+          "source": "《火珠林》",
+          "quote": "用神旺相，如春木之向荣，百事亨通。"
+        }
+      ]
+    },
+    "reasoning_chain": [
+      "[观局] 本卦：蹇（兑，金），上坎下艮，世在蹇第4爻，应在第1爻。月建丁酉（金），日辰丙申（金），旬空辰、巳。动爻初爻(父母辰)、四爻(兄弟申)。变卦：观",
+      "[定用] 问题类型「逃仆可追否」→ 用神为子孙（五行属水）。用神现于6爻 。原神兄弟（金）现于3爻 4爻 ，忌神父母（土）现于1爻 5爻 ，仇神官鬼（火）现于2爻 。",
+      "[断旺] 用神子孙居上爻，五行水。月建酉（金）→ 相（4分），日辰申（金）→ 相（4分）。十二长生：用神临长生，得气之象，三刑：无恩之刑待刑(缺寅)、恃势之刑待刑(缺丑)、无礼之刑(成刑)（-1.1），综合评分：3.90（极旺）。",
+      "[察变] 共有2个动爻。有利变化1项，不利变化1项。日月合绊：忌神与月合绊，暂不克用神（减凶）；总体动变效应：1.35（偏吉（动变总体有利））。",
+      "[卦身] 卦身在四爻（兄弟）——卦身持世——一身系于此事，全身心投入",
+      "[综合] 大吉 — 评分4.26"
+    ],
+    "summary_text": "=== 六爻思维链分析结果 ===\n【本卦】蹇（兑，金）\n【用神】子孙（水）\n【旺衰】极旺（评分：3.9）\n【动变】偏吉（动变总体有利）（效应：+1.35）\n【最终】大吉 — 大吉之象，万事如意，顺应天时\n【置信度】85%（高 — 信号清晰明确）\n【应期】应期判断：用神「子」临值之日应、用神「子」逢冲之日（午日）应。整体节奏：应速。\n【卦身】卦身在四爻（兄弟）——卦身持世——一身系于此事，全身心投入\n【飞伏互断】（总体：伏难出）\n  二爻：飞官鬼（午）→伏妻财（卯）：伏生飞\n【变爻格局】对爻齐动（综合权重：1.2）\n  断曰：世应齐动，交涉必有变"
+  },
+  "section_advice": [
+    "宜主动求进，主官职原神生合之方",
+    "逢值逢冲之日可上书求仕",
+    "利在原神方向城市/岗位",
+    "应期：申日（2026-09-19）"
+  ]
+}
+
+[STDERR]
+[手动指定] --hour 10
+[EVENT LOGGED] 090652f6-5f77-4a6a-b17d-5690220a291e

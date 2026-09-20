@@ -1,0 +1,803 @@
+{
+  "_meta": {
+    "description": "古籍六爻历史案例库 — 源自《增删卜易》《卜筮正宗》《黄金策》等经典",
+    "version": "1.0",
+    "total_cases": 30,
+    "usage": "盲评时只传递input部分予子代理，expected部分仅用于评分"
+  },
+  "cases": [
+    {
+      "id": "ZS001",
+      "source": "《卜筮正宗》附占验",
+      "topic": "求财",
+      "year": 2024, "month": 6, "day": 15, "hour": 10,
+      "question": "巳月戊戌日占求财，得益卦，戌日冲破旬空",
+      "hexagram": {"original": "益", "changed": null, "moving_count": 0},
+      "input": {
+        "date": "巳月戊戌日",
+        "question": "求财",
+        "hexagram_name": "益",
+        "notes": "辰土财爻持世，戌日冲破，日辰值财"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "妻财",
+        "use_god_branch": "辰",
+        "key_points": ["辰土财爻持世", "旬空遇日冲填实", "日辰值财不破"],
+        "yingqi": "戊戌日当天",
+        "detail": "辰土财爻持世，逢旬空，戌日冲破填实，且日辰即财星，当日得有财"
+      },
+      "scoring": {
+        "verdict_match": 0.4,
+        "use_god_correct": 0.3,
+        "key_pattern_identified": 0.2,
+        "yingqi_correct": 0.1
+      }
+    },
+    {
+      "id": "ZS002",
+      "source": "《卜筮正宗》附占验",
+      "topic": "疾病",
+      "question": "庚辰日申酉旬空，占岳父近病",
+      "hexagram": {"original": "师", "changed": null},
+      "input": {
+        "date": "庚辰日",
+        "question": "岳父近病吉凶",
+        "empty_branches": ["申", "酉"],
+        "notes": "应爻父母酉金为用神，临月建，辰日近病逢合为凶，忌神妻财午火动克，午火化酉空。卦象补充说明：原案例未记录卦名（原 hexagram 为空），按约束（应爻酉金父母、水宫生金）枚举六十四卦，唯一候选为师卦（坎宫，应6爻酉父母），已补入用于盲评"
+      },
+      "expected": {
+        "verdict": "凶",
+        "use_god": "父母",
+        "use_god_branch": "酉",
+        "key_points": ["近病逢合为凶", "用神临月建但逢合”，忌神午火动克", "忌神化酉旬空"],
+        "yingqi": "酉日",
+        "detail": "用神父母酉金虽临月建但不该合（近病逢合为凶），忌神午火动来克用，病危，应酉日出空之期"
+      },
+      "scoring": {
+        "verdict_match": 0.4,
+        "use_god_correct": 0.2,
+        "key_pattern_identified": 0.25,
+        "yingqi_correct": 0.15
+      }
+    },
+    {
+      "id": "ZS003",
+      "source": "《卜筮正宗》附占验",
+      "topic": "出行",
+      "question": "亥月甲子日占仆何日回，得革卦",
+      "hexagram": {"original": "革", "changed": null},
+      "input": {
+        "date": "亥月甲子日",
+        "question": "仆人何日归来",
+        "hexagram_name": "革",
+        "notes": "伏神午火财星为用神，世空主拖延，忌神旬空待破"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "妻财",
+        "use_god_branch": "午",
+        "key_points": ["伏神午火为用神", "世爻空主迟滞", "忌神待冲破"],
+        "yingqi": "乙巳日",
+        "detail": "伏神午火财爻为用神，受到日月克滞，世空主拖延，乙巳日得出"
+      },
+      "scoring": {
+        "verdict_match": 0.3,
+        "use_god_correct": 0.3,
+        "key_pattern_identified": 0.2,
+        "yingqi_correct": 0.2
+      }
+    },
+    {
+      "id": "ZS004",
+      "source": "《卜筮正宗》附占验",
+      "topic": "求官",
+      "question": "申月丁卯日占见贵求财得同人卦",
+      "hexagram": {"original": "同人", "changed": null},
+      "input": {
+        "date": "申月丁卯日",
+        "question": "见贵求财",
+        "hexagram_name": "同人",
+        "notes": "亥水官星旬空，月建中财爻生世"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "官鬼",
+        "use_god_branch": "亥",
+        "key_points": ["官鬼亥水旬空", "月建财爻生世", "出旬有验"],
+        "yingqi": "亥日",
+        "detail": "亥水官星空，出旬之亥日见贵，月建财爻生世，财如愿"
+      },
+      "scoring": {
+        "verdict_match": 0.3,
+        "use_god_correct": 0.3,
+        "key_pattern_identified": 0.2,
+        "yingqi_correct": 0.2
+      }
+    },
+    {
+      "id": "ZS005",
+      "source": "《卜筮正宗》附占验",
+      "topic": "婚姻",
+      "question": "子月癸酉日自占婚得恒之鼎卦",
+      "hexagram": {"original": "恒", "changed": "鼎", "moving_count": 1},
+      "input": {
+        "date": "子月癸酉日",
+        "question": "婚姻成否",
+        "hexagram_name": "恒",
+        "changed_name": "鼎",
+        "notes": "世爻官鬼，应爻妻财，戌土财爻旬空化巳火回头相生，动则生而不为空"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "妻财",
+        "use_god_branch": "戌",
+        "key_points": ["戌土妻财化回头生", "动则生而不为空", "次日巳时验"],
+        "yingqi": "次日（巳日）",
+        "detail": "世官应财得地，戌土财爻虽旬空但化巳火回头相生，动爻生则不空，次日巳时婚事允诺"
+      },
+      "scoring": {
+        "verdict_match": 0.4,
+        "use_god_correct": 0.25,
+        "key_pattern_identified": 0.25,
+        "yingqi_correct": 0.1
+      }
+    },
+    {
+      "id": "ZS006",
+      "source": "《卜筮正宗》附占验",
+      "topic": "疾病",
+      "question": "午月癸丑日占妻病何日愈得萃之比卦",
+      "hexagram": {"original": "萃", "changed": "比"},
+      "input": {
+        "date": "午月癸丑日",
+        "question": "妻病何日愈",
+        "hexagram_name": "萃",
+        "changed_name": "比",
+        "notes": "卯木财爻为用神旬空，亥水原神生之"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "妻财",
+        "use_god_branch": "卯",
+        "key_points": ["用神旬空但有原神生", "近病逢空待愈", "寅日卯出空"],
+        "yingqi": "甲寅日",
+        "detail": "卯木财爻用神旬空，亥水原神生之，甲寅日卯木出空且寅亦妻财，病愈"
+      },
+      "scoring": {
+        "verdict_match": 0.35,
+        "use_god_correct": 0.25,
+        "key_pattern_identified": 0.25,
+        "yingqi_correct": 0.15
+      }
+    },
+    {
+      "id": "ZS007",
+      "source": "《卜筮正宗》附占验",
+      "topic": "功名",
+      "question": "寅月庚戌日占子病何时愈得姤之无妄卦",
+      "hexagram": {"original": "姤", "changed": "无妄"},
+      "input": {
+        "date": "寅月庚戌日",
+        "question": "子病何时愈",
+        "hexagram_name": "姤",
+        "changed_name": "无妄",
+        "notes": "亥水子孙为用神，化寅木旬空，近病逢空即愈，但化空不受酉金生"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "子孙",
+        "use_god_branch": "亥",
+        "key_points": ["子孙化空近病逢空即愈", "化出寅木值日应"],
+        "yingqi": "寅日",
+        "detail": "亥水子孙化寅木旬空，近病逢空即愈，但不受酉金生，须值寅日"
+      },
+      "scoring": {
+        "verdict_match": 0.35,
+        "use_god_correct": 0.3,
+        "key_pattern_identified": 0.2,
+        "yingqi_correct": 0.15
+      }
+    },
+    {
+      "id": "ZS008",
+      "source": "《卜筮正宗》附占验",
+      "topic": "官司",
+      "question": "酉月己丑日占师尊官事得屯之震卦",
+      "hexagram": {"original": "屯", "changed": "震"},
+      "input": {
+        "date": "酉月己丑日",
+        "question": "官司",
+        "hexagram_name": "屯",
+        "changed_name": "震",
+        "notes": "申金父母为用神，入日丑墓，化妻财回头克，月建酉金拱旺，太岁辰生，父母临青龙"
+      },
+      "expected": {
+        "verdict": "凶",
+        "use_god": "父母",
+        "use_god_branch": "申",
+        "key_points": ["父母化回头克", "入日墓", "得月建拱旺当下无危", "防午年午火填空"],
+        "yingqi": "丙午年",
+        "detail": "父母化妻财回头克入日墓，本主重罪；然月建酉旺生、太岁辰生，暂得缓决；化爻午火旬空，防午年填空而终"
+      },
+      "scoring": {
+        "verdict_match": 0.3,
+        "use_god_correct": 0.25,
+        "key_pattern_identified": 0.3,
+        "yingqi_correct": 0.15
+      }
+    },
+    {
+      "id": "ZS009",
+      "source": "《卜筮正宗》附占验",
+      "topic": "出行",
+      "question": "午月丙辰日占出外贸易得恒之豫卦",
+      "hexagram": {"original": "恒", "changed": "豫"},
+      "input": {
+        "date": "午月丙辰日",
+        "question": "出外贸易",
+        "hexagram_name": "恒",
+        "changed_name": "豫",
+        "notes": "世爻酉金冲反吟，辰土生世形成冲中有合，变卦六合"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "妻财",
+        "use_god_branch": "戌",
+        "key_points": ["世爻反吟主反复", "日辰合世主有合", "变卦六合财爻暗动生世"],
+        "yingqi": "戌日",
+        "detail": "世爻酉金冲反吟有反复，但辰日合世合中有助，变卦六合得财"
+      },
+      "scoring": {
+        "verdict_match": 0.35,
+        "use_god_correct": 0.2,
+        "key_pattern_identified": 0.3,
+        "yingqi_correct": 0.15
+      }
+    },
+    {
+      "id": "ZS010",
+      "source": "《卜筮正宗》附占验",
+      "topic": "求财",
+      "question": "戌月甲辰日占借银有否得坤卦",
+      "hexagram": {"original": "坤", "changed": null},
+      "input": {
+        "date": "戌月甲辰日",
+        "question": "借贷",
+        "hexagram_name": "坤",
+        "notes": "应爻空亡六冲，但戌日合应，辰日合世，构成冲中逢合"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "妻财",
+        "key_points": ["六冲卦应爻空亡主冲", "日辰戌合应", "辰日合世", "冲中逢合主先难后成"],
+        "yingqi": "寅日",
+        "detail": "六冲卦本主不成，但日辰双合形成冲中逢合，先难后成"
+      },
+      "scoring": {
+        "verdict_match": 0.3,
+        "use_god_correct": 0.2,
+        "key_pattern_identified": 0.35,
+        "yingqi_correct": 0.15
+      }
+    },
+    {
+      "id": "ZS011",
+      "source": "《卜筮正宗》附占验",
+      "topic": "寻物",
+      "question": "寅月戊戌日占失银物可得复否得巽之讼卦",
+      "hexagram": {"original": "巽", "changed": "讼"},
+      "input": {
+        "date": "寅月戊戌日",
+        "question": "失银能否找回",
+        "hexagram_name": "巽",
+        "changed_name": "讼",
+        "notes": "六冲卦失物难寻，但财爻化回头生合，冲中逢合"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "妻财",
+        "use_god_branch": "未",
+        "key_points": ["六冲本难寻", "财爻未土化午火回头合", "他人所盗但冲中逢合"],
+        "yingqi": "乙巳日",
+        "detail": "六冲失财本难回，然财爻化午火回头生合，冲中逢合主失而复得"
+      },
+      "scoring": {
+        "verdict_match": 0.35,
+        "use_god_correct": 0.2,
+        "key_pattern_identified": 0.3,
+        "yingqi_correct": 0.15
+      }
+    },
+    {
+      "id": "ZS012",
+      "source": "《卜筮正宗》附占验",
+      "topic": "出行",
+      "question": "辰月丁酉日自占婚姻成否得否卦",
+      "hexagram": {"original": "否", "changed": null},
+      "input": {
+        "date": "辰月丁酉日",
+        "question": "婚姻成否",
+        "hexagram_name": "否",
+        "notes": "六合卦利婚姻，但世爻日冲，应爻月破，形成合处逢冲"
+      },
+      "expected": {
+        "verdict": "平/不利",
+        "use_god": "妻财",
+        "key_points": ["六合卦本利婚姻", "世爻日冲不稳", "应爻月破不安", "合处逢冲主先成后破"],
+        "yingqi": "不安",
+        "detail": "否卦六合利婚姻，然日被冲应被月破合处逢冲，难成"
+      },
+      "scoring": {
+        "verdict_match": 0.3,
+        "use_god_correct": 0.2,
+        "key_pattern_identified": 0.35,
+        "yingqi_correct": 0.15
+      }
+    },
+    {
+      "id": "ZS013",
+      "source": "《增删卜易》",
+      "topic": "疾病",
+      "question": "辰月庚戌日占子病何时愈",
+      "hexagram": {"original": "姤", "changed": "无妄"},
+      "input": {
+        "date": "辰月庚戌日",
+        "question": "子病何时愈",
+        "notes": "亥水子孙化寅木旬空，近病逢空即愈但需值寅日"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "子孙",
+        "use_god_branch": "亥",
+        "key_points": ["子孙化出寅木值日", "近病逢空即愈"],
+        "yingqi": "寅日",
+        "detail": "子孙化寅木近病逢空即愈，寅日应期"
+      },
+      "scoring": {
+        "verdict_match": 0.35,
+        "use_god_correct": 0.3,
+        "key_pattern_identified": 0.2,
+        "yingqi_correct": 0.15
+      }
+    },
+    {
+      "id": "ZS014",
+      "source": "《增删卜易》",
+      "topic": "寻人",
+      "question": "丁巳日占逃仆",
+      "hexagram": {"original": "蹇", "changed": null},
+      "input": {
+        "date": "丁巳日子丑旬空",
+        "question": "逃仆能否追回",
+        "hexagram_name": "蹇",
+        "notes": "妻财卯木伏于午火之下，申金持世克卯木，伏生飞为泄气"
+      },
+      "expected": {
+        "verdict": "凶",
+        "use_god": "妻财",
+        "use_god_branch": "卯",
+        "key_points": ["用神伏藏受飞神克", "申金持世克用", "伏生飞为泄气主损耗"],
+        "yingqi": "子日",
+        "detail": "妻财卯木伏藏被克，终不能逃远，但财物有损"
+      },
+      "scoring": {
+        "verdict_match": 0.3,
+        "use_god_correct": 0.3,
+        "key_pattern_identified": 0.25,
+        "yingqi_correct": 0.15
+      }
+    },
+    {
+      "id": "ZS015",
+      "source": "《增删卜易》",
+      "topic": "商业",
+      "question": "辰月庚申日占大例桑叶价贵贱得既济卦",
+      "hexagram": {"original": "既济", "changed": null},
+      "input": {
+        "date": "辰月庚申日",
+        "question": "桑叶价格走势",
+        "hexagram_name": "既济",
+        "notes": "午火财爻为用神，伏于世爻亥水之下，申日克亥水"
+      },
+      "expected": {
+        "verdict": "下跌",
+        "use_god": "妻财",
+        "use_god_branch": "午",
+        "key_points": ["财爻午火伏藏", "亥水飞神受申日克", "午火财爻绝于亥"],
+        "yingqi": "年内",
+        "detail": "财爻伏藏且绝于飞神亥水，价格不贵"
+      },
+      "scoring": {
+        "verdict_match": 0.3,
+        "use_god_correct": 0.3,
+        "key_pattern_identified": 0.25,
+        "yingqi_correct": 0.15
+      }
+    },
+    {
+      "id": "ZS016",
+      "source": "《黄金策》引例",
+      "topic": "生产",
+      "question": "酉月丙辰日占子病得升卦",
+      "hexagram": {"original": "升", "changed": null},
+      "input": {
+        "date": "酉月丙辰日",
+        "question": "子病",
+        "hexagram_name": "升",
+        "notes": "午火子孙伏于世爻丑土之下，丑土旬空，伏神得出"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "子孙",
+        "use_god_branch": "午",
+        "key_points": ["子孙伏藏得飞空", "伏神得出主易愈"],
+        "yingqi": "午日",
+        "detail": "子孙午火伏藏，飞神丑土旬空，得出易愈"
+      },
+      "scoring": {
+        "verdict_match": 0.35,
+        "use_god_correct": 0.3,
+        "key_pattern_identified": 0.2,
+        "yingqi_correct": 0.15
+      }
+    },
+    {
+      "id": "ZS017",
+      "source": "《黄金策》引例",
+      "topic": "商业",
+      "question": "卯月壬辰日占候文书何日领得贲卦",
+      "hexagram": {"original": "贲", "changed": null},
+      "input": {
+        "date": "卯月壬辰日",
+        "question": "文书何时领取",
+        "hexagram_name": "贲",
+        "notes": "午火父母伏丑土之下伏居空地待出"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "父母",
+        "use_god_branch": "午",
+        "key_points": ["伏神午火值日得出"],
+        "yingqi": "甲午日",
+        "detail": "午火父母伏丑土旬空，甲午日出空必领"
+      },
+      "scoring": {
+        "verdict_match": 0.3,
+        "use_god_correct": 0.3,
+        "key_pattern_identified": 0.2,
+        "yingqi_correct": 0.2
+      }
+    },
+    {
+      "id": "ZS018",
+      "source": "《黄金策》引例",
+      "topic": "疾病",
+      "question": "卯月丙辰日占父病得复卦",
+      "hexagram": {"original": "复", "changed": null},
+      "input": {
+        "date": "卯月丙辰日",
+        "question": "父病",
+        "hexagram_name": "复",
+        "notes": "巳火父母伏于寅木之下，飞神生伏神，且伏神遇长生"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "父母",
+        "use_god_branch": "巳",
+        "key_points": ["飞神寅木生伏神巳火", "伏神遇长生"],
+        "yingqi": "次日",
+        "detail": "飞生伏，伏得出长生易愈"
+      },
+      "scoring": {
+        "verdict_match": 0.35,
+        "use_god_correct": 0.3,
+        "key_pattern_identified": 0.2,
+        "yingqi_correct": 0.15
+      }
+    },
+    {
+      "id": "ZS019",
+      "source": "《黄金策》引例",
+      "topic": "失物",
+      "question": "辰月丁亥日占失银物得巽之讼",
+      "hexagram": {"original": "巽", "changed": "讼"},
+      "input": {
+        "date": "辰月丁亥日",
+        "question": "失银能否找回",
+        "notes": "财爻未土化午火回头生合，虽六冲但冲中逢合"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "妻财",
+        "key_points": ["六冲本难寻", "财爻化回头生合", "冲中逢合"],
+        "yingqi": "乙巳日",
+        "detail": "财爻化回头生合，冲中逢合主失而复得"
+      },
+      "scoring": {
+        "verdict_match": 0.35,
+        "use_god_correct": 0.2,
+        "key_pattern_identified": 0.3,
+        "yingqi_correct": 0.15
+      }
+    },
+    {
+      "id": "ZS020",
+      "source": "《黄金策》引例",
+      "topic": "商业",
+      "question": "午月丙辰日占出外贸易得恒之豫",
+      "hexagram": {"original": "恒", "changed": "豫"},
+      "input": {
+        "date": "午月丙辰日",
+        "question": "出外贸易",
+        "notes": "世爻酉金反吟，日辰辰合世，变卦六合财动生世"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "妻财",
+        "key_points": ["世爻反吟主反复", "日辰合世有助", "变卦六合财动"],
+        "yingqi": "戌日",
+        "detail": "虽有反复，终获利"
+      },
+      "scoring": {
+        "verdict_match": 0.35,
+        "use_god_correct": 0.2,
+        "key_pattern_identified": 0.3,
+        "yingqi_correct": 0.15
+      }
+    },
+    {
+      "id": "ZS021",
+      "source": "《卜筮正宗》附占验",
+      "topic": "疾病",
+      "question": "甲午日辰巳旬空占父近病六合卦",
+      "hexagram": {"original": null, "changed": null},
+      "input": {
+        "date": "甲午日",
+        "question": "父近病",
+        "notes": "六合卦占近病不吉，外局巳酉丑合金局暗动忌神，戌亥空"
+      },
+      "expected": {
+        "verdict": "凶",
+        "use_god": "父母",
+        "key_points": ["六合卦占久病凶", "合金局暗动克用"],
+        "yingqi": "亥日",
+        "detail": "六合近病不吉，亥日受冲克"
+      },
+      "scoring": {
+        "verdict_match": 0.35,
+        "use_god_correct": 0.25,
+        "key_pattern_identified": 0.25,
+        "yingqi_correct": 0.15
+      }
+    },
+    {
+      "id": "ZS022",
+      "source": "《卜筮正宗》附占验",
+      "topic": "出行",
+      "question": "庚辰日申酉旬空占岳父近病父母酉金",
+      "hexagram": {"original": null, "changed": null},
+      "input": {
+        "date": "庚辰日",
+        "question": "岳父近病",
+        "notes": "父母酉金临月建辰日合，近病逢合不吉，忌神午火动化酉空"
+      },
+      "expected": {
+        "verdict": "凶",
+        "use_god": "父母",
+        "key_points": ["近病逢合凶", "忌神动克", "忌神化空"],
+        "yingqi": "酉日",
+        "detail": "忌神动克用神，凶应酉日"
+      },
+      "scoring": {
+        "verdict_match": 0.4,
+        "use_god_correct": 0.2,
+        "key_pattern_identified": 0.25,
+        "yingqi_correct": 0.15
+      }
+    },
+    {
+      "id": "ZS023",
+      "source": "《卜筮正宗》附占验",
+      "topic": "出行",
+      "question": "癸卯日子丑旬空占后运功名官鬼持世",
+      "hexagram": {"original": null, "changed": null},
+      "input": {
+        "date": "癸卯日",
+        "question": "后运功名",
+        "notes": "官鬼寅木持世，卯日扶，申金动克，子水动连续相生但月破"
+      },
+      "expected": {
+        "verdict": "凶",
+        "use_god": "官鬼",
+        "key_points": ["官鬼持世旺", "申金动克有凶", "原神月破无救"],
+        "yingqi": "七月（申月）",
+        "detail": "原神月破，七月凶"
+      },
+      "scoring": {
+        "verdict_match": 0.35,
+        "use_god_correct": 0.3,
+        "key_pattern_identified": 0.2,
+        "yingqi_correct": 0.15
+      }
+    },
+    {
+      "id": "ZS024",
+      "source": "《卜筮正宗》附占验",
+      "topic": "疾病",
+      "question": "己巳日戌亥旬空占赌钱",
+      "hexagram": {"original": null, "changed": null},
+      "input": {
+        "date": "己巳日",
+        "question": "赌钱输赢",
+        "notes": "妻财亥水为用神，子月扶，巳日冲暗动，财暗动生应不生世"
+      },
+      "expected": {
+        "verdict": "凶",
+        "use_god": "妻财",
+        "use_god_branch": "亥",
+        "key_points": ["用神暗动生应不生世", "六冲卦不终"],
+        "yingqi": "当日",
+        "detail": "用神暗动生应，输，六冲不终"
+      },
+      "scoring": {
+        "verdict_match": 0.35,
+        "use_god_correct": 0.3,
+        "key_pattern_identified": 0.2,
+        "yingqi_correct": 0.15
+      }
+    },
+    {
+      "id": "ZS025",
+      "source": "《卜筮正宗》附占验",
+      "topic": "疾病",
+      "question": "庚子日辰巳旬空占生意妻财子水化绝",
+      "hexagram": {"original": null, "changed": null},
+      "input": {
+        "date": "庚子日",
+        "question": "生意",
+        "notes": "妻财子水为用神，戌月克，子日旺，动变子孙巳火化绝，世爻官鬼卯木旺"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "妻财",
+        "use_god_branch": "子",
+        "key_points": ["用神动化绝", "十二长生绝不为凶", "用生世格局"],
+        "yingqi": "当日",
+        "detail": "用神生世，用旺世兴，贪生忘刑得财"
+      },
+      "scoring": {
+        "verdict_match": 0.35,
+        "use_god_correct": 0.25,
+        "key_pattern_identified": 0.25,
+        "yingqi_correct": 0.15
+      }
+    },
+    {
+      "id": "ZS026",
+      "source": "《黄金策》引例",
+      "topic": "官司",
+      "question": "酉月己丑日占师尊官事申金父母回头克",
+      "hexagram": {"original": "屯", "changed": "震"},
+      "input": {
+        "date": "酉月己丑日",
+        "question": "官司结局",
+        "notes": "申金父母入日丑墓，化妻财午火回头克"
+      },
+      "expected": {
+        "verdict": "凶",
+        "use_god": "父母",
+        "key_points": ["回头克彻底", "入日墓", "防午年"],
+        "yingqi": "午年",
+        "detail": "回头克入墓大凶，防午年"
+      },
+      "scoring": {
+        "verdict_match": 0.3,
+        "use_god_correct": 0.3,
+        "key_pattern_identified": 0.25,
+        "yingqi_correct": 0.15
+      }
+    },
+    {
+      "id": "ZS027",
+      "source": "《黄金策》引例",
+      "topic": "出行",
+      "question": "亥月甲子日占仆何日回伏神午火",
+      "hexagram": {"original": "革", "changed": null},
+      "input": {
+        "date": "亥月甲子日",
+        "question": "仆人归期",
+        "notes": "伏神午火财星日月克"
+      },
+      "expected": {
+        "verdict": "凶",
+        "use_god": "妻财",
+        "key_points": ["伏神被日月克", "世空主迟"],
+        "yingqi": "乙巳日",
+        "detail": "伏神被克，世空，出旬迟滞"
+      },
+      "scoring": {
+        "verdict_match": 0.3,
+        "use_god_correct": 0.3,
+        "key_pattern_identified": 0.25,
+        "yingqi_correct": 0.15
+      }
+    },
+    {
+      "id": "ZS028",
+      "source": "《卜筮正宗·十八问答》",
+      "topic": "出行",
+      "question": "寅月戊戌日占失银冲中逢合",
+      "hexagram": {"original": "巽", "changed": "讼"},
+      "input": {
+        "date": "寅月戊戌日",
+        "question": "失银可寻否",
+        "notes": "六冲卦财爻化回头生合"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "妻财",
+        "key_points": ["六冲本难寻", "财爻化回头生合", "冲中逢合"],
+        "yingqi": "乙巳日",
+        "detail": "冲中逢合失而复得"
+      },
+      "scoring": {
+        "verdict_match": 0.35,
+        "use_god_correct": 0.2,
+        "key_pattern_identified": 0.3,
+        "yingqi_correct": 0.15
+      }
+    },
+    {
+      "id": "ZS029",
+      "source": "《卜筮正宗·十八问答》",
+      "topic": "出行",
+      "question": "辰月丁酉日占婚姻六合卦逢冲",
+      "hexagram": {"original": "否", "changed": null},
+      "input": {
+        "date": "辰月丁酉日",
+        "question": "婚姻成否",
+        "notes": "六合卦但世爻日冲应爻月破合处逢冲"
+      },
+      "expected": {
+        "verdict": "凶",
+        "use_god": "妻财",
+        "key_points": ["六合本吉", "合处逢冲破局", "应爻月破"],
+        "yingqi": "难成",
+        "detail": "合处逢冲难成"
+      },
+      "scoring": {
+        "verdict_match": 0.4,
+        "use_god_correct": 0.2,
+        "key_pattern_identified": 0.25,
+        "yingqi_correct": 0.15
+      }
+    },
+    {
+      "id": "ZS030",
+      "source": "《增删卜易》",
+      "topic": "寻人",
+      "question": "丁巳日占逃仆得蹇卦伏神卯木",
+      "hexagram": {"original": "蹇", "changed": null},
+      "input": {
+        "date": "丁巳日",
+        "question": "逃仆可追否",
+        "notes": "妻财卯木伏于二爻午火之下，申金持世克卯木"
+      },
+      "expected": {
+        "verdict": "凶",
+        "use_god": "妻财",
+        "use_god_branch": "卯",
+        "key_points": ["用神伏藏受克", "申金持世克用", "伏生飞泄气"],
+        "yingqi": "甲子日",
+        "detail": "用神伏藏被克终不能逃远"
+      },
+      "scoring": {
+        "verdict_match": 0.3,
+        "use_god_correct": 0.3,
+        "key_pattern_identified": 0.25,
+        "yingqi_correct": 0.15
+      }
+    }
+  ]
+}
