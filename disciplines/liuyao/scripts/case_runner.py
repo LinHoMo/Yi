@@ -132,7 +132,25 @@ def resolve_case_time(case: dict) -> dict:
 
 
 def load_cases() -> list[dict]:
-    return json.loads(CASES.read_text(encoding="utf-8"))["cases"]
+    """主案例库 + 外部验证集（yingqi_cases.json 等）。
+
+    外部集与 tune/holdout 分开登记在 case_splits.json，永不参与调参；
+    评分时按 split 取子集，两集合分别出分（AGENTS.md §四.1）。
+    """
+    cases = json.loads(CASES.read_text(encoding="utf-8"))["cases"]
+    seen = {c["id"] for c in cases}
+    for extra in sorted((ROOT / "data" / "cases").glob("*_cases.json")):
+        if extra.name == CASES.name:
+            continue
+        try:
+            data = json.loads(extra.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            continue
+        for c in data.get("cases", []):
+            if c.get("id") and c["id"] not in seen:
+                seen.add(c["id"])
+                cases.append(c)
+    return cases
 
 
 def load_ids(split: str | None = None, only: list[str] | None = None) -> list[str]:
@@ -145,6 +163,11 @@ def load_ids(split: str | None = None, only: list[str] | None = None) -> list[st
             if ids:
                 return [i for i in ids if i in all_ids]
         return [i for i in all_ids if i.startswith("ZS") and int(i[2:]) <= 20]
+    if split == "yingqi_holdout":
+        if SPLITS.exists():
+            return [i for i in json.loads(SPLITS.read_text(encoding="utf-8")).get("yingqi_holdout", [])
+                    if i in all_ids]
+        return [i for i in all_ids if i.startswith("YQ")]
     if split == "holdout":
         if SPLITS.exists():
             return [i for i in json.loads(SPLITS.read_text(encoding="utf-8")).get("holdout", [])

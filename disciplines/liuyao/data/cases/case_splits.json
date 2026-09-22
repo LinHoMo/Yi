@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "tune=ZS001-020 调参集；holdout=未参与词典调参的古籍真例；excluded=残缺或与tune重复，不计入均分",
+  "note": "tune=ZS001-020 调参集；holdout=未参与词典调参的古籍真例；excluded=残缺或与tune重复，不计入均分；yingqi_holdout=应期外部验证集，永不参与调参；yingqi_holdout=应期外部验证集，永不参与调参；yingqi_holdout=应期外部验证集，永不参与调参；yingqi_holdout=应期外部验证集，永不参与调参",
   "tune": [
     "ZS001",
     "ZS002",
@@ -79,5 +79,9 @@
       "reason": "与 ZS014 同源（蹇·逃仆伏神）"
     }
   ],
-  "holdout_policy": "禁止为单例新增仅对其命中的私有格局别名；通用古籍术语允许；原神失位/久病逢冲为通用法则"
+  "holdout_policy": "禁止为单例新增仅对其命中的私有格局别名；通用古籍术语允许；原神失位/久病逢冲为通用法则",
+  "yingqi_holdout": [
+    "YQ003",
+    "YQ007"
+  ]
 }

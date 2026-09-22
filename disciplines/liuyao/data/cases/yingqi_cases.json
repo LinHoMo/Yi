@@ -1,0 +1,373 @@
+{
+  "_meta": {
+    "description": "应期外部验证集：从 case_library.md 抽取、通过四道自洽校验、永不参与调参",
+    "built_by": "tools/build_yingqi_set.py",
+    "total_cases": 2,
+    "excluded": [
+      {
+        "id": "YQ001",
+        "reason": "文记动爻 [3, 5] 不在卦变差集 [4] 内，自相矛盾",
+        "title": "占父病 — 用神多现与原神贪合忘克",
+        "source": "《黄金策·疾病章》",
+        "original": "乾",
+        "changed": "小畜",
+        "moving": [
+          3,
+          5
+        ]
+      },
+      {
+        "id": "YQ002",
+        "reason": "应验句无明确干支（日/月），不可评分",
+        "title": "占升官 — 原神缺位致凶",
+        "source": "《黄金策·功名章》",
+        "original": "鼎",
+        "changed": "既济",
+        "moving": [
+          1,
+          2,
+          4,
+          5,
+          6
+        ]
+      },
+      {
+        "id": "YQ004",
+        "reason": "文记动爻 [1] 不在卦变差集 [4] 内，自相矛盾",
+        "title": "占久病 — 逢冲即死",
+        "source": "《黄金策·疾病章》",
+        "original": "小畜",
+        "changed": "乾",
+        "moving": [
+          1
+        ]
+      },
+      {
+        "id": "YQ005",
+        "reason": "文记动爻 [5] 不在卦变差集 [2] 内，自相矛盾",
+        "title": "占投资求财 — 妻财与世应生克",
+        "source": "《增删卜易·求财章》",
+        "original": "屯",
+        "changed": "节",
+        "moving": [
+          2,
+          5
+        ]
+      },
+      {
+        "id": "YQ006",
+        "reason": "无应验记录（只有断语没有实际结果），不可评分",
+        "title": "辟诸书之谬 — 归魂卦装卦错误辨析",
+        "source": "《卜筮正宗·辟诸书之谬》",
+        "original": "大有",
+        "changed": "大壮",
+        "moving": [
+          6
+        ]
+      },
+      {
+        "id": "YQ008",
+        "reason": "文记动爻 [5] 不在卦变差集 [2] 内，自相矛盾",
+        "title": "论伏神不得出 — 飞来克伏为难出",
+        "source": "《卜筮正宗·飞神伏神论》",
+        "original": "谦",
+        "changed": "升",
+        "moving": [
+          5
+        ]
+      },
+      {
+        "id": "YQ009",
+        "reason": "文记动爻 [5] 不在卦变差集 [2] 内，自相矛盾",
+        "title": "占行人 — 用神克世速至与用神生世迟归",
+        "source": "《黄金策·出行章》",
+        "original": "解",
+        "changed": "豫",
+        "moving": [
+          2,
+          5
+        ]
+      },
+      {
+        "id": "YQ010",
+        "reason": "文记动爻 [4] 不在卦变差集 [3] 内，自相矛盾",
+        "title": "占婚姻 — 男取财为用与女取官为用",
+        "source": "《黄金策·婚姻章》",
+        "original": "咸",
+        "changed": "萃",
+        "moving": [
+          4
+        ]
+      },
+      {
+        "id": "YQ011",
+        "reason": "文记动爻 [1, 4] 不在卦变差集 [2] 内，自相矛盾",
+        "title": "占官司 — 官鬼与世应之关系",
+        "source": "《增删卜易·官非章》",
+        "original": "讼",
+        "changed": "否",
+        "moving": [
+          1,
+          4
+        ]
+      },
+      {
+        "id": "YQ012",
+        "reason": "文记动爻 [3] 不在卦变差集 [6] 内，自相矛盾",
+        "title": "占失物 — 内卦不出园与用神取法",
+        "source": "《增删卜易·失物章》",
+        "original": "师",
+        "changed": "蒙",
+        "moving": [
+          3
+        ]
+      },
+      {
+        "id": "YQ013",
+        "reason": "文记动爻 [5] 不在卦变差集 [6] 内，自相矛盾",
+        "title": "六合卦特例 — 事聚不宜散事",
+        "source": "《卜筮正宗·六合论》",
+        "original": "需",
+        "changed": "小畜",
+        "moving": [
+          5
+        ]
+      },
+      {
+        "id": "YQ014",
+        "reason": "文记动爻 [1] 不在卦变差集 [4] 内，自相矛盾",
+        "title": "六冲卦特例 — 事散不宜成事",
+        "source": "《卜筮正宗·六冲论》",
+        "original": "震",
+        "changed": "复",
+        "moving": [
+          1
+        ]
+      },
+      {
+        "id": "YQ015",
+        "reason": "文记动爻 [6] 不在卦变差集 [4] 内，自相矛盾",
+        "title": "（额外）占考试功名 — 父母官鬼双用神",
+        "source": "《黄金策·功名章》",
+        "original": "晋",
+        "changed": "剥",
+        "moving": [
+          6
+        ]
+      },
+      {
+        "id": "YQ016",
+        "reason": "应验句无明确干支（日/月），不可评分",
+        "title": "（额外）占投资 — 财爻与世爻力量对比",
+        "source": "《增删卜易·求财章》",
+        "original": "颐",
+        "changed": "益",
+        "moving": [
+          5
+        ]
+      },
+      {
+        "id": "YQ026",
+        "reason": "记有变卦却未记动爻位次，无从核对",
+        "title": "占求财 — 财爻持世而世爻有气求可得",
+        "source": "《增删卜易·求财章》",
+        "original": "明夷",
+        "changed": "既济",
+        "moving": null
+      },
+      {
+        "id": "YQ027",
+        "reason": "文记动爻 [3] 不在卦变差集 [2] 内，自相矛盾",
+        "title": "占失物 — 用神在内卦逢冲可获",
+        "source": "《增删卜易·失物章》",
+        "original": "节",
+        "changed": "屯",
+        "moving": [
+          3
+        ]
+      },
+      {
+        "id": "YQ028",
+        "reason": "应验句无明确干支（日/月），不可评分",
+        "title": "占投资经营 — 兄弟持世求财有险",
+        "source": "《卜筮正宗·求财章》",
+        "original": "遁",
+        "changed": "姤",
+        "moving": [
+          2
+        ]
+      },
+      {
+        "id": "YQ029",
+        "reason": "文记动爻 [3] 不在卦变差集 [1] 内，自相矛盾",
+        "title": "占升官 — 官鬼化退任职不稳",
+        "source": "《增删卜易·升迁章》",
+        "original": "临",
+        "changed": "师",
+        "moving": [
+          3
+        ]
+      },
+      {
+        "id": "YQ030",
+        "reason": "文记动爻 [1, 4] 不在卦变差集 [2] 内，自相矛盾",
+        "title": "占科举考试 — 官父双用逢生利中",
+        "source": "《增删卜易·考试章》",
+        "original": "观",
+        "changed": "涣",
+        "moving": [
+          1,
+          4
+        ]
+      },
+      {
+        "id": "YQ031",
+        "reason": "应验句无明确干支（日/月），不可评分",
+        "title": "占病 — 子孙持世医药得力",
+        "source": "《增删卜易·疾病章》",
+        "original": "师",
+        "changed": "坤",
+        "moving": [
+          2
+        ]
+      },
+      {
+        "id": "YQ032",
+        "reason": "文记动爻 [2, 4] 不在卦变差集 [1, 5] 内，自相矛盾",
+        "title": "占病危 — 用神月破逢冲防危",
+        "source": "《卜筮正宗·占疾病论》",
+        "original": "同人",
+        "changed": "旅",
+        "moving": [
+          2,
+          4
+        ]
+      },
+      {
+        "id": "YQ033",
+        "reason": "记有变卦却未记动爻位次，无从核对",
+        "title": "占出行 — 世动化进出行宜速",
+        "source": "《黄金策·出行章》",
+        "original": "观",
+        "changed": "否",
+        "moving": null
+      },
+      {
+        "id": "YQ034",
+        "reason": "记有变卦却未记动爻位次，无从核对",
+        "title": "占行人归期 — 用生世迟归逢冲还",
+        "source": "《增删卜易·行人章》",
+        "original": "蹇",
+        "changed": "井",
+        "moving": null
+      },
+      {
+        "id": "YQ035",
+        "reason": "记有变卦却未记动爻位次，无从核对",
+        "title": "占婚姻 — 世应克合与六合卦",
+        "source": "《增删卜易·婚姻章》",
+        "original": "否",
+        "changed": "遁",
+        "moving": null
+      },
+      {
+        "id": "YQ036",
+        "reason": "记有变卦却未记动爻位次，无从核对",
+        "title": "占官司 — 官鬼克世诉讼被动",
+        "source": "《增删卜易·讼狱章》",
+        "original": "比",
+        "changed": "蹇",
+        "moving": null
+      },
+      {
+        "id": "YQ037",
+        "reason": "应验句无明确干支（日/月），不可评分",
+        "title": "占医药 — 子孙持世与医药有效之论",
+        "source": "《增删卜易·医药章》",
+        "original": "涣",
+        "changed": "井",
+        "moving": [
+          3,
+          6
+        ]
+      },
+      {
+        "id": "YQ038",
+        "reason": "文记动爻 [3, 4] 不在卦变差集 [2] 内，自相矛盾",
+        "title": "占进货求财 — 财生世有利可图",
+        "source": "《增删卜易·求财章》",
+        "original": "豫",
+        "changed": "解",
+        "moving": [
+          3,
+          4
+        ]
+      }
+    ]
+  },
+  "cases": [
+    {
+      "id": "YQ003",
+      "source": "《黄金策·疾病章》",
+      "topic": "占近病 — 逢冲即愈",
+      "question": "某人新病（三日），问何时能愈？",
+      "input": {
+        "date": "丑月丁卯日",
+        "question": "某人新病（三日），问何时能愈？"
+      },
+      "hexagram": {
+        "original": "泰",
+        "changed": "否",
+        "moving": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "子孙",
+        "use_god_branch": "",
+        "yingqi": "未日",
+        "yingqi_branches": [
+          "未"
+        ],
+        "detail": "未日病愈（冲破合局）",
+        "same_as_day_branch": false
+      },
+      "notes": "tools/build_yingqi_set.py 抽取，过本卦可解析/卦变自洽/时间可还原/应验句有干支/应期不宽于三支/用神与吉凶可判 六道门；不参与任何调参"
+    },
+    {
+      "id": "YQ007",
+      "source": "《卜筮正宗·飞神伏神论》",
+      "topic": "论伏神得出 — 飞来生伏为佳",
+      "question": "占子病，问吉凶？",
+      "input": {
+        "date": "申月乙巳日",
+        "question": "占子病，问吉凶？"
+      },
+      "hexagram": {
+        "original": "观",
+        "changed": "否",
+        "moving": [
+          4
+        ]
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "子孙",
+        "use_god_branch": "",
+        "yingqi": "巳日",
+        "yingqi_branches": [
+          "巳"
+        ],
+        "detail": "巳日得医，日渐好转而愈",
+        "same_as_day_branch": true
+      },
+      "notes": "tools/build_yingqi_set.py 抽取，过本卦可解析/卦变自洽/时间可还原/应验句有干支/应期不宽于三支/用神与吉凶可判 六道门；不参与任何调参"
+    }
+  ]
+}

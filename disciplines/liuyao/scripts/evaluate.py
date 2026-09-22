@@ -31,6 +31,7 @@ for _p in (str(ROOT / "scripts"), str(kernel_dir(__file__))):
         sys.path.insert(0, _p)
 
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
+import case_runner  # noqa: E402
 
 CASES = ROOT / "data" / "cases" / "classical_cases.json"
 OUT_DIR = ROOT / "data" / "cases"
@@ -223,7 +224,7 @@ def pct(dims: dict) -> tuple[float, int]:
 
 
 def evaluate(engine_out: dict, model: str, label: str, ids: list[str], verbose: bool) -> dict:
-    base = {c["id"]: c for c in json.loads(CASES.read_text(encoding="utf-8"))["cases"]}
+    base = {c["id"]: c for c in case_runner.load_cases()}
     by_e = {c.get("id"): c for c in engine_out.get("cases", [])}
 
     rows, per_dim = [], {k: [0, 0, 0] for k in WEIGHTS}  # [hit_full, applicable, na]
@@ -278,7 +279,7 @@ def yingqi_discrimination(engine_out: dict, ids: list[str]) -> dict:
       候选集平均大小、top-1 命中率、基准应支在候选中的平均名次、
       以及"随机列同样多候选即全覆盖"的期望概率（召回分的无信息基线）。
     """
-    base = {c["id"]: c for c in json.loads(CASES.read_text(encoding="utf-8"))["cases"]}
+    base = {c["id"]: c for c in case_runner.load_cases()}
     by_e = {c.get("id"): c for c in engine_out.get("cases", [])}
     sizes, ranks, top1_hit, top1_n, random_p = [], [], 0, 0, []
 
@@ -333,7 +334,8 @@ def report(res: dict) -> None:
 def main() -> int:
     force_utf8_stdio()
     ap = argparse.ArgumentParser(description="六爻古籍案例对齐评分（非现实预测命中率）")
-    ap.add_argument("--split", choices=["tune", "holdout", "all"], default="all")
+    ap.add_argument("--split", choices=["tune", "holdout", "yingqi_holdout", "all"],
+                    default="all")
     ap.add_argument("--ids", nargs="*", help="指定案例 ID，优先于 --split")
     ap.add_argument("--stage", choices=["run", "score", "all"], default="all")
     ap.add_argument("--engine-file", type=Path, help="已有的引擎输出（配合 --stage score）")

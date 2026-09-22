@@ -87,7 +87,8 @@ def eval_metrics(split: str) -> dict:
         return {"error": "评测未产出新文件（未落盘或路径不对）"}
     data = json.loads(path.read_text(encoding="utf-8"))
     disc = data["results"].get("yingqi_discrimination") or {}
-    return {"avg": data["results"]["strict"]["avg"], "rc": rc,
+    strict = data["results"]["strict"]
+    return {"avg": strict["avg"], "n": strict.get("n"), "rc": rc,
             "top1": disc.get("top1_hit_rate"), "rank": disc.get("avg_rank_of_correct")}
 
 
@@ -216,6 +217,19 @@ def main() -> int:
             if m.get("rank") is not None:
                 gate(f"{split}_rank", m.get("rank"), maximum=BASELINE_MAX.get(f"{split}_rank", 99),
                      label=f"{split} 应支平均名次")
+
+    if "yingqi_external" in selected or "eval" in selected:
+        # 外部验证集：只报数、不设门槛。n 太小时设门槛只会逼人去过拟合它。
+        ext = eval_metrics("yingqi_holdout")
+        print("\n[6] 外部验证集（未参与任何调参；只报数不设门槛）")
+        if ext.get("error"):
+            print(f"  ! 外部集未跑成：{ext['error'][:200]}")
+        elif not ext.get("avg"):
+            print("  ! 外部集为空（见 docs/CASE-LIBRARY-AUDIT.md）")
+        else:
+            print(f"  · yingqi_holdout 对齐分 {ext['avg']}% (n={ext.get('n') or 0})，"
+                  f"主应期命中 {ext.get('top1') or '—'}%，应支平均名次 {ext.get('rank') or '—'}")
+            print("    n 过小，仅供参照；要得出应期能力的结论须先扩样（见 HANDOFF 四·三）")
 
     print("\n" + "=" * 62)
     if failures:

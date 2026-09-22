@@ -49,8 +49,17 @@ class DivinationEvent:
     # 完整性校验
     result_hash: str = ""
 
+    # 应期（必须落盘，否则事后回填时无从判断"准不准"）
+    yingqi_main: str = ""         # 主应期，如 "辰日"
+    yingqi_rule: str = ""         # 主应期所本法则
+    yingqi_alt: list = field(default_factory=list)   # 次/备应期
+    yingqi_window_days: int = 0   # 起卦日至主应期的日历天数（回填时判断落在哪个候选上）
+
     # 事后验证
-    outcome: str = ""             # 实际结果（后续填写）
+    outcome: str = ""             # 实际结果（自由文本）
+    verdict_hit: Optional[bool] = None      # 吉凶方向是否应验
+    yingqi_hit: Optional[str] = None        # "main" / "alt" / "miss" / None=未回填
+    verified_on: str = ""          # 实际应验的公历日期 YYYY-MM-DD
     validation_timestamp: str = ""  # 验证时间
 
 
@@ -117,6 +126,40 @@ def _extract_verdict_info(result: dict) -> tuple[str, float, str]:
     return "", 0.0, ""
 
 
+def _extract_yingqi(result: dict) -> dict:
+    """取主/次应期与其法则。不落这几项，625 条历史记录就永远算不出应期命中率。"""
+    chain = (result or {}).get("thinking_chain") or {}
+    s5 = chain.get("step5_synthesis") or {}
+    timing = s5.get("timing") or {}
+    rules = timing.get("timing_rules") or []
+    main = rules[0]["token"] if rules and isinstance(rules[0], dict) else ""
+    rule = rules[0]["rule"] if rules and isinstance(rules[0], dict) else ""
+    dates = (s5.get("yingqi_dates") or {}).get("dates") or []
+    window = 0
+    # 窗口须对齐**主应期**那一支的日历日；取 dates[0] 会在主备次序不一致时报错窗口
+    pick = None
+    for d in dates:
+        if isinstance(d, dict) and d.get("date") and main and str(d.get("branch")) == main[:1]:
+            pick = d["date"]
+            break
+    if pick is None and dates and isinstance(dates[0], dict):
+        pick = dates[0].get("date")
+    if pick:
+        try:
+            from datetime import datetime as _dt
+            d0 = _dt.fromisoformat(str(result["divination_time"]["datetime"])[:10])
+            d1 = _dt.fromisoformat(pick)
+            window = max((d1 - d0).days, 0)
+        except Exception:
+            window = 0
+    return {
+        "yingqi_main": main,
+        "yingqi_rule": rule,
+        "yingqi_alt": [r["token"] for r in rules[1:4] if isinstance(r, dict)],
+        "yingqi_window_days": window,
+    }
+
+
 def log_divination(
     result: dict,
     notes: str = "",
@@ -153,6 +196,7 @@ def log_divination(
         changed_hexagram=ch.get("name", "") if ch else "",
         use_god=_extract_use_god(result),
         verdict=verdict,
+        **_extract_yingqi(result),
         final_score=final_score,
         confidence=confidence,
         hallucination_flags=[],
