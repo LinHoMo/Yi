@@ -78,7 +78,9 @@ python -c "import sys;sys.path[:0]=['scripts','core'];import liuyao_engine as e;
 
 ## 四、还欠什么（按优先级）
 
-0. **P0 爻序约定统一**（见上节）：内核定死自下而上，引擎与 hex2yao 同时改，重捕金标准。
+0. **P0 残余两例**：`thinking_chain_tests case_03`（六合卦体判定）与 `regression reg_03`
+   （泰卦动爻方向）的期望值，是在镜像爻序下标定过的，需回到《黄金策》原文重推。
+   当前基线 chain 7/12、regression 10/18；**不许为了变绿把爻序改回镜像**。
 
 
 1. **M2.4 外部效度**：n=17 的应期样本撑不起任何结论。先扩未参与调参的古籍案例，

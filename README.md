@@ -63,17 +63,30 @@ python scripts/evaluate.py --split holdout --save        # 古籍案例对齐评
 
 | 集合 | 古籍对齐分 strict | n |
 |---|---|---|
-| tune（参与过调参） | 93.6% | 20 |
+| tune（参与过调参） | 94.2% | 20 |
 | holdout（未参与调参） | **78.3%** | 12 |
 
-应期不看召回看判别力：主应期命中 29.4%（随机基线 8.3%）、基准应支平均名次 2.27/12。
+应期不看召回看判别力：主应期命中 29.4%（随机基线 8.3%）、基准应支平均名次 2.19/12。
 
 **这一堆数字此前是不可信的**：旧评分器已被删、`score.py` 读的是引擎根本不输出的字段、
-案例被统一塞进 2024-06-01 并伪造月干、年柱完全不判立春。M0 把这些重建了，
-所以旧文档宣传的 tune 100% 不再可比。逐次口径变化见 `disciplines/liuyao/docs/CHANGELOG.md`。
+案例被统一塞进 2024-06-01 并伪造月干、年柱完全不判立春。M0 把这些重建了，所以旧文档宣传的
+tune 100% 不再可比。逐次口径变化见 `disciplines/liuyao/docs/CHANGELOG.md`。
 
-**未修的历史债（P0，需要一次专门施工）**：爻序约定在引擎内部自洽、却与 SKILL.md 文档相反——
-按"从下往上"手工喂六爻会得到错的卦。复现与影响面见 `disciplines/liuyao/docs/HANDOFF.md` 四·〇节。
+**已修的 P0（2026-09-22）**：爻序约定曾在四处各存一份镜像编码（震·巽·艮·兑按"上爻在前"存、
+所有代码按"自下而上"读），导致按 SKILL.md 手工喂六爻会得到错的卦。现已收进内核
+`symbols.BAGUA_LINES` 单一真值源，并配 23 项断言看门狗（`tools/hexagram_check.py`，
+含"恒之鼎必须动在上六且化巳"这类古籍锚点）。自己验一下：
+
+```bash
+cd disciplines/liuyao
+python -c "import sys;sys.path[:0]=['scripts','../../core'];import liuyao_engine as e; \
+print(e.build_hexagram_result([8,7,7,7,8,8],'占','manual',2024,6,1,10)['original_hexagram']['name'])"
+# 应输出 恒（修复前输出 损）
+python tools/hexagram_check.py    # 应输出 23 项通过
+```
+
+残余两例待按古籍重推（`chain case_03`、`reg_03` 的期望值仍带着镜像位次下的标定），见
+`disciplines/liuyao/docs/HANDOFF.md`。
 
 ## 使用须知
 
