@@ -2756,7 +2756,8 @@ def mei_hua_cross_reference(question: str, year: int, month: int, day: int,
     liuyao_chain = None
     try:
         from thinking_chain import run_thinking_chain
-        liuyao_chain = run_thinking_chain(liuyao_result)
+        chain_result = run_thinking_chain(liuyao_result)
+        liuyao_chain = chain_result.get("thinking_chain", chain_result)
     except ImportError:
         pass
 
@@ -2883,7 +2884,8 @@ def batch_divination(question: str, n: int = 10, method: str = "time",
         # 运行思维链
         try:
             from thinking_chain import run_thinking_chain
-            chain = run_thinking_chain(result)
+            chain_full = run_thinking_chain(result)
+            chain = chain_full.get("thinking_chain", chain_full)
         except ImportError:
             chain = None
 
@@ -3686,9 +3688,11 @@ def _check_verify_mode(args):
         # 运行思维链
         try:
             from thinking_chain import run_thinking_chain
-            chain = run_thinking_chain(engine_result)
+            chain_full = run_thinking_chain(engine_result)
+            chain = chain_full.get("thinking_chain", chain_full)
             engine_result["thinking_chain"] = chain
         except ImportError:
+            chain = None
             pass
 
     # 读取解读文本
@@ -3940,7 +3944,8 @@ def main():
         chain = None
         try:
             from thinking_chain import run_thinking_chain
-            chain = run_thinking_chain(result)
+            chain_full = run_thinking_chain(result)
+            chain = chain_full.get("thinking_chain", chain_full)
         except ImportError:
             pass  # 若无 thinking_chain 模块，仅跳过思维链
 

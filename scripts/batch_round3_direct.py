@@ -137,9 +137,10 @@ def run_case_direct(case):
             )
 
         tc = run_thinking_chain(h)
-        s2 = tc.get("step2_use_god_identification", {})
-        s3 = tc.get("step3_strength_analysis", {})
-        s5 = tc.get("step5_synthesis", {}) or {}
+        thinking = tc.get("thinking_chain", tc)
+        s2 = thinking.get("step2_use_god_identification", {})
+        s3 = thinking.get("step3_strength_analysis", {})
+        s5 = thinking.get("step5_synthesis", {}) or {}
         
         ch = h.get("changed_hexagram") or {}
 

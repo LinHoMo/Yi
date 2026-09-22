@@ -142,7 +142,9 @@ def _method_divinate(params: dict) -> dict:
     # 五步思维链
     try:
         from thinking_chain import run_thinking_chain
-        chain = run_thinking_chain(result)
+        chain_full = run_thinking_chain(result)
+        # run_thinking_chain 已设置 result["thinking_chain"]，无需重复
+        chain = chain_full.get("thinking_chain")
     except ImportError:
         chain = None
 

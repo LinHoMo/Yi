@@ -23,6 +23,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta
+import re
 
 # =============================================================================
 # 五行基础数据
@@ -277,7 +278,7 @@ HEXAGRAM_LIUHE = ["泰", "否", "贲", "困", "旅", "豫", "复", "小畜"]
 # 六冲卦名
 HEXAGRAM_LIUCHONG = ["乾", "坤", "坎", "离", "艮", "震", "巽", "兑",
                      "无妄", "大壮", "晋", "明夷", "蹇", "解", "夬", "姤",
-                     "遁", "同人", "履", "小畜"]  # 部分六冲卦
+                     "遁", "同人", "履"]  # 部分六冲卦（小畜已从列表移除，见 issue:reg_12）
 
 # =============================================================================
 # 问题类型 → 用神映射（《卜筮正宗》《增删卜易》规则）
@@ -310,6 +311,11 @@ _QUESTION_USE_GOD_MAP = {
     "丈夫": "官鬼",
     "丈夫运势": "官鬼",
     "男测妻子": "妻财",
+    "感情": "妻财",
+    "喜欢": "妻财",
+    "女友": "妻财",
+    "恋人": "妻财",
+    "伴侣": "妻财",
     "疾病": "官鬼",
     "官司": "官鬼",
     "官司诉讼": "官鬼",
@@ -535,7 +541,10 @@ def get_elements_for_relation(relation: str, palace_element: str) -> list[str]:
     """
     给定六亲类型和宫五行，返回该六亲对应的五行列表。
     注意：一个六亲对应一个五行（除"兄弟"即宫五行本身外）。
+    "世爻"不预设五行——调用方须从世爻实际地支推算。
     """
+    if relation == "世爻":
+        return []  # 世爻五行须从爻支反推，此处留空
     if relation == "兄弟":
         return [palace_element]
     elif relation == "父母":
@@ -1063,9 +1072,14 @@ def step2_identify_use_god(r: dict) -> dict:
     )
 
     # ---------- 2.3: 确定原神、忌神、仇神 ----------
-    # 用神五行（根据用神类别 + 宫五行推导）
+    # 用神五行（根据用神类别 + 宫五行推导；世爻取实际地支五行）
     use_god_elements = get_elements_for_relation(use_god_category, palace_element)
-    use_god_element = use_god_elements[0] if use_god_elements else "未知"
+    if use_god_category == "世爻" and use_god_positions:
+        # 世爻五行从实际地支反推
+        world_branch = use_god_positions[0].get("earthly_branch", "")
+        use_god_element = BRANCH_ELEMENTS.get(world_branch, palace_element)
+    else:
+        use_god_element = use_god_elements[0] if use_god_elements else "未知"
 
     relationships = USE_GOD_RELATIONSHIPS.get(use_god_element, {})
     yuan_shen_element = relationships.get("原神", "")
@@ -1297,6 +1311,22 @@ def _determine_use_god_category(question_category: str, question_text: str) -> s
     """根据问题类型确定用神类别 — 使用打分制，避免顺序依赖"""
     # 合并两个文本用于搜索
     combined = f"{question_category} {question_text}"
+
+    # --- 特殊优先级覆盖（高于 _QUESTION_USE_GOD_MAP 中的映射） ---
+    # 提到具体人（父亲/母亲/儿子/女儿等）时，以该人为用神，优先级高于"出行→世"
+    if any(k in combined for k in ("父亲", "母亲", "爸爸", "妈妈", "爹", "娘", "祖父", "祖母", "岳父", "岳母", "公公", "婆婆")):
+        return "父母"
+    if any(k in combined for k in ("儿子", "女儿", "孩子", "孙子", "孙女", "儿媳", "女婿")):
+        return "子孙"
+    # 久病占取世爻为用（《卜筮正宗》：久病以世爻为用）
+    if "久病" in combined:
+        return "世爻"
+    # 出行/行人占取世爻为用（仅当没有提到具体人时生效——《黄金策》：出行以世爻为己身）
+    if any(k in combined for k in ("出行", "行人")):
+        return "世爻"
+    # 功名占取官鬼为用（《黄金策》：功名看官鬼爻，优先级高于考试/学业→父母）
+    if "功名" in combined:
+        return "官鬼"
 
     # 精确匹配优先
     if question_category in _QUESTION_USE_GOD_MAP:
@@ -1963,6 +1993,20 @@ def step3_analyze_strength(r: dict) -> dict:
             twelve_growth_modifier = -0.3
             twelve_growth_reason = f"用神临{stage_name}，初生而气弱"
 
+    # ---------- 3.7b: 绝处逢生 / 绝地无援 ----------
+    # 用神临绝地（十二长生"绝"位）：原神发动来生 → 绝处逢生（凶中反吉）；无原神救援 → 绝地无援（额外减分）
+    desperate_relief_from_stage_modifier = 0.0
+    desperate_relief_from_stage_reason = ""
+    if stage_name == "绝":
+        yuan_shen_positions_for_desperate = safe_get(step2_data, "yuan_shen", "positions", default=[])
+        has_yuan_rescue = any(p.get("is_moving", False) for p in (yuan_shen_positions_for_desperate or []))
+        if has_yuan_rescue:
+            desperate_relief_from_stage_modifier = 1.0
+            desperate_relief_from_stage_reason = "绝处逢生：用神虽临绝地，原神发动来生，凶中反吉"
+        else:
+            desperate_relief_from_stage_modifier = -1.0
+            desperate_relief_from_stage_reason = "绝地无援：用神临绝地，原神不动/无救援，险上加险"
+
     # ---------- 3.8: 综合评分 ----------
     # 基础分：月建为主（权重0.6），日辰为辅（权重0.4）
     base_score = god_month_score * 0.6 + god_day_score * 0.4
@@ -1977,9 +2021,14 @@ def step3_analyze_strength(r: dict) -> dict:
     # 加上十二长生修正
     effective_score += twelve_growth_modifier
 
-    # ---------- 3.8b: 绝处逢生修正（来自 advanced_analysis）----------
+    # ---------- 3.8b: 绝处逢生修正（来自 advanced_analysis 和步骤 3.7b 绝地检测）----------
     desperate_relief_modifier = 0.0
     desperate_relief_info = None
+    # 3.7b: 绝处逢生 / 绝地无援（由 step3 自身识别）
+    if desperate_relief_from_stage_modifier != 0.0:
+        desperate_relief_modifier += desperate_relief_from_stage_modifier
+        effective_score += desperate_relief_from_stage_modifier
+    # advanced_analysis: 绝处逢生（由 enhance_reading 预计算）
     advanced = r.get("advanced_analysis") if isinstance(r, dict) else None
     if isinstance(advanced, dict):
         dr = advanced.get("desperate_relief")
@@ -2003,12 +2052,16 @@ def step3_analyze_strength(r: dict) -> dict:
     effective_score = max(0.5, min(5.0, effective_score))
 
     # ---------- 3.9: 旺衰定性 ----------
+    # 古典规则：用神五行在月建处于"相"位(生月令者)时，即使合分因暗动/刑等被压低，旺衰定性仍应不低于"旺"
+    _month_str_for_level = element_strength_in_month(use_god_element, month_element) if use_god_element and month_element else ""
+    _xiang_bump = (_month_str_for_level == "相" and effective_score >= 2.5)
     if effective_score >= 4.5:
         strength_level = "极旺"
     elif effective_score >= 3.5:
         strength_level = "旺"
     elif effective_score >= 2.5:
-        strength_level = "中和"
+        # "相"位之爻合分在[2.5, 3.5)区间时，定性上调为"旺"而非"中和"
+        strength_level = "旺" if _xiang_bump else "中和"
     elif effective_score >= 1.5:
         strength_level = "偏弱"
     elif effective_score >= 0.8:
@@ -2043,7 +2096,7 @@ def step3_analyze_strength(r: dict) -> dict:
                 hidden_movement_modifier += 0.4 * hm_weight / 0.7
                 hidden_movement_reason += f"原神{hm_name}暗动（{hm_branch}受{day_branch}冲），暗中生助用神；"
             elif ji_shen_relation and hm_relation == ji_shen_relation:
-                hidden_movement_modifier -= 0.4 * hm_weight / 0.7
+                hidden_movement_modifier -= 0.8 * hm_weight / 0.7
                 hidden_movement_reason += f"忌神{hm_name}暗动（{hm_branch}受{day_branch}冲），暗中克害；"
             else:
                 hidden_movement_reason += f"{hm_name}暗动（{hm_branch}，{hm.get('effect_strength', '中')}），"
@@ -2059,11 +2112,18 @@ def step3_analyze_strength(r: dict) -> dict:
     if advanced_for_tp and isinstance(advanced_for_tp, dict):
         tp_data = advanced_for_tp.get("three_punishments", {})
         if isinstance(tp_data, dict) and tp_data.get("has_punishment"):
+            # 优先使用已乘倍数后的 total_score（classical_analysis 内部对多刑叠加用了1.5x/2.0x）
+            total_tp = tp_data.get("total_score", None)
+            if total_tp is not None and total_tp < 0:
+                tp_modifier = total_tp
+            else:
+                for p in tp_data.get("punishments", []):
+                    bp = p.get("branches_present", [])
+                    if use_god_branch and use_god_branch not in bp:
+                        continue
+                    tp_modifier += p.get("score", 0.0)
+            # 描述仍加所有已成立的刑
             for p in tp_data.get("punishments", []):
-                bp = p.get("branches_present", [])
-                if use_god_branch and use_god_branch not in bp:
-                    continue
-                tp_modifier += p.get("score", 0.0)
                 comp = p.get("completeness", "")
                 ptype = p.get("type", "")
                 if comp == "待刑":
@@ -2073,6 +2133,8 @@ def step3_analyze_strength(r: dict) -> dict:
                     tp_issues.append(f"{ptype}(完整三刑)")
                 elif comp == "成刑":
                     tp_issues.append(f"{ptype}(成刑)")
+                elif comp == "催刑":
+                    tp_issues.append(f"{ptype}(催刑)")
                 else:
                     tp_issues.append(ptype)
     tp_modifier_reason = "、".join(tp_issues) if tp_issues else ""
@@ -2115,12 +2177,17 @@ def step3_analyze_strength(r: dict) -> dict:
         })
 
     # ---------- 绝处逢生修正项 ----------
-    if desperate_relief_modifier != 0.0 and desperate_relief_info:
-        dr_reason = desperate_relief_info.get("description", "")
-        if not dr_reason:
-            dr_reason = desperate_relief_info.get("verdict", "")
+    if desperate_relief_modifier != 0.0 and (desperate_relief_info or desperate_relief_from_stage_reason):
+        dr_reason = ""
+        # 优先使用 step3 自身识别的绝地状态描述
+        if desperate_relief_from_stage_reason:
+            dr_reason = desperate_relief_from_stage_reason
+        else:
+            dr_reason = desperate_relief_info.get("description", "") if desperate_relief_info else ""
+            if not dr_reason and desperate_relief_info:
+                dr_reason = desperate_relief_info.get("verdict", "")
         modifiers.append({
-            "type": "绝处逢生",
+            "type": "绝处逢生" if desperate_relief_modifier > 0 else "绝地无援",
             "value": desperate_relief_modifier,
             "reason": dr_reason,
         })
@@ -2372,15 +2439,15 @@ def _detect_hexagram_harmony_clash_pattern(question: str, hex_result: dict, step
                      "姤", "小过", "既济", "益", "蛊", "困", "旅", "噬嗑", "归妹"}
     # 六冲卦列表
     HEX_CLASH_HEXAGRAMS = {"乾", "坤", "坎", "离", "震", "巽", "艮", "兑",
-                           "无讼", "同人", "遁", "大壮", "豫", "观", "晋", "萃",
-                           "大有", "夬", "姤", "鼎", "解", "归妹", "旅", "涣", "节", "中孚", "小过"}
+                           "无妄", "同人", "遁", "大壮", "豫", "观", "晋", "萃",
+                           "大有", "夬", "姤", "解", "归妹", "旅", "涣", "节", "中孚", "小过"}
 
     # Check for 六合/六冲 in hexagram name using advanced analysis
     hex_advanced = hex_result.get("advanced_analysis", {}) or {}
     hex_type = hex_advanced.get("hexagram_type", "")
 
     is_he = "六合" in hex_type or hex_name in ("否", "泰", "恒", "益", "萃", "咸", "损", "同人", "贲", "鼎", "随", "节", "中孚", "既济", "家人", "蛊", "困", "豫", "临", "小畜", "履", "涣", "离", "丰")
-    is_chong = "六冲" in hex_type or hex_name in ("乾", "坤", "坎", "离", "震", "巽", "艮", "兑", "无妄", "大壮", "遁", "晋", "萃", "夬", "姤", "解", "鼎", "归妹", "旅", "涣", "小过", "贲")
+    is_chong = "六冲" in hex_type or hex_name in ("乾", "坤", "坎", "离", "震", "巽", "艮", "兑", "无妄", "大壮", "遁", "晋", "萃", "夬", "姤", "解", "归妹", "旅", "涣", "小过")
 
     # Empty branches (for checking if world/response is void)
     empty = hex_result.get("empty_branches", [])
@@ -2404,9 +2471,17 @@ def _detect_hexagram_harmony_clash_pattern(question: str, hex_result: dict, step
                   "辰": "酉", "酉": "辰", "巳": "申", "申": "巳", "午": "未", "未": "午"}
         world_he = world_branch and (HE_MAP.get(world_branch, "") in [month_branch, day_branch])
         response_he = response_branch and (HE_MAP.get(response_branch, "") in [month_branch, day_branch])
-        # 动爻化合（化出之爻与月日成合）也可解冲
+        # 动爻化合（化出之爻与月日成合，或化出之爻生合用神）方可解冲
         details = step4_data.get("details", []) if step4_data else []
-        moving_he = any("化合" in d.get("change_type", "") or "六合" in d.get("change_type", "") for d in details)
+        def _is_helpful_he(d):
+            if "化合" not in d.get("change_type", "") and "六合" not in d.get("change_type", ""):
+                return False
+            chg_branch = d.get("changed_branch", "")
+            # 化出之支与日月成合 → 解冲
+            if chg_branch and HE_MAP.get(chg_branch, "") in [month_branch, day_branch]:
+                return True
+            return False
+        moving_he = any(_is_helpful_he(d) for d in details)
 
         if world_he or response_he or moving_he:
             he_target = "世爻" if world_he else ("应爻" if response_he else "动爻")
@@ -2505,6 +2580,20 @@ def _detect_special_pattern(step3_data: dict, step2_data: dict, step4_data: dict
     # 六合/六冲交互格局（冲中逢合/合处逢冲）
     harmony_clash_pattern = _detect_hexagram_harmony_clash_pattern(question, hex_result, step4_data)
     if harmony_clash_pattern["pattern"]:
+        # 六冲主散 + 合伙类问题 + 用神旺 → 追加减分（用神虽旺但合伙难持久）
+        if (harmony_clash_pattern.get("pattern") == "六冲主散"
+                and ("合伙" in question)):
+            try:
+                ug_score_s5 = float(step3_data.get("effective_score", 2.5))
+            except (TypeError, ValueError):
+                ug_score_s5 = 2.5
+            if ug_score_s5 >= 3.5:
+                harmony_clash_pattern["score_adjustment"] -= 0.5
+                harmony_clash_pattern["description"] += "（用神虽旺，合伙六冲终难持久）"
+                harmony_clash_pattern["impact_on_verdict"] = (
+                    (harmony_clash_pattern.get("impact_on_verdict") or "")
+                    + "——用神虽旺而合伙难持久，额外减分"
+                )
         return harmony_clash_pattern
 
     use_god_score = step3_data.get("effective_score", 2.5)
@@ -2563,6 +2652,33 @@ def _detect_special_pattern(step3_data: dict, step2_data: dict, step4_data: dict
                 "impact_on_verdict": "反转标准判断——本应判凶反为吉，用神弃命从强",
                 "rule_applied": "《增删易》'弱极反旺，从格为用'",
                 "score_adjustment": 3.0,
+            }
+
+    # ── Check 1b: 原神绝位·用神失源 (绝处逢生反断为凶) ──
+    # 条件：用神偏弱(score<2.0) + 原神不现或极弱(无实际爻位) + 无动变救援 → 大凶
+    # 区别于从格：不反转方向(不加分)，而是强化凶断(减分)
+    # 《增删易》"绝处逢生反断为凶"：原神无援→用神气绝→断凶不疑
+    if use_god_score < 2.0:
+        yuan_shen2 = step2_data.get("yuan_shen", {}) or {}
+        yuan_positions2 = yuan_shen2.get("positions", []) or []
+        yuan_fucang2 = yuan_shen2.get("fu_cang", None)
+        # 原神不现：完全无位置，或仅有伏藏(飞神下的隐藏原神)
+        _yuan_absent = len(yuan_positions2) == 0
+        # 无动变内生救援(step4无正面力量)
+        step4_details2 = step4_data.get("details", []) if step4_data else []
+        _has_positive_change = any(
+            isinstance(m, dict) and m.get("effect_score", 0) > 0.3
+            for m in step4_details2
+        )
+        net_effect2 = step4_data.get("net_effect", 0) if step4_data else 0
+        # 触发条件：原神完全不现 + 用神偏弱 + 无动变正面效应 + net_effect不显著正
+        if _yuan_absent and not _has_positive_change and (isinstance(net_effect2, (int, float)) and net_effect2 <= 0.1):
+            return {
+                "pattern": "原神绝位·用神失源",
+                "description": f"用神弱（{use_god_score:.2f}）原神不现（仅伏藏或无援），绝处逢生反断为凶",
+                "impact_on_verdict": "原神气绝不能生用，用神孤立无援→大凶",
+                "rule_applied": "《增删易》'原神无援，用神气绝，断凶不疑'",
+                "score_adjustment": -2.0,
             }
 
     # ── Check 2: 专旺格 (Dominant Element Pattern) ──
@@ -3289,6 +3405,10 @@ def _analyze_effect_on_use_god(
         elif ct == "六合":
             score = -0.3
             description_parts.append("原神合绊，暂难生用")
+        elif RETREAT_PAIRS.get(orig_branch) == chg_branch:
+            # 二次识别：变化类型未被 _determine_change_type 判为化退神，但进退神表匹配化退
+            score = -0.5
+            description_parts.append("原神化退（进退神判），生力减弱为凶")
         else:
             # 原神动（不论化什么都有一定助用效果）
             # 原神五行生用神 → 生用有力（《增删易》"原神发动，生用有力"）
@@ -3423,6 +3543,26 @@ def _check_tan_he_wan_sheng_ke(
 # =============================================================================
 # Step 5: 综合判断 (Synthesis)
 # =============================================================================
+
+def _user_reason(text: str, fallback: str = "") -> str:
+    """将开发者风格的 reason 精练为 ≤15 字的人话描述。"""
+    if not text:
+        return fallback
+    s = re.sub(r'【[^】]*】', '', text)
+    s = re.sub(r'\(x[\d.]+\)', '', s)
+    s = re.sub(r'[（(]\d+\.?\d*[)）]', '', s)
+    s = re.sub(r'（[^）]*）', '', s)
+    s = re.sub(r'\s*[+-]\d+\.?\d*$', '', s)
+    s = s.strip()
+    if len(s) > 15:
+        m = re.search(r'[，；、。]', s)
+        if m and m.start() >= 4:
+            s = s[:m.start()]
+        else:
+            s = s[:15]
+    s = s.strip('，；、。')
+    return s if s else fallback
+
 
 def step5_synthesize(r: dict) -> dict:
     """
@@ -3678,6 +3818,67 @@ def step5_synthesize(r: dict) -> dict:
                         combo_break_reason = "、".join(_cissues)
                         break  # only show first broken combo issue for brevity
 
+    # ---------- 5.5c2: 原神贪合忘生检测 (三合火局/水局 etc 中吸收原神) ----------
+    # 条件：原神所在五行参与了三合局(由日月引动) + 原神无动爻(完全被合住不生日)
+    yuan_shen_bond_adjustment = 0.0
+    yuan_shen_bond_reason = ""
+    if _advanced_for_combo and isinstance(_advanced_for_combo, dict):
+        _tc_adv2 = _advanced_for_combo.get("triple_combo", {})
+        if isinstance(_tc_adv2, dict) and _tc_adv2.get("has_triple_combo"):
+            _yuan_elem = safe_get(step2_data, "yuan_shen", "element", default="")
+            _yuan_positions = safe_get(step2_data, "yuan_shen", "positions", default=[]) or []
+            _day_br = safe_get(div_time, "day_stem_branch", default="")
+            _month_br = safe_get(div_time, "month_stem_branch", default="")
+            _day_b = _day_br[1:] if len(_day_br) >= 2 else ""
+            _month_b = _month_br[1:] if len(_month_br) >= 2 else ""
+            # 原神是否有动爻(明动)— 有动爻则原神仍有力，不构成贪合忘生
+            _yuan_has_moving = any(
+                isinstance(p, dict) and p.get("is_moving") for p in _yuan_positions
+            )
+            if _yuan_elem and not _yuan_has_moving:
+                for _combo2 in _tc_adv2.get("details", []):
+                    if not isinstance(_combo2, dict):
+                        continue
+                    if _combo2.get("element") != _yuan_elem:
+                        continue
+                    _combo_branches = _combo2.get("branches", [])
+                    _combo_positions = _combo2.get("positions", [])
+                    # 检查日辰/月建是否参与了此三合(位置列表中标记或分支匹配)
+                    _has_day_or_month = any(
+                        (isinstance(p, str) and ("日" in p or "月" in p))
+                        for p in _combo_positions
+                    ) or (_day_b in _combo_branches) or (_month_b in _combo_branches)
+                    _completeness = _combo2.get("completeness", "")
+                    # 日月引动待用之局
+                    _active = _has_day_or_month
+                    # 额外约束：原神之支必须全部在合局内，方构成完整贪合忘生
+                    # (若原神有支在局外，仍可生用神，不构成贪合)
+                    if _active and _yuan_positions:
+                        _yuan_branches_in = [
+                            p.get("earthly_branch", "")
+                            for p in _yuan_positions
+                            if isinstance(p, dict) and p.get("earthly_branch")
+                        ]
+                        _all_yuan_in_combo = bool(_yuan_branches_in) and all(
+                            b in _combo_branches for b in _yuan_branches_in
+                        )
+                        _active = _all_yuan_in_combo
+                    if _active:
+                        # 原神贪合忘生 — 用神失源 (-2.0推至凶)
+                        if yuan_shen_bond_adjustment == 0.0:
+                            yuan_shen_bond_adjustment = -2.0
+                        _combo_branches_str = "".join(_combo_branches)
+                        _day_info = ""
+                        if _day_b in _combo_branches:
+                            _day_info = f"(日{_day_b}引动)"
+                        elif _month_b in _combo_branches:
+                            _day_info = f"(月{_month_b}引动)"
+                        yuan_shen_bond_reason = (
+                            f"原神{_yuan_elem}参与{_combo_branches_str}"
+                            f"三合{_yuan_elem}局{_day_info}，贪合忘生，用神失源"
+                        )
+                        break
+
     # ---------- 5.5b: 特殊格局识别 ----------
     special_pattern = _detect_special_pattern(step3_data, step2_data, step4_data, r)
     pattern_adjustment = special_pattern.get("score_adjustment", 0.0)
@@ -3845,7 +4046,8 @@ def step5_synthesize(r: dict) -> dict:
             classical_notes.append("【文书/用神月破】官司中文书有缺，-0.5")
 
     # 9) 原神失位加强：旺极无生 → 大幅降分（黄金策）
-    if any("原神失位" in n for n in classical_notes) and _lv_ug in ("旺", "极旺"):
+    # 仅当用神为"极旺"时才额外加权；"旺"级已有规则5的-1.0，不再叠加
+    if any("原神失位" in n for n in classical_notes) and _lv_ug == "极旺":
         classical_adj -= 1.0
         classical_notes.append("【旺极无源加权】用神极旺而无原神发动，再-1.0")
 
@@ -3859,11 +4061,29 @@ def step5_synthesize(r: dict) -> dict:
         else:
             pattern_verdict_note = extra
 
+    # ---------- 5.5i: 三刑+六合吉凶相战覆写 ----------
+    # 当2+成刑/催刑 present 且 六合卦时，吉凶相战 — verdict 上限不超过平凶
+    xing_he_conflict_override = False
+    tp_data_for_conflict = safe_get(step3_data, "three_punishments_raw", default=None)
+    if tp_data_for_conflict is None:
+        _adv_for_xh = r.get("advanced_analysis", {})
+        if isinstance(_adv_for_xh, dict):
+            tp_data_for_conflict = _adv_for_xh.get("three_punishments", {})
+    if (isinstance(tp_data_for_conflict, dict) and tp_data_for_conflict.get("has_punishment")
+            and hex_adjustment > 0):
+        _tp_complete_cnt = sum(
+            1 for _p in tp_data_for_conflict.get("punishments", [])
+            if isinstance(_p, dict) and _p.get("completeness") in ("完整", "成刑", "催刑")
+        )
+        if _tp_complete_cnt >= 2:
+            xing_he_conflict_override = True
+
     # ---------- 5.6: 综合评分 ----------
     final_score = (base_score + change_net_effect + hex_adjustment
                    + spirit_adjustment + pattern_adjustment
                    + dmb_adjustment + sb_adjustment
                    + combo_break_adjustment
+                   + yuan_shen_bond_adjustment
                    + officer_tomb_adjustment
                    + fu_shen_adjustment
                    + classical_adj)
@@ -3895,6 +4115,37 @@ def step5_synthesize(r: dict) -> dict:
     _qtext = str((r.get("question") or r.get("question_category") or ""))
     _sp = special_pattern if isinstance(special_pattern, dict) else {}
     _sp_pat = str(_sp.get("pattern") or "") + str(_sp.get("description") or "")
+
+    # ── 古籍强凶格局强制覆写（pattern-based overrides）──
+    _fired = False
+    # 行人/出行占+六冲主散/合处逢冲：行人被冲散 → 凶
+    if any(k in _qtext for k in ("行人", "出行", "回来", "归")) and ("六冲" in _sp_pat or "合处逢冲" in _sp_pat):
+        if verdict in ("吉", "大吉", "平吉"):
+            verdict = "凶"
+            verdict_desc = "冲散行人，纵用神有气亦主归期不定"
+            _fired = True
+    # 合伙+六冲主散/合处逢冲：合伙看世应，应冲世则散 → 凶
+    if "合伙" in _qtext and ("六冲" in _sp_pat or "合处逢冲" in _sp_pat):
+        if verdict in ("吉", "大吉", "平吉"):
+            verdict = "凶"
+            verdict_desc = "六冲/逢冲合伙，世应相冲，合伙难持久"
+            _fired = True
+    # 用神衰弱+净动变负 → 凶
+    if verdict == "平吉" and final_score < 0.0:
+        _net_eff = 0.0
+        if step4_data and isinstance(step4_data, dict):
+            _net_eff = step4_data.get("net_effect") or 0.0
+        if _net_eff < -0.2:
+            verdict = "凶"
+            verdict_desc = "原神不济、变动不利，纵用神有些微气亦难持久"
+            _fired = True
+    # 三刑+六合吉凶相战覆写：2+成刑/催刑 + 六合卦 → 上限不超过平凶
+    if xing_he_conflict_override and verdict in ("吉", "大吉", "平吉"):
+        verdict = "平凶"
+        verdict_desc = "三刑齐全逢六合，吉凶相战，凶多吉少"
+        _fired = True
+    _verdict_locked = _fired
+
     if "合处逢冲" in _sp_pat and verdict in ("凶", "大凶", "平吉"):
         if any(k in _qtext for k in ("婚", "合", "成否", "聚")):
             verdict = "平/不利"
@@ -4047,6 +4298,134 @@ def step5_synthesize(r: dict) -> dict:
             f"• {q['source']}：{q['quote']}" for q in classical_quotes
         )
 
+    # ---------- 5.13: 可解释性因子贡献（SHAP 风格）----------
+    factor_contributions = []
+    # 1. 用神旺衰基础分
+    factor_contributions.append({
+        "name": "用神旺衰",
+        "factor": "base",
+        "score": round(base_score, 2),
+        "reason": (
+            "用神得令，旺相有力" if base_score > 2 else
+            "用神失令，根基偏弱" if base_score < 0 else
+            "用神平和，不旺不弱"
+        )
+    })
+    # 2. 动变效应
+    factor_contributions.append({
+        "name": "动变效应",
+        "factor": "change",
+        "score": round(change_net_effect, 2),
+        "reason": (
+            "动爻来生用神" if change_net_effect > 0.3 else
+            "动爻来克用神" if change_net_effect < -0.3 else
+            "动爻生克交抵，利弊相抵"
+        )
+    })
+    # 3. 合冲卦性
+    if hex_adjustment != 0:
+        factor_contributions.append({
+            "name": "合冲卦性",
+            "factor": "hexagram",
+            "score": round(hex_adjustment, 2),
+            "reason": _user_reason(hex_adjustment_reason, "六合利合" if hex_adjustment > 0 else "六冲主散")
+        })
+    # 4. 六神辅助
+    if spirit_adjustment != 0:
+        # 清理 reason 中含 (xN.N) 系数备注，避免用 generator 导致 re 闭包作用域异常
+        _cleaned_reasons = []
+        for _r in spirit_adjustment_reasons:
+            _cleaned_reasons.append(_r.split("(x")[0].strip() if "(x" in _r else _r)
+        _reason_text = "；".join(_cleaned_reasons) or "六神加临用神"
+        factor_contributions.append({
+            "name": "六神辅助",
+            "factor": "spirit",
+            "score": round(spirit_adjustment, 2),
+            "reason": _reason_text,
+        })
+    # 5. 暗动（已并入 base_score/effective_score，不单独计入以避免重复计算）
+    # 6. 日月合
+    if dmb_adjustment != 0:
+        factor_contributions.append({
+            "name": "日月合用神",
+            "factor": "day_month_bond",
+            "score": round(dmb_adjustment, 2),
+            "reason": _user_reason(dmb_reason, "日月合住用神")
+        })
+    # 7. 六破
+    if sb_adjustment != 0:
+        factor_contributions.append({
+            "name": "六破损伤",
+            "factor": "six_breaks",
+            "score": round(sb_adjustment, 2),
+            "reason": _user_reason(sb_reason, "用神逢月破")
+        })
+    # 8. 三合破
+    if combo_break_adjustment != 0:
+        factor_contributions.append({
+            "name": "三合局破",
+            "factor": "combo",
+            "score": round(combo_break_adjustment, 2),
+            "reason": _user_reason(combo_break_reason, "合局受破，所谋难成")
+        })
+    # 8b. 原神贪合忘生
+    if yuan_shen_bond_adjustment != 0:
+        factor_contributions.append({
+            "name": "原神贪合忘生",
+            "factor": "yuan_shen_bond",
+            "score": round(yuan_shen_bond_adjustment, 2),
+            "reason": _user_reason(yuan_shen_bond_reason, "原神被合，用神失源")
+        })
+    # 9. 随官入墓
+    if officer_tomb_adjustment != 0:
+        factor_contributions.append({
+            "name": "随官入墓",
+            "factor": "tomb",
+            "score": round(officer_tomb_adjustment, 2),
+            "reason": _user_reason(officer_tomb_reason, "官鬼入墓，困而不发")
+        })
+    # 10. 伏神得出
+    if fu_shen_adjustment != 0:
+        factor_contributions.append({
+            "name": "伏神得出",
+            "factor": "fu_shen",
+            "score": round(fu_shen_adjustment, 2),
+            "reason": _user_reason(fu_shen_note, "伏神得出，事有转机")
+        })
+    # 11. 格局调整
+    if pattern_adjustment != 0:
+        factor_contributions.append({
+            "name": "特殊格局",
+            "factor": "pattern",
+            "score": round(pattern_adjustment, 2),
+            "reason": _user_reason(pattern_verdict_note, "格局特殊，反其势用之")
+        })
+    # 12. 古籍通用格局加减（classical_adj：六亲持世+事项+伏出等）
+    if classical_adj != 0:
+        factor_contributions.append({
+            "name": "古籍格局加减",
+            "factor": "classical",
+            "score": round(classical_adj, 2),
+            "reason": "；".join(_user_reason(n) for n in classical_notes[:2]) if classical_notes else "古籍格局"
+        })
+    # 12b. 六亲持世深化（含占问情境化解读）
+    adv_shi = r.get("advanced_analysis", {}).get("shi_yao_relation") if isinstance(r, dict) else None
+    if isinstance(adv_shi, dict) and adv_shi.get("classical_rule"):
+        _sh_reason = adv_shi["classical_rule"]
+        if adv_shi.get("scenario_interpretation"):
+            _sh_reason = adv_shi["scenario_interpretation"]
+        factor_contributions.append({
+            "name": "六亲持世",
+            "factor": "shi_yao",
+            "score": 0.0,
+            "reason": _sh_reason,
+            "classical_rule": adv_shi.get("classical_rule", ""),
+            "scenario": adv_shi.get("scenario", ""),
+            "scenario_interpretation": adv_shi.get("scenario_interpretation", ""),
+        })
+    # 按绝对贡献度排序（影响最大的排前面）
+    factor_contributions.sort(key=lambda x: abs(x["score"]), reverse=True)
+
     return {
         "base_score": base_score,
         "strength_level": strength_level,
@@ -4059,7 +4438,8 @@ def step5_synthesize(r: dict) -> dict:
         "pattern_adjustment": pattern_adjustment,
         "pattern_verdict_note": pattern_verdict_note,
         "final_score": final_score,
-        "verdict": verdict,
+        # 最终锁定：若强凶格局已触发，不再允许 verdict 被后续逻辑回退到 吉/平吉
+        "verdict": verdict if not (_verdict_locked and "凶" not in verdict) else "凶",
         "verdict_description": verdict_desc,
         "confidence": confidence,
         "confidence_description": _confidence_to_text(confidence),
@@ -4120,6 +4500,9 @@ def step5_synthesize(r: dict) -> dict:
         "hexagram_body_note": _get_hexagram_body_summary_note(r),
         # 经典引文自动检索结果
         "classical_quotes": classical_quotes,
+        # 可解释性：因子贡献（SHAP 风格，供 frontend / human_narrative 使用）
+        "factor_contributions": factor_contributions,
+        "factor_contribution_verification": round(sum(c["score"] for c in factor_contributions), 2),
     }
 
 
@@ -4889,6 +5272,8 @@ def _predict_timing(r: dict, step3_data: dict, step1_data: dict, day_branch: str
 
 # Keys are bare 六亲 names (as produced by engine's six_relation field)
 # so that world_relation == "妻财" matches directly.
+# 六亲持世按占问情境的延伸断语（来源：classical_synthesis 第十四部）
+# 同一持世，在不同占问中意义不同——古籍有「一卦多断」之诀
 SHI_YAO_INTERPRETATION = {
     "妻财": {
         "general": "财爻持世，求财易得，然须看旺衰",
@@ -4897,6 +5282,10 @@ SHI_YAO_INTERPRETATION = {
         "with_officer": "官爻持世逢财 → 官财两美，仕途与财皆旺",
         "travel": "财爻持世出行 → 获利而归",
         "illness": "财爻持世病中 → 食欲尚可，胃气未绝",
+        "marriage": "妻财持世——男占婚卜大吉，女占成婚貌必丰（《火珠林·婚姻章》）",
+        "wealth": "财爻持世，财旺财宜聚。若子孙动来生财，万贯有余粮（《火珠林·求财章》）",
+        "illness_detail": "财爻持世病中——财克父（父为寿山），占父疾则凶",
+        "parents_illness": "财爻持世——占父疾为凶，财克父也",
     },
     "官鬼": {
         "general": "官鬼持世，多主忧疑不利",
@@ -4904,22 +5293,38 @@ SHI_YAO_INTERPRETATION = {
         "weak": "官鬼持世休囚 → 官非缠身，忧疑难解",
         "with_wealth": "财爻动来生世 → 官因财升",
         "illness": "官鬼持世病重 → 病难速愈，须防反复",
+        "marriage": "官鬼持世——女占婚大吉（官鬼为夫），占病/凶/灾为凶（《火珠林·婚姻章》）",
+        "career": "官鬼持世且旺——功名有望，求官必得；鬼旺官非重（《火珠林·讼章》）",
+        "illness_detail": "鬼旺病必重，病难速愈，须防反复",
+        "lawsuit": "鬼旺官非重；若财来生鬼，有理也难陈（《火珠林·讼章》）",
     },
     "父母": {
         "general": "父母持世，文书之事有利",
         "strong": "父母持世且旺 → 文书有成，考试必中",
         "weak": "父母持世休囚 → 文书有阻，费力难成",
-        "travel": "父母持世出行 → 途中有阻，文书行李之累",
+        "travel": "父持世出行 → 途中有阻，文书行李之累；父动阻行程（《火珠林·出行章》）",
+        "exam": "父母持世且旺——占文书学业为吉，考试必中",
+        "marriage": "父母持世——占婚不利（父克子，子为子息），子息难存（《火珠林·婚姻章》）",
+        "lawsuit": "父兴状纸真——官司有理（《火珠林·讼章》）",
     },
     "子孙": {
         "general": "子孙持世，凡事亨通无忧",
         "strong": "子孙持世且旺 → 官职可卸，忧患皆消",
         "weak": "子孙持世休囚 → 子息不安，医药少效",
+        "illness": "子持世兮病可安——占病/医药为吉（《火珠林·病章》）",
+        "marriage": "子孙持世——女占婚不利（子克官，官为夫），婚偶难谐（《火珠林·婚姻章》）",
+        "career": "子孙持世——占求官为凶（子克官），官运受阻（《火珠林·仕宦章》）",
+        "travel": "子动身安吉——子孙动一路平安（《火珠林·出行章》）",
     },
     "兄弟": {
         "general": "兄弟持世，多主争竞耗财",
         "strong": "兄弟持世且旺 → 事故重重，多破财",
         "weak": "兄弟持世休囚 → 争竞无力，耗散不多",
+        "wealth": "兄弟持世莫求财，兄兴财必伤——占财为凶，兄劫财也（《火珠林·求财章》）",
+        "marriage": "兄弟持世——男占婚不利，兄动婚来必有妨；争竞者入卦，第三者虎视眈眈（《火珠林·婚姻章》）",
+        "illness": "兄动病无凶——占病兄动生子（兄弟生子孙），间接益于医药（《火珠林·病章》）",
+        "travel": "兄动路途惊——出行防劫财（《火珠林·出行章》）",
+        "lawsuit": "兄弟持世——官司中兄动争讼不已，耗神伤财（《火珠林·讼章》）",
     },
 }
 
@@ -4933,12 +5338,39 @@ SHI_YAO_POEMS = {
     "子孙": "子孙持世事无忧，求名坐狱必然休。避乱求安皆可保，身安无祸亦无愁。",
 }
 
+# 问题类型 → 持世解读情境映射
+# 求测问题时，先用关键词判断情境，再取 SHI_YAO_INTERPRETATION[*][scenario]
+_QUESTION_SCENARIO_KEYWORDS = {
+    "marriage": ["婚", "恋", "感情", "喜欢", "女朋友", "男朋友", "对象", "正缘", "伴侣", "相亲", "姻缘", "爱"],
+    "wealth": ["财", "投资", "求财", "赚钱", "收入", "利", "生意", "经营", "破财"],
+    "illness": ["病", "健康", "疾", "医", "症", "身体", "患", "康复", "瘤", "炎"],
+    "career": ["官", "升", "职", "事业", "工作", "仕", "考功", "升职", "提拔", "领导", "加薪"],
+    "exam": ["考", "试", "学业", "成绩", "中", "秀才", "举人", "文", "读书", "高考", "笔试", "面试"],
+    "lawsuit": ["讼", "官非", "法律", "诉讼", "被告", "原告", "起诉", "纠纷", "合同", "赔偿", "牢狱"],
+    "travel": ["行", "出远门", "出行", "去某地", "旅行", "出差", "搬家", "移", "归", "返程"],
+    "parents_illness": ["父病", "母病", "爸", "妈", "父亲", "母亲", "公公", "婆婆", "岳父", "岳母"],
+}
+
+
+def _detect_question_scenario(question: str) -> str:
+    """从求测问题中检测占问情境（返回 SHI_YAO_INTERPRETATION 中对应的 key）。"""
+    if not question:
+        return ""
+    for scenario, keywords in _QUESTION_SCENARIO_KEYWORDS.items():
+        for kw in keywords:
+            if kw in question:
+                return scenario
+    return ""
+
 
 def analyze_shi_yao_relation(result):
     """
-    六亲持世深化分析（出自《黄金策》）。
+    六亲持世深化分析（出自《黄金策》+ 第十四部占婚/占病/占讼/出行/求财独断）。
 
-    当世爻的六亲确定后，根据旺衰和六亲性质给出深层解读。
+    当世爻的六亲确定后，根据：
+    (a) 世爻六亲旺衰
+    (b) 求测问题情境（marriage/wealth/illness/career/exam/lawsuit/travel/parents_illness）
+    综合给出深层解读。
     """
     yao_lines = result.get("original_hexagram", {}).get("yao_lines", [])
     world_relation = None
@@ -4949,6 +5381,7 @@ def analyze_shi_yao_relation(result):
 
     if world_relation and world_relation in SHI_YAO_INTERPRETATION:
         interp = SHI_YAO_INTERPRETATION[world_relation]
+
         # Determine strength from element_strength if available
         strength_hint = ""
         adv = result.get("advanced_analysis", {})
@@ -4962,18 +5395,30 @@ def analyze_shi_yao_relation(result):
                     elif score <= 2.0:
                         strength_hint = "_weak"
 
+        # Detect question scenario for contextual interpretation
+        question = result.get("question", "")
+        scenario = _detect_question_scenario(question)
+        scenario_interp = interp.get(scenario, "") if scenario else ""
+
         details = {"general": interp["general"]}
         if strength_hint == "_strong" and "strong" in interp:
             details["strength"] = interp["strong"]
         elif strength_hint == "_weak" and "weak" in interp:
             details["strength"] = interp["weak"]
 
+        classical_rule = f"{world_relation}者，{interp['general']}"
+        if scenario_interp:
+            _cn = _scenario_cn(scenario)
+            classical_rule += f"｜占{_cn}：{scenario_interp}"
+
         return {
             "relation": world_relation,
             "general": interp["general"],
+            "scenario": scenario,
+            "scenario_interpretation": scenario_interp,
             "details": details,
             "poem": SHI_YAO_POEMS.get(world_relation, ""),
-            "classical_rule": f"{world_relation}者，{interp['general']}",
+            "classical_rule": classical_rule,
         }
     return None
 
@@ -4984,20 +5429,64 @@ def analyze_shi_yao_relation(result):
 # Automatically retrieve classical quotations based on detected patterns.
 
 QUOTE_DATABASE = [
-    # 格局类
-    {"pattern": "六合卦", "source": "《卜筮正宗》", "quote": "六合卦者，买卖交通，和合纳财，百事皆吉。"},
-    {"pattern": "六冲卦", "source": "《卜筮正宗》", "quote": "六冲卦者，行人不通，散离失群，百事乖张。"},
-    {"pattern": "从格", "source": "《增删卜易》", "quote": "从强从弱，反其势而用之，柳暗花明。"},
-    {"pattern": "绝处逢生", "source": "《卜筮正宗》", "quote": "用神绝于日辰，若得原神发动来生，谓之绝处逢生，凶中反吉。"},
-    {"pattern": "回头克", "source": "《黄金策》", "quote": "动爻变爻，有回头克者，谓之大凶。"},
-    {"pattern": "游魂", "source": "《卜筮正宗》", "quote": "游魂行无定，事主忧疑不定，心无归宿。"},
-    {"pattern": "归魂", "source": "《卜筮正宗》", "quote": "归魂回故乡，事主有归宿，终有所归。"},
-    # 六亲类
-    {"pattern": "妻财持世", "source": "《黄金策》", "quote": "财爻持世，财利必得，然须看旺衰。"},
-    {"pattern": "官鬼持世", "source": "《黄金策》", "quote": "官鬼持世，忧疑难释，功名有望。"},
-    # 旺衰类
+    #  === 格局类 ===
+    {"pattern": "六合卦", "source": "《卜筮正宗·六合论》", "quote": "六合卦者，买卖交通，和合纳财，百事皆吉。"},
+    {"pattern": "六冲卦", "source": "《卜筮正宗·六冲论》", "quote": "六冲卦者，行人不通，散离失群，百事乖张。"},
+    {"pattern": "冲中逢合", "source": "《黄金策·千金赋》", "quote": "冲中逢合，先难后成；合处逢冲，先成后散。"},
+    {"pattern": "合处逢冲", "source": "《黄金策·千金赋》", "quote": "合处逢冲，先成后散；冲中逢合，先难后成。"},
+    {"pattern": "绝处逢生", "source": "《卜筮正宗·用神论》", "quote": "用神绝于日辰，若得原神发动来生，谓之绝处逢生，凶中反吉。"},
+    {"pattern": "克多出暴", "source": "《增删卜易》", "quote": "用神出一重克，一重凶；出二重克，二重凶；三爻全克，危在旦夕。"},
+    {"pattern": "回头克", "source": "《黄金策·千金赋》", "quote": "动爻变爻，有回头克者，谓之大凶——自伤之象。"},
+    {"pattern": "回头生", "source": "《增删卜易》", "quote": "动化回头生者，如潮之有源，进而不已，百事绵长。"},
+    {"pattern": "进神", "source": "《增删卜易·进退神论》", "quote": "进神之卦，如春木之渐盛，事情向好处推。"},
+    {"pattern": "退神", "source": "《增删卜易·进退神论》", "quote": "退神之卦，如秋叶之渐零，节节退步。"},
+    {"pattern": "游魂", "source": "《卜筮正宗·归魂游魂论》", "quote": "游魂行无定，事主忧疑不定，心无归宿，飘摇东西。"},
+    {"pattern": "归魂", "source": "《卜筮正宗·归魂游魂论》", "quote": "归魂回故乡，事主有归宿，终有所归，离散后复聚。"},
+    {"pattern": "从格", "source": "《增删卜易》", "quote": "从强从弱，反其势而用之，柳暗花明又一村。"},
+    {"pattern": "三合成局", "source": "《卜筮正宗·三合论》", "quote": "三合局成，其力专一，吉凶皆验于合局所得。"},
+    {"pattern": "伏藏", "source": "《黄金策·千金赋》", "quote": "用神伏藏，事有隐秘；飞神冲开，伏神方出——宜细察不为人知之处。"},
+    {"pattern": "伏神得出", "source": "《黄金策·千金赋》", "quote": "伏无提挈终徒尔，飞不推开亦枉然——伏神得出方有用。"},
+    {"pattern": "伏神不得出", "source": "《卜筮正宗·飞伏论》", "quote": "飞神克伏神而无解救，则伏神终埋，事终不成。"},
+    {"pattern": "用神多现", "source": "《增删卜易》", "quote": "用神两现，舍闲取动，舍静取世，舍远取近——此取用之法。"},
+    {"pattern": "用神不现", "source": "《卜筮正宗·用神论》", "quote": "用神不现于本卦，须看伏神——伏神得出犹可得力。"},
+    {"pattern": "世应比和", "source": "《卜筮正宗·世应论》", "quote": "世应比和，两情相愿，各得其所，谋事可成。"},
+    {"pattern": "世应相克", "source": "《黄金策》", "quote": "世克应，我能胜他；应克世，他能胜我——观其强弱断之。"},
+    {"pattern": "反吟", "source": "《卜筮正宗·反吟伏吟论》", "quote": "反吟卦者，反复不定，事多阻滞，行而复止。"},
+    {"pattern": "伏吟", "source": "《卜筮正宗·反吟伏吟论》", "quote": "伏吟卦者，呻吟不展，事多郁闷，欲行不前。"},
+
+    #  === 六亲类 ===
+    {"pattern": "妻财持世", "source": "《卜筮正宗·用神论》", "quote": "财爻持世生世，利在财赋，然须看旺衰向背。"},
+    {"pattern": "官鬼持世", "source": "《黄金策·身命章》", "quote": "官鬼持世，忧疑难释，功名有望；若带灾咎即为忧。"},
+    {"pattern": "子孙持世", "source": "《卜筮正宗·用神论》", "quote": "子孙持世，克官鬼、释忧烦，官司失所望，病者渐安。"},
+    {"pattern": "父母持世", "source": "《卜筮正宗·用神论》", "quote": "父母持世，文书劳心，求谋费力，营运多辛。"},
+    {"pattern": "兄弟持世", "source": "《黄金策·求财章》", "quote": "兄弟持世，忌神当头，求财不利，病讼皆忌。"},
+    {"pattern": "用神空破", "source": "《增删卜易·旬空论》", "quote": "用神旬空月破，虽有生扶终无力——真空难起，旺空待时。"},
+
+    #  === 旺衰类 ===
     {"pattern": "用神旺", "source": "《火珠林》", "quote": "用神旺相，如春木之向荣，百事亨通。"},
     {"pattern": "用神休囚", "source": "《火珠林》", "quote": "用神休囚，如秋叶之飘零，百事难成。"},
+    {"pattern": "用神极弱", "source": "《增删卜易》", "quote": "用神休囚已極，雖得元神生扶不能起也。枯木难生，寒灰不焰。"},
+    {"pattern": "月破", "source": "《卜筮正宗·月破论》", "quote": "月破之爻，如秋叶遇霜，失时无力，纵逢生扶亦难复。"},
+    {"pattern": "月破", "source": "《增删卜易·月破论》", "quote": "月破失时，若得日辰生扶冲填，亦可为用——旺空待时，真空难起。"},
+    {"pattern": "暗动", "source": "《增删卜易·暗动论》", "quote": "旺相之爻被日辰冲为暗动——虽无动爻之象，而有动爻之实，应验不小。"},
+    {"pattern": "暗动", "source": "《卜筮正宗·暗动论》", "quote": "暗动主他人作事，事出意外而不觉——暗中有人助，不必外求。"},
+    {"pattern": "伏神得出", "source": "《卜筮正宗·飞伏论》", "quote": "伏神得出于飞神之下——飞神衰/被冲/被合/被日/月生，皆为得出之期。"},
+    {"pattern": "伏神不得出", "source": "《增删卜易·飞伏论》", "quote": "飞神克伏神而无解救，伏神终埋——欲用不出，事终蹉跎。"},
+    {"pattern": "三合成局", "source": "《黄金策·千金赋》", "quote": "三合成局，其一气专一——'局中若得用神在，力气坚深。'"},
+    {"pattern": "三合成局", "source": "《卜筮正宗·三合论》", "quote": "三合局成，事有根脚——半局亦可用，全局力更专。"},
+    {"pattern": "暗动", "source": "《增删卜易·暗动论》", "quote": "旺相之爻被日辰冲为暗动——虽无动爻之象，而有动爻之实。"},
+
+    #  === 动变类 ===
+    {"pattern": "空动", "source": "《增删卜易》", "quote": "动而逢空，待出旬之气方有力——空动则有动之心，无动之力。"},
+    {"pattern": "化合", "source": "《黄金策·千金赋》", "quote": "贪合忘生、贪合忘克——被合住则失其用，须冲开方复。"},
+    {"pattern": "世动化退", "source": "《增删卜易》", "quote": "世动化退，事渐衰减，锐气渐失。"},
+    {"pattern": "世动化进", "source": "《增删卜易》", "quote": "世动化进，事渐隆盛，步步登高。"},
+
+    #  === 综合 ===
+    {"pattern": "大吉", "source": "《千金赋》", "quote": "生扶拱合，时雨滋苗——天时地利人和之象。"},
+    {"pattern": "偏吉", "source": "《增删卜易》", "quote": "用神虽弱而有生扶，可向为之——终有所成。"},
+    {"pattern": "偏凶", "source": "《增删卜易》", "quote": "克多生少，提防小人；过程波折，谨慎为上。"},
+    {"pattern": "大凶", "source": "《黄金策·千金赋》", "quote": "克害刑冲，秋霜杀草——天时地利俱失之象。"},
 ]
 
 
@@ -5011,33 +5500,222 @@ def _pattern_matches(pattern_str, advanced, result):
                 return True
             if pattern_str == "六冲卦" and htype == "六冲卦":
                 return True
-        # Fallback: use classical hexagram name classification (八卦八纯世)
+        # Fallback: use classical hexagram name classification
         hex_name = result.get("original_hexagram", {}).get("name", "")
         if pattern_str == "六合卦" and hex_name in HEXAGRAM_LIUHE:
             return True
         if pattern_str == "六冲卦" and hex_name in HEXAGRAM_LIUCHONG:
             return True
         return False
+    # 冲中逢合 / 合处逢冲
+    if pattern_str in ("冲中逢合", "合处逢冲"):
+        harmony = advanced.get("clash_harmony", {})
+        if isinstance(harmony, dict):
+            deep = harmony.get("deep_analysis") or harmony.get("transitions") or []
+            if isinstance(deep, list):
+                for entry in deep:
+                    desc = entry.get("description", "") if isinstance(entry, dict) else str(entry)
+                    if pattern_str in desc:
+                        return True
+        return False
+    if pattern_str in ("进神", "退神"):
+        ar = advanced.get("advance_retreat", {})
+        if isinstance(ar, dict):
+            direction = ar.get("direction", "") or ""
+            if pattern_str == "进神" and "进" in direction:
+                return True
+            if pattern_str == "退神" and "退" in direction:
+                return True
+        # Fallback: check step4 details
+        step4 = result.get("thinking_chain", {}).get("step4_change_analysis", {})
+        details = step4.get("details", []) if isinstance(step4, dict) else []
+        for d in details:
+            if not isinstance(d, dict):
+                continue
+            ct = d.get("change_type", "")
+            if pattern_str == "进神" and "进" in ct:
+                return True
+            if pattern_str == "退神" and "退" in ct:
+                return True
+        return False
+    if pattern_str in ("回头生",):
+        step4 = result.get("thinking_chain", {}).get("step4_change_analysis", {})
+        details = step4.get("details", []) if isinstance(step4, dict) else []
+        for d in details:
+            if isinstance(d, dict) and d.get("change_type") == "回头生":
+                return True
+        # 兜底：检查 advanced_analysis 的动爻数据（thinking_chain 构建完成前也能工作）
+        yaos = (result.get("original_hexagram") or {}).get("yao_lines") or []
+        for y in yaos:
+            if isinstance(y, dict) and y.get("is_moving"):
+                # 动爻五行生用神五行 → 回头生（简化判断：动爻 six_relation == use_god 且 回头）
+                # 这里只检查是否有动爻 → 配合 step5 调用时 thinking_chain 已就绪
+                return True
+        return False
+    if pattern_str == "三合成局":
+        tc = advanced.get("triple_combo", {})
+        if isinstance(tc, dict):
+            return tc.get("has_triple_combo") or tc.get("is_formed") or tc.get("formed") or False
+        return False
+    if pattern_str in ("伏藏",):
+        # 伏藏 = 用神不现于本卦 + 伏神存在（不关心得出与否）
+        hs = advanced.get("hidden_spirit", {}) or advanced.get("hidden_spirit_analysis", {})
+        if isinstance(hs, dict) and hs.get("has_hidden_spirit"):
+            return True
+        # 兜底：用神不在本卦 yao_lines 中即视为伏藏
+        return False
+    if pattern_str in ("伏神得出", "伏神不得出"):
+        hs = advanced.get("hidden_spirit", {}) or advanced.get("hidden_spirit_analysis", {})
+        if isinstance(hs, dict):
+            # 数据可能在 results 或 details 中
+            items = hs.get("results") or hs.get("details") or []
+            if not items and hs.get("has_hidden_spirit"):
+                # has_hidden_spirit=True means 伏神得出
+                return pattern_str == "伏神得出"
+            for r in items:
+                if not isinstance(r, dict):
+                    continue
+                can = r.get("can_emerge") or r.get("can_surface") or r.get("emerged")
+                if pattern_str == "伏神得出" and can:
+                    return True
+                if pattern_str == "伏神不得出" and not can:
+                    return True
+        return False
+    if pattern_str == "用神不现":
+        s2 = result.get("thinking_chain", {}).get("step2_use_god_identification", {})
+        if isinstance(s2, dict):
+            return not s2.get("has_use_god_in_hexagram", True)
+        return False
+    if pattern_str == "用神多现":
+        s2 = result.get("thinking_chain", {}).get("step2_use_god_identification", {})
+        if isinstance(s2, dict):
+            return (s2.get("use_god_count") or 0) > 1
+        return False
+    if pattern_str in ("世应比和", "世应相克"):
+        siyi = advanced.get("shi_yao_relation", {})
+        if isinstance(siyi, dict):
+            relation = siyi.get("relation", "")
+            if pattern_str == "世应比和" and "比和" in relation:
+                return True
+            if pattern_str == "世应相克" and ("克" in relation or "冲" in relation):
+                return True
+        return False
+    if pattern_str == "反吟":
+        rp = advanced.get("repetition", {})
+        if isinstance(rp, dict):
+            rtype = rp.get("repetition_type") or rp.get("type") or ""
+            return "反吟" in rtype or rp.get("is_repetition")
+        return False
+    if pattern_str == "伏吟":
+        rp = advanced.get("repetition", {})
+        if isinstance(rp, dict):
+            rtype = rp.get("repetition_type") or rp.get("type") or ""
+            return "伏吟" in rtype
+        return False
     if pattern_str == "从格":
         sp = advanced.get("special_pattern") or result.get("thinking_chain", {}).get("step5_synthesis", {}).get("special_pattern", {})
         if isinstance(sp, dict):
             return sp.get("pattern") == "从格"
         return False
+    # 世动化退 / 世动化进
+    if pattern_str in ("世动化退", "世动化进"):
+        s4 = result.get("thinking_chain", {}).get("step4_change_analysis", {})
+        details = s4.get("details", []) if isinstance(s4, dict) else []
+        for d in details:
+            if not isinstance(d, dict):
+                continue
+            if d.get("position") == 1 and d.get("line_role") == "世爻":
+                ct = d.get("change_type", "")
+                if pattern_str == "世动化退" and "退" in ct:
+                    return True
+                if pattern_str == "世动化进" and "进" in ct:
+                    return True
+        return False
+    # 旺衰休囚
+    if pattern_str.endswith("持世"):
+        siyi = advanced.get("shi_yao_relation", {})
+        if isinstance(siyi, dict):
+            rel = siyi.get("relation", "")
+            # pattern_str is X持世 (4 chars), relation is X (2 chars)
+            return rel == pattern_str[:2]
+        return False
+    if "旺" in pattern_str or "极弱" in pattern_str or "休囚" in pattern_str:
+        tc = result.get("thinking_chain", {})
+        s3 = tc.get("step3_strength_analysis", {}) if isinstance(tc, dict) else {}
+        if isinstance(s3, dict):
+            level = s3.get("strength_level", "")
+            if "旺" in pattern_str and "旺" in level:
+                return True
+            if "休囚" in pattern_str and ("休" in level or "囚" in level):
+                return True
+            if "极弱" in pattern_str and ("弱" in level or "衰" in level):
+                return True
+        return False
+    # Verdict-based patterns (大吉/偏吉/偏凶/大凶)
+    if pattern_str in ("大吉", "偏吉", "偏凶", "大凶"):
+        tc = result.get("thinking_chain", {})
+        s5 = tc.get("step5_synthesis", {}) if isinstance(tc, dict) else {}
+        verdict = s5.get("verdict", "") if isinstance(s5, dict) else ""
+        if pattern_str == "大吉" and "吉" in verdict and "凶" not in verdict:
+            return True
+        if pattern_str == "偏吉" and "偏吉" in verdict:
+            return True
+        if pattern_str == "偏凶" and "偏凶" in verdict:
+            return True
+        if pattern_str == "大凶" and "凶" in verdict and "吉" not in verdict:
+            return True
+        return False
+    # 月破
+    if pattern_str == "月破":
+        mb = advanced.get("monthly_break", {})
+        if isinstance(mb, dict):
+            return mb.get("has_monthly_break") or mb.get("has_break") or len(mb.get("break_positions") or []) > 0
+        return False
+    # 暗动
+    if pattern_str == "暗动":
+        hm = advanced.get("hidden_movement", {})
+        if isinstance(hm, dict):
+            return hm.get("has_hidden_movement") or len(hm.get("hidden_moving_yao") or []) > 0
+        return False
+    # 绝处逢生
     if pattern_str == "绝处逢生":
         dr = advanced.get("desperate_relief", {})
         if isinstance(dr, dict):
             return dr.get("has_desperate_relief")
+        s5 = result.get("thinking_chain", {}).get("step5_synthesis", {})
+        if isinstance(s5, dict):
+            return s5.get("desperate_relief_modifier", 0) > 0
         return False
+    # 回头克
     if pattern_str == "回头克":
-        # Check step4 details for 回头克 change type
-        step4 = result.get("_step4_data", {})
-        if not step4:
-            step4 = result.get("thinking_chain", {}).get("step4_change_analysis", {})
+        step4 = result.get("thinking_chain", {}).get("step4_change_analysis", {})
         details = step4.get("details", []) if isinstance(step4, dict) else []
         for d in details:
             if isinstance(d, dict) and d.get("change_type") == "回头克":
                 return True
         return False
+    # 克多出暴
+    if pattern_str == "克多出暴":
+        step4 = result.get("thinking_chain", {}).get("step4_change_analysis", {})
+        details = step4.get("details", []) if isinstance(step4, dict) else []
+        ke_count = sum(1 for d in details if isinstance(d, dict) and "克" in d.get("change_type", ""))
+        return ke_count >= 2
+    # 化合 / 空动
+    if pattern_str == "化合":
+        step4 = result.get("thinking_chain", {}).get("step4_change_analysis", {})
+        details = step4.get("details", []) if isinstance(step4, dict) else []
+        for d in details:
+            if isinstance(d, dict) and "合" in d.get("change_type", ""):
+                return True
+        return False
+    if pattern_str == "空动":
+        step4 = result.get("thinking_chain", {}).get("step4_change_analysis", {})
+        details = step4.get("details", []) if isinstance(step4, dict) else []
+        for d in details:
+            if isinstance(d, dict) and d.get("is_moving") and d.get("is_empty"):
+                return True
+        return False
+    # 游魂 / 归魂
     if pattern_str == "游魂":
         sh = advanced.get("soul_hexagram", {})
         if isinstance(sh, dict):
@@ -5047,29 +5725,6 @@ def _pattern_matches(pattern_str, advanced, result):
         sh = advanced.get("soul_hexagram", {})
         if isinstance(sh, dict):
             return sh.get("soul_type") == "归魂"
-        return False
-    if pattern_str.endswith("持世"):
-        siyi = advanced.get("shi_yao_relation", {})
-        if isinstance(siyi, dict):
-            return siyi.get("relation") == pattern_str[:3]
-        return False
-    if "旺" in pattern_str:
-        s3 = result.get("_step3_data", {})
-        if not s3:
-            tc = result.get("thinking_chain", {})
-            s3 = tc.get("step3_strength_analysis", {}) if isinstance(tc, dict) else {}
-        if isinstance(s3, dict):
-            level = s3.get("strength_level", "")
-            return "旺" in level
-        return False
-    if "休囚" in pattern_str:
-        s3 = result.get("_step3_data", {})
-        if not s3:
-            tc = result.get("thinking_chain", {})
-            s3 = tc.get("step3_strength_analysis", {}) if isinstance(tc, dict) else {}
-        if isinstance(s3, dict):
-            level = s3.get("strength_level", "")
-            return "囚" in level
         return False
     return False
 
@@ -5407,6 +6062,85 @@ def _inject_pattern_tags(chain: list, step3: dict, step4: dict, step5: dict, con
         bare = [t.replace("格局-", "") for t in tags]
         chain.append("[格局要点] " + "、".join(bare))
 
+    # ---- [格局详释] 一行暴露高级格局细节，供模型写正文时引用 ----
+    detail_parts: list[str] = []
+    # 三刑
+    tp = adv.get("three_punishments") or {}
+    if isinstance(tp, dict) and tp.get("has_punishment"):
+        for p in tp.get("punishments", []):
+            detail_parts.append(p.get("description", ""))
+    # 六冲/六合 详情
+    ch = adv.get("clash_harmony") or {}
+    if isinstance(ch, dict) and ch.get("pairs"):
+        _ch_pairs = ch.get("pairs", [])
+        if _ch_pairs:
+            pair_strs = []
+            for pair in _ch_pairs[:3]:
+                desc = pair.get("description", "")
+                if desc:
+                    pair_strs.append(desc)
+            _ch_meaning = ch.get("meaning", "")
+            if _ch_meaning and "安定" not in _ch_meaning:
+                pair_strs.append(_ch_meaning)
+            if pair_strs:
+                detail_parts.append("；".join(pair_strs))
+    # 六神动爻 / 世/应六神
+    sa = adv.get("six_spirit_analysis") or {}
+    if isinstance(sa, dict):
+        _moving = sa.get("moving_yao_spirits", [])
+        if _moving:
+            _mv_strs = []
+            for m in _moving:
+                _sp = m.get("six_spirit", "")
+                _sr = m.get("six_relation", "")
+                _desc = m.get("nature", "")
+                if _sp and _sr:
+                    _mv_strs.append(f"{_sp}临{_sr}（{_desc}）")
+            if _mv_strs:
+                detail_parts.append("六神动爻：" + "、".join(_mv_strs))
+        _ws_raw = sa.get("world_yao_spirit", {})
+        if isinstance(_ws_raw, dict):
+            _ws = _ws_raw.get("six_spirit", "")
+            _ws_desc = _ws_raw.get("nature", "")
+            if _ws:
+                detail_parts.append(f"世临{_ws}（{_ws_desc}）")
+    # 十二长生：取关键（用神/原神/临官/帝旺等）
+    tg = adv.get("twelve_growth") or {}
+    if isinstance(tg, dict):
+        _lines = tg.get("lines", [])
+        _key = [l for l in _lines if isinstance(l, dict) and l.get("is_key_stage")]
+        if _key:
+            _kg_strs = []
+            for kl in _key[:3]:
+                _br = kl.get("branch", "")
+                _st = kl.get("growth_stage", "")
+                _rel = kl.get("six_relation", "")
+                _mn = kl.get("stage_meaning", "")
+                if _st:
+                    _kg_strs.append(f"{_br}({_rel})临{_st}——{_mn}")
+            if _kg_strs:
+                detail_parts.append("十二长生：" + "；".join(_kg_strs))
+    # 伏藏分析
+    hs = adv.get("hidden_spirit_analysis") or {}
+    if isinstance(hs, dict) and hs.get("has_hidden_spirit"):
+        for det in hs.get("details", []):
+            _mr = det.get("missing_relation", "")
+            _em = det.get("can_emerge", "")
+            _rs = det.get("reason", "")
+            _status = "得出" if _em else "伏而不出"
+            if _mr:
+                detail_parts.append(f"伏藏：{_mr} {_status}（{_rs}）")
+    # 绝处逢生
+    dr = adv.get("desperate_relief") or {}
+    if isinstance(dr, dict) and dr.get("has_desperate_relief"):
+        _v = dr.get("verdict", "")
+        _d = dr.get("description", "")
+        if _d:
+            detail_parts.append(f"绝处逢生：{_d}" + (f"——{_v}" if _v else ""))
+
+    if detail_parts:
+        chain.append("[格局详释] " + " | ".join(detail_parts))
+
 
 
 
@@ -5492,16 +6226,27 @@ def run_thinking_chain(hex_result: dict) -> dict:
     # 清理内部引用键（不对外暴露）
     chain = _clean_internal_keys(chain)
     
-    # 将思维链结果写入原字典，供外部使用
+    # 将思维链结果写入原字典
     hex_result["thinking_chain"] = chain
+
+    # ★ 关键修复：重新检测经典引文（此时 chain 已构建，step4/step5 已就位）
+    # 原来在 step5_synthesize 内部调用 find_classical_quotes 时 chain 还未就绪，
+    # 导致「回头生/三合成局/伏藏/暗动」等需要 step4/5 数据的 pattern 全部匹配失败。
+    fresh_quotes = find_classical_quotes(hex_result)
+    if fresh_quotes and "step5_synthesis" in chain:
+        # 替换原来的 classical_quotes（原来的往往是空或不完整的）
+        chain["step5_synthesis"]["classical_quotes"] = fresh_quotes
+        chain["step5_synthesis"]["classical_quotes_text"] = "【经典引文】" + "".join(
+            f"• {q['source']}：{q['quote']}" for q in fresh_quotes
+        )
     
-    return chain
+    return hex_result
 
 
 def _get_hexagram_body_summary_note(r: dict) -> str:
     """
     从 advanced_analysis.hexagram_body 提取卦身摘要。
-    返回描述卦身位置与核心含义的短句，若无法确定则返回空字符串。
+    返回描述卦身位置、六亲与当前占问关联含义的短句，若无法确定则返回空字符串。
     """
     advanced = r.get("advanced_analysis", {})
     if not isinstance(advanced, dict):
@@ -5521,14 +6266,45 @@ def _get_hexagram_body_summary_note(r: dict) -> str:
     body_relation = hb.get("body_relation", "")
     specific_notes = hb.get("specific_notes", [])
 
-    # 核心描述
+    # 八卦身含义（按占问类型）
+    # 卦身临六亲在不同占问中有不同意义
+    body_relation_meaning = {
+        "妻财": {"marriage": "婚有缘本", "wealth": "求财有根", "default": "财爻为身"},
+        "官鬼": {"marriage": "女缘在此", "career": "仕途有根", "illness": "病犹缠身", "default": "鬼爻为身"},
+        "父母": {"exam": "文书有据", "marriage": "文书契证", "default": "父母为身"},
+        "子孙": {"illness": "药石有功", "career": "卸官归闲", "marriage": "子息有缘", "default": "子孙为身"},
+        "兄弟": {"marriage": "争竞者在", "wealth": "劫财有碍", "default": "兄弟为身"},
+    }
+
     note = f"卦身在{pos_name}"
     if body_relation:
         note += f"（{body_relation}）"
-    if specific_notes:
+        # 尝试按占问类型给出卦身的具体含义
+        scenario = _detect_question_scenario(r.get("question", ""))
+        _meaning_map = body_relation_meaning.get(body_relation, {})
+        _meaning = _meaning_map.get(scenario, _meaning_map.get("default", ""))
+        if _meaning:
+            note += f"——占{_scenario_cn(scenario) if scenario else '此'}: {_meaning}"
+        elif specific_notes:
+            note += "——" + specific_notes[0]
+    elif specific_notes:
         note += "——" + specific_notes[0]
 
     return note
+
+
+def _scenario_cn(scenario: str) -> str:
+    """英文 scenario key → 中文占问名称（用于卦身叙事）。"""
+    return {
+        "marriage": "婚姻",
+        "wealth": "求财",
+        "illness": "疾病",
+        "career": "事业",
+        "exam": "考试",
+        "lawsuit": "诉讼",
+        "travel": "出行",
+        "parents_illness": "父母之疾",
+    }.get(scenario, "")
 
 
 def _build_overall_summary(context: dict) -> str:

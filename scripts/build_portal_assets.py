@@ -4,14 +4,17 @@ import json
 import sys
 from pathlib import Path
 
-ROOT = Path(r"C:\Users\Lin\Desktop\skills\liu-yao")
+ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from liuyao_engine import build_hexagram_result
 from thinking_chain import run_thinking_chain
 from human_narrative import build_human_narrative, render_human_markdown
 from visualization import build_html_report
-from run_blind_v4 import date_from_str, hex2yao
+try:
+    from run_blind_v5 import date_from_str, hex2yao
+except ImportError:
+    from run_blind_v4 import date_from_str, hex2yao
 from advice_framework import generate_advice
 
 cc = json.load(open(ROOT / "data" / "cases" / "classical_cases.json", encoding="utf-8"))
@@ -35,40 +38,42 @@ for cid in ("ZS001", "ZS005", "ZS007", "ZS012", "ZS015", "ZS016"):
         d["year"], d["month"], d["day"], 10, explicit_time=explicit,
     )
     tc = run_thinking_chain(h)
-    human = build_human_narrative(h)
-    h["human_narrative"] = human
+    # run_thinking_chain 返回完整结果（含 thinking_chain 键）
+    thinking = tc.get("thinking_chain", tc)
+    human = build_human_narrative(tc)
+    tc["human_narrative"] = human
     try:
-        h["section_advice"] = generate_advice(
-            (tc.get("step5_synthesis") or {}).get("verdict", ""),
-            case["question"], h,
+        tc["section_advice"] = generate_advice(
+            (thinking.get("step5_synthesis") or {}).get("verdict", ""),
+            case["question"], tc,
         )
     except Exception:
         pass
-    html = build_html_report(h)
+    html = build_html_report(tc)
     out_html = ROOT / f"sample_report_{cid}.html"
     out_html.write_text(html, encoding="utf-8")
 
-    s2 = tc.get("step2_use_god_identification") or {}
-    s5 = tc.get("step5_synthesis") or {}
+    s2 = thinking.get("step2_use_god_identification") or {}
+    s5 = thinking.get("step5_synthesis") or {}
     samples.append({
         "id": cid,
         "question": case["question"],
-        "hexagram": h["original_hexagram"]["name"],
-        "changed": (h.get("changed_hexagram") or {}).get("name"),
-        "palace": h["original_hexagram"].get("palace"),
-        "generation": h["original_hexagram"].get("generation"),
-        "time": h.get("divination_time", {}),
-        "empty": h.get("empty_branches", []),
+        "hexagram": tc["original_hexagram"]["name"],
+        "changed": (tc.get("changed_hexagram") or {}).get("name"),
+        "palace": tc["original_hexagram"].get("palace"),
+        "generation": tc["original_hexagram"].get("generation"),
+        "time": tc.get("divination_time", {}),
+        "empty": tc.get("empty_branches", []),
         "use_god": human.get("use_god"),
         "verdict": s5.get("verdict"),
         "final_score": s5.get("final_score"),
         "confidence": s5.get("confidence"),
         "yingqi": (s5.get("timing") or {}).get("summary_text"),
         "yingqi_branches": (s5.get("timing") or {}).get("key_branches") or [],
-        "pattern_tags": tc.get("reasoning_chain", []),
+        "pattern_tags": thinking.get("reasoning_chain", []),
         "human": human,
-        "reasoning_chain": tc.get("reasoning_chain", []),
-        "yao_lines": h["original_hexagram"]["yao_lines"],
+        "reasoning_chain": thinking.get("reasoning_chain", []),
+        "yao_lines": tc["original_hexagram"]["yao_lines"],
         "expected": case.get("expected", {}),
         "blind_score": next((c.get("verdict") for c in blind["cases"] if c.get("id") == cid), None),
         "html_file": out_html.name,

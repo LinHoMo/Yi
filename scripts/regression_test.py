@@ -456,7 +456,8 @@ def run_single_case(case: RegressionCase, verbose: bool = False) -> dict:
     """
     year, month, day, hour = case.date
     result = build_hexagram_result(case.yao, case.question, "test", year, month, day, hour)
-    chain = run_thinking_chain(result)
+    chain_result = run_thinking_chain(result)
+    chain = chain_result.get("thinking_chain", chain_result)
 
     s2 = chain.get("step2_use_god_identification", {})
     s3 = chain.get("step3_strength_analysis", {})

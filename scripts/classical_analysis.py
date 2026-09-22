@@ -3117,6 +3117,26 @@ def analyze_three_punishments(result):
             })
             total_score -= 0.3 * (count - 1)  # 每多一次减0.3
 
+    # ── 三刑齐全加重（多个成刑/完整/催刑叠加时凶性倍增）──
+    # 经典规则："三刑齐全，凶不可解"——两处以上成刑时按1.5x折算，三处以上2.0x
+    complete_cnt = sum(1 for p in punishments if p.get("completeness") in ("完整", "成刑", "催刑"))
+    if complete_cnt >= 3:
+        total_score *= 2.0  # 三处以上成刑 → 极凶
+        # 三刑杂见（循环刑+无礼刑+自刑以上至少两类并列）额外加罚
+        ptype_set = set(p.get("type", "") for p in punishments)
+        if len(ptype_set) >= 3:
+            total_score -= 0.8  # 三类以上刑并见 → 更凶
+        elif len(ptype_set) >= 2:
+            total_score -= 0.5  # 多种刑类杂见，凶性更甚
+    elif complete_cnt >= 2:
+        total_score *= 1.5  # 两处成刑 → 凶性加重
+        ptype_set = set(p.get("type", "") for p in punishments)
+        if len(ptype_set) >= 2:
+            total_score *= 1.25  # 多种刑类杂见，再乘1.25
+        # 两处以上成刑额外定罚(不乘倍数直接加)
+        total_score -= 0.5  # 2+ 成刑叠加的固定附加减分
+    # 1处成刑维持原分数（线性加减已足够）
+
     if not punishments:
         return {"has_punishment": False, "punishments": [], "total_score": 0.0, "summary": "本卦无三刑"}
 
@@ -4085,10 +4105,171 @@ def enhance_reading(result_dict):
     # 随官入墓分析（需要引用伏藏分析的结果）
     result_dict["advanced_analysis"]["officer_tomb"] = analyze_officer_tomb(result_dict)
 
+    # 六神（六兽）辅助分析——根据各爻六神 + 六亲 + 世应综合研判
+    result_dict["advanced_analysis"]["six_spirit_analysis"] = _analyze_six_spirits(result_dict)
+
     # 纳音系统（六十甲子纳音取象）
     result_dict["advanced_analysis"]["nayin"] = analyze_nayin(result_dict)
 
     return result_dict
+
+
+# -----------------------------------------------------------------------------
+# 六神辅助分析（内部函数，由 enhance_reading 调用）
+# -----------------------------------------------------------------------------
+
+# 六神吉凶与象征（按《卜筮正宗·六神论》）
+SIX_SPIRIT_PROPERTIES = {
+    "青龙": {
+        "nature": "吉神",
+        "element": "木",
+        "direction": "东",
+        "virtue": "喜庆、吉祥、升迁、贵人",
+        "caution": "临忌神/仇神则喜中生忧",
+    },
+    "朱雀": {
+        "nature": "文书/口舌",
+        "element": "火",
+        "direction": "南",
+        "virtue": "文书、言辞、沟通、考试",
+        "caution": "临忌神/仇神则口舌讼事、文书之忧",
+    },
+    "勾陈": {
+        "nature": "中土/迟滞",
+        "element": "土",
+        "direction": "中",
+        "virtue": "稳重、田土、牵连、迟滞",
+        "caution": "临忌神则蹉跎难成、官非牵连",
+    },
+    "螣蛇": {
+        "nature": "惊恐/变动",
+        "element": "土",
+        "direction": "中",
+        "virtue": "机智、交结、惊疑、多变",
+        "caution": "临忌神则惊恐不安、怪异纠缠",
+    },
+    "白虎": {
+        "nature": "凶煞",
+        "element": "金",
+        "direction": "西",
+        "virtue": "威严、决断、医者",
+        "caution": "临忌神/仇神则血光凶丧、重病伤亡",
+    },
+    "玄武": {
+        "nature": "暗昧",
+        "element": "水",
+        "direction": "北",
+        "virtue": "智谋、暗计、盗贼",
+        "caution": "临忌神/仇神则奸邪盗贼、暗昧不明",
+    },
+}
+
+
+def _analyze_six_spirits(result_dict):
+    """
+    六神（六兽）辅助分析。
+
+    根据各爻的六神叠加六亲+动静+世应，提供综合研判：
+    - 用神/原神之六神：助力性质
+    - 忌神/仇神之六神：阻力性质
+    - 世应之六神：主体/客体之象
+    """
+    hex_info = result_dict.get("original_hexagram", {})
+    yao_lines = hex_info.get("yao_lines", [])
+    div_time = result_dict.get("divination_time", {})
+
+    # 提取关键
+    world_yao = None
+    response_yao = None
+    moving_yaos = []
+    spirit_summary = []
+
+    for yao in yao_lines:
+        pos = yao.get("position")
+        spirit = yao.get("six_spirit", "")
+        relation = yao.get("six_relation", "")
+        moving = yao.get("is_moving", False)
+        empty = yao.get("is_empty", False)
+        branch = yao.get("earthly_branch", "")
+        line_name = yao.get("name", "")
+        is_world = yao.get("is_world", False)
+        is_response = yao.get("is_response", False)
+
+        props = SIX_SPIRIT_PROPERTIES.get(spirit, {})
+        entry = {
+            "position": pos,
+            "name": line_name,
+            "six_spirit": spirit,
+            "six_relation": relation,
+            "earthly_branch": branch,
+            "element": props.get("element", ""),
+            "nature": props.get("nature", ""),
+            "is_moving": moving,
+            "is_empty": empty,
+            "is_world": is_world,
+            "is_response": is_response,
+        }
+        spirit_summary.append(entry)
+
+        if is_world:
+            world_yao = entry
+        if is_response:
+            response_yao = entry
+        if moving:
+            moving_yaos.append(entry)
+
+    # 用神与六神（若能从 question_category / thinking_chain 获取更佳，此处用启发式判断）
+    palace_element = hex_info.get("palace_element", "")
+    # 六神与宫五行相同（比值）的加分（《黄金策》云："六神生旺则吉，克害则凶"）
+    value_aligned = []
+    for entry in spirit_summary:
+        sp_elem = entry.get("element", "")
+        if sp_elem and sp_elem == palace_element:
+            value_aligned.append(entry)
+
+    # 综合判断
+    comment_parts = []
+    if world_yao:
+        comment_parts.append(
+            f"世爻{world_yao['name']}临{world_yao['six_spirit']}"
+            f"（{world_yao['nature']}），"
+            f"{'同气于宫，根基尚稳' if world_yao.get('element') == palace_element else '与宫气异，主体有变'}"
+        )
+    if value_aligned:
+        names = "、".join(f"{e['name']}({e['six_spirit']})" for e in value_aligned if not e.get("is_world"))
+        if names:
+            comment_parts.append(f"值宫五行之六神：{names}——与宫同气")
+    if response_yao:
+        comment_parts.append(
+            f"应爻{response_yao['name']}临{response_yao['six_spirit']}（{response_yao['nature']}）"
+        )
+
+    # 动爻六神的特殊意义
+    if moving_yaos:
+        move_desc = []
+        for m in moving_yaos:
+            move_desc.append(
+                f"{m['name']}{m['six_spirit']}动（{m['nature']}/{m['six_relation']}）"
+            )
+        comment_parts.append("动爻六神：" + "、".join(move_desc))
+
+    # 六神生克综合（简化）：统计各六神出现频次
+    spirit_count = {}
+    for entry in spirit_summary:
+        sp = entry.get("six_spirit", "")
+        spirit_count[sp] = spirit_count.get(sp, 0) + 1
+
+    return {
+        "palace_element": palace_element,
+        "day_stem": div_time.get("day_stem_branch", "")[:1] if div_time.get("day_stem_branch") else "",
+        "lines": spirit_summary,
+        "world_yao_spirit": world_yao,
+        "response_yao_spirit": response_yao,
+        "moving_yao_spirits": moving_yaos,
+        "value_aligned_spirits": value_aligned,
+        "spirit_count": spirit_count,
+        "comment": "；".join(comment_parts) if comment_parts else "六神分布平稳，无特殊格局",
+    }
 
 
 # =============================================================================
