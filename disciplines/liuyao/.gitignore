@@ -1,0 +1,21 @@
+__pycache__/
+*.pyc
+*.tmp
+.DS_Store
+.worktrees/
+
+# 一次性调试 / 草稿脚本（不入库）
+scratch/
+
+# 生成产物：由脚本重跑生成，不入库
+outputs/
+data/cases/blind_engine_output_*.json
+data/cases/*_summary.json
+scripts/regression_results.json
+scripts/coverage_report.md
+batch_report.html
+*_report.html
+
+# 求测事件日志：体积随使用增长，本地保留、历史版本可恢复
+logs/
+data/cases/eval_*.json

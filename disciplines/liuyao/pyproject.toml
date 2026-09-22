@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "liuyao"
+dynamic = ["version"]          # 版本号唯一真值源：yishu_core.__version__
+description = "六爻纳甲装卦与断卦引擎（易·卜科），配古籍案例对齐评测"
+requires-python = ">=3.10"
+dependencies = []          # 主计算只用标准库：历法由 core/yishu_core 自行求节气
+
+# 可选：装了只作交叉校验，不装也绝不降级为近似算法
+[project.optional-dependencies]
+lunar = ["lunar-python>=1.4"]
+viz = ["matplotlib>=3.8"]
+
+[tool.setuptools.dynamic]
+version = { attr = "yishu_core.__version__" }
+
+[tool.setuptools]
+package-dir = { "" = "core" }
+
+[tool.setuptools.packages.find]
+where = ["core"]
+
+[tool.pytest.ini_options]
+testpaths = ["scripts"]
