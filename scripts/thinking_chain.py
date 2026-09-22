@@ -4566,21 +4566,26 @@ def _next_date_with_day_branch(start_date: datetime, target_branch: str, max_day
 
 
 def _next_month_with_branch(start_date: datetime, target_branch: str) -> datetime | None:
-    """
-    Return a date in the next month whose month-branch matches target_branch.
-    Used for '应迟' cases where response happens in a specific month.
+    """下一个"月令"为该地支的日期。
+
+    月令由十二节决定（立春寅、惊蛰卯…），不是公历月。旧实现写作
+    `(d.month + 1) % 12` 的公历近似，在交节前后会整整错一个月——应期因此偏掉
+    30 天。现委托历法内核求交节时刻。
     """
     if not target_branch or target_branch not in set(BRANCHES):
         return None
-    # Approximate month-branch using same heuristic as engine SOLAR_TERM_DATES
-    # month_branch ≈ (month + 1) % 12 for months after the solar term
-    d = datetime(start_date.year, start_date.month, 1)
-    for _ in range(24):  # up to 2 years
-        d = _add_months(d, 1)
-        month_branch_idx = (d.month + 1) % 12
-        if BRANCHES[month_branch_idx] == target_branch:
-            return d
-    return None
+    try:
+        from yishu_core import ganzhi_calendar as _gc
+    except ImportError:
+        import os
+        import sys
+        from pathlib import Path
+        core_dir = Path(os.path.dirname(os.path.abspath(__file__))).parent / "core"
+        if str(core_dir) not in sys.path:
+            sys.path.insert(0, str(core_dir))
+        from yishu_core import ganzhi_calendar as _gc
+    inst = _gc.next_month_branch_instant(start_date, target_branch)
+    return inst if inst is None else inst.replace(hour=12, minute=0)
 
 
 def _add_months(d: datetime, months: int) -> datetime:

@@ -18,25 +18,14 @@ import os
 import random
 import sys
 from datetime import datetime, timedelta
+from pathlib import Path
 
 # =============================================================================
-# 高精度农历节气库 (Precision Lunar Calendar Library)
+# 高精度农历库（可选，仅作交叉校验）
 # =============================================================================
-# Try sxtwl first (most accurate, requires C++ build tools), then lunar-python.
-# If neither is available, fall back to SOLAR_TERM_DATES approximation.
-
-try:
-    from lunar_python import Solar as _LP_Solar, Lunar as _LP_Lunar
-    _HAS_PRECISE_LUNAR = True
-    _LUNAR_LIB_NAME = "lunar-python"
-except ImportError:
-    try:
-        import sxtwl
-        _HAS_PRECISE_LUNAR = True
-        _LUNAR_LIB_NAME = "sxtwl"
-    except ImportError:
-        _HAS_PRECISE_LUNAR = False
-        _LUNAR_LIB_NAME = None
+# 主计算走 core/yishu_core/ganzhi_calendar（太阳黄经求节气，纯标准库、可自检）。
+# lunar-python / sxtwl 装了就拿来旁证，没装也绝不降级为近似算法。
+# 校验入口：crosscheck_optional_libraries()
 
 # =============================================================================
 # 第一部分：基础数据定义
@@ -951,290 +940,106 @@ EMPTY_DEATH = {
     "甲寅": ["子", "丑"],
 }
 
+# 第六部分：四柱干支计算 —— 委托历法内核 (core/yishu_core)
 # =============================================================================
-# 第六部分：四柱干支计算 (简化版, 支持1900-2100年)
-# =============================================================================
+# 本部分不再自带历法近似。年界在立春、月界在十二节、日界以夜子时为界，
+# 全部由 yishu_core.ganzhi_calendar 按太阳黄经求交节时刻后给出。
+# 历法正确性由 `python core/yishu_core/calendar_check.py` 自检。
+#
+# 历史缺陷（2026-09-22 修，详见 docs/CHANGELOG.md）：
+#   1. 旧实现在未装 lunar-python/sxtwl 时完全不判立春 → 每年 1 月至立春前年柱错一位
+#   2. 月支用固定近似日（Feb 4 交立春等）→ 交节边界 ±1~2 天内月建错
+#   3. 五鼠遁写作 (stem_start + branch_idx) % 12 再减 10 → 戊/癸日辰时之后时柱错
 
-# 基准日期: 1900-01-31 为庚子年甲子月甲子日 (已知基准)
-# 注：这里使用简化的四柱计算，月柱和日柱用近似算法
-# 基准：1900年1月31日 = 庚子年 甲子月 甲子日
-# 实际应用中四柱精确计算复杂，这里用近似方式
+def _load_ganzhi_kernel():
+    """定位并导入历法内核。找不到时明确报错，绝不退回近似算法。"""
+    try:
+        from yishu_core import ganzhi_calendar as _gc  # 已安装为包
+        return _gc
+    except ImportError:
+        pass
+    core_dir = Path(__file__).resolve().parents[1] / "core"
+    if not (core_dir / "yishu_core").is_dir():
+        raise RuntimeError(f"缺少历法内核目录：{core_dir / 'yishu_core'}")
+    if str(core_dir) not in sys.path:
+        sys.path.insert(0, str(core_dir))
+    from yishu_core import ganzhi_calendar as _gc
+    return _gc
 
-# 已知基准点 (1900-01-01 的干支)
-# 1900-01-01: 己亥年 丙子月 甲辰日 (近似)
-# 使用1900-01-31为庚子年 丁丑月 甲子日 作为基准 (立春后)
 
-# 更精确的基准点：
-# 1984-02-04(立春): 甲子年 丙寅月 戊寅日 - 这是一个甲子年起点
+_GANZHI = _load_ganzhi_kernel()
 
-# 简化的计算方法：
-# 以1900-01-01为基准日（已知该日为庚子年起算附近）
-# 这里使用一个关键基准：
-# 2000-02-05(立春后): 庚辰年 戊寅月 癸未日
-# 用简化方法：已知1900-01-01的日干支为 甲辰
+# 交节流派："day" = 交节当日即换月/换年（默认，保持既有断卦行为）；"instant" = 精确到时刻
+GANZHI_BOUNDARY = os.environ.get("YI_GANZHI_BOUNDARY", "day")
 
-# 我们使用更简单的算法：
-# 以已知基准点推算偏移
-# 基准：1900-01-01 = 星期一
-# 日柱基准: 
 
-# 采用简化方式：使用推算公式
-# 参考：http://www.ipcjb.org/ 推算方法
-# 日干支计算（适用于1901-2099）：
-# 以1900年1月1日为基准（该日为"庚子日"序列中的一天）
+def _noon(year, month, day):
+    return datetime(year, month, day, 12, 0)
 
-# 使用公认的简化公式（Zeller-like）：
-# 注：这里使用近似算法，对1900-2100年有较好精度
 
-# 年干支
 def get_year_stem_branch(year, month=0, day=0):
-    """
-    计算年干支
-    
-    以立春为年界（六爻/四柱传统）。若提供 month 和 day，则通过
-    高精度节气库判断是否已过立春；未过立春则取前一年。
-    以1984年(甲子年)为基准进行推算。
-    
-    Args:
-        year: 公历年
-        month: 公历月（可选，用于精确判断立春边界）
-        day: 公历日（可选）
-    Returns:
-        str: 年干支，如 "甲子"
-    """
-    # 如果提供了月日且库可用，以立春为界
-    if month > 0 and day > 0 and _HAS_PRECISE_LUNAR:
-        if _LUNAR_LIB_NAME == "lunar-python":
-            lunar = _LP_Solar.fromYmd(year, month, day).getLunar()
-            li_chun = lunar.getJieQiTable()['立春']
-            # 若日期在当年立春之前，则年柱取前一年
-            if (month, day) < (li_chun.getMonth(), li_chun.getDay()):
-                year = year - 1
-        elif _LUNAR_LIB_NAME == "sxtwl":
-            sxtwl_lunar = sxtwl.Lunar()
-            # 逐月查找当年立春日期 (立春=节气索引1)
-            li_chun_m, li_chun_d = 2, 4  # 默认值
-            found = False
-            for m in range(1, 5):
-                if found:
-                    break
-                for dd in range(1, 29):
-                    try:
-                        if sxtwl_lunar.getDayBySolar(year, m, dd).getJieQi() == 1:
-                            li_chun_m, li_chun_d = m, dd
-                            found = True
-                            break
-                    except Exception:
-                        continue
-            if (month, day) < (li_chun_m, li_chun_d):
-                year = year - 1
-
-    # 1984年是甲子年
-    base_year = 1984
-    offset = (year - base_year) % 60
-    if offset < 0:
-        offset += 60
-
-    stem_index = offset % 10
-    branch_index = offset % 12
-
-    return HEAVENLY_STEMS[stem_index] + EARTHLY_BRANCHES[branch_index]
-
-# 节气日期表（近似值，用于判断月支）
-# month: (day, branch_index_after_term)
-# branch_index: 子0 丑1 寅2 卯3 辰4 巳5 午6 未7 申8 酉9 戌10 亥11
-SOLAR_TERM_DATES = {
-    1: (6, 1),   # Jan 6 小寒 → 丑月 (index 1)
-    2: (4, 2),   # Feb 4 立春 → 寅月 (index 2)
-    3: (6, 3),   # Mar 6 惊蛰 → 卯月 (index 3)
-    4: (5, 4),   # Apr 5 清明 → 辰月 (index 4)
-    5: (6, 5),   # May 6 立夏 → 巳月 (index 5)
-    6: (6, 6),   # Jun 6 芒种 → 午月 (index 6)
-    7: (7, 7),   # Jul 7 小暑 → 未月 (index 7)
-    8: (8, 8),   # Aug 8 立秋 → 申月 (index 8)
-    9: (8, 9),   # Sep 8 白露 → 酉月 (index 9)
-    10: (8, 10), # Oct 8 寒露 → 戌月 (index 10)
-    11: (7, 11), # Nov 7 立冬 → 亥月 (index 11)
-    12: (7, 0),  # Dec 7 大雪 → 子月 (index 0)
-}
-
-
-# 月干支（基于节气精确计算）
-def get_month_stem_branch(year, month, day):
-    """
-    计算月干支（基于节气划分月份）
-    优先使用高精度节气库，回退到 SOLAR_TERM_DATES 近似。
-
-    年干决定月干起始(五虎遁)：
-    甲己之年丙作首，乙庚之岁戊为头，丙辛之年庚寅始，丁壬壬寅顺水流，戊癸甲寅始追求
-
-    Args:
-        year: 公历年
-        month: 公历月
-        day: 公历日
-    Returns:
-        str: 月干支，如 "丁酉"
-    """
-    # --- 优先：使用高精度节气库 ---
-    if _HAS_PRECISE_LUNAR:
-        if _LUNAR_LIB_NAME == "lunar-python":
-            lunar = _LP_Solar.fromYmd(year, month, day).getLunar()
-            return lunar.getMonthInGanZhi()
-        elif _LUNAR_LIB_NAME == "sxtwl":
-            lunar = sxtwl.Lunar()
-            d = lunar.getDayBySolar(year, month, day)
-            # sxtwl 月柱：通过 getLunarYear 或年份直接推算
-            lunar_year = d.getLunarYear()
-            jieqi_index = d.getJieQi()
-            # 节气→地支映射：小寒(0)->丑(1), 立春(1)->寅(2), ... 大雪(11)->子(0)
-            jieqi_to_branch = {
-                0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6,
-                6: 7, 7: 8, 8: 9, 9: 10, 10: 11, 11: 0,
-            }
-            # 若有节气，取该节气对应月支；否则取当前农历月
-            if jieqi_index >= 0 and jieqi_index in jieqi_to_branch:
-                branch_idx = jieqi_to_branch[jieqi_index]
-            else:
-                # 无节气当天：根据最近的节气判断（sxtwl 用 d 对象取月）
-                branch_idx = (d.getMonth() + 1) % 12
-            # 五虎遁月干
-            year_stem = get_year_stem_branch(year, month, day)[0]
-            month_stem_start = {
-                "甲": 2, "己": 2, "乙": 4, "庚": 4, "丙": 6, "辛": 6,
-                "丁": 8, "壬": 8, "戊": 0, "癸": 0,
-            }
-            stem_start = month_stem_start[year_stem]
-            stem_offset = (branch_idx - 2) % 12
-            stem_idx = (stem_start + stem_offset) % 10
-            return HEAVENLY_STEMS[stem_idx] + EARTHLY_BRANCHES[branch_idx]
-
-    # --- 回退：使用 SOLAR_TERM_DATES 近似 ---
-    # 注意：即使回退也传入 month/day 以精确判断立春年界
-    year_stem = get_year_stem_branch(year, month, day)[0]
-
-    # 五虎遁月干起始索引
-    month_stem_start = {
-        "甲": 2, "己": 2,  # 丙寅月起
-        "乙": 4, "庚": 4,  # 戊寅月起
-        "丙": 6, "辛": 6,  # 庚寅月起
-        "丁": 8, "壬": 8,  # 壬寅月起
-        "戊": 0, "癸": 0,  # 甲寅月起
-    }
-
-    # 根据地支判断当前处于哪个月（节气划分）
-    if day >= SOLAR_TERM_DATES[month][0]:
-        branch_idx = SOLAR_TERM_DATES[month][1]
+    """年干支。以立春为年界：未过立春仍作前一年。"""
+    if month > 0 and day > 0:
+        dt = _noon(year, month, day)
     else:
-        # 取前一个月的地支
-        prev_month = month - 1 if month > 1 else 12
-        branch_idx = SOLAR_TERM_DATES[prev_month][1]
+        dt = _noon(year, 6, 15)  # 未给月日 → 取年中，必在立春之后
+    return _GANZHI.ganzhi_of(dt, boundary=GANZHI_BOUNDARY).year_ganzhi
 
-    # 计算月干：以寅月(branch_idx=2)为偏移0
-    stem_start = month_stem_start[year_stem]
-    stem_offset = (branch_idx - 2) % 12
-    stem_idx = (stem_start + stem_offset) % 10
 
-    return HEAVENLY_STEMS[stem_idx] + EARTHLY_BRANCHES[branch_idx]
+def get_month_stem_branch(year, month, day):
+    """月干支。以十二节定月支，五虎遁定月干。"""
+    return _GANZHI.ganzhi_of(_noon(year, month, day), boundary=GANZHI_BOUNDARY).month_ganzhi
 
-# 日干支计算
+
 def get_day_stem_branch(year, month, day):
-    """
-    计算日干支
-    优先使用高精度节气库，回退到基准日推算方法。
+    """日干支。由儒略日数直接取模，不查表、无累积误差。"""
+    return _GANZHI.day_ganzhi_of(year, month, day)
 
-    Args:
-        year: 公历年
-        month: 公历月
-        day: 公历日
-    Returns:
-        str: 日干支，如 "乙未"
-    """
-    # --- 优先：使用高精度节气库 ---
-    if _HAS_PRECISE_LUNAR:
-        if _LUNAR_LIB_NAME == "lunar-python":
-            lunar = _LP_Solar.fromYmd(year, month, day).getLunar()
-            return lunar.getDayInGanZhi()
-        elif _LUNAR_LIB_NAME == "sxtwl":
-            lunar = sxtwl.Lunar()
-            d = lunar.getDayBySolar(year, month, day)
-            return d.getDayInGanZhi()
 
-    # --- 回退：使用基准日推算 ---
-    # 使用 datetime 计算天数差
-    base_date = datetime(2024, 1, 1)  # 2024-01-01 = 甲子日
-    target_date = datetime(year, month, day)
-
-    delta = (target_date - base_date).days
-
-    # 2024-01-01是甲子日: stem=0(甲), branch=0(子)
-    base_stem = 0
-    base_branch = 0
-
-    stem_idx = (base_stem + delta) % 10
-    if stem_idx < 0:
-        stem_idx += 10
-    branch_idx = (base_branch + delta) % 12
-    if branch_idx < 0:
-        branch_idx += 12
-    
-    return HEAVENLY_STEMS[stem_idx] + EARTHLY_BRANCHES[branch_idx]
-
-# 时干支 (五鼠遁)
 def get_hour_stem_branch(day_stem, hour):
-    """
-    计算时干支
-    甲己还加甲，乙庚丙作初，丙辛从戊起，丁壬庚子居，戊癸壬子始
-    时辰对应地支：
-    23-1:子, 1-3:丑, 3-5:寅, 5-7:卯, 7-9:辰, 9-11:巳
-    11-13:午, 13-15:未, 15-17:申, 17-19:酉, 19-21:戌, 21-23:亥
-    """
-    # 确定时辰地支
-    if hour == 23 or hour == 0:
-        branch_idx = 0  # 子
-    elif 1 <= hour < 3:
-        branch_idx = 1  # 丑
-    elif 3 <= hour < 5:
-        branch_idx = 2  # 寅
-    elif 5 <= hour < 7:
-        branch_idx = 3  # 卯
-    elif 7 <= hour < 9:
-        branch_idx = 4  # 辰
-    elif 9 <= hour < 11:
-        branch_idx = 5  # 巳
-    elif 11 <= hour < 13:
-        branch_idx = 6  # 午
-    elif 13 <= hour < 15:
-        branch_idx = 7  # 未
-    elif 15 <= hour < 17:
-        branch_idx = 8  # 申
-    elif 17 <= hour < 19:
-        branch_idx = 9  # 酉
-    elif 19 <= hour < 21:
-        branch_idx = 10  # 戌
-    else:  # 21 <= hour < 23
-        branch_idx = 11  # 亥
-    
-    # 五鼠遁日起时干
-    hour_stem_start = {
-        "甲": 0,  # 甲子时起
-        "己": 0,
-        "乙": 2,  # 丙子时起
-        "庚": 2,
-        "丙": 4,  # 戊子时起
-        "辛": 4,
-        "丁": 6,  # 庚子时起
-        "壬": 6,
-        "戊": 8,  # 壬子时起
-        "癸": 8,
-    }
-    
-    stem_start = hour_stem_start[day_stem]
-    stem_idx = (stem_start + branch_idx) % 12
-    if stem_idx >= 10:
-        stem_idx -= 10
-    
-    return HEAVENLY_STEMS[stem_idx] + EARTHLY_BRANCHES[branch_idx]
+    """时干支。五鼠遁，日干 + 时辰地支。"""
+    return _GANZHI.hour_ganzhi_of(day_stem, hour)
 
+
+def ganzhi_moment(dt):
+    """完整四柱 + 节气上下文，供需要交节信息的上层调用。"""
+    return _GANZHI.ganzhi_of(dt if isinstance(dt, datetime) else _noon(*dt[:3]),
+                             boundary=GANZHI_BOUNDARY)
+
+
+def crosscheck_optional_libraries(years=range(2000, 2031)):
+    """若装了 lunar-python / sxtwl，抽样交叉核对内核结果；不一致则返回差异清单。
+
+    这两个库只是旁证，不参与主计算（主计算需自检、可移植、无编译依赖）。
+    """
+    diffs = []
+    try:
+        from lunar_python import Solar
+    except ImportError:
+        Solar = None
+    if Solar is None:
+        return diffs
+    for y in years:
+        for m, d in ((1, 5), (2, 2), (2, 6), (3, 15), (5, 6), (6, 21), (8, 8),
+                     (10, 9), (11, 8), (12, 22)):
+            try:
+                lunar = Solar.fromYmd(y, m, d).getLunar()
+            except Exception:
+                continue
+            mine = _GANZHI.ganzhi_of(_noon(y, m, d), boundary=GANZHI_BOUNDARY)
+            theirs = (lunar.getYearInGanZhiByLiChun() if GANZHI_BOUNDARY == "day"
+                      else lunar.getYearInGanZhi())
+            if mine.year_ganzhi != theirs or mine.month_ganzhi != lunar.getMonthInGanZhi() \
+                    or mine.day_ganzhi != lunar.getDayInGanZhi():
+                diffs.append({
+                    "date": f"{y}-{m:02d}-{d:02d}",
+                    "kernel": f"{mine.year_ganzhi} {mine.month_ganzhi} {mine.day_ganzhi}",
+                    "library": f"{theirs} {lunar.getMonthInGanZhi()} {lunar.getDayInGanZhi()}",
+                })
+    return diffs
+
+
+# =============================================================================
 # =============================================================================
 # 第七部分：起卦方法
 # =============================================================================
@@ -1875,18 +1680,6 @@ def format_text_output(result):
     lines.append(f"卦辞：{oh['judgment']}")
     lines.append("")
 
-    # 文王卦序
-    try:
-        from king_wen_sequence import king_wen_interpretation
-        kw = king_wen_interpretation(oh.get("sequence", 0))
-        if kw.get("king_wen_pos"):
-            lines.append(f"【文王序】第{kw['king_wen_pos']}卦，{kw['canon']}")
-            lines.append(f"  象征：{kw['symbolism']}")
-            lines.append(f"  阶段：{kw['life_phase']}")
-            lines.append("")
-    except ImportError:
-        pass
-
     # 排盘表
     lines.append("排盘详表（从上爻到下爻）：")
     lines.append(f"{'爻位':<6}{'六神':<6}{'六亲':<6}{'地支':<6}{'干支':<8}{'动静':<8}{'标记':<8}")
@@ -2112,18 +1905,6 @@ def format_reading_output(result, chain=None):
     if oh.get('judgment'):
         lines.append(f"卦　辞：{oh['judgment']}")
     lines.append("")
-
-    # 文王卦序
-    try:
-        from king_wen_sequence import king_wen_interpretation
-        kw = king_wen_interpretation(oh.get("sequence", 0))
-        if kw.get("king_wen_pos"):
-            lines.append(f"  文王序：第{kw['king_wen_pos']}卦，{kw['canon']}")
-            lines.append(f"  象旨：{kw['symbolism']}")
-            lines.append(f"  阶段：{kw['life_phase']}")
-            lines.append("")
-    except ImportError:
-        pass
 
     # 排盘表（上爻→下爻）
     yao_lines = oh.get("yao_lines", [])
@@ -2579,49 +2360,37 @@ def _hour_to_shichen(hour, minute=0):
 
 
 def handle_zi_hour(hour, minute, year, month, day):
-    """
-    早晚子时区分（出自《增删易》《卜筮正宗》）。
+    """子时（夜子／晨子）判定。
 
-    经典规则：
-      - 早子时 (23:00-00:00)：日柱用当日天干地支
-      - 晚子时 (00:00-01:00)：日柱用翌日天干地支
-      - 时柱地支均为「子」
+    默认口径：日辰以当日历日为准，夜子时不作次日。
+      - 夜子时（旧码误标"早子时"）23:00–23:59 → 日柱用当日
+      - 晨子时（旧码误标"晚子时"）00:00–00:59 → 日柱用当日
 
-    Args:
-        hour: 小时 (0-23)
-        minute: 分钟 (0-59)
-        year, month, day: 公历日期
+    历史缺陷（2026-09-22 修）：旧实现在 hour == 0 时返回**翌日**日柱，
+    等于把 00:00–01:00 起的所有卦的日辰推后一天——任何流派都不持此说。
+    欲采"23 点换日"一派，用 `--zi-hour-type late` 显式指定，不默认生效。
 
     Returns:
-        dict with keys: type, shichen, day_date, description, day_year, day_month, day_day
-        None  if the hour is not zi (子) hour
+        dict（含 type/shichen/day_* 与说明），非子时返回 None
     """
     base_date = datetime(year, month, day)
 
     if hour == 23:
-        # 早子时: 日柱用当日
-        return {
-            "type": "早子时",
-            "shichen": "子",
-            "day_date": base_date,
-            "day_year": base_date.year,
-            "day_month": base_date.month,
-            "day_day": base_date.day,
-            "description": f"早子时(23:00-00:00)，{base_date.strftime('%Y-%m-%d')}日子时，日柱用当日",
-        }
-    elif hour == 0 and minute <= 59:
-        # 晚子时: 日柱用翌日
-        next_date = base_date + timedelta(days=1)
-        return {
-            "type": "晚子时",
-            "shichen": "子",
-            "day_date": next_date,
-            "day_year": next_date.year,
-            "day_month": next_date.month,
-            "day_day": next_date.day,
-            "description": f"晚子时(00:00-01:00)，{next_date.strftime('%Y-%m-%d')}日子时，日柱用翌日",
-        }
-    return None  # not zi hour
+        zi_type, label = "night_zi", "夜子时(23:00-00:00)"
+    elif hour == 0:
+        zi_type, label = "morning_zi", "晨子时(00:00-01:00)"
+    else:
+        return None
+
+    return {
+        "type": zi_type,
+        "shichen": "子",
+        "day_date": base_date,
+        "day_year": base_date.year,
+        "day_month": base_date.month,
+        "day_day": base_date.day,
+        "description": f"{label}，{base_date.strftime('%Y-%m-%d')}日子时，日柱用当日",
+    }
 
 
 # =============================================================================
@@ -3885,29 +3654,30 @@ def main():
             _minute = longitude_info["corrected_minute"] if longitude_info else 0
             zi_hour_info = handle_zi_hour(hour, _minute, year, month, day)
 
-            # 手动指定子时类型 override
+            # 手动指定子时流派 override
             if args.zi_hour_type is not None:
                 base_date = datetime(year, month, day)
                 if args.zi_hour_type == "late":
+                    # 换日派：夜子时已作次日之日辰
                     next_date = base_date + timedelta(days=1)
                     zi_hour_info = {
-                        "type": "晚子时(手动)",
+                        "type": "夜子时(换日派·手动)",
                         "shichen": "子",
                         "day_date": next_date,
                         "day_year": next_date.year,
                         "day_month": next_date.month,
                         "day_day": next_date.day,
-                        "description": f"晚子时(手动指定)，{next_date.strftime('%Y-%m-%d')}日子时，日柱用翌日",
+                        "description": f"夜子时(手动·换日派)，日柱取{next_date.strftime('%Y-%m-%d')}日子时",
                     }
-                else:  # early
+                else:  # early → 与默认口径一致
                     zi_hour_info = {
-                        "type": "早子时(手动)",
+                        "type": "子时(当日派·手动)",
                         "shichen": "子",
                         "day_date": base_date,
                         "day_year": base_date.year,
                         "day_month": base_date.month,
                         "day_day": base_date.day,
-                        "description": f"早子时(手动指定)，{base_date.strftime('%Y-%m-%d')}日子时，日柱用当日",
+                        "description": f"子时(手动·当日派)，{base_date.strftime('%Y-%m-%d')}日子时，日柱用当日",
                     }
 
             # 用 zi_hour_info 中的 day_date 覆盖日柱参数
