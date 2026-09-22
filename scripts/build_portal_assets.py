@@ -175,9 +175,10 @@ def main() -> int:
             subprocess.run([sys.executable, str(ROOT / "scripts" / "evaluate.py"),
                             "--split", split, "--save"], cwd=str(ROOT), check=False)
 
+    from yishu_core import __version__
     payload = {
-        "project": "六爻纳甲断卦系统",
-        "version": "M3",
+        "project": "易 · 六爻纳甲断卦系统",
+        "version": __version__,
         "blind": build_blind(),
         "samples": build_samples(),
         "pipeline": [

@@ -72,6 +72,31 @@ def eval_metrics(split: str) -> dict:
             "top1": disc.get("top1_hit_rate"), "rank": disc.get("avg_rank_of_correct")}
 
 
+def version_report() -> list[str]:
+    """返回不一致项。版本唯一真值源是 yishu_core.__version__。"""
+    import yishu_core
+
+    problems = [f"版本号不合语义：{yishu_core.__version__}"] if not re.match(
+        r"^\d+\.\d+\.\d+$", yishu_core.__version__) else []
+    import tomllib
+    proj = tomllib.loads((ROOT / "pyproject.toml").read_bytes().decode("utf-8"))["project"]
+    if "version" in proj:
+        problems.append(f"pyproject [project] 里又写了字面 version={proj['version']}，"
+                        f"应改走 dynamic 从 yishu_core 取")
+    if "version" not in proj.get("dynamic", []):
+        problems.append("pyproject [project].dynamic 未包含 version")
+
+    for rel in ("assets/portal_data.json", "index.html"):
+        text = (ROOT / rel).read_text(encoding="utf-8")
+        m = re.search(r'"version"\s*:\s*"([^"]+)"', text)
+        if not m:
+            problems.append(f"{rel} 找不到 version 字段")
+        elif m.group(1) != yishu_core.__version__:
+            problems.append(f"{rel} 版本是 {m.group(1)}，应为 {yishu_core.__version__}"
+                            f"（跑 python scripts/build_portal_assets.py 重建）")
+    return problems
+
+
 def main() -> int:
     force_utf8_stdio()
     ap = argparse.ArgumentParser(description="六爻质量门")
@@ -103,7 +128,17 @@ def main() -> int:
             failures.append(f"{label} {value:g} 劣于基线")
             print(raw[-1500:])
 
-    selected = set(args.only or ["calendar", "smoke", "chain_tests", "regression", "eval"])
+    selected = set(args.only or ["version", "calendar", "smoke", "chain_tests", "regression", "eval"])
+
+    if "version" in selected:
+        import yishu_core
+        print(f"\n[0] 版本一致性（唯一真值源 yishu_core.__version__ = {yishu_core.__version__}）")
+        vproblems = version_report()
+        for v in vproblems:
+            print(f"  × {v}")
+        if not vproblems:
+            print(f"  √ 全项目统一 v{yishu_core.__version__}，无第二处版本号")
+        failures.extend(vproblems)
 
     if "calendar" in selected:
         print("\n[1] 干支历内核自检")

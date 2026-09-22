@@ -2766,6 +2766,7 @@ def parse_arguments():
         help="手动指定子时类型：early=早子时(当日日柱)，late=晚子时(翌日日柱)。优先级高于自动判断。"
     )
 
+    parser.add_argument("--version", action="store_true", help="打印易·六爻版本后退出")
     parser.add_argument(
         "--depth",
         choices=["brief", "standard", "full"],
@@ -3370,6 +3371,11 @@ def _check_verify_mode(args):
 def main():
     _force_utf8_stdio()
     args = parse_arguments()
+
+    if getattr(args, "version", False):
+        import yishu_core
+        print(f"易 · 六爻 v{yishu_core.__version__}")
+        return
 
     # ── 模式1：批量演卦 (优先级最高，覆盖 --mode) ──
     if args.batch is not None and args.batch > 0:

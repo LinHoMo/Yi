@@ -1,6 +1,6 @@
 {
-  "project": "六爻纳甲断卦系统",
-  "version": "M3",
+  "project": "易 · 六爻纳甲断卦系统",
+  "version": "0.0.1",
   "blind": {
     "metric": "古籍案例对齐分（strict 口径）",
     "updated": "2026-09-22",
