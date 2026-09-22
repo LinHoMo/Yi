@@ -254,11 +254,11 @@ footer{margin-top:28px;text-align:center;color:var(--muted);font-size:12px}
   "blind": {
     "metric": "古籍案例对齐分（strict 口径）",
     "updated": "2026-09-22",
-    "headline": 78.7,
+    "headline": 78.3,
     "headline_split": "holdout（未参与调参）",
     "headline_n": 12,
     "tune": {
-      "avg": 93.7,
+      "avg": 93.6,
       "n": 20,
       "min": 57.9,
       "scores": [
@@ -269,7 +269,7 @@ footer{margin-top:28px;text-align:center;color:var(--muted);font-size:12px}
         84.2,
         92.6,
         96.8,
-        92.6,
+        89.5,
         100.0,
         91.8,
         92.6,
@@ -346,14 +346,14 @@ footer{margin-top:28px;text-align:center;color:var(--muted);font-size:12px}
     },
     "yingqi": {
       "top1": 29.4,
-      "avg_rank": 2.13,
-      "set_size": 4.4,
-      "random_expectancy": 36.3,
+      "avg_rank": 2.27,
+      "set_size": 4.5,
+      "random_expectancy": 37.3,
       "n": 17
     },
     "note": "衡量引擎输出与《增删卜易》等古籍案例要点的一致性，属回归指标，不是现实世界预言命中率。real 占卜为象征推演，给方向不给定论。",
     "holdout": {
-      "avg": 78.7,
+      "avg": 78.3,
       "n": 12,
       "dims": {
         "use_god_category": {
@@ -401,7 +401,7 @@ footer{margin-top:28px;text-align:center;color:var(--muted);font-size:12px}
         84.2,
         57.9,
         42.1,
-        96.8,
+        92.6,
         100.0,
         86.3,
         100.0,
@@ -422,7 +422,7 @@ footer{margin-top:28px;text-align:center;color:var(--muted);font-size:12px}
         "HO012"
       ],
       "yingqi_top1": 25.0,
-      "yingqi_rank": 2.4
+      "yingqi_rank": 2.6
     },
     "scores": [
       57.9,
@@ -432,7 +432,7 @@ footer{margin-top:28px;text-align:center;color:var(--muted);font-size:12px}
       84.2,
       92.6,
       96.8,
-      92.6,
+      89.5,
       100.0,
       91.8,
       92.6,
@@ -446,7 +446,7 @@ footer{margin-top:28px;text-align:center;color:var(--muted);font-size:12px}
       82.4,
       100.0
     ],
-    "avg": 78.7,
+    "avg": 78.3,
     "history": [
       {
         "label": "M0 真基线(tune)",
@@ -454,7 +454,7 @@ footer{margin-top:28px;text-align:center;color:var(--muted);font-size:12px}
       },
       {
         "label": "M2.2 应期择优(tune)",
-        "avg": 93.7
+        "avg": 93.6
       }
     ]
   },
@@ -764,6 +764,89 @@ footer{margin-top:28px;text-align:center;color:var(--muted);font-size:12px}
           "line_text": "莫益之，或击之，立心勿恒，凶"
         }
       ],
+      "changed_yao_lines": [],
+      "advanced": {
+        "hidden_movement": {
+          "has_hidden_movement": true,
+          "details": [
+            {
+              "position": 3,
+              "name": "九三",
+              "branch": "辰",
+              "element": "土",
+              "six_relation": "妻财",
+              "six_spirit": "白虎",
+              "type": "冲空则实",
+              "effect_strength": "实",
+              "line_score": 1.0,
+              "month_strength": "相",
+              "day_strength": "旺",
+              "overall_strength": "旺",
+              "is_day_break": false,
+              "description": "三爻(辰旬空)被日辰戌冲，冲空则实，此爻由虚转实"
+            }
+          ],
+          "summary": "三爻(辰旬空)被日辰戌冲，冲空则实，此爻由虚转实"
+        },
+        "monthly_break": {
+          "has_monthly_break": false,
+          "details": [],
+          "summary": "本卦无月破之爻"
+        },
+        "triple_combo": {
+          "has_triple_combo": false,
+          "details": [],
+          "summary": "本卦无三合局"
+        },
+        "advance_retreat": {
+          "has_advance_retreat": false,
+          "details": [],
+          "summary": "无动爻或无变卦"
+        },
+        "clash_harmony": {
+          "hexagram_type": "无明确合冲",
+          "pairs": [
+            {
+              "positions": [
+                1,
+                4
+              ],
+              "branches": [
+                "子",
+                "未"
+              ],
+              "relation": "无特殊",
+              "description": "位置初爻与四爻（子与未）无合冲"
+            },
+            {
+              "positions": [
+                2,
+                5
+              ],
+              "branches": [
+                "寅",
+                "巳"
+              ],
+              "relation": "无特殊",
+              "description": "位置二爻与五爻（寅与巳）无合冲"
+            },
+            {
+              "positions": [
+                3,
+                6
+              ],
+              "branches": [
+                "辰",
+                "卯"
+              ],
+              "relation": "无特殊",
+              "description": "位置三爻与上爻（辰与卯）无合冲"
+            }
+          ],
+          "summary": "无明确合冲：位置初爻与四爻（子与未）无合冲；位置二爻与五爻（寅与巳）无合冲；位置三爻与上爻（辰与卯）无合冲",
+          "meaning": "本卦各对应爻位无合无冲，平顺之象，吉凶需依用神决断。"
+        }
+      },
       "expected": {
         "verdict": "吉",
         "use_god": "妻财",
@@ -810,13 +893,13 @@ footer{margin-top:28px;text-align:center;color:var(--muted);font-size:12px}
       "verdict": "吉",
       "final_score": 1.08,
       "confidence": 60,
-      "yingqi": "重点应期：辰日、戌日、亥日、辰月、酉日。主应期 辰日（用神旬空，冲空则实）。事情偏慢，可能要等旺相之月，年内陆续应验——别用三五天去衡量。依据：用神「戌」待辰戌丑未月（季月）之月应、原神旺日（巳午日）或值日应、用神「戌」出旬之日应（出空/填实）。",
+      "yingqi": "重点应期：辰日、戌日、亥日、酉日、辰月。主应期 辰日（用神旬空，冲空则实）。事情偏慢，可能要等旺相之月，年内陆续应验——别用三五天去衡量。依据：用神「戌」待辰戌丑未月（季月）之月应、原神旺日（巳午日）或值日应、用神「戌」出旬之日应（出空/填实）。",
       "yingqi_branches": [
         "辰日",
         "戌日",
         "亥日",
-        "辰月",
-        "酉日"
+        "酉日",
+        "辰月"
       ],
       "yingqi_rules": [
         {
@@ -832,12 +915,12 @@ footer{margin-top:28px;text-align:center;color:var(--muted);font-size:12px}
           "rule": "空亡之支出空值日"
         },
         {
-          "token": "辰月",
-          "rule": "旺相之月"
+          "token": "酉日",
+          "rule": "化出之支值日"
         },
         {
-          "token": "酉日",
-          "rule": "日辰值事"
+          "token": "辰月",
+          "rule": "旺相之月"
         }
       ],
       "pattern_tags": [
@@ -931,7 +1014,7 @@ footer{margin-top:28px;text-align:center;color:var(--muted);font-size:12px}
           "[卦身] 卦身在四爻（子孙）——占婚姻: 子息有缘",
           "[综合] 吉 — 评分1.08"
         ],
-        "summary_text": "=== 六爻思维链分析结果 ===\n【本卦】恒（震，木）\n【用神】妻财（土）\n【旺衰】偏弱（评分：1.38）\n【动变】偏吉（动变总体有利）（效应：+1.00）\n【最终】吉 — 整体是顺的，往前走问题不大\n【置信度】60%（中 — 大体可断，细节待验）\n【应期】重点应期：辰日、戌日、亥日、辰月、酉日。主应期 辰日（用神旬空，冲空则实）。事情偏慢，可能要等旺相之月，年内陆续应验——别用三五天去衡量。依据：用神「戌」待辰戌丑未月（季月）之月应、原神旺日（巳午日）或值日应、用神「戌」出旬之日应（出空/填实）。\n【卦身】卦身在四爻（子孙）——占婚姻: 子息有缘\n【飞伏互断】（总体：伏得出）\n  二爻：飞父母（亥）→伏兄弟（寅）：飞生伏",
+        "summary_text": "=== 六爻思维链分析结果 ===\n【本卦】恒（震，木）\n【用神】妻财（土）\n【旺衰】偏弱（评分：1.38）\n【动变】偏吉（动变总体有利）（效应：+1.00）\n【最终】吉 — 整体是顺的，往前走问题不大\n【置信度】60%（中 — 大体可断，细节待验）\n【应期】重点应期：辰日、戌日、亥日、酉日、辰月。主应期 辰日（用神旬空，冲空则实）。事情偏慢，可能要等旺相之月，年内陆续应验——别用三五天去衡量。依据：用神「戌」待辰戌丑未月（季月）之月应、原神旺日（巳午日）或值日应、用神「戌」出旬之日应（出空/填实）。\n【卦身】卦身在四爻（子孙）——占婚姻: 子息有缘\n【飞伏互断】（总体：伏得出）\n  二爻：飞父母（亥）→伏兄弟（寅）：飞生伏",
         "factor_contributions": [
           {
             "name": "用神旺衰",
@@ -1045,7 +1128,10 @@ footer{margin-top:28px;text-align:center;color:var(--muted);font-size:12px}
           "is_world": false,
           "is_response": false,
           "is_empty": false,
-          "line_text": "田无禽"
+          "line_text": "田无禽",
+          "changed_branch": "酉",
+          "changed_element": "金",
+          "changed_six_relation": "官鬼"
         },
         {
           "position": 5,
@@ -1078,6 +1164,104 @@ footer{margin-top:28px;text-align:center;color:var(--muted);font-size:12px}
           "line_text": "振恒，凶"
         }
       ],
+      "changed_yao_lines": [],
+      "advanced": {
+        "hidden_movement": {
+          "has_hidden_movement": false,
+          "details": [],
+          "summary": "本卦无暗动之爻"
+        },
+        "monthly_break": {
+          "has_monthly_break": true,
+          "details": [
+            {
+              "position": 4,
+              "name": "六四",
+              "branch": "午",
+              "element": "火",
+              "six_relation": "子孙",
+              "six_spirit": "勾陈",
+              "is_moving": true,
+              "is_empty": false,
+              "month_branch": "子",
+              "day_branch": "酉",
+              "both_broken": false,
+              "month_strength": "死",
+              "day_strength": "囚",
+              "salvageable": false,
+              "description": "四爻(午)为月破之爻，无解救之力，动爻月破，力量减半"
+            }
+          ],
+          "summary": "四爻(午)为月破之爻，无解救之力，动爻月破，力量减半"
+        },
+        "triple_combo": {
+          "has_triple_combo": false,
+          "details": [],
+          "summary": "本卦无三合局"
+        },
+        "advance_retreat": {
+          "has_advance_retreat": true,
+          "details": [
+            {
+              "position": 4,
+              "name": "六四",
+              "original_branch": "午",
+              "changed_branch": "酉",
+              "type": "无进退",
+              "six_relation": "子孙",
+              "six_spirit": "勾陈",
+              "advance_score": 0.0,
+              "advance_orig_strength": "偏弱",
+              "advance_chg_strength": "相",
+              "description": "四爻(午→酉)不涉及进退神，需结合其他因素分析"
+            }
+          ],
+          "summary": "四爻(午→酉)不涉及进退神，需结合其他因素分析"
+        },
+        "clash_harmony": {
+          "hexagram_type": "无明确合冲",
+          "pairs": [
+            {
+              "positions": [
+                1,
+                4
+              ],
+              "branches": [
+                "丑",
+                "午"
+              ],
+              "relation": "无特殊",
+              "description": "位置初爻与四爻（丑与午）无合冲"
+            },
+            {
+              "positions": [
+                2,
+                5
+              ],
+              "branches": [
+                "亥",
+                "申"
+              ],
+              "relation": "无特殊",
+              "description": "位置二爻与五爻（亥与申）无合冲"
+            },
+            {
+              "positions": [
+                3,
+                6
+              ],
+              "branches": [
+                "酉",
+                "戌"
+              ],
+              "relation": "无特殊",
+              "description": "位置三爻与上爻（酉与戌）无合冲"
+            }
+          ],
+          "summary": "无明确合冲：位置初爻与四爻（丑与午）无合冲；位置二爻与五爻（亥与申）无合冲；位置三爻与上爻（酉与戌）无合冲",
+          "meaning": "本卦各对应爻位无合无冲，平顺之象，吉凶需依用神决断。"
+        }
+      },
       "expected": {
         "verdict": "吉",
         "use_god": "妻财",
@@ -1124,13 +1308,13 @@ footer{margin-top:28px;text-align:center;color:var(--muted);font-size:12px}
       "verdict": "大吉",
       "final_score": 4.22,
       "confidence": 55,
-      "yingqi": "重点应期：申日、寅日、亥日、卯日、亥月。主应期 申日（用神被寅合住，冲开之日）。事情来得偏快，快则当日、次日就可能见分晓；事多反复，心下易感不安。合局宜候冲开之日。依据：用神「亥」待亥子月（冬）之月应、原神旺日（申酉日）或值日应、合爻逢冲之日应（合处逢冲/冲中逢合）。",
+      "yingqi": "重点应期：申日、寅日、亥日、寅年、卯日。主应期 申日（用神被寅合住，冲开之日）。事情来得偏快，快则当日、次日就可能见分晓；事多反复，心下易感不安。合局宜候冲开之日。依据：用神「亥」待亥子月（冬）之月应、原神旺日（申酉日）或值日应、合爻逢冲之日应（合处逢冲/冲中逢合）。",
       "yingqi_branches": [
         "申日",
         "寅日",
         "亥日",
-        "卯日",
-        "亥月"
+        "寅年",
+        "卯日"
       ],
       "yingqi_rules": [
         {
@@ -1146,8 +1330,16 @@ footer{margin-top:28px;text-align:center;color:var(--muted);font-size:12px}
           "rule": "发动值日"
         },
         {
+          "token": "寅年",
+          "rule": "填空之支，迟者应于其年"
+        },
+        {
           "token": "卯日",
           "rule": "空亡之支出空值日"
+        },
+        {
+          "token": "子日",
+          "rule": "化出之支值日"
         },
         {
           "token": "亥月",
@@ -1192,7 +1384,7 @@ footer{margin-top:28px;text-align:center;color:var(--muted);font-size:12px}
           "卦象偏松，仍要按医嘱治疗，不要自行停药",
           "静养与规范治疗比四处求偏方更重要",
           "可关注用神得力的那几日是否症状减轻",
-          "时机上可多留意 申日、寅日、亥日、卯日 这几日"
+          "时机上可多留意 申日、寅日、亥日、寅年 这几日"
         ],
         "caveat": "这是按纳甲六爻规则推出来的一份参考，讲的是方向和节奏，不是板上钉钉的预言。看病、打官司、做重大决定，仍要以专业意见为准。",
         "confidence_note": "线索一致程度约 55%，供你判断这份解读有多「齐心」。",
@@ -1250,7 +1442,7 @@ footer{margin-top:28px;text-align:center;color:var(--muted);font-size:12px}
           "[卦身] 卦身在初爻（父母）——占疾病: 父母为身",
           "[综合] 大吉 — 评分4.22"
         ],
-        "summary_text": "=== 六爻思维链分析结果 ===\n【本卦】姤（乾，金）\n【用神】子孙（水）\n【旺衰】弱（评分：0.6）\n【动变】中性（动变利弊参半）（效应：-0.15）\n【最终】大吉 — 顺得很，该推进的可以推进\n【置信度】55%（中等偏低 — 信号参半，谨慎判断）\n【应期】重点应期：申日、寅日、亥日、卯日、亥月。主应期 申日（用神被寅合住，冲开之日）。事情来得偏快，快则当日、次日就可能见分晓；事多反复，心下易感不安。合局宜候冲开之日。依据：用神「亥」待亥子月（冬）之月应、原神旺日（申酉日）或值日应、合爻逢冲之日应（合处逢冲/冲中逢合）。\n【卦身】卦身在初爻（父母）——占疾病: 父母为身\n【飞伏互断】（总体：伏得出）\n  二爻：飞子孙（亥）→伏妻财（寅）：飞生伏\n【变爻格局】连续三爻动、下卦全动（综合权重：2.8）\n  断曰：三爻齐动事必躁，宜速不宜迟；内卦全动，家宅不安",
+        "summary_text": "=== 六爻思维链分析结果 ===\n【本卦】姤（乾，金）\n【用神】子孙（水）\n【旺衰】弱（评分：0.6）\n【动变】中性（动变利弊参半）（效应：-0.15）\n【最终】大吉 — 顺得很，该推进的可以推进\n【置信度】55%（中等偏低 — 信号参半，谨慎判断）\n【应期】重点应期：申日、寅日、亥日、寅年、卯日。主应期 申日（用神被寅合住，冲开之日）。事情来得偏快，快则当日、次日就可能见分晓；事多反复，心下易感不安。合局宜候冲开之日。依据：用神「亥」待亥子月（冬）之月应、原神旺日（申酉日）或值日应、合爻逢冲之日应（合处逢冲/冲中逢合）。\n【卦身】卦身在初爻（父母）——占疾病: 父母为身\n【飞伏互断】（总体：伏得出）\n  二爻：飞子孙（亥）→伏妻财（寅）：飞生伏\n【变爻格局】连续三爻动、下卦全动（综合权重：2.8）\n  断曰：三爻齐动事必躁，宜速不宜迟；内卦全动，家宅不安",
         "factor_contributions": [
           {
             "name": "特殊格局",
@@ -1343,7 +1535,10 @@ footer{margin-top:28px;text-align:center;color:var(--muted);font-size:12px}
           "is_world": true,
           "is_response": false,
           "is_empty": false,
-          "line_text": "系于金柅，贞吉，有攸往，见凶，羸豕孚蹢躅"
+          "line_text": "系于金柅，贞吉，有攸往，见凶，羸豕孚蹢躅",
+          "changed_branch": "子",
+          "changed_element": "水",
+          "changed_six_relation": "子孙"
         },
         {
           "position": 2,
@@ -1358,7 +1553,10 @@ footer{margin-top:28px;text-align:center;color:var(--muted);font-size:12px}
           "is_world": false,
           "is_response": false,
           "is_empty": false,
-          "line_text": "包有鱼，无咎，不利宾"
+          "line_text": "包有鱼，无咎，不利宾",
+          "changed_branch": "寅",
+          "changed_element": "木",
+          "changed_six_relation": "妻财"
         },
         {
           "position": 3,
@@ -1373,7 +1571,10 @@ footer{margin-top:28px;text-align:center;color:var(--muted);font-size:12px}
           "is_world": false,
           "is_response": false,
           "is_empty": false,
-          "line_text": "臀无肤，其行次且，厉，无大咎"
+          "line_text": "臀无肤，其行次且，厉，无大咎",
+          "changed_branch": "辰",
+          "changed_element": "土",
+          "changed_six_relation": "父母"
         },
         {
           "position": 4,
@@ -1421,6 +1622,152 @@ footer{margin-top:28px;text-align:center;color:var(--muted);font-size:12px}
           "line_text": "姤其角，吝，无咎"
         }
       ],
+      "changed_yao_lines": [],
+      "advanced": {
+        "hidden_movement": {
+          "has_hidden_movement": false,
+          "details": [],
+          "summary": "本卦无暗动之爻"
+        },
+        "monthly_break": {
+          "has_monthly_break": true,
+          "details": [
+            {
+              "position": 5,
+              "name": "九五",
+              "branch": "申",
+              "element": "金",
+              "six_relation": "兄弟",
+              "six_spirit": "勾陈",
+              "is_moving": false,
+              "is_empty": false,
+              "month_branch": "寅",
+              "day_branch": "戌",
+              "both_broken": false,
+              "month_strength": "囚",
+              "day_strength": "相",
+              "salvageable": true,
+              "description": "五爻(申)为月破之爻，但得日辰戌生扶，尚可补救"
+            }
+          ],
+          "summary": "五爻(申)为月破之爻，但得日辰戌生扶，尚可补救"
+        },
+        "triple_combo": {
+          "has_triple_combo": true,
+          "details": [
+            {
+              "element": "火",
+              "branches": [
+                "寅",
+                "午",
+                "戌"
+              ],
+              "positions": [
+                "月(寅)",
+                4,
+                6
+              ],
+              "completeness": "待日/月",
+              "formation_type": "二爻动+日/月补",
+              "combo_status": "破局",
+              "combo_issues": [
+                "合局入墓于戌，局力不显"
+              ],
+              "combo_score_mod": -0.5,
+              "description": "寅午戌合火局，由日辰戌或月建寅补齐，力量稍逊但仍有合力。⚠破局：合局入墓于戌，局力不显"
+            }
+          ],
+          "summary": "寅午戌合火局，由日辰戌或月建寅补齐，力量稍逊但仍有合力。⚠破局：合局入墓于戌，局力不显"
+        },
+        "advance_retreat": {
+          "has_advance_retreat": true,
+          "details": [
+            {
+              "position": 1,
+              "name": "初九",
+              "original_branch": "丑",
+              "changed_branch": "子",
+              "type": "回头合",
+              "six_relation": "父母",
+              "six_spirit": "白虎",
+              "advance_score": 0.0,
+              "advance_orig_strength": "中和",
+              "advance_chg_strength": "偏弱",
+              "description": "初爻(丑→子)回头合（合住事态胶着）"
+            },
+            {
+              "position": 2,
+              "name": "九二",
+              "original_branch": "亥",
+              "changed_branch": "寅",
+              "type": "回头合",
+              "six_relation": "子孙",
+              "six_spirit": "玄武",
+              "advance_score": 0.0,
+              "advance_orig_strength": "偏弱",
+              "advance_chg_strength": "相",
+              "description": "二爻(亥→寅)回头合（合住事态胶着）"
+            },
+            {
+              "position": 3,
+              "name": "六三",
+              "original_branch": "酉",
+              "changed_branch": "辰",
+              "type": "回头合",
+              "six_relation": "兄弟",
+              "six_spirit": "青龙",
+              "advance_score": 0.0,
+              "advance_orig_strength": "中和",
+              "advance_chg_strength": "中和",
+              "description": "三爻(酉→辰)回头合（合住事态胶着）"
+            }
+          ],
+          "summary": "初爻(丑→子)回头合（合住事态胶着）；二爻(亥→寅)回头合（合住事态胶着）；三爻(酉→辰)回头合（合住事态胶着）"
+        },
+        "clash_harmony": {
+          "hexagram_type": "无明确合冲",
+          "pairs": [
+            {
+              "positions": [
+                1,
+                4
+              ],
+              "branches": [
+                "丑",
+                "午"
+              ],
+              "relation": "无特殊",
+              "description": "位置初爻与四爻（丑与午）无合冲"
+            },
+            {
+              "positions": [
+                2,
+                5
+              ],
+              "branches": [
+                "亥",
+                "申"
+              ],
+              "relation": "无特殊",
+              "description": "位置二爻与五爻（亥与申）无合冲"
+            },
+            {
+              "positions": [
+                3,
+                6
+              ],
+              "branches": [
+                "酉",
+                "戌"
+              ],
+              "relation": "无特殊",
+              "description": "位置三爻与上爻（酉与戌）无合冲"
+            }
+          ],
+          "summary": "无明确合冲：位置初爻与四爻（丑与午）无合冲；位置二爻与五爻（亥与申）无合冲；位置三爻与上爻（酉与戌）无合冲",
+          "meaning": "本卦各对应爻位无合无冲，平顺之象，吉凶需依用神决断。"
+        }
+      },
       "expected": {
         "verdict": "吉",
         "use_god": "子孙",
@@ -1745,6 +2092,107 @@ footer{margin-top:28px;text-align:center;color:var(--muted);font-size:12px}
           "line_text": "倾否，先否后喜"
         }
       ],
+      "changed_yao_lines": [],
+      "advanced": {
+        "hidden_movement": {
+          "has_hidden_movement": true,
+          "details": [
+            {
+              "position": 3,
+              "name": "六三",
+              "branch": "卯",
+              "element": "木",
+              "six_relation": "妻财",
+              "six_spirit": "螣蛇",
+              "type": "暗动(休囚，三分力)",
+              "effect_strength": "弱",
+              "line_score": 0.2,
+              "month_strength": "囚",
+              "day_strength": "死",
+              "overall_strength": "偏弱",
+              "is_day_break": false,
+              "description": "三爻(卯)静爻被日辰酉冲，休囚暗动，力微短暂"
+            }
+          ],
+          "summary": "三爻(卯)静爻被日辰酉冲，休囚暗动，力微短暂"
+        },
+        "monthly_break": {
+          "has_monthly_break": true,
+          "details": [
+            {
+              "position": 6,
+              "name": "上九",
+              "branch": "戌",
+              "element": "土",
+              "six_relation": "父母",
+              "six_spirit": "青龙",
+              "is_moving": false,
+              "is_empty": false,
+              "month_branch": "辰",
+              "day_branch": "酉",
+              "both_broken": false,
+              "month_strength": "旺",
+              "day_strength": "休",
+              "salvageable": true,
+              "description": "上爻(戌)为月破之爻，但得日辰酉生扶，尚可补救"
+            }
+          ],
+          "summary": "上爻(戌)为月破之爻，但得日辰酉生扶，尚可补救"
+        },
+        "triple_combo": {
+          "has_triple_combo": false,
+          "details": [],
+          "summary": "本卦无三合局"
+        },
+        "advance_retreat": {
+          "has_advance_retreat": false,
+          "details": [],
+          "summary": "无动爻或无变卦"
+        },
+        "clash_harmony": {
+          "hexagram_type": "六合卦",
+          "pairs": [
+            {
+              "positions": [
+                1,
+                4
+              ],
+              "branches": [
+                "未",
+                "午"
+              ],
+              "relation": "合",
+              "description": "位置初爻与四爻（未与午）六合"
+            },
+            {
+              "positions": [
+                2,
+                5
+              ],
+              "branches": [
+                "巳",
+                "申"
+              ],
+              "relation": "合",
+              "description": "位置二爻与五爻（巳与申）六合"
+            },
+            {
+              "positions": [
+                3,
+                6
+              ],
+              "branches": [
+                "卯",
+                "戌"
+              ],
+              "relation": "合",
+              "description": "位置三爻与上爻（卯与戌）六合"
+            }
+          ],
+          "summary": "六合卦：位置初爻与四爻（未与午）六合；位置二爻与五爻（巳与申）六合；位置三爻与上爻（卯与戌）六合",
+          "meaning": "六合卦主团聚、缠绵、迟缓、牵绊。占事多主反复纠缠、不易决断、需要耐心。占物则聚集不散，占病则缠绵难愈。然若用神旺相，则六合亦可为吉，主聚合之象。"
+        }
+      },
       "expected": {
         "verdict": "平/不利",
         "use_god": "妻财",
@@ -2075,6 +2523,110 @@ footer{margin-top:28px;text-align:center;color:var(--muted);font-size:12px}
           "line_text": "濡其首，厉"
         }
       ],
+      "changed_yao_lines": [],
+      "advanced": {
+        "hidden_movement": {
+          "has_hidden_movement": false,
+          "details": [],
+          "summary": "本卦无暗动之爻"
+        },
+        "monthly_break": {
+          "has_monthly_break": true,
+          "details": [
+            {
+              "position": 5,
+              "name": "九五",
+              "branch": "戌",
+              "element": "土",
+              "six_relation": "官鬼",
+              "six_spirit": "勾陈",
+              "is_moving": false,
+              "is_empty": false,
+              "month_branch": "辰",
+              "day_branch": "申",
+              "both_broken": false,
+              "month_strength": "旺",
+              "day_strength": "休",
+              "salvageable": true,
+              "description": "五爻(戌)为月破之爻，但得日辰申生扶，尚可补救"
+            }
+          ],
+          "summary": "五爻(戌)为月破之爻，但得日辰申生扶，尚可补救"
+        },
+        "triple_combo": {
+          "has_triple_combo": true,
+          "details": [
+            {
+              "element": "水",
+              "branches": [
+                "申",
+                "子",
+                "辰"
+              ],
+              "positions": [
+                4,
+                6,
+                "月(辰)"
+              ],
+              "completeness": "待日/月",
+              "formation_type": "二爻动+日/月补",
+              "combo_status": "完整",
+              "combo_issues": [],
+              "combo_score_mod": 0,
+              "description": "申子辰合水局，由日辰申或月建辰补齐，力量稍逊但仍有合力"
+            }
+          ],
+          "summary": "申子辰合水局，由日辰申或月建辰补齐，力量稍逊但仍有合力"
+        },
+        "advance_retreat": {
+          "has_advance_retreat": false,
+          "details": [],
+          "summary": "无动爻或无变卦"
+        },
+        "clash_harmony": {
+          "hexagram_type": "无明确合冲",
+          "pairs": [
+            {
+              "positions": [
+                1,
+                4
+              ],
+              "branches": [
+                "卯",
+                "申"
+              ],
+              "relation": "无特殊",
+              "description": "位置初爻与四爻（卯与申）无合冲"
+            },
+            {
+              "positions": [
+                2,
+                5
+              ],
+              "branches": [
+                "丑",
+                "戌"
+              ],
+              "relation": "无特殊",
+              "description": "位置二爻与五爻（丑与戌）无合冲"
+            },
+            {
+              "positions": [
+                3,
+                6
+              ],
+              "branches": [
+                "亥",
+                "子"
+              ],
+              "relation": "无特殊",
+              "description": "位置三爻与上爻（亥与子）无合冲"
+            }
+          ],
+          "summary": "无明确合冲：位置初爻与四爻（卯与申）无合冲；位置二爻与五爻（丑与戌）无合冲；位置三爻与上爻（亥与子）无合冲",
+          "meaning": "本卦各对应爻位无合无冲，平顺之象，吉凶需依用神决断。"
+        }
+      },
       "expected": {
         "verdict": "下跌",
         "use_god": "妻财",
@@ -2395,6 +2947,72 @@ footer{margin-top:28px;text-align:center;color:var(--muted);font-size:12px}
           "line_text": "冥升，利于不息之贞"
         }
       ],
+      "changed_yao_lines": [],
+      "advanced": {
+        "hidden_movement": {
+          "has_hidden_movement": false,
+          "details": [],
+          "summary": "本卦无暗动之爻"
+        },
+        "monthly_break": {
+          "has_monthly_break": false,
+          "details": [],
+          "summary": "本卦无月破之爻"
+        },
+        "triple_combo": {
+          "has_triple_combo": false,
+          "details": [],
+          "summary": "本卦无三合局"
+        },
+        "advance_retreat": {
+          "has_advance_retreat": false,
+          "details": [],
+          "summary": "无动爻或无变卦"
+        },
+        "clash_harmony": {
+          "hexagram_type": "无明确合冲",
+          "pairs": [
+            {
+              "positions": [
+                1,
+                4
+              ],
+              "branches": [
+                "丑",
+                "丑"
+              ],
+              "relation": "无特殊",
+              "description": "位置初爻与四爻（丑与丑）无合冲"
+            },
+            {
+              "positions": [
+                2,
+                5
+              ],
+              "branches": [
+                "亥",
+                "亥"
+              ],
+              "relation": "无特殊",
+              "description": "位置二爻与五爻（亥与亥）无合冲"
+            },
+            {
+              "positions": [
+                3,
+                6
+              ],
+              "branches": [
+                "酉",
+                "酉"
+              ],
+              "relation": "无特殊",
+              "description": "位置三爻与上爻（酉与酉）无合冲"
+            }
+          ],
+          "summary": "无明确合冲：位置初爻与四爻（丑与丑）无合冲；位置二爻与五爻（亥与亥）无合冲；位置三爻与上爻（酉与酉）无合冲",
+          "meaning": "本卦各对应爻位无合无冲，平顺之象，吉凶需依用神决断。"
+        }
+      },
       "expected": {
         "verdict": "吉",
         "use_god": "子孙",
@@ -2456,27 +3074,49 @@ footer{margin-top:28px;text-align:center;color:var(--muted);font-size:12px}
     return 'ping';
   }
 
-  function renderLines(el, yaoLines, movingOnlyTop){
-    el.innerHTML='';
-    (yaoLines||[]).forEach(y=>{
-      const row=document.createElement('div');
-      row.className='line'+(y.is_moving?' moving':'');
-      const nature=y.nature||((y.symbol||'').includes('—')?'yang':'yin');
-      const bar=document.createElement('div');
-      bar.className='bar '+(nature==='yang'?'yang':'yin');
-      if(nature==='yang'){ bar.innerHTML='<i></i>'; }
-      else { bar.innerHTML='<i></i><i></i>'; }
-      const tag=document.createElement('span');
-      tag.className='tag';
-      const bits=[y.name||('第'+y.position+'爻'), y.six_relation||'', y.earthly_branch||''];
-      if(y.is_world) bits.push('世');
-      if(y.is_response) bits.push('应');
-      if(y.is_moving) bits.push('动');
-      if(y.is_empty) bits.push('空');
-      tag.textContent=bits.filter(Boolean).join(' ');
-      row.appendChild(bar); row.appendChild(tag);
-      el.appendChild(row);
+  function renderLines(el, yaoLines, changedLines){
+    // 卦盘用 SVG 画：爻线（阳连阴断）、纳甲干支、六亲、六神、世应、动爻○×、旬空、变出之支。
+    // 原先是 CSS 色条，只能看出阴阳，六神与"动之变"全丢了——卦盘就是这类产品的界面本身。
+    const ROW=30, TOP=20, W=420;
+    const lines=[...(yaoLines||[])].sort((a,b)=>b.position-a.position);
+    const chg={}; (changedLines||[]).forEach(y=>{ chg[y.position]=y; });
+    const esc=escapeHtml;
+    let svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${TOP+lines.length*ROW+8}" width="100%" role="img" aria-label="卦盘">`;
+    if(lines.length){
+      svg+=`<g font-size="11" fill="#8a8175" font-family="'Microsoft YaHei',sans-serif">`
+         +`<text x="4" y="13">六神</text><text x="54" y="13">六亲</text>`
+         +`<text x="104" y="13">纳甲</text><text x="150" y="13">爻象</text>`
+         +`<text x="286" y="13">世应</text><text x="330" y="13">变出</text></g>`;
+    }
+    lines.forEach((y,i)=>{
+      const cy=TOP+i*ROW+ROW/2;
+      const yang=(y.nature||'')==='yang';
+      const mv=!!y.is_moving;
+      const ink=mv?'#b3401f':'#2b2620';
+      svg+=`<g font-family="'Microsoft YaHei',sans-serif">`;
+      svg+=`<text x="4" y="${cy+4}" font-size="11" fill="#8a8175">${esc(y.six_spirit||'')}</text>`;
+      svg+=`<text x="54" y="${cy+4}" font-size="12" fill="#4a433a">${esc(y.six_relation||'')}</text>`;
+      svg+=`<text x="104" y="${cy+4}" font-size="11" fill="#8a8175">${esc(y.heavenly_stem||'')}</text>`;
+      svg+=`<text x="120" y="${cy+4}" font-size="14" font-weight="600" fill="${ink}">${esc(y.earthly_branch||'')}</text>`;
+      if(yang){
+        svg+=`<rect x="150" y="${cy-4}" width="116" height="8" rx="2" fill="${ink}"/>`;
+      }else{
+        svg+=`<rect x="150" y="${cy-4}" width="53" height="8" rx="2" fill="${ink}"/>`
+           +`<rect x="213" y="${cy-4}" width="53" height="8" rx="2" fill="${ink}"/>`;
+      }
+      let marks='';
+      if(mv) marks+= yang ? '○' : '×';
+      if(y.is_empty) marks+=(marks?' ':'')+'空';
+      if(marks) svg+=`<text x="272" y="${cy+4}" font-size="11" fill="#b3401f">${esc(marks)}</text>`;
+      if(y.is_world) svg+=`<text x="286" y="${cy+4}" font-size="12" font-weight="700" fill="#b3401f">世</text>`;
+      else if(y.is_response) svg+=`<text x="286" y="${cy+4}" font-size="12" fill="#4a433a">应</text>`;
+      if(mv && y.changed_branch) svg+=`<text x="330" y="${cy+4}" font-size="12" fill="#4a433a">→${esc(y.changed_branch)} ${esc(y.changed_six_relation||'')}</text>`;
+      svg+=`<title>${esc([y.name, y.six_relation, (y.heavenly_stem||'')+(y.earthly_branch||''), y.six_spirit,
+             y.is_world?'持世':(y.is_response?'应位':''), mv?'动爻':'', y.is_empty?'旬空':''].filter(Boolean).join(' · '))}</title>`;
+      svg+=`</g>`;
     });
+    svg+=`</svg>`;
+    el.innerHTML = lines.length ? svg : '<div class="muted">无爻线数据</div>';
   }
 
   function extractTags(chain){
@@ -2533,11 +3173,18 @@ footer{margin-top:28px;text-align:center;color:var(--muted);font-size:12px}
 
     document.getElementById('hexName').textContent=sample.hexagram||'—';
     document.getElementById('hexSub').textContent=(sample.palace||'')+'宫 · '+(sample.generation||'');
-    renderLines(document.getElementById('hexLines'), sample.yao_lines);
+    renderLines(document.getElementById('hexLines'), sample.yao_lines, sample.changed_yao_lines);
 
     const chg=sample.changed||'';
     document.getElementById('chgName').textContent=chg||'（静卦）';
-    document.getElementById('chgLines').innerHTML='';
+    // 变卦栏：列出动爻化出何支何六亲（变爻六亲以主卦宫论，不另起一盘）
+    const chgEl=document.getElementById('chgLines');
+    const moves=(sample.yao_lines||[]).filter(y=>y.is_moving);
+    chgEl.innerHTML = moves.length
+      ? moves.map(y=>`<div class="line"><span class="tag">${escapeHtml(y.name||('第'+y.position+'爻'))} `
+          +`${escapeHtml(y.earthly_branch||'')} → ${escapeHtml(y.changed_branch||'?')} `
+          +`${escapeHtml(y.changed_six_relation||'')}</span></div>`).join('')
+      : '<div style="font-size:12px;color:var(--muted)">卦安静，无变卦</div>';
 
     const v=sample.verdict||'—';
     const badge=document.getElementById('verdictBadge');

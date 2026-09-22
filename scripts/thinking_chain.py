@@ -5141,8 +5141,6 @@ def _predict_timing(r: dict, step3_data: dict, step1_data: dict, day_branch: str
                (month_branch if _he(use_god_branch) == month_branch else "")
     PEAK_BRANCH = {"木": "寅", "火": "巳", "土": "辰", "金": "申", "水": "亥"}
 
-    if hui_tou_sheng:
-        _rank(hui_tou_sheng[0], "动而化回头生，期于生我之日")
     if is_empty:
         _rank(_chong(use_god_branch) or use_god_branch, "用神旬空，冲空则实")
         _rank(use_god_branch, "出旬填实")
@@ -5156,6 +5154,10 @@ def _predict_timing(r: dict, step3_data: dict, step1_data: dict, day_branch: str
         _rank(_chong(tomb_branch), "用神入墓，冲墓之日")
     if bound_by:
         _rank(_chong(bound_by), f"用神被{bound_by}合住，冲开之日")
+    # 化回头生的优先级在"解除障碍"诸法之后：先空破伏墓合，再谈生我之日。
+    # 实测把它放第一位会压掉原本排得对的主应期（top-1 29.4% → 17.6%）。
+    if hui_tou_sheng:
+        _rank(hui_tou_sheng[0], "动而化回头生，期于生我之日")
     if use_god_branch:
         if ug_moving:
             _rank(_he(use_god_branch), "用神发动，逢合之日")

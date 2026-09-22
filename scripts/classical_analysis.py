@@ -21,6 +21,7 @@ _CORE_DIR = _ks_os.path.join(_ks_os.path.dirname(_ks_os.path.abspath(__file__)),
                               _ks_os.pardir, "core")
 if _ks_os.path.isdir(_CORE_DIR) and _ks_os.path.abspath(_CORE_DIR) not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_os.path.abspath(_CORE_DIR))
+from yishu_core.najia import najia_branch
 from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     ADVANCE_PAIRS,
     BRANCH_ELEMENTS,
@@ -366,22 +367,8 @@ def get_stages_of_interest(stage):
 
 
 def get_changed_hexagram_branch(changed_hex_name, position):
-    """
-    获取变卦中指定位置(1-6)的地支。
-    position: 1=初爻(bottom), ..., 6=上爻(top)
-    """
-    if changed_hex_name is None:
-        return None
-    trigrams = HEXAGRAM_TRIGRAMS.get(changed_hex_name)
-    if trigrams is None:
-        return None
-    upper_name, lower_name = trigrams
-    if position <= 3:
-        # 内卦
-        return NAJIA_BRANCHES[lower_name]["inner"][position - 1]
-    else:
-        # 外卦
-        return NAJIA_BRANCHES[upper_name]["outer"][position - 4]
+    """变卦第 position 爻（1=初爻）的纳甲地支——实现已上收内核，此处仅保留旧名。"""
+    return najia_branch(changed_hex_name, position)
 
 
 def get_month_strength_description(month_element):

@@ -29,15 +29,18 @@ BASELINE_FILE = ROOT / "tools" / "check_baseline.json"
 BASELINE = {
     "calendar": 16,        # 自检通过项数（共 16）
     "smoke": 36,           # 有产出的分析段
-    "chain_tests": 7,      # /12  —— 已知 5 例失败（吉凶区间、动变净效应）
-    "regression": 10,      # /18  —— 已知 8 例古典结论维度不符
-    "tune": 93.7,          # 古籍对齐分 strict，n=20（参与过调参）
-    "holdout": 78.7,       # 古籍对齐分 strict，n=12（未参与调参）
+    "chain_tests": 8,      # /12 —— 引擎补 changed_branch 后多过 1 例（动变净效应）
+    "regression": 11,      # /18 —— 同上，多过 1 例
+    # 0.0.1 批次：动爻变出支补上后"化回头生"法则首次可触发，应期名次 2.13→2.27、
+    # 对齐分 −0.1/−0.4，但 top-1 持平、两套测试各多过一例。**基线下调是有意的**，
+    # 理由记于 docs/CHANGELOG.md；不许无凭据下调。
+    "tune": 93.6,          # 古籍对齐分 strict，n=20（参与过调参）
+    "holdout": 78.3,       # 古籍对齐分 strict，n=12（未参与调参）
     "tune_top1": 29.4,     # 主应期命中率 %（随机基线 8.3）
     "holdout_top1": 25.0,
 }
 # 基准应支平均名次：越小越好，单独按上限把关
-BASELINE_MAX = {"tune_rank": 2.13, "holdout_rank": 2.4}
+BASELINE_MAX = {"tune_rank": 2.27, "holdout_rank": 2.6}
 
 PATTERNS = {
     "chain_tests": r"Passed:\s*(\d+)/(\d+)",

@@ -141,6 +141,11 @@ def build_samples() -> list[dict]:
             "human": human,
             "reasoning_chain": thinking.get("reasoning_chain", []),
             "yao_lines": tc["original_hexagram"]["yao_lines"],
+            # 变卦逐爻数据：门户卦盘要画"某爻动、变出什么支"，只给卦名画不出来
+            "changed_yao_lines": (tc.get("changed_hexagram") or {}).get("yao_lines") or [],
+            "advanced": {k: v for k, v in (tc.get("advanced_analysis") or {}).items()
+                         if k in ("monthly_break", "hidden_movement", "triple_combo",
+                                  "advance_retreat", "clash_harmony")},
             "expected": case.get("expected", {}),
             "html_file": str(out_html.relative_to(ROOT)),
         })

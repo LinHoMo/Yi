@@ -32,6 +32,7 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     STEM_ELEMENTS,
     TOMB_MAP,
 )
+from yishu_core.najia import najia_branch  # noqa: E402
 
 import argparse
 import json
@@ -1394,6 +1395,20 @@ def build_hexagram_result(yao_values, question, method, year, month, day, hour, 
         new_hex_info, changed_changed_lines = find_changed_hexagram(yao_values)
         if new_hex_info:
             changed_seq, changed_hex_name, changed_judgment = new_hex_info
+
+    # 动爻所化之支与所化六亲属于"装卦"这一步的事实，必须记进爻数据。
+    # 此前引擎只给 changed_hexagram.name，爻上没有变出支，于是思维链里
+    # "动而化回头生，期于生我之日""化出之支值日"两条应期法则读不到输入，写了却从不触发。
+    if changed_hex_name:
+        for y in yao_lines_output:
+            if not y.get("is_moving"):
+                continue
+            cb = najia_branch(changed_hex_name, y["position"])
+            if not cb:
+                continue
+            y["changed_branch"] = cb
+            y["changed_element"] = BRANCH_ELEMENTS.get(cb, "")
+            y["changed_six_relation"] = determine_six_relations(cb, palace_element)
     
     # 八卦卜象解读（trigram symbolism interpretation）
     try:
