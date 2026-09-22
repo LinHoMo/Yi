@@ -18,3 +18,4 @@ batch_report.html
 
 # 求测事件日志：体积随使用增长，本地保留、历史版本可恢复
 logs/
+data/cases/eval_*.json

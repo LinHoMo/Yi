@@ -358,3 +358,44 @@ def months_ahead(dt: datetime, n: int = 12) -> list[dict]:
         nxt = next_jie_after(inst)
         cursor = nxt["instant"]
     return out
+
+
+def find_solar_date(day_ganzhi: str, month_branch: str | None = None,
+                    around: datetime | None = None, horizon_days: int = 365 * 6,
+                    limit: int = 8) -> list[dict]:
+    """反查满足「日柱 = day_ganzhi（且月令 = month_branch）」的真实公历日期。
+
+    古籍案例通常只记"巳月戊戌日占求财"，没有公历日期。旧评测管线于是把这类案例
+    一律塞进 2024-06-01 10 时，再由月支反推——于是应期日历日期全部建立在假日期上。
+    本函数把干支信息还原成真实日期，旬空、应期、真太阳时才有着落。
+
+    日柱 60 天一循环，叠加月令（约 30 天窗口）后在一个候选里唯一，故按距 `around`
+    的远近返回前 `limit` 个候选，由调用者择一。
+    """
+    if not day_ganzhi or len(day_ganzhi) != 2:
+        return []
+    if day_ganzhi[0] not in HEAVENLY_STEMS or day_ganzhi[1] not in EARTHLY_BRANCHES:
+        return []
+    if month_branch is not None and month_branch not in EARTHLY_BRANCHES:
+        return []
+
+    center = around or datetime(2024, 6, 1, 12, 0)
+    want_day = HEAVENLY_STEMS.index(day_ganzhi[0])
+    want_branch = EARTHLY_BRANCHES.index(day_ganzhi[1])
+    want_mb = EARTHLY_BRANCHES.index(month_branch) if month_branch else None
+
+    lo = (center - timedelta(days=horizon_days)).date()
+    hi = (center + timedelta(days=horizon_days)).date()
+    hits = []
+    d = lo
+    while d <= hi:
+        if day_ganzhi_index(d) % 10 == want_day and day_ganzhi_index(d) % 12 == want_branch:
+            inst = datetime(d.year, d.month, d.day, 12, 0)
+            mb, jie, _ = month_branch_index(inst)
+            if want_mb is None or mb == want_mb:
+                hits.append({"date": d.isoformat(), "dt": inst, "jie": jie,
+                             "distance": abs((d - center.date()).days)})
+        d += timedelta(days=1)
+
+    hits.sort(key=lambda h: h["distance"])
+    return hits[:limit]
