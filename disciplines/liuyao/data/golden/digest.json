@@ -1,0 +1,8 @@
+{
+  "_meta": {
+    "what": "金标准指纹基线（排盘+思维链+分析层逐字段）",
+    "how": "改动引擎行为后跑 python tools/golden.py capture 并说明为何允许漂移",
+    "cases": 288
+  },
+  "digest": "bb23797bf6044b95"
+}

@@ -18,10 +18,15 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from kernel_path import kernel_dir as _kernel_dir  # noqa: E402
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT / "scripts"), str(_kernel_dir(__file__))]
-OUT = ROOT / "scratch" / "golden_before.json"
+OUT = ROOT / "scratch" / "golden_before.json"          # 全量快照（gitignore，只在本地做逐条比对）
+DIGEST = ROOT / "data" / "golden" / "digest.json"      # 指纹基线（入库，换机器也拦得住漂移）
 
 TIMES = ["2024-02-03 10:30", "2024-02-05 10:30", "2026-09-22 23:40"]
-QUESTIONS = ["占求财", "占病", "占行人", "占婚姻", "占讼", "占失物"]
+# 问法要覆盖到"关系人"：用神那层关系法则只在句中出现父/母/夫/妻/伯… 时才触发，
+# 旧题面六种全不触发，等于给那层法则留了盲区（改了也没人报警）。
+QUESTIONS = ["占求财", "占病", "占行人", "占婚姻", "占讼", "占失物",
+             "占父病", "占夫外出", "占妻胎安否", "占伯何日回", "占子久病",
+             "占升遷", "占候文書"]
 
 
 def fingerprint() -> list[dict]:
@@ -95,28 +100,37 @@ def main() -> int:
     if mode == "capture":
         OUT.parent.mkdir(exist_ok=True)
         OUT.write_text(blob, encoding="utf-8")
-        print("金标准已落盘 →", OUT)
+        DIGEST.parent.mkdir(parents=True, exist_ok=True)
+        DIGEST.write_text(json.dumps({
+            "_meta": {"what": "金标准指纹基线（排盘+思维链+分析层逐字段）",
+                      "how": "改动引擎行为后跑 python tools/golden.py capture 并说明为何允许漂移",
+                      "cases": len(rows)},
+            "digest": digest}, ensure_ascii=False, indent=2) + chr(10), encoding="utf-8")
+        print("金标准已落盘 →", OUT, "与", DIGEST)
         return 0
 
-    if not OUT.exists():
-        print("缺金标准基线，请先 capture")
+    if not DIGEST.exists():
+        print(f"缺指纹基线 {DIGEST.relative_to(ROOT)}")
         return 2
+    want = json.loads(DIGEST.read_text(encoding="utf-8")).get("digest")
+    if digest == want:
+        print("√ 与基线指纹一致（行为未漂移）")
+        return 0
+    print(chr(10) + f"× 行为漂移：基线 {want} → 现在 {digest}")
+    if not OUT.exists():
+        print("  本地无全量快照时只能据此判断「改的是不是你要改的东西」；"
+              "要逐条比对请先 capture 再改动。")
+        return 1
     before = json.loads(OUT.read_text(encoding="utf-8"))
-    changed = [(a, b) for a, b in zip(before, rows) if a != b]
-    if len(before) != len(rows):
-        print(f"\n× 用例数变化：{len(before)} → {len(rows)}")
-        return 1
-    if changed:
-        print(f"\n× 行为发生变化（{len(changed)}/{len(rows)} 条）：")
-        for a, b in changed[:6]:
-            keys = [k for k in set(a) | set(b) if a.get(k) != b.get(k)]
-            print(f"  {a.get('case')}: {keys}")
-            for k in keys[:3]:
-                print(f"      旧 {str(a.get(k))[:200]}")
-                print(f"      新 {str(b.get(k))[:200]}")
-        return 1
-    print("√ 与重构前逐字段一致（纯结构重构，无行为漂移）")
-    return 0
+    changed = [(a, b) for a, b in zip(before, rows) if a != b] if len(before) == len(rows) else []
+    print(f"  逐条比对（本地快照 {len(before)} 条）：{len(changed)} 条变化")
+    for a, b in changed[:6]:
+        keys = [k for k in set(a) | set(b) if a.get(k) != b.get(k)]
+        print(f"  {a.get('case')}: {keys}")
+        for k in keys[:3]:
+            print(f"      旧 {str(a.get(k))[:160]}")
+            print(f"      新 {str(b.get(k))[:160]}")
+    return 1
 
 
 if __name__ == "__main__":

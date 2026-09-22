@@ -102,7 +102,17 @@ python scripts/thinking_chain.py <result_json_file>
 历法口径默认值（改动会使断卦结果不同，非必要不动）：交节按"当日即换"（`YI_GANZHI_BOUNDARY=day`）、
 夜子时不作次日（换日派需显式 `--distinguish-zi-hour --zi-hour-type late`）。
 
-**交叉校验（禁止省略）：** 思维链返回的 `step2_use_god_identification.use_god_category` 必须对照 `references/interpretation_guide.md` 中的用神取法总表确认。凡问题涉及"感情"、"喜欢"、"女友"、"喜欢我"且求测者为男性——用神应为妻财。**如果思维链选择的用神与此冲突，以指南为准，并在解读中以显式形式说明"卦象信号"及指南依据。**
+**用神的所本（禁止由 LLM 另判一遍）：** 思维链的 `step2_use_god_identification` 同时给出
+`use_god_category` 与 `use_god_basis`。basis 以「《增刪卜易》：…」开头的是原书明写的取用法则
+（关系优先层，规则表 `data/rules/use_god_relations.json`，每条带逐字引文与偏移量可回查）；
+以"问题词典默认"开头的，是词典按现代问法猜的——**这时要在正文里如实说明这是默认取法**，
+不要伪装成古籍定论。
+
+用神取错时不要由 LLM 心算改判（那违反铁律一，也没有可核对的产物）。缺的是信息就补信息：
+求测者性别与身份会改变用神（女家占婚取官鬼、男家占婚取妻财；占夫为妻占、占妻为夫占），
+`input` 里没有就把这些字段填上重跑一次，让引擎自己换到正确的法则上。
+`references/interpretation_guide.md` 的用神总表用于向当事人解释"为什么取这一爻"，
+不是用来另起炉灶推翻引擎。
 
 思维链中间结果（推理链、因子贡献表）不直接照搬到正文，但解读必须基于思维链的数据和格局判定——正文是"翻译"不是"重写"。
 

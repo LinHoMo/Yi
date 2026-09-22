@@ -152,7 +152,7 @@ def main() -> int:
             failures.append(f"{label} {value:g} 劣于基线")
             print(raw[-1500:])
 
-    selected = set(args.only or ["version", "calendar", "ordering", "smoke",
+    selected = set(args.only or ["version", "calendar", "ordering", "golden", "smoke",
                                  "chain_tests", "regression", "eval"])
 
     if "version" in selected:
@@ -184,6 +184,20 @@ def main() -> int:
                  label="爻序断言通过数", raw=out)
         if rc != 0:
             failures.append("爻序断言未通过")
+
+    if "golden" in selected:
+        # 金标准指纹：64 卦 × 3 爻型 × 时间的排盘＋思维链＋分析层逐字段快照。
+        # 基线是 data/golden/digest.json（入库），所以换机器也拦得住行为漂移——
+        # 以前它只活在 gitignore 的 scratch/ 里，等于只有我这台机器有看门狗。
+        print("\n[1.6] 金标准指纹（行为漂移看门狗）")
+        rc, out = run([sys.executable, "tools/golden.py"])
+        if "指纹" in out:
+            d = re.search(r"指纹 ([0-9a-f]{16})", out)
+            print(f"  {'√' if rc == 0 else '×'} 288 例指纹 "
+                  f"{d.group(1) if d else '?'} "
+                  f"{'与基线一致' if rc == 0 else '— 行为已漂移，改的是不是你要改的？'}")
+        if rc != 0:
+            failures.append("金标准指纹与基线不一致")
 
     if "smoke" in selected:
         print("\n[2] 分析段落产出冒烟（只验有无产出）")
