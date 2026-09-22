@@ -23,6 +23,7 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     CHONG_PAIRS,
     EARTHLY_BRANCHES,
     EIGHT_PALACES,
+    BAGUA_LINES,
     HEAVENLY_STEMS,
     HEXAGRAM_TRIGRAMS,
     HE_PAIRS,
@@ -67,6 +68,9 @@ BAGUA = {
     "艮": {"lines": [1, 0, 0], "nature": "yang", "element": "土", "symbol": "☶"},
     "兑": {"lines": [0, 1, 1], "nature": "yin",  "element": "金", "symbol": "☱"},
 }
+
+for _n, _lines in BAGUA_LINES.items():
+    BAGUA[_n]["lines"] = _lines      # 爻序唯一真值源在内核，且自下而上
 
 # 反向查找：由三爻编码到卦名
 def _build_trigram_lookup():

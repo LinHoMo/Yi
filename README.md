@@ -1,64 +1,79 @@
 # 易 · Yi
 
-中国传统道数的统一工程。命、相、卜是同一套时空符号系统（阴阳·五行·干支·卦象）的三个投影，
-本项目把它们建在**一份内核**上，再由"易"做多科合参。
+> 项目版本 **v0.0.1**｜唯一真值源 `core/yishu_core/__init__.py::__version__`
+> 本仓库统一使用一个 git 版本库（仓库根即此处）。
 
-# 易 · Yi
-
-> 项目版本 **v0.0.1**（唯一真值源 `liu-yao/core/yishu_core/__init__.py::__version__`）
+中国传统道数的统一工程。**只做命与卜**：二者是同一套时空符号系统（阴阳·五行·干支·卦象）
+的两个投影，建在一份内核上，再由"易"做跨科合参。
+**相科（面相、手相、堪舆）明确不做**——不实现、不预留目录、不写占位。
 
 ## 定位
 
 `易` 是统领级 skill，不是工具合集：
 
-| 学科 | 输入 | 回答 |
-|---|---|---|
-| **命** | 出生时空（四柱/紫微） | 格局与趋势，一生节律 |
-| ~~相~~ | 面相/手相/堪舆 | **不做**（见 `AGENTS.md` 范围） |
-| **卜** | 一念之动（六爻/梅花/小六壬） | 具体一事的趋向与应期 |
+| 学科 | 输入 | 回答的问题 | 时间尺度 |
+|---|---|---|---|
+| **命** | 出生时空（四柱八字） | 格局与趋势：宜何业、何时起伏 | 一生，粗颗粒 |
+| **卜** | 一念之动（六爻/梅花/小六壬/择吉） | 具体一事的趋向与应期 | 一事，细颗粒 |
 
 终局目标：对同一个人分别做命与卜的分析，再由易合参，输出阶段性指导与规划。
-合参两科即可成立（命定趋势节律、卜决具体一事），不必依赖相科。
+合参两科即可成立——命定趋势节律、卜决具体一事，不必依赖相科。
 
-## 现状（2026-09-22）
-
-- ✅ `liu-yao/` — 六爻纳甲，唯一有实现的学科。**M0–M3 首批已落地**：
-  历法内核与自检、唯一评分器与真基线、15 张规则表合一、应期改主/次择优、门户与报告改真分数
-- 📋 `docs/` 三份规划与契约已就位；`synthesis/`、`disciplines/` 立了目录与数据格式，尚无实现
-- ⚠️ 六爻现有分数：**tune 93.7%（n=20，参与过调参）／holdout 78.7%（n=12，未参与调参）**。
-  此前宣传的 tune 100% 属旧口径（评分器丢失、字段漂移、空白基准白送分），已不可复现
-
-## 目录
+## 目录（现状即目标结构，不再另立一套）
 
 ```
-Yi/
-├── AGENTS.md              # 项目铁律：运算归代码、案例隔离、口径诚实、命名规范
-├── README.md              # 本文件
-├── docs/
-│   ├── YI-PLAN.md         # 总规划：架构、学科契约、合参规则、里程碑 M0-M5
-│   ├── LIUYAO-PLAN.md     # 六爻专项：现状诊断 + M0-M4 施工表与验收
-│   └── CONTRACT.md        # 学科接入契约（新学科照此四步接入）
-├── synthesis/             # 合参层：人的档案 + 裁决规则 + 指导输出（未实现）
-├── disciplines/           # 学科目录与状态表（六爻 M4 迁入此处）
-└── liu-yao/               # 六爻 skill：core 内核 + scripts 引擎 + docs 交接
-    ├── README.md          # 学科现状、真实分数、怎么跑
-    └── docs/HANDOFF.md    # 哪些可信、哪些不可信、还欠什么
+Yi/                                   # 单一 git 仓库
+├── AGENTS.md                         # 项目铁律：运算归代码、案例隔离、口径诚实、命名规范
+├── pyproject.toml                    # 内核包 yishu-core（版本动态取自内核）
+├── core/yishu_core/                  # 唯一内核：干支历、节气、纳甲、象数基元、运行时
+│   ├── ganzhi_calendar.py            #   自求太阳黄经定节气；立春定年界、十二节定月令
+│   ├── symbols.py                    #   15 张规则表唯一真值源（六亲生克合冲破墓纳甲八宫）
+│   ├── najia.py                      #   卦名+爻位 → 该爻地支（变出支等）
+│   └── calendar_check.py             #   16 项历法自检
+├── disciplines/
+│   ├── README.md                     # 学科状态表（谁已实现、谁只是骨架、谁不做）
+│   └── liuyao/                       # 六爻纳甲 —— 唯一有实现的学科
+│       ├── SKILL.md                  #   给 LLM 的执行规程
+│       ├── scripts/                  #   引擎 / 思维链 / 叙事 / 报告 / 评测
+│       ├── tools/check.py            #   六道质量门
+│       ├── tools/golden.py           #   288 例排盘金标准（守结构性重构）
+│       ├── references/ data/         #   规则文献 / 古籍案例分层
+│       └── docs/HANDOFF.md           #   哪些可信、哪些不可信、还欠什么
+├── synthesis/README.md               # 合参层：人的档案 + 裁决规则 + 指导输出（未实现）
+└── docs/                             # YI-PLAN / LIUYAO-PLAN / CONTRACT / CHANGELOG
 ```
 
-目标结构见 `docs/YI-PLAN.md` §二：`core/`（内核）+ `disciplines/`（学科）+ `synthesis/`（合参）+ `tools/`。
-当前内核寄居在 `liu-yao/core/yishu_core/`，M4 上收为 `Yi/core/`。
+新学科怎么接，看 `docs/CONTRACT.md`（四段管线 chart→analyze→narrate→render）。
 
-## 六爻现在能跑什么
+## 现在能跑什么
 
 ```bash
-cd liu-yao
-python scripts/liuyao_engine.py --mode coin --question "所问之事"   # 排盘（铜钱）
-python scripts/thinking_chain.py <result.json>                      # 五步思维链
-python scripts/run_blind_v5.py tune                                 # 跑案例（只产出不打分）
-# 门户：浏览器直接打开 liu-yao/index.html
+pip install -e .                                   # 内核包；无必需第三方依赖
+cd disciplines/liuyao
+python tools/check.py                              # 一条命令跑全部质量门
+python scripts/liuyao_engine.py --mode coin --question "所问之事"
+python scripts/liuyao_engine.py --mode coin --question "所问之事" \
+       --format html --save-html outputs/report.html     # 一条命令出单文件报告
+python scripts/evaluate.py --split holdout --save        # 古籍案例对齐评测
 ```
 
-依赖：纯标准库可运行；`sxtwl` / `lunar-python` 可选（历法精度，当前有降级 bug，见专项规划 M0.4）。
+门户：浏览器直接打开 `disciplines/liuyao/index.html`（自包含，无 CDN、无 fetch）。
+
+## 现在的真实水平（2026-09-22）
+
+| 集合 | 古籍对齐分 strict | n |
+|---|---|---|
+| tune（参与过调参） | 93.6% | 20 |
+| holdout（未参与调参） | **78.3%** | 12 |
+
+应期不看召回看判别力：主应期命中 29.4%（随机基线 8.3%）、基准应支平均名次 2.27/12。
+
+**这一堆数字此前是不可信的**：旧评分器已被删、`score.py` 读的是引擎根本不输出的字段、
+案例被统一塞进 2024-06-01 并伪造月干、年柱完全不判立春。M0 把这些重建了，
+所以旧文档宣传的 tune 100% 不再可比。逐次口径变化见 `disciplines/liuyao/docs/CHANGELOG.md`。
+
+**未修的历史债（P0，需要一次专门施工）**：爻序约定在引擎内部自洽、却与 SKILL.md 文档相反——
+按"从下往上"手工喂六爻会得到错的卦。复现与影响面见 `disciplines/liuyao/docs/HANDOFF.md` 四·〇节。
 
 ## 使用须知
 

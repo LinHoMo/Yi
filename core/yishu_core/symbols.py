@@ -226,6 +226,53 @@ EIGHT_PALACES = {
 }
 
 
+# ── 八卦爻序（唯一真值源）──────────────────────────────────────────────
+# 约定：列表自下而上，index 0 = 初爻，1 = 二爻，2 = 三爻；1=阳，0=阴。
+# 这是 P0 爻序事故的终止点：震巽艮兑四个非回文卦曾在四处（引擎 BAGUA、
+# case_runner、batch_round3_direct、data/hexagrams.json 的 binary）各存一份
+# **上爻在前**的镜像编码，而所有消费代码都按"自下而上"解读，于是每个经卦内部
+# 三个爻的位次被整体颠倒——恒之鼎的上六动会被算成第四爻动。
+# 现在只有这里一份；其余处一律 import 或由此派生。
+BAGUA_LINES = {
+    "乾": [1, 1, 1],   # 三连
+    "坤": [0, 0, 0],   # 三断
+    "震": [1, 0, 0],   # 初阳，仰盂
+    "巽": [0, 1, 1],   # 初阴，下断
+    "坎": [0, 1, 0],   # 中满
+    "离": [1, 0, 1],   # 中虚
+    "艮": [0, 0, 1],   # 覆碗，上阳
+    "兑": [1, 1, 0],   # 上缺
+}
+
+# 六爻数组里的位置索引 → 该爻在其经卦内的序号（下卦 0-2、上卦 3-5 各自自下而上）
+YAO_INDEX_TO_TRIGRAM_SLOT = {0: 0, 1: 1, 2: 2, 3: 0, 4: 1, 5: 2}
+
+
+def trigram_lines(name: str) -> list[int]:
+    """经卦爻线（自下而上）。"""
+    return list(BAGUA_LINES[name])
+
+
+def yao_values(name: str, moving: tuple[int, ...] = ()) -> list[int]:
+    """经卦/别卦起卦值序列（自下而上，7 少阳 8 少阴 9 老阳 6 老阴）。
+
+    `name` 可以是经卦（乾…兑）或六十四卦卦名（需 HEXAGRAM_TRIGRAMS 有记录）。
+    `moving` 是 1..6 的爻位。
+    """
+    if name in BAGUA_LINES:
+        lines = BAGUA_LINES[name]
+    elif name in HEXAGRAM_TRIGRAMS:
+        upper, lower = HEXAGRAM_TRIGRAMS[name]
+        lines = BAGUA_LINES[lower] + BAGUA_LINES[upper]
+    else:
+        raise KeyError(f"未知卦名：{name}")
+    out = []
+    for i, bit in enumerate(lines, start=1):
+        moving_now = i in moving
+        out.append((9 if bit else 6) if moving_now else (7 if bit else 8))
+    return out
+
+
 SHENG_WO = {v: k for k, v in SHENG_CYCLE.items()}   # 生我者（原神方向）
 KE_WO = {v: k for k, v in KE_CYCLE.items()}         # 克我者（忌神方向）
 

@@ -30,7 +30,7 @@ def fingerprint() -> list[dict]:
     from classical_analysis import enhance_reading
     import case_runner as cr
 
-    names = sorted(cr._HEX2TRIGRAM)
+    names = sorted(cr.HEXAGRAM_TRIGRAMS)
     rows = []
     for i, name in enumerate(names):
         base = cr.hex2yao(name)

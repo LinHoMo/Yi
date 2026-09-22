@@ -146,7 +146,7 @@ TEST_CASES = [
         ),
         # 火风鼎 = 上离(101) + 下巽(110); 二爻(9)动(阳动), 五爻(6)动(阴动)
         date=(2024, 6, 19, 10),      # ≈午月
-        yao_values=[7, 9, 8, 7, 6, 7],
+        yao_values=[8, 9, 7, 7, 6, 7],
         question="求升迁能否成功",    # "升迁"→官鬼 keyword
         expected_use_god="官鬼",
         expected_strength_pattern="weak",          # 官鬼水弱(1.40)
@@ -200,7 +200,7 @@ TEST_CASES = [
         ),
         # 风天小畜 = 上巽(110) + 下乾(111); 初级(9)动(阳动)
         date=(2024, 7, 14, 10),      # ≈未月
-        yao_values=[9, 7, 7, 7, 7, 8],
+        yao_values=[9, 7, 7, 8, 7, 7],
         question="久病吉凶如何",      # 无关键词匹配→默认世爻
         expected_use_god="世爻",
         expected_strength_pattern="weak",          # 世爻极弱(0.50)
@@ -229,7 +229,7 @@ TEST_CASES = [
         ),
         # 水雷屯 = 上坎(010) + 下震(001); 二爻(6)动(阴动), 五爻(9)动(阳动)
         date=(2024, 2, 16, 10),      # ≈寅月
-        yao_values=[8, 6, 7, 8, 9, 8],
+        yao_values=[7, 6, 8, 8, 9, 8],
         question="投资求财得失如何",  # "投资"→妻财 keyword
         expected_use_god="妻财",
         expected_strength_pattern="medium",        # 伏藏N/A→default 2.5
@@ -255,7 +255,7 @@ TEST_CASES = [
         ),
         # 雷地豫 = 上震(001) + 下坤(000); 六爻全静
         date=(2024, 2, 10, 10),      # ≈寅月
-        yao_values=[8, 8, 8, 8, 8, 7],
+        yao_values=[8, 8, 8, 7, 8, 8],
         question="婚姻能否成功",      # "婚姻"→妻财 keyword
         expected_use_god="妻财",
         expected_strength_pattern="medium",        # 用神中和
@@ -282,7 +282,7 @@ TEST_CASES = [
         ),
         # 雷水解 = 上震(001) + 下坎(010); 二爻(9)动(阳动), 五爻(6)动(阴动)
         date=(2024, 12, 12, 10),     # ≈子月
-        yao_values=[8, 9, 8, 8, 6, 7],
+        yao_values=[8, 9, 8, 7, 6, 8],
         question="父亲出行何日回来",  # "父亲"→父母 keyword
         expected_use_god="父母",
         expected_strength_pattern="medium",        # 伏藏N/A→default 2.5
@@ -308,7 +308,7 @@ TEST_CASES = [
         ),
         # 地山谦 = 上坤(000) + 下艮(100); 五爻(6)动(阴动)
         date=(2024, 6, 8, 10),       # ≈午月
-        yao_values=[7, 8, 8, 8, 6, 8],
+        yao_values=[8, 8, 7, 8, 6, 8],
         question="儿子久病能好否",    # "儿子"→子孙 keyword
         expected_use_god="子孙",
         expected_strength_pattern="weak",          # 子孙极弱(0.50)
@@ -337,7 +337,7 @@ TEST_CASES = [
         ),
         # 火风鼎 = 上离(101) + 下巽(110); 二爻(9)动(阳动), 五爻(6)动(阴动)
         date=(2024, 6, 15, 10),      # ≈午月
-        yao_values=[7, 8, 8, 8, 8, 7],  # mostly static Metal(金), use-god Fire(火) weak in Summer
+        yao_values=[8, 8, 7, 7, 8, 8],  # mostly static Metal(金), use-god Fire(火) weak in Summer
         question="测事业",
         expected_use_god="官鬼",
         expected_strength_pattern="weak",          # 官鬼极弱
@@ -398,7 +398,7 @@ TEST_CASES = [
         ),
         # 风地升 = 上坤(000) + 下巽(110); 三爻(6)动(阴动), 四爻(6)动(阴动), 五爻(6)动(阴动)
         date=(2024, 6, 15, 10),      # ≈午月
-        yao_values=[7, 7, 6, 6, 6, 8],
+        yao_values=[8, 7, 9, 6, 6, 8],
         question="投资如何",           # "投资"→妻财 keyword
         expected_use_god="妻财",
         expected_strength_pattern="strong",        # 用神极旺(positive score)
@@ -431,7 +431,7 @@ TEST_CASES = [
         ),
         # 风天小畜 = 上巽(110) + 下乾(111); 静卦
         date=(2024, 5, 20, 10),      # ≈巳月 甲申日
-        yao_values=[7, 7, 7, 7, 7, 8],
+        yao_values=[7, 7, 7, 8, 7, 7],
         question="生意如何",           # "生意"→妻财 keyword
         expected_use_god="妻财",
         expected_strength_pattern="medium",        # 用神中和(1.29)

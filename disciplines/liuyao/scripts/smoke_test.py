@@ -130,7 +130,7 @@ COVERAGE_TESTS = [
         id="cov_01",
         target_segment="hidden_spirit_analysis",
         description="用神伏藏 — 风地观卦(巽宫木), 六亲缺妻财/父母",
-        yao_values=[8, 8, 8, 7, 7, 8],       # 上巽下坤 = 观卦(巽宫)
+        yao_values=[8, 8, 8, 8, 7, 7],       # 上巽下坤 = 观卦(巽宫)
         date=(2024, 6, 15, 10),
         question="投资财运如何",
         expected_check="result[advanced_analysis][hidden_spirit_analysis][has_hidden_spirit] == True",
@@ -154,7 +154,7 @@ COVERAGE_TESTS = [
         id="cov_03",
         target_segment="monthly_break",
         description="月破 — 寅爻被申月冲, 月破成立",
-        yao_values=[8, 8, 7, 7, 8, 8],        # 有寅爻的卦
+        yao_values=[7, 8, 8, 8, 8, 7],        # 有寅爻的卦
         date=(2024, 8, 10, 10),               # 申月冲寅
         question="求财",
         expected_check="has_monthly_break == True",
@@ -252,7 +252,7 @@ COVERAGE_TESTS = [
         id="cov_11",
         target_segment="hidden_spirit_scoring",
         description="伏神得出力量 — 风地观卦伏藏妻财得出不得出判断",
-        yao_values=[8, 8, 8, 7, 7, 8],        # 风地观, 伏藏
+        yao_values=[8, 8, 8, 8, 7, 7],        # 风地观, 伏藏
         date=(2024, 6, 15, 10),
         question="投资决策",
         expected_check="hidden_spirit_scoring has summary",
@@ -340,7 +340,7 @@ COVERAGE_TESTS = [
         id="cov_18",
         target_segment="flying_hidden_interaction",
         description="飞伏互断 — 飞伏神生克关系",
-        yao_values=[8, 8, 8, 7, 7, 8],        # 风地观, 有伏藏
+        yao_values=[8, 8, 8, 8, 7, 7],        # 风地观, 有伏藏
         date=(2024, 6, 15, 10),
         question="投资求财",
         expected_check="flying_hidden_interaction has summary",

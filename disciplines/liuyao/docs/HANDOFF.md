@@ -51,7 +51,7 @@ python scripts/build_portal_assets.py --run-eval                                
 6. **展示层**：报告加主/次应期表（应支＋法则＋日历日）；门户分数改从评测结果取，
    不再硬编满分；修「打开完整样例报告」死链；`visualize_shap.py` → `factor_waterfall.py`。
 
-## 四·〇、P0：爻序约定内部自洽、但与文档相反（未修，需决策）
+## 四·〇、P0：爻序约定（**已修**，2026-09-22）
 
 **现象**：`BAGUA[*]["lines"]` 存的是**上爻在前**（震 [0,0,1] 实为艮之象），而
 `build_hexagram_result(yao_values, …)` 把 `yao_values[0:3]` 当作**下卦**（初、二、三爻）。

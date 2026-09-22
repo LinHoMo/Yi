@@ -5,7 +5,7 @@
 
 > **执行进度（2026-09-22）**：M0 全部完成；M1 完成第一批（规则表合一，288 例零漂移）；
 > M2 完成 2.2 应期择优两批；M3 完成报告应期表、门户真分数、死链、命名。
-> 逐条实况见 `liu-yao/docs/HANDOFF.md`；分数变化与口径见 `liu-yao/docs/CHANGELOG.md`。
+> 逐条实况见 `disciplines/liuyao/docs/HANDOFF.md`；分数变化与口径见 `disciplines/liuyao/docs/CHANGELOG.md`。
 > 未做：M1b 巨石拆分与断语外置、M2.1 用神决策表、M2.4 扩样、M3 呈现三合一与 SVG 卦盘、M4 迁移。
 
 ## 〇、先说一件必须接受的事

@@ -34,49 +34,44 @@ from human_narrative import build_human_narrative, render_human_markdown  # noqa
 CASES = ROOT / "data" / "cases" / "classical_cases.json"
 SPLITS = ROOT / "data" / "cases" / "case_splits.json"
 
-_TRIGRAM_YAO = {
-    "乾": [7, 7, 7], "坤": [8, 8, 8], "坎": [8, 7, 8], "离": [7, 8, 7],
-    "震": [8, 8, 7], "巽": [7, 7, 8], "艮": [7, 8, 8], "兑": [8, 7, 7],
-}
+# 爻序与卦表全部来自内核（不再有本地副本）：
+#   BAGUA_LINES 自下而上，HEXAGRAM_TRIGRAMS 给出上下卦 —— 于是"某卦化出某卦"
+#   的动爻位次由两者爻线逐位比较得出，不再靠一张镜像表凑。
+from yishu_core.symbols import BAGUA_LINES, HEXAGRAM_TRIGRAMS  # noqa: E402
 
-_HEX2TRIGRAM = {
-    "乾": ("乾", "乾"), "坤": ("坤", "坤"), "屯": ("坎", "震"), "蒙": ("艮", "坎"),
-    "需": ("坎", "乾"), "讼": ("乾", "坎"), "师": ("坤", "坎"), "比": ("坎", "坤"),
-    "小畜": ("巽", "乾"), "履": ("乾", "兑"), "泰": ("坤", "乾"), "否": ("乾", "坤"),
-    "同人": ("乾", "离"), "大有": ("离", "乾"), "谦": ("坤", "艮"), "豫": ("震", "坤"),
-    "随": ("兑", "震"), "蛊": ("艮", "巽"), "临": ("坤", "兑"), "观": ("巽", "坤"),
-    "噬嗑": ("离", "震"), "贲": ("艮", "离"), "剥": ("艮", "坤"), "复": ("坤", "震"),
-    "无妄": ("乾", "震"), "大畜": ("艮", "乾"), "颐": ("艮", "震"), "大过": ("兑", "巽"),
-    "坎": ("坎", "坎"), "离": ("离", "离"), "咸": ("兑", "艮"), "恒": ("震", "巽"),
-    "遁": ("乾", "艮"), "大壮": ("震", "乾"), "晋": ("离", "坤"), "明夷": ("坤", "离"),
-    "家人": ("巽", "离"), "睽": ("离", "兑"), "蹇": ("坎", "艮"), "解": ("震", "坎"),
-    "损": ("艮", "兑"), "益": ("巽", "震"), "夬": ("兑", "乾"), "姤": ("乾", "巽"),
-    "萃": ("兑", "坤"), "升": ("坤", "巽"), "困": ("兑", "坎"), "井": ("坎", "巽"),
-    "革": ("兑", "离"), "鼎": ("离", "巽"), "震": ("震", "震"), "艮": ("艮", "艮"),
-    "渐": ("巽", "艮"), "归妹": ("震", "兑"), "丰": ("震", "离"), "旅": ("离", "艮"),
-    "巽": ("巽", "巽"), "兑": ("兑", "兑"), "涣": ("巽", "坎"), "节": ("坎", "兑"),
-    "中孚": ("巽", "兑"), "小过": ("震", "艮"), "既济": ("坎", "离"), "未济": ("离", "坎"),
-}
+_STEMS = "甲乙丙丁戊己庚辛壬癸"
+_MONTH_RE = re.compile(r"([%s])月" % "子丑寅卯辰巳午未申酉戌亥")
+_DAY_RE = re.compile(r"([%s])([%s])日" % (_STEMS, "子丑寅卯辰巳午未申酉戌亥"))
 
-_STEMS, _BRANCHES = gc.HEAVENLY_STEMS, gc.EARTHLY_BRANCHES
-_MONTH_RE = re.compile(r"([%s])月" % _BRANCHES)
-_DAY_RE = re.compile(r"([%s])([%s])日" % (_STEMS, _BRANCHES))
+
+def hex_lines(name: str) -> list[int] | None:
+    """别卦的六爻线（自下而上，1 阳 0 阴）。"""
+    tri = HEXAGRAM_TRIGRAMS.get(name)
+    if not tri:
+        return None
+    upper, lower = tri
+    return BAGUA_LINES[lower] + BAGUA_LINES[upper]
 
 
 def hex2yao(hx_name: str, changed_hx: str | None = None) -> list[int] | None:
-    """本卦（可选变卦）→ 六爻值序列，自下而上。7 少阳 8 少阴 9 老阳 6 老阴。"""
-    if hx_name not in _HEX2TRIGRAM:
+    """本卦（可选变卦）→ 六爻值序列，自下而上。7 少阳 8 少阴 9 老阳 6 老阴。
+
+    动爻位次 = 本卦与变卦逐位比较的差异位。P0 爻序修正前这里用一张上爻在前的
+    镜像表，恒之鼎的上六动会被算成第四爻动。
+    """
+    base = hex_lines(hx_name)
+    if base is None:
         return None
-    u, l = _HEX2TRIGRAM[hx_name]
-    base = _TRIGRAM_YAO[l] + _TRIGRAM_YAO[u]
-    if not changed_hx or changed_hx == hx_name:
-        return base
-    if changed_hx not in _HEX2TRIGRAM:
-        return base
-    cu, cl = _HEX2TRIGRAM[changed_hx]
-    changed = _TRIGRAM_YAO[cl] + _TRIGRAM_YAO[cu]
-    return [orig if orig == chg else (9 if orig == 7 else 6)
-            for orig, chg in zip(base, changed)]
+    moving: tuple[int, ...] = ()
+    if changed_hx and changed_hx != hx_name:
+        chg = hex_lines(changed_hx)
+        if chg is None:
+            return [7 if b else 8 for b in base]
+        moving = tuple(i + 1 for i, (a, b) in enumerate(zip(base, chg)) if a != b)
+        if not moving:
+            return None          # 两卦名相同却声明有变，或卦表有误
+    return [(9 if b else 6) if (i + 1) in moving else (7 if b else 8)
+            for i, b in enumerate(base)]
 
 
 def parse_ganzhi_hint(text: str) -> tuple[str | None, str | None]:

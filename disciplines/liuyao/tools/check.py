@@ -31,20 +31,23 @@ from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 BASELINE_FILE = ROOT / "tools" / "check_baseline.json"
 
 BASELINE = {
-    "calendar": 16,        # 自检通过项数（共 16）
+    "calendar": 16,        # 历法自检通过项数（共 16）
+    "ordering": 23,        # 爻序断言通过项数（共 23）——P0 事故看门狗
     "smoke": 36,           # 有产出的分析段
-    "chain_tests": 8,      # /12 —— 引擎补 changed_branch 后多过 1 例（动变净效应）
-    "regression": 11,      # /18 —— 同上，多过 1 例
+    # P0 爻序修正后各掉 1 例：那两例的期望值是在"卦内三位镜像"的位次上标定的
+    # （chain case_03 六合卦体、reg_03 泰初爻动方向），需按古籍重推，不许改回镜像凑数。
+    "chain_tests": 7,      # /12
+    "regression": 10,      # /18
     # 0.0.1 批次：动爻变出支补上后"化回头生"法则首次可触发，应期名次 2.13→2.27、
     # 对齐分 −0.1/−0.4，但 top-1 持平、两套测试各多过一例。**基线下调是有意的**，
     # 理由记于 docs/CHANGELOG.md；不许无凭据下调。
-    "tune": 93.6,          # 古籍对齐分 strict，n=20（参与过调参）
+    "tune": 94.2,          # 古籍对齐分 strict，n=20（参与过调参）
     "holdout": 78.3,       # 古籍对齐分 strict，n=12（未参与调参）
     "tune_top1": 29.4,     # 主应期命中率 %（随机基线 8.3）
     "holdout_top1": 25.0,
 }
 # 基准应支平均名次：越小越好，单独按上限把关
-BASELINE_MAX = {"tune_rank": 2.27, "holdout_rank": 2.6}
+BASELINE_MAX = {"tune_rank": 2.19, "holdout_rank": 2.6}
 
 PATTERNS = {
     "chain_tests": r"Passed:\s*(\d+)/(\d+)",
@@ -69,10 +72,18 @@ def measure(name: str, out: str) -> float | None:
 
 def eval_metrics(split: str) -> dict:
     """跑一个集合，返回 {avg, top1, rank}。"""
+    import time
     path = ROOT / "data" / "cases" / f"eval_{split}.json"
-    rc, _out = run([sys.executable, "scripts/evaluate.py", "--split", split, "--save"])
-    if not path.exists():
-        return {"rc": rc}
+    # 新鲜度守卫：评测崩溃时上一次的落盘文件还在，直接读会拿旧分数冒充本次结果。
+    # P0 修正中就发生过：case_runner 报错，门却报"分数一位不动"。
+    started = time.time()
+    if path.exists():
+        path.unlink()
+    rc, out = run([sys.executable, "scripts/evaluate.py", "--split", split, "--save"])
+    if rc != 0:
+        return {"error": "evaluate.py 退出码 %d：%s" % (rc, " ".join(out.split())[-400:])}
+    if not path.exists() or path.stat().st_mtime < started:
+        return {"error": "评测未产出新文件（未落盘或路径不对）"}
     data = json.loads(path.read_text(encoding="utf-8"))
     disc = data["results"].get("yingqi_discrimination") or {}
     return {"avg": data["results"]["strict"]["avg"], "rc": rc,
@@ -139,7 +150,8 @@ def main() -> int:
             failures.append(f"{label} {value:g} 劣于基线")
             print(raw[-1500:])
 
-    selected = set(args.only or ["version", "calendar", "smoke", "chain_tests", "regression", "eval"])
+    selected = set(args.only or ["version", "calendar", "ordering", "smoke",
+                                 "chain_tests", "regression", "eval"])
 
     if "version" in selected:
         import yishu_core
@@ -160,6 +172,16 @@ def main() -> int:
                  label="自检通过项", raw=out)
         if rc != 0:
             failures.append("历法自检退出码非 0")
+
+    if "ordering" in selected:
+        print("\n[1.5] 爻序断言（自下而上唯一约定，P0 看门狗）")
+        rc, out = run([sys.executable, "tools/hexagram_check.py"])
+        m = re.search(r"(\d+) 项通过，(\d+) 项失败", out)
+        if m:
+            gate("ordering", float(m.group(1)), minimum=baseline["ordering"],
+                 label="爻序断言通过数", raw=out)
+        if rc != 0:
+            failures.append("爻序断言未通过")
 
     if "smoke" in selected:
         print("\n[2] 分析段落产出冒烟（只验有无产出）")
@@ -183,6 +205,10 @@ def main() -> int:
         print("\n[5] 古籍案例对齐分与应期判别力（非现实预测命中率）")
         for split in ("tune", "holdout"):
             m = eval_metrics(split)
+            if m.get("error"):
+                failures.append(f"{split} 评测未跑成")
+                print(f"  × {split} 评测失败：{m['error'][:300]}")
+                continue
             gate(split, m.get("avg"), minimum=baseline[split], label=f"{split} 对齐分 %")
             gate(f"{split}_top1", m.get("top1"), minimum=baseline.get(f"{split}_top1", 0.0),
                  label=f"{split} 主应期命中 %")
