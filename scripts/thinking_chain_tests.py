@@ -54,6 +54,7 @@ _SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, _SCRIPT_DIR)
 
 from liuyao_engine import build_hexagram_result  # noqa: E402
+from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 from thinking_chain import (  # noqa: E402
     run_thinking_chain,
     HEXAGRAM_LIUHE,
@@ -460,7 +461,10 @@ def run_test_case(tc: TestCase, verbose: bool = False) -> dict:
     """
     year, month, day, hour = tc.date
     result = build_hexagram_result(tc.yao_values, tc.question, "test", year, month, day, hour)
-    chain = run_thinking_chain(result)
+    # run_thinking_chain 返回的是补全后的整份结果，五步链在其 "thinking_chain" 子键下；
+    # 直接按步骤名取值会全部拿到空 dict，曾因此误判"12 例期望全过期"。
+    enriched = run_thinking_chain(result)
+    chain = enriched.get("thinking_chain", enriched)
 
     s1 = chain.get("step1_situational_reading", {})
     s2 = chain.get("step2_use_god_identification", {})
@@ -633,6 +637,7 @@ def print_verbose(tc: TestCase, result: dict) -> None:
 
 
 def main():
+    force_utf8_stdio()
     parser = argparse.ArgumentParser(
         description="六爻思维链黑箱测试框架 ——— 验证古典案例推理正确性",
     )

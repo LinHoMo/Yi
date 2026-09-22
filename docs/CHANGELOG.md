@@ -2,7 +2,30 @@
 
 分数口径变化必须在此登记，否则 tune/holdout 数字不可比（`AGENTS.md` §四.4）。
 
+## M0.5 / M0.6 工程底座（2026-09-22）
+
+- **`tools/check.py`** 一条命令跑六个质量门（历法自检 / 段落冒烟 / 思维链用例 / 古籍回归 /
+  tune / holdout）。前两项必须全绿；后四项按**只准前进不准后退**的基线比较，
+  基线即本次实测值（chain 7/12、regression 10/18、tune 97.1、holdout 86.2），
+  改进后用 `--raise` 抬高。全部通过才退出码 0。
+- **`coverage_test.py` 更名 `smoke_test.py`**：它验的是"各分析段有没有产出"，
+  与代码覆盖率无关，报"Coverage 100%"属误导性命名。改为"产出率"并说明它不是正确性指标；
+  门槛由 90% 改为 100%（少一段即响）。
+- **`thinking_chain_tests.py` 从 0/12 修回 7/12**：此前全FAIL 不是用例期望过期，
+  而是测试自己读错了层级——`run_thinking_chain()` 返回补全后的整份结果，
+  五步链在 `"thinking_chain"` 子键下，测试直接按步骤名取值于是全部拿到空 dict。
+  剩 5 例是真实分歧（吉凶区间、动变净效应），留作 M2 的靶子。
+- **退出码**：`regression_test.py` 原先无论过不过都退出 0，现按通过数决定；三个测试脚本
+  统一由 `tools/check.py` 调度。
+- **Windows 控制台**：新增 `yishu_core.runtime.force_utf8_stdio()`，
+  engine / mcp_server / 三个测试 / evaluate / calendar_check 入口全部接入。
+  此前中文输出在 GBK 控制台乱码，`✓/✗` 与"※"直接抛 UnicodeEncodeError。
+- 新增 `pyproject.toml`（无必需依赖；lunar-python/matplotlib 列为可选 extras）与 `README.md`。
+- 回归报告默认输出目录由 `scripts/` 改为 `outputs/`（生成物不再污染源码目录）。
+- 删除 `liuyao_engine.py` 中两处从不生效的 `king_wen_sequence` 静默 import（前一条提交已记）。
+
 ## M0.2 / M0.3 唯一评分器与真基线（2026-09-22）
+
 
 **新增** `scripts/evaluate.py`（唯一评分入口）与 `scripts/case_runner.py`
 （由 `run_blind_v5.py` 更名重写，去掉 CLI 手解 `sys.argv` 与占位日期）。**删除** `scripts/score.py`

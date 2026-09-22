@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-Complete Analysis Coverage Matrix Test
-=======================================
-Verify that **every** analysis segment in the engine produces sensible output
-for a range of test cases.
+分析段落产出冒烟测试 (Analysis Segment Smoke Test)
+===================================================
+验证 enhance_reading() 的各分析段与 step5 的各评分调整项在多种卦象下
+**都有产出且不抛异常**，即"接线是否通"。
+
+⚠️ 这不是代码覆盖率，也不是正确性测试：段落返回了内容就算过。
+   内容对不对由 `scripts/evaluate.py`（古籍对齐）与 `scripts/regression_test.py` 负责。
+   旧名 coverage_test 且报 "Coverage 100%"，属误导性命名，2026-09-22 更正。
 
 Usage:
-    py -3.12 coverage_test.py              # Run all coverage tests
+    py -3.12 smoke_test.py              # Run all coverage tests
     py -3.12 coverage_test.py --markdown   # Generate coverage_report.md
     py -3.12 coverage_test.py -v           # Verbose output
     py -3.12 coverage_test.py --list       # List all test segments
@@ -33,6 +37,7 @@ _SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, _SCRIPT_DIR)
 
 from liuyao_engine import build_hexagram_result  # noqa: E402
+from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 from classical_analysis import (  # noqa: E402
     enhance_reading,
     # All 20+ analysis functions for direct invocation
@@ -763,7 +768,8 @@ def filter_tests(target: str, all_cov: list, all_s5: list, all_bnd: list):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Complete Analysis Coverage Matrix Test")
+    force_utf8_stdio()
+    parser = argparse.ArgumentParser(description="分析段落产出冒烟测试（只验有无产出）")
     parser.add_argument("--markdown", action="store_true",
                         help="Generate coverage_report.md")
     parser.add_argument("--list", action="store_true",
@@ -799,7 +805,7 @@ def main():
     cov_tests, s5_tests, bnd_tests = filter_tests(args.target, all_cov, all_s5, all_bnd)
 
     print("=" * 60)
-    print(" Complete Analysis Coverage Matrix Test")
+    print(" 分析段落产出冒烟测试（只验有无产出，不验对错）")
     print("=" * 60)
 
     report = run_coverage_report(
@@ -811,10 +817,10 @@ def main():
     )
 
     # Print results
-    print(f"\nTotal tests: {report['total_segments']}")
-    print(f"Covered:     {report['covered']}")
-    print(f"Uncovered:   {report['uncovered_count']}")
-    print(f"Coverage:    {report['coverage_rate']:.1f}%")
+    print(f"\n段落总数:   {report['total_segments']}")
+    print(f"有产出:     {report['covered']}")
+    print(f"无产出:     {report['uncovered_count']}")
+    print(f"产出率:     {report['coverage_rate']:.1f}%  ← 冒烟指标，非正确性指标")
 
     if args.verbose:
         print("\nDetailed Results:")
@@ -836,13 +842,12 @@ def main():
         generate_markdown_report(report, report_path)
         print(f"\nMarkdown report written to: {report_path}")
 
-    # Coverage gate
-    if report["coverage_rate"] < 90.0:
-        print(f"\n?? Coverage {report['coverage_rate']:.1f}% is below 90% target.")
+    # 产出率门槛：段落若一个多小时内静默少产出一整块，这里应当响
+    if report["coverage_rate"] < 100.0:
+        print(f"\n未达标：{100.0 - report['coverage_rate']:.1f}% 的分析段没有产出。")
         sys.exit(1)
-    else:
-        print(f"\n?? Coverage {report['coverage_rate']:.1f}% meets/exceeds 90% target.")
-        sys.exit(0)
+    print("\n所有分析段均有产出。")
+    sys.exit(0)
 
 
 if __name__ == "__main__":

@@ -38,6 +38,7 @@ from liuyao_engine import (
     TRIGRAM_LOOKUP,
     HEXAGRAM_LOOKUP,
 )
+from yishu_core.runtime import force_utf8_stdio as _force_utf8_stdio  # noqa: E402
 
 # =============================================================================
 # JSON-RPC 2.0 错误码
@@ -532,6 +533,7 @@ def run_server():
 # =============================================================================
 
 def main():
+    _force_utf8_stdio()
     """CLI 入口。"""
     import argparse
 

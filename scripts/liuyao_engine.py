@@ -968,6 +968,7 @@ def _load_ganzhi_kernel():
 
 
 _GANZHI = _load_ganzhi_kernel()
+from yishu_core.runtime import force_utf8_stdio as _force_utf8_stdio  # noqa: E402
 
 # 交节流派："day" = 交节当日即换月/换年（默认，保持既有断卦行为）；"instant" = 精确到时刻
 GANZHI_BOUNDARY = os.environ.get("YI_GANZHI_BOUNDARY", "day")
@@ -3511,6 +3512,7 @@ def _check_verify_mode(args):
 
 
 def main():
+    _force_utf8_stdio()
     args = parse_arguments()
 
     # ── 模式1：批量演卦 (优先级最高，覆盖 --mode) ──

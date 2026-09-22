@@ -30,6 +30,7 @@ sys.path.insert(0, _SCRIPT_DIR)
 
 from liuyao_engine import build_hexagram_result  # noqa: E402
 from thinking_chain import run_thinking_chain  # noqa: E402
+from yishu_core.runtime import force_utf8_stdio  # noqa: E402  (liuyao_engine 已把 core/ 加入 sys.path)
 
 
 # ===========================================================================
@@ -900,8 +901,10 @@ def main():
         help="Show detailed reasoning",
     )
     args = parser.parse_args()
+    force_utf8_stdio()
 
-    output_dir = args.output_dir or _SCRIPT_DIR
+    output_dir = args.output_dir or os.path.join(os.path.dirname(_SCRIPT_DIR), "outputs")
+    os.makedirs(output_dir, exist_ok=True)
 
     if args.case:
         case = [c for c in REGRESSION_CASES if c.id == args.case]
@@ -946,6 +949,9 @@ def main():
             with open(json_path, "w", encoding="utf-8") as f:
                 f.write(generate_json_report(result))
             print(f"JSON results: {json_path}")
+
+    # 失败必须以非零退出码报出去，否则 CI / tools/check.py 看不到任何信号
+    sys.exit(0 if result["all_passed"] == result["total"] else 1)
 
 
 if __name__ == "__main__":
