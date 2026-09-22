@@ -4840,17 +4840,20 @@ def _predict_timing(r: dict, step3_data: dict, step1_data: dict, day_branch: str
 
     BRANCH_ORDER = "子丑寅卯辰巳午未申酉戌亥"
 
-    def _chong(b: str) -> str:
-        for a, c in CHONG_PAIRS:
+    def _pair_partner(pairs, b: str) -> str:
+        """配对表是单向列出的（每对只写一次），必须双向查。"""
+        for a, c in pairs:
             if b == a:
                 return c
+            if b == c:
+                return a
         return ""
 
+    def _chong(b: str) -> str:
+        return _pair_partner(CHONG_PAIRS, b)
+
     def _he(b: str) -> str:
-        for a, c in HE_PAIRS:
-            if b == a:
-                return c
-        return ""
+        return _pair_partner(HE_PAIRS, b)
 
     key_branches: list[str] = []
 
@@ -5105,13 +5108,62 @@ def _predict_timing(r: dict, step3_data: dict, step1_data: dict, day_branch: str
     else:
         speed = "应迟"
 
-    # 保证 key_branches 至少含用神与日辰
-    if use_god_branch:
-        _push(use_god_branch)
-    if day_branch:
-        _push(day_branch)
+    # ── 应期择优：按用神状态取"解除障碍之期"为主，其余降为备选 ────────────
+    # 旧实现把动爻、变爻、用神之冲与合、原神四支、伏神、飞神、旬空、日月全部并集
+    # 塞进 key_branches，平均 11.1/12 个地支——召回率看着 100%，与瞎蒙无异
+    # （随机列同样多候选即全覆盖的期望是 92.6%）。改为法则驱动的主/次应期。
+    candidates_all = list(key_branches)          # 长列表保留作备查，不再充当"重点"
+    ranked: list[tuple[str, str]] = []
 
-    key_text = "、".join(key_branches[:8]) if key_branches else "待综合旺衰另断"
+    def _rank(b: str, rule: str, suffix: str = "日"):
+        if not b or b not in BRANCH_ORDER:
+            return
+        token = f"{b}{suffix}"
+        if token not in [t for t, _ in ranked]:
+            ranked.append((token, rule))
+
+    ug_moving = any(isinstance(y, dict) and y.get("earthly_branch") == use_god_branch
+                    and y.get("is_moving") for y in yao_lines)
+    fu_detail = step2_d.get("fu_cang_detail") or {}
+    fu_res = (fu_detail.get("results") or [{}])[0] if isinstance(fu_detail, dict) else {}
+    fu_branch = ((fu_res.get("fu_shen") or {}).get("branch")) or ""
+    fei_branch = ((fu_res.get("fei_shen") or {}).get("branch")) or ""
+    tomb_branch = TOMB_MAP.get(use_god_element or "", "")
+    bound_by = day_branch if _he(use_god_branch) == day_branch else \
+               (month_branch if _he(use_god_branch) == month_branch else "")
+    PEAK_BRANCH = {"木": "寅", "火": "巳", "土": "辰", "金": "申", "水": "亥"}
+
+    if is_empty:
+        _rank(_chong(use_god_branch) or use_god_branch, "用神旬空，冲空则实")
+        _rank(use_god_branch, "出旬填实")
+    if is_month_break:
+        _rank(use_god_branch, "月破出月，逢值填实")
+        _rank(_he(use_god_branch), "月破逢合，合处填实")
+    if step2_d.get("has_fu_cang") and (fu_branch or fei_branch):
+        _rank(_chong(fei_branch) or fu_branch, "用神伏藏，冲飞神得出")
+        _rank(fu_branch or use_god_branch, "伏神值日")
+    if tomb_branch and tomb_branch in (day_branch, month_branch):
+        _rank(_chong(tomb_branch), "用神入墓，冲墓之日")
+    if bound_by:
+        _rank(_chong(bound_by), f"用神被{bound_by}合住，冲开之日")
+    if use_god_branch:
+        if ug_moving:
+            _rank(_he(use_god_branch), "用神发动，逢合之日")
+            _rank(use_god_branch, "发动值日")
+        else:
+            _rank(_chong(use_god_branch), "用神安静，逢冲之日")
+            _rank(use_god_branch, "安静值日")
+    if strength_level in ("休囚", "囚", "死", "偏弱", "衰") or speed == "应迟":
+        _rank(PEAK_BRANCH.get(use_god_element or "", ""), "用神休囚，旺相之日")
+        _rank(PEAK_BRANCH.get(use_god_element or "", ""), "旺相之月", "月")
+    _rank(use_god_branch, "以用神为主")
+    _rank(day_branch, "日辰值事")
+
+    key_branches = [t for t, _ in ranked][:4]
+    timing_rules = [{"token": t, "rule": r} for t, r in ranked]
+
+    key_text = "、".join(key_branches) if key_branches else "待综合旺衰另断"
+    main_text = (f"{key_branches[0]}（{ranked[0][1]}）" if key_branches else "—")
     detail = ("、".join(t["description"] for t in timing_methods)
               if timing_methods else "难以确定单一应期，以用神旺衰断时机之迟速")
 
@@ -5131,24 +5183,22 @@ def _predict_timing(r: dict, step3_data: dict, step1_data: dict, day_branch: str
         "应期适中": "不急不缓，近期数日到一两个月都是观察期",
         "应迟": "事情偏慢，可能要等旺相之月，年内陆续应验——别用三五天去衡量",
     }.get(speed, speed)
-    sp_text = ""
-    if isinstance(special_pattern, dict):
-        sp_text = str(special_pattern.get("pattern") or "") + str(special_pattern.get("description") or "")
-    elif special_pattern:
-        sp_text = str(special_pattern)
+    sp_text = sp_blob
     if step4_data.get("tan_he_wan_sheng_ke") or "合处逢冲" in sp_text or "冲中逢合" in sp_text:
         speed_plain += "；事多反复，心下易感不安"
 
-    # 保留「重点应期」与地支词供评估；叙述用人话
-    summary_text = f"重点应期：{key_text}。{speed_plain}。{speed_plain_extra}" + (f"依据：{detail}。" if detail else "")
+    summary_text = (f"重点应期：{key_text}。主应期 {main_text}。{speed_plain}。{speed_plain_extra}"
+                    + (f"依据：{detail}。" if detail else ""))
     timing_reasons.append(summary_text)
 
     return {
         "timing_methods": timing_methods,
+        "timing_rules": timing_rules,
         "speed": speed,
         "key_branches": key_branches,
+        "candidates_all": candidates_all,
         "summary_text": summary_text,
-        "plain_text": f"事情应验的时间，优先看：{key_text}。{speed_plain}。",
+        "plain_text": f"事情应验的时间，主看{main_text}，备选{'、'.join(key_branches[1:]) or '无'}。{speed_plain}。",
     }
 
 

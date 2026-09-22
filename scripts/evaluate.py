@@ -166,9 +166,8 @@ def score_case(eng: dict, exp: dict, model: str) -> dict:
     w = WEIGHTS["yingqi"]
     e_yq = str(eng.get("yingqi") or "")
     x_yq = str(exp.get("yingqi") or "")
-    # declared = 引擎自己声明的"重点应期"（外加结构化候选）；
-    # verbose  = 再算上"依据"整句里顺带出现的地支——口径宽松到几乎必然命中，仅作 legacy 复现用。
-    declared = " ".join(str(b) for b in (eng.get("yingqi_branches") or []))
+    declared_tokens = [str(b) for b in (eng.get("yingqi_branches") or [])]
+    declared = " ".join(declared_tokens)
     head = e_yq.split("依据")[0]
     e_all = head + " " + declared
     e_verbose = e_yq + " " + declared + " " + " ".join(
@@ -176,24 +175,41 @@ def score_case(eng: dict, exp: dict, model: str) -> dict:
     probe = e_verbose if model == "legacy" else e_all
     if _na(x_yq):
         dims["yingqi"] = (w, w, "空白基准，满分") if model == "legacy" else (0, 0, "空白基准 → N/A")
-    elif x_yq in probe:
-        dims["yingqi"] = (w, w, f"字面命中({x_yq})")
-    else:
+    elif model == "legacy":
         x_branches = [c for c in DAY_CHARS if c in x_yq]
-        if x_branches and all(c in probe for c in x_branches):
-            dims["yingqi"] = (w, w, f"应支全覆盖({','.join(x_branches)})")
+        rhythm = any(any(k in x_yq for k in xk) and any(k in probe for k in ek)
+                     for xk, ek in RHYTHM_PAIRS)
+        if x_yq in probe or (x_branches and all(c in probe for c in x_branches)):
+            dims["yingqi"] = (w, w, "应支全覆盖")
+        elif any(c in probe for c in x_branches):
+            dims["yingqi"] = (int(w * 0.8), w, "应支部分覆盖")
+        elif rhythm:
+            dims["yingqi"] = (int(w * 0.8), w, "节奏语义对齐")
         else:
-            shared = [c for c in x_branches if c in probe]
-            rhythm = any(any(k in x_yq for k in xk) and any(k in probe for k in ek)
-                         for xk, ek in RHYTHM_PAIRS)
-            if shared:
-                dims["yingqi"] = (int(w * 0.8), w, f"应支部分覆盖({','.join(shared[:3])})")
-            elif rhythm:
-                dims["yingqi"] = (int(w * 0.8), w, "节奏语义对齐")
-            elif model == "legacy":
-                dims["yingqi"] = (8, w, "存在即保底")
-            else:
-                dims["yingqi"] = (0, w, f"未对齐基准({x_yq})")
+            dims["yingqi"] = (8, w, "存在即保底")
+    else:
+        # strict 按**名次**给分，不按"有没有提到"给分。
+        # 成员制打分会奖励骑墙：候选铺到 11/12 支就能白拿 15 分（旧口径的 100% 即由此而来）。
+        needed = [c for c in DAY_CHARS if c in x_yq]
+        offered = []
+        for token in declared_tokens:
+            for ch in token[:2]:
+                if ch in DAY_CHARS and ch not in offered:
+                    offered.append(ch)
+        rank = next((i + 1 for i, ch in enumerate(offered) if needed and ch in needed), None)
+        if not needed:
+            hit = x_yq in probe
+            dims["yingqi"] = (w if hit else 0, w, "字面命中" if hit else f"未对齐({x_yq})")
+        elif rank == 1:
+            dims["yingqi"] = (w, w, "主应期命中")
+        elif rank == 2:
+            dims["yingqi"] = (int(w * 0.8), w, "次应期命中")
+        elif rank and rank <= 4:
+            dims["yingqi"] = (int(w * 0.55), w, f"第 {rank} 位命中")
+        elif any(c in probe for c in needed):
+            dims["yingqi"] = (int(w * 0.35), w, "仅在依据句中出现，未列为应期")
+        else:
+            dims["yingqi"] = (0, w, f"未给出基准应期({','.join(needed)})")
     return dims
 
 
@@ -362,6 +378,7 @@ def main() -> int:
 
     disc = yingqi_discrimination(engine_out, ids)
     if disc:
+        results["yingqi_discrimination"] = disc
         print(f"\n应期信息量体检（n={disc['cases_with_yingqi']}，只看引擎自己声明的重点应期）")
         print(f"  候选集平均大小 {disc['avg_candidate_set_size']}/12 —— 越接近 12，召回分越没有信息量")
         print(f"  随机列同样多候选即全覆盖的期望 {disc['random_full_coverage_expectancy']}%"

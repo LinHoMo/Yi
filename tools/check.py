@@ -31,9 +31,13 @@ BASELINE = {
     "smoke": 36,           # 有产出的分析段
     "chain_tests": 7,      # /12  —— 已知 5 例失败（吉凶区间、动变净效应）
     "regression": 10,      # /18  —— 已知 8 例古典结论维度不符
-    "tune": 97.1,          # 古籍对齐分 strict，n=20（参与过调参）
-    "holdout": 86.2,       # 古籍对齐分 strict，n=12（未参与调参）
+    "tune": 92.4,          # 古籍对齐分 strict，n=20（参与过调参）
+    "holdout": 78.0,       # 古籍对齐分 strict，n=12（未参与调参）
+    "tune_top1": 29.4,     # 主应期命中率 %（随机基线 8.3）
+    "holdout_top1": 25.0,
 }
+# 基准应支平均名次：越小越好，单独按上限把关
+BASELINE_MAX = {"tune_rank": 1.67, "holdout_rank": 2.0}
 
 PATTERNS = {
     "chain_tests": r"Passed:\s*(\d+)/(\d+)",
@@ -56,13 +60,16 @@ def measure(name: str, out: str) -> float | None:
     return float(m.group(1)) if m else None
 
 
-def eval_score(split: str) -> tuple[float | None, int]:
+def eval_metrics(split: str) -> dict:
+    """跑一个集合，返回 {avg, top1, rank}。"""
     path = ROOT / "data" / "cases" / f"eval_{split}.json"
     rc, _out = run([sys.executable, "scripts/evaluate.py", "--split", split, "--save"])
     if not path.exists():
-        return None, rc
+        return {"rc": rc}
     data = json.loads(path.read_text(encoding="utf-8"))
-    return data["results"]["strict"]["avg"], rc
+    disc = data["results"].get("yingqi_discrimination") or {}
+    return {"avg": data["results"]["strict"]["avg"], "rc": rc,
+            "top1": disc.get("top1_hit_rate"), "rank": disc.get("avg_rank_of_correct")}
 
 
 def main() -> int:
@@ -81,17 +88,19 @@ def main() -> int:
     measured: dict[str, float] = {}
     failures: list[str] = []
 
-    def gate(name: str, value: float | None, *, minimum: float, label: str, raw: str = ""):
+    def gate(name: str, value: float | None, *, minimum: float = 0.0, maximum: float | None = None,
+             label: str, raw: str = ""):
         if value is None:
             failures.append(f"{label}: 未能从输出取到指标")
             print(f"  × {label:<34s} 取数失败")
             return
-        ok = value >= minimum - 1e-9
+        ok = value >= minimum - 1e-9 if maximum is None else value <= maximum + 1e-9
         measured[name] = value
         mark = "√" if ok else "×"
-        print(f"  {mark} {label:<34s} {value:g} (基线 {minimum:g})")
+        ref = f"基线 ≥{minimum:g}" if maximum is None else f"基线 ≤{maximum:g}"
+        print(f"  {mark} {label:<34s} {value:g} ({ref})")
         if not ok:
-            failures.append(f"{label} {value:g} < 基线 {minimum:g}")
+            failures.append(f"{label} {value:g} 劣于基线")
             print(raw[-1500:])
 
     selected = set(args.only or ["calendar", "smoke", "chain_tests", "regression", "eval"])
@@ -125,10 +134,15 @@ def main() -> int:
              label="回归通过数", raw=out)
 
     if "eval" in selected and not args.fast:
-        print("\n[5] 古籍案例对齐分（strict 口径；非现实预测命中率）")
+        print("\n[5] 古籍案例对齐分与应期判别力（非现实预测命中率）")
         for split in ("tune", "holdout"):
-            avg, rc = eval_score(split)
-            gate(split, avg, minimum=baseline[split], label=f"{split} 对齐分 %")
+            m = eval_metrics(split)
+            gate(split, m.get("avg"), minimum=baseline[split], label=f"{split} 对齐分 %")
+            gate(f"{split}_top1", m.get("top1"), minimum=baseline.get(f"{split}_top1", 0.0),
+                 label=f"{split} 主应期命中 %")
+            if m.get("rank") is not None:
+                gate(f"{split}_rank", m.get("rank"), maximum=BASELINE_MAX.get(f"{split}_rank", 99),
+                     label=f"{split} 应支平均名次")
 
     print("\n" + "=" * 62)
     if failures:
