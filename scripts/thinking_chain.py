@@ -5124,6 +5124,14 @@ def _predict_timing(r: dict, step3_data: dict, step1_data: dict, day_branch: str
 
     ug_moving = any(isinstance(y, dict) and y.get("earthly_branch") == use_god_branch
                     and y.get("is_moving") for y in yao_lines)
+    changed_pairs = [(y.get("earthly_branch") or "",
+                      y.get("changed_earthly_branch") or y.get("changed_branch") or "")
+                     for y in yao_lines
+                     if isinstance(y, dict) and y.get("is_moving")]
+    changed_pairs = [(b, c) for b, c in changed_pairs if c]
+    # 动而化回头生：古籍以"生我之日"为应，且此则先于旬空——动爻得生则不作空论
+    hui_tou_sheng = [c for b, c in changed_pairs
+                     if SHENG_CYCLE.get(BRANCH_ELEMENTS.get(c, "")) == use_god_element]
     fu_detail = step2_d.get("fu_cang_detail") or {}
     fu_res = (fu_detail.get("results") or [{}])[0] if isinstance(fu_detail, dict) else {}
     fu_branch = ((fu_res.get("fu_shen") or {}).get("branch")) or ""
@@ -5133,6 +5141,8 @@ def _predict_timing(r: dict, step3_data: dict, step1_data: dict, day_branch: str
                (month_branch if _he(use_god_branch) == month_branch else "")
     PEAK_BRANCH = {"木": "寅", "火": "巳", "土": "辰", "金": "申", "水": "亥"}
 
+    if hui_tou_sheng:
+        _rank(hui_tou_sheng[0], "动而化回头生，期于生我之日")
     if is_empty:
         _rank(_chong(use_god_branch) or use_god_branch, "用神旬空，冲空则实")
         _rank(use_god_branch, "出旬填实")
@@ -5153,13 +5163,20 @@ def _predict_timing(r: dict, step3_data: dict, step1_data: dict, day_branch: str
         else:
             _rank(_chong(use_god_branch), "用神安静，逢冲之日")
             _rank(use_god_branch, "安静值日")
+    # 非用神之空亡：出空值日；若是动变所化之支逢空，久案多应在"年"上
+    for e in (r.get("empty_branches") or []):
+        _rank(e, "空亡之支出空值日")
+        if any(e in (b, c) for b, c in changed_pairs):
+            _rank(e, "填空之支，迟者应于其年", "年")
+    if changed_pairs:
+        _rank(changed_pairs[0][1], "化出之支值日")
     if strength_level in ("休囚", "囚", "死", "偏弱", "衰") or speed == "应迟":
         _rank(PEAK_BRANCH.get(use_god_element or "", ""), "用神休囚，旺相之日")
         _rank(PEAK_BRANCH.get(use_god_element or "", ""), "旺相之月", "月")
     _rank(use_god_branch, "以用神为主")
     _rank(day_branch, "日辰值事")
 
-    key_branches = [t for t, _ in ranked][:4]
+    key_branches = [t for t, _ in ranked][:5]
     timing_rules = [{"token": t, "rule": r} for t, r in ranked]
 
     key_text = "、".join(key_branches) if key_branches else "待综合旺衰另断"

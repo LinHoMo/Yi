@@ -469,6 +469,52 @@ def generate_change_comparison(result_data, width=650, height=300):
 # 4. 应期时间线
 # =============================================================================
 
+def render_yingqi_table(result_data):
+    """主/次应期表：应支 + 所本法则 + 最近的日历日。
+
+    应期是当事人唯一能据以行动的输出，所以每条都必须说清"凭什么推出这一天"，
+    并且给日历日期而非"近期"。法则缺失时宁可留白，也不编一个听起来顺的理由。
+    """
+    chain = result_data.get("thinking_chain", {}) or {}
+    step5 = chain.get("step5_synthesis", {}) or {}
+    timing = step5.get("timing", {}) or {}
+    rules = timing.get("timing_rules") or []
+    raw_dates = step5.get("yingqi_dates") or {}
+    dates = raw_dates.get("dates", []) if isinstance(raw_dates, dict) else raw_dates
+    by_branch = {}
+    for d in dates or []:
+        if isinstance(d, dict) and d.get("branch") and d["branch"] not in by_branch:
+            by_branch[d["branch"]] = d
+
+    if not rules and not by_branch:
+        return '<p style="font-size:13px;color:#8a8175;">此卦难以定单一应期，以用神旺衰断迟速。</p>'
+
+    labels = ["主应期", "次应期", "备选", "备选"]
+    head = ("<tr><th style='text-align:left;padding:6px 10px;border-bottom:1px solid #e0d8c8;'>层次</th>"
+            "<th style='text-align:left;padding:6px 10px;border-bottom:1px solid #e0d8c8;'>应支</th>"
+            "<th style='text-align:left;padding:6px 10px;border-bottom:1px solid #e0d8c8;'>所本法则</th>"
+            "<th style='text-align:left;padding:6px 10px;border-bottom:1px solid #e0d8c8;'>最近之日</th></tr>")
+    rows = []
+    seen = set()
+    for i, item in enumerate((rules or [])[:4]):
+        token, rule = (item if isinstance(item, (list, tuple)) and len(item) == 2
+                       else (item.get("token", ""), item.get("rule", "")))
+        branch = str(token)[:1]
+        if not token or token in seen:
+            continue
+        seen.add(token)
+        rec = by_branch.get(branch) or {}
+        date = rec.get("date") or "候值日"
+        rows.append(
+            f"<tr><td style='padding:6px 10px;color:#8a6d3b;'>{labels[min(i, 3)]}</td>"
+            f"<td style='padding:6px 10px;font-weight:600;'>{html.escape(str(token))}</td>"
+            f"<td style='padding:6px 10px;font-size:13px;'>{html.escape(str(rule))}</td>"
+            f"<td style='padding:6px 10px;font-size:13px;'>{html.escape(str(date))}</td></tr>")
+    return (f"<table style='border-collapse:collapse;width:100%;margin-bottom:12px;'>{head}{''.join(rows)}</table>"
+            "<p style='font-size:12px;color:#8a8175;margin:0 0 10px;'>"
+            "应期是给方向的观察窗口，不是定时炸弹的倒计时；过了窗口不等于不验。</p>")
+
+
 def generate_yingqi_timeline(result_data, width=650, height=200):
     """应期日期时间线"""
     chain = result_data.get("thinking_chain", {})
@@ -1203,9 +1249,11 @@ def build_html_report(result_data):
 
     # 应期
     yingqi_svg = generate_yingqi_timeline(result_data)
+    yingqi_table = render_yingqi_table(result_data)
     tabs["推演"].append(f'''
     <div class="card">
         <h2>应期推断</h2>
+        {yingqi_table}
         <div class="chart-box">{yingqi_svg}</div>
     </div>''')
 

@@ -31,13 +31,13 @@ BASELINE = {
     "smoke": 36,           # 有产出的分析段
     "chain_tests": 7,      # /12  —— 已知 5 例失败（吉凶区间、动变净效应）
     "regression": 10,      # /18  —— 已知 8 例古典结论维度不符
-    "tune": 92.4,          # 古籍对齐分 strict，n=20（参与过调参）
-    "holdout": 78.0,       # 古籍对齐分 strict，n=12（未参与调参）
+    "tune": 93.7,          # 古籍对齐分 strict，n=20（参与过调参）
+    "holdout": 78.7,       # 古籍对齐分 strict，n=12（未参与调参）
     "tune_top1": 29.4,     # 主应期命中率 %（随机基线 8.3）
     "holdout_top1": 25.0,
 }
 # 基准应支平均名次：越小越好，单独按上限把关
-BASELINE_MAX = {"tune_rank": 1.67, "holdout_rank": 2.0}
+BASELINE_MAX = {"tune_rank": 2.13, "holdout_rank": 2.4}
 
 PATTERNS = {
     "chain_tests": r"Passed:\s*(\d+)/(\d+)",

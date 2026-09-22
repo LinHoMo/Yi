@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""注：本脚本不是机器学习 SHAP 归因，只是把 thinking_chain 的
+factor_contributions 手画成条形/瀑布图。旧名 visualize_shap 属蹭名词，2026-09-22 更名。
+
 """
-六爻 SHAP 风格因子贡献可视化
+六爻因子贡献图（条形 / 瀑布）
 生成横向条形图 + 瀑布图，显示每项因子如何推得最终评分。
 """
 import os
@@ -55,7 +58,7 @@ def generate_sample_hex(question: str = "婚姻感情走向", seed: int = None) 
 
 
 def render_bar_chart(factor_contributions: list, verdict: str, final_score: float, out_path: str) -> bool:
-    """横向条形图（SHAP 风格）：红色=拖累，绿色=助力，按绝对值排序。"""
+    """横向条形图（因子贡献，形似 SHAP summary 但非归因计算）：红色=拖累，绿色=助力，按绝对值排序。"""
     plt = _try_import_matplotlib()
     if plt is None:
         print("[warn] matplotlib 未安装，跳过条形图", file=sys.stderr)
@@ -170,7 +173,7 @@ def render_waterfall(factor_contributions: list, verdict: str, final_score: floa
 
 
 def main():
-    """命令行入口：python visualize_shap.py [--question X] [--outdir DIR]"""
+    """命令行入口：python factor_waterfall.py [--question X] [--outdir DIR]"""
     question = "婚姻感情走向"
     outdir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "outputs", "viz")
     seed = None
@@ -194,8 +197,8 @@ def main():
     verdict = s5.get("verdict", "平")
     final_score = s5.get("final_score", 0.0)
 
-    bar_path = os.path.join(outdir, "shap_bar.png")
-    wf_path = os.path.join(outdir, "shap_waterfall.png")
+    bar_path = os.path.join(outdir, "factor_bar.png")
+    wf_path = os.path.join(outdir, "factor_waterfall.png")
 
     ok1 = render_bar_chart(fcs, verdict, final_score, bar_path)
     ok2 = render_waterfall(fcs, verdict, final_score, wf_path)
@@ -210,7 +213,7 @@ def main():
         "bar_path": bar_path if ok1 else None,
         "waterfall_path": wf_path if ok2 else None,
     }
-    summary_path = os.path.join(outdir, "shap_summary.json")
+    summary_path = os.path.join(outdir, "factor_summary.json")
     with open(summary_path, "w", encoding="utf-8") as f:
         json.dump(summary, f, ensure_ascii=False, indent=2)
 
