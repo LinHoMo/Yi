@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+
+# 生成物（各学科内亦各自忽略，这里兜底）
+outputs/
+logs/
+scratch/
+*.tmp
+
+# 编辑器与系统
+.DS_Store
+.idea/
+.vscode/
