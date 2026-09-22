@@ -70,6 +70,12 @@ python <skill-path>/scripts/liuyao_engine.py --mode manual --yao "7,8,9,7,6,8"
 python scripts/thinking_chain.py <result_json_file>
 ```
 
+需要交付 HTML 报告时不必分步：`liuyao_engine.py --format html --save-html outputs/report.html`
+一条命令即可（内部已串起排盘→思维链→正文→报告）。
+
+历法口径默认值（改动会使断卦结果不同，非必要不动）：交节按"当日即换"（`YI_GANZHI_BOUNDARY=day`）、
+夜子时不作次日（换日派需显式 `--distinguish-zi-hour --zi-hour-type late`）。
+
 **交叉校验（禁止省略）：** 思维链返回的 `step2_use_god_identification.use_god_category` 必须对照 `references/interpretation_guide.md` 中的用神取法总表确认。凡问题涉及"感情"、"喜欢"、"女友"、"喜欢我"且求测者为男性——用神应为妻财。**如果思维链选择的用神与此冲突，以指南为准，并在解读中以显式形式说明"卦象信号"及指南依据。**
 
 思维链中间结果（推理链、因子贡献表）不直接照搬到正文，但解读必须基于思维链的数据和格局判定——正文是"翻译"不是"重写"。
@@ -109,6 +115,9 @@ python scripts/thinking_chain.py <result_json_file>
 | 动变分析（进退、合冲、三合） | `advanced_analysis.advance_retreat` / `clash_harmony` / `triple_combo` |
 | 伏藏 / 暗动 / 月破 | `advanced_analysis.hidden_spirit_analysis` / `hidden_movement` / `monthly_break` |
 | 变卦信息 | `changed_hexagram` |
+| **主/次应期及其法则** | `thinking_chain.step5_synthesis.timing.timing_rules[]`（`{token, rule}`，第一条即主应期） |
+| 应期日历日 | `thinking_chain.step5_synthesis.yingqi_dates.dates[]`（`{date, branch, rule, description}`） |
+| 全部候选（仅备查） | `thinking_chain.step5_synthesis.timing.candidates_all[]`——**禁止**当作"重点应期"念给用户 |
 
 #### 3.4 输出模板示例
 
@@ -219,7 +228,8 @@ python scripts/thinking_chain.py <result_json_file>
 - □ 本次解读未打开、未引用、未联想到案例库内容？
 - □ 用神多现/伏藏/空亡/月破/暗动等特殊状态均已处理？
 - □ 动爻分析覆盖所有动爻（无遗漏）？
-- □ **应期是否用了具体日历日期？** 不得使用"近期"、"数日内"等模糊描述，必须引用 `yingqi_dates.dates` 提供的日历日期。
+- □ **应期是否给了主、次两级并说明所本法则？** 必须从 `timing.timing_rules` 取主应期与次应期，每条讲清"凭什么推出这一支"（如"用神旬空，冲空则实"），并配 `yingqi_dates.dates` 的日历日期。
+- □ **有没有把候选堆成一串地支？** `candidates_all` 是备查长列表，正文只准出现主/次应期；罗列七八个地支等于没判断（旧版即如此，随机覆盖期望 92.6%，与瞎蒙无异）。
 - □ **象判边界是否克制？** "象"的描述用"偏向"、"结构上"等措辞；凡终极断语必须有"此为参考"或"非确定性"标注。
 - □ 正文单独读一遍：若仍像字段报表或需另一篇「翻译」才算懂，重写。
 
