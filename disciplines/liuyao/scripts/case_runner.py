@@ -11,6 +11,7 @@
   现在用内核反查满足该月令与该日柱的真实公历日期，四柱全部由历法算出。
 """
 from __future__ import annotations
+from kernel_path import kernel_dir  # noqa: E402
 
 import json
 import re
@@ -20,7 +21,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-for _p in (str(ROOT / "scripts"), str(ROOT / "core")):
+for _p in (str(ROOT / "scripts"), str(kernel_dir(__file__))):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 

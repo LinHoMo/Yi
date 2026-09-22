@@ -18,6 +18,7 @@
   用神六亲 15 / 用神地支 10 / 用神爻位 5 / 吉凶方向 40 / 格局覆盖 15 / 应期 15
 """
 from __future__ import annotations
+from kernel_path import kernel_dir  # noqa: E402
 
 import argparse
 import json
@@ -25,7 +26,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-for _p in (str(ROOT / "scripts"), str(ROOT / "core")):
+for _p in (str(ROOT / "scripts"), str(kernel_dir(__file__))):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 

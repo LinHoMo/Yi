@@ -14,8 +14,10 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+from kernel_path import kernel_dir as _kernel_dir  # noqa: E402
 ROOT = Path(__file__).resolve().parents[1]
-sys.path[:0] = [str(ROOT / "scripts"), str(ROOT / "core")]
+sys.path[:0] = [str(ROOT / "scripts"), str(_kernel_dir(__file__))]
 OUT = ROOT / "scratch" / "golden_before.json"
 
 TIMES = ["2024-02-03 10:30", "2024-02-05 10:30", "2026-09-22 23:40"]

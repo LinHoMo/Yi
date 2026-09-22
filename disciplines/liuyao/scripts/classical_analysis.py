@@ -16,11 +16,12 @@
     enhanced = enhance_reading(base_result)
     # enhanced['advanced_analysis'] 包含 9 个分析段
 """
-import os as _ks_os, sys as _ks_sys   # 内核路径引导，不依赖导入顺序
-_CORE_DIR = _ks_os.path.join(_ks_os.path.dirname(_ks_os.path.abspath(__file__)),
-                              _ks_os.pardir, "core")
-if _ks_os.path.isdir(_CORE_DIR) and _ks_os.path.abspath(_CORE_DIR) not in _ks_sys.path:
-    _ks_sys.path.insert(0, _ks_os.path.abspath(_CORE_DIR))
+import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
+_ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
+if _ks_d not in _ks_sys.path:
+    _ks_sys.path.insert(0, _ks_d)
+from kernel_path import ensure_kernel_on_path as _ensure_kernel, kernel_dir
+_ensure_kernel(__file__)
 from yishu_core.najia import najia_branch
 from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     ADVANCE_PAIRS,

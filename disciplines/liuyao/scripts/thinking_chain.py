@@ -21,11 +21,12 @@
 """
 
 from __future__ import annotations
-import os as _ks_os, sys as _ks_sys   # 内核路径引导，不依赖导入顺序
-_CORE_DIR = _ks_os.path.join(_ks_os.path.dirname(_ks_os.path.abspath(__file__)),
-                              _ks_os.pardir, "core")
-if _ks_os.path.isdir(_CORE_DIR) and _ks_os.path.abspath(_CORE_DIR) not in _ks_sys.path:
-    _ks_sys.path.insert(0, _ks_os.path.abspath(_CORE_DIR))
+import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
+_ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
+if _ks_d not in _ks_sys.path:
+    _ks_sys.path.insert(0, _ks_d)
+from kernel_path import ensure_kernel_on_path as _ensure_kernel, kernel_dir
+_ensure_kernel(__file__)
 from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     ADVANCE_PAIRS,
     BRANCH_ELEMENTS,
@@ -4465,7 +4466,8 @@ def _next_month_with_branch(start_date: datetime, target_branch: str) -> datetim
         import os
         import sys
         from pathlib import Path
-        core_dir = Path(os.path.dirname(os.path.abspath(__file__))).parent / "core"
+        from kernel_path import kernel_dir
+        core_dir = kernel_dir(__file__)
         if str(core_dir) not in sys.path:
             sys.path.insert(0, str(core_dir))
         from yishu_core import ganzhi_calendar as _gc

@@ -20,8 +20,12 @@ import subprocess
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "core"))
+DISC = Path(__file__).resolve().parents[1]          # 学科根：disciplines/liuyao
+sys.path.insert(0, str(DISC / "scripts"))
+from kernel_path import kernel_dir as _kernel_dir, repo_root as _repo_root  # noqa: E402
+REPO = _repo_root(__file__)                          # 仓库根：含 core/ 与 disciplines/
+ROOT = DISC                                          # 兼容旧变量名：脚本与数据以学科根为基准
+sys.path.insert(0, str(_kernel_dir(__file__)))
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 
 BASELINE_FILE = ROOT / "tools" / "check_baseline.json"
@@ -82,12 +86,16 @@ def version_report() -> list[str]:
     problems = [f"版本号不合语义：{yishu_core.__version__}"] if not re.match(
         r"^\d+\.\d+\.\d+$", yishu_core.__version__) else []
     import tomllib
-    proj = tomllib.loads((ROOT / "pyproject.toml").read_bytes().decode("utf-8"))["project"]
+    proj = tomllib.loads((REPO / "pyproject.toml").read_bytes().decode("utf-8"))["project"]
+    if proj.get("name") != "yishu-core":
+        problems.append(f"仓库根 pyproject 包名是 {proj.get('name')}，应为 yishu-core")
     if "version" in proj:
         problems.append(f"pyproject [project] 里又写了字面 version={proj['version']}，"
                         f"应改走 dynamic 从 yishu_core 取")
     if "version" not in proj.get("dynamic", []):
         problems.append("pyproject [project].dynamic 未包含 version")
+    if (DISC / "pyproject.toml").exists():
+        problems.append("学科根不该再有一份 pyproject（内核唯一发版）")
 
     for rel in ("assets/portal_data.json", "index.html"):
         text = (ROOT / rel).read_text(encoding="utf-8")
@@ -145,7 +153,7 @@ def main() -> int:
 
     if "calendar" in selected:
         print("\n[1] 干支历内核自检")
-        rc, out = run([sys.executable, "core/yishu_core/calendar_check.py"])
+        rc, out = run([sys.executable, str(REPO / "core" / "yishu_core" / "calendar_check.py")])
         passed = re.search(r"自检：(\d+) 项通过，(\d+) 项失败", out)
         if passed:
             gate("calendar", float(passed.group(1)), minimum=baseline["calendar"],

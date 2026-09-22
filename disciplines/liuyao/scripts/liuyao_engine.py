@@ -10,11 +10,12 @@
 
 仅使用 Python 标准库，无外部依赖。
 """
-import os as _ks_os, sys as _ks_sys   # 内核路径引导，不依赖导入顺序
-_CORE_DIR = _ks_os.path.join(_ks_os.path.dirname(_ks_os.path.abspath(__file__)),
-                              _ks_os.pardir, "core")
-if _ks_os.path.isdir(_CORE_DIR) and _ks_os.path.abspath(_CORE_DIR) not in _ks_sys.path:
-    _ks_sys.path.insert(0, _ks_os.path.abspath(_CORE_DIR))
+import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
+_ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
+if _ks_d not in _ks_sys.path:
+    _ks_sys.path.insert(0, _ks_d)
+from kernel_path import ensure_kernel_on_path as _ensure_kernel, kernel_dir
+_ensure_kernel(__file__)
 from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     ADVANCE_PAIRS,
     BRANCH_ELEMENTS,
@@ -815,7 +816,7 @@ def _load_ganzhi_kernel():
         return _gc
     except ImportError:
         pass
-    core_dir = Path(__file__).resolve().parents[1] / "core"
+    core_dir = kernel_dir(__file__)
     if not (core_dir / "yishu_core").is_dir():
         raise RuntimeError(f"缺少历法内核目录：{core_dir / 'yishu_core'}")
     if str(core_dir) not in sys.path:

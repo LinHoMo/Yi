@@ -8,6 +8,7 @@
 **不再手写常量**：上一版把 v8 的 100.0 硬编在脚本里，引擎改了、门户照旧显示满分。
 """
 from __future__ import annotations
+from kernel_path import kernel_dir  # noqa: E402
 
 import argparse
 import json
@@ -19,7 +20,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
-sys.path.insert(0, str(ROOT / "core"))
+sys.path.insert(0, str(kernel_dir(__file__)))
 
 OUT_REPORTS = ROOT / "outputs" / "reports"
 EVAL_FILES = {"tune": ROOT / "data" / "cases" / "eval_tune.json",
