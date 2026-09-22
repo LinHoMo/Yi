@@ -112,17 +112,22 @@ REGRESSION_CASES = [
     # ------------------------------------------------------------------
     RegressionCase(
         id="reg_03",
-        name="占近病·六合卦·用神极旺回头生",
+        name="占近病·六合卦·用神极旺·原神发动生用",
         source="《黄金策·疾病章》",
+        # 丑月乙酉日，地天泰（坤宫三世六合卦）三爻甲辰兄弟土动 → 之卦地泽临。
+        # 兄弟土为子孙金之原神，原神动而生用 ⇒ 动变净效应为正；
+        # 辰化丑属化退、日月合绊稍减其力，不改总体有助。用神临日帝旺、得月建
+        # 丑土之生 ⇒ 极旺；六合主缠绵，旺则合为聚不为滞 ⇒ 吉。
+        # 旧夹具此处记 neutral，是爻序镜像位次下的产物；P0 修正后按古籍理重推。
         date=(2024, 1, 22, 10),
         yao=[7, 7, 9, 8, 8, 8],
         question="孩子医药什么时候好",
         classical_verdict="吉",
         expected_direction="auspicious",
         expected_use_god="子孙",
-        key_reasoning=["六合卦判定正确", "子孙用神极旺", "回头生为吉"],
+        key_reasoning=["六合卦判定正确", "子孙用神极旺", "原神发动生用为吉"],
         acceptable_bands=["auspicious", "mixed-fav"],
-        expected_net_effect_sign="neutral",
+        expected_net_effect_sign="positive",
         expected_strength_pattern="strong",
     ),
 
