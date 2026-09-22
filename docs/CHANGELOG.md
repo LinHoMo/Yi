@@ -2,6 +2,37 @@
 
 分数口径变化必须在此登记，否则 tune/holdout 数字不可比（`AGENTS.md` §四.4）。
 
+## M1（第一批）象数基元合一（2026-09-22）
+
+新增 `core/yishu_core/symbols.py`（245 行）为**唯一真值源**：
+HEAVENLY_STEMS / EARTHLY_BRANCHES / STEM_ELEMENTS / BRANCH_ELEMENTS / SHENG_CYCLE / KE_CYCLE /
+HE_PAIRS / CHONG_PAIRS / BREAK_PAIRS / TOMB_MAP / ADVANCE_PAIRS / RETREAT_PAIRS /
+NAJIA_BRANCHES / HEXAGRAM_TRIGRAMS / EIGHT_PALACES，共 15 张表；
+三个源文件里的 **38 处本地副本全部删除**（含 `thinking_chain` 的 `BRANCHES` 别名副本）。
+`liuyao_engine.py` 4042 → 3670 行，`classical_analysis.py` 4318 → 4200 行，
+`thinking_chain.py` 6396 → 6150 行。
+
+搬动前用 `scratch/dup_table_audit.py` 逐条目比对取值：**14 张表三份完全一致**，合一无行为风险。
+
+### 顺带修掉的两个真问题
+
+1. **EIGHT_PALACES 三份不一致**：`thinking_chain` 副本把兑宫世次排错——
+   `蹇(四世) 小过(五世) 归妹(游魂) 谦(归魂)`，正法为
+   `蹇(四世) 谦(五世) 小过(游魂) 归妹(归魂)`。今天只有 `order[0]` 被读到，故是**潜伏缺陷**：
+   一旦有人用这张表判游魂/归魂，兑宫 谦/小过/归妹 三卦的世应就会错。已统一取 engine 副本。
+2. **`get_palace_first_hexagram` 的兼容分支写反了**：
+   原逻辑 `if not data and not name.endswith("宫"): try name + "宫"` —— 传入 `"兑宫"` 时
+   永远不会去查带宫后缀的键。现由 `symbols.palace_of_key()` 归一化，`"艮"` 与 `"艮宫"` 都能查到。
+
+### 护栏
+
+新增 `tools/golden.py`：64 卦 × 3 种爻型 × 3 个时刻（含立春边界内外与夜子时）共 288 例，
+对四柱、六爻纳甲六亲六神、世应、旬空、变卦、用神、旺衰、verdict、评分、应期候选、
+22 个分析段输出做全字段指纹。本次重构前后**指纹完全一致**
+（`147d57e8d06b0418`），证明是纯结构搬动、无判断漂移。
+
+`python tools/golden.py capture|verify` 今后是任何引擎改动的第二道门。
+
 ## M0.5 / M0.6 工程底座（2026-09-22）
 
 - **`tools/check.py`** 一条命令跑六个质量门（历法自检 / 段落冒烟 / 思维链用例 / 古籍回归 /
