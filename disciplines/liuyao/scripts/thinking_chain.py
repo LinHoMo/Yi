@@ -1057,7 +1057,8 @@ def step2_identify_use_god(r: dict) -> dict:
             break
     response_position = None
     if world_position:
-        response_position = ((world_position - 1 + 3) % 6) + 1
+        from yishu_core.najia import response_position as _resp_of
+        response_position = _resp_of(world_position)
 
     def _use_god_priority(pos_info):
         p = pos_info.get("position", 99)

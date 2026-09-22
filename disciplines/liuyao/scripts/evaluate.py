@@ -110,9 +110,15 @@ def score_case(eng: dict, exp: dict, model: str) -> dict:
     # 用神六亲
     e_cat, x_cat = eng.get("use_god_category", ""), exp.get("use_god_god") or exp.get("use_god") or ""
     hit = (e_cat == x_cat)
-    dims["use_god_category"] = (WEIGHTS["use_god_category"] if hit else 0,
-                                WEIGHTS["use_god_category"],
-                                f"{e_cat}{'=' if hit else '≠'}{x_cat or '基准缺'}")
+    w = WEIGHTS["use_god_category"]
+    if _na(x_cat):
+        # 基准未取用神（古籍那条只记了验期）→ 无从对照，记 N/A，不算引擎失分。
+        # legacy 沿用旧口径（跟着六亲走），两模型因此不可跨口径比较。
+        dims["use_god_category"] = (w if hit else 0, w, "基准未记用神，随六亲") if model == "legacy" \
+            else (0, 0, "基准未记用神 → N/A")
+    else:
+        dims["use_god_category"] = (w if hit else 0, w,
+                                    f"{e_cat}{'=' if hit else '≠'}{x_cat}")
 
     # 用神地支
     e_br, x_br = eng.get("use_god_branch", ""), exp.get("use_god_branch", "")
@@ -138,17 +144,23 @@ def score_case(eng: dict, exp: dict, model: str) -> dict:
     # 吉凶方向
     w = WEIGHTS["verdict"]
     ed, xd = verdict_direction(eng.get("verdict")), verdict_direction(exp.get("verdict"))
-    if ed == xd:
-        vs, note = w, "方向一致"
-    elif ed * xd > 0:
-        vs, note = int(w * 0.8), "同向异强"
-    elif str(exp.get("verdict")) in ("平/不利", "平") and ed <= 0:
-        vs, note = int(w * 0.8), "基准平·引擎偏负"
-    elif ed == 0:
-        vs, note = int(w * 0.3), "引擎中性回避"
+    if _na(exp.get("verdict")):
+        # 基准只记了验期、没记吉凶（外部集里过半是这种）→ 该维无从对照，记 N/A。
+        # 否则 40 分会凭空判给"引擎说了不算"，把分数压成假低。
+        dims["verdict"] = (w, w, "基准未记吉凶，满分") if model == "legacy" \
+            else (0, 0, "基准未记吉凶 → N/A")
     else:
-        vs, note = 0, "方向相反"
-    dims["verdict"] = (vs, w, f"{eng.get('verdict')}/{exp.get('verdict')} {note}")
+        if ed == xd:
+            vs, note = w, "方向一致"
+        elif ed * xd > 0:
+            vs, note = int(w * 0.8), "同向异强"
+        elif str(exp.get("verdict")) in ("平/不利", "平") and ed <= 0:
+            vs, note = int(w * 0.8), "基准平·引擎偏负"
+        elif ed == 0:
+            vs, note = int(w * 0.3), "引擎中性回避"
+        else:
+            vs, note = 0, "方向相反"
+        dims["verdict"] = (vs, w, f"{eng.get('verdict')}/{exp.get('verdict')} {note}")
 
     # 格局覆盖
     w = WEIGHTS["patterns"]
@@ -334,7 +346,8 @@ def report(res: dict) -> None:
 def main() -> int:
     force_utf8_stdio()
     ap = argparse.ArgumentParser(description="六爻古籍案例对齐评分（非现实预测命中率）")
-    ap.add_argument("--split", choices=["tune", "holdout", "yingqi_holdout", "all"],
+    ap.add_argument("--split", choices=["tune", "holdout", "yingqi_holdout",
+                                        "wikisource_holdout", "all"],
                     default="all")
     ap.add_argument("--ids", nargs="*", help="指定案例 ID，优先于 --split")
     ap.add_argument("--stage", choices=["run", "score", "all"], default="all")

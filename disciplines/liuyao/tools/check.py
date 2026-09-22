@@ -220,16 +220,19 @@ def main() -> int:
 
     if "yingqi_external" in selected or "eval" in selected:
         # 外部验证集：只报数、不设门槛。n 太小时设门槛只会逼人去过拟合它。
-        ext = eval_metrics("yingqi_holdout")
         print("\n[6] 外部验证集（未参与任何调参；只报数不设门槛）")
-        if ext.get("error"):
-            print(f"  ! 外部集未跑成：{ext['error'][:200]}")
-        elif not ext.get("avg"):
-            print("  ! 外部集为空（见 docs/CASE-LIBRARY-AUDIT.md）")
-        else:
-            print(f"  · yingqi_holdout 对齐分 {ext['avg']}% (n={ext.get('n') or 0})，"
-                  f"主应期命中 {ext.get('top1') or '—'}%，应支平均名次 {ext.get('rank') or '—'}")
-            print("    n 过小，仅供参照；要得出应期能力的结论须先扩样（见 HANDOFF 四·三）")
+        for split, note in (("yingqi_holdout", "转写本，过六道自洽门"),
+                            ("wikisource_holdout", "维基文库原本，过纳甲/卦变/世应三方校验")):
+            ext = eval_metrics(split)
+            if ext.get("error"):
+                print(f"  ! {split} 未跑成：{ext['error'][:200]}")
+            elif not ext.get("avg"):
+                print(f"  ! {split} 为空（见 docs/CASE-LIBRARY-AUDIT.md）")
+            else:
+                print(f"  · {split}（{note}）对齐分 {ext['avg']}% (n={ext.get('n') or 0})，"
+                      f"主应期命中 {ext.get('top1') or '—'}%，应支平均名次 {ext.get('rank') or '—'}")
+        print("    两个集合都是**永不参与调参**的外部集；n 越小越只能当参照，"
+              "别拿它当成绩，也别为过它写私有规则（扩样路线见 HANDOFF 四·三）")
 
     print("\n" + "=" * 62)
     if failures:

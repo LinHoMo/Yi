@@ -25,3 +25,15 @@ def najia_branch(hex_name: str, position: int) -> str | None:
     if position <= 3:
         return NAJIA_BRANCHES[lower_name]["inner"][position - 1]
     return NAJIA_BRANCHES[upper_name]["outer"][position - 4]
+
+
+def response_position(world_position: int) -> int | None:
+    """世爻在第 N 爻时，应爻在第几位（世应相隔三位：世一应四、世四应一）。
+
+    放内核的理由：这是安世应这一步的唯一事实。此前 `thinking_chain` 里写了一遍
+    `((world - 1 + 3) % 6) + 1`，抓取《增刪卜易》原文做外部校验的工具又手写了一遍，
+    两份镜像里的一份写成了"世+2"——应位比对当场错了 38 处（爻序 P0 的同类事故）。
+    """
+    if not world_position or not (1 <= world_position <= 6):
+        return None
+    return ((world_position - 1 + 3) % 6) + 1

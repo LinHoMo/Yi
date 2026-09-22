@@ -168,6 +168,11 @@ def load_ids(split: str | None = None, only: list[str] | None = None) -> list[st
             return [i for i in json.loads(SPLITS.read_text(encoding="utf-8")).get("yingqi_holdout", [])
                     if i in all_ids]
         return [i for i in all_ids if i.startswith("YQ")]
+    if split == "wikisource_holdout":
+        if SPLITS.exists():
+            return [i for i in json.loads(SPLITS.read_text(encoding="utf-8")).get("wikisource_holdout", [])
+                    if i in all_ids]
+        return [i for i in all_ids if i.startswith("WS")]
     if split == "holdout":
         if SPLITS.exists():
             return [i for i in json.loads(SPLITS.read_text(encoding="utf-8")).get("holdout", [])
