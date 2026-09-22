@@ -4,7 +4,7 @@
     "built_by": "tools/fetch_wikisource_cases.py",
     "retrieved": "2026-09-22",
     "sha256": "897f963b938ec4582bc892465301b831a6439216f317841f44b888117704ca07",
-    "total_cases": 37,
+    "total_cases": 39,
     "usage": "永不参与调参的外部验证集；评分前请先看 expected 是否需人工复核",
     "dropped": {
       "no_head": 93,
@@ -12,11 +12,11 @@
       "no_day": 3,
       "few_lines": 0,
       "validate_fail": 0,
-      "no_yingqi": 112,
+      "no_yingqi": 110,
       "dup": 0
     },
     "partial": {
-      "verdict_missing": 20
+      "verdict_missing": 21
     }
   },
   "cases": [
@@ -402,7 +402,7 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "父母",
+        "use_god": "",
         "use_god_branch": "",
         "use_god_position": "",
         "yingqi": "卯月",
@@ -1070,6 +1070,43 @@
     {
       "id": "WS030",
       "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占借貸",
+      "question": "占借貸",
+      "input": {
+        "date": "未月丁卯日",
+        "question": "占借貸"
+      },
+      "hexagram": {
+        "original": "兑",
+        "changed": "震",
+        "moving": [
+          2,
+          5
+        ],
+        "palace": "兑",
+        "generation": "六世"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "辰日",
+        "yingqi_branches": [
+          "辰"
+        ],
+        "detail": "果於辰日"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 3336,
+        "wikitext_head": "未月丁卯日占借貸得兌之震"
+      }
+    },
+    {
+      "id": "WS031",
+      "source": "《增刪卜易》（维基文库原本）",
       "topic": "女家代占婚",
       "question": "女家代占婚",
       "input": {
@@ -1106,7 +1143,7 @@
       }
     },
     {
-      "id": "WS031",
+      "id": "WS032",
       "source": "《增刪卜易》（维基文库原本）",
       "topic": "占夫妻不和將來如好否﹖",
       "question": "占夫妻不和將來如好否﹖",
@@ -1143,7 +1180,7 @@
       }
     },
     {
-      "id": "WS032",
+      "id": "WS033",
       "source": "《增刪卜易》（维基文库原本）",
       "topic": "占孕男女",
       "question": "占孕男女",
@@ -1162,7 +1199,7 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "妻财",
+        "use_god": "",
         "use_god_branch": "",
         "use_god_position": "",
         "yingqi": "申日",
@@ -1179,7 +1216,7 @@
       }
     },
     {
-      "id": "WS033",
+      "id": "WS034",
       "source": "《增刪卜易》（维基文库原本）",
       "topic": "占僕人何日回",
       "question": "占僕人何日回",
@@ -1215,7 +1252,7 @@
       }
     },
     {
-      "id": "WS034",
+      "id": "WS035",
       "source": "《增刪卜易》（维基文库原本）",
       "topic": "占伯何日來",
       "question": "占伯何日來",
@@ -1251,7 +1288,7 @@
       }
     },
     {
-      "id": "WS035",
+      "id": "WS036",
       "source": "《增刪卜易》（维基文库原本）",
       "topic": "占夫在外還往他省去否",
       "question": "占夫在外還往他省去否",
@@ -1288,7 +1325,43 @@
       }
     },
     {
-      "id": "WS036",
+      "id": "WS037",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "由江右登舟占一路平安否",
+      "question": "由江右登舟占一路平安否",
+      "input": {
+        "date": "戌月丙戌日",
+        "question": "由江右登舟占一路平安否"
+      },
+      "hexagram": {
+        "original": "蛊",
+        "changed": "巽",
+        "moving": [
+          5
+        ],
+        "palace": "巽",
+        "generation": "归魂"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "巳日",
+        "yingqi_branches": [
+          "巳"
+        ],
+        "detail": "果泊五日﹐巳日天晴得風順矣﹐自此始悟子孫乃行舟之順風也"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 3673,
+        "wikitext_head": "於戌月丙戌日由江右登舟占一路平安否得蠱之巽"
+      }
+    },
+    {
+      "id": "WS038",
       "source": "《增刪卜易》（维基文库原本）",
       "topic": "占地",
       "question": "占地",
@@ -1325,7 +1398,7 @@
       }
     },
     {
-      "id": "WS037",
+      "id": "WS039",
       "source": "《增刪卜易》（维基文库原本）",
       "topic": "占以父柩附葬祖苗",
       "question": "占以父柩附葬祖苗",

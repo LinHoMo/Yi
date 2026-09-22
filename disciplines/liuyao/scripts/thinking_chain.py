@@ -48,7 +48,9 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
 )
 
 from datetime import datetime, timedelta
+import json
 import re
+from pathlib import Path
 
 # =============================================================================
 # 五行基础数据
@@ -951,6 +953,7 @@ def step2_identify_use_god(r: dict) -> dict:
 
     # ---------- 2.1: 确定用神类别 ----------
     use_god_category = _determine_use_god_category(question_category, question_text)
+    use_god_basis = _use_god_basis(f"{question_category} {question_text}", use_god_category)
 
     # ---------- 2.2: 定位用神在卦中的位置 ----------
     use_god_positions = _find_use_god_positions(
@@ -1153,6 +1156,7 @@ def step2_identify_use_god(r: dict) -> dict:
     return {
         "question_category": question_category,
         "use_god_category": use_god_category,
+        "use_god_basis": use_god_basis,
         "use_god_element": use_god_element,
         "use_god_positions": use_god_positions,
         "selected_use_god": selected_use_god,
@@ -1194,10 +1198,92 @@ def step2_identify_use_god(r: dict) -> dict:
 
 # --- Step 2 辅助函数 ---
 
+# =============================================================================
+# 取用神：原书明写的"关系优先"法则（data/rules/use_god_relations.json，逐条带引文）
+# =============================================================================
+_USE_GOD_RULES: list[dict] | None = None
+
+
+def _use_god_rules() -> list[dict]:
+    """装载规则表；读不到就返回空表（宁可退回词典，也不硬编一份"假装有出处"的规则）。"""
+    global _USE_GOD_RULES
+    if _USE_GOD_RULES is None:
+        path = Path(__file__).resolve().parents[1] / "data" / "rules" / "use_god_relations.json"
+        try:
+            _USE_GOD_RULES = json.loads(path.read_text(encoding="utf-8")).get("rules") or []
+        except (OSError, ValueError):
+            _USE_GOD_RULES = []
+    return _USE_GOD_RULES
+
+
+_HEX_NAMES = sorted((n for n in HEXAGRAM_TRIGRAMS if len(n) >= 2), key=len, reverse=True)
+
+
+def _strip_hex_names(text: str) -> str:
+    """从待匹配文本里剥掉六十四卦名。
+
+    卦名里的字不是问事内容："益之小畜"的"畜"会让"凡占六畜皆以子孫為用"误触发，
+    "归妹"的"妹"会让"占兄弟姐妹→兄弟"误触发。用神只由问的事决定，不由起的卦决定。
+    """
+    for name in _HEX_NAMES:
+        text = text.replace(name, "")
+    return text
+
+
+_CHART_TAIL = re.compile(r"[，,、]?\s*(?P<orig>[一-鿿]{1,4})[之變变](?P<chg>[一-鿿]{1,4})\s*$")
+
+
+def _strip_chart_tail(text: str) -> str:
+    """剥掉题面末尾的卦名（"…占投资经营，益之小畜"里的"益之小畜"）。
+
+    用神只该由"问的是什么事"决定。不剥的话，"小畜"的"畜"会去命中"凡占六畜皆以子孫為用"，
+    把投资经营判成占牲口——卦名混进问事文本是关键词法的通病，不是一条规则的事。
+    """
+    m = _CHART_TAIL.search(text)
+    if m and m.group("orig") in HEXAGRAM_TRIGRAMS and m.group("chg") in HEXAGRAM_TRIGRAMS:
+        return text[:m.start()]
+    return text
+
+
+def _match_use_god_rule(text: str) -> dict | None:
+    """命中原书取用法则 → 该条规则。priority 小者优先，同级取更长（更具体）的触发词。"""
+    from yishu_core.symbols import normalize_question_text
+    text = _strip_chart_tail(normalize_question_text(text))
+    text = _strip_hex_names(text)
+    best = None
+    for rule in _use_god_rules():
+        hits = [t for t in rule.get("trigger") or [] if t and t in text]
+        if not hits:
+            continue
+        ctx = rule.get("context") or []
+        if ctx and not any(c in text for c in ctx):
+            continue
+        rank = (rule.get("priority", 99), -max(len(h) for h in hits))
+        if best is None or rank < best[0]:
+            best = (rank, rule)
+    return best[1] if best else None
+
+
+def _use_god_basis(text: str, chosen: str) -> str:
+    """用神所本：命中的法则给出原文引文，走词典兜底则明说是默认规则。"""
+    rule = _match_use_god_rule(text)
+    if rule and rule.get("use_god") == chosen:
+        return f"《增刪卜易》：{rule.get('citation', '')}"
+    return "问题词典默认（无古籍逐条出处，未见过的问法会退化）"
+
+
 def _determine_use_god_category(question_category: str, question_text: str) -> str:
     """根据问题类型确定用神类别 — 使用打分制，避免顺序依赖"""
-    # 合并两个文本用于搜索
-    combined = f"{question_category} {question_text}"
+    from yishu_core.symbols import normalize_question_text
+    # 关键词表按简体写，而问事文本可能是繁体（《增刪卜易》原文、以及任何繁体输入）。
+    # 不归一时"占候文書"匹配不上"文书"，用神静默退化成世爻——外部集上错的那 2 例即此。
+    combined = normalize_question_text(f"{question_category} {question_text}")
+
+    # --- 原书明写的取用法则优先（带引文可核；《增刪卜易·用神章》"占父母弟兄取用神者
+    #     皆在用神章內詳之"——关系定了用神就定了，不该由现代问法词典猜） ---
+    rule = _match_use_god_rule(combined)
+    if rule:
+        return rule["use_god"]
 
     # --- 特殊优先级覆盖（高于 _QUESTION_USE_GOD_MAP 中的映射） ---
     # 提到具体人（父亲/母亲/儿子/女儿等）时，以该人为用神，优先级高于"出行→世"

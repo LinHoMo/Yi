@@ -229,7 +229,20 @@ def diagram_items(block: dict, col: int) -> list[dict]:
     return items
 
 
-def outcome_of(text: str) -> tuple[str | None, str | None, str, str]:
+# 正文边界。维基文库本里卷首/卷尾夹着纳甲诀、安世应要领这类韵文附录（<poem> 块、
+# "=== 章 ===" 标题），爻图后若无边界就会一路读进附录——
+# 结果"占升遷"的用神被从附录里抓成"父母"（正解是官鬼），基准反而是错的。
+SECTION_CUT = re.compile(r"===|<poem>|</poem>|卷之[一二三四五六七八九十]|章第[一二三四五六七八九十百]+")
+
+
+def _clip(text: str, limit: int = 600) -> str:
+    m = SECTION_CUT.search(text)
+    if m:
+        text = text[:m.start()]
+    return text[:limit]
+
+
+def outcome_of(text: str, verdict_zone: str = "") -> tuple[str | None, str | None, str, str]:
     """取 (吉凶, 应验干支, 用神六亲, 原句)。
 
     应验只认验句里写明"（干）支 + 日/月/年"的期；"次日""次年""七月"这类相对
@@ -428,8 +441,13 @@ def main() -> int:
             mm = pat.search(after)
             if mm and mm.start() < cut:
                 cut = mm.start()
-        after = after[:min(cut, 600)]
-        verdict, yq, use_god, clause = outcome_of(m.group(0) + after)
+        after = _clip(after[:max(cut, 0)])
+        # 用神只在"断语区"里找（图后到第一个验句之前）。
+        # 整段扫会一路读进卷首的纳甲诀，"占升遷"因此被抓成"父母"（正解官鬼）——
+        # 基准错比基准缺更坏：它会把引擎判成"错"。
+        duan = re.split(r"[。，,﹐]?果|其驗|後果", after)[0][:220]
+        verdict, yq, _ig, clause = outcome_of(m.group(0) + after)
+        _, _, use_god, _ = outcome_of(duan, verdict_zone=duan)
         if not yq:
             stats["no_yingqi"] += 1
             dropped.append((blk["start"], "no_yingqi", clause))

@@ -1,0 +1,224 @@
+{
+  "_meta": {
+    "description": "取用神的『关系优先于事项』规则表，出自《增刪卜易》原文，每条带逐字引文与偏移量",
+    "built_by": "tools/build_use_god_rules.py",
+    "source": "data\\sources\\zengshan_buyi.wikitext.txt",
+    "usage": "thinking_chain 取用神时先过本表（先命中先停），未命中再退回问题词典",
+    "order": "priority 小的先判；同优先级里触发词长的先判（更具体）",
+    "rule_count": 14
+  },
+  "rules": [
+    {
+      "trigger": [
+        "子占母孕",
+        "代母占孕"
+      ],
+      "context": [],
+      "use_god": "兄弟",
+      "priority": 10,
+      "citation": "惟子占母孕﹐以弟兄爻為用神也",
+      "offset": 83782
+    },
+    {
+      "trigger": [
+        "女家",
+        "女方",
+        "女占",
+        "妻占",
+        "代女"
+      ],
+      "context": [
+        "婚",
+        "嫁",
+        "夫",
+        "婿"
+      ],
+      "use_god": "官鬼",
+      "priority": 10,
+      "citation": "男家占女﹐不拘父母親朋而代占者﹐無不以財為用。女家占男﹐皆以官為用",
+      "offset": 80320
+    },
+    {
+      "trigger": [
+        "男家",
+        "男方",
+        "男占",
+        "夫占"
+      ],
+      "context": [
+        "婚",
+        "娶",
+        "妻",
+        "妾"
+      ],
+      "use_god": "妻财",
+      "priority": 10,
+      "citation": "男家占女﹐不拘父母親朋而代占者﹐無不以財為用",
+      "offset": 80320
+    },
+    {
+      "trigger": [
+        "自占病",
+        "占自己病",
+        "自病",
+        "自身病",
+        "我病"
+      ],
+      "context": [],
+      "use_god": "世爻",
+      "priority": 15,
+      "citation": "自占病﹐世為用神",
+      "offset": 88484
+    },
+    {
+      "trigger": [
+        "胎",
+        "孕",
+        "安胎",
+        "坐月"
+      ],
+      "context": [],
+      "use_god": "子孙",
+      "priority": 15,
+      "citation": "卜胎之虛實﹐占孕之安危﹐問產婦之吉凶﹐測胎中之男女﹐各宜分占﹐親占代占﹐皆用子孫",
+      "offset": 83741
+    },
+    {
+      "trigger": [
+        "伯",
+        "叔",
+        "舅",
+        "姑",
+        "婶",
+        "姨",
+        "长辈",
+        "祖",
+        "主人"
+      ],
+      "context": [],
+      "use_god": "父母",
+      "priority": 20,
+      "citation": "寅月亥日占主人何時回﹐以父母為用",
+      "offset": 87043
+    },
+    {
+      "trigger": [
+        "兄",
+        "弟",
+        "姐",
+        "妹",
+        "朋友",
+        "同辈",
+        "姊妹"
+      ],
+      "context": [],
+      "use_god": "兄弟",
+      "priority": 20,
+      "citation": "占父母弟兄取用神者皆在用神章內詳之",
+      "offset": 88493
+    },
+    {
+      "trigger": [
+        "儿子",
+        "女儿",
+        "子女",
+        "孩子",
+        "侄",
+        "晚輩",
+        "孙子",
+        "孙女",
+        "子孙"
+      ],
+      "context": [],
+      "use_god": "子孙",
+      "priority": 20,
+      "citation": "如占子孫﹐取子孫為用神",
+      "offset": 7855
+    },
+    {
+      "trigger": [
+        "父",
+        "母",
+        "爹",
+        "娘",
+        "爺",
+        "婆"
+      ],
+      "context": [],
+      "use_god": "父母",
+      "priority": 20,
+      "citation": "子占父病﹐父爻為用神",
+      "offset": 94674
+    },
+    {
+      "trigger": [
+        "夫",
+        "婿"
+      ],
+      "context": [],
+      "use_god": "官鬼",
+      "priority": 20,
+      "citation": "妻占夫官為用神",
+      "offset": 87285
+    },
+    {
+      "trigger": [
+        "妻",
+        "妾",
+        "婢",
+        "僕",
+        "仆"
+      ],
+      "context": [],
+      "use_god": "妻财",
+      "priority": 20,
+      "citation": "男人自占妻者﹐亦以財爻為用神",
+      "offset": 80836
+    },
+    {
+      "trigger": [
+        "六畜",
+        "牲口",
+        "猪",
+        "馬",
+        "牛"
+      ],
+      "context": [],
+      "use_god": "子孙",
+      "priority": 30,
+      "citation": "凡占一切六畜﹐皆以子孫為用神",
+      "offset": 97604
+    },
+    {
+      "trigger": [
+        "医",
+        "醫",
+        "药",
+        "藥"
+      ],
+      "context": [],
+      "use_god": "子孙",
+      "priority": 30,
+      "citation": "占藥占醫又以子孫為用神",
+      "offset": 92036
+    },
+    {
+      "trigger": [
+        "自占",
+        "自身",
+        "我",
+        "吾"
+      ],
+      "context": [
+        "病",
+        "疾",
+        "流年",
+        "造化"
+      ],
+      "use_god": "世爻",
+      "priority": 40,
+      "citation": "自占病﹐世為用神",
+      "offset": 88484
+    }
+  ]
+}
