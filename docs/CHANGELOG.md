@@ -5,6 +5,19 @@
 
 ## v0.0.1 — 2026-09-23 大更：卜科四科全可用（三科上线 + 六爻四段契约接入）+ 合参层实现 + 仓库级质量门
 
+### 2026-09-23 重构批次：六爻巨石拆分 + core/report 呈现统一 + 四科 golden 规范化
+
+- **A4 四科 `golden.py` 规范化**（`liuyao/meihua/xiaoliuren/zeji`）：从裸 `sys.argv` 手解改为 argparse 标准 CLI，`--help` 可看，`capture` 必须给漂移理由（防掩盖退步，`AGENTS.md` §四）。
+- **A1 六爻三巨石拆分**（`disciplines/liuyao/scripts/`）：
+  - `liuyao_engine.py`（3696 行）/ `thinking_chain.py`（6493 行）/ `classical_analysis.py`（4226 行）拆为 `engine_*` / `chain_*` / `classical_*` 共 20 个子模块 + 薄聚合入口，纯搬移不改逻辑。
+  - 拆分修复两处此前就存在的隐性缺陷：爻序与八宫归属等构建循环丢失导致排盘/解读字段漂移，已按内核唯一真值源补回。
+  - 验收：金标准指纹 `0e2bb128`（288 例）与拆分前基线一致，连续两次运行可复现；六爻黑箱回归 11/18 与基线持平。
+- **A2 core/report 统一呈现 kit**（`core/yishu_core/report/`）：
+  - 新增 `html.py`：`render_page`（统一单文件 HTML 骨架：DOCTYPE/head/内联样式/页脚/可选脚本，容器宽度可配以兼容排盘与解读两类布局）、`write_html`（自动建父目录）、`escape`（转义统一入口）。
+  - 六爻两套并行报告引擎（`visualization.py` 排盘报告 3 处骨架、`build_html_report.py` 解读报告骨架 + `_xml_escape` 重复实现）收敛到 core/report——消除"一副卦两种骨架"。`grep "<!DOCTYPE"` 仅剩内核 kit 一处（回归测试工具的内嵌测试报告为独立样式，属工具 UI，不收敛）。
+  - 样式层仍唯一（`assets/report.css`）；`style_check.py` 39/29 个类全部有定义。
+  - 未做（留 `docs/LIUYAO-PLAN.md` 3.1 后续）：两套引擎**内容**合并、`render.py` 单一 HTML 出口、SVG 真卦盘——本轮只收敛骨架层。
+
 ### 新增
 
 - **六爻四段契约薄适配层**（`disciplines/liuyao/scripts/chart.py` / `analyze.py` / `narrate.py` / `render.py`）：
