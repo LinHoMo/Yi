@@ -5,6 +5,23 @@
 
 ## v0.0.1 — 2026-09-23 大更：卜科四科全可用（三科上线 + 六爻四段契约接入）+ 合参层实现 + 仓库级质量门
 
+### 2026-09-24 M3 门户修伤（3.3）：死链修复 + 真分数看板 + SVG 卦盘
+
+`disciplines/liuyao/index.html`（gitignore 生成物，由 `scripts/build_portal_assets.py` 可重建）：
+
+- **看板真分数**：`build_portal_assets.py` 的 `build_blind()` 从 `eval_{tune,holdout}.json` 取分
+  （当前读数 tune 94.5 / holdout 84.8，headline 取 holdout 并带 n=12 与口径说明），
+  页面不再自带硬编码 100 常量；各案例得分（57.9/92.6/96.8…）与 `evaluate.py` 一致。
+- **死链修复**："打开完整样例报告"原 `window.open('sample_report_ZS001.html')` 指向不存在的
+  静态文件，改为页内数据渲染完整报告——iframe 模态框预览（任何环境可用，关闭/点遮罩/Esc 均可退出）
+  ＋"在新窗口打开"可选路径（被拦截时提示走导出）。
+- **SVG 卦盘**：爻线（阳连阴断）＋六神/六亲/纳甲/爻象/世应/动变 ○×/旬空/"变出"列
+  （`→变出支 变出六亲`，数据来自 `changed_branch`/`changed_six_relation`）。
+- **自包含**：无外部 src/href/fetch/@import，`file://` 直开可用（验收标准）。
+- 浏览器实测：加载/看板/卦盘/切换/模态框/导出 6 项全过，控制台无 JS 报错。
+- 门户产物不入库（`index.html` / `assets/portal_data.json` / `outputs/reports/` 在 gitignore），
+  无引擎改动，金标准指纹与质量门不受影响。
+
 ### 2026-09-24 M3 呈现三合一：两套报告引擎合并为单一 HTML 出口 + SVG 真卦盘
 
 承接 2026-09-23 骨架收敛（A2）的"未做"项，本次完成**内容**合并：

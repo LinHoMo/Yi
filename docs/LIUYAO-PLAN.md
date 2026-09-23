@@ -13,6 +13,8 @@
 > **执行进度更新（2026-09-24）**：1.2「应期不可验证」补齐回收闭环——analyze 适配层把应期候选结构化外露（`conclusion.应期明细`，date+rule 按给出顺序即名次）；合参层 `record-outcome` 支持 `--occurred-at/--judged` 结构化回填，新增 `outcome-eval` 按候选名次比对（主/次应期、提前、超期），逐例带 rule 法则标签，汇总带样本量 n 并声明"现实回填命中，非古籍对齐分"（`AGENTS.md` §三）。断卦→回填→评分全链路实测通过。实现位置：`disciplines/liuyao/scripts/analyze.py`（适配层，不动推演，指纹不受影响）+ `synthesis/{normalize,person,outcome_eval,cli}.py`。其余学科暂无结构化应期候选，应期维度不评。
 >
 > **执行进度更新（2026-09-24）**：M3 呈现三合一完成（3.1）——两套并行报告引擎（`visualization.build_html_report` / `build_html_report.py`）删除，报告产物只剩 `scripts/render.py` 单一出口（`grep "<!DOCTYPE"` 仅剩内核 kit 一处）；HTML 报告 = SVG 真卦盘（爻线/六亲/六神/世应/空破/动变标记/变卦）＋ 结要卡 ＋ narrate 正文 ＋ 判据所本；`core/report/html.py` 的 `md_to_html` 支持标题/列表/表格/粗体/行内码/对齐排盘表（`<pre>` 保形）；样式层唯一 `assets/report.css`，`tools/style_check.py` 用 render 段采样核对类名覆盖；依赖方（`build_portal_assets.py` / `style_check.py` / `liuyao_engine.py --format html`）全部改走新出口。M3 其余子项（3.2 一键闭环、3.3 门户修伤、3.4 黄金样例、3.5 README 截图）未做，待后续推进。
+>
+> **执行进度更新（2026-09-24）**：M3 门户修伤完成（3.3）——`index.html` 重建：看板分数经 `build_portal_assets.py` 从 `eval_{tune,holdout}.json` 取（当前读数 tune 94.5 / holdout 84.8，含 n 与口径说明，不再硬编码 100）；"打开完整样例报告"原 `window.open('sample_report_ZS001.html')` 死链改为页内数据渲染（iframe 模态框兜底 + 新窗口可选，任何环境可用）；SVG 卦盘含六神/六亲/纳甲/爻象/世应/动变○×/旬空/变出列；门户完全自包含（无外部 src/href/fetch），`file://` 直开可用。门户产物（`index.html` / `assets/portal_data.json` / `outputs/reports/`）在 gitignore 内，由脚本可重建。M3 剩余 3.2 一键闭环、3.4 黄金样例、3.5 README 截图未做。
 
 ## 〇、先说一件必须接受的事
 
