@@ -22,6 +22,7 @@ from kernel_path import kernel_dir  # noqa: E402
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -31,12 +32,41 @@ for _p in (str(ROOT / "scripts"), str(kernel_dir(__file__))):
         sys.path.insert(0, _p)
 
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
+from yishu_core.eval import verdict_direction, pct, run_eval, report as _report  # noqa: E402
 import case_runner  # noqa: E402
 
 CASES = ROOT / "data" / "cases" / "classical_cases.json"
 OUT_DIR = ROOT / "data" / "cases"
 
 DAY_CHARS = "子丑寅卯辰巳午未申酉戌亥"
+
+# 应期的单位必须对上才算命中。旧口径只比地支字符，基准写"未月"而引擎给"未日"
+# 也判为主应期命中——三个单位互相顶替等于给应期白送分，这是外部集 17.1% 仍偏高的原因之一。
+YQ_UNIT_RE = re.compile(f"([{DAY_CHARS}])(年|月|日|時|时)")
+
+
+def _expected_unit(label: str) -> str:
+    m = YQ_UNIT_RE.search(str(label or ""))
+    if not m or m.group(2) in ("時", "时"):
+        return "日"
+    return m.group(2)
+
+
+def _unit_pool(eng: dict, unit: str) -> list:
+    if unit == "月":
+        return eng.get("yingqi_months") or []
+    if unit == "年":
+        return eng.get("yingqi_years") or []
+    return eng.get("yingqi_branches") or []
+
+
+def _offered_branches(pool) -> list:
+    offered = []
+    for token in pool:
+        for ch in _branches_in(str(token)[:2]):
+            if ch not in offered:
+                offered.append(ch)
+    return offered
 
 WEIGHTS = {
     "use_god_category": 15,
@@ -84,19 +114,6 @@ RHYTHM_PAIRS = [
     (("不安", "反复", "难成"), ("不安", "反复", "合处逢冲", "冲中逢合", "拖延")),
     (("出空", "出旬"), ("出空", "出旬", "填实", "冲空")),
 ]
-
-
-def verdict_direction(v) -> int:
-    s = str(v or "")
-    if s in ("吉", "平吉", "大吉"):
-        return 1
-    if s in ("凶", "大凶", "下跌"):
-        return -1
-    if "吉" in s and "凶" not in s and "不利" not in s:
-        return 1
-    if "凶" in s or "跌" in s or "不利" in s:
-        return -1
-    return 0
 
 
 def _na(value) -> bool:
@@ -181,7 +198,9 @@ def score_case(eng: dict, exp: dict, model: str) -> dict:
     e_yq = str(eng.get("yingqi") or "")
     x_yq = str(exp.get("yingqi") or "")
     declared_tokens = [str(b) for b in (eng.get("yingqi_branches") or [])]
-    declared = " ".join(declared_tokens)
+    declared_all = declared_tokens + [str(b) for b in (eng.get("yingqi_months") or [])] \
+        + [str(b) for b in (eng.get("yingqi_years") or [])]
+    declared = " ".join(declared_all)
     head = e_yq.split("依据")[0]
     e_all = head + " " + declared
     e_verbose = e_yq + " " + declared + " " + " ".join(
@@ -204,73 +223,32 @@ def score_case(eng: dict, exp: dict, model: str) -> dict:
     else:
         # strict 按**名次**给分，不按"有没有提到"给分。
         # 成员制打分会奖励骑墙：候选铺到 11/12 支就能白拿 15 分（旧口径的 100% 即由此而来）。
-        needed = [c for c in DAY_CHARS if c in x_yq]
-        offered = []
-        for token in declared_tokens:
-            for ch in token[:2]:
-                if ch in DAY_CHARS and ch not in offered:
-                    offered.append(ch)
+        # 名次只在**同单位**的候选池里数：基准是月级答案就去月级池里排名次。
+        exp_unit = _expected_unit(x_yq)
+        m_unit = YQ_UNIT_RE.search(x_yq)
+        needed = [m_unit.group(1)] if m_unit else [c for c in DAY_CHARS if c in x_yq]
+        offered = _offered_branches(_unit_pool(eng, exp_unit))
         rank = next((i + 1 for i, ch in enumerate(offered) if needed and ch in needed), None)
         if not needed:
             hit = x_yq in probe
             dims["yingqi"] = (w if hit else 0, w, "字面命中" if hit else f"未对齐({x_yq})")
         elif rank == 1:
-            dims["yingqi"] = (w, w, "主应期命中")
+            dims["yingqi"] = (w, w, f"主应期命中（{exp_unit}级）")
         elif rank == 2:
-            dims["yingqi"] = (int(w * 0.8), w, "次应期命中")
+            dims["yingqi"] = (int(w * 0.8), w, f"次应期命中（{exp_unit}级）")
         elif rank and rank <= 4:
-            dims["yingqi"] = (int(w * 0.55), w, f"第 {rank} 位命中")
+            dims["yingqi"] = (int(w * 0.55), w, f"{exp_unit}级第 {rank} 位命中")
         elif any(c in probe for c in needed):
-            dims["yingqi"] = (int(w * 0.35), w, "仅在依据句中出现，未列为应期")
+            dims["yingqi"] = (int(w * 0.35), w, f"仅在依据句中出现，未列为{exp_unit}级应期")
         else:
-            dims["yingqi"] = (0, w, f"未给出基准应期({','.join(needed)})")
+            dims["yingqi"] = (0, w, f"未给出基准应期({','.join(needed)}{exp_unit})")
     return dims
 
 
-def pct(dims: dict) -> tuple[float, int]:
-    earned = sum(v[0] for v in dims.values())
-    applicable = sum(v[1] for v in dims.values())
-    if applicable <= 0:
-        return 0.0, 0
-    return earned * 100.0 / applicable, applicable
-
-
 def evaluate(engine_out: dict, model: str, label: str, ids: list[str], verbose: bool) -> dict:
+    """六爻古籍案例对齐评分（框架与 N/A 口径见 yishu_core.eval，此处只给维度比较）。"""
     base = {c["id"]: c for c in case_runner.load_cases()}
-    by_e = {c.get("id"): c for c in engine_out.get("cases", [])}
-
-    rows, per_dim = [], {k: [0, 0, 0] for k in WEIGHTS}  # [hit_full, applicable, na]
-    for cid in ids:
-        e, b = by_e.get(cid), base.get(cid)
-        if b is None or e is None:
-            continue
-        if "error" in e and "verdict" not in e:
-            rows.append({"id": cid, "pct": 0.0, "applicable": 100, "note": "引擎错误"})
-            continue
-        dims = score_case(e, b.get("expected") or {}, model)
-        value, applicable = pct(dims)
-        for k, (earned, weight, note) in dims.items():
-            if weight == 0:
-                per_dim[k][2] += 1
-            else:
-                per_dim[k][1] += 1
-                if earned >= weight:
-                    per_dim[k][0] += 1
-        rows.append({"id": cid, "pct": round(value, 1), "applicable": applicable,
-                     "dims": {k: v for k, v in dims.items()}})
-        if verbose:
-            worst = [f"{k}:{v[0]}/{v[1]}" for k, v in dims.items() if v[0] < v[1] and v[1]]
-            print(f"[{label}] {cid:6s} {value:5.1f}%  " + ("; ".join(worst) if worst else "全中"))
-
-    scored = [r["pct"] for r in rows if "dims" in r]
-    if not scored:
-        return {"label": label, "model": model, "avg": None, "n": 0, "rows": rows}
-    dim_summary = {k: {"full": v[0], "applicable": v[1], "na": v[2],
-                       "rate": round(v[0] * 100.0 / v[1], 1) if v[1] else None}
-                   for k, v in per_dim.items()}
-    avg = sum(scored) / len(scored)
-    return {"label": label, "model": model, "avg": round(avg, 1), "n": len(scored),
-            "min": min(scored), "max": max(scored), "dims": dim_summary, "rows": rows}
+    return run_eval(engine_out, base, ids, WEIGHTS, score_case, model, label, verbose)
 
 
 def _branches_in(text: str) -> list[str]:
@@ -294,33 +272,39 @@ def yingqi_discrimination(engine_out: dict, ids: list[str]) -> dict:
     base = {c["id"]: c for c in case_runner.load_cases()}
     by_e = {c.get("id"): c for c in engine_out.get("cases", [])}
     sizes, ranks, top1_hit, top1_n, random_p = [], [], 0, 0, []
+    per_unit = {}
 
     for cid in ids:
         e, b = by_e.get(cid), base.get(cid)
         if not e or not b or "error" in e:
             continue
-        needed = _branches_in((b.get("expected") or {}).get("yingqi"))
+        x_yq = str((b.get("expected") or {}).get("yingqi") or "")
+        m_unit = YQ_UNIT_RE.search(x_yq)
+        needed = [m_unit.group(1)] if m_unit else _branches_in(x_yq)
         if not needed:
             continue
-        offered = []
-        for token in (e.get("yingqi_branches") or []):
-            for ch in _branches_in(str(token)[:2]):
-                if ch not in offered:
-                    offered.append(ch)
+        unit = _expected_unit(x_yq)
+        offered = _offered_branches(_unit_pool(e, unit))
+        # 同单位候选池为空＝引擎根本没能在这个单位上作答，算失败而不是从分母里消失。
+        # 跳过会让"答不出的单位"悄悄退出统计，n 变小、分数变好看，属于假指标。
+        sizes.append(len(offered))
+        top1_n += 1
+        u = per_unit.setdefault(unit, {"n": 0, "top1": 0, "ranks": []})
+        u["n"] += 1
         if not offered:
             continue
-        sizes.append(len(offered))
         k, n = len(needed), len(offered)
         p = 1.0
         for i in range(k):
             p *= max(n - i, 0) / (12 - i)
         random_p.append(p)
-        top1_n += 1
         if needed[0] == offered[0] or offered[0] in needed:
             top1_hit += 1
+            u["top1"] += 1
         hit_at = next((i + 1 for i, ch in enumerate(offered) if ch in needed), None)
         if hit_at:
             ranks.append(hit_at)
+            u["ranks"].append(hit_at)
 
     if not sizes:
         return {}
@@ -331,16 +315,17 @@ def yingqi_discrimination(engine_out: dict, ids: list[str]) -> dict:
         "avg_rank_of_correct": round(sum(ranks) / len(ranks), 2) if ranks else None,
         "ranked_cases": len(ranks),
         "random_full_coverage_expectancy": round(sum(random_p) * 100.0 / len(random_p), 1),
+        "by_unit": {u: {"n": v["n"],
+                        "top1_hit_rate": round(v["top1"] * 100.0 / v["n"], 1) if v["n"] else None,
+                        "avg_rank": round(sum(v["ranks"]) / len(v["ranks"]), 2) if v["ranks"] else None,
+                        "ranked": len(v["ranks"])}
+                    for u, v in sorted(per_unit.items())},
     }
 
 
 def report(res: dict) -> None:
-    print(f"\n=== {res['label']} [{res['model']}] 平均分 = {res['avg']}%  (n={res['n']}"
-          f"，最低 {res['min']}，最高 {res['max']}) ===")
-    print("  维度          命中/适用   N/A   命中率")
-    for k, v in res["dims"].items():
-        rate = f"{v['rate']}%" if v["rate"] is not None else "—"
-        print(f"  {k:<16s}{v['full']:>4d}/{v['applicable']:<4d}  {v['na']:>3d}   {rate}")
+    """六爻出口：换行风格与共享 report 一致，避免两处给分逻辑。"""
+    _report(res)
 
 
 def main() -> int:
@@ -401,6 +386,9 @@ def main() -> int:
               f"（召回分接近此值 = 等于没判断）")
         print(f"  top-1 命中 {disc['top1_hit_rate']}%；基准应支平均排在第 {disc['avg_rank_of_correct']} 位"
               f"（{disc['ranked_cases']} 例可定位）← 这一项才见真章")
+        for u, v in (disc.get("by_unit") or {}).items():
+            print(f"    {u}级：n={v['n']}，top-1 {v['top1_hit_rate']}%，"
+                  f"平均名次 {v['avg_rank']}（{v['ranked']} 例可定位）")
 
     print(f"\n口径差异：strict {strict['avg']}% vs legacy {legacy['avg']}%"
           f"（差 {round(legacy['avg'] - strict['avg'], 1)} 分来自空白基准满分与应期保底）")

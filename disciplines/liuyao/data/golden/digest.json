@@ -1,8 +1,16 @@
 {
   "_meta": {
     "what": "金标准指纹基线（排盘+思维链+分析层逐字段）",
-    "how": "改动引擎行为后跑 python tools/golden.py capture 并说明为何允许漂移",
+    "how": "改动引擎行为后跑 python tools/golden.py capture \"理由\"；无理由不落盘，历次漂移见 drift_log",
     "cases": 288
   },
-  "digest": "bb23797bf6044b95"
+  "digest": "0e2bb128bfefe831",
+  "drift_log": [
+    {
+      "from": "bb23797bf6044b95",
+      "to": "0e2bb128bfefe831",
+      "date": "2026-09-23",
+      "reason": "应期候选池按单位分列（日5/月3/年2各自有序封顶）。旧实现把月级/年级候选与日级挤在同一个5支窗口，月级答案占掉日级名额、日级又盖住月级，两个单位互相饿死（HANDOFF 四·7 记的那次三集全降即由此）。已逐字段证明漂移只落在 yingqi_branches：288 例中 102 例变化，结构字段（pillars/lines/palace/empty/changed/use_god/strength/verdict/score/adv/patterns）0 处漂移、0 异常。三集判别力同步改善：tune 主应期 29.4→35.3%、平均名次 2.19→2.0；holdout 平均名次 2.5→2.2；wikisource 主应期 17.1→20.0%、平均名次 2.37→2.0。holdout 对齐分 85.1→84.8、wikisource 56.7→56.3 属应期改单位感知后收回的假分（基准写未月而引擎给未日旧口径也算命中），不是退步。"
+    }
+  ]
 }

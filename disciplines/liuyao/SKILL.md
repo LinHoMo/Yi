@@ -99,6 +99,22 @@ python scripts/thinking_chain.py <result_json_file>
 需要交付 HTML 报告时不必分步：`liuyao_engine.py --format html --save-html outputs/report.html`
 一条命令即可（内部已串起排盘→思维链→正文→报告）。
 
+**四段契约入口（与梅花/小六壬/择吉同构，供合参层消费）**：六爻已提供
+chart→analyze→narrate→render 薄适配层，包装既有引擎、不引入新断法：
+
+```bash
+python scripts/chart.py --mode time --datetime "2026-09-18 14:30" \
+       --question "用户的问题" -o scratch/chart.json      # 起卦（排盘 JSON）
+python scripts/analyze.py scratch/chart.json -o scratch/analyze.json   # 推演（含 conclusion）
+python scripts/narrate.py scratch/analyze.json -o scratch/正文.md      # 正文
+python scripts/render.py scratch/analyze.json -o outputs/report.md     # 报告
+```
+
+analyze 输出的 `conclusion`（方向/应期/所本）与 `chart_summary`（卦名/用神/旺衰/动爻）
+可直接喂 `synthesis/cli.py add-divination --analyze-json` 进合参层归一化。
+narrate/render 是**薄装配**：正文一律用 `format_reading_output` 生成，不允许 LLM
+在 narrate 里另起炉灶重新断卦。
+
 历法口径默认值（改动会使断卦结果不同，非必要不动）：交节按"当日即换"（`YI_GANZHI_BOUNDARY=day`）、
 夜子时不作次日（换日派需显式 `--distinguish-zi-hour --zi-hour-type late`）。
 

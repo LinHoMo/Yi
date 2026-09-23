@@ -30,6 +30,32 @@ from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 
 BASELINE_FILE = ROOT / "tools" / "check_baseline.json"
 
+
+def _project_header(text: str) -> dict:
+    """零依赖最小 TOML 读取：只取 [project] 段内的 name/version/dynamic。
+
+    pyproject 只被此检查用，不值得引入 tomllib/tomli 依赖（Python 3.10 兼容）。
+    """
+    section = None
+    out: dict = {}
+    for line in text.splitlines():
+        stripped = line.strip()
+        if stripped.startswith("["):
+            section = stripped[1:stripped.rfind("]")].strip()
+            continue
+        if section != "project" or "=" not in stripped:
+            continue
+        key, _, raw = stripped.partition("=")
+        key, raw = key.strip(), raw.strip()
+        if key == "dynamic":
+            m = re.search(r"\[([^\]]*)\]", raw)
+            items = (m.group(1) if m else "").split(",")
+            out[key] = [v.strip().strip('"').strip("'")
+                        for v in items if v.strip()]
+        elif key in ("name", "version"):
+            out[key] = raw.strip('"').strip("'")
+    return out
+
 BASELINE = {
     "calendar": 16,        # 历法自检通过项数（共 16）
     "ordering": 23,        # 爻序断言通过项数（共 23）——P0 事故看门狗
@@ -98,8 +124,7 @@ def version_report() -> list[str]:
 
     problems = [f"版本号不合语义：{yishu_core.__version__}"] if not re.match(
         r"^\d+\.\d+\.\d+$", yishu_core.__version__) else []
-    import tomllib
-    proj = tomllib.loads((REPO / "pyproject.toml").read_bytes().decode("utf-8"))["project"]
+    proj = _project_header((REPO / "pyproject.toml").read_bytes().decode("utf-8"))
     if proj.get("name") != "yishu-core":
         problems.append(f"仓库根 pyproject 包名是 {proj.get('name')}，应为 yishu-core")
     if "version" in proj:

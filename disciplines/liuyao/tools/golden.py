@@ -98,14 +98,27 @@ def main() -> int:
         print("  !", e["case"], e["error"])
 
     if mode == "capture":
+        reason = sys.argv[2] if len(sys.argv) > 2 else ""
+        if not reason.strip():
+            print("× 重新落基线必须给理由：python tools/golden.py capture \"为何允许漂移\"")
+            print("  基线下调/漂移不写理由＝掩盖退步（AGENTS.md 四）。")
+            return 2
         OUT.parent.mkdir(exist_ok=True)
         OUT.write_text(blob, encoding="utf-8")
         DIGEST.parent.mkdir(parents=True, exist_ok=True)
+        prior = {}
+        if DIGEST.exists():
+            prior = json.loads(DIGEST.read_text(encoding="utf-8"))
+        log = list(prior.get("drift_log") or [])
+        log.append({"from": prior.get("digest"), "to": digest,
+                    "date": datetime.now().strftime("%Y-%m-%d"), "reason": reason.strip()})
         DIGEST.write_text(json.dumps({
             "_meta": {"what": "金标准指纹基线（排盘+思维链+分析层逐字段）",
-                      "how": "改动引擎行为后跑 python tools/golden.py capture 并说明为何允许漂移",
+                      "how": "改动引擎行为后跑 python tools/golden.py capture \"理由\"；"
+                             "无理由不落盘，历次漂移见 drift_log",
                       "cases": len(rows)},
-            "digest": digest}, ensure_ascii=False, indent=2) + chr(10), encoding="utf-8")
+            "digest": digest,
+            "drift_log": log[-20:]}, ensure_ascii=False, indent=2) + chr(10), encoding="utf-8")
         print("金标准已落盘 →", OUT, "与", DIGEST)
         return 0
 

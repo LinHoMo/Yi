@@ -230,7 +230,9 @@ def run_case(case: dict) -> dict:
         "special_pattern": (s5.get("special_pattern") or {}).get("pattern"),
         "yingqi": timing.get("summary_text", "?"),
         "yingqi_branches": timing.get("key_branches") or [],
-        "yingqi_dates": timing.get("yingqi_dates") or timing.get("dates") or [],
+        "yingqi_months": timing.get("yingqi_months") or [],
+        "yingqi_years": timing.get("yingqi_years") or [],
+        "yingqi_dates": s5.get("yingqi_dates") or timing.get("yingqi_dates") or [],
         "reasoning_chain": rc_lines,
         "pattern_tags": [ln for ln in rc_lines
                          if isinstance(ln, str) and ("[格局]" in ln or "[格局要点]" in ln)],

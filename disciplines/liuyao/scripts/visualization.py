@@ -1271,14 +1271,15 @@ def build_html_report(result_data):
     tab_panels_html = ""
     tab_buttons_html = ""
     tab_names = list(tabs.keys())
+    _nl = "\n"  # Python 3.10：f-string 表达式内不允许反斜杠
     for i, name in enumerate(tab_names):
         cards = tabs[name]
         if not cards:
             continue
         active = "active" if i == 0 else ""
-        tab_buttons_html += f'<button class="tab-btn {active}" onclick="switchTab(\'{name}\')">{name}</button>\n'
-        cards_html = "\n".join(cards)
-        tab_panels_html += f'<div class="tab-panel {active}" id="tab-{name}">\n{cards_html}\n</div>\n'
+        tab_buttons_html += f'<button class="tab-btn {active}" onclick="switchTab(\'{name}\')">{name}</button>{_nl}'
+        cards_html = _nl.join(cards)
+        tab_panels_html += f'<div class="tab-panel {active}" id="tab-{name}">{_nl}{cards_html}{_nl}</div>{_nl}'
 
     return f'''<!DOCTYPE html>
 <html lang="zh-CN">
@@ -1295,7 +1296,7 @@ def build_html_report(result_data):
         <p style="color:#888;font-size:13px;">{html.escape(orig.get("name",""))} {'→ '+html.escape(changed.get("name","")) if changed else ""} · {html.escape(dt.get("datetime",""))}</p>
     </div>
     <div class="tab-nav">
-{''.join("        " + b for b in tab_buttons_html.strip().split("\\n"))}
+{_nl.join("        " + b for b in tab_buttons_html.split(_nl))}
     </div>
 {tab_panels_html}
     <div class="footer">由六爻可视化引擎生成 · {generated_at} · CatPaw LiuYao Skill</div>

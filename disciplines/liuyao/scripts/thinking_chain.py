@@ -5266,15 +5266,54 @@ def _predict_timing(r: dict, step3_data: dict, step1_data: dict, day_branch: str
         _rank(changed_pairs[0][1], "化出之支值日")
     if strength_level in ("休囚", "囚", "死", "偏弱", "衰") or speed == "应迟":
         _rank(PEAK_BRANCH.get(use_god_element or "", ""), "用神休囚，旺相之日")
-        _rank(PEAK_BRANCH.get(use_god_element or "", ""), "旺相之月", "月")
     _rank(use_god_branch, "以用神为主")
     _rank(day_branch, "日辰值事")
 
-    key_branches = [t for t, _ in ranked][:5]
-    timing_rules = [{"token": t, "rule": r} for t, r in ranked]
+    # 月级阶梯：《增刪卜易》「遠則應月﹐近則應日」（norm@79289）——同一套"解除障碍之期"
+    # 在月单位上另排一遍。旧实现把月级候选与日级候选挤在同一个 5 支窗口里，
+    # 结果是月级答案占掉日级名额、日级答案又盖住月级，两个单位互相饿死
+    # （HANDOFF 四·7 记的那次三集全降即由此）。分列后各单位各自有序、各自封顶。
+    peak = PEAK_BRANCH.get(use_god_element or "", "")
+    if is_empty:
+        _rank(_chong(use_god_branch) or use_god_branch, "用神旬空，冲空则实之月", "月")
+        _rank(use_god_branch, "出旬填实之月", "月")
+    if is_month_break:
+        _rank(use_god_branch, "月破出月，实破之月", "月")
+    if tomb_branch and tomb_branch in (day_branch, month_branch):
+        _rank(_chong(tomb_branch), "用神入墓，冲墓之月", "月")
+    if bound_by:
+        _rank(_chong(bound_by), f"用神被{bound_by}合住，冲开之月", "月")
+    if step2_d.get("has_fu_cang") and (fu_branch or fei_branch):
+        _rank(_chong(fei_branch) or fu_branch, "用神伏藏，冲飞得出之月", "月")
+    if use_god_branch:
+        if ug_moving:
+            _rank(_he(use_god_branch), "用神发动，逢合之月", "月")
+        else:
+            _rank(_chong(use_god_branch), "用神安静，逢冲之月", "月")
+        _rank(use_god_branch, "用神值月", "月")
+    if strength_level in ("休囚", "囚", "死", "偏弱", "衰") or speed == "应迟":
+        _rank(peak, "用神休囚，生旺之月", "月")
+    _rank(use_god_branch, "以用神为主", "月")
+
+    # 分级预算：单位不同不可同窗排序，否则加一个"生旺之月"就把正确的日支挤出窗口。
+    UNIT_BUDGET = (("日", 5), ("月", 3), ("年", 2))
+    by_unit = {u: [] for u, _ in UNIT_BUDGET}
+    for token, rule in ranked:
+        unit = token[-1]
+        if unit in by_unit and len(by_unit[unit]) < dict(UNIT_BUDGET)[unit]:
+            by_unit[unit].append((token, rule))
+    yingqi_days = [t for t, _ in by_unit["日"]]
+    yingqi_months = [t for t, _ in by_unit["月"]]
+    yingqi_years = [t for t, _ in by_unit["年"]]
+    ranked_top = by_unit["日"] or ranked
+
+    key_branches = yingqi_days
+    timing_rules = [{"token": t, "rule": r, "unit": t[-1]} for t, r in ranked]
 
     key_text = "、".join(key_branches) if key_branches else "待综合旺衰另断"
-    main_text = (f"{key_branches[0]}（{ranked[0][1]}）" if key_branches else "—")
+    main_text = f"{ranked_top[0][0]}（{ranked_top[0][1]}）" if ranked_top else "—"
+    month_text = "、".join(yingqi_months) if yingqi_months else ""
+    year_text = "、".join(yingqi_years) if yingqi_years else ""
     detail = ("、".join(t["description"] for t in timing_methods)
               if timing_methods else "难以确定单一应期，以用神旺衰断时机之迟速")
 
@@ -5299,6 +5338,8 @@ def _predict_timing(r: dict, step3_data: dict, step1_data: dict, day_branch: str
         speed_plain += "；事多反复，心下易感不安"
 
     summary_text = (f"重点应期：{key_text}。主应期 {main_text}。{speed_plain}。{speed_plain_extra}"
+                    + (f"若事应迟，则看月级：{month_text}。" if month_text else "")
+                    + (f"久案应于年：{year_text}。" if year_text else "")
                     + (f"依据：{detail}。" if detail else ""))
     timing_reasons.append(summary_text)
 
@@ -5307,9 +5348,14 @@ def _predict_timing(r: dict, step3_data: dict, step1_data: dict, day_branch: str
         "timing_rules": timing_rules,
         "speed": speed,
         "key_branches": key_branches,
+        "yingqi_days": yingqi_days,
+        "yingqi_months": yingqi_months,
+        "yingqi_years": yingqi_years,
         "candidates_all": candidates_all,
         "summary_text": summary_text,
-        "plain_text": f"事情应验的时间，主看{main_text}，备选{'、'.join(key_branches[1:]) or '无'}。{speed_plain}。",
+        "plain_text": (f"事情应验的时间，主看{main_text}，备选{'、'.join(key_branches[1:]) or '无'}。"
+                       + (f"若拖得久，月级看{month_text}。" if month_text else "")
+                       + f"{speed_plain}。"),
     }
 
 

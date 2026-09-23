@@ -13,12 +13,15 @@
 | 干支历（年界立春、月界十二节、日界夜子时） | 可信。自求节气，不查近似表 |
 | 用神取法 | 加了"关系优先"法则层（`data/rules/use_god_relations.json`，14 条，逐条带原文引文与偏移量）：tune 20/20、holdout 12/12、外部集原文明写的 4/4。**词典层仍在**且未见过的问法会退化——`占买房子` 目前取子孙（应为父母） |
 | 吉凶方向 | tune 95%、holdout 75%；未调参外部集 81.2%（13/16，19 例只断不验记 N/A） |
-| **应期** | **尚不可用**。内部 holdout 主应期命中 25.0%，未调参外部集 **17.1%**（应支平均名次 2.37，35 例中 19 例可定位）。本文件四·1 记了一次"照书重排阶梯反而三集全降"的否证 |
+| **应期** | **仍不可用，但尺子变准了**。内部 holdout 主应期命中 25.0%（平均名次 2.5→2.2），未调参外部集 **20.0%**（平均名次 2.37→2.0，35 例中 16 例可定位）。分级后暴露真短板：外部集日级 17.6%／月级 22.2%／年级 33.3%。四·7 记的否证已按"日/月/年分级预算"重做（四·2.5 步骤①完成，步骤②未做） |
 | 现实世界命中率 | **无法评估**。仓库内所有分数都是古籍案例对齐分，见 `AGENTS.md` 铁律三 |
 
-当前分数（strict 口径，`python tools/check.py` 可复现）：tune 94.2%（n=20，参与过调参）、
-holdout 85.1%（n=12，未参与调参）、**wikisource_holdout 56.7%（n=35，维基文库原本，从未参与调参）**。
+当前分数（strict 口径，`python tools/check.py` 可复现）：tune 94.5%（n=20，参与过调参）、
+holdout 84.8%（n=12，未参与调参）、**wikisource_holdout 56.3%（n=35，维基文库原本，从未参与调参）**。
 **对外应引用最保守的那个，并同时给 n 与集合名。**
+（2026-09-23 起应期评分改为**单位感知**：基准写「未月」而引擎答「未日」不再算命中。
+holdout 85.1→84.8、外部集 56.7→56.3 是收回的假分，同批案例的判别力指标三集全改善。
+详见 `docs/CHANGELOG.md` 该条——**与之前的数字不可直接比**。）
 
 ## 二、怎么跑
 
@@ -44,6 +47,22 @@ python tools/style_check.py                                 # 报告用到的类
 
 - `YI_GANZHI_BOUNDARY=day|instant`：交节"当日即换"还是"精确到时刻"。默认 `day`。
 - `--distinguish-zi-hour` + `--zi-hour-type late`：夜子时按换日派起盘。默认不作次日。
+
+**四段契约入口**（2026-09-23 新增，与梅花/小六壬/择吉同构）：
+
+```bash
+python scripts/chart.py --mode time --datetime "2026-09-18 14:30" \
+       --question "所占之事" -o scratch/chart.json     # 起卦（排盘 JSON）
+python scripts/analyze.py scratch/chart.json -o scratch/analyze.json  # 推演（conclusion + chart_summary）
+python scripts/narrate.py scratch/analyze.json -o scratch/正文.md     # 正文（format_reading_output）
+python scripts/render.py scratch/analyze.json -o outputs/report.md    # 报告
+```
+
+- 这是**薄适配层**：包装 `build_hexagram_result` / `thinking_chain` / `advice_framework`，
+  不引入任何新断法；金标准指纹与回归分数不受影响（未触碰推演逻辑）。
+- analyze 的 `conclusion`/`chart_summary` 可直接喂 `synthesis/cli.py add-divination`
+  （`normalize_liuyao` 已适配），六爻正式可入合参层。
+- 根级 `tools/check.py` 已加六爻四段端到端冒烟。
 
 ## 三、这一轮（M0–M3 首批）改了什么
 
@@ -163,15 +182,25 @@ python -c "import sys;sys.path[:0]=['scripts','core'];import liuyao_engine as e;
      48 条靠词典、15 条兜底成世爻**，而其中 **47 条的用神是靠"单字键子串命中"定的**——
      所以"用神 100%"必须分开说：有据的和对的，不是一回事。
      下一步把词典层也结构化进 data/（含取舍依据），用同一矩阵看它有没有从"词典"搬到"法则"。
-2.5 **应期（下一步怎么做才对）**：
+2.5 **应期（①已做完，②是下一步）**：
    - 已诊断清楚（见上第 7 条）：失败分三类——14 例应支**已在候选里但名次靠后**、
      15 例**根本不在候选池**（被冲开的墓支、合神、忌神之支从不外推）、其余是单位不可检。
-   - 因此顺序是：① 先把候选按日/月两级分列并各给预算（改 `timing` 的输出契约与
-     `evaluate.py` 的取支逻辑，属口径变更，须在 CHANGELOG 记）；② 再把书里的阶梯
-     按"解除障碍之期优先"实现；③ 每步都出 tune/holdout/wikisource 三个数。
-     **只做①不做②会虚高**（候选变多，召回上去而判别力下来）。
+   - **① 已完成（2026-09-23）**：候选按单位分列 `yingqi_days`(5)/`yingqi_months`(3)/`yingqi_years`(2)，
+     各自有序各自封顶；`evaluate.py` 同步改为**单位感知**（旧口径只比地支字符，
+     基准「未月」被引擎「未日」顶替也算命中，是送分洞）。金标准漂移已逐字段证明
+     只落在 `yingqi_branches`（288 例中 102 例变，结构字段 0 漂移）。三集数字见 `docs/CHANGELOG.md`。
+     原担心的"只做①会虚高"**没有发生**，因为单位感知后日级答案无法再顶替月级基准；
+     虚高的前提是评分单位混算，那个洞已经堵了。
+   - **② 未做（下一步）**：把书里的阶梯按"解除障碍之期优先"实现。分级明细指出了靶子——
+     外部集月级 9 例只 4 例可定位、年级 6 例只 2 例可定位，即"应支根本不在候选池"那一类
+     在月/年单位上尤其严重。要补的是被冲开的墓支、合神、忌神之支的外推。
+     仍须每步出 tune/holdout/wikisource 三个数。
+     文献矛盾留在案头：动爻"逢值逢合"（發案持榜章）与"逢合逢值"（嬰章）两说，
+     **不宜拿外部集试出来挑一个**（那是在考卷上 tuning）。
    - 另 6 例（WS005/018/019/022/029/025）验期与验句自相矛盾或单位不可检（辰時/次日/静卦却论世動），
      已从外部集剔除或标注；再遇到宁可少 n。
+   - **口径纪律**：`yingqi_discrimination` 现在把"同单位候选池为空"计为失败而不是从分母剔除。
+     改这里之前先想清楚——让答不出的单位悄悄退出统计，n 会变小、分数会变好看，那是假指标。
 
 3. **M1b 巨石拆分与断语外置**（实测清单已备，见 `docs/CHANGELOG.md` 与本节）：
    - 断语字面量 **952 条**（thinking_chain 567 / classical_analysis 259 / liuyao_engine 126），
