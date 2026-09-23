@@ -25,22 +25,22 @@
 Yi/                                   # 单一 git 仓库
 ├── AGENTS.md                         # 项目铁律：运算归代码、案例隔离、口径诚实、命名规范
 ├── pyproject.toml                    # 内核包 yishu-core（版本动态取自内核）
-├── core/yishu_core/                  # 唯一内核：干支历、节气、纳甲、象数基元、运行时
+├── core/yishu_core/                  # 唯一内核：干支历、节气、农历、纳甲、象数基元、评分器
 │   ├── ganzhi_calendar.py            #   自求太阳黄经定节气；立春定年界、十二节定月令
+│   ├── lunar.py                      #   农历与公历双向转换（朔望月 + 节气定月双轨制）
 │   ├── symbols.py                    #   15 张规则表唯一真值源（六亲生克合冲破墓纳甲八宫）
-│   ├── najia.py                      #   卦名+爻位 → 该爻地支（变出支等）
+│   ├── zeji_tables.py                #   建除十二神 / 黄黑道十二神 / 二十八宿值日（择吉真值源）
+│   ├── eval.py                       #   全仓库唯一评分器（tune/holdout/excluded 分层）
 │   └── calendar_check.py             #   16 项历法自检
 ├── disciplines/
 │   ├── README.md                     # 学科状态表（谁已实现、谁只是骨架、谁不做）
-│   └── liuyao/                       # 六爻纳甲 —— 唯一有实现的学科
-│       ├── SKILL.md                  #   给 LLM 的执行规程
-│       ├── scripts/                  #   引擎 / 思维链 / 叙事 / 报告 / 评测
-│       ├── tools/check.py            #   六道质量门
-│       ├── tools/golden.py           #   288 例排盘金标准（守结构性重构）
-│       ├── references/ data/         #   规则文献 / 古籍案例分层
-│       └── docs/HANDOFF.md           #   哪些可信、哪些不可信、还欠什么
-├── synthesis/README.md               # 合参层：人的档案 + 裁决规则 + 指导输出（未实现）
-└── docs/                             # YI-PLAN / LIUYAO-PLAN / CONTRACT / CHANGELOG
+│   ├── liuyao/                       # 六爻纳甲 —— 已实现（旧实现 + 四段契约薄适配层，可入合参层）
+│   ├── meihua/                       # 梅花易数 —— 已实现（四段管线 + 案例评测 + 质量门）
+│   ├── xiaoliuren/                   # 小六壬 —— 已实现（四段管线 + 案例评测 + 质量门）
+│   └── zeji/                         # 择吉 —— 已实现（建除/黄黑道/二十八宿 + 质量门）
+├── synthesis/                        # 合参层（已实现）：person 档案 + 裁决规则 + 指导生成 + CLI
+├── tools/                            # 仓库级命令：check / demo / install
+└── docs/                             # YI-PLAN / CONTRACT / CHANGELOG / LIUYAO-PLAN
 ```
 
 新学科怎么接，看 `docs/CONTRACT.md`（四段管线 chart→analyze→narrate→render）。
@@ -49,61 +49,62 @@ Yi/                                   # 单一 git 仓库
 
 ```bash
 pip install -e .                                   # 内核包；无必需第三方依赖
-cd disciplines/liuyao
-python tools/check.py                              # 一条命令跑全部质量门
-python scripts/liuyao_engine.py --mode coin --question "所问之事"
-python scripts/liuyao_engine.py --mode coin --question "所问之事" \
-       --format html --save-html outputs/report.html     # 一条命令出单文件报告
-python scripts/evaluate.py --split holdout --save        # 古籍案例对齐评测
+python tools/check.py                              # 仓库根：全仓库质量门（--full 加案例评测）
+python tools/demo.py                               # 仓库根：全科演示 → tools/scratch/demo.md
+powershell -File tools/install.ps1 -Check -Demo    # 环境安装 + 质量门 + 演示
 ```
 
-门户：浏览器直接打开 `disciplines/liuyao/index.html`（自包含，无 CDN、无 fetch）。
+各科自检与一条命令出报告（三科接口同构）：
 
-## 现在的真实水平（2026-09-22）
+```bash
+cd disciplines/meihua        # 或 xiaoliuren / zeji
+python tools/check.py                          # 该科全部质量门
+python scripts/render.py -o outputs/report.md  # 起卦→推演→正文→报告（一步出报告）
+```
 
-| 集合 | 古籍对齐分 strict | n |
-|---|---|---|
-| tune（参与过调参） | 94.2% | 20 |
-| holdout（未参与调参） | **85.1%** | 12 |
-| wikisource_holdout（维基文库《增刪卜易》原本，从未参与任何调参） | **56.7%** | 35 |
-
-应期不看召回看判别力：主应期命中 29.4%（随机基线 8.3%）、基准应支平均名次 2.19/12。
-
-**装卦层已经和原书逐爻对上了**：从维基文库原本解析出 253 幅爻图，与内核比对
-822 爻纳甲、105 例卦变、120 例世应，**0 处不合**（分母随抽取出入变化，以 --report 现值为准）（`tools/fetch_wikisource_cases.py`，
-原文 sha256 与来源记于 `data/sources/`，重跑取回同一串）。差距全在断卦层：外部集上
-原书写明用神的 4 例，加"关系优先"法则层之前一例都没取对，现在 4/4；吉凶方向 81.2%（13/16）、
-主应期命中 17.1%（35 例中 19 例可定位）。
-
-内部 holdout 改前 78.3%／主应期 25.0%，对未见过的外部文本读数会再掉一截——**任何法则改动都要三集并报**（`python tools/check.py` 一次跑齐：历法/爻序/金标准指纹/冒烟/样式/用例/回归/对齐分/外部集）。
-
-**"用神 100%" 这句要打折看**：`python tools/use_god_coverage.py` 把 92 条问法按来源分类——
-只有 29 条（31%）落在**带原文引文**的法则上，48 条靠现代问法词典、15 条兜底成世爻，
-其中 47 条的用神是单字键子串命中定的。对的就是对，但有据的只是三成。
-
-**这一堆数字此前是不可信的**：旧评分器已被删、`score.py` 读的是引擎根本不输出的字段、
-案例被统一塞进 2024-06-01 并伪造月干、年柱完全不判立春。M0 把这些重建了，所以旧文档宣传的
-tune 100% 不再可比。逐次口径变化见 `disciplines/liuyao/docs/CHANGELOG.md`。
-
-**已修的 P0（2026-09-22）**：爻序约定曾在四处各存一份镜像编码（震·巽·艮·兑按"上爻在前"存、
-所有代码按"自下而上"读），导致按 SKILL.md 手工喂六爻会得到错的卦。现已收进内核
-`symbols.BAGUA_LINES` 单一真值源，并配 23 项断言看门狗（`tools/hexagram_check.py`，
-含"恒之鼎必须动在上六且化巳"这类古籍锚点）。自己验一下：
+六爻（迁移前旧实现，已接四段契约薄适配层；工作目录 `disciplines/liuyao/`）：
 
 ```bash
 cd disciplines/liuyao
-python -c "import sys;sys.path[:0]=['scripts','../../core'];import liuyao_engine as e; \
-print(e.build_hexagram_result([8,7,7,7,8,8],'占','manual',2024,6,1,10)['original_hexagram']['name'])"
-# 应输出 恒（修复前输出 损）
-python tools/hexagram_check.py    # 应输出 23 项通过
+python tools/check.py                              # 全部质量门
+python scripts/liuyao_engine.py --mode coin --question "所问之事" \
+       --format html --save-html outputs/report.html
+python scripts/chart.py --mode time --datetime "2026-09-23 10:00" \
+       --question "所问之事" -o scratch/chart.json        # 四段契约：起卦
+python scripts/analyze.py scratch/chart.json -o scratch/analyze.json   # 推演（结论/应期/所本）
+python scripts/render.py scratch/analyze.json -o outputs/report.md     # 报告
 ```
 
-残余两例待按古籍重推（`chain case_03`、`reg_03` 的期望值仍带着镜像位次下的标定），见
-`disciplines/liuyao/docs/HANDOFF.md`。
+合参层（工作目录 `synthesis/`）：`python cli.py init` 建档 → `add-divination` 登记占问
+→ `guide` 生成阶段性指导 → `record-outcome` 回填现实结果。
+
+门户：六爻浏览器直接打开 `disciplines/liuyao/index.html`（自包含，无 CDN、无 fetch；
+由 `python scripts/build_portal_assets.py` 生成，产物不入库，改动前先重建）。
+
+## 现在的真实水平（2026-09-23，strict 口径，`python tools/check.py` 全门绿复验）
+
+| 科 | 集合 | 古籍对齐分 | n | 口径说明 |
+|---|---|---|---|---|
+| 六爻 | tune（参与过调参） | 94.5% | 20 | 参与过调参 |
+| 六爻 | holdout（未参与调参） | **84.8%** | 12 | 未参与调参 |
+| 六爻 | wikisource_holdout | **56.3%** | 35 | 维基文库《增刪卜易》原本，从未参与任何调参 |
+| 梅花 | tune | 100% | 10 | 参与过调参 |
+| 梅花 | holdout | 100% | 3 | 未参与调参；n 过小只当参照 |
+| 小六壬 | tune | 100% | 10 | 参与过调参 |
+| 小六壬 | holdout | 100% | 5 | 未参与调参 |
+| 择吉 | tune | 100% | 10 | 参与过校参（2026-09 通书实查） |
+| 择吉 | holdout | 100% | 5 | 未参与调参 |
+
+**分数含义**：全部为**古籍案例对齐分**（引擎输出与案例库要点的吻合度），
+衡量不了现实命中率（`AGENTS.md` 铁律三）；对外引用最保守集合。
+
+**六爻应期尚不可用**：主应期命中 tune 35.3% / holdout 25.0% / 外部集 20.0%（随机基线 8.3%）。
+（2026-09-23 起应期评分改**单位感知**：基准写「未月」而引擎答「未日」不再算命中，旧读数 29.4% / 17.1% 与新读数不可直接比，详见 `disciplines/liuyao/docs/CHANGELOG.md`。）
+六爻其余旧读数与"装卦层逐爻对上原书"的详细说明见本文档历史版本与 `disciplines/liuyao/docs/HANDOFF.md`。
 
 ## 使用须知
 
-- 排盘、装卦、旺衰、应期一律由代码完成，LLM 不心算（`AGENTS.md` 铁律一）
+- 排盘、装卦、旺衰、应期、定建除/黄黑道/二十八宿一律由代码完成，LLM 不心算（`AGENTS.md` 铁律一）
 - 古籍案例库只用于测试与事后校验，不参与预测（铁律二）
 - 本仓库所有分数都是**古籍案例对齐分**，衡量不了现实命中率（铁律三）。
   医疗、法律、投资、重大决策请以专业意见为准。

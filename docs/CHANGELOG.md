@@ -1,0 +1,66 @@
+# 变更日志（CHANGELOG）
+
+仓库级变更登记（跨科 / 内核 / 口径 / 架构）。学科内细节见各科 `CHANGELOG.md`。
+规则：指标口径任何变动（计分方式、词典、缺失字段处理）必须在此登记，否则分数不可比（`AGENTS.md` §四.4）。
+
+## v0.0.1 — 2026-09-23 大更：卜科四科全可用（三科上线 + 六爻四段契约接入）+ 合参层实现 + 仓库级质量门
+
+### 新增
+
+- **六爻四段契约薄适配层**（`disciplines/liuyao/scripts/chart.py` / `analyze.py` / `narrate.py` / `render.py`）：
+  - 包装既有引擎（`build_hexagram_result` / `thinking_chain` / `advice_framework`），**不触碰任何推演逻辑**，金标准指纹与回归分数不受影响（未改引擎内部）。
+  - `chart.py`：起卦 → 排盘 JSON（支持 coin/time/number/manual，含早晚子时口径）。
+  - `analyze.py`：排盘 → analyze JSON，装配 `conclusion`（方向/说明/置信度/应期/所本，应期从 `yingqi_dates.dates[].date` 干净抽取）与 `chart_summary`（卦名/干支/旬空/动爻/用神/旺衰），直接供合参层 `normalize_liuyao` 归一化。
+  - `narrate.py` / `render.py`：薄装配，正文一律用 `format_reading_output` 生成，不允许另行断卦。
+  - 根级 `tools/check.py` 新增六爻四段端到端冒烟（chart→analyze→render 产物核验）。
+- **卜科三科上线**（`disciplines/`，各科完整四段管线 chart→analyze→narrate→render + 质量门 + 案例库）：
+  - `meihua/`（梅花易数）：年月日时起卦 / 报数起卦 / 两数起卦（观梅占金标准），体用生克、互变作用、卦气旺衰、应期、数应迟速、卦象特断。
+  - `xiaoliuren/`（小六壬）：月上起日、日上起时，六宫掌诀断事（《贺氏六壬小手册》口径），含变通取数法。
+  - `zeji/`（择吉）：建除十二神、黄黑道十二神、二十八宿值日，活动宜忌匹配与综合裁决（《协纪辨方书》口径）。
+- **内核扩展**（`core/yishu_core/`）：
+  - `zeji_tables.py`：建除十二神 / 黄黑道十二神 / 二十八宿值日表（唯一真值源，学科不复制）。
+  - `lunar.py`：农历与公历双向转换（朔望月 + 节气定月双轨制）。
+  - `eval.py`：全仓库唯一评分器（分层 tune/holdout/excluded、维度权重、`verdict_direction` 折叠）。
+  - `ming_tables.py`、`relations.py`：命科骨架所需表（本轮不实现命科推演，仅立数据）。
+- **合参层实现**（`synthesis/`，此前只有契约）：
+  - `person.py`：个人档案模型（birth.ganzhi 必须带 `calendar_policy`；`divinations[].outcome` 是唯一现实效度证据字段）。
+  - `normalize.py`：四科 analyze 输出 → 归一化占问记录（方向吉/平/凶、应期、判据所本）。
+  - `cross_rules.py`：五条裁决规则落码（各守其位 / 同向则确 / 两同一异 / 异向先查时空口径 / 缺数据降级）。
+  - `guidance.py`：阶段性指导生成（格局节律 / 近期诸事 / 合参结论 / 可执行建议 / 边界声明）。
+  - `cli.py`：init / validate / add-divination / record-outcome / guide / selfcheck。
+- **仓库级工具**（`tools/`）：
+  - `check.py`：一条命令全仓库质量门（版本唯一真值、结构契约、内核表唯一、三科门、六爻冒烟、合参自检；`--full` 加案例评测与六爻回归）。
+  - `demo.py`：全科演示（四科各一例 + 合参演示，走真实 CLI）。
+  - `install.ps1`：环境安装与自检。
+- 各科案例库与质量门：三科各有 `data/cases/`（tune/holdout/excluded 分层）、`tools/check.py`、`tools/golden.py`（行为漂移看门狗）。
+
+### 修复
+
+- `tools/check.py --full` 六爻黑箱回归口径与六爻自身质量门对齐：改用基线比较（11/18，2026-09-22 实测，残余案例待古籍重推已声明），不再要求全过——此前 `--full` 恒红，无法作回归门。
+- `synthesis/person.py`：移除 `xiang`（相理观察）占位字段——相科明确不做（`AGENTS.md` 范围条款），档案 schema 不留相科占位。
+- CLI 与文档/命令对齐：`synthesis` 里 `init/validate` 等命令此前以 `--id` 描述，实际为位置参数 `pid`、`add-divination` 需 `--analyze-json`——根 `SKILL.md` §5.3 与 `synthesis/README.md` §〇 已改为可执行的真实接口并实测跑通（建档→登记→指导→回填）。
+- 三科四段 CLI 写出路径不再依赖目录已存在：`meihua/xiaoliuren/zeji` 的 `chart/analyze/narrate/render` 的 `-o/--out` 此前不建父目录，文档示例 `-o outputs/report.md` 在 `outputs/` 不存在时直接崩（`FileNotFoundError`）；现统一在写前 `parent.mkdir(parents=True, exist_ok=True)`（与 `liuyao` 适配层一致），并已从空目录全链路实测四科 chart→analyze→narrate→render。纯 CLI 健壮性修复，不触碰推演逻辑，分数与指纹不受影响。
+- `disciplines/meihua/scripts/chart.py`：CLI 补齐 `--way lunar` 入口（内部 `chart_from_lunar` 与 docstring 早已支持，唯独 argparse 未暴露）。
+- 对齐 SKILL 与实际命令：meihua `SKILL.md` narrate 命令曾传入内联 JSON 字符串（实际接口要求 analyze JSON 文件路径），改为 chart→analyze→narrate→render 分步可执行命令；meihua chart `--way` 取值、xiaoliuren/zeji 起课命令逐一与 `--help` 核对一致。
+- `.gitignore`：补 `synthesis/person/` 与 `synthesis/guidance/`（合参层运行产物，此前未忽略，会误入库）。
+- `synthesis/cross_rules.py`：缺数据判定改用独立命理主题词表（财运/婚姻/事业等可一事一占、但趋势层缺命科佐证 → 标记 ming 未参评），与越位表解耦。
+- Python 3.10 兼容修复（`disciplines/liuyao/`）：`tools/check.py` 的版本检查依赖 `tomllib`（3.11+）改为零依赖最小解析；`scripts/visualization.py` 的 f-string 反斜杠（3.12 前语法错误）改为 `_nl` 变量。此前六爻 `tools/check.py` 在 3.10 下直接崩、质量门不可用。金标准指纹复验无漂移。
+- `synthesis/person.py`：`create` 同时给 ganzhi 与 policy 时 policy 不再被丢弃。
+- `synthesis/guidance.py`：`tally()` 调用补传 adjudication；被裁决剔除的越位记录不再混入「近期诸事」列表。
+- `disciplines/meihua/scripts/chart.py`：卦名自检断言改为简称（与内核 HEXAGRAM_TRIGRAMS、六爻 HEXAGRAMS 同一惯例）。
+- 三科 chart/analyze/narrate/render CLI 统一补齐与加固：
+  - meihua chart/analyze/narrate/render 补 argparse CLI（此前顶层无条件跑自检或裸 `sys.argv`，`--help` 不可用）；
+  - xiaoliuren / zeji 的 narrate 补缺失的 `__main__` CLI；
+  - 各科 analyze 统一 `-o/--out` 短长选项。
+
+### 口径说明（分数可比性）
+
+- 三科分数均为**古籍案例对齐分**（引擎输出与案例库要点吻合度），集合分层如下，禁止对外称"预测率"（`AGENTS.md` 铁律三）：
+  - meihua / xiaoliuren / zeji：tune 与 holdout 全绿（各科基线见 `disciplines/<科>/tools/check.py` 的 BASELINE）。
+- 合参层新增 `calendar_policy` 口径字段：各科年界/子时口径不一致时，合参先标记时空分歧，不直接比结论。
+
+### 已知欠项（不掩盖）
+
+- `ming`（四柱八字）只立数据表与档案字段，推演未实现——合参时该维度按规则降级为"未参评"。
+- 六爻（`disciplines/liuyao/`）为迁移前旧实现：已接四段契约薄适配层（可入合参层），但引擎内部仍运行于自身工具链，未迁入内核 `yishu_core.hexagram`；黑箱回归基线 11/18，残余案例待古籍重推（README/HANDOFF 已声明）。
+- 各科应期/数应字段暂无事后回填数据，效度统计依赖 `record-outcome` 积累。
