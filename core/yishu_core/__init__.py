@@ -21,9 +21,13 @@ from .ganzhi_calendar import (  # noqa: E402
     solar_term_instant,
     solar_terms_of_year,
 )
+from . import eval as eval_kit  # noqa: E402
+from . import zeji_tables  # noqa: E402
+from . import lunar  # noqa: E402
 
 __all__ = [
     "__version__",
     "HEAVENLY_STEMS", "EARTHLY_BRANCHES", "GanzhiMoment", "ganzhi_of", "ganzhi_pair",
     "day_ganzhi_index", "hour_branch_index", "solar_term_instant", "solar_terms_of_year",
+    "eval_kit", "zeji_tables", "lunar",
 ]
