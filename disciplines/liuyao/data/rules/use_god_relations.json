@@ -5,7 +5,7 @@
     "source": "data\\sources\\zengshan_buyi.wikitext.txt",
     "usage": "thinking_chain 取用神时先过本表（先命中先停），未命中再退回问题词典",
     "order": "priority 小的先判；同优先级里触发词长的先判（更具体）",
-    "rule_count": 14
+    "rule_count": 15
   },
   "rules": [
     {
@@ -174,6 +174,20 @@
       "priority": 20,
       "citation": "男人自占妻者﹐亦以財爻為用神",
       "offset": 80836
+    },
+    {
+      "trigger": [
+        "宅",
+        "房",
+        "屋",
+        "楼盘",
+        "房地"
+      ],
+      "context": [],
+      "use_god": "父母",
+      "priority": 25,
+      "citation": "父旺持世﹐此處淸安宜久住",
+      "offset": 96246
     },
     {
       "trigger": [

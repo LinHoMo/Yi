@@ -10,6 +10,9 @@ logs/
 scratch/
 *.tmp
 
+# 索引与工具缓存（外部工具生成，不入库）
+.codegraph/
+
 # 编辑器与系统
 .DS_Store
 .idea/

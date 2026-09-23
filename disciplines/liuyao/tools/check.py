@@ -152,7 +152,7 @@ def main() -> int:
             failures.append(f"{label} {value:g} 劣于基线")
             print(raw[-1500:])
 
-    selected = set(args.only or ["version", "calendar", "ordering", "golden", "smoke",
+    selected = set(args.only or ["version", "calendar", "ordering", "golden", "smoke", "style",
                                  "chain_tests", "regression", "eval"])
 
     if "version" in selected:
@@ -199,11 +199,23 @@ def main() -> int:
         if rc != 0:
             failures.append("金标准指纹与基线不一致")
 
+
     if "smoke" in selected:
         print("\n[2] 分析段落产出冒烟（只验有无产出）")
         rc, out = run([sys.executable, "scripts/smoke_test.py"])
         gate("smoke", measure("smoke", out), minimum=baseline["smoke"],
              label="段落有产出数", raw=out)
+
+    if "style" in selected:
+        # 报告外观：用到的类名必须有定义。评分与金标准指纹看不见"内容对、外观散架"这一类回归。
+        # （两套 CSS 合并时就散过一次：排盘报告的 .container/.cell-* 等 29 个类没了定义。）
+        print("\n[2.5] 报告样式层覆盖（类名必须有定义）")
+        rc, out = run([sys.executable, "tools/style_check.py"])
+        for line in out.splitlines():
+            if line.strip():
+                print("  " + line.strip())
+        if rc != 0:
+            failures.append("报告里有类名没定义（样式层缺规则）")
 
     if "chain_tests" in selected:
         print("\n[3] 思维链用例（12 例，逐维度断言）")

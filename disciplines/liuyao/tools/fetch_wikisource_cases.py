@@ -89,10 +89,14 @@ _ITEM = (_REL + r"\s*([" + BRANCHES + r"])([金木水火土])" + _MARK + r"\s*(�
 LINE_ITEM = re.compile(_ITEM)
 ROW_FULL = re.compile(r"^\s*" + _ITEM + r"(?:[\s　]+" + _ITEM + r")?\s*$")
 YINGQI = re.compile(r"[甲乙丙丁戊己庚辛壬癸]?[" + BRANCHES + r"](日|月|年)")
+# 锚定期：應/果/期/驗 后面（允许两三字赘词）直接跟"（干）支+日/月/年"。
+# 只认这一种形态，是为了把"所以然"句里的支排除掉——见 _yingqi_of 的注释。
+YINGQI_ANCHORED = re.compile(
+    r"(?P<a>[應果期驗]).{0,3}?[甲乙丙丁戊己庚辛壬癸]?(?P<b>[" + BRANCHES + r"])(?P<u>[日月年])")
 # 应验句锚点。古籍用 ﹐（异体逗号）断句，"，果於X日"是最常见的写法，
 # 只认"。果"会漏掉一大半（实测 21 例）。文言的"後果"是"后来果然"，不是名词"后果"，
 # 早先我把它当现代词整段挖掉，等于把真验句删了——故这里 此?後?果 都要接住。
-OUTCOME_ANCHOR = re.compile(r"(?:此?後?果|其驗|驗得|應驗)[^。\n]{0,44}")
+OUTCOME_ANCHOR = re.compile(r"(?:此?後?果|其驗|驗得|應驗).{0,44}")
 GOOD_WORDS = ("愈", "到", "至", "遂", "中举", "中試", "得選", "获選", "安", "晴",
               "吉", "生", "归", "來", "返回", "起用", "升")
 BAD_WORDS = ("死", "卒", "亡", "敗", "凶", "獄", "革職", "降級", "耗", "失",
@@ -273,21 +277,20 @@ def outcome_of(text: str, verdict_zone: str = "") -> tuple[str | None, str | Non
 
 
 def _yingqi_of(clause: str) -> str | None:
-    """从验句里取可检验期；同一级出现两个不同应支即判为不可检。
+    """取书自己**写在锚词后面**的那一期：「應X日者」「果於X日到」「期在X日」。
 
-    只认"（干）支 + 日/月/年"。数字月（"七月"）、相对期（"次日""次年"）
-    换算成月支要靠"夏正正月建寅"这类读法，读错就是给引擎假的对照，
-    本工具宁缺不假，一律不接。
+    早先的实现是"整句里扫（干）支+日/月/年，日级优先"，结果把机制句当成了答案：
+      「應未月者﹐土爻未土乃世爻之墓﹐**丑日**沖開」→ 抽成"丑日"（书答的是未月）
+      「應**子年**者﹐占時原有**子日**沖其午火」→ 抽成"子日"
+    两句都是"应期 + 所以然"的结构，所以然里的支不是应期。改成锚定抽取后：
+    只认紧跟應/果/期/驗（可带"于、在、得、結"等两三字赘字）的那一期；
+    同一句出现两个不一致的锚定期即判不可检。数字月（"七月"）与相对期
+    （"次日""次年"）要靠"夏正建寅"这类读法换算，读错就是给引擎假对照，不接。
     """
-    by_unit: dict[str, list[str]] = {}
-    for h in YINGQI.finditer(clause):
-        tok = h.group(0)
-        by_unit.setdefault(tok[-1], []).append(tok[-2] if len(tok) == 3 else tok[0])
-    for unit in ("日", "月", "年"):                  # 日级优先：与引擎主口径一致
-        brs = sorted(set(by_unit.get(unit, [])))
-        if len(brs) == 1:
-            return brs[0] + unit
-    return None
+    found = [(h.group("b") + h.group("u")) for h in YINGQI_ANCHORED.finditer(clause)
+             if h.group("u") in ("日", "月", "年")]
+    uniq = sorted(set(found))
+    return uniq[0] if len(uniq) == 1 else None
 
 
 def main() -> int:
@@ -332,7 +335,7 @@ def main() -> int:
     print(f"爻图块 {len(blocks)} 个；引例头 {len(heads)} 处")
 
     kept, dropped = [], []
-    stats = {"no_head": 0, "bad_hex_name": 0, "no_day": 0, "few_lines": 0,
+    stats = {"no_head": 0, "bad_hex_name": 0, "no_day": 0, "no_month": 0, "few_lines": 0,
              "validate_fail": 0, "no_yingqi": 0, "dup": 0}
     partial = {"verdict_missing": 0}   # 仍可评应期，只是缺吉凶对照
     cov: dict[str, int] = {}          # 比对分母：不合是 0 还得说清比了多少
@@ -374,6 +377,11 @@ def main() -> int:
             continue
         if not day_gz or len(day_gz) < 2:
             stats["no_day"] += 1
+            continue
+        if not month_branch:
+            # 月建缺失时引擎的月破/旺衰全无所据，评出来的分不是引擎的分
+            stats["no_month"] += 1
+            dropped.append((blk["start"], "no_month", m.group(0)[:40]))
             continue
 
         base = hex_lines(orig)

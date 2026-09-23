@@ -941,71 +941,20 @@ def _extract_severity(val):
     return ""
 
 
-CSS_STYLES = """
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-        font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", sans-serif;
-        background: #f0f2f5; color: #333; line-height: 1.7;
-        padding: 24px;
-    }
-    .container { max-width: 960px; margin: 0 auto; }
-    .card {
-        background: #fff; border-radius: 12px;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-        padding: 24px 28px; margin-bottom: 20px;
-    }
-    .card h2 {
-        font-size: 18px; color: #1a1a1a; border-bottom: 2px solid #e0e0e0;
-        padding-bottom: 10px; margin-bottom: 16px; font-weight: 600;
-    }
-    .card h3 { font-size: 15px; color: #444; margin: 12px 0 8px; }
-    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; }
-    .info-row { display: flex; gap: 10px; }
-    .info-label { color: #888; min-width: 60px; text-align: right; }
-    .info-value { color: #333; font-weight: 500; }
-    .hexagram-section { display: flex; gap: 8px; flex-wrap: wrap; }
-    .hexagram-box { flex: 1; min-width: 280px; }
-    .chart-box { margin: 8px 0; }
-    .chart-box svg { max-width: 100%; height: auto; }
-    .verdict-badge {
-        display: inline-block; padding: 4px 14px; border-radius: 16px;
-        font-size: 14px; font-weight: 600; color: white;
-    }
-    .verdict-auspicious { background: linear-gradient(135deg,#2e7d32,#1b5e20); }
-    .verdict-neutral { background: linear-gradient(135deg,#f57f17,#e65100); }
-    .verdict-inauspicious { background: linear-gradient(135deg,#d32f2f,#b71c1c); }
-    .step-chain { border-left: 3px solid #1565c0; padding-left: 16px; margin: 8px 0; }
-    .step-chain .step-item { margin: 8px 0; padding: 10px; background: #f8f9fa; border-radius: 6px; }
-    .step-item .step-title { font-weight: 600; color: #1565c0; font-size: 14px; }
-    .footer { text-align: center; color: #999; font-size: 12px; margin-top: 40px; padding: 16px; }
-    table.detail-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    table.detail-table th, table.detail-table td {
-        padding: 6px 10px; border: 1px solid #e0e0e0; text-align: center;
-    }
-    table.detail-table th { background: #f5f5f5; font-weight: 600; }
-    table.detail-table tr:hover { background: #fafafa; }
-    /* --- 标签页 --- */
-    .tab-nav {
-        display: flex; gap: 0; margin-bottom: 20px;
-        background: #fff; border-radius: 12px; padding: 4px;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-        position: sticky; top: 10px; z-index: 10;
-    }
-    .tab-btn {
-        flex: 1; padding: 10px 16px; border: none; background: transparent;
-        font-size: 14px; font-weight: 500; cursor: pointer; border-radius: 8px;
-        color: #666; transition: all 0.2s; text-align: center;
-    }
-    .tab-btn:hover { background: #f5f5f5; color: #333; }
-    .tab-btn.active { background: #1565c0; color: white; font-weight: 600; }
-    .tab-panel {{ display: none; }}
-    .tab-panel.active {{ display: block; }}
-    @media (max-width: 600px) {
-        .hexagram-section { flex-direction: column; }
-        .info-grid { grid-template-columns: 1fr; }
-        .tab-btn {{ font-size: 12px; padding: 8px 6px; }}
-    }
-"""
+def _load_report_css() -> str:
+    """读 assets/report.css —— 报告的唯一样式层。
+
+    样式原先在排盘报告与解读报告里各写一套（同一副卦两种长相），现已合成一份外部资源。
+    读不到就报错，不静默退回内置样式：两份 CSS 会再次分叉，而那正是这次要修的东西。
+    """
+    path = Path(__file__).resolve().parents[1] / "assets" / "report.css"
+    try:
+        return path.read_text(encoding="utf-8")
+    except OSError as exc:
+        raise SystemExit(f"缺报告样式层 {path}（应随仓库一起检出）：{exc}")
+
+
+CSS_STYLES = _load_report_css()
 
 
 def build_html_report(result_data):

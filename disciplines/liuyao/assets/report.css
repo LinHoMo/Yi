@@ -1,0 +1,397 @@
+/* 易 v0.0.1 · 六爻报告唯一样式层。
+   原先排盘报告与解读报告各带一套 CSS：同一副卦交付两种长相，改一处忘一处。
+   合成规则：以解读版（较新，带 :root 变量与卡片体系）为底，排盘侧图形规则整份追加；
+   同名选择器保留新版定义，其余一条不丢——第一版只挑了"看起来像图形"的 12 条，
+   结果 .container/.footer/.cell-* 等 29 个类没了，排盘报告当场散架。 */
+
+/* ═══ 基础变量 ═══ */
+:root {
+    --bg: #f8f4ec;
+    --card-bg: #ffffff;
+    --red: #c0392b;
+    --green: #27ae60;
+    --ink: #2c3e50;
+    --ink-light: #5d6d7e;
+    --gold: #d4a017;
+    --gold-light: #fef9e7;
+    --border: #e5dccd;
+    --shadow: 0 2px 12px rgba(44, 62, 80, 0.08);
+    --radius: 12px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.8;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+}
+/* ═══ 字体平滑 ═══ */
+::selection {
+    background: rgba(192, 57, 43, 0.15);
+}
+/* ═══ Header ═══ */
+.report-header {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 60%, #4a6274 100%);
+    color: #fff;
+    padding: 2rem 1.5rem 1.5rem;
+    text-align: center;
+    margin-bottom: 0;
+}
+.header-inner {
+    max-width: 720px;
+    margin: 0 auto;
+}
+.header-symbol {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.85;
+}
+.report-header h1 {
+    font-size: 1.75rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.75rem;
+    color: rgba(255,255,255,0.95);
+}
+.header-meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 0.5rem;
+}
+.meta-item {
+    white-space: nowrap;
+}
+.header-sub {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.65);
+    margin-top: 0.25rem;
+}
+/* ═══ Body ═══ */
+.report-body {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem;
+}
+/* ═══ Card ═══ */
+.card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    border-left: 4px solid var(--border);
+}
+.card h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 0.75rem;
+    position: relative;
+}
+/* ═══ 结论卡 ═══ */
+.card-verdict {
+    border-left: 6px solid var(--red);
+    background: linear-gradient(135deg, #fffbf5 0%, #fff 50%, #fff 100%);
+    text-align: center;
+}
+.verdict-badge {
+    display: inline-block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    padding: 0.5rem 2rem;
+    border-radius: 50px;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.1em;
+}
+.verdict-score {
+    font-size: 1rem;
+    color: var(--ink-light);
+    margin-bottom: 0.75rem;
+}
+.verdict-score strong {
+    font-size: 1.2rem;
+    color: var(--ink);
+    font-family: "SF Mono", Monaco, "Cascadia Code", monospace;
+}
+.verdict-headline {
+    font-size: 1.05rem;
+    color: var(--ink);
+    line-height: 1.7;
+    text-align: left;
+    padding-top: 0.5rem;
+    border-top: 1px dashed var(--border);
+    margin-top: 0.5rem;
+}
+/* ═══ 推因摘要 ═══ */
+.explain-text {
+    font-size: 1rem;
+    color: var(--ink);
+    line-height: 1.8;
+}
+/* ═══ SVG 容器 ═══ */
+.svg-container {
+    width: 100%;
+    overflow-x: auto;
+    text-align: center;
+    padding: 0.5rem 0;
+}
+.svg-container svg {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+}
+/* mark 高亮 */
+mark {
+    background: var(--gold-light);
+    color: var(--gold);
+    padding: 0 2px;
+    border-radius: 2px;
+}
+/* ═══ 正文 ═══ */
+.body-text p {
+    margin-bottom: 0.75rem;
+    text-indent: 2em;
+    line-height: 1.85;
+}
+.body-text p:last-child {
+    margin-bottom: 0;
+}
+/* ═══ 卡片变体 ═══ */
+.card-timing {
+    border-left-color: var(--gold);
+    background: var(--gold-light);
+}
+/* ═══ 行动建议 ═══ */
+.advice-list {
+    list-style: none;
+    padding: 0;
+}
+.advice-list li {
+    position: relative;
+    padding: 0.5rem 0.5rem 0.5rem 1.75rem;
+    margin-bottom: 0.25rem;
+    border-bottom: 1px solid var(--border);
+}
+.advice-list li:last-child {
+    border-bottom: none;
+}
+.advice-list li::before {
+    content: "$";
+    position: absolute;
+    left: 0.25rem;
+    top: 0.5rem;
+    color: var(--green);
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+/* ═══ 表格 ═══ */
+.table-wrapper {
+    overflow-x: auto;
+}
+.yao-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+.yao-table th {
+    background: #f2efe6;
+    color: var(--ink);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+}
+.yao-table td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
+.yao-table tbody tr:hover {
+    background: #faf8f2;
+}
+.role-tag {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+.role-用神 { background: #e8f5e9; color: #2e7d32; }
+.role-原神 { background: #e3f2fd; color: #1565c0; }
+.role-忌神 { background: #fdecea; color: #c62828; }
+.role-仇神 { background: #fff3e0; color: #e65100; }
+.role-闲神 { background: #f5f5f5; color: #666; }
+.no-data {
+    color: var(--ink-light);
+    font-style: italic;
+    padding: 1rem 0;
+}
+/* ═══ 经典引文 ═══ */
+.quotes-block blockquote {
+    border-left: 3px solid var(--gold);
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.75rem;
+    background: var(--gold-light);
+    border-radius: 0 8px 8px 0;
+    font-size: 0.95rem;
+}
+.quote-source {
+    font-weight: 600;
+    color: var(--gold);
+    margin-right: 0.5em;
+}
+/* ═══ 卦辞 ═══ */
+.judgment-text {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--ink);
+    padding: 0.75rem;
+    background: #f9f7f2;
+    border-radius: 8px;
+    border-left: 3px solid #bf9b30;
+}
+/* ═══ 降级因子列表 ═══ */
+.factor-fallback {
+    list-style: none;
+    padding: 0;
+}
+.factor-fallback li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+}
+.factor-fallback li:last-child { border-bottom: none; }
+.factor-fallback .fname { font-weight: 600; min-width: 80px; }
+.factor-fallback .fscore {
+    font-family: "SF Mono", Monaco, monospace;
+    font-weight: 700;
+    min-width: 60px;
+    text-align: right;
+}
+.factor-fallback .freason { color: var(--ink-light); flex: 1; }
+.factor-fallback .pos .fscore { color: var(--green); }
+.factor-fallback .neg .fscore { color: var(--red); }
+/* ═══ 附录 ═══ */
+.card-appendix {
+    border-left-color: #95a5a6;
+    background: #fafafa;
+}
+.card-appendix summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--ink-light);
+    padding: 0.25rem 0;
+}
+.card-appendix summary:hover { color: var(--ink); }
+.process-list {
+    margin-top: 0.75rem;
+}
+.process-item {
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+}
+.process-item:last-child { border-bottom: none; }
+.process-label {
+    display: inline-block;
+    background: #bf9b30;
+    color: #fff;
+    padding: 0.1rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-right: 0.5rem;
+}
+.process-text {
+    color: var(--ink-light);
+}
+/* ═══ 免责声明 ═══ */
+.card-disclaimer {
+    border-left-color: #95a5a6;
+    background: #fafafa;
+}
+.disclaimer-text {
+    font-size: 0.85rem;
+    color: var(--ink-light);
+    line-height: 1.7;
+}
+/* ═══ Footer ═══ */
+.report-footer {
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--ink-light);
+    font-size: 0.85rem;
+}
+body { font-size: 14px; }
+.report-header h1 { font-size: 1.4rem; }
+.header-symbol { font-size: 2.5rem; }
+.header-meta { flex-direction: column; gap: 0.3rem; align-items: center; }
+.card { padding: 1rem; }
+.verdict-badge { font-size: 1.2rem; padding: 0.4rem 1.5rem; }
+.yao-table { font-size: 0.8rem; }
+.yao-table th, .yao-table td { padding: 0.3rem 0.4rem; }
+.factor-fallback li { flex-wrap: wrap; }
+.factor-fallback .freason { width: 100%; margin-top: 0.25rem; }
+body { background: #fff; }
+.card { box-shadow: none; border: 1px solid #ddd; break-inside: avoid; }
+.report-header { background: #2c3e50 !important; -webkit-print-color-adjust: exact; print-color-color-adjust: exact; }
+.card-appendix details { display: block !important; }
+
+/* ── 排盘报告图形层（自 visualization.py 原样追加） ── */
+.container { max-width: 960px; margin: 0 auto; }
+.card h3 { font-size: 15px; color: #444; margin: 12px 0 8px; }
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; }
+.info-row { display: flex; gap: 10px; }
+.info-label { color: #888; min-width: 60px; text-align: right; }
+.info-value { color: #333; font-weight: 500; }
+.hexagram-section { display: flex; gap: 8px; flex-wrap: wrap; }
+.hexagram-box { flex: 1; min-width: 280px; }
+.chart-box { margin: 8px 0; }
+.chart-box svg { max-width: 100%; height: auto; }
+.verdict-auspicious { background: linear-gradient(135deg,#2e7d32,#1b5e20); }
+.verdict-neutral { background: linear-gradient(135deg,#f57f17,#e65100); }
+.verdict-inauspicious { background: linear-gradient(135deg,#d32f2f,#b71c1c); }
+.step-chain { border-left: 3px solid #1565c0; padding-left: 16px; margin: 8px 0; }
+.step-chain .step-item { margin: 8px 0; padding: 10px; background: #f8f9fa; border-radius: 6px; }
+.step-item .step-title { font-weight: 600; color: #1565c0; font-size: 14px; }
+.footer { text-align: center; color: #999; font-size: 12px; margin-top: 40px; padding: 16px; }
+table.detail-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+table.detail-table th, table.detail-table td {
+        padding: 6px 10px; border: 1px solid #e0e0e0; text-align: center;
+    }
+table.detail-table th { background: #f5f5f5; font-weight: 600; }
+table.detail-table tr:hover { background: #fafafa; }
+/* --- 标签页 --- */
+    .tab-nav {
+        display: flex; gap: 0; margin-bottom: 20px;
+        background: #fff; border-radius: 12px; padding: 4px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        position: sticky; top: 10px; z-index: 10;
+    }
+.tab-btn {
+        flex: 1; padding: 10px 16px; border: none; background: transparent;
+        font-size: 14px; font-weight: 500; cursor: pointer; border-radius: 8px;
+        color: #666; transition: all 0.2s; text-align: center;
+    }
+.tab-btn:hover { background: #f5f5f5; color: #333; }
+.tab-btn.active { background: #1565c0; color: white; font-weight: 600; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+.hexagram-section { flex-direction: column; }
+.info-grid { grid-template-columns: 1fr; }
+.tab-btn { font-size: 12px; padding: 8px 6px; }
+
+/* 同名选择器以新版为准，未追加：*、body、.card、.card h2、.verdict-badge */
+
+/* 报告主标题：这个类在 h2 上挂了很久但从未被定义（字体靠行内 style 撑） */
+.serif-title { font-family: "Songti SC", "SimSun", serif; }
