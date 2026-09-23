@@ -19,3 +19,7 @@ batch_report.html
 # 求测事件日志：体积随使用增长，本地保留、历史版本可恢复
 logs/
 data/cases/eval_*.json
+
+# 门户产物：由 build_portal_assets.py 重建，不入库（本地保留可直接打开）
+index.html
+assets/portal_data.json

@@ -9,9 +9,17 @@ outputs/
 logs/
 scratch/
 *.tmp
+# 评测生成物与 --raise 抬升基线（脚本重跑生成，不入库）
+**/data/cases/eval_*.json
+check_baseline.json
+
+# 合参层运行产物（人档案与指导，属用户数据，不入库）
+synthesis/person/
+synthesis/guidance/
 
 # 索引与工具缓存（外部工具生成，不入库）
 .codegraph/
+.yanagent/
 
 # 编辑器与系统
 .DS_Store
