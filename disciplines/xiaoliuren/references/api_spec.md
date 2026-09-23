@@ -1,0 +1,70 @@
+# 小六壬·接口规格（api_spec）
+
+四段管线契约（`docs/CONTRACT.md` §一）：chart → analyze → narrate → render，段间只传结构化数据。
+
+## 一、chart 段（`scripts/chart.py`）
+
+**输入**（`chart(params)`，params 为 dict）：
+
+| 键 | 类型 | 说明 |
+|---|---|---|
+| `way` | str | `datetime` / `lunar` / `month_day_hour` / `numbers`，默认 `datetime` |
+| `datetime` | str/datetime | `way=datetime`：公历时刻 ISO 字符串，自动转农历月日+时辰 |
+| `year` `month` `day` `hour_branch` | int×3 + str | `way=lunar`：农历年月日 + 时支（如"申"） |
+| `month` `day` `hour_ordinal` | int×3 | `way=month_day_hour`：农历月日 + 时辰序数（子=1…亥=12） |
+| `numbers` | list[int] | `way=numbers`：报数（任意个数，正整数） |
+| `topic` | str | 显式事类（覆盖问句自动识别；案例库传声明事类） |
+| `question` | str | 问事文本（自动识别事类 topic） |
+
+**输出**（chart 段，关键字段）：
+
+| 键 | 类型 | 说明 |
+|---|---|---|
+| `way` | str | 起课方式 |
+| `steps` | list[int] | 各步落宫序（月宫/日宫/时宫，或逐数） |
+| `step_names` | list[str] | 各步名称 |
+| `palace` | int | **课体**：时宫落宫序（0=大安…5=空亡） |
+| `month` `day` `hour_ordinal` | int | month_day_hour 起课的原始参数 |
+| `numbers` | list[int] | numbers 起课的原始报数 |
+| `topic` | str | 事类 |
+| `question` | str | 问事文本 |
+
+起课法（《贺氏六壬小手册》第二节）：以"大安"起正月顺数至所求月；以月宫起初一顺数至所求日；以日宫起子时顺数至所求时辰。变通/随机取数（第三、四节）：第一数自大安起数，其后自上数落宫起数。
+
+## 二、analyze 段（`scripts/analyze.py`）
+
+**输入**：chart 段输出。**输出**（关键字段）：
+
+| 键 | 类型 | 说明 |
+|---|---|---|
+| `schema` | str | `xiaoliuren-analyze-v1` |
+| `topic` `question` | str | 事类与问事文本 |
+| `chart_summary` | dict | 落宫/起课方式/报数/月日时/时辰序 |
+| `steps` | list[dict] | 步序与各步落宫名 |
+| `palace` | dict | 六要素：宫名/五行/颜色/方位/属神/位置/主数/含义/总诀/方向 |
+| `topic_verdict` | dict | topic/诀句/宫义/所本 |
+| `timing` | dict | 主数/解读/所本 |
+| `comprehensive` | bool | 是否综合判断事类（出行/求财） |
+| `conclusion` | dict | 方向/说明/宫义/所本 |
+| `factors` | list[dict] | {因子, 权重, 判据, 所本}，四因子：落宫30/吉凶方向30/事类断语20/应期主数20 |
+
+方向取法（`data/verdicts.json`）：大安/速喜/小吉→吉，赤口/空亡→凶，留连→平（两可宜缓）。
+
+## 三、narrate 段（`scripts/narrate.py`）
+
+**输入**：analyze 输出。**输出**：师傅口吻 markdown 正文（标题/结论/落宫解读/事类断语/应期主数/综合权衡提示/口径收尾）。只装配 analyze 判据，不自行推断新结论。
+
+## 四、render 段（`scripts/render.py`）
+
+**输入**：analyze 输出。**输出**：单文件 Markdown 报告（正文 + 盘面数据附录 + 判读因子明细），薄层不自带 HTML 模板。
+
+```
+python scripts/render.py [analyze.json] [-o report.md]
+```
+
+## 五、案例与评分
+
+- 案例库：`data/cases/xiaoliuren_cases.json`（tune 10 / holdout 5 / excluded 2）
+- 运行器：`scripts/case_runner.py`，输出 `{"cases": [...], "errors": [...]}` 契约
+- 评分器：`scripts/evaluate.py`（复用 `yishu_core.eval`），维度：落宫30/吉凶方向30/事类诀句20/应期主数20
+- 质量门：`tools/check.py`（金标准指纹 + 冒烟 + tune/holdout 分别出分带 n）

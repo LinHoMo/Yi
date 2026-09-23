@@ -1,0 +1,251 @@
+{
+  "schema": "xiaoliuren-cases-v1",
+  "note": "小六壬案例库：全部起课输入与断语要点取自《贺氏六壬小手册》（国学大师文库本）。tune 为原文实例与推算方法书例（参与过校参）；holdout 为未参与校参的机断练习例与正宗起课例；excluded 为原文信息不全、不可完全复现者。expected 只记可机械核验的要点：落宫（纯运算真值）、吉凶方向（宫义所定）、事类诀句（诀曰切句）、应期主数。综合判断例（如空亡测座位）吉凶/事类记 N/A，因其原文本就声明不可死套宫义。",
+  "cases": [
+    {
+      "id": "XLR001",
+      "source": "《贺氏六壬小手册》第五节·实例1",
+      "topic": "行人",
+      "question": "去朋友家，测有人否",
+      "split": "tune",
+      "input": {"way": "month_day_hour", "month": 8, "day": 15, "hour_ordinal": 9},
+      "expected": {
+        "palace": "空亡",
+        "verdict": "凶",
+        "topic_line": "行人有灾殃",
+        "timing": [3, 6, 9]
+      },
+      "note": "原文：按月日时推算结果『空亡』，打电话朋友家，其母接电话告知儿子下午出去还未回。空亡『音信稀时』，人不在家、音信无应。"
+    },
+    {
+      "id": "XLR002",
+      "source": "《贺氏六壬小手册》第五节·实例2",
+      "topic": "求财",
+      "question": "明日讨债顺利否",
+      "split": "tune",
+      "input": {"way": "numbers", "numbers": [1, 5, 1, 3, 8]},
+      "expected": {
+        "palace": "留连",
+        "verdict": "平",
+        "topic_line": "急讨方遂心",
+        "timing": [2, 8, 10]
+      },
+      "note": "原文：腰间传呼机号15138，掐算落『留连』，断明日讨债不成、必要拖延、一时无法偿还。后果验（对方无力偿还，一直拖延）。留连『急讨方遂心』——催讨需急，然终有拖延。"
+    },
+    {
+      "id": "XLR003",
+      "source": "《贺氏六壬小手册》第五节·实例3",
+      "topic": "天气",
+      "question": "明日天气如何（今日阴天）",
+      "split": "tune",
+      "input": {"way": "month_day_hour", "month": 4, "day": 13, "hour_ordinal": 5},
+      "expected": {
+        "palace": "留连",
+        "verdict": "平",
+        "topic_line": "水流不断之象，玄武属水，主雨",
+        "timing": [2, 8, 10]
+      },
+      "note": "原文：四月初十三辰时求测明日天气，落『留连』，断明日有雨——留连有水流不断之象，且北方玄武亦属水。果如所测，游玩不成。天气占无诀辞专句，以宫象与属神五行断。"
+    },
+    {
+      "id": "XLR004",
+      "source": "《贺氏六壬小手册》第五节·实例4",
+      "topic": "官讼",
+      "question": "纠纷能解决否",
+      "split": "tune",
+      "input": {"way": "numbers", "numbers": [7, 7, 2, 3, 4]},
+      "expected": {
+        "palace": "大安",
+        "verdict": "吉",
+        "topic_line": "大安事事昌，纠纷可解",
+        "timing": [1, 5, 7]
+      },
+      "note": "原文：随机报数77234，断纠纷能顺利解决、不必着急、有贵人帮助。果如所测，其朋友转托一林姓人从中帮忙顺利解决——大安属木临青龙，林姓与东方青龙契合。"
+    },
+    {
+      "id": "XLR005",
+      "source": "《贺氏六壬小手册》第六节·难点释疑3例1",
+      "topic": "出行",
+      "question": "坐火车有无座位",
+      "split": "tune",
+      "input": {"way": "month_day_hour", "month": 4, "day": 2, "hour_ordinal": 8},
+      "expected": {
+        "palace": "空亡",
+        "verdict": null,
+        "topic_line": null,
+        "timing": [3, 6, 9]
+      },
+      "note": "综合判断例：四月初二未时落『空亡』，朋友说定无座位，贺氏断上车定有座位，后果验。原文明言『此处空亡不能解释为无座位』——空亡测座位不可死解，吉凶与事类均不记单一要点（N/A），只考落宫与主数。"
+    },
+    {
+      "id": "XLR006",
+      "source": "《贺氏六壬小手册》第六节·难点释疑3例2",
+      "topic": "工作",
+      "question": "去四川成都办事能成否",
+      "split": "tune",
+      "input": {"way": "numbers", "numbers": [9, 9, 8, 6, 4]},
+      "expected": {
+        "palace": "留连",
+        "verdict": "平",
+        "topic_line": "求谋日未明，事难成",
+        "timing": [2, 8, 10]
+      },
+      "note": "综合判断例：随机写数99864掐五次落『留连』，按宫义应断办事无法成功；但成都西方属金、金生北方水（留连），综合断事情能办成但并非一帆风顺、有阻碍或拖延。后果验。宫义为平，事类句取留连谋事句，方位生克属解读层修正。"
+    },
+    {
+      "id": "XLR007",
+      "source": "《贺氏六壬小手册》第六节·难点释疑3例3",
+      "topic": "求财",
+      "question": "朋友还钱否",
+      "split": "tune",
+      "input": {"way": "month_day_hour", "month": 10, "day": 6, "hour_ordinal": 6},
+      "expected": {
+        "palace": "留连",
+        "verdict": "平",
+        "topic_line": "急讨方遂心",
+        "timing": [2, 8, 10]
+      },
+      "note": "综合判断例：十月初六10点55分（巳时）求测朋友还钱，落『留连』，断目前无法拿回、不过不久即可全部归回。几次催讨无功，将近一个月全部拿回。原文分析：10点55分很快进入午时，留连下一位是速喜——速喜表时间快且喜庆，故不会拖延很久。"
+    },
+    {
+      "id": "XLR008",
+      "source": "《贺氏六壬小手册》第六节·难点释疑3例5",
+      "topic": "家宅",
+      "question": "开饭店吉利否",
+      "split": "tune",
+      "input": {"way": "numbers", "numbers": [10]},
+      "expected": {
+        "palace": "赤口",
+        "verdict": "凶",
+        "topic_line": "赤口主口舌，家宅防是非",
+        "timing": [4, 7, 10]
+      },
+      "note": "原文：随机拍扑克牌为十，推算结果『赤口』；恰逢茶杯落地碎裂，水为财、流走有破财之象，断不吉、破财事小、弄不好有是非灾祸，劝其不要开饭店。其人未听，后饭店开张生意冷清，因结账争端被人围攻殴伤。"
+    },
+    {
+      "id": "XLR009",
+      "source": "《贺氏六壬小手册》第二节·推算方法（三月二十三例）",
+      "topic": "工作",
+      "question": "求谋某事可成否",
+      "split": "tune",
+      "input": {"way": "month_day_hour", "month": 3, "day": 23, "hour_ordinal": 1},
+      "expected": {
+        "palace": "大安",
+        "verdict": "吉",
+        "topic_line": "求谋在东方，谋事可成",
+        "timing": [1, 5, 7]
+      },
+      "note": "推算方法书例：三月落『速喜』，二十三落『大安』。原文只推至日宫，时辰未载，按子时补足成完整课体（日宫落点与原文一致）。大安主谋事，求谋在东方。"
+    },
+    {
+      "id": "XLR010",
+      "source": "《贺氏六壬小手册》第二节·推算方法（十一月初十例）",
+      "topic": "人事",
+      "question": "占人事",
+      "split": "tune",
+      "input": {"way": "month_day_hour", "month": 11, "day": 10, "hour_ordinal": 1},
+      "expected": {
+        "palace": "留连",
+        "verdict": "平",
+        "topic_line": "留连事难成，求谋日未明，官事只宜缓，去者来回程，失物南方见，急讨方遂心，更需防口舌，人事且平平",
+        "timing": [2, 8, 10]
+      },
+      "note": "推算方法书例：十一月初十，初一小吉、初二空亡、初三大安、初四留连、初五速喜、初六赤口、初七小吉、初八空亡、初九大安、初十落『留连』。原文只推至日宫，时辰未载，按子时补足（日宫落点与原文一致）。人事占无专句，取总诀。"
+    },
+    {
+      "id": "XLR101",
+      "source": "《贺氏六壬小手册》第二节·推算方法（正宗起课）",
+      "topic": "出行",
+      "question": "出行吉否",
+      "split": "holdout",
+      "input": {"way": "month_day_hour", "month": 1, "day": 1, "hour_ordinal": 1},
+      "expected": {
+        "palace": "大安",
+        "verdict": "吉",
+        "topic_line": "行人身未动",
+        "timing": [1, 5, 7]
+      },
+      "note": "正宗起课法：大安起正月，正月初一子时顺数皆落『大安』（各步均为大安）。机断练习例，要点取六宫释义标准义。"
+    },
+    {
+      "id": "XLR102",
+      "source": "《贺氏六壬小手册》第二节·推算方法（十一月例）",
+      "topic": "人事",
+      "question": "占人事",
+      "split": "holdout",
+      "input": {"way": "month_day_hour", "month": 11, "day": 1, "hour_ordinal": 1},
+      "expected": {
+        "palace": "小吉",
+        "verdict": "吉",
+        "topic_line": "小吉最吉昌，路上好商量，阴人来报喜，失物在坤方，行人立便至，交易甚是强，凡事皆和合，病者祈上苍",
+        "timing": [1, 5, 7]
+      },
+      "note": "推算方法书例：『如推算十一月…十一月就落在小吉上』。原文只推至月落点，按初一子时补足成完整课体（月落点与原文一致）。人事占取总诀。"
+    },
+    {
+      "id": "XLR103",
+      "source": "机断练习例（六宫释义标准义）",
+      "topic": "求财",
+      "question": "端午日求财如何",
+      "split": "holdout",
+      "input": {"way": "month_day_hour", "month": 5, "day": 5, "hour_ordinal": 7},
+      "expected": {
+        "palace": "速喜",
+        "verdict": "吉",
+        "topic_line": "求财向南行",
+        "timing": [3, 6, 9]
+      },
+      "note": "机断练习例（未参与校参）：五月初五午时（端午正午），落『速喜』。速喜为吉系，求财向南行，谋事主三、六、九。"
+    },
+    {
+      "id": "XLR104",
+      "source": "机断练习例（六宫释义标准义）",
+      "topic": "失物",
+      "question": "失物能否寻回",
+      "split": "holdout",
+      "input": {"way": "month_day_hour", "month": 6, "day": 15, "hour_ordinal": 1},
+      "expected": {
+        "palace": "留连",
+        "verdict": "平",
+        "topic_line": "失物南方见，急讨方遂心",
+        "timing": [2, 8, 10]
+      },
+      "note": "机断练习例（未参与校参）：六月十五子时，落『留连』。失物南方见，急讨方遂心，事有拖延。"
+    },
+    {
+      "id": "XLR105",
+      "source": "机断练习例（六宫释义标准义）",
+      "topic": "行人",
+      "question": "行人何时归",
+      "split": "holdout",
+      "input": {"way": "month_day_hour", "month": 12, "day": 30, "hour_ordinal": 11},
+      "expected": {
+        "palace": "速喜",
+        "verdict": "吉",
+        "topic_line": "行人有音信",
+        "timing": [3, 6, 9]
+      },
+      "note": "机断练习例（未参与校参）：十二月三十戌时（年尾岁末），落『速喜』。行人有音信，谋事主三、六、九。"
+    },
+    {
+      "id": "XLR901",
+      "source": "《贺氏六壬小手册》第六节·难点释疑3例4",
+      "topic": "行人",
+      "question": "明日上午找人在否",
+      "split": "excluded",
+      "input": {},
+      "expected": {},
+      "note": "原文只言九月初四求测、结果为『大安』，未载求测时辰。反推可得丑时或申时起课，无法确定，起课不可完全复现，故排除。原文断语（明日七点左右能碰到、人在家未走动）仅作参考。"
+    },
+    {
+      "id": "XLR902",
+      "source": "《贺氏六壬小手册》第二节·推算方法（十一月月落点）",
+      "topic": "人事",
+      "question": "",
+      "split": "excluded",
+      "input": {},
+      "expected": {},
+      "note": "原文『如推算十一月…十一月就落在小吉上』只推至月落点，无日与时，不可还原完整课体。以初一子时补足版见 XLR102。"
+    }
+  ]
+}

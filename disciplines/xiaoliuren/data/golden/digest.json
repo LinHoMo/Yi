@@ -1,0 +1,22 @@
+{
+  "_meta": {
+    "what": "金标准指纹基线（chart+analyze 逐字段）",
+    "how": "改动引擎行为后跑 python tools/golden.py capture \"理由\"；无理由不落盘，历次漂移见 drift_log",
+    "cases": 15
+  },
+  "digest": "0088d638d065402d",
+  "drift_log": [
+    {
+      "from": null,
+      "to": "87f4f9f7420043a9",
+      "date": "2026-09-23",
+      "reason": "小六壬学科初建：chart+analyze 首版行为基线"
+    },
+    {
+      "from": "87f4f9f7420043a9",
+      "to": "0088d638d065402d",
+      "date": "2026-09-23",
+      "reason": "修正：指纹仅覆盖可运行案例（tune+holdout 15 例），excluded 空输入跳过"
+    }
+  ]
+}

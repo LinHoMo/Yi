@@ -1,0 +1,161 @@
+# -*- coding: utf-8 -*-
+"""小六壬·规则推演（analyze 段）—— 纯机械，断语只取 data/verdicts.json。
+
+输入 chart 段输出的课体（落宫），输出结构化的因子与判据：
+  1. 落宫六要素（五行/颜色/方位/属神/主数/掌诀位置）——《贺氏六壬小手册》第一节
+  2. 吉凶方向（六宫释义所定：大安/速喜/小吉吉，赤口/空亡凶，留连平）
+  3. 事类诀辞（按 topic 取各宫『诀曰』切句）
+  4. 应期主数（谋事主一五七/二八十/三六九/四七十）
+"""
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+
+CORE = Path(__file__).resolve().parents[3] / "core"
+DISC = Path(__file__).resolve().parents[1]
+for _p in (str(CORE), str(Path(__file__).resolve().parent)):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+from chart import PALACES  # noqa: E402
+
+_CN = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"]
+
+
+def _load_verdicts() -> dict:
+    p = DISC / "data" / "verdicts.json"
+    return json.loads(p.read_text(encoding="utf-8"))
+
+
+VERDICTS = _load_verdicts()
+
+_WEIGHTS = {"落宫": 30, "吉凶方向": 30, "事类断语": 20, "应期主数": 20}
+
+
+def _num_list(nums: list[int]) -> str:
+    return "、".join(_CN[n] if n <= 10 else str(n) for n in nums)
+
+
+def analyze(chart_out: dict) -> dict:
+    """chart 段输出 → 因子与判据（结构化，无成段断语）。"""
+    palace_idx = chart_out["palace"]
+    palace_name = PALACES[palace_idx]
+    topic = chart_out.get("topic") or "人事"
+    question = chart_out.get("question", "")
+
+    p = VERDICTS["palaces"][palace_name]
+    direction = VERDICTS["direction"][palace_name]
+
+    # 事类诀辞：该宫对应 topic 的切句；天气等无专句时回退总诀
+    line = (VERDICTS["topic_lines"].get(topic) or {}).get(palace_name) or p["总诀"]
+
+    steps = chart_out.get("steps") or []
+    step_names = chart_out.get("step_names") or []
+    steps_info = [{"步": n, "落宫": PALACES[i]}
+                  for n, i in zip(step_names, steps)]
+
+    # 综合判断标记：《贺氏》难点释疑3 明示不可死板套宫义的事类
+    comprehensive_topics = {"出行", "求财"}
+    comprehensive = topic in comprehensive_topics
+
+    conclusion = {
+        "方向": direction,
+        "说明": _conclusion_text(direction, palace_name, line, topic),
+        "宫义": p["含义"],
+        "所本": p["所本"],
+    }
+
+    return {
+        "schema": "xiaoliuren-analyze-v1",
+        "topic": topic,
+        "question": question,
+        "chart_summary": {
+            "落宫": palace_name,
+            "起课方式": chart_out.get("way"),
+            "报数": chart_out.get("numbers"),
+            "月日时": (f"{chart_out.get('month')}月{chart_out.get('day')}日"
+                      if chart_out.get("way") == "month_day_hour" else None),
+            "时辰序": chart_out.get("hour_ordinal"),
+        },
+        "steps": steps_info,
+        "palace": {
+            "宫名": palace_name,
+            "五行": p["五行"],
+            "颜色": p["颜色"] or "—",
+            "方位": p["方位"] or "—",
+            "属神": p["属神"],
+            "位置": p["位置"],
+            "主数": p["主数"],
+            "含义": p["含义"],
+            "总诀": p["总诀"],
+            "方向": direction,
+        },
+        "topic_verdict": {
+            "topic": topic,
+            "诀句": line,
+            "宫义": p["含义"],
+            "所本": VERDICTS["topic_line_basis"],
+        },
+        "timing": {
+            "主数": p["主数"],
+            "解读": f"谋事主{_num_list(p['主数'])}之数（时间、日辰或数量皆可应）",
+            "所本": VERDICTS["number_basis"],
+        },
+        "comprehensive": comprehensive,
+        "conclusion": conclusion,
+        "factors": [
+            {"因子": "落宫", "权重": _WEIGHTS["落宫"], "判据": palace_name,
+             "所本": "《贺氏六壬小手册》第二节·推算方法（月上起日，日上起时）"},
+            {"因子": "吉凶方向", "权重": _WEIGHTS["吉凶方向"], "判据": direction,
+             "所本": p["所本"]},
+            {"因子": "事类断语", "权重": _WEIGHTS["事类断语"], "判据": line,
+             "所本": VERDICTS["topic_line_basis"]},
+            {"因子": "应期主数", "权重": _WEIGHTS["应期主数"], "判据": _num_list(p["主数"]),
+             "所本": VERDICTS["number_basis"]},
+        ],
+    }
+
+
+def _conclusion_text(direction: str, palace: str, line: str, topic: str) -> str:
+    """方向 + 事类诀句 → 一句结论底色（不出新象数结论，只装配）。"""
+    tone = {"吉": "事势偏顺，宫义为吉",
+            "平": "事在两可，拖延或待时而动",
+            "凶": "结构上偏不利，有凶象信号"}[direction]
+    if line and line != VERDICTS["palaces"][palace]["总诀"]:
+        return f"{tone}；就{topic}而言：{line}"
+    return f"{tone}；{VERDICTS['palaces'][palace]['总诀']}"
+
+
+if __name__ == "__main__":
+    import argparse
+    import json as _json
+
+    ap = argparse.ArgumentParser(description="小六壬分析（analyze 段）")
+    ap.add_argument("chart_json", nargs="?", help="chart 段输出 JSON 文件（缺省跑金标准自检）")
+    ap.add_argument("-o", "--out", type=Path, help="写出 analyze JSON")
+    args = ap.parse_args()
+
+    if not args.chart_json:
+        # 金标准自检：八月初十五申时 → 空亡（凶系）；报数77234 → 大安（吉系）
+        from chart import chart_from_month_day_hour, chart_from_numbers
+        a1 = analyze(chart_from_month_day_hour(8, 15, 9))
+        assert a1["palace"]["宫名"] == "空亡", a1["palace"]
+        assert a1["conclusion"]["方向"] == "凶", a1["conclusion"]
+        a2 = analyze(chart_from_numbers([7, 7, 2, 3, 4]))
+        assert a2["palace"]["宫名"] == "大安", a2["palace"]
+        assert a2["conclusion"]["方向"] == "吉", a2["conclusion"]
+        assert a2["timing"]["主数"] == [1, 5, 7], a2["timing"]
+        print("小六壬 analyze 校验通过（空亡/大安两例方向与主数正确）")
+        raise SystemExit(0)
+
+    chart_out = _json.loads(Path(args.chart_json).read_text(encoding="utf-8"))
+    a = analyze(chart_out)
+    text = _json.dumps(a, ensure_ascii=False, indent=2)
+    if args.out:
+        args.out.parent.mkdir(parents=True, exist_ok=True)
+        args.out.write_text(text + "\n", encoding="utf-8")
+        print("分析 →", args.out)
+    else:
+        print(text)
