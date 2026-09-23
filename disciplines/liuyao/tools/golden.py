@@ -8,6 +8,7 @@
 """
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import sys
@@ -88,7 +89,14 @@ def fingerprint() -> list[dict]:
 def main() -> int:
     from yishu_core.runtime import force_utf8_stdio
     force_utf8_stdio()
-    mode = sys.argv[1] if len(sys.argv) > 1 else "verify"
+    parser = argparse.ArgumentParser(
+        description="金标准指纹：capture 落基线 / verify 比对漂移（默认）")
+    parser.add_argument("mode", nargs="?", default="verify", choices=("capture", "verify"),
+                        help="capture 落新基线；verify 比对基线指纹（默认）")
+    parser.add_argument("reason", nargs="?", default="",
+                        help="capture 模式必填：为何允许漂移（防掩盖退步，见 AGENTS.md 四）")
+    args = parser.parse_args()
+    mode, reason = args.mode, args.reason
     rows = fingerprint()
     blob = json.dumps(rows, ensure_ascii=False, sort_keys=True, indent=1)
     digest = hashlib.sha256(blob.encode("utf-8")).hexdigest()[:16]
@@ -98,7 +106,6 @@ def main() -> int:
         print("  !", e["case"], e["error"])
 
     if mode == "capture":
-        reason = sys.argv[2] if len(sys.argv) > 2 else ""
         if not reason.strip():
             print("× 重新落基线必须给理由：python tools/golden.py capture \"为何允许漂移\"")
             print("  基线下调/漂移不写理由＝掩盖退步（AGENTS.md 四）。")
