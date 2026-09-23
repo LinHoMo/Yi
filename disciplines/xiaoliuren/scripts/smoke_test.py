@@ -36,6 +36,8 @@ SMOKES = [
 
 
 def main() -> int:
+    from yishu_core.runtime import force_utf8_stdio
+    force_utf8_stdio()
     ok = 0
     for name, params in SMOKES:
         try:
