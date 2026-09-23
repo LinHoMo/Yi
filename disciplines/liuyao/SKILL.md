@@ -96,8 +96,16 @@ python <skill-path>/scripts/liuyao_engine.py --mode manual --yao "7,8,9,7,6,8"
 python scripts/thinking_chain.py <result_json_file>
 ```
 
-需要交付 HTML 报告时不必分步：`liuyao_engine.py --format html --save-html outputs/report.html`
-一条命令即可（内部已串起排盘→思维链→正文→报告）。
+需要交付报告时**一键闭环（M3.2）**，不必分步：
+
+```bash
+python scripts/yi_liuyao.py "所问之事" --when "2026-09-18 14:30" -o outputs/report.html
+python scripts/yi_liuyao.py "所问之事" --mode manual --yao "7,8,9,7,6,8" -f md   # 手动起卦 / Markdown
+```
+
+内部固定 chart→analyze→render（同一份 analyze JSON 出报告，不另行断卦）；
+缺省 `--mode time` 用 `--when` 时刻，不给 `--when` 用当前时刻。旧引擎入口
+`liuyao_engine.py --format html --save-html` 的 HTML 分支同样走 render 单一出口。
 
 **四段契约入口（与梅花/小六壬/择吉同构，供合参层消费）**：六爻已提供
 chart→analyze→narrate→render 薄适配层，包装既有引擎、不引入新断法：

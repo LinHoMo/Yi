@@ -60,6 +60,7 @@ tune 主应期命中 35.3%（平均名次 2.0）、holdout 25.0%（2.2）、外�
 | `scripts/classical_analysis.py` | 22 类动变关系检测：伏藏、暗动、月破、三合、进退、反吟伏吟… |
 | `scripts/thinking_chain.py` | 五步思维链：现状 → 取用神 → 旺衰 → 动变 → 综合 |
 | `scripts/human_narrative.py` | 唯一交付正文（师傅口吻），不做"人话/古典"两张皮 |
+| `scripts/yi_liuyao.py` | 一键闭环（M3.2）：`python scripts/yi_liuyao.py "问题" --when "..."` → 单文件报告 |
 | `scripts/render.py` | 报告渲染单一出口（M3）：analyze JSON → Markdown / 单文件 HTML |
 | `scripts/visualization.py` | SVG 组件库：卦盘（爻线/六亲/六神/世应/空破/动变）、应期时间线、五行雷达 |
 | `scripts/build_portal_assets.py` | 门户与样例报告构建，分数从评测结果取，不写常量 |

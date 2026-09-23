@@ -15,6 +15,7 @@ import argparse
 import json
 import subprocess
 import sys
+from datetime import datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -56,23 +57,24 @@ def _pipeline(disc: str, chart_args: list[str]) -> tuple[dict, str, str]:
 
 
 def demo_liuyao(question: str) -> tuple[dict, str, str]:
-    """六爻旧实现：引擎一条命令出 JSON，正文取思维链综合段摘要。"""
-    out = _run(["disciplines/liuyao/scripts/liuyao_engine.py", "--mode", "coin",
-                "--question", question])
-    data = json.loads(out)
-    chain = data.get("thinking_chain") or {}
-    s5 = chain.get("step5_synthesis") or {}
-    verdict = s5.get("verdict") or s5.get("结论") or "（见引擎 JSON）"
-    gz = (data.get("original_hexagram") or {}).get("name") or "?"
-    changed_data = data.get("changed_hexagram") or {}
-    changed = (changed_data.get("name") or "?") if changed_data else "无动爻之变"
-    text = (f"问：{question}\n\n本卦 **{gz}**（变 **{changed}**）。"
-            f"综合断语：{verdict}\n"
-            f"（完整盘面与思维链见引擎 JSON 输出）")
+    """六爻四段契约（M3.2 一键闭环同构）：chart → analyze → render 单文件 HTML。"""
     SCRATCH.mkdir(parents=True, exist_ok=True)
-    p = SCRATCH / "liuyao_result.json"
-    p.write_text(out + "\n", encoding="utf-8")
-    return data, text, str(p)
+    c = SCRATCH / "liuyao_chart.json"
+    a = SCRATCH / "liuyao_analyze.json"
+    r = SCRATCH / "liuyao_report.html"
+    when = datetime.now().strftime("%Y-%m-%d %H:%M")
+    _run(["disciplines/liuyao/scripts/chart.py", "--mode", "time",
+          "--datetime", when, "--question", question, "-o", str(c)])
+    _run(["disciplines/liuyao/scripts/analyze.py", str(c), "-o", str(a)])
+    _run(["disciplines/liuyao/scripts/render.py", str(a), "-f", "html", "-o", str(r)])
+    analyze = json.loads(a.read_text(encoding="utf-8"))
+    con = analyze.get("conclusion") or {}
+    oh = analyze.get("original_hexagram") or {}
+    ch = analyze.get("changed_hexagram") or {}
+    text = (f"问：{question}\n\n本卦 **{oh.get('name', '?')}**"
+            f"（变 {ch.get('name', '无动爻之变')}）。结论：{con.get('方向', '见报告')}。"
+            f"\n完整报告：`{Path(r).relative_to(ROOT)}`（单文件 HTML，浏览器直开）")
+    return analyze, text, str(r)
 
 
 def demo_single(disc: str, question: str) -> tuple[dict, str, str]:
@@ -95,7 +97,7 @@ def demo_all() -> int:
     q1 = "占本月工作调动能否成"
     _, txt1, src1 = demo_liuyao(q1)
     lines += ["## 一、六爻纳甲（liuyao）", "", f"**问**：{q1}", "", txt1,
-              "", f"（原始输出：`{Path(src1).relative_to(ROOT)}`）", ""]
+              "", f"（报告：`{Path(src1).relative_to(ROOT)}`）", ""]
 
     # 梅花 / 小六壬 / 择吉
     cases = [
@@ -178,7 +180,7 @@ def main() -> int:
         if args.discipline == "liuyao":
             _, text, src = demo_liuyao(args.question)
             print(text)
-            print(f"（原始输出：{src}）")
+            print(f"（报告：{src}）")
             return 0
         _, text, src = demo_single(args.discipline, args.question)
         print(text)

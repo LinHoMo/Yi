@@ -5,6 +5,19 @@
 
 ## v0.0.1 — 2026-09-23 大更：卜科四科全可用（三科上线 + 六爻四段契约接入）+ 合参层实现 + 仓库级质量门
 
+### 2026-09-24 M3 一键闭环（3.2）：yi_liuyao.py 一条命令出报告
+
+- **新增 `disciplines/liuyao/scripts/yi_liuyao.py`**：`python scripts/yi_liuyao.py "所问之事" --when "..."`
+  一条命令走完 chart→analyze→render——起卦（缺省 time 用 --when 时刻/当前时刻，支持
+  manual/number/coin+seed）→ 排盘 → 推演 → 单文件报告（HTML 缺省 / `-f md`），
+  `-o` 指定输出（缺省 `outputs/reports/report_<时间戳>.<ext>`），`--open` 浏览器直开；
+  命令尾部打印结要（本卦/变卦/结论/应期）。从零到可分享报告无人工拼装（验收达标）。
+- **`tools/demo.py` 六爻演示切四段契约**：demo_liuyao 从旧引擎入口
+  （`liuyao_engine.py --mode coin`）改为 chart→analyze→render（与其他三科同构），
+  输出单文件 HTML 报告；全科演示 `python tools/demo.py` 实测通过。
+- **SKILL.md / README 命令同步**：一键闭环命令写入执行规程，旧引擎 HTML 分支注明仍走 render 出口。
+- 纯新增入口与演示装配，不触碰引擎推演，金标准指纹与质量门不受影响。
+
 ### 2026-09-24 M3 门户修伤（3.3）：死链修复 + 真分数看板 + SVG 卦盘
 
 `disciplines/liuyao/index.html`（gitignore 生成物，由 `scripts/build_portal_assets.py` 可重建）：

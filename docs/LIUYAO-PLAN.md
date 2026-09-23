@@ -15,6 +15,8 @@
 > **执行进度更新（2026-09-24）**：M3 呈现三合一完成（3.1）——两套并行报告引擎（`visualization.build_html_report` / `build_html_report.py`）删除，报告产物只剩 `scripts/render.py` 单一出口（`grep "<!DOCTYPE"` 仅剩内核 kit 一处）；HTML 报告 = SVG 真卦盘（爻线/六亲/六神/世应/空破/动变标记/变卦）＋ 结要卡 ＋ narrate 正文 ＋ 判据所本；`core/report/html.py` 的 `md_to_html` 支持标题/列表/表格/粗体/行内码/对齐排盘表（`<pre>` 保形）；样式层唯一 `assets/report.css`，`tools/style_check.py` 用 render 段采样核对类名覆盖；依赖方（`build_portal_assets.py` / `style_check.py` / `liuyao_engine.py --format html`）全部改走新出口。M3 其余子项（3.2 一键闭环、3.3 门户修伤、3.4 黄金样例、3.5 README 截图）未做，待后续推进。
 >
 > **执行进度更新（2026-09-24）**：M3 门户修伤完成（3.3）——`index.html` 重建：看板分数经 `build_portal_assets.py` 从 `eval_{tune,holdout}.json` 取（当前读数 tune 94.5 / holdout 84.8，含 n 与口径说明，不再硬编码 100）；"打开完整样例报告"原 `window.open('sample_report_ZS001.html')` 死链改为页内数据渲染（iframe 模态框兜底 + 新窗口可选，任何环境可用）；SVG 卦盘含六神/六亲/纳甲/爻象/世应/动变○×/旬空/变出列；门户完全自包含（无外部 src/href/fetch），`file://` 直开可用。门户产物（`index.html` / `assets/portal_data.json` / `outputs/reports/`）在 gitignore 内，由脚本可重建。M3 剩余 3.2 一键闭环、3.4 黄金样例、3.5 README 截图未做。
+>
+> **执行进度更新（2026-09-24）**：M3 一键闭环完成（3.2）——新增 `scripts/yi_liuyao.py`：`python scripts/yi_liuyao.py "所问之事" --when "..."` 一条命令 chart→analyze→render（HTML/Markdown，缺省 time 起卦，支持 manual/number/coin+seed，`--open` 浏览器直开），从零到可分享报告无人工拼装；`tools/demo.py` 六爻演示从旧引擎入口切换为四段契约（与其他三科同构），全科演示实测通过。M3 剩余 3.4 黄金样例、3.5 README 截图未做。
 
 ## 〇、先说一件必须接受的事
 
