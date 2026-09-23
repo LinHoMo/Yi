@@ -17,6 +17,7 @@
   - 六爻两套并行报告引擎（`visualization.py` 排盘报告 3 处骨架、`build_html_report.py` 解读报告骨架 + `_xml_escape` 重复实现）收敛到 core/report——消除"一副卦两种骨架"。`grep "<!DOCTYPE"` 仅剩内核 kit 一处（回归测试工具的内嵌测试报告为独立样式，属工具 UI，不收敛）。
   - 样式层仍唯一（`assets/report.css`）；`style_check.py` 39/29 个类全部有定义。
   - 未做（留 `docs/LIUYAO-PLAN.md` 3.1 后续）：两套引擎**内容**合并、`render.py` 单一 HTML 出口、SVG 真卦盘——本轮只收敛骨架层。
+- **A3 断语外置**（`disciplines/liuyao/`）：成表断语/引文库（`SHI_YAO_INTERPRETATION` 六亲持世断语、`SHI_YAO_POEMS` 持世歌诀、`QUOTE_DATABASE` 引文库共 59 条）从 `chain_verdicts.py` 迁至 `data/verdicts.json`，代码只留加载与算法（`AGENTS.md` §三）。出处：引文库逐条 `source` 字段标注古籍；持世断语值内文末括注出处，无括注者为基础持世通论（`_meta` 注明）。金标准指纹 `0e2bb128` 复验无漂移。关键词表（`_QUESTION_SCENARIO_KEYWORDS`）属算法特征，留代码。
 
 ### 新增
 
