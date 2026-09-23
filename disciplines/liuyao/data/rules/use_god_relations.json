@@ -3,7 +3,7 @@
     "description": "取用神的『关系优先于事项』规则表，出自《增刪卜易》原文，每条带逐字引文与偏移量",
     "built_by": "tools/build_use_god_rules.py",
     "source": "data\\sources\\zengshan_buyi.wikitext.txt",
-    "usage": "thinking_chain 取用神时先过本表（先命中先停），未命中再退回问题词典",
+    "usage": "chain_step2 取用神时先过本表（先命中先停），未命中再依次过覆盖层与问题词典",
     "order": "priority 小的先判；同优先级里触发词长的先判（更具体）",
     "rule_count": 15
   },

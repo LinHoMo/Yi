@@ -5,6 +5,26 @@
 
 ## v0.0.1 — 2026-09-23 大更：卜科四科全可用（三科上线 + 六爻四段契约接入）+ 合参层实现 + 仓库级质量门
 
+### 2026-09-24 M2.1 词典层结构化：186 键问题词典入 data/ + 取用神四层来源标注（六爻）
+
+- **问题词典外置**：新增 `disciplines/liuyao/tools/build_question_use_gods.py` 把 `_QUESTION_USE_GOD_MAP`
+  186 键按 64 个事项族生成 `data/rules/question_use_gods.json`——逐族标注取舍依据
+  （38 引文族＝《增刪卜易》逐字引文+offset，`--check` 复验 59/59 命中；26 推断族＝
+  诚实标注"无逐条出处"的理由）。键序与取值零漂移（保序快照逐键比对），`chain_tables`
+  改为装载器，缺表直接报排盘异常不降级。
+- **决策与所本同源**：`chain_step2._decide_use_god()` 返回 (类别, meta)，meta.source ∈
+  法则|覆盖|词典|兜底；`_use_god_basis` 换新签名，四种前缀各说实话（覆盖层带引文的挂
+  `layer_citations` 逐字引文，推断明说"问题词典推断·无古籍逐条出处"）；SKILL.md §用神所本同步。
+- **口径变动（矩阵）**：`tools/use_god_coverage.py` 分类改直接消费 meta.source——旧版复刻判断，
+  把覆盖层命中的问法误报成"兜底"。**旧矩阵数字与新矩阵不可比**：92 条问法现为法则 29、
+  覆盖 14、词典 35（有据族 23）、兜底 14，有古籍逐字依据 63 条（旧口径记 29 法则/48 词典/15 兜底）。
+  `_use_god_basis` 的文案同时由两态（引文/默认）改为四态，下游按前缀判断的文案需知悉。
+- **验收**：三集 strict 与基线完全一致——tune 94.5（n=20）／holdout 84.8（n=12）／
+  wikisource_holdout 56.3（n=35）；金标准 288 例指纹 `0e2bb128bfefe831` 不变；
+  新旧 `_determine_use_god_category` 465 条问法对拍全同；`tools/check.py --full` 全绿（黑箱 11/18）。
+  另：`use_god_relations.json` 仅 `_meta.usage` 措辞随构建器同步（15 条规则内容未动，
+  `--check` 15/15 命中）。
+
 ### 2026-09-24 M3 黄金样例与样例入库（3.4/3.5）：唯一模板 + 六项验收清单
 
 - **黄金样例**：`docs/samples/感情卦_巽之涣.html` 定为唯一模板——`yi_liuyao.py --mode manual

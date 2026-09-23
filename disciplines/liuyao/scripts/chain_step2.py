@@ -43,7 +43,7 @@ import re
 from pathlib import Path
 
 from chain_support import _branch_element, _is_chong, _pos_to_name, get_changed_hexagram_branch, get_elements_for_relation, get_palace_first_hexagram, get_relation_from_element, safe_get
-from chain_tables import JUE_MAP, USE_GOD_RELATIONSHIPS, _CHART_TAIL, _HEX_NAMES, _QUESTION_USE_GOD_MAP
+from chain_tables import JUE_MAP, USE_GOD_RELATIONSHIPS, _CHART_TAIL, _HEX_NAMES, _QUESTION_USE_GOD_MAP, _QUESTION_USE_GOD_BASIS, _USE_GOD_LAYER_CITATIONS
 
 def step2_identify_use_god(r: dict) -> dict:
     """
@@ -79,7 +79,7 @@ def step2_identify_use_god(r: dict) -> dict:
 
     # ---------- 2.1: 确定用神类别 ----------
     use_god_category = _determine_use_god_category(question_category, question_text)
-    use_god_basis = _use_god_basis(f"{question_category} {question_text}", use_god_category)
+    use_god_basis = _use_god_basis(question_category, question_text, use_god_category)
 
     # ---------- 2.2: 定位用神在卦中的位置 ----------
     use_god_positions = _find_use_god_positions(
@@ -379,17 +379,50 @@ def _match_use_god_rule(text: str) -> dict | None:
     return best[1] if best else None
 
 
-def _use_god_basis(text: str, chosen: str) -> str:
-    """用神所本：命中的法则给出原文引文，走词典兜底则明说是默认规则。"""
-    rule = _match_use_god_rule(text)
-    if rule and rule.get("use_god") == chosen:
-        return f"《增刪卜易》：{rule.get('citation', '')}"
+def _use_god_basis(question_category: str, question_text: str, chosen: str) -> str:
+    """用神所本：消费 _decide_use_god 的决策元信息，四层各说各的实话。
+
+    法则与"词典·有引文族"报「《增刪卜易》：…」并带族标签；覆盖层报「覆盖规则「…」」；
+    词典·推断族明说是推断；兜底保留原默认文案。不许把词典猜的说成古籍定论（铁律三）。
+    """
+    got, meta = _decide_use_god(question_category, question_text)
+    if got != chosen:
+        # 决策与调用方拿到的用神对不上时不编故事：退回最保守的默认说法。
+        return "问题词典默认（无古籍逐条出处，未见过的问法会退化）"
+    if meta["source"] == "法则":
+        return f"《增刪卜易》：{meta.get('citation', '')}"
+    if meta["source"] == "覆盖":
+        cite = meta.get("citation") or ""
+        if cite:
+            return f"覆盖规则「{meta['label']}」·《增刪卜易》：{cite}"
+        return f"覆盖规则「{meta['label']}」（消歧层，无逐字引文）"
+    if meta["source"] == "词典":
+        keys = meta.get("keys") or []
+        top = max(keys, key=len) if keys else ""
+        b = _QUESTION_USE_GOD_BASIS.get(top) or {}
+        label = b.get("label") or "问题词典"
+        if b.get("kind") == "citation" and b.get("citation"):
+            return f"《增刪卜易》：{b['citation']}（问题词典·{label}）"
+        return f"问题词典推断（{label}·无古籍逐条出处）"
     return "问题词典默认（无古籍逐条出处，未见过的问法会退化）"
 
 
-def _determine_use_god_category(question_category: str, question_text: str) -> str:
-    """根据问题类型确定用神类别 — 使用打分制，避免顺序依赖"""
+def _decide_use_god(question_category: str, question_text: str) -> tuple[str, dict]:
+    """根据问题类型确定用神类别 — 使用打分制，避免顺序依赖。
+
+    返回 (用神类别, 决策元信息 meta)：meta["source"] ∈ 法则|覆盖|词典|兜底，
+    另带 label/citation/keys。`use_god_coverage` 的来源矩阵与 `_use_god_basis` 的
+    所本文案都直接消费这份元信息，不再各自复刻判断（复刻过的那份把覆盖层命中的
+    问法误报成了"兜底"）。分层顺序与重构前逐字一致；`_determine_use_god_category`
+    取 [0] 供旧调用方，行为零漂移（金标准 288 例 + 三集分数核验）。
+    """
     from yishu_core.symbols import normalize_question_text
+    layer_cite = _USE_GOD_LAYER_CITATIONS  # data 层装载的覆盖层展示引文（逐字核验过）
+
+    def _layer(label: str, god: str, cite_key: str = "") -> tuple[str, dict]:
+        cite = (layer_cite.get(cite_key) or {}).get("citation", "") if cite_key else ""
+        return god, {"source": "覆盖", "label": label, "citation": cite, "keys": []}
+
     # 关键词表按简体写，而问事文本可能是繁体（《增刪卜易》原文、以及任何繁体输入）。
     # 不归一时"占候文書"匹配不上"文书"，用神静默退化成世爻——外部集上错的那 2 例即此。
     combined = normalize_question_text(f"{question_category} {question_text}")
@@ -398,56 +431,59 @@ def _determine_use_god_category(question_category: str, question_text: str) -> s
     #     皆在用神章內詳之"——关系定了用神就定了，不该由现代问法词典猜） ---
     rule = _match_use_god_rule(combined)
     if rule:
-        return rule["use_god"]
+        return rule["use_god"], {"source": "法则", "label": "关系优先法则",
+                                 "citation": rule.get("citation", ""),
+                                 "keys": list(rule.get("trigger") or [])}
 
     # --- 特殊优先级覆盖（高于 _QUESTION_USE_GOD_MAP 中的映射） ---
     # 提到具体人（父亲/母亲/儿子/女儿等）时，以该人为用神，优先级高于"出行→世"
     if any(k in combined for k in ("父亲", "母亲", "爸爸", "妈妈", "爹", "娘", "祖父", "祖母", "岳父", "岳母", "公公", "婆婆")):
-        return "父母"
+        return _layer("尊长称谓→父母", "父母")
     if any(k in combined for k in ("儿子", "女儿", "孩子", "孙子", "孙女", "儿媳", "女婿")):
-        return "子孙"
-    # 久病占取世爻为用（《卜筮正宗》：久病以世爻为用）
+        return _layer("晚辈称谓→子孙", "子孙")
+    # 久病占取世爻为用（书名归属《卜筮正宗》，该书原文未入库——覆盖层不挂逐字引文）
     if "久病" in combined:
-        return "世爻"
-    # 出行/行人占取世爻为用（仅当没有提到具体人时生效——《黄金策》：出行以世爻为己身）
+        return _layer("久病→世爻", "世爻")
+    # 出行/行人占取世爻为用（仅当没有提到具体人时生效；出行章"世為出行人"见层引文表）
     if any(k in combined for k in ("出行", "行人")):
-        return "世爻"
-    # 功名占取官鬼为用（《黄金策》：功名看官鬼爻，优先级高于考试/学业→父母）
+        return _layer("出行行人→世爻", "世爻", "出行")
+    # 功名占取官鬼为用（原书驳"子动反为用"仍看官爻，引文见层引文表；优先级高于考试/学业→父母）
     if "功名" in combined:
-        return "官鬼"
+        return _layer("功名→官鬼", "官鬼", "功名")
 
     # 精确匹配优先
     if question_category in _QUESTION_USE_GOD_MAP:
-        return _QUESTION_USE_GOD_MAP[question_category]
+        return _QUESTION_USE_GOD_MAP[question_category],             {"source": "词典", "label": "", "citation": "", "keys": [question_category]}
 
     # 特殊复合语义（高优先级覆盖）：语境歧义消解
     # "见贵求财"：主体是"见贵"（求官）而非"求财" → 官鬼
     if "见贵" in combined and "求财" in combined:
-        return "官鬼"
+        return _layer("见贵求财→官鬼", "官鬼", "见贵")
     # "占子病"/"子病"系列：直接取子孙为用神
     if "占子病" in combined or ("子病" in combined):
-        return "子孙"
+        return _layer("占子病→子孙", "子孙", "占子")
     # 胎孕：以子孙为胎息，优先于句中「妻」
     if any(k in combined for k in ("怀孕", "胎", "孕", "产", "怀")):
-        return "子孙"
+        return _layer("胎孕→子孙", "子孙", "胎孕")
     # 久病/自身/自占病：以世爻为己身
     if any(k in combined for k in ("久病", "自占病", "自身", "自测")) or (
         "病" in combined and any(k in combined for k in ("半年", "多月", "已久", "沉重"))
     ):
-        return "世爻"
+        return _layer("自占/久病→世爻", "世爻")
     # 科举功名：文书父母为主用（官鬼为录取参考，双用神）
     if any(k in combined for k in ("科举", "中第", "考试", "功名", "学业", "文书领取", "候文书")):
-        return "父母"
+        return _layer("科举文书→父母", "父母", "文书")
     # 官司：官鬼为官方
     if any(k in combined for k in ("官司", "官非", "诬告", "诉讼", "官事")) and "师尊" not in combined:
-        return "官鬼"
+        return _layer("司法官讼→官鬼", "官鬼")
 
     # 按类别统计匹配关键词数和优先级得分
     # 六亲 → [(category, matched_weight)]
     category_scores = {}
     # 记录每个类别首次出现位置（用于同分时的优先判断）
     category_first_pos = {}
-    
+    matched_pairs: list[tuple[str, str]] = []
+
     # 核心用神关键词加权
     # 注意：单字"财"/"官"容易在复合词中误匹配（如"见贵求财"中的财），已在特殊语义层处理
     CORE_USE_GOD_KEYWORDS = {"仆", "奴", "婢", "婚", "父", "兄",
@@ -466,6 +502,7 @@ def _determine_use_god_category(question_category: str, question_text: str) -> s
 
     for keyword, relation in _QUESTION_USE_GOD_MAP.items():
         if keyword in combined:
+            matched_pairs.append((keyword, relation))
             # 关键词越长越具体，得分越高
             weight = len(keyword) ** 2
             if keyword in CORE_USE_GOD_KEYWORDS:
@@ -476,19 +513,26 @@ def _determine_use_god_category(question_category: str, question_text: str) -> s
                 category_scores[relation] = 0
                 category_first_pos[relation] = combined.index(keyword)
             category_scores[relation] += weight
-    
+
     if category_scores:
         max_score = max(category_scores.values())
         # 获取所有最高分的类别
         candidates = [cat for cat, s in category_scores.items() if s == max_score]
         if len(candidates) == 1:
-            return candidates[0]
-        # 同分时，选择在问题中出现位置最靠前的（即更早被提及=更核心主题）
-        best_category = min(candidates, key=lambda c: category_first_pos[c])
-        return best_category
-    
+            got = candidates[0]
+        else:
+            # 同分时，选择在问题中出现位置最靠前的（即更早被提及=更核心主题）
+            got = min(candidates, key=lambda c: category_first_pos[c])
+        deciding = [k for k, rel in matched_pairs if rel == got]
+        return got, {"source": "词典", "label": "", "citation": "", "keys": deciding}
+
     # 默认：自测 → 世爻
-    return "世爻"
+    return "世爻", {"source": "兜底", "label": "", "citation": "", "keys": []}
+
+
+def _determine_use_god_category(question_category: str, question_text: str) -> str:
+    """（薄包装）取用神类别；决策与来源标签一并返回的版本见 _decide_use_god。"""
+    return _decide_use_god(question_category, question_text)[0]
 
 
 def _find_use_god_positions(

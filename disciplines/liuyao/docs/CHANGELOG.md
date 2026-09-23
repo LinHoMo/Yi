@@ -4,6 +4,41 @@
 
 分数口径变化必须在此登记，否则 tune/holdout 数字不可比（`AGENTS.md` §四.4）。
 
+## M2.1（第三批·词典层）问题词典结构化进 data/ + 取用神四层来源标注（2026-09-24）
+
+**改了什么**
+- `tools/build_question_use_gods.py`（新）：186 键 `_QUESTION_USE_GOD_MAP` 按 64 事项族外置成
+  `data/rules/question_use_gods.json`，逐族带取舍依据——38 引文族（《增刪卜易》逐字引文+offset，
+  构建器 `locate()` 定位，`--check` 复验 **59/59** 命中）、26 推断族（写明"无逐条出处"的理由）。
+  引文一律写 **為** 不写 **爲**、保留原竖标点，与 `build_use_god_rules.py` 同 locate 口径。
+  键序与取值零漂移：外置前后 186 键逐键逐值比对一致（顺序参与打分 tie-break，禁止重排）。
+- `chain_tables._load_question_use_gods()` 装载器替代字面量；装载失败抛 RuntimeError
+  **不降级**（缺词典会把取用神静默退化成一律世爻，按铁律一宁可报排盘异常）。
+- `chain_step2._decide_use_god()`：取用神决策返回 (类别, meta)，meta.source ∈
+  法则|覆盖|词典|兜底，四层顺序与重构前逐字一致；`_determine_use_god_category` 变薄包装取 `[0]`。
+  `_use_god_basis(question_category, question_text, chosen)` 四态文案：
+  法则/词典有据＝「《增刪卜易》：…」（词典带族标签）、带引文覆盖层＝「覆盖规则「…」·《增刪卜易》：…」、
+  无引文覆盖层＝「覆盖规则「…」（消歧层，无逐字引文）」、词典推断＝「问题词典推断（族名·无古籍
+  逐条出处）」、兜底＝原默认文案。覆盖层展示引文集中于 JSON `layer_citations`（出行/功名/见贵/
+  占子/胎孕/自占病/文书 7 类，逐字核验）；《卜筮正宗》《黄金策》归属改为"书名归属，原文未入库"。
+- `tools/use_god_coverage.py`：classify 改直接消费 `_decide_use_god` 的 meta——**修覆盖层误报
+  缺陷**（旧版复刻判断，覆盖层命中无 dict key → 报兜底）；docstring 里过时的"190 条无出处"同步。
+
+**口径变动登记（AGENTS.md §四.4）**
+- `_use_god_basis` 文案两态→四态；`use_god_coverage` 矩阵分类 法则|词典|兜底 →
+  法则|覆盖|词典|兜底（词典再分 有据/推断）。**旧矩阵数字与新矩阵不可比**：
+  新数＝92 问法中 法则 29、覆盖 14、词典 35（有据 23/推断 12）、兜底 14，有古籍逐字依据 63；
+  旧数记 29 法则/48 词典/15 兜底。单字键问法 40 条（旧记 47，计数口径同为"含单字键的问法条数"，
+  差异来自删键与分类修正，非分数）。
+- `use_god_relations.json` 仅 `_meta.usage` 措辞更新（先过本表 → 再依次过覆盖层与问题词典），
+  15 条规则内容未动，`--check` 15/15 命中。
+
+**验收数字（strict，与基线逐集对照）**
+- tune **94.5**（n=20，基线 94.5）／holdout **84.8**（n=12，基线 84.8）／
+  wikisource_holdout **56.3**（n=35，基线 56.3）——三集全部持平，无回归。
+- 金标准 288 例指纹 `0e2bb128bfefe831` 不变、异常 0；黑箱回归 11/18 持平；
+  新旧 `_determine_use_god_category` 465 条问法对拍输出全同；`tools/check.py --full` 全绿。
+
 ## v0.0.1（2026-09-23）四段契约薄适配层 + Python 3.10 兼容修复
 
 **新增：四段契约入口**（`scripts/chart.py` / `analyze.py` / `narrate.py` / `render.py`）。

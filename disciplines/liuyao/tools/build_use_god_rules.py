@@ -4,9 +4,11 @@
     python tools/build_use_god_rules.py            # 生成 data/rules/use_god_relations.json
     python tools/build_use_god_rules.py --check    # 只校验引文是否仍在原文中
 
-为什么不直接把这些词塞进 `thinking_chain._QUESTION_USE_GOD_MAP`：
-  那张 190 条的表是"现代问法→六亲"的扁平映射，没出处也没法核。刚建成的外部集
-  （`wikisource_holdout`）上，原文明写用神的 4 例引擎只对 1 例，错在三处：
+为什么不直接把这些词塞进 `chain_tables._QUESTION_USE_GOD_MAP`
+（即 `data/rules/question_use_gods.json`，186 条现代问法词典）：
+  那张表是"现代问法→六亲"的扁平映射，词典本身虽已按 64 个事项族标注取舍依据
+  （有引文族/推断族），但族级依据是**整族一条引文**，不是逐词的"关系优先"判断。
+  刚建成的外部集（`wikisource_holdout`）上，原文明写用神的 4 例引擎只对 1 例，错在三处：
   女家占婚取了妻财（该书婚姻章明写"女家占男，皆以官為用"）、占伯取了子孙、
   占夫取了世爻。扁平表缺的不是词，是**关系优先于事项**这一层，以及每条规则的出处。
   所以规则单列成本表，且**引文逐字对不上原文就不出表**——写错出处比没出处更坏。
@@ -147,7 +149,7 @@ def main() -> int:
                            "每条带逐字引文与偏移量",
             "built_by": "tools/build_use_god_rules.py",
             "source": str(RAW.relative_to(DISC.parent.parent)),
-            "usage": "thinking_chain 取用神时先过本表（先命中先停），未命中再退回问题词典",
+            "usage": "chain_step2 取用神时先过本表（先命中先停），未命中再依次过覆盖层与问题词典",
             "order": "priority 小的先判；同优先级里触发词长的先判（更具体）",
             "rule_count": len(rows),
         },
