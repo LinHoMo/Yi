@@ -46,13 +46,13 @@ def defined_in_document(html: str, page_css: str) -> set[str]:
 
 
 def render_samples() -> dict[str, str]:
-    from liuyao_engine import build_hexagram_result
-    from thinking_chain import run_thinking_chain
-    import human_narrative, visualization, build_html_report as bhr
-    r = build_hexagram_result([7, 8, 7, 7, 8, 7], "占买房子何时有结果", "manual", 2024, 6, 1, 10)
-    r = run_thinking_chain(r)
-    r["human_narrative"] = human_narrative.build_human_narrative(r)
-    return {"排盘报告": visualization.build_html_report(r), "解读报告": bhr.render_html(r)}
+    """单一出口采样：render 段 HTML（M3.1 后报告产物只此一份）。"""
+    from chart import chart
+    from analyze import analyze
+    from render import render
+    a = analyze(chart("manual", "占买房子何时有结果", yao="7,8,7,7,8,7",
+                      datetime_str="2024-06-01 10:00"))
+    return {"render 报告": render(a, fmt="html")}
 
 
 def main() -> int:

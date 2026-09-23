@@ -5,6 +5,26 @@
 
 ## v0.0.1 — 2026-09-23 大更：卜科四科全可用（三科上线 + 六爻四段契约接入）+ 合参层实现 + 仓库级质量门
 
+### 2026-09-24 M3 呈现三合一：两套报告引擎合并为单一 HTML 出口 + SVG 真卦盘
+
+承接 2026-09-23 骨架收敛（A2）的"未做"项，本次完成**内容**合并：
+
+- **`scripts/render.py` 成为唯一 HTML 出口**（`render_html`）：同一份 analyze JSON 出 Markdown 或单文件 HTML，
+  HTML = 结要卡（方向徽章/信息栅格/应期卡）＋ 二、卦盘（SVG）＋ 三、正文（narrate）＋ 四、判据所本，
+  骨架走 `core/report`。两套并行生成器 `visualization.build_html_report` / `build_html_report.py`
+  （后者已删除）不再产出报告，`grep "<!DOCTYPE"` 仅剩内核 kit 一处。
+- **SVG 真卦盘**（`visualization.generate_hexagram_diagram`，替换 CSS 色块条）：本卦＋变卦并列，
+  爻线（阴阳/动变 ○×）、六亲六神地支标注、世应（蓝/绿标记）、旬空"(空)"、变卦动爻红框＋原爻虚线示意。
+- **`core/report/html.py` 新增 `md_to_html`**：轻量 Markdown → HTML（标题/列表/表格/粗体/行内码），
+  对齐文本块（排盘表等多列空格对齐）识别后 `<pre>` 保形，正文排盘表不再散架。
+- **样式层唯一**：全部报告类名走 `assets/report.css`（SVG 自带内嵌 `<style>` 计入定义域），
+  `tools/style_check.py` 改为仅用 render 段采样核对类名覆盖。
+- **依赖方迁移**：`build_portal_assets.py`（样例报告）、`liuyao_engine.py --format html`（旧引擎 CLI）、
+  `tools/style_check.py` 全部改走 render 出口；`visualization.py` CLI 仅保留 `svg` 子命令生成单一组件。
+- 六爻 `README.md` 目录表与 `docs/LIUYAO-PLAN.md` 进度同步更新。
+- 验证：静卦（全阴）与动卦（7,8,9,7,6,8 → 变卦＋动爻标记＋红框）两条路径实测通过；M3 其余子项
+  （3.2 一键闭环 / 3.3 门户修伤 / 3.4 黄金样例 / 3.5 README 截图）未做。
+
 ### 2026-09-24 应期回收闭环（B2）：断卦→回填→评分全链路打通
 
 - **六爻 analyze 适配层外露结构化应期候选**：`conclusion` 新增 `应期明细`（`[{date, rule}]`，

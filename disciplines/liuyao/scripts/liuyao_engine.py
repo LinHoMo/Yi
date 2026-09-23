@@ -471,8 +471,10 @@ def main():
         # 输出
         if output_format == "html":
             try:
-                from visualization import build_html_report
-                html_out = build_html_report(result)
+                from render import render_html
+                a = dict(result)
+                a["thinking_chain"] = chain
+                html_out = render_html(a)
                 # 保存到文件（若指定 --save-html）
                 save_path = getattr(args, "save_html", None)
                 if save_path:
@@ -496,7 +498,7 @@ def main():
                 if not save_path:
                     print(html_out)
             except ImportError:
-                print("[WARN] visualization module not installed, fallback to JSON", file=sys.stderr)
+                print("[WARN] render module not installed, fallback to JSON", file=sys.stderr)
                 _apply_depth_to_result(result, depth)
                 print(json.dumps(result, ensure_ascii=False, indent=2, default=str))
         elif output_format == "json":

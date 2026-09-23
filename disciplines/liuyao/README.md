@@ -60,7 +60,8 @@ tune 主应期命中 35.3%（平均名次 2.0）、holdout 25.0%（2.2）、外�
 | `scripts/classical_analysis.py` | 22 类动变关系检测：伏藏、暗动、月破、三合、进退、反吟伏吟… |
 | `scripts/thinking_chain.py` | 五步思维链：现状 → 取用神 → 旺衰 → 动变 → 综合 |
 | `scripts/human_narrative.py` | 唯一交付正文（师傅口吻），不做"人话/古典"两张皮 |
-| `scripts/visualization.py` | 报告渲染（含主/次应期表：应支＋所本法则＋日历日） |
+| `scripts/render.py` | 报告渲染单一出口（M3）：analyze JSON → Markdown / 单文件 HTML |
+| `scripts/visualization.py` | SVG 组件库：卦盘（爻线/六亲/六神/世应/空破/动变）、应期时间线、五行雷达 |
 | `scripts/build_portal_assets.py` | 门户与样例报告构建，分数从评测结果取，不写常量 |
 | `scripts/mcp_server.py` | JSON-RPC stdio 服务：divinate / quick_reading / validate_hexagram … |
 | `references/` | 纳甲规则、断卦方法论、十二格局、四大经典综合、案例库（黑箱用） |
@@ -77,5 +78,5 @@ tune 主应期命中 35.3%（平均名次 2.0）、holdout 25.0%（2.2）、外�
 ## 已知待修
 
 历法与评分已重建（M0 完成）。剩下的按优先级：三处双写的规则表合一（M1）→
-应期法则与用神取法决策表（M2）→ 三套呈现合一与一键报告（M3）。
+应期法则与用神取法决策表（M2）→ 三套呈现合一与一键报告（M3，已完成：单一 HTML 出口 + SVG 真卦盘）。
 详见仓库外的 `../docs/LIUYAO-PLAN.md`。

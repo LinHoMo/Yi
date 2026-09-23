@@ -80,11 +80,8 @@ def build_blind() -> dict:
 
 
 def build_samples() -> list[dict]:
-    from liuyao_engine import build_hexagram_result
-    from thinking_chain import run_thinking_chain
-    from human_narrative import build_human_narrative
-    from visualization import build_html_report
-    from advice_framework import generate_advice
+    from analyze import analyze
+    from render import render
     import case_runner as cr
 
     cases = {c["id"]: c for c in json.loads(
@@ -100,23 +97,19 @@ def build_samples() -> list[dict]:
             resolved = cr.resolve_case_time(case)
             dt = resolved["dt"]
             yao = cr.hex2yao(case["hexagram"]["original"], case["hexagram"].get("changed"))
+            from liuyao_engine import build_hexagram_result
             h = build_hexagram_result(yao, case["question"], "manual",
                                       dt.year, dt.month, dt.day, dt.hour)
         except Exception as exc:
             print(f"  跳过 {cid}：{exc}")
             continue
-        tc = run_thinking_chain(h)
-        thinking = tc.get("thinking_chain", tc)
+        out = analyze(dict(h))
+        tc = dict(out)
+        thinking = tc.get("thinking_chain") or {}
+        from human_narrative import build_human_narrative
         human = build_human_narrative(tc)
-        tc["human_narrative"] = human
-        try:
-            tc["section_advice"] = generate_advice(
-                (thinking.get("step5_synthesis") or {}).get("verdict", ""),
-                case["question"], tc)
-        except Exception as exc:                      # 建议层缺项不应阻断交付物生成
-            print(f"  {cid} 建议生成跳过：{exc}")
         out_html = OUT_REPORTS / f"report_{cid}.html"
-        out_html.write_text(build_html_report(tc), encoding="utf-8")
+        out_html.write_text(render(out, fmt="html"), encoding="utf-8")
 
         s5 = thinking.get("step5_synthesis") or {}
         timing = s5.get("timing") or {}
