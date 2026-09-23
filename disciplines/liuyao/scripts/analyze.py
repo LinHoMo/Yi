@@ -27,6 +27,7 @@ def _conclusion_from(chain: dict, result: dict) -> dict:
     # 应期：dates[].date 为主，speed 为节奏；不取嵌套 dict 原样（保持结论可读）
     yingqi_dates = step5.get("yingqi_dates") or {}
     yingqi_list: list[str] = []
+    yingqi_items: list[dict] = []
     if isinstance(yingqi_dates, dict):
         dates = yingqi_dates.get("dates") or []
         if isinstance(dates, list):
@@ -36,6 +37,8 @@ def _conclusion_from(chain: dict, result: dict) -> dict:
                 date = d.get("date")
                 rule = d.get("rule")
                 yingqi_list.append(date if not rule else f"{date}（{rule}）")
+                if date:
+                    yingqi_items.append({"date": date, "rule": rule or ""})
         speed = yingqi_dates.get("speed")
         if speed and str(speed).strip():
             yingqi_list.append(str(speed))
@@ -47,6 +50,8 @@ def _conclusion_from(chain: dict, result: dict) -> dict:
         "最终得分": step5.get("final_score"),
         "置信度": step5.get("confidence"),
         "应期": yingqi_list,
+        # 结构化应期候选（date+rule），供合参层现实回填评分；按引擎给出顺序即名次
+        "应期明细": yingqi_items,
         "所本": "六爻纳甲·思维链五步（用神·旺衰·动变·月日）",
     }
 

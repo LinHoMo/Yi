@@ -5,23 +5,40 @@
 （相科已剔除，合参按命·卜两科成立；日后若增学科，本层规则按同一形式扩展。）
 
 本层**已实现**（2026-09-23）：`person.py`（档案模型）、`normalize.py`（学科输出归一化）、
-`cross_rules.py`（裁决规则）、`guidance.py`（指导生成）、`cli.py`（命令行入口）。
-入口：`python cli.py --help`（init / validate / add-divination / record-outcome / guide / selfcheck）。
+`cross_rules.py`（裁决规则）、`guidance.py`（指导生成）、`cli.py`（命令行入口）、
+`outcome_eval.py`（应期回收闭环评分，2026-09-24）。
+入口：`python cli.py --help`（init / validate / add-divination / record-outcome / outcome-eval / guide / selfcheck）。
 
 ## 〇、CLI 用法（工作目录 `synthesis/`）
 
 ```bash
 python cli.py init P001 --solar "1990-05-20 07:15"                        # 新建档案 → person/P001.json
 python cli.py validate P001                                               # 校验档案
-python cli.py add-divination P001 --discipline meihua \
+python cli.py add-divination P001 --discipline liuyao \
        --analyze-json <analyze.json> --at "2026-09-23 10:00"                # 登记占问（归一化，需各科 analyze 输出）
-python cli.py record-outcome P001 --event-id EVT001 --result 应验           # 回填现实结果（唯一效度证据）
+python cli.py record-outcome P001 --event-id EVT001 --result 应验 \
+       --occurred-at 2026-10-05 --judged 应验                              # 回填现实结果（应期回收闭环入参）
+python cli.py outcome-eval P001                                           # 应期回收评分：回填 × 断卦应期
 python cli.py guide P001                                                   # 生成指导 → guidance/P001.md
 python cli.py selfcheck                                                     # 合参层自检
 ```
 
 档案存 `person/<id>.json`，指导存 `guidance/<id>.md`（两者均已 gitignore，属运行产物）。
 `add-divination` 的良输入是各科 `analyze` 段输出的 JSON；系统归一化为统一占问记录，含方向/应期/判据所本。
+
+### 应期回收闭环（outcome-eval）
+
+断卦时六爻 analyze 输出把应期候选连同法则结构化给出（`conclusion.应期明细`，
+归一化后存 `divinations[].yingqi_offered`，按给出顺序即名次）。事后回填
+`--occurred-at`（应验/观察日期）+ `--judged`（应验/未应验/部分应验/超期未验），
+`outcome-eval` 按候选名次比对：
+
+- 第 1 位候选命中 → 主应期；第 2~4 位 → 次应期；更靠后 → 命中但名次靠后；早于全部候选 → 提前；晚于末位候选 → 超期。
+- 断事层面：judged 应验/部分应验 → 断事应验；未应验/超期未验 → 未验。
+- 汇总带样本量 n 与集合名（档案内已回填占问）。口径诚实：这是**现实回填命中**，
+  不是古籍案例对齐分，也绝不等于"预测率"（`AGENTS.md` §三）。
+
+此闭环让"哪个法则推出哪个日"可事后核验：逐例判定带 `rule` 标签，攒够样本后可按法则统计命中，供六爻应期法则迭代。
 
 ## 一、人的档案 `person/<id>.json`
 
@@ -40,7 +57,9 @@ python cli.py selfcheck                                                     # �
   },
   "divinations": [
     {"event_id": "…", "asked": "占近三月财运", "at": "2026-09-22",
-     "discipline": "liuyao", "verdict": "…", "yingqi": ["…"],
+     "discipline": "liuyao", "verdict": "…", "direction": "吉",
+     "timing": ["应期 2026-10-05（冲空填实）"],
+     "yingqi_offered": [{"date": "2026-10-05", "rule": "冲空填实"}],
      "outcome": {"recorded": null, "note": "待事后回填，用于真实效度"}}
   ],
   "guidance": [{"issued": "2026-09-22", "window": "2026-Q4", "advice": "…", "based_on": ["liuyao:…"]}]
@@ -51,6 +70,10 @@ python cli.py selfcheck                                                     # �
 - `birth.ganzhi` 必须带 `calendar_policy`。各科若用了不同的年界/子时口径，合参就是在比两件事。
 - `divinations[].outcome` 是**唯一能产生现实效度证据的字段**。六爻已有 300KB 求测日志，
   但没有结果回填，所以永远只能报"古籍对齐分"。这一步在本层补，不在学科层补。
+- `divinations[].yingqi_offered` 是六爻断卦时的结构化应期候选（date+rule，顺序即名次），
+  现实回填后供 `outcome-eval` 评分；其余学科暂无结构化候选（`timing` 仅文本），应期不评。
+- `divinations[].outcome.judged` 取值：应验 / 未应验 / 部分应验 / 超期未验；
+  `occurred_at` 为应验/观察日期（YYYY-MM-DD，须为有效日期）。
 
 ## 二、合参裁决规则
 

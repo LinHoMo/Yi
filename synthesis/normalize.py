@@ -110,6 +110,10 @@ def normalize_liuyao(a: dict, *, at: str | None = None) -> dict:
         if v:
             yingqi = list(v) if isinstance(v, (list, tuple)) else [str(v)]
             break
+    # 结构化应期候选（date+rule，按引擎给出顺序即名次），供现实回填评分
+    items = con.get("应期明细") or []
+    offered = [{"date": str(it.get("date")), "rule": str(it.get("rule") or "")}
+               for it in items if isinstance(it, dict) and it.get("date")]
     return {
         "discipline": "liuyao",
         "asked": (a.get("question") or "").strip(),
@@ -117,6 +121,7 @@ def normalize_liuyao(a: dict, *, at: str | None = None) -> dict:
         "verdict": str(verdict),
         "direction": _direction_label(verdict),
         "timing": [f"应期 {t}" for t in yingqi],
+        "yingqi_offered": offered,
         "based_on": _based_on(a),
         "chart_summary": a.get("chart_summary"),
     }

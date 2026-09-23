@@ -16,6 +16,18 @@ from pathlib import Path
 
 DISCIPLINES = ("liuyao", "meihua", "xiaoliuren", "zeji", "ming")
 _AT_RE = re.compile(r"^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}(:\d{2})?)?$")
+_DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+
+def _valid_date(text) -> bool:
+    if not _DATE_RE.match(str(text or "")):
+        return False
+    try:
+        datetime.strptime(str(text), "%Y-%m-%d")
+        return True
+    except ValueError:
+        return False
+JUDGED = ("应验", "未应验", "部分应验", "超期未验")
 
 
 class PersonError(ValueError):
@@ -110,6 +122,11 @@ class PersonArchive:
                 errs.append(f"{p}.outcome.recorded 缺失（须为 null 或文本）")
             elif oc["recorded"] is not None and not isinstance(oc["recorded"], str):
                 errs.append(f"{p}.outcome.recorded 须为 null 或 str")
+            if "judged" in oc and oc["judged"] not in JUDGED:
+                errs.append(f"{p}.outcome.judged 须在 {JUDGED}，收到 {oc.get('judged')!r}")
+            if "occurred_at" in oc and oc["occurred_at"] is not None \
+                    and not _valid_date(oc["occurred_at"]):
+                errs.append(f"{p}.outcome.occurred_at 应为有效 YYYY-MM-DD，收到 {oc.get('occurred_at')!r}")
 
         for i, g in enumerate(d.get("guidance") or []):
             p = f"guidance[{i}]"
@@ -133,12 +150,27 @@ class PersonArchive:
         self.data.setdefault("divinations", []).append(rec)
         return rec["event_id"]
 
-    def record_outcome(self, event_id: str, result: str) -> None:
-        """回填某次占问的现实结果（唯一能产生现实效度证据的字段）。"""
+    def record_outcome(self, event_id: str, result: str, *,
+                       occurred_at: str | None = None,
+                       judged: str | None = None) -> None:
+        """回填某次占问的现实结果（唯一能产生现实效度证据的字段）。
+
+        occurred_at：应验/观察发生的日期（YYYY-MM-DD），评应期命中用；
+        judged：应验 / 未应验 / 部分应验 / 超期未验（断事层面的判定）。
+        """
+        if judged is not None and judged not in JUDGED:
+            raise PersonError(f"judged 须在 {JUDGED}，收到 {judged!r}")
+        if occurred_at is not None and not _valid_date(occurred_at):
+            raise PersonError(f"occurred_at 应为有效 YYYY-MM-DD，收到 {occurred_at!r}")
         for div in self.data.get("divinations") or []:
             if div.get("event_id") == event_id:
-                div.setdefault("outcome", {})["recorded"] = result
-                div["outcome"]["note"] = f"回填于 {datetime.now().strftime('%Y-%m-%d')}"
+                oc = div.setdefault("outcome", {})
+                oc["recorded"] = result
+                if occurred_at is not None:
+                    oc["occurred_at"] = occurred_at
+                if judged is not None:
+                    oc["judged"] = judged
+                oc["note"] = f"回填于 {datetime.now().strftime('%Y-%m-%d')}"
                 return
         raise PersonError(f"无此占问记录：{event_id}")
 

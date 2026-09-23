@@ -9,6 +9,8 @@
 > 未做：M2.1 用神决策表、M2.4 扩样、M3 呈现三合一（两套引擎内容合并 / render 单一 HTML 出口 / SVG 真卦盘）、M4 迁移。
 >
 > **执行进度更新（2026-09-23）**：M1b 巨石拆分完成（`liuyao_engine`/`thinking_chain`/`classical_analysis` → 20 子模块 + 薄聚合入口，金标准指纹 `0e2bb128` 288 例零漂移）；断语/引文库外置 `data/verdicts.json`（含出处）；卦辞爻辞上收内核 `core/yishu_core/hexagram_texts.py`；两套报告引擎**骨架**收敛 `core/report`（`grep <!DOCTYPE` 仅剩内核 kit）；四科 `golden.py` 规范化 argparse。逐条实况见仓库级 `docs/CHANGELOG.md`。
+>
+> **执行进度更新（2026-09-24）**：1.2「应期不可验证」补齐回收闭环——analyze 适配层把应期候选结构化外露（`conclusion.应期明细`，date+rule 按给出顺序即名次）；合参层 `record-outcome` 支持 `--occurred-at/--judged` 结构化回填，新增 `outcome-eval` 按候选名次比对（主/次应期、提前、超期），逐例带 rule 法则标签，汇总带样本量 n 并声明"现实回填命中，非古籍对齐分"（`AGENTS.md` §三）。断卦→回填→评分全链路实测通过。实现位置：`disciplines/liuyao/scripts/analyze.py`（适配层，不动推演，指纹不受影响）+ `synthesis/{normalize,person,outcome_eval,cli}.py`。其余学科暂无结构化应期候选，应期维度不评。
 
 ## 〇、先说一件必须接受的事
 

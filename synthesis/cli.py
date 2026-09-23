@@ -31,6 +31,7 @@ from person import PersonArchive, PersonError  # noqa: E402
 from normalize import normalize  # noqa: E402
 from cross_rules import adjudicate, selfcheck as cross_selfcheck  # noqa: E402
 from guidance import write_guidance  # noqa: E402
+from outcome_eval import eval_outcomes, report as yq_report  # noqa: E402
 
 PERSON_DIR = HERE / "person"
 GUIDANCE_DIR = HERE / "guidance"
@@ -103,10 +104,19 @@ def cmd_add_divination(args) -> int:
 
 def cmd_record_outcome(args) -> int:
     arch = _load(args.pid)
-    arch.record_outcome(args.event_id, args.result)
+    arch.record_outcome(args.event_id, args.result,
+                        occurred_at=args.occurred_at, judged=args.judged)
     arch.save(PERSON_DIR)
-    print(f"{args.pid}·{args.event_id} 结果已回填")
+    print(f"{args.pid}·{args.event_id} 结果已回填"
+          + (f"（{args.judged}，{args.occurred_at}）" if args.judged or args.occurred_at else ""))
     return 0
+
+
+def cmd_outcome_eval(args) -> int:
+    arch = _load(args.pid)
+    res = eval_outcomes(arch.data.get("divinations") or [])
+    yq_report(res)
+    return 0 if res.get("n_回填") else 1
 
 
 def cmd_guide(args) -> int:
@@ -147,7 +157,36 @@ def cmd_selfcheck(args) -> int:
     }
     rec = normalize("xiaoliuren", sample, at="2026-09-23 10:30")
     assert rec["direction"] == "平" and rec["timing"] == ["主数 2", "主数 8", "主数 10"]
-    print("synthesis 自检通过（person 校验 + cross_rules + 归一化）")
+    # 六爻应期结构化候选 + 回填评分自检（B2 应期回收闭环）
+    lya = {
+        "schema": "liuyao-analyze-v1",
+        "question": "本季度能否入职",
+        "conclusion": {
+            "方向": "吉", "verdict": "吉",
+            "应期": ["2026-10-05（冲空填实）", "2026-10-17（出旬）"],
+            "应期明细": [{"date": "2026-10-05", "rule": "冲空填实"},
+                       {"date": "2026-10-17", "rule": "出旬"}],
+        },
+    }
+    rec = normalize("liuyao", lya, at="2026-09-23 10:30")
+    assert rec["yingqi_offered"] == [
+        {"date": "2026-10-05", "rule": "冲空填实"},
+        {"date": "2026-10-17", "rule": "出旬"}]
+    from outcome_eval import eval_outcomes  # noqa: E402
+    fake = [{"event_id": "EVT001", "discipline": "liuyao", "direction": "吉",
+             "asked": "本季度能否入职", "yingqi_offered": rec["yingqi_offered"],
+             "outcome": {"recorded": "10-05 收到 offer", "occurred_at": "2026-10-05",
+                         "judged": "应验"}},
+            {"event_id": "EVT002", "discipline": "liuyao", "direction": "吉",
+             "asked": "何时能回款", "yingqi_offered": rec["yingqi_offered"],
+             "outcome": {"recorded": "至今未回", "occurred_at": "2026-12-20",
+                         "judged": "超期未验"}}]
+    r = eval_outcomes(fake)
+    assert r["n_回填"] == 2 and r["n_应期可评"] == 2
+    yq = {c["event_id"]: c["应期"] for c in r["cases"]}
+    assert yq["EVT001"]["命中"] and yq["EVT001"]["名次"] == 1
+    assert not yq["EVT002"]["命中"] and yq["EVT002"]["判定"].startswith("超期")
+    print("synthesis 自检通过（person 校验 + cross_rules + 归一化 + 应期回收闭环）")
     return 0
 
 
@@ -180,11 +219,18 @@ def main() -> int:
     p.add_argument("--policy", help="本次占问的历法口径（见 init）")
     p.set_defaults(func=cmd_add_divination)
 
-    p = sub.add_parser("record-outcome", help="回填占问结果")
+    p = sub.add_parser("record-outcome", help="回填占问结果（结构化字段供应期回收评分）")
     p.add_argument("pid")
     p.add_argument("--event-id", required=True)
-    p.add_argument("--result", required=True)
+    p.add_argument("--result", required=True, help="现实结果自由文本")
+    p.add_argument("--occurred-at", help="应验/观察发生日期 YYYY-MM-DD（评应期命中用）")
+    p.add_argument("--judged", choices=["应验", "未应验", "部分应验", "超期未验"],
+                   help="断事层面的判定")
     p.set_defaults(func=cmd_record_outcome)
+
+    p = sub.add_parser("outcome-eval", help="应期回收评分：回填结果与断卦应期比对")
+    p.add_argument("pid")
+    p.set_defaults(func=cmd_outcome_eval)
 
     p = sub.add_parser("guide", help="生成阶段性指导")
     p.add_argument("pid")
