@@ -17,6 +17,28 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from liuyao_engine import format_reading_output  # noqa: E402
 
 
+_BOUNDARY_TEXT = (
+    "【象判边界】本报告为象征推演与方向参考，非现实预测。凶象只言"
+    "「偏向／有…信号／结构上」，不说「注定／一定」；"
+    "医疗、法律、投资等重大决策请以专业意见为准。"
+)
+
+
+def _appendix(a: dict) -> str:
+    """【持世】【象判边界】—— 纯转述 advanced_analysis 已有数据，不新增推演。"""
+    adv = a.get("advanced_analysis") or {}
+    lines = []
+    syr = adv.get("shi_yao_relation") or {}
+    interp = syr.get("scenario_interpretation") or syr.get("general") or ""
+    if syr.get("relation") and interp:
+        lines.append(f"【持世】{interp}")
+        poem = syr.get("poem")
+        if poem:
+            lines.append(f"　　　　持世歌诀：{poem}")
+    lines.append(_BOUNDARY_TEXT)
+    return "\n" + "\n".join(lines) + "\n"
+
+
 def narrate(a: dict) -> str:
     """analyze JSON → 完整正文（markdown 化文本）。"""
     chain = a.get("thinking_chain") or {}
@@ -28,6 +50,7 @@ def narrate(a: dict) -> str:
         body += "【趋避建议】\n"
         for i, adv in enumerate(advice, 1):
             body += f"  {i}. {adv}\n"
+    body += _appendix(a)
     return body
 
 

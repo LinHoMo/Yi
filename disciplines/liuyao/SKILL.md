@@ -254,6 +254,33 @@ narrate/render 是**薄装配**：正文一律用 `format_reading_output` 生成
 
 ---
 
+#### 3.7 黄金样例验收清单（M3-4，交付门槛）
+
+以 `docs/samples/感情卦_巽之涣*.html` 为唯一模板（要素完整度最低标准）。**残缺薄版不得交付**——
+任何交付报告（含一键闭环产物）须逐条过以下六项清单，缺一项即打回重做：
+
+| # | 要素 | 判据（报告里必须看得到） | 数据来源 |
+|---|------|--------------------------|----------|
+| 1 | **六神临用** | 明确指出用神临哪个六神并解释语义（如"螣蛇临用，事带惊恐/变动"），不能只给数字 | `advanced_analysis.six_spirit_analysis` / `thinking_chain.step5_synthesis.spirit_adjustment_reasons` |
+| 2 | **持世** | 明确指出世爻六亲并引古籍出处（如"兄弟持世——男占婚不利…（《火珠林·婚姻章》）"） | `advanced_analysis.shi_yao_relation`（`scenario_interpretation` + `poem`） |
+| 3 | **卦身** | 指出卦身所在爻位与六亲（如"卦身在初爻（妻财）"） | `advanced_analysis.hexagram_body` |
+| 4 | **格局详释** | 对推理链 `[格局详释]` 段逐条渲染（三刑/六冲/三合/暗动/月破/进退神），不能一笔带过 | `thinking_chain.step5_synthesis.reasoning_chain` 的 `[格局详释]` 段 |
+| 5 | **公历应期** | 应期必须给公历日期＋推出法则（如"2026-09-24 丑日——逢值"），不能只罗列地支 | `thinking_chain.step5_synthesis.yingqi_dates.dates[]` 或 `conclusion.应期明细` |
+| 6 | **边界克制** | 凶象用"偏向／有…信号／结构上"，不说"注定"；含"象征推演与方向参考"声明与专业意见提示 | narrate 输出的【象判边界】段 |
+
+生成报告的命令：
+
+```bash
+python scripts/yi_liuyao.py "问感情：目前这段感情能否修成正果" \
+       --mode manual --yao "8,7,9,8,7,7" --when "2026-09-22 10:00" \
+       -o outputs/report.html
+```
+
+对照验收：报告内六项要素齐全（六神临用／持世／卦身／格局详释／公历应期／边界克制）。
+残缺薄版（如只有应期与推演、缺排盘表/六神/持世/格局）不得交付。
+
+---
+
 ### 第四步：案例库隔离协议（绝对规则）
 
 > ⛔ `references/case_library.md` 仅可在以下场景访问：

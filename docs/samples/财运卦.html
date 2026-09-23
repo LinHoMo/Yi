@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>六爻纳甲占报告 · 问财运：今年投资能否获利</title>
+<style>
+/* 易 v0.0.1 · 六爻报告唯一样式层。
+   原先排盘报告与解读报告各带一套 CSS：同一副卦交付两种长相，改一处忘一处。
+   合成规则：以解读版（较新，带 :root 变量与卡片体系）为底，排盘侧图形规则整份追加；
+   同名选择器保留新版定义，其余一条不丢——第一版只挑了"看起来像图形"的 12 条，
+   结果 .container/.footer/.cell-* 等 29 个类没了，排盘报告当场散架。 */
+
+/* ═══ 基础变量 ═══ */
+:root {
+    --bg: #f8f4ec;
+    --card-bg: #ffffff;
+    --red: #c0392b;
+    --green: #27ae60;
+    --ink: #2c3e50;
+    --ink-light: #5d6d7e;
+    --gold: #d4a017;
+    --gold-light: #fef9e7;
+    --border: #e5dccd;
+    --shadow: 0 2px 12px rgba(44, 62, 80, 0.08);
+    --radius: 12px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.8;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+}
+/* ═══ 字体平滑 ═══ */
+::selection {
+    background: rgba(192, 57, 43, 0.15);
+}
+/* ═══ Header ═══ */
+.report-header {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 60%, #4a6274 100%);
+    color: #fff;
+    padding: 2rem 1.5rem 1.5rem;
+    text-align: center;
+    margin-bottom: 0;
+}
+.header-inner {
+    max-width: 720px;
+    margin: 0 auto;
+}
+.header-symbol {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.85;
+}
+.report-header h1 {
+    font-size: 1.75rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.75rem;
+    color: rgba(255,255,255,0.95);
+}
+.header-meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 0.5rem;
+}
+.meta-item {
+    white-space: nowrap;
+}
+.header-sub {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.65);
+    margin-top: 0.25rem;
+}
+/* ═══ Body ═══ */
+.report-body {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem;
+}
+/* ═══ Card ═══ */
+.card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    border-left: 4px solid var(--border);
+}
+.card h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 0.75rem;
+    position: relative;
+}
+/* ═══ 结论卡 ═══ */
+.card-verdict {
+    border-left: 6px solid var(--red);
+    background: linear-gradient(135deg, #fffbf5 0%, #fff 50%, #fff 100%);
+    text-align: center;
+}
+.verdict-badge {
+    display: inline-block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    padding: 0.5rem 2rem;
+    border-radius: 50px;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.1em;
+}
+.verdict-score {
+    font-size: 1rem;
+    color: var(--ink-light);
+    margin-bottom: 0.75rem;
+}
+.verdict-score strong {
+    font-size: 1.2rem;
+    color: var(--ink);
+    font-family: "SF Mono", Monaco, "Cascadia Code", monospace;
+}
+.verdict-headline {
+    font-size: 1.05rem;
+    color: var(--ink);
+    line-height: 1.7;
+    text-align: left;
+    padding-top: 0.5rem;
+    border-top: 1px dashed var(--border);
+    margin-top: 0.5rem;
+}
+/* ═══ 推因摘要 ═══ */
+.explain-text {
+    font-size: 1rem;
+    color: var(--ink);
+    line-height: 1.8;
+}
+/* ═══ SVG 容器 ═══ */
+.svg-container {
+    width: 100%;
+    overflow-x: auto;
+    text-align: center;
+    padding: 0.5rem 0;
+}
+.svg-container svg {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+}
+/* mark 高亮 */
+mark {
+    background: var(--gold-light);
+    color: var(--gold);
+    padding: 0 2px;
+    border-radius: 2px;
+}
+/* ═══ 正文 ═══ */
+.body-text p {
+    margin-bottom: 0.75rem;
+    text-indent: 2em;
+    line-height: 1.85;
+}
+.body-text p:last-child {
+    margin-bottom: 0;
+}
+/* ═══ 卡片变体 ═══ */
+.card-timing {
+    border-left-color: var(--gold);
+    background: var(--gold-light);
+}
+/* ═══ 行动建议 ═══ */
+.advice-list {
+    list-style: none;
+    padding: 0;
+}
+.advice-list li {
+    position: relative;
+    padding: 0.5rem 0.5rem 0.5rem 1.75rem;
+    margin-bottom: 0.25rem;
+    border-bottom: 1px solid var(--border);
+}
+.advice-list li:last-child {
+    border-bottom: none;
+}
+.advice-list li::before {
+    content: "$";
+    position: absolute;
+    left: 0.25rem;
+    top: 0.5rem;
+    color: var(--green);
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+/* ═══ 表格 ═══ */
+.table-wrapper {
+    overflow-x: auto;
+}
+.yao-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+.yao-table th {
+    background: #f2efe6;
+    color: var(--ink);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+}
+.yao-table td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
+.yao-table tbody tr:hover {
+    background: #faf8f2;
+}
+.role-tag {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+.role-用神 { background: #e8f5e9; color: #2e7d32; }
+.role-原神 { background: #e3f2fd; color: #1565c0; }
+.role-忌神 { background: #fdecea; color: #c62828; }
+.role-仇神 { background: #fff3e0; color: #e65100; }
+.role-闲神 { background: #f5f5f5; color: #666; }
+.no-data {
+    color: var(--ink-light);
+    font-style: italic;
+    padding: 1rem 0;
+}
+/* ═══ 经典引文 ═══ */
+.quotes-block blockquote {
+    border-left: 3px solid var(--gold);
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.75rem;
+    background: var(--gold-light);
+    border-radius: 0 8px 8px 0;
+    font-size: 0.95rem;
+}
+.quote-source {
+    font-weight: 600;
+    color: var(--gold);
+    margin-right: 0.5em;
+}
+/* ═══ 卦辞 ═══ */
+.judgment-text {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--ink);
+    padding: 0.75rem;
+    background: #f9f7f2;
+    border-radius: 8px;
+    border-left: 3px solid #bf9b30;
+}
+/* ═══ 降级因子列表 ═══ */
+.factor-fallback {
+    list-style: none;
+    padding: 0;
+}
+.factor-fallback li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+}
+.factor-fallback li:last-child { border-bottom: none; }
+.factor-fallback .fname { font-weight: 600; min-width: 80px; }
+.factor-fallback .fscore {
+    font-family: "SF Mono", Monaco, monospace;
+    font-weight: 700;
+    min-width: 60px;
+    text-align: right;
+}
+.factor-fallback .freason { color: var(--ink-light); flex: 1; }
+.factor-fallback .pos .fscore { color: var(--green); }
+.factor-fallback .neg .fscore { color: var(--red); }
+/* ═══ 附录 ═══ */
+.card-appendix {
+    border-left-color: #95a5a6;
+    background: #fafafa;
+}
+.card-appendix summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--ink-light);
+    padding: 0.25rem 0;
+}
+.card-appendix summary:hover { color: var(--ink); }
+.process-list {
+    margin-top: 0.75rem;
+}
+.process-item {
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+}
+.process-item:last-child { border-bottom: none; }
+.process-label {
+    display: inline-block;
+    background: #bf9b30;
+    color: #fff;
+    padding: 0.1rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-right: 0.5rem;
+}
+.process-text {
+    color: var(--ink-light);
+}
+/* ═══ 免责声明 ═══ */
+.card-disclaimer {
+    border-left-color: #95a5a6;
+    background: #fafafa;
+}
+.disclaimer-text {
+    font-size: 0.85rem;
+    color: var(--ink-light);
+    line-height: 1.7;
+}
+/* ═══ Footer ═══ */
+.report-footer {
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--ink-light);
+    font-size: 0.85rem;
+}
+body { font-size: 14px; }
+.report-header h1 { font-size: 1.4rem; }
+.header-symbol { font-size: 2.5rem; }
+.header-meta { flex-direction: column; gap: 0.3rem; align-items: center; }
+.card { padding: 1rem; }
+.verdict-badge { font-size: 1.2rem; padding: 0.4rem 1.5rem; }
+.yao-table { font-size: 0.8rem; }
+.yao-table th, .yao-table td { padding: 0.3rem 0.4rem; }
+.factor-fallback li { flex-wrap: wrap; }
+.factor-fallback .freason { width: 100%; margin-top: 0.25rem; }
+body { background: #fff; }
+.card { box-shadow: none; border: 1px solid #ddd; break-inside: avoid; }
+.report-header { background: #2c3e50 !important; -webkit-print-color-adjust: exact; print-color-color-adjust: exact; }
+.card-appendix details { display: block !important; }
+
+/* ── 排盘报告图形层（自 visualization.py 原样追加） ── */
+.container { max-width: 960px; margin: 0 auto; }
+.card h3 { font-size: 15px; color: #444; margin: 12px 0 8px; }
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; }
+.info-row { display: flex; gap: 10px; }
+.info-label { color: #888; min-width: 60px; text-align: right; }
+.info-value { color: #333; font-weight: 500; }
+.hexagram-section { display: flex; gap: 8px; flex-wrap: wrap; }
+.hexagram-box { flex: 1; min-width: 280px; }
+.chart-box { margin: 8px 0; }
+.chart-box svg { max-width: 100%; height: auto; }
+.verdict-auspicious { background: linear-gradient(135deg,#2e7d32,#1b5e20); }
+.verdict-neutral { background: linear-gradient(135deg,#f57f17,#e65100); }
+.verdict-inauspicious { background: linear-gradient(135deg,#d32f2f,#b71c1c); }
+.step-chain { border-left: 3px solid #1565c0; padding-left: 16px; margin: 8px 0; }
+.step-chain .step-item { margin: 8px 0; padding: 10px; background: #f8f9fa; border-radius: 6px; }
+.step-item .step-title { font-weight: 600; color: #1565c0; font-size: 14px; }
+.footer { text-align: center; color: #999; font-size: 12px; margin-top: 40px; padding: 16px; }
+table.detail-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+table.detail-table th, table.detail-table td {
+        padding: 6px 10px; border: 1px solid #e0e0e0; text-align: center;
+    }
+table.detail-table th { background: #f5f5f5; font-weight: 600; }
+table.detail-table tr:hover { background: #fafafa; }
+/* --- 标签页 --- */
+    .tab-nav {
+        display: flex; gap: 0; margin-bottom: 20px;
+        background: #fff; border-radius: 12px; padding: 4px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        position: sticky; top: 10px; z-index: 10;
+    }
+.tab-btn {
+        flex: 1; padding: 10px 16px; border: none; background: transparent;
+        font-size: 14px; font-weight: 500; cursor: pointer; border-radius: 8px;
+        color: #666; transition: all 0.2s; text-align: center;
+    }
+.tab-btn:hover { background: #f5f5f5; color: #333; }
+.tab-btn.active { background: #1565c0; color: white; font-weight: 600; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+.hexagram-section { flex-direction: column; }
+.info-grid { grid-template-columns: 1fr; }
+.tab-btn { font-size: 12px; padding: 8px 6px; }
+
+/* 同名选择器以新版为准，未追加：*、body、.card、.card h2、.verdict-badge */
+
+/* 报告主标题：这个类在 h2 上挂了很久但从未被定义（字体靠行内 style 撑） */
+.serif-title { font-family: "Songti SC", "SimSun", serif; }
+
+</style>
+</head>
+<body>
+
+<header class="report-header">
+    <div class="header-inner">
+        <div class="header-symbol">☯</div>
+        <h1>六爻纳甲占报告</h1>
+        <div class="header-meta">
+            <span class="meta-item">❓ 问财运：今年投资能否获利</span>
+            <span class="meta-item">🕐 2026-09-20 09:00</span><span class="meta-item">☰ 坤（坤宫·六世）</span>
+        </div>
+        <div class="header-sub">上坤 下坤 ｜ 旬辰、巳</div>
+    </div>
+</header>
+
+<main class="report-body">
+
+    <section class="card card-verdict">
+        <h2>一、结要</h2>
+        <div class="verdict-badge verdict-inauspicious">凶</div>
+        <div class="verdict-headline">阻力明显，硬上容易吃亏</div>
+        <div class="info-grid"><div class="info-row"><span class="info-label">用神</span><span class="info-value">妻财</span></div><div class="info-row"><span class="info-label">用神爻</span><span class="info-value">5</span></div><div class="info-row"><span class="info-label">旺衰</span><span class="info-value">极旺</span></div></div>
+        <div class="card card-timing"><h3>应期</h3><ul><li>2026-09-20（速应(旺)）</li><li>2026-09-21（速应(次日)）</li><li>2026-09-22（逢值）</li><li>2026-09-23（三合成局）</li><li>2026-09-27（三合成局）</li><li>速应（当日或数日内）</li></ul></div>
+    </section>
+
+    <section class="card hexagram-section">
+        <h2>二、卦盘</h2>
+        <div class="svg-container"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 500" width="100%">
+<style>.hex-title{font:bold 14px "Microsoft YaHei",sans-serif;fill:#333}.hex-sub{font:11px "Microsoft YaHei",sans-serif;fill:#666}.yang-line{stroke:#1a1a1a;stroke-width:6;stroke-linecap:round}.yin-line-l,.yin-line-r{stroke:#1a1a1a;stroke-width:6;stroke-linecap:round}.moving-marker{fill:#d32f2f;font:bold 16px sans-serif}.world-mark{fill:#1565c0;font:bold 12px sans-serif}.response-mark{fill:#2e7d32;font:bold 12px sans-serif}</style>
+<text x="180" y="30" text-anchor="middle" class="hex-title">本卦：坤（坤宫 六世）</text>
+<line x1="60" y1="60" x2="82.0" y2="60" class="yin-line-l"/>
+<line x1="98.0" y1="60" x2="120" y2="60" class="yin-line-r"/>
+<text x="164" y="64" class="hex-sub"><tspan class="world-mark">世</tspan> 青龙子孙酉</text>
+<line x1="60" y1="82" x2="82.0" y2="82" class="yin-line-l"/>
+<line x1="98.0" y1="82" x2="120" y2="82" class="yin-line-r"/>
+<text x="164" y="86" class="hex-sub"> 玄武妻财亥</text>
+<line x1="60" y1="104" x2="82.0" y2="104" class="yin-line-l"/>
+<line x1="98.0" y1="104" x2="120" y2="104" class="yin-line-r"/>
+<text x="164" y="108" class="hex-sub"> 白虎兄弟丑</text>
+<line x1="60" y1="126" x2="82.0" y2="126" class="yin-line-l"/>
+<line x1="98.0" y1="126" x2="120" y2="126" class="yin-line-r"/>
+<text x="164" y="130" class="hex-sub"><tspan class="response-mark">应</tspan> 螣蛇官鬼卯</text>
+<line x1="60" y1="148" x2="82.0" y2="148" class="yin-line-l"/>
+<line x1="98.0" y1="148" x2="120" y2="148" class="yin-line-r"/>
+<text x="164" y="152" class="hex-sub"> 勾陈父母巳(空)</text>
+<line x1="60" y1="170" x2="82.0" y2="170" class="yin-line-l"/>
+<line x1="98.0" y1="170" x2="120" y2="170" class="yin-line-r"/>
+<text x="164" y="174" class="hex-sub"> 朱雀兄弟未</text>
+</svg></div>
+    </section>
+
+    <section class="card">
+        <h2>三、正文</h2>
+        <div class="body-text"><p>====================================================<br>                  六 爻 纳 甲 占 卜 报 告                   <br>====================================================</p>
+<pre>【求测信息】
+  问  题：问财运：今年投资能否获利
+  方  式：time
+  时  间：2026-09-20 09:00</pre>
+<p>【干支历法】<br>  年柱：丙午　月柱：丁酉<br>  日柱：丁酉　时柱：乙巳<br>  旬  空：辰, 巳</p>
+<p>────────────────────────────────────────────────────<br>【卦象一览】<br>  本 卦：坤　坤上坤下　第2卦<br>  归 属：坤宫（土行）　六世卦<br>卦　辞：元亨，利牝马之贞</p>
+<pre>  排盘详表：
+  爻位  六神   六亲   地支   干支     动静   标记    
+  ------------------------------------------------
+  上六  青龙   子孙   酉    癸酉     静    世     
+  六五  玄武   妻财   亥    癸亥     静    －     
+  六四  白虎   兄弟   丑    癸丑     静    －     
+  六三  螣蛇   官鬼   卯    乙卯     静    应     
+  六二  勾陈   父母   巳    乙巳     静    空     
+  初六  朱雀   兄弟   未    乙未     静    －     </pre>
+<p>────────────────────────────────────────────────────<br>【用神建议】<br>  · 财运类：取妻财爻为用神</p>
+<p>====================================================<br>【五步思维链分析】<br>====================================================</p>
+<p>  ┌── Step 1 ─ 观局 ──────────────────────────┐<br>  │ 本卦：坤　坤宫　土行<br>  └──────────────────────────────────────────┘</p>
+<p>  ┌── Step 2 ─ 定用神 ────────────────────────┐<br>  │ 用神：妻财　五行：水<br>  └──────────────────────────────────────────┘</p>
+<p>  ┌── Step 3 ─ 断旺衰 ────────────────────────┐<br>  │ 旺衰等级：极旺（评分 4.40）<br>  └──────────────────────────────────────────┘</p>
+<p>  ┌── Step 4 ─ 察动变 ────────────────────────┐<br>  │ 动变净效应：+0.00（静卦无动爻，以用神旺衰论吉凶）<br>  └──────────────────────────────────────────┘</p>
+<p>  ┌── Step 5 ─ 综合判断 ──────────────────────┐<br>  │ 判　语：凶（-1.29分）<br>  │ 说　明：阻力明显，硬上容易吃亏<br>  │ 置信度：80%（高 — 信号清晰明确）<br>  │ 评分明细：基础旺衰 4.40 + 卦体 -0.5（六冲卦，事主散离） + 六神 -0.4（玄武临用，阴日暗昧更重(x1.3)） = -1.29<br>  └──────────────────────────────────────────┘</p>
+<p>────────────────────────────────────────────────────<br>【格局识别】<br>  · 暗动：三爻(卯)静爻被日辰酉冲，月休囚逢冲为日破，此爻彻底无用<br>  · 月破：三爻(卯)既破于月建又冲于日辰，力量极弱，无解救之力<br>  · 三合局：巳酉丑成金局，位置二爻/上爻/四爻，构成方式：三爻皆静。静爻合局，待时日引发方成；亥卯未成木局，位置五爻/三爻/初爻，构成方式：0爻动+1暗动+2静。木力大增。⚠破局：卯被日冲，合局不稳<br>  · 卦格：六冲卦：位置初爻与四爻（未与丑）六冲；位置二爻与五爻（巳与亥）六冲；位置三爻与上爻（卯与酉）六冲<br>  · 吟反：本卦无动爻，不存在反吟伏吟<br>  · 三刑：恃势之刑（待刑）：丑、未相见，缺戌，待月日逢戌方成刑，目前刑伤未全，但有刑伤之象<br>  · 纳音：日柱丁酉纳音山下火(火)</p>
+<p>────────────────────────────────────────────────────<br>【卜象解析】<br>　　【卦象】地在上，地在下（坤为地）<br>　　【象意】坤为地，坤为地<br>　　【体用】上土下土，土对土为比和<br>　　【生克】下卦坤(土)为体，上卦坤(土)为用；体用比和——内外谐顺，事多圆满<br>　　【总论】八纯卦——上下皆坤（地），纯土之象。柔顺/包容/承载占事专一，力量集中而不杂。<br>　　【方位】上卦西南，下卦西南<br>　　【气象】上云/雾/阴天，下云/雾/阴天</p>
+<pre>────────────────────────────────────────────────────
+【应期推断】
+  整体节奏：应速
+  方法综述：重点应期：巳日、亥日、辰日、酉日。主应期 巳日（用神安静，逢冲之日）。事情来得偏快，快则当日、次日就可能见分晓。若事应迟，则看月级：巳月、亥月。依据：用神「亥」临值之日应（亥日）、用神「亥」逢冲之日（巳日）应。
+  用　　神：亥（水）
+  旺　　衰：极旺
+  应期日期：
+    2026-09-20 [酉] — 速应(旺)（用神旺相，当日可能应）
+    2026-09-21 [戌] — 速应(次日)（用神旺相，次日之应）
+    2026-09-22 [亥] — 逢值（用神亥临值）
+    2026-09-23 [子] — 三合成局（申/子/辰合水局）
+    2026-09-27 [辰] — 三合成局（申/子/辰合水局）
+  小　　结：应期（速应（当日或数日内））：2026-09-20(速应(旺))、2026-09-21(速应(次日))、2026-09-22(逢值)、2026-09-23(三合成局)、2026-09-27(三合成局)</pre>
+<p>====================================================<br>                     【最 终 判 语】                      <br>====================================================</p>
+<p>　　　　　　◖ 凶 ◗</p>
+<p>　　阻力明显，硬上容易吃亏</p>
+<p>　　综合评分：-1.29 / 5.00<br>　　置信　度：80%（高 — 信号清晰明确）</p>
+<p>　　※ 【原神失位】用神虽旺而原神不动/缺位，旺极无源，-1.0；【旺极无源加权】用神极旺而无原神发动，再-1.0</p>
+<p>　　【经典引文】<br>　　· 《卜筮正宗·六冲论》：「六冲卦者，行人不通，散离失群，百事乖张。」<br>　　· 《卜筮正宗·三合论》：「三合局成，其力专一，吉凶皆验于合局所得。」<br>　　· 《卜筮正宗·用神论》：「子孙持世，克官鬼、释忧烦，官司失所望，病者渐安。」<br>　　· 《火珠林》：「用神旺相，如春木之向荣，百事亨通。」<br>　　· 《卜筮正宗·月破论》：「月破之爻，如秋叶遇霜，失时无力，纵逢生扶亦难复。」</p>
+<p>　　【卦身】卦身在初爻（兄弟）——占求财: 劫财有碍</p>
+<p>====================================================<br>                     报告中　·　仅供参考                     <br>====================================================<br>====================================================<br>【趋避建议】<br>  1. 眼下不是加仓的时候，能不进就不进<br>  2. 别碰自己看不懂、也和忌神所主方向纠缠太深的标的<br>  3. 若已经持有，优先减风险而不是幻想翻盘<br>  4. 时机上可多留意 巳日、亥日、辰日、酉日 这几日</p>
+<p>【持世】子孙持世，凡事亨通无忧<br>　　　　持世歌诀：子孙持世事无忧，求名坐狱必然休。避乱求安皆可保，身安无祸亦无愁。<br>【象判边界】本报告为象征推演与方向参考，非现实预测。凶象只言「偏向／有…信号／结构上」，不说「注定／一定」；医疗、法律、投资等重大决策请以专业意见为准。</p></div>
+    </section>
+    <section class="card card-appendix"><h2>四、判据所本</h2><div class="judgment-text">六爻纳甲·思维链五步（用神·旺衰·动变·月日）。</div></section>
+</main>
+
+<footer class="report-footer">
+    本报告为象征推演与方向参考，非现实预测；医疗、法律、投资等重大决策请以专业意见为准。
+</footer>
+
+</body>
+</html>

@@ -73,7 +73,10 @@ python scripts/chart.py --mode time --datetime "2026-09-23 10:00" \
        --question "所问之事" -o scratch/chart.json        # 四段契约：起卦
 python scripts/analyze.py scratch/chart.json -o scratch/analyze.json   # 推演（结论/应期/所本）
 python scripts/render.py scratch/analyze.json -o outputs/report.md     # 报告
+python scripts/yi_liuyao.py "所问之事" --when "2026-09-23 10:00" -o outputs/report.html   # 一键闭环（chart→analyze→render 单文件报告）
 ```
+
+黄金样例与验收清单见 `disciplines/liuyao/docs/samples/`（`感情卦_巽之涣.html` 为唯一模板）。
 
 合参层（工作目录 `synthesis/`）：`python cli.py init` 建档 → `add-divination` 登记占问
 → `guide` 生成阶段性指导 → `record-outcome` 回填现实结果。

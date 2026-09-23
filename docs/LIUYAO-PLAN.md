@@ -17,6 +17,8 @@
 > **执行进度更新（2026-09-24）**：M3 门户修伤完成（3.3）——`index.html` 重建：看板分数经 `build_portal_assets.py` 从 `eval_{tune,holdout}.json` 取（当前读数 tune 94.5 / holdout 84.8，含 n 与口径说明，不再硬编码 100）；"打开完整样例报告"原 `window.open('sample_report_ZS001.html')` 死链改为页内数据渲染（iframe 模态框兜底 + 新窗口可选，任何环境可用）；SVG 卦盘含六神/六亲/纳甲/爻象/世应/动变○×/旬空/变出列；门户完全自包含（无外部 src/href/fetch），`file://` 直开可用。门户产物（`index.html` / `assets/portal_data.json` / `outputs/reports/`）在 gitignore 内，由脚本可重建。M3 剩余 3.2 一键闭环、3.4 黄金样例、3.5 README 截图未做。
 >
 > **执行进度更新（2026-09-24）**：M3 一键闭环完成（3.2）——新增 `scripts/yi_liuyao.py`：`python scripts/yi_liuyao.py "所问之事" --when "..."` 一条命令 chart→analyze→render（HTML/Markdown，缺省 time 起卦，支持 manual/number/coin+seed，`--open` 浏览器直开），从零到可分享报告无人工拼装；`tools/demo.py` 六爻演示从旧引擎入口切换为四段契约（与其他三科同构），全科演示实测通过。M3 剩余 3.4 黄金样例、3.5 README 截图未做。
+>
+> **执行进度更新（2026-09-24）**：M3 黄金样例与样例入库完成（3.4/3.5）——以 `docs/samples/感情卦_巽之涣.html` 为唯一模板：重跑管线生成（manual 起卦 8,7,9,8,7,7 @ 2026-09-22 10:00，问感情），逐条过六项验收清单（六神临用/持世/卦身/格局详释/公历应期/边界克制）；补齐机制：narrate 薄适配层新增【持世】【象判边界】两段（纯转述 `advanced_analysis.shi_yao_relation` 与固定分寸声明，不新增推演，`data/verdicts.json` 引文出处照用）；验收清单写入 `SKILL.md` §3.7（残缺薄版不得交付）；3 份样例（感情卦_巽之涣/财运卦/事业卦）＋全页截图入库 `docs/samples/`，README（根与六爻）同步。指纹 `0e2bb128` 288 例零漂移，质量门 --full 全绿，黑箱回归 11/18 持平基线。M3 至此全部完成，遗留 M2.1 用神决策表、M2.4 扩样、M4 迁移待推进。
 
 ## 〇、先说一件必须接受的事
 
