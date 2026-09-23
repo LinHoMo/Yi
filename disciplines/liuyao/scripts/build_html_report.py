@@ -29,6 +29,12 @@ PROJECT_DIR = os.path.dirname(SCRIPT_DIR)
 if PROJECT_DIR not in sys.path:
     sys.path.insert(0, PROJECT_DIR)
 
+from kernel_path import ensure_kernel_on_path as _ensure_kernel  # noqa: E402
+
+_ensure_kernel(__file__)
+
+from yishu_core.report import escape as _core_escape, render_page  # noqa: E402  统一呈现 kit
+
 
 # ──────────────────────────────────────────────────────────────
 # 1. 引擎调用：获取完整结果（含 thinking_chain + human_narrative）
@@ -290,18 +296,7 @@ def render_html(result: dict) -> str:
         and q not in classical_quotes
     ]
 
-    html = f"""<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>六爻解读 · {_xml_escape(hex_name)} &middot; {_xml_escape(question)}</title>
-<style>
-{_css()}
-</style>
-</head>
-<body>
-
+    html = """
 <!-- ═══ Header ═══ -->
 <header class="report-header">
     <div class="header-inner">
@@ -445,11 +440,14 @@ def render_html(result: dict) -> str:
 <footer class="report-footer">
     <p>由妙手六爻引擎生成 · 仅供参考</p>
 </footer>
+"""
 
-</body>
-</html>"""
-
-    return html
+    return render_page(
+        title=f"六爻解读 · {hex_name} · {question}",
+        body=html,
+        css=_css(),
+        container=False,
+    )
 
 
 # ──────────────────────────────────────────────────────────────
@@ -606,15 +604,8 @@ def _render_moving_lines_table(yao_lines: list, result: dict, s4: dict) -> str:
 
 
 def _xml_escape(text: str) -> str:
-    """XML/HTML 实体转义。"""
-    if not isinstance(text, str):
-        text = str(text) if text is not None else ""
-    text = text.replace("&", "&amp;")
-    text = text.replace("<", "&lt;")
-    text = text.replace(">", "&gt;")
-    text = text.replace('"', "&quot;")
-    text = text.replace("'", "&#39;")
-    return text
+    """XML/HTML 实体转义（统一入口在 core/report，这里只是本地别名）。"""
+    return _core_escape(text)
 
 
 def _css() -> str:

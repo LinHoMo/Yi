@@ -26,6 +26,19 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+import os as _ks_os  # noqa: E402  内核定位规则只在 kernel_path.py 一份实现
+
+_ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
+
+if _ks_d not in sys.path:
+    sys.path.insert(0, _ks_d)
+
+from kernel_path import ensure_kernel_on_path as _ensure_kernel  # noqa: E402
+
+_ensure_kernel(__file__)
+
+from yishu_core.report import render_page  # noqa: E402  统一呈现 kit
+
 # =============================================================================
 # 常量定义
 # =============================================================================
@@ -1281,16 +1294,16 @@ def build_html_report(result_data):
         cards_html = _nl.join(cards)
         tab_panels_html += f'<div class="tab-panel {active}" id="tab-{name}">{_nl}{cards_html}{_nl}</div>{_nl}'
 
-    return f'''<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>六爻占卜报告 — {html.escape(orig.get("name",""))}</title>
-<style>{CSS_STYLES}</style>
-</head>
-<body>
-<div class="container">
+    script = """function switchTab(name) {
+    document.querySelectorAll(".tab-panel").forEach(function(el) { el.classList.remove("active"); });
+    document.querySelectorAll(".tab-btn").forEach(function(el) { el.classList.remove("active"); });
+    document.getElementById("tab-" + name).classList.add("active");
+    event.target.classList.add("active");
+}"""
+
+    return render_page(
+        title=f"六爻占卜报告 — {orig.get('name','')}",
+        body=f'''
     <div class="card" style="text-align:center;padding:30px 28px 20px;">
         <h1 style="font-size:24px;letter-spacing:4px;margin-bottom:8px;">六爻纳甲占卜报告</h1>
         <p style="color:#888;font-size:13px;">{html.escape(orig.get("name",""))} {'→ '+html.escape(changed.get("name","")) if changed else ""} · {html.escape(dt.get("datetime",""))}</p>
@@ -1298,19 +1311,11 @@ def build_html_report(result_data):
     <div class="tab-nav">
 {_nl.join("        " + b for b in tab_buttons_html.split(_nl))}
     </div>
-{tab_panels_html}
-    <div class="footer">由六爻可视化引擎生成 · {generated_at} · CatPaw LiuYao Skill</div>
-</div>
-<script>
-function switchTab(name) {{
-    document.querySelectorAll(".tab-panel").forEach(function(el) {{ el.classList.remove("active"); }});
-    document.querySelectorAll(".tab-btn").forEach(function(el) {{ el.classList.remove("active"); }});
-    document.getElementById("tab-" + name).classList.add("active");
-    event.target.classList.add("active");
-}}
-</script>
-</body>
-</html>'''
+{tab_panels_html}''',
+        css=CSS_STYLES,
+        footer=f"由六爻可视化引擎生成 · {generated_at} · CatPaw LiuYao Skill",
+        script=script,
+    )
 
 
 # =============================================================================
@@ -1349,25 +1354,18 @@ def build_html_report_batch(results):
 
     batch_chart = generate_batch_comparison(results) if len(results) > 1 else ""
 
-    return f'''<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<title>六爻批量对比报告</title>
-<style>{CSS_STYLES}</style>
-</head>
-<body>
-<div class="container">
+    return render_page(
+        title="六爻批量对比报告",
+        body=f'''
     <div class="card" style="text-align:center;">
         <h1 style="font-size:22px;margin-bottom:6px;">六爻批量对比报告</h1>
         <p style="color:#888;font-size:13px;">共 {len(results)} 次占卜</p>
     </div>
     <div class="card"><h2>综合评分对比</h2><div class="chart-box">{batch_chart}</div></div>
-    {"".join(cards)}
-    <div class="footer">由六爻可视化引擎生成 · {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}</div>
-</div>
-</body>
-</html>'''
+    {"".join(cards)}''',
+        css=CSS_STYLES,
+        footer=f"由六爻可视化引擎生成 · {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+    )
 
 
 def build_html_report_history(events):
@@ -1383,15 +1381,9 @@ def build_html_report_history(events):
             <td>{html.escape(str(ev.get("score",""))[:6])}</td>
         </tr>'''
 
-    return f'''<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<title>六爻历史日志统计</title>
-<style>{CSS_STYLES}</style>
-</head>
-<body>
-<div class="container">
+    return render_page(
+        title="六爻历史日志统计",
+        body=f'''
     <div class="card" style="text-align:center;">
         <h1 style="font-size:22px;margin-bottom:6px;">六爻历史日志统计</h1>
         <p style="color:#888;font-size:13px;">共 {len(events)} 次占卜记录</p>
@@ -1402,11 +1394,10 @@ def build_html_report_history(events):
             <thead><tr><th>时间</th><th>卦名</th><th>结论</th><th>评分</th></tr></thead>
             <tbody>{rows}</tbody>
         </table>
-    </div>
-    <div class="footer">由六爻可视化引擎生成 · {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}</div>
-</div>
-</body>
-</html>'''
+    </div>''',
+        css=CSS_STYLES,
+        footer=f"由六爻可视化引擎生成 · {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+    )
 
 
 def main():
