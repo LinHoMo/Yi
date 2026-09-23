@@ -4,7 +4,24 @@
 再由易合起来，给出阶段性指导与规划。** 这层不做，"易"就只是一个路由。
 （相科已剔除，合参按命·卜两科成立；日后若增学科，本层规则按同一形式扩展。）
 
-本层目前只有契约与数据格式，无实现——依赖 M2/M4 之后才有可合参的科目输出。
+本层**已实现**（2026-09-23）：`person.py`（档案模型）、`normalize.py`（学科输出归一化）、
+`cross_rules.py`（裁决规则）、`guidance.py`（指导生成）、`cli.py`（命令行入口）。
+入口：`python cli.py --help`（init / validate / add-divination / record-outcome / guide / selfcheck）。
+
+## 〇、CLI 用法（工作目录 `synthesis/`）
+
+```bash
+python cli.py init P001 --solar "1990-05-20 07:15"                        # 新建档案 → person/P001.json
+python cli.py validate P001                                               # 校验档案
+python cli.py add-divination P001 --discipline meihua \
+       --analyze-json <analyze.json> --at "2026-09-23 10:00"                # 登记占问（归一化，需各科 analyze 输出）
+python cli.py record-outcome P001 --event-id EVT001 --result 应验           # 回填现实结果（唯一效度证据）
+python cli.py guide P001                                                   # 生成指导 → guidance/P001.md
+python cli.py selfcheck                                                     # 合参层自检
+```
+
+档案存 `person/<id>.json`，指导存 `guidance/<id>.md`（两者均已 gitignore，属运行产物）。
+`add-divination` 的良输入是各科 `analyze` 段输出的 JSON；系统归一化为统一占问记录，含方向/应期/判据所本。
 
 ## 一、人的档案 `person/<id>.json`
 
@@ -20,10 +37,6 @@
     "ganzhi": {"year": "庚午", "month": "辛巳", "day": "…", "hour": "…"},
     "calendar_policy": {"boundary": "day", "zi_hour": "night_same_day"},
     "assembled_from": "ganzhi_resolved"
-  },
-  "xiang": {
-    "observations": [{"part": "眉眼", "note": "…", "source": "用户自述|照片|面客"}],
-    "captured": "2026-09-22"
   },
   "divinations": [
     {"event_id": "…", "asked": "占近三月财运", "at": "2026-09-22",
