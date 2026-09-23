@@ -6,7 +6,9 @@
 > **执行进度（2026-09-22）**：M0 全部完成；M1 完成第一批（规则表合一，288 例零漂移）；
 > M2 完成 2.2 应期择优两批；M3 完成报告应期表、门户真分数、死链、命名。
 > 逐条实况见 `disciplines/liuyao/docs/HANDOFF.md`；分数变化与口径见 `disciplines/liuyao/docs/CHANGELOG.md`。
-> 未做：M1b 巨石拆分与断语外置、M2.1 用神决策表、M2.4 扩样、M3 呈现三合一与 SVG 卦盘、M4 迁移。
+> 未做：M2.1 用神决策表、M2.4 扩样、M3 呈现三合一（两套引擎内容合并 / render 单一 HTML 出口 / SVG 真卦盘）、M4 迁移。
+>
+> **执行进度更新（2026-09-23）**：M1b 巨石拆分完成（`liuyao_engine`/`thinking_chain`/`classical_analysis` → 20 子模块 + 薄聚合入口，金标准指纹 `0e2bb128` 288 例零漂移）；断语/引文库外置 `data/verdicts.json`（含出处）；卦辞爻辞上收内核 `core/yishu_core/hexagram_texts.py`；两套报告引擎**骨架**收敛 `core/report`（`grep <!DOCTYPE` 仅剩内核 kit）；四科 `golden.py` 规范化 argparse。逐条实况见仓库级 `docs/CHANGELOG.md`。
 
 ## 〇、先说一件必须接受的事
 
