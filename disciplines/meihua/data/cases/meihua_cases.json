@@ -1,0 +1,235 @@
+{
+  "_meta": {
+    "description": "梅花易数古籍案例库 — 主体取自《梅花易数》卷一·观梅占验（黄宗羲序本全文核对），另含《周易与预测学》（邵伟华）转写实践案例 2 例与原文变体 1 例",
+    "version": "1.0",
+    "total_cases": 15,
+    "tune": 10,
+    "holdout": 3,
+    "excluded": 2,
+    "usage": "盲评时只传 input 部分予引擎，expected 部分仅用于评分（对齐分，非现实命中率）",
+    "honesty_note": "古籍原文可完整还原起卦数字的案例共 11 例（观梅占验 10 + 西林寺『添勾』变体 1），全部进 tune 与 holdout；CONTRACT §四.4 要求的 10+5 未能满额，holdout 仅 3 例（1 古籍变体 + 2 转写实践），缺 2 例记于 excluded 并写明原因。月令维度因案例多数以数字起卦、无真实时刻而整体 N/A，评分不设该维度。",
+    "golden_standard_note": "观梅占验十占的数字逐条核对：观梅占(5,12,17,9)、牡丹占(6,3,16,4)、扣门占(1,5,10)、今日动静(8,5,0)、西林寺(7,8,0)、老人(1,5,4)、少年(7,3,7)、牛哀鸣(8,6,7)、鸡悲鸣(5,1,4)、枯枝(3,2,5)。其中牛哀鸣『师三爻动变升』与通行爻变法一致（坎上爻变巽 → 地风升），原文无误。"
+  },
+  "cases": [
+    {
+      "id": "MH001",
+      "source": "《梅花易数》卷一·观梅占验·观梅占（年月日时占例）",
+      "topic": "人事",
+      "question": "二雀争枝坠地，占明晚之事",
+      "split": "tune",
+      "input": {"way": "numbers", "year_num": 5, "month": 12, "day": 17, "hour_num": 9, "motion": "立"},
+      "expected": {
+        "relation": "用克体",
+        "verdict": "平凶",
+        "sheng_ti": ["艮"],
+        "ke_ti": ["离"],
+        "timing": null,
+        "note": "原文：明晚当有女子折花，园丁逐之，女子失惊坠地，伤其股。兑金为体、离火克之，互中巽木复起离火，克体之卦气盛；幸变艮土，兑金得生，但被伤而不至凶危。应期按『花朝夕之故』不取数应。"
+      }
+    },
+    {
+      "id": "MH002",
+      "source": "《梅花易数》卷一·观梅占验·牡丹占",
+      "topic": "人事",
+      "question": "观牡丹，占花之数",
+      "split": "tune",
+      "input": {"way": "numbers", "year_num": 6, "month": 3, "day": 16, "hour_num": 4, "motion": "立"},
+      "expected": {
+        "relation": "用克体",
+        "verdict": "凶",
+        "sheng_ti": [],
+        "ke_ti": ["乾"],
+        "timing": null,
+        "note": "原文：明日午时花当为马所践毁。巽木为体、乾金克之，互见重乾，克体之卦多矣，卦中无生意。乾为马，午时离明之象。应期属『朝夕之故』，不取数应。"
+      }
+    },
+    {
+      "id": "MH003",
+      "source": "《梅花易数》卷一·观梅占验·邻夜扣门借物占（闻声占例）",
+      "topic": "人事",
+      "question": "扣门借物，所占何物",
+      "split": "tune",
+      "input": {"way": "two_numbers", "upper_num": 1, "lower_num": 5, "hour_num": 10, "motion": "立"},
+      "expected": {
+        "relation": "用克体",
+        "verdict": null,
+        "sheng_ti": [],
+        "ke_ti": ["乾"],
+        "timing": null,
+        "note": "原文：卦中三乾金、二巽木，为金木之物；乾金短而巽木长，是斧也。子断锄，先生以理推之：夕晚安用锄？必斧。此例为物类断，不考吉凶方向。"
+      }
+    },
+    {
+      "id": "MH004",
+      "source": "《梅花易数》卷一·观梅占验·今日动静如何（声音占例）",
+      "topic": "人事",
+      "question": "今日动静如何",
+      "split": "tune",
+      "input": {"way": "two_numbers", "upper_num": 8, "lower_num": 5, "hour_num": 0, "motion": "立"},
+      "expected": {
+        "relation": "用克体",
+        "verdict": "平吉",
+        "sheng_ti": [],
+        "ke_ti": ["巽", "震"],
+        "timing": null,
+        "note": "原文：今日有人相请，客不多，酒不醉，味至黍鸡。用克体本无饮食，而升有升阶之义、互兑为口、坤为腹，故有人相请（《卦断遗论》不拘体用例）。原文为『今日动』『静如何』字占折算：坤八、巽五、总十三、初爻动。"
+      }
+    },
+    {
+      "id": "MH005",
+      "source": "《梅花易数》卷一·观梅占验·西林寺牌额占（字画占例）",
+      "topic": "人事",
+      "question": "西林寺额『林』字无两勾，占寺中吉凶",
+      "split": "tune",
+      "input": {"way": "two_numbers", "upper_num": 7, "lower_num": 8, "hour_num": 0, "motion": "立"},
+      "expected": {
+        "relation": "比和",
+        "verdict": "凶",
+        "sheng_ti": [],
+        "ke_ti": [],
+        "timing": null,
+        "note": "原文：寺者纯阳人居之地，得纯阴之卦、群阴剥阳，体用互变虽俱比和而不吉，主阴人之祸（《卦断遗论》不拘体用例）。添林字两勾则转吉，见 holdout MH011。"
+      }
+    },
+    {
+      "id": "MH006",
+      "source": "《梅花易数》卷一·观梅占验·老人有忧色占（端法占例）",
+      "topic": "人事",
+      "question": "途遇老人有忧色，占其忧",
+      "split": "tune",
+      "input": {"way": "two_numbers", "upper_num": 1, "lower_num": 5, "hour_num": 4, "motion": "行"},
+      "expected": {
+        "relation": "用克体",
+        "verdict": "凶",
+        "sheng_ti": [],
+        "ke_ti": ["乾"],
+        "timing": {"value": 5, "unit": "日"},
+        "note": "原文：五日内谨慎出入，恐有重祸。巽木为体、乾金克之，互见重乾俱是克体，并无生气；时在途行其应速，成卦之数（十）中分而取其半为五日。果五日此老因鱼骨鲠而终。"
+      }
+    },
+    {
+      "id": "MH007",
+      "source": "《梅花易数》卷一·观梅占验·少年有喜色占（端法占例）",
+      "topic": "人事",
+      "question": "遇少年喜形于色，占其喜",
+      "split": "tune",
+      "input": {"way": "two_numbers", "upper_num": 7, "lower_num": 3, "hour_num": 7, "motion": "立"},
+      "expected": {
+        "relation": "体生用",
+        "verdict": "平吉",
+        "sheng_ti": ["震", "巽"],
+        "ke_ti": ["坎"],
+        "timing": {"value": 17, "unit": "日"},
+        "note": "原文：十七日内必有聘币之喜，果如期定亲。贲卦体离用艮（体生用泄气），互见震坎、变巽，互变俱生体（《卦断遗论》互变生之而吉例）；易辞『贲于丘园，束帛戋戋』亦吉。数应十七日（艮七离三午七）。"
+      }
+    },
+    {
+      "id": "MH008",
+      "source": "《梅花易数》卷一·观梅占验·牛哀鸣占（端法占例）",
+      "topic": "人事",
+      "question": "闻牛鸣于坎方，声极悲，占之",
+      "split": "tune",
+      "input": {"way": "two_numbers", "upper_num": 8, "lower_num": 6, "hour_num": 7, "motion": "立"},
+      "expected": {
+        "relation": "体克用",
+        "verdict": "凶",
+        "sheng_ti": [],
+        "ke_ti": ["震", "巽"],
+        "timing": {"value": 21, "unit": "日"},
+        "note": "原文：此牛二十一日内必遭屠杀，果二十日人买牛杀以犒众。易辞『师或舆尸，凶』；坤为体，互震克体、变巽克体，并无生气（《卦断遗论》互变俱克之而凶例）。师三爻动变升，与爻变法一致。"
+      }
+    },
+    {
+      "id": "MH009",
+      "source": "《梅花易数》卷一·观梅占验·鸡悲鸣占（端法占例）",
+      "topic": "人事",
+      "question": "闻鸡鸣于乾方，声极悲怆，占之",
+      "split": "tune",
+      "input": {"way": "two_numbers", "upper_num": 5, "lower_num": 1, "hour_num": 4, "motion": "立"},
+      "expected": {
+        "relation": "体克用",
+        "verdict": "凶",
+        "sheng_ti": [],
+        "ke_ti": ["离"],
+        "timing": {"value": 10, "unit": "日"},
+        "note": "原文：此鸡十日当烹，果十日客至有烹鸡之验。小畜四爻动，乾金为体、互离火克之，卦中巽木离火有烹饪之象（体克用而互变俱克之而凶例）。数应十日。"
+      }
+    },
+    {
+      "id": "MH010",
+      "source": "《梅花易数》卷一·观梅占验·枯枝坠地占（端法占例）",
+      "topic": "人事",
+      "question": "无风枯枝自坠于兑方，占之",
+      "split": "tune",
+      "input": {"way": "two_numbers", "upper_num": 3, "lower_num": 2, "hour_num": 5, "motion": "立"},
+      "expected": {
+        "relation": "用克体",
+        "verdict": "凶",
+        "sheng_ti": ["艮"],
+        "ke_ti": ["离"],
+        "timing": {"value": 10, "unit": "日"},
+        "note": "原文：此树十日当伐，果十日伐树起公榭。睽卦兑金为体、离火克之（用离互离俱克），睽损卦名俱有伤残之义；变山泽损，变艮土生体而仍断凶。数应十日。"
+      }
+    },
+    {
+      "id": "MH011",
+      "source": "《梅花易数》卷一·观梅占验·西林寺牌额占（添勾变体，字画占例）",
+      "topic": "人事",
+      "question": "若添『林』字两勾，寺中吉凶如何",
+      "split": "holdout",
+      "input": {"way": "two_numbers", "upper_num": 7, "lower_num": 10, "hour_num": 0, "motion": "立"},
+      "expected": {
+        "relation": "用生体",
+        "verdict": "吉",
+        "sheng_ti": ["艮", "坤"],
+        "ke_ti": [],
+        "timing": null,
+        "note": "原文：添林字两勾则十画，除八得二为兑卦，合上艮为山泽损，第五爻变中孚，互见坤震，『损者益之，用互俱生体，为吉卦，可以得安矣』。数过八以八递除（卦以八除）。"
+      }
+    },
+    {
+      "id": "MH012",
+      "source": "《周易与预测学》·邵伟华（转写实践案例）",
+      "topic": "行人",
+      "question": "孩子走失后的吉凶",
+      "split": "holdout",
+      "input": {"way": "numbers", "year_num": 12, "month": 12, "day": 18, "hour_num": 8, "motion": "立"},
+      "expected": {
+        "relation": "比和",
+        "verdict": "吉",
+        "sheng_ti": [],
+        "ke_ti": ["离"],
+        "timing": null,
+        "note": "癸亥年十二月十八日未时，兑为泽二爻动（互见风火家人、变泽雷随）。上下卦比和，断孩子平安无事，当晚八点半前回来，果于八点一刻回。应期按三兑六数推小时，不取数应。"
+      }
+    },
+    {
+      "id": "MH013",
+      "source": "《周易与预测学》·邵伟华（转写实践案例）",
+      "topic": "疾病",
+      "question": "奶奶病危，占能否好转",
+      "split": "holdout",
+      "input": {"way": "numbers", "year_num": 7, "month": 7, "day": 12, "hour_num": 7, "motion": "立"},
+      "expected": {
+        "relation": "比和",
+        "verdict": "吉",
+        "sheng_ti": [],
+        "ke_ti": [],
+        "timing": null,
+        "note": "庚午年七月十二日午时，泽天夬三爻动。体为病人、用为病症，体用比和，疾病易安。断老人这次死不了、病会好转，果妻兄回去后病立即好转。原文另以六爻法参断，此处只取梅花体用断语为 expected 要点。"
+      }
+    }
+  ],
+  "excluded": [
+    {
+      "id": "MHX1",
+      "source": "现代教学案例（fortune-telling 网站起卦示例）",
+      "reason": "报数 47 → 震上艮下颐卦五爻动。该例以『震为动、艮为止』的卦象直读断『进展受阻、待外力介入』，未走体用生克断法，与本引擎断法维度不对齐，无法形成可比 expected。"
+    },
+    {
+      "id": "MHX2",
+      "source": "现代教学案例（时间起卦示例：农历三月十八巳时 → 地水师二爻动）",
+      "reason": "起卦数字完整，但原文无断语与应验记录，无法形成 expected 要点（吉凶方向、生克之卦均缺），按 CONTRACT §四.4『缺项的进 excluded 并写原因』处理。"
+    }
+  ]
+}
