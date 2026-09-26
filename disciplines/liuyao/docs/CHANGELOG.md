@@ -13,6 +13,11 @@
 - **分数/指纹**：无变化（tune 93.9 / holdout 85.7 / 金标准 `65e8331c80c4f06a`）。
 - 历史条目里对 `visualize_shap`→`factor_waterfall` 的记载仍保留；后者本轮已删。
 
+## 2026-09-26m chain_step4 拆分 + 择吉破日黑箱
+
+- chain_step4.py（1313 行）→ 门面 + chain_step4_{changes,patterns}.py；金标准不变。
+- 择吉：ZJ022 补「破」日规则应用黑箱（期望由 verdicts 宜忌表独立推出）；holdout 100%（n=6）。
+
 ## 2026-09-26l chain_step5 按职责拆分（零漂移）
 
 - chain_step5.py（1949 行）→ 门面 step5_synthesize + chain_step5_{dates,timing,conf,yp}.py。

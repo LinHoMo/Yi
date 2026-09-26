@@ -3,6 +3,11 @@
 仓库级变更登记（跨科 / 内核 / 口径 / 架构）。学科内细节见各科 `CHANGELOG.md`。
 规则：指标口径任何变动（计分方式、词典、缺失字段处理）必须在此登记，否则分数不可比（`AGENTS.md` §四.4）。
 
+### 2026-09-26m chain_step4 拆分 + 择吉规则黑箱
+
+- 六爻 chain_step4 按职责拆 changes/patterns，零指纹漂移。
+- 择吉 holdout 补破日（ZJ022）：规则应用黑箱，期望独立于 analyze。
+
 ### 2026-09-26k 架构：classical_rules 拆分 + 巨石看门狗
 
 - 六爻 `classical_rules` 3091 行按域拆 hidden/patterns/effects，门面保持 API；零指纹漂移。
