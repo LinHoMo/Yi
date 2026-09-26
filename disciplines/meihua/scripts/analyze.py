@@ -351,6 +351,9 @@ def _synthesize(relation: str, helpers: list, hinderers: list,
     # 变卦定终局（《体用总诀》：变乃末后之期）
     change = "变卦生体" if any(h["位"].startswith("变卦") for h in helpers) else \
              ("变卦克体" if any(h["位"].startswith("变卦") for h in hinderers) else "变卦比和/无关")
+    # 末后克体：体用虽和，终局受克则不得言吉（《卷二·体用总诀》变乃末后之期）
+    if change == "变卦克体" and direction in ("吉", "平吉"):
+        direction, tone = "平凶", "体用虽顺，然变卦克体（末后之期受克），终局偏向有阻"
     result = {
         "方向": direction,
         "说明": tone,

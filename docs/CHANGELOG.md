@@ -3,6 +3,31 @@
 仓库级变更登记（跨科 / 内核 / 口径 / 架构）。学科内细节见各科 `CHANGELOG.md`。
 规则：指标口径任何变动（计分方式、词典、缺失字段处理）必须在此登记，否则分数不可比（`AGENTS.md` §四.4）。
 
+### 2026-09-26m chain_step4 拆分 + 择吉规则黑箱
+
+- 六爻 chain_step4 按职责拆 changes/patterns，零指纹漂移。
+- 择吉 holdout 补破日（ZJ022）：规则应用黑箱，期望独立于 analyze。
+
+### 2026-09-26k 架构：classical_rules 拆分 + 巨石看门狗
+
+- 六爻 `classical_rules` 3091 行按域拆 hidden/patterns/effects，门面保持 API；零指纹漂移。
+- 根结构检查：学科 `.py` >2200 行失败，防再堆巨石。
+
+### 2026-09-26i 命科起运岁数 + 应期相对窗评分
+
+- **命科**：大运起运岁改「距下一节气日数 / 3」（`DAYS_PER_LUCK_YEAR`），不再写死 3 岁；仍标 approximate。金标准 `91f64b857cc6597e`。
+- **六爻评分口径**：strict 相对应期窗走 `RHYTHM_PAIRS` 语义对齐（0.7×）；holdout 85.7→87.5。详见六爻 CHANGELOG 2026-09-26i。
+
+### 2026-09-26h 深度优化：命科机械推演 + 外部方向集 + 梅花变克体终局
+
+- **命科**：强弱/格局/喜用神/大运 8 步（`ming/scripts/pattern.py`）；6 样例指纹 `189d8db4f1800414`。
+  合参 `normalize_ming` 带 strength/pattern；**仍无命运吉凶总断**。
+- **六爻外部集**：新增 `wikisource_direction` n=36（有吉凶无验期，应期 N/A），strict 对齐分 72.2%。
+- **梅花**：holdout 扩至 13（MH019–023，《梅花易数》卷二/卷三）；通则「变卦克体→终局不言吉」
+  （《体用总诀》变乃末后之期）；tune/holdout 100%（n=10/13）。
+- **择吉**：案例与断语表整理，holdout 100%（n=5）不变。
+- **星煞**仍不进主分（无古籍定性表不臆断）；应期相对表述走 `RHYTHM_PAIRS` 语义对齐。
+
 ### 2026-09-26g 易优化包：MCP narrate/render + eval 入口 + 命科骨架 + 病药入 step5
 
 - **MCP**：新增 `liuyao.narrate` / `liuyao.render`（复用四段契约，不另写推演）；api_spec 同步。

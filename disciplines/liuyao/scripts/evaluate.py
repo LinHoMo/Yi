@@ -231,7 +231,28 @@ def score_case(eng: dict, exp: dict, model: str) -> dict:
         rank = next((i + 1 for i, ch in enumerate(offered) if needed and ch in needed), None)
         if not needed:
             hit = x_yq in probe
-            dims["yingqi"] = (w if hit else 0, w, "字面命中" if hit else f"未对齐({x_yq})")
+            # 相对窗：有锚日则换算绝对日窗比对引擎日期；否则节奏语义对齐
+            from yingqi_windows import relative_window, resolve_case_anchor, date_in_window
+            win = relative_window(x_yq)
+            anchor = resolve_case_anchor((exp.get("input") or {}), exp) if isinstance(exp, dict) else None
+            abs_hit = False
+            if win and anchor:
+                lo, hi, label = win
+                dates = [str(d.get("date") if isinstance(d, dict) else d)
+                         for d in (eng.get("yingqi_dates") or [])]
+                abs_hit = any(date_in_window(anchor, d, lo, hi) for d in dates if d)
+            rhythm = any(
+                any(k in x_yq for k in xk) and any(k in probe for k in ek)
+                for xk, ek in RHYTHM_PAIRS
+            )
+            if abs_hit:
+                dims["yingqi"] = (w, w, "绝对日窗命中")
+            elif hit:
+                dims["yingqi"] = (w, w, "字面命中")
+            elif rhythm:
+                dims["yingqi"] = (int(w * 0.7), w, "相对窗节奏语义对齐")
+            else:
+                dims["yingqi"] = (0, w, f"未对齐({x_yq})")
         elif rank == 1:
             dims["yingqi"] = (w, w, f"主应期命中（{exp_unit}级）")
         elif rank == 2:
@@ -332,7 +353,7 @@ def main() -> int:
     force_utf8_stdio()
     ap = argparse.ArgumentParser(description="六爻古籍案例对齐评分（非现实预测命中率）")
     ap.add_argument("--split", choices=["tune", "holdout", "yingqi_holdout",
-                                        "wikisource_holdout", "all"],
+                                        "wikisource_holdout", "wikisource_direction", "all"],
                     default="all")
     ap.add_argument("--ids", nargs="*", help="指定案例 ID，优先于 --split")
     ap.add_argument("--stage", choices=["run", "score", "all"], default="all")

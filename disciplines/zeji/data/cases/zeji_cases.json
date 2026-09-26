@@ -8,7 +8,9 @@
       "activity": "嫁娶",
       "question": "9月23日结婚嫁娶吉否",
       "split": "tune",
-      "input": {"date": "2026-09-23"},
+      "input": {
+        "date": "2026-09-23"
+      },
       "expected": {
         "jian_chu": "平",
         "day_god": "司命",
@@ -27,7 +29,9 @@
       "activity": "嫁娶",
       "question": "9月24日结婚嫁娶吉否",
       "split": "tune",
-      "input": {"date": "2026-09-24"},
+      "input": {
+        "date": "2026-09-24"
+      },
       "expected": {
         "jian_chu": "定",
         "day_god": "勾陈",
@@ -46,7 +50,9 @@
       "activity": "嫁娶",
       "question": "9月25日结婚嫁娶吉否",
       "split": "tune",
-      "input": {"date": "2026-09-25"},
+      "input": {
+        "date": "2026-09-25"
+      },
       "expected": {
         "jian_chu": "执",
         "day_god": "青龙",
@@ -65,7 +71,9 @@
       "activity": "开市",
       "question": "9月28日开张营业吉否",
       "split": "tune",
-      "input": {"date": "2026-09-28"},
+      "input": {
+        "date": "2026-09-28"
+      },
       "expected": {
         "jian_chu": "成",
         "day_god": "朱雀",
@@ -84,7 +92,9 @@
       "activity": "纳财",
       "question": "9月29日签约收款吉利否",
       "split": "tune",
-      "input": {"date": "2026-09-29"},
+      "input": {
+        "date": "2026-09-29"
+      },
       "expected": {
         "jian_chu": "收",
         "day_god": "金匮",
@@ -103,7 +113,9 @@
       "activity": "开市",
       "question": "9月30日开张营业吉否",
       "split": "tune",
-      "input": {"date": "2026-09-30"},
+      "input": {
+        "date": "2026-09-30"
+      },
       "expected": {
         "jian_chu": "开",
         "day_god": "天德",
@@ -122,7 +134,9 @@
       "activity": "安葬",
       "question": "9月30日安葬先人吉否",
       "split": "tune",
-      "input": {"date": "2026-09-30"},
+      "input": {
+        "date": "2026-09-30"
+      },
       "expected": {
         "jian_chu": "开",
         "day_god": "天德",
@@ -141,7 +155,9 @@
       "activity": "出行",
       "question": "9月27日长途出行吉否",
       "split": "tune",
-      "input": {"date": "2026-09-27"},
+      "input": {
+        "date": "2026-09-27"
+      },
       "expected": {
         "jian_chu": "危",
         "day_god": "天刑",
@@ -160,7 +176,9 @@
       "activity": "祭祀",
       "question": "9月22日祭祀祈福吉否",
       "split": "tune",
-      "input": {"date": "2026-09-22"},
+      "input": {
+        "date": "2026-09-22"
+      },
       "expected": {
         "jian_chu": "满",
         "day_god": "玄武",
@@ -179,7 +197,9 @@
       "activity": "开市",
       "question": "9月21日开张营业吉否",
       "split": "tune",
-      "input": {"date": "2026-09-21"},
+      "input": {
+        "date": "2026-09-21"
+      },
       "expected": {
         "jian_chu": "除",
         "day_god": "天牢",
@@ -198,7 +218,9 @@
       "activity": "开市",
       "question": "10月1日开张营业吉否",
       "split": "holdout",
-      "input": {"date": "2026-10-01"},
+      "input": {
+        "date": "2026-10-01"
+      },
       "expected": {
         "jian_chu": "闭",
         "day_god": "白虎",
@@ -217,7 +239,9 @@
       "activity": "安葬",
       "question": "10月1日安葬先人吉否",
       "split": "holdout",
-      "input": {"date": "2026-10-01"},
+      "input": {
+        "date": "2026-10-01"
+      },
       "expected": {
         "jian_chu": "闭",
         "day_god": "白虎",
@@ -236,7 +260,9 @@
       "activity": "祭祀",
       "question": "10月8日祭祀祈福吉否",
       "split": "holdout",
-      "input": {"date": "2026-10-08"},
+      "input": {
+        "date": "2026-10-08"
+      },
       "expected": {
         "jian_chu": "执",
         "day_god": "勾陈",
@@ -255,7 +281,9 @@
       "activity": "纳财",
       "question": "10月13日签约收款吉利否",
       "split": "holdout",
-      "input": {"date": "2026-10-13"},
+      "input": {
+        "date": "2026-10-13"
+      },
       "expected": {
         "jian_chu": "开",
         "day_god": "金匮",
@@ -274,7 +302,9 @@
       "activity": "出行",
       "question": "10月15日长途出行吉否",
       "split": "holdout",
-      "input": {"date": "2026-10-15"},
+      "input": {
+        "date": "2026-10-15"
+      },
       "expected": {
         "jian_chu": "建",
         "day_god": "白虎",
@@ -293,7 +323,9 @@
       "activity": "通用",
       "question": "",
       "split": "excluded",
-      "input": {"date": "1899-12-31"},
+      "input": {
+        "date": "1899-12-31"
+      },
       "expected": {},
       "note": "公历 1899-12-31 早于农历表起点（1900-01-31 起 150 年），solar_to_lunar 返回 None，起局异常。此类案例不可运行，不参与评分与指纹。"
     },
@@ -303,9 +335,33 @@
       "activity": "通用",
       "question": "",
       "split": "excluded",
-      "input": {"date": "2051-01-01"},
+      "input": {
+        "date": "2051-01-01"
+      },
       "expected": {},
       "note": "公历 2051-01-01 超出农历表覆盖范围（1900-01-31 起 150 年），起局异常。不可运行，不参与评分与指纹。"
+    },
+    {
+      "id": "ZJ022",
+      "source": "《协纪辨方书》建除/黄黑道/星宿宜忌表规则应用（非古籍日例应验）",
+      "activity": "动土",
+      "question": "2026-10-09动土吉否",
+      "split": "holdout",
+      "input": {
+        "date": "2026-10-09"
+      },
+      "expected": {
+        "jian_chu": "破",
+        "day_god": "青龙",
+        "huang_dao": true,
+        "xiu": "鬼",
+        "yi_hit": false,
+        "ji_hit": true,
+        "verdict": "平",
+        "score": 0.0
+      },
+      "note": "补齐建除「破」覆盖。期望由 verdicts.json 宜忌表+verdict_rule 独立推出，不读 analyze 输出。"
     }
-  ]
+  ],
+  "expansion_path": "仓库内暂无带日期的古籍宜忌应验全文；holdout 为「机械因子 × 建除/黄黑道/星宿宜忌表」规则应用黑箱，期望独立于 analyze。"
 }

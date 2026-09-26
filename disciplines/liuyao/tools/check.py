@@ -273,7 +273,8 @@ def main() -> int:
         # 外部验证集：只报数、不设门槛。n 太小时设门槛只会逼人去过拟合它。
         print("\n[6] 外部验证集（未参与任何调参；只报数不设门槛）")
         for split, note in (("yingqi_holdout", "转写本，过六道自洽门"),
-                            ("wikisource_holdout", "维基文库原本，过纳甲/卦变/世应三方校验")):
+                            ("wikisource_holdout", "维基文库原本，过纳甲/卦变/世应三方校验"),
+                            ("wikisource_direction", "同书有吉凶无验期（应期 N/A，只评方向）")):
             ext = eval_metrics(split)
             if ext.get("error"):
                 print(f"  ! {split} 未跑成：{ext['error'][:200]}")

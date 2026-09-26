@@ -128,20 +128,29 @@ def normalize_liuyao(a: dict, *, at: str | None = None) -> dict:
 
 
 def normalize_ming(a: dict, *, at: str | None = None) -> dict:
-    """命科骨架：只归一化机械因子，方向固定平（推演未实现，不编吉凶）。"""
+    """命科：机械强弱/格局/大运入记录；方向不编吉凶，固定平。"""
     cs = a.get("chart_summary") or {}
+    con = a.get("conclusion") or {}
     birth = a.get("birth") or {}
     pillars = cs.get("四柱") or {}
     gz = " ".join(str(pillars.get(k) or "—") for k in ("year", "month", "day", "hour"))
+    strength = con.get("strength") or cs.get("强弱") or ""
+    pattern = con.get("pattern") or cs.get("格局") or ""
+    useful = "、".join(con.get("useful_gods") or [])
     return {
         "discipline": "ming",
         "asked": (a.get("question") or "").strip() or "命局排盘",
         "at": birth.get("datetime") or _at_of(a, at) or "",
-        "verdict": f"四柱 {gz}·推演未实现",
+        "verdict": f"四柱 {gz}·{strength}·{pattern}" + (f"·喜用{useful}" if useful else ""),
         "direction": "平",
         "timing": [],
         "based_on": _based_on(a),
-        "chart_summary": cs,
+        "chart_summary": {
+            **cs,
+            "strength": strength,
+            "pattern": pattern,
+            "useful_gods": con.get("useful_gods") or [],
+        },
     }
 
 

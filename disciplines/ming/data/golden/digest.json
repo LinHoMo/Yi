@@ -1,4 +1,5 @@
 {
-  "fingerprint": "bc38ce82eef72dbf",
-  "reason": "M5 骨架初始指纹"
+  "fingerprint": "91f64b857cc6597e",
+  "reason": "起运岁数改按距节日数/DAYS_PER_LUCK_YEAR",
+  "n_samples": 6
 }

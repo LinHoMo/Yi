@@ -334,7 +334,7 @@ def main() -> int:
     heads = {m.start() for pat in (HEAD, HEAD_NO_MONTH) for m in pat.finditer(raw)}
     print(f"爻图块 {len(blocks)} 个；引例头 {len(heads)} 处")
 
-    kept, dropped = [], []
+    kept, dropped, dir_only = [], [], []
     stats = {"no_head": 0, "bad_hex_name": 0, "no_day": 0, "no_month": 0, "few_lines": 0,
              "validate_fail": 0, "no_yingqi": 0, "dup": 0}
     partial = {"verdict_missing": 0}   # 仍可评应期，只是缺吉凶对照
@@ -459,6 +459,28 @@ def main() -> int:
         if not yq:
             stats["no_yingqi"] += 1
             dropped.append((blk["start"], "no_yingqi", clause))
+            # 有明确吉凶、无可靠验期 → 可入「仅方向」集（应期 N/A，不造假基准）
+            if verdict:
+                dir_only.append({
+                    "id": f"WSD{len(dir_only) + 1:03d}",
+                    "source": "《增刪卜易》（维基文库原本）",
+                    "topic": (q or "占事").strip()[:24],
+                    "question": (q or "").strip() or f"占{orig}卦事",
+                    "input": {"date": f"{month_branch}月{day_gz}日",
+                              "question": (q or "").strip()},
+                    "hexagram": {"original": orig, "changed": changed,
+                                 "moving": info.get("moving") or [],
+                                 "palace": info.get("palace", ""),
+                                 "generation": info.get("generation", "")},
+                    "expected": {"verdict": verdict, "use_god": "",
+                                 "use_god_branch": "", "use_god_position": "",
+                                 "yingqi": "", "yingqi_branches": [],
+                                 "detail": clause},
+                    "provenance": {"page": PAGE,
+                                   "sha256_head": hashlib.sha256(raw.encode("utf-8")).hexdigest()[:12],
+                                   "offset": blk["start"], "wikitext_head": m.group(0)[:80]},
+                    "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A",
+                })
             continue
         if not verdict:
             # 没有明确吉凶不等于坏案例：应期判别力只看应支名次，不看吉凶。
@@ -502,6 +524,7 @@ def main() -> int:
     print("剔除计数：" + json.dumps(stats, ensure_ascii=False))
     print("入集但缺对照：" + json.dumps(partial, ensure_ascii=False))
     print(f"可入外部集 {len(kept)} 例")
+    print(f"仅方向集（有吉凶无验期） {len(dir_only)} 例")
     # 字段覆盖也要报数：某关键字只写了另一种异体（爲/為），抽取会静默全空，
     # 报表上却像"这一维没测到"而不是"这个模式根本匹配不上"。
     filled = {f: sum(1 for c in kept if c["expected"].get(f))
@@ -528,17 +551,19 @@ def main() -> int:
             "retrieved": json.loads(PROV.read_text(encoding="utf-8"))["retrieved"] if PROV.exists() else "",
             "sha256": json.loads(PROV.read_text(encoding="utf-8"))["sha256"] if PROV.exists() else "",
             "total_cases": len(kept),
+            "direction_only_cases": len(dir_only),
             "usage": "永不参与调参的外部验证集；评分前请先看 expected 是否需人工复核",
             "dropped": stats,
             "partial": partial,
         },
-        "cases": kept}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        "cases": kept + dir_only}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"写入 {OUT.relative_to(DISC.parent.parent)}")
 
     sp = json.loads(SPLITS.read_text(encoding="utf-8")) if SPLITS.exists() else {}
     sp["wikisource_holdout"] = [c["id"] for c in kept]
+    sp["wikisource_direction"] = [c["id"] for c in dir_only]
     SPLITS.write_text(json.dumps(sp, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print("case_splits.json 已登记 wikisource_holdout")
+    print("case_splits.json 已登记 wikisource_holdout / wikisource_direction")
     return 0
 
 

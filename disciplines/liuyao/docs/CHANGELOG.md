@@ -13,6 +13,46 @@
 - **分数/指纹**：无变化（tune 93.9 / holdout 85.7 / 金标准 `65e8331c80c4f06a`）。
 - 历史条目里对 `visualize_shap`→`factor_waterfall` 的记载仍保留；后者本轮已删。
 
+## 2026-09-26m chain_step4 拆分 + 择吉破日黑箱
+
+- chain_step4.py（1313 行）→ 门面 + chain_step4_{changes,patterns}.py；金标准不变。
+- 择吉：ZJ022 补「破」日规则应用黑箱（期望由 verdicts 宜忌表独立推出）；holdout 100%（n=6）。
+
+## 2026-09-26l chain_step5 按职责拆分（零漂移）
+
+- chain_step5.py（1949 行）→ 门面 step5_synthesize + chain_step5_{dates,timing,conf,yp}.py。
+- 对外 API（thinking_chain 调 step5_synthesize）不变；金标准 5c6e77ee253b0ddd 不变。
+
+## 2026-09-26k M1b 收尾：classical_rules 按域拆分（零漂移）
+
+- `classical_rules.py`（3091 行）→ 门面 + `classical_rules_{hidden,patterns,effects}.py`。
+- 对外 API 不变（`classical_analysis` 仍 from classical_rules import …）。
+- 金标准指纹 `5c6e77ee253b0ddd` **不变**；tune/holdout/外部集读数不变。
+- 根 `tools/check.py` 结构门新增巨石看门狗（单文件 >2200 行即失败）。
+
+## 2026-09-26j 金标准补 narrate 文案门 + 应期绝对日窗
+
+- **金标准**：抽样子集（每 24 卦静盘）记 `narrate_sha`/`narrate_len`，堵「文案搬家全盲」缺口；
+  新指纹 `5c6e77ee253b0ddd`（含文案哈希）。纯结构改动若改正文会被拦住。
+- **应期**：`yingqi_windows.py`——基准为次日/当日/年内/月余且案例有公历锚日时，
+  换算绝对日窗比对 `yingqi_dates`；无锚日仍走 RHYTHM 语义。holdout 87.5 不变。
+
+## 2026-09-26i 应期相对窗语义对齐（strict 口径）
+
+- **口径变动**：strict 下基准无地支（`次日`/`年内`/`月余`/`当日`…）时，由「字面命中否则 0」改为：
+  字面命中→满分；`RHYTHM_PAIRS` 节奏语义对齐→0.7×权重；否则 0。
+  旧口径把相对表述当「未对齐」，低估引擎；**与此前 strict 分数不可比**。
+- **读数**：holdout 对齐分 **85.7→87.5**（n=12）；tune 93.9、wikisource 57.3/72.2 不变。
+- 仍不做「次日→绝对日」换算（缺事件锚日时不造假）。
+
+## 2026-09-26h 外部集扩样：wikisource_direction（有吉凶无验期）
+
+- `fetch_wikisource_cases` 新增**仅方向集**：无可靠验期但吉凶明确的 36 例（`WSD001–036`），
+  expected.yingqi 留空 → evaluate 该维 **N/A**，不造假基准。
+- 分数：`wikisource_direction` strict 对齐分 **72.2%**（n=36，verdict 26/36）；
+  应期维全 N/A。与 `wikisource_holdout`（n=35，应期 top-1 20%）分列，永不调参。
+- 口径：方向维与应期维分开报 n；禁止把无验期例当应期考卷。
+
 ## 2026-09-26g 病药进 step5（有界加减）+ 否证记录
 
 - `chain_step5` 调用 `evaluate_bing_yao`，按 illness/medicine 码有界加减：

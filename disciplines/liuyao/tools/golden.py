@@ -56,7 +56,7 @@ def fingerprint() -> list[dict]:
                     s5 = inner.get("step5_synthesis", {}) or {}
                     sel = s2.get("selected_use_god") or {}
                     t = h["divination_time"]
-                    rows.append({
+                    row = {
                         "case": f"{name}|{moving}|{when}|{q}",
                         "pillars": f"{t['year_stem_branch']}-{t['month_stem_branch']}-{t['day_stem_branch']}-{t.get('hour_stem_branch', '')}",
                         "lines": [
@@ -79,7 +79,19 @@ def fingerprint() -> list[dict]:
                                         for k, v in sorted(adv.items())},
                         "patterns": [t2 for t2 in (inner.get("reasoning_chain") or [])
                                      if isinstance(t2, str) and t2.startswith("[格局")],
-                    })
+                    }
+                    # 文案门：抽样子集记 narrate 文案哈希（HANDOFF：指纹原不含 narrate）
+                    if i % 24 == 0 and not moving:
+                        try:
+                            from analyze import analyze as _analyze
+                            from narrate import narrate as _narrate
+                            a = _analyze(h)
+                            text = _narrate(a)
+                            row["narrate_sha"] = hashlib.sha256(text.encode("utf-8")).hexdigest()[:12]
+                            row["narrate_len"] = len(text)
+                        except Exception as nex:
+                            row["narrate_sha"] = f"ERR:{type(nex).__name__}"
+                    rows.append(row)
                 except Exception as exc:
                     rows.append({"case": f"{name}|{moving}|{when}|{q}",
                                  "error": f"{type(exc).__name__}: {exc}"})
@@ -120,7 +132,7 @@ def main() -> int:
         log.append({"from": prior.get("digest"), "to": digest,
                     "date": datetime.now().strftime("%Y-%m-%d"), "reason": reason.strip()})
         DIGEST.write_text(json.dumps({
-            "_meta": {"what": "金标准指纹基线（排盘+思维链+分析层逐字段）",
+            "_meta": {"what": "金标准指纹基线（排盘+思维链+分析层逐字段；抽样含 narrate 文案哈希）",
                       "how": "改动引擎行为后跑 python tools/golden.py capture \"理由\"；"
                              "无理由不落盘，历次漂移见 drift_log",
                       "cases": len(rows)},

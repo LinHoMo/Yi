@@ -1,10 +1,10 @@
 {
   "_meta": {
-    "what": "金标准指纹基线（排盘+思维链+分析层逐字段）",
+    "what": "金标准指纹基线（排盘+思维链+分析层逐字段；抽样含 narrate 文案哈希）",
     "how": "改动引擎行为后跑 python tools/golden.py capture \"理由\"；无理由不落盘，历次漂移见 drift_log",
     "cases": 288
   },
-  "digest": "a1a7d34c3532f2f2",
+  "digest": "5c6e77ee253b0ddd",
   "drift_log": [
     {
       "from": "bb23797bf6044b95",
@@ -41,6 +41,12 @@
       "to": "a1a7d34c3532f2f2",
       "date": "2026-09-26",
       "reason": "step5 接入病药结构化加减（有界）；应期排序不纳入药码（holdout 否证）"
+    },
+    {
+      "from": "a1a7d34c3532f2f2",
+      "to": "5c6e77ee253b0ddd",
+      "date": "2026-09-26",
+      "reason": "金标准抽样补 narrate 文案哈希（HANDOFF 文案搬家盲区）"
     }
   ]
 }
