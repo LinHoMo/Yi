@@ -8,7 +8,8 @@
     "step5_confidence": "置信度文字说明",
     "step5_yingqi_texts": "应期节奏说明",
     "classical_interpretations": "classical_rules 古典格局判据长句（游魂/六合/反吟/十二长生/随官入墓/卦身等）",
-    "classical_rules_notes": "classical_rules 可交付断语（summary/meaning/description 与 reasons 条目）。text 与代码原字面量一字不差；地支/五行符号与 docstring 留在代码。"
+    "classical_rules_notes": "classical_rules 可交付断语（summary/meaning/description 与 reasons 条目）。text 与代码原字面量一字不差；地支/五行符号与 docstring 留在代码。",
+    "classical_rules_templates": "classical_rules 拼装句整句模板。{0}{1}… 为 ctpl 位置参数。"
   },
   "step5_classical_notes": {
     "travel_use_sheng_world": {
@@ -1110,6 +1111,396 @@
     },
     "cr_051": {
       "text": "无特殊格局"
+    }
+  },
+  "classical_rules_templates": {
+    "crt_001": {
+      "text": "检测到随官入墓格局（{0}）：{1}。",
+      "template": true
+    },
+    "crt_002": {
+      "text": "{0}成{1}局，位置{2}/{3}/{4}，构成方式：{5}",
+      "template": true
+    },
+    "crt_003": {
+      "text": "用神{0}（{1}）处{2}地，原神{3}发动来生，原神{4}有力，绝处逢生，凶中反吉",
+      "template": true
+    },
+    "crt_004": {
+      "text": "卦身在{0}，代表事体核心与根基",
+      "template": true
+    },
+    "crt_005": {
+      "text": "月建{0}({1})，日辰{2}({3})",
+      "template": true
+    },
+    "crt_006": {
+      "text": "当月旺衰：{0}",
+      "template": true
+    },
+    "crt_007": {
+      "text": "六破{0}处，皆主破损不遂",
+      "template": true
+    },
+    "crt_008": {
+      "text": "日辰{0}伏神",
+      "template": true
+    },
+    "crt_009": {
+      "text": "月建{0}伏神",
+      "template": true
+    },
+    "crt_010": {
+      "text": "飞神{0}",
+      "template": true
+    },
+    "crt_011": {
+      "text": "伏神{0}",
+      "template": true
+    },
+    "crt_012": {
+      "text": "伏神入墓({0})",
+      "template": true
+    },
+    "crt_013": {
+      "text": "{0}伏藏（{1}）飞神{2}({3})→ {4}",
+      "template": true
+    },
+    "crt_014": {
+      "text": "{0}卦——{1}。事多{2}",
+      "template": true
+    },
+    "crt_015": {
+      "text": "合局入墓于{0}，局力不显",
+      "template": true
+    },
+    "crt_016": {
+      "text": "。{0}力大增",
+      "template": true
+    },
+    "crt_017": {
+      "text": "。⚠破局：{0}",
+      "template": true
+    },
+    "crt_018": {
+      "text": "{0}({1}→{2})化进神，力量递增，事态向前发展顺利",
+      "template": true
+    },
+    "crt_019": {
+      "text": "得力之爻：{0}",
+      "template": true
+    },
+    "crt_020": {
+      "text": "无力之爻：{0}",
+      "template": true
+    },
+    "crt_021": {
+      "text": "用神{0}（{1}）处{2}地，原神{3}发动来生，但原神{4}无力，虽生而力微",
+      "template": true
+    },
+    "crt_022": {
+      "text": "位置{0}与{1}（{2}与{3}）六合",
+      "template": true
+    },
+    "crt_023": {
+      "text": "反吟：{0}处地支相冲 ({1})",
+      "template": true
+    },
+    "crt_024": {
+      "text": "伏吟：{0}伏吟",
+      "template": true
+    },
+    "crt_025": {
+      "text": "卦身在{0}，{1}坐镇，本位安定",
+      "template": true
+    },
+    "crt_026": {
+      "text": "旺相之爻：{0}",
+      "template": true
+    },
+    "crt_027": {
+      "text": "休囚之爻：{0}",
+      "template": true
+    },
+    "crt_028": {
+      "text": "（其中{0}处合中带破，恩中有怨）",
+      "template": true
+    },
+    "crt_029": {
+      "text": "官鬼({0})未入墓或世/用未随鬼入墓，无随官入墓凶象",
+      "template": true
+    },
+    "crt_030": {
+      "text": "日辰{0}({1})生伏神{2}({3})",
+      "template": true
+    },
+    "crt_031": {
+      "text": "月建{0}({1})生伏神{2}",
+      "template": true
+    },
+    "crt_032": {
+      "text": "日冲飞神{0}（{1}冲{2}，冲开）",
+      "template": true
+    },
+    "crt_033": {
+      "text": "月冲飞神{0}（{1}冲{2}）",
+      "template": true
+    },
+    "crt_034": {
+      "text": "飞神{0}旬空",
+      "template": true
+    },
+    "crt_035": {
+      "text": "飞神{0}月破",
+      "template": true
+    },
+    "crt_036": {
+      "text": "飞神{0}休囚({1})",
+      "template": true
+    },
+    "crt_037": {
+      "text": "日辰{0}克飞神{1}",
+      "template": true
+    },
+    "crt_038": {
+      "text": "月建{0}克飞神{1}",
+      "template": true
+    },
+    "crt_039": {
+      "text": "伏神{0}旺相",
+      "template": true
+    },
+    "crt_040": {
+      "text": "伏神{0}被月日双克",
+      "template": true
+    },
+    "crt_041": {
+      "text": "伏神{0}入墓于{1}",
+      "template": true
+    },
+    "crt_042": {
+      "text": "伏神{0}逢绝地(日辰{1})",
+      "template": true
+    },
+    "crt_043": {
+      "text": "伏神{0}旬空",
+      "template": true
+    },
+    "crt_044": {
+      "text": "伏神{0}月破",
+      "template": true
+    },
+    "crt_045": {
+      "text": "伏神{0}休囚无气({1})",
+      "template": true
+    },
+    "crt_046": {
+      "text": "{0}伏{1}于{2}之下，飞神{3}，伏神{4}，得出评分={5}({6})",
+      "template": true
+    },
+    "crt_047": {
+      "text": "{0}({1}旬空)被日辰{2}冲，冲空则实，此爻由虚转实",
+      "template": true
+    },
+    "crt_048": {
+      "text": "{0}被日冲，合局不稳",
+      "template": true
+    },
+    "crt_049": {
+      "text": "{0}({1}→{2})化退神，力量递减，事态逐渐后退/消退",
+      "template": true
+    },
+    "crt_050": {
+      "text": "用神{0}（{1}）处{2}地，原神{3}虽现于卦中但未发动，待时而动",
+      "template": true
+    },
+    "crt_051": {
+      "text": "位置{0}与{1}（{2}与{3}）六冲",
+      "template": true
+    },
+    "crt_052": {
+      "text": "位置{0}与{1}（{2}与{3}）无合冲",
+      "template": true
+    },
+    "crt_053": {
+      "text": "月建({0})",
+      "template": true
+    },
+    "crt_054": {
+      "text": "日辰({0})",
+      "template": true
+    },
+    "crt_055": {
+      "text": "{0}：飞{1}({2})与伏{3}({4})：{5}，{6}",
+      "template": true
+    },
+    "crt_056": {
+      "text": "日辰{0}与伏神同五行",
+      "template": true
+    },
+    "crt_057": {
+      "text": "月建{0}与伏神同五行",
+      "template": true
+    },
+    "crt_058": {
+      "text": "伏神{0}有气",
+      "template": true
+    },
+    "crt_059": {
+      "text": "飞神{0}({1})旺相克伏神{2}({3})",
+      "template": true
+    },
+    "crt_060": {
+      "text": "{0}({1})静爻被日辰{2}冲，旺相暗动，其力约当明动七成",
+      "template": true
+    },
+    "crt_061": {
+      "text": "{0}({1})既破于月建又冲于日辰，力量极弱",
+      "template": true
+    },
+    "crt_062": {
+      "text": "{0}({1})为月破之爻",
+      "template": true
+    },
+    "crt_063": {
+      "text": "但得日辰{0}生扶，尚可补救",
+      "template": true
+    },
+    "crt_064": {
+      "text": "{0}被月冲，合局有隙",
+      "template": true
+    },
+    "crt_065": {
+      "text": "{0}爻动+{1}暗动+{2}静",
+      "template": true
+    },
+    "crt_066": {
+      "text": "{0}({1}→{2})回头合（合住事态胶着）",
+      "template": true
+    },
+    "crt_067": {
+      "text": "用神{0}（{1}）处{2}地，原神{3}不现于卦中，绝地无救",
+      "template": true
+    },
+    "crt_068": {
+      "text": "用神{0}（{1}）处{2}地，原神{3}虽现但{4}，无力救援，绝地无救",
+      "template": true
+    },
+    "crt_069": {
+      "text": "本卦有六合又有六冲（合{0}对、冲{1}对），",
+      "template": true
+    },
+    "crt_070": {
+      "text": "爻{0}",
+      "template": true
+    },
+    "crt_071": {
+      "text": "{0}（完整三刑）：{1}刑{2}刑{3}，三字全见于{4}，极凶之象",
+      "template": true
+    },
+    "crt_072": {
+      "text": "无礼之刑（成刑）：{0}刑{1}，见于{2}，主无礼刑伤、恩中之怨",
+      "template": true
+    },
+    "crt_073": {
+      "text": "无礼之刑（待刑）：{0}、{1}月日相见，刑伤未全，主微咎",
+      "template": true
+    },
+    "crt_074": {
+      "text": "自刑：{0}出现{1}次（{2}），自刑主自我纠结、自作自受、内心矛盾",
+      "template": true
+    },
+    "crt_075": {
+      "text": "官鬼{0}({1}·{2})入墓于{3}（{4}）",
+      "template": true
+    },
+    "crt_076": {
+      "text": "世爻{0}临官鬼{1}之墓{2}，自身随鬼入墓，凶象显著",
+      "template": true
+    },
+    "crt_077": {
+      "text": "用神{0}({1})临官鬼{2}之墓{3}，用神被鬼所困，极凶",
+      "template": true
+    },
+    "crt_078": {
+      "text": "官鬼({0})与世/用神同墓于{1}，鬼用同墓，灾难性凶象",
+      "template": true
+    },
+    "crt_079": {
+      "text": "{0}({1})静爻被日辰{2}冲，中和暗动，力量中等",
+      "template": true
+    },
+    "crt_080": {
+      "text": "{0}合{1}局，由日辰{2}或月建{3}补齐，力量稍逊但仍有合力",
+      "template": true
+    },
+    "crt_081": {
+      "text": "{0}({1}→{2})回头克（大凶）",
+      "template": true
+    },
+    "crt_082": {
+      "text": "本卦有{0}对合{1}，",
+      "template": true
+    },
+    "crt_083": {
+      "text": "{0}：{1}→{2}，本支被冲，反复变动之象",
+      "template": true
+    },
+    "crt_084": {
+      "text": "{0}（催刑）：卦内{1}，月日{2}补足成刑，刑伤力减半",
+      "template": true
+    },
+    "crt_085": {
+      "text": "{0}{1}爻{2}与{3}{4}{5}成{6}，{7}",
+      "template": true
+    },
+    "crt_086": {
+      "text": "官鬼{0}({1})动而化墓({2})，鬼动入墓，凶象加剧",
+      "template": true
+    },
+    "crt_087": {
+      "text": "{0}({1})静爻被日辰{2}冲，休囚暗动，力微短暂",
+      "template": true
+    },
+    "crt_088": {
+      "text": "{0}({1})静爻被日辰{2}冲，月休囚逢冲为日破，此爻彻底无用",
+      "template": true
+    },
+    "crt_089": {
+      "text": "。⚠破局：{0}",
+      "template": true
+    },
+    "crt_090": {
+      "text": "{0}({1}→{2})回头生（有救济）",
+      "template": true
+    },
+    "crt_091": {
+      "text": "本卦有{0}对冲，",
+      "template": true
+    },
+    "crt_092": {
+      "text": "{0}（待刑）：{1}、{2}相见，缺{3}，待月日逢{4}方成刑，目前刑伤未全，但有刑伤之象",
+      "template": true
+    },
+    "crt_093": {
+      "text": "{0}({1}→{2})化泄（力量消散）",
+      "template": true
+    },
+    "crt_094": {
+      "text": "{0}({1}→{2})不涉及进退神，需结合其他因素分析",
+      "template": true
+    },
+    "crt_095": {
+      "text": "日({0})",
+      "template": true
+    },
+    "crt_096": {
+      "text": "，{0}对冲",
+      "template": true
+    },
+    "crt_097": {
+      "text": "月({0})",
+      "template": true
     }
   }
 }

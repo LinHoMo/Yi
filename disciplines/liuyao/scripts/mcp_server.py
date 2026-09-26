@@ -8,6 +8,8 @@
 方法:
   - liuyao.divinate          — 完整排盘 + 断卦
   - liuyao.quick_reading     — 简化版，仅返回判语 + 推理链
+  - liuyao.narrate           — 唯一交付正文（复用 narrate 段）
+  - liuyao.render            — 报告导出 md/html（复用 render 段）
   - liuyao.validate_hexagram — 校验六爻排列是否符合古典规则
   - liuyao.get_classical_quotes — 按格局检索经典引文
 
@@ -384,6 +386,70 @@ def _method_get_classical_quotes(params: str | dict) -> list[dict]:
     return results
 
 
+def _analyze_from_params(params: dict) -> dict:
+    """MCP 参数 → analyze JSON（四段契约 chart→analyze，不另写推演）。"""
+    from chart import chart as chart_fn
+    from analyze import analyze as analyze_fn
+
+    method = params.get("method", "coin")
+    numbers = params.get("numbers")
+    yao = params.get("yao")
+    numbers_s = None
+    if numbers:
+        numbers_s = ",".join(str(int(x)) for x in numbers)
+    yao_s = None
+    if yao:
+        yao_s = ",".join(str(int(x)) for x in yao)
+    return analyze_fn(
+        chart_fn(
+            method,
+            params.get("question") or "占当前所问之事",
+            datetime_str=params.get("time"),
+            numbers=numbers_s,
+            yao=yao_s,
+            seed=params.get("seed"),
+            hour=params.get("hour"),
+            longitude=params.get("longitude"),
+        )
+    )
+
+
+def _method_narrate(params: dict) -> dict:
+    """
+    liuyao.narrate — 唯一交付正文
+
+    参数: 与 divinate 相同（question/method/time/seed/numbers/yao/…）
+    返回: {text, conclusion, chart_summary, use_god_basis}
+    """
+    from narrate import narrate as narrate_fn
+
+    a = _analyze_from_params(params)
+    chain = a.get("thinking_chain") or {}
+    s2 = chain.get("step2_use_god_identification") or {}
+    return {
+        "text": narrate_fn(a),
+        "conclusion": a.get("conclusion") or {},
+        "chart_summary": a.get("chart_summary") or {},
+        "use_god_basis": s2.get("use_god_basis") or "",
+    }
+
+
+def _method_render(params: dict) -> dict:
+    """
+    liuyao.render — 报告导出
+
+    参数: 与 divinate 相同；format: "md"|"html"（默认 md）
+    返回: {content, format}
+    """
+    from render import render as render_fn
+
+    fmt = params.get("format") or params.get("fmt") or "md"
+    if fmt not in ("md", "html"):
+        raise ValueError(f"format 仅支持 md|html，收到: {fmt}")
+    a = _analyze_from_params(params)
+    return {"content": render_fn(a, fmt=fmt), "format": fmt}
+
+
 # =============================================================================
 # 方法路由表
 # =============================================================================
@@ -391,6 +457,8 @@ def _method_get_classical_quotes(params: str | dict) -> list[dict]:
 METHODS = {
     "liuyao.divinate": _method_divinate,
     "liuyao.quick_reading": _method_quick_reading,
+    "liuyao.narrate": _method_narrate,
+    "liuyao.render": _method_render,
     "liuyao.validate_hexagram": _method_validate_hexagram,
     "liuyao.get_classical_quotes": _method_get_classical_quotes,
 }
@@ -399,6 +467,8 @@ METHODS = {
 METHOD_DESCRIPTIONS = {
     "liuyao.divinate": "完整排盘+断卦（支持 coin/time/number/manual 四种起卦方式）",
     "liuyao.quick_reading": "简化版断卦，仅返回判语+推理链",
+    "liuyao.narrate": "唯一交付正文（复用 narrate 段，不另写推演）",
+    "liuyao.render": "报告导出 md|html（复用 render 段单一出口）",
     "liuyao.validate_hexagram": "校验六爻排列 [6,7,8,9] 是否符合古典规则",
     "liuyao.get_classical_quotes": "按格局名称检索经典引文",
     "liuyao.list_methods": "（内建）列出所有可用方法的帮助信息",

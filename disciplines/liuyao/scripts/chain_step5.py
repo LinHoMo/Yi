@@ -583,6 +583,32 @@ def step5_synthesize(r: dict) -> dict:
             xing_he_conflict_override = True
 
     # ---------- 5.6: 综合评分 ----------
+    # 病药（《增删卜易》有病取药）：结构化 illness/medicine 只做有界加减，
+    # 吉凶主判仍在旺衰/动变/格局；星煞不进主分（仅 narrate 旁参）。
+    bing_yao_adjustment = 0.0
+    bing_yao_reasons: list[str] = []
+    bing_yao_panel: dict = {}
+    try:
+        from bing_yao_shensha import evaluate_bing_yao
+        bing_yao_panel = evaluate_bing_yao(step2_data, step3_data, None) or {}
+    except Exception:
+        bing_yao_panel = {}
+    _ill = set(bing_yao_panel.get("illness_codes") or [])
+    _med = set(bing_yao_panel.get("medicine_codes") or [])
+    # 重病（空+破+衰）无药：有界扣减
+    if {"void", "month_break", "weak"} <= _ill and not _med:
+        bing_yao_adjustment -= 0.4
+        bing_yao_reasons.append("病重无药")
+    elif _ill and not _med:
+        bing_yao_adjustment -= 0.2
+        bing_yao_reasons.append("有病无药")
+    elif _med and not _ill:
+        bing_yao_adjustment += 0.15
+        bing_yao_reasons.append("有药无病")
+    # 有药能解病：不再另加（避免双重计）
+    if bing_yao_adjustment:
+        classical_notes.append(f"病药：{'；'.join(bing_yao_reasons)}")
+
     final_score = (base_score + change_net_effect + hex_adjustment
                    + spirit_adjustment + pattern_adjustment
                    + dmb_adjustment + sb_adjustment
@@ -590,6 +616,7 @@ def step5_synthesize(r: dict) -> dict:
                    + yuan_shen_bond_adjustment
                    + officer_tomb_adjustment
                    + fu_shen_adjustment
+                   + bing_yao_adjustment
                    + classical_adj)
     final_score = round(final_score, 2)
     if classical_notes:
@@ -931,6 +958,14 @@ def step5_synthesize(r: dict) -> dict:
             "classical_rule": adv_shi.get("classical_rule", ""),
             "scenario": adv_shi.get("scenario", ""),
             "scenario_interpretation": adv_shi.get("scenario_interpretation", ""),
+        })
+    # 13. 病药（有界加减，见 5.6）
+    if bing_yao_adjustment != 0:
+        factor_contributions.append({
+            "name": "病药",
+            "factor": "bing_yao",
+            "score": round(bing_yao_adjustment, 2),
+            "reason": "；".join(bing_yao_reasons) if bing_yao_reasons else "病药平衡",
         })
     # 按绝对贡献度排序（影响最大的排前面）
     factor_contributions.sort(key=lambda x: abs(x["score"]), reverse=True)
@@ -1770,6 +1805,8 @@ def _predict_timing(r: dict, step3_data: dict, step1_data: dict, day_branch: str
     if is_month_break:
         _rank(use_god_branch, YINGQI_TXT["month_break_fill"]["text"])
         _rank(_he(use_god_branch), YINGQI_TXT["month_break_he"]["text"])
+    # 病药结构化码不进应期主排序：holdout 实测会挤掉正确日支（见 CHANGELOG 2026-09-26g）。
+    # 药码仅在 score 层有界加减；解除障碍之期仍由空/破/伏/化出既有通则覆盖。
     # 化空出空 / 回头生：先于合住冲开与伏藏（ZS005/007/013）
     if step2_d.get("has_fu_cang") and (fu_branch or fei_branch):
         fei_empty = fei_branch in _empty_list if fei_branch else False

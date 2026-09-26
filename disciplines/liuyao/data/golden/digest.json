@@ -4,7 +4,7 @@
     "how": "改动引擎行为后跑 python tools/golden.py capture \"理由\"；无理由不落盘，历次漂移见 drift_log",
     "cases": 288
   },
-  "digest": "65e8331c80c4f06a",
+  "digest": "a1a7d34c3532f2f2",
   "drift_log": [
     {
       "from": "bb23797bf6044b95",
@@ -35,6 +35,12 @@
       "to": "65e8331c80c4f06a",
       "date": "2026-09-26",
       "reason": "应期排序：化空出空前插/空而回头生不作空/飞克伏先冲飞/动爻先值后合——古例通用规则"
+    },
+    {
+      "from": "65e8331c80c4f06a",
+      "to": "a1a7d34c3532f2f2",
+      "date": "2026-09-26",
+      "reason": "step5 接入病药结构化加减（有界）；应期排序不纳入药码（holdout 否证）"
     }
   ]
 }

@@ -401,7 +401,7 @@ python scripts/yi_liuyao.py "问感情：目前这段感情能否修成正果" \
 | `references/pattern_reference.md` | 六爻十二大经典格局速查（原文出处、识别条件、应期规则） | 判断特殊格局时 |
 | `references/classical_synthesis.md` | 六爻四大经典综合（火珠林·黄金策·卜筮正宗·含十八论、实占案例、附录十三细微格局补遗、十四火珠林纳甲条文） | 需要理论深度时，尤其涉及虚空月破墓绝刑冲 |
 | `references/case_library.md` | 六爻经典案例库（黑箱测试用，严禁预测时引用做类比） | 仅场景 A/B/C |
-| `data/hexagrams.json` | 六十四卦完整数据（卦名、上下卦、卦辞、爻辞、八宫归属） | 需要查卦辞爻辞时 |
+| `core/yishu_core/hexagram_texts.py` | 六十四卦卦辞/爻辞唯一真值源 | 需要查卦辞爻辞时 |
 
 ---
 
