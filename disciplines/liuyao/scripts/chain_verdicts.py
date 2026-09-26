@@ -71,6 +71,7 @@ STEP5_YINGQI = _VERDICT_TEXTS["step5_yingqi_texts"]
 CLASSICAL_INTERPRETATIONS = _VERDICT_TEXTS["classical_interpretations"]
 CHAIN_SUPPORT_NOTES = _VERDICT_TEXTS.get("chain_support_notes", {})
 CLASSICAL_RULES_NOTES = _VERDICT_TEXTS.get("classical_rules_notes", {})
+CLASSICAL_RULES_TEMPLATES = _VERDICT_TEXTS.get("classical_rules_templates", {})
 
 
 def note_text(key: str, **fmt) -> str:

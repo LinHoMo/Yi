@@ -13,6 +13,17 @@
 - **分数/指纹**：无变化（tune 93.9 / holdout 85.7 / 金标准 `65e8331c80c4f06a`）。
 - 历史条目里对 `visualize_shap`→`factor_waterfall` 的记载仍保留；后者本轮已删。
 
+## 2026-09-26g 病药进 step5（有界加减）+ 否证记录
+
+- `chain_step5` 调用 `evaluate_bing_yao`，按 illness/medicine 码有界加减：
+  重病无药 −0.4、有病无药 −0.2、有药无病 +0.15；不改主判阈值。
+- **否证**：把药码（fill_void/heal_break/out_of_hiding）写入应期主排序 →
+  tune top-1 升至 64.7，但 holdout top-1 **50→37.5**、名次 1.6→1.8，
+  属过拟合 tune。**已回退药码进排序**；解除障碍之期仍由空/破/伏/化出通则覆盖。
+- 回退后 tune/holdout/wikisource 与 26e 基线持平（93.9/85.7/57.3）。
+- 金标准因新增 `bing_yao` 因子贡献条目而 capture 新指纹。
+- 星煞仍不进 step5 主分（仅 narrate 旁参），与原口径一致。
+
 ## 2026-09-26f classical_rules 可交付断语外置
 
 - `data/rules/verdict_texts.json#classical_rules_notes`：51 条 summary/reasons 完整句（空态说明、伏神飞神判据、格局名等）。

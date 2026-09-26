@@ -3,6 +3,17 @@
 仓库级变更登记（跨科 / 内核 / 口径 / 架构）。学科内细节见各科 `CHANGELOG.md`。
 规则：指标口径任何变动（计分方式、词典、缺失字段处理）必须在此登记，否则分数不可比（`AGENTS.md` §四.4）。
 
+### 2026-09-26g 易优化包：MCP narrate/render + eval 入口 + 命科骨架 + 病药入 step5
+
+- **MCP**：新增 `liuyao.narrate` / `liuyao.render`（复用四段契约，不另写推演）；api_spec 同步。
+- **tools/eval.py**：仓库级对齐分一览，转发各科 evaluate，无第二套给分逻辑。
+- **hexagrams.json 删除**：visualization 收敛后零代码引用；卦辞真值源为 `core/yishu_core/hexagram_texts.py`。
+- **命科 M5 骨架**：`disciplines/ming/` 四段契约 + 机械因子（四柱/藏干十神/纳音/神煞/命身宫）；
+  narrate 明示推演未实现；合参 `normalize_ming` 方向固定平。**无格局断语、无大运推演**。
+- **病药进 step5**：illness/medicine 有界加减（重病无药 −0.4 等）；药码进应期排序已否证回退
+  （holdout top-1 50→37.5，见六爻 CHANGELOG 2026-09-26g）。
+- **分数**：tune/holdout/wikisource 与 26e 持平（93.9/85.7/57.3）；金标准见六爻 digest。
+
 ### 2026-09-26e 仓库整洁：死代码与过期文档清理
 
 **删除清单（行为无变化；分数与金标准指纹 `65e8331c80c4f06a` 不变）**

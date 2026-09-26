@@ -34,7 +34,7 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
 
 from classical_support import _branch_element, _combined_strength, _element_to_relation, _find_stage_at, _find_use_god_positions, _get_use_god_strength_level, _infer_use_god_category, _pos_to_name, _relation_element, _score_fanyin, _score_fuyin, _strength_score, determine_six_relation, element_strength_in_month, find_hexagram_body, g_day_cn, get_changed_hexagram_branch, get_month_strength_description, get_stages_of_interest, get_twelve_growth_stage, is_ba_zu_chong, is_ba_zu_he
 from classical_tables import KE_WO, SAN_HE, SELF_PUNISHMENTS, SHENG_WO, SIX_RELATIONS, THREE_PUNISHMENTS_CYCLIC, THREE_PUNISHMENTS_MUTUAL, TRANSFORMATION_PATTERNS, TWELVE_GROWTH
-from chain_verdicts import CLASSICAL_INTERPRETATIONS as CINTERP, CLASSICAL_RULES_NOTES as _CR_NOTES
+from chain_verdicts import CLASSICAL_INTERPRETATIONS as CINTERP, CLASSICAL_RULES_NOTES as _CR_NOTES, CLASSICAL_RULES_TEMPLATES as _CR_TPL
 
 
 def ctext(key: str, **fmt) -> str:
@@ -43,6 +43,12 @@ def ctext(key: str, **fmt) -> str:
     text = entry["text"]
     return text.format(**fmt) if fmt else text
 
+
+
+def ctpl(key: str, *args) -> str:
+    """取 classical_rules 拼装句模板；{0}{1}… 为位置参数。"""
+    text = _CR_TPL[key]["text"]
+    return text.format(*args) if args else text
 
 def _evaluate_hidden_spirit_emergence(hid_elem, hid_branch, cov_rel, cov_branch,
                                        cov_elem, month_branch, day_branch,
@@ -71,10 +77,10 @@ def _evaluate_hidden_spirit_emergence(hid_elem, hid_branch, cov_rel, cov_branch,
     # 1. 日/月生伏神
     if SHENG_CYCLE.get(day_elem) == hid_elem or day_elem == hid_elem:
         emerge_score += 2
-        reasons.append(f"日辰{'生' if SHENG_CYCLE.get(day_elem) == hid_elem else '同'}伏神")
+        reasons.append(ctpl("crt_008", '生' if SHENG_CYCLE.get(day_elem) == hid_elem else '同'))
     if SHENG_CYCLE.get(month_elem) == hid_elem or month_elem == hid_elem:
         emerge_score += 1
-        reasons.append(f"月建{'生' if SHENG_CYCLE.get(month_elem) == hid_elem else '同'}伏神")
+        reasons.append(ctpl("crt_009", '生' if SHENG_CYCLE.get(month_elem) == hid_elem else '同'))
 
     # 2. 飞神生伏神
     if SHENG_CYCLE.get(cov_elem) == hid_elem:
@@ -95,7 +101,7 @@ def _evaluate_hidden_spirit_emergence(hid_elem, hid_branch, cov_rel, cov_branch,
     cov_strength = element_strength_in_month(cov_elem, month_elem)
     if cov_strength in ("休", "囚", "死"):
         emerge_score += 1
-        reasons.append(f"飞神{cov_strength}")
+        reasons.append(ctpl("crt_010", cov_strength))
 
     # 6. 伏克飞为出暴（伏神有力反克飞神，出暴为吉）
     if KE_CYCLE.get(hid_elem) == cov_elem:
@@ -107,7 +113,7 @@ def _evaluate_hidden_spirit_emergence(hid_elem, hid_branch, cov_rel, cov_branch,
     hid_strength = element_strength_in_month(hid_elem, month_elem)
     if hid_strength in ("死", "囚"):
         emerge_score -= 2
-        reasons.append(f"伏神{hid_strength}")
+        reasons.append(ctpl("crt_011", hid_strength))
 
     day_hid_strength = element_strength_in_month(hid_elem, day_elem)
     if day_hid_strength == "死":
@@ -125,7 +131,7 @@ def _evaluate_hidden_spirit_emergence(hid_elem, hid_branch, cov_rel, cov_branch,
     tomb = TOMB_MAP.get(hid_elem, "")
     if tomb and day_branch == tomb:
         emerge_score -= 2
-        reasons.append(f"伏神入墓({tomb})")
+        reasons.append(ctpl("crt_012", tomb))
 
     # 4. 伏神逢绝
     stage = get_twelve_growth_stage(hid_elem, day_branch)
@@ -280,9 +286,7 @@ def analyze_hidden_spirits(result):
     for d in details:
         status = "得出" if d["can_emerge"] else "不得出"
         summary_parts.append(
-            f"{d['missing_relation']}伏藏（{d['hidden_spirit']['branch']}）"
-            f"飞神{d['covering_spirit']['six_relation']}({d['covering_spirit']['branch']})"
-            f"→ {status}"
+            ctpl("crt_013", d['missing_relation'], d['hidden_spirit']['branch'], d['covering_spirit']['six_relation'], d['covering_spirit']['branch'], status)
         )
 
     return {
@@ -410,44 +414,44 @@ def analyze_hidden_spirit_emergence(result):
         # 1. 日辰生扶伏神
         if SHENG_CYCLE.get(day_element) == hidden_element:
             emerge_score += 3
-            emerge_reasons.append(f"日辰{day_branch}({day_element})生伏神{hidden_branch}({hidden_element})")
+            emerge_reasons.append(ctpl("crt_030", day_branch, day_element, hidden_branch, hidden_element))
         elif day_element == hidden_element:
             emerge_score += 2
-            emerge_reasons.append(f"日辰{day_branch}与伏神同五行")
+            emerge_reasons.append(ctpl("crt_056", day_branch))
 
         # 2. 月建生扶伏神
         if SHENG_CYCLE.get(month_element) == hidden_element:
             emerge_score += 2
-            emerge_reasons.append(f"月建{month_branch}({month_element})生伏神{hidden_branch}")
+            emerge_reasons.append(ctpl("crt_031", month_branch, month_element, hidden_branch))
         elif month_element == hidden_element:
             emerge_score += 1
-            emerge_reasons.append(f"月建{month_branch}与伏神同五行")
+            emerge_reasons.append(ctpl("crt_057", month_branch))
 
         # 3. 日冲飞神（冲开飞神）
         if is_ba_zu_chong(covering_branch, day_branch):
             emerge_score += 2
-            emerge_reasons.append(f"日冲飞神{covering_branch}（{day_branch}冲{covering_branch}，冲开）")
+            emerge_reasons.append(ctpl("crt_032", covering_branch, day_branch, covering_branch))
 
         # 4. 月冲飞神
         if is_ba_zu_chong(covering_branch, month_branch):
             emerge_score += 1
-            emerge_reasons.append(f"月冲飞神{covering_branch}（{month_branch}冲{covering_branch}）")
+            emerge_reasons.append(ctpl("crt_033", covering_branch, month_branch, covering_branch))
 
         # 5. 飞神旬空（空则不挡）
         if covering_branch in empty_branches:
             emerge_score += 2
-            emerge_reasons.append(f"飞神{covering_branch}旬空")
+            emerge_reasons.append(ctpl("crt_034", covering_branch))
 
         # 6. 飞神月破（破则不挡）
         if is_ba_zu_chong(covering_branch, month_branch):
             emerge_score += 2
-            emerge_reasons.append(f"飞神{covering_branch}月破")
+            emerge_reasons.append(ctpl("crt_035", covering_branch))
 
         # 7. 飞神休囚无气
         cov_strength = element_strength_in_month(covering_element, month_element)
         if cov_strength in ("休", "囚", "死"):
             emerge_score += 1
-            emerge_reasons.append(f"飞神{covering_branch}休囚({cov_strength})")
+            emerge_reasons.append(ctpl("crt_036", covering_branch, cov_strength))
 
         # 8. 飞神被日/月/动爻克
         day_attacks_cov = KE_CYCLE.get(day_element) == covering_element
@@ -459,10 +463,10 @@ def analyze_hidden_spirit_emergence(result):
                 break
         if day_attacks_cov:
             emerge_score += 1
-            emerge_reasons.append(f"日辰{g_day_cn(day_element)}克飞神{g_day_cn(covering_element)}")
+            emerge_reasons.append(ctpl("crt_037", g_day_cn(day_element), g_day_cn(covering_element)))
         if month_attacks_cov:
             emerge_score += 1
-            emerge_reasons.append(f"月建{g_day_cn(month_element)}克飞神{g_day_cn(covering_element)}")
+            emerge_reasons.append(ctpl("crt_038", g_day_cn(month_element), g_day_cn(covering_element)))
         if moving_attacks_cov:
             emerge_score += 1
             emerge_reasons.append(ctext("cr_016"))
@@ -471,50 +475,50 @@ def analyze_hidden_spirit_emergence(result):
         hid_strength = element_strength_in_month(hidden_element, month_element)
         if hid_strength == "旺":
             emerge_score += 2
-            emerge_reasons.append(f"伏神{hidden_branch}旺相")
+            emerge_reasons.append(ctpl("crt_039", hidden_branch))
         elif hid_strength == "相":
             emerge_score += 1
-            emerge_reasons.append(f"伏神{hidden_branch}有气")
+            emerge_reasons.append(ctpl("crt_058", hidden_branch))
 
         # --- 不得出条件 ---
         # 1. 伏神被月日双克
         hid_day_strength = element_strength_in_month(hidden_element, day_element)
         if hid_strength == "死" and hid_day_strength == "死":
             emerge_score -= 4
-            block_reasons.append(f"伏神{hidden_branch}被月日双克")
+            block_reasons.append(ctpl("crt_040", hidden_branch))
 
         # 2. 飞神旺相克伏神（飞克伏）
         if KE_CYCLE.get(covering_element) == hidden_element:
             if cov_strength in ("旺", "相"):
                 emerge_score -= 3
-                block_reasons.append(f"飞神{covering_branch}({covering_element})旺相克伏神{hidden_branch}({hidden_element})")
+                block_reasons.append(ctpl("crt_059", covering_branch, covering_element, hidden_branch, hidden_element))
 
         # 3. 伏神入墓
         tomb = TOMB_MAP.get(hidden_element, "")
         if tomb and (day_branch == tomb or month_branch == tomb):
             emerge_score -= 2
-            block_reasons.append(f"伏神{hidden_branch}入墓于{tomb}")
+            block_reasons.append(ctpl("crt_041", hidden_branch, tomb))
 
         # 4. 伏神逢绝
         stage = get_twelve_growth_stage(hidden_element, day_branch)
         if stage == "绝":
             emerge_score -= 2
-            block_reasons.append(f"伏神{hidden_branch}逢绝地(日辰{day_branch})")
+            block_reasons.append(ctpl("crt_042", hidden_branch, day_branch))
 
         # 5. 伏神旬空
         if hidden_branch in empty_branches:
             emerge_score -= 2
-            block_reasons.append(f"伏神{hidden_branch}旬空")
+            block_reasons.append(ctpl("crt_043", hidden_branch))
 
         # 6. 伏神月破
         if is_ba_zu_chong(hidden_branch, month_branch):
             emerge_score -= 2
-            block_reasons.append(f"伏神{hidden_branch}月破")
+            block_reasons.append(ctpl("crt_044", hidden_branch))
 
         # 7. 伏神休囚无气
         if hid_strength in ("休", "囚", "死"):
             emerge_score -= 1
-            block_reasons.append(f"伏神{hidden_branch}休囚无气({hid_strength})")
+            block_reasons.append(ctpl("crt_045", hidden_branch, hid_strength))
 
         # 判断得出/不得出
         can_emerge = emerge_score > 0
@@ -543,9 +547,7 @@ def analyze_hidden_spirit_emergence(result):
             "emerge_reasons": emerge_reasons,
             "block_reasons": block_reasons,
             "summary": (
-                f"{missing_rel}伏{hidden_branch}于{covering_branch}之下，"
-                f"飞神{cov_strength}，伏神{hid_strength}，"
-                f"得出评分={emerge_score}({emerge_level})"
+                ctpl("crt_046", missing_rel, hidden_branch, covering_branch, cov_strength, hid_strength, emerge_score, emerge_level)
             ),
         })
 
@@ -625,38 +627,34 @@ def analyze_hidden_movement(result):
                 line_type = "冲空则实"
                 effect_strength = "实"
                 line_score = 1.0
-                desc = f"{_pos_to_name(yao['position'])}({branch}旬空)被日辰{day_branch}冲，冲空则实，此爻由虚转实"
+                desc = ctpl("crt_047", _pos_to_name(yao['position']), branch, day_branch)
             elif overall in ("旺", "相"):
                 line_type = "暗动(旺相，七分布动)"
                 effect_strength = "强"
                 line_score = 0.7
                 desc = (
-                    f"{_pos_to_name(yao['position'])}({branch})静爻被日辰{day_branch}冲，"
-                    f"旺相暗动，其力约当明动七成"
+                    ctpl("crt_060", _pos_to_name(yao['position']), branch, day_branch)
                 )
             elif overall == "中和":
                 line_type = "暗动(中和，中力)"
                 effect_strength = "中"
                 line_score = 0.4
                 desc = (
-                    f"{_pos_to_name(yao['position'])}({branch})静爻被日辰{day_branch}冲，"
-                    f"中和暗动，力量中等"
+                    ctpl("crt_079", _pos_to_name(yao['position']), branch, day_branch)
                 )
             elif overall == "偏弱":
                 line_type = "暗动(休囚，三分力)"
                 effect_strength = "弱"
                 line_score = 0.2
                 desc = (
-                    f"{_pos_to_name(yao['position'])}({branch})静爻被日辰{day_branch}冲，"
-                    f"休囚暗动，力微短暂"
+                    ctpl("crt_087", _pos_to_name(yao['position']), branch, day_branch)
                 )
             else:  # "衰"
                 line_type = "日破(月休逢冲，此爻无用)"
                 effect_strength = "无"
                 line_score = 0.0
                 desc = (
-                    f"{_pos_to_name(yao['position'])}({branch})静爻被日辰{day_branch}冲，"
-                    f"月休囚逢冲为日破，此爻彻底无用"
+                    ctpl("crt_088", _pos_to_name(yao['position']), branch, day_branch)
                 )
 
             details.append({
@@ -739,7 +737,7 @@ def analyze_wandering_returning_soul(result):
             "travel": soul_data["travel"],
             "residence": soul_data["residence"],
             "mind": soul_data["mind"],
-            "summary": f"{generation}卦——{soul_data['meaning']}。事多{CINTERP['youhun_dynamic']['text'] if generation == '游魂' else CINTERP['guihun_dynamic']['text']}",
+            "summary": ctpl("crt_014", generation, soul_data['meaning'], CINTERP['youhun_dynamic']['text'] if generation == '游魂' else CINTERP['guihun_dynamic']['text']),
             "score_adjustment": 0,  # 不改变评分——仅为断卦方向指引
         }
 
@@ -825,15 +823,15 @@ def analyze_monthly_break(result):
             desc_parts = []
             if both_broken:
                 desc_parts.append(
-                    f"{_pos_to_name(yao['position'])}({branch})既破于月建又冲于日辰，力量极弱"
+                    ctpl("crt_061", _pos_to_name(yao['position']), branch)
                 )
             else:
                 desc_parts.append(
-                    f"{_pos_to_name(yao['position'])}({branch})为月破之爻"
+                    ctpl("crt_062", _pos_to_name(yao['position']), branch)
                 )
 
             if salvageable:
-                desc_parts.append(f"但得日辰{day_branch}生扶，尚可补救")
+                desc_parts.append(ctpl("crt_063", day_branch))
             else:
                 desc_parts.append(ctext("cr_022"))
 
@@ -901,14 +899,14 @@ def _check_broken_combo(combo_dict, day_branch, month_branch):
     for b in branches:
         # 检查日冲
         if CHONG_MAP.get(b) == day_branch:
-            issues.append(f"{b}被日冲，合局不稳")
+            issues.append(ctpl("crt_048", b))
         elif CHONG_MAP.get(b) == month_branch:
-            issues.append(f"{b}被月冲，合局有隙")
+            issues.append(ctpl("crt_064", b))
 
     # 检查合局五行是否整体入墓于日辰
     target_element = combo_dict.get("element", "")
     if target_element and day_branch == TOMB_MAP.get(target_element, ""):
-        issues.append(f"合局入墓于{day_branch}，局力不显")
+        issues.append(ctpl("crt_015", day_branch))
 
     if issues:
         return {"status": "破局", "severity": "减力", "issues": issues, "score_mod": -0.5}
@@ -1003,9 +1001,9 @@ def analyze_triple_combo(result):
                         if pos_map[b]:
                             valid_positions.append(pos_map[b][0])
                         elif b == day_branch:
-                            valid_positions.append(f"日({day_branch})")
+                            valid_positions.append(ctpl("crt_095", day_branch))
                         elif b == month_branch:
-                            valid_positions.append(f"月({month_branch})")
+                            valid_positions.append(ctpl("crt_097", month_branch))
 
                     # 需要至少两个明动的爻才成局
                     actual_pos = [p for p in valid_positions if isinstance(p, int)]
@@ -1017,12 +1015,10 @@ def analyze_triple_combo(result):
                         }
                         _broken = _check_broken_combo(_combo_d, day_branch, month_branch)
                         _desc = (
-                            f"{''.join(combo_branches)}合{combo_element}局，"
-                            f"由日辰{day_branch}或月建{month_branch}补齐，"
-                            f"力量稍逊但仍有合力"
+                            ctpl("crt_080", ''.join(combo_branches), combo_element, day_branch, month_branch)
                         )
                         if _broken["status"] == "破局":
-                            _desc += f"。⚠破局：{'；'.join(_broken['issues'])}"
+                            _desc += ctpl("crt_017", '；'.join(_broken['issues']))
                         details.append({
                             "element": combo_element,
                             "branches": combo_branches,
@@ -1056,7 +1052,7 @@ def analyze_triple_combo(result):
             ftype = "三爻齐发"
             completeness = "完整"
         elif moving_count >= 1 or hidden_count >= 1:
-            ftype = f"{moving_count}爻动+{hidden_count}暗动+{static_count}静"
+            ftype = ctpl("crt_065", moving_count, hidden_count, static_count)
             completeness = "完整"
         else:
             ftype = "三爻皆静"
@@ -1071,18 +1067,16 @@ def analyze_triple_combo(result):
         _broken = _check_broken_combo(_combo_d, day_branch, month_branch)
 
         desc = (
-            f"{''.join(combo_branches)}成{combo_element}局，"
-            f"位置{_pos_to_name(p1)}/{_pos_to_name(p2)}/{_pos_to_name(p3)}，"
-            f"构成方式：{ftype}"
+            ctpl("crt_002", ''.join(combo_branches), combo_element, _pos_to_name(p1), _pos_to_name(p2), _pos_to_name(p3), ftype)
         )
 
         if completeness == "完整":
-            desc += f"。{combo_element}力大增"
+            desc += ctpl("crt_016", combo_element)
         elif completeness == "待用（需冲引发）":
             desc += "。静爻合局，待时日引发方成"
 
         if _broken["status"] == "破局":
-            desc += f"。⚠破局：{'；'.join(_broken['issues'])}"
+            desc += ctpl("crt_089", '；'.join(_broken['issues']))
 
         details.append({
             "element": combo_element,
@@ -1164,14 +1158,12 @@ def analyze_advance_retreat(result):
         if ADVANCE_PAIRS.get(orig_branch) == chg_branch:
             advance_type = "化进"
             desc = (
-                f"{_pos_to_name(pos)}({orig_branch}→{chg_branch})"
-                f"化进神，力量递增，事态向前发展顺利"
+                ctpl("crt_018", _pos_to_name(pos), orig_branch, chg_branch)
             )
         elif RETREAT_PAIRS.get(orig_branch) == chg_branch:
             advance_type = "化退"
             desc = (
-                f"{_pos_to_name(pos)}({orig_branch}→{chg_branch})"
-                f"化退神，力量递减，事态逐渐后退/消退"
+                ctpl("crt_049", _pos_to_name(pos), orig_branch, chg_branch)
             )
         else:
             # 检查 回头合/回头克/回头生/化泄
@@ -1182,32 +1174,27 @@ def analyze_advance_retreat(result):
             if he_pair_match:
                 advance_type = "回头合"
                 desc = (
-                    f"{_pos_to_name(pos)}({orig_branch}→{chg_branch})"
-                    f"回头合（合住事态胶着）"
+                    ctpl("crt_066", _pos_to_name(pos), orig_branch, chg_branch)
                 )
             elif KE_CYCLE.get(chg_elem) == orig_elem:
                 advance_type = "回头克"
                 desc = (
-                    f"{_pos_to_name(pos)}({orig_branch}→{chg_branch})"
-                    f"回头克（大凶）"
+                    ctpl("crt_081", _pos_to_name(pos), orig_branch, chg_branch)
                 )
             elif SHENG_CYCLE.get(chg_elem) == orig_elem:
                 advance_type = "回头生"
                 desc = (
-                    f"{_pos_to_name(pos)}({orig_branch}→{chg_branch})"
-                    f"回头生（有救济）"
+                    ctpl("crt_090", _pos_to_name(pos), orig_branch, chg_branch)
                 )
             elif SHENG_CYCLE.get(orig_elem) == chg_elem:
                 advance_type = "化泄"
                 desc = (
-                    f"{_pos_to_name(pos)}({orig_branch}→{chg_branch})"
-                    f"化泄（力量消散）"
+                    ctpl("crt_093", _pos_to_name(pos), orig_branch, chg_branch)
                 )
             else:
                 advance_type = "无进退"
                 desc = (
-                    f"{_pos_to_name(pos)}({orig_branch}→{chg_branch})"
-                    f"不涉及进退神，需结合其他因素分析"
+                    ctpl("crt_094", _pos_to_name(pos), orig_branch, chg_branch)
                 )
 
         # ── 进退神五行力量量化（《增删卜易》） ──
@@ -1360,11 +1347,11 @@ def analyze_twelve_growth(result):
     if key_lines:
         key_desc = "、".join(f"{_pos_to_name(p)}{_find_stage_at(lines_out, p)}"
                             for p in key_lines)
-        parts.append(f"得力之爻：{key_desc}")
+        parts.append(ctpl("crt_019", key_desc))
     if weak_lines:
         weak_desc = "、".join(f"{_pos_to_name(p)}{_find_stage_at(lines_out, p)}"
                              for p in weak_lines)
-        parts.append(f"无力之爻：{weak_desc}")
+        parts.append(ctpl("crt_020", weak_desc))
 
     summary = "；".join(parts) if parts else "各爻状态平和"
 
@@ -1533,40 +1520,32 @@ def analyze_desperate_relief(result):
         out["verdict"] = "绝处逢生"
         out["score_modifier"] = 2.0
         out["description"] = (
-            f"用神{use_god_element}（{use_god_branch}）处{stage}地，"
-            f"原神{yuan_shen_element}发动来生，原神{yuan_shen_combined}有力，"
-            f"绝处逢生，凶中反吉"
+            ctpl("crt_003", use_god_element, use_god_branch, stage, yuan_shen_element, yuan_shen_combined)
         )
     elif yuan_shen_moving and not yuan_shen_empty and not yuan_shen_month_break:
         out["verdict"] = "绝处逢生但原神无力"
         out["score_modifier"] = 0.5
         out["description"] = (
-            f"用神{use_god_element}（{use_god_branch}）处{stage}地，"
-            f"原神{yuan_shen_element}发动来生，但原神{yuan_shen_combined}无力，"
-            f"虽生而力微"
+            ctpl("crt_021", use_god_element, use_god_branch, stage, yuan_shen_element, yuan_shen_combined)
         )
     elif yuan_shen_present and not yuan_shen_empty and not yuan_shen_month_break:
         out["verdict"] = "绝地待原神"
         out["score_modifier"] = 0.2
         out["description"] = (
-            f"用神{use_god_element}（{use_god_branch}）处{stage}地，"
-            f"原神{yuan_shen_element}虽现于卦中但未发动，待时而动"
+            ctpl("crt_050", use_god_element, use_god_branch, stage, yuan_shen_element)
         )
     elif not yuan_shen_present:
         out["verdict"] = "绝地无救"
         out["score_modifier"] = -0.8
         out["description"] = (
-            f"用神{use_god_element}（{use_god_branch}）处{stage}地，"
-            f"原神{yuan_shen_element}不现于卦中，绝地无救"
+            ctpl("crt_067", use_god_element, use_god_branch, stage, yuan_shen_element)
         )
     else:
         # 原神 present but empty or month-broken
         out["verdict"] = "绝地无救"
         out["score_modifier"] = -0.8
         out["description"] = (
-            f"用神{use_god_element}（{use_god_branch}）处{stage}地，"
-            f"原神{yuan_shen_element}虽现但{ctext('cr_031') if yuan_shen_empty else ctext('cr_032')}，"
-            f"无力救援，绝地无救"
+            ctpl("crt_068", use_god_element, use_god_branch, stage, yuan_shen_element, ctext('cr_031') if yuan_shen_empty else ctext('cr_032'))
         )
 
     return out
@@ -1618,17 +1597,14 @@ def analyze_clash_harmony(result):
         if is_ba_zu_he(b1, b2):
             relation = "合"
             he_count += 1
-            desc = (f"位置{_pos_to_name(p1)}与{_pos_to_name(p2)}"
-                    f"（{b1}与{b2}）六合")
+            desc = (ctpl("crt_022", _pos_to_name(p1), _pos_to_name(p2), b1, b2))
         elif is_ba_zu_chong(b1, b2):
             relation = "冲"
             chong_count += 1
-            desc = (f"位置{_pos_to_name(p1)}与{_pos_to_name(p2)}"
-                    f"（{b1}与{b2}）六冲")
+            desc = (ctpl("crt_051", _pos_to_name(p1), _pos_to_name(p2), b1, b2))
         else:
             relation = "无特殊"
-            desc = (f"位置{_pos_to_name(p1)}与{_pos_to_name(p2)}"
-                    f"（{b1}与{b2}）无合冲")
+            desc = (ctpl("crt_052", _pos_to_name(p1), _pos_to_name(p2), b1, b2))
 
         pairs.append({
             "positions": (p1, p2),
@@ -1656,19 +1632,19 @@ def analyze_clash_harmony(result):
     elif he_count > 0 and chong_count > 0:
         hexagram_type = "半合半冲"
         meaning = (
-            f"本卦有六合又有六冲（合{he_count}对、冲{chong_count}对），"
+            ctpl("crt_069", he_count, chong_count)
             + CINTERP["half_he_half_chong"]["text"]
         )
     elif he_count > 0:
         hexagram_type = "有合"
         meaning = (
-            f"本卦有{he_count}对合{'' if chong_count == 0 else f'，{chong_count}对冲'}，"
+            ctpl("crt_082", he_count, '' if chong_count == 0 else ctpl("crt_096", chong_count))
             + CINTERP["has_he"]["text"]
         )
     elif chong_count > 0:
         hexagram_type = "有冲"
         meaning = (
-            f"本卦有{chong_count}对冲，"
+            ctpl("crt_091", chong_count)
             + CINTERP["has_chong"]["text"]
         )
     else:
@@ -1743,8 +1719,7 @@ def analyze_repetition(result):
                     "original_branch": orig_branch,
                     "changed_branch": chg_branch,
                     "description": (
-                        f"{_pos_to_name(pos)}：{orig_branch}→{chg_branch}，"
-                        f"本支被冲，反复变动之象"
+                        ctpl("crt_083", _pos_to_name(pos), orig_branch, chg_branch)
                     ),
                 })
                 diff_count += 1
@@ -1811,12 +1786,11 @@ def analyze_repetition(result):
     summary_parts = []
     if has_fanyin:
         summary_parts.append(
-            f"反吟：{len(chong_pairs)}处地支相冲 "
-            f"({'、'.join(d['description'] for d in chong_pairs)})"
+            ctpl("crt_023", len(chong_pairs), '、'.join((d['description'] for d in chong_pairs)))
         )
     if has_fuyin:
         trigram = "内卦" if inner_all_changed and inner_same else "外卦"
-        summary_parts.append(f"伏吟：{trigram}伏吟")
+        summary_parts.append(ctpl("crt_024", trigram))
 
     summary = "；".join(summary_parts) if summary_parts else "无反吟伏吟"
 
@@ -2023,13 +1997,13 @@ def analyze_hexagram_body(result):
         response_texts.append(CINTERP["hex_body_child"]["text"])
 
     if not response_texts:
-        response_texts.append(f"卦身在{_pos_to_name(body_pos)}，{body_relation}坐镇，本位安定")
+        response_texts.append(ctpl("crt_025", _pos_to_name(body_pos), body_relation))
 
     return {
         "body_position": body_pos,
         "body_element": body_element,
         "body_relation": body_relation,
-        "meaning": f"卦身在{_pos_to_name(body_pos)}，代表事体核心与根基",
+        "meaning": ctpl("crt_004", _pos_to_name(body_pos)),
         "classical_rule": "阳世子起顺推，阴世应起逆推",
         "implications": [
             CINTERP["hex_body_use_arrow"]["text"],
@@ -2128,8 +2102,8 @@ def analyze_element_strength(result):
 
     # 通用建议
     advice_parts = [
-        f"月建{month_branch}({month_element})，日辰{day_branch}({day_element})",
-        f"当月旺衰：{strength_desc}",
+        ctpl("crt_005", month_branch, month_element, day_branch, day_element),
+        ctpl("crt_006", strength_desc),
     ]
 
     # 综合总结
@@ -2142,13 +2116,13 @@ def analyze_element_strength(result):
             f"{d['six_relation']}({d['branch']},{d['month_strength']}/{d['day_strength']})"
             for d in strong_yaos
         )
-        summary_lines.append(f"旺相之爻：{s_desc}")
+        summary_lines.append(ctpl("crt_026", s_desc))
     if weak_yaos:
         w_desc = "、".join(
             f"{d['six_relation']}({d['branch']},{d['month_strength']}/{d['day_strength']})"
             for d in weak_yaos
         )
-        summary_lines.append(f"休囚之爻：{w_desc}")
+        summary_lines.append(ctpl("crt_027", w_desc))
 
     return {
         "month_branch": month_branch,
@@ -2211,13 +2185,13 @@ def analyze_three_punishments(result):
     for yao in yao_lines:
         branch = yao.get("earthly_branch", "")
         if branch:
-            hex_branches.append((branch, f"爻{_pos_to_name(yao['position'])}"))
+            hex_branches.append((branch, ctpl("crt_070", _pos_to_name(yao['position']))))
 
     external_branches = []
     if month_branch:
-        external_branches.append((month_branch, f"月建({month_branch})"))
+        external_branches.append((month_branch, ctpl("crt_053", month_branch)))
     if day_branch:
-        external_branches.append((day_branch, f"日辰({day_branch})"))
+        external_branches.append((day_branch, ctpl("crt_054", day_branch)))
 
     branches_with_source = hex_branches + external_branches
 
@@ -2252,8 +2226,7 @@ def analyze_three_punishments(result):
                 "formed_by": "卦内",
                 "positions": pos_list,
                 "description": (
-                    f"{ptype}（完整三刑）：{present[0]}刑{present[1]}刑{present[2]}，"
-                    f"三字全见于{ '、'.join(pos_list) }，极凶之象"
+                    ctpl("crt_071", ptype, present[0], present[1], present[2], '、'.join(pos_list))
                 ),
                 "score": -1.0,
             })
@@ -2270,9 +2243,7 @@ def analyze_three_punishments(result):
                 "formed_by": "卦内为主，月日催刑",
                 "positions": pos_list,
                 "description": (
-                    f"{ptype}（催刑）：卦内{ '、'.join(p for p in present if p in hex_set) or '无'}，"
-                    f"月日{ '、'.join(p for p in present if p not in hex_set) }补足成刑，"
-                    f"刑伤力减半"
+                    ctpl("crt_084", ptype, '、'.join((p for p in present if p in hex_set)) or '无', '、'.join((p for p in present if p not in hex_set)))
                 ),
                 "score": -0.5,
             })
@@ -2289,9 +2260,7 @@ def analyze_three_punishments(result):
                 "formed_by": "待月日补齐",
                 "positions": pos_list,
                 "description": (
-                    f"{ptype}（待刑）：{present[0]}、{present[1]}相见，"
-                    f"缺{missing[0]}，待月日逢{missing[0]}方成刑，"
-                    f"目前刑伤未全，但有刑伤之象"
+                    ctpl("crt_092", ptype, present[0], present[1], missing[0], missing[0])
                 ),
                 "score": -0.3,
             })
@@ -2314,8 +2283,7 @@ def analyze_three_punishments(result):
                 "formed_by": "卦内",
                 "positions": pos_list,
                 "description": (
-                    f"无礼之刑（成刑）：{b1_key}刑{b2_key}，"
-                    f"见于{ '、'.join(pos_list) }，主无礼刑伤、恩中之怨"
+                    ctpl("crt_072", b1_key, b2_key, '、'.join(pos_list))
                 ),
                 "score": -0.5,
             })
@@ -2329,8 +2297,7 @@ def analyze_three_punishments(result):
                 "formed_by": "卦内为主，月日催刑",
                 "positions": pos_list,
                 "description": (
-                    f"无礼之刑（待刑）：{b1_key}、{b2_key}月日相见，"
-                    f"刑伤未全，主微咎"
+                    ctpl("crt_073", b1_key, b2_key)
                 ),
                 "score": -0.3,
             })
@@ -2352,9 +2319,7 @@ def analyze_three_punishments(result):
                 "formed_by": "卦内",
                 "positions": pos_list,
                 "description": (
-                    f"自刑：{sp_branch}出现{count}次"
-                    f"（{ '、'.join(pos_list) }），"
-                    f"自刑主自我纠结、自作自受、内心矛盾"
+                    ctpl("crt_074", sp_branch, count, '、'.join(pos_list))
                 ),
                 "score": -0.3 * (count - 1),
             })
@@ -2601,9 +2566,7 @@ def analyze_six_breaks(result):
                     "is_critical": is_critical,
                     "score": score,
                     "description": (
-                        f"{'世/用爻' if is_critical else ''}{_pos_to_name(pos)}爻{b}"
-                        f"与{ref_label}{ref_label == '日' and '辰' or '建'}{ref_branch}"
-                        f"成{break_type}，{'破损不遂' if is_critical else '微有损伤'}"
+                        ctpl("crt_085", '世/用爻' if is_critical else '', _pos_to_name(pos), b, ref_label, ref_label == '日' and '辰' or '建', ref_branch, break_type, '破损不遂' if is_critical else '微有损伤')
                     ),
                 })
 
@@ -2612,9 +2575,9 @@ def analyze_six_breaks(result):
     if breaks:
         po_count = len(breaks)
         he_po_count = sum(1 for br in breaks if br["type"] == "合中带破")
-        desc = f"六破{po_count}处，皆主破损不遂"
+        desc = ctpl("crt_007", po_count)
         if he_po_count > 0:
-            desc += f"（其中{he_po_count}处合中带破，恩中有怨）"
+            desc += ctpl("crt_028", he_po_count)
         summary_parts = [br["description"] for br in breaks]
         summary = "；".join(summary_parts)
     else:
@@ -2803,7 +2766,7 @@ def analyze_officer_tomb(result):
                 "officer_branch": off_branch,
                 "officer_element": off_element,
                 "tomb_branch": tomb,
-                "description": f"官鬼{off_element}({off_name}·{off_branch})入墓于{tomb}（{source}）",
+                "description": ctpl("crt_075", off_element, off_name, off_branch, tomb, source),
             })
             if worst_severity == "none":
                 worst_severity = "mild"
@@ -2818,7 +2781,7 @@ def analyze_officer_tomb(result):
                 "officer_branch": off_branch,
                 "world_branch": world_branch,
                 "tomb_branch": tomb,
-                "description": f"世爻{world_branch}临官鬼{off_element}之墓{tomb}，自身随鬼入墓，凶象显著",
+                "description": ctpl("crt_076", world_branch, off_element, tomb),
             })
             worst_severity = "severe"
             total_score_modifier += -1.0
@@ -2834,8 +2797,7 @@ def analyze_officer_tomb(result):
                 "use_god_category": use_god_category,
                 "tomb_branch": tomb,
                 "description": (
-                    f"用神{use_god_category}({use_god_branch})临官鬼{off_element}之墓{tomb}，"
-                    f"用神被鬼所困，极凶"
+                    ctpl("crt_077", use_god_category, use_god_branch, off_element, tomb)
                 ),
             })
             worst_severity = "severe"
@@ -2851,7 +2813,7 @@ def analyze_officer_tomb(result):
                 "world_branch": world_branch,
                 "use_god_branch": use_god_branch,
                 "tomb_branch": tomb,
-                "description": f"官鬼({off_branch})与世/用神同墓于{tomb}，鬼用同墓，灾难性凶象",
+                "description": ctpl("crt_078", off_branch, tomb),
             })
             worst_severity = "catastrophic"
             total_score_modifier += -2.0
@@ -2868,8 +2830,7 @@ def analyze_officer_tomb(result):
                     "changed_branch": chg_branch,
                     "tomb_branch": tomb,
                     "description": (
-                        f"官鬼{off_name}({off_branch})动而化墓({chg_branch})，"
-                        f"鬼动入墓，凶象加剧"
+                        ctpl("crt_086", off_name, off_branch, chg_branch)
                     ),
                 })
                 if worst_severity in ("none", "mild"):
@@ -2887,8 +2848,7 @@ def analyze_officer_tomb(result):
             "officer_branches": officer_branches_collected,
             "tomb_branch": primary_tomb_branch,
             "description": (
-                f"官鬼({','.join(officer_branches_collected)})未入墓"
-                f"或世/用未随鬼入墓，无随官入墓凶象"
+                ctpl("crt_029", ','.join(officer_branches_collected))
             ),
             "score_modifier": 0.0,
             "classical_quote": CINTERP["guan_tomb_poem"]["text"],
@@ -2911,8 +2871,7 @@ def analyze_officer_tomb(result):
 
     desc_parts = [scenario_descriptions.get(s, s) for s in scenarios]
     description = (
-        f"检测到随官入墓格局（{severity_text.get(worst_severity, '')}）："
-        f"{'、'.join(desc_parts)}。"
+        ctpl("crt_001", severity_text.get(worst_severity, ''), '、'.join(desc_parts))
     )
     if worst_severity == "catastrophic":
         description += CINTERP["officer_tomb_catastrophic"]["text"]
@@ -3116,9 +3075,7 @@ def analyze_flying_hidden_interaction(result):
             "relation": relation,
             "can_emerge": can_emerge,
             "description": (
-                f"{_pos_to_name(hidden.get('position', 0))}："
-                f"飞{fei_name}({fei_elem})与伏{fu_name}({fu_elem})：{relation}，"
-                f"{'伏得出' if can_emerge else '伏难出'}"
+                ctpl("crt_055", _pos_to_name(hidden.get('position', 0)), fei_name, fei_elem, fu_name, fu_elem, relation, '伏得出' if can_emerge else '伏难出')
             ),
         })
 

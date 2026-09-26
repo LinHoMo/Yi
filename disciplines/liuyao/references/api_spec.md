@@ -28,6 +28,8 @@ The Liu Yao MCP Server exposes the complete Liu Yao (Six Lines of Hexagram) divi
 |-----------|--------|
 | Full divination + structured analysis | `liuyao.divinate` |
 | Quick reading (verdict + reasoning only) | `liuyao.quick_reading` |
+| Deliverable narrative (narrate segment) | `liuyao.narrate` |
+| Report export md/html (render segment) | `liuyao.render` |
 | Hexagram validation against classical rules | `liuyao.validate_hexagram` |
 | Classical quote pattern search | `liuyao.get_classical_quotes` |
 | Method listing (introspection) | `liuyao.list_methods` |
@@ -536,6 +538,26 @@ Retrieves classical text quotes matching a pattern name.
 **Returns**: `LiuYaoClassicalQuotes` (Section 3.4)
 
 ---
+
+### 4.2a `liuyao.narrate`
+
+Deliverable narrative (narrate segment). Same params as `liuyao.divinate`.
+
+**Returns**: `{ "text": string, "conclusion": object, "chart_summary": object, "use_god_basis": string }`
+
+Body is produced by `scripts/narrate.py` (single narrative source). No second interpretation path.
+
+### 4.2b `liuyao.render`
+
+Report export. Same params as `liuyao.divinate`, plus:
+
+| Param | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `format` | `string` | No | `"md"` | `md` or `html` |
+
+**Returns**: `{ "content": string, "format": string }`
+
+HTML includes SVG hexagram diagram via `scripts/render.py` single exit.
 
 ### 4.5 `liuyao.list_methods`
 

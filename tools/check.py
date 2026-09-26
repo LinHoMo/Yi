@@ -29,7 +29,7 @@ from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 CONTRACT_FILES = ("SKILL.md", "scripts/chart.py", "scripts/analyze.py",
                   "scripts/narrate.py", "scripts/render.py",
                   "data/verdicts.json", "tools/check.py", "tools/golden.py")
-NEW_DISCIPLINES = ("meihua", "xiaoliuren", "zeji")
+NEW_DISCIPLINES = ("meihua", "xiaoliuren", "zeji", "ming")
 
 # 内核唯一真值表名：学科内出现同名赋值即视为复制（AGENTS.md 内核唯一真值源）
 CORE_TABLE_ASSIGN = re.compile(

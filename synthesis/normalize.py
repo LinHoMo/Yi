@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from yishu_core.eval import verdict_direction
 
-DISCIPLINES = ("liuyao", "meihua", "xiaoliuren", "zeji")
+DISCIPLINES = ("liuyao", "meihua", "xiaoliuren", "zeji", "ming")
 
 
 def _direction_label(text) -> str:
@@ -127,11 +127,30 @@ def normalize_liuyao(a: dict, *, at: str | None = None) -> dict:
     }
 
 
+def normalize_ming(a: dict, *, at: str | None = None) -> dict:
+    """命科骨架：只归一化机械因子，方向固定平（推演未实现，不编吉凶）。"""
+    cs = a.get("chart_summary") or {}
+    birth = a.get("birth") or {}
+    pillars = cs.get("四柱") or {}
+    gz = " ".join(str(pillars.get(k) or "—") for k in ("year", "month", "day", "hour"))
+    return {
+        "discipline": "ming",
+        "asked": (a.get("question") or "").strip() or "命局排盘",
+        "at": birth.get("datetime") or _at_of(a, at) or "",
+        "verdict": f"四柱 {gz}·推演未实现",
+        "direction": "平",
+        "timing": [],
+        "based_on": _based_on(a),
+        "chart_summary": cs,
+    }
+
+
 _NORMALIZERS = {
     "xiaoliuren": normalize_xiaoliuren,
     "meihua": normalize_meihua,
     "zeji": normalize_zeji,
     "liuyao": normalize_liuyao,
+    "ming": normalize_ming,
 }
 
 
