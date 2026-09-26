@@ -46,6 +46,16 @@ from chain_narrate import _build_reasoning_chain, _get_hexagram_body_summary_not
 from chain_step4 import _detect_special_pattern, _user_reason
 from chain_support import safe_get
 from chain_tables import HEXAGRAM_LIUCHONG, HEXAGRAM_LIUHE, SAN_HE, _60_CYCLE_BASE, _BRANCH_CLASH_MAP, _ELEMENT_PEAK_MONTHS, _HE_MAP
+from chain_verdicts import (
+    CLASSICAL_INTERPRETATIONS as CINTERP,
+    STEP5_CONFIDENCE as CONF_TXT,
+    STEP5_FACTOR_REASONS as FREASON,
+    STEP5_SPIRIT_REASONS as SPIRIT_TXT,
+    STEP5_VERDICT_DESCS as VDESC,
+    STEP5_YINGQI as YINGQI_TXT,
+    note_text,
+    vdesc,
+)
 
 def step5_synthesize(r: dict) -> dict:
     """
@@ -106,12 +116,12 @@ def step5_synthesize(r: dict) -> dict:
     # 六合卦检查（上下卦各爻对应六合）
     if hex_name in HEXAGRAM_LIUHE:
         hex_adjustment += 0.5
-        hex_adjustment_reason = "六合卦，事主和合"
+        hex_adjustment_reason = FREASON["hex_liuhe_reason"]["text"]
 
     # 六冲卦检查
     if hex_name in HEXAGRAM_LIUCHONG:
         hex_adjustment -= 0.5
-        hex_adjustment_reason = "六冲卦，事主散离"
+        hex_adjustment_reason = FREASON["hex_liuchong_reason"]["text"]
 
     # ---------- 5.4: 六神辅助调整（协纪辨方书—六兽分阴阳日）----------
     spirit_adjustment = 0.0
@@ -137,51 +147,51 @@ def step5_synthesize(r: dict) -> dict:
                 if spirit == "青龙":
                     spirit_adjustment += 0.3 * yy_factor
                     if yy_factor > 1.0:
-                        spirit_adjustment_reasons.append(f"青龙临用，阳日力增，吉上添吉(x{yy_factor})")
+                        spirit_adjustment_reasons.append(f"{SPIRIT_TXT['qinglong_yang']['text']}(x{yy_factor})")
                     elif yy_factor < 1.0:
-                        spirit_adjustment_reasons.append(f"青龙临用，阴日力略减(x{yy_factor})")
+                        spirit_adjustment_reasons.append(f"{SPIRIT_TXT['qinglong_yin']['text']}(x{yy_factor})")
                     else:
-                        spirit_adjustment_reasons.append("青龙临用，喜气之象")
+                        spirit_adjustment_reasons.append(SPIRIT_TXT["qinglong_neutral"]["text"])
                 elif spirit == "白虎":
                     spirit_adjustment -= 0.5 * yy_factor
                     if yy_factor > 1.0:
-                        spirit_adjustment_reasons.append(f"白虎临用，阳日凶焰更炽(x{yy_factor})")
+                        spirit_adjustment_reasons.append(f"{SPIRIT_TXT['baihu_yang']['text']}(x{yy_factor})")
                     elif yy_factor < 1.0:
-                        spirit_adjustment_reasons.append(f"白虎临用，阴日凶焰稍敛(x{yy_factor})")
+                        spirit_adjustment_reasons.append(f"{SPIRIT_TXT['baihu_yin']['text']}(x{yy_factor})")
                     else:
-                        spirit_adjustment_reasons.append("白虎临用，丧凶之兆")
+                        spirit_adjustment_reasons.append(SPIRIT_TXT["baihu_neutral"]["text"])
                 elif spirit == "玄武":
                     spirit_adjustment -= 0.3 * yy_factor
                     if yy_factor > 1.0:
-                        spirit_adjustment_reasons.append(f"玄武临用，阴日暗昧更重(x{yy_factor})")
+                        spirit_adjustment_reasons.append(f"{SPIRIT_TXT['xuanwu_yin']['text']}(x{yy_factor})")
                     elif yy_factor < 1.0:
-                        spirit_adjustment_reasons.append(f"玄武临用，阳日暗昧被抑(x{yy_factor})")
+                        spirit_adjustment_reasons.append(f"{SPIRIT_TXT['xuanwu_yang']['text']}(x{yy_factor})")
                     else:
-                        spirit_adjustment_reasons.append("玄武临用，暗昧不明")
+                        spirit_adjustment_reasons.append(SPIRIT_TXT["xuanwu_neutral"]["text"])
                 elif spirit == "朱雀":
                     spirit_adjustment += 0.1 * yy_factor
                     if yy_factor > 1.0:
-                        spirit_adjustment_reasons.append(f"朱雀临用，阳日口舌更显(x{yy_factor})")
+                        spirit_adjustment_reasons.append(f"{SPIRIT_TXT['zhuque_yang']['text']}(x{yy_factor})")
                     elif yy_factor < 1.0:
-                        spirit_adjustment_reasons.append(f"朱雀临用，阴日口舌稍抑(x{yy_factor})")
+                        spirit_adjustment_reasons.append(f"{SPIRIT_TXT['zhuque_yin']['text']}(x{yy_factor})")
                     else:
-                        spirit_adjustment_reasons.append("朱雀临用，文书口舌")
+                        spirit_adjustment_reasons.append(SPIRIT_TXT["zhuque_neutral"]["text"])
                 elif spirit == "勾陈":
                     spirit_adjustment -= 0.2 * yy_factor
                     if yy_factor > 1.0:
-                        spirit_adjustment_reasons.append(f"勾陈临用，阳日官非更显(x{yy_factor})")
+                        spirit_adjustment_reasons.append(f"{SPIRIT_TXT['gouchen_yang']['text']}(x{yy_factor})")
                     elif yy_factor < 1.0:
-                        spirit_adjustment_reasons.append(f"勾陈临用，阴日事缓(x{yy_factor})")
+                        spirit_adjustment_reasons.append(f"{SPIRIT_TXT['gouchen_yin']['text']}(x{yy_factor})")
                     else:
-                        spirit_adjustment_reasons.append("勾陈临用，牵绊迟滞")
+                        spirit_adjustment_reasons.append(SPIRIT_TXT["gouchen_neutral"]["text"])
                 elif spirit == "螣蛇":
                     spirit_adjustment -= 0.1 * yy_factor
                     if yy_factor > 1.0:
-                        spirit_adjustment_reasons.append(f"螣蛇临用，阴日惊恐更甚(x{yy_factor})")
+                        spirit_adjustment_reasons.append(f"{SPIRIT_TXT['tengshe_yin']['text']}(x{yy_factor})")
                     elif yy_factor < 1.0:
-                        spirit_adjustment_reasons.append(f"螣蛇临用，阳日惊恐略抑(x{yy_factor})")
+                        spirit_adjustment_reasons.append(f"{SPIRIT_TXT['tengshe_yang']['text']}(x{yy_factor})")
                     else:
-                        spirit_adjustment_reasons.append("螣蛇临用，惊恐怪异")
+                        spirit_adjustment_reasons.append(SPIRIT_TXT["tengshe_neutral"]["text"])
                 break
 
     # ---------- 5.5: 暗动加分/贪合忘生克修正 ----------
@@ -381,15 +391,15 @@ def step5_synthesize(r: dict) -> dict:
     if "飞空得出" in step3_reasoning_text or ("飞神" in step3_reasoning_text and "旬空" in step3_reasoning_text and "得出" in step3_reasoning_text):
         # 飞神旬空 → 伏神得出有力（P0-4 新增，优先于泄气/克伏等次级关系）
         fu_shen_adjustment = 1.5
-        fu_shen_note = "【飞空得出】飞神旬空，伏神得出有力，+1.5"
+        fu_shen_note = note_text("fu_fei_kong_out")
     elif "飞来生伏" in step3_reasoning_text or "飞生伏" in step3_reasoning_text:
         # 飞神生伏神，伏得出为吉
         fu_shen_adjustment = 1.0
-        fu_shen_note = "【飞来生伏可出】伏神得生而出，+1.0"
+        fu_shen_note = note_text("fu_fei_sheng_fu")
     elif "绝于飞" in step3_reasoning_text:
         # 伏神绝于飞神 → 气绝难出（P0-5）
         fu_shen_adjustment = -2.0
-        fu_shen_note = "【伏神绝于飞】伏神气绝难出，-2.0"
+        fu_shen_note = note_text("fu_die_at_fei")
     elif "飞克伏" in step3_reasoning_text:
         # 飞克伏: 需检查飞神是否旬空/月破 → 伏得出为吉
         import re
@@ -399,18 +409,18 @@ def step5_synthesize(r: dict) -> dict:
         if fei_branch and fei_branch in empty_branches_list:
             # 飞神旬空，伏神得出为吉
             fu_shen_adjustment = 1.5
-            fu_shen_note = f"【伏神得出伏·飞旬空】飞神{fei_branch}旬空得出，+1.5"
+            fu_shen_note = note_text("fu_out_fei_empty", fei_branch=fei_branch)
         elif "月破" in step3_reasoning_text:
             # 飞神月破，伏神得出
             fu_shen_adjustment = 1.0
-            fu_shen_note = "【伏神得出伏·飞月破】飞神月破得出，+1.0"
+            fu_shen_note = note_text("fu_out_fei_month_break")
         else:
             fu_shen_adjustment = -1.0
-            fu_shen_note = "【飞克伏难出】伏神被克不出，-1.0"
+            fu_shen_note = note_text("fu_fei_ke_hard_out")
     elif "伏泄气于飞" in step3_reasoning_text:
         # 伏泄气: 伏神被动泄力，轻微负面
         fu_shen_adjustment = -0.5
-        fu_shen_note = "【伏神泄气】伏神泄气于飞，-0.5"
+        fu_shen_note = note_text("fu_drain_by_fei")
 
     # ---------- 5.5h: 古籍通用格局加减（holdout 暴露的系统性缺口） ----------
     classical_adj = 0.0
@@ -448,14 +458,14 @@ def step5_synthesize(r: dict) -> dict:
         w_el = _el_of_branch(world_branch) or ""
         if w_el and SHENG_CYCLE.get(ug_el_s) == w_el:
             classical_adj += 1.5
-            classical_notes.append("【用神生世·迟归】行人占用神生世，主迟归终至，+1.5")
+            classical_notes.append(note_text("travel_use_sheng_world"))
         elif w_el and KE_CYCLE.get(ug_el_s) == w_el:
             classical_adj += 0.8
-            classical_notes.append("【用神克世·速至】行人占用神克世，主速至，+0.8")
+            classical_notes.append(note_text("travel_use_ke_world"))
         elif w_el and KE_CYCLE.get(w_el) == ug_el_s:
             # 世克用：行人受制，未必即归，但用神有气仍主终归
             classical_adj += 0.3
-            classical_notes.append("【世克用·行人受制】世克用神，归途有阻，+0.3")
+            classical_notes.append(note_text("travel_world_ke_use"))
     if _is_travel_return:
         _fu_txt = str((step3_data or {}).get("summary_text") or "")
         _lv = str((step3_data or {}).get("strength_level") or "")
@@ -466,7 +476,7 @@ def step5_synthesize(r: dict) -> dict:
             or "伏神" in _fu_txt
         ):
             classical_adj += 0.6
-            classical_notes.append("【行人用神有气】用神未至死绝或伏而得出，主终能归，+0.6")
+            classical_notes.append(note_text("travel_use_alive"))
 
     # 2) 兄弟持世 + 求财 — 古籍大忌（《增删》兄弟持世莫求财）
     _sp_pat_txt = ""
@@ -1733,7 +1743,17 @@ def _predict_timing(r: dict, step3_data: dict, step1_data: dict, day_branch: str
     _q_txt = str(r.get("question") or "") + str(r.get("topic") or "")
     _is_illness_q = any(k in _q_txt for k in ("病", "疾", "愈", "医"))
     _is_chronic = any(k in _q_txt for k in ("久病", "沉疴", "久疾", "半年"))
-    if is_empty:
+    _chg0 = changed_pairs[0][1] if changed_pairs else ""
+    # 化空 / 回头生优先；动而化回头生则不作空论（ZS005/007/013）
+    # 注意：非空卦的回头生不前插（ZS009 化绝+回头生仍应逢值）
+    for _b, _c in changed_pairs:
+        if _c and _c in _empty_list:
+            _rank(_c, "化出之支逢空，出空值日")
+    if hui_tou_sheng and is_empty:
+        _rank(hui_tou_sheng[0], "动而化回头生，虽空不作空论，期于生我之日")
+    elif hui_tou_sheng:
+        pass  # 后面统一排
+    if is_empty and not hui_tou_sheng:
         if day_branch and day_branch == _chong_ug:
             _rank(day_branch, "用神旬空，日辰冲空填实，当日即应")
         elif _is_chronic and _chong_ug:
@@ -1750,17 +1770,18 @@ def _predict_timing(r: dict, step3_data: dict, step1_data: dict, day_branch: str
     if is_month_break:
         _rank(use_god_branch, "月破出月，逢值填实")
         _rank(_he(use_god_branch), "月破逢合，合处填实")
+    # 化空出空 / 回头生：先于合住冲开与伏藏（ZS005/007/013）
     if step2_d.get("has_fu_cang") and (fu_branch or fei_branch):
         fei_empty = fei_branch in _empty_list if fei_branch else False
         _fu_txt = str(step2_d.get("fu_cang_detail") or "") + str(step2_d.get("fu_cang_summary") or "")
         _fei_ke_fu = any(k in _fu_txt for k in ("飞克伏", "飞神克"))
         _fu_sheng_fei = any(k in _fu_txt for k in ("伏生飞", "伏神生"))
-        if fei_empty and fu_branch:
-            _rank(fu_branch, "飞神旬空，伏神得出，期于伏神值日")
-        elif _fei_ke_fu and fei_branch:
+        if _fei_ke_fu and fei_branch:
             _rank(_chong(fei_branch) or fu_branch, "飞神克伏，冲开飞神")
             if fu_branch:
                 _rank(fu_branch, "伏神值日")
+        elif fei_empty and fu_branch:
+            _rank(fu_branch, "飞神旬空，伏神得出，期于伏神值日")
         elif fu_branch:
             _rank(fu_branch, "伏神得出，期于伏神值日")
             if fei_branch and _fu_sheng_fei:
@@ -1776,21 +1797,14 @@ def _predict_timing(r: dict, step3_data: dict, step1_data: dict, day_branch: str
     # 用神不空时，本气值日优先于其他空亡出空
     if use_god_branch and not is_empty:
         if ug_moving:
-            _rank(_he(use_god_branch), "用神发动，逢合之日")
             _rank(use_god_branch, "发动值日")
+            _rank(_he(use_god_branch), "用神发动，逢合之日")
         else:
             _rank(use_god_branch, "用神值日")
             _rank(_chong_ug, "用神安静，逢冲之日")
-    # 化出之支：回头生之支 / 化空之支
-    if changed_pairs:
-        _chg0 = changed_pairs[0][1]
-        if _chg0:
-            if _chg0 in _empty_list:
-                _rank(_chg0, "化出之支逢空，出空值日")
-            if hui_tou_sheng:
-                _rank(hui_tou_sheng[0], "动而化回头生，期于生我之日")
-            elif _chg0:
-                _rank(_chg0, "化出之支值日")
+    # 其余化出之支
+    if changed_pairs and _chg0 and _chg0 not in _empty_list and not hui_tou_sheng:
+        _rank(_chg0, "化出之支值日")
     # 同五行之空亡支
     ug_el = use_god_element or ""
     for e in _empty_list:

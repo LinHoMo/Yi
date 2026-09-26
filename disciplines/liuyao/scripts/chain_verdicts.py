@@ -43,21 +43,44 @@ import re
 from pathlib import Path
 
 
-# ── 断语/引文库：外置 data/verdicts.json（AGENTS.md §三），代码只留算法与加载 ──
-_VERDICTS_PATH = Path(__file__).resolve().parents[1] / "data" / "verdicts.json"
+# ── 断语/引文库：外置 data/verdicts.json 与 data/rules/verdict_texts.json（AGENTS.md §三），代码只留算法与加载 ──
+_DATA_DIR = Path(__file__).resolve().parents[1] / "data"
+_VERDICTS_PATH = _DATA_DIR / "verdicts.json"
+_VERDICT_TEXTS_PATH = _DATA_DIR / "rules" / "verdict_texts.json"
 
 
-def _load_verdicts() -> dict:
+def _load_json(path: Path) -> dict:
     try:
-        return json.loads(_VERDICTS_PATH.read_text(encoding="utf-8"))
+        return json.loads(path.read_text(encoding="utf-8"))
     except OSError as exc:
-        raise SystemExit(f"缺断语库 {_VERDICTS_PATH}（应随仓库一起检出）：{exc}")
+        raise SystemExit(f"缺断语库 {path}（应随仓库一起检出）：{exc}")
 
 
-_VERDICTS = _load_verdicts()
+_VERDICTS = _load_json(_VERDICTS_PATH)
 SHI_YAO_INTERPRETATION = _VERDICTS["shi_yao_interpretation"]
 SHI_YAO_POEMS = _VERDICTS["shi_yao_poems"]
 QUOTE_DATABASE = _VERDICTS["quote_database"]
+
+_VERDICT_TEXTS = _load_json(_VERDICT_TEXTS_PATH)
+STEP5_CLASSICAL_NOTES = _VERDICT_TEXTS["step5_classical_notes"]
+STEP5_VERDICT_DESCS = _VERDICT_TEXTS["step5_verdict_descs"]
+STEP5_SPIRIT_REASONS = _VERDICT_TEXTS["step5_spirit_reasons"]
+STEP5_FACTOR_REASONS = _VERDICT_TEXTS["step5_factor_reasons"]
+STEP5_CONFIDENCE = _VERDICT_TEXTS["step5_confidence"]
+STEP5_YINGQI = _VERDICT_TEXTS["step5_yingqi_texts"]
+CLASSICAL_INTERPRETATIONS = _VERDICT_TEXTS["classical_interpretations"]
+
+
+def note_text(key: str, **fmt) -> str:
+    """取 step5 注记展示句；key 为结构化 id。"""
+    entry = STEP5_CLASSICAL_NOTES[key]
+    text = entry["text"]
+    return text.format(**fmt) if entry.get("template") or fmt else text
+
+
+def vdesc(key: str) -> str:
+    """取 step5 综合定性说明展示句。"""
+    return STEP5_VERDICT_DESCS[key]["text"]
 
 
 _QUESTION_SCENARIO_KEYWORDS = {

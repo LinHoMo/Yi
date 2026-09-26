@@ -10,10 +10,27 @@
 """
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 try:
     from advice_framework import generate_advice, match_advice_category
 except ImportError:
     from scripts.advice_framework import generate_advice, match_advice_category
+
+
+# ── 叙事模板外置 data/narrative_templates.json（AGENTS.md 三：断语进 data，py 只组装）──
+_NARRATIVE_TEMPLATES_PATH = Path(__file__).resolve().parents[1] / "data" / "narrative_templates.json"
+
+
+def _load_narrative_templates() -> dict:
+    try:
+        return json.loads(_NARRATIVE_TEMPLATES_PATH.read_text(encoding="utf-8"))
+    except OSError:
+        return {}
+
+
+_NARRATIVE_TPL = _load_narrative_templates()
 
 
 def _pos_name(p) -> str:
@@ -629,6 +646,153 @@ def _build_explain_summary(factor_contribs: list, focus: str) -> str:
     return f"{header}：{body_text}。{summary}"
 
 
+def _resolve_bing_yao_shensha(result: dict) -> tuple[dict, dict]:
+    """取 analyze 已有 bing_yao / shensha_panel；缺失时从思维链机械补算。"""
+    concl = result.get("conclusion") or {}
+    bing = result.get("bing_yao") or {}
+    if not bing and isinstance(concl.get("病药"), dict):
+        bing = concl["病药"]
+    shen = result.get("shensha_panel") or {}
+    if not shen and isinstance(concl.get("星煞"), dict):
+        shen = concl["星煞"]
+    if bing and shen:
+        return bing, shen
+
+    tc = result.get("thinking_chain") or {}
+    s2 = tc.get("step2_use_god_identification") or {}
+    s3 = tc.get("step3_strength_analysis") or {}
+    if not s3:
+        for v in tc.values():
+            if isinstance(v, dict) and "strength_level" in v:
+                s3 = v
+                break
+    try:
+        from bing_yao_shensha import attach_shensha, evaluate_bing_yao
+        if not bing and (s2 or s3):
+            bing = evaluate_bing_yao(s2, s3, tc.get("step5_synthesis") or {})
+        if not shen and result.get("divination_time"):
+            shen = attach_shensha(result, s3)
+    except Exception:
+        pass
+    return bing or {}, shen or {}
+
+
+def _line_on_pos(line_name, use_pos) -> bool:
+    """爻名（初六/九三/上九…）是否落在用神爻位。"""
+    try:
+        p = int(use_pos)
+    except Exception:
+        return False
+    mark = {1: "初", 2: "二", 3: "三", 4: "四", 5: "五", 6: "上"}.get(p)
+    return bool(mark) and mark in str(line_name or "")
+
+
+def _line_plain(line_name, tpl: dict) -> str:
+    s = str(line_name or "")
+    words = (tpl.get("line_words") or {})
+    for key, word in words.items():
+        if key in s:
+            return word
+    return s
+
+
+def _bing_yao_paragraph(result: dict) -> str:
+    """病药短段：列出病与药，口吻偏向/有…信号/结构上（口径诚实）。"""
+    tpl = _NARRATIVE_TPL.get("bing_yao") or {}
+    if not tpl:
+        return ""
+    bing, _ = _resolve_bing_yao_shensha(result)
+    illness = (bing or {}).get("illness") or []
+    medicine = (bing or {}).get("medicine") or []
+    if not illness and not medicine:
+        return ""
+
+    ill_phrases = tpl.get("illness_phrases") or {}
+    med_phrases = tpl.get("medicine_phrases") or {}
+    joiner = tpl.get("item_joiner") or "；"
+    ills = [ill_phrases.get(x.get("code")) or x.get("label") or ""
+            for x in illness if isinstance(x, dict)]
+    meds = [med_phrases.get(x.get("code")) or x.get("label") or ""
+            for x in medicine if isinstance(x, dict)]
+    ills = [x for x in ills if x]
+    meds = [x for x in meds if x]
+    if not ills and not meds:
+        return ""
+
+    intro = tpl.get("intro") or ""
+    tail = tpl.get("tail") or ""
+    if ills and meds:
+        core = (
+            f"{intro}"
+            f"{tpl.get('illness_lead') or '病'}有——{joiner.join(ills)}"
+            f"{tpl.get('pair_joiner') or '；药偏向：'}{joiner.join(meds)}"
+        )
+    elif ills:
+        core = f"{intro}{tpl.get('only_illness_lead') or '病有——'}{joiner.join(ills)}"
+    else:
+        core = f"{intro}{tpl.get('only_medicine_lead') or '药偏向——'}{joiner.join(meds)}"
+    return f"{core}。{tail}".strip()
+
+
+def _shensha_paragraph(result: dict, use_pos=None) -> str:
+    """星煞短提及：仅临爻/临日，不吉凶夸张；无命中不硬造段。"""
+    tpl = _NARRATIVE_TPL.get("shensha") or {}
+    if not tpl:
+        return ""
+    _, shen = _resolve_bing_yao_shensha(result)
+    stars = (shen or {}).get("shensha") or []
+    if not stars:
+        return ""
+
+    max_items = int(tpl.get("max_items") or 3)
+    joiner = tpl.get("joiner") or "；"
+    seen: set[str] = set()
+    mentions: list[str] = []
+
+    def _push(text: str, key: str) -> None:
+        if text and key not in seen and len(mentions) < max_items:
+            mentions.append(text)
+            seen.add(key)
+
+    # 1) 临用爻优先
+    for s in stars:
+        if not isinstance(s, dict):
+            continue
+        name = str(s.get("name") or "")
+        if not name:
+            continue
+        on_lines = s.get("on_lines") or []
+        if any(_line_on_pos(ln, use_pos) for ln in on_lines):
+            _push((tpl.get("on_use_god") or "{name}临用爻").format(name=name), name)
+    # 2) 其他临爻
+    for s in stars:
+        if not isinstance(s, dict):
+            continue
+        name = str(s.get("name") or "")
+        if not name or name in seen:
+            continue
+        on_lines = [ln for ln in (s.get("on_lines") or []) if not _line_on_pos(ln, use_pos)]
+        if on_lines:
+            line = _line_plain(on_lines[0], tpl)
+            _push((tpl.get("on_line") or "{name}临{line}").format(name=name, line=line), name)
+    # 3) 仅临日
+    for s in stars:
+        if not isinstance(s, dict):
+            continue
+        name = str(s.get("name") or "")
+        if not name or name in seen:
+            continue
+        if s.get("on_day"):
+            _push((tpl.get("on_day") or "{name}临日").format(name=name), name)
+
+    if not mentions:
+        return ""
+    lead = tpl.get("lead") or ""
+    tail = tpl.get("tail") or ""
+    core = f"{lead}{joiner.join(mentions)}"
+    return f"{core}。{tail}".strip() if tail else f"{core}。"
+
+
 def build_human_narrative(result: dict) -> dict:
     """
     生成完整解读正文（唯一交付口吻）。
@@ -744,7 +908,11 @@ def build_human_narrative(result: dict) -> dict:
     p4 = _special_sentence(special, s3, s2, question)
     p5 = _meaning_paragraph(verdict, s2, s3, special, question, factor_contribs)
 
-    body = [x for x in (p1, p2, p3, p4, p5) if x]
+    # 病药短段 + 星煞简短提及（消费 analyze 的 bing_yao / shensha_panel）
+    p_bing = _bing_yao_paragraph(result)
+    p_shen = _shensha_paragraph(result, use_pos=use_pos)
+
+    body = [x for x in (p1, p2, p_bing, p_shen, p3, p4, p5) if x]
     lead = p1
 
     timing_plain = _timing_sentence(timing, special, s3, s5)

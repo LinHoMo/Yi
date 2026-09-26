@@ -168,11 +168,14 @@ def narrate(a: dict) -> str:
 
     整体结构：
       1. 专项叙事段（六神临用/持世/卦身/用神所本）
-      2. 正文段落（结论→旺衰→动变→格局→综合）
+      2. 正文段落（结论→旺衰→病药/星煞→动变→格局→综合）
       3. 应期
       4. 趋避建议
       5. 经典引文
       6. 象判边界声明
+
+    病药/星煞段由 human_narrative 从 analyze 的 bing_yao / shensha_panel
+    组装（文案在 data/narrative_templates.json），本层不新增象数结论。
     """
     chain = a.get("thinking_chain") or {}
     # 注意：build_human_narrative 内部需要 reading 段字段与 thinking_chain，

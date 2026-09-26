@@ -1,0 +1,51 @@
+{
+  "_meta": {
+    "说明": "narrate / human_narrative 正文叙事模板。py 只组装，断语字面量在本文件（AGENTS.md 三）。",
+    "口径": "凶象只用偏向/有…信号/结构上；禁注定/一定；不报内部评分与预测率。"
+  },
+  "bing_yao": {
+    "heading": "病药",
+    "intro": "病药方面，结构上有这样的信号：",
+    "illness_lead": "病",
+    "medicine_lead": "药",
+    "illness_phrases": {
+      "weak": "用神衰弱，偏向助力不足",
+      "void": "用神旬空，有…力虚的信号",
+      "month_break": "用神月破，结构上偏有伤象",
+      "hidden": "用神伏藏，偏向受飞神压制",
+      "controlled": "用神受克（日月克身），有…压力信号"
+    },
+    "medicine_phrases": {
+      "strong_root": "用神有气，偏向自立有根",
+      "day_month_sheng": "日月生扶，有…外助信号",
+      "yuan_moving": "原神动来生，偏向有源",
+      "yuan_present": "原神在卦，待时而用",
+      "fill_void": "冲空填实，结构上可解旬空",
+      "out_of_hiding": "出伏，待冲开飞神或飞神受制",
+      "heal_break": "月破待补，逢合逢值填实可解"
+    },
+    "item_joiner": "；",
+    "pair_joiner": "；对应的药偏向：",
+    "only_illness_lead": "病有——",
+    "only_medicine_lead": "药偏向——",
+    "tail": "病药是结构信号，讲的是偏向与解处，不是断定结局；仍看应期与人事。"
+  },
+  "shensha": {
+    "heading": "星煞",
+    "lead": "星煞旁参：",
+    "on_use_god": "{name}临用爻",
+    "on_line": "{name}临{line}",
+    "on_day": "{name}临日",
+    "joiner": "；",
+    "tail": "星煞只记是否临爻/临日，不主吉凶。",
+    "max_items": 3,
+    "line_words": {
+      "初": "初爻",
+      "二": "二爻",
+      "三": "三爻",
+      "四": "四爻",
+      "五": "五爻",
+      "上": "上爻"
+    }
+  }
+}
