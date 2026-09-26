@@ -231,13 +231,23 @@ def score_case(eng: dict, exp: dict, model: str) -> dict:
         rank = next((i + 1 for i, ch in enumerate(offered) if needed and ch in needed), None)
         if not needed:
             hit = x_yq in probe
-            # 相对窗（次日/年内/月余…）无地支可比时：走节奏语义对齐（RHYTHM_PAIRS）
-            # + 引擎 speed/依据句字面，而不是整维记 0——基准是相对表述，不是缺基准。
+            # 相对窗：有锚日则换算绝对日窗比对引擎日期；否则节奏语义对齐
+            from yingqi_windows import relative_window, resolve_case_anchor, date_in_window
+            win = relative_window(x_yq)
+            anchor = resolve_case_anchor((exp.get("input") or {}), exp) if isinstance(exp, dict) else None
+            abs_hit = False
+            if win and anchor:
+                lo, hi, label = win
+                dates = [str(d.get("date") if isinstance(d, dict) else d)
+                         for d in (eng.get("yingqi_dates") or [])]
+                abs_hit = any(date_in_window(anchor, d, lo, hi) for d in dates if d)
             rhythm = any(
                 any(k in x_yq for k in xk) and any(k in probe for k in ek)
                 for xk, ek in RHYTHM_PAIRS
             )
-            if hit:
+            if abs_hit:
+                dims["yingqi"] = (w, w, "绝对日窗命中")
+            elif hit:
                 dims["yingqi"] = (w, w, "字面命中")
             elif rhythm:
                 dims["yingqi"] = (int(w * 0.7), w, "相对窗节奏语义对齐")
