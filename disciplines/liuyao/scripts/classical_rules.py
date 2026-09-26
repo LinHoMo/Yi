@@ -34,7 +34,15 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
 
 from classical_support import _branch_element, _combined_strength, _element_to_relation, _find_stage_at, _find_use_god_positions, _get_use_god_strength_level, _infer_use_god_category, _pos_to_name, _relation_element, _score_fanyin, _score_fuyin, _strength_score, determine_six_relation, element_strength_in_month, find_hexagram_body, g_day_cn, get_changed_hexagram_branch, get_month_strength_description, get_stages_of_interest, get_twelve_growth_stage, is_ba_zu_chong, is_ba_zu_he
 from classical_tables import KE_WO, SAN_HE, SELF_PUNISHMENTS, SHENG_WO, SIX_RELATIONS, THREE_PUNISHMENTS_CYCLIC, THREE_PUNISHMENTS_MUTUAL, TRANSFORMATION_PATTERNS, TWELVE_GROWTH
-from chain_verdicts import CLASSICAL_INTERPRETATIONS as CINTERP
+from chain_verdicts import CLASSICAL_INTERPRETATIONS as CINTERP, CLASSICAL_RULES_NOTES as _CR_NOTES
+
+
+def ctext(key: str, **fmt) -> str:
+    """取 classical_rules 可交付断语；key 见 data/rules/verdict_texts.json#classical_rules_notes。"""
+    entry = _CR_NOTES[key]
+    text = entry["text"]
+    return text.format(**fmt) if fmt else text
+
 
 def _evaluate_hidden_spirit_emergence(hid_elem, hid_branch, cov_rel, cov_branch,
                                        cov_elem, month_branch, day_branch,
@@ -71,17 +79,17 @@ def _evaluate_hidden_spirit_emergence(hid_elem, hid_branch, cov_rel, cov_branch,
     # 2. 飞神生伏神
     if SHENG_CYCLE.get(cov_elem) == hid_elem:
         emerge_score += 2
-        reasons.append("飞神生伏神")
+        reasons.append(ctext("cr_001"))
 
     # 3. 飞神旬空
     if cov_branch in empty_branches:
         emerge_score += 1
-        reasons.append("飞神旬空")
+        reasons.append(ctext("cr_002"))
 
     # 4. 飞神月破
     if is_ba_zu_chong(cov_branch, month_branch):
         emerge_score += 1
-        reasons.append("飞神月破")
+        reasons.append(ctext("cr_003"))
 
     # 5. 飞神休囚
     cov_strength = element_strength_in_month(cov_elem, month_elem)
@@ -92,7 +100,7 @@ def _evaluate_hidden_spirit_emergence(hid_elem, hid_branch, cov_rel, cov_branch,
     # 6. 伏克飞为出暴（伏神有力反克飞神，出暴为吉）
     if KE_CYCLE.get(hid_elem) == cov_elem:
         emerge_score += 3
-        reasons.append("伏克飞为出暴")
+        reasons.append(ctext("cr_004"))
 
     # --- 不得出条件 ---
     # 1. 伏神休囚被日月克
@@ -104,14 +112,14 @@ def _evaluate_hidden_spirit_emergence(hid_elem, hid_branch, cov_rel, cov_branch,
     day_hid_strength = element_strength_in_month(hid_elem, day_elem)
     if day_hid_strength == "死":
         emerge_score -= 2
-        reasons.append("日辰克伏神")
+        reasons.append(ctext("cr_005"))
 
     # 2. 飞神旺相克伏神
     if KE_CYCLE.get(cov_elem) == hid_elem:
         cov_strength = element_strength_in_month(cov_elem, month_elem)
         if cov_strength in ("旺", "相"):
             emerge_score -= 3
-            reasons.append("飞神旺相克伏神")
+            reasons.append(ctext("cr_006"))
 
     # 3. 伏神入墓
     tomb = TOMB_MAP.get(hid_elem, "")
@@ -123,17 +131,17 @@ def _evaluate_hidden_spirit_emergence(hid_elem, hid_branch, cov_rel, cov_branch,
     stage = get_twelve_growth_stage(hid_elem, day_branch)
     if stage == "绝":
         emerge_score -= 2
-        reasons.append("伏神逢绝")
+        reasons.append(ctext("cr_007"))
 
     # 5. 伏神旬空
     if hid_branch in empty_branches:
         emerge_score -= 1
-        reasons.append("伏神旬空")
+        reasons.append(ctext("cr_008"))
 
     # 6. 伏神月破
     if is_ba_zu_chong(hid_branch, month_branch):
         emerge_score -= 2
-        reasons.append("伏神月破")
+        reasons.append(ctext("cr_009"))
 
     can_emerge = emerge_score > 0
     reason_text = "；".join(reasons) if reasons else "条件平淡"
@@ -176,7 +184,7 @@ def analyze_hidden_spirits(result):
     yao_lines = hex_info.get("yao_lines", [])
 
     if not palace or not yao_lines:
-        return {"has_hidden_spirit": False, "details": [], "summary": "无足够数据进行伏藏分析"}
+        return {"has_hidden_spirit": False, "details": [], "summary": ctext("cr_010")}
 
     # 收集本卦已有的六亲
     existing_relations = set()
@@ -192,14 +200,14 @@ def analyze_hidden_spirits(result):
         return {
             "has_hidden_spirit": False,
             "details": [],
-            "summary": "本卦六亲齐备，无伏藏",
+            "summary": ctext("cr_011"),
         }
 
     # 本宫首卦（纯卦）的地支
     # 宫殿名即为八卦名，其五行为 palace_element
     # 本宫卦上下皆为该八卦
     if palace not in NAJIA_BRANCHES:
-        return {"has_hidden_spirit": True, "details": [], "summary": "宫名异常，无法分析"}
+        return {"has_hidden_spirit": True, "details": [], "summary": ctext("cr_012")}
 
     base_inner = NAJIA_BRANCHES[palace]["inner"]
     base_outer = NAJIA_BRANCHES[palace]["outer"]
@@ -335,7 +343,7 @@ def analyze_hidden_spirit_emergence(result):
     yao_lines = hex_info.get("yao_lines", [])
 
     if not palace or not yao_lines:
-        return {"has_hidden_spirit": False, "spirits": [], "summary": "无足够数据"}
+        return {"has_hidden_spirit": False, "spirits": [], "summary": ctext("cr_013")}
 
     # 收集本卦已有的六亲
     existing_relations = set()
@@ -347,11 +355,11 @@ def analyze_hidden_spirit_emergence(result):
     missing_relations = [r for r in SIX_RELATIONS if r not in existing_relations]
 
     if not missing_relations:
-        return {"has_hidden_spirit": False, "spirits": [], "summary": "六亲齐备，无伏藏"}
+        return {"has_hidden_spirit": False, "spirits": [], "summary": ctext("cr_014")}
 
     # 本宫首卦地支
     if palace not in NAJIA_BRANCHES:
-        return {"has_hidden_spirit": True, "spirits": [], "summary": "宫名异常"}
+        return {"has_hidden_spirit": True, "spirits": [], "summary": ctext("cr_015")}
 
     base_branches = NAJIA_BRANCHES[palace]["inner"] + NAJIA_BRANCHES[palace]["outer"]
 
@@ -457,7 +465,7 @@ def analyze_hidden_spirit_emergence(result):
             emerge_reasons.append(f"月建{g_day_cn(month_element)}克飞神{g_day_cn(covering_element)}")
         if moving_attacks_cov:
             emerge_score += 1
-            emerge_reasons.append("动爻克飞神")
+            emerge_reasons.append(ctext("cr_016"))
 
         # 9. 伏神旺相有气
         hid_strength = element_strength_in_month(hidden_element, month_element)
@@ -542,7 +550,7 @@ def analyze_hidden_spirit_emergence(result):
         })
 
     if not spirits:
-        return {"has_hidden_spirit": False, "spirits": [], "summary": "无需分析"}
+        return {"has_hidden_spirit": False, "spirits": [], "summary": ctext("cr_017")}
 
     summary_parts = [s["summary"] for s in spirits]
     return {
@@ -578,7 +586,7 @@ def analyze_hidden_movement(result):
     hex_info = result.get("original_hexagram", {})
     yao_lines = hex_info.get("yao_lines", [])
     if not yao_lines:
-        return {"has_hidden_movement": False, "details": [], "summary": "无数据"}
+        return {"has_hidden_movement": False, "details": [], "summary": ctext("cr_018")}
 
     dt = result.get("divination_time", {})
     day_sb = dt.get("day_stem_branch", "")
@@ -586,7 +594,7 @@ def analyze_hidden_movement(result):
     day_branch = day_sb[1:] if len(day_sb) >= 2 else ""
     month_branch = month_sb[1:] if len(month_sb) >= 2 else ""
     if not day_branch:
-        return {"has_hidden_movement": False, "details": [], "summary": "无日辰数据"}
+        return {"has_hidden_movement": False, "details": [], "summary": ctext("cr_019")}
 
     day_element = _branch_element(day_branch)
     month_element = _branch_element(month_branch)
@@ -669,7 +677,7 @@ def analyze_hidden_movement(result):
             })
 
     if not details:
-        return {"has_hidden_movement": False, "details": [], "summary": "本卦无暗动之爻"}
+        return {"has_hidden_movement": False, "details": [], "summary": ctext("cr_020")}
 
     summary = "；".join(d["description"] for d in details)
     return {"has_hidden_movement": True, "details": details, "summary": summary}
@@ -776,7 +784,7 @@ def analyze_monthly_break(result):
     hex_info = result.get("original_hexagram", {})
     yao_lines = hex_info.get("yao_lines", [])
     if not yao_lines:
-        return {"has_monthly_break": False, "details": [], "summary": "无数据"}
+        return {"has_monthly_break": False, "details": [], "summary": ctext("cr_018")}
 
     dt = result.get("divination_time", {})
     month_sb = dt.get("month_stem_branch", "")
@@ -784,7 +792,7 @@ def analyze_monthly_break(result):
     month_branch = month_sb[1:] if len(month_sb) >= 2 else ""
     day_branch = day_sb[1:] if len(day_sb) >= 2 else ""
     if not month_branch:
-        return {"has_monthly_break": False, "details": [], "summary": "无月建数据"}
+        return {"has_monthly_break": False, "details": [], "summary": ctext("cr_021")}
 
     day_element = _branch_element(day_branch)
     month_element = _branch_element(month_branch)
@@ -827,12 +835,12 @@ def analyze_monthly_break(result):
             if salvageable:
                 desc_parts.append(f"但得日辰{day_branch}生扶，尚可补救")
             else:
-                desc_parts.append("无解救之力")
+                desc_parts.append(ctext("cr_022"))
 
             if is_moving:
-                desc_parts.append("动爻月破，力量减半")
+                desc_parts.append(ctext("cr_023"))
             if is_empty:
-                desc_parts.append("又逢旬空，更为无力")
+                desc_parts.append(ctext("cr_024"))
 
             relation_str = yao.get("six_relation", "")
             details.append({
@@ -854,7 +862,7 @@ def analyze_monthly_break(result):
             })
 
     if not details:
-        return {"has_monthly_break": False, "details": [], "summary": "本卦无月破之爻"}
+        return {"has_monthly_break": False, "details": [], "summary": ctext("cr_025")}
 
     summary = "；".join(d["description"] for d in details)
     return {"has_monthly_break": True, "details": details, "summary": summary}
@@ -932,7 +940,7 @@ def analyze_triple_combo(result):
     hex_info = result.get("original_hexagram", {})
     yao_lines = hex_info.get("yao_lines", [])
     if not yao_lines:
-        return {"has_triple_combo": False, "details": [], "summary": "无数据"}
+        return {"has_triple_combo": False, "details": [], "summary": ctext("cr_018")}
 
     dt = result.get("divination_time", {})
     month_sb = dt.get("month_stem_branch", "")
@@ -1092,7 +1100,7 @@ def analyze_triple_combo(result):
         })
 
     if not details:
-        return {"has_triple_combo": False, "details": [], "summary": "本卦无三合局"}
+        return {"has_triple_combo": False, "details": [], "summary": ctext("cr_026")}
 
     summary = "；".join(d["description"] for d in details)
     return {"has_triple_combo": True, "details": details, "summary": summary}
@@ -1127,7 +1135,7 @@ def analyze_advance_retreat(result):
     changed_name = changed.get("name")
 
     if not yao_lines or not changed_name:
-        return {"has_advance_retreat": False, "details": [], "summary": "无动爻或无变卦"}
+        return {"has_advance_retreat": False, "details": [], "summary": ctext("cr_027")}
 
     # 获取月建日辰五行用于旺衰评分
     dt = result.get("divination_time", {})
@@ -1254,7 +1262,7 @@ def analyze_advance_retreat(result):
         })
 
     if not details:
-        return {"has_advance_retreat": False, "details": [], "summary": "无有效进退神分析"}
+        return {"has_advance_retreat": False, "details": [], "summary": ctext("cr_028")}
 
     summary = "；".join(d["description"] for d in details)
     return {"has_advance_retreat": True, "details": details, "summary": summary}
@@ -1290,14 +1298,14 @@ def analyze_twelve_growth(result):
     yao_lines = hex_info.get("yao_lines", [])
     if not yao_lines:
         return {"day_branch": "", "day_element": "", "lines": [],
-                "summary": "无数据", "key_lines": [], "weak_lines": []}
+                "summary": ctext("cr_018"), "key_lines": [], "weak_lines": []}
 
     dt = result.get("divination_time", {})
     day_sb = dt.get("day_stem_branch", "")
     day_branch = day_sb[1:] if len(day_sb) >= 2 else ""
     if not day_branch:
         return {"day_branch": "", "day_element": "", "lines": [],
-                "summary": "无日辰数据", "key_lines": [], "weak_lines": []}
+                "summary": ctext("cr_019"), "key_lines": [], "weak_lines": []}
 
     day_element = _branch_element(day_branch)
     empty_branches = result.get("empty_branches", [])
@@ -1557,7 +1565,7 @@ def analyze_desperate_relief(result):
         out["score_modifier"] = -0.8
         out["description"] = (
             f"用神{use_god_element}（{use_god_branch}）处{stage}地，"
-            f"原神{yuan_shen_element}虽现但{'旬空' if yuan_shen_empty else '月破'}，"
+            f"原神{yuan_shen_element}虽现但{ctext('cr_031') if yuan_shen_empty else ctext('cr_032')}，"
             f"无力救援，绝地无救"
         )
 
@@ -1591,7 +1599,7 @@ def analyze_clash_harmony(result):
     hex_info = result.get("original_hexagram", {})
     yao_lines = hex_info.get("yao_lines", [])
     if not yao_lines:
-        return {"hexagram_type": "未知", "pairs": [], "summary": "无数据", "meaning": ""}
+        return {"hexagram_type": "未知", "pairs": [], "summary": ctext("cr_018"), "meaning": ""}
 
     yao_by_pos = {y["position"]: y for y in yao_lines}
 
@@ -1710,7 +1718,7 @@ def analyze_repetition(result):
         return {
             "repetition_type": "无",
             "chong_pairs": [],
-            "summary": "本卦无动爻，不存在反吟伏吟",
+            "summary": ctext("cr_029"),
             "meaning": "",
         }
 
@@ -1962,7 +1970,7 @@ def analyze_hexagram_body(result):
             "body_position": None,
             "body_element": "",
             "body_relation": "",
-            "meaning": "无法确定卦身（卦代未知）",
+            "meaning": ctext("cr_030"),
             "classical_rule": "阳世子起顺推，阴世应起逆推",
             "implications": [],
         }
@@ -2071,7 +2079,7 @@ def analyze_element_strength(result):
     if not yao_lines:
         return {"month_branch": "", "month_element": "", "day_branch": "",
                 "day_element": "", "strength_description": "",
-                "details": [], "summary": "无数据"}
+                "details": [], "summary": ctext("cr_018")}
 
     dt = result.get("divination_time", {})
     month_sb = dt.get("month_stem_branch", "")
@@ -2096,11 +2104,11 @@ def analyze_element_strength(result):
         # 特殊标记
         special = []
         if branch in empty_branches:
-            special.append("旬空")
+            special.append(ctext("cr_031"))
         if is_ba_zu_chong(branch, month_branch):
-            special.append("月破")
+            special.append(ctext("cr_032"))
         if is_ba_zu_chong(branch, day_branch):
-            special.append("日冲")
+            special.append(ctext("cr_033"))
         stage = get_twelve_growth_stage(elem, day_branch)
         if stage in ("墓", "绝", "死"):
             special.append(f"{stage}")
@@ -2186,7 +2194,7 @@ def analyze_three_punishments(result):
     hex_info = result.get("original_hexagram", {})
     yao_lines = hex_info.get("yao_lines", [])
     if not yao_lines:
-        return {"has_punishment": False, "punishments": [], "total_score": 0.0, "summary": "无数据"}
+        return {"has_punishment": False, "punishments": [], "total_score": 0.0, "summary": ctext("cr_018")}
 
     dt = result.get("divination_time", {})
     month_sb = dt.get("month_stem_branch", "")
@@ -2373,7 +2381,7 @@ def analyze_three_punishments(result):
     # 1处成刑维持原分数（线性加减已足够）
 
     if not punishments:
-        return {"has_punishment": False, "punishments": [], "total_score": 0.0, "summary": "本卦无三刑"}
+        return {"has_punishment": False, "punishments": [], "total_score": 0.0, "summary": ctext("cr_034")}
 
     summary_parts = [p["description"] for p in punishments]
 
@@ -2490,7 +2498,7 @@ def analyze_day_month_bonding(result):
         summary_parts = [f"{f['bond']}（{f['effect']}）" for f in findings]
         summary = "；".join(summary_parts)
     else:
-        summary = "无用神/忌神与日辰月建之合"
+        summary = ctext("cr_035")
 
     return {
         "findings": findings,
@@ -2611,7 +2619,7 @@ def analyze_six_breaks(result):
         summary = "；".join(summary_parts)
     else:
         desc = ""
-        summary = "无六破"
+        summary = ctext("cr_036")
 
     return {
         "breaks": breaks,
@@ -2663,7 +2671,7 @@ def analyze_officer_tomb(result):
             "scenarios": [],
             "officer_branches": [],
             "tomb_branch": "",
-            "description": "数据不足，无法分析随官入墓",
+            "description": ctext("cr_037"),
             "score_modifier": 0.0,
             "classical_quote": CINTERP["guan_tomb_poem"]["text"],
             "details": [],
@@ -2749,7 +2757,7 @@ def analyze_officer_tomb(result):
             "scenarios": [],
             "officer_branches": [],
             "tomb_branch": "",
-            "description": "本卦无官鬼爻，不论随官入墓",
+            "description": ctext("cr_038"),
             "score_modifier": 0.0,
             "classical_quote": CINTERP["guan_tomb_poem"]["text"],
             "details": [],
@@ -2787,11 +2795,11 @@ def analyze_officer_tomb(result):
         self_tomb = (off_branch == tomb)
 
         if officer_in_tomb or self_tomb:
-            if "官鬼入墓" not in scenarios:
-                scenarios.append("官鬼入墓")
+            if ctext("cr_039") not in scenarios:
+                scenarios.append(ctext("cr_039"))
             source = "本卦/变卦/日月中" if officer_in_tomb else "本支即墓"
             details.append({
-                "type": "官鬼入墓",
+                "type": ctext("cr_039"),
                 "officer_branch": off_branch,
                 "officer_element": off_element,
                 "tomb_branch": tomb,
@@ -2803,10 +2811,10 @@ def analyze_officer_tomb(result):
 
         # 场景b: 世随官入墓 -- 世爻地支 = 官鬼墓库
         if world_branch and world_branch == tomb:
-            if "世随官入墓" not in scenarios:
-                scenarios.append("世随官入墓")
+            if ctext("cr_040") not in scenarios:
+                scenarios.append(ctext("cr_040"))
             details.append({
-                "type": "世随官入墓",
+                "type": ctext("cr_040"),
                 "officer_branch": off_branch,
                 "world_branch": world_branch,
                 "tomb_branch": tomb,
@@ -2817,10 +2825,10 @@ def analyze_officer_tomb(result):
 
         # 场景c: 用随官入墓 -- 用神地支 = 官鬼墓库
         if use_god_branch and use_god_branch == tomb:
-            if "用随官入墓" not in scenarios:
-                scenarios.append("用随官入墓")
+            if ctext("cr_041") not in scenarios:
+                scenarios.append(ctext("cr_041"))
             details.append({
-                "type": "用随官入墓",
+                "type": ctext("cr_041"),
                 "officer_branch": off_branch,
                 "use_god_branch": use_god_branch,
                 "use_god_category": use_god_category,
@@ -2835,10 +2843,10 @@ def analyze_officer_tomb(result):
 
         # 场景d: 鬼用同墓 -- 官鬼自身地支即墓 且 世/用也临此墓
         if off_branch == tomb and (world_branch == tomb or use_god_branch == tomb):
-            if "鬼用同墓" not in scenarios:
-                scenarios.append("鬼用同墓")
+            if ctext("cr_042") not in scenarios:
+                scenarios.append(ctext("cr_042"))
             details.append({
-                "type": "鬼用同墓",
+                "type": ctext("cr_042"),
                 "officer_branch": off_branch,
                 "world_branch": world_branch,
                 "use_god_branch": use_god_branch,
@@ -2852,10 +2860,10 @@ def analyze_officer_tomb(result):
         if is_moving and changed_name:
             chg_branch = get_changed_hexagram_branch(changed_name, off_pos)
             if chg_branch == tomb:
-                if "官鬼动化墓" not in scenarios:
-                    scenarios.append("官鬼动化墓")
+                if ctext("cr_043") not in scenarios:
+                    scenarios.append(ctext("cr_043"))
                 details.append({
-                    "type": "官鬼动化墓",
+                    "type": ctext("cr_043"),
                     "officer_branch": off_branch,
                     "changed_branch": chg_branch,
                     "tomb_branch": tomb,
@@ -2894,11 +2902,11 @@ def analyze_officer_tomb(result):
     }
 
     scenario_descriptions = {
-        "官鬼入墓": CINTERP["officer_tomb_officer"]["text"],
-        "世随官入墓": CINTERP["officer_tomb_world"]["text"],
-        "用随官入墓": CINTERP["officer_tomb_use"]["text"],
-        "鬼用同墓": CINTERP["officer_tomb_both"]["text"],
-        "官鬼动化墓": CINTERP["officer_tomb_moving"]["text"],
+        ctext("cr_039"): CINTERP["officer_tomb_officer"]["text"],
+        ctext("cr_040"): CINTERP["officer_tomb_world"]["text"],
+        ctext("cr_041"): CINTERP["officer_tomb_use"]["text"],
+        ctext("cr_042"): CINTERP["officer_tomb_both"]["text"],
+        ctext("cr_043"): CINTERP["officer_tomb_moving"]["text"],
     }
 
     desc_parts = [scenario_descriptions.get(s, s) for s in scenarios]
@@ -2971,24 +2979,24 @@ def analyze_transformation_pattern(result):
     # 检查连续三爻动
     for i in range(1, 5):  # position 1~4 as starting point
         if all(p in moving for p in [i, i + 1, i + 2]):
-            patterns.append("连续三爻动")
+            patterns.append(ctext("cr_044"))
             break
 
     # 检查间隔动爻
     if moving == [1, 3, 5] or moving == [2, 4, 6]:
-        patterns.append("间隔动爻")
+        patterns.append(ctext("cr_045"))
 
     # 检查上卦全动 (positions 4,5,6)
     if all(p in moving for p in [4, 5, 6]):
-        patterns.append("上卦全动")
+        patterns.append(ctext("cr_046"))
 
     # 检查下卦全动 (positions 1,2,3)
     if all(p in moving for p in [1, 2, 3]):
-        patterns.append("下卦全动")
+        patterns.append(ctext("cr_047"))
 
     # 检查对爻齐动（世爻与应爻同动）
     if world_pos and response_pos and world_pos in moving and response_pos in moving:
-        patterns.append("对爻齐动")
+        patterns.append(ctext("cr_048"))
 
     # 检查用神原神齐动/用神忌神齐动
     # 需要从 thinking-chain 的用神信息获取
@@ -3018,9 +3026,9 @@ def analyze_transformation_pattern(result):
             ) if ji_shen_rel else False
 
             if use_god_moving and yuan_shen_moving:
-                patterns.append("用神原神齐动")
+                patterns.append(ctext("cr_049"))
             if use_god_moving and ji_shen_moving:
-                patterns.append("用神忌神齐动")
+                patterns.append(ctext("cr_050"))
 
     total_weight = sum(
         TRANSFORMATION_PATTERNS.get(p, {}).get("weight", 1.0) for p in patterns
@@ -3031,7 +3039,7 @@ def analyze_transformation_pattern(result):
             TRANSFORMATION_PATTERNS.get(p, {}).get("advice", "") for p in patterns
         )
     else:
-        interpretation = "无特殊格局"
+        interpretation = ctext("cr_051")
 
     return {
         "moving_positions": moving,

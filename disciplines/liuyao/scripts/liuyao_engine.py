@@ -55,11 +55,10 @@ from engine_tables import BAGUA, _build_trigram_lookup, TRIGRAM_LOOKUP, BRANCH_N
 from engine_calendar import _load_ganzhi_kernel, _GANZHI, GANZHI_BOUNDARY, _noon, get_year_stem_branch, get_month_stem_branch, get_day_stem_branch, get_hour_stem_branch, ganzhi_moment, crosscheck_optional_libraries, apply_true_solar_time, _hour_to_shichen, handle_zi_hour
 from engine_chart import coin_toss, time_based_hexagram, number_based_hexagram, yao_value_to_lines, find_trigram_name, find_hexagram, find_changed_hexagram, get_palace_info, get_palace_element, determine_six_relations, get_empty_death, get_six_spirit, get_yao_name, get_yao_symbol, build_hexagram_result
 from engine_format import generate_analysis_hints, format_text_output, format_reading_output, apply_depth_limit, _apply_depth_to_result
-from engine_legacy import mei_hua_divination, mei_hua_cross_reference, batch_divination, _format_mei_hua_text, _check_batch_mode, _identify_use_god, _find_decisive_yao, _compute_quick_score, _score_to_verdict, _verdict_to_action, quick_reading, single_yao_judgment, _format_batch_text, _check_verify_mode
 
 def parse_arguments():
     parser = argparse.ArgumentParser(
-        description="六爻纳甲装卦引擎 - 完整的六爻占卜系统（含梅花易数互参、批量演卦、反幻觉校验）",
+        description="六爻纳甲装卦引擎",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 示例用法:
@@ -67,19 +66,15 @@ def parse_arguments():
   python liuyao_engine.py --mode time --datetime "2026-09-18 14:30"
   python liuyao_engine.py --mode number --numbers "3,5,8"
   python liuyao_engine.py --mode manual --yao "7,8,9,7,6,8"
-  python liuyao_engine.py --mode mei_hua --question "测试" --year 2024 --month 6 --day 15 --hour 10
-  python liuyao_engine.py --batch 5 --question "测投资"
-  python liuyao_engine.py --verify interp.txt --mode coin --question "测投资"
   python liuyao_engine.py --mode coin --output json
-  python liuyao_engine.py --mode quick --question "今日运程"
         """
     )
 
     parser.add_argument(
         "--mode",
-        choices=["coin", "time", "number", "manual", "mei_hua", "quick"],
+        choices=["coin", "time", "number", "manual"],
         default="coin",
-        help="起卦方式 (默认: coin)。mei_hua 模式下同时起六爻与梅花两卦并交叉验证；quick 为直觉速读模式"
+        help="起卦方式 (默认: coin)"
     )
     
     parser.add_argument(
@@ -159,48 +154,6 @@ def parse_arguments():
         help="生成HTML报告后自动在浏览器中打开（需配合 --format html）"
     )
 
-    # ── 梅花易数互参专用参数 ──
-    parser.add_argument(
-        "--year",
-        type=int,
-        default=None,
-        help="起卦年份（梅花易数互参模式必填）"
-    )
-    parser.add_argument(
-        "--month",
-        type=int,
-        default=None,
-        help="起卦月份（梅花易数互参模式必填）"
-    )
-    parser.add_argument(
-        "--day",
-        type=int,
-        default=None,
-        help="起卦日期（梅花易数互参模式必填）"
-    )
-
-    # ── 批量演卦专用参数 ──
-    parser.add_argument(
-        "--batch",
-        type=int,
-        default=None,
-        help="批量起卦次数（生成 N 个卦并统计对比）。同时使用 coin 模式时以不同种子起卦"
-    )
-
-    # ── 反幻觉校验专用参数 ──
-    parser.add_argument(
-        "--verify",
-        type=str,
-        default=None,
-        help="对指定的 LLM 解读文件执行反幻觉校验（需配合其他起卦参数或传入 --engine-result JSON）"
-    )
-    parser.add_argument(
-        "--engine-result",
-        type=str,
-        default=None,
-        help="引擎输出 JSON 文件路径（--verify 模式下可选，默认使用本次起卦的引擎结果）"
-    )
-
     parser.add_argument(
         "--distinguish-zi-hour",
         action="store_true",
@@ -240,16 +193,6 @@ def main():
     if getattr(args, "version", False):
         import yishu_core
         print(f"易 · 六爻 v{yishu_core.__version__}")
-        return
-
-    # ── 模式1：批量演卦 (优先级最高，覆盖 --mode) ──
-    if args.batch is not None and args.batch > 0:
-        _check_batch_mode(args)
-        return
-
-    # ── 模式2：反幻觉校验 (独立模式) ──
-    if args.verify is not None:
-        _check_verify_mode(args)
         return
 
     # 真太阳时校正 (如果提供了 --longitude)
@@ -345,36 +288,6 @@ def main():
             except ValueError:
                 print("错误：爻值格式不正确", file=sys.stderr)
                 sys.exit(1)
-
-        elif args.mode == "quick":
-            # 直觉速读模式：极简输出，200字以内
-            now = datetime.now()
-            year = args.year if args.year is not None else now.year
-            month = args.month if args.month is not None else now.month
-            day = args.day if args.day is not None else now.day
-            hour = args.hour if args.hour is not None else now.hour
-            output = quick_reading(args.question, year, month, day, hour)
-            print(output)
-            return
-
-        elif args.mode == "mei_hua":
-            # 梅花易数互参模式：同时起六爻 + 梅花，交叉验证
-            if not all([args.year, args.month, args.day, args.hour is not None]):
-                print("错误：梅花易数互参模式需要 --year、--month、--day、--hour 参数",
-                      file=sys.stderr)
-                print("示例：--mode mei_hua --question \"测试\" --year 2024 --month 6 --day 15 --hour 10",
-                      file=sys.stderr)
-                sys.exit(1)
-            cross_result = mei_hua_cross_reference(
-                args.question, args.year, args.month, args.day, args.hour
-            )
-            # 输出结果
-            output_format = args.format if args.format is not None else args.output
-            if output_format == "json":
-                print(json.dumps(cross_result, ensure_ascii=False, indent=2, default=str))
-            else:
-                print(_format_mei_hua_text(cross_result))
-            return
 
         # 早晚子时处理 (step 0: adjust day pillar if --distinguish-zi-hour)
         zi_hour_info = None

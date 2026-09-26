@@ -4,6 +4,23 @@
 
 分数口径变化必须在此登记，否则 tune/holdout 数字不可比（`AGENTS.md` §四.4）。
 
+## 2026-09-26e 仓库整洁（死代码/文档）
+
+- **删除**：`factor_waterfall.py`、`engine_legacy.py`、`hallucination_guard.py`；
+  `liuyao_engine` 仅 `coin|time|number|manual`；`visualization` 收敛为 SVG 卦盘。
+- **删除过期研究稿**：`references/precision_gaps.md`、`regression_failure_analysis.md`、`open_source_research.md`（历史见 git）。
+- **文档**：双 HANDOFF 合并至根 `docs/HANDOFF.md`；`LIUYAO-PLAN` 收为路线表。
+- **分数/指纹**：无变化（tune 93.9 / holdout 85.7 / 金标准 `65e8331c80c4f06a`）。
+- 历史条目里对 `visualize_shap`→`factor_waterfall` 的记载仍保留；后者本轮已删。
+
+## 2026-09-26f classical_rules 可交付断语外置
+
+- `data/rules/verdict_texts.json#classical_rules_notes`：51 条 summary/reasons 完整句（空态说明、伏神飞神判据、格局名等）。
+- `classical_rules.ctext(key)` 经 `chain_verdicts.CLASSICAL_RULES_NOTES` 加载；代码只留算法与键名。
+- 地支/五行等象数符号、f-string 运算符字、docstring 留在代码（非断语）。
+- **文本一字未改**，金标准指纹 `65e8331c80c4f06a` 与 tune/holdout/回归读数全部持平。
+- 仍有拼装句用 f-string 组合；下一步可按模板键继续外置。
+
 ## M2.1（第三批·词典层）问题词典结构化进 data/ + 取用神四层来源标注（2026-09-24）
 
 **改了什么**
