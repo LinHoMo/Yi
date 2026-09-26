@@ -25,3 +25,5 @@ synthesis/guidance/
 .DS_Store
 .idea/
 .vscode/
+
+.worktrees/
