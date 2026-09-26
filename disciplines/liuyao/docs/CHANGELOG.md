@@ -13,6 +13,11 @@
 - **分数/指纹**：无变化（tune 93.9 / holdout 85.7 / 金标准 `65e8331c80c4f06a`）。
 - 历史条目里对 `visualize_shap`→`factor_waterfall` 的记载仍保留；后者本轮已删。
 
+## 2026-09-26l chain_step5 按职责拆分（零漂移）
+
+- chain_step5.py（1949 行）→ 门面 step5_synthesize + chain_step5_{dates,timing,conf,yp}.py。
+- 对外 API（thinking_chain 调 step5_synthesize）不变；金标准 5c6e77ee253b0ddd 不变。
+
 ## 2026-09-26k M1b 收尾：classical_rules 按域拆分（零漂移）
 
 - `classical_rules.py`（3091 行）→ 门面 + `classical_rules_{hidden,patterns,effects}.py`。
