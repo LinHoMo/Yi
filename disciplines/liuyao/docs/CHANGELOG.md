@@ -13,6 +13,13 @@
 - **分数/指纹**：无变化（tune 93.9 / holdout 85.7 / 金标准 `65e8331c80c4f06a`）。
 - 历史条目里对 `visualize_shap`→`factor_waterfall` 的记载仍保留；后者本轮已删。
 
+## 2026-09-26k M1b 收尾：classical_rules 按域拆分（零漂移）
+
+- `classical_rules.py`（3091 行）→ 门面 + `classical_rules_{hidden,patterns,effects}.py`。
+- 对外 API 不变（`classical_analysis` 仍 from classical_rules import …）。
+- 金标准指纹 `5c6e77ee253b0ddd` **不变**；tune/holdout/外部集读数不变。
+- 根 `tools/check.py` 结构门新增巨石看门狗（单文件 >2200 行即失败）。
+
 ## 2026-09-26j 金标准补 narrate 文案门 + 应期绝对日窗
 
 - **金标准**：抽样子集（每 24 卦静盘）记 `narrate_sha`/`narrate_len`，堵「文案搬家全盲」缺口；

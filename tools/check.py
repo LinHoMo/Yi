@@ -91,6 +91,14 @@ def check_structure() -> list[str]:
                 m = CROSS_DISC_IMPORT.match(line)
                 if m and m.group(2) != disc:
                     fails.append(f"{p.relative_to(ROOT)}:{i}: 学科间 import {m.group(2)}")
+    # 巨石看门狗：单文件过长视为架构债（M1b；classical_rules 已按域拆分）
+    max_lines = 2200
+    for p in (ROOT / "disciplines").rglob("*.py"):
+        if "scratch" in p.parts:
+            continue
+        n = sum(1 for _ in p.open(encoding="utf-8", errors="ignore"))
+        if n > max_lines:
+            fails.append(f"{p.relative_to(ROOT)} 过长（{n} 行 > {max_lines}）——按域拆分，勿再堆巨石")
     return fails
 
 
