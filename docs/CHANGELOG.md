@@ -3,6 +3,24 @@
 仓库级变更登记（跨科 / 内核 / 口径 / 架构）。学科内细节见各科 `CHANGELOG.md`。
 规则：指标口径任何变动（计分方式、词典、缺失字段处理）必须在此登记，否则分数不可比（`AGENTS.md` §四.4）。
 
+### 2026-09-26e 仓库整洁：死代码与过期文档清理
+
+**删除清单（行为无变化；分数与金标准指纹 `65e8331c80c4f06a` 不变）**
+
+| 对象 | 原因 |
+|---|---|
+| `disciplines/liuyao/scripts/factor_waterfall.py` | 语法已坏、零调用（原 visualize_shap） |
+| `disciplines/liuyao/scripts/engine_legacy.py` | mei_hua/quick/batch 旧 CLI 兼容层，绕开四段契约 |
+| `disciplines/liuyao/scripts/hallucination_guard.py` | 仅被 engine_legacy 引用 |
+| `liuyao_engine --mode mei_hua\|quick`、`--batch`、`--verify` | 同上；MCP `quick_reading` 不依赖此路径 |
+| `visualization.py` 中雷达/动变/应期时间线/八宫/批量/历史/HTML 组装 | 无调用方；仅保留 SVG 卦盘给 `render` |
+| `references/precision_gaps.md` | 过期研究稿（缺口已修或已否证） |
+| `references/regression_failure_analysis.md` | 过期（2026-07 失败分析，基线已重立） |
+| `references/open_source_research.md` | 过期调研，结论已过时 |
+
+文档收敛：`YI-PLAN`/`LIUYAO-PLAN` 收为路线表；双 HANDOFF 合并至根 `docs/HANDOFF.md`。
+`reg_14`/`reg_18` 备注原指向 `precision_gaps.md`——该文件已删，缺口现状见六爻 CHANGELOG 与 HANDOFF。
+
 ## v0.0.1 — 2026-09-23 大更：卜科四科全可用（三科上线 + 六爻四段契约接入）+ 合参层实现 + 仓库级质量门
 
 ### 2026-09-26d 六爻应期 top-1 稳超随机 10pt+（目标达成）
@@ -121,7 +139,7 @@
 - **质量门全绿**：黑箱回归 11/18 → 13/18（+2）；chain tests 8/12 → 12/12；金标准指纹不变；
   无 engine 零漂移以外回退。
 - **未覆盖剩余 5 个失败案例**（属 engine 结构性建模能力，非断语调整可解）：
-  - `reg_14`、`reg_18`：六亲通关/暗动未建模（engine 限制，见 `references/precision_gaps.md`）；
+  - `reg_14`、`reg_18`：六亲通关/暗动未建模（engine 限制）；
   - `reg_13`：测试 case 实际触发用神不伏藏路径（用神子孙在卦可直取），伏藏压制未覆盖。
      显式路径给出 3.80 分（旺），但测试期望 medium（古籍伏克飞为出场景）。
      路径错配不在本轮范围（避免私有别名）；
