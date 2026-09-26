@@ -4,7 +4,7 @@
     "how": "改动引擎行为后跑 python tools/golden.py capture \"理由\"；无理由不落盘，历次漂移见 drift_log",
     "cases": 288
   },
-  "digest": "9b90c24d20ee5f3b",
+  "digest": "2701fda2c925c208",
   "drift_log": [
     {
       "from": "bb23797bf6044b95",
@@ -23,6 +23,12 @@
       "to": "9b90c24d20ee5f3b",
       "date": "2026-09-26",
       "reason": "analyze 输出追加病药/星煞加性字段（bing_yao/shensha_panel），不改已有判定；应期插队规则已回退（tune/名次变差）"
+    },
+    {
+      "from": "9b90c24d20ee5f3b",
+      "to": "2701fda2c925c208",
+      "date": "2026-09-26",
+      "reason": "应期排序按古例规律修订（近病填实/久病冲空/化空出空/伏得出/飞克伏冲飞），yingqi_branches 重排属有意行为变更"
     }
   ]
 }

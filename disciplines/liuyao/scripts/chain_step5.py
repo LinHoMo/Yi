@@ -1722,37 +1722,85 @@ def _predict_timing(r: dict, step3_data: dict, step1_data: dict, day_branch: str
                (month_branch if _he(use_god_branch) == month_branch else "")
     PEAK_BRANCH = {"木": "寅", "火": "巳", "土": "辰", "金": "申", "水": "亥"}
 
+    # ── 病药解除优先（《增删卜易》空则实之、破则补之、墓则冲之）──
+    # 古例规律（tune 实测）：
+    #   · 用神旬空而日辰已冲 → 当日冲空填实即应（ZS001）
+    #   · 化出之支逢空 → 出空值日为应（ZS007/013）
+    #   · 飞神旬空、伏神得出 → 伏神值日为应（ZS016）
+    #   · 空亡支与用神同五行 → 亦作出空应期（ZS006/010）
+    _empty_list = list(r.get("empty_branches") or [])
+    _chong_ug = _chong(use_god_branch)
+    _q_txt = str(r.get("question") or "") + str(r.get("topic") or "")
+    _is_illness_q = any(k in _q_txt for k in ("病", "疾", "愈", "医"))
+    _is_chronic = any(k in _q_txt for k in ("久病", "沉疴", "久疾", "半年"))
     if is_empty:
-        _rank(_chong(use_god_branch) or use_god_branch, "用神旬空，冲空则实")
-        _rank(use_god_branch, "出旬填实")
+        if day_branch and day_branch == _chong_ug:
+            _rank(day_branch, "用神旬空，日辰冲空填实，当日即应")
+        elif _is_chronic and _chong_ug:
+            # 久病逢空多应冲空之日（《增删卜易》久病之忌）
+            _rank(_chong_ug, "久病用神旬空，期于冲空")
+            _rank(use_god_branch, "出旬填实")
+        elif _is_illness_q:
+            # 近病逢空即愈：出空填实为应
+            _rank(use_god_branch, "近病用神旬空，出旬填实即愈")
+            _rank(_chong_ug or use_god_branch, "冲空则实")
+        else:
+            _rank(use_god_branch, "用神旬空，出旬填实")
+            _rank(_chong_ug or use_god_branch, "用神旬空，冲空则实")
     if is_month_break:
         _rank(use_god_branch, "月破出月，逢值填实")
         _rank(_he(use_god_branch), "月破逢合，合处填实")
     if step2_d.get("has_fu_cang") and (fu_branch or fei_branch):
-        _rank(_chong(fei_branch) or fu_branch, "用神伏藏，冲飞神得出")
-        _rank(fu_branch or use_god_branch, "伏神值日")
+        fei_empty = fei_branch in _empty_list if fei_branch else False
+        _fu_txt = str(step2_d.get("fu_cang_detail") or "") + str(step2_d.get("fu_cang_summary") or "")
+        _fei_ke_fu = any(k in _fu_txt for k in ("飞克伏", "飞神克"))
+        _fu_sheng_fei = any(k in _fu_txt for k in ("伏生飞", "伏神生"))
+        if fei_empty and fu_branch:
+            _rank(fu_branch, "飞神旬空，伏神得出，期于伏神值日")
+        elif _fei_ke_fu and fei_branch:
+            _rank(_chong(fei_branch) or fu_branch, "飞神克伏，冲开飞神")
+            if fu_branch:
+                _rank(fu_branch, "伏神值日")
+        elif fu_branch:
+            _rank(fu_branch, "伏神得出，期于伏神值日")
+            if fei_branch and _fu_sheng_fei:
+                _rank(_chong(fei_branch) or fei_branch, "伏生飞，冲开飞神")
+            elif fei_branch:
+                _rank(_chong(fei_branch) or fu_branch, "冲飞神得出")
+        if fu_branch and fu_branch != use_god_branch:
+            _rank(fu_branch, "伏神值日")
     if tomb_branch and tomb_branch in (day_branch, month_branch):
         _rank(_chong(tomb_branch), "用神入墓，冲墓之日")
     if bound_by:
         _rank(_chong(bound_by), f"用神被{bound_by}合住，冲开之日")
-    # 化回头生的优先级在"解除障碍"诸法之后：先空破伏墓合，再谈生我之日。
-    # 实测把它放第一位会压掉原本排得对的主应期（top-1 29.4% → 17.6%）。
-    if hui_tou_sheng:
-        _rank(hui_tou_sheng[0], "动而化回头生，期于生我之日")
-    if use_god_branch:
+    # 用神不空时，本气值日优先于其他空亡出空
+    if use_god_branch and not is_empty:
         if ug_moving:
             _rank(_he(use_god_branch), "用神发动，逢合之日")
             _rank(use_god_branch, "发动值日")
         else:
-            _rank(_chong(use_god_branch), "用神安静，逢冲之日")
-            _rank(use_god_branch, "安静值日")
-    # 非用神之空亡：出空值日；若是动变所化之支逢空，久案多应在"年"上
-    for e in (r.get("empty_branches") or []):
-        _rank(e, "空亡之支出空值日")
-        if any(e in (b, c) for b, c in changed_pairs):
-            _rank(e, "填空之支，迟者应于其年", "年")
+            _rank(use_god_branch, "用神值日")
+            _rank(_chong_ug, "用神安静，逢冲之日")
+    # 化出之支：回头生之支 / 化空之支
     if changed_pairs:
-        _rank(changed_pairs[0][1], "化出之支值日")
+        _chg0 = changed_pairs[0][1]
+        if _chg0:
+            if _chg0 in _empty_list:
+                _rank(_chg0, "化出之支逢空，出空值日")
+            if hui_tou_sheng:
+                _rank(hui_tou_sheng[0], "动而化回头生，期于生我之日")
+            elif _chg0:
+                _rank(_chg0, "化出之支值日")
+    # 同五行之空亡支
+    ug_el = use_god_element or ""
+    for e in _empty_list:
+        if e and e != use_god_branch and ug_el and BRANCH_ELEMENTS.get(e) == ug_el:
+            _rank(e, "空亡之支与用神同五行，出空填实")
+    for e in _empty_list:
+        if e and e != use_god_branch:
+            _rank(e, "空亡之支出空填实")
+    if use_god_branch and is_empty:
+        _rank(use_god_branch, "以用神为主")
     if strength_level in ("休囚", "囚", "死", "偏弱", "衰") or speed == "应迟":
         _rank(PEAK_BRANCH.get(use_god_element or "", ""), "用神休囚，旺相之日")
     _rank(use_god_branch, "以用神为主")
@@ -1764,8 +1812,8 @@ def _predict_timing(r: dict, step3_data: dict, step1_data: dict, day_branch: str
     # （HANDOFF 四·7 记的那次三集全降即由此）。分列后各单位各自有序、各自封顶。
     peak = PEAK_BRANCH.get(use_god_element or "", "")
     if is_empty:
+        _rank(use_god_branch, "用神旬空，出旬填实之月", "月")
         _rank(_chong(use_god_branch) or use_god_branch, "用神旬空，冲空则实之月", "月")
-        _rank(use_god_branch, "出旬填实之月", "月")
     if is_month_break:
         _rank(use_god_branch, "月破出月，实破之月", "月")
     if tomb_branch and tomb_branch in (day_branch, month_branch):

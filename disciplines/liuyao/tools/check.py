@@ -68,13 +68,13 @@ BASELINE = {
     # 0.0.1 批次：动爻变出支补上后"化回头生"法则首次可触发，应期名次 2.13→2.27、
     # 对齐分 −0.1/−0.4，但 top-1 持平、两套测试各多过一例。**基线下调是有意的**，
     # 理由记于 docs/CHANGELOG.md；不许无凭据下调。
-    "tune": 93.7,          # 古籍对齐分 strict，n=20（参与过调参）；2026-09-26 规则修订后重锚，见 CHANGELOG
-    "holdout": 78.3,       # 古籍对齐分 strict，n=12（未参与调参）
-    "tune_top1": 29.4,     # 主应期命中率 %（随机基线 8.3）
-    "holdout_top1": 25.0,
+    "tune": 93.2,          # 古籍对齐分 strict，n=20；2026-09-26c 应期判别力优化后重锚（-0.5 换 top-1/holdout，见 CHANGELOG）
+    "holdout": 85.4,       # 古籍对齐分 strict，n=12（未参与调参）
+    "tune_top1": 41.2,     # 主应期命中率 %（随机期望 ~39）
+    "holdout_top1": 37.5,
 }
 # 基准应支平均名次：越小越好，单独按上限把关
-BASELINE_MAX = {"tune_rank": 2.19, "holdout_rank": 2.6}
+BASELINE_MAX = {"tune_rank": 2.25, "holdout_rank": 2.1}
 
 PATTERNS = {
     "chain_tests": r"Passed:\s*(\d+)/(\d+)",
