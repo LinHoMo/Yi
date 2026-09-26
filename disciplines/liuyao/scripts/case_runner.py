@@ -172,6 +172,10 @@ def load_ids(split: str | None = None, only: list[str] | None = None) -> list[st
         if SPLITS.exists():
             return [i for i in json.loads(SPLITS.read_text(encoding="utf-8")).get("wikisource_holdout", [])
                     if i in all_ids]
+    if split == "wikisource_direction":
+        if SPLITS.exists():
+            return [i for i in json.loads(SPLITS.read_text(encoding="utf-8")).get("wikisource_direction", [])
+                    if i in all_ids]
         return [i for i in all_ids if i.startswith("WS")]
     if split == "holdout":
         if SPLITS.exists():

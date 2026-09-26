@@ -48,7 +48,7 @@ def main() -> int:
             fails.append(f"缺 {rel}")
     print("[0] 契约文件", "√" if not fails else "×")
 
-    code, out = run(["scripts/chart.py", "--datetime", "1990-05-20 10:30", "-o", "scratch/chart.json"])
+    code, out = run(["scripts/chart.py", "--datetime", "1990-05-20 10:30", "--gender", "男", "-o", "scratch/chart.json"])
     if code != 0:
         fails.append("chart 冒烟失败")
         print(out)
@@ -61,16 +61,26 @@ def main() -> int:
         print(out)
     else:
         a = json.loads((DISC / "scratch" / "analyze.json").read_text(encoding="utf-8"))
-        if (a.get("conclusion") or {}).get("verdicts"):
-            fails.append("analyze 不应产出断语（M5 骨架）")
-        print("[2] analyze 冒烟 √（无断语）")
+        con = a.get("conclusion") or {}
+        # 机械标签允许；禁止「命运吉凶」总断
+        if con.get("方向"):
+            fails.append("analyze 不应给出命运方向总断")
+        for v in con.get("verdicts") or []:
+            if not isinstance(v, dict) or not v.get("basis"):
+                fails.append("verdicts 须带 basis")
+                break
+        if not con.get("strength") or not con.get("pattern"):
+            fails.append("缺 strength/pattern 机械推演")
+        if not con.get("dayun"):
+            fails.append("缺 dayun 大运表")
+        print("[2] analyze 机械推演 √" if not any("analyze" in f or "verdicts" in f or "strength" in f or "dayun" in f or "方向" in f for f in fails) else "[2] analyze ×")
 
     code, out = run(["scripts/narrate.py", "scratch/analyze.json"])
-    if code != 0 or "未实现" not in out:
-        fails.append("narrate 应明示未实现")
+    if code != 0 or "不是命运断言" not in out:
+        fails.append("narrate 应声明非命运断言")
         print(out)
     else:
-        print("[3] narrate 占位 √")
+        print("[3] narrate 口径声明 √")
 
     code, out = run(["tools/golden.py", "verify"])
     if code != 0:

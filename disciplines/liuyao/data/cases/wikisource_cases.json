@@ -5,6 +5,7 @@
     "retrieved": "2026-09-22",
     "sha256": "897f963b938ec4582bc892465301b831a6439216f317841f44b888117704ca07",
     "total_cases": 35,
+    "direction_only_cases": 36,
     "usage": "永不参与调参的外部验证集；评分前请先看 expected 是否需人工复核",
     "dropped": {
       "no_head": 93,
@@ -1290,6 +1291,1266 @@
         "offset": 4264,
         "wikitext_head": "子月丙申日占以父柩附葬祖苗得復之坤卦"
       }
+    },
+    {
+      "id": "WSD001",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占鄕試",
+      "question": "占鄕試",
+      "input": {
+        "date": "申月癸卯日",
+        "question": "占鄕試"
+      },
+      "hexagram": {
+        "original": "恒",
+        "changed": "大过",
+        "moving": [
+          5
+        ],
+        "palace": "震",
+        "generation": "三世"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "果得連捷。"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 212,
+        "wikitext_head": "申月癸卯日占鄕試得恆變大過"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD002",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占病",
+      "question": "占病",
+      "input": {
+        "date": "申月辛卯日",
+        "question": "占病"
+      },
+      "hexagram": {
+        "original": "夬",
+        "changed": "大壮",
+        "moving": [
+          5
+        ],
+        "palace": "坤",
+        "generation": "五世"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "果於次日用鍼而愈。或曰﹕子孫化退神﹐何其用藥亦效﹖予曰﹕動變皆屬秋金﹐當相得令﹐占近事豈可"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 282,
+        "wikitext_head": "申月辛卯日占病得澤天夬卦變大壯"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD003",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占母血崩一年有餘",
+      "question": "占母血崩一年有餘",
+      "input": {
+        "date": "戌月己卯日",
+        "question": "占母血崩一年有餘"
+      },
+      "hexagram": {
+        "original": "同人",
+        "changed": "解",
+        "moving": [
+          1,
+          2,
+          3,
+          5,
+          6
+        ],
+        "palace": "离",
+        "generation": "归魂"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "應爻戌土以生申金﹐金生亥水﹐丑土化破﹐非丑土化進神以塞亥水﹐此父母爻得"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 315,
+        "wikitext_head": "戌月己卯日占母血崩一年有餘得同人變解"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD004",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占父母近病",
+      "question": "占父母近病",
+      "input": {
+        "date": "卯月癸酉日",
+        "question": "占父母近病"
+      },
+      "hexagram": {
+        "original": "萃",
+        "changed": "否",
+        "moving": [
+          6
+        ],
+        "palace": "兑",
+        "generation": "二世"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "果於甲戌出空卽愈﹐此乃父爻休囚而化空也﹐若以古法動日月化空破尙且不進﹐今休囚而化空﹐可得愈"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 326,
+        "wikitext_head": "卯月癸酉日占父母近病得萃之否"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD005",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占母路隔千里何時來",
+      "question": "占母路隔千里何時來",
+      "input": {
+        "date": "未月丁丑日",
+        "question": "占母路隔千里何時來"
+      },
+      "hexagram": {
+        "original": "大有",
+        "changed": "井",
+        "moving": [
+          1,
+          4,
+          5,
+          6
+        ],
+        "palace": "乾",
+        "generation": "归魂"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "應不來﹐幸得未土生起酉金兄爻﹐兄化退神而合世﹐父母必不來﹐兄弟必來"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 414,
+        "wikitext_head": "未月丁丑日占母路隔千里何時來得火天大有變井"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD006",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占賊來否",
+      "question": "占賊來否",
+      "input": {
+        "date": "申月己未日",
+        "question": "占賊來否"
+      },
+      "hexagram": {
+        "original": "大畜",
+        "changed": "泰",
+        "moving": [
+          6
+        ],
+        "palace": "艮",
+        "generation": "二世"
+      },
+      "expected": {
+        "verdict": "凶",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "應自身之死者﹐世臨破鬼而入日墓﹐女之死者﹐上爻鬼變子孫之故耳"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 506,
+        "wikitext_head": "申月己未日占賊來否得大畜之泰卦"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD007",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "予占南行",
+      "question": "予占南行",
+      "input": {
+        "date": "戌月己巳日",
+        "question": "予占南行"
+      },
+      "hexagram": {
+        "original": "大有",
+        "changed": "大壮",
+        "moving": [
+          6
+        ],
+        "palace": "乾",
+        "generation": "归魂"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "應爻為官星動而生世﹐官貴相生者﹐𨿽則可喜﹐但嫌巳火墓於戌月而又化墓﹐生"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 1151,
+        "wikitext_head": "戌月己巳日予占南行得大有之大壯"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD008",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占功名",
+      "question": "占功名",
+      "input": {
+        "date": "午月辛酉日",
+        "question": "占功名"
+      },
+      "hexagram": {
+        "original": "萃",
+        "changed": "遁",
+        "moving": [
+          3,
+          6
+        ],
+        "palace": "兑",
+        "generation": "二世"
+      },
+      "expected": {
+        "verdict": "凶",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "應七月傷妻﹐卯木財爻絕於申也"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 1301,
+        "wikitext_head": "午月辛酉日占功名得萃變遁"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD009",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占母病",
+      "question": "占母病",
+      "input": {
+        "date": "未月丁亥日",
+        "question": "占母病"
+      },
+      "hexagram": {
+        "original": "坤",
+        "changed": "剥",
+        "moving": [
+          6
+        ],
+        "palace": "坤",
+        "generation": "六世"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "果於八月其子驚風﹐又來卜之。"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 1369,
+        "wikitext_head": "未月丁亥日占母病得坤之剝"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD010",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占天何日雨",
+      "question": "占天何日雨",
+      "input": {
+        "date": "巳月丁卯日",
+        "question": "占天何日雨"
+      },
+      "hexagram": {
+        "original": "恒",
+        "changed": "大过",
+        "moving": [
+          5
+        ],
+        "palace": "震",
+        "generation": "三世"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "應何干﹖予曾占雨占晴﹐一卦不現﹐再占兩卦"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 1442,
+        "wikitext_head": "巳月丁卯日占天何日雨得恆之大過"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD011",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "因連日雪占何日晴",
+      "question": "因連日雪占何日晴",
+      "input": {
+        "date": "子月己亥日",
+        "question": "因連日雪占何日晴"
+      },
+      "hexagram": {
+        "original": "观",
+        "changed": "比",
+        "moving": [
+          6
+        ],
+        "palace": "乾",
+        "generation": "四世"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "果於次日卯時﹐云開日出﹐此子水者旣臨月建﹐又有亥月拱之﹐旺之無比。若以之為霜雪﹐不獨不晴﹐"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 1470,
+        "wikitext_head": "子月己亥日因連日雪占何日晴得觀之比"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD012",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "久雪占晴﹐",
+      "question": "久雪占晴﹐",
+      "input": {
+        "date": "丑月戊辰日",
+        "question": "久雪占晴﹐"
+      },
+      "hexagram": {
+        "original": "随",
+        "changed": "震",
+        "moving": [
+          5
+        ],
+        "palace": "震",
+        "generation": "归魂"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "果於酉時霧散天開。凡得父化退神﹐雨亦將止。兄動化退神﹐云將開。於子孫財爻化退神者﹐晴不久矣"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 1571,
+        "wikitext_head": "丑月戊辰日久雪占晴﹐得隨之震"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD013",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占何日雨﹕",
+      "question": "占何日雨﹕",
+      "input": {
+        "date": "卯月丁巳日",
+        "question": "占何日雨﹕"
+      },
+      "hexagram": {
+        "original": "涣",
+        "changed": "坎",
+        "moving": [
+          6
+        ],
+        "palace": "离",
+        "generation": "五世"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "應在卯戌日﹐而雨卻應長生亥日"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 1666,
+        "wikitext_head": "卯月丁巳日占何日雨﹕得渙之坎卦"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD014",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占何日晴",
+      "question": "占何日晴",
+      "input": {
+        "date": "辰月庚寅日",
+        "question": "占何日晴"
+      },
+      "hexagram": {
+        "original": "观",
+        "changed": "升",
+        "moving": [
+          2,
+          3,
+          5,
+          6
+        ],
+        "palace": "乾",
+        "generation": "四世"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "果於次日晴還又雨。"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 1703,
+        "wikitext_head": "辰月庚寅日占何日晴得觀之升"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD015",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占終身財福",
+      "question": "占終身財福",
+      "input": {
+        "date": "酉月辛未日",
+        "question": "占終身財福"
+      },
+      "hexagram": {
+        "original": "颐",
+        "changed": null,
+        "moving": [],
+        "palace": "巽",
+        "generation": "游魂"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "果然顚倒昏迷﹐及逢墓庫沖開﹐如苗逢雨。諺云﹕福至心靈﹐爻中再有財福相生﹐或財福旺相者﹐陡然"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 1875,
+        "wikitext_head": "酉月辛未日占終身財福得頤卦"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD016",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占終身財福",
+      "question": "占終身財福",
+      "input": {
+        "date": "丑月丙辰日",
+        "question": "占終身財福"
+      },
+      "hexagram": {
+        "original": "未济",
+        "changed": "睽",
+        "moving": [
+          1
+        ],
+        "palace": "离",
+        "generation": "三世"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "應寅木父爻生﹐又是筆墨營生"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 1933,
+        "wikitext_head": "丑月丙辰日占終身財福得未濟之睽"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD017",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占終身財福",
+      "question": "占終身財福",
+      "input": {
+        "date": "卯月癸未日",
+        "question": "占終身財福"
+      },
+      "hexagram": {
+        "original": "革",
+        "changed": "家人",
+        "moving": [
+          4,
+          6
+        ],
+        "palace": "坎",
+        "generation": "四世"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "應外卦世與日月同為三合﹐以為吉卦﹐不宜世爻變鬼﹐又化回頭之克﹐上爻未土"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 2034,
+        "wikitext_head": "卯月癸未日占終身財福得革之家人"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD018",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占通鄕避亂",
+      "question": "占通鄕避亂",
+      "input": {
+        "date": "巳月丙戌日",
+        "question": "占通鄕避亂"
+      },
+      "hexagram": {
+        "original": "乾",
+        "changed": "大有",
+        "moving": [
+          5
+        ],
+        "palace": "乾",
+        "generation": "六世"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "果如何﹐但得世爻旺相﹐或有功爻日月生扶﹐或動而化吉﹐皆許無疾而終。"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 2298,
+        "wikitext_head": "巳月丙戌日占通鄕避亂得乾之大有"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD019",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占定何罪",
+      "question": "占定何罪",
+      "input": {
+        "date": "未月癸亥日",
+        "question": "占定何罪"
+      },
+      "hexagram": {
+        "original": "中孚",
+        "changed": "临",
+        "moving": [
+          5,
+          6
+        ],
+        "palace": "艮",
+        "generation": "游魂"
+      },
+      "expected": {
+        "verdict": "凶",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "果議絞罪﹐後蒙駁番撥活罪。"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 2315,
+        "wikitext_head": "未月癸亥日占定何罪得中孚變臨卦"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD020",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占兄弟還有",
+      "question": "占兄弟還有",
+      "input": {
+        "date": "未月辛丑日",
+        "question": "占兄弟還有"
+      },
+      "hexagram": {
+        "original": "既济",
+        "changed": "革",
+        "moving": [
+          4
+        ],
+        "palace": "坎",
+        "generation": "三世"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "應爻之子水﹐𨿽則出現﹐巳值旬空﹐故曰必不得濟"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 2408,
+        "wikitext_head": "未月辛丑日占兄弟還有得旣濟變革"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD021",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占夫婦將來和俁否﹖",
+      "question": "占夫婦將來和俁否﹖",
+      "input": {
+        "date": "酉月辛巳日",
+        "question": "占夫婦將來和俁否﹖"
+      },
+      "hexagram": {
+        "original": "泰",
+        "changed": null,
+        "moving": [],
+        "palace": "坤",
+        "generation": "三世"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "應在得妻家之財力也﹐否則內助必善於持家"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 2434,
+        "wikitext_head": "酉月辛巳日占夫婦將來和俁否﹖得泰卦"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD022",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占會試",
+      "question": "占會試",
+      "input": {
+        "date": "卯月甲申日",
+        "question": "占會試"
+      },
+      "hexagram": {
+        "original": "艮",
+        "changed": "益",
+        "moving": [
+          1,
+          3,
+          5
+        ],
+        "palace": "艮",
+        "generation": "六世"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "果得及第。"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 2710,
+        "wikitext_head": "卯月甲申日占會試得艮之益"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD023",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占缺得否",
+      "question": "占缺得否",
+      "input": {
+        "date": "申月己亥日",
+        "question": "占缺得否"
+      },
+      "hexagram": {
+        "original": "井",
+        "changed": "节",
+        "moving": [
+          1,
+          3
+        ],
+        "palace": "震",
+        "generation": "五世"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "應爻﹐一定不得﹐後 果另選別人"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 2797,
+        "wikitext_head": "申月己亥日占缺得否得井之節卦"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD024",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "住在京都占地方",
+      "question": "住在京都占地方",
+      "input": {
+        "date": "未月己巳日",
+        "question": "住在京都占地方"
+      },
+      "hexagram": {
+        "original": "归妹",
+        "changed": "解",
+        "moving": [
+          1
+        ],
+        "palace": "兑",
+        "generation": "归魂"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "應爻﹐不得"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 2861,
+        "wikitext_head": "未月己巳日住在京都占地方得歸妹變解"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD025",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占何時得價",
+      "question": "占何時得價",
+      "input": {
+        "date": "子月己丑日",
+        "question": "占何時得價"
+      },
+      "hexagram": {
+        "original": "归妹",
+        "changed": "兑",
+        "moving": [
+          5
+        ],
+        "palace": "兑",
+        "generation": "归魂"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "應動而逢合之月而得價也"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 3260,
+        "wikitext_head": "子月己丑日占何時得價得歸妹之兌"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD026",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占脫貨於何時",
+      "question": "占脫貨於何時",
+      "input": {
+        "date": "寅月己酉日",
+        "question": "占脫貨於何時"
+      },
+      "hexagram": {
+        "original": "贲",
+        "changed": null,
+        "moving": [],
+        "palace": "艮",
+        "generation": "一世"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "果去﹐不數日﹐得價出脫。此乃爻逢六合﹐財逢月合﹐及時脫貨也。"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 3273,
+        "wikitext_head": "寅月己酉日占脫貨於何時得賁卦"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD027",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占往楚買豆",
+      "question": "占往楚買豆",
+      "input": {
+        "date": "午月戊子日",
+        "question": "占往楚買豆"
+      },
+      "hexagram": {
+        "original": "临",
+        "changed": null,
+        "moving": [],
+        "palace": "坤",
+        "generation": "二世"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "果中間人作獘﹐告到官府﹐誤了一个月。幸好到地頭上價格上漲﹐果然得了厚利。此乃指其地而占者無"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 3304,
+        "wikitext_head": "午月戊子日占往楚買豆得臨卦"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD028",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占往粵東探親可帶何貨歸來得利",
+      "question": "占往粵東探親可帶何貨歸來得利",
+      "input": {
+        "date": "未月戊申日",
+        "question": "占往粵東探親可帶何貨歸來得利"
+      },
+      "hexagram": {
+        "original": "旅",
+        "changed": null,
+        "moving": [],
+        "palace": "离",
+        "generation": "一世"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "應相生﹐此行遂意﹐如問置實何貨﹐予無此法﹐不敢相誤﹐但喜旣得吉卦﹐任爾"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 3320,
+        "wikitext_head": "未月戊申日占往粵東探親可帶何貨歸來得利得旅卦"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD029",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占鵪鶉",
+      "question": "占鵪鶉",
+      "input": {
+        "date": "巳月戊申日",
+        "question": "占鵪鶉"
+      },
+      "hexagram": {
+        "original": "渐",
+        "changed": "巽",
+        "moving": [
+          2
+        ],
+        "palace": "艮",
+        "generation": "归魂"
+      },
+      "expected": {
+        "verdict": "凶",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "果於早勝﹐午時又大敗破財。"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 3372,
+        "wikitext_head": "巳月戊申日占鵪鶉得漸之巽卦"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD030",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "自占婚",
+      "question": "自占婚",
+      "input": {
+        "date": "子月癸酉日",
+        "question": "自占婚"
+      },
+      "hexagram": {
+        "original": "恒",
+        "changed": "鼎",
+        "moving": [
+          6
+        ],
+        "palace": "震",
+        "generation": "三世"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "應相生﹐戌土𨿽值旬空﹐動不為空﹐明日出空之日﹐求之必允﹐果於次日巳時允"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 3404,
+        "wikitext_head": "子月癸酉日自占婚得恆變鼎"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD031",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占母在外何時來",
+      "question": "占母在外何時來",
+      "input": {
+        "date": "酉月戊申日",
+        "question": "占母在外何時來"
+      },
+      "hexagram": {
+        "original": "旅",
+        "changed": "艮",
+        "moving": [
+          4
+        ],
+        "palace": "离",
+        "generation": "一世"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "果在外平安。"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 3608,
+        "wikitext_head": "酉月戊申日占母在外何時來得旅之艮卦"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD032",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占父遠去何日回",
+      "question": "占父遠去何日回",
+      "input": {
+        "date": "丑月庚午日",
+        "question": "占父遠去何日回"
+      },
+      "hexagram": {
+        "original": "履",
+        "changed": null,
+        "moving": [],
+        "palace": "艮",
+        "generation": "五世"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "果於申時到。"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 3640,
+        "wikitext_head": "丑月庚午日占父遠去何日回得履卦"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD033",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "由江右登舟占一路平安否",
+      "question": "由江右登舟占一路平安否",
+      "input": {
+        "date": "戌月丙戌日",
+        "question": "由江右登舟占一路平安否"
+      },
+      "hexagram": {
+        "original": "蛊",
+        "changed": "巽",
+        "moving": [
+          5
+        ],
+        "palace": "巽",
+        "generation": "归魂"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "果泊五日﹐巳日天晴得風順矣﹐自此始悟子孫乃行舟之順風也。"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 3673,
+        "wikitext_head": "於戌月丙戌日由江右登舟占一路平安否得蠱之巽"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD034",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占子病",
+      "question": "占子病",
+      "input": {
+        "date": "申月壬子日",
+        "question": "占子病"
+      },
+      "hexagram": {
+        "original": "遁",
+        "changed": null,
+        "moving": [],
+        "palace": "乾",
+        "generation": "二世"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "應破者空實破之日而愈"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 3737,
+        "wikitext_head": "申月壬子日占子病得遁卦"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD035",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占",
+      "question": "占",
+      "input": {
+        "date": "巳月己丑日",
+        "question": "占"
+      },
+      "hexagram": {
+        "original": "大有",
+        "changed": "乾",
+        "moving": [
+          5
+        ],
+        "palace": "乾",
+        "generation": "归魂"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "應﹐世應相生如何有犯﹖廟前另有一物﹐未土發動刑世﹐乃此故耳"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 4046,
+        "wikitext_head": "巳月己丑日占得大有之乾卦"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
+    },
+    {
+      "id": "WSD036",
+      "source": "《增刪卜易》（维基文库原本）",
+      "topic": "占穴",
+      "question": "占穴",
+      "input": {
+        "date": "未月乙巳日",
+        "question": "占穴"
+      },
+      "hexagram": {
+        "original": "大壮",
+        "changed": null,
+        "moving": [],
+        "palace": "坤",
+        "generation": "四世"
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "果得原錢於紅花之下﹐掘之周圍僅有丈予﹐皆泥土也﹐予皆石塊﹐此公次年開府﹐兩公郎五年之內俱登"
+      },
+      "provenance": {
+        "page": "增刪卜易",
+        "sha256_head": "a1d6086c3de3",
+        "offset": 4220,
+        "wikitext_head": "未月乙巳日占穴得大壯卦"
+      },
+      "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A"
     }
   ]
 }

@@ -332,7 +332,7 @@ def main() -> int:
     force_utf8_stdio()
     ap = argparse.ArgumentParser(description="六爻古籍案例对齐评分（非现实预测命中率）")
     ap.add_argument("--split", choices=["tune", "holdout", "yingqi_holdout",
-                                        "wikisource_holdout", "all"],
+                                        "wikisource_holdout", "wikisource_direction", "all"],
                     default="all")
     ap.add_argument("--ids", nargs="*", help="指定案例 ID，优先于 --split")
     ap.add_argument("--stage", choices=["run", "score", "all"], default="all")

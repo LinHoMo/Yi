@@ -2,9 +2,9 @@
   "_meta": {
     "what": "金标准指纹基线（chart+analyze 逐字段）",
     "how": "改动引擎行为后跑 python tools/golden.py capture \"理由\"；无理由不落盘，历次漂移见 drift_log",
-    "cases": 18
+    "cases": 23
   },
-  "digest": "9ff25fba45be16b0",
+  "digest": "2c9c810d8a265180",
   "drift_log": [
     {
       "from": null,
@@ -17,6 +17,12 @@
       "to": "9ff25fba45be16b0",
       "date": "2026-09-26",
       "reason": "holdout 扩样 MH014-MH018（多爻动校验例），指纹行数 13→18；MH001-MH013 行为字段未改，对齐分 tune/holdout 仍 100%；analyze 新增 analogies/multi_move 字段不进指纹快照"
+    },
+    {
+      "from": "9ff25fba45be16b0",
+      "to": "2c9c810d8a265180",
+      "date": "2026-09-26",
+      "reason": "变卦克体终局封顶平凶（体用总诀·变乃末后之期）+ holdout 扩样 MH019-023"
     }
   ]
 }

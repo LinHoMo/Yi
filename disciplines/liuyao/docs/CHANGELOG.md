@@ -13,6 +13,14 @@
 - **分数/指纹**：无变化（tune 93.9 / holdout 85.7 / 金标准 `65e8331c80c4f06a`）。
 - 历史条目里对 `visualize_shap`→`factor_waterfall` 的记载仍保留；后者本轮已删。
 
+## 2026-09-26h 外部集扩样：wikisource_direction（有吉凶无验期）
+
+- `fetch_wikisource_cases` 新增**仅方向集**：无可靠验期但吉凶明确的 36 例（`WSD001–036`），
+  expected.yingqi 留空 → evaluate 该维 **N/A**，不造假基准。
+- 分数：`wikisource_direction` strict 对齐分 **72.2%**（n=36，verdict 26/36）；
+  应期维全 N/A。与 `wikisource_holdout`（n=35，应期 top-1 20%）分列，永不调参。
+- 口径：方向维与应期维分开报 n；禁止把无验期例当应期考卷。
+
 ## 2026-09-26g 病药进 step5（有界加减）+ 否证记录
 
 - `chain_step5` 调用 `evaluate_bing_yao`，按 illness/medicine 码有界加减：

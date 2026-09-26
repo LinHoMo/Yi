@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""命·正文（narrate 段）—— 占位：明示推演未实现，不编命运结论。"""
+"""命·正文（narrate 段）—— 叙述机械因子；禁止命运断言。"""
 from __future__ import annotations
 
 import argparse
@@ -10,18 +10,35 @@ from pathlib import Path
 
 def narrate(a: dict) -> str:
     s = a.get("chart_summary") or {}
+    con = a.get("conclusion") or {}
     pillars = s.get("四柱") or {}
     gz = " ".join(str(pillars.get(k) or "—") for k in ("year", "month", "day", "hour"))
+    dayun = a.get("dayun") or con.get("dayun") or []
+
     lines = [
         "# 命局因子说明",
         "",
-        f"四柱：{gz}（年月日时）。",
-        f"日主：{s.get('日主') or '—'}。命宫：{s.get('命宫') or '—'}；身宫：{s.get('身宫') or '—'}。",
+        f"四柱：{gz}（年月日时）。日主：{s.get('日主') or '—'}。",
+        f"命宫：{s.get('命宫') or '—'}；身宫：{s.get('身宫') or '—'}。",
         "",
-        "本版本**未实现命理推演**（格局、大运、流年吉凶均未建）。",
-        "以上仅为机械排盘因子，供合参与人工研判对照，**不构成命运断言**。",
+        f"**强弱**：{con.get('strength') or s.get('强弱') or '—'}（得分 {con.get('strength_score')}）。",
+        f"**格局**：{con.get('pattern') or s.get('格局') or '—'}。",
+        f"**喜用**：{'、'.join(con.get('useful_gods') or []) or '—'}；"
+        f"忌：{'、'.join(con.get('taboo_gods') or []) or '—'}。",
         "",
-        "按 `AGENTS.md`：机械运算归代码；缺推演时明示未参评，不用其他科补位猜测。",
+    ]
+    if dayun:
+        lines.append("**大运**（起运岁为近似）：")
+        for d in dayun:
+            lines.append(
+                f"- {d.get('start_age')}–{d.get('end_age')} 岁　{d.get('ganzhi')}"
+                f"（{d.get('ten_god') or '—'}）"
+            )
+        lines.append("")
+    lines += [
+        "以上为机械排盘与扶抑口径推演，**不是命运断言**。",
+        "格局从格仅作 tentative 标注；重大决策以专业意见为准。",
+        "本模块不宣称现实预测命中率（`AGENTS.md` 铁律三）。",
     ]
     return "\n".join(lines) + "\n"
 
@@ -38,7 +55,7 @@ def main() -> int:
         from analyze import analyze as _analyze
         from chart import chart as _chart
 
-        a = _analyze(_chart(datetime_str="1990-05-20 10:30"))
+        a = _analyze(_chart(datetime_str="1990-05-20 10:30", gender="男"))
 
     text = narrate(a)
     if args.out:
