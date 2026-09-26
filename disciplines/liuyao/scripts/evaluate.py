@@ -231,7 +231,18 @@ def score_case(eng: dict, exp: dict, model: str) -> dict:
         rank = next((i + 1 for i, ch in enumerate(offered) if needed and ch in needed), None)
         if not needed:
             hit = x_yq in probe
-            dims["yingqi"] = (w if hit else 0, w, "字面命中" if hit else f"未对齐({x_yq})")
+            # 相对窗（次日/年内/月余…）无地支可比时：走节奏语义对齐（RHYTHM_PAIRS）
+            # + 引擎 speed/依据句字面，而不是整维记 0——基准是相对表述，不是缺基准。
+            rhythm = any(
+                any(k in x_yq for k in xk) and any(k in probe for k in ek)
+                for xk, ek in RHYTHM_PAIRS
+            )
+            if hit:
+                dims["yingqi"] = (w, w, "字面命中")
+            elif rhythm:
+                dims["yingqi"] = (int(w * 0.7), w, "相对窗节奏语义对齐")
+            else:
+                dims["yingqi"] = (0, w, f"未对齐({x_yq})")
         elif rank == 1:
             dims["yingqi"] = (w, w, f"主应期命中（{exp_unit}级）")
         elif rank == 2:

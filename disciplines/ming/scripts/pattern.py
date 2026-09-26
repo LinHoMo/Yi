@@ -170,19 +170,36 @@ def strength_and_pattern(chart_json: dict) -> dict:
 
 
 def dayun_table(chart_json: dict) -> list[dict]:
-    """大运 8 步（顺逆按年干阴阳×性别；起运岁≈起运日数/3，近似）。"""
+    """大运 8 步（顺逆按年干阴阳×性别；起运岁≈距节气日数/3，见 DAYS_PER_LUCK_YEAR）。"""
+    from datetime import datetime
+    from yishu_core.ganzhi_calendar import next_jie_after
+
     pillars = chart_json.get("pillars") or {}
     year_stem = (pillars.get("year") or {}).get("stem") or ""
-    year_branch = (pillars.get("year") or {}).get("branch") or ""
     month_gz = (pillars.get("month") or {}).get("ganzhi") or ""
     gender = (chart_json.get("birth") or {}).get("gender") or ""
     day_stem = (pillars.get("day") or {}).get("stem") or ""
+    birth_dt_s = (chart_json.get("birth") or {}).get("datetime") or ""
 
     direction = dayun_direction(year_stem, gender) if year_stem and gender else None
     if not direction or len(month_gz) < 2:
         return []
 
-    # 月柱干支序号顺逆推
+    # 起运：出生到下一节的日数 / DAYS_PER_LUCK_YEAR（三日=一年，通行近似）
+    start_age = 3
+    approximate = True
+    if birth_dt_s:
+        try:
+            bdt = datetime.strptime(str(birth_dt_s)[:16], "%Y-%m-%d %H:%M")
+            jie = next_jie_after(bdt)
+            jie_dt = jie.get("instant") if isinstance(jie, dict) else None
+            if isinstance(jie_dt, datetime):
+                days = max((jie_dt - bdt).total_seconds() / 86400.0, 0.0)
+                start_age = round(days / float(DAYS_PER_LUCK_YEAR), 1)
+                approximate = True  # 未计三日=一年的余数折算规则
+        except Exception:
+            start_age = 3
+
     stems = "甲乙丙丁戊己庚辛壬癸"
     branches = "子丑寅卯辰巳午未申酉戌亥"
     ms, mb = month_gz[0], month_gz[1]
@@ -194,20 +211,19 @@ def dayun_table(chart_json: dict) -> list[dict]:
 
     step = 1 if direction == "forward" else -1
     out = []
-    # 起运岁数：节气距离未算精确间隔时用 3 岁近似，标注 approximate
-    start_age = 3
     for i in range(8):
         s = stems[(si + step * (i + 1)) % 10]
         b = branches[(bi + step * (i + 1)) % 12]
         gz = s + b
         gods = canggan_ten_gods(day_stem, b) if day_stem else []
         main_god = next((g.get("ten_god") for g in gods if g.get("layer") == "本气"), "")
+        a0 = round(start_age + i * 10, 1)
         out.append({
             "index": i + 1,
             "ganzhi": gz,
-            "start_age": start_age + i * 10,
-            "end_age": start_age + i * 10 + 9,
+            "start_age": a0,
+            "end_age": round(a0 + 9.9, 1),
             "ten_god": main_god,
-            "approximate": True,
+            "approximate": approximate,
         })
     return out
