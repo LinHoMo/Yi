@@ -3,7 +3,7 @@ feature: repo-tidy-and-classical-texts
 status: delivered
 updated: 2026-09-26
 branch: chore/repo-tidy
-commits: 0fb5590..(uncommitted working tree on this base)
+commits: 0fb5590..dae6522
 ---
 
 # 仓库整洁 + classical_rules 断语外置
