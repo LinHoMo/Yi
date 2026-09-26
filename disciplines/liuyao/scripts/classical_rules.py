@@ -34,6 +34,7 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
 
 from classical_support import _branch_element, _combined_strength, _element_to_relation, _find_stage_at, _find_use_god_positions, _get_use_god_strength_level, _infer_use_god_category, _pos_to_name, _relation_element, _score_fanyin, _score_fuyin, _strength_score, determine_six_relation, element_strength_in_month, find_hexagram_body, g_day_cn, get_changed_hexagram_branch, get_month_strength_description, get_stages_of_interest, get_twelve_growth_stage, is_ba_zu_chong, is_ba_zu_he
 from classical_tables import KE_WO, SAN_HE, SELF_PUNISHMENTS, SHENG_WO, SIX_RELATIONS, THREE_PUNISHMENTS_CYCLIC, THREE_PUNISHMENTS_MUTUAL, TRANSFORMATION_PATTERNS, TWELVE_GROWTH
+from chain_verdicts import CLASSICAL_INTERPRETATIONS as CINTERP
 
 def _evaluate_hidden_spirit_emergence(hid_elem, hid_branch, cov_rel, cov_branch,
                                        cov_elem, month_branch, day_branch,
@@ -707,16 +708,16 @@ def analyze_wandering_returning_soul(result):
     # 游魂/归魂的卦类特质
     SOUL_GEN = {
         "游魂": {
-            "meaning": "游魂行无定，事主忧疑不定，心无归宿",
-            "travel": "行无方、四处飘荡、不定",
-            "residence": "不安于室，思迁",
-            "mind": "忧疑不决，心思散乱",
+            "meaning": CINTERP["youhun"]["text"],
+            "travel": CINTERP["youhun_traits"]["text"],
+            "residence": CINTERP["youhun_trait_home"]["text"],
+            "mind": CINTERP["youhun_trait_mind"]["text"],
         },
         "归魂": {
-            "meaning": "归魂回故乡，事主有归宿，终有所归",
-            "travel": "归期可定，终有所返",
-            "residence": "安居乐业，归家安定",
-            "mind": "疑虑消解，心有所属",
+            "meaning": CINTERP["guihun"]["text"],
+            "travel": CINTERP["guihun_traits"]["text"],
+            "residence": CINTERP["guihun_trait_home"]["text"],
+            "mind": CINTERP["guihun_trait_mind"]["text"],
         },
     }
 
@@ -730,18 +731,18 @@ def analyze_wandering_returning_soul(result):
             "travel": soul_data["travel"],
             "residence": soul_data["residence"],
             "mind": soul_data["mind"],
-            "summary": f"{generation}卦——{soul_data['meaning']}。事多{'往复飘摇，暂难定居' if generation == '游魂' else '反复纠结，终有归依'}",
+            "summary": f"{generation}卦——{soul_data['meaning']}。事多{CINTERP['youhun_dynamic']['text'] if generation == '游魂' else CINTERP['guihun_dynamic']['text']}",
             "score_adjustment": 0,  # 不改变评分——仅为断卦方向指引
         }
 
     return {
         "is_soul_hexagram": False,
         "soul_type": None,
-        "meaning": "本卦非游魂归魂主事卦，不以游魂归魂论断",
+        "meaning": CINTERP["not_youhun_guihun"]["text"],
         "travel": "无游魂归魂特征",
         "residence": "无游魂归魂特征",
         "mind": "无游魂归魂特征",
-        "summary": "非游魂归魂卦——事态以常规世应生克为断，不涉飘泊依附之象",
+        "summary": CINTERP["not_youhun_guihun_summary"]["text"],
         "score_adjustment": 0,
     }
 
@@ -1303,18 +1304,18 @@ def analyze_twelve_growth(result):
 
     # 关键阶段含义
     stage_meaning = {
-        "长生": "新生之象，事有先机，力量初萌",
-        "沐浴": "初生柔嫩，需防贻害，纯正尚待时日",
-        "冠带": "渐趋成熟，力量渐增，气色渐隆",
-        "临官": "正当显达，力量充实，可担重任",
-        "帝旺": "极盛之时，力量最旺，盛极将衰之先",
-        "衰": "物极必反，力量开始减退",
-        "病": "力不从心，内耗渐显，弊端初露",
-        "死": "气数已尽，力量极微，难以作为",
-        "墓": "收藏归库，力量隐伏，待冲开方可",
-        "绝": "绝地无援，力量极弱，最难施为",
-        "胎": "孕育新机，力量暗藏，有复生之机",
-        "养": "休养恢复，力量渐聚，新生在前",
+        "长生": CINTERP["twelve_changsheng"]["长生"]["text"],
+        "沐浴": CINTERP["twelve_changsheng"]["沐浴"]["text"],
+        "冠带": CINTERP["twelve_changsheng"]["冠带"]["text"],
+        "临官": CINTERP["twelve_changsheng"]["临官"]["text"],
+        "帝旺": CINTERP["twelve_changsheng"]["帝旺"]["text"],
+        "衰": CINTERP["twelve_changsheng"]["衰"]["text"],
+        "病": CINTERP["twelve_changsheng"]["病"]["text"],
+        "死": CINTERP["twelve_changsheng"]["死"]["text"],
+        "墓": CINTERP["twelve_changsheng"]["墓"]["text"],
+        "绝": CINTERP["twelve_changsheng"]["绝"]["text"],
+        "胎": CINTERP["twelve_changsheng"]["胎"]["text"],
+        "养": CINTERP["twelve_changsheng"]["养"]["text"],
     }
 
     lines_out = []
@@ -1631,40 +1632,40 @@ def analyze_clash_harmony(result):
     if he_count == 3:
         hexagram_type = "六合卦"
         meaning = (
-            "六合卦主团聚、缠绵、迟缓、牵绊。"
-            "占事多主反复纠缠、不易决断、需要耐心。"
-            "占物则聚集不散，占病则缠绵难愈。"
-            "然若用神旺相，则六合亦可为吉，主聚合之象。"
+            CINTERP["liuhe_hex"]["text"]
+            + CINTERP["liuhe_hex_2"]["text"]
+            + CINTERP["liuhe_hex_3"]["text"]
+            + CINTERP["liuhe_hex_4"]["text"]
         )
     elif chong_count == 3:
         hexagram_type = "六冲卦"
         meaning = (
-            "六冲卦主散、速决、分离、变动。"
-            "占事多主动散不聚、难以坚守、事来事去迅速。"
-            "占出行利，占散事宜，占聚合则不利。"
-            "若用神休囚受克，则冲散太过，须防意外。"
+            CINTERP["liuchong_hex"]["text"]
+            + CINTERP["liuchong_hex_2"]["text"]
+            + CINTERP["liuchong_hex_3"]["text"]
+            + CINTERP["liuchong_hex_4"]["text"]
         )
     elif he_count > 0 and chong_count > 0:
         hexagram_type = "半合半冲"
         meaning = (
             f"本卦有六合又有六冲（合{he_count}对、冲{chong_count}对），"
-            "主事态复杂，表面和谐内有矛盾，或聚散交织需视具体情形而定。"
+            + CINTERP["half_he_half_chong"]["text"]
         )
     elif he_count > 0:
         hexagram_type = "有合"
         meaning = (
             f"本卦有{he_count}对合{'' if chong_count == 0 else f'，{chong_count}对冲'}，"
-            "合处逢事宜斟酌，主有聚合之象但不完整。"
+            + CINTERP["has_he"]["text"]
         )
     elif chong_count > 0:
         hexagram_type = "有冲"
         meaning = (
             f"本卦有{chong_count}对冲，"
-            "冲处逢事宜谨慎，主有散动之象但不完整。"
+            + CINTERP["has_chong"]["text"]
         )
     else:
         hexagram_type = "无明确合冲"
-        meaning = "本卦各对应爻位无合无冲，平顺之象，吉凶需依用神决断。"
+        meaning = CINTERP["no_he_chong"]["text"]
 
     pair_summaries = "；".join(p["description"] for p in pairs)
     summary = f"{hexagram_type}：{pair_summaries}"
@@ -1778,26 +1779,26 @@ def analyze_repetition(result):
     if has_fanyin and has_fuyin:
         repetition_type = "反吟兼伏吟"
         meaning = (
-            "既反吟又伏吟，主反复多端、牵制难解、呻吟不止。"
-            "事情反复无常，内心焦虑不安，是最不安定的卦象。"
+            CINTERP["fanyin_and_fuyin"]["text"]
+            + CINTERP["fanyin_and_fuyin_2"]["text"]
         )
     elif has_fanyin:
         repetition_type = "反吟"
         meaning = (
-            "反吟主反复、变动不安、事多反复。"
-            "化反吟多为先成后败、先聚后散之象。"
-            "若用神旺相可解，主虽有波折终可成；若休囚则反复无定。"
+            CINTERP["fanyin"]["text"]
+            + CINTERP["fanyin_2"]["text"]
+            + CINTERP["fanyin_3"]["text"]
         )
     elif has_fuyin:
         repetition_type = "伏吟"
         meaning = (
-            "伏吟主呻吟不止、忧郁难舒、事有内心之苦。"
-            "占事多停滞不前、郁闷焦虑、欲行又止。"
-            "宜静不宜动，宜守不宜攻。"
+            CINTERP["fuyin"]["text"]
+            + CINTERP["fuyin_2"]["text"]
+            + CINTERP["fuyin_3"]["text"]
         )
     else:
         repetition_type = "无"
-        meaning = "本卦变爻无反吟伏吟，卦象安定。"
+        meaning = CINTERP["no_fanyin_fuyin"]["text"]
 
     summary_parts = []
     if has_fanyin:
@@ -1994,24 +1995,24 @@ def analyze_hexagram_body(result):
     world_pos = gen_map_reverse.get(generation, 1)
 
     if body_pos == world_pos:
-        response_texts.append("卦身持世——一身系于此事，全身心投入")
+        response_texts.append(CINTERP["hex_body_world"]["text"])
 
     # 卦身临用神检查
     use_positions = _find_use_god_positions(result)
     if body_pos in use_positions:
-        response_texts.append("卦身临用神——事有主骨，终有所成")
+        response_texts.append(CINTERP["hex_body_use"]["text"])
 
     # 卦身空破
     if is_empty:
-        response_texts.append("卦身逢空——事无本体，虚晃一枪")
+        response_texts.append(CINTERP["hex_body_empty"]["text"])
 
     # 卦身临官鬼
     if body_relation == "官鬼":
-        response_texts.append("卦身临鬼——忧患围绕本体，需防内患")
+        response_texts.append(CINTERP["hex_body_officer"]["text"])
     elif body_relation == "妻财":
-        response_texts.append("卦身临财——求财有根本")
+        response_texts.append(CINTERP["hex_body_wealth"]["text"])
     elif body_relation == "子孙":
-        response_texts.append("卦身临子孙——事有福德庇护")
+        response_texts.append(CINTERP["hex_body_child"]["text"])
 
     if not response_texts:
         response_texts.append(f"卦身在{_pos_to_name(body_pos)}，{body_relation}坐镇，本位安定")
@@ -2023,10 +2024,10 @@ def analyze_hexagram_body(result):
         "meaning": f"卦身在{_pos_to_name(body_pos)}，代表事体核心与根基",
         "classical_rule": "阳世子起顺推，阴世应起逆推",
         "implications": [
-            "卦身临用神 → 事有主骨，终有所成",
-            "卦身临忌神 → 事有内患，防不胜防",
-            "卦身持世 → 一身系于此事",
-            "卦身逢空 → 事无本体，虚晃一枪",
+            CINTERP["hex_body_use_arrow"]["text"],
+            CINTERP["hex_body_ji_arrow"]["text"],
+            CINTERP["hex_body_world_arrow"]["text"],
+            CINTERP["hex_body_empty_arrow"]["text"],
         ],
         "body_is_world": body_pos == world_pos,
         "body_is_empty": is_empty,
@@ -2664,7 +2665,7 @@ def analyze_officer_tomb(result):
             "tomb_branch": "",
             "description": "数据不足，无法分析随官入墓",
             "score_modifier": 0.0,
-            "classical_quote": "随官入墓最凶凶，世用临之祸不轻",
+            "classical_quote": CINTERP["guan_tomb_poem"]["text"],
             "details": [],
         }
 
@@ -2750,7 +2751,7 @@ def analyze_officer_tomb(result):
             "tomb_branch": "",
             "description": "本卦无官鬼爻，不论随官入墓",
             "score_modifier": 0.0,
-            "classical_quote": "随官入墓最凶凶，世用临之祸不轻",
+            "classical_quote": CINTERP["guan_tomb_poem"]["text"],
             "details": [],
         }
 
@@ -2882,7 +2883,7 @@ def analyze_officer_tomb(result):
                 f"或世/用未随鬼入墓，无随官入墓凶象"
             ),
             "score_modifier": 0.0,
-            "classical_quote": "随官入墓最凶凶，世用临之祸不轻",
+            "classical_quote": CINTERP["guan_tomb_poem"]["text"],
             "details": [],
         }
 
@@ -2893,11 +2894,11 @@ def analyze_officer_tomb(result):
     }
 
     scenario_descriptions = {
-        "官鬼入墓": "官鬼入墓（鬼入墓中，凶象暗藏）",
-        "世随官入墓": "世随官入墓（自身随鬼入墓，凶不可避）",
-        "用随官入墓": "用随官入墓（用神随鬼入墓，事必遭凶）",
-        "鬼用同墓": "鬼用同墓（官鬼与世用同归墓中，灾难性凶象）",
-        "官鬼动化墓": "官鬼动化墓（鬼动入墓，凶象加剧）",
+        "官鬼入墓": CINTERP["officer_tomb_officer"]["text"],
+        "世随官入墓": CINTERP["officer_tomb_world"]["text"],
+        "用随官入墓": CINTERP["officer_tomb_use"]["text"],
+        "鬼用同墓": CINTERP["officer_tomb_both"]["text"],
+        "官鬼动化墓": CINTERP["officer_tomb_moving"]["text"],
     }
 
     desc_parts = [scenario_descriptions.get(s, s) for s in scenarios]
@@ -2906,11 +2907,11 @@ def analyze_officer_tomb(result):
         f"{'、'.join(desc_parts)}。"
     )
     if worst_severity == "catastrophic":
-        description += "此为极凶之象，占病/占讼尤忌，宜慎重对待。"
+        description += CINTERP["officer_tomb_catastrophic"]["text"]
     elif worst_severity == "severe":
-        description += "此为严重凶象，宜慎防祸患。"
+        description += CINTERP["officer_tomb_severe"]["text"]
     else:
-        description += "官鬼入墓，其力受困，吉凶需综合判断。"
+        description += CINTERP["officer_tomb_mild"]["text"]
 
     return {
         "has_officer_tomb": True,
@@ -2920,7 +2921,7 @@ def analyze_officer_tomb(result):
         "tomb_branch": primary_tomb_branch,
         "description": description,
         "score_modifier": round(total_score_modifier, 2),
-        "classical_quote": "随官入墓最凶凶，世用临之祸不轻",
+        "classical_quote": CINTERP["guan_tomb_poem"]["text"],
         "details": details,
     }
 

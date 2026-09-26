@@ -290,7 +290,7 @@ def step5_synthesize(r: dict) -> dict:
             if any(kw in q_txt for kw in ["病", "疾", "痛", "恙", "染"]):
                 officer_tomb_adjustment = round(officer_tomb_adjustment * 0.3, 2)
                 officer_tomb_severity = "mild"
-                officer_tomb_description += "（疾病占：官鬼病气入墓为收藏之象，凶力大减）"
+                officer_tomb_description += note_text("illness_officer_tomb_mild")
 
     # ---------- 5.5c: 三合破局惩罚 (Gap 9) ----------
     combo_break_adjustment = 0.0
@@ -488,15 +488,15 @@ def step5_synthesize(r: dict) -> dict:
     if world_relation == "兄弟" and _is_wealth and ug_cat == "妻财":
         if any(k in _q_l for k in ("失", "找回", "失物")) or "冲中逢合" in _sp_pat_txt:
             classical_adj -= 0.2
-            classical_notes.append("【兄弟持世·失物/逢合轻扣】另有冲中逢合等解象，仅-0.2")
+            classical_notes.append(note_text("brother_hold_wealth_lost_soft"))
         else:
             classical_adj -= 1.2
-            classical_notes.append("【兄弟持世求财】兄弟克财，求财多耗，-1.2")
+            classical_notes.append(note_text("brother_hold_wealth"))
 
     # 3) 妻财持世 + 失物 — 世持财主自失可寻（增删失物章）
     if world_relation == "妻财" and any(k in _q_l for k in ("失", "找回", "失物", "银")):
         classical_adj += 0.8
-        classical_notes.append("【世持财·失物】世持财主物未远失，+0.8")
+        classical_notes.append(note_text("wealth_hold_lost"))
 
     # 5) 原神失位：用神旺相而原神（完全）不在卦中或不动 — 黄金策「用神虽旺亦凶」
     _lv_ug = str((step3_data or {}).get("strength_level") or "")
@@ -519,17 +519,17 @@ def step5_synthesize(r: dict) -> dict:
         _yuan_missing = (not _yuan_pos) or (not _is_static_hexagram and not _yuan_moving)
         if _yuan_missing and not _skip_yuanshen:
             classical_adj -= 1.0
-            classical_notes.append("【原神失位】用神虽旺而原神不动/缺位，旺极无源，-1.0")
+            classical_notes.append(note_text("static_yuanshen_missing"))
 
     # 6) 久病逢冲为凶（对「近病逢冲即愈」）
     if any(k in _q_l for k in ("久病", "半年", "病久", "多月")):
         classical_adj -= 0.8
-        classical_notes.append("【久病】久病正气已衰，逢冲逢克主凶，-0.8")
+        classical_notes.append(note_text("chronic_illness"))
 
     # 7) 兄弟持世 + 功名/考试 — 竞争费力（可中而难前茅）
     if world_relation == "兄弟" and any(k in _q_l for k in ("考试", "功名", "学业", "科举", "中第")):
         classical_adj -= 0.4
-        classical_notes.append("【兄弟持世求名】竞争费力，可成而名次不显，-0.4")
+        classical_notes.append(note_text("brother_hold_exam"))
 
     # 8) 官司：官鬼克世 / 父母月破 → 不利（增删官非章）
     if any(k in _q_l for k in ("官司", "官非", "诬告", "诉讼", "官事")) and "师尊" not in _q_l:
@@ -539,18 +539,18 @@ def step5_synthesize(r: dict) -> dict:
         w_e = _el_of_branch(w_br) or ""
         if ug_e and w_e and KE_CYCLE.get(ug_e) == w_e:
             classical_adj -= 1.2
-            classical_notes.append("【官鬼克世】官司占官方克世，主对我不利，-1.2")
+            classical_notes.append(note_text("officer_ke_world_lawsuit"))
         # 文书月破：从摘要文本识别
         _txt3 = str((step3_data or {}).get("summary_text") or "") + str((step2_data or {}).get("summary_text") or "")
         if "月破" in _txt3 and any(k in _q_l for k in ("官司", "官非", "诬告")):
             classical_adj -= 0.5
-            classical_notes.append("【文书/用神月破】官司中文书有缺，-0.5")
+            classical_notes.append(note_text("document_month_break"))
 
     # 9) 原神失位加强：旺极无生 → 大幅降分（黄金策）
     # 仅当用神为"极旺"时才额外加权；"旺"级已有规则5的-1.0，不再叠加
     if any("原神失位" in n for n in classical_notes) and _lv_ug == "极旺":
         classical_adj -= 1.0
-        classical_notes.append("【旺极无源加权】用神极旺而无原神发动，再-1.0")
+        classical_notes.append(note_text("extreme_prosper_no_source"))
 
     # 4) 用神临月建（通用旺格标记分已在旺衰，此处仅补注记）
 
@@ -601,19 +601,19 @@ def step5_synthesize(r: dict) -> dict:
     # 校准标准：final_score > 1.0 → 吉; > 4.0 → 大吉; -0.8 ~ 1.0 → 平吉; -2.0 ~ -0.8 → 凶; < -2.0 → 大凶
     if final_score > 4.0:
         verdict = "大吉"
-        verdict_desc = "顺得很，该推进的可以推进"
+        verdict_desc = vdesc("score_daji")
     elif final_score >= 1.0:
         verdict = "吉"
-        verdict_desc = "整体是顺的，往前走问题不大"
+        verdict_desc = vdesc("score_ji")
     elif final_score >= -0.5:
         verdict = "平吉"
-        verdict_desc = "有戏但不稳，节奏比结果更要紧"
+        verdict_desc = vdesc("score_ping_ji")
     elif final_score >= -2.0:
         verdict = "凶"
-        verdict_desc = "阻力明显，硬上容易吃亏"
+        verdict_desc = vdesc("score_xiong")
     else:
         verdict = "大凶"
-        verdict_desc = "眼下不宜发力，先守住"
+        verdict_desc = vdesc("score_da_xiong")
 
     # v8 口径微调：更贴近古籍断语习惯
     _qtext = str((r.get("question") or r.get("question_category") or ""))
@@ -626,13 +626,13 @@ def step5_synthesize(r: dict) -> dict:
     if any(k in _qtext for k in ("行人", "出行", "回来", "归")) and ("六冲" in _sp_pat or "合处逢冲" in _sp_pat):
         if verdict in ("吉", "大吉", "平吉"):
             verdict = "凶"
-            verdict_desc = "冲散行人，纵用神有气亦主归期不定"
+            verdict_desc = vdesc("travel_scattered")
             _fired = True
     # 合伙+六冲主散/合处逢冲：合伙看世应，应冲世则散 → 凶
     if "合伙" in _qtext and ("六冲" in _sp_pat or "合处逢冲" in _sp_pat):
         if verdict in ("吉", "大吉", "平吉"):
             verdict = "凶"
-            verdict_desc = "六冲/逢冲合伙，世应相冲，合伙难持久"
+            verdict_desc = vdesc("partner_scattered")
             _fired = True
     # 用神衰弱+净动变负 → 凶
     if verdict == "平吉" and final_score < 0.0:
@@ -641,14 +641,14 @@ def step5_synthesize(r: dict) -> dict:
             _net_eff = step4_data.get("net_effect") or 0.0
         if _net_eff < -0.2:
             verdict = "凶"
-            verdict_desc = "原神不济、变动不利，纵用神有些微气亦难持久"
+            verdict_desc = vdesc("weak_use_net_negative")
             _fired = True
     # 三刑+六合吉凶相战覆写：2+成刑/催刑 + 六合卦 → 上限不超过平凶
     # 偏向中带凶：六合主合而三刑主损，合中带损，吉凶相战，凶多吉少。
     # 依古籍合中带损之旨，伏下仍有六合之余气，故 score 保底在 0.5 (偏向下界)。
     if xing_he_conflict_override and verdict in ("吉", "大吉", "平吉"):
         verdict = "平凶"
-        verdict_desc = "三刑齐全逢六合，吉凶相战，凶多吉少"
+        verdict_desc = vdesc("xing_he_conflict")
         if final_score < 0.5:
             final_score = 0.5
             final_score = round(final_score, 2)
@@ -658,93 +658,93 @@ def step5_synthesize(r: dict) -> dict:
     if "合处逢冲" in _sp_pat and verdict in ("凶", "大凶", "平吉"):
         if any(k in _qtext for k in ("婚", "合", "成否", "聚")):
             verdict = "平/不利"
-            verdict_desc = "先合后散，事情容易反复，适合稳住再看"
+            verdict_desc = vdesc("he_then_chong")
         elif verdict == "大凶":
             verdict = "凶"
     if any(k in _qtext for k in ("价", "贵贱", "桑叶", "涨跌")) and verdict in ("凶", "大凶"):
         verdict = "下跌"
-        verdict_desc = "势头偏弱，观望比追高稳妥"
+        verdict_desc = vdesc("price_down")
 
     # 古籍通用口径：行人「用神生世/克世」主能归；兄弟持世求财主耗
     if classical_notes:
         if any("原神失位" in n for n in classical_notes) and "冲中逢合" not in _sp_pat_txt:
             if verdict in ("大吉",):
                 verdict = "吉"
-                verdict_desc = "表面有力，实则源头不足，勿被旺象迷惑"
+                verdict_desc = vdesc("yuanshen_missing_daji_cap")
             if any("旺极无源" in n for n in classical_notes) and verdict in ("吉", "大吉", "平吉"):
                 if final_score < 1.0:
                     verdict = "凶"
-                    verdict_desc = "旺而无源，古法主事难持久，防盛极而衰"
+                    verdict_desc = vdesc("extreme_no_source_xiong")
                 else:
                     verdict = "平吉"
-                    verdict_desc = "用神虽旺，源头不足，勿把一时之盛当长久"
+                    verdict_desc = vdesc("yuanshen_missing_ping_ji")
             elif verdict == "吉" and final_score < 2.0:
                 verdict = "平吉"
-                verdict_desc = "用神看似不弱，但原神未动，成算要打折"
+                verdict_desc = vdesc("yuanshen_missing_discount")
         if any("官鬼克世" in n for n in classical_notes):
             if verdict in ("大吉", "吉"):
                 verdict = "凶"
-                verdict_desc = "官司官方克世，形势对己不利，宜专业应对"
+                verdict_desc = vdesc("officer_ke_world_xiong")
             elif verdict == "平吉":
                 verdict = "凶"
-                verdict_desc = "官司官方克世，形势偏紧，勿心存侥幸"
+                verdict_desc = vdesc("officer_ke_world_tight")
         if any("兄弟持世求名" in n for n in classical_notes) and verdict in ("吉", "大凶", "凶"):
             if verdict in ("凶", "大凶"):
                 verdict = "平吉"
-                verdict_desc = "功名有阻力但未必绝望，兄弟持世主竞争费力"
+                verdict_desc = vdesc("brother_exam_not_desperate")
             else:
                 verdict = "平吉"
-                verdict_desc = "功名有象，但竞争大、须全力以赴，名次未必靠前"
+                verdict_desc = vdesc("brother_exam_hard")
         if any("久病" in n for n in classical_notes):
             if verdict in ("大吉", "吉"):
                 verdict = "平吉" if verdict == "吉" else "凶"
                 if verdict == "平吉":
-                    verdict_desc = "久病不宜言吉，仍以调护就医为先"
+                    verdict_desc = vdesc("chronic_illness_care")
             if verdict == "平吉" and any(k in _q_l for k in ("久病", "半年")):
                 verdict = "凶"
-                verdict_desc = "久病体衰，卦象偏紧，务必遵医嘱"
+                verdict_desc = vdesc("chronic_illness_tight")
         if any("兄弟持世求名" in n for n in classical_notes) and verdict in ("吉", "大吉"):
             verdict = "平吉"
-            verdict_desc = "功名有象，但竞争大、须全力以赴，名次未必靠前"
+            verdict_desc = vdesc("brother_exam_hard")
         if _is_travel_return and any(
             ("用神生世" in n) or ("用神克世" in n) or ("行人用神有气" in n) or ("世克用" in n)
             for n in classical_notes
         ):
             if verdict in ("凶", "大凶"):
                 verdict = "平吉"
-                verdict_desc = "行人终归，只是偏迟或途中多折，宜候应期"
+                verdict_desc = vdesc("travel_eventually_back")
             if any("用神生世" in n for n in classical_notes) and verdict in ("平吉", "凶", "大凶"):
                 verdict = "吉"
-                verdict_desc = "用神生世，行人迟归终至，可候应期"
+                verdict_desc = vdesc("travel_use_sheng_back")
             elif verdict == "平吉" and any("用神克世" in n for n in classical_notes):
                 verdict = "吉"
-                verdict_desc = "行人可望速至"
+                verdict_desc = vdesc("travel_use_ke_fast")
         if world_relation == "兄弟" and _is_wealth and ug_cat == "妻财":
             _soft_bro = any(k in _q_l for k in ("失", "找回", "失物")) or "冲中逢合" in _sp_pat_txt
             if _soft_bro:
                 if verdict in ("凶", "大凶") and final_score >= 0:
                     verdict = "吉"
-                    verdict_desc = "虽兄弟持世，然冲中逢合，主先难后成"
+                    verdict_desc = vdesc("brother_lost_he_chong")
                 elif verdict == "平吉" and final_score >= 0:
                     verdict = "吉"
-                    verdict_desc = "有惊无险，失而可复得"
+                    verdict_desc = vdesc("lost_recoverable")
             else:
                 if verdict in ("大吉",):
                     verdict = "吉"
-                    verdict_desc = "有财可谋，但兄弟持世，到手易耗"
+                    verdict_desc = vdesc("wealth_but_brother")
                 elif verdict == "吉" and final_score < 2.5:
                     verdict = "平吉"
-                    verdict_desc = "财路有象，兄弟持世须防破耗"
+                    verdict_desc = vdesc("wealth_watch_waste")
                 elif verdict in ("平吉",) and final_score <= 0.2:
                     verdict = "平/不利"
-                    verdict_desc = "兄弟持世求财，辛苦多耗，得不偿失"
+                    verdict_desc = vdesc("brother_wealth_not_worth")
     elif _is_travel_return and verdict in ("凶", "大凶"):
         # 无 classical_notes 时仍按行人占谨慎：用神非死绝不断大凶
         _fu_txt2 = str((step3_data or {}).get("summary_text") or "")
         if not any(k in _fu_txt2 for k in ("绝于", "真空", "月破")):
             if (step3_data or {}).get("effective_score", 0) >= 2.0:
                 verdict = "平吉"
-                verdict_desc = "用神尚有气，行人主能归，过程偏拖"
+                verdict_desc = vdesc("travel_use_alive_slow")
 
     # ---------- 5.7b: 随官入墓凶象覆盖 (Gap 3) ----------
     # 随官入墓极凶，catastrophic级别强行覆盖定性判断
@@ -753,7 +753,7 @@ def step5_synthesize(r: dict) -> dict:
         old_verdict = verdict
         verdict = officer_tomb_verdict_override
         if officer_tomb_severity == "catastrophic":
-            verdict_desc = "随官入墓极凶之象——" + officer_tomb_description[:50]
+            verdict_desc = VDESC["officer_tomb_catastrophic_prefix"]["text"] + officer_tomb_description[:50]
             officer_tomb_verdict_note = (
                 f"【随官入墓强行覆盖】原为{old_verdict}，"
                 f"因{officer_tomb_reason}降级为凶"
@@ -815,9 +815,9 @@ def step5_synthesize(r: dict) -> dict:
         "factor": "base",
         "score": round(base_score, 2),
         "reason": (
-            "用神得令，旺相有力" if base_score > 2 else
-            "用神失令，根基偏弱" if base_score < 0 else
-            "用神平和，不旺不弱"
+            FREASON["base_strong"]["text"] if base_score > 2 else
+            FREASON["base_weak"]["text"] if base_score < 0 else
+            FREASON["base_neutral"]["text"]
         )
     })
     # 2. 动变效应
@@ -826,9 +826,9 @@ def step5_synthesize(r: dict) -> dict:
         "factor": "change",
         "score": round(change_net_effect, 2),
         "reason": (
-            "动爻来生用神" if change_net_effect > 0.3 else
-            "动爻来克用神" if change_net_effect < -0.3 else
-            "动爻生克交抵，利弊相抵"
+            FREASON["change_sheng"]["text"] if change_net_effect > 0.3 else
+            FREASON["change_ke"]["text"] if change_net_effect < -0.3 else
+            FREASON["change_balance"]["text"]
         )
     })
     # 3. 合冲卦性
@@ -837,7 +837,7 @@ def step5_synthesize(r: dict) -> dict:
             "name": "合冲卦性",
             "factor": "hexagram",
             "score": round(hex_adjustment, 2),
-            "reason": _user_reason(hex_adjustment_reason, "六合利合" if hex_adjustment > 0 else "六冲主散")
+            "reason": _user_reason(hex_adjustment_reason, FREASON["hex_liuhe"]["text"] if hex_adjustment > 0 else FREASON["hex_liuchong"]["text"])
         })
     # 4. 六神辅助
     if spirit_adjustment != 0:
@@ -845,7 +845,7 @@ def step5_synthesize(r: dict) -> dict:
         _cleaned_reasons = []
         for _r in spirit_adjustment_reasons:
             _cleaned_reasons.append(_r.split("(x")[0].strip() if "(x" in _r else _r)
-        _reason_text = "；".join(_cleaned_reasons) or "六神加临用神"
+        _reason_text = "；".join(_cleaned_reasons) or FREASON["spirit_fallback"]["text"]
         factor_contributions.append({
             "name": "六神辅助",
             "factor": "spirit",
@@ -859,7 +859,7 @@ def step5_synthesize(r: dict) -> dict:
             "name": "日月合用神",
             "factor": "day_month_bond",
             "score": round(dmb_adjustment, 2),
-            "reason": _user_reason(dmb_reason, "日月合住用神")
+            "reason": _user_reason(dmb_reason, FREASON["day_month_bond"]["text"])
         })
     # 7. 六破
     if sb_adjustment != 0:
@@ -867,7 +867,7 @@ def step5_synthesize(r: dict) -> dict:
             "name": "六破损伤",
             "factor": "six_breaks",
             "score": round(sb_adjustment, 2),
-            "reason": _user_reason(sb_reason, "用神逢月破")
+            "reason": _user_reason(sb_reason, FREASON["six_break"]["text"])
         })
     # 8. 三合破
     if combo_break_adjustment != 0:
@@ -875,7 +875,7 @@ def step5_synthesize(r: dict) -> dict:
             "name": "三合局破",
             "factor": "combo",
             "score": round(combo_break_adjustment, 2),
-            "reason": _user_reason(combo_break_reason, "合局受破，所谋难成")
+            "reason": _user_reason(combo_break_reason, FREASON["combo_break"]["text"])
         })
     # 8b. 原神贪合忘生
     if yuan_shen_bond_adjustment != 0:
@@ -883,7 +883,7 @@ def step5_synthesize(r: dict) -> dict:
             "name": "原神贪合忘生",
             "factor": "yuan_shen_bond",
             "score": round(yuan_shen_bond_adjustment, 2),
-            "reason": _user_reason(yuan_shen_bond_reason, "原神被合，用神失源")
+            "reason": _user_reason(yuan_shen_bond_reason, FREASON["yuanshen_bond"]["text"])
         })
     # 9. 随官入墓
     if officer_tomb_adjustment != 0:
@@ -891,7 +891,7 @@ def step5_synthesize(r: dict) -> dict:
             "name": "随官入墓",
             "factor": "tomb",
             "score": round(officer_tomb_adjustment, 2),
-            "reason": _user_reason(officer_tomb_reason, "官鬼入墓，困而不发")
+            "reason": _user_reason(officer_tomb_reason, FREASON["officer_tomb"]["text"])
         })
     # 10. 伏神得出
     if fu_shen_adjustment != 0:
@@ -899,7 +899,7 @@ def step5_synthesize(r: dict) -> dict:
             "name": "伏神得出",
             "factor": "fu_shen",
             "score": round(fu_shen_adjustment, 2),
-            "reason": _user_reason(fu_shen_note, "伏神得出，事有转机")
+            "reason": _user_reason(fu_shen_note, FREASON["fu_shen_out"]["text"])
         })
     # 11. 格局调整
     if pattern_adjustment != 0:
@@ -907,7 +907,7 @@ def step5_synthesize(r: dict) -> dict:
             "name": "特殊格局",
             "factor": "pattern",
             "score": round(pattern_adjustment, 2),
-            "reason": _user_reason(pattern_verdict_note, "格局特殊，反其势用之")
+            "reason": _user_reason(pattern_verdict_note, FREASON["special_pattern"]["text"])
         })
     # 12. 古籍通用格局加减（classical_adj：六亲持世+事项+伏出等）
     if classical_adj != 0:
@@ -915,7 +915,7 @@ def step5_synthesize(r: dict) -> dict:
             "name": "古籍格局加减",
             "factor": "classical",
             "score": round(classical_adj, 2),
-            "reason": "；".join(_user_reason(n) for n in classical_notes[:2]) if classical_notes else "古籍格局"
+            "reason": "；".join(_user_reason(n) for n in classical_notes[:2]) if classical_notes else FREASON["classical_fallback"]["text"]
         })
     # 12b. 六亲持世深化（含占问情境化解读）
     adv_shi = r.get("advanced_analysis", {}).get("shi_yao_relation") if isinstance(r, dict) else None
@@ -1226,7 +1226,7 @@ def calculate_yingqi(
         candidates.append(("速应(旺)", base + timedelta(days=0), _day_branch_for_date(base),
                            f"用神旺相，当日可能应"))
         candidates.append(("速应(次日)", base + timedelta(days=1), _day_branch_for_date(base + timedelta(days=1)),
-                           "用神旺相，次日之应"))
+                           YINGQI_TXT["use_alive_next_day"]["text"]))
 
     # MEDIUM: 用神动化进 → 逢值日（已由逢值规则覆盖）
     # SLOW: 用神休囚 + 静 → 原神旺月/旺日
@@ -1280,13 +1280,13 @@ def calculate_yingqi(
 
     # Determine overall speed
     if not dates_list:
-        speed = "无应期可断"
+        speed = YINGQI_TXT["no_yingqi"]["text"]
     elif any(d["rule"].startswith("速应") for d in dates_list):
-        speed = "速应（当日或数日内）"
+        speed = YINGQI_TXT["speed_fast_desc"]["text"]
     elif any(d["rule"] in ("逢值", "逢冲", "三合成局") for d in dates_list):
-        speed = "适中（数日至数周）"
+        speed = YINGQI_TXT["speed_medium_desc"]["text"]
     else:
-        speed = "迟应（数周至数月）"
+        speed = YINGQI_TXT["speed_slow_desc"]["text"]
 
     # Build summary
     if dates_list:
@@ -1357,13 +1357,13 @@ def _assess_confidence(
 def _confidence_to_text(confidence: int) -> str:
     """置信度文字说明"""
     if confidence >= 80:
-        return "高 — 信号清晰明确"
+        return CONF_TXT["high"]["text"]
     elif confidence >= 60:
-        return "中 — 大体可断，细节待验"
+        return CONF_TXT["medium"]["text"]
     elif confidence >= 40:
-        return "中等偏低 — 信号参半，谨慎判断"
+        return CONF_TXT["medium_low"]["text"]
     else:
-        return "低 — 信号矛盾，暂缓决断"
+        return CONF_TXT["low"]["text"]
 
 
 def _compose_synthesis_summary(**kw) -> str:
@@ -1379,17 +1379,17 @@ def _compose_synthesis_summary(**kw) -> str:
     concerns = []
     # 旺衰
     lv_say = {
-        "极旺": "用神很旺", "旺": "用神得力", "相": "用神有根",
-        "中和": "用神中和", "中和偏旺": "用神略旺", "中和偏弱": "用神略弱",
-        "偏弱": "用神偏弱", "弱": "用神力薄", "极弱": "用神极弱", "休囚": "用神休囚",
+        "极旺": FREASON["lv_ji_wang"]["text"], "旺": FREASON["lv_wang"]["text"], "相": FREASON["lv_xiang"]["text"],
+        "中和": FREASON["lv_zhonghe"]["text"], "中和偏旺": FREASON["lv_zhonghe_wang"]["text"], "中和偏弱": FREASON["lv_zhonghe_ru"]["text"],
+        "偏弱": FREASON["lv_pianruo"]["text"], "弱": FREASON["lv_ruo"]["text"], "极弱": FREASON["lv_jiruo"]["text"], "休囚": FREASON["lv_xiqiu"]["text"],
     }.get(str(level), f"用神{level}")
     supports.append(lv_say) if any(x in str(level) for x in ("旺", "相", "中和偏旺")) else concerns.append(lv_say)
     # 动变
     net = float(kw.get("change_net_effect") or 0)
     if net > 0.3:
-        supports.append("动变有助力")
+        supports.append(FREASON["change_help"]["text"])
     elif net < -0.3:
-        concerns.append("动变有牵扯")
+        concerns.append(FREASON["change_drag"]["text"])
     # 格局
     sp = kw.get("special_pattern") if isinstance(kw.get("special_pattern"), dict) else {}
     pat = str(sp.get("pattern") or "") if sp else ""
@@ -1403,9 +1403,9 @@ def _compose_synthesis_summary(**kw) -> str:
     if kw.get("pattern_verdict_note"):
         concerns.append(str(kw["pattern_verdict_note"]).rstrip("。"))
     if supports:
-        parts.append("有利的一面：" + "，".join(supports) + "。")
+        parts.append(FREASON["support_prefix"]["text"] + "，".join(supports) + "。")
     if concerns:
-        parts.append("要当心的一面：" + "，".join(str(c) for c in concerns if c) + "。")
+        parts.append(FREASON["concern_prefix"]["text"] + "，".join(str(c) for c in concerns if c) + "。")
     if score is not None:
         parts.append(f"（量化参考 {float(score):.2f}，把握约 {kw.get('confidence','—')}%）")
     note_bits = [x for x in (
@@ -1415,7 +1415,7 @@ def _compose_synthesis_summary(**kw) -> str:
         parts.append(" ".join(str(x) for x in note_bits))
     qt = kw.get("classical_quotes_text") or ""
     if qt:
-        parts.append(str(qt).replace("【经典引文】", "古人类似情境有言："))
+        parts.append(str(qt).replace("【经典引文】", FREASON["quote_prefix"]["text"]))
     return "".join(parts)
 
 
@@ -1748,28 +1748,28 @@ def _predict_timing(r: dict, step3_data: dict, step1_data: dict, day_branch: str
     # 注意：非空卦的回头生不前插（ZS009 化绝+回头生仍应逢值）
     for _b, _c in changed_pairs:
         if _c and _c in _empty_list:
-            _rank(_c, "化出之支逢空，出空值日")
+            _rank(_c, YINGQI_TXT["change_branch_empty_fill"]["text"])
     if hui_tou_sheng and is_empty:
-        _rank(hui_tou_sheng[0], "动而化回头生，虽空不作空论，期于生我之日")
+        _rank(hui_tou_sheng[0], YINGQI_TXT["change_hui_tou_sheng_empty"]["text"])
     elif hui_tou_sheng:
         pass  # 后面统一排
     if is_empty and not hui_tou_sheng:
         if day_branch and day_branch == _chong_ug:
-            _rank(day_branch, "用神旬空，日辰冲空填实，当日即应")
+            _rank(day_branch, YINGQI_TXT["use_empty_day_chong"]["text"])
         elif _is_chronic and _chong_ug:
             # 久病逢空多应冲空之日（《增删卜易》久病之忌）
-            _rank(_chong_ug, "久病用神旬空，期于冲空")
+            _rank(_chong_ug, YINGQI_TXT["chronic_empty_wait_chong"]["text"])
             _rank(use_god_branch, "出旬填实")
         elif _is_illness_q:
             # 近病逢空即愈：出空填实为应
-            _rank(use_god_branch, "近病用神旬空，出旬填实即愈")
+            _rank(use_god_branch, YINGQI_TXT["acute_empty_fill"]["text"])
             _rank(_chong_ug or use_god_branch, "冲空则实")
         else:
-            _rank(use_god_branch, "用神旬空，出旬填实")
-            _rank(_chong_ug or use_god_branch, "用神旬空，冲空则实")
+            _rank(use_god_branch, YINGQI_TXT["empty_fill"]["text"])
+            _rank(_chong_ug or use_god_branch, YINGQI_TXT["empty_chong_real"]["text"])
     if is_month_break:
-        _rank(use_god_branch, "月破出月，逢值填实")
-        _rank(_he(use_god_branch), "月破逢合，合处填实")
+        _rank(use_god_branch, YINGQI_TXT["month_break_fill"]["text"])
+        _rank(_he(use_god_branch), YINGQI_TXT["month_break_he"]["text"])
     # 化空出空 / 回头生：先于合住冲开与伏藏（ZS005/007/013）
     if step2_d.get("has_fu_cang") and (fu_branch or fei_branch):
         fei_empty = fei_branch in _empty_list if fei_branch else False
@@ -1777,31 +1777,31 @@ def _predict_timing(r: dict, step3_data: dict, step1_data: dict, day_branch: str
         _fei_ke_fu = any(k in _fu_txt for k in ("飞克伏", "飞神克"))
         _fu_sheng_fei = any(k in _fu_txt for k in ("伏生飞", "伏神生"))
         if _fei_ke_fu and fei_branch:
-            _rank(_chong(fei_branch) or fu_branch, "飞神克伏，冲开飞神")
+            _rank(_chong(fei_branch) or fu_branch, YINGQI_TXT["fu_fei_ke_chong_fei"]["text"])
             if fu_branch:
                 _rank(fu_branch, "伏神值日")
         elif fei_empty and fu_branch:
-            _rank(fu_branch, "飞神旬空，伏神得出，期于伏神值日")
+            _rank(fu_branch, YINGQI_TXT["fu_fei_empty_wait_fu_day"]["text"])
         elif fu_branch:
-            _rank(fu_branch, "伏神得出，期于伏神值日")
+            _rank(fu_branch, YINGQI_TXT["fu_out_wait_fu_day"]["text"])
             if fei_branch and _fu_sheng_fei:
-                _rank(_chong(fei_branch) or fei_branch, "伏生飞，冲开飞神")
+                _rank(_chong(fei_branch) or fei_branch, YINGQI_TXT["fu_sheng_fei_chong"]["text"])
             elif fei_branch:
                 _rank(_chong(fei_branch) or fu_branch, "冲飞神得出")
         if fu_branch and fu_branch != use_god_branch:
             _rank(fu_branch, "伏神值日")
     if tomb_branch and tomb_branch in (day_branch, month_branch):
-        _rank(_chong(tomb_branch), "用神入墓，冲墓之日")
+        _rank(_chong(tomb_branch), YINGQI_TXT["use_tomb_chong_tomb"]["text"])
     if bound_by:
         _rank(_chong(bound_by), f"用神被{bound_by}合住，冲开之日")
     # 用神不空时，本气值日优先于其他空亡出空
     if use_god_branch and not is_empty:
         if ug_moving:
             _rank(use_god_branch, "发动值日")
-            _rank(_he(use_god_branch), "用神发动，逢合之日")
+            _rank(_he(use_god_branch), YINGQI_TXT["use_moving_he_day"]["text"])
         else:
             _rank(use_god_branch, "用神值日")
-            _rank(_chong_ug, "用神安静，逢冲之日")
+            _rank(_chong_ug, YINGQI_TXT["use_quiet_chong_day"]["text"])
     # 其余化出之支
     if changed_pairs and _chg0 and _chg0 not in _empty_list and not hui_tou_sheng:
         _rank(_chg0, "化出之支值日")
@@ -1809,14 +1809,14 @@ def _predict_timing(r: dict, step3_data: dict, step1_data: dict, day_branch: str
     ug_el = use_god_element or ""
     for e in _empty_list:
         if e and e != use_god_branch and ug_el and BRANCH_ELEMENTS.get(e) == ug_el:
-            _rank(e, "空亡之支与用神同五行，出空填实")
+            _rank(e, YINGQI_TXT["empty_same_element_fill"]["text"])
     for e in _empty_list:
         if e and e != use_god_branch:
             _rank(e, "空亡之支出空填实")
     if use_god_branch and is_empty:
         _rank(use_god_branch, "以用神为主")
     if strength_level in ("休囚", "囚", "死", "偏弱", "衰") or speed == "应迟":
-        _rank(PEAK_BRANCH.get(use_god_element or "", ""), "用神休囚，旺相之日")
+        _rank(PEAK_BRANCH.get(use_god_element or "", ""), YINGQI_TXT["use_weak_wait_prosper"]["text"])
     _rank(use_god_branch, "以用神为主")
     _rank(day_branch, "日辰值事")
 
@@ -1826,24 +1826,24 @@ def _predict_timing(r: dict, step3_data: dict, step1_data: dict, day_branch: str
     # （HANDOFF 四·7 记的那次三集全降即由此）。分列后各单位各自有序、各自封顶。
     peak = PEAK_BRANCH.get(use_god_element or "", "")
     if is_empty:
-        _rank(use_god_branch, "用神旬空，出旬填实之月", "月")
-        _rank(_chong(use_god_branch) or use_god_branch, "用神旬空，冲空则实之月", "月")
+        _rank(use_god_branch, YINGQI_TXT["use_empty_fill_month"]["text"], "月")
+        _rank(_chong(use_god_branch) or use_god_branch, YINGQI_TXT["use_empty_chong_month"]["text"], "月")
     if is_month_break:
-        _rank(use_god_branch, "月破出月，实破之月", "月")
+        _rank(use_god_branch, YINGQI_TXT["month_break_real_month"]["text"], "月")
     if tomb_branch and tomb_branch in (day_branch, month_branch):
-        _rank(_chong(tomb_branch), "用神入墓，冲墓之月", "月")
+        _rank(_chong(tomb_branch), YINGQI_TXT["use_tomb_chong_month"]["text"], "月")
     if bound_by:
         _rank(_chong(bound_by), f"用神被{bound_by}合住，冲开之月", "月")
     if step2_d.get("has_fu_cang") and (fu_branch or fei_branch):
-        _rank(_chong(fei_branch) or fu_branch, "用神伏藏，冲飞得出之月", "月")
+        _rank(_chong(fei_branch) or fu_branch, YINGQI_TXT["fu_hidden_chong_fei_month"]["text"], "月")
     if use_god_branch:
         if ug_moving:
-            _rank(_he(use_god_branch), "用神发动，逢合之月", "月")
+            _rank(_he(use_god_branch), YINGQI_TXT["use_moving_he_month"]["text"], "月")
         else:
-            _rank(_chong(use_god_branch), "用神安静，逢冲之月", "月")
+            _rank(_chong(use_god_branch), YINGQI_TXT["use_quiet_chong_month"]["text"], "月")
         _rank(use_god_branch, "用神值月", "月")
     if strength_level in ("休囚", "囚", "死", "偏弱", "衰") or speed == "应迟":
-        _rank(peak, "用神休囚，生旺之月", "月")
+        _rank(peak, YINGQI_TXT["use_weak_prosper_month"]["text"], "月")
     _rank(use_god_branch, "以用神为主", "月")
 
     # 分级预算：单位不同不可同窗排序，否则加一个"生旺之月"就把正确的日支挤出窗口。
@@ -1861,12 +1861,12 @@ def _predict_timing(r: dict, step3_data: dict, step1_data: dict, day_branch: str
     key_branches = yingqi_days
     timing_rules = [{"token": t, "rule": r, "unit": t[-1]} for t, r in ranked]
 
-    key_text = "、".join(key_branches) if key_branches else "待综合旺衰另断"
+    key_text = "、".join(key_branches) if key_branches else YINGQI_TXT["wait_strength"]["text"]
     main_text = f"{ranked_top[0][0]}（{ranked_top[0][1]}）" if ranked_top else "—"
     month_text = "、".join(yingqi_months) if yingqi_months else ""
     year_text = "、".join(yingqi_years) if yingqi_years else ""
     detail = ("、".join(t["description"] for t in timing_methods)
-              if timing_methods else "难以确定单一应期，以用神旺衰断时机之迟速")
+              if timing_methods else YINGQI_TXT["hard_to_single_yingqi"]["text"])
 
     sp_blob = ""
     if isinstance(special_pattern, dict):
@@ -1876,17 +1876,17 @@ def _predict_timing(r: dict, step3_data: dict, step1_data: dict, day_branch: str
     if any(k in sp_blob for k in ("近病逢空", "近病逢合", "近病")):
         speed = "应速"
     if any("合" in str(t.get("method") or "") or "合" in str(t.get("description") or "") for t in timing_methods):
-        speed_plain_extra = "合局宜候冲开之日。"
+        speed_plain_extra = YINGQI_TXT["he_wait_chong"]["text"]
     else:
         speed_plain_extra = ""
     speed_plain = {
-        "应速": "事情来得偏快，快则当日、次日就可能见分晓",
-        "应期适中": "不急不缓，近期数日到一两个月都是观察期",
-        "应迟": "事情偏慢，可能要等旺相之月，年内陆续应验——别用三五天去衡量",
+        "应速": YINGQI_TXT["speed_fast"]["text"],
+        "应期适中": YINGQI_TXT["speed_medium"]["text"],
+        "应迟": YINGQI_TXT["speed_slow"]["text"],
     }.get(speed, speed)
     sp_text = sp_blob
     if step4_data.get("tan_he_wan_sheng_ke") or "合处逢冲" in sp_text or "冲中逢合" in sp_text:
-        speed_plain += "；事多反复，心下易感不安"
+        speed_plain += YINGQI_TXT["repeat_uneasy"]["text"]
 
     summary_text = (f"重点应期：{key_text}。主应期 {main_text}。{speed_plain}。{speed_plain_extra}"
                     + (f"若事应迟，则看月级：{month_text}。" if month_text else "")

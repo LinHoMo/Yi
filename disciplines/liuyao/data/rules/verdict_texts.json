@@ -372,6 +372,66 @@
     "classical_fallback": {
       "text": "古籍格局",
       "basis": ""
+    },
+    "lv_ji_wang": {
+      "text": "用神很旺",
+      "basis": ""
+    },
+    "lv_wang": {
+      "text": "用神得力",
+      "basis": ""
+    },
+    "lv_xiang": {
+      "text": "用神有根",
+      "basis": ""
+    },
+    "lv_zhonghe": {
+      "text": "用神中和",
+      "basis": ""
+    },
+    "lv_zhonghe_wang": {
+      "text": "用神略旺",
+      "basis": ""
+    },
+    "lv_zhonghe_ru": {
+      "text": "用神略弱",
+      "basis": ""
+    },
+    "lv_pianruo": {
+      "text": "用神偏弱",
+      "basis": ""
+    },
+    "lv_ruo": {
+      "text": "用神力薄",
+      "basis": ""
+    },
+    "lv_jiruo": {
+      "text": "用神极弱",
+      "basis": ""
+    },
+    "lv_xiqiu": {
+      "text": "用神休囚",
+      "basis": ""
+    },
+    "change_help": {
+      "text": "动变有助力",
+      "basis": ""
+    },
+    "change_drag": {
+      "text": "动变有牵扯",
+      "basis": ""
+    },
+    "support_prefix": {
+      "text": "有利的一面：",
+      "basis": ""
+    },
+    "concern_prefix": {
+      "text": "要当心的一面：",
+      "basis": ""
+    },
+    "quote_prefix": {
+      "text": "古人类似情境有言：",
+      "basis": ""
     }
   },
   "step5_confidence": {
@@ -560,6 +620,10 @@
     "wait_strength": {
       "text": "待综合旺衰另断",
       "basis": ""
+    },
+    "change_hui_tou_sheng_empty": {
+      "text": "动而化回头生，虽空不作空论，期于生我之日",
+      "basis": "ZS005/007/013 用例规律"
     }
   },
   "classical_interpretations": {
@@ -700,18 +764,54 @@
       "basis": ""
     },
     "twelve_changsheng": {
-      "长生": {"text": "新生之象，事有先机，力量初萌", "basis": "十二长生"},
-      "沐浴": {"text": "初生柔嫩，需防贻害，纯正尚待时日", "basis": "十二长生"},
-      "冠带": {"text": "渐趋成熟，力量渐增，气色渐隆", "basis": "十二长生"},
-      "临官": {"text": "正当显达，力量充实，可担重任", "basis": "十二长生"},
-      "帝旺": {"text": "极盛之时，力量最旺，盛极将衰之先", "basis": "十二长生"},
-      "衰": {"text": "物极必反，力量开始减退", "basis": "十二长生"},
-      "病": {"text": "力不从心，内耗渐显，弊端初露", "basis": "十二长生"},
-      "死": {"text": "气数已尽，力量极微，难以作为", "basis": "十二长生"},
-      "墓": {"text": "收藏归库，力量隐伏，待冲开方可", "basis": "十二长生"},
-      "绝": {"text": "绝地无援，力量极弱，最难施为", "basis": "十二长生"},
-      "胎": {"text": "孕育新机，力量暗藏，有复生之机", "basis": "十二长生"},
-      "养": {"text": "休养恢复，力量渐聚，新生在前", "basis": "十二长生"}
+      "长生": {
+        "text": "新生之象，事有先机，力量初萌",
+        "basis": "十二长生"
+      },
+      "沐浴": {
+        "text": "初生柔嫩，需防贻害，纯正尚待时日",
+        "basis": "十二长生"
+      },
+      "冠带": {
+        "text": "渐趋成熟，力量渐增，气色渐隆",
+        "basis": "十二长生"
+      },
+      "临官": {
+        "text": "正当显达，力量充实，可担重任",
+        "basis": "十二长生"
+      },
+      "帝旺": {
+        "text": "极盛之时，力量最旺，盛极将衰之先",
+        "basis": "十二长生"
+      },
+      "衰": {
+        "text": "物极必反，力量开始减退",
+        "basis": "十二长生"
+      },
+      "病": {
+        "text": "力不从心，内耗渐显，弊端初露",
+        "basis": "十二长生"
+      },
+      "死": {
+        "text": "气数已尽，力量极微，难以作为",
+        "basis": "十二长生"
+      },
+      "墓": {
+        "text": "收藏归库，力量隐伏，待冲开方可",
+        "basis": "十二长生"
+      },
+      "绝": {
+        "text": "绝地无援，力量极弱，最难施为",
+        "basis": "十二长生"
+      },
+      "胎": {
+        "text": "孕育新机，力量暗藏，有复生之机",
+        "basis": "十二长生"
+      },
+      "养": {
+        "text": "休养恢复，力量渐聚，新生在前",
+        "basis": "十二长生"
+      }
     },
     "guan_tomb_poem": {
       "text": "随官入墓最凶凶，世用临之祸不轻",
@@ -828,6 +928,32 @@
     "jue_no_save": {
       "text": "绝地无救",
       "basis": "绝处逢生"
+    }
+  },
+  "chain_support_notes": {
+    "fei_missing": {
+      "text": "飞神缺失，无法判断飞伏关系",
+      "basis": ""
+    },
+    "fu_suppressed": {
+      "text": "伏神受压制难以得出，-0.5",
+      "basis": ""
+    },
+    "fu_hidden_cap": {
+      "text": "伏藏隐而不显，力不能全伸，压制至多为中和(≤3.4)",
+      "basis": "《增删卜易·用神伏藏章》"
+    },
+    "fu_hidden_info_lack": {
+      "text": "伏藏信息不足，默认中和。",
+      "basis": ""
+    },
+    "fu_element_unknown": {
+      "text": "伏神五行不明，默认中和。",
+      "basis": ""
+    },
+    "fei_unknown": {
+      "text": "飞神不明",
+      "basis": ""
     }
   }
 }

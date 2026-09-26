@@ -43,6 +43,7 @@ import re
 from pathlib import Path
 
 from chain_tables import KE_WO, SHENG_WO, STEMS, TWELVE_GROWTH, TWELVE_GROWTH_STAGES, TWELVE_GROWTH_TABLES, XUN_KONG, _TWELVE_GROWTH_SCORE
+from chain_verdicts import CHAIN_SUPPORT_NOTES as CS_NOTES
 
 def get_relation_from_element(element: str, palace_element: str) -> str:
     """根据地支五行确定六亲"""
