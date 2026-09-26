@@ -29,6 +29,61 @@ def _load_verdicts() -> dict:
 
 VERDICTS = _load_verdicts()
 
+# 日支冲肖（通书：冲即对冲地支之生肖）
+_BRANCH_ZODIAC = {
+    "子": "鼠", "丑": "牛", "寅": "虎", "卯": "兔", "辰": "龙", "巳": "蛇",
+    "午": "马", "未": "羊", "申": "猴", "酉": "鸡", "戌": "狗", "亥": "猪",
+}
+_BRANCH_CLASH = {
+    "子": "午", "丑": "未", "寅": "申", "卯": "酉", "辰": "戌", "巳": "亥",
+    "午": "子", "未": "丑", "申": "寅", "酉": "卯", "戌": "辰", "亥": "巳",
+}
+# 煞方（申子辰日煞南，寅午戌日煞北，巳酉丑日煞东，亥卯未日煞西）
+_SHA_FANG = {
+    "申": "南", "子": "南", "辰": "南",
+    "寅": "北", "午": "北", "戌": "北",
+    "巳": "东", "酉": "东", "丑": "东",
+    "亥": "西", "卯": "西", "未": "西",
+}
+
+
+def _shensha_chong_pengzu(chart_out: dict) -> tuple[dict, dict, dict]:
+    """机械算天德/月德、冲煞、彭祖百忌。纯结构化，断语模板在 verdicts。"""
+    gz = chart_out.get("ganzhi") or {}
+    month_branch = gz.get("月建") or ""
+    day_branch = gz.get("日支") or (gz.get("日柱") or "  ")[1:2]
+    day_stem = (gz.get("日柱") or " ")[0]
+    stars: list[str] = []
+    try:
+        from yishu_core.ming_tables import tian_de, yue_de
+        if month_branch:
+            stars.extend(tian_de(month_branch))
+            yd = yue_de(month_branch)
+            if yd:
+                stars.append("月德")
+    except Exception:
+        pass
+
+    chong_zhi = _BRANCH_CLASH.get(day_branch, "")
+    chong_xiao = _BRANCH_ZODIAC.get(chong_zhi, "")
+    sha_fang = _SHA_FANG.get(day_branch, "")
+    chong = {
+        "日支": day_branch,
+        "冲支": chong_zhi,
+        "冲肖": chong_xiao,
+        "煞方": sha_fang,
+        "phrase_chong": VERDICTS["chong_sha"]["chong_phrase"].format(zhi=chong_xiao) if chong_xiao else "",
+        "phrase_sha": VERDICTS["chong_sha"]["sha_phrase"].format(fang=sha_fang) if sha_fang else "",
+    }
+
+    pz = VERDICTS.get("pengzu") or {}
+    hits = []
+    hits.extend((pz.get("by_stem") or {}).get(day_stem, []))
+    hits.extend((pz.get("by_branch") or {}).get(day_branch, []))
+    pengzu = {"日干": day_stem, "日支": day_branch, "hit": bool(hits), "items": hits}
+    shensha = {"month_branch": month_branch, "stars": stars}
+    return shensha, chong, pengzu
+
 
 def _activity_label(activity: str) -> str:
     return VERDICTS["activity_names"].get(activity, "通用")
@@ -50,6 +105,8 @@ def _factors(chart_out: dict, activity: str) -> dict:
     xiu_ji = xiu.get("name") in VERDICTS["xiu"]["吉宿"]
     xiu_xiong = xiu.get("name") in VERDICTS["xiu"]["凶宿"]
 
+    shensha, chong, pengzu = _shensha_chong_pengzu(chart_out)
+
     return {
         "jian_chu": {
             "神": jc, "宜": jc_yi, "忌": jc_ji,
@@ -63,15 +120,26 @@ def _factors(chart_out: dict, activity: str) -> dict:
             "宿": xiu.get("name"), "全名": xiu.get("full"),
             "吉": xiu_ji, "凶": xiu_xiong,
         },
+        "shensha": shensha,
+        "chong_sha": chong,
+        "pengzu": pengzu,
     }
 
 
 def _verdict(f: dict) -> dict:
-    """综合裁决（verdicts.json::verdict_rule）。"""
+    """综合裁决（verdicts.json::verdict_rule）。神煞/彭祖作辅助，不压过黄黑道。"""
     score = 0.0
     score += 1.0 if f["huang_dao"]["黄道"] else -1.0
     score += 1.0 if f["jian_chu"]["宜"] else (-1.0 if f["jian_chu"]["忌"] else 0.0)
     score += 0.5 if f["xiu"]["吉"] else (-0.5 if f["xiu"]["凶"] else 0.0)
+    # 天德/月德等神煞加分
+    ss = f.get("shensha") or {}
+    for star, w in (VERDICTS.get("shensha") or {}).get("tian_de_yue_de", {}).items():
+        if star in (ss.get("stars") or []):
+            score += float(w)
+    # 彭祖百忌硬忌
+    if (f.get("pengzu") or {}).get("hit"):
+        score -= 0.5
 
     if score >= VERDICTS["verdict_rule"]["thresholds"]["吉"]:
         direction, tone = "吉", "黄道相合、建除无碍，事类与日辰相宜"
@@ -136,6 +204,13 @@ def analyze(chart_out: dict) -> dict:
             {"因子": "星宿", "权重": _WEIGHTS["星宿"], "判据": f"{f['xiu']['全名']}"
              f"（{'吉宿' if f['xiu']['吉'] else ('凶宿' if f['xiu']['凶'] else '—')}）",
              "所本": "《二十八宿吉凶歌》通行通书口径"},
+            {"因子": "天月德神煞", "权重": "辅助", "判据": "、".join((f.get("shensha") or {}).get("stars") or []) or "无",
+             "所本": VERDICTS["shensha"]["note"]},
+            {"因子": "冲煞", "权重": "趋避", "判据": (f.get("chong_sha") or {}).get("phrase_chong", "")
+             + " " + (f.get("chong_sha") or {}).get("phrase_sha", ""),
+             "所本": VERDICTS["chong_sha"]["note"]},
+            {"因子": "彭祖百忌", "权重": "辅助", "判据": "；".join((f.get("pengzu") or {}).get("items") or []) or "不犯",
+             "所本": VERDICTS["pengzu"]["note"]},
             {"因子": "吉凶", "权重": _WEIGHTS["吉凶"], "判据": f"{v['方向']}（{v['得分']}）",
              "所本": VERDICTS["verdict_rule"]["note"]},
         ],
@@ -159,6 +234,17 @@ def _yi_ji(f: dict, activity: str) -> tuple[list[str], list[str]]:
         yi.append(f"{f['xiu']['全名']}值日（吉宿）")
     if f["xiu"]["凶"]:
         ji.append(f"{f['xiu']['全名']}值日（凶宿）")
+    ss = f.get("shensha") or {}
+    for star in (ss.get("stars") or []):
+        yi.append(f"天月德：{star}照临")
+    ch = f.get("chong_sha") or {}
+    if ch.get("phrase_chong"):
+        ji.append(ch["phrase_chong"])
+    if ch.get("phrase_sha"):
+        ji.append(ch["phrase_sha"])
+    pz = f.get("pengzu") or {}
+    for item in (pz.get("items") or []):
+        ji.append(f"彭祖百忌：{item}")
     return yi, ji
 
 

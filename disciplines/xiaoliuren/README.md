@@ -30,8 +30,8 @@ python tools/check.py
 
 ## 已实现
 
-- **chart 段**（`scripts/chart.py`）：月日时起课、变通/随机取数起课、公历时刻起课（内核转农历）、农历+时支起课；6 例贺氏实例金标准自检
-- **analyze 段**（`scripts/analyze.py`）：六宫六要素（五行/颜色/方位/属神/主数/位置）、吉凶方向、十类事类诀辞切句、应期主数；断语全部来自 `data/verdicts.json`（带出处）
+- **chart 段**（`scripts/chart.py`）：月日时起课、变通/随机取数起课、公历时刻起课（内核转农历）、农历+时支起课；可选 `direction` 方位参数；6 例贺氏实例金标准自检
+- **analyze 段**（`scripts/analyze.py`）：六宫六要素（五行/颜色/方位/属神/主数/位置）、吉凶方向、十类事类诀辞切句、应期主数、**邻宫速断**（进/退/临）、**方位/五行综合断**（生克关系）；断语全部来自 `data/verdicts.json`（带出处）
 - **narrate 段**（`scripts/narrate.py`）：师傅口吻正文，只装配判据不新造结论
 - **render 段**（`scripts/render.py`）：单文件 Markdown 报告（正文 + 盘面数据 + 判读因子）
 - **案例库**（`data/cases/xiaoliuren_cases.json`）：tune 10 / holdout 5 / excluded 2，全部可还原
@@ -40,8 +40,6 @@ python tools/check.py
 
 ## 未来路线
 
-- 方位生克综合断（例：成都西方属金生留连水）做成显式参数而非解读层口传
-- 邻宫速断（例：留连临速喜"不久即归"）的机械判定
 - 与六爻/梅花同题互验（同求测者同一事，跨科合参）
 
 ## 纪律

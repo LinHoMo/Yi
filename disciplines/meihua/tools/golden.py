@@ -4,7 +4,7 @@
     python tools/golden.py capture "重构排盘逻辑，字段等价"   # 改动前落基线（必须给理由）
     python tools/golden.py verify                          # 默认；比对指纹，漂移退出码 1
 
-覆盖：全部 13 例案例（tune 10 + holdout 3）的 chart 段与 analyze 段逐字段快照。
+覆盖：全部案例（tune + holdout）的 chart 段与 analyze 段逐字段快照。
 """
 from __future__ import annotations
 

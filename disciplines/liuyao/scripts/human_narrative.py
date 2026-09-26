@@ -471,8 +471,9 @@ def _meaning_paragraph(verdict, s2, s3, special, question, factor_contribs=None)
 
     改进点：
     - 消除原来硬凑「原神当权阻力实在」这类与实际数据矛盾的套话
-    - 改为直接引用 factor_contributions 里已有的因子名+评分描述
+    - 改为直接引用 factor_contributions 里已有的因子名+理由（**不暴露评分数字**）
     - 去掉「事难成，守住等时机」这类与 advice 重复的表述
+    - 内部评分是回归审计用的对齐分，不等于预测能力，不对外暴露（AGENTS.md §三）
     """
     use_cat = s2.get("use_god_category") or "用神"
     yuan = (s2.get("yuan_shen") or {}).get("category") or ""
@@ -493,7 +494,7 @@ def _meaning_paragraph(verdict, s2, s3, special, question, factor_contribs=None)
     else:
         parts.append(f"事在两可之间，谁先动谁定局。")
 
-    # —— 引用 factor_contributions 关键项（最多2条正+1条负） ——
+    # —— 引用 factor_contributions 关键项（只说因子名+理由，不带评分数字） ——
     if factor_contribs:
         pos_items = [fc for fc in factor_contribs if (fc.get("score") or 0) > 0][:2]
         neg_items = [fc for fc in factor_contribs if (fc.get("score") or 0) < 0][:2]
@@ -501,17 +502,15 @@ def _meaning_paragraph(verdict, s2, s3, special, question, factor_contribs=None)
             pos_strs = []
             for fc in pos_items:
                 nm = fc.get("name", "")
-                sc = fc.get("score", 0)
                 reason = _clean_reason(fc.get("reason", ""), nm)
-                pos_strs.append(f"{nm}+{sc:.1f}" + (f"（{reason}）" if reason else ""))
+                pos_strs.append(f"{nm}" + (f"（{reason}）" if reason else ""))
             parts.append("有利面：" + "；".join(pos_strs) + "。")
         if neg_items:
             neg_strs = []
             for fc in neg_items:
                 nm = fc.get("name", "")
-                sc = fc.get("score", 0)
                 reason = _clean_reason(fc.get("reason", ""), nm)
-                neg_strs.append(f"{nm}{sc:.1f}" + (f"（{reason}）" if reason else ""))
+                neg_strs.append(f"{nm}" + (f"（{reason}）" if reason else ""))
             parts.append("拖累面：" + "；".join(neg_strs) + "。")
 
     # —— 弱而格吉/弱而格凶，点一句 ——
@@ -543,283 +542,21 @@ def _clean_reason(reason: str, name: str) -> str:
 
 
 def _ensure_thinking_chain(result: dict) -> dict:
-    """当 thinking_chain 缺失时，从引擎原始 JSON 推导出最小可用数据。"""
-    tc = result.get("thinking_chain")
-    if tc:
-        return tc
-    # --- 从引擎输出重建 step1–step5 ---
-    orig = result.get("original_hexagram") or {}
-    changed = result.get("changed_hexagram") or {}
-    dt = result.get("divination_time") or {}
-    yao_lines = orig.get("yao_lines", [])
-    palace = orig.get("palace", "")
-    palace_elem = orig.get("palace_element", "")
-    generation = orig.get("generation", "")
-    empty = result.get("empty_branches", [])
-    month_sb = dt.get("month_stem_branch", "")
-    day_sb = dt.get("day_stem_branch", "")
-    # 月支/日支（用于旺衰）
-    month_branch = month_sb[-1:] if month_sb else ""
-    day_branch = day_sb[-1:] if day_sb else ""
+    """已停用——铁律一合规清理。
 
-    # 五行星性映射
-    branch_elem = {"子":"水","丑":"土","寅":"木","卯":"木","辰":"土","巳":"火",
-                   "午":"火","未":"土","申":"金","酉":"金","戌":"土","亥":"水"}
+    此函数曾内置一套独立的五行旺衰打分、进退神判断与五步思维链重建逻辑，
+    与主线 chain_step1–5 形成双路径。按 AGENTS.md §二"内核唯一真值源"的要求，
+    同一套推演规则（当令旺衰、进退神、三合局等）只应由链式模块一处实现，
+    不应在此就地重算来"兜底"。
 
-    BRANCH_CYCLE = {"子":"木","丑":"火","寅":"土","卯":"金","辰":"水",
-                    "巳":"火","午":"土","未":"木","申":"金","戌":"水","亥":"水"}
-    # 月建旺衰：当令者旺、相
-    def elem_strength_by_month(elem):
-        if not month_branch or not elem:
-            return "中和"
-        m = branch_elem.get(month_branch, "")
-        if m == elem:
-            return "旺"
-        # 相：月建五行生用神五行（用神得气）
-        sheng = {"木":"火","火":"土","土":"金","金":"水","水":"木"}
-        if sheng.get(m, "") == elem:
-            return "相"
-        # 休：用神生月建（泄气）
-        if sheng.get(elem, "") == m:
-            return "休"
-        # 囚：月建克用神
-        ke = {"木":"土","土":"水","水":"火","火":"金","金":"木"}
-        if ke.get(m, "") == elem:
-            return "囚"
-        # 死：用神克月建
-        if ke.get(elem, "") == m:
-            return "死"
-        return "中和"
-
-    # step1: 观局
-    moving_lines = []
-    world_pos = resp_pos = None
-    for y in yao_lines:
-        if y.get("is_moving"):
-            p = y.get("position")
-            rel = y.get("six_relation", "")
-            br = y.get("earthly_branch", "")
-            moving_lines.append(f"{_pos_name(p)}{rel}{br}")
-        if y.get("is_world"):
-            world_pos = y.get("position")
-        if y.get("is_response"):
-            resp_pos = y.get("position")
-
-    s1_text = f"本卦：{orig.get('name','')}{'（' + palace + '）' if palace else ''}{generation}，"
-    s1_text += f"上{orig.get('upper_trigram','')}下{orig.get('lower_trigram','')}。"
-    s1_text += f"世在{orig.get('name','')}{world_pos or '?'}爻，应在{resp_pos or '?'}爻。" if world_pos else ""
-    s1_text += f"月建{month_branch or '?'}，日辰{day_branch or '?'}，旬空{'、'.join(empty)}。"
-    if moving_lines:
-        s1_text += f"动爻：{'、'.join(moving_lines)}。"
-    s1_text += f"变卦：{changed.get('name','')}。"
-
-    # step2: 定用 —— 优先取用神作为世爻的五行所对应的事
-    question = result.get("question", "")
-    focus = _question_focus(question)
-    # 根据问题类别找到用神类别
-    # 世爻的五行属性
-    world_line = next((y for y in yao_lines if y.get("is_world")), None)
-    world_relation = world_line.get("six_relation", "") if world_line else ""
-    world_branch = world_line.get("earthly_branch", "") if world_line else ""
-
-    # 根据世爻六亲推导用神（占运势/自身时以世爻为主）
-    use_god_cat = world_relation or "世爻"
-    use_god_elem = branch_elem.get(world_branch, palace_elem) if world_branch else palace_elem
-    use_god_branch = world_branch
-
-    # 原神 = 生用神者; 忌神 = 克用神者
-    sheng_cycle = {"木":"火","火":"土","土":"金","金":"水","水":"木"}
-    ke_cycle = {"木":"土","土":"水","水":"火","火":"金","金":"木"}
-    jiang = {"水":"火","火":"木","木":"土","土":"金","金":"水"}
-    # 六亲: 生我=父母(水→金), 我生=子孙(金→水), 克我=官鬼(金→火), 我克=妻财(金→木), 同我=兄弟(金→金)
-    yuan_elem = jiang.get(use_god_elem, "")  # 生我者的五行
-    ji_elem = ke_cycle.get(use_god_elem, "")  # 克我者的五行
-
-    s2_text = f"问的是「{question}」，{focus}以{use_god_cat}为用神。"
-    if use_god_branch:
-        s2_text += f"用神落在{use_god_branch}{_pos_name(world_pos)}。"
-
-    # step3: 断旺
-    strength_raw = elem_strength_by_month(use_god_elem) if use_god_elem else "中和"
-    if strength_raw == "旺":
-        strength_level, score = "旺", 5
-    elif strength_raw == "相":
-        strength_level, score = "相", 4
-    elif strength_raw == "休":
-        strength_level, score = "中和偏弱", 3
-    elif strength_raw == "囚":
-        strength_level, score = "弱", 2
-    elif strength_raw == "死":
-        strength_level, score = "极弱", 1
-    else:
-        strength_level, score = "中和", 3
-
-    # 日辰修正
-    if day_branch:
-        d_elem = branch_elem.get(day_branch, "")
-        if d_elem == use_god_elem:
-            strength_level = "旺" if strength_level == "旺" else "中和偏旺"
-            score = min(score + 0.5, 5.5)
-        elif sheng_cycle.get(d_elem, "") == use_god_elem:
-            strength_level += "(日生)"
-            score = min(score + 0.3, 5.5)
-        elif ke_cycle.get(d_elem, "") == use_god_elem:
-            strength_level += "(日克)"
-            score = max(score - 0.5, 0.5)
-
-    # 旬空扣分
-    use_empty = False
-    if use_god_branch and use_god_branch in empty:
-        use_empty = True
-        strength_level += "(空)"
-        score = max(score * 0.7, 0.5)
-
-    s3_text = f"用神{use_god_cat}五行{use_god_elem or '？'}，月建{month_branch or '?'}对它{elem_strength_by_month(use_god_elem) if use_god_elem else '？'}。"
-    s3_text += f"总起来说，用神{strength_level}。（量化参考 {score:.2f}）"
-    if use_empty:
-        s3_text += "用神落空亡，冲空或出空之时方可应事。"
-
-    # step4: 察变 —— 从 thinking_chain 复用已有的八卦/纳甲数据
-    try:
-        from thinking_chain import HEXAGRAM_TRIGRAMS as _HEX_T, NAJIA_BRANCHES as _NAJIA
-    except ImportError:
-        _HEX_T, _NAJIA = {}, {}
-    # 构建变卦各爻地支映射
-    chg_br_by_pos = {}
-    cname = changed.get("name", "")
-    if cname in _HEX_T:
-        upper, lower = _HEX_T[cname]
-        l_na = _NAJIA.get(lower, {}).get("inner", [])
-        u_na = _NAJIA.get(upper, {}).get("outer", [])
-        all_brs = (l_na + u_na)[:6]
-        for i, br in enumerate(all_brs):
-            chg_br_by_pos[i + 1] = br
-
-    s4_details = []
-    net_effect = 0
-    advance_map = {"子":"丑","丑":"寅","寅":"卯","卯":"辰","辰":"巳",
-                    "巳":"午","午":"未","未":"申","申":"酉","酉":"戌",
-                    "戌":"亥","亥":"子"}
-    retreat_map = {v: k for k, v in advance_map.items()}
-
-    for y in yao_lines:
-        if not y.get("is_moving"):
-            continue
-        pos = y.get("position")
-        orig_rel = y.get("six_relation", "")
-        orig_br = y.get("earthly_branch", "")
-        chg_br = chg_br_by_pos.get(pos, "")
-        if not chg_br:
-            for cy in (changed.get("yao_lines") or []):
-                if cy.get("position") == pos:
-                    chg_br = cy.get("earthly_branch", "")
-                    break
-        if not chg_br:
-            continue  # 无法确定则跳过此动爻
-        # 判断进退
-        if advance_map.get(orig_br) == chg_br:
-            ct = "化进"
-            net_effect += 0.8
-        elif retreat_map.get(orig_br) == chg_br:
-            ct = "化退"
-            net_effect -= 0.8
-        else:
-            orig_e = branch_elem.get(orig_br, "")
-            chg_e = branch_elem.get(chg_br, "")
-            if sheng_cycle.get(chg_e, "") == orig_e:
-                ct = "回头生"
-                net_effect += 1.2
-            elif ke_cycle.get(chg_e, "") == orig_e:
-                ct = "回头克"
-                net_effect -= 1.5
-            else:
-                ct = "动变"
-                net_effect += 0.2
-        # 确定此动爻相对于用神的角色（用神/原神/忌神/仇神/闲神）
-        orig_rel_e = branch_elem.get(orig_br, "")
-        if orig_rel == use_god_cat:
-            role = "用神"
-        elif orig_rel_e and jiang.get(orig_rel_e) == use_god_elem:
-            # 此爻的五行生用神五行 → 原神
-            role = "原神"
-        elif orig_rel_e and ke_cycle.get(orig_rel_e) == use_god_elem:
-            # 此爻的五行克用神五行 → 忌神
-            role = "忌神"
-        else:
-            role = "闲神"
-        s4_details.append({
-            "position": pos,
-            "original_relation": orig_rel,
-            "line_role": role,
-            "change_type": ct,
-            "changed_branch": chg_br,
-        })
-
-    s4_text = f"卦中有{len(s4_details)}个动爻。" if s4_details else "卦里没有动爻。"
-    for d in s4_details:
-        s4_text += f"{_pos_name(d['position'])}{d['original_relation']}{d['change_type']}；"
-
-    # step5: 综合
-    if score >= 4.5:
-        verdict = "大吉"
-    elif score >= 3.5:
-        verdict = "吉"
-    elif score >= 2.5:
-        verdict = "平吉"
-    elif score >= 1.5:
-        verdict = "平/不利"
-    elif score >= 0.8:
-        verdict = "凶"
-    else:
-        verdict = "大凶"
-
-    # 六神辅助
-    spirit_notes = ""
-    if world_line:
-        spirit = world_line.get("six_spirit", "")
-        spirit_mean = {"青龙":"喜庆临门，所谋易遂",
-                       "朱雀":"文书利好但防口舌",
-                       "勾陈":"迟滞牵连，进展偏慢",
-                       "螣蛇":"虚惊怪异，事多反复",
-                       "白虎":"凶险伤灾，须防血光",
-                       "玄武":"暗昧隐蔽，防人暗算"}
-        if spirit in spirit_mean:
-            spirit_notes = f"世临{spirit}，{spirit_mean[spirit]}。"
-
-    s5_text = f"综合来看，断为{verdict}。{spirit_notes}"
-
-    return {
-        "step1_situational_reading": {"summary_text": s1_text, "hexagram_name": orig.get("name",""), "palace": palace},
-        "step2_use_god_identification": {
-            "summary_text": s2_text,
-            "use_god_category": use_god_cat,
-            "use_god_element": use_god_elem,
-            "selected_use_god": {"earthly_branch": use_god_branch, "position": world_pos},
-            "yuan_shen": {"element": yuan_elem, "category": ""},
-            "ji_shen": {"element": ji_elem, "category": ""},
-        },
-        "step3_strength_analysis": {
-            "summary_text": s3_text,
-            "strength_level": strength_level,
-            "strength_score": score,
-            "use_god_branch": use_god_branch,
-            "is_empty": use_empty,
-        },
-        "step4_change_analysis": {
-            "summary_text": s4_text,
-            "has_moving_lines": bool(s4_details),
-            "details": s4_details,
-            "net_effect": net_effect,
-        },
-        "step5_synthesis": {
-            "summary_text": s5_text,
-            "verdict": verdict,
-            "final_score": score,
-            "confidence": min(95, max(20, int(50 + net_effect * 8 + (score - 3) * 6))),
-        },
-        "reasoning_chain": [],
-        "summary_text": "",
-    }
+    当 thinking_chain 不可用时，正确做法是修复上游 chain_step1–5 的生成流程，
+    而不是调一套平行逻辑绕过它。故改为显式拒绝，防止意外触发。
+    """
+    raise RuntimeError(
+        "thinking_chain 缺失，不应在交付路径外就地重建——"
+        "请检查上游 analyze / run_thinking_chain 是否执行成功；"
+        "铁律一（AGENTS.md §一）要求机械运算统一由主线引擎完成。"
+    )
 
 
 def _build_explain_summary(factor_contribs: list, focus: str) -> str:
@@ -865,18 +602,16 @@ def _build_explain_summary(factor_contribs: list, focus: str) -> str:
     pos_parts = []
     for fc in positive[:3]:
         name = fc.get("name", "")
-        score = fc.get("score", 0)
         reason = _short_reason(fc.get("reason", ""), name)
-        tail = f"，{reason}" if reason else ""
-        pos_parts.append(f"{name}（+{round(score, 1)}）{tail}")
+        tail = f"（{reason}）" if reason else ""
+        pos_parts.append(f"{name}{tail}")
 
     neg_parts = []
     for fc in negative[:3]:
         name = fc.get("name", "")
-        score = fc.get("score", 0)
         reason = _short_reason(fc.get("reason", ""), name)
-        tail = f"，{reason}" if reason else ""
-        neg_parts.append(f"{name}（{round(score, 1)}）{tail}")
+        tail = f"（{reason}）" if reason else ""
+        neg_parts.append(f"{name}{tail}")
 
     if pos_parts and neg_parts:
         body_text = "；".join(pos_parts) + "；拖累面：" + "；".join(neg_parts)
@@ -1040,7 +775,9 @@ def build_human_narrative(result: dict) -> dict:
         "这是按纳甲六爻规则推出来的一份参考，讲的是方向和节奏，不是板上钉钉的预言。"
         "看病、打官司、做重大决定，仍要以专业意见为准。"
     )
-    conf_note = f"线索一致程度约 {conf}%，供你判断这份解读有多「齐心」。" if conf not in (None, "") else ""
+    # 置信度是内部指标，不在交付正文中暴露（AGENTS.md §三：对齐分≠预测率）。
+    # "线索一致程度约 X%" 是置信度的换名表述，口径层面等同于把内部分数伪装成预测能力。
+    conf_note = ""
 
     # —— 推因摘要（从 factor_contributions 翻译成人话）——
     factor_contribs = s5.get("factor_contributions") or []

@@ -17,6 +17,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from thinking_chain import run_thinking_chain  # noqa: E402
+from bing_yao_shensha import evaluate_bing_yao, attach_shensha  # noqa: E402
 
 
 def _conclusion_from(chain: dict, result: dict) -> dict:
@@ -52,7 +53,9 @@ def _conclusion_from(chain: dict, result: dict) -> dict:
         "应期": yingqi_list,
         # 结构化应期候选（date+rule），供合参层现实回填评分；按引擎给出顺序即名次
         "应期明细": yingqi_items,
-        "所本": "六爻纳甲·思维链五步（用神·旺衰·动变·月日）",
+        "病药": (result.get("bing_yao") or {}),
+        "星煞": (result.get("shensha_panel") or {}),
+        "所本": "六爻纳甲·思维链五步（用神·旺衰·动变·月日）+ 病药/星煞结构化",
     }
 
 
@@ -86,6 +89,19 @@ def analyze(chart_json: dict) -> dict:
     result = dict(chart_json)
     chain_full = run_thinking_chain(result)
     chain = chain_full.get("thinking_chain", chain_full)
+
+    step2 = chain.get("step2_use_god_identification") or {}
+    step3 = chain.get("step3_strength_analysis") or {}
+    if not step3:
+        # 兼容键名差异
+        for k, v in chain.items():
+            if isinstance(v, dict) and "strength_level" in v:
+                step3 = v
+                break
+    bing_yao = evaluate_bing_yao(step2, step3, chain.get("step5_synthesis") or {})
+    shensha = attach_shensha(result, step3)
+    result["bing_yao"] = bing_yao
+    result["shensha_panel"] = shensha
 
     verdict = ""
     step5 = chain.get("step5_synthesis") or {}

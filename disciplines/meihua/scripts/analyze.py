@@ -13,6 +13,8 @@
   4. 卦气旺衰（《卷一·卦气旺/卦气衰》，月令定旺相休囚死）
   5. 应期（《卷二·先天後天論》：先天卦取卦气应期；应体之卦气宜盛不宜衰，
      旺则应速，衰则应迟；变卦为末后之期）
+  6. 万物类象（《卷一·八卦万物属类》《八卦类象》）：机械挂到体/用/互/变各卦
+  7. 多爻动合参（verdicts.json#multi_move_rules）：两爻及以上动时更重互变生克
 """
 from __future__ import annotations
 
@@ -118,6 +120,18 @@ def _numerical_timing(total: int | None, motion: str | None) -> int | None:
     return total
 
 
+def _analogies_of(trig: str | None) -> dict | None:
+    """经卦/别卦 → 万物类象（verdicts.json#bagua_analogies）。别卦取上卦经卦类象。"""
+    if not trig:
+        return None
+    bagua = VERDICTS.get("bagua_analogies") or {}
+    if trig in bagua:
+        entry = bagua[trig]
+        return {k: v for k, v in entry.items() if k not in ("note", "所本", "categories")}
+    # 别卦名 → 上经卦类象（辅助挂象；主类象仍看体用互变经卦）
+    return None
+
+
 def analyze(chart_out: dict) -> dict:
     """chart 段输出 → 因子与判据（结构化，无成段断语）。"""
     body = chart_out["body"]
@@ -126,17 +140,25 @@ def analyze(chart_out: dict) -> dict:
     use_el = chart_out["use_element"]
     topic = chart_out.get("topic") or "人事"
     question = chart_out.get("question", "")
+    movings = chart_out.get("movings") or [chart_out.get("moving")]
+    multi_move = bool(chart_out.get("multi_move")) or len(movings) > 1
 
     relation = _relation_of(body_el, use_el)
 
     # 各卦对体的作用：用卦 / 互下 / 互上 / 变出之卦
     # 变卦以"变出之卦"（动爻所在经卦变后的经卦）论五行，《观梅占》"变艮土生兑金"。
+    # 多爻动两侧皆变时，上下变出之卦分列（《卷二》"最切看互卦变卦"）。
     actors = [
         ("用卦", use),
         ("互卦下", chart_out.get("interacting_lower")),
         ("互卦上", chart_out.get("interacting_upper")),
-        ("变卦", chart_out.get("changed_trigram")),
     ]
+    changed_trigrams = chart_out.get("changed_trigrams")
+    if multi_move and changed_trigrams and len(changed_trigrams) > 1:
+        actors.append(("变卦下", chart_out.get("changed_lower")))
+        actors.append(("变卦上", chart_out.get("changed_upper")))
+    else:
+        actors.append(("变卦", chart_out.get("changed_trigram")))
     helpers, hinderers = [], []
     for role, trig in actors:
         if not trig or trig == chart_out.get("hexagram"):
@@ -172,6 +194,24 @@ def analyze(chart_out: dict) -> dict:
     ke_ti = [{"卦": h["卦"], "含义": VERDICTS["ke_ti_meaning"].get(h["卦"])}
              for h in hinderers]
 
+    # 万物类象：机械挂到体/用/互/变（《卷一·八卦万物属类》）
+    analogies = {
+        "体卦": {"卦": body, "类象": _analogies_of(body)},
+        "用卦": {"卦": use, "类象": _analogies_of(use)},
+        "互卦下": {"卦": chart_out.get("interacting_lower"),
+                   "类象": _analogies_of(chart_out.get("interacting_lower"))},
+        "互卦上": {"卦": chart_out.get("interacting_upper"),
+                   "类象": _analogies_of(chart_out.get("interacting_upper"))},
+    }
+    if multi_move and changed_trigrams and len(changed_trigrams) > 1:
+        analogies["变卦下"] = {"卦": chart_out.get("changed_lower"),
+                              "类象": _analogies_of(chart_out.get("changed_lower"))}
+        analogies["变卦上"] = {"卦": chart_out.get("changed_upper"),
+                              "类象": _analogies_of(chart_out.get("changed_upper"))}
+    else:
+        analogies["变出之卦"] = {"卦": chart_out.get("changed_trigram"),
+                               "类象": _analogies_of(chart_out.get("changed_trigram"))}
+
     # 应期：体卦卦气为主，旺则速衰则迟；互变生克作吉凶应期参考
     timing = {
         "体卦五行": body_el,
@@ -199,7 +239,20 @@ def analyze(chart_out: dict) -> dict:
             "所本": special["所本"],
         }
     else:
-        verdict = _synthesize(relation, helpers, hinderers, qi, topic)
+        verdict = _synthesize(relation, helpers, hinderers, qi, topic,
+                              multi_move=multi_move, movings=movings)
+
+    multi_info = None
+    if multi_move:
+        rules = VERDICTS.get("multi_move_rules") or {}
+        multi_info = {
+            "动爻列表": movings,
+            "体用规则": chart_out.get("body_use_rule"),
+            "变出之卦": chart_out.get("changed_trigrams") or [chart_out.get("changed_trigram")],
+            "所本": rules.get("所本", ""),
+            "体用取舍": rules.get("body_use", []),
+            "合参": rules.get("synthesis", ""),
+        }
 
     return {
         "schema": "meihua-analyze-v1",
@@ -208,6 +261,9 @@ def analyze(chart_out: dict) -> dict:
         "chart_summary": {
             "卦名": chart_out.get("hexagram"),
             "动爻": chart_out.get("moving"),
+            "动爻列表": movings,
+            "多爻动": multi_move,
+            "体用规则": chart_out.get("body_use_rule"),
             "上卦": chart_out.get("upper"),
             "下卦": chart_out.get("lower"),
             "互卦下": chart_out.get("interacting_lower"),
@@ -226,6 +282,8 @@ def analyze(chart_out: dict) -> dict:
             "生体之卦": helpers,
             "克体之卦": hinderers,
         },
+        "analogies": analogies,
+        "multi_move": multi_info,
         "body_qi": qi,
         "topic_verdict": topic_verdict,
         "sheng_ti": sheng_ti,
@@ -250,11 +308,13 @@ def analyze(chart_out: dict) -> dict:
 
 
 def _synthesize(relation: str, helpers: list, hinderers: list,
-                qi: dict | None, topic: str) -> dict:
+                qi: dict | None, topic: str,
+                multi_move: bool = False, movings: list | None = None) -> dict:
     """综合吉凶：以体用关系为基准，互变生克与旺衰做修正。
 
     规则出处均标在结论里；方向措辞遵循 AGENTS.md（凶象用"偏向/有…信号"，
     不用"注定"）。天时占不分体用，另行处理（全观诸卦五行）。
+    多爻动时更重互变合参（《卷二》"生体多者则愈吉，克体多者则愈凶"）。
     """
     base = {
         "体克用": 1, "用生体": 1, "比和": 1,
@@ -268,6 +328,9 @@ def _synthesize(relation: str, helpers: list, hinderers: list,
         score += 0.6
     if relation == "体克用" and len(hinderers) > len(helpers):
         score -= 1.0
+    if multi_move:
+        # 多爻动更重互变净势（《卷二·体用生克篇》"生体多者则愈吉，克体多者则愈凶"）
+        score += 0.4 * (len(helpers) - len(hinderers))
     if qi:
         score += {"旺": 0.5, "相": 0.2, "休": 0.0, "囚": -0.2, "死": -0.5}.get(qi["状态"], 0)
 
@@ -286,14 +349,19 @@ def _synthesize(relation: str, helpers: list, hinderers: list,
         direction, tone = "凶", "体用不和又逢克伐，事势偏于不利，宜谨慎"
 
     # 变卦定终局（《体用总诀》：变乃末后之期）
-    change = "变卦生体" if any(h["位"] == "变卦" for h in helpers) else \
-             ("变卦克体" if any(h["位"] == "变卦" for h in hinderers) else "变卦比和/无关")
-    return {
+    change = "变卦生体" if any(h["位"].startswith("变卦") for h in helpers) else \
+             ("变卦克体" if any(h["位"].startswith("变卦") for h in hinderers) else "变卦比和/无关")
+    result = {
         "方向": direction,
         "说明": tone,
         "变卦作用": change,
         "所本": "《卷二·体用总诀》 + 《卷二·先天後天論》（卦气旺衰）",
     }
+    if multi_move:
+        result["多爻动"] = True
+        result["动爻列表"] = list(movings or [])
+        result["所本"] += " + 《卷二·体用生克篇》（生体多者愈吉、克体多者愈凶，多爻动重互变合参）"
+    return result
 
 
 if __name__ == "__main__":
@@ -307,14 +375,25 @@ if __name__ == "__main__":
 
     if not args.chart_json:
         # 金标准自检：观梅占 → 体兑金、用离火，用克体，变艮生体
-        from chart import chart_from_numbers
+        from chart import chart_from_numbers, chart_from_manual
         r = chart_from_numbers(5, 12, 17, 9)
         a = analyze(r)
         assert a["body_use"]["关系"] == "用克体", a["body_use"]
         assert a["conclusion"]["方向"] in ("平凶", "凶"), a["conclusion"]
         sheng = [h["卦"] for h in a["interaction"]["生体之卦"]]
         assert "艮" in sheng, a["interaction"]
+        assert a["analogies"]["体卦"]["卦"] == "兑", a["analogies"]
+        assert a["analogies"]["体卦"]["类象"].get("人物"), a["analogies"]
+        assert a["multi_move"] is None, a["multi_move"]
         print("观梅占 analyze 校验通过：", a["conclusion"]["方向"], a["conclusion"]["说明"])
+        # 多爻动自检：乾上震下 1,2 动 → 上体下用，体克用
+        m = chart_from_manual("乾", "震", [1, 2])
+        ma = analyze(m)
+        assert ma["body_use"]["关系"] == "体克用", ma["body_use"]
+        assert ma["chart_summary"]["多爻动"] is True, ma["chart_summary"]
+        assert ma["multi_move"] and ma["multi_move"]["动爻列表"] == [1, 2], ma["multi_move"]
+        print("多爻动 analyze 校验通过：", ma["multi_move"]["体用规则"],
+              ma["body_use"]["关系"], ma["conclusion"]["方向"])
         raise SystemExit(0)
 
     chart_out = _json.loads(Path(args.chart_json).read_text(encoding="utf-8"))

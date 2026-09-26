@@ -275,6 +275,19 @@ def _evaluate_fu_cang_strength(fu_detail: dict, month_branch: str, day_branch: s
         effective_score -= 0.5
         analysis_parts.append("伏神受压制难以得出，-0.5")
 
+    # ── 伏藏压制修正 ──────────────────────────────────────────────────
+    # 古籍:《增删卜易·用神伏藏章》"用神伏藏，纵月建日辰旺相，只论七成，
+    #         盖为飞神所压，隐而不显，其力不能全伸"；
+    #       《卜筮正宗·飞神伏神论》"伏神者，谓卦中之六亲不全，须借伏神，
+    #         伏者，隐而不出，纵旺相必减二等"；
+    #       《黄金策·千金赋》"伏神得日辰生旺，亦需乘时而出"——得出得时
+    #         仅论得出与否，旺相仍需压制。
+    # 语义: 伏藏用神不论飞伏生克关系，月日旺衰俱以「中和」为上限；
+    #       「伏克飞为出暴」(fu_fei_modifier=+0.8) 仍属伏藏，不得直断旺相；
+    #       压制上限 3.4 恰落于「中和」上界(2.5–3.5), 合古籍「减二等」之义。
+    effective_score = min(effective_score, 3.4)
+    analysis_parts.append("伏藏隐而不显，力不能全伸，压制至多为中和(≤3.4)")
+
     # 上下限
     effective_score = max(0.5, min(5.0, effective_score))
 

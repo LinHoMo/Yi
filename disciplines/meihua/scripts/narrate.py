@@ -54,9 +54,17 @@ def narrate(a: dict) -> str:
     # 标题
     hex_name = s.get("卦名")
     moving = s.get("动爻")
+    movings = s.get("动爻列表") or ([moving] if moving else [])
+    multi = bool(s.get("多爻动")) or (movings and len(movings) > 1)
     title = f"梅花易数·{topic}占"
     if hex_name:
-        title += f"（{hex_name}卦" + (f" {_MOVING_CN.get(moving, moving)}动" if moving else "") + "）"
+        if multi and movings:
+            mv_txt = "、".join(_MOVING_CN.get(m, m) for m in movings)
+            title += f"（{hex_name}卦 {mv_txt}动）"
+        elif moving:
+            title += f"（{hex_name}卦 {_MOVING_CN.get(moving, moving)}动）"
+        else:
+            title += f"（{hex_name}卦）"
 
     lines = [f"# {title}", ""]
 
@@ -73,7 +81,13 @@ def narrate(a: dict) -> str:
         rel = bu.get("关系", "")
         body, use = bu.get("体卦"), bu.get("用卦")
         summary = f"这一卦得**{hex_name}**"
-        if moving:
+        if multi and movings:
+            mv_txt = "、".join(_MOVING_CN.get(m, m) for m in movings)
+            summary += f"，{mv_txt}齐动"
+            rule = s.get("体用规则") or (a.get("multi_move") or {}).get("体用规则")
+            if rule:
+                summary += f"（{rule}）"
+        elif moving:
             summary += f"，{_MOVING_CN.get(moving, moving)}动"
         if body and use and rel:
             summary += f"。体卦**{body}**（主我），用卦**{use}**（主事），两下里是**{rel}**的关系"
@@ -82,6 +96,27 @@ def narrate(a: dict) -> str:
             summary += f"，变卦为{change}"
         lines.append(summary + "。")
         lines.append("")
+
+    # 二·五、万物类象（《卷一·八卦万物属类》挂到体用互变，供说人话）
+    analogies = a.get("analogies") or {}
+    if analogies:
+        picks = []
+        for role in ("体卦", "用卦"):
+            item = analogies.get(role) or {}
+            lex = item.get("类象") or {}
+            if not lex:
+                continue
+            people = "、".join((lex.get("人物") or [])[:3])
+            body_bits = "、".join((lex.get("身体") or [])[:3])
+            things = "、".join((lex.get("物类") or [])[:3])
+            bits = [x for x in (people, body_bits, things) if x]
+            if bits:
+                picks.append(f"{role}**{item.get('卦')}**取象：" + " / ".join(bits))
+        if picks:
+            lines.append("按《八卦万物属类》，这卦里的取象可先落一落——")
+            for p in picks:
+                lines.append(f"- {p}")
+            lines.append("")
 
     # 三、为什么：体用总诀 + 事类断语
     g = (bu.get("关系判语") or "").strip()
@@ -100,6 +135,9 @@ def narrate(a: dict) -> str:
     hinderers = iv.get("克体之卦") or []
     st = a.get("sheng_ti") or []
     kt = a.get("ke_ti") or []
+    if multi:
+        lines.append("这回是多爻同动，体用照「动者为用」分侧之外，更看互变合参——"
+                     "《体用生克篇》说「生体多者则愈吉，克体多者则愈凶」。")
     if helpers or hinderers:
         lines.append("再看中间与终局：互卦是事情的中间，变卦是事情的最后。")
         if helpers:

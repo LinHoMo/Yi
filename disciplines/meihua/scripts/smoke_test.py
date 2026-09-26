@@ -32,6 +32,8 @@ SMOKES = [
                    "hour_branch": "午", "question": "占出行"}),
     ("卦象特断（西林寺）", {"way": "two_numbers", "upper_num": 7, "lower_num": 8,
                           "hour_num": 0, "question": "西林寺额占"}),
+    ("多爻动（manual 1,2）", {"way": "manual", "upper": "乾", "lower": "震",
+                            "movings": [1, 2], "question": "占求财"}),
 ]
 
 

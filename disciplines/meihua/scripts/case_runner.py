@@ -57,6 +57,9 @@ def run_case(case: dict) -> dict:
         "topic": a.get("topic"),
         "hexagram": c.get("hexagram"),
         "moving": c.get("moving"),
+        "movings": c.get("movings"),
+        "multi_move": c.get("multi_move"),
+        "body_use_rule": c.get("body_use_rule"),
         "body": bu.get("体卦"),
         "use": bu.get("用卦"),
         "body_element": bu.get("体卦五行"),
@@ -70,6 +73,7 @@ def run_case(case: dict) -> dict:
         "numerical_timing": t.get("数应"),   # 《占卜总诀》动静定应期（行半/立全/坐卧倍）
         "qi_state": (a.get("body_qi") or {}).get("状态"),
         "chart_summary": a.get("chart_summary"),
+        "analogies_keys": list((a.get("analogies") or {}).keys()),
     }
 
 

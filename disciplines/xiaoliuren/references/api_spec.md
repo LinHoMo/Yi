@@ -14,6 +14,7 @@
 | `month` `day` `hour_ordinal` | int×3 | `way=month_day_hour`：农历月日 + 时辰序数（子=1…亥=12） |
 | `numbers` | list[int] | `way=numbers`：报数（任意个数，正整数） |
 | `topic` | str | 显式事类（覆盖问句自动识别；案例库传声明事类） |
+| `direction` | str | 目标方位（东/南/中/西/北等），供 analyze 方位/五行综合断；可缺省 |
 | `question` | str | 问事文本（自动识别事类 topic） |
 
 **输出**（chart 段，关键字段）：
@@ -27,6 +28,7 @@
 | `month` `day` `hour_ordinal` | int | month_day_hour 起课的原始参数 |
 | `numbers` | list[int] | numbers 起课的原始报数 |
 | `topic` | str | 事类 |
+| `direction` | str | 目标方位（可缺省） |
 | `question` | str | 问事文本 |
 
 起课法（《贺氏六壬小手册》第二节）：以"大安"起正月顺数至所求月；以月宫起初一顺数至所求日；以日宫起子时顺数至所求时辰。变通/随机取数（第三、四节）：第一数自大安起数，其后自上数落宫起数。
@@ -42,13 +44,19 @@
 | `chart_summary` | dict | 落宫/起课方式/报数/月日时/时辰序 |
 | `steps` | list[dict] | 步序与各步落宫名 |
 | `palace` | dict | 六要素：宫名/五行/颜色/方位/属神/位置/主数/含义/总诀/方向 |
+| `neighbors` | dict | **邻宫速断**：进宫/退宫/临宫[]，各含 宫名/关系/主速/速断/说明/所本 |
+| `direction_element` | dict | **方位/五行综合断**：输入方位/方位五行/落宫五行/关系/倾向/说明/所本 |
 | `topic_verdict` | dict | topic/诀句/宫义/所本 |
 | `timing` | dict | 主数/解读/所本 |
 | `comprehensive` | bool | 是否综合判断事类（出行/求财） |
 | `conclusion` | dict | 方向/说明/宫义/所本 |
-| `factors` | list[dict] | {因子, 权重, 判据, 所本}，四因子：落宫30/吉凶方向30/事类断语20/应期主数20 |
+| `factors` | list[dict] | {因子, 权重, 判据, 所本}，六因子：落宫30/吉凶方向30/事类断语20/应期主数20/邻宫速断0/方位五行0 |
 
 方向取法（`data/verdicts.json`）：大安/速喜/小吉→吉，赤口/空亡→凶，留连→平（两可宜缓）。
+
+邻宫速断（`data/verdicts.json`）：进=顺数下一位、退=逆数上一位、临=掌诀相邻。规则先查 `neighbor_overrides`（有古籍出处，如『留连临速喜→不久即归』），未命中按主速属性查 `speed_interactions`（通行口径）。py 只查表。
+
+方位/五行综合断（`data/verdicts.json`）：输入方位→查 `direction_element_map` 得方位五行→`core.wuxing_relation` 与落宫五行生克→查 `direction_relation` 得倾向（助/泄/阻/制/和）。例：西方金生留连水=生我→助。
 
 ## 三、narrate 段（`scripts/narrate.py`）
 

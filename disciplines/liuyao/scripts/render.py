@@ -37,8 +37,7 @@ def _summary_block(a: dict) -> list[str]:
     if ch.get("name"):
         lines.append(f"- **变卦**：{ch['name']}")
     if con.get("方向"):
-        lines.append(f"- **结论**：{con['方向']}"
-                     + (f"（置信度 {con.get('置信度')}）" if con.get("置信度") else ""))
+        lines.append(f"- **结论**：{con['方向']}")
     if con.get("应期"):
         lines.append("- **应期**：" + "、".join(map(str, con["应期"])))
     return lines

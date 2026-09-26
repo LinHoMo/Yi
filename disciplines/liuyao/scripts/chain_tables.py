@@ -130,9 +130,13 @@ XUN_KONG = {
 HEXAGRAM_LIUHE = ["泰", "否", "贲", "困", "旅", "豫", "复", "小畜"]
 
 
+# 小畜：巽宫一世，巽上乾下，上卦「巳丑酉·六合」，下卦「午卯子·六冲」。
+# 《火珠林》以小畜为 六合+六冲 双卦 (本利见合而逢冲则散) — 象数同源表须两存。
+# hex_adjustment 中 六合+0.5 与 六冲-0.5 相抵为 0，三刑+六合覆写 (chain_step5 §5.5i)
+# 以「在 HEXAGRAM_LIUHE」判定，不依赖 hex_adjustment>0，确保叠加六冲后仍被覆写。
 HEXAGRAM_LIUCHONG = ["乾", "坤", "坎", "离", "艮", "震", "巽", "兑",
                      "无妄", "大壮", "晋", "明夷", "蹇", "解", "夬", "姤",
-                     "遁", "同人", "履"]  # 部分六冲卦（小畜已从列表移除，见 issue:reg_12）
+                     "遁", "同人", "履", "小畜"]
 
 
 _USE_GOD_DICT_PATH = Path(__file__).resolve().parents[1] / "data" / "rules" / "question_use_gods.json"

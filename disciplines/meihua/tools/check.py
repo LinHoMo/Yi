@@ -30,9 +30,9 @@ from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 BASELINE_FILE = DISC / "tools" / "check_baseline.json"
 
 BASELINE = {
-    "smoke": 5,          # 四段管线冒烟有产出数（共 5）
+    "smoke": 5,          # 四段管线冒烟有产出数（最低 5；现跑 6，含多爻动 manual）
     "tune": 100.0,       # 古籍对齐分 strict，n=10（参与过调参）
-    "holdout": 100.0,    # 古籍对齐分 strict，n=3（未参与调参）
+    "holdout": 100.0,    # 古籍对齐分 strict，n=8（未参与调参；2026-09-26b 扩样 3→8）
 }
 
 PATTERNS = {
@@ -133,7 +133,7 @@ def main() -> int:
         print("\n[1] 金标准指纹（行为漂移看门狗）")
         rc, out = run([sys.executable, "tools/golden.py"])
         d = re.search(r"指纹 ([0-9a-f]{16})", out)
-        print(f"  {'√' if rc == 0 else '×'} 13 例指纹 "
+        print(f"  {'√' if rc == 0 else '×'} 案例指纹 "
               f"{d.group(1) if d else '?'} "
               f"{'与基线一致' if rc == 0 else '— 行为已漂移，改的是不是你要改的？'}")
         if rc != 0:

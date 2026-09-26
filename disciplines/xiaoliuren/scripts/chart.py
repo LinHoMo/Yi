@@ -147,6 +147,8 @@ def chart(params: dict) -> dict:
         raise ValueError(f"未知起课方式：{way}")
     out["question"] = params.get("question", "")
     out["topic"] = params.get("topic") or detect_topic(out["question"])
+    if params.get("direction"):
+        out["direction"] = params["direction"]
     return out
 
 
@@ -190,6 +192,7 @@ if __name__ == "__main__":
     ap.add_argument("--hour-ordinal", dest="hour_ordinal", type=int, help="时辰序数 子=1…亥=12")
     ap.add_argument("--numbers", help="报数，逗号分隔（如 7,7,2,3,4）")
     ap.add_argument("--topic", help="显式事类（覆盖问句识别）")
+    ap.add_argument("--direction", help="目标方位（东/南/中/西/北等，供 analyze 方位/五行综合断）")
     ap.add_argument("--question", default="")
     ap.add_argument("-o", "--out", type=Path, help="写出 chart JSON（缺省打印 stdout）")
     args = ap.parse_args()
@@ -216,7 +219,8 @@ if __name__ == "__main__":
         if not args.numbers:
             ap.error("--way numbers 需要 --numbers")
         params = {"way": "numbers", "numbers": [int(n) for n in args.numbers.split(",")]}
-    params.update({"question": args.question, "topic": args.topic})
+    params.update({"question": args.question, "topic": args.topic,
+                   "direction": args.direction})
     try:
         out = chart(params)
     except Exception as exc:

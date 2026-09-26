@@ -488,18 +488,26 @@ def step5_synthesize(r: dict) -> dict:
         classical_adj += 0.8
         classical_notes.append("【世持财·失物】世持财主物未远失，+0.8")
 
-    # 5) 原神失位：用神旺相而原神不动作 — 黄金策「用神虽旺亦凶」
+    # 5) 原神失位：用神旺相而原神（完全）不在卦中或不动 — 黄金策「用神虽旺亦凶」
     _lv_ug = str((step3_data or {}).get("strength_level") or "")
     _yuan = (step2_data or {}).get("yuan_shen") or {}
     _yuan_pos = _yuan.get("positions") or []
     _yuan_moving = any(isinstance(p, dict) and p.get("is_moving") for p in _yuan_pos)
+    # 静卦判定：六爻全静时，原神不动是天然状态, 不应扣"失位"
+    # 用 step1 返回的 moving_lines 列表判定是否为静卦
+    _static_moving_lines = (step1_data or {}).get("moving_lines") or []
+    _is_static_hexagram = (not _static_moving_lines) or len(_static_moving_lines) == 0
     if _lv_ug in ("旺", "极旺") and ug_cat and ug_cat != "世爻":
         _skip_yuanshen = (
             "冲中逢合" in _sp_pat_txt
             or any(k in _q_l for k in ("失", "找回", "失物"))
             or "世持财" in _sp_pat_txt
         )
-        if ((not _yuan_pos) or (not _yuan_moving)) and not _skip_yuanshen:
+        # 静卦(_is_static_hexagram=True)下，只要原神出现在卦中(position有值), 不算"失位";
+        # 仅当原神完全不在卦中 (not _yuan_pos) 时, 才扣-1.0
+        # 动卦下原神位置存在但未发动时, 仍扣-1.0
+        _yuan_missing = (not _yuan_pos) or (not _is_static_hexagram and not _yuan_moving)
+        if _yuan_missing and not _skip_yuanshen:
             classical_adj -= 1.0
             classical_notes.append("【原神失位】用神虽旺而原神不动/缺位，旺极无源，-1.0")
 
@@ -546,14 +554,17 @@ def step5_synthesize(r: dict) -> dict:
 
     # ---------- 5.5i: 三刑+六合吉凶相战覆写 ----------
     # 当2+成刑/催刑 present 且 六合卦时，吉凶相战 — verdict 上限不超过平凶
+    # 注意：小畜同时入 六合表 与 六冲表 → hex_adjustment 被六冲-0.5 抵消为 0,
+    # 若仅以 hex_adjustment > 0 判定, 小畜三刑会漏覆写。故以「入六合表」为准。
     xing_he_conflict_override = False
     tp_data_for_conflict = safe_get(step3_data, "three_punishments_raw", default=None)
     if tp_data_for_conflict is None:
         _adv_for_xh = r.get("advanced_analysis", {})
         if isinstance(_adv_for_xh, dict):
             tp_data_for_conflict = _adv_for_xh.get("three_punishments", {})
+    _is_liuhe_hexagram = (hex_name in HEXAGRAM_LIUHE)
     if (isinstance(tp_data_for_conflict, dict) and tp_data_for_conflict.get("has_punishment")
-            and hex_adjustment > 0):
+            and _is_liuhe_hexagram):
         _tp_complete_cnt = sum(
             1 for _p in tp_data_for_conflict.get("punishments", [])
             if isinstance(_p, dict) and _p.get("completeness") in ("完整", "成刑", "催刑")
@@ -623,9 +634,14 @@ def step5_synthesize(r: dict) -> dict:
             verdict_desc = "原神不济、变动不利，纵用神有些微气亦难持久"
             _fired = True
     # 三刑+六合吉凶相战覆写：2+成刑/催刑 + 六合卦 → 上限不超过平凶
+    # 偏向中带凶：六合主合而三刑主损，合中带损，吉凶相战，凶多吉少。
+    # 依古籍合中带损之旨，伏下仍有六合之余气，故 score 保底在 0.5 (偏向下界)。
     if xing_he_conflict_override and verdict in ("吉", "大吉", "平吉"):
         verdict = "平凶"
         verdict_desc = "三刑齐全逢六合，吉凶相战，凶多吉少"
+        if final_score < 0.5:
+            final_score = 0.5
+            final_score = round(final_score, 2)
         _fired = True
     _verdict_locked = _fired
 
