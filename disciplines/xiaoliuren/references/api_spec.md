@@ -76,3 +76,38 @@ python scripts/render.py [analyze.json] [-o report.md]
 - 运行器：`scripts/case_runner.py`，输出 `{"cases": [...], "errors": [...]}` 契约
 - 评分器：`scripts/evaluate.py`（复用 `yishu_core.eval`），维度：落宫30/吉凶方向30/事类诀句20/应期主数20
 - 质量门：`tools/check.py`（金标准指纹 + 冒烟 + tune/holdout 分别出分带 n）
+
+## 六、MCP JSON-RPC 方法（`scripts/mcp_server.py`）
+
+四段脚本经共享路由 `tools/mcp_router.py` 以 **JSON-RPC 2.0 over stdio** 暴露；
+薄入口 `scripts/mcp_server.py` 锁定本学科，不另写推演。也可用
+`python tools/mcp_router.py --discipline xiaoliuren` 或 `--all`（四科同进程）。
+
+**传输**：每行一个 JSON 请求，每行一个 JSON 响应；`"id"` 缺省/为 null 视为通知、无响应。
+
+| 方法 | 参数（params） | 返回 |
+|---|---|---|
+| `xiaoliuren.chart` | 与 chart 段 `chart(params)` 同构的 dict | chart JSON |
+| `xiaoliuren.analyze` | 起盘参数 dict，或 `{"chart": <chart JSON>}` | analyze JSON |
+| `xiaoliuren.narrate` | 同 analyze | `{text, conclusion?, chart_summary?, question?}`，`text` 为唯一交付正文 |
+| `xiaoliuren.render` | 同 analyze；可选 `format`: `"md"`\|`"html"`（默认 md） | `{content, format}` |
+| `xiaoliuren.list_methods` / `list_methods` | — | `{methods: {名: 说明}}` |
+
+**format**：本 render 段仅出 Markdown；`format=html` 返回 JSON-RPC error `-32602`。
+
+**错误码**：`-32700` 解析 / `-32600` 非法请求 / `-32601` 方法不存在 / `-32602` 参数错误 / `-32603` 内部错误。
+
+```bash
+python scripts/mcp_server.py --help
+python scripts/mcp_server.py --list-methods
+python scripts/mcp_server.py --test-narrate          # 冒烟：演示盘 narrate
+python scripts/mcp_server.py                        # stdio 服务
+```
+
+JSON-RPC 示例：
+
+```json
+{"jsonrpc":"2.0","id":1,"method":"xiaoliuren.narrate","params":{"way":"month_day_hour","month":8,"day":15,"hour_ordinal":9,"question":"测有人否"}}
+{"jsonrpc":"2.0","id":2,"method":"xiaoliuren.render","params":{"way":"month_day_hour","month":8,"day":15,"hour_ordinal":9,"question":"测有人否","format":"md"}}
+{"jsonrpc":"2.0","id":3,"method":"list_methods","params":{}}
+```

@@ -6,8 +6,13 @@
 由当事人结合具体事物权衡——engine 不越权改判。
 """
 from __future__ import annotations
+import json
+from pathlib import Path as _P
 
 _CN = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"]
+
+
+_NP = json.loads((_P(__file__).resolve().parents[1] / 'data' / 'verdicts.json').read_text(encoding='utf-8')).get('narrate_phrases', {})
 
 
 def _direction_label(direction: str) -> str:
@@ -36,7 +41,7 @@ def narrate(a: dict) -> str:
 
     lines = [f"# 小六壬·{_topic_cn(topic)}占（{name}）", ""]
 
-    opening = con.get("说明") or "事在两可之间"
+    opening = con.get("说明") or _NP["open_ping"]
     if q:
         lines.append(f"你问「{q}」。先说结论：**{opening}**，"
                      f"整体是「{_direction_label(con.get('方向'))}」。")
@@ -57,7 +62,7 @@ def narrate(a: dict) -> str:
     lines.append("")
 
     # 事类断语
-    lines += ["## 二、就你问的这件事", ""]
+    lines += [_NP["section_title"], ""]
     line = tv.get("诀句") or ""
     if line:
         lines.append(f"落在{name}，断事之语是：**「{line}」**。")

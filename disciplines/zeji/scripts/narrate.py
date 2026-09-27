@@ -4,10 +4,15 @@
 只装配 analyze 输出的因子宜忌与综合裁决，不自行推断新结论（CONTRACT §一）。
 """
 from __future__ import annotations
+import json
+from pathlib import Path as _P
+
+
+_NP = json.loads((_P(__file__).resolve().parents[1] / 'data' / 'verdicts.json').read_text(encoding='utf-8')).get('narrate_phrases', {})
 
 
 def _direction_label(direction: str) -> str:
-    return {"吉": "吉（可用）", "平": "平（可用但有保留）", "凶": "凶（结构上偏不利）"}.get(direction, direction)
+    return {"吉": "吉（可用）", "平": _NP["label_ping"], "凶": _NP["label_xiong"]}.get(direction, direction)
 
 
 def narrate(a: dict) -> str:
@@ -50,11 +55,11 @@ def narrate(a: dict) -> str:
     yi = a.get("yi") or []
     ji = a.get("ji") or []
     if yi:
-        lines.append("此日于此事的有利信号：" + "；".join("· " + y for y in yi) + "。")
+        lines.append(_NP["yi_lead"] + "；".join("· " + y for y in yi) + "。")
     if ji:
-        lines.append("此日于此事的保留信号：" + "；".join("· " + j for j in ji) + "。")
+        lines.append(_NP["ji_lead"] + "；".join("· " + j for j in ji) + "。")
     if not yi and not ji:
-        lines.append("此日于此事的建除/黄黑道均无明显宜忌，以星宿吉凶与通盘论。")
+        lines.append(_NP["neutral_lead"])
     lines.append("")
 
     # 口径收尾

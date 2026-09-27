@@ -149,7 +149,7 @@
     "taboo_bound": "{pos}{rel}被合住——'贪合忘克'，一时顾不上来捣乱",
     "taboo_block": "{pos}{rel}有动，此为阻力之源，要留意有人或有事来添堵",
     "foe": "{pos}{rel}（原神所忌）亦动——须防'仇神动则助纣为虐'",
-    "other": "{pos}{rel or '他爻'}亦有变化",
+    "other": "{pos}{rel}亦有变化",
     "bits_empty": "卦中有动，变化落在细节上，主线仍看用神",
     "tail_pos": "动爻对用神形成有力生扶，事有助力——'动化回头生者，如潮之有源'，这是实实在在的加码。",
     "tail_neg": "动爻来克用神或化退，有负面拖累——'刑冲克害，秋霜杀草'，事情会被这处动变扯住。",
@@ -170,5 +170,33 @@
     "other_pattern": "此卦另有格局：{pat}。",
     "other_pattern_desc": "此卦另有格局：{pat}。{desc}",
     "void_but_rooted": "用神虽落空亡，却得日月生扶，空而有根——事情不是没有，而是还欠一个「落实」的时机。"
+  },
+  "advice_soft": {
+    "push": "方向可以推进，但别贪。",
+    "hold": "风头不利，暂把现有局面稳住更划算。",
+    "wait": "事在两可之间，谁先动谁定局。",
+    "weak_but_pattern": "用神虽弱，却得格局生扶——",
+    "weak_and_bad": "用神弱叠不利——",
+    "weak_and_bad_tail": "之险，此时当守不宜攻。",
+    "chong_then_he": "冲中逢合，先难后成——过前面那关才谈得到后面的合。",
+    "internal_block": "——阻力从内在格局生，稳住节奏便是破法。"
+  },
+  "narrate_shell": {
+    "title": "六爻纳甲解读（narrate 段）",
+    "disclaimer": "这份解读按六爻纳甲的规则推出来，讲的是方向与节奏，不是注定会怎样的预言。凶象只用「偏向／有…信号／结构上」讲，不用「注定／一定」。看病、打官司、做重大决定，仍以专业意见为准。",
+    "quote_lead": "古人类似情境也说过：",
+    "thinking_missing": "thinking_chain 缺失，不应在交付路径外就地重建——铁律一（AGENTS.md §一）要求机械运算统一由主线引擎完成。"
+  },
+  "engine_format_labels": {
+    "use_god_caiyun": "财运类：取妻财爻为用神",
+    "use_god_career": "事业类：取官鬼爻为用神",
+    "use_god_love": "感情类：男测取妻财爻，女测取官鬼爻为用神",
+    "use_god_exam": "学业类：取父母爻为用神",
+    "use_god_lawsuit": "诉讼类：取官鬼爻为用神",
+    "use_god_home": "家宅类：取父母爻（建筑）+ 相应爻位看风水",
+    "use_god_default": "通用：以世爻为主，兼看卦象整体生克",
+    "title": "六爻纳甲排盘结果",
+    "yao_table": "排盘详表（从上爻到下爻）：",
+    "classical": "经典断法分析："
   }
 }

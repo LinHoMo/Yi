@@ -90,3 +90,38 @@
 | `scripts/evaluate.py` | 对齐分（复用 `yishu_core.eval`，权重：关系 30/方向 30/生体 15/克体 15/数应 10） |
 | `tools/golden.py` | chart+analyze 逐字段指纹（基线 `data/golden/digest.json`） |
 | `tools/check.py` | 质量门：版本/指纹/冒烟/对齐分（只准前进不准后退） |
+
+## 六、MCP JSON-RPC 方法（`scripts/mcp_server.py`）
+
+四段脚本经共享路由 `tools/mcp_router.py` 以 **JSON-RPC 2.0 over stdio** 暴露；
+薄入口 `scripts/mcp_server.py` 锁定本学科，不另写推演。也可用
+`python tools/mcp_router.py --discipline meihua` 或 `--all`（四科同进程）。
+
+**传输**：每行一个 JSON 请求，每行一个 JSON 响应；`"id"` 缺省/为 null 视为通知、无响应。
+
+| 方法 | 参数（params） | 返回 |
+|---|---|---|
+| `meihua.chart` | 与 chart 段 `chart(params)` 同构的 dict | chart JSON |
+| `meihua.analyze` | 起盘参数 dict，或 `{"chart": <chart JSON>}` | analyze JSON |
+| `meihua.narrate` | 同 analyze | `{text, conclusion?, chart_summary?, question?}`，`text` 为唯一交付正文 |
+| `meihua.render` | 同 analyze；可选 `format`: `"md"`\|`"html"`（默认 md） | `{content, format}` |
+| `meihua.list_methods` / `list_methods` | — | `{methods: {名: 说明}}` |
+
+**format**：本 render 段仅出 Markdown；`format=html` 返回 JSON-RPC error `-32602`。
+
+**错误码**：`-32700` 解析 / `-32600` 非法请求 / `-32601` 方法不存在 / `-32602` 参数错误 / `-32603` 内部错误。
+
+```bash
+python scripts/mcp_server.py --help
+python scripts/mcp_server.py --list-methods
+python scripts/mcp_server.py --test-narrate          # 冒烟：演示盘 narrate
+python scripts/mcp_server.py                        # stdio 服务
+```
+
+JSON-RPC 示例：
+
+```json
+{"jsonrpc":"2.0","id":1,"method":"meihua.narrate","params":{"way":"numbers","year_num":5,"month":12,"day":17,"hour_num":9,"question":"测花"}}
+{"jsonrpc":"2.0","id":2,"method":"meihua.render","params":{"way":"numbers","year_num":5,"month":12,"day":17,"hour_num":9,"question":"测花","format":"md"}}
+{"jsonrpc":"2.0","id":3,"method":"list_methods","params":{}}
+```

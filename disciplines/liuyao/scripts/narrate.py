@@ -20,9 +20,10 @@
 正文每个象数判断都出自 analyze 输出，不新增结论。
 """
 from __future__ import annotations
+import json
+from pathlib import Path as _P
 
 import argparse
-import json
 import re
 import sys
 from pathlib import Path
@@ -32,11 +33,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 # format_reading_output 已弃用：正文主体改由 human_narrative.build_human_narrative 生成
 
 
-_BOUNDARY_TEXT = (
-    "这份解读按六爻纳甲的规则推出来，讲的是方向与节奏，"
-    "不是注定会怎样的预言。凶象只用「偏向／有…信号／结构上」讲，"
-    "不用「注定／一定」。看病、打官司、做重大决定，仍以专业意见为准。"
-)
+_SHELL = json.loads((_P(__file__).resolve().parents[1] / 'data' / 'narrative_templates.json').read_text(encoding='utf-8')).get('narrate_shell', {})
+_BOUNDARY_TEXT = _SHELL.get("disclaimer") or ""
+
+
 
 
 def _filter_metric_exposure(text: str) -> str:
