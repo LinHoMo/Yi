@@ -23,3 +23,10 @@ package-dir = { "" = "core" }
 
 [tool.setuptools.packages.find]
 where = ["core"]
+
+# 测试：切到 importlib 导入模式，避免仓库内同名脚本（disciplines/*/scripts/smoke_test.py、
+# 多个同名的 evaluate.py）在 prepend 模式下互相遮蔽/撞车；testpaths 只收真正的测试套件，
+# 不碰被各学科 check.py 以子进程按路径调用的 smoke_test.py。
+[tool.pytest.ini_options]
+addopts = "--import-mode=importlib"
+testpaths = ["tests"]
