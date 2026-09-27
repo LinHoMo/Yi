@@ -122,6 +122,9 @@ python tools/refactor_guard.py --compare guard/base.json  # 改后
 
 ## 四、还欠什么（按优先序）
 
+> 债务的**速查登记 + 提交锚点 + 阻塞说明**见 `docs/TECH-DEBT.md`（单一登记入口）。
+> 本节约为叙述版，用于讲清来龙去脉；两处互相指针，**不互为副本**——改一处记得同步另一处。
+
 1. **wikisource 应期泛化** top-1 ~20%（n=35）：等换书或真实反馈 n≥30；**禁止考卷调参**。
    - 《卜筮正宗》卷次未数字化（原文存 `data/sources/`）；《火珠林》3 例未过卦变/时刻门（`huozhulin_candidates.json`）。
 2. **择吉通书真黑箱** ⌛ 已随择吉科 2026-09 归档至 `archive/zeji/`；如重启再做（不优先）。

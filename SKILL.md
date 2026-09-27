@@ -196,6 +196,8 @@ powershell -File tools/install.ps1 -Check -Demo   # 环境安装 + 质量门 + �
 | `docs/YI-PLAN.md` | 总规划：定位、架构、里程碑 M0–M5、验收标准 |
 | `docs/CONTRACT.md` | 新学科接入契约：四段管线、内核提供什么、口径与流派显式化 |
 | `docs/CHANGELOG.md` | 仓库级变更日志（跨科/内核/口径）；学科内细节见各科 CHANGELOG |
+| `docs/HANDOFF.md` | 交接叙述版：哪些可信、怎么跑、还欠什么（来龙去脉） |
+| `docs/TECH-DEBT.md` | 技术债务单一登记入口：已清偿/待清偿 + 提交锚点 + 阻塞说明 + 防新债纪律（速查用） |
 | `disciplines/README.md` | 学科状态表：谁已实现、谁建设中、谁不做 |
 | `disciplines/liuyao/SKILL.md` | 六爻执行规程（收集信息/起卦/解读/自检/箴言） |
 | `archive/meihua/SKILL.md` | 梅花执行规程（已归档，2026-09 范围收缩） |

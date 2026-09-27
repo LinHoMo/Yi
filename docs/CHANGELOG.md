@@ -140,6 +140,26 @@
   - AST 解析 + import 检查（含 synthesis 全模块）确认无残留归档科引用。
 - 分数口径未变；**非预测率**。三科古籍案例对齐分随归档移出当前评测范围，不计入。
 
+### 2026-09-27aa deep-optimize：历史债务文档化 + 治理扫描（死脚本 / 冗余 skills）
+
+- **新增 `docs/TECH-DEBT.md`**（技术债务单一登记入口）：已清偿（含提交锚点）+ 待清偿
+  （分「阻塞于外部数据」/「有意保持」两类，每条写清阻塞原因）+ 防新债纪律八条 + 本轮扫描结论。
+  定位为**速查索引**，细节仍以 `docs/HANDOFF.md` §四（叙述版）与 `docs/CHANGELOG.md` 为准——
+  两处互为指针、不互为副本（避免出现第二份真相各自漂移）。
+- **补记遗漏**：root `docs/HANDOFF.md` 此前未进 `SKILL.md` §七 文档地图，已一并补上
+  `docs/HANDOFF.md` 与 `docs/TECH-DEBT.md` 两行。
+- **治理扫描（如实登记，不美化）**：
+  - 死脚本：tracked 层**已干净**——`tools/scratch/` 全程 gitignore（仅 demo 产物 + 2 个一次性
+    snapshot 辅助，不入 git），无遗留 `split_*.py`，`liuyao/scripts/` 各模块均被导入或具 CLI，
+    **未发现孤儿模块** → 无需动作（强行删反而引入回归风险）。
+  - 冗余 skills：活跃 `SKILL.md` 三份职责分明（根路由 205 / `liuyao` 419 / `ming` 25 行，
+    路由器 vs 各科实现指南，**非冗余**）；`.workbuddy/skills/` 无项目级技能、用户级无 yi 相关冗余
+    → **不强行合并**（无安全合并点，拆合只会破坏现有装配、制造新债）。
+- 原则入文件：宁可登记「扫描后确认无需动作」，也不为交付感去动 codebase 制造新风险；
+  「待清偿」每条必须写清阻塞原因——写不出阻塞原因的债务通常说明它其实已经能解决，或根本不该叫债务。
+- 纯文档改动，不触碰代码/引擎/验收件；质量门复核：`tools/check.py` 全过、`pytest tests -q` **76 passed**、
+  六爻金标准 288 例指纹 `5c6e77ee253b0ddd` 一致。分数口径未变；**非预测率**。
+
 ### 2026-09-26t internal-depth-pack：断语收尾/拆巨石/pytest/MCP四科/应期分列/命科交互
 
 - **断语**：meihua/xiaoliuren/zeji narrate 短语与口径句入各自 `verdicts.json`；六爻 `advice_soft`/`narrate_shell`/`engine_format_labels` 入 `narrative_templates.json`。修复模板 `rel or '他爻'` 误写成 format 表达式导致 HO011/HO012 报错。
