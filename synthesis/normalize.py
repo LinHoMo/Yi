@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from yishu_core.eval import verdict_direction
 
-DISCIPLINES = ("liuyao", "meihua", "xiaoliuren", "zeji", "ming")
+DISCIPLINES = ("liuyao", "ming")
 
 
 def _direction_label(text) -> str:
@@ -45,55 +45,6 @@ def _at_of(a: dict, fallback: str | None) -> str | None:
         if v:
             return str(v)
     return fallback
-
-
-def normalize_xiaoliuren(a: dict, *, at: str | None = None) -> dict:
-    con = _conclusion(a)
-    palace = a.get("palace") or {}
-    timing = (a.get("timing") or {}).get("主数") or []
-    return {
-        "discipline": "xiaoliuren",
-        "asked": (a.get("question") or "").strip(),
-        "at": _at_of(a, at) or "",
-        "verdict": f"{palace.get('宫名') or '?'}·{con.get('说明') or ''}",
-        "direction": _direction_label(con.get("方向")),
-        "timing": [f"主数 {n}" for n in timing],
-        "based_on": _based_on(a),
-        "chart_summary": a.get("chart_summary"),
-    }
-
-
-def normalize_meihua(a: dict, *, at: str | None = None) -> dict:
-    con = _conclusion(a)
-    timing = (a.get("timing") or {}).get("卦气应期") or []
-    return {
-        "discipline": "meihua",
-        "asked": (a.get("question") or "").strip(),
-        "at": _at_of(a, at) or "",
-        "verdict": f"{con.get('说明') or ''}",
-        "direction": _direction_label(con.get("方向")),
-        "timing": [f"卦气应期 {t}" for t in timing],
-        "based_on": _based_on(a),
-        "chart_summary": a.get("chart_summary"),
-    }
-
-
-def normalize_zeji(a: dict, *, at: str | None = None) -> dict:
-    con = _conclusion(a)
-    cs = a.get("chart_summary") or {}
-    score = con.get("得分")
-    return {
-        "discipline": "zeji",
-        "asked": (a.get("question") or "").strip(),
-        "at": _at_of(a, at) or "",
-        "verdict": (f"{cs.get('日期') or '?'} {cs.get('建除') or '?'}日"
-                    f"{cs.get('日值神') or '?'}·{con.get('说明') or ''}"
-                    + (f"（得分 {score}）" if score is not None else "")),
-        "direction": _direction_label(con.get("方向")),
-        "timing": [],
-        "based_on": _based_on(a),
-        "chart_summary": cs,
-    }
 
 
 def normalize_liuyao(a: dict, *, at: str | None = None) -> dict:
@@ -155,9 +106,6 @@ def normalize_ming(a: dict, *, at: str | None = None) -> dict:
 
 
 _NORMALIZERS = {
-    "xiaoliuren": normalize_xiaoliuren,
-    "meihua": normalize_meihua,
-    "zeji": normalize_zeji,
     "liuyao": normalize_liuyao,
     "ming": normalize_ming,
 }

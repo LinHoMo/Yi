@@ -111,6 +111,35 @@
   `test_yingqi_windows.py` 现正确解析到 liuyao 的 `evaluate.py` / `yingqi_windows.py`。
 - 不改动任何测试文件或脚本；各学科 `check.py` 子进程调用 smoke_test.py 的路径不变。
 
+### 2026-09-27z 范围收缩：仅保留 ming（四柱）+ liuyao（六爻），归档 meihua/xiaoliuren/zeji
+
+- **范围收缩**（用户决策）：命科只做 `ming`（四柱八字），卜科只做 `liuyao`（六爻纳甲）；
+  梅花易数 / 小六壬 / 择吉三科本体、测试、专属数据全部 `git mv` 归档至 `archive/`，保留 git 历史、可随时还原。
+- **归档动作**（`git mv`，保留历史）：
+  - `disciplines/meihua` / `disciplines/xiaoliuren` / `disciplines/zeji` → `archive/`
+  - `core/yishu_core/zeji_tables.py` → `archive/yishu_core_zeji_tables.py`（zeji 专属，随科归档）
+  - `data/sources/meihua_*` 古籍原文 → `archive/sources/`
+- **代码引用清理**（死代码删除，非功能改动）：
+  - `core/yishu_core/__init__.py`：移除 `zeji_tables` 导入与 `__all__` 项。
+  - `tools/check.py`：注册学科 `("ming",)`；跨科 import 正则收窄为 `liuyao|ming`；结构检查循环、`--only` choices、docstring 同步。
+  - `tools/eval.py`：学科元组改为 `("liuyao","ming")`。
+  - `tools/demo.py`：演示只剩 `liuyao`/`ming` 两科；合参演示改用两科 analyze。
+  - `tools/mcp_router.py`：仅注册 `ming`（六爻走专属 `mcp_server.py`，原设计未挂 router）。
+  - `synthesis/normalize.py`：删除 `normalize_xiaoliuren`/`normalize_meihua`/`normalize_zeji` 死代码；`_NORMALIZERS` 仅留两科。
+  - `synthesis/{cli,cross_rules,guidance,person}.py`：学科元组/过滤/正则同步收窄到 `("liuyao","ming")`。
+- **绑定范围文档同步**：`AGENTS.md` 范围条款、`disciplines/README.md` 状态表、`docs/CONTRACT.md`、
+  `docs/YI-PLAN.md`、`README.md`、`SKILL.md`、`docs/HANDOFF.md` 均改写——三科标「已归档 → archive/」，
+  实现范围仅 `ming`+`liuyao`。
+- **冲突 spec 失效说明**：`docs/compose/spec/repo-tidy-and-classical-texts.md` 第 42 行「**禁止删除** `zeji_tables`」
+  约束，因本次归档已随 zeji 科移出内核，本条相应失效（已在原行旁注明）。
+- **验收（质量门全绿）**：
+  - `tools/check.py`（快速门）全过——版本唯一真值 / 结构契约 / 内核自测 / 断语键 / ming 门 / 六爻冒烟 / 六爻四段端到端 / synthesis 自检。
+  - `pytest tests -q`：**76 passed**（importlib 模式，无跨科同名冲突）。
+  - 六爻金标准 `disciplines/liuyao/tools/golden.py verify`：288 例、指纹 `5c6e77ee253b0ddd`、与基线一致，零漂移。
+  - `tools/demo.py --list` 与 `--discipline ming`、`mcp_router.py --list-disciplines` 实测只剩两科/ming。
+  - AST 解析 + import 检查（含 synthesis 全模块）确认无残留归档科引用。
+- 分数口径未变；**非预测率**。三科古籍案例对齐分随归档移出当前评测范围，不计入。
+
 ### 2026-09-26t internal-depth-pack：断语收尾/拆巨石/pytest/MCP四科/应期分列/命科交互
 
 - **断语**：meihua/xiaoliuren/zeji narrate 短语与口径句入各自 `verdicts.json`；六爻 `advice_soft`/`narrate_shell`/`engine_format_labels` 入 `narrative_templates.json`。修复模板 `rel or '他爻'` 误写成 format 表达式导致 HO011/HO012 报错。

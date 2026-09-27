@@ -37,12 +37,10 @@
 
 对外引用：优先 holdout/wikisource，**必须带 n 与集合名**。
 
-### 梅花 / 小六壬 / 择吉 — 可用
+### 梅花 / 小六壬 / 择吉 — 已归档（2026-09 范围收缩）
 
-- 梅花 tune/holdout 100%（n=10/13）；**变卦克体 → 终局不言吉**
-- 小六壬 tune/holdout 100%（n=10/5）
-- 择吉 tune/holdout 100%（n=10/6）；**规则应用黑箱**（`validity_gap`：缺带应验通书日例）
-- 三科均有 **MCP**（chart/analyze/narrate/render/list_methods）
+- 三科曾完整实现（四段管线 + 案例评测 + 质量门），已于 2026-09 经 `git mv` 归档至 `archive/meihua/`、`archive/xiaoliuren/`、`archive/zeji/`，保留完整 git 历史、可随时还原。
+- 不在当前实现、测试、质量门与文档「可用」范围内；本节历史读数仅作留存。
 
 ### 命科 — 机械推演已立（非命运断言）
 
@@ -53,7 +51,7 @@
 
 ### 合参 / 工具
 
-- `tools/check.py`（结构/内核自测/断语键一致/五科/六爻/合参/**pytest**）
+- `tools/check.py`（结构/内核自测/断语键一致/ming 质量门/六爻冒烟/合参/**pytest**）
 - `tools/eval.py`、`tools/demo.py`、`tools/mcp_router.py`、`tools/core_selftest.py`、`tools/text_keys_selftest.py`
 - person + outcome-eval
 
@@ -65,7 +63,7 @@
 python tools/check.py              # 快速门
 python tools/check.py --full       # + 案例评测 + 黑箱回归 + pytest tests
 python -m pytest tests -q          # 76 项单测
-python tools/eval.py               # 四科对齐分一览
+python tools/eval.py               # 两科对齐分一览
 
 # 六爻
 cd disciplines/liuyao
@@ -79,12 +77,12 @@ cd disciplines/ming
 python scripts/chart.py --datetime "1990-05-20 10:30" --gender 男
 python tools/check.py                # 含机械回归
 
-# MCP 四科（六爻独立）
+# MCP（当前仅命 ming 注册；六爻走专用 mcp_server.py）
 python tools/mcp_router.py --help
-python tools/mcp_router.py --discipline meihua --test-narrate
+python tools/mcp_router.py --discipline ming --test-narrate
 
-# 其余
-cd disciplines/{meihua,xiaoliuren,zeji} && python tools/check.py
+# 其余（meihua/xiaoliuren/zeji 已归档至 archive/，不再维护）
+# cd archive/meihua && python tools/check.py
 ```
 
 流派开关（改了分数不可比）：`YI_GANZHI_BOUNDARY=day|instant`、`--zi-hour-type late`。
@@ -126,8 +124,8 @@ python tools/refactor_guard.py --compare guard/base.json  # 改后
 
 1. **wikisource 应期泛化** top-1 ~20%（n=35）：等换书或真实反馈 n≥30；**禁止考卷调参**。
    - 《卜筮正宗》卷次未数字化（原文存 `data/sources/`）；《火珠林》3 例未过卦变/时刻门（`huozhulin_candidates.json`）。
-2. **择吉通书真黑箱**：需带应验古例日例（不伪造）；`validity_gap` 已写明。
-3. **小六壬**外部书源仍缺。
+2. **择吉通书真黑箱** ⌛ 已随择吉科 2026-09 归档至 `archive/zeji/`；如重启再做（不优先）。
+3. **小六壬**外部书源仍缺 ⌛ 已随小六壬科 2026-09 归档至 `archive/xiaoliuren/`；如重启再做（不优先）。
 4. **巨石残余**（已全部清，见 CHANGELOG）：
    `chain_step5` 991→351、`format_reading_output` 445→~30、`step3_analyze_strength` 509→322、
    `_predict_timing` 491→四职责模块 `chain_step5_yp_timing`（26v）、
@@ -182,7 +180,7 @@ tests/              pytest（relations/symbols/najia/yingqi/ming_dayun）
   格局引文（`_extract_pattern_tags`/`_select_relevant_quotes`/`_pattern_advice_hint`）/ 推因
   （`_build_explain_summary`），并再导出搬移名。`human_narrative_segments` 只 import 叶子模块
   （`chain_verdicts`/`chain_tables`），单向依赖、无循环。
-- **MCP**：六爻 7 方法；meihua/xiaoliuren/zeji/ming 各 chart/analyze/narrate/render/list_methods
+- **MCP**：六爻 7 方法（专用 `mcp_server.py`）；命 ming 经 `tools/mcp_router.py` 注册 chart/analyze/narrate/render/list_methods（meihua/xiaoliuren/zeji 已归档）
 
 ---
 

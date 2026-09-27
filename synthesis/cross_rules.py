@@ -15,7 +15,7 @@
 """
 from __future__ import annotations
 
-BU_DISCIPLINES = ("liuyao", "meihua", "xiaoliuren", "zeji")
+BU_DISCIPLINES = ("liuyao",)
 MING_DISCIPLINES = ("ming",)
 
 # 卜科问这些主题＝越位问命（《周易》语境下命理与占卜各守其位）
@@ -144,7 +144,7 @@ def json_dumps(obj) -> str:
 
 def selfcheck() -> None:
     """金标准自检：五条规则逐条构造最小用例。"""
-    def rec(direction, discipline="xiaoliuren", asked="讨债能成否"):
+    def rec(direction, discipline="liuyao", asked="讨债能成否"):
         return {"discipline": discipline, "asked": asked, "direction": direction}
 
     # 规则 1：越位

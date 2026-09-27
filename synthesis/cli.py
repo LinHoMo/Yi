@@ -3,7 +3,7 @@
 
   python cli.py init P001 --solar "1990-05-20 07:15" [--longitude 116.4]
   python cli.py validate P001
-  python cli.py add-divination P001 --discipline xiaoliuren --analyze-json <file> \
+  python cli.py add-divination P001 --discipline ming --analyze-json <file> \
       [--event-id EVT001] [--asked "…"] [--at "2026-09-23 10:30"] \
       [--policy "boundary=day,zi_hour=night_same_day"]
   python cli.py record-outcome P001 --event-id EVT001 --result "应验：…"
@@ -148,15 +148,16 @@ def cmd_selfcheck(args) -> int:
     assert not arch.validate(), arch.validate()
     arch.data["birth"].pop("calendar_policy", None)
     assert any("calendar_policy" in e for e in arch.validate())
-    # 归一化自检：小六壬 analyze 样例
+    # 归一化自检：命 analyze 样例
     sample = {
-        "schema": "xiaoliuren-analyze-v1",
-        "question": "明日讨债顺利否",
-        "conclusion": {"方向": "平", "说明": "留连事难成", "所本": "《贺氏六壬小手册》"},
-        "timing": {"主数": [2, 8, 10]},
+        "schema": "ming-analyze-v1",
+        "question": "命局排盘",
+        "chart_summary": {"四柱": {"year": "庚午", "month": "辛巳",
+                                  "day": "壬辰", "hour": "丙辰"}},
+        "conclusion": {"strength": "中和", "pattern": "正官格"},
     }
-    rec = normalize("xiaoliuren", sample, at="2026-09-23 10:30")
-    assert rec["direction"] == "平" and rec["timing"] == ["主数 2", "主数 8", "主数 10"]
+    rec = normalize("ming", sample, at="1990-05-20 07:15")
+    assert rec["discipline"] == "ming" and rec["direction"] == "平"
     # 六爻应期结构化候选 + 回填评分自检（B2 应期回收闭环）
     lya = {
         "schema": "liuyao-analyze-v1",
@@ -211,7 +212,7 @@ def main() -> int:
     p = sub.add_parser("add-divination", help="登记一次占问")
     p.add_argument("pid")
     p.add_argument("--discipline", required=True,
-                   choices=["liuyao", "meihua", "xiaoliuren", "zeji"])
+                   choices=["liuyao", "ming"])
     p.add_argument("--analyze-json", required=True, help="该科 analyze 输出 JSON")
     p.add_argument("--event-id")
     p.add_argument("--asked", help="问句（缺省取 analyze.question）")

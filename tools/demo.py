@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """易·交互演示：一条命令看各科在跑什么、合参怎么合。
 
-  python tools/demo.py                       # 全科演示（六爻/梅花/小六壬/择吉 + 合参），
+  python tools/demo.py                       # 全科演示（六爻/命 + 合参），
                                              #   汇总写到 tools/scratch/demo/（gitignored）
-  python tools/demo.py --discipline meihua --question "占今年财运如何"
+  python tools/demo.py --discipline ming --question "推算此命局强弱与格局"
                                              # 单科问答：chart→analyze→narrate 一条龙
   python tools/demo.py --list                # 列出可演示的学科
 
@@ -28,9 +28,7 @@ from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 
 DISCIPLINES = {
     "liuyao": "六爻纳甲",
-    "meihua": "梅花易数",
-    "xiaoliuren": "小六壬",
-    "zeji": "择吉",
+    "ming": "命（四柱）",
 }
 
 
@@ -79,10 +77,8 @@ def demo_liuyao(question: str) -> tuple[dict, str, str]:
 
 def demo_single(disc: str, question: str) -> tuple[dict, str, str]:
     chart_args = {
-        "meihua": ["--datetime", "2026-09-23 10:30", "--question", question],
-        "xiaoliuren": ["--way", "datetime", "--datetime", "2026-09-23 10:30",
-                       "--question", question],
-        "zeji": ["--date", "2026-09-29", "--question", question],
+        "ming": ["--datetime", "1990-05-20 10:30", "--gender", "男",
+                 "--question", question],
     }[disc]
     return _pipeline(disc, chart_args)
 
@@ -99,34 +95,31 @@ def demo_all() -> int:
     lines += ["## 一、六爻纳甲（liuyao）", "", f"**问**：{q1}", "", txt1,
               "", f"（报告：`{Path(src1).relative_to(ROOT)}`）", ""]
 
-    # 梅花 / 小六壬 / 择吉
+    # 命（四柱）
     cases = [
-        ("meihua", "占今年财运如何"),
-        ("xiaoliuren", "占今年财运如何"),
-        ("zeji", "今日签约收款吉利否"),
+        ("ming", "推算此命局强弱与格局"),
     ]
     for i, (disc, q) in enumerate(cases):
         _, text, src = demo_single(disc, q)
-        lines += [f"## {['二', '三', '四'][i]}、{DISCIPLINES[disc]}（{disc}）", "",
+        lines += [f"## {['二'][i]}、{DISCIPLINES[disc]}（{disc}）", "",
                   f"**问**：{q}", "", text, "",
                   f"（报告：`{Path(src).relative_to(ROOT)}`）", ""]
 
     # 合参演示
-    lines += ["## 五、合参演示（synthesis）", ""]
+    lines += ["## 三、合参演示（synthesis）", ""]
     lines += _demo_synthesis()
     summary = "\n".join(lines) + "\n"
     out = SCRATCH / "demo.md"
     out.write_text(summary, encoding="utf-8")
     print(f"全科演示完成 → {out}")
-    for src in (SCRATCH / "meihua_report.md", SCRATCH / "xiaoliuren_report.md",
-                SCRATCH / "zeji_report.md"):
+    for src in (SCRATCH / "ming_narrate.md",):
         if src.exists():
             src.unlink()
     return 0
 
 
 def _demo_synthesis() -> list[str]:
-    """用本轮演示的梅花/小六壬/择吉输出合参，出一份阶段性指导（写到 scratch）。"""
+    """用本轮演示的六爻/命输出合参，出一份阶段性指导（写到 scratch）。"""
     from person import PersonArchive
     from normalize import normalize
     from cross_rules import adjudicate
@@ -142,22 +135,21 @@ def _demo_synthesis() -> list[str]:
         "P001", "1990-05-20 07:15", longitude=116.4,
         ganzhi={"year": "庚午", "month": "辛巳", "day": "壬辰", "hour": "丙辰"},
         policy={"boundary": "day", "zi_hour": "night_same_day"})
-    for disc, fn in (("meihua", "meihua_analyze.json"),
-                     ("xiaoliuren", "xiaoliuren_analyze.json"),
-                     ("zeji", "zeji_analyze.json")):
+    for disc, fn in (("liuyao", "liuyao_analyze.json"),
+                     ("ming", "ming_analyze.json")):
         a = json.loads((SCRATCH / fn).read_text(encoding="utf-8"))
         rec = normalize(disc, a)
         arch.add_divination(rec)
     arch.add_divination({  # 越位样例：卜科问命域，应被裁决剔除
-        "discipline": "xiaoliuren", "asked": "我这一生的命运如何",
-        "direction": "吉", "at": "2026-09-23", "verdict": "大安·…",
+        "discipline": "liuyao", "asked": "我这一生的命运如何",
+        "direction": "吉", "at": "2026-09-23", "verdict": "…",
     })
     arch.save(person_dir)
     recs = arch.data["divinations"]
     adj = adjudicate(recs, policies=[r.get("calendar_policy") for r in recs])
     out = write_guidance(arch, adj, guidance_dir)
     text = out.read_text(encoding="utf-8")
-    return [f"档案 P001（1990-05-20 出生）+ 三次占问 + 一条越位样例，"
+    return [f"档案 P001（1990-05-20 出生）+ 两次占问 + 一条越位样例，"
             f"裁决：**{adj['pattern']} / {adj['trend']}**，"
             f"剔除越位 {len(adj['excluded'])} 条，未参评维度 {adj['missing'] or '无'}。", "",
             text, ""]

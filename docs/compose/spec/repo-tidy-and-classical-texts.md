@@ -41,6 +41,8 @@ commits: 0fb5590..dae6522
 
 **禁止删除**：`lunar.py`、`yishu_core/eval.py`、`calendar_check.py`、`ming_tables`/`zeji_tables`、四段契约脚本、质量门脚本。`visualization.generate_hexagram_diagram` 保留（render HTML 依赖）。
 
+> 失效注记：`zeji_tables` 已于 **2026-09-27z 范围收缩**随 zeji 科 `git mv` 归档至 `archive/yishu_core_zeji_tables.py`，本条「禁止删除 `zeji_tables`」相应失效（其余内核表仍受本条约束）。
+
 删除后 `liuyao_engine.py` 仅保留 `coin|time|number|manual` 四模式（与四段契约的起卦入口一致）。
 
 ### 2.2 文档收敛

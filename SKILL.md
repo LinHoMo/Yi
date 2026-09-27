@@ -1,6 +1,6 @@
 ---
 name: yi
-description: 易·统领 skill，中国传统术数的路由与口径统领。命（四柱八字：一生格局、趋势、宜何业、何时起伏）与卜（六爻/梅花易数/小六壬/择吉：具体一事的趋向与应期）的意图路由、选科、脚本调用监督与合参入口。当用户提到算命、占卜、算卦、测命、批命、起卦、排盘、断卦、八字、四柱、六爻、梅花易数、小六壬、择吉、合参，或问"某事成不成、什么时候成、我命如何"时，先用本 skill 路由，再进入对应学科的 SKILL.md。
+description: 易·统领 skill，中国传统术数的路由与口径统领。命（四柱八字：一生格局、趋势、宜何业、何时起伏）与卜（六爻：具体一事的趋向与应期）的意图路由、选科、脚本调用监督与合参入口。当用户提到算命、占卜、算卦、测命、批命、起卦、排盘、断卦、八字、四柱、六爻、合参，或问"某事成不成、什么时候成、我命如何"时，先用本 skill 路由，再进入对应学科的 SKILL.md。
 ---
 
 # 易 · 统领 Skill
@@ -11,7 +11,7 @@ description: 易·统领 skill，中国传统术数的路由与口径统领。�
 ## 〇、这一层管什么
 
 易不是工具合集，是统领层：**意图路由 → 选科 → 调脚本 → 翻译输出 →（若同一人多科）合参**。
-当前实现状态（2026-09-26 复核）：**卜科四科全部可用**（`disciplines/liuyao/` 六爻已接四段契约薄适配层；`meihua/`、`xiaoliuren/`、`zeji/` 为完整四段实现）；**命科机械推演已立**（强弱/格局/喜用/大运/流年对照，无命运断语）；合参层（`synthesis/`）已实现。
+当前实现状态（2026-09 范围收缩后）：**卜科仅六爻可用**（`disciplines/liuyao/` 六爻已接四段契约薄适配层）；`meihua/`/`xiaoliuren/`/`zeji/` 已于 2026-09 经范围收缩**归档**至 `archive/`，不在当前范围；**命科（`ming`）机械推演已立**（强弱/格局/喜用/大运/流年对照，无命运断语）；合参层（`synthesis/`）已实现。
 
 两条诚实原则：
 
@@ -26,9 +26,9 @@ description: 易·统领 skill，中国传统术数的路由与口径统领。�
 |---|---|---|---|
 | 一生的格局与趋势：宜何业、何时起伏、性情禀赋、大运流年 | 命 · 四柱八字 | `disciplines/ming/` | **已实现机械推演**（四柱/强弱/格局/喜用/大运/流年对照；无命运断语）。执行规程见 `disciplines/ming/SKILL.md` |
 | 具体一事的趋向与应期：成不成、吉不吉、何时应 | 卜 · 六爻纳甲 | `disciplines/liuyao/` | **已实现**（迁移前旧实现，已接四段契约薄适配层、可入合参层）。执行规程见其 `SKILL.md`，现状见其 `docs/HANDOFF.md` |
-| 同上，想以数字/时间快速起卦 | 卜 · 梅花易数 | `disciplines/meihua/` | **已实现**。四段管线 + 案例评测 + 质量门全通；与六爻同题互验入口见合参层（`synthesis/README.md`） |
-| 同上，临场速断 | 卜 · 小六壬 | `disciplines/xiaoliuren/` | **已实现**。四段管线 + 案例评测 + 质量门全通（《贺氏六壬小手册》口径） |
-| 择吉日：搬家/嫁娶/开业/动工选日子 | 卜 · 择吉 | `disciplines/zeji/` | **已实现**。四段管线 + 案例评测 + 质量门全通（《协纪辨方书》口径，建除十二神/黄黑道/二十八宿） |
+| 同上，想以数字/时间快速起卦 | 卜 · 梅花易数 | `archive/meihua/` | **已归档**（2026-09 范围收缩，不在当前范围） |
+| 同上，临场速断 | 卜 · 小六壬 | `archive/xiaoliuren/` | **已归档**（2026-09 范围收缩，不在当前范围） |
+| 择吉日：搬家/嫁娶/开业/动工选日子 | 卜 · 择吉 | `archive/zeji/` | **已归档**（2026-09 范围收缩，不在当前范围） |
 | 面相、手相、风水堪舆 | — | — | **不做**（`AGENTS.md` 范围条款：不实现、不预留目录）。明确婉拒并说明本仓库范围 |
 
 ### 1.2 命与卜怎么判别
@@ -51,9 +51,7 @@ description: 易·统领 skill，中国传统术数的路由与口径统领。�
 ### 1.4 信息收集（收齐了才算路由完成）
 
 - **卜 · 六爻**：所问何事、求测者性别与身份（影响用神选取，如女家占婚取官鬼）、起卦方式与时间（默认铜钱法、当前系统时间）。
-- **卜 · 梅花易数**：所问何事、起卦方式（默认当前时刻，亦可报数/两数）、求测者性别（体用主从参考）。命令见 §5.2。
-- **卜 · 小六壬**：所问何事、起课时间（默认当前时刻，亦可报数取时）。
-- **卜 · 择吉**：所问何事（活动类型：搬家/嫁娶/开业/动工…）、拟选日期范围。
+- **卜 · 梅花易数 / 小六壬 / 择吉**（2026-09 已归档至 `archive/`，不再维护）：以下说明仅保留作历史参考——梅花所问何事、起卦方式（默认当前时刻，亦可报数/两数）、求测者性别（体用主从参考）；小六壬所问何事、起课时间（默认当前时刻，亦可报数取时）；择吉所问何事（活动类型：搬家/嫁娶/开业/动工…）、拟选日期范围。
 - **命（科建成后）**：出生公历年月日时、出生地（真太阳时校正）。输入格式以 `synthesis/README.md` 人的档案 `birth` 字段（含 `calendar_policy` 历法口径）为约定。
 - 缺信息影响起局时（如占婚缺性别），照六爻 `SKILL.md` 的做法：**补进 input 重跑脚本**，让引擎自己换到正确法则上，不由 LLM 另判。
 
@@ -67,7 +65,7 @@ description: 易·统领 skill，中国传统术数的路由与口径统领。�
 
 **严禁心算或"推算"**：起局、排盘、装卦、定宫、纳甲、安世应、推六亲、配六神、查旬空、判旺衰、算应期、识别格局、定建除黄黑道二十八宿——以上全部只能由 Python 完成。
 
-断卦的执行细节（叙事要素、主/次应期、质量自检、措辞箴言）跟随各科 SKILL.md：六爻见 `disciplines/liuyao/SKILL.md`，梅花见 `disciplines/meihua/SKILL.md`，小六壬见 `disciplines/xiaoliuren/SKILL.md`，择吉见 `disciplines/zeji/SKILL.md`。
+断卦的执行细节（叙事要素、主/次应期、质量自检、措辞箴言）跟随各科 SKILL.md：六爻见 `disciplines/liuyao/SKILL.md`（梅花/小六壬/择吉 已归档，见 `archive/` 对应目录）。
 
 ## 三、一卦一事（`AGENTS.md` §五）
 
@@ -85,9 +83,7 @@ description: 易·统领 skill，中国传统术数的路由与口径统领。�
 | 六爻 | holdout | **87.5%** | 12 | 未参与调参 |
 | 六爻 | wikisource_holdout | 57.3% | 35 | 维基文库《增刪卜易》原本，从未参与任何调参 |
 | 六爻 | wikisource_direction | 72.2% | 36 | 有吉凶无验期；应期 N/A |
-| 梅花 | tune / holdout | 100% | 10 / 13 | 同源构造例居多 |
-| 小六壬 | tune / holdout | 100% | 10 / 5 | — |
-| 择吉 | tune / holdout | 100% | 10 / 6 | 规则应用黑箱，非通书应验 |
+| 梅花 / 小六壬 / 择吉 | — | 已归档（2026-09 范围收缩） | — | 历史读数见 git 历史 |
 
   **六爻应期**：tune top-1 58.8%、holdout top-1 50.0%（strict；随机约 36–38%）；
   wikisource_holdout top-1 20.0%（n=35，泛化未证明）。详见 `docs/HANDOFF.md`。
@@ -113,7 +109,7 @@ python scripts/liuyao_engine.py --mode coin --question "所占之事" \
        --format html --save-html outputs/report.html                              # 一条命令出单文件报告
 python scripts/evaluate.py --split holdout --save                                 # 古籍案例对齐评测
 
-# 四段契约入口（与三科同构，供合参层消费；薄适配既有引擎，不引入新断法）
+# 四段契约入口（与命科同构，供合参层消费；薄适配既有引擎，不引入新断法）
 python scripts/chart.py --mode time --datetime "2026-09-23 10:00" \
        --question "所占之事" -o scratch/chart.json            # 起卦 → 排盘 JSON
 python scripts/analyze.py scratch/chart.json -o scratch/analyze.json   # 推演 → conclusion + chart_summary
@@ -128,9 +124,9 @@ analyze 输出的 `conclusion`/`chart_summary` 可直接喂 `synthesis/cli.py ad
 `YI_GANZHI_BOUNDARY=day|instant`（交节"当日即换"还是"精确到时刻"）；
 `--distinguish-zi-hour --zi-hour-type late`（夜子时按换日派起盘，默认不作次日）。
 
-### 5.2 梅花 / 小六壬 / 择吉（已实现，四段管线）
+### 5.2 梅花 / 小六壬 / 择吉（已归档，2026-09 范围收缩）
 
-以下命令的工作目录都是**各科自己的目录**（`disciplines/meihua/` 等）。三科接口同构：
+以下三科已于 2026-09 经范围收缩**归档**至 `archive/meihua/`、`archive/xiaoliuren/`、`archive/zeji/`，命令仅作历史参考，不再维护：
 `chart`（起局）→ `analyze`（推演）→ `narrate`（正文）→ `render`（报告），
 各脚本均有 argparse CLI、`--help` 可看、`-o/--out` 写文件（缺省 stdout）。
 
@@ -160,8 +156,8 @@ python scripts/evaluate.py --split holdout                                    # 
 cd synthesis
 python cli.py init P001 --solar "1990-05-20 07:15"                      # 新建档案 → person/P001.json
 python cli.py validate P001                                             # 校验档案
-python cli.py add-divination P001 --discipline meihua \
-       --analyze-json <meihua/analyze.json> --at "2026-09-23 10:00"      # 登记占问（归一化，需该科 analyze 输出）
+python cli.py add-divination P001 --discipline ming \
+       --analyze-json <ming/analyze.json> --at "1990-05-20 07:15"      # 登记占问（归一化，需该科 analyze 输出）
 python cli.py record-outcome P001 --event-id EVT001 --result 应验         # 回填现实结果
 python cli.py guide P001                                                 # 生成阶段性指导 → guidance/P001.md
 python cli.py selfcheck                                                  # 合参层自检
@@ -174,13 +170,13 @@ chart→analyze 拿到），系统自动归一化为统一占问记录；不传 
 
 ```bash
 python tools/check.py            # 全仓库质量门（版本/结构/内核/三科/六爻冒烟/合参自检；--full 加案例评测与六爻回归）
-python tools/demo.py             # 全科演示（四科各一例 + 合参演示，走真实 CLI）→ tools/scratch/demo.md
+python tools/demo.py             # 全科演示（六爻 + 命 两科各一例 + 合参演示，走真实 CLI）→ tools/scratch/demo.md
 powershell -File tools/install.ps1 -Check -Demo   # 环境安装 + 质量门 + 演示
 ```
 
 ## 六、合参入口（`synthesis/`）
 
-合参层**已实现**（`synthesis/`：person / normalize / cross_rules / guidance / cli）。四科输出可归一化为统一占问记录（方向吉/平/凶、应期、判据所本），再按 `docs/YI-PLAN.md` §二与 `synthesis/README.md` §二的四条裁决规则合参：
+合参层**已实现**（`synthesis/`：person / normalize / cross_rules / guidance / cli）。两科（六爻/命）输出可归一化为统一占问记录（方向吉/平/凶、应期、判据所本），再按 `docs/YI-PLAN.md` §二与 `synthesis/README.md` §二的四条裁决规则合参：
 
 1. **各守其位**：命定趋势与节律，卜决具体一事之趋向与应期。任何一科越位（用六爻断人一生格局、用八字断某笔钱能否当日到账）→ 判为无效输入。
 2. **同向则确**：各科指向一致时可提升陈述强度（仍不用"注定"）。
@@ -202,8 +198,8 @@ powershell -File tools/install.ps1 -Check -Demo   # 环境安装 + 质量门 + �
 | `docs/CHANGELOG.md` | 仓库级变更日志（跨科/内核/口径）；学科内细节见各科 CHANGELOG |
 | `disciplines/README.md` | 学科状态表：谁已实现、谁建设中、谁不做 |
 | `disciplines/liuyao/SKILL.md` | 六爻执行规程（收集信息/起卦/解读/自检/箴言） |
-| `disciplines/meihua/SKILL.md` | 梅花执行规程（起卦方式/体用/应期/自检） |
-| `disciplines/xiaoliuren/SKILL.md` | 小六壬执行规程（起课/落宫/综合断） |
-| `disciplines/zeji/SKILL.md` | 择吉执行规程（因子/宜忌/口径） |
+| `archive/meihua/SKILL.md` | 梅花执行规程（已归档，2026-09 范围收缩） |
+| `archive/xiaoliuren/SKILL.md` | 小六壬执行规程（已归档） |
+| `archive/zeji/SKILL.md` | 择吉执行规程（已归档） |
 | `disciplines/liuyao/docs/HANDOFF.md` | 六爻交接：哪些可信、怎么跑、还欠什么 |
 | `synthesis/README.md` | 合参层契约与实现：人的档案 schema、裁决规则、指导输出格式 |

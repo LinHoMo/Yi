@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """根级质量门：一条命令跑完全仓库检查。
 
-  python tools/check.py          # 快速门（默认）：版本/结构契约/内核自检/三科快速门/六爻冒烟/合参自检
-  python tools/check.py --full   # 全量门：再加三科 tune/holdout 案例评测、六爻黑箱回归与 pytest tests（慢）
+  python tools/check.py          # 快速门（默认）：版本/结构契约/内核自检/ming 质量门/六爻冒烟/合参自检
+  python tools/check.py --full   # 全量门：再加 ming tune/holdout 案例评测、六爻黑箱回归与 pytest tests（慢）
   python tools/check.py --only version,structure,core   # 只跑指定检查项
 
 设计口径（与各科 tools/check.py 一致）：
@@ -25,11 +25,11 @@ sys.path.insert(0, str(CORE))
 from yishu_core import __version__  # noqa: E402
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 
-# 四段契约要求的文件（新三科严格核验；liuyao 为迁移前旧实现，另立检查项）
+# 四段契约要求的文件（新学科 ming 严格核验；liuyao 为迁移前旧实现，另立检查项）
 CONTRACT_FILES = ("SKILL.md", "scripts/chart.py", "scripts/analyze.py",
                   "scripts/narrate.py", "scripts/render.py",
                   "data/verdicts.json", "tools/check.py", "tools/golden.py")
-NEW_DISCIPLINES = ("meihua", "xiaoliuren", "zeji", "ming")
+NEW_DISCIPLINES = ("ming",)
 
 # 内核唯一真值表名：学科内出现同名赋值即视为复制（AGENTS.md 内核唯一真值源）
 # 含历史别名/拆分名（STEMS/NAYIN_TABLE/XUN_KONG/SAN_HE…），否则同义表仍会漏检。
@@ -45,7 +45,7 @@ CORE_TABLE_ASSIGN = re.compile(
 
 # 学科间 import（违反 disciplines 禁止互相 import 的契约）
 CROSS_DISC_IMPORT = re.compile(
-    r"^\s*(from|import)\s+(liuyao|meihua|xiaoliuren|zeji)\b", re.M)
+    r"^\s*(from|import)\s+(liuyao|ming)\b", re.M)
 
 
 def _run_py(cmd: list[str], *, label: str, cwd: Path = ROOT) -> tuple[int, str]:
@@ -85,7 +85,7 @@ def check_structure() -> list[str]:
         if not (d / "data" / "cases").is_dir():
             fails.append(f"{disc}/data/cases 目录缺失（案例分层）")
     # 学科互相 import
-    for disc in ("liuyao", "meihua", "xiaoliuren", "zeji"):
+    for disc in ("liuyao", "ming"):
         scripts = ROOT / "disciplines" / disc / "scripts"
         if not scripts.is_dir():
             continue
@@ -129,7 +129,7 @@ def main() -> int:
     force_utf8_stdio()
     ap = argparse.ArgumentParser(description="易·仓库级质量门")
     ap.add_argument("--only", nargs="*", help="限定检查项：version,structure,tables,core,"
-                                              "meihua,xiaoliuren,zeji,liuyao,synthesis,tests")
+                                              "ming,liuyao,synthesis,tests")
     ap.add_argument("--full", action="store_true",
                     help="全量：三科案例评测（tune/holdout）+ 六爻黑箱回归 + pytest tests（慢）")
     args = ap.parse_args()

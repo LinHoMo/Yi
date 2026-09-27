@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""四科共享 MCP JSON-RPC 路由器（meihua / xiaoliuren / zeji / ming）。
+"""MCP JSON-RPC 路由器（范围收缩后仅注册命 ming；六爻 liuyao 走专用 CLI/流水线）。
 
 薄层：只把各科已有四段脚本（chart → analyze → narrate → render）挂到
 JSON-RPC 2.0 over stdio，**不写任何新的推演/起课/断语逻辑**。
 
 传输协议：JSON-RPC 2.0 over stdio（每行一个请求，每行一个响应）。
 
-方法（每科一套，`<disc>` ∈ meihua | xiaoliuren | zeji | ming）：
+方法（每科一套，`<disc>` ∈ ming）：
   - `<disc>.chart`    params → chart JSON
   - `<disc>.analyze`  params → analyze JSON（params 可直接给 chart，或给起盘参数）
   - `<disc>.narrate`  params → {text, ...}（复用 narrate 段，不另写推演）
@@ -15,13 +15,13 @@ JSON-RPC 2.0 over stdio，**不写任何新的推演/起课/断语逻辑**。
   - `list_methods`    列出全部方法（另提供 `<disc>.list_methods`）
 
 入口：
-  python tools/mcp_router.py --discipline meihua            # 单科 stdio 服务
-  python tools/mcp_router.py --all                          # 四科同一进程
-  python tools/mcp_router.py --discipline meihua --list-methods
-  python tools/mcp_router.py --discipline meihua --test-narrate
+  python tools/mcp_router.py --discipline ming             # 单科 stdio 服务
+  python tools/mcp_router.py --all                          # 全部已注册学科同一进程
+  python tools/mcp_router.py --discipline ming --list-methods
+  python tools/mcp_router.py --discipline ming --test-narrate
 
 各科亦可经薄入口调用：
-  python disciplines/meihua/scripts/mcp_server.py --help
+  python disciplines/ming/scripts/mcp_server.py --help
 """
 from __future__ import annotations
 
@@ -56,39 +56,18 @@ except Exception:  # pragma: no cover - core 缺失时仍允许 --help
 
 
 # 各科四段模块的加载顺序（依赖靠前）。ming 额外有 pattern.py。
+# 范围收缩（2026-09）：仅保留命 ming 与六爻 liuyao；本路由器只挂 ming，
+# 六爻 liuyao 走专用 CLI/流水线（disciplines/liuyao），不在此注册。
 _STAGE_ORDER: dict[str, tuple[str, ...]] = {
-    "meihua": ("chart", "analyze", "narrate", "render"),
-    "xiaoliuren": ("chart", "analyze", "narrate", "render"),
-    "zeji": ("chart", "analyze", "narrate", "render"),
     "ming": ("chart", "pattern", "analyze", "narrate", "render"),
 }
 
 DISCIPLINES: dict[str, str] = {
-    "meihua": "梅花易数",
-    "xiaoliuren": "小六壬",
-    "zeji": "择吉",
     "ming": "命（四柱）",
 }
 
 # 冒烟/演示用缺省起盘参数（与各科金标准自检同源，可复现）。
 _DEMO_PARAMS: dict[str, dict] = {
-    "meihua": {
-        "way": "numbers",
-        "year_num": 5, "month": 12, "day": 17, "hour_num": 9,
-        "month_branch": "子",
-        "question": "明晚会有女子来折花吗？",
-    },
-    "xiaoliuren": {
-        "way": "month_day_hour",
-        "month": 8, "day": 15, "hour_ordinal": 9,
-        "question": "去朋友家，测有人否",
-        "topic": "行人",
-    },
-    "zeji": {
-        "date": "2026-09-25",
-        "question": "结婚嫁娶吉否",
-        "activity": "嫁娶",
-    },
     "ming": {
         "datetime": "1990-05-20 10:30",
         "gender": "男",
@@ -190,24 +169,9 @@ def _call_chart(disc: str, params: dict) -> dict:
             gender=params.get("gender"),
             longitude=params.get("longitude"),
         )
-    # 其余三科：chart(params: dict)
+    # 非 ming 学科（当前仅 ming 注册；后续若接入 liuyao 等再在此分支处理）
     p = dict(params)
-    # 便捷别名：numbers 列表 → meihua 的 year_num/… 四数（way 缺省时）
-    if disc == "meihua" and isinstance(p.get("numbers"), (list, tuple)):
-        nums = list(p.pop("numbers"))
-        if len(nums) >= 4 and "year_num" not in p:
-            p.setdefault("way", "numbers")
-            p["year_num"] = int(nums[0])
-            p["month"] = int(nums[1])
-            p["day"] = int(nums[2])
-            p["hour_num"] = int(nums[3])
     out = chart_fn(p)
-    # 小六壬 CLI 会补 palace_name；MCP chart 对齐 CLI 输出
-    if disc == "xiaoliuren" and isinstance(out, dict) and "palace" in out:
-        try:
-            out.setdefault("palace_name", mods["chart"].palace_name(out["palace"]))
-        except Exception:
-            pass
     return out
 
 
@@ -268,7 +232,7 @@ def _make_render_handler(disc: str) -> Callable[[dict], dict]:
         a = _call_analyze(disc, p)
         # 各科 render(analyze_out, out_path=None) -> str；ming 为 render(analyze_out)
         if fmt == "html":
-            # 仅当该科 render 真正支持 html 才走；现四科均只出 Markdown
+            # 仅当该科 render 真正支持 html 才走；现各注册学科均只出 Markdown
             raise ValueError(
                 f"{disc} 的 render 段目前仅支持 format=md，不支持 html"
             )
@@ -296,7 +260,7 @@ def _make_list_methods(disc: str) -> Callable[[dict], dict]:
 
 
 # =============================================================================
-# 方法路由表（进程内可挂单科或四科；由 build_methods 决定挂载范围）
+# 方法路由表（进程内可挂单科或全部已注册学科；由 build_methods 决定挂载范围）
 # =============================================================================
 
 METHOD_DESCRIPTIONS: dict[str, str] = {
@@ -322,7 +286,7 @@ for _disc, _label in DISCIPLINES.items():
 
 
 def build_methods(disciplines: Optional[list[str]] = None) -> dict[str, Callable]:
-    """构造方法表。disciplines 为 None 时挂载全部四科。"""
+    """构造方法表。disciplines 为 None 时挂载全部已注册学科。"""
     if disciplines is None:
         discs = list(DISCIPLINES)
     else:
@@ -448,22 +412,20 @@ def _build_parser(default_disc: Optional[str] = None) -> argparse.ArgumentParser
 方法:
   <disc>.chart / <disc>.analyze / <disc>.narrate / <disc>.render
   list_methods
-  （<disc> ∈ meihua | xiaoliuren | zeji | ming）
+  （<disc> ∈ ming；六爻 liuyao 走专用 CLI/流水线，不经此路由器）
 
 示例:
-  python tools/mcp_router.py --discipline meihua
+  python tools/mcp_router.py --discipline ming
   python tools/mcp_router.py --all
-  python tools/mcp_router.py --discipline zeji --list-methods
+  python tools/mcp_router.py --discipline ming --list-methods
   python tools/mcp_router.py --discipline ming --test-narrate
 
 JSON-RPC 请求示例:
-  {"jsonrpc":"2.0","id":1,"method":"meihua.narrate","params":{"way":"numbers","year_num":5,"month":12,"day":17,"hour_num":9,"question":"测花"}}
-  {"jsonrpc":"2.0","id":2,"method":"zeji.chart","params":{"date":"2026-09-25","activity":"嫁娶"}}
-  {"jsonrpc":"2.0","id":3,"method":"xiaoliuren.render","params":{"way":"month_day_hour","month":8,"day":15,"hour_ordinal":9}}
+  {"jsonrpc":"2.0","id":1,"method":"ming.narrate","params":{"datetime":"1990-05-20 10:30","gender":"男","question":"命局排盘"}}
   {"jsonrpc":"2.0","id":4,"method":"list_methods","params":{}}
 """
     parser = argparse.ArgumentParser(
-        description="四科 MCP JSON-RPC 服务器（meihua/xiaoliuren/zeji/ming）",
+        description="MCP JSON-RPC 服务器（仅命 ming；六爻 liuyao 走专用 CLI/流水线）",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=epilog,
     )
@@ -476,7 +438,7 @@ JSON-RPC 请求示例:
     parser.add_argument(
         "--all",
         action="store_true",
-        help="同一进程挂载全部四科方法",
+        help="同一进程挂载全部已注册学科方法",
     )
     parser.add_argument(
         "--list-methods",
@@ -534,7 +496,7 @@ def _resolve_discs(args: argparse.Namespace, parser: argparse.ArgumentParser) ->
         return list(DISCIPLINES)
     if args.discipline:
         return [args.discipline]
-    parser.error("必须指定 --discipline {meihua,xiaoliuren,zeji,ming} 或 --all")
+    parser.error("必须指定 --discipline {ming} 或 --all")
     return []  # unreachable
 
 

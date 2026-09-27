@@ -68,10 +68,10 @@ def build_guidance(archive: PersonArchive, adjudication: dict) -> str:
     # 只列裁决后的合法记录（越位/无效输入已在第三节剔除，不在此展示）
     valid = adjudication.get("valid")
     bu = ([r for r in valid if r.get("discipline") in
-           ("liuyao", "meihua", "xiaoliuren", "zeji")]
+           ("liuyao",)]
           if valid is not None else
           [r for r in divs if r.get("discipline") in
-           ("liuyao", "meihua", "xiaoliuren", "zeji")])
+           ("liuyao",)])
     if not bu:
         lines.append("无占问记录。")
     for r in bu:

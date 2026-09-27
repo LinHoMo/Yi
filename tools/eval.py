@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """仓库级案例对齐分一览：转发各科 evaluate，分集合打印，不写第二套给分逻辑。
 
-  python tools/eval.py                 # 四科 tune+holdout
+  python tools/eval.py                 # 两科 tune+holdout
   python tools/eval.py --discipline liuyao --split all
   python tools/eval.py --full          # 加六爻外部集（wikisource/yingqi）
 
@@ -20,7 +20,7 @@ sys.path.insert(0, str(ROOT / "core"))
 
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 
-DISCIPLINES = ("liuyao", "meihua", "xiaoliuren", "zeji")
+DISCIPLINES = ("liuyao", "ming")
 
 
 def run_eval(disc: str, split: str, *, verbose: bool = False) -> tuple[int, str]:
