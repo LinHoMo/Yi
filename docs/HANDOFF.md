@@ -1,11 +1,16 @@
 # 易 · 现状交接
 
 > 取代口头交接。分数口径的逐次变化一律查 `docs/CHANGELOG.md`；
-> 本文件只写「现在是什么、怎么跑、还欠什么」。
+> 本文件只写「现在是什么、怎么跑、还欠什么」。**债务速查见 `docs/TECH-DEBT.md`**。
 > **一切分数是古籍案例对齐分，不是现实预测命中率**（`AGENTS.md` 铁律三）。
 > 路线：`docs/YI-PLAN.md`、`docs/LIUYAO-PLAN.md`。规格归档：`docs/compose/spec/`。
 
-**基线**：`main` @ `42cdc7c`（2026-09-26，含 deep-optimize 与 internal-depth-pack 两轮合入）。
+**范围（2026-09 收缩后）**：只做两科——**命 = `ming`（四柱八字）**、**卜 = `liuyao`（六爻纳甲）**。
+`meihua` / `xiaoliuren` / `zeji` 已于 2026-09 经 `git mv` 归档至 `archive/`（保留 git 历史、可还原），
+**不在当前实现 / 测试 / 质量门 / 文档「可用」范围内**。
+
+**基线**：`main`（2026-09-27；含范围收缩、债务登记、仓库清理）。
+质量门：`tools/check.py --full` 全绿（含 pytest）；工作区无未跟踪垃圾（生成物一律 gitignore）。
 
 ---
 
@@ -47,6 +52,8 @@
 - 强弱 / 月令定格 / 扶抑喜用 / 大运 8 步 / 流年干支×十神 / **大运×流年机械对照**
 - 起运：顺行下一节、逆行上一节；运干十神；空亡；从儿/从财/从杀/专旺（tentative）
 - 金标准 `3d4ff149ef6be933`；机械回归 5 例；pytest 覆盖
+- **无案例对齐评测**（`scripts/evaluate.py` 本就不存在）：按机械回归 `tools/regression.py` 校验，
+  故 `tools/eval.py` 转发时 ming 直接跳过、不计失败。
 - **不做**：命运断语、流年吉凶定论
 
 ### 合参 / 工具
@@ -63,7 +70,7 @@
 python tools/check.py              # 快速门
 python tools/check.py --full       # + 案例评测 + 黑箱回归 + pytest tests
 python -m pytest tests -q          # 76 项单测
-python tools/eval.py               # 两科对齐分一览
+python tools/eval.py               # 六爻 tune+holdout（命科无案例对齐评测，自动跳过）
 
 # 六爻
 cd disciplines/liuyao
@@ -199,3 +206,7 @@ tests/              pytest（relations/symbols/najia/yingqi/ming_dayun）
 | 26v | 巨石收尾续：_predict_timing 491 行应期巨石按职责切出（零指纹漂移）+ 死代码清理 |
 | 26w | 巨石收尾续：chain_narrate._inject_pattern_tags 359 行格局标签巨石按职责切出（零指纹漂移）+ 死导入清理 |
 | 26x | 巨石收尾续：human_narrative 979 行按域拆——正文段落八段素材切到 human_narrative_segments，编排/渲染/格局引文/推因留 human_narrative（零指纹漂移）+ 死导入清理 |
+| 26y | CI 硬化：修复 pytest 从根目录收集失败（importlib 模式 + testpaths，零逻辑改动）——`pytest -q` 从根干净 76 passed |
+| 26z | 范围收缩：仅保留 `ming`+`liuyao`，`meihua`/`xiaoliuren`/`zeji` 归档 `archive/`；清理 `tools/`+`synthesis/` 引用与死代码；绑定文档同步 |
+| 26aa | 历史债务文档化：新增 `docs/TECH-DEBT.md` 统一登记（已清偿/待清偿 + 提交锚点 + 防新债纪律）+ 治理扫描（死脚本、冗余 skills 判定**无需动作**） |
+| 27-tidy | 仓库清理（清 gitignore 生成物与遗留 `.worktrees/`）+ 修 `tools/eval.py`（ming 无评测器不再误报失败、默认改回 `tune+holdout`、对齐 docstring）+ 本 handoff 重写 |

@@ -160,6 +160,26 @@
 - 纯文档改动，不触碰代码/引擎/验收件；质量门复核：`tools/check.py` 全过、`pytest tests -q` **76 passed**、
   六爻金标准 288 例指纹 `5c6e77ee253b0ddd` 一致。分数口径未变；**非预测率**。
 
+### 2026-09-27ab 仓库清理 + 修 tools/eval.py + handoff 重写
+
+- **仓库清理**（只动 gitignore 生成物，不碰跟踪文件与用户数据）：清 `tools/scratch/`（2.4M）、
+  `.pytest_cache`、`__pycache__`、遗留空壳 `.worktrees/`；`git worktree list` 仅 main（无残留注册）；
+  跟踪树干净、无非忽略未跟踪文件。
+- **修 `tools/eval.py`**（发现两处长期缺陷，均非本轮引入）：
+  - 引用 `disciplines/ming/scripts/evaluate.py`——该文件**从未存在**，导致默认命令 `python tools/eval.py`
+    对 ming 恒报「缺 evaluate.py」并返回 1。修复：缺评测器改为**非致命跳过**并指向
+    `disciplines/<科>/tools/regression.py`（机械回归），不再计入失败。
+  - docstring 称默认 `tune+holdout`，代码默认却是 `--split all`——而 `all`（n=115，经 `load_ids('all')`
+    纳入已排除案例 ZS021–025，无卦名）必然触发引擎报错、返回非零。修复：默认 split 对齐 docstring
+    为 `tune+holdout`，`--full` 追加外部集（wikisource/yingqi），`--split` 仍可显式指定；help/docstring 更正。
+  - 影响面：`tools/check.py` **不调用** `tools/eval.py`，故质量门不受影响；纯便利工具修复。
+- **handoff 重写**（`docs/HANDOFF.md`）：基线由过期 `@42cdc7c` 改为按范围/日期描述；顶部加
+  「范围收缩后只做 ming+liuyao」显著声明；§七 变更索引补 26y/26z/26aa 与 27-tidy；
+  §一 命科注明「无案例对齐评测」；加 `docs/TECH-DEBT.md` 指针。
+- **验收**：`tools/check.py --full` 全绿（含 pytest 76、黑箱 12/18、ming 门、四段端到端）；
+  `tools/eval.py` 默认与 `--full` 均**退出 0**，数字与 HANDOFF §一 逐项一致
+  （tune 93.9 / holdout 87.5 / wikisource_holdout 57.3 / yingqi_holdout 87.2）。口径未变；**非预测率**。
+
 ### 2026-09-26t internal-depth-pack：断语收尾/拆巨石/pytest/MCP四科/应期分列/命科交互
 
 - **断语**：meihua/xiaoliuren/zeji narrate 短语与口径句入各自 `verdicts.json`；六爻 `advice_soft`/`narrate_shell`/`engine_format_labels` 入 `narrative_templates.json`。修复模板 `rel or '他爻'` 误写成 format 表达式导致 HO011/HO012 报错。

@@ -13,6 +13,7 @@
 
 | 债务 | 处理 | 锚点 |
 |---|---|---|
+| `tools/eval.py` 两处长期缺陷：引用从未存在的 `ming/scripts/evaluate.py`（默认命令恒失败）+ docstring/默认 split 不一致（`all` 纳入排除案例恒报错） | 缺评测器改为非致命跳过；默认改回 `tune+holdout`（`--full` 追加外部集）；`check.py` 不依赖它 | 2026-09-27ab |
 | 范围收缩：卜科四科 → 仅 `ming`（四柱）+ `liuyao`（六爻） | `git mv` 三科归档至 `archive/`（保历史、可还原）；清理 `tools/`+`synthesis/` 引用，删 `normalize_*` 死代码 | `d341b0b`（CHANGELOG 2026-09-27z） |
 | pytest 从根目录收集失败（四科同名 `smoke_test`/`evaluate` 撞车） | `--import-mode=importlib` + `testpaths=["tests"]`，纯配置零逻辑 | `0e08202`（2026-09-27y） |
 | `human_narrative` 979 行巨石 | 正文段落八段素材切出 `human_narrative_segments` | `3de6502`（26x） |
