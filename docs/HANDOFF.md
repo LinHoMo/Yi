@@ -128,11 +128,11 @@ python tools/refactor_guard.py --compare guard/base.json  # 改后
    - 《卜筮正宗》卷次未数字化（原文存 `data/sources/`）；《火珠林》3 例未过卦变/时刻门（`huozhulin_candidates.json`）。
 2. **择吉通书真黑箱**：需带应验古例日例（不伪造）；`validity_gap` 已写明。
 3. **小六壬**外部书源仍缺。
-4. **巨石残余**（2026-09-27u 已清三处 + 26v 再清应期巨石，见 CHANGELOG 26u/26v）：
+4. **巨石残余**（2026-09-27u 已清三处 + 26v 应期巨石 + 26w 叙事格局标签巨石，见 CHANGELOG）：
    `chain_step5` 991→351、`format_reading_output` 445→~30、`step3_analyze_strength` 509→322、
-   `_predict_timing` 491→四职责模块 `chain_step5_yp_timing`。
-   剩余：`chain_narrate._inject_pattern_tags` 358 行（拆分因循环依赖已回退过一次）、
-   `human_narrative` 可按域拆。
+   `_predict_timing` 491→四职责模块 `chain_step5_yp_timing`、
+   `chain_narrate._inject_pattern_tags` 359→三职责模块 `chain_narrate_patterns`。
+   剩余：`human_narrative` 可按域拆。
 5. **断语残句**：扫描后确认残留多为 argparse help 与测试夹具文本（属 CLI 文档，不是断语），
    真正面向求测者的文案已在 `data/*.json`；此项**暂不再动**，避免误伤。
 6. **命科**：从格仍 tentative；运年交互只记关系不批吉凶（有意如此）。
@@ -170,6 +170,8 @@ tests/              pytest（relations/symbols/najia/yingqi/ming_dayun）
   `chain_step3_strength`（step3 八个修正项）。三个新模块都不反引调用方，单向依赖。
 - **已拆（26v）**：`chain_step5_yp_timing`（应期四职责：收集/法则/排序/组装 + 5 个原闭包辅助提升）。
   `chain_step5_yp` 退化为再导出入口，依赖单向。
+- **已拆（26w）**：`chain_narrate_patterns`（叙事格局标签三职责：收集标签 / 收集详释 / 编排注入；
+  `_inject_pattern_tags` 原 359 行巨石）。`chain_narrate` 退化为再导出入口，依赖单向，规避循环依赖。
   **再拆的硬约束**：`thinking_chain.py` 从 `chain_step3` / `chain_step5` 再导出一批名字，
   搬动前先 grep `from chain_stepN import` 确认不是再导出项，否则断链。
 - **MCP**：六爻 7 方法；meihua/xiaoliuren/zeji/ming 各 chart/analyze/narrate/render/list_methods
@@ -186,3 +188,4 @@ tests/              pytest（relations/symbols/najia/yingqi/ming_dayun）
 | 26t | internal-depth-pack：断语收尾 + effects 拆分 + pytest + MCP 四科 + 应期分列 + 运年交互 |
 | 26u | 巨石收尾：step5 / 报告排版 / step3 三拆（零指纹漂移）+ 死导入清理 |
 | 26v | 巨石收尾续：_predict_timing 491 行应期巨石按职责切出（零指纹漂移）+ 死代码清理 |
+| 26w | 巨石收尾续：chain_narrate._inject_pattern_tags 359 行格局标签巨石按职责切出（零指纹漂移）+ 死导入清理 |
