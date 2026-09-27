@@ -89,6 +89,10 @@ cd disciplines/{meihua,xiaoliuren,zeji} && python tools/check.py
 
 流派开关（改了分数不可比）：`YI_GANZHI_BOUNDARY=day|instant`、`--zi-hour-type late`。
 
+# 拆分/搬家前后的零漂移验收（报告文本 + 思维链 + 人话叙述，115 例）
+python tools/refactor_guard.py --write  guard/base.json   # 改前
+python tools/refactor_guard.py --compare guard/base.json  # 改后
+
 **金标准**：`python tools/golden.py verify`；改动后 `capture "理由"`。
 
 ---
@@ -124,8 +128,13 @@ cd disciplines/{meihua,xiaoliuren,zeji} && python tools/check.py
    - 《卜筮正宗》卷次未数字化（原文存 `data/sources/`）；《火珠林》3 例未过卦变/时刻门（`huozhulin_candidates.json`）。
 2. **择吉通书真黑箱**：需带应验古例日例（不伪造）；`validity_gap` 已写明。
 3. **小六壬**外部书源仍缺。
-4. **巨石残余**：`chain_step5` 939 行单函数；`chain_narrate` 807 行（拆分因循环依赖已回退）；`human_narrative` 仍可按域拆。
-5. **断语残句**：`chain_narrate` / `engine_format` / `human_narrative` 仍有少量成句中文在 `.py`。
+4. **巨石残余**（2026-09-27u 已清三处，见 CHANGELOG 26u）：
+   `chain_step5` 991→351、`format_reading_output` 445→~30、`step3_analyze_strength` 509→322。
+   剩余：`_predict_timing` 491 行（应期核心资产，HANDOFF 三，拆分需同样的零漂移验收）、
+   `chain_narrate._inject_pattern_tags` 358 行（拆分因循环依赖已回退过一次）、
+   `human_narrative` 可按域拆。
+5. **断语残句**：扫描后确认残留多为 argparse help 与测试夹具文本（属 CLI 文档，不是断语），
+   真正面向求测者的文案已在 `data/*.json`；此项**暂不再动**，避免误伤。
 6. **命科**：从格仍 tentative；运年交互只记关系不批吉凶（有意如此）。
 7. 报告「格局详释」依赖案例是否触发格局词。
 
@@ -139,7 +148,9 @@ cd disciplines/{meihua,xiaoliuren,zeji} && python tools/check.py
 4. 口径变更记 `docs/CHANGELOG.md`
 5. 案例库解读隔离；一卦一事
 6. 金标准 `capture` 必须写理由
-7. 拆分/搬家以**零指纹漂移**验收；巨石看门狗 2200 行
+7. 拆分/搬家以**零指纹漂移**验收（用 `tools/refactor_guard.py`，别自己写临时脚本——
+   26u 就踩过「脚本传错参数 → 115 例全挂 → 两次指纹一致其实都是全失败」的假阳性，
+   该脚本现在会强制校验有效样本数）；巨石看门狗 2200 行
 
 ---
 
@@ -155,6 +166,10 @@ tests/              pytest（relations/symbols/najia/yingqi/ming_dayun）
 
 - **真值表**：旬空/三刑/十二长生/纳音/三合 已上收 core；看门狗盯同义表名
 - **已拆**：`classical_rules_*`、`effects_harmony/structure/change`、`chain_step5` 假拆死体已删
+- **已拆（26u）**：`chain_step5_adjust`（step5 八个加减项）、`engine_format_report`（报告九段）、
+  `chain_step3_strength`（step3 八个修正项）。三个新模块都不反引调用方，单向依赖。
+  **再拆的硬约束**：`thinking_chain.py` 从 `chain_step3` / `chain_step5` 再导出一批名字，
+  搬动前先 grep `from chain_stepN import` 确认不是再导出项，否则断链。
 - **MCP**：六爻 7 方法；meihua/xiaoliuren/zeji/ming 各 chart/analyze/narrate/render/list_methods
 
 ---
@@ -167,3 +182,4 @@ tests/              pytest（relations/symbols/najia/yingqi/ming_dayun）
 | 26n | 真值表上收 + step5 假拆清理 + 命科机械扩充 |
 | 26o–s | 星煞口径/建议库/场景提示/键自测 |
 | 26t | internal-depth-pack：断语收尾 + effects 拆分 + pytest + MCP 四科 + 应期分列 + 运年交互 |
+| 26u | 巨石收尾：step5 / 报告排版 / step3 三拆（零指纹漂移）+ 死导入清理 |

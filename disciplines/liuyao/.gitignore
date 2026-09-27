@@ -9,6 +9,7 @@ scratch/
 
 # 生成产物：由脚本重跑生成，不入库
 outputs/
+guard/
 data/cases/blind_engine_output_*.json
 data/cases/*_summary.json
 scripts/regression_results.json
