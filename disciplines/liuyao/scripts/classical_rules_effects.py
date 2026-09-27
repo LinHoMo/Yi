@@ -34,7 +34,7 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
 
 from classical_support import _branch_element, _combined_strength, _element_to_relation, _find_stage_at, _find_use_god_positions, _get_use_god_strength_level, _infer_use_god_category, _pos_to_name, _relation_element, _score_fanyin, _score_fuyin, _strength_score, determine_six_relation, element_strength_in_month, find_hexagram_body, g_day_cn, get_changed_hexagram_branch, get_month_strength_description, get_stages_of_interest, get_twelve_growth_stage, is_ba_zu_chong, is_ba_zu_he
 from classical_tables import KE_WO, SAN_HE, SELF_PUNISHMENTS, SHENG_WO, SIX_RELATIONS, THREE_PUNISHMENTS_CYCLIC, THREE_PUNISHMENTS_MUTUAL, TRANSFORMATION_PATTERNS, TWELVE_GROWTH
-from chain_verdicts import CLASSICAL_INTERPRETATIONS as CINTERP, CLASSICAL_RULES_NOTES as _CR_NOTES, CLASSICAL_RULES_TEMPLATES as _CR_TPL
+from chain_verdicts import EFFECT_LABELS, EFFECT_PHRASES, CLASSICAL_INTERPRETATIONS as CINTERP, CLASSICAL_RULES_NOTES as _CR_NOTES, CLASSICAL_RULES_TEMPLATES as _CR_TPL
 
 
 def ctext(key: str, **fmt) -> str:
@@ -142,13 +142,13 @@ def analyze_clash_harmony(result):
             + CINTERP["has_he"]["text"]
         )
     elif chong_count > 0:
-        hexagram_type = "有冲"
+        hexagram_type = EFFECT_LABELS["hex_has_clash"]
         meaning = (
             ctpl("crt_091", chong_count)
             + CINTERP["has_chong"]["text"]
         )
     else:
-        hexagram_type = "无明确合冲"
+        hexagram_type = EFFECT_LABELS["hex_no_he_chong"]
         meaning = CINTERP["no_he_chong"]["text"]
 
     pair_summaries = "；".join(p["description"] for p in pairs)
@@ -260,27 +260,27 @@ def analyze_repetition(result):
     has_fuyin = (inner_all_changed and inner_same) or (outer_all_changed and outer_same)
 
     if has_fanyin and has_fuyin:
-        repetition_type = "反吟兼伏吟"
+        repetition_type = EFFECT_LABELS["fan_yin_and_fu_yin"]
         meaning = (
             CINTERP["fanyin_and_fuyin"]["text"]
             + CINTERP["fanyin_and_fuyin_2"]["text"]
         )
     elif has_fanyin:
-        repetition_type = "反吟"
+        repetition_type = EFFECT_LABELS["fan_yin"]
         meaning = (
             CINTERP["fanyin"]["text"]
             + CINTERP["fanyin_2"]["text"]
             + CINTERP["fanyin_3"]["text"]
         )
     elif has_fuyin:
-        repetition_type = "伏吟"
+        repetition_type = EFFECT_LABELS["fu_yin"]
         meaning = (
             CINTERP["fuyin"]["text"]
             + CINTERP["fuyin_2"]["text"]
             + CINTERP["fuyin_3"]["text"]
         )
     else:
-        repetition_type = "无"
+        repetition_type = EFFECT_LABELS["fan_fu_none"]
         meaning = CINTERP["no_fanyin_fuyin"]["text"]
 
     summary_parts = []
@@ -289,10 +289,10 @@ def analyze_repetition(result):
             ctpl("crt_023", len(chong_pairs), '、'.join((d['description'] for d in chong_pairs)))
         )
     if has_fuyin:
-        trigram = "内卦" if inner_all_changed and inner_same else "外卦"
+        trigram = EFFECT_LABELS["inner"] if inner_all_changed and inner_same else EFFECT_LABELS["outer"]
         summary_parts.append(ctpl("crt_024", trigram))
 
-    summary = "；".join(summary_parts) if summary_parts else "无反吟伏吟"
+    summary = "；".join(summary_parts) if summary_parts else EFFECT_LABELS["fan_fu_none_summary"]
 
     return {
         "repetition_type": repetition_type,
@@ -937,24 +937,24 @@ def analyze_day_month_bonding(result):
 
     # 用神合日
     if use_god_branch and day_branch and (use_god_branch, day_branch) in HE_SET_BI:
-        findings.append({"bond": "日合用神", "effect": "切近有力", "score": 0.5})
+        findings.append({"bond": "日合用神", "effect": EFFECT_PHRASES["day_he_use_close"], "score": 0.5})
 
     # 用神合月
     if use_god_branch and month_branch and (use_god_branch, month_branch) in HE_SET_BI:
-        findings.append({"bond": "月合用神", "effect": "事必成就", "score": 0.4})
+        findings.append({"bond": "月合用神", "effect": EFFECT_PHRASES["month_he_use_success"], "score": 0.4})
 
     # 月日同合 check
     if (use_god_branch and day_branch and month_branch
             and (use_god_branch, day_branch) in HE_SET_BI
             and (use_god_branch, month_branch) in HE_SET_BI):
-        findings.append({"bond": "月日同合用神", "effect": "大吉之极", "score": 0.3})
+        findings.append({"bond": "月日同合用神", "effect": EFFECT_PHRASES["day_month_he_use_peak"], "score": 0.3})
 
     # 忌神合日/月 (negative effect)
     for ji_b in ji_shen_branches:
         if ji_b and day_branch and (ji_b, day_branch) in HE_SET_BI:
-            findings.append({"bond": "日合忌神", "effect": "忌神有力为祸", "score": -0.3})
+            findings.append({"bond": "日合忌神", "effect": EFFECT_PHRASES["day_he_taboo_harm"], "score": -0.3})
         if ji_b and month_branch and (ji_b, month_branch) in HE_SET_BI:
-            findings.append({"bond": "月合忌神", "effect": "忌神缠月不解", "score": -0.25})
+            findings.append({"bond": "月合忌神", "effect": EFFECT_PHRASES["month_he_taboo_stick"], "score": -0.25})
 
     total_modifier = sum(f["score"] for f in findings)
 

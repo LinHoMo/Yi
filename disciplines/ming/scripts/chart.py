@@ -26,7 +26,8 @@ from yishu_core.ming_tables import (  # noqa: E402
     ming_shen_gong,
     dayun_direction,
 )
-from yishu_core.symbols import EARTHLY_BRANCHES, HEAVENLY_STEMS  # noqa: E402
+from yishu_core.relations import ten_god as _stem_ten_god  # noqa: E402
+from yishu_core.symbols import EARTHLY_BRANCHES, HEAVENLY_STEMS, xunkong_of  # noqa: E402
 
 
 def _split_gz(gz: str) -> tuple[str, str]:
@@ -68,11 +69,20 @@ def chart(
     factors = {}
     for name, p in pillars.items():
         br = p["branch"]
+        st = p["stem"]
+        stem_god = _stem_ten_god(day_stem, st) if (day_stem and st) else None
+        p["ten_god"] = stem_god or ""
         if br:
             factors[name] = {
                 "hidden_stems": hidden_stems(br),
                 "ten_gods": canggan_ten_gods(day_stem, br),
+                "stem_ten_god": stem_god,
             }
+        else:
+            factors[name] = {"hidden_stems": [], "ten_gods": [], "stem_ten_god": stem_god}
+
+    day_gz = pillars["day"]["ganzhi"] or ""
+    xunkong = xunkong_of(day_gz) if day_gz else []
 
     shensha = []
     try:
@@ -109,6 +119,7 @@ def chart(
         "factors": factors,
         "shensha": shensha,
         "ming_shen_gong": ming_shen,
+        "xunkong": xunkong,
         "calendar_policy": {"boundary": "day", "zi_hour": "same-day"},
     }
 

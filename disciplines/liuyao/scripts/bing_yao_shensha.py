@@ -17,6 +17,11 @@ if str(_CORE) not in sys.path:
 
 from yishu_core.ming_tables import shensha_at_branches  # noqa: E402
 from yishu_core.symbols import BRANCH_ELEMENTS  # noqa: E402
+from pathlib import Path as _P
+import json as _json
+_VT = _P(__file__).resolve().parents[1] / 'data' / 'rules' / 'verdict_texts.json'
+BING_YAO_LABELS = _json.loads(_VT.read_text(encoding='utf-8')).get('bing_yao_labels', {})
+
 
 _WEAK_LEVELS = {"极弱", "弱", "偏弱", "休囚", "囚", "死"}
 _STRONG_LEVELS = {"旺", "极旺"}
@@ -65,30 +70,30 @@ def evaluate_bing_yao(step2: dict, step3: dict, step5: dict | None = None) -> di
         return "比和"
 
     if level in _WEAK_LEVELS:
-        illness.append({"code": "weak", "label": "用神衰弱", "basis": f"旺衰={level}"})
+        illness.append({"code": "weak", "label": BING_YAO_LABELS["weak"]["label"], "basis": BING_YAO_LABELS["weak"]["basis"].format(level=level)})
     if is_empty:
-        illness.append({"code": "void", "label": "用神旬空", "basis": "旬空则力虚"})
+        illness.append({"code": "void", "label": BING_YAO_LABELS["void"]["label"], "basis": BING_YAO_LABELS["void"]["basis"]})
     if is_month_break:
-        illness.append({"code": "month_break", "label": "用神月破", "basis": "月破则伤"})
+        illness.append({"code": "month_break", "label": BING_YAO_LABELS["month_break"]["label"], "basis": BING_YAO_LABELS["month_break"]["basis"]})
     if has_fu:
-        illness.append({"code": "hidden", "label": "用神伏藏", "basis": "伏藏受飞神压制"})
+        illness.append({"code": "hidden", "label": BING_YAO_LABELS["hidden"]["label"], "basis": BING_YAO_LABELS["hidden"]["basis"]})
     if _rel(month_el) == "克我" or _rel(day_el) == "克我":
-        illness.append({"code": "controlled", "label": "日月克身", "basis": f"月={month_el} 日={day_el} 克用神"})
+        illness.append({"code": "controlled", "label": BING_YAO_LABELS["controlled"]["label"], "basis": BING_YAO_LABELS["controlled"]["basis"].format(month_el=month_el, day_el=day_el)})
 
     if level in _STRONG_LEVELS:
-        medicine.append({"code": "strong_root", "label": "用神有气", "basis": f"旺衰={level}"})
+        medicine.append({"code": "strong_root", "label": BING_YAO_LABELS["strong_root"]["label"], "basis": BING_YAO_LABELS["strong_root"]["basis"].format(level=level)})
     if _rel(month_el) == "生我" or _rel(day_el) == "生我":
-        medicine.append({"code": "day_month_sheng", "label": "日月生扶", "basis": f"月={month_el} 日={day_el} 生用神"})
+        medicine.append({"code": "day_month_sheng", "label": BING_YAO_LABELS["day_month_sheng"]["label"], "basis": BING_YAO_LABELS["day_month_sheng"]["basis"].format(month_el=month_el, day_el=day_el)})
     if yuan_moving:
-        medicine.append({"code": "yuan_moving", "label": "原神动来生", "basis": "原神发动生用神"})
+        medicine.append({"code": "yuan_moving", "label": BING_YAO_LABELS["yuan_moving"]["label"], "basis": BING_YAO_LABELS["yuan_moving"]["basis"]})
     elif yuan_pos:
-        medicine.append({"code": "yuan_present", "label": "原神在卦", "basis": "原神出现，待时而用"})
+        medicine.append({"code": "yuan_present", "label": BING_YAO_LABELS["yuan_present"]["label"], "basis": BING_YAO_LABELS["yuan_present"]["basis"]})
     if is_empty and ug_branch:
-        medicine.append({"code": "fill_void", "label": "冲空填实之药", "basis": f"旬空待值日/冲空解：{ug_branch}"})
+        medicine.append({"code": "fill_void", "label": BING_YAO_LABELS["fill_void"]["label"], "basis": BING_YAO_LABELS["fill_void"]["basis"].format(ug_branch=ug_branch)})
     if has_fu:
-        medicine.append({"code": "out_of_hiding", "label": "出伏之药", "basis": "待冲开飞神或飞神受制"})
+        medicine.append({"code": "out_of_hiding", "label": BING_YAO_LABELS["out_of_hiding"]["label"], "basis": BING_YAO_LABELS["out_of_hiding"]["basis"]})
     if is_month_break and ug_branch:
-        medicine.append({"code": "heal_break", "label": "月破待补", "basis": "逢合逢值填实可解"})
+        medicine.append({"code": "heal_break", "label": BING_YAO_LABELS["heal_break"]["label"], "basis": BING_YAO_LABELS["heal_break"]["basis"]})
 
     return {
         "illness": illness,
@@ -122,7 +127,8 @@ def attach_shensha(chart_result: dict, step3: dict | None = None) -> dict:
         year_branch = year_stem[1:]
         year_stem = year_stem[0]
     if not day_stem and not day_branch:
-        return {"shensha": [], "shensha_note": "缺日柱，未安星"}
+        return {"shensha": [], "shensha_note": "缺日柱，未安星",
+            "shensha_policy": "旁参不进主分（《卜筮正宗》辟星煞之谬；《增删卜易》删星煞）"}
 
     stars = shensha_at_branches(day_stem, day_branch, year_stem or None, year_branch or None)
     oh = (chart_result or {}).get("original_hexagram") or {}

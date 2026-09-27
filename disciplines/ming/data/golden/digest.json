@@ -1,5 +1,5 @@
 {
-  "fingerprint": "91f64b857cc6597e",
-  "reason": "起运岁数改按距节日数/DAYS_PER_LUCK_YEAR",
+  "fingerprint": "3d4ff149ef6be933",
+  "reason": "大运起运：逆行取上一节（prev_jie_before）；十神改取运干；补空亡/流年/起运余数",
   "n_samples": 6
 }

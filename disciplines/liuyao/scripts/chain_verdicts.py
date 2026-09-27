@@ -72,6 +72,16 @@ CLASSICAL_INTERPRETATIONS = _VERDICT_TEXTS["classical_interpretations"]
 CHAIN_SUPPORT_NOTES = _VERDICT_TEXTS.get("chain_support_notes", {})
 CLASSICAL_RULES_NOTES = _VERDICT_TEXTS.get("classical_rules_notes", {})
 CLASSICAL_RULES_TEMPLATES = _VERDICT_TEXTS.get("classical_rules_templates", {})
+PATTERN_VERDICTS = _VERDICT_TEXTS.get("pattern_verdicts", {})
+EFFECT_LABELS = _VERDICT_TEXTS.get("effect_labels", {})
+EFFECT_PHRASES = _VERDICT_TEXTS.get("effect_phrases", {})
+BING_YAO_LABELS = _VERDICT_TEXTS.get("bing_yao_labels", {})
+NARRATIVE_HINTS = _VERDICT_TEXTS.get("narrative_hints", {})
+PATTERN_RELATED = _VERDICT_TEXTS.get("pattern_related", {})
+PATTERN_NOTES_EXTRA = _VERDICT_TEXTS.get("pattern_notes_extra", {})
+SHENSHA_POLICY = _VERDICT_TEXTS.get("shensha_policy", {})
+ZEJI_VALIDITY_GAP = _VERDICT_TEXTS.get("zeji_validity_gap", {})
+
 
 
 def note_text(key: str, **fmt) -> str:

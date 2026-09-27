@@ -89,6 +89,13 @@ def main() -> int:
     else:
         print("[4] 金标准 √", out.strip())
 
+    code, out = run(["tools/regression.py"])
+    if code != 0:
+        fails.append("机械因子回归失败")
+        print(out)
+    else:
+        print("[5] 机械回归 √", out.strip().splitlines()[-1] if out.strip() else "")
+
     if fails:
         print("失败：", *fails, sep="\n  ")
         return 1

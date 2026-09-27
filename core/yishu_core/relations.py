@@ -89,6 +89,8 @@ LIUQIN_OF_RELATION = {
     RELATION_WO_KE: "妻财",
 }
 LIUQIN_NAMES = ["父母", "兄弟", "子孙", "妻财", "官鬼"]
+# 卜科惯用序（六爻 classical/chain 层）；与 LIUQIN_NAMES 同集不同序
+SIX_RELATIONS = ["父母", "官鬼", "子孙", "妻财", "兄弟"]
 
 
 def six_relation(me_wx: str, other_wx: str) -> str | None:

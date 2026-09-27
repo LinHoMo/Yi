@@ -12,6 +12,9 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from chain_verdicts import NARRATIVE_HINTS, PATTERN_RELATED  # noqa: E402
+from chain_tables import _BRANCH_CLASH_MAP, _HE_MAP  # noqa: E402
+
 
 try:
     from advice_framework import generate_advice, match_advice_category
@@ -44,9 +47,7 @@ def _pos_name(p) -> str:
 def _strength_sentence(level: str, use_cat: str, use_br: str, use_pos, yuan_moving: bool = False, yuan_greedy: bool = False) -> str:
     """把旺衰说成对这件事意味着什么——老师傅看盘的口吻，月破单列。
 
-    改进点：
-    - 不再固定套用「原神生用」的话术，改为根据原神实际动作来量体裁衣
-    - 增加 yuan_moving / yuan_greedy 两个flag，区分静原神、贪合原神和动原神
+    断语文案在 data/narrative_templates.json#strength_phrases，此处只组装。
     """
     loc = ""
     if use_br:
@@ -54,30 +55,30 @@ def _strength_sentence(level: str, use_cat: str, use_br: str, use_pos, yuan_movi
         if use_pos:
             loc += _pos_name(use_pos)
         loc = f"（落在{loc}）"
-    # 月破单独伤透
+    sp = _NARRATIVE_TPL.get("strength_phrases") or {}
     if "月破" in str(level):
-        return f"{use_cat}{loc}被月建冲破，伤透了，难办——春木秋金皆失时令，纵有援手亦力衰。"
-    # 原神补充短句
+        return (sp.get("month_break") or "").format(use_cat=use_cat, loc=loc)
+
     def _yuan_note() -> str:
         if yuan_greedy:
-            return "原神贪合忘生，动能没传导到你，旺而无源——如炉火无薪，旺极必衰"
+            return sp.get("yuan_greed_he") or ""
         if yuan_moving:
-            return "原神动而生用，有外力持续托一把"
-        return "原神静而不动，旺而无源，靠自己撑"
+            return sp.get("yuan_moving") or ""
+        return sp.get("yuan_static") or ""
 
     table = {
-        "极旺": f"{use_cat}{loc}得月令之气极盛，气贯充盈——底气足到可以主动往外推。{_yuan_note()}。",
-        "旺": f"{use_cat}{loc}得月令之气，旺而有力。{_yuan_note()}。",
-        "相": f"{use_cat}{loc}有根气，能扛事。月建生扶，'生扶拱合，时雨滋苗'之象。{_yuan_note()}。",
-        "中和": f"{use_cat}{loc}不旺不弱，全看原神和动爻能不能再加把劲——此时最忌坐等，人为处便是转机。",
-        "中和偏旺": f"{use_cat}{loc}略占上风，顺势推则可成。{_yuan_note()}。",
-        "中和偏弱": f"{use_cat}{loc}稍显吃力。'不及者益之则利'，宜借力打力。",
-        "偏弱": f"{use_cat}{loc}失令，本身底子薄，需要看有没有救——先补条件再谈结果。",
-        "弱": f"{use_cat}{loc}力量薄，急着要结果容易落空。须待旺相之时。",
-        "极弱": f"{use_cat}{loc}几乎使不上劲。'用神休囚已極，雖得元神生扶不能起也'——妄动必凶。",
-        "休囚": f"{use_cat}{loc}处在低潮，如草木逢秋。须候时而行。",
+        "极旺": (sp.get("极旺") or "").format(use_cat=use_cat, loc=loc, yuan_note=_yuan_note()),
+        "旺": (sp.get("旺") or "").format(use_cat=use_cat, loc=loc, yuan_note=_yuan_note()),
+        "相": (sp.get("相") or "").format(use_cat=use_cat, loc=loc, yuan_note=_yuan_note()),
+        "中和": (sp.get("中和") or "").format(use_cat=use_cat, loc=loc),
+        "中和偏旺": (sp.get("中和偏旺") or "").format(use_cat=use_cat, loc=loc, yuan_note=_yuan_note()),
+        "中和偏弱": (sp.get("中和偏弱") or "").format(use_cat=use_cat, loc=loc),
+        "偏弱": (sp.get("偏弱") or "").format(use_cat=use_cat, loc=loc),
+        "弱": (sp.get("弱") or "").format(use_cat=use_cat, loc=loc),
+        "极弱": (sp.get("极弱") or "").format(use_cat=use_cat, loc=loc),
+        "休囚": (sp.get("休囚") or "").format(use_cat=use_cat, loc=loc),
     }
-    return table.get(str(level or ""), f"{use_cat}{loc}平常，需结合动静变化再断。")
+    return table.get(str(level or ""), (sp.get("default") or "").format(use_cat=use_cat, loc=loc))
 
 
 def _question_focus(question: str) -> str:
@@ -100,55 +101,54 @@ def _question_focus(question: str) -> str:
 
 
 def _verdict_opening(verdict: str, focus: str, pattern_label: str = "", yuan_diagnosis: str = "") -> str:
-    """第一句：先接住问题、亮明结论，并直接给出最关键的一条理由。
-
-    说明：原来的「就 fans 来说 …」句式每个卦都一样、没有信息量；
-    改成「结论 + 最直接原因」格式，让读者在第一句就知道「为什么」。
-    对凶象，同时说明对应阻力类型，不再用抽象的「阻力是实的」。
-    """
+    """第一句：先接住问题、亮明结论，并直接给出最关键的一条理由。文案在 narrative_templates。"""
+    tpl = _NARRATIVE_TPL.get("verdict_openings") or {}
     reason_part = ""
     if yuan_diagnosis:
-        reason_part = f"，主要因为{yuan_diagnosis}"
+        reason_part = (tpl.get("reason_yuan") or "").format(yuan_diagnosis=yuan_diagnosis)
     elif pattern_label:
-        reason_part = f"，主要受「{pattern_label}」影响"
+        reason_part = (tpl.get("reason_pattern") or "").format(pattern_label=pattern_label)
 
-    # 正向判断
-    pos_table = {
-        "大吉": "这卦是顺的，天时人事都站在你这边",
-        "吉": "整体能成，可以往前推，不必太犹豫",
-        "平吉": "有戏，但节奏比结果更要紧——别急着要痛快结果",
-    }
-    neg_table = {
-        "凶": f"{focus}阻力不光是面上的，六冲散离加用神独旺无源{reason_part}。硬上容易吃亏",
-        "大凶": f"{focus}眼下不是发力的时候——{reason_part or '内忧外患，动不如静'}",
-        "下跌": "势头偏弱，观望比追高稳妥",
-        "平/不定": "先在两可之间，稳住不要急着押注",
-        "平/不利": "先别急着定。事情容易反复，稳住再看更划算",
-        "平": "事在两可之间，谁先动谁定局",
-    }
+    pos_table = tpl.get("pos_table") or {}
+    neg_table = tpl.get("neg_table") or {}
+    wrap = tpl.get("wrap_pos") or "就{focus}来说，{text}。"
+
     v = str(verdict or "")
     if v in pos_table:
-        return f"就{focus}来说，{pos_table[v]}。"
+        return wrap.format(focus=focus, text=pos_table[v])
     if v in neg_table:
-        return f"就{focus}来说，{neg_table[v]}。"
-    # fallback: 按关键词匹配
+        raw = neg_table[v]
+        if "{reason_part_or_default}" in raw:
+            text = raw.format(
+                focus=focus,
+                reason_part=reason_part,
+                reason_part_or_default=reason_part or (tpl.get("neg_default_reason") or ""),
+            )
+        elif "{reason_part}" in raw:
+            text = raw.format(focus=focus, reason_part=reason_part)
+        else:
+            text = raw
+        return wrap.format(focus=focus, text=text)
     if "凶" in v or "跌" in v:
-        return f"就{focus}来说，{v}。硬上容易吃亏{reason_part}。"
+        return (tpl.get("fallback_xiong") or "").format(focus=focus, v=v, reason_part=reason_part)
     if "吉" in v and "凶" not in v:
-        return f"就{focus}来说，{v}。可以顺势推进。"
-    return f"就{focus}来说，卦象已明，先看关键处再定节奏。"
+        return (tpl.get("fallback_ji") or "").format(focus=focus, v=v)
+    return (tpl.get("fallback_neu") or "").format(focus=focus)
 
 
 def _change_sentence(s4: dict, s2: dict) -> str:
-    """动变：说清楚谁在动、对事情是帮还是扯后腿——融入经典占语。"""
+    """动变：说清楚谁在动、对事情是帮还是扯后腿——文案在 narrative_templates#change_sentences。"""
+    tpl = _NARRATIVE_TPL.get("change_sentences") or {}
     details = (s4.get("details") or []) if s4 else []
     if not s4 or not s4.get("has_moving_lines") or not details:
-        return "卦里没有动爻——'静为无为，动为有象'，事情相对安静，吉凶主要看用神本身够不够力，而不是突然杀出什么变数。"
+        return tpl.get("no_moving") or ""
 
     details = s4.get("details") or []
     net = float(s4.get("net_effect") or 0)
-    yuan = (s2.get("yuan_shen") or {}).get("category") or ""
     use_cat = s2.get("use_god_category") or "用神"
+
+    def _fmt(key: str, **kw) -> str:
+        return (tpl.get(key) or "").format(**kw)
 
     bits = []
     for d in details:
@@ -161,80 +161,83 @@ def _change_sentence(s4: dict, s2: dict) -> str:
         chg = d.get("changed_branch") or ""
         if role == "用神":
             if "回头生" in ct:
-                bits.append(f"{pos}{rel}发动，变出{chg}回头来生——'动化回头生者，如潮之有源，进而不已'，用神自己有劲往上走")
+                bits.append(_fmt("use_huisheng", pos=pos, rel=rel, chg=chg))
             elif "回头克" in ct:
-                bits.append(f"{pos}{rel}动了，却化出回头克——'刑冲克害，秋霜杀草'之象，事情容易在关键处掉链子")
+                bits.append(_fmt("use_huike", pos=pos, rel=rel))
             elif "反吟" in ct:
-                bits.append(f"{pos}{rel}动而反吟，'反吟卦者，反复不定'，过程反复，进两步可能退一步")
+                bits.append(_fmt("use_fanyin", pos=pos, rel=rel))
             else:
-                bits.append(f"{pos}{rel}有动——动静阴阳反复变迁，事情在动，不是死水一潭")
+                bits.append(_fmt("use_moving", pos=pos, rel=rel))
         elif role == "原神":
             if "回头生" in ct or "化合" in ct:
-                bits.append(f"{pos}{rel}（助{use_cat}者）发动，等于有人在后面持续托一把——'原神生用，根深蒂固'")
+                bits.append(_fmt("yuan_help", pos=pos, rel=rel, use_cat=use_cat))
             else:
-                bits.append(f"{pos}{rel}（助{use_cat}者）动了，'生扶拱合，时雨滋苗'，局面背后有支撑")
+                bits.append(_fmt("yuan_support", pos=pos, rel=rel, use_cat=use_cat))
         elif role == "忌神":
             if "回头克" in ct:
-                bits.append(f"{pos}{rel}虽是阻力，但动化回头克——忌神自伤，阻势自解")
+                bits.append(_fmt("taboo_self_hurt", pos=pos, rel=rel))
             elif "贪合" in str(d.get("effect_on_usegod") or "") or "合" in ct:
-                bits.append(f"{pos}{rel}被合住——'贪合忘克'，一时顾不上来捣乱")
+                bits.append(_fmt("taboo_bound", pos=pos, rel=rel))
             else:
-                bits.append(f"{pos}{rel}有动，此为阻力之源，要留意有人或有事来添堵")
+                bits.append(_fmt("taboo_block", pos=pos, rel=rel))
         elif role == "仇神":
-            bits.append(f"{pos}{rel}（原神所忌）亦动——须防'仇神动则助纣为虐'")
+            bits.append(_fmt("foe", pos=pos, rel=rel))
         else:
-            bits.append(f"{pos}{rel or '他爻'}亦有变化")
+            bits.append(_fmt("other", pos=pos, rel=rel or "他爻"))
 
     if not bits:
-        bits.append("卦中有动，变化落在细节上，主线仍看用神")
+        bits.append(tpl.get("bits_empty") or "")
 
     if net > 1.0:
-        tail = "动爻对用神形成有力生扶，事有助力——'动化回头生者，如潮之有源'，这是实实在在的加码。"
+        tail = tpl.get("tail_pos") or ""
     elif net < -1.0:
-        tail = "动爻来克用神或化退，有负面拖累——'刑冲克害，秋霜杀草'，事情会被这处动变扯住。"
+        tail = tpl.get("tail_neg") or ""
     else:
-        tail = "动爻有来有往，吉凶相抵——整体既不加分也不减分，关键还在用神自身强弱和下一步走势。"
+        tail = tpl.get("tail_neu") or ""
     return "；".join(bits) + "。" + tail
 
 
 def _special_sentence(special, s3, s2, question: str) -> str:
     if not isinstance(special, dict):
         return ""
+    tpl = _NARRATIVE_TPL.get("special_sentences") or {}
     pat = str(special.get("pattern") or "")
     desc = str(special.get("description") or "")
     focus = _question_focus(question)
     empty = bool(s3.get("is_empty")) if s3 else False
     strength = str((s3 or {}).get("strength_level") or "")
 
+    def _g(key: str, **kw) -> str:
+        return (tpl.get(key) or "").format(**kw)
+
     if "近病逢空" in pat or "近病逢空" in desc:
-        return "病气逢空，古法主近病易退——不是没事，而是病势有松动的迹象，按医嘱静养，往往比想象中快见好。"
+        return (_NARRATIVE_TPL.get("strength_phrases") or {}).get("near_illness_void") or ""
     if "近病逢合" in pat:
-        return "近病本忌缠住不放，卦里又见合，病情容易拖泥带水，别大意，该看医生就看。"
+        return (_NARRATIVE_TPL.get("change_sentences") or {}).get("near_he") or ""
     if "合处逢冲" in pat:
         if "婚" in focus or "婚姻" in focus:
-            return "卦是六合，本来利成，但日辰冲动世爻——先合后散，事情容易开头热、后面凉，别急着把话说死。"
-        return f"表面有合，内里逢冲，{focus}容易先顺后挫，推进时留一手。"
+            return _g("he_then_scatter_marriage")
+        return _g("he_then_scatter", focus=focus)
     if "冲中逢合" in pat:
-        return "看着像散，细处又有合来解——先难后成的路子，别在第一关就放弃。"
+        return _g("chong_then_he")
     if "反吟" in pat:
-        return "卦带反吟，过程多半反复，不是直线走完；心里有数，就不容易被一次起落打乱。"
-    # 老师傅口吻断格局，不贴标签
+        return _g("fan_yin")
     if "六冲" in pat:
-        return f"{focus}遇六冲——'六冲卦者，凡事主散'，聚拢为难，散开容易，须看合象来救。"
+        return _g("liu_chong", focus=focus)
     if "六合" in pat:
-        return f"{focus}遇六合——'六合卦者，凡事主聚'，利成事利合局，最怕日辰冲破。"
+        return _g("liu_he", focus=focus)
     if "伏吟" in pat:
-        return f"{focus}遇伏吟——'伏吟卦者，呻吟不出'，事多停滞难进，须待冲动方活。"
+        return _g("fu_yin", focus=focus)
     if "游魂" in pat:
-        return f"{focus}游魂卦——'游魂者，反复不定'，主意难坚，方向易改。"
+        return _g("you_hun", focus=focus)
     if "归魂" in pat:
-        return f"{focus}归魂卦——'归魂者，性情归拢'，虽动而终归本位。"
+        return _g("gui_hun", focus=focus)
     if "归禄" in pat or "禄" in pat:
-        return f"{focus}遇禄——古法看禄为生发之气，底气不薄。"
+        return _g("lu", focus=focus)
     if pat:
-        return f"此卦另有格局：{pat}。{desc}" if desc else f"此卦另有格局：{pat}。"
+        return _g("other_pattern_desc", pat=pat, desc=desc) if desc else _g("other_pattern", pat=pat)
     if empty and any(x in strength for x in ("旺", "相", "中和")):
-        return "用神虽落空亡，却得日月生扶，空而有根——事情不是没有，而是还欠一个「落实」的时机。"
+        return _g("void_but_rooted")
     return ""
 
 
@@ -251,10 +254,8 @@ def _timing_sentence(timing: dict, special, s3, s5: dict = None) -> str:
             shown.append(f"{d.get('date','')}({d.get('description','')})")
         calendar_str = "、".join(shown)
     # 六冲合 → 对应冲合之日
-    clashing = {"子": "午", "丑": "未", "寅": "申", "卯": "酉", "辰": "戌", "巳": "亥",
-                "午": "子", "未": "丑", "申": "寅", "酉": "卯", "戌": "辰", "亥": "巳"}
-    combining = {"子": "丑", "丑": "子", "寅": "亥", "亥": "寅", "卯": "戌", "戌": "卯",
-                 "辰": "酉", "酉": "辰", "巳": "申", "申": "巳", "午": "未", "未": "午"}
+    clashing = _BRANCH_CLASH_MAP
+    combining = {b: (ps[0] if ps else "") for b, ps in _HE_MAP.items()}
     t = timing if isinstance(timing, dict) else {}
     keys = list(t.get("key_branches") or [])
     speed = str(t.get("speed") or "")
@@ -269,74 +270,41 @@ def _timing_sentence(timing: dict, special, s3, s5: dict = None) -> str:
         cl = clashing.get(use_br, "")
         co = combining.get(use_br, "")
         if "伏" in str(s3.get("is_fu", "") or ""):
-            day_hint = f"冲飞神之日伏神得出"
+            day_hint = NARRATIVE_HINTS["day_hint_fu_out"]
         elif cl and co:
-            day_hint = f"{use_br}日应事，逢{cl}冲、逢{co}合皆动"
+            day_hint = NARRATIVE_HINTS["day_hint_value_or_clash_he"].format(use_br=use_br, cl=cl, co=co)
         elif cl:
-            day_hint = f"{use_br}日或{cl}日（{use_br}{cl}冲）应事"
+            day_hint = NARRATIVE_HINTS["day_hint_value_or_clash"].format(use_br=use_br, cl=cl)
         else:
-            day_hint = f"{use_br}日值日之时最应"
+            day_hint = NARRATIVE_HINTS["day_hint_value"].format(use_br=use_br)
 
     # —— 基础快慢 ——
     if "近病逢空" in sp or "近病" in sp:
-        base = "病在近，逢空即散——快则当日、慢则数日便见松动。"
+        base = NARRATIVE_HINTS["timing_near_illness_void"]
     elif speed == "应速" or "应速" in str(t.get("summary_text") or "") or "次日" in str(t.get("summary_text") or ""):
-        base = "应期偏速，当日或数日内就有信号，别错过。"
+        base = NARRATIVE_HINTS["timing_fast"]
     elif speed == "应迟" or "应迟" in str(t.get("summary_text") or "") or "年内" in str(t.get("summary_text") or ""):
-        base = "应期偏迟，按月计，旺相之月到才应——别拿天来量。"
+        base = NARRATIVE_HINTS["timing_slow"]
     else:
-        base = "应期在数日到一两个月之间，不出近期。"
+        base = NARRATIVE_HINTS["timing_mid"]
 
     if "合处逢冲" in sp or "冲中逢合" in sp or "反吟" in sp:
-        base += "过程有反复，别因一次起伏就下结论。"
+        base += NARRATIVE_HINTS["timing_repeat"]
 
     if day_hint:
-        base += f"具体看——{day_hint}。"
+        base += NARRATIVE_HINTS["timing_day_detail"].format(day_hint=day_hint)
     elif keys:
         shown = "、".join(keys[:3])
-        base += f"对应{shown}相关之日。"
+        base += NARRATIVE_HINTS["timing_shown"].format(shown=shown)
     # 日历日期（若存在就补上精确日期；与 day_hint/keys 不冲突）
     if calendar_str:
-        base += f"具体应期日历上落在：{calendar_str}。"
+        base += NARRATIVE_HINTS["timing_calendar"].format(calendar_str=calendar_str)
     return base
 
 
 # ── pattern 标签 → 相关引文 pattern 映射（人工精选）──
 # 每个 pattern 标签对应应该被优先引用的引文 pattern 名
-_PATTERN_QUOTE_RELEVANCE: dict = {
-    "六冲卦": ["六冲卦", "反吟", "伏吟", "合处逢冲"],
-    "六合卦": ["六合卦", "化合", "冲中逢合", "三合"],
-    "反吟": ["反吟", "六冲卦", "伏吟"],
-    "伏吟": ["伏吟", "反吟"],
-    "游魂": ["游魂", "归魂"],
-    "归魂": ["归魂", "游魂"],
-    "化合": ["化合", "六合卦", "合处逢冲", "三合成局"],
-    "三合成局": ["三合成局", "六合卦", "三合"],
-    "绝处逢生": ["绝处逢生", "用神旺", "回头生"],
-    "回头生": ["回头生", "进神", "绝处逢生"],
-    "回头克": ["回头克", "退神", "大凶"],
-    "进神": ["进神", "回头生"],
-    "退神": ["退神", "回头克"],
-    "用神旺": ["用神旺", "绝处逢生", "回头生"],
-    "用神休囚": ["用神休囚", "用神极弱"],
-    "用神极弱": ["用神极弱", "用神休囚", "绝处逢生"],
-    "原神绝位·用神失源": ["原神绝位·用神失源", "用神休囚"],
-    "月破": ["月破", "用神空破"],
-    "近病逢空": ["近病逢空即愈", "用神空破"],
-    "近病逢合": ["近病逢合为凶", "六合卦"],
-    "久病逢空": ["久病逢空为凶", "用神极弱"],
-    "兄弟持世": ["兄弟持世", "忌神"],
-    "官鬼持世": ["官鬼持世", "子孙持世"],
-    "子孙持世": ["子孙持世", "官鬼持世"],
-    "父母持世": ["父母持世", "兄弟持世"],
-    "妻财持世": ["妻财持世", "兄弟持世"],
-    "从格": ["从格", "专旺格"],
-    "专旺格": ["专旺格", "从格"],
-    "化格": ["化合", "三合成局"],
-    "暗动": ["暗动", "伏神得出"],
-    "伏神得出": ["伏神得出", "伏神不得出", "暗动"],
-    "伏神不得出": ["伏神不得出", "伏神得出"],
-}
+_PATTERN_QUOTE_RELEVANCE = PATTERN_RELATED
 
 
 def _pattern_advice_hint(pattern_tag: str, verdict: str, timing: dict) -> str:
@@ -355,40 +323,15 @@ def _pattern_advice_hint(pattern_tag: str, verdict: str, timing: dict) -> str:
             cal = str(ds[0].get("date", ""))
 
     # 场景表
-    HINTS = {
-        "六冲卦": "六冲主散，事不宜急进，先稳住阵脚再对冲解决；最忌讳冲动决策或仓促变动。",
-        "六合卦": "六合主聚，利成事利合作；最怕冲破，近期重要决定要避开与日辰相冲的时段。",
-        "反吟": "反吟主反复，同一个问题会再来第二次；不要一次定论，留出余地方能周全。",
-        "伏吟": "伏吟主停滞不进，硬推不如等一等；待冲动之时自然化解，期间以守为安。",
-        "游魂": "游魂主意念飘摇、方向易改；当下先把方向定下来，定下来再谈执行。",
-        "归魂": "归魂主最终有归宿，过程曲折但结果能收；保持节奏，别中途改道。",
-        "化合": "化合主牵绊；事先解决已有的牵绊或承诺，再着手推进新事。",
-        "三合成局": "三合局成则力量集中；若合局临事，说明时机已到，可顺势推进。",
-        "绝处逢生": "绝处逢生是先危后救；主动寻找那个「救」——往往是原有未注意的人或资源。",
-        "回头生": "回头生动化来生，属实质助力；主动推动或会得到超出预期的正向反馈。",
-        "回头克": "回头克为自伤之象；凡事宜自我检视，先解决内部阻力再图发展。",
-        "进神": "进神主渐盛；可小步推进，量变积累自然成质变。",
-        "退神": "退神主渐衰；凡事量力而行，别把有限的筹码耗尽。",
-        "原神绝位·用神失源": f"原神虽现不动，旺而无源；唯一出路是外力救扶（冲开原神之合、待原神出空）。{cal and f'可重点留意 {cal} 前后是否出现转机。' or ''}",
-        "月破": "月破失时，当前阻力偏重；待冲破之爻填实或出月后再推动更为便利。",
-        "近病逢空": "逢空即散，病势不深；重在规律作息、信医嘱，一般可愈。",
-        "近病逢合": "逢合易拖，病势缠绵；不可轻视，主动跟进治疗以免拖成慢性。",
-        "久病逢空": "久病逢空为凶象；病情不轻，以医院专业处理为要。",
-        "久病逢冲": "久病逢冲为危象；古法云\"久病逢冲必死\"，虽不必尽信，但务必重视，应速备预案。",
-        "近病逢冲": "近病逢冲多主散，病势有松动的迹象；观察反应，及时调整治疗方向。",
-        "兄弟持世": f"兄弟持世，他人分财或阻力较重。{cal and f'{cal} 前后注意人际关系破财事项。' or '切忌合伙和投机。'}",
-        "官鬼持世": "官鬼持世多忧疑烦忧；正面可理解为有责任感，负面则防小人暗动。",
-        "子孙持世": "子孙持世，医药得力、忧虑消解；整体偏松，可略放宽心。",
-        "父母持世": "父母持世，文事宜成、营运多辛；打持久战心态，不被一时反复影响。",
-        "妻财持世": "妻财持世，利财赋事；但仍以用神旺衰定胜负，别因持世轻敌。",
-        "从格": "从格反其势而用之；顺势强的一边，别做逆势挣扎。",
-        "专旺格": "专旺格一方气盛；最怕冲破，宜以守代攻。",
-        "化格": "化格主力量集中转化；若化向生扶方向，则事多顺，反之则宜慎。",
-        "暗动": "暗动主他人作事、事出意外而不觉；暗中有人助，不必外求，但别因此大意。",
-        "伏神得出": "伏神得出，潜在助力出现；可主动靠近原以为不可能的资源或人。",
-        "伏神不得出": "伏神不得出，事情一个关键之处被压着没被看见；先找出那个被遮蔽的因素。",
-    }
-    return HINTS.get(tag, "")
+    HINTS = _NARRATIVE_TPL.get("pattern_hints") or {}
+    text = HINTS.get(tag, "")
+    if not text:
+        return ""
+    if tag == "原神绝位·用神失源" and cal:
+        text = text + (HINTS.get("原神绝位·补转机") or "").format(cal=cal)
+    if tag == "兄弟持世":
+        text = text + ((HINTS.get("兄弟持世·补") or "").format(cal=cal) if cal else (HINTS.get("兄弟持世·补_default") or ""))
+    return text
 
 
 def _extract_pattern_tags(tc: dict) -> set:
@@ -924,9 +867,9 @@ def build_human_narrative(result: dict) -> dict:
         advice = []
     if not advice:
         if "凶" in str(verdict) or "跌" in str(verdict):
-            advice = ["先稳住现有局面，不宜加码", "把风险点列出来，能避则避", "等用神得力的时段再考虑推进"]
+            advice = list(NARRATIVE_HINTS["advice_xiong"])
         else:
-            advice = ["顺着已有条件推进，不必反复起念试探", "抓住用神得力的时段做关键动作", "过程有起伏属正常，盯住主线即可"]
+            advice = list(NARRATIVE_HINTS["advice_ji"])
     # 根据当前卦象的 pattern 标签给建议补充一句具体场景化提示
     # 若有专属 pattern 提示，用它替换最后一条（一般是通用的时机建议），保留总数 4 条
     pattern_tag = pattern_label or ""
@@ -940,8 +883,7 @@ def build_human_narrative(result: dict) -> dict:
     quotes = _select_relevant_quotes(tc)
 
     caveat = (
-        "这是按纳甲六爻规则推出来的一份参考，讲的是方向和节奏，不是板上钉钉的预言。"
-        "看病、打官司、做重大决定，仍要以专业意见为准。"
+        NARRATIVE_HINTS["disclaimer"]
     )
     # 置信度是内部指标，不在交付正文中暴露（AGENTS.md §三：对齐分≠预测率）。
     # "线索一致程度约 X%" 是置信度的换名表述，口径层面等同于把内部分数伪装成预测能力。

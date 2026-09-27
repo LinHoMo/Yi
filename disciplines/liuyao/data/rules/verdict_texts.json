@@ -9,7 +9,8 @@
     "step5_yingqi_texts": "应期节奏说明",
     "classical_interpretations": "classical_rules 古典格局判据长句（游魂/六合/反吟/十二长生/随官入墓/卦身等）",
     "classical_rules_notes": "classical_rules 可交付断语（summary/meaning/description 与 reasons 条目）。text 与代码原字面量一字不差；地支/五行符号与 docstring 留在代码。",
-    "classical_rules_templates": "classical_rules 拼装句整句模板。{0}{1}… 为 ctpl 位置参数。"
+    "classical_rules_templates": "classical_rules 拼装句整句模板。{0}{1}… 为 ctpl 位置参数。",
+    "residual_externalized": "pattern_verdicts / effect_labels / effect_phrases / bing_yao_labels / narrative_hints / pattern_related 为本轮从 .py 外置的断语与标签"
   },
   "step5_classical_notes": {
     "travel_use_sheng_world": {
@@ -1502,5 +1503,290 @@
       "text": "月({0})",
       "template": true
     }
+  },
+  "pattern_verdicts": {
+    "no_youhun_guihun": "无游魂归魂特征",
+    "yao_states_calm": "各爻状态平和",
+    "jue_chu_feng_sheng": "绝处逢生",
+    "jue_chu_feng_sheng_weak_yuan": "绝处逢生但原神无力",
+    "jue_wait_yuan": "绝地待原神",
+    "jue_no_save": "绝地无救"
+  },
+  "effect_labels": {
+    "hex_has_clash": "有冲",
+    "hex_no_he_chong": "无明确合冲",
+    "fan_yin_and_fu_yin": "反吟兼伏吟",
+    "fan_yin": "反吟",
+    "fu_yin": "伏吟",
+    "fan_fu_none": "无",
+    "fan_fu_none_summary": "无反吟伏吟",
+    "inner": "内卦",
+    "outer": "外卦"
+  },
+  "effect_phrases": {
+    "day_he_use_close": "切近有力",
+    "month_he_use_success": "事必成就",
+    "day_month_he_use_peak": "大吉之极",
+    "day_he_taboo_harm": "忌神有力为祸",
+    "month_he_taboo_stick": "忌神缠月不解"
+  },
+  "bing_yao_labels": {
+    "weak": {
+      "label": "用神衰弱",
+      "basis": "旺衰={level}"
+    },
+    "void": {
+      "label": "用神旬空",
+      "basis": "旬空则力虚"
+    },
+    "month_break": {
+      "label": "用神月破",
+      "basis": "月破则伤"
+    },
+    "hidden": {
+      "label": "用神伏藏",
+      "basis": "伏藏受飞神压制"
+    },
+    "controlled": {
+      "label": "日月克身",
+      "basis": "月={month_el} 日={day_el} 克用神"
+    },
+    "strong_root": {
+      "label": "用神有气",
+      "basis": "旺衰={level}"
+    },
+    "day_month_sheng": {
+      "label": "日月生扶",
+      "basis": "月={month_el} 日={day_el} 生用神"
+    },
+    "yuan_moving": {
+      "label": "原神动来生",
+      "basis": "原神发动生用神"
+    },
+    "yuan_present": {
+      "label": "原神在卦",
+      "basis": "原神出现，待时而用"
+    },
+    "fill_void": {
+      "label": "冲空填实之药",
+      "basis": "旬空待值日/冲空解：{ug_branch}"
+    },
+    "out_of_hiding": {
+      "label": "出伏之药",
+      "basis": "待冲开飞神或飞神受制"
+    },
+    "heal_break": {
+      "label": "月破待补",
+      "basis": "逢合逢值填实可解"
+    }
+  },
+  "narrative_hints": {
+    "day_hint_fu_out": "冲飞神之日伏神得出",
+    "day_hint_value_or_clash_he": "{use_br}日应事，逢{cl}冲、逢{co}合皆动",
+    "day_hint_value_or_clash": "{use_br}日或{cl}日（{use_br}{cl}冲）应事",
+    "day_hint_value": "{use_br}日值日之时最应",
+    "timing_near_illness_void": "病在近，逢空即散——快则当日、慢则数日便见松动。",
+    "timing_fast": "应期偏速，当日或数日内就有信号，别错过。",
+    "timing_slow": "应期偏迟，按月计，旺相之月到才应——别拿天来量。",
+    "timing_mid": "应期在数日到一两个月之间，不出近期。",
+    "timing_repeat": "过程有反复，别因一次起伏就下结论。",
+    "timing_day_detail": "具体看——{day_hint}。",
+    "timing_shown": "对应{shown}相关之日。",
+    "timing_calendar": "具体应期日历上落在：{calendar_str}。",
+    "advice_xiong": [
+      "先稳住现有局面，不宜加码",
+      "把风险点列出来，能避则避",
+      "等用神得力的时段再考虑推进"
+    ],
+    "advice_ji": [
+      "顺着已有条件推进，不必反复起念试探",
+      "抓住用神得力的时段做关键动作",
+      "过程有起伏属正常，盯住主线即可"
+    ],
+    "disclaimer": "这是按纳甲六爻规则推出来的一份参考，讲的是方向和节奏，不是板上钉钉的预言。看病、打官司、做重大决定，仍要以专业意见为准。"
+  },
+  "pattern_related": {
+    "六冲卦": [
+      "六冲卦",
+      "反吟",
+      "伏吟",
+      "合处逢冲"
+    ],
+    "六合卦": [
+      "六合卦",
+      "化合",
+      "冲中逢合",
+      "三合"
+    ],
+    "反吟": [
+      "反吟",
+      "六冲卦",
+      "伏吟"
+    ],
+    "伏吟": [
+      "伏吟",
+      "反吟"
+    ],
+    "游魂": [
+      "游魂",
+      "归魂"
+    ],
+    "归魂": [
+      "归魂",
+      "游魂"
+    ],
+    "化合": [
+      "化合",
+      "六合卦",
+      "合处逢冲",
+      "三合成局"
+    ],
+    "三合成局": [
+      "三合成局",
+      "六合卦",
+      "三合"
+    ],
+    "绝处逢生": [
+      "绝处逢生",
+      "用神旺",
+      "回头生"
+    ],
+    "回头生": [
+      "回头生",
+      "进神",
+      "绝处逢生"
+    ],
+    "回头克": [
+      "回头克",
+      "退神",
+      "大凶"
+    ],
+    "进神": [
+      "进神",
+      "回头生"
+    ],
+    "退神": [
+      "退神",
+      "回头克"
+    ],
+    "用神旺": [
+      "用神旺",
+      "绝处逢生",
+      "回头生"
+    ],
+    "用神休囚": [
+      "用神休囚",
+      "用神极弱"
+    ],
+    "用神极弱": [
+      "用神极弱",
+      "用神休囚",
+      "绝处逢生"
+    ],
+    "原神绝位·用神失源": [
+      "原神绝位·用神失源",
+      "用神休囚"
+    ],
+    "月破": [
+      "月破",
+      "用神空破"
+    ],
+    "近病逢空": [
+      "近病逢空即愈",
+      "用神空破"
+    ],
+    "近病逢合": [
+      "近病逢合为凶",
+      "六合卦"
+    ],
+    "久病逢空": [
+      "久病逢空为凶",
+      "用神极弱"
+    ],
+    "兄弟持世": [
+      "兄弟持世",
+      "忌神"
+    ],
+    "官鬼持世": [
+      "官鬼持世",
+      "子孙持世"
+    ],
+    "子孙持世": [
+      "子孙持世",
+      "官鬼持世"
+    ],
+    "父母持世": [
+      "父母持世",
+      "兄弟持世"
+    ],
+    "妻财持世": [
+      "妻财持世",
+      "兄弟持世"
+    ],
+    "从格": [
+      "从格",
+      "专旺格"
+    ],
+    "专旺格": [
+      "专旺格",
+      "从格"
+    ],
+    "化格": [
+      "化合",
+      "三合成局"
+    ],
+    "暗动": [
+      "暗动",
+      "伏神得出"
+    ],
+    "伏神得出": [
+      "伏神得出",
+      "伏神不得出",
+      "暗动"
+    ],
+    "伏神不得出": [
+      "伏神不得出",
+      "伏神得出"
+    ]
+  },
+  "pattern_notes_extra": {
+    "youhun": "游魂卦主在外、不安、忧疑、反复。",
+    "guihun": "归魂卦主在内、有归、安定、终有所归。",
+    "static_he_wait": "。静爻合局，待时日引发方成"
+  },
+  "shensha_policy": {
+    "_note": "星煞是否进主判的口径（有古籍出处才写；无定性表不编吉凶）",
+    "liuyao": {
+      "in_main_score": false,
+      "role": "旁参挂盘（临用/临世/临日只记位置，不进主分）",
+      "basis": [
+        "《卜筮正宗》第十八论·辟诸书之谬：辟星煞之谬——天乙贵人、天赦等各种星煞与六爻无关",
+        "《增删卜易》删去多余规则：星煞（天乙贵人、天月德等）八字命理之法，不验于六爻"
+      ],
+      "six_spirits_note": "六神（青龙/朱雀/勾陈/螣蛇/白虎/玄武）是另一套，仍作旁参；与星煞不同"
+    },
+    "ming": {
+      "in_main_score": false,
+      "role": "机械安星（天乙/文昌/驿马/桃花/华盖等）只进 chart 因子，不批吉凶",
+      "basis": [
+        "神煞安法属机械步骤（AGENTS.md 铁律一）；吉凶解读不在 core/学科层"
+      ]
+    },
+    "zeji": {
+      "in_main_score": false,
+      "role": "天月德/冲肖煞方/彭祖百忌作辅助加减，不压黄黑道与建除主判",
+      "basis": [
+        "《协纪辨方书》通行口径；仓库内无带应验的通书日例，故不作真黑箱宣称"
+      ]
+    }
+  },
+  "zeji_validity_gap": {
+    "status": "规则应用黑箱（rule-application black box）",
+    "missing": "带现实应验的通书日例（古例 day + outcome）",
+    "do_not": [
+      "伪造应验例",
+      "把规则应用分说成择吉命中率"
+    ],
+    "next": "若日后有可核验通书日例，再建 holdout 集；在此之前只报规则一致性"
   }
 }

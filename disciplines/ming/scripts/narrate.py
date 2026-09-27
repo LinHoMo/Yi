@@ -27,6 +27,10 @@ def narrate(a: dict) -> str:
         f"忌：{'、'.join(con.get('taboo_gods') or []) or '—'}。",
         "",
     ]
+    xunkong = s.get("空亡") or a.get("xunkong") or []
+    if xunkong:
+        lines.append(f"**空亡**：{'、'.join(xunkong)}（日柱旬空）。")
+        lines.append("")
     if dayun:
         lines.append("**大运**（起运岁为近似）：")
         for d in dayun:
@@ -34,6 +38,11 @@ def narrate(a: dict) -> str:
                 f"- {d.get('start_age')}–{d.get('end_age')} 岁　{d.get('ganzhi')}"
                 f"（{d.get('ten_god') or '—'}）"
             )
+        lines.append("")
+    liunian = con.get("liunian") or []
+    if liunian:
+        head = "、".join(f"{x.get('year')}{x.get('ganzhi')}({x.get('ten_god') or '—'})" for x in liunian[:6])
+        lines.append(f"**流年前六年**（干支×十神对照，不批吉凶）：{head}…")
         lines.append("")
     lines += [
         "以上为机械排盘与扶抑口径推演，**不是命运断言**。",

@@ -64,7 +64,7 @@ render(analyze)  → 交内核 report 出 HTML/MD，学科只提供盘数据与�
 4. 准备案例集：至少 10 例 `tune` + 5 例**未参与任何调参**的 `holdout`，
    每例必须有 `source`、可还原的起局信息、`expected` 要点；缺项的进 `excluded` 并写原因
 5. 实现 `analyze` 时，每个判据都要能回答"哪本古籍的哪条法则"，答不上来就不要写
-6. 实现评分器：**复用 `yishu_core.eval`（待从六爻 `scripts/evaluate.py` 上收）**，
+6. 实现评分器：**复用 `yishu_core.eval`**，
    禁止另写一套给分逻辑。指标必须报 n、报集合名、区分 strict/legacy
 7. 加进 `tools/check.py` 的质量门，基线取首次数值，此后只准前进
 

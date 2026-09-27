@@ -43,13 +43,22 @@ def build_guidance(archive: PersonArchive, adjudication: dict) -> str:
     # ------------------------------------------------------------ 1. 格局与节律（命）
     lines += ["## 一、格局与节律（命）", ""]
     if "ming" in adjudication.get("missing", []):
-        lines.append("命科未参评：本版本未实现命科推演，本节空缺。"
+        lines.append("命科未参评：本版本无命科档案数据，本节空缺。"
                      "**按合参规则 5，缺数据维度降级为未参评，不用其他科补位猜测**。")
     elif any(r.get("discipline") == "ming" for r in divs):
         ming_recs = [r for r in divs if r.get("discipline") == "ming"]
         for r in ming_recs:
-            lines.append(f"- {r.get('asked')}：{r.get('verdict')}"
-                         + (f"（{r.get('based_on')}）" if r.get("based_on") else ""))
+            bits = [r.get("asked"), r.get("verdict")]
+            extra = []
+            if r.get("strength"):
+                extra.append(f"强弱 {r.get('strength')}")
+            if r.get("pattern"):
+                extra.append(f"格局 {r.get('pattern')}")
+            if r.get("based_on"):
+                extra.append(str(r.get("based_on")))
+            lines.append("- " + "：".join(str(b) for b in bits if b)
+                         + (f"（{'；'.join(extra)}）" if extra else ""))
+        lines.append("（机械因子转述，非命运断言。）")
     else:
         lines.append("无命科数据。")
     lines.append("")

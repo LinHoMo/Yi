@@ -1,16 +1,15 @@
-# 命 · 四柱骨架（M5）
+# 命 · 四柱机械推演
 
-> **本轮只立契约与机械因子，不做命理推演**（`docs/YI-PLAN.md` M5、`AGENTS.md` 范围）。
-> 干支/藏干/十神/纳音/神煞来自内核 `yishu_core.ming_tables` / `ganzhi_calendar`。
-> 合参层只吃 `analyze` 输出的结构化因子；**不产出格局断语、大运流年吉凶**。
+> 干支/藏干/十神/纳音/神煞/空亡来自内核 `yishu_core.ming_tables` / `symbols` / `relations`。
+> 合参层只吃 `analyze` 输出的结构化因子；**不产出命运吉凶断语**。
 
 ## 四段契约
 
 | 段 | 入口 | 输出 |
 |---|---|---|
-| chart | `scripts/chart.py` | 出生时刻 → 四柱、藏干十神、纳音、神煞、命宫身宫（纯机械） |
-| analyze | `scripts/analyze.py` | 因子清单 + `verdicts: []`（空）+ 所本说明 |
-| narrate | `scripts/narrate.py` | 明示「命科推演未实现」的占位正文 |
+| chart | `scripts/chart.py` | 出生时刻 → 四柱、藏干十神、天干十神、纳音、神煞、空亡、命宫身宫（纯机械） |
+| analyze | `scripts/analyze.py` | 强弱/格局/喜用/大运 8 步/流年对照 + 机械 `verdicts`（均带 `basis`） |
+| narrate | `scripts/narrate.py` | 因子正文；明确「非命运断言」 |
 | render | `scripts/render.py` | Markdown：因子表 + 正文 |
 
 ## 怎么跑
@@ -23,7 +22,15 @@ python scripts/narrate.py scratch/analyze.json
 python tools/check.py
 ```
 
+## 口径（可回溯）
+
+- 强弱：藏干本/中/余气 1.0/0.5/0.25 + 得令加权；扶抑用神
+- 格局：月令本气十神 → 正格名；从格仅 `tentative`
+- 大运：年干阴阳×性别定顺逆；顺行取下一节、逆行取上一节；三日=一年
+- 十神：运干/流年干对日主（`relations.ten_god`）
+- 流年：只给干支×十神对照，不批吉凶
+
 ## 边界
 
 - 机械运算归代码；本层不写吉凶断语。
-- 分数/命中率口径见根 `AGENTS.md` 铁律三（本轮无案例评测集）。
+- 分数口径见根 `AGENTS.md` 铁律三（古籍对齐分 ≠ 现实预测命中率）。

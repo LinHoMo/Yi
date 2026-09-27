@@ -1,0 +1,7 @@
+{
+  "page": "卜筮正宗",
+  "api": "https://zh.wikisource.org/w/api.php",
+  "sha256": "7f644d3276c0c00cee8650a812f2f22119188b2278e409a466ae91ea3f695bd0",
+  "bytes": 912,
+  "note": "raw only; parser for this book not yet implemented"
+}

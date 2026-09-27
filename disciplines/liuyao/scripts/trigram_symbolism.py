@@ -669,29 +669,34 @@ def _general_overview(upper: str, lower: str, u: dict, l: dict, relation: str) -
 # =============================================================================
 
 if __name__ == "__main__":
-    import sys
+    import argparse
 
-    trigrams = TRIGRAM_SYMBOLISM.keys()
+    trigrams = list(TRIGRAM_SYMBOLISM.keys())
+    ap = argparse.ArgumentParser(description="八卦象意组合解读（机械查表）")
+    ap.add_argument("upper", nargs="?", help="上卦名")
+    ap.add_argument("lower", nargs="?", help="下卦名")
+    ap.add_argument("category", nargs="?", default="general",
+                    choices=("general", "career", "health", "relationship", "travel", "loss"),
+                    help="事类")
+    ap.add_argument("--list", action="store_true", help="列出可用卦名与类别")
+    args = ap.parse_args()
 
-    if len(sys.argv) < 3:
-        print("用法: python trigram_symbolism.py <上卦> <下卦> [category]")
-        print(f"可用卦: {', '.join(trigrams)}")
-        print(f"类别: general, career, health, relationship, travel, loss")
-        print()
-        # 演示：乾上坤下
-        print("── 演示：乾上坤下(天地否) ──")
-        result = interpret_trigram_combination("乾", "坤", "general")
-        print(format_trigram_interpretation_text(result))
-        print()
-        print("── 演示：坤上乾下(地天泰) ──")
-        result = interpret_trigram_combination("坤", "乾", "general")
-        print(format_trigram_interpretation_text(result))
-    else:
-        upper = sys.argv[1]
-        lower = sys.argv[2]
-        cat = sys.argv[3] if len(sys.argv) > 3 else "general"
-        if upper not in trigrams or lower not in trigrams:
-            print(f"错误: 卦名无效。可用: {', '.join(trigrams)}")
-            sys.exit(1)
-        result = interpret_trigram_combination(upper, lower, cat)
-        print(format_trigram_interpretation_text(result))
+    if args.list or not args.upper or not args.lower:
+        print("可用卦:", ", ".join(trigrams))
+        print("类别: general, career, health, relationship, travel, loss")
+        if not args.list:
+            print()
+            print("── 演示：乾上坤下(天地否) ──")
+            print(format_trigram_interpretation_text(
+                interpret_trigram_combination("乾", "坤", args.category)))
+            print()
+            print("── 演示：坤上乾下(地天泰) ──")
+            print(format_trigram_interpretation_text(
+                interpret_trigram_combination("坤", "乾", args.category)))
+        raise SystemExit(0)
+
+    if args.upper not in trigrams or args.lower not in trigrams:
+        print(f"错误: 卦名无效。可用: {', '.join(trigrams)}")
+        raise SystemExit(1)
+    result = interpret_trigram_combination(args.upper, args.lower, args.category)
+    print(format_trigram_interpretation_text(result))

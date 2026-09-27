@@ -14,6 +14,7 @@ from yishu_core.ming_tables import (
     canggan_ten_gods,
     dayun_direction,
     DAYS_PER_LUCK_YEAR,
+    MONTHS_PER_DAY,
 )
 from yishu_core.symbols import BRANCH_ELEMENTS, STEM_ELEMENTS, SHENG_CYCLE, KE_CYCLE
 
@@ -132,12 +133,29 @@ def strength_and_pattern(chart_json: dict) -> dict:
         pattern = "未知"
         pattern_basis = "缺月令十神"
 
-    # 从格 tentative：克泄耗压倒性且无生扶根
+    # 从格条件识别（通行子平口径，只标结构不断吉凶）：
+    # 日主无根且克泄耗/生扶一方压倒 → 从弱/从强；再按主导十神细分从儿/从财/从杀/从势。
     tentative_from = None
+    from_kind = None
+    from_basis = ""
     if sheng_fu < 0.5 and ke_xie_hao >= 4.0:
-        tentative_from = "从弱（tentative）"
+        # 从弱：看克泄耗里谁最强
+        role_score = {"官杀": 0.0, "食伤": 0.0, "财": 0.0}
+        for d in details:
+            r = d.get("role")
+            if r in role_score:
+                role_score[r] += float(d.get("w") or 0)
+        top_role = max(role_score, key=role_score.get)
+        from_kind = {"官杀": "从杀", "食伤": "从儿", "财": "从财"}.get(top_role, "从弱")
+        tentative_from = f"{from_kind}（tentative）"
+        from_basis = (
+            f"生扶{sheng_fu}≈无根，克泄耗{ke_xie_hao}压倒；"
+            f"主导={top_role}({role_score[top_role]})"
+        )
     elif ke_xie_hao < 0.5 and sheng_fu >= 4.0:
-        tentative_from = "从强/专旺（tentative）"
+        from_kind = "从强/专旺"
+        tentative_from = f"{from_kind}（tentative）"
+        from_basis = f"克泄耗{ke_xie_hao}≈无，生扶{sheng_fu}压倒（专旺结构）"
 
     if strength == "偏旺":
         useful = ["官杀", "食伤", "财"]
@@ -158,6 +176,8 @@ def strength_and_pattern(chart_json: dict) -> dict:
         "pattern": pattern,
         "pattern_basis": pattern_basis,
         "tentative_special": tentative_from,
+        "from_kind": from_kind,
+        "from_basis": from_basis,
         "useful_gods": useful,
         "taboo_gods": taboo,
         "useful_basis": (
@@ -170,9 +190,15 @@ def strength_and_pattern(chart_json: dict) -> dict:
 
 
 def dayun_table(chart_json: dict) -> list[dict]:
-    """大运 8 步（顺逆按年干阴阳×性别；起运岁≈距节气日数/3，见 DAYS_PER_LUCK_YEAR）。"""
+    """大运 8 步（顺逆按年干阴阳×性别；起运岁按距节气日数折算）。
+
+    顺行取出生后下一节，逆行取出生前上一节（《渊海子平》通行口径）。
+    起运：三日=一年，一日=四月（`DAYS_PER_LUCK_YEAR` / `MONTHS_PER_DAY`）；
+    十神取**运干**对日主（不是运支藏干）。
+    """
     from datetime import datetime
-    from yishu_core.ganzhi_calendar import next_jie_after
+    from yishu_core.ganzhi_calendar import next_jie_after, prev_jie_before
+    from yishu_core.relations import ten_god as _ten_god
 
     pillars = chart_json.get("pillars") or {}
     year_stem = (pillars.get("year") or {}).get("stem") or ""
@@ -185,20 +211,26 @@ def dayun_table(chart_json: dict) -> list[dict]:
     if not direction or len(month_gz) < 2:
         return []
 
-    # 起运：出生到下一节的日数 / DAYS_PER_LUCK_YEAR（三日=一年，通行近似）
-    start_age = 3
+    start_age = 3.0
+    start_age_months = 0
     approximate = True
+    jie_name = ""
     if birth_dt_s:
         try:
             bdt = datetime.strptime(str(birth_dt_s)[:16], "%Y-%m-%d %H:%M")
-            jie = next_jie_after(bdt)
+            jie = next_jie_after(bdt) if direction == "forward" else prev_jie_before(bdt)
             jie_dt = jie.get("instant") if isinstance(jie, dict) else None
+            jie_name = (jie.get("name") or "") if isinstance(jie, dict) else ""
             if isinstance(jie_dt, datetime):
-                days = max((jie_dt - bdt).total_seconds() / 86400.0, 0.0)
-                start_age = round(days / float(DAYS_PER_LUCK_YEAR), 1)
-                approximate = True  # 未计三日=一年的余数折算规则
+                days = abs((jie_dt - bdt).total_seconds()) / 86400.0
+                years = days / float(DAYS_PER_LUCK_YEAR)
+                start_age = round(years, 1)
+                # 一日=四月，把小数年折成月（粗粒度余数）
+                rem_days = days - int(days / DAYS_PER_LUCK_YEAR) * DAYS_PER_LUCK_YEAR
+                start_age_months = int(round(rem_days * MONTHS_PER_DAY))
+                approximate = True
         except Exception:
-            start_age = 3
+            start_age = 3.0
 
     stems = "甲乙丙丁戊己庚辛壬癸"
     branches = "子丑寅卯辰巳午未申酉戌亥"
@@ -215,15 +247,55 @@ def dayun_table(chart_json: dict) -> list[dict]:
         s = stems[(si + step * (i + 1)) % 10]
         b = branches[(bi + step * (i + 1)) % 12]
         gz = s + b
-        gods = canggan_ten_gods(day_stem, b) if day_stem else []
-        main_god = next((g.get("ten_god") for g in gods if g.get("layer") == "本气"), "")
+        main_god = _ten_god(day_stem, s) if day_stem else None
         a0 = round(start_age + i * 10, 1)
         out.append({
             "index": i + 1,
             "ganzhi": gz,
             "start_age": a0,
             "end_age": round(a0 + 9.9, 1),
-            "ten_god": main_god,
+            "ten_god": main_god or "",
             "approximate": approximate,
+        })
+    return out
+
+
+def liunian_table(chart_json: dict, n: int = 12) -> list[dict]:
+    """流年干支×十神对照表（只机械对照，不批吉凶）。
+
+    自出生年起 n 个流年；十神取流年干对日主。
+    """
+    from datetime import datetime
+    from yishu_core.relations import ten_god as _ten_god
+
+    pillars = chart_json.get("pillars") or {}
+    year_gz = (pillars.get("year") or {}).get("ganzhi") or ""
+    day_stem = (pillars.get("day") or {}).get("stem") or ""
+    birth_dt_s = (chart_json.get("birth") or {}).get("datetime") or ""
+    if len(year_gz) < 2:
+        return []
+
+    stems = "甲乙丙丁戊己庚辛壬癸"
+    branches = "子丑寅卯辰巳午未申酉戌亥"
+    try:
+        yi, yb = stems.index(year_gz[0]), branches.index(year_gz[1])
+    except ValueError:
+        return []
+
+    try:
+        birth_year = datetime.strptime(str(birth_dt_s)[:10], "%Y-%m-%d").year
+    except Exception:
+        birth_year = datetime.now().year
+
+    out = []
+    for i in range(int(n)):
+        s = stems[(yi + i) % 10]
+        b = branches[(yb + i) % 12]
+        gz = s + b
+        out.append({
+            "year": birth_year + i,
+            "age": i,
+            "ganzhi": gz,
+            "ten_god": (_ten_god(day_stem, s) if day_stem else "") or "",
         })
     return out

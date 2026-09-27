@@ -326,6 +326,24 @@ def next_jie_after(dt: datetime) -> dict:
                 best[0].year, best[0].month, best[0].day)}
 
 
+def prev_jie_before(dt: datetime) -> dict:
+    """dt 之前最近的"节"（定月令者）。
+
+    逆行大运起运岁取「出生到上一节」的天数（与 next_jie_after 相对）。
+    """
+    best = None
+    for y in (dt.year - 1, dt.year):
+        for name, _, _ in TWELVE_JIE:
+            inst = solar_term_instant(y, name)
+            if inst.date() < dt.date() and (best is None or inst > best[0]):
+                best = (inst, name)
+    if best is None:
+        raise RuntimeError(f"{dt} 之前未找到节气（超出可计算范围）")
+    return {"name": best[1], "instant": best[0],
+            "date": best[0].strftime("%Y-%m-%d"), "ganzhi_day": day_ganzhi_of(
+                best[0].year, best[0].month, best[0].day)}
+
+
 def next_month_branch_instant(dt: datetime, target_branch: str) -> datetime | None:
     """dt 之后第一个使月支成为 `target_branch` 的交节时刻。
 

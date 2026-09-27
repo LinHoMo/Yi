@@ -64,6 +64,103 @@ ADVANCE_PAIRS = {
 
 RETREAT_PAIRS = {v: k for k, v in ADVANCE_PAIRS.items()}
 
+# ============================================================ 旬空（空亡）
+# 六十甲子每旬（甲…癸）余下两支为「空」。甲子旬空戌亥，余仿此。
+# 消费方：六爻（用神旬空/出空）、命科（日柱空亡）。
+XUN_KONG = {
+    "甲子": ["戌", "亥"], "甲戌": ["申", "酉"], "甲申": ["午", "未"],
+    "甲午": ["辰", "巳"], "甲辰": ["寅", "卯"], "甲寅": ["子", "丑"],
+}
+
+
+def xunkong_of(day_ganzhi: str) -> list[str]:
+    """日柱干支 → 该旬空亡两支；非法返回 []。旬首按甲x 取，其余干支回溯本旬甲x。"""
+    gz = (day_ganzhi or "").strip()
+    if len(gz) != 2:
+        return []
+    stem, branch = gz[0], gz[1]
+    if stem not in HEAVENLY_STEMS or branch not in EARTHLY_BRANCHES:
+        return []
+    si, bi = HEAVENLY_STEMS.index(stem), EARTHLY_BRANCHES.index(branch)
+    # 本旬甲支：从日支回溯到最近的甲*（天干序差）
+    xun_start_branch = EARTHLY_BRANCHES[(bi - si) % 12]
+    key = "甲" + xun_start_branch
+    return list(XUN_KONG.get(key, []))
+
+
+# ============================================================ 三刑
+# 《三命通会》通行口径：无礼之刑（子卯）、无恩之刑（寅巳申）、恃势之刑（丑戌未），
+# 另有自刑辰午酉亥。这里只存结构，判刑由机械函数 `sanxing_hits` 给出，不断吉凶。
+THREE_PUNISHMENTS_CYCLIC = {
+    "无恩之刑": ["寅", "巳", "申"],
+    "恃势之刑": ["丑", "戌", "未"],
+}
+THREE_PUNISHMENTS_MUTUAL = {
+    "无礼之刑": ("子", "卯"),
+}
+SELF_PUNISHMENTS = ["辰", "午", "酉", "亥"]
+THREE_PUNISHMENTS = {
+    "无礼之刑": [("子", "卯")],
+    "无恩之刑": [("寅", "巳"), ("巳", "申"), ("申", "寅")],
+    "恃势之刑": [("丑", "戌"), ("戌", "未"), ("未", "丑")],
+    "自刑": ["辰", "午", "酉", "亥"],
+}
+
+
+def sanxing_hits(branches: list[str]) -> list[str]:
+    """地支集合 → 命中的三刑类型名列表（只报结构，不报吉凶）。"""
+    bs = [b for b in (branches or []) if b in BRANCH_ELEMENTS]
+    hits: list[str] = []
+    set_bs = set(bs)
+    if "子" in set_bs and "卯" in set_bs:
+        hits.append("无礼之刑")
+    for name, cycle in THREE_PUNISHMENTS_CYCLIC.items():
+        if all(b in set_bs for b in cycle):
+            hits.append(name)
+    for b in SELF_PUNISHMENTS:
+        if bs.count(b) >= 2:
+            hits.append("自刑")
+            break
+    return hits
+
+
+# ============================================================ 十二长生
+# 阳干顺行、阴干逆行的通行表已折算成「五行 → 支序」固定盘（火土同宫）。
+# 只存结构；旺衰加减由学科层按自身口径消费。
+TWELVE_GROWTH_STAGES = [
+    "长生", "沐浴", "冠带", "临官", "帝旺",
+    "衰", "病", "死", "墓", "绝", "胎", "养",
+]
+TWELVE_GROWTH_TABLES = {
+    "木": ["亥", "子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌"],
+    "火": ["寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥", "子", "丑"],
+    "金": ["巳", "午", "未", "申", "酉", "戌", "亥", "子", "丑", "寅", "卯", "辰"],
+    "水": ["申", "酉", "戌", "亥", "子", "丑", "寅", "卯", "辰", "巳", "午", "未"],
+    "土": ["申", "酉", "戌", "亥", "子", "丑", "寅", "卯", "辰", "巳", "午", "未"],
+}
+# 火土同长生（寅起）；与上表「土从水（申起）」并存是流派差异，本仓库默认火土同宫。
+TWELVE_GROWTH = {
+    "木": {b: TWELVE_GROWTH_STAGES[i] for i, b in enumerate(TWELVE_GROWTH_TABLES["木"])},
+    "火": {b: TWELVE_GROWTH_STAGES[i] for i, b in enumerate(TWELVE_GROWTH_TABLES["火"])},
+    "土": {b: TWELVE_GROWTH_STAGES[i] for i, b in enumerate(TWELVE_GROWTH_TABLES["火"])},  # 火土同宫
+    "金": {b: TWELVE_GROWTH_STAGES[i] for i, b in enumerate(TWELVE_GROWTH_TABLES["金"])},
+    "水": {b: TWELVE_GROWTH_STAGES[i] for i, b in enumerate(TWELVE_GROWTH_TABLES["水"])},
+}
+
+
+def twelve_growth(element: str, branch: str) -> str | None:
+    """五行 + 地支 → 十二长生阶段名；非法返回 None。"""
+    return TWELVE_GROWTH.get(element, {}).get(branch)
+
+
+def twelve_growth_index(element: str, branch: str) -> int | None:
+    """五行 + 地支 → 长生序号（0=长生 … 11=养）；非法返回 None。"""
+    stage = twelve_growth(element, branch)
+    if stage is None:
+        return None
+    return TWELVE_GROWTH_STAGES.index(stage)
+
+
 NAJIA_BRANCHES = {
     "乾": {
         "inner": ["子", "寅", "辰"],   # 下卦从下到上
@@ -258,12 +355,16 @@ def yao_values(name: str, moving: tuple[int, ...] = ()) -> list[int]:
 
     `name` 可以是经卦（乾…兑）或六十四卦卦名（需 HEXAGRAM_TRIGRAMS 有记录）。
     `moving` 是 1..6 的爻位。
+
+    八纯卦（乾/坤/坎/离/震/巽/艮/兑）同名既有经卦也有别卦：本函数**优先按六十四卦**
+    返回 6 爻；要经卦 3 爻请直接用 `BAGUA_LINES[name]`。
     """
-    if name in BAGUA_LINES:
-        lines = BAGUA_LINES[name]
-    elif name in HEXAGRAM_TRIGRAMS:
+    # 六十四卦优先（八纯卦与经卦重名）
+    if name in HEXAGRAM_TRIGRAMS:
         upper, lower = HEXAGRAM_TRIGRAMS[name]
         lines = BAGUA_LINES[lower] + BAGUA_LINES[upper]
+    elif name in BAGUA_LINES:
+        lines = BAGUA_LINES[name]
     else:
         raise KeyError(f"未知卦名：{name}")
     out = []

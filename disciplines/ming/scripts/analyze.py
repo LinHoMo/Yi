@@ -19,7 +19,7 @@ for _p in (str(CORE), str(Path(__file__).resolve().parent)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from pattern import strength_and_pattern, dayun_table  # noqa: E402
+from pattern import strength_and_pattern, dayun_table, liunian_table  # noqa: E402
 
 
 def analyze(chart_json: dict) -> dict:
@@ -28,6 +28,7 @@ def analyze(chart_json: dict) -> dict:
     pillars = result.get("pillars") or {}
     sp = strength_and_pattern(result)
     dayun = dayun_table(result)
+    liunian = liunian_table(result, n=12)
 
     summary = {
         "四柱": {k: (v or {}).get("ganzhi") for k, v in pillars.items()},
@@ -37,6 +38,7 @@ def analyze(chart_json: dict) -> dict:
         "强弱": sp.get("strength"),
         "格局": sp.get("pattern"),
         "喜用": "、".join(sp.get("useful_gods") or []),
+        "空亡": result.get("xunkong") or [],
     }
 
     verdicts = [
@@ -56,13 +58,19 @@ def analyze(chart_json: dict) -> dict:
         verdicts.append({
             "code": "special_pattern",
             "label": sp.get("tentative_special"),
-            "basis": "仅条件识别，未作定论；需人工复核",
+            "basis": sp.get("from_basis") or "仅条件识别，未作定论；需人工复核",
         })
     if dayun:
         verdicts.append({
             "code": "dayun",
             "label": f"大运 8 步（{dayun[0]['ganzhi']}→{dayun[-1]['ganzhi']}）",
-            "basis": "顺逆按年干阴阳×性别；起运岁≈3 近似（三日=一年）",
+            "basis": "顺逆按年干阴阳×性别；起运岁≈距节气日数/3（三日=一年，一日=四月）",
+        })
+    if result.get("xunkong"):
+        verdicts.append({
+            "code": "xunkong",
+            "label": "空亡 " + "、".join(result["xunkong"]),
+            "basis": "日柱所在旬之空亡（core.symbols.xunkong_of）",
         })
 
     return {
@@ -87,6 +95,7 @@ def analyze(chart_json: dict) -> dict:
             "useful_gods": sp.get("useful_gods") or [],
             "taboo_gods": sp.get("taboo_gods") or [],
             "dayun": dayun,
+            "liunian": liunian,
         },
     }
 

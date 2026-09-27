@@ -32,11 +32,16 @@ CONTRACT_FILES = ("SKILL.md", "scripts/chart.py", "scripts/analyze.py",
 NEW_DISCIPLINES = ("meihua", "xiaoliuren", "zeji", "ming")
 
 # 内核唯一真值表名：学科内出现同名赋值即视为复制（AGENTS.md 内核唯一真值源）
+# 含历史别名/拆分名（STEMS/NAYIN_TABLE/XUN_KONG/SAN_HE…），否则同义表仍会漏检。
 CORE_TABLE_ASSIGN = re.compile(
     r"^\s*(EARTHLY_BRANCHES|HEAVENLY_STEMS|BAGUA_LINES|HEXAGRAM_TRIGRAMS|"
     r"EIGHT_PALACES|TRIGRAM_ELEMENTS|XIAN_TIAN_TRIGRAM_NUMBERS|NUMBER_TO_TRIGRAM|"
     r"SHENG_CYCLE|KE_CYCLE|TWELVE_CHANGES|NAJIA|LIU_QIN|LIU_SHEN|"
-    r"ER_SHISI_XIU|JIAN_CHU|HUANG_HEI_DAO)\s*=\s*[\[\{]", re.M)
+    r"ER_SHISI_XIU|JIAN_CHU|HUANG_HEI_DAO|"
+    r"STEMS|BRANCHES|NAYIN|NAYIN_TABLE|NAYIN_COUPLETS|NAYIN_TO_ELEMENT|"
+    r"XUN_KONG|SAN_HE|SAN_HE_GROUPS|THREE_PUNISHMENTS|THREE_PUNISHMENTS_CYCLIC|"
+    r"THREE_PUNISHMENTS_MUTUAL|SELF_PUNISHMENTS|TWELVE_GROWTH|TWELVE_GROWTH_TABLES|"
+    r"TWELVE_GROWTH_STAGES|SIX_RELATIONS|LIUQIN_NAMES)\s*=\s*[\[\{]", re.M)
 
 # 学科间 import（违反 disciplines 禁止互相 import 的契约）
 CROSS_DISC_IMPORT = re.compile(
@@ -173,6 +178,20 @@ def main() -> int:
         else:
             failures.append("内核自检失败")
             print("  × 干支历内核自检")
+            print(f"      …{_tail(out)}")
+        code, out = _run_py(["tools/core_selftest.py"], label="内核 API 自测")
+        if code == 0:
+            print("  √ 内核 API 自测（旬空/三刑/长生/纳音/十神/节气）")
+        else:
+            failures.append("内核 API 自测失败")
+            print("  × 内核 API 自测")
+            print(f"      …{_tail(out)}")
+        code, out = _run_py(["tools/text_keys_selftest.py"], label="断语库键一致性")
+        if code == 0:
+            print("  √ 断语库键一致性（JSON 与代码引用对齐）")
+        else:
+            failures.append("断语库键一致性失败")
+            print("  × 断语库键一致性")
             print(f"      …{_tail(out)}")
 
     for disc in NEW_DISCIPLINES:

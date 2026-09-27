@@ -30,9 +30,15 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     SHENG_CYCLE,
     STEM_ELEMENTS,
     TOMB_MAP,
+    TWELVE_GROWTH as _CORE_TWELVE_GROWTH,
+    TWELVE_GROWTH_STAGES as _CORE_TWELVE_GROWTH_STAGES,
+    TWELVE_GROWTH_TABLES as _CORE_TWELVE_GROWTH_TABLES,
+    XUN_KONG as _CORE_XUN_KONG,
     palace_of_key,
     EARTHLY_BRANCHES as BRANCHES,
 )
+from yishu_core.ming_tables import SAN_HE_GROUPS as _CORE_SAN_HE  # noqa: E402
+from yishu_core.relations import SIX_RELATIONS  # noqa: E402
 
 from datetime import datetime, timedelta
 
@@ -43,7 +49,7 @@ import re
 from pathlib import Path
 
 
-STEMS = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+STEMS = list(HEAVENLY_STEMS)
 
 
 SHENG_WO = {v: k for k, v in SHENG_CYCLE.items()}
@@ -52,51 +58,37 @@ SHENG_WO = {v: k for k, v in SHENG_CYCLE.items()}
 KE_WO = {v: k for k, v in KE_CYCLE.items()}
 
 
-PALACE_GENERATING = dict(SHENG_WO)  # {"木": "水", "火": "木", "土": "火", "金": "土", "水": "金"}
+PALACE_GENERATING = dict(SHENG_WO)
 
 
-PALACE_OVERCOMING = dict(KE_WO)    # {"木": "金", "火": "水", "土": "木", "金": "火", "水": "土"}
+PALACE_OVERCOMING = dict(KE_WO)
 
 
-SAN_HE = {
-    "水": ["申", "子", "辰"],
-    "火": ["寅", "午", "戌"],
-    "金": ["巳", "酉", "丑"],
-    "木": ["亥", "卯", "未"],
-}
+# 三合/十二长生/旬空：真值源在 core.yishu_core（AGENTS.md §二），此处仅别名。
+SAN_HE = _CORE_SAN_HE  # core.ming_tables.SAN_HE_GROUPS 别名
 
 
-TWELVE_GROWTH_TABLES = {
-    "木": ["亥", "子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌"],
-    "火": ["寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥", "子", "丑"],
-    "金": ["巳", "午", "未", "申", "酉", "戌", "亥", "子", "丑", "寅", "卯", "辰"],
-    "水": ["申", "酉", "戌", "亥", "子", "丑", "寅", "卯", "辰", "巳", "午", "未"],
-    "土": ["申", "酉", "戌", "亥", "子", "丑", "寅", "卯", "辰", "巳", "午", "未"],
-}
+TWELVE_GROWTH_TABLES = _CORE_TWELVE_GROWTH_TABLES
 
 
-TWELVE_GROWTH_STAGES = [
-    "长生", "沐浴", "冠带", "临官", "帝旺",
-    "衰", "病", "死", "墓", "绝", "胎", "养",
-]
+TWELVE_GROWTH_STAGES = _CORE_TWELVE_GROWTH_STAGES
 
 
-SIX_RELATIONS = ["父母", "官鬼", "子孙", "妻财", "兄弟"]
 
 
 RELATION_ELEMENT = {
-    "兄弟": None,  # 同宫五行，后面特殊处理
-    "子孙": None,  # 宫五行所生
-    "妻财": None,  # 宫五行所克
-    "官鬼": None,  # 克宫五行
-    "父母": None,  # 生宫五行
+    "兄弟": None,
+    "子孙": None,
+    "妻财": None,
+    "官鬼": None,
+    "父母": None,
 }
 
 
 JUE_MAP = {
     "木": "申",
     "火": "亥",
-    "土": "亥",  # 土从水
+    "土": "亥",
     "金": "寅",
     "水": "巳",
 }
@@ -121,10 +113,7 @@ TRIGRAM_ELEMENT = {
 }
 
 
-XUN_KONG = {
-    "甲子": ["戌", "亥"], "甲戌": ["申", "酉"], "甲申": ["午", "未"],
-    "甲午": ["辰", "巳"], "甲辰": ["寅", "卯"], "甲寅": ["子", "丑"],
-}
+XUN_KONG = _CORE_XUN_KONG
 
 
 HEXAGRAM_LIUHE = ["泰", "否", "贲", "困", "旅", "豫", "复", "小畜"]
@@ -184,18 +173,7 @@ USE_GOD_RELATIONSHIPS = {
 }
 
 
-TWELVE_GROWTH = {
-    "木": {"亥": "长生", "子": "沐浴", "丑": "冠带", "寅": "临官", "卯": "帝旺",
-           "辰": "衰", "巳": "病", "午": "死", "未": "墓", "申": "绝", "酉": "胎", "戌": "养"},
-    "火": {"寅": "长生", "卯": "沐浴", "辰": "冠带", "巳": "临官", "午": "帝旺",
-           "未": "衰", "申": "病", "酉": "死", "戌": "墓", "亥": "绝", "子": "胎", "丑": "养"},
-    "土": {"寅": "长生", "卯": "沐浴", "辰": "冠带", "巳": "临官", "午": "帝旺",
-           "未": "衰", "申": "病", "酉": "死", "戌": "墓", "亥": "绝", "子": "胎", "丑": "养"},
-    "金": {"巳": "长生", "午": "沐浴", "未": "冠带", "申": "临官", "酉": "帝旺",
-           "戌": "衰", "亥": "病", "子": "死", "丑": "墓", "寅": "绝", "卯": "胎", "辰": "养"},
-    "水": {"申": "长生", "酉": "沐浴", "戌": "冠带", "亥": "临官", "子": "帝旺",
-           "丑": "衰", "寅": "病", "卯": "死", "辰": "墓", "巳": "绝", "午": "胎", "未": "养"},
-}
+TWELVE_GROWTH = _CORE_TWELVE_GROWTH
 
 
 _TWELVE_GROWTH_SCORE = {
@@ -207,14 +185,9 @@ _TWELVE_GROWTH_SCORE = {
 }
 
 
-_BRANCH_CLASHES = {
-    "子": "午", "午": "子",
-    "丑": "未", "未": "丑",
-    "寅": "申", "申": "寅",
-    "卯": "酉", "酉": "卯",
-    "辰": "戌", "戌": "辰",
-    "巳": "亥", "亥": "巳",
-}
+# 六冲对照：由 core.CHONG_PAIRS 派生，不另抄一份
+_BRANCH_CLASHES = {a: b for a, b in CHONG_PAIRS}
+_BRANCH_CLASHES.update({b: a for a, b in CHONG_PAIRS})
 
 
 _HEXAGRAM_HARMONY_SET = set()

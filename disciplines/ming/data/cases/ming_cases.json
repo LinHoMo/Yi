@@ -1,1 +1,72 @@
-﻿{"_meta": {"说明": "命科案例集（骨架）：本轮无古籍占验案例，推演未实现。"}, "tune": [], "holdout": []}
+{
+  "_meta": {
+    "说明": "命科机械因子回归用例（非古籍占验、非对齐分）",
+    "用途": "固定出生样例回归强弱/格局/空亡/四柱；禁止当预测率"
+  },
+  "tune": [],
+  "holdout": [],
+  "regression": [
+    {
+      "id": "MG001",
+      "datetime": "1984-02-10 10:00",
+      "gender": "男",
+      "expect": {
+        "pillars": {
+          "year": "甲子",
+          "month": "丙寅",
+          "day": null,
+          "hour": null
+        },
+        "strength_in": [
+          "中和",
+          "偏旺",
+          "偏弱"
+        ],
+        "pattern": "建禄格",
+        "xunkong": [
+          "申",
+          "酉"
+        ],
+        "dayun_dir": "forward"
+      }
+    },
+    {
+      "id": "MG002",
+      "datetime": "1990-05-20 10:30",
+      "gender": "男",
+      "expect": {
+        "strength": "偏弱",
+        "pattern": "伤官格",
+        "dayun_dir": "forward"
+      }
+    },
+    {
+      "id": "MG003",
+      "datetime": "1984-12-08 08:00",
+      "gender": "女",
+      "expect": {
+        "strength": "偏弱",
+        "pattern": "正官格",
+        "dayun_dir": "backward"
+      }
+    },
+    {
+      "id": "MG004",
+      "datetime": "1996-11-11 22:00",
+      "gender": "男",
+      "expect": {
+        "strength": "偏旺",
+        "pattern": "建禄格"
+      }
+    },
+    {
+      "id": "MG005",
+      "datetime": "2000-08-15 14:00",
+      "gender": "男",
+      "expect": {
+        "strength": "偏弱",
+        "pattern": "正官格"
+      }
+    }
+  ]
+}

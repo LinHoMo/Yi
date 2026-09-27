@@ -34,7 +34,7 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
 
 from classical_support import _branch_element, _combined_strength, _element_to_relation, _find_stage_at, _find_use_god_positions, _get_use_god_strength_level, _infer_use_god_category, _pos_to_name, _relation_element, _score_fanyin, _score_fuyin, _strength_score, determine_six_relation, element_strength_in_month, find_hexagram_body, g_day_cn, get_changed_hexagram_branch, get_month_strength_description, get_stages_of_interest, get_twelve_growth_stage, is_ba_zu_chong, is_ba_zu_he
 from classical_tables import KE_WO, SAN_HE, SELF_PUNISHMENTS, SHENG_WO, SIX_RELATIONS, THREE_PUNISHMENTS_CYCLIC, THREE_PUNISHMENTS_MUTUAL, TRANSFORMATION_PATTERNS, TWELVE_GROWTH
-from chain_verdicts import CLASSICAL_INTERPRETATIONS as CINTERP, CLASSICAL_RULES_NOTES as _CR_NOTES, CLASSICAL_RULES_TEMPLATES as _CR_TPL
+from chain_verdicts import PATTERN_NOTES_EXTRA,  PATTERN_VERDICTS, CLASSICAL_INTERPRETATIONS as CINTERP, CLASSICAL_RULES_NOTES as _CR_NOTES, CLASSICAL_RULES_TEMPLATES as _CR_TPL
 
 
 def ctext(key: str, **fmt) -> str:
@@ -115,9 +115,9 @@ def analyze_wandering_returning_soul(result):
         "is_soul_hexagram": False,
         "soul_type": None,
         "meaning": CINTERP["not_youhun_guihun"]["text"],
-        "travel": "无游魂归魂特征",
-        "residence": "无游魂归魂特征",
-        "mind": "无游魂归魂特征",
+        "travel": PATTERN_VERDICTS["no_youhun_guihun"],
+        "residence": PATTERN_VERDICTS["no_youhun_guihun"],
+        "mind": PATTERN_VERDICTS["no_youhun_guihun"],
         "summary": CINTERP["not_youhun_guihun_summary"]["text"],
         "score_adjustment": 0,
     }
@@ -443,7 +443,7 @@ def analyze_triple_combo(result):
         if completeness == "完整":
             desc += ctpl("crt_016", combo_element)
         elif completeness == "待用（需冲引发）":
-            desc += "。静爻合局，待时日引发方成"
+            desc += PATTERN_NOTES_EXTRA["static_he_wait"]
 
         if _broken["status"] == "破局":
             desc += ctpl("crt_089", '；'.join(_broken['issues']))
@@ -723,7 +723,7 @@ def analyze_twelve_growth(result):
                              for p in weak_lines)
         parts.append(ctpl("crt_020", weak_desc))
 
-    summary = "；".join(parts) if parts else "各爻状态平和"
+    summary = "；".join(parts) if parts else PATTERN_VERDICTS["yao_states_calm"]
 
     return {
         "day_branch": day_branch,
@@ -887,32 +887,32 @@ def analyze_desperate_relief(result):
     # ── Apply judgment logic ──
     if yuan_shen_moving and yuan_shen_combined in ("旺", "相", "中和") and \
        not yuan_shen_empty and not yuan_shen_month_break:
-        out["verdict"] = "绝处逢生"
+        out["verdict"] = PATTERN_VERDICTS["jue_chu_feng_sheng"]
         out["score_modifier"] = 2.0
         out["description"] = (
             ctpl("crt_003", use_god_element, use_god_branch, stage, yuan_shen_element, yuan_shen_combined)
         )
     elif yuan_shen_moving and not yuan_shen_empty and not yuan_shen_month_break:
-        out["verdict"] = "绝处逢生但原神无力"
+        out["verdict"] = PATTERN_VERDICTS["jue_chu_feng_sheng_weak_yuan"]
         out["score_modifier"] = 0.5
         out["description"] = (
             ctpl("crt_021", use_god_element, use_god_branch, stage, yuan_shen_element, yuan_shen_combined)
         )
     elif yuan_shen_present and not yuan_shen_empty and not yuan_shen_month_break:
-        out["verdict"] = "绝地待原神"
+        out["verdict"] = PATTERN_VERDICTS["jue_wait_yuan"]
         out["score_modifier"] = 0.2
         out["description"] = (
             ctpl("crt_050", use_god_element, use_god_branch, stage, yuan_shen_element)
         )
     elif not yuan_shen_present:
-        out["verdict"] = "绝地无救"
+        out["verdict"] = PATTERN_VERDICTS["jue_no_save"]
         out["score_modifier"] = -0.8
         out["description"] = (
             ctpl("crt_067", use_god_element, use_god_branch, stage, yuan_shen_element)
         )
     else:
         # 原神 present but empty or month-broken
-        out["verdict"] = "绝地无救"
+        out["verdict"] = PATTERN_VERDICTS["jue_no_save"]
         out["score_modifier"] = -0.8
         out["description"] = (
             ctpl("crt_068", use_god_element, use_god_branch, stage, yuan_shen_element, ctext('cr_031') if yuan_shen_empty else ctext('cr_032'))

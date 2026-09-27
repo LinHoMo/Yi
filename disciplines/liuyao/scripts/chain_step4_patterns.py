@@ -44,7 +44,7 @@ from pathlib import Path
 
 from chain_step2 import _element_to_relation
 from chain_support import _branch_element, _is_chong, _is_he, _pos_to_name, get_changed_hexagram_branch, get_relation_from_element, safe_get
-from chain_tables import JUE_MAP, _HEXAGRAM_HARMONY_SET
+from chain_tables import JUE_MAP, _BRANCH_CLASH_MAP, _HE_MAP, _HEXAGRAM_HARMONY_SET
 
 
 def _detect_classical_illness_pattern(question: str, step2_data: dict, step3_data: dict,
@@ -246,11 +246,12 @@ def _detect_hexagram_harmony_clash_pattern(question: str, hex_result: dict, step
                 world_branch = y.get("earthly_branch", "")
             if y.get("is_response"):
                 response_branch = y.get("earthly_branch", "")
-        # 六合：子丑 寅亥 卯戌 辰酉 巳申 午未
-        HE_MAP = {"子": "丑", "丑": "子", "寅": "亥", "亥": "寅", "卯": "戌", "戌": "卯",
-                  "辰": "酉", "酉": "辰", "巳": "申", "申": "巳", "午": "未", "未": "午"}
-        world_he = world_branch and (HE_MAP.get(world_branch, "") in [month_branch, day_branch])
-        response_he = response_branch and (HE_MAP.get(response_branch, "") in [month_branch, day_branch])
+        # 六合：由 core.HE_PAIRS 派生的 _HE_MAP（chain_tables），不另抄
+        def _he_with(b: str) -> bool:
+            partners = _HE_MAP.get(b) or []
+            return month_branch in partners or day_branch in partners
+        world_he = world_branch and _he_with(world_branch)
+        response_he = response_branch and _he_with(response_branch)
         # 动爻化合（化出之爻与月日成合，或化出之爻生合用神）方可解冲
         details = step4_data.get("details", []) if step4_data else []
         def _is_helpful_he(d):
@@ -258,7 +259,8 @@ def _detect_hexagram_harmony_clash_pattern(question: str, hex_result: dict, step
                 return False
             chg_branch = d.get("changed_branch", "")
             # 化出之支与日月成合 → 解冲
-            if chg_branch and HE_MAP.get(chg_branch, "") in [month_branch, day_branch]:
+            if chg_branch and (month_branch in (_HE_MAP.get(chg_branch) or [])
+                               or day_branch in (_HE_MAP.get(chg_branch) or [])):
                 return True
             return False
         moving_he = any(_is_helpful_he(d) for d in details)
@@ -296,12 +298,12 @@ def _detect_hexagram_harmony_clash_pattern(question: str, hex_result: dict, step
             if y.get("is_response"):
                 response_branch = y.get("earthly_branch", "")
 
-        # Check if world/response is being clashed by month or day
-        CLASH_MAP = {"子": "午", "午": "子", "卯": "酉", "酉": "卯",
-                     "寅": "申", "申": "寅", "巳": "亥", "亥": "巳",
-                     "辰": "戌", "戌": "辰", "丑": "未", "未": "丑"}
-        world_clashed = world_branch and CLASH_MAP.get(world_branch, "") in [month_branch, day_branch]
-        response_clashed = response_branch and CLASH_MAP.get(response_branch, "") in [month_branch, day_branch]
+        # Check if world/response is being clashed by month or day（_BRANCH_CLASH_MAP 由 core 派生）
+        def _clashed_by(b: str) -> bool:
+            partner = _BRANCH_CLASH_MAP.get(b, "")
+            return partner and partner in (month_branch, day_branch)
+        world_clashed = world_branch and _clashed_by(world_branch)
+        response_clashed = response_branch and _clashed_by(response_branch)
 
         if (world_clashed or response_clashed):
             SCATTER2 = ["婚姻", "婚", "占婚", "合伙", "合作", "出行", "外出", "交易", "买卖",
