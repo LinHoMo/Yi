@@ -64,7 +64,7 @@ def check_version() -> list[str]:
     fails = []
     pat = re.compile(r'(__version__\s*=\s*["\']|version\s*=\s*["\']\d)')
     for p in ROOT.rglob("*.py"):
-        if "__pycache__" in p.parts or "scratch" in p.parts:
+        if "__pycache__" in p.parts or "scratch" in p.parts or ".worktrees" in p.parts:
             continue
         if p == CORE / "yishu_core" / "__init__.py":
             continue
