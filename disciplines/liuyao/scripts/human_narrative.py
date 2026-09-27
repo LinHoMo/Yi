@@ -34,6 +34,7 @@ def _load_narrative_templates() -> dict:
 
 
 _NARRATIVE_TPL = _load_narrative_templates()
+_ADVICE_SOFT = _NARRATIVE_TPL.get("advice_soft") or {}
 
 
 def _pos_name(p) -> str:
@@ -183,7 +184,7 @@ def _change_sentence(s4: dict, s2: dict) -> str:
         elif role == "仇神":
             bits.append(_fmt("foe", pos=pos, rel=rel))
         else:
-            bits.append(_fmt("other", pos=pos, rel=rel or "他爻"))
+            bits.append(_fmt("other", pos=pos, rel=(rel or "他爻")))
 
     if not bits:
         bits.append(tpl.get("bits_empty") or "")
@@ -448,11 +449,11 @@ def _meaning_paragraph(verdict, s2, s3, special, question, factor_contribs=None)
     parts = []
     # —— 一言定性（精简、不再与 p1 重复） ——
     if vdir > 0:
-        parts.append(f"方向可以推进，但别贪。")
+        parts.append(_ADVICE_SOFT.get("push") or "")
     elif vdir < 0:
-        parts.append(f"风头不利，暂把现有局面稳住更划算。")
+        parts.append(_ADVICE_SOFT.get("hold") or "")
     else:
-        parts.append(f"事在两可之间，谁先动谁定局。")
+        parts.append(_ADVICE_SOFT.get("wait") or "")
 
     # —— 引用 factor_contributions 关键项（只说因子名+理由，不带评分数字） ——
     if factor_contribs:
@@ -475,13 +476,13 @@ def _meaning_paragraph(verdict, s2, s3, special, question, factor_contribs=None)
 
     # —— 弱而格吉/弱而格凶，点一句 ——
     if any(x in strength for x in ("弱", "囚", "死")) and vdir > 0:
-        parts.append("用神虽弱，却得格局生扶——'绝处逢生'之象，成可成，心力要花够。")
+        parts.append((_ADVICE_SOFT.get("weak_but_pattern") or "") + "'绝处逢生'之象，成可成，心力要花够。")
     if any(x in strength for x in ("弱", "囚", "死")) and vdir <= 0:
-        parts.append("用神弱叠不利——'克多出暴'之险，此时当守不宜攻。")
+        parts.append((_ADVICE_SOFT.get("weak_and_bad") or "") + "'克多出暴'" + (_ADVICE_SOFT.get("weak_and_bad_tail") or ""))
     if "冲中逢合" in str(special or ""):
-        parts.append("冲中逢合，先难后成——过前面那关才谈得到后面的合。")
+        parts.append(_ADVICE_SOFT.get("chong_then_he") or "")
     if "回头克" in str(special or ""):
-        parts.append("回头克为'自伤'——阻力从内在格局生，稳住节奏便是破法。")
+        parts.append("回头克为'自伤'" + (_ADVICE_SOFT.get("internal_block") or ""))
 
     return "".join(parts)
 

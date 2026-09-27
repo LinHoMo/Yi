@@ -336,6 +336,9 @@ def yingqi_discrimination(engine_out: dict, ids: list[str]) -> dict:
         "avg_rank_of_correct": round(sum(ranks) / len(ranks), 2) if ranks else None,
         "ranked_cases": len(ranks),
         "random_full_coverage_expectancy": round(sum(random_p) * 100.0 / len(random_p), 1),
+        "yingqi_day": None,
+        "yingqi_month": None,
+        "yingqi_year": None,
         "by_unit": {u: {"n": v["n"],
                         "top1_hit_rate": round(v["top1"] * 100.0 / v["n"], 1) if v["n"] else None,
                         "avg_rank": round(sum(v["ranks"]) / len(v["ranks"]), 2) if v["ranks"] else None,
@@ -407,9 +410,22 @@ def main() -> int:
               f"（召回分接近此值 = 等于没判断）")
         print(f"  top-1 命中 {disc['top1_hit_rate']}%；基准应支平均排在第 {disc['avg_rank_of_correct']} 位"
               f"（{disc['ranked_cases']} 例可定位）← 这一项才见真章")
+        # 应期日/月/年分列（口径：按 expected 时间单位切分；合集仍见上）
+        unit_map = {"日": "yingqi_day", "月": "yingqi_month", "年": "yingqi_year"}
         for u, v in (disc.get("by_unit") or {}).items():
+            key = unit_map.get(u)
+            if key and key in disc:
+                disc[key] = {"n": v["n"], "top1_hit_rate": v["top1_hit_rate"],
+                             "avg_rank": v["avg_rank"], "ranked": v["ranked"]}
             print(f"    {u}级：n={v['n']}，top-1 {v['top1_hit_rate']}%，"
                   f"平均名次 {v['avg_rank']}（{v['ranked']} 例可定位）")
+        print("  分列（strict 应期）："
+              + "；".join(
+                  f"{k.split('_')[1]} n={ (disc.get(k) or {}).get('n') }"
+                  f" top-1={ (disc.get(k) or {}).get('top1_hit_rate') }%"
+                  for k in ("yingqi_day", "yingqi_month", "yingqi_year")
+                  if disc.get(k)
+              ))
 
     print(f"\n口径差异：strict {strict['avg']}% vs legacy {legacy['avg']}%"
           f"（差 {round(legacy['avg'] - strict['avg'], 1)} 分来自空白基准满分与应期保底）")

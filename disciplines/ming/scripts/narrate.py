@@ -39,6 +39,13 @@ def narrate(a: dict) -> str:
                 f"（{d.get('ten_god') or '—'}）"
             )
         lines.append("")
+    xs = con.get("dayun_liunian") or []
+    if xs:
+        lines.append("**大运×流年对照**（机械关系，不批吉凶）：")
+        for x in xs[:4]:
+            rel = "；".join(r.get("text", "") for r in (x.get("relations") or [])[:2])
+            lines.append(f"- {x.get('year')}（{x.get('liunian')}）× 运{x.get('dayun')}：{rel or '—'}")
+        lines.append("")
     liunian = con.get("liunian") or []
     if liunian:
         head = "、".join(f"{x.get('year')}{x.get('ganzhi')}({x.get('ten_god') or '—'})" for x in liunian[:6])

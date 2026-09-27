@@ -10,20 +10,26 @@ analyze 输出里找到出处；术语出现时顺口带一句，不堆字段。
   → 生体/克体卦的具体含义 → 应期与节奏 → 口径收尾。
 """
 from __future__ import annotations
+import json
+from pathlib import Path as _P
 
 from pathlib import Path
+
+_NP = json.loads((_P(__file__).resolve().parents[1] / 'data' / 'verdicts.json').read_text(encoding='utf-8')).get('narrate_phrases', {})
 
 _MOVING_CN = {1: "初爻", 2: "二爻", 3: "三爻", 4: "四爻", 5: "五爻", 6: "上爻"}
 
 _DIRECTION_OPENING = {
-    "吉": "这卦整体是顺的，天时人事大体都站在你这边",
-    "平吉": "大体顺遂，节奏比结果更要紧——别急着要一个痛快的结果",
-    "平": "事在两可之间，成与不成看后续生扶和月令，先稳住局面",
-    "平凶": "偏向有阻，凶势未盛——先看清克体之卦示的险处，再决定动不动",
-    "凶": "事势偏于不利，眼下不宜硬推，宜缓宜防",
+    "吉": _NP["open_daji"],
+    "平吉": _NP["open_ji"],
+    "平": _NP["open_ping"],
+    "平凶": _NP["open_xiao_xiong"],
+    "凶": _NP["open_xiong"],
 }
 
 _DIRECTION_SKIP = {"平": "两可", "平吉": "小吉", "平凶": "偏阻", "吉": "吉", "凶": "凶"}
+
+
 
 
 def _direction_label(direction: str) -> str:
@@ -32,10 +38,10 @@ def _direction_label(direction: str) -> str:
 
 def _relation_plain(relation: str) -> str:
     return {
-        "体克用": "体卦克用卦——你这一方压得住事，主动能成",
-        "用克体": "用卦克体卦——事势反过来压你，硬顶容易吃亏",
-        "体生用": "体卦生用卦——你在往外耗，费力而所得有限",
-        "用生体": "用卦生体卦——事情自己来就你，有进益之象",
+        "体克用": _NP["rel_ti_ke_yong"],
+        "用克体": _NP["rel_yong_ke_ti"],
+        "体生用": _NP["rel_ti_sheng_yong"],
+        "用生体": _NP["rel_yong_sheng_ti"],
         "比和": "体用比和——双方同气，不相妨碍，顺遂之象",
     }.get(relation, relation)
 
@@ -113,7 +119,7 @@ def narrate(a: dict) -> str:
             if bits:
                 picks.append(f"{role}**{item.get('卦')}**取象：" + " / ".join(bits))
         if picks:
-            lines.append("按《八卦万物属类》，这卦里的取象可先落一落——")
+            lines.append(_NP["analogy_lead"])
             for p in picks:
                 lines.append(f"- {p}")
             lines.append("")

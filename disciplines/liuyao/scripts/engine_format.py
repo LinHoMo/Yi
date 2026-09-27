@@ -1,3 +1,6 @@
+from __future__ import annotations
+import json
+from pathlib import Path as _P
 # -*- coding: utf-8 -*-
 """六爻纳甲引擎：数据表 / 干支历与真太阳时 / 排盘核心 / 文本输出 / 历史遗留梅花与批量接口。（拆分自 liuyao_engine.py，纯搬移不改逻辑；聚合入口见 liuyao_engine.py）。"""
 
@@ -52,6 +55,9 @@ from pathlib import Path
 from yishu_core.runtime import force_utf8_stdio as _force_utf8_stdio  # noqa: E402
 
 
+_FL = json.loads((_P(__file__).resolve().parents[1] / 'data' / 'narrative_templates.json').read_text(encoding='utf-8')).get('engine_format_labels', {})
+
+
 def generate_analysis_hints(question):
     """
     根据问题关键词生成用神建议
@@ -70,17 +76,17 @@ def generate_analysis_hints(question):
     
     for kw in finance_keywords:
         if kw in question:
-            hints.append("财运类：取妻财爻为用神")
+            hints.append(_FL.get("use_god_caiyun"))
             break
     
     for kw in career_keywords:
         if kw in question:
-            hints.append("事业类：取官鬼爻为用神")
+            hints.append(_FL.get("use_god_career"))
             break
     
     for kw in love_keywords:
         if kw in question:
-            hints.append("感情类：男测取妻财爻，女测取官鬼爻为用神")
+            hints.append(_FL.get("use_god_love"))
             break
     
     for kw in health_keywords:
@@ -90,7 +96,7 @@ def generate_analysis_hints(question):
     
     for kw in study_keywords:
         if kw in question:
-            hints.append("学业类：取父母爻为用神")
+            hints.append(_FL.get("use_god_exam"))
             break
     
     for kw in travel_keywords:
@@ -100,16 +106,16 @@ def generate_analysis_hints(question):
     
     for kw in lawsuit_keywords:
         if kw in question:
-            hints.append("诉讼类：取官鬼爻为用神")
+            hints.append(_FL.get("use_god_lawsuit"))
             break
     
     for kw in family_keywords:
         if kw in question:
-            hints.append("家宅类：取父母爻（建筑）+ 相应爻位看风水")
+            hints.append(_FL.get("use_god_home"))
             break
     
     if not hints:
-        hints.append("通用：以世爻为主，兼看卦象整体生克")
+        hints.append(_FL.get("use_god_default"))
     
     return hints
 
@@ -118,7 +124,7 @@ def format_text_output(result):
     """将JSON结果格式化为可读的文本输出"""
     lines = []
     lines.append("=" * 50)
-    lines.append("六爻纳甲排盘结果")
+    lines.append(_FL.get("title"))
     lines.append("=" * 50)
     lines.append("")
     lines.append(f"求测问题：{result['question']}")
@@ -141,7 +147,7 @@ def format_text_output(result):
     lines.append("")
 
     # 排盘表
-    lines.append("排盘详表（从上爻到下爻）：")
+    lines.append(_FL.get("yao_table"))
     lines.append(f"{'爻位':<6}{'六神':<6}{'六亲':<6}{'地支':<6}{'干支':<8}{'动静':<8}{'标记':<8}")
     lines.append("-" * 50)
     
@@ -198,7 +204,7 @@ def format_text_output(result):
         aa = result['advanced_analysis']
         lines.append("")
         lines.append("-" * 50)
-        lines.append("经典断法分析：")
+        lines.append(_FL.get("classical"))
         
         # 伏藏
         if aa.get('hidden_spirit_analysis'):

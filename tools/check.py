@@ -2,7 +2,7 @@
 """根级质量门：一条命令跑完全仓库检查。
 
   python tools/check.py          # 快速门（默认）：版本/结构契约/内核自检/三科快速门/六爻冒烟/合参自检
-  python tools/check.py --full   # 全量门：再加三科 tune/holdout 案例评测与六爻黑箱回归（慢）
+  python tools/check.py --full   # 全量门：再加三科 tune/holdout 案例评测、六爻黑箱回归与 pytest tests（慢）
   python tools/check.py --only version,structure,core   # 只跑指定检查项
 
 设计口径（与各科 tools/check.py 一致）：
@@ -129,9 +129,9 @@ def main() -> int:
     force_utf8_stdio()
     ap = argparse.ArgumentParser(description="易·仓库级质量门")
     ap.add_argument("--only", nargs="*", help="限定检查项：version,structure,tables,core,"
-                                              "meihua,xiaoliuren,zeji,liuyao,synthesis")
+                                              "meihua,xiaoliuren,zeji,liuyao,synthesis,tests")
     ap.add_argument("--full", action="store_true",
-                    help="全量：三科案例评测（tune/holdout）+ 六爻黑箱回归（慢）")
+                    help="全量：三科案例评测（tune/holdout）+ 六爻黑箱回归 + pytest tests（慢）")
     args = ap.parse_args()
 
     only = set(args.only) if args.only else None
@@ -245,6 +245,17 @@ def main() -> int:
 
     print("\n[7] 合参层（synthesis 自检：person 校验 + 裁决规则 + 归一化）")
     gate_sub("synthesis", ["synthesis/cli.py", "selfcheck"], "synthesis 自检", fast=False)
+
+    if args.full or (only is not None and "tests" in only):
+        print("\n[8] 单元测试（pytest tests）")
+        if only is None or "tests" in only:
+            code, out = _run_py(["-m", "pytest", "tests", "-q"], label="pytest tests")
+            if code == 0:
+                print("  √ pytest tests")
+            else:
+                failures.append("pytest tests 失败")
+                print("  × pytest tests")
+                print(f"      …{_tail(out)}")
 
     print()
     if failures:

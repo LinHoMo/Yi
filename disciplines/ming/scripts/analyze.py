@@ -19,7 +19,7 @@ for _p in (str(CORE), str(Path(__file__).resolve().parent)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from pattern import strength_and_pattern, dayun_table, liunian_table  # noqa: E402
+from pattern import strength_and_pattern, dayun_table, liunian_table, dayun_liunian_interactions  # noqa: E402
 
 
 def analyze(chart_json: dict) -> dict:
@@ -29,6 +29,7 @@ def analyze(chart_json: dict) -> dict:
     sp = strength_and_pattern(result)
     dayun = dayun_table(result)
     liunian = liunian_table(result, n=12)
+    interactions = dayun_liunian_interactions(result, dayun=dayun, liunian=liunian)
 
     summary = {
         "四柱": {k: (v or {}).get("ganzhi") for k, v in pillars.items()},
@@ -96,6 +97,7 @@ def analyze(chart_json: dict) -> dict:
             "taboo_gods": sp.get("taboo_gods") or [],
             "dayun": dayun,
             "liunian": liunian,
+            "dayun_liunian": interactions[:12],
         },
     }
 

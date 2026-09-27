@@ -299,3 +299,81 @@ def liunian_table(chart_json: dict, n: int = 12) -> list[dict]:
             "ten_god": (_ten_god(day_stem, s) if day_stem else "") or "",
         })
     return out
+
+
+def dayun_liunian_interactions(chart_json: dict, dayun: list[dict] | None = None,
+                               liunian: list[dict] | None = None) -> list[dict]:
+    """大运×流年机械交互因子（只对照干支关系，不批吉凶）。
+
+    对每一组（运，年）给出：
+      - 流年干对运干之十神
+      - 流年支对运支：六合 / 六冲 / 三合 / 相刑 / 比和
+    结构化输出供 narrate/合参消费；**禁止**据此写命运断语。
+    """
+    from yishu_core.relations import ten_god as _tg, wuxing_relation as _wx
+    from yishu_core.symbols import (
+        BRANCH_ELEMENTS,
+        HE_PAIRS,
+        CHONG_PAIRS,
+        sanxing_hits,
+        SHENG_CYCLE,
+        KE_CYCLE,
+    )
+
+    pillars = chart_json.get("pillars") or {}
+    day_stem = (pillars.get("day") or {}).get("stem") or ""
+    if dayun is None:
+        dayun = dayun_table(chart_json)
+    if liunian is None:
+        liunian = liunian_table(chart_json, n=12)
+
+    he_set = {frozenset(p) for p in HE_PAIRS}
+    chong_set = {frozenset(p) for p in CHONG_PAIRS}
+    from yishu_core.ming_tables import SAN_HE_GROUPS
+    sanhe = {k: set(v) for k, v in SAN_HE_GROUPS.items()}
+
+    out = []
+    for d in dayun or []:
+        d_gz = d.get("ganzhi") or ""
+        if len(d_gz) < 2:
+            continue
+        d_stem, d_branch = d_gz[0], d_gz[1]
+        for y in liunian or []:
+            y_gz = y.get("ganzhi") or ""
+            if len(y_gz) < 2:
+                continue
+            y_stem, y_branch = y_gz[0], y_gz[1]
+            rels = []
+            tg = _tg(d_stem, y_stem) if day_stem else None
+            if tg:
+                rels.append({"kind": "ten_god_stem", "text": f"流年干{y_stem}对运干{d_stem}={tg}", "value": tg})
+            pair = frozenset((d_branch, y_branch))
+            if pair in he_set:
+                rels.append({"kind": "liuhe", "text": f"流年支{y_branch}与运支{d_branch}六合"})
+            elif pair in chong_set:
+                rels.append({"kind": "liuchong", "text": f"流年支{y_branch}与运支{d_branch}六冲"})
+            else:
+                hits = sanxing_hits([d_branch, y_branch])
+                if hits:
+                    rels.append({"kind": "sanxing", "text": f"流年支{y_branch}与运支{d_branch}见{'/'.join(hits)}", "value": hits})
+                for elem, bs in sanhe.items():
+                    if d_branch in bs and y_branch in bs:
+                        rels.append({"kind": "sanhe", "text": f"流年支{y_branch}与运支{d_branch}三合{elem}局", "value": elem})
+                de, ye = BRANCH_ELEMENTS.get(d_branch), BRANCH_ELEMENTS.get(y_branch)
+                if de and ye:
+                    if de == ye:
+                        rels.append({"kind": "bihe", "text": f"流年支{y_branch}与运支{d_branch}比和（{de}）"})
+                    elif SHENG_CYCLE.get(ye) == de or SHENG_CYCLE.get(de) == ye:
+                        rels.append({"kind": "sheng", "text": f"流年支{y_branch}与运支{d_branch}有相生"})
+                    elif KE_CYCLE.get(ye) == de or KE_CYCLE.get(de) == ye:
+                        rels.append({"kind": "ke", "text": f"流年支{y_branch}与运支{d_branch}有相克"})
+            out.append({
+                "year": y.get("year"),
+                "liunian": y_gz,
+                "dayun": d_gz,
+                "dayun_index": d.get("index"),
+                "start_age": d.get("start_age"),
+                "relations": rels,
+                "basis": "干支对照（core.relations / symbols）；只记关系，不批吉凶",
+            })
+    return out
