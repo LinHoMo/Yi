@@ -128,11 +128,12 @@ python tools/refactor_guard.py --compare guard/base.json  # 改后
    - 《卜筮正宗》卷次未数字化（原文存 `data/sources/`）；《火珠林》3 例未过卦变/时刻门（`huozhulin_candidates.json`）。
 2. **择吉通书真黑箱**：需带应验古例日例（不伪造）；`validity_gap` 已写明。
 3. **小六壬**外部书源仍缺。
-4. **巨石残余**（2026-09-27u 已清三处 + 26v 应期巨石 + 26w 叙事格局标签巨石，见 CHANGELOG）：
+4. **巨石残余**（已全部清，见 CHANGELOG）：
    `chain_step5` 991→351、`format_reading_output` 445→~30、`step3_analyze_strength` 509→322、
-   `_predict_timing` 491→四职责模块 `chain_step5_yp_timing`、
-   `chain_narrate._inject_pattern_tags` 359→三职责模块 `chain_narrate_patterns`。
-   剩余：`human_narrative` 可按域拆。
+   `_predict_timing` 491→四职责模块 `chain_step5_yp_timing`（26v）、
+   `chain_narrate._inject_pattern_tags` 359→三职责模块 `chain_narrate_patterns`（26w）、
+   `human_narrative` 979→编排/渲染/格局引文/推因 + 新模块 `human_narrative_segments`（正文段落八段素材，26x）。
+   全部零指纹漂移验收通过。
 5. **断语残句**：扫描后确认残留多为 argparse help 与测试夹具文本（属 CLI 文档，不是断语），
    真正面向求测者的文案已在 `data/*.json`；此项**暂不再动**，避免误伤。
 6. **命科**：从格仍 tentative；运年交互只记关系不批吉凶（有意如此）。
@@ -174,6 +175,13 @@ tests/              pytest（relations/symbols/najia/yingqi/ming_dayun）
   `_inject_pattern_tags` 原 359 行巨石）。`chain_narrate` 退化为再导出入口，依赖单向，规避循环依赖。
   **再拆的硬约束**：`thinking_chain.py` 从 `chain_step3` / `chain_step5` 再导出一批名字，
   搬动前先 grep `from chain_stepN import` 确认不是再导出项，否则断链。
+- **已拆（26x）**：`human_narrative_segments`（正文段落素材八段：旺衰 / 结论开头 / 动变 / 特殊格局 /
+  应期 / 综合定性 / 病药 / 星煞 + 私有辅助 `_pos_name`/`_question_focus`/`_clean_reason`/
+  `_resolve_bing_yao_shensha`/`_line_on_pos`/`_line_plain` + 模板加载；从 `human_narrative` 按域切出）。
+  `human_narrative` 保留编排（`build_human_narrative`）/ 渲染（`render_human_markdown`）/
+  格局引文（`_extract_pattern_tags`/`_select_relevant_quotes`/`_pattern_advice_hint`）/ 推因
+  （`_build_explain_summary`），并再导出搬移名。`human_narrative_segments` 只 import 叶子模块
+  （`chain_verdicts`/`chain_tables`），单向依赖、无循环。
 - **MCP**：六爻 7 方法；meihua/xiaoliuren/zeji/ming 各 chart/analyze/narrate/render/list_methods
 
 ---
@@ -189,3 +197,4 @@ tests/              pytest（relations/symbols/najia/yingqi/ming_dayun）
 | 26u | 巨石收尾：step5 / 报告排版 / step3 三拆（零指纹漂移）+ 死导入清理 |
 | 26v | 巨石收尾续：_predict_timing 491 行应期巨石按职责切出（零指纹漂移）+ 死代码清理 |
 | 26w | 巨石收尾续：chain_narrate._inject_pattern_tags 359 行格局标签巨石按职责切出（零指纹漂移）+ 死导入清理 |
+| 26x | 巨石收尾续：human_narrative 979 行按域拆——正文段落八段素材切到 human_narrative_segments，编排/渲染/格局引文/推因留 human_narrative（零指纹漂移）+ 死导入清理 |
