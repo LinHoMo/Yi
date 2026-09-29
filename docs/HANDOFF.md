@@ -95,10 +95,13 @@ python tools/mcp_router.py --discipline ming --test-narrate
 流派开关（改了分数不可比）：`YI_GANZHI_BOUNDARY=day|instant`、`--zi-hour-type late`。
 
 # 拆分/搬家前后的零漂移验收（报告文本 + 思维链 + 人话叙述，115 例）
+# ⚠️ 下面的 tools/ 是**学科层**的 disciplines/liuyao/tools/，要先 cd 到学科根：
+#    仓库根 tools/ 另有 check.py / eval.py / demo.py / mcp_router.py，两个 tools/ 别混。
+cd disciplines/liuyao
 python tools/refactor_guard.py --write  guard/base.json   # 改前
 python tools/refactor_guard.py --compare guard/base.json  # 改后
 
-**金标准**：`python tools/golden.py verify`；改动后 `capture "理由"`。
+**金标准**：`python tools/golden.py verify`；改动后 `capture "理由"`（同上，在学科根执行）。
 
 ---
 
@@ -157,7 +160,8 @@ python tools/refactor_guard.py --compare guard/base.json  # 改后
 4. 口径变更记 `docs/CHANGELOG.md`
 5. 案例库解读隔离；一卦一事
 6. 金标准 `capture` 必须写理由
-7. 拆分/搬家以**零指纹漂移**验收（用 `tools/refactor_guard.py`，别自己写临时脚本——
+7. 拆分/搬家以**零指纹漂移**验收（用 `disciplines/liuyao/tools/refactor_guard.py`，
+   在学科根以 `tools/refactor_guard.py` 调用；别自己写临时脚本——
    26u 就踩过「脚本传错参数 → 115 例全挂 → 两次指纹一致其实都是全失败」的假阳性，
    该脚本现在会强制校验有效样本数）；巨石看门狗 2200 行
 
