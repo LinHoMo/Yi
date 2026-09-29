@@ -273,6 +273,7 @@ def step5_synthesize(r: dict) -> dict:
     # ---------- 5.13: 可解释性因子贡献（SHAP 风格）----------
     factor_contributions = build_factor_contributions({
         "base_score": base_score,
+        "strength_level": strength_level,
         "change_net_effect": change_net_effect,
         "hex_adjustment": hex_adjustment,
         "hex_adjustment_reason": hex_adjustment_reason,

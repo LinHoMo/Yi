@@ -6,14 +6,14 @@
 **都有产出且不抛异常**，即"接线是否通"。
 
 ⚠️ 这不是代码覆盖率，也不是正确性测试：段落返回了内容就算过。
-   内容对不对由 `scripts/evaluate.py`（古籍对齐）与 `scripts/regression_test.py` 负责。
+   内容对不对由 `scripts/evaluate.py`（古籍对齐）与 `tests/regression_test.py` 负责。
    旧名 coverage_test 且报 "Coverage 100%"，属误导性命名，2026-09-22 更正。
 
 Usage:
-    py -3.12 smoke_test.py              # Run all coverage tests
-    py -3.12 coverage_test.py --markdown   # Generate coverage_report.md
-    py -3.12 coverage_test.py -v           # Verbose output
-    py -3.12 coverage_test.py --list       # List all test segments
+    py -3.12 tests/smoke_test.py                # Run all coverage tests
+    py -3.12 tests/smoke_test.py --markdown   # Generate coverage_report.md
+    py -3.12 tests/smoke_test.py -v           # Verbose output
+    py -3.12 tests/smoke_test.py --list       # List all test segments
 
 Design
 ------
@@ -31,9 +31,11 @@ from dataclasses import dataclass, field
 from typing import Any, Callable, Optional
 
 # ---------------------------------------------------------------------------
-# Import engine + analysis modules from sibling modules
+# 引擎与古典分析模块在 ../scripts。
+# 本文件已从 scripts/ 迁出到 tests/（AGENTS.md：生产目录不混测试），故显式指回 scripts/。
 # ---------------------------------------------------------------------------
-_SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+_TEST_DIR = os.path.dirname(os.path.abspath(__file__))              # disciplines/liuyao/tests
+_SCRIPT_DIR = os.path.join(os.path.dirname(_TEST_DIR), "scripts")   # disciplines/liuyao/scripts
 sys.path.insert(0, _SCRIPT_DIR)
 
 from liuyao_engine import build_hexagram_result  # noqa: E402
@@ -838,7 +840,7 @@ def main():
 
     # Generate markdown report
     if args.markdown:
-        report_path = os.path.join(_SCRIPT_DIR, "coverage_report.md")
+        report_path = os.path.join(_TEST_DIR, "coverage_report.md")
         generate_markdown_report(report, report_path)
         print(f"\nMarkdown report written to: {report_path}")
 

@@ -28,8 +28,11 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     NAJIA_BRANCHES,
     RETREAT_PAIRS,
     SHENG_CYCLE,
+    SHENG_WO,
+    KE_WO,
     STEM_ELEMENTS,
     TOMB_MAP,
+    TRIGRAM_ELEMENTS as _CORE_TRIGRAM_ELEMENTS,
     TWELVE_GROWTH as _CORE_TWELVE_GROWTH,
     TWELVE_GROWTH_STAGES as _CORE_TWELVE_GROWTH_STAGES,
     TWELVE_GROWTH_TABLES as _CORE_TWELVE_GROWTH_TABLES,
@@ -52,10 +55,8 @@ from pathlib import Path
 STEMS = list(HEAVENLY_STEMS)
 
 
-SHENG_WO = {v: k for k, v in SHENG_CYCLE.items()}
-
-
-KE_WO = {v: k for k, v in KE_CYCLE.items()}
+# 生我(SHENG_WO)/克我(KE_WO)唯一真值源在内核 yishu_core.symbols（AGENTS.md §二），此处仅引用。
+# 历史债务：此前本文件与 classical_tables.py 各就地推导一份，连同内核共 3 份副本。
 
 
 PALACE_GENERATING = dict(SHENG_WO)
@@ -107,10 +108,7 @@ SPIRIT_ELEMENT = {
 }
 
 
-TRIGRAM_ELEMENT = {
-    "乾": "金", "兑": "金", "离": "火", "震": "木",
-    "巽": "木", "坎": "水", "艮": "土", "坤": "土",
-}
+TRIGRAM_ELEMENT = _CORE_TRIGRAM_ELEMENTS  # 卦五行唯一真值源在内核（AGENTS.md §二）
 
 
 XUN_KONG = _CORE_XUN_KONG

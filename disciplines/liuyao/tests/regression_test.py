@@ -7,12 +7,12 @@
 吉凶方向与古典结论是否一致。
 
 Usage:
-    py -3.12 scripts/regression_test.py                     # Run all, console only
-    py -3.12 scripts/regression_test.py --report html       # Generate HTML report
-    py -3.12 scripts/regression_test.py --report json       # Generate JSON results
-    py -3.12 scripts/regression_test.py --report all        # Generate all reports
-    py -3.12 scripts/regression_test.py -v                  # Verbose output
-    py -3.12 scripts/regression_test.py --case reg_03       # Run single case
+    py -3.12 tests/regression_test.py                     # Run all, console only
+    py -3.12 tests/regression_test.py --report html       # Generate HTML report
+    py -3.12 tests/regression_test.py --report json       # Generate JSON results
+    py -3.12 tests/regression_test.py --report all        # Generate all reports
+    py -3.12 tests/regression_test.py -v                  # Verbose output
+    py -3.12 tests/regression_test.py --case reg_03       # Run single case
 """
 
 import argparse
@@ -23,9 +23,12 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 # ---------------------------------------------------------------------------
-# Import engine + thinking chain from sibling modules
+# 推演模块（engine / thinking_chain）在 ../scripts。
+# 本文件是测试 CLI，已从 scripts/ 迁出到 tests/（AGENTS.md：生产目录不混测试），
+# 故这里显式把 scripts/ 指回 sys.path——原来靠「与本脚本同目录」是不够的。
 # ---------------------------------------------------------------------------
-_SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+_TEST_DIR = os.path.dirname(os.path.abspath(__file__))              # disciplines/liuyao/tests
+_SCRIPT_DIR = os.path.join(os.path.dirname(_TEST_DIR), "scripts")   # disciplines/liuyao/scripts
 sys.path.insert(0, _SCRIPT_DIR)
 
 from liuyao_engine import build_hexagram_result  # noqa: E402

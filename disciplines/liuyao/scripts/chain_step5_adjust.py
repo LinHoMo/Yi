@@ -36,6 +36,7 @@ from chain_verdicts import (
     note_text,
     vdesc,
 )
+from narrative_rules import strength_reason, strength_polarity  # 数据驱动的旺衰理由/极性
 
 
 # ---------------------------------------------------------------- 5.4 六神
@@ -736,6 +737,10 @@ def apply_verdict_overrides(
     }
 
 
+# 用神旺衰因子理由/极性已统一由 narrative_rules.strength_reason / strength_polarity 提供
+# （数据驱动：verdict_texts.json 的 strength_reason_map / strength_polarity_map）。
+
+
 # ---------------------------------------------------------------- 5.13 因子贡献
 def build_factor_contributions(adj: dict, r: dict) -> list:
     """5.13 可解释性因子贡献（SHAP 风格）。adj 为各调整项的名→(分值, 理由)映射。"""
@@ -765,16 +770,15 @@ def build_factor_contributions(adj: dict, r: dict) -> list:
     bing_yao_reasons = adj.get("bing_yao_reasons", []) or []
 
     factor_contributions = []
-    # 1. 用神旺衰基础分
+    # 1. 用神旺衰基础分（理由/极性均以权威 strength_level 为准，避免与正文旺衰口径矛盾；
+    #    极性供 有利面/拖累面 分类使用，与 floored score 解耦——极弱不再误入有利面）
+    strength_level = str(adj.get("strength_level") or "")
     factor_contributions.append({
         "name": "用神旺衰",
         "factor": "base",
         "score": round(base_score, 2),
-        "reason": (
-            FREASON["base_strong"]["text"] if base_score > 2 else
-            FREASON["base_weak"]["text"] if base_score < 0 else
-            FREASON["base_neutral"]["text"]
-        )
+        "reason": strength_reason(strength_level),
+        "polarity": strength_polarity(strength_level),
     })
     # 2. 动变效应
     factor_contributions.append({

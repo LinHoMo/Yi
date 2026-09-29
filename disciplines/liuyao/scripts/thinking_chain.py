@@ -94,14 +94,17 @@ def run_thinking_chain(hex_result: dict) -> dict:
     if "advanced_analysis" in context and "advanced_analysis" not in hex_result:
         hex_result["advanced_analysis"] = context["advanced_analysis"]
 
-    # 六亲持世深化分析（存入 advanced_analysis.shi_yao_relation）
-    adv = hex_result.get("advanced_analysis", {})
-    if isinstance(adv, dict):
-        adv["shi_yao_relation"] = analyze_shi_yao_relation(hex_result)
-
     # 执行五步（前一步结果存入 context 供后续步骤使用）
     context["_step1_data"] = step1_read_situation(hex_result)
     context["_step2_data"] = step2_identify_use_god(context)  # 使用含step1的context
+
+    # 六亲持世深化分析：需 用神类别（性别视角）方能量身解读婚姻持世，
+    # 故置于 step2 之后；结果存入 advanced_analysis.shi_yao_relation。
+    adv = hex_result.get("advanced_analysis", {})
+    if isinstance(adv, dict):
+        adv["shi_yao_relation"] = analyze_shi_yao_relation(
+            hex_result, context["_step2_data"].get("use_god_category")
+        )
     context["_step3_data"] = step3_analyze_strength(context)
     context["_step4_data"] = step4_analyze_changes(context)
     context["_step5_data"] = step5_synthesize(context)

@@ -227,7 +227,7 @@ def main() -> int:
 
     if "smoke" in selected:
         print("\n[2] 分析段落产出冒烟（只验有无产出）")
-        rc, out = run([sys.executable, "scripts/smoke_test.py"])
+        rc, out = run([sys.executable, "tests/smoke_test.py"])
         gate("smoke", measure("smoke", out), minimum=baseline["smoke"],
              label="段落有产出数", raw=out)
 
@@ -244,13 +244,13 @@ def main() -> int:
 
     if "chain_tests" in selected:
         print("\n[3] 思维链用例（12 例，逐维度断言）")
-        rc, out = run([sys.executable, "scripts/thinking_chain_tests.py"])
+        rc, out = run([sys.executable, "tests/thinking_chain_tests.py"])
         gate("chain_tests", measure("chain_tests", out), minimum=baseline["chain_tests"],
              label="用例通过数", raw=out)
 
     if "regression" in selected:
         print("\n[4] 古籍回归（18 例，用神/方向/区间三维）")
-        rc, out = run([sys.executable, "scripts/regression_test.py"])
+        rc, out = run([sys.executable, "tests/regression_test.py"])
         gate("regression", measure("regression", out), minimum=baseline["regression"],
              label="回归通过数", raw=out)
 

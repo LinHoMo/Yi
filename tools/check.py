@@ -200,7 +200,7 @@ def main() -> int:
         gate_sub(disc, [f"disciplines/{disc}/tools/check.py"], disc, fast=not args.full)
 
     print("\n[6] 六爻（迁移前旧实现：冒烟 + 四段契约端到端；--full 加黑箱回归）")
-    gate_sub("liuyao", ["disciplines/liuyao/scripts/smoke_test.py"], "六爻冒烟", fast=False)
+    gate_sub("liuyao", ["disciplines/liuyao/tests/smoke_test.py"], "六爻冒烟", fast=False)
     # 六爻四段契约薄适配层（chart→analyze→render）端到端冒烟
     scratch = ROOT / "tools" / "scratch" / "liuyao_pipeline"
     scratch.mkdir(parents=True, exist_ok=True)
@@ -234,7 +234,7 @@ def main() -> int:
     if args.full and (only is None or "liuyao" in only):
         # 六爻自身质量门对回归用基线口径（11/18，2026-09-22 实测），
         # 残余案例待古籍重推（README/HANDOFF 已声明）——根门对齐该口径，不得要求全过。
-        code, out = _run_py(["disciplines/liuyao/scripts/regression_test.py"], label="六爻回归")
+        code, out = _run_py(["disciplines/liuyao/tests/regression_test.py"], label="六爻回归")
         m = re.search(r"总通过:\s*(\d+)/(\d+)", out)
         if code == 0 or (m and int(m.group(1)) >= 11):
             print(f"  √ 六爻黑箱回归（{m.group(0) if m else '通过'}，基线 11/18）")

@@ -8,10 +8,10 @@ the chain's intermediate reasoning steps (Step1-5) are individually
 correct — not merely the final verdict.
 
 Usage:
-    py -3.12 scripts/thinking_chain_tests.py              # Run all tests
-    py -3.12 scripts/thinking_chain_tests.py -v            # Verbose (show details)
-    py -3.12 scripts/thinking_chain_tests.py --case case_03 # Run one case
-    py -3.12 scripts/thinking_chain_tests.py --list        # List cases
+    py -3.12 tests/thinking_chain_tests.py              # Run all tests
+    py -3.12 tests/thinking_chain_tests.py -v            # Verbose (show details)
+    py -3.12 tests/thinking_chain_tests.py --case case_03 # Run one case
+    py -3.12 tests/thinking_chain_tests.py --list        # List cases
 
 Design Principles
 -----------------
@@ -48,9 +48,11 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 # ---------------------------------------------------------------------------
-# Import engine + thinking chain from sibling modules
+# 推演模块在 ../scripts。
+# 本文件已从 scripts/ 迁出到 tests/（AGENTS.md：生产目录不混测试），故显式指回 scripts/。
 # ---------------------------------------------------------------------------
-_SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+_TEST_DIR = os.path.dirname(os.path.abspath(__file__))              # disciplines/liuyao/tests
+_SCRIPT_DIR = os.path.join(os.path.dirname(_TEST_DIR), "scripts")   # disciplines/liuyao/scripts
 sys.path.insert(0, _SCRIPT_DIR)
 
 from liuyao_engine import build_hexagram_result  # noqa: E402

@@ -308,6 +308,10 @@
       "text": "用神失令，根基偏弱",
       "basis": ""
     },
+    "base_very_weak": {
+      "text": "用神极弱，几近失力",
+      "basis": ""
+    },
     "base_neutral": {
       "text": "用神平和，不旺不弱",
       "basis": ""
@@ -1580,6 +1584,22 @@
       "basis": "逢合逢值填实可解"
     }
   },
+  "strength_reason_map": {
+    "极旺": "base_strong",
+    "旺": "base_strong",
+    "中和": "base_neutral",
+    "偏弱": "base_weak",
+    "弱": "base_weak",
+    "极弱": "base_very_weak"
+  },
+  "strength_polarity_map": {
+    "极旺": 1,
+    "旺": 1,
+    "中和": 0,
+    "偏弱": -1,
+    "弱": -1,
+    "极弱": -1
+  },
   "narrative_hints": {
     "day_hint_fu_out": "冲飞神之日伏神得出",
     "day_hint_value_or_clash_he": "{use_br}日应事，逢{cl}冲、逢{co}合皆动",
@@ -1588,6 +1608,7 @@
     "timing_near_illness_void": "病在近，逢空即散——快则当日、慢则数日便见松动。",
     "timing_fast": "应期偏速，当日或数日内就有信号，别错过。",
     "timing_slow": "应期偏迟，按月计，旺相之月到才应——别拿天来量。",
+    "timing_with_dates": "应期偏迟，但已有明确日辰可寻——",
     "timing_mid": "应期在数日到一两个月之间，不出近期。",
     "timing_repeat": "过程有反复，别因一次起伏就下结论。",
     "timing_day_detail": "具体看——{day_hint}。",

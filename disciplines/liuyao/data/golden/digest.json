@@ -4,7 +4,7 @@
     "how": "改动引擎行为后跑 python tools/golden.py capture \"理由\"；无理由不落盘，历次漂移见 drift_log",
     "cases": 288
   },
-  "digest": "5c6e77ee253b0ddd",
+  "digest": "abc7884de0653ee5",
   "drift_log": [
     {
       "from": "bb23797bf6044b95",
@@ -47,6 +47,12 @@
       "to": "5c6e77ee253b0ddd",
       "date": "2026-09-26",
       "reason": "金标准抽样补 narrate 文案哈希（HANDOFF 文案搬家盲区）"
+    },
+    {
+      "from": "5c6e77ee253b0ddd",
+      "to": "abc7884de0653ee5",
+      "date": "2026-09-29",
+      "reason": "有意行为变更：叙述层四处缺陷修复（用户报的正文问题+用神旺衰遗漏）。1) 用神旺衰因子理由改以权威 strength_level 为准（原先按 floored base_score 分桶误落「平和」，与 strength_level=极弱 自相矛盾）；2) 应期基础句在已有日级日历日期时改用 timing_with_dates，不再输出「按月计…别拿天来量」的矛盾口径；3) 婚姻持世解读按用神类别分流男/女模板（男测姻缘曾误套「女占婚不利」）；4) 有利面/拖累面选取改为显式 polarity 优先，修复用神旺衰(极弱)因 abs(score) 排序+[:2] 截断被挤出、两边都不落的遗漏。证据：golden 逐条比对 HEAD 快照，288 例中 5 条变化且变化字段仅限 narrate_sha/narrate_len（叙事文案哈希与长度），结构字段 pillars/lines/palace/empty/changed/use_god/strength/verdict/score/yingqi_branches/adv_keys/adv_summary/patterns 全部 0 漂移 0 异常；另经 refactor_guard 115 例零漂移复验，tune 93.9%/holdout 87.5%、思维链 12/12、黑箱回归 12/18 均与基线持平。属「改的正是要改的文案」，不是结构性退步。"
     }
   ]
 }

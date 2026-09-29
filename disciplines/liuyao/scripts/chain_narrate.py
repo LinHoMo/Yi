@@ -42,6 +42,7 @@ from chain_support import _pos_to_name
 from chain_tables import HEXAGRAM_LIUCHONG, HEXAGRAM_LIUHE
 from chain_verdicts import QUOTE_DATABASE, SHI_YAO_INTERPRETATION, SHI_YAO_POEMS, _QUESTION_SCENARIO_KEYWORDS
 from chain_narrate_patterns import _inject_pattern_tags  # noqa: E402
+from narrative_rules import resolve_marriage_interpretation  # 婚姻持世按用神/性别分流
 
 def _detect_question_scenario(question: str) -> str:
     """从求测问题中检测占问情境（返回 SHI_YAO_INTERPRETATION 中对应的 key）。"""
@@ -54,7 +55,17 @@ def _detect_question_scenario(question: str) -> str:
     return ""
 
 
-def analyze_shi_yao_relation(result):
+def _infer_use_god_category_fallback(result: dict) -> str:
+    """use_god_category 未显式传入时的回退：从 result 中已有的 step2 / advanced_analysis 取用神类别。"""
+    tc = (result.get("thinking_chain", {}) or {}).get("step2_use_god_identification", {}) or {}
+    cat = tc.get("use_god_category") or (tc.get("selected_use_god") or {}).get("category")
+    if cat:
+        return cat
+    adv = result.get("advanced_analysis", {}) or {}
+    return adv.get("use_god_category", "") or ""
+
+
+def analyze_shi_yao_relation(result, use_god_category=None):
     """
     六亲持世深化分析（出自《黄金策》+ 第十四部占婚/占病/占讼/出行/求财独断）。
 
@@ -89,7 +100,13 @@ def analyze_shi_yao_relation(result):
         # Detect question scenario for contextual interpretation
         question = result.get("question", "")
         scenario = _detect_question_scenario(question)
-        scenario_interp = interp.get(scenario, "") if scenario else ""
+        # 婚姻情境按用神（问测者性别视角）分流：男问女→用神妻财，子孙为原神，持世有利；
+        # 女问男→用神官鬼，子孙克官，持世不利。Bug3 根因：原先只有女占模板，男占姻缘被误判为不利。
+        if scenario == "marriage":
+            ug = use_god_category or _infer_use_god_category_fallback(result)
+            scenario_interp = resolve_marriage_interpretation(interp, ug)
+        else:
+            scenario_interp = interp.get(scenario, "") if scenario else ""
 
         details = {"general": interp["general"]}
         if strength_hint == "_strong" and "strong" in interp:

@@ -29,7 +29,10 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     RETREAT_PAIRS,
     SELF_PUNISHMENTS,
     SHENG_CYCLE,
+    SHENG_WO,
+    KE_WO,
     STEM_ELEMENTS,
+    TRIGRAM_ELEMENTS as _CORE_TRIGRAM_ELEMENTS,
     THREE_PUNISHMENTS,
     THREE_PUNISHMENTS_CYCLIC,
     THREE_PUNISHMENTS_MUTUAL,
@@ -44,16 +47,8 @@ from yishu_core.ming_tables import SAN_HE_GROUPS as _CORE_SAN_HE  # noqa: E402
 from yishu_core.relations import SIX_RELATIONS  # noqa: E402
 
 
-BAGUA = {
-    "乾": {"element": "金"},
-    "坤": {"element": "土"},
-    "震": {"element": "木"},
-    "巽": {"element": "木"},
-    "坎": {"element": "水"},
-    "离": {"element": "火"},
-    "艮": {"element": "土"},
-    "兑": {"element": "金"},
-}
+# 卦五行唯一真值源在内核 yishu_core.symbols.TRIGRAM_ELEMENTS（AGENTS.md §二），此处仅派生。
+BAGUA = {_n: {"element": _el} for _n, _el in _CORE_TRIGRAM_ELEMENTS.items()}
 
 
 PALACE_LOOKUP = {}
@@ -64,12 +59,7 @@ for _pname, _pdata in EIGHT_PALACES.items():
         PALACE_LOOKUP[_hname] = (_pname, _gen)
 
 
-SHENG_WO = {v: k for k, v in SHENG_CYCLE.items()}
-
-
-KE_WO = {v: k for k, v in KE_CYCLE.items()}
-
-
+# 生我(SHENG_WO)/克我(KE_WO)唯一真值源在内核（AGENTS.md §二），此处仅引用（与 chain_tables 同源）。
 # 三合/十二长生/三刑/纳音：真值源在 core.yishu_core（AGENTS.md §二），此处仅别名。
 SAN_HE = _CORE_SAN_HE
 

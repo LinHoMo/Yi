@@ -11,6 +11,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from chain_verdicts import NARRATIVE_HINTS  # noqa: E402
+from narrative_rules import select_timing_base  # 应期基础句（含日历感知）
 from chain_tables import _BRANCH_CLASH_MAP, _HE_MAP  # noqa: E402
 _NARRATIVE_TEMPLATES_PATH = Path(__file__).resolve().parents[1] / "data" / "narrative_templates.json"
 
@@ -260,15 +261,8 @@ def _timing_sentence(timing: dict, special, s3, s5: dict = None) -> str:
         else:
             day_hint = NARRATIVE_HINTS["day_hint_value"].format(use_br=use_br)
 
-    # —— 基础快慢 ——
-    if "近病逢空" in sp or "近病" in sp:
-        base = NARRATIVE_HINTS["timing_near_illness_void"]
-    elif speed == "应速" or "应速" in str(t.get("summary_text") or "") or "次日" in str(t.get("summary_text") or ""):
-        base = NARRATIVE_HINTS["timing_fast"]
-    elif speed == "应迟" or "应迟" in str(t.get("summary_text") or "") or "年内" in str(t.get("summary_text") or ""):
-        base = NARRATIVE_HINTS["timing_slow"]
-    else:
-        base = NARRATIVE_HINTS["timing_mid"]
+    # —— 基础快慢（交予数据驱动规则模块；有日级日历时不用「按月计」矛盾口径）——
+    base = select_timing_base(sp, speed, str((t or {}).get("summary_text") or ""), calendar_str)
 
     if "合处逢冲" in sp or "冲中逢合" in sp or "反吟" in sp:
         base += NARRATIVE_HINTS["timing_repeat"]
@@ -313,8 +307,27 @@ def _meaning_paragraph(verdict, s2, s3, special, question, factor_contribs=None)
 
     # —— 引用 factor_contributions 关键项（只说因子名+理由，不带评分数字） ——
     if factor_contribs:
-        pos_items = [fc for fc in factor_contribs if (fc.get("score") or 0) > 0][:2]
-        neg_items = [fc for fc in factor_contribs if (fc.get("score") or 0) < 0][:2]
+        # 分类以 polarity 为准（用神旺衰的 floored score 恒为正，需用 strength_level 推极性，
+        # 否则「极弱」会被误归入有利面）；无 polarity 字段时回退到 score 符号。
+        def _factor_polarity(fc):
+            p = fc.get("polarity")
+            if p is None:
+                s = fc.get("score") or 0
+                p = 1 if s > 0 else (-1 if s < 0 else 0)
+            return p
+        # 选取 有利面/拖累面 时，显式标注 polarity 的因子（如用神旺衰）优先——
+        # 其 floored 分极小，按「绝对分值排序」会被挤到后面、在 [:2] 截断里被丢；
+        # 但它是全局 headline，必须进 拖累面。其次按绝对分值降序。
+        def _sort_key(fc):
+            explicit = 0 if fc.get("polarity") is not None else 1
+            mag = abs(fc.get("score") or 0)
+            return (explicit, -mag)
+        pos_items = sorted(
+            [fc for fc in factor_contribs if _factor_polarity(fc) > 0], key=_sort_key
+        )[:2]
+        neg_items = sorted(
+            [fc for fc in factor_contribs if _factor_polarity(fc) < 0], key=_sort_key
+        )[:2]
         if pos_items:
             pos_strs = []
             for fc in pos_items:

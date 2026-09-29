@@ -29,6 +29,7 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     SHENG_CYCLE,
     STEM_ELEMENTS,
     TOMB_MAP,
+    TRIGRAM_ELEMENTS,
 )
 
 from yishu_core.najia import najia_branch  # noqa: E402
@@ -54,19 +55,23 @@ from pathlib import Path
 from yishu_core.runtime import force_utf8_stdio as _force_utf8_stdio  # noqa: E402
 
 
+# 爻序(lines)与卦五行(element)的唯一真值源在内核 BAGUA_LINES / TRIGRAM_ELEMENTS（AGENTS.md §二）。
+# 历史教训：此处曾就地硬编码一份「上爻在前」的镜像爻序，其中 震/巽/艮/兑 四卦与内核完全相反，
+# 仅靠下方覆盖循环才未暴露成 bug——一旦有人删掉循环即复活。现本地不存任何爻序/五行副本。
 BAGUA = {
-    "乾": {"lines": [1, 1, 1], "nature": "yang", "element": "金", "symbol": "☰"},
-    "坤": {"lines": [0, 0, 0], "nature": "yin",  "element": "土", "symbol": "☷"},
-    "震": {"lines": [0, 0, 1], "nature": "yang", "element": "木", "symbol": "☳"},
-    "巽": {"lines": [1, 1, 0], "nature": "yin",  "element": "木", "symbol": "☴"},
-    "坎": {"lines": [0, 1, 0], "nature": "yang", "element": "水", "symbol": "☵"},
-    "离": {"lines": [1, 0, 1], "nature": "yin",  "element": "火", "symbol": "☲"},
-    "艮": {"lines": [1, 0, 0], "nature": "yang", "element": "土", "symbol": "☶"},
-    "兑": {"lines": [0, 1, 1], "nature": "yin",  "element": "金", "symbol": "☱"},
+    "乾": {"nature": "yang", "symbol": "☰"},
+    "坤": {"nature": "yin",  "symbol": "☷"},
+    "震": {"nature": "yang", "symbol": "☳"},
+    "巽": {"nature": "yin",  "symbol": "☴"},
+    "坎": {"nature": "yang", "symbol": "☵"},
+    "离": {"nature": "yin",  "symbol": "☲"},
+    "艮": {"nature": "yang", "symbol": "☶"},
+    "兑": {"nature": "yin",  "symbol": "☱"},
 }
 
 for _n, _lines in BAGUA_LINES.items():
-    BAGUA[_n]["lines"] = _lines      # 爻序唯一真值源在内核，且自下而上
+    BAGUA[_n]["lines"] = _lines                  # 自下而上，唯一真值源
+    BAGUA[_n]["element"] = TRIGRAM_ELEMENTS[_n]  # 卦五行同样取自内核
 
 
 def _build_trigram_lookup():

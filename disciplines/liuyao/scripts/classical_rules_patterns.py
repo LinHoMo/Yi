@@ -261,8 +261,7 @@ def _check_broken_combo(combo_dict, day_branch, month_branch):
         "辰": "戌", "戌": "辰", "巳": "亥", "亥": "巳",
     }
 
-    # 各五行入墓地支
-    TOMB_MAP = {"金": "丑", "木": "未", "火": "戌", "水": "辰", "土": "辰"}
+    # 各五行入墓地支：真值源在内核 TOMB_MAP（模块顶部已 import），禁止就地重定义遮蔽。
 
     issues = []
 
