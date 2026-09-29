@@ -27,6 +27,7 @@ REPO = _repo_root(__file__)                          # 仓库根：含 core/ 与
 ROOT = DISC                                          # 兼容旧变量名：脚本与数据以学科根为基准
 sys.path.insert(0, str(_kernel_dir(__file__)))
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
+from yishu_core.runtime import utf8_subprocess_env  # noqa: E402
 
 BASELINE_FILE = ROOT / "tools" / "check_baseline.json"
 
@@ -85,7 +86,8 @@ PATTERNS = {
 
 def run(cmd: list[str]) -> tuple[int, str]:
     proc = subprocess.run(cmd, cwd=str(ROOT), capture_output=True, text=True,
-                          encoding="utf-8", errors="replace")
+                          encoding="utf-8", errors="replace",
+                          env=utf8_subprocess_env())
     return proc.returncode, (proc.stdout or "") + (proc.stderr or "")
 
 

@@ -25,6 +25,7 @@ sys.path.insert(0, str(CORE))
 sys.path.insert(0, str(ROOT / "synthesis"))
 
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
+from yishu_core.runtime import utf8_subprocess_env  # noqa: E402
 
 DISCIPLINES = {
     "liuyao": "六爻纳甲",
@@ -35,7 +36,8 @@ DISCIPLINES = {
 def _run(cmd: list[str]) -> str:
     p = subprocess.run([sys.executable, *cmd], cwd=ROOT,
                        capture_output=True, text=True, encoding="utf-8",
-                       errors="replace", timeout=300)
+                       errors="replace", timeout=300,
+                       env=utf8_subprocess_env())
     if p.returncode != 0:
         raise RuntimeError(f"{' '.join(cmd[:2])} 失败：{(p.stderr or p.stdout)[-500:]}")
     return p.stdout.strip()

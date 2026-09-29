@@ -7,6 +7,12 @@ import json
 import sys
 from pathlib import Path
 
+CORE = Path(__file__).resolve().parents[3] / "core"
+if str(CORE) not in sys.path:
+    sys.path.insert(0, str(CORE))
+
+from yishu_core.runtime import force_utf8_stdio  # noqa: E402
+
 from narrate import narrate
 
 
@@ -24,6 +30,7 @@ def render(analyze_out: dict) -> str:
 
 
 def main() -> int:
+    force_utf8_stdio()
     ap = argparse.ArgumentParser(description="命·报告（render 段）")
     ap.add_argument("analyze_json", nargs="?")
     ap.add_argument("-o", "--out", type=Path)

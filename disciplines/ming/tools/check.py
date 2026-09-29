@@ -14,6 +14,7 @@ for _p in (str(DISC / "scripts"), str(CORE)):
         sys.path.insert(0, _p)
 
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
+from yishu_core.runtime import utf8_subprocess_env  # noqa: E402
 
 
 def run(cmd: list[str]) -> tuple[int, str]:
@@ -25,6 +26,7 @@ def run(cmd: list[str]) -> tuple[int, str]:
         encoding="utf-8",
         errors="replace",
         timeout=60,
+        env=utf8_subprocess_env(),
     )
     return p.returncode, (p.stdout or "") + (p.stderr or "")
 

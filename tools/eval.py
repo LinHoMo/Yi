@@ -24,6 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "core"))
 
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
+from yishu_core.runtime import utf8_subprocess_env  # noqa: E402
 
 DISCIPLINES = ("liuyao", "ming")
 
@@ -45,6 +46,7 @@ def run_eval(disc: str, split: str, *, verbose: bool = False) -> tuple[int, str]
             encoding="utf-8",
             errors="replace",
             timeout=600,
+            env=utf8_subprocess_env(),
         )
     except subprocess.TimeoutExpired:
         return 1, f"{disc}/{split}: 超时"

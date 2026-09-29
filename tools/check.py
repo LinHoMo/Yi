@@ -24,6 +24,7 @@ sys.path.insert(0, str(CORE))
 
 from yishu_core import __version__  # noqa: E402
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
+from yishu_core.runtime import utf8_subprocess_env  # noqa: E402
 
 # 四段契约要求的文件（新学科 ming 严格核验；liuyao 为迁移前旧实现，另立检查项）
 CONTRACT_FILES = ("SKILL.md", "scripts/chart.py", "scripts/analyze.py",
@@ -53,7 +54,8 @@ def _run_py(cmd: list[str], *, label: str, cwd: Path = ROOT) -> tuple[int, str]:
     try:
         p = subprocess.run([sys.executable, *cmd], cwd=cwd,
                            capture_output=True, text=True, encoding="utf-8",
-                           errors="replace", timeout=1200)
+                           errors="replace", timeout=1200,
+                           env=utf8_subprocess_env())
     except subprocess.TimeoutExpired:
         return 1, f"{label}: 超时（>1200s）"
     return p.returncode, (p.stdout or "") + (p.stderr or "")

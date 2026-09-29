@@ -14,6 +14,8 @@ for _p in (str(DISC / "scripts"), str(CORE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
+from yishu_core.runtime import force_utf8_stdio  # noqa: E402
+
 DIGEST = DISC / "data" / "golden" / "digest.json"
 
 # 覆盖身旺/身弱/中和与不同月令格的固定样例
@@ -59,6 +61,7 @@ def digest() -> str:
 
 
 def main() -> int:
+    force_utf8_stdio()
     ap = argparse.ArgumentParser(description="命·金标准指纹")
     ap.add_argument("mode", nargs="?", default="verify", choices=("capture", "verify"))
     ap.add_argument("reason", nargs="?", help="capture 理由")

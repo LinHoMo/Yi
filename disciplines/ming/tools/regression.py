@@ -17,6 +17,8 @@ for _p in (str(DISC / "scripts"), str(CORE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
+from yishu_core.runtime import force_utf8_stdio  # noqa: E402
+
 CASES = DISC / "data" / "cases" / "ming_cases.json"
 
 # 机械回归样例（非占验）：覆盖顺逆大运、空亡、不同月令格
@@ -75,6 +77,7 @@ REGRESSION = [
 
 
 def run() -> int:
+    force_utf8_stdio()
     from chart import chart
     from analyze import analyze
 

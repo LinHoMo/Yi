@@ -27,6 +27,7 @@ from yishu_core.ming_tables import (  # noqa: E402
     dayun_direction,
 )
 from yishu_core.relations import ten_god as _stem_ten_god  # noqa: E402
+from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 from yishu_core.symbols import EARTHLY_BRANCHES, HEAVENLY_STEMS, xunkong_of  # noqa: E402
 
 
@@ -125,6 +126,7 @@ def chart(
 
 
 def main() -> int:
+    force_utf8_stdio()
     ap = argparse.ArgumentParser(description="命·四柱起盘（chart 段，纯机械）")
     ap.add_argument("--datetime", help='出生公历 "YYYY-MM-DD HH:MM"')
     ap.add_argument("--gender", choices=["男", "女"], default=None)

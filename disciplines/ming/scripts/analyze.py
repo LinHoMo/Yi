@@ -19,6 +19,7 @@ for _p in (str(CORE), str(Path(__file__).resolve().parent)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
+from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 from pattern import strength_and_pattern, dayun_table, liunian_table, dayun_liunian_interactions  # noqa: E402
 
 
@@ -103,6 +104,7 @@ def analyze(chart_json: dict) -> dict:
 
 
 def main() -> int:
+    force_utf8_stdio()
     ap = argparse.ArgumentParser(description="命·因子推演（analyze 段）")
     ap.add_argument("chart_json", nargs="?", help="chart 段输出")
     ap.add_argument("-o", "--out", type=Path)
