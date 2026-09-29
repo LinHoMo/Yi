@@ -13,173 +13,39 @@
 
 参考经典：《周易·说卦传》《黄金策》《卜筮正宗》
 """
-
-
 # =============================================================================
-# 八卦万物类象完整表
+# 数据加载（AGENTS.md §三：断语/象征文案进 data/*.json，代码只留算法）
+#
+# 下面三张表原先内嵌在本文件共约 230 行，是纯文案例项，不属于算法，已整体外提：
+#   trigram_symbolism —— 八卦万物类象（自然/五行/方位/身体/六亲/象征物/性情…）
+#   trigram_directions —— 八卦方位
+#   hexagram_names    —— 六十四卦复合卦名，键为 "上卦/下卦"
 # =============================================================================
+import json
+from pathlib import Path
 
-TRIGRAM_SYMBOLISM = {
-    "乾": {
-        "nature": "天",
-        "element": "金",
-        "direction": "西北",
-        "season": "秋冬",
-        "body": "首/脑/骨",
-        "family": "父",
-        "trait": "刚健/进取/领导",
-        "color": "大赤/玄色",
-        "number": 1,
-        "symbols": [
-            "天", "君", "父", "金", "玉", "寒", "冰",
-            "良马", "老马", "瘠马", "木果",
-        ],
-        "personality": "刚健有为、果决、领导力强",
-        "career": "公职/领导/军警/金融/金属",
-        "illness": "头部/骨骼/呼吸系统",
-        "weather": "寒/霜/冰",
-    },
-    "坤": {
-        "nature": "地",
-        "element": "土",
-        "direction": "西南",
-        "season": "夏秋",
-        "body": "腹/脾/肉",
-        "family": "母",
-        "trait": "柔顺/包容/承载",
-        "color": "黄/黑",
-        "number": 8,
-        "symbols": [
-            "地", "母", "布", "众", "柄", "吝啬",
-            "舆", "黄", "瓦", "文",
-        ],
-        "personality": "包容宽厚、被动稳重、循规蹈矩",
-        "career": "农业/地产/教育/纺织/陶艺",
-        "illness": "腹部/脾胃/消化系统",
-        "weather": "云/雾/阴天",
-    },
-    "震": {
-        "nature": "雷",
-        "element": "木",
-        "direction": "东",
-        "season": "春",
-        "body": "足/肝/发",
-        "family": "长男",
-        "trait": "动/起/惊恐",
-        "color": "青/绿",
-        "number": 4,
-        "symbols": [
-            "雷", "龙", "玄黄", "涂", "长子",
-            "决躁", "仓竹", "马善鸣",
-        ],
-        "personality": "行动力强、果断、易冲动、好动",
-        "career": "军警/运动/机械/交通/声响",
-        "illness": "足疾/肝病/神经/惊吓",
-        "weather": "雷/大风/春暖",
-    },
-    "巽": {
-        "nature": "风",
-        "element": "木",
-        "direction": "东南",
-        "season": "春夏",
-        "body": "股/胆/气",
-        "family": "长女",
-        "trait": "入/逊/顺",
-        "color": "白/青",
-        "number": 5,
-        "symbols": [
-            "风", "女", "绳", "工", "白/长/高",
-            "进退不果", "臭/寡发",
-        ],
-        "personality": "细心周旋、交际灵活、易反复无常",
-        "career": "商贸/交通/传播/文化/教育",
-        "illness": "股疾/胆疾/中风/气病",
-        "weather": "风/暖风/春夏风",
-    },
-    "坎": {
-        "nature": "水",
-        "element": "水",
-        "direction": "北",
-        "season": "冬",
-        "body": "耳/肾/血",
-        "family": "中男",
-        "trait": "陷/险/智",
-        "color": "黑",
-        "number": 6,
-        "symbols": [
-            "水/渎/沟/隐/矫/弓/盗/心病/耳痛",
-            "月/盗/北",
-        ],
-        "personality": "机智灵活、多疑善变、外柔内刚",
-        "career": "水/酒/航海/运输/机密",
-        "illness": "肾病/耳疾/血液/情志",
-        "weather": "雨/雪/霜",
-    },
-    "离": {
-        "nature": "火",
-        "element": "火",
-        "direction": "南",
-        "season": "夏",
-        "body": "目/心",
-        "family": "中女",
-        "trait": "丽/明/依附",
-        "color": "赤/紫/黄",
-        "number": 3,
-        "symbols": [
-            "火/电/日/龟/蟹/蚌/目/明/智",
-        ],
-        "personality": "聪明外露、重文采、易急躁",
-        "career": "文化/教育/电子/信息/美容",
-        "illness": "目疾/心病/精神/热症",
-        "weather": "晴/热/电",
-    },
-    "艮": {
-        "nature": "山",
-        "element": "土",
-        "direction": "东北",
-        "season": "冬春",
-        "body": "手/鼻/背",
-        "family": "少男",
-        "trait": "止/笃/静",
-        "color": "黄/黑/棕",
-        "number": 7,
-        "symbols": [
-            "山/径路/小石/门阙/果/果蓏/阍寺/鼠/虎/鼻",
-        ],
-        "personality": "稳重踏实、保守固执、耐力持久",
-        "career": "地产/建筑/安保/手工艺",
-        "illness": "手疾/鼻疾/背疾/关节",
-        "weather": "云止/雾气/寒冷",
-    },
-    "兑": {
-        "nature": "泽",
-        "element": "金",
-        "direction": "西",
-        "season": "秋",
-        "body": "口/舌/肺",
-        "family": "少女",
-        "trait": "悦/说/口舌",
-        "color": "白",
-        "number": 2,
-        "symbols": [
-            "泽/巫/口舌/羊/少女/妾/毁折", "附决",
-        ],
-        "personality": "乐观善辩、好社交、易口舌是非",
-        "career": "艺术/口才/媒体/娱乐/法律",
-        "illness": "口疾/舌疾/肺疾/气管",
-        "weather": "雨/霜/秋凉",
-    },
+_TRIGRAM_DATA_PATH = Path(__file__).resolve().parents[1] / "data" / "trigram_symbolism.json"
+
+
+def _load_trigram_data() -> dict:
+    try:
+        return json.loads(_TRIGRAM_DATA_PATH.read_text(encoding="utf-8"))
+    except OSError:
+        return {}
+
+
+_TRIGRAM_DATA = _load_trigram_data()
+
+TRIGRAM_SYMBOLISM = _TRIGRAM_DATA.get("trigram_symbolism") or {}
+
+TRIGRAM_DIRECTIONS = _TRIGRAM_DATA.get("trigram_directions") or {}
+
+# 复合卦名：JSON 无法表达 tuple 键，故序列化为 "上卦/下卦"；此处还原成 tuple，
+# 使下游 HEXAGRAM_NAMES.get((上, 下)) 的调用方式与外提前完全一致（零行为漂移）。
+HEXAGRAM_NAMES = {
+    tuple(_k.split("/")): _v for _k, _v in (_TRIGRAM_DATA.get("hexagram_names") or {}).items()
 }
 
-
-# =============================================================================
-# 八卦先天方位
-# =============================================================================
-
-TRIGRAM_DIRECTIONS = {
-    "乾": "西北", "兑": "西", "离": "南", "震": "东",
-    "巽": "东南", "坎": "北", "艮": "东北", "坤": "西南",
-}
 
 
 # =============================================================================
@@ -187,7 +53,6 @@ TRIGRAM_DIRECTIONS = {
 # =============================================================================
 
 ELEMENT_ORDER = ["木", "火", "土", "金", "水"]  # 相生序
-
 
 def _element_relation(elem_a: str, elem_b: str) -> str:
     """返回 elem_a 对 elem_b 的五行关系"""
@@ -206,7 +71,6 @@ def _element_relation(elem_a: str, elem_b: str) -> str:
     if ke_map.get(elem_b) == elem_a:
         return "被克"  # a被b克
     return "未知"
-
 
 # =============================================================================
 # 核心函数
@@ -327,7 +191,6 @@ def interpret_trigram_combination(upper: str, lower: str, category: str = "gener
 
     return symbolism
 
-
 def build_trigram_interpretation(result: dict, category: str = "general") -> dict:
     """
     从 build_hexagram_result 的输出中提取上下卦信息并生成卜象解读。
@@ -353,7 +216,6 @@ def build_trigram_interpretation(result: dict, category: str = "general") -> dic
 
     return interpret_trigram_combination(upper, lower, category)
 
-
 def trigram_to_favorable_direction(trigram: str) -> str:
     """
     八卦先天方位——返回对应方位。
@@ -370,7 +232,6 @@ def trigram_to_favorable_direction(trigram: str) -> str:
     """
     return TRIGRAM_DIRECTIONS.get(trigram, "中")
 
-
 def get_trigram_info(trigram: str) -> dict:
     """
     获取单个卦的完整类象信息。
@@ -386,7 +247,6 @@ def get_trigram_info(trigram: str) -> dict:
         该卦的全部类象数据
     """
     return TRIGRAM_SYMBOLISM.get(trigram, {}).copy()
-
 
 def format_trigram_interpretation_text(interp: dict) -> str:
     """
@@ -462,84 +322,15 @@ def format_trigram_interpretation_text(interp: dict) -> str:
 
     return "\n".join(lines)
 
-
 # =============================================================================
 # 辅助函数（内部使用）
 # =============================================================================
 
 # 六十四卦名复合表（上卦+下卦 → 卦名）
-HEXAGRAM_NAMES = {
-    ("乾", "乾"): "乾为天",
-    ("乾", "坤"): "天地否",
-    ("乾", "震"): "雷天大壮",
-    ("乾", "巽"): "风天小畜",
-    ("乾", "坎"): "水天需",
-    ("乾", "离"): "火天大有",
-    ("乾", "艮"): "山天大畜",
-    ("乾", "兑"): "泽天夬",
-    ("坤", "乾"): "地天泰",
-    ("坤", "坤"): "坤为地",
-    ("坤", "震"): "雷地豫",
-    ("坤", "巽"): "风地观",
-    ("坤", "坎"): "水地比",
-    ("坤", "离"): "火地晋",
-    ("坤", "艮"): "山地剥",
-    ("坤", "兑"): "泽地萃",
-    ("震", "乾"): "天雷无妄",
-    ("震", "坤"): "地雷复",
-    ("震", "震"): "震为雷",
-    ("震", "巽"): "雷风恒",
-    ("震", "坎"): "水雷屯",
-    ("震", "离"): "火雷噬嗑",
-    ("震", "艮"): "山雷颐",
-    ("震", "兑"): "泽雷随",
-    ("巽", "乾"): "天风姤",
-    ("巽", "坤"): "地风升",
-    ("巽", "震"): "雷风益",
-    ("巽", "巽"): "巽为风",
-    ("巽", "坎"): "风水涣",
-    ("巽", "离"): "火风鼎",
-    ("巽", "艮"): "山风蛊",
-    ("巽", "兑"): "泽风大过",
-    ("坎", "乾"): "天水讼",
-    ("坎", "坤"): "地水师",
-    ("坎", "震"): "雷水解",
-    ("坎", "巽"): "水风井",
-    ("坎", "坎"): "坎为水",
-    ("坎", "离"): "水火既济",
-    ("坎", "艮"): "山水蒙",
-    ("坎", "兑"): "泽水困",
-    ("离", "乾"): "天火同人",
-    ("离", "坤"): "地火明夷",
-    ("离", "震"): "雷火丰",
-    ("离", "巽"): "风火家人",
-    ("离", "坎"): "火水未济",
-    ("离", "离"): "离为火",
-    ("离", "艮"): "山火贲",
-    ("离", "兑"): "泽火革",
-    ("艮", "乾"): "天山遁",
-    ("艮", "坤"): "地山谦",
-    ("艮", "震"): "雷山小过",
-    ("艮", "巽"): "风山渐",
-    ("艮", "坎"): "水山蹇",
-    ("艮", "离"): "火山旅",
-    ("艮", "艮"): "艮为山",
-    ("艮", "兑"): "泽山咸",
-    ("兑", "乾"): "天泽履",
-    ("兑", "坤"): "地泽临",
-    ("兑", "震"): "雷泽归妹",
-    ("兑", "巽"): "风泽中孚",
-    ("兑", "坎"): "水泽节",
-    ("兑", "离"): "火泽睽",
-    ("兑", "艮"): "山泽损",
-    ("兑", "兑"): "兑为泽",
-}
-
 
 def _compound_name(upper: str, lower: str) -> str:
     """获取六十四卦名"""
     return HEXAGRAM_NAMES.get((upper, lower), f"{upper}上{lower}下")
-
 
 def _body_use_analysis(upper: str, lower: str, elem_u: str, elem_l: str, relation: str) -> str:
     """
@@ -561,7 +352,6 @@ def _body_use_analysis(upper: str, lower: str, elem_u: str, elem_l: str, relatio
     else:
         return f"{body}；体用关系待察"
 
-
 def _career_advice(element_relation: str) -> str:
     """根据体用关系给事业建议"""
     if element_relation in ("生", "比和"):
@@ -573,7 +363,6 @@ def _career_advice(element_relation: str) -> str:
     elif element_relation == "被克":
         return "需努力争取，不可松懈"
     return "观察形势，待时而动"
-
 
 def _health_advice(relation: str, elem_u: str, elem_l: str) -> str:
     """根据体用关系给健康分析"""
@@ -588,7 +377,6 @@ def _health_advice(relation: str, elem_u: str, elem_l: str) -> str:
     elif relation == "比和":
         return f"体用比和——{elem_l}平调，病情稳定"
     return "平和观察，详查脉证"
-
 
 def _relationship_dynamic(upper: str, lower: str, relation: str) -> str:
     """人际关系与婚姻分析"""
@@ -612,7 +400,6 @@ def _relationship_dynamic(upper: str, lower: str, relation: str) -> str:
 
     return f"{family_map}；两象相参，局势微妙"
 
-
 def _travel_advice(lower: str) -> str:
     """出行分析"""
     info = TRIGRAM_SYMBOLISM.get(lower, {})
@@ -627,7 +414,6 @@ def _travel_advice(lower: str) -> str:
     elif "险" in trait or "陷" in trait:
         return f"下卦{trait}——出行有险，须防不测"
     return f"下卦类象{body}——出行宜备周全"
-
 
 def _general_overview(upper: str, lower: str, u: dict, l: dict, relation: str) -> str:
     """通用总论"""
@@ -662,7 +448,6 @@ def _general_overview(upper: str, lower: str, u: dict, l: dict, relation: str) -
         + f"内蕴{l_nature_val}{l_trait_val}之质。"
         + f"{body_use_judgment}。"
     )
-
 
 # =============================================================================
 # CLI 快速测试
