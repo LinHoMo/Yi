@@ -3,6 +3,36 @@
 仓库级变更登记（跨科 / 内核 / 口径 / 架构）。学科内细节见各科 `CHANGELOG.md`。
 规则：指标口径任何变动（计分方式、词典、缺失字段处理）必须在此登记，否则分数不可比（`AGENTS.md` §四.4）。
 
+### 2026-09-29a 质量门编码修复 + 断语取用器去重 + B3 内核命名拆分 + B2 首批（四提交，全零漂移）
+
+- **`ea3a0e2` fix(gate)**：仓库级 `tools/check.py` 在中文 Windows 上**恒红**（唯一失败项
+  ming [3]「narrate 应声明非命运断言」）——根因是 gate 用 UTF-8 解码子进程输出，而子进程按
+  控制台代码页（GBK）写字节，两者错配而非逻辑缺陷。新增 `yishu_core.runtime.utf8_subprocess_env()`
+  单点强制子进程 `PYTHONUTF8=1`/`PYTHONIOENCODING=utf-8`，接入 6 处 subprocess 调用点
+  （`tools/check.py`、`tools/eval.py`、`tools/demo.py`、ming/liuyao 两科 `tools/check.py`）；
+  ming 全部 CLI 补 `force_utf8_stdio()`（`runtime.py` 已明文约定、此前 6 个 CLI 全缺）。
+  干净 GBK 环境下 ❌→✅。**不改任何分数口径**。
+- **`f500b25` refactor(liuyao)**：`ctext`/`ctpl` 断语取用器**五份逐字节相同副本**
+  （sha256 `cbdd3873274473d2`）收敛到 `chain_verdicts.py` 单点，五个规则模块改 import，
+  清死导入 `_CR_NOTES`/`_CR_TPL`；每文件 −16/+1，行尾逐文件保留。
+- **`697bc75` refactor(core) B3 清偿**：`ming_tables.py` 模块头写「唯一消费方：命科，卜科不用」，
+  而六爻三处在取它的纳音/三合/星煞——**文档与事实矛盾**。按归属拆：纳音 + 三合局分组 →
+  `symbols.py`（顺带补齐该模块章程本就写着的「三合」），星煞 → 新 `shensha.py`
+  （按 CONTRACT §二 标注命卜两科共用）；`ming_tables` 364 → 153 行，只剩命科专属的
+  藏干十神/大运/命宫身宫；6 处消费方同步，迁后 `grep ming_tables` 生产残留全为命科表。
+- **`0b11419` refactor(liuyao) B2 首批**：`classical_rules_patterns` **909 → 369 行**
+  （原 `scripts/` 最大），按域切出 `classical_rules_combo`（合破局）与 `classical_rules_growth`
+  （十二长生/绝处逢生），纯搬移、门面 `__all__` 24 项不变、消费方零改动；
+  拆分时按块内引用逐名裁剪 import，顺带清掉 patterns 残留的 35 个死导入。
+  （踩坑记录：裁剪脚本首版按原名判 `X as Y` 别名导入，删掉 `CINTERP` → 冒烟 36/36 归零，
+  改按别名判后恢复；详见 AUDIT §四之四。）
+- **验收（四项共用一套，全绿）**：refactor_guard 115 例指纹 `d754cfaddb105208` **零漂移**；
+  金标准 288 例 `abc7884de0653ee5` 不变；冒烟 36/36、样式层缺定义 0、思维链 12/12、古籍回归 12/12；
+  **tune 93.9 / holdout 87.5、主应期命中 58.8 / 50 逐项与基线一致**（两集分列出分）；
+  仓库级 gate ✅、pytest 76 passed、`tools/eval.py` strict holdout 87.5 不变。
+- **口径未变**：本轮为纯结构性重构与环境修复，计分方式/词典/缺失字段处理均未动，
+  分数与历史可比；**所有分数仍是古籍案例对齐分，非预测率**。
+
 ### 2026-09-27u 巨石收尾：step5 / 报告排版 / step3 三拆（零指纹漂移）
 
 - **step5**（`chain_step5.py`）：`step5_synthesize` 991 → 351 行。八个纯函数外置到

@@ -170,7 +170,7 @@ python tools/refactor_guard.py --compare guard/base.json  # 改后
 ## 六、架构要点
 
 ```
-core/yishu_core     唯一真值源（历法/象数/旬空三刑长生/纳音/十神/评分）
+core/yishu_core     唯一真值源（历法/象数/旬空三刑长生/纳音/三合/星煞/十神/评分）
 disciplines/<科>    四段契约 chart→analyze→narrate→render
 synthesis           person + 合参 + outcome-eval
 tools               check / eval / demo / mcp_router / selftests
@@ -194,6 +194,20 @@ tests/              pytest（relations/symbols/najia/yingqi/ming_dayun）
   格局引文（`_extract_pattern_tags`/`_select_relevant_quotes`/`_pattern_advice_hint`）/ 推因
   （`_build_explain_summary`），并再导出搬移名。`human_narrative_segments` 只 import 叶子模块
   （`chain_verdicts`/`chain_tables`），单向依赖、无循环。
+- **已拆（2026-09-29 B3 内核命名）**：`ming_tables.py` 曾兼存**命、卜两科共用**的纳音/三合/星煞，
+  模块头却写「唯一消费方：命科，卜科不用」——**文档与事实矛盾**（B3 实锤）。按归属拆后：
+  纳音 + 三合局分组 → `symbols.py`（顺带补齐该模块章程本就写着的「三合」），
+  星煞 → 新 `shensha.py`（模块头按 CONTRACT §二 标注命卜两科共用），
+  `ming_tables` 只剩命科专属（藏干十神 / 大运 / 命宫身宫）。消费方 6 处同步，**取值零变化**。
+- **已拆（2026-09-29 B2 首批）**：`classical_rules_patterns` 909 → 369 行（原 `scripts/` 最大），
+  切出 `classical_rules_combo`（`_check_broken_combo` + `analyze_triple_combo`）与
+  `classical_rules_growth`（`analyze_twelve_growth` + `analyze_desperate_relief`）；
+  门面 `classical_rules` 改从新模块取数，`__all__` 24 项不变、消费方零改动。
+  **裁剪 import 要按别名判 `X as Y`**——首版按原名判，删掉了 `CINTERP`，
+  冒烟当场 36/36 归零（记 AUDIT §四之四）。
+- **质量门编码（2026-09-29）**：`yishu_core.runtime.utf8_subprocess_env()` 让所有 gate 子进程
+  `PYTHONUTF8=1`，与父进程解码对齐——仓库级 `tools/check.py` 在中文 Windows 上由恒红转全绿。
+  **新写子进程调用必须走它**，别手拼 `env`；CLI 还要 `force_utf8_stdio()`。
 - **MCP**：六爻 7 方法（专用 `mcp_server.py`）；命 ming 经 `tools/mcp_router.py` 注册 chart/analyze/narrate/render/list_methods（meihua/xiaoliuren/zeji 已归档）
 
 ---
@@ -214,3 +228,4 @@ tests/              pytest（relations/symbols/najia/yingqi/ming_dayun）
 | 26z | 范围收缩：仅保留 `ming`+`liuyao`，`meihua`/`xiaoliuren`/`zeji` 归档 `archive/`；清理 `tools/`+`synthesis/` 引用与死代码；绑定文档同步 |
 | 26aa | 历史债务文档化：新增 `docs/TECH-DEBT.md` 统一登记（已清偿/待清偿 + 提交锚点 + 防新债纪律）+ 治理扫描（死脚本、冗余 skills 判定**无需动作**） |
 | 27-tidy | 仓库清理（清 gitignore 生成物与遗留 `.worktrees/`）+ 修 `tools/eval.py`（ming 无评测器不再误报失败、默认改回 `tune+holdout`、对齐 docstring）+ 本 handoff 重写 |
+| 29a | **B1 测试迁出生产 `scripts/`**（→ 科内 `tests/`）；**质量门编码修复**（子进程 UTF-8，仓库级门由恒红转全绿）；`ctext`/`ctpl` 五副本收敛 `chain_verdicts`；**B3 内核命名拆分**（纳音/三合→`symbols`、星煞→新 `shensha`）；**B2 首批**（`classical_rules_patterns` 909→369 行）——逐项零指纹漂移验收 |

@@ -13,6 +13,11 @@
 
 | 债务 | 处理 | 锚点 |
 |---|---|---|
+| **B1 生产目录里的 2,533 行测试**（`regression_test`/`smoke_test`/`thinking_chain_tests` 住 `disciplines/liuyao/scripts/`） | 三个测试 CLI `git mv` 到科内 `tests/`（不跨树，保「每科自包含」）；三处路径基址改由 `../scripts` 派生使 outputs/报告语义不变；6 处调用点同步 | 见 AUDIT §四之二（2026-09-29） |
+| 仓库级质量门在中文 Windows **恒红**（唯一失败项 ming [3]「narrate 应声明非命运断言」） | 根因：gate 以 UTF-8 解码子进程输出，而子进程按控制台代码页（GBK）写字节。新增 `yishu_core.runtime.utf8_subprocess_env()` 单点强制子进程 `PYTHONUTF8=1`，接入 6 处 subprocess 调用点；ming 各 CLI 补 `force_utf8_stdio()`（`runtime.py` 明文约定此前 6 个 CLI 全缺） | `ea3a0e2`（2026-09-29） |
+| `ctext`/`ctpl` 断语取用器**五份逐字节相同副本**（sha256 `cbdd3873274473d2`） | 唯一实现收进 `chain_verdicts.py`（与 `note_text`/`vdesc` 同居），五个规则模块改 import，清死导入 `_CR_NOTES`/`_CR_TPL`；每文件 −16/+1 | `f500b25`（2026-09-29） |
+| **B3 内核领域命名泄漏**：`ming_tables` 放着命卜两科共用的纳音/三合/星煞，模块头却写「唯一消费方：命科，卜科不用」 | 纳音 + 三合局分组 → `symbols.py`（顺带补齐章程里本就写着的「三合」）；星煞 → 新 `shensha.py`（模块头标注两科共用）；`ming_tables` 只剩藏干十神/大运/命宫身宫；6 处消费方同步 | `697bc75`（2026-09-29，记录见 AUDIT §四之三） |
+| **B2 巨型模块** `classical_rules_patterns` 909 行（`scripts/` 最大） | 按域切出 `classical_rules_combo`（合破局）与 `classical_rules_growth`（十二长生/绝处逢生），patterns → 369 行；死导入同步清零 | `0b11419`（2026-09-29） |
 | `tools/eval.py` 两处长期缺陷：引用从未存在的 `ming/scripts/evaluate.py`（默认命令恒失败）+ docstring/默认 split 不一致（`all` 纳入排除案例恒报错） | 缺评测器改为非致命跳过；默认改回 `tune+holdout`（`--full` 追加外部集）；`check.py` 不依赖它 | 2026-09-27ab |
 | 范围收缩：卜科四科 → 仅 `ming`（四柱）+ `liuyao`（六爻） | `git mv` 三科归档至 `archive/`（保历史、可还原）；清理 `tools/`+`synthesis/` 引用，删 `normalize_*` 死代码 | `d341b0b`（CHANGELOG 2026-09-27z） |
 | pytest 从根目录收集失败（四科同名 `smoke_test`/`evaluate` 撞车） | `--import-mode=importlib` + `testpaths=["tests"]`，纯配置零逻辑 | `0e08202`（2026-09-27y） |

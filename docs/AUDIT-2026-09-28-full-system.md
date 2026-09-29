@@ -73,7 +73,7 @@
 | ID | 问题 | 证据 | 为何本轮未动 |
 |---|---|---|---|
 | B1 | ~~2,533 行测试住在生产目录~~ → **已清偿（2026-09-29）** | 见下「B1 清偿记录」 | — |
-| B2 | **巨型模块 >700 行 ×10**：regression_test 963 / classical_rules_patterns 923 / chain_step5_adjust 905 / smoke_test 854 / effects_change 783 / chain_step4_patterns 741 / mcp_server 722 / thinking_chain_tests 716 / trigram_symbolism 702 / chain_step2 701。 | 见规模表 | 拆分需逐模块建立「零指纹漂移」基线，工作量大，宜按模块分批。 |
+| B2 | **巨型模块 >700 行 ×8**（2026-09-29 复测）：regression_test 966 / chain_step5_adjust 905 / smoke_test 856 / effects_change 769 / chain_step4_patterns 741 / mcp_server 722 / thinking_chain_tests 718 / chain_step2 701。~~trigram_symbolism 702~~ → **已清偿（`0143e5b`）**；~~classical_rules_patterns 923~~ → **已清偿（`0b11419`）**。 | 见规模表 + 下「B2 拆分记录」 | 拆分需逐模块建立「零指纹漂移」基线，工作量大，宜按模块分批（剩余 8 项中 3 项是测试文件，收益低于生产模块）。 |
 | B3 | ~~**内核领域命名泄漏**：六爻从 `yishu_core.ming_tables` 取三合/纳音/星煞（`bing_yao_shensha.py:18`、`chain_tables.py:40`、`classical_tables.py:42-43`）。三者实为跨科共用表，却冠以 `ming_`。~~ → **已清偿（2026-09-29）** | 见下「B3 清偿记录」 | — |
 
 ## 六、勘误（初判有误，经查证后撤回）
@@ -163,6 +163,51 @@ AGENTS.md 未规定 tests 位置，故选科内 `tests/` 而非仓库根 `tests/
 > **`bing_yao_shensha.py:159` 那句 `basis` 是交付正文里可见的溯源文案**，改它有金标准漂移风险。
 > 处置顺序：先 `grep basis` 查有无消费方读取（结论：无读取方）→ 改 → 跑金标准确认不入覆盖域。
 > 省掉这一步，就是拿一次文案改动冒充「零漂移」——26u 那次假阳性就是这么来的。
+
+---
+
+## 四之四、B2 拆分记录（2026-09-29 首批）
+
+`classical_rules_patterns.py` **909 行（当时 `scripts/` 最大）**，一个文件塞 18 项断法。
+按域切两刀，**纯搬移、块内一行不改**：
+
+| 去向 | 函数 | 行数 |
+|---|---|---|
+| `classical_rules_combo.py`（新） | `_check_broken_combo` + `analyze_triple_combo` | 251 |
+| `classical_rules_growth.py`（新） | `analyze_twelve_growth` + `analyze_desperate_relief` | 311 |
+| `classical_rules_patterns.py`（留） | 游魂归魂 / 月破 / 进退神 | 909 → 369 |
+
+- 切口按**调用关系**定：`_check_broken_combo` 全文只被 `analyze_triple_combo` 调用
+  （`grep` 证实 3 处：定义 1 + 调用 2），两者必须同走；四个被迁函数彼此无横向调用。
+- 新模块头复用原样板段（内核定位 + `kernel_path` 接线，与 `classical_rules_hidden.py` 同构），
+  import 按块内实际引用**逐名裁剪**，两个新模块死导入 0；`patterns` 拆完残留的 35 个
+  死导入（`najia_branch`/`TOMB_MAP`/`KE_WO`/`SAN_HE`/`g_day_cn`…）一并清掉。
+- 门面 `classical_rules.py` 改从新模块取数，`__all__` 24 项不变；
+  `classical_analysis.py` 与 `tests/smoke_test.py` 都经门面取名，**消费方零改动**。
+
+**踩坑（首版拆分直接红灯）**：裁剪脚本按**原名**判断 `X as Y` 别名导入，
+`CLASSICAL_INTERPRETATIONS as CINTERP` 被判为「块内没用到原名」而删掉，
+运行期 `NameError: CINTERP` → 冒烟 36/36 **归零**、金标准指纹变、tune/holdout 双双跌。
+改为按**别名 Y** 判有无、保留时仍写原书写 `X as Y` 后恢复全绿。
+> 教训：拆分脚本的「死导入裁剪」看着是清潔活，实际是**能直接把引擎打穿**的改动——
+> 判据取错一个字段就红。所以裁剪后必须先跑冒烟（最快暴露 NameError），再跑金标准与分数门。
+
+**验收**（与 B3 同一套，全绿）：
+
+| 手段 | 结果 |
+|---|---|
+| refactor_guard 115 例 | 指纹 `d754cfaddb105208` **零漂移**（失败 5 ≤ MAX_ERRORS 8） |
+| 金标准 288 例 | `abc7884de0653ee5` 不变 |
+| 冒烟 / 样式层缺定义 / 思维链 / 古籍回归 | 36/36、0、12/12、12/12 |
+| tune / holdout（分列出分） | 93.9 / 87.5，主应期命中 58.8 / 50 —— 逐项与基线一致 |
+| 仓库级 gate / pytest / `tools/eval.py` | ✅ / 76 passed / strict holdout 87.5 不变 |
+
+**B2 余量复测**（本表首次给出实测行数，取代 09-28 的旧表）：
+`trigram_symbolism` 已由 `0143e5b` 清偿（702→487），`classical_rules_patterns` 本轮清偿；
+尚余 8 项 >700：regression_test 966、chain_step5_adjust 905、smoke_test 856、
+effects_change 769、chain_step4_patterns 741、mcp_server 722、thinking_chain_tests 718、chain_step2 701
+—— 其中 3 项是测试 CLI（B1 刚迁过目录），**拆分收益低于生产模块**，下一批优先
+`chain_step5_adjust` / `effects_change` / `chain_step4_patterns`。
 
 ---
 
