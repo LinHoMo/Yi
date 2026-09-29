@@ -98,6 +98,25 @@ def vdesc(key: str) -> str:
     return STEP5_VERDICT_DESCS[key]["text"]
 
 
+def ctext(key: str, **fmt) -> str:
+    """取 classical_rules 可交付断语；key 见 data/rules/verdict_texts.json#classical_rules_notes。
+
+    **断语/模板取用的唯一实现**：此前 `classical_rules_{hidden,patterns}` 与
+    `effects_{change,harmony,structure}` 五处各写一份完全相同的副本（五份逐字节同 sha256），
+    改口径要改五处、漏改一处就出现两种说法——同类缺陷即审计 F2/F3 的副本问题。
+    现五处一律 `from chain_verdicts import ctext, ctpl`。
+    """
+    entry = CLASSICAL_RULES_NOTES[key]
+    text = entry["text"]
+    return text.format(**fmt) if fmt else text
+
+
+def ctpl(key: str, *args) -> str:
+    """取 classical_rules 拼装句模板；{0}{1}… 为位置参数。"""
+    text = CLASSICAL_RULES_TEMPLATES[key]["text"]
+    return text.format(*args) if args else text
+
+
 _QUESTION_SCENARIO_KEYWORDS = {
     "marriage": ["婚", "恋", "感情", "喜欢", "女朋友", "男朋友", "对象", "正缘", "伴侣", "相亲", "姻缘", "爱"],
     "wealth": ["财", "投资", "求财", "赚钱", "收入", "利", "生意", "经营", "破财"],

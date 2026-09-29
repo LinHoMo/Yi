@@ -34,21 +34,7 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
 
 from classical_support import _branch_element, _combined_strength, _element_to_relation, _find_stage_at, _find_use_god_positions, _get_use_god_strength_level, _infer_use_god_category, _pos_to_name, _relation_element, _score_fanyin, _score_fuyin, _strength_score, determine_six_relation, element_strength_in_month, find_hexagram_body, g_day_cn, get_changed_hexagram_branch, get_month_strength_description, get_stages_of_interest, get_twelve_growth_stage, is_ba_zu_chong, is_ba_zu_he
 from classical_tables import KE_WO, SAN_HE, SELF_PUNISHMENTS, SHENG_WO, SIX_RELATIONS, THREE_PUNISHMENTS_CYCLIC, THREE_PUNISHMENTS_MUTUAL, TRANSFORMATION_PATTERNS, TWELVE_GROWTH
-from chain_verdicts import CLASSICAL_INTERPRETATIONS as CINTERP, CLASSICAL_RULES_NOTES as _CR_NOTES, CLASSICAL_RULES_TEMPLATES as _CR_TPL
-
-
-def ctext(key: str, **fmt) -> str:
-    """取 classical_rules 可交付断语；key 见 data/rules/verdict_texts.json#classical_rules_notes。"""
-    entry = _CR_NOTES[key]
-    text = entry["text"]
-    return text.format(**fmt) if fmt else text
-
-
-
-def ctpl(key: str, *args) -> str:
-    """取 classical_rules 拼装句模板；{0}{1}… 为位置参数。"""
-    text = _CR_TPL[key]["text"]
-    return text.format(*args) if args else text
+from chain_verdicts import CLASSICAL_INTERPRETATIONS as CINTERP, ctext, ctpl
 
 
 def _evaluate_hidden_spirit_emergence(hid_elem, hid_branch, cov_rel, cov_branch,

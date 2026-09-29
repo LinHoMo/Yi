@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
-"""古典断法增强：门面。实现按域拆在 classical_rules_{hidden,patterns,effects}.py。
-
+"""古典断法增强：门面。实现按域拆在 classical_rules_{hidden,patterns,effects}.py；
+断语/模板取用器 ctext、ctpl 的唯一实现在 chain_verdicts.py（断语库），此处再导出。
 
 纯搬移拆分，不改逻辑；对外 API 仍从本模块 import（classical_analysis 等）。
 """
 from __future__ import annotations
 
+from chain_verdicts import ctext, ctpl  # noqa: F401  唯一实现见 chain_verdicts
 from classical_rules_hidden import (  # noqa: F401
-    ctext,
-    ctpl,
     _evaluate_hidden_spirit_emergence,
     analyze_hidden_spirits,
     analyze_hidden_spirit_emergence,
