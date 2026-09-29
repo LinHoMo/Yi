@@ -13,6 +13,9 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "core"))
 
 from yishu_core.symbols import (  # noqa: E402
+    NAYIN,
+    NAYIN_TO_ELEMENT,
+    sanhe_group,
     xunkong_of,
     sanxing_hits,
     twelve_growth,
@@ -20,11 +23,10 @@ from yishu_core.symbols import (  # noqa: E402
     yao_values,
 )
 from yishu_core.ming_tables import (  # noqa: E402
-    NAYIN,
-    NAYIN_TO_ELEMENT,
     dayun_direction,
     DAYS_PER_LUCK_YEAR,
 )
+from yishu_core.shensha import shensha_at_branches  # noqa: E402
 from yishu_core.relations import ten_god, six_relation  # noqa: E402
 from yishu_core.ganzhi_calendar import next_jie_after, prev_jie_before  # noqa: E402
 

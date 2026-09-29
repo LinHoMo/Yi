@@ -4,7 +4,8 @@
 病药（《增删卜易》通行口径，子平/六爻皆用「有病有药」思路）：
   病：休囚死、旬空、月破、受日月克、伏藏受压、入墓
   药：原神动来生、日月生扶、冲空填实、冲开墓库、飞神受制出伏
-星煞：安星自 core.ming_tables，是否临爻由本模块比对后挂到爻位。
+星煞：安星自 core.shensha（原在 core.ming_tables，2026-09-29 按「命卜两科共用」拆出），
+是否临爻由本模块比对后挂到爻位。
 """
 from __future__ import annotations
 
@@ -15,7 +16,7 @@ _CORE = Path(__file__).resolve().parents[3] / "core"
 if str(_CORE) not in sys.path:
     sys.path.insert(0, str(_CORE))
 
-from yishu_core.ming_tables import shensha_at_branches  # noqa: E402
+from yishu_core.shensha import shensha_at_branches  # noqa: E402
 from yishu_core.symbols import BRANCH_ELEMENTS  # noqa: E402
 from pathlib import Path as _P
 import json as _json
@@ -156,5 +157,5 @@ def attach_shensha(chart_result: dict, step3: dict | None = None) -> dict:
         "shensha": hit,
         "day_stem": day_stem,
         "day_branch": day_branch,
-        "basis": "core.yishu_core.ming_tables 安星；是否吉凶由 narrate 按语境表述，不在此断",
+        "basis": "core.shensha 安星；是否吉凶由 narrate 按语境表述，不在此断",
     }

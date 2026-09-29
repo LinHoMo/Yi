@@ -40,7 +40,7 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     palace_of_key,
     EARTHLY_BRANCHES as BRANCHES,
 )
-from yishu_core.ming_tables import SAN_HE_GROUPS as _CORE_SAN_HE  # noqa: E402
+from yishu_core.symbols import SAN_HE_GROUPS as _CORE_SAN_HE  # noqa: E402
 from yishu_core.relations import SIX_RELATIONS  # noqa: E402
 
 from datetime import datetime, timedelta
@@ -66,7 +66,7 @@ PALACE_OVERCOMING = dict(KE_WO)
 
 
 # 三合/十二长生/旬空：真值源在 core.yishu_core（AGENTS.md §二），此处仅别名。
-SAN_HE = _CORE_SAN_HE  # core.ming_tables.SAN_HE_GROUPS 别名
+SAN_HE = _CORE_SAN_HE  # core.symbols.SAN_HE_GROUPS 别名
 
 
 TWELVE_GROWTH_TABLES = _CORE_TWELVE_GROWTH_TABLES

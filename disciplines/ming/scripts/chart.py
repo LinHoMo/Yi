@@ -21,14 +21,13 @@ from yishu_core.ganzhi_calendar import ganzhi_of  # noqa: E402
 from yishu_core.ming_tables import (  # noqa: E402
     hidden_stems,
     canggan_ten_gods,
-    nayin_of,
-    shensha_of_chart,
     ming_shen_gong,
     dayun_direction,
 )
 from yishu_core.relations import ten_god as _stem_ten_god  # noqa: E402
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
-from yishu_core.symbols import EARTHLY_BRANCHES, HEAVENLY_STEMS, xunkong_of  # noqa: E402
+from yishu_core.shensha import shensha_of_chart  # noqa: E402  命卜两科共用
+from yishu_core.symbols import EARTHLY_BRANCHES, HEAVENLY_STEMS, nayin_of, xunkong_of  # noqa: E402
 
 
 def _split_gz(gz: str) -> tuple[str, str]:

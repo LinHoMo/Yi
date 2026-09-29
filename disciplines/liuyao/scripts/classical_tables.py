@@ -42,8 +42,8 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     TWELVE_GROWTH_TABLES,
 )
 
-from yishu_core.ming_tables import NAYIN as _CORE_NAYIN, NAYIN_TO_ELEMENT  # noqa: E402
-from yishu_core.ming_tables import SAN_HE_GROUPS as _CORE_SAN_HE  # noqa: E402
+from yishu_core.symbols import NAYIN as _CORE_NAYIN, NAYIN_TO_ELEMENT  # noqa: E402
+from yishu_core.symbols import SAN_HE_GROUPS as _CORE_SAN_HE  # noqa: E402
 from yishu_core.relations import SIX_RELATIONS  # noqa: E402
 
 

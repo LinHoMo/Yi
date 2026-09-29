@@ -74,7 +74,7 @@
 |---|---|---|---|
 | B1 | ~~2,533 行测试住在生产目录~~ → **已清偿（2026-09-29）** | 见下「B1 清偿记录」 | — |
 | B2 | **巨型模块 >700 行 ×10**：regression_test 963 / classical_rules_patterns 923 / chain_step5_adjust 905 / smoke_test 854 / effects_change 783 / chain_step4_patterns 741 / mcp_server 722 / thinking_chain_tests 716 / trigram_symbolism 702 / chain_step2 701。 | 见规模表 | 拆分需逐模块建立「零指纹漂移」基线，工作量大，宜按模块分批。 |
-| B3 | **内核领域命名泄漏**：六爻从 `yishu_core.ming_tables` 取三合/纳音/星煞（`bing_yao_shensha.py:18`、`chain_tables.py:40`、`classical_tables.py:42-43`）。三者实为跨科共用表，却冠以 `ming_`。 | 同上 | 更名/拆分属 core 重构，会同时触及 ming 科，需单独评估影响面。 |
+| B3 | ~~**内核领域命名泄漏**：六爻从 `yishu_core.ming_tables` 取三合/纳音/星煞（`bing_yao_shensha.py:18`、`chain_tables.py:40`、`classical_tables.py:42-43`）。三者实为跨科共用表，却冠以 `ming_`。~~ → **已清偿（2026-09-29）** | 见下「B3 清偿记录」 | — |
 
 ## 六、勘误（初判有误，经查证后撤回）
 
@@ -126,6 +126,43 @@ AGENTS.md 未规定 tests 位置，故选科内 `tests/` 而非仓库根 `tests/
 - 仓库级文档 `docs/TECH-DEBT.md:58`、`docs/HANDOFF.md:98,160`、`docs/CHANGELOG.md` 把
   `tools/refactor_guard.py` 写成仓库根路径，实际位于 **`disciplines/liuyao/tools/refactor_guard.py`**
   （文档默认 cwd=学科根）。建议补一句 cwd 约定或改写全路径。
+
+---
+
+## 四之三、B3 清偿记录（2026-09-29）
+
+`core/yishu_core/ming_tables.py` 模块头一直写着「**唯一消费方：命科 `disciplines/ming`；卜科不用**」，
+而六爻三处实际在取——**文档与事实矛盾**，这是 B3 的实锤。按归属拆分后 `ming_tables` 剩 153 行，只留命科专属表：
+
+| 原住 `ming_tables.py` | 迁至 | 谁在用 |
+|---|---|---|
+| 纳音 `NAYIN_COUPLETS`/`NAYIN`/`NAYIN_TO_ELEMENT`/`nayin_of`/`nayin_of_index` | `symbols.py` | 命 `chart.py`、卜 `classical_tables.py` |
+| 三合局分组 `SAN_HE_GROUPS`/`sanhe_group` | `symbols.py` | 命 `pattern.py`、卜 `chain_tables.py`/`classical_tables.py`、神煞驿马桃花华盖 |
+| 星煞（天乙/文昌/羊刃/驿马/桃花/华盖/禄神/红艳/天喜/天德/月德 + `shensha_at_branches`/`shensha_of_chart`） | 新建 `shensha.py` | 命 `chart.py`、卜 `bing_yao_shensha.py` |
+| 藏干十神 / 大运起法 / 命宫身宫 | 留在 `ming_tables.py` | 命科 |
+
+- 三合局迁入 `symbols.py` 顺带**补齐该模块自己的章程**：它的模块头与 `docs/CONTRACT.md` §二
+  本就写着「六合六冲**三合**三刑六破」，而 `SAN_HE_GROUPS` 一直不在里面——章程与实现也不一致。
+- `shensha.py` 模块头按 CONTRACT §二「标注只有哪几科用」明写**命、卜两科共用**；
+  迁出依据同时写进 `ming_tables` 与 `shensha` 两个模块头，不留第二份叙述。
+- 消费方 6 处同步：`ming/scripts/chart.py`、`ming/scripts/pattern.py:332`、
+  `liuyao/scripts/chain_tables.py:43`、`liuyao/scripts/classical_tables.py:45-46`、
+  `liuyao/scripts/bing_yao_shensha.py:7,18,159`、`tools/core_selftest.py`；
+  迁后复查 `grep ming_tables`，生产代码残留项**全部**是命科专属表，无跨科取用。
+
+**取值等价 + 零漂移验收**：
+
+| 手段 | 结果 |
+|---|---|
+| 迁移前后逐表比对（`NAYIN` / `NAYIN_TO_ELEMENT` / `SAN_HE_GROUPS` / `shensha_at_branches` / `shensha_of_chart` / `nayin_of_index` 60 序，独立解释器） | ✅ 全等，取值零变化 |
+| refactor_guard 115 例 | 指纹 `d754cfaddb105208` **零漂移**（失败 5 ≤ MAX_ERRORS 8，快照可信） |
+| 金标准 288 例 | `abc7884de0653ee5` 不变 |
+| 仓库级 gate / 学科级 gate | ✅ / ✅ 全门通过（tune 93.9 / holdout 87.5、top-1 58.8/50 逐项不变） |
+| pytest | 76 passed |
+
+> **`bing_yao_shensha.py:159` 那句 `basis` 是交付正文里可见的溯源文案**，改它有金标准漂移风险。
+> 处置顺序：先 `grep basis` 查有无消费方读取（结论：无读取方）→ 改 → 跑金标准确认不入覆盖域。
+> 省掉这一步，就是拿一次文案改动冒充「零漂移」——26u 那次假阳性就是这么来的。
 
 ---
 

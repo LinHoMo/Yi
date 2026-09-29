@@ -329,7 +329,7 @@ def dayun_liunian_interactions(chart_json: dict, dayun: list[dict] | None = None
 
     he_set = {frozenset(p) for p in HE_PAIRS}
     chong_set = {frozenset(p) for p in CHONG_PAIRS}
-    from yishu_core.ming_tables import SAN_HE_GROUPS
+    from yishu_core.symbols import SAN_HE_GROUPS
     sanhe = {k: set(v) for k, v in SAN_HE_GROUPS.items()}
 
     out = []

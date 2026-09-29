@@ -1,6 +1,8 @@
 # 命 · 四柱机械推演
 
-> 干支/藏干/十神/纳音/神煞/空亡来自内核 `yishu_core.ming_tables` / `symbols` / `relations`。
+> 干支/藏干/十神/空亡来自内核 `yishu_core.ming_tables` / `symbols` / `relations`；
+> **纳音**归 `symbols`、**神煞**（`shensha_of_chart`）归 `yishu_core.shensha`——
+> 两者 2026-09-29 自 `ming_tables` 按「命卜两科共用」拆出（审计 B3）。
 > 合参层只吃 `analyze` 输出的结构化因子；**不产出命运吉凶断语**。
 
 ## 四段契约

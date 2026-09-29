@@ -1,19 +1,25 @@
 # -*- coding: utf-8 -*-
 """命科补表（Ming Tables）—— 八字四柱所需、而 core 此前没有的规则表。
 
-依 CONTRACT.md §二：「学科若需要内核没有的表（如八字的藏干、十神、神煞），
+依 CONTRACT.md §二：「学科若需要内核没有的表（如八字的藏干、十神），
 加到内核并标注只有哪几科用，不要开第二个真值源。」本模块即命科（四柱八字）的补表，
-**唯一消费方：命科 `disciplines/ming`**；卜科不用（六亲/卦象另有 symbols、najia）。
+**唯一消费方：命科 `disciplines/ming`**（藏干十神 / 大运起法 / 命宫身宫）。
 
-收录：藏干、纳音、神煞、大运起法、命宫身宫。十神本身是「关系」，其推演在
+收录：藏干、大运起法、命宫身宫。十神本身是「关系」，其推演在
 relations.py（十神↔六亲同一张表），本模块只借它给藏干逐个定十神。
+
+**纳音、三合局分组、神煞原本也住在这里**，但卜科（六爻）同样在取——
+`bing_yao_shensha.py` 取 `shensha_at_branches`、`chain_tables.py` 取 `SAN_HE_GROUPS`、
+`classical_tables.py` 取 `NAYIN`/`NAYIN_TO_ELEMENT`——与本模块「唯一消费方：命科」
+的声明自相矛盾，即审计 B3「内核领域命名泄漏」。2026-09-29 按归属拆出，**取值零变化**：
+  - 纳音 + 三合局分组 → `symbols.py`（干支五行关系；其章程本就写着「六合六冲三合三刑六破」，
+    三合却一直不在里面，顺带补齐章程）
+  - 神煞 → 新建 `shensha.py`（命、卜两科共用，消费方已在该模块头标注）
 
 真值源纪律（两处须知）：
   1. 干支、五行、五虎遁、节气一律取自 ganzhi_calendar.py / symbols.py，不在此另抄。
-  2. 三合局分组（申子辰…）core 此前没有——六爻把它写在 `thinking_chain.py` 里（学科内副本）。
-     神煞中的驿马/桃花/华盖按三合局取，故在**内核**此处立一份规范分组；
-     六爻那份副本应日后上收归并（已记入 `synthesis/notes/CORE-GAPS.md`）。
-     这不是在学科里开第二真值源，而是把共用表补进 core。
+  2. 三合局分组（申子辰…）唯一真值源在 `symbols.SAN_HE_GROUPS`；神煞中的驿马/桃花/华盖
+     按三合局取，经 `symbols.sanhe_group` 调用，绝不再开第二份。
 
 出处诚实：以下诸表均为子平通行定式（多托名《渊海子平》《三命通会》），
 本环境无法逐字核对原文，凡被 analyze 引用为判据者，其 `verified` 一律标 false，
@@ -27,7 +33,7 @@ from .ganzhi_calendar import (
     TIGER_MONTH_STEM,
     ganzhi_pair,
 )
-from .symbols import BRANCH_ELEMENTS
+from .symbols import BRANCH_ELEMENTS, nayin_of as _nayin_of
 from . import relations as rel
 
 # ================================================================ 藏干（人元司令）
@@ -65,217 +71,6 @@ def canggan_ten_gods(day_stem: str, branch: str) -> list[dict]:
             "layer": CANG_GAN_LAYER[i] if i < len(CANG_GAN_LAYER) else "余气",
         })
     return out
-
-
-# ================================================================ 纳音（六十甲子）
-NAYIN_COUPLETS = [
-    ("海中金", "甲子", "乙丑"), ("炉中火", "丙寅", "丁卯"), ("大林木", "戊辰", "己巳"),
-    ("路旁土", "庚午", "辛未"), ("剑锋金", "壬申", "癸酉"), ("山头火", "甲戌", "乙亥"),
-    ("涧下水", "丙子", "丁丑"), ("城头土", "戊寅", "己卯"), ("白蜡金", "庚辰", "辛巳"),
-    ("杨柳木", "壬午", "癸未"), ("泉中水", "甲申", "乙酉"), ("屋上土", "丙戌", "丁亥"),
-    ("霹雳火", "戊子", "己丑"), ("松柏木", "庚寅", "辛卯"), ("长流水", "壬辰", "癸巳"),
-    ("沙中金", "甲午", "乙未"), ("山下火", "丙申", "丁酉"), ("平地木", "戊戌", "己亥"),
-    ("壁上土", "庚子", "辛丑"), ("金箔金", "壬寅", "癸卯"), ("覆灯火", "甲辰", "乙巳"),
-    ("天河水", "丙午", "丁未"), ("大驿土", "戊申", "己酉"), ("钗钏金", "庚戌", "辛亥"),
-    ("桑柘木", "壬子", "癸丑"), ("大溪水", "甲寅", "乙卯"), ("沙中土", "丙辰", "丁巳"),
-    ("天上火", "戊午", "己未"), ("石榴木", "庚申", "辛酉"), ("大海水", "壬戌", "癸亥"),
-]
-NAYIN = {}
-for _ny, _g1, _g2 in NAYIN_COUPLETS:
-    NAYIN[_g1] = _ny
-    NAYIN[_g2] = _ny
-
-
-# 纳音 → 五行（六爻断法与命科共用；名字取《三命通会》通行写法）
-NAYIN_TO_ELEMENT = {
-    "海中金": "金", "炉中火": "火", "大林木": "木", "路旁土": "土", "剑锋金": "金",
-    "山头火": "火", "涧下水": "水", "城头土": "土", "白蜡金": "金", "杨柳木": "木",
-    "泉中水": "水", "屋上土": "土", "霹雳火": "火", "松柏木": "木", "长流水": "水",
-    "沙中金": "金", "山下火": "火", "平地木": "木", "壁上土": "土", "金箔金": "金",
-    "覆灯火": "火", "天河水": "水", "大驿土": "土", "钗钏金": "金", "桑柘木": "木",
-    "大溪水": "水", "沙中土": "土", "天上火": "火", "石榴木": "木", "大海水": "水",
-}
-
-
-def nayin_of(ganzhi: str) -> str | None:
-    """干支（两字）→ 纳音；非法返回 None。"""
-    return NAYIN.get(ganzhi)
-
-
-def nayin_of_index(index60: int) -> str | None:
-    """六十甲子序号 → 纳音。"""
-    return NAYIN.get(ganzhi_pair(index60 % 60))
-
-
-# ================================================================ 三合局分组
-# 驿马/桃花/华盖按三合局取，故需要「一支属哪一局」。core 此前无此表（见模块头注释）。
-SAN_HE_GROUPS = {
-    "水": ["申", "子", "辰"],
-    "木": ["亥", "卯", "未"],
-    "火": ["寅", "午", "戌"],
-    "金": ["巳", "酉", "丑"],
-}
-_BRANCH_TO_SANHE = {b: elem for elem, bs in SAN_HE_GROUPS.items() for b in bs}
-
-
-def sanhe_group(branch: str) -> str | None:
-    """地支 → 所属三合局五行（水/木/火/金）；非法返回 None。"""
-    return _BRANCH_TO_SANHE.get(branch)
-
-
-# ================================================================ 神煞
-# 只收「起例明确、可由四柱机械安出」的通行神煞。神煞安法是机械步骤（属 chart），
-# 吉凶解读不在这里，也不在此写断语。出处见 references/rules.md，analyze 引用时 verified=false。
-
-# 天乙贵人（以日干或年干取）：甲戊庚牛羊、乙己鼠猴乡、丙丁猪鸡位、
-# 壬癸兔蛇藏、六辛逢马虎。
-TIAN_YI_GUI_REN = {
-    "甲": ["丑", "未"], "戊": ["丑", "未"], "庚": ["丑", "未"],
-    "乙": ["子", "申"], "己": ["子", "申"],
-    "丙": ["亥", "酉"], "丁": ["亥", "酉"],
-    "壬": ["卯", "巳"], "癸": ["卯", "巳"],
-    "辛": ["午", "寅"],
-}
-# 文昌贵人（以日干取）：甲巳乙午丙戊申、丁己酉庚亥辛子、壬寅癸卯。
-WEN_CHANG = {
-    "甲": "巳", "乙": "午", "丙": "申", "丁": "酉", "戊": "申",
-    "己": "酉", "庚": "亥", "辛": "子", "壬": "寅", "癸": "卯",
-}
-# 羊刃（阳干禄前一位）：甲卯、丙戊午、庚酉、壬子。阴干刃说法不一，此处不取（宁缺勿造）。
-YANG_REN = {"甲": "卯", "丙": "午", "戊": "午", "庚": "酉", "壬": "子"}
-
-# 三合局神煞：驿马、桃花（咸池）、华盖。以年支或日支所在三合局取。
-YI_MA = {"水": "寅", "火": "申", "金": "亥", "木": "巳"}
-TAO_HUA = {"水": "酉", "火": "卯", "金": "午", "木": "子"}
-HUA_GAI = {"水": "辰", "火": "戌", "金": "丑", "木": "未"}
-
-# 禄神（日干禄位）：甲禄在寅乙禄卯、丙戊禄巳丁己午、庚禄申辛禄酉、壬禄亥癸禄子。
-LU_SHEN = {
-    "甲": "寅", "乙": "卯", "丙": "巳", "戊": "巳", "丁": "午",
-    "己": "午", "庚": "申", "辛": "酉", "壬": "亥", "癸": "子",
-}
-# 红艳（以日干取）：甲午乙午丙寅丁未戊辰、己辰庚戌辛酉壬子癸申。
-HONG_YAN = {
-    "甲": "午", "乙": "午", "丙": "寅", "丁": "未", "戊": "辰",
-    "己": "辰", "庚": "戌", "辛": "酉", "壬": "子", "癸": "申",
-}
-# 天喜：红鸾对冲。红鸾卯起子逆行，天喜=冲红鸾。按年支或日支取。
-# 子→酉 丑→申 寅→未 卯→午 辰→巳 巳→辰 午→卯 未→寅 申→丑 酉→子 戌→亥 亥→戌
-TIAN_XI = {
-    "子": "酉", "丑": "申", "寅": "未", "卯": "午", "辰": "巳", "巳": "辰",
-    "午": "卯", "未": "寅", "申": "丑", "酉": "子", "戌": "亥", "亥": "戌",
-}
-
-# 择吉用：天德/月德贵人（以月支取）。《协纪辨方书》通行口径。
-# 天德：正丁二申三壬四辛五亥六甲七癸八寅九丙十乙十一巳十二庚
-TIAN_DE = {
-    "寅": ["丁"], "卯": ["申"], "辰": ["壬"], "巳": ["辛"],
-    "午": ["亥"], "未": ["甲"], "申": ["癸"], "酉": ["寅"],
-    "戌": ["丙"], "亥": ["乙"], "子": ["巳"], "丑": ["庚"],
-}
-# 月德：寅午戌月在丙，申子辰月在壬，亥卯未月在甲，巳酉丑月在庚。
-YUE_DE = {
-    "寅": "丙", "午": "丙", "戌": "丙",
-    "申": "壬", "子": "壬", "辰": "壬",
-    "亥": "甲", "卯": "甲", "未": "甲",
-    "巳": "庚", "酉": "庚", "丑": "庚",
-}
-
-
-def tianyi_guiren(stem: str) -> list[str]:
-    return list(TIAN_YI_GUI_REN.get(stem, []))
-
-
-def lu_shen(stem: str) -> str | None:
-    """日干 → 禄神地支。"""
-    return LU_SHEN.get(stem)
-
-
-def hong_yan(stem: str) -> str | None:
-    """日干 → 红艳地支。"""
-    return HONG_YAN.get(stem)
-
-
-def tian_xi(branch: str) -> str | None:
-    """年支/日支 → 天喜地支。"""
-    return TIAN_XI.get(branch)
-
-
-def tian_de(month_branch: str) -> list[str]:
-    """月支 → 天德所落地支/干（择吉用）。"""
-    return list(TIAN_DE.get(month_branch, []))
-
-
-def yue_de(month_branch: str) -> str | None:
-    """月支 → 月德天干（择吉用）。"""
-    return YUE_DE.get(month_branch)
-
-
-def shensha_at_branches(day_stem: str, day_branch: str,
-                        year_stem: str | None = None,
-                        year_branch: str | None = None) -> list[dict]:
-    """按日干/日支（及可选年柱）机械安出常见神煞，返回各神煞「应落」地支。
-
-    供六爻/择吉挂盘使用：只返回安星结果 [{name, target_branches, basis}]，
-    是否「临爻/临日」由调用方比对，本函数不写吉凶。
-    """
-    out: list[dict] = []
-
-    def _one(name: str, targets: list[str], basis: str) -> None:
-        if targets:
-            out.append({"name": name, "target_branches": targets, "basis": basis})
-
-    _one("天乙贵人", tianyi_guiren(day_stem), "日干")
-    _one("文昌贵人", [WEN_CHANG[day_stem]] if day_stem in WEN_CHANG else [], "日干")
-    _one("羊刃", [YANG_REN[day_stem]] if day_stem in YANG_REN else [], "日干")
-    _one("禄神", [LU_SHEN[day_stem]] if day_stem in LU_SHEN else [], "日干")
-    _one("红艳", [HONG_YAN[day_stem]] if day_stem in HONG_YAN else [], "日干")
-    for label, branch in (("日支", day_branch), ("年支", year_branch or "")):
-        if not branch:
-            continue
-        _one("天喜", [TIAN_XI[branch]] if branch in TIAN_XI else [], label)
-        grp = sanhe_group(branch)
-        if not grp:
-            continue
-        _one("驿马", [YI_MA[grp]], label)
-        _one("桃花", [TAO_HUA[grp]], label)
-        _one("华盖", [HUA_GAI[grp]], label)
-    return out
-
-
-def shensha_of_chart(day_stem: str, year_stem: str,
-                     year_branch: str, day_branch: str,
-                     all_branches: list[str]) -> list[dict]:
-    """从四柱机械安出通行神煞。all_branches 为年/月/日/时四支，用于判断神煞是否入命。
-
-    返回 [{name, at}]，`at` 为神煞所落地支；只报「盘中实际出现」者，未出现的不报。
-    纯安星，无吉凶措辞。
-    """
-    present = set(all_branches)
-    found = []
-
-    def _add(name, target_branches, basis):
-        hit = [b for b in target_branches if b in present]
-        if hit:
-            found.append({"name": name, "at": hit, "basis": basis})
-
-    # 天乙贵人：日干为主，年干为辅
-    _add("天乙贵人", tianyi_guiren(day_stem), "日干")
-    if year_stem != day_stem:
-        _add("天乙贵人(年干)", tianyi_guiren(year_stem), "年干")
-    # 文昌贵人
-    _add("文昌贵人", [WEN_CHANG[day_stem]] if day_stem in WEN_CHANG else [], "日干")
-    # 羊刃（仅阳干）
-    _add("羊刃", [YANG_REN[day_stem]] if day_stem in YANG_REN else [], "日干")
-    # 三合局神煞：年支、日支各起一次
-    for label, branch in (("年支", year_branch), ("日支", day_branch)):
-        grp = sanhe_group(branch)
-        if not grp:
-            continue
-        _add(f"驿马({label})", [YI_MA[grp]], label)
-        _add(f"桃花({label})", [TAO_HUA[grp]], label)
-        _add(f"华盖({label})", [HUA_GAI[grp]], label)
-    return found
 
 
 # ================================================================ 大运起法
@@ -359,6 +154,6 @@ def ming_shen_gong(year_stem: str, month_branch: str, hour_branch: str) -> dict:
     mgz = palace_ganzhi(year_stem, mb) if mb else None
     sgz = palace_ganzhi(year_stem, sb) if sb else None
     return {
-        "ming_gong": {"branch": mb, "ganzhi": mgz, "nayin": nayin_of(mgz) if mgz else None},
-        "shen_gong": {"branch": sb, "ganzhi": sgz, "nayin": nayin_of(sgz) if sgz else None},
+        "ming_gong": {"branch": mb, "ganzhi": mgz, "nayin": _nayin_of(mgz) if mgz else None},
+        "shen_gong": {"branch": sb, "ganzhi": sgz, "nayin": _nayin_of(sgz) if sgz else None},
     }
