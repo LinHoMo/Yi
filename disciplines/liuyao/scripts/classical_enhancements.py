@@ -71,6 +71,11 @@ from narrative_utils import (  # noqa: E402
     ctpl,
 )
 
+from classical_enhancements_dufa import analyze_du_fa_du_jing  # noqa: E402
+# 独发/独静域 2026-09-30e 按域切出到 classical_enhancements_dufa.py（巨石看门狗
+# 2251 > 2200 触发）：该域只依赖 narrative_utils 断语素材，与其他增强域无耦合。
+# 此处再导出维持 __all__ 与 classical_analysis 的消费方零改动；依赖单向，勿回调本模块。
+
 
 
 # ======================================================================
@@ -2131,6 +2136,7 @@ __all__ = [
     # growth
     "analyze_twelve_growth",
     "analyze_desperate_relief",
+    "analyze_du_fa_du_jing",
     # effects (re-exported lazily from effects.py, originally classical_rules_effects.py)
     "analyze_clash_harmony",
     "analyze_repetition",

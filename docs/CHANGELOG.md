@@ -3,6 +3,47 @@
 仓库级变更登记（跨科 / 内核 / 口径 / 架构）。学科内细节见各科 `CHANGELOG.md`。
 规则：指标口径任何变动（计分方式、词典、缺失字段处理）必须在此登记，否则分数不可比（`AGENTS.md` §四.4）。
 
+### 2026-09-30f 六爻深度改造第一批：缺失环节六项落地（DEEP-DIVE-PLAN §1.3 清偿）
+
+> **计分口径影响有界且已 capture**：金标准指纹 `abc7884de0653ee5` → `6a67db48bbed83fc`
+> （288 例 0 异常，`capture` 理由见 scratch 记录与本条目）；tune **93.9** / holdout **87.5** /
+> 应期 top-1 **58.8/50.0** / 黑箱回归 **12/18** / wikisource **57.3** 全部与改前持平——
+> 新格局词只增检测面，未动既有通则的取值与排序。
+
+**新增通则（全部通用规则 + 古籍出处，无 case-specific 分支）**：
+
+1. **三会方局**（step4，优先于三合）：卦中三支俱现或月建/日辰补一支；用神旺 +0.5 /
+   衰 −0.5（有界）。《三命通会》寅卯辰会木、巳午未会火、申酉戌会金、亥子丑会水。
+   内核新增 `SAN_HUI_GROUPS`（唯一真值源）。
+2. **本卦↔变卦双卦对比**（step4）：本卦六合而变卦六冲 = 合处逢冲事已散 −1.5；
+   本卦六冲而变卦六合 = 冲中逢合事迟成 +1.5。《黄金策》"合处逢冲事已散，冲中逢合事迟成"。
+   **同时修复通则缺陷**：卦体六合一/六冲判定由卦名白名单改为内核 `hexagram_he_chong_kind`
+   对应位纳支判——旧 `HEX_HEXAGRAMS`/`HEX_CLASH_HEXAGRAMS` 两表互相矛盾
+   （同人/夬/姤/大有等同时出现在两表）。
+3. **独发/独静**（新模块 `classical_enhancements_dufa.py`）：一爻独动/五爻独静，
+   只标象 + 结构提示（主驱动力/枢纽落点），**不进主分**。《增删卜易·独发章第三十一》
+   "如捨其用神，執之而決事者，謬也"。
+4. **真空/假空标签**（step3 `compute_empty_modifier`）：假空＝旬空 + 旺相/有生扶/日辰冲实；
+   真空＝旬空 + 月建休囚 + 日辰克用 + 无生扶；两者互斥，宁缺勿滥。
+   《增删卜易》"旺空待出，真空难起"。权重口径不变。
+5. **三传克制**（step5 `detect_three_passages_clash`）：太岁+月建+日辰俱克用神且无生扶，
+   只标记、score 恒 0（未验证项）。《增删卜易》"三傳俱克，雖旺亦危"。
+6. **卦级反吟伏吟**（effects `analyze_repetition(_deep)` 扩展）。
+
+**配套**：
+
+- 内核唯一真值源新增：`symbols.hexagram_branches`（别卦纳支）、`hexagram_he_chong_kind`、
+  `SAN_HUI_GROUPS`；断语全部外置 `data/rules/verdict_texts.json#pattern_verdict_labels`
+  （真空/假空、独发/独静、三传克制标签句与引文），代码零字面量。
+- 叙述层 `liuyao_narrate._collect_pattern_tags/_details` 与 `narrative_utils.pattern_label`
+  收新格局；评测层 `evaluate.py` PATTERNS/别名补 真空/假空/独发/独静/变卦六冲/三会/
+  三传克制/卦反吟/卦伏吟（格局词不再是漏配子串）。
+- **巨石拆分**：`classical_enhancements` 2251 → 2184 行（看门狗 2200 触发），
+  独发独静域按域切出 `classical_enhancements_dufa.py`（101 行，单向依赖）；
+  refactor_guard 117 例指纹一致零漂移。
+- 修 WIP 断链：step4 调用 `_hexagram_branches` 未导入（内核公开名无下划线），
+  曾致 11/20 案例引擎崩、黑箱回归假摔 4/18——补 import 后全部恢复。
+
 ### 2026-09-30e 三科评测口径审计：被推翻的"100%"订正 + 报分口径披露
 
 > **引擎口径零漂移**：三科金标准指纹不变（梅花 `2c9c810d8a265180`、小六壬 `0088d638d065402d`、

@@ -434,6 +434,19 @@ def trigram_element(name: str) -> str | None:
     return TRIGRAM_ELEMENTS.get(name)
 
 
+def hexagram_branches(name: str) -> list[str] | None:
+    """别卦六爻纳甲地支（自下而上，index 0 = 初爻）；卦名不可解析返回 None。
+
+    下卦取 `NAJIA_BRANCHES[lower]["inner"]`、上卦取 `NAJIA_BRANCHES[upper]["outer"]`，
+    与六爻排盘的装卦口径一致（阴卦逆排已写在表里，此处不再另作顺逆判断）。
+    """
+    tri = HEXAGRAM_TRIGRAMS.get(name)
+    if not tri:
+        return None
+    upper, lower = tri
+    return list(NAJIA_BRANCHES[lower]["inner"]) + list(NAJIA_BRANCHES[upper]["outer"])
+
+
 def palace_of_key(name: str) -> str:
     """"艮宫" → "艮"。EIGHT_PALACES 的键是裸宫名。"""
     return name[:-1] if name.endswith("宫") else name
@@ -528,3 +541,200 @@ _BRANCH_TO_SANHE = {b: elem for elem, bs in SAN_HE_GROUPS.items() for b in bs}
 def sanhe_group(branch: str) -> str | None:
     """地支 → 所属三合局五行（水/木/火/金）；非法返回 None。"""
     return _BRANCH_TO_SANHE.get(branch)
+
+
+# ================================================================ 三会方局
+# 《三命通会》通行口径：寅卯辰会东方木、巳午未会南方火、申酉戌会西方金、亥子丑会北方水。
+# 方局是一季三支之气全，力大于三合（三合是隔三之支，长生于帝旺之三支）。
+# 只存结构；吉凶与优先序由学科层按自身口径消费。
+SAN_HUI_GROUPS = {
+    "木": ["寅", "卯", "辰"],
+    "火": ["巳", "午", "未"],
+    "金": ["申", "酉", "戌"],
+    "水": ["亥", "子", "丑"],
+}
+_BRANCH_TO_SANHUI = {b: elem for elem, bs in SAN_HUI_GROUPS.items() for b in bs}
+
+
+def sanhui_group(branch: str) -> str | None:
+    """地支 → 所属三会方局五行（木/火/金/水）；非法返回 None。"""
+    return _BRANCH_TO_SANHUI.get(branch)
+
+
+# ================================================================ 卦级反吟 / 伏吟
+# 《卜筮正宗》"内卦反吟内不安，外卦反吟外不宁"；《火珠林》`小畜`条
+# "上卦巳丑酉·六合，下卦午卯子·六冲"——同一卦可以半反半伏。
+# 判定在**卦位**上做：本卦与变卦同一爻位的地支，冲＝反吟、同＝伏吟，逐位统计。
+# 逐位关系只算冲/同/合三类（合另立 `pair_he`）：地支值域里既冲又合、既合又同的组合
+# 并不存在，故三类互斥；"其他"即无关系。这里只出结构名，吉凶由学科层叠旺衰定。
+HEXAGRAM_LEVEL_FULL_CLASH = "全卦反吟"
+HEXAGRAM_LEVEL_FULL_SAME = "全卦伏吟"
+HEXAGRAM_LEVEL_TRIGRAM_CLASH = "内外反吟"
+HEXAGRAM_LEVEL_TRIGRAM_SAME = "内外伏吟"
+HEXAGRAM_LEVEL_MIXED = "半反半伏"
+HEXAGRAM_LEVEL_NONE = "无反吟伏吟"
+
+# 卦体六合/六冲（按对应位 (1,4)(2,5)(3,6) 的地支关系判，非卦名表）
+HEXAGRAM_KIND_LIUHE = "六合卦"
+HEXAGRAM_KIND_LIUCHONG = "六冲卦"
+HEXAGRAM_KIND_HALF = "半合半冲"
+HEXAGRAM_KIND_SOME_HE = "有合"
+HEXAGRAM_KIND_SOME_CHONG = "有冲"
+HEXAGRAM_KIND_NONE = "无明确合冲"
+HEXAGRAM_KIND_UNKNOWN = "未知"
+
+_CHONG_PAIR_SET = {frozenset(p) for p in CHONG_PAIRS}
+_HE_PAIR_SET = {frozenset(p) for p in HE_PAIRS}
+
+
+def hexagram_he_chong_kind(name: str) -> str:
+    """卦名 → 卦体六合/六冲类别（对应位三对地支皆合/皆冲才算）。
+
+    口径与六爻排盘层 `analyze_clash_harmony` 一致：取 (初,四)(二,五)(三,六) 三对
+    地支，三对皆六合＝六合卦、三对皆六冲＝六冲卦。**不用卦名白名单**——白名单
+    会把 `小畜`（下乾上巽：内三爻子寅辰、外三爻未巳卯，三对为合、合、合）这类
+    双象卦判成单一类。八纯卦（乾兑离震巽坎艮坤）与 `无妄`/`大壮` 判为六冲，
+    `否`/`泰`/`贲`/`困`/`旅`/`豫`/`复`/`节` 判为六合，与《卜卦正宗》卦体六冲六合
+    的通行口径一致。卦名不可解析返回 `未知`。
+    """
+    branches = hexagram_branches(name) if name else None
+    if not branches:
+        return HEXAGRAM_KIND_UNKNOWN
+    he = chong = 0
+    for i, j in ((0, 3), (1, 4), (2, 5)):
+        pair = frozenset((branches[i], branches[j]))
+        if pair in _CHONG_PAIR_SET:
+            chong += 1
+        elif pair in _HE_PAIR_SET:
+            he += 1
+    if he == 3:
+        return HEXAGRAM_KIND_LIUHE
+    if chong == 3:
+        return HEXAGRAM_KIND_LIUCHONG
+    if he and chong:
+        return HEXAGRAM_KIND_HALF
+    if he:
+        return HEXAGRAM_KIND_SOME_HE
+    if chong:
+        return HEXAGRAM_KIND_SOME_CHONG
+    return HEXAGRAM_KIND_NONE
+
+
+def hexagram_level_relations(original_name: str, changed_name: str) -> dict:
+    """本卦 / 变卦按爻位逐一比对地支 → 反吟（冲）伏吟（同）的卦级结构。
+
+    返回 {pairs, clash_count, same_count, he_count, other_count,
+          full_clash, full_same, inner_clash, outer_clash, inner_same, outer_same,
+          scope, category}；卦名不可解析时 category/scope 为 None（调用方按"未判定"处理）。
+
+    口径（三层，逐层收严）：
+      1. **爻位关系**：同一位上本卦支 vs 变卦支，冲＝反吟、同＝伏吟、合＝化合。
+         一对爻位不可能既冲又同，冲与合在六爻地支里也无交集，故三类互斥。
+      2. **卦级**：六位全冲＝`全卦反吟`（乾变巽：子冲午、寅冲申、辰冲戌，两位皆然）；
+         六位全同＝`全卦伏吟`（八纯卦不动之变）。
+      3. **内外卦级**：内三爻或外三爻全冲（内卦反吟）／全同（内卦伏吟）。
+         小畜（下乾上巽）变乾（下乾上乾）：下卦三位子寅辰不变而全同、上卦巳丑酉
+         三位全冲——《火珠林》以小畜为六合六冲双卦，正是此象。
+
+    `scope` 另报经卦层面的"变与不变"：经卦未变而爻支全同 = 真伏吟；经卦变了却
+    纳甲支全同（如乾→震，同为子寅辰）＝纳甲同而卦体已易，按古籍只作"伏吟之象"
+    而不作真伏吟，两个标志分开报，由消费方定口径。`valid` 为 False 表示卦名无法
+    从 HEXAGRAM_TRIGRAMS 解析，此时各计数均为 0，调用方不得据以断卦。
+    """
+    base = hexagram_branches(original_name) if original_name else None
+    chg = hexagram_branches(changed_name) if changed_name else None
+    tri_base = HEXAGRAM_TRIGRAMS.get(original_name) if original_name else None
+    tri_chg = HEXAGRAM_TRIGRAMS.get(changed_name) if changed_name else None
+    if not base or not chg or not tri_base or not tri_chg:
+        return {
+            "valid": False,
+            "pairs": [], "clash_count": 0, "same_count": 0, "he_count": 0,
+            "other_count": 0, "full_clash": False, "full_same": False,
+            "inner_clash": False, "outer_clash": False,
+            "inner_same": False, "outer_same": False,
+            "scope": None, "category": None,
+        }
+
+    base_upper, base_lower = tri_base
+    chg_upper, chg_lower = tri_chg
+    inner_trigram_unchanged = base_lower == chg_lower
+    outer_trigram_unchanged = base_upper == chg_upper
+
+    clash_set = {frozenset(p) for p in CHONG_PAIRS}
+    he_set = {frozenset(p) for p in HE_PAIRS}
+    pairs = []
+    for idx, (b1, b2) in enumerate(zip(base, chg)):
+        if frozenset((b1, b2)) in clash_set:
+            rel = "冲"
+        elif b1 == b2:
+            rel = "同"
+        elif frozenset((b1, b2)) in he_set:
+            rel = "合"
+        else:
+            rel = "其他"
+        pairs.append({"position": idx + 1, "original": b1, "changed": b2,
+                      "relation": rel,
+                      "scope": "内卦" if idx < 3 else "外卦"})
+
+    def _scope_all(idx_set, rel):
+        return all(p["relation"] == rel for p in pairs if p["position"] - 1 in idx_set)
+
+    inner_idx, outer_idx = (0, 1, 2), (3, 4, 5)
+    clash_count = sum(1 for p in pairs if p["relation"] == "冲")
+    same_count = sum(1 for p in pairs if p["relation"] == "同")
+    he_count = sum(1 for p in pairs if p["relation"] == "合")
+    full_clash = clash_count == 6
+    full_same = same_count == 6
+    inner_clash, outer_clash = _scope_all(inner_idx, "冲"), _scope_all(outer_idx, "冲")
+    inner_same, outer_same = _scope_all(inner_idx, "同"), _scope_all(outer_idx, "同")
+
+    # 经卦层面：该半卦是否"经卦未变 + 爻支全同"（真伏吟）／"经卦变了 + 爻支全冲"（真反吟）
+    inner_true_fuyin = inner_same and inner_trigram_unchanged
+    outer_true_fuyin = outer_same and outer_trigram_unchanged
+    inner_najia_same = inner_same and not inner_trigram_unchanged
+    outer_najia_same = outer_same and not outer_trigram_unchanged
+    inner_true_fanyin = inner_clash and not inner_trigram_unchanged
+    outer_true_fanyin = outer_clash and not outer_trigram_unchanged
+
+    if full_clash:
+        category = HEXAGRAM_LEVEL_FULL_CLASH
+    elif full_same:
+        category = HEXAGRAM_LEVEL_FULL_SAME
+    elif inner_true_fanyin or outer_true_fanyin or inner_true_fuyin or outer_true_fuyin:
+        category = (HEXAGRAM_LEVEL_TRIGRAM_CLASH
+                    if (inner_true_fanyin or outer_true_fanyin) else HEXAGRAM_LEVEL_TRIGRAM_SAME)
+    elif inner_clash or outer_clash or inner_najia_same or outer_najia_same:
+        # 半卦爻支全冲/全同而经卦已易：纳甲同或卦体易，只作"杂反伏"记象
+        category = HEXAGRAM_LEVEL_MIXED
+    elif clash_count or same_count:
+        category = HEXAGRAM_LEVEL_MIXED
+    else:
+        category = HEXAGRAM_LEVEL_NONE
+
+    scope = {
+        "inner_trigram_unchanged": inner_trigram_unchanged,
+        "outer_trigram_unchanged": outer_trigram_unchanged,
+        "inner_true_fanyin": inner_true_fanyin,
+        "outer_true_fanyin": outer_true_fanyin,
+        "inner_true_fuyin": inner_true_fuyin,
+        "outer_true_fuyin": outer_true_fuyin,
+        "inner_najia_same_but_trigram_changed": inner_najia_same,
+        "outer_najia_same_but_trigram_changed": outer_najia_same,
+    }
+
+    return {
+        "valid": True,
+        "pairs": pairs,
+        "clash_count": clash_count,
+        "same_count": same_count,
+        "he_count": he_count,
+        "other_count": sum(1 for p in pairs if p["relation"] == "其他"),
+        "full_clash": full_clash,
+        "full_same": full_same,
+        "inner_clash": inner_clash,
+        "outer_clash": outer_clash,
+        "inner_same": inner_same,
+        "outer_same": outer_same,
+        "scope": scope,
+        "category": category,
+    }

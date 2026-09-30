@@ -4,7 +4,7 @@
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；无理由不落盘，历次漂移见 drift_log",
     "cases": 288
   },
-  "digest": "abc7884de0653ee5",
+  "digest": "6a67db48bbed83fc",
   "drift_log": [
     {
       "from": "bb23797bf6044b95",
@@ -53,6 +53,12 @@
       "to": "abc7884de0653ee5",
       "date": "2026-09-29",
       "reason": "有意行为变更：叙述层四处缺陷修复（用户报的正文问题+用神旺衰遗漏）。1) 用神旺衰因子理由改以权威 strength_level 为准（原先按 floored base_score 分桶误落「平和」，与 strength_level=极弱 自相矛盾）；2) 应期基础句在已有日级日历日期时改用 timing_with_dates，不再输出「按月计…别拿天来量」的矛盾口径；3) 婚姻持世解读按用神类别分流男/女模板（男测姻缘曾误套「女占婚不利」）；4) 有利面/拖累面选取改为显式 polarity 优先，修复用神旺衰(极弱)因 abs(score) 排序+[:2] 截断被挤出、两边都不落的遗漏。证据：golden 逐条比对 HEAD 快照，288 例中 5 条变化且变化字段仅限 narrate_sha/narrate_len（叙事文案哈希与长度），结构字段 pillars/lines/palace/empty/changed/use_god/strength/verdict/score/yingqi_branches/adv_keys/adv_summary/patterns 全部 0 漂移 0 异常；另经 refactor_guard 115 例零漂移复验，tune 93.9%/holdout 87.5%、思维链 12/12、黑箱回归 12/18 均与基线持平。属「改的正是要改的文案」，不是结构性退步。"
+    },
+    {
+      "from": "abc7884de0653ee5",
+      "to": "6a67db48bbed83fc",
+      "date": "2026-09-30",
+      "reason": "深度改造第一批通则新增（DEEP-DIVE-PLAN §1.3）：①三会方局（寅卯辰/巳午未/申酉戌/亥子丑，卦中二支+月日补一支，±0.5 有界，《三命通会》）；②独发/独静（一爻独动/五爻独静，格局标签与详释，不进主分）；③卦级反吟伏吟（内卦纳支对冲/同支）；④真空/假空标签（旬空定性，不进主分）；⑤本卦↔变卦双卦对比（合处逢冲事已散 -1.5 / 冲中逢合事迟成 +1.5，《黄金策》），卦体六合一/六冲判定由卦名白名单改为内核对应位纳支判——旧白名单两表互相矛盾（同人/夬/姤等同时出现在两表），属通则修复。全部为通用规则，无 case-specific 分支；tune 93.9 / holdout 87.5 / 应期 top-1 58.8/50.0 与黑箱回归 12/18 全部持平"
     }
   ]
 }

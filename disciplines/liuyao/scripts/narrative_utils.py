@@ -89,6 +89,23 @@ PATTERN_RELATED = _VERDICT_TEXTS.get("pattern_related", {})
 PATTERN_NOTES_EXTRA = _VERDICT_TEXTS.get("pattern_notes_extra", {})
 SHENSHA_POLICY = _VERDICT_TEXTS.get("shensha_policy", {})
 ZEJI_VALIDITY_GAP = _VERDICT_TEXTS.get("zeji_validity_gap", {})
+# 格局标签句（真空/假空…）：键 = 格局组名 → 标签名 → {label, strength_text, reason, verdict, basis}
+PATTERN_VERDICT_LABELS = _VERDICT_TEXTS.get("pattern_verdict_labels", {})
+VOID_KIND_LABELS = {
+    "true": PATTERN_VERDICT_LABELS.get("真空/假空", {}).get("真空", {}),
+    "false": PATTERN_VERDICT_LABELS.get("真空/假空", {}).get("假空", {}),
+}
+DUFA_QUOTE = PATTERN_VERDICT_LABELS.get("独发/独静", {}).get("古典引文", "")
+DUFA_NOTES = {
+    "du_fa": PATTERN_VERDICT_LABELS.get("独发/独静", {}).get("du_fa", ""),
+    "du_jing": PATTERN_VERDICT_LABELS.get("独发/独静", {}).get("du_jing", ""),
+}
+SANCHUAN_LABELS = PATTERN_VERDICT_LABELS.get("三传克制", {})
+
+
+def pattern_label(group: str, name: str) -> dict:
+    """取格局标签句；缺库时返回空 dict（调用方按"无断语"处理，不硬编一份）。"""
+    return (PATTERN_VERDICT_LABELS.get(group) or {}).get(name) or {}
 
 
 def note_text(key: str, **fmt) -> str:

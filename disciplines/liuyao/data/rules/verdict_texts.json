@@ -10,7 +10,8 @@
     "classical_interpretations": "classical_rules 古典格局判据长句（游魂/六合/反吟/十二长生/随官入墓/卦身等）",
     "classical_rules_notes": "classical_rules 可交付断语（summary/meaning/description 与 reasons 条目）。text 与代码原字面量一字不差；地支/五行符号与 docstring 留在代码。",
     "classical_rules_templates": "classical_rules 拼装句整句模板。{0}{1}… 为 ctpl 位置参数。",
-    "residual_externalized": "pattern_verdicts / effect_labels / effect_phrases / bing_yao_labels / narrative_hints / pattern_related 为本轮从 .py 外置的断语与标签"
+    "residual_externalized": "pattern_verdicts / effect_labels / effect_phrases / bing_yao_labels / narrative_hints / pattern_related 为本轮从 .py 外置的断语与标签",
+    "pattern_verdict_labels": "格局标签的展示句、理由句与古典引文（键为格局组名，值为 {label/strength_text/reason/verdict/basis/古典引文/…}）；代码只留判定算法，断语一律从此取。"
   },
   "step5_classical_notes": {
     "travel_use_sheng_world": {
@@ -1809,5 +1810,36 @@
       "把规则应用分说成择吉命中率"
     ],
     "next": "若日后有可核验通书日例，再建 holdout 集；在此之前只报规则一致性"
+  },
+  "pattern_verdict_labels": {
+    "真空/假空": {
+      "真空": {
+        "label": "真空",
+        "strength_text": "用神旬空而月建{month}休囚、日辰{day}来克，又无生扶——真空难起，出空亦不应",
+        "reason": "用神休囚旬空且日辰克之、无生扶（真空难起），论30%",
+        "verdict": "真空直断不成（《增删卜易》「旺空待出，真空难起」）",
+        "basis": "《增删卜易》「旺空待出，真空难起」；真空＝休囚无气＋日克＋无生扶"
+      },
+      "假空": {
+        "label": "假空",
+        "strength_text": "用神虽旬空而得生扶（月建/日辰/动爻），旺空待出——出空（值日或冲日）即应",
+        "reason": "用神旬空但旺相得生扶（假空待出），出空即应，论70%",
+        "verdict": "假空出空（值日或冲日）则应（《增删卜易》「旺空待出」）",
+        "basis": "《增删卜易》「旺空待出，真空难起」；假空＝旺相＋月日或动爻生扶"
+      }
+    },
+    "独发/独静": {
+      "古典引文": "《增刪卜易·獨發章第三十一》：「五爻俱動，一爻不動，謂之獨靜；五爻不動，一爻獨動，謂之獨發。」同章又立界：「事之成敗，由乎用神；應期遲速，亦由乎用神……如捨其用神，執之而決事者，謬也。」",
+      "du_fa": "独发：一爻独动而五爻皆静，{name}{branch}（{role}）为全卦主驱动力——动处即事之所由起，静处只作背景。",
+      "du_jing": "独静：一爻独静而五爻俱动，{name}{branch}（{role}）为全卦枢纽——众动之中此爻不动，事之滞处多在此。"
+    },
+    "三传克制": {
+      "label": "三传克制",
+      "basis": "《增删卜易》「三傳俱克，雖旺亦危」；references/pattern_reference.md 格局六：月建克用神、日辰克用神、太岁亦克用神，三者皆克而無一生扶",
+      "verdict": "三传俱克：太岁、月建、日辰俱克用神且无一生扶——纵值旺相亦危，凶多吉少",
+      "reason": "三传俱克（太岁{year}、月建{month}、日辰{day}俱克用神{use_god}），虽旺亦危",
+      "verified": false,
+      "verified_note": "未验证：本项目基准集中无含太岁的可对照案例，此条只落地标记、不进主分；待自建并标注出处的基准例到位后方可计分"
+    }
   }
 }

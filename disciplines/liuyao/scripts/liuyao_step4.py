@@ -28,6 +28,9 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     STEM_ELEMENTS,
     TOMB_MAP,
     palace_of_key,
+    hexagram_branches,          # 别卦六爻纳甲地支（三会判据要逐支比对）
+    hexagram_he_chong_kind,     # 卦体六合/六冲：对应位三对地支判（内核唯一实现）
+    SAN_HUI_GROUPS,             # 三会方局：寅卯辰/巳午未/申酉戌/亥子丑（内核唯一真值源）
     EARTHLY_BRANCHES as BRANCHES,
 )
 
@@ -838,12 +841,30 @@ def _detect_classical_illness_pattern(question: str, step2_data: dict, step3_dat
     return result
 
 
+# 六冲/六合对的无序集合（由内核 CHONG_PAIRS / HE_PAIRS 派生，不另抄一份表）
+_CHONG_PAIRS_SET = {frozenset(p) for p in CHONG_PAIRS}
+_HE_PAIRS_SET = {frozenset(p) for p in HE_PAIRS}
+
+
+def _hexagram_he_chong_kind(name: str) -> str:
+    """（门面）卦名 → 六合卦/六冲卦/半合半冲/有合/有冲/无明确合冲/未知。
+
+    机器判定唯一实现在内核 `yishu_core.symbols.hexagram_he_chong_kind`：按对应位
+    (1,4)(2,5)(3,6) 三对地支判，不用卦名白名单。此处只转发，供本模块内
+    `_detect_hexagram_harmony_clash_pattern` 的"本卦定始、变卦定终"双卦对比使用。
+    """
+    return hexagram_he_chong_kind(name)
+
+
 def _detect_hexagram_harmony_clash_pattern(question: str, hex_result: dict, step4_data: dict) -> dict:
     """
-    六合/六冲交互格局识别 — 冲中逢合可解，合处逢冲则散。
+    六合/六冲交互格局识别 — 冲中逢合可解，合处逢冲则散；并做"本卦定始、变卦定终"双卦对比。
 
     - 冲中逢合可解：六冲卦中却有日辰/动爻合世爻或应爻，冲散可解为吉
     - 合处逢冲则散：六合卦中却有日辰/月建冲世爻或应爻，合处逢冲为凶
+    - 双卦对比（《黄金策》"合处逢冲事已散，冲中逢合事迟成"）：
+      本卦六合而变卦六冲 → 先合后散（事已散）；本卦六冲而变卦六合 → 先散后合（事迟成）。
+      本卦言始、变卦言终，两卦同为合或同为冲则只作同向叠加，不另出格局。
     """
     result = {"pattern": None, "description": "", "impact_on_verdict": "", "score_adjustment": 0.0}
 
@@ -851,15 +872,6 @@ def _detect_hexagram_harmony_clash_pattern(question: str, hex_result: dict, step
     hex_name = hex_result.get("original_hexagram", {}).get("name", "")
     if not hex_name:
         return result
-
-    # 六合卦列表
-    HEX_HEXAGRAMS = {"否", "屯", "豫", "贲", "鼎", "萃", "丰", "恒", "损", "同人", "节", "履",
-                     "临", "家人", "中孚", "涣", "离", "咸", "泰", "大畜", "需", "大有", "夬",
-                     "姤", "小过", "既济", "益", "蛊", "困", "旅", "噬嗑", "归妹"}
-    # 六冲卦列表
-    HEX_CLASH_HEXAGRAMS = {"乾", "坤", "坎", "离", "震", "巽", "艮", "兑",
-                           "无妄", "同人", "遁", "大壮", "豫", "观", "晋", "萃",
-                           "大有", "夬", "姤", "解", "归妹", "旅", "涣", "节", "中孚", "小过"}
 
     # Check for 六合/六冲 in hexagram name using advanced analysis
     hex_advanced = hex_result.get("advanced_analysis", {}) or {}
@@ -953,6 +965,33 @@ def _detect_hexagram_harmony_clash_pattern(question: str, hex_result: dict, step
                 result["impact_on_verdict"] = "婚姻六合不可解冲，先成后散；散事类同"
                 result["score_adjustment"] = -2.0
                 return result
+
+    # --- 双卦对比：本卦定始、变卦定终（《黄金策》"合处逢冲事已散，冲中逢合事迟成"）---
+    changed_name = (hex_result.get("changed_hexagram") or {}).get("name") or ""
+    if changed_name and changed_name != hex_name:
+        # 同一口径（对应位三对地支）分别判本卦与变卦，两个 kind 才可比
+        orig_kind = _hexagram_he_chong_kind(hex_name)
+        chg_kind = _hexagram_he_chong_kind(changed_name)
+        orig_he, orig_chong = orig_kind == "六合卦", orig_kind == "六冲卦"
+        chg_he, chg_chong = chg_kind == "六合卦", chg_kind == "六冲卦"
+        if orig_he and chg_chong:
+            result["pattern"] = "合处逢冲事已散"
+            result["description"] = (
+                f"本卦{hex_name}六合（始合），变卦{changed_name}六冲（终冲）——"
+                f"合处逢冲，事已散（《黄金策》）"
+            )
+            result["impact_on_verdict"] = "先合后散：开头顺、终局散，先成后败之象"
+            result["score_adjustment"] = -1.5
+            return result
+        if orig_chong and chg_he:
+            result["pattern"] = "冲中逢合事迟成"
+            result["description"] = (
+                f"本卦{hex_name}六冲（始散），变卦{changed_name}六合（终合）——"
+                f"冲中逢合，事迟成（《黄金策》）"
+            )
+            result["impact_on_verdict"] = "先散后合：开头受阻、终局有成，成之迟而非不成"
+            result["score_adjustment"] = 1.5
+            return result
 
     return result
 
@@ -1136,6 +1175,49 @@ def _detect_special_pattern(step3_data: dict, step2_data: dict, step4_data: dict
                     "rule_applied": "《增删易》'两象平衡以用神方取'",
                     "score_adjustment": 0.0,
                 }
+
+    # ── Check 3b: 三会方局（优先于三合；《三命通会》寅卯辰会东方木、巳午未会南方火、
+    #    申酉戌会西方金、亥子丑会北方水）──
+    # 一季三支之气全，力大于三合（三合是隔三之支：长生-帝旺-墓）。判据只认"三支俱现
+    # 于本卦"（含日辰/月建补一字）；三会成立时不再按三合破局论——三会不是三合，
+    # 拿三合的破局条件去套三会属误判（本函数在化格之前先认三会，即为此）。
+    # 分类只给象（用神会入／会成他气），寒暖燥湿为通行取象，不作为本条加减依据。
+    _bl = hexagram_branches(hex_info.get("name", "")) or []
+    _dt = hex_result.get("divination_time", {}) or {}
+    _m_br = (_dt.get("month_stem_branch", "") or "")[1:]
+    _d_br = (_dt.get("day_stem_branch", "") or "")[1:]
+    for _hui_elem, _hui_branches in SAN_HUI_GROUPS.items():
+        _missing = [b for b in _hui_branches if b not in _bl]
+        if len(_missing) == 1 and _missing[0] in (_m_br, _d_br):
+            _via = "月建" if _missing[0] == _m_br else "日辰"
+        elif not _missing:
+            _via = "本卦三支俱现"
+        else:
+            continue
+        _hui_desc = f"{''.join(_hui_branches)}会{_hui_elem}方局（{_via}）"
+        if use_god_score >= 3.5:
+            return {
+                "pattern": "三会局",
+                "description": f"{_hui_desc}，用神旺而随局，气聚一方",
+                "impact_on_verdict": "三会力大于三合，用神旺则局助其势，事有可成之基",
+                "rule_applied": "《三命通会》三会方局：寅卯辰会木、巳午未会火、申酉戌会金、亥子丑会水",
+                "score_adjustment": 0.5,
+            }
+        if use_god_score <= 1.5:
+            return {
+                "pattern": "三会局",
+                "description": f"{_hui_desc}，用神衰而局气偏枯，独木难支",
+                "impact_on_verdict": "局气虽聚而用神不任，凶中无援之象",
+                "rule_applied": "《三命通会》三会方局；用神衰则不受局助",
+                "score_adjustment": -0.5,
+            }
+        return {
+            "pattern": "三会局",
+            "description": f"{_hui_desc}，用神中和，随局而尚未定",
+            "impact_on_verdict": "三会成局而不偏枯，成事之机在用神得力之时",
+            "rule_applied": "《三命通会》三会方局",
+            "score_adjustment": 0.0,
+        }
 
     # ── Check 4: 化格 (Transformation Pattern) ──
     # Condition: 用神本身的动爻参与三合化才算真正化格

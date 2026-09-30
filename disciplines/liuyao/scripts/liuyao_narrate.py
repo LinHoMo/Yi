@@ -35,6 +35,7 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     STEM_ELEMENTS,
     TOMB_MAP,
     palace_of_key,
+    hexagram_he_chong_kind,     # 卦体六合/六冲（内核唯一实现，用于"变卦定终"）
     EARTHLY_BRANCHES as BRANCHES,
 )
 
@@ -667,6 +668,12 @@ def _collect_pattern_tags(context, step3: dict, step4: dict, step5: dict) -> lis
             slevel = str(step3.get("strength_level") or "")
             if any(x in slevel for x in ("旺", "相", "中和")):
                 _add("出旬有验", "出旬", "填实")
+            # 真空 / 假空（《增删卜易》"旺空待出，真空难起"；判定在 compute_empty_modifier）
+            _vk = str(step3.get("void_kind") or "")
+            if _vk == "true":
+                _add("格局-真空", "真空")
+            elif _vk == "false":
+                _add("格局-假空", "假空")
         if step3.get("is_month_break"):
             _add("格局-月破", "月破")
         summary3 = str(step3.get("summary_text") or "")
@@ -693,12 +700,21 @@ def _collect_pattern_tags(context, step3: dict, step4: dict, step5: dict) -> lis
             "久病逢冲": ["格局-久病逢冲为凶", "久病逢冲"],
             "冲中逢合": ["格局-冲中逢合", "冲中逢合"],
             "合处逢冲": ["格局-合处逢冲", "合处逢冲"],
+            # 双卦对比（《黄金策》"合处逢冲事已散，冲中逢合事迟成"）：本卦定始、变卦定终
+            "事已散": ["格局-合处逢冲事已散", "合处逢冲", "变卦六冲"],
+            "事迟成": ["格局-冲中逢合事迟成", "冲中逢合", "变卦六合"],
+            # 三会方局（《三命通会》）：力大于三合，不得被当作三合破局
+            "三会局": ["格局-三会局", "三会", "三会局"],
         }
         for key, names in mapping.items():
             if key in blob:
                 _add(*names)
         if step5.get("officer_tomb_severity") == "catastrophic":
             _add("格局-随官入墓", "随官入墓")
+        # 三传克制（《增删卜易》"三传俱克，虽旺亦危"）：**未验证项**，只标象不计分
+        sc = step5.get("sanchuan") or {}
+        if isinstance(sc, dict) and sc.get("fired"):
+            _add("格局-三传克制", "三传克制")
         reason_text = " ".join(str(v) for v in step5.values() if not isinstance(v, (list, dict)))
         for kw in ("三合", "合局", "三刑", "恃势", "无恩", "六合", "六冲",
                    "冲中逢合", "合处逢冲", "旬空", "月破", "反吟", "伏吟"):
@@ -746,6 +762,19 @@ def _collect_pattern_tags(context, step3: dict, step4: dict, step5: dict) -> lis
             _add("格局-反吟", "反吟")
         if "伏吟" in rt:
             _add("格局-伏吟", "伏吟")
+    # 卦级反吟/伏吟（《卜筮正宗》"内卦反吟内不安，外卦反吟外不宁"；
+    # 判定在内核 hexagram_level_relations：六位全冲/全同 + 内外卦 flag）
+    _hl = rep.get("hexagram_level") if isinstance(rep, dict) else None
+    if isinstance(_hl, dict) and _hl.get("valid"):
+        if _hl.get("full_clash") or _hl.get("inner_clash") or _hl.get("outer_clash"):
+            _add("卦反吟")
+        if _hl.get("full_same") or _hl.get("inner_same") or _hl.get("outer_same"):
+            _add("卦伏吟")
+        _scope = _hl.get("scope") or {}
+        if _scope.get("inner_clash") or _scope.get("inner_same"):
+            _add("内卦")
+        if _scope.get("outer_clash") or _scope.get("outer_same"):
+            _add("外卦")
 
     ch = adv.get("clash_harmony") or {}
     if isinstance(ch, dict):
@@ -755,9 +784,25 @@ def _collect_pattern_tags(context, step3: dict, step4: dict, step5: dict) -> lis
         if "六冲" in ht:
             _add("格局-六冲", "六冲", "六冲卦")
 
+    # 独发 / 独静（《增删卜易·独发章》：五爻俱动一爻不动为独静，五爻不动一爻独动为独发）
+    df = adv.get("du_fa_du_jing") or {}
+    if isinstance(df, dict) and df.get("type") in ("独发", "独静"):
+        if df.get("type") == "独发":
+            _add("格局-独发", "独发")
+        else:
+            _add("格局-独静", "独静")
+
     changed_name = ""
     if isinstance(context, dict):
         changed_name = ((context.get("changed_hexagram") or {}).get("name")) or ""
+    if changed_name:
+        # 变卦定终：卦体六合/六冲按对应位三对地支判（内核 hexagram_he_chong_kind），
+        # 与排盘层 analyze_clash_harmony 同一口径，不用卦名白名单。
+        _chg_kind = hexagram_he_chong_kind(changed_name)
+        if _chg_kind == "六合卦":
+            _add("变卦六合", "六合")
+        elif _chg_kind == "六冲卦":
+            _add("变卦六冲", "六冲")
     if changed_name in HEXAGRAM_LIUHE:
         _add("变卦六合", "六合")
     if changed_name in HEXAGRAM_LIUCHONG:
@@ -932,6 +977,10 @@ def _collect_pattern_details(context) -> list:
         _d = dr.get("description", "")
         if _d:
             detail_parts.append(f"绝处逢生：{_d}" + (f"——{_v}" if _v else ""))
+    # 独发 / 独静（《增删卜易·独发章》）：只作结构性提示
+    df = adv.get("du_fa_du_jing") or {}
+    if isinstance(df, dict) and df.get("driving_note"):
+        detail_parts.append(f"{df.get('type')}：{df['driving_note']}")
 
     return detail_parts
 

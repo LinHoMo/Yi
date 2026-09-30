@@ -39,6 +39,7 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     SHENG_CYCLE,
     STEM_ELEMENTS,
     TOMB_MAP,
+    hexagram_level_relations,   # 卦级反吟伏吟：冲/同逐位比对的唯一实现（内核）
 )
 
 from classical_enhancements import _branch_element, _combined_strength, _element_to_relation, _find_stage_at, _find_use_god_positions, _get_use_god_strength_level, _infer_use_god_category, _pos_to_name, _relation_element, _score_fanyin, _score_fuyin, _strength_score, determine_six_relation, element_strength_in_month, find_hexagram_body, g_day_cn, get_changed_hexagram_branch, get_month_strength_description, get_stages_of_interest, get_twelve_growth_stage, is_ba_zu_chong, is_ba_zu_he
@@ -930,6 +931,7 @@ def analyze_repetition(result):
             "chong_pairs": [],
             "summary": ctext("cr_029"),
             "meaning": "",
+            "hexagram_level": None,
         }
 
     # 判断伏吟：如果所有爻都没变（理论上在变卦时有changed_lines，说明有变爻）
@@ -1035,6 +1037,11 @@ def analyze_repetition(result):
                          "外卦" if outer_all_changed and outer_same else None),
         "summary": summary,
         "meaning": meaning,
+        # 卦级反吟/伏吟：本卦与变卦逐位比对地支（内核 hexagram_level_relations）。
+        # 《卜筮正宗》"内卦反吟内不安，外卦反吟外不宁"——scope 即此处给出的内外卦级。
+        "hexagram_level": hexagram_level_relations(
+            hex_info.get("name", ""), changed_name
+        ),
     }
 
 
@@ -1081,9 +1088,13 @@ def analyze_repetition_deep(result):
     changed_name = changed.get("name")
     original_name = hex_info.get("name", "")
 
+    # 卦级判定以内核逐位比对为准（六位全冲/全同；半卦经卦未变而爻支全冲/全同）
+    hl = basic.get("hexagram_level") or {}
+    scope_info = hl.get("scope") or {}
+    full_hexagram = bool(hl.get("full_clash") or hl.get("full_same"))
+
     level = "爻"
     if original_name and changed_name and original_name != changed_name:
-        # 检查是否是整个卦变了（如六冲变六冲）
         yao_lines = hex_info.get("yao_lines", [])
         changed_lines = changed.get("changed_lines", [])
         if len(changed_lines) >= 3:
@@ -1091,6 +1102,8 @@ def analyze_repetition_deep(result):
             chong_count = basic.get("chong_pairs", [])
             if len(chong_count) >= 4:
                 level = "卦"
+    if full_hexagram:
+        level = "卦"
 
     # 判断 scope
     scope = None
@@ -1121,6 +1134,14 @@ def analyze_repetition_deep(result):
         scope = "世爻"
     elif any(p in involved_positions for p in use_god_positions):
         scope = "用神"
+    elif full_hexagram:
+        scope = "内卦"      # 全卦反吟/伏吟：六爻俱动，内卦先受（"内不安"为其本象）
+    elif (main_type == "反吟" and (scope_info.get("inner_true_fanyin")
+                                   or scope_info.get("outer_true_fanyin"))):
+        scope = "内卦" if scope_info.get("inner_true_fanyin") else "外卦"
+    elif (main_type == "伏吟" and (scope_info.get("inner_true_fuyin")
+                                   or scope_info.get("outer_true_fuyin"))):
+        scope = "内卦" if scope_info.get("inner_true_fuyin") else "外卦"
     elif fuyin_trigram:
         scope = "内卦" if fuyin_trigram == "内卦" else "外卦"
     elif chong_pairs:
@@ -1150,6 +1171,9 @@ def analyze_repetition_deep(result):
         "interpretation": interpretation,
         "score_modifier": round(score_modifier, 2),
         "classical_quote": classical_quote,
+        # 卦级判定（内核 hexagram_level_relations）：full_clash/full_same/内外卦 flag + category
+        "hexagram_level": hl,
+        "hexagram_category": hl.get("category"),
     }
 
 

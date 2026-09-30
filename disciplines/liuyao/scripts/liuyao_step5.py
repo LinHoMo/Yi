@@ -69,6 +69,7 @@ from narrative_utils import (  # noqa: E402
     get_twelve_growth_stage,
     note_text,
     safe_get,
+    SANCHUAN_LABELS,
     strength_to_score,
     STEP5_CONFIDENCE as CONF_TXT,
     STEP5_FACTOR_REASONS as FREASON,
@@ -194,6 +195,10 @@ def step5_synthesize(r: dict) -> dict:
     combo_break_reason = adv["combo_break_reason"]
     yuan_shen_bond_adjustment = adv["yuan_shen_bond_adjustment"]
     yuan_shen_bond_reason = adv["yuan_shen_bond_reason"]
+    # 5.5g: 三传克制（太岁+月建+日辰俱克）——只标记、不计分（未验证项，见 detect_three_passages_clash）
+    sanchuan = adv.get("sanchuan") or {}
+    sanchuan_fired = bool(sanchuan.get("fired"))
+    sanchuan_reason = str(sanchuan.get("reason") or "")
 
     # 纳音（5.11）仍要从 advanced_analysis 取，故此处保留原取值
     advanced = r.get("advanced_analysis", {})
@@ -395,6 +400,8 @@ def step5_synthesize(r: dict) -> dict:
         "officer_tomb_reason": officer_tomb_reason,
         "officer_tomb_severity": officer_tomb_severity,
         "officer_tomb_verdict_note": officer_tomb_verdict_note,
+        # 三传克制标记（未验证项：只报象、score 恒 0，不进 final_score）
+        "sanchuan": sanchuan,
         "summary_text": _compose_synthesis_summary(
             strength_level=strength_level,
             base_score=base_score,
@@ -697,7 +704,85 @@ def compute_advanced_adjustments(r: dict, step2_data: dict, step3_data: dict, di
         "combo_break_reason": combo_break_reason,
         "yuan_shen_bond_adjustment": yuan_shen_bond_adjustment,
         "yuan_shen_bond_reason": yuan_shen_bond_reason,
+        "sanchuan": detect_three_passages_clash(r, step2_data, step3_data, div_time),
     }
+
+
+def detect_three_passages_clash(r: dict, step2_data: dict, step3_data: dict, div_time: dict) -> dict:
+    """三传克制（太岁 + 月建 + 日辰俱克用神，且无一生扶）。
+
+    《增删卜易》"三傳俱克，雖旺亦危"（references/pattern_reference.md 格局六）：
+    月建克用神、日辰克用神、太岁亦克用神——三者皆克，纵原神旺动亦难扭转。
+
+    ⚠️ **未验证项**：本项目基准集（tune/holdout/wikisource/huozhulin）里没有
+    含太岁的可对照案例，故此处**只落地标记、score_adjustment 恒为 0、不进主分**。
+    待自建并标注出处的基准例到位后再谈计分；在此之前任何把它算进吉凶的做法
+    都属未经验证的调参。太岁取流年地支：年柱为立春换年（内核干支历口径）。
+    """
+    out = {
+        "fired": False,
+        "score_adjustment": 0.0,
+        "counted": False,          # 明确声明：本条未计分
+        "year_branch": "",
+        "month_branch": "",
+        "day_branch": "",
+        "use_god_branch": "",
+        "use_god_element": "",
+        "reason": "",
+        "verdict": "",
+        "verified": False,
+    }
+    labels = SANCHUAN_LABELS or {}
+    out["verdict"] = labels.get("verdict", "")
+    out["verified"] = bool(labels.get("verified", False))
+
+    year_gz = str((r.get("divination_time") or {}).get("year_stem_branch") or "")
+    month_gz = str(div_time.get("month_stem_branch") or "")
+    day_gz = str(div_time.get("day_stem_branch") or "")
+    year_branch = year_gz[1:] if len(year_gz) >= 2 else ""
+    month_branch = month_gz[1:] if len(month_gz) >= 2 else ""
+    day_branch = day_gz[1:] if len(day_gz) >= 2 else ""
+
+    sel = step2_data.get("selected_use_god") or {}
+    use_god_branch = sel.get("earthly_branch", "") if isinstance(sel, dict) else ""
+    use_god_element = step2_data.get("use_god_element", "")
+
+    out.update({
+        "year_branch": year_branch,
+        "month_branch": month_branch,
+        "day_branch": day_branch,
+        "use_god_branch": use_god_branch,
+        "use_god_element": use_god_element,
+    })
+
+    if not (year_branch and month_branch and day_branch and use_god_element):
+        return out
+
+    def _ke(branch: str) -> bool:
+        elem = BRANCH_ELEMENTS.get(branch, "")
+        return bool(elem) and KE_CYCLE.get(elem) == use_god_element
+
+    def _sheng(branch: str) -> bool:
+        elem = BRANCH_ELEMENTS.get(branch, "")
+        return bool(elem) and SHENG_CYCLE.get(elem) == use_god_element
+
+    branches = (year_branch, month_branch, day_branch)
+    if not all(_ke(b) for b in branches):
+        return out
+    if any(_sheng(b) for b in branches):
+        return out
+    # 卦中有动爻来生用神者不构成"俱克"（原书以"得众多动爻齐来生扶"为解）
+    for yao in (safe_get(r, "original_hexagram", "yao_lines", default=[]) or []):
+        if isinstance(yao, dict) and yao.get("is_moving"):
+            if SHENG_CYCLE.get(_branch_element(yao.get("earthly_branch", ""))) == use_god_element:
+                return out
+
+    out["fired"] = True
+    out["reason"] = str(labels.get("reason", "")).format(
+        year=year_branch, month=month_branch, day=day_branch,
+        use_god=use_god_element or "用神",
+    ) or "三传俱克（太岁/月建/日辰俱克用神且无生扶），虽旺亦危"
+    return out
 
 
 # ---------------------------------------------------------------- 伏神格局

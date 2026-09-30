@@ -75,6 +75,7 @@ from narrative_utils import (  # noqa: E402
     STEP5_SPIRIT_REASONS as SPIRIT_TXT,
     STEP5_VERDICT_DESCS as VDESC,
     STEP5_YINGQI as YINGQI_TXT,
+    VOID_KIND_LABELS,
     vdesc,
 )
 
@@ -184,6 +185,9 @@ def step3_analyze_strength(r: dict) -> dict:
     empty_modifier_reason = em["empty_modifier_reason"]
     chu_xun_bonus = em["chu_xun_bonus"]
     chu_xun_reason = em["chu_xun_reason"]
+    is_true_void = em["is_true_void"]
+    is_false_void = em["is_false_void"]
+    void_kind = em["void_kind"]
 
     # ---------- 3.5: 月破修正 ----------
     mb = compute_month_break_modifier(selected_use_god, day_branch)
@@ -356,6 +360,9 @@ def step3_analyze_strength(r: dict) -> dict:
         "is_empty": is_empty,
         "empty_modifier": empty_modifier,
         "empty_modifier_reason": empty_modifier_reason,
+        "is_true_void": is_true_void,
+        "is_false_void": is_false_void,
+        "void_kind": void_kind,
         "is_month_break": is_month_break,
         "month_break_modifier": month_break_modifier,
         "month_break_modifier_reason": month_break_modifier_reason,
@@ -384,6 +391,7 @@ def step3_analyze_strength(r: dict) -> dict:
             god_day_score=god_day_score,
             is_empty=is_empty,
             empty_modifier_reason=empty_modifier_reason,
+            void_kind=void_kind,
             is_month_break=is_month_break,
             month_break_modifier_reason=month_break_modifier_reason,
             is_an_dong=is_an_dong,
@@ -539,8 +547,14 @@ def _compose_strength_summary(**kw) -> str:
     parts = [f"{ug}在{name}，五行{elem}。"]
     parts.append(f"月建{mb}（{me}）对它{ms}，日辰{db}（{de}）对它{ds}。")
     extras = []
-    if kw.get("is_empty") and kw.get("empty_modifier_reason"):
-        extras.append(str(kw["empty_modifier_reason"]).rstrip("，。"))
+    if kw.get("is_empty"):
+        _vk = str(kw.get("void_kind") or "")
+        _vlabel = VOID_KIND_LABELS.get(_vk) or {}
+        if _vlabel.get("strength_text"):
+            extras.append(_vlabel["strength_text"].format(
+                month=kw.get("month_branch", ""), day=kw.get("day_branch", "")))
+        elif kw.get("empty_modifier_reason"):
+            extras.append(str(kw["empty_modifier_reason"]).rstrip("，。"))
     if kw.get("is_month_break") and kw.get("month_break_modifier_reason"):
         extras.append(str(kw["month_break_modifier_reason"]).rstrip("，。"))
     if kw.get("is_an_dong") and kw.get("an_dong_modifier_reason"):
@@ -673,6 +687,22 @@ def compute_day_modifier(day_element: str, use_god_element: str) -> tuple:
     return day_modifier, day_modifier_reason
 
 
+def _births(branch_or_element: str, use_god_element: str) -> bool:
+    """该支（或五行）是否生用神五行。空/未知一律 False。"""
+    if not branch_or_element or not use_god_element:
+        return False
+    elem = BRANCH_ELEMENTS.get(branch_or_element, branch_or_element)
+    return SHENG_CYCLE.get(elem) == use_god_element
+
+
+def _branch_ke(branch_or_element: str, use_god_element: str) -> bool:
+    """该支（或五行）是否克用神五行（日克用神）。"""
+    if not branch_or_element or not use_god_element:
+        return False
+    elem = BRANCH_ELEMENTS.get(branch_or_element, branch_or_element)
+    return KE_CYCLE.get(elem) == use_god_element
+
+
 def compute_empty_modifier(
     selected_use_god: dict,
     use_god_element: str,
@@ -682,16 +712,26 @@ def compute_empty_modifier(
     yao_lines: list,
     god_month_score: float,
 ) -> dict:
-    """3.4 旬空修正：有气论 70% / 休囚论 30%，并判出旬有验加成。"""
+    """3.4 旬空修正：有气论 70% / 休囚论 30%，并判出旬有验加成。
+
+    旺衰权重之外另出「真空 / 假空」标签，口径见 data/rules/verdict_texts.json
+    #pattern_verdict_labels（逐字原文见 references/pattern_reference.md 格局十三）：
+      假空＝旬空 + 旺相（月建或日辰临旺相）+ 有生扶（月生／日生／动爻生），或日辰冲实；
+      真空＝旬空 + 月建休囚 + 日辰克用 + 无任何生扶（既无生扶又受日克，终难起）。
+    两者互斥；既非假空又不构成真空者，只标旬空、不给真空/假空断语（宁缺勿滥）。
+    """
     is_empty = selected_use_god.get("is_empty", False)
     empty_modifier = 1.0
     empty_modifier_reason = ""
     chu_xun_bonus = 0.0
     chu_xun_reason = ""
+    is_false_void = False
+    is_true_void = False
+    void_kind = ""
     if is_empty:
         # 有生源检测（月建/日辰/动爻生用神 → 空亡有气，出旬有验）
-        month_births_use = SHENG_CYCLE.get(month_element) == use_god_element
-        day_births_use = SHENG_CYCLE.get(day_element) == use_god_element
+        month_births_use = _births(month_element, use_god_element)
+        day_births_use = _births(day_element, use_god_element)
         # 动爻生用神 → "动则生而不为空"（《增删易》动空出旬）
         moving_births_use = False
         for yao in yao_lines:
@@ -700,29 +740,51 @@ def compute_empty_modifier(
                 if SHENG_CYCLE.get(y_elem) == use_god_element:
                     moving_births_use = True
                     break
+        # 月建/日辰的旺相（"相"亦为旺，见旺相休囚死：生月令者为相）
+        month_prosperous = element_strength_in_month(use_god_element, month_element) in ("旺", "相")
+        day_prosperous = element_strength_in_month(use_god_element, day_element) in ("旺", "相")
+        month_weak = element_strength_in_month(use_god_element, month_element) in ("休", "囚", "死")
+        _ugb = (selected_use_god or {}).get("earthly_branch", "")
+        # 日辰冲用神 → 旬空逢冲为填实（《卜筮正宗》冲空则实）：空而逢冲不作空论
+        day_clashes_use = bool(day_branch) and bool(_ugb) and _is_chong(_ugb, day_branch)
+        births = month_births_use or day_births_use or moving_births_use
+
+        # 假空：旺相待出——旺相或有生扶，皆非真亡
+        if month_prosperous or day_prosperous or births or day_clashes_use:
+            is_false_void = True
+            void_kind = "false"
+        # 真空：休囚难起——月建休囚、日辰克用、又无一生扶
+        elif month_weak and _branch_ke(day_element, use_god_element) and not births:
+            is_true_void = True
+            void_kind = "true"
+        # 旺衰权重（口径未变，保持既有读数可比）
+        void_label = VOID_KIND_LABELS.get(void_kind, {})
         if god_month_score >= 4 or moving_births_use:
             empty_modifier = 0.7  # 有气论
             if moving_births_use:
                 empty_modifier_reason = "用神旬空但得动爻生之（动空），出旬即应，论70%"
             else:
                 empty_modifier_reason = "用神旺相旬空，论70%（有气空亡，出空可应）"
-            # 日辰冲用神 → 旬空逢冲为填实（《卜筮正宗》冲空则实）
-            _ugb = (selected_use_god or {}).get("earthly_branch", "")
-            day_clashes_use = bool(day_branch) and bool(_ugb) and _is_chong(_ugb, day_branch)
             if day_clashes_use:
                 empty_modifier_reason = "用神旺相旬空，逢日辰冲为填实（冲空则实，出空即应），论70%"
-            if month_births_use or day_births_use or moving_births_use:
+            if births:
                 chu_xun_bonus = 1.0
                 chu_xun_reason = "用神旬空有气且得生扶（月/日/动爻），出旬有验，断吉倾向"
+            if is_false_void and void_label.get("reason"):
+                empty_modifier_reason = void_label["reason"]
         else:
             empty_modifier = 0.3  # 休囚论
-            empty_modifier_reason = "用神休囚旬空，论30%（真空亡，难应）"
+            empty_modifier_reason = void_label.get("reason") or "用神休囚旬空，论30%（真空亡，难应）"
     return {
         "is_empty": is_empty,
         "empty_modifier": empty_modifier,
         "empty_modifier_reason": empty_modifier_reason,
         "chu_xun_bonus": chu_xun_bonus,
         "chu_xun_reason": chu_xun_reason,
+        # 真空/假空标签（《增删卜易》"旺空待出，真空难起"）
+        "is_true_void": is_true_void,
+        "is_false_void": is_false_void,
+        "void_kind": void_kind,
     }
 
 
