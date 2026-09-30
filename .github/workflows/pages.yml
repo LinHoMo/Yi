@@ -6,6 +6,8 @@ name: Yi 纯前端站点（GitHub Pages）
 # 取用规程见 docs/AI-SOP.md。
 #
 # 一次性设置：仓库 Settings → Pages → Source 选 "GitHub Actions"。
+# （已启用后，推送任意本工作流 paths 内的文件即自动触发构建+部署；首次启用后
+#  如站点未出现，对最近一次失败的 run 执行 Re-run all jobs 即可。）
 
 on:
   push:
