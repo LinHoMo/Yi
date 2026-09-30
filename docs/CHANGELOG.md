@@ -3,6 +3,32 @@
 仓库级变更登记（跨科 / 内核 / 口径 / 架构）。学科内细节见各科 `CHANGELOG.md`。
 规则：指标口径任何变动（计分方式、词典、缺失字段处理）必须在此登记，否则分数不可比（`AGENTS.md` §四.4）。
 
+### 2026-09-30g 命科调候落地：《穷通宝鉴》表入内核 + 首批案例对齐评测（51 例）+ 佐神分母修正
+
+> **口径登记（§四.4）**：命科 `evaluate.py` 调候维度修正——书只给主神时，佐神
+> 「书上没写」= 不适用，**适用权重只算主神 10**（原实现拿 16 当分母，把没写的佐神
+> 记成扣分，违背本文件自身规则 1）。修正与首批数据同轮落地，此前调候维度无任何
+> 官方读数，**无可比性问题**。
+
+**新增**：
+
+1. **内核唯一真值源** `yishu_core/ming_tables.py` 新增 `TIAO_HOU`（月支×日主 →
+   {main, assist}）与 `tiaohou_of()`：由 `disciplines/ming/dev_tools/build_tiaohou.py`
+   从 `data/sources/qiong-tong-bao-jian.wikitext.txt` 机械提取并人审——**51/120 格**，
+   未提取到的格不入表（宁缺勿滥，查不到返回 None，不凭记忆补格）；逐格引文留档
+   `disciplines/ming/data/tiaohou_quotes.json`。
+2. **引擎透出**：`pattern.py::strength_and_pattern` 查表输出 `tiaohou`，`analyze.py`
+   透出到顶层；`narrate.py` 新增「调候」一节（标注查表口径）。金标准指纹
+   `3d4ff149ef6be933` 零漂移（纯增量透出）。
+3. **首批案例对齐评测**（命科此前无任何案例评测）：`dev_tools/build_tiaohou_cases.py`
+   建例 51 例（**tune 30 / holdout 21**，按三春三夏/三秋冬切分）——
+   - expected 只有 `tiaohou`（书上明写的主/佐神），其余维度一律 N/A；
+   - 每例 `source_quote` 逐字可回指原文（铁律三）；
+   - 公历时刻由内核历法**反查**（月支/日干为定值），与六爻 case_runner 同一范式；
+   - **诚实口径**：引擎查的表与 expected 同出一份原文 → 本集是**表对表回归 +
+     历法链路验证**（引擎 51/51 与书一致，随机基线≈10%），**不是泛化证据**。
+4. ming `dev_tools/check.py` [7] 评测门由"空集可跑"变为有实数据（tune 30 / holdout 21）。
+
 ### 2026-09-30f 六爻深度改造第一批：缺失环节六项落地（DEEP-DIVE-PLAN §1.3 清偿）
 
 > **计分口径影响有界且已 capture**：金标准指纹 `abc7884de0653ee5` → `6a67db48bbed83fc`

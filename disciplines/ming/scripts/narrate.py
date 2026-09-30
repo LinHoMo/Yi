@@ -34,6 +34,11 @@ def narrate(a: dict) -> str:
         "",
     ]
     xunkong = s.get("空亡") or a.get("xunkong") or []
+    th = a.get("tiaohou")
+    if th and th.get("main"):
+        assist = f"、佐{th['assist']}" if th.get("assist") else "（原文未单列佐神）"
+        lines.append(f"**调候**（《穷通宝鉴》月令×日主查表）：主{th['main']}{assist}。")
+        lines.append("")
     if xunkong:
         lines.append(f"**空亡**：{'、'.join(xunkong)}（日柱旬空）。")
         lines.append("")

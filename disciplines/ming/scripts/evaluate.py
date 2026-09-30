@@ -201,21 +201,23 @@ def score_case(eng: dict, exp: dict, model: str) -> dict:
         if tot:
             dims["hidden_stems"] = (w * hit // tot, w, f"{hit}/{tot} " + " ".join(notes))
 
-    # 4) 调候（《穷通宝鉴》表对表：主神 10 分 + 佐神 5 分）
+    # 4) 调候（《穷通宝鉴》表对表：主神 10 分 + 佐神 6 分）
     w = WEIGHTS["tiaohou"]
     x_t = exp.get("tiaohou")
     if not _na(x_t):
         got = (eng.get("tiaohou") or {})
         main_ok = bool(got.get("main")) and got.get("main") == x_t.get("main")
+        note = (f"引擎 {got.get('main') or '—'}/{got.get('assist') or '—'}"
+                f" vs 书 {x_t.get('main')}/{x_t.get('assist') or '—'}")
         if x_t.get("assist"):
             assist_ok = bool(got.get("assist")) and got.get("assist") == x_t.get("assist")
             earned = (10 if main_ok else 0) + (6 if assist_ok else 0)
+            dims["tiaohou"] = (min(earned, w), w, note)
         else:
-            # 书只给主神：主神命中即给满（不因为「书没写佐神」而扣分）
-            earned = 10 if main_ok else 0
-        note = (f"引擎 {got.get('main') or '—'}/{got.get('assist') or '—'}"
-                f" vs 书 {x_t.get('main')}/{x_t.get('assist') or '—'}")
-        dims["tiaohou"] = (min(earned, w), w, note)
+            # 书只给主神：佐神「书上没写」= 不适用 → 适用权重只算主神 10，
+            # 从分母剔除（规则1：没写的量既不进分子也不进分母），而不是拿 16
+            # 当分母把没写的佐神记成扣分（2026-09-30f 修正；此前无数据，无可比性问题）
+            dims["tiaohou"] = (10 if main_ok else 0, 10, note)
 
     # 5) 格局（名 8 分 + 成破救应 4 分）
     w = WEIGHTS["pattern"]

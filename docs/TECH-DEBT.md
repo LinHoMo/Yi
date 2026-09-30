@@ -13,6 +13,7 @@
 
 | 债务 | 处理 | 锚点 |
 |---|---|---|
+| **命科调候用神缺失 + 案例评测空白** | `TIAO_HOU` 入内核（51/120 格原文提取、宁缺勿滥，引文留档 `tiaohou_quotes.json`）；`pattern/analyze/narrate` 透出调候；首批案例对齐评测 51 例（tune 30 / holdout 21，历法反查真实时刻，铁律三全遵守）；佐神分母口径修正见 CHANGELOG 2026-09-30g | 2026-09-30g（见 CHANGELOG） |
 | **六爻缺失环节第一批**：三会局、独发独静、卦级反吟伏吟、本卦↔变卦双卦对比、三传克制、"真空/假空"标签 | 六项全部按古籍通则落地（三会±0.5 有界；独发独静/三传克制只标象不进主分；双卦对比 ±1.5；卦体合冲判定由卦名白名单改内核对应位纳支判——旧两表白名单互相矛盾，属通则修复）；内核增 `SAN_HUI_GROUPS`/`hexagram_branches`/`hexagram_he_chong_kind` 唯一真值源；独发独静域切出 `classical_enhancements_dufa.py`（2251→2184 行，看门狗线内）；金标准 `capture` 带理由，tune 93.9 / holdout 87.5 / 应期 58.8/50.0 / 黑箱 12/18 全部持平，refactor_guard 117 例零漂移 | 2026-09-30e（见 CHANGELOG 2026-09-30f） |
 | **三科（梅花/小六壬/择吉）"tune/holdout 均 100%"读数误导**：expected 与引擎同源（自洽项权重梅花 70/100、小六壬与择吉 100/100）；梅花 holdout MH014–MH018 按本仓 `verdicts.json#multi_move_rules` 构造且与该表同提交 `010bcee` 引入（硬泄漏） | 逐例审计落三科 `docs/EVAL-AUDIT.md`；cases 逐例 `provenance` + `_meta._provenance`；三科 `evaluate.py` 报分自动 `[口径披露]`（n<20 不发百分比，改打逐维度命中数）；一键复核 `tools/eval_audit_recheck.py`；HANDOFF §一/§四、DEEP-DIVE-PLAN §三 读数同步订正 | 2026-09-30e（见 CHANGELOG） |
 | **云端链路整体未入版本控制**（`.github/workflows/report.yml`、`tools/report.py`、`tools/ci_*.py`、`cli/main.py`、`disciplines/base/*.py`，以及六爻核心模块 `liuyao_step1-5`/`classical_enhancements`/`effects`/`chart_tables`/`liuyao_timing` 等、紫微斗数整科、`docs/ARCHITECTURE|MIGRATION`）——**推到 GitHub 也是空的**，云报告通道等于零功能 | 全部纳入索引并提交；同时清掉已合并的旧模块（`chain_*`/`classical_rules_*`/`human_narrative*`/`yingqi_windows` 等 25 个）与 `archive/` 冗余副本 | `b86e4b7`（2026-09-30d） |
@@ -62,8 +63,8 @@
 | 债务 | 现状 | 阻塞说明 |
 |---|---|---|
 | **六爻评测盲区**：旺衰定性、六神临用、卦身、三合、墓库开合零覆盖；反吟/伏吟/进退神/入墓/暗动/月破被降级为格局词**子串匹配**；`use_god_position` 在 tune/holdout **全为 N/A** | 待清偿 | 需先补基准例（expected 里 `use_god_position` 仅 3 例填了）。缺失环节第一批已把引擎侧格局检测补齐，剩的是**案例断言层** |
-| **命科八字完全没有案例评测**：`ming_cases.json` 的 `tune`/`holdout` 皆空，仅 5 条机械回归 | 待清偿 | 需建古籍案例集（《穷通宝鉴》调候表最适合逐条对照）。**只评书上明写的量，缺的记 null 走 N/A 剔除**；富贵层次/寿夭/六亲克应等无客观标的者**不计分** |
-| **命科八字缺失判据**：调候用神、通关、病药、格局成败救应、三会、四柱间独立刑冲合害、胎元、小运、流月、岁运并临、天克地冲、十神组合、女命夫子星 | 待清偿 | 新增神煞/起例**无逐字出处者一律标 `verified=false`**，不得把流俗起例写成古法 |
+| **命科案例评测只有调候单一维度**（2026-09-30g 调候批 51 例已立，《穷通宝鉴》原文提取，引擎 51/51=表对表回归）；四柱/十神/藏干/格局/神煞/大运仍无书源 expected | 待扩 | 需从古籍占验实录建例（**只评书上明写的量，缺的记 null 走 N/A 剔除**）；富贵层次/寿夭/六亲克应等无客观标的者**不计分** |
+| **命科八字缺失判据**：通关、病药、格局成败救应、三会、四柱间独立刑冲合害、胎元、小运、流月、岁运并临、天克地冲、十神组合、女命夫子星（~~调候用神~~ ✅ 2026-09-30g 已落地，`ming_tables.TIAO_HOU`） | 待清偿 | 新增神煞/起例**无逐字出处者一律标 `verified=false`**，不得把流俗起例写成古法 |
 | **三科外部独立集缺失**：梅花/小六壬/择吉 tune/holdout 全部本仓构造（梅花原书应验 18/23、小六壬真·书上结论仅 4 例、择吉古籍日例应验 **0** 例），无任何外部盲集 | 待清偿 | 2026-09-30 审计实锤（各科 `docs/EVAL-AUDIT.md`）。唯一有效动作＝照六爻范式建 `data/cases/external_cases.json` + case_splits「永不调参」split；**扩判据、调权重不解决**（尺子先于判据） |
 | 新门类（大六壬 / 奇门遁甲 / 七政四余） | 已论证未落地 | 骨架与古书来源见 `docs/NEW-DISCIPLINES.md`；相科（面相/手相/堪舆）按铁律不做 |
 

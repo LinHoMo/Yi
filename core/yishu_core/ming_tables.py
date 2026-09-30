@@ -157,3 +157,95 @@ def ming_shen_gong(year_stem: str, month_branch: str, hour_branch: str) -> dict:
         "ming_gong": {"branch": mb, "ganzhi": mgz, "nayin": _nayin_of(mgz) if mgz else None},
         "shen_gong": {"branch": sb, "ganzhi": sgz, "nayin": _nayin_of(sgz) if sgz else None},
     }
+
+
+# ================================================================ 调候用神表
+# 《穷通宝鉴》按月令×日主定调候（"正月甲木，得丙癸逢"）。本表只收**原文有明文**的
+# 格——由 `disciplines/ming/dev_tools/build_tiaohou.py` 从 data/sources/
+# qiong-tong-bao-jian.wikitext.txt 机械提取并人审（51/120 格，逐格引文见
+# disciplines/ming/data/tiaohou_quotes.json）；未提取到的格不在表里（宁缺勿滥，
+# 查不到返回 None，调用方按"无明文"处理，不得凭记忆补格）。
+# 口径：main = 原文排序在前/为尊之神，assist = 次/佐之神；assist 空串 = 原文只明写一神。
+TIAO_HOU: dict[str, dict[str, dict[str, str]]] = {
+    "寅": {
+        "甲": {"main": "丙", "assist": "癸"},
+        "丙": {"main": "壬", "assist": "庚"},
+        "庚": {"main": "丙", "assist": "甲"},
+        "辛": {"main": "己", "assist": "壬"},
+        "癸": {"main": "辛", "assist": "丙"},
+    },
+    "卯": {
+        "乙": {"main": "丙", "assist": "癸"},
+        "丁": {"main": "庚", "assist": "甲"},
+        "庚": {"main": "丁", "assist": ""},
+        "壬": {"main": "戊", "assist": "辛"},
+        "癸": {"main": "庚", "assist": ""},
+    },
+    "辰": {
+        "甲": {"main": "庚", "assist": "壬"},
+        "乙": {"main": "癸", "assist": "丙"},
+        "丁": {"main": "庚", "assist": "甲"},
+        "己": {"main": "丙", "assist": "癸"},
+        "庚": {"main": "甲", "assist": "丁"},
+        "辛": {"main": "壬", "assist": "甲"},
+        "癸": {"main": "丙", "assist": ""},
+    },
+    "巳": {
+        "甲": {"main": "癸", "assist": "丁"},
+        "乙": {"main": "癸", "assist": ""},
+        "丙": {"main": "壬", "assist": ""},
+        "壬": {"main": "壬", "assist": "辛"},
+        "癸": {"main": "辛", "assist": ""},
+    },
+    "午": {
+        "甲": {"main": "癸", "assist": "丁"},
+        "庚": {"main": "壬", "assist": ""},
+        "辛": {"main": "壬", "assist": "己"},
+    },
+    "未": {
+        "丙": {"main": "壬", "assist": ""},
+        "戊": {"main": "癸", "assist": "丙"},
+        "庚": {"main": "丁", "assist": "甲"},
+        "辛": {"main": "壬", "assist": "庚"},
+        "壬": {"main": "辛", "assist": "甲"},
+    },
+    "申": {
+        "甲": {"main": "丁", "assist": "庚"},
+        "庚": {"main": "丁", "assist": ""},
+        "壬": {"main": "戊", "assist": ""},
+        "癸": {"main": "丁", "assist": ""},
+    },
+    "酉": {
+        "甲": {"main": "丁", "assist": "丙"},
+        "戊": {"main": "丙", "assist": "癸"},
+        "辛": {"main": "壬", "assist": ""},
+        "壬": {"main": "甲", "assist": ""},
+        "癸": {"main": "辛", "assist": ""},
+    },
+    "戌": {
+        "甲": {"main": "丁", "assist": ""},
+        "丙": {"main": "甲", "assist": "壬"},
+        "戊": {"main": "丙", "assist": ""},
+        "辛": {"main": "壬", "assist": "甲"},
+        "癸": {"main": "辛", "assist": "甲"},
+    },
+    "亥": {
+        "乙": {"main": "丙", "assist": "戊"},
+        "庚": {"main": "丁", "assist": "甲"},
+        "辛": {"main": "壬", "assist": "丙"},
+        "癸": {"main": "庚", "assist": "辛"},
+    },
+    "丑": {
+        "庚": {"main": "丙", "assist": "丁"},
+        "辛": {"main": "丙", "assist": "壬"},
+        "壬": {"main": "丙", "assist": ""},
+    },
+}
+
+
+def tiaohou_of(month_branch: str, day_stem: str) -> dict | None:
+    """月支×日主 → 调候用神 {main, assist}；原文无明文的格返回 None（宁缺勿滥）。"""
+    cell = TIAO_HOU.get(month_branch, {}).get(day_stem)
+    if not cell:
+        return None
+    return {"main": cell["main"], "assist": cell.get("assist") or ""}

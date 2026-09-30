@@ -15,6 +15,7 @@ from yishu_core.ming_tables import (
     dayun_direction,
     DAYS_PER_LUCK_YEAR,
     MONTHS_PER_DAY,
+    tiaohou_of,
 )
 from yishu_core.symbols import BRANCH_ELEMENTS, STEM_ELEMENTS, SHENG_CYCLE, KE_CYCLE
 
@@ -178,6 +179,9 @@ def strength_and_pattern(chart_json: dict) -> dict:
         "tentative_special": tentative_from,
         "from_kind": from_kind,
         "from_basis": from_basis,
+        # 调候用神（《穷通宝鉴》月令×日主查表，内核唯一真值源 ming_tables.TIAO_HOU；
+        # 原文无明文的格为 None——宁缺勿滥，不凭记忆补格）
+        "tiaohou": tiaohou_of(month_branch, day_stem),
         "useful_gods": useful,
         "taboo_gods": taboo,
         "useful_basis": (

@@ -31,6 +31,8 @@ def analyze(chart_json: dict) -> dict:
     dayun = dayun_table(result)
     liunian = liunian_table(result, n=12)
     interactions = dayun_liunian_interactions(result, dayun=dayun, liunian=liunian)
+    # 调候用神（《穷通宝鉴》查表结果透出到 analyze 顶层；无明文的格为 None）
+    result["tiaohou"] = sp.get("tiaohou")
 
     summary = {
         "四柱": {k: (v or {}).get("ganzhi") for k, v in pillars.items()},
