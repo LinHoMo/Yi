@@ -1,0 +1,87 @@
+{
+ "schema": "yi-liuren-course-examples/1",
+ "_comment": [
+  "书源内嵌课例（六壬大全 卷一课经/格局段），expected 只有书上明写的三传。",
+  "重建方式：定位语（X加Y/干上X/支上X）→ 天地盘旋转 delta → 九宗门复算。",
+  "本集度量是**机械一致率**（引擎三传 vs 书面三传），不是对齐分，",
+  "更不是现实预测命中率（NEW-DISCIPLINES §2.1：两类分数必须分开报）。"
+ ],
+ "stats": {
+  "sentences": 78,
+  "has_triple": 9,
+  "has_day": 5,
+  "has_determiner": 4,
+  "kept": 4,
+  "dropped_multi_day_list": 0
+ },
+ "cases": [
+  {
+   "id": "LE001",
+   "book": "六壬大全",
+   "location": "六壬大全（内嵌课例）",
+   "source_quote": "凡占事事有成，惟忌空亡如乙丑日干上子与支合，支上酉与干合，三传巳丑酉又三合之例",
+   "day_ganzhi": "乙丑",
+   "delta": 8,
+   "determiner": "干上子",
+   "expected": {
+    "san_chuan": [
+     "巳",
+     "丑",
+     "酉"
+    ]
+   },
+   "expected_men": null
+  },
+  {
+   "id": "LE002",
+   "book": "六壬大全",
+   "location": "六壬大全（内嵌课例）",
+   "source_quote": "要年命上有制虎之神如壬辰日遥克，戌加未发用，三传戌丑辰，上下六鬼，午上寅木制之之例",
+   "day_ganzhi": "壬辰",
+   "delta": 3,
+   "determiner": "戌加未",
+   "expected": {
+    "san_chuan": [
+     "戌",
+     "丑",
+     "辰"
+    ]
+   },
+   "expected_men": "遥克"
+  },
+  {
+   "id": "LE003",
+   "book": "六壬大全",
+   "location": "六壬大全（内嵌课例）",
+   "source_quote": "凡鬼发用是支上神，又引中末入鬼乡，谓之家鬼弄家神，有救无祸，无救有祸如己丑日支上寅发用作鬼，三传寅卯辰皆归木乡之例",
+   "day_ganzhi": "己丑",
+   "delta": 1,
+   "determiner": "支上寅",
+   "expected": {
+    "san_chuan": [
+     "寅",
+     "卯",
+     "辰"
+    ]
+   },
+   "expected_men": null
+  },
+  {
+   "id": "LE004",
+   "book": "六壬大全",
+   "location": "六壬大全（内嵌课例）",
+   "source_quote": "凡三传入局为鬼，返生起干上神生干者，主一切返凶为吉如庚午日，干上辰，三传戌午寅火局为鬼，生起辰土以生干之例",
+   "day_ganzhi": "庚午",
+   "delta": 8,
+   "determiner": "干上辰",
+   "expected": {
+    "san_chuan": [
+     "戌",
+     "午",
+     "寅"
+    ]
+   },
+   "expected_men": null
+  }
+ ]
+}

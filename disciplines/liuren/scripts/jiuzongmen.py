@@ -120,10 +120,16 @@ def _ke_tree(day_stem: str, day_branch: str, tianpan: dict[str, str],
 
     courses = four_courses(day_stem, day_branch, tianpan)
     ze, ke = _ze_ke_courses(courses)
-    pool = ze or ke
+    # 下贼与上克并存（"上下俱有克"）→ 合池进入比用/涉害，不得只取下贼：
+    # 书例 乙丑日干上子（六壬大全·课经「三传巳丑酉」）即下贼(辰→子)与上克(巳克酉)
+    # 并存、俱不比涉害取孟位巳——只取下贼会误出 子申辰。
+    if ze and ke:
+        pool = ze + ke
+    else:
+        pool = ze or ke
     if not pool:
         return None
-    kind = "下贼" if ze else "上克"
+    kind = "下贼" if ze and not ke else ("上克" if ke and not ze else "下贼+上克")
     if len(pool) == 1:
         c = pool[0]
         men, ke_name = label("重审" if ze else "元首")
