@@ -38,7 +38,13 @@
     "yingqi": "戊戌日当天",
     "detail": "辰土财爻持世，逢旬空，戌日冲破填实，且日辰即财星，当日得有财",
     "use_god_position": 3,
-    "use_god_position_basis": "纳甲唯一可定：妻财(辰)在本卦仅3爻一处"
+    "use_god_position_basis": "纳甲唯一可定：妻财(辰)在本卦仅3爻一处",
+    "use_god_wangshuai": "相",
+    "use_god_wangshuai_basis": "机械派生：用神辰(土)临巳(火)月",
+    "use_god_muku": "不入墓",
+    "use_god_muku_basis": "机械判定：土墓在辰，日戌/月巳",
+    "use_god_six_spirit": "白虎",
+    "use_god_six_spirit_basis": "机械派生：戊日3爻按六神起例"
    },
    "scoring": {
     "verdict_match": 0.4,
@@ -77,7 +83,13 @@
     "yingqi": "酉日",
     "detail": "用神父母酉金虽临月建但不该合（近病逢合为凶），忌神午火动来克用，病危，应酉日出空之期",
     "use_god_position": 6,
-    "use_god_position_basis": "纳甲唯一可定：父母(酉)在本卦仅6爻一处"
+    "use_god_position_basis": "纳甲唯一可定：父母(酉)在本卦仅6爻一处",
+    "use_god_wangshuai": "死",
+    "use_god_wangshuai_basis": "机械派生：用神酉(金)临巳(火)月",
+    "use_god_muku": "不入墓",
+    "use_god_muku_basis": "机械判定：金墓在丑，日辰/月巳",
+    "use_god_six_spirit": "螣蛇",
+    "use_god_six_spirit_basis": "机械派生：庚日6爻按六神起例"
    },
    "scoring": {
     "verdict_match": 0.4,
@@ -111,7 +123,11 @@
      "忌神待冲破"
     ],
     "yingqi": "乙巳日",
-    "detail": "伏神午火财爻为用神，受到日月克滞，世空主拖延，乙巳日得出"
+    "detail": "伏神午火财爻为用神，受到日月克滞，世空主拖延，乙巳日得出",
+    "use_god_wangshuai": "死",
+    "use_god_wangshuai_basis": "机械派生：用神午(火)临亥(水)月",
+    "use_god_muku": "不入墓",
+    "use_god_muku_basis": "机械判定：火墓在戌，日子/月亥"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -147,7 +163,13 @@
     "yingqi": "亥日",
     "detail": "亥水官星空，出旬之亥日见贵，月建财爻生世，财如愿",
     "use_god_position": 3,
-    "use_god_position_basis": "纳甲唯一可定：官鬼(亥)在本卦仅3爻一处"
+    "use_god_position_basis": "纳甲唯一可定：官鬼(亥)在本卦仅3爻一处",
+    "use_god_wangshuai": "相",
+    "use_god_wangshuai_basis": "机械派生：用神亥(水)临申(金)月",
+    "use_god_muku": "不入墓",
+    "use_god_muku_basis": "机械判定：水墓在辰，日卯/月申",
+    "use_god_six_spirit": "螣蛇",
+    "use_god_six_spirit_basis": "机械派生：丁日3爻按六神起例"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -185,7 +207,13 @@
     "yingqi": "次日（巳日）",
     "detail": "世官应财得地，戌土财爻虽旬空但化巳火回头相生，动爻生则不空，次日巳时婚事允诺",
     "use_god_position": 6,
-    "use_god_position_basis": "纳甲唯一可定：妻财(戌)在本卦仅6爻一处"
+    "use_god_position_basis": "纳甲唯一可定：妻财(戌)在本卦仅6爻一处",
+    "use_god_wangshuai": "囚",
+    "use_god_wangshuai_basis": "机械派生：用神戌(土)临子(水)月",
+    "use_god_muku": "不入墓",
+    "use_god_muku_basis": "机械判定：土墓在辰，日酉/月子",
+    "use_god_six_spirit": "白虎",
+    "use_god_six_spirit_basis": "机械派生：癸日6爻按六神起例"
    },
    "scoring": {
     "verdict_match": 0.4,
@@ -222,7 +250,13 @@
     "yingqi": "甲寅日",
     "detail": "卯木财爻用神旬空，亥水原神生之，甲寅日卯木出空且寅亦妻财，病愈",
     "use_god_position": 3,
-    "use_god_position_basis": "纳甲唯一可定：妻财(卯)在本卦仅3爻一处"
+    "use_god_position_basis": "纳甲唯一可定：妻财(卯)在本卦仅3爻一处",
+    "use_god_wangshuai": "休",
+    "use_god_wangshuai_basis": "机械派生：用神卯(木)临午(火)月",
+    "use_god_muku": "不入墓",
+    "use_god_muku_basis": "机械判定：木墓在未，日丑/月午",
+    "use_god_six_spirit": "朱雀",
+    "use_god_six_spirit_basis": "机械派生：癸日3爻按六神起例"
    },
    "scoring": {
     "verdict_match": 0.35,
@@ -258,7 +292,13 @@
     "yingqi": "寅日",
     "detail": "亥水子孙化寅木旬空，近病逢空即愈，但不受酉金生，须值寅日",
     "use_god_position": 2,
-    "use_god_position_basis": "纳甲唯一可定：子孙(亥)在本卦仅2爻一处"
+    "use_god_position_basis": "纳甲唯一可定：子孙(亥)在本卦仅2爻一处",
+    "use_god_wangshuai": "休",
+    "use_god_wangshuai_basis": "机械派生：用神亥(水)临寅(木)月",
+    "use_god_muku": "不入墓",
+    "use_god_muku_basis": "机械判定：水墓在辰，日戌/月寅",
+    "use_god_six_spirit": "玄武",
+    "use_god_six_spirit_basis": "机械派生：庚日2爻按六神起例"
    },
    "scoring": {
     "verdict_match": 0.35,
@@ -296,7 +336,13 @@
     "yingqi": "丙午年",
     "detail": "父母化妻财回头克入日墓，本主重罪；然月建酉旺生、太岁辰生，暂得缓决；化爻午火旬空，防午年填空而终",
     "use_god_position": 4,
-    "use_god_position_basis": "纳甲唯一可定：父母(申)在本卦仅4爻一处"
+    "use_god_position_basis": "纳甲唯一可定：父母(申)在本卦仅4爻一处",
+    "use_god_wangshuai": "旺",
+    "use_god_wangshuai_basis": "机械派生：用神申(金)临酉(金)月",
+    "use_god_muku": "入日墓",
+    "use_god_muku_basis": "机械判定：金墓在丑，日丑/月酉",
+    "use_god_six_spirit": "青龙",
+    "use_god_six_spirit_basis": "机械派生：己日4爻按六神起例"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -333,7 +379,13 @@
     "yingqi": "戌日",
     "detail": "世爻酉金冲反吟有反复，但辰日合世合中有助，变卦六合得财",
     "use_god_position": 6,
-    "use_god_position_basis": "纳甲唯一可定：妻财(戌)在本卦仅6爻一处"
+    "use_god_position_basis": "纳甲唯一可定：妻财(戌)在本卦仅6爻一处",
+    "use_god_wangshuai": "相",
+    "use_god_wangshuai_basis": "机械派生：用神戌(土)临午(火)月",
+    "use_god_muku": "入日墓",
+    "use_god_muku_basis": "机械判定：土墓在辰，日辰/月午",
+    "use_god_six_spirit": "青龙",
+    "use_god_six_spirit_basis": "机械派生：丙日6爻按六神起例"
    },
    "scoring": {
     "verdict_match": 0.35,
@@ -404,7 +456,13 @@
     "yingqi": "乙巳日",
     "detail": "六冲失财本难回，然财爻化午火回头生合，冲中逢合主失而复得",
     "use_god_position": 4,
-    "use_god_position_basis": "纳甲唯一可定：妻财(未)在本卦仅4爻一处"
+    "use_god_position_basis": "纳甲唯一可定：妻财(未)在本卦仅4爻一处",
+    "use_god_wangshuai": "死",
+    "use_god_wangshuai_basis": "机械派生：用神未(土)临寅(木)月",
+    "use_god_muku": "不入墓",
+    "use_god_muku_basis": "机械判定：土墓在辰，日戌/月寅",
+    "use_god_six_spirit": "玄武",
+    "use_god_six_spirit_basis": "机械派生：戊日4爻按六神起例"
    },
    "scoring": {
     "verdict_match": 0.35,
@@ -472,7 +530,13 @@
     "yingqi": "寅日",
     "detail": "子孙化寅木近病逢空即愈，寅日应期",
     "use_god_position": 2,
-    "use_god_position_basis": "纳甲唯一可定：子孙(亥)在本卦仅2爻一处"
+    "use_god_position_basis": "纳甲唯一可定：子孙(亥)在本卦仅2爻一处",
+    "use_god_wangshuai": "死",
+    "use_god_wangshuai_basis": "机械派生：用神亥(水)临辰(土)月",
+    "use_god_muku": "入月墓",
+    "use_god_muku_basis": "机械判定：水墓在辰，日戌/月辰",
+    "use_god_six_spirit": "玄武",
+    "use_god_six_spirit_basis": "机械派生：庚日2爻按六神起例"
    },
    "scoring": {
     "verdict_match": 0.35,
@@ -506,7 +570,11 @@
      "伏生飞为泄气主损耗"
     ],
     "yingqi": "子日",
-    "detail": "妻财卯木伏藏被克，终不能逃远，但财物有损"
+    "detail": "妻财卯木伏藏被克，终不能逃远，但财物有损",
+    "use_god_wangshuai": "休",
+    "use_god_wangshuai_basis": "机械派生：用神卯(木)临午(火)月",
+    "use_god_muku": "不入墓",
+    "use_god_muku_basis": "机械判定：木墓在未，日巳/月午"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -540,7 +608,11 @@
      "午火财爻绝于亥"
     ],
     "yingqi": "年内",
-    "detail": "财爻伏藏且绝于飞神亥水，价格不贵"
+    "detail": "财爻伏藏且绝于飞神亥水，价格不贵",
+    "use_god_wangshuai": "休",
+    "use_god_wangshuai_basis": "机械派生：用神午(火)临辰(土)月",
+    "use_god_muku": "不入墓",
+    "use_god_muku_basis": "机械判定：火墓在戌，日申/月辰"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -573,7 +645,11 @@
      "伏神得出主易愈"
     ],
     "yingqi": "午日",
-    "detail": "子孙午火伏藏，飞神丑土旬空，得出易愈"
+    "detail": "子孙午火伏藏，飞神丑土旬空，得出易愈",
+    "use_god_wangshuai": "囚",
+    "use_god_wangshuai_basis": "机械派生：用神午(火)临酉(金)月",
+    "use_god_muku": "不入墓",
+    "use_god_muku_basis": "机械判定：火墓在戌，日辰/月酉"
    },
    "scoring": {
     "verdict_match": 0.35,
@@ -605,7 +681,11 @@
      "伏神午火值日得出"
     ],
     "yingqi": "甲午日",
-    "detail": "午火父母伏丑土旬空，甲午日出空必领"
+    "detail": "午火父母伏丑土旬空，甲午日出空必领",
+    "use_god_wangshuai": "相",
+    "use_god_wangshuai_basis": "机械派生：用神午(火)临卯(木)月",
+    "use_god_muku": "不入墓",
+    "use_god_muku_basis": "机械判定：火墓在戌，日辰/月卯"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -638,7 +718,11 @@
      "伏神遇长生"
     ],
     "yingqi": "次日",
-    "detail": "飞生伏，伏得出长生易愈"
+    "detail": "飞生伏，伏得出长生易愈",
+    "use_god_wangshuai": "相",
+    "use_god_wangshuai_basis": "机械派生：用神巳(火)临卯(木)月",
+    "use_god_muku": "不入墓",
+    "use_god_muku_basis": "机械判定：火墓在戌，日辰/月卯"
    },
    "scoring": {
     "verdict_match": 0.35,
@@ -1022,7 +1106,11 @@
      "伏生飞泄气"
     ],
     "yingqi": "甲子日",
-    "detail": "用神伏藏被克终不能逃远"
+    "detail": "用神伏藏被克终不能逃远",
+    "use_god_wangshuai": "休",
+    "use_god_wangshuai_basis": "机械派生：用神卯(木)临午(火)月",
+    "use_god_muku": "不入墓",
+    "use_god_muku_basis": "机械判定：木墓在未，日巳/月午"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -1062,7 +1150,13 @@
     "yingqi": "丑日",
     "detail": "病重但可愈，须待丑日冲开合局，果于丑日病愈",
     "use_god_position": 3,
-    "use_god_position_basis": "纳甲唯一可定：父母(辰)在本卦仅3爻一处"
+    "use_god_position_basis": "纳甲唯一可定：父母(辰)在本卦仅3爻一处",
+    "use_god_wangshuai": "旺",
+    "use_god_wangshuai_basis": "机械派生：用神辰(土)临辰(土)月",
+    "use_god_muku": "入月墓",
+    "use_god_muku_basis": "机械判定：土墓在辰，日申/月辰",
+    "use_god_six_spirit": "白虎",
+    "use_god_six_spirit_basis": "机械派生：戊日3爻按六神起例"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -1099,7 +1193,11 @@
      "妻财持世"
     ],
     "yingqi": "戌月",
-    "detail": "财可得但不多，防破耗；应期在冲开世爻之月"
+    "detail": "财可得但不多，防破耗；应期在冲开世爻之月",
+    "use_god_wangshuai": "相",
+    "use_god_wangshuai_basis": "机械派生：用神午(火)临寅(木)月",
+    "use_god_muku": "不入墓",
+    "use_god_muku_basis": "机械判定：火墓在戌，日子/月寅"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -1135,7 +1233,11 @@
      "旬空"
     ],
     "yingqi": "子日",
-    "detail": "行人迟归，果于子日回"
+    "detail": "行人迟归，果于子日回",
+    "use_god_wangshuai": "旺",
+    "use_god_wangshuai_basis": "机械派生：用神子(水)临子(水)月",
+    "use_god_muku": "不入墓",
+    "use_god_muku_basis": "机械判定：水墓在辰，日寅/月子"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -1171,7 +1273,11 @@
      "世应"
     ],
     "yingqi": "巳午月",
-    "detail": "可成，须待世爻出空"
+    "detail": "可成，须待世爻出空",
+    "use_god_wangshuai": "旺",
+    "use_god_wangshuai_basis": "机械派生：用神卯(木)临卯(木)月",
+    "use_god_muku": "不入墓",
+    "use_god_muku_basis": "机械判定：木墓在未，日亥/月卯"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -1209,7 +1315,13 @@
     "yingqi": "未日",
     "detail": "物未失在家内，未日厨下寻得",
     "use_god_position": 3,
-    "use_god_position_basis": "纳甲唯一可定：妻财(午)在本卦仅3爻一处"
+    "use_god_position_basis": "纳甲唯一可定：妻财(午)在本卦仅3爻一处",
+    "use_god_wangshuai": "囚",
+    "use_god_wangshuai_basis": "机械派生：用神午(火)临酉(金)月",
+    "use_god_muku": "不入墓",
+    "use_god_muku_basis": "机械判定：火墓在戌，日丑/月酉",
+    "use_god_six_spirit": "螣蛇",
+    "use_god_six_spirit_basis": "机械派生：丁日3爻按六神起例"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -1248,7 +1360,13 @@
     "yingqi": "年内",
     "detail": "库文叙事主不利，但按纳甲世爻非兄弟；综合断平吉偏耗，经营三月所得甚微",
     "use_god_position": 3,
-    "use_god_position_basis": "纳甲唯一可定：妻财(辰)在本卦仅3爻一处"
+    "use_god_position_basis": "纳甲唯一可定：妻财(辰)在本卦仅3爻一处",
+    "use_god_wangshuai": "囚",
+    "use_god_wangshuai_basis": "机械派生：用神辰(土)临亥(水)月",
+    "use_god_muku": "不入墓",
+    "use_god_muku_basis": "机械判定：土墓在辰，日寅/月亥",
+    "use_god_six_spirit": "勾陈",
+    "use_god_six_spirit_basis": "机械派生：甲日3爻按六神起例"
    },
    "scoring": {
     "verdict_match": 0.35,
@@ -1285,7 +1403,11 @@
      "月破"
     ],
     "yingqi": "月余",
-    "detail": "出行受阻延迟，最终可成，因故延迟月余"
+    "detail": "出行受阻延迟，最终可成，因故延迟月余",
+    "use_god_wangshuai": "休",
+    "use_god_wangshuai_basis": "机械派生：用神辰(土)临申(金)月",
+    "use_god_muku": "不入墓",
+    "use_god_muku_basis": "机械判定：土墓在辰，日卯/月申"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -1323,7 +1445,13 @@
     "yingqi": "亥日",
     "detail": "离宫官鬼在亥（库文巳支有误）；鼎之既济多爻动、原神有动，综合可断吉，防旺极",
     "use_god_position": 2,
-    "use_god_position_basis": "纳甲唯一可定：官鬼(亥)在本卦仅2爻一处"
+    "use_god_position_basis": "纳甲唯一可定：官鬼(亥)在本卦仅2爻一处",
+    "use_god_wangshuai": "囚",
+    "use_god_wangshuai_basis": "机械派生：用神亥(水)临午(火)月",
+    "use_god_muku": "不入墓",
+    "use_god_muku_basis": "机械判定：水墓在辰，日午/月午",
+    "use_god_six_spirit": "朱雀",
+    "use_god_six_spirit_basis": "机械派生：甲日2爻按六神起例"
    },
    "scoring": {
     "verdict_match": 0.35,
@@ -1362,7 +1490,11 @@
      "旬空"
     ],
     "yingqi": "午日",
-    "detail": "久病以世为用，回头克+合处变冲，逢冲日危"
+    "detail": "久病以世为用，回头克+合处变冲，逢冲日危",
+    "use_god_wangshuai": "死",
+    "use_god_wangshuai_basis": "机械派生：用神子(水)临未(土)月",
+    "use_god_muku": "不入墓",
+    "use_god_muku_basis": "机械判定：水墓在辰，日亥/月未"
    },
    "scoring": {
     "verdict_match": 0.4,
@@ -1401,7 +1533,11 @@
      "旬空"
     ],
     "yingqi": "申日",
-    "detail": "官司以官鬼为官方；官鬼克世/文书有缺主不利（库文申金与离宫纳甲不符，取亥）"
+    "detail": "官司以官鬼为官方；官鬼克世/文书有缺主不利（库文申金与离宫纳甲不符，取亥）",
+    "use_god_wangshuai": "死",
+    "use_god_wangshuai_basis": "机械派生：用神亥(水)临辰(土)月",
+    "use_god_muku": "入月墓",
+    "use_god_muku_basis": "机械判定：水墓在辰，日寅/月辰"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -1437,7 +1573,11 @@
      "兄弟持世"
     ],
     "yingqi": "年内",
-    "detail": "科举父母用神，晋卦父母丑未两现，取临月/得势者；可中而名次不显"
+    "detail": "科举父母用神，晋卦父母丑未两现，取临月/得势者；可中而名次不显",
+    "use_god_wangshuai": "旺",
+    "use_god_wangshuai_basis": "机械派生：用神未(土)临戌(土)月",
+    "use_god_muku": "不入墓",
+    "use_god_muku_basis": "机械判定：土墓在辰，日卯/月戌"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -1474,7 +1614,11 @@
      "旬空"
     ],
     "yingqi": "月余",
-    "detail": "胎孕子孙用神；乾宫子孙属水取子（库文未支为父母，纳甲不合）"
+    "detail": "胎孕子孙用神；乾宫子孙属水取子（库文未支为父母，纳甲不合）",
+    "use_god_wangshuai": "死",
+    "use_god_wangshuai_basis": "机械派生：用神子(水)临丑(土)月",
+    "use_god_muku": "不入墓",
+    "use_god_muku_basis": "机械判定：水墓在辰，日子/月丑"
    },
    "scoring": {
     "verdict_match": 0.3,

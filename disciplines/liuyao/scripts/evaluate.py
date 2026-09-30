@@ -21,7 +21,8 @@
   both   —— 双列对比输出（默认）
 
 维度与权重（单一真值源，总和 100）：
-  用神六亲 15 / 用神地支 10 / 用神爻位 5 / 吉凶方向 40 / 格局覆盖 15 / 应期 15
+  用神六亲 13 / 用神地支 9 / 用神爻位 4 / 六神临用 4 / 月令旺衰 5 / 墓库 3 /
+  吉凶方向 36 / 格局覆盖 13 / 应期 13
 """
 from __future__ import annotations
 from kernel_path import kernel_dir  # noqa: E402
@@ -77,12 +78,15 @@ def _offered_branches(pool) -> list:
     return offered
 
 WEIGHTS = {
-    "use_god_category": 15,
-    "use_god_branch": 10,
-    "use_god_position": 5,
-    "verdict": 40,
-    "patterns": 15,
-    "yingqi": 15,
+    "use_god_category": 13,
+    "use_god_branch": 9,
+    "use_god_position": 4,
+    "use_god_six_spirit": 4,
+    "use_god_wangshuai": 5,
+    "use_god_muku": 3,
+    "verdict": 36,
+    "patterns": 13,
+    "yingqi": 13,
 }
 
 PATTERNS = [
@@ -178,6 +182,17 @@ def score_case(eng: dict, exp: dict, model: str) -> dict:
     else:
         ok = str(e_pos) == str(x_pos)
         dims["use_god_position"] = (w if ok else 0, w, f"{e_pos}{'=' if ok else '≠'}{x_pos}")
+
+    # 六神临用 / 月令旺衰 / 墓库（附加对表维度，expected 由书面用神机械派生，对表回归性质）
+    e_extra = eng.get("extra") or {}
+    for dim in ("use_god_six_spirit", "use_god_wangshuai", "use_god_muku"):
+        w = WEIGHTS[dim]
+        e_v, x_v = e_extra.get(dim, ""), exp.get(dim)
+        if _na(x_v):
+            dims[dim] = (w, w, "基准未记，满分") if model == "legacy" else (0, 0, "基准未记 → N/A")
+        else:
+            ok = str(e_v) == str(x_v)
+            dims[dim] = (w if ok else 0, w, f"{e_v}{'=' if ok else '≠'}{x_v}")
 
     # 吉凶方向
     w = WEIGHTS["verdict"]

@@ -1028,7 +1028,13 @@
         "yingqi_branches": [
           "巳"
         ],
-        "detail": "應巳月者亥水逢月破也"
+        "detail": "應巳月者亥水逢月破也",
+        "use_god_wangshuai": "旺",
+        "use_god_wangshuai_basis": "机械派生：用神卯(木)临寅(木)月",
+        "use_god_muku": "不入墓",
+        "use_god_muku_basis": "机械判定：木墓在未，日午/月寅",
+        "use_god_six_spirit": "勾陈",
+        "use_god_six_spirit_basis": "机械派生：丙日2爻按六神起例"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -1173,7 +1179,13 @@
         "yingqi_branches": [
           "亥"
         ],
-        "detail": "應亥月者父母化出之爻也"
+        "detail": "應亥月者父母化出之爻也",
+        "use_god_wangshuai": "相",
+        "use_god_wangshuai_basis": "机械派生：用神申(金)临未(土)月",
+        "use_god_muku": "不入墓",
+        "use_god_muku_basis": "机械判定：金墓在丑，日戌/月未",
+        "use_god_six_spirit": "玄武",
+        "use_god_six_spirit_basis": "机械派生：戊日4爻按六神起例"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -1210,7 +1222,13 @@
         "yingqi_branches": [
           "巳"
         ],
-        "detail": "應巳日者﹐合住申金之日也"
+        "detail": "應巳日者﹐合住申金之日也",
+        "use_god_wangshuai": "相",
+        "use_god_wangshuai_basis": "机械派生：用神寅(木)临亥(水)月",
+        "use_god_muku": "不入墓",
+        "use_god_muku_basis": "机械判定：木墓在未，日子/月亥",
+        "use_god_six_spirit": "朱雀",
+        "use_god_six_spirit_basis": "机械派生：甲日2爻按六神起例"
       },
       "provenance": {
         "page": "增刪卜易",

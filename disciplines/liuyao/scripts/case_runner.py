@@ -29,6 +29,7 @@ from yishu_core import ganzhi_calendar as gc  # noqa: E402
 
 from liuyao_engine import build_hexagram_result  # noqa: E402
 from thinking_chain import run_thinking_chain  # noqa: E402
+from classical_enhancements import element_strength_in_month  # noqa: E402
 from liuyao_narrate import build_human_narrative, render_human_markdown  # noqa: E402
 
 CASES = ROOT / "data" / "cases" / "classical_cases.json"
@@ -37,7 +38,7 @@ SPLITS = ROOT / "data" / "cases" / "case_splits.json"
 # 爻序与卦表全部来自内核（不再有本地副本）：
 #   BAGUA_LINES 自下而上，HEXAGRAM_TRIGRAMS 给出上下卦 —— 于是"某卦化出某卦"
 #   的动爻位次由两者爻线逐位比较得出，不再靠一张镜像表凑。
-from yishu_core.symbols import BAGUA_LINES, HEXAGRAM_TRIGRAMS  # noqa: E402
+from yishu_core.symbols import BAGUA_LINES, HEXAGRAM_TRIGRAMS, TOMB_MAP  # noqa: E402
 
 _STEMS = "甲乙丙丁戊己庚辛壬癸"
 _MONTH_RE = re.compile(r"([%s])月" % "子丑寅卯辰巳午未申酉戌亥")
@@ -200,6 +201,11 @@ def load_ids(split: str | None = None, only: list[str] | None = None) -> list[st
     return []
 
 
+def _extra_element(branch: str) -> str:
+    from yishu_core.symbols import BRANCH_ELEMENTS
+    return BRANCH_ELEMENTS.get(branch, "")
+
+
 def run_case(case: dict) -> dict:
     """单例：还原时刻 → 排盘 → 五步思维链 → 抽取评分所需字段。"""
     cid = case["id"]
@@ -217,6 +223,7 @@ def run_case(case: dict) -> dict:
     dt = resolved["dt"]
 
     h = build_hexagram_result(yao, q, "manual", dt.year, dt.month, dt.day, dt.hour)
+    day_br = (h["divination_time"] or {}).get("day_stem_branch", "")[1:]
     tc = run_thinking_chain(h)
     thinking = tc.get("thinking_chain", tc)
     human = build_human_narrative(tc)
@@ -228,6 +235,28 @@ def run_case(case: dict) -> dict:
     rc_lines = thinking.get("reasoning_chain", []) or []
     timing = s5.get("timing") or {}
     sel = s2.get("selected_use_god") or {}
+
+    # ── 附加维度（对表回归用）：六神临用 / 用神月令旺衰 / 用神墓库（日月墓） ──
+    extra = {}
+    upos = sel.get("position")
+    if isinstance(upos, int):
+        yao_at = next((y for y in h["original_hexagram"]["yao_lines"]
+                       if y.get("position") == upos), None)
+        if yao_at and yao_at.get("six_spirit"):
+            extra["use_god_six_spirit"] = yao_at["six_spirit"]
+    ug_branch = sel.get("earthly_branch") or ""
+    ug_elem = _extra_element(ug_branch)
+    month_sb = (h["divination_time"] or {}).get("month_stem_branch", "")
+    if ug_elem and month_sb:
+        month_br = month_sb[1]
+        month_elem = _extra_element(month_br)
+        if month_elem:
+            extra["use_god_wangshuai"] = element_strength_in_month(ug_elem, month_elem)
+        # 入墓：用神五行之墓支恰临日辰/月建（日月可同时命中）
+        tomb_of = TOMB_MAP.get(ug_elem, "")
+        hits = [tag for tag, br in (("入日墓", day_br), ("入月墓", month_br))
+                if tomb_of and tomb_of == br]
+        extra["use_god_muku"] = "、".join(hits) if hits else "不入墓"
 
     return {
         "id": cid,
@@ -256,6 +285,7 @@ def run_case(case: dict) -> dict:
         "pattern_tags": [ln for ln in rc_lines
                          if isinstance(ln, str) and ("[格局]" in ln or "[格局要点]" in ln)],
         "empty_branches": h.get("empty_branches", []),
+        "extra": extra,
         "classical_quotes": h.get("classical_quotes", []),
         "human_narrative": human,
         "human_markdown": render_human_markdown(human),
