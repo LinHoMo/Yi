@@ -31,6 +31,7 @@ PLAN_DOCS = (
     "docs/AI-SOP.md",
     "docs/YI-PLAN.md",
     "docs/ARCHITECTURE.md",
+    "disciplines/ming/docs/EVAL-PLAN.md",
 )
 
 FOOTER = (
