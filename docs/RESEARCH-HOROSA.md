@@ -67,9 +67,13 @@ horosa-skill 的六条 AI 纪律设计与本仓库铁律一/三高度同构，�
   **MIT** Python 引擎——若属实，N2（奇门）当前卡住的「起例书源」问题有了**另一条路**：
   以 MIT 上游引擎为**实现参照/交叉验证源**（不是真值源；真值源仍按仓库纪律取古籍
   原文），可显著降低「起例机械实现」的风险。
-- **行动项**：核实 `kentang2017` 各引擎仓库的 LICENSE 原文与起例注释出处，再决定
-  是否引入 vendor；引入的话在 `docs/NEW-DISCIPLINES.md` 增补「实现参照」小节并
-  标注许可链。**未核实前不得 vendor。**
+- **行动项（2026-09-30k 已执行核实，WebFetch LICENSE 原文）**：
+  - `kentang2017/kinqimen`（奇门）：**MIT License，Copyright (c) 2019 Ken Tang** ——原文核实 ✓
+  - `kentang2017/kintaiyi`（太乙）：**MIT License，Copyright (c) 2023-2026 kentang2017** ——原文核实 ✓
+  - `kentang2017/kinliuren`（大六壬）：master/main 均无 LICENSE 文件（404）——**许可未知，不得 vendor**；
+    本仓 N1 已直接从《六壬大全》建判据，不依赖它
+  - 结论：奇门（N2）的实现参照阻塞解除；但**书源阻塞仍在**（起例表未落实，煙波釣叟歌抓取
+    遭 429 限流待重试）——参照可用不等于口径有源，骨架启动仍以书源为准
 
 ## 五、明确不采纳
 
