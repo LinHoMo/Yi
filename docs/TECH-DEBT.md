@@ -13,6 +13,15 @@
 
 | 债务 | 处理 | 锚点 |
 |---|---|---|
+| **云端链路整体未入版本控制**（`.github/workflows/report.yml`、`tools/report.py`、`tools/ci_*.py`、`cli/main.py`、`disciplines/base/*.py`，以及六爻核心模块 `liuyao_step1-5`/`classical_enhancements`/`effects`/`chart_tables`/`liuyao_timing` 等、紫微斗数整科、`docs/ARCHITECTURE|MIGRATION`）——**推到 GitHub 也是空的**，云报告通道等于零功能 | 全部纳入索引并提交；同时清掉已合并的旧模块（`chain_*`/`classical_rules_*`/`human_narrative*`/`yingqi_windows` 等 25 个）与 `archive/` 冗余副本 | `b86e4b7`（2026-09-30d） |
+| **"给链接即出报告"缺零凭证通道**：云端触发半场必须要 Token 或人工点链接 | 新增纯前端通道（Pyodide 在浏览器内跑同一份引擎）+ 深链协议 + Pages 工作流 + 站点自检 + 同源验收 | `b86e4b7`（同上，详见 CHANGELOG 2026-09-30d） |
+| **请求→命令行参数映射双份**（本机执行器与浏览器执行器各写一份 → 必然"本地对的、网页端错"） | 上收内核 `core/yishu_core/report/request.py` 单一映射；`tools/report.py` 瘦身为纯执行器 | `b86e4b7`（同上） |
+| 六爻起卦时刻**丢分钟**（`engine_chart` 硬编码 `HH:00`，报告内部自相矛盾） | 新增 `minute` 形参（缺省 0，不参与推演）并在 `chart.py` 透传 | `b86e4b7`（同上） |
+| 梅花 `way=numbers` 直接 argparse 崩；小六壬同参数**静默忽略**按 datetime 出课；择吉日期不接受 `2026/09/30`；表外 `mode/way` 无校验 | 白名单校验 + 正确映射（梅花按"年数,月数,日数"）+ 日期归一化；表外取值明确报错 | `b86e4b7`（同上） |
+| `/yi` 命令行里的 `key:value` **被静默丢弃**（旧正则要求键紧跟行首） | 重写 `parse_kv_text`，支持 `/yi k: v` 与一行多组 `k=v` | `b86e4b7`（同上） |
+| `ci_request._from_workflow_inputs` 回落裸 `os.environ` → 字段名与 runner 环境变量同名时"表单没填却出盘" | 只认显式注入的 `INPUT_*` | `b86e4b7`（同上） |
+| `/yi` 评论**不校验评论者权限** → 公开仓库任何人可消耗 Actions 分钟并让 bot 提交代码 | 限定 OWNER/MEMBER/COLLABORATOR（`YI_ALLOW_ASSOCIATIONS` 可放开） | `b86e4b7`（同上） |
+| 报告取回 URL 带 run_id，网页 AI 拿不到（只能轮询 API，限流 60/h） | `reports/<科>/latest.{md,html}` 固定别名 + `reports/index.json`；`ls-remote` 区分"分支不存在"与网络/凭证失败 | `b86e4b7`（同上） |
 | **B1 生产目录里的 2,533 行测试**（`regression_test`/`smoke_test`/`thinking_chain_tests` 住 `disciplines/liuyao/scripts/`） | 三个测试 CLI `git mv` 到科内 `tests/`（不跨树，保「每科自包含」）；三处路径基址改由 `../scripts` 派生使 outputs/报告语义不变；6 处调用点同步 | 见 AUDIT §四之二（2026-09-29） |
 | 仓库级质量门在中文 Windows **恒红**（唯一失败项 ming [3]「narrate 应声明非命运断言」） | 根因：gate 以 UTF-8 解码子进程输出，而子进程按控制台代码页（GBK）写字节。新增 `yishu_core.runtime.utf8_subprocess_env()` 单点强制子进程 `PYTHONUTF8=1`，接入 6 处 subprocess 调用点；ming 各 CLI 补 `force_utf8_stdio()`（`runtime.py` 明文约定此前 6 个 CLI 全缺） | `ea3a0e2`（2026-09-29） |
 | `ctext`/`ctpl` 断语取用器**五份逐字节相同副本**（sha256 `cbdd3873274473d2`） | 唯一实现收进 `chain_verdicts.py`（与 `note_text`/`vdesc` 同居），五个规则模块改 import，清死导入 `_CR_NOTES`/`_CR_TPL`；每文件 −16/+1 | `f500b25`（2026-09-29） |
@@ -45,6 +54,18 @@
 | 《火珠林》候选 | 3 例未过校验 | 卦变/缺时刻未过三方校验，存 `huozhulin_candidates.json`，**不入 holdout** |
 | 择吉通书真黑箱 | 已还原 | 2026-09-29 从 `archive/zeji/` 还原；重启机械因子 + 裁决口径回归（tune/holdout 100%） |
 | 小六壬外部书源 | 已还原 | 2026-09-29 从 `archive/xiaoliuren/` 还原；落宫为历法真值，诀句同源，n=15 |
+
+### 2.3 深度能力缺口（已论证，见 `docs/DEEP-DIVE-PLAN.md`）
+
+| 债务 | 现状 | 阻塞说明 |
+|---|---|---|
+| **六爻缺失环节**：三会局、独发独静、卦级反吟伏吟、本卦↔变卦双卦对比、三传克制；旬空只有权重无"真空/假空"标签 | 待清偿 | 无阻塞（有指纹兜底）。清单与古籍依据见 `DEEP-DIVE-PLAN.md` §1.3 |
+| **六爻评测盲区**：旺衰定性、六神临用、卦身、三合、墓库开合、独发独静零覆盖；反吟/伏吟/进退神/入墓/暗动/月破被降级为格局词**子串匹配**；`use_god_position` 在 tune/holdout **全为 N/A** | 待清偿 | 需先补基准例（expected 里 `use_god_position` 仅 3 例填了） |
+| **命科八字完全没有案例评测**：`ming_cases.json` 的 `tune`/`holdout` 皆空，仅 5 条机械回归 | 待清偿 | 需建古籍案例集（《穷通宝鉴》调候表最适合逐条对照）。**只评书上明写的量，缺的记 null 走 N/A 剔除**；富贵层次/寿夭/六亲克应等无客观标的者**不计分** |
+| **命科八字缺失判据**：调候用神、通关、病药、格局成败救应、三会、四柱间独立刑冲合害、胎元、小运、流月、岁运并临、天克地冲、十神组合、女命夫子星 | 待清偿 | 新增神煞/起例**无逐字出处者一律标 `verified=false`**，不得把流俗起例写成古法 |
+| **三科（梅花/小六壬/择吉）对齐分恒为 100%** | 审计中 | 该读数不能当"更准"；先查清案例构造是否自洽（是否用引擎输出反推 expected）。**尺子先于判据** |
+| 新门类（大六壬 / 奇门遁甲 / 七政四余） | 已论证未落地 | 骨架与古书来源见 `docs/NEW-DISCIPLINES.md`；相科（面相/手相/堪舆）按铁律不做 |
+
 
 ### 2.2 有意保持（非缺陷，强改会违反铁律）
 
