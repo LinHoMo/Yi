@@ -96,6 +96,8 @@ def analyze(chart_json: dict) -> dict:
             "strength": sp.get("strength"),
             "strength_score": sp.get("strength_score"),
             "pattern": sp.get("pattern"),
+            "pattern_cheng_bai": sp.get("pattern_cheng_bai") or "",
+            "pattern_cheng_bai_basis": sp.get("pattern_cheng_bai_basis") or "",
             "useful_gods": sp.get("useful_gods") or [],
             "taboo_gods": sp.get("taboo_gods") or [],
             "dayun": dayun,

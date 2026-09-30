@@ -29,6 +29,15 @@ def narrate(a: dict) -> str:
         "",
         f"**强弱**：{con.get('strength') or s.get('强弱') or '—'}（得分 {con.get('strength_score')}）。",
         f"**格局**：{con.get('pattern') or s.get('格局') or '—'}。",
+    ]
+    cb = con.get("pattern_cheng_bai") or ""
+    if cb:
+        cb_basis = con.get("pattern_cheng_bai_basis") or ""
+        lines.append(
+            f"**格局成败**（《子平真诠》主干判据，机械判定）：{cb}"
+            + (f"　— {cb_basis}。" if cb_basis else "。")
+        )
+    lines += [
         f"**喜用**：{'、'.join(con.get('useful_gods') or []) or '—'}；"
         f"忌：{'、'.join(con.get('taboo_gods') or []) or '—'}。",
         "",

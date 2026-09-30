@@ -251,7 +251,38 @@
    "MP392",
    "MP394",
    "MP396",
-   "MP398"
+   "MP398",
+   "ZP001",
+   "ZP002",
+   "ZP003",
+   "ZP004",
+   "ZP005",
+   "ZP006",
+   "ZP007",
+   "ZP008",
+   "ZP009",
+   "ZP010",
+   "ZP011",
+   "ZP012",
+   "ZP013",
+   "ZP014",
+   "ZP015",
+   "ZP016",
+   "ZP017",
+   "ZP018",
+   "ZP019",
+   "ZP020",
+   "ZP021",
+   "ZP022",
+   "ZP023",
+   "ZP024",
+   "ZP025",
+   "ZP026",
+   "ZP027",
+   "ZP028",
+   "ZP029",
+   "ZP030",
+   "ZP032"
   ]
  },
  "cases": [
@@ -4634,6 +4665,564 @@
      "month": "辛亥",
      "year": "壬申"
     }
+   }
+  },
+  {
+   "id": "ZP001",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第09章 论用神成败救应",
+   "source_quote": "格之成者，如龙济光造，丁卯、丙午、丙子、壬辰，煞刃格成也",
+   "pillars": {
+    "year": "丁卯",
+    "month": "丙午",
+    "day": "丙子",
+    "hour": "壬辰"
+   },
+   "gender": "",
+   "note": "书源称煞刃格=月刃格用煞制；徐注主判成",
+   "expected": {
+    "pattern_cheng_bai": "成格"
+   }
+  },
+  {
+   "id": "ZP002",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第09章 论用神成败救应",
+   "source_quote": "建禄如江万平造，丁酉、丙午、丁酉、己酉，用食神生财，亦格之成也",
+   "pillars": {
+    "year": "丁酉",
+    "month": "丙午",
+    "day": "丁酉",
+    "hour": "己酉"
+   },
+   "gender": "",
+   "note": "建禄用食神生财",
+   "expected": {
+    "pattern_cheng_bai": "成格"
+   }
+  },
+  {
+   "id": "ZP003",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第09章 论用神成败救应",
+   "source_quote": "月令财星生官，格之成也，而干透己土，官星被伤，成中有败。时干透甲印，而财印不相碍，印绶制食，格局以成",
+   "pillars": {
+    "year": "壬戌",
+    "month": "己酉",
+    "day": "丁丑",
+    "hour": "甲辰"
+   },
+   "gender": "",
+   "note": "财格生官，甲印救应；徐注另述运上败中有成（成中有败属带忌细节）",
+   "expected": {
+    "pattern_cheng_bai": "成格"
+   }
+  },
+  {
+   "id": "ZP004",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第09章 论用神成败救应",
+   "source_quote": "伤官带煞而透印，格之成也。印坐财地，不能制伤化煞，成中有败",
+   "pillars": {
+    "year": "己卯",
+    "month": "丙子",
+    "day": "庚寅",
+    "hour": "辛巳"
+   },
+   "gender": "",
+   "note": "伤官带煞透印；印坐财地成中有败=细节不判",
+   "expected": {
+    "pattern_cheng_bai": "成格"
+   }
+  },
+  {
+   "id": "ZP005",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第09章 论用神成败救应",
+   "source_quote": "月令官星，财印为辅，格之成也。惜寅申相冲，财印两伤……为成中有败也",
+   "pillars": {
+    "year": "甲子",
+    "month": "丙子",
+    "day": "丙寅",
+    "hour": "丙申"
+   },
+   "gender": "",
+   "note": "官格财印为辅；寅申冲=地支细节不判",
+   "expected": {
+    "pattern_cheng_bai": "成格"
+   }
+  },
+  {
+   "id": "ZP006",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第09章 论用神成败救应",
+   "source_quote": "此石友三命造，阳刃格。时透七煞，制刃为用，格之成也。无如月干辛金合丙……为成中有败也",
+   "pillars": {
+    "year": "癸巳",
+    "month": "辛酉",
+    "day": "庚申",
+    "hour": "丙戌"
+   },
+   "gender": "",
+   "note": "月刃格煞制刃；合煞细节不判",
+   "expected": {
+    "pattern_cheng_bai": "成格"
+   }
+  },
+  {
+   "id": "ZP007",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第09章 论用神成败救应",
+   "source_quote": "朱古薇命造。月令阳刃用官，然重官不贵，妙在年上官星隔以己印，官生印，印生身……则因己土为救应之神也",
+   "pillars": {
+    "year": "丁巳",
+    "month": "己酉",
+    "day": "庚子",
+    "hour": "丁亥"
+   },
+   "gender": "",
+   "note": "阳刃用官，己印为救应之神，格成",
+   "expected": {
+    "pattern_cheng_bai": "成格"
+   }
+  },
+  {
+   "id": "ZP008",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第41章 论伤官",
+   "source_quote": "伤官生财，则以伤官为生官之具，转凶为吉，故最利。只要身强而有根，便为贵格，如壬午、己酉、戊午、庚申，史春芳命也",
+   "pillars": {
+    "year": "壬午",
+    "month": "己酉",
+    "day": "戊午",
+    "hour": "庚申"
+   },
+   "gender": "",
+   "note": "伤官生财身强有根",
+   "expected": {
+    "pattern_cheng_bai": "成格"
+   }
+  },
+  {
+   "id": "ZP009",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第41章 论伤官",
+   "source_quote": "化伤为财……如罗状元命，甲子、乙亥、辛未、戊子……所以伤官生财，冬金不贵……安得不为殿元乎",
+   "pillars": {
+    "year": "甲子",
+    "month": "乙亥",
+    "day": "辛未",
+    "hour": "戊子"
+   },
+   "gender": "",
+   "note": "化伤为财（亥未会局）；三合细节引擎不判，成条件财透主判成",
+   "expected": {
+    "pattern_cheng_bai": "成格"
+   }
+  },
+  {
+   "id": "ZP010",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第41章 论伤官",
+   "source_quote": "有伤官佩印者，印能制伤，所以为贵，反要伤官旺，身稍弱，始为秀气。如孛罗平章命，壬申、丙午、甲午、壬申……所以一品之贵",
+   "pillars": {
+    "year": "壬申",
+    "month": "丙午",
+    "day": "甲午",
+    "hour": "壬申"
+   },
+   "gender": "",
+   "note": "伤官佩印（印透即佩印成）",
+   "expected": {
+    "pattern_cheng_bai": "成格"
+   }
+  },
+  {
+   "id": "ZP011",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第41章 论伤官",
+   "source_quote": "有伤官用煞印者，伤多身弱，赖煞生印以帮身而制伤，如己未、丙子、庚子、丙子，蔡贵妃也……只要无财，便为贵格",
+   "pillars": {
+    "year": "己未",
+    "month": "丙子",
+    "day": "庚子",
+    "hour": "丙子"
+   },
+   "gender": "",
+   "note": "伤官用煞印（带煞佩印特例）",
+   "expected": {
+    "pattern_cheng_bai": "成格"
+   }
+  },
+  {
+   "id": "ZP012",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第41章 论伤官",
+   "source_quote": "又如壬戌、己酉、戊午、丁巳，印太重而隔戊已，而丁与壬不相碍，一丞相命也",
+   "pillars": {
+    "year": "壬戌",
+    "month": "己酉",
+    "day": "戊午",
+    "hour": "丁巳"
+   },
+   "gender": "",
+   "note": "伤官兼用财印（财印两不相碍）",
+   "expected": {
+    "pattern_cheng_bai": "成格"
+   }
+  },
+  {
+   "id": "ZP013",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第41章 论伤官",
+   "source_quote": "至于财伤有情……如秦龙图命，己卯、丁丑、丙寅、庚寅，己与庚同根月令是也",
+   "pillars": {
+    "year": "己卯",
+    "month": "丁丑",
+    "day": "丙寅",
+    "hour": "庚寅"
+   },
+   "gender": "",
+   "note": "伤官生财（财伤有情），书源以秀气贵论",
+   "expected": {
+    "pattern_cheng_bai": "成格"
+   }
+  },
+  {
+   "id": "ZP014",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第41章 论伤官",
+   "source_quote": "化伤为财，伤非其伤，作财旺生官而不作伤官见官，如甲子、壬申、己亥、辛未，章丞相命也",
+   "pillars": {
+    "year": "甲子",
+    "month": "壬申",
+    "day": "己亥",
+    "hour": "辛未"
+   },
+   "gender": "",
+   "note": "化伤为财作财旺生官（子申会局细节不判，财透主判成）",
+   "expected": {
+    "pattern_cheng_bai": "成格"
+   }
+  },
+  {
+   "id": "ZP015",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第41章 论伤官",
+   "source_quote": "亦有伤官见官秀财以解者，如某侍郎造，壬戌、己酉、戊戌、乙卯……凶转为吉",
+   "pillars": {
+    "year": "壬戌",
+    "month": "己酉",
+    "day": "戊戌",
+    "hour": "乙卯"
+   },
+   "gender": "",
+   "note": "伤官见官秀财以解；财透成条件主判成",
+   "expected": {
+    "pattern_cheng_bai": "成格"
+   }
+  },
+  {
+   "id": "ZP016",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第41章 论伤官",
+   "source_quote": "又某知府造，庚午、己卯、壬申、己酉，水木伤官，己官两透，为伤官见官，喜得年支午藏丁火己土，财官同宫，伤官生财，转以生官",
+   "pillars": {
+    "year": "庚午",
+    "month": "己卯",
+    "day": "壬申",
+    "hour": "己酉"
+   },
+   "gender": "",
+   "note": "伤官见官财官同宫转吉；印透带煞佩印特例主判成",
+   "expected": {
+    "pattern_cheng_bai": "成格"
+   }
+  },
+  {
+   "id": "ZP017",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第41章 论伤官",
+   "source_quote": "若冬金用官，而又化伤为财，则尤为极秀极贵。如丙申、己亥、辛未、己亥，郑丞相命是也",
+   "pillars": {
+    "year": "丙申",
+    "month": "己亥",
+    "day": "辛未",
+    "hour": "己亥"
+   },
+   "gender": "",
+   "note": "冬金用官化伤为财；印透带煞佩印主判成",
+   "expected": {
+    "pattern_cheng_bai": "成格"
+   }
+  },
+  {
+   "id": "ZP018",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第45章 论建禄月劫",
+   "source_quote": "禄格用官，干头透出为奇，又要财印相随……有用官而印护者，如庚戌、戊子、癸酉、癸亥，金丞相命是也",
+   "pillars": {
+    "year": "庚戌",
+    "month": "戊子",
+    "day": "癸酉",
+    "hour": "癸亥"
+   },
+   "gender": "",
+   "note": "建禄用官印护",
+   "expected": {
+    "pattern_cheng_bai": "成格"
+   }
+  },
+  {
+   "id": "ZP019",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第45章 论建禄月劫",
+   "source_quote": "有用官而财助者，如丁酉、丙午、丁巳、壬寅，李知府命是也",
+   "pillars": {
+    "year": "丁酉",
+    "month": "丙午",
+    "day": "丁巳",
+    "hour": "壬寅"
+   },
+   "gender": "",
+   "note": "建禄用官财助",
+   "expected": {
+    "pattern_cheng_bai": "成格"
+   }
+  },
+  {
+   "id": "ZP020",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第45章 论建禄月劫",
+   "source_quote": "有官而兼带财印者，所谓身强值三奇，尤为贵气……如庚午、戊子、癸卯、丁巳，王少师命是也",
+   "pillars": {
+    "year": "庚午",
+    "month": "戊子",
+    "day": "癸卯",
+    "hour": "丁巳"
+   },
+   "gender": "",
+   "note": "建禄财官印三奇",
+   "expected": {
+    "pattern_cheng_bai": "成格"
+   }
+  },
+  {
+   "id": "ZP021",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第45章 论建禄月劫",
+   "source_quote": "禄劫用财，须带食伤……如甲子、丙子、癸丑、壬辰，张都统命是也",
+   "pillars": {
+    "year": "甲子",
+    "month": "丙子",
+    "day": "癸丑",
+    "hour": "壬辰"
+   },
+   "gender": "",
+   "note": "建禄用财带食伤",
+   "expected": {
+    "pattern_cheng_bai": "成格"
+   }
+  },
+  {
+   "id": "ZP022",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第45章 论建禄月劫",
+   "source_quote": "如张状元命，甲子、丙寅、甲子、丙寅，木火通明也",
+   "pillars": {
+    "year": "甲子",
+    "month": "丙寅",
+    "day": "甲子",
+    "hour": "丙寅"
+   },
+   "gender": "",
+   "note": "建禄食伤泄秀（木火通明）",
+   "expected": {
+    "pattern_cheng_bai": "成格"
+   }
+  },
+  {
+   "id": "ZP023",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第45章 论建禄月劫",
+   "source_quote": "如高尚书命，庚子、甲申、庚子、甲申，即以劫财之金，化为生财之水，所谓化劫为生也",
+   "pillars": {
+    "year": "庚子",
+    "month": "甲申",
+    "day": "庚子",
+    "hour": "甲申"
+   },
+   "gender": "",
+   "note": "建禄化劫为生（子申会局细节不判，财透主判成）",
+   "expected": {
+    "pattern_cheng_bai": "成格"
+   }
+  },
+  {
+   "id": "ZP024",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第45章 论建禄月劫",
+   "source_quote": "至用煞而又逢财，本为不美，然能去煞存财，又成贵格。戊辰、癸亥、壬午、丙午，合煞存财，袁内阁命是也",
+   "pillars": {
+    "year": "戊辰",
+    "month": "癸亥",
+    "day": "壬午",
+    "hour": "丙午"
+   },
+   "gender": "",
+   "note": "建禄合煞存财；官财透成条件主判成",
+   "expected": {
+    "pattern_cheng_bai": "成格"
+   }
+  },
+  {
+   "id": "ZP025",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第45章 论建禄月劫",
+   "source_quote": "更有禄劫而官煞竞出，必取清方为贵格。如一平章命，辛丑、庚寅、甲辰、乙亥、合煞留官也",
+   "pillars": {
+    "year": "辛丑",
+    "month": "庚寅",
+    "day": "甲辰",
+    "hour": "乙亥"
+   },
+   "gender": "",
+   "note": "建禄官煞竞出合煞留官",
+   "expected": {
+    "pattern_cheng_bai": "成格"
+   }
+  },
+  {
+   "id": "ZP026",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第45章 论建禄月劫",
+   "source_quote": "如辛亥、庚寅、甲申、丙寅，制煞留官也",
+   "pillars": {
+    "year": "辛亥",
+    "month": "庚寅",
+    "day": "甲申",
+    "hour": "丙寅"
+   },
+   "gender": "",
+   "note": "建禄官煞竞出制煞留官",
+   "expected": {
+    "pattern_cheng_bai": "成格"
+   }
+  },
+  {
+   "id": "ZP027",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第45章 论建禄月劫",
+   "source_quote": "然亦有官伤并透而贵者，何也？如己酉、乙亥、壬戌、庚子，庚合乙而去伤存官，王总兵命也",
+   "pillars": {
+    "year": "己酉",
+    "month": "乙亥",
+    "day": "壬戌",
+    "hour": "庚子"
+   },
+   "gender": "",
+   "note": "建禄官伤并透合伤存官；官食透成条件主判成",
+   "expected": {
+    "pattern_cheng_bai": "成格"
+   }
+  },
+  {
+   "id": "ZP028",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第45章 论建禄月劫",
+   "source_quote": "禄劫用煞，必须制伏，如娄参政命，丁巳、壬子、癸卯、己未，壬合丁财以去其党煞，卯未会局以制伏是也",
+   "pillars": {
+    "year": "丁巳",
+    "month": "壬子",
+    "day": "癸卯",
+    "hour": "己未"
+   },
+   "gender": "",
+   "note": "建禄用煞制伏；官财透成条件主判成",
+   "expected": {
+    "pattern_cheng_bai": "成格"
+   }
+  },
+  {
+   "id": "ZP029",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第09章 论用神成败救应",
+   "source_quote": "何谓败？官逢伤克刑冲，官格败也",
+   "pillars": {
+    "year": "己卯",
+    "month": "丙子",
+    "day": "丙子",
+    "hour": "丁酉"
+   },
+   "gender": "",
+   "note": "书源原文：官格透伤无印救=败；徐注评注另判格成三奇（年印时财两不相碍）——两说分歧，expected 取原文判词",
+   "expected": {
+    "pattern_cheng_bai": "破格"
+   }
+  },
+  {
+   "id": "ZP030",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第09章 论用神成败救应",
+   "source_quote": "成中之败，亦变化万端……如财旺生官，美格也，身弱透官，即为破格",
+   "pillars": {
+    "year": "丁亥",
+    "month": "丙午",
+    "day": "壬寅",
+    "hour": "己酉"
+   },
+   "gender": "",
+   "note": "书源原文：财格身弱透官=破格；徐注评注另判败中成（亥禄酉印帮身）——两说分歧，expected 取原文判词",
+   "expected": {
+    "pattern_cheng_bai": "破格"
+   }
+  },
+  {
+   "id": "ZP032",
+   "split": "holdout",
+   "book": "子平真诠评注",
+   "location": "第09章 论用神成败救应",
+   "source_quote": "食神制煞，而中隔以财，格之败也。喜乙丁隔癸，木不生火，煞坐食地，为败中有成……财逢煞而食神制煞以生，有救应，即是败中有成",
+   "pillars": {
+    "year": "己卯",
+    "month": "丁丑",
+    "day": "癸丑",
+    "hour": "乙卯"
+   },
+   "gender": "",
+   "note": "偏官格身弱，财党煞+食神制煞救应；书源判败中有成（全凭救应）",
+   "expected": {
+    "pattern_cheng_bai": "救应成格"
    }
   }
  ]

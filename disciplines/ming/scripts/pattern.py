@@ -56,6 +56,124 @@ WEAK_THRESHOLD = -1.5
 STRONG_THRESHOLD = 1.5
 
 
+# 格局成败救应规则（《子平真诠·论用神成败救应/论相神紧要》，机械主干版）。
+# 每格定义：成条件（书源「何谓成」的成格结构，满足即成）、忌神类（破格者）、
+# 救应类（制忌神者）。判据只取**透干十神有无**（主干规则）；地支会合、位置、合化
+# 等细节徐注才谈，机械层不做——基准例只选主干可判的书源命例（ming 案例集）。
+# 判定顺序：成条件满足 → 成格；否则忌神透：救应透 → 救应成格，无救 → 破格；
+# 忌神未透 → 成格。
+# 原文依据（逐条可溯）：
+#   官格：成「官逢财印，又无刑冲破害」；败「官逢伤克刑冲」；救「官逢伤而透印以解之」
+#   财格：成「财生官旺」「财逢食生而身强带比」；败「财轻比重，财透七煞」；
+#        救「财逢劫而透食以化之，生官以制之」
+#   印格：成「印轻逢煞」「官印双全」；败「印轻逢财」；救「印逢财而劫财以解之」
+#   食神格：成「食神生财」「食带煞而无财，弃食就煞而透印」；败「食神逢枭」；
+#           救「食逢枭而就煞以成格，或生财以护食」
+#   伤官格：成「伤官生财」「伤官佩印」「伤官旺、身主弱而透煞印」「伤官带煞而无财」；
+#           败「伤官…见官」「佩印而伤轻身旺」；救（伤官见官）以印制伤
+#   七杀格：成「身强七煞逢制」（食制/印化）；败「七煞逢财无制」；
+#   阳刃格：成「阳刃透官煞而露财印，不见伤官」；败「阳刃无官煞」；救官杀制刃
+#   建禄月劫：成「透官而逢财印，透财而逢食伤，透煞而遇制伏」；
+#             败「无财官，透煞印」（月劫日主旺，透印助旺、无财官泄制）
+PATTERN_CB_RULES = {
+    "正官格": {"cheng": ("财", "印"), "ji": ("食伤",), "jiu": ("印",)},
+    "偏官格": {"cheng": ("食伤", "印"), "ji": ("财",), "jiu": ("食伤", "印")},
+    "正印格": {"cheng": ("官杀",), "ji": ("财",), "jiu": ("比劫",)},
+    "偏印格": {"cheng": ("官杀",), "ji": ("财",), "jiu": ("比劫",)},
+    "食神格": {"cheng": ("财",), "ji": ("印",), "jiu": ("财",)},
+    "伤官格": {"cheng": ("财", "印"), "ji": ("官杀",), "jiu": ("印",)},
+    "正财格": {"cheng": ("食伤", "官杀"), "ji": ("比劫",), "jiu": ("食伤", "官杀")},
+    "偏财格": {"cheng": ("食伤", "官杀"), "ji": ("比劫",), "jiu": ("食伤", "官杀")},
+    "建禄格": {"cheng": ("官杀", "财", "食伤"), "ji": ("印",), "jiu": ("财", "食伤")},
+    "月刃格": {"cheng": ("官杀",), "ji": ("食伤", "财"), "jiu": ("印",)},
+}
+# 伤官格补充成条件：书源「伤官旺、身主弱而透煞印」「伤官带煞而无财」亦成——
+# 即官杀透而印透（带煞佩印）直接成格，不算「救应」。主表 cheng 之后特判。
+SHANGGUAN_CHENG_WITH_GUANSHA = True
+
+
+def _pillar_ten_gods(chart_json: dict) -> list[str]:
+    """四柱天干十神（chart 已算好，直接取，不重算）。
+
+    注意排除 **day 柱**（日主自身）：日主对日主恒为比肩，若计入会把「比劫」
+    误当忌神/相神（2026-09-30s 修正，命中徐注命例比对时暴露）。
+    """
+    pillars = chart_json.get("pillars") or {}
+    out = []
+    for pname in ("year", "month", "hour"):
+        tg = (pillars.get(pname) or {}).get("ten_god") or ""
+        if tg:
+            out.append(tg)
+    return out
+
+
+def judge_pattern_cheng_bai(pattern: str, chart_json: dict,
+                            tentative_from: bool = False,
+                            strength: str = "") -> dict:
+    """格局成败救应（《子平真诠》主干）：{pattern_cheng_bai, basis}。
+
+    判定顺序（书源「何谓成→何谓败→何谓救应」三层）：
+      1. 成条件满足（书源明写的成格结构，如官逢财印、食神制煞、带煞透印）→ 成格
+      2. 否则忌神透干：救应类透 → 救应成格（败中有成，全凭救应）；无救 → 破格
+      3. 忌神未透 → 成格
+    身强条件（书源明文）：
+      - 七杀格「身强七煞逢制，煞格成也；若身强煞弱，或煞强身弱，皆不能以制伏为用，
+        必身煞两停者，方许成格」→ 食伤制煞的成条件需身强
+      - 财格「财旺生官，美格也，身弱透官，即为破格」→ 身弱透官直接破格
+    - 从格（tentative）不判成败（结构特殊，另走从格论）
+    """
+    if tentative_from or pattern not in PATTERN_CB_RULES:
+        return {"pattern_cheng_bai": "", "basis": "从格/未定义格不判成败"}
+    rule = PATTERN_CB_RULES[pattern]
+    gods = _pillar_ten_gods(chart_json)
+    roles = set(_role(g) for g in gods if _role(g))
+    weak = strength == "偏弱"
+
+    cheng_hit = [c for c in rule["cheng"] if c in roles]
+    ji_hit = [c for c in rule["ji"] if c in roles]
+    jiu_hit = [c for c in rule["jiu"] if c in roles]
+
+    basis_parts = [f"月令本气十神定格={pattern}"]
+    if cheng_hit:
+        basis_parts.append(f"成条件透:{'/'.join(cheng_hit)}")
+    if ji_hit:
+        basis_parts.append(f"忌神透:{'/'.join(ji_hit)}")
+    if jiu_hit:
+        basis_parts.append(f"救应透:{'/'.join(jiu_hit)}")
+    if weak:
+        basis_parts.append("身弱")
+
+    # 伤官格特例（书源成条件）：官杀透而印透 = 带煞佩印，直接成格，不算救应
+    if pattern == "伤官格" and ("官杀" in roles) and ("印" in roles):
+        return {"pattern_cheng_bai": "成格",
+                "basis": "；".join(basis_parts)
+                         + "——伤官带煞而透印，格之成也（《子平真诠·论用神成败救应》）"}
+
+    # 财格身弱透官：书源原文「身弱透官，即为破格」；
+    # 但印透则印可生身（徐注刘澄如造「时透甲印……格局以成」），不落此破
+    if (pattern in ("正财格", "偏财格") and "官杀" in roles and weak
+            and "印" not in roles):
+        return {"pattern_cheng_bai": "破格",
+                "basis": "；".join(basis_parts)
+                         + "——财旺生官，美格也，身弱透官，即为破格（《子平真诠·论用神成败救应》）"}
+
+    # 七杀格食伤制煞：书源「必身煞两停者方许成格」——身弱时不算成条件
+    if pattern == "偏官格" and "食伤" in roles and weak:
+        cheng_hit = [c for c in cheng_hit if c != "食伤"]
+
+    if cheng_hit:
+        return {"pattern_cheng_bai": "成格",
+                "basis": "；".join(basis_parts) + "——成格结构（《子平真诠·何谓成》）"}
+    if ji_hit:
+        if jiu_hit:
+            return {"pattern_cheng_bai": "救应成格",
+                    "basis": "；".join(basis_parts) + "——败中有成，全凭救应（《子平真诠》）"}
+        return {"pattern_cheng_bai": "破格",
+                "basis": "；".join(basis_parts) + "——忌神犯格且无救应（《子平真诠》）"}
+    return {"pattern_cheng_bai": "成格",
+            "basis": "；".join(basis_parts) + "——忌神未犯，格成（《子平真诠》）"}
+
+
 def _role(ten_god: str) -> str:
     return TEN_GOD_GROUP.get(ten_god, "")
 
@@ -168,6 +286,11 @@ def strength_and_pattern(chart_json: dict) -> dict:
         useful = ["印", "财", "官杀"]  # 中和取流通
         taboo = ["比劫"]  # 防过旺
 
+    # 格局成败救应（《子平真诠》主干；从格 tentative 不判）
+    cb = judge_pattern_cheng_bai(pattern, chart_json,
+                                 tentative_from=bool(tentative_from),
+                                 strength=strength)
+
     return {
         "strength": strength,
         "strength_score": score,
@@ -176,6 +299,8 @@ def strength_and_pattern(chart_json: dict) -> dict:
         "ke_xie_hao": round(ke_xie_hao, 2),
         "pattern": pattern,
         "pattern_basis": pattern_basis,
+        "pattern_cheng_bai": cb["pattern_cheng_bai"],
+        "pattern_cheng_bai_basis": cb["basis"],
         "tentative_special": tentative_from,
         "from_kind": from_kind,
         "from_basis": from_basis,

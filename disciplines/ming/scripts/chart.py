@@ -36,25 +36,12 @@ def _split_gz(gz: str) -> tuple[str, str]:
     return gz[0], gz[1]
 
 
-def chart(
-    question: str = "命局排盘",
-    *,
-    datetime_str: str | None = None,
-    gender: str | None = None,
-    longitude: float | None = None,
-) -> dict:
-    """出生时刻 → 四柱盘 JSON（机械因子）。"""
-    if datetime_str:
-        dt = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M")
-    else:
-        dt = datetime.now()
+def _build_from_gzs(year_gz: str, month_gz: str, day_gz: str, hour_gz: str,
+                    birth_meta: dict) -> dict:
+    """四柱干支 → 完整盘 JSON（chart 与 chart_from_pillars 共用的唯一构建路径）。
 
-    moment = ganzhi_of(dt, boundary="day")
-    year_gz = moment.year_ganzhi
-    month_gz = moment.month_ganzhi
-    day_gz = moment.day_ganzhi
-    hour_gz = moment.hour_ganzhi
-
+    birth_meta: {datetime, gender, longitude, datetime_source}
+    """
     pillars = {}
     for name, gz in (("year", year_gz), ("month", month_gz), ("day", day_gz), ("hour", hour_gz)):
         stem, branch = _split_gz(gz)
@@ -108,12 +95,13 @@ def chart(
         ming_shen = {}
 
     return {
-        "question": question,
+        "question": birth_meta.get("question", "命局排盘"),
         "discipline": "ming",
         "birth": {
-            "datetime": dt.strftime("%Y-%m-%d %H:%M"),
-            "gender": gender,
-            "longitude": longitude,
+            "datetime": birth_meta.get("datetime") or "",
+            "gender": birth_meta.get("gender"),
+            "longitude": birth_meta.get("longitude"),
+            "datetime_source": birth_meta.get("datetime_source") or "ganzhi",
         },
         "pillars": pillars,
         "factors": factors,
@@ -122,6 +110,48 @@ def chart(
         "xunkong": xunkong,
         "calendar_policy": {"boundary": "day", "zi_hour": "same-day"},
     }
+
+
+def chart(
+    question: str = "命局排盘",
+    *,
+    datetime_str: str | None = None,
+    gender: str | None = None,
+    longitude: float | None = None,
+) -> dict:
+    """出生时刻 → 四柱盘 JSON（机械因子）。"""
+    if datetime_str:
+        dt = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M")
+    else:
+        dt = datetime.now()
+
+    moment = ganzhi_of(dt, boundary="day")
+    return _build_from_gzs(
+        moment.year_ganzhi, moment.month_ganzhi, moment.day_ganzhi, moment.hour_ganzhi,
+        {"datetime": dt.strftime("%Y-%m-%d %H:%M"), "gender": gender,
+         "longitude": longitude, "question": question, "datetime_source": "datetime"},
+    )
+
+
+def chart_from_pillars(pillars_gz: dict, *, gender: str | None = None,
+                       question: str = "命局排盘") -> dict:
+    """直接给定四柱干支起盘（书源命例无公历时用，如《子平真诠》徐注命例）。
+
+    pillars_gz: {"year": "己卯", "month": "丙子", "day": "丙子", "hour": "丁酉"}
+    四柱必须完整（年月日时），缺一即报错——不猜、不补。
+    其余机械因子（十神/藏干/空亡/神煞/命宫）与 chart() 同源；
+    birth.datetime 置空并标注 datetime_source=ganzhi（无公历可溯，如实标记，
+    大运起运岁数按近似值，不冒充精确）。
+    """
+    missing = [k for k in ("year", "month", "day", "hour")
+               if not (pillars_gz.get(k) or "").strip()]
+    if missing:
+        raise ValueError(f"四柱不全，缺：{'/'.join(missing)}（不猜、不补）")
+    return _build_from_gzs(
+        pillars_gz["year"], pillars_gz["month"], pillars_gz["day"], pillars_gz["hour"],
+        {"datetime": "", "gender": gender, "longitude": None,
+         "question": question, "datetime_source": "ganzhi"},
+    )
 
 
 def main() -> int:

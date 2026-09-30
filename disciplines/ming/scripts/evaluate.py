@@ -91,7 +91,11 @@ def _pillars_to_datetime(pillars: dict) -> str | None:
 
 
 def run_ids(ids: list[str], gender_default: str = "") -> dict:
-    """逐例跑 chart→analyze，收集引擎输出。"""
+    """逐例跑 chart→analyze，收集引擎输出。
+
+    案例给公历 datetime → chart（干支历换算）；只给四柱 → chart_from_pillars
+    （直填，birth.datetime 置空、不猜公历；大运起运岁数按近似）。
+    """
     by_id = {c["id"]: c for c in load_cases()}
     out: dict = {"cases": [], "errors": []}
     for cid in ids:
@@ -101,15 +105,22 @@ def run_ids(ids: list[str], gender_default: str = "") -> dict:
             continue
         dt = _pillars_to_datetime(case.get("pillars") or {})
         gender = case.get("gender") or gender_default or "男"
-        if not dt:
-            # 只给了四柱、没给公历：属"待补公历"案例，如实记为不可跑，不猜
-            out["cases"].append({
-                "id": cid, "error": "案例只给四柱、未给公历 datetime；无法反推（不猜）",
-                "expected_available": bool(case.get("expected")),
-            })
-            continue
         try:
-            ch = chart_mod.chart(datetime_str=dt, gender=gender)
+            if dt:
+                ch = chart_mod.chart(datetime_str=dt, gender=gender)
+            else:
+                gz = {k: (case.get("pillars") or {}).get(k) for k in ("year", "month", "day", "hour")}
+                missing = [k for k, v in gz.items() if not v]
+                if missing:
+                    out["errors"].append({"id": cid,
+                                          "error": f"案例无公历 datetime 且四柱不全（缺 {'/'.join(missing)}）；无法起盘（不猜）"})
+                    out["cases"].append({
+                        "id": cid,
+                        "error": f"案例无公历 datetime 且四柱不全（缺 {'/'.join(missing)}）",
+                        "expected_available": bool(case.get("expected")),
+                    })
+                    continue
+                ch = chart_mod.chart_from_pillars(gz, gender=gender)
             an = dict(analyze_mod.analyze(ch))
             an["id"] = cid
             # 大运顺逆：analyze 未把它提到顶层，这里按同一内核口径补上（不新造判据）
@@ -220,20 +231,25 @@ def score_case(eng: dict, exp: dict, model: str) -> dict:
             dims["tiaohou"] = (10 if main_ok else 0, 10, note)
 
     # 5) 格局（名 8 分 + 成破救应 4 分）
-    w = WEIGHTS["pattern"]
-    if not _na(exp.get("pattern")) or not _na(exp.get("pattern_cheng_bai")):
+    # 适用权重 = 实际出现的子项权重之和：只记成败 → w=4；只记格名 → w=8；
+    # 都记 → w=12。此前固定 w=12，成败-only 案例永远拿不满"满分"导致全 0
+    # （2026-09-30t 修正；pattern_cheng_bai 维度首次落地时暴露）。
+    name_na = _na(exp.get("pattern"))
+    cb_na = _na(exp.get("pattern_cheng_bai"))
+    if not (name_na and cb_na):
+        w_app = (0 if name_na else 8) + (0 if cb_na else 4)
         strength = eng.get("strength") or {}
         earned, bits = 0, []
-        if not _na(exp.get("pattern")):
+        if not name_na:
             ok = strength.get("pattern") == exp.get("pattern")
             earned += 8 if ok else 0
             bits.append(f"格{'√' if ok else '×'}")
-        if not _na(exp.get("pattern_cheng_bai")):
+        if not cb_na:
             got_cb = strength.get("pattern_cheng_bai")
             ok = got_cb is not None and got_cb == exp.get("pattern_cheng_bai")
             earned += 4 if ok else 0
             bits.append(f"成败{'√' if ok else '×'}")
-        dims["pattern"] = (min(earned, w), w, " ".join(bits))
+        dims["pattern"] = (min(earned, w_app), w_app, " ".join(bits))
 
     # 6) 从格（布尔一致即得；只判"是否为从格"，不判种类）
     w = WEIGHTS["cong_ge"]
