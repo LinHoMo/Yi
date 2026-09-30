@@ -1,0 +1,23 @@
+{
+  "key": "qiong-tong-bao-jian",
+  "kind": "八字·调候",
+  "title": "穷通宝鉴",
+  "site": "zh.wikisource.org",
+  "api": "https://zh.wikisource.org/w/api.php",
+  "pages": [
+    "穷通宝鉴"
+  ],
+  "page_count": 1,
+  "fetched": "2026-09-30 13:02:14+0800",
+  "sha256": "08e2a1ec95eeda3b0d6f9d14853554ca6cd37d2d4010fb91cc8fae6fc2bb9cf4",
+  "stats": {
+    "bytes": 100030,
+    "chars": 36770,
+    "lines": 1296,
+    "ganzhi_pairs": 68,
+    "tables": 70,
+    "headings": 56
+  },
+  "source_file": "data/sources/qiong-tong-bao-jian.wikitext.txt",
+  "note": "公版古籍原文的字符级转存，未做任何改写或模型转写；子页以 <!-- ==== 标题 ==== --> 分隔。"
+}

@@ -1,0 +1,23 @@
+{
+  "key": "liu-ren-da-quan-juan3",
+  "kind": "大六壬",
+  "title": "六壬大全/3",
+  "site": "zh.wikisource.org",
+  "api": "https://zh.wikisource.org/w/api.php",
+  "pages": [
+    "六壬大全/3"
+  ],
+  "page_count": 1,
+  "fetched": "2026-09-30 13:02:20+0800",
+  "sha256": "d80c3618723ad280583e8d2eef9fd5e7c9a517c9033413c80502cfd7e192079a",
+  "stats": {
+    "bytes": 72209,
+    "chars": 24645,
+    "lines": 344,
+    "ganzhi_pairs": 62,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/liu-ren-da-quan-juan3.wikitext.txt",
+  "note": "公版古籍原文的字符级转存，未做任何改写或模型转写；子页以 <!-- ==== 标题 ==== --> 分隔。"
+}
