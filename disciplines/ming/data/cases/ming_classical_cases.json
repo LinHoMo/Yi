@@ -6,11 +6,22 @@
   "2) 每例必须能指回 book + location 的原文（source_quote 逐字抄录）；",
   "3) 禁止用引擎输出反推 expected。",
   "",
-  "2026-09-30f 调候批（《穷通宝鉴》）：每个「原文有明文」的月支×日主格一例，",
   "expected 只有 tiaohou；公历时刻由内核历法反查（月支/日干为定值，其余任其自然）。",
   "引擎查同一张内核表（ming_tables.TIAO_HOU，提取自同一原文）→ 本集是**表对表",
   "回归 + 历法链路验证**，不是泛化证据；口径披露与随机基线见 scripts/evaluate.py。",
-  "构建器：dev_tools/build_tiaohou.py（提取）+ dev_tools/build_tiaohou_cases.py（建例）。"
+  "构建器：dev_tools/build_tiaohou.py（提取）+ dev_tools/build_tiaohou_cases.py（建例）。",
+  "",
+  "2026-09-30n 命例批（《穷通宝鉴》四柱命例表 70 表）：expected 只有书上明写的",
+  "四柱（客观标的）；「状元/词林/按察」等富贵断语逐字保留于 note 但**不计分**。",
+  "公历时刻由内核历法反查（四柱全同的真实时刻，确定性重建）。",
+  "本批度量 = 四柱对表（历法链路与明清古籍记录的吻合度），表对表回归性质，",
+  "不是对齐分泛化证据。构建器：dev_tools/build_mingli_cases.py。",
+  "",
+  "2026-09-30n 命例批（《穷通宝鉴》四柱命例表 70 表）：expected 只有书上明写的",
+  "四柱（客观标的）；「状元/词林/按察」等富贵断语逐字保留于 note 但**不计分**。",
+  "公历时刻由内核历法反查（四柱全同的真实时刻，确定性重建）。",
+  "本批度量 = 四柱对表（历法链路与明清古籍记录的吻合度），表对表回归性质，",
+  "不是对齐分泛化证据。构建器：dev_tools/build_mingli_cases.py。"
  ],
  "splits": {
   "tune": [
@@ -66,7 +77,181 @@
    "MT048",
    "MT049",
    "MT050",
-   "MT051"
+   "MT051",
+   "MP052",
+   "MP054",
+   "MP056",
+   "MP058",
+   "MP060",
+   "MP062",
+   "MP064",
+   "MP066",
+   "MP068",
+   "MP070",
+   "MP072",
+   "MP074",
+   "MP076",
+   "MP078",
+   "MP080",
+   "MP082",
+   "MP084",
+   "MP086",
+   "MP088",
+   "MP090",
+   "MP092",
+   "MP094",
+   "MP096",
+   "MP098",
+   "MP100",
+   "MP102",
+   "MP104",
+   "MP106",
+   "MP108",
+   "MP110",
+   "MP112",
+   "MP114",
+   "MP116",
+   "MP118",
+   "MP120",
+   "MP122",
+   "MP124",
+   "MP126",
+   "MP128",
+   "MP130",
+   "MP132",
+   "MP134",
+   "MP136",
+   "MP138",
+   "MP140",
+   "MP142",
+   "MP144",
+   "MP146",
+   "MP148",
+   "MP150",
+   "MP152",
+   "MP154",
+   "MP156",
+   "MP158",
+   "MP160",
+   "MP162",
+   "MP164",
+   "MP166",
+   "MP168",
+   "MP170",
+   "MP172",
+   "MP174",
+   "MP176",
+   "MP178",
+   "MP180",
+   "MP182",
+   "MP184",
+   "MP186",
+   "MP188",
+   "MP190",
+   "MP192",
+   "MP194",
+   "MP196",
+   "MP198",
+   "MP200",
+   "MP202",
+   "MP204",
+   "MP206",
+   "MP208",
+   "MP210",
+   "MP212",
+   "MP214",
+   "MP216",
+   "MP218",
+   "MP220",
+   "MP222",
+   "MP224",
+   "MP226",
+   "MP228",
+   "MP230",
+   "MP232",
+   "MP234",
+   "MP236",
+   "MP238",
+   "MP240",
+   "MP242",
+   "MP244",
+   "MP246",
+   "MP248",
+   "MP250",
+   "MP252",
+   "MP254",
+   "MP256",
+   "MP258",
+   "MP260",
+   "MP262",
+   "MP264",
+   "MP266",
+   "MP268",
+   "MP270",
+   "MP272",
+   "MP274",
+   "MP276",
+   "MP278",
+   "MP280",
+   "MP282",
+   "MP284",
+   "MP286",
+   "MP288",
+   "MP290",
+   "MP292",
+   "MP294",
+   "MP296",
+   "MP298",
+   "MP300",
+   "MP302",
+   "MP304",
+   "MP306",
+   "MP308",
+   "MP310",
+   "MP312",
+   "MP314",
+   "MP316",
+   "MP318",
+   "MP320",
+   "MP322",
+   "MP324",
+   "MP326",
+   "MP328",
+   "MP330",
+   "MP332",
+   "MP334",
+   "MP336",
+   "MP338",
+   "MP340",
+   "MP342",
+   "MP344",
+   "MP346",
+   "MP348",
+   "MP350",
+   "MP352",
+   "MP354",
+   "MP356",
+   "MP358",
+   "MP360",
+   "MP362",
+   "MP364",
+   "MP366",
+   "MP368",
+   "MP370",
+   "MP372",
+   "MP374",
+   "MP376",
+   "MP378",
+   "MP380",
+   "MP382",
+   "MP384",
+   "MP386",
+   "MP388",
+   "MP390",
+   "MP392",
+   "MP394",
+   "MP396",
+   "MP398"
   ]
  },
  "cases": [
@@ -968,6 +1153,3486 @@
    "expected": {
     "tiaohou": {
      "main": "丙"
+    }
+   }
+  },
+  {
+   "id": "MP052",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L337）",
+   "source_quote": "时日月年 庚丙庚丙 寅午寅午 两间不杂，按察",
+   "pillars": {
+    "datetime": "1966-02-16 03:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丙午/庚寅/丙午/庚寅；书断语「两间不杂，按察」（富贵层次，按规则不计分）",
+   "expected": {
+    "pillars": {
+     "hour": "庚寅",
+     "day": "丙午",
+     "month": "庚寅",
+     "year": "丙午"
+    }
+   }
+  },
+  {
+   "id": "MP054",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L337）",
+   "source_quote": "时日月年 壬丙戊庚 辰寅寅寅 庚壬两透，词林",
+   "pillars": {
+    "datetime": "2070-03-02 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 庚寅/戊寅/丙寅/壬辰；书断语「庚壬两透，词林」（富贵层次，按规则不计分）",
+   "expected": {
+    "pillars": {
+     "hour": "壬辰",
+     "day": "丙寅",
+     "month": "戊寅",
+     "year": "庚寅"
+    }
+   }
+  },
+  {
+   "id": "MP056",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L337）",
+   "source_quote": "时日月年 丁丙庚辛 酉子寅亥 状元",
+   "pillars": {
+    "datetime": "2031-02-05 17:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 辛亥/庚寅/丙子/丁酉；书断语「状元」（富贵层次，按规则不计分）",
+   "expected": {
+    "pillars": {
+     "hour": "丁酉",
+     "day": "丙子",
+     "month": "庚寅",
+     "year": "辛亥"
+    }
+   }
+  },
+  {
+   "id": "MP058",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L337）",
+   "source_quote": "时日月年 戊丙壬丁 戌子寅酉",
+   "pillars": {
+    "datetime": "2077-02-03 19:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丁酉/壬寅/丙子/戊戌",
+   "expected": {
+    "pillars": {
+     "hour": "戊戌",
+     "day": "丙子",
+     "month": "壬寅",
+     "year": "丁酉"
+    }
+   }
+  },
+  {
+   "id": "MP060",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L378）",
+   "source_quote": "时日月年 己丙己乙 亥申卯亥",
+   "pillars": {
+    "datetime": "1995-03-06 21:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 乙亥/己卯/丙申/己亥",
+   "expected": {
+    "pillars": {
+     "hour": "己亥",
+     "day": "丙申",
+     "month": "己卯",
+     "year": "乙亥"
+    }
+   }
+  },
+  {
+   "id": "MP062",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L378）",
+   "source_quote": "时日月年 己丙丁己 亥申卯亥",
+   "pillars": {
+    "datetime": "1959-03-15 21:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 己亥/丁卯/丙申/己亥",
+   "expected": {
+    "pillars": {
+     "hour": "己亥",
+     "day": "丙申",
+     "month": "丁卯",
+     "year": "己亥"
+    }
+   }
+  },
+  {
+   "id": "MP064",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L412）",
+   "source_quote": "时日月年 戊丙乙丁 子子巳巳 庚运夺魁",
+   "pillars": {
+    "datetime": "1977-05-19 00:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丁巳/乙巳/丙子/戊子；书断语「庚运夺魁」（富贵层次，按规则不计分）",
+   "expected": {
+    "pillars": {
+     "hour": "戊子",
+     "day": "丙子",
+     "month": "乙巳",
+     "year": "丁巳"
+    }
+   }
+  },
+  {
+   "id": "MP066",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L412）",
+   "source_quote": "时日月年 甲丙辛乙 午午巳未",
+   "pillars": {
+    "datetime": "2075-05-15 11:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 乙未/辛巳/丙午/甲午",
+   "expected": {
+    "pillars": {
+     "hour": "甲午",
+     "day": "丙午",
+     "month": "辛巳",
+     "year": "乙未"
+    }
+   }
+  },
+  {
+   "id": "MP068",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L412）",
+   "source_quote": "时日月年 丙丙辛庚 申寅巳子",
+   "pillars": {
+    "datetime": "2080-05-08 15:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 庚子/辛巳/丙寅/丙申",
+   "expected": {
+    "pillars": {
+     "hour": "丙申",
+     "day": "丙寅",
+     "month": "辛巳",
+     "year": "庚子"
+    }
+   }
+  },
+  {
+   "id": "MP070",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L440）",
+   "source_quote": "时日月年 己丙壬庚 亥戌午寅",
+   "pillars": {
+    "datetime": "1950-06-20 21:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 庚寅/壬午/丙戌/己亥",
+   "expected": {
+    "pillars": {
+     "hour": "己亥",
+     "day": "丙戌",
+     "month": "壬午",
+     "year": "庚寅"
+    }
+   }
+  },
+  {
+   "id": "MP072",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L440）",
+   "source_quote": "时日月年 己丙戊戊 丑午午戌",
+   "pillars": {
+    "datetime": "2078-06-28 01:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 戊戌/戊午/丙午/己丑",
+   "expected": {
+    "pillars": {
+     "hour": "己丑",
+     "day": "丙午",
+     "month": "戊午",
+     "year": "戊戌"
+    }
+   }
+  },
+  {
+   "id": "MP074",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L440）",
+   "source_quote": "时日月年 甲丙戊戊 午辰午申",
+   "pillars": {
+    "datetime": "1968-06-15 11:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 戊申/戊午/丙辰/甲午",
+   "expected": {
+    "pillars": {
+     "hour": "甲午",
+     "day": "丙辰",
+     "month": "戊午",
+     "year": "戊申"
+    }
+   }
+  },
+  {
+   "id": "MP076",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L466）",
+   "source_quote": "时日月年 壬丙丁壬 辰申未寅",
+   "pillars": {
+    "datetime": "2082-07-27 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 壬寅/丁未/丙申/壬辰",
+   "expected": {
+    "pillars": {
+     "hour": "壬辰",
+     "day": "丙申",
+     "month": "丁未",
+     "year": "壬寅"
+    }
+   }
+  },
+  {
+   "id": "MP078",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L466）",
+   "source_quote": "时日月年 己丙己戊 亥戌未午",
+   "pillars": {
+    "datetime": "2038-07-08 21:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 戊午/己未/丙戌/己亥",
+   "expected": {
+    "pillars": {
+     "hour": "己亥",
+     "day": "丙戌",
+     "month": "己未",
+     "year": "戊午"
+    }
+   }
+  },
+  {
+   "id": "MP080",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L466）",
+   "source_quote": "时日月年 戊丙丁壬 戌申未寅",
+   "pillars": {
+    "datetime": "2082-07-27 19:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 壬寅/丁未/丙申/戊戌",
+   "expected": {
+    "pillars": {
+     "hour": "戊戌",
+     "day": "丙申",
+     "month": "丁未",
+     "year": "壬寅"
+    }
+   }
+  },
+  {
+   "id": "MP082",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L490）",
+   "source_quote": "时日月年 壬丙戊壬 辰申申戌",
+   "pillars": {
+    "datetime": "2042-08-26 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 壬戌/戊申/丙申/壬辰",
+   "expected": {
+    "pillars": {
+     "hour": "壬辰",
+     "day": "丙申",
+     "month": "戊申",
+     "year": "壬戌"
+    }
+   }
+  },
+  {
+   "id": "MP084",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L490）",
+   "source_quote": "时日月年 庚丙甲乙 寅申申未",
+   "pillars": {
+    "datetime": "2075-09-02 03:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 乙未/甲申/丙申/庚寅",
+   "expected": {
+    "pillars": {
+     "hour": "庚寅",
+     "day": "丙申",
+     "month": "甲申",
+     "year": "乙未"
+    }
+   }
+  },
+  {
+   "id": "MP086",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L511）",
+   "source_quote": "时日月年 丁丙丁丙 酉午酉子",
+   "pillars": {
+    "datetime": "1936-09-21 17:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丙子/丁酉/丙午/丁酉",
+   "expected": {
+    "pillars": {
+     "hour": "丁酉",
+     "day": "丙午",
+     "month": "丁酉",
+     "year": "丙子"
+    }
+   }
+  },
+  {
+   "id": "MP088",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L511）",
+   "source_quote": "时日月年 丁丙丁丙 酉辰酉寅",
+   "pillars": {
+    "datetime": "1986-09-09 17:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丙寅/丁酉/丙辰/丁酉",
+   "expected": {
+    "pillars": {
+     "hour": "丁酉",
+     "day": "丙辰",
+     "month": "丁酉",
+     "year": "丙寅"
+    }
+   }
+  },
+  {
+   "id": "MP090",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L511）",
+   "source_quote": "时日月年 戊丙癸己 子子酉卯",
+   "pillars": {
+    "datetime": "1999-09-21 00:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 己卯/癸酉/丙子/戊子",
+   "expected": {
+    "pillars": {
+     "hour": "戊子",
+     "day": "丙子",
+     "month": "癸酉",
+     "year": "己卯"
+    }
+   }
+  },
+  {
+   "id": "MP092",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L535）",
+   "source_quote": "时日月年 戊丙甲己 子子戌亥",
+   "pillars": {
+    "datetime": "1959-10-21 00:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 己亥/甲戌/丙子/戊子",
+   "expected": {
+    "pillars": {
+     "hour": "戊子",
+     "day": "丙子",
+     "month": "甲戌",
+     "year": "己亥"
+    }
+   }
+  },
+  {
+   "id": "MP094",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L535）",
+   "source_quote": "时日月年 戊丙戊丙 戌午戌申",
+   "pillars": {
+    "datetime": "2076-11-05 19:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丙申/戊戌/丙午/戊戌",
+   "expected": {
+    "pillars": {
+     "hour": "戊戌",
+     "day": "丙午",
+     "month": "戊戌",
+     "year": "丙申"
+    }
+   }
+  },
+  {
+   "id": "MP096",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L535）",
+   "source_quote": "时日月年 壬丙壬戊 辰寅戌戌",
+   "pillars": {
+    "datetime": "1958-10-16 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 戊戌/壬戌/丙寅/壬辰",
+   "expected": {
+    "pillars": {
+     "hour": "壬辰",
+     "day": "丙寅",
+     "month": "壬戌",
+     "year": "戊戌"
+    }
+   }
+  },
+  {
+   "id": "MP098",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L559）",
+   "source_quote": "时日月年 庚丙乙甲 寅戌亥申",
+   "pillars": {
+    "datetime": "1944-11-18 03:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 甲申/乙亥/丙戌/庚寅",
+   "expected": {
+    "pillars": {
+     "hour": "庚寅",
+     "day": "丙戌",
+     "month": "乙亥",
+     "year": "甲申"
+    }
+   }
+  },
+  {
+   "id": "MP100",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L559）",
+   "source_quote": "时日月年 戊丙辛壬 子戌亥辰",
+   "pillars": {
+    "datetime": "2072-11-06 00:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 壬辰/辛亥/丙戌/戊子",
+   "expected": {
+    "pillars": {
+     "hour": "戊子",
+     "day": "丙戌",
+     "month": "辛亥",
+     "year": "壬辰"
+    }
+   }
+  },
+  {
+   "id": "MP102",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L559）",
+   "source_quote": "时日月年 壬丙己辛 辰子亥巳",
+   "pillars": {
+    "datetime": "2001-11-09 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 辛巳/己亥/丙子/壬辰",
+   "expected": {
+    "pillars": {
+     "hour": "壬辰",
+     "day": "丙子",
+     "month": "己亥",
+     "year": "辛巳"
+    }
+   }
+  },
+  {
+   "id": "MP104",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L585）",
+   "source_quote": "时日月年 庚丙庚辛 寅寅子亥",
+   "pillars": {
+    "datetime": "1911-12-22 03:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 辛亥/庚子/丙寅/庚寅",
+   "expected": {
+    "pillars": {
+     "hour": "庚寅",
+     "day": "丙寅",
+     "month": "庚子",
+     "year": "辛亥"
+    }
+   }
+  },
+  {
+   "id": "MP106",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L585）",
+   "source_quote": "时日月年 癸丙庚辛 巳子子丑",
+   "pillars": {
+    "datetime": "1961-12-09 09:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 辛丑/庚子/丙子/癸巳",
+   "expected": {
+    "pillars": {
+     "hour": "癸巳",
+     "day": "丙子",
+     "month": "庚子",
+     "year": "辛丑"
+    }
+   }
+  },
+  {
+   "id": "MP108",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L585）",
+   "source_quote": "时日月年 戊丙庚辛 子戌子酉",
+   "pillars": {
+    "datetime": "2041-12-19 00:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 辛酉/庚子/丙戌/戊子",
+   "expected": {
+    "pillars": {
+     "hour": "戊子",
+     "day": "丙戌",
+     "month": "庚子",
+     "year": "辛酉"
+    }
+   }
+  },
+  {
+   "id": "MP110",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L607）",
+   "source_quote": "时日月年 癸丙己乙 巳申丑巳",
+   "pillars": {
+    "datetime": "2086-01-07 09:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 乙巳/己丑/丙申/癸巳",
+   "expected": {
+    "pillars": {
+     "hour": "癸巳",
+     "day": "丙申",
+     "month": "己丑",
+     "year": "乙巳"
+    }
+   }
+  },
+  {
+   "id": "MP112",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L607）",
+   "source_quote": "时日月年 庚丙己乙 寅午丑丑",
+   "pillars": {
+    "datetime": "1926-01-17 03:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 乙丑/己丑/丙午/庚寅",
+   "expected": {
+    "pillars": {
+     "hour": "庚寅",
+     "day": "丙午",
+     "month": "己丑",
+     "year": "乙丑"
+    }
+   }
+  },
+  {
+   "id": "MP114",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L619）",
+   "source_quote": "时日月年 壬丙乙癸 辰午丑卯",
+   "pillars": {
+    "datetime": "2084-01-28 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 癸卯/乙丑/丙午/壬辰",
+   "expected": {
+    "pillars": {
+     "hour": "壬辰",
+     "day": "丙午",
+     "month": "乙丑",
+     "year": "癸卯"
+    }
+   }
+  },
+  {
+   "id": "MP116",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L619）",
+   "source_quote": "时日月年 庚丙丁己 寅寅丑丑",
+   "pillars": {
+    "datetime": "2010-01-16 03:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 己丑/丁丑/丙寅/庚寅",
+   "expected": {
+    "pillars": {
+     "hour": "庚寅",
+     "day": "丙寅",
+     "month": "丁丑",
+     "year": "己丑"
+    }
+   }
+  },
+  {
+   "id": "MP118",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L653）",
+   "source_quote": "时日月年 壬丁戊庚 寅未寅辰",
+   "pillars": {
+    "datetime": "2060-02-04 03:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 庚辰/戊寅/丁未/壬寅",
+   "expected": {
+    "pillars": {
+     "hour": "壬寅",
+     "day": "丁未",
+     "month": "戊寅",
+     "year": "庚辰"
+    }
+   }
+  },
+  {
+   "id": "MP120",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L653）",
+   "source_quote": "时日月年 癸丁庚辛 卯酉寅卯",
+   "pillars": {
+    "datetime": "2011-02-11 05:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 辛卯/庚寅/丁酉/癸卯",
+   "expected": {
+    "pillars": {
+     "hour": "癸卯",
+     "day": "丁酉",
+     "month": "庚寅",
+     "year": "辛卯"
+    }
+   }
+  },
+  {
+   "id": "MP122",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L672）",
+   "source_quote": "时日月年 丁丁乙戊 未巳卯子",
+   "pillars": {
+    "datetime": "2008-03-18 13:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 戊子/乙卯/丁巳/丁未",
+   "expected": {
+    "pillars": {
+     "hour": "丁未",
+     "day": "丁巳",
+     "month": "乙卯",
+     "year": "戊子"
+    }
+   }
+  },
+  {
+   "id": "MP124",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L672）",
+   "source_quote": "时日月年 庚丁癸丁 子卯卯卯",
+   "pillars": {
+    "datetime": "1987-03-19 00:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丁卯/癸卯/丁卯/庚子",
+   "expected": {
+    "pillars": {
+     "hour": "庚子",
+     "day": "丁卯",
+     "month": "癸卯",
+     "year": "丁卯"
+    }
+   }
+  },
+  {
+   "id": "MP126",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L672）",
+   "source_quote": "时日月年 甲丁己庚 辰丑卯辰",
+   "pillars": {
+    "datetime": "2060-03-05 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 庚辰/己卯/丁丑/甲辰",
+   "expected": {
+    "pillars": {
+     "hour": "甲辰",
+     "day": "丁丑",
+     "month": "己卯",
+     "year": "庚辰"
+    }
+   }
+  },
+  {
+   "id": "MP128",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L703）",
+   "source_quote": "时日月年 乙丁己甲 巳丑巳午",
+   "pillars": {
+    "datetime": "2014-05-06 09:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 甲午/己巳/丁丑/乙巳",
+   "expected": {
+    "pillars": {
+     "hour": "乙巳",
+     "day": "丁丑",
+     "month": "己巳",
+     "year": "甲午"
+    }
+   }
+  },
+  {
+   "id": "MP130",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L703）",
+   "source_quote": "时日月年 乙丁癸辛 巳巳巳酉",
+   "pillars": {
+    "datetime": "2041-05-24 09:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 辛酉/癸巳/丁巳/乙巳",
+   "expected": {
+    "pillars": {
+     "hour": "乙巳",
+     "day": "丁巳",
+     "month": "癸巳",
+     "year": "辛酉"
+    }
+   }
+  },
+  {
+   "id": "MP132",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L726）",
+   "source_quote": "时日月年 戊丁壬庚 申亥午午",
+   "pillars": {
+    "datetime": "2050-07-06 15:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 庚午/壬午/丁亥/戊申",
+   "expected": {
+    "pillars": {
+     "hour": "戊申",
+     "day": "丁亥",
+     "month": "壬午",
+     "year": "庚午"
+    }
+   }
+  },
+  {
+   "id": "MP134",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L726）",
+   "source_quote": "时日月年 甲丁甲辛 辰未午巳",
+   "pillars": {
+    "datetime": "2001-06-13 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 辛巳/甲午/丁未/甲辰",
+   "expected": {
+    "pillars": {
+     "hour": "甲辰",
+     "day": "丁未",
+     "month": "甲午",
+     "year": "辛巳"
+    }
+   }
+  },
+  {
+   "id": "MP136",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L738）",
+   "source_quote": "时日月年 甲丁戊癸 辰丑午卯",
+   "pillars": {
+    "datetime": "2083-07-03 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 癸卯/戊午/丁丑/甲辰",
+   "expected": {
+    "pillars": {
+     "hour": "甲辰",
+     "day": "丁丑",
+     "month": "戊午",
+     "year": "癸卯"
+    }
+   }
+  },
+  {
+   "id": "MP138",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L738）",
+   "source_quote": "时日月年 乙丁甲丙 巳丑午寅",
+   "pillars": {
+    "datetime": "1926-06-17 09:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丙寅/甲午/丁丑/乙巳",
+   "expected": {
+    "pillars": {
+     "hour": "乙巳",
+     "day": "丁丑",
+     "month": "甲午",
+     "year": "丙寅"
+    }
+   }
+  },
+  {
+   "id": "MP140",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L738）",
+   "source_quote": "时日月年 癸丁甲丙 卯酉午子",
+   "pillars": {
+    "datetime": "2056-06-14 05:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丙子/甲午/丁酉/癸卯",
+   "expected": {
+    "pillars": {
+     "hour": "癸卯",
+     "day": "丁酉",
+     "month": "甲午",
+     "year": "丙子"
+    }
+   }
+  },
+  {
+   "id": "MP142",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L764）",
+   "source_quote": "时日月年 丙丁丁丁 午未未卯",
+   "pillars": {
+    "datetime": "1927-07-12 11:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丁卯/丁未/丁未/丙午",
+   "expected": {
+    "pillars": {
+     "hour": "丙午",
+     "day": "丁未",
+     "month": "丁未",
+     "year": "丁卯"
+    }
+   }
+  },
+  {
+   "id": "MP144",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L764）",
+   "source_quote": "时日月年 丁丁丁壬 未巳未子",
+   "pillars": {
+    "datetime": "2032-07-10 13:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 壬子/丁未/丁巳/丁未",
+   "expected": {
+    "pillars": {
+     "hour": "丁未",
+     "day": "丁巳",
+     "month": "丁未",
+     "year": "壬子"
+    }
+   }
+  },
+  {
+   "id": "MP146",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L785）",
+   "source_quote": "时日月年 戊丁丙辛 申丑申亥",
+   "pillars": {
+    "datetime": "1971-08-20 15:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 辛亥/丙申/丁丑/戊申",
+   "expected": {
+    "pillars": {
+     "hour": "戊申",
+     "day": "丁丑",
+     "month": "丙申",
+     "year": "辛亥"
+    }
+   }
+  },
+  {
+   "id": "MP148",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L785）",
+   "source_quote": "时日月年 戊丁丙辛 申卯申亥",
+   "pillars": {
+    "datetime": "1971-08-10 15:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 辛亥/丙申/丁卯/戊申",
+   "expected": {
+    "pillars": {
+     "hour": "戊申",
+     "day": "丁卯",
+     "month": "丙申",
+     "year": "辛亥"
+    }
+   }
+  },
+  {
+   "id": "MP150",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L785）",
+   "source_quote": "时日月年 丙丁丙辛 午酉申卯",
+   "pillars": {
+    "datetime": "2011-08-10 11:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 辛卯/丙申/丁酉/丙午",
+   "expected": {
+    "pillars": {
+     "hour": "丙午",
+     "day": "丁酉",
+     "month": "丙申",
+     "year": "辛卯"
+    }
+   }
+  },
+  {
+   "id": "MP152",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L785）",
+   "source_quote": "时日月年 丙丁甲庚 午未申辰",
+   "pillars": {
+    "datetime": "2000-08-17 11:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 庚辰/甲申/丁未/丙午",
+   "expected": {
+    "pillars": {
+     "hour": "丙午",
+     "day": "丁未",
+     "month": "甲申",
+     "year": "庚辰"
+    }
+   }
+  },
+  {
+   "id": "MP154",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L812）",
+   "source_quote": "时日月年 庚丁己壬 戌亥酉午",
+   "pillars": {
+    "datetime": "2002-09-16 19:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 壬午/己酉/丁亥/庚戌",
+   "expected": {
+    "pillars": {
+     "hour": "庚戌",
+     "day": "丁亥",
+     "month": "己酉",
+     "year": "壬午"
+    }
+   }
+  },
+  {
+   "id": "MP156",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L812）",
+   "source_quote": "时日月年 辛丁己丁 亥丑酉未",
+   "pillars": {
+    "datetime": "1967-09-10 21:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丁未/己酉/丁丑/辛亥",
+   "expected": {
+    "pillars": {
+     "hour": "辛亥",
+     "day": "丁丑",
+     "month": "己酉",
+     "year": "丁未"
+    }
+   }
+  },
+  {
+   "id": "MP158",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L812）",
+   "source_quote": "时日月年 壬丁丙庚 寅未戌午",
+   "pillars": {
+    "datetime": "1990-10-09 03:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 庚午/丙戌/丁未/壬寅",
+   "expected": {
+    "pillars": {
+     "hour": "壬寅",
+     "day": "丁未",
+     "month": "丙戌",
+     "year": "庚午"
+    }
+   }
+  },
+  {
+   "id": "MP160",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L812）",
+   "source_quote": "时日月年 丙丁甲己 午卯戌亥",
+   "pillars": {
+    "datetime": "1959-10-12 11:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 己亥/甲戌/丁卯/丙午",
+   "expected": {
+    "pillars": {
+     "hour": "丙午",
+     "day": "丁卯",
+     "month": "甲戌",
+     "year": "己亥"
+    }
+   }
+  },
+  {
+   "id": "MP162",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L843）",
+   "source_quote": "时日月年 辛丁癸癸 亥亥亥亥",
+   "pillars": {
+    "datetime": "1923-11-10 21:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 癸亥/癸亥/丁亥/辛亥",
+   "expected": {
+    "pillars": {
+     "hour": "辛亥",
+     "day": "丁亥",
+     "month": "癸亥",
+     "year": "癸亥"
+    }
+   }
+  },
+  {
+   "id": "MP164",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L843）",
+   "source_quote": "时日月年 庚丁丁乙 戌未亥卯",
+   "pillars": {
+    "datetime": "2095-11-27 19:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 乙卯/丁亥/丁未/庚戌",
+   "expected": {
+    "pillars": {
+     "hour": "庚戌",
+     "day": "丁未",
+     "month": "丁亥",
+     "year": "乙卯"
+    }
+   }
+  },
+  {
+   "id": "MP166",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L843）",
+   "source_quote": "时日月年 丁丁癸癸 未丑亥丑",
+   "pillars": {
+    "datetime": "2093-11-07 13:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 癸丑/癸亥/丁丑/丁未",
+   "expected": {
+    "pillars": {
+     "hour": "丁未",
+     "day": "丁丑",
+     "month": "癸亥",
+     "year": "癸丑"
+    }
+   }
+  },
+  {
+   "id": "MP168",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L843）",
+   "source_quote": "时日月年 癸丁丁庚 卯卯亥戌",
+   "pillars": {
+    "datetime": "2090-11-13 05:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 庚戌/丁亥/丁卯/癸卯",
+   "expected": {
+    "pillars": {
+     "hour": "癸卯",
+     "day": "丁卯",
+     "month": "丁亥",
+     "year": "庚戌"
+    }
+   }
+  },
+  {
+   "id": "MP170",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L868）",
+   "source_quote": "时日月年 甲丁己庚 辰酉丑午",
+   "pillars": {
+    "datetime": "2051-01-12 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 庚午/己丑/丁酉/甲辰",
+   "expected": {
+    "pillars": {
+     "hour": "甲辰",
+     "day": "丁酉",
+     "month": "己丑",
+     "year": "庚午"
+    }
+   }
+  },
+  {
+   "id": "MP172",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L868）",
+   "source_quote": "时日月年 乙丁癸壬 巳巳丑辰",
+   "pillars": {
+    "datetime": "1953-01-06 09:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 壬辰/癸丑/丁巳/乙巳",
+   "expected": {
+    "pillars": {
+     "hour": "乙巳",
+     "day": "丁巳",
+     "month": "癸丑",
+     "year": "壬辰"
+    }
+   }
+  },
+  {
+   "id": "MP174",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L868）",
+   "source_quote": "时日月年 甲丁辛辛 辰卯丑卯",
+   "pillars": {
+    "datetime": "2012-01-07 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 辛卯/辛丑/丁卯/甲辰",
+   "expected": {
+    "pillars": {
+     "hour": "甲辰",
+     "day": "丁卯",
+     "month": "辛丑",
+     "year": "辛卯"
+    }
+   }
+  },
+  {
+   "id": "MP176",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L934）",
+   "source_quote": "时日月年 丙戊乙癸 辰寅卯未",
+   "pillars": {
+    "datetime": "2003-03-06 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 癸未/乙卯/戊寅/丙辰",
+   "expected": {
+    "pillars": {
+     "hour": "丙辰",
+     "day": "戊寅",
+     "month": "乙卯",
+     "year": "癸未"
+    }
+   }
+  },
+  {
+   "id": "MP178",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L934）",
+   "source_quote": "时日月年 壬戊乙癸 子寅卯未",
+   "pillars": {
+    "datetime": "2003-03-06 00:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 癸未/乙卯/戊寅/壬子",
+   "expected": {
+    "pillars": {
+     "hour": "壬子",
+     "day": "戊寅",
+     "month": "乙卯",
+     "year": "癸未"
+    }
+   }
+  },
+  {
+   "id": "MP180",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L934）",
+   "source_quote": "时日月年 甲戊戊己 寅寅辰未",
+   "pillars": {
+    "datetime": "2099-04-11 03:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 己未/戊辰/戊寅/甲寅",
+   "expected": {
+    "pillars": {
+     "hour": "甲寅",
+     "day": "戊寅",
+     "month": "戊辰",
+     "year": "己未"
+    }
+   }
+  },
+  {
+   "id": "MP182",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L967）",
+   "source_quote": "时日月年 丙戊癸辛 辰午巳亥",
+   "pillars": {
+    "datetime": "2031-05-18 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 辛亥/癸巳/戊午/丙辰",
+   "expected": {
+    "pillars": {
+     "hour": "丙辰",
+     "day": "戊午",
+     "month": "癸巳",
+     "year": "辛亥"
+    }
+   }
+  },
+  {
+   "id": "MP184",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L967）",
+   "source_quote": "时日月年 丁戊丁癸 巳午巳丑",
+   "pillars": {
+    "datetime": "2033-05-07 09:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 癸丑/丁巳/戊午/丁巳",
+   "expected": {
+    "pillars": {
+     "hour": "丁巳",
+     "day": "戊午",
+     "month": "丁巳",
+     "year": "癸丑"
+    }
+   }
+  },
+  {
+   "id": "MP186",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L998）",
+   "source_quote": "时日月年 辛戊己戊 酉午未申",
+   "pillars": {
+    "datetime": "2088-07-17 17:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 戊申/己未/戊午/辛酉",
+   "expected": {
+    "pillars": {
+     "hour": "辛酉",
+     "day": "戊午",
+     "month": "己未",
+     "year": "戊申"
+    }
+   }
+  },
+  {
+   "id": "MP188",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L998）",
+   "source_quote": "时日月年 丁戊癸庚 巳子未子",
+   "pillars": {
+    "datetime": "2080-07-29 09:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 庚子/癸未/戊子/丁巳",
+   "expected": {
+    "pillars": {
+     "hour": "丁巳",
+     "day": "戊子",
+     "month": "癸未",
+     "year": "庚子"
+    }
+   }
+  },
+  {
+   "id": "MP190",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1020）",
+   "source_quote": "时日月年 癸戊甲庚 丑寅申寅",
+   "pillars": {
+    "datetime": "1950-08-11 01:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 庚寅/甲申/戊寅/癸丑",
+   "expected": {
+    "pillars": {
+     "hour": "癸丑",
+     "day": "戊寅",
+     "month": "甲申",
+     "year": "庚寅"
+    }
+   }
+  },
+  {
+   "id": "MP192",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1020）",
+   "source_quote": "时日月年 丙戊丙辛 辰子申酉",
+   "pillars": {
+    "datetime": "2041-08-23 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 辛酉/丙申/戊子/丙辰",
+   "expected": {
+    "pillars": {
+     "hour": "丙辰",
+     "day": "戊子",
+     "month": "丙申",
+     "year": "辛酉"
+    }
+   }
+  },
+  {
+   "id": "MP194",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1052）",
+   "source_quote": "时日月年 丙戊甲己 辰辰戌酉",
+   "pillars": {
+    "datetime": "1969-10-20 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 己酉/甲戌/戊辰/丙辰",
+   "expected": {
+    "pillars": {
+     "hour": "丙辰",
+     "day": "戊辰",
+     "month": "甲戌",
+     "year": "己酉"
+    }
+   }
+  },
+  {
+   "id": "MP196",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1052）",
+   "source_quote": "时日月年 癸戊庚丁 亥戌戌亥",
+   "pillars": {
+    "datetime": "2067-10-16 21:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丁亥/庚戌/戊戌/癸亥",
+   "expected": {
+    "pillars": {
+     "hour": "癸亥",
+     "day": "戊戌",
+     "month": "庚戌",
+     "year": "丁亥"
+    }
+   }
+  },
+  {
+   "id": "MP198",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1064）",
+   "source_quote": "时日月年 壬戊戊丙 子寅戌戌",
+   "pillars": {
+    "datetime": "2006-10-16 00:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丙戌/戊戌/戊寅/壬子",
+   "expected": {
+    "pillars": {
+     "hour": "壬子",
+     "day": "戊寅",
+     "month": "戊戌",
+     "year": "丙戌"
+    }
+   }
+  },
+  {
+   "id": "MP200",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1064）",
+   "source_quote": "时日月年 乙戊庚丁 卯寅戌酉",
+   "pillars": {
+    "datetime": "2017-10-18 05:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丁酉/庚戌/戊寅/乙卯",
+   "expected": {
+    "pillars": {
+     "hour": "乙卯",
+     "day": "戊寅",
+     "month": "庚戌",
+     "year": "丁酉"
+    }
+   }
+  },
+  {
+   "id": "MP202",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1064）",
+   "source_quote": "时日月年 己戊戊丙 未辰戌子",
+   "pillars": {
+    "datetime": "1936-10-13 13:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丙子/戊戌/戊辰/己未",
+   "expected": {
+    "pillars": {
+     "hour": "己未",
+     "day": "戊辰",
+     "month": "戊戌",
+     "year": "丙子"
+    }
+   }
+  },
+  {
+   "id": "MP204",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1088）",
+   "source_quote": "时日月年 戊戊癸癸 午辰亥卯",
+   "pillars": {
+    "datetime": "1963-11-21 11:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 癸卯/癸亥/戊辰/戊午",
+   "expected": {
+    "pillars": {
+     "hour": "戊午",
+     "day": "戊辰",
+     "month": "癸亥",
+     "year": "癸卯"
+    }
+   }
+  },
+  {
+   "id": "MP206",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1088）",
+   "source_quote": "时日月年 丙戊丁乙 辰戌亥卯",
+   "pillars": {
+    "datetime": "2095-11-18 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 乙卯/丁亥/戊戌/丙辰",
+   "expected": {
+    "pillars": {
+     "hour": "丙辰",
+     "day": "戊戌",
+     "month": "丁亥",
+     "year": "乙卯"
+    }
+   }
+  },
+  {
+   "id": "MP208",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1114）",
+   "source_quote": "时日月年 壬戊壬壬 子子子子",
+   "pillars": {
+    "datetime": "2032-12-08 00:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 壬子/壬子/戊子/壬子",
+   "expected": {
+    "pillars": {
+     "hour": "壬子",
+     "day": "戊子",
+     "month": "壬子",
+     "year": "壬子"
+    }
+   }
+  },
+  {
+   "id": "MP210",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1114）",
+   "source_quote": "时日月年 癸戊乙癸 丑申丑卯",
+   "pillars": {
+    "datetime": "2084-01-30 01:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 癸卯/乙丑/戊申/癸丑",
+   "expected": {
+    "pillars": {
+     "hour": "癸丑",
+     "day": "戊申",
+     "month": "乙丑",
+     "year": "癸卯"
+    }
+   }
+  },
+  {
+   "id": "MP212",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1114）",
+   "source_quote": "时日月年 戊戊甲戊 午辰子寅",
+   "pillars": {
+    "datetime": "2059-01-01 11:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 戊寅/甲子/戊辰/戊午",
+   "expected": {
+    "pillars": {
+     "hour": "戊午",
+     "day": "戊辰",
+     "month": "甲子",
+     "year": "戊寅"
+    }
+   }
+  },
+  {
+   "id": "MP214",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1154）",
+   "source_quote": "时日月年 庚己乙癸 午巳卯卯",
+   "pillars": {
+    "datetime": "2023-03-12 11:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 癸卯/乙卯/己巳/庚午",
+   "expected": {
+    "pillars": {
+     "hour": "庚午",
+     "day": "己巳",
+     "month": "乙卯",
+     "year": "癸卯"
+    }
+   }
+  },
+  {
+   "id": "MP216",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1154）",
+   "source_quote": "时日月年 乙己乙癸 丑巳卯卯",
+   "pillars": {
+    "datetime": "2023-03-12 01:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 癸卯/乙卯/己巳/乙丑",
+   "expected": {
+    "pillars": {
+     "hour": "乙丑",
+     "day": "己巳",
+     "month": "乙卯",
+     "year": "癸卯"
+    }
+   }
+  },
+  {
+   "id": "MP218",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1173）",
+   "source_quote": "时日月年 丙己甲壬 寅卯辰子",
+   "pillars": {
+    "datetime": "1972-04-18 03:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 壬子/甲辰/己卯/丙寅",
+   "expected": {
+    "pillars": {
+     "hour": "丙寅",
+     "day": "己卯",
+     "month": "甲辰",
+     "year": "壬子"
+    }
+   }
+  },
+  {
+   "id": "MP220",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1173）",
+   "source_quote": "时日月年 甲己壬辛 子巳辰未",
+   "pillars": {
+    "datetime": "2051-04-14 00:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 辛未/壬辰/己巳/甲子",
+   "expected": {
+    "pillars": {
+     "hour": "甲子",
+     "day": "己巳",
+     "month": "壬辰",
+     "year": "辛未"
+    }
+   }
+  },
+  {
+   "id": "MP222",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1173）",
+   "source_quote": "时日月年 壬己甲壬 申卯辰子",
+   "pillars": {
+    "datetime": "1972-04-18 15:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 壬子/甲辰/己卯/壬申",
+   "expected": {
+    "pillars": {
+     "hour": "壬申",
+     "day": "己卯",
+     "month": "甲辰",
+     "year": "壬子"
+    }
+   }
+  },
+  {
+   "id": "MP224",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1203）",
+   "source_quote": "时日月年 戊己己己 辰巳巳巳",
+   "pillars": {
+    "datetime": "1989-05-09 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 己巳/己巳/己巳/戊辰",
+   "expected": {
+    "pillars": {
+     "hour": "戊辰",
+     "day": "己巳",
+     "month": "己巳",
+     "year": "己巳"
+    }
+   }
+  },
+  {
+   "id": "MP226",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1203）",
+   "source_quote": "时日月年 辛己辛乙 未巳巳巳",
+   "pillars": {
+    "datetime": "1965-05-15 13:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 乙巳/辛巳/己巳/辛未",
+   "expected": {
+    "pillars": {
+     "hour": "辛未",
+     "day": "己巳",
+     "month": "辛巳",
+     "year": "乙巳"
+    }
+   }
+  },
+  {
+   "id": "MP228",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1203）",
+   "source_quote": "时日月年 庚己辛乙 午巳巳丑",
+   "pillars": {
+    "datetime": "2045-05-15 11:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 乙丑/辛巳/己巳/庚午",
+   "expected": {
+    "pillars": {
+     "hour": "庚午",
+     "day": "己巳",
+     "month": "辛巳",
+     "year": "乙丑"
+    }
+   }
+  },
+  {
+   "id": "MP230",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1203）",
+   "source_quote": "时日月年 乙己癸丙 亥亥巳申",
+   "pillars": {
+    "datetime": "2016-05-17 21:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丙申/癸巳/己亥/乙亥",
+   "expected": {
+    "pillars": {
+     "hour": "乙亥",
+     "day": "己亥",
+     "month": "癸巳",
+     "year": "丙申"
+    }
+   }
+  },
+  {
+   "id": "MP232",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1240）",
+   "source_quote": "时日月年 壬己癸甲 申未酉寅",
+   "pillars": {
+    "datetime": "1974-09-15 15:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 甲寅/癸酉/己未/壬申",
+   "expected": {
+    "pillars": {
+     "hour": "壬申",
+     "day": "己未",
+     "month": "癸酉",
+     "year": "甲寅"
+    }
+   }
+  },
+  {
+   "id": "MP234",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1240）",
+   "source_quote": "时日月年 壬己甲己 申丑戌巳",
+   "pillars": {
+    "datetime": "1929-10-11 15:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 己巳/甲戌/己丑/壬申",
+   "expected": {
+    "pillars": {
+     "hour": "壬申",
+     "day": "己丑",
+     "month": "甲戌",
+     "year": "己巳"
+    }
+   }
+  },
+  {
+   "id": "MP236",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1270）",
+   "source_quote": "时日月年 甲己癸壬 戌丑丑申",
+   "pillars": {
+    "datetime": "1993-01-08 19:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 壬申/癸丑/己丑/甲戌",
+   "expected": {
+    "pillars": {
+     "hour": "甲戌",
+     "day": "己丑",
+     "month": "癸丑",
+     "year": "壬申"
+    }
+   }
+  },
+  {
+   "id": "MP238",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1270）",
+   "source_quote": "时日月年 己己癸壬 巳卯丑子",
+   "pillars": {
+    "datetime": "2093-01-13 09:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 壬子/癸丑/己卯/己巳",
+   "expected": {
+    "pillars": {
+     "hour": "己巳",
+     "day": "己卯",
+     "month": "癸丑",
+     "year": "壬子"
+    }
+   }
+  },
+  {
+   "id": "MP240",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1312）",
+   "source_quote": "时日月年 庚庚壬壬 辰申寅子",
+   "pillars": {
+    "datetime": "2092-02-29 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 壬子/壬寅/庚申/庚辰",
+   "expected": {
+    "pillars": {
+     "hour": "庚辰",
+     "day": "庚申",
+     "month": "壬寅",
+     "year": "壬子"
+    }
+   }
+  },
+  {
+   "id": "MP242",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1312）",
+   "source_quote": "时日月年 丙庚庚辛 戌戌寅巳",
+   "pillars": {
+    "datetime": "2001-02-16 19:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 辛巳/庚寅/庚戌/丙戌",
+   "expected": {
+    "pillars": {
+     "hour": "丙戌",
+     "day": "庚戌",
+     "month": "庚寅",
+     "year": "辛巳"
+    }
+   }
+  },
+  {
+   "id": "MP244",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1335）",
+   "source_quote": "时日月年 丁庚己庚 丑寅卯申",
+   "pillars": {
+    "datetime": "1980-03-18 01:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 庚申/己卯/庚寅/丁丑",
+   "expected": {
+    "pillars": {
+     "hour": "丁丑",
+     "day": "庚寅",
+     "month": "己卯",
+     "year": "庚申"
+    }
+   }
+  },
+  {
+   "id": "MP246",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1335）",
+   "source_quote": "时日月年 甲庚己庚 申子卯午",
+   "pillars": {
+    "datetime": "2050-03-21 15:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 庚午/己卯/庚子/甲申",
+   "expected": {
+    "pillars": {
+     "hour": "甲申",
+     "day": "庚子",
+     "month": "己卯",
+     "year": "庚午"
+    }
+   }
+  },
+  {
+   "id": "MP248",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1335）",
+   "source_quote": "时日月年 丁庚辛辛 亥寅卯酉",
+   "pillars": {
+    "datetime": "1981-03-13 21:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 辛酉/辛卯/庚寅/丁亥",
+   "expected": {
+    "pillars": {
+     "hour": "丁亥",
+     "day": "庚寅",
+     "month": "辛卯",
+     "year": "辛酉"
+    }
+   }
+  },
+  {
+   "id": "MP250",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1335）",
+   "source_quote": "时日月年 丁庚辛丙 亥辰卯申",
+   "pillars": {
+    "datetime": "1956-03-14 21:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丙申/辛卯/庚辰/丁亥",
+   "expected": {
+    "pillars": {
+     "hour": "丁亥",
+     "day": "庚辰",
+     "month": "辛卯",
+     "year": "丙申"
+    }
+   }
+  },
+  {
+   "id": "MP252",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1370）",
+   "source_quote": "时日月年 壬庚庚庚 午申辰子",
+   "pillars": {
+    "datetime": "2080-05-02 11:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 庚子/庚辰/庚申/壬午",
+   "expected": {
+    "pillars": {
+     "hour": "壬午",
+     "day": "庚申",
+     "month": "庚辰",
+     "year": "庚子"
+    }
+   }
+  },
+  {
+   "id": "MP254",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1398）",
+   "source_quote": "时日月年 壬庚乙丙 午寅未午",
+   "pillars": {
+    "datetime": "2026-07-15 11:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丙午/乙未/庚寅/壬午",
+   "expected": {
+    "pillars": {
+     "hour": "壬午",
+     "day": "庚寅",
+     "month": "乙未",
+     "year": "丙午"
+    }
+   }
+  },
+  {
+   "id": "MP256",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1398）",
+   "source_quote": "时日月年 甲庚己癸 申子未巳",
+   "pillars": {
+    "datetime": "2073-07-18 15:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 癸巳/己未/庚子/甲申",
+   "expected": {
+    "pillars": {
+     "hour": "甲申",
+     "day": "庚子",
+     "month": "己未",
+     "year": "癸巳"
+    }
+   }
+  },
+  {
+   "id": "MP258",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1398）",
+   "source_quote": "时日月年 癸庚乙丙 未辰未辰",
+   "pillars": {
+    "datetime": "2036-07-12 13:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丙辰/乙未/庚辰/癸未",
+   "expected": {
+    "pillars": {
+     "hour": "癸未",
+     "day": "庚辰",
+     "month": "乙未",
+     "year": "丙辰"
+    }
+   }
+  },
+  {
+   "id": "MP260",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1439）",
+   "source_quote": "时日月年 丙庚丁丙 子子酉子",
+   "pillars": {
+    "datetime": "1936-09-15 00:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丙子/丁酉/庚子/丙子",
+   "expected": {
+    "pillars": {
+     "hour": "丙子",
+     "day": "庚子",
+     "month": "丁酉",
+     "year": "丙子"
+    }
+   }
+  },
+  {
+   "id": "MP262",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1439）",
+   "source_quote": "时日月年 丁庚乙乙 亥午酉巳",
+   "pillars": {
+    "datetime": "1965-09-13 21:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 乙巳/乙酉/庚午/丁亥",
+   "expected": {
+    "pillars": {
+     "hour": "丁亥",
+     "day": "庚午",
+     "month": "乙酉",
+     "year": "乙巳"
+    }
+   }
+  },
+  {
+   "id": "MP264",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1439）",
+   "source_quote": "时日月年 戊庚癸己 寅申酉亥",
+   "pillars": {
+    "datetime": "2019-09-20 03:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 己亥/癸酉/庚申/戊寅",
+   "expected": {
+    "pillars": {
+     "hour": "戊寅",
+     "day": "庚申",
+     "month": "癸酉",
+     "year": "己亥"
+    }
+   }
+  },
+  {
+   "id": "MP266",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1463）",
+   "source_quote": "时日月年 甲庚戊辛 申申戌酉",
+   "pillars": {
+    "datetime": "1981-10-09 15:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 辛酉/戊戌/庚申/甲申",
+   "expected": {
+    "pillars": {
+     "hour": "甲申",
+     "day": "庚申",
+     "month": "戊戌",
+     "year": "辛酉"
+    }
+   }
+  },
+  {
+   "id": "MP268",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1463）",
+   "source_quote": "时日月年 辛庚丙庚 巳戌戌寅",
+   "pillars": {
+    "datetime": "2070-10-12 09:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 庚寅/丙戌/庚戌/辛巳",
+   "expected": {
+    "pillars": {
+     "hour": "辛巳",
+     "day": "庚戌",
+     "month": "丙戌",
+     "year": "庚寅"
+    }
+   }
+  },
+  {
+   "id": "MP270",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1463）",
+   "source_quote": "时日月年 辛庚戊辛 巳申戌酉",
+   "pillars": {
+    "datetime": "1981-10-09 09:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 辛酉/戊戌/庚申/辛巳",
+   "expected": {
+    "pillars": {
+     "hour": "辛巳",
+     "day": "庚申",
+     "month": "戊戌",
+     "year": "辛酉"
+    }
+   }
+  },
+  {
+   "id": "MP272",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1487）",
+   "source_quote": "时日月年 壬庚辛丁 午子亥亥",
+   "pillars": {
+    "datetime": "1947-11-17 11:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丁亥/辛亥/庚子/壬午",
+   "expected": {
+    "pillars": {
+     "hour": "壬午",
+     "day": "庚子",
+     "month": "辛亥",
+     "year": "丁亥"
+    }
+   }
+  },
+  {
+   "id": "MP274",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1487）",
+   "source_quote": "时日月年 丙庚辛壬 子辰亥辰",
+   "pillars": {
+    "datetime": "2012-11-15 00:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 壬辰/辛亥/庚辰/丙子",
+   "expected": {
+    "pillars": {
+     "hour": "丙子",
+     "day": "庚辰",
+     "month": "辛亥",
+     "year": "壬辰"
+    }
+   }
+  },
+  {
+   "id": "MP276",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1506）",
+   "source_quote": "时日月年 庚庚壬壬 辰申子子",
+   "pillars": {
+    "datetime": "2092-12-25 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 壬子/壬子/庚申/庚辰",
+   "expected": {
+    "pillars": {
+     "hour": "庚辰",
+     "day": "庚申",
+     "month": "壬子",
+     "year": "壬子"
+    }
+   }
+  },
+  {
+   "id": "MP278",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1506）",
+   "source_quote": "时日月年 癸庚庚辛 未辰子亥",
+   "pillars": {
+    "datetime": "1971-12-21 13:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 辛亥/庚子/庚辰/癸未",
+   "expected": {
+    "pillars": {
+     "hour": "癸未",
+     "day": "庚辰",
+     "month": "庚子",
+     "year": "辛亥"
+    }
+   }
+  },
+  {
+   "id": "MP280",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1506）",
+   "source_quote": "时日月年 戊庚戊乙 寅寅子卯",
+   "pillars": {
+    "datetime": "1975-12-10 03:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 乙卯/戊子/庚寅/戊寅",
+   "expected": {
+    "pillars": {
+     "hour": "戊寅",
+     "day": "庚寅",
+     "month": "戊子",
+     "year": "乙卯"
+    }
+   }
+  },
+  {
+   "id": "MP282",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1526）",
+   "source_quote": "时日月年 癸庚己庚 未戌丑辰 女命",
+   "pillars": {
+    "datetime": "2061-02-01 13:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 庚辰/己丑/庚戌/癸未；书断语「女命」（富贵层次，按规则不计分）",
+   "expected": {
+    "pillars": {
+     "hour": "癸未",
+     "day": "庚戌",
+     "month": "己丑",
+     "year": "庚辰"
+    }
+   }
+  },
+  {
+   "id": "MP284",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1526）",
+   "source_quote": "时日月年 甲庚丁己 申子丑巳",
+   "pillars": {
+    "datetime": "2050-01-20 15:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 己巳/丁丑/庚子/甲申",
+   "expected": {
+    "pillars": {
+     "hour": "甲申",
+     "day": "庚子",
+     "month": "丁丑",
+     "year": "己巳"
+    }
+   }
+  },
+  {
+   "id": "MP286",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1553）",
+   "source_quote": "时日月年 己辛庚丙 丑酉寅辰",
+   "pillars": {
+    "datetime": "2096-02-09 01:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丙辰/庚寅/辛酉/己丑",
+   "expected": {
+    "pillars": {
+     "hour": "己丑",
+     "day": "辛酉",
+     "month": "庚寅",
+     "year": "丙辰"
+    }
+   }
+  },
+  {
+   "id": "MP288",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1569）",
+   "source_quote": "时日月年 甲辛己乙 午酉卯卯",
+   "pillars": {
+    "datetime": "1975-03-16 11:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 乙卯/己卯/辛酉/甲午",
+   "expected": {
+    "pillars": {
+     "hour": "甲午",
+     "day": "辛酉",
+     "month": "己卯",
+     "year": "乙卯"
+    }
+   }
+  },
+  {
+   "id": "MP290",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1569）",
+   "source_quote": "时日月年 丙辛己乙 申卯卯酉",
+   "pillars": {
+    "datetime": "2005-03-08 15:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 乙酉/己卯/辛卯/丙申",
+   "expected": {
+    "pillars": {
+     "hour": "丙申",
+     "day": "辛卯",
+     "month": "己卯",
+     "year": "乙酉"
+    }
+   }
+  },
+  {
+   "id": "MP292",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1581）",
+   "source_quote": "时日月年 己辛丁己 亥巳卯未",
+   "pillars": {
+    "datetime": "1979-03-15 21:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 己未/丁卯/辛巳/己亥",
+   "expected": {
+    "pillars": {
+     "hour": "己亥",
+     "day": "辛巳",
+     "month": "丁卯",
+     "year": "己未"
+    }
+   }
+  },
+  {
+   "id": "MP294",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1581）",
+   "source_quote": "时日月年 己辛丁甲 亥未卯午",
+   "pillars": {
+    "datetime": "1954-03-16 21:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 甲午/丁卯/辛未/己亥",
+   "expected": {
+    "pillars": {
+     "hour": "己亥",
+     "day": "辛未",
+     "month": "丁卯",
+     "year": "甲午"
+    }
+   }
+  },
+  {
+   "id": "MP296",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1581）",
+   "source_quote": "时日月年 壬辛癸壬 辰卯卯子",
+   "pillars": {
+    "datetime": "2092-03-31 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 壬子/癸卯/辛卯/壬辰",
+   "expected": {
+    "pillars": {
+     "hour": "壬辰",
+     "day": "辛卯",
+     "month": "癸卯",
+     "year": "壬子"
+    }
+   }
+  },
+  {
+   "id": "MP298",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1612）",
+   "source_quote": "时日月年 乙辛辛乙 未亥巳未",
+   "pillars": {
+    "datetime": "2075-05-20 13:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 乙未/辛巳/辛亥/乙未",
+   "expected": {
+    "pillars": {
+     "hour": "乙未",
+     "day": "辛亥",
+     "month": "辛巳",
+     "year": "乙未"
+    }
+   }
+  },
+  {
+   "id": "MP300",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1624）",
+   "source_quote": "时日月年 壬辛甲丙 辰亥午子",
+   "pillars": {
+    "datetime": "2056-06-28 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丙子/甲午/辛亥/壬辰",
+   "expected": {
+    "pillars": {
+     "hour": "壬辰",
+     "day": "辛亥",
+     "month": "甲午",
+     "year": "丙子"
+    }
+   }
+  },
+  {
+   "id": "MP302",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1634）",
+   "source_quote": "时日月年 甲辛丁壬 午丑未辰",
+   "pillars": {
+    "datetime": "2072-07-24 11:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 壬辰/丁未/辛丑/甲午",
+   "expected": {
+    "pillars": {
+     "hour": "甲午",
+     "day": "辛丑",
+     "month": "丁未",
+     "year": "壬辰"
+    }
+   }
+  },
+  {
+   "id": "MP304",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1634）",
+   "source_quote": "时日月年 丁辛辛甲 酉未未寅",
+   "pillars": {
+    "datetime": "2034-07-14 17:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 甲寅/辛未/辛未/丁酉",
+   "expected": {
+    "pillars": {
+     "hour": "丁酉",
+     "day": "辛未",
+     "month": "辛未",
+     "year": "甲寅"
+    }
+   }
+  },
+  {
+   "id": "MP306",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1653）",
+   "source_quote": "时日月年 癸辛壬甲 巳卯申午",
+   "pillars": {
+    "datetime": "2074-09-02 09:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 甲午/壬申/辛卯/癸巳",
+   "expected": {
+    "pillars": {
+     "hour": "癸巳",
+     "day": "辛卯",
+     "month": "壬申",
+     "year": "甲午"
+    }
+   }
+  },
+  {
+   "id": "MP308",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1675）",
+   "source_quote": "时日月年 己辛癸己 亥未酉酉",
+   "pillars": {
+    "datetime": "2089-09-23 21:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 己酉/癸酉/辛未/己亥",
+   "expected": {
+    "pillars": {
+     "hour": "己亥",
+     "day": "辛未",
+     "month": "癸酉",
+     "year": "己酉"
+    }
+   }
+  },
+  {
+   "id": "MP310",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1675）",
+   "source_quote": "时日月年 丙辛己丁 申酉酉酉",
+   "pillars": {
+    "datetime": "2077-09-16 15:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丁酉/己酉/辛酉/丙申",
+   "expected": {
+    "pillars": {
+     "hour": "丙申",
+     "day": "辛酉",
+     "month": "己酉",
+     "year": "丁酉"
+    }
+   }
+  },
+  {
+   "id": "MP312",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1675）",
+   "source_quote": "时日月年 壬辛己丁 辰亥酉卯",
+   "pillars": {
+    "datetime": "1927-09-14 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丁卯/己酉/辛亥/壬辰",
+   "expected": {
+    "pillars": {
+     "hour": "壬辰",
+     "day": "辛亥",
+     "month": "己酉",
+     "year": "丁卯"
+    }
+   }
+  },
+  {
+   "id": "MP314",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1705）",
+   "source_quote": "时日月年 壬辛戊丙 辰未戌戌",
+   "pillars": {
+    "datetime": "2006-10-09 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丙戌/戊戌/辛未/壬辰",
+   "expected": {
+    "pillars": {
+     "hour": "壬辰",
+     "day": "辛未",
+     "month": "戊戌",
+     "year": "丙戌"
+    }
+   }
+  },
+  {
+   "id": "MP316",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1705）",
+   "source_quote": "时日月年 戊辛壬戊 子酉戌戌",
+   "pillars": {
+    "datetime": "1958-10-11 00:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 戊戌/壬戌/辛酉/戊子",
+   "expected": {
+    "pillars": {
+     "hour": "戊子",
+     "day": "辛酉",
+     "month": "壬戌",
+     "year": "戊戌"
+    }
+   }
+  },
+  {
+   "id": "MP318",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1705）",
+   "source_quote": "时日月年 丁辛戊丙 酉未戌戌",
+   "pillars": {
+    "datetime": "2006-10-09 17:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丙戌/戊戌/辛未/丁酉",
+   "expected": {
+    "pillars": {
+     "hour": "丁酉",
+     "day": "辛未",
+     "month": "戊戌",
+     "year": "丙戌"
+    }
+   }
+  },
+  {
+   "id": "MP320",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1743）",
+   "source_quote": "时日月年 戊辛己乙 子丑丑丑",
+   "pillars": {
+    "datetime": "1926-01-12 00:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 乙丑/己丑/辛丑/戊子",
+   "expected": {
+    "pillars": {
+     "hour": "戊子",
+     "day": "辛丑",
+     "month": "己丑",
+     "year": "乙丑"
+    }
+   }
+  },
+  {
+   "id": "MP322",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1743）",
+   "source_quote": "时日月年 戊辛癸丁 子卯丑丑",
+   "pillars": {
+    "datetime": "2058-01-29 00:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丁丑/癸丑/辛卯/戊子",
+   "expected": {
+    "pillars": {
+     "hour": "戊子",
+     "day": "辛卯",
+     "month": "癸丑",
+     "year": "丁丑"
+    }
+   }
+  },
+  {
+   "id": "MP324",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1743）",
+   "source_quote": "时日月年 丁辛己乙 酉未丑卯",
+   "pillars": {
+    "datetime": "1976-01-20 17:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 乙卯/己丑/辛未/丁酉",
+   "expected": {
+    "pillars": {
+     "hour": "丁酉",
+     "day": "辛未",
+     "month": "己丑",
+     "year": "乙卯"
+    }
+   }
+  },
+  {
+   "id": "MP326",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1743）",
+   "source_quote": "时日月年 己辛丁甲 亥卯丑申",
+   "pillars": {
+    "datetime": "2005-01-07 21:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 甲申/丁丑/辛卯/己亥",
+   "expected": {
+    "pillars": {
+     "hour": "己亥",
+     "day": "辛卯",
+     "month": "丁丑",
+     "year": "甲申"
+    }
+   }
+  },
+  {
+   "id": "MP328",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1791）",
+   "source_quote": "时日月年 庚壬丙己 子辰寅巳",
+   "pillars": {
+    "datetime": "1929-02-16 00:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 己巳/丙寅/壬辰/庚子",
+   "expected": {
+    "pillars": {
+     "hour": "庚子",
+     "day": "壬辰",
+     "month": "丙寅",
+     "year": "己巳"
+    }
+   }
+  },
+  {
+   "id": "MP330",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1813）",
+   "source_quote": "时日月年 甲壬甲壬 辰辰辰申",
+   "pillars": {
+    "datetime": "2052-05-01 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 壬申/甲辰/壬辰/甲辰",
+   "expected": {
+    "pillars": {
+     "hour": "甲辰",
+     "day": "壬辰",
+     "month": "甲辰",
+     "year": "壬申"
+    }
+   }
+  },
+  {
+   "id": "MP332",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1831）",
+   "source_quote": "时日月年 乙壬乙壬 巳午巳寅",
+   "pillars": {
+    "datetime": "2082-05-14 09:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 壬寅/乙巳/壬午/乙巳",
+   "expected": {
+    "pillars": {
+     "hour": "乙巳",
+     "day": "壬午",
+     "month": "乙巳",
+     "year": "壬寅"
+    }
+   }
+  },
+  {
+   "id": "MP334",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1831）",
+   "source_quote": "时日月年 乙壬乙壬 巳申巳午",
+   "pillars": {
+    "datetime": "1942-05-19 09:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 壬午/乙巳/壬申/乙巳",
+   "expected": {
+    "pillars": {
+     "hour": "乙巳",
+     "day": "壬申",
+     "month": "乙巳",
+     "year": "壬午"
+    }
+   }
+  },
+  {
+   "id": "MP336",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1831）",
+   "source_quote": "时日月年 壬壬癸丙 寅辰巳辰",
+   "pillars": {
+    "datetime": "2096-05-10 03:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丙辰/癸巳/壬辰/壬寅",
+   "expected": {
+    "pillars": {
+     "hour": "壬寅",
+     "day": "壬辰",
+     "month": "癸巳",
+     "year": "丙辰"
+    }
+   }
+  },
+  {
+   "id": "MP338",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1853）",
+   "source_quote": "时日月年 辛壬壬庚 亥寅午午",
+   "pillars": {
+    "datetime": "1990-06-06 21:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 庚午/壬午/壬寅/辛亥",
+   "expected": {
+    "pillars": {
+     "hour": "辛亥",
+     "day": "壬寅",
+     "month": "壬午",
+     "year": "庚午"
+    }
+   }
+  },
+  {
+   "id": "MP340",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1853）",
+   "source_quote": "时日月年 甲壬丙丁 辰寅午酉",
+   "pillars": {
+    "datetime": "2077-06-29 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丁酉/丙午/壬寅/甲辰",
+   "expected": {
+    "pillars": {
+     "hour": "甲辰",
+     "day": "壬寅",
+     "month": "丙午",
+     "year": "丁酉"
+    }
+   }
+  },
+  {
+   "id": "MP342",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1877）",
+   "source_quote": "时日月年 壬壬庚戊 寅辰申寅",
+   "pillars": {
+    "datetime": "1998-08-13 03:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 戊寅/庚申/壬辰/壬寅",
+   "expected": {
+    "pillars": {
+     "hour": "壬寅",
+     "day": "壬辰",
+     "month": "庚申",
+     "year": "戊寅"
+    }
+   }
+  },
+  {
+   "id": "MP344",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1877）",
+   "source_quote": "时日月年 丙壬戊丁 午辰申亥",
+   "pillars": {
+    "datetime": "2067-08-11 11:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丁亥/戊申/壬辰/丙午",
+   "expected": {
+    "pillars": {
+     "hour": "丙午",
+     "day": "壬辰",
+     "month": "戊申",
+     "year": "丁亥"
+    }
+   }
+  },
+  {
+   "id": "MP346",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1877）",
+   "source_quote": "时日月年 辛壬庚癸 亥辰申酉",
+   "pillars": {
+    "datetime": "2053-08-24 21:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 癸酉/庚申/壬辰/辛亥",
+   "expected": {
+    "pillars": {
+     "hour": "辛亥",
+     "day": "壬辰",
+     "month": "庚申",
+     "year": "癸酉"
+    }
+   }
+  },
+  {
+   "id": "MP348",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1903）",
+   "source_quote": "时日月年 壬壬丁辛 寅辰酉酉",
+   "pillars": {
+    "datetime": "1981-09-11 03:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 辛酉/丁酉/壬辰/壬寅",
+   "expected": {
+    "pillars": {
+     "hour": "壬寅",
+     "day": "壬辰",
+     "month": "丁酉",
+     "year": "辛酉"
+    }
+   }
+  },
+  {
+   "id": "MP350",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1903）",
+   "source_quote": "时日月年 庚壬己壬 戌子酉子",
+   "pillars": {
+    "datetime": "1972-09-18 19:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 壬子/己酉/壬子/庚戌",
+   "expected": {
+    "pillars": {
+     "hour": "庚戌",
+     "day": "壬子",
+     "month": "己酉",
+     "year": "壬子"
+    }
+   }
+  },
+  {
+   "id": "MP352",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1903）",
+   "source_quote": "时日月年 己壬丁丙 酉子酉子",
+   "pillars": {
+    "datetime": "1996-09-12 17:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丙子/丁酉/壬子/己酉",
+   "expected": {
+    "pillars": {
+     "hour": "己酉",
+     "day": "壬子",
+     "month": "丁酉",
+     "year": "丙子"
+    }
+   }
+  },
+  {
+   "id": "MP354",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1903）",
+   "source_quote": "时日月年 甲壬乙庚 辰子酉午",
+   "pillars": {
+    "datetime": "2050-09-29 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 庚午/乙酉/壬子/甲辰",
+   "expected": {
+    "pillars": {
+     "hour": "甲辰",
+     "day": "壬子",
+     "month": "乙酉",
+     "year": "庚午"
+    }
+   }
+  },
+  {
+   "id": "MP356",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1930）",
+   "source_quote": "时日月年 甲壬戊辛 辰戌戌丑",
+   "pillars": {
+    "datetime": "2081-10-26 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 辛丑/戊戌/壬戌/甲辰",
+   "expected": {
+    "pillars": {
+     "hour": "甲辰",
+     "day": "壬戌",
+     "month": "戊戌",
+     "year": "辛丑"
+    }
+   }
+  },
+  {
+   "id": "MP358",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1949）",
+   "source_quote": "时日月年 庚壬丁庚 戌戌亥子",
+   "pillars": {
+    "datetime": "2020-11-15 19:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 庚子/丁亥/壬戌/庚戌",
+   "expected": {
+    "pillars": {
+     "hour": "庚戌",
+     "day": "壬戌",
+     "month": "丁亥",
+     "year": "庚子"
+    }
+   }
+  },
+  {
+   "id": "MP360",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1949）",
+   "source_quote": "时日月年 辛壬辛壬 亥子亥申",
+   "pillars": {
+    "datetime": "2052-11-17 21:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 壬申/辛亥/壬子/辛亥",
+   "expected": {
+    "pillars": {
+     "hour": "辛亥",
+     "day": "壬子",
+     "month": "辛亥",
+     "year": "壬申"
+    }
+   }
+  },
+  {
+   "id": "MP362",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1970）",
+   "source_quote": "时日月年 壬壬壬壬 寅寅子寅",
+   "pillars": {
+    "datetime": "2022-12-15 03:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 壬寅/壬子/壬寅/壬寅",
+   "expected": {
+    "pillars": {
+     "hour": "壬寅",
+     "day": "壬寅",
+     "month": "壬子",
+     "year": "壬寅"
+    }
+   }
+  },
+  {
+   "id": "MP364",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L1970）",
+   "source_quote": "时日月年 甲壬壬壬 辰子子子",
+   "pillars": {
+    "datetime": "2092-12-17 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 壬子/壬子/壬子/甲辰",
+   "expected": {
+    "pillars": {
+     "hour": "甲辰",
+     "day": "壬子",
+     "month": "壬子",
+     "year": "壬子"
+    }
+   }
+  },
+  {
+   "id": "MP366",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L2008）",
+   "source_quote": "时日月年 癸癸癸丁 丑亥卯未",
+   "pillars": {
+    "datetime": "2087-03-30 01:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丁未/癸卯/癸亥/癸丑",
+   "expected": {
+    "pillars": {
+     "hour": "癸丑",
+     "day": "癸亥",
+     "month": "癸卯",
+     "year": "丁未"
+    }
+   }
+  },
+  {
+   "id": "MP368",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L2008）",
+   "source_quote": "时日月年 癸癸癸丁 丑卯卯亥",
+   "pillars": {
+    "datetime": "2007-03-10 01:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丁亥/癸卯/癸卯/癸丑",
+   "expected": {
+    "pillars": {
+     "hour": "癸丑",
+     "day": "癸卯",
+     "month": "癸卯",
+     "year": "丁亥"
+    }
+   }
+  },
+  {
+   "id": "MP370",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L2008）",
+   "source_quote": "时日月年 庚癸己庚 申酉卯子",
+   "pillars": {
+    "datetime": "2080-03-16 15:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 庚子/己卯/癸酉/庚申",
+   "expected": {
+    "pillars": {
+     "hour": "庚申",
+     "day": "癸酉",
+     "month": "己卯",
+     "year": "庚子"
+    }
+   }
+  },
+  {
+   "id": "MP372",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L2030）",
+   "source_quote": "时日月年 辛癸甲丁 酉亥辰酉",
+   "pillars": {
+    "datetime": "2017-04-06 17:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丁酉/甲辰/癸亥/辛酉",
+   "expected": {
+    "pillars": {
+     "hour": "辛酉",
+     "day": "癸亥",
+     "month": "甲辰",
+     "year": "丁酉"
+    }
+   }
+  },
+  {
+   "id": "MP374",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L2030）",
+   "source_quote": "时日月年 甲癸壬丙 寅巳辰寅",
+   "pillars": {
+    "datetime": "2046-04-04 03:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丙寅/壬辰/癸巳/甲寅",
+   "expected": {
+    "pillars": {
+     "hour": "甲寅",
+     "day": "癸巳",
+     "month": "壬辰",
+     "year": "丙寅"
+    }
+   }
+  },
+  {
+   "id": "MP376",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L2030）",
+   "source_quote": "时日月年 辛癸丙戊 酉丑辰午",
+   "pillars": {
+    "datetime": "2038-04-06 17:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 戊午/丙辰/癸丑/辛酉",
+   "expected": {
+    "pillars": {
+     "hour": "辛酉",
+     "day": "癸丑",
+     "month": "丙辰",
+     "year": "戊午"
+    }
+   }
+  },
+  {
+   "id": "MP378",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L2030）",
+   "source_quote": "时日月年 丙癸壬丙 辰丑辰寅",
+   "pillars": {
+    "datetime": "2046-04-24 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丙寅/壬辰/癸丑/丙辰",
+   "expected": {
+    "pillars": {
+     "hour": "丙辰",
+     "day": "癸丑",
+     "month": "壬辰",
+     "year": "丙寅"
+    }
+   }
+  },
+  {
+   "id": "MP380",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L2065）",
+   "source_quote": "时日月年 庚癸癸乙 申未未酉",
+   "pillars": {
+    "datetime": "1945-07-13 15:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 乙酉/癸未/癸未/庚申",
+   "expected": {
+    "pillars": {
+     "hour": "庚申",
+     "day": "癸未",
+     "month": "癸未",
+     "year": "乙酉"
+    }
+   }
+  },
+  {
+   "id": "MP382",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L2065）",
+   "source_quote": "时日月年 丙癸辛己 辰未未未",
+   "pillars": {
+    "datetime": "1979-07-15 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 己未/辛未/癸未/丙辰",
+   "expected": {
+    "pillars": {
+     "hour": "丙辰",
+     "day": "癸未",
+     "month": "辛未",
+     "year": "己未"
+    }
+   }
+  },
+  {
+   "id": "MP384",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L2082）",
+   "source_quote": "时日月年 甲癸戊丁 寅卯申酉",
+   "pillars": {
+    "datetime": "2077-08-29 03:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 丁酉/戊申/癸卯/甲寅",
+   "expected": {
+    "pillars": {
+     "hour": "甲寅",
+     "day": "癸卯",
+     "month": "戊申",
+     "year": "丁酉"
+    }
+   }
+  },
+  {
+   "id": "MP386",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L2082）",
+   "source_quote": "时日月年 乙癸庚戊 卯未申午",
+   "pillars": {
+    "datetime": "2098-08-19 05:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 戊午/庚申/癸未/乙卯",
+   "expected": {
+    "pillars": {
+     "hour": "乙卯",
+     "day": "癸未",
+     "month": "庚申",
+     "year": "戊午"
+    }
+   }
+  },
+  {
+   "id": "MP388",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L2082）",
+   "source_quote": "时日月年 辛癸丙辛 酉酉申酉",
+   "pillars": {
+    "datetime": "2041-08-08 17:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 辛酉/丙申/癸酉/辛酉",
+   "expected": {
+    "pillars": {
+     "hour": "辛酉",
+     "day": "癸酉",
+     "month": "丙申",
+     "year": "辛酉"
+    }
+   }
+  },
+  {
+   "id": "MP390",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L2102）",
+   "source_quote": "时日月年 丙癸乙庚 辰亥酉寅",
+   "pillars": {
+    "datetime": "2010-09-10 07:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 庚寅/乙酉/癸亥/丙辰",
+   "expected": {
+    "pillars": {
+     "hour": "丙辰",
+     "day": "癸亥",
+     "month": "乙酉",
+     "year": "庚寅"
+    }
+   }
+  },
+  {
+   "id": "MP392",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L2102）",
+   "source_quote": "时日月年 癸癸丁辛 亥巳酉酉",
+   "pillars": {
+    "datetime": "1981-09-12 21:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 辛酉/丁酉/癸巳/癸亥",
+   "expected": {
+    "pillars": {
+     "hour": "癸亥",
+     "day": "癸巳",
+     "month": "丁酉",
+     "year": "辛酉"
+    }
+   }
+  },
+  {
+   "id": "MP394",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L2117）",
+   "source_quote": "时日月年 癸癸庚壬 亥丑戌辰",
+   "pillars": {
+    "datetime": "2012-10-19 21:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 壬辰/庚戌/癸丑/癸亥",
+   "expected": {
+    "pillars": {
+     "hour": "癸亥",
+     "day": "癸丑",
+     "month": "庚戌",
+     "year": "壬辰"
+    }
+   }
+  },
+  {
+   "id": "MP396",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L2136）",
+   "source_quote": "时日月年 癸癸癸癸 亥丑亥卯",
+   "pillars": {
+    "datetime": "2083-12-06 21:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 癸卯/癸亥/癸丑/癸亥",
+   "expected": {
+    "pillars": {
+     "hour": "癸亥",
+     "day": "癸丑",
+     "month": "癸亥",
+     "year": "癸卯"
+    }
+   }
+  },
+  {
+   "id": "MP398",
+   "split": "holdout",
+   "book": "穷通宝鉴",
+   "location": "<big>（甲于各月）</big>（表 L2136）",
+   "source_quote": "时日月年 壬癸辛壬 子亥亥申",
+   "pillars": {
+    "datetime": "2052-11-28 00:30"
+   },
+   "gender": "男",
+   "note": "书源命例四柱 壬申/辛亥/癸亥/壬子",
+   "expected": {
+    "pillars": {
+     "hour": "壬子",
+     "day": "癸亥",
+     "month": "辛亥",
+     "year": "壬申"
     }
    }
   }
