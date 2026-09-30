@@ -3,6 +3,30 @@
 仓库级变更登记（跨科 / 内核 / 口径 / 架构）。学科内细节见各科 `CHANGELOG.md`。
 规则：指标口径任何变动（计分方式、词典、缺失字段处理）必须在此登记，否则分数不可比（`AGENTS.md` §四.4）。
 
+### 2026-09-30v AI 可发现层（llms.txt / SKILL.md frontmatter / skills 目录 / PROMPTS.md / MCP 文档）
+
+> 纯文档/入口层，**零引擎改动、零口径变动**（根 `tools/check.py --full` 全绿复验）。
+> 目标：让 AI Agent"搜索到仓库 → 读 llms.txt → 加载匹配的 skills/<科>/SKILL.md →
+> 走 AI-SOP 通道 A 出报告"，无需通读仓库。
+
+1. **`llms.txt`**（根，新增）：AI 索引地图——核心入口（AI-SOP/SKILL.md/AGENTS.md/PROMPTS.md）、
+   8 科技能目录、MCP、状态文档。AI 第一阅读物。
+2. **根 `SKILL.md` 重写**：YAML frontmatter 合规化（`description` 收敛到 160 字符内、
+   触发式；`name: yi`），正文改为**入口式**（AI 取用顺序 → 意图路由摘要 → 信息收集 →
+   铁律引用 → 合参入口 → 文档地图），删除过时读数表（读数以 `docs/HANDOFF.md` 为唯一真值源）。
+3. **`skills/<8科>/SKILL.md`**（新增）：每科一个轻量触发式技能文件
+   （frontmatter + 输入字段/调用命令/输出纪律），正文指向 `disciplines/<科>/SKILL.md`
+   详细规程——渐进式披露，AI 只加载匹配的那一个。
+4. **`PROMPTS.md`**（根，新增）：面向普通用户的复制粘贴提示词模板
+   （网页端通道 A / 云端通道 B / 本地 MCP 三场景 + 报告结构约定）。
+5. **README 顶部 AI 导航区块**："AI READ THIS FIRST"——告诉 AI 别通读 README，
+   按 llms.txt → AI-SOP 通道 A 取用；另补 **MCP 小节**（问题：`tools/mcp_router.py`
+   已实现但零文档——现暴露为 `mcp-server/README.md`：启动、Claude Desktop/Cursor 配置、
+   方法清单、安全边界；纯 stdio JSON-RPC、零第三方依赖，未改动路由器代码）。
+6. **已知缺口（不掩盖）**：`tools/mcp_router.py` 当前仅注册命科 `ming`（六爻走专用
+   CLI，其余科未接入——文档已如实注明，接入模式见注册处）；通道 A 深链 URL 尚未
+   在 README 给全 8 科示例（字段表在 `PROMPTS.md`）。
+
 ### 2026-09-30u 命科格局成败救应增强（财格官/煞细分 + 六合救应 + 煞刃格）+ 岁运并临标记 + 神煞补全（术数深度强化批"123推进"第 1/2/5/6 项）
 
 > **口径登记（§四.4）**：本变更含 ① **案例 expected 口径修正一例**：ZP027 王总兵

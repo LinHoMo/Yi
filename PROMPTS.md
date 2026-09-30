@@ -1,0 +1,62 @@
+# PROMPTS.md —— 复制粘贴即可用的提示词模板
+
+> 给**人**用的：把下面任一模板整段复制给任意网页聊天 AI（或本地 AI 客户端），
+> 替换方括号 `[ ]` 里的内容即可。AI 会按 `docs/AI-SOP.md` 通道 A（零凭证，首选）
+> 或通道 B（云端留档）触发 Yi 引擎出报告。
+> 想了解架构的开发者看 `llms.txt`；AI 的执行规程看 `docs/AI-SOP.md`。
+
+## 模板一：网页端 AI 出报告（首选，零凭证）
+
+```
+请访问 https://github.com/LinHoMo/Yi 这个仓库。
+先读 llms.txt，再按 docs/AI-SOP.md 的流程帮我生成一份术数报告，
+输出 Markdown（如需 HTML 也一起给）。报告结构要稳定：基本信息 → 排盘/起卦结果 → 机械推演 → 综合说明。
+
+我的信息如下（替换方括号内容）：
+- 学科：六爻（liuyao）
+- 所问之事：[今年换工作是否合适]
+- 起卦时间：[2026-09-30 14:00]（留空则用当前时间）
+
+请按照通道 A（GitHub Pages 深链）操作，把链接给我打开即可；
+不要替我下"注定会怎样"的结论，按仓库纪律如实呈现引擎输出。
+```
+
+换成其他学科的字段（照抄即可）：
+
+| 学科 | 必填字段 |
+|---|---|
+| 六爻 liuyao | question（+可填 datetime/mode） |
+| 四柱 ming | datetime 出生公历时间、gender 性别 |
+| 紫微 ziwei | datetime、gender |
+| 梅花 meihua | question（+可填 datetime/way/numbers） |
+| 小六壬 xiaoliuren | question（+可填 datetime/numbers） |
+| 择吉 zeji | date 用事日期、activity 事类 |
+| 大六壬 liuren | datetime、question |
+| 灵棋经 lingqi | up/mid/down 三数（0–4） |
+
+## 模板二：云端留档 + 回评（通道 B，要报告存进仓库时）
+
+```
+请访问 https://github.com/LinHoMo/Yi。
+按 docs/AI-SOP.md 通道 B 操作：生成一个预填 issue 链接（把学科与参数填进去），
+交我提交；报告会以评论回到该 issue，并存入 reports 分支。
+- 学科：[ming]
+- 出生时间：[1990-05-20 10:30]
+- 性别：[男]
+- 想问方向：[事业格局与近几年起伏]
+```
+
+## 模板三：本地 AI 客户端直连（Claude Desktop / Cursor 等已配置 MCP）
+
+```
+请调用 Yi 的 MCP 服务（methods 见 mcp-server/README.md）：
+用 [ming.analyze] 排盘，出生时间 [1990-05-20 10:30]、性别 [男]，
+然后按引擎输出的结构给我讲解，不要添加引擎没有给出的判断。
+```
+
+## 附：报告结构约定（AI 生成报告时遵守）
+
+- 固定标题层级：`基本信息 → 排盘/起卦结果 → 机械推演（引擎逐项）→ 综合说明（翻译，非断言）`。
+- 每个结论都要能在引擎输出的 JSON 里找到出处（`pattern_cheng_bai`/`strength`/`verdicts` 等字段）。
+- 结尾必须声明：分数为古籍案例对齐分、非现实命中率；重大决策以专业意见为准。
+- HTML 版用内联 CSS，可在手机浏览器直接打开。

@@ -1,0 +1,45 @@
+# Yi
+
+> 中国传统术数统合引擎：命（四柱八字 / 紫微斗数）+ 卜（六爻纳甲 / 梅花易数 / 小六壬 / 择吉 / 大六壬骨架 / 灵棋经），六科建在同一份内核与四段契约（chart→analyze→narrate→render）上，支持跨科合参。
+>
+> 给 AI 的取用原则：**不要通读本仓库**。先读下面的"核心入口"，按 `docs/AI-SOP.md` 通道 A（GitHub Pages + Pyodide，零凭证）或通道 B（云端 Actions）触发引擎出报告；推演一律由 Python 引擎完成，禁止 LLM 心算排盘。
+
+## 核心入口
+
+- [AI-SOP（网页端 AI 取用报告的标准流程）](docs/AI-SOP.md)：必读。字段、触发、取回报告的方法
+- [SKILL.md（技能描述与调用说明）](SKILL.md)：YAML frontmatter，先读 description 判断是否匹配
+- [AGENTS.md（项目铁律）](AGENTS.md)：机械运算归代码、案例库隔离、对齐分≠命中率
+- [PROMPTS.md（面向用户的复制粘贴提示词）](PROMPTS.md)：让用户直接抄的模板
+
+## 技能目录（每个技能一个 SKILL.md，渐进式披露）
+
+- [skills/liuyao（六爻纳甲）](skills/liuyao/SKILL.md)
+- [skills/ming（四柱八字）](skills/ming/SKILL.md)
+- [skills/ziwei（紫微斗数）](skills/ziwei/SKILL.md)
+- [skills/meihua（梅花易数）](skills/meihua/SKILL.md)
+- [skills/xiaoliuren（小六壬）](skills/xiaoliuren/SKILL.md)
+- [skills/zeji（择吉通书）](skills/zeji/SKILL.md)
+- [skills/liuren（大六壬骨架）](skills/liuren/SKILL.md)
+- [skills/lingqi（灵棋经）](skills/lingqi/SKILL.md)
+
+## 学科详细规程（skills 层的被引目标）
+
+- [disciplines/liuyao/SKILL.md](disciplines/liuyao/SKILL.md)
+- [disciplines/ming/SKILL.md](disciplines/ming/SKILL.md)
+- [disciplines/ziwei/SKILL.md](disciplines/ziwei/SKILL.md)
+- [disciplines/meihua/SKILL.md](disciplines/meihua/SKILL.md)
+- [disciplines/xiaoliuren/SKILL.md](disciplines/xiaoliuren/SKILL.md)
+- [disciplines/zeji/SKILL.md](disciplines/zeji/SKILL.md)
+- [disciplines/liuren/SKILL.md](disciplines/liuren/SKILL.md)
+- [disciplines/lingqi/SKILL.md](disciplines/lingqi/SKILL.md)
+
+## MCP（本地 AI 客户端直连）
+
+- [mcp-server/README.md（启动与配置说明）](mcp-server/README.md)：stdio JSON-RPC，零第三方依赖
+
+## 状态与规划（AI 一般不需要读）
+
+- [README.md](README.md)：给人看的总览（含"AI READ THIS FIRST"导航）
+- [docs/HANDOFF.md](docs/HANDOFF.md)：现状交接（哪些可信、怎么跑、还欠什么）
+- [docs/CHANGELOG.md](docs/CHANGELOG.md)：口径变更登记
+- [docs/DEEP-DIVE-PLAN.md](docs/DEEP-DIVE-PLAN.md)：深度改造清单

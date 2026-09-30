@@ -3,6 +3,19 @@
 > 版本号唯一真值源：`core/yishu_core/__init__.py::__version__`（不在此另写版本号）。
 > 本仓库统一使用一个 git 版本库（仓库根即此处）。
 
+## AI READ THIS FIRST
+
+> 如果你（AI Agent）要帮用户生成术数报告（起卦/排盘/测八字/问吉凶应期），
+> **不要通读本 README 的其余部分**，按下面顺序取用：
+>
+> 1. 读仓库根 `llms.txt`（AI 索引地图）。
+> 2. 读 `docs/AI-SOP.md` 第 1 节收集该科所需字段，按**通道 A**（GitHub Pages + Pyodide
+>    深链，零凭证）或通道 B（云端 Actions）触发引擎出报告。
+> 3. 报告由引擎机械生成，你只负责把结构化输出翻译成用户看得懂的话；
+>    **禁止 LLM 心算排盘**（`AGENTS.md` 铁律一），禁止把对齐分说成现实命中率（铁律三）。
+>
+> 需要"某一科怎么调"时，只加载对应 `skills/<科>/SKILL.md`，不要整目录通读。
+
 中国传统术数的统一工程。**六科可用**：命（四柱八字 / 紫微斗数）+
 卜（六爻纳甲 / 梅花易数 / 小六壬 / 择吉通书），六科建在同一份内核
 （`core/yishu_core/`）与共享契约（`disciplines/base/`）上，由"易"做跨科合参。
@@ -25,6 +38,13 @@
 ```
 
 > 也可直接用 GitHub 网页 "New Issue"，正文按 `discipline: ...`、`question: ...` 等行填写。
+
+## 给本地 AI 客户端：MCP（stdio，零第三方依赖）
+
+本地 AI 客户端（Claude Desktop / Cursor 等）可直接把 `tools/mcp_router.py` 配为
+MCP Server 调用引擎——不需要 GitHub、不需要复制提示词。启动与配置见
+[`mcp-server/README.md`](mcp-server/README.md)；当前注册命科 `ming`
+（chart/analyze/narrate/render），其余科按同一模式接入。
 
 ## 定位
 
