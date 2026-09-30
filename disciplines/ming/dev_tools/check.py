@@ -98,6 +98,28 @@ def main() -> int:
     else:
         print("[5] 机械回归 √", out.strip().splitlines()[-1] if out.strip() else "")
 
+    # 评测器存在性 + 框架自检 + 空集可跑（命科评测是新立的尺子，必须校准）
+    if not (DISC / "scripts" / "evaluate.py").is_file():
+        fails.append("缺 scripts/evaluate.py（命科评测器）")
+        print("[6] 评测器 ×")
+    else:
+        code, out = run(["dev_tools/eval_selftest.py"])
+        if code != 0:
+            fails.append("评测框架自检失败")
+            print(out)
+        else:
+            print("[6] 评测框架自检 √", out.strip().splitlines()[-2]
+                  if len(out.strip().splitlines()) > 1 else "")
+        # tune / holdout 都必须能跑（n=0 时如实报"尚无案例"，不是报错）
+        for split in ("tune", "holdout"):
+            code, out = run(["scripts/evaluate.py", "--split", split])
+            if code != 0 and "无可用结果" not in out:
+                fails.append(f"评测 {split} 跑不通")
+                print(out)
+            else:
+                head = out.strip().splitlines()[0] if out.strip() else ""
+                print(f"[7] 评测 {split} √ {head}")
+
     if fails:
         print("失败：", *fails, sep="\n  ")
         return 1

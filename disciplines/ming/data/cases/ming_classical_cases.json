@@ -1,0 +1,15 @@
+{
+  "schema": "yi-ming-cases/1",
+  "_comment": [
+    "命科古籍案例集。规范见 disciplines/ming/docs/EVAL-PLAN.md：",
+    "1) expected 只填书上明写的量，未写的一律不出现（= N/A，从分母剔除）；",
+    "2) 每例必须能指回 book + location 的原文（source_quote 逐字抄录）；",
+    "3) 禁止用引擎输出反推 expected。",
+    "本文件当前为**框架自检用**的最小集，尚未收入古籍案例：见 splits 为空的原因说明。"
+  ],
+  "splits": {
+    "tune": [],
+    "holdout": []
+  },
+  "cases": []
+}
