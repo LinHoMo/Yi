@@ -251,15 +251,37 @@ def score_case(eng: dict, exp: dict, model: str) -> dict:
             bits.append(f"成败{'√' if ok else '×'}")
         dims["pattern"] = (min(earned, w_app), w_app, " ".join(bits))
 
-    # 6) 从格（布尔一致即得；只判"是否为从格"，不判种类）
+    # 6) 从格（布尔 2 + 种类 1 + 真/假 1；书没写的子项从分母剔除）
+    # 口径：2026-09-30v 从「只判是否从」升级为可判级（《滴天髓》从象/假从章
+    # 真从=绝无一毫生扶，假从=中有比劫暗生；kind 大类 从财/从官杀/从儿/
+    # 从旺/从强/从势/从气）。判据缺口（三合化气/财生杀/透干印比无根边界）
+    # 见 docs/CHANGELOG.md。
     w = WEIGHTS["cong_ge"]
-    if not _na(exp.get("cong_ge")):
+    x_bool = exp.get("cong_ge")
+    x_kind = exp.get("from_kind")
+    x_type = exp.get("from_type")
+    if not (_na(x_bool) and _na(x_kind) and _na(x_type)):
         strength = eng.get("strength") or {}
-        eng_cong = bool(strength.get("from_kind"))
-        ok = eng_cong == bool(exp.get("cong_ge"))
-        dims["cong_ge"] = (w if ok else 0, w,
-                           f"引擎{'从' if eng_cong else '不从'} vs 书"
-                           f"{'从' if exp.get('cong_ge') else '不从'}")
+        w_app = 0
+        earned = 0
+        bits = []
+        if not _na(x_bool):
+            w_app += 2
+            eng_cong = bool(strength.get("from_kind"))
+            ok = eng_cong == bool(x_bool)
+            earned += 2 if ok else 0
+            bits.append(f"从{'√' if ok else '×'}")
+        if not _na(x_kind):
+            w_app += 1
+            ok = (strength.get("from_kind") or "") == x_kind
+            earned += 1 if ok else 0
+            bits.append(f"类{'√' if ok else '×'}({strength.get('from_kind') or '—'})")
+        if not _na(x_type):
+            w_app += 1
+            ok = (strength.get("from_type") or "") == x_type
+            earned += 1 if ok else 0
+            bits.append(f"真/假{'√' if ok else '×'}({strength.get('from_type') or '—'})")
+        dims["cong_ge"] = (min(earned, w_app), w_app, " ".join(bits))
 
     # 7) 神煞（期望集合的命中比例；多出不算错——神煞流派差异大）
     w = WEIGHTS["shensha"]
@@ -302,7 +324,7 @@ RANDOM_BASELINE = {
     "hidden_stems": 1.0 / 10,   # 天干十中取一
     "tiaohou": 1.0 / 10,        # 调候主神十干取一
     "pattern": 1.0 / 12,        # 正格十二名取一
-    "cong_ge": 0.5,             # 布尔
+    "cong_ge": 0.5,             # 布尔 2/4；种类 1/8、真/假 1/2 另计（见维度明细）
     "shensha": 1.0 / 30,        # 神煞表约 30 项
     "dayun": 0.5,               # 顺逆布尔
 }

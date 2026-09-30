@@ -5,7 +5,8 @@
 - 藏干十神本/中/余气权重 1.0 / 0.5 / 0.25
 - 生扶 = 印 + 比劫；克泄耗 = 官杀 + 食伤 + 财
 - 身旺喜克泄耗，身弱喜生扶（《渊海子平》扶抑用神通行口径）
-- 格局取月支本气十神正格名；从格条件仅作 tentative 标注
+- 格局取月支本气十神正格名；从格按《滴天髓》从化论/从象/假从章分级
+  （真从/假从/从旺/从强/从气/从势，机械口径见 `_from_judge`）
 大运顺逆走 core.ming_tables.dayun_direction；起运岁数按三日=一年近似。
 """
 from __future__ import annotations
@@ -23,6 +24,8 @@ from yishu_core.symbols import (
     STEM_ELEMENTS,
     SHENG_CYCLE,
     KE_CYCLE,
+    CHONG_PAIRS,
+    SAN_HE_GROUPS,
     twelve_growth,
 )
 
@@ -145,6 +148,300 @@ def _has_yang_ren(chart_json: dict) -> bool:
         if b and twelve_growth(elem, b) == "帝旺":
             return True
     return False
+
+
+def _role_of_elem(day_elem: str, other_elem: str) -> str:
+    """五行 vs 日主五行 → 十神作用类（比劫/印/食伤/官杀/财）。
+
+    书源：十神定义（生我者印、我生者食伤、克我者官杀、我克者财、
+    同我者比劫），用 core 五行相生/相克表推，不另存表。
+    """
+    if not day_elem or not other_elem:
+        return ""
+    if other_elem == day_elem:
+        return "比劫"
+    if SHENG_CYCLE.get(other_elem) == day_elem:      # 他生我 → 印
+        return "印"
+    if SHENG_CYCLE.get(day_elem) == other_elem:      # 我生他 → 食伤
+        return "食伤"
+    if KE_CYCLE.get(other_elem) == day_elem:         # 他克我 → 官杀
+        return "官杀"
+    return "财"                                      # 我克他
+
+
+def _from_judge(chart_json: dict, details: list[dict], day_stem: str,
+                decree: float = 0.0, sheng_fu: float = 0.0) -> tuple:
+    """从格可判级判定（《滴天髓·从化论/从象/假从》章）。
+
+    返回 (from_kind, from_type, from_basis, from_label)；
+    from_label 兼容旧字段 tentative_special（形如「从杀·真从」）。
+
+    原文依据（逐条可溯）：
+      - 从得真者只论从，从神又有吉和凶（《从化论》）
+      - 日主孤弱无气，天地人三元，绝无一毫生扶之意，财官等强甚，乃为真从也（《从象》原注）
+      - 日主弱矣，财官强矣，不能不从；中有比劫暗生，从之不真（《假从》原注）
+      - 从旺者四柱皆比劫；从强者印绶重重比劫叠叠；从气者不论财官印绶食伤，
+        气势在木火/金水；从势者日主无根，财官食伤并旺（《从象》任氏注）
+
+    机械口径（v3，2026-09-30；边界诚实登记于 CHANGELOG）：
+      - 生扶只认本气根；透干印比须坐支本气/中气为其五行才算有力（虚浮不算）
+      - 地支互动（core 唯一真值源，无私有表）：
+        三合局（三支全）→ 局内支本气被合化：日主根/印比失效、从神加权 +2.0；
+        六冲（任一他支相冲）→ 日主根/印比/月令被冲则失效；
+        从神主导本气支被冲 → 从之不真（type 强制假从，如 ZC011 卯酉冲杀）
+      - 月令有效（ling_effective）：月支生扶日主且不被冲、不在三合局内
+      - 从弱成立 = from_weight≥4.0 且 失令 且（无日主根 或 有印比）——有根有印比者
+        归正格（成败救应按《子平真诠》），不再误入从格
+      - 从旺/从强须 得令 且 sheng_fu≥5.0（「旺之极矣」），防月刃/建禄等正格误入
+      - 从气须 失令 且 日主有根 且 四支本气集中于金水/木火
+      - 灰区（登记）：透干比劫/印绶坐支无根书判假从而本判据按真从
+        （ZC014 辛金天干丙丁庚辛、ZC015 丁印被癸克）；ZC012 寅令被申冲后
+        印比俱失书仍判假从——三者待六合化气/合冲互动引入后复核。
+    """
+    if not day_stem:
+        return None, None, "", None
+    day_elem = STEM_ELEMENTS.get(day_stem) or ""
+    if not day_elem:
+        return None, None, "", None
+    pillars = chart_json.get("pillars") or {}
+
+    # 支本气角色（details 已含四支藏干十神，day 柱计入）；四支五行取地支本身
+    main_roles = {}   # pillar -> role（本气）
+    main_gods = {}    # pillar -> god（本气，细分用）
+    weight_by_role = {"印": 0.0, "比劫": 0.0, "官杀": 0.0, "食伤": 0.0, "财": 0.0}
+    branch_main_elems = []
+    branch_list = []
+    for pname in ("year", "month", "day", "hour"):
+        br = (pillars.get(pname) or {}).get("branch") or ""
+        if br:
+            branch_list.append(br)
+            branch_main_elems.append(BRANCH_ELEMENTS.get(br) or "")
+    for d in details:
+        role = d.get("role") or ""
+        if role not in weight_by_role:
+            continue
+        w = float(d.get("w") or 0)
+        weight_by_role[role] += w
+        if d.get("layer") == "本气":
+            main_roles[d.get("pillar") or ""] = role
+            main_gods[d.get("pillar") or ""] = d.get("god") or ""
+
+    # ── 地支互动（core 唯一真值源）：三合局（三支全）化气 + 六冲 ──
+    sanhe_branches: set = set()
+    sanhe_elem = ""
+    for elem, grp in SAN_HE_GROUPS.items():
+        if set(grp) <= set(branch_list):
+            sanhe_elem = elem
+            sanhe_branches = {b for b in branch_list if b in grp}
+            break
+    chong_map: dict = {}          # 支 -> {与之相冲的他支}（同类相冲=库冲不破）
+    for b in branch_list:
+        for o in branch_list:
+            if o != b and ((b, o) in CHONG_PAIRS or (o, b) in CHONG_PAIRS):
+                chong_map.setdefault(b, set()).add(o)
+    chonged: set = set(chong_map)
+
+    def _eff(br: str) -> bool:
+        """支是否"有效"：未被三合局化；被冲者仅异类相冲算破
+        （辰戌/丑未等同类库冲气不破——ZP003 甲印坐辰被戌冲仍算有根）。"""
+        if br in sanhe_branches:
+            return False
+        if br in chong_map:
+            return _chong_same_elem(br)   # 同类冲保留（库冲不破），异类冲破
+        return True
+
+    def _chong_same_elem(br: str) -> bool:
+        """br 被同类五行支冲（辰戌/丑未等库冲、同气冲）→ 气不破，不算缺角。"""
+        return any(BRANCH_ELEMENTS.get(o) == BRANCH_ELEMENTS.get(br)
+                   for o in chong_map.get(br, ()))
+
+    # 月令有效：月支生扶日主 且 未被冲、未被三合局化
+    month_branch = (pillars.get("month") or {}).get("branch") or ""
+    month_elem = BRANCH_ELEMENTS.get(month_branch, "")
+    ling_effective = bool(
+        month_elem and day_elem and _eff(month_branch) and
+        (month_elem == day_elem or SHENG_CYCLE.get(month_elem) == day_elem))
+
+    # 透干十神（year/month/hour）与坐支根气
+    dry_has_yinbi = False          # 干透印比（虚浮也算，仅灰区登记参考）
+    dry_strong_yinbi = False       # 干透印比且坐支本气/中气为该十神五行（有力）
+    for pname in ("year", "month", "hour"):
+        p = pillars.get(pname) or {}
+        tg = p.get("ten_god") or ""
+        br = p.get("branch") or ""
+        st = p.get("stem") or ""
+        if tg in ("正印", "偏印", "比肩", "劫财"):
+            dry_has_yinbi = True
+            if not _eff(br):
+                continue          # 坐支被合化/被冲 → 印比虚浮，不算有力
+            # 印五行 = 生我者（SHENG_CYCLE 是"我生"方向，须反向）；
+            # 比劫五行 = 日主五行
+            want_elem = ({v: k for k, v in SHENG_CYCLE.items()}.get(day_elem)
+                         if tg in ("正印", "偏印") else day_elem)
+            f = (chart_json.get("factors") or {}).get(pname) or {}
+            hidden = f.get("hidden_stems") or []
+            if hidden and want_elem:
+                # 本气或中气是该五行 → 印比坐支有根（有力）
+                if STEM_ELEMENTS.get(hidden[0]) == want_elem or (
+                        len(hidden) > 1 and STEM_ELEMENTS.get(hidden[1]) == want_elem):
+                    dry_strong_yinbi = True
+
+    # 日主本气根：任一支本气 role 为比劫，且支未被合化/被冲
+    day_root = any(r == "比劫" and _eff(br) for p, r in main_roles.items()
+                   for br in [(pillars.get(p) or {}).get("branch") or ""])
+    # 强根：本气比劫且该支为日主五行临官/帝旺（禄刃位）→ 身可自立，正格（ZC013
+    # 辰戊冠带、ZP017 未己冠带为弱根，不在此列；ZP020 甲坐卯帝旺即属此）
+    day_root_strong = any(
+        r == "比劫" and _eff(br) and day_elem and
+        twelve_growth(day_elem, br) in ("临官", "帝旺")
+        for p, r in main_roles.items()
+        for br in [(pillars.get(p) or {}).get("branch") or ""])
+    # 藏干本气印比（如巳中丙=印、寅中甲=印）：有力生扶；被合化/被冲者失效
+    hidden_strong_yinbi = any(
+        r in ("印", "比劫") and _eff((pillars.get(p) or {}).get("branch") or "")
+        for p, r in main_roles.items())
+    # 藏干本气印（未冲/未合化，如未中己=辛金之印、子中癸=甲木之印）→ 印绶
+    # 有力可用 → 身弱正格（ZP009/011/013/016/020/026/033）；无根者本气印
+    # 伏藏无气仍从（ZC003 巳中庚印书从财『一点庚金临绝』、ZC009 戌中辛印
+    # 书从势『印星伏而无气』——二者印在中气且日主无根，不在此列）
+    hidden_benqi_yin = any(
+        r == "印" and _eff((pillars.get(p) or {}).get("branch") or "")
+        for p, r in main_roles.items())
+    # 藏干中气印（未中丁=印、巳中庚=印等）：须与日主弱根同在才使身可自立
+    # → 身弱正格（ZP009/017 未己比劫根+未丁印中气）；无根者印伏藏无气仍从
+    # （ZC003 巳中庚印书从财『一点庚金临绝』、ZC009 戌中辛印书从势『印星
+    # 伏而无气』）
+    yin_zhongqi_hidden = day_root and any(
+        d.get("role") == "印" and d.get("layer") in ("本气", "中气")
+        and _eff((pillars.get(d.get("pillar") or "") or {}).get("branch") or "")
+        for d in details)
+    # 透干印比须坐支本气/中气为该十神五行才算有力（坐支无根 = 虚浮，不算生扶之意）
+    strong_yinbi = dry_strong_yinbi or hidden_strong_yinbi
+    # 透干印比坐支中气根（库中印/中气印，如 ZP003 甲印坐辰中气乙）→ 印绶可用
+    # → 身弱正格，不判从弱（余气根 ZC002 戊坐寅仍判从，任注『虽生犹死』）
+    dry_yinbi_zhongqi = False
+    for pname in ("year", "month", "hour"):
+        p = pillars.get(pname) or {}
+        tg = p.get("ten_god") or ""
+        br = p.get("branch") or ""
+        if tg not in ("正印", "偏印") or not _eff(br):
+            continue
+        want_elem = {v: k for k, v in SHENG_CYCLE.items()}.get(day_elem)
+        f = (chart_json.get("factors") or {}).get(pname) or {}
+        hidden = f.get("hidden_stems") or []
+        if len(hidden) > 1 and STEM_ELEMENTS.get(hidden[1]) == want_elem:
+            dry_yinbi_zhongqi = True
+    # 干透印比（无论有力与否）：仅作灰区登记参考，不直接定真假（ZC002/003/005
+    # 透印比坐支无根仍为真从；ZC014/015 透干印比书判假从，属灰区，待六合化复核）
+
+    # 从神（财/官杀/食伤）综合权重（藏干全权重 + 透干 w=1.0 + 三合局化气 +2.0）
+    from_weight = weight_by_role["财"] + weight_by_role["官杀"] + weight_by_role["食伤"]
+    for pname in ("year", "month", "hour"):
+        tg = (pillars.get(pname) or {}).get("ten_god") or ""
+        if tg in ("正财", "偏财", "正官", "偏官", "七杀", "食神", "伤官"):
+            from_weight += 1.0
+    if sanhe_elem and day_elem:
+        from_weight += 2.0        # 三合局化气助从神（如 ZC004 寅午戌火局党杀）
+
+    # ── 从旺/从强（专旺）：得令且旺之极 + 四支本气全印比 + 干不透财官杀食伤 + 日主有根 ──
+    branch_roles = list(main_roles.values())
+    dry_has_caiguansha = any(
+        (pillars.get(p) or {}).get("ten_god") in ("正财", "偏财", "正官", "偏官", "七杀")
+        for p in ("year", "month", "hour"))
+    # 干透食伤泄秀（如 ZP022 甲子丙寅甲子丙寅 透双丙）→ 旺气有泄 → 建禄/月刃
+    # 正格论，非专旺（《从象》『从旺者四柱皆比劫』，透食伤则不纯）
+    dry_has_shishang = any(
+        (pillars.get(p) or {}).get("ten_god") in ("食神", "伤官")
+        for p in ("year", "month", "hour"))
+    if ling_effective and sheng_fu >= 5.0 and day_root and branch_roles \
+            and all(r in ("印", "比劫") for r in branch_roles) \
+            and not dry_has_caiguansha and not dry_has_shishang:
+        # 比劫本气权重 vs 印本气权重 → 从旺 / 从强
+        bj = sum(1 for r in branch_roles if r == "比劫")
+        yin = sum(1 for r in branch_roles if r == "印")
+        kind = "从旺" if bj >= yin else "从强"
+        label = f"{kind}（真从）"
+        basis = ("得令且旺之极（sheng_fu=%.1f），四支本气全印比（比劫%d/印%d），"
+                 "干不透财官杀，日主有根——《从象》任注『从旺者四柱皆比劫，"
+                 "从强者印绶重重比劫叠叠』" % (sheng_fu, bj, yin))
+        return kind, "真从", basis, label
+
+    # ── 从气：失令 + 日主有根 + 四支本气五行集中于金水/木火两行 ──
+    if not ling_effective and day_root and branch_main_elems:
+        elems = {e for e in branch_main_elems if e}
+        if (elems and elems <= {"金", "水"}) or (elems and elems <= {"木", "火"}):
+            kind = "从气"
+            label = f"{kind}（真从）"
+            basis = ("日主失令有根，四支本气集中于" + "/".join(sorted(elems)) +
+                     "两行——《从象》任注『从气者气势在木火/金水』")
+            return kind, "真从", basis, label
+
+    # 透干比劫计数（帮身之心）：≥3 者身弱有比劫可帮 → 正格论成败
+    # （ZP029 丙子丙子丁酉 透丙丙丁、ZP005 透甲丙丙；ZC010 透丙丙虽 2 仍从——
+    # 任注『衰绝无气』，见 CHANGELOG 口径登记）
+    dry_bijie_count = sum(
+        1 for pname in ("year", "month", "hour")
+        if (pillars.get(pname) or {}).get("ten_god") in ("比肩", "劫财"))
+
+    # ── 从弱侧：从神压倒 + 日主难自立（失令，无强根、无可用印绶；无根或有印比） ──
+    if from_weight >= 4.0 and not ling_effective and not day_root_strong \
+            and not hidden_benqi_yin \
+            and dry_bijie_count < 3 \
+            and not (dry_yinbi_zhongqi or yin_zhongqi_hidden) \
+            and (not day_root or strong_yinbi):
+        # 主导十神：藏干全权重 + 透干 + 三合局化气
+        role_score = {"财": weight_by_role["财"], "官杀": weight_by_role["官杀"],
+                      "食伤": weight_by_role["食伤"]}
+        for pname in ("year", "month", "hour"):
+            tg = (pillars.get(pname) or {}).get("ten_god") or ""
+            if tg in ("正财", "偏财"):
+                role_score["财"] += 1.0
+            elif tg in ("正官", "偏官", "七杀"):
+                role_score["官杀"] += 1.0
+            elif tg in ("食神", "伤官"):
+                role_score["食伤"] += 1.0
+        if sanhe_elem and day_elem:
+            sanhe_role = _role_of_elem(day_elem, sanhe_elem)
+            if sanhe_role in role_score:
+                role_score[sanhe_role] += 2.0
+        ordered = sorted(role_score.items(), key=lambda kv: kv[1], reverse=True)
+        top_role, top_w = ordered[0]
+        second_w = ordered[1][1] if len(ordered) > 1 else 0.0
+        if top_w - second_w < 0.8:
+            kind = "从势"
+            ftype = "真从" if (not day_root and not strong_yinbi) else "假从"
+            label = f"{kind}·{ftype}"
+            basis = ("日主失令无自立，财官食伤并旺（主导差 <0.8）——"
+                     "《从象》任注『从势者日主无根，财官食伤并旺』；"
+                     "生扶口径：%s" % ("绝无一毫生扶" if ftype == "真从" else "中有印比暗生"))
+            # 从势（从神非唯一主导）时，某从神本气支仅一支且被异类支冲
+            # （卯酉金克木、寅申金木）→ 从神缺角 → 从之不纯（ZC011 卯酉冲杀、
+            # ZC012 寅申冲财）；同类相冲（辰戌库冲）不破（ZC009/001 仍真从）。
+            cong_shen_chong = False
+            for p, r in main_roles.items():
+                br = (pillars.get(p) or {}).get("branch") or ""
+                if r in ("财", "官杀", "食伤") and br in chong_map:
+                    same = sum(1 for pp, rr in main_roles.items()
+                               if rr == r and (pillars.get(pp) or {}).get("branch") == br)
+                    if same == 1 and not _chong_same_elem(br):
+                        cong_shen_chong = True
+                        break
+            if cong_shen_chong:
+                ftype = "假从"
+                label = f"{kind}·{ftype}"
+                basis += "；从神主导支被冲，从之不纯（ZC011 卯酉冲杀）"
+            return kind, ftype, basis, label
+        kind = {"财": "从财", "官杀": "从官杀", "食伤": "从儿"}[top_role]
+        ftype = "真从" if (not day_root and not strong_yinbi) else "假从"
+        label = f"{kind}·{ftype}"
+        basis = ("从神压倒（%s=%.1f），日主失令%s——%s" % (
+            top_role, top_w,
+            "无本气根" if not day_root else "有本气根",
+            "《从象》『绝无一毫生扶之意，乃为真从』" if ftype == "真从"
+            else "《假从》『中有比劫暗生，从之不真』"))
+        return kind, ftype, basis, label
+
+    return None, None, "", None
 
 
 def judge_pattern_cheng_bai(pattern: str, chart_json: dict,
@@ -347,29 +644,10 @@ def strength_and_pattern(chart_json: dict) -> dict:
         pattern = "未知"
         pattern_basis = "缺月令十神"
 
-    # 从格条件识别（通行子平口径，只标结构不断吉凶）：
-    # 日主无根且克泄耗/生扶一方压倒 → 从弱/从强；再按主导十神细分从儿/从财/从杀/从势。
-    tentative_from = None
-    from_kind = None
-    from_basis = ""
-    if sheng_fu < 0.5 and ke_xie_hao >= 4.0:
-        # 从弱：看克泄耗里谁最强
-        role_score = {"官杀": 0.0, "食伤": 0.0, "财": 0.0}
-        for d in details:
-            r = d.get("role")
-            if r in role_score:
-                role_score[r] += float(d.get("w") or 0)
-        top_role = max(role_score, key=role_score.get)
-        from_kind = {"官杀": "从杀", "食伤": "从儿", "财": "从财"}.get(top_role, "从弱")
-        tentative_from = f"{from_kind}（tentative）"
-        from_basis = (
-            f"生扶{sheng_fu}≈无根，克泄耗{ke_xie_hao}压倒；"
-            f"主导={top_role}({role_score[top_role]})"
-        )
-    elif ke_xie_hao < 0.5 and sheng_fu >= 4.0:
-        from_kind = "从强/专旺"
-        tentative_from = f"{from_kind}（tentative）"
-        from_basis = f"克泄耗{ke_xie_hao}≈无，生扶{sheng_fu}压倒（专旺结构）"
+    # 从格可判级判定（《滴天髓·从化论/从象/假从》；机械口径见 _from_judge 文档）：
+    # 真从/假从/从旺/从强/从气/从势 分级，不再只标 tentative。
+    from_kind, from_type, from_basis, tentative_from = _from_judge(
+        chart_json, details, day_stem, decree=decree, sheng_fu=sheng_fu)
 
     if strength == "偏旺":
         useful = ["官杀", "食伤", "财"]
@@ -398,6 +676,7 @@ def strength_and_pattern(chart_json: dict) -> dict:
         "pattern_cheng_bai_basis": cb["basis"],
         "tentative_special": tentative_from,
         "from_kind": from_kind,
+        "from_type": from_type,
         "from_basis": from_basis,
         # 调候用神（《穷通宝鉴》月令×日主查表，内核唯一真值源 ming_tables.TIAO_HOU；
         # 原文无明文的格为 None——宁缺勿滥，不凭记忆补格）
