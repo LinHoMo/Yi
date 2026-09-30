@@ -44,7 +44,13 @@
     "use_god_muku": "不入墓",
     "use_god_muku_basis": "机械判定：土墓在辰，日戌/月巳",
     "use_god_six_spirit": "白虎",
-    "use_god_six_spirit_basis": "机械派生：戊日3爻按六神起例"
+    "use_god_six_spirit_basis": "机械派生：戊日3爻按六神起例",
+    "gua_shen_branch": "申",
+    "gua_shen_branch_basis": "机械派生：三世→卦身申支",
+    "sanhe_full_combo": "无",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "无",
+    "use_god_in_sanhe_basis": "机械判定：书面用神辰是否入三合"
    },
    "scoring": {
     "verdict_match": 0.4,
@@ -89,7 +95,13 @@
     "use_god_muku": "不入墓",
     "use_god_muku_basis": "机械判定：金墓在丑，日辰/月巳",
     "use_god_six_spirit": "螣蛇",
-    "use_god_six_spirit_basis": "机械派生：庚日6爻按六神起例"
+    "use_god_six_spirit_basis": "机械派生：庚日6爻按六神起例",
+    "gua_shen_branch": "申",
+    "gua_shen_branch_basis": "机械派生：归魂→卦身申支",
+    "sanhe_full_combo": "无",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "无",
+    "use_god_in_sanhe_basis": "机械判定：书面用神酉是否入三合"
    },
    "scoring": {
     "verdict_match": 0.4,
@@ -127,7 +139,13 @@
     "use_god_wangshuai": "死",
     "use_god_wangshuai_basis": "机械派生：用神午(火)临亥(水)月",
     "use_god_muku": "不入墓",
-    "use_god_muku_basis": "机械判定：火墓在戌，日子/月亥"
+    "use_god_muku_basis": "机械判定：火墓在戌，日子/月亥",
+    "gua_shen_branch": "卯",
+    "gua_shen_branch_basis": "机械派生：四世→卦身卯支",
+    "sanhe_full_combo": "亥卯未",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "无",
+    "use_god_in_sanhe_basis": "机械判定：书面用神午是否入三合"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -169,7 +187,13 @@
     "use_god_muku": "不入墓",
     "use_god_muku_basis": "机械判定：水墓在辰，日卯/月申",
     "use_god_six_spirit": "螣蛇",
-    "use_god_six_spirit_basis": "机械派生：丁日3爻按六神起例"
+    "use_god_six_spirit_basis": "机械派生：丁日3爻按六神起例",
+    "gua_shen_branch": "寅",
+    "gua_shen_branch_basis": "机械派生：归魂→卦身寅支",
+    "sanhe_full_combo": "无",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "无",
+    "use_god_in_sanhe_basis": "机械判定：书面用神亥是否入三合"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -213,7 +237,13 @@
     "use_god_muku": "不入墓",
     "use_god_muku_basis": "机械判定：土墓在辰，日酉/月子",
     "use_god_six_spirit": "白虎",
-    "use_god_six_spirit_basis": "机械派生：癸日6爻按六神起例"
+    "use_god_six_spirit_basis": "机械派生：癸日6爻按六神起例",
+    "gua_shen_branch": "寅",
+    "gua_shen_branch_basis": "机械派生：三世→卦身寅支",
+    "sanhe_full_combo": "无",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "无",
+    "use_god_in_sanhe_basis": "机械判定：书面用神戌是否入三合"
    },
    "scoring": {
     "verdict_match": 0.4,
@@ -256,7 +286,13 @@
     "use_god_muku": "不入墓",
     "use_god_muku_basis": "机械判定：木墓在未，日丑/月午",
     "use_god_six_spirit": "朱雀",
-    "use_god_six_spirit_basis": "机械派生：癸日3爻按六神起例"
+    "use_god_six_spirit_basis": "机械派生：癸日3爻按六神起例",
+    "gua_shen_branch": "未",
+    "gua_shen_branch_basis": "机械派生：二世→卦身未支",
+    "sanhe_full_combo": "亥卯未",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "亥卯未",
+    "use_god_in_sanhe_basis": "机械判定：书面用神卯是否入三合"
    },
    "scoring": {
     "verdict_match": 0.35,
@@ -298,7 +334,13 @@
     "use_god_muku": "不入墓",
     "use_god_muku_basis": "机械判定：水墓在辰，日戌/月寅",
     "use_god_six_spirit": "玄武",
-    "use_god_six_spirit_basis": "机械派生：庚日2爻按六神起例"
+    "use_god_six_spirit_basis": "机械派生：庚日2爻按六神起例",
+    "gua_shen_branch": "午",
+    "gua_shen_branch_basis": "机械派生：一世→卦身午支",
+    "sanhe_full_combo": "无",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "无",
+    "use_god_in_sanhe_basis": "机械判定：书面用神亥是否入三合"
    },
    "scoring": {
     "verdict_match": 0.35,
@@ -342,7 +384,13 @@
     "use_god_muku": "入日墓",
     "use_god_muku_basis": "机械判定：金墓在丑，日丑/月酉",
     "use_god_six_spirit": "青龙",
-    "use_god_six_spirit_basis": "机械派生：己日4爻按六神起例"
+    "use_god_six_spirit_basis": "机械派生：己日4爻按六神起例",
+    "gua_shen_branch": "未",
+    "gua_shen_branch_basis": "机械派生：二世→卦身未支",
+    "sanhe_full_combo": "申子辰",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "申子辰",
+    "use_god_in_sanhe_basis": "机械判定：书面用神申是否入三合"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -385,7 +433,13 @@
     "use_god_muku": "入日墓",
     "use_god_muku_basis": "机械判定：土墓在辰，日辰/月午",
     "use_god_six_spirit": "青龙",
-    "use_god_six_spirit_basis": "机械派生：丙日6爻按六神起例"
+    "use_god_six_spirit_basis": "机械派生：丙日6爻按六神起例",
+    "gua_shen_branch": "寅",
+    "gua_shen_branch_basis": "机械派生：三世→卦身寅支",
+    "sanhe_full_combo": "无",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "无",
+    "use_god_in_sanhe_basis": "机械判定：书面用神戌是否入三合"
    },
    "scoring": {
     "verdict_match": 0.35,
@@ -462,7 +516,13 @@
     "use_god_muku": "不入墓",
     "use_god_muku_basis": "机械判定：土墓在辰，日戌/月寅",
     "use_god_six_spirit": "玄武",
-    "use_god_six_spirit_basis": "机械派生：戊日4爻按六神起例"
+    "use_god_six_spirit_basis": "机械派生：戊日4爻按六神起例",
+    "gua_shen_branch": "巳",
+    "gua_shen_branch_basis": "机械派生：六世→卦身巳支",
+    "sanhe_full_combo": "亥卯未",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "亥卯未",
+    "use_god_in_sanhe_basis": "机械判定：书面用神未是否入三合"
    },
    "scoring": {
     "verdict_match": 0.35,
@@ -536,7 +596,13 @@
     "use_god_muku": "入月墓",
     "use_god_muku_basis": "机械判定：水墓在辰，日戌/月辰",
     "use_god_six_spirit": "玄武",
-    "use_god_six_spirit_basis": "机械派生：庚日2爻按六神起例"
+    "use_god_six_spirit_basis": "机械派生：庚日2爻按六神起例",
+    "gua_shen_branch": "午",
+    "gua_shen_branch_basis": "机械派生：一世→卦身午支",
+    "sanhe_full_combo": "无",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "无",
+    "use_god_in_sanhe_basis": "机械判定：书面用神亥是否入三合"
    },
    "scoring": {
     "verdict_match": 0.35,
@@ -574,7 +640,13 @@
     "use_god_wangshuai": "休",
     "use_god_wangshuai_basis": "机械派生：用神卯(木)临午(火)月",
     "use_god_muku": "不入墓",
-    "use_god_muku_basis": "机械判定：木墓在未，日巳/月午"
+    "use_god_muku_basis": "机械判定：木墓在未，日巳/月午",
+    "gua_shen_branch": "酉",
+    "gua_shen_branch_basis": "机械派生：四世→卦身酉支",
+    "sanhe_full_combo": "申子辰",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "无",
+    "use_god_in_sanhe_basis": "机械判定：书面用神卯是否入三合"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -612,7 +684,13 @@
     "use_god_wangshuai": "休",
     "use_god_wangshuai_basis": "机械派生：用神午(火)临辰(土)月",
     "use_god_muku": "不入墓",
-    "use_god_muku_basis": "机械判定：火墓在戌，日申/月辰"
+    "use_god_muku_basis": "机械判定：火墓在戌，日申/月辰",
+    "gua_shen_branch": "寅",
+    "gua_shen_branch_basis": "机械派生：三世→卦身寅支",
+    "sanhe_full_combo": "无",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "无",
+    "use_god_in_sanhe_basis": "机械判定：书面用神午是否入三合"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -649,7 +727,13 @@
     "use_god_wangshuai": "囚",
     "use_god_wangshuai_basis": "机械派生：用神午(火)临酉(金)月",
     "use_god_muku": "不入墓",
-    "use_god_muku_basis": "机械判定：火墓在戌，日辰/月酉"
+    "use_god_muku_basis": "机械判定：火墓在戌，日辰/月酉",
+    "gua_shen_branch": "酉",
+    "gua_shen_branch_basis": "机械派生：四世→卦身酉支",
+    "sanhe_full_combo": "无",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "无",
+    "use_god_in_sanhe_basis": "机械判定：书面用神午是否入三合"
    },
    "scoring": {
     "verdict_match": 0.35,
@@ -685,7 +769,13 @@
     "use_god_wangshuai": "相",
     "use_god_wangshuai_basis": "机械派生：用神午(火)临卯(木)月",
     "use_god_muku": "不入墓",
-    "use_god_muku_basis": "机械判定：火墓在戌，日辰/月卯"
+    "use_god_muku_basis": "机械判定：火墓在戌，日辰/月卯",
+    "gua_shen_branch": "子",
+    "gua_shen_branch_basis": "机械派生：一世→卦身子支",
+    "sanhe_full_combo": "无",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "无",
+    "use_god_in_sanhe_basis": "机械判定：书面用神午是否入三合"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -722,7 +812,13 @@
     "use_god_wangshuai": "相",
     "use_god_wangshuai_basis": "机械派生：用神巳(火)临卯(木)月",
     "use_god_muku": "不入墓",
-    "use_god_muku_basis": "机械判定：火墓在戌，日辰/月卯"
+    "use_god_muku_basis": "机械判定：火墓在戌，日辰/月卯",
+    "gua_shen_branch": "子",
+    "gua_shen_branch_basis": "机械派生：一世→卦身子支",
+    "sanhe_full_combo": "无",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "无",
+    "use_god_in_sanhe_basis": "机械判定：书面用神巳是否入三合"
    },
    "scoring": {
     "verdict_match": 0.35,
@@ -1110,7 +1206,13 @@
     "use_god_wangshuai": "休",
     "use_god_wangshuai_basis": "机械派生：用神卯(木)临午(火)月",
     "use_god_muku": "不入墓",
-    "use_god_muku_basis": "机械判定：木墓在未，日巳/月午"
+    "use_god_muku_basis": "机械判定：木墓在未，日巳/月午",
+    "gua_shen_branch": "酉",
+    "gua_shen_branch_basis": "机械派生：四世→卦身酉支",
+    "sanhe_full_combo": "申子辰",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "无",
+    "use_god_in_sanhe_basis": "机械判定：书面用神卯是否入三合"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -1156,7 +1258,13 @@
     "use_god_muku": "入月墓",
     "use_god_muku_basis": "机械判定：土墓在辰，日申/月辰",
     "use_god_six_spirit": "白虎",
-    "use_god_six_spirit_basis": "机械派生：戊日3爻按六神起例"
+    "use_god_six_spirit_basis": "机械派生：戊日3爻按六神起例",
+    "gua_shen_branch": "巳",
+    "gua_shen_branch_basis": "机械派生：六世→卦身巳支",
+    "sanhe_full_combo": "申子辰",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "申子辰",
+    "use_god_in_sanhe_basis": "机械判定：书面用神辰是否入三合"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -1197,7 +1305,13 @@
     "use_god_wangshuai": "相",
     "use_god_wangshuai_basis": "机械派生：用神午(火)临寅(木)月",
     "use_god_muku": "不入墓",
-    "use_god_muku_basis": "机械判定：火墓在戌，日子/月寅"
+    "use_god_muku_basis": "机械判定：火墓在戌，日子/月寅",
+    "gua_shen_branch": "未",
+    "gua_shen_branch_basis": "机械派生：二世→卦身未支",
+    "sanhe_full_combo": "申子辰",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "无",
+    "use_god_in_sanhe_basis": "机械判定：书面用神午是否入三合"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -1237,7 +1351,13 @@
     "use_god_wangshuai": "旺",
     "use_god_wangshuai_basis": "机械派生：用神子(水)临子(水)月",
     "use_god_muku": "不入墓",
-    "use_god_muku_basis": "机械判定：水墓在辰，日寅/月子"
+    "use_god_muku_basis": "机械判定：水墓在辰，日寅/月子",
+    "gua_shen_branch": "丑",
+    "gua_shen_branch_basis": "机械派生：二世→卦身丑支",
+    "sanhe_full_combo": "寅午戌",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "无",
+    "use_god_in_sanhe_basis": "机械判定：书面用神子是否入三合"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -1277,7 +1397,13 @@
     "use_god_wangshuai": "旺",
     "use_god_wangshuai_basis": "机械派生：用神卯(木)临卯(木)月",
     "use_god_muku": "不入墓",
-    "use_god_muku_basis": "机械判定：木墓在未，日亥/月卯"
+    "use_god_muku_basis": "机械判定：木墓在未，日亥/月卯",
+    "gua_shen_branch": "寅",
+    "gua_shen_branch_basis": "机械派生：三世→卦身寅支",
+    "sanhe_full_combo": "无",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "无",
+    "use_god_in_sanhe_basis": "机械判定：书面用神卯是否入三合"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -1321,7 +1447,13 @@
     "use_god_muku": "不入墓",
     "use_god_muku_basis": "机械判定：火墓在戌，日丑/月酉",
     "use_god_six_spirit": "螣蛇",
-    "use_god_six_spirit_basis": "机械派生：丁日3爻按六神起例"
+    "use_god_six_spirit_basis": "机械派生：丁日3爻按六神起例",
+    "gua_shen_branch": "申",
+    "gua_shen_branch_basis": "机械派生：归魂→卦身申支",
+    "sanhe_full_combo": "无",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "无",
+    "use_god_in_sanhe_basis": "机械判定：书面用神午是否入三合"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -1366,7 +1498,13 @@
     "use_god_muku": "不入墓",
     "use_god_muku_basis": "机械判定：土墓在辰，日寅/月亥",
     "use_god_six_spirit": "勾陈",
-    "use_god_six_spirit_basis": "机械派生：甲日3爻按六神起例"
+    "use_god_six_spirit_basis": "机械派生：甲日3爻按六神起例",
+    "gua_shen_branch": "申",
+    "gua_shen_branch_basis": "机械派生：三世→卦身申支",
+    "sanhe_full_combo": "无",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "无",
+    "use_god_in_sanhe_basis": "机械判定：书面用神辰是否入三合"
    },
    "scoring": {
     "verdict_match": 0.35,
@@ -1407,7 +1545,13 @@
     "use_god_wangshuai": "休",
     "use_god_wangshuai_basis": "机械派生：用神辰(土)临申(金)月",
     "use_god_muku": "不入墓",
-    "use_god_muku_basis": "机械判定：土墓在辰，日卯/月申"
+    "use_god_muku_basis": "机械判定：土墓在辰，日卯/月申",
+    "gua_shen_branch": "寅",
+    "gua_shen_branch_basis": "机械派生：三世→卦身寅支",
+    "sanhe_full_combo": "无",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "无",
+    "use_god_in_sanhe_basis": "机械判定：书面用神辰是否入三合"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -1451,7 +1595,13 @@
     "use_god_muku": "不入墓",
     "use_god_muku_basis": "机械判定：水墓在辰，日午/月午",
     "use_god_six_spirit": "朱雀",
-    "use_god_six_spirit_basis": "机械派生：甲日2爻按六神起例"
+    "use_god_six_spirit_basis": "机械派生：甲日2爻按六神起例",
+    "gua_shen_branch": "丑",
+    "gua_shen_branch_basis": "机械派生：二世→卦身丑支",
+    "sanhe_full_combo": "巳酉丑",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "无",
+    "use_god_in_sanhe_basis": "机械判定：书面用神亥是否入三合"
    },
    "scoring": {
     "verdict_match": 0.35,
@@ -1494,7 +1644,13 @@
     "use_god_wangshuai": "死",
     "use_god_wangshuai_basis": "机械派生：用神子(水)临未(土)月",
     "use_god_muku": "不入墓",
-    "use_god_muku_basis": "机械判定：水墓在辰，日亥/月未"
+    "use_god_muku_basis": "机械判定：水墓在辰，日亥/月未",
+    "gua_shen_branch": "子",
+    "gua_shen_branch_basis": "机械派生：一世→卦身子支",
+    "sanhe_full_combo": "无",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "无",
+    "use_god_in_sanhe_basis": "机械判定：书面用神子是否入三合"
    },
    "scoring": {
     "verdict_match": 0.4,
@@ -1537,7 +1693,13 @@
     "use_god_wangshuai": "死",
     "use_god_wangshuai_basis": "机械派生：用神亥(水)临辰(土)月",
     "use_god_muku": "入月墓",
-    "use_god_muku_basis": "机械判定：水墓在辰，日寅/月辰"
+    "use_god_muku_basis": "机械判定：水墓在辰，日寅/月辰",
+    "gua_shen_branch": "卯",
+    "gua_shen_branch_basis": "机械派生：游魂→卦身卯支",
+    "sanhe_full_combo": "寅午戌",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "无",
+    "use_god_in_sanhe_basis": "机械判定：书面用神亥是否入三合"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -1577,7 +1739,13 @@
     "use_god_wangshuai": "旺",
     "use_god_wangshuai_basis": "机械派生：用神未(土)临戌(土)月",
     "use_god_muku": "不入墓",
-    "use_god_muku_basis": "机械判定：土墓在辰，日卯/月戌"
+    "use_god_muku_basis": "机械判定：土墓在辰，日卯/月戌",
+    "gua_shen_branch": "卯",
+    "gua_shen_branch_basis": "机械派生：游魂→卦身卯支",
+    "sanhe_full_combo": "无",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "无",
+    "use_god_in_sanhe_basis": "机械判定：书面用神未是否入三合"
    },
    "scoring": {
     "verdict_match": 0.3,
@@ -1618,7 +1786,13 @@
     "use_god_wangshuai": "死",
     "use_god_wangshuai_basis": "机械派生：用神子(水)临丑(土)月",
     "use_god_muku": "不入墓",
-    "use_god_muku_basis": "机械判定：水墓在辰，日子/月丑"
+    "use_god_muku_basis": "机械判定：水墓在辰，日子/月丑",
+    "gua_shen_branch": "酉",
+    "gua_shen_branch_basis": "机械派生：四世→卦身酉支",
+    "sanhe_full_combo": "无",
+    "sanhe_full_combo_basis": "机械判定：本卦纳甲支集合",
+    "use_god_in_sanhe": "无",
+    "use_god_in_sanhe_basis": "机械判定：书面用神子是否入三合"
    },
    "scoring": {
     "verdict_match": 0.3,

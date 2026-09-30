@@ -1507,6 +1507,10 @@
     "crt_097": {
       "text": "月({0})",
       "template": true
+    },
+    "crt_098": {
+      "text": "卦身{0}不现于卦，事无定向；须待临值或伏出之期方有眉目",
+      "template": true
     }
   },
   "pattern_verdicts": {

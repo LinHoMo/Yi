@@ -488,33 +488,33 @@ def _score_fuyin(scope, use_god_strength, result, basic_detail):
     return score, interpretation, quote
 
 
-def find_hexagram_body(generation, day_stem):
+def find_hexagram_body(world_is_yang, world_position):
     """
-    定位卦身爻位 (1-6)。
+    安月卦身（《卜筮正宗》安月卦身诀唯一实现）。
+
+    「阴世则从午月起，阳世还从子月生，欲得识其卦中意，从初数至世方真。」
+
+    - 阳世（世爻为阳）：从初爻起子，二丑三寅四卯五辰六巳；
+    - 阴世（世爻为阴）：从初爻起午，二未三申四酉五戌六亥。
+    「从初数至世」= 数到世爻所在爻位，所得地支即月卦身支。
 
     Parameters
     ----------
-    generation : int
-        卦的代数：一世=1, 二世=2, ..., 六世=6, 游魂=7, 归魂=8
-    day_stem : str
-        日干（十个天干的字符串），决定顺逆
+    world_is_yang : bool
+        世爻爻画是否为阳（阳世 True / 阴世 False）
+    world_position : int
+        世爻所在爻位 (1=初爻 ... 6=上爻；游魂=4、归魂=3)
 
     Returns
     -------
-    int
-        卦身爻位 (1-6, 1=初爻, 6=上爻)
+    str
+        卦身地支（"子"~"亥"）；世爻位不在 1..6 返回空串。
     """
-    YANG_STEMS = {"甲", "丙", "戊", "庚", "壬"}
-    is_yang_day = day_stem in YANG_STEMS
-
-    if is_yang_day:
-        # 阳日起，顺数：世数即位数
-        body_pos = 1 + (generation - 1)
-    else:
-        # 阴日起，逆数：从 7 逆推
-        body_pos = 7 - generation
-
-    return ((body_pos - 1) % 6) + 1  # clamp to 1-6
+    if world_position < 1 or world_position > 6:
+        return ""
+    seq = ("子", "丑", "寅", "卯", "辰", "巳") if world_is_yang \
+        else ("午", "未", "申", "酉", "戌", "亥")
+    return seq[world_position - 1]
 
 
 def _relation_element(relation, palace_element):

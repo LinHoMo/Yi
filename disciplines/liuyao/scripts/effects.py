@@ -1185,97 +1185,96 @@ def analyze_hexagram_body(result):
     """
     卦身法分析：卦身为一卦之身体，代表事物的本体与根基。
 
+    《卜筮正宗》安月卦身诀：「阴世则从午月起，阳世还从子月生，
+    欲得识其卦中意，从初数至世方真。」以世爻阴阳 + 世爻爻位推卦身支，
+    卦身支在卦中所现爻即卦身（可 0/1/2 处；不现为「卦身不现」，事无头绪）。
+
     Returns
     -------
-    dict with keys: body_position, body_element, body_relation,
-        meaning, classical_rule, implications
+    dict with keys: body_branch, body_position(s), body_element, body_relation,
+        body_not_present, meaning, classical_rule, implications
     """
     hex_info = result.get("original_hexagram", {})
     generation = hex_info.get("generation", "")
-
-    # 解析 generation 为数字
-    gen_map = {
-        "六世": 6, "五世": 5, "四世": 4, "三世": 3,
-        "二世": 2, "一世": 1,
-        "游魂": 7, "归魂": 8,
-    }
-    gen_num = gen_map.get(generation, 0)
-
-    if gen_num == 0:
-        return {
-            "body_position": None,
-            "body_element": "",
-            "body_relation": "",
-            "meaning": ctext("cr_030"),
-            "classical_rule": "阳世子起顺推，阴世应起逆推",
-            "implications": [],
-        }
-
-    # 获取日干
-    dt = result.get("divination_time", {})
-    day_sb = dt.get("day_stem_branch", "甲")
-    day_stem = day_sb[0] if day_sb else "甲"
-
-    body_pos = find_hexagram_body(gen_num, day_stem)
-
-    # 获取对应爻信息
     yao_lines = hex_info.get("yao_lines", [])
-    body_yao = {}
-    for yao in yao_lines:
-        if yao.get("position") == body_pos:
-            body_yao = yao
-            break
 
-    body_element = _branch_element(body_yao.get("earthly_branch", ""))
-    body_relation = body_yao.get("six_relation", "")
-    is_empty = body_yao.get("earthly_branch", "") in result.get("empty_branches", [])
-
-    # 判断卦身与世爻/用神的关系
-    response_texts = []
-
-    # 卦身持世检查
+    # 世爻爻位（游魂=4、归魂=3，与装卦通则一致）
     gen_map_reverse = {"六世": 6, "五世": 5, "四世": 4, "三世": 3,
                        "二世": 2, "一世": 1, "游魂": 4, "归魂": 3}
-    world_pos = gen_map_reverse.get(generation, 1)
+    world_pos = gen_map_reverse.get(generation, 0)
 
-    if body_pos == world_pos:
-        response_texts.append(CINTERP["hex_body_world"]["text"])
+    if world_pos == 0 or not yao_lines:
+        return {
+            "body_position": None, "body_positions": [], "body_branch": "",
+            "body_element": "", "body_relation": "",
+            "meaning": ctext("cr_030"),
+            "classical_rule": "《卜筮正宗》安月卦身诀：阴世则从午月起，阳世还从子月生；从初数至世方真。",
+            "implications": [],
+            "body_not_present": False,
+        }
 
-    # 卦身临用神检查
-    use_positions = _find_use_god_positions(result)
-    if body_pos in use_positions:
-        response_texts.append(CINTERP["hex_body_use"]["text"])
+    world_yao = next((y for y in yao_lines if y.get("position") == world_pos), None)
+    if world_yao is None:
+        return {
+            "body_position": None, "body_positions": [], "body_branch": "",
+            "body_element": "", "body_relation": "",
+            "meaning": ctext("cr_030"),
+            "classical_rule": "《卜筮正宗》安月卦身诀：阴世则从午月起，阳世还从子月生；从初数至世方真。",
+            "implications": [],
+            "body_not_present": False,
+        }
 
-    # 卦身空破
-    if is_empty:
-        response_texts.append(CINTERP["hex_body_empty"]["text"])
+    world_is_yang = world_yao.get("nature") == "yang"
+    body_branch = find_hexagram_body(world_is_yang, world_pos)  # 月卦身支
 
-    # 卦身临官鬼
-    if body_relation == "官鬼":
-        response_texts.append(CINTERP["hex_body_officer"]["text"])
-    elif body_relation == "妻财":
-        response_texts.append(CINTERP["hex_body_wealth"]["text"])
-    elif body_relation == "子孙":
-        response_texts.append(CINTERP["hex_body_child"]["text"])
+    # 卦身支在卦中所现爻位（可 0 / 1 / 2 处）
+    body_positions = [y.get("position") for y in yao_lines
+                      if y.get("earthly_branch") == body_branch]
+    body_yao = next((y for y in yao_lines if y.get("earthly_branch") == body_branch), {})
 
-    if not response_texts:
-        response_texts.append(ctpl("crt_025", _pos_to_name(body_pos), body_relation))
+    body_element = _branch_element(body_branch)
+    body_relation = body_yao.get("six_relation", "")
+    is_empty = body_branch in result.get("empty_branches", [])
+
+    response_texts = []
+    body_pos = body_positions[0] if body_positions else None
+    if not body_positions:
+        response_texts.append(ctpl("crt_098", body_branch))
+    else:
+        if world_pos in body_positions:
+            response_texts.append(CINTERP["hex_body_world"]["text"])
+        use_positions = _find_use_god_positions(result)
+        if any(p in use_positions for p in body_positions):
+            response_texts.append(CINTERP["hex_body_use"]["text"])
+        if is_empty:
+            response_texts.append(CINTERP["hex_body_empty"]["text"])
+        if body_relation == "官鬼":
+            response_texts.append(CINTERP["hex_body_officer"]["text"])
+        elif body_relation == "妻财":
+            response_texts.append(CINTERP["hex_body_wealth"]["text"])
+        elif body_relation == "子孙":
+            response_texts.append(CINTERP["hex_body_child"]["text"])
+        if not response_texts:
+            response_texts.append(ctpl("crt_025", _pos_to_name(body_pos), body_relation))
 
     return {
         "body_position": body_pos,
+        "body_positions": body_positions,
+        "body_branch": body_branch,
         "body_element": body_element,
         "body_relation": body_relation,
-        "meaning": ctpl("crt_004", _pos_to_name(body_pos)),
-        "classical_rule": "阳世子起顺推，阴世应起逆推",
+        "meaning": ctpl("crt_004", _pos_to_name(body_pos)) if body_pos else "卦身不现",
+        "classical_rule": "《卜筮正宗》安月卦身诀：阴世则从午月起，阳世还从子月生；从初数至世方真。",
         "implications": [
             CINTERP["hex_body_use_arrow"]["text"],
             CINTERP["hex_body_ji_arrow"]["text"],
             CINTERP["hex_body_world_arrow"]["text"],
             CINTERP["hex_body_empty_arrow"]["text"],
         ],
-        "body_is_world": body_pos == world_pos,
+        "body_is_world": world_pos in body_positions,
         "body_is_empty": is_empty,
-        "body_is_use_god": body_pos in use_positions,
+        "body_is_use_god": any(p in _find_use_god_positions(result) for p in body_positions),
+        "body_not_present": not body_positions,
         "specific_notes": response_texts,
     }
 

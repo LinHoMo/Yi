@@ -471,16 +471,18 @@ def _get_hexagram_body_summary_note(r: dict) -> str:
     if not isinstance(hb, dict):
         return ""
 
-    body_pos = hb.get("body_position")
-    if body_pos is None:
-        return ""
-
-    # 将数字爻位转为名称
-    pos_names = {1: "初爻", 2: "二爻", 3: "三爻", 4: "四爻", 5: "五爻", 6: "上爻"}
-    pos_name = pos_names.get(body_pos, f"{body_pos}爻")
-
+    body_positions = hb.get("body_positions") or []
+    body_branch = hb.get("body_branch", "")
     body_relation = hb.get("body_relation", "")
     specific_notes = hb.get("specific_notes", [])
+
+    # 卦身不现：古籍「无卦身则事无头绪」，specific_notes 首条（crt_098）已含卦身支
+    if hb.get("body_not_present") or not body_positions:
+        return specific_notes[0] if specific_notes else f"卦身{body_branch}不现于卦，事无定向"
+
+    # 将数字爻位转为名称（卦身可一卦多现）
+    pos_names = {1: "初爻", 2: "二爻", 3: "三爻", 4: "四爻", 5: "五爻", 6: "上爻"}
+    pos_name = "、".join(pos_names.get(p, f"{p}爻") for p in body_positions)
 
     # 八卦身含义（按占问类型）
     body_relation_meaning = {

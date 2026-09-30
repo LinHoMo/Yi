@@ -30,6 +30,7 @@ from yishu_core import ganzhi_calendar as gc  # noqa: E402
 from liuyao_engine import build_hexagram_result  # noqa: E402
 from thinking_chain import run_thinking_chain  # noqa: E402
 from classical_enhancements import element_strength_in_month  # noqa: E402
+from effects import analyze_hexagram_body  # noqa: E402
 from liuyao_narrate import build_human_narrative, render_human_markdown  # noqa: E402
 
 CASES = ROOT / "data" / "cases" / "classical_cases.json"
@@ -38,7 +39,7 @@ SPLITS = ROOT / "data" / "cases" / "case_splits.json"
 # 爻序与卦表全部来自内核（不再有本地副本）：
 #   BAGUA_LINES 自下而上，HEXAGRAM_TRIGRAMS 给出上下卦 —— 于是"某卦化出某卦"
 #   的动爻位次由两者爻线逐位比较得出，不再靠一张镜像表凑。
-from yishu_core.symbols import BAGUA_LINES, HEXAGRAM_TRIGRAMS, TOMB_MAP  # noqa: E402
+from yishu_core.symbols import BAGUA_LINES, HEXAGRAM_TRIGRAMS, TOMB_MAP, SAN_HE_GROUPS  # noqa: E402
 
 _STEMS = "甲乙丙丁戊己庚辛壬癸"
 _MONTH_RE = re.compile(r"([%s])月" % "子丑寅卯辰巳午未申酉戌亥")
@@ -257,6 +258,22 @@ def run_case(case: dict) -> dict:
         hits = [tag for tag, br in (("入日墓", day_br), ("入月墓", month_br))
                 if tomb_of and tomb_of == br]
         extra["use_god_muku"] = "、".join(hits) if hits else "不入墓"
+
+    # ── 卦身支（《卜筮正宗》安月卦身诀：世爻阴阳 + 世爻位 → 卦身支，analyze_hexagram_body 唯一实现）──
+    body = analyze_hexagram_body(h)
+    extra["gua_shen_branch"] = body.get("body_branch") or "?"
+
+    # ── 三合局（纯纳甲事实）：本卦六爻支是否含完整三合组；用神支是否入局 ──
+    hex_branches = {y.get("earthly_branch") for y in h["original_hexagram"]["yao_lines"]}
+    full_combo = god_combo = ""
+    for _elem, grp in SAN_HE_GROUPS.items():
+        if set(grp) <= hex_branches:
+            full_combo = "".join(grp)
+            if ug_branch in grp:
+                god_combo = "".join(grp)
+            break
+    extra["sanhe_full_combo"] = full_combo or "无"
+    extra["use_god_in_sanhe"] = god_combo or "无"
 
     return {
         "id": cid,

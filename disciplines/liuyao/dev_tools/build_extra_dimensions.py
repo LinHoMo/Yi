@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """附加评测维度基准补全器（一次性数据构建，产物入库、脚本留档可复跑）。
 
-补三个维度（只在机械可定时填，与 build_usegod_position 同一口径）：
+补六维度（只在机械可定时填，与 build_usegod_position 同一口径）：
   - expected.use_god_wangshuai（月令旺衰 旺/相/休/囚/死）：
     书面已明写用神地支（expected.use_god_branch），其五行对月建的旺衰为机械派生
     （classical_enhancements.element_strength_in_month），对表回归性质。
@@ -10,10 +10,18 @@
   - expected.use_god_six_spirit（六神临用）：
     书面用神爻位已由纳甲唯一确定（expected.use_god_position，30o 批），
     六神由日干 + 爻位按起例表机械派生（engine_chart.get_six_spirit）。
+  - expected.gua_shen_branch（卦身支，仅主案例集）：世爻阴阳 + 世爻位按
+    《卜筮正宗》安月卦身诀机械派生（effects.analyze_hexagram_body 唯一实现）。
+  - expected.sanhe_full_combo / expected.use_god_in_sanhe（三合局，仅主案例集）：
+    本卦六爻纳甲支是否含完整三合组（内核 SAN_HE_GROUPS）；书面用神支是否入局。
 
 数据源：月将/日辰由案例时间还原（case_runner.resolve_case_time）后经
 build_hexagram_result 排出，与引擎跑同一案例同源——故本批为**对表回归**，
-衡量「取用神 → 定爻位/旺衰/墓库/六神」派生链路的自洽，非泛化证据。
+衡量「取用神 → 定爻位/旺衰/墓库/六神/卦身/三合」派生链路的自洽，非泛化证据。
+
+卦身/三合无古籍案例锚点（案例原文不写卦身、几乎不写三合），属「对通则对表」；
+只填主案例集，**不填外部集**——外部集（wikisource 等）是永不调参的真检验，
+不能被必然满分的自洽维度抬高（口径诚实，见 CHANGELOG 30r）。
 """
 from __future__ import annotations
 
@@ -29,13 +37,14 @@ for _p in (str(DISC / "scripts"), str(DISC.parents[1] / "core")):
 from liuyao_engine import build_hexagram_result  # noqa: E402
 from engine_chart import get_six_spirit  # noqa: E402
 from classical_enhancements import element_strength_in_month  # noqa: E402
-from yishu_core.symbols import BRANCH_ELEMENTS, TOMB_MAP  # noqa: E402
+from effects import analyze_hexagram_body  # noqa: E402
+from yishu_core.symbols import BRANCH_ELEMENTS, TOMB_MAP, SAN_HE_GROUPS  # noqa: E402
 import case_runner as cr  # noqa: E402
 
 CASES = DISC / "data" / "cases" / "classical_cases.json"
 
 
-def _build_file(path: Path, counters: list, indent: int) -> bool:
+def _build_file(path: Path, counters: list, indent: int, self_consistent: bool = False) -> bool:
     store = json.loads(path.read_text(encoding="utf-8"))
     changed = False
     for case in store.get("cases", []):
@@ -87,6 +96,38 @@ def _build_file(path: Path, counters: list, indent: int) -> bool:
             counters[2] += 1
             changed = True
 
+        # ── 卦身/三合：仅主案例集（无古籍案例锚点，对通则对表；外部集不填防口径膨胀）──
+        if self_consistent:
+            if not exp.get("gua_shen_branch"):
+                body = analyze_hexagram_body(h)
+                gsb = body.get("body_branch")
+                if gsb:
+                    exp["gua_shen_branch"] = gsb
+                    exp.setdefault(
+                        "gua_shen_branch_basis",
+                        f"机械派生：{h['original_hexagram'].get('generation','')}"
+                        f"→卦身{gsb}支")
+                    counters[4] += 1
+                    changed = True
+            if not exp.get("sanhe_full_combo"):
+                hex_branches = {y.get("earthly_branch")
+                                for y in h["original_hexagram"]["yao_lines"]}
+                full_combo = god_combo = ""
+                for _elem, grp in SAN_HE_GROUPS.items():
+                    if set(grp) <= hex_branches:
+                        full_combo = "".join(grp)
+                        if branch in grp:
+                            god_combo = "".join(grp)
+                        break
+                exp["sanhe_full_combo"] = full_combo or "无"
+                exp.setdefault("sanhe_full_combo_basis", "机械判定：本卦纳甲支集合")
+                exp["use_god_in_sanhe"] = god_combo or "无"
+                exp.setdefault("use_god_in_sanhe_basis",
+                               f"机械判定：书面用神{branch or '?'}是否入三合")
+                counters[5] += 1
+                counters[6] += 1
+                changed = True
+
     # 保留各文件原有缩进（主案例集 indent=1，外部集 indent=2）与末尾换行；无改动不写回
     if changed:
         path.write_text(json.dumps(store, ensure_ascii=False, indent=indent) + "\n",
@@ -97,11 +138,12 @@ def _build_file(path: Path, counters: list, indent: int) -> bool:
 def main() -> int:
     # 主案例集 + 全部外部集（外部 split 永不调参，补入后即外部对表检验）
     others = [p for p in sorted(CASES.parent.glob("*_cases.json")) if p.name != CASES.name]
-    counters = [0, 0, 0, 0]  # 旺衰 / 墓库 / 六神 / 无基准
-    _build_file(CASES, counters, indent=1)
+    counters = [0, 0, 0, 0, 0, 0, 0]  # 旺衰/墓库/六神/无基准/卦身/三合/用神入三合
+    _build_file(CASES, counters, indent=1, self_consistent=True)
     for path in others:
         _build_file(path, counters, indent=2)
-    print(f"旺衰 {counters[0]}｜墓库 {counters[1]}｜六神 {counters[2]}｜无基准跳过 {counters[3]}")
+    print(f"旺衰 {counters[0]}｜墓库 {counters[1]}｜六神 {counters[2]}｜无基准跳过 {counters[3]}｜"
+          f"卦身 {counters[4]}｜三合 {counters[5]}｜用神入三合 {counters[6]}")
     return 0
 
 
