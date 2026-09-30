@@ -1,0 +1,23 @@
+{
+  "key": "yan-bo-diao-sou-ge",
+  "kind": "奇门遁甲",
+  "title": "煙波釣叟歌",
+  "site": "zh.wikisource.org",
+  "api": "https://zh.wikisource.org/w/api.php",
+  "pages": [
+    "煙波釣叟歌"
+  ],
+  "page_count": 1,
+  "fetched": "2026-09-30 16:04:46+0800",
+  "sha256": "2041b3d44bed75758144f45d6323aaf8d7d73fdcf703c304192438921f922bc0",
+  "stats": {
+    "bytes": 5970,
+    "chars": 2258,
+    "lines": 114,
+    "ganzhi_pairs": 5,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/yan-bo-diao-sou-ge.wikitext.txt",
+  "note": "公版古籍原文的字符级转存，未做任何改写或模型转写；子页以 <!-- ==== 标题 ==== --> 分隔。"
+}
