@@ -4,7 +4,8 @@
 > 本文件只写「现在是什么、怎么跑、还欠什么」。**债务速查见 `docs/TECH-DEBT.md`**。
 > **一切分数是古籍案例对齐分，不是现实预测命中率**（`AGENTS.md` 铁律三）。
 > 路线：`docs/YI-PLAN.md`。深度改造清单：`docs/DEEP-DIVE-PLAN.md`；
-> 新门类论证：`docs/NEW-DISCIPLINES.md`；网页端 AI 取用规程：`docs/AI-SOP.md`。
+> 新门类论证：`docs/NEW-DISCIPLINES.md`；网页端 AI 取用规程：`docs/AI-SOP.md`；
+> 同域项目调研（Horosa/星阙）：`docs/RESEARCH-HOROSA.md`。
 > 规格归档：`docs/compose/spec/`。
 
 **范围（2026-09-30d：六科 + 两条出报告通道）**：
