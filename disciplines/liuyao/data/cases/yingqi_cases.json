@@ -1,7 +1,7 @@
 {
   "_meta": {
     "description": "应期外部验证集：从 case_library.md 抽取、通过四道自洽校验、永不参与调参",
-    "built_by": "tools/build_yingqi_set.py",
+    "built_by": "dev_tools/build_yingqi_set.py",
     "total_cases": 2,
     "excluded": [
       {
@@ -338,7 +338,7 @@
         "detail": "未日病愈（冲破合局）",
         "same_as_day_branch": false
       },
-      "notes": "tools/build_yingqi_set.py 抽取，过本卦可解析/卦变自洽/时间可还原/应验句有干支/应期不宽于三支/用神与吉凶可判 六道门；不参与任何调参"
+      "notes": "dev_tools/build_yingqi_set.py 抽取，过本卦可解析/卦变自洽/时间可还原/应验句有干支/应期不宽于三支/用神与吉凶可判 六道门；不参与任何调参"
     },
     {
       "id": "YQ007",
@@ -367,7 +367,7 @@
         "detail": "巳日得医，日渐好转而愈",
         "same_as_day_branch": true
       },
-      "notes": "tools/build_yingqi_set.py 抽取，过本卦可解析/卦变自洽/时间可还原/应验句有干支/应期不宽于三支/用神与吉凶可判 六道门；不参与任何调参"
+      "notes": "dev_tools/build_yingqi_set.py 抽取，过本卦可解析/卦变自洽/时间可还原/应验句有干支/应期不宽于三支/用神与吉凶可判 六道门；不参与任何调参"
     }
   ]
 }

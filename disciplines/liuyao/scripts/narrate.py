@@ -183,7 +183,7 @@ def narrate(a: dict) -> str:
     result = dict(a)
 
     # 1. 构造结构化叙事（human_narrative 提供）
-    from human_narrative import build_human_narrative
+    from liuyao_narrate import build_human_narrative
     narrative = build_human_narrative(result)
 
     # 2. 专项叙事段：六神临用 / 持世 / 卦身 / 用神所本

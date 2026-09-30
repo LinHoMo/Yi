@@ -1,7 +1,7 @@
 {
   "_meta": {
     "description": "《增刪卜易》维基文库原本自动解析的占验案例；通过纳甲/卦变/世应三方校验",
-    "built_by": "tools/fetch_wikisource_cases.py",
+    "built_by": "dev_tools/fetch_wikisource_cases.py",
     "retrieved": "2026-09-22",
     "sha256": "897f963b938ec4582bc892465301b831a6439216f317841f44b888117704ca07",
     "total_cases": 35,

@@ -158,5 +158,40 @@
     "WSD034",
     "WSD035",
     "WSD036"
-  ]
+  ],
+  "huozhulin_holdout": [
+    "HZL001",
+    "HZL002"
+  ],
+  "huozhulin_qualitative": [
+    "HZL001",
+    "HZL002",
+    "HZL003",
+    "HZL004",
+    "HZL005"
+  ],
+  "bushi_zhengzong_holdout": [],
+  "too_weak": [
+    {
+      "source": "黄金策（维基文库）",
+      "reason": "23389 字全文已下载（data/sources/huangjin_ce.wikitext.txt），但全书为理论赋体（总断千金赋+34分类章节+何知章），无任何'X月X日占Y得A之B卦果于C日'形态的占例；0 处应期锚点，不产出 yingqi-scorable 案例"
+    },
+    {
+      "source": "卜筮元龟",
+      "reason": "维基文库 API missingtitle；全文搜索未命中；无结构化数字版本"
+    },
+    {
+      "source": "断易天机",
+      "reason": "维基文库 API missingtitle（简/繁体均搜索未命中）；无结构化数字版本"
+    },
+    {
+      "source": "易冒（程良玉）",
+      "reason": "维基文库 API missingtitle；维基文库术数分类无此目"
+    },
+    {
+      "source": "卜筮全书",
+      "reason": "维基文库主搜索未命中；术数 Category 下仅4条目不含卜筮全书；shidianguji.com 有内容但无结构化 API"
+    }
+  ],
+  "note_externals": "yingqi_holdout/wikisource_holdout/wikisource_direction/huozhulin_holdout/bushi_zhengzong_holdout 均为外部验证集，永不参与调参；too_weak 为探测后<5 例或不存在之来源，不计入任何集合"
 }

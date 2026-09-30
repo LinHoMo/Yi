@@ -3,6 +3,224 @@
 仓库级变更登记（跨科 / 内核 / 口径 / 架构）。学科内细节见各科 `CHANGELOG.md`。
 规则：指标口径任何变动（计分方式、词典、缺失字段处理）必须在此登记，否则分数不可比（`AGENTS.md` §四.4）。
 
+### 2026-09-30d 两条出报告通道：纯前端（零凭证）+ 云端固定链接
+
+> **引擎口径零漂移**：六爻金标准指纹 `abc7884de0653ee5`（288 例）不变；tune/holdout
+> 对齐分未变（本轮未动推演规则）。新增的站点与同源验收不参与任何评分。
+
+**主要变更**：
+
+1. **新增纯前端通道（零凭证出报告）**：
+   - `web/`：单页应用（`index.html` + `web.css` + `web.js` + `favicon.svg`）+
+     `web/engine_runtime.py`（浏览器侧四段契约执行器；Pyodide 没有 `subprocess`，
+     改用同进程 `runpy`）。
+   - `tools/build_web.py`：把仓库源码镜像成静态站点（`engine/<仓库相对路径>`）+
+     生成 `manifest.json`（含 sha256、`profile`、`discipline` 标注与逐科体量汇总）。
+   - `tools/serve_web.py`：本机预览服务器（以仓库工作区为站点根，布局与 Pages 一致）。
+   - `tools/check_web_site.py`：站点自检（前端四件套 / 清单↔镜像逐条 sha256 对齐 /
+     各科运行期文件齐全 / `.nojekyll` / `engine_runtime.py` 引用的内核 API 存在）。
+   - `.github/workflows/pages.yml`：构建并发布到 GitHub Pages。
+   - **深链协议**：`?d=<学科>&q=&dt=&g=&mode=&way=&num=&yao=&date=&activity=&yb=&dir=&auto=1`，
+     网页端 AI 只需拼一条 URL，用户点开即出报告——**不需要凭证、不需要后端**。
+
+2. **请求→命令行参数的映射上收内核**：新增 `core/yishu_core/report/request.py`
+   （`normalize_request` / `chart_argv` / `analyze_argv` / `render_argv` /
+   `report_title` / `report_meta` / `norm_date` / `norm_iso`）。
+   本机/CI 子进程执行器（`tools/report.py`）与浏览器同进程执行器
+   （`web/engine_runtime.py`）共用这一份映射，禁止各写一份。
+   `tools/report.py` 相应瘦身为纯执行器，新增 `--result-json`、`--yao`、`--direction`。
+
+3. **新增同源验收** `tools/verify_web_parity.py`：同一请求分别经本地子进程与浏览器侧
+   执行器出报告，**Markdown 逐字节比对**、HTML 除"运行环境"标签外逐字节比对；
+   10 例（六科 + 4 个回归例）全绿。已接入 `tools/check.py --full` 的 `[7c]`。
+
+4. **缺陷修复（均有本机实测证据）**：
+   - 六爻起卦时刻**丢分钟**：`engine_chart.build_hexagram_result` 硬编码 `HH:00`，
+     输入 10:30 报告印 10:00，与页头 meta 自相矛盾。新增 `minute` 形参（缺省 0，
+     不参与任何推演），`disciplines/liuyao/scripts/chart.py` 透传真实分钟。
+   - 梅花/小六壬**参数映射错**：`way=numbers` 曾把 `--numbers` 转给只认
+     `--year-num/--hour-num` 的梅花（argparse exit 2）；小六壬则**静默忽略**，
+     实跑按 datetime 出课（求测者拿到另一种方式的盘而报告不说）。现改为白名单校验
+     + 正确映射（梅花按"年数,月数,日数"三数解释）。
+   - 择吉日期**未归一化**：`2026/09/30` 会让 `date.fromisoformat` 抛错，现统一归一化。
+   - 表外 `mode`/`way` 从"转发给 argparse 炸"或"静默忽略"改为**明确报错**。
+   - `/yi` 命令行里的 `key:value` **被静默丢弃**（旧正则要求键紧跟行首，
+     `/yi discipline: ming` 里键前还有 `yi `）：重写 `parse_kv_text`，支持一行多组。
+   - `ci_request._from_workflow_inputs` 不再回落裸 `os.environ.get(f)`：字段名与
+     runner 环境变量同名时会把无关值当成求测输入（"表单没填却出盘"）。
+   - 报告排版：`md_to_html` 现支持**有序列表**（`1. `）与**分割线**（`---`），
+     此前建议列表被压进一个 `<p>`、`---` 原样印出。
+
+5. **云端链路硬化**：
+   - `tools/ci_publish_branch.py`：新增**固定链接** `reports/<学科>/latest.{md,html}`
+     与 `reports/index.json`（URL 不含 run id，网页 AI 无需轮询 API 即可取回）；
+     区分"分支不存在"与"ls-remote/clone 失败"，不再把网络或凭证错误误判为分支不存在。
+   - `tools/ci_request.py`：`/yi` 评论**校验评论者权限**
+     （OWNER/MEMBER/COLLABORATOR，`YI_ALLOW_ASSOCIATIONS` 可放开），
+     防止公开仓库里任何人消耗 Actions 分钟并让 bot 提交代码。
+   - `.github/workflows/report.yml`：注入 `INPUT_WAY`；新增 `concurrency` 组
+     （同 issue/同学科串行，不再并行多 run 各回一次评论）；
+     明确登记 `workflow_dispatch.inputs` **最多 10 个**这一硬约束。
+   - `tools/ci_deliver.py`：评论首行给固定链接，并提示纯前端通道。
+   - `docs/AI-SOP.md` 重写：通道 A（纯前端 + 深链协议）与通道 B（云端）并列，
+     给出两条通道的能力边界表（诚实口径：不存在"AI 零凭证零人工让云端跑完递回"的组合，
+     但纯前端把"零凭证出报告"变成现实）。
+
+6. **质量门**：`tools/check.py` 新增 `[7b] 站点构建 + 自检`、`[7c] 同源验收`（`--full`），
+   并把 `site/` 排除出"版本号唯一"与"文件名规范"扫描；`.gitignore` 忽略 `site/`、`_site/`。
+
+7. **新增立项论证文档** `docs/NEW-DISCIPLINES.md`：11 个候选门类按
+   "古书出处可编程取用 / 判据树清晰 / 内核复用 / 可建评测集 / 可合参" 五条标准评估，
+   推荐落地顺序为大六壬 → 奇门遁甲（时家转盘）→ 七政四余，备选灵棋经、大衍筮法；
+   相科（面相/手相/堪舆）按铁律列为不推荐。**尚未落地任何新科**。
+
+**验收**：`python tools/check.py --full` 全绿（含站点构建/自检、同源验收 10 例、
+pytest 76 项、六爻黑箱回归 12/18 ≥ 基线 11/18）。
+
+**受影响的文件**：新增 `web/`、`core/yishu_core/report/request.py`、
+`tools/{build_web,serve_web,check_web_site,verify_web_parity}.py`、
+`.github/workflows/pages.yml`、`docs/NEW-DISCIPLINES.md`；
+改动 `tools/{report,ci_request,ci_publish_branch,ci_deliver,check}.py`、
+`core/yishu_core/report/{__init__,html}.py`、
+`disciplines/liuyao/scripts/{chart,engine_chart}.py`、`.github/workflows/report.yml`、
+`docs/AI-SOP.md`、`AGENTS.md`、`.gitignore`。
+
+### 2026-09-30c 第六科：紫微斗数落地 + 扩书源探查
+
+> **功能零漂移**：紫微斗数是新科，不影响六爻/命科现有 baseline。book source 探查无新案例入库，仅交付脚手架。
+
+**主要变更**：
+
+1. **紫微斗数完整实现**（新命科，第六科）：
+   - 新增 `disciplines/ziwei/`（四段管线 + dev_tools + data）
+   - 内核新增 `core/yishu_core/ziwei_tables.py`（十四主星 + 四化表 + 紫微定位公式 + 格局 lookup + 大限起法）
+   - chart.py：完整排盘引擎（年纳音→五行局→紫微起安→星系布星→十二宫逆布→四化）
+   - analyze.py：格局识别（固定 lookup）+ 四化入宫影响 + 大限表（阳年男顺/阴年男逆）
+   - narrate.py + render.py：全人因子叙述 + Markdown 报告
+   - 接入 synthesis/normalize.py + cli/main.py + tools/eval.py + tools/check.py
+
+2. **扩书源探查**：
+   - 《黄金策》全文下载（66 KB），但为纯理论赋体，无占案例可用，标记 `full_non_case`
+   - 《卜筮元龟》《断易天机》《易冒》维基文库均 missingtitle
+   - 交付 `tools/scratch/fetch_book_source.py` 脚手架（probe/fetch/parse/register 命令 + 三方校验接口）
+   - 阻塞登记于 `disciplines/liuyao/data/cases/cases_splits.json` `too_weak` 段
+
+3. **口径未变**：紫微斗数无 holdout 案例评测（古籍案例库尚未建立），当前冒烟验证 + 金标准指纹 4 条通过。
+
+**验收**：`python tools/check.py --full` 含 `[4] ziwei 质量门` 通过；`python disciplines/ziwei/dev_tools/check.py` 全绿
+
+**受影响的文件**：新增 `disciplines/ziwei/` 整体、`core/yishu_core/ziwei_tables.py`、`tools/eval.py`、`tools/check.py`、`synthesis/normalize.py`、`cli/main.py`
+
+### 2026-09-30b 应期评分区间化 + 通用规则 r8/r9 + 真实反馈闭环
+
+> **strict baseline 未跌破**：tune 93.9/holdout 87.5/wikisource 57.3 与变更前完全一致。新增的 loose 评分与反馈数据不参与调参。
+
+**主要变更**：
+
+1. **应期评分区间化（loose 列）**：在 `evaluate.py` 新增 `score_yingqi_loose()` 与 `--yingqi-mode strict|loose|both`。Loose 命中 = 主应期=expected 或 相对窗/绝对日期窗覆盖 expected 支。
+   - 读数对比：tune strict=58.8% → loose=94.1%；wikisource strict=20.0% → loose=60.0%
+   - 关键发现：引擎实际在窗内命中了大量 case（日级 loose=82.4%），只是未排到 top-1
+
+2. **通用规则 r8/r9**（`liuyao_timing.py` v9）：
+   - Rule 8「静爻旺相逢冲即发」— 出处《增删卜易》"静爻旺相，冲之即发；静爻休囚，冲之即破"。用神静爻旺相 + 日辰冲之 → 应于冲日
+   - Rule 9「世应位置迟速调节」— 出处《增删卜易》"世应相克，往来冲合，迟速有别；世应相生，逢值即应"。世应生克 → 宽松度参数（不影响 strict 命中）
+   - 两条均为通用规则，无 case-specific 分支。输出 schema 新增 `timing_factors` 字段（向后兼容）
+
+3. **真实反馈闭环**：
+   - 新增 `data/feedback/` 目录（三层层 gitignore 隔离）
+   - `dev_tools/feedback_store.py` — 独立存储 + 自判定 hit（不 import 评分引擎）
+   - `scripts/yi_liuyao.py --feedback` — 占算后追加输入应验日期
+   - `dev_tools/feedback_report.py --summary` — 独立评估报告
+
+4. **load_ids 健壮性**：未知 split 不再 fallback 到 all_ids；bushi_zhengzong_holdout 显式处理
+
+**读数对比（strict ⇢ loose）**：
+
+| Split | n | strict top-1 | loose top-1 | 日级 strict→loose |
+|---|---|---|---|---|
+| tune | 20 | 58.8% | 94.1% | 62.5%→100.0% |
+| holdout | 12 | 50.0% | — | — |
+| wikisource | 35 | 20.0% | 60.0% | 29.4%→82.4% |
+
+**验收**：`evaluate.py --split all --yingqi-mode both` 出双列；`check.py` 全绿；pytest 76 passed
+
+### 2026-09-30a 卜筮正宗/火珠林外部书源（扩外部验证集）
+
+> **功能零漂移**：本变更新增外部案例数据与 split 接线，不涉及任何引擎代码/计分口径调整。tune/holdout/金标准/冒烟/思维链/古籍回归与变更前逐项一致。
+
+**主要变更**：
+
+1. **火珠林外部集**：新增 `dev_tools/fetch_huozhulin_cases.py`，从维基文库《火珠林》原文（问答体）提取占验案例。入 `data/cases/huozhulin_cases.json`（2 例 yingqi scorable，5 例定性参考）。注册 `huozhulin_holdout` split（永不参与调参）。
+2. **卜筮正宗 parser 就绪**：`data/sources/bushi_zhengzong.wikitext.txt` 仅 912 字节目录骨架（14 卷子页在维基文库不存在）。parser `fetch_bushi_cases.py` 可参照 `fetch_wikisource_cases.py` 同源扩写，待正文到位后压入即可跑。注册 `bushi_zhengzong_holdout` split（当前 0 例，待填）。
+3. **`load_ids()` 健壮性修复**：未知 split 不再 fallback 到 `all_ids`（会误跑全库），改为返回 `[]`。同时新增 `bushi_zhengzong_holdout` 显式处理。
+4. **`evaluate.py` 注册新 split**：`--split` 增加 `bushi_zhengzong_holdout` 选项。
+5. **数据/元数据更新**：`case_splits.json` 注册两个新外部 split。
+
+**扩样后读数（tune/holdout/外部分列）**：
+
+| Split | n | strict 对齐分 | yingqi top-1 | 应支平均名次 |
+|---|---|---|---|---|
+| tune | 20 | 93.9% | 58.8% | 1.93 (baseline) |
+| holdout | 12 | 87.5% | 50.0% | 1.6 (baseline) |
+| wikisource_holdout | 35 | 57.3% | 20.0% | 2.14 |
+| huozhulin_holdout | 2 | 13.3% | 0.0% | 3.0 |
+| bushi_zhengzong_holdout | 0 | N/A（无源文件） | N/A | N/A |
+
+**口径差异说明**：
+- tune/holdout = 增删卜易体系，引擎基线；wikisource = 同体系但独立集，top-1 20% 是旧读数的新确认。
+- 火珠林 top-1 = 0%（n=2 且火珠林用纳音/飞伏体系，结构性差异，顶分会被 strict 严打），**不意味引擎退步**。
+- 卜筮正宗 = 源文件缺失，0 例。parser 集成已就绪，等正文。
+- **口径未变**：分数仍是古籍案例对齐分。
+
+**受影响的文件**：`disciplines/liuyao/scripts/evaluate.py`、`disciplines/liuyao/scripts/case_runner.py`、`disciplines/liuyao/data/cases/case_splits.json`、新增 `disciplines/liuyao/dev_tools/fetch_huozhulin_cases.py`、`disciplines/liuyao/data/cases/huozhulin_cases.json`、`huozhulin_qualitative.json`
+
+**验收**：`python scripts/evaluate.py --split all` 出读数；`python dev_tools/check.py` 全绿；pytest 76 passed。
+
+### 2026-09-29c v1.0.0 结构重构（五科底座归一）
+
+> **功能 zero-drift**：本轮为纯结构性重构，tune/holdout/金标准/冒烟/思维链/古籍回归全绿，分数与重构前逐项一致。
+
+**主要变更**：
+
+1. **新增 `disciplines/base/` 共享层**（`protocol.py` + `cli.py` 基类）：
+   - `protocol.py`：四段契约 Protocol 定义（`ChartData`/`Verdict`/`AnalyzeData`/`NarrateData`），依赖方向 `disciplines/base → core`。
+   - `cli.py`：`DisciplineCLI` 抽象基类，子类继承即可自动获得统一 CLI 入口（chart/analyze/narrate/render）。
+2. **六爻 scripts/ 精简 58 → 28 → 37 个文件**：
+   - 合并链：`liuyao_analyze`（6 拆为 step1–5 + facade）/ `liuyao_narrate` / `liuyao_timing` / `classical_enhancements` / `effects` / `chart_tables` / `narrative_utils`。
+   - 所有合并均为纯搬移，依赖单向，零指纹漂移。
+3. **统一 CLI 入口**：新增 `cli/main.py`，`pyproject.toml` 注册 entry point `yi = "cli.main:main"`。
+   - 用法：`yi <discipline> <command>`，五科命令：`liuyao(cast/chart/analyze/narrate/render)` / `ming(chart/analyze)` / `meihua(cast/chart)` / `xiaoliuren(cast)` / `zeji(chart)`。
+4. **五科工具归一**：
+   - 5 个学科的 `tools/` 重命名为 `dev_tools/`，消除与仓库根 `tools/` 的歧义。
+   - `synthesis/normalize.py` 支持五科归一化。
+   - `tools/eval.py` 支持五科评测（命科无案例对齐评测仍自动跳过）。
+5. **文档新增**：`docs/ARCHITECTURE.md`（316 行，架构全局视图）、`docs/MIGRATION.md`（161 行，迁移指南）。
+6. **测试修复**：`tests/test_yingqi_windows.py` import 修正。
+
+**验收（零漂移）**：
+- refactor_guard 115 例指纹不变；金标准 288 例指纹不变；tune/holdout 逐项一致。
+- 仓库级 gate ✅；pytest 全绿；五科各自 `dev_tools/check.py` 全绿。
+- **口径未变**：所有分数仍是古籍案例对齐分，非预测率。
+
+---
+
+### 2026-09-29b 归档三科还原（五科全通）
+
+- **还原**：`git mv archive/meihua` → `disciplines/meihua`、`archive/xiaoliuren` → `disciplines/xiaoliuren`、`archive/zeji` → `disciplines/zeji`、`archive/yishu_core_zeji_tables.py` → `core/yishu_core/zeji_tables.py`。
+- **适配**：
+  - `disciplines/zeji/scripts/analyze.py`：`from yishu_core.ming_tables import tian_de, yue_de` → `yishu_core.shensha`（B3 拆分后星煞已迁）。
+  - `synthesis/normalize.py`：新增 `normalize_meihua`、`normalize_xiaoliuren`、`normalize_zeji`，`DISCIPLINES` 扩至五科。
+  - `synthesis/person.py`：`DISCIPLINES` 扩至五科，`based_on` 正则同步。
+  - `tools/eval.py`、`tools/demo.py`：`DISCIPLINES` 扩至五科并加 demo 调用参数。
+- **文档**：更新 `SKILL.md`、`docs/HANDOFF.md`、`docs/YI-PLAN.md`、`docs/TECH-DEBT.md`、`disciplines/README.md` 将三科状态从"已归档"改为"已实现/已还原"。
+- **验收**：
+  - 梅花易数 `tools/check.py` ✅（tune·holdout 100%，指纹 `2c9c810d8a265180`）
+  - 小六壬 `tools/check.py` ✅（tune·holdout 100%，指纹 `0088d638d065402d`）
+  - 择吉 `tools/check.py` ✅（tune·holdout 100%，指纹 `9e206e9a93aa3cf3`）
+  - 六爻 / 命科未受影响，回归通过
+  - 仓库根 `tools/check.py --full` ✅（含 pytest 76 passed）
+- **口径未变**：还原不改动任何计分方式/词典/缺失字段处理，分数与历史可比。
+
 ### 2026-09-29a 质量门编码修复 + 断语取用器去重 + B3 内核命名拆分 + B2 首批（四提交，全零漂移）
 
 - **`ea3a0e2` fix(gate)**：仓库级 `tools/check.py` 在中文 Windows 上**恒红**（唯一失败项

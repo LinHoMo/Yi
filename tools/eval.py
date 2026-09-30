@@ -9,7 +9,7 @@
 评分框架唯一实现见 core/yishu_core/eval.py。
 
 注：命科（ming）是机械推演，**没有案例对齐评测**（机械回归见
-`disciplines/ming/tools/regression.py`），转发时按「无 evaluate.py」跳过、不计失败。
+`disciplines/ming/dev_tools/regression.py`），转发时按「无 evaluate.py」跳过、不计失败。
 默认只跑 tune+holdout；`--split all` 会把已排除案例（ZS021–025，无卦名）一并送入，
 触发引擎报错并返回非零——那是刻意保留的体检信号，不是默认路径。
 """
@@ -26,14 +26,14 @@ sys.path.insert(0, str(ROOT / "core"))
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 from yishu_core.runtime import utf8_subprocess_env  # noqa: E402
 
-DISCIPLINES = ("liuyao", "ming")
+DISCIPLINES = ("liuyao", "ming", "meihua", "xiaoliuren", "zeji", "ziwei")
 
 
 def run_eval(disc: str, split: str, *, verbose: bool = False) -> tuple[int, str]:
     script = ROOT / "disciplines" / disc / "scripts" / "evaluate.py"
     if not script.exists():
         # 无案例对齐评测的学科（如 ming 机械推演）不列为失败，只提示。
-        return 0, f"{disc}: 无 evaluate.py（无案例对齐评测，机械回归见 disciplines/{disc}/tools/regression.py）"
+        return 0, f"{disc}: 无 evaluate.py（无案例对齐评测，机械回归见 disciplines/{disc}/dev_tools/regression.py）"
     cmd = [sys.executable, str(script), "--split", split]
     if verbose:
         cmd.append("--verbose")

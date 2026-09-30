@@ -21,6 +21,9 @@ batch_report.html
 logs/
 data/cases/eval_*.json
 
+# 真实应期反馈数据：永不入库、永不参与调参
+data/feedback/
+
 # 门户产物：由 build_portal_assets.py 重建，不入库（本地保留可直接打开）
 index.html
 assets/portal_data.json

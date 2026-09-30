@@ -20,6 +20,7 @@ from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from kernel_path import ensure_kernel_on_path  # noqa: E402
 
@@ -42,6 +43,32 @@ def _summary(a: dict) -> list[str]:
     if con.get("应期"):
         lines.append("应期：" + "、".join(map(str, con["应期"])))
     return lines
+
+
+def _collect_feedback(analyze_json: dict, report_path: Path) -> None:
+    """--feedback 模式：占算后追加收集实际应验日期，写入 data/feedback/。
+
+    数据与古籍案例物理隔离，永不参与调参。
+    """
+    print("\n── 应期反馈（可选，按回车跳过）──")
+    print("提示：此数据仅用于独立评估，永不参与引擎调参。")
+    raw = input("实际应验日期（YYYY-MM-DD，跳过按回车）：").strip()
+    if not raw:
+        print("跳过反馈记录。")
+        return
+    actual = raw
+    description = input("简述事件经过（可空）：").strip()
+    # 使用延迟 import 避免污染主流程依赖
+    from dev_tools.feedback_store import FeedbackStore
+    store = FeedbackStore("liuyao")
+    record = {
+        "analyze_json": analyze_json,
+        "actual_date": actual,
+        "actual_outcome": {"date": actual, "description": description},
+        "report_path": str(report_path),
+    }
+    rid = store.save(record)
+    print(f"反馈已记录 → data/feedback/{rid}.json")
 
 
 def main() -> int:
@@ -70,6 +97,8 @@ def main() -> int:
                     help="输出文件路径（缺省 outputs/reports/report_<时间戳>.<ext>）")
     ap.add_argument("--open", action="store_true",
                     help="完成后用默认浏览器打开（仅 html）")
+    ap.add_argument("--feedback", action="store_true",
+                    help="占算后追加收集实际应验日期（写入 data/feedback/，永不参与调参）")
     args = ap.parse_args()
 
     from chart import chart
@@ -105,6 +134,9 @@ def main() -> int:
     for line in _summary(a):
         print(f"  {line}")
     print(f"  报告 → {out}")
+
+    if args.feedback:
+        _collect_feedback(a, out)
 
     if args.fmt == "html" and args.open:
         webbrowser.open(out.resolve().as_uri())

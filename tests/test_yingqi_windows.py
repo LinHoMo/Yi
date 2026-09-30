@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
-"""应期相对窗 → 绝对日窗；节奏对 RHYTHM_PAIRS 的公开行为。"""
+"""应期相对窗 → 绝对日窗；节奏对 RHYTHM_PAIRS 的公开行为。
+
+注意：yingqi_windows.py 已合并至 disciplines/liuyao/scripts/liuyao_timing.py。
+本测试直接 import liuyao_timing（conftest.py 已将 scripts/ 加入 sys.path）。
+"""
 from __future__ import annotations
 
 from datetime import datetime
 
-import yingqi_windows as yw
+import liuyao_timing as yw
 from evaluate import RHYTHM_PAIRS
 
 

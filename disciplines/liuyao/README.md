@@ -11,7 +11,7 @@
 
 ```bash
 pip install -e .                    # 无必需第三方依赖，纯标准库
-python tools/check.py               # 一条命令跑全部质量门（历法/冒烟/用例/回归/对齐分）
+python dev_tools/check.py            # 一条命令跑全部质量门（历法/冒烟/用例/回归/对齐分）
 ```
 
 起一卦（一条命令出单文件报告）：

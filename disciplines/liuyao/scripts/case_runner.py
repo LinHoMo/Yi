@@ -29,7 +29,7 @@ from yishu_core import ganzhi_calendar as gc  # noqa: E402
 
 from liuyao_engine import build_hexagram_result  # noqa: E402
 from thinking_chain import run_thinking_chain  # noqa: E402
-from human_narrative import build_human_narrative, render_human_markdown  # noqa: E402
+from liuyao_narrate import build_human_narrative, render_human_markdown  # noqa: E402
 
 CASES = ROOT / "data" / "cases" / "classical_cases.json"
 SPLITS = ROOT / "data" / "cases" / "case_splits.json"
@@ -177,12 +177,27 @@ def load_ids(split: str | None = None, only: list[str] | None = None) -> list[st
             return [i for i in json.loads(SPLITS.read_text(encoding="utf-8")).get("wikisource_direction", [])
                     if i in all_ids]
         return [i for i in all_ids if i.startswith("WS")]
+    if split == "huozhulin_holdout":
+        if SPLITS.exists():
+            return [i for i in json.loads(SPLITS.read_text(encoding="utf-8")).get("huozhulin_holdout", [])
+                    if i in all_ids]
+        return [i for i in all_ids if i.startswith("HZL")]
     if split == "holdout":
         if SPLITS.exists():
             return [i for i in json.loads(SPLITS.read_text(encoding="utf-8")).get("holdout", [])
                     if i in all_ids]
         return [i for i in all_ids if i.startswith("HO")]
-    return all_ids
+    if split == "all":
+        return all_ids
+    # 外部验证集（bushi_zhengzong / 其他书本源）— 显式返回其 ID 列表，无数据时返回空
+    for ext_key in ("bushi_zhengzong_holdout",):
+        if split == ext_key:
+            if SPLITS.exists():
+                return [i for i in json.loads(SPLITS.read_text(encoding="utf-8")).get(ext_key, [])
+                        if i in all_ids]
+            return []
+    # 未知 split — 返回空集而非全量（防止误跑全库）
+    return []
 
 
 def run_case(case: dict) -> dict:

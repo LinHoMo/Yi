@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 """根级质量门：一条命令跑完全仓库检查。
 
-  python tools/check.py          # 快速门（默认）：版本/结构契约/内核自检/ming 质量门/六爻冒烟/合参自检
+  python tools/check.py          # 快速门（默认）：版本/结构契约/内核自检/命名与断语/ming 质量门/六爻冒烟/合参自检
   python tools/check.py --full   # 全量门：再加 ming tune/holdout 案例评测、六爻黑箱回归与 pytest tests（慢）
-  python tools/check.py --only version,structure,core   # 只跑指定检查项
+  python tools/check.py --only version,structure,filenames   # 只跑指定检查项
 
-设计口径（与各科 tools/check.py 一致）：
+设计口径（与各科 dev_tools/check.py 一致）：
   - 分数都是古籍案例对齐分，只用于回归审计（AGENTS.md 铁律三）；
   - 版本号唯一真值源 core/yishu_core/__init__.py::__version__，此处负责抓第二份；
-  - 依赖方向单向（disciplines → core，synthesis → disciplines 的 schema），违反即缺陷。
+  - 依赖方向单向（disciplines → core，synthesis → disciplines 的 schema），违反即缺陷；
+  - 文件名不携带版本（版本走 git 与 CHANGELOG）；
+  - 断语/引文进 data/*.json 或 references/*.md，代码只留算法。
 """
 from __future__ import annotations
 
@@ -29,8 +31,8 @@ from yishu_core.runtime import utf8_subprocess_env  # noqa: E402
 # 四段契约要求的文件（新学科 ming 严格核验；liuyao 为迁移前旧实现，另立检查项）
 CONTRACT_FILES = ("SKILL.md", "scripts/chart.py", "scripts/analyze.py",
                   "scripts/narrate.py", "scripts/render.py",
-                  "data/verdicts.json", "tools/check.py", "tools/golden.py")
-NEW_DISCIPLINES = ("ming",)
+                  "data/verdicts.json", "dev_tools/check.py", "dev_tools/golden.py")
+NEW_DISCIPLINES = ("ming", "ziwei")
 
 # 内核唯一真值表名：学科内出现同名赋值即视为复制（AGENTS.md 内核唯一真值源）
 # 含历史别名/拆分名（STEMS/NAYIN_TABLE/XUN_KONG/SAN_HE…），否则同义表仍会漏检。
@@ -46,7 +48,16 @@ CORE_TABLE_ASSIGN = re.compile(
 
 # 学科间 import（违反 disciplines 禁止互相 import 的契约）
 CROSS_DISC_IMPORT = re.compile(
-    r"^\s*(from|import)\s+(liuyao|ming)\b", re.M)
+    r"^\s*(from|import)\s+(liuyao|ming|ziwei|meihua|xiaoliuren|zeji)\b", re.M)
+
+# 文件名版本号标记（AGENTS.md §三：名字不携带版本；版本走 git 与 CHANGELOG）
+# 排除 archive/ 目录和 .git/ 目录，匹配 _v2 / _V3 / _v10 等
+VERSIONED_FILENAME = re.compile(
+    r"_v\d+(?:\.[A-Za-z0-9_]+)?\.(?:py|md|json|txt|yaml|yml|toml)$", re.I)
+
+# 中文断语字面量检测（AGENTS.md §三：断语/引文进 data/*.json，代码只留算法）
+# 检测 .py 文件中 dict/List 值含连续 8+ 中文字符的字符串
+CHINESE_VERDICT_LITERAL = re.compile(r"[\u4e00-\u9fff]{8,}")
 
 
 def _run_py(cmd: list[str], *, label: str, cwd: Path = ROOT) -> tuple[int, str]:
@@ -66,13 +77,99 @@ def check_version() -> list[str]:
     fails = []
     pat = re.compile(r'(__version__\s*=\s*["\']|version\s*=\s*["\']\d)')
     for p in ROOT.rglob("*.py"):
-        if "__pycache__" in p.parts or "scratch" in p.parts or ".worktrees" in p.parts:
+        if any(seg in p.parts for seg in ("__pycache__", "scratch", ".worktrees",
+                                          "site", "_site", "archive", "egg-info")):
             continue
         if p == CORE / "yishu_core" / "__init__.py":
             continue
         for i, line in enumerate(p.read_text(encoding="utf-8", errors="ignore").splitlines(), 1):
             if pat.search(line):
                 fails.append(f"{p.relative_to(ROOT)}:{i}: {line.strip()}")
+    return fails
+
+
+def check_filenames() -> list[str]:
+    """文件名规范（AGENTS.md §三）：禁止携带版本号；data/cases 外的 .json 进 cases/。"""
+    fails = []
+    for p in ROOT.rglob("*"):
+        if not p.is_file():
+            continue
+        rel = p.relative_to(ROOT)
+        parts = rel.parts
+        if any(seg in ("archive", ".git", "__pycache__", ".worktrees",
+                       "egg-info", "site", "_site") for seg in parts):
+            continue
+        # 版本号文件名
+        if VERSIONED_FILENAME.search(p.name):
+            fails.append(f"{rel}: 文件名携带版本号（版本走 git 与 CHANGELOG）")
+    return fails
+
+
+def check_verdict_literals() -> list[str]:
+    """断语字面量检测（AGENTS.md §三）：.py 中不应堆砌中文断语表，应外置到 data/*.json。
+
+    本检查仅针对明确的数据结构——Python 字典中连续多条「条件/含义/建议」三元组
+    或多条 verdict reason 映射——不计 docstring、argparse help、异常消息、注释。
+    """
+    fails = []
+    KNOWN_DATA_DRIVERS = {"classical_tables"}  # 已走 json.load
+    for p in (ROOT / "disciplines").rglob("*.py"):
+        if "__pycache__" in p.parts or "scratch" in p.parts:
+            continue
+        stem = p.stem
+        if stem in KNOWN_DATA_DRIVERS:
+            continue
+        if "/tests/" in str(p.relative_to(ROOT)) or "\\tests\\" in str(p.relative_to(ROOT)):
+            continue
+        # 含 json.load(data 路径) 且仅做引用的模块也跳过（从 data 加载而非硬编码）
+        txt = p.read_text(encoding="utf-8", errors="ignore")
+        if re.search(r'json\.load\s*\(\s*open\s*\(.*(?:\.\./)?data/"', txt) or \
+           re.search(r'json\.load\s*\(.*_cp\b', txt):
+            continue
+
+        lines = txt.splitlines()
+        in_docstring = False
+        docstring_marker = ""
+        for i, line in enumerate(lines, 1):
+            stripped = line.strip()
+            # 追踪 docstring 块（跳过的内容）
+            if not in_docstring:
+                for m in ('"""', "'''"):
+                    if stripped.count(m) % 2 == 1:
+                        in_docstring = True
+                        docstring_marker = m
+                        break
+                if in_docstring:
+                    continue
+            else:
+                if docstring_marker in stripped:
+                    in_docstring = False
+                    continue
+                continue  # 在 docstring 内部，跳过
+
+            # 跳过 argparse help 字符串、错误消息行
+            if 'help="' in stripped or "help='" in stripped:
+                continue
+            if stripped.startswith(("raise ", "return {")):
+                continue
+            if '"error"' in stripped or "'error'" in stripped:
+                continue
+            # 跳过纯注释行
+            if stripped.startswith("#"):
+                continue
+
+            # 检测：字典值是多层嵌套 dict 且包含 verdict 关键字
+            # 模式：SOME_NAME = { "key": { "condition"|"meaning"|"advice"|"reason"|"note": "中文..." } }
+            if re.search(r'=\s*\{', stripped) and \
+               any(kw in stripped for kw in ('"condition"', '"meaning"', '"advice"',
+                                              '"reason"', '"note"', '"text"', '"description"')):
+                # 检查本行或后续行是否有 verdict-text 模式的中文
+                context_block = "\n".join(lines[i-1:min(i+10, len(lines))])
+                cn_literals = CHINESE_VERDICT_LITERAL.findall(context_block)
+                if len(cn_literals) >= 3:  # 3条以上才视为"堆砌"
+                    fails.append(f"{p.relative_to(ROOT)}:{i}: "
+                                 f"疑似字典式断语表（{len(cn_literals)} 条中文字段）→ 外置到 data/*.json")
+                    break  # 每文件只报首处
     return fails
 
 
@@ -130,10 +227,12 @@ def _tail(out: str, n: int = 3) -> str:
 def main() -> int:
     force_utf8_stdio()
     ap = argparse.ArgumentParser(description="易·仓库级质量门")
-    ap.add_argument("--only", nargs="*", help="限定检查项：version,structure,tables,core,"
-                                              "ming,liuyao,synthesis,tests")
+    ap.add_argument("--only", nargs="*", help="限定检查项：version,structure,tables,"
+                                              "filenames,verdict_literals,core,"
+                                              "ming,liuyao,synthesis,web,parity,tests")
     ap.add_argument("--full", action="store_true",
-                    help="全量：三科案例评测（tune/holdout）+ 六爻黑箱回归 + pytest tests（慢）")
+                    help="全量：三科案例评测（tune/holdout）+ 六爻黑箱回归 + "
+                         "网页/本地同源验收 + pytest tests（慢）")
     args = ap.parse_args()
 
     only = set(args.only) if args.only else None
@@ -172,6 +271,10 @@ def main() -> int:
     gate("structure", check_structure(), "学科目录完整、无学科间 import")
     gate("tables", check_core_tables(), "内核规则表无学科复制")
 
+    print("\n[1b] 命名与断语规范（AGENTS.md §三: 文件名无版本号 + 断语进 data JSON）")
+    gate("filenames", check_filenames(), "文件名无版本号标记")
+    gate("verdict_literals", check_verdict_literals(), "断语/引文外置到 data JSON")
+
     print("\n[2] 内核自检（干支历/农历/评分器）")
     if only is None or "core" in only:
         code, out = _run_py(["core/yishu_core/calendar_check.py"], label="内核自检")
@@ -199,7 +302,7 @@ def main() -> int:
     for disc in NEW_DISCIPLINES:
         print(f"\n[{NEW_DISCIPLINES.index(disc) + 3}] {disc} 质量门"
               f"{'（含案例评测）' if args.full else '（快速：指纹+冒烟）'}")
-        gate_sub(disc, [f"disciplines/{disc}/tools/check.py"], disc, fast=not args.full)
+        gate_sub(disc, [f"disciplines/{disc}/dev_tools/check.py"], disc, fast=not args.full)
 
     print("\n[6] 六爻（迁移前旧实现：冒烟 + 四段契约端到端；--full 加黑箱回归）")
     gate_sub("liuyao", ["disciplines/liuyao/tests/smoke_test.py"], "六爻冒烟", fast=False)
@@ -247,6 +350,38 @@ def main() -> int:
 
     print("\n[7] 合参层（synthesis 自检：person 校验 + 裁决规则 + 归一化）")
     gate_sub("synthesis", ["synthesis/cli.py", "selfcheck"], "synthesis 自检", fast=False)
+
+    print("\n[7b] 纯前端站点（浏览器内跑同一份引擎：零凭证出报告）")
+    if only is None or "web" in only:
+        # 站点自检里含"清单↔镜像逐条对齐"，所以必须先构建再校验
+        site_dir = ROOT / "site"
+        code, out = _run_py(["tools/build_web.py", "--outdir", str(site_dir)],
+                            label="站点构建")
+        if code == 0:
+            print("  √ 站点构建（源码镜像 + 清单）")
+        else:
+            failures.append("站点构建失败")
+            print("  × 站点构建")
+            print(f"      …{_tail(out)}")
+        code, out = _run_py(["tools/check_web_site.py", "--site", str(site_dir)],
+                            label="站点自检")
+        if code == 0:
+            print("  √ 站点自检（清单/镜像/内核引用一致）")
+        else:
+            failures.append("站点自检失败")
+            print("  × 站点自检")
+            print(f"      …{_tail(out)}")
+
+    if args.full or (only is not None and "parity" in only):
+        if only is None or "parity" in only:
+            print("\n[7c] 网页端与本地端同源（同一请求两边出报告，逐字节比对）")
+            code, out = _run_py(["tools/verify_web_parity.py"], label="同源验收")
+            if code == 0:
+                print("  √ 同源验收（" + (out.strip().splitlines() or [""])[-1] + "）")
+            else:
+                failures.append("同源验收失败")
+                print("  × 同源验收")
+                print(f"      …{_tail(out, 6)}")
 
     if args.full or (only is not None and "tests" in only):
         print("\n[8] 单元测试（pytest tests）")

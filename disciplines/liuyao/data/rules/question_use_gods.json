@@ -1,7 +1,7 @@
 {
   "_meta": {
     "description": "六爻问题词典（186 条现代问法→六亲），按事项族分组；每族给 label + 取舍依据（citation＝《增刪卜易》逐字引文与偏移，inference＝诚实标注的无据推断）",
-    "built_by": "tools/build_question_use_gods.py",
+    "built_by": "dev_tools/build_question_use_gods.py",
     "source": "data\\sources\\zengshan_buyi.wikitext.txt",
     "order_warning": "entries 顺序＝打分层 tie-break 依赖的插入顺序，禁止重排/增删；改词典必须重跑 tune/holdout/wikisource 三集（AGENTS.md 四）",
     "usage": "chain_tables._QUESTION_USE_GOD_MAP 由本表加载；取用神顺序＝关系法则(use_god_relations) → 覆盖层 → 本词典 → 世爻兜底",

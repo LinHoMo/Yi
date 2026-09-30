@@ -30,6 +30,9 @@ from yishu_core.runtime import utf8_subprocess_env  # noqa: E402
 DISCIPLINES = {
     "liuyao": "六爻纳甲",
     "ming": "命（四柱）",
+    "meihua": "梅花易数",
+    "xiaoliuren": "小六壬",
+    "zeji": "择吉",
 }
 
 
@@ -80,6 +83,11 @@ def demo_liuyao(question: str) -> tuple[dict, str, str]:
 def demo_single(disc: str, question: str) -> tuple[dict, str, str]:
     chart_args = {
         "ming": ["--datetime", "1990-05-20 10:30", "--gender", "男",
+                 "--question", question],
+        "meihua": ["--way", "time", "--question", question],
+        "xiaoliuren": ["--way", "numbers", "--numbers", "7,7,2,3,4",
+                       "--question", question],
+        "zeji": ["--date", "2026-09-30", "--activity", "开市",
                  "--question", question],
     }[disc]
     return _pipeline(disc, chart_args)

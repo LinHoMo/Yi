@@ -97,4 +97,4 @@ conclusion: {
 - [x] T6: 梅花/择吉古书 holdout 扩样 — acceptance: 新案例带出处与 expected；评测分列 (covers: S2.3)
 - [x] T7: 应期相对窗语义对齐（RHYTHM_PAIRS）；星煞仍不进主分（无古籍定性表）— acceptance: 口径入 CHANGELOG (covers: S2.3)
 - [x] T8: 报告合一收口 — acceptance: 单文件含卦盘+正文+应期+免责；黄金样例清单过关 (covers: S2.3)
-- [ ] T9: 全量验证与评审 — acceptance: 根 check --full 四科+六爻+命科全绿；独立评审 (covers: S2)
+- [x] T9: 全量验证与评审 — acceptance: 根 check --full 四科+六爻+命科全绿；独立评审 (covers: S2)

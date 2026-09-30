@@ -1,0 +1,84 @@
+{
+  "_meta": {
+    "description": "火珠林（宋·麻衣道者）占验案例；问答体占断；含干支应期可评分",
+    "built_by": "dev_tools/fetch_huozhulin_cases.py",
+    "source": "data/sources/huozhulin.wikitext.txt",
+    "retrieved": "2026-09-30",
+    "sha256": "b3bed441a997370275ab2e5988038ae3a55fcf9986e8f4a344f0083b78c60b64",
+    "total_cases": 2,
+    "note": "仅含干支日/月/年级别应期的案例；用于应期评分",
+    "dropped_stats": {
+      "no_hex": 0,
+      "validation_fail": 0,
+      "no_date_and_no_qualitative": 0,
+      "pure_theory": 1,
+      "dup": 0
+    }
+  },
+  "cases": [
+    {
+      "id": "HZL001",
+      "source": "《火珠林》（维基文库原本·__trailing__）",
+      "topic": "得坎之蒙",
+      "question": "得坎之蒙",
+      "input": {
+        "date": "癸亥日",
+        "question": "得坎之蒙"
+      },
+      "hexagram": {
+        "original": "乾",
+        "changed": "大壮",
+        "moving": [
+          5,
+          6
+        ],
+        "palace": "乾",
+        "generation": "六世"
+      },
+      "expected": {
+        "verdict": null,
+        "yingqi": "申时",
+        "detail": "曰：如六月甲辰日占雨得乾之大壮，当日申时雷雨骤至，此壬癸克日定时，何以知之？乾为天，震为雷，外卦震，内卦乾，岂得无雨？第五爻申亲艾动，日值甲辰，夜半生甲子，脯时",
+        "spatial_detail": "又问：内动主昼，外动主夜？曰：内为阳，外为阴，昼夜之道也。\n\n又问：未戌动主晴，而癸日占得坎宫地水师，如何入雨？\n曰：未戌动晴，以其中有丁火也，今戊戌化癸亥，癸字克了丁火，日后又逢是癸，并去伤了，岂得不雨？\n\n又问：癸亥日占得坎之蒙，亦是癸"
+      },
+      "provenance": {
+        "page": "火珠林",
+        "sha256_head": "b3bed441a997",
+        "section": "__trailing__",
+        "context_head": "曰：如六月甲辰日占雨得乾之大壮，当日申时雷雨骤至，此壬癸克日定时，何以知之？乾为天，震为雷，外卦震，内卦乾，岂得无雨？第"
+      }
+    },
+    {
+      "id": "HZL002",
+      "source": "《火珠林》（维基文库原本·__trailing__）",
+      "topic": "父母",
+      "question": "父母",
+      "input": {
+        "date": "巳月丁酉日",
+        "question": "父母"
+      },
+      "hexagram": {
+        "original": "乾",
+        "changed": "离",
+        "moving": [
+          2,
+          5
+        ],
+        "palace": "乾",
+        "generation": "六世"
+      },
+      "expected": {
+        "verdict": null,
+        "yingqi": "甲寅日",
+        "detail": "假如乙丑年辛巳月丁酉日丁未时占得乾之离卦：\n\n\n \t正卦乾\t \t \t \t \t　变卦离\t \t \n父母\t\t \t戌　世\t \t官鬼\t\t巳\t青龙\n兄弟\t\t○\t申\t \t父母",
+        "spatial_detail": "。\n* 酉为金、为而旁、为目旁、为坚洞旁、为鸡。\n* 戌为土、为戌字、为成字、为犬。\n* 亥为水、为绞丝、为猪。\n\n=== 五行类 ===\n* 水为点水、为曲、为一六数。\n* 火为火旁、为上尖下阔、为二七数。\n* 木为木旁、为步头、为竹头、"
+      },
+      "provenance": {
+        "page": "火珠林",
+        "sha256_head": "b3bed441a997",
+        "section": "__trailing__",
+        "context_head": "假如乙丑年辛巳月丁酉日丁未时占得乾之离卦：\n\n\n \t正卦乾\t \t \t \t \t　变卦离\t \t \n父母\t\t \t戌　世\t \t官"
+      }
+    }
+  ]
+}

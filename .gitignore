@@ -13,6 +13,10 @@ scratch/
 **/data/cases/eval_*.json
 check_baseline.json
 
+# 真实应期反馈数据：恒定不入库（与古籍案例物理隔离，永不参与调参）
+disciplines/*/data/feedback/
+**/data/feedback/
+
 # 合参层运行产物（人档案与指导，属用户数据，不入库）
 synthesis/person/
 synthesis/guidance/
@@ -21,6 +25,7 @@ synthesis/guidance/
 .codegraph/
 .yanagent/
 .trae-html-share-packages/
+.preview/
 .pytest_cache/
 
 # 编辑器与系统
@@ -29,3 +34,7 @@ synthesis/guidance/
 .vscode/
 
 .worktrees/
+
+# 纯前端站点构建产物（tools/build_web.py 生成，Pages 工作流在 CI 里重建，不入库）
+site/
+_site/

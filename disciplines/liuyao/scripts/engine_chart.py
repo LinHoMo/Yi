@@ -53,7 +53,7 @@ from yishu_core.runtime import force_utf8_stdio as _force_utf8_stdio  # noqa: E4
 
 from engine_calendar import get_day_stem_branch, get_hour_stem_branch, get_month_stem_branch, get_year_stem_branch
 from engine_format import generate_analysis_hints
-from engine_tables import BAGUA, BRANCH_NUMBERS, DAY_STEM_SPIRIT_START, EMPTY_DEATH, HEXAGRAMS, HEXAGRAM_LINE_TEXTS, HEXAGRAM_LOOKUP, NAJIA_STEMS, PALACE_LOOKUP, RESPONSE_POSITION, SIX_SPIRITS, TRIGRAM_LOOKUP, WORLD_POSITION
+from chart_tables import BAGUA, BRANCH_NUMBERS, DAY_STEM_SPIRIT_START, EMPTY_DEATH, HEXAGRAMS, HEXAGRAM_LINE_TEXTS, HEXAGRAM_LOOKUP, NAJIA_STEMS, PALACE_LOOKUP, RESPONSE_POSITION, SIX_SPIRITS, TRIGRAM_LOOKUP, WORLD_POSITION
 
 def coin_toss(random_gen=None):
     """
@@ -411,7 +411,8 @@ def get_yao_symbol(yao_value):
         return "━ ━"  # yin
 
 
-def build_hexagram_result(yao_values, question, method, year, month, day, hour, explicit_time=None):
+def build_hexagram_result(yao_values, question, method, year, month, day, hour,
+                          explicit_time=None, minute=0):
     """
     基于6个爻值，构建完整的排盘结果
 
@@ -421,6 +422,9 @@ def build_hexagram_result(yao_values, question, method, year, month, day, hour, 
         或 month_branch / day_branch（仅地支；天干缺失时月干用"甲"占位，
         日干缺失时按甲日计，仅影响六神与旬空精度，不影响旺衰主路径）。
         提供时跳过公历推算；未提供时行为与原来完全一致。
+    minute : int, optional
+        起卦时刻的分钟。只影响 divination_time.datetime 的**呈现**，
+        不参与任何推演（干支以时辰为单位）。缺省 0，与旧行为一致。
     """
     # 1. 找出上下卦
     lower_lines, upper_lines = yao_value_to_lines(yao_values)
@@ -588,7 +592,7 @@ def build_hexagram_result(yao_values, question, method, year, month, day, hour, 
     result = {
         "question": question,
         "divination_time": {
-            "datetime": f"{year}-{month:02d}-{day:02d} {hour:02d}:00",
+            "datetime": f"{year}-{month:02d}-{day:02d} {hour:02d}:{int(minute or 0):02d}",
             "year_stem_branch": year_sb,
             "month_stem_branch": month_sb,
             "day_stem_branch": day_sb,

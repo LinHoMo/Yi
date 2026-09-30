@@ -958,7 +958,7 @@ def main():
                 f.write(generate_json_report(result))
             print(f"JSON results: {json_path}")
 
-    # 失败必须以非零退出码报出去，否则 CI / tools/check.py 看不到任何信号
+    # 失败必须以非零退出码报出去，否则 CI / dev_tools/check.py 看不到任何信号
     sys.exit(0 if result["all_passed"] == result["total"] else 1)
 
 

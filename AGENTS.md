@@ -2,8 +2,17 @@
 
 本文件约束所有在本仓库工作的 agent 和 contributor。与任何单个学科的 SKILL.md 冲突时，本文件优先。
 
-**范围**：本仓库只做 **命**（四柱八字 / `disciplines/ming/`）与 **卜**（六爻 / `disciplines/liuyao/`）。
-梅花易数、小六壬、择吉曾完整实现过，已于 **2026-09 范围收缩** 经 `git mv` **归档**至 `archive/meihua/`、`archive/xiaoliuren/`、`archive/zeji/`（保留完整 git 历史、可随时还原），不在当前实现、测试、质量门与文档"可用"范围内。
+**范围**：本仓库有六科可用，均经各学科 `dev_tools/check.py` 与仓库根 `tools/check.py` 全绿。
+
+| 学科 | 目录 | 说明 |
+|---|---|---|
+| **命**（四柱八字） | `disciplines/ming/` | 机械推演（强弱/格局/喜用/大运/流年），非命运断言 |
+| **命**（紫微斗数） | `disciplines/ziwei/` | 安星/四化/格局/大限，四段契约 |
+| **卜·六爻** | `disciplines/liuyao/` | 六爻纳甲，四段契约 chart→analyze→narrate→render |
+| **卜·梅花易数** | `disciplines/meihua/` | 体用生克/互变/卦气旺衰 |
+| **卜·小六壬** | `disciplines/xiaoliuren/` | 六宫掌诀断事 |
+| **卜·择吉** | `disciplines/zeji/` | 建除/黄黑道/二十八宿综合裁决 |
+
 **相科（面相、手相、堪舆）明确不做**——不在路线图内，不预留目录，不写占位实现。
 
 ## 一、三条不可动摇的铁律
@@ -38,15 +47,26 @@ LLM 的职责只有三段：收集求测信息 → 调用脚本 → 把脚本输
 
 ```
 Yi/
-├── core/            # 唯一内核 yishu_core。学科层只能 import core，禁止互相 import
-├── disciplines/     # 每科一个自包含目录：SKILL.md + scripts/ + references/ + data/
-├── synthesis/       # 合参层，依赖 disciplines 的输出契约，不依赖其内部实现
-├── tools/           # 仓库级命令：check / eval / demo / install
-└── docs/            # 规划、规范、决策记录、审计报告
+├── core/                # 唯一内核 yishu_core。学科层只能 import core，禁止互相 import
+├── .github/workflows/    # 云端出报告 report.yml（见 §六）
+├── disciplines/
+│   ├── base/             # 共享层：protocol.py（四段契约 Protocol）+ cli.py（DisciplineCLI 基类）
+│   │                     # 依赖方向：base → core；学科 → base + core；学科之间禁止互相 import
+│   ├── liuyao/           # 六爻纳甲
+│   ├── ming/             # 四柱八字
+│   ├── ziwei/            # 紫微斗数
+│   ├── meihua/           # 梅花易数
+│   ├── xiaoliuren/       # 小六壬
+│   └── zeji/             # 择吉
+├── cli/                  # 统一命令行入口：yi <discipline> <command>
+├── synthesis/            # 合参层，依赖 disciplines 的输出契约，不依赖其内部实现
+├── tools/                # 仓库级命令：check / eval / demo / install / report / ci_*
+└── docs/                 # 规划、规范、决策记录、审计报告、AI-SOP
 ```
 
-依赖方向单向：`disciplines → core`，`synthesis → disciplines 的 schema`。
-违反此方向的 import 视为缺陷，评审直接驳回。
+依赖方向单向：`disciplines/base → core`、`disciplines/<科> → disciplines/base + core`、
+`synthesis → disciplines 的 schema`、`cli/main.py → disciplines/<科>`。
+学科之间禁止互相 import。违反此方向的 import 视为缺陷，评审直接驳回。
 
 ### 内核唯一真值源
 
@@ -81,3 +101,47 @@ Yi/
 
 同一问题不重复占卜（"再三则渎"）。用户在既问之后换实质角度提问（换用神、换层面、假设未来、比较两人、测人心）——
 应提议另起一卦，不得在原卦里延伸硬推。超出用神覆盖域的断言（对方家庭背景、未来伴侣身份、心里想什么）属臆测，不讲。
+
+## 六、出报告的两条通道（"给链接即出报告"）
+
+仓库上传 GitHub 后，网页端 AI（只能读公开文本、发 HTTP，不能在本地 clone 跑 Python）
+按 `docs/AI-SOP.md` 操作即可拿到 MD+HTML 报告。**两条通道跑同一份引擎、同一条四段契约**，
+产出同源；`tools/verify_web_parity.py` 是这条同源性的自动验收。
+
+### 通道 A · 纯前端（零凭证，网页 AI 首选）
+
+- 站点源在 `web/`，由 `tools/build_web.py` 把仓库镜像成静态站点
+  （`engine/<仓库相对路径>`），`.github/workflows/pages.yml` 发布到 GitHub Pages。
+- 页面在浏览器内用 **Pyodide** 跑 `chart→analyze→render`：**零凭证、零后端、
+  不上传任何输入**。深链协议 `?d=<学科>&q=…&dt=…&auto=1` 让 AI 只需拼一条 URL。
+- Pyodide 没有 `subprocess`，故浏览器侧执行器是 `web/engine_runtime.py`（同进程
+  `runpy`）；**请求→命令行参数的映射只有一份**，在内核 `yishu_core.report.request`，
+  三个执行器（本机/CI 子进程、浏览器同进程、将来任何宿主）共用，禁止各写一份。
+- 浏览器是单一解释器，而六科的 `scripts/` **目录同名**（每科都有 `chart.py`）。
+  跑某科前必须把别科模块清出 `sys.modules` 并把本科 `scripts/` 提到 `sys.path` 最前
+  （`engine_runtime._isolate`）——否则同名遮蔽会让某一科拿到别科的盘面。
+- 本地预览：`python tools/serve_web.py`（以仓库为站点根，改完刷新即生效）。
+
+### 通道 B · 云端 Actions（要留档、要回评时用）
+
+- 工作流 `.github/workflows/report.yml`：触发 = `workflow_dispatch` / `issues` /
+  `issue_comment`（`/yi` 命令）/ `repository_dispatch`（type `yi-report`）。
+  ⚠️ `workflow_dispatch.inputs` **最多 10 个**，超了工作流直接不注册；高级字段走
+  issue 正文或 `repository_dispatch`。
+- runner 上**零第三方依赖**直接跑 `python tools/report.py`（chart→analyze→render→统一 HTML）；
+  不得在工作流里引入未声明的依赖或私有服务。
+- 回传三通道：① **固定链接** `reports/<学科>/latest.{md,html}` +
+  `reports/index.json`（URL 里不含 run id，AI 无需轮询 API）；② 逐次留档
+  `reports/<学科>/<name>-<run_id>/`；③ issue/评论触发时回写评论。
+  Artifact（**下载需登录**）只作人工补充。
+- 触发半场的写操作必须有凭证（Token）或由人点预填 issue 链接。`/yi` 评论只对
+  OWNER/MEMBER/COLLABORATOR 生效（`YI_ALLOW_ASSOCIATIONS` 可放开）。
+- 报告与回评内容同样受铁律三约束：分数为古籍案例对齐分、非命中率，重大事项提示专业意见。
+- `reports` 分支、`site/` 与生成的报告文件都是产物，遵循 gitignore/分支隔离，
+  不混入主分支历史。
+
+### 修订 §六 的门槛
+
+改 `web/`、`tools/build_web.py`、`web/engine_runtime.py`、`core/yishu_core/report/request.py`
+或任一学科 `scripts/` 的 CLI 契约时，必须跑：
+`python tools/check.py --full`（含站点构建+自检、网页/本地同源验收）。

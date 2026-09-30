@@ -1,0 +1,131 @@
+name: Yi 云端报告
+
+# 网页 AI / 用户通过以下任一方式触发，runner 在零依赖环境跑 yi，产出 MD+HTML，
+# 并通过 Artifact、reports 分支、issue 评论回传。详见 docs/AI-SOP.md。
+#
+# ⚠️ 表单字段上限：workflow_dispatch 的 inputs **最多 10 个**，超了工作流直接不注册。
+# 故表单只暴露最常用的 10 个字段；yao（手摇爻值）/hour_branch/direction/longitude
+# 等高级字段请走 issue 正文 key:value 或 repository_dispatch（见 docs/AI-SOP.md §1）。
+on:
+  workflow_dispatch:
+    inputs:
+      discipline:
+        description: 学科
+        type: choice
+        options:
+          - liuyao
+          - ming
+          - ziwei
+          - meihua
+          - xiaoliuren
+          - zeji
+        default: liuyao
+      question:
+        description: 求测问题（卜科；命科可留空）
+        type: string
+        default: ''
+      datetime:
+        description: '起算/出生时间，格式 YYYY-MM-DD HH:MM（命/紫微必填）'
+        type: string
+        default: ''
+      gender:
+        description: 性别（命/紫微用：男 或 女）
+        type: string
+        default: ''
+      mode:
+        description: 六爻起卦模式 coin/time/number/manual（留空按是否有时间自动）
+        type: string
+        default: ''
+      numbers:
+        description: 数字起卦/起课，逗号分隔
+        type: string
+        default: ''
+      way:
+        description: 梅花/小六壬起卦方式 datetime/numbers/lunar/...
+        type: string
+        default: ''
+      date:
+        description: 择吉日期 YYYY-MM-DD（也接受 2026/09/30）
+        type: string
+        default: ''
+      activity:
+        description: 择吉事类（如 开市/嫁娶）
+        type: string
+        default: ''
+      commit_branch:
+        description: 是否提交到可匿名读取的 reports 分支
+        type: boolean
+        default: true
+  issues:
+    types: [opened, edited]
+  issue_comment:
+    types: [created]
+  repository_dispatch:
+    types: [yi-report]
+
+# 回传需要：写 reports 分支（contents）、回写 issue 评论（issues）、
+# 读 issue 评论者权限（issues: read 已含在 issues: write）
+permissions:
+  contents: write
+  issues: write
+  actions: read
+
+# 同一 issue / 同一学科串行：连点两次触发不会并行起多个 run 各回一次评论。
+# 不取消进行中的（cancel-in-progress: false）——报告是有用产物，跑完比省时间重要。
+concurrency:
+  group: yi-report-${{ github.event.issue.number || github.event.inputs.discipline || 'misc' }}
+  cancel-in-progress: false
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+
+      - name: 配置 Python（零第三方依赖，不安装包）
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 解析触发请求
+        id: req
+        env:
+          INPUT_DISCIPLINE: ${{ github.event.inputs.discipline }}
+          INPUT_QUESTION: ${{ github.event.inputs.question }}
+          INPUT_DATETIME: ${{ github.event.inputs.datetime }}
+          INPUT_GENDER: ${{ github.event.inputs.gender }}
+          INPUT_MODE: ${{ github.event.inputs.mode }}
+          INPUT_WAY: ${{ github.event.inputs.way }}
+          INPUT_NUMBERS: ${{ github.event.inputs.numbers }}
+          INPUT_DATE: ${{ github.event.inputs.date }}
+          INPUT_ACTIVITY: ${{ github.event.inputs.activity }}
+          INPUT_COMMIT_BRANCH: ${{ github.event.inputs.commit_branch }}
+        run: python tools/ci_request.py --out request.json --meta meta.json
+
+      - name: 端到端出报告（chart→analyze→render→HTML）
+        if: steps.req.outputs.should_run == 'true'
+        run: python tools/report.py --request request.json --outdir out --name report
+
+      - name: 上传 Artifact（MD+HTML）
+        if: steps.req.outputs.should_run == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: yi-report
+          path: |
+            out/report.md
+            out/report.html
+          if-no-files-found: error
+
+      - name: 提交到 reports 分支（可匿名 raw 读取）
+        if: steps.req.outputs.should_run == 'true' && steps.req.outputs.commit_branch == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python tools/ci_publish_branch.py --meta meta.json --outdir out
+
+      - name: 回写 issue 评论
+        if: steps.req.outputs.should_run == 'true' && steps.req.outputs.has_issue == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python tools/ci_deliver.py --meta meta.json --outdir out

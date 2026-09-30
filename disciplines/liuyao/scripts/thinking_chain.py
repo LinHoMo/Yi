@@ -43,14 +43,54 @@ import re
 from pathlib import Path
 
 from chain_tables import STEMS, SHENG_WO, KE_WO, PALACE_GENERATING, PALACE_OVERCOMING, SAN_HE, TWELVE_GROWTH_TABLES, TWELVE_GROWTH_STAGES, SIX_RELATIONS, RELATION_ELEMENT, JUE_MAP, SIX_SPIRITS, SPIRIT_ELEMENT, TRIGRAM_ELEMENT, XUN_KONG, HEXAGRAM_LIUHE, HEXAGRAM_LIUCHONG, _QUESTION_USE_GOD_MAP, USE_GOD_RELATIONSHIPS, TWELVE_GROWTH, _TWELVE_GROWTH_SCORE, _BRANCH_CLASHES, _HEXAGRAM_HARMONY_SET, _SAN_HE_SET, _BRANCH_CLASH_MAP, _HE_MAP, _ELEMENT_PEAK_MONTHS, _60_CYCLE_BASE, _HEX_NAMES, _CHART_TAIL, _QUESTION_USE_GOD_BASIS, _USE_GOD_LAYER_CITATIONS
-from chain_verdicts import SHI_YAO_INTERPRETATION, SHI_YAO_POEMS, _QUESTION_SCENARIO_KEYWORDS, QUOTE_DATABASE
-from chain_support import get_relation_from_element, get_elements_for_relation, _branch_element, _stem_element, _pos_to_name, _is_he, _is_chong, get_empty_branches, element_strength_in_month, _twelve_growth_at_day, _evaluate_fu_cang_strength, strength_to_score, get_twelve_growth_stage, get_changed_hexagram_branch, get_palace_first_hexagram, safe_get
-from chain_step1 import step1_read_situation
-from chain_step2 import step2_identify_use_god, _use_god_rules, _USE_GOD_RULES, _strip_hex_names, _strip_chart_tail, _match_use_god_rule, _use_god_basis, _decide_use_god, _determine_use_god_category, _find_use_god_positions, _find_relation_positions, _element_to_relation, _branch_to_relation, _check_fu_cang
-from chain_step3 import step3_analyze_strength, _combined_strength_for_hm, _detect_hidden_movement, _compose_strength_summary
-from chain_step4 import step4_analyze_changes, _compose_change_summary, _classify_line_role, _determine_change_type, _analyze_effect_on_use_god, _check_tan_sheng_wan_ke, _check_tan_he_wan_sheng_ke, _user_reason, _detect_classical_illness_pattern, _detect_hexagram_harmony_clash_pattern, _detect_special_pattern, _forms_hexagram_harmony, _check_greedy_harmony
-from chain_step5 import step5_synthesize, _day_branch_for_date, _next_date_with_day_branch, _next_month_with_branch, _add_months, _dates_overlap, calculate_yingqi, _assess_confidence, _confidence_to_text, _compose_synthesis_summary, _predict_timing
-from chain_narrate import _detect_question_scenario, analyze_shi_yao_relation, _pattern_matches, find_classical_quotes, _build_reasoning_chain, _inject_pattern_tags, _get_hexagram_body_summary_note, _scenario_cn, _build_overall_summary, _clean_internal_keys
+from narrative_utils import SHI_YAO_INTERPRETATION, SHI_YAO_POEMS, _QUESTION_SCENARIO_KEYWORDS, QUOTE_DATABASE
+from narrative_utils import get_relation_from_element, get_elements_for_relation, _branch_element, _stem_element, _pos_to_name, _is_he, _is_chong, get_empty_branches, element_strength_in_month, _twelve_growth_at_day, _evaluate_fu_cang_strength, strength_to_score, get_twelve_growth_stage, get_changed_hexagram_branch, get_palace_first_hexagram, safe_get
+from liuyao_analyze import (
+    step1_read_situation,
+    step2_identify_use_god,
+    step3_analyze_strength,
+    step4_analyze_changes,
+    step5_synthesize,
+    _add_months,
+    _analyze_effect_on_use_god,
+    _assess_confidence,
+    _branch_to_relation,
+    _check_fu_cang,
+    _check_greedy_harmony,
+    _check_tan_he_wan_sheng_ke,
+    _check_tan_sheng_wan_ke,
+    _classify_line_role,
+    _compose_change_summary,
+    _compose_strength_summary,
+    _compose_synthesis_summary,
+    _confidence_to_text,
+    _day_branch_for_date,
+    _decide_use_god,
+    _determine_change_type,
+    _determine_use_god_category,
+    _dates_overlap,
+    _detect_classical_illness_pattern,
+    _detect_hexagram_harmony_clash_pattern,
+    _detect_hidden_movement,
+    _detect_special_pattern,
+    _element_to_relation,
+    _find_relation_positions,
+    _find_use_god_positions,
+    _forms_hexagram_harmony,
+    _match_use_god_rule,
+    _next_date_with_day_branch,
+    _next_month_with_branch,
+    _predict_timing,
+    _strip_chart_tail,
+    _strip_hex_names,
+    _use_god_basis,
+    _use_god_rules,
+    _USE_GOD_RULES,
+    _user_reason,
+    _combined_strength_for_hm,
+    calculate_yingqi,
+)
+from liuyao_narrate import _detect_question_scenario, analyze_shi_yao_relation, _pattern_matches, find_classical_quotes, _build_reasoning_chain, _inject_pattern_tags, _get_hexagram_body_summary_note, _scenario_cn, _build_overall_summary, _clean_internal_keys
 
 def run_thinking_chain(hex_result: dict) -> dict:
     """

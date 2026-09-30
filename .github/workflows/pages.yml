@@ -1,0 +1,69 @@
+name: Yi 纯前端站点（GitHub Pages）
+
+# 作用：把仓库源码镜像成纯静态站点，发布到 GitHub Pages。
+# 发布后的页面在**浏览器内**跑与本地/CI 同一份 Python 引擎（Pyodide），
+# 因此"只给一条链接 + 信息就出报告"这条路**不需要任何凭证、不需要后端**。
+# 取用规程见 docs/AI-SOP.md。
+#
+# 一次性设置：仓库 Settings → Pages → Source 选 "GitHub Actions"。
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'core/**'
+      - 'disciplines/**'
+      - 'synthesis/**'
+      - 'cli/**'
+      - 'web/**'
+      - 'tools/build_web.py'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Pages 同时只允许一个部署；不取消进行中的（避免页面在半成品状态）
+concurrency:
+  group: yi-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+
+      - name: 配置 Python（零第三方依赖）
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 构建静态站点
+        run: python tools/build_web.py --outdir _site
+
+      - name: 自检（清单与镜像逐条对齐）
+        run: python tools/check_web_site.py --site _site
+
+      - name: 配置 Pages
+        uses: actions/configure-pages@v5
+
+      - name: 打包并上传站点
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 部署到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

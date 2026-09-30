@@ -15,7 +15,7 @@
 """
 from __future__ import annotations
 
-from chain_verdicts import (
+from narrative_utils import (
     STEP5_FACTOR_REASONS as FREASON,
     NARRATIVE_HINTS,
     STRENGTH_POLARITY_MAP,

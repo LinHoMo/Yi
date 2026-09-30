@@ -16,7 +16,7 @@
 | `scripts/analyze.py` | 强弱/格局/喜用/大运/流年机械推演 |
 | `scripts/narrate.py` | 因子正文（明确非命运断言） |
 | `scripts/render.py` | 因子报告 |
-| `tools/check.py` | 契约完整性 + 冒烟 + 金标准 |
+| `dev_tools/check.py` | 契约完整性 + 冒烟 + 金标准 |
 
 ## 禁止
 

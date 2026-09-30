@@ -10,6 +10,9 @@ description = "易的内核：干支历、节气、纳甲、象数基元、评�
 requires-python = ">=3.10"
 dependencies = []              # 主计算只用标准库；历法自行求节气，不依赖近似表
 
+[project.scripts]
+yi = "cli.main:main"
+
 # 可选：装了仅用作历法交叉校验，不装绝不降级为近似算法
 [project.optional-dependencies]
 lunar = ["lunar-python>=1.4"]
@@ -22,7 +25,8 @@ version = { attr = "yishu_core.__version__" }
 package-dir = { "" = "core" }
 
 [tool.setuptools.packages.find]
-where = ["core"]
+where = ["core", "."]
+include = ["yishu_core*", "cli*"]
 
 # 测试：切到 importlib 导入模式，避免仓库内同名脚本（disciplines/*/scripts/smoke_test.py、
 # 多个同名的 evaluate.py）在 prepend 模式下互相遮蔽/撞车；testpaths 只收真正的测试套件，

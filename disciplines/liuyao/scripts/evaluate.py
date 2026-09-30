@@ -5,6 +5,7 @@
     python scripts/evaluate.py --split tune
     python scripts/evaluate.py --split holdout --verbose
     python scripts/evaluate.py --stage score --engine-file data/cases/eval_all.json
+    python scripts/evaluate.py --split wikisource_holdout --yingqi-mode both
 
 口径说明（务必连同分数一起阅读）：
   本脚本衡量的是**引擎输出与古籍案例要点的一致性**，不是现实世界预言命中率。
@@ -13,6 +14,11 @@
   strict —— 基准未记录某维度时该维度记 N/A 并从分母剔除；应期不对齐不得分。
   legacy —— 复刻 2026-09-20 之前的口径：N/A 按满分给、应期有 8/15 保底。
             历史上报出的 tune 100% 就是这个口径的产物，此处保持可复现。
+
+应期体检评分（--yingqi-mode）：
+  strict —— 主应期支精确命中才算命中（与 score_case 一致）
+  loose  —— 命中任一区间化规则即算命中（相对窗 / 绝对日期 / 位置无关）
+  both   —— 双列对比输出（默认）
 
 维度与权重（单一真值源，总和 100）：
   用神六亲 15 / 用神地支 10 / 用神爻位 5 / 吉凶方向 40 / 格局覆盖 15 / 应期 15
@@ -24,6 +30,7 @@ import argparse
 import json
 import re
 import sys
+from datetime import datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -33,6 +40,7 @@ for _p in (str(ROOT / "scripts"), str(kernel_dir(__file__))):
 
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 from yishu_core.eval import verdict_direction, pct, run_eval, report as _report  # noqa: E402
+from liuyao_timing import relative_window, resolve_case_anchor, date_in_window  # noqa: E402
 import case_runner  # noqa: E402
 
 CASES = ROOT / "data" / "cases" / "classical_cases.json"
@@ -232,7 +240,7 @@ def score_case(eng: dict, exp: dict, model: str) -> dict:
         if not needed:
             hit = x_yq in probe
             # 相对窗：有锚日则换算绝对日窗比对引擎日期；否则节奏语义对齐
-            from yingqi_windows import relative_window, resolve_case_anchor, date_in_window
+            from liuyao_timing import relative_window, resolve_case_anchor, date_in_window
             win = relative_window(x_yq)
             anchor = resolve_case_anchor((exp.get("input") or {}), exp) if isinstance(exp, dict) else None
             abs_hit = False
@@ -266,6 +274,104 @@ def score_case(eng: dict, exp: dict, model: str) -> dict:
     return dims
 
 
+def score_yingqi_loose(eng: dict, exp: dict, case: dict | None = None) -> tuple[int, int, str]:
+    """应期 loose 评分：命中任一即满分。
+
+    命中规则（OR 逻辑）：
+      1. 主应期支 = expected 支（与 strict top-1 同）
+      2. expected 支出现在引擎任何单位级候选池中（位置无关）
+      3. 引擎给出的相对窗 (relative_window) 覆盖 expected 支
+         — 解析引擎文本中的相对关键词，锚日优先取 case 顶层，其次从 input.date 抽取
+      4. 引擎给出的绝对日 (yingqi_dates) 含 expected 支
+
+    参数：
+      eng  —— 引擎单例输出
+      exp  —— 基准 expected 子字典（必须含 yingqi）
+      case —— 完整案例（可选，用于 resolve_case_anchor 的年月日/input.date 解析）
+    """
+    w = WEIGHTS["yingqi"]
+    x_yq = str(exp.get("yingqi") or "")
+
+    if _na(x_yq):
+        return (0, 0, "空白基准 → N/A")
+
+    exp_unit = _expected_unit(x_yq)
+    m_unit = YQ_UNIT_RE.search(x_yq)
+    needed = [m_unit.group(1)] if m_unit else _branches_in(x_yq)
+    if not needed:
+        e_yq = str(eng.get("yingqi") or "")
+        if x_yq in e_yq:
+            return (w, w, "字面命中 [loose]")
+        return (0, w, f"未命中({x_yq})")
+
+    offered = _offered_branches(_unit_pool(eng, exp_unit))
+
+    # 引擎所有单位支集合
+    eng_yq = str(eng.get("yingqi") or "")
+    declared_tokens = [str(t) for t in (eng.get("yingqi_branches") or [])] + \
+                      [str(t) for t in (eng.get("yingqi_months") or [])] + \
+                      [str(t) for t in (eng.get("yingqi_years") or [])]
+    declared_branches = _branches_in(" ".join(declared_tokens))
+
+    # 引擎绝对日期集 (date, branch)
+    eng_dates_data = eng.get("yingqi_dates") or {}
+    if isinstance(eng_dates_data, dict):
+        eng_date_list = [(d.get("date", ""), d.get("branch", ""))
+                         for d in eng_dates_data.get("dates", []) if isinstance(d, dict)]
+    else:
+        eng_date_list = []
+
+    # 锚日：优先从引擎 assembled_time 取，否则 resolve_case_anchor 退到 case 顶层
+    anchor = None
+    assembled = str(eng.get("assembled_time") or "")
+    if assembled:
+        try:
+            anchor = datetime.strptime(assembled[:10], "%Y-%m-%d")
+        except ValueError:
+            pass
+    if anchor is None and case is not None:
+        anchor = resolve_case_anchor((case.get("input") or {}), case)
+
+    # 规则 1: 主应期 = expected
+    main_hit = bool(offered and offered[0] in needed)
+
+    # 规则 2: 任何位置有 expected 支
+    any_hit = bool(any(n in declared_branches for n in needed))
+
+    # 规则 3: 相对窗覆盖
+    rel_hit = False
+    rel_note = ""
+    win = relative_window(eng_yq)
+    if win and anchor:
+        lo_rel, hi_rel, label = win
+        for d, br in eng_date_list:
+            if d and br and br in needed and date_in_window(anchor, d, lo_rel, hi_rel):
+                rel_hit = True
+                rel_note = f"{label}覆盖{''.join(needed)}"
+                break
+
+    # 规则 4: 绝对日期含 expected 支
+    abs_hit = False
+    abs_note = ""
+    if needed:
+        for d, br in eng_date_list:
+            if br in needed:
+                abs_hit = True
+                abs_note = f"日期{d}对应{''.join(needed)}"
+                break
+
+    if main_hit:
+        return (w, w, f"主应期命中（{exp_unit}级）[loose]")
+    elif any_hit:
+        return (w, w, f"候选命中（{exp_unit}级）[loose]")
+    elif rel_hit:
+        return (w, w, f"相对窗命中（{exp_unit}级）[loose]: {rel_note}")
+    elif abs_hit:
+        return (w, w, f"日期命中（{exp_unit}级）[loose]: {abs_note}")
+    else:
+        return (0, w, f"未命中({x_yq})")
+
+
 def evaluate(engine_out: dict, model: str, label: str, ids: list[str], verbose: bool) -> dict:
     """六爻古籍案例对齐评分（框架与 N/A 口径见 yishu_core.eval，此处只给维度比较）。"""
     base = {c["id"]: c for c in case_runner.load_cases()}
@@ -289,10 +395,16 @@ def yingqi_discrimination(engine_out: dict, ids: list[str]) -> dict:
     这里只数引擎**自己声明的重点应期**（yingqi_branches），报告：
       候选集平均大小、top-1 命中率、基准应支在候选中的平均名次、
       以及"随机列同样多候选即全覆盖"的期望概率（召回分的无信息基线）。
+
+    同时输出 loose 评分（区间化命中）指标：
+      - loose_hit_rate: 命中任一 loose 规则（相对窗/绝对日期）即算命中
+      - loose_rel_hit_rate: 通过相对窗命中的比例
+      - loose_abs_hit_rate: 通过绝对日期命中的比例
     """
     base = {c["id"]: c for c in case_runner.load_cases()}
     by_e = {c.get("id"): c for c in engine_out.get("cases", [])}
     sizes, ranks, top1_hit, top1_n, random_p = [], [], 0, 0, []
+    loose_hit, rel_hit, abs_hit, loose_n = 0, 0, 0, 0
     per_unit = {}
 
     for cid in ids:
@@ -310,7 +422,9 @@ def yingqi_discrimination(engine_out: dict, ids: list[str]) -> dict:
         # 跳过会让"答不出的单位"悄悄退出统计，n 变小、分数变好看，属于假指标。
         sizes.append(len(offered))
         top1_n += 1
-        u = per_unit.setdefault(unit, {"n": 0, "top1": 0, "ranks": []})
+        loose_n += 1
+        u = per_unit.setdefault(unit, {"n": 0, "top1": 0, "ranks": [],
+                                        "loose": 0, "rel": 0, "abs": 0})
         u["n"] += 1
         if not offered:
             continue
@@ -327,6 +441,21 @@ def yingqi_discrimination(engine_out: dict, ids: list[str]) -> dict:
             ranks.append(hit_at)
             u["ranks"].append(hit_at)
 
+        # ── loose 评分判定 ──
+        loose_result = score_yingqi_loose(e, b.get("expected") or {}, b)
+        if loose_result[0] > 0:
+            loose_hit += 1
+            u["loose"] += 1
+        # 解析 loose 命中类型
+        loose_note = loose_result[2]
+        if "[loose]" in loose_note:
+            if "相对窗" in loose_note:
+                rel_hit += 1
+                u["rel"] += 1
+            if "日期命中" in loose_note:
+                abs_hit += 1
+                u["abs"] += 1
+
     if not sizes:
         return {}
     return {
@@ -336,13 +465,19 @@ def yingqi_discrimination(engine_out: dict, ids: list[str]) -> dict:
         "avg_rank_of_correct": round(sum(ranks) / len(ranks), 2) if ranks else None,
         "ranked_cases": len(ranks),
         "random_full_coverage_expectancy": round(sum(random_p) * 100.0 / len(random_p), 1),
+        "loose_hit_rate": round(loose_hit * 100.0 / loose_n, 1) if loose_n else None,
+        "loose_rel_hit_rate": round(rel_hit * 100.0 / loose_n, 1) if loose_n else None,
+        "loose_abs_hit_rate": round(abs_hit * 100.0 / loose_n, 1) if loose_n else None,
         "yingqi_day": None,
         "yingqi_month": None,
         "yingqi_year": None,
         "by_unit": {u: {"n": v["n"],
                         "top1_hit_rate": round(v["top1"] * 100.0 / v["n"], 1) if v["n"] else None,
                         "avg_rank": round(sum(v["ranks"]) / len(v["ranks"]), 2) if v["ranks"] else None,
-                        "ranked": len(v["ranks"])}
+                        "ranked": len(v["ranks"]),
+                        "loose_hit_rate": round(v["loose"] * 100.0 / v["n"], 1) if v["n"] else None,
+                        "loose_rel_hit_rate": round(v["rel"] * 100.0 / v["n"], 1) if v["n"] and v["rel"] else None,
+                        "loose_abs_hit_rate": round(v["abs"] * 100.0 / v["n"], 1) if v["n"] and v["abs"] else None}
                     for u, v in sorted(per_unit.items())},
     }
 
@@ -356,13 +491,17 @@ def main() -> int:
     force_utf8_stdio()
     ap = argparse.ArgumentParser(description="六爻古籍案例对齐评分（非现实预测命中率）")
     ap.add_argument("--split", choices=["tune", "holdout", "yingqi_holdout",
-                                        "wikisource_holdout", "wikisource_direction", "all"],
+                                        "wikisource_holdout", "wikisource_direction",
+                                        "huozhulin_holdout", "huozhulin_qualitative",
+                                        "bushi_zhengzong_holdout", "all"],
                     default="all")
     ap.add_argument("--ids", nargs="*", help="指定案例 ID，优先于 --split")
     ap.add_argument("--stage", choices=["run", "score", "all"], default="all")
     ap.add_argument("--engine-file", type=Path, help="已有的引擎输出（配合 --stage score）")
     ap.add_argument("--verbose", action="store_true")
     ap.add_argument("--save", action="store_true", help="写出 JSON 明细到 data/cases/")
+    ap.add_argument("--yingqi-mode", choices=["strict", "loose", "both"], default="both",
+                    help="应期体检评分模型（strict=精确支命中, loose=区间化命中, both=双列对比）")
     args = ap.parse_args()
 
     import case_runner
@@ -401,6 +540,7 @@ def main() -> int:
         print("无可用结果")
         return 1
 
+    yq_mode = getattr(args, "yingqi_mode", "both")
     disc = yingqi_discrimination(engine_out, ids)
     if disc:
         results["yingqi_discrimination"] = disc
@@ -408,24 +548,31 @@ def main() -> int:
         print(f"  候选集平均大小 {disc['avg_candidate_set_size']}/12 —— 越接近 12，召回分越没有信息量")
         print(f"  随机列同样多候选即全覆盖的期望 {disc['random_full_coverage_expectancy']}%"
               f"（召回分接近此值 = 等于没判断）")
-        print(f"  top-1 命中 {disc['top1_hit_rate']}%；基准应支平均排在第 {disc['avg_rank_of_correct']} 位"
-              f"（{disc['ranked_cases']} 例可定位）← 这一项才见真章")
-        # 应期日/月/年分列（口径：按 expected 时间单位切分；合集仍见上）
+        # 严格 / loose 双列对比
+        strict_top1 = disc.get("top1_hit_rate")
+        loose_top1 = disc.get("loose_hit_rate")
+        strict_rank = disc.get("avg_rank_of_correct")
+        ranked_n = disc.get("ranked_cases")
+        if yq_mode in ("strict", "both"):
+            print(f"  strict top-1 命中 {strict_top1}%；基准应支平均排在第 {strict_rank} 位"
+                  f"（{ranked_n} 例可定位）← 这一项才见真章")
+        if yq_mode in ("loose", "both") and loose_top1 is not None:
+            rel_rate = disc.get("loose_rel_hit_rate") or 0
+            abs_rate = disc.get("loose_abs_hit_rate") or 0
+            print(f"  loose top-1 命中 {loose_top1}%（相对窗 {rel_rate}% + 绝对日期 {abs_rate}%）")
+        # 应期日/月/年分列
         unit_map = {"日": "yingqi_day", "月": "yingqi_month", "年": "yingqi_year"}
         for u, v in (disc.get("by_unit") or {}).items():
             key = unit_map.get(u)
             if key and key in disc:
-                disc[key] = {"n": v["n"], "top1_hit_rate": v["top1_hit_rate"],
-                             "avg_rank": v["avg_rank"], "ranked": v["ranked"]}
-            print(f"    {u}级：n={v['n']}，top-1 {v['top1_hit_rate']}%，"
-                  f"平均名次 {v['avg_rank']}（{v['ranked']} 例可定位）")
-        print("  分列（strict 应期）："
-              + "；".join(
-                  f"{k.split('_')[1]} n={ (disc.get(k) or {}).get('n') }"
-                  f" top-1={ (disc.get(k) or {}).get('top1_hit_rate') }%"
-                  for k in ("yingqi_day", "yingqi_month", "yingqi_year")
-                  if disc.get(k)
-              ))
+                disc[key] = dict(v)
+            if yq_mode == "strict":
+                print(f"    {u}级：n={v['n']} strict={v.get('top1_hit_rate')}%")
+            elif yq_mode == "loose":
+                print(f"    {u}级：n={v['n']} loose={v.get('loose_hit_rate')}%")
+            else:
+                print(f"    {u}级：n={v['n']} strict={v.get('top1_hit_rate')}% "
+                      f"loose={v.get('loose_hit_rate')}%")
 
     print(f"\n口径差异：strict {strict['avg']}% vs legacy {legacy['avg']}%"
           f"（差 {round(legacy['avg'] - strict['avg'], 1)} 分来自空白基准满分与应期保底）")

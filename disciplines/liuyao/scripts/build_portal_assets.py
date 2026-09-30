@@ -106,7 +106,7 @@ def build_samples() -> list[dict]:
         out = analyze(dict(h))
         tc = dict(out)
         thinking = tc.get("thinking_chain") or {}
-        from human_narrative import build_human_narrative
+        from liuyao_narrate import build_human_narrative
         human = build_human_narrative(tc)
         out_html = OUT_REPORTS / f"report_{cid}.html"
         out_html.write_text(render(out, fmt="html"), encoding="utf-8")

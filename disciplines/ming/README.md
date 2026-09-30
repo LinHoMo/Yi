@@ -21,7 +21,7 @@ cd disciplines/ming
 python scripts/chart.py --datetime "1990-05-20 10:30" --gender 男 -o scratch/chart.json
 python scripts/analyze.py scratch/chart.json -o scratch/analyze.json
 python scripts/narrate.py scratch/analyze.json
-python tools/check.py
+python dev_tools/check.py
 ```
 
 ## 口径（可回溯）

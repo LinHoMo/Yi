@@ -3,7 +3,7 @@
 
 对既有 `liuyao_engine.build_hexagram_result` 的薄适配：不改引擎内部，
 只负责按契约产出结构化的 chart JSON（排盘 + 干支 + 旬空 + 六亲 + 增强分析），
-供 analyze 段消费。验证走既有 `tools/check.py` 与金标准指纹，不新增推演逻辑。
+供 analyze 段消费。验证走既有 `dev_tools/check.py` 与金标准指纹，不新增推演逻辑。
 """
 from __future__ import annotations
 
@@ -28,14 +28,22 @@ def _parse_yao_values(text: str) -> list[int]:
 
 def _resolve_moment(datetime_str: str | None, hour: int | None,
                     zi_hour_type: str | None = None) -> tuple:
-    """解析起卦时刻（含 --hour 覆盖与早晚子时），返回 (year, month, day, hour, zi_info)。"""
+    """解析起卦时刻（含 --hour 覆盖与早晚子时），返回 (年, 月, 日, 时, 分, zi_info)。
+
+    分只用于报告里"起卦时刻"的呈现：干支以时辰为单位，分钟不参与推演。
+    --hour 覆盖小时时，分钟随之归零（否则会印出"覆盖后的小时 + 原分钟"这种
+    并不存在的时刻）。
+    """
     if datetime_str:
         dt = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M")
     else:
         now = datetime.now()
         dt = datetime(now.year, now.month, now.day, now.hour, now.minute)
 
-    hh = hour if hour is not None else dt.hour
+    if hour is not None:
+        hh, minute = hour, 0
+    else:
+        hh, minute = dt.hour, dt.minute
     year, month, day = dt.year, dt.month, dt.day
 
     zi_info = None
@@ -49,7 +57,7 @@ def _resolve_moment(datetime_str: str | None, hour: int | None,
             year = zi_info["day_year"]
             month = zi_info["day_month"]
             day = zi_info["day_day"]
-    return year, month, day, hh, zi_info
+    return year, month, day, hh, minute, zi_info
 
 
 def chart(mode: str, question: str, *, datetime_str: str | None = None,
@@ -68,9 +76,10 @@ def chart(mode: str, question: str, *, datetime_str: str | None = None,
     # 时间模式：显式年月日时优先，否则解析 datetime_str
     if mode == "time" and year is not None and month is not None and day is not None:
         yy, mm, dd, hh = year, month, day, hour if hour is not None else 12
+        minute = 0
         _zi = None
     else:
-        yy, mm, dd, hh, _zi = _resolve_moment(datetime_str, hour, zi_type)
+        yy, mm, dd, hh, minute, _zi = _resolve_moment(datetime_str, hour, zi_type)
 
     if mode == "coin":
         rng = engine.random.Random(seed) if seed is not None else None
@@ -89,7 +98,7 @@ def chart(mode: str, question: str, *, datetime_str: str | None = None,
         yao_values = [coin_toss(rng) for _ in range(6)]
 
     result = build_hexagram_result(
-        yao_values, question, mode, yy, mm, dd, hh,
+        yao_values, question, mode, yy, mm, dd, hh, minute=minute,
     )
 
     # 早晚子时信息（与引擎 main 一致地挂到 enhancements）

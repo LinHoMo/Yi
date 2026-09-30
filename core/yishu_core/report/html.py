@@ -81,6 +81,11 @@ _MD_BLOCK_RULES = (
     (re.compile(r"^\|(.*)\|$"), None),  # 表格行 → 交给 _md_table
 )
 
+# 有序列表项 / 水平分割线（报告里"可以这样做：1. 2. 3."与"---"很常见，
+# 早期版本会把它们塞进一个 <p> 或原样印出 "---"，排版与 CSS 都对不上）
+_MD_OL = re.compile(r"^\d+[.)]\s+(.*)$")
+_MD_HR = re.compile(r"^\s*(?:-{3,}|\*{3,}|_{3,})\s*$")
+
 
 def _md_table(lines: list[str], i: int) -> tuple[str, int]:
     """把连续的 markdown 表格行转成一个 <table>，返回 (html, 下一行下标)。"""
@@ -101,10 +106,13 @@ def _md_table(lines: list[str], i: int) -> tuple[str, int]:
 
 
 def _md_inline(text: str) -> str:
+    # 先转义原文（防注入/尖括号），再套行内标签；否则后做 escape 会把刚生成的
+    # <strong>/<code> 标签一并转义成字面文本。
+    text = escape(text)
     text = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", text)
     text = re.sub(r"\*(.+?)\*", r"<em>\1</em>", text)
     text = re.sub(r"`(.+?)`", r"<code>\1</code>", text)
-    return escape(text)
+    return text
 
 
 def _is_aligned_block(lines: list[str]) -> bool:
@@ -121,7 +129,7 @@ def _is_aligned_block(lines: list[str]) -> bool:
 
 
 def md_to_html(text: str) -> str:
-    """轻量 markdown → HTML（标题/表格/列表/粗体/行内码/对齐文本块）。
+    """轻量 markdown → HTML（标题/表格/有序与无序列表/分割线/粗体/行内码/对齐文本块）。
     只做呈现转换，不解析链接与引用语法；段落按空行切分。"""
     lines = text.split("\n")
     out: list[str] = []
@@ -130,6 +138,10 @@ def md_to_html(text: str) -> str:
         line = lines[i]
         stripped = line.strip()
         if not stripped:
+            i += 1
+            continue
+        if _MD_HR.match(line):
+            out.append("<hr>")
             i += 1
             continue
         if stripped.startswith("|"):
@@ -154,6 +166,17 @@ def md_to_html(text: str) -> str:
             out.append(f"<ul>{''.join(items)}</ul>")
             i = j
             continue
+        if _MD_OL.match(stripped):
+            items, j = [], i
+            while j < n:
+                m = _MD_OL.match(lines[j].strip())
+                if not m:
+                    break
+                items.append(f"<li>{_md_inline(m.group(1))}</li>")
+                j += 1
+            out.append(f"<ol>{''.join(items)}</ol>")
+            i = j
+            continue
         # 连续段落行（空行前）→ 对齐痕迹则保形成 <pre>，否则 <p>
         block, j = [], i
         while j < n and lines[j].strip():
@@ -167,3 +190,107 @@ def md_to_html(text: str) -> str:
                        else f"<p>{'<br>'.join(_md_inline(l) for l in block)}</p>")
         i = j
     return "\n".join(out)
+
+
+# 统一报告样式：纸质底 + 墨色正文 + 朱砂点缀（避开靛蓝/紫色系），任何学科的
+# Markdown 报告都经同一套 CSS 出 HTML，保证"一科一长相"不再发生。
+REPORT_CSS = """
+:root {
+  --paper: #f4f1ea;
+  --card: #fffdf8;
+  --ink: #2b2924;
+  --muted: #6f6a5e;
+  --accent: #9a3b2d;
+  --accent-soft: #b8675a;
+  --line: #e2dccf;
+  --pre-bg: #efece3;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: "Noto Serif SC", "Songti SC", "SimSun", "Microsoft YaHei", serif;
+  line-height: 1.8; font-size: 16px;
+}
+.report { max-width: 880px; margin: 0 auto; padding: 40px 24px 64px; }
+.report-header {
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+  padding: 28px 32px; margin-bottom: 24px;
+  border-top: 4px solid var(--accent);
+}
+.report-header h1 { margin: 0 0 6px; font-size: 26px; color: var(--ink); }
+.report-header .meta { color: var(--muted); font-size: 14px; margin: 0; }
+.report-body {
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+  padding: 32px 36px;
+}
+.report-body h1 { font-size: 23px; margin: 8px 0 18px; }
+.report-body h2 {
+  font-size: 19px; margin: 34px 0 14px; padding-left: 12px;
+  border-left: 4px solid var(--accent);
+}
+.report-body h3 { font-size: 16px; margin: 24px 0 10px; color: var(--accent); }
+.report-body h4, .report-body h5 { font-size: 15px; margin: 18px 0 8px; }
+.report-body p { margin: 12px 0; }
+.report-body ul { margin: 12px 0; padding-left: 26px; }
+.report-body ol { margin: 12px 0; padding-left: 26px; }
+.report-body li { margin: 5px 0; }
+.report-body hr {
+  border: 0; border-top: 1px dashed var(--line); margin: 26px 0;
+}
+.report-body table {
+  border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 14.5px;
+}
+.report-body th, .report-body td {
+  border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top;
+}
+.report-body th { background: #f3ece4; font-weight: 600; }
+.report-body tbody tr:nth-child(even) { background: #faf7f0; }
+.report-body pre {
+  background: var(--pre-bg); border: 1px solid var(--line); border-radius: 8px;
+  padding: 14px 16px; overflow-x: auto; font-size: 14px; line-height: 1.6;
+  font-family: "Consolas", "Noto Sans Mono", monospace;
+}
+.report-body code {
+  background: var(--pre-bg); padding: 1px 6px; border-radius: 4px;
+  font-family: "Consolas", monospace; font-size: 14px;
+}
+.report-footer {
+  text-align: center; color: var(--muted); font-size: 13px;
+  margin-top: 22px; line-height: 1.7;
+}
+@media (max-width: 640px) {
+  .report { padding: 20px 12px 40px; }
+  .report-header, .report-body { padding: 20px; }
+}
+"""
+
+
+def report_page_from_markdown(
+    *,
+    title: str,
+    markdown: str,
+    meta: str = "",
+    footer: str = "",
+) -> str:
+    """把一份学科 Markdown 报告组装成统一风格的完整单文件 HTML 页面。
+
+    title    : 报告主标题（<h1> 与 <title>）
+    markdown : 学科 render 产出的 Markdown 正文
+    meta     : 标题下的小字（如学科、求测信息、生成时间）
+    footer   : 页脚（口径说明 / 免责）
+    """
+    body_html = md_to_html(markdown)
+    meta_html = f'<p class="meta">{escape(meta)}</p>\n' if meta else ""
+    body = (
+        '<div class="report">\n'
+        f'  <div class="report-header">\n    <h1>{escape(title)}</h1>\n{meta_html}  </div>\n'
+        f'  <div class="report-body">\n{body_html}\n  </div>\n'
+        f'  <div class="report-footer">{footer}</div>\n'
+        "</div>\n"
+    )
+    return render_page(
+        title=title,
+        body=body,
+        css=REPORT_CSS,
+        container=False,
+    )

@@ -1,0 +1,15 @@
+{
+  "_meta": {
+    "what": "紫微斗数金标准指纹基线",
+    "how": "改动引擎后跑 python dev_tools/golden.py capture \"理由\""
+  },
+  "digest": "68123c2d0fd0ce7e",
+  "drift_log": [
+    {
+      "from": null,
+      "to": "68123c2d0fd0ce7e",
+      "date": "2026-09-30",
+      "reason": "初始基线:紫微斗数新建学科"
+    }
+  ]
+}

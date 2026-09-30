@@ -132,7 +132,7 @@ _USE_GOD_DICT_PATH = Path(__file__).resolve().parents[1] / "data" / "rules" / "q
 def _load_question_use_gods() -> tuple[dict, dict, dict]:
     """装载问题词典 data/rules/question_use_gods.json → (词典, 按键依据, 覆盖层引文)。
 
-    词典本体已按事项族结构化进 data/（tools/build_question_use_gods.py 生成，
+    词典本体已按事项族结构化进 data/（dev_tools/build_question_use_gods.py 生成，
     每族带 label + 引文/推断依据）；这里只做装载与展平。装载失败直接抛错、不降级：
     词典缺了打分层会把一切静默判成世爻，那是"错得安静"——按铁律一宁可整个排盘
     报异常。entries 顺序即 JSON 顺序（同分 tie-break 依赖插入序），装载保持原序，

@@ -6,5 +6,23 @@ HTML 模板（历史教训：六爻两套并行引擎一副卦两种长相）。
 """
 
 from .html import escape, render_page, write_html
+from .request import (
+    DISCIPLINES,
+    DISC_TITLE,
+    REPORT_FOOTER,
+    analyze_argv,
+    chart_argv,
+    norm_date,
+    norm_iso,
+    normalize_request,
+    render_argv,
+    report_meta,
+    report_title,
+)
 
-__all__ = ["escape", "render_page", "write_html"]
+__all__ = [
+    "escape", "render_page", "write_html",
+    "DISCIPLINES", "DISC_TITLE", "REPORT_FOOTER",
+    "analyze_argv", "chart_argv", "render_argv",
+    "norm_date", "norm_iso", "normalize_request", "report_meta", "report_title",
+]

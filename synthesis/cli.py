@@ -212,7 +212,7 @@ def main() -> int:
     p = sub.add_parser("add-divination", help="登记一次占问")
     p.add_argument("pid")
     p.add_argument("--discipline", required=True,
-                   choices=["liuyao", "ming"])
+                   choices=["liuyao", "ming", "ziwei"])
     p.add_argument("--analyze-json", required=True, help="该科 analyze 输出 JSON")
     p.add_argument("--event-id")
     p.add_argument("--asked", help="问句（缺省取 analyze.question）")
