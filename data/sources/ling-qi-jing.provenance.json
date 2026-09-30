@@ -1,0 +1,23 @@
+{
+  "key": "ling-qi-jing",
+  "kind": "灵棋经",
+  "title": "靈棋經",
+  "site": "zh.wikisource.org",
+  "api": "https://zh.wikisource.org/w/api.php",
+  "pages": [
+    "靈棋經"
+  ],
+  "page_count": 1,
+  "fetched": "2026-09-30 15:50:46+0800",
+  "sha256": "141c12c03fecd109c6105636a2a2a594b9173b387c225c1a963c715457d097d5",
+  "stats": {
+    "bytes": 36941,
+    "chars": 15633,
+    "lines": 1302,
+    "ganzhi_pairs": 0,
+    "tables": 0,
+    "headings": 125
+  },
+  "source_file": "data/sources/ling-qi-jing.wikitext.txt",
+  "note": "公版古籍原文的字符级转存，未做任何改写或模型转写；子页以 <!-- ==== 标题 ==== --> 分隔。"
+}

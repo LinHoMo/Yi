@@ -116,7 +116,8 @@ def _request_from_args(args) -> dict:
         yao=args.yao, date=args.date, activity=args.activity,
         hour_branch=args.hour_branch, direction=args.direction,
         longitude=args.longitude, name=args.name or None,
-    ).items() if v}
+        up=args.up, mid=args.mid, down=args.down,
+    ).items() if v is not None and v != ""}
 
 
 def main() -> int:
@@ -136,6 +137,9 @@ def main() -> int:
     ap.add_argument("--hour-branch", dest="hour_branch", default="")
     ap.add_argument("--direction", default="", help="小六壬：目标方位")
     ap.add_argument("--longitude", type=float)
+    ap.add_argument("--up", type=int, help="灵棋经：上掷面数 0..4")
+    ap.add_argument("--mid", type=int, help="灵棋经：中掷面数 0..4")
+    ap.add_argument("--down", type=int, help="灵棋经：下掷面数 0..4")
     ap.add_argument("--name", default="", help="输出文件主名（缺省带时间戳）")
     ap.add_argument("--outdir", type=Path, default=Path("reports"))
     ap.add_argument("--result-json", type=Path, default=None,

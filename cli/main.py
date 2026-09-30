@@ -72,6 +72,12 @@ DISCIPLINE_COMMANDS: dict[str, dict[str, tuple[str, str]]] = {
         "narrate":  ("liuren/scripts/narrate.py",   "人话叙述（机械标签，无吉凶断语）"),
         "render":   ("liuren/scripts/render.py",    "渲染报告（Markdown）"),
     },
+    "lingqi": {
+        "chart":    ("lingqi/scripts/chart.py",     "起课（三部掷数查 124 课表）"),
+        "analyze":  ("lingqi/scripts/analyze.py",   "课名/象/卦注/象曰/詩曰直录"),
+        "narrate":  ("lingqi/scripts/narrate.py",   "书源断语叙述（不做书外发挥）"),
+        "render":   ("lingqi/scripts/render.py",    "渲染报告（Markdown）"),
+    },
 }
 
 DISCIPLINE_DESC: dict[str, str] = {
@@ -82,6 +88,7 @@ DISCIPLINE_DESC: dict[str, str] = {
     "zeji":       "择吉",
     "ziwei":      "紫微斗数",
     "liuren":     "大六壬",
+    "lingqi":     "灵棋经",
 }
 
 ALL_DISCIPLINES = list(DISCIPLINE_COMMANDS.keys())

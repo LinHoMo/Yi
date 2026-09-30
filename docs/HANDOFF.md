@@ -8,17 +8,18 @@
 > 同域项目调研（Horosa/星阙）：`docs/RESEARCH-HOROSA.md`。
 > 规格归档：`docs/compose/spec/`。
 
-**范围（2026-09-30h：七科 + 两条出报告通道）**：
+**范围（2026-09-30l：八科 + 两条出报告通道）**：
 - **命科**：`ming`（四柱八字，机械推演）、`ziwei`（紫微斗数，安星/四化/格局/大限）
 - **卜科**：`liuyao`（六爻纳甲）、`meihua`（梅花易数）、`xiaoliuren`（小六壬）、`zeji`（择吉通书）、
-  `liuren`（大六壬骨架：九宗门三传/天将乘临，机械结构标签，无吉凶断语）
+  `liuren`（大六壬骨架：九宗门三传/天将乘临，机械结构标签，无吉凶断语）、
+  `lingqi`（灵棋经：三部掷数查 124 课表直录书源断语）
 - 六科均经各学科 `dev_tools/check.py` 全绿，仓库根 `tools/check.py --full` 全绿。
 - **两条出报告通道**（同一份引擎、同一条四段契约，产出由 `tools/verify_web_parity.py` 逐字节验收）：
   **A 纯前端**（`web/` + GitHub Pages + Pyodide，**零凭证**）；
   **B 云端 Actions**（`reports` 分支固定链接 + issue 回评）。
 
-**基线**：`main`（2026-09-30h：大六壬骨架落地；同日 30g 命科调候、30f 六爻深度改造
-第一批、30e 三科口径审计；上一质量门锚 `b86e4b7`）。
+**基线**：`main`（2026-09-30l：灵棋经落地为第八科；同日 30k 梅花核验+许可核实、
+30h–30j 大六壬三批；上一质量门锚 `b86e4b7`）。
 质量门：`tools/check.py --full` 全绿（含站点构建+自检、网页↔本机同源验收 10 例、pytest 76 项、
 六爻黑箱回归 12/18 ≥ 基线 11/18）；工作区无未跟踪垃圾（生成物一律 gitignore）。
 
@@ -307,6 +308,7 @@ python tools/refactor_guard.py --compare guard/base.json  # 改后
 | 小六壬 `xiaoliuren` | 8 | 2 | `yi xiaoliuren cast` |
 | 择吉 `zeji` | 8 | 2 | `yi zeji chart` |
 | 大六壬 `liuren` | 5 | 2 | `yi liuren chart/analyze/narrate/render` |
+| 灵棋经 `lingqi` | 4 | 2 | `yi lingqi chart/analyze/narrate/render` |
 
 - 共享层：`disciplines/base/`（`protocol.py` + `cli.py`），所有学科继承基类。
 - 统一入口：`cli/main.py` → `yi`。

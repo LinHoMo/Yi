@@ -68,6 +68,10 @@ CATALOG = (
      "pages": [], "status": "ok",
      "note": "2026-09-30j 实测存在（繁体，正文 11201 字节）。三科外部独立集的书源前置："
              "抓取后从中提取卷二/卷三占验例建 external_cases（永不调参 split）"},
+    {"key": "ling-qi-jing", "kind": "灵棋经", "title": "靈棋經",
+     "pages": [], "status": "ok",
+     "note": "2026-09-30l 实测存在（繁体，正文 36912 字节）。第二门类（备选一）书源："
+             "查表即断（上中下三部掷数 → 课名/卦象/断语），core 零增补"},
     {"key": "da-liu-ren-zhi-nan", "kind": "大六壬", "title": "大六壬指南",
      "pages": [], "status": "missing", "note": "实测 missingtitle"},
     {"key": "liu-ren-bi-fa-fu", "kind": "大六壬", "title": "六壬毕法赋",

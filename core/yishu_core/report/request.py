@@ -23,7 +23,7 @@ from datetime import date, datetime, timedelta, timezone
 
 CST = timezone(timedelta(hours=8))
 
-DISCIPLINES = ("liuyao", "ming", "ziwei", "meihua", "xiaoliuren", "zeji", "liuren")
+DISCIPLINES = ("liuyao", "ming", "ziwei", "meihua", "xiaoliuren", "zeji", "liuren", "lingqi")
 
 DISC_TITLE = {
     "liuyao": "六爻纳甲",
@@ -33,6 +33,7 @@ DISC_TITLE = {
     "xiaoliuren": "小六壬",
     "zeji": "择吉",
     "liuren": "大六壬",
+    "lingqi": "灵棋经",
 }
 
 # 各科起卦/起课方式白名单（与学科 chart.py 的 argparse choices 逐字对齐）
@@ -49,6 +50,7 @@ REQUIRED = {
     "xiaoliuren": (),
     "zeji": (),
     "liuren": ("datetime",),
+    "lingqi": (),
 }
 
 FIELD_HINT = {
@@ -125,6 +127,22 @@ def chart_argv(req: dict, program: str, out_path: str) -> list[str]:
     dt = req.get("datetime", "")
     argv = [program]
 
+    if d == "lingqi":
+        # 三部掷数缺一即无课——结构性澄清门禁（0 为合法面数，只拦"未给"）
+        vals = {}
+        for k, label in (("up", "上"), ("mid", "中"), ("down", "下")):
+            v = req.get(k)
+            if v is None:
+                raise ValueError(
+                    f"lingqi（灵棋经）需要 {k}（{label}部掷面数 0..4）：十二棋分三部，"
+                    "三部掷数缺一不可；请向求测者确认掷棋结果后再试")
+            if not isinstance(v, int) or not 0 <= v <= 4:
+                raise ValueError(f"lingqi {k}（{label}部）必须是 0..4 的整数，收到 {v!r}")
+            vals[k] = v
+        argv += ["--up", str(vals["up"]), "--mid", str(vals["mid"]),
+                 "--down", str(vals["down"])]
+        if req.get("question"):
+            argv += ["--question", req["question"]]
     if d == "liuren":
         # 六壬起课=月将加时，无时刻即无课——结构性缺参必须报错并给出澄清话术，
         # 不允许 AI 脑补一个时刻开算（AGENTS.md 铁律一）

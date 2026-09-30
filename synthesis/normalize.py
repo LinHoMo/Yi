@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from yishu_core.eval import verdict_direction
 
-DISCIPLINES = ("liuyao", "ming", "meihua", "xiaoliuren", "zeji", "liuren")
+DISCIPLINES = ("liuyao", "ming", "meihua", "xiaoliuren", "zeji", "liuren", "lingqi")
 
 
 def _direction_label(text) -> str:
@@ -193,6 +193,19 @@ def normalize_liuren(a: dict, *, at: str | None = None) -> dict:
         "note": con.get("note", ""),
     }
 
+
+def normalize_lingqi(a: dict, *, at: str | None = None) -> dict:
+    """灵棋经：查表直录书源断语，方向字段不设（断语属原文文本）。"""
+    con = _conclusion(a)
+    return {
+        "discipline": "lingqi",
+        "asked": (a.get("question") or "").strip(),
+        "at": _at_of(a, at) or "",
+        "verdict": a.get("ke_name") or con.get("pattern") or "待定",
+        "direction": None,
+        "note": "查表直录《靈棋經》原文断语",
+    }
+
 def normalize_ziwei(a: dict, *, at: str | None = None) -> dict:
     """紫微斗数：机械格局/四化入宫→归一记录；方向固定平（三元命科不断吉凶）。"""
     cs = a.get("chart_summary") or {}
@@ -227,6 +240,7 @@ _NORMALIZERS = {
     "xiaoliuren": normalize_xiaoliuren,
     "zeji": normalize_zeji,
     "liuren": normalize_liuren,
+    "lingqi": normalize_lingqi,
     "ziwei": normalize_ziwei,
 }
 
