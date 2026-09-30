@@ -23,16 +23,16 @@
 
 换成其他学科的字段（照抄即可）：
 
-| 学科 | 必填字段 |
-|---|---|
-| 六爻 liuyao | question（+可填 datetime/mode） |
-| 四柱 ming | datetime 出生公历时间、gender 性别 |
-| 紫微 ziwei | datetime、gender |
-| 梅花 meihua | question（+可填 datetime/way/numbers） |
-| 小六壬 xiaoliuren | question（+可填 datetime/numbers） |
-| 择吉 zeji | date 用事日期、activity 事类 |
-| 大六壬 liuren | datetime、question |
-| 灵棋经 lingqi | up/mid/down 三数（0–4） |
+| 学科 | 必填字段 | 通道 A 站点 |
+|---|---|---|
+| 六爻 liuyao | question（+可填 datetime/mode） | ✅ |
+| 四柱 ming | datetime 出生公历时间、gender 性别 | ✅ |
+| 紫微 ziwei | datetime、gender | ✅ |
+| 梅花 meihua | question（+可填 datetime/way/numbers） | ✅ |
+| 小六壬 xiaoliuren | question（+可填 datetime/numbers） | ✅ |
+| 择吉 zeji | date 用事日期、activity 事类 | ✅ |
+| 大六壬 liuren | datetime、question | ⚠️ 仅本地 CLI / MCP（站点通道 A 尚未挂载） |
+| 灵棋经 lingqi | up/mid/down 三数（0–4） | ⚠️ 仅本地 CLI / MCP（站点通道 A 尚未挂载） |
 
 ## 模板二：云端留档 + 回评（通道 B，要报告存进仓库时）
 

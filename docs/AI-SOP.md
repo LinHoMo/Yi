@@ -221,6 +221,12 @@ curl -s "$BASE/index.json"                       # 六科各自最近一次
 轮询技巧：先反复 GET `latest.md`（或 `index.json` 里的 `updated` 字段），
 看到时间戳更新即说明本次已完成，比查 run 状态更省额度。
 
+> ⚠️ **网络注意**：`raw.githubusercontent.com` 在部分网络（如中国大陆常见环境）
+> 不可达。若 curl 超时，改用 GitHub REST API 取回（公开仓库匿名可用，注意
+> 60 次/时额度，逐条取、别轮询）：
+> `https://api.github.com/repos/{OWNER}/{REPO}/contents/reports/liuyao/latest.md?ref=reports`
+> （返回 JSON，正文在 `content` 字段，Base64 编码；或加 `Accept: application/vnd.github.raw+json` 直接拿原文。）
+
 ### 4.2 从 issue 评论匿名取回（通道 B-1）
 
 ```bash
