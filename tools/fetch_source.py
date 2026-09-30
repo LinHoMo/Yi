@@ -64,6 +64,10 @@ CATALOG = (
              "（贼克/比用/涉害/遥克…），三传/四课/天将/月将/寄宫全部命中"},
     {"key": "liu-ren-da-quan-juan3", "kind": "大六壬", "title": "六壬大全/3",
      "pages": [], "status": "ok", "note": "已抓 72209 字节（344 行 / 干支对 62）"},
+    {"key": "mei-hua-yi-shu", "kind": "梅花易数", "title": "梅花易數",
+     "pages": [], "status": "ok",
+     "note": "2026-09-30j 实测存在（繁体，正文 11201 字节）。三科外部独立集的书源前置："
+             "抓取后从中提取卷二/卷三占验例建 external_cases（永不调参 split）"},
     {"key": "da-liu-ren-zhi-nan", "kind": "大六壬", "title": "大六壬指南",
      "pages": [], "status": "missing", "note": "实测 missingtitle"},
     {"key": "liu-ren-bi-fa-fu", "kind": "大六壬", "title": "六壬毕法赋",

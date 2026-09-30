@@ -36,6 +36,7 @@ from yishu_core.symbols import (  # noqa: E402
     THREE_PUNISHMENTS_MUTUAL,
 )
 from chart import dun_gan_of  # noqa: E402
+from kemu import recognize as kemu_recognize  # noqa: E402
 
 
 def _load_verdicts() -> dict:
@@ -112,6 +113,7 @@ def analyze(chart_out: dict) -> dict:
             "relations": _relations_of(b, day_stem, day_branch),
         })
 
+    kemu_hits = kemu_recognize(chart_out)
     factors = [
         {"code": "men", "label": chart_out["men"],
          "basis": chart_out.get("men_trigger", "")},
@@ -124,6 +126,9 @@ def analyze(chart_out: dict) -> dict:
                             + ("（" + "/".join(x["kind"] for x in r["relations"]) + "）"
                                if r["relations"] else "（无关系标签）")
                             for r in chuan_rows)},
+        {"code": "kemu", "label": "课目识别（第一批机械判据）",
+         "basis": "；".join(h["name"] for h in kemu_hits) if kemu_hits
+                  else "无第一批课目命中"},  # 诀文引文见 data/kemu.json
     ]
     return {
         "discipline": "liuren",
@@ -139,6 +144,7 @@ def analyze(chart_out: dict) -> dict:
         "men": chart_out["men"],
         "ke_name": chart_out["ke_name"],
         "san_chuan": chuan_rows,
+        "kemu": kemu_hits,
         "factors": factors,
         "conclusion": {
             "strength": None,

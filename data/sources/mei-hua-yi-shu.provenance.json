@@ -1,0 +1,26 @@
+{
+  "key": "mei-hua-yi-shu",
+  "kind": "梅花易数",
+  "title": "梅花易數",
+  "site": "zh.wikisource.org",
+  "api": "https://zh.wikisource.org/w/api.php",
+  "pages": [
+    "梅花易數",
+    "梅花易數/卷一",
+    "梅花易數/卷三",
+    "梅花易數/卷二"
+  ],
+  "page_count": 4,
+  "fetched": "2026-09-30 15:25:12+0800",
+  "sha256": "5048d799ce1fa6f0755d5d0f844f0b7d4844e2cabd1f10c7c2bbb6e6e00c7185",
+  "stats": {
+    "bytes": 126781,
+    "chars": 44241,
+    "lines": 879,
+    "ganzhi_pairs": 6,
+    "tables": 0,
+    "headings": 141
+  },
+  "source_file": "data/sources/mei-hua-yi-shu.wikitext.txt",
+  "note": "公版古籍原文的字符级转存，未做任何改写或模型转写；子页以 <!-- ==== 标题 ==== --> 分隔。"
+}

@@ -1,0 +1,301 @@
+{
+ "schema": "yi-liuren-kemu/1",
+ "_comment": [
+  "六壬大全 卷一「课目」诀表（第 7–65 条；1–6 即九宗门前六门，判据见",
+  "scripts/jiuzongmen.py）。verse 逐字（铁律三：引文可回指）。",
+  "implemented=true 为已落机械判据（scripts/kemu.py）；其余仅登记诀文，",
+  "判据落地前不得在 analyze 中输出该课目名（不写占位识别）。"
+ ],
+ "entries": [
+  {
+   "name": "别责",
+   "verse": "别责无克三课备，刚三柔六九为宗七",
+   "implemented": false
+  },
+  {
+   "name": "八专",
+   "verse": "八专二课俱无克，日阳辰阴顺逆从八同人",
+   "implemented": false
+  },
+  {
+   "name": "伏吟",
+   "verse": "伏吟天地皆不动，乙癸有克法不同九艮",
+   "implemented": false
+  },
+  {
+   "name": "返吟",
+   "verse": "返吟有克往来取，井栏丑未乙巳辛十震",
+   "implemented": false
+  },
+  {
+   "name": "三光",
+   "verse": "三光用神与日辰，时旺将吉万事通十一贲",
+   "implemented": false
+  },
+  {
+   "name": "三阳",
+   "verse": "三阳日辰与用旺，日辰贵前贵顺登十二晋 四顺",
+   "implemented": false
+  },
+  {
+   "name": "三奇",
+   "verse": "三奇子戌寻大吉，申午辰寅子亥辰十三豫",
+   "implemented": false
+  },
+  {
+   "name": "六仪",
+   "verse": "六仪六甲勾头发，日仪午逆未顺吉十四兑",
+   "implemented": false
+  },
+  {
+   "name": "时太",
+   "verse": "时太发用岁日方，龙合财德最为强十五泰 天恩",
+   "implemented": false
+  },
+  {
+   "name": "龙德",
+   "verse": "龙德太岁与月将，天乙发用致福祥十六革",
+   "implemented": false
+  },
+  {
+   "name": "官爵",
+   "verse": "官爵岁月与年命，驿马魁常发用者十七益",
+   "implemented": false
+  },
+  {
+   "name": "富贵",
+   "verse": "富贵天乙乘旺相，日乘年命相生良十八大有",
+   "implemented": false
+  },
+  {
+   "name": "轩盖",
+   "verse": "轩盖三传午卯子，正七两月相当是十九升",
+   "implemented": true
+  },
+  {
+   "name": "铸印",
+   "verse": "铸印发用戌加巳，戌卯巳炉绶太常二十鼎",
+   "implemented": false
+  },
+  {
+   "name": "斲轮",
+   "verse": "斲轮太冲申上传，卯轮庚斧乙庚欢二一颐",
+   "implemented": true
+  },
+  {
+   "name": "引从",
+   "verse": "引从二传引干支，又有贵引干年吉二二涣",
+   "implemented": true
+  },
+  {
+   "name": "亨通",
+   "verse": "亨通三传递生日，天生地生有两般二三渐",
+   "implemented": true
+  },
+  {
+   "name": "繁昌",
+   "verse": "繁昌夫妻年为用，德合旺相卦应咸二四咸 德孕 旺孕",
+   "implemented": false
+  },
+  {
+   "name": "繁华",
+   "verse": "繁华贵旺禄马发，干支年命吉将传二五师",
+   "implemented": false
+  },
+  {
+   "name": "德庆",
+   "verse": "德庆天德与月德，干支二德用为先二六需",
+   "implemented": false
+  },
+  {
+   "name": "合欢",
+   "verse": "合欢日上遁干合，吉将三六合用兼二七井",
+   "implemented": false
+  },
+  {
+   "name": "和美",
+   "verse": "和美专言四课事，各合互合皆为欢二八丰",
+   "implemented": false
+  },
+  {
+   "name": "斩关",
+   "verse": "斩关魁罡日辰用，重土塞门斩关行二九遁",
+   "implemented": false
+  },
+  {
+   "name": "闭口",
+   "verse": "闭口旬尾加旬首，又有武阴逆四从三十谦 刑德",
+   "implemented": false
+  },
+  {
+   "name": "游子",
+   "verse": "游子季用又乘丁，再遇天马是西东三一观",
+   "implemented": false
+  },
+  {
+   "name": "三交",
+   "verse": "三交四仲来加仲，三传皆仲阴合逢三二姤",
+   "implemented": true
+  },
+  {
+   "name": "乱首",
+   "verse": "乱首支加干克干，干加支上被克同三三观",
+   "implemented": true
+  },
+  {
+   "name": "赘胥",
+   "verse": "赘胥支临干被克，干加支上克支通三四旅",
+   "implemented": true
+  },
+  {
+   "name": "冲破",
+   "verse": "冲破日辰冲为用，更兼岁月破神并三五",
+   "implemented": true
+  },
+  {
+   "name": "淫泆",
+   "verse": "淫泆后合乘卯酉，狡童泆女此中情三六既济",
+   "implemented": false
+  },
+  {
+   "name": "芜淫",
+   "verse": "芜淫三课有克课，交军克下男女争三七小畜",
+   "implemented": false
+  },
+  {
+   "name": "解离",
+   "verse": "解离日辰互克下，年命互克亦同称三八",
+   "implemented": false
+  },
+  {
+   "name": "孤寡",
+   "verse": "孤寡四季之前后，春巳孤丑寡星临三九",
+   "implemented": false
+  },
+  {
+   "name": "地盘",
+   "verse": "地盘为孤天盘寡，阳孤阴寡三盘呈四十",
+   "implemented": false
+  },
+  {
+   "name": "度厄",
+   "verse": "度厄三课上下克，上下相克长幼惊四一剥",
+   "implemented": false
+  },
+  {
+   "name": "无禄",
+   "verse": "无禄四下贼乎上，小人无礼肆纵横四二否",
+   "implemented": false
+  },
+  {
+   "name": "迍福",
+   "verse": "迍福八迍兼五福，吉凶参驳此为名四三屯",
+   "implemented": false
+  },
+  {
+   "name": "侵害",
+   "verse": "侵害日辰六害兼，年命发用最凶残四四屯",
+   "implemented": false
+  },
+  {
+   "name": "刑伤",
+   "verse": "刑伤干支三刑用，又兼本命与年命四五损 凌犯",
+   "implemented": false
+  },
+  {
+   "name": "二烦",
+   "verse": "二烦日月加四仲，斗击丑未此为言四六讼",
+   "implemented": false
+  },
+  {
+   "name": "天祸",
+   "verse": "天祸四立绝神用，昨日之干加今干四七明夷",
+   "implemented": false
+  },
+  {
+   "name": "天狱",
+   "verse": "天狱墓死作囚用，天罡日木之宫缠四八大过",
+   "implemented": false
+  },
+  {
+   "name": "天寇",
+   "verse": "天寇分至前一日，月加离辰发用先四九噬嗑",
+   "implemented": false
+  },
+  {
+   "name": "天网",
+   "verse": "天网时用俱克日，物孕有损病缠绵五十蹇",
+   "implemented": false
+  },
+  {
+   "name": "魄化",
+   "verse": "魄化死囚白虎随，干支年用凶祸连五一蒙 罗网",
+   "implemented": false
+  },
+  {
+   "name": "三阴",
+   "verse": "三阴贵迍日辰后，死囚玄虎时克年五二中孚 四逆",
+   "implemented": false
+  },
+  {
+   "name": "龙战",
+   "verse": "龙战卯酉日兼用，年立卯酉事迍邅五三离 飞魂 丧魄 丧门",
+   "implemented": false
+  },
+  {
+   "name": "死奇",
+   "verse": "死奇月缠天罡用，丘墓岁伏殃灾随五四离",
+   "implemented": false
+  },
+  {
+   "name": "灾厄",
+   "verse": "灾厄丧吊游魂用，丘墓岁虎伏殃边五五 死色",
+   "implemented": false
+  },
+  {
+   "name": "殃咎",
+   "verse": "殃咎三传克日囚，神将克战乘墓真五六归妹",
+   "implemented": false
+  },
+  {
+   "name": "九丑",
+   "verse": "九丑子午与卯酉，配合乙戊己辛壬五七解",
+   "implemented": false
+  },
+  {
+   "name": "鬼墓",
+   "verse": "鬼墓日辰鬼作墓，鬼克墓覆祸宅身五九困 鬼呼 丧门 五坟四煞",
+   "implemented": false
+  },
+  {
+   "name": "励德",
+   "verse": "励德日辰看前后，天乙立在二八门六十随",
+   "implemented": false
+  },
+  {
+   "name": "盘珠",
+   "verse": "盘珠岁月与日时，传课俱全此为云六一大壮 即天心格、回环格",
+   "implemented": false
+  },
+  {
+   "name": "全局",
+   "verse": "全局三合之课是，水火木金土中存六二大畜",
+   "implemented": false
+  },
+  {
+   "name": "玄胎",
+   "verse": "玄胎三传皆四孟，玄中有胎名义深六三家人",
+   "implemented": false
+  },
+  {
+   "name": "联珠",
+   "verse": "联珠连茹兼进退，间传顺逆此中论六四复 间传 撞支巽 撞干",
+   "implemented": false
+  },
+  {
+   "name": "六纯",
+   "verse": "六纯十难兼物类",
+   "implemented": false
+  }
+ ]
+}

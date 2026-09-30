@@ -45,6 +45,7 @@ def enumerate_gate() -> tuple[list[str], dict]:
     bieze_days: dict[str, int] = {}
     bazhuan_days: dict[str, int] = {}
     fuyin = fanyin = jinglanshe = 0
+    kemu_counts: dict[str, int] = {}
     chain_mens = {"贼克", "比用", "涉害", "遥克"}
     for day in days:
         # 月将固定取「子」作代表：delta = 月将-时辰 随 12 时辰取遍 0..11，
@@ -74,6 +75,15 @@ def enumerate_gate() -> tuple[list[str], dict]:
                 bieze_days[day] = bieze_days.get(day, 0) + 1
             if men == "八专":
                 bazhuan_days[day] = bazhuan_days.get(day, 0) + 1
+            from kemu import recognize as _kemu_rec
+            chart_like = {
+                "moment": {"day_ganzhi": day, "hour_branch": hour,
+                           "xunkong": []},
+                "san_chuan": res["san_chuan"],
+                "tianpan": tianpan,
+            }
+            for h in _kemu_rec(chart_like):
+                kemu_counts[h["name"]] = kemu_counts.get(h["name"], 0) + 1
     # 诀文锚定断言（《六壬大全·入手法》逐字，每日 12 课口径）
     if fuyin != 60:
         fails.append(f"伏吟数 {fuyin} ≠ 60（60 日各 1 课）")
@@ -89,7 +99,11 @@ def enumerate_gate() -> tuple[list[str], dict]:
         fails.append(f"八专日 {sorted(bazhuan_days)} ≠ 五日（两课无克号八专）")
     if stats.get("昴星", 0) <= 0 or stats.get("遥克", 0) <= 0 or stats.get("涉害", 0) <= 0:
         fails.append(f"九宗门覆盖不全：{stats}")
-    return fails, stats
+    # 课目识别守门：首批九条判据在 720 例中每条至少触发一次
+    for name in ("轩盖", "斲轮", "引从", "亨通", "三交", "乱首", "赎胥", "冲破"):
+        if kemu_counts.get(name, 0) <= 0:
+            fails.append(f"课目「{name}」720 例零触发——判据或枚举有误")
+    return fails, stats, kemu_counts
 
 
 def main() -> int:
@@ -104,12 +118,13 @@ def main() -> int:
         fails.append(f"缺 {missing}")
     print("[0] 契约文件", "√" if not missing else "×")
 
-    fails2, stats = enumerate_gate()
+    fails2, stats, kemu_counts = enumerate_gate()
     if fails2:
         fails.extend(fails2)
         print("[1] 九宗门全枚举守门 ×", *fails2[:6], sep="\n    ")
     else:
-        print(f"[1] 九宗门全枚举守门 √ 720 例（60 日×12 时辰）门类分布 {stats}")
+        print(f"[1] 九宗门全枚举守门 √ 720 例（60 日×12 时辰）门类分布 {stats}; "
+          f"课目首批触发 {kemu_counts}")
 
     code, out = run(["scripts/chart.py", "--datetime", "2024-02-20 10:30",
                      "--question", "占求财", "-o", "scratch/chart.json"])
