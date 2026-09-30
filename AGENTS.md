@@ -1,5 +1,10 @@
 # 易（Yi）· 项目级铁律
 
+**读者边界**：本文件写给**在本仓库改代码的贡献者/编码 Agent**（Cursor、Codex 等）。
+**调用 Yi 出报告的 AI（任务 Agent）不要读本文件**——你的入口是根 `llms.txt` +
+`SKILL.md`（其中 §四已用"只引用不复制"的方式给你三条铁律的操作版）。
+本文件与任何单个学科的 SKILL.md 冲突时，本文件优先。
+
 本文件约束所有在本仓库工作的 agent 和 contributor。与任何单个学科的 SKILL.md 冲突时，本文件优先。
 
 **范围**：本仓库有八科可用，均经各学科 `dev_tools/check.py` 与仓库根 `tools/check.py` 全绿。
