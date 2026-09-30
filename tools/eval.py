@@ -26,7 +26,7 @@ sys.path.insert(0, str(ROOT / "core"))
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 from yishu_core.runtime import utf8_subprocess_env  # noqa: E402
 
-DISCIPLINES = ("liuyao", "ming", "meihua", "xiaoliuren", "zeji", "ziwei")
+DISCIPLINES = ("liuyao", "ming", "meihua", "xiaoliuren", "zeji", "ziwei", "liuren")
 
 
 def run_eval(disc: str, split: str, *, verbose: bool = False) -> tuple[int, str]:

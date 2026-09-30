@@ -48,7 +48,7 @@ CORE_TABLE_ASSIGN = re.compile(
 
 # 学科间 import（违反 disciplines 禁止互相 import 的契约）
 CROSS_DISC_IMPORT = re.compile(
-    r"^\s*(from|import)\s+(liuyao|ming|ziwei|meihua|xiaoliuren|zeji)\b", re.M)
+    r"^\s*(from|import)\s+(liuyao|ming|ziwei|meihua|xiaoliuren|zeji|liuren)\b", re.M)
 
 # 文件名版本号标记（AGENTS.md §三：名字不携带版本；版本走 git 与 CHANGELOG）
 # 排除 archive/ 目录和 .git/ 目录，匹配 _v2 / _V3 / _v10 等

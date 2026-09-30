@@ -23,7 +23,7 @@ from datetime import date, datetime, timedelta, timezone
 
 CST = timezone(timedelta(hours=8))
 
-DISCIPLINES = ("liuyao", "ming", "ziwei", "meihua", "xiaoliuren", "zeji")
+DISCIPLINES = ("liuyao", "ming", "ziwei", "meihua", "xiaoliuren", "zeji", "liuren")
 
 DISC_TITLE = {
     "liuyao": "六爻纳甲",
@@ -32,6 +32,7 @@ DISC_TITLE = {
     "meihua": "梅花易数",
     "xiaoliuren": "小六壬",
     "zeji": "择吉",
+    "liuren": "大六壬",
 }
 
 # 各科起卦/起课方式白名单（与学科 chart.py 的 argparse choices 逐字对齐）
@@ -47,6 +48,7 @@ REQUIRED = {
     "meihua": (),
     "xiaoliuren": (),
     "zeji": (),
+    "liuren": ("datetime",),
 }
 
 FIELD_HINT = {
@@ -122,6 +124,17 @@ def chart_argv(req: dict, program: str, out_path: str) -> list[str]:
     q = req.get("question", "")
     dt = req.get("datetime", "")
     argv = [program]
+
+    if d == "liuren":
+        # 六壬起课=月将加时，无时刻即无课——结构性缺参必须报错并给出澄清话术，
+        # 不允许 AI 脑补一个时刻开算（AGENTS.md 铁律一）
+        if not dt:
+            raise ValueError(
+                "liuren（大六壬）需要 datetime（YYYY-MM-DD HH:MM）：起课以月将加时，"
+                "无时刻不可起课；请向求测者确认起课的公历时刻后再试")
+        argv += ["--datetime", dt]
+        if q:
+            argv += ["--question", q]
 
     if d == "liuyao":
         mode = req.get("mode") or ("time" if dt else "coin")

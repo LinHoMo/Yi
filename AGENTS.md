@@ -2,7 +2,7 @@
 
 本文件约束所有在本仓库工作的 agent 和 contributor。与任何单个学科的 SKILL.md 冲突时，本文件优先。
 
-**范围**：本仓库有六科可用，均经各学科 `dev_tools/check.py` 与仓库根 `tools/check.py` 全绿。
+**范围**：本仓库有七科可用，均经各学科 `dev_tools/check.py` 与仓库根 `tools/check.py` 全绿。
 
 | 学科 | 目录 | 说明 |
 |---|---|---|
@@ -12,6 +12,7 @@
 | **卜·梅花易数** | `disciplines/meihua/` | 体用生克/互变/卦气旺衰 |
 | **卜·小六壬** | `disciplines/xiaoliuren/` | 六宫掌诀断事 |
 | **卜·择吉** | `disciplines/zeji/` | 建除/黄黑道/二十八宿综合裁决 |
+| **卜·大六壬** | `disciplines/liuren/` | 月将加时/九宗门三传/天将乘临（骨架：机械结构标签，无吉凶断语） |
 
 **相科（面相、手相、堪舆）明确不做**——不在路线图内，不预留目录，不写占位实现。
 
