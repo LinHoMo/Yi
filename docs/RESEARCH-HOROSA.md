@@ -33,9 +33,11 @@ horosa-skill 的六条 AI 纪律设计与本仓库铁律一/三高度同构，�
    「分数口径必带集合名+n」的铁律三在报告层的延伸。
 3. **忠实度基准（HorosaBench）**：非 LLM 的确定性校验器，把 AI 断言逐条分类为
    supported / invented / contradicted（对照机器可读盘面真值），106 例锁进工具注册表。
-   → **落点**：本仓已有 `text_keys_selftest`（断语键一致）与 EVAL-AUDIT（评测口径审计），
-   缺的是「**报告文本 vs 引擎结构化输出**」的忠实度审计——登记为待办
-   （工具名建议 `tools/report_faithfulness.py`）。
+   → 落点：**已落地 `tools/report_faithfulness.py`（2026-09-30s）**——读六爻 narrate
+   正文抽断言（用神/持世/卦身/旬空/六神临用/卦级/三合/月令旺衰），对照 analyze JSON
+   结构化真值逐条分类，全确定性规则；已挂根质量门；首版审计即发现并修正
+   strength_reason 模板「得令/失令」措辞与月令旺衰脱钩（见 CHANGELOG 30s）。
+   后续可扩展：多科接入、断言覆盖扩展（应期/病药/星煞）。
 4. **策略单一源 + 框架镜像**：SKILL.md 是唯一策略源，GEMINI.md/.cursor/rules 等
    全部是薄镜像。
    → 本仓 AGENTS.md/SKILL.md 已是单一源；暂**不做**镜像生成（无真实多框架需求，

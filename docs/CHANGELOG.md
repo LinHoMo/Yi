@@ -3,6 +3,34 @@
 仓库级变更登记（跨科 / 内核 / 口径 / 架构）。学科内细节见各科 `CHANGELOG.md`。
 规则：指标口径任何变动（计分方式、词典、缺失字段处理）必须在此登记，否则分数不可比（`AGENTS.md` §四.4）。
 
+### 2026-09-30s 报告忠实度审计工具 `tools/report_faithfulness.py`（HorosaBench 落点）+ 叙事模板口径修正
+
+> **口径登记（§四.4）**：本变更含 ① 新增工具（报告正文断言 vs 引擎结构化输出，
+> supported/invented/contradicted 确定性分类）② **叙事模板措辞修正**：strength_reason
+> 的 `base_strong`/`base_weak` 文案去掉「得令/失令」措辞（与月令旺衰脱钩），
+> 288 例金标准 4 条 narrate 哈希漂移（引擎逻辑零改动），已 capture 带理由，
+> 指纹 2e8e48f9 → **46fd569f**。
+
+1. **工具**：`tools/report_faithfulness.py`（HorosaBench 思想落地，RESEARCH-HOROSA §二.3
+   待办清项）——读六爻 narrate 正文，抽取断言（用神/持世/卦身/卦身不现/旬空/六神临用/
+   卦级六冲六合/三合/用神旺衰），对照 analyze JSON 的结构化真值逐条分类。全确定性规则，
+   不引入模型判断；引文块（古歌诀、古籍引用）先剥除，不当成本卦断言。
+   - 断言对照维度：用神/持世/卦身/六神临用/卦级/三合 对照 thinking_chain+advanced_analysis；
+     「得令/失令/旺相休囚死」对照**用神爻月令旺衰**（element_strength.month_strength），
+     与综合 strength_level 解耦——模板曾把综合「旺」写成「得令」，月令休时即矛盾。
+   - 接入根质量门 `tools/check.py` 六爻段：出现 invented/contradicted 即失败。
+   - 验证：多样卦（六冲/六合/无合冲/卦身不现/有动爻）全绿；注入错误断言 10 项全检出；
+     篡改报告文本检出 contradicted。
+2. **叙事模板口径修正**（审计实际产出）：`verdict_texts.json` 的 strength_reason
+   `base_strong`「用神得令，旺相有力」→「用神有力，根基扎实」、
+   `base_weak`「用神失令，根基偏弱」→「用神乏力，根基偏弱」。
+   「得令/失令」是月令旺衰语义，而模板用于综合 strength_level——月令休但综合旺时
+   模板断言与结构矛盾。改后措辞不断言月令，忠实度审计不再误报。
+3. **读数**：tune 95.0 / holdout 89.7 持平（模板改动不影响打分维度）；
+   金标准指纹漂移仅 4 条 narrate_sha，capture 带理由。
+4. **质量门**：六爻门 + 根 `--full`（新增「报告忠实度」检查项）全绿。
+
+
 ### 2026-09-30r 卦身口径修复（《卜筮正宗》安月卦身诀）+ 卦身/三合三维度激活（权重表再分配）
 
 > **口径登记（§四.4）**：本变更含 ① **引擎推演逻辑改动**（卦身口径，288 例指纹

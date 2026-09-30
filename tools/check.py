@@ -306,6 +306,9 @@ def main() -> int:
 
     print("\n[6] 六爻（迁移前旧实现：冒烟 + 四段契约端到端；--full 加黑箱回归）")
     gate_sub("liuyao", ["disciplines/liuyao/tests/smoke_test.py"], "六爻冒烟", fast=False)
+    # 报告忠实度审计：narrate 正文断言 vs 引擎结构化输出，出现 invented/contradicted 即失败
+    gate_sub("faithfulness", ["tools/report_faithfulness.py", "--demo"],
+             "报告忠实度（narrate 断言 vs 引擎结构）", fast=False)
     # 六爻四段契约薄适配层（chart→analyze→render）端到端冒烟
     scratch = ROOT / "tools" / "scratch" / "liuyao_pipeline"
     scratch.mkdir(parents=True, exist_ok=True)

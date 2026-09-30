@@ -4,7 +4,7 @@
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；无理由不落盘，历次漂移见 drift_log",
     "cases": 288
   },
-  "digest": "2e8e48f9bd3a39f4",
+  "digest": "46fd569fbe945814",
   "drift_log": [
     {
       "from": "bb23797bf6044b95",
@@ -65,6 +65,12 @@
       "to": "2e8e48f9bd3a39f4",
       "date": "2026-09-30",
       "reason": "修卦身口径：原实现按日干阴阳+代数定爻位，与《卜筮正宗》安月卦身诀（阳世从子月起、阴世从午月起，从初数至世）不符；改为世爻阴阳+世爻位推卦身支。漂移仅卦身叙述文本（6 条抽样子集 narrate 哈希）"
+    },
+    {
+      "from": "2e8e48f9bd3a39f4",
+      "to": "46fd569fbe945814",
+      "date": "2026-09-30",
+      "reason": "叙事模板口径修正：strength_reason 的 base_strong/base_weak 文案去掉「得令/失令」措辞（与月令旺衰脱钩，消除 report_faithfulness 审计 contradicted）"
     }
   ]
 }
