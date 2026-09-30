@@ -17,7 +17,14 @@ from yishu_core.ming_tables import (
     MONTHS_PER_DAY,
     tiaohou_of,
 )
-from yishu_core.symbols import BRANCH_ELEMENTS, STEM_ELEMENTS, SHENG_CYCLE, KE_CYCLE
+from yishu_core.relations import STEM_YINYANG, stems_wuhe
+from yishu_core.symbols import (
+    BRANCH_ELEMENTS,
+    STEM_ELEMENTS,
+    SHENG_CYCLE,
+    KE_CYCLE,
+    twelve_growth,
+)
 
 # 十神 → 作用类
 TEN_GOD_GROUP = {
@@ -82,8 +89,11 @@ PATTERN_CB_RULES = {
     "偏印格": {"cheng": ("官杀",), "ji": ("财",), "jiu": ("比劫",)},
     "食神格": {"cheng": ("财",), "ji": ("印",), "jiu": ("财",)},
     "伤官格": {"cheng": ("财", "印"), "ji": ("官杀",), "jiu": ("印",)},
-    "正财格": {"cheng": ("食伤", "官杀"), "ji": ("比劫",), "jiu": ("食伤", "官杀")},
-    "偏财格": {"cheng": ("食伤", "官杀"), "ji": ("比劫",), "jiu": ("食伤", "官杀")},
+    # 财格：成=食伤生财 / 正官生财（书源「财生官旺」「财逢食生而身强带比」）；
+    # 败=七杀透（财党煞，「财透七煞，财格败也」）/ 比劫透（财轻比重）；
+    # 救=食伤制煞生财 / 合煞存财。官与煞须细分（七杀≠正官），故财格走特判分支。
+    "正财格": {"cheng": ("食伤", "正官"), "ji": ("七杀", "比劫"), "jiu": ("食伤", "正官")},
+    "偏财格": {"cheng": ("食伤", "正官"), "ji": ("七杀", "比劫"), "jiu": ("食伤", "正官")},
     "建禄格": {"cheng": ("官杀", "财", "食伤"), "ji": ("印",), "jiu": ("财", "食伤")},
     "月刃格": {"cheng": ("官杀",), "ji": ("食伤", "财"), "jiu": ("印",)},
 }
@@ -107,26 +117,62 @@ def _pillar_ten_gods(chart_json: dict) -> list[str]:
     return out
 
 
+def _god_detail(chart_json: dict) -> list[dict]:
+    """透干明细 [{god, stem}]（year/month/hour，排除 day 柱）。"""
+    pillars = chart_json.get("pillars") or {}
+    out = []
+    for pname in ("year", "month", "hour"):
+        p = pillars.get(pname) or {}
+        tg, st = p.get("ten_god") or "", p.get("stem") or ""
+        if tg and st:
+            out.append({"god": tg, "stem": st})
+    return out
+
+
+def _has_yang_ren(chart_json: dict) -> bool:
+    """阳刃在支（年/日/时支为阳干日主之帝旺位）。
+
+    书源：《三命通会》阳刃起例（甲刃卯、丙戊刃午、庚刃酉、壬刃子）；
+    阴干无刃。用 core 十二长生表推，不另存表。
+    """
+    pillars = chart_json.get("pillars") or {}
+    day_stem = (pillars.get("day") or {}).get("stem") or ""
+    if not day_stem or STEM_YINYANG.get(day_stem) != "阳":
+        return False
+    elem = STEM_ELEMENTS.get(day_stem) or ""
+    for k in ("year", "day", "hour"):
+        b = (pillars.get(k) or {}).get("branch") or ""
+        if b and twelve_growth(elem, b) == "帝旺":
+            return True
+    return False
+
+
 def judge_pattern_cheng_bai(pattern: str, chart_json: dict,
                             tentative_from: bool = False,
                             strength: str = "") -> dict:
     """格局成败救应（《子平真诠》主干）：{pattern_cheng_bai, basis}。
 
     判定顺序（书源「何谓成→何谓败→何谓救应」三层）：
-      1. 成条件满足（书源明写的成格结构，如官逢财印、食神制煞、带煞透印）→ 成格
-      2. 否则忌神透干：救应类透 → 救应成格（败中有成，全凭救应）；无救 → 破格
+      1. 成条件满足（书源明写的成格结构）→ 成格
+      2. 否则忌神透干：救应透 → 救应成格（败中有成，全凭救应）；无救 → 破格
       3. 忌神未透 → 成格
+    特判（书源原文/徐注明文的救应结构，2026-09-30u 增）：
+      - 财格：正官/食伤透=成；七杀透（财党煞）/比劫透=败；
+        救=食伤制煞生财、合煞存财；身弱透正官=破（印透生身除外）
+      - 印格：忌财透，财干与日主六合 = 合财存印 → 救应成格（「或合财而存印」）
+      - 建禄格：用官而伤透，伤干被合 = 去伤存官 → 救应成格（「遇伤而伤被合」）
+      - 偏官格+阳刃在支（煞刃格）：印透化煞=破格（「煞刃格需要七煞抑刃，
+        则偏印为破格」）
     身强条件（书源明文）：
-      - 七杀格「身强七煞逢制，煞格成也；若身强煞弱，或煞强身弱，皆不能以制伏为用，
-        必身煞两停者，方许成格」→ 食伤制煞的成条件需身强
-      - 财格「财旺生官，美格也，身弱透官，即为破格」→ 身弱透官直接破格
+      - 偏官格食制煞需身强（「必身煞两停者方许成格」）
+      - 财格身弱透正官即破（「身弱透官，即为破格」）
     - 从格（tentative）不判成败（结构特殊，另走从格论）
     """
     if tentative_from or pattern not in PATTERN_CB_RULES:
         return {"pattern_cheng_bai": "", "basis": "从格/未定义格不判成败"}
     rule = PATTERN_CB_RULES[pattern]
-    gods = _pillar_ten_gods(chart_json)
-    roles = set(_role(g) for g in gods if _role(g))
+    gods_detail = _god_detail(chart_json)
+    roles = set(_role(g["god"]) for g in gods_detail)
     weak = strength == "偏弱"
 
     cheng_hit = [c for c in rule["cheng"] if c in roles]
@@ -143,35 +189,84 @@ def judge_pattern_cheng_bai(pattern: str, chart_json: dict,
     if weak:
         basis_parts.append("身弱")
 
+    def _cb(label: str, quote: str) -> dict:
+        return {"pattern_cheng_bai": label,
+                "basis": "；".join(basis_parts) + f"——{quote}"}
+
+    # 偏官格+阳刃在支 = 煞刃格：印透化煞则刃无制 → 破（书源第13章）
+    if pattern == "偏官格" and _has_yang_ren(chart_json) and "印" in roles:
+        return _cb("破格",
+                   "煞刃格需要七煞抑刃，则偏印为破格（《子平真诠·论用神因成得败因败得成》）")
+
     # 伤官格特例（书源成条件）：官杀透而印透 = 带煞佩印，直接成格，不算救应
     if pattern == "伤官格" and ("官杀" in roles) and ("印" in roles):
-        return {"pattern_cheng_bai": "成格",
-                "basis": "；".join(basis_parts)
-                         + "——伤官带煞而透印，格之成也（《子平真诠·论用神成败救应》）"}
+        return _cb("成格", "伤官带煞而透印，格之成也（《子平真诠·论用神成败救应》）")
 
-    # 财格身弱透官：书源原文「身弱透官，即为破格」；
-    # 但印透则印可生身（徐注刘澄如造「时透甲印……格局以成」），不落此破
-    if (pattern in ("正财格", "偏财格") and "官杀" in roles and weak
-            and "印" not in roles):
-        return {"pattern_cheng_bai": "破格",
-                "basis": "；".join(basis_parts)
-                         + "——财旺生官，美格也，身弱透官，即为破格（《子平真诠·论用神成败救应》）"}
+    # 财格特判（官/煞须细分，不落通用官杀组）：
+    #   正官/食伤透=成；身弱透正官=破（印透生身除外）；七杀透=败（财党煞），
+    #   食伤制煞/合煞存财=救应；比劫透=败（财轻比重），食伤化劫=救应
+    if pattern in ("正财格", "偏财格"):
+        zheng_guan = [g for g in gods_detail if g["god"] == "正官"]
+        shi_shang = [g for g in gods_detail if _role(g["god"]) == "食伤"]
+        qi_sha = [g for g in gods_detail if g["god"] in ("偏官", "七杀")]
+        bi_jie = [g for g in gods_detail if _role(g["god"]) == "比劫"]
+        yin_tou = any(_role(g["god"]) == "印" for g in gods_detail)
+        he_sha = [g for g in gods_detail
+                  if qi_sha and g["stem"] != qi_sha[0]["stem"]
+                  and stems_wuhe(g["stem"], qi_sha[0]["stem"])]
+        if zheng_guan and weak and not yin_tou:
+            return _cb("破格",
+                       "财旺生官，美格也，身弱透官，即为破格（《子平真诠·论用神成败救应》）")
+        if zheng_guan or shi_shang:
+            return _cb("成格",
+                       "财生官旺/财逢食生，财格成也（《子平真诠·何谓成》）")
+        if qi_sha:
+            if shi_shang or he_sha:
+                return _cb("救应成格",
+                           "财带七煞，制煞生财/合煞存财，皆贵格（《子平真诠·论财》）")
+            return _cb("破格",
+                       "财透七煞，财格败也（《子平真诠·论用神成败救应》）")
+        if bi_jie:
+            if shi_shang:
+                return _cb("救应成格",
+                           "财逢劫而透食以化之（《子平真诠·论用神成败救应》）")
+            return _cb("破格", "财轻比重，财格败也（《子平真诠·论用神成败救应》）")
+        return _cb("成格", "忌神未犯，格成（《子平真诠》）")
+
+    # 印格特判：忌财透，财干与日主六合 = 合财存印 → 救应成格（书源「或合财而存印」）
+    if pattern in ("正印格", "偏印格"):
+        day_stem = ((chart_json.get("pillars") or {}).get("day") or {}).get("stem") or ""
+        cai = [g for g in gods_detail if _role(g["god"]) == "财"]
+        if cai and day_stem and not any(_role(g["god"]) == "比劫" for g in gods_detail):
+            he_cai = [g for g in cai if stems_wuhe(g["stem"], day_stem)]
+            if he_cai:
+                return _cb("救应成格",
+                           "印逢财而…合财而存印（《子平真诠·论用神成败救应》）")
+
+    # 建禄格特判：用官而伤透，伤干被合 = 去伤存官 → 救应成格（书源「遇伤而伤被合」）
+    if pattern == "建禄格":
+        zheng_guan = [g for g in gods_detail if g["god"] == "正官"]
+        shang_guan = [g for g in gods_detail if g["god"] == "伤官"]
+        if zheng_guan and shang_guan:
+            he_shang = [g for g in gods_detail
+                        if g["stem"] != shang_guan[0]["stem"]
+                        and stems_wuhe(g["stem"], shang_guan[0]["stem"])]
+            if he_shang:
+                return _cb("救应成格",
+                           "建禄月劫用官，遇伤而伤被合…是谓之救应也"
+                           "（《子平真诠·论用神成败救应》）")
 
     # 七杀格食伤制煞：书源「必身煞两停者方许成格」——身弱时不算成条件
     if pattern == "偏官格" and "食伤" in roles and weak:
         cheng_hit = [c for c in cheng_hit if c != "食伤"]
 
     if cheng_hit:
-        return {"pattern_cheng_bai": "成格",
-                "basis": "；".join(basis_parts) + "——成格结构（《子平真诠·何谓成》）"}
+        return _cb("成格", "成格结构（《子平真诠·何谓成》）")
     if ji_hit:
         if jiu_hit:
-            return {"pattern_cheng_bai": "救应成格",
-                    "basis": "；".join(basis_parts) + "——败中有成，全凭救应（《子平真诠》）"}
-        return {"pattern_cheng_bai": "破格",
-                "basis": "；".join(basis_parts) + "——忌神犯格且无救应（《子平真诠》）"}
-    return {"pattern_cheng_bai": "成格",
-            "basis": "；".join(basis_parts) + "——忌神未犯，格成（《子平真诠》）"}
+            return _cb("救应成格", "败中有成，全凭救应（《子平真诠》）")
+        return _cb("破格", "忌神犯格且无救应（《子平真诠》）")
+    return _cb("成格", "忌神未犯，格成（《子平真诠》）")
 
 
 def _role(ten_god: str) -> str:
@@ -473,6 +568,12 @@ def dayun_liunian_interactions(chart_json: dict, dayun: list[dict] | None = None
                 continue
             y_stem, y_branch = y_gz[0], y_gz[1]
             rels = []
+            # 岁运并临：大运干支 == 流年干支（《渊海子平》「岁运并临，灾殃立至」——
+            # 只标记这一结构，禁止据此批吉凶，2026-09-30u）
+            if d_gz == y_gz:
+                rels.append({"kind": "sui_yun_bing_lin",
+                             "text": f"岁运并临（大运{d_gz}=流年{y_gz}，干支相同；"
+                                     "《渊海子平》有此结构之名——只标记，不批吉凶）"})
             tg = _tg(d_stem, y_stem) if day_stem else None
             if tg:
                 rels.append({"kind": "ten_god_stem", "text": f"流年干{y_stem}对运干{d_stem}={tg}", "value": tg})

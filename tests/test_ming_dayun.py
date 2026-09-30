@@ -140,3 +140,20 @@ def test_dayun_liunian_interactions_six_samples():
         assert all(x.get("basis") for x in xs)
         for x in xs:
             assert "verdict" not in x
+
+
+def test_sui_yun_bing_lin_marker():
+    """岁运并临：大运干支 == 流年干支 → 只标记结构、不批吉凶（2026-09-30u）。"""
+    from yishu_core.relations import ten_god as _tg
+    chart = _chart("male")
+    dayun = [{"index": 1, "ganzhi": "庚午", "start_age": 1, "end_age": 10},
+             {"index": 2, "ganzhi": "戊辰", "start_age": 11, "end_age": 20}]
+    liunian = [{"year": 1990, "ganzhi": "庚午", "age": 6},
+               {"year": 1991, "ganzhi": "辛未", "age": 7}]
+    xs = pattern.dayun_liunian_interactions(chart, dayun=dayun, liunian=liunian)
+    hit = [x for x in xs if any(r["kind"] == "sui_yun_bing_lin" for r in x["relations"])]
+    assert len(hit) == 1 and hit[0]["liunian"] == "庚午" and hit[0]["dayun"] == "庚午"
+    for x in xs:
+        for r in x["relations"]:
+            assert "verdict" not in r
+            assert r["kind"] != "sui_yun_bing_lin" or "标记" in r["text"]

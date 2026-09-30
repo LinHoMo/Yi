@@ -48,6 +48,14 @@ def narrate(a: dict) -> str:
         assist = f"、佐{th['assist']}" if th.get("assist") else "（原文未单列佐神）"
         lines.append(f"**调候**（《穷通宝鉴》月令×日主查表）：主{th['main']}{assist}。")
         lines.append("")
+    shensha = a.get("shensha") or []
+    if shensha:
+        items = []
+        for s_ in shensha:
+            at = "、".join(s_.get("at") or [])
+            items.append(f"{s_.get('name')}" + (f"@{at}" if at else ""))
+        lines.append(f"**神煞**（机械安星，通行起例无法逐字核对，不批吉凶）：{'；'.join(items)}。")
+        lines.append("")
     if xunkong:
         lines.append(f"**空亡**：{'、'.join(xunkong)}（日柱旬空）。")
         lines.append("")
