@@ -30,8 +30,11 @@ BASELINE_FILE = DISC / "dev_tools" / "check_baseline.json"
 
 BASELINE = {
     "smoke": 5,          # 四段管线冒烟有产出数（共 5）
-    "tune": 100.0,       # 古籍案例对齐分 strict，n=10（参与过校参）
-    "holdout": 100.0,    # 古籍案例对齐分 strict，n=5（未参与调参）
+    # 100.0 是「历法表 + 规则表自洽回归线」，不是能力线：expected 可由引擎确定性复算
+    # （审计实测 16/16 逐字段全等；见 data/cases/zeji_cases.json#_meta._provenance
+    # 与 docs/EVAL-AUDIT.md）。此门只防「历法/宜忌表被改坏」。
+    "tune": 100.0,       # 机械因子+规则表自洽回归数 strict，n=10
+    "holdout": 100.0,    # 同口径 strict，n=6。n<20 按 docs/EVAL-AUDIT.md 只报命中数
 }
 
 PATTERNS = {

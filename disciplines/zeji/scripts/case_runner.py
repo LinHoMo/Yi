@@ -40,6 +40,12 @@ def load_ids(split: str = "all") -> list[str]:
             if split == "all" or c.get("split") == split]
 
 
+def load_meta(cases_file: str | Path = DEFAULT_CASES) -> dict:
+    """案例库 `_meta` 块（口径审计元数据：expected 来源、自洽项清单）。"""
+    p = Path(cases_file)
+    return json.loads(p.read_text(encoding="utf-8")).get("_meta") or {}
+
+
 def run_case(case: dict) -> dict:
     """单个案例 → 引擎输出（评分维度的原始材料）。"""
     input_data = case.get("input") or {}

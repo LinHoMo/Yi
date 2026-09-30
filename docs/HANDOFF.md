@@ -3,15 +3,21 @@
 > 取代口头交接。分数口径的逐次变化一律查 `docs/CHANGELOG.md`；
 > 本文件只写「现在是什么、怎么跑、还欠什么」。**债务速查见 `docs/TECH-DEBT.md`**。
 > **一切分数是古籍案例对齐分，不是现实预测命中率**（`AGENTS.md` 铁律三）。
-> 路线：`docs/YI-PLAN.md`、`docs/LIUYAO-PLAN.md`。规格归档：`docs/compose/spec/`。
+> 路线：`docs/YI-PLAN.md`。深度改造清单：`docs/DEEP-DIVE-PLAN.md`；
+> 新门类论证：`docs/NEW-DISCIPLINES.md`；网页端 AI 取用规程：`docs/AI-SOP.md`。
+> 规格归档：`docs/compose/spec/`。
 
-**范围（2026-09-29 全五科还原）**：
-- **命科**：`ming`（四柱八字，机械推演）
-- **卜科**：`liuyao`（六爻纳甲）、`meihua`（梅花易数）、`xiaoliuren`（小六壬）、`zeji`（择吉通书）。
-五科均经各学科 `tools/check.py` 全绿，仓库根 `tools/check.py --full` 全绿。
+**范围（2026-09-30d：六科 + 两条出报告通道）**：
+- **命科**：`ming`（四柱八字，机械推演）、`ziwei`（紫微斗数，安星/四化/格局/大限）
+- **卜科**：`liuyao`（六爻纳甲）、`meihua`（梅花易数）、`xiaoliuren`（小六壬）、`zeji`（择吉通书）
+- 六科均经各学科 `dev_tools/check.py` 全绿，仓库根 `tools/check.py --full` 全绿。
+- **两条出报告通道**（同一份引擎、同一条四段契约，产出由 `tools/verify_web_parity.py` 逐字节验收）：
+  **A 纯前端**（`web/` + GitHub Pages + Pyodide，**零凭证**）；
+  **B 云端 Actions**（`reports` 分支固定链接 + issue 回评）。
 
-**基线**：`main`（2026-09-29c；v1.0.0 结构重构已落地）。
-质量门：`tools/check.py --full` 全绿（含 pytest）；工作区无未跟踪垃圾（生成物一律 gitignore）。
+**基线**：`main`（2026-09-30e：三科评测口径审计订正；上一质量门锚 `b86e4b7`，2026-09-30d）。
+质量门：`tools/check.py --full` 全绿（含站点构建+自检、网页↔本机同源验收 10 例、pytest 76 项、
+六爻黑箱回归 12/18 ≥ 基线 11/18）；工作区无未跟踪垃圾（生成物一律 gitignore）。
 
 ---
 
@@ -43,12 +49,31 @@
 
 对外引用：优先 holdout/wikisource，**必须带 n 与集合名**。
 
-### 梅花 / 小六壬 / 择吉 — 已还原（2026-09-29）
+### 梅花 / 小六壬 / 择吉 — 已还原，但**分数口径已订正**（2026-09-30 审计）
 
-- 三科均已在 2026-09-29 从 `archive/` 还原至 `disciplines/`，四段管线 + 案例评测 + 质量门均通过（各科 `tools/check.py` 全绿）。
-- **梅花易数**：体用生克/互变/卦气旺衰/万物类象/多爻动合参；tune/holdout 均 100%，对齐分口径同源自洽，仅供趋势参考。
-- **小六壬**：六宫掌诀/邻宫速断/方位五行综合；n=15 取自《贺氏六壬小手册》，落宫为历法真值+诀句同源，tune/holdout 均 100%。
-- **择吉**：建除/黄黑道/二十八宿三因子综合裁决（≥1 吉 / ≤-1 凶 / 其间平）；机械因子与多家在线黄历核对；tune/holdout 均 100%；裁决口径为《协纪辨方书》通行口径并固定于 `data/verdicts.json`。
+- 三科均已于 2026-09-29 从 `archive/` 还原至 `disciplines/`，四段管线 + 质量门均通过
+  （各科 `dev_tools/check.py` 全绿），金标准指纹未漂移。
+- ⚠️ **此前写的"tune/holdout 均 100%"是误导，已订正**。2026-09-30 逐例审计
+  （`disciplines/<科>/docs/EVAL-AUDIT.md`，一键复核 `python tools/eval_audit_recheck.py`）
+  的结论是：那 100% 是**规则自洽回归数**，不是古籍案例对齐分，更不是精度。
+  三科的可评构成如下：
+
+| 科 | 集合 | n | expected 来源 | 自洽项占权重 | 读数含义 |
+|---|---|---|---|---|---|
+| 梅花 | tune 10 / holdout 13 | 23 | 原书应验 8 + **引擎口径构造 5** | holdout 41.9% | 管线自洽；唯一真判据是 5 档吉凶 |
+| 小六壬 | tune 10 / holdout 5 | 15 | 书上原例 2（仅落宫）+ **构造 3** | **100/100** | 落宫/吉凶/事类/主数全查同一张表 |
+| 择吉 | tune 10 / holdout 6 | 16 | **全部 engine_derived；古籍日例应验 0 例** | **100/100** | 等价于一次带断言的回归测试 |
+
+- **已发现的硬泄漏**：梅花 `holdout` MH014–MH018 的 expected 出自本仓
+  `data/verdicts.json#multi_move_rules`，而该表与这 5 例在**同一次提交 `010bcee`**
+  一起引入（`aecb832` 两者皆无）。
+- **正确说法**（对外引用请照此）：*规则自洽回归数：梅花 13/13、11/11、6/6、8/8；
+  小六壬与择吉各维度 n/n 命中*——**带 n，不带百分比**（三科 n 全 < 20）。
+- **想让三科真正可检验，唯一有效动作是建外部独立集**，范式照六爻
+  （`case_runner.py` 合并 `*_cases.json` + `case_splits.json` 单列"永不调参"split，
+  wikisource 35 例）。**扩判据、调权重都不解决这个问题。**
+- 三科 `evaluate.py` 现已在报分时自动打印 `[口径披露]`（集合名 / n / 是否调参 /
+  自洽项占比 / 泄漏警告），n<20 时声明不发百分比、改打逐维度命中数。
 
 ### 命科 — 机械推演已立（非命运断言）
 
@@ -61,9 +86,13 @@
 
 ### 合参 / 工具
 
-- `tools/check.py`（结构/内核自测/断语键一致/ming 质量门/六爻冒烟/合参/**pytest**）
+- `tools/check.py`（结构/内核自测/断语键一致/ming 质量门/六爻冒烟/合参/**站点构建+自检**/**网页↔本机同源**/pytest）
 - `tools/eval.py`、`tools/demo.py`、`tools/mcp_router.py`、`tools/core_selftest.py`、`tools/text_keys_selftest.py`
 - person + outcome-eval
+- **交付通道（2026-09-30d 新增）**：`tools/build_web.py`（仓库源码镜像成静态站点 + 清单）、
+  `tools/serve_web.py`（本机预览，以仓库为站点根）、`tools/check_web_site.py`（站点自检）、
+  `tools/verify_web_parity.py`（两条通道产出同源逐字节验收）；站点源在 `web/`，
+  发布走 `.github/workflows/pages.yml`。
 
 ---
 
@@ -87,7 +116,30 @@ yi zeji chart --date "2026-09-30" --activity 开市       # 择吉排盘
 
 > 安装：`pip install -e .`（注册 `yi` entry point）。
 
-### 三科还原（原始脚本直跑，[历史，仍有效]）
+### 出报告（两条通道，2026-09-30d）
+
+```bash
+# 一条命令出 MD+HTML（六科任一；写进 request.json 或直接给参数）
+python tools/report.py --discipline liuyao --question "占求财" \
+    --datetime "2026-09-30 10:30" --mode time --outdir reports
+python tools/report.py --request request.json --outdir reports --result-json out.json
+
+# 通道 A：纯前端（浏览器内跑同一份引擎，零凭证）
+python tools/serve_web.py           # 本机预览 http://127.0.0.1:8737/
+#   深链： /?d=liuyao&q=占求财&dt=2026-09-30 10:30&mode=time&auto=1
+python tools/build_web.py --outdir site   # 构建可发布的静态站点
+python tools/check_web_site.py --site site   # 站点自检（清单↔镜像逐条 sha256）
+
+# 两条通道同源验收（同一请求两边出报告，逐字节比对）
+python tools/verify_web_parity.py
+
+# 通道 B：云端（推上 GitHub 后）
+#   AI 拼预填 issue 链接 → 用户点提交 → 报告回评 + 落到 reports 分支固定链接：
+#   https://raw.githubusercontent.com/<owner>/<repo>/reports/<学科>/latest.md
+#   规程见 docs/AI-SOP.md
+```
+
+### 各科直跑（[历史，仍有效]）
 
 ```bash
 # 六爻
@@ -182,8 +234,23 @@ python tools/refactor_guard.py --compare guard/base.json  # 改后
 ## 四、还欠什么（按优先序）
 
 > 债务的**速查登记 + 提交锚点 + 阻塞说明**见 `docs/TECH-DEBT.md`（单一登记入口）。
-> 本节约为叙述版，用于讲清来龙去脉；两处互相指针，**不互为副本**——改一处记得同步另一处。
+> **各科"老师傅程度"差距与可执行改造清单见 `docs/DEEP-DIVE-PLAN.md`**（含代码位置、
+> 古籍依据、验收方式）；新门类论证见 `docs/NEW-DISCIPLINES.md`。
+> 本节约为叙述版，用于讲清来龙去脉；几处互相指针，**不互为副本**——改一处记得同步。
 
+0. **各科深度缺口**（2026-09-30d 审计，清单已落 `DEEP-DIVE-PLAN.md`，**尚未动引擎**）：
+   - 六爻：缺三会局、独发独静、卦级反吟伏吟、本卦↔变卦双卦对比、三传克制；
+     旬空只有权重、无"真空/假空"标签。更严重的是**评测盲区**：旺衰定性、六神临用、
+     卦身、三合、墓库开合、独发独静零覆盖，反吟/伏吟/进退神/入墓/暗动/月破被降级为
+     格局词**子串匹配**，`use_god_position` 在 tune/holdout **全为 N/A**。
+   - 命科八字：**完全没有案例评测**（`ming_cases.json` 的 tune/holdout 皆空）；
+     缺调候用神、通关、病药、格局成败救应、三会、四柱间独立刑冲合害、胎元、小运、
+     流月、岁运并临、天克地冲、十神组合、女命夫子星。
+   - 梅花/小六壬/择吉：~~tune/holdout 恒为 100%~~ **该读数已被 2026-09-30 逐例审计
+     推翻并订正**——它是**规则自洽回归数**（expected 与引擎同源），不是古籍案例对齐分，
+     更不是精度。结论、构成表与硬泄漏见 §一 与各科 `docs/EVAL-AUDIT.md`
+     （一键复核 `python tools/eval_audit_recheck.py`）。三科剩余的**唯一有效动作是建
+     外部独立集**（范式照六爻 wikisource 35 例）；扩判据、调权重都不解决。
 1. **wikisource 应期泛化** top-1 ~20%（n=35）：等换书或真实反馈 n≥30；**禁止考卷调参**。
    - 《卜筮正宗》`data/sources/bushi_zhengzong.wikitext.txt` 仅 912 字节目录骨架（维基文库 14 卷子页均返回 404）；parser 空白骨架已搭（`dev_tools/fetch_wikisource_cases.py` 同模式），待正文压入即可出外部 case。
    - 《火珠林》2026-09-30 已解析：**2 例 scorable** 入 `huozhulin_holdout` + **5 例定性**（空间/人事）入 `huozhulin_qualitative.json`（因 n=2 且火珠林用纳音/飞伏体系，strict 对齐分偏低属结构性差异，不参与应期 top-1 排名）。

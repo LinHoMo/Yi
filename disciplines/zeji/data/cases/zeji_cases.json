@@ -1,11 +1,56 @@
 {
-  "schema": "zeji-cases-v1",
-  "note": "择吉案例库。机械因子（建除/黄黑道/二十八宿值日）为历法真值，逐一对照通书黄历核对（锚点 2026-09-23/24/25 开发期核对；holdout 的 10-01/10-08/10-13/10-15 对照在线黄历复核，干支以彭祖百忌校验）；宜忌命中与综合方向为规则应用（《协纪辨方书》建除篇 + 学科自有裁决口径，见 verdicts.json）。tune 为开发窗口期核对过的 9 月日期（参与过校参）；holdout 为引擎定稿后新取的 10 月日期（未参与调参）；excluded 为超出农历表范围、无法起局的边界记录。expected 只记可机械核验的要点：建除神、日值神、黄道归属、值宿、该活动宜/忌命中、综合方向与得分。",
+  "_meta": {
+    "schema": "zeji-cases-v1",
+    "note": "择吉案例库。机械因子（建除/黄黑道/二十八宿值日）为历法真值，逐一对照通书黄历核对（锚点 2026-09-23/24/25 开发期核对；holdout 的 10-01/10-08/10-13/10-15 对照在线黄历复核，干支以彭祖百忌校验）；宜忌命中与综合方向为规则应用（《协纪辨方书》建除篇 + 学科自有裁决口径，见 verdicts.json）。tune 为开发窗口期核对过的 9 月日期（参与过校参）；holdout 为引擎定稿后新取的 10 月日期（未参与调参）；excluded 为超出农历表范围、无法起局的边界记录。expected 只记可机械核验的要点：建除神、日值神、黄道归属、值宿、该活动宜/忌命中、综合方向与得分。",
+    "total_cases": 18,
+    "tune": 10,
+    "holdout": 6,
+    "excluded": 2,
+    "provenance_counts": {
+      "book_original": 0,
+      "engine_derived": 16
+    },
+    "count_note": "计数口径：total_cases 含 excluded（18 = tune 10 + holdout 6 + excluded 2，另有 ZJ018–ZJ021 已被删除不再登记）。provenance 计数不含 excluded。",
+    "_provenance": {
+      "what": "本库 expected 的来源与口径审计结论（逐条审计见 disciplines/zeji/docs/EVAL-AUDIT.md）。报分必须连同本块阅读。",
+      "expected_source": "本库无古籍日例应验可引（见本文件 expansion_path）：全部 expected 来自「内核历法函数 + 通书黄历核对」的机械因子，与本仓 verdicts.json 宜忌表 + verdict_rule 的规则应用。逐例 provenance 统一为 engine_derived。",
+      "self_consistent_dims": [
+        "jian_chu",
+        "day_god",
+        "huang_dao",
+        "xiu",
+        "yi_ji",
+        "verdict"
+      ],
+      "self_consistent_note": "六维全部与引擎同源：jian_chu/day_god/huang_dao/xiu 是 core/yishu_core/zeji_tables.py 的历法真值（同一函数算两遍，权重 70/100）；yi_ji 是 analyze.py::_factors 查 verdicts.json 宜忌表；verdict 是 analyze.py::_verdict 按 verdicts.json#verdict_rule 阈值裁决。合计 100/100。ZJ022 的 note 自述「期望由 verdicts.json 宜忌表 + verdict_rule 独立推出，不读 analyze 输出」——独立于 analyze 的代码，但不独立于同一份 tables + verdicts.json。",
+      "tune_holdout_leakage": "切分为人工指定（逐例 split 字段），无重叠 ID、无重叠日期。但 tune（2026-09-21~30）与 holdout（2026-10-01~15）由同一作者在同一次开发中取自同一套表，且 verdicts.json 与两集在同批提交中共同演进（git log 显示 1b93b10/010bcee/878d193/b86e4b7 同时改 cases 与 verdicts）。属「同源同期」，不是独立情境抽样。审计实测：16/16 例 expected 与 analyze 输出逐字段全等。",
+      "holdout_breakdown": [
+        {
+          "split": "holdout",
+          "text": "n=6 = 通书机械因子核对 5（ZJ011–ZJ015）+ 规则表覆盖补例 1（ZJ022，note 明示为「补齐建除『破』覆盖」）。全部为可确定性复算项，无一条外部应验。"
+        }
+      ],
+      "why_still_100": "自洽项占适用权重 100%，且 expected 可由引擎确定性复算（审计实测 16/16 全等）。100% 只说明「历法表与规则表被一致地实现」，等价于一次带断言的回归测试；对外部黄历的核对价值只存在于开发期的少数锚点（chart.py::_selfcheck 的 2026-09-23/24/25）。随机基线仅作量级参照：建除 12 选 1=8.3%、日值神 12 选 1=8.3%、值宿 28 选 1=3.6%、黄道 2 选 1=50%。",
+      "reporting_rule": "n<20 不报百分比，只报 命中数/适用数；对外引用必须写「择吉·<集合名>，n=<n>，机械因子 + 规则表自洽回归数（非古籍案例对齐分、非预测命中率）」。",
+      "counts": {
+        "total_cases": 18,
+        "tune": 10,
+        "holdout": 6,
+        "excluded": 2,
+        "provenance": {
+          "book_original": 0,
+          "engine_derived": 16
+        },
+        "note": "total_cases 含 excluded（18 = 10 + 6 + 2）；provenance 计数不含 excluded（0 + 16 = 16）。本库无古籍日例应验。"
+      }
+    }
+  },
   "cases": [
     {
       "id": "ZJ001",
       "source": "《协纪辨方书》建除篇 + 通书黄历核对（开发期锚点）",
       "activity": "嫁娶",
+      "provenance": "engine_derived",
       "question": "9月23日结婚嫁娶吉否",
       "split": "tune",
       "input": {
@@ -27,6 +72,7 @@
       "id": "ZJ002",
       "source": "《协纪辨方书》建除篇 + 通书黄历核对（开发期锚点）",
       "activity": "嫁娶",
+      "provenance": "engine_derived",
       "question": "9月24日结婚嫁娶吉否",
       "split": "tune",
       "input": {
@@ -48,6 +94,7 @@
       "id": "ZJ003",
       "source": "《协纪辨方书》建除篇 + 通书黄历核对（开发期锚点）",
       "activity": "嫁娶",
+      "provenance": "engine_derived",
       "question": "9月25日结婚嫁娶吉否",
       "split": "tune",
       "input": {
@@ -69,6 +116,7 @@
       "id": "ZJ004",
       "source": "《协纪辨方书》建除篇 + 通书黄历核对（开发窗口期）",
       "activity": "开市",
+      "provenance": "engine_derived",
       "question": "9月28日开张营业吉否",
       "split": "tune",
       "input": {
@@ -90,6 +138,7 @@
       "id": "ZJ005",
       "source": "《协纪辨方书》建除篇 + 通书黄历核对（开发窗口期）",
       "activity": "纳财",
+      "provenance": "engine_derived",
       "question": "9月29日签约收款吉利否",
       "split": "tune",
       "input": {
@@ -111,6 +160,7 @@
       "id": "ZJ006",
       "source": "《协纪辨方书》建除篇 + 通书黄历核对（2026-09-30）",
       "activity": "开市",
+      "provenance": "engine_derived",
       "question": "9月30日开张营业吉否",
       "split": "tune",
       "input": {
@@ -132,6 +182,7 @@
       "id": "ZJ007",
       "source": "《协纪辨方书》建除篇 + 通书黄历核对（2026-09-30）",
       "activity": "安葬",
+      "provenance": "engine_derived",
       "question": "9月30日安葬先人吉否",
       "split": "tune",
       "input": {
@@ -153,6 +204,7 @@
       "id": "ZJ008",
       "source": "《协纪辨方书》建除篇 + 通书黄历核对（开发窗口期）",
       "activity": "出行",
+      "provenance": "engine_derived",
       "question": "9月27日长途出行吉否",
       "split": "tune",
       "input": {
@@ -174,6 +226,7 @@
       "id": "ZJ009",
       "source": "《协纪辨方书》建除篇 + 通书黄历核对（开发窗口期）",
       "activity": "祭祀",
+      "provenance": "engine_derived",
       "question": "9月22日祭祀祈福吉否",
       "split": "tune",
       "input": {
@@ -195,6 +248,7 @@
       "id": "ZJ010",
       "source": "《协纪辨方书》建除篇 + 通书黄历核对（开发窗口期）",
       "activity": "开市",
+      "provenance": "engine_derived",
       "question": "9月21日开张营业吉否",
       "split": "tune",
       "input": {
@@ -216,6 +270,7 @@
       "id": "ZJ011",
       "source": "《协纪辨方书》建除篇 + 通书黄历核对（2026-10-01）",
       "activity": "开市",
+      "provenance": "engine_derived",
       "question": "10月1日开张营业吉否",
       "split": "holdout",
       "input": {
@@ -237,6 +292,7 @@
       "id": "ZJ012",
       "source": "《协纪辨方书》建除篇 + 通书黄历核对（2026-10-01）",
       "activity": "安葬",
+      "provenance": "engine_derived",
       "question": "10月1日安葬先人吉否",
       "split": "holdout",
       "input": {
@@ -258,6 +314,7 @@
       "id": "ZJ013",
       "source": "《协纪辨方书》建除篇 + 通书黄历核对（2026-10-08）",
       "activity": "祭祀",
+      "provenance": "engine_derived",
       "question": "10月8日祭祀祈福吉否",
       "split": "holdout",
       "input": {
@@ -279,6 +336,7 @@
       "id": "ZJ014",
       "source": "《协纪辨方书》建除篇 + 通书黄历核对（2026-10-13）",
       "activity": "纳财",
+      "provenance": "engine_derived",
       "question": "10月13日签约收款吉利否",
       "split": "holdout",
       "input": {
@@ -300,6 +358,7 @@
       "id": "ZJ015",
       "source": "《协纪辨方书》建除篇 + 通书黄历核对（2026-10-15）",
       "activity": "出行",
+      "provenance": "engine_derived",
       "question": "10月15日长途出行吉否",
       "split": "holdout",
       "input": {
@@ -345,6 +404,7 @@
       "id": "ZJ022",
       "source": "《协纪辨方书》建除/黄黑道/星宿宜忌表规则应用（非古籍日例应验）",
       "activity": "动土",
+      "provenance": "engine_derived",
       "question": "2026-10-09动土吉否",
       "split": "holdout",
       "input": {

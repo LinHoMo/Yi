@@ -30,8 +30,11 @@ BASELINE_FILE = DISC / "dev_tools" / "check_baseline.json"
 
 BASELINE = {
     "smoke": 5,          # 四段管线冒烟有产出数（共 5）
-    "tune": 100.0,       # 古籍对齐分 strict，n=10（参与过调参）
-    "holdout": 100.0,    # 古籍对齐分 strict，n=5（未参与调参）
+    # 100.0 是「规则表自洽回归线」，不是能力线：四维 expected 全部与引擎同源
+    # （见 data/cases/xiaoliuren_cases.json#_meta._provenance 与 docs/EVAL-AUDIT.md）。
+    # 此门只防「起课/查表管线被改坏」。
+    "tune": 100.0,       # 规则自洽回归数 strict，n=10
+    "holdout": 100.0,    # 规则自洽回归数 strict，n=5。n<20 按 docs/EVAL-AUDIT.md 只报命中数
 }
 
 PATTERNS = {

@@ -123,6 +123,47 @@ def evaluate(engine_out: dict, label: str, ids: list[str], verbose: bool) -> dic
     return run_eval(engine_out, base, ids, WEIGHTS, score_case, MODEL, label, verbose)
 
 
+def _count(ids: list[str], **match) -> int:
+    """按字段计数（用于口径披露：多少例是原书应验、多少例是构造校验）。"""
+    return sum(1 for c in case_runner.load_cases()
+               if c["id"] in ids and all(c.get(k) == v for k, v in match.items()))
+
+
+def provenance_note(label: str, ids: list[str], res: dict) -> None:
+    """报分前先披露口径（AGENTS.md 铁律三：必带集合名 + n + 是否参与调参）。
+
+    n < 20 时不报百分比，只报命中数/适用数——20 例以下的百分比是伪精度。
+    同时点明本集的自洽项：这些维度上 expected 与引擎同源，命中的是"是否与规则表一致"，
+    不是"是否与古籍原断一致"。
+    """
+    meta = case_runner.load_meta()
+    n = res.get("n") or 0
+    prov = meta.get("_provenance") or {}
+    n_book = _count(ids, provenance="book_original")
+    n_synth = _count(ids, provenance="engine_derived")
+    print("\n[口径披露]")
+    print(f"  集合名：{label}；n={n}（原书应验 {n_book} 例 / 由引擎口径构造 {n_synth} 例）；"
+          f"{'参与过调参（tune）' if label == 'tune' else '未参与调参（holdout）'}")
+    print("  分数含义：引擎输出与案例库要点的**对齐分**，不是现实预测命中率。")
+    if prov.get("self_consistent_dims"):
+        print(f"  自洽项（expected 与引擎同源，命中≠独立判断正确）："
+              f"{'、'.join(prov['self_consistent_dims'])}")
+    if prov.get("tune_holdout_leakage"):
+        print(f"  ⚠ 切分泄漏：{prov['tune_holdout_leakage']}")
+    if n < 20:
+        print(f"  ⚠ n={n} < 20 → 本集**不发百分比**，只报命中数；下方百分比仅供参考，"
+              f"不构成可检验的泛化证据。")
+
+
+def hits_summary(res: dict, ids: list[str]) -> None:
+    """n<20 时的诚实读数：逐维度报 命中/适用、N/A。"""
+    if not res.get("dims"):
+        return
+    print("  逐维度命中数（n<20 的正确读数）：")
+    for k, v in res["dims"].items():
+        print(f"    {k:<12s} {v['full']}/{v['applicable']} 命中，N/A {v['na']}")
+
+
 def main() -> int:
     force_utf8_stdio()
     ap = argparse.ArgumentParser(description="梅花易数古籍案例对齐评分（非现实预测命中率）")
@@ -154,6 +195,10 @@ def main() -> int:
     if res["avg"] is None:
         print("无可用结果")
         return 1
+
+    provenance_note(label, ids, res)
+    if (res.get("n") or 0) < 20:
+        hits_summary(res, ids)
 
     errored = [e["id"] for e in engine_out.get("errors", [])]
     if errored:

@@ -31,8 +31,12 @@ BASELINE_FILE = DISC / "dev_tools" / "check_baseline.json"
 
 BASELINE = {
     "smoke": 5,          # 四段管线冒烟有产出数（最低 5；现跑 6，含多爻动 manual）
+    # 100.0 是「规则表自洽回归线」，不是能力线：relation/sheng_ti/ke_ti/timing 四项
+    # expected 与引擎同源（见 data/cases/meihua_cases.json#_meta._provenance 与
+    # docs/EVAL-AUDIT.md）。此门只防「查表/生克管线被改坏」。
     "tune": 100.0,       # 古籍对齐分 strict，n=10（参与过调参）
-    "holdout": 100.0,    # 古籍对齐分 strict，n=8（未参与调参；2026-09-26b 扩样 3→8）
+    "holdout": 100.0,    # 古籍对齐分 strict，n=13（未参与调参；原注释写 n=8 已过期）。
+                         # n<20 按 docs/EVAL-AUDIT.md 只报命中数，不报百分比。
 }
 
 PATTERNS = {

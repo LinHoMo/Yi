@@ -113,6 +113,46 @@ def evaluate(engine_out: dict, label: str, ids: list[str], verbose: bool) -> dic
     return run_eval(engine_out, base, ids, WEIGHTS, score_case, MODEL, label, verbose)
 
 
+def _count(ids: list[str], **match) -> int:
+    """按字段计数（口径披露用：多少例取自书上原例、多少例是按规则表构造）。"""
+    return sum(1 for c in case_runner.load_cases()
+               if c["id"] in ids and all(c.get(k) == v for k, v in match.items()))
+
+
+def provenance_note(label: str, ids: list[str], res: dict) -> None:
+    """报分前先披露口径（AGENTS.md 铁律三：必带集合名 + n + 是否参与调参）。
+
+    n < 20 不报百分比；并显式声明本集四维全部与引擎同源。
+    """
+    meta = case_runner.load_meta()
+    prov = meta.get("_provenance") or {}
+    n = res.get("n") or 0
+    n_book = _count(ids, provenance="book_original")
+    n_synth = _count(ids, provenance="engine_derived")
+    print("\n[口径披露]")
+    print(f"  集合名：{label}；n={n}（书上原例 {n_book} 例 / 按规则表构造 {n_synth} 例）；"
+          f"{'参与过调参（tune）' if label == 'tune' else '未参与调参（holdout）'}")
+    print("  分数含义：引擎输出与案例库要点的**对齐分**，不是现实预测命中率。")
+    if prov.get("self_consistent_dims"):
+        print(f"  ⚠ 自洽项（expected 与引擎同源，命中≠独立判断正确）："
+              f"{'、'.join(prov['self_consistent_dims'])}"
+              f"——本集四维权重合计 100/100，本读数衡量的是「引擎与自己的规则表是否一致」。")
+    if prov.get("tune_holdout_leakage"):
+        print(f"  ⚠ 切分泄漏：{prov['tune_holdout_leakage']}")
+    if n < 20:
+        print(f"  ⚠ n={n} < 20 → 本集**不发百分比**，只报命中数；下方百分比仅供参考，"
+              f"不构成可检验的泛化证据。")
+
+
+def hits_summary(res: dict) -> None:
+    """n<20 时的诚实读数：逐维度报 命中/适用、N/A。"""
+    if not res.get("dims"):
+        return
+    print("  逐维度命中数（n<20 的正确读数）：")
+    for k, v in res["dims"].items():
+        print(f"    {k:<10s} {v['full']}/{v['applicable']} 命中，N/A {v['na']}")
+
+
 def main() -> int:
     force_utf8_stdio()
     ap = argparse.ArgumentParser(description="小六壬古籍案例对齐评分（非现实预测命中率）")
@@ -144,6 +184,10 @@ def main() -> int:
     if res["avg"] is None:
         print("无可用结果")
         return 1
+
+    provenance_note(label, ids, res)
+    if (res.get("n") or 0) < 20:
+        hits_summary(res)
 
     errored = [e["id"] for e in engine_out.get("errors", [])]
     if errored:
