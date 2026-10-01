@@ -32,6 +32,7 @@ SAMPLES = [
 def fingerprint() -> list[dict]:
     from chart import chart
     from analyze import analyze
+    from narrate import narrate as _narrate
 
     out = []
     for s in SAMPLES:
@@ -51,6 +52,7 @@ def fingerprint() -> list[dict]:
             "pattern": con.get("pattern"),
             "useful_gods": con.get("useful_gods"),
             "dayun_head": (con.get("dayun") or [{}])[0] if con.get("dayun") else None,
+            "narrate_sha": hashlib.sha256(str(_narrate(a)).encode("utf-8")).hexdigest()[:12],
         })
     return out
 

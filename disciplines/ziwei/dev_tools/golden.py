@@ -33,6 +33,7 @@ GOLDEN_CASES = [
 def fingerprint() -> list[dict]:
     from chart import ziwei_chart
     from analyze import ziwei_analyze
+    from narrate import narrate as _narrate
 
     rows = []
     for case in GOLDEN_CASES:
@@ -55,6 +56,7 @@ def fingerprint() -> list[dict]:
                 "sihua": c.get("sihua", {}),
                 "direction": con.get("方向"),
                 "dayun_step1_age": (con.get("dayun") or [{}])[0].get("start_age"),
+                "narrate_sha": hashlib.sha256(str(_narrate(a)).encode("utf-8")).hexdigest()[:12],
             })
         except Exception as exc:
             rows.append({"id": case["id"], "error": f"{type(exc).__name__}: {exc}"})

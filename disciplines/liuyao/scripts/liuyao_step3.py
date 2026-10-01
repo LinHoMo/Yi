@@ -75,6 +75,7 @@ from narrative_utils import (  # noqa: E402
     STEP5_SPIRIT_REASONS as SPIRIT_TXT,
     STEP5_VERDICT_DESCS as VDESC,
     STEP5_YINGQI as YINGQI_TXT,
+    STRENGTH_SUMMARY_SAY,
     VOID_KIND_LABELS,
     vdesc,
 )
@@ -570,19 +571,10 @@ def _compose_strength_summary(**kw) -> str:
     if extras:
         parts.append("另外要留意：" + "；".join(extras) + "。")
     # 口语结论
+    # 断语唯一真值源在 data/rules/verdict_texts.json#strength_summary_say；
+    # 越界的旺衰档位（历史上没出现过）才在此处退化为机械描述。
     lv = str(level)
-    say = {
-        "极旺": "总起来说，用神很有底气。",
-        "旺": "总起来说，用神得力。",
-        "相": "总起来说，用神有根，能用。",
-        "中和": "总起来说，用神不强不弱，看后手怎么走。",
-        "中和偏旺": "总起来说，用神略占上风。",
-        "中和偏弱": "总起来说，用神稍显吃力。",
-        "偏弱": "总起来说，用神偏软，宜借力。",
-        "弱": "总起来说，用神力量薄，不宜硬催结果。",
-        "极弱": "总起来说，用神几乎使不上劲。",
-        "休囚": "总起来说，用神处在低潮。",
-    }.get(lv, f"总起来说，用神状态为{lv}。")
+    say = STRENGTH_SUMMARY_SAY.get(lv, f"总起来说，用神状态为{lv}。")
     parts.append(say)
     if score is not None:
         parts.append(f"（量化参考 {float(score):.2f} · {lv}）")

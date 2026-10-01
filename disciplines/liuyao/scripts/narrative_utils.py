@@ -87,6 +87,8 @@ STRENGTH_REASON_MAP = _VERDICT_TEXTS.get("strength_reason_map", {})
 STRENGTH_POLARITY_MAP = _VERDICT_TEXTS.get("strength_polarity_map", {})
 PATTERN_RELATED = _VERDICT_TEXTS.get("pattern_related", {})
 PATTERN_NOTES_EXTRA = _VERDICT_TEXTS.get("pattern_notes_extra", {})
+# step3 旺衰口语结论（level → 断语）；结构见 data/rules/verdict_texts.json#strength_summary_say
+STRENGTH_SUMMARY_SAY = _VERDICT_TEXTS.get("strength_summary_say", {})
 SHENSHA_POLICY = _VERDICT_TEXTS.get("shensha_policy", {})
 ZEJI_VALIDITY_GAP = _VERDICT_TEXTS.get("zeji_validity_gap", {})
 # 格局标签句（真空/假空…）：键 = 格局组名 → 标签名 → {label, strength_text, reason, verdict, basis}

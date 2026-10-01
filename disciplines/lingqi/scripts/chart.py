@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """灵棋经·起课（chart 段）—— 纯机械查表，无解读成分。
 
-灵棋法（《靈棋經》书源，data/sources/ling-qi-jing.wikitext.txt）：
+灵棋法（《灵棋经》书源，data/sources/ling-qi-jing.wikitext.txt）：
   十二枚棋分上/中/下三部（各四枚），掷之数「面」：每部 0..4（全零不成课），
   共 124 课。本段只做：(三部掷数) → 课号 → 查 data/ketables.json 得课名/象/卦注/
   象曰/詩曰——全部逐字录自书源（铁律三），代码零断语字面量。
@@ -31,7 +31,7 @@ def chart(up: int, mid: int, down: int, question: str = "") -> dict:
         if not isinstance(v, int) or not 0 <= v <= 4:
             raise ValueError(f"{label}部掷数必须是 0..4，收到 {v!r}")
     if up == mid == down == 0:
-        raise ValueError("三部全零不成课（《靈棋經》：掷不获面则不立课）；请重新掷棋")
+        raise ValueError("三部全零不成课（《灵棋经》：掷不获面则不立课）；请重新掷棋")
     key = f"{up}-{mid}-{down}"
     table = load_ketable()
     course = (table.get("courses") or {}).get(key)

@@ -1,10 +1,10 @@
 {
   "_meta": {
     "what": "金标准指纹基线（chart+analyze 逐字段）",
-    "how": "改动引擎行为后跑 python tools/golden.py capture \"理由\"；无理由不落盘，历次漂移见 drift_log",
+    "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；无理由不落盘，历次漂移见 drift_log",
     "cases": 23
   },
-  "digest": "2c9c810d8a265180",
+  "digest": "16976fe43e5d1dff",
   "drift_log": [
     {
       "from": null,
@@ -23,6 +23,18 @@
       "to": "2c9c810d8a265180",
       "date": "2026-09-26",
       "reason": "变卦克体终局封顶平凶（体用总诀·变乃末后之期）+ holdout 扩样 MH019-023"
+    },
+    {
+      "from": "2c9c810d8a265180",
+      "to": "58b521b035b84d79",
+      "date": "2026-10-01",
+      "reason": "阶段4 A5：golden 指纹补 narrate 段（四段契约 chart→analyze→narrate 全覆盖，原仅六爻有）"
+    },
+    {
+      "from": "58b521b035b84d79",
+      "to": "16976fe43e5d1dff",
+      "date": "2026-10-01",
+      "reason": "阶段4 D档：梅花书源篇目名 先天後天論→先天后天论（统一简体，消除同一字段内繁简混排）"
     }
   ]
 }

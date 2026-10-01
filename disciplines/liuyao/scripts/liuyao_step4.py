@@ -79,6 +79,7 @@ from narrative_utils import (  # noqa: E402
     STEP5_VERDICT_DESCS as VDESC,
     STEP5_YINGQI as YINGQI_TXT,
     vdesc,
+    PATTERN_NOTES_EXTRA,
 )
 
 # ─── 全局变量 ───
@@ -1198,7 +1199,7 @@ def _detect_special_pattern(step3_data: dict, step2_data: dict, step4_data: dict
         if use_god_score >= 3.5:
             return {
                 "pattern": "三会局",
-                "description": f"{_hui_desc}，用神旺而随局，气聚一方",
+                "description": f"{_hui_desc}{PATTERN_NOTES_EXTRA['sanhui_use_strong']}",
                 "impact_on_verdict": "三会力大于三合，用神旺则局助其势，事有可成之基",
                 "rule_applied": "《三命通会》三会方局：寅卯辰会木、巳午未会火、申酉戌会金、亥子丑会水",
                 "score_adjustment": 0.5,
@@ -1206,7 +1207,8 @@ def _detect_special_pattern(step3_data: dict, step2_data: dict, step4_data: dict
         if use_god_score <= 1.5:
             return {
                 "pattern": "三会局",
-                "description": f"{_hui_desc}，用神衰而局气偏枯，独木难支",
+                # 断语尾巴的唯一真值_source 在 pattern_notes_extra，此处只做拼装
+                "description": f"{_hui_desc}{PATTERN_NOTES_EXTRA['sanhui_use_weak']}",
                 "impact_on_verdict": "局气虽聚而用神不任，凶中无援之象",
                 "rule_applied": "《三命通会》三会方局；用神衰则不受局助",
                 "score_adjustment": -0.5,

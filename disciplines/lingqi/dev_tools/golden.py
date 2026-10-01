@@ -21,9 +21,29 @@ DIGEST = ROOT / "data" / "golden" / "digest.json"
 def fingerprint() -> dict:
     table = json.loads(KETABLE.read_text(encoding="utf-8"))
     courses = table["courses"]
-    return {"n": len(courses),
+    rows = {"n": len(courses),
             "names": {k: v["name"] for k, v in sorted(courses.items())},
             "xiang": {k: v["xiang"] for k, v in sorted(courses.items())}}
+    # 四段契约的 analyze / narrate 段也要进指纹：原指纹只罩课表数据，
+    # 改 analyze 或 narrate 的措辞不会报警（曾漏到用户眼前）。
+    from analyze import analyze
+    from chart import chart
+    from narrate import narrate as _narrate
+    import io
+    import contextlib
+    nrows = []
+    for key in sorted(courses):
+        up, mid, down = (int(x) for x in key.split("-"))
+        try:
+            with contextlib.redirect_stdout(io.StringIO()):
+                a = analyze(chart(up, mid, down, question="占问"))
+                text = _narrate(a)
+        except Exception as exc:                      # noqa: BLE001 — 指纹要记死错误类型
+            nrows.append(f"{key}:ERR:{type(exc).__name__}")
+            continue
+        nrows.append(f"{key}:{hashlib.sha256(text.encode('utf-8')).hexdigest()[:12]}")
+    rows["narrate"] = nrows
+    return rows
 
 
 def digest_of(rows: dict) -> str:

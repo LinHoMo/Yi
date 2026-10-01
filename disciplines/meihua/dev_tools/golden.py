@@ -29,6 +29,7 @@ def fingerprint() -> list[dict]:
     import case_runner as cr
     from chart import chart
     from analyze import analyze
+    from narrate import narrate as _narrate
 
     rows = []
     for case in cr.load_cases():
@@ -52,6 +53,7 @@ def fingerprint() -> list[dict]:
                 "special": a["conclusion"].get("特断", False),
                 "timing_gz": a["timing"].get("卦气应期") or [],
                 "numerical": a["timing"].get("数应"),
+                "narrate_sha": hashlib.sha256(str(_narrate(a)).encode("utf-8")).hexdigest()[:12],
             })
         except Exception as exc:
             rows.append({"id": case.get("id"), "error": f"{type(exc).__name__}: {exc}"})

@@ -29,6 +29,7 @@ QUESTIONS = ["占求财", "占病", "占行人", "占讼"]
 
 def fingerprint() -> list[dict]:
     from analyze import analyze as _analyze
+    from narrate import narrate as _narrate
     from chart import chart as _chart
 
     rows = []
@@ -49,6 +50,7 @@ def fingerprint() -> list[dict]:
             "four_courses": [(x["xia"], x["shang"]) for x in c["four_courses"]],
             "chuan_tianjiang": [(x["chuan"], x["jiang"]) for x in c["chuan_tianjiang"]],
             "factors": [f["basis"] for f in a["factors"]],
+            "narrate_sha": hashlib.sha256(str(_narrate(a)).encode("utf-8")).hexdigest()[:12],
         })
     return rows
 

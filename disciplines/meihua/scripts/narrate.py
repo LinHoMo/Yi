@@ -96,7 +96,7 @@ def narrate(a: dict) -> str:
         elif moving:
             summary += f"，{_MOVING_CN.get(moving, moving)}动"
         if body and use and rel:
-            summary += f"。体卦**{body}**（主我），用卦**{use}**（主事），两下里是**{rel}**的关系"
+            summary += _NP.get("rel_two_sides", "").format(body=body, use=use, rel=rel)
         change = s.get("变卦")
         if change:
             summary += f"，变卦为{change}"
@@ -145,14 +145,14 @@ def narrate(a: dict) -> str:
         lines.append("这回是多爻同动，体用照「动者为用」分侧之外，更看互变合参——"
                      "《体用生克篇》说「生体多者则愈吉，克体多者则愈凶」。")
     if helpers or hinderers:
-        lines.append("再看中间与终局：互卦是事情的中间，变卦是事情的最后。")
+        lines.append(_NP.get("hu_bian_lead", ""))
         if helpers:
             names = "、".join(h.get("卦") for h in helpers)
             lines.append(f"- 有**{names}**生体，是来帮你的。《体用总诀》说生体之卦各有所应："
                          + "；".join((x.get("含义") or "").strip() for x in st if x.get("含义")))
         if hinderers:
             names = "、".join(h.get("卦") for h in hinderers)
-            lines.append(f"- 有**{names}**克体，是来阻你的，要多留意它示的险处："
+            lines.append(_NP.get("hinder_lead", "").format(names=names)
                          + "；".join((x.get("含义") or "").strip() for x in kt if x.get("含义")))
         if not helpers and not hinderers:
             lines.append("- 用互变都与体卦无生克，事势平铺，全看月令推助。")
@@ -171,13 +171,13 @@ def narrate(a: dict) -> str:
         state = qi.get("状态")
         speed = t.get("应期速度")
         if state:
-            speed_txt = {"速": "事情应得急", "迟": "事情应得慢", "常": "事情按平常节奏走"}.get(speed, "")
+            speed_txt = _NP.get("speed_text", {}).get(speed, "")
             lines.append(f"体卦{bu.get('体卦')}（{bu.get('体卦五行')}）在当下月令是**{state}**"
                          + (f"，{speed_txt}" if speed_txt else "") + "。")
     timing = t.get("卦气应期") or []
     if timing:
         gz = "、".join(timing)
-        lines.append(f"按卦气应期，事之应验多应在与体卦同气的干支之日——**{gz}**（日）。")
+        lines.append(_NP.get("timing_lead", "").format(gz=gz))
         for item in (t.get("生体卦应期") or []):
             if item.get("干支"):
                 lines.append(f"- {item.get('卦')}生体：应于{('、'.join(item['干支']))}之日")

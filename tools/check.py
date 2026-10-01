@@ -125,6 +125,14 @@ def check_verdict_literals() -> list[str]:
 
     本检查仅针对明确的数据结构——Python 字典中连续多条「条件/含义/建议」三元组
     或多条 verdict reason 映射——不计 docstring、argparse help、异常消息、注释。
+
+    **它是粗筛，不是判据。** 两个方向各自有漏：
+      · 假阴性：硬编码在 .py 里的断语只要不写成"连续字典值"就抓不到
+        （阶段4 就靠这个漏掉过小六壬 `事势偏顺，宫义为吉` 整句）；
+      · 假阳性：把 docstring / 模块说明批量外置只会让代码读不懂。
+    **主判据是 `tools/verdict_audit.py --strict`**（[1c] 门）：它跑真实报告，
+    反查"用户到底读到了哪些没进 data/*.json 的中文结论句"，取证而不猜代码长相。
+    本函数的作用是：在主判据的采样集之外，再扫一遍没被报告覆盖的分支。
     """
     fails = []
     KNOWN_DATA_DRIVERS = {"classical_tables"}  # 已走 json.load
@@ -520,7 +528,15 @@ def main() -> int:
 
     print("\n[1b] 命名与断语规范（AGENTS.md §三: 文件名无版本号 + 断语进 data JSON）")
     gate("filenames", check_filenames(), "文件名无版本号标记")
-    gate("verdict_literals", check_verdict_literals(), "断语/引文外置到 data JSON")
+    gate("verdict_literals", check_verdict_literals(), "断语/引文外置到 data JSON（文本粗筛）")
+
+    # 黑箱取证门：不看代码长什么样，只看用户读到什么（verdict_audit.py 的说明）
+    # 比上面的文本粗筛准——粗筛会把 docstring/help 当成断语，取证门不会漏真断语。
+    # 要跑 10 份真实报告，故归到 --full 档。
+    print("\n[1c] 断语外置取证（跑真实报告，反查未进 data/*.json 的结论句）")
+    gate_sub("verdict_audit",
+             ["tools/verdict_audit.py", "--strict"],
+             "断语外置取证（白名单外的未外置句判失败）", fast=False)
 
     print("\n[2] 内核自检（干支历/农历/评分器）")
     if only is None or "core" in only:

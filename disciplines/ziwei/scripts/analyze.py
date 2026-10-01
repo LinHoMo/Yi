@@ -28,6 +28,18 @@ from yishu_core.ziwei_tables import (  # noqa: E402
     dayun_step_years,
 )
 
+_VERDICTS_CACHE: dict | None = None
+
+
+def _load_verdicts() -> dict:
+    """读 data/verdicts.json（结论措辞唯一真值源）；缓存避免每局重读。"""
+    global _VERDICTS_CACHE
+    if _VERDICTS_CACHE is None:
+        with open(Path(__file__).resolve().parent.parent / "data" / "verdicts.json",
+                  encoding="utf-8") as fh:
+            _VERDICTS_CACHE = json.load(fh)
+    return _VERDICTS_CACHE
+
 
 def _stem_yinyang(stem: str) -> str:
     """天干阴阳：甲丙戊庚壬 = 阳，乙丁己辛癸 = 阴。"""
@@ -136,10 +148,12 @@ def ziwei_analyze(chart_json: dict) -> dict:
             has_ji_in_critical = True
         if item.get("type") == "禄" and item.get("palace") in critical_palaces:
             has_lu_in_critical = True
+    # 结论措辞唯一真值源在 data/verdicts.json#方向说明，此处只做查表
+    direction_note = _load_verdicts()["方向说明"]
     if has_ji_in_critical:
-        direction = "平（命宫三方四正有忌入，偏中性偏考验）"
+        direction = direction_note["忌入三方四正"]
     elif has_lu_in_critical:
-        direction = "平（命宫三方四正有禄入，偏吉信号）"
+        direction = direction_note["禄入三方四正"]
     else:
         direction = "平"
 

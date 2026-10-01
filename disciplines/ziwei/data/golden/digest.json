@@ -3,13 +3,19 @@
     "what": "紫微斗数金标准指纹基线",
     "how": "改动引擎后跑 python dev_tools/golden.py capture \"理由\""
   },
-  "digest": "68123c2d0fd0ce7e",
+  "digest": "11787e814b8e027d",
   "drift_log": [
     {
       "from": null,
       "to": "68123c2d0fd0ce7e",
       "date": "2026-09-30",
       "reason": "初始基线:紫微斗数新建学科"
+    },
+    {
+      "from": "68123c2d0fd0ce7e",
+      "to": "11787e814b8e027d",
+      "date": "2026-10-01",
+      "reason": "阶段4 A5：golden 指纹补 narrate 段（四段契约 chart→analyze→narrate 全覆盖，原仅六爻有）"
     }
   ]
 }

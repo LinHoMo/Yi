@@ -1,10 +1,10 @@
 {
   "_meta": {
     "what": "金标准指纹基线（chart+analyze 逐字段）",
-    "how": "改动引擎行为后跑 python tools/golden.py capture \"理由\"；无理由不落盘，历次漂移见 drift_log",
+    "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；无理由不落盘，历次漂移见 drift_log",
     "cases": 15
   },
-  "digest": "0088d638d065402d",
+  "digest": "bfaa423ec28bea06",
   "drift_log": [
     {
       "from": null,
@@ -17,6 +17,12 @@
       "to": "0088d638d065402d",
       "date": "2026-09-23",
       "reason": "修正：指纹仅覆盖可运行案例（tune+holdout 15 例），excluded 空输入跳过"
+    },
+    {
+      "from": "0088d638d065402d",
+      "to": "bfaa423ec28bea06",
+      "date": "2026-10-01",
+      "reason": "阶段4 A5：小六壬 golden 补 narrate 段（四段契约全覆盖）"
     }
   ]
 }

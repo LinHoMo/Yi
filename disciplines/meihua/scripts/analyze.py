@@ -11,7 +11,7 @@
   2. 互卦·变卦对体卦的生克影响（互乃中间之应，变乃末后之期；体宜受生不宜受克）
   3. 事类断语（《卷二·体用生克篇之二》十八章占例）
   4. 卦气旺衰（《卷一·卦气旺/卦气衰》，月令定旺相休囚死）
-  5. 应期（《卷二·先天後天論》：先天卦取卦气应期；应体之卦气宜盛不宜衰，
+  5. 应期（《卷二·先天后天论》：先天卦取卦气应期；应体之卦气宜盛不宜衰，
      旺则应速，衰则应迟；变卦为末后之期）
   6. 万物类象（《卷一·八卦万物属类》《八卦类象》）：机械挂到体/用/互/变各卦
   7. 多爻动合参（verdicts.json#multi_move_rules）：两爻及以上动时更重互变生克
@@ -45,13 +45,13 @@ for _palace, _info in EIGHT_PALACES.items():
     for _name, _gen in _info["order"]:
         _HEX_ELEMENT[_name] = _info["element"]
 
-# 干支五行（应期干支与体卦五行对应：《卷二·先天後天論》
+# 干支五行（应期干支与体卦五行对应：《卷二·先天后天论》
 # "乾、兑则应如庚、辛及申金之日…震、巽当应于甲、乙及支木之日"）
 # 干支五行唯一真值源在 core（AGENTS.md §二），此处仅别名
 _STEM_ELEMENT = STEM_ELEMENTS
 _BRANCH_ELEMENT = dict(BRANCH_ELEMENTS)
 
-# 应期单位：日（卦气应期以干支日为单位，《先天後天論》"应如庚辛及申金之日"）
+# 应期单位：日（卦气应期以干支日为单位，《先天后天论》"应如庚辛及申金之日"）
 _TIMING_UNIT = "日"
 
 
@@ -96,7 +96,7 @@ def _interaction(trig: str, body_el: str) -> tuple[str, str]:
 
 
 def _timing_gz(element: str) -> list[str]:
-    """体卦五行所应的干支（《先天後天論》卦气应期）。"""
+    """体卦五行所应的干支（《先天后天论》卦气应期）。"""
     stems = [s for s, e in _STEM_ELEMENT.items() if e == element]
     branches = [b for b, e in _BRANCH_ELEMENT.items() if e == element]
     return stems + branches
@@ -222,7 +222,7 @@ def analyze(chart_out: dict) -> dict:
         "生体卦应期": [{"卦": h["卦"], "干支": _timing_gz(h["五行"])} for h in helpers],
         "克体卦应期": [{"卦": h["卦"], "干支": _timing_gz(h["五行"])} for h in hinderers],
         "数应": _numerical_timing(chart_out.get("total"), chart_out.get("motion")),
-        "所本": "《卷二·先天後天論》：先天卦定事应之期，取之卦气；"
+        "所本": "《卷二·先天后天论》：先天卦定事应之期，取之卦气；"
                 "应体之卦气宜盛不宜衰；《卷二·占卜总诀》：复验己身之动静",
     }
 
@@ -302,7 +302,7 @@ def analyze(chart_out: dict) -> dict:
              "所本": "《卷一·卦气旺》：应体之卦气宜盛不宜衰"},
             {"因子": "应期", "权重": 10,
              "判据": "、".join(timing["卦气应期"]) or "无",
-             "所本": "《卷二·先天後天論》"},
+             "所本": "《卷二·先天后天论》"},
         ],
     }
 
@@ -358,7 +358,7 @@ def _synthesize(relation: str, helpers: list, hinderers: list,
         "方向": direction,
         "说明": tone,
         "变卦作用": change,
-        "所本": "《卷二·体用总诀》 + 《卷二·先天後天論》（卦气旺衰）",
+        "所本": "《卷二·体用总诀》 + 《卷二·先天后天论》（卦气旺衰）",
     }
     if multi_move:
         result["多爻动"] = True

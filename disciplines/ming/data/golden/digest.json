@@ -1,5 +1,5 @@
 {
-  "fingerprint": "3d4ff149ef6be933",
-  "reason": "调候用神落地：analyze 顶层新增 tiaohou{main,assist}（ming_tables.TIAO_HOU 查表，《穷通宝鉴》原文提取 51 格）；narrate 新增调候一节。既有字段零改动，纯增量透出",
+  "fingerprint": "d290ebc1de0319ca",
+  "reason": "阶段4 A5：golden 指纹补 narrate 段（四段契约 chart→analyze→narrate 全覆盖，原仅六爻有）",
   "n_samples": 6
 }

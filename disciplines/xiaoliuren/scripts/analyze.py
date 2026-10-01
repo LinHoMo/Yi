@@ -198,10 +198,12 @@ def analyze(chart_out: dict) -> dict:
 
 
 def _conclusion_text(direction: str, palace: str, line: str, topic: str) -> str:
-    """方向 + 事类诀句 → 一句结论底色（不出新象数结论，只装配）。"""
-    tone = {"吉": "事势偏顺，宫义为吉",
-            "平": "事在两可，拖延或待时而动",
-            "凶": "结构上偏不利，有凶象信号"}[direction]
+    """方向 + 事类诀句 → 一句结论底色（不出新象数结论，只装配）。
+
+    三档底色措辞唯一真值源在 `verdicts.json#direction_tone`（此前硬编码在这段代码里，
+    与 zeji 的 `narrate_phrases.sum_*` 是同一种重复形态）。
+    """
+    tone = VERDICTS["direction_tone"][direction]
     if line and line != VERDICTS["palaces"][palace]["总诀"]:
         return f"{tone}；就{topic}而言：{line}"
     return f"{tone}；{VERDICTS['palaces'][palace]['总诀']}"

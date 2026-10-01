@@ -141,12 +141,14 @@ def _verdict(f: dict) -> dict:
     if (f.get("pengzu") or {}).get("hit"):
         score -= 0.5
 
+    # 三档结论措辞唯一真值源在 verdicts.json#narrate_phrases（sum_good/sum_bad/sum_mixed）
+    _tone = VERDICTS["narrate_phrases"]
     if score >= VERDICTS["verdict_rule"]["thresholds"]["吉"]:
-        direction, tone = "吉", "黄道相合、建除无碍，事类与日辰相宜"
+        direction, tone = "吉", _tone["sum_good"]
     elif score <= VERDICTS["verdict_rule"]["thresholds"]["凶"]:
-        direction, tone = "凶", "黑道当值或建除有忌，结构上偏不利"
+        direction, tone = "凶", _tone["sum_bad"]
     else:
-        direction, tone = "平", "有宜有忌，可行但需保留（宜择黄道吉时）"
+        direction, tone = "平", _tone["sum_mixed"]
     return {"方向": direction, "说明": tone, "得分": round(score, 1),
             "所本": VERDICTS["verdict_rule"]["note"]}
 
