@@ -32,7 +32,9 @@ try:
 except ImportError:
     pass
 
-DAY_CHARS = "子丑寅卯辰巳午未申酉戌亥"
+from yishu_core.symbols import EARTHLY_BRANCHES  # noqa: E402  地支序唯一真值源
+
+DAY_CHARS = EARTHLY_BRANCHES
 
 LOOSE_WINDOW_DAYS = 7  # loose 判定容差：预测日期 ±7 天
 

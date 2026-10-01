@@ -45,8 +45,8 @@ OUT_JSON = DISC / "data" / "cases" / "huozhulin_cases.json"
 OUT_QUAL = DISC / "data" / "cases" / "huozhulin_qualitative.json"
 SPLITS = DISC / "data" / "cases" / "case_splits.json"
 
-STEMS = "甲乙丙丁戊己庚辛壬癸"
-BRANCHES = "子丑寅卯辰巳午未申酉戌亥"
+STEMS = sym.HEAVENLY_STEMS
+BRANCHES = sym.EARTHLY_BRANCHES
 
 # 繁体字头归一：六十四卦用字 + 天干地支用字
 TRAD = {

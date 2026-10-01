@@ -50,8 +50,8 @@ PROV = SOURCES / "zengshan_buyi.provenance.json"
 OUT = DISC / "data" / "cases" / "wikisource_cases.json"
 SPLITS = DISC / "data" / "cases" / "case_splits.json"
 
-STEMS = "甲乙丙丁戊己庚辛壬癸"
-BRANCHES = "子丑寅卯辰巳午未申酉戌亥"
+STEMS = sym.HEAVENLY_STEMS
+BRANCHES = sym.EARTHLY_BRANCHES
 
 # 繁体字头 → 内核（简体）卦名用字。只列六十四卦、八卦前缀与世应/動變会碰到的字。
 TRAD = {

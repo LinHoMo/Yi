@@ -20,6 +20,7 @@ import json
 import re
 import subprocess
 import sys
+import importlib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -60,6 +61,9 @@ VERSIONED_FILENAME = re.compile(
 # 中文断语字面量检测（AGENTS.md §三：断语/引文进 data/*.json，代码只留算法）
 # 检测 .py 文件中 dict/List 值含连续 8+ 中文字符的字符串
 CHINESE_VERDICT_LITERAL = re.compile(r"[\u4e00-\u9fff]{8,}")
+
+# 干支序列唯一字面量（天干 / 地支的完整 10/12 位串）
+GANZHI_SEQ_LITERAL = re.compile(r'["\'](?:甲乙丙丁戊己庚辛壬癸|子丑寅卯辰巳午未申酉戌亥)["\']')
 
 
 def _run_py(cmd: list[str], *, label: str, cwd: Path = ROOT) -> tuple[int, str]:
@@ -220,6 +224,8 @@ def check_core_tables() -> list[str]:
                 fails.append(f"{p.relative_to(ROOT)}:{i}: 复制内核表 {name}"
                              f"（唯一真值源在 core）")
     fails.extend(check_core_table_renames())
+    fails.extend(check_core_tables_in_scope())
+    fails.extend(check_core_string_tables())
     return fails
 
 
@@ -265,6 +271,125 @@ def _module_table_fingerprints(py_file: Path) -> dict[str, list[str]]:
                 if isinstance(t, ast.Name):
                     out.setdefault(fp, []).append(t.id)
     return out
+
+
+def _all_scope_literals(py_file: Path) -> dict[str, dict[str, list[str]]]:
+    """全作用域 dict/list 字面量赋值：指纹 → {作用域名: [变量名]}（含函数内、任意嵌套）。
+
+    `_module_table_fingerprints` 只看模块级，看不见函数内的 dict 赋值
+    （如 `def f(): sheng_wo = {"木": "水", ...}`）。这类副本与模块级副本同样危险：
+    同份数据的第二份，改 core 漏改即口径分叉。故单独开一路全作用域收集。
+    """
+    try:
+        tree = ast.parse(py_file.read_text(encoding="utf-8", errors="ignore"))
+    except SyntaxError:
+        return {}
+    out: dict[str, dict[str, list[str]]] = {}
+
+    def walk(node: ast.AST, scope: str) -> None:
+        for child in ast.iter_child_nodes(node):
+            if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                walk(child, getattr(child, "name", "<scope>"))
+                continue
+            if isinstance(child, (ast.Assign, ast.AnnAssign)):
+                value = child.value
+                if isinstance(value, (ast.Dict, ast.List)):
+                    fp = _canonical_literal(value)
+                    if fp:
+                        targets = (child.targets if isinstance(child, ast.Assign)
+                                   else [child.target])
+                        for t in targets:
+                            if isinstance(t, ast.Name):
+                                out.setdefault(fp, {}).setdefault(scope, []).append(t.id)
+            walk(child, scope)
+
+    walk(tree, "<module>")
+    return out
+
+
+def _core_module_values(py_file: Path) -> dict[str, str]:
+    """import 一个 core 模块，收集其模块级 dict/list 变量的运行值指纹。
+
+    目的见 `check_core_tables_in_scope`：推导式派生的表（SHENG_WO/KE_WO 等）不是
+    ast 字面量，只靠静态扫描会漏，故实际 import 一次取运行值补进指纹库。
+    core 仅依赖 stdlib，import 无副作用。
+    """
+    if str(ROOT / "core") not in sys.path:
+        sys.path.insert(0, str(ROOT / "core"))
+    try:
+        mod = importlib.import_module(f"yishu_core.{py_file.stem}")
+    except Exception:
+        return {}
+    out: dict[str, str] = {}
+    for name, val in vars(mod).items():
+        if name.startswith("_"):
+            continue
+        try:
+            if isinstance(val, dict) and val:
+                out[name] = json.dumps(val, ensure_ascii=False, sort_keys=True)
+            elif isinstance(val, list) and val:
+                out[name] = json.dumps(val, ensure_ascii=False)
+        except (TypeError, ValueError):
+            continue
+    return out
+
+
+def check_core_tables_in_scope() -> list[str]:
+    """函数级 / 嵌套作用域的内核表副本检测（补 `check_core_table_renames` 盲区）。
+
+    背景：模块级指纹门对 `def f(): sheng_wo = {...}` 这类**函数内**字面量 100% 失明，
+    六爻 engine_chart.py 的五行生克 dict 即因此长期挂着（AGENTS.md §二 真值源清单
+    里"五行生克"赫然在列）。本函数用 ast 遍历全部作用域补齐。
+    """
+    core_fps: dict[str, list[str]] = {}
+    for p in sorted((ROOT / "core" / "yishu_core").glob("*.py")):
+        for fp, scopes in _all_scope_literals(p).items():
+            for names in scopes.values():
+                core_fps.setdefault(fp, []).extend(
+                    f"yishu_core.{p.stem}.{n}" for n in names)
+        # 补盲：core 里由推导式派生的表（如 `SHENG_WO = {v: k for k, v in SHENG_CYCLE...}`）
+        # 不是 dict 字面量，字面量指纹库收不到它，学科层对其反向复制就漏检。
+        # core 只依赖 stdlib，import 安全；取其模块级 dict/list 变量的运行值入指纹库。
+        for name, val in _core_module_values(p).items():
+            core_fps.setdefault(val, []).append(f"yishu_core.{p.stem}.{name}")
+    if not core_fps:
+        return []
+    fails: list[str] = []
+    for p in (ROOT / "disciplines").rglob("*.py"):
+        if "scratch" in p.parts or "__pycache__" in p.parts:
+            continue
+        rel = p.relative_to(ROOT)
+        for fp, scopes in _all_scope_literals(p).items():
+            if fp not in core_fps:
+                continue  # core 里没有这份内容 → 不是内核表的副本，不算违规
+            src = "、".join(core_fps[fp])
+            for scope, names in scopes.items():
+                if scope == "<module>":
+                    continue  # 模块级由 check_core_table_renames 负责，避免重复报
+                fails.append(f"{rel}: 作用域 {scope}() 内复制内核表 {'、'.join(names)}"
+                             f"（内容与 core {src} 逐字节相同，唯一真值源在 core）")
+    return fails
+
+
+def check_core_string_tables() -> list[str]:
+    """干支序列字符串字面量唯一性（core/yishu_core/ganzhi_calendar.py 为唯一真值源）。
+
+    上两条门都只比对 dict/list 字面量：裸字符串 `stems = "甲乙丙丁戊己庚辛壬癸"`
+    既不匹配 `CORE_TABLE_ASSIGN` 正则，也不是可指纹的 dict —— 两层门同时放行。
+    且同一函数里常出现"一半用 core 一半手写串"（如 meihua/chart.py:327 手写 stems、
+    :328 用 core EARTHLY_BRANCHES），是最容易漏改半截的形态。
+    """
+    fails: list[str] = []
+    for p in (ROOT / "disciplines").rglob("*.py"):
+        if "scratch" in p.parts or "__pycache__" in p.parts:
+            continue
+        rel = p.relative_to(ROOT)
+        for i, line in enumerate(p.read_text(encoding="utf-8", errors="ignore").splitlines(), 1):
+            m = GANZHI_SEQ_LITERAL.search(line)
+            if m:
+                fails.append(f"{rel}:{i}: 复制内核干支序列「{m.group(0).strip(chr(34)+chr(39))}」"
+                             f"（唯一真值源在 core/yishu_core/ganzhi_calendar.py）")
+    return fails
 
 
 def check_core_table_renames() -> list[str]:

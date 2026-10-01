@@ -42,13 +42,14 @@ for _p in (str(ROOT / "scripts"), str(kernel_dir(__file__))):
 
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 from yishu_core.eval import verdict_direction, pct, run_eval, report as _report  # noqa: E402
+from yishu_core.symbols import EARTHLY_BRANCHES  # noqa: E402  地支序唯一真值源
 from liuyao_timing import relative_window, resolve_case_anchor, date_in_window  # noqa: E402
 import case_runner  # noqa: E402
 
 CASES = ROOT / "data" / "cases" / "classical_cases.json"
 OUT_DIR = ROOT / "data" / "cases"
 
-DAY_CHARS = "子丑寅卯辰巳午未申酉戌亥"
+DAY_CHARS = EARTHLY_BRANCHES
 
 # 应期的单位必须对上才算命中。旧口径只比地支字符，基准写"未月"而引擎给"未日"
 # 也判为主应期命中——三个单位互相顶替等于给应期白送分，这是外部集 17.1% 仍偏高的原因之一。

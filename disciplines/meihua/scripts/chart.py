@@ -43,6 +43,8 @@ from yishu_core.symbols import (  # noqa: E402
     XIAN_TIAN_TRIGRAM_NUMBERS,
     NUMBER_TO_TRIGRAM,
     TRIGRAM_ELEMENTS,
+    EARTHLY_BRANCHES,
+    HEAVENLY_STEMS,
 )
 
 # (上卦, 下卦) → 六十四卦名（逆查 HEXAGRAM_TRIGRAMS）
@@ -324,9 +326,8 @@ def _ganzhi_year_of_lunar_year(year: int) -> str:
     与六爻「立春定年界」属同一内核的不同口径，仅用于取年支序数。
     """
     idx = (year - 4) % 60
-    stems = "甲乙丙丁戊己庚辛壬癸"
-    branches = EARTHLY_BRANCHES
-    return stems[idx % 10] + branches[idx % 12]
+    # 干支序列唯一真值源在 core（此前此处只有地支走 core、天干手写，半复制最易漏改）
+    return HEAVENLY_STEMS[idx % 10] + EARTHLY_BRANCHES[idx % 12]
 
 
 def chart(params: dict) -> dict:

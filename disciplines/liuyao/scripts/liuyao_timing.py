@@ -22,6 +22,7 @@ _ensure_kernel(__file__)
 from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     BRANCH_ELEMENTS,
     CHONG_PAIRS,
+    EARTHLY_BRANCHES,
     HE_PAIRS,
     KE_CYCLE,
     SHENG_CYCLE,
@@ -38,7 +39,8 @@ import re  # noqa: E402
 _YD = _json.loads((_P(__file__).resolve().parents[1] / 'data' / 'narrative_templates.json').read_text(encoding='utf-8')).get('yingqi_descriptions', {})
 
 # 原闭包内本地常量；提升为模块常量供 _push / _rank 复用。
-BRANCH_ORDER = "子丑寅卯辰巳午未申酉戌亥"
+# 地支序列唯一真值源在 core（此前是第二份手写串）
+BRANCH_ORDER = EARTHLY_BRANCHES
 
 
 # ────────────────────────────────────────────────────────────────

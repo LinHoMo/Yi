@@ -24,9 +24,11 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     HEXAGRAM_TRIGRAMS,
     HE_PAIRS,
     KE_CYCLE,
+    KE_WO,
     NAJIA_BRANCHES,
     RETREAT_PAIRS,
     SHENG_CYCLE,
+    SHENG_WO,
     STEM_ELEMENTS,
     TOMB_MAP,
     xunkong_of,
@@ -323,21 +325,17 @@ def determine_six_relations(branch, palace_element):
     if branch_element == "未知" or palace_element == "未知":
         return "未知"
     
-    # 五行相生: 木→火→土→金→水→木
-    sheng_wo = {"木": "水", "火": "木", "土": "火", "金": "土", "水": "金"}  # 生我者的五行
-    wo_sheng = {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}  # 我生者的五行
-    ke_wo = {"木": "金", "火": "水", "土": "木", "金": "火", "水": "土"}     # 克我者的五行
-    wo_ke = {"木": "土", "火": "金", "土": "水", "金": "木", "水": "火"}     # 我克者的五行
-    
+    # 五行生克：生克关系表唯一真值源在 core/yishu_core/symbols.py
+    # （SHENG_WO=生我者、SHENG_CYCLE=我生者、KE_WO=克我者、KE_CYCLE=我克者）
     if branch_element == palace_element:
         return "兄弟"
-    elif sheng_wo.get(palace_element) == branch_element:
+    elif SHENG_WO.get(palace_element) == branch_element:
         return "父母"
-    elif wo_sheng.get(palace_element) == branch_element:
+    elif SHENG_CYCLE.get(palace_element) == branch_element:
         return "子孙"
-    elif ke_wo.get(palace_element) == branch_element:
+    elif KE_WO.get(palace_element) == branch_element:
         return "官鬼"
-    elif wo_ke.get(palace_element) == branch_element:
+    elif KE_CYCLE.get(palace_element) == branch_element:
         return "妻财"
     else:
         return "未知"

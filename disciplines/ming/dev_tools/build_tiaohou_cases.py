@@ -27,6 +27,7 @@ for _p in (str(DISC / "scripts"), str(CORE)):
         sys.path.insert(0, _p)
 
 from yishu_core.ganzhi_calendar import ganzhi_of  # noqa: E402
+from yishu_core.symbols import HEAVENLY_STEMS  # noqa: E402  天干序唯一真值源
 
 QUOTES = DISC / "data" / "tiaohou_quotes.json"
 CASES = DISC / "data" / "cases" / "ming_classical_cases.json"
@@ -59,7 +60,7 @@ def main() -> int:
 
     cells = sorted(
         (v for v in quotes.values() if v["main"]),
-        key=lambda v: (v["month"], "甲乙丙丁戊己庚辛壬癸".index(v["stem"])),
+        key=lambda v: (v["month"], HEAVENLY_STEMS.index(v["stem"])),
     )
     cases = list(store.get("cases", []))
     next_seq = len(cases) + 1

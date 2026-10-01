@@ -3,6 +3,36 @@
 仓库级变更登记（跨科 / 内核 / 口径 / 架构）。学科内细节见各科 `CHANGELOG.md`。
 规则：指标口径任何变动（计分方式、词典、缺失字段处理）必须在此登记，否则分数不可比（`AGENTS.md` §四.4）。
 
+### 2026-10-01c 真值源门升级（能看见函数内 dict 与干支串）+ 清 25 处运行时副本
+
+> **机械门口径变更（§四.4 必须登记）**：`tools/check.py` 的 `check_core_tables` 新增两条检测，
+> 两者都是**原先两层门的共同盲区**——
+> ① **`check_core_tables_in_scope`**：旧 `_module_table_fingerprints` 只扫**模块级** dict/list
+> 字面量，`CORE_TABLE_ASSIGN` 正则只匹配行首 `NAME=[[{`。**函数内的 dict 赋值 100% 漏检**，
+> 新增 `_all_scope_literals`（ast 遍历全作用域，按最近 FunctionDef 标注作用域名）。
+> ② **`check_core_string_tables`**：裸字符串 `stems = "甲乙丙丁戊己庚辛壬癸"` 既不匹配正则
+> 也不是 dict 指纹，两层门同时放行；且存在"同函数一半用 core 一半手写串"的半复制形态。
+> ③ **顺带补的第三处盲区**：core 侧推导式派生表（如 `SHENG_WO = {v: k for k, v in SHENG_CYCLE...}`）
+> 不是 ast 字面量，字面量指纹库收不到 → 学科层对其反向复制漏检。新增 `_core_module_values`：
+> import core 模块（仅依赖 stdlib、无副作用）取其模块级 dict/list 运行值入指纹库。
+>
+> **新门立即可检出 5 类副本，本次全部修完（引擎行为零变化，golden 指纹未漂移）**：
+> - `liuyao/scripts/engine_chart.py` `determine_six_relations()` 内 `wo_sheng`/`wo_ke`/`sheng_wo`/`ke_wo`
+>   → 改用 core `SHENG_CYCLE`/`KE_CYCLE`/`SHENG_WO`/`KE_WO`
+> - `liuyao/scripts/trigram_symbolism.py` `_element_relation()` 内 `sheng_map`/`ke_map`，
+>   及未被使用的模块级 `ELEMENT_ORDER` → 改用 core；`ELEMENT_ORDER = list(SHENG_CYCLE)`
+> - `liuyao/scripts/classical_enhancements.py` `_score_fuyin()` 内 `shenyuan_elem_map`
+>   （== core SHENG_WO）→ 改用 core
+> - **21 处干支序列字符串**：`ming/scripts/pattern.py`(2 处函数 × 2 串)、`meihua/scripts/chart.py:327`
+>   （同函数 `:328` 已在用 core EARTHLY_BRANCHES，是最易漏改的半复制形态）、
+>   `liuyao/scripts/{case_runner,evaluate,liuyao_timing}.py`、`liuyao/dev_tools/`×4、
+>   `liuren/dev_tools/build_course_cases.py`、`ming/dev_tools/build_tiaohou{,cases}.py`
+>   → 一律 `HEAVENLY_STEMS`/`EARTHLY_BRANCHES`；正则字符集由 core 常量拼出而非再抄一份
+> - 新增 `GANZHI_SEQ_LITERAL` 常量与 `check_core_string_tables`
+>
+> **同步**：`trigram_symbolism.py` / `classical_enhancements.py` 改为走既有的
+> `kernel_path.ensure_kernel_on_path`（内核定位规则仍只在 `kernel_path.py` 一份实现，不各写一份）。
+
 ### 2026-10-01b 第二轮深潜减法：清 6 项零引用件 + 尾留文档打过期标
 
 > **决策记录（非口径变更，引擎行为零变化）**：源自 `docs/DEEP-REVIEW.md`（第二轮深潜，

@@ -21,8 +21,18 @@
 #   trigram_directions —— 八卦方位
 #   hexagram_names    —— 六十四卦复合卦名，键为 "上卦/下卦"
 # =============================================================================
-import json
-from pathlib import Path
+import json as _ks_json, os as _ks_os, sys as _ks_sys  # 内核定位规则只在 kernel_path.py 一份实现
+
+_ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
+
+if _ks_d not in _ks_sys.path:
+    _ks_sys.path.insert(0, _ks_d)
+
+from kernel_path import ensure_kernel_on_path as _ensure_kernel  # noqa: E402
+
+_ensure_kernel(__file__)
+
+from yishu_core.symbols import KE_CYCLE, KE_WO, SHENG_CYCLE, SHENG_WO  # noqa: E402
 
 _TRIGRAM_DATA_PATH = Path(__file__).resolve().parents[1] / "data" / "trigram_symbolism.json"
 
@@ -52,23 +62,20 @@ HEXAGRAM_NAMES = {
 # 八卦五行生克关系（用于象数推演）
 # =============================================================================
 
-ELEMENT_ORDER = ["木", "火", "土", "金", "水"]  # 相生序
+ELEMENT_ORDER = list(SHENG_CYCLE)  # 五行相生序（唯一真值源在 core）
 
 def _element_relation(elem_a: str, elem_b: str) -> str:
     """返回 elem_a 对 elem_b 的五行关系"""
     if elem_a == elem_b:
         return "比和"
-    # 相生：木→火→土→金→水→木
-    sheng_map = {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}
-    if sheng_map.get(elem_a) == elem_b:
+    # 相生/相克表唯一真值源在 core/yishu_core/symbols.py
+    if SHENG_CYCLE.get(elem_a) == elem_b:
         return "生"  # a生b
-    if sheng_map.get(elem_b) == elem_a:
+    if SHENG_CYCLE.get(elem_b) == elem_a:
         return "被生"  # a被b生
-    # 相克：木→土→水→火→金→木
-    ke_map = {"木": "土", "土": "水", "水": "火", "火": "金", "金": "木"}
-    if ke_map.get(elem_a) == elem_b:
+    if KE_CYCLE.get(elem_a) == elem_b:
         return "克"  # a克b
-    if ke_map.get(elem_b) == elem_a:
+    if KE_CYCLE.get(elem_b) == elem_a:
         return "被克"  # a被b克
     return "未知"
 

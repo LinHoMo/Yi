@@ -24,6 +24,8 @@ from kernel_path import ensure_kernel_on_path as _ensure_kernel, kernel_dir
 
 _ensure_kernel(__file__)
 
+from yishu_core.symbols import SHENG_WO  # noqa: E402  原神（生我者）五行唯一真值源
+
 from yishu_core.najia import najia_branch
 
 from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
@@ -464,9 +466,8 @@ def _score_fuyin(scope, use_god_strength, result, basic_detail):
             branch = yao.get("earthly_branch", "")
             elem = _branch_element(branch)
             if elem:
-                # 原神五行为：金→土，木→水，水→金，火→木，土→火
-                shenyuan_elem_map = {"金": "土", "木": "水", "水": "金", "火": "木", "土": "火"}
-                if elem == shenyuan_elem_map.get(palace_element):
+                # 原神 = 生我者，其五行映射唯一真值源在 core（SHENG_WO）
+                if elem == SHENG_WO.get(palace_element):
                     shenyuan_moved = True
                     break
 

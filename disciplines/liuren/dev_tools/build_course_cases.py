@@ -27,15 +27,16 @@ OUT = DISC / "data" / "cases" / "course_examples.json"
 # 寄宫唯一真值源在 core（AGENTS.md §二）
 sys.path.insert(0, str(ROOT / "core"))
 from yishu_core.liuren_tables import JI_GONG  # noqa: E402
+from yishu_core.symbols import EARTHLY_BRANCHES, HEAVENLY_STEMS  # noqa: E402
 
-STEMS = "甲乙丙丁戊己庚辛壬癸"
+STEMS = HEAVENLY_STEMS
 BRANCHES = "寅卯辰巳午未申酉戌亥子丑"
 DAY_RE = re.compile(rf"([{STEMS}])([{BRANCHES}])日")
 TRIPLE_RE = re.compile(rf"三传([{BRANCHES}])([{BRANCHES}])([{BRANCHES}])")
 JIA_RE = re.compile(rf"([{BRANCHES}])加([{BRANCHES}])")
 GANSHANG_RE = re.compile(rf"干上([{BRANCHES}])")
 ZHISHANG_RE = re.compile(rf"支上([{BRANCHES}])")
-BR_IDX = {b: i for i, b in enumerate("子丑寅卯辰巳午未申酉戌亥")}
+BR_IDX = {b: i for i, b in enumerate(EARTHLY_BRANCHES)}
 
 # 全文扫描：内嵌课例散见于 课经/格局/毕法引文/占法 各段（两份书源全文）
 

@@ -39,11 +39,18 @@ SPLITS = ROOT / "data" / "cases" / "case_splits.json"
 # 爻序与卦表全部来自内核（不再有本地副本）：
 #   BAGUA_LINES 自下而上，HEXAGRAM_TRIGRAMS 给出上下卦 —— 于是"某卦化出某卦"
 #   的动爻位次由两者爻线逐位比较得出，不再靠一张镜像表凑。
-from yishu_core.symbols import BAGUA_LINES, HEXAGRAM_TRIGRAMS, TOMB_MAP, SAN_HE_GROUPS  # noqa: E402
+from yishu_core.symbols import (  # noqa: E402
+    BAGUA_LINES,
+    HEXAGRAM_TRIGRAMS,
+    TOMB_MAP,
+    SAN_HE_GROUPS,
+    EARTHLY_BRANCHES,
+    HEAVENLY_STEMS,
+)
 
-_STEMS = "甲乙丙丁戊己庚辛壬癸"
-_MONTH_RE = re.compile(r"([%s])月" % "子丑寅卯辰巳午未申酉戌亥")
-_DAY_RE = re.compile(r"([%s])([%s])日" % (_STEMS, "子丑寅卯辰巳午未申酉戌亥"))
+# 干支序列唯一真值源在 core；正则字符集由 core 常量拼出，而非再抄一份字符串
+_MONTH_RE = re.compile(r"([%s])月" % EARTHLY_BRANCHES)
+_DAY_RE = re.compile(r"([%s])([%s])日" % (HEAVENLY_STEMS, EARTHLY_BRANCHES))
 
 
 def hex_lines(name: str) -> list[int] | None:

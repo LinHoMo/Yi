@@ -21,6 +21,8 @@ from yishu_core.ming_tables import (
 from yishu_core.relations import STEM_YINYANG, stems_wuhe
 from yishu_core.symbols import (
     BRANCH_ELEMENTS,
+    EARTHLY_BRANCHES,
+    HEAVENLY_STEMS,
     STEM_ELEMENTS,
     SHENG_CYCLE,
     KE_CYCLE,
@@ -735,8 +737,8 @@ def dayun_table(chart_json: dict) -> list[dict]:
         except Exception:
             start_age = 3.0
 
-    stems = "甲乙丙丁戊己庚辛壬癸"
-    branches = "子丑寅卯辰巳午未申酉戌亥"
+    # 干支序列唯一真值源在 core（此前此处写死两份字符串，改 core 漏改即口径分叉）
+    stems, branches = HEAVENLY_STEMS, EARTHLY_BRANCHES
     ms, mb = month_gz[0], month_gz[1]
     try:
         si = stems.index(ms)
@@ -778,8 +780,8 @@ def liunian_table(chart_json: dict, n: int = 12) -> list[dict]:
     if len(year_gz) < 2:
         return []
 
-    stems = "甲乙丙丁戊己庚辛壬癸"
-    branches = "子丑寅卯辰巳午未申酉戌亥"
+    # 干支序列唯一真值源在 core
+    stems, branches = HEAVENLY_STEMS, EARTHLY_BRANCHES
     try:
         yi, yb = stems.index(year_gz[0]), branches.index(year_gz[1])
     except ValueError:

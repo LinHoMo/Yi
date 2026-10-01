@@ -16,13 +16,17 @@ from __future__ import annotations
 
 import json
 import re
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "core"))
+from yishu_core.symbols import HEAVENLY_STEMS  # noqa: E402  天干序唯一真值源
 
 DISC = Path(__file__).resolve().parents[1]
 SRC = DISC.parent.parent / "data" / "sources" / "qiong-tong-bao-jian.wikitext.txt"
 OUT = DISC / "data" / "tiaohou_quotes.json"
 
-STEMS = "甲乙丙丁戊己庚辛壬癸"
+STEMS = HEAVENLY_STEMS
 STEM_RE = f"[{STEMS}]"
 MONTH_NAMES = {"正": 1, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6,
                "七": 7, "八": 8, "九": 9, "十": 10, "冬": 11, "腊": 12}

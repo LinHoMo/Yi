@@ -27,7 +27,12 @@ sys.path.insert(0, str(HERE.parent / "scripts"))
 from kernel_path import kernel_dir  # noqa: E402
 sys.path.insert(0, str(kernel_dir(__file__)))
 
-from yishu_core.symbols import BAGUA_LINES, HEXAGRAM_TRIGRAMS  # noqa: E402
+from yishu_core.symbols import (  # noqa: E402
+    BAGUA_LINES,
+    EARTHLY_BRANCHES,
+    HEAVENLY_STEMS,
+    HEXAGRAM_TRIGRAMS,
+)
 
 LIB = HERE.parent / "references" / "case_library.md"
 OUT = HERE.parent / "data" / "cases" / "yingqi_cases.json"
@@ -35,8 +40,8 @@ SPLITS = HERE.parent / "data" / "cases" / "case_splits.json"
 REPORT = HERE.parent / "docs" / "CASE-LIBRARY-AUDIT.md"
 
 CN_NUM = {"初": 1, "一": 1, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6, "上": 6}
-STEMS = "甲乙丙丁戊己庚辛壬癸"
-BRANCHES = "子丑寅卯辰巳午未申酉戌亥"
+STEMS = HEAVENLY_STEMS
+BRANCHES = EARTHLY_BRANCHES
 
 SEC = re.compile(r"^###\s*(.+?)\s*$", re.M)
 CASE = re.compile(r"^##\s*案例([一二三四五六七八九十\d]+)[：:](.*)$", re.M)
