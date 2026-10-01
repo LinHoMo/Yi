@@ -331,8 +331,11 @@ python tools/refactor_guard.py --compare guard/base.json  # 改后
    `chain_narrate._inject_pattern_tags` 359→三职责模块 `chain_narrate_patterns`（26w）、
    `human_narrative` 979→编排/渲染/格局引文/推因 + 新模块 `human_narrative_segments`（正文段落八段素材，26x）。
    全部零指纹漂移验收通过。
-5. **断语残句**：扫描后确认残留多为 argparse help 与测试夹具文本（属 CLI 文档，不是断语），
-   真正面向求测者的文案已在 `data/*.json`；此项**暂不再动**，避免误伤。
+5. **断语外置**（~~断语残句~~ **已于阶段4 换判据，本条作废**）：旧判据是数 `.py` 里的
+   中文字面量条数（2026-10-01e 前），两个方向都不可靠。现由 **[1c] 取证门**
+   （`tools/verdict_audit.py --strict`）接管——不猜代码长什么样，跑真实报告反查未外置句。
+   残留的 argparse help / 测试夹具文本属 CLI 文档不是断语，由白名单 `NON_VERDICT` 口径
+   处理（复核见 §八.B）。**不要再按"数字面量"的方式处置断语。**
 6. **命科**：从格仍 tentative；运年交互只记关系不批吉凶（有意如此）。
 7. 报告「格局详释」依赖案例是否触发格局词。
 
@@ -433,3 +436,59 @@ tests/              pytest（relations/symbols/najia/yingqi/ming_dayun）
 | 27-tidy | 仓库清理（清 gitignore 生成物与遗留 `.worktrees/`）+ 修 `tools/eval.py`（ming 无评测器不再误报失败、默认改回 `tune+holdout`、对齐 docstring）+ 本 handoff 重写 |
 | 29a | **B1 测试迁出生产 `scripts/`**（→ 科内 `tests/`）；**质量门编码修复**（子进程 UTF-8，仓库级门由恒红转全绿）；`ctext`/`ctpl` 五副本收敛 `chain_verdicts`；**B3 内核命名拆分**（纳音/三合→`symbols`、星煞→新 `shensha`）；**B2 首批**（`classical_rules_patterns` 909→369 行）——逐项零指纹漂移验收 |
 | 29c | **v1.0.0 结构重构（五科底座归一）**：新增 `disciplines/base/` 共享层（protocol + cli 基类）；六爻 scripts/ 58→28→37 文件；统一 CLI `yi <discipline> <command>`（`cli/main.py` + pyproject entry point）；5 科 `tools/` → `dev_tools/`；`synthesis/normalize.py` + `tools/eval.py` 支持五科；新增 `docs/ARCHITECTURE.md` + `docs/MIGRATION.md` —— 功能 zero-drift 验收 |
+| **阶段4（2026-10-01e/f）** | 断语外置由"数 `.py` 字面量"换血为**黑箱取证**（`tools/verdict_audit.py` 跑真实报告反查）；取证门自曝语料池 410 万汉字，67% 来自 `guard/*.json`（报告产物快照）→ 剔除后瘦 97%；`{focus}` 主语口径错配修复；七科 golden 补 narrate 指纹；D 档繁简统一 —— 八科 golden 全绿、`check.py --full` EXIT=0 |
+
+---
+
+## 八、下一棒（阶段4 交接，2026-10-01，提交 `d34c269`）
+
+> 给接手的人。**先读「0. 交接状态」，再从「1. 可执行清单」按序挑一项做**——
+> 每项都写清了完成标准与验收命令，做完不通过验收即视为未完成。
+> 叙述版债务见 §四，机械登记见 `docs/TECH-DEBT.md`（单一入口），本节约为行动版。
+
+### 0. 交接状态
+
+- **代码状态**：`d34c269` 已入库，工作区干净（无需先补提交才能开工）。
+- **门状态**：`tools/check.py` 与 `--full` 档**均 EXIT=0**；八科行为指纹全绿。
+- **本棒交付**：断语外置判定从"猜代码长什么样"改成"看终端用户读到什么"；
+  取证门语料池剔除 `guard/`+`scratch/`（报告产物快照，见 CHANGELOG 2026-10-01f）；
+  `{focus}` 主语口径错配已修（自举剥离）；七科 golden 补 narrate 哈希；
+  D 档繁简统一（梅花书源篇目、灵棋经书名；**课表原文仍逐字保留繁体**）。
+- **跑门的环境**：受管 venv
+  `C:/Users/31103/.workbuddy/binaries/python/envs/default/Scripts/python.exe`，
+  `site/` 是 gitignore 生成物。
+
+> ⚠️ **跑 `--full` 前先 `rm -rf site/`**，否则站点构建会撞沙箱批量删除保护
+> （`count 142→284 > threshold 50`）报假红——这是环境噪声，不是代码缺陷。
+
+### 1. 可执行清单（按优先序）
+
+| # | 任务 | 现状（已核实的证据） | 完成标准 | 验收 |
+|---|---|---|---|---|
+| **A** | **render 段（四段契约之四）无行为保护** | 六爻 golden `rows` 逐字段只罩 chart+analyze；`narrate_sha` 是 `i % 24 == 0 and not moving` 抽样（288 例里约 12 条）——**四段契约里的 render 完全裸奔** | 报告全文（render 产物）哈希进入可 verify 的基线；改动排版/措辞会被门拦下 | `check.py --full` EXIT=0，且故意改一行报告文案能被测出漂移 |
+| **B** | **`NON_VERDICT` 白名单当作逃罪条款** | `verdict_audit.py` 里 6 条豁免正则（`无法逐字核对｜通行起例…` 等），每条豁免 = 一类漏判后门，没有审批记录 | 逐条复核并给每条补一句"为何属非断语"；或把过宽的那条收紧后跑 `--strict` 仍 0 句 | `verdict_audit --strict --verbose` EXIT=0 |
+| **C** | **孤儿断语（反向缺口，属"减法"）** | 现有取证只查"报告里的句是否外置"，**不查"已外置的断语是否真被用到"**——进了 `data/*.json` 却没接上引擎 = 另一种死件 | 出一份孤儿断语清单（语料有、报告与代码均无引用），逐条判"接上/删除" | 清单 + 处置后八科 golden 不漂移 |
+| **D** | **`guard` 快照去留** | `liuyao/guard/*.json` 5 份 ≈315 万汉字 + `dev_tools/guard/base_human.json` + `scratch/golden_before.json`；已确认为**报告产物快照**（存人工确认过的 `human_markdown` 全文），故已从语料池剔除；但是否还被门/脚本读取未查 | 判定"归档 / 去重 / 保留"之一，并说明依据；**不要顺手删**——先确认无引用 | `docs/TECH-DEBT.md` 该条状态翻转 |
+| **E** | **`check_verdict_literals` 粗筛门去留** | 降级为粗筛（两个方向都有漏），与 [1c] 取证门功能重叠 | 二选一：删（只留 [1c]）或保留（在 docstring 写明保留理由） | 门数不变则两门都 EXIT=0 |
+
+### 2. 取证口径的坑（本棒实踩，别重复踩）
+
+1. **待检句与语料池必须走同一个归一函数**（`_hanzi`）——否则 data 里的引号
+   （`须防'仇神动则助纣为虐'`）会切断连续汉字，已外置的被误报。
+2. **绝不能在抽汉字前先剥 `{...}`**——正则 `[^{}]*` 会跨行吞掉 JSON 区间内容，
+   把 `zeji/verdicts.json` 吞到只剩 527 汉字（本仓实踩）。抽汉字后占位符天然消失。
+3. **案例库/`guard`/`scratch` 都不能当措辞真值源**——它们存的是旧版引擎与报告产物，
+   充语料等于"写过的就算外置"，审计变橡皮图章（六爻语料池因此虚胖到 410 万汉字）。
+4. **模板前缀要跟着模板走**：`{pos}{rel}` → `YAO_PREFIX`；`{focus}` → 从报告自举
+   （`wrap_pos = "就{focus}来说，{text}。"` 必然出现）。剥离过度 = 假阴性。
+5. **`--verbose` 的语料汉字数是关键信号**：突然暴涨（如 410 万）就是语料池被污染了，
+   先查贡献最大的文件再谈结论。
+
+### 3. 需要拍板的二选一（本棒未擅自决定）
+
+- **语料池边界**：现在只剔 `cases/`+`guard/`+`scratch/`+`case_library.md`。
+  是否有其他"产物性目录"也应剔？建议按"这条目录里存的是不是**引擎输出**"判，
+  是则剔（产物 ≠ 措辞真值源）。
+- **`{focus}` 剥离是否算放宽判据**：它是输入数据不是引擎措辞，剥掉合理；
+  但若有人为绕过漏判而新增剥离规则，应视为放行一条假阴性——**新增剥离规则须在
+  CHANGELOG 写明理由**。
