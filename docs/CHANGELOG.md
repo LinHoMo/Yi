@@ -3,6 +3,24 @@
 仓库级变更登记（跨科 / 内核 / 口径 / 架构）。学科内细节见各科 `CHANGELOG.md`。
 规则：指标口径任何变动（计分方式、词典、缺失字段处理）必须在此登记，否则分数不可比（`AGENTS.md` §四.4）。
 
+### 2026-10-01b 第二轮深潜减法：清 6 项零引用件 + 尾留文档打过期标
+
+> **决策记录（非口径变更，引擎行为零变化）**：源自 `docs/DEEP-REVIEW.md`（第二轮深潜，
+> 全仓 394 文本文件 / 201 `.py` 的 AST+grep 交叉扫描）。判定口径：AGENTS §三"一次性
+> 脚本 / 无引用件不留尸" + "断语引文进 data"。
+> ① **删 4 项零引用件**：`disciplines/liuren/dev_tools/build_kemu.py`（92 行，全仓
+> `grep build_kemu` 零命中，连 `liuren/dev_tools/check.py` 的 `required` 清单都没有）；
+> `docs/refactor/MAJOR_REFACTOR_PLAN.md`（700 行，全仓零引用，规划的三个目录
+> `liuyao/rules/`、`liuyao/support/` 从未存在）；
+> `docs/AUDIT-2026-09-28-full-system.md`（215 行，全仓零引用、llms.txt 未列，8 处
+> 把已不存在的文件当现状写）；`disciplines/liuyao/dev_tools/scratch/merge_classical.py`
+> （270 行一次性合并器，产物已入库、不在 git 索引）。
+> ② **清空 `tools/scratch/`**（17 `.py` + 16 `.txt`，一次性调试器 + 硬编码本地绝对路径，
+> 从未入库），**保留空目录**供将来放新的一次性脚本（AGENTS §三指定的合规去处）。
+> ③ **尾部文档打过期标**：`docs/DEEP-OPTIMIZE-PLAN.md`（1363 行，全仓最长改造总纲，
+> 有检索价值）头部新增 2026-10-01b 警示，指认其 6 处 `base/protocol.py` 引用作废、
+> 四段契约以 `docs/CONTRACT.md` 为准。**不删长文档**，只作执行依据失效处理。
+
 ### 2026-10-01a 架构瘦身：删除闲置共享层 `disciplines/base/` + 报告工作流输入通道留余量
 
 > **决策记录（非口径变更，引擎行为零变化）**：

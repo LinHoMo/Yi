@@ -4,6 +4,13 @@
 >
 > **版本与日期**：v1.0，2026-09-30。
 >
+> ⚠️ **2026-10-01b 过期警示（见 `docs/DEEP-REVIEW.md` 第二轮深潜）**：本规划有 6 处
+> （`:65`/`:66`/`:120`/`:171`/`:1187`/`:1357`）引用 `disciplines/base/protocol.py` 的
+> `Protocol` / `DisciplineCLI` / `AnalysisData`——该文件已随 2026-10-01a 架构瘦身删除
+> （`docs/CHANGELOG.md`），**上述条目作废**。四段契约的现行定义以 `docs/CONTRACT.md` 为准，
+> 强制靠根 `tools/check.py` + 各科 `dev_tools/golden.py` + `report_faithfulness.py`。
+> 本文件保留作改造史检索，不再作为执行依据。
+>
 > **全篇口径（仓库铁律，方案立场不可协商）**：
 > 1. **机械运算归代码，象数解读归 LLM**——起局、排盘、装卦、定宫、纳甲、安世应、推六亲、配六神、查旬空、判旺衰、算应期、识别格局，必须且只能由 Python 完成；LLM 只做“收集输入 → 调脚本 → 翻译输出”。
 > 2. **案例库与预测过程物理隔离**——`**/cases/` 与 `references/case_library.md` 只在测试运行器读取、用户明确要求事后校验、用户主动询问“有无类似案例”三种场景可访问。
