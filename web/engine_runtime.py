@@ -26,7 +26,9 @@ import sys
 import traceback
 from pathlib import Path
 
-DISCIPLINES = ("liuyao", "ming", "ziwei", "meihua", "xiaoliuren", "zeji")
+# web 通道支持的学科（与 tools/build_web.py 的 DISCIPLINE_META 同口径；
+# liuren/lingqi 为本地/MCP-only，未挂载站点通道，见 PROMPTS.md）
+WEB_DISCIPLINES = ("liuyao", "ming", "ziwei", "meihua", "xiaoliuren", "zeji")
 
 RUNTIME_LABEL = "浏览器内 Pyodide"
 
@@ -47,9 +49,12 @@ def _ensure_core(engine_root: Path) -> None:
 def _isolate(engine_root: Path, disc: str) -> list[str]:
     """把解释器收拾成"只服务这一科"的状态。
 
-    做两件事：
+    做三件事：
       1. 清掉 sys.modules 里**别的学科**的模块（同名遮蔽的根源）；
-      2. 把本学科 scripts/ 目录提到 sys.path 最前，裸模块名只可能解析到本学科。
+      2. 把 sys.path 上**所有**学科的 scripts/ 目录全部移除
+         （否则先跑 A 再跑 B 时，A 的 scripts 目录仍留在 path 上，
+         B 里一个只存在于 A 目录的裸模块名仍会解析到 A —— 遮蔽并未根除）；
+      3. 把本学科 scripts/ 目录提到 sys.path 最前，裸模块名只可能解析到本学科。
     返回被清掉的模块名（供联调观察；正常使用无需关心）。
     """
     disc_dir = (engine_root / "disciplines").resolve()
@@ -67,10 +72,14 @@ def _isolate(engine_root: Path, disc: str) -> list[str]:
             sys.modules.pop(name, None)
             purged.append(name)
 
+    # 2. 先把所有学科的 scripts 目录从 sys.path 剥离（含本学科，第 3 步再放回最前）
+    all_scripts = {str(p.resolve()) for p in disc_dir.glob("*/scripts") if p.is_dir()}
+    sys.path[:] = [p for p in sys.path if p not in all_scripts]
+
+    # 3. 只把当前学科提到最前
     scripts = (disc_dir / disc / "scripts").resolve()
     if scripts.is_dir():
-        scripts_s = str(scripts)
-        sys.path[:] = [scripts_s] + [p for p in sys.path if p != scripts_s]
+        sys.path.insert(0, str(scripts))
     return purged
 
 
@@ -114,6 +123,10 @@ def build_report(engine_root: str | Path, req: dict, outdir: str | Path) -> dict
 
     req = normalize_request(req)
     d = req["discipline"]
+    if d not in WEB_DISCIPLINES or not (engine_root / "disciplines" / d / "scripts").is_dir():
+        raise ValueError(
+            f"学科 {d!r} 未挂载 web 站点通道（仅本地 CLI/MCP 可用）；"
+            f"web 支持科目：{'、'.join(WEB_DISCIPLINES)}")
     _isolate(engine_root, d)
 
     outdir.mkdir(parents=True, exist_ok=True)

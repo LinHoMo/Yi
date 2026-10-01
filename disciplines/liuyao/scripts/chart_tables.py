@@ -13,6 +13,7 @@ from kernel_path import ensure_kernel_on_path as _ensure_kernel, kernel_dir
 _ensure_kernel(__file__)
 
 from yishu_core.najia import najia_branch
+from yishu_core.symbols import NAJIA_STEMS  # noqa: F401  纳甲天干唯一真值源在 core（再导出供本科使用）
 
 from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     ADVANCE_PAIRS,
@@ -113,18 +114,6 @@ BRANCH_NUMBERS = {
 }
 
 
-NAJIA_STEMS = {
-    "乾": {"inner": "甲", "outer": "壬", "nature": "yang"},
-    "坤": {"inner": "乙", "outer": "癸", "nature": "yin"},
-    "震": {"inner": "庚", "outer": "庚", "nature": "yang"},
-    "坎": {"inner": "戊", "outer": "戊", "nature": "yang"},
-    "艮": {"inner": "丙", "outer": "丙", "nature": "yang"},
-    "巽": {"inner": "辛", "outer": "辛", "nature": "yin"},
-    "离": {"inner": "己", "outer": "己", "nature": "yin"},
-    "兑": {"inner": "丁", "outer": "丁", "nature": "yin"},
-}
-
-
 def _build_hexagram_lookup():
     lookup = {}
     for seq, name, upper, lower, judgment in HEXAGRAMS:
@@ -185,15 +174,6 @@ DAY_STEM_SPIRIT_START = {
     "癸": 5,  # 玄武起初爻
 }
 
-
-EMPTY_DEATH = {
-    "甲子": ["戌", "亥"],
-    "甲戌": ["申", "酉"],
-    "甲申": ["午", "未"],
-    "甲午": ["辰", "巳"],
-    "甲辰": ["寅", "卯"],
-    "甲寅": ["子", "丑"],
-}
 
 
 # ══════════════════════════════════════════════════════════════════════════════

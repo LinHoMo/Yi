@@ -128,6 +128,12 @@ def main(argv: list[str] | None = None) -> int:
     """统一 CLI 主入口。
 
     根据 discipline 子命令将剩余参数透传给对应学科的脚本入口。
+
+    为什么手动路由而不交给 argparse parse_args()：
+    各命令的真正参数由**学科脚本自己的 argparse** 定义（--mode、--datetime 等），
+    顶层解析器不知道也不该知道它们。若在这里 parse_args()，未知参数会被顶层
+    直接拒绝、无法透传。argparse 在此只负责生成 `--help` 帮助视图；
+    discipline/command 的合法性校验与转发是本函数的职责。
     """
     if argv is None:
         argv = sys.argv[1:]

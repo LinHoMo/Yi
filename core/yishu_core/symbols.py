@@ -18,11 +18,16 @@ EIGHT_PALACES 的键是裸宫名（"乾" 而非 "乾宫"），本宫首卦的世
 """
 from __future__ import annotations
 
-from .ganzhi_calendar import ganzhi_pair  # 纳音按六十甲子序取（nayin_of_index）
+from .ganzhi_calendar import (  # 纳音按六十甲子序取（nayin_of_index）
+    ganzhi_pair,
+    HEAVENLY_STEMS as _GC_HEAVENLY_STEMS,
+    EARTHLY_BRANCHES as _GC_EARTHLY_BRANCHES,
+)
 
-HEAVENLY_STEMS = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+# 天干地支唯一字面量在 ganzhi_calendar（依赖链最底层），此处派生 list 形态供各科使用
+HEAVENLY_STEMS = list(_GC_HEAVENLY_STEMS)
 
-EARTHLY_BRANCHES = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
+EARTHLY_BRANCHES = list(_GC_EARTHLY_BRANCHES)
 
 STEM_ELEMENTS = {
     "甲": "木", "乙": "木", "丙": "火", "丁": "火", "戊": "土",
@@ -213,6 +218,18 @@ NAJIA_BRANCHES = {
         "inner": ["巳", "卯", "丑"],   # 阴卦逆排
         "outer": ["亥", "酉", "未"],
     },
+}
+
+# 纳甲天干表（与 NAJIA_BRANCHES 合璧：纳甲干支整体唯一真值源，2026-10-01 自六爻迁入）
+NAJIA_STEMS = {
+    "乾": {"inner": "甲", "outer": "壬", "nature": "yang"},
+    "坤": {"inner": "乙", "outer": "癸", "nature": "yin"},
+    "震": {"inner": "庚", "outer": "庚", "nature": "yang"},
+    "坎": {"inner": "戊", "outer": "戊", "nature": "yang"},
+    "艮": {"inner": "丙", "outer": "丙", "nature": "yang"},
+    "巽": {"inner": "辛", "outer": "辛", "nature": "yin"},
+    "离": {"inner": "己", "outer": "己", "nature": "yin"},
+    "兑": {"inner": "丁", "outer": "丁", "nature": "yin"},
 }
 
 HEXAGRAM_TRIGRAMS = {

@@ -29,8 +29,10 @@ for _p in (str(CORE), str(Path(__file__).resolve().parent)):
         sys.path.insert(0, _p)
 
 from yishu_core.symbols import (  # noqa: E402
+    BRANCH_ELEMENTS,
     SHENG_CYCLE,
     KE_CYCLE,
+    STEM_ELEMENTS,
     TRIGRAM_ELEMENTS,
     EIGHT_PALACES,
     wangxiangxiuqiusi,
@@ -45,11 +47,9 @@ for _palace, _info in EIGHT_PALACES.items():
 
 # 干支五行（应期干支与体卦五行对应：《卷二·先天後天論》
 # "乾、兑则应如庚、辛及申金之日…震、巽当应于甲、乙及支木之日"）
-_STEM_ELEMENT = {"甲": "木", "乙": "木", "丙": "火", "丁": "火", "戊": "土",
-                 "己": "土", "庚": "金", "辛": "金", "壬": "水", "癸": "水"}
-_BRANCH_ELEMENT = {b: e for b, e in zip("子丑寅卯辰巳午未申酉戌亥",
-                                        ["水", "土", "木", "木", "土", "火",
-                                         "火", "土", "金", "金", "土", "水"])}
+# 干支五行唯一真值源在 core（AGENTS.md §二），此处仅别名
+_STEM_ELEMENT = STEM_ELEMENTS
+_BRANCH_ELEMENT = dict(BRANCH_ELEMENTS)
 
 # 应期单位：日（卦气应期以干支日为单位，《先天後天論》"应如庚辛及申金之日"）
 _TIMING_UNIT = "日"

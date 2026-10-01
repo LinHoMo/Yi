@@ -11,7 +11,7 @@ position：1=初爻（最下），6=上爻（最上）。
 """
 from __future__ import annotations
 
-from .symbols import HEXAGRAM_TRIGRAMS, NAJIA_BRANCHES
+from .symbols import HEXAGRAM_TRIGRAMS, NAJIA_BRANCHES, NAJIA_STEMS  # noqa: F401  (NAJIA_STEMS 再导出)
 
 
 def najia_branch(hex_name: str, position: int) -> str | None:

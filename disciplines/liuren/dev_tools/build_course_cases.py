@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import json
 import re
+import sys
 from pathlib import Path
 
 DISC = Path(__file__).resolve().parents[1]
@@ -23,6 +24,10 @@ SOURCES = [ROOT / "data" / "sources" / "liu-ren-da-quan.wikitext.txt",
            ROOT / "data" / "sources" / "liu-ren-da-quan-juan3.wikitext.txt"]
 OUT = DISC / "data" / "cases" / "course_examples.json"
 
+# 寄宫唯一真值源在 core（AGENTS.md §二）
+sys.path.insert(0, str(ROOT / "core"))
+from yishu_core.liuren_tables import JI_GONG  # noqa: E402
+
 STEMS = "甲乙丙丁戊己庚辛壬癸"
 BRANCHES = "寅卯辰巳午未申酉戌亥子丑"
 DAY_RE = re.compile(rf"([{STEMS}])([{BRANCHES}])日")
@@ -30,8 +35,6 @@ TRIPLE_RE = re.compile(rf"三传([{BRANCHES}])([{BRANCHES}])([{BRANCHES}])")
 JIA_RE = re.compile(rf"([{BRANCHES}])加([{BRANCHES}])")
 GANSHANG_RE = re.compile(rf"干上([{BRANCHES}])")
 ZHISHANG_RE = re.compile(rf"支上([{BRANCHES}])")
-JI_GONG = {"甲": "寅", "乙": "辰", "丙": "巳", "丁": "未", "戊": "巳",
-           "己": "未", "庚": "申", "辛": "戌", "壬": "亥", "癸": "丑"}
 BR_IDX = {b: i for i, b in enumerate("子丑寅卯辰巳午未申酉戌亥")}
 
 # 全文扫描：内嵌课例散见于 课经/格局/毕法引文/占法 各段（两份书源全文）

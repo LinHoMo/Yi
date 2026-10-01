@@ -29,6 +29,7 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     SHENG_CYCLE,
     STEM_ELEMENTS,
     TOMB_MAP,
+    xunkong_of,
 )
 
 from yishu_core.najia import najia_branch  # noqa: E402
@@ -53,7 +54,7 @@ from yishu_core.runtime import force_utf8_stdio as _force_utf8_stdio  # noqa: E4
 
 from engine_calendar import get_day_stem_branch, get_hour_stem_branch, get_month_stem_branch, get_year_stem_branch
 from engine_format import generate_analysis_hints
-from chart_tables import BAGUA, BRANCH_NUMBERS, DAY_STEM_SPIRIT_START, EMPTY_DEATH, HEXAGRAMS, HEXAGRAM_LINE_TEXTS, HEXAGRAM_LOOKUP, NAJIA_STEMS, PALACE_LOOKUP, RESPONSE_POSITION, SIX_SPIRITS, TRIGRAM_LOOKUP, WORLD_POSITION
+from chart_tables import BAGUA, BRANCH_NUMBERS, DAY_STEM_SPIRIT_START, HEXAGRAMS, HEXAGRAM_LINE_TEXTS, HEXAGRAM_LOOKUP, NAJIA_STEMS, PALACE_LOOKUP, RESPONSE_POSITION, SIX_SPIRITS, TRIGRAM_LOOKUP, WORLD_POSITION
 
 def coin_toss(random_gen=None):
     """
@@ -344,34 +345,9 @@ def determine_six_relations(branch, palace_element):
 
 def get_empty_death(day_stem_branch):
     """
-    根据日柱旬空查空亡
-    由日干支的前两个字符判断旬
+    根据日柱旬空查空亡（唯一真值源：yishu_core.symbols.xunkong_of，AGENTS.md §二）
     """
-    # 提取日柱的天干地支对
-    stem = day_stem_branch[0]
-    branch = day_stem_branch[1]
-    day_pair = stem + branch
-    
-    # 查表
-    if day_pair in EMPTY_DEATH:
-        return EMPTY_DEATH[day_pair]
-    
-    # 如果不在预计算表中，根据天干推算
-    # 甲子旬:0-9, 甲戌旬:10-19, 甲申旬:20-29, 甲午旬:30-39, 甲辰旬:40-49, 甲寅旬:50-59
-    # day_pair在60甲子中的序号
-    stem_idx = HEAVENLY_STEMS.index(stem)
-    branch_idx = EARTHLY_BRANCHES.index(branch)
-    
-    # 计算60甲子序号
-    for i in range(60):
-        if i % 10 == stem_idx and i % 12 == branch_idx:
-            xun_index = i // 10
-            break
-    else:
-        return []
-    
-    xun_keys = ["甲子", "甲戌", "甲申", "甲午", "甲辰", "甲寅"]
-    return EMPTY_DEATH.get(xun_keys[xun_index], [])
+    return xunkong_of(day_stem_branch)
 
 
 def get_six_spirit(day_stem, line_position):

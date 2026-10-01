@@ -43,6 +43,13 @@ MIRROR_DIRS = ("core", "synthesis", "cli")
 MIRROR_FILES = ("tools/report.py",)
 
 # 学科元数据：字段名与 tools/ci_request.py / docs/AI-SOP.md 的请求契约保持一致
+#
+# ⚠️ 有意排除 liuren / lingqi（大六壬、灵棋经）：这两科为本地 CLI/MCP-only，
+#    站点通道 A 未挂载（见 PROMPTS.md）。新增学科时必须同步：
+#    ① core/yishu_core/report/request.py 的 DISCIPLINES（全部学科）；
+#    ② 此处 DISCIPLINE_META（进 web 的学科子集）；
+#    ③ web/engine_runtime.py 的 WEB_DISCIPLINES + DEMO。
+#    构建期断言（build() 前）会校验 ② ⊆ ①，清单漂移直接 fail-fast。
 DISCIPLINE_META = (
     {
         "id": "liuyao", "name": "六爻纳甲", "kind": "卜",
@@ -243,8 +250,20 @@ def build_manifest(*, site_base: str = "", engine_root: str = "engine") -> dict:
     }
 
 
+def _assert_discipline_lists_consistent() -> None:
+    """fail-fast：DISCIPLINE_META 必须是 request.DISCIPLINES 的子集（清单漂移即拒绝构建）。"""
+    from yishu_core.report.request import DISCIPLINES as ALL_DISCIPLINES
+    web_ids = [m["id"] for m in DISCIPLINE_META]
+    unknown = [d for d in web_ids if d not in ALL_DISCIPLINES]
+    if unknown:
+        raise SystemExit(
+            f"DISCIPLINE_META 含未知学科 {unknown}——"
+            f"request.DISCIPLINES = {list(ALL_DISCIPLINES)}，先同步两份清单")
+
+
 def build(outdir: Path, *, site_base: str = "") -> dict:
     """生成站点。site_base 为空表示站点在域名根，否则形如 '/Yi'。"""
+    _assert_discipline_lists_consistent()
     web_src = ROOT / "web"
     if not (web_src / "index.html").is_file():
         raise SystemExit("缺少 web/index.html（前端页面源）")

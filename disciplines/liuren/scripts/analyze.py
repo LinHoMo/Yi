@@ -34,6 +34,7 @@ from yishu_core.symbols import (  # noqa: E402
     STEM_ELEMENTS,
     THREE_PUNISHMENTS_CYCLIC,
     THREE_PUNISHMENTS_MUTUAL,
+    TOMB_MAP,
 )
 from chart import dun_gan_of  # noqa: E402
 from kemu import recognize as kemu_recognize  # noqa: E402
@@ -61,7 +62,8 @@ _HE_SET = {frozenset(p) for p in HE_PAIRS}
 _CHONG_SET = {frozenset(p) for p in CHONG_PAIRS}
 _HARM_SET = {frozenset(p) for p in HARM_PAIRS}
 _BREAK_SET = {frozenset(p) for p in BREAK_PAIRS}
-_TOMB_OF_ELEM = {"木": "未", "火": "戌", "金": "丑", "水": "辰", "土": "辰"}
+# 墓库唯一真值源在 core（AGENTS.md §二），此处仅别名
+_TOMB_OF_ELEM = dict(TOMB_MAP)
 
 
 def _relations_of(chuan: str, day_stem: str, day_branch: str) -> list[dict]:

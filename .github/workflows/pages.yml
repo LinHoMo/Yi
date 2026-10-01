@@ -51,6 +51,11 @@ jobs:
       - name: 自检（清单与镜像逐条对齐）
         run: python tools/check_web_site.py --site _site
 
+      # 产出同源闸门（AGENTS.md §六修订门槛的自动化）：网页端与本地端必须
+      # 同引擎同契约同产出，不一致即失败、不部署。request.py 与执行器漂移在此拦截。
+      - name: 网页/本地同源验收
+        run: python tools/verify_web_parity.py
+
       - name: 配置 Pages
         uses: actions/configure-pages@v5
 

@@ -51,7 +51,7 @@ from pathlib import Path
 
 from yishu_core.runtime import force_utf8_stdio as _force_utf8_stdio  # noqa: E402
 
-from chart_tables import BAGUA, _build_trigram_lookup, TRIGRAM_LOOKUP, BRANCH_NUMBERS, NAJIA_STEMS, HEXAGRAMS, _build_hexagram_lookup, HEXAGRAM_LOOKUP, HEXAGRAM_LINE_TEXTS, _build_palace_lookup, PALACE_LOOKUP, WORLD_POSITION, RESPONSE_POSITION, SIX_SPIRITS, DAY_STEM_SPIRIT_START, EMPTY_DEATH
+from chart_tables import BAGUA, _build_trigram_lookup, TRIGRAM_LOOKUP, BRANCH_NUMBERS, NAJIA_STEMS, HEXAGRAMS, _build_hexagram_lookup, HEXAGRAM_LOOKUP, HEXAGRAM_LINE_TEXTS, _build_palace_lookup, PALACE_LOOKUP, WORLD_POSITION, RESPONSE_POSITION, SIX_SPIRITS, DAY_STEM_SPIRIT_START
 from engine_calendar import _load_ganzhi_kernel, _GANZHI, GANZHI_BOUNDARY, _noon, get_year_stem_branch, get_month_stem_branch, get_day_stem_branch, get_hour_stem_branch, ganzhi_moment, crosscheck_optional_libraries, apply_true_solar_time, _hour_to_shichen, handle_zi_hour
 from engine_chart import coin_toss, time_based_hexagram, number_based_hexagram, yao_value_to_lines, find_trigram_name, find_hexagram, find_changed_hexagram, get_palace_info, get_palace_element, determine_six_relations, get_empty_death, get_six_spirit, get_yao_name, get_yao_symbol, build_hexagram_result
 from engine_format import generate_analysis_hints, format_text_output, format_reading_output, apply_depth_limit, _apply_depth_to_result

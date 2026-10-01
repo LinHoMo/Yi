@@ -14,8 +14,7 @@
 """
 from __future__ import annotations
 
-HEAVENLY_STEMS = "甲乙丙丁戊己庚辛壬癸"
-EARTHLY_BRANCHES = "子丑寅卯辰巳午未申酉戌亥"
+from .ganzhi_calendar import HEAVENLY_STEMS, EARTHLY_BRANCHES  # 全内核唯一字面量在 ganzhi_calendar
 
 
 def _branch_index(branch: str) -> int:

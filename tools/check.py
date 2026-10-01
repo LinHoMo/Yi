@@ -15,6 +15,8 @@
 from __future__ import annotations
 
 import argparse
+import ast
+import json
 import re
 import subprocess
 import sys
@@ -207,8 +209,8 @@ def check_structure() -> list[str]:
 
 
 def check_core_tables() -> list[str]:
-    """内核表唯一：学科内不得重新定义 core 已有规则表。"""
-    fails = []
+    """内核表唯一：学科内不得重新定义 core 已有规则表（同名 + 改名副本两层检测）。"""
+    fails: list[str] = []
     for p in (ROOT / "disciplines").rglob("*.py"):
         if "scratch" in p.parts or "__pycache__" in p.parts:
             continue
@@ -217,6 +219,76 @@ def check_core_tables() -> list[str]:
                 name = line.strip().split("=", 1)[0].strip()
                 fails.append(f"{p.relative_to(ROOT)}:{i}: 复制内核表 {name}"
                              f"（唯一真值源在 core）")
+    fails.extend(check_core_table_renames())
+    return fails
+
+
+def _canonical_literal(node: ast.AST) -> str | None:
+    """dict/list 字面量 → 归一化指纹（dict 键排序），不可字面求值则返回 None。
+
+    空 dict/list 不参与指纹比对：`{}`/`[]` 常是"运行时从 core 派生填充"的合法形态
+    （如 chain_tables 用 core HE_PAIRS 现算六合表），并非复制。
+    """
+    try:
+        val = ast.literal_eval(node)
+    except Exception:
+        return None
+    if not val:  # 空 dict / 空 list
+        return None
+    try:
+        if isinstance(val, dict):
+            return json.dumps(val, ensure_ascii=False, sort_keys=True)
+        if isinstance(val, list):
+            return json.dumps(val, ensure_ascii=False)
+    except (TypeError, ValueError):
+        return None
+    return None
+
+
+def _module_table_fingerprints(py_file: Path) -> dict[str, list[str]]:
+    """收集一个 .py 模块级 dict/list 字面量赋值：指纹 → [变量名]。"""
+    try:
+        tree = ast.parse(py_file.read_text(encoding="utf-8", errors="ignore"))
+    except SyntaxError:
+        return {}
+    out: dict[str, list[str]] = {}
+    for node in tree.body:
+        if isinstance(node, (ast.Assign, ast.AnnAssign)):
+            value = node.value if isinstance(node, ast.Assign) else node.value
+            targets = node.targets if isinstance(node, ast.Assign) else [node.target]
+            if not isinstance(value, (ast.Dict, ast.List)):
+                continue
+            fp = _canonical_literal(value)
+            if not fp:
+                continue
+            for t in targets:
+                if isinstance(t, ast.Name):
+                    out.setdefault(fp, []).append(t.id)
+    return out
+
+
+def check_core_table_renames() -> list[str]:
+    """改名副本检测：学科层出现与 core 真值表内容逐字节相同的模块级字面量即视为复制。
+
+    背景：历史事故形态之一是把 core 表换名复制（如 XUN_KONG → EMPTY_DEATH），
+    同名检测（CORE_TABLE_ASSIGN）对此失明，故增加内容指纹比对。
+    """
+    core_fps: dict[str, list[str]] = {}
+    for p in sorted((ROOT / "core" / "yishu_core").glob("*.py")):
+        for fp, names in _module_table_fingerprints(p).items():
+            core_fps.setdefault(fp, []).extend(f"yishu_core.{p.stem}.{n}" for n in names)
+    if not core_fps:
+        return []
+    fails: list[str] = []
+    for p in (ROOT / "disciplines").rglob("*.py"):
+        if "scratch" in p.parts or "__pycache__" in p.parts:
+            continue
+        rel = p.relative_to(ROOT)
+        for fp, names in _module_table_fingerprints(p).items():
+            if fp in core_fps:
+                src = "、".join(core_fps[fp])
+                fails.append(f"{rel}: 改名复制内核表 {', '.join(names)}"
+                             f"（内容与 core {src} 逐字节相同，唯一真值源在 core）")
     return fails
 
 

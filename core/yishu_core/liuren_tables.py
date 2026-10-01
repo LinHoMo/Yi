@@ -140,6 +140,5 @@ DAY_DE: dict[str, str] = {
 }
 DAY_DE_VERIFIED = False
 
-# 干合（日德辨伪与合神关系用，甲己/乙庚/丙辛/丁壬/戊癸）
-STEM_HE = {"甲": "己", "己": "甲", "乙": "庚", "庚": "乙",
-           "丙": "辛", "辛": "丙", "丁": "壬", "壬": "丁", "戊": "癸", "癸": "戊"}
+# 干合（日德辨伪与合神关系用，甲己/乙庚/丙辛/丁壬/戊癸）——唯一真值源在 relations.STEM_WUHE
+from .relations import STEM_WUHE as STEM_HE  # noqa: E402

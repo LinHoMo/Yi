@@ -27,9 +27,11 @@ sys.path.insert(0, str(ROOT / "synthesis"))
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 from yishu_core.runtime import utf8_subprocess_env  # noqa: E402
 
+# 演示科清单（ziwei 含在内；--discipline 可单跑）
 DISCIPLINES = {
     "liuyao": "六爻纳甲",
     "ming": "命（四柱）",
+    "ziwei": "紫微斗数",
     "meihua": "梅花易数",
     "xiaoliuren": "小六壬",
     "zeji": "择吉",
@@ -81,9 +83,13 @@ def demo_liuyao(question: str) -> tuple[dict, str, str]:
 
 
 def demo_single(disc: str, question: str) -> tuple[dict, str, str]:
+    # 说明：此处刻意手写各科 CLI 参数（与 SKILL.md 文档命令逐字一致，作真实用法演示），
+    # 不走 yishu_core.report 映射层——demo 不是三大报告执行器之一，属有意为之。
     chart_args = {
         "ming": ["--datetime", "1990-05-20 10:30", "--gender", "男",
                  "--question", question],
+        "ziwei": ["--datetime", "1990-05-20 10:30", "--gender", "男",
+                  "--question", question],
         "meihua": ["--way", "time", "--question", question],
         "xiaoliuren": ["--way", "numbers", "--numbers", "7,7,2,3,4",
                        "--question", question],
