@@ -50,10 +50,6 @@ Yi/
 │           └── html.py
 │
 ├── disciplines/
-│   ├── base/                    # 共享层（协议定义 + CLI 基类）
-│   │   ├── protocol.py          # 四段契约 TypedDict/Protocol/合规检查
-│   │   └── cli.py               # DisciplineCLI 基类（argparse + chart/analyze/narrate/render/cast）
-│   │
 │   ├── liuyao/                  # 六爻纳甲（卜科）
 │   │   ├── SKILL.md
 │   │   ├── scripts/             # ~32 个模块（由 58 个合并而来）
@@ -146,26 +142,16 @@ Yi/
 ## 三、四段契约 Protocol
 
 每个学科必须按四段暴露能力，段与段之间只传结构化数据。
-契约定义在 `disciplines/base/protocol.py`，核心 TypedDict 与 Protocol：
+契约由 `docs/CONTRACT.md` 定义，强制手段是**机械验收**而非运行时类型检查：
+根 `tools/check.py` 结构门（四段入口文件齐全）+ 各科 `dev_tools/golden.py`
+黄金回归 + `tools/report_faithfulness.py` 叙事忠实度审计。
 
-| 类型 | 说明 |
-|---|---|
-| `ChartData` | 盘面（discipline + timestamp + input_params + chart） |
-| `AnalysisData` | 推演结论（chart + factors + verdict + basis） |
-| `NarrativeData` | 正文摘要（summary + reasoning + advice） |
-| `Verdict` | 吉凶 + 置信度 + 描述 |
-
-四个 runtime-checkable Protocol：
-
-| Protocol | 方法 | 输入 → 输出 |
-|---|---|---|
-| `ChartProtocol` | `chart(params)` | 参数 → `ChartData`（纯确定性，无解读） |
-| `AnalyzeProtocol` | `analyze(chart)` | 盘面 → `AnalysisData`（因子/判据/所本法则） |
-| `NarrateProtocol` | `narrate(analysis)` | 推演 → Markdown 正文 |
-| `RenderProtocol` | `render(analysis, fmt)` | 推演 → HTML/MD/JSON 报告 |
-
-合规检查函数 `check_protocols()` 返回四段实现情况。
-共享 CLI 基类 `DisciplineCLI`（`disciplines/base/cli.py`）提供统一 argparse 入口。
+> 历史备注：本节原先定义于 `disciplines/base/protocol.py` 的运行时
+> TypedDict/Protocol（ChartData/AnalysisData/ChartProtocol 等）与
+> `base/cli.py` 的 DisciplineCLI 基类。二者全仓零引用（学科脚本各自用
+> argparse 直接实现四段入口，CLI 由 `cli/main.py` subprocess 透传编排），
+> 属闲置抽象，2026-10-01 删除（见 `docs/CHANGELOG.md`）。下表的**语义契约**
+> 与每段硬性边界继续有效，验收以机械门为准。
 
 每段的硬性边界：
 
@@ -232,15 +218,14 @@ Yi/
 ```
 disciplines → core/yishu_core          # 学科只能 import 内核
 synthesis   → disciplines 的 schema      # 合参只依赖输出契约
-disciplines/base → core                 # 共享层不依赖任何学科
 ```
 
 禁止的依赖：
 
 - ❌ 学科间互相 import（`liuyao` 不应 import `ming`）
 - ❌ 内核 import 学科
-- ❌ `disciplines/base` import 任何学科
-- ❌ 学科自带第二份共用规则表（旬空/三刑/纳音/三合/卦表只能在 core 存在一份）
+- ❌ 学科自带第二份共用规则表（旬空/三刑/纳音/三合/卦表只能在 core 存在一份，
+  含"改名副本"——内容指纹检测由根 `check.py` 强制）
 
 违反上述方向的 import 视为缺陷，评审直接驳回。
 

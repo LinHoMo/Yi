@@ -173,8 +173,8 @@
 | 6 | 学科目录多源 | ✅ 已修 | `engine_runtime` 弃用死常量、改 `WEB_DISCIPLINES` + 未挂载学科**干净拒绝**（ValueError 带可用科目清单）；`build_web` 构建期断言 `DISCIPLINE_META ⊆ request.DISCIPLINES`（fail-fast），并写明三处清单的同步规程 |
 | 7 | `_site/` 陈旧副本 | ✅ 已删 | 磁盘构建产物，`build_web.py` 随时可重建 |
 | 8 | `.gitignore` 与 §三 冲突 | ✅ 已修 | 新增 `*.html`/`*.jsonl` 兜底忽略 + 白名单（`web/index.html`、`docs/samples/**`）；`docs/DEEP-OPTIMIZE-PLAN.html` 移入 `docs/samples/` |
-| 9 | `base` 层闲置 | ⏸ 暂缓 | 属设计取舍（接入 DisciplineCLI 是较大重构），保留待立项 |
-| 10 | `report.yml` 10 输入上限 | ⏸ 暂缓 | 当前合法（=10 未超），加注释即可；重构输入通道属独立任务 |
+| 9 | `base` 层闲置 | ✅ 已修（独立重构 2026-10-01） | 全仓零引用确认后**删除** `disciplines/base/`；契约强制本就靠 CONTRACT.md + check.py 结构门 + golden/忠实度回归；同步 AGENTS/README/ARCHITECTURE/HANDOFF/MIGRATION/CHANGELOG |
+| 10 | `report.yml` 10 输入上限 | ✅ 已修（独立重构 2026-10-01） | 表单 10→6 个（核心 4 字段 + `extra` JSON 逃生舱 + commit_branch，留 4 余量）；`ci_request.py` 解析 `INPUT_EXTRA`（extra 铺底、显式字段覆盖、坏 JSON 容错）；旧逐字段调用兼容；AI-SOP/AGENTS 同步 |
 | 11 | `cli/main.py` 手动路由 | ✅ 已修 | 补注设计理由：argparse 只作帮助视图，手动路由是为把未知参数透传给学科脚本 |
 | 12 | `demo.py` 清单缺 ziwei | ✅ 已修 | `DISCIPLINES` 补 ziwei（含 chart_args）；硬编码 CLI 参数补注"有意为之"（与 SKILL.md 文档命令一致） |
 | — | `tools/scratch/` 残留 | ⏸ 保留 | AGENTS.md §三 明文指定一次性脚本放 `tools/scratch/`（gitignored），属合规去处，不清 |

@@ -3,6 +3,23 @@
 仓库级变更登记（跨科 / 内核 / 口径 / 架构）。学科内细节见各科 `CHANGELOG.md`。
 规则：指标口径任何变动（计分方式、词典、缺失字段处理）必须在此登记，否则分数不可比（`AGENTS.md` §四.4）。
 
+### 2026-10-01a 架构瘦身：删除闲置共享层 `disciplines/base/` + 报告工作流输入通道留余量
+
+> **决策记录（非口径变更，引擎行为零变化）**：
+> ① **删 `disciplines/base/`**（`protocol.py` 四段 Protocol + `cli.py` DisciplineCLI 基类）：
+> 全仓零引用（8 科脚本各自 argparse 直实现四段入口，CLI 由 `cli/main.py` subprocess
+> 透传编排，tests/tools 亦不引用）。四段契约的强制本就靠机械验收（`docs/CONTRACT.md`
+> + 根 `check.py` 结构门 + 各科 golden + `report_faithfulness.py`），不依赖运行时
+> Protocol。接入基类需重写全部学科 CLI 形状、高风险且违背 YAGNI——按"闲置抽象
+> 不留尸"原则删除。同步：AGENTS.md §二目录树与依赖方向、README、ARCHITECTURE §三/§六、
+> HANDOFF。② **report.yml `workflow_dispatch.inputs` 10→6 个**（GitHub 硬上限 10，
+> 原先顶格、再添一字段即全工作流静默失注册）：核心 4 字段 + `extra`（JSON 对象字符串
+> 逃生舱，`ci_request.py` 解析合并：extra 先铺底、显式 INPUT_* 覆盖同名键；坏 JSON
+> 容错忽略）+ commit_branch。旧版逐字段 INPUT_MODE 等调用路径兼容不变。
+> ③ 同日早前：内核唯一真值源收敛（天干地支字面量唯一化、`NAJIA_STEMS`/`STEM_HE`
+> 并入 core、删除 3+1 处学科层改名副本）+ `check.py` 内容指纹防复制检测 +
+> web `_isolate` 隔离兑现 + pages.yml 同源验收闸门（commit 368042d）。
+
 ### 2026-09-30w 命科从格收敛（DEEP-DIVE-PLAN #3）：tentative → 可判级（真/假从、从旺/从强/从气/从势）+ 地支互动（三合化气/六冲）+ 15 例滴天髓书源案例
 
 > **口径登记（§四.4）**：① **从格判定从「tentative 只标结构」升级为可判级**

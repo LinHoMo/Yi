@@ -174,10 +174,12 @@ curl -s -o /dev/null -w "%{http_code}\n" -X POST \
 
 - 成功通常返回 **204 No Content**（部分网关/版本为 200）。这一步**不直接返回 run id**。
 - Token 权限：Fine-grained PAT 需 **Actions: Write**；Classic PAT 需 `repo` 作用域。
-- ⚠️ **表单只有 10 个字段**（GitHub 对 `workflow_dispatch.inputs` 的硬上限），
-  暴露的是 `discipline/question/datetime/gender/mode/way/numbers/date/activity/commit_branch`。
-  `yao`、`hour_branch`、`direction`、`longitude` 等高级字段走 issue 正文或
-  `repository_dispatch`（见 3.4）。
+- ⚠️ **表单只有 6 个字段**（GitHub 对 `workflow_dispatch.inputs` 的硬上限是 10，
+  留 4 个余量）：`discipline/question/datetime/gender/extra/commit_branch`。
+  `mode/numbers/way/date/activity/yao/hour_branch/direction/longitude/name` 等
+  高级字段放进 `extra`（**JSON 对象字符串**），如
+  `"extra":"{\"mode\":\"coin\",\"numbers\":\"1,1,1\"}"`；也可以照旧走 issue 正文或
+  `repository_dispatch`（见 3.4）。旧版逐字段表单调用仍兼容（显式 `INPUT_*` 照常生效）。
 - PowerShell 发 curl 时引号易被改写：把 JSON 先存 `body.json`，再用 `-d "@body.json"`。
 
 ### 3.4 通道 B-3：repository_dispatch（需 Token，传结构化 JSON）
@@ -305,7 +307,7 @@ zip 内为 `report.md` + `report.html`；默认保留约 90 天。
 | 404（Actions） | 工作流不在默认分支 / 仓库私有 / 文件名错 | 核对分支与文件名 |
 | 401 | Token 无效/过期 | 换 Token，或改走通道 A |
 | 403 | Token 作用域不足，或触发限流 | 补 `Actions: Write`；读 `x-ratelimit-remaining` 后退避 |
-| 422 | `inputs` 字段与工作流定义不符 | 对照 §1 字段名（注意表单只有 10 个字段） |
+| 422 | `inputs` 字段与工作流定义不符 | 对照 §3.3 字段名（表单只有 6 个字段，高级字段进 `extra` JSON） |
 | `should_run=false` | 未识别 discipline，或评论者不在允许名单 | 检查请求写法 / 权限；维护者可设 `YI_ALLOW_ASSOCIATIONS` |
 | 报告里报"表外取值" | `mode`/`way` 不在白名单 | 按 §1 表改正后重发 |
 | Artifact 410 | 产物已过期 | 改读 `reports` 分支固定链接 |

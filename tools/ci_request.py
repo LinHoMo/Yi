@@ -108,8 +108,29 @@ def _from_workflow_inputs() -> dict:
     **不再回落到裸 `os.environ.get(f)`**：字段名（如 `mode`、`date`、`name`）
     与 runner 上某些环境变量同名时，会把无关的值当成求测输入——"表单没填却出盘"，
     且没有任何提示。workflow 里每加一个字段就在 env: 段显式注入一个。
+
+    高级字段逃生舱：`INPUT_EXTRA` 是一个 JSON 对象字符串（report.yml 表单只有 6 个
+    输入，4 个余量），键可为字段名或中文别名，解析后并入请求。
+    合并顺序：extra 先铺底，显式注入的核心 INPUT_* 字段覆盖同名键。
     """
-    out = {}
+    out: dict = {}
+
+    raw_extra = os.environ.get("INPUT_EXTRA")
+    if raw_extra:
+        try:
+            data = json.loads(raw_extra)
+        except json.JSONDecodeError as exc:
+            print(f"⚠️ INPUT_EXTRA 不是合法 JSON，已忽略（{exc}）", file=sys.stderr)
+            data = None
+        if isinstance(data, dict):
+            for k, v in data.items():
+                canon = FIELD_ALIASES.get(str(k).strip())
+                if not canon:
+                    continue
+                v2 = _coerce(canon, v)
+                if v2 not in (None, ""):
+                    out[canon] = v2
+
     for f in FIELDS:
         raw = os.environ.get(f"INPUT_{f.upper()}")
         if raw is None or raw == "":

@@ -13,7 +13,7 @@
 | 模块路径 | liuyao 58 脚本合并至 ~32 个 | import 路径可能变化 |
 | 文档精简 | 从十余份减至 7 份核心文档 | 部分旧文档已归档 |
 | 学科范围 | meihua/xiaoliuren/zeji 归档至 `archive/` | 日常路径不可达 |
-| 共享层新增 | `disciplines/base/` 引入 protocol + CLI 基类 | 新科接入方式变化 |
+| 共享层撤除 | `disciplines/base/`（protocol/cli 基类）2026-10-01 删除（全仓零引用；契约靠 CONTRACT.md + 根 check.py 机械验收） | 新科接入方式见 §3.3 |
 | 内功命名拆分 | `ming_tables` 内的纳音/三合/星煞迁出 | 依赖 ming_tables 中这些表的代码需改 import |
 
 ---
@@ -93,14 +93,19 @@
 | `from factor_waterfall import ...` | ❌ 已删 |
 | `from hallucination_guard import ...` | ❌ 已删 |
 
-### 3.3 共享层（新增）
+### 3.3 四段契约（新科接入）
 
-| 模块 | 提供什么 |
-|---|---|
-| `disciplines/base/protocol.py` | `ChartData`, `AnalysisData`, `NarrativeData`, `Verdict` TypedDict + 四个 Protocol + `check_protocols()` |
-| `disciplines/base/cli.py` | `DisciplineCLI` 基类（argparse 绑定 chart/analyze/narrate/render/cast） |
+> 历史备注：本节原为 `disciplines/base/`（protocol.py 四段 Protocol + cli.py
+> DisciplineCLI 基类），因全仓零引用于 2026-10-01 删除（见 `docs/CHANGELOG.md`）。
 
-新学科接入：继承 `DisciplineCLI` + 实现四段 Protocol，即可自动获得统一 CLI。
+新学科接入方式（现状）：
+
+1. 按 `docs/CONTRACT.md` 建目录：`SKILL.md` + `scripts/{chart,analyze,narrate,render}.py`
+   + `data/verdicts.json` + `dev_tools/{check,golden}.py`（根 `check.py` 结构门核验）；
+2. 各段入口脚本自带 argparse（bare 模块互相 import，内核表从 `yishu_core` 取，
+   禁止复制/改名复制——内容指纹检测强制）；
+3. 在 `cli/main.py` 的 `DISCIPLINE_COMMANDS` 注册命令；
+4. golden 回归 + `tools/report_faithfulness.py` 忠实度验收，最后根 `check.py --full` 全绿。
 
 ### 3.4 合参层
 

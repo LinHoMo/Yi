@@ -363,7 +363,8 @@ python tools/refactor_guard.py --compare guard/base.json  # 改后
 | 大六壬 `liuren` | 5 | 2 | `yi liuren chart/analyze/narrate/render` |
 | 灵棋经 `lingqi` | 4 | 2 | `yi lingqi chart/analyze/narrate/render` |
 
-- 共享层：`disciplines/base/`（`protocol.py` + `cli.py`），所有学科继承基类。
+- 四段契约：`docs/CONTRACT.md` 定义，根 `tools/check.py` 结构门 + 各科 `dev_tools/golden.py`
+  与报告忠实度回归强制（原 `disciplines/base/` 运行时 Protocol 层因零引用已删，见 CHANGELOG）。
 - 统一入口：`cli/main.py` → `yi`。
 - 五分科各自 `dev_tools/check.py` 全绿，仓库根 `tools/check.py --full` 全绿。
 

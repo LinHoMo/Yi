@@ -4,8 +4,10 @@ name: Yi 云端报告
 # 并通过 Artifact、reports 分支、issue 评论回传。详见 docs/AI-SOP.md。
 #
 # ⚠️ 表单字段上限：workflow_dispatch 的 inputs **最多 10 个**，超了工作流直接不注册。
-# 故表单只暴露最常用的 10 个字段；yao（手摇爻值）/hour_branch/direction/longitude
-# 等高级字段请走 issue 正文 key:value 或 repository_dispatch（见 docs/AI-SOP.md §1）。
+# 故表单只暴露 6 个字段（4 个余量）：discipline/question/datetime/gender + 一个
+# `extra`（JSON 对象字符串）作为高级字段逃生舱——mode/numbers/way/date/activity/
+# yao/hour_branch/direction/longitude/name 都可塞进 extra，由 tools/ci_request.py
+# 解析合并。旧版逐字段表单（mode/way/…）仍兼容：显式注入的 INPUT_* 环境变量照常生效。
 on:
   workflow_dispatch:
     inputs:
@@ -32,24 +34,8 @@ on:
         description: 性别（命/紫微用：男 或 女）
         type: string
         default: ''
-      mode:
-        description: 六爻起卦模式 coin/time/number/manual（留空按是否有时间自动）
-        type: string
-        default: ''
-      numbers:
-        description: 数字起卦/起课，逗号分隔
-        type: string
-        default: ''
-      way:
-        description: 梅花/小六壬起卦方式 datetime/numbers/lunar/...
-        type: string
-        default: ''
-      date:
-        description: 择吉日期 YYYY-MM-DD（也接受 2026/09/30）
-        type: string
-        default: ''
-      activity:
-        description: 择吉事类（如 开市/嫁娶）
+      extra:
+        description: '高级字段（JSON 对象，可选）：{"mode":"coin","numbers":"1,2,3","way":"time","date":"2026-09-30","activity":"开市","yao":"…","hour_branch":"…","direction":"…","longitude":116.4,"name":"…"}'
         type: string
         default: ''
       commit_branch:
@@ -96,11 +82,7 @@ jobs:
           INPUT_QUESTION: ${{ github.event.inputs.question }}
           INPUT_DATETIME: ${{ github.event.inputs.datetime }}
           INPUT_GENDER: ${{ github.event.inputs.gender }}
-          INPUT_MODE: ${{ github.event.inputs.mode }}
-          INPUT_WAY: ${{ github.event.inputs.way }}
-          INPUT_NUMBERS: ${{ github.event.inputs.numbers }}
-          INPUT_DATE: ${{ github.event.inputs.date }}
-          INPUT_ACTIVITY: ${{ github.event.inputs.activity }}
+          INPUT_EXTRA: ${{ github.event.inputs.extra }}
           INPUT_COMMIT_BRANCH: ${{ github.event.inputs.commit_branch }}
         run: python tools/ci_request.py --out request.json --meta meta.json
 

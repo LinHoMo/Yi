@@ -57,8 +57,6 @@ Yi/
 ├── core/                # 唯一内核 yishu_core。学科层只能 import core，禁止互相 import
 ├── .github/workflows/    # 云端出报告 report.yml（见 §六）
 ├── disciplines/
-│   ├── base/             # 共享层：protocol.py（四段契约 Protocol）+ cli.py（DisciplineCLI 基类）
-│   │                     # 依赖方向：base → core；学科 → base + core；学科之间禁止互相 import
 │   ├── liuyao/           # 六爻纳甲
 │   ├── ming/             # 四柱八字
 │   ├── ziwei/            # 紫微斗数
@@ -71,9 +69,12 @@ Yi/
 └── docs/                 # 规划、规范、决策记录、审计报告、AI-SOP
 ```
 
-依赖方向单向：`disciplines/base → core`、`disciplines/<科> → disciplines/base + core`、
+依赖方向单向：`disciplines/<科> → core`、
 `synthesis → disciplines 的 schema`、`cli/main.py → disciplines/<科>`。
 学科之间禁止互相 import。违反此方向的 import 视为缺陷，评审直接驳回。
+（历史备注：`disciplines/base/` 共享层（protocol/cli 基类）因全仓零引用于
+2026-10-01 删除——四段契约由 `docs/CONTRACT.md` + 根 `check.py` 结构门 +
+各科 golden/忠实度回归强制，不依赖运行时 Protocol；见 `docs/CHANGELOG.md`。）
 
 ### 内核唯一真值源
 
@@ -133,8 +134,10 @@ Yi/
 
 - 工作流 `.github/workflows/report.yml`：触发 = `workflow_dispatch` / `issues` /
   `issue_comment`（`/yi` 命令）/ `repository_dispatch`（type `yi-report`）。
-  ⚠️ `workflow_dispatch.inputs` **最多 10 个**，超了工作流直接不注册；高级字段走
-  issue 正文或 `repository_dispatch`。
+  ⚠️ `workflow_dispatch.inputs` **最多 10 个**，超了工作流直接不注册。表单只暴露
+  6 个字段（discipline/question/datetime/gender/extra/commit_branch，留 4 个余量）；
+  mode/numbers/way/date/activity 等高级字段进 `extra`（JSON 对象字符串，
+  `tools/ci_request.py` 解析合并），或走 issue 正文 / `repository_dispatch`。
 - runner 上**零第三方依赖**直接跑 `python tools/report.py`（chart→analyze→render→统一 HTML）；
   不得在工作流里引入未声明的依赖或私有服务。
 - 回传三通道：① **固定链接** `reports/<学科>/latest.{md,html}` +
