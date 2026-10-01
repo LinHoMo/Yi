@@ -28,6 +28,8 @@ CORE = ROOT / "core"
 sys.path.insert(0, str(CORE))
 
 from yishu_core import __version__  # noqa: E402
+# 学科清单唯一真值源：与 build_web.py 同源，避免 check.py 再硬编码一份 8 科名字
+from yishu_core.report.request import DISCIPLINES as ALL_DISCIPLINES  # noqa: E402
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 from yishu_core.runtime import utf8_subprocess_env  # noqa: E402
 
@@ -35,7 +37,14 @@ from yishu_core.runtime import utf8_subprocess_env  # noqa: E402
 CONTRACT_FILES = ("SKILL.md", "scripts/chart.py", "scripts/analyze.py",
                   "scripts/narrate.py", "scripts/render.py",
                   "data/verdicts.json", "dev_tools/check.py", "dev_tools/golden.py")
-NEW_DISCIPLINES = ("ming", "ziwei")
+# 四段契约里"查表直录类学科"豁免的条目：这类学科断语直接录自古籍课表
+# （lingqi 的 124 课），不设 data/verdicts.json、也不分案例集，见 docs/CONTRACT.md §四。
+CONTRACT_EXEMPT_FILES = ("data/verdicts.json",)
+TABLE_LOOKUP_DISCIPLINES = ("lingqi",)
+
+# 快速冒烟门（跑 golden，成本高）只跑这两科；八科的"静态结构门"（文件齐全）由
+# check_structure 用 request.DISCIPLINES 全覆盖，新科接入时不必改这里。
+SMOKE_DISCIPLINES = ("ming", "ziwei")
 
 # 内核唯一真值表名：学科内出现同名赋值即视为复制（AGENTS.md 内核唯一真值源）
 # 含历史别名/拆分名（STEMS/NAYIN_TABLE/XUN_KONG/SAN_HE…），否则同义表仍会漏检。
@@ -180,17 +189,27 @@ def check_verdict_literals() -> list[str]:
 
 
 def check_structure() -> list[str]:
-    """学科目录契约：新三科四段文件齐全；依赖方向单向。"""
+    """学科目录契约：八科四段文件齐全；依赖方向单向。
+
+    清单取 `request.DISCIPLINES`（唯一真值源），扩展新科时自动覆盖——此前
+    `NEW_DISCIPLINES` 只放 ming/ziwei，其余 6 科靠各学科自己的 dev_tools/check.py，
+    根门对新科是敞的。
+    查表直录类学科（`TABLE_LOOKUP_DISCIPLINES`，如 lingqi 的 124 课本就直录古籍）
+    豁免 `CONTRACT_EXEMPT_FILES`，见 `docs/CONTRACT.md` §四。
+    """
     fails = []
-    for disc in NEW_DISCIPLINES:
+    for disc in ALL_DISCIPLINES:
         d = ROOT / "disciplines" / disc
-        for f in CONTRACT_FILES:
+        exempt = TABLE_LOOKUP_DISCIPLINES
+        files = [f for f in CONTRACT_FILES
+                 if not (disc in exempt and f in CONTRACT_EXEMPT_FILES)]
+        for f in files:
             if not (d / f).exists():
                 fails.append(f"{disc}/ 缺 {f}（CONTRACT.md 四段契约）")
-        if not (d / "data" / "cases").is_dir():
+        if disc not in exempt and not (d / "data" / "cases").is_dir():
             fails.append(f"{disc}/data/cases 目录缺失（案例分层）")
-    # 学科互相 import
-    for disc in ("liuyao", "ming"):
+    # 学科互相 import（8 科全扫：此前只扫 liuyao/ming，另 6 科的违规 import 是敞的）
+    for disc in ALL_DISCIPLINES:
         scripts = ROOT / "disciplines" / disc / "scripts"
         if not scripts.is_dir():
             continue
@@ -209,6 +228,34 @@ def check_structure() -> list[str]:
         n = sum(1 for _ in p.open(encoding="utf-8", errors="ignore"))
         if n > max_lines:
             fails.append(f"{p.relative_to(ROOT)} 过长（{n} 行 > {max_lines}）——按域拆分，勿再堆巨石")
+    return fails
+
+
+def check_modules_importable() -> list[str]:
+    """八科每个 `scripts/*.py` 都能独立 import 成功。
+
+    背景（本门的存在理由）：2026-10-02 修 `trigram_symbolism.py` 时把
+    `import json` / `from pathlib import Path` 换成了别名导入，模块一进 import
+    就 NameError，被上层 try/except 吞成"空类象表"，288 条六爻排盘静默漂移
+    （偏弱/中和翻转），而当时根门里根本没有跑六爻 golden，谁也没报警。
+    纯静态的门（结构/命名/内核表）抓不到这种"import 期炸、运行期装死"，
+    只能真的 import 一遍。
+    """
+    fails = []
+    env = utf8_subprocess_env()
+    for disc in ALL_DISCIPLINES:
+        sp = ROOT / "disciplines" / disc / "scripts"
+        if not sp.is_dir():
+            continue
+        for f in sorted(sp.glob("*.py")):
+            code, out = _run_py(
+                ["-c", f"import sys; sys.path[:0] = [{str(sp)!r}, {str(CORE)!r}];"
+                       f" import importlib; importlib.import_module({f.stem!r})"],
+                label=f"{disc}/{f.name}", cwd=sp)
+            if code != 0:
+                tail = [l for l in out.strip().splitlines() if l.strip()]
+                fails.append(f"{disc}/scripts/{f.name} 独立导入失败："
+                             f"{tail[-1][:120] if tail else 'unknown'}")
     return fails
 
 
@@ -468,6 +515,9 @@ def main() -> int:
     gate("structure", check_structure(), "学科目录完整、无学科间 import")
     gate("tables", check_core_tables(), "内核规则表无学科复制")
 
+    gate("structure", check_modules_importable(),
+         "八科 scripts 模块均可独立导入（import 期不得炸、也不得静默降级）")
+
     print("\n[1b] 命名与断语规范（AGENTS.md §三: 文件名无版本号 + 断语进 data JSON）")
     gate("filenames", check_filenames(), "文件名无版本号标记")
     gate("verdict_literals", check_verdict_literals(), "断语/引文外置到 data JSON")
@@ -496,10 +546,17 @@ def main() -> int:
             print("  × 断语库键一致性")
             print(f"      …{_tail(out)}")
 
-    for disc in NEW_DISCIPLINES:
-        print(f"\n[{NEW_DISCIPLINES.index(disc) + 3}] {disc} 质量门"
+    for disc in SMOKE_DISCIPLINES:
+        print(f"\n[{SMOKE_DISCIPLINES.index(disc) + 3}] {disc} 质量门"
               f"{'（含案例评测）' if args.full else '（快速：指纹+冒烟）'}")
         gate_sub(disc, [f"disciplines/{disc}/dev_tools/check.py"], disc, fast=not args.full)
+
+    print("\n[5] 八科行为指纹（golden 基线：重构只准改结构，不准改行为）")
+    for disc in ALL_DISCIPLINES:
+        g = ROOT / "disciplines" / disc / "dev_tools" / "golden.py"
+        if not g.is_file():
+            continue
+        gate_sub(f"golden_{disc}", [str(g.relative_to(ROOT))], f"{disc} 行为指纹", fast=False)
 
     print("\n[6] 六爻（迁移前旧实现：冒烟 + 四段契约端到端；--full 加黑箱回归）")
     gate_sub("liuyao", ["disciplines/liuyao/tests/smoke_test.py"], "六爻冒烟", fast=False)

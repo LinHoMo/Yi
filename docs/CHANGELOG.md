@@ -33,6 +33,36 @@
 > **同步**：`trigram_symbolism.py` / `classical_enhancements.py` 改为走既有的
 > `kernel_path.ensure_kernel_on_path`（内核定位规则仍只在 `kernel_path.py` 一份实现，不各写一份）。
 
+### 2026-10-01d 更正 2026-10-01c「golden 未漂移」的结论 + 补两道机械门（模块可导入 / 八科指纹进根门）
+
+> **⚠️ 先更正上一条（2026-10-01c）的一句不实结论。** 该条写「引擎行为零变化，
+> golden 指纹未漂移」，**这句当时是错的**：那次清理在
+> `liuyao/scripts/trigram_symbolism.py` 把 `import json` / `from pathlib import Path`
+> 换成了别名导入，**漏了 `Path`** —— 模块一进 import 就 `NameError: name 'Path' is not
+> defined`，而调用方用 `try/except` 兜住，于是 `TRIGRAM_SYMBOLISM` 静默变成空表，
+> 八卦类象全部落空，**六爻 288 条排盘指纹从 `46fd569f…` 漂到 `d33bf303…`**
+> （`advance_chg_strength` 偏弱↔中和翻转）。当时之所以没人报警，不是因为门宽松，
+> 而是因为**根门根本没跑六爻 golden**（`SMOKE_DISCIPLINES` 只有 ming/ziwei），
+> 而 `ming` 指纹确实没动，于是"ming 绿 ⇒ 全绿"被当成了"零漂移"的证据。
+>
+> **根因归类**：这是「import 期炸、运行期装死」型缺陷，纯静态门（结构/命名/内核表
+> 指纹）在原理上都抓不到，只能真的 import 一遍。
+>
+> **本条处置（引擎行为已回基线，非口径变更）**：
+> ① **修 `trigram_symbolism.py`**：恢复 `import json` / `from pathlib import Path`
+>    （内核定位仍走既有的 `kernel_path.ensure_kernel_on_path`，不另写路径拼接）。
+>    六爻指纹回到 `46fd569fbe945814`，八科 golden 全绿。
+> ② **新增 `check_modules_importable()`（根门 [1]）**：逐科逐文件子进程
+>    `importlib.import_module`，任何 import 期异常即失败。已反向验证——把上面那个
+>    坏文件放回去，本门立刻红。
+> ③ **八科 golden 指纹全部进根门（新增 [5]）**：此前只有 ming/ziwei 的
+>    `dev_tools/check.py` 冒烟，liuren/liuyao/meihua/xiaoliuren/zeji/lingqi 六科的行为
+>    指纹只在各自 `dev_tools/golden.py` 里，根门对它们长期是敞的。实测每科 ≤1s，
+>    故直接进**快速门**（不必等 `--full`）。
+>
+> **教训固化**：重构前后比对行为指纹，**必须八科全跑，不能拿一科绿推其余科**；
+> 下一条起 `front matter` 里的「零漂移」只在八科指纹全绿时才写。
+
 ### 2026-10-01b 第二轮深潜减法：清 6 项零引用件 + 尾留文档打过期标
 
 > **决策记录（非口径变更，引擎行为零变化）**：源自 `docs/DEEP-REVIEW.md`（第二轮深潜，

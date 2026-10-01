@@ -21,12 +21,12 @@
 #   trigram_directions —— 八卦方位
 #   hexagram_names    —— 六十四卦复合卦名，键为 "上卦/下卦"
 # =============================================================================
-import json as _ks_json, os as _ks_os, sys as _ks_sys  # 内核定位规则只在 kernel_path.py 一份实现
+# 内核定位规则只在 kernel_path.py 一份实现，不得在此另写路径拼接
+import json
+import sys
+from pathlib import Path
 
-_ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
-
-if _ks_d not in _ks_sys.path:
-    _ks_sys.path.insert(0, _ks_d)
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from kernel_path import ensure_kernel_on_path as _ensure_kernel  # noqa: E402
 

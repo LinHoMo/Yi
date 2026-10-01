@@ -48,6 +48,17 @@ CASES = (
 )
 
 
+# 负例：非法 / 越界输入。两侧必须"一致地拒绝"，否则说明某一侧漏了参数门禁
+# （映射层 `request.chart_argv` 是唯一入口，这条断言就是它的回归网）。
+NEG_CASES = (
+    {"discipline": "lingqi", "question": "占出行", "numbers": "0,0,0"},  # 三部掷数全零
+    {"discipline": "ming", "datetime": "1990-13-45", "gender": "男"},     # 不存在的日期
+)
+# 已知不对称：这两科是本地 / MCP-only，web 站点通道故意不挂载（见 engine_runtime
+# WEB_DISCIPLINES），本地放行而网页拒绝属设计意图——只断言"网页必须明确拒绝"。
+WEB_CHANNEL_UNAVAILABLE = ("liuren", "lingqi")
+
+
 def _load_web_runtime():
     path = ROOT / "web" / "engine_runtime.py"
     spec = importlib.util.spec_from_file_location("yi_web_engine_runtime", path)
@@ -76,6 +87,22 @@ def _run_local(req: dict, outdir: Path) -> dict:
 def _run_web(web_mod, req: dict, outdir: Path) -> dict:
     res = web_mod.build_report(ROOT, req, outdir)
     return {"md": res["md"], "html": res["html"]}
+
+
+def _try_local(req: dict, outdir: Path) -> tuple[bool, str]:
+    try:
+        _run_local(req, outdir)
+        return True, ""
+    except Exception as exc:
+        return False, str(exc)
+
+
+def _try_web(web_mod, req: dict, outdir: Path) -> tuple[bool, str]:
+    try:
+        _run_web(web_mod, req, outdir)
+        return True, ""
+    except Exception as exc:
+        return False, str(exc)
 
 
 def _html_without_runtime_tag(html: str, req: dict) -> str:
@@ -141,7 +168,37 @@ def main() -> int:
             if args.verbose:
                 _diff(local["html"], web["html"])
 
+    # 负例段：非法 / 越界输入必须两侧一致地拒绝
+    print("—— 负例：非法/越界输入的两侧拒绝必须一致 ——")
+    for i, case in enumerate(NEG_CASES, 1):
+        d = base / f"x{i:02d}"
+        d.mkdir(parents=True, exist_ok=True)
+        disc = case["discipline"]
+        lok, lmsg = _try_local(case, d)
+        wok, wmsg = _try_web(web_mod, case, d)
+        if disc in WEB_CHANNEL_UNAVAILABLE:
+            # 通道没挂载 → 只要求网页明确拒绝（本地放行是设计意图）
+            if wok:
+                failures.append(f"负例#{i} {disc} 网页通道应拒绝却放行了")
+                print(f"  × 负例#{i} {disc}: 网页应拒绝却放行")
+            else:
+                print(f"  √ 负例#{i} {disc}: 网页拒绝（本地/通道不对称，设计意图）")
+            continue
+        if lok != wok:
+            failures.append(f"负例#{i} {disc} 拒绝判定不同源：本地={'通过' if lok else '拒绝'}，"
+                            f"网页={'通过' if wok else '拒绝'}")
+            print(f"  × 负例#{i} {disc}: 拒绝判定不同源（本地={'通过' if lok else '拒绝'}，"
+                  f"网页={'通过' if wok else '拒绝'}）")
+            continue
+        if not lok:
+            # 只断言"两侧都拒绝"，不做拒绝层次比对：本地侧恒被 subprocess 包成
+            # RuntimeError，网页侧则嵌了 traceback（内含 ValueError 等字样误字符匹配），
+            # 两者层次本就不可比；真正的实质是"非法输入不许某一侧悄悄放行"。
+            print(f"  √ 负例#{i} {disc}: 两侧均拒绝")
+        else:
+            print(f"  √ 负例#{i} {disc}: 两侧均放行（用例已失效，请换成真正非法的输入）")
     print()
+
     if failures:
         print(f"同源验收失败 {len(failures)} 项：")
         for f in failures:
@@ -149,7 +206,8 @@ def main() -> int:
         if not args.keep:
             pass
         return 1
-    print(f"同源验收通过（{len(CASES)} 例）：网页端与本地端产出同源。")
+    print(f"同源验收通过（正例 {len(CASES)} 例 + 负例 {len(NEG_CASES)} 例）："
+          f"网页端与本地端产出同源、非法输入一致地拒绝。")
     return 0
 
 

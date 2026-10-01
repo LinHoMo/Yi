@@ -70,6 +70,13 @@ render(analyze)  → 交内核 report 出 HTML/MD，学科只提供盘数据与�
    禁止另写一套给分逻辑。指标必须报 n、报集合名、区分 strict/legacy
 7. 加进 `tools/check.py` 的质量门，基线取首次数值，此后只准前进
 
+> **豁免条款（2026-10-01c）**：**查表直录类学科**（现行仅 `lingqi`，断语直录古籍 124 课、
+> 无干支历法运算）不设 `data/verdicts.json` 与 `data/cases/`，其断语源是
+> `data/ketables.json`。根 `tools/check.py` 以 `TABLE_LOOKUP_DISCIPLINES`、
+> `CONTRACT_EXEMPT_FILES` 两个常量认这一豁免，新增同类学科时照写即可，不必为了让门变绿
+> 去造一份空的 `verdicts.json`。**但该类学科仍须在 `SKILL.md` 写明"本科不接内核、
+> 书源为唯一真值源"**，以免后人误判为漏接。其余七科一律按 1–7 全条核。
+
 ## 五、验收标准（新学科）
 
 - □ 一条命令从"所问之事"到单文件报告

@@ -125,22 +125,7 @@ def six_relation(me_wx: str, other_wx: str) -> str | None:
 # ---------------------------------------------------------------- 十神（命科命名）
 # 在五行关系之上再分阴阳：同阴阳为「偏」，异阴阳为「正」（比劫食伤另有专名）。
 # (关系, 是否同阴阳) → 十神名。
-SHISHEN_TABLE = {
-    (RELATION_SAME, True): "比肩",
-    (RELATION_SAME, False): "劫财",
-    (RELATION_WO_SHENG, True): "食神",
-    (RELATION_WO_SHENG, False): "伤官",
-    (RELATION_WO_KE, True): "偏财",
-    (RELATION_WO_KE, False): "正财",
-    (RELATION_KE_WO, True): "七杀",
-    (RELATION_KE_WO, False): "正官",
-    (RELATION_SHENG_WO, True): "偏印",
-    (RELATION_SHENG_WO, False): "正印",
-}
-SHISHEN_NAMES = ["比肩", "劫财", "食神", "伤官", "偏财",
-                 "正财", "七杀", "正官", "偏印", "正印"]
-# 别名（同物异名，只作查表用，不参与判定）
-SHISHEN_ALIAS = {"七杀": "偏官", "偏印": "枭神"}
+# SHISHEN_TABLE / SHISHEN_TO_LIUQIN 均由 LIUQIN_TO_SHISHEN 派生，不在 core 内另存一份。
 
 
 def ten_god(day_stem: str, other_stem: str) -> str | None:
@@ -159,13 +144,6 @@ def ten_god(day_stem: str, other_stem: str) -> str | None:
 # ---------------------------------------------------------------- 十神 ↔ 六亲（合参对齐桥）
 # 六亲是十神去掉阴阳后的「五行关系大类」。合参层据此把命科十神结论与卜科六亲结论
 # 落到同一条关系上：正财/偏财 → 妻财，正官/七杀 → 官鬼，余类推。
-SHISHEN_TO_LIUQIN = {
-    "比肩": "兄弟", "劫财": "兄弟",
-    "食神": "子孙", "伤官": "子孙",
-    "偏财": "妻财", "正财": "妻财",
-    "七杀": "官鬼", "正官": "官鬼",
-    "偏印": "父母", "正印": "父母",
-}
 # 反向：一条六亲对应「同阴阳」「异阴阳」两个十神（顺序固定，供合参层展开）
 LIUQIN_TO_SHISHEN = {
     "兄弟": ("比肩", "劫财"),
@@ -173,6 +151,18 @@ LIUQIN_TO_SHISHEN = {
     "妻财": ("偏财", "正财"),
     "官鬼": ("七杀", "正官"),
     "父母": ("偏印", "正印"),
+}
+# 派生（不另存字面量）：(关系, 同阴阳?) → 十神名。False 一档取「异阴阳」那一支。
+SHISHEN_TABLE = {
+    (rel, pol): LIUQIN_TO_SHISHEN[liq][0 if pol else 1]
+    for rel, liq in LIUQIN_OF_RELATION.items()
+    for pol in (True, False)
+}
+# 派生：十神 → 六亲大类（上表的反查）
+SHISHEN_TO_LIUQIN = {
+    name: lq
+    for lq, pair in LIUQIN_TO_SHISHEN.items()
+    for name in pair
 }
 
 

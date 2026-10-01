@@ -36,11 +36,6 @@ def verdict_direction(v) -> int:
     return 0
 
 
-def is_na(value) -> bool:
-    """基准是否未记录该维度。"""
-    return value in (None, "", "?")
-
-
 def pct(dims: dict) -> tuple[float, int]:
     """维度明细 → (百分比, 适用权重)。dims 为 {dim: (earned, applicable_weight, note)}。"""
     earned = sum(v[0] for v in dims.values())

@@ -378,7 +378,6 @@ BAGUA_LINES = {
 }
 
 # 六爻数组里的位置索引 → 该爻在其经卦内的序号（下卦 0-2、上卦 3-5 各自自下而上）
-YAO_INDEX_TO_TRIGRAM_SLOT = {0: 0, 1: 1, 2: 2, 3: 0, 4: 1, 5: 2}
 
 
 def trigram_lines(name: str) -> list[int]:
@@ -455,11 +454,6 @@ def wangxiangxiuqiusi(month_branch: str, element: str) -> str | None:
     """某月支下某五行的旺相休囚死状态；非法输入返回 None。"""
     table = WANG_XIANG_XIU_QIU_SI.get(month_branch)
     return table.get(element) if table else None
-
-
-def trigram_element(name: str) -> str | None:
-    """经卦名 → 五行（乾兑金、震巽木、坎水、离火、坤艮土）。"""
-    return TRIGRAM_ELEMENTS.get(name)
 
 
 def hexagram_branches(name: str) -> list[str] | None:
@@ -581,12 +575,6 @@ SAN_HUI_GROUPS = {
     "金": ["申", "酉", "戌"],
     "水": ["亥", "子", "丑"],
 }
-_BRANCH_TO_SANHUI = {b: elem for elem, bs in SAN_HUI_GROUPS.items() for b in bs}
-
-
-def sanhui_group(branch: str) -> str | None:
-    """地支 → 所属三会方局五行（木/火/金/水）；非法返回 None。"""
-    return _BRANCH_TO_SANHUI.get(branch)
 
 
 # ================================================================ 卦级反吟 / 伏吟

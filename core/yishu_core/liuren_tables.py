@@ -96,7 +96,6 @@ NOBLE_NIGHT: dict[str, str] = {
 
 # 昼夜分界：卯时起昼、酉时起夜（卯辰巳午未申为昼，酉戌亥子丑寅为夜）——
 # 流派有寅时起昼一说，第一版固定卯酉分界并显式声明。
-DAY_NIGHT_POLICY = "mao_you"
 
 
 def is_day(hour_branch: str) -> bool:
@@ -138,7 +137,6 @@ DAY_DE: dict[str, str] = {
     "甲": "寅", "乙": "申", "丙": "巳", "丁": "亥", "戊": "巳",
     "己": "寅", "庚": "申", "辛": "巳", "壬": "亥", "癸": "巳",
 }
-DAY_DE_VERIFIED = False
 
 # 干合（日德辨伪与合神关系用，甲己/乙庚/丙辛/丁壬/戊癸）——唯一真值源在 relations.STEM_WUHE
 from .relations import STEM_WUHE as STEM_HE  # noqa: E402

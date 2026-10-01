@@ -107,22 +107,8 @@ YUE_DE = {
 
 
 def tianyi_guiren(stem: str) -> list[str]:
+    """日干/年干 → 天乙贵人所落地支（甲戊庚牛羊、乙己鼠猴…）。"""
     return list(TIAN_YI_GUI_REN.get(stem, []))
-
-
-def lu_shen(stem: str) -> str | None:
-    """日干 → 禄神地支。"""
-    return LU_SHEN.get(stem)
-
-
-def hong_yan(stem: str) -> str | None:
-    """日干 → 红艳地支。"""
-    return HONG_YAN.get(stem)
-
-
-def tian_xi(branch: str) -> str | None:
-    """年支/日支 → 天喜地支。"""
-    return TIAN_XI.get(branch)
 
 
 def tian_de(month_branch: str) -> list[str]:

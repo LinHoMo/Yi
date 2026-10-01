@@ -17,27 +17,6 @@ from __future__ import annotations
 from .ganzhi_calendar import HEAVENLY_STEMS, EARTHLY_BRANCHES  # 全内核唯一字面量在 ganzhi_calendar
 
 
-def _branch_index(branch: str) -> int:
-    """地支 → 索引（子=0 … 亥=11）。"""
-    try:
-        return EARTHLY_BRANCHES.index(branch)
-    except ValueError:
-        return -1
-
-
-def _branch_at(index: int) -> str:
-    """索引 → 地支。"""
-    return EARTHLY_BRANCHES[index % 12]
-
-
-def _stem_index(stem: str) -> int:
-    """天干 → 索引（甲=0 … 癸=9）。"""
-    try:
-        return HEAVENLY_STEMS.index(stem)
-    except ValueError:
-        return -1
-
-
 # ============================================================ 星曜基础数据
 
 STARS: dict[str, dict] = {

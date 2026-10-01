@@ -79,7 +79,6 @@ def canggan_ten_gods(day_stem: str, branch: str) -> list[dict]:
 # 一日折四月、一时辰折十日。节时刻由 ganzhi_calendar 求，本模块只给规则常量与方向。
 DAYS_PER_LUCK_YEAR = 3        # 三日 = 一年
 MONTHS_PER_DAY = 4            # 一日 = 四月
-DAYS_PER_SHICHEN = 10         # 一时辰 = 十日
 
 
 def dayun_direction(year_stem: str, gender: str) -> str | None:
