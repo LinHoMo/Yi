@@ -470,6 +470,9 @@ tests/              pytest（relations/symbols/najia/yingqi/ming_dayun）
 | **C** | **孤儿断语（反向缺口，属"减法"）** | 现有取证只查"报告里的句是否外置"，**不查"已外置的断语是否真被用到"**——进了 `data/*.json` 却没接上引擎 = 另一种死件 | 出一份孤儿断语清单（语料有、报告与代码均无引用），逐条判"接上/删除" | 清单 + 处置后八科 golden 不漂移 |
 | **D** | **`guard` 快照去留** | `liuyao/guard/*.json` 5 份 ≈315 万汉字 + `dev_tools/guard/base_human.json` + `scratch/golden_before.json`；已确认为**报告产物快照**（存人工确认过的 `human_markdown` 全文），故已从语料池剔除；但是否还被门/脚本读取未查 | 判定"归档 / 去重 / 保留"之一，并说明依据；**不要顺手删**——先确认无引用 | `docs/TECH-DEBT.md` 该条状态翻转 |
 | **E** | **`check_verdict_literals` 粗筛门去留** | 降级为粗筛（两个方向都有漏），与 [1c] 取证门功能重叠 | 二选一：删（只留 [1c]）或保留（在 docstring 写明保留理由） | 门数不变则两门都 EXIT=0 |
+| **F** | **`tools/eval.py` 未挂门**（第三轮探查 §四 遗留，2026-10-01f 复核 `check.py` 仍**无任何引用**，未动） | 已在库但不进质量门 → 回归不会被测出 | 挂到 `--full` 档跑快照（对齐第三轮建议）；先确认它当前 EXIT=0 再挂，否则挂上去就是常红 | `tools/check.py --full` EXIT=0 且 eval 分数有输出 |
+
+> 记分铁律：挂门前先确认基线分，避免把**已知漂移**当成新债反复查（HANDOFF §一）。
 
 ### 2. 取证口径的坑（本棒实踩，别重复踩）
 
