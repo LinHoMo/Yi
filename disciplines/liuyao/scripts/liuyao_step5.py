@@ -7,43 +7,32 @@ _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
-from kernel_path import ensure_kernel_on_path as _ks_ensure, kernel_dir
+from kernel_path import ensure_kernel_on_path as _ks_ensure
 
 _ks_ensure(__file__)
 
 from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
-    ADVANCE_PAIRS,
     BRANCH_ELEMENTS,
-    BREAK_PAIRS,
-    CHONG_PAIRS,
-    EARTHLY_BRANCHES,
-    EIGHT_PALACES,
-    HEAVENLY_STEMS,
-    HEXAGRAM_TRIGRAMS,
-    HE_PAIRS,
     KE_CYCLE,
-    NAJIA_BRANCHES,
-    RETREAT_PAIRS,
     SHENG_CYCLE,
-    STEM_ELEMENTS,
-    TOMB_MAP,
-    palace_of_key,
     EARTHLY_BRANCHES as BRANCHES,
 )
 
 from datetime import datetime, timedelta
 
-import json
 
 import re
 
-from pathlib import Path
 
-from chain_tables import (_BRANCH_CLASHES, _BRANCH_CLASH_MAP, _CHART_TAIL,
-    _ELEMENT_PEAK_MONTHS, _HE_MAP, _HEXAGRAM_HARMONY_SET, _HEX_NAMES,
-    _QUESTION_USE_GOD_BASIS, _QUESTION_USE_GOD_MAP, _USE_GOD_LAYER_CITATIONS,
-    HEXAGRAM_LIUCHONG, HEXAGRAM_LIUHE, JUE_MAP, SAN_HE, TRIGRAM_ELEMENT,
-    USE_GOD_RELATIONSHIPS, _60_CYCLE_BASE)
+from chain_tables import (
+    _BRANCH_CLASH_MAP,
+    _ELEMENT_PEAK_MONTHS,
+    _HE_MAP,
+    HEXAGRAM_LIUCHONG,
+    HEXAGRAM_LIUHE,
+    SAN_HE,
+    _60_CYCLE_BASE,
+)
 
 from liuyao_narrate import (_build_reasoning_chain,
     _get_hexagram_body_summary_note, find_classical_quotes)
@@ -54,23 +43,9 @@ from narrative_rules import strength_reason, strength_polarity
 
 from narrative_utils import (  # noqa: E402
     _branch_element,
-    _evaluate_fu_cang_strength,
-    _is_chong,
-    _is_he,
-    _pos_to_name,
-    _twelve_growth_at_day,
-    CLASSICAL_INTERPRETATIONS as CINTERP,
-    element_strength_in_month,
-    get_changed_hexagram_branch,
-    get_elements_for_relation,
-    get_empty_branches,
-    get_palace_first_hexagram,
-    get_relation_from_element,
-    get_twelve_growth_stage,
     note_text,
     safe_get,
     SANCHUAN_LABELS,
-    strength_to_score,
     STEP5_CONFIDENCE as CONF_TXT,
     STEP5_FACTOR_REASONS as FREASON,
     STEP5_SPIRIT_REASONS as SPIRIT_TXT,
@@ -88,38 +63,7 @@ from liuyao_step4 import _detect_special_pattern, _user_reason  # 跨文件引�
 
 
 def step5_synthesize(r: dict) -> dict:
-    """
-    Step 5: 综合判断 — 综合所有前序分析给出最终结论。
-
-    这是最终判断步骤。此前四步的输出都汇聚于此。
-
-    评分规则（加权）：
-    1. 用神旺衰分（来自 step3）作为基础分
-    2. 加上动变效应分（来自 step4）
-    3. 应用卦体调候：六合卦+0.5，六冲卦-0.5
-    4. 辅助神煞调整
-    5. 得最终分数 → 定性判断
-
-    最终判断区间：
-    - 分数 > 4.0：大吉
-    - 3.0-4.0：吉（小吉-吉）
-    - 2.0-3.0：平吉/小吉
-    - 1.0-2.0：平/小凶
-    - 分数 < 1.0：凶
-
-    预测置信度：
-    - 信号清晰（旺+原神动）→ 高（>80%）
-    - 信号混合 → 中（50-80%）
-    - 信号矛盾 → 低（<50%），建议谨慎
-
-    应期判断：
-    - 逢值：用神临值日
-    - 逢冲：用神逢冲日
-    - 出空：旬空出旬
-    - 旺则速应（当月/当日），衰则待时
-
-    各加减分项与断语覆写规则按职责外置到 chain_step5_adjust（纯搬移，逻辑未改）。
-    """
+    """Step 5 综合判断：step3 旺衰 + step4 动变 + 卦体调候 + 神煞 → 定性 + 置信度 + 应期。"""
     # 获取前序步骤数据
     step3_data = safe_get(r, "_step3_data", default={})
     step4_data = safe_get(r, "_step4_data", default={})
@@ -709,16 +653,7 @@ def compute_advanced_adjustments(r: dict, step2_data: dict, step3_data: dict, di
 
 
 def detect_three_passages_clash(r: dict, step2_data: dict, step3_data: dict, div_time: dict) -> dict:
-    """三传克制（太岁 + 月建 + 日辰俱克用神，且无一生扶）。
-
-    《增删卜易》"三傳俱克，雖旺亦危"（references/pattern_reference.md 格局六）：
-    月建克用神、日辰克用神、太岁亦克用神——三者皆克，纵原神旺动亦难扭转。
-
-    ⚠️ **未验证项**：本项目基准集（tune/holdout/wikisource/huozhulin）里没有
-    含太岁的可对照案例，故此处**只落地标记、score_adjustment 恒为 0、不进主分**。
-    待自建并标注出处的基准例到位后再谈计分；在此之前任何把它算进吉凶的做法
-    都属未经验证的调参。太岁取流年地支：年柱为立春换年（内核干支历口径）。
-    """
+    """三传克制（太岁+月建+日辰俱克用神）。⚠️ 基准集无太岁对照案例，仅标记、score 恒为 0。"""
     out = {
         "fired": False,
         "score_adjustment": 0.0,
@@ -792,7 +727,7 @@ def compute_fu_shen_adjustment(step3_data: dict, r: dict) -> tuple:
     fu_shen_adjustment = 0.0
     fu_shen_note = ""
     if "飞空得出" in step3_reasoning_text or ("飞神" in step3_reasoning_text and "旬空" in step3_reasoning_text and "得出" in step3_reasoning_text):
-        # 飞神旬空 → 伏神得出有力（P0-4 新增，优先于泄气/克伏等次级关系）
+        # 飞神旬空 → 伏神得出有力（优先于泄气/克伏等次级关系）
         fu_shen_adjustment = 1.5
         fu_shen_note = note_text("fu_fei_kong_out")
     elif "飞来生伏" in step3_reasoning_text or "飞生伏" in step3_reasoning_text:
@@ -837,7 +772,7 @@ def compute_classical_adjustment(
     special_pattern: dict,
     pattern_verdict_note: str,
 ) -> dict:
-    """5.5h 古籍通用格局加减。同时产出供后续覆写复用的上下文 ctx。"""
+    """5.5h 古籍通用格局加减 + 产出覆用上下文 ctx。"""
     classical_adj = 0.0
     classical_notes = []
     _q_l = str((r.get("question") or r.get("question_category") or ""))
@@ -994,11 +929,7 @@ def compute_classical_adjustment(
 
 # ---------------------------------------------------------------- 5.5i 三刑+六合相战
 def detect_xing_he_conflict(step3_data: dict, r: dict, hex_name: str) -> bool:
-    """三刑+六合吉凶相战：2+ 成刑/催刑 且 六合卦 → 覆写上限不超过平凶。
-
-    注意：小畜同时入 六合表 与 六冲表 → hex_adjustment 被六冲-0.5 抵消为 0,
-    若仅以 hex_adjustment > 0 判定, 小畜三刑会漏覆写。故以「入六合表」为准。
-    """
+    """三刑+六合吉凶相战：成刑且六合卦 → 不覆过平凶；以「入六合表」为准（小畜例外处理）。"""
     tp_data_for_conflict = safe_get(step3_data, "three_punishments_raw", default=None)
     if tp_data_for_conflict is None:
         _adv_for_xh = r.get("advanced_analysis", {})
@@ -1018,10 +949,7 @@ def detect_xing_he_conflict(step3_data: dict, r: dict, hex_name: str) -> bool:
 
 # ---------------------------------------------------------------- 5.6 病药
 def compute_bing_yao_adjustment(step2_data: dict, step3_data: dict) -> tuple:
-    """病药（《增删卜易》有病取药）：结构化 illness/medicine 只做有界加减。
-
-    吉凶主判仍在旺衰/动变/格局；星煞不进主分（仅 narrate 旁参）。
-    """
+    """病药（《增删卜易》）：有界加减，不进主分（仅 narrate 旁参）。"""
     bing_yao_adjustment = 0.0
     bing_yao_reasons: list[str] = []
     bing_yao_panel: dict = {}
@@ -1060,7 +988,7 @@ def apply_verdict_overrides(
     xing_he_conflict_override: bool,
     officer_tomb: dict,
 ) -> dict:
-    """5.7 定性判断之后的古籍强凶/从吉覆写链。返回覆写后的定性三件套。"""
+    """5.7 古籍强凶/从吉覆写链 → 定性三件套（verdict/desc/score）。"""
     _q_l = ctx.get("_q_l", "")
     _sp_pat_txt = ctx.get("_sp_pat_txt", "")
     world_relation = ctx.get("world_relation", "")
@@ -1403,18 +1331,7 @@ def _assess_confidence(
     final_score: float,
     strength_level: str,
 ) -> int:
-    """
-    评估预测置信度（0-100%）。
-    信度高条件：
-    - 用神旺相/极旺，信号清晰
-    - 动变与原神相助一致
-    - 无明显矛盾
-
-    信度低条件：
-    - 用神休囚或旬空+月破
-    - 动变与忌神相克
-    - 多种反向信号交织
-    """
+    """评估预测置信度 0-100%：旺+原神+清晰信号 → 高；休囚/旬空月破+忌神克 → 低。"""
     confidence = 70  # 基础置信度
 
     # 旺衰修正
@@ -1514,11 +1431,7 @@ def _compose_synthesis_summary(**kw) -> str:
 
 
 def _day_branch_for_date(d: datetime) -> str:
-    """
-    Return the 地支 for the day of a given Gregian date.
-    Uses the same algorithm as liuyao_engine.get_day_stem_branch fallback:
-    2024-01-01 = 甲子日 (stem_idx=0, branch_idx=0).
-    """
+    """Gregory 日期 → 日地支（2024-01-01 = 甲子日）。"""
     delta = (d - _60_CYCLE_BASE).days
     branch_idx = delta % 12
     if branch_idx < 0:
@@ -1527,11 +1440,7 @@ def _day_branch_for_date(d: datetime) -> str:
 
 
 def _next_date_with_day_branch(start_date: datetime, target_branch: str, max_days: int = 366) -> datetime | None:
-    """
-    Return the next date (from start_date forward) whose day-branch equals target_branch.
-    Scans up to max_days (default 1 year + leap day).
-    Returns None if not found within range.
-    """
+    """下一日-branch = target_branch 的日期（前向扫描 max_days）。"""
     if not target_branch or target_branch not in set(BRANCHES):
         return None
     d = start_date + timedelta(days=1)  # start FROM tomorrow
@@ -1540,46 +1449,6 @@ def _next_date_with_day_branch(start_date: datetime, target_branch: str, max_day
             return d
         d += timedelta(days=1)
     return None
-
-
-def _next_month_with_branch(start_date: datetime, target_branch: str) -> datetime | None:
-    """下一个"月令"为该地支的日期。
-
-    月令由十二节决定（立春寅、惊蛰卯…），不是公历月。旧实现写作
-    `(d.month + 1) % 12` 的公历近似，在交节前后会整整错一个月——应期因此偏掉
-    30 天。现委托历法内核求交节时刻。
-    """
-    if not target_branch or target_branch not in set(BRANCHES):
-        return None
-    try:
-        from yishu_core import ganzhi_calendar as _gc
-    except ImportError:
-        import os
-        import sys
-        from pathlib import Path
-        from kernel_path import kernel_dir
-        core_dir = kernel_dir(__file__)
-        if str(core_dir) not in sys.path:
-            sys.path.insert(0, str(core_dir))
-        from yishu_core import ganzhi_calendar as _gc
-    inst = _gc.next_month_branch_instant(start_date, target_branch)
-    return inst if inst is None else inst.replace(hour=12, minute=0)
-
-
-def _add_months(d: datetime, months: int) -> datetime:
-    """Add months to a date, capping day at month max."""
-    month = d.month + months
-    year = d.year
-    while month > 12:
-        month -= 12
-        year += 1
-    while month < 1:
-        month += 12
-        year -= 1
-    import calendar
-    max_day = calendar.monthrange(year, month)[1]
-    day = min(d.day, max_day)
-    return datetime(year, month, day)
 
 
 def _dates_overlap(dt1: datetime | None, dt2: datetime | None, tol_days: int = 2) -> bool:
@@ -1600,16 +1469,7 @@ def calculate_yingqi(
     step5: dict,
     base_date: datetime | None = None,
 ) -> dict:
-    """
-    应期精确计算 — 将增删易/黄金策应期规则转化为具体日历日期。
-
-    Returns
-    -------
-    dict with keys:
-        - dates: list of {rule: str, date: str(YYYY-MM-DD), branch: str, description: str}
-        - speed: str — 速应/适中/迟应
-        - summary_text: str — human-readable summary
-    """
+    """应期精确计算（《增删卜易》《黄金策》）：{日期+规则列表, speed, summary_text}。"""
     use_god_branch = safe_get(step3, "use_god_branch", default="")
     use_god_element = safe_get(step3, "use_god_element", default="")
     strength_level = safe_get(step3, "strength_level", default="中和")
@@ -1650,7 +1510,6 @@ def calculate_yingqi(
 
     # ===== Rule 2: 原神受克时 → 原神旺时 / 忌神受制时 =====
     if yuan_shen_positions or yuan_shen_fu_cang:
-        # Get 原神 branches
         yuan_branches: list[str] = []
         for yp in (yuan_shen_positions or []):
             yb = yp.get("earthly_branch", "")
@@ -1765,7 +1624,6 @@ def calculate_yingqi(
         if existing is None or priority.get(rule, 0) > priority.get(existing[0], 0):
             seen_dates[key] = (rule, dt, br, desc)
 
-    # Sort by date
     unique_sorted = sorted(seen_dates.values(), key=lambda x: x[1] or datetime.max if x[1] else datetime.max)
     top5 = unique_sorted[:5]
 
@@ -1779,7 +1637,6 @@ def calculate_yingqi(
             "description": desc,
         })
 
-    # Determine overall speed
     if not dates_list:
         speed = YINGQI_TXT["no_yingqi"]["text"]
     elif any(d["rule"].startswith("速应") for d in dates_list):
@@ -1789,7 +1646,6 @@ def calculate_yingqi(
     else:
         speed = YINGQI_TXT["speed_slow_desc"]["text"]
 
-    # Build summary
     if dates_list:
         date_strs = "、".join(f"{d['date']}({d['rule']})" for d in dates_list if d["date"])
         summary = f"应期（{speed}）：{date_strs}"
@@ -1822,8 +1678,6 @@ __all__ = [
     "_compose_synthesis_summary",
     "_day_branch_for_date",
     "_next_date_with_day_branch",
-    "_next_month_with_branch",
-    "_add_months",
     "_dates_overlap",
     "calculate_yingqi",
 ]

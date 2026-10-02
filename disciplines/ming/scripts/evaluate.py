@@ -37,7 +37,7 @@ for _p in (str(DISC / "scripts"), str(CORE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from yishu_core.eval import pct, run_eval, report  # noqa: E402
+from yishu_core.eval import run_eval, report  # noqa: E402
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 
 import analyze as analyze_mod  # noqa: E402
@@ -227,13 +227,12 @@ def score_case(eng: dict, exp: dict, model: str) -> dict:
         else:
             # 书只给主神：佐神「书上没写」= 不适用 → 适用权重只算主神 10，
             # 从分母剔除（规则1：没写的量既不进分子也不进分母），而不是拿 16
-            # 当分母把没写的佐神记成扣分（2026-09-30f 修正；此前无数据，无可比性问题）
+            # 当分母把没写的佐神记成扣分
             dims["tiaohou"] = (10 if main_ok else 0, 10, note)
 
     # 5) 格局（名 8 分 + 成破救应 4 分）
     # 适用权重 = 实际出现的子项权重之和：只记成败 → w=4；只记格名 → w=8；
-    # 都记 → w=12。此前固定 w=12，成败-only 案例永远拿不满"满分"导致全 0
-    # （2026-09-30t 修正；pattern_cheng_bai 维度首次落地时暴露）。
+    # 都记 → w=12。
     name_na = _na(exp.get("pattern"))
     cb_na = _na(exp.get("pattern_cheng_bai"))
     if not (name_na and cb_na):
@@ -252,7 +251,7 @@ def score_case(eng: dict, exp: dict, model: str) -> dict:
         dims["pattern"] = (min(earned, w_app), w_app, " ".join(bits))
 
     # 6) 从格（布尔 2 + 种类 1 + 真/假 1；书没写的子项从分母剔除）
-    # 口径：2026-09-30v 从「只判是否从」升级为可判级（《滴天髓》从象/假从章
+    # 口径：可判级（《滴天髓》从象/假从章
     # 真从=绝无一毫生扶，假从=中有比劫暗生；kind 大类 从财/从官杀/从儿/
     # 从旺/从强/从势/从气）。判据缺口（三合化气/财生杀/透干印比无根边界）
     # 见 docs/CHANGELOG.md。

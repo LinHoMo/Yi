@@ -16,6 +16,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from person import PersonArchive
+from cross_rules import BU_DISCIPLINES, MING_DISCIPLINES
 
 
 def _window_of(timing: list[str]) -> str:
@@ -45,8 +46,8 @@ def build_guidance(archive: PersonArchive, adjudication: dict) -> str:
     if "ming" in adjudication.get("missing", []):
         lines.append("命科未参评：本版本无命科档案数据，本节空缺。"
                      "**按合参规则 5，缺数据维度降级为未参评，不用其他科补位猜测**。")
-    elif any(r.get("discipline") == "ming" for r in divs):
-        ming_recs = [r for r in divs if r.get("discipline") == "ming"]
+    elif any(r.get("discipline") in MING_DISCIPLINES for r in divs):
+        ming_recs = [r for r in divs if r.get("discipline") in MING_DISCIPLINES]
         for r in ming_recs:
             bits = [r.get("asked"), r.get("verdict")]
             extra = []
@@ -67,11 +68,9 @@ def build_guidance(archive: PersonArchive, adjudication: dict) -> str:
     lines += ["## 二、近期诸事（卜）", ""]
     # 只列裁决后的合法记录（越位/无效输入已在第三节剔除，不在此展示）
     valid = adjudication.get("valid")
-    bu = ([r for r in valid if r.get("discipline") in
-           ("liuyao",)]
+    bu = ([r for r in valid if r.get("discipline") in BU_DISCIPLINES]
           if valid is not None else
-          [r for r in divs if r.get("discipline") in
-           ("liuyao",)])
+          [r for r in divs if r.get("discipline") in BU_DISCIPLINES])
     if not bu:
         lines.append("无占问记录。")
     for r in bu:

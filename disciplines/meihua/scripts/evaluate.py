@@ -27,7 +27,7 @@ for _p in (str(DISC / "scripts"), str(CORE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from yishu_core.eval import verdict_direction, pct, run_eval, report  # noqa: E402
+from yishu_core.eval import verdict_direction, run_eval, report  # noqa: E402
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 import case_runner  # noqa: E402
 
@@ -141,14 +141,27 @@ def provenance_note(label: str, ids: list[str], res: dict) -> None:
     prov = meta.get("_provenance") or {}
     n_book = _count(ids, provenance="book_original")
     n_synth = _count(ids, provenance="engine_derived")
+    if label == "tune":
+        tuning = "参与过调参（tune）"
+    elif label == "external_holdout":
+        tuning = "未参与调参（外部独立集，永不调参）"
+    else:
+        tuning = "未参与调参（holdout）"
     print("\n[口径披露]")
-    print(f"  集合名：{label}；n={n}（原书应验 {n_book} 例 / 由引擎口径构造 {n_synth} 例）；"
-          f"{'参与过调参（tune）' if label == 'tune' else '未参与调参（holdout）'}")
+    print(f"  集合名：{label}；n={n}（原书应验 {n_book} 例 / 由引擎口径构造 {n_synth} 例）；{tuning}")
     print("  分数含义：引擎输出与案例库要点的**对齐分**，不是现实预测命中率。")
-    if prov.get("self_consistent_dims"):
+    if label == "external_holdout":
+        # 外部独立集的 expected 全部取自《梅花易数》原书（book_original），
+        # 与引擎实现不同源，是真正的独立对齐校验——不报"自洽项"。
+        print("  独立性：本集 expected 全部源自《梅花易数》卷三原书（book_original），"
+              "与引擎实现不同源；命中=引擎与古籍原断一致，是独立对齐证据（非同义反复）。")
+        print("  口径收窄：卷三·變卦式八則为「物类断」且部分互变陈述采用非标准口径，"
+              "故 verdict 维度整体 N/A，归妹·夬·履 的 生体/克体 维度 N/A；"
+              "仅 体用关系（4 例全维度适用）+ 革 的 生体(艮)/克体(离) 为可对齐维度。")
+    elif prov.get("self_consistent_dims"):
         print(f"  自洽项（expected 与引擎同源，命中≠独立判断正确）："
               f"{'、'.join(prov['self_consistent_dims'])}")
-    if prov.get("tune_holdout_leakage"):
+    if prov.get("tune_holdout_leakage") and label != "external_holdout":
         print(f"  ⚠ 切分泄漏：{prov['tune_holdout_leakage']}")
     if n < 20:
         print(f"  ⚠ n={n} < 20 → 本集**不发百分比**，只报命中数；下方百分比仅供参考，"
@@ -167,7 +180,7 @@ def hits_summary(res: dict, ids: list[str]) -> None:
 def main() -> int:
     force_utf8_stdio()
     ap = argparse.ArgumentParser(description="梅花易数古籍案例对齐评分（非现实预测命中率）")
-    ap.add_argument("--split", choices=["tune", "holdout", "all"], default="all")
+    ap.add_argument("--split", choices=["tune", "holdout", "external_holdout", "all"], default="all")
     ap.add_argument("--ids", nargs="*", help="指定案例 ID，优先于 --split")
     ap.add_argument("--stage", choices=["run", "score", "all"], default="all")
     ap.add_argument("--engine-file", type=Path, help="已有的引擎输出（配合 --stage score）")

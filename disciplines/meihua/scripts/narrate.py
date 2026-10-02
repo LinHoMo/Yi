@@ -15,7 +15,9 @@ from pathlib import Path as _P
 
 from pathlib import Path
 
-_NP = json.loads((_P(__file__).resolve().parents[1] / 'data' / 'verdicts.json').read_text(encoding='utf-8')).get('narrate_phrases', {})
+_VD = json.loads((_P(__file__).resolve().parents[1] / 'data' / 'verdicts.json').read_text(encoding='utf-8'))
+_NP = _VD.get('narrate_phrases', {})
+_BQ = _VD.get('basis_quotes', {})
 
 _MOVING_CN = {1: "初爻", 2: "二爻", 3: "三爻", 4: "四爻", 5: "五爻", 6: "上爻"}
 
@@ -44,6 +46,25 @@ def _relation_plain(relation: str) -> str:
         "用生体": _NP["rel_yong_sheng_ti"],
         "比和": "体用比和——双方同气，不相妨碍，顺遂之象",
     }.get(relation, relation)
+
+
+def _classics_lines(cl: dict) -> list[str]:
+    """所本原文小节：逐字照录（含篇名与源文件行号），只作所本凭证。"""
+    rules = cl.get("规则") or []
+    per_gua = cl.get("逐卦") or []
+    if not rules and not per_gua:
+        return []
+    out = [f"## {_NP.get('classics_title', '')}", "", _NP.get("classics_lead", ""), ""]
+    for it in rules:
+        out.append(f"- {it.get('出处', '')}")
+        out += [f"  > {t}" for t in (it.get("原文") or [])]
+    if per_gua:
+        out += ["", f"**{_NP.get('classics_per_gua_label', '')}**", ""]
+        for it in per_gua:
+            out.append(f"- {it.get('出处', '')}")
+            out.append(f"  > {it.get('原文', '')}")
+    out.append("")
+    return out
 
 
 def narrate(a: dict) -> str:
@@ -123,6 +144,16 @@ def narrate(a: dict) -> str:
             for p in picks:
                 lines.append(f"- {p}")
             lines.append("")
+        # 书源类象正表原文（《卷一·八卦萬物屬類》按事类取象；逐字，供回指）
+        wt = a.get("analogy_table") or {}
+        wx = [f"{role}**{item.get('卦')}**" + "；".join((item.get("类象") or {}).values())
+              for role, item in ((r, wt.get(r) or {}) for r in ("体卦", "用卦"))
+              if item.get("类象")]
+        if wx:
+            lines.append(_NP["wanwu_table_lead"])
+            for line in wx:
+                lines.append(f"- {line}")
+            lines.append("")
 
     # 三、为什么：体用总诀 + 事类断语
     g = (bu.get("关系判语") or "").strip()
@@ -134,6 +165,12 @@ def narrate(a: dict) -> str:
         role = (tv.get("note") or "").strip()
         prefix = f"就{topic}这一问而言" + (f"（{role}）" if role else "") + "，"
         lines.append(prefix + "古诀断「" + tv_text + "」。")
+    if topic == "天时":
+        rules = ((_VD.get("topics") or {}).get("天时") or {}).get("hexagram_rules") or []
+        if rules:
+            lines.append("天时观卦五行歌（《卷一》通行口径引文）：")
+            for r in rules:
+                lines.append(f"> {r}")
     lines.append("")
 
     # 四、互变生克
@@ -143,7 +180,7 @@ def narrate(a: dict) -> str:
     kt = a.get("ke_ti") or []
     if multi:
         lines.append("这回是多爻同动，体用照「动者为用」分侧之外，更看互变合参——"
-                     "《体用生克篇》说「生体多者则愈吉，克体多者则愈凶」。")
+                     f"{_BQ.get('duo_gong', '')}。")
     if helpers or hinderers:
         lines.append(_NP.get("hu_bian_lead", ""))
         if helpers:
@@ -186,6 +223,9 @@ def narrate(a: dict) -> str:
                 lines.append(f"- {item.get('卦')}克体：其阻应于{('、'.join(item['干支']))}之日")
     if timing or qi:
         lines.append("")
+
+    # 六·五、所本原文（逐字，供逐一核对；只作凭证不参与评分）
+    lines += _classics_lines(a.get("classics") or {})
 
     # 七、口径收尾
     conclusion = con.get("说明") or ""

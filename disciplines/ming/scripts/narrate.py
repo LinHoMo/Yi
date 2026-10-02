@@ -13,6 +13,96 @@ if str(CORE) not in sys.path:
 
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 
+_DATA = Path(__file__).resolve().parent.parent / "data"
+_VERDICTS = json.loads((_DATA / "verdicts.json").read_text(encoding="utf-8"))
+_TIAO_HOU_QUOTES = json.loads((_DATA / "tiaohou_quotes.json").read_text(encoding="utf-8"))
+_DTS = json.loads((_DATA / "ditian_sui.json").read_text(encoding="utf-8"))
+_MONTH_ORDINAL = dict(zip("寅卯辰巳午未申酉戌亥子丑", range(1, 13)))
+
+
+def _dts_chapter(name: str) -> dict:
+    return (_DTS.get("chapters") or {}).get(name) or {}
+
+
+def _dts_verse(name: str) -> str:
+    """《滴天髓》某章原文（逐字，不改写）。"""
+    ch = _dts_chapter(name)
+    return "".join(ch.get("verse") or [])
+
+
+def _dts_block(name: str, label: str) -> list[str]:
+    """《滴天髓》某章原文 + 注文（逐字），返回引用块行。"""
+    ch = _dts_chapter(name)
+    if not ch.get("verse"):
+        return []
+    out = [f"> **{label}**（《滴天髓》·{name}）：{''.join(ch['verse'])}"]
+    for note in ch.get("notes") or []:
+        out.append(f"> 　{note}")
+    return out
+
+
+def _dts_line(name: str, label: str) -> list[str]:
+    """《滴天髓》某章原文（逐字，只取原文；注文过长时不入报告）。"""
+    ch = _dts_chapter(name)
+    if not ch.get("verse"):
+        return []
+    return [f"> **{label}**（《滴天髓》·{name}）：{''.join(ch['verse'])}"]
+
+
+def _day_stem_block(a: dict) -> list[str]:
+    """日主本气体性：《滴天髓》天干論逐字（十日干各一条原文 + 注）。"""
+    s = a.get("chart_summary") or {}
+    day = str((s.get("四柱") or {}).get("day") or "")
+    stem = day[0] if day else ""
+    e = (_DTS.get("day_stem") or {}).get(stem)
+    if not e:
+        return []
+    out = [f"**日主体性**（《滴天髓》天干論·{stem}）：{''.join(e.get('verse') or [])}"]
+    for note in e.get("notes") or []:
+        out.append(f"> 　{note}")
+    return out
+
+
+def _cong_hua_block(pattern: str) -> list[str]:
+    """从格／化格：《滴天髓》從化論真、假两段逐字原文。"""
+    if not pattern.startswith(("从", "化")):
+        return []
+    zhen = _dts_verse("從化論－真")
+    jia = _dts_verse("從化論－假")
+    if not (zhen or jia):
+        return []
+    return [f"**从化所本**（《滴天髓》從化論）：真——「{zhen}」；假——「{jia}」。"]
+
+
+def _geju_line(pattern: str) -> str:
+    """格局名 → 《子平真诠》引文行（查 data/verdicts.json；建禄格走「不适用」口径）。"""
+    if not pattern:
+        return ""
+    for side, info in (_VERDICTS.get("格局顺逆") or {}).items():
+        if pattern in (info.get("covers") or []):
+            tg = _VERDICTS.get("格局提纲") or {}
+            return (f"**格局所本**（{tg.get('所本')}）：「{tg.get('text')}」；"
+                    f"{pattern}属{side}——「{info.get('text')}」（{info.get('所本')}）。")
+    na = (_VERDICTS.get("不适用") or {}).get(pattern)
+    if na:
+        return f"**格局口径**：{na}"
+    cong = _VERDICTS.get("从格引文") or {}
+    if cong and pattern.startswith("从"):
+        return (f"**从格所本**：「{cong.get('verse')}」（{cong.get('verse_source')}）"
+                f"{cong.get('verse_note') or ''}。")
+    return ""
+
+
+def _tiaohou_quote(a: dict) -> dict | None:
+    """调候原文引文（月建×日主 → data/tiaohou_quotes.json 查引文）。"""
+    pillars = (a.get("chart_summary") or {}).get("四柱") or {}
+    month_gz = str(pillars.get("month") or "")
+    day_gz = str(pillars.get("day") or "")
+    if len(month_gz) < 2 or not day_gz:
+        return None
+    n = _MONTH_ORDINAL.get(month_gz[1])
+    return _TIAO_HOU_QUOTES.get(f"{n}{day_gz[0]}") if n else None
+
 
 def narrate(a: dict) -> str:
     s = a.get("chart_summary") or {}
@@ -27,9 +117,22 @@ def narrate(a: dict) -> str:
         f"四柱：{gz}（年月日时）。日主：{s.get('日主') or '—'}。",
         f"命宫：{s.get('命宫') or '—'}；身宫：{s.get('身宫') or '—'}。",
         "",
+    ]
+    ds = _day_stem_block(a)
+    if ds:
+        lines += ds + [""]
+    lines += [
         f"**强弱**：{con.get('strength') or s.get('强弱') or '—'}（得分 {con.get('strength_score')}）。",
+    ]
+    lines += _dts_block("衰旺論", "衰旺所本")
+    lines += [
         f"**格局**：{con.get('pattern') or s.get('格局') or '—'}。",
     ]
+    gy = _geju_line(con.get("pattern") or s.get("格局") or "")
+    if gy:
+        lines.append(gy)
+    lines += _cong_hua_block(con.get("pattern") or s.get("格局") or "")
+    lines.append("")
     cb = con.get("pattern_cheng_bai") or ""
     if cb:
         cb_basis = con.get("pattern_cheng_bai_basis") or ""
@@ -42,11 +145,19 @@ def narrate(a: dict) -> str:
         f"忌：{'、'.join(con.get('taboo_gods') or []) or '—'}。",
         "",
     ]
+    lines += _dts_line("體用論", "体用所本")
+    lines.append("")
     xunkong = s.get("空亡") or a.get("xunkong") or []
     th = a.get("tiaohou")
     if th and th.get("main"):
         assist = f"、佐{th['assist']}" if th.get("assist") else "（原文未单列佐神）"
         lines.append(f"**调候**（《穷通宝鉴》月令×日主查表）：主{th['main']}{assist}。")
+        huan = _dts_verse("寒暖論")
+        if huan:
+            lines.append(f"（《滴天髓》寒暖論：「{huan}」）")
+        tq = _tiaohou_quote(a)
+        if tq and tq.get("quote"):
+            lines.append(f"> 调候原文（《穷通宝鉴》·{tq.get('section') or ''}）：{tq['quote']}")
         lines.append("")
     shensha = a.get("shensha") or []
     if shensha:
@@ -55,6 +166,16 @@ def narrate(a: dict) -> str:
             at = "、".join(s_.get("at") or [])
             items.append(f"{s_.get('name')}" + (f"@{at}" if at else ""))
         lines.append(f"**神煞**（机械安星，通行起例无法逐字核对，不批吉凶）：{'；'.join(items)}。")
+        lines.append("")
+    ffz = a.get("female_fu_zi")
+    if ffz:
+        fu = ffz.get("夫星") or []
+        zi = ffz.get("子星") or []
+        lines.append("**女命夫子星**（《渊海子平·女命论》，机械标注，不批吉凶）：")
+        lines.append("- 夫星（官杀）：" + (
+            "；".join(f"{h['柱']}{h['位']}{h['十神']}" for h in fu) or "局中不见"))
+        lines.append("- 子星（食伤）：" + (
+            "；".join(f"{h['柱']}{h['位']}{h['十神']}" for h in zi) or "局中不见"))
         lines.append("")
     if xunkong:
         lines.append(f"**空亡**：{'、'.join(xunkong)}（日柱旬空）。")
@@ -66,6 +187,9 @@ def narrate(a: dict) -> str:
                 f"- {d.get('start_age')}–{d.get('end_age')} 岁　{d.get('ganzhi')}"
                 f"（{d.get('ten_god') or '—'}）"
             )
+        sui = _dts_verse("歲運論")
+        if sui:
+            lines.append(f"> 岁运所本（《滴天髓》歲運論）：{sui}")
         lines.append("")
     xs = con.get("dayun_liunian") or []
     if xs:
@@ -78,6 +202,47 @@ def narrate(a: dict) -> str:
     if liunian:
         head = "、".join(f"{x.get('year')}{x.get('ganzhi')}({x.get('ten_god') or '—'})" for x in liunian[:6])
         lines.append(f"**流年前六年**（干支×十神对照，不批吉凶）：{head}…")
+        lines.append("")
+    # 四柱结构补充因子（三会/胎元/十神组合/天克地冲/流月/小运）——机械标签，不批吉凶
+    ty = a.get("tai_yuan")
+    sh = a.get("san_hui") or []
+    combos = a.get("ten_god_combos") or []
+    tkdc = a.get("tian_ke_di_chong") or []
+    if ty or sh or combos or tkdc:
+        lines.append("**四柱结构与组合**（机械标签，不批吉凶）：")
+        if ty:
+            lines.append(f"- 胎元：{ty.get('ganzhi')}（{ty.get('basis')}）。")
+        if sh:
+            lines.append("- 三会：" + "、".join(
+                f"{x.get('element')}局（{'、'.join(x.get('branches') or [])}）" for x in sh) + "。")
+        if combos:
+            lines.append("- 十神组合：" + "、".join(c.get("name") for c in combos) + "。")
+        if tkdc:
+            lines.append("- 天克地冲：" + "；".join(t.get("text") for t in tkdc) + "。")
+        lines.append("")
+    pr = a.get("pillar_relations") or []
+    if pr:
+        lines.append("**四柱干支关系**（机械关系，不批吉凶）："
+                     + "、".join(t.get("text") for t in pr) + "。")
+        lines += _dts_line("地支論", "地支关系所本")
+        lines.append("")
+    tg = a.get("tong_guan") or []
+    if tg:
+        lines.append("**通关／关隔**（《滴天髓·通隔論》机械判据，不批吉凶）：")
+        for t in tg:
+            lines.append(f"- {t.get('label')}。")
+        ds_tg = _dts_block("通隔論", "所本")
+        lines += ds_tg
+        lines.append("")
+    ly = a.get("liu_yue") or []
+    if ly:
+        head = "、".join(f"{x.get('ganzhi')}({x.get('ten_god') or '—'})" for x in ly)
+        lines.append(f"**流月**（正月起五虎遁，干支×十神对照，不批吉凶）：{head}。")
+        lines.append("")
+    xy = a.get("xiao_yun") or []
+    if xy:
+        head = "、".join(f"{x.get('age')}岁{x.get('ganzhi')}" for x in xy[:6])
+        lines.append(f"**小运**（自生时起，机械对照；通行起法，流派有别）：{head}…")
         lines.append("")
     lines += [
         "以上为机械排盘与扶抑口径推演，**不是命运断言**。",

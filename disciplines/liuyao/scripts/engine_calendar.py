@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""六爻纳甲引擎：数据表 / 干支历与真太阳时 / 排盘核心 / 文本输出 / 历史遗留梅花与批量接口。（拆分自 liuyao_engine.py，纯搬移不改逻辑；聚合入口见 liuyao_engine.py）。"""
+"""六爻引擎历法：干支历推算（年/月/日/时干支）与真太阳时校正、时辰与子时换算。聚合入口见 liuyao_engine.py。"""
 
 import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
 
@@ -12,44 +12,10 @@ from kernel_path import ensure_kernel_on_path as _ensure_kernel, kernel_dir
 
 _ensure_kernel(__file__)
 
-from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
-    ADVANCE_PAIRS,
-    BRANCH_ELEMENTS,
-    BREAK_PAIRS,
-    CHONG_PAIRS,
-    EARTHLY_BRANCHES,
-    EIGHT_PALACES,
-    BAGUA_LINES,
-    HEAVENLY_STEMS,
-    HEXAGRAM_TRIGRAMS,
-    HE_PAIRS,
-    KE_CYCLE,
-    NAJIA_BRANCHES,
-    RETREAT_PAIRS,
-    SHENG_CYCLE,
-    STEM_ELEMENTS,
-    TOMB_MAP,
-)
-
-from yishu_core.najia import najia_branch  # noqa: E402
-
-import argparse
-
-import json
-
 import math
-
 import os
-
-import random
-
 import sys
-
-from datetime import datetime, timedelta
-
-from pathlib import Path
-
-from yishu_core.runtime import force_utf8_stdio as _force_utf8_stdio  # noqa: E402
+from datetime import datetime
 
 
 def _load_ganzhi_kernel():
@@ -102,44 +68,6 @@ def get_hour_stem_branch(day_stem, hour):
     return _GANZHI.hour_ganzhi_of(day_stem, hour)
 
 
-def ganzhi_moment(dt):
-    """完整四柱 + 节气上下文，供需要交节信息的上层调用。"""
-    return _GANZHI.ganzhi_of(dt if isinstance(dt, datetime) else _noon(*dt[:3]),
-                             boundary=GANZHI_BOUNDARY)
-
-
-def crosscheck_optional_libraries(years=range(2000, 2031)):
-    """若装了 lunar-python / sxtwl，抽样交叉核对内核结果；不一致则返回差异清单。
-
-    这两个库只是旁证，不参与主计算（主计算需自检、可移植、无编译依赖）。
-    """
-    diffs = []
-    try:
-        from lunar_python import Solar
-    except ImportError:
-        Solar = None
-    if Solar is None:
-        return diffs
-    for y in years:
-        for m, d in ((1, 5), (2, 2), (2, 6), (3, 15), (5, 6), (6, 21), (8, 8),
-                     (10, 9), (11, 8), (12, 22)):
-            try:
-                lunar = Solar.fromYmd(y, m, d).getLunar()
-            except Exception:
-                continue
-            mine = _GANZHI.ganzhi_of(_noon(y, m, d), boundary=GANZHI_BOUNDARY)
-            theirs = (lunar.getYearInGanZhiByLiChun() if GANZHI_BOUNDARY == "day"
-                      else lunar.getYearInGanZhi())
-            if mine.year_ganzhi != theirs or mine.month_ganzhi != lunar.getMonthInGanZhi() \
-                    or mine.day_ganzhi != lunar.getDayInGanZhi():
-                diffs.append({
-                    "date": f"{y}-{m:02d}-{d:02d}",
-                    "kernel": f"{mine.year_ganzhi} {mine.month_ganzhi} {mine.day_ganzhi}",
-                    "library": f"{theirs} {lunar.getMonthInGanZhi()} {lunar.getDayInGanZhi()}",
-                })
-    return diffs
-
-
 def apply_true_solar_time(year, month, day, hour, longitude, standard_longitude=120.0):
     """
     真太阳时校正
@@ -164,7 +92,6 @@ def apply_true_solar_time(year, month, day, hour, longitude, standard_longitude=
     # 应用到输入时间
     total_minutes = hour * 60 + int(total_offset)
 
-    # Handle rollover
     while total_minutes < 0:
         total_minutes += 1440
     while total_minutes >= 1440:

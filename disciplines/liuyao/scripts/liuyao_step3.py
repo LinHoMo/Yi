@@ -7,77 +7,35 @@ _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
-from kernel_path import ensure_kernel_on_path as _ks_ensure, kernel_dir
+from kernel_path import ensure_kernel_on_path as _ks_ensure
 
 _ks_ensure(__file__)
 
-from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
-    ADVANCE_PAIRS,
-    BRANCH_ELEMENTS,
-    BREAK_PAIRS,
-    CHONG_PAIRS,
-    EARTHLY_BRANCHES,
-    EIGHT_PALACES,
-    HEAVENLY_STEMS,
-    HEXAGRAM_TRIGRAMS,
-    HE_PAIRS,
-    KE_CYCLE,
-    NAJIA_BRANCHES,
-    RETREAT_PAIRS,
-    SHENG_CYCLE,
-    STEM_ELEMENTS,
-    TOMB_MAP,
-    palace_of_key,
-    EARTHLY_BRANCHES as BRANCHES,
-)
+from yishu_core.symbols import BRANCH_ELEMENTS, KE_CYCLE, SHENG_CYCLE  # noqa: E402  象数基元唯一真值源
 
-from datetime import datetime, timedelta
 
-import json
 
-import re
 
-from pathlib import Path
 
-from chain_tables import (_BRANCH_CLASHES, _BRANCH_CLASH_MAP, _CHART_TAIL,
-    _ELEMENT_PEAK_MONTHS, _HE_MAP, _HEXAGRAM_HARMONY_SET, _HEX_NAMES,
-    _QUESTION_USE_GOD_BASIS, _QUESTION_USE_GOD_MAP, _USE_GOD_LAYER_CITATIONS,
-    HEXAGRAM_LIUCHONG, HEXAGRAM_LIUHE, JUE_MAP, SAN_HE, TRIGRAM_ELEMENT,
-    USE_GOD_RELATIONSHIPS, _60_CYCLE_BASE)
+from chain_tables import _BRANCH_CLASHES
 
-from liuyao_narrate import (_build_reasoning_chain,
-    _get_hexagram_body_summary_note, find_classical_quotes)
 
-from liuyao_timing import predict_timing_core as _predict_timing
 
-from narrative_rules import strength_reason, strength_polarity
 
 from narrative_utils import (  # noqa: E402
     _branch_element,
+    _combined_strength as _combined_strength_for_hm,
     _evaluate_fu_cang_strength,
     _is_chong,
     _is_he,
     _pos_to_name,
     _twelve_growth_at_day,
-    CLASSICAL_INTERPRETATIONS as CINTERP,
     element_strength_in_month,
-    get_changed_hexagram_branch,
-    get_elements_for_relation,
-    get_empty_branches,
-    get_palace_first_hexagram,
-    get_relation_from_element,
     get_twelve_growth_stage,
-    note_text,
     safe_get,
     strength_to_score,
-    STEP5_CONFIDENCE as CONF_TXT,
-    STEP5_FACTOR_REASONS as FREASON,
-    STEP5_SPIRIT_REASONS as SPIRIT_TXT,
-    STEP5_VERDICT_DESCS as VDESC,
-    STEP5_YINGQI as YINGQI_TXT,
     STRENGTH_SUMMARY_SAY,
     VOID_KIND_LABELS,
-    vdesc,
 )
 
 # ─── 全局变量 ───
@@ -89,32 +47,7 @@ from liuyao_step2 import _element_to_relation  # 跨文件引用
 
 
 def step3_analyze_strength(r: dict) -> dict:
-    """
-    Step 3: 断旺 — 分析用神旺衰（最关键步骤）。
-
-    使用「旺相休囚死」框架，结合月建、日辰综合判断。
-
-    规则：
-    ┌────────┬──────────────────────────────────┐
-    │ 状态   │ 条件                              │
-    ├────────┼──────────────────────────────────┤
-    │ 旺(5)  │ 用神五行 同于 月建五行             │
-    │ 相(4)  │ 月建五行 生 用神五行               │
-    │ 休(3)  │ 用神五行 生 月建五行               │
-    │ 囚(2)  │ 用神五行 克 月建五行               │
-    │ 死(1)  │ 月建五行 克 用神五行               │
-    └────────┴──────────────────────────────────┘
-
-    日辰修正：
-    - 日辰生用神: +1
-    - 日辰克用神: -1
-    - 日辰同五行: +0.5
-
-    特殊状态：
-    - 旬空：有气论70%（旺相+旬空）、休囚论30%（休囚+旬空）
-    - 月破：直接降为1（死）
-    - 暗动：旺相×0.7, 休囚×0.3
-    """
+    """Step 3 断旺：旺相休囚死 + 日辰修正（生+1/克-1/同+0.5）+ 旬空/月破/暗动。"""
     # 获取分析上下文
     step1_data = safe_get(r, "_step1_data", default={})
     step2_data = safe_get(r, "_step2_data", default={})
@@ -274,7 +207,6 @@ def step3_analyze_strength(r: dict) -> dict:
         strength_level = "极弱"
 
     # ---------- 3.10b: 暗动检测（全卦静爻） ----------
-    # Extract yuan_shen/ji_shen elements from step2_data for hidden movement role check
     yuan_shen_elem = safe_get(step2_data, "yuan_shen", "element", default="")
     ji_shen_elem = safe_get(step2_data, "ji_shen", "element", default="")
     yuan_shen_relation = _element_to_relation(yuan_shen_elem, palace_element) if yuan_shen_elem else ""
@@ -292,7 +224,6 @@ def step3_analyze_strength(r: dict) -> dict:
             hm_name = hm.get("name", "")
             hm_branch = hm.get("branch", "")
             hm_weight = hm.get("weight", 0.5)
-            # Check if this hidden-moved yao is the use god
             if hm_pos == selected_use_god.get("position"):
                 hidden_movement_modifier += 0.3 * hm_weight / 0.7
                 hidden_movement_reason += f"用神{hm_name}暗动（{hm_branch}受{day_branch}冲），有动意；"
@@ -419,65 +350,13 @@ def step3_analyze_strength(r: dict) -> dict:
     }
 
 
-def _combined_strength_for_hm(element: str, month_element: str, day_element: str) -> str:
-    """
-    综合月建日辰判断旺衰（暗动专用轻量版）。
-    返回: "旺", "相", "中和", "偏弱", "衰"
-    """
-    m = element_strength_in_month(element, month_element)
-    d = element_strength_in_month(element, day_element)
-    strength_val = {"旺": 5, "相": 4, "休": 3, "囚": 2, "死": 1, "未知": 0}
-    total = strength_val.get(m, 0) + strength_val.get(d, 0)
-
-    if total >= 9:
-        return "旺"
-    elif total >= 7:
-        return "相"
-    elif total >= 5:
-        return "中和"
-    elif total >= 3:
-        return "偏弱"
-    else:
-        return "衰"
-
-
 def _detect_hidden_movement(
     day_branch: str,
     yao_lines: list[dict],
     month_element: str = "",
     day_element: str = "",
 ) -> list[dict]:
-    """
-    Detect 暗动 (hidden movement) — static yao that are genuinely clashed by 日辰.
-
-    Rule from 《卜筮正宗》《增删卜易》:
-    - 旺相之爻遇日冲 → 暗动（强，~70%明动）
-    - 中和之爻遇日冲 → 暗动（中，~40%）
-    - 休囚之爻遇日冲 → 暗动（弱，~30%——力微短暂）
-    - 月休囚+日冲+衰 → 日破（此爻彻底无用，零效力）
-
-    Only applies to 静爻 (static yao, not marked as moving by 6 or 9).
-    日破 yao are excluded from the result (weight=0 = no effect).
-
-    Parameters
-    ----------
-    day_branch : str
-        The day branch (e.g. "子", "午")
-    yao_lines : list[dict]
-        All 6 yao with their attributes including 'is_moving', 'earthly_branch',
-        'six_relation', 'position', 'nature' etc.
-    month_element : str
-        Five-element value of the month branch (for strength calculation)
-    day_element : str
-        Five-element value of the day branch (for strength calculation)
-
-    Returns
-    -------
-    list[dict]
-        Each hidden movement record with position, branch, type, source, role, weight.
-        日破 yao are excluded (zero effect).
-        Empty list if none detected.
-    """
+    """暗动检测（《卜筮正宗》《增删卜易》）：静爻遇日冲 → 旺%70/中%40/衰%30；月休囚+日冲=日破。"""
     if not day_branch or not yao_lines:
         return []
 
@@ -492,13 +371,11 @@ def _detect_hidden_movement(
 
     hidden_moved = []
     for yao in yao_lines:
-        # Skip explicit moving yao (already 明动)
         if yao.get("is_moving") or yao.get("moving"):
             continue
         yao_branch = yao.get("earthly_branch", "") or yao.get("branch", "")
         if not yao_branch:
             continue
-        # Check 六冲 relationship: day_branch clashes with yao_branch
         if _BRANCH_CLASHES.get(yao_branch) == day_branch:
             elem = _branch_element(yao_branch)
 
@@ -516,7 +393,6 @@ def _detect_hidden_movement(
             if weight == 0.0:
                 continue
 
-            # Determine the role for reporting
             relation = yao.get("six_relation", "")
             role = relation if relation else "静爻"
             hidden_moved.append({
@@ -594,7 +470,7 @@ def resolve_fu_cang_result(
     month_element: str,
     day_element: str,
 ) -> tuple:
-    """伏藏用神的早退分支。返回 (handled, result)；handled=False 时 result 为 None。"""
+    """伏藏用神早退分支，返回 (handled, result)。"""
     if not (not selected_use_god or selected_use_god.get("is_fu_cang")):
         return False, None
 
@@ -704,14 +580,7 @@ def compute_empty_modifier(
     yao_lines: list,
     god_month_score: float,
 ) -> dict:
-    """3.4 旬空修正：有气论 70% / 休囚论 30%，并判出旬有验加成。
-
-    旺衰权重之外另出「真空 / 假空」标签，口径见 data/rules/verdict_texts.json
-    #pattern_verdict_labels（逐字原文见 references/pattern_reference.md 格局十三）：
-      假空＝旬空 + 旺相（月建或日辰临旺相）+ 有生扶（月生／日生／动爻生），或日辰冲实；
-      真空＝旬空 + 月建休囚 + 日辰克用 + 无任何生扶（既无生扶又受日克，终难起）。
-    两者互斥；既非假空又不构成真空者，只标旬空、不给真空/假空断语（宁缺勿滥）。
-    """
+    """3.4 旬空：有气论70%/休囚论30% + 真空/假空标签（互斥，宁缺勿滥）。"""
     is_empty = selected_use_god.get("is_empty", False)
     empty_modifier = 1.0
     empty_modifier_reason = ""
@@ -824,11 +693,7 @@ def compute_an_dong(selected_use_god: dict, day_branch: str, god_month_score: fl
 
 
 def compute_twelve_growth(use_god_element: str, day_branch: str, step2_data: dict) -> dict:
-    """3.7 十二长生修正 + 3.7b 绝处逢生 / 绝地无援。
-
-    注意：原实现中 3.7b 依赖 3.7 块内解包出的 stage_name（twelve_growth 为真时才有），
-    两节必须同进同出，切分后由本函数一并返回。
-    """
+    """3.7 十二长生 + 3.7b 绝处逢生/绝地无援（同进同出）。"""
     twelve_growth = get_twelve_growth_stage(use_god_element, day_branch)
     twelve_growth_modifier = 0.0
     twelve_growth_reason = ""
@@ -871,11 +736,7 @@ def compute_twelve_growth(use_god_element: str, day_branch: str, step2_data: dic
 
 
 def compute_three_punishment(r: dict, use_god_branch: str) -> dict:
-    """3.10c 三刑修正。
-
-    P0-4 修正：三刑只计入"用神自身参与"的刑（branches_present 含用神支）。
-    卦内其他爻的刑（如无关自刑）属于整体格局，不应扣在用神旺衰分上。
-    """
+    """3.10c 三刑修正：只计用神自身参与的刑（不含无关自刑）。"""
     tp_modifier = 0.0
     tp_issues = []
     advanced_for_tp = r.get("advanced_analysis", {})

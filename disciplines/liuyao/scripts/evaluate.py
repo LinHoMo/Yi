@@ -41,7 +41,7 @@ for _p in (str(ROOT / "scripts"), str(kernel_dir(__file__))):
         sys.path.insert(0, _p)
 
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
-from yishu_core.eval import verdict_direction, pct, run_eval, report as _report  # noqa: E402
+from yishu_core.eval import verdict_direction, run_eval, report as _report  # noqa: E402
 from yishu_core.symbols import EARTHLY_BRANCHES  # noqa: E402  地支序唯一真值源
 from liuyao_timing import relative_window, resolve_case_anchor, date_in_window  # noqa: E402
 import case_runner  # noqa: E402
@@ -50,10 +50,13 @@ CASES = ROOT / "data" / "cases" / "classical_cases.json"
 OUT_DIR = ROOT / "data" / "cases"
 
 DAY_CHARS = EARTHLY_BRANCHES
+# 进正则字符类前必须先 "".join：DAY_CHARS 是 core 的 list，直接插值会把 list 的
+# repr 写进去，字符类在第一个 ] 处提前闭合、正则永不匹配。
+BRANCH_CLASS = "".join(DAY_CHARS)
 
 # 应期的单位必须对上才算命中。旧口径只比地支字符，基准写"未月"而引擎给"未日"
 # 也判为主应期命中——三个单位互相顶替等于给应期白送分，这是外部集 17.1% 仍偏高的原因之一。
-YQ_UNIT_RE = re.compile(f"([{DAY_CHARS}])(年|月|日|時|时)")
+YQ_UNIT_RE = re.compile(f"([{BRANCH_CLASS}])(年|月|日|時|时)")
 
 
 def _expected_unit(label: str) -> str:
@@ -527,7 +530,7 @@ def main() -> int:
     ap.add_argument("--split", choices=["tune", "holdout", "yingqi_holdout",
                                         "wikisource_holdout", "wikisource_direction",
                                         "huozhulin_holdout", "huozhulin_qualitative",
-                                        "bushi_zhengzong_holdout", "all"],
+                                        "suigui_holdout", "bushi_zhengzong_holdout", "all"],
                     default="all")
     ap.add_argument("--ids", nargs="*", help="指定案例 ID，优先于 --split")
     ap.add_argument("--stage", choices=["run", "score", "all"], default="all")

@@ -20,7 +20,61 @@ for _p in (str(CORE), str(Path(__file__).resolve().parent)):
         sys.path.insert(0, _p)
 
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
-from pattern import strength_and_pattern, dayun_table, liunian_table, dayun_liunian_interactions  # noqa: E402
+from yishu_core.relations import LIUQIN_TO_SHISHEN  # noqa: E402  单源：官鬼=夫星、子孙=子星
+from pattern import (  # noqa: E402
+    strength_and_pattern,
+    dayun_table,
+    liunian_table,
+    dayun_liunian_interactions,
+    san_hui_present,
+    pillar_relations,
+    tai_yuan,
+    liuyue_table,
+    xiao_yun_table,
+    tian_ke_di_chong,
+    ten_god_combos,
+    tong_guan,
+)
+
+
+def female_fu_zi(chart_json: dict) -> dict | None:
+    """女命夫子星（机械标注，不批吉凶）。
+
+    《渊海子平·女命论》：女命以官杀为夫星（正官正夫、七杀偏夫），以食伤为子星
+    （食神为女、伤官为男）。机械扫描四柱天干 `ten_god` 与地支藏干 `ten_gods`，
+    标出夫星/子星所在柱与位置；不评旺衰吉凶（AGENTS.md 铁律三）。男命不调用。
+    夫星/子星取法绑定 core.relations.LIUQIN_TO_SHISHEN 单源，不另写字面量。
+    """
+    birth = chart_json.get("birth") or {}
+    if birth.get("gender") != "女":
+        return None
+    pillars = chart_json.get("pillars") or {}
+    factors = chart_json.get("factors") or {}
+    # 夫星=官鬼(正官/七杀)；子星=子孙(食神/伤官)
+    fu_stars = set(LIUQIN_TO_SHISHEN.get("官鬼") or ())
+    zi_stars = set(LIUQIN_TO_SHISHEN.get("子孙") or ())
+    fu_hits, zi_hits = [], []
+    for name, p in pillars.items():
+        tg = (p or {}).get("ten_god") or ""
+        if tg in fu_stars:
+            fu_hits.append({"柱": name, "位": "天干", "十神": tg})
+        if tg in zi_stars:
+            zi_hits.append({"柱": name, "位": "天干", "十神": tg})
+    for name, f in factors.items():
+        for cg in (f or {}).get("ten_gods") or []:
+            tg = (cg or {}).get("ten_god") or ""
+            layer = (cg or {}).get("layer") or ""
+            if tg in fu_stars:
+                fu_hits.append({"柱": name, "位": f"藏干({layer})", "十神": tg})
+            if tg in zi_stars:
+                zi_hits.append({"柱": name, "位": f"藏干({layer})", "十神": tg})
+    return {
+        "gender": "女",
+        "夫星": fu_hits,
+        "子星": zi_hits,
+        "basis": "《渊海子平·女命论》：官杀为夫星（正官正夫、七杀偏夫），"
+                 "食伤为子星（食神女、伤官男）；仅机械标注所在，不评旺衰吉凶",
+    }
 
 
 def analyze(chart_json: dict) -> dict:
@@ -34,6 +88,22 @@ def analyze(chart_json: dict) -> dict:
     # 调候用神（《穷通宝鉴》查表结果透出到 analyze 顶层；无明文的格为 None）
     result["tiaohou"] = sp.get("tiaohou")
 
+    # 四柱结构补充因子（三会方局 / 胎元 / 流月 / 小运 / 天克地冲 / 十神组合）——
+    # 均为机械结构标签，只出结构名与依据，不批吉凶（AGENTS.md 铁律三）。
+    month_gz = (pillars.get("month") or {}).get("ganzhi") or ""
+    year_stem = (pillars.get("year") or {}).get("stem") or ""
+    day_stem = (pillars.get("day") or {}).get("stem") or ""
+    san_hui = san_hui_present(pillars)
+    pillar_rel = pillar_relations(result)
+    tai = tai_yuan(month_gz)
+    liuyue = liuyue_table(year_stem, day_stem, 12)
+    xiaoyun = xiao_yun_table(result, 12)
+    tkdc = tian_ke_di_chong(result, dayun=dayun, liunian=liunian)
+    combos = ten_god_combos(result, strength=sp.get("strength") or "")
+    tg = tong_guan(result)
+    # 女命夫子星（机械标注；男命返回 None）
+    ffz = female_fu_zi(result)
+
     summary = {
         "四柱": {k: (v or {}).get("ganzhi") for k, v in pillars.items()},
         "日主": (pillars.get("day") or {}).get("stem"),
@@ -43,6 +113,7 @@ def analyze(chart_json: dict) -> dict:
         "格局": sp.get("pattern"),
         "喜用": "、".join(sp.get("useful_gods") or []),
         "空亡": result.get("xunkong") or [],
+        "胎元": (tai or {}).get("ganzhi"),
     }
 
     verdicts = [
@@ -76,12 +147,61 @@ def analyze(chart_json: dict) -> dict:
             "label": "空亡 " + "、".join(result["xunkong"]),
             "basis": "日柱所在旬之空亡（core.symbols.xunkong_of）",
         })
+    if san_hui:
+        verdicts.append({
+            "code": "san_hui",
+            "label": "三会 " + "、".join(f"{x['element']}局" for x in san_hui),
+            "basis": san_hui[0]["basis"],
+        })
+    if pillar_rel:
+        verdicts.append({
+            "code": "pillar_relations",
+            "label": "四柱干支关系 " + "、".join(r["text"] for r in pillar_rel),
+            "basis": pillar_rel[0]["basis"],
+        })
+    if tai:
+        verdicts.append({"code": "tai_yuan", "label": f"胎元 {tai['ganzhi']}",
+                         "basis": tai["basis"]})
+    if combos:
+        verdicts.append({
+            "code": "ten_god_combo",
+            "label": "十神组合 " + "、".join(c["name"] for c in combos),
+            "basis": "；".join(c["basis"] for c in combos),
+        })
+    if tkdc:
+        verdicts.append({
+            "code": "tian_ke_di_chong",
+            "label": f"天克地冲 {len(tkdc)} 处",
+            "basis": "运/年柱与日柱天干相克且地支相冲（《渊海子平》）；只标记不批吉凶",
+        })
+    if tg:
+        verdicts.append({
+            "code": "tong_guan",
+            "label": "通关/关隔 " + "、".join(t["name"] for t in tg),
+            "basis": tg[0]["basis"],
+        })
+    if ffz:
+        verdicts.append({
+            "code": "female_fu_zi",
+            "label": f"女命夫星 {len(ffz['夫星'])} 处 / 子星 {len(ffz['子星'])} 处",
+            "basis": ffz["basis"],
+        })
+
+    result["female_fu_zi"] = ffz
 
     return {
         **result,
         "chart_summary": summary,
         "strength": sp,
         "dayun": dayun,
+        "san_hui": san_hui,
+        "pillar_relations": pillar_rel,
+        "tai_yuan": tai,
+        "liu_yue": liuyue,
+        "xiao_yun": xiaoyun,
+        "tian_ke_di_chong": tkdc,
+        "ten_god_combos": combos,
+        "tong_guan": tg,
         "conclusion": {
             "方向": "",
             "verdicts": verdicts,
@@ -103,6 +223,13 @@ def analyze(chart_json: dict) -> dict:
             "dayun": dayun,
             "liunian": liunian,
             "dayun_liunian": interactions[:12],
+            "san_hui": san_hui,
+            "pillar_relations": [r["text"] for r in pillar_rel],
+            "tai_yuan": (tai or {}).get("ganzhi"),
+            "ten_god_combos": [c["name"] for c in combos],
+            "tian_ke_di_chong": [t["text"] for t in tkdc],
+            "tong_guan": [t["label"] for t in tg],
+            "female_fu_zi": ffz,
         },
     }
 

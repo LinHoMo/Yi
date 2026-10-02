@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
-"""命·金标准指纹：固定 6 样例的强弱/格局/大运字段快照。"""
+"""命·金标准指纹：固定 6 样例的强弱/格局/大运字段快照。
+
+   python dev_tools/golden.py capture "理由"  # 有意漂移后落基线（必须给理由）
+   python dev_tools/golden.py verify           # 默认；比对指纹，漂移退出码 1
+"""
 from __future__ import annotations
 
-import argparse
 import hashlib
-import json
 import sys
 from pathlib import Path
 
@@ -14,8 +16,7 @@ for _p in (str(DISC / "scripts"), str(CORE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from yishu_core.runtime import force_utf8_stdio  # noqa: E402
-
+OUT = DISC / "scratch" / "golden_ming_before.json"
 DIGEST = DISC / "data" / "golden" / "digest.json"
 
 # 覆盖身旺/身弱/中和与不同月令格的固定样例
@@ -57,45 +58,14 @@ def fingerprint() -> list[dict]:
     return out
 
 
-def digest() -> str:
-    blob = json.dumps(fingerprint(), ensure_ascii=False, sort_keys=True, default=str)
-    return hashlib.sha256(blob.encode("utf-8")).hexdigest()[:16]
-
-
 def main() -> int:
-    force_utf8_stdio()
-    ap = argparse.ArgumentParser(description="命·金标准指纹")
-    ap.add_argument("mode", nargs="?", default="verify", choices=("capture", "verify"))
-    ap.add_argument("reason", nargs="?", help="capture 理由")
-    args = ap.parse_args()
-
-    d = digest()
-    if args.mode == "capture":
-        if not args.reason:
-            print("capture 必须写理由", file=sys.stderr)
-            return 1
-        DIGEST.parent.mkdir(parents=True, exist_ok=True)
-        DIGEST.write_text(
-            json.dumps(
-                {"fingerprint": d, "reason": args.reason, "n_samples": len(SAMPLES)},
-                ensure_ascii=False,
-                indent=2,
-            )
-            + "\n",
-            encoding="utf-8",
-        )
-        print(f"captured {d} n={len(SAMPLES)}")
-        return 0
-
-    if not DIGEST.exists():
-        print("缺 digest.json，先 capture", file=sys.stderr)
-        return 1
-    base = json.loads(DIGEST.read_text(encoding="utf-8")).get("fingerprint")
-    if d != base:
-        print(f"指纹漂移: now={d} base={base}", file=sys.stderr)
-        return 1
-    print(f"指纹一致 {d}")
-    return 0
+    from yishu_core.golden_kit import run
+    return run(
+        "命科（四柱）",
+        what="命科金标准指纹基线（强弱/格局/大运逐字段）",
+        how='改动引擎行为后跑 python dev_tools/golden.py capture "理由"；'
+            "机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）",
+        fingerprint=fingerprint, out=OUT, digest_path=DIGEST)
 
 
 if __name__ == "__main__":

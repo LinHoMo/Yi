@@ -7,7 +7,6 @@
 """
 from __future__ import annotations
 
-import os
 import sys
 from pathlib import Path
 
@@ -46,12 +45,3 @@ def ensure_kernel_on_path(start_file: str | Path) -> Path:
 def repo_root(start_file: str | Path) -> Path:
     """仓库根（含 core/ 与 disciplines/ 的那一级）。"""
     return kernel_dir(start_file).parent
-
-
-def discipline_root(start_file: str | Path) -> Path:
-    """当前学科目录（含 scripts/、data/、SKILL.md 的那一级）。"""
-    p = Path(start_file).resolve()
-    for cand in (p, *p.parents):
-        if (cand / "SKILL.md").is_file():
-            return cand
-    return Path(start_file).resolve().parents[1]

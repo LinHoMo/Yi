@@ -5,25 +5,37 @@
 """
 from __future__ import annotations
 
-import argparse
 import hashlib
 import json
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "scripts"))
+sys.path[:0] = [str(ROOT / "scripts"), str(ROOT.parents[1] / "core")]
 
 KETABLE = ROOT / "data" / "ketables.json"
+OUT = ROOT / "scratch" / "golden_before.json"
 DIGEST = ROOT / "data" / "golden" / "digest.json"
 
 
-def fingerprint() -> dict:
+def fingerprint() -> list[dict]:
     table = json.loads(KETABLE.read_text(encoding="utf-8"))
     courses = table["courses"]
-    rows = {"n": len(courses),
-            "names": {k: v["name"] for k, v in sorted(courses.items())},
-            "xiang": {k: v["xiang"] for k, v in sorted(courses.items())}}
+    # 机械层：课表**全字段**（含卦宫与标注组原文）——原指纹只罩 name/xiang，
+    # 象曰/詩曰被静默并入相邻课这类数据漂移不会报警（曾漏到用户眼前）。
+    canon = json.dumps({
+        "courses": courses,
+        "appendix": table.get("appendix") or [],
+        "gongs": table.get("gongs") or [],
+    }, ensure_ascii=False, sort_keys=True)
+    row = {"case": "ketables-124",
+           "n": len(courses),
+           "names": {k: v["name"] for k, v in sorted(courses.items())},
+           "xiang": {k: v["xiang"] for k, v in sorted(courses.items())},
+           "gong": {k: v.get("gong", "") for k, v in sorted(courses.items())},
+           "notes": sum(len(v.get("notes") or []) for v in courses.values()),
+           "appendix": [a.get("title") for a in table.get("appendix") or []],
+           "table_sha": hashlib.sha256(canon.encode("utf-8")).hexdigest()[:16]}
     # 四段契约的 analyze / narrate 段也要进指纹：原指纹只罩课表数据，
     # 改 analyze 或 narrate 的措辞不会报警（曾漏到用户眼前）。
     from analyze import analyze
@@ -42,38 +54,18 @@ def fingerprint() -> dict:
             nrows.append(f"{key}:ERR:{type(exc).__name__}")
             continue
         nrows.append(f"{key}:{hashlib.sha256(text.encode('utf-8')).hexdigest()[:12]}")
-    rows["narrate"] = nrows
-    return rows
-
-
-def digest_of(rows: dict) -> str:
-    return hashlib.sha256(json.dumps(rows, ensure_ascii=False,
-                                     sort_keys=True).encode("utf-8")).hexdigest()[:16]
+    row["narrate_lines"] = nrows
+    return [row]
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="灵棋经金标准指纹（capture/verify）")
-    ap.add_argument("action", nargs="?", default="verify", choices=["capture", "verify"])
-    ap.add_argument("reason", nargs="?", default="")
-    args = ap.parse_args()
-    rows = fingerprint()
-    digest = digest_of(rows)
-    if args.action == "capture":
-        if not args.reason:
-            print("capture 必须写理由（AGENTS.md §四）")
-            return 2
-        DIGEST.parent.mkdir(parents=True, exist_ok=True)
-        DIGEST.write_text(json.dumps({"digest": digest, "reason": args.reason,
-                                      "n": rows["n"]}, ensure_ascii=False, indent=1),
-                          encoding="utf-8")
-        print(f"课表 {rows['n']} 课｜指纹 {digest}｜已落盘")
-        return 0
-    base = json.loads(DIGEST.read_text(encoding="utf-8"))
-    if base["digest"] == digest:
-        print(f"指纹一致 {digest}（{rows['n']} 课）")
-        return 0
-    print(f"× 指纹漂移：基线 {base['digest']} ≠ 现在 {digest}")
-    return 1
+    from yishu_core.golden_kit import run
+    return run(
+        "灵棋经",
+        what="灵棋经金标准指纹基线（124 课全量表 + analyze/narrate 逐课哈希）",
+        how='改动引擎行为后跑 python dev_tools/golden.py capture "理由"；'
+            "机械层漂移=课表/analyze 结构变化，措辞层漂移=narrate 断语变化（两层分列归因）",
+        fingerprint=fingerprint, out=OUT, digest_path=DIGEST)
 
 
 if __name__ == "__main__":

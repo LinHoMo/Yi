@@ -4,7 +4,8 @@
 灵棋法（《灵棋经》书源，data/sources/ling-qi-jing.wikitext.txt）：
   十二枚棋分上/中/下三部（各四枚），掷之数「面」：每部 0..4（全零不成课），
   共 124 课。本段只做：(三部掷数) → 课号 → 查 data/ketables.json 得课名/象/卦注/
-  象曰/詩曰——全部逐字录自书源（铁律三），代码零断语字面量。
+  卦宫/标注组（象曰/詩曰/又/又曰/許曰）——全部逐字录自书源（铁律三），
+  代码零断语字面量。
 """
 from __future__ import annotations
 
@@ -47,8 +48,8 @@ def chart(up: int, mid: int, down: int, question: str = "") -> dict:
         "ke_name": course["name"],
         "xiang": course["xiang"],
         "zhu": course["zhu"],
-        "xiangyue": course["xiangyue"],
-        "shiyue": course["shiyue"],
+        "gong": course["gong"],
+        "notes": course["notes"],
         "men_trigger": f"三部掷数：上{up} 中{mid} 下{down} → {key}",
         "men_verified": True,
         "day_kind": "",

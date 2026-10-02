@@ -12,6 +12,7 @@ if str(CORE) not in sys.path:
     sys.path.insert(0, str(CORE))
 
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
+from yishu_core.ziwei_tables import PALACES  # noqa: E402
 
 from narrate import narrate  # noqa: E402
 
@@ -24,10 +25,7 @@ def render(analyze_out: dict) -> str:
     palaces = analyze_out.get("palaces") or {}
     if palaces:
         lines += ["", "## 十二宫星曜", "", "| 宫 | 主星 | 辅星 | 四化 |", "|---|---|---|---|"]
-        for pname in (
-            "命宫", "兄弟", "夫妻", "子女", "财帛", "疾厄",
-            "迁移", "交友", "官禄", "田宅", "福德", "父母",
-        ):
+        for pname in PALACES:   # 宫序唯一真值源在 core.ziwei_tables.PALACES
             p = palaces.get(pname, {})
             mh = "、".join(p.get("main_stars") or []) or "—"
             ah = "、".join(p.get("aux_stars") or []) or "—"

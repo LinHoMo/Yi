@@ -1032,7 +1032,7 @@
         "use_god_wangshuai": "旺",
         "use_god_wangshuai_basis": "机械派生：用神卯(木)临寅(木)月",
         "use_god_muku": "不入墓",
-        "use_god_muku_basis": "机械判定：木墓在未，日午/月寅",
+        "use_god_muku_basis": "机械判定：木墓在未，日午/月寅，动墓/化墓另核动爻",
         "use_god_six_spirit": "勾陈",
         "use_god_six_spirit_basis": "机械派生：丙日2爻按六神起例"
       },
@@ -1183,7 +1183,7 @@
         "use_god_wangshuai": "相",
         "use_god_wangshuai_basis": "机械派生：用神申(金)临未(土)月",
         "use_god_muku": "不入墓",
-        "use_god_muku_basis": "机械判定：金墓在丑，日戌/月未",
+        "use_god_muku_basis": "机械判定：金墓在丑，日戌/月未，动墓/化墓另核动爻",
         "use_god_six_spirit": "玄武",
         "use_god_six_spirit_basis": "机械派生：戊日4爻按六神起例"
       },
@@ -1226,7 +1226,7 @@
         "use_god_wangshuai": "相",
         "use_god_wangshuai_basis": "机械派生：用神寅(木)临亥(水)月",
         "use_god_muku": "不入墓",
-        "use_god_muku_basis": "机械判定：木墓在未，日子/月亥",
+        "use_god_muku_basis": "机械判定：木墓在未，日子/月亥，动墓/化墓另核动爻",
         "use_god_six_spirit": "朱雀",
         "use_god_six_spirit_basis": "机械派生：甲日2爻按六神起例"
       },

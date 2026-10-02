@@ -1,6 +1,4 @@
-#!/usr/bin/env pyt
-
-# 本文件为拆分后的聚合入口：子模块见 engine_*/chain_*/classical_*，纯搬移不改逻辑。
+# 本文件为聚合入口：子模块见 engine_*/chain_*/classical_*。
 import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
 
 _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
@@ -8,32 +6,38 @@ _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
-from kernel_path import ensure_kernel_on_path as _ensure_kernel, kernel_dir
+from kernel_path import ensure_kernel_on_path as _ensure_kernel
 
 _ensure_kernel(__file__)
 
-from yishu_core.najia import najia_branch
 
-from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
-    ADVANCE_PAIRS,
-    BRANCH_ELEMENTS,
-    BREAK_PAIRS,
-    CHONG_PAIRS,
-    EARTHLY_BRANCHES,
-    EIGHT_PALACES,
-    HEAVENLY_STEMS,
-    HEXAGRAM_TRIGRAMS,
-    HE_PAIRS,
-    KE_CYCLE,
-    NAJIA_BRANCHES,
-    RETREAT_PAIRS,
-    SHENG_CYCLE,
-    STEM_ELEMENTS,
-    TOMB_MAP,
+
+from chart_tables import SIX_SPIRIT_PROPERTIES
+from classical_enhancements import (
+    analyze_hidden_spirits,
+    analyze_hidden_spirit_emergence,
+    analyze_hidden_movement,
+    analyze_wandering_returning_soul,
+    analyze_monthly_break,
+    analyze_triple_combo,
+    analyze_advance_retreat,
+    analyze_twelve_growth,
+    analyze_desperate_relief,
+    analyze_du_fa_du_jing,
+    analyze_clash_harmony,
+    analyze_repetition,
+    analyze_repetition_deep,
+    analyze_hexagram_body,
+    analyze_element_strength,
+    analyze_three_punishments,
+    analyze_day_month_bonding,
+    analyze_six_breaks,
+    analyze_officer_tomb,
+    analyze_transformation_pattern,
+    analyze_flying_hidden_interaction,
+    spirit_yin_yang_factor,
+    analyze_nayin,
 )
-
-from chart_tables import BAGUA, PALACE_LOOKUP, SHENG_WO, KE_WO, SAN_HE, TWELVE_GROWTH_TABLES, TWELVE_GROWTH_STAGES, SIX_RELATIONS, TWELVE_GROWTH, THREE_PUNISHMENTS_CYCLIC, THREE_PUNISHMENTS_MUTUAL, SELF_PUNISHMENTS, THREE_PUNISHMENTS, YANG_STEMS, NAYIN_TABLE, NAYIN_TO_ELEMENT, _QUESTION_KEYWORDS_USE_GOD, TRANSFORMATION_PATTERNS, SIX_SPIRIT_PROPERTIES
-from classical_enhancements import _evaluate_hidden_spirit_emergence, analyze_hidden_spirits, analyze_hidden_spirit_emergence, analyze_hidden_movement, analyze_wandering_returning_soul, analyze_monthly_break, _check_broken_combo, analyze_triple_combo, analyze_advance_retreat, analyze_twelve_growth, analyze_desperate_relief, analyze_du_fa_du_jing, analyze_clash_harmony, analyze_repetition, analyze_repetition_deep, analyze_hexagram_body, analyze_element_strength, analyze_three_punishments, analyze_day_month_bonding, analyze_six_breaks, analyze_officer_tomb, analyze_transformation_pattern, analyze_flying_hidden_interaction, spirit_yin_yang_factor, analyze_nayin, _branch_element, determine_six_relation, is_ba_zu_he, is_ba_zu_chong, is_ba_zu_po, element_strength_in_month, element_strength_text, get_twelve_growth_stage, get_stages_of_interest, get_changed_hexagram_branch, get_month_strength_description, _pos_to_name, g_day_cn, _combined_strength, _strength_score, _find_stage_at, _find_use_god_positions, _get_use_god_strength_level, _score_fanyin, _score_fuyin, find_hexagram_body, _relation_element, _element_to_relation, _infer_use_god_category
 
 def enhance_reading(result_dict):
     """

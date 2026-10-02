@@ -1,6 +1,4 @@
-#!/usr/bin/e
-
-# 本文件为拆分后的聚合入口：子模块见 engine_*/chain_*/classical_*，纯搬移不改逻辑。
+# 本文件为聚合入口：子模块见 engine_*/chain_*/classical_*。
 import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
 
 _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
@@ -8,36 +6,16 @@ _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
-from kernel_path import ensure_kernel_on_path as _ensure_kernel, kernel_dir
+from kernel_path import ensure_kernel_on_path as _ensure_kernel
 
 _ensure_kernel(__file__)
 
-from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
-    ADVANCE_PAIRS,
-    BRANCH_ELEMENTS,
-    BREAK_PAIRS,
-    CHONG_PAIRS,
-    EARTHLY_BRANCHES,
-    EIGHT_PALACES,
-    BAGUA_LINES,
-    HEAVENLY_STEMS,
-    HEXAGRAM_TRIGRAMS,
-    HE_PAIRS,
-    KE_CYCLE,
-    NAJIA_BRANCHES,
-    RETREAT_PAIRS,
-    SHENG_CYCLE,
-    STEM_ELEMENTS,
-    TOMB_MAP,
-)
 
-from yishu_core.najia import najia_branch  # noqa: E402
 
 import argparse
 
 import json
 
-import math
 
 import os
 
@@ -47,14 +25,22 @@ import sys
 
 from datetime import datetime, timedelta
 
-from pathlib import Path
 
 from yishu_core.runtime import force_utf8_stdio as _force_utf8_stdio  # noqa: E402
 
-from chart_tables import BAGUA, _build_trigram_lookup, TRIGRAM_LOOKUP, BRANCH_NUMBERS, NAJIA_STEMS, HEXAGRAMS, _build_hexagram_lookup, HEXAGRAM_LOOKUP, HEXAGRAM_LINE_TEXTS, _build_palace_lookup, PALACE_LOOKUP, WORLD_POSITION, RESPONSE_POSITION, SIX_SPIRITS, DAY_STEM_SPIRIT_START
-from engine_calendar import _load_ganzhi_kernel, _GANZHI, GANZHI_BOUNDARY, _noon, get_year_stem_branch, get_month_stem_branch, get_day_stem_branch, get_hour_stem_branch, ganzhi_moment, crosscheck_optional_libraries, apply_true_solar_time, _hour_to_shichen, handle_zi_hour
-from engine_chart import coin_toss, time_based_hexagram, number_based_hexagram, yao_value_to_lines, find_trigram_name, find_hexagram, find_changed_hexagram, get_palace_info, get_palace_element, determine_six_relations, get_empty_death, get_six_spirit, get_yao_name, get_yao_symbol, build_hexagram_result
-from engine_format import generate_analysis_hints, format_text_output, format_reading_output, apply_depth_limit, _apply_depth_to_result
+from engine_calendar import apply_true_solar_time, handle_zi_hour
+from engine_chart import (
+    coin_toss,
+    time_based_hexagram,
+    number_based_hexagram,
+    build_hexagram_result,
+)
+from engine_format import (
+    format_text_output,
+    format_reading_output,
+    apply_depth_limit,
+    _apply_depth_to_result,
+)
 
 def parse_arguments():
     parser = argparse.ArgumentParser(

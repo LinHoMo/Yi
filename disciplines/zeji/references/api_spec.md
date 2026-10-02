@@ -39,21 +39,27 @@
 
 | 键 | 类型 | 说明 |
 |---|---|---|
-| `schema` | str | `zeji-analyze-v1` |
+| `schema` | str | `zeji-analyze-v2`（v1→v2 仅新增 `citations` 透出字段，判据字段未变） |
 | `activity` `question` | str | 事类与问事文本 |
 | `yi_hit` `ji_hit` | bool | 活动在建除/值神宜表（宜命中）、在建除忌表（忌命中） |
 | `chart_summary` | dict | 日期/星期/农历/干支/建除/日值神/黄道/值宿 |
 | `factors_detail` | dict | 三因子明细：jian_chu（神/宜/忌/含义）、huang_dao（神/黄道/宜/含义）、xiu（宿/全名/吉/凶） |
 | `hour` | dict\|None | 时辰值神（给了时支才出） |
 | `yi` `ji` | list[str] | 该活动此日有利/保留信号文本 |
+| `citations` | dict | 参考书证（**只透出，不参与评分**）：`通则`（引擎两项计分判据的书证篇目）、`本例`（本例事类的书证篇目）、`缺口`（《協紀辨方書》缺书登记）、`来源`（书源文件与 provenance）。数据源 `data/citations.json` |
 | `conclusion` | dict | 方向（吉/平/凶）/说明/得分/所本 |
 | `factors` | list[dict] | {因子, 权重, 判据, 所本}，四因子：建除20/黄黑道20/星宿20/吉凶40 |
+
+**两份数据的分工（不得互相替代）**：
+- `data/verdicts.json` = **判据唯一真值源**（建除/黄黑道/星宿宜忌表、裁决规则、措辞模板）；`basis_*` 引据属通行口径转述（原书库内无公版，见下）。
+- `data/citations.json` = **参考书证**（《玉匣記》逐字引文，带篇名与源文件行号），由 narrate 第三节照录，**不改判据、不参与评分**。
+- 书证门 `dev_tools/check.py::check_citations` 断言：引文逐字可回指书源、事类全覆盖、缺口登记齐备、书证不出现判据专属键。
 
 综合裁决（`data/verdicts.json::verdict_rule`）：黄黑道 ±1（日辰第一权）+ 建除对该活动宜 +1/忌 -1 + 星宿 ±0.5；总分 ≥1 吉、≤-1 凶、其间平。**此为学科自有规则应用，非古籍定论。**
 
 ## 三、narrate 段（`scripts/narrate.py`）
 
-**输入**：analyze 输出。**输出**：师傅口吻 markdown 正文（标题/结论/盘面要素/事类宜忌/口径收尾）。只装配 analyze 判据，不自行推断新结论。
+**输入**：analyze 输出。**输出**：师傅口吻 markdown 正文（一、盘面 / 二、事类宜忌 / 三、参考书证逐字引文 + 来源缺口 / 口径收尾）。只装配 analyze 判据与 `citations`，不自行推断新结论。若 `citations` 为空则不输出第三节。
 
 ## 四、render 段（`scripts/render.py`）
 
@@ -68,39 +74,8 @@ python scripts/render.py [analyze.json] [-o report.md]
 - 案例库：`data/cases/zeji_cases.json`（tune 10 / holdout 5 / excluded 2），expected 记：建除/日值神/黄道/值宿（历法真值，通书核对）+ 宜忌命中/方向/得分（规则应用）
 - 运行器：`scripts/case_runner.py`，输出 `{"cases": [...], "errors": [...]}` 契约
 - 评分器：`scripts/evaluate.py`（复用 `yishu_core.eval`），维度：建除20/日值神20/黄道10/值宿20/宜忌命中15/综合方向15
-- 质量门：`tools/check.py`（金标准指纹 + 冒烟 + tune/holdout 分别出分带 n）
+- 质量门：`tools/check.py`（金标准指纹 + 冒烟 + tune/holdout 分别出分带 n）；分科门 `dev_tools/check.py`（[1c] 书证门 + [1] 金标准 + [2] 冒烟 + [3] tune/holdout）
+- 书证构建器：`dev_tools/build_citations.py`（默认 dry-run，`--write` 落盘 `data/citations.json`；逐条断言引文为书源整行原文）
 
-## 六、MCP JSON-RPC 方法（`scripts/mcp_server.py`）
 
-四段脚本经共享路由 `tools/mcp_router.py` 以 **JSON-RPC 2.0 over stdio** 暴露；
-薄入口 `scripts/mcp_server.py` 锁定本学科，不另写推演。也可用
-`python tools/mcp_router.py --discipline zeji` 或 `--all`（四科同进程）。
 
-**传输**：每行一个 JSON 请求，每行一个 JSON 响应；`"id"` 缺省/为 null 视为通知、无响应。
-
-| 方法 | 参数（params） | 返回 |
-|---|---|---|
-| `zeji.chart` | 与 chart 段 `chart(params)` 同构的 dict | chart JSON |
-| `zeji.analyze` | 起盘参数 dict，或 `{"chart": <chart JSON>}` | analyze JSON |
-| `zeji.narrate` | 同 analyze | `{text, conclusion?, chart_summary?, question?}`，`text` 为唯一交付正文 |
-| `zeji.render` | 同 analyze；可选 `format`: `"md"`\|`"html"`（默认 md） | `{content, format}` |
-| `zeji.list_methods` / `list_methods` | — | `{methods: {名: 说明}}` |
-
-**format**：本 render 段仅出 Markdown；`format=html` 返回 JSON-RPC error `-32602`。
-
-**错误码**：`-32700` 解析 / `-32600` 非法请求 / `-32601` 方法不存在 / `-32602` 参数错误 / `-32603` 内部错误。
-
-```bash
-python scripts/mcp_server.py --help
-python scripts/mcp_server.py --list-methods
-python scripts/mcp_server.py --test-narrate          # 冒烟：演示盘 narrate
-python scripts/mcp_server.py                        # stdio 服务
-```
-
-JSON-RPC 示例：
-
-```json
-{"jsonrpc":"2.0","id":1,"method":"zeji.narrate","params":{"date":"2026-09-25","activity":"嫁娶","question":"结婚嫁娶吉否"}}
-{"jsonrpc":"2.0","id":2,"method":"zeji.render","params":{"date":"2026-09-25","activity":"嫁娶","question":"结婚嫁娶吉否","format":"md"}}
-{"jsonrpc":"2.0","id":3,"method":"list_methods","params":{}}
-```

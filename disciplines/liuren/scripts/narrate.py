@@ -45,6 +45,32 @@ def narrate(a: dict) -> str:
             f"- {row['pos']}传 {row['branch']}（乘{row.get('tianjiang') or '—'}"
             f"，遁{row.get('dun_gan') or '—'}）：{rel_txt}"
         )
+    tj = v.get("tianjiang") or {}
+    tj_verses = {row.get("tianjiang") for row in a.get("san_chuan") or []
+                 if row.get("tianjiang") and tj.get(row["tianjiang"])}
+    if tj_verses:
+        lines += ["", "**天将乘临歌诀**（书源引文，逐字照录；引擎不作判读）："]
+        for name in sorted(tj_verses, key=lambda n: list(tj).index(n)):
+            block = tj[name]
+            lines.append(f"> {name}（{block.get('head')}）：{block.get('verse')}")
+    richen = a.get("richen") or []
+    if richen:
+        lines += ["", "**日辰关系**（《六壬大全》卷三「日辰」歌赋；只报结构命中，不判吉凶）："]
+        for r in richen:
+            lines.append(f"- **{r['name']}**（{r.get('desc') or ''}）：{r.get('basis') or ''}")
+            if r.get("句"):
+                lines.append(f"  > {r['句']}（{r.get('出处') or ''}）")
+    kemu_hits = a.get("kemu") or []
+    kemu_rows = [h for h in kemu_hits if h.get("verse") or h.get("note")]
+    if kemu_rows:
+        lines += ["", "**课目**（诀文＝卷一「课目」歌诀逐字，释义＝卷七~卷十「课经集」"
+                      "定义句逐字；只报结构命中，不判吉凶）："]
+        for h in kemu_rows:
+            lines.append(f"- **{h['name']}**：{h.get('verse') or ''}")
+            if h.get("note"):
+                lines.append(f"  > {h['note']}（{h.get('note_src') or ''}）")
+            if h.get("partial"):
+                lines.append(f"  > 判据边界：{h['partial']}")
     lines += ["", "以上为机械排盘与结构标签，**不是吉凶断语**。"]
     lines += list(a.get("verdicts_note") or v.get("preamble") or [])
     return "\n".join(lines) + "\n"

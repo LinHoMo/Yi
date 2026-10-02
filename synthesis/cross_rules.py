@@ -15,8 +15,11 @@
 """
 from __future__ import annotations
 
-BU_DISCIPLINES = ("liuyao",)
-MING_DISCIPLINES = ("ming",)
+from yishu_core.report.request import DISCIPLINES
+
+# 命科＝定趋势节律，卜科＝决具体一事；分区只此一份，其余模块 import 本处。
+MING_DISCIPLINES = ("ming", "ziwei")
+BU_DISCIPLINES = tuple(d for d in DISCIPLINES if d not in MING_DISCIPLINES)
 
 # 卜科问这些主题＝越位问命（《周易》语境下命理与占卜各守其位）
 MING_DOMAIN_KEYWORDS = ("一生", "命运", "命理", "八字", "格局", "寿命",
@@ -146,6 +149,12 @@ def selfcheck() -> None:
     """金标准自检：五条规则逐条构造最小用例。"""
     def rec(direction, discipline="liuyao", asked="讨债能成否"):
         return {"discipline": discipline, "asked": asked, "direction": direction}
+
+    # 分区完备性：命科 ∪ 卜科 == 全科且不相交；ziwei 属命科，不再被判「未知学科」
+    assert not (set(MING_DISCIPLINES) & set(BU_DISCIPLINES)), "命卜分区相交"
+    assert set(MING_DISCIPLINES) | set(BU_DISCIPLINES) == set(DISCIPLINES), "命卜分区不完备"
+    ok, reason = domain_check(rec("平", discipline="ziwei", asked="今年事业如何"))
+    assert ok, f"ziwei 应属命科，却被判：{reason}"
 
     # 规则 1：越位
     ok, reason = domain_check(rec("吉", asked="我这一生的命运如何"))

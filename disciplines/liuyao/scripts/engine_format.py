@@ -1,8 +1,9 @@
+# -*- coding: utf-8 -*-
+"""六爻引擎输出格式化：文本输出与报告的拼装编排（报告各段落排版在 engine_format_report），另有分析提示生成与深度裁剪。聚合入口见 liuyao_engine.py。"""
+
 from __future__ import annotations
 import json
 from pathlib import Path as _P
-# -*- coding: utf-8 -*-
-"""六爻纳甲引擎：数据表 / 干支历与真太阳时 / 排盘核心 / 文本输出 / 历史遗留梅花与批量接口。（拆分自 liuyao_engine.py，纯搬移不改逻辑；聚合入口见 liuyao_engine.py）。"""
 
 import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
 
@@ -11,48 +12,22 @@ _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
-from kernel_path import ensure_kernel_on_path as _ensure_kernel, kernel_dir
+from kernel_path import ensure_kernel_on_path as _ensure_kernel
 
 _ensure_kernel(__file__)
 
-from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
-    ADVANCE_PAIRS,
-    BRANCH_ELEMENTS,
-    BREAK_PAIRS,
-    CHONG_PAIRS,
-    EARTHLY_BRANCHES,
-    EIGHT_PALACES,
-    BAGUA_LINES,
-    HEAVENLY_STEMS,
-    HEXAGRAM_TRIGRAMS,
-    HE_PAIRS,
-    KE_CYCLE,
-    NAJIA_BRANCHES,
-    RETREAT_PAIRS,
-    SHENG_CYCLE,
-    STEM_ELEMENTS,
-    TOMB_MAP,
-)
 
-from yishu_core.najia import najia_branch  # noqa: E402
 
-import argparse
 
 import json
 
-import math
 
-import os
 
-import random
 
-import sys
 
-from datetime import datetime, timedelta
+from datetime import datetime
 
-from pathlib import Path
 
-from yishu_core.runtime import force_utf8_stdio as _force_utf8_stdio  # noqa: E402
 from engine_format_report import (  # noqa: E402  报告各段落排版（本文件只管顺序编排）
     REPORT_WIDTH,
     build_head,

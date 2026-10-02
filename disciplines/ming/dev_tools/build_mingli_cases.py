@@ -12,7 +12,6 @@ expected 只含**书上明写的四柱**（客观标的）；「状元/词林/�
 from __future__ import annotations
 
 import json
-import re
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path

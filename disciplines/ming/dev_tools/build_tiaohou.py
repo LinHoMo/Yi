@@ -14,19 +14,26 @@
 """
 from __future__ import annotations
 
+import argparse
 import json
 import re
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "core"))
-from yishu_core.symbols import HEAVENLY_STEMS  # noqa: E402  天干序唯一真值源
-
 DISC = Path(__file__).resolve().parents[1]
+# 内核路径必须由 DISC 反推（`Path(__file__).parents[2]` 会落到 `disciplines/` 而非仓库根，
+# 在未 `pip install -e .` 的环境里直接 ModuleNotFoundError——本脚本此前正是如此）。
+sys.path.insert(0, str(DISC.parent.parent / "core"))
+from yishu_core.symbols import HEAVENLY_STEMS  # noqa: E402  天干序唯一真值源
+from yishu_core import corpus_kit  # noqa: E402  语料可复现性比对
 SRC = DISC.parent.parent / "data" / "sources" / "qiong-tong-bao-jian.wikitext.txt"
 OUT = DISC / "data" / "tiaohou_quotes.json"
 
-STEMS = HEAVENLY_STEMS
+# `HEAVENLY_STEMS` 是 **list**：直接 f-string 插进字符类会变成
+# `['甲', '乙', …, '癸']]` —— 类在首个 `]` 处提前闭合，多出一个必须匹配的字面 `]`，
+# 于是「== 论癸水 ==」这类标题**永远不匹配**（实测采集到 0 段、重跑会把整个
+# tiaohou_quotes.json 写成 120 个空格）。必须先 "".join 成字符串（同 ming 另一建器口径）。
+STEMS = "".join(HEAVENLY_STEMS)
 STEM_RE = f"[{STEMS}]"
 MONTH_NAMES = {"正": 1, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6,
                "七": 7, "八": 8, "九": 9, "十": 10, "冬": 11, "腊": 12}
@@ -83,7 +90,8 @@ def month_nums(header: str) -> list[int]:
     return [MONTH_NAMES[c] for c in token if c in MONTH_NAMES]
 
 
-def main() -> int:
+def build_table() -> dict:
+    """书源 → 12 月 × 10 干 的调候引文表（纯计算，不落盘）。"""
     text = SRC.read_text(encoding="utf-8")
     lines = text.splitlines()
 
@@ -157,6 +165,19 @@ def main() -> int:
                 "quote": body[:120], "section": f"论{stem}（{para['season']}）",
                 "via": how or None, "exact_paragraph": bool(exact),
             }
+
+    return table
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description="《穷通宝鉴》调候用神引文层提取（默认写盘）")
+    ap.add_argument("--check", action="store_true",
+                    help="不落盘，只比对已入库 data/tiaohou_quotes.json 是否与重算一致")
+    args = ap.parse_args()
+
+    table = build_table()
+    if args.check:
+        return corpus_kit.report(OUT.name, corpus_kit.check(OUT, table))
 
     OUT.write_text(json.dumps(table, ensure_ascii=False, indent=1), encoding="utf-8")
 

@@ -6,5 +6,9 @@
   "retrieved": "2026-09-22",
   "sha256": "897f963b938ec4582bc892465301b831a6439216f317841f44b888117704ca07",
   "license": "原作清代，公有领域；转录本依维基文库授权条款",
-  "chars": 123927
+  "chars": 128438,
+  "sha256_convention": "本文件旧有的 sha256 是对**换行归一为 LF 的文本**取的哈希（抓取时的 API 文本形态）；在盘文件的字节哈希见 sha256_file_bytes。两者内容相同，仅行尾不同（旧脚本以文本模式写盘，Windows 上 \\n→\\r\\n）。",
+  "sha256_lf_text": "897f963b938ec4582bc892465301b831a6439216f317841f44b888117704ca07",
+  "sha256_file_bytes": "522068be9311bafe9329a2e2bae5c793251ddc859aa3d04a3d46184cd3720d7c",
+  "eol_on_disk": "CRLF"
 }

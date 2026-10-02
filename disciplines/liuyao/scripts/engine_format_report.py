@@ -1,16 +1,13 @@
 # -*- coding: utf-8 -*-
-"""六爻报告排版：format_reading_output 的各段落（自 engine_format.py 按段切出）。
-
-纯搬移不改写逻辑：每个函数对应原报告中的一段（求测信息 / 卦象 / Step1–5 /
+"""六爻报告排版：format_reading_output 的各段落（求测信息 / 卦象 / Step1–5 /
 格局 / 卜象 / 应期 / 判语 / 页脚），顺序由调用方编排。
 
 本模块**不 import engine_format**，依赖单向：engine_format → engine_format_report。
-验收口径：拆分前后报告文本逐字符一致（零指纹漂移）。
 """
 
 from __future__ import annotations
 
-REPORT_WIDTH = 52  # 报告宽度（原 format_reading_output 内的 W）
+REPORT_WIDTH = 52  # 报告宽度
 
 
 def build_head(result: dict, dt: dict, empty: list, W: int = REPORT_WIDTH) -> list:
@@ -21,14 +18,12 @@ def build_head(result: dict, dt: dict, empty: list, W: int = REPORT_WIDTH) -> li
     lines.append("=" * W)
     lines.append("")
 
-    # ── 求测信息 ──
     lines.append("【求测信息】")
     lines.append(f"  问  题：{result.get('question', '未指明')}")
     lines.append(f"  方  式：{result.get('method', '铜钱摇卦')}")
     lines.append(f"  时  间：{dt.get('datetime', '未知')}")
     lines.append("")
 
-    # ── 干支历法 ──
     lines.append("【干支历法】")
     lines.append(f"  年柱：{dt.get('year_stem_branch', '?')}　"
                  f"月柱：{dt.get('month_stem_branch', '?')}")

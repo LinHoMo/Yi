@@ -29,6 +29,7 @@ from yishu_core.ganzhi_calendar import EARTHLY_BRANCHES, ganzhi_of  # noqa: E402
 from yishu_core.lunar import solar_to_lunar, lunar_month_name  # noqa: E402
 
 PALACES = ["大安", "留连", "速喜", "赤口", "小吉", "空亡"]
+CN_NUM = "零一二三四五六七八九十"        # 汉字数目（analyze/narrate 共用一份，避免两处各抄）
 
 TOPIC_KEYWORDS = [
     ("失物", ["失物", "丢", "遗失", "找东西", "寻物", "被偷"]),

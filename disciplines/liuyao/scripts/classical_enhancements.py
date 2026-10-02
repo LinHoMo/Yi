@@ -1,15 +1,5 @@
 # -*- coding: utf-8 -*-
-"""古典断法增强：合并自 classical_support.py、classical_rules.py、classical_rules_combo.py、classical_rules_growth.py、classical_rules_hidden.py、classical_rules_patterns.py。
-
-包含：
-  - 通用辅助函数与表工具（原 classical_support.py）
-  - 伏藏 / 暗动 / 伏神得出不得出（原 classical_rules_hidden.py）
-  - 游魂归魂 / 月破 / 进退神（原 classical_rules_patterns.py）
-  - 三合局 / 破局（原 classical_rules_combo.py）
-  - 十二长生 / 绝处逢生（原 classical_rules_growth.py）
-
-断语/模板取用器 ctext、ctpl 的唯一实现在 narrative_utils.py，此处再导出。
-"""
+"""古典断法增强：伏藏/暗动/进退/三合/十二长生/绝处逢生。"""
 
 from __future__ import annotations
 
@@ -20,29 +10,22 @@ _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
-from kernel_path import ensure_kernel_on_path as _ensure_kernel, kernel_dir
+from kernel_path import ensure_kernel_on_path as _ensure_kernel
 
 _ensure_kernel(__file__)
 
 from yishu_core.symbols import SHENG_WO  # noqa: E402  原神（生我者）五行唯一真值源
-
-from yishu_core.najia import najia_branch
 
 from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     ADVANCE_PAIRS,
     BRANCH_ELEMENTS,
     BREAK_PAIRS,
     CHONG_PAIRS,
-    EARTHLY_BRANCHES,
-    EIGHT_PALACES,
-    HEAVENLY_STEMS,
-    HEXAGRAM_TRIGRAMS,
     HE_PAIRS,
     KE_CYCLE,
     NAJIA_BRANCHES,
     RETREAT_PAIRS,
     SHENG_CYCLE,
-    STEM_ELEMENTS,
     TOMB_MAP,
 )
 
@@ -51,13 +34,8 @@ from chart_tables import (  # noqa: E402
     NAYIN_TABLE,
     NAYIN_TO_ELEMENT,
     SAN_HE,
-    SELF_PUNISHMENTS,
     SHENG_WO,
     SIX_RELATIONS,
-    THREE_PUNISHMENTS,
-    THREE_PUNISHMENTS_CYCLIC,
-    THREE_PUNISHMENTS_MUTUAL,
-    TRANSFORMATION_PATTERNS,
     TWELVE_GROWTH,
     TWELVE_GROWTH_STAGES,
     TWELVE_GROWTH_TABLES,
@@ -69,20 +47,25 @@ from narrative_utils import (  # noqa: E402
     CLASSICAL_INTERPRETATIONS as CINTERP,
     PATTERN_NOTES_EXTRA,
     PATTERN_VERDICTS,
+    _combined_strength,
     ctext,
     ctpl,
+    element_strength_in_month,
+    get_changed_hexagram_branch,
 )
+# element_strength_in_month / get_changed_hexagram_branch / _combined_strength 的
+# 唯一实现都在 narrative_utils（各自逐字经快照对照）；本模块不再各留一份，
+# 只按 __all__ 再导出给 effects / classical_analysis 的消费方。
 
 from classical_enhancements_dufa import analyze_du_fa_du_jing  # noqa: E402
-# 独发/独静域 2026-09-30e 按域切出到 classical_enhancements_dufa.py（巨石看门狗
-# 2251 > 2200 触发）：该域只依赖 narrative_utils 断语素材，与其他增强域无耦合。
-# 此处再导出维持 __all__ 与 classical_analysis 的消费方零改动；依赖单向，勿回调本模块。
+# 独发/独静域在 classical_enhancements_dufa.py 实现：该域只依赖 narrative_utils
+# 断语素材，与其他增强域无耦合。此处再导出维持 __all__ 与 classical_analysis 的
+# 消费方零改动；依赖单向，勿回调本模块。
 
 
 
 # ======================================================================
 # section: helpers & table utils
-#  原 classical_support.py
 # ======================================================================
 
 
@@ -179,7 +162,6 @@ def is_ba_zu_he(b1, b2):
 
 
 def is_ba_zu_chong(b1, b2):
-    """判断两地支是否六冲"""
     for a, b in CHONG_PAIRS:
         if (b1 == a and b2 == b) or (b1 == b and b2 == a):
             return True
@@ -192,30 +174,6 @@ def is_ba_zu_po(b1, b2):
         if (b1 == a and b2 == b) or (b1 == b and b2 == a):
             return True
     return False
-
-
-def element_strength_in_month(element, month_element):
-    """
-    五行在月建中的旺衰（旺相休囚死）。
-    旺: 同月, 相: 月所生, 休: 生月, 囚: 克月, 死: 月克
-    """
-    if element == month_element:
-        return "旺"
-    if SHENG_CYCLE.get(month_element) == element:
-        return "相"
-    if SHENG_CYCLE.get(element) == month_element:
-        return "休"
-    if KE_CYCLE.get(month_element) == element:
-        return "死"
-    if KE_CYCLE.get(element) == month_element:
-        return "囚"
-    return "未知"
-
-
-def element_strength_text(element, month_element):
-    """旺相休囚死完整描述"""
-    s = element_strength_in_month(element, month_element)
-    return s
 
 
 def get_twelve_growth_stage(element, day_branch):
@@ -238,9 +196,53 @@ def get_stages_of_interest(stage):
     return stage in ("帝旺", "临官", "长生", "墓", "绝", "死", "沐浴")
 
 
-def get_changed_hexagram_branch(changed_hex_name, position):
-    """变卦第 position 爻（1=初爻）的纳甲地支——实现已上收内核，此处仅保留旧名。"""
-    return najia_branch(changed_hex_name, position)
+def use_god_tomb_tags(yao_lines, use_god_branch, use_god_position,
+                      day_branch, month_branch):
+    """用神入墓结构标签（纯结构，不批吉凶）。
+
+    《增刪卜易·隨鬼入墓章第三十》：「古有日墓、動墓、化墓之三墓。」
+    〈入墓難克〉又申之：「且如木爲用神，金爲忌神，若在丑日占者，金入墓矣……
+    卦中動出墓爻，亦向此推。金爻動而化丑亦是。」故用神入墓分四类，皆可机械判：
+
+      入日墓 — 用神五行之墓支恰值日辰
+      入月墓 — 恰值月建
+      动墓   — 卦中另有动爻，其地支即用神之墓支（他爻动而引入墓）
+      化墓   — 用神爻自身发动，其所化之支即用神之墓支
+
+    只判结构，不作「凶/必死」一类断语（是否成凶，看旺衰与救应，见该章后文）。
+    返回 {"label": 顿号连接或"不入墓", "tomb_branch": 墓支, "hits": [标签…]}。
+    """
+    elem = _branch_element(use_god_branch)
+    tomb = TOMB_MAP.get(elem, "") if elem else ""
+    if not tomb:
+        return {"label": "不入墓", "tomb_branch": "", "hits": []}
+
+    # 爻位在不同消费方手里可能是 int 或数字字符串（案例 JSON），归一后比较
+    try:
+        ug_pos = int(use_god_position)
+    except (TypeError, ValueError):
+        ug_pos = None
+
+    hits = []
+    if tomb == day_branch:
+        hits.append("入日墓")
+    if tomb == month_branch:
+        hits.append("入月墓")
+    # 动墓：他爻发动而墓用神（用神本爻值墓支属自坐墓，不在此列）
+    for yao in yao_lines:
+        if (yao.get("is_moving") and yao.get("earthly_branch") == tomb
+                and yao.get("position") != ug_pos):
+            hits.append("动墓")
+            break
+    # 化墓：用神发动，化出之支即其墓支（化出本支属伏吟，非入墓）
+    for yao in yao_lines:
+        if (yao.get("position") == ug_pos and yao.get("is_moving")
+                and yao.get("changed_branch") == tomb
+                and yao.get("changed_branch") != use_god_branch):
+            hits.append("化墓")
+            break
+    return {"label": "、".join(hits) if hits else "不入墓",
+            "tomb_branch": tomb, "hits": hits}
 
 
 def get_month_strength_description(month_element):
@@ -259,34 +261,6 @@ def _pos_to_name(pos):
     """位置数字转为中文名称（1→初爻, 6→上爻）"""
     names = {1: "初爻", 2: "二爻", 3: "三爻", 4: "四爻", 5: "五爻", 6: "上爻"}
     return names.get(pos, f"{pos}爻")
-
-
-def g_day_cn(element):
-    """五行中文名辅助"""
-    return element
-
-
-def _combined_strength(element, month_element, day_element):
-    """
-    综合月建日辰判断旺衰：日辰权重更高。
-    """
-    m = element_strength_in_month(element, month_element)
-    d = element_strength_in_month(element, day_element)
-
-    # 力量等级: 旺=5, 相=4, 休=3, 囚=2, 死=1
-    strength_val = {"旺": 5, "相": 4, "休": 3, "囚": 2, "死": 1, "未知": 0}
-    total = strength_val.get(m, 0) + strength_val.get(d, 0)
-
-    if total >= 9:
-        return "旺"
-    elif total >= 7:
-        return "相"
-    elif total >= 5:
-        return "中和"
-    elif total >= 3:
-        return "偏弱"
-    else:
-        return "衰"
 
 
 def _strength_score(level):
@@ -673,35 +647,7 @@ def _evaluate_hidden_spirit_emergence(hid_elem, hid_branch, cov_rel, cov_branch,
 
 
 def analyze_hidden_spirits(result):
-    """
-    伏藏分析：检查六亲是否有缺失，找出伏神、飞神及其得出/不得出。
-    
-    返回：
-        {
-            "has_hidden_spirit": bool,
-            "details": [
-                {
-                    "missing_relation": str,        # 缺失的六亲
-                    "hidden_spirit": {              # 伏神（来自本宫首卦）
-                        "position": int,
-                        "branch": str,
-                        "six_relation": str,
-                        "element": str,
-                    },
-                    "covering_spirit": {            # 飞神（当前卦中的该位置）
-                        "position": int,
-                        "branch": str,
-                        "six_relation": str,
-                        "element": str,
-                    },
-                    "can_emerge": bool,             # 伏神得出/不得出
-                    "reason": str,                  # 得出/不得出判断理由
-                },
-                ...
-            ],
-            "summary": str,
-        }
-    """
+    """伏藏分析：检查六亲缺失，找出伏神/飞神及其得出/不得出。"""
     hex_info = result.get("original_hexagram", {})
     palace = hex_info.get("palace", "")
     palace_element = hex_info.get("palace_element", "")
@@ -815,50 +761,7 @@ def analyze_hidden_spirits(result):
 
 
 def analyze_hidden_spirit_emergence(result):
-    """
-    伏神得出不得出优化版评分。
-    基于卜筮正宗四大伏神规则完整实现：
-
-    伏神得出（可出）的条件:
-      1. 日辰生扶伏神
-      2. 月建生扶伏神
-      3. 日冲飞神（冲开飞神）
-      4. 月冲飞神
-      5. 飞神旬空（空则不挡）
-      6. 飞神月破（破则不挡）
-      7. 飞神休囚无气
-      8. 飞神被日/月/动爻克
-      9. 伏神旺相有气
-
-    伏神不得出（难出）的条件:
-      1. 伏神被月日双克
-      2. 飞神旺相克伏神（飞克伏）
-      3. 伏神入墓于日/月
-      4. 伏神逢绝地
-      5. 伏神旬空
-      6. 伏神月破
-      7. 伏神休囚无气
-
-    返回：
-        {
-            "has_hidden_spirit": bool,
-            "spirits": [
-                {
-                    "missing_relation": str,
-                    "hidden_branch": str,
-                    "covering_branch": str,
-                    "can_emerge": bool,
-                    "emerge_score": int,
-                    "emerge_level": str,    # "极易出"/"可以出"/"难出"/"不得出"
-                    "emerge_reasons": [str],
-                    "block_reasons": [str],
-                    "summary": str,
-                },
-                ...
-            ],
-            "summary": str,
-        }
-    """
+    """基于《卜筮正宗》伏神规则评分伏神得出/不得出。"""
     hex_info = result.get("original_hexagram", {})
     palace = hex_info.get("palace", "")
     palace_element = hex_info.get("palace_element", "")
@@ -923,7 +826,7 @@ def analyze_hidden_spirit_emergence(result):
         covering_branch = covering_yao.get("earthly_branch", "")
         covering_element = _branch_element(covering_branch)
 
-        # === 优化版评分 ===
+        # === 评分 ===
         emerge_score = 0
         emerge_reasons = []
         block_reasons = []
@@ -981,10 +884,10 @@ def analyze_hidden_spirit_emergence(result):
                 break
         if day_attacks_cov:
             emerge_score += 1
-            emerge_reasons.append(ctpl("crt_037", g_day_cn(day_element), g_day_cn(covering_element)))
+            emerge_reasons.append(ctpl("crt_037", day_element, covering_element))
         if month_attacks_cov:
             emerge_score += 1
-            emerge_reasons.append(ctpl("crt_038", g_day_cn(month_element), g_day_cn(covering_element)))
+            emerge_reasons.append(ctpl("crt_038", month_element, covering_element))
         if moving_attacks_cov:
             emerge_score += 1
             emerge_reasons.append(ctext("cr_016"))
@@ -2091,6 +1994,23 @@ def analyze_desperate_relief(result):
     return out
 
 
+# 实现在 effects.py、由本模块按 PEP 562 惰性再导出的名字（唯一一份清单：
+# __all__ 从这里展开，避免同一串名字在文件里写两遍）。
+_EFFECTS_REEXPORT = (
+    "analyze_clash_harmony",
+    "analyze_repetition",
+    "analyze_repetition_deep",
+    "analyze_hexagram_body",
+    "analyze_element_strength",
+    "analyze_three_punishments",
+    "analyze_day_month_bonding",
+    "analyze_six_breaks",
+    "analyze_officer_tomb",
+    "analyze_transformation_pattern",
+    "analyze_flying_hidden_interaction",
+)
+
+
 __all__ = [
     # narrative_utils (re-exported)
     "ctext",
@@ -2104,13 +2024,12 @@ __all__ = [
     "is_ba_zu_chong",
     "is_ba_zu_po",
     "element_strength_in_month",
-    "element_strength_text",
     "get_twelve_growth_stage",
     "get_stages_of_interest",
+    "use_god_tomb_tags",
     "get_changed_hexagram_branch",
     "get_month_strength_description",
     "_pos_to_name",
-    "g_day_cn",
     "_combined_strength",
     "_strength_score",
     "_find_stage_at",
@@ -2138,18 +2057,8 @@ __all__ = [
     "analyze_twelve_growth",
     "analyze_desperate_relief",
     "analyze_du_fa_du_jing",
-    # effects (re-exported lazily from effects.py, originally classical_rules_effects.py)
-    "analyze_clash_harmony",
-    "analyze_repetition",
-    "analyze_repetition_deep",
-    "analyze_hexagram_body",
-    "analyze_element_strength",
-    "analyze_three_punishments",
-    "analyze_day_month_bonding",
-    "analyze_six_breaks",
-    "analyze_officer_tomb",
-    "analyze_transformation_pattern",
-    "analyze_flying_hidden_interaction",
+    # effects (re-exported lazily from effects.py)
+    *_EFFECTS_REEXPORT,
 ]
 
 # ---------------------------------------------------------------------------
@@ -2157,21 +2066,6 @@ __all__ = [
 # effects.py imports helpers that now live in this module, so a top-level
 # "from effects import …" would create an import cycle.
 # ---------------------------------------------------------------------------
-_EFFECTS_REEXPORT = frozenset({
-    "analyze_clash_harmony",
-    "analyze_repetition",
-    "analyze_repetition_deep",
-    "analyze_hexagram_body",
-    "analyze_element_strength",
-    "analyze_three_punishments",
-    "analyze_day_month_bonding",
-    "analyze_six_breaks",
-    "analyze_officer_tomb",
-    "analyze_transformation_pattern",
-    "analyze_flying_hidden_interaction",
-})
-
-
 def __getattr__(name):
     if name in _EFFECTS_REEXPORT:
         try:

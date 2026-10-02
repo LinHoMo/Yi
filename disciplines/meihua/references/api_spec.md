@@ -57,14 +57,24 @@
 | `body_use` | 体卦/用卦/五行/关系（体克用、用克体、体生用、用生体、比和）+ 关系判语 |
 | `interaction` | `生体之卦`/`克体之卦`：各卦的作用（生体/克体/体生/体克/比和）与位（用卦/互卦下/互卦上/变卦；多爻动两侧皆变时为变卦上/变卦下） |
 | `analogies` | 万物类象：体/用/互/变各卦 → 人物/身体/物类/场所等（`verdicts.json#bagua_analogies`，《卷一·八卦万物属类》） |
+| `analogy_table` | 逐卦类象**正表原文**：按本次事类取象（`verdicts.json#wanwu_topic_keys` 映射事类→书源类目），给出体卦/用卦在该类目下的**逐字**原文（`classics.json#wanwu`，《卷一·象數易理篇之三·八卦萬物屬類》）；只作取象依据，不参与评分 |
 | `multi_move` | 多爻动信息：动爻列表、体用规则、变出之卦、所本；单动为 null |
 | `body_qi` | 卦气旺衰 `{状态(旺相休囚死), 月支, 体卦五行}`；无月令为 None |
 | `topic_verdict` | 事类断语（`data/verdicts.json#topics`，带所本） |
 | `sheng_ti` / `ke_ti` | 生体/克体卦的具体含义（`verdicts.json#sheng_ti_meaning`） |
 | `timing` | 卦气应期干支、应期速度（旺速衰迟）、生体/克体卦应期、数应（《占卜总诀》动静定应期：行取半、立取全、坐卧加倍） |
 | `conclusion` | `{方向, 说明, 特断?, 所本}`；特断优先（`verdicts.json#hexagram_special`，《卦断遗论》不拘体用例） |
+| `classics` | 本次判读**实际执行的古诀原文**（逐字，繁体照录）：`{规则: [{键,卷,篇,原文,出处}…], 逐卦: [{键,卷,篇,原文,出处}…], 来源, 备注}`。实体在 `data/classics.json`（构建器 `dev_tools/build_classics.py`），索引 `references/classics.md`。**只作所本凭证**：不参与评分、不改判据 |
 | `factors` | 判读因子表（体用关系 40 / 生克之卦 30 / 卦气旺衰 20 / 应期 10） |
 | `chart_summary` | 盘面摘要（narrate 标题与盘面数据用；含动爻列表/多爻动/体用规则） |
+
+**classics 的挑选口径**（`_classics()`，机械、可复现）：起例三条（卦以八除/互卦/爻以六除）
+恒入选；`way=numbers|two_numbers` 加《物數占例》，`way=datetime|lunar` 加《年月日時起例》；
+有月令加《體用衰旺之訣》；多爻动加《變卦式八則》；有变卦加《占卦訣》；
+再加本次**生体/克体之卦**在《體用總訣》里的逐卦条。其余入库篇目仅在 `classics.json`
+备查，报告不主动列出（控篇幅）。**案例篇（占验/占例）永不入选**（铁律二）。
+
+**schema**：`meihua-analyze-v2`（v1 → v2 仅新增 `classics` 透出字段，判据字段未变）。
 
 **综合判断规则**：体用总诀基准分 + 互变净势修正（《卦断遗论》"互变生之而吉""互变俱克之而凶"）
 + 卦气旺衰修正；多爻动再加互变净势权重（《卷二》"生体多者则愈吉，克体多者则愈凶"）；
@@ -75,6 +85,10 @@
 **输入**：analyze 段输出 dict。
 **输出**：Markdown 正文（唯一交付正文，师傅口吻）。
 **边界**：不自行推断任何新的象数结论；正文每个判断都能在 analyze 输出中找到出处。
+末段「所本原文（《梅花易数》逐字，繁体照录）」由 analyze 的 `classics` 渲染，
+每条带篇名与源文件行号；小节标题/引导语/逐卦条标签取自
+`data/verdicts.json#narrate_phrases`（`classics_title`/`classics_lead`/`classics_per_gua_label`）。
+无 `classics` 时该小节整段不输出（不产生空标题）。
 
 ## 四、render 段（`scripts/render.py`）
 
@@ -91,37 +105,5 @@
 | `tools/golden.py` | chart+analyze 逐字段指纹（基线 `data/golden/digest.json`） |
 | `tools/check.py` | 质量门：版本/指纹/冒烟/对齐分（只准前进不准后退） |
 
-## 六、MCP JSON-RPC 方法（`scripts/mcp_server.py`）
 
-四段脚本经共享路由 `tools/mcp_router.py` 以 **JSON-RPC 2.0 over stdio** 暴露；
-薄入口 `scripts/mcp_server.py` 锁定本学科，不另写推演。也可用
-`python tools/mcp_router.py --discipline meihua` 或 `--all`（四科同进程）。
 
-**传输**：每行一个 JSON 请求，每行一个 JSON 响应；`"id"` 缺省/为 null 视为通知、无响应。
-
-| 方法 | 参数（params） | 返回 |
-|---|---|---|
-| `meihua.chart` | 与 chart 段 `chart(params)` 同构的 dict | chart JSON |
-| `meihua.analyze` | 起盘参数 dict，或 `{"chart": <chart JSON>}` | analyze JSON |
-| `meihua.narrate` | 同 analyze | `{text, conclusion?, chart_summary?, question?}`，`text` 为唯一交付正文 |
-| `meihua.render` | 同 analyze；可选 `format`: `"md"`\|`"html"`（默认 md） | `{content, format}` |
-| `meihua.list_methods` / `list_methods` | — | `{methods: {名: 说明}}` |
-
-**format**：本 render 段仅出 Markdown；`format=html` 返回 JSON-RPC error `-32602`。
-
-**错误码**：`-32700` 解析 / `-32600` 非法请求 / `-32601` 方法不存在 / `-32602` 参数错误 / `-32603` 内部错误。
-
-```bash
-python scripts/mcp_server.py --help
-python scripts/mcp_server.py --list-methods
-python scripts/mcp_server.py --test-narrate          # 冒烟：演示盘 narrate
-python scripts/mcp_server.py                        # stdio 服务
-```
-
-JSON-RPC 示例：
-
-```json
-{"jsonrpc":"2.0","id":1,"method":"meihua.narrate","params":{"way":"numbers","year_num":5,"month":12,"day":17,"hour_num":9,"question":"测花"}}
-{"jsonrpc":"2.0","id":2,"method":"meihua.render","params":{"way":"numbers","year_num":5,"month":12,"day":17,"hour_num":9,"question":"测花","format":"md"}}
-{"jsonrpc":"2.0","id":3,"method":"list_methods","params":{}}
-```

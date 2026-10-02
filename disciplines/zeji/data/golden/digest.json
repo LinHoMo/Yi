@@ -1,10 +1,10 @@
 {
   "_meta": {
     "what": "金标准指纹基线（chart+analyze 逐字段）",
-    "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；无理由不落盘，历次漂移见 drift_log",
-    "cases": 16
+    "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
-  "digest": "78101a034d8936b8",
+  "digest": "9e206e9a93aa3cf3",
+  "narrate_digest": "545addae28127c7c",
   "drift_log": [
     {
       "from": null,
@@ -23,6 +23,32 @@
       "to": "78101a034d8936b8",
       "date": "2026-10-01",
       "reason": "阶段4 A5：golden 指纹补 narrate 段（四段契约 chart→analyze→narrate 全覆盖，原仅六爻有）"
+    },
+    {
+      "from": "78101a034d8936b8",
+      "to": "9e206e9a93aa3cf3",
+      "date": "2026-10-01",
+      "reason": "指纹拆分（SYS-REVIEW#2）：机械/措辞分列；机械字段取值不变（逐条比对仅 narrate_sha 键移出）"
+    }
+  ],
+  "narrate_drift_log": [
+    {
+      "from": "78101a034d8936b8",
+      "to": "d0fb538b93f3c53d",
+      "date": "2026-10-01",
+      "reason": "指纹拆分（SYS-REVIEW#2）：机械/措辞分列；机械字段取值不变（逐条比对仅 narrate_sha 键移出）"
+    },
+    {
+      "from": "d0fb538b93f3c53d",
+      "to": "90489dae70aeed06",
+      "date": "2026-10-01",
+      "reason": "narrate 新增「参考书证」小节（《玉匣記》逐字引文 + 缺口登记），机械层零漂移，仅措辞层变化"
+    },
+    {
+      "from": "90489dae70aeed06",
+      "to": "545addae28127c7c",
+      "date": "2026-10-01",
+      "reason": "narrate 在「值宿」后附《玉匣記·二十八宿值日吉凶歌》逐字歌诀（含值宿神将/书证吉凶/出处）；analyze citations 新增 值宿歌诀 字段。不参与评分，tune/holdout 仍 100%"
     }
   ]
 }

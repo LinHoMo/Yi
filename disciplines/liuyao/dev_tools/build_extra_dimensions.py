@@ -5,8 +5,10 @@
   - expected.use_god_wangshuai（月令旺衰 旺/相/休/囚/死）：
     书面已明写用神地支（expected.use_god_branch），其五行对月建的旺衰为机械派生
     （classical_enhancements.element_strength_in_month），对表回归性质。
-  - expected.use_god_muku（入日墓 / 入月墓 / 不入墓）：
-    用神五行墓支（内核 TOMB_MAP）恰临日辰/月建即入墓，机械判定。
+  - expected.use_god_muku（入日墓 / 入月墓 / 动墓 / 化墓 任意组合，无则「不入墓」）：
+    用神五行墓支（内核 TOMB_MAP）恰临日辰/月建即入墓；另有动爻地支即用神墓支
+    为「动墓」，用神发动而化出墓支为「化墓」。判据唯一实现在
+    classical_enhancements.use_god_tomb_tags（与 case_runner 同源，禁各写一份）。
   - expected.use_god_six_spirit（六神临用）：
     书面用神爻位已由纳甲唯一确定（expected.use_god_position，30o 批），
     六神由日干 + 爻位按起例表机械派生（engine_chart.get_six_spirit）。
@@ -36,9 +38,9 @@ for _p in (str(DISC / "scripts"), str(DISC.parents[1] / "core")):
 
 from liuyao_engine import build_hexagram_result  # noqa: E402
 from engine_chart import get_six_spirit  # noqa: E402
-from classical_enhancements import element_strength_in_month  # noqa: E402
+from classical_enhancements import element_strength_in_month, use_god_tomb_tags  # noqa: E402
 from effects import analyze_hexagram_body  # noqa: E402
-from yishu_core.symbols import BRANCH_ELEMENTS, TOMB_MAP, SAN_HE_GROUPS  # noqa: E402
+from yishu_core.symbols import BRANCH_ELEMENTS, SAN_HE_GROUPS  # noqa: E402
 import case_runner as cr  # noqa: E402
 
 CASES = DISC / "data" / "cases" / "classical_cases.json"
@@ -78,15 +80,20 @@ def _build_file(path: Path, counters: list, indent: int, self_consistent: bool =
                                f"机械派生：用神{branch}({ug_elem})临{month_br}({month_elem})月")
                 counters[0] += 1
                 changed = True
-            if month_elem and not exp.get("use_god_muku"):
-                tomb_of = TOMB_MAP.get(ug_elem, "")
-                hits = [tag for tag, br in (("入日墓", day_br), ("入月墓", month_br))
-                        if tomb_of and tomb_of == br]
-                exp["use_god_muku"] = "、".join(hits) if hits else "不入墓"
-                exp.setdefault("use_god_muku_basis",
-                               f"机械判定：{ug_elem}墓在{tomb_of}，日{day_br}/月{month_br}")
-                counters[1] += 1
-                changed = True
+            # 墓库：日墓/月墓/动墓/化墓四类，判据唯一实现在 classical_enhancements。
+            # 每次重建（规则升级后旧值须刷新），故不用 setdefault。
+            if month_elem:
+                muku = use_god_tomb_tags(
+                    h["original_hexagram"]["yao_lines"], branch, position,
+                    day_br, month_br)
+                basis = (f"机械判定：{ug_elem}墓在{muku['tomb_branch']}，"
+                         f"日{day_br}/月{month_br}，动墓/化墓另核动爻")
+                if exp.get("use_god_muku") != muku["label"] \
+                        or exp.get("use_god_muku_basis") != basis:
+                    exp["use_god_muku"] = muku["label"]
+                    exp["use_god_muku_basis"] = basis
+                    counters[1] += 1
+                    changed = True
 
         # 六神临用：依赖纳甲唯一爻位 + 日干
         if position and day_stem and not exp.get("use_god_six_spirit"):

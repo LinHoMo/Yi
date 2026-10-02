@@ -19,6 +19,8 @@ for _p in (str(CORE), str(Path(__file__).resolve().parent)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
+from yishu_core.symbols import CHONG_PAIRS  # noqa: E402
+
 _WEIGHTS = {"建除": 20, "黄黑道": 20, "星宿": 20, "吉凶": 40}
 
 
@@ -27,17 +29,24 @@ def _load_verdicts() -> dict:
     return json.loads(p.read_text(encoding="utf-8"))
 
 
+def _load_citations() -> dict:
+    p = DISC / "data" / "citations.json"
+    return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
+
+
 VERDICTS = _load_verdicts()
+CITATIONS = _load_citations()
 
 # 日支冲肖（通书：冲即对冲地支之生肖）
 _BRANCH_ZODIAC = {
     "子": "鼠", "丑": "牛", "寅": "虎", "卯": "兔", "辰": "龙", "巳": "蛇",
     "午": "马", "未": "羊", "申": "猴", "酉": "鸡", "戌": "狗", "亥": "猪",
 }
-_BRANCH_CLASH = {
-    "子": "午", "丑": "未", "寅": "申", "卯": "酉", "辰": "戌", "巳": "亥",
-    "午": "子", "未": "丑", "申": "寅", "酉": "卯", "戌": "辰", "亥": "巳",
-}
+# 地支六冲：**由 core 唯一真值源 CHONG_PAIRS 派生**（不在此另抄一份冲表）
+_BRANCH_CLASH: dict[str, str] = {}
+for _a, _b in CHONG_PAIRS:
+    _BRANCH_CLASH[_a] = _b
+    _BRANCH_CLASH[_b] = _a
 # 煞方（申子辰日煞南，寅午戌日煞北，巳酉丑日煞东，亥卯未日煞西）
 _SHA_FANG = {
     "申": "南", "子": "南", "辰": "南",
@@ -87,6 +96,23 @@ def _shensha_chong_pengzu(chart_out: dict) -> tuple[dict, dict, dict]:
 
 def _activity_label(activity: str) -> str:
     return VERDICTS["activity_names"].get(activity, "通用")
+
+
+def _citations(activity: str, xiu_name: str = "") -> dict:
+    """本例事类的参考书证（《玉匣記》逐字引文）+ 当日值宿歌诀——只透出，不参与评分。
+
+    引文与判据**物理分栏**：`data/citations.json` 是书证，`data/verdicts.json`
+    是判据唯一真值源；两者不互相覆盖（见 citations.json#_comment）。
+    """
+    acts = CITATIONS.get("activities") or {}
+    return {
+        "活动": activity,
+        "通则": CITATIONS.get("common") or [],
+        "本例": acts.get(activity) or [],
+        "值宿歌诀": (CITATIONS.get("xiu_verses") or {}).get(xiu_name) or None,
+        "缺口": CITATIONS.get("gap") or {},
+        "来源": CITATIONS.get("source") or {},
+    }
 
 
 def _factors(chart_out: dict, activity: str) -> dict:
@@ -176,7 +202,7 @@ def analyze(chart_out: dict) -> dict:
     yi_hit = bool(f["jian_chu"]["宜"] or f["huang_dao"]["宜"])
     ji_hit = bool(f["jian_chu"]["忌"])
     return {
-        "schema": "zeji-analyze-v1",
+        "schema": "zeji-analyze-v2",
         "activity": activity,
         "question": chart_out.get("question", ""),
         "yi_hit": yi_hit,
@@ -195,17 +221,18 @@ def analyze(chart_out: dict) -> dict:
         "hour": hour_note,
         "yi": yi,
         "ji": ji,
+        "citations": _citations(activity, (chart_out.get("xiu") or {}).get("name") or ""),
         "conclusion": v,
         "factors": [
             {"因子": "建除", "权重": _WEIGHTS["建除"], "判据": f"{f['jian_chu']['神']}"
              f"（{_yi_ji_phrase(f['jian_chu']['宜'], f['jian_chu']['忌'])}）",
-             "所本": "《协纪辨方书》建除篇通行口径"},
+             "所本": VERDICTS["narrate_phrases"]["basis_jianchu"]},
             {"因子": "黄黑道", "权重": _WEIGHTS["黄黑道"], "判据": f"{f['huang_dao']['神']}"
              f"（{'黄道' if f['huang_dao']['黄道'] else '黑道'}）",
-             "所本": "《协纪辨方书·卷五·黄黑道》"},
+             "所本": VERDICTS["narrate_phrases"]["basis_huanghei"]},
             {"因子": "星宿", "权重": _WEIGHTS["星宿"], "判据": f"{f['xiu']['全名']}"
              f"（{'吉宿' if f['xiu']['吉'] else ('凶宿' if f['xiu']['凶'] else '—')}）",
-             "所本": "《二十八宿吉凶歌》通行通书口径"},
+             "所本": VERDICTS["narrate_phrases"]["basis_xiu"]},
             {"因子": "天月德神煞", "权重": "辅助", "判据": "、".join((f.get("shensha") or {}).get("stars") or []) or "无",
              "所本": VERDICTS["shensha"]["note"]},
             {"因子": "冲煞", "权重": "趋避", "判据": (f.get("chong_sha") or {}).get("phrase_chong", "")

@@ -1,0 +1,23 @@
+{
+  "key": "liu-ren-da-quan-juan8",
+  "kind": "大六壬",
+  "title": "六壬大全/8",
+  "site": "zh.wikisource.org",
+  "api": "https://zh.wikisource.org/w/api.php",
+  "pages": [
+    "六壬大全/8"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-01 18:04:19+0800",
+  "sha256": "95d1364991db679be530375a506cf1714ae9b68851465b07fee74c5f55185e7f",
+  "stats": {
+    "bytes": 54836,
+    "chars": 19400,
+    "lines": 511,
+    "ganzhi_pairs": 179,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/liu-ren-da-quan-juan8.wikitext.txt",
+  "note": "公版古籍原文的字符级转存，未做任何改写或模型转写；子页以 <!-- ==== 标题 ==== --> 分隔。"
+}

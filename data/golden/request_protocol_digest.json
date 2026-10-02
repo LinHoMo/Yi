@@ -1,0 +1,24 @@
+{
+  "_meta": {
+    "what": "request.py 输入协议指纹基线（normalize_request 正/负例逐字段）",
+    "how": "改动输入协议后跑 python tools/request_protocol_golden.py capture \"理由\"；与八科 golden 同价，防协议漂移只被同源验收间接发现"
+  },
+  "digest": "70b6244d7c869ddf",
+  "narrate_digest": "dc933251dc9df30a",
+  "drift_log": [
+    {
+      "from": null,
+      "to": "70b6244d7c869ddf",
+      "date": "2026-10-01",
+      "reason": "初始基线：输入协议指纹（SYS-REVIEW#4，正例8+负例4）"
+    }
+  ],
+  "narrate_drift_log": [
+    {
+      "from": null,
+      "to": "dc933251dc9df30a",
+      "date": "2026-10-01",
+      "reason": "初始基线：输入协议指纹（SYS-REVIEW#4，正例8+负例4）"
+    }
+  ]
+}

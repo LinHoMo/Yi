@@ -7,78 +7,43 @@ _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
-from kernel_path import ensure_kernel_on_path as _ks_ensure, kernel_dir
+from kernel_path import ensure_kernel_on_path as _ks_ensure
 
 _ks_ensure(__file__)
 
 from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     ADVANCE_PAIRS,
-    BRANCH_ELEMENTS,
-    BREAK_PAIRS,
     CHONG_PAIRS,
-    EARTHLY_BRANCHES,
-    EIGHT_PALACES,
-    HEAVENLY_STEMS,
-    HEXAGRAM_TRIGRAMS,
     HE_PAIRS,
+    HEXAGRAM_KIND_LIUCHONG,
+    HEXAGRAM_KIND_LIUHE,
     KE_CYCLE,
-    NAJIA_BRANCHES,
     RETREAT_PAIRS,
     SHENG_CYCLE,
-    STEM_ELEMENTS,
     TOMB_MAP,
-    palace_of_key,
-    hexagram_branches,          # 别卦六爻纳甲地支（三会判据要逐支比对）
-    hexagram_he_chong_kind,     # 卦体六合/六冲：对应位三对地支判（内核唯一实现）
-    SAN_HUI_GROUPS,             # 三会方局：寅卯辰/巳午未/申酉戌/亥子丑（内核唯一真值源）
-    EARTHLY_BRANCHES as BRANCHES,
+    hexagram_branches,
+    hexagram_he_chong_kind,
+    SAN_HUI_GROUPS,
 )
 
-from datetime import datetime, timedelta
 
-import json
 
 import re
 
-from pathlib import Path
 
-from chain_tables import (_BRANCH_CLASHES, _BRANCH_CLASH_MAP, _CHART_TAIL,
-    _ELEMENT_PEAK_MONTHS, _HE_MAP, _HEXAGRAM_HARMONY_SET, _HEX_NAMES,
-    _QUESTION_USE_GOD_BASIS, _QUESTION_USE_GOD_MAP, _USE_GOD_LAYER_CITATIONS,
-    HEXAGRAM_LIUCHONG, HEXAGRAM_LIUHE, JUE_MAP, SAN_HE, TRIGRAM_ELEMENT,
-    USE_GOD_RELATIONSHIPS, _60_CYCLE_BASE)
+from chain_tables import _BRANCH_CLASH_MAP, _HE_MAP, _HEXAGRAM_HARMONY_SET, JUE_MAP
 
-from liuyao_narrate import (_build_reasoning_chain,
-    _get_hexagram_body_summary_note, find_classical_quotes)
 
-from liuyao_timing import predict_timing_core as _predict_timing
 
-from narrative_rules import strength_reason, strength_polarity
 
 from narrative_utils import (  # noqa: E402
     _branch_element,
-    _evaluate_fu_cang_strength,
     _is_chong,
     _is_he,
     _pos_to_name,
-    _twelve_growth_at_day,
-    CLASSICAL_INTERPRETATIONS as CINTERP,
-    element_strength_in_month,
     get_changed_hexagram_branch,
-    get_elements_for_relation,
-    get_empty_branches,
-    get_palace_first_hexagram,
     get_relation_from_element,
-    get_twelve_growth_stage,
-    note_text,
     safe_get,
-    strength_to_score,
-    STEP5_CONFIDENCE as CONF_TXT,
-    STEP5_FACTOR_REASONS as FREASON,
-    STEP5_SPIRIT_REASONS as SPIRIT_TXT,
-    STEP5_VERDICT_DESCS as VDESC,
-    STEP5_YINGQI as YINGQI_TXT,
-    vdesc,
     PATTERN_NOTES_EXTRA,
 )
 
@@ -91,25 +56,7 @@ from liuyao_step2 import _element_to_relation  # 跨文件引用
 
 
 def step4_analyze_changes(r: dict) -> dict:
-    """
-    Step 4: 察变 — 分析动爻及其影响。
-
-    对每一动爻分析：
-    1. 何六亲动？（原神？忌神？仇神？）
-    2. 动化何种？（回头生/克/进退/化合/入墓/化绝）
-    3. 对用神的净效应
-
-    经典规则《黄金策》：
-    - 回头生（变爻生动爻）：极为有利 → 原神回头生用尤佳
-    - 回头克（变爻克动爻）：极为不利 → 用神回头克大凶
-    - 化进神：势盛递增
-    - 化退神：势衰递减
-    - 化墓/化绝：困顿断绝
-    - 六合（动爻与变爻合）：绊住（贪合忘生/克）
-
-    贪生忘克：如有原神动，忌神贪生忘克用神。
-    贪合忘生/克：动变相合则贪合忘其生克。
-    """
+    """Step 4 察变：动爻六亲 + 动化类型（回头生克/进退/化合/墓绝）+ 用神净效应。"""
     # 获取上下文
     hex_info = safe_get(r, "original_hexagram", default={})
     yao_lines = safe_get(hex_info, "yao_lines", default=[])
@@ -248,7 +195,6 @@ def step4_analyze_changes(r: dict) -> dict:
     # Combine moving lines with hidden-moved lines (as virtual moving lines for harmony check)
     all_active_lines = list(moving_lines)
     for hm in hm_lines:
-        # Find the actual yao for this hidden-moved position
         for yl in yao_lines:
             if yl.get("position") == hm.get("position"):
                 all_active_lines.append(yl)
@@ -265,7 +211,6 @@ def step4_analyze_changes(r: dict) -> dict:
         palace_element=palace_element,
     )
 
-    # Apply greedy harmony adjustment to net_effect
     net_effect += greedy_harmony_score
 
     # ---------- 4.3c: 进退神力量量化（来自 classical_analysis.advance_score） ----------
@@ -295,7 +240,6 @@ def step4_analyze_changes(r: dict) -> dict:
     else:
         net_description = "大凶（动变全面不利）"
 
-    # Build greedy harmony description for summary
     greedy_harmony_summary = ""
     if greedy_harmony_issues:
         issue_descs = [i["effect"] for i in greedy_harmony_issues if i.get("score_effect", 0) != 0]
@@ -414,7 +358,7 @@ def _classify_line_role(
     ji_shen_element: str,
     chou_shen_element: str,
 ) -> str:
-    """判断动爻相对于用神的身份"""
+    """动爻身份：用神/用神同气/原神/忌神/仇神/生用/克用/闲神。"""
     if relation == use_god_category:
         return "用神"
     if element == use_god_element:
@@ -441,7 +385,7 @@ def _determine_change_type(
     month_branch: str,
     day_branch: str,
 ) -> dict:
-    """判断动爻变化类型"""
+    """动爻变化类型：无变/回头生/回头克/六合/化进/化退/化墓/化合/月破/日破。"""
     if not chg_branch:
         return {"type": "无变爻", "detail": "变卦缺失"}
 
@@ -492,10 +436,7 @@ def _analyze_effect_on_use_god(
     change_type: dict,
     line_role: str,
 ) -> dict:
-    """
-    分析动爻变化对用神的净效应。
-    返回 {description, score}，score 为正=有利，为负=不利。
-    """
+    """动爻变化对用神的净效应 → {description, score}（正=有利/负=不利）。"""
     score = 0.0
     description_parts = []
 
@@ -635,11 +576,7 @@ def _check_tan_sheng_wan_ke(
     use_god_element: str,
     palace_element: str,
 ) -> list[dict]:
-    """
-    贪生忘克规则检查。
-    《黄金策》：贪生忘克者，原神动，忌神贪生原神而忘克用。
-    条件：原神动 且 原神生忌神 同时存在
-    """
+    """贪生忘克（《黄金策》）：原神动且生忌神 → 忌神贪生忘克用。"""
     rules = []
     # 寻找原神动的详情
     yuan_shen_moving = [d for d in details if d["line_role"] == "原神"]
@@ -665,10 +602,7 @@ def _check_tan_he_wan_sheng_ke(
     yao_lines: list[dict],
     use_god_category: str,
 ) -> list[dict]:
-    """
-    贪合忘生/贪合忘克规则检查。
-    条件：动爻与变爻六合，或动爻与日月合。
-    """
+    """贪合忘生/克：动爻与变爻六合，或动爻与日月合。"""
     rules = []
     for detail in details:
         if detail["change_type"] == "六合":
@@ -679,12 +613,6 @@ def _check_tan_he_wan_sheng_ke(
                 "detail_position": pos,
                 "benefit_or_loss": "neutral",  # 有利有弊，视情况
             })
-        # 检查与日月合
-        orig_branch = detail.get("original_branch", "")
-        chg_branch = detail.get("changed_branch")
-        if chg_branch:
-            # 检查动爻+日月合（简化）
-            pass
     return rules
 
 
@@ -694,16 +622,7 @@ def _check_tan_he_wan_sheng_ke(
 def _detect_classical_illness_pattern(question: str, step2_data: dict, step3_data: dict,
                                        empty_branches: list, step4_data: dict = None,
                                        hex_result: dict = None) -> dict:
-    """
-    古籍经典疾厄格局识别 —《增删卜易》《卜筮正宗》之核心断法。
-
-    特殊疾厄格局优先于一般旺衰规则：
-    - 近病逢空即愈：用神旬空，速愈之象
-    - 近病逢合为凶：用神被日/月/动爻合住，病难退
-    - 近病逢冲即愈：用神被冲，病气散
-    - 近病六冲卦速愈
-    - 久病逢空/冲/合为凶
-    """
+    """古籍疾厄格局（《增删卜易》《卜筮正宗》）：近病逢空/冲/六冲即愈、逢合为凶；久病反之。"""
     result = {"pattern": None, "description": "", "impact_on_verdict": "", "score_adjustment": 0.0}
 
     q = question or ""
@@ -815,11 +734,6 @@ def _detect_classical_illness_pattern(question: str, step2_data: dict, step3_dat
                 return result
 
         # Also check: 用神被日月生合为凶
-        div_time = step3_data.get("divination_info", {})
-        if not div_time:
-            # Try hex_result (passed separately)
-            pass
-        # Check if use god is combined by day or month
         day_combine = step3_data.get("day_combine", "")
         month_combine = step3_data.get("month_combine", "")
         if day_combine or month_combine:
@@ -848,25 +762,12 @@ _HE_PAIRS_SET = {frozenset(p) for p in HE_PAIRS}
 
 
 def _hexagram_he_chong_kind(name: str) -> str:
-    """（门面）卦名 → 六合卦/六冲卦/半合半冲/有合/有冲/无明确合冲/未知。
-
-    机器判定唯一实现在内核 `yishu_core.symbols.hexagram_he_chong_kind`：按对应位
-    (1,4)(2,5)(3,6) 三对地支判，不用卦名白名单。此处只转发，供本模块内
-    `_detect_hexagram_harmony_clash_pattern` 的"本卦定始、变卦定终"双卦对比使用。
-    """
+    """卦名 → 六合/六冲卦种类（转发内核 hexagram_he_chong_kind）。"""
     return hexagram_he_chong_kind(name)
 
 
 def _detect_hexagram_harmony_clash_pattern(question: str, hex_result: dict, step4_data: dict) -> dict:
-    """
-    六合/六冲交互格局识别 — 冲中逢合可解，合处逢冲则散；并做"本卦定始、变卦定终"双卦对比。
-
-    - 冲中逢合可解：六冲卦中却有日辰/动爻合世爻或应爻，冲散可解为吉
-    - 合处逢冲则散：六合卦中却有日辰/月建冲世爻或应爻，合处逢冲为凶
-    - 双卦对比（《黄金策》"合处逢冲事已散，冲中逢合事迟成"）：
-      本卦六合而变卦六冲 → 先合后散（事已散）；本卦六冲而变卦六合 → 先散后合（事迟成）。
-      本卦言始、变卦言终，两卦同为合或同为冲则只作同向叠加，不另出格局。
-    """
+    """六合/六冲交互格局（《黄金策》）：冲中逢合可解、合处逢冲则散；本卦定始、变卦定终。"""
     result = {"pattern": None, "description": "", "impact_on_verdict": "", "score_adjustment": 0.0}
 
     q = question or ""
@@ -874,12 +775,17 @@ def _detect_hexagram_harmony_clash_pattern(question: str, hex_result: dict, step
     if not hex_name:
         return result
 
-    # Check for 六合/六冲 in hexagram name using advanced analysis
     hex_advanced = hex_result.get("advanced_analysis", {}) or {}
     hex_type = hex_advanced.get("hexagram_type", "")
 
-    is_he = "六合" in hex_type or hex_name in ("否", "泰", "恒", "益", "萃", "咸", "损", "同人", "贲", "鼎", "随", "节", "中孚", "既济", "家人", "蛊", "困", "豫", "临", "小畜", "履", "涣", "离", "丰")
-    is_chong = "六冲" in hex_type or hex_name in ("乾", "坤", "坎", "离", "震", "巽", "艮", "兑", "无妄", "大壮", "遁", "晋", "萃", "夬", "姤", "解", "归妹", "旅", "涣", "小过")
+    # 卦体六合/六冲：**只用引擎自己的结构判据**（core `hexagram_he_chong_kind`，按对应位
+    # (1,4)(2,5)(3,6) 三对地支皆合/皆冲算，与 advanced_analysis.hexagram_type 同源）。
+    # 此处曾并列一份手写卦名白名单，它与同一次 analyze 的 `clash_harmony.hexagram_type`
+    # 直接冲突（如 `晋` 被判六冲而结构层判「无明确合冲」，`离` 同时进六合与六冲名单），
+    # 会被 report_faithfulness 判为 contradicted——白名单已删，唯一真值源在 core。
+    hex_kind = _hexagram_he_chong_kind(hex_name)
+    is_he = hex_kind == HEXAGRAM_KIND_LIUHE or "六合" in hex_type
+    is_chong = hex_kind == HEXAGRAM_KIND_LIUCHONG or "六冲" in hex_type
 
     # Empty branches (for checking if world/response is void)
     empty = hex_result.get("empty_branches", [])
@@ -998,37 +904,7 @@ def _detect_hexagram_harmony_clash_pattern(question: str, hex_result: dict, step
 
 
 def _detect_special_pattern(step3_data: dict, step2_data: dict, step4_data: dict, hex_result: dict) -> dict:
-    """
-    特殊格局识别 — 当标准旺相休囚死规则被逆转时触发。
-
-    检测四种高级格局：
-    1. 从格 (Following Pattern) — 用神极弱，顺势从强
-    2. 专旺格 (Dominant Element) — 一气独旺
-    3. 两神成象格 — 两元素各据一方
-    4. 化格 (Transformation) — 三合化气
-
-    Parameters
-    ----------
-    step3_data : dict
-        Step3 断旺结果（含 effective_score 等）
-    step2_data : dict
-        Step2 定用结果（含 用神五行、原神/忌神 等）
-    step4_data : dict
-        Step4 察变结果（含 moving_analysis 等）
-    hex_result : dict
-        完整卦象结果（含 original_hexagram, advanced_analysis 等）
-
-    Returns
-    -------
-    dict
-        {
-            "pattern": None | "从格" | "专旺格" | "两神成象" | "化格",
-            "description": str,
-            "impact_on_verdict": str,
-            "rule_applied": str,
-            "score_adjustment": float,  # 对 final_score 的调整量
-        }
-    """
+    """特殊格局识别：从格/专旺格/两神成象/化格（旺衰逆转时触发）。"""
     # --- 优先检查古籍经典格局（这些格局优先于从格等高级格局） ---
     question = hex_result.get("question", "")
     empty_branches = hex_result.get("empty_branches", [])
@@ -1060,7 +936,6 @@ def _detect_special_pattern(step3_data: dict, step2_data: dict, step4_data: dict
     use_god_score = step3_data.get("effective_score", 2.5)
     hex_info = hex_result.get("original_hexagram", {})
     yao_lines = hex_info.get("yao_lines", [])
-    # Normalize score to float
     try:
         use_god_score = float(use_god_score)
     except (TypeError, ValueError):
@@ -1079,7 +954,7 @@ def _detect_special_pattern(step3_data: dict, step2_data: dict, step4_data: dict
     # ── Check 1: 从格 (Following Pattern) ──
     # Condition: 用神极弱(<-1.0), 原神无援(<1.5), 忌神极旺(>3.5) or absent,
     #            all moving lines trend toward 忌神, NO 冲中逢合救应
-    # ⚠️ 从格为极端罕见格局，必须严格判定，避免误判正常弱卦
+    # 从格为极端罕见格局，必须严格判定，避免误判正常弱卦
     if use_god_score < -1.0:
         yuan_shen = step2_data.get("yuan_shen", {}) or {}
         ji_shen = step2_data.get("ji_shen", {}) or {}
@@ -1089,7 +964,6 @@ def _detect_special_pattern(step3_data: dict, step2_data: dict, step4_data: dict
         # 原神评估：无位置或位置少则视为无援
         yuan_shen_weak = len(yuan_positions) == 0
         if not yuan_shen_weak and yuan_positions:
-            # Check if yuan_shen has any moving line support
             yuan_moving = [p for p in yuan_positions if p.get("is_moving")]
             yuan_shen_weak = len(yuan_moving) == 0 and len(yuan_positions) <= 1
 
@@ -1161,7 +1035,6 @@ def _detect_special_pattern(step3_data: dict, step2_data: dict, step4_data: dict
     if len(elem_counts) == 2:
         elems = list(elem_counts.keys())
         if abs(elem_counts[elems[0]] - elem_counts[elems[1]]) <= 1:
-            # Check no major attacking in moving lines
             has_major_attack = False
             for m in moving_analysis:
                 ct = m.get("change_type", "")
@@ -1223,7 +1096,7 @@ def _detect_special_pattern(step3_data: dict, step2_data: dict, step4_data: dict
 
     # ── Check 4: 化格 (Transformation Pattern) ──
     # Condition: 用神本身的动爻参与三合化才算真正化格
-    # ⚠️ 化格是极端罕见格局，普通三合但不涉及用神动爻时不触发
+    # 化格是极端罕见格局，普通三合但不涉及用神动爻时不触发
     advanced = hex_result.get("advanced_analysis", {})
     if advanced and isinstance(advanced, dict):
         tc_data = advanced.get("triple_combo", {})
@@ -1286,39 +1159,7 @@ def _check_greedy_harmony(
     ji_shen_element: str,
     palace_element: str,
 ) -> tuple[float, list[dict]]:
-    """
-    贪合忘生克检测 — rule from 《增删易》.
-
-    When a yao forms 六合 with another yao or with 日辰/月建, it becomes "贪合" —
-    obsessed with the conjunction. This causes:
-    - 原神贪合忘生 → the 原神 fails to generate its 用神
-    - 忌神贪合忘克 → the 忌神 fails to attack its 用神 (beneficial)
-
-    Parameters
-    ----------
-    yao_lines : list[dict]
-        All 6 yao lines.
-    moving_lines : list[dict]
-        Subset of yao_lines that are moving (动爻 or 暗动).
-    day_branch : str
-        Day branch.
-    month_branch : str
-        Month branch.
-    use_god_category : str
-        The use god relation (e.g. "妻财", "官鬼").
-    yuan_shen_element : str
-        Element of the 原神.
-    ji_shen_element : str
-        Element of the 忌神.
-    palace_element : str
-        Element of the palace.
-
-    Returns
-    -------
-    tuple[float, list[dict]]
-        (score_adjustment, issues_list). Positive = beneficial, negative = harmful.
-        Empty list if no issues found.
-    """
+    """贪合忘生克（《增删卜易》）：六合 → 原神忘生/忌神忘克。"""
     if not moving_lines:
         return 0.0, []
 
@@ -1334,8 +1175,6 @@ def _check_greedy_harmony(
         orig_element = _branch_element(orig_branch) if orig_branch else ""
         changed_branch = yao.get("changed_branch", "")
 
-        # Determine the branch to check for harmony:
-        # Use the original branch if static/hidden-moved, or changed branch if moving
         branches_to_check = [orig_branch]
         if changed_branch:
             branches_to_check.append(changed_branch)
@@ -1344,9 +1183,7 @@ def _check_greedy_harmony(
             if not target_branch:
                 continue
 
-            # Check 合 with 日辰
             if _forms_hexagram_harmony(target_branch, day_branch):
-                # Classify by role
                 if orig_relation == yuan_shen_relation_name or orig_element == yuan_shen_element:
                     # 原神贪合忘生 → harmful:原神 can't generate use god
                     effect_score = -0.3
@@ -1411,7 +1248,6 @@ def _check_greedy_harmony(
                         "score_effect": 0.0,
                     })
 
-            # Check 合 with 月建
             if month_branch and _forms_hexagram_harmony(target_branch, month_branch):
                 if orig_relation == yuan_shen_relation_name or orig_element == yuan_shen_element:
                     effect_score = -0.2

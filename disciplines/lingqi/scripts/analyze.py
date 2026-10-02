@@ -2,8 +2,8 @@
 """灵棋经·规则推演（analyze 段）—— 查表直录，无衍生解读。
 
 灵棋经属「查表即断」门类：analyze 的职责是**忠实透出课表内容**
-（课名/象/卦注/象曰/詩曰，全部逐字来自书源 ketables.json）并标注结构
-（三部布数与阴阳定性——按《灵棋经》通行注：多寡分阳阴，奇偶见书注），
+（课名/象/卦注/卦宫/标注组，全部逐字来自书源 ketables.json）并标注结构
+（三部布数与卦宫定性——卦宫取书源卦注末段，八宫齐），
 不做任何书外发挥（AGENTS.md 铁律一/三）。
 """
 from __future__ import annotations
@@ -22,6 +22,7 @@ for _p in (str(DISC / "scripts"),):
 def analyze(chart_out: dict) -> dict:
     key = chart_out.get("key") or ""
     up, mid, down = (int(x) for x in key.split("-"))
+    notes = chart_out.get("notes") or []
     factors = [
         {"code": "sanbu", "label": f"上{up} 中{mid} 下{down}",
          "basis": "十二棋分三部（各四枚），面数即布数；全零不成课"},
@@ -29,6 +30,10 @@ def analyze(chart_out: dict) -> dict:
          "basis": chart_out.get("xiang", "")},
         {"code": "zhu", "label": chart_out.get("zhu", ""),
          "basis": "书源卦注（逐字）"},
+        {"code": "gong", "label": chart_out.get("gong", "") or "—",
+         "basis": "书源卦注末段（卦宫；八宫齐，异文照录）"},
+        {"code": "notes", "label": f"标注组 {len(notes)} 组",
+         "basis": "；".join(g.get("mark", "") for g in notes) or "—"},
     ]
     return {
         "discipline": "lingqi",
@@ -39,15 +44,16 @@ def analyze(chart_out: dict) -> dict:
             "课号": key,
             "课名": chart_out.get("ke_name", ""),
             "象": chart_out.get("xiang", ""),
+            "卦宫": chart_out.get("gong", ""),
         },
         "ke_name": chart_out.get("ke_name", ""),
-        "xiangyue": chart_out.get("xiangyue") or [],
-        "shiyue": chart_out.get("shiyue") or [],
+        "gong": chart_out.get("gong", ""),
         "zhu": chart_out.get("zhu", ""),
+        "notes": notes,
         "factors": factors,
         "conclusion": {
             "direction": None,
-            "note": "查表直录古籍断语（象曰/詩曰），吉凶判断属原文文本，"
+            "note": "查表直录古籍断语（象曰/詩曰/又/許曰），吉凶判断属原文文本，"
                     "非本仓推断；解读请结合原文与求测语境（铁律三）",
         },
     }

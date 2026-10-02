@@ -28,10 +28,10 @@ for _p in (str(HERE), str(CORE)):
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 
 from person import PersonArchive, PersonError  # noqa: E402
-from normalize import normalize  # noqa: E402
+from normalize import normalize, DISCIPLINES  # noqa: E402
 from cross_rules import adjudicate, selfcheck as cross_selfcheck  # noqa: E402
 from guidance import write_guidance  # noqa: E402
-from outcome_eval import eval_outcomes, report as yq_report  # noqa: E402
+from outcome_eval import eval_outcomes, report as yq_report, selfcheck_scoring  # noqa: E402
 
 PERSON_DIR = HERE / "person"
 GUIDANCE_DIR = HERE / "guidance"
@@ -116,7 +116,12 @@ def cmd_outcome_eval(args) -> int:
     arch = _load(args.pid)
     res = eval_outcomes(arch.data.get("divinations") or [])
     yq_report(res)
-    return 0 if res.get("n_回填") else 1
+    if res.get("n_回填"):
+        return 0
+    # 空集 = 「无数据」，不是「评测失败」（架构评审 A7）：如实声明口径并退出 0，
+    # 否则这条链路的"可跑"永远被误报成失败，回归无从谈起。
+    print("口径：本档案尚无已回填占问（n=0），效度无从讨论——此为空集，非评测失败。")
+    return 0
 
 
 def cmd_guide(args) -> int:
@@ -140,6 +145,11 @@ def cmd_guide(args) -> int:
 
 def cmd_selfcheck(args) -> int:
     cross_selfcheck()
+    # 学科清单锁：合参层各清单必须与内核唯一真值源同源（防四处清单再次分叉）
+    import person as _person  # noqa: E402
+    from yishu_core.report.request import DISCIPLINES as _core_disc  # noqa: E402
+    assert set(DISCIPLINES) == set(_person.DISCIPLINES) == set(_core_disc), \
+        "合参层学科清单与 request.DISCIPLINES 不同源"
     # person 档案校验自检：ganzhi 存在时必须带 calendar_policy
     arch = PersonArchive.create(
         "TEST", "1990-05-20 07:15",
@@ -187,7 +197,9 @@ def cmd_selfcheck(args) -> int:
     yq = {c["event_id"]: c["应期"] for c in r["cases"]}
     assert yq["EVT001"]["命中"] and yq["EVT001"]["名次"] == 1
     assert not yq["EVT002"]["命中"] and yq["EVT002"]["判定"].startswith("超期")
-    print("synthesis 自检通过（person 校验 + cross_rules + 归一化 + 应期回收闭环）")
+    # 评分表自洽（A7）：7 档位跑真实判定路径，锁「名次→得分」映射
+    selfcheck_scoring()
+    print("synthesis 自检通过（person 校验 + cross_rules + 归一化 + 应期回收闭环 + 评分表自洽）")
     return 0
 
 
@@ -211,8 +223,7 @@ def main() -> int:
 
     p = sub.add_parser("add-divination", help="登记一次占问")
     p.add_argument("pid")
-    p.add_argument("--discipline", required=True,
-                   choices=["liuyao", "ming", "ziwei"])
+    p.add_argument("--discipline", required=True, choices=list(DISCIPLINES))
     p.add_argument("--analyze-json", required=True, help="该科 analyze 输出 JSON")
     p.add_argument("--event-id")
     p.add_argument("--asked", help="问句（缺省取 analyze.question）")

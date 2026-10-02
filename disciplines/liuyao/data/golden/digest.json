@@ -1,10 +1,10 @@
 {
   "_meta": {
     "what": "金标准指纹基线（排盘+思维链+分析层逐字段；抽样含 narrate 文案哈希）",
-    "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；无理由不落盘，历次漂移见 drift_log",
-    "cases": 288
+    "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
-  "digest": "46fd569fbe945814",
+  "digest": "d4ccdb7a3050b564",
+  "narrate_digest": "25c5eeea2fa7e3b9",
   "drift_log": [
     {
       "from": "bb23797bf6044b95",
@@ -71,6 +71,38 @@
       "to": "46fd569fbe945814",
       "date": "2026-09-30",
       "reason": "叙事模板口径修正：strength_reason 的 base_strong/base_weak 文案去掉「得令/失令」措辞（与月令旺衰脱钩，消除 report_faithfulness 审计 contradicted）"
+    },
+    {
+      "from": "46fd569fbe945814",
+      "to": "eb9977f62de4653f",
+      "date": "2026-10-01",
+      "reason": "指纹拆分（SYS-REVIEW#2）：机械/措辞分列；机械字段取值不变（机械层逐条比对仅 narrate_sha/narrate_len 键移出，机械 digest 回到纯机械口径）"
+    },
+    {
+      "from": "eb9977f62de4653f",
+      "to": "83f3b9d9022d7f22",
+      "date": "2026-10-01",
+      "reason": "删除 liuyao_step4 卦体六合/六冲的手写卦名白名单（10 卦误收六冲、18 卦误收六合、涣离萃两名单并存），改用 core hexagram_he_chong_kind 结构判据；报告层不再出现与同一 analyze 的 clash_harmony 相矛盾的六冲断言"
+    },
+    {
+      "from": "83f3b9d9022d7f22",
+      "to": "d4ccdb7a3050b564",
+      "date": "2026-10-02",
+      "reason": "六爻格局标签去子串扫描：反吟/伏吟·进退神·暗动·月破·三合/三刑改为读 advanced_analysis 结构（不再扫 step5/summary 文本）；patterns 字段为措辞层派生标签，机械排盘不变"
+    }
+  ],
+  "narrate_drift_log": [
+    {
+      "from": "46fd569fbe945814",
+      "to": "ede6f855568a66a1",
+      "date": "2026-10-01",
+      "reason": "指纹拆分（SYS-REVIEW#2）：机械/措辞分列；机械字段取值不变（机械层逐条比对仅 narrate_sha/narrate_len 键移出，机械 digest 回到纯机械口径）"
+    },
+    {
+      "from": "ede6f855568a66a1",
+      "to": "25c5eeea2fa7e3b9",
+      "date": "2026-10-01",
+      "reason": "删除 liuyao_step4 卦体六合/六冲的手写卦名白名单（10 卦误收六冲、18 卦误收六合、涣离萃两名单并存），改用 core hexagram_he_chong_kind 结构判据；报告层不再出现与同一 analyze 的 clash_harmony 相矛盾的六冲断言"
     }
   ]
 }

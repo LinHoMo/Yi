@@ -14,8 +14,7 @@ synthesis 只依赖 disciplines 的输出 schema（CONTRACT.md §二），不 im
 from __future__ import annotations
 
 from yishu_core.eval import verdict_direction
-
-DISCIPLINES = ("liuyao", "ming", "meihua", "xiaoliuren", "zeji", "liuren", "lingqi")
+from yishu_core.report.request import DISCIPLINES  # 学科清单唯一真值源（八科）
 
 
 def _direction_label(text) -> str:
@@ -243,6 +242,10 @@ _NORMALIZERS = {
     "lingqi": normalize_lingqi,
     "ziwei": normalize_ziwei,
 }
+
+# 清单锁：适配器必须覆盖全部学科，缺一即 import 期失败（防「加了科忘了适配」）
+assert set(_NORMALIZERS) == set(DISCIPLINES), \
+    f"归一化适配器与学科清单不一致：{set(DISCIPLINES) ^ set(_NORMALIZERS)}"
 
 
 def normalize(discipline: str, analyze_out: dict, *, at: str | None = None) -> dict:

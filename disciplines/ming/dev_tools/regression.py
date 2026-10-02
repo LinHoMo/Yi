@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""命科机械因子回归用例：固定出生样例 → 断言四柱/强弱/格局/空亡/大运方向。
+"""命科机械因子回归用例：固定出生样例 → 断言四柱/强弱/格局/空亡/大运方向/通关关隔。
 
 这是**引擎机械回归**，不是古籍案例对齐分（AGENTS.md 铁律三）。
 expected 由独立手工/内核表推得，与 analyze 输出比对。
@@ -33,6 +33,12 @@ REGRESSION = [
             "pattern": "建禄格",
             "xunkong": ["申", "酉"],
             "dayun_dir": "forward",
+            # 甲日主，局中木火土水俱现（金缺）：身财相战木克土，得火（食伤）通关
+            "tong_guan": [{"name": "身财相战", "克": "木", "被克": "土",
+                           "中介": "火", "通关": True}],
+            # 四柱 甲子/丙寅/甲戌/己巳：年时与日时两处甲己合（core.relations.STEM_WUHE）；
+            # 支 子寅戌巳：寅巳相害（core.HARM_PAIRS）
+            "pillar_relations": ["年时干甲己合", "月时支寅巳六害", "日时干甲己合"],
         },
     },
     {
@@ -43,6 +49,11 @@ REGRESSION = [
             "strength": "偏弱",
             "pattern": "伤官格",
             "dayun_dir": "forward",
+            # 乙日主，局中金木火（土水缺）：官杀金克身，无水（印）→ 关隔
+            "tong_guan": [{"name": "官杀克身", "克": "金", "被克": "木",
+                           "中介": "水", "通关": False}],
+            # 四柱 庚午/辛巳/乙酉/辛巳：年日干乙庚合（五合）；支 午巳酉巳 无合/冲/害/刑之对
+            "pillar_relations": ["年日干庚乙合"],
         },
     },
     {
@@ -53,6 +64,11 @@ REGRESSION = [
             "strength": "偏弱",
             "pattern": "正官格",
             "dayun_dir": "backward",
+            # 丙日主，局中木火水土（金缺）：官杀水克身，得木（印）通关
+            "tong_guan": [{"name": "官杀克身", "克": "水", "被克": "火",
+                           "中介": "木", "通关": True}],
+            # 四柱 甲子/丙子/丙子/壬辰：干甲丙壬互不成五合，支亦无合/冲/害/刑——防误报
+            "pillar_relations": [],
         },
     },
     {
@@ -62,6 +78,8 @@ REGRESSION = [
         "expect": {
             "strength": "偏旺",
             "pattern": "建禄格",
+            # 四柱 丙子/己亥/壬子/辛亥：年时干丙辛合；支 子亥子亥 亥两现 → 自刑
+            "pillar_relations": ["年时干丙辛合", "自刑"],
         },
     },
     {
@@ -71,6 +89,8 @@ REGRESSION = [
         "expect": {
             "strength": "偏弱",
             "pattern": "正官格",
+            # 四柱 庚辰/甲申/乙巳/癸未：年日干乙庚合；支 辰申巳未 申巳相合（core.HE_PAIRS）
+            "pillar_relations": ["年日干庚乙合", "月日支申巳六合"],
         },
     },
 ]
@@ -107,6 +127,15 @@ def run() -> int:
                 got = (c.get("pillars") or {}).get(k, {}).get("ganzhi")
                 if got != v:
                     fails.append(f"{case['id']} pillar {k} {got} != {v}")
+        if "tong_guan" in exp:
+            keys = ("name", "克", "被克", "中介", "通关")
+            got = [{k: t.get(k) for k in keys} for t in (a.get("tong_guan") or [])]
+            if got != exp["tong_guan"]:
+                fails.append(f"{case['id']} tong_guan {got} != {exp['tong_guan']}")
+        if "pillar_relations" in exp:
+            got = [r.get("text") for r in (a.get("pillar_relations") or [])]
+            if got != exp["pillar_relations"]:
+                fails.append(f"{case['id']} pillar_relations {got} != {exp['pillar_relations']}")
         print(f"  {case['id']} {'ok' if not any(case['id'] in f for f in fails) else 'FAIL'}")
 
     # persist mechanical regression set (not classical alignment)

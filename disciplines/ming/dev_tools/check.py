@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import subprocess
 import sys
 from pathlib import Path
 
@@ -13,22 +12,22 @@ for _p in (str(DISC / "scripts"), str(CORE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
+from yishu_core.gate_kit import run_step  # noqa: E402
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
-from yishu_core.runtime import utf8_subprocess_env  # noqa: E402
 
 
 def run(cmd: list[str]) -> tuple[int, str]:
-    p = subprocess.run(
-        [sys.executable, *cmd],
-        cwd=DISC,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-        timeout=60,
-        env=utf8_subprocess_env(),
-    )
-    return p.returncode, (p.stdout or "") + (p.stderr or "")
+    """本门口径：cwd=学科根、60s 超时、argv 前补解释器（实现在内核 gate_kit）。"""
+    return run_step(cmd, cwd=DISC, timeout=60, python=True)
+
+
+def _leaf_strings(obj) -> list[str]:
+    """语料 JSON → 全部叶子字符串（跳过 _meta：元信息本就不进报告）。"""
+    if isinstance(obj, dict):
+        return [s for k, v in obj.items() if k != "_meta" for s in _leaf_strings(v)]
+    if isinstance(obj, list):
+        return [s for v in obj for s in _leaf_strings(v)]
+    return [obj] if isinstance(obj, str) else []
 
 
 def main() -> int:
@@ -42,6 +41,8 @@ def main() -> int:
         "scripts/narrate.py",
         "scripts/render.py",
         "data/verdicts.json",
+        "data/tiaohou_quotes.json",
+        "data/ditian_sui.json",
         "dev_tools/check.py",
         "dev_tools/golden.py",
     ]
@@ -119,6 +120,28 @@ def main() -> int:
             else:
                 head = out.strip().splitlines()[0] if out.strip() else ""
                 print(f"[7] 评测 {split} √ {head}")
+
+    # 语料接线：data/*.json 每个语料文件都必须真的被报告消费（否则是死语料）
+    code, out = run(["scripts/narrate.py", "scratch/analyze.json"])
+    if code != 0:
+        fails.append("narrate 接线自检时跑不通")
+        print("[8] 语料接线 ×")
+    else:
+        bad = []
+        for path in sorted((DISC / "data").glob("*.json")):
+            obj = json.loads(path.read_text(encoding="utf-8"))
+            leaves = [s for s in _leaf_strings(obj) if len(s) >= 12]
+            if not leaves:
+                continue
+            hit = sum(1 for s in leaves if s in out)
+            if hit == 0:
+                bad.append(f"{path.name}：{len(leaves)} 条语料一条未进报告（接线缺失）")
+            else:
+                print(f"[8] 语料接线 √ {path.name}：{hit}/{len(leaves)} 条进入报告")
+        if bad:
+            fails.extend(bad)
+            for b in bad:
+                print(f"[8] 语料接线 × {b}")
 
     if fails:
         print("失败：", *fails, sep="\n  ")

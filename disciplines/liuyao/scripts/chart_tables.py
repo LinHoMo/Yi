@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""六爻纳甲引擎数据表 + 古典断法数据表。（合并自 engine_tables.py 与 classical_tables.py，去重 import 后保留全部公共定义）。"""
+"""六爻纳甲引擎数据表 + 古典断法数据表。"""
 
 import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
 
@@ -8,42 +8,25 @@ _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
-from kernel_path import ensure_kernel_on_path as _ensure_kernel, kernel_dir
+from kernel_path import ensure_kernel_on_path as _ensure_kernel
 
 _ensure_kernel(__file__)
 
-from yishu_core.najia import najia_branch
 from yishu_core.symbols import NAJIA_STEMS  # noqa: F401  纳甲天干唯一真值源在 core（再导出供本科使用）
 
 from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
-    ADVANCE_PAIRS,
     BAGUA_LINES,
-    BRANCH_ELEMENTS,
-    BREAK_PAIRS,
-    CHONG_PAIRS,
-    EARTHLY_BRANCHES,
     EIGHT_PALACES,
-    HEAVENLY_STEMS,
-    HEXAGRAM_TRIGRAMS,
-    HE_PAIRS,
-    KE_CYCLE,
-    NAJIA_BRANCHES,
-    RETREAT_PAIRS,
     SELF_PUNISHMENTS,
-    SHENG_CYCLE,
     SHENG_WO,
     KE_WO,
-    STEM_ELEMENTS,
     THREE_PUNISHMENTS,
     THREE_PUNISHMENTS_CYCLIC,
     THREE_PUNISHMENTS_MUTUAL,
-    TOMB_MAP,
     TRIGRAM_ELEMENTS,
     TWELVE_GROWTH,
     TWELVE_GROWTH_STAGES,
     TWELVE_GROWTH_TABLES,
-    palace_of_key,
-    EARTHLY_BRANCHES as BRANCHES,
     NAYIN as _CORE_NAYIN,
     NAYIN_TO_ELEMENT,
     SAN_HE_GROUPS as _CORE_SAN_HE,
@@ -53,25 +36,16 @@ from yishu_core.relations import SIX_RELATIONS  # noqa: E402
 
 from yishu_core.hexagram_texts import HEXAGRAMS, HEXAGRAM_LINE_TEXTS  # noqa: E402  卦辞爻辞唯一真值源（AGENTS.md §二）
 
-import argparse
 
 import json as _kt_json
 
-import json
 
-import math
 
-import os
 
-import random
 
-import sys
 
-from datetime import datetime, timedelta
 
-from pathlib import Path
 
-from yishu_core.runtime import force_utf8_stdio as _force_utf8_stdio  # noqa: E402
 
 
 # ══════════════════════════════════════════════════════════════════════════════

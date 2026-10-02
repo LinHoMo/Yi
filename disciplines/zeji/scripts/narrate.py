@@ -15,6 +15,32 @@ def _direction_label(direction: str) -> str:
     return {"吉": "吉（可用）", "平": _NP["label_ping"], "凶": _NP["label_xiong"]}.get(direction, direction)
 
 
+def _citations_section(c: dict) -> list[str]:
+    """参考书证小节：引文逐字照录（含篇名与源文件行号）+ 来源缺口如实登记。"""
+    groups = ((_NP.get("citation_common_label", ""), c.get("通则") or []),
+              (_NP.get("citation_activity_label", ""), c.get("本例") or []))
+    gap = c.get("缺口") or {}
+    if not any(items for _, items in groups) and not gap:
+        return []
+    out = [f"## 三、{_NP.get('citation_title', '')}", "", _NP.get("citation_lead", ""), ""]
+    for label, items in groups:
+        if not items:
+            continue
+        out += [f"**{label}**", ""]
+        for it in items:
+            out.append(f"- {it.get('provenance', '')}")
+            out += [f"  > {ln}" for ln in (it.get("lines") or [])]
+        out.append("")
+    if gap:
+        out += [f"**{_NP.get('citation_gap_title', '')}**", "",
+                f"- 缺书：{gap.get('book', '')}",
+                f"- 状态：{gap.get('status', '')}",
+                f"- 实测：{'、'.join(gap.get('checked') or [])}；{gap.get('result', '')}",
+                f"- 处置：{gap.get('handling', '')}",
+                f"- 引据口径：{gap.get('basis_note', '')}", ""]
+    return out
+
+
 def narrate(a: dict) -> str:
     """analyze 输出 → 完整正文（markdown）。"""
     q = (a.get("question") or "").strip()
@@ -45,6 +71,13 @@ def narrate(a: dict) -> str:
     lines.append(f"建除十二神：**{jc.get('神')}**日——{jc.get('含义')}。")
     lines.append(f"日值神：**{hd.get('神')}**（{'黄道吉神' if hd.get('黄道') else '黑道凶神'}）——{hd.get('含义')}。")
     lines.append(f"值宿：**{xr.get('全名')}**（{'吉宿' if xr.get('吉') else '凶宿' if xr.get('凶') else '—'}）。")
+    xv = (a.get("citations") or {}).get("值宿歌诀") or {}
+    if xv.get("歌诀"):
+        lines.append(_NP["xiu_verse_lead"].format(
+            宿名=xv.get("宿名书源") or "", 神将=xv.get("值宿神将") or "",
+            吉凶=xv.get("吉凶") or ""))
+        for v_line in xv["歌诀"]:
+            lines.append(f"> {v_line}")
     if hour:
         lines.append(f"若择{hour.get('时支')}时：值神{hour.get('值神')}"
                      f"（{'黄道' if hour.get('黄道') else '黑道'}）。")
@@ -62,15 +95,16 @@ def narrate(a: dict) -> str:
         lines.append(_NP["neutral_lead"])
     lines.append("")
 
+    # 参考书证：逐字引文（只对照，不参与评分；判据真值源仍是 verdicts.json）
+    lines += _citations_section(a.get("citations") or {})
+
     # 口径收尾
     lines += ["---", ""]
     direction = v.get("方向")
     if direction == "凶":
-        lines.append("口径提示：凶系为结构信号，措辞用「偏向/有…信号」，不作「注定」；"
-                     "择日为象数参考，重大事项请结合专业意见（如安葬涉法规、医疗涉医嘱）。")
+        lines.append(_NP["disclaimer_xiong"])
     else:
-        lines.append("口径提示：择日为象数参考，不作现实承诺；"
-                 "如涉医疗、法律、投资，请以专业意见为准。")
+        lines.append(_NP["disclaimer"])
     lines.append("")
     return "\n".join(lines)
 

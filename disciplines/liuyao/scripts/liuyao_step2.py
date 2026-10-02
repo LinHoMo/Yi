@@ -7,75 +7,45 @@ _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
-from kernel_path import ensure_kernel_on_path as _ks_ensure, kernel_dir
+from kernel_path import ensure_kernel_on_path as _ks_ensure
 
 _ks_ensure(__file__)
 
 from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
-    ADVANCE_PAIRS,
     BRANCH_ELEMENTS,
-    BREAK_PAIRS,
-    CHONG_PAIRS,
-    EARTHLY_BRANCHES,
-    EIGHT_PALACES,
-    HEAVENLY_STEMS,
     HEXAGRAM_TRIGRAMS,
-    HE_PAIRS,
     KE_CYCLE,
     NAJIA_BRANCHES,
-    RETREAT_PAIRS,
-    SHENG_CYCLE,
-    STEM_ELEMENTS,
-    TOMB_MAP,
-    palace_of_key,
-    EARTHLY_BRANCHES as BRANCHES,
 )
 
-from datetime import datetime, timedelta
 
 import json
 
-import re
 
 from pathlib import Path
 
-from chain_tables import (_BRANCH_CLASHES, _BRANCH_CLASH_MAP, _CHART_TAIL,
-    _ELEMENT_PEAK_MONTHS, _HE_MAP, _HEXAGRAM_HARMONY_SET, _HEX_NAMES,
-    _QUESTION_USE_GOD_BASIS, _QUESTION_USE_GOD_MAP, _USE_GOD_LAYER_CITATIONS,
-    HEXAGRAM_LIUCHONG, HEXAGRAM_LIUHE, JUE_MAP, SAN_HE, TRIGRAM_ELEMENT,
-    USE_GOD_RELATIONSHIPS, _60_CYCLE_BASE)
+from chain_tables import (
+    _CHART_TAIL,
+    _HEX_NAMES,
+    _QUESTION_USE_GOD_BASIS,
+    _QUESTION_USE_GOD_MAP,
+    _USE_GOD_LAYER_CITATIONS,
+    JUE_MAP,
+    USE_GOD_RELATIONSHIPS,
+)
 
-from liuyao_narrate import (_build_reasoning_chain,
-    _get_hexagram_body_summary_note, find_classical_quotes)
 
-from liuyao_timing import predict_timing_core as _predict_timing
 
-from narrative_rules import strength_reason, strength_polarity
 
 from narrative_utils import (  # noqa: E402
     _branch_element,
-    _evaluate_fu_cang_strength,
     _is_chong,
-    _is_he,
     _pos_to_name,
-    _twelve_growth_at_day,
-    CLASSICAL_INTERPRETATIONS as CINTERP,
-    element_strength_in_month,
     get_changed_hexagram_branch,
     get_elements_for_relation,
-    get_empty_branches,
     get_palace_first_hexagram,
     get_relation_from_element,
-    get_twelve_growth_stage,
-    note_text,
     safe_get,
-    strength_to_score,
-    STEP5_CONFIDENCE as CONF_TXT,
-    STEP5_FACTOR_REASONS as FREASON,
-    STEP5_SPIRIT_REASONS as SPIRIT_TXT,
-    STEP5_VERDICT_DESCS as VDESC,
-    STEP5_YINGQI as YINGQI_TXT,
-    vdesc,
 )
 
 # ─── 全局变量 ───
@@ -722,9 +692,7 @@ def _check_fu_cang(
                 }
                 break
 
-        # 判断伏神是否得出
-        # 《增删卜易》：得伏出者，伏神旺相、飞神衰/被冲/被合/被日/月生
-        can_emerge = fei_shen is None or True  # 默认可出
+        can_emerge = True  # 本层不做判定：真正判据在 classical_enhancements._evaluate_hidden_spirit_emergence
 
         results.append({
             "fu_shen": target,

@@ -37,7 +37,6 @@ from yishu_core.symbols import (  # noqa: E402
     EIGHT_PALACES,
     wangxiangxiuqiusi,
 )
-from yishu_core.ganzhi_calendar import EARTHLY_BRANCHES  # noqa: E402
 
 # 六十四卦名 → 宫五行（变卦等别卦取其宫五行论生克）
 _HEX_ELEMENT: dict[str, str] = {}
@@ -51,16 +50,59 @@ for _palace, _info in EIGHT_PALACES.items():
 _STEM_ELEMENT = STEM_ELEMENTS
 _BRANCH_ELEMENT = dict(BRANCH_ELEMENTS)
 
-# 应期单位：日（卦气应期以干支日为单位，《先天后天论》"应如庚辛及申金之日"）
-_TIMING_UNIT = "日"
-
 
 def _load_verdicts() -> dict:
     p = DISC / "data" / "verdicts.json"
     return json.loads(p.read_text(encoding="utf-8"))
 
 
+def _load_classics() -> dict:
+    p = DISC / "data" / "classics.json"
+    return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
+
+
 VERDICTS = _load_verdicts()
+CLASSICS = _load_classics()
+
+
+def _classics(way, movings, helpers, hinderers, qi, multi_move, changed_hexagram) -> dict:
+    """本次判读实际执行的古诀原文（逐字），供 narrate 末段附出。
+
+    只作**所本原文**：不参与评分、不改判据（判据唯一真值源是 verdicts.json）。
+    原文与出处由 `dev_tools/build_classics.py` 从书源逐字抽出并断言可回指。
+    """
+    rules = (CLASSICS.get("rules") or {})
+    keys = ["起例_卦以八除", "起例_互卦", "体用总诀", "体用互变之诀"]
+    if way in ("numbers", "two_numbers"):
+        keys.append("起例_物数")
+    elif way in ("datetime", "lunar"):
+        keys.append("起例_年月日时")
+    if qi:
+        keys.append("体用衰旺之诀")
+    if multi_move:
+        keys.append("变卦式八则")
+    if changed_hexagram:
+        keys.append("占卦诀")
+    picked: list[dict] = []
+    for k in keys:
+        if k in rules:
+            picked.append({"键": k, **rules[k]})
+    per_gua: list[dict] = []
+    seen: set[str] = set()
+    for kind, lst in (("生体", helpers), ("克体", hinderers)):
+        for h in lst:
+            entry = ((CLASSICS.get("per_gua") or {}).get(kind) or {}).get(h["卦"]) or {}
+            if entry and h["卦"] not in seen:
+                seen.add(h["卦"])
+                per_gua.append({"键": f"{kind}·{h['卦']}", **entry})
+    if not picked and not per_gua:
+        return {}
+    return {
+        "规则": picked,
+        "逐卦": per_gua,
+        "来源": CLASSICS.get("source") or {},
+        "备注": "原文为书源逐字（繁体照录），只作所本凭证，不参与评分、不改判据",
+    }
 
 
 def _relation_of(body_el: str, use_el: str) -> str:
@@ -102,10 +144,6 @@ def _timing_gz(element: str) -> list[str]:
     return stems + branches
 
 
-def _chinese_num(n: int) -> str:
-    return ["零", "一", "二", "三", "四", "五", "六"][n]
-
-
 def _numerical_timing(total: int | None, motion: str | None) -> int | None:
     """数应（《卷二·占卜总诀》"复验己身之动静。坐则事应迟，行则事应速，
     走则愈速，卧则愈迟"；《老人有忧色占》"行则应速，成卦之数中分而取其半"）。
@@ -130,6 +168,26 @@ def _analogies_of(trig: str | None) -> dict | None:
         return {k: v for k, v in entry.items() if k not in ("note", "所本", "categories")}
     # 别卦名 → 上经卦类象（辅助挂象；主类象仍看体用互变经卦）
     return None
+
+
+def _analogy_table(topic: str, body: str, use: str) -> dict:
+    """事类对应的书源类象**原文**（《卷一·八卦萬物屬類》逐字），挂到体卦/用卦。
+
+    事类→类目键的映射在 `verdicts.json#wanwu_topic_keys`（数据，非代码字面量）；
+    原文与行号在 `classics.json#wanwu`（构建器逐字抽取、门 [1c] 按行号回读核对）。
+    只作取象依据，不参与评分。
+    """
+    spec = VERDICTS.get("wanwu_topic_keys") or {}
+    keys = list((spec.get("topics") or {}).get(topic) or []) + list(spec.get("common") or [])
+    table = CLASSICS.get("wanwu") or {}
+    out: dict[str, dict] = {}
+    for role, gua in (("体卦", body), ("用卦", use)):
+        entry = table.get(gua) or {}
+        picked = {k: entry[k]["原文"] for k in keys
+                  if k in entry and isinstance(entry[k], dict)}
+        if picked:
+            out[role] = {"卦": gua, "类象": picked}
+    return out
 
 
 def analyze(chart_out: dict) -> dict:
@@ -222,14 +280,11 @@ def analyze(chart_out: dict) -> dict:
         "生体卦应期": [{"卦": h["卦"], "干支": _timing_gz(h["五行"])} for h in helpers],
         "克体卦应期": [{"卦": h["卦"], "干支": _timing_gz(h["五行"])} for h in hinderers],
         "数应": _numerical_timing(chart_out.get("total"), chart_out.get("motion")),
-        "所本": "《卷二·先天后天论》：先天卦定事应之期，取之卦气；"
-                "应体之卦气宜盛不宜衰；《卷二·占卜总诀》：复验己身之动静",
+        "所本": VERDICTS["basis_quotes"]["xiantian_houtian"],
     }
 
     # 综合判断：体用总诀基准 + 互变生克修正 + 旺衰修正
     # 卦象特断优先：《卷二·卦断遗论》"有不拘体用者"，命中即不再套体用生克。
-    basis = "《卷二·体用总诀》：体克用诸事吉，用克体诸事凶，体生用有耗失之患，" \
-            "用生体有进益之喜，体用比和百事顺遂；互乃中间之应，变乃末后之期"
     special = VERDICTS["hexagram_special"].get(f"{chart_out.get('hexagram')}·{chart_out.get('moving')}爻动")
     if special:
         verdict = {
@@ -255,7 +310,7 @@ def analyze(chart_out: dict) -> dict:
         }
 
     return {
-        "schema": "meihua-analyze-v1",
+        "schema": "meihua-analyze-v2",
         "topic": topic,
         "question": question,
         "chart_summary": {
@@ -288,7 +343,10 @@ def analyze(chart_out: dict) -> dict:
         "topic_verdict": topic_verdict,
         "sheng_ti": sheng_ti,
         "ke_ti": ke_ti,
+        "analogy_table": _analogy_table(topic, body, use),
         "timing": timing,
+        "classics": _classics(chart_out.get("way"), movings, helpers, hinderers,
+                              qi, multi_move, chart_out.get("changed_hexagram")),
         "conclusion": verdict,
         "factors": [
             {"因子": "体用关系", "权重": 40, "判据": relation,
@@ -296,10 +354,10 @@ def analyze(chart_out: dict) -> dict:
              "所本": "《卷二·体用总诀》"},
             {"因子": "生克之卦", "权重": 30,
              "判据": f"生体 {len(helpers)} 卦 / 克体 {len(hinderers)} 卦",
-             "所本": "《卷二·体用总诀》：体宜受他卦之生，不宜他卦之克"},
+             "所本": VERDICTS["basis_quotes"]["ti_yong_shengke"]},
             {"因子": "卦气旺衰", "权重": 20,
              "判据": qi["状态"] if qi else "未定（无月令）",
-             "所本": "《卷一·卦气旺》：应体之卦气宜盛不宜衰"},
+             "所本": VERDICTS["basis_quotes"]["guaqi"]},
             {"因子": "应期", "权重": 10,
              "判据": "、".join(timing["卦气应期"]) or "无",
              "所本": "《卷二·先天后天论》"},
@@ -336,7 +394,7 @@ def _synthesize(relation: str, helpers: list, hinderers: list,
 
     if topic == "天时":
         direction = "平"          # 天时由卦象五行主导，不套体用吉凶
-        tone = "天时占不分体用，全观诸卦五行（离多主晴、坎多主雨…）"
+        tone = VERDICTS["basis_quotes"]["tianshi"]
     elif score >= 1.2:
         direction, tone = "吉", "体用相济，又有生扶之卦，事势顺畅"
     elif score >= 0.4:

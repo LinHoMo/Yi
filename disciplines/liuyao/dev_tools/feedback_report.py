@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""真实应期反馈的独立审计报告 —— 不依赖任何评分引擎。
+"""真实应期反馈的独立审计报告 —— 不依赖调参/古籍对齐评分引擎。
 
     用法:
         python dev_tools/feedback_report.py --summary
@@ -8,19 +8,20 @@
     用途:
         从 data/feedback/ 读取真实用户应期反馈，输出独立统计。
         数据永不参与调参，报告仅用于独立审计现实命中率。
-        不引用 evaluate.py 或评分引擎任何函数。
+        不引用 evaluate.py 或古籍对齐评分引擎任何函数；命中判定口径
+        （strict/loose 窗口与支关系表）唯一真值源是 `yishu_core.yingqi`，
+        与调参链无交集。
 """
 from __future__ import annotations
 
 import argparse
 import csv
-import json
 import sys
 from collections import Counter
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from feedback_store import FeedbackStore, _branch_of  # noqa: E402
+from feedback_store import FeedbackStore, WINDOW_CALIBER, _branch_of  # noqa: E402
 
 
 DAYS_OF_WEEK = "一二三四五六日"
@@ -59,6 +60,7 @@ def summary(store: FeedbackStore) -> str:
                      f"({stats['loose_hits']}/{stats['with_actual_outcome']})")
     else:
         lines.append("  命中率：尚无带实际日期的反馈")
+    lines.append("  口径：" + WINDOW_CALIBER)
     # 应验日期分布（按星期几）
     wdays, months = [], []
     for r in records:

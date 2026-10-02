@@ -1,5 +1,96 @@
 {
- "digest": "36005aa05670b1a6",
- "reason": "阶段4 A5：golden 指纹补 narrate 段（四段契约 chart→analyze→narrate 全覆盖，原仅六爻有）",
- "n": 4
+  "_meta": {
+    "what": "大六壬金标准指纹基线（排盘+九宗门+天将逐字段）",
+    "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
+  },
+  "digest": "9a508ee7a27bba40",
+  "narrate_digest": "6a3c40fb858b933a",
+  "drift_log": [
+    {
+      "from": "36005aa05670b1a6",
+      "to": "bfdd8d68fecfb918",
+      "date": "2026-10-01",
+      "reason": "指纹拆分（SYS-REVIEW#2）：机械/措辞分列；机械字段取值不变（narrate_sha/narrate_lines 移入措辞层单列）"
+    },
+    {
+      "from": "bfdd8d68fecfb918",
+      "to": "4f697b774a13c05d",
+      "date": "2026-10-01",
+      "reason": "课目判据 8→31 条纯结构条件（甲组门类10+乙组结构11+丙组旬奇3+前三批7），命中列表进 analyze factors[4].basis 与 narrate 课目段；排盘字段（日干支/时柱/月将/门类/课体/三传/遁干/四课乘临）逐字段比对零漂移"
+    },
+    {
+      "from": "4f697b774a13c05d",
+      "to": "cb34a6d43b22b8c1",
+      "date": "2026-10-01",
+      "reason": "liuren 引文逐字订正（独立验证指出口径不实）：men.昴星/伏吟/返吟 三条 basis 还原为书源原样（含小字夹注「论初传也/论中末也」「阳日用辰，阴日用日，辰上作中，日上作末」与书名号《玉厯》），使 21 条引文（men 9 + 天将 12）全部为书源去空白后逐字子串。机械层真实漂移（如实范围，两层并记，免读窄）= ①进机械指纹的 factors[1]（返吟诀文）2 例——金标准 4 例中 2 例命中返吟；②不进机械指纹的显示层 analyze#verdicts_note[1] 文本 1 处（= verdicts.json#preamble[1]，去掉写死数字改引用句；该变更随同批次「同一事实只有一处权威源」收口于 2026-10-01o 落地，见 narrate_drift_log 末条）——它只经 narrate 全文影响措辞层 narrate_sha，不属 factors、不改排盘字段。排盘字段（日干支/时柱/月将/门类/课体/三传/遁干/四课乘临）JSON 归一化逐字段零变化，证据 tools/scratch/gate_logs/liuren_fp_real_diff.txt。措辞层 2 例 narrate_sha 随引文同步变化。新增门 [1d] 引文逐字门：21 条 0 归化。"
+    },
+    {
+      "from": "cb34a6d43b22b8c1",
+      "to": "aae0b01f13955a50",
+      "date": "2026-10-01",
+      "reason": "第五批结构课目（淫泆/芜淫/侵害/刑伤/死奇/鬼墓/殃咎/龙战）落判据，课目清单入 analyze 输出，四个样例的 课目/天将/factors 字段随之新增命中课名"
+    },
+    {
+      "from": "aae0b01f13955a50",
+      "to": "9a508ee7a27bba40",
+      "date": "2026-10-02",
+      "reason": "新增日辰关系层（卷三「日辰」歌 10 条结构判据）：analyze 增 richen 字段与 factors 一项、narrate 增该段；判据只出结构标签与书源引文，不改方向输出"
+    }
+  ],
+  "narrate_drift_log": [
+    {
+      "from": "36005aa05670b1a6",
+      "to": "32198ebda6685894",
+      "date": "2026-10-01",
+      "reason": "指纹拆分（SYS-REVIEW#2）：机械/措辞分列；机械字段取值不变（narrate_sha/narrate_lines 移入措辞层单列）"
+    },
+    {
+      "from": "32198ebda6685894",
+      "to": "b6229cd459486d89",
+      "date": "2026-10-01",
+      "reason": "narrate 接线新增两段：三传天将乘临歌诀（十二天将逐字引文）+ 课目诀文引文（kemu.json 归一后 verse 随命中输出）；另课名 赎胥→赘胥 照书源正名（机械枚举门 22 次触发正常）"
+    },
+    {
+      "from": "b6229cd459486d89",
+      "to": "962b50bd337a1ab1",
+      "date": "2026-10-01",
+      "reason": "课目判据 8→31 条纯结构条件（甲组门类10+乙组结构11+丙组旬奇3+前三批7），命中列表进 analyze factors[4].basis 与 narrate 课目段；排盘字段（日干支/时柱/月将/门类/课体/三传/遁干/四课乘临）逐字段比对零漂移"
+    },
+    {
+      "from": "962b50bd337a1ab1",
+      "to": "da8e617b4af71d94",
+      "date": "2026-10-01",
+      "reason": "narrate 课目段接线：由「> 课名：诀文」改为「- 课名：卷一诀文 + > 课经集定义句（卷篇出处）+ 判据边界」；verdicts.json preamble/charter 口径同步为「已落 31 条纯结构判据，旺相/神煞/年命依赖者未接入」。机械层仅 factors[4].basis 课目命中列表变化"
+    },
+    {
+      "from": "da8e617b4af71d94",
+      "to": "983f8c1b0af92cd3",
+      "date": "2026-10-01",
+      "reason": "课目判据补判据边界说明（联珠并收连茹/间传四式、玄胎名从卷一、无禄两读并收），机械 factors 值不变、narrate 课目段文字随 partial 输出"
+    },
+    {
+      "from": "983f8c1b0af92cd3",
+      "to": "46079ece1688f627",
+      "date": "2026-10-01",
+      "reason": "liuren 引文逐字订正（独立验证指出口径不实）：men.昴星/伏吟/返吟 三条 basis 还原为书源原样（含小字夹注「论初传也/论中末也」「阳日用辰，阴日用日，辰上作中，日上作末」与书名号《玉厯》），使 21 条引文（men 9 + 天将 12）全部为书源去空白后逐字子串。机械层真实漂移（如实范围，两层并记，免读窄）= ①进机械指纹的 factors[1]（返吟诀文）2 例——金标准 4 例中 2 例命中返吟；②不进机械指纹的显示层 analyze#verdicts_note[1] 文本 1 处（= verdicts.json#preamble[1]，去掉写死数字改引用句；该变更随同批次「同一事实只有一处权威源」收口于 2026-10-01o 落地，见 narrate_drift_log 末条）——它只经 narrate 全文影响措辞层 narrate_sha，不属 factors、不改排盘字段。排盘字段（日干支/时柱/月将/门类/课体/三传/遁干/四课乘临）JSON 归一化逐字段零变化，证据 tools/scratch/gate_logs/liuren_fp_real_diff.txt。措辞层 2 例 narrate_sha 随引文同步变化。新增门 [1d] 引文逐字门：21 条 0 归化。"
+    },
+    {
+      "from": "46079ece1688f627",
+      "to": "8e12f73742eecf26",
+      "date": "2026-10-01",
+      "reason": "「同一事实多处写死」收口：判据条数/门类名单/课目条数/引文条数一律改由权威源运行时实算（jiuzongmen.MEN_ORDER、core TIAN_JIANG_ORDER、kemu.IMPLEMENTED、check.verbatim_inventory、书源课目段实算），analyze factors[4].label、analyze#verdicts_note[1]（= verdicts.json#preamble[1]）与 tianjiang.charter 措辞去掉写死数字（改引用句）——其中 verdicts_note/charter 属显示层，不进机械指纹，只经 narrate 影响本层；机械层零漂移（factors 只取 basis，未动），仅 narrate 措辞层 4/4 例随之变化"
+    },
+    {
+      "from": "8e12f73742eecf26",
+      "to": "2978cc70c8e014d6",
+      "date": "2026-10-01",
+      "reason": "第五批结构课目（淫泆/芜淫/侵害/刑伤/死奇/鬼墓/殃咎/龙战）落判据，课目清单入 analyze 输出，四个样例的 课目/天将/factors 字段随之新增命中课名"
+    },
+    {
+      "from": "2978cc70c8e014d6",
+      "to": "6a3c40fb858b933a",
+      "date": "2026-10-02",
+      "reason": "新增日辰关系层（卷三「日辰」歌 10 条结构判据）：analyze 增 richen 字段与 factors 一项、narrate 增该段；判据只出结构标签与书源引文，不改方向输出"
+    }
+  ]
 }

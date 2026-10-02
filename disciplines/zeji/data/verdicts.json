@@ -429,6 +429,16 @@
     "sum_bad": "黑道当值或建除有忌，结构上偏不利",
     "sum_mixed": "有宜有忌，可行但需保留（宜择黄道吉时）",
     "basis_jianchu": "《协纪辨方书》建除篇通行口径",
-    "basis_xiu": "《二十八宿吉凶歌》通行通书口径"
-  }
+    "basis_xiu": "《二十八宿吉凶歌》通行通书口径",
+    "xiu_verse_lead": "《玉匣記·二十八宿值日吉凶歌》{宿名}（值宿神将 {神将}，书证作「{吉凶}」；逐字引文，只作对照）：",
+    "basis_huanghei": "《协纪辨方书·卷五·黄黑道》",
+    "basis_pengzu": "彭祖百忌（通书通行口诀）",
+    "citation_title": "参考书证（逐字引文，供对照）",
+    "citation_lead": "下引同源通书原文，供与本日盘面相互对照；引文不参与评分、不改判据——判据唯一真值源是 data/verdicts.json。",
+    "citation_common_label": "通则",
+    "citation_activity_label": "本例事类",
+    "citation_gap_title": "来源缺口（如实登记）"
+  },
+  "citations_ref": "参考书证见 data/citations.json（《玉匣記》逐字引文，带篇名与源文件行号）；构建器 dev_tools/build_citations.py",
+  "source_gap_ref": "缺书与处置见 data/citations.json#gap（《協紀辨方書》维基文库无公版可抓，实测 missingtitle）"
 }

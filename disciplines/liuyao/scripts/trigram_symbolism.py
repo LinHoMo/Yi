@@ -32,7 +32,7 @@ from kernel_path import ensure_kernel_on_path as _ensure_kernel  # noqa: E402
 
 _ensure_kernel(__file__)
 
-from yishu_core.symbols import KE_CYCLE, KE_WO, SHENG_CYCLE, SHENG_WO  # noqa: E402
+from yishu_core.symbols import KE_CYCLE, SHENG_CYCLE  # noqa: E402
 
 _TRIGRAM_DATA_PATH = Path(__file__).resolve().parents[1] / "data" / "trigram_symbolism.json"
 
@@ -239,21 +239,6 @@ def trigram_to_favorable_direction(trigram: str) -> str:
     """
     return TRIGRAM_DIRECTIONS.get(trigram, "中")
 
-def get_trigram_info(trigram: str) -> dict:
-    """
-    获取单个卦的完整类象信息。
-
-    Parameters
-    ----------
-    trigram : str
-        八卦名
-
-    Returns
-    -------
-    dict
-        该卦的全部类象数据
-    """
-    return TRIGRAM_SYMBOLISM.get(trigram, {}).copy()
 
 def format_trigram_interpretation_text(interp: dict) -> str:
     """

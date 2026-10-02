@@ -17,7 +17,6 @@ if str(_CORE) not in sys.path:
     sys.path.insert(0, str(_CORE))
 
 from yishu_core.shensha import shensha_at_branches  # noqa: E402
-from yishu_core.symbols import BRANCH_ELEMENTS  # noqa: E402
 from pathlib import Path as _P
 import json as _json
 _VT = _P(__file__).resolve().parents[1] / 'data' / 'rules' / 'verdict_texts.json'

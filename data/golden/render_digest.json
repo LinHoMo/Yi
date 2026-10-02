@@ -1,0 +1,95 @@
+{
+  "_meta": {
+    "what": "八科 render 段 Markdown 内容指纹基线（逐字节，含反馈尾注）",
+    "how": "改 render 模板/字段后跑 python tools/check.py --only report_contract --raise-render --reason \"理由\"；同源验收已保证 本地=网页，本基线保证「和上一版一样」（架构评审 A6）"
+  },
+  "md": {
+    "lingqi": "9956c452faa824e7",
+    "liuren": "fccde3a8aa44e4b2",
+    "liuyao": "e1d588fbcb7d88dc",
+    "meihua": "4fad656b06e1dde2",
+    "ming": "11990ccbc315ac29",
+    "xiaoliuren": "8c741d88438ab8f5",
+    "zeji": "6a42b641e3aa69e9",
+    "ziwei": "7c55065b2601b0c6"
+  },
+  "drift_log": [
+    {
+      "discipline": "lingqi",
+      "from": null,
+      "to": "9956c452faa824e7",
+      "date": "2026-10-02",
+      "reason": "2026-10-02c 建立 render 段 MD 内容指纹基线（架构评审 A6 大动血版）"
+    },
+    {
+      "discipline": "liuren",
+      "from": null,
+      "to": "fccde3a8aa44e4b2",
+      "date": "2026-10-02",
+      "reason": "2026-10-02c 建立 render 段 MD 内容指纹基线（架构评审 A6 大动血版）"
+    },
+    {
+      "discipline": "liuyao",
+      "from": null,
+      "to": "e1d588fbcb7d88dc",
+      "date": "2026-10-02",
+      "reason": "2026-10-02c 建立 render 段 MD 内容指纹基线（架构评审 A6 大动血版）"
+    },
+    {
+      "discipline": "meihua",
+      "from": null,
+      "to": "4fad656b06e1dde2",
+      "date": "2026-10-02",
+      "reason": "2026-10-02c 建立 render 段 MD 内容指纹基线（架构评审 A6 大动血版）"
+    },
+    {
+      "discipline": "ming",
+      "from": null,
+      "to": "c67bbb4e95cea0f4",
+      "date": "2026-10-02",
+      "reason": "2026-10-02c 建立 render 段 MD 内容指纹基线（架构评审 A6 大动血版）"
+    },
+    {
+      "discipline": "xiaoliuren",
+      "from": null,
+      "to": "8c741d88438ab8f5",
+      "date": "2026-10-02",
+      "reason": "2026-10-02c 建立 render 段 MD 内容指纹基线（架构评审 A6 大动血版）"
+    },
+    {
+      "discipline": "zeji",
+      "from": null,
+      "to": "6a42b641e3aa69e9",
+      "date": "2026-10-02",
+      "reason": "2026-10-02c 建立 render 段 MD 内容指纹基线（架构评审 A6 大动血版）"
+    },
+    {
+      "discipline": "ziwei",
+      "from": null,
+      "to": "7c55065b2601b0c6",
+      "date": "2026-10-02",
+      "reason": "2026-10-02c 建立 render 段 MD 内容指纹基线（架构评审 A6 大动血版）"
+    },
+    {
+      "discipline": "ming",
+      "from": "c67bbb4e95cea0f4",
+      "to": "a0846ee4a129f775",
+      "date": "2026-10-02",
+      "reason": "命科四柱关系层补入天干五合（pillar_relations），narrate 段标题改「四柱干支关系」，ming render MD 变化；其余七科指纹不变"
+    },
+    {
+      "discipline": "ming",
+      "from": "a0846ee4a129f775",
+      "to": "5fe0d4da98e7c205",
+      "date": "2026-10-02",
+      "reason": "命科四柱干支关系段引文标签限定为「地支关系所本」，ming render MD 变化；其余七科不变"
+    },
+    {
+      "discipline": "ming",
+      "from": "5fe0d4da98e7c205",
+      "to": "11990ccbc315ac29",
+      "date": "2026-10-02",
+      "reason": "2026-10-02c 命科加法：B1 女命夫子星 narrate 专段 + B2 童子煞神煞入盘，ming render MD 有意变更（其余七科零漂移）"
+    }
+  ]
+}

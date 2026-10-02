@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """六爻叙述层：思维链格局标签 / 五步推演推理链 / 解读正文生成 / 段落素材。
 
-合并自 chain_narrate / chain_narrate_patterns / human_narrative / human_narrative_segments。
 铁律一合规：机械运算在主线引擎完成，本层只把结构化结论翻译成人话并装配成交付对象。
 """
 
@@ -14,32 +13,18 @@ _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
-from kernel_path import ensure_kernel_on_path as _ensure_kernel, kernel_dir
+from kernel_path import ensure_kernel_on_path as _ensure_kernel
 
 _ensure_kernel(__file__)
 
 from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
-    ADVANCE_PAIRS,
-    BRANCH_ELEMENTS,
-    BREAK_PAIRS,
     CHONG_PAIRS,
-    EARTHLY_BRANCHES,
-    EIGHT_PALACES,
-    HEAVENLY_STEMS,
     HE_PAIRS,
-    HEXAGRAM_TRIGRAMS,
     KE_CYCLE,
-    NAJIA_BRANCHES,
-    RETREAT_PAIRS,
     SHENG_CYCLE,
-    STEM_ELEMENTS,
-    TOMB_MAP,
-    palace_of_key,
-    hexagram_he_chong_kind,     # 卦体六合/六冲（内核唯一实现，用于"变卦定终"）
-    EARTHLY_BRANCHES as BRANCHES,
+    hexagram_he_chong_kind,
 )
 
-from datetime import datetime, timedelta
 
 import json
 
@@ -120,7 +105,6 @@ def analyze_shi_yao_relation(result, use_god_category=None):
     if world_relation and world_relation in SHI_YAO_INTERPRETATION:
         interp = SHI_YAO_INTERPRETATION[world_relation]
 
-        # Determine strength from element_strength if available
         strength_hint = ""
         adv = result.get("advanced_analysis", {})
         if isinstance(adv, dict):
@@ -133,7 +117,6 @@ def analyze_shi_yao_relation(result, use_god_category=None):
                     elif score <= 2.0:
                         strength_hint = "_weak"
 
-        # Detect question scenario for contextual interpretation
         question = result.get("question", "")
         scenario = _detect_question_scenario(question)
         # 婚姻情境按用神（问测者性别视角）分流：男问女→用神妻财，子孙为原神，持世有利；
@@ -184,7 +167,6 @@ def _pattern_matches(pattern_str, advanced, result):
         if pattern_str == "六冲卦" and hex_name in HEXAGRAM_LIUCHONG:
             return True
         return False
-    # 冲中逢合 / 合处逢冲
     if pattern_str in ("冲中逢合", "合处逢冲"):
         harmony = advanced.get("clash_harmony", {})
         if isinstance(harmony, dict):
@@ -294,7 +276,6 @@ def _pattern_matches(pattern_str, advanced, result):
         if isinstance(sp, dict):
             return sp.get("pattern") == "从格"
         return False
-    # 世动化退 / 世动化进
     if pattern_str in ("世动化退", "世动化进"):
         s4 = result.get("thinking_chain", {}).get("step4_change_analysis", {})
         details = s4.get("details", []) if isinstance(s4, dict) else []
@@ -342,19 +323,16 @@ def _pattern_matches(pattern_str, advanced, result):
         if pattern_str == "大凶" and "凶" in verdict and "吉" not in verdict:
             return True
         return False
-    # 月破
     if pattern_str == "月破":
         mb = advanced.get("monthly_break", {})
         if isinstance(mb, dict):
             return mb.get("has_monthly_break") or mb.get("has_break") or len(mb.get("break_positions") or []) > 0
         return False
-    # 暗动
     if pattern_str == "暗动":
         hm = advanced.get("hidden_movement", {})
         if isinstance(hm, dict):
             return hm.get("has_hidden_movement") or len(hm.get("hidden_moving_yao") or []) > 0
         return False
-    # 绝处逢生
     if pattern_str == "绝处逢生":
         dr = advanced.get("desperate_relief", {})
         if isinstance(dr, dict):
@@ -363,7 +341,6 @@ def _pattern_matches(pattern_str, advanced, result):
         if isinstance(s5, dict):
             return s5.get("desperate_relief_modifier", 0) > 0
         return False
-    # 回头克
     if pattern_str == "回头克":
         step4 = result.get("thinking_chain", {}).get("step4_change_analysis", {})
         details = step4.get("details", []) if isinstance(step4, dict) else []
@@ -371,7 +348,6 @@ def _pattern_matches(pattern_str, advanced, result):
             if isinstance(d, dict) and d.get("change_type") == "回头克":
                 return True
         return False
-    # 克多出暴
     if pattern_str == "克多出暴":
         step4 = result.get("thinking_chain", {}).get("step4_change_analysis", {})
         details = step4.get("details", []) if isinstance(step4, dict) else []
@@ -453,7 +429,6 @@ def _build_reasoning_chain(
     if body_note:
         chain.append(f"[卦身] {body_note}")
 
-    # Step5: 综合
     chain.append(f"[综合] {step5_data.get('verdict')} — 评分{step5_data.get('final_score'):.2f}")
 
     return chain
@@ -678,10 +653,16 @@ def _collect_pattern_tags(context, step3: dict, step4: dict, step5: dict) -> lis
                 _add("格局-假空", "假空")
         if step3.get("is_month_break"):
             _add("格局-月破", "月破")
-        summary3 = str(step3.get("summary_text") or "")
-        for kw in ("出旬", "填实", "冲空", "动空", "飞克伏", "伏生飞", "泄气", "暗动"):
-            if kw in summary3:
-                _add(kw)
+        # 暗动 / 冲空：读结构（`advanced_analysis.hidden_movement` 逐爻），不扫 summary 文本。
+        # 旧实现按 summary_text 子串取词——「无暗动」也会命中「暗动」，属假阳来源。
+        hm_ = adv.get("hidden_movement") or {}
+        if isinstance(hm_, dict) and hm_.get("has_hidden_movement"):
+            for d in hm_.get("details") or []:
+                kind = str((d or {}).get("type") or "")
+                if "暗动" in kind:
+                    _add("格局-暗动", "暗动")
+                if "冲空" in kind:
+                    _add("冲空")
 
     # ---- step5 / special pattern ----
     if step5:
@@ -717,11 +698,26 @@ def _collect_pattern_tags(context, step3: dict, step4: dict, step5: dict) -> lis
         sc = step5.get("sanchuan") or {}
         if isinstance(sc, dict) and sc.get("fired"):
             _add("格局-三传克制", "三传克制")
-        reason_text = " ".join(str(v) for v in step5.values() if not isinstance(v, (list, dict)))
-        for kw in ("三合", "合局", "三刑", "恃势", "无恩", "六合", "六冲",
-                   "冲中逢合", "合处逢冲", "旬空", "月破", "反吟", "伏吟"):
-            if kw in reason_text or kw in blob:
-                _add(kw if not kw.startswith("格局") else kw)
+        # 三合局 / 三刑 / 月破：读结构（`advanced_analysis` 各段），不扫 step5 文本。
+        # 旧实现把 step5 全部标量拼成字符串子串取词，是「格局词子串匹配」的假阳来源。
+        tc_ = adv.get("triple_combo") or {}
+        if isinstance(tc_, dict) and tc_.get("has_triple_combo"):
+            _add("三合", "合局")
+        tp_ = adv.get("three_punishments") or {}
+        if isinstance(tp_, dict) and tp_.get("has_punishment"):
+            for p in tp_.get("punishments") or []:
+                # 只认成刑（完整/成刑/催刑）；「待刑」缺月日补齐，不计结构命中（口径同 effects/step5）
+                if str((p or {}).get("completeness") or "") not in ("完整", "成刑", "催刑"):
+                    continue
+                _add("三刑")
+                pt = str((p or {}).get("type") or "")
+                if "恃势" in pt:
+                    _add("恃势")
+                if "无恩" in pt:
+                    _add("无恩")
+        mb_ = adv.get("monthly_break") or {}
+        if isinstance(mb_, dict) and mb_.get("has_monthly_break"):
+            _add("格局-月破", "月破")
 
     # ---- advanced_analysis ----
     hs = adv.get("hidden_spirit_analysis") or {}

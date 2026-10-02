@@ -17,7 +17,7 @@ import json
 import re
 import sys
 import traceback
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -29,7 +29,7 @@ from yishu_core import ganzhi_calendar as gc  # noqa: E402
 
 from liuyao_engine import build_hexagram_result  # noqa: E402
 from thinking_chain import run_thinking_chain  # noqa: E402
-from classical_enhancements import element_strength_in_month  # noqa: E402
+from classical_enhancements import element_strength_in_month, use_god_tomb_tags  # noqa: E402
 from effects import analyze_hexagram_body  # noqa: E402
 from liuyao_narrate import build_human_narrative, render_human_markdown  # noqa: E402
 
@@ -42,15 +42,18 @@ SPLITS = ROOT / "data" / "cases" / "case_splits.json"
 from yishu_core.symbols import (  # noqa: E402
     BAGUA_LINES,
     HEXAGRAM_TRIGRAMS,
-    TOMB_MAP,
     SAN_HE_GROUPS,
     EARTHLY_BRANCHES,
     HEAVENLY_STEMS,
 )
 
-# 干支序列唯一真值源在 core；正则字符集由 core 常量拼出，而非再抄一份字符串
-_MONTH_RE = re.compile(r"([%s])月" % EARTHLY_BRANCHES)
-_DAY_RE = re.compile(r"([%s])([%s])日" % (HEAVENLY_STEMS, EARTHLY_BRANCHES))
+# 干支序列唯一真值源在 core；正则字符集由 core 常量拼出，而非再抄一份字符串。
+# 必须先 "".join：这两个常量是 list，直接交给 %s 会插进 list 的 repr
+# （"[['子', '丑', …]]"），字符类在第一个 ] 处提前闭合，整条正则从此永不匹配。
+_STEM_CLASS = "".join(HEAVENLY_STEMS)
+_BRANCH_CLASS = "".join(EARTHLY_BRANCHES)
+_MONTH_RE = re.compile(r"([%s])月" % _BRANCH_CLASS)
+_DAY_RE = re.compile(r"([%s])([%s])日" % (_STEM_CLASS, _BRANCH_CLASS))
 
 
 def hex_lines(name: str) -> list[int] | None:
@@ -198,13 +201,12 @@ def load_ids(split: str | None = None, only: list[str] | None = None) -> list[st
         return [i for i in all_ids if i.startswith("HO")]
     if split == "all":
         return all_ids
-    # 外部验证集（bushi_zhengzong / 其他书本源）— 显式返回其 ID 列表，无数据时返回空
-    for ext_key in ("bushi_zhengzong_holdout",):
-        if split == ext_key:
-            if SPLITS.exists():
-                return [i for i in json.loads(SPLITS.read_text(encoding="utf-8")).get(ext_key, [])
-                        if i in all_ids]
-            return []
+    # 其余外部验证集：凡 case_splits.json 里登记的 ID 列表键（*_holdout / *_direction /
+    # *_qualitative），一律按清单取子集 —— 新增书源只登记数据，不必再改本函数。
+    if SPLITS.exists():
+        entry = json.loads(SPLITS.read_text(encoding="utf-8")).get(split)
+        if isinstance(entry, list):
+            return [i for i in entry if isinstance(i, str) and i in all_ids]
     # 未知 split — 返回空集而非全量（防止误跑全库）
     return []
 
@@ -260,11 +262,10 @@ def run_case(case: dict) -> dict:
         month_elem = _extra_element(month_br)
         if month_elem:
             extra["use_god_wangshuai"] = element_strength_in_month(ug_elem, month_elem)
-        # 入墓：用神五行之墓支恰临日辰/月建（日月可同时命中）
-        tomb_of = TOMB_MAP.get(ug_elem, "")
-        hits = [tag for tag, br in (("入日墓", day_br), ("入月墓", month_br))
-                if tomb_of and tomb_of == br]
-        extra["use_god_muku"] = "、".join(hits) if hits else "不入墓"
+        # 入墓：日墓/月墓/动墓/化墓，结构判据唯一实现在 classical_enhancements
+        extra["use_god_muku"] = use_god_tomb_tags(
+            h["original_hexagram"]["yao_lines"], ug_branch, sel.get("position"),
+            day_br, month_br)["label"]
 
     # ── 卦身支（《卜筮正宗》安月卦身诀：世爻阴阳 + 世爻位 → 卦身支，analyze_hexagram_body 唯一实现）──
     body = analyze_hexagram_body(h)

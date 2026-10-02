@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""六爻纳甲引擎：数据表 / 干支历与真太阳时 / 排盘核心 / 文本输出 / 历史遗留梅花与批量接口。（拆分自 liuyao_engine.py，纯搬移不改逻辑；聚合入口见 liuyao_engine.py）。"""
+"""六爻引擎排盘：起卦（铜钱/时间/数字）与装卦排盘（定宫、六亲、旬空、六神、爻名），产出 build_hexagram_result 基础盘面。聚合入口见 liuyao_engine.py。"""
 
 import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
 
@@ -8,51 +8,34 @@ _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
-from kernel_path import ensure_kernel_on_path as _ensure_kernel, kernel_dir
+from kernel_path import ensure_kernel_on_path as _ensure_kernel
 
 _ensure_kernel(__file__)
 
 from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
-    ADVANCE_PAIRS,
     BRANCH_ELEMENTS,
-    BREAK_PAIRS,
-    CHONG_PAIRS,
-    EARTHLY_BRANCHES,
     EIGHT_PALACES,
-    BAGUA_LINES,
-    HEAVENLY_STEMS,
-    HEXAGRAM_TRIGRAMS,
-    HE_PAIRS,
     KE_CYCLE,
     KE_WO,
     NAJIA_BRANCHES,
-    RETREAT_PAIRS,
     SHENG_CYCLE,
     SHENG_WO,
-    STEM_ELEMENTS,
-    TOMB_MAP,
     xunkong_of,
 )
 
 from yishu_core.najia import najia_branch  # noqa: E402
 
-import argparse
 
-import json
 
-import math
 
-import os
 
 import random
 
 import sys
 
-from datetime import datetime, timedelta
+from datetime import datetime
 
-from pathlib import Path
 
-from yishu_core.runtime import force_utf8_stdio as _force_utf8_stdio  # noqa: E402
 
 from engine_calendar import get_day_stem_branch, get_hour_stem_branch, get_month_stem_branch, get_year_stem_branch
 from engine_format import generate_analysis_hints

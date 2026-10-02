@@ -26,8 +26,15 @@ from yishu_core.symbols import (
 from yishu_core.liuren_tables import JI_GONG, STEM_HE
 
 YANG_STEMS = set("甲丙戊庚壬")
-_MENG = {"寅", "申", "巳", "亥"}
-_ZHONG = {"子", "午", "卯", "酉"}
+MENG = {"寅", "申", "巳", "亥"}          # 四孟（孟仲季取用，见 _position）
+ZHONG = {"子", "午", "卯", "酉"}
+
+# 九宗门名单（卷一「入手法」九法次序）——**本科门类名单的唯一真值源**。
+# 门 [1] 的门类越界断言、门 [1d] 的引文清单与条数，一律由本元组实算，
+# 别处（含 data/verdicts.json 的 men 键、文档散文）不得再写一份名单或条数。
+MEN_ORDER: tuple[str, ...] = (
+    "贼克", "比用", "涉害", "遥克", "昴星", "别责", "八专", "伏吟", "返吟",
+)
 
 PUNISH_OF: dict[str, str] = {}
 for _cycle in THREE_PUNISHMENTS_CYCLIC.values():
@@ -99,7 +106,7 @@ def _she_hai_deep(c: dict) -> int:
 
 def _meng_zhong_ji(branch: str) -> int:
     """孟深仲浅季当休：孟 0 / 仲 1 / 季 2。"""
-    return 0 if branch in _MENG else (1 if branch in _ZHONG else 2)
+    return 0 if branch in MENG else (1 if branch in ZHONG else 2)
 
 
 def _ke_tree(day_stem: str, day_branch: str, tianpan: dict[str, str],

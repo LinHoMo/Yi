@@ -1,7 +1,46 @@
 {
-  "page": "卜筮正宗",
+  "key": "bushi_zhengzong",
+  "kind": "六爻",
+  "title": "卜筮正宗",
+  "site": "zh.wikisource.org",
   "api": "https://zh.wikisource.org/w/api.php",
-  "sha256": "7f644d3276c0c00cee8650a812f2f22119188b2278e409a466ae91ea3f695bd0",
-  "bytes": 912,
-  "note": "raw only; parser for this book not yet implemented"
+  "pages": [
+    "卜筮正宗（河潞武子龄校本）",
+    "卜筮正宗（河潞武子龄校本）/卷前"
+  ],
+  "page_count": 2,
+  "fetched": "2026-10-01 18:16:01+0800",
+  "sha256": "9bbfabacf3a61307d6f35990c5c08e8cecfa8996f22f2b2e72b9514016e6e063",
+  "stats": {
+    "bytes": 2741,
+    "chars": 1408,
+    "lines": 43,
+    "ganzhi_pairs": 3,
+    "tables": 0,
+    "headings": 2
+  },
+  "source_file": "data/sources/bushi_zhengzong.wikitext.txt",
+  "note": "公版古籍原文的字符级转存，未做任何改写或模型转写；子页以 <!-- ==== 标题 ==== --> 分隔；另经四次独立实测：本书维基文库正文未数字化，见 probe 字段。",
+  "probe": {
+    "probed_at": "2026-10-01",
+    "method": "四次独立探测；判据只用 action=query 的 missing 字段（限流≠不存在，本工具遇 429 退避重试）",
+    "allpages_apprefix": {
+      "卜筮正宗": 3,
+      "卜筮正宗（河潞武子龄校本）": 2,
+      "卜筮正宗（河潞武子龄校本）/": 1,
+      "卜筮正宗（河潞武子龄校本）/卷0": 0
+    },
+    "title_checks": {
+      "卜筮正宗": "存在（重定向→校本页；页面长度 912B）",
+      "卜筮正宗（河潞武子龄校本）/卷前": "存在（1702B）",
+      "卜筮正宗（河潞武子龄校本）/卷一 … /卷六": "missingtitle",
+      "卜筮正宗（河潞武子龄校本）/卷01 … /卷14": "missingtitle",
+      "卜筮正宗/卷一 … /卷六": "missingtitle",
+      "卜筮全書": "missingtitle",
+      "卜筮正宗（四庫全書本）": "missingtitle"
+    },
+    "insource_search": "insource:\"卜筮正宗\" 命中 9 页；除校本总页与其 /卷前 外，其余均为**引用**该书的其他文献（增刪卜易/黃金策/清史稿 等）",
+    "verdict": "维基文库《卜筮正宗》正文**未数字化**：可得内容只有总页（目录+PD声明，912B）与 /卷前（張景崧敘，1702B）；总页列出的 /卷01–/卷14 全是红链。本文件 2741 字节即维基文库的上限；缺口性质是『未数字化』，不是抓取失败，重复 --force 抓取不会得到新内容。",
+    "alternatives": "维基文库另有《欽定古今圖書集成·博物彙編·藝術典》含卜筮部（第679卷主 namespace 仅 422B 转写壳，正文在 Page: 命名空间），取用需另写 Page 命名空间抽取器，本轮不做。"
+  }
 }

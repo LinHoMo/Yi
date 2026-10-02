@@ -39,14 +39,14 @@
 
 | 键 | 类型 | 说明 |
 |---|---|---|
-| `schema` | str | `xiaoliuren-analyze-v1` |
+| `schema` | str | `xiaoliuren-analyze-v2` |
 | `topic` `question` | str | 事类与问事文本 |
 | `chart_summary` | dict | 落宫/起课方式/报数/月日时/时辰序 |
 | `steps` | list[dict] | 步序与各步落宫名 |
 | `palace` | dict | 六要素：宫名/五行/颜色/方位/属神/位置/主数/含义/总诀/方向 |
 | `neighbors` | dict | **邻宫速断**：进宫/退宫/临宫[]，各含 宫名/关系/主速/速断/说明/所本 |
 | `direction_element` | dict | **方位/五行综合断**：输入方位/方位五行/落宫五行/关系/倾向/说明/所本 |
-| `topic_verdict` | dict | topic/诀句/宫义/所本 |
+| `topic_verdict` | dict | topic/诀句/句类/覆盖/宫义/所本。**句类** ∈ {`诀辞`,`引申`,`阙`}；`阙` 时 `诀句` 为空串；`覆盖` 取 `verdicts.json#topic_coverage.per_topic[topic]` |
 | `timing` | dict | 主数/解读/所本 |
 | `comprehensive` | bool | 是否综合判断事类（出行/求财） |
 | `conclusion` | dict | 方向/说明/宫义/所本 |
@@ -54,13 +54,25 @@
 
 方向取法（`data/verdicts.json`）：大安/速喜/小吉→吉，赤口/空亡→凶，留连→平（两可宜缓）。
 
+**事类断语与句类**（`data/verdicts.json#topic_lines`，v2 起条目为 `{kind,text[,reason]}`）：
+
+- 矩阵 = `topic_names` 每事类（11 门：人事/失物/行人/求财/官讼/疾病/婚姻/出行/家宅/工作/天气）× 六宫 = 66 条；
+- `诀辞` → 去括注后必须是**本宫总诀或宫义的连续子串**（逐字可回指）；
+- `引申` → text 自带「引申」标记，且与同宫底本（总诀/含义/属神/五行/方位/颜色/位置）至少有一个双字重叠；
+- `阙` → text 为空 + `reason`（**如实阙如：不以引申充作原文**）；
+- 计数记账在 `topic_coverage`（per_topic + totals），由 `dev_tools/check.py` 的 `[1c] 断语口径门` 逐条核对；
+  任一条不符即门红。当前实测：诀辞 40 / 引申 25 / 阙 1。
+
+**公版书源缺口**（`#source_gap`）：维基文库无小六壬公版专书（实测 missingtitle），现行断语所本
+《贺氏六壬小手册》为现代文本、非公版；缺口字段齐备由 `[1c]` 门检查。
+
 邻宫速断（`data/verdicts.json`）：进=顺数下一位、退=逆数上一位、临=掌诀相邻。规则先查 `neighbor_overrides`（有古籍出处，如『留连临速喜→不久即归』），未命中按主速属性查 `speed_interactions`（通行口径）。py 只查表。
 
 方位/五行综合断（`data/verdicts.json`）：输入方位→查 `direction_element_map` 得方位五行→`core.wuxing_relation` 与落宫五行生克→查 `direction_relation` 得倾向（助/泄/阻/制/和）。例：西方金生留连水=生我→助。
 
 ## 三、narrate 段（`scripts/narrate.py`）
 
-**输入**：analyze 输出。**输出**：师傅口吻 markdown 正文（标题/结论/落宫解读/事类断语/应期主数/综合权衡提示/口径收尾）。只装配 analyze 判据，不自行推断新结论。
+**输入**：analyze 输出。**输出**：师傅口吻 markdown 正文（标题/结论/落宫解读/事类断语+覆盖行/应期主数/综合权衡提示/断语来源与覆盖（含公版缺口）/口径收尾）。只装配 analyze 判据，不自行推断新结论。
 
 ## 四、render 段（`scripts/render.py`）
 
@@ -77,37 +89,5 @@ python scripts/render.py [analyze.json] [-o report.md]
 - 评分器：`scripts/evaluate.py`（复用 `yishu_core.eval`），维度：落宫30/吉凶方向30/事类诀句20/应期主数20
 - 质量门：`tools/check.py`（金标准指纹 + 冒烟 + tune/holdout 分别出分带 n）
 
-## 六、MCP JSON-RPC 方法（`scripts/mcp_server.py`）
 
-四段脚本经共享路由 `tools/mcp_router.py` 以 **JSON-RPC 2.0 over stdio** 暴露；
-薄入口 `scripts/mcp_server.py` 锁定本学科，不另写推演。也可用
-`python tools/mcp_router.py --discipline xiaoliuren` 或 `--all`（四科同进程）。
 
-**传输**：每行一个 JSON 请求，每行一个 JSON 响应；`"id"` 缺省/为 null 视为通知、无响应。
-
-| 方法 | 参数（params） | 返回 |
-|---|---|---|
-| `xiaoliuren.chart` | 与 chart 段 `chart(params)` 同构的 dict | chart JSON |
-| `xiaoliuren.analyze` | 起盘参数 dict，或 `{"chart": <chart JSON>}` | analyze JSON |
-| `xiaoliuren.narrate` | 同 analyze | `{text, conclusion?, chart_summary?, question?}`，`text` 为唯一交付正文 |
-| `xiaoliuren.render` | 同 analyze；可选 `format`: `"md"`\|`"html"`（默认 md） | `{content, format}` |
-| `xiaoliuren.list_methods` / `list_methods` | — | `{methods: {名: 说明}}` |
-
-**format**：本 render 段仅出 Markdown；`format=html` 返回 JSON-RPC error `-32602`。
-
-**错误码**：`-32700` 解析 / `-32600` 非法请求 / `-32601` 方法不存在 / `-32602` 参数错误 / `-32603` 内部错误。
-
-```bash
-python scripts/mcp_server.py --help
-python scripts/mcp_server.py --list-methods
-python scripts/mcp_server.py --test-narrate          # 冒烟：演示盘 narrate
-python scripts/mcp_server.py                        # stdio 服务
-```
-
-JSON-RPC 示例：
-
-```json
-{"jsonrpc":"2.0","id":1,"method":"xiaoliuren.narrate","params":{"way":"month_day_hour","month":8,"day":15,"hour_ordinal":9,"question":"测有人否"}}
-{"jsonrpc":"2.0","id":2,"method":"xiaoliuren.render","params":{"way":"month_day_hour","month":8,"day":15,"hour_ordinal":9,"question":"测有人否","format":"md"}}
-{"jsonrpc":"2.0","id":3,"method":"list_methods","params":{}}
-```

@@ -27,7 +27,21 @@
           "申",
           "酉"
         ],
-        "dayun_dir": "forward"
+        "dayun_dir": "forward",
+        "tong_guan": [
+          {
+            "name": "身财相战",
+            "克": "木",
+            "被克": "土",
+            "中介": "火",
+            "通关": true
+          }
+        ],
+        "pillar_relations": [
+          "年时干甲己合",
+          "月时支寅巳六害",
+          "日时干甲己合"
+        ]
       }
     },
     {
@@ -37,7 +51,19 @@
       "expect": {
         "strength": "偏弱",
         "pattern": "伤官格",
-        "dayun_dir": "forward"
+        "dayun_dir": "forward",
+        "tong_guan": [
+          {
+            "name": "官杀克身",
+            "克": "金",
+            "被克": "木",
+            "中介": "水",
+            "通关": false
+          }
+        ],
+        "pillar_relations": [
+          "年日干庚乙合"
+        ]
       }
     },
     {
@@ -47,7 +73,17 @@
       "expect": {
         "strength": "偏弱",
         "pattern": "正官格",
-        "dayun_dir": "backward"
+        "dayun_dir": "backward",
+        "tong_guan": [
+          {
+            "name": "官杀克身",
+            "克": "水",
+            "被克": "火",
+            "中介": "木",
+            "通关": true
+          }
+        ],
+        "pillar_relations": []
       }
     },
     {
@@ -56,7 +92,11 @@
       "gender": "男",
       "expect": {
         "strength": "偏旺",
-        "pattern": "建禄格"
+        "pattern": "建禄格",
+        "pillar_relations": [
+          "年时干丙辛合",
+          "自刑"
+        ]
       }
     },
     {
@@ -65,7 +105,11 @@
       "gender": "男",
       "expect": {
         "strength": "偏弱",
-        "pattern": "正官格"
+        "pattern": "正官格",
+        "pillar_relations": [
+          "年日干庚乙合",
+          "月日支申巳六合"
+        ]
       }
     }
   ]

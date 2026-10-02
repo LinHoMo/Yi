@@ -1,1863 +1,1781 @@
 {
-  "_meta": {
-    "说明": "六爻断语/判据句目录（AGENTS.md §三：断语进 data/*.json，代码只留算法）。规则键为结构化 id，值含 text（展示句）与 basis（古籍出处/依据，可空）。",
-    "step5_classical_notes": "chain_step5 古籍通用格局注记（classical_notes.append 的展示句）",
-    "step5_verdict_descs": "chain_step5 综合定性说明（verdict_desc 展示句）",
-    "step5_spirit_reasons": "六神临用展示句",
-    "step5_factor_reasons": "可解释性因子贡献 reason 展示句",
-    "step5_confidence": "置信度文字说明",
-    "step5_yingqi_texts": "应期节奏说明",
-    "classical_interpretations": "classical_rules 古典格局判据长句（游魂/六合/反吟/十二长生/随官入墓/卦身等）",
-    "classical_rules_notes": "classical_rules 可交付断语（summary/meaning/description 与 reasons 条目）。text 与代码原字面量一字不差；地支/五行符号与 docstring 留在代码。",
-    "classical_rules_templates": "classical_rules 拼装句整句模板。{0}{1}… 为 ctpl 位置参数。",
-    "residual_externalized": "pattern_verdicts / effect_labels / effect_phrases / bing_yao_labels / narrative_hints / pattern_related 为本轮从 .py 外置的断语与标签",
-    "pattern_verdict_labels": "格局标签的展示句、理由句与古典引文（键为格局组名，值为 {label/strength_text/reason/verdict/basis/古典引文/…}）；代码只留判定算法，断语一律从此取。"
+ "_meta": {
+  "说明": "六爻断语/判据句目录（AGENTS.md §三：断语进 data/*.json，代码只留算法）。规则键为结构化 id，值含 text（展示句）与 basis（古籍出处/依据，可空）。",
+  "step5_classical_notes": "chain_step5 古籍通用格局注记（classical_notes.append 的展示句）",
+  "step5_verdict_descs": "chain_step5 综合定性说明（verdict_desc 展示句）",
+  "step5_spirit_reasons": "六神临用展示句",
+  "step5_factor_reasons": "可解释性因子贡献 reason 展示句",
+  "step5_confidence": "置信度文字说明",
+  "step5_yingqi_texts": "应期节奏说明",
+  "classical_interpretations": "classical_rules 古典格局判据长句（游魂/六合/反吟/十二长生/随官入墓/卦身等）",
+  "classical_rules_notes": "classical_rules 可交付断语（summary/meaning/description 与 reasons 条目）。text 与代码原字面量一字不差；地支/五行符号与 docstring 留在代码。",
+  "classical_rules_templates": "classical_rules 拼装句整句模板。{0}{1}… 为 ctpl 位置参数。",
+  "residual_externalized": "pattern_verdicts / effect_labels / effect_phrases / bing_yao_labels / narrative_hints / pattern_related 为本轮从 .py 外置的断语与标签",
+  "pattern_verdict_labels": "格局标签的展示句、理由句与古典引文（键为格局组名，值为 {label/strength_text/reason/verdict/basis/古典引文/…}）；代码只留判定算法，断语一律从此取。"
+ },
+ "step5_classical_notes": {
+  "travel_use_sheng_world": {
+   "text": "【用神生世·迟归】行人占用神生世，主迟归终至，+1.5",
+   "basis": "《黄金策》出行章"
   },
-  "step5_classical_notes": {
-    "travel_use_sheng_world": {
-      "text": "【用神生世·迟归】行人占用神生世，主迟归终至，+1.5",
-      "basis": "《黄金策》出行章"
-    },
-    "travel_use_ke_world": {
-      "text": "【用神克世·速至】行人占用神克世，主速至，+0.8",
-      "basis": "《黄金策》出行章"
-    },
-    "travel_world_ke_use": {
-      "text": "【世克用·行人受制】世克用神，归途有阻，+0.3",
-      "basis": "《黄金策》出行章"
-    },
-    "travel_use_alive": {
-      "text": "【行人用神有气】用神未至死绝或伏而得出，主终能归，+0.6",
-      "basis": "《增删卜易》行人章"
-    },
-    "brother_hold_wealth_lost_soft": {
-      "text": "【兄弟持世·失物/逢合轻扣】另有冲中逢合等解象，仅-0.2",
-      "basis": "《增删卜易》失物章"
-    },
-    "brother_hold_wealth": {
-      "text": "【兄弟持世求财】兄弟克财，求财多耗，-1.2",
-      "basis": "《增删卜易》「兄弟持世莫求财」"
-    },
-    "wealth_hold_lost": {
-      "text": "【世持财·失物】世持财主物未远失，+0.8",
-      "basis": "《增删卜易》失物章"
-    },
-    "static_yuanshen_missing": {
-      "text": "【原神失位】用神虽旺而原神不动/缺位，旺极无源，-1.0",
-      "basis": "《黄金策》「用神虽旺亦凶」"
-    },
-    "chronic_illness": {
-      "text": "【久病】久病正气已衰，逢冲逢克主凶，-0.8",
-      "basis": "《增删卜易》疾病章"
-    },
-    "brother_hold_exam": {
-      "text": "【兄弟持世求名】竞争费力，可成而名次不显，-0.4",
-      "basis": "《增删卜易》仕宦章"
-    },
-    "officer_ke_world_lawsuit": {
-      "text": "【官鬼克世】官司占官方克世，主对我不利，-1.2",
-      "basis": "《增删卜易》官非章"
-    },
-    "document_month_break": {
-      "text": "【文书/用神月破】官司中文书有缺，-0.5",
-      "basis": "《增删卜易》官非章"
-    },
-    "extreme_prosper_no_source": {
-      "text": "【旺极无源加权】用神极旺而无原神发动，再-1.0",
-      "basis": "《黄金策》"
-    },
-    "fu_fei_kong_out": {
-      "text": "【飞空得出】飞神旬空，伏神得出有力，+1.5",
-      "basis": "《卜筮正宗》伏神章"
-    },
-    "fu_fei_sheng_fu": {
-      "text": "【飞来生伏可出】伏神得生而出，+1.0",
-      "basis": "《卜筮正宗》伏神章"
-    },
-    "fu_die_at_fei": {
-      "text": "【伏神绝于飞】伏神气绝难出，-2.0",
-      "basis": "《卜筮正宗》伏神章"
-    },
-    "fu_out_fei_empty": {
-      "text": "【伏神得出伏·飞旬空】飞神{fei_branch}旬空得出，+1.5",
-      "basis": "《卜筮正宗》伏神章",
-      "template": true
-    },
-    "fu_out_fei_month_break": {
-      "text": "【伏神得出伏·飞月破】飞神月破得出，+1.0",
-      "basis": "《卜筮正宗》伏神章"
-    },
-    "fu_fei_ke_hard_out": {
-      "text": "【飞克伏难出】伏神被克不出，-1.0",
-      "basis": "《卜筮正宗》伏神章"
-    },
-    "fu_drain_by_fei": {
-      "text": "【伏神泄气】伏神泄气于飞，-0.5",
-      "basis": "《卜筮正宗》伏神章"
-    },
-    "illness_officer_tomb_mild": {
-      "text": "（疾病占：官鬼病气入墓为收藏之象，凶力大减）",
-      "basis": "疾病占修正"
-    }
+  "travel_use_ke_world": {
+   "text": "【用神克世·速至】行人占用神克世，主速至，+0.8",
+   "basis": "《黄金策》出行章"
   },
-  "step5_verdict_descs": {
-    "score_daji": {
-      "text": "顺得很，该推进的可以推进",
-      "basis": ""
-    },
-    "score_ji": {
-      "text": "整体是顺的，往前走问题不大",
-      "basis": ""
-    },
-    "score_ping_ji": {
-      "text": "有戏但不稳，节奏比结果更要紧",
-      "basis": ""
-    },
-    "score_xiong": {
-      "text": "阻力明显，硬上容易吃亏",
-      "basis": ""
-    },
-    "score_da_xiong": {
-      "text": "眼下不宜发力，先守住",
-      "basis": ""
-    },
-    "travel_scattered": {
-      "text": "冲散行人，纵用神有气亦主归期不定",
-      "basis": "六冲/合处逢冲+行人占"
-    },
-    "partner_scattered": {
-      "text": "六冲/逢冲合伙，世应相冲，合伙难持久",
-      "basis": "六冲/合处逢冲+合伙占"
-    },
-    "weak_use_net_negative": {
-      "text": "原神不济、变动不利，纵用神有些微气亦难持久",
-      "basis": "用神衰弱+净动变负"
-    },
-    "xing_he_conflict": {
-      "text": "三刑齐全逢六合，吉凶相战，凶多吉少",
-      "basis": "三刑+六合"
-    },
-    "he_then_chong": {
-      "text": "先合后散，事情容易反复，适合稳住再看",
-      "basis": "合处逢冲+婚聚占"
-    },
-    "price_down": {
-      "text": "势头偏弱，观望比追高稳妥",
-      "basis": "价贵涨跌占+凶"
-    },
-    "yuanshen_missing_daji_cap": {
-      "text": "表面有力，实则源头不足，勿被旺象迷惑",
-      "basis": "原神失位"
-    },
-    "extreme_no_source_xiong": {
-      "text": "旺而无源，古法主事难持久，防盛极而衰",
-      "basis": "旺极无源"
-    },
-    "yuanshen_missing_ping_ji": {
-      "text": "用神虽旺，源头不足，勿把一时之盛当长久",
-      "basis": "原神失位"
-    },
-    "yuanshen_missing_discount": {
-      "text": "用神看似不弱，但原神未动，成算要打折",
-      "basis": "原神失位"
-    },
-    "officer_ke_world_xiong": {
-      "text": "官司官方克世，形势对己不利，宜专业应对",
-      "basis": "官鬼克世+官司占"
-    },
-    "officer_ke_world_tight": {
-      "text": "官司官方克世，形势偏紧，勿心存侥幸",
-      "basis": "官鬼克世+官司占"
-    },
-    "brother_exam_not_desperate": {
-      "text": "功名有阻力但未必绝望，兄弟持世主竞争费力",
-      "basis": "兄弟持世求名"
-    },
-    "brother_exam_hard": {
-      "text": "功名有象，但竞争大、须全力以赴，名次未必靠前",
-      "basis": "兄弟持世求名"
-    },
-    "chronic_illness_care": {
-      "text": "久病不宜言吉，仍以调护就医为先",
-      "basis": "久病"
-    },
-    "chronic_illness_tight": {
-      "text": "久病体衰，卦象偏紧，务必遵医嘱",
-      "basis": "久病"
-    },
-    "travel_eventually_back": {
-      "text": "行人终归，只是偏迟或途中多折，宜候应期",
-      "basis": "行人占"
-    },
-    "travel_use_sheng_back": {
-      "text": "用神生世，行人迟归终至，可候应期",
-      "basis": "用神生世+行人占"
-    },
-    "travel_use_ke_fast": {
-      "text": "行人可望速至",
-      "basis": "用神克世+行人占"
-    },
-    "brother_lost_he_chong": {
-      "text": "虽兄弟持世，然冲中逢合，主先难后成",
-      "basis": "兄弟持世+失物+冲中逢合"
-    },
-    "lost_recoverable": {
-      "text": "有惊无险，失而可复得",
-      "basis": "兄弟持世+失物"
-    },
-    "wealth_but_brother": {
-      "text": "有财可谋，但兄弟持世，到手易耗",
-      "basis": "兄弟持世求财"
-    },
-    "wealth_watch_waste": {
-      "text": "财路有象，兄弟持世须防破耗",
-      "basis": "兄弟持世求财"
-    },
-    "brother_wealth_not_worth": {
-      "text": "兄弟持世求财，辛苦多耗，得不偿失",
-      "basis": "兄弟持世求财"
-    },
-    "travel_use_alive_slow": {
-      "text": "用神尚有气，行人主能归，过程偏拖",
-      "basis": "行人占+用神非死绝"
-    },
-    "officer_tomb_catastrophic_prefix": {
-      "text": "随官入墓极凶之象——",
-      "basis": "随官入墓"
-    }
+  "travel_world_ke_use": {
+   "text": "【世克用·行人受制】世克用神，归途有阻，+0.3",
+   "basis": "《黄金策》出行章"
   },
-  "step5_spirit_reasons": {
-    "qinglong_neutral": {
-      "text": "青龙临用，喜气之象",
-      "basis": "《协纪辨方书》六兽"
-    },
-    "qinglong_yang": {
-      "text": "青龙临用，阳日力增，吉上添吉",
-      "basis": "《协纪辨方书》六兽分阴阳日"
-    },
-    "qinglong_yin": {
-      "text": "青龙临用，阴日力略减",
-      "basis": "《协纪辨方书》六兽分阴阳日"
-    },
-    "baihu_neutral": {
-      "text": "白虎临用，丧凶之兆",
-      "basis": "《协纪辨方书》六兽"
-    },
-    "baihu_yang": {
-      "text": "白虎临用，阳日凶焰更炽",
-      "basis": "《协纪辨方书》六兽分阴阳日"
-    },
-    "baihu_yin": {
-      "text": "白虎临用，阴日凶焰稍敛",
-      "basis": "《协纪辨方书》六兽分阴阳日"
-    },
-    "xuanwu_neutral": {
-      "text": "玄武临用，暗昧不明",
-      "basis": "《协纪辨方书》六兽"
-    },
-    "xuanwu_yin": {
-      "text": "玄武临用，阴日暗昧更重",
-      "basis": "《协纪辨方书》六兽分阴阳日"
-    },
-    "xuanwu_yang": {
-      "text": "玄武临用，阳日暗昧被抑",
-      "basis": "《协纪辨方书》六兽分阴阳日"
-    },
-    "zhuque_neutral": {
-      "text": "朱雀临用，文书口舌",
-      "basis": "《协纪辨方书》六兽"
-    },
-    "zhuque_yang": {
-      "text": "朱雀临用，阳日口舌更显",
-      "basis": "《协纪辨方书》六兽分阴阳日"
-    },
-    "zhuque_yin": {
-      "text": "朱雀临用，阴日口舌稍抑",
-      "basis": "《协纪辨方书》六兽分阴阳日"
-    },
-    "gouchen_neutral": {
-      "text": "勾陈临用，牵绊迟滞",
-      "basis": "《协纪辨方书》六兽"
-    },
-    "gouchen_yang": {
-      "text": "勾陈临用，阳日官非更显",
-      "basis": "《协纪辨方书》六兽分阴阳日"
-    },
-    "gouchen_yin": {
-      "text": "勾陈临用，阴日事缓",
-      "basis": "《协纪辨方书》六兽分阴阳日"
-    },
-    "tengshe_neutral": {
-      "text": "螣蛇临用，惊恐怪异",
-      "basis": "《协纪辨方书》六兽"
-    },
-    "tengshe_yin": {
-      "text": "螣蛇临用，阴日惊恐更甚",
-      "basis": "《协纪辨方书》六兽分阴阳日"
-    },
-    "tengshe_yang": {
-      "text": "螣蛇临用，阳日惊恐略抑",
-      "basis": "《协纪辨方书》六兽分阴阳日"
-    }
+  "travel_use_alive": {
+   "text": "【行人用神有气】用神未至死绝或伏而得出，主终能归，+0.6",
+   "basis": "《增删卜易》行人章"
   },
-  "step5_factor_reasons": {
-    "base_strong": {
-      "text": "用神有力，根基扎实",
-      "basis": ""
-    },
-    "base_weak": {
-      "text": "用神乏力，根基偏弱",
-      "basis": ""
-    },
-    "base_very_weak": {
-      "text": "用神极弱，几近失力",
-      "basis": ""
-    },
-    "base_neutral": {
-      "text": "用神平和，不旺不弱",
-      "basis": ""
-    },
-    "change_sheng": {
-      "text": "动爻来生用神",
-      "basis": ""
-    },
-    "change_ke": {
-      "text": "动爻来克用神",
-      "basis": ""
-    },
-    "change_balance": {
-      "text": "动爻生克交抵，利弊相抵",
-      "basis": ""
-    },
-    "hex_liuhe": {
-      "text": "六合利合",
-      "basis": ""
-    },
-    "hex_liuchong": {
-      "text": "六冲主散",
-      "basis": ""
-    },
-    "hex_liuhe_reason": {
-      "text": "六合卦，事主和合",
-      "basis": ""
-    },
-    "hex_liuchong_reason": {
-      "text": "六冲卦，事主散离",
-      "basis": ""
-    },
-    "spirit_fallback": {
-      "text": "六神加临用神",
-      "basis": ""
-    },
-    "day_month_bond": {
-      "text": "日月合住用神",
-      "basis": ""
-    },
-    "six_break": {
-      "text": "用神逢月破",
-      "basis": ""
-    },
-    "combo_break": {
-      "text": "合局受破，所谋难成",
-      "basis": ""
-    },
-    "yuanshen_bond": {
-      "text": "原神被合，用神失源",
-      "basis": ""
-    },
-    "officer_tomb": {
-      "text": "官鬼入墓，困而不发",
-      "basis": ""
-    },
-    "fu_shen_out": {
-      "text": "伏神得出，事有转机",
-      "basis": ""
-    },
-    "special_pattern": {
-      "text": "格局特殊，反其势用之",
-      "basis": ""
-    },
-    "classical_fallback": {
-      "text": "古籍格局",
-      "basis": ""
-    },
-    "lv_ji_wang": {
-      "text": "用神很旺",
-      "basis": ""
-    },
-    "lv_wang": {
-      "text": "用神得力",
-      "basis": ""
-    },
-    "lv_xiang": {
-      "text": "用神有根",
-      "basis": ""
-    },
-    "lv_zhonghe": {
-      "text": "用神中和",
-      "basis": ""
-    },
-    "lv_zhonghe_wang": {
-      "text": "用神略旺",
-      "basis": ""
-    },
-    "lv_zhonghe_ru": {
-      "text": "用神略弱",
-      "basis": ""
-    },
-    "lv_pianruo": {
-      "text": "用神偏弱",
-      "basis": ""
-    },
-    "lv_ruo": {
-      "text": "用神力薄",
-      "basis": ""
-    },
-    "lv_jiruo": {
-      "text": "用神极弱",
-      "basis": ""
-    },
-    "lv_xiqiu": {
-      "text": "用神休囚",
-      "basis": ""
-    },
-    "change_help": {
-      "text": "动变有助力",
-      "basis": ""
-    },
-    "change_drag": {
-      "text": "动变有牵扯",
-      "basis": ""
-    },
-    "support_prefix": {
-      "text": "有利的一面：",
-      "basis": ""
-    },
-    "concern_prefix": {
-      "text": "要当心的一面：",
-      "basis": ""
-    },
-    "quote_prefix": {
-      "text": "古人类似情境有言：",
-      "basis": ""
-    }
+  "brother_hold_wealth_lost_soft": {
+   "text": "【兄弟持世·失物/逢合轻扣】另有冲中逢合等解象，仅-0.2",
+   "basis": "《增删卜易》失物章"
   },
-  "step5_confidence": {
-    "high": {
-      "text": "高 — 信号清晰明确",
-      "basis": ""
-    },
-    "medium": {
-      "text": "中 — 大体可断，细节待验",
-      "basis": ""
-    },
-    "medium_low": {
-      "text": "中等偏低 — 信号参半，谨慎判断",
-      "basis": ""
-    },
-    "low": {
-      "text": "低 — 信号矛盾，暂缓决断",
-      "basis": ""
-    }
+  "brother_hold_wealth": {
+   "text": "【兄弟持世求财】兄弟克财，求财多耗，-1.2",
+   "basis": "《增删卜易》「兄弟持世莫求财」"
   },
-  "step5_yingqi_texts": {
-    "no_yingqi": {
-      "text": "无应期可断",
-      "basis": ""
-    },
-    "speed_fast": {
-      "text": "事情来得偏快，快则当日、次日就可能见分晓",
-      "basis": ""
-    },
-    "speed_medium": {
-      "text": "不急不缓，近期数日到一两个月都是观察期",
-      "basis": ""
-    },
-    "speed_slow": {
-      "text": "事情偏慢，可能要等旺相之月，年内陆续应验——别用三五天去衡量",
-      "basis": ""
-    },
-    "speed_fast_label": {
-      "text": "应速",
-      "basis": ""
-    },
-    "speed_medium_label": {
-      "text": "应期适中",
-      "basis": ""
-    },
-    "speed_slow_label": {
-      "text": "应迟",
-      "basis": ""
-    },
-    "speed_fast_desc": {
-      "text": "速应（当日或数日内）",
-      "basis": ""
-    },
-    "speed_medium_desc": {
-      "text": "适中（数日至数周）",
-      "basis": ""
-    },
-    "speed_slow_desc": {
-      "text": "迟应（数周至数月）",
-      "basis": ""
-    },
-    "use_alive_next_day": {
-      "text": "用神旺相，次日之应",
-      "basis": ""
-    },
-    "use_empty_day_chong": {
-      "text": "用神旬空，日辰冲空填实，当日即应",
-      "basis": ""
-    },
-    "chronic_empty_wait_chong": {
-      "text": "久病用神旬空，期于冲空",
-      "basis": ""
-    },
-    "acute_empty_fill": {
-      "text": "近病用神旬空，出旬填实即愈",
-      "basis": ""
-    },
-    "empty_fill": {
-      "text": "用神旬空，出旬填实",
-      "basis": ""
-    },
-    "empty_chong_real": {
-      "text": "用神旬空，冲空则实",
-      "basis": ""
-    },
-    "month_break_fill": {
-      "text": "月破出月，逢值填实",
-      "basis": ""
-    },
-    "month_break_he": {
-      "text": "月破逢合，合处填实",
-      "basis": ""
-    },
-    "fu_fei_empty_wait_fu_day": {
-      "text": "飞神旬空，伏神得出，期于伏神值日",
-      "basis": ""
-    },
-    "fu_fei_ke_chong_fei": {
-      "text": "飞神克伏，冲开飞神",
-      "basis": ""
-    },
-    "fu_out_wait_fu_day": {
-      "text": "伏神得出，期于伏神值日",
-      "basis": ""
-    },
-    "fu_sheng_fei_chong": {
-      "text": "伏生飞，冲开飞神",
-      "basis": ""
-    },
-    "use_tomb_chong_tomb": {
-      "text": "用神入墓，冲墓之日",
-      "basis": ""
-    },
-    "use_moving_he_day": {
-      "text": "用神发动，逢合之日",
-      "basis": ""
-    },
-    "use_quiet_chong_day": {
-      "text": "用神安静，逢冲之日",
-      "basis": ""
-    },
-    "change_branch_empty_fill": {
-      "text": "化出之支逢空，出空值日",
-      "basis": ""
-    },
-    "change_hui_tou_sheng": {
-      "text": "动而化回头生，期于生我之日",
-      "basis": ""
-    },
-    "empty_same_element_fill": {
-      "text": "空亡之支与用神同五行，出空填实",
-      "basis": ""
-    },
-    "use_weak_wait_prosper": {
-      "text": "用神休囚，旺相之日",
-      "basis": ""
-    },
-    "use_empty_fill_month": {
-      "text": "用神旬空，出旬填实之月",
-      "basis": ""
-    },
-    "use_empty_chong_month": {
-      "text": "用神旬空，冲空则实之月",
-      "basis": ""
-    },
-    "month_break_real_month": {
-      "text": "月破出月，实破之月",
-      "basis": ""
-    },
-    "use_tomb_chong_month": {
-      "text": "用神入墓，冲墓之月",
-      "basis": ""
-    },
-    "fu_hidden_chong_fei_month": {
-      "text": "用神伏藏，冲飞得出之月",
-      "basis": ""
-    },
-    "use_moving_he_month": {
-      "text": "用神发动，逢合之月",
-      "basis": ""
-    },
-    "use_quiet_chong_month": {
-      "text": "用神安静，逢冲之月",
-      "basis": ""
-    },
-    "use_weak_prosper_month": {
-      "text": "用神休囚，生旺之月",
-      "basis": ""
-    },
-    "use_hidden_wait": {
-      "text": "用神伏藏，待飞神受冲或伏神值日/得出之日应",
-      "basis": ""
-    },
-    "hard_to_single_yingqi": {
-      "text": "难以确定单一应期，以用神旺衰断时机之迟速",
-      "basis": ""
-    },
-    "he_wait_chong": {
-      "text": "合局宜候冲开之日。",
-      "basis": ""
-    },
-    "repeat_uneasy": {
-      "text": "；事多反复，心下易感不安",
-      "basis": ""
-    },
-    "wait_strength": {
-      "text": "待综合旺衰另断",
-      "basis": ""
-    },
-    "change_hui_tou_sheng_empty": {
-      "text": "动而化回头生，虽空不作空论，期于生我之日",
-      "basis": "ZS005/007/013 用例规律"
-    }
+  "wealth_hold_lost": {
+   "text": "【世持财·失物】世持财主物未远失，+0.8",
+   "basis": "《增删卜易》失物章"
   },
-  "classical_interpretations": {
-    "youhun": {
-      "text": "游魂行无定，事主忧疑不定，心无归宿",
-      "basis": "《卜筮正宗》游魂归魂章"
-    },
-    "youhun_traits": {
-      "text": "行无方、四处飘荡、不定",
-      "basis": "游魂卦特质"
-    },
-    "youhun_trait_home": {
-      "text": "不安于室，思迁",
-      "basis": "游魂卦特质"
-    },
-    "youhun_trait_mind": {
-      "text": "忧疑不决，心思散乱",
-      "basis": "游魂卦特质"
-    },
-    "guihun": {
-      "text": "归魂回故乡，事主有归宿，终有所归",
-      "basis": "《卜筮正宗》游魂归魂章"
-    },
-    "guihun_traits": {
-      "text": "归期可定，终有所返",
-      "basis": "归魂卦特质"
-    },
-    "guihun_trait_home": {
-      "text": "安居乐业，归家安定",
-      "basis": "归魂卦特质"
-    },
-    "guihun_trait_mind": {
-      "text": "疑虑消解，心有所属",
-      "basis": "归魂卦特质"
-    },
-    "youhun_dynamic": {
-      "text": "往复飘摇，暂难定居",
-      "basis": "游魂+动爻"
-    },
-    "guihun_dynamic": {
-      "text": "反复纠结，终有归依",
-      "basis": "归魂+动爻"
-    },
-    "not_youhun_guihun": {
-      "text": "本卦非游魂归魂主事卦，不以游魂归魂论断",
-      "basis": ""
-    },
-    "not_youhun_guihun_summary": {
-      "text": "非游魂归魂卦——事态以常规世应生克为断，不涉飘泊依附之象",
-      "basis": ""
-    },
-    "liuhe_hex": {
-      "text": "六合卦主团聚、缠绵、迟缓、牵绊。",
-      "basis": "《卜筮正宗·六合论》"
-    },
-    "liuhe_hex_2": {
-      "text": "占事多主反复纠缠、不易决断、需要耐心。",
-      "basis": "《卜筮正宗·六合论》"
-    },
-    "liuhe_hex_3": {
-      "text": "占物则聚集不散，占病则缠绵难愈。",
-      "basis": "《卜筮正宗·六合论》"
-    },
-    "liuhe_hex_4": {
-      "text": "然若用神旺相，则六合亦可为吉，主聚合之象。",
-      "basis": "《卜筮正宗·六合论》"
-    },
-    "liuchong_hex": {
-      "text": "六冲卦主散、速决、分离、变动。",
-      "basis": "《卜筮正宗·六冲论》"
-    },
-    "liuchong_hex_2": {
-      "text": "占事多主动散不聚、难以坚守、事来事去迅速。",
-      "basis": "《卜筮正宗·六冲论》"
-    },
-    "liuchong_hex_3": {
-      "text": "占出行利，占散事宜，占聚合则不利。",
-      "basis": "《卜筮正宗·六冲论》"
-    },
-    "liuchong_hex_4": {
-      "text": "若用神休囚受克，则冲散太过，须防意外。",
-      "basis": "《卜筮正宗·六冲论》"
-    },
-    "half_he_half_chong": {
-      "text": "主事态复杂，表面和谐内有矛盾，或聚散交织需视具体情形而定。",
-      "basis": ""
-    },
-    "has_he": {
-      "text": "合处逢事宜斟酌，主有聚合之象但不完整。",
-      "basis": ""
-    },
-    "has_chong": {
-      "text": "冲处逢事宜谨慎，主有散动之象但不完整。",
-      "basis": ""
-    },
-    "no_he_chong": {
-      "text": "本卦各对应爻位无合无冲，平顺之象，吉凶需依用神决断。",
-      "basis": ""
-    },
-    "fanyin_and_fuyin": {
-      "text": "既反吟又伏吟，主反复多端、牵制难解、呻吟不止。",
-      "basis": "《卜筮正宗》反吟伏吟章"
-    },
-    "fanyin_and_fuyin_2": {
-      "text": "事情反复无常，内心焦虑不安，是最不安定的卦象。",
-      "basis": "《卜筮正宗》反吟伏吟章"
-    },
-    "fanyin": {
-      "text": "反吟主反复、变动不安、事多反复。",
-      "basis": "《卜筮正宗》反吟伏吟章"
-    },
-    "fanyin_2": {
-      "text": "化反吟多为先成后败、先聚后散之象。",
-      "basis": "《卜筮正宗》反吟伏吟章"
-    },
-    "fanyin_3": {
-      "text": "若用神旺相可解，主虽有波折终可成；若休囚则反复无定。",
-      "basis": "《卜筮正宗》反吟伏吟章"
-    },
-    "fuyin": {
-      "text": "伏吟主呻吟不止、忧郁难舒、事有内心之苦。",
-      "basis": "《卜筮正宗》反吟伏吟章"
-    },
-    "fuyin_2": {
-      "text": "占事多停滞不前、郁闷焦虑、欲行又止。",
-      "basis": "《卜筮正宗》反吟伏吟章"
-    },
-    "fuyin_3": {
-      "text": "宜静不宜动，宜守不宜攻。",
-      "basis": "《卜筮正宗》反吟伏吟章"
-    },
-    "no_fanyin_fuyin": {
-      "text": "本卦变爻无反吟伏吟，卦象安定。",
-      "basis": ""
-    },
-    "no_moving_no_fanyin": {
-      "text": "本卦无动爻，不存在反吟伏吟",
-      "basis": ""
-    },
-    "twelve_changsheng": {
-      "长生": {
-        "text": "新生之象，事有先机，力量初萌",
-        "basis": "十二长生"
-      },
-      "沐浴": {
-        "text": "初生柔嫩，需防贻害，纯正尚待时日",
-        "basis": "十二长生"
-      },
-      "冠带": {
-        "text": "渐趋成熟，力量渐增，气色渐隆",
-        "basis": "十二长生"
-      },
-      "临官": {
-        "text": "正当显达，力量充实，可担重任",
-        "basis": "十二长生"
-      },
-      "帝旺": {
-        "text": "极盛之时，力量最旺，盛极将衰之先",
-        "basis": "十二长生"
-      },
-      "衰": {
-        "text": "物极必反，力量开始减退",
-        "basis": "十二长生"
-      },
-      "病": {
-        "text": "力不从心，内耗渐显，弊端初露",
-        "basis": "十二长生"
-      },
-      "死": {
-        "text": "气数已尽，力量极微，难以作为",
-        "basis": "十二长生"
-      },
-      "墓": {
-        "text": "收藏归库，力量隐伏，待冲开方可",
-        "basis": "十二长生"
-      },
-      "绝": {
-        "text": "绝地无援，力量极弱，最难施为",
-        "basis": "十二长生"
-      },
-      "胎": {
-        "text": "孕育新机，力量暗藏，有复生之机",
-        "basis": "十二长生"
-      },
-      "养": {
-        "text": "休养恢复，力量渐聚，新生在前",
-        "basis": "十二长生"
-      }
-    },
-    "guan_tomb_poem": {
-      "text": "随官入墓最凶凶，世用临之祸不轻",
-      "basis": "《卜筮正宗》随官入墓歌诀"
-    },
-    "officer_tomb_catastrophic": {
-      "text": "此为极凶之象，占病/占讼尤忌，宜慎重对待。",
-      "basis": "随官入墓"
-    },
-    "officer_tomb_severe": {
-      "text": "此为严重凶象，宜慎防祸患。",
-      "basis": "随官入墓"
-    },
-    "officer_tomb_mild": {
-      "text": "官鬼入墓，其力受困，吉凶需综合判断。",
-      "basis": "随官入墓"
-    },
-    "officer_tomb_officer": {
-      "text": "官鬼入墓（鬼入墓中，凶象暗藏）",
-      "basis": "随官入墓"
-    },
-    "officer_tomb_world": {
-      "text": "世随官入墓（自身随鬼入墓，凶不可避）",
-      "basis": "随官入墓"
-    },
-    "officer_tomb_use": {
-      "text": "用随官入墓（用神随鬼入墓，事必遭凶）",
-      "basis": "随官入墓"
-    },
-    "officer_tomb_both": {
-      "text": "鬼用同墓（官鬼与世用同归墓中，灾难性凶象）",
-      "basis": "随官入墓"
-    },
-    "officer_tomb_moving": {
-      "text": "官鬼动化墓（鬼动入墓，凶象加剧）",
-      "basis": "随官入墓"
-    },
-    "no_officer_tomb": {
-      "text": "本卦无官鬼爻，不论随官入墓",
-      "basis": ""
-    },
-    "hex_body_world": {
-      "text": "卦身持世——一身系于此事，全身心投入",
-      "basis": "卦身法"
-    },
-    "hex_body_use": {
-      "text": "卦身临用神——事有主骨，终有所成",
-      "basis": "卦身法"
-    },
-    "hex_body_empty": {
-      "text": "卦身逢空——事无本体，虚晃一枪",
-      "basis": "卦身法"
-    },
-    "hex_body_officer": {
-      "text": "卦身临鬼——忧患围绕本体，需防内患",
-      "basis": "卦身法"
-    },
-    "hex_body_wealth": {
-      "text": "卦身临财——求财有根本",
-      "basis": "卦身法"
-    },
-    "hex_body_child": {
-      "text": "卦身临子孙——事有福德庇护",
-      "basis": "卦身法"
-    },
-    "hex_body_use_arrow": {
-      "text": "卦身临用神 → 事有主骨，终有所成",
-      "basis": "卦身法"
-    },
-    "hex_body_ji_arrow": {
-      "text": "卦身临忌神 → 事有内患，防不胜防",
-      "basis": "卦身法"
-    },
-    "hex_body_world_arrow": {
-      "text": "卦身持世 → 一身系于此事",
-      "basis": "卦身法"
-    },
-    "hex_body_empty_arrow": {
-      "text": "卦身逢空 → 事无本体，虚晃一枪",
-      "basis": "卦身法"
-    },
-    "day_he_use": {
-      "text": "切近有力",
-      "basis": "日合用神"
-    },
-    "month_he_use": {
-      "text": "事必成就",
-      "basis": "月合用神"
-    },
-    "month_day_he_use": {
-      "text": "大吉之极",
-      "basis": "月日同合用神"
-    },
-    "day_he_ji": {
-      "text": "忌神有力为祸",
-      "basis": "日合忌神"
-    },
-    "month_he_ji": {
-      "text": "忌神缠月不解",
-      "basis": "月合忌神"
-    },
-    "jue_chu_feng_sheng": {
-      "text": "绝处逢生",
-      "basis": "绝处逢生"
-    },
-    "jue_chu_no_source": {
-      "text": "绝处逢生但原神无力",
-      "basis": "绝处逢生"
-    },
-    "jue_wait_source": {
-      "text": "绝地待原神",
-      "basis": "绝处逢生"
-    },
-    "jue_no_save": {
-      "text": "绝地无救",
-      "basis": "绝处逢生"
-    }
+  "static_yuanshen_missing": {
+   "text": "【原神失位】用神虽旺而原神不动/缺位，旺极无源，-1.0",
+   "basis": "《黄金策》「用神虽旺亦凶」"
   },
-  "chain_support_notes": {
-    "fei_missing": {
-      "text": "飞神缺失，无法判断飞伏关系",
-      "basis": ""
-    },
-    "fu_suppressed": {
-      "text": "伏神受压制难以得出，-0.5",
-      "basis": ""
-    },
-    "fu_hidden_cap": {
-      "text": "伏藏隐而不显，力不能全伸，压制至多为中和(≤3.4)",
-      "basis": "《增删卜易·用神伏藏章》"
-    },
-    "fu_hidden_info_lack": {
-      "text": "伏藏信息不足，默认中和。",
-      "basis": ""
-    },
-    "fu_element_unknown": {
-      "text": "伏神五行不明，默认中和。",
-      "basis": ""
-    },
-    "fei_unknown": {
-      "text": "飞神不明",
-      "basis": ""
-    }
+  "chronic_illness": {
+   "text": "【久病】久病正气已衰，逢冲逢克主凶，-0.8",
+   "basis": "《增删卜易》疾病章"
   },
-  "classical_rules_notes": {
-    "cr_001": {
-      "text": "飞神生伏神"
-    },
-    "cr_002": {
-      "text": "飞神旬空"
-    },
-    "cr_003": {
-      "text": "飞神月破"
-    },
-    "cr_004": {
-      "text": "伏克飞为出暴"
-    },
-    "cr_005": {
-      "text": "日辰克伏神"
-    },
-    "cr_006": {
-      "text": "飞神旺相克伏神"
-    },
-    "cr_007": {
-      "text": "伏神逢绝"
-    },
-    "cr_008": {
-      "text": "伏神旬空"
-    },
-    "cr_009": {
-      "text": "伏神月破"
-    },
-    "cr_010": {
-      "text": "无足够数据进行伏藏分析"
-    },
-    "cr_011": {
-      "text": "本卦六亲齐备，无伏藏"
-    },
-    "cr_012": {
-      "text": "宫名异常，无法分析"
-    },
-    "cr_013": {
-      "text": "无足够数据"
-    },
-    "cr_014": {
-      "text": "六亲齐备，无伏藏"
-    },
-    "cr_015": {
-      "text": "宫名异常"
-    },
-    "cr_016": {
-      "text": "动爻克飞神"
-    },
-    "cr_017": {
-      "text": "无需分析"
-    },
-    "cr_018": {
-      "text": "无数据"
-    },
-    "cr_019": {
-      "text": "无日辰数据"
-    },
-    "cr_020": {
-      "text": "本卦无暗动之爻"
-    },
-    "cr_021": {
-      "text": "无月建数据"
-    },
-    "cr_022": {
-      "text": "无解救之力"
-    },
-    "cr_023": {
-      "text": "动爻月破，力量减半"
-    },
-    "cr_024": {
-      "text": "又逢旬空，更为无力"
-    },
-    "cr_025": {
-      "text": "本卦无月破之爻"
-    },
-    "cr_026": {
-      "text": "本卦无三合局"
-    },
-    "cr_027": {
-      "text": "无动爻或无变卦"
-    },
-    "cr_028": {
-      "text": "无有效进退神分析"
-    },
-    "cr_029": {
-      "text": "本卦无动爻，不存在反吟伏吟"
-    },
-    "cr_030": {
-      "text": "无法确定卦身（卦代未知）"
-    },
-    "cr_031": {
-      "text": "旬空"
-    },
-    "cr_032": {
-      "text": "月破"
-    },
-    "cr_033": {
-      "text": "日冲"
-    },
-    "cr_034": {
-      "text": "本卦无三刑"
-    },
-    "cr_035": {
-      "text": "无用神/忌神与日辰月建之合"
-    },
-    "cr_036": {
-      "text": "无六破"
-    },
-    "cr_037": {
-      "text": "数据不足，无法分析随官入墓"
-    },
-    "cr_038": {
-      "text": "本卦无官鬼爻，不论随官入墓"
-    },
-    "cr_039": {
-      "text": "官鬼入墓"
-    },
-    "cr_040": {
-      "text": "世随官入墓"
-    },
-    "cr_041": {
-      "text": "用随官入墓"
-    },
-    "cr_042": {
-      "text": "鬼用同墓"
-    },
-    "cr_043": {
-      "text": "官鬼动化墓"
-    },
-    "cr_044": {
-      "text": "连续三爻动"
-    },
-    "cr_045": {
-      "text": "间隔动爻"
-    },
-    "cr_046": {
-      "text": "上卦全动"
-    },
-    "cr_047": {
-      "text": "下卦全动"
-    },
-    "cr_048": {
-      "text": "对爻齐动"
-    },
-    "cr_049": {
-      "text": "用神原神齐动"
-    },
-    "cr_050": {
-      "text": "用神忌神齐动"
-    },
-    "cr_051": {
-      "text": "无特殊格局"
-    }
+  "brother_hold_exam": {
+   "text": "【兄弟持世求名】竞争费力，可成而名次不显，-0.4",
+   "basis": "《增删卜易》仕宦章"
   },
-  "classical_rules_templates": {
-    "crt_001": {
-      "text": "检测到随官入墓格局（{0}）：{1}。",
-      "template": true
-    },
-    "crt_002": {
-      "text": "{0}成{1}局，位置{2}/{3}/{4}，构成方式：{5}",
-      "template": true
-    },
-    "crt_003": {
-      "text": "用神{0}（{1}）处{2}地，原神{3}发动来生，原神{4}有力，绝处逢生，凶中反吉",
-      "template": true
-    },
-    "crt_004": {
-      "text": "卦身在{0}，代表事体核心与根基",
-      "template": true
-    },
-    "crt_005": {
-      "text": "月建{0}({1})，日辰{2}({3})",
-      "template": true
-    },
-    "crt_006": {
-      "text": "当月旺衰：{0}",
-      "template": true
-    },
-    "crt_007": {
-      "text": "六破{0}处，皆主破损不遂",
-      "template": true
-    },
-    "crt_008": {
-      "text": "日辰{0}伏神",
-      "template": true
-    },
-    "crt_009": {
-      "text": "月建{0}伏神",
-      "template": true
-    },
-    "crt_010": {
-      "text": "飞神{0}",
-      "template": true
-    },
-    "crt_011": {
-      "text": "伏神{0}",
-      "template": true
-    },
-    "crt_012": {
-      "text": "伏神入墓({0})",
-      "template": true
-    },
-    "crt_013": {
-      "text": "{0}伏藏（{1}）飞神{2}({3})→ {4}",
-      "template": true
-    },
-    "crt_014": {
-      "text": "{0}卦——{1}。事多{2}",
-      "template": true
-    },
-    "crt_015": {
-      "text": "合局入墓于{0}，局力不显",
-      "template": true
-    },
-    "crt_016": {
-      "text": "。{0}力大增",
-      "template": true
-    },
-    "crt_017": {
-      "text": "。⚠破局：{0}",
-      "template": true
-    },
-    "crt_018": {
-      "text": "{0}({1}→{2})化进神，力量递增，事态向前发展顺利",
-      "template": true
-    },
-    "crt_019": {
-      "text": "得力之爻：{0}",
-      "template": true
-    },
-    "crt_020": {
-      "text": "无力之爻：{0}",
-      "template": true
-    },
-    "crt_021": {
-      "text": "用神{0}（{1}）处{2}地，原神{3}发动来生，但原神{4}无力，虽生而力微",
-      "template": true
-    },
-    "crt_022": {
-      "text": "位置{0}与{1}（{2}与{3}）六合",
-      "template": true
-    },
-    "crt_023": {
-      "text": "反吟：{0}处地支相冲 ({1})",
-      "template": true
-    },
-    "crt_024": {
-      "text": "伏吟：{0}伏吟",
-      "template": true
-    },
-    "crt_025": {
-      "text": "卦身在{0}，{1}坐镇，本位安定",
-      "template": true
-    },
-    "crt_026": {
-      "text": "旺相之爻：{0}",
-      "template": true
-    },
-    "crt_027": {
-      "text": "休囚之爻：{0}",
-      "template": true
-    },
-    "crt_028": {
-      "text": "（其中{0}处合中带破，恩中有怨）",
-      "template": true
-    },
-    "crt_029": {
-      "text": "官鬼({0})未入墓或世/用未随鬼入墓，无随官入墓凶象",
-      "template": true
-    },
-    "crt_030": {
-      "text": "日辰{0}({1})生伏神{2}({3})",
-      "template": true
-    },
-    "crt_031": {
-      "text": "月建{0}({1})生伏神{2}",
-      "template": true
-    },
-    "crt_032": {
-      "text": "日冲飞神{0}（{1}冲{2}，冲开）",
-      "template": true
-    },
-    "crt_033": {
-      "text": "月冲飞神{0}（{1}冲{2}）",
-      "template": true
-    },
-    "crt_034": {
-      "text": "飞神{0}旬空",
-      "template": true
-    },
-    "crt_035": {
-      "text": "飞神{0}月破",
-      "template": true
-    },
-    "crt_036": {
-      "text": "飞神{0}休囚({1})",
-      "template": true
-    },
-    "crt_037": {
-      "text": "日辰{0}克飞神{1}",
-      "template": true
-    },
-    "crt_038": {
-      "text": "月建{0}克飞神{1}",
-      "template": true
-    },
-    "crt_039": {
-      "text": "伏神{0}旺相",
-      "template": true
-    },
-    "crt_040": {
-      "text": "伏神{0}被月日双克",
-      "template": true
-    },
-    "crt_041": {
-      "text": "伏神{0}入墓于{1}",
-      "template": true
-    },
-    "crt_042": {
-      "text": "伏神{0}逢绝地(日辰{1})",
-      "template": true
-    },
-    "crt_043": {
-      "text": "伏神{0}旬空",
-      "template": true
-    },
-    "crt_044": {
-      "text": "伏神{0}月破",
-      "template": true
-    },
-    "crt_045": {
-      "text": "伏神{0}休囚无气({1})",
-      "template": true
-    },
-    "crt_046": {
-      "text": "{0}伏{1}于{2}之下，飞神{3}，伏神{4}，得出评分={5}({6})",
-      "template": true
-    },
-    "crt_047": {
-      "text": "{0}({1}旬空)被日辰{2}冲，冲空则实，此爻由虚转实",
-      "template": true
-    },
-    "crt_048": {
-      "text": "{0}被日冲，合局不稳",
-      "template": true
-    },
-    "crt_049": {
-      "text": "{0}({1}→{2})化退神，力量递减，事态逐渐后退/消退",
-      "template": true
-    },
-    "crt_050": {
-      "text": "用神{0}（{1}）处{2}地，原神{3}虽现于卦中但未发动，待时而动",
-      "template": true
-    },
-    "crt_051": {
-      "text": "位置{0}与{1}（{2}与{3}）六冲",
-      "template": true
-    },
-    "crt_052": {
-      "text": "位置{0}与{1}（{2}与{3}）无合冲",
-      "template": true
-    },
-    "crt_053": {
-      "text": "月建({0})",
-      "template": true
-    },
-    "crt_054": {
-      "text": "日辰({0})",
-      "template": true
-    },
-    "crt_055": {
-      "text": "{0}：飞{1}({2})与伏{3}({4})：{5}，{6}",
-      "template": true
-    },
-    "crt_056": {
-      "text": "日辰{0}与伏神同五行",
-      "template": true
-    },
-    "crt_057": {
-      "text": "月建{0}与伏神同五行",
-      "template": true
-    },
-    "crt_058": {
-      "text": "伏神{0}有气",
-      "template": true
-    },
-    "crt_059": {
-      "text": "飞神{0}({1})旺相克伏神{2}({3})",
-      "template": true
-    },
-    "crt_060": {
-      "text": "{0}({1})静爻被日辰{2}冲，旺相暗动，其力约当明动七成",
-      "template": true
-    },
-    "crt_061": {
-      "text": "{0}({1})既破于月建又冲于日辰，力量极弱",
-      "template": true
-    },
-    "crt_062": {
-      "text": "{0}({1})为月破之爻",
-      "template": true
-    },
-    "crt_063": {
-      "text": "但得日辰{0}生扶，尚可补救",
-      "template": true
-    },
-    "crt_064": {
-      "text": "{0}被月冲，合局有隙",
-      "template": true
-    },
-    "crt_065": {
-      "text": "{0}爻动+{1}暗动+{2}静",
-      "template": true
-    },
-    "crt_066": {
-      "text": "{0}({1}→{2})回头合（合住事态胶着）",
-      "template": true
-    },
-    "crt_067": {
-      "text": "用神{0}（{1}）处{2}地，原神{3}不现于卦中，绝地无救",
-      "template": true
-    },
-    "crt_068": {
-      "text": "用神{0}（{1}）处{2}地，原神{3}虽现但{4}，无力救援，绝地无救",
-      "template": true
-    },
-    "crt_069": {
-      "text": "本卦有六合又有六冲（合{0}对、冲{1}对），",
-      "template": true
-    },
-    "crt_070": {
-      "text": "爻{0}",
-      "template": true
-    },
-    "crt_071": {
-      "text": "{0}（完整三刑）：{1}刑{2}刑{3}，三字全见于{4}，极凶之象",
-      "template": true
-    },
-    "crt_072": {
-      "text": "无礼之刑（成刑）：{0}刑{1}，见于{2}，主无礼刑伤、恩中之怨",
-      "template": true
-    },
-    "crt_073": {
-      "text": "无礼之刑（待刑）：{0}、{1}月日相见，刑伤未全，主微咎",
-      "template": true
-    },
-    "crt_074": {
-      "text": "自刑：{0}出现{1}次（{2}），自刑主自我纠结、自作自受、内心矛盾",
-      "template": true
-    },
-    "crt_075": {
-      "text": "官鬼{0}({1}·{2})入墓于{3}（{4}）",
-      "template": true
-    },
-    "crt_076": {
-      "text": "世爻{0}临官鬼{1}之墓{2}，自身随鬼入墓，凶象显著",
-      "template": true
-    },
-    "crt_077": {
-      "text": "用神{0}({1})临官鬼{2}之墓{3}，用神被鬼所困，极凶",
-      "template": true
-    },
-    "crt_078": {
-      "text": "官鬼({0})与世/用神同墓于{1}，鬼用同墓，灾难性凶象",
-      "template": true
-    },
-    "crt_079": {
-      "text": "{0}({1})静爻被日辰{2}冲，中和暗动，力量中等",
-      "template": true
-    },
-    "crt_080": {
-      "text": "{0}合{1}局，由日辰{2}或月建{3}补齐，力量稍逊但仍有合力",
-      "template": true
-    },
-    "crt_081": {
-      "text": "{0}({1}→{2})回头克（大凶）",
-      "template": true
-    },
-    "crt_082": {
-      "text": "本卦有{0}对合{1}，",
-      "template": true
-    },
-    "crt_083": {
-      "text": "{0}：{1}→{2}，本支被冲，反复变动之象",
-      "template": true
-    },
-    "crt_084": {
-      "text": "{0}（催刑）：卦内{1}，月日{2}补足成刑，刑伤力减半",
-      "template": true
-    },
-    "crt_085": {
-      "text": "{0}{1}爻{2}与{3}{4}{5}成{6}，{7}",
-      "template": true
-    },
-    "crt_086": {
-      "text": "官鬼{0}({1})动而化墓({2})，鬼动入墓，凶象加剧",
-      "template": true
-    },
-    "crt_087": {
-      "text": "{0}({1})静爻被日辰{2}冲，休囚暗动，力微短暂",
-      "template": true
-    },
-    "crt_088": {
-      "text": "{0}({1})静爻被日辰{2}冲，月休囚逢冲为日破，此爻彻底无用",
-      "template": true
-    },
-    "crt_089": {
-      "text": "。⚠破局：{0}",
-      "template": true
-    },
-    "crt_090": {
-      "text": "{0}({1}→{2})回头生（有救济）",
-      "template": true
-    },
-    "crt_091": {
-      "text": "本卦有{0}对冲，",
-      "template": true
-    },
-    "crt_092": {
-      "text": "{0}（待刑）：{1}、{2}相见，缺{3}，待月日逢{4}方成刑，目前刑伤未全，但有刑伤之象",
-      "template": true
-    },
-    "crt_093": {
-      "text": "{0}({1}→{2})化泄（力量消散）",
-      "template": true
-    },
-    "crt_094": {
-      "text": "{0}({1}→{2})不涉及进退神，需结合其他因素分析",
-      "template": true
-    },
-    "crt_095": {
-      "text": "日({0})",
-      "template": true
-    },
-    "crt_096": {
-      "text": "，{0}对冲",
-      "template": true
-    },
-    "crt_097": {
-      "text": "月({0})",
-      "template": true
-    },
-    "crt_098": {
-      "text": "卦身{0}不现于卦，事无定向；须待临值或伏出之期方有眉目",
-      "template": true
-    }
+  "officer_ke_world_lawsuit": {
+   "text": "【官鬼克世】官司占官方克世，主对我不利，-1.2",
+   "basis": "《增删卜易》官非章"
   },
-  "pattern_verdicts": {
-    "no_youhun_guihun": "无游魂归魂特征",
-    "yao_states_calm": "各爻状态平和",
-    "jue_chu_feng_sheng": "绝处逢生",
-    "jue_chu_feng_sheng_weak_yuan": "绝处逢生但原神无力",
-    "jue_wait_yuan": "绝地待原神",
-    "jue_no_save": "绝地无救"
+  "document_month_break": {
+   "text": "【文书/用神月破】官司中文书有缺，-0.5",
+   "basis": "《增删卜易》官非章"
   },
-  "effect_labels": {
-    "hex_has_clash": "有冲",
-    "hex_no_he_chong": "无明确合冲",
-    "fan_yin_and_fu_yin": "反吟兼伏吟",
-    "fan_yin": "反吟",
-    "fu_yin": "伏吟",
-    "fan_fu_none": "无",
-    "fan_fu_none_summary": "无反吟伏吟",
-    "inner": "内卦",
-    "outer": "外卦"
+  "extreme_prosper_no_source": {
+   "text": "【旺极无源加权】用神极旺而无原神发动，再-1.0",
+   "basis": "《黄金策》"
   },
-  "effect_phrases": {
-    "day_he_use_close": "切近有力",
-    "month_he_use_success": "事必成就",
-    "day_month_he_use_peak": "大吉之极",
-    "day_he_taboo_harm": "忌神有力为祸",
-    "month_he_taboo_stick": "忌神缠月不解"
+  "fu_fei_kong_out": {
+   "text": "【飞空得出】飞神旬空，伏神得出有力，+1.5",
+   "basis": "《卜筮正宗》伏神章"
   },
-  "bing_yao_labels": {
-    "weak": {
-      "label": "用神衰弱",
-      "basis": "旺衰={level}"
-    },
-    "void": {
-      "label": "用神旬空",
-      "basis": "旬空则力虚"
-    },
-    "month_break": {
-      "label": "用神月破",
-      "basis": "月破则伤"
-    },
-    "hidden": {
-      "label": "用神伏藏",
-      "basis": "伏藏受飞神压制"
-    },
-    "controlled": {
-      "label": "日月克身",
-      "basis": "月={month_el} 日={day_el} 克用神"
-    },
-    "strong_root": {
-      "label": "用神有气",
-      "basis": "旺衰={level}"
-    },
-    "day_month_sheng": {
-      "label": "日月生扶",
-      "basis": "月={month_el} 日={day_el} 生用神"
-    },
-    "yuan_moving": {
-      "label": "原神动来生",
-      "basis": "原神发动生用神"
-    },
-    "yuan_present": {
-      "label": "原神在卦",
-      "basis": "原神出现，待时而用"
-    },
-    "fill_void": {
-      "label": "冲空填实之药",
-      "basis": "旬空待值日/冲空解：{ug_branch}"
-    },
-    "out_of_hiding": {
-      "label": "出伏之药",
-      "basis": "待冲开飞神或飞神受制"
-    },
-    "heal_break": {
-      "label": "月破待补",
-      "basis": "逢合逢值填实可解"
-    }
+  "fu_fei_sheng_fu": {
+   "text": "【飞来生伏可出】伏神得生而出，+1.0",
+   "basis": "《卜筮正宗》伏神章"
   },
-  "strength_reason_map": {
-    "极旺": "base_strong",
-    "旺": "base_strong",
-    "中和": "base_neutral",
-    "偏弱": "base_weak",
-    "弱": "base_weak",
-    "极弱": "base_very_weak"
+  "fu_die_at_fei": {
+   "text": "【伏神绝于飞】伏神气绝难出，-2.0",
+   "basis": "《卜筮正宗》伏神章"
   },
-  "strength_polarity_map": {
-    "极旺": 1,
-    "旺": 1,
-    "中和": 0,
-    "偏弱": -1,
-    "弱": -1,
-    "极弱": -1
+  "fu_out_fei_empty": {
+   "text": "【伏神得出伏·飞旬空】飞神{fei_branch}旬空得出，+1.5",
+   "basis": "《卜筮正宗》伏神章",
+   "template": true
   },
-  "narrative_hints": {
-    "day_hint_fu_out": "冲飞神之日伏神得出",
-    "day_hint_value_or_clash_he": "{use_br}日应事，逢{cl}冲、逢{co}合皆动",
-    "day_hint_value_or_clash": "{use_br}日或{cl}日（{use_br}{cl}冲）应事",
-    "day_hint_value": "{use_br}日值日之时最应",
-    "timing_near_illness_void": "病在近，逢空即散——快则当日、慢则数日便见松动。",
-    "timing_fast": "应期偏速，当日或数日内就有信号，别错过。",
-    "timing_slow": "应期偏迟，按月计，旺相之月到才应——别拿天来量。",
-    "timing_with_dates": "应期偏迟，但已有明确日辰可寻——",
-    "timing_mid": "应期在数日到一两个月之间，不出近期。",
-    "timing_repeat": "过程有反复，别因一次起伏就下结论。",
-    "timing_day_detail": "具体看——{day_hint}。",
-    "timing_shown": "对应{shown}相关之日。",
-    "timing_calendar": "具体应期日历上落在：{calendar_str}。",
-    "advice_xiong": [
-      "先稳住现有局面，不宜加码",
-      "把风险点列出来，能避则避",
-      "等用神得力的时段再考虑推进"
-    ],
-    "advice_ji": [
-      "顺着已有条件推进，不必反复起念试探",
-      "抓住用神得力的时段做关键动作",
-      "过程有起伏属正常，盯住主线即可"
-    ],
-    "disclaimer": "这是按纳甲六爻规则推出来的一份参考，讲的是方向和节奏，不是板上钉钉的预言。看病、打官司、做重大决定，仍要以专业意见为准。"
+  "fu_out_fei_month_break": {
+   "text": "【伏神得出伏·飞月破】飞神月破得出，+1.0",
+   "basis": "《卜筮正宗》伏神章"
   },
-  "pattern_related": {
-    "六冲卦": [
-      "六冲卦",
-      "反吟",
-      "伏吟",
-      "合处逢冲"
-    ],
-    "六合卦": [
-      "六合卦",
-      "化合",
-      "冲中逢合",
-      "三合"
-    ],
-    "反吟": [
-      "反吟",
-      "六冲卦",
-      "伏吟"
-    ],
-    "伏吟": [
-      "伏吟",
-      "反吟"
-    ],
-    "游魂": [
-      "游魂",
-      "归魂"
-    ],
-    "归魂": [
-      "归魂",
-      "游魂"
-    ],
-    "化合": [
-      "化合",
-      "六合卦",
-      "合处逢冲",
-      "三合成局"
-    ],
-    "三合成局": [
-      "三合成局",
-      "六合卦",
-      "三合"
-    ],
-    "绝处逢生": [
-      "绝处逢生",
-      "用神旺",
-      "回头生"
-    ],
-    "回头生": [
-      "回头生",
-      "进神",
-      "绝处逢生"
-    ],
-    "回头克": [
-      "回头克",
-      "退神",
-      "大凶"
-    ],
-    "进神": [
-      "进神",
-      "回头生"
-    ],
-    "退神": [
-      "退神",
-      "回头克"
-    ],
-    "用神旺": [
-      "用神旺",
-      "绝处逢生",
-      "回头生"
-    ],
-    "用神休囚": [
-      "用神休囚",
-      "用神极弱"
-    ],
-    "用神极弱": [
-      "用神极弱",
-      "用神休囚",
-      "绝处逢生"
-    ],
-    "原神绝位·用神失源": [
-      "原神绝位·用神失源",
-      "用神休囚"
-    ],
-    "月破": [
-      "月破",
-      "用神空破"
-    ],
-    "近病逢空": [
-      "近病逢空即愈",
-      "用神空破"
-    ],
-    "近病逢合": [
-      "近病逢合为凶",
-      "六合卦"
-    ],
-    "久病逢空": [
-      "久病逢空为凶",
-      "用神极弱"
-    ],
-    "兄弟持世": [
-      "兄弟持世",
-      "忌神"
-    ],
-    "官鬼持世": [
-      "官鬼持世",
-      "子孙持世"
-    ],
-    "子孙持世": [
-      "子孙持世",
-      "官鬼持世"
-    ],
-    "父母持世": [
-      "父母持世",
-      "兄弟持世"
-    ],
-    "妻财持世": [
-      "妻财持世",
-      "兄弟持世"
-    ],
-    "从格": [
-      "从格",
-      "专旺格"
-    ],
-    "专旺格": [
-      "专旺格",
-      "从格"
-    ],
-    "化格": [
-      "化合",
-      "三合成局"
-    ],
-    "暗动": [
-      "暗动",
-      "伏神得出"
-    ],
-    "伏神得出": [
-      "伏神得出",
-      "伏神不得出",
-      "暗动"
-    ],
-    "伏神不得出": [
-      "伏神不得出",
-      "伏神得出"
-    ]
+  "fu_fei_ke_hard_out": {
+   "text": "【飞克伏难出】伏神被克不出，-1.0",
+   "basis": "《卜筮正宗》伏神章"
   },
-  "pattern_notes_extra": {
-    "youhun": "游魂卦主在外、不安、忧疑、反复。",
-    "guihun": "归魂卦主在内、有归、安定、终有所归。",
-    "static_he_wait": "。静爻合局，待时日引发方成",
-    "sanhui_use_strong": "，用神旺而随局，气聚一方",
-    "sanhui_use_weak": "，用神衰而局气偏枯，独木难支"
+  "fu_drain_by_fei": {
+   "text": "【伏神泄气】伏神泄气于飞，-0.5",
+   "basis": "《卜筮正宗》伏神章"
   },
-  "strength_summary_say": {
-    "极旺": "总起来说，用神很有底气。",
-    "旺": "总起来说，用神得力。",
-    "相": "总起来说，用神有根，能用。",
-    "中和": "总起来说，用神不强不弱，看后手怎么走。",
-    "中和偏旺": "总起来说，用神略占上风。",
-    "中和偏弱": "总起来说，用神稍显吃力。",
-    "偏弱": "总起来说，用神偏软，宜借力。",
-    "弱": "总起来说，用神力量薄，不宜硬催结果。",
-    "极弱": "总起来说，用神几乎使不上劲。",
-    "休囚": "总起来说，用神处在低潮。"
-  },
-  "shensha_policy": {
-    "_note": "星煞是否进主判的口径（有古籍出处才写；无定性表不编吉凶）",
-    "liuyao": {
-      "in_main_score": false,
-      "role": "旁参挂盘（临用/临世/临日只记位置，不进主分）",
-      "basis": [
-        "《卜筮正宗》第十八论·辟诸书之谬：辟星煞之谬——天乙贵人、天赦等各种星煞与六爻无关",
-        "《增删卜易》删去多余规则：星煞（天乙贵人、天月德等）八字命理之法，不验于六爻"
-      ],
-      "six_spirits_note": "六神（青龙/朱雀/勾陈/螣蛇/白虎/玄武）是另一套，仍作旁参；与星煞不同"
-    },
-    "ming": {
-      "in_main_score": false,
-      "role": "机械安星（天乙/文昌/驿马/桃花/华盖等）只进 chart 因子，不批吉凶",
-      "basis": [
-        "神煞安法属机械步骤（AGENTS.md 铁律一）；吉凶解读不在 core/学科层"
-      ]
-    },
-    "zeji": {
-      "in_main_score": false,
-      "role": "天月德/冲肖煞方/彭祖百忌作辅助加减，不压黄黑道与建除主判",
-      "basis": [
-        "《协纪辨方书》通行口径；仓库内无带应验的通书日例，故不作真黑箱宣称"
-      ]
-    }
-  },
-  "zeji_validity_gap": {
-    "status": "规则应用黑箱（rule-application black box）",
-    "missing": "带现实应验的通书日例（古例 day + outcome）",
-    "do_not": [
-      "伪造应验例",
-      "把规则应用分说成择吉命中率"
-    ],
-    "next": "若日后有可核验通书日例，再建 holdout 集；在此之前只报规则一致性"
-  },
-  "pattern_verdict_labels": {
-    "真空/假空": {
-      "真空": {
-        "label": "真空",
-        "strength_text": "用神旬空而月建{month}休囚、日辰{day}来克，又无生扶——真空难起，出空亦不应",
-        "reason": "用神休囚旬空且日辰克之、无生扶（真空难起），论30%",
-        "verdict": "真空直断不成（《增删卜易》「旺空待出，真空难起」）",
-        "basis": "《增删卜易》「旺空待出，真空难起」；真空＝休囚无气＋日克＋无生扶"
-      },
-      "假空": {
-        "label": "假空",
-        "strength_text": "用神虽旬空而得生扶（月建/日辰/动爻），旺空待出——出空（值日或冲日）即应",
-        "reason": "用神旬空但旺相得生扶（假空待出），出空即应，论70%",
-        "verdict": "假空出空（值日或冲日）则应（《增删卜易》「旺空待出」）",
-        "basis": "《增删卜易》「旺空待出，真空难起」；假空＝旺相＋月日或动爻生扶"
-      }
-    },
-    "独发/独静": {
-      "古典引文": "《增刪卜易·獨發章第三十一》：「五爻俱動，一爻不動，謂之獨靜；五爻不動，一爻獨動，謂之獨發。」同章又立界：「事之成敗，由乎用神；應期遲速，亦由乎用神……如捨其用神，執之而決事者，謬也。」",
-      "du_fa": "独发：一爻独动而五爻皆静，{name}{branch}（{role}）为全卦主驱动力——动处即事之所由起，静处只作背景。",
-      "du_jing": "独静：一爻独静而五爻俱动，{name}{branch}（{role}）为全卦枢纽——众动之中此爻不动，事之滞处多在此。"
-    },
-    "三传克制": {
-      "label": "三传克制",
-      "basis": "《增删卜易》「三傳俱克，雖旺亦危」；references/pattern_reference.md 格局六：月建克用神、日辰克用神、太岁亦克用神，三者皆克而無一生扶",
-      "verdict": "三传俱克：太岁、月建、日辰俱克用神且无一生扶——纵值旺相亦危，凶多吉少",
-      "reason": "三传俱克（太岁{year}、月建{month}、日辰{day}俱克用神{use_god}），虽旺亦危",
-      "verified": false,
-      "verified_note": "未验证：本项目基准集中无含太岁的可对照案例，此条只落地标记、不进主分；待自建并标注出处的基准例到位后方可计分"
-    }
+  "illness_officer_tomb_mild": {
+   "text": "（疾病占：官鬼病气入墓为收藏之象，凶力大减）",
+   "basis": "疾病占修正"
   }
+ },
+ "step5_verdict_descs": {
+  "score_daji": {
+   "text": "顺得很，该推进的可以推进",
+   "basis": ""
+  },
+  "score_ji": {
+   "text": "整体是顺的，往前走问题不大",
+   "basis": ""
+  },
+  "score_ping_ji": {
+   "text": "有戏但不稳，节奏比结果更要紧",
+   "basis": ""
+  },
+  "score_xiong": {
+   "text": "阻力明显，硬上容易吃亏",
+   "basis": ""
+  },
+  "score_da_xiong": {
+   "text": "眼下不宜发力，先守住",
+   "basis": ""
+  },
+  "travel_scattered": {
+   "text": "冲散行人，纵用神有气亦主归期不定",
+   "basis": "六冲/合处逢冲+行人占"
+  },
+  "partner_scattered": {
+   "text": "六冲/逢冲合伙，世应相冲，合伙难持久",
+   "basis": "六冲/合处逢冲+合伙占"
+  },
+  "weak_use_net_negative": {
+   "text": "原神不济、变动不利，纵用神有些微气亦难持久",
+   "basis": "用神衰弱+净动变负"
+  },
+  "xing_he_conflict": {
+   "text": "三刑齐全逢六合，吉凶相战，凶多吉少",
+   "basis": "三刑+六合"
+  },
+  "he_then_chong": {
+   "text": "先合后散，事情容易反复，适合稳住再看",
+   "basis": "合处逢冲+婚聚占"
+  },
+  "price_down": {
+   "text": "势头偏弱，观望比追高稳妥",
+   "basis": "价贵涨跌占+凶"
+  },
+  "yuanshen_missing_daji_cap": {
+   "text": "表面有力，实则源头不足，勿被旺象迷惑",
+   "basis": "原神失位"
+  },
+  "extreme_no_source_xiong": {
+   "text": "旺而无源，古法主事难持久，防盛极而衰",
+   "basis": "旺极无源"
+  },
+  "yuanshen_missing_ping_ji": {
+   "text": "用神虽旺，源头不足，勿把一时之盛当长久",
+   "basis": "原神失位"
+  },
+  "yuanshen_missing_discount": {
+   "text": "用神看似不弱，但原神未动，成算要打折",
+   "basis": "原神失位"
+  },
+  "officer_ke_world_xiong": {
+   "text": "官司官方克世，形势对己不利，宜专业应对",
+   "basis": "官鬼克世+官司占"
+  },
+  "officer_ke_world_tight": {
+   "text": "官司官方克世，形势偏紧，勿心存侥幸",
+   "basis": "官鬼克世+官司占"
+  },
+  "brother_exam_not_desperate": {
+   "text": "功名有阻力但未必绝望，兄弟持世主竞争费力",
+   "basis": "兄弟持世求名"
+  },
+  "brother_exam_hard": {
+   "text": "功名有象，但竞争大、须全力以赴，名次未必靠前",
+   "basis": "兄弟持世求名"
+  },
+  "chronic_illness_care": {
+   "text": "久病不宜言吉，仍以调护就医为先",
+   "basis": "久病"
+  },
+  "chronic_illness_tight": {
+   "text": "久病体衰，卦象偏紧，务必遵医嘱",
+   "basis": "久病"
+  },
+  "travel_eventually_back": {
+   "text": "行人终归，只是偏迟或途中多折，宜候应期",
+   "basis": "行人占"
+  },
+  "travel_use_sheng_back": {
+   "text": "用神生世，行人迟归终至，可候应期",
+   "basis": "用神生世+行人占"
+  },
+  "travel_use_ke_fast": {
+   "text": "行人可望速至",
+   "basis": "用神克世+行人占"
+  },
+  "brother_lost_he_chong": {
+   "text": "虽兄弟持世，然冲中逢合，主先难后成",
+   "basis": "兄弟持世+失物+冲中逢合"
+  },
+  "lost_recoverable": {
+   "text": "有惊无险，失而可复得",
+   "basis": "兄弟持世+失物"
+  },
+  "wealth_but_brother": {
+   "text": "有财可谋，但兄弟持世，到手易耗",
+   "basis": "兄弟持世求财"
+  },
+  "wealth_watch_waste": {
+   "text": "财路有象，兄弟持世须防破耗",
+   "basis": "兄弟持世求财"
+  },
+  "brother_wealth_not_worth": {
+   "text": "兄弟持世求财，辛苦多耗，得不偿失",
+   "basis": "兄弟持世求财"
+  },
+  "travel_use_alive_slow": {
+   "text": "用神尚有气，行人主能归，过程偏拖",
+   "basis": "行人占+用神非死绝"
+  },
+  "officer_tomb_catastrophic_prefix": {
+   "text": "随官入墓极凶之象——",
+   "basis": "随官入墓"
+  }
+ },
+ "step5_spirit_reasons": {
+  "qinglong_neutral": {
+   "text": "青龙临用，喜气之象",
+   "basis": "《协纪辨方书》六兽"
+  },
+  "qinglong_yang": {
+   "text": "青龙临用，阳日力增，吉上添吉",
+   "basis": "《协纪辨方书》六兽分阴阳日"
+  },
+  "qinglong_yin": {
+   "text": "青龙临用，阴日力略减",
+   "basis": "《协纪辨方书》六兽分阴阳日"
+  },
+  "baihu_neutral": {
+   "text": "白虎临用，丧凶之兆",
+   "basis": "《协纪辨方书》六兽"
+  },
+  "baihu_yang": {
+   "text": "白虎临用，阳日凶焰更炽",
+   "basis": "《协纪辨方书》六兽分阴阳日"
+  },
+  "baihu_yin": {
+   "text": "白虎临用，阴日凶焰稍敛",
+   "basis": "《协纪辨方书》六兽分阴阳日"
+  },
+  "xuanwu_neutral": {
+   "text": "玄武临用，暗昧不明",
+   "basis": "《协纪辨方书》六兽"
+  },
+  "xuanwu_yin": {
+   "text": "玄武临用，阴日暗昧更重",
+   "basis": "《协纪辨方书》六兽分阴阳日"
+  },
+  "xuanwu_yang": {
+   "text": "玄武临用，阳日暗昧被抑",
+   "basis": "《协纪辨方书》六兽分阴阳日"
+  },
+  "zhuque_neutral": {
+   "text": "朱雀临用，文书口舌",
+   "basis": "《协纪辨方书》六兽"
+  },
+  "zhuque_yang": {
+   "text": "朱雀临用，阳日口舌更显",
+   "basis": "《协纪辨方书》六兽分阴阳日"
+  },
+  "zhuque_yin": {
+   "text": "朱雀临用，阴日口舌稍抑",
+   "basis": "《协纪辨方书》六兽分阴阳日"
+  },
+  "gouchen_neutral": {
+   "text": "勾陈临用，牵绊迟滞",
+   "basis": "《协纪辨方书》六兽"
+  },
+  "gouchen_yang": {
+   "text": "勾陈临用，阳日官非更显",
+   "basis": "《协纪辨方书》六兽分阴阳日"
+  },
+  "gouchen_yin": {
+   "text": "勾陈临用，阴日事缓",
+   "basis": "《协纪辨方书》六兽分阴阳日"
+  },
+  "tengshe_neutral": {
+   "text": "螣蛇临用，惊恐怪异",
+   "basis": "《协纪辨方书》六兽"
+  },
+  "tengshe_yin": {
+   "text": "螣蛇临用，阴日惊恐更甚",
+   "basis": "《协纪辨方书》六兽分阴阳日"
+  },
+  "tengshe_yang": {
+   "text": "螣蛇临用，阳日惊恐略抑",
+   "basis": "《协纪辨方书》六兽分阴阳日"
+  }
+ },
+ "step5_factor_reasons": {
+  "base_neutral": {
+   "text": "用神平和，不旺不弱",
+   "basis": ""
+  },
+  "change_sheng": {
+   "text": "动爻来生用神",
+   "basis": ""
+  },
+  "change_ke": {
+   "text": "动爻来克用神",
+   "basis": ""
+  },
+  "change_balance": {
+   "text": "动爻生克交抵，利弊相抵",
+   "basis": ""
+  },
+  "hex_liuhe": {
+   "text": "六合利合",
+   "basis": ""
+  },
+  "hex_liuchong": {
+   "text": "六冲主散",
+   "basis": ""
+  },
+  "hex_liuhe_reason": {
+   "text": "六合卦，事主和合",
+   "basis": ""
+  },
+  "hex_liuchong_reason": {
+   "text": "六冲卦，事主散离",
+   "basis": ""
+  },
+  "spirit_fallback": {
+   "text": "六神加临用神",
+   "basis": ""
+  },
+  "day_month_bond": {
+   "text": "日月合住用神",
+   "basis": ""
+  },
+  "six_break": {
+   "text": "用神逢月破",
+   "basis": ""
+  },
+  "combo_break": {
+   "text": "合局受破，所谋难成",
+   "basis": ""
+  },
+  "yuanshen_bond": {
+   "text": "原神被合，用神失源",
+   "basis": ""
+  },
+  "officer_tomb": {
+   "text": "官鬼入墓，困而不发",
+   "basis": ""
+  },
+  "fu_shen_out": {
+   "text": "伏神得出，事有转机",
+   "basis": ""
+  },
+  "special_pattern": {
+   "text": "格局特殊，反其势用之",
+   "basis": ""
+  },
+  "classical_fallback": {
+   "text": "古籍格局",
+   "basis": ""
+  },
+  "lv_ji_wang": {
+   "text": "用神很旺",
+   "basis": ""
+  },
+  "lv_wang": {
+   "text": "用神得力",
+   "basis": ""
+  },
+  "lv_xiang": {
+   "text": "用神有根",
+   "basis": ""
+  },
+  "lv_zhonghe": {
+   "text": "用神中和",
+   "basis": ""
+  },
+  "lv_zhonghe_wang": {
+   "text": "用神略旺",
+   "basis": ""
+  },
+  "lv_zhonghe_ru": {
+   "text": "用神略弱",
+   "basis": ""
+  },
+  "lv_pianruo": {
+   "text": "用神偏弱",
+   "basis": ""
+  },
+  "lv_ruo": {
+   "text": "用神力薄",
+   "basis": ""
+  },
+  "lv_jiruo": {
+   "text": "用神极弱",
+   "basis": ""
+  },
+  "lv_xiqiu": {
+   "text": "用神休囚",
+   "basis": ""
+  },
+  "change_help": {
+   "text": "动变有助力",
+   "basis": ""
+  },
+  "change_drag": {
+   "text": "动变有牵扯",
+   "basis": ""
+  },
+  "support_prefix": {
+   "text": "有利的一面：",
+   "basis": ""
+  },
+  "concern_prefix": {
+   "text": "要当心的一面：",
+   "basis": ""
+  },
+  "quote_prefix": {
+   "text": "古人类似情境有言：",
+   "basis": ""
+  },
+  "base_strong": {
+   "text": "用神有力，根基扎实",
+   "basis": ""
+  },
+  "base_weak": {
+   "text": "用神乏力，根基偏弱",
+   "basis": ""
+  },
+  "base_very_weak": {
+   "text": "用神极弱，几近失力",
+   "basis": ""
+  }
+ },
+ "step5_confidence": {
+  "high": {
+   "text": "高 — 信号清晰明确",
+   "basis": ""
+  },
+  "medium": {
+   "text": "中 — 大体可断，细节待验",
+   "basis": ""
+  },
+  "medium_low": {
+   "text": "中等偏低 — 信号参半，谨慎判断",
+   "basis": ""
+  },
+  "low": {
+   "text": "低 — 信号矛盾，暂缓决断",
+   "basis": ""
+  }
+ },
+ "step5_yingqi_texts": {
+  "no_yingqi": {
+   "text": "无应期可断",
+   "basis": ""
+  },
+  "speed_fast": {
+   "text": "事情来得偏快，快则当日、次日就可能见分晓",
+   "basis": ""
+  },
+  "speed_medium": {
+   "text": "不急不缓，近期数日到一两个月都是观察期",
+   "basis": ""
+  },
+  "speed_slow": {
+   "text": "事情偏慢，可能要等旺相之月，年内陆续应验——别用三五天去衡量",
+   "basis": ""
+  },
+  "speed_fast_desc": {
+   "text": "速应（当日或数日内）",
+   "basis": ""
+  },
+  "speed_medium_desc": {
+   "text": "适中（数日至数周）",
+   "basis": ""
+  },
+  "speed_slow_desc": {
+   "text": "迟应（数周至数月）",
+   "basis": ""
+  },
+  "use_alive_next_day": {
+   "text": "用神旺相，次日之应",
+   "basis": ""
+  },
+  "use_empty_day_chong": {
+   "text": "用神旬空，日辰冲空填实，当日即应",
+   "basis": ""
+  },
+  "chronic_empty_wait_chong": {
+   "text": "久病用神旬空，期于冲空",
+   "basis": ""
+  },
+  "acute_empty_fill": {
+   "text": "近病用神旬空，出旬填实即愈",
+   "basis": ""
+  },
+  "empty_fill": {
+   "text": "用神旬空，出旬填实",
+   "basis": ""
+  },
+  "empty_chong_real": {
+   "text": "用神旬空，冲空则实",
+   "basis": ""
+  },
+  "month_break_fill": {
+   "text": "月破出月，逢值填实",
+   "basis": ""
+  },
+  "month_break_he": {
+   "text": "月破逢合，合处填实",
+   "basis": ""
+  },
+  "fu_fei_empty_wait_fu_day": {
+   "text": "飞神旬空，伏神得出，期于伏神值日",
+   "basis": ""
+  },
+  "fu_fei_ke_chong_fei": {
+   "text": "飞神克伏，冲开飞神",
+   "basis": ""
+  },
+  "fu_out_wait_fu_day": {
+   "text": "伏神得出，期于伏神值日",
+   "basis": ""
+  },
+  "fu_sheng_fei_chong": {
+   "text": "伏生飞，冲开飞神",
+   "basis": ""
+  },
+  "use_tomb_chong_tomb": {
+   "text": "用神入墓，冲墓之日",
+   "basis": ""
+  },
+  "use_moving_he_day": {
+   "text": "用神发动，逢合之日",
+   "basis": ""
+  },
+  "use_quiet_chong_day": {
+   "text": "用神安静，逢冲之日",
+   "basis": ""
+  },
+  "change_branch_empty_fill": {
+   "text": "化出之支逢空，出空值日",
+   "basis": ""
+  },
+  "empty_same_element_fill": {
+   "text": "空亡之支与用神同五行，出空填实",
+   "basis": ""
+  },
+  "use_weak_wait_prosper": {
+   "text": "用神休囚，旺相之日",
+   "basis": ""
+  },
+  "use_empty_fill_month": {
+   "text": "用神旬空，出旬填实之月",
+   "basis": ""
+  },
+  "use_empty_chong_month": {
+   "text": "用神旬空，冲空则实之月",
+   "basis": ""
+  },
+  "month_break_real_month": {
+   "text": "月破出月，实破之月",
+   "basis": ""
+  },
+  "use_tomb_chong_month": {
+   "text": "用神入墓，冲墓之月",
+   "basis": ""
+  },
+  "fu_hidden_chong_fei_month": {
+   "text": "用神伏藏，冲飞得出之月",
+   "basis": ""
+  },
+  "use_moving_he_month": {
+   "text": "用神发动，逢合之月",
+   "basis": ""
+  },
+  "use_quiet_chong_month": {
+   "text": "用神安静，逢冲之月",
+   "basis": ""
+  },
+  "use_weak_prosper_month": {
+   "text": "用神休囚，生旺之月",
+   "basis": ""
+  },
+  "hard_to_single_yingqi": {
+   "text": "难以确定单一应期，以用神旺衰断时机之迟速",
+   "basis": ""
+  },
+  "he_wait_chong": {
+   "text": "合局宜候冲开之日。",
+   "basis": ""
+  },
+  "repeat_uneasy": {
+   "text": "；事多反复，心下易感不安",
+   "basis": ""
+  },
+  "wait_strength": {
+   "text": "待综合旺衰另断",
+   "basis": ""
+  },
+  "change_hui_tou_sheng_empty": {
+   "text": "动而化回头生，虽空不作空论，期于生我之日",
+   "basis": "ZS005/007/013 用例规律"
+  }
+ },
+ "classical_interpretations": {
+  "youhun": {
+   "text": "游魂行无定，事主忧疑不定，心无归宿",
+   "basis": "《卜筮正宗》游魂归魂章"
+  },
+  "youhun_traits": {
+   "text": "行无方、四处飘荡、不定",
+   "basis": "游魂卦特质"
+  },
+  "youhun_trait_home": {
+   "text": "不安于室，思迁",
+   "basis": "游魂卦特质"
+  },
+  "youhun_trait_mind": {
+   "text": "忧疑不决，心思散乱",
+   "basis": "游魂卦特质"
+  },
+  "guihun": {
+   "text": "归魂回故乡，事主有归宿，终有所归",
+   "basis": "《卜筮正宗》游魂归魂章"
+  },
+  "guihun_traits": {
+   "text": "归期可定，终有所返",
+   "basis": "归魂卦特质"
+  },
+  "guihun_trait_home": {
+   "text": "安居乐业，归家安定",
+   "basis": "归魂卦特质"
+  },
+  "guihun_trait_mind": {
+   "text": "疑虑消解，心有所属",
+   "basis": "归魂卦特质"
+  },
+  "youhun_dynamic": {
+   "text": "往复飘摇，暂难定居",
+   "basis": "游魂+动爻"
+  },
+  "guihun_dynamic": {
+   "text": "反复纠结，终有归依",
+   "basis": "归魂+动爻"
+  },
+  "not_youhun_guihun": {
+   "text": "本卦非游魂归魂主事卦，不以游魂归魂论断",
+   "basis": ""
+  },
+  "not_youhun_guihun_summary": {
+   "text": "非游魂归魂卦——事态以常规世应生克为断，不涉飘泊依附之象",
+   "basis": ""
+  },
+  "liuhe_hex": {
+   "text": "六合卦主团聚、缠绵、迟缓、牵绊。",
+   "basis": "《卜筮正宗·六合论》"
+  },
+  "liuhe_hex_2": {
+   "text": "占事多主反复纠缠、不易决断、需要耐心。",
+   "basis": "《卜筮正宗·六合论》"
+  },
+  "liuhe_hex_3": {
+   "text": "占物则聚集不散，占病则缠绵难愈。",
+   "basis": "《卜筮正宗·六合论》"
+  },
+  "liuhe_hex_4": {
+   "text": "然若用神旺相，则六合亦可为吉，主聚合之象。",
+   "basis": "《卜筮正宗·六合论》"
+  },
+  "liuchong_hex": {
+   "text": "六冲卦主散、速决、分离、变动。",
+   "basis": "《卜筮正宗·六冲论》"
+  },
+  "liuchong_hex_2": {
+   "text": "占事多主动散不聚、难以坚守、事来事去迅速。",
+   "basis": "《卜筮正宗·六冲论》"
+  },
+  "liuchong_hex_3": {
+   "text": "占出行利，占散事宜，占聚合则不利。",
+   "basis": "《卜筮正宗·六冲论》"
+  },
+  "liuchong_hex_4": {
+   "text": "若用神休囚受克，则冲散太过，须防意外。",
+   "basis": "《卜筮正宗·六冲论》"
+  },
+  "half_he_half_chong": {
+   "text": "主事态复杂，表面和谐内有矛盾，或聚散交织需视具体情形而定。",
+   "basis": ""
+  },
+  "has_he": {
+   "text": "合处逢事宜斟酌，主有聚合之象但不完整。",
+   "basis": ""
+  },
+  "has_chong": {
+   "text": "冲处逢事宜谨慎，主有散动之象但不完整。",
+   "basis": ""
+  },
+  "no_he_chong": {
+   "text": "本卦各对应爻位无合无冲，平顺之象，吉凶需依用神决断。",
+   "basis": ""
+  },
+  "fanyin_and_fuyin": {
+   "text": "既反吟又伏吟，主反复多端、牵制难解、呻吟不止。",
+   "basis": "《卜筮正宗》反吟伏吟章"
+  },
+  "fanyin_and_fuyin_2": {
+   "text": "事情反复无常，内心焦虑不安，是最不安定的卦象。",
+   "basis": "《卜筮正宗》反吟伏吟章"
+  },
+  "fanyin": {
+   "text": "反吟主反复、变动不安、事多反复。",
+   "basis": "《卜筮正宗》反吟伏吟章"
+  },
+  "fanyin_2": {
+   "text": "化反吟多为先成后败、先聚后散之象。",
+   "basis": "《卜筮正宗》反吟伏吟章"
+  },
+  "fanyin_3": {
+   "text": "若用神旺相可解，主虽有波折终可成；若休囚则反复无定。",
+   "basis": "《卜筮正宗》反吟伏吟章"
+  },
+  "fuyin": {
+   "text": "伏吟主呻吟不止、忧郁难舒、事有内心之苦。",
+   "basis": "《卜筮正宗》反吟伏吟章"
+  },
+  "fuyin_2": {
+   "text": "占事多停滞不前、郁闷焦虑、欲行又止。",
+   "basis": "《卜筮正宗》反吟伏吟章"
+  },
+  "fuyin_3": {
+   "text": "宜静不宜动，宜守不宜攻。",
+   "basis": "《卜筮正宗》反吟伏吟章"
+  },
+  "no_fanyin_fuyin": {
+   "text": "本卦变爻无反吟伏吟，卦象安定。",
+   "basis": ""
+  },
+  "twelve_changsheng": {
+   "长生": {
+    "text": "新生之象，事有先机，力量初萌",
+    "basis": "十二长生"
+   },
+   "沐浴": {
+    "text": "初生柔嫩，需防贻害，纯正尚待时日",
+    "basis": "十二长生"
+   },
+   "冠带": {
+    "text": "渐趋成熟，力量渐增，气色渐隆",
+    "basis": "十二长生"
+   },
+   "临官": {
+    "text": "正当显达，力量充实，可担重任",
+    "basis": "十二长生"
+   },
+   "帝旺": {
+    "text": "极盛之时，力量最旺，盛极将衰之先",
+    "basis": "十二长生"
+   },
+   "衰": {
+    "text": "物极必反，力量开始减退",
+    "basis": "十二长生"
+   },
+   "病": {
+    "text": "力不从心，内耗渐显，弊端初露",
+    "basis": "十二长生"
+   },
+   "死": {
+    "text": "气数已尽，力量极微，难以作为",
+    "basis": "十二长生"
+   },
+   "墓": {
+    "text": "收藏归库，力量隐伏，待冲开方可",
+    "basis": "十二长生"
+   },
+   "绝": {
+    "text": "绝地无援，力量极弱，最难施为",
+    "basis": "十二长生"
+   },
+   "胎": {
+    "text": "孕育新机，力量暗藏，有复生之机",
+    "basis": "十二长生"
+   },
+   "养": {
+    "text": "休养恢复，力量渐聚，新生在前",
+    "basis": "十二长生"
+   }
+  },
+  "guan_tomb_poem": {
+   "text": "随官入墓最凶凶，世用临之祸不轻",
+   "basis": "《卜筮正宗》随官入墓歌诀"
+  },
+  "officer_tomb_catastrophic": {
+   "text": "此为极凶之象，占病/占讼尤忌，宜慎重对待。",
+   "basis": "随官入墓"
+  },
+  "officer_tomb_severe": {
+   "text": "此为严重凶象，宜慎防祸患。",
+   "basis": "随官入墓"
+  },
+  "officer_tomb_mild": {
+   "text": "官鬼入墓，其力受困，吉凶需综合判断。",
+   "basis": "随官入墓"
+  },
+  "officer_tomb_officer": {
+   "text": "官鬼入墓（鬼入墓中，凶象暗藏）",
+   "basis": "随官入墓"
+  },
+  "officer_tomb_world": {
+   "text": "世随官入墓（自身随鬼入墓，凶不可避）",
+   "basis": "随官入墓"
+  },
+  "officer_tomb_use": {
+   "text": "用随官入墓（用神随鬼入墓，事必遭凶）",
+   "basis": "随官入墓"
+  },
+  "officer_tomb_both": {
+   "text": "鬼用同墓（官鬼与世用同归墓中，灾难性凶象）",
+   "basis": "随官入墓"
+  },
+  "officer_tomb_moving": {
+   "text": "官鬼动化墓（鬼动入墓，凶象加剧）",
+   "basis": "随官入墓"
+  },
+  "hex_body_world": {
+   "text": "卦身持世——一身系于此事，全身心投入",
+   "basis": "卦身法"
+  },
+  "hex_body_use": {
+   "text": "卦身临用神——事有主骨，终有所成",
+   "basis": "卦身法"
+  },
+  "hex_body_empty": {
+   "text": "卦身逢空——事无本体，虚晃一枪",
+   "basis": "卦身法"
+  },
+  "hex_body_officer": {
+   "text": "卦身临鬼——忧患围绕本体，需防内患",
+   "basis": "卦身法"
+  },
+  "hex_body_wealth": {
+   "text": "卦身临财——求财有根本",
+   "basis": "卦身法"
+  },
+  "hex_body_child": {
+   "text": "卦身临子孙——事有福德庇护",
+   "basis": "卦身法"
+  },
+  "hex_body_use_arrow": {
+   "text": "卦身临用神 → 事有主骨，终有所成",
+   "basis": "卦身法"
+  },
+  "hex_body_ji_arrow": {
+   "text": "卦身临忌神 → 事有内患，防不胜防",
+   "basis": "卦身法"
+  },
+  "hex_body_world_arrow": {
+   "text": "卦身持世 → 一身系于此事",
+   "basis": "卦身法"
+  },
+  "hex_body_empty_arrow": {
+   "text": "卦身逢空 → 事无本体，虚晃一枪",
+   "basis": "卦身法"
+  },
+  "jue_chu_feng_sheng": {
+   "text": "绝处逢生",
+   "basis": "绝处逢生"
+  },
+  "jue_no_save": {
+   "text": "绝地无救",
+   "basis": "绝处逢生"
+  }
+ },
+ "classical_rules_notes": {
+  "cr_001": {
+   "text": "飞神生伏神"
+  },
+  "cr_002": {
+   "text": "飞神旬空"
+  },
+  "cr_003": {
+   "text": "飞神月破"
+  },
+  "cr_004": {
+   "text": "伏克飞为出暴"
+  },
+  "cr_005": {
+   "text": "日辰克伏神"
+  },
+  "cr_006": {
+   "text": "飞神旺相克伏神"
+  },
+  "cr_007": {
+   "text": "伏神逢绝"
+  },
+  "cr_008": {
+   "text": "伏神旬空"
+  },
+  "cr_009": {
+   "text": "伏神月破"
+  },
+  "cr_010": {
+   "text": "无足够数据进行伏藏分析"
+  },
+  "cr_011": {
+   "text": "本卦六亲齐备，无伏藏"
+  },
+  "cr_012": {
+   "text": "宫名异常，无法分析"
+  },
+  "cr_013": {
+   "text": "无足够数据"
+  },
+  "cr_014": {
+   "text": "六亲齐备，无伏藏"
+  },
+  "cr_015": {
+   "text": "宫名异常"
+  },
+  "cr_016": {
+   "text": "动爻克飞神"
+  },
+  "cr_017": {
+   "text": "无需分析"
+  },
+  "cr_018": {
+   "text": "无数据"
+  },
+  "cr_019": {
+   "text": "无日辰数据"
+  },
+  "cr_020": {
+   "text": "本卦无暗动之爻"
+  },
+  "cr_021": {
+   "text": "无月建数据"
+  },
+  "cr_022": {
+   "text": "无解救之力"
+  },
+  "cr_023": {
+   "text": "动爻月破，力量减半"
+  },
+  "cr_024": {
+   "text": "又逢旬空，更为无力"
+  },
+  "cr_025": {
+   "text": "本卦无月破之爻"
+  },
+  "cr_026": {
+   "text": "本卦无三合局"
+  },
+  "cr_027": {
+   "text": "无动爻或无变卦"
+  },
+  "cr_028": {
+   "text": "无有效进退神分析"
+  },
+  "cr_029": {
+   "text": "本卦无动爻，不存在反吟伏吟"
+  },
+  "cr_030": {
+   "text": "无法确定卦身（卦代未知）"
+  },
+  "cr_031": {
+   "text": "旬空"
+  },
+  "cr_032": {
+   "text": "月破"
+  },
+  "cr_033": {
+   "text": "日冲"
+  },
+  "cr_034": {
+   "text": "本卦无三刑"
+  },
+  "cr_035": {
+   "text": "无用神/忌神与日辰月建之合"
+  },
+  "cr_036": {
+   "text": "无六破"
+  },
+  "cr_037": {
+   "text": "数据不足，无法分析随官入墓"
+  },
+  "cr_038": {
+   "text": "本卦无官鬼爻，不论随官入墓"
+  },
+  "cr_039": {
+   "text": "官鬼入墓"
+  },
+  "cr_040": {
+   "text": "世随官入墓"
+  },
+  "cr_041": {
+   "text": "用随官入墓"
+  },
+  "cr_042": {
+   "text": "鬼用同墓"
+  },
+  "cr_043": {
+   "text": "官鬼动化墓"
+  },
+  "cr_044": {
+   "text": "连续三爻动"
+  },
+  "cr_045": {
+   "text": "间隔动爻"
+  },
+  "cr_046": {
+   "text": "上卦全动"
+  },
+  "cr_047": {
+   "text": "下卦全动"
+  },
+  "cr_048": {
+   "text": "对爻齐动"
+  },
+  "cr_049": {
+   "text": "用神原神齐动"
+  },
+  "cr_050": {
+   "text": "用神忌神齐动"
+  },
+  "cr_051": {
+   "text": "无特殊格局"
+  }
+ },
+ "classical_rules_templates": {
+  "crt_001": {
+   "text": "检测到随官入墓格局（{0}）：{1}。",
+   "template": true
+  },
+  "crt_002": {
+   "text": "{0}成{1}局，位置{2}/{3}/{4}，构成方式：{5}",
+   "template": true
+  },
+  "crt_003": {
+   "text": "用神{0}（{1}）处{2}地，原神{3}发动来生，原神{4}有力，绝处逢生，凶中反吉",
+   "template": true
+  },
+  "crt_004": {
+   "text": "卦身在{0}，代表事体核心与根基",
+   "template": true
+  },
+  "crt_005": {
+   "text": "月建{0}({1})，日辰{2}({3})",
+   "template": true
+  },
+  "crt_006": {
+   "text": "当月旺衰：{0}",
+   "template": true
+  },
+  "crt_007": {
+   "text": "六破{0}处，皆主破损不遂",
+   "template": true
+  },
+  "crt_008": {
+   "text": "日辰{0}伏神",
+   "template": true
+  },
+  "crt_009": {
+   "text": "月建{0}伏神",
+   "template": true
+  },
+  "crt_010": {
+   "text": "飞神{0}",
+   "template": true
+  },
+  "crt_011": {
+   "text": "伏神{0}",
+   "template": true
+  },
+  "crt_012": {
+   "text": "伏神入墓({0})",
+   "template": true
+  },
+  "crt_013": {
+   "text": "{0}伏藏（{1}）飞神{2}({3})→ {4}",
+   "template": true
+  },
+  "crt_014": {
+   "text": "{0}卦——{1}。事多{2}",
+   "template": true
+  },
+  "crt_015": {
+   "text": "合局入墓于{0}，局力不显",
+   "template": true
+  },
+  "crt_016": {
+   "text": "。{0}力大增",
+   "template": true
+  },
+  "crt_017": {
+   "text": "。⚠破局：{0}",
+   "template": true
+  },
+  "crt_018": {
+   "text": "{0}({1}→{2})化进神，力量递增，事态向前发展顺利",
+   "template": true
+  },
+  "crt_019": {
+   "text": "得力之爻：{0}",
+   "template": true
+  },
+  "crt_020": {
+   "text": "无力之爻：{0}",
+   "template": true
+  },
+  "crt_021": {
+   "text": "用神{0}（{1}）处{2}地，原神{3}发动来生，但原神{4}无力，虽生而力微",
+   "template": true
+  },
+  "crt_022": {
+   "text": "位置{0}与{1}（{2}与{3}）六合",
+   "template": true
+  },
+  "crt_023": {
+   "text": "反吟：{0}处地支相冲 ({1})",
+   "template": true
+  },
+  "crt_024": {
+   "text": "伏吟：{0}伏吟",
+   "template": true
+  },
+  "crt_025": {
+   "text": "卦身在{0}，{1}坐镇，本位安定",
+   "template": true
+  },
+  "crt_026": {
+   "text": "旺相之爻：{0}",
+   "template": true
+  },
+  "crt_027": {
+   "text": "休囚之爻：{0}",
+   "template": true
+  },
+  "crt_028": {
+   "text": "（其中{0}处合中带破，恩中有怨）",
+   "template": true
+  },
+  "crt_029": {
+   "text": "官鬼({0})未入墓或世/用未随鬼入墓，无随官入墓凶象",
+   "template": true
+  },
+  "crt_030": {
+   "text": "日辰{0}({1})生伏神{2}({3})",
+   "template": true
+  },
+  "crt_031": {
+   "text": "月建{0}({1})生伏神{2}",
+   "template": true
+  },
+  "crt_032": {
+   "text": "日冲飞神{0}（{1}冲{2}，冲开）",
+   "template": true
+  },
+  "crt_033": {
+   "text": "月冲飞神{0}（{1}冲{2}）",
+   "template": true
+  },
+  "crt_034": {
+   "text": "飞神{0}旬空",
+   "template": true
+  },
+  "crt_035": {
+   "text": "飞神{0}月破",
+   "template": true
+  },
+  "crt_036": {
+   "text": "飞神{0}休囚({1})",
+   "template": true
+  },
+  "crt_037": {
+   "text": "日辰{0}克飞神{1}",
+   "template": true
+  },
+  "crt_038": {
+   "text": "月建{0}克飞神{1}",
+   "template": true
+  },
+  "crt_039": {
+   "text": "伏神{0}旺相",
+   "template": true
+  },
+  "crt_040": {
+   "text": "伏神{0}被月日双克",
+   "template": true
+  },
+  "crt_041": {
+   "text": "伏神{0}入墓于{1}",
+   "template": true
+  },
+  "crt_042": {
+   "text": "伏神{0}逢绝地(日辰{1})",
+   "template": true
+  },
+  "crt_043": {
+   "text": "伏神{0}旬空",
+   "template": true
+  },
+  "crt_044": {
+   "text": "伏神{0}月破",
+   "template": true
+  },
+  "crt_045": {
+   "text": "伏神{0}休囚无气({1})",
+   "template": true
+  },
+  "crt_046": {
+   "text": "{0}伏{1}于{2}之下，飞神{3}，伏神{4}，得出评分={5}({6})",
+   "template": true
+  },
+  "crt_047": {
+   "text": "{0}({1}旬空)被日辰{2}冲，冲空则实，此爻由虚转实",
+   "template": true
+  },
+  "crt_048": {
+   "text": "{0}被日冲，合局不稳",
+   "template": true
+  },
+  "crt_049": {
+   "text": "{0}({1}→{2})化退神，力量递减，事态逐渐后退/消退",
+   "template": true
+  },
+  "crt_050": {
+   "text": "用神{0}（{1}）处{2}地，原神{3}虽现于卦中但未发动，待时而动",
+   "template": true
+  },
+  "crt_051": {
+   "text": "位置{0}与{1}（{2}与{3}）六冲",
+   "template": true
+  },
+  "crt_052": {
+   "text": "位置{0}与{1}（{2}与{3}）无合冲",
+   "template": true
+  },
+  "crt_053": {
+   "text": "月建({0})",
+   "template": true
+  },
+  "crt_054": {
+   "text": "日辰({0})",
+   "template": true
+  },
+  "crt_055": {
+   "text": "{0}：飞{1}({2})与伏{3}({4})：{5}，{6}",
+   "template": true
+  },
+  "crt_056": {
+   "text": "日辰{0}与伏神同五行",
+   "template": true
+  },
+  "crt_057": {
+   "text": "月建{0}与伏神同五行",
+   "template": true
+  },
+  "crt_058": {
+   "text": "伏神{0}有气",
+   "template": true
+  },
+  "crt_059": {
+   "text": "飞神{0}({1})旺相克伏神{2}({3})",
+   "template": true
+  },
+  "crt_060": {
+   "text": "{0}({1})静爻被日辰{2}冲，旺相暗动，其力约当明动七成",
+   "template": true
+  },
+  "crt_061": {
+   "text": "{0}({1})既破于月建又冲于日辰，力量极弱",
+   "template": true
+  },
+  "crt_062": {
+   "text": "{0}({1})为月破之爻",
+   "template": true
+  },
+  "crt_063": {
+   "text": "但得日辰{0}生扶，尚可补救",
+   "template": true
+  },
+  "crt_064": {
+   "text": "{0}被月冲，合局有隙",
+   "template": true
+  },
+  "crt_065": {
+   "text": "{0}爻动+{1}暗动+{2}静",
+   "template": true
+  },
+  "crt_066": {
+   "text": "{0}({1}→{2})回头合（合住事态胶着）",
+   "template": true
+  },
+  "crt_067": {
+   "text": "用神{0}（{1}）处{2}地，原神{3}不现于卦中，绝地无救",
+   "template": true
+  },
+  "crt_068": {
+   "text": "用神{0}（{1}）处{2}地，原神{3}虽现但{4}，无力救援，绝地无救",
+   "template": true
+  },
+  "crt_069": {
+   "text": "本卦有六合又有六冲（合{0}对、冲{1}对），",
+   "template": true
+  },
+  "crt_070": {
+   "text": "爻{0}",
+   "template": true
+  },
+  "crt_071": {
+   "text": "{0}（完整三刑）：{1}刑{2}刑{3}，三字全见于{4}，极凶之象",
+   "template": true
+  },
+  "crt_072": {
+   "text": "无礼之刑（成刑）：{0}刑{1}，见于{2}，主无礼刑伤、恩中之怨",
+   "template": true
+  },
+  "crt_073": {
+   "text": "无礼之刑（待刑）：{0}、{1}月日相见，刑伤未全，主微咎",
+   "template": true
+  },
+  "crt_074": {
+   "text": "自刑：{0}出现{1}次（{2}），自刑主自我纠结、自作自受、内心矛盾",
+   "template": true
+  },
+  "crt_075": {
+   "text": "官鬼{0}({1}·{2})入墓于{3}（{4}）",
+   "template": true
+  },
+  "crt_076": {
+   "text": "世爻{0}临官鬼{1}之墓{2}，自身随鬼入墓，凶象显著",
+   "template": true
+  },
+  "crt_077": {
+   "text": "用神{0}({1})临官鬼{2}之墓{3}，用神被鬼所困，极凶",
+   "template": true
+  },
+  "crt_078": {
+   "text": "官鬼({0})与世/用神同墓于{1}，鬼用同墓，灾难性凶象",
+   "template": true
+  },
+  "crt_079": {
+   "text": "{0}({1})静爻被日辰{2}冲，中和暗动，力量中等",
+   "template": true
+  },
+  "crt_080": {
+   "text": "{0}合{1}局，由日辰{2}或月建{3}补齐，力量稍逊但仍有合力",
+   "template": true
+  },
+  "crt_081": {
+   "text": "{0}({1}→{2})回头克（大凶）",
+   "template": true
+  },
+  "crt_082": {
+   "text": "本卦有{0}对合{1}，",
+   "template": true
+  },
+  "crt_083": {
+   "text": "{0}：{1}→{2}，本支被冲，反复变动之象",
+   "template": true
+  },
+  "crt_084": {
+   "text": "{0}（催刑）：卦内{1}，月日{2}补足成刑，刑伤力减半",
+   "template": true
+  },
+  "crt_085": {
+   "text": "{0}{1}爻{2}与{3}{4}{5}成{6}，{7}",
+   "template": true
+  },
+  "crt_086": {
+   "text": "官鬼{0}({1})动而化墓({2})，鬼动入墓，凶象加剧",
+   "template": true
+  },
+  "crt_087": {
+   "text": "{0}({1})静爻被日辰{2}冲，休囚暗动，力微短暂",
+   "template": true
+  },
+  "crt_088": {
+   "text": "{0}({1})静爻被日辰{2}冲，月休囚逢冲为日破，此爻彻底无用",
+   "template": true
+  },
+  "crt_089": {
+   "text": "。⚠破局：{0}",
+   "template": true
+  },
+  "crt_090": {
+   "text": "{0}({1}→{2})回头生（有救济）",
+   "template": true
+  },
+  "crt_091": {
+   "text": "本卦有{0}对冲，",
+   "template": true
+  },
+  "crt_092": {
+   "text": "{0}（待刑）：{1}、{2}相见，缺{3}，待月日逢{4}方成刑，目前刑伤未全，但有刑伤之象",
+   "template": true
+  },
+  "crt_093": {
+   "text": "{0}({1}→{2})化泄（力量消散）",
+   "template": true
+  },
+  "crt_094": {
+   "text": "{0}({1}→{2})不涉及进退神，需结合其他因素分析",
+   "template": true
+  },
+  "crt_095": {
+   "text": "日({0})",
+   "template": true
+  },
+  "crt_096": {
+   "text": "，{0}对冲",
+   "template": true
+  },
+  "crt_097": {
+   "text": "月({0})",
+   "template": true
+  },
+  "crt_098": {
+   "text": "卦身{0}不现于卦，事无定向；须待临值或伏出之期方有眉目",
+   "template": true
+  }
+ },
+ "pattern_verdicts": {
+  "no_youhun_guihun": "无游魂归魂特征",
+  "yao_states_calm": "各爻状态平和",
+  "jue_chu_feng_sheng": "绝处逢生",
+  "jue_chu_feng_sheng_weak_yuan": "绝处逢生但原神无力",
+  "jue_wait_yuan": "绝地待原神",
+  "jue_no_save": "绝地无救"
+ },
+ "effect_labels": {
+  "hex_has_clash": "有冲",
+  "hex_no_he_chong": "无明确合冲",
+  "fan_yin_and_fu_yin": "反吟兼伏吟",
+  "fan_yin": "反吟",
+  "fu_yin": "伏吟",
+  "fan_fu_none": "无",
+  "fan_fu_none_summary": "无反吟伏吟",
+  "inner": "内卦",
+  "outer": "外卦"
+ },
+ "effect_phrases": {
+  "day_he_use_close": "切近有力",
+  "month_he_use_success": "事必成就",
+  "day_month_he_use_peak": "大吉之极",
+  "day_he_taboo_harm": "忌神有力为祸",
+  "month_he_taboo_stick": "忌神缠月不解"
+ },
+ "bing_yao_labels": {
+  "weak": {
+   "label": "用神衰弱",
+   "basis": "旺衰={level}"
+  },
+  "void": {
+   "label": "用神旬空",
+   "basis": "旬空则力虚"
+  },
+  "month_break": {
+   "label": "用神月破",
+   "basis": "月破则伤"
+  },
+  "hidden": {
+   "label": "用神伏藏",
+   "basis": "伏藏受飞神压制"
+  },
+  "controlled": {
+   "label": "日月克身",
+   "basis": "月={month_el} 日={day_el} 克用神"
+  },
+  "strong_root": {
+   "label": "用神有气",
+   "basis": "旺衰={level}"
+  },
+  "day_month_sheng": {
+   "label": "日月生扶",
+   "basis": "月={month_el} 日={day_el} 生用神"
+  },
+  "yuan_moving": {
+   "label": "原神动来生",
+   "basis": "原神发动生用神"
+  },
+  "yuan_present": {
+   "label": "原神在卦",
+   "basis": "原神出现，待时而用"
+  },
+  "fill_void": {
+   "label": "冲空填实之药",
+   "basis": "旬空待值日/冲空解：{ug_branch}"
+  },
+  "out_of_hiding": {
+   "label": "出伏之药",
+   "basis": "待冲开飞神或飞神受制"
+  },
+  "heal_break": {
+   "label": "月破待补",
+   "basis": "逢合逢值填实可解"
+  }
+ },
+ "strength_reason_map": {
+  "极旺": "base_strong",
+  "旺": "base_strong",
+  "中和": "base_neutral",
+  "偏弱": "base_weak",
+  "弱": "base_weak",
+  "极弱": "base_very_weak"
+ },
+ "strength_polarity_map": {
+  "极旺": 1,
+  "旺": 1,
+  "中和": 0,
+  "偏弱": -1,
+  "弱": -1,
+  "极弱": -1
+ },
+ "narrative_hints": {
+  "day_hint_fu_out": "冲飞神之日伏神得出",
+  "day_hint_value_or_clash_he": "{use_br}日应事，逢{cl}冲、逢{co}合皆动",
+  "day_hint_value_or_clash": "{use_br}日或{cl}日（{use_br}{cl}冲）应事",
+  "day_hint_value": "{use_br}日值日之时最应",
+  "timing_near_illness_void": "病在近，逢空即散——快则当日、慢则数日便见松动。",
+  "timing_fast": "应期偏速，当日或数日内就有信号，别错过。",
+  "timing_slow": "应期偏迟，按月计，旺相之月到才应——别拿天来量。",
+  "timing_with_dates": "应期偏迟，但已有明确日辰可寻——",
+  "timing_mid": "应期在数日到一两个月之间，不出近期。",
+  "timing_repeat": "过程有反复，别因一次起伏就下结论。",
+  "timing_day_detail": "具体看——{day_hint}。",
+  "timing_shown": "对应{shown}相关之日。",
+  "timing_calendar": "具体应期日历上落在：{calendar_str}。",
+  "advice_xiong": [
+   "先稳住现有局面，不宜加码",
+   "把风险点列出来，能避则避",
+   "等用神得力的时段再考虑推进"
+  ],
+  "advice_ji": [
+   "顺着已有条件推进，不必反复起念试探",
+   "抓住用神得力的时段做关键动作",
+   "过程有起伏属正常，盯住主线即可"
+  ],
+  "disclaimer": "这是按纳甲六爻规则推出来的一份参考，讲的是方向和节奏，不是板上钉钉的预言。看病、打官司、做重大决定，仍要以专业意见为准。"
+ },
+ "pattern_related": {
+  "六冲卦": [
+   "六冲卦",
+   "反吟",
+   "伏吟",
+   "合处逢冲"
+  ],
+  "六合卦": [
+   "六合卦",
+   "化合",
+   "冲中逢合",
+   "三合"
+  ],
+  "反吟": [
+   "反吟",
+   "六冲卦",
+   "伏吟"
+  ],
+  "伏吟": [
+   "伏吟",
+   "反吟"
+  ],
+  "游魂": [
+   "游魂",
+   "归魂"
+  ],
+  "归魂": [
+   "归魂",
+   "游魂"
+  ],
+  "化合": [
+   "化合",
+   "六合卦",
+   "合处逢冲",
+   "三合成局"
+  ],
+  "三合成局": [
+   "三合成局",
+   "六合卦",
+   "三合"
+  ],
+  "绝处逢生": [
+   "绝处逢生",
+   "用神旺",
+   "回头生"
+  ],
+  "回头生": [
+   "回头生",
+   "进神",
+   "绝处逢生"
+  ],
+  "回头克": [
+   "回头克",
+   "退神",
+   "大凶"
+  ],
+  "进神": [
+   "进神",
+   "回头生"
+  ],
+  "退神": [
+   "退神",
+   "回头克"
+  ],
+  "用神旺": [
+   "用神旺",
+   "绝处逢生",
+   "回头生"
+  ],
+  "用神休囚": [
+   "用神休囚",
+   "用神极弱"
+  ],
+  "用神极弱": [
+   "用神极弱",
+   "用神休囚",
+   "绝处逢生"
+  ],
+  "原神绝位·用神失源": [
+   "原神绝位·用神失源",
+   "用神休囚"
+  ],
+  "月破": [
+   "月破",
+   "用神空破"
+  ],
+  "近病逢空": [
+   "近病逢空即愈",
+   "用神空破"
+  ],
+  "近病逢合": [
+   "近病逢合为凶",
+   "六合卦"
+  ],
+  "久病逢空": [
+   "久病逢空为凶",
+   "用神极弱"
+  ],
+  "兄弟持世": [
+   "兄弟持世",
+   "忌神"
+  ],
+  "官鬼持世": [
+   "官鬼持世",
+   "子孙持世"
+  ],
+  "子孙持世": [
+   "子孙持世",
+   "官鬼持世"
+  ],
+  "父母持世": [
+   "父母持世",
+   "兄弟持世"
+  ],
+  "妻财持世": [
+   "妻财持世",
+   "兄弟持世"
+  ],
+  "从格": [
+   "从格",
+   "专旺格"
+  ],
+  "专旺格": [
+   "专旺格",
+   "从格"
+  ],
+  "化格": [
+   "化合",
+   "三合成局"
+  ],
+  "暗动": [
+   "暗动",
+   "伏神得出"
+  ],
+  "伏神得出": [
+   "伏神得出",
+   "伏神不得出",
+   "暗动"
+  ],
+  "伏神不得出": [
+   "伏神不得出",
+   "伏神得出"
+  ]
+ },
+ "pattern_notes_extra": {
+  "youhun": "游魂卦主在外、不安、忧疑、反复。",
+  "guihun": "归魂卦主在内、有归、安定、终有所归。",
+  "static_he_wait": "。静爻合局，待时日引发方成",
+  "sanhui_use_strong": "，用神旺而随局，气聚一方",
+  "sanhui_use_weak": "，用神衰而局气偏枯，独木难支"
+ },
+ "strength_summary_say": {
+  "极旺": "总起来说，用神很有底气。",
+  "旺": "总起来说，用神得力。",
+  "相": "总起来说，用神有根，能用。",
+  "中和": "总起来说，用神不强不弱，看后手怎么走。",
+  "中和偏旺": "总起来说，用神略占上风。",
+  "中和偏弱": "总起来说，用神稍显吃力。",
+  "偏弱": "总起来说，用神偏软，宜借力。",
+  "弱": "总起来说，用神力量薄，不宜硬催结果。",
+  "极弱": "总起来说，用神几乎使不上劲。",
+  "休囚": "总起来说，用神处在低潮。"
+ },
+ "shensha_policy": {
+  "_note": "星煞是否进主判的口径（有古籍出处才写；无定性表不编吉凶）",
+  "liuyao": {
+   "in_main_score": false,
+   "role": "旁参挂盘（临用/临世/临日只记位置，不进主分）",
+   "basis": [
+    "《卜筮正宗》第十八论·辟诸书之谬：辟星煞之谬——天乙贵人、天赦等各种星煞与六爻无关",
+    "《增删卜易》删去多余规则：星煞（天乙贵人、天月德等）八字命理之法，不验于六爻"
+   ],
+   "six_spirits_note": "六神（青龙/朱雀/勾陈/螣蛇/白虎/玄武）是另一套，仍作旁参；与星煞不同"
+  },
+  "ming": {
+   "in_main_score": false,
+   "role": "机械安星（天乙/文昌/驿马/桃花/华盖等）只进 chart 因子，不批吉凶",
+   "basis": [
+    "神煞安法属机械步骤（AGENTS.md 铁律一）；吉凶解读不在 core/学科层"
+   ]
+  },
+  "zeji": {
+   "in_main_score": false,
+   "role": "天月德/冲肖煞方/彭祖百忌作辅助加减，不压黄黑道与建除主判",
+   "basis": [
+    "《协纪辨方书》通行口径；仓库内无带应验的通书日例，故不作真黑箱宣称"
+   ]
+  }
+ },
+ "zeji_validity_gap": {
+  "status": "规则应用黑箱（rule-application black box）",
+  "missing": "带现实应验的通书日例（古例 day + outcome）",
+  "do_not": [
+   "伪造应验例",
+   "把规则应用分说成择吉命中率"
+  ],
+  "next": "若日后有可核验通书日例，再建 holdout 集；在此之前只报规则一致性"
+ },
+ "pattern_verdict_labels": {
+  "真空/假空": {
+   "真空": {
+    "label": "真空",
+    "strength_text": "用神旬空而月建{month}休囚、日辰{day}来克，又无生扶——真空难起，出空亦不应",
+    "reason": "用神休囚旬空且日辰克之、无生扶（真空难起），论30%",
+    "verdict": "真空直断不成（《增删卜易》「旺空待出，真空难起」）",
+    "basis": "《增删卜易》「旺空待出，真空难起」；真空＝休囚无气＋日克＋无生扶"
+   },
+   "假空": {
+    "label": "假空",
+    "strength_text": "用神虽旬空而得生扶（月建/日辰/动爻），旺空待出——出空（值日或冲日）即应",
+    "reason": "用神旬空但旺相得生扶（假空待出），出空即应，论70%",
+    "verdict": "假空出空（值日或冲日）则应（《增删卜易》「旺空待出」）",
+    "basis": "《增删卜易》「旺空待出，真空难起」；假空＝旺相＋月日或动爻生扶"
+   }
+  },
+  "独发/独静": {
+   "古典引文": "《增刪卜易·獨發章第三十一》：「五爻俱動，一爻不動，謂之獨靜；五爻不動，一爻獨動，謂之獨發。」同章又立界：「事之成敗，由乎用神；應期遲速，亦由乎用神……如捨其用神，執之而決事者，謬也。」",
+   "du_fa": "独发：一爻独动而五爻皆静，{name}{branch}（{role}）为全卦主驱动力——动处即事之所由起，静处只作背景。",
+   "du_jing": "独静：一爻独静而五爻俱动，{name}{branch}（{role}）为全卦枢纽——众动之中此爻不动，事之滞处多在此。"
+  },
+  "三传克制": {
+   "label": "三传克制",
+   "basis": "《增删卜易》「三傳俱克，雖旺亦危」；references/pattern_reference.md 格局六：月建克用神、日辰克用神、太岁亦克用神，三者皆克而無一生扶",
+   "verdict": "三传俱克：太岁、月建、日辰俱克用神且无一生扶——纵值旺相亦危，凶多吉少",
+   "reason": "三传俱克（太岁{year}、月建{month}、日辰{day}俱克用神{use_god}），虽旺亦危",
+   "verified": false,
+   "verified_note": "未验证：本项目基准集中无含太岁的可对照案例，此条只落地标记、不进主分；待自建并标注出处的基准例到位后方可计分"
+  }
+ }
 }

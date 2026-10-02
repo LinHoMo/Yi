@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""六爻思维链：基元表 / 断语库 / 通用辅助 / 五步推演 / 应期 / 叙事组装。（拆分自 thinking_chain.py，纯搬移不改逻辑；聚合入口见 thinking_chain.py）。"""
+"""六爻思维链：基元表 / 断语库 / 通用辅助 / 五步推演 / 应期 / 叙事组装。聚合入口见 thinking_chain.py。"""
 
 from __future__ import annotations
 
@@ -10,40 +10,27 @@ _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
-from kernel_path import ensure_kernel_on_path as _ensure_kernel, kernel_dir
+from kernel_path import ensure_kernel_on_path as _ensure_kernel
 
 _ensure_kernel(__file__)
 
 from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
-    ADVANCE_PAIRS,
-    BRANCH_ELEMENTS,
-    BREAK_PAIRS,
     CHONG_PAIRS,
-    EARTHLY_BRANCHES,
-    EIGHT_PALACES,
     HEAVENLY_STEMS,
     HEXAGRAM_TRIGRAMS,
     HE_PAIRS,
-    KE_CYCLE,
-    NAJIA_BRANCHES,
-    RETREAT_PAIRS,
-    SHENG_CYCLE,
     SHENG_WO,
     KE_WO,
-    STEM_ELEMENTS,
-    TOMB_MAP,
     TRIGRAM_ELEMENTS as _CORE_TRIGRAM_ELEMENTS,
     TWELVE_GROWTH as _CORE_TWELVE_GROWTH,
     TWELVE_GROWTH_STAGES as _CORE_TWELVE_GROWTH_STAGES,
     TWELVE_GROWTH_TABLES as _CORE_TWELVE_GROWTH_TABLES,
     XUN_KONG as _CORE_XUN_KONG,
-    palace_of_key,
-    EARTHLY_BRANCHES as BRANCHES,
 )
 from yishu_core.symbols import SAN_HE_GROUPS as _CORE_SAN_HE  # noqa: E402
 from yishu_core.relations import SIX_RELATIONS  # noqa: E402
 
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import json
 

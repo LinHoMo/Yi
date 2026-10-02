@@ -1,5 +1,84 @@
 {
-  "fingerprint": "d290ebc1de0319ca",
-  "reason": "阶段4 A5：golden 指纹补 narrate 段（四段契约 chart→analyze→narrate 全覆盖，原仅六爻有）",
-  "n_samples": 6
+  "_meta": {
+    "what": "命科金标准指纹基线（强弱/格局/大运逐字段）",
+    "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
+  },
+  "digest": "2c3eee326cec8ccd",
+  "narrate_digest": "05f8ebf3f6f9cc0b",
+  "drift_log": [
+    {
+      "from": "57dc7e890af222fa",
+      "to": "2c3eee326cec8ccd",
+      "date": "2026-10-01",
+      "reason": "指纹拆分（SYS-REVIEW#2）：机械/措辞分列；机械字段取值不变（机械digest 2c3eee32 为 57dc7e89 去 narrate_sha 后的机械字段，样例零异常）"
+    }
+  ],
+  "narrate_drift_log": [
+    {
+      "from": "57dc7e890af222fa",
+      "to": "10d46559c6200582",
+      "date": "2026-10-01",
+      "reason": "指纹拆分（SYS-REVIEW#2）：机械/措辞分列；机械字段取值不变（机械digest 2c3eee32 为 57dc7e89 去 narrate_sha 后的机械字段，样例零异常）"
+    },
+    {
+      "from": "10d46559c6200582",
+      "to": "5498585f61e725ae",
+      "date": "2026-10-01",
+      "reason": "narrate 接线新增两行：建禄格走 verdicts.不适用 口径行、从格报滴天髓从化论引文行（引文外置后 _geju_line 补全两分支，机械零漂移）"
+    },
+    {
+      "from": "5498585f61e725ae",
+      "to": "286883c58f448ca7",
+      "date": "2026-10-01",
+      "reason": "narrate 措辞层新增《滴天髓》逐字引文五处（天干論日主体性／衰旺論／體用論／寒暖論／歲運論）与從化論真伪两段（从化格时）；数据来自新增引文层 data/ditian_sui.json（机械提取，出处见 _meta）。机械层零漂移。"
+    },
+    {
+      "from": "286883c58f448ca7",
+      "to": "183589ee3d03af53",
+      "date": "2026-10-01",
+      "reason": "命科加法：新增四柱结构因子（三会方局/胎元/流月/小运/天克地冲/十神组合）——机械层零漂移，仅 narrate 新增呈现段（2026-10-01 加法批）"
+    },
+    {
+      "from": "183589ee3d03af53",
+      "to": "0d70d5efb0102b47",
+      "date": "2026-10-01",
+      "reason": "命科加法：小运口径句拆分（措辞层微调，机械层零漂移）"
+    },
+    {
+      "from": "0d70d5efb0102b47",
+      "to": "f43e0cb70bcd5340",
+      "date": "2026-10-02",
+      "reason": "2026-10-02a 命科加法：narrate 增《滴天髓·通隔論》通关/关隔段（逐字原文+注），机械层零漂移"
+    },
+    {
+      "from": "f43e0cb70bcd5340",
+      "to": "18de3ab8f3b91fbe",
+      "date": "2026-10-02",
+      "reason": "命科新增四柱地支关系层（六合/六冲/六害/三刑，判据在 pattern.pillar_branch_relations）；narrate 增『四柱地支关系』段并引《滴天髓·地支論》逐字三首。措辞层有意漂移，机械层（强弱/格局/大运）零漂移"
+    },
+    {
+      "from": "18de3ab8f3b91fbe",
+      "to": "f031d282e8cf13cd",
+      "date": "2026-10-02",
+      "reason": "命科四柱干支关系层补入天干五合（甲己/乙庚/丙辛/丁壬/戊癸，表取 core.relations.STEM_WUHE）；pillar_branch_relations 更名 pillar_relations，narrate 段随之变化。机械层（强弱/格局/大运）零漂移"
+    },
+    {
+      "from": "f031d282e8cf13cd",
+      "to": "b51a7836cc89fe4e",
+      "date": "2026-10-02",
+      "reason": "命科四柱干支关系段标题订正为「四柱干支关系」（含天干五合后名实相符）"
+    },
+    {
+      "from": "b51a7836cc89fe4e",
+      "to": "365c1e687f48d64b",
+      "date": "2026-10-02",
+      "reason": "四柱干支关系段：地支所本引文标签限定为「地支关系所本」（该段同时含天干五合，避免引文标签扩大所指）"
+    },
+    {
+      "from": "365c1e687f48d64b",
+      "to": "05f8ebf3f6f9cc0b",
+      "date": "2026-10-02",
+      "reason": "2026-10-02c 命科加法：B1 女命夫子星（analyze 新增 female_fu_zi 机械标注 + narrate 专段，仅女命样例漂移）；B2 童子煞（core 新增民间通胜口诀神煞，3 样例命中入神煞列表）。机械层（强弱/格局/大运）零漂移，措辞层新增呈现段为有意变更。"
+    }
+  ]
 }

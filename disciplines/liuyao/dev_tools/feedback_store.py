@@ -11,9 +11,11 @@
     all_records = store.load_all()
     s = store.stats()
 
-独立判定 hit_strict / hit_loose：
-    本模块自行从 analyze JSON 解析预测应期，不做任何 import from
-    evaluate.py 或评分引擎，避免耦合。
+命中判定（strict / loose）的口径与常量**不在此处持有**：唯一真值源是
+`yishu_core.yingqi`（架构评审 A2——此前本模块与合参层 `synthesis/outcome_eval.py`
+各写一份应期口径，且本地支合表多出两条错项「丑午」「未申」，会造成虚假宽松命中；
+现两处统一读内核一份，门 `tools/check.py [1i]` 锁死）。
+本模块只做本学科的事：从 analyze JSON 取预测应期、落盘与汇总。
 """
 from __future__ import annotations
 
@@ -22,7 +24,7 @@ import json
 import os
 import re
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / ".." / "scripts"))
@@ -32,11 +34,15 @@ try:
 except ImportError:
     pass
 
-from yishu_core.symbols import EARTHLY_BRANCHES  # noqa: E402  地支序唯一真值源
-
-DAY_CHARS = EARTHLY_BRANCHES
-
-LOOSE_WINDOW_DAYS = 7  # loose 判定容差：预测日期 ±7 天
+# 判定口径唯一真值源（本模块不再持有任何窗口常量或支关系表）
+from yishu_core.yingqi import (  # noqa: E402,F401
+    BRANCH_WINDOW_DAYS,
+    LOOSE_WINDOW_DAYS,
+    STRICT_WINDOW_DAYS,
+    WINDOW_CALIBER,
+    branch_of as _branch_of,
+    judge_window as _judge_window,
+)
 
 
 def _discipline_root(start_file: str | Path) -> Path:
@@ -61,87 +67,6 @@ def _extract_yingqi_dates(analyze_json: dict) -> list[str]:
             if m:
                 dates.append(m.group(1))
     return dates
-
-
-def _branch_of(date_str: str) -> str | None:
-    """从 YYYY-MM-DD 反推当日地支（由日柱序数 mod 12 得到，0=子 … 11=亥）。"""
-    try:
-        dt = datetime.strptime(date_str[:10], "%Y-%m-%d")
-    except ValueError:
-        return None
-    seq = _day_ganzhi_seq(dt)
-    return DAY_CHARS[seq % 12] if seq >= 0 else None
-
-
-# 已知锚点：1900-01-31 是甲子日（序数 0）
-_ANCHOR = datetime(1900, 1, 31)
-
-
-def _day_ganzhi_seq(dt: datetime) -> int:
-    """日柱序数（甲子=0, 乙丑=1, … 癸亥=59）。"""
-    delta = (dt - _ANCHOR).days
-    return delta % 60
-
-
-BRANCH_WINDOW_DAYS = 21  # 地支合/冲默认窗口：自此跨度的日期内才允许按支判定
-
-
-def _compute_hits(predicted_dates: list[str], actual_date: str) -> tuple[bool, bool]:
-    """独立计算 hit_strict 与 hit_loose。
-
-    hit_strict: 实际日期精确命中某条预测日（含 ±1 天容差，抵消排盘日差）。
-    hit_loose: 实际日期在任一预测日的 ±LOOSE_WINDOW_DAYS 天范围内；
-               或在 ±BRANCH_WINDOW_DAYS 天内且该地支与任一预测日的地支
-               相同/相合/相冲（六爻应期直读法）。
-
-    注：地支窗口约束是为了防止日期跨度过大时（如 86 天）地支恰好按周期
-    重复而导致虚假命中判——地支循环周期是 12 天，会与远距日期反复重影。
-    """
-    if not actual_date or not predicted_dates:
-        return False, False
-    try:
-        actual_dt = datetime.strptime(actual_date[:10], "%Y-%m-%d")
-    except ValueError:
-        return False, False
-    actual_branch = _branch_of(actual_date)
-    hit_strict = False
-    hit_loose = False
-    for p in predicted_dates:
-        try:
-            p_dt = datetime.strptime(p[:10], "%Y-%m-%d")
-        except ValueError:
-            continue
-        delta = (actual_dt - p_dt).days
-        if abs(delta) <= 1:
-            hit_strict = True
-            hit_loose = True
-            break
-        if abs(delta) <= LOOSE_WINDOW_DAYS:
-            hit_loose = True
-        if abs(delta) <= BRANCH_WINDOW_DAYS:
-            p_branch = _branch_of(p)
-            if actual_branch and p_branch and (
-                actual_branch == p_branch
-                or _is_he(actual_branch, p_branch)
-                or _is_chong(actual_branch, p_branch)
-            ):
-                hit_loose = True
-    return hit_strict, hit_loose
-
-
-_HE = (("子", "丑"), ("寅", "亥"), ("卯", "戌"), ("辰", "酉"),
-       ("申", "巳"), ("丑", "午"), ("未", "申"), ("戌", "卯"),
-       ("亥", "寅"), ("酉", "辰"), ("巳", "申"), ("午", "未"))
-_CHONG = (("子", "午"), ("丑", "未"), ("寅", "申"), ("卯", "酉"),
-          ("辰", "戌"), ("巳", "亥"))
-
-
-def _is_he(a: str, b: str) -> bool:
-    return (a, b) in _HE or (b, a) in _HE
-
-
-def _is_chong(a: str, b: str) -> bool:
-    return (a, b) in _CHONG or (b, a) in _CHONG
 
 
 def _make_chart_id(analyze_json: dict) -> str:
@@ -195,9 +120,10 @@ class FeedbackStore:
             actual = record["actual_date"]
             preds = record.get("predicted_dates") or []
             if actual:
-                hs, hl = _compute_hits(preds, actual)
-                record.setdefault("hit_strict", hs)
-                record.setdefault("hit_loose", hl)
+                # 口径唯一真值源：yishu_core.yingqi.judge_window
+                jw = _judge_window(preds, actual)
+                record.setdefault("hit_strict", jw["hit_strict"])
+                record.setdefault("hit_loose", jw["hit_loose"])
             else:
                 record.setdefault("hit_strict", False)
                 record.setdefault("hit_loose", False)

@@ -1,0 +1,23 @@
+{
+  "key": "liu-ren-da-quan-juan11",
+  "kind": "大六壬",
+  "title": "六壬大全/11",
+  "site": "zh.wikisource.org",
+  "api": "https://zh.wikisource.org/w/api.php",
+  "pages": [
+    "六壬大全/11"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-01 18:04:34+0800",
+  "sha256": "8db3e7d90a5f352c804d306feca44b5201bf6c2b4785f17ead6a18226ea53222",
+  "stats": {
+    "bytes": 76654,
+    "chars": 26318,
+    "lines": 333,
+    "ganzhi_pairs": 720,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/liu-ren-da-quan-juan11.wikitext.txt",
+  "note": "公版古籍原文的字符级转存，未做任何改写或模型转写；子页以 <!-- ==== 标题 ==== --> 分隔。"
+}

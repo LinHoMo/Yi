@@ -21,10 +21,8 @@ for _p in (str(CORE), str(Path(__file__).resolve().parent)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from chart import PALACES  # noqa: E402
+from chart import CN_NUM as _CN, PALACES  # noqa: E402
 from yishu_core.relations import wuxing_relation  # noqa: E402
-
-_CN = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"]
 
 
 def _load_verdicts() -> dict:
@@ -96,7 +94,7 @@ def _direction_element(palace_name: str, target_direction: str | None) -> dict:
         return out
     dir_el = VERDICTS["direction_element_map"].get(target_direction)
     if not dir_el:
-        out["说明"] = f"未识别方位「{target_direction}」，方位/五行综合断跳过"
+        out["说明"] = VERDICTS["narrate_phrases"]["dir_unknown"].replace("{target_direction}", target_direction)
         return out
     rel = wuxing_relation(palace_el, dir_el)
     rel_meta = (VERDICTS["direction_relation"] or {}).get(rel) or {}
@@ -117,8 +115,17 @@ def analyze(chart_out: dict) -> dict:
     p = VERDICTS["palaces"][palace_name]
     direction = VERDICTS["direction"][palace_name]
 
-    # 事类诀辞：该宫对应 topic 的切句；天气等无专句时回退总诀
-    line = (VERDICTS["topic_lines"].get(topic) or {}).get(palace_name) or p["总诀"]
+    # 事类诀辞：该宫对应 topic 的切句（v2 起为 {kind, text} 对象）；无此门时如实阙如
+    topic_lines_map = VERDICTS["topic_lines"].get(topic) or {}
+    entry = topic_lines_map.get(palace_name) or {}
+    if isinstance(entry, str):                       # 兼容 v1 裸字符串（旧存档）
+        entry = {"kind": "诀辞", "text": entry}
+    line_kind = entry.get("kind") or "阙"
+    line = entry.get("text") or ""
+    if not line and line_kind != "阙":               # 未知事类：回退本宫总诀（逐字）
+        line, line_kind = p["总诀"], "诀辞"
+    if not line:                                     # 如实阙如：不造句、不冒充原文
+        line, line_kind = "", "阙"
 
     steps = chart_out.get("steps") or []
     step_names = chart_out.get("step_names") or []
@@ -140,7 +147,7 @@ def analyze(chart_out: dict) -> dict:
     }
 
     return {
-        "schema": "xiaoliuren-analyze-v1",
+        "schema": "xiaoliuren-analyze-v2",
         "topic": topic,
         "question": question,
         "chart_summary": {
@@ -169,6 +176,8 @@ def analyze(chart_out: dict) -> dict:
         "topic_verdict": {
             "topic": topic,
             "诀句": line,
+            "句类": line_kind,
+            "覆盖": (VERDICTS.get("topic_coverage") or {}).get("per_topic", {}).get(topic),
             "宫义": p["含义"],
             "所本": VERDICTS["topic_line_basis"],
         },
@@ -181,10 +190,11 @@ def analyze(chart_out: dict) -> dict:
         "conclusion": conclusion,
         "factors": [
             {"因子": "落宫", "权重": _WEIGHTS["落宫"], "判据": palace_name,
-             "所本": "《贺氏六壬小手册》第二节·推算方法（月上起日，日上起时）"},
+             "所本": VERDICTS["narrate_phrases"]["basis_calc"]},
             {"因子": "吉凶方向", "权重": _WEIGHTS["吉凶方向"], "判据": direction,
              "所本": p["所本"]},
-            {"因子": "事类断语", "权重": _WEIGHTS["事类断语"], "判据": line,
+            {"因子": "事类断语", "权重": _WEIGHTS["事类断语"],
+             "判据": f"{line or '（本门无据，阙）'}［{line_kind}］",
              "所本": VERDICTS["topic_line_basis"]},
             {"因子": "应期主数", "权重": _WEIGHTS["应期主数"], "判据": _num_list(p["主数"]),
              "所本": VERDICTS["number_basis"]},

@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-"""古典断法增强·effects.py（合并自 effects_change / effects_harmony / effects_structure）。
+"""古典断法增强·effects.py。
 
-分域实现（已合并于此文件）：
+分域实现：
   合绊 / 六破 / 入墓 / 化格 / 飞伏
   六合六冲 / 反吟伏吟
   卦身 / 五行旺衰 / 三刑
 
-门面聚合入口见 classical_rules_effects.py。
+门面聚合入口见 classical_analysis.py。
 """
 
 import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
@@ -17,33 +17,47 @@ _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
-from kernel_path import ensure_kernel_on_path as _ensure_kernel, kernel_dir
+from kernel_path import ensure_kernel_on_path as _ensure_kernel
 
 _ensure_kernel(__file__)
 
-from yishu_core.najia import najia_branch
 
 from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
-    ADVANCE_PAIRS,
-    BRANCH_ELEMENTS,
     BREAK_PAIRS,
-    CHONG_PAIRS,
-    EARTHLY_BRANCHES,
-    EIGHT_PALACES,
-    HEAVENLY_STEMS,
-    HEXAGRAM_TRIGRAMS,
     HE_PAIRS,
     KE_CYCLE,
-    NAJIA_BRANCHES,
-    RETREAT_PAIRS,
     SHENG_CYCLE,
-    STEM_ELEMENTS,
     TOMB_MAP,
-    hexagram_level_relations,   # 卦级反吟伏吟：冲/同逐位比对的唯一实现（内核）
+    hexagram_level_relations,
 )
 
-from classical_enhancements import _branch_element, _combined_strength, _element_to_relation, _find_stage_at, _find_use_god_positions, _get_use_god_strength_level, _infer_use_god_category, _pos_to_name, _relation_element, _score_fanyin, _score_fuyin, _strength_score, determine_six_relation, element_strength_in_month, find_hexagram_body, g_day_cn, get_changed_hexagram_branch, get_month_strength_description, get_stages_of_interest, get_twelve_growth_stage, is_ba_zu_chong, is_ba_zu_he
-from chart_tables import KE_WO, SAN_HE, SELF_PUNISHMENTS, SHENG_WO, SIX_RELATIONS, THREE_PUNISHMENTS_CYCLIC, THREE_PUNISHMENTS_MUTUAL, TRANSFORMATION_PATTERNS, TWELVE_GROWTH
+from classical_enhancements import (
+    _branch_element,
+    _combined_strength,
+    _element_to_relation,
+    _find_use_god_positions,
+    _get_use_god_strength_level,
+    _infer_use_god_category,
+    _pos_to_name,
+    _relation_element,
+    _score_fanyin,
+    _score_fuyin,
+    element_strength_in_month,
+    find_hexagram_body,
+    get_changed_hexagram_branch,
+    get_month_strength_description,
+    get_twelve_growth_stage,
+    is_ba_zu_chong,
+    is_ba_zu_he,
+)
+from chart_tables import (
+    KE_WO,
+    SELF_PUNISHMENTS,
+    SHENG_WO,
+    THREE_PUNISHMENTS_CYCLIC,
+    THREE_PUNISHMENTS_MUTUAL,
+    TRANSFORMATION_PATTERNS,
+)
 from narrative_utils import EFFECT_LABELS, EFFECT_PHRASES, CLASSICAL_INTERPRETATIONS as CINTERP, ctext, ctpl
 
 
@@ -52,36 +66,21 @@ from narrative_utils import EFFECT_LABELS, EFFECT_PHRASES, CLASSICAL_INTERPRETAT
 # ─────────────────────────────────────────────────────────────────────────────
 
 def analyze_day_month_bonding(result):
+    """用神/忌神在日辰/月建上的六合关系（bond/effect/score）。
+    
+    来源：《卜筮正宗》"用神合日切近有力，合月事必成就"。
     """
-    检测用神/忌神与日辰/月建的六合关系。
-
-    经典规则：
-    - 用神合日："切近有力" — immediate power, near-term response
-    - 用神合月："事必成就" — success within the month
-    - 月日同合：大吉之极
-    - 忌神合月日：忌神有力为祸
-
-    返回:
-        {
-            "findings": [{"bond": str, "effect": str, "score": float}, ...],
-            "total_score_modifier": float,
-            "summary": str,
-        }
-    """
-    # Build bidirectional 六合 lookup
     HE_SET_BI = set()
     for a, b in HE_PAIRS:
         HE_SET_BI.add((a, b))
         HE_SET_BI.add((b, a))
 
-    # Extract 用神 branch from thinking chain step2
     use_god_branch = ""
     use_god_data = result.get("thinking_chain", {}).get("step2_use_god_identification", {})
     selected = use_god_data.get("selected_use_god", {})
     if isinstance(selected, dict):
         use_god_branch = selected.get("earthly_branch", "")
 
-    # Also check step3 which has use_god_branch explicitly
     if not use_god_branch:
         step3 = result.get("thinking_chain", {}).get("step3_strength_analysis", {})
         use_god_branch = step3.get("use_god_branch", "")
@@ -95,7 +94,6 @@ def analyze_day_month_bonding(result):
                 use_god_branch = yao.get("earthly_branch", "")
                 break
 
-    # Extract 忌神 positions/branches from step2
     ji_shen_branches = []
     ji_shen_data = use_god_data.get("ji_shen", {})
     if isinstance(ji_shen_data, dict):
@@ -106,7 +104,6 @@ def analyze_day_month_bonding(result):
                     jb = jp.get("earthly_branch", "")
                     if jb:
                         ji_shen_branches.append(jb)
-        # Also check fu_cang
         ji_fu = ji_shen_data.get("fu_cang")
         if isinstance(ji_fu, dict):
             jb = ji_fu.get("branch", "")
@@ -151,7 +148,6 @@ def analyze_day_month_bonding(result):
 
     total_modifier = sum(f["score"] for f in findings)
 
-    # Build summary
     if findings:
         summary_parts = [f"{f['bond']}（{f['effect']}）" for f in findings]
         summary = "；".join(summary_parts)
@@ -170,26 +166,7 @@ def analyze_day_month_bonding(result):
 
 
 def analyze_six_breaks(result):
-    """
-    六破系统：次级冲克关系，弱于六冲但仍有害。
-
-    六破对：子酉破、午卯破、巳申破、寅亥破、辰丑破、戌未破
-    注意：巳申、寅亥既是六合又是六破 → "合中带破"
-
-    检查：
-    - 各爻与月建之间的六破
-    - 各爻与日辰之间的六破
-    - 世爻/用爻被破 → 加重
-
-    返回:
-        {
-            "breaks": [break_dict, ...],
-            "has_break": bool,
-            "total_modifier": float,
-            "description": str,
-            "summary": str,
-        }
-    """
+    """六破：子酉/午卯/巳申/寅亥/辰丑/戌未，弱于六冲但仍有害（含世/用被破加重）。"""
     HE_SET_BI = set()
     for a, b in HE_PAIRS:
         HE_SET_BI.add((a, b))
@@ -228,7 +205,6 @@ def analyze_six_breaks(result):
             world_positions.add(yao.get("position"))
         if yao.get("six_relation") == use_god_cat and use_god_cat:
             use_god_positions.add(yao.get("position"))
-        # Also match by branch if step3 has it
         if use_god_branch and yao.get("earthly_branch") == use_god_branch:
             use_god_positions.add(yao.get("position"))
 
@@ -240,7 +216,6 @@ def analyze_six_breaks(result):
         pos = yao.get("position")
         is_critical = pos in world_positions or pos in use_god_positions
 
-        # Check vs 日辰
         for ref_branch, ref_label in [(day_b, "日"), (month_b, "月")]:
             if not ref_branch:
                 continue
@@ -287,34 +262,7 @@ def analyze_six_breaks(result):
 
 
 def analyze_officer_tomb(result):
-    """
-    随官入墓分析：世爻/用神与官鬼同临墓库地支的凶象。
-
-    《卜筮正宗》"随官入墓"歌诀：
-    > "随官入墓最凶凶，世用临之祸不轻。官鬼入墓身难保，病人入墓必归冥。"
-
-    检测五种情形：
-    1. 官鬼入墓：官鬼五行对应的墓库地支出现在卦中
-    2. 世随官入墓：世爻地支 = 官鬼的墓库地支
-    3. 用随官入墓：用神地支 = 官鬼的墓库地支（极凶）
-    4. 鬼用同墓：官鬼自身地支 = 墓支 且 世/用也临此墓
-    5. 官鬼动化墓：官鬼动爻的变爻为墓库地支
-
-    墓库对应：金墓丑、木墓未、火墓戌、水墓辰、土墓辰
-
-    返回：
-        {
-            "has_officer_tomb": bool,
-            "severity": "mild" | "severe" | "catastrophic" | "none",
-            "scenarios": [str],
-            "officer_branches": [str],
-            "tomb_branch": str,
-            "description": str,
-            "score_modifier": float,
-            "classical_quote": str,
-            "details": [dict],
-        }
-    """
+    """随官入墓（《卜筮正宗》凶象）：世/用同临墓库。五情形：官鬼入墓/世随/用随/鬼用同墓/化墓。"""
     hex_info = result.get("original_hexagram", {})
     yao_lines = hex_info.get("yao_lines", [])
     palace_element = hex_info.get("palace_element", "")
@@ -587,26 +535,7 @@ def analyze_officer_tomb(result):
 
 
 def analyze_transformation_pattern(result):
-    """
-    八卦变爻深度推演：分析动爻排列规律及其附加意义。
-
-    检查以下格局：
-    - 连续三爻动：三个相邻动爻
-    - 间隔动爻：1,3,5 或 2,4,6 交替
-    - 上卦全动：四、五、上皆动
-    - 下卦全动：初、二、三皆动
-    - 对爻齐动：世爻与应爻同动
-    - 用神原神齐动/用神忌神齐动
-
-    返回：
-        {
-            "moving_positions": [int],
-            "moving_count": int,
-            "patterns": [str],
-            "total_weight": float,
-            "interpretation": str,
-        }
-    """
+    """动爻格局：连续三爻/间隔动/上下卦全动/对爻齐动/用原齐动/用忌齐动。"""
     hex_info = result.get("original_hexagram", {})
     yao_lines = hex_info.get("yao_lines", [])
     # 世爻和应爻位置从爻中提取
@@ -703,28 +632,7 @@ def analyze_transformation_pattern(result):
 
 
 def analyze_flying_hidden_interaction(result):
-    """
-    飞伏深度互断：飞神与伏神的生克制化关系分析。
-    基于《火珠林》《卜筮正宗》伏神得出/不得出规则，
-    细化飞神与伏神的五行生克关系及得出难易。
-
-    返回：
-        {
-            "has_interaction": bool,
-            "interactions": [
-                {
-                    "position": int,
-                    "fei_shen": str,       # 飞神六亲
-                    "fu_shen": str,        # 伏神名称
-                    "relation": str,       # 关系定性
-                    "can_emerge": bool,
-                    "description": str,
-                },
-                ...
-            ],
-            "overall_emerge": bool,
-        }
-    """
+    """飞伏互断（《火珠林》）：飞神与伏神的生克制化及得出/不得出。"""
     fu_analysis = result.get("advanced_analysis", {}).get("hidden_spirit_analysis", {})
     if not fu_analysis or not fu_analysis.get("has_hidden_spirit"):
         return {"has_interaction": False}
@@ -787,29 +695,7 @@ def analyze_flying_hidden_interaction(result):
 # ─────────────────────────────────────────────────────────────────────────────
 
 def analyze_clash_harmony(result):
-    """
-    六合/六冲卦判断：
-    - 检查各对应位置爻对(1-4, 2-5, 3-6)的地支关系
-    - 全部合 → 六合卦
-    - 全部冲 → 六冲卦
-    - 部分合、部分冲 → 描述各异
-
-    返回：
-        {
-            "hexagram_type": str,    # "六合卦"/"六冲卦"/"半合半冲"/"无明确合冲"
-            "pairs": [
-                {
-                    "positions": (int, int),
-                    "branches": (str, str),
-                    "relation": str,    # "合"/"冲"/"无特殊"
-                    "description": str,
-                },
-                ...
-            ],
-            "summary": str,
-            "meaning": str,  # 六合/六冲的含义解释
-        }
-    """
+    """六合/六冲卦判断：逐位(1-4,2-5,3-6)地支关系 → 合卦/冲卦/半合半冲/无明确。"""
     hex_info = result.get("original_hexagram", {})
     yao_lines = hex_info.get("yao_lines", [])
     if not yao_lines:
@@ -898,27 +784,7 @@ def analyze_clash_harmony(result):
 
 
 def analyze_repetition(result):
-    """
-    反吟伏吟分析：
-    - 反吟：变卦之爻地支与本卦对应爻地支相冲（反复之意）
-    - 伏吟：变卦与本卦相同（或内/外卦不变），爻位地支不变（呻吟不止）
-
-    返回：
-        {
-            "repetition_type": str,  # "反吟"/"伏吟"/"反吟兼伏吟"/"无"
-            "chong_pairs": [
-                {
-                    "position": int,
-                    "original_branch": str,
-                    "changed_branch": str,
-                    "description": str,
-                },
-                ...
-            ],
-            "summary": str,
-            "meaning": str,
-        }
-    """
+    """反吟伏吟：本卦逐位比对变卦地支。反吟=六冲；伏吟=不变。"""
     hex_info = result.get("original_hexagram", {})
     yao_lines = hex_info.get("yao_lines", [])
     changed = result.get("changed_hexagram") or {}
@@ -1046,20 +912,7 @@ def analyze_repetition(result):
 
 
 def analyze_repetition_deep(result):
-    """
-    反吟伏吟深层析义：基于《卜筮正宗》的五行旺衰综合规则，
-    对反吟伏吟进行精细化评分，而非统一扣减。
-
-    返回：
-        {
-            "type": "反吟" | "伏吟" | None,
-            "level": "卦" | "爻",
-            "scope": "内卦" | "外卦" | "用神" | "世爻" | None,
-            "interpretation": str,
-            "score_modifier": float,
-            "classical_quote": str,
-        }
-    """
+    """反吟伏吟深层析义（《卜筮正宗》）：五行旺衰综合的精细化评分，非统一扣减。"""
     # 先调用基础分析获取类型信息
     basic = analyze_repetition(result)
     rep_type = basic.get("repetition_type", "无")
@@ -1110,7 +963,6 @@ def analyze_repetition_deep(result):
     chong_pairs = basic.get("chong_pairs", [])
     fuyin_trigram = basic.get("fuyin_trigram")
 
-    # 检查是否涉及世爻
     generation_str = hex_info.get("generation", "")
     gen_map_reverse = {"六世": 6, "五世": 5, "四世": 4, "三世": 3,
                        "二世": 2, "一世": 1, "游魂": 4, "归魂": 3}
@@ -1182,18 +1034,7 @@ def analyze_repetition_deep(result):
 # ─────────────────────────────────────────────────────────────────────────────
 
 def analyze_hexagram_body(result):
-    """
-    卦身法分析：卦身为一卦之身体，代表事物的本体与根基。
-
-    《卜筮正宗》安月卦身诀：「阴世则从午月起，阳世还从子月生，
-    欲得识其卦中意，从初数至世方真。」以世爻阴阳 + 世爻爻位推卦身支，
-    卦身支在卦中所现爻即卦身（可 0/1/2 处；不现为「卦身不现」，事无头绪）。
-
-    Returns
-    -------
-    dict with keys: body_branch, body_position(s), body_element, body_relation,
-        body_not_present, meaning, classical_rule, implications
-    """
+    """卦身法（《卜筮正宗》安月卦身诀）：世爻阴阳 + 爻位 → 卦身支。"""
     hex_info = result.get("original_hexagram", {})
     generation = hex_info.get("generation", "")
     yao_lines = hex_info.get("yao_lines", [])
@@ -1280,33 +1121,7 @@ def analyze_hexagram_body(result):
 
 
 def analyze_element_strength(result):
-    """
-    纳甲四柱旺衰总结：基于月建日辰的五行旺衰体系。
-
-    返回：
-        {
-            "month_branch": str,
-            "month_element": str,
-            "day_branch": str,
-            "day_element": str,
-            "strength_description": str,  # 如"木旺火相水休金囚土死"
-            "use_god_advice": str,        # 通用旺衰判断建议
-            "details": [
-                {
-                    "position": int,
-                    "name": str,
-                    "branch": str,
-                    "element": str,
-                    "six_relation": str,
-                    "month_strength": str,  # 在月建的状态
-                    "day_strength": str,    # 在日辰的状态
-                    "overall": str,         # 综合状态
-                },
-                ...
-            ],
-            "summary": str,
-        }
-    """
+    """纳甲四柱旺衰（月建日辰五行旺衰体系 + 用神 monthly/daily 综合）。"""
     hex_info = result.get("original_hexagram", {})
     yao_lines = hex_info.get("yao_lines", [])
     palace_element = hex_info.get("palace_element", "")
@@ -1398,34 +1213,7 @@ def analyze_element_strength(result):
 
 
 def analyze_three_punishments(result):
-    """
-    三刑分析（卜筮正宗定量版）：区分完整三刑、待刑、自刑。
-
-    规则：
-      - 循环刑（无恩寅巳申、恃势丑戌未）：三字全见 → 完整三刑（极凶）；
-        仅见两字 → 待刑（待月日补齐方成刑）。
-      - 互刑（无礼子卯）：两字相见即成刑。
-      - 自刑（辰午酉亥）：同一地支两见以上。
-
-    返回：
-        {
-            "has_punishment": bool,
-            "punishments": [
-                {
-                    "type": str,              # 刑的类型
-                    "completeness": str,      # "完整" | "待刑" | "自刑"
-                    "branches_present": [str], # 卦中及月日出现的地支
-                    "missing": [str],          # 缺失的地支（待刑时）
-                    "formed_by": str,          # "卦内" | "待月日补齐"
-                    "positions": [str],        # 涉及的位置
-                    "description": str,
-                },
-                ...
-            ],
-            "total_score": float,  # 完整三刑 -1.0, 待刑 -0.3, 无礼成刑 -0.5, 自刑 -0.3/次
-            "summary": str,
-        }
-    """
+    """三刑（《卜筮正宗》定量版）：完整/待刑/自刑。循环刑寅巳申丑戌未、互刑子卯、自刑辰午酉亥。"""
     hex_info = result.get("original_hexagram", {})
     yao_lines = hex_info.get("yao_lines", [])
     if not yao_lines:

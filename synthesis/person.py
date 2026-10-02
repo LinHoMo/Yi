@@ -14,7 +14,8 @@ import re
 from datetime import datetime
 from pathlib import Path
 
-DISCIPLINES = ("liuyao", "ming", "meihua", "xiaoliuren", "zeji")
+from yishu_core.report.request import DISCIPLINES  # 学科清单唯一真值源（八科）
+
 _AT_RE = re.compile(r"^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}(:\d{2})?)?$")
 _DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
@@ -133,7 +134,7 @@ class PersonArchive:
             if not g.get("issued"):
                 errs.append(f"{p}.issued 缺失")
             for ref in g.get("based_on") or []:
-                if not re.match(r"^(liuyao|ming|meihua|xiaoliuren|zeji):", str(ref)):
+                if not re.match(r"^(?:" + "|".join(DISCIPLINES) + r"):", str(ref)):
                     errs.append(f"{p}.based_on 元素须形如 'discipline:…'，收到 {ref!r}")
         return errs
 

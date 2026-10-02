@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
-"""六爻应期（YP）：候选支收集 + 法则方法 + 择优排序 + 窗口计算。
-
-合并自：
-- chain_step5_yp.py（再导出入口）
-- chain_step5_yp_timing.py（predict_timing_core 本体）
-- yingqi_windows.py（evaluate 用的相对/绝对应期窗口）
-"""
+"""六爻应期（YP）：候选支收集 + 法则方法 + 择优排序 + 窗口计算。"""
 from __future__ import annotations
 
 import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
@@ -33,7 +27,7 @@ from narrative_utils import STEP5_YINGQI as YINGQI_TXT  # noqa: E402
 
 import json as _json  # noqa: E402
 from pathlib import Path as _P  # noqa: E402
-from datetime import datetime, timedelta  # noqa: E402
+from datetime import datetime  # noqa: E402
 import re  # noqa: E402
 
 _YD = _json.loads((_P(__file__).resolve().parents[1] / 'data' / 'narrative_templates.json').read_text(encoding='utf-8')).get('yingqi_descriptions', {})
@@ -595,7 +589,7 @@ def _assemble_timing(ranked: list, timing_methods: list, speed: str,
                     + (f"若事应迟，则看月级：{month_text}。" if month_text else "")
                     + (f"久案应于年：{year_text}。" if year_text else "")
                     + (f"依据：{detail}。" if detail else ""))
-    timing_reasons = [summary_text]  # 原实现保留该本地列表（不进返回字典）
+    timing_reasons = [summary_text]  # 本地列表，不进返回字典
 
     return {
         "timing_methods": timing_methods,

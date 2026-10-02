@@ -10,7 +10,6 @@
 
 import hashlib
 import json
-import os
 import sys
 import uuid
 from collections import Counter
@@ -19,56 +18,37 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-
-# =============================================================================
-# 数据模型
-# =============================================================================
-
 @dataclass
 class DivinationEvent:
-    """单次占卜事件的完整记录。"""
-    event_id: str = ""           # UUID
-    timestamp: str = ""          # ISO 8601 格式
+    """单次占卜事件（本标准库 JSONL 日志行对应的 dict 结构）。"""
+    event_id: str = ""
+    timestamp: str = ""
     question: str = ""
-    method: str = ""             # coin / time / number / manual
+    method: str = ""
     seed: Optional[int] = None
     longitude: Optional[float] = None
-
-    # 结果摘要
     hexagram: str = ""
     changed_hexagram: str = ""
     use_god: str = ""
     verdict: str = ""
     final_score: float = 0.0
     confidence: str = ""
-
-    # 验证标记
-    hallucination_flags: list = field(default_factory=list)  # 空 = 无误
-    notes: str = ""                                           # 人工备注
-
-    # 完整性校验
+    hallucination_flags: list = field(default_factory=list)
+    notes: str = ""
     result_hash: str = ""
-
-    # 应期（必须落盘，否则事后回填时无从判断"准不准"）
-    yingqi_main: str = ""         # 主应期，如 "辰日"
-    yingqi_rule: str = ""         # 主应期所本法则
-    yingqi_alt: list = field(default_factory=list)   # 次/备应期
-    yingqi_window_days: int = 0   # 起卦日至主应期的日历天数（回填时判断落在哪个候选上）
-
-    # 事后验证
-    outcome: str = ""             # 实际结果（自由文本）
-    verdict_hit: Optional[bool] = None      # 吉凶方向是否应验
-    yingqi_hit: Optional[str] = None        # "main" / "alt" / "miss" / None=未回填
-    verified_on: str = ""          # 实际应验的公历日期 YYYY-MM-DD
-    validation_timestamp: str = ""  # 验证时间
-
-
-# =============================================================================
-# 日志文件路径
-# =============================================================================
+    yingqi_main: str = ""
+    yingqi_rule: str = ""
+    yingqi_alt: list = field(default_factory=list)
+    yingqi_window_days: int = 0
+    outcome: str = ""
+    verdict_hit: Optional[bool] = None
+    yingqi_hit: Optional[str] = None
+    verified_on: str = ""
+    validation_timestamp: str = ""
 
 def get_log_path() -> Path:
     """
+
     获取日志文件路径: ~/.meituan-catpaw/<uid>/skills/liu-yao/logs/divination_events.jsonl
     如果目录不存在则自动创建。
     """
@@ -80,9 +60,6 @@ def get_log_path() -> Path:
     return log_dir / "divination_events.jsonl"
 
 
-# =============================================================================
-# 核心函数
-# =============================================================================
 
 def _compute_result_hash(result: dict) -> str:
     """计算占卜结果的 SHA256 哈希值 (用于完整性校验)。"""
@@ -92,7 +69,6 @@ def _compute_result_hash(result: dict) -> str:
 
 def _extract_use_god(result: dict) -> str:
     """从完整结果中提取用神信息。"""
-    # 优先从思维链 step2 获取
     chain = result.get("thinking_chain", {})
     if chain:
         step2 = chain.get("step2_use_god_identification", {})
@@ -100,8 +76,6 @@ def _extract_use_god(result: dict) -> str:
             cat = step2.get("use_god_category", "")
             if cat:
                 return cat
-
-    # fallback: 从 analysis_hints 提取
     hints = result.get("analysis_hints", {}).get("possible_use_gods", [])
     if hints and isinstance(hints[0], str):
         return hints[0]
@@ -121,8 +95,6 @@ def _extract_verdict_info(result: dict) -> tuple[str, float, str]:
         final_score = step5.get("final_score", 0.0)
         confidence = str(step5.get("confidence", ""))
         return verdict, float(final_score), confidence
-
-    # 无思维链时的 fallback
     return "", 0.0, ""
 
 
@@ -136,7 +108,6 @@ def _extract_yingqi(result: dict) -> dict:
     rule = rules[0]["rule"] if rules and isinstance(rules[0], dict) else ""
     dates = (s5.get("yingqi_dates") or {}).get("dates") or []
     window = 0
-    # 窗口须对齐**主应期**那一支的日历日；取 dates[0] 会在主备次序不一致时报错窗口
     pick = None
     for d in dates:
         if isinstance(d, dict) and d.get("date") and main and str(d.get("branch")) == main[:1]:
@@ -179,7 +150,7 @@ def log_divination(
     Returns:
         event_id: 本次事件的 UUID
     """
-    # 提取结果摘要
+   
     oh = result.get("original_hexagram", {})
     ch = result.get("changed_hexagram")
 
@@ -205,8 +176,6 @@ def log_divination(
     )
 
     log_path = get_log_path()
-
-    # 追加写入 JSONL
     with open(log_path, "a", encoding="utf-8") as f:
         f.write(json.dumps(asdict(event), ensure_ascii=False) + "\n")
 
@@ -237,9 +206,7 @@ def get_events(limit: int = 50) -> list[DivinationEvent]:
                 data = json.loads(line)
                 events.append(DivinationEvent(**data))
             except (json.JSONDecodeError, TypeError):
-                continue  # 跳过损坏行
-
-    # 倒序（最新在前）并截取
+                continue
     events.reverse()
     return events[:limit]
 
@@ -293,8 +260,6 @@ def validate_event(event_id: str, outcome: str) -> bool:
 
     found = False
     timestamp = datetime.now(timezone.utc).isoformat()
-
-    # 读取全部事件
     events = []
     with open(log_path, "r", encoding="utf-8") as f:
         for line in f:
@@ -309,12 +274,11 @@ def validate_event(event_id: str, outcome: str) -> bool:
                     found = True
                 events.append(data)
             except (json.JSONDecodeError, TypeError):
-                events.append(line)  # 保留原始损坏行
+                events.append(line)
 
     if not found:
         return False
 
-    # 写回
     with open(log_path, "w", encoding="utf-8") as f:
         for event_data in events:
             if isinstance(event_data, dict):
@@ -323,11 +287,6 @@ def validate_event(event_id: str, outcome: str) -> bool:
                 f.write(event_data + "\n")
 
     return True
-
-
-# =============================================================================
-# 统计分析
-# =============================================================================
 
 def get_statistics() -> dict:
     """统计历史占卜数据"""
@@ -386,9 +345,6 @@ def search_events(question_contains: str = None,
     return results
 
 
-# =============================================================================
-# 命令行工具
-# =============================================================================
 
 def main():
     """CLI 入口：查看 / 验证 / 统计 / 检索 / 导出 / 热力图。"""
@@ -407,7 +363,7 @@ def main():
   export     导出全部记录为 JSON 文件 (需 --output)
   heatmap    打印 verdict 分布 ASCII 柱状图
 
-示例:
+    示例:
   python event_logger.py list --limit 50
   python event_logger.py show --id <uuid>
   python event_logger.py validate --id <uuid> --outcome "投资获利"
@@ -420,27 +376,19 @@ def main():
     )
     sub = parser.add_subparsers(dest="command", help="子命令")
 
-    # list 子命令
+   
     list_parser = sub.add_parser("list", help="列出最近事件")
     list_parser.add_argument("--limit", type=int, default=20, help="最大条数")
-
-    # show 子命令
     show_parser = sub.add_parser("show", help="查看单个事件")
     show_parser.add_argument("--id", type=str, required=True, help="事件 UUID")
-
-    # validate 子命令
     val_parser = sub.add_parser("validate", help="事后验证事件")
     val_parser.add_argument("--id", type=str, required=True, help="事件 UUID")
     val_parser.add_argument("--outcome", type=str, required=True, help="实际结果")
-
-    # stats 子命令
     stats_parser = sub.add_parser("stats", help="查看统计信息")
     stats_parser.add_argument(
         "--format", choices=["text", "json"], default="text",
         help="输出格式 (默认 text)",
     )
-
-    # search 子命令
     search_parser = sub.add_parser("search", help="条件检索历史记录")
     search_parser.add_argument("--question", type=str, default=None,
                                help="按问题关键词匹配 (包含)")
@@ -452,15 +400,11 @@ def main():
                                help="结束日期 (ISO 8601 前缀, 如 2025-08-01)")
     search_parser.add_argument("--limit", type=int, default=50,
                                help="最大返回条数")
-
-    # export 子命令
     export_parser = sub.add_parser("export", help="导出为 JSON 文件")
     export_parser.add_argument("--output", "-o", type=str, required=True,
                                help="输出文件路径")
     export_parser.add_argument("--pretty", action="store_true",
                                help="美化 JSON 输出 (缩进2空格)")
-
-    # heatmap 子命令
     sub.add_parser("heatmap", help="打印 verdict 分布 ASCII 柱状图")
 
     args = parser.parse_args()
@@ -534,9 +478,6 @@ def main():
         parser.print_help()
 
 
-# =============================================================================
-# CLI 输出辅助函数
-# =============================================================================
 
 def _print_stats(stats: dict) -> None:
     """以人类可读格式打印统计信息。"""
@@ -553,8 +494,6 @@ def _print_stats(stats: dict) -> None:
     first_str = dr["first"][:10] if dr.get("first") else "N/A"
     last_str = dr["last"][:10] if dr.get("last") else "N/A"
     print(f"  时间范围:   {first_str} ~ {last_str}")
-
-    # 判语分布
     vd = stats["verdict_distribution"]
     if vd:
         total = sum(vd.values())
@@ -573,8 +512,6 @@ def _print_stats(stats: dict) -> None:
     print(f"    标准差: {ss['stdev']:.4f}")
     print(f"    最小值: {ss['min']:+.4f}")
     print(f"    最大值: {ss['max']:+.4f}")
-
-    # 常见卦
     ch = stats["common_hexagrams"]
     if ch:
         print(f"\n  常见本卦 Top {len(ch)}:")
@@ -601,7 +538,7 @@ def _print_heatmap() -> None:
         return
 
     max_count = max(counts)
-    bar_max_width = 40  # characters
+    bar_max_width = 40
 
     print("\n  Verdict Distribution Heatmap")
     print("  " + "-" * 50)

@@ -25,15 +25,11 @@ def narrate(a: dict) -> str:
         f"课名：**{s.get('课名') or '—'}**；象：{s.get('象') or '—'}。",
         "",
         f"**卦注**：{a.get('zhu') or '—'}",
+        f"**卦宫**：{a.get('gong') or '—'}（书源卦注末段；八宫齐，异文照录）",
     ]
-    xy = a.get("xiangyue") or []
-    if xy:
-        lines += ["", "**象曰**（书源原文）："]
-        lines += [f"> {x}" for x in xy]
-    sy = a.get("shiyue") or []
-    if sy:
-        lines += ["", "**詩曰**（书源原文）："]
-        lines += [f"> {x}" for x in sy]
+    for g in a.get("notes") or []:
+        lines += ["", f"**{g.get('mark') or '—'}**（书源原文）："]
+        lines += [f"> {x}" for x in g.get("lines") or []]
     lines += [
         "",
         "以上断语**逐字直录《灵棋经》原文**（查表即断，本仓不做书外发挥），",

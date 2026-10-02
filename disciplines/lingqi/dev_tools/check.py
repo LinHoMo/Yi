@@ -3,24 +3,24 @@
 from __future__ import annotations
 
 import json
-import os
-import subprocess
+import re
 import sys
 from pathlib import Path
 
 DISC = Path(__file__).resolve().parents[1]
 CORE = DISC.parents[1] / "core"
+if str(CORE) not in sys.path:
+    sys.path.insert(0, str(CORE))
+
+from yishu_core.gate_kit import run_step as _run_step  # noqa: E402
 
 
 def run(cmd: list[str]) -> tuple[int, str]:
-    p = subprocess.run([sys.executable, *cmd], cwd=DISC, capture_output=True,
-                       text=True, encoding="utf-8", errors="replace", timeout=120,
-                       env={**os.environ, "PYTHONUTF8": "1"})
-    return p.returncode, (p.stdout or "") + (p.stderr or "")
+    """本门口径：cwd=学科根、120s 超时、argv 前补解释器（实现在内核 gate_kit）。"""
+    return _run_step(cmd, cwd=DISC, timeout=120, python=True)
 
 
 def main() -> int:
-    force = {"PYTHONUTF8": "1"}
     fails: list[str] = []
 
     required = ["SKILL.md", "scripts/chart.py", "scripts/analyze.py",
@@ -49,8 +49,58 @@ def main() -> int:
         fails.append(f"课名重复: {dup[:5]}")
     if table.get("problems"):
         fails.append(f"构建器报告问题: {table['problems']}")
-    print(f"[1] 课表完整性 √ 124 课" if not any("课表" in f or "课名" in f for f in fails)
+    # 字段不变式（SYS-REVIEW #9）：每课 name/xiang/zhu/gong 非空、标注组至少一组——
+    # 查表直录科的结构恒定，防某课静默缺字段
+    # 标注组可少（书源个别课本无詩曰，如 4-1-3 益友卦只有象曰+許曰），忠实录不造句
+    gongs = sorted({v.get("gong", "") for v in courses.values()})
+    gong8 = sorted({g[0] for g in gongs if g})
+    bad_fields = [k for k, v in courses.items()
+                  if not v.get("name") or not v.get("xiang") or not v.get("zhu")
+                  or not v.get("gong") or not v.get("notes")]
+    if bad_fields:
+        fails.append(f"课条目缺字段（name/xiang/zhu/gong/notes）: {bad_fields[:5]}")
+    if len(gong8) != 8:
+        fails.append(f"卦宫八卦 {len(gong8)} 种 ≠ 8：{gong8}")
+    print(f"[1] 课表完整性 √ 124 课" if not any("课表" in f or "课名" in f or "缺字段" in f
+                                              or "卦宫" in f for f in fails)
           else "[1] 课表完整性 ×")
+
+    # [1c] 逐字回指门（铁律三）：入库文本去空白后必须是书源连续子串；
+    # 另校验标注组结构（每课恰一组「象曰」）与非课标题章节已进 appendix（不静默并入）
+    src = (DISC.parents[1] / "data" / "sources" / "ling-qi-jing.wikitext.txt")
+    flat = re.sub(r"\s+", "", src.read_text(encoding="utf-8")) if src.exists() else ""
+    bad = []
+    if not flat:
+        bad.append("书源缺失，无法做回指")
+    for k, v in courses.items():
+        for fld in ("name", "xiang", "zhu"):
+            if re.sub(r"\s+", "", v.get(fld) or "") not in flat:
+                bad.append(f"{k}.{fld} 不可回指")
+        notes = v.get("notes") or []
+        marks = [g.get("mark") for g in notes]
+        if marks.count("象曰") != 1:
+            bad.append(f"{k}：象曰组数 {marks.count('象曰')} ≠ 1（{marks}）")
+        for gi, g in enumerate(notes):
+            if not g.get("lines"):
+                bad.append(f"{k}.notes[{gi}]({g.get('mark')}) 空组")
+            for li, line in enumerate(g.get("lines") or []):
+                if re.sub(r"\s+", "", line) not in flat:
+                    bad.append(f"{k}.notes[{gi}][{li}] 不可回指")
+    appendix = table.get("appendix") or []
+    if not appendix:
+        bad.append("书源非课标题章节（如「純陰饅」）未登记 appendix——不得静默并入相邻课")
+    for a in appendix:
+        for gi, g in enumerate(a.get("notes") or []):
+            for li, line in enumerate(g.get("lines") or []):
+                if re.sub(r"\s+", "", line) not in flat:
+                    bad.append(f"appendix[{a.get('title')}][{gi}][{li}] 不可回指")
+    if bad:
+        fails.extend(bad[:5])
+        print("[1c] 引文可回指 ×", *bad[:5], sep="\n    ")
+    else:
+        groups = sum(len(v.get("notes") or []) for v in courses.values())
+        print(f"[1c] 引文可回指 √ 124 课｜标注组 {groups} 组｜卦宫 9 串（八宫齐）"
+              f"｜附录 {len(appendix)} 条：{'、'.join(a.get('title', '') for a in appendix)}")
 
     # [2] 全 124 课逐一走 chart（机械查表无异常）
     sys.path.insert(0, str(DISC / "scripts"))

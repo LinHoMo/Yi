@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "tune=ZS001-020 调参集；holdout=未参与词典调参的古籍真例；excluded=残缺或与tune重复，不计入均分；yingqi_holdout=应期外部验证集，永不参与调参；yingqi_holdout=应期外部验证集，永不参与调参；yingqi_holdout=应期外部验证集，永不参与调参；yingqi_holdout=应期外部验证集，永不参与调参",
+  "note": "tune=ZS001-020 调参集；holdout=未参与词典调参的古籍真例；excluded=残缺或与 tune 重复，不计入均分；外部验证集见 note_externals",
   "tune": [
     "ZS001",
     "ZS002",
@@ -163,6 +163,10 @@
     "HZL001",
     "HZL002"
   ],
+  "suigui_holdout": [
+    "SG001",
+    "SG002"
+  ],
   "huozhulin_qualitative": [
     "HZL001",
     "HZL002",
@@ -193,5 +197,5 @@
       "reason": "维基文库主搜索未命中；术数 Category 下仅4条目不含卜筮全书；shidianguji.com 有内容但无结构化 API"
     }
   ],
-  "note_externals": "yingqi_holdout/wikisource_holdout/wikisource_direction/huozhulin_holdout/bushi_zhengzong_holdout 均为外部验证集，永不参与调参；too_weak 为探测后<5 例或不存在之来源，不计入任何集合"
+  "note_externals": "yingqi_holdout/wikisource_holdout/wikisource_direction/huozhulin_holdout/suigui_holdout/bushi_zhengzong_holdout 均为外部验证集，永不参与调参；too_weak 为探测后<5 例或不存在之来源，不计入任何集合"
 }

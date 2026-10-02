@@ -27,7 +27,6 @@ from liuyao_timing import predict_timing_core as _predict_timing
 from liuyao_step2 import _USE_GOD_RULES
 
 __all__ = [
-    "_add_months",
     "_analyze_effect_on_use_god",
     "_assess_confidence",
     "_branch_to_relation",
@@ -56,7 +55,6 @@ __all__ = [
     "_forms_hexagram_harmony",
     "_match_use_god_rule",
     "_next_date_with_day_branch",
-    "_next_month_with_branch",
     "_strip_chart_tail",
     "_strip_hex_names",
     "_use_god_basis",

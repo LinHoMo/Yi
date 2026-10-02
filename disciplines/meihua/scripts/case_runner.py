@@ -25,17 +25,39 @@ DEFAULT_CASES = DISC / "data" / "cases" / "meihua_cases.json"
 
 
 def load_cases(cases_file: str | Path = DEFAULT_CASES) -> list[dict]:
-    """案例库 JSON → 案例列表。文件根必须是 {"cases": [...]}。"""
+    """案例库 JSON → 案例列表；合并同目录其它 *_cases.json（外部独立集，永不调参）。
+
+    主库 meihua_cases.json 与 external_cases.json 等按 id 去重合并——
+    仿 liuyao 的「外部集与主库分文件、按 split 单列」模式（AGENTS.md §四.1 +
+    EVAL-AUDIT §6.2）：外部集只报命中数、永不参与 tune。
+    """
     p = Path(cases_file)
     data = json.loads(p.read_text(encoding="utf-8"))
     cases = data.get("cases")
     if not isinstance(cases, list):
         raise ValueError(f"{p} 缺少 cases 列表")
+    seen = {c["id"] for c in cases if c.get("id")}
+    case_dir = p.parent
+    for extra in sorted(case_dir.glob("*_cases.json")):
+        if extra.resolve() == p.resolve():
+            continue
+        try:
+            extra_data = json.loads(extra.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            continue
+        for c in extra_data.get("cases", []):
+            if c.get("id") and c["id"] not in seen:
+                seen.add(c["id"])
+                cases.append(c)
     return cases
 
 
 def load_ids(split: str = "all") -> list[str]:
-    """按 split 字段取案例 id（excluded 不参与任何评分）。"""
+    """按 split 字段取案例 id（excluded 不参与任何评分）。
+
+    支持任意 split 值（含 external_holdout）：凡 `c.get("split") == split` 即取，
+    新增书源只登记数据、不必改本函数（与 liuyao load_ids 末段同思路）。
+    """
     return [c["id"] for c in load_cases()
             if split == "all" or c.get("split") == split]
 

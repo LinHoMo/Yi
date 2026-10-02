@@ -33,14 +33,12 @@ for _p in (str(CORE), str(Path(__file__).resolve().parent)):
         sys.path.insert(0, _p)
 
 from yishu_core.ganzhi_calendar import (  # noqa: E402
-    EARTHLY_BRANCHES,
     ganzhi_of,
 )
 from yishu_core.lunar import solar_to_lunar, lunar_to_solar, lunar_month_name  # noqa: E402
 from yishu_core.symbols import (  # noqa: E402
     HEXAGRAM_TRIGRAMS,
     BAGUA_LINES,
-    XIAN_TIAN_TRIGRAM_NUMBERS,
     NUMBER_TO_TRIGRAM,
     TRIGRAM_ELEMENTS,
     EARTHLY_BRANCHES,
@@ -111,10 +109,6 @@ def _trigram_from_lines(three: list[int]) -> str:
         if pat == three:
             return name
     raise ValueError(f"非八卦爻线：{three}")
-
-
-def _moving_in_upper(moving: int) -> bool:
-    return moving >= 4
 
 
 def _normalize_movings(moving=None, movings=None) -> list[int]:

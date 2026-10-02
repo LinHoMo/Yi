@@ -9,7 +9,7 @@ from __future__ import annotations
 import json
 from pathlib import Path as _P
 
-_CN = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"]
+from chart import CN_NUM as _CN        # 汉字数目只有一份（chart.py），不在此另抄
 
 
 _NP = json.loads((_P(__file__).resolve().parents[1] / 'data' / 'verdicts.json').read_text(encoding='utf-8')).get('narrate_phrases', {})
@@ -21,7 +21,6 @@ def _direction_label(direction: str) -> str:
 
 def _num_list(nums: list[int]) -> str:
     return "、".join(_CN[n] if n <= 10 else str(n) for n in nums)
-
 
 def _topic_cn(topic: str) -> str:
     return {"失物": "失物", "行人": "行人归期", "求财": "求财",
@@ -65,31 +64,40 @@ def narrate(a: dict) -> str:
     lines += [_NP["section_title"], ""]
     line = tv.get("诀句") or ""
     if line:
-        lines.append(f"落在{name}，断事之语是：**「{line}」**。")
+        lines.append(f"落在{name}，{_NP['jiaju_lead']}**「{line}」**。")
+    else:
+        lines.append(_NP["kind_que"])
+    cov = tv.get("覆盖") or {}
+    if cov:
+        lines.append("")
+        lines.append(_NP["coverage_lead"].replace(
+            "{jue}", str(cov.get("诀辞", 0))).replace(
+            "{yin}", str(cov.get("引申", 0))).replace("{que}", str(cov.get("阙", 0))))
     lines.append("")
 
     # 应期主数
     lines += ["## 三、应期与数目", ""]
     nums = t.get("主数") or []
     if nums:
-        lines.append(f"此宫谋事主 **{_num_list(nums)}** 之数——时间、日辰或数量均可应之。")
+        lines.append(_NP["number_lead"].replace("{nums}", _num_list(nums)))
     lines.append("")
 
     # 综合判断提示 + 口径收尾
     if a.get("comprehensive"):
         lines += ["## 四、综合权衡", ""]
-        lines.append("出行/求财之占，宫义不可死板套用（《贺氏六壬小手册》难点释疑）："
-                     "同一落宫在不同事物下结果有伸缩，需结合具体情形权衡——"
-                     "这是解读层的事，engine 只给结构与信号，不作最终断言。")
+        lines.append(_NP["palace_caveat"])
         lines.append("")
+
+    # 断语来源与覆盖（缺口如实登记，不冒充古籍原文）
+    lines += [_NP["coverage_title"], ""]
+    lines.append(_NP["source_gap_lead"])
+    lines.append("")
     lines += ["---", ""]
     direction = con.get("方向")
     if direction == "凶":
-        lines.append("口径提示：凶系为结构信号，措辞用「偏向/有…信号」，不作「注定」；"
-                     "如涉医疗、法律、投资，请以专业意见为准。")
+        lines.append(_NP["disclaimer_xiong"])
     else:
-        lines.append("口径提示：此占为象数参考，不作现实承诺；如涉医疗、法律、投资，"
-                 "请以专业意见为准。")
+        lines.append(_NP["disclaimer"])
     lines.append("")
     return "\n".join(lines)
 

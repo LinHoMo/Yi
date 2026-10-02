@@ -30,7 +30,6 @@ from yishu_core.ganzhi_calendar import (  # noqa: E402
 )
 from yishu_core.symbols import xunkong_of  # noqa: E402
 from yishu_core.liuren_tables import (  # noqa: E402
-    YUEJIANG_POLICY,
     tianjiang_layout,
     yuejiang_of,
 )

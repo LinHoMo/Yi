@@ -1,0 +1,23 @@
+{
+  "key": "liu-ren-da-quan-juan7",
+  "kind": "大六壬",
+  "title": "六壬大全/7",
+  "site": "zh.wikisource.org",
+  "api": "https://zh.wikisource.org/w/api.php",
+  "pages": [
+    "六壬大全/7"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-01 18:04:13+0800",
+  "sha256": "d1373c956e001ef7f4d60ae64bda3d4bad5a3d6190cde326dd2105c15fa5b99a",
+  "stats": {
+    "bytes": 79490,
+    "chars": 28144,
+    "lines": 792,
+    "ganzhi_pairs": 222,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/liu-ren-da-quan-juan7.wikitext.txt",
+  "note": "公版古籍原文的字符级转存，未做任何改写或模型转写；子页以 <!-- ==== 标题 ==== --> 分隔。"
+}

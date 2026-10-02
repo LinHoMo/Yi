@@ -1,10 +1,10 @@
 {
   "_meta": {
     "what": "金标准指纹基线（chart+analyze 逐字段）",
-    "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；无理由不落盘，历次漂移见 drift_log",
-    "cases": 23
+    "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
-  "digest": "16976fe43e5d1dff",
+  "digest": "2c9c810d8a265180",
+  "narrate_digest": "3302336c6f3145e1",
   "drift_log": [
     {
       "from": null,
@@ -35,6 +35,38 @@
       "to": "16976fe43e5d1dff",
       "date": "2026-10-01",
       "reason": "阶段4 D档：梅花书源篇目名 先天後天論→先天后天论（统一简体，消除同一字段内繁简混排）"
+    },
+    {
+      "from": "16976fe43e5d1dff",
+      "to": "f810baf8a8eb7717",
+      "date": "2026-10-01",
+      "reason": "多爻动引文行改从 data/basis_quotes 取+出处修正为《卷二·体用》（2026-10-01k）"
+    },
+    {
+      "from": "f810baf8a8eb7717",
+      "to": "2c9c810d8a265180",
+      "date": "2026-10-01",
+      "reason": "指纹拆分（SYS-REVIEW#2）：机械/措辞分列；机械字段取值不变（逐条比对仅 narrate_sha 键移出）"
+    }
+  ],
+  "narrate_drift_log": [
+    {
+      "from": "f810baf8a8eb7717",
+      "to": "ad4431db6327bccc",
+      "date": "2026-10-01",
+      "reason": "指纹拆分（SYS-REVIEW#2）：机械/措辞分列；机械字段取值不变（逐条比对仅 narrate_sha 键移出）"
+    },
+    {
+      "from": "ad4431db6327bccc",
+      "to": "7e415b83909fc561",
+      "date": "2026-10-01",
+      "reason": "narrate 末段新增「所本原文（逐字）」小节：引 data/classics.json 的古诀原文与篇名行号；机械层零漂移，仅措辞层 23 条 narrate_sha 变化"
+    },
+    {
+      "from": "7e415b83909fc561",
+      "to": "3302336c6f3145e1",
+      "date": "2026-10-01",
+      "reason": "narrate 新增《卷一·八卦萬物屬類》按事类取象的逐字原文段（体卦/用卦）；analyze 新增 analogy_table 字段。不参与评分，tune/holdout 仍 100%"
     }
   ]
 }

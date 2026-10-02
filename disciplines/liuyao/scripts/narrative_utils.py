@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""六爻思维链：基元表 / 断语库 / 通用辅助 / 五步推演 / 应期 / 叙事组装 / 断语/模板取用器。（合并自 chain_support.py 与 chain_verdicts.py，去重 import 后保留全部公共定义；聚合入口见 thinking_chain.py）。"""
+"""六爻思维链：基元表 / 断语库 / 通用辅助 / 五步推演 / 应期 / 叙事组装 / 断语/模板取用器。聚合入口见 thinking_chain.py。"""
 
 from __future__ import annotations
 
@@ -10,35 +10,25 @@ _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
-from kernel_path import ensure_kernel_on_path as _ensure_kernel, kernel_dir
+from kernel_path import ensure_kernel_on_path as _ensure_kernel
 
 _ensure_kernel(__file__)
 
 from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
-    ADVANCE_PAIRS,
     BRANCH_ELEMENTS,
-    BREAK_PAIRS,
     CHONG_PAIRS,
-    EARTHLY_BRANCHES,
     EIGHT_PALACES,
-    HEAVENLY_STEMS,
     HEXAGRAM_TRIGRAMS,
     HE_PAIRS,
     KE_CYCLE,
     NAJIA_BRANCHES,
-    RETREAT_PAIRS,
     SHENG_CYCLE,
-    STEM_ELEMENTS,
-    TOMB_MAP,
     palace_of_key,
-    EARTHLY_BRANCHES as BRANCHES,
 )
 
-from datetime import datetime, timedelta
 
 import json
 
-import re
 
 from pathlib import Path
 
@@ -75,7 +65,6 @@ STEP5_FACTOR_REASONS = _VERDICT_TEXTS["step5_factor_reasons"]
 STEP5_CONFIDENCE = _VERDICT_TEXTS["step5_confidence"]
 STEP5_YINGQI = _VERDICT_TEXTS["step5_yingqi_texts"]
 CLASSICAL_INTERPRETATIONS = _VERDICT_TEXTS["classical_interpretations"]
-CHAIN_SUPPORT_NOTES = _VERDICT_TEXTS.get("chain_support_notes", {})
 CLASSICAL_RULES_NOTES = _VERDICT_TEXTS.get("classical_rules_notes", {})
 CLASSICAL_RULES_TEMPLATES = _VERDICT_TEXTS.get("classical_rules_templates", {})
 PATTERN_VERDICTS = _VERDICT_TEXTS.get("pattern_verdicts", {})
@@ -157,7 +146,6 @@ _QUESTION_SCENARIO_KEYWORDS = {
 # ── chain_support 部分 ──
 # ══════════════════════════════════════════════════════════════════════════════
 
-# CS_NOTES 已为本文件内 CHAIN_SUPPORT_NOTES，无需跨模块导入。
 
 def get_relation_from_element(element: str, palace_element: str) -> str:
     """根据地支五行确定六亲"""
@@ -198,11 +186,6 @@ def get_elements_for_relation(relation: str, palace_element: str) -> list[str]:
 def _branch_element(branch: str) -> str:
     """获取地支五行"""
     return BRANCH_ELEMENTS.get(branch, "未知")
-
-
-def _stem_element(stem: str) -> str:
-    """获取天干五行"""
-    return STEM_ELEMENTS.get(stem, "未知")
 
 
 def _pos_to_name(pos: int) -> str:
@@ -435,6 +418,25 @@ def _evaluate_fu_cang_strength(fu_detail: dict, month_branch: str, day_branch: s
 def strength_to_score(strength: str) -> int:
     """旺相休囚死到数字分值"""
     return {"旺": 5, "相": 4, "休": 3, "囚": 2, "死": 1, "未知": 0}.get(strength, 0)
+
+
+def _combined_strength(element: str, month_element: str, day_element: str) -> str:
+    """月建、日辰两处旺衰同权累加后分档：旺/相/中和/偏弱/衰。
+
+    唯一实现（classical_enhancements 与 liuyao_step3 原先各有一份逐字相同的副本，
+    阈值与分值表一旦只改一处即口径分叉）。分值表复用 strength_to_score。
+    """
+    total = (strength_to_score(element_strength_in_month(element, month_element))
+             + strength_to_score(element_strength_in_month(element, day_element)))
+    if total >= 9:
+        return "旺"
+    if total >= 7:
+        return "相"
+    if total >= 5:
+        return "中和"
+    if total >= 3:
+        return "偏弱"
+    return "衰"
 
 
 def get_twelve_growth_stage(element: str, day_branch: str) -> tuple:
