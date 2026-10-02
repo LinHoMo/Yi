@@ -5,16 +5,43 @@
 天干与地支藏干十神、归类夫/子星、绑定 core.relations 单源」是否正确，不评旺衰吉凶。
 男命不调用（analyze 顶层无 female_fu_zi）。
 """
+import importlib.util
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-for _p in (ROOT / "core", ROOT / "disciplines" / "ming" / "scripts"):
-    if str(_p) not in sys.path:
-        sys.path.insert(0, str(_p))
+CORE = ROOT / "core"
+MING_SCRIPTS = ROOT / "disciplines" / "ming" / "scripts"
+if str(CORE) not in sys.path:
+    sys.path.insert(0, str(CORE))
 
-from chart import chart  # noqa: E402
-from analyze import analyze, female_fu_zi  # noqa: E402
+
+def _load_ming(name: str):
+    """按**唯一模块名**从路径加载命科脚本，避免各科同名模块互相遮蔽。
+
+    八科 `scripts/` 同名（每科都有 chart/analyze），conftest 又有意让六爻
+    `scripts/` 排在 `sys.path` 前列（test_yingqi_windows 依赖）。裸
+    `from analyze import ...` 会拿到六爻的 analyze（或被先收集测试缓存进
+    `sys.modules` 的那份）。故此处照 `test_ziwei_patterns.py` 的惯例：
+    ① `spec_from_file_location` 给唯一名（不进 `sys.modules['analyze']`）；
+    ② 加载后还原 `sys.path`，不污染根 pytest 对同名模块的解析。
+    """
+    spec = importlib.util.spec_from_file_location(f"ming_{name}_under_test",
+                                                  MING_SCRIPTS / f"{name}.py")
+    mod = importlib.util.module_from_spec(spec)
+    before = list(sys.path)
+    try:
+        spec.loader.exec_module(mod)
+    finally:
+        sys.path[:] = before
+    return mod
+
+
+_chart_mod = _load_ming("chart")
+_analyze_mod = _load_ming("analyze")
+chart = _chart_mod.chart
+analyze = _analyze_mod.analyze
+female_fu_zi = _analyze_mod.female_fu_zi
 
 
 def test_female_fu_zi_scans_gan_and_hidden():

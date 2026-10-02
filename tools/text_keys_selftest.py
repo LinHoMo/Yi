@@ -48,7 +48,6 @@ def check_text_keys() -> list[str]:
         "PATTERN_RELATED": ("verdict_texts", "pattern_related"),
         "PATTERN_NOTES_EXTRA": ("verdict_texts", "pattern_notes_extra"),
         "SHENSHA_POLICY": ("verdict_texts", "shensha_policy"),
-        "ZEJI_VALIDITY_GAP": ("verdict_texts", "zeji_validity_gap"),
     }
 
     for py in (LIUYAO / "scripts").glob("*.py"):

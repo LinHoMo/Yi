@@ -213,7 +213,8 @@ def narrate(a: dict) -> str:
     quotes = narrative.get("classical_quotes") or []
     quote_lines = []
     if quotes:
-        quote_lines = ["古人类似情境也说过："]
+        # 引导句外置 narrative_templates.json#narrate_shell.quote_lead（与 liuyao_narrate 同一出处）
+        quote_lines = [_SHELL.get("quote_lead") or "古人类似情境也说过："]
         for q in quotes:
             quote_lines.append(f"- （{q['source']}）{q['quote']}")
 

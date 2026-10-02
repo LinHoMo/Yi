@@ -1,3 +1,59 @@
+### 2026-10-02s 修复+治理 · 根门 pytest 红 × 同名遮蔽 / [1c] 白名单逐条复核 / 孤儿断语处置 / 六爻「伏而不得出」入方向聚合
+
+> **口径登记（`AGENTS.md` §四.4）**：① `[1c]` 断语外置审计的豁免口径收紧（详见下）；② 六爻新增一条
+> **通用规则**（伏神不得出方向权重，所本《黄金策·千金赋》）；两者都属口径变更。分列验收：tune 96.8 /
+> holdout 90.2 / wikisource_holdout 56.9 / suigui_holdout 94.5 / 黑箱回归 11/18——**全部与基线持平**（新规则
+> 只在「用神伏藏且全部伏/飞对 can_emerge=False」时触发，现有评测集无一命中，由单元测试锁定行为）；
+> 六爻金标准（机械 `d4ccdb7a…` / 措辞 `25c5eeea…`）与八科 render 指纹**零漂移**。分数口径未变，读数可比。
+
+- **修复：根门 pytest 恒红（10-02q 遗留）**。`tests/test_ming_female.py` 用裸 `from analyze import …`，
+  而 `tests/conftest.py` 有意让六爻 `scripts/` 排在 `sys.path` 前列（test_yingqi_windows 依赖）→ 六爻
+  `analyze.py` 遮蔽命科同名模块，`female_fu_zi` 导入失败，`tools/check.py --full` 收集即断。改用
+  `test_ziwei_patterns.py` 既有惯例：`spec_from_file_location` 唯一名加载 + 还原 `sys.path`。根 pytest
+  195 → **199 passed**（含新增 4 例）。
+- **HANDOFF §四.B [1c] 白名单逐条复核**（`tools/verdict_audit.py`）：
+  - **过宽条收紧**：旧「括注性术语」「术语标签」两条是"行首带括注即整句豁免"，实测把
+    「官鬼（落在卯三爻）几乎使不上劲」这类**真判语**整个豁免掉（判语本体已外置
+    `narrative_templates.json#strength_phrases`，但引擎值插在句中导致子串匹配不上，白名单成了遮羞布）。
+    收紧为「括注+短尾 ≤8 字」，并新增 `REL_LOC_PREFIX` 机械定位前缀剥离（`{六亲}（落在{支}{爻}）`，
+    与既有 `YAO_PREFIX` 同理）把这类句子交还语料匹配。
+  - **修正**：③ 事实配列旧版硬编码「丙午年」，改为通式「干+支+年」；⑦ 删冗余的「综合下来」
+    （独立成句时短于 8 字本就被 MIN_HANZI 跳过，接续判语时不该替判语豁免）。
+  - **新增豁免条（⑥b–⑥g，逐条写明"为何属非断语"）**：因子节标题带所本括注（ming）、紫微格局判定行
+    （格局名+内核状态+书源诀文，名/诀均外置 `geju_rules.json`，中段插入值使匹配必漏）、紫微十二宫安星
+    事实行（宫支/星名/亮度全为 core 查表值）、梅花卦气事实句、梅花 wrap 壳（就{focus}这一问而言…）、
+    用神取法来源标注（meta.source 标签）。收紧后全量复核：**strict 0 句豁免性漏判**。
+- **HANDOFF §四.C 孤儿断语处置**（清单=代码引用 × 数据引用 × 28 例报告消费三重核对）：
+  - **删（9 条真孤儿，代码/数据零引用、零消费）**：六爻 `verdicts.json#shi_yao_interpretation` 的
+    妻财 with_officer/illness_detail、官鬼 with_wealth/illness_detail（旧解读方案遗留；scenario 分派只认
+    illness/marriage/travel/wealth 等 8 键）；梅花 `narrate_phrases.speed_lead`、`basis_quotes.ti_yong_zongjue`
+    （体用总诀正本在 classics.json 有行号可回指，此为无行号副本）；小六壬 `narrate_phrases` 的
+    open_youju/open_buli/kind_yinshen；六爻 `narrative_templates.json#narrate_shell.thinking_missing`；
+    六爻 `verdict_texts.json#zeji_validity_gap`（zeji 自己的 verdicts.json#validity_gap 是正本，此处为
+    错位副本，连同 `narrative_utils` 死加载量与 `text_keys_selftest` 死登记一并清除）。
+  - **接线（1 处）**：「古人类似情境也说过：」此前在 `liuyao_narrate.py`/`narrate.py` 各内联一份字面量，
+    `narrate_shell.quote_lead` 反被判零消费——两处改读同一 JSON 出处，渲染字节不变。
+  - **登记（`tools/verdict_consumption.py`）**：修正 ALLOWLIST 匹配逻辑——旧实现拿键段去匹配**文件路径**，
+    永远不命中，白名单名存实亡；现 `corpus_entries` 带键路径（`disc/data/x.json#/a/b`），并登记
+    元数据/口径声明类零消费键（`_meta`、`shensha_policy`、`verified_note`、指针声明等，逐条写明理由）与
+    未接线书源内容（六神 virtue/caution 列）。`[1d]` 维持报告制非 strict（124 课表等主题性键合法未触发）。
+- **TECH-DEBT 2.3 六爻「伏藏+合绊」方向聚合（reg_07）——伏藏半边落地**：
+  - 核实：**合绊**已有有界方向权重（原神贪合忘生 −2.0、日月合绊 −0.2 梯度、动化合绊 −0.3，10-02g 已
+    结构化）；**伏而不得出**是真空缺——旧 `compute_fu_shen_adjustment` 只覆盖得出/泄气/克伏各象且靠
+    嗅探 step3 文本，不得出时方向分零反馈。
+  - 补法（通用规则，非 case 分支）：新增 **−1.0**，判据读 step2 `fu_cang_detail.results[].can_emerge`
+    结构，旧文本路径保留为兜底、优先级不变；注记/理由外置
+    `verdict_texts.json#step5_classical_notes.fu_no_emerge`（所本《黄金策·千金赋》"伏无提挈终徒尔，
+    飞不推开亦枉然"，引文已在 references/classical_synthesis.md）。因子呈现区分「伏神得出/伏神不得出」。
+  - **诚实边界**：reg_07 本例伏神临月建、飞神旬空（can_emerge=True），不触发新规则——其引擎「吉」与
+    夹具「凶」的残余分歧是「飞空得出 +1.5」与占行人古籍直断之间的解释差异，引擎证据链可见，登记为
+    已知方向失配，不为过此例加码。评测集暂无「不得出」书源真例（119 例探针核实），基准例待书源；
+    行为由 `tests/test_liuyao_fu_no_emerge.py` 4 例锁定。
+- **书源可得性复核（10-02 实测）**：《卜筮正宗》维基文库仍为纯目录骨架（卷一~十四全为红链，仅"卷前"
+  可能存文）；《协紀辨方書》404——TECH-DEBT 2.1 "阻塞于外部数据"登记属实。新发现：《滴天髓阐微》
+  （任铁樵注本，含命例）维基文库存在独立条目（由 滴天髓 辑要页链接可达）→ 命科外部独立集（HANDOFF §四.D）
+  的解除路径由"用户供书"更新为"书源可网络获取，待照 ZC 批次机制提取命例"。
+
 ### 2026-10-02r 卜科加法 · 梅花易数外部独立集 `external_holdout`（卷三·變卦式八則，永不调参）[A 线]
 
 > **口径登记（`AGENTS.md` §四.4）**：只建外部评测语料与其报分口径，引擎（`chart.py`/`analyze.py`）零改动；

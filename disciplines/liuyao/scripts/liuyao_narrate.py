@@ -1843,7 +1843,9 @@ def render_human_markdown(narrative: dict) -> str:
     if narrative.get("confidence_note"):
         lines += ["", narrative["confidence_note"]]
     if narrative.get("classical_quotes"):
-        lines += ["", "古人类似情境也说过："]
+        # 引导句外置 narrative_templates.json#narrate_shell.quote_lead（此前与 narrate.py
+        # 各内联一份字面量，语料审计判该键零消费——两处合一后单一出处）
+        lines += ["", _NARRATIVE_TPL.get("narrate_shell", {}).get("quote_lead", "古人类似情境也说过：")]
         for q in narrative["classical_quotes"]:
             lines.append(f"- （{q['source']}）{q['quote']}")
     process = narrative.get("process") or []

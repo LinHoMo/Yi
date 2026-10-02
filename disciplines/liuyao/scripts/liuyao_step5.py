@@ -160,7 +160,7 @@ def step5_synthesize(r: dict) -> dict:
         pattern_verdict_note = ""
 
     # ---------- 伏神格局调整 ----------
-    fu_shen_adjustment, fu_shen_note = compute_fu_shen_adjustment(step3_data, r)
+    fu_shen_adjustment, fu_shen_note = compute_fu_shen_adjustment(step2_data, step3_data, r)
 
     # ---------- 5.5h: 古籍通用格局加减（holdout 暴露的系统性缺口） ----------
     cl = compute_classical_adjustment(
@@ -721,8 +721,16 @@ def detect_three_passages_clash(r: dict, step2_data: dict, step3_data: dict, div
 
 
 # ---------------------------------------------------------------- 伏神格局
-def compute_fu_shen_adjustment(step3_data: dict, r: dict) -> tuple:
-    """伏神格局调整（飞空得出 / 飞来生伏 / 绝于飞 / 飞克伏 / 伏泄气）。"""
+def compute_fu_shen_adjustment(step2_data: dict, step3_data: dict, r: dict) -> tuple:
+    """伏神格局调整（飞空得出 / 飞来生伏 / 绝于飞 / 飞克伏 / 伏泄气 / 伏而不得出）。
+
+    2026-10-02（TECH-DEBT 2.3「伏藏+合绊未进方向聚合」）：
+      ① 新增**伏而不得出**方向权重 -1.0——旧实现只覆盖「得出/泄气/克伏」各象，
+        伏神无提挈（日月生扶、飞神空破、伏克飞皆无）时方向分零反馈，只有应期
+        效果；判据读 step2 `fu_cang_detail.results[].can_emerge` 结构，不嗅探文本。
+        所本：《黄金策·千金赋》"伏无提挈终徒尔，飞不推开亦枉然"。
+      ② step2_data 为新增入参（结构判据取用）；旧文本路径保留为兜底，先后语义不变。
+    """
     step3_reasoning_text = step3_data.get("summary_text", "") if step3_data else ""
     fu_shen_adjustment = 0.0
     fu_shen_note = ""
@@ -759,6 +767,14 @@ def compute_fu_shen_adjustment(step3_data: dict, r: dict) -> tuple:
         # 伏泄气: 伏神被动泄力，轻微负面
         fu_shen_adjustment = -0.5
         fu_shen_note = note_text("fu_drain_by_fei")
+    else:
+        # 伏而不得出（结构化判据，旧文本路径覆盖不到的盲区）：用神伏藏且所有
+        # 伏/飞对均 can_emerge=False——无提挈则终不得出头，方向减分。
+        _fu_results = ((step2_data or {}).get("fu_cang_detail") or {}).get("results") or []
+        _fu_entries = [e for e in _fu_results if isinstance(e, dict)]
+        if _fu_entries and all(not e.get("can_emerge", True) for e in _fu_entries):
+            fu_shen_adjustment = -1.0
+            fu_shen_note = note_text("fu_no_emerge")
 
     return fu_shen_adjustment, fu_shen_note
 
@@ -1270,13 +1286,17 @@ def build_factor_contributions(adj: dict, r: dict) -> list:
             "score": round(officer_tomb_adjustment, 2),
             "reason": _user_reason(officer_tomb_reason, FREASON["officer_tomb"]["text"])
         })
-    # 10. 伏神得出
+    # 10. 伏神得出 / 伏神不得出（TECH-DEBT 2.3：伏而不得出 −1.0 已入方向聚合）
     if fu_shen_adjustment != 0:
         factor_contributions.append({
-            "name": "伏神得出",
+            "name": "伏神不得出" if fu_shen_adjustment < 0 else "伏神得出",
             "factor": "fu_shen",
             "score": round(fu_shen_adjustment, 2),
-            "reason": _user_reason(fu_shen_note, FREASON["fu_shen_out"]["text"])
+            "reason": _user_reason(
+                fu_shen_note,
+                FREASON["fu_no_emerge"]["text"] if fu_shen_adjustment < 0
+                else FREASON["fu_shen_out"]["text"],
+            )
         })
     # 11. 格局调整
     if pattern_adjustment != 0:

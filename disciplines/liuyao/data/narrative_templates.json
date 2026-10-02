@@ -184,8 +184,7 @@
   "narrate_shell": {
     "title": "六爻纳甲解读（narrate 段）",
     "disclaimer": "这份解读按六爻纳甲的规则推出来，讲的是方向与节奏，不是注定会怎样的预言。凶象只用「偏向／有…信号／结构上」讲，不用「注定／一定」。看病、打官司、做重大决定，仍以专业意见为准。",
-    "quote_lead": "古人类似情境也说过：",
-    "thinking_missing": "thinking_chain 缺失，不应在交付路径外就地重建——铁律一（AGENTS.md §一）要求机械运算统一由主线引擎完成。"
+    "quote_lead": "古人类似情境也说过："
   },
   "engine_format_labels": {
     "use_god_caiyun": "财运类：取妻财爻为用神",

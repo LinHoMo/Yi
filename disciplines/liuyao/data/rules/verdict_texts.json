@@ -98,6 +98,10 @@
   "illness_officer_tomb_mild": {
    "text": "（疾病占：官鬼病气入墓为收藏之象，凶力大减）",
    "basis": "疾病占修正"
+  },
+  "fu_no_emerge": {
+   "text": "【伏神不得出】用神伏藏而不得出——无提挈：日辰月建不生扶、飞神不空不破、伏不克飞，用神之力终不得用于事，-1.0",
+   "basis": "《黄金策·千金赋》伏无提挈终徒尔，飞不推开亦枉然"
   }
  },
  "step5_verdict_descs": {
@@ -440,6 +444,10 @@
   "base_very_weak": {
    "text": "用神极弱，几近失力",
    "basis": ""
+  },
+  "fu_no_emerge": {
+   "text": "用神伏藏而不得出，力量难用于事",
+   "basis": "《黄金策·千金赋》"
   }
  },
  "step5_confidence": {
@@ -1737,15 +1745,6 @@
     "《协纪辨方书》通行口径；仓库内无带应验的通书日例，故不作真黑箱宣称"
    ]
   }
- },
- "zeji_validity_gap": {
-  "status": "规则应用黑箱（rule-application black box）",
-  "missing": "带现实应验的通书日例（古例 day + outcome）",
-  "do_not": [
-   "伪造应验例",
-   "把规则应用分说成择吉命中率"
-  ],
-  "next": "若日后有可核验通书日例，再建 holdout 集；在此之前只报规则一致性"
  },
  "pattern_verdict_labels": {
   "真空/假空": {

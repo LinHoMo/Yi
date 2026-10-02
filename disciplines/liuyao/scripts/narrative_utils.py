@@ -79,7 +79,6 @@ PATTERN_NOTES_EXTRA = _VERDICT_TEXTS.get("pattern_notes_extra", {})
 # step3 旺衰口语结论（level → 断语）；结构见 data/rules/verdict_texts.json#strength_summary_say
 STRENGTH_SUMMARY_SAY = _VERDICT_TEXTS.get("strength_summary_say", {})
 SHENSHA_POLICY = _VERDICT_TEXTS.get("shensha_policy", {})
-ZEJI_VALIDITY_GAP = _VERDICT_TEXTS.get("zeji_validity_gap", {})
 # 格局标签句（真空/假空…）：键 = 格局组名 → 标签名 → {label, strength_text, reason, verdict, basis}
 PATTERN_VERDICT_LABELS = _VERDICT_TEXTS.get("pattern_verdict_labels", {})
 VOID_KIND_LABELS = {
