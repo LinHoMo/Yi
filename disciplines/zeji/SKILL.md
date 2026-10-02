@@ -43,8 +43,9 @@ description: 择吉择日（通书黄历）。基于《协纪辨方书》建除�
 ## 核心能力
 
 1. **择日盘装配**：公历日期 → 干支四柱 + 建除十二神 + 日值黄黑道神 + 二十八宿值日（可带时辰取时辰值神）
-2. **十类活动宜忌**：嫁娶/开市/出行/入宅/安葬/动土/祭祀/入学/上任/纳财，按建除宜忌表与值神宜忌表匹配
+2. **十一类活动宜忌**：嫁娶/开市/出行/入宅/安葬/动土/祭祀/入学/上任/纳财 + 通用，按建除宜忌表与值神宜忌表匹配
 3. **综合裁决**：黄黑道 ±1（日辰第一权）+ 建除宜忌 ±1 + 星宿吉凶 ±0.5；≥1 吉、≤-1 凶、其间平（裁决口径见 `data/verdicts.json`，README 明示为规则应用非古籍定论）
+4. **外置参考书证**：《玉匣記》逐字引文 11 类事×篇目（`data/citations.json`），报告末段附出；含《協紀辨方書》缺书登记
 
 ---
 
@@ -76,7 +77,7 @@ python <skill-path>/scripts/chart.py --date 2026-09-30 --activity 开市 --hour-
 python <skill-path>/scripts/analyze.py <chart_json_file>
 ```
 
-输出含 `factors_detail`（建除/黄黑道/星宿三因子宜忌落点）、`yi`/`ji`（该活动有利/保留信号）、`conclusion`（方向/说明/得分/所本）、`factors`（因子/权重/判据/所本）。所有宜忌文字来自 `data/verdicts.json`，带《协纪辨方书》出处。
+输出含 `factors_detail`（建除/黄黑道/星宿三因子宜忌落点）、`yi`/`ji`（该活动有利/保留信号）、`conclusion`（方向/说明/得分/所本）、`factors`（因子/权重/判据/所本）、`citations`（`通则`+`本例`逐字书证与`缺口`，只透出、不参与评分）。宜忌文字来自 `data/verdicts.json`；书证文字来自 `data/citations.json`（两者物理分栏，见 `references/api_spec.md`）。
 
 ### 第四步：解读交付
 
@@ -96,7 +97,26 @@ LLM 拿到 analyze 输出后，把宜忌要点、综合裁决翻译成当事人�
 - 农历范围：1900-01-31 起 150 年；范围外日期起局异常（`data/cases/` 中以 excluded 记录边界）
 - 机械因子（建除/黄黑道/值宿）为历法真值，锚点 2026-09-23/24/25 与 10-01/10-08/10-13/10-15 对照通书黄历核对一致
 - 宜忌表取《协纪辨方书》通行口径；个别通书（如某些网上黄历）宜忌略有出入，如实说明
+- **缺书如实登记**：择吉口径正源《協紀辨方書》在维基文库**无公版可抓**（`tools/fetch_source.py --check` 对「協紀辨方書/欽定協紀辨方書/星曆考原/御定星曆考原/選擇宗鏡」实测全部 missingtitle）。故 `data/verdicts.json` 的 `basis_*` 引据是**通行口径转述**，库内无可核书证、不作逐字书证；缺口登记见 `data/citations.json#gap`
+- **参考书证**：报告第三节附《玉匣記》（同源通书）**逐字引文**（`data/citations.json`，带篇名与源文件行号，构建器 `dev_tools/build_citations.py`）。引文只作对照，**不参与评分、不改判据**——判据唯一真值源仍是 `data/verdicts.json`
 - 综合裁决（黄黑道±1 + 建除±1 + 星宿±0.5）为学科自有口径，非古籍定论
 - 本学科分数为**古籍案例对齐分**（`dev_tools/check.py`），不是现实预测命中率（`AGENTS.md` 铁律三）
 - **尊重科学**：涉及医疗、法律、投资、重大人生决策时，**必须提示以专业意见为准**——择吉是传统通书的方向参考，不是医疗诊断、法律意见或投资建议
 - **象判边界**：凶象用"偏向 / 有…信号 / 结构上"，不用"注定 / 一定 / 绝无可能"。不把某个不利的建除或值神当"这天绝对不能用"的终判
+
+---
+
+## 质量门与书证构建
+
+```bash
+python dev_tools/check.py                # 全部门：[1c] 书证 / [1] 金标准 / [2] 冒烟 / [3] tune+holdout
+python dev_tools/check.py --only citations   # 只跑书证门（逗号与空格等价；名字对不上即报错退出 2，不会静默全绿）
+python dev_tools/build_citations.py      # 书证构建器 dry-run（打印统计与问题，不落盘）
+python dev_tools/build_citations.py --write  # 落盘 data/citations.json
+```
+
+**[1c] 参考书证门**（`dev_tools/check.py::check_citations`）四条不变式：
+1. 每条引文逐字可回指书源（`data/sources/yuxiaji.wikitext.txt` 连续子串），并且有篇名+行号出处；
+2. **事类全覆盖**：`data/verdicts.json::activity_names` 的每类事活动都必须有书证（缺一即失败），且不得出现表外事类；
+3. **缺口如实登记**：`gap` 的 book/status/checked/result/handling/basis_note 齐备，`result` 必须写明实测结论（missingtitle）；
+4. **不混判据**：书证文件出现 `jian_chu`/`huang_hei_dao`/`xiu`/`verdict_rule` 等判据专属键即失败（防书证长成第二份判据表）。

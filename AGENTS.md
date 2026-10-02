@@ -62,7 +62,9 @@ Yi/
 │   ├── ziwei/            # 紫微斗数
 │   ├── meihua/           # 梅花易数
 │   ├── xiaoliuren/       # 小六壬
-│   └── zeji/             # 择吉
+│   ├── zeji/             # 择吉
+│   ├── liuren/           # 大六壬（骨架：机械结构标签，无吉凶断语）
+│   └── lingqi/           # 灵棋经（124 课表直录书源断语）
 ├── cli/                  # 统一命令行入口：yi <discipline> <command>
 ├── synthesis/            # 合参层，依赖 disciplines 的输出契约，不依赖其内部实现
 ├── tools/                # 仓库级命令：check / eval / demo / install / report / ci_*
@@ -125,7 +127,7 @@ Yi/
 - Pyodide 没有 `subprocess`，故浏览器侧执行器是 `web/engine_runtime.py`（同进程
   `runpy`）；**请求→命令行参数的映射只有一份**，在内核 `yishu_core.report.request`，
   三个执行器（本机/CI 子进程、浏览器同进程、将来任何宿主）共用，禁止各写一份。
-- 浏览器是单一解释器，而六科的 `scripts/` **目录同名**（每科都有 `chart.py`）。
+- 浏览器是单一解释器，而八科的 `scripts/` **目录同名**（每科都有 `chart.py`）。
   跑某科前必须把别科模块清出 `sys.modules` 并把本科 `scripts/` 提到 `sys.path` 最前
   （`engine_runtime._isolate`）——否则同名遮蔽会让某一科拿到别科的盘面。
 - 本地预览：`python tools/serve_web.py`（以仓库为站点根，改完刷新即生效）。

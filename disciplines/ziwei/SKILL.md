@@ -12,35 +12,69 @@
 
 | 命令 | 作用 |
 |---|---|
-| `scripts/chart.py` | 出生公历时刻 → 紫微斗数排盘 JSON（12宫星曜、四化、紫微天府定位） |
-| `scripts/analyze.py` | 格局 / 四化入宫 / 大限（阳男阴女顺行） |
-| `scripts/narrate.py` | 因子正文（明确非命运断言） |
+| `scripts/chart.py` | 出生公历时刻 → 紫微斗数排盘 JSON（农历、12宫星曜、24辅星、四化、紫微天府定位） |
+| `scripts/analyze.py` | 格局 / 四化入宫方向 / 大限 / 古法格局判据 |
+| `scripts/narrate.py` | 因子正文（逐条引书源原文，明确非命运断言） |
 | `scripts/render.py` | 因子报告 |
-| `dev_tools/check.py` | 契约完整性 + 冒烟 + 金标准 |
+| `dev_tools/build_corpus.py` | 从 `data/sources/` 书源机械提取外置语料（字符级，不改写） |
+| `dev_tools/regression.py` | 古法回归：安星取值层对着书源原文逐条核对 |
+| `dev_tools/check.py` | 契约 + 冒烟 + 古法回归 + 语料接线 + 金标准指纹 |
 
 ## 数据契约
 
 ```json
 {
-  "chart": "{discipline:'ziwei', birth:{datetime, gender}, pillars:{year,month,day,hour},
-             wuxing_ju, ju_name, ming_gong, ziwei, tianfu,
+  "chart": "{discipline:'ziwei', birth:{datetime, gender}, lunar:{year,month,day,leap,month_used},
+             pillars:{year,month,day,hour}, calendar_policy:{...},
+             wuxing_ju, ju_name, ming_gong:{branch, palace_idx, ganzhi}, shen_gong:{branch, palace_idx},
+             ziwei, tianfu,
              palaces:{命宫:{branch, main_stars, aux_stars, sihua}, ...},
              sihua:{禄,权,科,忌}, sihua_list}",
-  "analyze": "{chart_summary:{命宫主星, 格局, 四化影响, 大限位序},
-               conclusion:{命宫主星, 格局, 四化影响, 方向, 说明, dayun}}"
+  "analyze": "{chart_summary:{命宫主星, 格局, 格局依据, 五行局, 命宫地支, 紫微所在, 天府所在,
+               四化, 四化影响, 古法格局, 大限起宫, 大限位序},
+               conclusion:{命宫主星, 格局, 格局依据, 四化影响, 古法格局, 方向, 说明, 所本, dayun}}"
 }
 ```
 
-## 排盘内核
+## 排盘内核（逐条注明所本）
 
-- 紫微定位：`紫微pos = (局数 + (生日-1)×局数) % 12`
-- 天府对宫：`天府pos = (紫微pos + 6) % 12`
-- 紫微星系6星逆布、天府星系7星顺布
-- 四化由年干定（《紫微斗数全书》通行版口诀）
-- 大限：起运年龄 = 五行局数，阳男阴女顺行
+- **安星依据**：农历月日（`core.lunar.solar_to_lunar`；正月=寅，闰月顺延一月）；年份界沿用 core 立春界。
+- **命宫** = `(月支 − 时支) % 12`、**身宫** = `(月支 + 时支) % 12`（卷二「安身命例」原文，含三条例题）。
+- **五行局** = 命宫干支纳音（五虎遁配干 → `core.symbols.nayin_of`），如甲寅命宫 → 大溪水 → 水二局。
+- **紫微定位**：查 `core.ziwei_tables.ZIWEI_POS_TABLE`（五局 × 农历日，逐格解自卷二五张「安紫微图」）。
+  旧闭式公式 `(局数+(生日−1)×局数)%12` 与书源 150 格**皆不符**，已废；书源两处自身残缺格
+  （木三局初五、金四局三十）按全表结构自洽推得，已登记在 `data/ziwei_position_table.json`。
+- **天府** = `(4 − 紫微) % 12`（卷二「安天府图」图注：「紫居丑则府居卯矣」「惟寅申二宫紫府同宫」）。
+- **星系布排**：紫微系 6 星逆布（偏移 0/1/3/4/5/8）、天府系 8 星顺布（偏移 0…6 与破军 10）。
+- **辅星 24 颗**：昌曲/辅弼/魁钺/禄存/擎羊陀罗/火铃/天马/空劫/刑姚/哭虚/龙池凤阁/三台八座/台辅封诰，
+  逐条依卷二各「安××诀」原文（`data/anshi_quotes.json` 存逐字原文）。
+- **四化**由年干定（`SIHUA_TABLE`）；壬化科取「天府」，依所本书源「壬梁紫府武宿是」。
+- **大限**：起运年龄 = 五行局数；**阳男阴女顺行、第一限在父母宫；阴男阳女逆行、第一限在兄弟宫**
+  （卷二「安大限诀」原文）。
+
+## 语料（引文层）
+
+| 文件 | 内容 | 所本 |
+|---|---|---|
+| `data/star_nature.json` | 十四主星性情说解 | 卷一·諸星問答論 |
+| `data/star_palace.json` | 十二宫诸星释义 | 卷二各宫段 |
+| `data/star_brightness.json` | 星×宫支庙陷 + 同度表 | 卷二「一 命宫」本宫诗 |
+| `data/sihua_quotes.json` | 四化释义 | 卷一·問化祿/權/科/忌星所主若何 |
+| `data/geju_rules.json` | 定富/贵/贫贱/杂局判据 | 卷一 |
+| `data/anshi_quotes.json` | 卷二各安星诀原文 | 卷二 |
+| `data/ziwei_position_table.json` | 五局安紫微图原始格面 + 解码表 + 例题 | 卷二 |
+| `data/verdicts.json` | 格局释义与方向说明（唯一措辞源） | 引擎口径（非书源） |
+
+**条数一律不写死**——各语料文件与「同度明文」的格数，分别由
+`python dev_tools/build_corpus.py`（构建时打印）与 `python dev_tools/regression.py`
+（B1 那行，唯一权威读数）实时给出；本文件只写口径与所本，不抄常量。
+
+取值层（引擎实际判定用的那份表）唯一在 `core/yishu_core/ziwei_tables.py`；
+`data/*.json` 是引文层，二者由 `dev_tools/regression.py` 与门 `[4] 语料接线` 保证同源。
 
 ## 禁止
 
 - LLM 心算星曜位置、格局名目（铁律一）
 - 在 narrate 里编"命定""必如何""绝无可能"类断言
 - 把机械推演说成现实预测命中率或"命已算准"
+- 用「预测准确率」口径复述 `dev_tools/regression.py` 的对齐结果（那是**古籍原文对齐**，不是命中率）

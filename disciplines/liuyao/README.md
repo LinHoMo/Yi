@@ -64,7 +64,6 @@ tune 主应期命中 35.3%（平均名次 2.0）、holdout 25.0%（2.2）、外�
 | `scripts/render.py` | 报告渲染单一出口（M3）：analyze JSON → Markdown / 单文件 HTML |
 | `scripts/visualization.py` | SVG 组件库：卦盘（爻线/六亲/六神/世应/空破/动变）、应期时间线、五行雷达 |
 | `scripts/build_portal_assets.py` | 门户与样例报告构建，分数从评测结果取，不写常量 |
-| `scripts/mcp_server.py` | JSON-RPC stdio 服务：divinate / quick_reading / validate_hexagram … |
 | `references/` | 纳甲规则、断卦方法论、十二格局、四大经典综合、案例库（黑箱用） |
 | `data/cases/` | 古籍案例 42 例 + tune/holdout/excluded 分层 |
 | `docs/` | CHANGELOG（分数口径史）、规划交接 |

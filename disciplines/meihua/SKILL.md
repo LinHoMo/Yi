@@ -62,13 +62,30 @@ python scripts/render.py scratch/analyze.json -o outputs/report.md      # 报告
 # 案例与评测
 python scripts/case_runner.py --split all --save   # 跑全部案例出引擎输出
 python scripts/evaluate.py --split tune            # tune 对齐分（n=10，参与调参）
-python scripts/evaluate.py --split holdout         # holdout 对齐分（n=3，未参与调参）
+python scripts/evaluate.py --split holdout         # holdout 对齐分（n=13，未参与调参）
+
+# 古诀原文（逐字，带篇名与源文件行号）
+python dev_tools/build_classics.py                 # dry-run：看能摘出多少条、断言是否全过
+python dev_tools/build_classics.py --write         # 落盘 data/classics.json（供 narrate 末段附出）
 
 # 质量门（一条命令全绿）
-python dev_tools/check.py                           # 版本/指纹/冒烟/对齐分
+python dev_tools/check.py                           # 版本/指纹/古籍原文门/冒烟/对齐分
+python dev_tools/check.py --only classics           # 只跑 [1c] 古籍原文门（逗号与空格等价；名字对不上即报错退出 2）
 python dev_tools/check.py --raise                   # 确认改进后抬基线
 python dev_tools/golden.py                          # 金标准指纹验证
 ```
+
+## 古籍原文（所本凭证，不是判据）
+
+- 实体在 `data/classics.json`（schema `meihua-classics-v1`）：卷一/卷二/卷三**逐字**引文，
+  繁体照录，每条带篇名与源文件行号；构建器 `dev_tools/build_classics.py`；
+  索引 `references/classics.md`（**只索引，不复抄**）。
+- **原文不参与评分、不改判据**——判据唯一真值源仍是 `data/verdicts.json`。
+  analyze 按本次命中的因子挑出相关原文（`classics` 字段，schema `meihua-analyze-v2`），
+  narrate 在报告末段「所本原文（《梅花易数》逐字，繁体照录）」逐条列出。
+- **故意不收**卷二《卦斷遺論》：其原文本身以「西林寺額 / 今日動靜如何 / 牛哀鳴占」等
+  占验例说理，逐字引入会把案例名带进语料，违反铁律二（案例库与预测过程物理隔离）。
+  18 个占验/占例篇名一律不入库，由 `[1c]` 门机械断言。
 
 ## 断卦口径（narrate 段的固定骨架）
 
@@ -79,6 +96,7 @@ python dev_tools/golden.py                          # 金标准指纹验证
 5. 卦象特断：《卦断遗论》"不拘体用"的特殊卦例优先（`verdicts.json#hexagram_special`）
 6. 卦气旺衰与应期：旺则应速衰则应迟；数应按动静（行取半、立取全、坐卧加倍）
 7. 口径收尾：凶象用"偏向/有…信号"，不注定；医疗法律投资以专业意见为准
+8. 所本原文：末段逐字列出本次实际执行的古诀原文与篇名行号（繁体照录，供对照核对）
 
 ## 一卦一事与口径诚实
 

@@ -19,8 +19,7 @@ import argparse
 import json
 import os
 import sys
-from dataclasses import dataclass, field
-from typing import Optional
+from typing import NamedTuple, Optional
 
 # ---------------------------------------------------------------------------
 # 推演模块（engine / thinking_chain）在 ../scripts。
@@ -36,25 +35,19 @@ from thinking_chain import run_thinking_chain  # noqa: E402
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402  (liuyao_engine 已把 core/ 加入 sys.path)
 
 
-# ===========================================================================
-# Historical cases extracted from case_library.md
-# ===========================================================================
-
-@dataclass
-class RegressionCase:
-    """Single regression test case from classical sources."""
+class RegressionCase(NamedTuple):
     id: str
     name: str
     source: str
-    date: tuple          # (year, month, day, hour)
-    yao: list            # 6 values (6,7,8,9); index 0 = 初爻 (bottom)
+    date: tuple
+    yao: list
     question: str
-    classical_verdict: str       # "吉" | "平" | "凶"
-    expected_direction: str      # "auspicious" | "mixed-fav" | "mixed-unfav" | "inauspicious"
-    expected_use_god: str        # "父母" | "妻财" | "官鬼" | "子孙" | "兄弟" | "世爻"
-    key_reasoning: list = field(default_factory=list)
-    acceptable_bands: list = field(default_factory=list)
-    expected_net_effect_sign: Optional[str] = None  # 'positive'|'negative'|'neutral'|None
+    classical_verdict: str
+    expected_direction: str
+    expected_use_god: str
+    key_reasoning: list = []
+    acceptable_bands: list = []
+    expected_net_effect_sign: Optional[str] = None
     expected_strength_pattern: Optional[str] = None  # 'strong'|'medium'|'weak'|None
     classical_notes: str = ""
 
@@ -368,13 +361,18 @@ REGRESSION_CASES = [
     # Case 15 — 占合伙经营·六冲卦·世应相冲 (仿古《卜筮正宗》)
     # 古典: 六冲卦占合伙, 世应相冲, 合伙不终(凶)
     # 引擎: 震为雷六冲, 方向散
-    # ------------------------------------------------------------------
+    #
+    # 2026-10-01u 订正：原 yao=[7,7,8,7,7,7] 实起「天泽履」（对应位三对皆非合非冲，
+    # 世五申/应二卯亦不相冲），与本例自述前提「六冲卦·世应相冲」不符——旧值能过是
+    # 因为引擎当时用一份手写卦名白名单把「履」误标为六合、走了另一条分支。白名单已删
+    # （改由 core `hexagram_he_chong_kind` 判），故按本例前提把爻改为名副其实的
+    # 震为雷（八纯六冲、世六戌/应三辰相冲）。
     RegressionCase(
         id="reg_15",
         name="占合伙·六冲卦·世应相冲",
         source="《卜筮正宗·六冲论》",
         date=(2024, 3, 15, 10),
-        yao=[7, 7, 8, 7, 7, 7],
+        yao=[7, 8, 8, 7, 8, 8],
         question="合伙经营吉凶如何",
         classical_verdict="凶",
         expected_direction="inauspicious",
@@ -382,7 +380,10 @@ REGRESSION_CASES = [
         key_reasoning=["六冲卦事散不宜成事", "世应相冲为合伙大忌"],
         acceptable_bands=["inauspicious", "mixed-unfav"],
         expected_net_effect_sign="neutral",
-        expected_strength_pattern="medium",
+        # 用神旺衰记 N/A：本例书据（《卜筮正宗·六冲论》）只说「六冲卦占合伙不终」，
+        # 未言用神旺衰；原值 medium 是与旧错误卦名（履）配套的读数。缺书明写的量记
+        # None 走 N/A 剔除（HANDOFF 四·三的既定做法），不据引擎实测回头改期望值。
+        expected_strength_pattern=None,
     ),
 
     # ------------------------------------------------------------------

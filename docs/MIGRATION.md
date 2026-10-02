@@ -79,8 +79,8 @@
 | `from chain_step5_yp_timing import predict_timing_core` | 同左（推荐直引子模块） |
 | `from chain_narrate_patterns import _inject_pattern_tags` | 通过 `chain_narrate` 门面再导出 |
 | `from human_narrative_segments import _strength_sentence` | 通过 `human_narrative` 门面 |
-| `from classical_rules_patterns import ...` | `from classical_rules` 门面 |
-| `from classical_rules_effects import ...` | `from classical_rules` 门面 |
+| `from classical_rules_patterns import ...` | `from classical_analysis` 门面 |
+| `from classical_rules_effects import ...` | `from classical_analysis` 门面 |
 | `from effects_harmony import ...` | `from effects`（门面合并） |
 | `from effects_structure import ...` | `from effects`（门面合并） |
 | `from effects_change import ...` | `from effects`（门面合并） |
@@ -129,9 +129,8 @@
 | `scripts/yi_liuyao.py` | 保留 | 一键闭环快捷命令。内部调用四段契约，可等效替换 |
 | `scripts/liuyao_engine.py` | 保留（薄门面） | 再导出子模块聚合入口，不引入新逻辑 |
 | `scripts/classical_analysis.py` | 保留（薄门面） | 再导出 classical_* 子模块 |
-| `scripts/classical_rules.py` | 保留（薄门面） | 再导出匹配/合破/长生子模块 |
+| `scripts/classical_rules.py` | 已并入 | 门面为 `scripts/classical_analysis.py` |
 | `scripts/thinking_chain.py` | 保留 | Step 1-5 推理标记。多处再导出依赖，暂不迁移 |
-| `scripts/mcp_server.py` | 保留 | 六爻专用 MCP server（与 `tools/mcp_router.py` 命科路由并存） |
 
 以上门面类模块均为薄聚合：它们本身不承载推演逻辑，只是 `from xxx import yyy` 的再导出入口。
 外部代码引用这些门面不受内部拆分影响，但若直引门面内部的私有辅助函数，可能在某次重构中断链。
@@ -145,7 +144,7 @@
 
 1. `mkdir -p disciplines/xxx/{scripts,data,references,tools}`
 2. 编写 `disciplines/xxx/SKILL.md`——只写该科内容，引用 `AGENTS.md` 不复制
-3. 继承 `disciplines/base/cli.py` 的 `DisciplineCLI`，实现 `run_chart` / `run_analyze` / `run_narrate` / `run_render` / `run_cast`
+3. 编写四段 CLI（`chart.py` / `analyze.py` / `narrate.py` / `render.py`），参考 `disciplines/meihua/scripts/chart.py` 的 argparse 范式
 4. 实现四段逻辑，每个判据给出古籍出处
 5. 准备案例集：至少 10 例 `tune` + 5 例**未参与调参**的 `holdout`
 6. 复用 `yishu_core.eval`，禁止另写评分器

@@ -49,8 +49,9 @@ horosa-skill 的六条 AI 纪律设计与本仓库铁律一/三高度同构，�
 6. **统一信封 + 分节导出快照**：AI 读结构化小节而非自由文本；`response_view=titles`
    省上下文、完整快照留档。
    → 本仓四段契约产出本就是结构化 JSON；报告 HTML/MD 是渲染层。可借鉴其
-   「AI 只取小节标题 + 按需展开」控制上下文——对 MCP `tools/mcp_router.py` 的
-   返回体量有参考价值。
+   「AI 只取小节标题 + 按需展开」控制上下文——对 MCP 路由层的返回体量有参考价值。
+   （注：本仓原 `tools/mcp_router.py` 已随 MCP 通道一并移除，现由四段契约直出
+   结构化 JSON、DLP 深链 `?d=&q=&dt=&auto=1` 供网页 AI 取数，不经过 MCP 路由层。）
 
 ## 三、divination-notes-prompt 可采纳的方法论（提示词/口径层）
 

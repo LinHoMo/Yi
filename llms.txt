@@ -1,8 +1,34 @@
 # Yi
 
-> 中国传统术数统合引擎：命（四柱八字 / 紫微斗数）+ 卜（六爻纳甲 / 梅花易数 / 小六壬 / 择吉 / 大六壬骨架 / 灵棋经），六科建在同一份内核与四段契约（chart→analyze→narrate→render）上，支持跨科合参。
+> 中国传统术数统合引擎：命（四柱八字 / 紫微斗数）+ 卜（六爻纳甲 / 梅花易数 / 小六壬 / 择吉 / 大六壬骨架 / 灵棋经），八科建在同一份内核与四段契约（chart→analyze→narrate→render）上，支持跨科合参。
 >
 > 给 AI 的取用原则：**不要通读本仓库**。先读下面的"核心入口"，按 `docs/AI-SOP.md` 通道 A（GitHub Pages + Pyodide，零凭证）或通道 B（云端 Actions）触发引擎出报告；推演一律由 Python 引擎完成，禁止 LLM 心算排盘。
+
+## 能力矩阵（权威表：科 × 出报告通道）
+
+| 学科 | 本地 CLI | 通道 A 网页（Pyodide） | 通道 B 云端 Actions |
+|---|---|---|---|
+| 六爻纳甲 liuyao | ✓ | ✓ | ✓ |
+| 四柱八字 ming | ✓ | ✓ | ✓ |
+| 紫微斗数 ziwei | ✓ | ✓ | ✓ |
+| 梅花易数 meihua | ✓ | ✓ | ✓ |
+| 小六壬 xiaoliuren | ✓ | ✓ | ✓ |
+| 择吉 zeji | ✓ | ✓ | ✓ |
+| 大六壬骨架 liuren | ✓ | ✓ | ✓ |
+| 灵棋经 lingqi | ✓ | ✓ | ✓ |
+
+- 通道 A 站点挂载**全部八科**（`tools/build_web.py` 的 `DISCIPLINE_META`，构建期 fail-fast
+  校验它落在 `request.DISCIPLINES` 内；另与 `web/engine_runtime.py` 的 `WEB_DISCIPLINES`
+  同口径）。本地 CLI、通道 A、通道 B 的学科集合一致，无落差。
+- 八科的 `scripts/` 目录**同名**（每科都有 `chart.py`），浏览器内同进程连跑由
+  `web/engine_runtime._isolate` 清 `sys.modules` + 重排 `sys.path` 隔离，别动那段。
+- 口径：liuren 是**骨架科**，只出月将加时／九宗门三传／天将乘临的机械结构标签，**无吉凶断语**；
+  lingqi 断语为《靈棋經》原文**逐字直录**，无书外发挥。两者都不得被转述成断事结论。
+- 本表由四道门共同看住，任一处漂移即红：① `tools/check.py` 的矩阵锁（本表逐行 ↔ `DISCIPLINE_META`）；
+  ② `tools/build_web.py` 构建期 fail-fast（`DISCIPLINE_META` ⊆ `request.DISCIPLINES`）；
+  ③ `tools/verify_web_parity.py` 的覆盖不变式（同源验收正例覆盖集合 ≡ 站点挂载集合）；
+  ④ `tools/check_web_site.py` 的清单口径（`manifest.disciplines` ≡ `web/engine_runtime.py` 的
+  `WEB_DISCIPLINES`）。以本表为准，别处引用不复制。
 
 ## 核心入口
 
@@ -32,10 +58,6 @@
 - [disciplines/zeji/SKILL.md](disciplines/zeji/SKILL.md)
 - [disciplines/liuren/SKILL.md](disciplines/liuren/SKILL.md)
 - [disciplines/lingqi/SKILL.md](disciplines/lingqi/SKILL.md)
-
-## MCP（本地 AI 客户端直连）
-
-- [mcp-server/README.md（启动与配置说明）](mcp-server/README.md)：stdio JSON-RPC，零第三方依赖
 
 ## 状态与规划（AI 一般不需要读）
 

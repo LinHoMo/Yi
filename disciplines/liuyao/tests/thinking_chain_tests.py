@@ -44,8 +44,7 @@ Known Limitations Documented
 import argparse
 import os
 import sys
-from dataclasses import dataclass, field
-from typing import Optional
+from typing import Callable, NamedTuple, Optional
 
 # ---------------------------------------------------------------------------
 # 推演模块在 ../scripts。
@@ -64,31 +63,23 @@ from thinking_chain import (  # noqa: E402
 )
 
 
-# ===========================================================================
-# Test-case data structure
-# ===========================================================================
-
-@dataclass
-class TestCase:
-    """Single black-box test case."""
+class TestCase(NamedTuple):
     id: str
     name: str
     description: str
-    date: tuple          # (year, month, day, hour)
-    yao_values: list     # 6 values (6,7,8,9); index 0 = 初爻 (bottom)
+    date: tuple
+    yao_values: list
     question: str
-    expected_use_god: str               # e.g. "父母", "妻财", "官鬼", "子孙"
-    expected_strength_pattern: str       # 'strong' | 'medium' | 'weak'
-    expected_verdict_band: str          # 'auspicious' | 'mixed-fav' | 'mixed-unfav' | 'inauspicious'
-    key_reasoning_checks: list = field(default_factory=list)
+    expected_use_god: str
+    expected_strength_pattern: str
+    expected_verdict_band: str
+    key_reasoning_checks: list = []
     expected_net_effect_sign: Optional[str] = None  # 'positive' | 'negative' | 'neutral' | None
     expected_is_liuhe: bool = False
     expected_is_liuchong: bool = False
 
 
-# ===========================================================================
 # Yao-values construction helper
-# ===========================================================================
 # Trigram encoding (bottom-to-top, 1=yang 0=yin):
 #   乾=111  兑=011  离=101  震=001
 #   巽=110  坎=010  艮=100  坤=000
@@ -98,9 +89,7 @@ class TestCase:
 #         8=young-yin(static)  6=old-yin(moving)
 
 
-# ===========================================================================
 # Test cases (8 diverse classical scenarios)
-# ===========================================================================
 
 TEST_CASES = [
     # ------------------------------------------------------------------
@@ -176,9 +165,8 @@ TEST_CASES = [
             "吻合古典'近病逢冲即愈'之吉断。"
         ),
         # 地天泰 = 下乾(111) + 上坤(000)，自下而上；三爻甲辰动，之卦地泽临
-        # 原注释曾写"丁卯日""回头生"，与 2024-01-22 的日柱（乙酉）及
-        # 三爻辰化丑（化退比和，非回头生）均不合；且原 expected 净效应 neutral
-        # 是爻序镜像位次下算出来的值。P0 修正后按古籍理重推为 positive。
+        # 判据：三爻辰化丑为化退比和（非回头生）；兄弟土为子孙原神，原神
+        # 发动生用，动变净效应为正（positive）。
         date=(2024, 1, 22, 10),      # 丑月乙酉日
         yao_values=[7, 7, 9, 8, 8, 8],
         question="孩子医药什么时候好",  # "孩子"/"医药"→子孙 keyword
@@ -455,9 +443,7 @@ TEST_CASES = [
 ]
 
 
-# ===========================================================================
 # Test execution engine
-# ===========================================================================
 
 def run_test_case(tc: TestCase, verbose: bool = False) -> dict:
     """
@@ -605,9 +591,7 @@ def run_test_case(tc: TestCase, verbose: bool = False) -> dict:
     }
 
 
-# ===========================================================================
 # CLI presentation
-# ===========================================================================
 
 def print_table(results: list) -> None:
     """Print a compact summary table of all results."""

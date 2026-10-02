@@ -14,29 +14,39 @@ python scripts/render.py scratch/analyze.json -o scratch/report.md
 质量门（一条命令跑完所有检查）：
 
 ```bash
-python tools/check.py
+python dev_tools/check.py
 ```
 
-## 现在的真实水平（2026-09-23，strict 口径）
+## 现在的真实水平（2026-10-01）
 
-| 集合 | 对齐分 | n | 口径说明 |
-|---|---|---|---|
-| tune | 100% | 10 | 参与过校参（《贺氏六壬小手册》实例 8 + 推算方法书例 2） |
-| holdout | 100% | 5 | 未参与校参（正宗起课例 + 机断练习例） |
+> 读数以 `docs/EVAL-AUDIT.md` 为准（集合构成与自洽项占比在那里）；本 README 不另抄分数。
 
-说明：**本分数衡量引擎输出与古籍案例要点的一致性，不是现实预测命中率**（`AGENTS.md` 铁律三）。
-落宫判定是纯机械真值（月上起日、日上起时）；断语要点取自同一原文，故两集合均高发。
-综合判断案例（空亡测座位等）吉凶/事类记 N/A——宫义不可死套，engine 不越权改判。
+**报法**：`holdout`，n=5（书上原例 2 + 按规则表构造 3），**规则自洽回归：落宫 5/5、
+吉凶 5/5、事类 5/5、主数 5/5 命中**（n<20 不报百分比，不出具任何"准确率"表述）。
+
+- **100% 的成因**：四个维度（合计 100/100 权重）的 expected 全部来自引擎自己的规则表——
+  落宫是同一算法算两遍，吉凶/事类/主数是 `verdicts.json` 的查表回读；
+  等价于"查表管线没被改坏"，**不含任何外部信息**。
+- 综合判断案例（空亡测座位等）吉凶/事类记 N/A——宫义不可死套，engine 不越权改判。
 
 ## 已实现
 
 - **chart 段**（`scripts/chart.py`）：月日时起课、变通/随机取数起课、公历时刻起课（内核转农历）、农历+时支起课；可选 `direction` 方位参数；6 例贺氏实例金标准自检
-- **analyze 段**（`scripts/analyze.py`）：六宫六要素（五行/颜色/方位/属神/主数/位置）、吉凶方向、十类事类诀辞切句、应期主数、**邻宫速断**（进/退/临）、**方位/五行综合断**（生克关系）；断语全部来自 `data/verdicts.json`（带出处）
-- **narrate 段**（`scripts/narrate.py`）：师傅口吻正文，只装配判据不新造结论
+- **analyze 段**（`scripts/analyze.py`）：六宫六要素（五行/颜色/方位/属神/主数/位置）、吉凶方向、**十一门**事类断语（每门每宫标 `句类`：诀辞/引申/阙）、应期主数、**邻宫速断**（进/退/临）、**方位/五行综合断**（生克关系）；断语全部来自 `data/verdicts.json`（带出处）
+- **narrate 段**（`scripts/narrate.py`）：师傅口吻正文，只装配判据不新造结论；含「本门覆盖」行与「断语来源与覆盖」小节（公版书源缺口如实说明）
 - **render 段**（`scripts/render.py`）：单文件 Markdown 报告（正文 + 盘面数据 + 判读因子）
-- **案例库**（`data/cases/xiaoliuren_cases.json`）：tune 10 / holdout 5 / excluded 2，全部可还原
+- **案例库**（`data/cases/xiaoliuren_cases.json`）：tune 10 / holdout 5 / excluded 2，全部可还原；`expected.topic_line` 是 `verdicts.json#topic_lines` 的镜像（自洽项）
 - **评分器**（`scripts/evaluate.py`）：复用 `yishu_core.eval`，维度 落宫30/吉凶方向30/事类诀句20/应期主数20
-- **质量门**（`tools/check.py`）：金标准指纹（15 例）+ 管线冒烟 + tune/holdout 分别出分带 n
+- **质量门**（`dev_tools/check.py`）：金标准指纹（15 例）+ **`[1c]` 断语口径门**（句类相符 + 矩阵完整 + 记账一致 + 缺口登记）+ 管线冒烟 + tune/holdout 分别出分带 n
+
+## 古籍来源：**无公版书源**（如实登记）
+
+- 实测 `python tools/fetch_source.py --check 小六壬 小六壬掌訣 六壬時課 萬法歸宗 六壬類聚`
+  → 维基文库**全部 missingtitle**：小六壬没有可抓的公版专书。
+- 现行断语所本《贺氏六壬小手册》是**现代文本、非公版**，本仓一律标该书节次，
+  **不冒充古籍原文，也不据记忆补写口诀**。缺口登记在 `data/verdicts.json#source_gap`。
+- 因此「真实能力」的增量方向是**把已有断语逐条判类、把无据的如实标阙**，
+  而不是堆量：66 条里 诀辞 40 / 引申 25 / 阙 1，全部可机检。
 
 ## 未来路线
 

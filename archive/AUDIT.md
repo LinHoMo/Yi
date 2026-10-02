@@ -63,12 +63,12 @@
 
 | # | 文件 | 行数 | 判据 |
 |---|---|---|---|
-| S-B1 | `docs/DEEP-OPTIMIZE-PLAN.md` | 1,370 | 文件头自承"**本文件保留作改造史检索，不再作为执行依据**"，6 处引用已删除的 `disciplines/base/` |
-| S-B2 | `docs/PROJECT-REVIEW.md` | 182 | 12 项全部 ✅ 已修（§8 回执表），只剩历史 |
-| S-B3 | `docs/DEEP-REVIEW.md` | 155 | 第二轮清单，本轮即它的续做；未决项见 §四 |
+| ~~S-B1~~ | ~~`docs/DEEP-OPTIMIZE-PLAN.md`~~ | ~~1,370~~ | **已删除（2026-10-01j）**：文件头自承"不再作为执行依据"，且 6 处引用已删的 `disciplines/base/` |
+| ~~S-B2~~ | ~~`docs/PROJECT-REVIEW.md`~~ | ~~182~~ | **已删除（2026-10-01b）**：12 项全部修完，只剩历史 |
+| ~~S-B3~~ | ~~`docs/DEEP-REVIEW.md`~~ | ~~155~~ | **已删除（2026-10-01b）**：第二轮清单，本轮即它的续做 |
 | S-B4 | `docs/compose/spec/` 6 份 | 525 | 全部 `status: delivered`，含 2026-09-26 的旧指纹 `a1a7d34c3532f2f2` 与旧分 `93.7 < 基线 94.2` |
 | S-B5 | `disciplines/liuyao/docs/compose/spec/classical-holdout-benchmark.md` | 119 | 同类 |
-| S-B6 | `docs/MIGRATION.md` | 166 | v0→v1 迁移已完成；`:148` 仍教"继承 `base/cli.py` 的 `DisciplineCLI`"——**对贡献者是错误指导**（该基类 2026-10-01 已删） |
+| ~~S-B6~~ | `docs/MIGRATION.md` | 166 | v0→v1 迁移已完成；`:148` ~~教"继承 `base/cli.py` 的 `DisciplineCLI`"~~ **已修正为"参考 meihua/scripts/chart.py 范式"（2026-10-01j）** |
 
 → 合并为一份《决策与教训归档》（只留"什么被否证了、为什么"，不过程叙事），或直接删（git 里有完整历史）。
 **判据来自 `AGENTS.md` §三本身**：产物/过程叙事不入库。
@@ -92,8 +92,8 @@
 | S-D3 | 三科 `scripts/case_runner.py` | `load_cases`/`load_meta`/`run_cases`/`main` 逐字相同（370 行三份） | 同上（第二轮 B2 判"需评估"，本轮给出更硬的依据：CONTRACT 已明文禁止） |
 | S-D4 | 六爻内部同体异名副本 | `classical_enhancements.is_ba_zu_he/_chong` ↔ `narrative_utils._is_he/_is_chong` 四份同体 | 合一（§二"改名副本"纪律在**代码层**同样适用） |
 | S-D5 | 六爻门面/再导出链 | `liuyao_step1.py`（243 行 / 1 个 def）、`liuyao_analyze.py`（87 行 / 0 个 def）、`classical_analysis.py`（275 行 / 2 个 def）——三个模块只做转发 | 合并或降为一行 re-export |
-| S-D6 | 5 份 `scripts/mcp_server.py` | 4 份 19 行转发壳（meihua/xiaoliuren/zeji/ming）+ 1 份 722 行独立实现（liuyao） | 统一到 `tools/mcp_router.py`，liuyao 也注册进去 |
-| S-D7 | 六爻本地门户 | `build_portal_assets.py`（201 行）+ `index.html`/`assets/portal_data.json` + `docs/samples/screenshot_golden.png` + `disciplines/liuyao/README.md:25,66` + `dev_tools/check.py:138-150` 的版本门 | **删**。两层问题：① 与 `web/` 通道功能重复；② 该版本门读的是 **gitignored 产物**，新克隆上 `liuyao/dev_tools/check.py` 必 `FileNotFoundError` |
+| S-D6 | ~~5 份 `scripts/mcp_server.py`~~ | **已作废**：用户 2026-10-01 决策"不使用 MCP"，5 份 `mcp_server.py` + `tools/mcp_router.py` + `mcp-server/` 整体删除 | 无（不再是"统一"的问题） |
+| S-D7 | 六爻本地门户 | `build_portal_assets.py`（201 行）+ `index.html`/`assets/portal_data.json` + `docs/samples/screenshot_golden.png` + `disciplines/liuyao/README.md:25,66` + `dev_tools/check.py:138-150` 的版本门 | **半已修**：②号问题（新克隆必 `FileNotFoundError`）已修——产物缺失时明确跳过并打印 `·` 注记，不再判红（见 §七 1-8）。①号"是否删门户"仍待用户拍板 |
 | S-D8 | 结果回收四套并存 | `event_logger.py`（618 行，写 gitignored `logs/`）、`dev_tools/outcome.py`、`data/feedback/`、`synthesis/outcome_eval.py` | 抽一条唯一链路 |
 | S-D9 | `check_verdict_literals`（`tools/check.py:185-187`） | 弱启发式：只认 `"condition"/"meaning"/"advice"` 等键，plain `str→str` 的真断语一条报不出；而 `tools/check.py:133` **自己已经写明**"主判据是 `verdict_audit.py --strict`（[1c] 门），本函数（[1b]）是辅助"。同一件事挂着两道门，其中一道已知失明 | 降为提示或删。**"已确定失明的门"继续占着"全绿"的位置，是首轮 P0 的同类风险** |
 | S-D10 | 书源双份 | `data/sources/bushi_zhengzong.wikitext.txt` 与 `bushi_卜筮正宗_河潞武子龄校本_.wikitext.txt` **sha256 完全相同**（`47A8C226…`）；`archive/sources/meihua_梅花易數*`（4 份 128 KB）与 `data/sources/mei-hua-yi-shu.wikitext.txt` 同书两处 | 书源也守"唯一真值源"：一处存副本，一处只留 `provenance.json` |
@@ -182,3 +182,89 @@
 - 生成物一律 gitignore，工作区无未跟踪垃圾；`.gitignore` 与 §三 已不冲突。
 - **撤下一条上一版的乐观结论**：我先前按第二轮 §C 清单推断"断语基本已外置、残留多为测试夹具"，
   本轮用 AST 全量扫过后**不成立**——见 S-D11（1,734 处 / 138 文件）。上一轮的 C 清单是抽样，不是全量。
+
+---
+
+## 七、执行记录（边执行边记）
+
+> 本节是**实际执行轴**，§五 那张表是开写时的设想（已被实跑推翻，见 7-9）。
+> 规则：每条记「改了什么 / 为什么 / 怎么验收 / 实测结果」；没过验收的不算完成。
+> 环境：Windows；解释器 `C:/Users/31103/.workbuddy/binaries/python/envs/default/Scripts/python.exe`；
+> 慢门（>15s）自动转后台，日志落 `scratch/*.log`。
+
+系名说明：下面 `1-x` 是 2026-10-01 这一轮（第三轮审查的落地轮）的条目，按实际动手顺序编号。
+
+### 第 1 轮 · 2026-10-01（零风险面 + 一个 P0）
+
+| # | 动作 | 为什么 | 验收命令 | 实测结果 |
+|---|---|---|---|---|
+| 1-1 | **MCP 全量移除** | 用户决策"不使用 MCP"；且实跑证明它已经是死入口：`tools/mcp_router.py` 的范围收缩后 `DISCIPLINES` 只剩 `ming`，而三科 `mcp_server.py` 仍在委派 `meihua`/`xiaoliuren`/`zeji` → 一敲就 `未知学科` | `git grep -i mcp`（活跃面）；`python tools/check.py` 与 `--full` | 删 7 文件 + `mcp-server/` 目录 + 1 份 772 行 MCP 接口文档；活跃面引用 **189 → 0**；双档 EXIT=0 |
+| 1-2 | **新增 `.github/workflows/ci.yml`**（A-1） | 11 道门此前只在人手动敲命令时才存在（`.github/` 里 grep `check.py` 零命中） | pyyaml 解析 + 逐 job 打印结构 | 三份工作流全部解析通过；`push(main)`/PR/手动 → `python tools/check.py --full`；并在 `pyproject.toml` 补 `dev = ["pytest>=8"]` 作为版本约束**声明**（不改变"零第三方依赖"事实） |
+| 1-3 | 三科 README 口径纠错（S-A2/S-A3） | 三张 100% 分数表既违铁律三、又与各科 `docs/EVAL-AUDIT.md` 自相矛盾 | 逐条比对案例集 JSON 实计数（`scratch/count_splits.py`） | 3 张表删除，改为"命中数/适用数 + n"；顺带纠正：zeji holdout **5→6**、zeji 指纹 15→**16 例**、meihua 指纹 18→**23 例**、三科 `tools/check.py` → **`dev_tools/check.py`**（学科下没有 `tools/`） |
+| 1-4 | `disciplines/README.md` 范围与分数（S-A2） | 同上；且它当时写"当前范围（六科）" | — | 六科 → **八科**（补 liuren/lingqi 两行）；删除分数列，改指向各科 `EVAL-AUDIT.md` |
+| 1-5 | `docs/CONTRACT.md:3`、`docs/HANDOFF.md` §一/§五之一（S-C3/S-C5） | 现行文档写着过期事实 | 八科门逐一实跑（见 1-9） | CONTRACT"当前范围仅 `ming`" → 八科并列；HANDOFF"六科均绿" → 八科实跑 + **显式标注根门盲区** |
+| 1-6 | **P0 修复：核心常量进正则**（本轮最重要的发现） | 六爻案例评测已坏死，而根门全绿 | 见下"证据链" | 六爻门由红转绿，读数**回到文档原值** |
+| 1-7 | **门在干净克隆上必红的两处**（新发现，见下） | 1-2 的 CI 会一上来就常红 | 干净克隆副本上复跑 | 两处都由"假红"变为"显式注记"，克隆上八科全绿 |
+| 1-8 | **八科分科门挂进 CI**（A-4 落地） | 1-6 的门盲区正是被 CI 该盯的缝 | 干净克隆 + LF 化两份副本各跑一遍 | 两份副本：**根门 `--full` EXIT=0、八科门八绿** → 才有资格挂门 |
+| 1-9 | 记录与登记 | 用户要求"边执行边记录" | 本文件 §七 + `docs/CHANGELOG.md` | 本节；CHANGELOG 新增 `2026-10-01g`（MCP）、`h`（正则回归 + 八科实跑）、`i`（克隆必红两处 + 挂门） |
+
+**1-6 的证据链**（每一步都是实跑，不是推断）：
+
+1. **症状**：`cd disciplines/liuyao && python dev_tools/check.py` → EXIT=1，[5] "tune 评测失败"；
+   而同一时刻根门 `python tools/check.py --full` **EXIT=0**。
+2. **复现**：`python scripts/evaluate.py --split tune` → 20 例里只有 1 例跑成，**19 例报错**
+   "既无干支也无公历日期"；在一次 holdout 留痕里读到"时刻还原方式：error=19"。
+3. **定位**（`scratch/probe_liuyao_case.py`）：`EARTHLY_BRANCHES` 是 **list**；
+   `_DAY_RE.pattern` 打出来是 `([['甲', '乙', …]])日` —— 正则扫到 list repr 的**第一个** `]`
+   就闭合了字符类，其后多出 `])` 两个必须逐字匹配的字符，**整条正则从此永不匹配**；
+   `parse_ganzhi_hint("巳月戊戌日")` 返回 `(None, None)`。
+4. **追责**：`git blame` → `244dd00`（2026-10-01c「真值源门升级」）：把 `DAY_CHARS` 由字面串
+   换成了 `yishu_core.symbols.EARTHLY_BRANCHES`（list）。三处受害点都只"值换了类型"，
+   行号、注释、调用方一字未改——**review 看不出来，也没有门盯它**。
+5. **修**：进字符类前一律 `"".join(...)`（`case_runner.py` 2 处、`evaluate.py` 1 处），
+   并在原处留一行注释说明为何必须 join。
+6. **验收**：`FutureWarning: Possible nested set` 4 条 → **0**；
+   `parse_ganzhi_hint("巳月戊戌日") → ("巳","戊戌")`；ZS001–ZS003 的 `resolve_case_time`
+   由 `error` 变 `ganzhi_resolved`；六爻门转绿且读数回到 **tune 95.0 / holdout 89.7 /
+   主应期 58.8、50.0 / wikisource 57.1(n=35) / direction 72.2(n=36)**，
+   与 `HANDOFF.md` §一 逐项一致 → 证明是**恢复行为**而不是改行为；八科行为指纹零漂移。
+
+**1-7 / 1-8 的证据链**（为什么必须先修门、再挂门）：
+
+用 `git ls-files` 把**入库文件**复制成干净副本（`%TEMP%\yi_fresh`，无任何 gitignored 产物）
+模拟新克隆，在其上跑门：
+
+| 检查 | 干净克隆（CRLF） | 再统一成 LF | 结论 |
+|---|---|---|---|
+| 根门 `--full` | 先红 → 修后 **EXIT=0** | **EXIT=0** | 可挂 CI |
+| liuyao 门 | 先是 **Traceback `FileNotFoundError: assets/portal_data.json`** → 修后绿 | 绿 | 可挂 CI |
+| ziwei 门 | 先是 **`data/cases 目录缺失`** → 修后绿 | 绿 | 可挂 CI |
+| 其余六科 | 绿 | 绿 | — |
+
+两处红是**同一族**：门断言了 git 克隆不可能有的东西。
+
+- liuyao：`assets/portal_data.json` 与 `index.html` 是本地构建产物（gitignore），
+  新克隆里没有 → 改成"缺了就跳过并打印 `· 本地门户未构建 → 跳过该版本门`"。
+- ziwei：门要求 `data/cases/` **目录存在**。但空目录 git 带不走，而 ziwei 恰恰**没有案例库**
+  （该目录本机是个空目录、0 个入库文件）——"靠本机一个空目录过门"就是它此前全绿的全部原因。
+  改成：有案例文件才谈分层，没有就打印 `· 尚无案例库（data/cases 下没有 *.json）`。
+  > **由此新增一条待办（不是缺陷，是缺口）**：**ziwei 没有案例库**。其余七科
+  > `data/cases/` 下都有入库的案例 JSON（ming 2 份、liuyao 7 份、其余各 1 份）。
+  > 建库要选案例、核出处，属作者工作，本轮不擅自造数据。
+
+挂门的前提是**基线**：两份克隆副本上八科门全绿之后，才把 `discipline-gates` 矩阵写进 `ci.yml`。
+
+### 本轮对原清单的订正（写下来，免得下一轮再按旧结论走）
+
+1. **S-D6 作废** —— 5 份 `mcp_server.py` 已整体删除（1-1），不再是"统一"问题。
+2. **S-D7 折半** —— ②号"新克隆必崩"已修（1-7）；①号"门户是否删"仍待用户拍板。
+3. **A-2 的判断是错的** —— 原写"六爻 `narrate_sha` 只有 1 科带、建议 promote 到内核"，
+   实测**八科 golden 都已带 narrate 指纹**（1-8 的实跑里八科 [金标准指纹] 都在过）。
+   这条从"加法"里划掉，别再动。
+4. **A-4 的前提变了** —— 原写"把各科 check.py 挂进根门，约 1 行"。若照原样挂，根门
+   **当场变红**（六爻评测当时已坏死）。正确顺序是：先修"分科门自己坏了没人知道"的问题
+   （1-6），再在干净克隆上取基线（1-7/1-8），最后挂门。**已按正确顺序做完。**
+5. **§五 的五轮顺序作废** —— 它按"零风险/低风险/动代码"分层，而实跑证明：**最贵的一步是
+   让门真的可信**（1-6/1-8），不是清 2,500 行过程文档。本轮把顺序改成"先让门可信，
+   再清理文档"。§二/§三 的具体条目仍然有效，只是不再按 §五 的轮次走。
+6. **新增待办** —— ziwei 案例库（见 1-7 注），性质是内容缺口，不是代码缺陷。

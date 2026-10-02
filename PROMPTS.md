@@ -31,8 +31,8 @@
 | 梅花 meihua | question（+可填 datetime/way/numbers） | ✅ |
 | 小六壬 xiaoliuren | question（+可填 datetime/numbers） | ✅ |
 | 择吉 zeji | date 用事日期、activity 事类 | ✅ |
-| 大六壬 liuren | datetime、question | ⚠️ 仅本地 CLI / MCP（站点通道 A 尚未挂载） |
-| 灵棋经 lingqi | up/mid/down 三数（0–4） | ⚠️ 仅本地 CLI / MCP（站点通道 A 尚未挂载） |
+| 大六壬 liuren | datetime 起课时刻、question | ✅（骨架科：只出机械结构标签，无吉凶断语） |
+| 灵棋经 lingqi | up/mid/down 三部掷面数（各 0–4） | ✅（断语为《靈棋經》原文逐字直录） |
 
 ## 模板二：云端留档 + 回评（通道 B，要报告存进仓库时）
 
@@ -44,14 +44,6 @@
 - 出生时间：[1990-05-20 10:30]
 - 性别：[男]
 - 想问方向：[事业格局与近几年起伏]
-```
-
-## 模板三：本地 AI 客户端直连（Claude Desktop / Cursor 等已配置 MCP）
-
-```
-请调用 Yi 的 MCP 服务（methods 见 mcp-server/README.md）：
-用 [ming.analyze] 排盘，出生时间 [1990-05-20 10:30]、性别 [男]，
-然后按引擎输出的结构给我讲解，不要添加引擎没有给出的判断。
 ```
 
 ## 附：报告结构约定（AI 生成报告时遵守）

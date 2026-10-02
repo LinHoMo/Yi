@@ -5,9 +5,8 @@
 验证 enhance_reading() 的各分析段与 step5 的各评分调整项在多种卦象下
 **都有产出且不抛异常**，即"接线是否通"。
 
-⚠️ 这不是代码覆盖率，也不是正确性测试：段落返回了内容就算过。
+这不是代码覆盖率，也不是正确性测试：段落返回了内容就算过。
    内容对不对由 `scripts/evaluate.py`（古籍对齐）与 `tests/regression_test.py` 负责。
-   旧名 coverage_test 且报 "Coverage 100%"，属误导性命名，2026-09-22 更正。
 
 Usage:
     py -3.12 tests/smoke_test.py                # Run all coverage tests
@@ -27,8 +26,7 @@ import argparse
 import os
 import sys
 import traceback
-from dataclasses import dataclass, field
-from typing import Any, Callable, Optional
+from typing import Any, Callable, NamedTuple, Optional
 
 # ---------------------------------------------------------------------------
 # 引擎与古典分析模块在 ../scripts。
@@ -71,24 +69,18 @@ from thinking_chain import (  # noqa: E402
     HEXAGRAM_LIUCHONG,
 )
 
-# ===========================================================================
-# Test-case data structure
-# ===========================================================================
-
-@dataclass
-class CoverageTest:
-    """Single coverage test targeting a specific analysis segment."""
+class CoverageTest(NamedTuple):
     id: str
     target_segment: str
     description: str
-    yao_values: list          # 6 values (6,7,8,9); index 0 = bottom (初爻)
-    date: tuple               # (year, month, day, hour)
-    expected_check: str       # Human-readable assertion description
+    yao_values: list
+    date: tuple
+    expected_check: str
     question: str = "测试覆盖率"
     method_str: str = "manual"
-    assertion_fn: Callable = None  # fn(result_dict) -> bool
-    target_step5_adj: str = ""  # If non-empty, targets a step5 adjustment instead
-    is_boundary: bool = False  # Boundary test case
+    assertion_fn: Optional[Callable] = None
+    target_step5_adj: str = ""
+    is_boundary: bool = False
 
 
 # ===========================================================================

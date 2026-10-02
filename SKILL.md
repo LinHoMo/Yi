@@ -24,7 +24,6 @@ description: 中国传统术数的统合引擎技能。用户提到算命、测�
 1. **读 `llms.txt`** 拿仓库地图；**不要通读 `disciplines/`、`core/`、`docs/`**。
 2. **网页端 AI 出报告（首选）**：读 `docs/AI-SOP.md` §1 收集字段 → 拼通道 A 深链 URL（`?d=<科>&q=…&dt=…&auto=1`）交用户点击，或按通道 B 触发云端 Actions；报告取回见 AI-SOP §3。**报告由引擎生成，AI 只翻译不重写。**
 3. **本地/服务器 AI（可跑 Python）**：用各科四段契约 `chart→analyze→narrate→render`（命令见对应 `skills/<科>/SKILL.md`），或统一入口 `python tools/report.py --request request.json --outdir out`。
-4. **本地 AI 客户端（Claude Desktop/Cursor 等）**：直连 MCP 服务，见 `mcp-server/README.md`。
 
 ## 二、意图路由（摘要；详细判据见 `skills/<科>/SKILL.md`）
 
@@ -62,8 +61,10 @@ description: 中国传统术数的统合引擎技能。用户提到算命、测�
 
 ## 五、合参入口（`synthesis/`）
 
-同一人多科问时走合参层：`cd synthesis && python cli.py init/validate/add-divination/record-outcome/guide`。
-裁决规则四条：各守其位、同向则确、异向则卜（先回溯时空口径分歧）、禁止拼贴安慰叙事。详细见 `synthesis/README.md`。
+同一人多科问时走合参层：`cd synthesis && python cli.py init/validate/add-divination/record-outcome/outcome-eval/guide/selfcheck`。
+裁决规则**五类**（权威表述见 `synthesis/README.md` §二，实现见 `synthesis/cross_rules.py`）：
+各守其位（越位即剔除）、同向则确、两同一异、异向裁诸因（先回溯时空口径分歧）、缺数据降级。
+禁止拼贴安慰叙事（没有判据来源的话不许落进指导）。
 
 ## 六、文档地图（AI 用）
 
@@ -73,6 +74,5 @@ description: 中国传统术数的统合引擎技能。用户提到算命、测�
 | `docs/AI-SOP.md` | 网页端 AI 出报告的标准流程（触发/取回） |
 | `skills/<科>/SKILL.md` | 各科技能：输入字段、命令、输出、纪律（**AI 只加载匹配的那一个**） |
 | `disciplines/<科>/SKILL.md` | 各科详细执行规程（被 skills 层引用） |
-| `mcp-server/README.md` | MCP stdio 服务：启动、配置、方法清单 |
 | `docs/HANDOFF.md` | 现状交接：哪些可信、怎么跑、还欠什么（读数以这里为准） |
 | `AGENTS.md` | 项目铁律全文，**只给改代码的贡献者/编码 Agent**；任务 AI 以本文件 §四为准，不读 |

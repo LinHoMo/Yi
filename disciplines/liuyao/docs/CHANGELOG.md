@@ -4,6 +4,361 @@
 
 分数口径变化必须在此登记，否则 tune/holdout 数字不可比（`AGENTS.md` §四.4）。
 
+## 2026-10-01o 语料占位空壳切除 + "消失的 40 叶子"复核（第三方验证订正）
+
+第三方验证在你的写域查到两处事：一处**真 AI 痕迹**（已删），一处"结构性存疑"经复核
+**判定为零引用死条目、不恢复**。
+
+### 1. 切除 `verdict_texts.json` 末尾的 `chain_support_notes` 占位空壳
+
+验证者发现 `data/rules/verdict_texts.json` 末尾是：
+
+```json
+ "chain_support_notes": {
+  "temp": "x"
+ }
+```
+
+`{"temp": "x"}` 是临时占位；该节**既无 loader 也无任何消费者**——全仓 420 个文本文件里，
+`chain_support_notes` 只出现在该 JSON 自身与 `docs/CHANGELOG.md` 的记述里
+（`tools/scratch/`、`.git/`、`site/` 镜像已排除）。处置：**整节切除**。
+
+- 手术：逐行切除（`tools/scratch/vt-audit/cut_stub.py`），保留原 EOL（CRLF）、无 BOM；
+  末行顶层 `}` 保留，前一行 `},` → `}` 去尾逗号；
+- 结果：顶层节 24 → 23，叶子 892 → 891，49,777 → 49,730 字节
+  （sha256 `7f9ffd7d1b139bd8` → `3e632a7596dd4636`）；严格 `json.loads` 通过；
+- 该节原有的 6 条实文本（`fei_missing` / `fu_suppressed` / `fu_hidden_cap` /
+  `fu_hidden_info_lack` / `fu_element_unknown` / `fei_unknown`）连同它的 loader，早在本批
+  之前的减法里已按"死语料"删除（`docs/CHANGELOG.md` 2026-10-01 段记："六爻死语料 20 条
+  删除（classical_interpretations 9、step5_yingqi_texts 5、chain_support_notes 6+loader）"）；
+  本次只清掉残留的空壳。
+
+### 2. 复核"相对 HEAD 少 40 个叶子"：全部零引用，**不恢复**
+
+验证者按归一口径比对 HEAD，发现本文件少 40 个叶子（`"basis"` 由 251 降至 231）。
+逐条复核结论：**40 叶子 = 20 条目 × (text + basis)，全部零引用，无一条承重**。四条判据：
+
+1. **数量与分布和既有记载精确吻合**：消失的 20 条 =
+   `classical_interpretations` 9 + `step5_yingqi_texts` 5 + `chain_support_notes` 6，
+   与 `docs/CHANGELOG.md` 2026-10-01 段记载的 9 / 5 / 6（+loader）**逐位一致**；
+   且本次比对 **changed = 0**——保留条目取值一处未改，属纯减法。
+2. **静态检索零命中**（`tools/scratch/vt-audit/vt_consumers.py`）：对 20 个键名
+   （`fei_missing` `fu_suppressed` `fu_hidden_cap` `fu_hidden_info_lack` `fu_element_unknown`
+   `fei_unknown` `day_he_ji` `day_he_use` `jue_chu_no_source` `jue_wait_source`
+   `month_day_he_use` `month_he_ji` `month_he_use` `no_moving_no_fanyin` `no_officer_tomb`
+   `change_hui_tou_sheng` `speed_fast_label` `speed_medium_label` `speed_slow_label`
+   `use_hidden_wait`）在 420 个仓库文本文件（`.py/.json/.md/.txt/.js/.html`）中检索，
+   **全部 0 命中**。
+3. **A/B 反向实验（决定性）**：静态 grep 查不出"动态拼装键"（本仓既有 `base_{强弱}` 一例），
+   故把 **HEAD 版语料整份放回**再跑一遍，与在盘版对比（`tools/scratch/vt-audit/ab_reversal.py`）：
+   - `dev_tools/golden.py verify` → 机械 `eb9977f62de4653f`、措辞 `ede6f855568a66a1`、
+     异常 0 条，**两态完全相同**；
+   - `dev_tools/check.py` 14 项读数（288 例指纹 / 段落 36 / 用例 12 / 回归 12 /
+     tune 95.0·58.8·1.93 / holdout 89.7·50.0·1.6）**逐位相同**。
+
+   即：把这 40 个叶子放回去，对输出**零影响**——含 `.get()` 式静默降级也不成立
+   （任何一次真读都会改变渲染文本，从而改变措辞指纹）。实验后文件已**按字节还原**
+   （sha256 校验一致）。
+4. **消费口径旁证**：把 HEAD 版放回后跑 `tools/verdict_consumption.py`，liuyao 由
+   `814 条语料 / 零消费 709` 变为 `821 / 716`——**新增的 7 条可计语料全部落在"零消费"**
+   （其余 13 条因不足 8 汉字或与既有串重复而不进统计）。
+
+**处置：一条不恢复。** 若将来要复活这些判定句，正确顺序是**先接线、再补数据**，
+而不是把语料放回去等它被消费。
+
+### 3. 验收（改动后实测，五项全 exit 0）
+
+| 检查 | 实测输出 |
+|---|---|
+| `dev_tools/golden.py verify` | 288 例｜机械 **eb9977f62de4653f**｜措辞 **ede6f855568a66a1**｜异常 0｜√ 与基线一致 |
+| `dev_tools/check.py` | 14 项全绿（288 指纹一致 / 段落 36 / 用例 12 / 回归 12 / tune 95.0·58.8·1.93 / holdout 89.7·50.0·1.6） |
+| `tools/verdict_audit.py --strict` | exit 0：合计疑似未外置断语 **0 句** |
+| `tools/verdict_consumption.py` | exit 0：liuyao **814 条语料 / 零消费 709**（与改动前一致） |
+| `tools/check.py --full` | exit 0：**仓库级质量门全部通过**（含六爻黑箱回归 12/18，基线 11/18） |
+
+**机械层与措辞层均零漂移**，未重新 capture。
+
+### 4. 顺带记录：整文件重写的真实成因（本轮未动）
+
+该文件相对 HEAD 呈**整文件级重写**（difflib 独立口径：+1755 / −1838 行，在盘 1781 行 vs
+HEAD 1864 行），但**语义差异只有"40 叶子 + 空壳"**（逐叶子 JSON 比对：missing 40 /
+added 1 / **changed 0**）。成因是两个纯格式变量：
+
+| 变量 | HEAD | 在盘 |
+|---|---|---|
+| 缩进 | 2 空格 | 1 空格 |
+| 行尾 | LF | CRLF（git 提示 "CRLF will be replaced by LF"） |
+
+二者叠加使几乎每一行都不相等，`git diff` 因此失去可读性——**真正的语义改动被淹没在噪声里**，
+这正是评审最易漏看真问题的地方（本次第三方验证正是靠"归一后比叶子"才抓到那 40 条）。
+本轮切壳**沿用在盘的 1 空格 + CRLF**，不制造新的格式变更；是否把缩进/行尾归一回 HEAD 口径
+（可把该文件 diff 从 ~3600 行压到 ~45 行）属仓库级决定，**本轮未动**。
+
+## 2026-10-01n 注释减法 + 真死代码清零 + 学科质量门 `--only` 假绿修复
+
+**本轮不改推演、不改计分口径**——tune/holdout 与各集分数、金标准指纹、回归/用例计数
+全部持平（见下"验收数字"），故上面的分数仍可比。两类改动：① 删注释与真死代码；
+② 修 `dev_tools/check.py` 的 `--only` 选择器语义。
+
+### 1. 注释减法（六爻 7 个脚本，删 35 行注释）
+
+另有 5 行注释（`liuyao_step4.py` 死块内 3 行、`liuyao_step2.py` 2 行）随 §2 的死代码一并删，
+本轮注释合计 **40 行**、死代码语句 **7 行**、恒真表达式简化 **1 行**（合计 48 处改动）。
+
+判据：**删掉后读者无法从代码本身恢复该信息 → 保留**；能恢复 → 删；不确定 → 不删、登记存疑。
+带古籍出处/卷篇、口径依据、真值源指针（如 `（_BRANCH_CLASH_MAP 由 core 派生）`、
+`真值源在内核 TOMB_MAP`）、阈值来源、算法契约（四段契约字段/边界条件/`tuple` 结构）的
+注释**一律保留**；三段式分节注释（`# ---------- 3.10b: 暗动检测 ----------`）是 37 个
+超大 `.py` 的唯一结构线索，**一律保留**。
+
+| 文件 | 删 | 删掉的注释原文 |
+|---|---|---|
+| `effects.py` | 9 | `# Build bidirectional 六合 lookup`／`# Extract 用神 branch…`／`# Also check step3 which has use_god_branch explicitly`／`# Extract 忌神 positions/branches from step2`／`# Also check fu_cang`／`# Build summary`／`# Also match by branch if step3 has it`／`# Check vs 日辰`／`# 检查是否涉及世爻` |
+| `liuyao_step3.py` | 5 | `# Extract yuan_shen/ji_shen elements…`／`# Check if this hidden-moved yao is the use god`／`# Skip explicit moving yao (already 明动)`／`# Check 六冲 relationship: day_branch clashes with yao_branch`／`# Determine the role for reporting` |
+| `liuyao_step4.py` | 13 | `# Find the actual yao…`／`# Apply greedy harmony adjustment…`／`# Build greedy harmony description…`／`# Check if use god is combined by day or month`／`# Check for 六合/六冲 in hexagram name…`／`# Normalize score to float`／`# Check if yuan_shen has any moving line support`／`# Check no major attacking in moving lines`／`# Determine the branch to check for harmony:`＋`# Use the original branch if static/hidden-moved…`（两行）／`# Check 合 with 日辰`／`# Classify by role`／`# Check 合 with 月建` |
+| `liuyao_step5.py` | 4 | `# Get 原神 branches`／`# Sort by date`／`# Determine overall speed`／`# Build summary` |
+| `liuyao_narrate.py` | 2 | `# Determine strength from element_strength if available`／`# Detect question scenario for contextual interpretation` |
+| `engine_calendar.py` | 1 | `# Handle rollover` |
+| `classical_enhancements.py` | 1 | docstring `"""判断两地支是否六冲"""`（与函数名 `is_ba_zu_chong` 同义；同文件 `"""获取地支五行"""` **保留**，它锚定 `未知` 兜底约定） |
+
+两类"删得有理"的特例，单列以免下棒误当误删：`# Check vs 日辰`（下一行循环同时遍历
+`日`/`月`，注释只写日辰）、`# Check for 六合/六冲 in hexagram name`（实际查的是
+`hex_type` 而非"卦名"）、`liuyao_step4.py` 的
+`# Determine the branch to check for harmony:` 两行（实际是"本卦支+变卦支两支都查"，
+注释却写成静/动二选一）——**这三处是与行为不符/容易误导的过期注释**。
+
+### 2. 真死代码（3 处，均先全仓 grep 调用点）
+
+| 位置 | 内容 | 判据 |
+|---|---|---|
+| `liuyao_step4.py` 旧 :617–:622 | `orig_branch = detail.get(...)`／`chg_branch = detail.get(...)`／`if chg_branch:` → 只有 `pass` | 两个局部变量在本函数内取完即弃（函数末尾即 `return rules`），分支体为空 |
+| `liuyao_step4.py` 旧 :744–:747 | `div_time = step3_data.get("divination_info", {})`／`if not div_time:` → 只有 `pass` | 该 `div_time` 在本函数内无任何后续使用；空分支内注释"Try hex_result"没有任何实现 |
+| `liuyao_step2.py` 旧 :695–:697 | `# 判断伏神是否得出`＋《增删卜易》引文＋`can_emerge = fei_shen is None or True  # 默认可出` | 表达式恒为 `True`（`fei_shen is None` 是死分支）→ 改为 `can_emerge = True`，并把注释换成**指向真正判据**的诚实指针：`本层不做判定：真正判据在 classical_enhancements._evaluate_hidden_spirit_emergence`。注意：`"fei_shen": fei_shen` 仍写入结果字典、被 `liuyao_step3.py` 读取，**不可删** |
+
+**等价性证据**：`can_emerge` 恒真表达式的真值表不变（`fei_shen` 为 `dict`/`None` 两种取值
+下结果都是 `True`）；两处空 `pass` 分支删除不改变任何控制流；`git` 之外无 `__all__`
+或字符串形式的引用（全仓 grep）。运行层证据见 §4。
+
+### 3. `dev_tools/check.py` 的 `--only` 假绿（与仓库级 `tools/check.py` 同类缺陷）
+
+旧实现 `selected = set(args.only or [...])`＋逐门 `if "x" in selected`：**没有未知门校验**，
+而 docstring 旧示例又写 `--only eval,calendar`（逗号）——名字整串对不上任何门时，所有
+`if` 全假、一门不跑，却在末尾打印"质量门全部通过（或不低于基线）。"并 `return 0`。
+
+修法（语义照抄仓库级 `tools/check.py`，**判定语义未动**）：逗号与空格等价；名字就地登记
+（`want()`，可用名字的唯一真值源 = 各门调用点）；零命中或部分未命中 → 打印
+`--only 用法错误：…`、列出可用门名、**退出码 2**，绝不打印"全部通过"。
+本文件 docstring 示例同步改为空格形式并写明该语义。
+
+### 3b. 金标准指纹显示 `?`（显示层缺陷，同批次一并修掉）
+
+`liuyao`／`meihua`／`xiaoliuren` 三科门的金标准指纹行打出 `?`，例如
+`√ 288 例指纹 ? 与基线一致`——**一个显示不出自己基线的门，读数就不可信**，故本轮一并修掉。
+
+- 成因：三科用内核共享壳 `core/yishu_core/golden_kit.py`，壳的实文是
+  `用例 N 条｜机械 <16hex>｜措辞 <16hex>｜异常 0 条`，而三科只写了
+  `re.search(r"指纹 ([0-9a-f]{16})", out)` → 永不命中。同族的 `zeji/dev_tools/check.py:199`
+  多带一个 `机械` 兜底，所以只有它显示得出指纹。
+- 修法（三科各一行，**与 `zeji:199` 同构；判定语义未动**）：
+  `d = re.search(r"指纹 ([0-9a-f]{16})", out) or re.search(r"机械 ([0-9a-f]{16})", out)`
+  —— 落在 `liuyao/dev_tools/check.py:249`、`meihua/dev_tools/check.py:231`、
+  `xiaoliuren/dev_tools/check.py:222`。
+- **先证伪"是不是真取不到"**：三科的 `dev_tools/golden.py` 现场输出都含 16 位机械指纹
+  （`liuyao` `eb9977f62de4653f`／`meihua` `2c9c810d8a265180`／`xiaoliuren` `9fd0de627fb787a5`），
+  修前修后**一字未变**——换的只是"显示"，不是"读数"；该门的通过与否本来就只看 `rc`
+  （`if rc != 0: failures.append(...)`），指纹比对由 `dev_tools/golden.py` 执行。
+- 修后显示行：
+
+| 科 | 修前 | 修后 |
+|---|---|---|
+| `liuyao` | `√ 288 例指纹 ? 与基线一致` | `√ 288 例指纹 eb9977f62de4653f 与基线一致` |
+| `meihua` | `√ 案例指纹 ? 与基线一致` | `√ 案例指纹 2c9c810d8a265180 与基线一致` |
+| `xiaoliuren` | `√ 15 例指纹 ? 与基线一致` | `√ 15 例指纹 9fd0de627fb787a5 与基线一致` |
+
+八科门输出逐行 diff 后**只有上面这三行不同**（其余读数、异常数、对齐分全部持平），
+`tools/check.py --full` 仍 exit 0。历史条目里记的一直是 16 位 hex（如 2026-09 的
+`0e2bb128bfefe831`），可见"显示指纹"本来就是这个门的设计，`?` 是显示层回归。
+
+### 3c. 硬编码用例数 → 从壳输出读（同一行内一并修掉）
+
+同三科门的指纹行里还印着**硬编码**的用例数：`liuyao` 写死 `288 例`、`xiaoliuren` 写死
+`15 例`、`meihua` 干脆只写"案例指纹"。权威值就在壳输出里（`用例 N 条`，`zeji:200` 就是这么取的）
+——**语料一旦增长，门会印一个错误的数字却仍显示 √**，属静默说谎，故一并修掉。
+
+- 修法（三科各一行；**判定语义未动**，通过与否仍只看 `rc`）：
+
+  ```python
+  # 用例数只认壳输出（唯一真值源）；取不到就如实说未知，不回落到自写常量。
+  n = re.search(r"用例 (\d+) 条", out)
+  cnt = f"{n.group(1)} 例指纹" if n else "指纹（用例数未知）"
+  ```
+  —— 落在 `liuyao/dev_tools/check.py`、`meihua/dev_tools/check.py`、
+  `xiaoliuren/dev_tools/check.py` 的金标准段。
+- **证伪"是不是常量"**（临时把本科 `dev_tools/golden.py` 换成打印假壳输出的 stub，跑完即还原并校验 sha256）：
+
+| 科 | 未动 | stub 壳输出写 `用例 1234 条` | 还原后 |
+|---|---|---|---|
+| `liuyao` | `√ 288 例指纹 eb9977f62de4653f 与基线一致` | `√ 1234 例指纹 deadbeefdeadbeef 与基线一致` | `√ 288 例指纹 eb9977f62de4653f 与基线一致` |
+| `meihua` | `√ 23 例指纹 2c9c810d8a265180 与基线一致` | `√ 1234 例指纹 deadbeefdeadbeef 与基线一致` | `√ 23 例指纹 2c9c810d8a265180 与基线一致` |
+| `xiaoliuren` | `√ 15 例指纹 9fd0de627fb787a5 与基线一致` | `√ 1234 例指纹 deadbeefdeadbeef 与基线一致` | `√ 15 例指纹 9fd0de627fb787a5 与基线一致` |
+
+  数字跟着壳输出变（`288`→`1234`→`288`）＝它真的在读数，不是常量；
+  `liuyao` 另做"壳输出里没有 `用例 N 条`"变体 → `√ 指纹（用例数未知） deadbeefdeadbeef 与基线一致`
+  ——**取不到就如实说未知，不回落到硬编码**。三次替换的 `golden.py` 均按字节还原、
+  sha256 校验一致（**本工作流对 `golden.py` 零改动**：工作树 vs 暂存区为空；
+  这三个文件相对 HEAD 的已暂存改动——改委托 `yishu_core.golden_kit`、-201/+23 行——是别的工作流的，与本轮无关）。
+- 修后三科正常路径显示行：`liuyao` = `√ 288 例指纹 eb9977f62de4653f 与基线一致`、
+  `meihua` = `√ 23 例指纹 2c9c810d8a265180 与基线一致`、
+  `xiaoliuren` = `√ 15 例指纹 9fd0de627fb787a5 与基线一致`。
+  与 §3b 的修后行**逐字相同**（因为解析出来的用例数与原来硬编码的数值相等），
+  即这次改动**不改变任何正常路径的文字**，只在"数字与指纹不符/缺字段"时才显示差异。
+
+### 4. 验收数字（与 2026-10-01m 基线逐项对照，全部持平）
+
+- `dev_tools/check.py` 全跑：历法自检 16、爻序断言 23、金标准 288 例指纹**与基线一致**、
+  段落冒烟、思维链用例 12、古籍回归 12、tune **95**、holdout **89.7**，
+  `yingqi/wikisource/huozhulin` 外部集同前——**改动前后逐行一致**。
+  （范围限定：这里指 §1／§2／§3 那次改动集。同批次追加的 §3b"`?` 显示修复"与
+  §3c"用例数改为从壳输出读"都只改了三科门的**同三行显示文字**（`?` → 真实 16 位指纹；
+  硬编码例数 → 壳输出的 `用例 N 条`），故八科门输出的准确表述是
+  **"除那三行显示文字外逐行一致"**；机械层指纹、各集读数一字未变。
+  证据：`before/` vs `after3/` 的逐行 diff = 恰 3 行差异；`--full` 全文只差
+  `[0b] 读数锚点`的自指工作树计数那一行。）
+- `--only` 证伪：`--only golden,calendar` 真跑两门、退出 0；`--only bogus` 与 `--only ""`
+  均退出 2、列出 10 个可用门名、无"通过"字样。
+- `python tools/check.py --full` 全绿（八科行为指纹 √ ×8）。
+
+### 5. 本轮"刻意不动"（记此以免下一棒重复劳动）
+
+- **注释**：`classical_enhancements.py:1888 # Compute combined strength (first match is
+  enough — they share element)`（理由在括号里，属"为什么"）；`liuyao_step4.py` 的
+  `# Check for 暗动 even in "static" hexagrams`、`# Also include 暗动 lines for greedy
+  harmony check`、`# Also check: 用神被日月生合为凶`；`liuyao_step5.py`
+  `# Use divination date as base for scanning forward`、`# Collect all 应期: list of
+  (rule_str, date_or_None, branch, description_parts)`（`tuple` 结构契约）、
+  `# Build a synthetic result dict…`＋`# Ensure thinking_chain structure exists…`；
+  `liuyao_step4.py:866` 的 `（_BRANCH_CLASH_MAP 由 core 派生）`；以及**存疑未删**的
+  `classical_enhancements.py:157` `"""判断两地支是否六合"""`——它与本轮删掉的 `:165` 六冲版同型
+  （函数名已同义），只因"六合/六冲两版要一起裁决、不单独删一个"而留下，下一棒若要动手请两版同删。
+
+  （更正：本条曾把 `liuyao_step3.py` 旧 `:376` 的 `# Skip explicit moving yao (already 明动)`
+  也列入"刻意不动"，与本轮 §1 的删除记录自相矛盾——该行**确已删除**，现从本条移除。
+  `liuyao_step3.py` 现已无任何"明动"字样。）
+- **`generation → 世爻位` 有 5 份副本**：权威表 `scripts/chart_tables.py::WORLD_POSITION`，
+  `effects.py` 两份就地重定义（缺省 `1` / `0`）、`dev_tools/fetch_*_cases.py` 两份。
+  `core` **没有**该数值表（`symbols.EIGHT_PALACES` 只有世代字符串标签，
+  `najia.response_position()` 是"由世位推应位"，语义不同），故"唯一真值源"在此不成立；
+  改它要新建 core 表、属行为敏感改动，**本轮不做**。
+- `# 检查连续三爻动`（`effects.py`）措辞：函数在 `len(moving) < 2` 就早退，严格说该块
+  语义是"至少三爻且连续"，但改动太微妙，**不动**。
+
+## 2026-10-01m 六爻整顿：减法做对 + 《卜筮正宗》书源结论
+
+**本轮只做质量，不给六爻加语料。** 书源事实进 `references/source_ledger.md`，本条目只记结果。
+
+### 1. 减法：重做上一棒的半成品（先查调用点，再删）
+
+上一棒删了 `classical_enhancements.py` 的三个包装函数却没清调用点，`effects.py` 5 处与
+`classical_enhancements.py:1340` 调到未导入的名字 → `NameError` → 段落 36→31、
+古籍回归 12→10、tune 95→93.3、金标准指纹不一致。本轮按"**全仓 grep 调用点 → 改 → 立刻跑门**"
+重做，并把被删函数的**唯一实现上收到更低层 `narrative_utils`**、保留 `__all__` 再导出，
+消费方（`effects` / `classical_analysis` / 六爻门自身）**零改动**：
+
+| 收敛项 | 处置 | 等价性证据 |
+|---|---|---|
+| `element_strength_text` | 删（纯转发壳 `s = f(...); return s`） | 全仓 grep 无调用点；从 `__all__` 同步移除 |
+| `g_day_cn` | 删（纯 `return element` 壳），2 处调用改为直接传元素名 | 语义零变化 |
+| `get_changed_hexagram_branch` | 两份合一（`classical_enhancements` 是 `return najia_branch(...)` 壳，`narrative_utils` 是自写循环） | 对 core `HEXAGRAM_TRIGRAMS` 全 64 卦 × 6 爻逐爻比对，**diffs = 0** |
+| `element_strength_in_month` | 删本模块副本，改从 `narrative_utils` 导入 | 两份逐语句相同 |
+| `_combined_strength` | 本模块与 `liuyao_step3._combined_strength_for_hm` **逐字相同** → 单一实现移入 `narrative_utils`；分值表改用既有 `strength_to_score` | 阈值 9/7/5/3 与分值表逐字相同；step3 以别名导入，调用点与 `__all__` 不动 |
+| `_EFFECTS_REEXPORT` | 11 个名字原在文件里写两遍（`__all__` 字面量 + `frozenset`）→ 收敛为 `__all__` **之前**的一处 tuple，`__all__` 用 `*_EFFECTS_REEXPORT` 展开 | PEP 562 `__getattr__` 链路不变 |
+| `najia_branch` 导入 | 随壳删除变为未用 → 删 | 先确认全仓无 `from classical_enhancements import najia_branch` |
+
+**等价性证据全量复现**（`tools/scratch/liuyao_equiv_verify.py`，非抽样）：
+`get_changed_hexagram_branch` 64 卦 × 6 爻 = **384 例 diffs=0**；
+`element_strength_in_month` 5×5 = **25 例 diffs=0**；
+`_combined_strength` 5×5×5 = **125 例 diffs=0**；空元素态（`""`）行为不变（`未知` / `衰`）；
+`ce.get_changed_hexagram_branch is nu.get_changed_hexagram_branch` → **True**。
+两个被删的壳已不在 `__all__` 且取不到；三个收敛项仍可按 `__all__` 取到，消费方零改动。
+
+**清点后决定"不动"的两处**（记此以免下一棒重复劳动）：
+
+- **死代码 0 个**：保守判据（私有名 + 不在本模块 `__all__` + 全仓任何 `.py` 里连**字符串形式**
+  都不出现）全扫，命中 0。六爻已无可静态判定的死代码。
+- `classical_enhancements` 末尾 **PEP 562 惰性再导出的 11 个 `analyze_*`**：`effects.py` 里
+  那 9 个"本模块不用、外部也无 `from effects import`"的函数**不是死代码**——纯静态分析
+  看不见这条再导出链路，**不得删**。
+
+### 2. 《卜筮正宗》书源：维基文库**没有正文**（结论，不是抓取失败）
+
+按 `tools/fetch_source.py` 的管线重抓（`--force`）：落盘 2,796B 并写 provenance。
+但**四次独立探测**证明这就是上限：维基文库可得内容只有总页（目录 + PD 声明）与
+`/卷前`（張景崧《敘》），总页列出的 `/卷01`–`/卷14` **全是红链**。
+缺口性质是"**未数字化**"，重复重抓不会有新内容。
+
+连带把三件事钉死（详见 `references/source_ledger.md`）：
+
+1. **外部验证集被卡住**：`case_splits.json` 预留的 `bushi_zhengzong_holdout` 条目数为 **0**
+   ——缺口不只是少一本书，而是让一个已立项的独立验证集无从建立。
+2. **两份旧 provenance 的 `sha256` 与在盘文件不一致**，原因查明并复现：它是对
+   **LF 归一文本**取的哈希，而在盘文件是 **CRLF**（文本模式写盘时 `\n`→`\r\n`）。
+   `lf_text == 原 sha256` 为 **True**；两种口径已写进 provenance。
+3. **`quote_database` 有 18 条署名《卜筮正宗·…》的引文**（共 49 条），该书正文不在库、
+   维基文库也无 → **在库无源可核验**。本轮**不动**：改它要动 `verdicts.json` 结构或
+   49 处 `source` 字面量，并把 `source` 带进渲染文案，须按"措辞层漂移"重新 capture，
+   属独立一批。
+
+《火珠林》原本**缺 provenance**，本轮按在盘文件实测补写；抓取时刻与子页清单当时
+未留痕，**如实标"未知"，不编造**。
+
+### 3. 书源双份（`archive/AUDIT.md` S-D10）已处理
+
+`bushi_卜筮正宗_河潞武子龄校本_*.wikitext.txt` 两份重名副本，**先逐行证明其内容全部
+被 `bushi_zhengzong.wikitext.txt` 包含**（缺 0 行）后删除；六爻下 3 个 `__pycache__`
+一并清除。`archive/sources/meihua_*` 是同一挂账项的另一半，在只读作用域内，**未动**。
+
+### 4. 瘦身：< 15,000 行**本轮做不到**（给证据与剩余计划）
+
+行数 **18,560 → 18,117**（−443，−2.4%），全部来自上面两类减法。
+
+用 tokenize 实测的分母：18,117 行里**含中文的只有 4,865 行**
+（字符串 3,698 + 注释 1,167），且叙事断语**大部分早已外置**
+（`data/narrative_templates.json`、`data/rules/verdict_texts.json`、`data/verdicts.json`）。
+即便把全部中文串搬走也只到约 14.4k，可其中相当部分是 docstring 与**带古籍出处/口径
+的注释**——后者是承重证据链，按用户口径不得删。
+
+**结论：< 15,000 无法用"把可外置叙述逻辑移进 `data/`"单一手段达成**，因为 18k 行主体是
+`AGENTS.md` 铁律一要求必须留在 Python 的机械推演（装卦/纳甲/旺衰/格局/应期/评分/渲染），
+不是叙述。剩余可选路径都需挂账决策：① 合并/裁撤分析域（**改行为**，须重跑三集并重新
+capture 金标准）；② 逐行清"复述代码"的注释（不改行为，需人工判读，粗估 −400~−900 行）；
+③ 换度量——看**门面 API 表面积**（`liuyao_analyze.__all__` 条目数、叶子模块数）而非裸 LOC。
+本条目倾向 ③ + ②，**但不擅自改挂账项口径**。
+
+### 5. 口径与复跑
+
+本轮只改结构与数据，**不改判定**；金标准机械层要求零漂移。复跑
+`cd disciplines/liuyao; python dev_tools/check.py` 全绿，与改动前逐位一致：
+
+- 金标准 **288 例指纹与基线一致**（机械层零漂移，未重新 capture）；
+- 段落产出 36（≥36）、思维链 12（≥8）、古籍回归 12（≥11）；
+- **tune** 对齐分 95.0 / 主应期 58.8 / 应支平均名次 1.93（集合 `tune`，n=20，**非 holdout**）；
+- **holdout** 对齐分 89.7 / 主应期 50.0 / 应支平均名次 1.6（集合 `holdout`，n=12，**holdout**）；
+- 外部集（只报数、不设门槛）：`wikisource_holdout` 56.3（n=35）、`wikisource_direction` 72.2（n=36）、
+  `yingqi_holdout` 87.9（n=2）、`huozhulin_holdout` 13.1（n=2）。
+
+分数一律是**古籍案例对齐分**（引擎输出与古籍案例要点的吻合度），
+**不是现实预测命中率**；n 越小越只能当参照。
+
+## 2026-10-01k 问题词典补天气占（186→195 键）
+
+- 新增两族：**雨→父母**（5 键）、**晴→子孙**（4 键）；引文「占雨用父爻」「占晴用子孫爻」
+  逐字取自 `data/sources/zengshan_buyi.wikitext.txt` 占雨占晴章，构建器 locate 核验通过。
+- 动因：关系法则层与旧词典均不覆盖天气问，占雨类问题此前落到世爻兜底（取用错误，
+  《增删卜易》明文父母主雨）。
+- 追加在 FAMILIES 尾部，既有 186 键插入顺序未动（tie-break 不受影响）。
+- **复跑三集**：tune 95.0 / holdout 89.7 / wikisource_holdout 57.1，与基线逐位一致。
+  `EXPECTED_KEYS` 搬移基线同步 186→195。
+
 ## 2026-09-26e 仓库整洁（死代码/文档）
 
 - **删除**：`factor_waterfall.py`、`engine_legacy.py`、`hallucination_guard.py`；
