@@ -186,7 +186,7 @@ def get_twelve_growth_stage(element, day_branch):
         return None
     try:
         idx = table.index(day_branch)
-        return TWELVE_GROWTH_STAGES[idx]
+        return TWELVE_GROWTH_STAGES[idx], idx
     except ValueError:
         return None
 
@@ -626,8 +626,8 @@ def _evaluate_hidden_spirit_emergence(hid_elem, hid_branch, cov_rel, cov_branch,
         reasons.append(ctpl("crt_012", tomb))
 
     # 4. 伏神逢绝
-    stage = get_twelve_growth_stage(hid_elem, day_branch)
-    if stage == "绝":
+    stage_name, _ = get_twelve_growth_stage(hid_elem, day_branch) or (None, None)
+    if stage_name == "绝":
         emerge_score -= 2
         reasons.append(ctext("cr_007"))
 
@@ -921,8 +921,8 @@ def analyze_hidden_spirit_emergence(result):
             block_reasons.append(ctpl("crt_041", hidden_branch, tomb))
 
         # 4. 伏神逢绝
-        stage = get_twelve_growth_stage(hidden_element, day_branch)
-        if stage == "绝":
+        stage_name, _ = get_twelve_growth_stage(hidden_element, day_branch) or (None, None)
+        if stage_name == "绝":
             emerge_score -= 2
             block_reasons.append(ctpl("crt_042", hidden_branch, day_branch))
 
@@ -1763,11 +1763,11 @@ def analyze_twelve_growth(result):
     for yao in yao_lines:
         branch = yao.get("earthly_branch", "")
         elem = _branch_element(branch)
-        stage = get_twelve_growth_stage(elem, day_branch)
-        is_key = get_stages_of_interest(stage)
+        stage_name, _ = get_twelve_growth_stage(elem, day_branch) or (None, None)
+        is_key = get_stages_of_interest(stage_name)
 
-        is_weak_stage = stage in ("死", "墓", "绝")
-        is_strong_stage = stage in ("帝旺", "临官", "长生")
+        is_weak_stage = stage_name in ("死", "墓", "绝")
+        is_strong_stage = stage_name in ("帝旺", "临官", "长生")
 
         if is_weak_stage:
             weak_lines.append(yao["position"])
@@ -1780,9 +1780,9 @@ def analyze_twelve_growth(result):
             "branch": branch,
             "element": elem,
             "six_relation": yao.get("six_relation", ""),
-            "growth_stage": stage,
+            "growth_stage": stage_name,
             "is_key_stage": is_key,
-            "stage_meaning": stage_meaning.get(stage, ""),
+            "stage_meaning": stage_meaning.get(stage_name, ""),
         })
 
     # 汇总

@@ -64,6 +64,10 @@ Yi/
 │       ├── gate_kit.py         # 学科质量门共享壳（子进程 / 取指标 / 跑一套评测）
 │       ├── runtime.py          # UTF-8 子进程/控制台适配
 │       ├── calendar_check.py   # 历法自检
+│       ├── execution/          # 统一执行入口 (YiRuntime)
+│       │   ├── runtime.py      # YiRuntime: execute() / chart() / analyze()
+│       │   ├── schemas.py      # TypedDict: RequestEnvelope / ChartEnvelope / AnalysisEnvelope / ResultEnvelope
+│       │   └── registry.py     # 学科能力注册表 (Capability Matrix 唯一真值源)
 │       └── report/             # 报告 kit + 输入协议
 │           ├── request.py      # 请求→命令行参数唯一映射（DISCIPLINES 八科元组）
 │           └── html.py         # HTML/MD 报告模板
@@ -143,7 +147,50 @@ Yi/
 
 ---
 
-## 三、四段契约 Protocol
+## 三、YiRuntime 统一执行入口
+
+`core/yishu_core/execution/` 是所有宿主调用 Yi 引擎的唯一入口：
+
+```
+User / Agent
+    │
+    ▼
+Skill / CLI / Web / Actions
+    │
+    ▼
+YiRuntime (统一入口)
+    │
+    ▼
+Request → discipline routing → chart → analyze → render → Result
+```
+
+**原则**：CLI / Web / Actions 不再各自拼接命令行参数或起子进程，
+统一通过 `YiRuntime.execute(request)` 进入引擎。
+Runtime 负责 discipline routing、request normalization、provenance、
+结果封装（schema_version + engine_version + envelope）。
+
+### 数据契约（TypedDict）
+
+`execution/schemas.py` 定义最小稳定 schema：
+- `RequestEnvelope`: 入口请求（discipline/question/datetime/.../up/mid/down/seed）
+- `ChartEnvelope`: 盘面结构
+- `AnalysisEnvelope`: 分析结果（verdict/signal_strength/factors/...）
+- `ResultEnvelope`: 最终输出（markdown/html/chart/analysis/provenance）
+- `SCHEMA_VERSION = "1.0.0"`
+
+**字段命名**：`signal_strength`（0-100 整数，信号一致性得分，**非概率**）替代原 `confidence`
+以避免被用户理解为发生概率。保留 `confidence` 作为 deprecated 别名。
+
+### 学科能力矩阵
+
+`execution/registry.py` 维护每个学科的 capability：
+- `chart / analyze / evidence / render / narrate / mcp / external_evaluation / holdout / synthesis`
+- 成熟度级别：`stable` / `experimental` / `unavailable`
+- 唯一真值源，CLI / Web / Actions / 文档均从此引用
+
+---
+
+## 四、四段契约 Protocol
 
 每个学科必须按四段暴露能力，段与段之间只传结构化数据。
 契约由 `docs/CONTRACT.md` 定义，强制手段是**机械验收**而非运行时类型检查：
@@ -168,7 +215,7 @@ Yi/
 
 ---
 
-## 四、数据流
+## 五、数据流
 
 完整的占问交付流程：
 
@@ -201,7 +248,7 @@ Yi/
 
 ---
 
-## 五、合参裁决规则
+## 六、合参裁决规则
 
 定义在 `synthesis/cross_rules.py`，核心五条：
 
@@ -215,15 +262,15 @@ Yi/
 
 ---
 
-## 六、依赖方向
+## 七、依赖方向
 
 **严格单向**：
 
 ```
 disciplines/<科> → core/yishu_core            # 学科只能 import 内核
 synthesis        → disciplines 的 schema       # 合参只依赖输出契约，不依赖其内部实现
-cli/main.py      → disciplines/<科>            # 统一 CLI 只做参数透传（subprocess）
-web/engine_runtime.py → core / tools/report.py  # 浏览器侧同进程跑同一份引擎
+cli/main.py      → core/yishu_core.execution.YiRuntime  # 统一 CLI 走 Runtime
+web/engine_runtime.py → tools/report.py        # 浏览器侧同进程跑同一份引擎
 ```
 
 学科之间禁止互相 import（违反此方向视为缺陷，评审直接驳回）。
@@ -239,7 +286,7 @@ web/engine_runtime.py → core / tools/report.py  # 浏览器侧同进程跑同�
 
 ---
 
-## 七、验收标准
+## 八、验收标准
 
 ### 功能验收
 

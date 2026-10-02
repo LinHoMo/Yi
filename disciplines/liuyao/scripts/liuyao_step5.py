@@ -237,8 +237,10 @@ def step5_synthesize(r: dict) -> dict:
     _verdict_locked = ov["fired"]
     officer_tomb_verdict_note = ov["officer_tomb_verdict_note"]
 
-    # ---------- 5.8: 置信度评估 ----------
-    confidence = _assess_confidence(step3_data, step4_data, final_score, strength_level)
+    # ---------- 5.8: 信号强度评估 ----------
+    signal = _assess_signal_strength(step3_data, step4_data, final_score, strength_level)
+    # 保留 confidence 作为向后兼容别名
+    confidence = signal
 
     # ---------- 5.9: 应期判断 ----------
     timing = _predict_timing(r, step3_data, step1_data, day_branch, special_pattern=special_pattern)
@@ -324,8 +326,10 @@ def step5_synthesize(r: dict) -> dict:
         # 最终锁定：若强凶格局已触发，不再允许 verdict 被后续逻辑回退到 吉/平吉
         "verdict": verdict if not (_verdict_locked and "凶" not in verdict) else "凶",
         "verdict_description": verdict_desc,
-        "confidence": confidence,
-        "confidence_description": _confidence_to_text(confidence),
+        "signal_strength": signal,
+        "confidence": signal,
+        "signal_strength_description": _strength_to_text(signal),
+        "confidence_description": _strength_to_text(signal),
         "timing": timing,
         "yingqi_dates": yingqi_dates,
         "reasoning_chain": reasoning_chain,
@@ -379,6 +383,7 @@ def step5_synthesize(r: dict) -> dict:
             officer_tomb_verdict_note=officer_tomb_verdict_note,
             nayin_desc=nayin_desc,
             confidence=confidence,
+            signal_strength=signal,
             classical_quotes_text=classical_quotes_text,
         ),
         # 卦身摘要（供整体摘要引用）
@@ -1345,53 +1350,66 @@ def build_factor_contributions(adj: dict, r: dict) -> list:
 # ═══ chain_step5_conf.py ═══
 
 
-def _assess_confidence(
+def _assess_signal_strength(
     step3_data: dict,
     step4_data: dict,
     final_score: float,
     strength_level: str,
 ) -> int:
-    """评估预测置信度 0-100%：旺+原神+清晰信号 → 高；休囚/旬空月破+忌神克 → 低。"""
-    confidence = 70  # 基础置信度
+    """评估信号强度 0-100：旺+原神+清晰信号 → 高；休囚/旬空月破+忌神克 → 低。
+
+    该值为信号一致性得分（非概率），反映旺衰/旬空/动变等维度的一致性。
+    """
+    strength = 70  # 基础信号强度
 
     # 旺衰修正
     if strength_level in ("极旺", "旺"):
-        confidence += 10
+        strength += 10
     elif strength_level in ("极弱", "弱"):
-        confidence -= 15
+        strength -= 15
 
     # 旬空修正
     if step3_data.get("is_empty"):
-        confidence -= 10
+        strength -= 10
 
     # 月破修正
     if step3_data.get("is_month_break"):
-        confidence -= 10
+        strength -= 10
 
     # 动变一致性
     net_effect = step4_data.get("net_effect", 0)
     if abs(net_effect) > 1.5:
-        confidence += 5  # 动变方向明确
+        strength += 5  # 动变方向明确
     elif abs(net_effect) < 0.3:
-        confidence -= 5  # 动变方向不明，降低置信度
+        strength -= 5  # 动变方向不明，降低信号强度
 
-    # 最终分极端值提升置信度
+    # 最终分极端值提升信号强度
     if final_score > 4.0 or final_score < 1.0:
-        confidence += 5
+        strength += 5
 
-    return max(30, min(95, confidence))
+    return max(30, min(95, strength))
 
 
-def _confidence_to_text(confidence: int) -> str:
-    """置信度文字说明"""
-    if confidence >= 80:
+def _assess_confidence(*args, **kwargs) -> int:
+    """向后兼容别名：已重命名为 _assess_signal_strength。"""
+    return _assess_signal_strength(*args, **kwargs)
+
+
+def _strength_to_text(strength: int) -> str:
+    """信号强度一致性描述。"""
+    if strength >= 80:
         return CONF_TXT["high"]["text"]
-    elif confidence >= 60:
+    elif strength >= 60:
         return CONF_TXT["medium"]["text"]
-    elif confidence >= 40:
+    elif strength >= 40:
         return CONF_TXT["medium_low"]["text"]
     else:
         return CONF_TXT["low"]["text"]
+
+
+def _confidence_to_text(*args, **kwargs) -> str:
+    """向后兼容别名：已重命名为 _strength_to_text。"""
+    return _strength_to_text(*args, **kwargs)
 
 
 def _compose_synthesis_summary(**kw) -> str:
@@ -1435,7 +1453,7 @@ def _compose_synthesis_summary(**kw) -> str:
     if concerns:
         parts.append(FREASON["concern_prefix"]["text"] + "，".join(str(c) for c in concerns if c) + "。")
     if score is not None:
-        parts.append(f"（量化参考 {float(score):.2f}，把握约 {kw.get('confidence','—')}%）")
+        parts.append(f"（量化参考 {float(score):.2f}，信号强度 {kw.get('signal_strength', kw.get('confidence','—'))}）")
     note_bits = [x for x in (
         kw.get("officer_tomb_verdict_note"), kw.get("nayin_desc"),
     ) if x]
@@ -1693,7 +1711,9 @@ __all__ = [
     "compute_bing_yao_adjustment",
     "apply_verdict_overrides",
     "build_factor_contributions",
+    "_assess_signal_strength",
     "_assess_confidence",
+    "_strength_to_text",
     "_confidence_to_text",
     "_compose_synthesis_summary",
     "_day_branch_for_date",

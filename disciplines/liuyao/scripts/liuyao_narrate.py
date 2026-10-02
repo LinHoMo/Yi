@@ -513,7 +513,7 @@ def _build_overall_summary(context: dict) -> str:
         f"【旺衰】{step3.get('strength_level', '?')}（评分：{step3.get('effective_score', '?')}）",
         f"【动变】{step4.get('net_effect_description', '无动爻')}（效应：{step4.get('net_effect', 0):+.2f}）",
         f"【最终】{step5.get('verdict', '?')} — {step5.get('verdict_description', '')}",
-        f"【置信度】{step5.get('confidence', '?')}%（{step5.get('confidence_description', '')}）",
+        f"【信号强度】{step5.get('signal_strength', step5.get('confidence', '?'))}（{step5.get('signal_strength_description', step5.get('confidence_description', ''))}）",
         f"【应期】{step5.get('timing', {}).get('summary_text', '待断')}",
     ]
 
@@ -1668,7 +1668,7 @@ def build_human_narrative(result: dict) -> dict:
 
     verdict = s5.get("verdict") or "未知"
     score = s5.get("final_score")
-    conf = s5.get("confidence")
+    conf = s5.get("signal_strength", s5.get("confidence"))
     use_cat = s2.get("use_god_category") or "用神"
     use_el = s2.get("use_god_element") or ""
     use_br = (s2.get("selected_use_god") or {}).get("earthly_branch") or s3.get("use_god_branch") or ""
@@ -1798,6 +1798,7 @@ def build_human_narrative(result: dict) -> dict:
         "changed_hexagram": changed_name,
         "verdict": verdict,
         "final_score": score,
+        "signal_strength": conf,
         "confidence": conf,
         "headline": p1 if len(p1) < 80 else _verdict_opening(verdict, focus),
         "lead": lead,

@@ -127,7 +127,7 @@ def build_samples() -> list[dict]:
             "use_god": human.get("use_god"),
             "verdict": s5.get("verdict"),
             "final_score": s5.get("final_score"),
-            "confidence": s5.get("confidence"),
+            "signal_strength": s5.get("signal_strength", s5.get("confidence")),
             "yingqi": timing.get("summary_text"),
             "yingqi_branches": timing.get("key_branches") or [],
             "yingqi_rules": timing.get("timing_rules") or [],

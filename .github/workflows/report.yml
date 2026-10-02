@@ -39,9 +39,9 @@ on:
         type: string
         default: ''
       commit_branch:
-        description: 是否提交到可匿名读取的 reports 分支
+        description: '是否提交到 reports 分支(公开可读)。注意: question/datetime/gender 将永久公开,默认关闭'
         type: boolean
-        default: true
+        default: false
   issues:
     types: [opened, edited]
   issue_comment:
@@ -55,6 +55,8 @@ permissions:
   contents: write
   issues: write
   actions: read
+  # 最小权限原则: 仅保留写 reports 分支 + 回评 issue 的权限。
+  # 仓库 secrets 不暴露给本工作流(除非显式 declared)。
 
 # 同一 issue / 同一学科串行：连点两次触发不会并行起多个 run 各回一次评论。
 # 不取消进行中的（cancel-in-progress: false）——报告是有用产物，跑完比省时间重要。
@@ -75,8 +77,34 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: 校验 repository_dispatch 签名(可选安全门)
+        id: auth
+        if: github.event_name == 'repository_dispatch'
+        env:
+          YI_DISPATCH_SECRET: ${{ secrets.YI_DISPATCH_SECRET }}
+        run: |
+          # 若 YI_DISPATCH_SECRET 已设置,则 repository_dispatch 的 client_payload
+          # 必须包含同名的 token 字段,否则拒绝执行。未设置则跳过(向后兼容)。
+          python - <<'PY'
+          import os, json, sys
+          secret = os.environ.get("YI_DISPATCH_SECRET", "")
+          if not secret:
+              print("未设置 YI_DISPATCH_SECRET, 跳过 dispatch 校验(向后兼容)")
+              with open(os.environ.get("GITHUB_OUTPUT", "/dev/null"), "a") as f:
+                  f.write("dispatch_authenticated=skip\n")
+              sys.exit(0)
+          payload = json.loads(os.environ.get("CLIENT_PAYLOAD", "{}"))
+          if payload.get("token") != secret:
+              print("::error::YI_DISPATCH_SECRET 与 client_payload.token 不匹配,拒绝执行")
+              sys.exit(1)
+          with open(os.environ.get("GITHUB_OUTPUT", "/dev/null"), "a") as f:
+              f.write("dispatch_authenticated=true\n")
+          print("dispatch 签名校验通过")
+          PY
+
       - name: 解析触发请求
         id: req
+        if: steps.auth.outcome != 'failure'
         env:
           INPUT_DISCIPLINE: ${{ github.event.inputs.discipline }}
           INPUT_QUESTION: ${{ github.event.inputs.question }}

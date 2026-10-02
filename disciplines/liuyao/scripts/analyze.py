@@ -49,7 +49,7 @@ def _conclusion_from(chain: dict, result: dict) -> dict:
         "verdict": verdict,
         "说明": step5.get("verdict_description") or "",
         "最终得分": step5.get("final_score"),
-        "置信度": step5.get("confidence"),
+        "信号强度": step5.get("signal_strength", step5.get("confidence")),
         "应期": yingqi_list,
         # 结构化应期候选（date+rule），供合参层现实回填评分；按引擎给出顺序即名次
         "应期明细": yingqi_items,

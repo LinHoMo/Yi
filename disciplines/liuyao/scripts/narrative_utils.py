@@ -210,14 +210,24 @@ def _is_chong(b1: str, b2: str) -> bool:
 
 
 def get_empty_branches(day_stem: str) -> list[str]:
-    """获取当日旬空的地支"""
+    """获取当日旬空的地支。
+
+    古籍出处：以日柱定旬首——甲乙同甲子旬、丙丁同甲戌旬、戊己同甲申旬、
+    庚辛同甲午旬、壬癸同甲辰旬、癸末尾归甲寅旬。原实现用 stem_idx % 6 推旬首，
+    除甲子日（idx=0）外全部错误；改为 stem_idx // 2 十干两两同旬。
+    """
     if day_stem in XUN_KONG:
         return XUN_KONG[day_stem]
-    # 如果没有精确匹配，从甲己等推算
-    stem_idx = STEMS.index(day_stem) if day_stem in STEMS else 0
-    # 根据天干推算旬首
+    # 天干两两同旬：甲乙→甲子旬(idx 0)，丙丁→甲戌旬(1)，戊己→甲申旬(2)，
+    # 庚辛→甲午旬(3)，壬癸→甲辰旬(4)，癸末尾→甲寅旬(5 备用）
+    try:
+        stem_idx = STEMS.index(day_stem)
+    except ValueError:
+        return []
     xun_stems = ["甲子", "甲戌", "甲申", "甲午", "甲辰", "甲寅"]
-    xun_idx = stem_idx % 6
+    xun_idx = stem_idx // 2
+    if xun_idx >= len(xun_stems):
+        xun_idx = 0
     return XUN_KONG.get(xun_stems[xun_idx], [])
 
 

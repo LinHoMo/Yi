@@ -26,8 +26,10 @@ from yishu_core.ming_tables import (  # noqa: E402
     dayun_direction,
     DAYS_PER_LUCK_YEAR,
 )
-from yishu_core.shensha import shensha_at_branches  # noqa: E402
+from yishu_core.shensha import shensha_at_branches, shensha_of_chart  # noqa: E402
 from yishu_core.relations import ten_god, six_relation  # noqa: E402
+from yishu_core.najia import najia_branch, response_position  # noqa: E402
+from yishu_core.hexagram_texts import HEXAGRAMS  # noqa: E402
 from yishu_core.ganzhi_calendar import next_jie_after, prev_jie_before  # noqa: E402
 
 
@@ -105,6 +107,49 @@ def check_core_apis() -> list[str]:
 
     if DAYS_PER_LUCK_YEAR != 3:
         fails.append("DAYS_PER_LUCK_YEAR 应为 3（三日=一年）")
+
+    # 神煞（命科 shensha_of_chart）
+    ss_chart = shensha_of_chart("甲", "子", "寅", "辰", "申")
+    if not isinstance(ss_chart, list):
+        fails.append(f"shensha_of_chart 应返回 list，得 {type(ss_chart)}")
+    elif not ss_chart:
+        fails.append("shensha_of_chart(甲/子/寅/辰/申) 应至少安出天乙/文昌等")
+    else:
+        s0 = ss_chart[0]
+        if not isinstance(s0, dict) or "name" not in s0:
+            fails.append(f"shensha_of_chart 条目应为含 name 的 dict，得 {s0!r}")
+
+    # 神煞（卜科 shensha_at_branches）
+    ss_ly = shensha_at_branches("甲", "寅", year_branch="子")
+    if not isinstance(ss_ly, list):
+        fails.append(f"shensha_at_branches 应返回 list，得 {type(ss_ly)}")
+    elif not ss_ly:
+        fails.append("shensha_at_branches(甲/寅) 应至少安出一项神煞")
+
+    # 纳甲
+    nb = najia_branch("乾", 1)
+    if nb != "子":
+        fails.append(f"乾卦初九纳子，得 {nb}")
+    nb6 = najia_branch("坤", 6)
+    if nb6 != "酉":
+        fails.append(f"坤卦六三纳酉，得 {nb6}")
+    if najia_branch("ZZZ_not_exist", 1) is not None:
+        fails.append("未知卦纳甲应返回 None")
+
+    # 世应定位（世在X爻则应隔两位：1→4, 2→5, 3→6, 4→1, 5→2, 6→3）
+    if response_position(1) != 4:
+        fails.append(f"世在初爻应在四，得 {response_position(1)}")
+    if response_position(3) != 6:
+        fails.append(f"世在三爻应在六，得 {response_position(3)}")
+    if response_position(4) != 1:
+        fails.append(f"世在四爻应在初，得 {response_position(4)}")
+    if response_position(6) != 3:
+        fails.append(f"世在上爻应在三，得 {response_position(6)}")
+
+    # 六十四卦表完整
+    if len(HEXAGRAMS) != 64:
+        fails.append(f"HEXAGRAMS 应为 64 卦，实际 {len(HEXAGRAMS)}")
+
     return fails
 
 
@@ -115,4 +160,4 @@ if __name__ == "__main__":
         for f in fails:
             print("  ·", f)
         raise SystemExit(1)
-    print("内核 API 自测通过（旬空/三刑/十二长生/纳音/十神/节气/大运方向）")
+    print("内核 API 自测通过（旬空/三刑/十二长生/纳音/十神/节气/大运方向/神煞/纳甲/世应/六十四卦表）")

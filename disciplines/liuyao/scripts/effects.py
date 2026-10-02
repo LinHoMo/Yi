@@ -1159,9 +1159,9 @@ def analyze_element_strength(result):
             special.append(ctext("cr_032"))
         if is_ba_zu_chong(branch, day_branch):
             special.append(ctext("cr_033"))
-        stage = get_twelve_growth_stage(elem, day_branch)
-        if stage in ("墓", "绝", "死"):
-            special.append(f"{stage}")
+        stage_name, _ = get_twelve_growth_stage(elem, day_branch) or (None, None)
+        if stage_name in ("墓", "绝", "死"):
+            special.append(f"{stage_name}")
 
         details.append({
             "position": yao["position"],
@@ -1172,7 +1172,7 @@ def analyze_element_strength(result):
             "month_strength": m_str,
             "day_strength": d_str,
             "overall": overall,
-            "growth_stage": stage,
+            "growth_stage": stage_name,
             "special_markers": special,
         })
 

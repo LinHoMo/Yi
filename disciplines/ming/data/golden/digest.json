@@ -4,7 +4,7 @@
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
   "digest": "2c3eee326cec8ccd",
-  "narrate_digest": "05f8ebf3f6f9cc0b",
+  "narrate_digest": "322cebf811a70940",
   "drift_log": [
     {
       "from": "57dc7e890af222fa",
@@ -79,6 +79,12 @@
       "to": "05f8ebf3f6f9cc0b",
       "date": "2026-10-02",
       "reason": "2026-10-02c 命科加法：B1 女命夫子星（analyze 新增 female_fu_zi 机械标注 + narrate 专段，仅女命样例漂移）；B2 童子煞（core 新增民间通胜口诀神煞，3 样例命中入神煞列表）。机械层（强弱/格局/大运）零漂移，措辞层新增呈现段为有意变更。"
+    },
+    {
+      "from": "05f8ebf3f6f9cc0b",
+      "to": "322cebf811a70940",
+      "date": "2026-10-02",
+      "reason": "B5(ming narrate): append short basis ref like '日干起' to shensha output for source attribution"
     }
   ]
 }

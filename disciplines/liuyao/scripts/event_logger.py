@@ -32,6 +32,7 @@ class DivinationEvent:
     use_god: str = ""
     verdict: str = ""
     final_score: float = 0.0
+    signal_strength: str = ""
     confidence: str = ""
     hallucination_flags: list = field(default_factory=list)
     notes: str = ""
@@ -84,7 +85,7 @@ def _extract_use_god(result: dict) -> str:
 
 
 def _extract_verdict_info(result: dict) -> tuple[str, float, str]:
-    """从完整结果中提取 (verdict, final_score, confidence)。"""
+    """从完整结果中提取 (verdict, final_score, signal_strength)。"""
     chain = result.get("thinking_chain", {})
     step5 = None
     if chain:
@@ -93,8 +94,8 @@ def _extract_verdict_info(result: dict) -> tuple[str, float, str]:
     if step5 and isinstance(step5, dict):
         verdict = step5.get("verdict", "")
         final_score = step5.get("final_score", 0.0)
-        confidence = str(step5.get("confidence", ""))
-        return verdict, float(final_score), confidence
+        signal = str(step5.get("signal_strength", step5.get("confidence", "")))
+        return verdict, float(final_score), signal
     return "", 0.0, ""
 
 
@@ -154,7 +155,7 @@ def log_divination(
     oh = result.get("original_hexagram", {})
     ch = result.get("changed_hexagram")
 
-    verdict, final_score, confidence = _extract_verdict_info(result)
+    verdict, final_score, signal = _extract_verdict_info(result)
 
     event = DivinationEvent(
         event_id=str(uuid.uuid4()),
@@ -169,7 +170,8 @@ def log_divination(
         verdict=verdict,
         **_extract_yingqi(result),
         final_score=final_score,
-        confidence=confidence,
+        signal_strength=signal,
+        confidence=signal,
         hallucination_flags=[],
         notes=notes,
         result_hash=_compute_result_hash(result),

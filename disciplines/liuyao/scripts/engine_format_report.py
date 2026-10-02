@@ -194,13 +194,13 @@ def _step5_body(step5: dict) -> list:
     verdict = step5.get("verdict", "?")
     final_score = step5.get("final_score", 0)
     verdict_desc = step5.get("verdict_description", "")
-    confidence = step5.get("confidence", "?")
-    conf_desc = step5.get("confidence_description", "")
+    strength = step5.get("signal_strength", step5.get("confidence", "?"))
+    conf_desc = step5.get("signal_strength_description", step5.get("confidence_description", ""))
 
     lines = [f"  │ 判　语：{verdict}（{final_score:.2f}分）"]
     if verdict_desc:
         lines.append(f"  │ 说　明：{verdict_desc}")
-    lines.append(f"  │ 置信度：{confidence}%（{conf_desc}）")
+    lines.append(f"  │ 信号强度：{strength}（{conf_desc}）")
 
     # 格局识别
     sp = step5.get("special_pattern", {})
@@ -394,7 +394,8 @@ def build_verdict(step5: dict, W: int = REPORT_WIDTH) -> list:
         verdict = step5.get("verdict", "待定")
         final_score = step5.get("final_score", 0)
         verdict_desc = step5.get("verdict_description", "")
-        confidence = step5.get("confidence", "?")
+        strength = step5.get("signal_strength", step5.get("confidence", "?"))
+        conf_desc = step5.get("signal_strength_description", step5.get("confidence_description", ""))
 
         # 判语大字
         lines.append(f"　　　　　　◖ {verdict} ◗")
@@ -403,7 +404,7 @@ def build_verdict(step5: dict, W: int = REPORT_WIDTH) -> list:
             lines.append(f"　　{verdict_desc}")
         lines.append("")
         lines.append(f"　　综合评分：{final_score:.2f} / 5.00")
-        lines.append(f"　　置信　度：{confidence}%（{step5.get('confidence_description', '')}）")
+        lines.append(f"　　信号　强度：{strength}（{conf_desc}）")
 
         # pattern override notes
         pvn = step5.get("pattern_verdict_note", "")

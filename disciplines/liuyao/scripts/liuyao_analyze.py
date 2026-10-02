@@ -28,6 +28,7 @@ from liuyao_step2 import _USE_GOD_RULES
 
 __all__ = [
     "_analyze_effect_on_use_god",
+    "_assess_signal_strength",
     "_assess_confidence",
     "_branch_to_relation",
     "_check_fu_cang",
@@ -39,6 +40,7 @@ __all__ = [
     "_compose_change_summary",
     "_compose_strength_summary",
     "_compose_synthesis_summary",
+    "_strength_to_text",
     "_confidence_to_text",
     "_dates_overlap",
     "_day_branch_for_date",

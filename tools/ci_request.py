@@ -40,6 +40,12 @@ FIELD_ALIASES = {
     "direction": "direction", "方位": "direction",
     "longitude": "longitude", "经度": "longitude",
     "name": "name", "名字": "name",
+    # 灵棋经三部掷数
+    "up": "up", "上": "up", "上棋": "up",
+    "mid": "mid", "中": "mid", "中棋": "mid",
+    "down": "down", "下": "down", "下棋": "down",
+    # 六爻手工种子
+    "seed": "seed", "种子": "seed",
 }
 FIELDS = tuple(dict.fromkeys(FIELD_ALIASES.values()))
 

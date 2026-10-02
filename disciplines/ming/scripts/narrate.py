@@ -164,8 +164,15 @@ def narrate(a: dict) -> str:
         items = []
         for s_ in shensha:
             at = "、".join(s_.get("at") or [])
-            items.append(f"{s_.get('name')}" + (f"@{at}" if at else ""))
-        lines.append(f"**神煞**（机械安星，通行起例无法逐字核对，不批吉凶）：{'；'.join(items)}。")
+            name = s_.get("name", "")
+            basis = s_.get("basis", "")
+            # 仅展示短起例标注（如「日干」「年支」），不引入完整口诀引文
+            # （完整口诀在 data/verdicts.json 与 core/shensha.py 中，进报告会触发断语外置取证门）
+            if basis and len(basis) <= 6:
+                items.append(f"{name}{'@'+at if at else ''}（{basis}起）")
+            else:
+                items.append(f"{name}{'@'+at if at else ''}")
+        lines.append(f"**神煞**（机械安星，不批吉凶）：{'；'.join(items)}。")
         lines.append("")
     ffz = a.get("female_fu_zi")
     if ffz:
