@@ -102,6 +102,10 @@ CATALOG = (
      "note": "2026-10-01 重抓实测 60578 字节（含任注從化論：『從得真者只論從』逐字在库），此前 skeleton 判定过期"},
     {"key": "yuan-hai-zi-ping", "kind": "八字·总纲", "title": "渊海子平",
      "pages": [], "status": "missing", "note": "实测 missingtitle"},
+    {"key": "shen-feng-tong-kao", "kind": "八字·病药", "title": "神峰通考",
+     "pages": [], "status": "ok",
+     "note": "2026-10-02 实测有正文：病药说类/雕枯旺弱四病说类/损益生长四药说类"
+             "=病药用神判据正文章节在库（命科病药判据的语料阻塞解除）"},
     # ── 备选与旁证 ──
     {"key": "ling-qi-jing", "kind": "灵棋经", "title": "灵棋经 (四库全书本)",
      "pages": [], "status": "unverified", "note": "备选门类；124 课查表即断"},
