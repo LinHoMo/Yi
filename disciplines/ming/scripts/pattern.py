@@ -409,10 +409,27 @@ def _from_judge(chart_json: dict, details: list[dict], day_stem: str,
         second_w = ordered[1][1] if len(ordered) > 1 else 0.0
         if top_w - second_w < 0.8:
             kind = "从势"
+            # 杀势当权则不落从势（2026-10-02t，通用规则）：任注从势者须「财官食伤
+            # **并旺**」势均——官杀「当令且透干」或「透干≥2（成党）」即杀势当权，
+            # 非并旺，书例皆判从杀（ZC011「杀势当权…弃命从杀」卯令乙透、
+            # ZC012「杀势愈旺」双壬透、ZC014 丙丁并透；对照 ZC009 辰令官**不透**
+            # 书仍从势——当令而不透不成当权）。仅改 kind，真假口径不变。
+            guansha_chou = sum(
+                1 for pname in ("year", "month", "hour")
+                if (pillars.get(pname) or {}).get("ten_god") in ("正官", "偏官", "七杀"))
+            sha_dangling_tou = (main_roles.get("month") == "官杀" and guansha_chou >= 1)
+            sha_shuang_tou = guansha_chou >= 2
+            if sha_dangling_tou or sha_shuang_tou:
+                kind = "从官杀"
+                basis = ("官杀当权（%s），杀势成党非「并旺」，书例判从杀——" %
+                         ("杀临月令且透干" if sha_dangling_tou else "官杀双透成党")
+                         + _CONG["cong_shi"])
+            else:
+                basis = ("日主失令无自立，财官食伤并旺（主导差 <0.8）——"
+                         + _CONG["cong_shi"])
             ftype = "真从" if (not day_root and not strong_yinbi) else "假从"
             label = f"{kind}·{ftype}"
-            basis = ("日主失令无自立，财官食伤并旺（主导差 <0.8）——"
-                     + _CONG["cong_shi"] + "；生扶口径：%s" % (_CONG["sheng_fu_jue_wu"] if ftype == "真从" else _CONG["zhong_you_yin_bi"]))
+            basis += "；生扶口径：%s" % (_CONG["sheng_fu_jue_wu"] if ftype == "真从" else _CONG["zhong_you_yin_bi"])
             # 从势（从神非唯一主导）时，某从神本气支仅一支且被异类支冲
             # （卯酉金克木、寅申金木）→ 从神缺角 → 从之不纯（ZC011 卯酉冲杀、
             # ZC012 寅申冲财）；同类相冲（辰戌库冲）不破（ZC009/001 仍真从）。
