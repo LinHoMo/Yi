@@ -50,7 +50,7 @@ def same_polarity(a: str, b: str) -> bool | None:
 # ---------------------------------------------------------------- 天干五合
 # 甲己合土、乙庚合金、丙辛合水、丁壬合木、戊癸合火（《三命通会》「十干合」；
 # 干支关系通用表，属内核唯一真值源，学科层不得另存）。
-# 命科用于「合财存印」「合煞存财」「去伤存官」等救应判据（2026-09-30u）。
+# 命科用于「合财存印」「合煞存财」「去伤存官」等救应判据。
 STEM_WUHE = {
     "甲": "己", "己": "甲",
     "乙": "庚", "庚": "乙",
@@ -59,10 +59,6 @@ STEM_WUHE = {
     "戊": "癸", "癸": "戊",
 }
 
-
-def stem_wuhe(stem: str) -> str | None:
-    """天干 → 与它相合的天干；非法输入返回 None。"""
-    return STEM_WUHE.get(stem)
 
 
 def stems_wuhe(a: str, b: str) -> bool:
@@ -176,15 +172,3 @@ def liuqin_to_shishen(liuqin: str) -> tuple[str, str] | None:
     return LIUQIN_TO_SHISHEN.get(liuqin)
 
 
-def relation_class(me_wx: str, other_wx: str) -> dict | None:
-    """一次性给出两五行之间的关系大类、六亲名、以及若加阴阳可得的两支十神。
-
-    合参层用它把「卜科某六亲」与「命科某十神」判为同源，返回结构化对齐信息。
-    """
-    rel = wuxing_relation(me_wx, other_wx)
-    if rel is None:
-        return None
-    liuqin = LIUQIN_OF_RELATION[rel]
-    same, diff = LIUQIN_TO_SHISHEN[liuqin]
-    return {"relation": rel, "liuqin": liuqin,
-            "shishen_same_polarity": same, "shishen_diff_polarity": diff}

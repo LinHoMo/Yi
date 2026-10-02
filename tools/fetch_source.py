@@ -98,8 +98,8 @@ CATALOG = (
      "pages": [], "status": "missing",
      "note": "实测 missingtitle（简繁两式均无）。格局成败救应的判据来源需另找"},
     {"key": "di-tian-sui", "kind": "八字·用神", "title": "滴天髓",
-     "pages": [], "status": "skeleton",
-     "note": "实测存在但仅 2444 字节，属纲领短文，无注例"},
+     "pages": [], "status": "ok",
+     "note": "2026-10-01 重抓实测 60578 字节（含任注從化論：『從得真者只論從』逐字在库），此前 skeleton 判定过期"},
     {"key": "yuan-hai-zi-ping", "kind": "八字·总纲", "title": "渊海子平",
      "pages": [], "status": "missing", "note": "实测 missingtitle"},
     # ── 备选与旁证 ──
@@ -109,6 +109,10 @@ CATALOG = (
      "pages": [], "status": "unverified", "note": "论证中列为不推荐（占域以分野/治乱为纲）"},
     {"key": "xie-ji-bian-fang", "kind": "择吉", "title": "协纪辨方书",
      "pages": [], "status": "unverified", "note": "择吉科的口径旁证"},
+    {"key": "zi-wei-dou-shu-quan-shu", "kind": "紫微斗数", "title": "紫微斗數全書",
+     "pages": [], "status": "ok",
+     "note": "已抓 214512 字节（卷一/二/三，93 标题）：卷一诸星问答论十四主星性情段 + "
+             "太微赋/形性赋，可校 verdicts 主星格释义"},
     {"key": "zeng-shan-bu-yi", "kind": "六爻", "title": "增刪卜易",
      "pages": [], "status": "ok",
      "note": "已有专用 parser：disciplines/liuyao/dev_tools/fetch_wikisource_cases.py"})

@@ -13,7 +13,7 @@
 """
 from __future__ import annotations
 
-from .symbols import sanhe_group
+from .symbols import sanhe_group, nayin_of
 
 # ================================================================ 神煞
 # 只收「起例明确、可由四柱机械安出」的通行神煞。神煞安法是机械步骤（属 chart），
@@ -41,7 +41,7 @@ YI_MA = {"水": "寅", "火": "申", "金": "亥", "木": "巳"}
 TAO_HUA = {"水": "酉", "火": "卯", "金": "午", "木": "子"}
 HUA_GAI = {"水": "辰", "火": "戌", "金": "丑", "木": "未"}
 
-# 三合局神煞（2026-09-30u 补，《三命通会·论神煞》通行起例，verified=false）：
+# 三合局神煞（《三命通会·论神煞》通行起例，verified=false）：
 #   将星 = 三合中位（申子辰→子，寅午戌→午，巳酉丑→酉，亥卯未→卯）
 #   亡神 = 三合临官（申子辰→亥，寅午戌→巳，巳酉丑→申，亥卯未→寅）
 #   劫煞 = 三合绝位（申子辰→巳，寅午戌→寅，巳酉丑→申，亥卯未→亥）
@@ -77,6 +77,24 @@ YIN_CHA_YANG_CUO = {
 LU_SHEN = {
     "甲": "寅", "乙": "卯", "丙": "巳", "戊": "巳", "丁": "午",
     "己": "午", "庚": "申", "辛": "酉", "壬": "亥", "癸": "子",
+}
+# 童子煞（民间通胜口诀，非《渊海子平》等子平经典原文；verified=false）。
+# 口诀：春秋寅子贵，冬夏卯未辰；金木马卯合，水火鸡犬多；土命逢辰巳，童子定不错。
+# 释：春/秋季（以月令算）日支或时支见寅或子；冬/夏季日支或时支见卯、未或辰；
+#      年柱纳音金或木，日时支见午或卯；水、火见酉或戌；土见辰或巳。
+TONGZI_MONTH_SEASON = {
+    "寅": "春", "卯": "春", "辰": "春",
+    "巳": "夏", "午": "夏", "未": "夏",
+    "申": "秋", "酉": "秋", "戌": "秋",
+    "亥": "冬", "子": "冬", "丑": "冬",
+}
+TONGZI_SEASON_TARGETS = {
+    "春": ["寅", "子"], "秋": ["寅", "子"],
+    "冬": ["卯", "未", "辰"], "夏": ["卯", "未", "辰"],
+}
+TONGZI_NAYIN_TARGETS = {
+    "金": ["午", "卯"], "木": ["午", "卯"],
+    "水": ["酉", "戌"], "火": ["酉", "戌"], "土": ["辰", "巳"],
 }
 # 红艳（以日干取）：甲午乙午丙寅丁未戊辰、己辰庚戌辛酉壬子癸申。
 HONG_YAN = {
@@ -173,7 +191,6 @@ def shensha_of_chart(day_stem: str, year_stem: str,
     _add("天乙贵人", tianyi_guiren(day_stem), "日干")
     if year_stem != day_stem:
         _add("天乙贵人(年干)", tianyi_guiren(year_stem), "年干")
-    # 文昌贵人
     _add("文昌贵人", [WEN_CHANG[day_stem]] if day_stem in WEN_CHANG else [], "日干")
     # 羊刃（仅阳干）
     _add("羊刃", [YANG_REN[day_stem]] if day_stem in YANG_REN else [], "日干")
@@ -200,4 +217,25 @@ def shensha_of_chart(day_stem: str, year_stem: str,
     # 阴差阳错日（日柱干支命中 12 组，书源《三命通会》原文照录）
     if day_stem + day_branch in YIN_CHA_YANG_CUO:
         _add("阴差阳错", [day_branch], "日柱")
+    # 童子煞（民间通胜口诀；非《渊海子平》等子平经典原文，verified=false）。
+    # 只机械安星，不批吉凶：月令定季 + 年柱纳音五行，查日支/时支是否落入目标支。
+    month_branch_tz = all_branches[1] if len(all_branches) >= 2 else ""
+    hour_branch_tz = all_branches[3] if len(all_branches) >= 4 else ""
+    tz_targets = set()
+    if month_branch_tz in TONGZI_MONTH_SEASON:
+        tz_targets.update(TONGZI_SEASON_TARGETS[TONGZI_MONTH_SEASON[month_branch_tz]])
+    year_gz = (year_stem or "") + (year_branch or "")
+    nayin = nayin_of(year_gz) if year_gz else None
+    nayin_elem = nayin[-1] if nayin else None
+    if nayin_elem in TONGZI_NAYIN_TARGETS:
+        tz_targets.update(TONGZI_NAYIN_TARGETS[nayin_elem])
+    tz_hit = [b for b in (day_branch, hour_branch_tz) if b in tz_targets]
+    tz_hit = [b for i, b in enumerate(tz_hit) if b not in tz_hit[:i]]  # 日时同支去重
+    if tz_hit:
+        found.append({
+            "name": "童子煞",
+            "at": tz_hit,
+            "basis": "民间通胜口诀『春秋寅子贵，冬夏卯未辰；金木马卯合，水火鸡犬多；"
+                     "土命逢辰巳，童子定不错』；非《渊海子平》等子平经典原文（verified=false）；只安星不批吉凶",
+        })
     return found

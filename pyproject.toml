@@ -17,6 +17,7 @@ yi = "cli.main:main"
 [project.optional-dependencies]
 lunar = ["lunar-python>=1.4"]
 viz = ["matplotlib>=3.8"]
+dev = ["pytest>=8"]            # 仅质量门 [8] 与 tests/ 需要；主计算与出报告不用
 
 [tool.setuptools.dynamic]
 version = { attr = "yishu_core.__version__" }

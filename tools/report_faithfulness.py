@@ -16,7 +16,8 @@
 用法：
     python tools/report_faithfulness.py analyze.json          # 审已有 analyze JSON
     python tools/report_faithfulness.py --chart chart.json    # 从 chart 起跑 chart→analyze→narrate→审计
-    python tools/report_faithfulness.py --demo                # 跑内置演示案例
+    python tools/report_faithfulness.py --demo                # 跑内置演示案例（1 例）
+    python tools/report_faithfulness.py --corpus              # 跑内置语料（12 例，三种起卦法）
 退出码：断言全 supported（或空断言集）→ 0；出现 invented/contradicted → 1；错误 → 2。
 """
 from __future__ import annotations
@@ -38,6 +39,23 @@ SIX_SPIRITS = ("青龙", "朱雀", "勾陈", "螣蛇", "白虎", "玄武")
 BRANCHES = "子丑寅卯辰巳午未申酉戌亥"
 POS_NAMES = {"初": 1, "二": 2, "三": 3, "四": 4, "五": 5, "上": 6}
 STRENGTH_WORDS = ("旺", "相", "休", "囚", "死")
+
+# 内置审计语料（架构评审 A10：忠实度门原只跑单例 --demo，证明不了「换一种起卦法、
+# 换一类问事」时叙述模板仍不越界）。全部为**合成请求**，不取自 data/cases/（铁律二）。
+CORPUS_CASES: tuple[tuple[str, str, dict], ...] = (
+    ("coin", "占求财", {"seed": 42}),
+    ("coin", "占病", {"seed": 7}),
+    ("coin", "占考试", {"seed": 11}),
+    ("coin", "占婚姻", {"seed": 23}),
+    ("coin", "占出行", {"seed": 101}),
+    ("time", "占求财", {"datetime_str": "2026-03-05 09:30"}),
+    ("time", "占官司", {"datetime_str": "2026-07-18 15:10"}),
+    ("time", "占失物", {"datetime_str": "2026-01-09 21:40"}),
+    ("time", "占天气", {"datetime_str": "2026-05-02 06:20"}),
+    ("number", "占求财", {"numbers": "3,8,5"}),
+    ("number", "占病", {"numbers": "5,2,9"}),
+    ("number", "占行人", {"numbers": "7,4,6"}),
+)
 
 
 # ── 结构化真值提取 ──────────────────────────────────────────────────────────
@@ -140,7 +158,6 @@ def extract_assertions(text: str) -> list[dict]:
                          text):
         out.append({"kind": "卦身", "raw": m.group(0),
                     "value": {"pos": POS_NAMES.get(m.group(1)), "relation": m.group(2) or ""}})
-    # 旬空
     for m in re.finditer(r"旬空([%s、]+)" % BRANCHES, text):
         branches = [b for b in m.group(1) if b in BRANCHES]
         out.append({"kind": "旬空", "raw": m.group(0), "value": set(branches)})
@@ -258,14 +275,78 @@ def _print_report(res: dict, text_len: int) -> None:
             print(f"  {mark} {r['断言']}  [{r['类别']}]  结构={r['结构真值'] or '—'}")
 
 
+def run_corpus() -> dict:
+    """跑内置语料（`CORPUS_CASES`）逐例审计并汇总（A10）。
+
+    返回 {cases, 断言, supported, invented, contradicted, rows, fails}；
+    `rows` 为逐例读数（起卦法/问事/断言数/三项判定），`fails` 只列有 invented|contradicted 的例。
+    """
+    from chart import chart as _chart
+
+    agg = {"cases": 0, "断言": 0, "supported": 0, "invented": 0,
+           "contradicted": 0, "rows": [], "fails": []}
+    for mode, question, kw in CORPUS_CASES:
+        label = f"{mode}/{question}" + (f" seed={kw['seed']}" if "seed" in kw else "")
+        try:
+            data = run_analyze(_chart(mode, question, **kw))
+            text = run_narrate(data)
+            res = audit(data, text)
+        except Exception as exc:  # noqa: BLE001 —— 某例起不来即判败，但不掩盖其余各例
+            agg["cases"] += 1
+            agg["contradicted"] += 1
+            agg["rows"].append({"case": label, "断言": 0, "supported": 0,
+                                "invented": 0, "contradicted": 1, "error": f"{type(exc).__name__}: {exc}"})
+            agg["fails"].append({"case": label, "summary": {"contradicted": 1}, "rows": [],
+                                 "error": f"{type(exc).__name__}: {exc}"})
+            continue
+        s = res["summary"]
+        n = sum(s.values())
+        agg["cases"] += 1
+        agg["断言"] += n
+        for k in ("supported", "invented", "contradicted"):
+            agg[k] += s[k]
+        agg["rows"].append({"case": label, "断言": n, **s})
+        if s["invented"] or s["contradicted"]:
+            agg["fails"].append({"case": label, "summary": s,
+                                 "rows": [r for r in res["rows"] if r["判定"] != "supported"]})
+    return agg
+
+
+def _print_corpus(agg: dict) -> None:
+    for r in agg["rows"]:
+        flag = "×" if (r["invented"] or r["contradicted"]) else "√"
+        print(f"  {flag} {r['case']:<26s} 断言 {r['断言']:>3d}"
+              f"｜supported {r['supported']}｜invented {r['invented']}"
+              f"｜contradicted {r['contradicted']}")
+    print(f"\n语料 {agg['cases']} 例｜断言 {agg['断言']} 条 → supported {agg['supported']}"
+          f"｜invented {agg['invented']}｜contradicted {agg['contradicted']}")
+    for f in agg["fails"]:
+        print(f"\n× {f['case']} 的越界断言：")
+        for r in f["rows"]:
+            print(f"  {'! 凭空' if r['判定'] == 'invented' else '× 矛盾'} {r['断言']}"
+                  f"  [{r['类别']}]  结构={r['结构真值'] or '—'}")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(
         description="报告忠实度审计：报告正文断言 vs 引擎结构化输出（supported/invented/contradicted）")
     ap.add_argument("analyze_json", nargs="?", help="六爻 analyze JSON 文件")
     ap.add_argument("--chart", type=Path, help="从 chart JSON 起跑 chart→analyze→narrate→审计")
-    ap.add_argument("--demo", action="store_true", help="跑内置演示案例")
+    ap.add_argument("--demo", action="store_true", help="跑内置演示案例（1 例）")
+    ap.add_argument("--corpus", action="store_true",
+                    help=f"跑内置语料（{len(CORPUS_CASES)} 例，coin/time/number 三种起卦法）")
     ap.add_argument("--out", type=Path, help="写出审计明细 JSON")
     args = ap.parse_args()
+
+    if args.corpus:
+        agg = run_corpus()
+        _print_corpus(agg)
+        if args.out:
+            args.out.parent.mkdir(parents=True, exist_ok=True)
+            args.out.write_text(json.dumps(agg, ensure_ascii=False, indent=2) + "\n",
+                                encoding="utf-8")
+            print("\n明细 →", args.out)
+        return 1 if (agg["invented"] or agg["contradicted"]) else 0
 
     try:
         if args.analyze_json:

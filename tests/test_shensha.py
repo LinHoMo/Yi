@@ -95,3 +95,31 @@ def test_yin_cha_yang_cuo_days():
     # 甲子日不入（不在 12 组）
     r2 = shensha_of_chart("甲", "庚", "申", "子", ["庚", "申", "甲", "子"])
     assert "阴差阳错" not in _names(r2)
+
+
+def test_tongzi_shasha_autumn_yin_zi():
+    """童子煞：秋生（申月）日支寅或时支子 → 触发；标注非子平经典原文（verified=false）。"""
+    r = shensha_of_chart("甲", "甲", "子", "寅", ["甲", "申", "甲", "子"])
+    tz = [x for x in r if x["name"] == "童子煞"]
+    assert tz and set(tz[0]["at"]) == {"寅", "子"}
+    assert "非《渊海子平》" in tz[0]["basis"]
+
+
+def test_tongzi_shasha_spring_yin_zi():
+    """童子煞：春生（寅月）日/时支见子 → 触发。"""
+    r = shensha_of_chart("甲", "甲", "寅", "子", ["甲", "寅", "甲", "子"])
+    tz = [x for x in r if x["name"] == "童子煞"]
+    assert tz and "子" in tz[0]["at"]
+
+
+def test_tongzi_shasha_summer_no_hit():
+    """童子煞：夏生（午月）日时支无卯/未/辰、纳音无关 → 不触发。"""
+    r = shensha_of_chart("甲", "甲", "午", "申", ["甲", "午", "甲", "申"])
+    assert not [x for x in r if x["name"] == "童子煞"]
+
+
+def test_tongzi_shasha_nayin_tu():
+    """童子煞：土纳音（庚午路旁土）日/时支见辰 → 触发（纳音分支）。"""
+    r = shensha_of_chart("甲", "庚", "午", "辰", ["庚", "午", "甲", "辰"])
+    tz = [x for x in r if x["name"] == "童子煞"]
+    assert tz and "辰" in tz[0]["at"]

@@ -3,7 +3,7 @@
 
 为什么需要这一层：
   * Yi 的学科脚本彼此用**裸模块名**互相 import（`from chart import ...`），
-    而六科的 scripts/ 目录**同名**（每科都有 chart.py）。同一个解释器里连着跑两科
+    而八科的 scripts/ 目录**同名**（每科都有 chart.py）。同一个解释器里连着跑两科
     会互相遮蔽——实测：先跑六爻再跑小六壬，小六壬的 `from chart import PALACES`
     拿到的是六爻的 chart。所以跑某科之前必须把别的学科模块清出 sys.modules。
   * Pyodide 没有 subprocess，`tools/report.py` 那种"分步起子进程"跑不了，
@@ -26,9 +26,11 @@ import sys
 import traceback
 from pathlib import Path
 
-# web 通道支持的学科（与 tools/build_web.py 的 DISCIPLINE_META 同口径；
-# liuren/lingqi 为本地/MCP-only，未挂载站点通道，见 PROMPTS.md）
-WEB_DISCIPLINES = ("liuyao", "ming", "ziwei", "meihua", "xiaoliuren", "zeji")
+# web 通道支持的学科：与 tools/build_web.py 的 DISCIPLINE_META 同口径，
+# 也与本地 CLI / 通道 B 的学科集合一致——通道 A 挂载**全部八科**。
+# （八科的 scripts/ 目录同名，跑某科前必须 _isolate 清掉别科模块，见下。）
+WEB_DISCIPLINES = ("liuyao", "ming", "ziwei", "meihua", "xiaoliuren", "zeji",
+                   "liuren", "lingqi")
 
 RUNTIME_LABEL = "浏览器内 Pyodide"
 
@@ -112,6 +114,7 @@ def build_report(engine_root: str | Path, req: dict, outdir: str | Path) -> dict
 
     # 内核的映射层：与 tools/report.py 同一份
     from yishu_core.report import (  # noqa: E402
+        MD_FEEDBACK_NOTE,
         REPORT_FOOTER,
         analyze_argv,
         chart_argv,
@@ -125,7 +128,7 @@ def build_report(engine_root: str | Path, req: dict, outdir: str | Path) -> dict
     d = req["discipline"]
     if d not in WEB_DISCIPLINES or not (engine_root / "disciplines" / d / "scripts").is_dir():
         raise ValueError(
-            f"学科 {d!r} 未挂载 web 站点通道（仅本地 CLI/MCP 可用）；"
+            f"学科 {d!r} 未挂载 web 站点通道（仅本地 CLI 可用）；"
             f"web 支持科目：{'、'.join(WEB_DISCIPLINES)}")
     _isolate(engine_root, d)
 
@@ -155,7 +158,8 @@ def build_report(engine_root: str | Path, req: dict, outdir: str | Path) -> dict
     if code != 0:
         raise RuntimeError(f"render 段失败（exit {code}）：\n{out[-1500:]}")
 
-    md_text = md_p.read_text(encoding="utf-8")
+    md_text = md_p.read_text(encoding="utf-8") + MD_FEEDBACK_NOTE
+    md_p.write_text(md_text, encoding="utf-8")
 
     from yishu_core.report.html import report_page_from_markdown  # noqa: E402
     title = report_title(req)
@@ -189,6 +193,12 @@ DEMO = {
     "xiaoliuren": {"discipline": "xiaoliuren", "question": "自检占",
                    "datetime": "2026-09-30 10:30"},
     "zeji": {"discipline": "zeji", "date": "2026-09-30", "activity": "开市"},
+    # 骨架科：只出机械结构标签，无吉凶断语（口径见 tools/build_web.py 的 caveat）
+    "liuren": {"discipline": "liuren", "question": "自检占",
+               "datetime": "2026-09-30 10:30"},
+    # 查表直录类：三部掷面数各 0..4（缺一即拒）
+    "lingqi": {"discipline": "lingqi", "question": "自检占",
+               "up": 2, "mid": 1, "down": 3},
 }
 
 

@@ -8,6 +8,10 @@
  *      JS 只负责"取文件、落盘、调用、呈现"。
  *   3. 首次推演才下载 Python 运行时（约 10 MB），之后同一浏览器走缓存。
  *      页面本身不依赖运行时即可显示（表单、深链都能用）。
+ *
+ * 本轮只做"看得见的部分"：入场动效、页签键盘可达性、科目元信息、轻提示、
+ * 时间快捷填入、主题切换过渡。**协议与引擎调用未改**——深链键、manifest 取用、
+ * engine_runtime 调用、_isolate 隔离全在各自原位。
  */
 'use strict';
 
@@ -26,6 +30,9 @@ const state = {
   written: new Set(),
   ready: false,
 };
+
+const REDUCED = !!(window.matchMedia
+  && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
 /* ── 小工具 ───────────────────────────────────────────── */
 
@@ -63,6 +70,22 @@ function clearError() {
   $('form-error').hidden = true;
 }
 
+/* 轻提示：替代原先"借用报告状态行"的复制反馈 */
+let toastTimer = null;
+function toast(msg, kind) {
+  const el = $('toast');
+  if (!el) return;
+  el.textContent = msg;
+  el.className = 'toast' + (kind ? ' ' + kind : '');
+  el.hidden = false;
+  requestAnimationFrame(() => el.classList.add('in'));
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    el.classList.remove('in');
+    setTimeout(() => { el.hidden = true; }, REDUCED ? 0 : 320);
+  }, 2200);
+}
+
 function download(name, text, mime) {
   const blob = new Blob([text], { type: (mime || 'text/plain') + ';charset=utf-8' });
   const url = URL.createObjectURL(blob);
@@ -78,9 +101,9 @@ function download(name, text, mime) {
 async function copyText(text, label) {
   try {
     await navigator.clipboard.writeText(text);
-    setStatus((label || '已复制') + '到剪贴板', 'ok');
+    toast((label || '已复制') + '到剪贴板');
   } catch (e) {
-    setStatus('复制失败，请手动选中复制', 'err');
+    toast('复制失败，请手动选中复制', 'err');
   }
 }
 
@@ -93,6 +116,8 @@ const DEEPLINK_KEYS = {
   q: 'question', dt: 'datetime', g: 'gender', mode: 'mode', way: 'way',
   num: 'numbers', yao: 'yao', date: 'date', activity: 'activity',
   yb: 'hour_branch', dir: 'direction', seed: 'seed',
+  // 灵棋经三部掷面数：短名与请求字段同名，省一层心智映射（0–4 整数）
+  up: 'up', mid: 'mid', down: 'down',
 };
 
 function readDeepLink() {
@@ -129,24 +154,55 @@ function currentDiscipline() {
   return (state.manifest.disciplines || []).find((d) => d.id === state.disc);
 }
 
+function pad2(n) { return String(n).padStart(2, '0'); }
+
+function nowValue(withTime) {
+  const d = new Date();
+  const day = `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+  return withTime ? `${day} ${pad2(d.getHours())}:${pad2(d.getMinutes())}` : day;
+}
+
 function renderTabs() {
   const box = $('tabs');
   box.innerHTML = '';
-  for (const d of state.manifest.disciplines) {
+  const list = state.manifest.disciplines;
+  list.forEach((d, i) => {
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'tab';
+    b.id = 'tab-' + d.id;
     b.setAttribute('role', 'tab');
     b.setAttribute('aria-selected', String(d.id === state.disc));
+    b.setAttribute('aria-controls', 'fields');
+    b.tabIndex = d.id === state.disc ? 0 : -1;
     b.innerHTML = `${d.name}<span class="kind">${d.kind}</span>`;
     b.onclick = () => selectDiscipline(d.id, { keepValues: true });
+    b.addEventListener('keydown', (ev) => onTabKey(ev, i));
     box.appendChild(b);
-  }
+  });
+}
+
+/* 页签键盘可达：左右/上下切换，Home/End 到首尾 */
+function onTabKey(ev, i) {
+  const list = state.manifest.disciplines;
+  let j = null;
+  if (ev.key === 'ArrowRight' || ev.key === 'ArrowDown') j = (i + 1) % list.length;
+  else if (ev.key === 'ArrowLeft' || ev.key === 'ArrowUp') j = (i - 1 + list.length) % list.length;
+  else if (ev.key === 'Home') j = 0;
+  else if (ev.key === 'End') j = list.length - 1;
+  if (j == null) return;
+  ev.preventDefault();
+  const target = list[j].id;
+  selectDiscipline(target, { keepValues: true });
+  const el = $('tab-' + target);
+  if (el) el.focus();
 }
 
 function renderFields(values) {
   const d = currentDiscipline();
   $('disc-summary').textContent = d ? d.summary : '';
+  renderCaveat(d);
+  $('disc-meta').textContent = d ? disciplineMeta(d) : '';
   const box = $('fields');
   box.innerHTML = '';
   for (const f of d.fields) {
@@ -169,7 +225,19 @@ function renderFields(values) {
       }
     } else {
       input = document.createElement('input');
-      input.type = f.type === 'date' ? 'date' : (f.type === 'datetime' ? 'text' : 'text');
+      if (f.type === 'date') {
+        input.type = 'date';
+      } else if (f.type === 'number') {
+        // 灵棋经三部掷面数一类的整数字段：范围交给浏览器先拦一道，
+        // 真正把关的仍是内核（越界/缺数由 request.chart_argv 明确拒绝）。
+        input.type = 'number';
+        input.step = f.step != null ? f.step : 1;
+        input.inputMode = 'numeric';
+        if (f.min != null) input.min = f.min;
+        if (f.max != null) input.max = f.max;
+      } else {
+        input.type = 'text';
+      }
       if (f.type === 'datetime') input.placeholder = 'YYYY-MM-DD HH:MM（留空用当前时间）';
       if (f.placeholder) input.placeholder = f.placeholder;
     }
@@ -179,17 +247,60 @@ function renderFields(values) {
     if (values && values[f.key] != null) input.value = values[f.key];
     input.addEventListener('input', refreshDeepLink);
     input.addEventListener('change', refreshDeepLink);
-    wrap.appendChild(input);
+
+    // 时间类字段给一个"当前"快捷键：既省事，也把期望的格式演示出来
+    if (f.type === 'datetime' || f.type === 'date') {
+      const withTime = f.type === 'datetime';
+      const row = document.createElement('div');
+      row.className = 'field-row';
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'nowbtn';
+      btn.textContent = withTime ? '现在' : '今天';
+      btn.title = withTime ? '填入当前时间（YYYY-MM-DD HH:MM）' : '填入今天（YYYY-MM-DD）';
+      btn.onclick = () => {
+        input.value = nowValue(withTime);
+        refreshDeepLink();
+        saveDraft();
+      };
+      row.appendChild(input);
+      row.appendChild(btn);
+      wrap.appendChild(row);
+    } else {
+      wrap.appendChild(input);
+    }
     box.appendChild(wrap);
   }
   refreshDeepLink();
+}
+
+/* 口径标注（铁律三的执行）：骨架科"无吉凶断语"、书源直录类"原文逐字"这类
+   限定必须出现在页面上，不让用户误以为能断事。文案来自清单（DISCIPLINE_META），
+   前端不另写一份，避免两处口径漂移。 */
+function renderCaveat(d) {
+  const el = $('disc-caveat');
+  if (!el) return;
+  const note = (d && d.caveat) ? d.caveat : '';
+  el.textContent = note;
+  el.hidden = !note;
+}
+
+/* 科目元信息：用清单里已有的 per_discipline，不新增任何请求 */
+function disciplineMeta(d) {
+  const pd = (state.manifest.per_discipline || {})[d.id];
+  if (!pd) return '';
+  const kb = (pd.bytes / 1024).toFixed(1);
+  const rt = pd.runtime_files ? `，运行期脚本 ${pd.runtime_files} 个` : '';
+  return `站点镜像：本学科 ${pd.files} 个文件 / ${kb} KB${rt}（含内核，全部在浏览器内取用）`;
 }
 
 function collectForm() {
   const out = {};
   for (const el of $('fields').querySelectorAll('[data-key]')) {
     const v = el.value.trim();
-    if (v !== '') out[el.dataset.key] = v;
+    if (v === '') continue;
+    // 数字输入框转 Number：内核 chart_argv 要求 0..4 的整数，字符串会被拒
+    out[el.dataset.key] = el.type === 'number' ? Number(v) : v;
   }
   return out;
 }
@@ -303,6 +414,8 @@ async function runReport() {
   const req = Object.assign({ discipline: state.disc }, values);
   if (req.seed) req.seed = Number(req.seed);
 
+  const outCard = $('out-card');
+  outCard.setAttribute('aria-busy', 'true');
   $('run').disabled = true;
   $('result-actions').hidden = true;
   $('fallback-md').hidden = true;
@@ -340,6 +453,7 @@ async function runReport() {
     log('ERROR ' + msg);
     showError(msg.length > 400 ? msg.slice(0, 400) + '…' : msg);
   } finally {
+    outCard.removeAttribute('aria-busy');
     $('run').disabled = false;
     setProgress(null);
   }
@@ -384,15 +498,42 @@ function initTheme() {
   document.documentElement.dataset.theme = saved;
   $('theme').onclick = () => {
     const next = document.documentElement.dataset.theme === 'ink' ? 'paper' : 'ink';
-    document.documentElement.dataset.theme = next;
-    try { localStorage.setItem('yi.theme', next); } catch (e) { /* ignore */ }
+    const apply = () => {
+      document.documentElement.dataset.theme = next;
+      try { localStorage.setItem('yi.theme', next); } catch (e) { /* ignore */ }
+    };
+    // 支持 View Transitions 的浏览器走一次纸墨过渡，其余直接换
+    if (document.startViewTransition && !REDUCED) document.startViewTransition(apply);
+    else apply();
   };
+}
+
+/* ── 入场动效 ─────────────────────────────────────────── */
+
+function initReveal() {
+  const items = document.querySelectorAll('.reveal');
+  window.__yiRevealReady = true;   // 关掉首屏脚本里的三秒兜底
+  if (!items.length || !('IntersectionObserver' in window)) {
+    items.forEach((el) => el.classList.add('in'));
+    return;
+  }
+  const io = new IntersectionObserver((entries) => {
+    for (const en of entries) {
+      if (en.isIntersecting) {
+        en.target.classList.add('in');
+        io.unobserve(en.target);
+      }
+    }
+  }, { rootMargin: '0px 0px -6% 0px', threshold: 0.04 });
+  items.forEach((el) => io.observe(el));
 }
 
 /* ── 启动 ─────────────────────────────────────────────── */
 
 async function main() {
   initTheme();
+  initReveal();
+
   try {
     const res = await fetch('manifest.json', { cache: 'no-cache' });
     if (!res.ok) throw new Error(res.status + ' ' + res.statusText);
@@ -437,11 +578,21 @@ async function main() {
   $('fields').addEventListener('change', saveDraft);
   $('fields').addEventListener('input', saveDraft);
   $('copylink').onclick = () => copyText($('deeplink').value, '深链已复制');
+  // 深链框整条选中，方便直接复制
+  $('deeplink').addEventListener('focus', (ev) => ev.target.select());
   $('deeplink-hint').textContent =
     '把这条链接给任何网页端 AI 或同事，打开就是同一个填好的表单；末尾加 &auto=1 则打开即出报告。';
 
   if (deep.auto && Object.keys(deep.values).length) {
     log('深链要求自动推演');
+    // 窄屏下表单与报告串成单列：自动把报告滚进视野，省掉一次手动下滑
+    if (!REDUCED && window.matchMedia
+        && window.matchMedia('(max-width: 980px)').matches) {
+      setTimeout(() => {
+        const box = $('out-card');
+        if (box) box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 240);
+    }
     runReport();
   } else {
     setBadge(navigator.onLine ? '待命' : '离线');

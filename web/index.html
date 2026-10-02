@@ -5,63 +5,150 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="color-scheme" content="light dark" />
 <title>易 · Yi 术数推演台（纯前端）</title>
-<meta name="description" content="易（Yi）：命卜六科的机械排盘与规则推演台。全部计算在浏览器内完成，不上传任何数据，无需凭证。" />
+<meta name="description" content="易（Yi）：命卜八科的机械排盘与规则推演台（含大六壬骨架、灵棋经）。全部计算在浏览器内完成，不上传任何数据，无需凭证。" />
+<meta name="theme-color" content="#f4f1ea" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#141416" media="(prefers-color-scheme: dark)" />
 <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 <link rel="stylesheet" href="web.css" />
+<script>
+/* 首屏定主题：避免"浅色闪一下再翻成墨色"。判定口径与 web.js 的 initTheme 一致。
+   reveal-ready 也在这里挂上，好让入场动效从第一帧就成立；三秒后若 web.js 仍未接管，
+   自动摘掉这个类，保证内容不会因为脚本失败而一直隐形。 */
+(function () {
+  var d = document.documentElement;
+  try {
+    var t = localStorage.getItem('yi.theme');
+    if (!t) {
+      t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        ? 'ink' : 'paper';
+    }
+    d.dataset.theme = t;
+  } catch (e) { /* 隐私模式忽略 */ }
+  d.classList.add('reveal-ready');
+  setTimeout(function () {
+    if (!window.__yiRevealReady) d.classList.remove('reveal-ready');
+  }, 3000);
+})();
+</script>
 </head>
 <body>
 <a class="skip" href="#panel">跳到表单</a>
 
 <header class="topbar">
-  <div class="wrap">
-    <div class="brand">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="./" aria-label="易 · Yi 术数推演台">
       <span class="seal" aria-hidden="true">易</span>
-      <div>
-        <h1>Yi 术数推演台</h1>
-        <p class="sub">命卜六科 · 机械排盘与规则推演 · 全部计算在你的浏览器内完成</p>
-      </div>
-    </div>
+      <span class="brand-text">
+        <span class="brand-title">Yi 术数推演台</span>
+        <span class="brand-sub">命卜八科 · 机械排盘与规则推演</span>
+      </span>
+    </a>
     <div class="topbar-actions">
-      <button id="theme" class="ghost" type="button" title="切换纸张/墨色">◐ 主题</button>
       <span id="engine-badge" class="badge" title="引擎来源">引擎 未就绪</span>
+      <button id="theme" class="iconbtn" type="button" title="切换纸张／墨色" aria-label="切换纸张／墨色主题">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.2" fill="none" stroke="currentColor" stroke-width="1.4" />
+          <path d="M12 3.8a8.2 8.2 0 0 1 0 16.4z" fill="currentColor" />
+        </svg>
+      </button>
     </div>
   </div>
 </header>
 
 <main class="wrap">
-  <section class="intro card">
-    <p>
-      这个页面把 <strong>Yi</strong> 的推演引擎（Python）搬到浏览器里跑：起局、排盘、装卦、安星、
-      旺衰、格局、应期全部由代码机械完成，页面只做呈现，不做任何心算。
-      <strong>数据不出本机</strong>，不需要登录、不需要 Token、不需要后端。
-    </p>
-    <p class="muted">
-      分数口径：仓库里出现的一切百分比都是<strong>古籍案例对齐分</strong>（引擎输出与古书案例要点的吻合度，
-      用于回归审计），<em>不是</em>现实命中率。凶吉为条件化倾向（"偏向／有…信号／结构上"），
-      不是"注定／一定"。医疗、法律、投资及重大人生决策，请以专业意见为准。
-    </p>
-    <details class="linkbox">
-      <summary>给网页端 AI 用：把信息填进链接，点开即出报告</summary>
-      <p class="muted small">
-        任何模型只要会拼 URL，就能让用户一条链接拿到报告。参数说明：
-        <code>d</code>=学科，<code>q</code>=所问之事，<code>dt</code>=起算/出生时间，
-        <code>g</code>=性别，<code>mode</code>/<code>way</code>=起卦方式，
-        <code>num</code>=数字，<code>date</code>=择吉日期，<code>activity</code>=事类，
-        <code>auto=1</code>=打开即自动推演。
+
+  <section class="hero reveal" aria-labelledby="hero-title">
+    <div class="hero-copy">
+      <p class="eyebrow">零凭证 · 零后端 · 数据不出本机</p>
+      <h1 id="hero-title">一条链接，<span class="em">从起局到报告</span>。</h1>
+      <p class="lede">
+        把 <strong>Yi</strong> 的推演引擎（Python）搬进浏览器里跑：起局、排盘、装卦、安星、
+        旺衰、格局、应期全部由代码机械完成，页面只做呈现，不做任何心算。
       </p>
-      <div class="copyrow">
-        <input id="deeplink" type="text" readonly aria-label="当前深链" />
-        <button id="copylink" class="ghost" type="button">复制链接</button>
-      </div>
-      <p class="muted small" id="deeplink-hint"></p>
-    </details>
+      <ul class="facts">
+        <li>命卜八科</li>
+        <li>浏览器内推演</li>
+        <li>不需要登录与 Token</li>
+        <li>与本地／CI 同源</li>
+      </ul>
+    </div>
+    <div class="hero-art">
+      <svg class="luoshu" viewBox="0 0 320 320" aria-hidden="true" focusable="false">
+        <g class="ls-frame">
+          <rect x="14" y="14" width="292" height="292" rx="10" />
+        </g>
+        <g class="ls-lines">
+          <line x1="14" y1="111.33" x2="306" y2="111.33" />
+          <line x1="14" y1="208.67" x2="306" y2="208.67" />
+          <line x1="111.33" y1="14" x2="111.33" y2="306" />
+          <line x1="208.67" y1="14" x2="208.67" y2="306" />
+        </g>
+        <g class="ls-num">
+          <text x="62.7" y="62.7">4</text>
+          <text x="160" y="62.7">9</text>
+          <text x="257.3" y="62.7">2</text>
+          <text x="62.7" y="160">3</text>
+          <text x="160" y="160" class="center">5</text>
+          <text x="257.3" y="160">7</text>
+          <text x="62.7" y="257.3">8</text>
+          <text x="160" y="257.3">1</text>
+          <text x="257.3" y="257.3">6</text>
+        </g>
+      </svg>
+    </div>
   </section>
 
-  <div class="cols">
-    <section class="card" id="panel">
-      <h2 class="cardtitle">一、选科与填写</h2>
+  <div class="notes reveal">
+    <aside class="note" style="--i: 1">
+      <span class="note-tag">口径</span>
+      <p>
+        这里出现的一切百分比都是<strong>古籍案例对齐分</strong>——引擎输出与古书案例要点的吻合度，
+        用来做回归审计，<em>不是</em>现实命中率。凶吉是条件化倾向（"偏向／有…信号／结构上"），
+        不是"注定／一定"。
+      </p>
+    </aside>
+    <aside class="note" style="--i: 2">
+      <span class="note-tag">一卦一事</span>
+      <p>
+        同一问题不重复占卜（"再三则渎"）。若要换实质角度再问——换用神、换层面、比较两人——
+        请另起一次，不要在原卦里延伸硬推。
+      </p>
+    </aside>
+    <aside class="note" style="--i: 3">
+      <span class="note-tag">边界</span>
+      <p>
+        医疗、法律、投资及重大人生决策，请以专业意见为准。报告是条件化倾向陈述，
+        不构成任何专业建议。
+      </p>
+    </aside>
+  </div>
+
+  <section class="card reveal" aria-labelledby="link-title">
+    <h2 class="cardtitle" id="link-title"><span class="num">链接</span>给网页端 AI 用：一条链接即出报告</h2>
+    <hr class="rule" />
+    <p class="muted small">
+      任何模型只要会拼 URL，就能让用户一条链接拿到报告。参数：
+      <code>d</code>=学科，<code>q</code>=所问之事，<code>dt</code>=起算／出生时间，
+      <code>g</code>=性别，<code>mode</code>／<code>way</code>=起卦方式，<code>num</code>=数字，
+      <code>date</code>=择吉日期，<code>activity</code>=事类，
+      <code>up</code>／<code>mid</code>／<code>down</code>=灵棋经三部掷面数（0–4），
+      <code>auto=1</code>=打开即自动推演。
+    </p>
+    <div class="copyrow">
+      <input id="deeplink" type="text" readonly aria-label="当前深链" spellcheck="false" />
+      <button id="copylink" class="ghost" type="button">复制链接</button>
+    </div>
+    <p class="muted small" id="deeplink-hint"></p>
+  </section>
+
+  <div class="workbench" style="margin-top: clamp(16px, 2.2vw, 24px)">
+    <section class="card reveal" id="panel">
+      <h2 class="cardtitle"><span class="num">一</span>选科与填写</h2>
+      <hr class="rule" />
       <div id="tabs" class="tabs" role="tablist" aria-label="学科"></div>
       <p id="disc-summary" class="muted small"></p>
+      <p id="disc-caveat" class="caveat" hidden></p>
+      <p id="disc-meta" class="meta-line"></p>
       <form id="form" autocomplete="off">
         <div id="fields" class="fields"></div>
         <div class="actions">
@@ -70,13 +157,11 @@
         </div>
         <p id="form-error" class="error" role="alert" hidden></p>
       </form>
-      <p class="muted small">
-        一卦一事：同一问题不重复起卦（"再三则渎"）。要换角度问，请另起一次。
-      </p>
     </section>
 
-    <section class="card" id="out-card">
-      <h2 class="cardtitle">二、报告</h2>
+    <section class="card reveal" id="out-card" style="--i: 1">
+      <h2 class="cardtitle"><span class="num">二</span>报告</h2>
+      <hr class="rule" />
       <div id="status" class="status" aria-live="polite">
         <span class="dot"></span><span id="status-text">等待推演</span>
       </div>
@@ -88,10 +173,14 @@
         <a id="open-html" class="ghost" href="#" target="_blank" rel="noopener">新窗口打开</a>
       </div>
       <div id="result" class="result">
-        <p class="placeholder">
-          报告将显示在这里。首次推演需要下载 Python 运行时（约 10&nbsp;MB，来自公开 CDN），
-          之后同一浏览器内会走缓存。
-        </p>
+        <div class="placeholder">
+          <div class="vase" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <p>报告将显示在这里。</p>
+          <p class="muted">
+            首次推演需要下载 Python 运行时（约 10&nbsp;MB，来自公开 CDN），
+            之后同一浏览器内会走缓存。
+          </p>
+        </div>
       </div>
       <pre id="fallback-md" class="fallback" hidden></pre>
       <details id="logbox" class="logbox">
@@ -101,24 +190,39 @@
     </section>
   </div>
 
-  <section class="card">
-    <h2 class="cardtitle">三、换一台设备 / 换一个 AI 也能拿到报告</h2>
-    <p class="muted small">
-      本页是<strong>零凭证通道</strong>：只要有链接就能出报告。若需要把报告留档、或让别的
-      网页端 AI 匿名取回，仓库另有 <strong>GitHub Actions 通道</strong>——AI 拼一条预填 issue 链接，
-      你点一下提交，云端跑同一套引擎，报告以评论回写并提交到 <code>reports</code> 分支，
-      用 <code>raw.githubusercontent.com</code> 匿名可读。取用规程见仓库
-      <code>docs/AI-SOP.md</code>。
-    </p>
-    <p class="muted small">
-      两条通道跑的是<strong>同一份 Python 引擎</strong>（同一支四段契约：
-      <code>chart→analyze→narrate→render</code>），产出同源；
-      仓库根 <code>tools/verify_web_parity.py</code> 就是这条同源性的自动验收。
-    </p>
+  <section class="card reveal" aria-labelledby="channel-title">
+    <h2 class="cardtitle" id="channel-title"><span class="num">三</span>换一台设备／换一个 AI 也能拿到报告</h2>
+    <hr class="rule" />
+    <div class="card-split">
+      <div class="prose">
+        <p>
+          本页是<strong>零凭证通道</strong>：只要有链接就能出报告。若要留档、或让别的网页端 AI
+          匿名取回，仓库另有 <strong>GitHub Actions 通道</strong>——AI 拼一条预填 issue 链接，
+          你点一下提交，云端跑同一套引擎，报告以评论回写并提交到 <code>reports</code> 分支，
+          用 <code>raw.githubusercontent.com</code> 匿名可读。取用规程见仓库
+          <code>docs/AI-SOP.md</code>。
+        </p>
+        <p>
+          两条通道跑的是<strong>同一份 Python 引擎</strong>、同一支四段契约
+          <code>chart → analyze → narrate → render</code>，产出同源；
+          仓库根 <code>tools/verify_web_parity.py</code> 就是这条同源性的自动验收。
+        </p>
+      </div>
+      <div class="flow" aria-hidden="true">
+        <div class="flow-row">
+          <span class="chip">通道 A · 本页（浏览器内 Pyodide）</span>
+          <span class="chip">通道 B · 云端 Actions</span>
+        </div>
+        <span class="flow-arrow"></span>
+        <span class="chip chip-core">同一份引擎 · 同一支四段契约</span>
+        <span class="flow-arrow"></span>
+        <span class="chip chip-out">报告 · MD ＋ HTML</span>
+      </div>
+    </div>
   </section>
 
   <footer class="foot">
-    <p>易（Yi）· 机械运算归代码，象数解读归语言模型。</p>
+    <p class="foot-line">易（Yi）· 机械运算归代码，象数解读归语言模型。</p>
     <p class="muted small">
       本页不采集、不上传任何输入；所有计算发生在你的浏览器进程内。
       报告为条件化倾向陈述，不构成医疗、法律、投资或任何专业意见。
@@ -127,6 +231,7 @@
   </footer>
 </main>
 
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 <script src="web.js"></script>
 </body>
 </html>

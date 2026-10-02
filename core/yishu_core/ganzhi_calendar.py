@@ -337,38 +337,6 @@ def prev_jie_before(dt: datetime) -> dict:
                 best[0].year, best[0].month, best[0].day)}
 
 
-def next_month_branch_instant(dt: datetime, target_branch: str) -> datetime | None:
-    """dt 之后第一个使月支成为 `target_branch` 的交节时刻。
-
-    应期里"应于某月"指的是月令（由节决定），不是公历月——用 (month+1)%12 这类
-    公历近似会在交节前后错整整一个月。
-    """
-    if target_branch not in EARTHLY_BRANCHES:
-        return None
-    want = EARTHLY_BRANCHES.index(target_branch)
-    best = None
-    for y in (dt.year, dt.year + 1, dt.year + 2):
-        for name, _, branch in TWELVE_JIE:
-            inst = solar_term_instant(y, name)
-            if branch == want and inst > dt and (best is None or inst < best):
-                best = inst
-    return best
-
-
-def months_ahead(dt: datetime, n: int = 12) -> list[dict]:
-    """自 dt 起 n 个月的月令表（月支、起于何节何日），供应期展示。"""
-    out = []
-    cursor = dt
-    for _ in range(n):
-        branch, jie, inst = month_branch_index(cursor)
-        out.append({
-            "month_branch": EARTHLY_BRANCHES[branch],
-            "jie": jie,
-            "since": inst.strftime("%Y-%m-%d"),
-        })
-        nxt = next_jie_after(inst)
-        cursor = nxt["instant"]
-    return out
 
 
 def find_solar_date(day_ganzhi: str, month_branch: str | None = None,

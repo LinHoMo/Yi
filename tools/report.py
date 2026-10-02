@@ -36,6 +36,7 @@ sys.path.insert(0, str(CORE))
 from yishu_core.report import (  # noqa: E402
     DISCIPLINES,
     DISC_TITLE,
+    MD_FEEDBACK_NOTE,
     REPORT_FOOTER,
     analyze_argv,
     chart_argv,
@@ -90,8 +91,9 @@ def build_report(req: dict, outdir: Path) -> dict:
     # 3) render → Markdown
     _run(render_argv(req, str(scripts / "render.py"), str(analyze_p), str(md_p)))
 
-    # 4) Markdown → 统一 HTML
-    md_text = md_p.read_text(encoding="utf-8")
+    # 4) Markdown → 统一 HTML（尾部追加反馈引导；落盘 md 同步，通道 B 留档同文）
+    md_text = md_p.read_text(encoding="utf-8") + MD_FEEDBACK_NOTE
+    md_p.write_text(md_text, encoding="utf-8")
     html = report_page_from_markdown(
         title=report_title(req), markdown=md_text,
         meta=report_meta(req, runtime=RUNTIME_LABEL), footer=REPORT_FOOTER,
@@ -116,7 +118,7 @@ def _request_from_args(args) -> dict:
         yao=args.yao, date=args.date, activity=args.activity,
         hour_branch=args.hour_branch, direction=args.direction,
         longitude=args.longitude, name=args.name or None,
-        up=args.up, mid=args.mid, down=args.down,
+        up=args.up, mid=args.mid, down=args.down, seed=args.seed,
     ).items() if v is not None and v != ""}
 
 
@@ -140,6 +142,7 @@ def main() -> int:
     ap.add_argument("--up", type=int, help="灵棋经：上掷面数 0..4")
     ap.add_argument("--mid", type=int, help="灵棋经：中掷面数 0..4")
     ap.add_argument("--down", type=int, help="灵棋经：下掷面数 0..4")
+    ap.add_argument("--seed", type=int, help="六爻 coin：随机种子（可复现摇卦）")
     ap.add_argument("--name", default="", help="输出文件主名（缺省带时间戳）")
     ap.add_argument("--outdir", type=Path, default=Path("reports"))
     ap.add_argument("--result-json", type=Path, default=None,

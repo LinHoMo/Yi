@@ -16,6 +16,11 @@ import sys
 import urllib.request
 from pathlib import Path
 
+_CORE = Path(__file__).resolve().parents[1] / "core"
+if str(_CORE) not in sys.path:
+    sys.path.insert(0, str(_CORE))
+from yishu_core.report.request import FOOTER_TEXT  # noqa: E402  口径句唯一真值源
+
 DISC_TITLE = {
     "liuyao": "六爻纳甲", "ming": "四柱八字", "ziwei": "紫微斗数",
     "meihua": "梅花易数", "xiaoliuren": "小六壬", "zeji": "择吉",
@@ -63,10 +68,11 @@ def build_comment(meta: dict, outdir: Path) -> str:
         + md_text
         + "\n\n</details>\n\n"
         "---\n"
-        "本报告由 Yi 机械排盘与规则库生成；文中分数为古籍案例对齐分（非现实命中率）。"
-        "凶吉为条件化倾向而非定论；医疗、法律、投资及重大决策请以专业意见为准。\n"
+        + FOOTER_TEXT + "\n"
         "> 想在本机/离线出报告、或不想用 GitHub 账号，可用同一份引擎的纯前端页面"
         "（浏览器内 Pyodide 运行，无需凭证），见仓库 `web/` 与 `docs/AI-SOP.md` §2。\n"
+        "> 结果如何？欢迎在本 issue 下回复实际进展——反馈进入应期/效度统计"
+        "（也可用 `synthesis record-outcome` 回填）。\n"
     )
 
 

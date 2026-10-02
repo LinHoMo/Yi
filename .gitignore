@@ -9,6 +9,11 @@ outputs/
 logs/
 scratch/
 *.tmp
+# 门输出日志（各工作流把 check/评测输出直接重定向到仓库根或任意目录，
+# 2026-10-01 实测仓库根散落 4 个 *.log，已移入 tools/scratch/logs-20261001/）。
+# 全仓无被跟踪的 *.log（git ls-files '*.log' 为空），故通配不误伤；
+# 将来若确有需入库的日志，用 `git add -f <file>` 显式豁免，不要放宽本条。
+*.log
 # 评测生成物与 --raise 抬升基线（脚本重跑生成，不入库）
 **/data/cases/eval_*.json
 check_baseline.json
@@ -27,6 +32,7 @@ synthesis/guidance/
 .trae-html-share-packages/
 .preview/
 .pytest_cache/
+.archify/
 
 # 编辑器与系统
 .DS_Store

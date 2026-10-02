@@ -1,0 +1,81 @@
+name: Yi 质量门
+
+# 让"机械门"在 push / PR 时真的跑起来，而不是只活在人手动敲命令的时候。
+#
+# 为什么要有这个工作流：项目的可信度建立在"机械运算归代码"上（AGENTS.md 铁律一），
+# 门本身就应当是自动的。此前 `.github/` 里没有任何工作流引用 check.py——pages.yml
+# 只在站点那条路径上跑一步，还要 paths 命中。
+#
+# 两个 job 缺一不可：
+#   root-gate        —— 仓库根门全档（结构/内核表/断语取证/金手指纹/同源/pytest）
+#   discipline-gates —— 八科各自的 dev_tools/check.py（tune/holdout 评测基线）
+# 后者不是重复劳动：根门只冒烟 ming/ziwei 两科，各科评测基线不在根门内。
+# 2026-10-01h 的六爻回归（tune 20 例里 19 例报错）就是被这个缝漏过去的——根门全绿，
+# 而六爻的案例评测其实已经坏了。挂门的前提是先在干净克隆上逐一实跑取得基线。
+#
+# 依赖：只装 pyproject 声明的 dev extra（pytest）。主计算零第三方依赖，
+#       本工作流不引入任何未声明的包或私有服务。
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: yi-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  root-gate:
+    name: 仓库根门（全档）
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+
+      - name: 配置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # 只装 tests/ 与门 [8] 需要的 pytest（版本约束声明在 pyproject 的 dev extra）。
+      # 引擎本体**不需要安装**：check.py 与各科脚本自己处理 sys.path，
+      # 与 `AGENTS.md` §六"零第三方依赖直接跑"的口径一致——CI 不多做一件事。
+      - name: 安装测试依赖（pytest）
+        run: python -m pip install pytest
+
+      # --full = 结构/内核表/断语取证/金标准指纹/八科行为指纹/六爻黑箱回归/合参/
+      # 站点构建+自检/网页↔本机同源/pytest。任一门红即失败。
+      - name: 全档质量门
+        run: python tools/check.py --full
+
+  discipline-gates:
+    name: 分科门 · ${{ matrix.discipline }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false          # 一科红也要看到其余七科的结果
+      matrix:
+        discipline: [liuyao, ming, ziwei, meihua, xiaoliuren, zeji, liuren, lingqi]
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+
+      - name: 配置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 安装测试依赖（pytest）
+        run: python -m pip install pytest
+
+      # 各科门里有该科自己的 tune/holdout 基线与行为指纹。case 必须在学科目录下执行
+      # （脚本按工作目录找 dev_tools/ 与 data/）。
+      - name: ${{ matrix.discipline }} 质量门
+        working-directory: disciplines/${{ matrix.discipline }}
+        run: python dev_tools/check.py

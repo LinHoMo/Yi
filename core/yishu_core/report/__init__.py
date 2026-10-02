@@ -9,7 +9,9 @@ from .html import escape, render_page, write_html
 from .request import (
     DISCIPLINES,
     DISC_TITLE,
+    MD_FEEDBACK_NOTE,
     REPORT_FOOTER,
+    REQUEST_FIELDS,
     analyze_argv,
     chart_argv,
     norm_date,
@@ -22,7 +24,7 @@ from .request import (
 
 __all__ = [
     "escape", "render_page", "write_html",
-    "DISCIPLINES", "DISC_TITLE", "REPORT_FOOTER",
+    "DISCIPLINES", "DISC_TITLE", "MD_FEEDBACK_NOTE", "REPORT_FOOTER", "REQUEST_FIELDS",
     "analyze_argv", "chart_argv", "render_argv",
     "norm_date", "norm_iso", "normalize_request", "report_meta", "report_title",
 ]

@@ -56,7 +56,6 @@ HUANG_HEI_DAO_ORDER = [
     "白虎", "玉堂", "天牢", "玄武", "司命", "勾陈",
 ]
 HUANG_DAO_GODS = {"青龙", "明堂", "金匮", "天德", "玉堂", "司命"}
-HEI_DAO_GODS = {"天刑", "朱雀", "白虎", "天牢", "玄武", "勾陈"}
 
 
 def qinglong_start_index(month_branch: str) -> int | None:

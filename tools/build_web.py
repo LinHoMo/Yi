@@ -44,12 +44,19 @@ MIRROR_FILES = ("tools/report.py",)
 
 # 学科元数据：字段名与 tools/ci_request.py / docs/AI-SOP.md 的请求契约保持一致
 #
-# ⚠️ 有意排除 liuren / lingqi（大六壬、灵棋经）：这两科为本地 CLI/MCP-only，
-#    站点通道 A 未挂载（见 PROMPTS.md）。新增学科时必须同步：
-#    ① core/yishu_core/report/request.py 的 DISCIPLINES（全部学科）；
+# 通道 A（纯前端站点）挂载**全部八科**，与本地 CLI、通道 B 的学科集合一致——
+# 不再有"网页只能跑六科"的落差。新增学科时必须四处同步（缺一处即被门锁打死）：
+#    ① core/yishu_core/report/request.py 的 DISCIPLINES（全部学科，协议映射唯一处）；
 #    ② 此处 DISCIPLINE_META（进 web 的学科子集）；
-#    ③ web/engine_runtime.py 的 WEB_DISCIPLINES + DEMO。
+#    ③ web/engine_runtime.py 的 WEB_DISCIPLINES + DEMO（smoke 自检按 id 取用）；
+#    ④ 根 llms.txt 的能力矩阵表（权威表，tools/check.py 的矩阵锁与 ② 逐行核对）。
 #    构建期断言（build() 前）会校验 ② ⊆ ①，清单漂移直接 fail-fast。
+#
+# fields 只声明"要收哪些输入"；请求 → 命令行参数的映射**只有一份**，在内核
+# yishu_core.report.request，三个执行器（本机/CI、浏览器、将来任何宿主）共用。
+# 诚实口径（AGENTS.md 铁律三）在 summary/caveat 里如实标注，不得省略：
+#    · liuren 是骨架科（只出机械结构标签，无吉凶断语）；
+#    · lingqi 的断语是《靈棋經》原文逐字直录（无书外发挥）。
 DISCIPLINE_META = (
     {
         "id": "liuyao", "name": "六爻纳甲", "kind": "卜",
@@ -113,6 +120,34 @@ DISCIPLINE_META = (
              "placeholder": "例：开市 / 嫁娶 / 出行"},
             {"key": "hour_branch", "label": "时支（可选）", "type": "text"},
             {"key": "question", "label": "所问之事（可选）", "type": "text"},
+        ],
+    },
+    {
+        "id": "liuren", "name": "大六壬", "kind": "卜",
+        "summary": "月将加时起课，九宗门三传与天将乘临（只出机械结构标签）",
+        "caveat": "骨架科：只出月将加时／九宗门三传／天将乘临的机械结构标签，"
+                  "无吉凶断语，也无应期断言——请勿当作断事结论。",
+        "fields": [
+            {"key": "question", "label": "所问之事", "type": "text", "required": True,
+             "placeholder": "例：占本周面试能否通过"},
+            {"key": "datetime", "label": "起课时刻（月将加时，必填）", "type": "datetime",
+             "required": True},
+        ],
+    },
+    {
+        "id": "lingqi", "name": "灵棋经", "kind": "卜",
+        "summary": "十二棋分三部掷面数，查 124 课表直录《靈棋經》原文断语",
+        "caveat": "断语为《靈棋經》原文逐字直录，不做书外发挥；"
+                  "所列吉凶均为古籍断语，不构成任何现实建议。",
+        "fields": [
+            {"key": "question", "label": "所问之事", "type": "text", "required": True,
+             "placeholder": "例：占求财"},
+            {"key": "up", "label": "上部掷面数", "type": "number", "required": True,
+             "min": 0, "max": 4, "placeholder": "0–4"},
+            {"key": "mid", "label": "中部掷面数", "type": "number", "required": True,
+             "min": 0, "max": 4, "placeholder": "0–4"},
+            {"key": "down", "label": "下部掷面数", "type": "number", "required": True,
+             "min": 0, "max": 4, "placeholder": "0–4"},
         ],
     },
 )

@@ -8,10 +8,13 @@
   2. manifest.json 可解析、schema 对得上、学科元数据齐全
   3. **清单与磁盘逐条对齐**：清单里每个文件的 sha256 与字节数与实际文件一致
      （防止"清单说有、盘上没有"以及构建后又改了源文件）
-  4. 六科的运行期文件（code + doc，含 core）都在盘上——缺一个页面就报错
+  4. 八科的运行期文件（code + doc，含 core）都在盘上——缺一个页面就报错
   5. `.nojekyll` 存在（否则 Jekyll 会吃掉 `_` 开头的路径与部分 .py）
   6. `engine_runtime.py` 里引用的内核 API 在镜像的 core 里确实存在
      （防止改名之后站点静默失效）
+  7. **学科集合同口径**：`manifest.disciplines`（构建期 `DISCIPLINE_META`）与镜像里
+     `engine_runtime.py` 的 `WEB_DISCIPLINES` 必须逐项相同——llms.txt（权威表）声称
+     这两者同口径，这句得由门看住，而不是靠注释。
 
 零第三方依赖，可在干净 runner 上直接运行。
 """
@@ -133,6 +136,23 @@ def check(site: Path) -> list[str]:
                                                    pkg.read_text(encoding="utf-8")):
                         continue
                     fails.append(f"engine_runtime.py 用到 {mod}.{token}，镜像里找不到")
+
+    # 7) 学科集合同口径：manifest.disciplines ≡ engine_runtime.WEB_DISCIPLINES
+    if rt.is_file():
+        text = rt.read_text(encoding="utf-8")
+        m = re.search(r"^WEB_DISCIPLINES\s*=\s*\(([^)]*)\)", text, re.M)
+        if not m:
+            fails.append("engine_runtime.py 里找不到 WEB_DISCIPLINES 元组")
+        else:
+            web_ids = re.findall(r"[\"']([\w.-]+)[\"']", m.group(1))
+            if tuple(web_ids) != tuple(discs):
+                fails.append(
+                    "学科集合不同口径：manifest.disciplines=[%s] 与 "
+                    "engine_runtime.WEB_DISCIPLINES=[%s]（改矩阵时两处必须同步）"
+                    % ("、".join(discs), "、".join(web_ids)))
+            else:
+                print(f"  √ 学科集合同口径（清单与 engine_runtime 均 {len(discs)} 科："
+                      f"{'、'.join(discs)}）")
 
     return fails
 

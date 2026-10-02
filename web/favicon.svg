@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="易">
-  <rect width="64" height="64" rx="12" fill="#9a3b2d"/>
-  <rect x="5" y="5" width="54" height="54" rx="9" fill="none" stroke="#ffffff" stroke-opacity=".35" stroke-width="2"/>
-  <text x="32" y="45" font-size="38" text-anchor="middle" fill="#ffffff"
-        font-family="Songti SC, SimSun, Noto Serif SC, serif">易</text>
+  <rect width="64" height="64" rx="13" fill="#9a3b2d"/>
+  <rect x="5" y="5" width="54" height="54" rx="9.5" fill="none" stroke="#fff9f4" stroke-opacity=".34" stroke-width="2"/>
+  <text x="32" y="45" font-size="38" text-anchor="middle" fill="#fff9f4"
+        font-family="KaiTi, Kaiti SC, Songti SC, SimSun, Noto Serif SC, serif">易</text>
 </svg>

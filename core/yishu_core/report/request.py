@@ -4,7 +4,7 @@
 为什么放在内核里：同一条映射现在有三个消费方——
   * `tools/report.py`（本机与 CI：起子进程分步跑）
   * `web/engine_runtime.py`（浏览器 Pyodide：无 subprocess，用 runpy 同进程跑）
-  * 将来任何新的执行器（MCP / 本地服务 / 别的宿主）
+  * 将来任何新的执行器（本地服务 / 别的宿主）
 映射若各写一份，必然出现"本地对的、网页端错"（历史教训：同一张规则表在三个
 文件里各存一份且取值不一致）。所以映射只此一份，执行器只负责"怎么跑"。
 
@@ -58,6 +58,15 @@ FIELD_HINT = {
     "date": "用事日期，格式 YYYY-MM-DD",
     "gender": "性别：男 或 女",
 }
+
+# 请求字段白名单（唯一真值源）：本地 CLI 与深链短键（web/web.js 的 DEEPLINK_KEYS）
+# 共用此集合。短键表只存在于 JS 侧、不受输入协议指纹覆盖，[1h] 门把它锁在此集合内，
+# 防「短键悄悄指向一个没有任何 argv 会读的死字段」——那会让本地与网页端行为不一致且零报警。
+REQUEST_FIELDS = (
+    "discipline", "question", "datetime", "gender", "mode", "way", "numbers",
+    "yao", "date", "activity", "hour_branch", "direction", "longitude", "name",
+    "up", "mid", "down", "seed",
+)
 
 
 # ── 基础归一化 ─────────────────────────────────────────────────────────────
@@ -241,7 +250,7 @@ def chart_argv(req: dict, program: str, out_path: str) -> list[str]:
 
 
 def analyze_argv(req: dict, program: str, chart_path: str, out_path: str) -> list[str]:
-    """analyze 段命令行：六科同形（chart.json → analyze.json）。"""
+    """analyze 段命令行：八科同形（chart.json → analyze.json）。"""
     return [program, chart_path, "-o", out_path]
 
 
@@ -281,7 +290,18 @@ def report_meta(req: dict, *, runtime: str = "") -> str:
     return "　｜　".join(bits)
 
 
-REPORT_FOOTER = (
-    "本报告由 Yi 机械排盘与规则库生成；文中分数为古籍案例对齐分（非现实命中率）。<br>"
+# 口径声明唯一真值源（铁律三）：HTML 页脚与 issue 回评都用它，禁止各处另写副本
+FOOTER_TEXT = (
+    "本报告由 Yi 机械排盘与规则库生成；文中分数为古籍案例对齐分（非现实命中率）。"
     "凶吉均为条件化倾向，而非注定结论；医疗、法律、投资及重大人生决策，请以专业意见为准。"
+)
+REPORT_FOOTER = FOOTER_TEXT.replace("。凶吉", "。<br>凶吉", 1)
+
+# 反馈回路尾注（SYS-REVIEW #6）：本地 CLI / 通道 B / 通道 A 三宿主在同一逻辑点
+# 追加到 MD 尾部；通道 B 的 issue 回评由 ci_deliver 另行附带引导句。
+MD_FEEDBACK_NOTE = (
+    "\n---\n\n"
+    "> 结果如何？占问事件的现实反馈可回填本仓（`synthesis record-outcome`），"
+    "或在触发报告的 issue 下回复；反馈进入应期/效度统计。"
+    "反馈 n=0 时，一切效度讨论无从谈起。\n"
 )

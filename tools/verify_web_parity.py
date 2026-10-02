@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """网页端与本地端**同源验收**：同一请求两边出报告，逐例比对。
 
-  python tools/verify_web_parity.py            # 六科各一例
+  python tools/verify_web_parity.py            # 八科各一例
   python tools/verify_web_parity.py --verbose  # 附两边首段摘要
 
 为什么需要这个脚本：
@@ -9,10 +9,20 @@
   执行器**。执行器可以不同，产出必须同源——否则"点开链接看到的报告"与"CI 出的
   报告"会长成两个样子，而没人会发现。本脚本把这件事变成一条命令。
 
+额外作用：网页侧是**同一个解释器里按 CASES 顺序连跑**，而八科的 `scripts/`
+目录同名（每科都有 chart.py）。所以这份顺序本身就是
+`web/engine_runtime._isolate` 的回归网——某科拿到别科盘面，逐字节比对立刻会红。
+
 比对口径：
   * Markdown：**逐字节**必须一致（两边都只写学科 render 段产出的文本）。
   * HTML   ：只有页头小字里的「运行环境」标签允许不同（这是有意标注），
              其余逐字节必须一致。
+
+覆盖不变式：
+  CASES 覆盖的学科集合必须与**站点挂载集合**（`tools/build_web.py` 的
+  `DISCIPLINE_META`）恒等——站点挂上了某科而这里没有正例，本脚本直接失败。
+  此前这里另存过一份写死的"web 通道不挂载"名单，于是"站点已挂载的"与"门验过的"
+  是两个集合；现在两者由同一条断言绑死，不存在第三份手写清单。
 """
 from __future__ import annotations
 
@@ -28,7 +38,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "core"))
 
-from yishu_core.report import normalize_request, report_meta  # noqa: E402
+from yishu_core.report import DISCIPLINES, normalize_request, report_meta  # noqa: E402
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 
 CASES = (
@@ -41,10 +51,20 @@ CASES = (
     {"discipline": "meihua", "question": "占投资", "datetime": "2026-09-30 10:30"},
     {"discipline": "xiaoliuren", "question": "占出行", "datetime": "2026-09-30 10:30"},
     {"discipline": "zeji", "date": "2026-09-30", "activity": "开市"},
-    # 回归：曾经会崩或会静默降级的请求，现在必须与另一侧同源
+    # 这些请求必须与另一侧同源
     {"discipline": "meihua", "question": "占失物", "way": "numbers", "numbers": "3,5,7"},
     {"discipline": "xiaoliuren", "question": "占寻人", "way": "numbers", "numbers": "7,7,2"},
     {"discipline": "zeji", "date": "2026/09/30", "activity": "嫁娶"},
+    # 通道 A 自 2026-10-01 起挂载全部八科，这两科一并纳入同源验收：
+    # liuren 是骨架科（只出机械结构标签，无吉凶断语），lingqi 是查表直录类
+    # （三部掷面数各 0..4，缺一即拒——见 NEG_CASES#1）。
+    {"discipline": "liuren", "question": "占本周面试能否通过",
+     "datetime": "2026-09-30 10:30"},
+    {"discipline": "lingqi", "question": "占求财", "up": 2, "mid": 1, "down": 3},
+    # 再回到第一科收尾：证明"跑过 liuren/lingqi 之后，早先那科的 scripts/ 仍解析到
+    # 自己那套"（同名遮蔽若被破坏，这一例最先红）。
+    {"discipline": "liuyao", "question": "占出行", "mode": "time",
+     "datetime": "2026-10-01 08:00"},
 )
 
 
@@ -54,9 +74,27 @@ NEG_CASES = (
     {"discipline": "lingqi", "question": "占出行", "numbers": "0,0,0"},  # 三部掷数全零
     {"discipline": "ming", "datetime": "1990-13-45", "gender": "男"},     # 不存在的日期
 )
-# 已知不对称：这两科是本地 / MCP-only，web 站点通道故意不挂载（见 engine_runtime
-# WEB_DISCIPLINES），本地放行而网页拒绝属设计意图——只断言"网页必须明确拒绝"。
-WEB_CHANNEL_UNAVAILABLE = ("liuren", "lingqi")
+def _load_build_web():
+    """按文件路径加载构建期唯一开关（`tools/` 不是包，按路径加载最省事）。"""
+    path = ROOT / "tools" / "build_web.py"
+    spec = importlib.util.spec_from_file_location("yi_build_web_for_parity", path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def _web_mount_ids() -> tuple[str, ...]:
+    """站点挂载集合。唯一真值源是构建期 `DISCIPLINE_META`，此处不另存手写清单。"""
+    return tuple(d["id"] for d in _load_build_web().DISCIPLINE_META)
+
+
+# 「引擎已实现、但站点通道不挂载」= 引擎学科集合 − 站点挂载集合，**派生而来，不写死**：
+# `DISCIPLINE_META` 或 `request.DISCIPLINES` 一变，本集合随之变。2026-10-01 通道 A
+# 挂载全部八科后它自然为空；将来若有学科只走本地 CLI / 通道 B，它会自动收进来，
+# 负例段即恢复"只断言网页拒绝"的分支——不需要谁记得回来改一行名单。
+WEB_CHANNEL_UNAVAILABLE: tuple[str, ...] = tuple(
+    d for d in DISCIPLINES if d not in set(_web_mount_ids())
+)
 
 
 def _load_web_runtime():
@@ -126,6 +164,28 @@ def main() -> int:
     args = ap.parse_args()
 
     web_mod = _load_web_runtime()
+
+    # ── 覆盖不变式：正例覆盖集合 ≡ 站点挂载集合 ─────────────────────────────
+    # 二者一旦不等就先红，不许靠"把某科排除出验收"换绿（评审项 A4）。
+    mount_ids = _web_mount_ids()
+    covered_ids = tuple(dict.fromkeys(c["discipline"] for c in CASES))
+    print("覆盖检查：站点挂载 %d 科 —— %s" % (len(mount_ids), "、".join(mount_ids)))
+    print("          同源验收 %d 例覆盖 %d 科 —— %s"
+          % (len(CASES), len(covered_ids), "、".join(covered_ids)))
+    missing = [d for d in mount_ids if d not in covered_ids]
+    beyond = [d for d in covered_ids if d not in mount_ids]
+    if missing or beyond:
+        for d in missing:
+            print("  × 站点已挂载、同源验收却无正例：" + d)
+        for d in beyond:
+            print("  × 同源验收有正例、站点却未挂载：" + d)
+        print("\n同源验收失败 1 项：覆盖集合 ≠ 站点挂载集合。"
+              "补正例或改 DISCIPLINE_META，不得放宽断言。")
+        return 1
+    if WEB_CHANNEL_UNAVAILABLE:
+        print("          未走站点通道的学科（负例段只断言网页拒绝）："
+              + "、".join(WEB_CHANNEL_UNAVAILABLE))
+    print("  √ 覆盖集合与站点挂载集合恒等\n")
     base = Path(tempfile.mkdtemp(prefix="yi_parity_"))
     failures: list[str] = []
     print(f"临时目录：{base}\n")
