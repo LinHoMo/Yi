@@ -135,3 +135,46 @@ def test_classical_cases_expose_known_layer_divergence():
         # 已知分歧：书源病神为藏干字（如「卯中乙木」），引擎为五行（如「木/金」）
         assert "中" in book_bing, f"{case['id']}：书源病神应为藏干表述"
         assert engine_bing in "木火土金水", f"{case['id']}：引擎病神应为五行"
+
+
+def test_observation_set_is_not_benchmark():
+    """观察集纪律：不得被当成评测集（不计分、不入 holdout、不调参）。
+
+    2026-10-03e source adjudication 产出。schema 刻意与评测集 cases 区分。
+    """
+    import json
+    obs = json.loads((ROOT / "disciplines" / "ming" / "data" / "cases"
+                      / "ming_bing_yao_observations.json").read_text(encoding="utf-8"))
+    assert obs["schema"] == "yi-ming-bingyao-observations/1"
+    note = obs["_discipline_note"]
+    assert note["engine_frozen"] is True
+    assert note["score_policy"].startswith("禁止计算 alignment score")
+    assert note["holdout_policy"].startswith("禁止入 holdout")
+    n = 0
+    for o in obs["observations"]:
+        assert o["source_quote"], f"{o['id']}：缺书源逐字引文"
+        assert "engine_output" in o and "difference" in o, f"{o['id']}：缺差异记录"
+        assert o["source_layer"], f"{o['id']}：缺病药层级判定"
+        n += 1
+    assert n >= 5, f"观察集仅 {n} 例，不足以支撑任何层级结论"
+
+
+def test_observation_census_matches_the_ruling():
+    """§2.7 裁决的机械锁定：观察集统计必须与裁决结论一致。
+
+    若哪天engine 真的与书源同向（或书源出现「月令五行本身为病」的例），本测试会失败
+    并提醒同步更新裁决文本——防裁决与代码脱节。
+    """
+    import json
+    obs = json.loads((ROOT / "disciplines" / "ming" / "data" / "cases"
+                      / "ming_bing_yao_observations.json").read_text(encoding="utf-8"))
+    c = obs["layer_census"]
+    # 书源病神层级全部为字层，无一例是「月令五行本身为病」
+    assert c["source_layer_word_level"] == len(obs["observations"]), \
+        "书源病药层级统计与观察集条目数不符"
+    # engine 与书源同向者应为 0
+    assert c["divergence_direction"]["engine病与书源病同五行"] == 0, \
+        "若 engine 已与书源同向，TECH-DEBT §2.7 的裁决需同步更新"
+    # 方向相反（engine 把书源之药当病）至少 1 例——这是最强的反例证据
+    assert c["divergence_direction"]["engine病与书源药同五行"] >= 1, \
+        "方向相反的强反例消失，须复核观察集与裁决"
