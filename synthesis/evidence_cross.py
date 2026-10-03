@@ -56,12 +56,22 @@ def _entry(ev: dict) -> dict:
     }
 
 
-def cross_examine(records: list[dict]) -> dict:
+def cross_examine(records: list[dict], *,
+                  concept_map: dict | None = None) -> dict:
     """归一化占问记录（含 evidence 列表）→ 证据级检视结果。
 
     records : normalize() 输出的占问记录列表；每条含 `evidence`（Evidence 列表）。
               旧记录无 evidence 键时按空处理（兼容层不要求重写历史档案）。
+    concept_map : 跨科概念映射注册表（None → 自动读 synthesis/concept_map.json；
+                  传 {} 可在纯内存测试中禁用映射）。仅 verified=true 的映射
+                  参与维度归并（factor → canonical concept，全等匹配）；
+                  无已验证映射时行为与按原词分组完全一致。
     """
+    if concept_map is None:
+        concept_map = load_concept_map()
+    verified = [m for m in (concept_map.get("mappings") or [])
+                if isinstance(m, dict) and m.get("verified") is True]
+
     directional: dict[int, list[dict]] = {1: [], -1: [], 0: []}
     non_directional: list[dict] = []
     by_factor: dict[str, list[dict]] = {}
@@ -71,7 +81,8 @@ def cross_examine(records: list[dict]) -> dict:
         for ev in rec.get("evidence") or []:
             entry = _entry(ev)
             factor = entry["factor"] or "未命名维度"
-            by_factor.setdefault(factor, []).append(entry)
+            canon = canonical_factor(factor, verified)
+            by_factor.setdefault(canon, []).append(entry)
             status = entry["evaluation_status"]
             if status in _WEAK_STATUSES:
                 gaps.append({"evidence_id": entry["evidence_id"],
@@ -87,7 +98,7 @@ def cross_examine(records: list[dict]) -> dict:
                 # effect 为空：学科未表态（机械结构/书源直录/命科机械标签）
                 non_directional.append(entry)
 
-    # ── 维度级：同名词才成立 ──────────────────────────────────────────
+    # ── 维度级：同名词才成立（已验证概念映射归并的除外）─────────────────
     dimensions: list[dict] = []
     conflicts: list[dict] = []
     n_same = n_single = 0
@@ -119,13 +130,18 @@ def cross_examine(records: list[dict]) -> dict:
         else:
             relation = "noted"
         weak = any(e["evaluation_status"] in _WEAK_STATUSES for e in entries)
+        merged = sorted({e["factor"] for e in entries if e["factor"] != factor})
         dimensions.append({
             "factor": factor,
+            "factors": sorted({e["factor"] for e in entries}),
             "relation": relation,
             "entries": entries,
             "note": ("含未独立评测的证据（evaluation_status: "
                      f"{sorted({e['evaluation_status'] for e in entries} & set(_WEAK_STATUSES))}）"
                      if weak else ""),
+            **({"merged_from": merged,
+                "merge_note": "经已验证概念映射归并（出处与适用条件见 concept_map.json）"}
+               if merged else {}),
         })
 
     # ── 未表态学科（有记录但没有任何方向表态）──────────────────────────
@@ -206,6 +222,41 @@ def attach_rule_registries(records: list[dict]) -> list[dict]:
     return out
 
 
+# ────────────────────────────────────────────────────────────────
+# 跨科概念对齐（Phase 5/6：verified-only，宁缺毋滥）
+# ────────────────────────────────────────────────────────────────
+
+def load_concept_map() -> dict:
+    """读跨科概念映射注册表（synthesis/concept_map.json）。
+
+    文件缺失/损坏 → {"mappings": []}（机制可用、映射为空——宁缺毋滥）。
+    映射纪律见该文件 _comment：每条必须带古籍出处与适用条件，
+    `verified=false` 的映射**不参与对照**。
+    """
+    import json as _json
+    p = Path(__file__).resolve().parent / "concept_map.json"
+    if not p.is_file():
+        return {"schema": "yi-concept-map-v1", "mappings": []}
+    try:
+        data = _json.loads(p.read_text(encoding="utf-8"))
+        return data if isinstance(data, dict) else {"mappings": []}
+    except (ValueError, OSError):
+        return {"schema": "yi-concept-map-v1", "mappings": []}
+
+
+def canonical_factor(factor: str, verified_mappings: list[dict]) -> str:
+    """factor → canonical concept（仅已验证映射；**全等匹配**，保守）。
+
+    无命中时原样返回——跨科维度词表未统一前，只有显式登记且
+    verified=true 的同义对才允许归入同一概念。
+    """
+    for m in verified_mappings or []:
+        for member in (m.get("members") or []):
+            if isinstance(member, dict) and member.get("factor") == factor:
+                return m.get("concept") or factor
+    return factor
+
+
 def selfcheck() -> None:
     """最小用例自检：同向提升/冲突保留条件/缺失 unassessed/无制造事实。"""
     def rec(disc, direction, factor, claim, effect, status="classical_holdout",
@@ -249,7 +300,40 @@ def selfcheck() -> None:
     assert r["evidence_present"] is False
     assert r["unassessed"]["no_evidence_disciplines"] == ["ming"]
     assert r["unassessed"]["silent_disciplines"] == []
-    print("evidence_cross 自检通过（同向/冲突保留条件/unassessed/弱状态/旧记录兼容）")
+
+    # ⑥ 概念映射：verified=false 不归并（宁缺毋滥）；verified=true 才按 concept 归并
+    def rec_f(disc, factor, effect):
+        return rec(disc, "吉", factor, effect, effect)
+
+    unverified_map = {"mappings": [
+        {"concept": "卦爻冲合",
+         "members": [{"discipline": "liuyao", "factor": "六合/六冲"},
+                     {"discipline": "meihua", "factor": "体用关系"}],
+         "verified": False}]}
+    r = cross_examine([rec_f("liuyao", "六合/六冲", "吉"),
+                       rec_f("meihua", "体用关系", "吉")],
+                      concept_map=unverified_map)
+    assert r["consistency"]["same"] == 0, "未验证映射不得归并维度"
+    verified_map = {"mappings": [dict(unverified_map["mappings"][0], verified=True)]}
+    r = cross_examine([rec_f("liuyao", "六合/六冲", "吉"),
+                       rec_f("meihua", "体用关系", "吉")],
+                      concept_map=verified_map)
+    assert r["consistency"]["same"] == 1, "已验证映射按 concept 归并"
+    dim = next(d for d in r["dimensions"] if d["factor"] == "卦爻冲合")
+    assert sorted(dim["merged_from"]) == sorted(["六合/六冲", "体用关系"]), dim
+
+    # ⑦ 真实注册表：当前全部 verified=false → 默认行为与无映射完全一致
+    real = load_concept_map()
+    assert all(not m.get("verified") for m in real.get("mappings") or []), \
+        "concept_map 出现 verified=true 条目：须先落逐字引文并经 CHANGELOG 登记"
+    r_plain = cross_examine([rec_f("liuyao", "六合/六冲", "吉"),
+                             rec_f("meihua", "体用关系", "吉")])
+    r_real = cross_examine([rec_f("liuyao", "六合/六冲", "吉"),
+                            rec_f("meihua", "体用关系", "吉")], concept_map=real)
+    assert r_plain["consistency"] == r_real["consistency"], \
+        "真实 concept_map（全未验证）不得改变对照行为"
+    print("evidence_cross 自检通过（同向/冲突保留条件/unassessed/弱状态/旧记录兼容/"
+          "概念映射 verified-only）")
 
 
 if __name__ == "__main__":

@@ -8,7 +8,7 @@
 > 同域项目调研（Horosa/星阙）：`docs/RESEARCH-HOROSA.md`。
 > 规格归档（历史过程规格，读数停在 2026-09，勿当现状引用）：`archive/compose-spec/`。
 
-**范围（2026-10-01j：八科 + 两条出报告通道 + 代码瘦身完成；2026-10-01l 架构修正落地，见 SYS-REVIEW/CHANGELOG）**：
+**范围（2026-10-01j：八科 + 两条出报告通道 + 代码瘦身完成；2026-10-01l 架构修正落地，见 CHANGELOG）**：
 - **命科**：`ming`（四柱八字，机械推演）、`ziwei`（紫微斗数，安星/四化/格局/大限）
 - **卜科**：`liuyao`（六爻纳甲）、`meihua`（梅花易数）、`xiaoliuren`（小六壬）、`zeji`（择吉通书）、
   `liuren`（大六壬骨架：九宗门三传/天将乘临，机械结构标签，无吉凶断语）、
@@ -148,6 +148,11 @@
   用神多现/应期）+ 卦身/三合，逐条带书源引文指针（quote_in_data/quote_in_code，
   测试逐条可解析）、适用条件、实现位置、评测覆盖（dim 必须是 evaluate.py WEIGHTS
   真实维度）；三合局引文未逐字挂接，`verified=false` 如实登记缺口。
+- **ming / meihua 规则注册表（2026-10-03b，Phase 5）**：ming 调候/格局成败/从格/
+  大运/神煞 5 域（穷通宝鉴逐字库/子平真诠/滴天髓引文锚）；meihua 体用关系/
+  生克之卦/应期 3 域（外部独立集覆盖的体用域如实标 external_holdout）。
+  挂接时评测状态**以注册表为准**——规则级覆盖是比学科基线更细的真值：
+  ming dayun/shensha（案例集 0 applicable）如实降到 mechanical_regression。
 - **canonical 反馈模型**：`core/yishu_core/feedback.py`——synthesis 档案链与六爻
   FeedbackStore 链经 adapter 折叠为同一 FeedbackRecord（两链的存储与判定口径保留，
   判定真值源仍是 `core/yishu_core/yingqi`）；`provenance.kind` 强制区分
@@ -163,6 +168,10 @@
   **已内嵌 `guide` 主合参文档**（同一 `cross_examine`）：`two_one`（两吉一凶）趋向
   显式标注为方向级计数倾向（裁决规则 3），不再是最终逻辑——异向结论与成立条件
   并列保留后方可采信；旧档案未携带证据时如实声明「检视不可用，描述强度不提升」。
+- **断言边界与概念映射（2026-10-03b，Phase 5）**：报告 envelope 的
+  `evidence.claim_policy` 按证据组合给出机器可读断言边界（方向表态强弱分层/
+  应期单列/弱覆盖须声明未独立验证）；`synthesis/concept_map.json` 为跨科概念
+  映射注册表（verified-only、全等匹配、当前零已验证条目——机制就位、语义债如实登记）。
 
 ---
 
@@ -260,6 +269,10 @@ python tools/eval.py
 > 债务的**速查登记**见 `docs/TECH-DEBT.md`。
 > **各科"老师傅程度"差距与可执行改造清单见 `docs/DEEP-DIVE-PLAN.md`**；
 > 新门类论证见 `docs/NEW-DISCIPLINES.md`。
+> **当前进行中的工作项与优先序见 `docs/TECH-DEBT.md` §2.5（证据链收敛）与 §2.6（评审遗留）**
+> （2026-10-03b 起：规则一等实体推广 / 规则级评测覆盖 / claim_policy 断言边界 /
+> verified-only 跨科概念映射）。阶段路线图件已按减法删除——工作项以 TECH-DEBT 为准，
+> 不另立规划文档。
 
 0. **wikisource 应期泛化** top-1 ~20%（n=35）：等换书或真实反馈 n≥30；**禁止考卷调参**。
    - 《卜筮正宗》仅 912 字节目录骨架（维基文库子页 404；**2026-10-02s 复核仍属实**：卷一~十四全为红链）。parser 已搭，待正文压入。
@@ -283,7 +296,10 @@ python tools/eval.py
    **10-02f 已补**四柱地支**刑冲害合**（`pattern.pillar_relations` 四支两两 +
    三刑，表取内核；《滴天髓·地支論》逐字三首入库，见 CHANGELOG）；
    **10-02h 已补**四柱**天干五合**（同函数四干两两，表取 `core.relations.STEM_WUHE`）；
-   仍欠：病药（《神峰通考》）——**2026-10-02t 书源已抓取入库**（`data/sources/shen-feng-tong-kao`，453KB 含四病/四药正文章节，待落地判据）、**地支合化/争合妒合/冲开墓库**（须透干与月令条件，语料待拓）。
+   仍欠：**地支合化/争合妒合/冲开墓库**（须透干与月令条件，语料待拓）；
+   ~~病药（《神峰通考》）~~ ✅ 2026-10-03c 已落地（`pattern.py::bing_yao`：五行层依「从重者论」
+   定病定药 + 十神层三对病药，总纲逐字入码，`tests/test_ming_bing_yao.py` 5 例，
+   `ming.bing_yao` 入规则注册表；只标病药在否不批吉凶。古籍对齐覆盖待从《人命见验类》提取命例）。
    - ~~女命夫子星~~ ✅ 2026-10-02q 已补（`analyze.py::female_fu_zi`：官杀夫星/食伤子星，机械标注不批吉凶）。
    - ~~童子关煞~~ ✅ 2026-10-02q 已补（`shensha.py` 童子煞，民间通胜口诀、`verified=false`、只安星不批吉凶）。
    - **2026-10-02s**：《滴天髓阐微》（任铁樵注本，含命例）维基文库存在独立条目（滴天髓 辑要页链接可达）

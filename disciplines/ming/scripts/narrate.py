@@ -241,6 +241,18 @@ def narrate(a: dict) -> str:
         ds_tg = _dts_block("通隔論", "所本")
         lines += ds_tg
         lines.append("")
+    by = a.get("bing_yao") or {}
+    if by.get("bing"):
+        _bb = by["bing"]
+        lines.append("**病药**（《神峰通考·病药说类》机械判据，不批吉凶）：")
+        lines.append(f"- 病：{_bb.get('病')}（四柱最重五行{_bb.get('病之五行')}，"
+                     f"原文「从重者论」）；药：{_bb.get('药')}"
+                     f"（{'在局中' if _bb.get('药在局中') else '局中未见'}）。")
+        for c in by.get("consumed_by_bing") or []:
+            lines.append(f"- 十神层病：{c.get('病')}（{c.get('所病')}）"
+                         f"——药{'在局中：' + '、'.join(c.get('所见之药') or []) if c.get('药在局中') else '局中未见'}。")
+        lines.append(f"> 病药总纲：「{by.get('thesis')}」（{by.get('basis')}）。")
+        lines.append("")
     ly = a.get("liu_yue") or []
     if ly:
         head = "、".join(f"{x.get('ganzhi')}({x.get('ten_god') or '—'})" for x in ly)

@@ -4,8 +4,9 @@
 > 操作纪律见 `AGENTS.md`；口径变更史见 `docs/CHANGELOG.md`。
 > **现状读数（各科分数与 n、scripts 行数、案例数、金标准指纹）唯一权威源是 `docs/HANDOFF.md`**；
 > 科 × 三通道能力矩阵唯一权威表是 `llms.txt`。本文对上述事实**只引用、不复制**（见 §七「文档读数纪律」）。
-> 输入→输出的系统工程分析：最新为 `docs/ARCHITECTURE-REVIEW.md`（上一版 `docs/SYS-REVIEW.md`）；
-> 目标态架构图：`.archify/architecture-yi-20261001-182134/`。
+> 输入→输出的逐段评审已于 2026-10-03 删除（`ARCHITECTURE-REVIEW.md` / `SYS-REVIEW.md`
+> 均为读数停在 2026-10 的**时点**件，其结论或已落地、或已转登记 `docs/TECH-DEBT.md` §2.6；
+> 保留只会让过时读数与现状并存）。过程叙事查 git 历史与 `docs/CHANGELOG.md`。
 
 ---
 
@@ -136,13 +137,11 @@ Yi/
 ├── archive/                     # 归档（如 AUDIT.md 过程档）
 └── docs/
     ├── ARCHITECTURE.md          # ← 本文（架构总览）
-    ├── ARCHITECTURE-REVIEW.md   # 最新系统工程评审（改进项 A1–A11）
-    ├── SYS-REVIEW.md            # 上一版评审（含「三之一、落地状态」表）
     ├── AI-SOP.md                # 网页端 AI 取用报告标准操作手册
     ├── CONTRACT.md              # 学科接入契约（新科参考）
     ├── HANDOFF.md               # 现状交接（**现状读数唯一权威源**）
     ├── CHANGELOG.md             # 仓库级口径变更登记
-    ├── TECH-DEBT.md             # 技术债务登记
+    ├── TECH-DEBT.md             # 技术债务登记（含已清偿与评审遗留）
     ├── MIGRATION.md / YI-PLAN.md / DEEP-DIVE-PLAN.md / NEW-DISCIPLINES.md / RESEARCH-HOROSA.md
     ├── LIUYAO-PLAN.md                   # 六爻路线
     └── samples/                 # 样例报告
@@ -205,9 +204,9 @@ Runtime 负责 discipline routing、request normalization、provenance、
 | Source | 各科 `data/*.json`、`references/`、语料构建器 | 古籍文本 → 结构化引文/判据表 |
 | Rule | 学科规则表（如六爻 `data/rules/rule_registry.json`、`verdict_texts.json`） | rule_id → 出处指针/适用条件/评测覆盖 |
 | Engine | 学科 `scripts/` 四段 + core 表 | 盘面 → analyze JSON（verdict/factors/应期…） |
-| Evidence | `core/yishu_core/evidence.py`（唯一实现，纯函数双宿主共用） | analyze JSON → 结构化证据（rule_id/出处/适用条件/观察/评测状态/provenance） |
-| Evaluation | 各科 `evaluate.py` + `yishu_core.eval` + 注册表评测基线 | 证据/案例 → 对齐分与覆盖状态（口径分层：机械回归/古籍对齐/外部集/现实回填） |
-| Synthesis | `synthesis/cross_rules.py`（方向级裁决）+ `evidence_cross.py`（证据级 same/conflict/unassessed）+ `feedback.py` adapter | 多科证据 → 一致性/冲突/缺口清单与 canonical 反馈记录 |
+| Evidence | `core/yishu_core/evidence.py`（唯一实现，纯函数双宿主共用） | analyze JSON → 结构化证据（rule_id/出处/适用条件/观察/评测状态/provenance）+ claim_policy 断言边界 |
+| Evaluation | 各科 `evaluate.py` + `yishu_core.eval` + 注册表评测基线 | 证据/案例 → 对齐分与覆盖状态（口径分层：机械回归/古籍对齐/外部集/现实回填）；规则级覆盖见各科 `data/rules/rule_registry.json`（六爻/ming/meihua） |
+| Synthesis | `synthesis/cross_rules.py`（方向级裁决）+ `evidence_cross.py`（证据级 same/conflict/unassessed + verified-only 概念映射 `concept_map.json`）+ `feedback.py` adapter | 多科证据 → 一致性/冲突/缺口清单与 canonical 反馈记录 |
 | Narrative | `narrate/render` + LLM 翻译 + `core/yishu_core/agent.py` 五入口 | 证据与裁决 → 当事人可读报告（LLM 只翻译不推断） |
 
 纪律：Evidence 是**派生视图**，不改动 analyze 输出 schema（golden 零漂移）；
@@ -368,7 +367,8 @@ web/engine_runtime.py → tools/report.py        # 浏览器侧同进程跑同�
 | 学科清单 | `core/yishu_core/report/request.py::DISCIPLINES` |
 | 口径变更历史 | `docs/CHANGELOG.md` |
 
-引用行数/分数等读数时必须带**读数时点**（评审发现同一指纹曾在库里有两个值，见 `docs/ARCHITECTURE-REVIEW.md` A8）。
+引用行数/分数等读数时必须带**读数时点**（历史上同一指纹曾在库里有两个值，
+故一律以 `docs/HANDOFF.md` §一的当次读数为准）。
 
 ### 读数锚点（架构评审改进项 A11 · 与 A8 互引）
 

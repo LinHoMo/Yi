@@ -8,7 +8,7 @@
     "liuren": "fccde3a8aa44e4b2",
     "liuyao": "e1d588fbcb7d88dc",
     "meihua": "4fad656b06e1dde2",
-    "ming": "14f9bbe2a0c0f34e",
+    "ming": "d5c9f7ac80ea4bac",
     "xiaoliuren": "8c741d88438ab8f5",
     "zeji": "6a42b641e3aa69e9",
     "ziwei": "7c55065b2601b0c6"
@@ -97,6 +97,13 @@
       "to": "14f9bbe2a0c0f34e",
       "date": "2026-10-02",
       "reason": "B5(ming narrate): append short basis ref like '（日干起）' to shensha output; functional change"
+    },
+    {
+      "discipline": "ming",
+      "from": "14f9bbe2a0c0f34e",
+      "to": "d5c9f7ac80ea4bac",
+      "date": "2026-10-03",
+      "reason": "2026-10-03 命科病药落地（《神峰通考》病药说类）：render MD 新增病药专段，为有意改版"
     }
   ]
 }

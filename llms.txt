@@ -46,10 +46,16 @@
   `get_evaluation_status(disc)`。可跑 Python 的 Agent 走这五个函数即可，
   不要自己拼学科脚本命令，也不需要知道执行器细节。
 - **证据链**：结构化证据契约在 `core/yishu_core/evidence.py`（analyze 输出的派生视图，
-  每条证据带 rule_id / 出处 / 适用条件 / 观察事实 / 评测状态）；六爻规则注册表在
-  `disciplines/liuyao/data/rules/rule_registry.json`（rule_id → 书源引文指针 /
-  适用条件 / 评测覆盖）；canonical 反馈模型在 `core/yishu_core/feedback.py`
-  （synthesis 与六爻两条反馈链经同一 adapter 折叠，真实/合成数据强制分离）。
+  每条证据带 rule_id / 出处 / 适用条件 / 观察事实 / 评测状态；envelope 另带
+  `claim_policy` 断言边界——本次证据组合允许说到什么程度）；规则注册表在
+  `disciplines/{liuyao,ming,meihua}/data/rules/rule_registry.json`（rule_id → 书源引文
+  指针 / 适用条件 / 规则级评测覆盖——挂接时状态以注册表为准，可升可如实降级）；
+  canonical 反馈模型在 `core/yishu_core/feedback.py`（synthesis 与六爻两条反馈链经
+  同一 adapter 折叠，真实/合成数据强制分离）；跨科概念映射注册表
+  `synthesis/concept_map.json`（verified-only，当前零已验证条目）。
+- **进行中的工作项与优先序**：`docs/TECH-DEBT.md` §2.5（证据链收敛）/ §2.6（评审遗留）
+  （每条重要结论 → 可追溯/可评测/可解释/可跨科对齐的知识单元；Agent 按证据
+  成熟度自动限制结论边界）。阶段路线图件已删除，不另立规划文档。
 
 ## 核心入口
 

@@ -4,7 +4,7 @@
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
   "digest": "2c3eee326cec8ccd",
-  "narrate_digest": "322cebf811a70940",
+  "narrate_digest": "1c9dc4f81cc85b22",
   "drift_log": [
     {
       "from": "57dc7e890af222fa",
@@ -85,6 +85,18 @@
       "to": "322cebf811a70940",
       "date": "2026-10-02",
       "reason": "B5(ming narrate): append short basis ref like '日干起' to shensha output for source attribution"
+    },
+    {
+      "from": "322cebf811a70940",
+      "to": "ccdecd0d01774478",
+      "date": "2026-10-03",
+      "reason": "2026-10-03 病药落地（《神峰通考·病药说类》）：narrate 新增病药段（病/药/十神层病药对+总纲原文），机械层零漂移、tune/holdout 读数持平（holdout pattern 28/36、cong_ge 13/15 未变）"
+    },
+    {
+      "from": "ccdecd0d01774478",
+      "to": "1c9dc4f81cc85b22",
+      "date": "2026-10-03",
+      "reason": "2026-10-03 病药落地二改：移除 narrate 病药段末行口径说明（该句被判为未外置断语，说明属元数据不入报告正文）；机械层零漂移"
     }
   ]
 }

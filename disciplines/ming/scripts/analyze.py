@@ -34,6 +34,7 @@ from pattern import (  # noqa: E402
     tian_ke_di_chong,
     ten_god_combos,
     tong_guan,
+    bing_yao,
 )
 
 
@@ -101,6 +102,8 @@ def analyze(chart_json: dict) -> dict:
     tkdc = tian_ke_di_chong(result, dayun=dayun, liunian=liunian)
     combos = ten_god_combos(result, strength=sp.get("strength") or "")
     tg = tong_guan(result)
+    # 病药（《神峰通考·病药说类》）：病＝原所害之神，药＝得一字以去之
+    by = bing_yao(result, strength=sp.get("strength") or "")
     # 女命夫子星（机械标注；男命返回 None）
     ffz = female_fu_zi(result)
 
@@ -186,6 +189,22 @@ def analyze(chart_json: dict) -> dict:
             "label": f"女命夫星 {len(ffz['夫星'])} 处 / 子星 {len(ffz['子星'])} 处",
             "basis": ffz["basis"],
         })
+    if by:
+        _b = by["bing"]
+        verdicts.append({
+            "code": "bing_yao",
+            "label": f"病药 {_b['病']}（药 {_b['药']}"
+                     f"{'·在局中' if _b['药在局中'] else '·局中未见'}）",
+            "basis": _b["basis"],
+        })
+        if by["medicines"]:
+            verdicts.append({
+                "code": "bing_yao_medicine",
+                "label": "得药 " + "、".join(
+                    (m.get("药神") and "、".join(m["药神"])) or m.get("药", "")
+                    for m in by["medicines"]),
+                "basis": by["basis"],
+            })
 
     result["female_fu_zi"] = ffz
 
@@ -202,6 +221,7 @@ def analyze(chart_json: dict) -> dict:
         "tian_ke_di_chong": tkdc,
         "ten_god_combos": combos,
         "tong_guan": tg,
+        "bing_yao": by,
         "conclusion": {
             "方向": "",
             "verdicts": verdicts,
@@ -229,6 +249,8 @@ def analyze(chart_json: dict) -> dict:
             "ten_god_combos": [c["name"] for c in combos],
             "tian_ke_di_chong": [t["text"] for t in tkdc],
             "tong_guan": [t["label"] for t in tg],
+            "bing_yao": (_b["病"] if (_b := (by or {}).get("bing")) else ""),
+            "bing_yao_has_medicine": bool((by or {}).get("has_medicine")),
             "female_fu_zi": ffz,
         },
     }

@@ -284,6 +284,48 @@ def _topic_verdict(discipline: str, a: dict, baseline: str) -> list[Evidence]:
                 baseline=baseline, path="topic_verdict")]
 
 
+def _tiaohou_ming(discipline: str, a: dict, baseline: str) -> list[Evidence]:
+    """analyze['tiaohou']={main,assist}（《穷通宝鉴》调候查表，命科顶层输出）。
+
+    引文按「月序+日干」键回指 `disciplines/ming/data/tiaohou_quotes.json`
+    （本模块零文件读取——source 留给规则注册表挂接书名与指针）。
+    """
+    t = a.get("tiaohou")
+    if not isinstance(t, dict) or not t.get("main"):
+        return []
+    bits = f"主神 {t.get('main')}"
+    if t.get("assist"):
+        bits += f"、佐神 {t.get('assist')}"
+    return [_ev(discipline, "tiaohou", 0,
+                factor="tiaohou",
+                claim=f"调候用神：{bits}",
+                observation=f"main={t.get('main')} assist={t.get('assist') or '—'}",
+                effect="",  # 调候是用神主张，不是吉凶方向
+                baseline=baseline, path="tiaohou")]
+
+
+def _shensha_ming(discipline: str, a: dict, baseline: str) -> list[Evidence]:
+    """analyze['shensha']=[{name,at,basis}]（命科神煞安星，只安星不批吉凶）。"""
+    out: list[Evidence] = []
+    ss = a.get("shensha")
+    if not isinstance(ss, list):
+        return []
+    names = []
+    for i, s in enumerate(ss):
+        if not isinstance(s, dict) or not s.get("name"):
+            continue
+        names.append(f"{s['name']}({'、'.join(_s(x) for x in (s.get('at') or []))}"
+                     f"{'｜' + _s(s.get('basis')) if s.get('basis') else ''})")
+    if not names:
+        return []
+    return [_ev(discipline, "shensha", 0,
+                factor="shensha",
+                claim="神煞：" + "、".join(names),
+                observation=f"n={len(names)}",
+                effect="",  # 只安星，不批吉凶——绝不制造方向
+                baseline=baseline, path="shensha")]
+
+
 def _richen(discipline: str, a: dict, baseline: str) -> list[Evidence]:
     """richen=[{name,desc,句,出处}]（大六壬日辰课经引文）。"""
     out: list[Evidence] = []
@@ -384,6 +426,8 @@ def evidence_from_analyze(discipline: str, analyze_out: dict, *,
     ev += _timing_dict(discipline, analyze_out, baseline)
     ev += _topic_verdict(discipline, analyze_out, baseline)
     ev += _richen(discipline, analyze_out, baseline)
+    ev += _tiaohou_ming(discipline, analyze_out, baseline)
+    ev += _shensha_ming(discipline, analyze_out, baseline)
     ev += _advanced_analysis(discipline, analyze_out, baseline)
     return ev
 
@@ -397,8 +441,11 @@ def attach_rule_registry(evidence: list[Evidence],
     """用规则注册表（如六爻 data/rules/rule_registry.json 的解析结果）升级证据。
 
     匹配纪律（保守）：只在 evidence.factor 与注册表 domain **互为子串**时挂接；
-    挂接动作 = 补 rule_id、出处缺省时补书名、评测状态按注册表 evaluation.status
-    取较强者。匹配不上的一律不动——宁缺毋滥。
+    挂接动作 = 补 rule_id、出处缺省时补书名、**评测状态以注册表
+    evaluation.status 为准**——规则级覆盖是比学科级基线更细的真值，
+    注册表说 mechanical_regression 就如实降级（如命科大运/神煞维度
+    案例集 0 applicable），说 external_holdout 就如实升级。匹配不上
+    的一律不动——宁缺毋滥。
     """
     if not registry:
         return evidence
@@ -420,8 +467,7 @@ def attach_rule_registry(evidence: list[Evidence],
                                                     _s(src.get("locator"))) if x)
             reg_status = _s((rule.get("evaluation") or {}).get("status"))
             if reg_status in _STATUS_RANK:
-                ev["evaluation_status"] = max_status(ev.get("evaluation_status", ""),
-                                                     reg_status)
+                ev["evaluation_status"] = reg_status
             break  # 一个证据只挂一条最先命中的规则
         out.append(ev)
     return out
@@ -442,6 +488,58 @@ def evaluation_gaps(evidence: list[Evidence]) -> list[dict]:
     ]
 
 
+# 弱评测状态：方向表态不被视为「已验证」（claim_policy 与缺口登记共用此界）
+_WEAK_STATUSES = ("unassessed", "source_only")
+
+
+def claim_policy(discipline: str, evidence: list[Evidence]) -> dict:
+    """证据组合 → 断言边界（机器可读；Agent 叙事层的越界防护，铁律三）。
+
+    回答的不是「每条证据各自能说什么」，而是**这份报告的组合结论允许说到
+    什么程度**：只统计与归纳，不推断；边界句与能力注册表的 agent_note
+    同源（口径诚实约束的机器可读版）。
+    """
+    from yishu_core.execution.registry import evaluation_baseline_of
+
+    n_by_status: dict[str, int] = {}
+    directional_supported = 0
+    directional_weak = 0
+    timing_n = 0
+    for ev in evidence or []:
+        st = ev.get("evaluation_status") or "unassessed"
+        n_by_status[st] = n_by_status.get(st, 0) + 1
+        if ev.get("effect"):
+            if st in _WEAK_STATUSES:
+                directional_weak += 1
+            else:
+                directional_supported += 1
+        if ev.get("provenance", {}).get("kind") == "timing":
+            timing_n += 1
+    unassessed_n = n_by_status.get("unassessed", 0) + n_by_status.get("source_only", 0)
+
+    if directional_supported:
+        boundary = ("方向结论可陈述：须带评测口径（古籍对齐/外部集，集合名+n），"
+                    "不是现实预测；弱覆盖证据不得并入同一断言")
+    elif directional_weak:
+        boundary = ("方向结论仅有出处声明/无评测覆盖：陈述时必须声明"
+                    "「未独立验证」，不得给对齐分或效度暗示")
+    else:
+        boundary = ("本报告无吉凶方向结论：只陈述机械结构、书源文本或用神/调候"
+                    "等非方向主张，不得自行补充吉凶")
+    return {
+        "n_evidence": len(evidence or []),
+        "n_by_status": n_by_status,
+        "unassessed_n": unassessed_n,
+        "directional": {"supported_n": directional_supported,
+                        "weak_n": directional_weak},
+        "timing_candidates_n": timing_n,
+        "evaluation_baseline": evaluation_baseline_of(discipline),
+        "boundary": boundary,
+        "timing_note": ("应期候选为结构化时间主张（命中口径见 yishu_core.yingqi 两制），"
+                        "不与吉凶混评" if timing_n else ""),
+    }
+
+
 def evidence_envelope(discipline: str, evidence: list[Evidence], *,
                       evaluation_baseline: str = "unassessed") -> dict:
     """证据信封（宿主附加到报告 envelope 的 evidence 字段）。"""
@@ -452,6 +550,8 @@ def evidence_envelope(discipline: str, evidence: list[Evidence], *,
         "n": len(evidence),
         "evidence": evidence,
         "gaps": evaluation_gaps(evidence),
+        "claim_policy": claim_policy(discipline, evidence),
         "note": "evidence 为 analyze 输出的派生视图；effect 只含学科自报方向；"
-                "evaluation_status 为评测覆盖登记（古籍对齐分/外部集读数见 docs/HANDOFF.md）",
+                "evaluation_status 为评测覆盖登记（古籍对齐分/外部集读数见 docs/HANDOFF.md）；"
+                "claim_policy 为本次证据组合允许的断言边界",
     }

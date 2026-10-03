@@ -67,6 +67,16 @@ schema 与提取器唯一实现在 `core/yishu_core/evidence.py`；评测基线�
 结构化证据（旧档案）时如实声明「证据级检视不可用，描述强度不提升」。
 silent（有证据但无方向表态）与 no_evidence（未携带证据）分列，不再混为一谈。
 
+### 跨科概念映射（concept_map，2026-10-03b 起）
+
+`synthesis/concept_map.json`（schema `yi-concept-map-v1`）：跨科维度词表统一的
+**唯一合法路径**——每条映射 `discipline+factor → concept` 须带古籍出处与适用条件，
+逐字核对后才可翻 `verified=true`；`cross_examine` 只对已验证映射做归并
+（factor **全等匹配**，归并维度带 `merged_from`/`merge_note`），**当前已验证映射
+为 0 条**，对照行为与「仅同名词」现状逐字段一致（selfcheck 锁定）。文件内登记的
+verified=false 护栏样例（六爻六合六冲 ↔ 梅花体用关系）是 GOAL 明令禁止的
+拍脑袋 ontology 候选——无逐字书源依据永远不许启用。
+
 ### canonical 反馈模型（FeedbackRecord，2026-10-03 起）
 
 本层（`outcome_eval.py`）与六爻侧（`dev_tools/feedback_store.py`）两条反馈链的

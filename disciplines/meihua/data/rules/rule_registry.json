@@ -1,0 +1,61 @@
+{
+  "schema": "yi-rule-registry-v1",
+  "discipline": "meihua",
+  "_comment": "梅花易数规则注册表（Phase 5 Evidence Maturation：范式照六爻/ming）。domain 为 analyze.factors 的因子名 / timing 键词——evidence.factor 互为子串即挂接。评测 dim 必须是 scripts/evaluate.py WEIGHTS 的键（relation/verdict/sheng_ti/ke_ti/timing）。体用关系域另受 n=4 外部独立集（卷三·變卦式八則，永不调参）覆盖，如实标 external_holdout；生克之卦外部仅革卦 1 例可评，维持 classical_holdout；verdict（五档吉凶）由体用生克整体推出、不挂单条规则（同六爻「总判不强行挂接」纪律）。",
+  "rules": [
+    {
+      "rule_id": "meihua.ti_yong_shengke",
+      "domain": "体用关系",
+      "impl": "scripts/analyze.py:analyze（factors 因子「体用关系」；判据与断语取 data/verdicts.json）",
+      "source": {
+        "book": "《梅花易数》",
+        "locator": "体用总诀（体用生克总纲；逐字引文库 data/classics.json 卷一带篇名）",
+        "quote_in_data": "disciplines/meihua/data/verdicts.json#basis_quotes.ti_yong_shengke",
+        "verified": true
+      },
+      "applicability": "以体卦为主、用卦为宾，按五行生克定体用关系（用生体/体克用/比和/体生用/用克体）；吉凶倾向只由该判据推出，不做书外发挥",
+      "evaluation": {
+        "status": "external_holdout",
+        "splits": ["tune", "holdout", "external_holdout"],
+        "dim": "relation",
+        "note": "relation 维度 tune 10 + holdout 13 古籍对齐，另有外部独立集 n=4（卷三·變卦式八則，永不调参）relation 4/4——n<20 按纪律只报命中数不报百分比"
+      }
+    },
+    {
+      "rule_id": "meihua.sheng_ke",
+      "domain": "生克之卦",
+      "impl": "scripts/analyze.py:analyze（factors 因子「生克之卦」；释义 data/verdicts.json#sheng_ti_meaning/ke_ti_meaning）",
+      "source": {
+        "book": "《梅花易数》",
+        "locator": "体用总诀（生体克体吉凶章）",
+        "quote_in_data": "disciplines/meihua/data/verdicts.json#sheng_ti_meaning",
+        "verified": true
+      },
+      "applicability": "生体/克体之卦的五行与吉凶释义；互卦变卦参断属同章口径",
+      "evaluation": {
+        "status": "classical_holdout",
+        "splits": ["tune", "holdout"],
+        "dim": "sheng_ti",
+        "note": "sheng_ti/ke_ti 同源同判据（各 15 分）：tune 10 + holdout 13 对齐；外部集仅革卦 1 例可评生克体（1/1），不足以外推，维持 classical_holdout 不虚标"
+      }
+    },
+    {
+      "rule_id": "meihua.yingqi",
+      "domain": "应期",
+      "impl": "scripts/analyze.py:analyze（factors 因子「应期」+ timing.卦气应期/数应/应期速度）",
+      "source": {
+        "book": "《梅花易数》",
+        "locator": "卦气旺衰与数应（应期迟速）",
+        "quote_in_data": "disciplines/meihua/data/verdicts.json#basis_quotes.guaqi",
+        "verified": true
+      },
+      "applicability": "应期按卦气旺衰定迟速、按体用卦数定数应；应期是时间主张，不与吉凶混评",
+      "evaluation": {
+        "status": "classical_holdout",
+        "splits": ["tune", "holdout"],
+        "dim": "timing",
+        "note": "timing 维度 tune 10 + holdout 13 对齐（10 分）；外部集 4 例 timing 均 N/A，不参与"
+      }
+    }
+  ]
+}

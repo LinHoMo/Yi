@@ -673,10 +673,10 @@ def check_feedback_caliber() -> list[str]:
     return fails
 
 
-# ── A11（P2）· 读数锚点：工作树领先 HEAD 时，别让"以 revision 为锚"的取证悄悄说谎 ──
-# 背景（docs/ARCHITECTURE-REVIEW.md A11）：评审实测工作树领先 HEAD 132 个文件，而
-# archify 的 repository-evidence 门按 **pin 的 revision** 校验文件与行号——于是
-# "以 HEAD 之名断言工作树事实"不诚实，评审因此放弃了 pin revision。
+# ── 读数锚点：工作树领先 HEAD 时，别让"以 revision 为锚"的取证悄悄说谎 ──
+# 背景（2026-10-01 时点评审 A11，件已删、结论转登记 TECH-DEBT §2.6）：当时实测工作树
+# 领先 HEAD 132 个文件，而 archify 的 repository-evidence 门按 **pin 的 revision** 校验
+# 文件与行号——于是"以 HEAD 之名断言工作树事实"不诚实，评审因此放弃了 pin revision。
 # 本条是折中版：不解决取证失效，只让它**可见**（报告制，不阻断——开发期漂移是常态）。
 DRIFT_THRESHOLD = 50
 

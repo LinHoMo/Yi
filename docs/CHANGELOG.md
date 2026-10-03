@@ -1,3 +1,81 @@
+### 2026-10-03c 减法优先的一轮：命科病药落地（增能力）+ 三份过时治理文档删除（减复杂度）
+
+> **性质**：一处**真实能力增加**（命科新增《神峰通考》病药判据，有书源、有测试、有出处
+> 指针），一处**纯减法**（删 85KB 过时评审 + Phase 路线图）。无新抽象、无新层、无新目录。
+> 评测读数不变：命科 tune 100.0%（30/30 调候）、holdout strict 97.1%（pattern 28/36、
+> cong_ge 13/15 均未动——病药不在 WEIGHTS 内，不污染既有维度）。
+
+- **命科病药（`pattern.py::bing_yao`）**：《神峰通考·病药说类》落地为机械结构标签。
+  - **总纲逐字入码**：`BING_YAO_THESIS = "有病方为贵，无伤不是奇；格中如去病，财禄两相随"`
+    （书源 `data/sources/shen-feng-tong-kao.wikitext.txt`「病药说类」，维基文库公版 452KB）。
+  - **五行层**：依原文「从重者论…地支虽又藏有别物，且不必看」——取四干五行 ∪ 四支**本气**
+    中最重者为病，药为其所克之神（土病药木、金病药火，依原文「是则土为诸格之病，俱喜木
+    为医药，以去其病也」的通例推及余四行）。
+  - **十神层**：原文明写三对病药——「用财见比肩为病，喜见官杀为药也」／「用食神伤官，
+    以印为病，喜财为药也」，加「印星太旺者，宜行财星运以破其印」。病神集合取**比劫全类**
+    （劫财与比肩同为夺财之神，不窄化到只认「比肩」二字，此为实现期修正，见下）。
+  - **口径**：只标「病是什么、药是什么、药在不在局中」，**有药≠吉、无药≠凶**
+    （铁律三）；`analyze` 出 `bing_yao` 顶层键 + 两条 verdict，`narrate` 出专段。
+  - **测试**：`tests/test_ming_bing_yao.py` 5 例——总纲逐字、「从重者论」取舍（有药/无药各
+    一造，锁定藏干不计入）、十神层病药对、空盘不臆造。
+  - **注册**：`ming.bing_yao` 入 `disciplines/ming/data/rules/rule_registry.json`，
+    `verified=true`（引文逐字入 `pattern.py#BING_YAO_THESIS`）；评测状态如实标
+    `mechanical_regression`、`dim=null`——**bing_yao 维度案例集不存在，禁止虚标对齐分**。
+    古籍对齐覆盖待从《神峰通考·人命见验类》提取病药命例后建立。
+  - **golden**：机械层零漂移（`2c3eee326cec8ccd` 不变），仅 narrate 措辞层按新增病药段
+    依 `capture` 落基线（已记理由）。
+- **减法 · 删除三份文档（合计约 85KB）**：
+  - `docs/ARCHITECTURE-REVIEW.md`（73KB）、`docs/SYS-REVIEW.md`（12KB）：均为读数停在
+    2026-10-01/02 的**时点**评审件，A1–A11 改进项或已落地、或已转登记 `TECH-DEBT.md`
+    §2.6（A7 反馈 n=0 / A9 架构图表达力 / A11 读数锚点）。继续维护只会让过时读数与现状
+    并存——正是评审 A8「读数多源矛盾」本身所指的病。
+  - `docs/EVIDENCE-MATURATION.md`（6.7KB）：Phase 5–8 阶段路线图，属「为未来可能需要
+    提前设计」的规划件；其五大问题的**已落地部分**（ming/meihua 注册表、claim_policy、
+    concept_map）在 CHANGELOG 2026-10-03b 有完整记录，**未落地部分**在 `TECH-DEBT.md`
+    §2.5 有逐条登记——不需要另立一份规划文档承载。
+  - 引用同步：`ARCHITECTURE.md`、`HANDOFF.md`、`TECH-DEBT.md`、`llms.txt`、`tools/check.py`
+    （代码注释里 `SYS-REVIEW #N` 的历史锚点**保留**，它们标的是各门的设计出处，删掉会断溯源）。
+- **语料与文档同步**：《神峰通考》病药语料的全仓统一位置是**仓库根 `data/sources/`**
+  （452KB，`shen-feng-tong-kao.wikitext.txt` + provenance），与 `HANDOFF`/`TECH-DEBT`
+  所记一致——本轮据此确认病药判据的引文可逐字回指，无需迁移语料。
+
+### 2026-10-03b Evidence Maturation（Phase 5）启动 · 规则一等实体推广 + 规则级评测语义 + claim_policy + verified-only 概念映射
+
+> **性质**：仍是纯加法与派生视图——引擎行为、语料、golden、tune/holdout/外部集
+> 零改动；分数读数不变（唯一权威源仍 `docs/HANDOFF.md` §一）。
+> 阶段目标与优先序落成 `docs/EVIDENCE-MATURATION.md`（Phase 4 已收口，
+> 总目标从「完成 Evidence-First」升级为「Evidence Maturation」）。
+
+- **ming 规则注册表**：`disciplines/ming/data/rules/rule_registry.json`——调候/格局成败/
+  从格/大运/神煞 5 域（domain 带英文 verdict code 供互为子串挂接），逐条带引文指针
+  （调候=穷通宝鉴 `tiaohou_quotes.json#1甲.quote` 逐字库；格局成败=《子平真诠》原文注释锚；
+  从格=《滴天髓》诀句锚），**评测 dim 必须是 ming evaluate.py WEIGHTS 真实维度**；
+  dayun/shensha 维度案例集 0 applicable → 如实标 `mechanical_regression` 不虚标。
+- **meihua 规则注册表**：体用关系/生克之卦/应期 3 域（引文指针 `verdicts.json#basis_quotes.*`）；
+  体用关系域另受外部独立集 n=4 覆盖 → 状态如实标 `external_holdout`（n<20 只报命中数）。
+- **规则级评测语义（attach_rule_registry）**：挂接时评测状态**以注册表为准**（原为「取较强者」）
+  ——规则级覆盖是比学科基线更细的真值，可升（meihua external_holdout）也可**如实降级**
+  （ming dayun/shensha：classical_holdout 基线 → mechanical_regression）。六爻全部规则
+  状态=学科基线，行为零变化。
+- **Evidence 提取器补口**：新增命科 `tiaohou`（顶层调候查表）与 `shensha`（只安星不批吉凶，
+  effect 恒空）提取器——调候是命科最大对齐维度（51 例）此前不产证据。
+- **claim_policy（断言边界）**：`evidence.claim_policy(discipline, evidence)` 按本次证据
+  组合生成机器可读边界（各状态计数 / 方向表态强弱分层 / 应期候选单列 / boundary 口径句），
+  经 `evidence_envelope` 进双宿主信封（parity EV 列自动覆盖）——Agent 不读文档也知道
+  「这份报告能说到什么程度」。rendered MD/HTML 零改动。
+- **跨科概念映射机制（verified-only）**：`synthesis/concept_map.json`
+  （schema `yi-concept-map-v1`）+ `evidence_cross.canonical_factor`（**全等匹配**，
+  仅 verified=true 参与归并）+ `cross_examine(concept_map=…)`（缺省读注册表文件；
+  归并维度带 `merged_from`/`merge_note`）。当前已验证映射 **0 条**；登记 1 条
+  verified=false 护栏样例（六爻六合六冲 ↔ 梅花体用关系——GOAL 明令禁止的拍脑袋
+  ontology 候选，无逐字书源依据不得启用）。零验证映射时对照行为与现状逐字段一致
+  （selfcheck ⑦ 断言锁定）。
+- **测试**：新增 `tests/test_rule_registry_ming_meihua.py` 24 例（结构/引文指针/dim 真实性/
+  端到端挂接含如实降级/claim_policy 三态）；evidence_cross selfcheck 增概念映射两态 +
+  真实注册表零行为断言。
+- **文档**：`docs/EVIDENCE-MATURATION.md` 新增（Phase 1-8 阶段定位、五大问题→工作流、
+  明确不做清单、完成判据）；TECH-DEBT §2.5、HANDOFF、llms.txt、synthesis README 同步。
+
 ### 2026-10-03 架构收敛 · Evidence-First / Agent-Native：Evidence Contract + 规则注册表 + canonical 反馈模型 + 能力注册表两级状态 + Agent API 五入口
 
 > **性质**：纯加法与派生视图，**零引擎行为改动**——八科推演逻辑、语料、golden、

@@ -1200,3 +1200,114 @@ def tong_guan(chart_json: dict) -> list[dict]:
 def _ke_wo(elem: str) -> str:
     """克我者（官杀五行）：与 KE_CYCLE 逆向查表，不新建第二份表。"""
     return next((k for k, v in KE_CYCLE.items() if v == elem), "")
+
+
+# ────────────────────────────────────────────────────────────────
+# 病药（《神峰通考·病药说类》/《雕枯旺弱四病说类》）
+# ────────────────────────────────────────────────────────────────
+
+# 病药总纲原文（「有病方为贵，无伤不是奇；格中如去病，财禄两相随」）
+BING_YAO_THESIS = "有病方为贵，无伤不是奇；格中如去病，财禄两相随"
+
+# 四病：病名 →（所害之神, 药, 原文定位）
+#   原文「土为诸格之病，俱喜木为医药，以去其病也」——土厚埋金之类，
+#   药即「克其所厚之神」之神（从重者论，取四柱最重之五行）。
+BING_RULES_BY_KE: dict[str, tuple[str, str]] = {
+    # 「如金日干，则为土厚埋金」——土厚之病，药为木（木克土）
+    "土": ("土厚埋金/土重埋身", "木"),
+    "木": ("木旺折身/木多塞塞", "金"),
+    "金": ("金重伐身", "火"),
+    "火": ("火炎焚身", "水"),
+    "水": ("水泛身浮", "土"),
+}
+
+# 十神层药例（原文：「如用财见比肩为病，喜见官杀为药也。如用食神伤官，
+# 以印为病，喜财为药也。」——病为用神之伤，药为能去该伤之十神）。
+BING_RULES_BY_GOD: tuple[tuple[str, frozenset, str, frozenset, str], ...] = (
+    # (病名, 病神集合, 病之说明, 药神集合, 药之说明)
+    # 原文「用财见比肩为病，喜见官杀为药也」——劫财与比肩同为同类夺财之神，
+    # 依「用财」之通则并入比劫一类（病神集合取比劫全类，非窄化到只认「比肩」二字）。
+    ("比肩夺财", frozenset({"比肩", "劫财"}), "用财见比肩（劫财同类）为病",
+     frozenset({"正官", "偏官", "七杀"}), "喜见官杀为药"),
+    ("枭神夺食", frozenset({"偏印"}), "用食神伤官以印为病",
+     frozenset({"正财", "偏财"}), "喜财为药"),
+    ("印重财轻", frozenset({"正印", "偏印"}), "印星太旺则财星受伤",
+     frozenset({"正财", "偏财"}), "宜行财运以破其印"),
+)
+
+
+def bing_yao(chart_json: dict, strength: str = "") -> dict:
+    """病药结构（《神峰通考·病药说类》）。
+
+    原文病药总纲：「何以为之病？原八字中原所害之神也；何以为之药？如八字原
+    有所害之字，而得一字以去之谓了，如朱子所谓各因其病而药之也。故书云：
+    **有病方为贵，无伤不是奇；格中如去病，财禄两相随。**」
+
+    两条机械路径（均为原文明写，不引申）：
+
+      1. **五行层**：「假如人八字中，四柱纯土水…如金日干，则为土厚埋金，
+         火日干，则为比肩太重，是则土为诸格之病，俱喜木为医药，以去其病也。」
+         → 取四柱出现次数最多之五行（「从重者论」原文自注）为病，
+           药为其所克之神（去病即以所克之神克之），局中见药则「有药」。
+      2. **十神层**：「如用财见比肩为病，喜见官杀为药也。如用食神伤官，
+         以印为病，喜财为药也。」→ 病药成对共现则成立，局中见药则「有药」。
+
+    只出结构名与依据，**不批吉凶**（AGENTS.md 铁律三）：有药不等于吉，无药不等于凶。
+    原文另有「从重者论」之明确取舍口径——不以杂藏取胜药，逐条路径均取最重之五行。
+
+    返回结构：{thesis, dominant_element 及其五行为病、consumed_by_bing: [...],
+    medicines: [...], has_medicine: bool, quotes}
+    """
+    pillars = chart_json.get("pillars") or {}
+    # 局中五行（四干 + 四支本气），原文「从重者论」取次数最多者为病
+    counts: dict[str, int] = {}
+    for key in ("year", "month", "day", "hour"):
+        p = pillars.get(key) or {}
+        for el in (STEM_ELEMENTS.get(p.get("stem") or ""),
+                   BRANCH_ELEMENTS.get(p.get("branch") or "")):
+            if el:
+                counts[el] = counts.get(el, 0) + 1
+    if not counts:
+        return {}
+    # 「从重者论」：最重之五行；同重则按五行相生序取先（确定性排序，免并列歧义）
+    dominant = min(counts.items(), key=lambda kv: (-kv[1], "木火土金水".index(kv[0])))[0]
+    bing_elem_name, yao_elem = BING_RULES_BY_KE.get(dominant, ("", ""))
+    bing = {
+        "病": bing_elem_name,
+        "病之五行": dominant,
+        "所重": counts[dominant],
+        "药": yao_elem,
+        "药在局中": bool(yao_elem) and yao_elem in counts,
+        "basis": (f"《神峰通考·病药说类》「假如人八字中…是则{dominant}为诸格之病，"
+                  f"俱喜{yao_elem}为医药，以去其病也」；四柱最重之五行为{dominant}"
+                  f"（{'、'.join(f'{k}{v}' for k, v in sorted(counts.items(), key=lambda kv: -kv[1]))}），"
+                  f"依原文「从重者论」取舍。"),
+    }
+    consumed: list[dict] = []
+    medicines: list[dict] = []
+    if yao_elem and yao_elem in counts:
+        medicines.append({"药": yao_elem, "味数": counts[yao_elem],
+                           "note": f"以{yao_elem}克{dominant}去其病"})
+    # 十神层病药成对
+    gods = {g["god"] for g in _god_detail(chart_json)}
+    for name, bing_gods, bing_note, yao_gods, yao_note in BING_RULES_BY_GOD:
+        if not (gods & set(bing_gods)):
+            continue
+        hit_yao = sorted(gods & set(yao_gods))
+        consumed.append({"病": name, "所病": bing_note,
+                         "药在局中": bool(hit_yao), "所见之药": hit_yao})
+        if hit_yao:
+            medicines.append({"药": name, "药神": hit_yao, "note": yao_note})
+    return {
+        "thesis": BING_YAO_THESIS,
+        "dominant_element": dominant,
+        "element_counts": counts,
+        "bing": bing,
+        "consumed_by_bing": consumed,
+        "medicines": medicines,
+        "has_medicine": bool(medicines),
+        "note": ("病药为《神峰通考》正说第一家紧要；此处只标病、药及其在否，"
+                 "不批吉凶——有病方为贵是原文命题，落到具体命造须人工复核（铁律三）"),
+        "basis": f"《神峰通考·病药说类》：「{BING_YAO_THESIS}」"
+                 "（病＝原所害之神，药＝得一字以去之）",
+    }
