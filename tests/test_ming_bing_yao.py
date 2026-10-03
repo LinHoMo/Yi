@@ -159,22 +159,31 @@ def test_observation_set_is_not_benchmark():
     assert n >= 5, f"观察集仅 {n} 例，不足以支撑任何层级结论"
 
 
-def test_observation_census_matches_the_ruling():
-    """§2.7 裁决的机械锁定：观察集统计必须与裁决结论一致。
+def test_observations_are_registered_not_graded():
+    """观察集的**状态登记**须存在且自洽，但**不锁死分歧必须继续存在**。
 
-    若哪天engine 真的与书源同向（或书源出现「月令五行本身为病」的例），本测试会失败
-    并提醒同步更新裁决文本——防裁决与代码脱节。
+    评审 2026-10-03 纠正过一个反模式：曾有一版断言「engine 与书源同向者必须为 0」，
+    那等于把「当前存在已知分歧」写成「未来必须继续分歧」——一旦有人正确修复了
+    engine，测试反而报错。这是治理测试过拟合。
+
+    此处锁的是**登记纪律**（该记的都被记下来了），而非**结论永恒**：
+      · 每条观察必须有 known_divergence 字段（差异被显式记录，不是隐含）；
+      · known_divergence 为 true 者必须同时带 book_support（书源逐字依据）；
+      · 观察集不得携带任何 score / alignment 字段（防止被当成评测集）；
+      · 若将来 engine 与书源同向，只需把该例 known_divergence 置 false 并在
+        TECH-DEBT §2.7 记录裁决变更，测试即通过——**修正被允许**。
     """
     import json
     obs = json.loads((ROOT / "disciplines" / "ming" / "data" / "cases"
                       / "ming_bing_yao_observations.json").read_text(encoding="utf-8"))
-    c = obs["layer_census"]
-    # 书源病神层级全部为字层，无一例是「月令五行本身为病」
-    assert c["source_layer_word_level"] == len(obs["observations"]), \
-        "书源病药层级统计与观察集条目数不符"
-    # engine 与书源同向者应为 0
-    assert c["divergence_direction"]["engine病与书源病同五行"] == 0, \
-        "若 engine 已与书源同向，TECH-DEBT §2.7 的裁决需同步更新"
-    # 方向相反（engine 把书源之药当病）至少 1 例——这是最强的反例证据
-    assert c["divergence_direction"]["engine病与书源药同五行"] >= 1, \
-        "方向相反的强反例消失，须复核观察集与裁决"
+    for o in obs["observations"]:
+        kd = o.get("known_divergence")
+        assert isinstance(kd, bool), f"{o['id']}：须显式登记 known_divergence"
+        if kd:
+            assert o.get("book_support"), \
+                f"{o['id']}：标为分歧须有 book_support（书源逐字依据）"
+            assert o.get("difference"), f"{o['id']}：标为分歧须记录差异内容"
+    # 观察集不得携带分数字段（一旦有了alignment/score，说明有人把它当评测集用了）
+    blob = json.dumps(obs, ensure_ascii=False)
+    for banned in ('"alignment_score"', '"score"', '"alignment"', '"holdout"'):
+        assert banned not in blob, f"观察集出现 {banned}——观察集不得携带评分/holdout 字段"

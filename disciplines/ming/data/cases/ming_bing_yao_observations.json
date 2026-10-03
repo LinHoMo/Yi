@@ -7,7 +7,8 @@
     "engine_evidence": "本轮未修改 disciplines/ming/scripts/pattern.py 任何一行；engine 输出由未改动的 bing_yao() 产出",
     "score_policy": "禁止计算 alignment score——书源病药落在具体字、engine 落在月令五行，两者不同层级，逐位比对无意义",
     "holdout_policy": "禁止入 holdout——split 一律 observation，且永不适格为评测集（schema 亦与 ming_bing_yao_cases.json 不同）",
-    "sample_size_caveat": "n=7 是 screening，不是充分证据；即便全部同向也不足以证明层级（见 TECH-DEBT §2.7）"
+    "sample_size_caveat": "n=7 是 screening，不是充分证据；即便全部同向也不足以证明层级（见 TECH-DEBT §2.7）",
+    "correction_log": "2026-10-03 评审纠正两处：(1)旧断言「engine 与书源同向者必须为 0」把已知分歧写成未来必须继续分歧（治理测试过拟合），已改为只锁登记纪律（known_divergence + book_support + 无评分字段）；(2)旧措辞「缺的是『病＝字』这一层本身」说得过满，已改为「把病药过度压缩到月令五行层；字层是必要候选层但尚未证明为唯一语义层」。"
   },
   "extraction": {
     "source": "data/sources/shen-feng-tong-kao.wikitext.txt（《神峰通考》，明·张楠）",
@@ -17,98 +18,189 @@
   "observations": [
     {
       "id": "OBS01",
-      "pillars": {"year": "甲寅", "month": "辛未", "day": "辛未", "hour": "丁酉"},
+      "pillars": {
+        "year": "甲寅",
+        "month": "辛未",
+        "day": "辛未",
+        "hour": "丁酉"
+      },
       "title": "临川周半峰火多为病格",
       "axis_explicit": false,
       "source_bing": "丁火过多（火为病）",
       "source_yao": "水（运入北方子运，以水济火炎；「吾以水济火炎之理告之」）",
       "source_layer": "天干字（丁火透时干）+ 五行",
       "source_quote": "辛金坐未杀星多，丁火伤辛苦太过。运喜北方能去杀，最宜水火制中和。……辛生未月，丁火过多，运入北方子运，滥知命术，而得冠带，自且不知，吾以水济火炎之理告之，方谙斯理。吾以寅运火旺必死，寅运果死耳。",
-      "engine_output": {"axis": "土", "axis_reason": "月令未=土", "bing": "土厚埋金/土重埋身", "yao": "木", "轴重": 2},
+      "engine_output": {
+        "axis": "土",
+        "axis_reason": "月令未=土",
+        "bing": "土厚埋金/土重埋身",
+        "yao": "木",
+        "轴重": 2
+      },
       "difference": "书源病=丁火（透干），engine 病=土（月令）；书源药=水（行运），engine 药=木",
-      "divergence_type": "层级不同：字层（透干） vs 月令五行层"
+      "divergence_type": "层级不同：字层（透干） vs 月令五行层",
+      "known_divergence": true,
+      "book_support": "辛金坐未杀星多，丁火伤辛苦太过。运喜北方能去杀，最宜水火制中和。……辛生未月，丁火过多，运入北方子运，滥知命术，而得冠带…"
     },
     {
       "id": "OBS02",
-      "pillars": {"year": "丁丑", "month": "庚戌", "day": "乙巳", "hour": "壬午"},
+      "pillars": {
+        "year": "丁丑",
+        "month": "庚戌",
+        "day": "乙巳",
+        "hour": "壬午"
+      },
       "title": "金鸡陈秀二公富命木火伤官庚金为病",
       "axis_explicit": true,
       "source_bing": "月上一點庚金为官星，为我之病神（伤官以官星为病）",
       "source_yao": "戌午合成火局、木火假伤官；去庚金病神（南方丙午丁未运）",
       "source_layer": "天干字（庚金透月干）",
       "source_quote": "大抵当以有病而论，十月九验。故八字有病者，窒行去病之运。……此造顶喜戌中有一点火星，透出天干，再喜戌午合成火局，作木火假伤官看，喜月上有一点庚金为官星，为我之病神也。何以言之？盖伤官以官星为病。书云：“有病方为贵”……",
-      "engine_output": {"axis": "土", "axis_reason": "月令戌=土", "bing": "土厚埋金/土重埋身", "yao": "木", "轴重": 2},
+      "engine_output": {
+        "axis": "土",
+        "axis_reason": "月令戌=土",
+        "bing": "土厚埋金/土重埋身",
+        "yao": "木",
+        "轴重": 2
+      },
       "difference": "书源病=庚金（透干官星），engine 病=土；书源药=火（干支两处），engine 药=木",
       "divergence_type": "层级不同：字层（透干·十神） vs 月令五行层",
-      "note": "书源此例**病与用神的关系极明确**：伤官格以官星为病，药即伤官（用神）本身。engine 无「伤官以官星为病」这条规则（engine 十神层只有比肩夺财/枭神夺食/印重财轻三条）"
+      "note": "书源此例**病与用神的关系极明确**：伤官格以官星为病，药即伤官（用神）本身。engine 无「伤官以官星为病」这条规则（engine 十神层只有比肩夺财/枭神夺食/印重财轻三条）",
+      "known_divergence": true,
+      "book_support": "大抵当以有病而论，十月九验。故八字有病者，窒行去病之运。……此造顶喜戌中有一点火星，透出天干，再喜戌午合成火局，作木火假…"
     },
     {
       "id": "OBS03",
-      "pillars": {"year": "己巳", "month": "辛未", "day": "乙亥", "hour": "丁丑"},
+      "pillars": {
+        "year": "己巳",
+        "month": "辛未",
+        "day": "乙亥",
+        "hour": "丁丑"
+      },
       "title": "营山吴精三公庚辛金为病神丙丁火为福神",
       "axis_explicit": true,
       "source_bing": "见辛金己丑，七杀为病（月干辛金透出）",
       "source_yao": "丁卯丙寅运——克去庚金，为去病之神；丙丁火为福神",
       "source_layer": "天干字（辛金透月干）+ 十神（七杀）",
       "source_quote": "辛金透出为真病，丁丙交来是福基。……见辛金己丑，七杀为病。行丁卯丙寅，克去庚金，为去病之神。",
-      "engine_output": {"axis": "土", "axis_reason": "月令未=土", "bing": "土厚埋金/土重埋身", "yao": "木", "轴重": 3},
+      "engine_output": {
+        "axis": "土",
+        "axis_reason": "月令未=土",
+        "bing": "土厚埋金/土重埋身",
+        "yao": "木",
+        "轴重": 3
+      },
       "difference": "书源病=辛金（七杀，透干），engine 病=土",
-      "divergence_type": "层级不同：字层（透干·十神） vs 月令五行层"
+      "divergence_type": "层级不同：字层（透干·十神） vs 月令五行层",
+      "known_divergence": true,
+      "book_support": "辛金透出为真病，丁丙交来是福基。……见辛金己丑，七杀为病。行丁卯丙寅，克去庚金，为去病之神。…"
     },
     {
       "id": "OBS04",
-      "pillars": {"year": "甲戌", "month": "庚午", "day": "乙亥", "hour": "丁丑"},
+      "pillars": {
+        "year": "甲戌",
+        "month": "庚午",
+        "day": "乙亥",
+        "hour": "丁丑"
+      },
       "title": "逸叟自命真伤官庚金官星为病",
       "axis_explicit": true,
       "source_bing": "庚金月上为真病（庚金贴身制我身，羁绊）",
       "source_yao": "壬癸伤丁（损所透丁火，使庚金之病得解）",
       "source_layer": "天干字（庚金透月干）",
       "source_quote": "庚金月上为真病，壬癸伤丁便可唉。……奈何庚金贴身制我身，而不能用丙丁火地。所以青云志弗克就，只为此一点庚金羁绊。再行壬癸，仿损所透丁火，愈不能去庚畏也。",
-      "engine_output": {"axis": "火", "axis_reason": "月令午=火", "bing": "火炎焚身", "yao": "水", "轴重": 2},
+      "engine_output": {
+        "axis": "火",
+        "axis_reason": "月令午=火",
+        "bing": "火炎焚身",
+        "yao": "水",
+        "轴重": 2
+      },
       "difference": "书源病=庚金，engine 病=**火**——engine 把病判成了书源的**福神/药**（丁火为福、用火为伤官）",
       "divergence_type": "方向相反：engine 把药当病",
-      "note": "**本表最强反例**。书源明写「用火为伤官」「庚金为病」，engine 主轴=月令午=火→判「火炎焚身」。若按 engine，病神恰是书源的药神。"
+      "note": "**本表最强反例**。书源明写「用火为伤官」「庚金为病」，engine 主轴=月令午=火→判「火炎焚身」。若按 engine，病神恰是书源的药神。",
+      "known_divergence": true,
+      "book_support": "庚金月上为真病，壬癸伤丁便可唉。……奈何庚金贴身制我身，而不能用丙丁火地。所以青云志弗克就，只为此一点庚金羁绊。再行壬癸…"
     },
     {
       "id": "OBS05",
-      "pillars": {"year": "壬辰", "month": "庚戌", "day": "辛酉", "hour": "辛卯"},
+      "pillars": {
+        "year": "壬辰",
+        "month": "庚戌",
+        "day": "辛酉",
+        "hour": "辛卯"
+      },
       "title": "金溪徐龙冈命专禄格以官杀为病格",
       "axis_explicit": true,
       "source_bing": "杀星原是柱中病；戌中丁火为损禄之病神（藏干）",
       "source_yao": "辰字去之（辰冲戌去其丁火）；癸丑运丑刑戌，火去病尽",
       "source_layer": "藏干（戌中丁火）+ 柱位（辰字）",
       "source_quote": "杀星原是柱中病，去杀方知禄位荣。……辛酉专禄，见戌有丁，为损禄之病神，辰字去之，所以有病者贵。癸丑运癸丑年，丑刑戌火去病尽矣。",
-      "engine_output": {"axis": "土", "axis_reason": "月令戌=土", "bing": "土厚埋金/土重埋身", "yao": "木", "轴重": 2},
+      "engine_output": {
+        "axis": "土",
+        "axis_reason": "月令戌=土",
+        "bing": "土厚埋金/土重埋身",
+        "yao": "木",
+        "轴重": 2
+      },
       "difference": "书源病=戌中丁火（藏干）、兼说杀星为病；engine 病=土。**注意**：戌为火土墓库，engine 主轴取戌本气=土，而书源取戌中所藏丁火",
       "divergence_type": "层级不同：字层（藏干） vs 月令五行层",
-      "note": "本例揭示第三种可能：月令本气 ≠ 病神所在。书源在月令戌中取的是**藏干丁火**，engine 取的是**本气土**"
+      "note": "本例揭示第三种可能：月令本气 ≠ 病神所在。书源在月令戌中取的是**藏干丁火**，engine 取的是**本气土**",
+      "known_divergence": true,
+      "book_support": "杀星原是柱中病，去杀方知禄位荣。……辛酉专禄，见戌有丁，为损禄之病神，辰字去之，所以有病者贵。癸丑运癸丑年，丑刑戌火去病…"
     },
     {
       "id": "OBS06",
-      "pillars": {"year": "辛酉", "month": "丁酉", "day": "癸卯", "hour": "壬戌"},
+      "pillars": {
+        "year": "辛酉",
+        "month": "丁酉",
+        "day": "癸卯",
+        "hour": "壬戌"
+      },
       "title": "临川会元山御史（时上财库官星格）",
       "axis_explicit": false,
       "source_bing": "卯中乙木（暗来损土，病重而甚明）；书源两处并提「喜财官轻而病也」",
       "source_yao": "年上酉金（破去卯中乙木病神）",
       "source_layer": "藏干（卯中乙木）",
       "source_quote": "癸水生酉，偏印本非用神，盖得戌时财官之库，然酉月火土极衷，喜财官轻而病也。又得卯中乙木暗来损土，其病重而甚明也。病重名大贵，喜年上有酉金，能破去卯木也。书云：“格中如去病，财禄两相随。”所以运行癸巳，会起金来，破去卯中乙木病神，联登科甲，御史权尊，宜矣。",
-      "engine_output": {"axis": "金", "axis_reason": "月令酉=金", "bing": "金重伐身", "yao": "火", "轴重": 3},
+      "engine_output": {
+        "axis": "金",
+        "axis_reason": "月令酉=金",
+        "bing": "金重伐身",
+        "yao": "火",
+        "轴重": 3
+      },
       "difference": "书源病=卯中乙木（藏干），engine 病=金；书源药=年上酉金（另一柱），engine 药=火",
-      "divergence_type": "层级不同：藏干字层 vs 月令五行层；且书源药跨柱取用"
+      "divergence_type": "层级不同：藏干字层 vs 月令五行层；且书源药跨柱取用",
+      "known_divergence": true,
+      "book_support": "癸水生酉，偏印本非用神，盖得戌时财官之库，然酉月火土极衷，喜财官轻而病也。又得卯中乙木暗来损土，其病重而甚明也。病重名大…"
     },
     {
       "id": "OBS07",
-      "pillars": {"year": "辛亥", "month": "癸巳", "day": "戊午", "hour": "丙辰"},
+      "pillars": {
+        "year": "辛亥",
+        "month": "癸巳",
+        "day": "戊午",
+        "hour": "丙辰"
+      },
       "title": "临川陆江副使（命化火畏水）",
       "axis_explicit": false,
       "source_bing": "亥中壬水（微来破火，病在此矣，此为火不足之象）",
       "source_yao": null,
       "source_layer": "藏干（亥中壬水）",
       "source_quote": "戊午生巳月，干通火局，喜癸水贴身，戊从癸化，用火有情。又喜丙辰时，有火透也，用火无疑。更得亥中有壬，微来破火，病在此矣，此为火不足之象也。",
-      "engine_output": {"axis": "火", "axis_reason": "月令巳=火", "bing": "火炎焚身", "yao": "水", "轴重": 3},
+      "engine_output": {
+        "axis": "火",
+        "axis_reason": "月令巳=火",
+        "bing": "火炎焚身",
+        "yao": "水",
+        "轴重": 3
+      },
       "difference": "书源病=亥中壬水（藏干），engine 病=火。**方向相反**：engine 的「药水」恰是书源的病神",
       "divergence_type": "方向相反：engine 把药当病",
-      "note": "书源此例**不载药**（去病之神 null）。书源自身把病定位在藏干，而 engine 的药恰是它认定的病神"
+      "note": "书源此例**不载药**（去病之神 null）。书源自身把病定位在藏干，而 engine 的药恰是它认定的病神",
+      "known_divergence": true,
+      "book_support": "戊午生巳月，干通火局，喜癸水贴身，戊从癸化，用火有情。又喜丙辰时，有火透也，用火无疑。更得亥中有壬，微来破火，病在此矣，…"
     }
   ],
   "layer_census": {
@@ -127,5 +219,10 @@
       "两者皆不同": 5
     }
   },
-  "open_question": "当前实现缺的是哪一个语义层级？—— 见 CHANGELOG 2026-10-03e 的裁决依据与仍存的不确定性"
+  "open_question": "当前实现缺的是哪一个语义层级？—— 见 CHANGELOG 2026-10-03e 的裁决依据与仍存的不确定性",
+  "_field_semantics": {
+    "known_divergence": "布尔。true = 已登记 engine 与书源不一致（差异记录在 difference）；false = 一致或未比对。**这是状态登记，不是结论断言**——engine 修复后应改为 false，本观察集不阻止修正。",
+    "book_support": "书源逐字依据的简短摘引（长引文见 source_quote）。标 known_divergence=true 时必填——分歧必须有书源侧的凭据，不许只凭 engine 输出断言分歧。",
+    "not_a_benchmark": "本文件不得携带任何 alignment / score / holdout 字段。若将来出现，说明有人把它误当评测集——tests/test_ming_bing_yao.py 会直接判失败。"
+  }
 }
