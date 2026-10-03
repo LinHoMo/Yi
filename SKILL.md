@@ -23,7 +23,8 @@ description: 中国传统术数的统合引擎技能。用户提到算命、测�
 
 1. **读 `llms.txt`** 拿仓库地图；**不要通读 `disciplines/`、`core/`、`docs/`**。
 2. **网页端 AI 出报告（首选）**：读 `docs/AI-SOP.md` §1 收集字段 → 拼通道 A 深链 URL（`?d=<科>&q=…&dt=…&auto=1`）交用户点击，或按通道 B 触发云端 Actions；报告取回见 AI-SOP §3。**报告由引擎生成，AI 只翻译不重写。**
-3. **本地/服务器 AI（可跑 Python）**：用各科四段契约 `chart→analyze→narrate→render`（命令见对应 `skills/<科>/SKILL.md`），或统一入口 `python tools/report.py --request request.json --outdir out`。
+3. **本地/服务器 AI（可跑 Python）**：优先用稳定 Agent 入口 `core/yishu_core/agent.py` 的五函数（`capabilities / validate_request / run_report / get_evidence / get_evaluation_status`，YiRuntime 宿主自备）；等价地可用各科四段契约 `chart→analyze→narrate→render`（命令见对应 `skills/<科>/SKILL.md`），或统一入口 `python tools/report.py --request request.json --outdir out`。**不要自己拼学科脚本命令，也不要假设执行器细节。**
+4. **问"这个结论有什么依据"**：报告 envelope 的 `evidence` 字段（结构化证据：规则、出处、适用条件、观察、评测状态）就是答案来源；六爻规则域另见 `disciplines/liuyao/data/rules/rule_registry.json`。各科允许说到什么程度，问 `get_evaluation_status(<科>)`。
 
 ## 二、意图路由（摘要；详细判据见 `skills/<科>/SKILL.md`）
 
@@ -61,10 +62,12 @@ description: 中国传统术数的统合引擎技能。用户提到算命、测�
 
 ## 五、合参入口（`synthesis/`）
 
-同一人多科问时走合参层：`cd synthesis && python cli.py init/validate/add-divination/record-outcome/outcome-eval/guide/selfcheck`。
+同一人多科问时走合参层：`cd synthesis && python cli.py init/validate/add-divination/record-outcome/outcome-eval/evidence-cross/guide/selfcheck`。
 裁决规则**五类**（权威表述见 `synthesis/README.md` §二，实现见 `synthesis/cross_rules.py`）：
 各守其位（越位即剔除）、同向则确、两同一异、异向裁诸因（先回溯时空口径分歧）、缺数据降级。
-禁止拼贴安慰叙事（没有判据来源的话不许落进指导）。
+跨科同向只提升**证据一致性**描述强度，不制造新事实；证据级同向/冲突/缺口（unassessed）
+用 `evidence-cross` 查看，且已内嵌 `guide` 生成的指导文档（two_one 趋向标注为方向级
+计数倾向，异向结论与成立条件单列保留）。禁止拼贴安慰叙事（没有判据来源的话不许落进指导）。
 
 ## 六、文档地图（AI 用）
 

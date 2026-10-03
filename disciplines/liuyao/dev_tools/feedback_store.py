@@ -149,6 +149,16 @@ class FeedbackStore:
                 continue
         return records
 
+    def load_all_canonical(self) -> list:
+        """全部记录折叠为 canonical FeedbackRecord（core/yishu_core/feedback.py）。
+
+        2026-10-03 反馈模型统一：存储仍在本学科 data/feedback/（物理隔离不变），
+        但跨链统计/导出只面对 canonical 形态——本方法即六爻侧的 adapter 出口。
+        """
+        from yishu_core.feedback import from_liuyao_feedback
+
+        return [from_liuyao_feedback(r) for r in self.load_all()]
+
     def stats(self) -> dict:
         """读数汇总：n、strict_hit_rate、loose_hit_rate、有日期反馈数。"""
         records = self.load_all()

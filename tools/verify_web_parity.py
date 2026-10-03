@@ -17,6 +17,8 @@
   * Markdown：**逐字节**必须一致（两边都只写学科 render 段产出的文本）。
   * HTML   ：只有页头小字里的「运行环境」标签允许不同（这是有意标注），
              其余逐字节必须一致。
+  * Evidence：结构化证据信封必须一致（同一份 core 提取器的纯函数输出；
+             宿主分叉即红——2026-10-03 证据链收敛新增维度）。
 
 覆盖不变式：
   CASES 覆盖的学科集合必须与**站点挂载集合**（`tools/build_web.py` 的
@@ -105,6 +107,17 @@ def _load_web_runtime():
     return mod
 
 
+def _evidence_of(req: dict, analyze_json: dict) -> dict:
+    """Evidence 信封（与 YiRuntime.execute / engine_runtime.build_report 同一份 core 提取器）。"""
+    from yishu_core.evidence import evidence_envelope, evidence_from_analyze
+    from yishu_core.execution.registry import evaluation_baseline_of
+    d = req["discipline"]
+    baseline = evaluation_baseline_of(d)
+    return evidence_envelope(
+        d, evidence_from_analyze(d, analyze_json, evaluation_baseline=baseline),
+        evaluation_baseline=baseline)
+
+
 def _run_local(req: dict, outdir: Path) -> dict:
     req_file = outdir / "request.json"
     req_file.write_text(json.dumps(req, ensure_ascii=False), encoding="utf-8")
@@ -118,13 +131,17 @@ def _run_local(req: dict, outdir: Path) -> dict:
     if proc.returncode != 0:
         raise RuntimeError(f"本机链路失败（exit {proc.returncode}）：\n"
                            f"{(proc.stdout or '')[-800:]}\n{(proc.stderr or '')[-800:]}")
+    analyze_p = outdir / "report.analyze.json"
+    evidence = _evidence_of(normalize_request(req),
+                            json.loads(analyze_p.read_text(encoding="utf-8")))
     return {"md": (outdir / "report.md").read_text(encoding="utf-8"),
-            "html": (outdir / "report.html").read_text(encoding="utf-8")}
+            "html": (outdir / "report.html").read_text(encoding="utf-8"),
+            "evidence": evidence}
 
 
 def _run_web(web_mod, req: dict, outdir: Path) -> dict:
     res = web_mod.build_report(ROOT, req, outdir)
-    return {"md": res["md"], "html": res["html"]}
+    return {"md": res["md"], "html": res["html"], "evidence": res["evidence"]}
 
 
 def _try_local(req: dict, outdir: Path) -> tuple[bool, str]:
@@ -189,7 +206,7 @@ def main() -> int:
     base = Path(tempfile.mkdtemp(prefix="yi_parity_"))
     failures: list[str] = []
     print(f"临时目录：{base}\n")
-    print("%-3s %-11s %-34s %-8s %-8s" % ("#", "学科", "请求摘要", "MD", "HTML"))
+    print("%-3s %-11s %-34s %-8s %-8s %-4s" % ("#", "学科", "请求摘要", "MD", "HTML", "EV"))
 
     for i, case in enumerate(CASES, 1):
         local_dir = base / f"{i:02d}-local"
@@ -212,13 +229,15 @@ def main() -> int:
         md_same = local["md"] == web["md"]
         html_same = (_html_without_runtime_tag(local["html"], case)
                      == _html_without_runtime_tag(web["html"], case))
+        ev_same = local["evidence"] == web["evidence"]
         req_brief = json.dumps({k: v for k, v in case.items() if k != "discipline"},
                                ensure_ascii=False)
         if len(req_brief) > 32:
             req_brief = req_brief[:31] + "…"
-        print("%-3d %-11s %-34s %-8s %-8s" % (
+        print("%-3d %-11s %-34s %-8s %-8s %-4s" % (
             i, case["discipline"], req_brief,
-            "√" if md_same else "×", "√" if html_same else "×"))
+            "√" if md_same else "×", "√" if html_same else "×",
+            "√" if ev_same else "×"))
         if not md_same:
             failures.append(f"#{i} {case['discipline']} Markdown 两侧不一致")
             if args.verbose:
@@ -227,6 +246,9 @@ def main() -> int:
             failures.append(f"#{i} {case['discipline']} HTML 两侧不一致")
             if args.verbose:
                 _diff(local["html"], web["html"])
+        if not ev_same:
+            failures.append(f"#{i} {case['discipline']} Evidence 两侧不一致"
+                            "（证据提取器被宿主分叉？唯一实现 core/yishu_core/evidence.py）")
 
     # 负例段：非法 / 越界输入必须两侧一致地拒绝
     print("—— 负例：非法/越界输入的两侧拒绝必须一致 ——")
@@ -267,7 +289,7 @@ def main() -> int:
             pass
         return 1
     print(f"同源验收通过（正例 {len(CASES)} 例 + 负例 {len(NEG_CASES)} 例）："
-          f"网页端与本地端产出同源、非法输入一致地拒绝。")
+          f"网页端与本地端产出同源（MD/HTML/Evidence）、非法输入一致地拒绝。")
     return 0
 
 

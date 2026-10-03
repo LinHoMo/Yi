@@ -10,10 +10,14 @@ synthesis 只依赖 disciplines 的输出 schema（CONTRACT.md §二），不 im
   direction : 吉 / 平 / 凶（由 verdict_direction 折叠：含凶→凶、含吉→吉、否则平）
   timing    : 应期要点列表（学科有则取，无则 []；「该维度未参评」不补位）
   based_on  : 判据所本法则（conclusion.所本，无则空串）
+  evidence  : 结构化证据列表（Evidence Contract 派生视图，core/yishu_core/evidence.py；
+              2026-10-03 起附加——旧档案无此键，读取方须容缺）
 """
 from __future__ import annotations
 
 from yishu_core.eval import verdict_direction
+from yishu_core.evidence import evidence_from_analyze
+from yishu_core.execution.registry import evaluation_baseline_of
 from yishu_core.report.request import DISCIPLINES  # 学科清单唯一真值源（八科）
 
 
@@ -257,4 +261,8 @@ def normalize(discipline: str, analyze_out: dict, *, at: str | None = None) -> d
     rec["discipline"] = discipline
     if not rec["asked"]:
         rec["asked"] = f"{discipline} 占问"
+    # 结构化证据（Evidence Contract）：verdict/direction 之外的可答责底稿。
+    # 评测基线取自能力注册表（唯一真值源），本层不复制任何学科评测事实。
+    rec["evidence"] = evidence_from_analyze(
+        discipline, analyze_out, evaluation_baseline=evaluation_baseline_of(discipline))
     return rec

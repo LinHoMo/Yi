@@ -60,6 +60,9 @@ Yi/
 │       ├── hexagram_texts.py   # 六十四卦卦辞爻辞
 │       ├── lunar.py            # 公历↔农历互转
 │       ├── eval.py             # 全仓库唯一评分器
+│       ├── evidence.py         # Evidence Contract：analyze→结构化证据派生视图（唯一实现）
+│       ├── feedback.py         # canonical FeedbackRecord：synthesis/六爻反馈 adapter（判定真值源仍 yingqi）
+│       ├── agent.py            # Agent API 稳定最小五入口（capabilities/validate/run/evidence/status）
 │       ├── golden_kit.py       # 金标准指纹 kit（机械层 / 措辞层分列）
 │       ├── gate_kit.py         # 学科质量门共享壳（子进程 / 取指标 / 跑一套评测）
 │       ├── runtime.py          # UTF-8 子进程/控制台适配
@@ -67,7 +70,7 @@ Yi/
 │       ├── execution/          # 统一执行入口 (YiRuntime)
 │       │   ├── runtime.py      # YiRuntime: execute() / chart() / analyze()
 │       │   ├── schemas.py      # TypedDict: RequestEnvelope / ChartEnvelope / AnalysisEnvelope / ResultEnvelope
-│       │   └── registry.py     # 学科能力注册表 (Capability Matrix 唯一真值源)
+│       │   └── registry.py     # 学科能力注册表（能力性质 + 评测基线 + evaluation_splits 唯一真值源）
 │       └── report/             # 报告 kit + 输入协议
 │           ├── request.py      # 请求→命令行参数唯一映射（DISCIPLINES 八科元组）
 │           └── html.py         # HTML/MD 报告模板
@@ -95,10 +98,12 @@ Yi/
 │   └── README.md                # 学科状态表
 │
 ├── synthesis/                   # 合参层（只依赖各科 analyze 输出契约）
-│   ├── cli.py                   # init/validate/add-divination/record-outcome/outcome-eval/guide/selfcheck
+│   ├── cli.py                   # init/validate/add-divination/record-outcome/outcome-eval/evidence-cross/guide/selfcheck
 │   ├── person.py                # 个人档案模型
 │   ├── normalize.py             # 各科 analyze → 归一化占问记录
-│   ├── cross_rules.py           # 合参裁决规则实现（五类）
+│   ├── cross_rules.py           # 合参裁决规则实现（五类；方向级裁决权在此）
+│   ├── evidence_cross.py        # 证据级检视：same/conflict/unassessed（兼容层，不替代五类裁决）
+│   │                            #   → 已内嵌 guidance 主合参文档（two_one 降为方向级计数倾向）
 │   ├── guidance.py              # 阶段性指导生成
 │   ├── outcome_eval.py          # 现实回填命中评估（当前 n=0，开环）
 │   └── README.md                # **裁决规则唯一权威表**（§二）
@@ -184,9 +189,29 @@ Runtime 负责 discipline routing、request normalization、provenance、
 ### 学科能力矩阵
 
 `execution/registry.py` 维护每个学科的 capability：
-- `chart / analyze / evidence / render / narrate / mcp / external_evaluation / holdout / synthesis`
-- 成熟度级别：`stable` / `experimental` / `unavailable`
+- `chart / analyze / evidence / render / narrate / mcp / external_evaluation / holdout / synthesis / source_provenance / outcome_feedback`
+- 能力性质：`stable / experimental / mechanical_only / source_only / unavailable`
+- **评测基线**（EvaluationBaseline，2026-10-03 起两级分离）：`classical_holdout / external_holdout / mechanical_regression / source_only / unassessed`——能力性质回答"这是什么"，评测基线回答"有没有独立评测覆盖"，两者不得混用；分数读数不进注册表（唯一权威源 `docs/HANDOFF.md` §一）
+- `evaluation_splits`：该科已建的评测分列名（结构事实）
 - 唯一真值源，CLI / Web / Actions / 文档均从此引用
+
+### 证据链（2026-10-03 收敛）
+
+目标链路 Source → Rule → Engine → Evidence → Evaluation → Synthesis → Narrative
+的各段责任与落点：
+
+| 段 | 落点 | 输入 → 输出 |
+|---|---|---|
+| Source | 各科 `data/*.json`、`references/`、语料构建器 | 古籍文本 → 结构化引文/判据表 |
+| Rule | 学科规则表（如六爻 `data/rules/rule_registry.json`、`verdict_texts.json`） | rule_id → 出处指针/适用条件/评测覆盖 |
+| Engine | 学科 `scripts/` 四段 + core 表 | 盘面 → analyze JSON（verdict/factors/应期…） |
+| Evidence | `core/yishu_core/evidence.py`（唯一实现，纯函数双宿主共用） | analyze JSON → 结构化证据（rule_id/出处/适用条件/观察/评测状态/provenance） |
+| Evaluation | 各科 `evaluate.py` + `yishu_core.eval` + 注册表评测基线 | 证据/案例 → 对齐分与覆盖状态（口径分层：机械回归/古籍对齐/外部集/现实回填） |
+| Synthesis | `synthesis/cross_rules.py`（方向级裁决）+ `evidence_cross.py`（证据级 same/conflict/unassessed）+ `feedback.py` adapter | 多科证据 → 一致性/冲突/缺口清单与 canonical 反馈记录 |
+| Narrative | `narrate/render` + LLM 翻译 + `core/yishu_core/agent.py` 五入口 | 证据与裁决 → 当事人可读报告（LLM 只翻译不推断） |
+
+纪律：Evidence 是**派生视图**，不改动 analyze 输出 schema（golden 零漂移）；
+LLM 推断永远不进 Evidence；没有评测覆盖的证据显式标 `unassessed`/`source_only`。
 
 ---
 
@@ -300,7 +325,8 @@ web/engine_runtime.py → tools/report.py        # 浏览器侧同进程跑同�
   `[1c]` 断语外置取证 / `[1d]` 语料消费审计 / `[1e]` 能力矩阵锁 / `[1f]` 输入协议指纹 /
   **`[1g]` 案例库隔离（铁律二）** / `[2]` 内核自检 / `[3]` ming 门 / `[4]` ziwei 门 /
   `[5]` 八科行为指纹 / `[6]` 六爻（含黑箱回归）/ **`[6b]` 报告契约（render 段：结构断言 + 八科 MD 内容指纹）** /
-  `[7]` 合参层 / `[7b]` 站点构建 / `[7c]` 同源验收 / `[8]` pytest
+  `[7]` 合参层 / `[7b]` 站点构建 / `[7c]` 同源验收（MD/HTML/**Evidence** 三列逐例）/
+  **`[7d]` 各科案例对齐分一览（口径披露）** / `[8]` pytest
 - `[1g]` 把**铁律二从「文档承诺」变成「机械可达」**（此前它是三条铁律里唯一零机械支撑的一条）：
   `tools/case_isolation_check.py` 静态层做四段契约入口的 **import 闭包 BFS + AST 判据**，
   运行层用 `sys.addaudithook` 记录真实 `open`，在受控子进程里实跑一份解读请求，

@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 from datetime import datetime
@@ -39,10 +40,17 @@ DISCIPLINES = {
 
 
 def _run(cmd: list[str]) -> str:
+    env = utf8_subprocess_env()
+    # 子进程不继承本进程的 sys.path：把内核显式放进 PYTHONPATH，
+    # 否则各科脚本 import yishu_core 在未安装内核的机器上直接失败
+    py_path = str(CORE)
+    if env.get("PYTHONPATH"):
+        py_path += os.pathsep + env["PYTHONPATH"]
+    env["PYTHONPATH"] = py_path
     p = subprocess.run([sys.executable, *cmd], cwd=ROOT,
                        capture_output=True, text=True, encoding="utf-8",
                        errors="replace", timeout=300,
-                       env=utf8_subprocess_env())
+                       env=env)
     if p.returncode != 0:
         raise RuntimeError(f"{' '.join(cmd[:2])} 失败：{(p.stderr or p.stdout)[-500:]}")
     return p.stdout.strip()
@@ -139,6 +147,7 @@ def _demo_synthesis() -> list[str]:
     from person import PersonArchive
     from normalize import normalize
     from cross_rules import adjudicate
+    from evidence_cross import attach_rule_registries, cross_examine
     from guidance import write_guidance
 
     person_dir = SCRATCH / "person"
@@ -163,11 +172,15 @@ def _demo_synthesis() -> list[str]:
     arch.save(person_dir)
     recs = arch.data["divinations"]
     adj = adjudicate(recs, policies=[r.get("calendar_policy") for r in recs])
-    out = write_guidance(arch, adj, guidance_dir)
+    ev = cross_examine(attach_rule_registries(recs))
+    out = write_guidance(arch, adj, guidance_dir, evidence_view=ev)
     text = out.read_text(encoding="utf-8")
+    assert "证据级检视" in text, "指导文档应内嵌证据级检视小节"
     return [f"档案 P001（1990-05-20 出生）+ 两次占问 + 一条越位样例，"
             f"裁决：**{adj['pattern']} / {adj['trend']}**，"
-            f"剔除越位 {len(adj['excluded'])} 条，未参评维度 {adj['missing'] or '无'}。", "",
+            f"剔除越位 {len(adj['excluded'])} 条，未参评维度 {adj['missing'] or '无'}；"
+            f"指导文档内嵌证据级检视（冲突 {len(ev.get('conflicts') or [])} 处、"
+            f"unassessed 缺口 {len((ev.get('unassessed') or {}).get('evaluation_gaps') or [])} 条）。", "",
             text, ""]
 
 

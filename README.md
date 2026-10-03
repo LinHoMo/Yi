@@ -171,24 +171,46 @@ disciplines/<科>  → python dev_tools/check.py
 
 | 集合 | n | 古籍对齐分 | 是否调参 |
 |---|---|---|---|
-| tune | 20 | **95.0** | 参与过调参 |
-| holdout | 12 | **89.7** | 未参与调参 |
-| wikisource_holdout | 35 | **57.1** | 永不调参（维基文库《增刪卜易》原本，泛化短板） |
+| tune | 20 | **96.8** | 参与过调参 |
+| holdout | 12 | **90.2** | 未参与调参 |
+| wikisource_holdout | 35 | **56.9** | 永不调参（维基文库《增刪卜易》原本，泛化短板） |
 | wikisource_direction | 36 | **72.2** | 有吉凶无应期 |
 
 六爻应期：主应期 top-1 tune **58.8%** / holdout **50.0%** / wikisource **20.0%**，
 日/月/年分列已输出（`disciplines/liuyao/dev_tools/check.py`）。
+黑箱回归 18 例 **11/18**（基线 ≥11）。
 
-**梅花易数 / 小六壬 / 择吉**：**这三科目前没有古籍对齐分**。
+**梅花易数 / 小六壬 / 择吉**：**这三科目前没有古籍对齐分**（梅花例外，见下）。
 逐例审计（各科 `docs/EVAL-AUDIT.md`，一键复核 `python tools/eval_audit_recheck.py`）
-结论：其读数性质是**规则自洽回归数**——expected 与引擎口径
+结论：小六壬/择吉读数性质是**规则自洽回归数**——expected 与引擎口径
 同源（择吉 16 例全部 engine_derived，古籍日例应验 0 例）。对外请照此写法、**带 n 不带百分比**：
-*规则自洽回归数：梅花 13/13、11/11、6/6、8/8；小六壬与择吉各维度 n/n 命中*（三科 n 均 < 20）。
-**想让三科真正可检验，唯一有效动作是建外部独立集**（范式照六爻 wikisource 35 例）。
+*规则自洽回归数：小六壬与择吉各维度 n/n 命中*（n 均 < 20）。
+梅花已有古籍对齐评测（tune 10 / holdout 13），并于 2026-10-02r 起另有
+**外部独立集 external_holdout n=4**（《梅花易数·卷三·變卦式八則》，永不调参；
+n<20 按纪律只报命中数：relation 4/4、革卦生克体 1/1，**不报百分比**）。
+**想让小六壬/择吉真正可检验，唯一有效动作是建外部独立集**（范式照梅花 4 例与六爻 wikisource 35 例）。
 
-**命科**：四柱八字有案例对齐评测——调候 tune 100.0（30/30）、holdout 93.8
-（n=246；含格局成败 28/36、从格 11/15），性质是**表对表回归 + 历法链路验证，不是泛化证据**。
+**命科**：四柱八字有案例对齐评测——调候 tune 100.0（30/30）、holdout **strict 97.1**
+（n=246；含格局成败 28/36、从格 13/15、from_kind 15/15，2026-10-02t 读数），
+性质是**表对表回归 + 历法链路验证，不是泛化证据**；外部独立集（书源基准例）
+**尚未建立**——该缺口在册（《滴天髓阐微》语料已取得，判据待落地）。
 紫微斗数、大六壬、灵棋经**无案例对齐评测**，只有机械自检与行为指纹（`dev_tools/golden.py`）。
+
+**评测成熟度分层**（机器可读权威表：`core/yishu_core/execution/registry.py`，
+此处只引用）：liuyao / ming / meihua 为 **classical_holdout**（古籍案例对齐评测已建，
+liuyao/meihua 另有外部独立候选集）；ziwei / xiaoliuren / zeji / liuren 为
+**mechanical_regression**（只有规则自洽回归与 golden 指纹）；lingqi 为
+**source_only**（书源直录，忠实度门即其基线）。四类评测口径——
+机械回归 / 古籍对齐（source alignment）/ 外部独立集（external holdout）/
+现实回填反馈（outcome feedback，当前 n=0 开环）——**不得互相冒充**
+（`AGENTS.md` 铁律三）。
+
+**证据链与 Agent 入口**（2026-10-03 起）：报告 envelope 附带结构化证据
+（`core/yishu_core/evidence.py`：每条结论带规则 id / 出处 / 适用条件 / 观察 / 评测状态）；
+六爻规则注册表（书源引文指针 + 评测覆盖）在
+`disciplines/liuyao/data/rules/rule_registry.json`；现实反馈经 canonical 模型
+`core/yishu_core/feedback.py` 统一折叠（synthesis 与六爻两条链共用 adapter）；
+程序化 Agent 用 `core/yishu_core/agent.py` 的五入口，不直接拼脚本命令。
 
 **分数含义**：古籍案例对齐分 = 引擎输出与案例库要点的吻合度，
 衡量不了现实命中率（`AGENTS.md` 铁律三）；对外引用最保守集合。

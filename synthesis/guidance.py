@@ -4,7 +4,11 @@
 结构固定（synthesis/README.md §三）：
   1. 格局与节律（命）   —— 命科缺数据则明示「未参评」，不补位猜测（规则 5）
   2. 近期诸事（卜）     —— 逐事给方向/应期/所本法则
-  3. 合参结论           —— 同向/互证/存疑分列，每条注明来自哪一科的哪个判据
+  3. 合参结论           —— 同向/互证/存疑分列，每条注明来自哪一科的哪个判据；
+                           内嵌**证据级检视**小节（same/conflict/unassessed，
+                           2026-10-03 起）：趋向声明带「方向级计数倾向」口径限定，
+                           two_one 不再是无条件的最终逻辑——异向结论与成立条件
+                           必须并列检视，同向只提升证据一致性描述强度
   4. 可执行建议 2–4 条  —— 判据驱动 + 复验时点（到哪个窗口回看并回填 outcome）
   5. 边界声明           —— 医疗/法律/投资以专业意见为准；象征推演给方向不给定论
 
@@ -25,7 +29,8 @@ def _window_of(timing: list[str]) -> str:
     return "、".join(timing)
 
 
-def build_guidance(archive: PersonArchive, adjudication: dict) -> str:
+def build_guidance(archive: PersonArchive, adjudication: dict,
+                   evidence_view: dict | None = None) -> str:
     d = archive.data
     pid = d["id"]
     birth = d.get("birth") or {}
@@ -99,6 +104,10 @@ def build_guidance(archive: PersonArchive, adjudication: dict) -> str:
               f"（吉{tally(adjudication, '吉')}/平{tally(adjudication, '平')}"
               f"/凶{tally(adjudication, '凶')}）",
               ""]
+    if adjudication.get("pattern") == "two_one" and evidence_view is not None:
+        lines.append("- 口径：上述趋向是**方向级计数倾向**（裁决规则 3），"
+                     "不是证据加权投票——采信前先看下方证据级检视的"
+                     "同向/冲突/缺口与各自评测状态。")
     for note in adjudication.get("notes", []):
         lines.append(f"- {note}")
     if adjudication.get("missing"):
@@ -106,14 +115,61 @@ def build_guidance(archive: PersonArchive, adjudication: dict) -> str:
                      "（降级处理，不补位）")
     lines.append("")
 
+    # ------------------------------------------------------ 3b. 证据级检视（evidence-first）
+    if evidence_view is not None:
+        lines += ["### 证据级检视（same / conflict / unassessed）", ""]
+        cons = evidence_view.get("consistency") or {}
+        confs = evidence_view.get("conflicts") or []
+        unass = evidence_view.get("unassessed") or {}
+        gaps = unass.get("evaluation_gaps") or []
+        silent = unass.get("silent_disciplines") or []
+        no_ev = unass.get("no_evidence_disciplines") or []
+        if not evidence_view.get("evidence_present"):
+            lines.append("- 档案占问未携带结构化证据（旧档案或绕过归一化直接写入）："
+                         "证据级检视不可用，上方趋向仅为方向级计数倾向，"
+                         "**描述强度不提升**。补录证据请走 `add-divination` 归一化入口。")
+        else:
+            lines.append(f"- 一致性：跨科同向 **{cons.get('same', 0)}** 维、"
+                         f"冲突 {cons.get('conflict', 0)} 处、单科 {cons.get('single', 0)} 维"
+                         "——同向只提升证据一致性描述强度，**不制造新事实**。")
+            if no_ev:
+                lines.append(f"- 未携带证据的占问：{'、'.join(no_ev)}"
+                             "（旧档案记录，不参与证据级对照，其方向只按原样陈述）。")
+        for c in confs:
+            lines.append(f"- **冲突**〔{c.get('factor')}〕（双方条件如列，不做平均、不编调和说）：")
+            for s in c.get("sides") or []:
+                bits = [f"{s.get('discipline')}：{s.get('claim')}"]
+                if s.get("applicability"):
+                    bits.append(f"条件：{s['applicability']}")
+                if s.get("source"):
+                    bits.append(f"所本：{s['source']}")
+                lines.append("  - " + "｜".join(str(b) for b in bits if b))
+        if gaps:
+            shown = "；".join(f"{g['discipline']}·{g['factor']}"
+                              f"[{g['evaluation_status']}]"
+                              for g in gaps[:8])
+            more = f"…（共 {len(gaps)} 条）" if len(gaps) > 8 else ""
+            lines.append(f"- **unassessed 评测缺口**（宁登记缺口，不制造假评测）：{shown}{more}。")
+        if silent:
+            lines.append(f"- 未表态学科：{'、'.join(silent)}"
+                         "（机械骨架/书源直录/机械标签——不冒充表态，不进方向计数）。")
+        lines.append("")
+
     # ------------------------------------------------------------ 4. 可执行建议
     lines += ["## 四、可执行建议", ""]
     pattern = adjudication.get("pattern")
     trend = adjudication.get("trend")
     if pattern in ("same", "two_one"):
         tone = "按趋向安排" if trend in ("吉",) else "按趋向回避/缓办"
-        lines.append(f"1. {tone}：多科同向「{trend}」，可将相关事项安排在趋向窗口内"
-                     "（仍非保证，触发条件与时间窗以各科应期为准）。")
+        if pattern == "two_one":
+            lines.append(f"1. {tone}前先复核：趋向「{trend}」为两科同向、一科异向的"
+                         "**方向级计数倾向**，异向结论及其成立条件已在证据级检视单列——"
+                         "核对双方评测状态与适用条件后再采信；跨科同向只提升"
+                         "证据一致性描述强度，不制造新的事实或保证。")
+        else:
+            lines.append(f"1. {tone}：多科同向「{trend}」（证据一致性提升描述强度，"
+                         "非新事实），可将相关事项安排在趋向窗口内"
+                         "（仍非保证，触发条件与时间窗以各科应期为准）。")
     elif pattern == "split":
         lines.append("1. 分歧事项暂缓拍板：先统一各科起局时间与历法口径复核；"
                      "仍分歧则并行观察两种趋向的触发条件，不押单边。")
@@ -156,8 +212,9 @@ def tally(adjudication: dict, direction: str) -> int:
 
 
 def write_guidance(archive: PersonArchive, adjudication: dict,
-                   guidance_dir: str | Path) -> Path:
-    text = build_guidance(archive, adjudication)
+                   guidance_dir: str | Path,
+                   evidence_view: dict | None = None) -> Path:
+    text = build_guidance(archive, adjudication, evidence_view)
     p = Path(guidance_dir) / f"{archive.data['id']}.md"
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(text, encoding="utf-8")
@@ -170,6 +227,7 @@ def main() -> int:
     import sys
 
     from cross_rules import adjudicate
+    from evidence_cross import attach_rule_registries, cross_examine
     from yishu_core.runtime import force_utf8_stdio
     force_utf8_stdio()
 
@@ -187,7 +245,9 @@ def main() -> int:
         return 1
     recs = arch.data.get("divinations") or []
     policies = [r.get("calendar_policy") for r in recs]
-    out = write_guidance(arch, adjudicate(recs, policies=policies), args.out or "guidance")
+    ev = cross_examine(attach_rule_registries(recs))
+    out = write_guidance(arch, adjudicate(recs, policies=policies),
+                         args.out or "guidance", evidence_view=ev)
     print("指导 →", out)
     return 0
 

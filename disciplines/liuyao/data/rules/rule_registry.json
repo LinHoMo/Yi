@@ -1,0 +1,161 @@
+{
+  "schema": "yi-rule-registry-v1",
+  "discipline": "liuyao",
+  "_comment": [
+    "六爻规则注册表：rule_id → 出处 / 适用条件 / 实现位置 / 评测覆盖 / 测试。",
+    "这是 Rule → Evidence → Evaluation 链的规则侧锚点（Evidence 侧在 core/yishu_core/evidence.py，",
+    "经 attach_rule_registry 按 domain 互为子串匹配挂接）。",
+    "口径纪律：",
+    "  * evaluation.status 只登记真实存在的评测覆盖——patterns/use_god_*/yingqi 等维度是",
+    "    disciplines/liuyao/scripts/evaluate.py WEIGHTS 里的真实维度，tune/holdout 分列出分；",
+    "    没有基准例的域宁可登记缺口（status=unassessed + gap），不制造假评测。",
+    "  * source.quote_in_data 指向仓库数据文件里的逐字引文（file#点分路径），",
+    "    source.quote_in_code 指向实现文件中的锚点子串；两者都被测试校验存在。",
+    "  * 引文无法逐字核对时 verified=false，不伪装成古法。",
+    "  * 本表不存分数；分数唯一权威源是 docs/HANDOFF.md §一（此处只声明「哪类评测存在」。"
+  ],
+  "rules": [
+    {
+      "rule_id": "liuyao.sanhui",
+      "domain": "三会局",
+      "impl": "scripts/liuyao_step4.py:1058（check 3b，SAN_HUI_GROUPS 判定；三会成立不再按三合破局论）",
+      "source": {
+        "book": "《三命通会》",
+        "locator": "三会方局",
+        "quote_in_code": "disciplines/liuyao/scripts/liuyao_step4.py#三会方局：寅卯辰会木",
+        "verified": true
+      },
+      "applicability": "三会三支俱现于本卦，或月建/日辰补足一字；用神旺（分≥3.5）+0.5、衰（分≤1.5）−0.5、中和 0。寒暖燥湿为取象，不作加减依据",
+      "evaluation": {"status": "classical_holdout", "splits": ["tune", "holdout"], "dim": "patterns", "note": "格局覆盖维度含「三会」标签；tune/holdout 分列出分，禁止混分"}
+    },
+    {
+      "rule_id": "liuyao.dufa_dujing",
+      "domain": "独发/独静",
+      "impl": "scripts/classical_enhancements_dufa.py:analyze_du_fa_du_jing（advanced_analysis.du_fa_du_jing）",
+      "source": {
+        "book": "《增刪卜易》",
+        "locator": "独发章第三十一",
+        "quote_in_data": "disciplines/liuyao/data/rules/verdict_texts.json#pattern_verdict_labels.独发/独静.古典引文",
+        "verified": true
+      },
+      "applicability": "五爻俱動一爻不動謂之獨靜；五爻不動一爻獨動謂之獨發。同章立界「捨其用神執之而決事者謬也」——故只标象、给结构性提示，不改吉凶主判、不进主分（设计决策）",
+      "evaluation": {"status": "classical_holdout", "splits": ["tune", "holdout"], "dim": "patterns", "note": "patterns 维度登记「独发/独静」标签；主判不受其影响为本域设计边界"}
+    },
+    {
+      "rule_id": "liuyao.fanyin_fuyin",
+      "domain": "反吟/伏吟",
+      "impl": "scripts/effects.py:analyze_repetition(786)/analyze_repetition_deep(914)；精细化评分 scripts/classical_enhancements.py(369/419)",
+      "source": {
+        "book": "《卜筮正宗》",
+        "locator": "反吟伏吟章",
+        "quote_in_data": "disciplines/liuyao/data/rules/verdict_texts.json#classical_interpretations.fanyin_and_fuyin.basis",
+        "verified": true
+      },
+      "applicability": "本卦逐位比对变卦地支：反吟=六冲、伏吟=不变；卦级反吟/伏吟按内核 hexagram_level_relations 分内外卦；深层评分按五行旺衰综合，非统一扣减",
+      "evaluation": {"status": "classical_holdout", "splits": ["tune", "holdout"], "dim": "patterns", "note": "patterns 维度含「反吟/伏吟/卦反吟/卦伏吟」标签"}
+    },
+    {
+      "rule_id": "liuyao.liuhe_liuchong",
+      "domain": "六合/六冲",
+      "impl": "scripts/effects.py:analyze_clash_harmony(697)（断语经 verdict_texts：crt_022/crt_051、classical_interpretations.liuhe_hex/liuchong_hex）",
+      "source": {
+        "book": "《卜筮正宗》",
+        "locator": "六合论 / 六冲论",
+        "quote_in_data": "disciplines/liuyao/data/rules/verdict_texts.json#classical_interpretations.liuhe_hex.basis",
+        "verified": true
+      },
+      "applicability": "卦内逐位地支六合/六冲配对；卦级六合卦/六冲卦；变卦六合/六冲单列。六合利合、六冲主散（断语外置）",
+      "evaluation": {"status": "classical_holdout", "splits": ["tune", "holdout"], "dim": "patterns", "note": "patterns 维度含「六合/六冲/变卦六合/变卦六冲」标签"}
+    },
+    {
+      "rule_id": "liuyao.xunkong_zhenjia",
+      "domain": "旬空（真空/假空）",
+      "impl": "scripts/liuyao_step3.py:583（真空/假空判定，互斥宁缺勿滥；旬空机械事实唯一真值源在内核 symbols.xunkong_of）",
+      "source": {
+        "book": "《增删卜易》",
+        "locator": "旺空待出，真空难起",
+        "quote_in_data": "disciplines/liuyao/data/rules/verdict_texts.json#pattern_verdict_labels.真空/假空.真空.basis",
+        "verified": true
+      },
+      "applicability": "真空＝休囚无气＋日克＋无生扶（论30%）；假空＝旺相＋月日或动爻生扶（论70%），出空（值日或冲日）即应；有气/休囚两档之外不硬贴标签",
+      "evaluation": {"status": "classical_holdout", "splits": ["tune", "holdout"], "dim": "patterns", "note": "patterns 维度含「旬空/出空/真空/假空」；应期维度含出空填实候选"}
+    },
+    {
+      "rule_id": "liuyao.muku",
+      "domain": "墓库",
+      "impl": "scripts/effects.py:analyze_officer_tomb(264)（随官入墓）；化墓 scripts/classical_enhancements.py(237)；断语 guan_tomb_poem/crt_012/041/075-086",
+      "source": {
+        "book": "《卜筮正宗》",
+        "locator": "随官入墓歌诀",
+        "quote_in_data": "disciplines/liuyao/data/rules/verdict_texts.json#classical_interpretations.guan_tomb_poem.basis",
+        "verified": true
+      },
+      "applicability": "官鬼入墓于世/用/同墓分场景（crt_075-078）；动而化墓加剧；伏神入墓、合局入墓单列；吉凶需综合判断，不单凭入墓定凶",
+      "evaluation": {"status": "classical_holdout", "splits": ["tune", "holdout"], "dim": "use_god_muku", "note": "专用维度 use_god_muku（权重3）+ patterns「入墓/随官入墓」标签；根测试 tests/test_liuyao_tomb_tags.py"}
+    },
+    {
+      "rule_id": "liuyao.jintui_shen",
+      "domain": "进退神",
+      "impl": "scripts/classical_enhancements.py:analyze_advance_retreat(1298)；五行力量量化同文件(1395)",
+      "source": {
+        "book": "《增删卜易》",
+        "locator": "进神/退神（化进势盛、化退势衰；量化判据见实现注释）",
+        "quote_in_code": "disciplines/liuyao/scripts/classical_enhancements.py#进退神五行力量量化（《增删卜易》）",
+        "verified": true
+      },
+      "applicability": "动爻化进（支序递进）势盛、化退势衰；回头生/克/合/泄单列；量化按月日旺衰，非统一加减",
+      "evaluation": {"status": "classical_holdout", "splits": ["tune", "holdout"], "dim": "patterns", "note": "patterns 维度含「化进神/化退神」标签"}
+    },
+    {
+      "rule_id": "liuyao.use_god_multi",
+      "domain": "用神多现",
+      "impl": "scripts/liuyao_step2.py:step2_identify_use_god(57)/_find_use_god_positions(556)；取舍优先级 data/rules/use_god_relations.json（逐字引文+偏移）",
+      "source": {
+        "book": "《增刪卜易》",
+        "locator": "用神多现取舍（问法→六亲 per data/rules/question_use_gods.json 195 问法，含引文与偏移）",
+        "quote_in_data": "disciplines/liuyao/data/rules/use_god_relations.json#rules",
+        "verified": true
+      },
+      "applicability": "用神两现/多现时按取舍优先级规则选取（舍闲爻取持世/临月日等书源序）；无规则命中时回落通用序并明示",
+      "evaluation": {"status": "classical_holdout", "splits": ["tune", "holdout"], "dim": "use_god_category", "note": "use_god_category(12)/branch(8)/position(4) 三维度直接评测选取结果"}
+    },
+    {
+      "rule_id": "liuyao.yingqi_rules",
+      "domain": "应期",
+      "impl": "scripts/liuyao_timing.py:predict_timing_core(733)；Rule 8(615)/Rule 9(672) 带书源引文",
+      "source": {
+        "book": "《增删卜易》",
+        "locator": "应期直读法（Rule 8：静爻旺相逢冲即发；Rule 9：世应生克迟速调节）",
+        "quote_in_code": "disciplines/liuyao/scripts/liuyao_timing.py#静爻旺相，冲之即发",
+        "verified": true
+      },
+      "applicability": "结构化候选有序给出（date+rule，顺序即名次）；单位（年/月/日）必须对上才判命中；现实回填判定口径唯一真值源 core/yishu_core/yingqi",
+      "evaluation": {"status": "classical_holdout", "splits": ["tune", "holdout", "yingqi_holdout"], "dim": "yingqi", "note": "yingqi 维度(11)；yingqi_holdout 为外部候选集（n=2，另 wikisource top-1 ~20% n=35 为泛化读数——见 HANDOFF，非调参对象）"}
+    },
+    {
+      "rule_id": "liuyao.sanhe",
+      "domain": "三合局",
+      "impl": "scripts/classical_enhancements.py:analyze_triple_combo(1507)（advanced_analysis.triple_combo）",
+      "source": {
+        "book": "《增删卜易》",
+        "locator": "三合成局（引文未逐字挂接——登记缺口）",
+        "verified": false
+      },
+      "applicability": "申子辰/寅午戌/巳酉丑/亥卯未三支成局， completeness 分待用/成局；静爻可参与；局力受冲破条件约束（:_check_sanhui_broken）",
+      "evaluation": {"status": "classical_holdout", "splits": ["tune", "holdout"], "dim": "sanhe_full_combo", "note": "sanhe_full_combo(2)/use_god_in_sanhe(2) 两维度；引文待逐字挂接，verified=false 诚实登记"}
+    },
+    {
+      "rule_id": "liuyao.guashen",
+      "domain": "卦身",
+      "impl": "scripts/classical_enhancements.py:find_hexagram_body(466)（安月卦身诀唯一实现；advanced_analysis.hexagram_body）",
+      "source": {
+        "book": "《卜筮正宗》",
+        "locator": "安月卦身诀",
+        "quote_in_code": "disciplines/liuyao/scripts/effects.py#《卜筮正宗》安月卦身诀：阴世则从午月起",
+        "verified": true
+      },
+      "applicability": "阴世从午月起、阳世从子月起，从初数至世方真；世爻位不在 1..6 返回空",
+      "evaluation": {"status": "classical_holdout", "splits": ["tune", "holdout"], "dim": "gua_shen_branch", "note": "gua_shen_branch 维度（权重2）"}
+    }
+  ]
+}

@@ -30,6 +30,12 @@ from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 from person import PersonArchive, PersonError  # noqa: E402
 from normalize import normalize, DISCIPLINES  # noqa: E402
 from cross_rules import adjudicate, selfcheck as cross_selfcheck  # noqa: E402
+from evidence_cross import (  # noqa: E402
+    attach_rule_registries,
+    cross_examine,
+    load_rule_registry,  # noqa: F401  （cli 历史导出名，实现单源在 evidence_cross）
+    selfcheck as evidence_selfcheck,
+)
 from guidance import write_guidance  # noqa: E402
 from outcome_eval import eval_outcomes, report as yq_report, selfcheck_scoring  # noqa: E402
 
@@ -137,14 +143,60 @@ def cmd_guide(args) -> int:
         print("无占问记录，先 add-divination。")
         return 1
     policies = [r.get("calendar_policy") for r in recs]
+    # 证据级检视进主合参文档：趋向之外，同向/冲突/缺口一并给出（evidence-first）
+    ev = cross_examine(attach_rule_registries(recs))
     out_dir = Path(args.out) if args.out else GUIDANCE_DIR
-    p = write_guidance(arch, adjudicate(recs, policies=policies), out_dir)
+    p = write_guidance(arch, adjudicate(recs, policies=policies), out_dir,
+                       evidence_view=ev)
     print("指导 →", p)
+    n_conf = len(ev.get("conflicts") or [])
+    n_gap = len((ev.get("unassessed") or {}).get("evaluation_gaps") or [])
+    print(f"  证据级检视：冲突 {n_conf} 处、unassessed 缺口 {n_gap} 条"
+          + ("（已内嵌指导文档 §三）" if ev.get("dimensions") else
+             "（档案无结构化证据，指导文档已如实声明）"))
+    return 0
+
+
+def cmd_evidence_cross(args) -> int:
+    """证据级检视：档案内各占问的 evidence → same/conflict/unassessed 清单。"""
+    arch = _load(args.pid)
+    recs = arch.data.get("divinations") or []
+    if not recs:
+        print("无占问记录，先 add-divination。")
+        return 1
+    res = cross_examine(attach_rule_registries(recs))
+    print(f"证据级检视（{res['schema']}）")
+    for factor, dim in ((d["factor"], d) for d in res["dimensions"]):
+        sides = "、".join(f"{e['discipline']}:{e['effect'] or '—'}"
+                          for e in dim["entries"])
+        print(f"  · {factor}［{dim['relation']}］{sides}"
+              + (f"（{dim['note']}）" if dim["note"] else ""))
+    conf = res["conflicts"]
+    if conf:
+        print(f"  冲突 {len(conf)} 处（双方条件已保留，不做平均）：")
+        for c in conf:
+            for s in c["sides"]:
+                print(f"    · {s['discipline']}：{s['claim']}"
+                      + (f"｜条件：{s['applicability']}" if s["applicability"] else "")
+                      + (f"｜所本：{s['source']}" if s["source"] else ""))
+    gaps = res["unassessed"]["evaluation_gaps"]
+    print(f"  unassessed：评测缺口 {len(gaps)} 条"
+          f"（{res['unassessed']['note'][:30]}…）")
+    for g in gaps[:10]:
+        print(f"    · {g['discipline']}·{g['factor']}：{g['evaluation_status']}"
+              f"｜{g['claim']}")
+    if res["unassessed"]["silent_disciplines"]:
+        print(f"  未表态学科：{'、'.join(res['unassessed']['silent_disciplines'])}")
+    no_ev = res["unassessed"].get("no_evidence_disciplines") or []
+    if no_ev:
+        print(f"  未携带证据（旧档案记录，不参与证据级对照）：{'、'.join(no_ev)}")
+    print("  口径：" + res["note"])
     return 0
 
 
 def cmd_selfcheck(args) -> int:
     cross_selfcheck()
+    evidence_selfcheck()
     # 学科清单锁：合参层各清单必须与内核唯一真值源同源（防四处清单再次分叉）
     import person as _person  # noqa: E402
     from yishu_core.report.request import DISCIPLINES as _core_disc  # noqa: E402
@@ -199,7 +251,7 @@ def cmd_selfcheck(args) -> int:
     assert not yq["EVT002"]["命中"] and yq["EVT002"]["判定"].startswith("超期")
     # 评分表自洽（A7）：7 档位跑真实判定路径，锁「名次→得分」映射
     selfcheck_scoring()
-    print("synthesis 自检通过（person 校验 + cross_rules + 归一化 + 应期回收闭环 + 评分表自洽）")
+    print("synthesis 自检通过（person 校验 + cross_rules + 证据级检视 + 归一化 + 应期回收闭环 + 评分表自洽）")
     return 0
 
 
@@ -248,6 +300,10 @@ def main() -> int:
     p.add_argument("pid")
     p.add_argument("-o", "--out")
     p.set_defaults(func=cmd_guide)
+
+    p = sub.add_parser("evidence-cross", help="证据级检视：same/conflict/unassessed 清单")
+    p.add_argument("pid")
+    p.set_defaults(func=cmd_evidence_cross)
 
     p = sub.add_parser("selfcheck", help="合参层自检")
     p.set_defaults(func=cmd_selfcheck)

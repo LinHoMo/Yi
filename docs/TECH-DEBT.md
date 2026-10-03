@@ -75,6 +75,17 @@
 | **Horosa 调研采纳项**：① 报告忠实度审计工具 ✅（`tools/report_faithfulness.py`，12 例语料、确定性 supported/invented/contradicted 分类，已挂根门 [6]）；② 缺参结构化澄清信封 ✅（`core/yishu_core/report/request.py` 结构性缺参门禁：六壬无时刻不起课、灵棋三部缺一即无课等）；③ 合参「分歧披露不平均」✅（`synthesis/cross_rules.py`：分歧如实并列两趋向及触发条件，不平均不调和）；④ 报告机器可读出处块（口径开关+指纹）——部分：report_meta 页头+口径声明页脚已统一单源，机器可读指纹块未建；⑤ kentang2017 MIT 引擎许可核实——未做（奇门 N2 维持不启动，见 NEW-DISCIPLINES） | 部分清偿 | ④ 待建（须评估 render 指纹影响）；⑤ 随 N2 启动一并核（**AGPL 代码不得复制**） |
 
 
+### 2.5 证据链收敛登记（2026-10-03 新增，Evidence-First 阶段产物与残余缺口）
+
+| 债务 | 现状 | 阻塞说明 |
+|---|---|---|
+| **六爻规则注册表引文缺口**：三合局（`liuyao.sanhe`）书源引文未逐字挂接，`verified=false` 如实登记 | 已登记（`data/rules/rule_registry.json`，测试 `tests/test_rule_registry.py` 逐条核查指针） | 补引文须逐字核对《增删卜易》原文后填 `quote_in_data/quote_in_code` 并翻转 verified；**禁止凭印象补引文** |
+| **六爻规则注册表未覆盖域**：月破/三刑/六破/暗动/伏藏/游魂归魂/合绊/绝处逢生等 advanced_analysis 块已在 Evidence 里（factor 齐全）但未注册 rule_id | 证据可答责（factor/claim/出处），rule_id 留空 | 按域逐条补注册（每条带出处指针+评测覆盖），不一次堆完；无基准例的域宁可 status=unassessed |
+| **Evidence 评测粒度是学科级**：`evaluation_baseline` 为学科默认值，单条证据的细则覆盖（哪条判定对应哪个评分维度）只有经规则注册表挂接的六爻域有 | 学科级默认 + 规则级升级双轨 | 其他科照六爻范式（规则注册表 + 逐条引文指针）逐步推广；先立尺子再填覆盖 |
+| **合参维度词表跨科未统一**：`evidence_cross` 的维度级对照仅对同名词（同 factor 字符串）成立；跨科（六爻「六合/六冲」↔ 梅花「体用关系」）无对照 | 如实声明于输出 note 与 `synthesis/README.md` | 建跨科维度本体是**新规则工作**，须逐条带古籍依据；禁止硬编映射表冒充术语对齐 |
+| **六爻 `event_logger.py`（JSONL 事件日志）未接 canonical FeedbackRecord adapter** | 第三条反馈路径，已在 `core/feedback.SOURCE_SYSTEMS` 预登记 | 接入时写 `from_liuyao_event()` adapter + 测试；在此之前它不进任何效度统计 |
+| **CLI/Web/Actions request parity 的 pytest 侧**：`tests/test_request_parity.py`（归一化同一性 + 深链语义 parity + 短键白名单）与 [1f]/[1h]/[7c] 门并存 | 双保险在位 | 语义双维护已消除（短键锁同一 REQUEST_FIELDS 白名单）；如再加入口，先加 normalize 断言再加门 |
+
 ### 2.2 有意保持（非缺陷，强改会违反铁律）
 
 | 债务 | 为什么不动 |

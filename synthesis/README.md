@@ -19,6 +19,7 @@ python cli.py add-divination P001 --discipline liuyao \
 python cli.py record-outcome P001 --event-id EVT001 --result 应验 \
        --occurred-at 2026-10-05 --judged 应验                              # 回填现实结果（应期回收闭环入参）
 python cli.py outcome-eval P001                                           # 应期回收评分：回填 × 断卦应期
+python cli.py evidence-cross P001                                          # 证据级检视：same/conflict/unassessed 清单
 python cli.py guide P001                                                   # 生成指导 → guidance/P001.md
 python cli.py selfcheck                                                     # 合参层自检
 ```
@@ -39,6 +40,46 @@ python cli.py selfcheck                                                     # �
   不是古籍案例对齐分，也绝不等于"预测率"（`AGENTS.md` §三）。
 
 此闭环让"哪个法则推出哪个日"可事后核验：逐例判定带 `rule` 标签，攒够样本后可按法则统计命中，供六爻应期法则迭代。
+
+### 证据级检视（evidence-cross，2026-10-03 起）
+
+归一化记录自 2026-10-03 起附带 `evidence` 字段（Evidence Contract 派生视图，
+schema 与提取器唯一实现在 `core/yishu_core/evidence.py`；评测基线取自能力注册表
+`core/yishu_core/execution/registry.py`）。`evidence-cross` 在**旧五条裁决之下**
+新增一层证据级检视（实现 `evidence_cross.py`），输出三类结构化清单：
+
+- **same / conflict / single**：按维度（factor）归组的证据一致性。冲突**保留双方**
+  claim + 适用条件（applicability）+ 出处，不做平均、不编调和说；方向级分歧的
+  裁决权仍在 §二 的五条规则（`cross_rules.adjudicate`，本层不替代）。
+- **unassessed**：无评测覆盖（`unassessed`）或仅有出处声明（`source_only`）的证据
+  显式登记为缺口——宁登记缺口，不制造假评测。学科无方向表态（liuren 骨架/lingqi
+  直录/命科机械标签）单列为 silent，不冒充表态。
+- **一致性描述**：跨科同向只提升"证据一致性"的描述强度，**不自动制造新的事实**；
+  本层输出无任何趋势/得分字段。
+
+诚实边界：维度级对照仅对**同名词**（同 factor 字符串）成立；跨科维度词表
+（六爻「六合/六冲」↔ 梅花「体用关系」）尚未统一，硬造对照属新规则工作、须逐条带古籍依据。
+
+**进主合参文档（2026-10-03 起）**：`guide` 生成的指导文档 §三 内嵌同一份检视
+（同一 `cross_examine`，规则注册表挂接口径一致）——「合参结论」的趋向声明带
+**方向级计数倾向**口径限定，`two_one`（两吉一凶）不再是无条件的最终逻辑：
+异向结论及其成立条件在检视小节单列，采信前须核对双方评测状态；档案未携带
+结构化证据（旧档案）时如实声明「证据级检视不可用，描述强度不提升」。
+silent（有证据但无方向表态）与 no_evidence（未携带证据）分列，不再混为一谈。
+
+### canonical 反馈模型（FeedbackRecord，2026-10-03 起）
+
+本层（`outcome_eval.py`）与六爻侧（`dev_tools/feedback_store.py`）两条反馈链的
+**存储与判定口径保留不变**，但记录形态统一折叠为 canonical `FeedbackRecord`
+（schema 唯一真值源 `core/yishu_core/feedback.py`）后进入统计：
+
+- `from_synthesis_divination()` / `from_liuyao_feedback()` 为双向 adapter；
+  六爻 store 另有 `load_all_canonical()` 出口。判定真值源仍是
+  `core/yishu_core/yingqi`（名次制/容差窗两制，门 `[1i]` 锁定）。
+- `provenance.kind` 强制区分 **real_outcome / synthetic_regression**：真实回填与
+  合成回归数据物理/语义分离，混集（`validate_record_set`）直接判败；
+  合成记录只允许存在于测试夹具，永不进真实效度统计。
+- 六爻 store 只判应期不断事——adapter 折叠后 `judged` 留空，不冒充断事判定。
 
 ## 一、人的档案 `person/<id>.json`
 

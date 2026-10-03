@@ -30,6 +30,27 @@
   ④ `tools/check_web_site.py` 的清单口径（`manifest.disciplines` ≡ `web/engine_runtime.py` 的
   `WEB_DISCIPLINES`）。以本表为准，别处引用不复制。
 
+## 能力与评测状态（权威表：core/yishu_core/execution/registry.py，2026-10-03 起）
+
+- **能力性质**（stable / experimental / mechanical_only / source_only / unavailable）与
+  **评测基线**（classical_holdout / external_holdout / mechanical_regression / source_only /
+  unassessed）的唯一真值源是 `core/yishu_core/execution/registry.py`（机器可读，
+  `capability_matrix()`）。本文件只登记出报告通道，**不复制评测状态**。
+  口径要点（与注册表同源，改动以它为准）：liuren 为机械骨架（mechanical_only，
+  不得当成完整吉凶能力）；lingqi 为书源直录（source_only，不得把原文解释成独立
+  预测结论）；liuyao / ming / meihua 有古籍案例对齐评测，ziwei / xiaoliuren / zeji /
+  liuren 只有机械自洽回归——各科成熟度**不同**，报分必带集合名 + n + 是否调参
+  （读数唯一权威源 `docs/HANDOFF.md` §一）。
+- **Agent 稳定入口**（`core/yishu_core/agent.py`，五入口）：`capabilities()` /
+  `validate_request()` / `run_report(rt, req)` / `get_evidence(rt, req)` /
+  `get_evaluation_status(disc)`。可跑 Python 的 Agent 走这五个函数即可，
+  不要自己拼学科脚本命令，也不需要知道执行器细节。
+- **证据链**：结构化证据契约在 `core/yishu_core/evidence.py`（analyze 输出的派生视图，
+  每条证据带 rule_id / 出处 / 适用条件 / 观察事实 / 评测状态）；六爻规则注册表在
+  `disciplines/liuyao/data/rules/rule_registry.json`（rule_id → 书源引文指针 /
+  适用条件 / 评测覆盖）；canonical 反馈模型在 `core/yishu_core/feedback.py`
+  （synthesis 与六爻两条反馈链经同一 adapter 折叠，真实/合成数据强制分离）。
+
 ## 核心入口
 
 - [AI-SOP（网页端 AI 取用报告的标准流程）](docs/AI-SOP.md)：必读。字段、触发、取回报告的方法

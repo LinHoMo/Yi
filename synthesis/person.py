@@ -14,6 +14,7 @@ import re
 from datetime import datetime
 from pathlib import Path
 
+from yishu_core.feedback import JUDGED  # noqa: F401  断事判定词汇唯一真值源（core/feedback.py）
 from yishu_core.report.request import DISCIPLINES  # 学科清单唯一真值源（八科）
 
 _AT_RE = re.compile(r"^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}(:\d{2})?)?$")
@@ -28,7 +29,7 @@ def _valid_date(text) -> bool:
         return True
     except ValueError:
         return False
-JUDGED = ("应验", "未应验", "部分应验", "超期未验")
+
 
 
 class PersonError(ValueError):

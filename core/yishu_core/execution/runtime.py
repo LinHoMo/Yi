@@ -35,6 +35,8 @@ from yishu_core.report import (
 from yishu_core.report.html import report_page_from_markdown
 
 from yishu_core import __version__ as _ENGINE_VERSION
+from yishu_core.evidence import evidence_envelope, evidence_from_analyze
+from yishu_core.execution.registry import evaluation_baseline_of
 from yishu_core.execution.schemas import (
     SCHEMA_VERSION,
     AnalysisEnvelope,
@@ -140,6 +142,12 @@ class YiRuntime:
         # 统一 HTML (在 tmp 之外, 不依赖文件系统)
         html = report_page_from_markdown(markdown=markdown, title=title, meta=meta, footer=REPORT_FOOTER)
 
+        # 结构化证据（Evidence Contract 派生视图，不改动 analyze 输出本身）
+        baseline = evaluation_baseline_of(d)
+        evidence = evidence_envelope(
+            d, evidence_from_analyze(d, analysis_data, evaluation_baseline=baseline),
+            evaluation_baseline=baseline)
+
         return RuntimeResult(
             schema_version=SCHEMA_VERSION,
             engine_version=_ENGINE_VERSION,
@@ -150,6 +158,7 @@ class YiRuntime:
             html=html,
             chart=chart_data,
             analysis=analysis_data,
+            evidence=evidence,
             footer=REPORT_FOOTER,
             feedback_note=MD_FEEDBACK_NOTE,
             provenance={

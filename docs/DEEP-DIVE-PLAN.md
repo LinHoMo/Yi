@@ -3,6 +3,16 @@
 > 本文是**审计结论 + 可执行清单**，不是进度报告。所有条目都带代码位置、古籍依据与验收方式；
 > 已完成项在 `docs/CHANGELOG.md`，现状读数在 `docs/HANDOFF.md`。
 > 口径：全文分数见 `AGENTS.md` 铁律三（对齐分，回归审计用）。
+>
+> **时效声明（2026-10-03）**：本文是 2026-09-30 前后的审计快照，**已完成项以
+> `docs/CHANGELOG.md` 与 `docs/HANDOFF.md` 为准**——下文凡与它们冲突之处一律
+> 以它们为准并按 ✅/~~~~ 划线标注。已知已被后续工作超越的断言：
+> ① §0/§1.1 "六爻缺三会局、独发独静、卦级反吟伏吟/零评测覆盖"——✅ 2026-09-30e/30p/30r
+>   已落地并入评测（见 TECH-DEBT §2.3）；② §2.2 "命科没有 evaluate/零对齐评测"——
+>   ✅ 2026-09-30n 起 276 例 tune/holdout 评测已建（HANDOFF §一，读数 strict 97.1，
+>   2026-10-02t）；③ §2.1 "女命夫子星/童子关煞缺失"——✅ 2026-10-02q 已落地；
+>   ④ 六爻规则域的出处/评测覆盖现登记于 `disciplines/liuyao/data/rules/rule_registry.json`
+>   （2026-10-03），本文 §1.3 的对应条目以注册表为准。
 
 ---
 
@@ -35,10 +45,10 @@
 | 反吟伏吟 | **半有** | `classical_enhancements.py` | 只有爻级打分；**无卦级**"内外卦全冲/全同"检测 |
 | 六冲六合（含变卦对比） | **半有** | `effects.py`、`liuyao_step5.py` | 只给 ±0.5 加减；无"本卦定始、变卦定终"双卦对比 |
 | 三合局/破局/静爻待用 | 有 | `classical_enhancements.py` | 含"合局待用需日月引动" |
-| **三会局** | **无** | 全仓无 `三会` | 只有 `SAN_HE_GROUPS`（三合） |
-| **独发独静** | **无** | 仅 `references/classical_synthesis.md` 有文 | 文码不一致 |
+| **三会局** | ~~无~~ **有**（✅ 2026-09-30e，注册表 `liuyao.sanhui`） | `liuyao_step4.py` check 3b | 内核 `SAN_HUI_GROUPS` 唯一真值源 |
+| **独发独静** | ~~无~~ **有**（✅ 2026-09-30e，注册表 `liuyao.dufa_dujing`） | `classical_enhancements_dufa.py` | 只标象不进主分（设计边界） |
 | 月建日辰权力 | 有 | `liuyao_step3.py` | 月 0.6 / 日 0.4 + 日辰 ±1 |
-| 旬空假空 | **半有** | `liuyao_step3.py::compute_empty_modifier` | 有旺衰权重；**未产"真空/假空"标签** |
+| 旬空假空 | ~~半有~~ **有**（✅ 真空/假空标签 2026-09-30e 落地，注册表 `liuyao.xunkong_zhenjia`） | `liuyao_step3.py::compute_empty_modifier` | 互斥，宁缺勿滥 |
 | 墓库开合 | **半有** | `liuyao_step4.py`（化墓）、`liuyao_step5.py` | 无"冲开墓库" |
 | 应期细则 | 有 | `liuyao_timing.py::predict_timing_core` | 出空/填实/逢值/逢冲/待旺/暗动/伏神 7 类 |
 | 六亲持世 | 有 | `liuyao_step5.py`、`liuyao_narrate.py` | 7 条情境 |
@@ -92,7 +102,7 @@ case 的 `expected` 字段实际填充率：`detail` 117、`verdict` 96、`yingq
 
 **缺失**（逐条落实；✅ = 已落地，见 `docs/CHANGELOG.md` 对应条目）：
 病药用神（须《神峰通考》语料）｜四柱干支关系的**合化 / 争合妒合 / 冲开墓库**
-（结构性的地支刑冲害合已于 10-02f、天干五合已于 10-02h 落地）｜女命夫子星｜童子关煞。
+（结构性的地支刑冲害合已于 10-02f、天干五合已于 10-02h 落地）｜~~女命夫子星~~ ✅ 10-02q｜~~童子关煞~~ ✅ 10-02q（`verified=false` 民间通则，只安星不批吉凶）。
 （已落地：调候用神 ✅ 30g；格局成败救应 ✅ 30t/30u；从格可判级 ✅ 30w；
   岁运并临 ✅ 30u；神煞 9→17 种 ✅ 30u；**三会局 / 胎元 / 流月 / 小运 / 天克地冲 / 十神组合 ✅ 10-01p**；
   **通关/关隔 ✅ 10-02b**；**四柱干支关系 ✅ 10-02f/10-02h**（`pattern.pillar_relations`：
@@ -103,9 +113,12 @@ case 的 `expected` 字段实际填充率：`detail` 117、`verdict` 96、`yingq
 
 ### 2.2 评测缺口（最要紧的一条）
 
-`disciplines/ming` 下**没有 `evaluate*.py`**；`data/cases/ming_cases.json` 的
-`tune: []`、`holdout: []`，只有 5 条机械回归，`expect` 仅含四柱/强弱/格局/空亡/大运方向。
-结论：**排盘、十神、神煞、命宫、大运流年、narrate 全部零对齐评测。**
+~~`disciplines/ming` 下**没有 `evaluate*.py`**……全部零对齐评测。~~
+**✅ 已被超越（2026-09-30n 建，2026-10-02t 读数）**：`scripts/evaluate.py` 在位，
+案例对齐评测 **276 例（tune 30 / holdout 246）**，holdout strict **97.1**
+（pillars 189/189、tiaohou 21/21、pattern 28/36、cong_ge 13/15、from_kind 15/15）——
+读数与分列见 `docs/HANDOFF.md` §一。仍缺的尺子：**外部独立集（external_holdout）**，
+已在册（《滴天髓阐微》语料已取得，判据待落地，禁人为制造 expected）。
 
 ### 2.3 案例集与诚实打分方案
 

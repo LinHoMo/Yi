@@ -168,7 +168,18 @@ def build_report(engine_root: str | Path, req: dict, outdir: str | Path) -> dict
         meta=report_meta(req, runtime=RUNTIME_LABEL), footer=REPORT_FOOTER)
     html_p.write_text(html, encoding="utf-8")
 
+    # 结构化证据（Evidence Contract 派生视图）——与本机 YiRuntime.execute 同一份
+    # core 提取器（纯函数），宿主差异不进证据；MD/HTML 不受影响（同源验收照旧）。
+    from yishu_core.evidence import evidence_envelope, evidence_from_analyze  # noqa: E402
+    from yishu_core.execution.registry import evaluation_baseline_of  # noqa: E402
+    analysis_data = json.loads(analyze_p.read_text(encoding="utf-8"))
+    baseline = evaluation_baseline_of(d)
+    evidence = evidence_envelope(
+        d, evidence_from_analyze(d, analysis_data, evaluation_baseline=baseline),
+        evaluation_baseline=baseline)
+
     return {"discipline": d, "title": title, "md": md_text, "html": html,
+            "evidence": evidence,
             "md_path": str(md_p), "html_path": str(html_p)}
 
 

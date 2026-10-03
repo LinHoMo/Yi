@@ -14,9 +14,22 @@
 
 判定口径与得分表**不在此处持有**：唯一真值源在 `yishu_core.yingqi`（架构评审 A2
 把合参层与六爻侧两套并行实现收成一份，门 `tools/check.py [1i]` 锁死）。
+
+2026-10-03 反馈模型统一：本模块的评估路径改为**先经 canonical FeedbackRecord**
+（`core/yishu_core/feedback.py` 的 adapter）再判定——档案条目与六爻落盘记录
+折叠成同一记录形态后进入评分；输出结构与口径不变。六爻侧
+`dev_tools/feedback_store.py` 同步提供 `load_all_canonical()`，两条链的记录
+形态自此同源（存储与判定口径仍各自保留）。
 """
 from __future__ import annotations
 
+from yishu_core.eval import verdict_direction
+from yishu_core.feedback import (  # noqa: F401  （canonical 反馈模型）
+    FeedbackRecord,
+    from_synthesis_divination,
+    judge_record,
+    validate_record_set,
+)
 from yishu_core.yingqi import (  # noqa: F401  （YQ_SCORE 为对外旧名的再导出）
     RANK_CALIBER,
     RANK_SCORE as YQ_SCORE,
@@ -45,11 +58,13 @@ def eval_outcomes(divinations: list[dict]) -> dict:
         oc = div.get("outcome") or {}
         if oc.get("recorded") is None:
             continue  # 未回填 → 不进现实效度统计
-        discipline = div.get("discipline") or "?"
-        judged = oc.get("judged")
-        occurred = oc.get("occurred_at")
+        # canonical 反馈记录（形态统一的唯一入口；字段映射不改变判定语义）
+        rec = from_synthesis_divination(div)
+        discipline = rec["discipline"] or "?"
+        judged = rec.get("judged") or ""
+        occurred = rec.get("occurred_at") or ""
         row = {
-            "event_id": div.get("event_id"),
+            "event_id": rec.get("event_id") or div.get("event_id"),
             "discipline": discipline,
             "asked": str(div.get("asked") or "")[:40],
             "direction": div.get("direction"),
@@ -66,7 +81,7 @@ def eval_outcomes(divinations: list[dict]) -> dict:
             elif hit == "部分":
                 n_partial += 1
 
-        yq = _eval_yingqi(div, occurred)
+        yq = _eval_record_yingqi(rec)
         row["应期"] = yq
         if yq and yq.get("可评"):
             n_yq_eval += 1
@@ -101,11 +116,93 @@ def eval_outcomes(divinations: list[dict]) -> dict:
     }
 
 
+def _eval_record_yingqi(rec: dict) -> dict | None:
+    """canonical 记录的应期判定（名次制，口径见 `yishu_core.yingqi`）。
+
+    非六爻（其余学科目前无可评的结构化候选）或未声明名次制口径 → None。
+    """
+    if rec.get("discipline") != "liuyao":
+        return None
+    if rec.get("evaluation_policy") != "rank":
+        return None
+    return judge_record(rec)["judgement"]
+
+
 def _eval_yingqi(div: dict, occurred: str | None) -> dict | None:
-    """单例应期判定（名次制，口径见 `yishu_core.yingqi`）；非六爻或无候选返回 None。"""
-    if div.get("discipline") != "liuyao":
-        return None  # 其余学科目前无可评的结构化候选
-    return _judge_rank(div.get("yingqi_offered") or [], occurred)
+    """兼容入口（selfcheck_scoring 与既有调用方）：档案条目 → canonical → 判定。"""
+    rec = from_synthesis_divination(div)
+    rec["occurred_at"] = occurred or ""
+    return _eval_record_yingqi(rec)
+
+
+def eval_feedback_records(records: list[dict]) -> dict:
+    """canonical FeedbackRecord 集合 → 现实效度汇总（与 eval_outcomes 同形）。
+
+    供未来学科与导出数据使用：任何链路只要折叠成 canonical 记录即可入评。
+    真实/合成混集直接抛错（`validate_record_set` 强制物理/语义分离）；
+    合成回归数据只允许在测试夹具里单独成集，永不进真实效度统计。
+    """
+    errs = validate_record_set(records)
+    if errs:
+        raise ValueError("反馈记录集不合规：" + "；".join(errs))
+
+    cases: list[dict] = []
+    n_judged = n_hit = n_partial = 0
+    n_yq_eval = n_yq_hit = 0
+    by_discipline: dict[str, dict] = {}
+
+    for rec in records or []:
+        discipline = rec.get("discipline") or "?"
+        judged = rec.get("judged") or ""
+        hit = _judged_hit(judged)
+        yq = _eval_record_yingqi(rec)
+        row = {
+            "event_id": rec.get("event_id"),
+            "discipline": discipline,
+            "asked": str(rec.get("question") or "")[:40],
+            "direction": {1: "吉", -1: "凶", 0: "平"}[verdict_direction(rec.get("prediction"))],
+            "judged": judged,
+            "occurred_at": rec.get("occurred_at") or "",
+            "recorded": str(rec.get("observed_outcome") or "")[:60],
+            "断事": hit,
+            "应期": yq,
+        }
+        if hit:
+            n_judged += 1
+            if hit == "应验":
+                n_hit += 1
+            elif hit == "部分":
+                n_partial += 1
+        if yq and yq.get("可评"):
+            n_yq_eval += 1
+            if yq["命中"]:
+                n_yq_hit += 1
+        cases.append(row)
+        by = by_discipline.setdefault(discipline, {"n": 0, "judged": 0, "hit": 0, "yq_eval": 0, "yq_hit": 0})
+        by["n"] += 1
+        if hit:
+            by["judged"] += 1
+            if hit == "应验":
+                by["hit"] += 1
+        if yq and yq.get("可评"):
+            by["yq_eval"] += 1
+            if yq["命中"]:
+                by["yq_hit"] += 1
+
+    if not cases:
+        return {"n_回填": 0, "cases": []}
+    return {
+        "n_回填": len(cases),
+        "n_断事可评": n_judged,
+        "断事应验": n_hit,
+        "断事部分": n_partial,
+        "断事应验率": _rate(n_hit, n_judged),
+        "n_应期可评": n_yq_eval,
+        "应期命中": n_yq_hit,
+        "应期命中率": _rate(n_yq_hit, n_yq_eval),
+        "by_discipline": by_discipline,
+        "cases": cases,
+    }
 
 
 def selfcheck_scoring() -> None:

@@ -1,3 +1,78 @@
+### 2026-10-03 架构收敛 · Evidence-First / Agent-Native：Evidence Contract + 规则注册表 + canonical 反馈模型 + 能力注册表两级状态 + Agent API 五入口
+
+> **性质**：纯加法与派生视图，**零引擎行为改动**——八科推演逻辑、语料、golden、
+> tune/holdout/外部集全部不动；新层全部是 analyze 输出的派生表达与状态登记。
+> 指标口径无变化（本条不涉及任何分数变更），分数读数仍以 `docs/HANDOFF.md` §一 为准。
+
+- **Evidence Contract（P0）**：新增 `core/yishu_core/evidence.py`（唯一实现，纯函数、
+  双宿主共用，不 import 学科代码）。八科 analyze 输出折叠为统一 Evidence 记录
+  （id/claim/factor/rule_id/source/applicability/observation/effect/
+  evaluation_status/provenance）。纪律：`effect` 只取学科自报方向（liuren/lingqi/ming
+  无方向即留空，不制造吉凶）；有出处 ⇒ 至少 `source_only`；评测状态五档
+  （unassessed/source_only/mechanical_regression/classical_holdout/external_holdout）
+  按注册表基线传播、可被规则注册表升级；缺口经 `evaluation_gaps()` 显式登记。
+- **宿主接线**：本机 `YiRuntime.execute` 与浏览器 `web/engine_runtime.build_report`
+  的返回 envelope 均挂 `evidence` 信封；`tools/verify_web_parity.py` 同源验收新增
+  **EV 列**（13 正例证据逐例比对，MD/HTML 比对口径不变）。
+- **六爻规则注册表（P0/P1）**：新增 `disciplines/liuyao/data/rules/rule_registry.json`——
+  9 个优先域（三会局/独发独静/反吟伏吟/六合六冲/旬空真空假空/墓库/进退神/用神多现/
+  应期）+ 卦身/三合共 11 条，逐条带 `quote_in_data`/`quote_in_code` 引文指针
+  （测试逐条解析验证存在）、适用条件、实现位置、评测覆盖（`dim` 必须是
+  `evaluate.py WEIGHTS` 真实维度）；三合局引文未逐字核对，`verified=false` 登记缺口。
+  挂接走 `evidence.attach_rule_registry`（domain 互为子串才挂，宁缺毋滥）。
+- **合参证据级检视（P0）**：新增 `synthesis/evidence_cross.py` + CLI 子命令
+  `evidence-cross`。归一化记录（`normalize.py`）附带 `evidence` 字段；检视输出
+  same/conflict（保留双方 applicability+出处）/unassessed（缺口与 silent 学科显式登记）；
+  **无趋势/得分字段**——跨科同向只提升一致性描述强度，不制造新事实；旧五条裁决
+  （`cross_rules.adjudicate`）原样保留。诚实边界：维度级对照仅对同名词成立
+  （跨科词表未统一，已登记 TECH-DEBT §2.5）。
+- **证据检视进主合参文档（P0 收口）**：`synthesis cli guide`（与 `guidance.py`
+  直跑、`tools/demo.py` 合参段共用）生成的指导文档 §三 内嵌「证据级检视」小节
+  （same/conflict/unassessed + 冲突双方条件 + 评测缺口清单）；`two_one`（两吉一凶）
+  趋向显式标注为**方向级计数倾向**（裁决规则 3），不再是最终逻辑——异向结论与
+  成立条件必须并列检视后方可采信，同向只提升证据一致性描述强度。旧签名
+  `build_guidance(arch, adjudication)` 兼容保留（不传视图则不渲染小节）；
+  `cross_examine` 增加 `evidence_present` 与 `no_evidence_disciplines`
+  （旧档案未携带证据 ≠ 学科未表态，两者不再混入 silent）。注册表挂接助手
+  `attach_rule_registries` 单源收在 `evidence_cross.py`（cli 历史导出名保留转发）。
+- **demo 子进程路径修复**：`tools/demo.py` 此前未把内核路径传给子进程
+  （进程内 `sys.path.insert` 不被子进程继承），未安装内核的机器上六爻 render
+  第一步即 `ModuleNotFoundError`；现显式注入 `PYTHONPATH=<repo>/core`。
+  demo 本身非质量门，属工具修复（全科演示 + 合参指导段已实测通过）。
+- **canonical 反馈模型（P1）**：新增 `core/yishu_core/feedback.py`（FeedbackRecord
+  schema + 校验 + 双 adapter + `judge_record` 转调 `yishu_core.yingqi`——判定真值源
+  不变，门 `[1i]` 纪律延伸）。`synthesis/outcome_eval.py` 评估路径改经
+  `from_synthesis_divination` adapter（输出形状与口径逐字段不变，`[1i]` 门照跑）；
+  六爻 `FeedbackStore` 增 `load_all_canonical()` 出口。`provenance.kind` 强制区分
+  real_outcome/synthetic_regression，混集判败（真实/合成物理语义分离）。
+  `synthesis/person.JUDGED` 改从 `core/feedback` 引用（词汇单源）。
+- **能力注册表两级状态（P1）**：`core/yishu_core/execution/registry.py` 扩展——
+  状态词表加 `mechanical_only`/`source_only`（`unvalidated` 语义由
+  evaluation_baseline 的 `unassessed` 承载）；新增 `source_provenance`（八科 stable）、
+  `outcome_feedback`（八科 experimental，机制已建真实回填 n=0 开环）、
+  `evaluation_baseline`（liuyao/ming/meihua=classical_holdout；
+  ziwei/xiaoliuren/zeji/liuren=mechanical_regression；lingqi=source_only）与
+  `evaluation_splits`（分列名是结构事实，分数不进注册表）。liuren analyze=mechanical_only、
+  lingqi analyze/narrate=source_only 显式落表——骨架科/直录科不得被当成完整吉凶能力。
+- **Agent API（P1）**：新增 `core/yishu_core/agent.py` 稳定最小五入口
+  `capabilities / validate_request / run_report / get_evidence / get_evaluation_status`；
+  `get_evaluation_status` 刻意不含分数（附 `scores_authority` 指向 HANDOFF），
+  附各科 `agent_note`（该科结论允许说到什么程度，口径诚实机器可读版）。
+- **请求协议（P1）**：语义双维护消除的测试侧落点——新增
+  `tests/test_request_parity.py`（归一化入口无关性、等价形式同 argv、深链短键
+  白名单与语义 parity、Actions extra 字段 ⊆ REQUEST_FIELDS）；与 [1f]/[1h]/[7c]
+  门并存，未改任何协议代码。
+- **测试**：新增 7 个测试文件（evidence 契约 / synthesis 证据层 / feedback schema /
+  capability registry / agent API / 规则注册表 / request parity）；既有
+  golden/黑箱/忠实度/同源验收零改动。
+- **文档治理（P2）**：单一权威源消歧——能力/评测状态 → `registry.py`（llms.txt
+  引用不复制）；HANDOFF §一 ming 读数刷新（strict 97.1 / cong_ge 13/15，10-02t）并
+  新增「证据链与 Agent 层」节；README 镜像读数同步刷新并声明四类评测口径
+  （机械回归/古籍对齐/外部集/现实回填）不得互相冒充；ARCHITECTURE 补 [1h]/[1i]/[1j]/[7d]
+  门清单 + 证据链七段责任表；DEEP-DIVE-PLAN 顶部加时效声明、四处已被超越的断言
+  划线标注；TECH-DEBT 新增 §2.5（规则注册表缺口/评测粒度/跨科词表/event_logger
+  未接 adapter）；`synthesis/README.md` 增证据级检视与 canonical 反馈模型两节。
+
 ### 2026-10-02t 命科加法 · 从格 kind「杀势当权」判据（通用规则，ZC kind 缺口 3→0）
 
 > **口径登记（`AGENTS.md` §四.4）**：`pattern._from_judge` 从格 kind 判定新增一条通用规则

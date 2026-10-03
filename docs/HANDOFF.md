@@ -114,9 +114,14 @@
 - 金标准 6 用例与基线一致（**指纹值见 `disciplines/ming/data/golden/digest.json`**）；机械回归 5 例；pytest 覆盖。
 - **案例对齐评测**：**276 例（tune 30 / holdout 246）**——
   - 调候 225 例、格局成败 36 例（全 holdout）、从格 15 例（全 holdout）
-  - 读数：tune 100.0%（30/30 调候）、holdout 93.8%（n=246：pillars 189/189、
-    tiaohou 21/21、pattern 28/36、cong_ge 满分 11/15）
+  - 读数（2026-10-02t）：tune 100.0%（30/30 调候）、holdout **strict 97.1%**
+    （n=246：pillars 189/189、tiaohou 21/21、pattern 28/36、
+    cong_ge 13/15、from_kind 15/15——kind「杀势当权」通则补齐后；真/假灰区余 2 例 ZC014/015）
   - **表对表回归 + 历法链路验证，不是泛化证据**
+  - **外部独立集（external_holdout）：未建**——评测尺子缺口在册
+    （《滴天髓阐微》语料已取得，判据待照调候批次机制落地；禁人为制造 expected）。
+    评测报告分层：机械回归 / 古籍对齐（source alignment）/ 外部独立集（external holdout）/
+    现实回填反馈（outcome feedback）四类口径不得互相冒充。
 - **不做**：命运断语、流年吉凶定论
 
 ### 合参 / 工具
@@ -124,6 +129,40 @@
 - `tools/check.py`（结构/内核自测/断语键一致/ming 质量门/六爻冒烟/合参/站点/同源/pytest）
 - `tools/eval.py`、`tools/demo.py`、`tools/core_selftest.py`、`tools/text_keys_selftest.py`
 - person + outcome-eval
+
+### 证据链与 Agent 层（2026-10-03 新增，机器可读状态见注册表）
+
+- **Evidence Contract**：`core/yishu_core/evidence.py`——八科 analyze 输出的结构化证据
+  派生视图（id/claim/factor/rule_id/source/applicability/observation/effect/
+  evaluation_status/provenance）。纯函数双宿主共用；本机 `YiRuntime.execute` 与
+  浏览器 `web/engine_runtime.build_report` 的 envelope 都挂 `evidence` 信封，
+  同源验收（`tools/verify_web_parity.py`）已加 **EV 列**逐例比对。
+- **能力注册表（评测状态唯一真值源）**：`core/yishu_core/execution/registry.py`——
+  能力性质五档（stable/experimental/mechanical_only/source_only/unavailable）+
+  评测基线五档（classical_holdout/external_holdout/mechanical_regression/
+  source_only/unassessed）+ `evaluation_splits`（分列名是结构事实，分数读数仍以本文件为准）。
+  liuren=mechanical_only、lingqi=source_only；liuyao/ming/meihua=classical_holdout；
+  ziwei/xiaoliuren/zeji/liuren=mechanical_regression。文档引用不复制。
+- **六爻规则注册表**：`disciplines/liuyao/data/rules/rule_registry.json`——
+  9 个优先规则域（三会局/独发独静/反吟伏吟/六合六冲/旬空真空假空/墓库/进退神/
+  用神多现/应期）+ 卦身/三合，逐条带书源引文指针（quote_in_data/quote_in_code，
+  测试逐条可解析）、适用条件、实现位置、评测覆盖（dim 必须是 evaluate.py WEIGHTS
+  真实维度）；三合局引文未逐字挂接，`verified=false` 如实登记缺口。
+- **canonical 反馈模型**：`core/yishu_core/feedback.py`——synthesis 档案链与六爻
+  FeedbackStore 链经 adapter 折叠为同一 FeedbackRecord（两链的存储与判定口径保留，
+  判定真值源仍是 `core/yishu_core/yingqi`）；`provenance.kind` 强制区分
+  real_outcome / synthetic_regression，混集判败（物理/语义分离）。
+- **Agent API（稳定最小五入口）**：`core/yishu_core/agent.py`——capabilities /
+  validate_request / run_report / get_evidence / get_evaluation_status。
+  `get_evaluation_status` 刻意不含分数（读数权威源是本文件 §一），只回答
+  「哪类评测存在、该科结论可以说到什么程度」。
+- **合参证据级检视**：`synthesis/evidence_cross.py` + `synthesis cli evidence-cross`——
+  在旧五条裁决（`cross_rules.adjudicate`，保持不变）之下新增
+  same/conflict/unassessed 清单：冲突保留双方 applicability/出处，缺失证据显式
+  unassessed，跨科同向只提升一致性描述强度、不制造新事实。
+  **已内嵌 `guide` 主合参文档**（同一 `cross_examine`）：`two_one`（两吉一凶）趋向
+  显式标注为方向级计数倾向（裁决规则 3），不再是最终逻辑——异向结论与成立条件
+  并列保留后方可采信；旧档案未携带证据时如实声明「检视不可用，描述强度不提升」。
 
 ---
 
