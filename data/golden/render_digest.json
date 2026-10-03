@@ -8,7 +8,7 @@
     "liuren": "fccde3a8aa44e4b2",
     "liuyao": "e1d588fbcb7d88dc",
     "meihua": "4fad656b06e1dde2",
-    "ming": "d5c9f7ac80ea4bac",
+    "ming": "b3d102908a23c87d",
     "xiaoliuren": "8c741d88438ab8f5",
     "zeji": "6a42b641e3aa69e9",
     "ziwei": "7c55065b2601b0c6"
@@ -104,6 +104,13 @@
       "to": "d5c9f7ac80ea4bac",
       "date": "2026-10-03",
       "reason": "2026-10-03 命科病药落地（《神峰通考》病药说类）：render MD 新增病药专段，为有意改版"
+    },
+    {
+      "discipline": "ming",
+      "from": "d5c9f7ac80ea4bac",
+      "to": "b3d102908a23c87d",
+      "date": "2026-10-03",
+      "reason": "2026-10-03 病药主轴判据按原文修正（主轴取月令本气），命科 render 病药段随之改写，为有意改版"
     }
   ]
 }

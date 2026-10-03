@@ -296,6 +296,58 @@ def _assert_discipline_lists_consistent() -> None:
             f"request.DISCIPLINES = {list(ALL_DISCIPLINES)}，先同步两份清单")
 
 
+def _clean_previous_build(outdir: Path) -> int:
+    """只删除**本构建器上次生成**的文件，不整目录 rmtree。
+
+    纪律（2026-10-03 评审后修正）：站点目录是**生成物**，但「生成物」不等于
+    「可以整目录删除」——`shutil.rmtree(outdir)` 会连带删掉任何非本工具写入的
+    内容，且在大目录下触发批量删除拦截，使质量门 [7b] 长期假红。
+
+    本实现改为**按上次 manifest 记账逐文件删除**：
+      · 有 manifest.json → 按其文件清单删（清单缺失的条目才整文件删）；
+      · 无 manifest.json（首次构建或遗留目录）→ 不删任何文件，直接覆盖写；
+      · 删完清理**空目录**（`rmdir` 而非 `rmtree`，非空即失败，不强删）。
+    返回删除的文件数（供门与日志观察）。
+    """
+    mf = outdir / "manifest.json"
+    if not mf.is_file():
+        return 0                      # 无记账 → 不删，覆盖写即可
+    try:
+        prev = json.loads(mf.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return 0
+    removed = 0
+    # 记账来源：`_build_written`（本次构建实际写入的全集，含非镜像文件）；
+    # 旧版本 manifest 只有 files 清单时回退到 files，保证向后兼容。
+    written = prev.get("_build_written")
+    if not isinstance(written, list):
+        written = [e.get("path") for e in (prev.get("files") or [])
+                   if isinstance(e, dict)]
+    for rel in written:
+        if not rel or not isinstance(rel, str):
+            continue
+        p = (outdir / rel).resolve()
+        # 记账条目不得越出 outdir（防御 manifest 被手改后越界删除）
+        try:
+            p.relative_to(outdir.resolve())
+        except ValueError:
+            continue
+        try:
+            if p.is_file():
+                p.unlink()              # 逐文件删（不递归、不整目录）
+                removed += 1
+        except OSError:
+            pass
+    # 自底向上清理空目录；非空则保留（不强制）
+    for d in sorted((p for p in outdir.rglob("*") if p.is_dir()),
+                    key=lambda p: len(p.parts), reverse=True):
+        try:
+            d.rmdir()
+        except OSError:
+            pass
+    return removed
+
+
 def build(outdir: Path, *, site_base: str = "") -> dict:
     """生成站点。site_base 为空表示站点在域名根，否则形如 '/Yi'。"""
     _assert_discipline_lists_consistent()
@@ -303,9 +355,8 @@ def build(outdir: Path, *, site_base: str = "") -> dict:
     if not (web_src / "index.html").is_file():
         raise SystemExit("缺少 web/index.html（前端页面源）")
 
-    if outdir.exists():
-        shutil.rmtree(outdir)
-    outdir.mkdir(parents=True)
+    outdir.mkdir(parents=True, exist_ok=True)
+    _clean_previous_build(outdir)
 
     # 1) 前端静态资源
     for name in WEB_FILES:
@@ -335,6 +386,20 @@ def build(outdir: Path, *, site_base: str = "") -> dict:
         "入口：tools/report.py；四段契约：disciplines/<科>/scripts/{chart,analyze,narrate,render}.py\n"
         "取用说明见站点根 manifest.json 与仓库 docs/AI-SOP.md。\n",
         encoding="utf-8")
+
+    # 6) 写入记账：把**本次实际写入的每一个相对路径**记进 manifest 的
+    #    `_build_written` 列表。下一轮构建据此清理（_clean_previous_build 读它），
+    #    使「引擎镜像改名/移除后旧路径残留」也能被清掉——只靠镜像清单记账会漏。
+    written = ([f for f in WEB_FILES if (web_src / f).is_file()]
+               + list(index)                      # 引擎镜像（manifest files 的 path）
+               + [".nojekyll", "manifest.json", "engine/README.txt"])
+    mf = outdir / "manifest.json"
+    try:
+        data = json.loads(mf.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        data = {}
+    data["_build_written"] = sorted(set(written))
+    mf.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 
     return {"outdir": str(outdir), "files": manifest["totals"]["files"],
             "bytes": manifest["totals"]["bytes"]}

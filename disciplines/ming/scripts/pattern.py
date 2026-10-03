@@ -1209,30 +1209,39 @@ def _ke_wo(elem: str) -> str:
 # 病药总纲原文（「有病方为贵，无伤不是奇；格中如去病，财禄两相随」）
 BING_YAO_THESIS = "有病方为贵，无伤不是奇；格中如去病，财禄两相随"
 
-# 四病：病名 →（所害之神, 药, 原文定位）
-#   原文「土为诸格之病，俱喜木为医药，以去其病也」——土厚埋金之类，
-#   药即「克其所厚之神」之神（从重者论，取四柱最重之五行）。
-BING_RULES_BY_KE: dict[str, tuple[str, str]] = {
-    # 「如金日干，则为土厚埋金」——土厚之病，药为木（木克土）
-    "土": ("土厚埋金/土重埋身", "木"),
-    "木": ("木旺折身/木多塞塞", "金"),
-    "金": ("金重伐身", "火"),
-    "火": ("火炎焚身", "水"),
-    "水": ("水泛身浮", "土"),
+# 五行层病药规则：主轴五行 →（病名, 药, 规则性质 provenance）
+#
+# **provenance 纪律**（评审 2026-10-03 要求，勿删）：
+#   "source_backed_exact"        —— 原文明写该字句，可逐字回指；
+#   "source_informed_generalization" —— 原文只举「土厚埋金」一例，其余四行依
+#                                    「则土为诸格之病，俱喜木为医药，以去其病也」
+#                                    的**通则结构**推得；书源未逐字列其余四行病名。
+# 评测时两类知识不得混同（前者可直接对表，后者只能作通则回归）。
+#
+# 原文：「如金日干，则为土厚埋金，火日干，则为比肩太重，是则土为诸格之病，
+#       俱喜木为医药，以去其病也。」
+# 「土厚埋金」为逐字例；「金重伐身/火炎焚身/水泛身浮/木旺折身」为据同句通则推得。
+BING_RULES_BY_KE: dict[str, tuple[str, str, str]] = {
+    "土": ("土厚埋金/土重埋身", "木", "source_backed_exact"),          # 原文逐字
+    "木": ("木旺折身/木多塞塞", "金", "source_informed_generalization"),  # 依「以去其病」通则推得
+    "金": ("金重伐身", "火", "source_informed_generalization"),
+    "火": ("火炎焚身", "水", "source_informed_generalization"),
+    "水": ("水泛身浮", "土", "source_informed_generalization"),
 }
 
-# 十神层药例（原文：「如用财见比肩为病，喜见官杀为药也。如用食神伤官，
-# 以印为病，喜财为药也。」——病为用神之伤，药为能去该伤之十神）。
-BING_RULES_BY_GOD: tuple[tuple[str, frozenset, str, frozenset, str], ...] = (
-    # (病名, 病神集合, 病之说明, 药神集合, 药之说明)
-    # 原文「用财见比肩为病，喜见官杀为药也」——劫财与比肩同为同类夺财之神，
-    # 依「用财」之通则并入比劫一类（病神集合取比劫全类，非窄化到只认「比肩」二字）。
+# 十神层病药对：每条同样标 provenance
+#   原文逐字：「如用财见比肩为病，喜见官杀为药也」——病为「比肩」二字是逐字；
+#             本实现取比劫全类（含劫财）属语义扩展，故该条为 generalization。
+#   原文逐字：「如用食神伤官，以印为病，喜财为药也」——「印」含正偏印，是十神大类，
+#             与「比肩」同类处理，故仍记 generalization 以示口径等价性来自推得。
+BING_RULES_BY_GOD: tuple[tuple[str, frozenset, str, frozenset, str, str], ...] = (
+    # (病名, 病神集合, 病之说明, 药神集合, 药之说明, provenance)
     ("比肩夺财", frozenset({"比肩", "劫财"}), "用财见比肩（劫财同类）为病",
-     frozenset({"正官", "偏官", "七杀"}), "喜见官杀为药"),
+     frozenset({"正官", "偏官", "七杀"}), "喜见官杀为药", "source_informed_generalization"),
     ("枭神夺食", frozenset({"偏印"}), "用食神伤官以印为病",
-     frozenset({"正财", "偏财"}), "喜财为药"),
+     frozenset({"正财", "偏财"}), "喜财为药", "source_backed_exact"),
     ("印重财轻", frozenset({"正印", "偏印"}), "印星太旺则财星受伤",
-     frozenset({"正财", "偏财"}), "宜行财运以破其印"),
+     frozenset({"正财", "偏财"}), "宜行财运以破其印", "source_backed_exact"),
 )
 
 
@@ -1247,19 +1256,24 @@ def bing_yao(chart_json: dict, strength: str = "") -> dict:
 
       1. **五行层**：「假如人八字中，四柱纯土水…如金日干，则为土厚埋金，
          火日干，则为比肩太重，是则土为诸格之病，俱喜木为医药，以去其病也。」
-         → 取四柱出现次数最多之五行（「从重者论」原文自注）为病，
-           药为其所克之神（去病即以所克之神克之），局中见药则「有药」。
+         → 病是**相对于主轴**的过剩：原文举例皆以「金日干…土厚埋金」「火日干…比肩
+         太重」为式，病神即主轴所惧之神。主轴取月令本气（原文「看了日干，次看了
+         月令」），再依「从重者论」聚合该五行——原文明写「先看月令中此一火字起，
+         又看年上或火…宜将以上各火做一处看，或为病，或非病…故曰：从重者论」，
+         即**先定主轴五行，再看该五行在各柱积重**，非全盘取最重者为病。药为
+         所克之神（去病即以所克之神克之），局中见药则「有药」。
       2. **十神层**：「如用财见比肩为病，喜见官杀为药也。如用食神伤官，
          以印为病，喜财为药也。」→ 病药成对共现则成立，局中见药则「有药」。
 
     只出结构名与依据，**不批吉凶**（AGENTS.md 铁律三）：有药不等于吉，无药不等于凶。
-    原文另有「从重者论」之明确取舍口径——不以杂藏取胜药，逐条路径均取最重之五行。
+    藏干口径依原文自注「地支虽又藏有别物，且不必看，若再看别物，由混杂不明」——
+    五行层只用四干与四支**本气**，藏干不入此层（十神层仍透干，引擎既有口径不变）。
 
-    返回结构：{thesis, dominant_element 及其五行为病、consumed_by_bing: [...],
-    medicines: [...], has_medicine: bool, quotes}
+    返回结构：{thesis, axis_element 主轴, bing 病, consumed_by_bing 十神层病药对,
+    medicines, has_medicine, counts, note, basis}
     """
     pillars = chart_json.get("pillars") or {}
-    # 局中五行（四干 + 四支本气），原文「从重者论」取次数最多者为病
+    # 局中五行（四干 + 四支本气；藏干不入此层，依原文自注）
     counts: dict[str, int] = {}
     for key in ("year", "month", "day", "hour"):
         p = pillars.get(key) or {}
@@ -1269,45 +1283,66 @@ def bing_yao(chart_json: dict, strength: str = "") -> dict:
                 counts[el] = counts.get(el, 0) + 1
     if not counts:
         return {}
-    # 「从重者论」：最重之五行；同重则按五行相生序取先（确定性排序，免并列歧义）
-    dominant = min(counts.items(), key=lambda kv: (-kv[1], "木火土金水".index(kv[0])))[0]
-    bing_elem_name, yao_elem = BING_RULES_BY_KE.get(dominant, ("", ""))
+    # 主轴 = 月令本气（原文「看了日干，次看了月令」）；无月支则退日元主
+    month_branch = (pillars.get("month") or {}).get("branch") or ""
+    day_stem = (pillars.get("day") or {}).get("stem") or ""
+    axis = BRANCH_ELEMENTS.get(month_branch) or STEM_ELEMENTS.get(day_stem) or ""
+    if not axis:
+        return {}
+    # 病神 = 主轴所惧之神（土厚埋金之于金、木旺折身之于土……依原文五行通例）
+    bing_elem_name, yao_elem, bing_prov = BING_RULES_BY_KE.get(axis, ("", "", ""))
     bing = {
         "病": bing_elem_name,
-        "病之五行": dominant,
-        "所重": counts[dominant],
+        "病之五行": axis,
+        "主轴": axis,
+        "所重": counts.get(axis, 0),
         "药": yao_elem,
         "药在局中": bool(yao_elem) and yao_elem in counts,
-        "basis": (f"《神峰通考·病药说类》「假如人八字中…是则{dominant}为诸格之病，"
-                  f"俱喜{yao_elem}为医药，以去其病也」；四柱最重之五行为{dominant}"
-                  f"（{'、'.join(f'{k}{v}' for k, v in sorted(counts.items(), key=lambda kv: -kv[1]))}），"
-                  f"依原文「从重者论」取舍。"),
+        "provenance": bing_prov,
+        "basis": (f"《神峰通考·病药说类》「如八字中看了日干，次看了月令，且如月令中支中"
+                  f"所属是{axis}，先看月令中此一{axis}字起，又看年上或{axis}，又看月时上"
+                  f"或有{axis}，宜将以上各{axis}做一处看，或为病，或非病…故曰：从重者论」；"
+                  f"本造月令={month_branch}（主轴{axis}）、日主={day_stem}，"
+                  f"局中{axis}共{counts.get(axis, 0)}见。"
+                  + (f"原文例「如金日干，则为土厚埋金」类此：{axis}重则"
+                     f"{BING_RULES_BY_KE[axis][0]}，俱喜{yao_elem}为医药，以去其病也。"
+                     if axis in BING_RULES_BY_KE else "")),
     }
     consumed: list[dict] = []
     medicines: list[dict] = []
     if yao_elem and yao_elem in counts:
         medicines.append({"药": yao_elem, "味数": counts[yao_elem],
-                           "note": f"以{yao_elem}克{dominant}去其病"})
+                           "note": f"以{yao_elem}克{axis}去其病"})
     # 十神层病药成对
     gods = {g["god"] for g in _god_detail(chart_json)}
-    for name, bing_gods, bing_note, yao_gods, yao_note in BING_RULES_BY_GOD:
+    for name, bing_gods, bing_note, yao_gods, yao_note, god_prov in BING_RULES_BY_GOD:
         if not (gods & set(bing_gods)):
             continue
         hit_yao = sorted(gods & set(yao_gods))
-        consumed.append({"病": name, "所病": bing_note,
+        consumed.append({"病": name, "所病": bing_note, "provenance": god_prov,
                          "药在局中": bool(hit_yao), "所见之药": hit_yao})
         if hit_yao:
             medicines.append({"药": name, "药神": hit_yao, "note": yao_note})
     return {
         "thesis": BING_YAO_THESIS,
-        "dominant_element": dominant,
+        "axis_element": axis,
         "element_counts": counts,
         "bing": bing,
         "consumed_by_bing": consumed,
         "medicines": medicines,
         "has_medicine": bool(medicines),
+        # 规则性质汇总：原文逐字 vs 据通例推得——两类不得混同评（评测口径用）
+        "provenance": {
+            "五行层": bing_prov,
+            "十神层": sorted({c["provenance"] for c in consumed}) or [],
+            "口径": ("source_backed_exact＝原文逐字可回指；"
+                     "source_informed_generalization＝依原文通例结构推得、书源未逐字列该句。"
+                     "generalization 项只作通则回归，不冒充逐字对齐。"),
+        },
         "note": ("病药为《神峰通考》正说第一家紧要；此处只标病、药及其在否，"
-                 "不批吉凶——有病方为贵是原文命题，落到具体命造须人工复核（铁律三）"),
+                 "不批吉凶——有病方为贵是原文命题，落到具体命造须人工复核（铁律三）。"
+                 "命例级分歧见 TECH-DEBT §2.7：书源命例取病取药落在藏干与具体字，"
+                 "与本实现层级不同，故该两例不计对齐分。"),
         "basis": f"《神峰通考·病药说类》：「{BING_YAO_THESIS}」"
                  "（病＝原所害之神，药＝得一字以去之）",
     }

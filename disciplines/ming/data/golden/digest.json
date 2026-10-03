@@ -4,7 +4,7 @@
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
   "digest": "2c3eee326cec8ccd",
-  "narrate_digest": "1c9dc4f81cc85b22",
+  "narrate_digest": "a4ffadf44d386ad8",
   "drift_log": [
     {
       "from": "57dc7e890af222fa",
@@ -97,6 +97,12 @@
       "to": "1c9dc4f81cc85b22",
       "date": "2026-10-03",
       "reason": "2026-10-03 病药落地二改：移除 narrate 病药段末行口径说明（该句被判为未外置断语，说明属元数据不入报告正文）；机械层零漂移"
+    },
+    {
+      "from": "1c9dc4f81cc85b22",
+      "to": "a4ffadf44d386ad8",
+      "date": "2026-10-03",
+      "reason": "2026-10-03 病药判据按原文修正：主轴取月令本气（原实现误取全盘最重五行），narrate 病药段随之改写；机械层零漂移、tune/holdout 读数未变"
     }
   ]
 }

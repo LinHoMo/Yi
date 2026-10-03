@@ -34,20 +34,20 @@ def test_thesis_quote_is_verbatim():
         "thesis"] == "有病方为贵，无伤不是奇；格中如去病，财禄两相随"
 
 
-def test_dominant_element_as_bing_by_weight():
-    """「从重者论」：最重之五行为病；药为其所克之神（原文「以去其病也」）。
+def test_axis_is_month_branch_not_global_max():
+    """主轴取月令本气（原文「看了日干，次看了月令」），非全盘最重五行。
 
-    原文举例：「如金日干，则为土厚埋金…是则土为诸格之病，俱喜木为医药」——
-    土病药木，故造四柱土重而寅卯木见者应判土病、有药。
+    原文：「且如月令中支中所属是火，先看月令中此一火字起，又看年上或火，又看月时上
+    或有火，宜将以上各火做一处看，或为病，或非病…故曰：从重者论」——先定主轴五行，
+    再聚合该五行，非全盘取最重者为病。
     """
-    # 戊戌 戊申 己未 甲寅 —— 土五见最重，寅卯木见 → 土病、有木药
-    got = bing_yao(_pillars(year="戊戌", month="戊申", day="己未", hour="甲寅"))
-    b = got["bing"]
-    assert got["dominant_element"] == "土"
-    assert b["病"] == "土厚埋金/土重埋身"
-    assert b["药"] == "木"
-    assert b["药在局中"] is True
-    assert got["has_medicine"] is True
+    # 月令申（金），全局最重为土——主轴须取月令金，不取全盘土
+    got = bing_yao(_pillars(year="戊戌", month="庚申", day="戊午", hour="己未"))
+    assert got["element_counts"]["土"] > got["element_counts"]["金"]
+    assert got["axis_element"] == "金"
+    assert got["bing"]["主轴"] == "金"
+    assert got["bing"]["病"] == "金重伐身"
+    assert got["bing"]["药"] == "火"
 
 
 def test_bing_without_medicine_reports_absent():
@@ -56,10 +56,11 @@ def test_bing_without_medicine_reports_absent():
     亦锁「从重者论」口径：地支藏干（未/丑/申/戌 皆藏土或金）不计入
     ——原文明写「地支虽又藏有别物，且不必看…若再看别物，由混杂不明」。
     """
-    got = bing_yao(_pillars(year="戊戌", month="己未", day="戊申", hour="己丑"))
+    # 月令酉（金）为主轴，药为火；四柱无火
+    got = bing_yao(_pillars(year="乙酉", month="己酉", day="乙丑", hour="乙卯"))
     b = got["bing"]
-    assert got["dominant_element"] == "土"
-    assert b["药"] == "木"
+    assert got["axis_element"] == "金"
+    assert b["药"] == "火"
     assert b["药在局中"] is False
     assert got["has_medicine"] is False
 
@@ -82,3 +83,55 @@ def test_empty_pillars_returns_empty():
     """无有效干支时不臆造病药（宁缺毋滥）。"""
     assert bing_yao({}) == {}
     assert bing_yao({"pillars": {}}) == {}
+
+# ── provenance 与案例集纪律（评审 2026-10-03 要求）──────────────────────
+
+def test_provenance_distinguishes_exact_vs_generalization():
+    """规则性质须逐条可辨：原文逐字 vs 据通例推得，不得混同评。"""
+    got = bing_yao(_pillars(year="辛酉", month="丁酉", day="癸卯", hour="壬戌"))
+    prov = got["provenance"]
+    assert prov["五行层"] in ("source_backed_exact", "source_informed_generalization")
+    assert "generalization 项只作通则回归" in prov["口径"]
+
+    # 土厚埋金是原文明写的逐字例，其余四行属通例推得
+    from pattern import BING_RULES_BY_KE
+    assert BING_RULES_BY_KE["土"][2] == "source_backed_exact"
+    for elem in ("木", "金", "火", "水"):
+        assert BING_RULES_BY_KE[elem][2] == "source_informed_generalization"
+
+
+def test_classical_cases_are_provenance_honest():
+    """古籍案例集：逐字取自书源、只收书源明写者、split 恒为 external_holdout。"""
+    import json
+    p = (ROOT / "disciplines" / "ming" / "data" / "cases" / "ming_bing_yao_cases.json")
+    d = json.loads(p.read_text(encoding="utf-8"))
+    assert d["schema"] == "yi-ming-bingyao-cases/1"
+    for cid in d["splits"]["external_holdout"]:
+        case = next(c for c in d["cases"] if c["id"] == cid)
+        assert case["split"] == "external_holdout", f"{cid}：须恒为 external_holdout"
+        assert case["source_quote"], f"{cid}：缺书源逐字引文"
+        assert "《神峰通考》" in d["_provenance"]["book"]
+        # expected 只收书源明写；书中未载者必须是显式 null（禁止本仓推断填值）
+        by = case["expected"]["bing_yao"]
+        assert by["病神"] and by["机理"], f"{cid}：病神/机理须为书源明写"
+        assert "去病之神" in by
+
+
+def test_classical_cases_expose_known_layer_divergence():
+    """锁定已知口径分歧：书源命例取病在藏干，引擎判病在月令主轴。
+
+    该分歧是**已登记的实现理解偏差**（TECH-DEBT §2.7），不是待修 bug——
+    本测试的作用是让分歧可见并可回归，防止有人悄悄改判据去凑案例。
+    """
+    import json
+    p = (ROOT / "disciplines" / "ming" / "data" / "cases" / "ming_bing_yao_cases.json")
+    d = json.loads(p.read_text(encoding="utf-8"))
+    for case in d["cases"]:
+        pillars = {k: {"ganzhi": v, "stem": v[0], "branch": v[1]}
+                   for k, v in case["pillars"].items()}
+        got = bing_yao({"pillars": pillars})
+        book_bing = case["expected"]["bing_yao"]["病神"]
+        engine_bing = got["bing"]["病之五行"]
+        # 已知分歧：书源病神为藏干字（如「卯中乙木」），引擎为五行（如「木/金」）
+        assert "中" in book_bing, f"{case['id']}：书源病神应为藏干表述"
+        assert engine_bing in "木火土金水", f"{case['id']}：引擎病神应为五行"

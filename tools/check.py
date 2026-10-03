@@ -27,6 +27,7 @@ import ast
 import hashlib
 import json
 import re
+import shutil
 import subprocess
 import sys
 import importlib
@@ -1073,24 +1074,31 @@ def main() -> int:
 
     print("\n[7b] 纯前端站点（浏览器内跑同一份引擎：零凭证出报告）")
     if section("web"):
-        # 站点自检里含"清单↔镜像逐条对齐"，所以必须先构建再校验
-        site_dir = ROOT / "site"
-        code, out = _run_py(["tools/build_web.py", "--outdir", str(site_dir)],
-                            label="站点构建")
-        if code == 0:
-            print("  √ 站点构建（源码镜像 + 清单）")
-        else:
-            failures.append("站点构建失败")
-            print("  × 站点构建")
-            print(f"      …{_tail(out)}")
-        code, out = _run_py(["tools/check_web_site.py", "--site", str(site_dir)],
-                            label="站点自检")
-        if code == 0:
-            print("  √ 站点自检（清单/镜像/内核引用一致）")
-        else:
-            failures.append("站点自检失败")
-            print("  × 站点自检")
-            print(f"      …{_tail(out)}")
+        # 站点自检里含"清单↔镜像逐条对齐"，所以必须先构建再校验。
+        # 构建到**一次性目录**（评审 2026-10-03 定）：`site/` 是生成物但非本工具独占，
+        # 逐文件记账清理在大目录下仍会触碰批量删除阈值；一次性目录随用随弃，
+        # 既不需要删除权限，也不会把生成物写进仓库工作区（site/ 本已 gitignore）。
+        import tempfile
+        site_dir = Path(tempfile.mkdtemp(prefix="yi-site-verify-"))
+        try:
+            code, out = _run_py(["tools/build_web.py", "--outdir", str(site_dir)],
+                                label="站点构建")
+            if code == 0:
+                print("  √ 站点构建（源码镜像 + 清单；一次性目录，不写工作区）")
+            else:
+                failures.append("站点构建失败")
+                print("  × 站点构建")
+                print(f"      …{_tail(out)}")
+            code, out = _run_py(["tools/check_web_site.py", "--site", str(site_dir)],
+                                label="站点自检")
+            if code == 0:
+                print("  √ 站点自检（清单/镜像/内核引用一致）")
+            else:
+                failures.append("站点自检失败")
+                print("  × 站点自检")
+                print(f"      …{_tail(out)}")
+        finally:
+            shutil.rmtree(site_dir, ignore_errors=True)
 
     # parity/tests 是"选项门"：默认档不跑，--full 或 --only 点名才跑（原语义，未改）。
     if section("parity") and (args.full or only is not None):

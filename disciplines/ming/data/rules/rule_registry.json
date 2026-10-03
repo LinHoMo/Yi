@@ -121,7 +121,10 @@
         "verified": true
       },
       "why_not_registered": "evaluate.py WEIGHTS 无 bing_yao 维度——注册表 rules 契约要求 dim 必须是评分器真实键，病药无对齐案例集，故不入 rules（如实登记于此，勿虚标 classical_holdout）",
-      "coverage": "mechanical_regression：golden 机械层 + narrate 措辞层指纹 + tests/test_ming_bing_yao.py（5 例）；古籍对齐覆盖待从《神峰通考·人命见验类》提取病药命例后建立，届时再建维度与注册条目"
+      "coverage": "mechanical_regression：golden 机械层 + narrate 措辞层指纹 + tests/test_ming_bing_yao.py（5 例）；古籍对齐覆盖待从《神峰通考·人命见验类》提取病药命例后建立，届时再建维度与注册条目",
+      "maturity": "C→B 未完成：古籍→规则→代码已通；古籍命例已入库（ming_bing_yao_cases.json n=2，external_holdout），但与实现存在层级性口径分歧（书源病在藏干、引擎判病在月令主轴，方向相反），故不计分",
+      "layer_divergence": "TECH-DEBT.md §2.7",
+      "provenance_mix": "规则表内混两类知识：土厚埋金=source_backed_exact；金/火/水/木四行病名与「比肩夺财」（含劫财）=source_informed_generalization。评测时两类不得混同，generalization 只作通则回归"
     }
   ]
 }
