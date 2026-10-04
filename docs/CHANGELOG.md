@@ -1,3 +1,24 @@
+### 2026-10-04n ming 注册表引文缺口收口：dayun 起例逐字挂接翻 verified · shensha 补查获书源否定语境
+
+> **性质**：纯 provenance 收口（ming 注册表仅剩两处 verified=false 的逐字核对）。
+> **engine 零变化、评测读数零变化**。
+
+- **ming.dayun → verified=true**：注册表原登记「通行起例——逐字书源核对待补」（所引
+  《渊海子平》不在库）。本轮实测在库《神峰通考》**起大运法两节全 mechanics 逐字在库**
+  （行2608/2612：「折除三日，为一岁」「顺数至二月惊蛰」「逆数至初一日立春……岁运逆行」
+  ——三日折一岁＋阳男阴女顺/阴男阳女逆＋按节气折算，与 `ming_tables` 起运实现逐项同构）。
+  落地：新建 `disciplines/ming/data/dayun_quotes.json`（照 tiaohou_quotes.json 范式，
+  两节引文＋语料行号）＋注册表双指针翻 verified=true。**evaluation 状态维持
+  mechanical_regression 不变**（缺 expected 与引文核对是两回事，测试锁定不虚标）。
+- **ming.shensha → verified=false 维持（依据升级）**：补查在库两书——贵人诀
+  「甲戊庚牛羊」在《神峰通考》唯一出现系**「总论子平谬说类」批判语境**（张楠：
+  「日贵格，如甲戊庚牛羊，乙巳鼠猴乡之类也。焉有斯理……原取名之不据理出……
+  岂可信乎？」——书源主动否定贵人格起例）；童子煞两库 0 命中。登记由「待核对」
+  升级为「已核对且在库书源否定/缺载」——「只安星不批吉凶 + verified=false」的
+  既有保守姿态获得书源侧直接支持，维持不改。
+- **验收**：`tests/test_rule_registry_ming_meihua.py` 全绿（引文指针回查＋
+  dayun/shensha 状态锁定不冲突）；根套件全绿；仓库门绿。
+
 ### 2026-10-04m 六爻注册表未覆盖域第三批：绝处逢生域注册（`liuyao.juechufengsheng`）· provenance 增量
 
 > **性质**：纯 provenance 增量（TECH-DEBT §2.5「注册表未覆盖域」第三批）。**engine 判据一字未改**。

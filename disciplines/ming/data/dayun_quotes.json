@@ -1,0 +1,25 @@
+{
+ "schema": "yi-ming-dayun-quotes/1",
+ "discipline": "ming",
+ "_comment": "大运起例书源引文库（《神峰通考》在库语料逐字转存，2026-10-04n）。供规则注册表 ming.dayun 的 quote_in_data 指针回查：引文必须与 data/sources/shen-feng-tong-kao.wikitext.txt 逐字一致，tests/test_rule_registry_ming_meihua.py 与 [1j] 类门可程序化回验。",
+ "_provenance": {
+  "book": "《神峰通考》",
+  "source_file": "data/sources/shen-feng-tong-kao.wikitext.txt",
+  "located": "2026-10-04n（起大运法两节，语料行 2606-2612）",
+  "note": "此前 ming.dayun 注册表登记「逐字书源核对待补」时所引《渊海子平》不在库；本轮改以在库《神峰通考》起例为书源锚定——机制相同（折除三日为一岁＋阳男阴女顺行/阴男阳女逆行＋按节气折算）。"
+ },
+ "yang_male_yin_female": {
+  "rule": "阳男阴女顺行",
+  "section": "起大运法阳男阴女",
+  "corpus_line": 2608,
+  "quote": "如甲子年，甲己之年丙作首，正月逢丙寅，初一立春后一日生男，折除三日，为一岁，顺数至二月惊蛰，得三十日起十岁，丁卯是也",
+  "mechanics": "三日折一岁（=DAYS_PER_LUCK_YEAR=3）＋按节气折算起运岁＋月柱顺行"
+ },
+ "yin_male_yang_female": {
+  "rule": "阴男阳女逆行",
+  "section": "起大运法阴男阳女",
+  "corpus_line": 2612,
+  "quote": "如乙丑年，乙庚之岁戊为头，正月起戊寅，初二立春，后十五日生男，逆数至初一日立春，五三十五，五岁运逆行",
+  "mechanics": "逆数至前一节折算起运岁＋月柱逆行"
+ }
+}

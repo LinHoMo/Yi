@@ -71,10 +71,11 @@
    "domain": "大运（dayun）",
    "impl": "scripts/analyze.py:dayun 8 步（起运岁在 core/yishu_core/ming_tables.py）",
    "source": {
-    "book": "《渊海子平》",
-    "locator": "论大运（通行起例——逐字书源核对待补，缺口）",
+    "book": "《神峰通考》",
+    "locator": "起大运法阳男阴女/阴男阳女两节（「折除三日，为一岁」＋顺数/逆数至节气折算；语料行 2608/2612 逐字在库——2026-10-04n 核对翻转；机制同《渊海子平》通行口径）",
+    "quote_in_data": "disciplines/ming/data/dayun_quotes.json#yang_male_yin_female.quote",
     "quote_in_code": "core/yishu_core/ming_tables.py#三日折一年",
-    "verified": false
+    "verified": true
    },
    "applicability": "顺逆按年干阴阳×性别；起运岁≈距节气日数/3（三日=一年，一日=四月）；只推干支不批吉凶",
    "evaluation": {
@@ -84,7 +85,7 @@
      "holdout"
     ],
     "dim": "dayun",
-    "note": "dayun 维度案例集 0 applicable（expected 缺）——机械覆盖=golden 指纹+回归；对齐覆盖待外部集（禁人为制造 expected）；不得虚标 classical_holdout"
+    "note": "dayun 维度案例集 0 applicable（expected 缺）——机械覆盖=golden 指纹+回归；对齐覆盖待外部集（禁人为制造 expected）；不得虚标 classical_holdout。书源引文已逐字挂接（2026-10-04n），evaluation 状态维持 mechanical_regression 不变（缺 expected 与引文核对是两回事）"
    }
   },
   {
@@ -93,7 +94,7 @@
    "impl": "core/yishu_core/shensha.py:shensha_of_chart（analyze 顶层 result['shensha']，只安星不批吉凶）",
    "source": {
     "book": "《渊海子平》",
-    "locator": "通行起例（经考证确认不在《三命通会》《渊海子平》《滴天髓》《子平真诠》原文——2026-10-02u 登记；逐字书源核对缺口）",
+    "locator": "通行起例（经考证确认不在《三命通会》《渊海子平》《滴天髓》《子平真诠》原文——2026-10-02u 登记；**2026-10-04n 补查在库《神峰通考》**：贵人诀「甲戊庚牛羊」唯一出现系「总论子平谬说类」批判语境——「日贵格，如甲戊庚牛羊，乙巳鼠猴乡之类也。焉有斯理……原取名之不据理出……岂可信乎？」，张楠明斥贵人格虚诞；童子煞两库 0 命中。verified=false 维持：由「待核对」升级为「已核对且在库书源否定/缺载」）",
     "quote_in_code": "core/yishu_core/shensha.py#甲戊庚牛羊",
     "verified": false
    },
