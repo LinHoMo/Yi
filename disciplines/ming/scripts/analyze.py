@@ -45,6 +45,12 @@ def female_fu_zi(chart_json: dict) -> dict | None:
     （食神为女、伤官为男）。机械扫描四柱天干 `ten_god` 与地支藏干 `ten_gods`，
     标出夫星/子星所在柱与位置；不评旺衰吉凶（AGENTS.md 铁律三）。男命不调用。
     夫星/子星取法绑定 core.relations.LIUQIN_TO_SHISHEN 单源，不另写字面量。
+
+    ⚠️ 跨书源异说（2026-10-04j 登记）：《滴天髓阐微·女命章》任注持弹性体系——
+    「凡女命之夫星，即是用神，女命之子星，即是喜神，不可专论官星为夫、伤食为子」
+    （data/sources/di-tian-sui-chan-wei.wikitext.txt 行6254；命例有夫星＝伤官者，行6824）。
+    两书两体系，照病药案保留差异、不强行统一；本函数的固定官杀/食伤映射
+    是渊海子平系（库外书源）的机械标注实现。
     """
     birth = chart_json.get("birth") or {}
     if birth.get("gender") != "女":
