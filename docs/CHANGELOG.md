@@ -1,3 +1,18 @@
+### 2026-10-04i 六爻注册表未覆盖域第二批：暗动域注册（`liuyao.andong`）· 并登记一处 source-engine 分歧
+
+> **性质**：纯 provenance 增量 + 分歧登记。**engine 判据一行未改**。
+
+- **书源取证（`zengshan_buyi.wikitext.txt`，逐字回验各恰 1 命中）**：①官星持世例「酉金官星
+  持世旺相﹐當時卯日沖之而暗動」（旺相+日冲＝暗动）；②千金賦卦例批注「休囚爲日破﹐不爲暗動」；
+  ③总注「靜逢沖而暗興」。暗動章定义正文本章语料未展开——定义原文缺，如实登记。
+- **落地**：`verdict_texts#pattern_verdict_labels.暗动.古典引文` + `analyze_hidden_movement`
+  代码锚点 + 注册表 `liuyao.andong`（双指针，verified=true，dim=patterns）。
+- **诚实标注（GOAL §8/§4）**：①applicability 明示中间档（中和 0.4/偏弱 0.2）为**工程映射**
+  非古法原值——书源只支持旺相/休囚二分；②**登记 source-engine 分歧**：书源明言「休囚爲日破」
+  而引擎偏弱档给 0.2 暗动。因定义正文缺书源、孤例不裁决，engine 维持不改；
+  解除路径＝暗動章正文语料入库后做 source adjudication。
+- **验收**：根套件 375 绿；六爻学科门 + 仓库门绿；render/golden 零变化。
+
 ### 2026-10-04h 命科强弱外集扩容：章外穷尽扫描 +7 例（ZE020–ZE026）· report-only 21/26 · 旺侧失配同签名汇聚
 
 > **性质**：独立评测证据扩容（external holdout n=19→26）。**engine 推演一行未改**；

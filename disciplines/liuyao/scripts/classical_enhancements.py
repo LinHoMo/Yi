@@ -1034,6 +1034,7 @@ def analyze_hidden_movement(result):
 
         # 判断是否被日冲
         if is_ba_zu_chong(branch, day_branch):
+            # 旺相逢沖則暗動，休囚則日破（《增删卜易》卦例二句）——中间档梯度为工程映射
             is_empty = branch in empty_branches
             elem = _branch_element(branch)
 
