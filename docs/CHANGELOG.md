@@ -1,3 +1,24 @@
+### 2026-10-04o 六爻注册表未覆盖域第四批：伏藏/飞伏＋合绊域注册（`liuyao.fucang`＋`liuyao.heban`）· provenance 增量
+
+> **性质**：纯 provenance 增量。**engine 判据一字未改**。
+
+- **书源取证（`zengshan_buyi.wikitext.txt`，逐字回验各恰 1 命中）**：
+  ①**伏藏**——飛伏神章第二十八正文在库：「飛來生伏得長生」「伏神遭克害﹐名爲伏神受制」
+  ＋**「伏神有用者有六」判据清单**（得日月生/旺相/飛神生/動爻生/沖克飛神/飛神空破休囚墓絕）
+  ＋引《黃金策》「空下伏神﹐易於引撥」。引擎 `analyze_hidden_spirit_emergence` 九条评分
+  与六条判据**逐项对应**（can_emerge=emerge_score>0）；「伏而不得出」方向另本
+  《黃金策·千金賦》「伏無提挈終徒爾」（10-02s 已落地）——两方向血缘均已挂接。
+  ②**合绊**——千金賦「動逢合而絆住」野鶴注：「忌神動逢日月相合﹐則不成凶。元神動逢
+  日月合住則不濟事……後逢沖開之日月﹐吉凶俱成」（含应期义）＋「貪生貪合﹐刑沖克害皆忘」。
+  与 `liuyao_step4` 4.3 贪合忘生克（效应减半）＋4.3b 日月合绊（有界方向权重）对应。
+- **落地**：`verdict_texts#pattern_verdict_labels.伏藏/飞伏|合绊.古典引文` 两槽位＋
+  代码锚点（classical_enhancements docstring/liuyao_step4 注释）＋注册表两条
+  （双指针，verified=true，dim=patterns；合绊条目 note 如实登记「无独立 dim，
+  效应经 effect/方向聚合进入 verdict 类维度」）。
+- **诚实标注**：合绊有界权重（−2.0/−0.2/−0.3/效应减半）与绝处逢生梯度同为**工程映射**，
+  书源为定性二分＋「后逢冲开之日月」应期义。
+- **验收**：根套件全绿；六爻学科门＋仓库门绿；render/golden 零变化。
+
 ### 2026-10-04n ming 注册表引文缺口收口：dayun 起例逐字挂接翻 verified · shensha 补查获书源否定语境
 
 > **性质**：纯 provenance 收口（ming 注册表仅剩两处 verified=false 的逐字核对）。

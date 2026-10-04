@@ -168,6 +168,7 @@ def step4_analyze_changes(r: dict) -> dict:
             unfavorable_changes.append(detail)
 
     # ---------- 4.3: 贪生忘克/贪合忘生克规则 ----------
+    # 书源：《增删卜易》「貪生貪合，刑沖克害皆忘……貪合忘克忘沖」——效应减半为工程映射
     tan_sheng_wan_ke = _check_tan_sheng_wan_ke(details, use_god_element, palace_element)
     tan_he_wan_sheng_ke = _check_tan_he_wan_sheng_ke(details, yao_lines, use_god_category)
 
@@ -189,6 +190,7 @@ def step4_analyze_changes(r: dict) -> dict:
             net_effect += (detail["effect_score"] - old_score)
 
     # ---------- 4.3b: 贪合忘生克（日月合绊检查） ----------
+    # 书源：《增删卜易》「動逢合而絆住：忌神動逢日月相合則不成凶，元神動逢日月合住則不濟事」
     # Also include 暗动 lines for greedy harmony check
     step3_data_for_hm = safe_get(r, "_step3_data", default={})
     hm_lines = step3_data_for_hm.get("hidden_movement", []) or []

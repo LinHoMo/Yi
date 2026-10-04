@@ -200,6 +200,34 @@
       },
       "applicability": "用神（或世爻）绝/死于日辰或动而化绝，得日月动爻生扶＝绝处逢生、临危有救——引擎以原神发动且有力为强判（+2.0）、无力 0.5、原神静现 0.2、不现旬空月破 −0.8；梯度分值为工程映射（书源只立「有生扶/无生扶」二分），凶中反吉只作结构提示",
       "evaluation": {"status": "classical_holdout", "splits": ["tune", "holdout"], "dim": "patterns", "note": "patterns 维度登记「绝处逢生」标签"}
+    },
+    {
+      "rule_id": "liuyao.fucang",
+      "domain": "伏藏/飞伏",
+      "impl": "scripts/classical_enhancements.py:analyze_hidden_spirit_emergence(763)（advanced_analysis.hidden_spirit_emergence，can_emerge）＋scripts/liuyao_step2.py:_check_fu_cang（本宫首卦寻伏）",
+      "source": {
+        "book": "《增删卜易》",
+        "locator": "飛伏神章第二十八：飞来生伏得长生/飞克伏受制＋「伏神有用者有六」判据清单＋引《黃金策》「空下伏神，易於引撥」；不得出方向另有所本《黃金策·千金賦》「伏無提挈終徒爾」（2026-10-02s 落地，quote 见 liuyao_step5 方向聚合）",
+        "quote_in_data": "disciplines/liuyao/data/rules/verdict_texts.json#pattern_verdict_labels.伏藏/飞伏.古典引文",
+        "quote_in_code": "disciplines/liuyao/scripts/classical_enhancements.py#《增删卜易·飛伏神章》「伏神有用者有六」",
+        "verified": true
+      },
+      "applicability": "用神不现→本宫首卦寻伏神伏于飞神之下；得出判据六条（得日月生/旺相/飞神生/动爻生/冲克飞神/飞神空破休囚墓绝）——引擎九条评分与六条逐项对应（can_emerge=emerge_score>0）；方向聚合对「伏而不得出」给 −1.0（2026-10-02s，有界）",
+      "evaluation": {"status": "classical_holdout", "splits": ["tune", "holdout"], "dim": "patterns", "note": "patterns 维度登记「伏藏/伏神」标签；10-02s 分列验收 tune/holdout 持平（fu_cang_detail 结构判据）"}
+    },
+    {
+      "rule_id": "liuyao.heban",
+      "domain": "合绊/贪合忘生",
+      "impl": "scripts/liuyao_step4.py:4.3/4.3b（贪合忘生克效应减半＋日月合绊检查，进方向聚合）",
+      "source": {
+        "book": "《增删卜易》",
+        "locator": "千金賦「動逢合而絆住」野鶴注（忌神合不成凶/元神合不濟事，后逢沖開之月日吉凶俱成——应期义）＋「貪生貪合，刑沖克害皆忘……貪合忘克忘沖」",
+        "quote_in_data": "disciplines/liuyao/data/rules/verdict_texts.json#pattern_verdict_labels.合绊.古典引文",
+        "quote_in_code": "disciplines/liuyao/scripts/liuyao_step4.py#動逢合而絆住：忌神動逢日月相合則不成凶，元神動逢日月合住則不濟事",
+        "verified": true
+      },
+      "applicability": "动爻（含暗动）逢日/月合住＝合绊：忌神合住不成凶、原神/元神合住不济事——引擎以有界方向权重表达（原神贪合忘生 −2.0、日月合绊 −0.2 梯度、动化合绊 −0.3、贪合忘生克效应减半）；梯度分值为工程映射（书源定性二分＋「后逢冲开之日月」应期义）；「如逢合住，沖破成功」的三合侧破局已另见 liuyao.sanhe",
+      "evaluation": {"status": "classical_holdout", "splits": ["tune", "holdout"], "dim": "patterns", "note": "合绊效应经 effect/方向聚合进入 verdict 类维度（10-02s 分列验收 tune/holdout 持平）；无独立 dim，此处以 patterns 维度登记标签覆盖"}
     }
   ]
 }

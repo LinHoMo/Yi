@@ -761,7 +761,11 @@ def analyze_hidden_spirits(result):
 
 
 def analyze_hidden_spirit_emergence(result):
-    """基于《卜筮正宗》伏神规则评分伏神得出/不得出。"""
+    """基于《卜筮正宗》伏神规则评分伏神得出/不得出。
+
+    得出判据同《增删卜易·飛伏神章》「伏神有用者有六」：得日月生/旺相/飛神生/
+    動爻生/日月動爻沖克飛神/飛神空破休囚墓絕；《黃金策》「空下伏神，易於引撥」。
+    """
     hex_info = result.get("original_hexagram", {})
     palace = hex_info.get("palace", "")
     palace_element = hex_info.get("palace_element", "")
