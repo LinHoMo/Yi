@@ -15,7 +15,7 @@
    "太衰": "偏弱",
    "衰极": "偏弱"
   },
-  "contamination_note": "强弱阈值（±1.5）与层次权重从未以任何案例集调参（本批之前仓库无 strength expected，无可调之尺）；同书从象/假从章 ZC 批曾参与从格 kind 调参（CHANGELOG 10-02t），但强弱标签由生扶−克泄耗阈值独立算出，与从格判据无反馈回路。仍按永不调参纪律执行。"
+  "contamination_note": "强弱阈值（±1.5）与层次权重从未以任何案例集调参（本批之前仓库无 strength expected，无可调之尺）；同书从象/假从章 ZC 批曾参与从格 kind 调参（CHANGELOG 10-02t），但强弱标签由生扶−克泄耗阈值独立算出，与从格判据无反馈回路。仍按永不调参纪律执行。 2026-10-04d 根权重宫位分层落地（衰旺章任注，木火金水日主之根：长生禄旺=重根1.0、墓库余气=轻根0.25）系书源逐字取证驱动，非本集驱动——反事实测量在改前完成：重映射后 ZE005 Δ=0.0、ZE017 Δ=−0.25，两例均不翻转（17/19 不变），与本集无反馈回路；tests/test_ming_strength_root_stage.py::test_external_set_isolation_tripwire 持续锁定。"
  },
  "splits": {
   "external_holdout": [

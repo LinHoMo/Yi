@@ -131,14 +131,14 @@
    "domain": "强弱扶抑（strength）",
    "impl": "disciplines/ming/scripts/pattern.py:strength_and_pattern（analyze 顶层 result['strength']；三档标签 偏旺/偏弱/中和，阈值 WEAK/STRONG_THRESHOLD=±1.5）",
    "source": {
-    "book": "《渊海子平》通行口径（身旺喜克泄耗/身弱喜生扶）；衰旺机制旁证《滴天髓阐微·衰旺》",
-    "locator": "《渊海子平》维基文库实测 missingtitle（不在库）；阐微衰旺章全文 data/sources/di-tian-sui-chan-wei.wikitext.txt（2026-10-04 入库）",
-    "quote_in_code": "disciplines/ming/scripts/pattern.py#WEAK_THRESHOLD",
-    "verified": false
+    "book": "《渊海子平》通行口径（身旺喜克泄耗/身弱喜生扶）；根权重机制《滴天髓阐微·衰旺》任注（2026-10-04d 已逐字取证落地）",
+    "locator": "《渊海子平》维基文库实测 missingtitle（不在库）；阐微衰旺章全文 data/sources/di-tian-sui-chan-wei.wikitext.txt（语料行 2452；「奶之轻者也」为 wikisource 转写讹字，通行本作「根」）",
+    "quote_in_code": "disciplines/ming/scripts/pattern.py#ROOT_STAGE_ELEMENTS",
+    "verified": true
    },
    "why_not_registered": "evaluate.py WEIGHTS 无 strength 维度（强弱读数为 report-only，不进加权均分）——rules 契约要求 dim 必须是评分器真实键；外部集已立（ming_external_cases.json，split=external_holdout 永不调参），维度加权化属口径变更，须先登记 CHANGELOG 并冻结集合",
-   "coverage": "external_holdout（report-only）：`python scripts/evaluate.py --split external_holdout` → 强弱对齐 17/19（2026-10-04 首批：衰旺章任注显式标注例 n=19，旺侧9/衰侧10；纳入规则与类别映射见案例文件 _provenance）",
-   "maturity": "独立验证首批落地：外部集从无到有。分歧 2 例（ZE005/ZE017 书源「太旺」vs 引擎「中和」）同指一个机制——引擎根权重未区分「禄刃长生之根」与普通本气根（衰旺章原文明写「长生禄旺，根之重者也」）；修复属规则变更，须另起 source→implementation→tune/holdout 分列验收的完整闭环，禁止拿本集考卷调参"
+   "coverage": "external_holdout（report-only）：`python scripts/evaluate.py --split external_holdout` → 强弱对齐 17/19（2026-10-04 首批：衰旺章任注显式标注例 n=19，旺侧9/衰侧10；纳入规则与类别映射见案例文件 _provenance）。机械覆盖：日主之根宫位分层已落地（tests/test_ming_strength_root_stage.py 锁引文逐字+映射+外集隔离 tripwire）",
+   "maturity": "2026-10-04d 裁决+落地：①衰旺章根层级（长生禄旺重根/墓库余气轻根/天干比肩最轻）逐字取证，引擎根权重按宫位轴落地（ROOT_STAGE_ELEMENTS 木火金水；土寄四隅流派不一维持层位权重，如实登记）。②归因修正：2026-10-04 首批登记的「ZE005/ZE017 失配同指根权重未区分禄刃长生」经反事实测量证伪——按书源轴重映射后 ZE005 Δ=0.0、ZE017 Δ=−0.25，两例均不翻转（17/19 不变）；剩余失配候选机制=中和带宽（±1.5 无书源标定）/三会支局未入强弱/天干十神零权重（书源「比肩如朋友之相扶」主张正权但量级无书源数），三者均待独立证据，禁止拿外集调参。③分列验收：tune 100.0(n=30)/holdout 96.7(n=246)/外集 17/19 全部持平，金标准带理由重捕（仅 weak_zhengguan2 strength_score −5.20→−5.45，标签/格局不变）"
   }
  ]
 }

@@ -2,7 +2,9 @@
 """命·格局与强弱（纯机械表驱动，无命运断语）。
 
 规则口径（通行子平，可回溯）：
-- 藏干十神本/中/余气权重 1.0 / 0.5 / 0.25
+- 藏干十神本/中/余气权重 1.0 / 0.5 / 0.25；日主之根（木火金水）按十二长生宫位分层：
+  长生/禄/旺＝重根 1.0、墓/余气库支＝轻根 0.25（《滴天髓阐微·衰旺》任注，见
+  ROOT_STAGE_ELEMENTS 注）
 - 生扶 = 印 + 比劫；克泄耗 = 官杀 + 食伤 + 财
 - 身旺喜克泄耗，身弱喜生扶（《渊海子平》扶抑用神通行口径）
 - 格局取月支本气十神正格名；从格按《滴天髓》从化论/从象/假从章分级
@@ -59,6 +61,17 @@ TEN_GOD_GROUP = {
     "偏官": "官杀",
     "七杀": "官杀",
 }
+
+# 日主之根的宫位分层（《滴天髓阐微·衰旺》任注，语料行 2452）：
+# 「长生禄旺，根之重者也；墓库余气，奶之轻者也」（「奶」＝wikisource 转写讹字，
+# 通行本作「根」）。「天干得一比肩，不如地支得一余气墓库……得二比肩，不如支中
+# 得一长生禄旺」。书源「墓者/余气者/长生禄旺」三组例字（甲乙逢未/辰、丙丁逢戌/未、
+# 庚辛逢丑/戌、壬癸逢辰/丑、甲乙逢亥寅卯……）只列木火金水四行；土寄四隅流派不一
+# （火土同宫/水土同宫），戊己日主之根维持藏干层位权重，不混同（TECH-DEBT §2.3 强弱行登记）。
+ROOT_STAGE_ELEMENTS = ("木", "火", "金", "水")
+ROOT_HEAVY_STAGES = ("长生", "临官", "帝旺")
+ROOT_HEAVY_W = 1.0    # 重根 → 本气档
+ROOT_LIGHT_W = 0.25   # 轻根（墓/余气库支）→ 余气档
 
 # 月令本气十神 → 正格名
 PATTERN_BY_MONTH_GOD = {
@@ -613,6 +626,7 @@ def strength_and_pattern(chart_json: dict) -> dict:
     for pname in ("year", "month", "day", "hour"):
         block = factors.get(pname) or {}
         gods = block.get("ten_gods") or []
+        branch = (pillars.get(pname) or {}).get("branch") or ""
         for item in gods:
             if not isinstance(item, dict):
                 continue
@@ -620,6 +634,13 @@ def strength_and_pattern(chart_json: dict) -> dict:
             layer = item.get("layer") or "本气"
             w = LAYER_WEIGHT.get(layer, 0.25)
             role = _role(god)
+            # 日主之根按宫位分层（衰旺章：长生禄旺重根 / 墓库余气轻根）；
+            # 与 _from_judge 强根判据（临官/帝旺）同一宫位轴（core.twelve_growth）。
+            root_stage = ""
+            if role == "比劫" and day_elem in ROOT_STAGE_ELEMENTS and branch:
+                root_stage = twelve_growth(day_elem, branch) or ""
+                if root_stage:
+                    w = ROOT_HEAVY_W if root_stage in ROOT_HEAVY_STAGES else ROOT_LIGHT_W
             # 日支比劫/印也算，但日干本身不重复计
             if role in ("印", "比劫"):
                 sheng_fu += w
@@ -627,7 +648,10 @@ def strength_and_pattern(chart_json: dict) -> dict:
                 ke_xie_hao += w
             if pname == "month" and layer == "本气":
                 month_main_god = god
-            details.append({"pillar": pname, "god": god, "layer": layer, "role": role, "w": w})
+            entry = {"pillar": pname, "god": god, "layer": layer, "role": role, "w": w}
+            if root_stage:
+                entry["root_stage"] = root_stage
+            details.append(entry)
 
     # 得令：月支本气五行生扶日主则 +1.2，克泄耗则 −1.2
     month_branch = (pillars.get("month") or {}).get("branch") or ""

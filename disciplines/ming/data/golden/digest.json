@@ -3,14 +3,20 @@
     "what": "命科金标准指纹基线（强弱/格局/大运逐字段）",
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
-  "digest": "2c3eee326cec8ccd",
-  "narrate_digest": "a4ffadf44d386ad8",
+  "digest": "1be8d5b579463a47",
+  "narrate_digest": "aa2dbf4be60b38bf",
   "drift_log": [
     {
       "from": "57dc7e890af222fa",
       "to": "2c3eee326cec8ccd",
       "date": "2026-10-01",
       "reason": "指纹拆分（SYS-REVIEW#2）：机械/措辞分列；机械字段取值不变（机械digest 2c3eee32 为 57dc7e89 去 narrate_sha 后的机械字段，样例零异常）"
+    },
+    {
+      "from": "2c3eee326cec8ccd",
+      "to": "1be8d5b579463a47",
+      "date": "2026-10-04",
+      "reason": "2026-10-04d 日主之根宫位分层（衰旺章任注：长生禄旺=重根1.0、墓库余气=轻根0.25，书源例字仅列木火金水）：weak_zhengguan2 乙木辰中乙根由中气0.5改判衰宫轻根0.25（strength_score -5.20→-5.45，strength标签/格局/用神/大运全不变）；分列验收 tune 100.0(n=30)/holdout 96.7(n=246)/外集17/19 全部持平"
     }
   ],
   "narrate_drift_log": [
@@ -103,6 +109,12 @@
       "to": "a4ffadf44d386ad8",
       "date": "2026-10-03",
       "reason": "2026-10-03 病药判据按原文修正：主轴取月令本气（原实现误取全盘最重五行），narrate 病药段随之改写；机械层零漂移、tune/holdout 读数未变"
+    },
+    {
+      "from": "a4ffadf44d386ad8",
+      "to": "aa2dbf4be60b38bf",
+      "date": "2026-10-04",
+      "reason": "2026-10-04d 日主之根宫位分层（衰旺章任注：长生禄旺=重根1.0、墓库余气=轻根0.25，书源例字仅列木火金水）：weak_zhengguan2 乙木辰中乙根由中气0.5改判衰宫轻根0.25（strength_score -5.20→-5.45，strength标签/格局/用神/大运全不变）；分列验收 tune 100.0(n=30)/holdout 96.7(n=246)/外集17/19 全部持平"
     }
   ]
 }
