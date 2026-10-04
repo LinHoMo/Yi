@@ -15,7 +15,16 @@
    "太衰": "偏弱",
    "衰极": "偏弱"
   },
-  "contamination_note": "强弱阈值（±1.5）与层次权重从未以任何案例集调参（本批之前仓库无 strength expected，无可调之尺）；同书从象/假从章 ZC 批曾参与从格 kind 调参（CHANGELOG 10-02t），但强弱标签由生扶−克泄耗阈值独立算出，与从格判据无反馈回路。仍按永不调参纪律执行。 2026-10-04d 根权重宫位分层落地（衰旺章任注，木火金水日主之根：长生禄旺=重根1.0、墓库余气=轻根0.25）系书源逐字取证驱动，非本集驱动——反事实测量在改前完成：重映射后 ZE005 Δ=0.0、ZE017 Δ=−0.25，两例均不翻转（17/19 不变），与本集无反馈回路；tests/test_ming_strength_root_stage.py::test_external_set_isolation_tripwire 持续锁定。"
+  "contamination_note": "强弱阈值（±1.5）与层次权重从未以任何案例集调参（本批之前仓库无 strength expected，无可调之尺）；同书从象/假从章 ZC 批曾参与从格 kind 调参（CHANGELOG 10-02t），但强弱标签由生扶−克泄耗阈值独立算出，与从格判据无反馈回路。仍按永不调参纪律执行。 2026-10-04d 根权重宫位分层落地（衰旺章任注，木火金水日主之根：长生禄旺=重根1.0、墓库余气=轻根0.25）系书源逐字取证驱动，非本集驱动——反事实测量在改前完成：重映射后 ZE005 Δ=0.0、ZE017 Δ=−0.25，两例均不翻转（17/19 不变），与本集无反馈回路；tests/test_ming_strength_root_stage.py::test_external_set_isolation_tripwire 持续锁定。 2026-10-04h 第二批（ZE020–ZE026）：扫描规则与剔除清单先于引擎评分声明并留痕；7 例入库后跑 report-only 读数一次，**无论读数高低一律保留**（唯一可剔除理由＝机械自洽失败，已在入库前完成），禁止事后按读数筛例；不进 tune/holdout，不参与任何调参。",
+  "batch2_rule": "纳入规则（扫描与判例提取先于引擎评分声明，2026-10-04h）：衰旺章之外全书穷尽扫描（词族：日主/日元/日干/身 × 旺极/旺之极/旺矣/太旺/衰极/弱极/弱之极/太衰/虚弱/虚弱极/衰弱/健旺/旺相/衰弱/不弱/旺中变弱），凡任注**命例判语**显式给出原局强弱类别词者全收。逐条剔除并登记：①「日主不弱」否定式 2 例（行3820/10731）——无法唯一映射三档；②从格取用判语（行7653「须从官星之势」）——强弱非独立类别词；③问答讨论非判语（行10231）；④原注/任氏曰理论注疏段；⑤四柱机械自洽失败 1 例（行4634「弱之极矣」：月柱己酉与五虎遁矛盾，戊年八月应辛酉——四柱无法忠实直录，剔除理由是提取失败而非判语存疑）。n=7（旺侧 3 / 衰侧 4），ZE020–ZE026。",
+  "batch2_pillar_check": "7 例四柱按书源竖排年月日时序直录；全部通过五虎遁（年×月）+五鼠遁（日×时）+首运（年干阴阳×性别×月柱顺逆）自洽校验；ZE022 为女命（阴年顺排）。日主与任注判语逐一相符。",
+  "batch2_category_mapping": {
+   "旺极": "偏旺",
+   "旺矣": "偏旺",
+   "衰弱": "偏弱",
+   "虚弱": "偏弱",
+   "虚弱极": "偏弱"
+  }
  },
  "splits": {
   "external_holdout": [
@@ -37,7 +46,14 @@
    "ZE016",
    "ZE017",
    "ZE018",
-   "ZE019"
+   "ZE019",
+   "ZE020",
+   "ZE021",
+   "ZE022",
+   "ZE023",
+   "ZE024",
+   "ZE025",
+   "ZE026"
   ]
  },
  "cases": [
@@ -381,6 +397,132 @@
    "expected": {
     "strength": "偏弱",
     "strength_book_category": "衰极"
+   }
+  },
+  {
+   "id": "ZE020",
+   "split": "external_holdout",
+   "book": "滴天髓阐微",
+   "location": "通神论·二十二、伤官",
+   "source_quote": "此火土伤官，日主旺极，喜其伤官发泄菁华，更妙财星得用。",
+   "pillars": {
+    "year": "戊申",
+    "month": "戊午",
+    "day": "丁巳",
+    "hour": "乙巳"
+   },
+   "gender": "",
+   "expected": {
+    "strength": "偏旺",
+    "strength_book_category": "旺极"
+   }
+  },
+  {
+   "id": "ZE021",
+   "split": "external_holdout",
+   "book": "滴天髓阐微",
+   "location": "通神论·三十二、众寡",
+   "source_quote": "此造戌午拱火，日时逢印，日主旺极，莫作用印而推，亦不可作去官留杀论也。",
+   "pillars": {
+    "year": "戊午",
+    "month": "壬戌",
+    "day": "丁卯",
+    "hour": "癸卯"
+   },
+   "gender": "",
+   "expected": {
+    "strength": "偏旺",
+    "strength_book_category": "旺极"
+   }
+  },
+  {
+   "id": "ZE022",
+   "split": "external_holdout",
+   "book": "滴天髓阐微",
+   "location": "六亲论·六、女命章",
+   "source_quote": "乙木生于季秋，柱中两坐禄旺，亥卯又拱木局，四柱无金，日元旺矣。",
+   "pillars": {
+    "year": "乙卯",
+    "month": "丙戌",
+    "day": "乙卯",
+    "hour": "丁亥"
+   },
+   "gender": "女",
+   "expected": {
+    "strength": "偏旺",
+    "strength_book_category": "旺矣"
+   }
+  },
+  {
+   "id": "ZE023",
+   "split": "external_holdout",
+   "book": "滴天髓阐微",
+   "location": "六亲论·三、父母",
+   "source_quote": "所嫌者，丑时伤官肆逞，官星退气，日主衰弱，全赖乙木生火而卫官。",
+   "pillars": {
+    "year": "癸卯",
+    "month": "乙丑",
+    "day": "丙子",
+    "hour": "己丑"
+   },
+   "gender": "",
+   "expected": {
+    "strength": "偏弱",
+    "strength_book_category": "衰弱"
+   }
+  },
+  {
+   "id": "ZE024",
+   "split": "external_holdout",
+   "book": "滴天髓阐微",
+   "location": "六亲论·五、何知章",
+   "source_quote": "天干两乙，地支不载，凋可知矣，由此推之，日元虚弱",
+   "pillars": {
+    "year": "乙丑",
+    "month": "乙酉",
+    "day": "丙辰",
+    "hour": "辛卯"
+   },
+   "gender": "",
+   "expected": {
+    "strength": "偏弱",
+    "strength_book_category": "虚弱"
+   }
+  },
+  {
+   "id": "ZE025",
+   "split": "external_holdout",
+   "book": "滴天髓阐微",
+   "location": "六亲论·七、小儿",
+   "source_quote": "虽丁火可以帮身，癸水伤之，谓财多身弱，兼之官星又旺，日主虚弱极矣。",
+   "pillars": {
+    "year": "辛丑",
+    "month": "癸巳",
+    "day": "丙子",
+    "hour": "丁酉"
+   },
+   "gender": "",
+   "expected": {
+    "strength": "偏弱",
+    "strength_book_category": "虚弱极"
+   }
+  },
+  {
+   "id": "ZE026",
+   "split": "external_holdout",
+   "book": "滴天髓阐微",
+   "location": "六亲论·二十六、出身",
+   "source_quote": "但嫌杀势太旺，日主虚弱，不能假杀为权，所以起而不起也。",
+   "pillars": {
+    "year": "癸未",
+    "month": "庚申",
+    "day": "甲申",
+    "hour": "乙亥"
+   },
+   "gender": "",
+   "expected": {
+    "strength": "偏弱",
+    "strength_book_category": "虚弱"
    }
   }
  ]
