@@ -1,0 +1,192 @@
+{
+  "schema": "yi-liuren-course-adjudication/1",
+  "_comment": [
+    "OBSERVATION-ONLY 文件（2026-10-04 source adjudication 轮产出）：只登记裁决结论与证据，不进 tune/holdout/任何评分，",
+    "不改 course_examples.json（其 expected/source_quote 原样，[1j] 可复现门不受影响），不改 engine 一行。",
+    "本轮验收：engine files modified = 0；benchmark files modified = 0；score changes = 0。",
+    "status 词表（本轮约定，取自任务口径）：source_error_suspected / source_variant / engine_rule_gap_suspected / unresolved / insufficient_information。",
+    "chart_input 口径与 course_examples 相同：delta 为天地盘旋转量（天盘神=地盘宫+delta），四课记作 下→上。",
+    "证据可复核：四课/引擎输出由 scripts/jiuzongmen.san_chuan_full 现算（tests/test_liuren_le_adjudication.py 锁定）；",
+    "卷一/卷七/卷十一/卷十二引文逐字见 data/sources/liu-ren-da-quan*.wikitext.txt（wikisource 字符级转存，provenance+sha256 已档）。"
+  ],
+  "conclusions": {
+    "q1_LE036": "毕法赋注例把昴星门用在了有克的盘上（无视一课唯一上克下：寅木克丑土）。书面三传申寅申与引擎自身昴星分支（阴日：初传=天盘酉所临地盘位申、中=干上寅、末=支上申）逐字吻合，且「缘始末皆空」与癸未∈甲戌旬空申酉自洽——数字层面排除传抄讹误；「门选择」层面与本书卷一通则冲突。status=source_error_suspected。",
+    "q2_LE041": "同构：毕法赋注例无视一课唯一下贼上（辰土克子水）径取遥克。书面三传酉巳丑与引擎自身遥克分支（蒿矢：上神克日干者申/酉两课，取与日干比之阴支酉，递传酉→巳→丑）逐字吻合——数字层面排除传抄讹误；门选择与卷一通则冲突。status=source_error_suspected。",
+    "q3_same_family": "是。两例共享同一签名：干上神（一课）之克不参与取传。该签名另覆盖 LE022（丁丑）、LE032（癸卯）、LE039（己巳）——五例全部集中于卷十一/十二毕法赋注区；而毕法注区自身的 LE026（丙申）又如常计入一课之贼克，卷一（LE001 乙丑）与卷七课经集（LE005 甲午涉害章）书例均使用一课之克——故它不是全书口径，而是注例局部、且内部不一致的习惯。",
+    "q4_generic_rule_gap": "未发现引擎相对卷一+课经集通则的缺陷（43 例机械一致率 33/43，含必须使用一课之克的 LE026、必须合池的 LE001）。唯一登记的通则张力：下贼与上克并存时，引擎取「合池进比用/涉害」（有卷一交车格乙丑例＋卷十二法九五同例两处书源支撑），而卷一贼克诀字面「如无下贼上克初」与课经集知一课定义「二上克下，或二下克上」（同类多克）未言混池，LE032（卷十二法七三）按合池不可复现、按严格下贼优先恰好复现——两读在书内 1:1 分裂，登记为 unresolved 古籍异说，本轮不修。",
+    "q5_source_variant": "三传数字层面不存在版本/转写差异（数字与「换门复算」逐字吻合，传讹不可能恰好算出另一门的机械结果）；门选择层面疑似毕法赋注例局部异说/疏误。外部他本校验未获：ctext 反爬拦截、通用搜索未索引该两段；故「注例另有所本（异说）」与「注者算误」两解不可分，按保守口径记 source_error_suspected 并保留异说候选（source_variant 字段），不强行裁决。",
+    "q6_next_round_engine_change": "LE036/LE041 本身不需要改引擎。唯一候选改动是合池口径（jiuzongmen._ke_tree 的「下贼+上克并存」分支），但书内证据 1:1 分裂（LE001/乙丑×2 需合池 vs LE032 需下贼优先），且 LE022/LE039 的书面三传同时依赖「一课之克不参与」假设——现证据不足以翻转任何一读，翻转将同时打破既有匹配例。",
+    "q7_which_generic_rule_if_any": "若未来证据（如《大六壬指南》他本入库后找到更多「上下俱克」判例）倒向下贼优先：改的是 _ke_tree 的合池分支这一条通用判据（删除「ze and ke 合池」、恢复 ze 优先），须按 AGENTS.md §四 走完整闭环（通则出处+tune/holdout 分列+golden 重捕），影响面：LE001（将转失配）、LE032（将转匹配）、LE022/LE039（落入何种口径需重裁）。本轮不改。",
+    "q8_continue_or_stop": "建议暂停扩大取传类课例评测：10 例失配已全部归因（5 例涉害口径异说——LE004/020/021/027/037，三种备选口径下读数均不变，维持原涉害异说桶；5 例「一课之克不参与」签名——LE022/032/036/039/041）。继续加同源书例只会重复这两类。下一步增量应是他本语料（《大六壬指南》全文入库）而非新案例。"
+  },
+  "shared_evidence": {
+    "tongze_quotes": [
+      {
+        "loc": "六壬大全·卷一·起例·入手法·一 贼克法（data/sources/liu-ren-da-quan.wikitext.txt）",
+        "quote": "取课先从下贼呼，如无下贼上克初。初传之上名中次，中上加临是末居。",
+        "role": "下贼优先、上克为缺省的次序依据（「如无」二字）。",
+        "corpus_file": "liu-ren-da-quan.wikitext.txt"
+      },
+      {
+        "loc": "六壬大全·卷一·入手法·二 比用法",
+        "quote": "下贼或三二四侵，若逢上克亦同云。常将天日比神用，阳日用阳阴用阴。",
+        "role": "引擎合池规则所本的歧义句（「若逢上克亦同云」可读作同类多克各论，也可读作混池）。",
+        "corpus_file": "liu-ren-da-quan.wikitext.txt"
+      },
+      {
+        "loc": "六壬大全·卷一·入手法·五 昴星法",
+        "quote": "无遥无克昴星穷，阳仰阴俯酉位中论初传也。刚日先辰而后日，柔日先日而后辰论中末也。",
+        "role": "昴星门前置条件=无遥无克（「论初传也/论中末也」为书源小字夹注原样）；LE036 书面三传正是柔日（阴俯）分支的机械结果。",
+        "corpus_file": "liu-ren-da-quan.wikitext.txt"
+      },
+      {
+        "loc": "六壬大全·卷一·入手法·四 遥克法",
+        "quote": "神遥克日曰蒿矢，日遥克神曰弹射。四课无克号为遥，日与神兮逓互招。",
+        "quote2": "先取神遥克其日，如无方取日来遥。或有日克乎两神，复有两神来克日。择与日干比者用，阳日用阳阴用阴。",
+        "role": "遥克门前置条件=四课无克；LE041 书面三传正是蒿矢+比用取阴的机械结果。",
+        "corpus_file": "liu-ren-da-quan.wikitext.txt"
+      },
+      {
+        "loc": "六壬大全·卷七·课经集·知一课",
+        "quote": "凡课有二上克下，或二下克上，择课之阴阳与今日比者而为用神，曰知一课。",
+        "role": "定义章只言同类多克取比，未言下贼与上克混池。",
+        "corpus_file": "liu-ren-da-quan-juan7.wikitext.txt"
+      }
+    ],
+    "survey_43": {
+      "engine_match": "33/43（与既有登记一致）",
+      "mismatch_attribution": [
+        "涉害口径异说 5 例（引擎自标 verified=false 涉害桶内）：LE004/LE020/LE021/LE027/LE037——在 R1（严格下贼优先）/H1（一课下取天干五行）/H2（一课不计克）三种备选口径下读数均不变，维持原「涉害诸书不一」归因不变。",
+        "「一课之克不参与」签名 5 例：LE022/LE032/LE036/LE039/LE041——在 H2 口径下全部转为匹配书面三传；其中 LE022/LE032/LE039 此前按引擎落点归入涉害异说桶，本轮归因修正为同一签名（引擎落点在涉害只是表象：两候选拔河后涉害取了课1候选）。"
+      ],
+      "alternative_readings": {
+        "R1_严格下贼优先": "pool = ze if ze else ke（恢复贼克诀「如无」字面）",
+        "H1_一课下取天干五行": "一课之下以天干本五行（非寄宫地支）参克",
+        "H2_一课不计克": "一课不参与贼克候选（低阶门照常取干上神）",
+        "readings_matrix_note": "R1/H1/H2 对 33 匹配例中 31 例零影响；R1 使 LE001 转失配、LE032 转匹配；H2 使 LE005/LE026 转失配、LE022/LE032/LE036/LE039/LE041 转匹配；H1 仅影响 LE007（转失配）/LE032/LE036/LE041（转匹配）。无一口径全绿——书源自身不一致的直接证明。"
+      }
+    },
+    "merge_vs_precedence_tension": {
+      "status": "unresolved（古籍异说，登记不修）",
+      "merge_side": [
+        "LE001 乙丑日干上子→巳丑酉（卷一·起例·交车合·十交会合条；卷十二法九五「官鬼爻现卦」条同例重现——书内两处）",
+        "引擎现行：jiuzongmen._ke_tree「下贼与上克并存→合池」分支（代码注释已声明所本即乙丑书例）"
+      ],
+      "precedence_side": [
+        "卷一贼克诀「如无下贼上克初」+ 卷七课经集知一课定义「二上克下，或二下克上」",
+        "LE032 癸卯日干上寅→辰巳午（卷十二法七三；注意：该例位于注者自标「此于逼迫二字不合」的例举清单内，证据力打折）",
+        "外部通则核查：《大六壬探原》（袁树珊）引同诀并按「先下贼、无则上克」讲解；通行九宗门讲解同"
+      ],
+      "affected_cases": "LE001（合池匹配）、LE032（优先匹配）、LE022/LE039（两读皆失配，另依赖课1假设）"
+    },
+    "external_check_log": [
+      "通则他本：Web 检索证实「取课先从下贼呼，如（若）无下贼上克初」为通行口径（《大六壬探原》引文页 scribd.com、九宗门讲解页 m.yi958.com 等，二手讲解仅作旁证不当原文）。",
+      "两段引文他本转写校验：未获——ctext.org 检索被反爬拦截，通用搜索引擎未索引该两段；仓库语料为 wikisource 字符级转存（provenance.json + sha256），且书面三传与「换门复算」逐字吻合，数字传讹可排除。",
+      "《大六壬指南》：仓库无此书语料（data/sources 无指南条目）；其全文入库列为后续增量建议。"
+    ]
+  },
+  "records": [
+    {
+      "case_id": "LE036",
+      "source": "六壬大全（wikisource 字符级转存：data/sources/liu-ren-da-quan-juan12.wikitext.txt）",
+      "source_location": "卷十二《毕法赋》第九十法「复，七日来复，虚张攻势」（返吟论）内「似返吟卦」格",
+      "source_quote": "似返吟卦，癸未日干上寅，虽不系返吟卦，缘三传申寅申，往来皆在支干上，似乎与返吟相类也，如占事虽不免往来交通，下稍全无一事，缘始末皆空，又是柔日昴星，故伏匿也",
+      "chart_input": {
+        "day_ganzhi": "癸未",
+        "delta": 1,
+        "determiner": "干上寅（癸寄丑，天盘寅；支上申）",
+        "four_courses": [
+          "丑→寅",
+          "寅→卯",
+          "未→申",
+          "申→酉"
+        ],
+        "ke_involving_course1": "课1 上克下：寅木克丑土（全盘唯一之克）",
+        "xunkong": "癸未∈甲戌旬，空申酉"
+      },
+      "source_stated_result": {
+        "san_chuan": [
+          "申",
+          "寅",
+          "申"
+        ],
+        "book_men_claim": "书面自述「虽不系返吟卦」且「又是柔日昴星」；course_examples.json 的 expected_men=\"返吟\" 是建器定位词产物，书意明确否认"
+      },
+      "engine_result": {
+        "men": "贼克",
+        "ke_name": "元首",
+        "san_chuan": [
+          "寅",
+          "卯",
+          "辰"
+        ],
+        "trigger": "上克独一（1课 丑→寅）",
+        "verified": true
+      },
+      "discrepancy": "书面三传申寅申=阴日昴星在给定天地盘上的机械结果（初传=天盘酉所临地盘位申、中传=干上寅、末传=支上申），前提是无遥无克；而该盘一课有唯一上克下（寅木克丑土），按卷一通则应元首发用出寅卯辰。差异全部来自「一课上克下是否参与门判」。",
+      "possible_explanation": "毕法赋注例把昴星门用于有克之盘（无视一课之克）。数字传抄讹误被排除：申寅申与昴星分支逐字吻合，且「缘始末皆空」（初末传申皆落旬空申酉）与书源三传自洽——讹抄不可能恰好同时算对另一门的机械结果并配平空亡论断。",
+      "evidence": [
+        "卷一贼克诀「取课先从下贼呼，如无下贼上克初」+ 昴星诀「无遥无克昴星穷」（通则次序，见 shared_evidence.tongze_quotes）",
+        "引擎昴星分支（阴日）在本盘复现申寅申（tests/test_liuren_le_adjudication.py 锁定）",
+        "癸未∈甲戌旬空申酉（「始末皆空」自洽）；书面「往来皆在支干上」即申=支上神、寅=干上神",
+        "同签名共 5 例（LE022/LE032/LE036/LE039/LE041）全部集中在卷十一/十二毕法赋注区；毕法他处 LE026（丙申，法二六区）又如常使用一课之贼克——注例内部不一致",
+        "43 例普查：R1/H1/H2 三种备选口径无一全绿（shared_evidence.survey_43），书源自身不一致"
+      ],
+      "adjudication_status": "source_error_suspected",
+      "source_adjudication": "书源（毕法赋注例）取传门选择与本书卷一起例通则冲突：有克而取昴星。疑为注者按己意（或所本异说）取传的局部疏误；仓库内外均未发现任何文献支持「有克仍取昴星」为独立法门。",
+      "source_variant": "候选异说「毕法注例不计干上神之克」保留登记（5 例共有签名，H2 口径下五例全部转匹配）；但卷一 LE001、卷七 LE005、毕法 LE026 三处书例均反证该习惯非全书口径，未构成可依循法门。",
+      "note": "course_examples.json 的 source_quote/expected/delta/determiner 原样未动；本记录为 observation-only，不进任何评分。外部他本校验未获（ctext 反爬），故不升级为确定性判死。"
+    },
+    {
+      "case_id": "LE041",
+      "source": "六壬大全（wikisource 字符级转存：data/sources/liu-ren-da-quan-juan12.wikitext.txt）",
+      "source_location": "卷十二《毕法赋》第九五法「财爻现卦，必忧父母」区「六爻相生而成类」段·传鬼化父母条",
+      "source_quote": "传鬼化父母者，如乙巳日干上子，三传酉巳丑生起干上之子水父母爻",
+      "chart_input": {
+        "day_ganzhi": "乙巳",
+        "delta": 8,
+        "determiner": "干上子（乙寄辰，天盘子；支上丑）",
+        "four_courses": [
+          "辰→子",
+          "子→申",
+          "巳→丑",
+          "丑→酉"
+        ],
+        "ke_involving_course1": "课1 下贼上：辰土克子水（全盘唯一下贼上；无上克下）",
+        "xunkong": "乙巳∈甲辰旬，空寅卯（三传不涉空亡）"
+      },
+      "source_stated_result": {
+        "san_chuan": [
+          "酉",
+          "巳",
+          "丑"
+        ],
+        "book_men_claim": "书未明写门类（expected_men=null）；语义仅述三传金局生起干上子水父母爻"
+      },
+      "engine_result": {
+        "men": "贼克",
+        "ke_name": "重审",
+        "san_chuan": [
+          "子",
+          "申",
+          "辰"
+        ],
+        "trigger": "下贼独一（1课 辰→子）",
+        "verified": true
+      },
+      "discrepancy": "书面三传酉巳丑=遥克（蒿矢）在给定天地盘上的机械结果（上神克日干者：课2申、课4酉皆金克乙木；取与日干比之阴支酉为初传，递传酉→巳→丑），前提是四课无克；而该盘一课有唯一下贼上（辰土克子水），按卷一通则应重审发用出子申辰。差异全部来自「一课下贼上是否参与门判」。",
+      "possible_explanation": "毕法赋注例无视一课下贼上而径取遥克。数字传抄讹误被排除：酉巳丑与引擎遥克分支（蒿矢+比用取阴）逐字吻合。另注：紧邻的孪生例「乙丑日干上子，三传巳丑酉」（同法九五官鬼爻现卦条，卷一交车格亦载）与本例三传同为金局三合、仅旋转不同（巳丑酉/酉巳丑），两例疑同源衍生；乙丑例引擎按现行合池规则可复现。",
+      "evidence": [
+        "卷一贼克诀（下贼优先）+ 遥克诀「四课无克号为遥……先取神遥克其日」（通则次序与遥克分支口径，见 shared_evidence.tongze_quotes）",
+        "引擎遥克分支（蒿矢，比用取阴）在本盘复现酉巳丑（tests/test_liuren_le_adjudication.py 锁定）",
+        "同签名 5 例集中于毕法赋注区；毕法他处 LE026 与卷一 LE001、卷七 LE005 均使用一课之克——注例内部不一致",
+        "孪生例乙丑（巳丑酉）书内两处（卷一+卷十二）且引擎复现，证明同段注例并非整体失准，而是逐例不一",
+        "43 例普查三种备选口径无一全绿（shared_evidence.survey_43）"
+      ],
+      "adjudication_status": "source_error_suspected",
+      "source_adjudication": "书源（毕法赋注例）取传门选择与本书卷一起例通则冲突：有下贼上而取遥克（遥克诀自设前提「四课无克」被违反）。疑为注者按己意取传的局部疏误；无文献支持「有贼克仍取遥克」为独立法门。",
+      "source_variant": "候选异说「毕法注例不计干上神之克」保留登记（与 LE036 同一 source_variant 条目共用证据链）；乙丑/乙巳孪生例的三传旋转关系亦提示卷十二注例内部存在转写衍生，但无法从仓库语料进一步裁决何者为原文原意。",
+      "note": "course_examples.json 的 source_quote/expected/delta/determiner 原样未动；本记录为 observation-only，不进任何评分。外部他本校验未获，故不升级为确定性判死。"
+    }
+  ]
+}
