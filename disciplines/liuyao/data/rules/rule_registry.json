@@ -135,7 +135,7 @@
     {
       "rule_id": "liuyao.sanhe",
       "domain": "三合局",
-      "impl": "scripts/classical_enhancements.py:analyze_triple_combo(1507)（advanced_analysis.triple_combo）",
+      "impl": "scripts/classical_enhancements.py:analyze_triple_combo(1508)（advanced_analysis.triple_combo）",
       "source": {
         "book": "《增删卜易》",
         "locator": "升遷例（如酉月乙巳日占升遷得澤地萃之天地否）斷曰「虛一待用」＋增刪《黃金策千金賦》第三十四「合遭破以無功」野鶴注「合住沖破成功」（语料 zengshan_buyi.wikitext.txt 行1043/行969，逐字回验各恰 1 命中）",
@@ -158,6 +158,20 @@
       },
       "applicability": "阴世从午月起、阳世从子月起，从初数至世方真；世爻位不在 1..6 返回空",
       "evaluation": {"status": "classical_holdout", "splits": ["tune", "holdout"], "dim": "gua_shen_branch", "note": "gua_shen_branch 维度（权重2）"}
+    },
+    {
+      "rule_id": "liuyao.yuepo",
+      "domain": "月破",
+      "impl": "scripts/classical_enhancements.py:analyze_monthly_break(1185)（advanced_analysis.monthly_break）",
+      "source": {
+        "book": "《增删卜易》",
+        "locator": "月破章第二十七：定义诀「月建沖之爲月破」＋野鶴動破之辨（出月/实破之日/合之日不破；不动又无日辰动爻生助者到底破）",
+        "quote_in_data": "disciplines/liuyao/data/rules/verdict_texts.json#pattern_verdict_labels.月破.古典引文",
+        "quote_in_code": "disciplines/liuyao/scripts/classical_enhancements.py#月建沖之爲月破（《增删卜易·月破章》）；野鶴動破之辨：「目下𨿽破﹐出月則不破」",
+        "verified": true
+      },
+      "applicability": "爻支被月建冲为月破；动则能伤（神兆机于动），出月/实破之日/合之日不破；不动又无日辰动爻生助者到底破——引擎以 is_moving + salvageable（日辰生扶或旺相可救）落此辨",
+      "evaluation": {"status": "classical_holdout", "splits": ["tune", "holdout"], "dim": "patterns", "note": "patterns 维度登记「月破」标签（2026-10-02g 起读 advanced_analysis.monthly_break 结构，不再扫 step5/summary 文本）"}
     }
   ]
 }

@@ -1,3 +1,24 @@
+### 2026-10-04g 六爻注册表未覆盖域第一批：月破域注册（`liuyao.yuepo`）· provenance 增量
+
+> **性质**：纯 provenance 增量（TECH-DEBT §2.5「注册表未覆盖域」按「按域逐条补注册，不一次堆完」
+> 路径执行的第一批）。**engine/benchmark/评测读数零变化**——`analyze_monthly_break` 判据一字未动。
+
+- **书源取证（`data/sources/zengshan_buyi.wikitext.txt` 月破章第二十七，程序化逐字回验各恰 1 命中）**：
+  ① 定义诀：「正申﹑二酉﹑三戌…十二未﹐**月建沖之爲月破**﹐逐月之破日是也」——与
+  `analyze_monthly_break` 的 `is_ba_zu_chong(branch, month_branch)` 直接对应；
+  ② 野鶴動破之辨：「目下𨿽破﹐出月則不破﹐今日𨿽破﹐實破之日則不破﹐合之日則不破﹐
+  近應日遠應年月。惟而不動又無日辰動爻生助者則到底而破矣」——与实现的 `is_moving` +
+  `salvageable`（日辰生扶或旺相可救）对应。转写字（𨿽＝雖、全角逗号﹐）逐字照录不改。
+- **落地**：① `verdict_texts.json#pattern_verdict_labels.月破.古典引文`；②
+  `analyze_monthly_break` 内代码锚点注释一行；③ 注册表新增 `liuyao.yuepo`
+  （domain=月破，双指针，`verified=true`，dim=`patterns`——该维度权重表本就含「月破」标签，
+  2026-10-02g 起读 `advanced_analysis.monthly_break` 结构）。
+- **影响面**：Evidence 挂接自动生效（factor=月破 的 evidence 条目此后带 rule_id 与
+  classical_holdout 状态）；render/golden 无变化（引文无 narrate 消费者）。
+  附带：注册表 sanhe 行 impl 行号 1507→1508（上轮注释插入的顺移，描述性 ref 校正）。
+- **验收**：`tests/test_rule_registry.py` 全绿（新条目自动过 schema/指针/dim 三门）；
+  语料引文回验 1/1 命中；根套件 + 六爻学科门 + 仓库门全绿。
+
 ### 2026-10-04f 六爻三合局引文逐字挂接：`liuyao.sanhe` verified=false → true · 注册表引文缺口清偿
 
 > **性质**：纯 provenance 增量（TECH-DEBT §2.5 首行预登记债务按其解除路径执行）。

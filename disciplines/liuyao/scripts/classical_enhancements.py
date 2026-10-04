@@ -1232,6 +1232,7 @@ def analyze_monthly_break(result):
             continue
 
         if is_ba_zu_chong(branch, month_branch):
+            # 月建沖之爲月破（《增删卜易·月破章》）；野鶴動破之辨：「目下𨿽破﹐出月則不破」——salvageable 即此辨
             elem = _branch_element(branch)
             is_moving = yao.get("is_moving", False)
             is_empty = branch in empty_branches
