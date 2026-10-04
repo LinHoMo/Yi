@@ -242,6 +242,46 @@
       },
       "applicability": "循环刑寅巳申丑戌未/互刑子卯/自刑辰午酉亥（表取内核）；卦内三字齐备＝完整、月日补足一字＝催刑（力减半，本野鶴虚一待用例）——完整/待刑分值与多处成刑 1.5x/2.0x 折算为工程映射（「凶不可解」一句不在库内语料，如实登记无书源数值）；变卦不参与本卦三刑（化出之爻不构成原局刑伤）",
       "evaluation": {"status": "classical_holdout", "splits": ["tune", "holdout"], "dim": "patterns", "note": "三刑效应经 step5 调整进入 verdict 类维度（10-02g 起读 advanced_analysis.three_punishments 结构）；无独立 dim，以 patterns 维度登记标签覆盖"}
+    },
+    {
+      "rule_id": "liuyao.soul_hexagram",
+      "domain": "游魂归魂",
+      "impl": "scripts/classical_enhancements.py:analyze_wandering_returning_soul(1118)（advanced_analysis.soul_hexagram）",
+      "source": {
+        "book": "《黄金策·千金赋》",
+        "locator": "游魂归魂断法（游魂行无定，归魂回故乡；各宫七八卦类特质）",
+        "quote_in_data": "disciplines/liuyao/data/rules/verdict_texts.json#pattern_verdict_labels.游魂归魂.古典引文",
+        "quote_in_code": "disciplines/liuyao/scripts/classical_enhancements.py#游魂行无定，归魂回故乡",
+        "verified": true
+      },
+      "applicability": "游魂卦（各宫第七卦，六四为世）主行无定、忧疑不安、心无归宿；归魂卦（各宫第八卦，九三为世）主回故乡、有归属、终有所归——卦由 generation 字段自动判定（七/八世之卦），神归则安、游则不安",
+      "evaluation": {"status": "classical_holdout", "splits": ["tune", "holdout"], "dim": "patterns", "note": "patterns 维度登记「游魂/归魂」标签（10-5 PATTERNS 列表已含）"}
+    },
+    {
+      "rule_id": "liuyao.shierchangsheng",
+      "domain": "十二长生",
+      "impl": "scripts/classical_enhancements.py:analyze_twelve_growth(1707)（advanced_analysis.twelve_growth；取各爻地支在十二长生表中的宫位阶段）",
+      "source": {
+        "book": "《黄金策·千金赋》",
+        "locator": "长生帝旺为吉、死墓绝空为凶（定宫位而不批吉凶，只标结构）",
+        "quote_in_code": "disciplines/liuyao/scripts/classical_enhancements.py#十二长生分析：各爻在十二长生中的位置",
+        "verified": false
+      },
+      "applicability": "各爻五行在日支十二长生表中查位（长生→养共十二宫），长生/帝旺/临官为吉位，死/墓/绝为凶位——只标结构位置（stage_name/is_key_stage），不提供评分调整，断卦方向由综合判断决定",
+      "evaluation": {"status": "classical_holdout", "splits": ["tune", "holdout"], "dim": "patterns", "note": "patterns 维度含「长生/帝旺/沐浴」标签；十二长生域整体标 verified=false：表取机械事实、无书源逐字评语，得位不等于吉凶，只作象数辅助参考"}
+    },
+    {
+      "rule_id": "liuyao.liupo",
+      "domain": "六破",
+      "impl": "scripts/effects.py:analyze_six_breaks(168)（advanced_analysis.six_breaks；卦内爻支与日/月建落六破对则标记，世/用被破加重扣分）",
+      "source": {
+        "book": "古典破法（《增删卜易》/《千金赋》注）",
+        "locator": "六破对：子酉/午卯/巳申/寅亥/辰丑/戌未——弱于六冲仍有破损",
+        "quote_in_code": "disciplines/liuyao/scripts/effects.py#六破：子酉/午卯/巳申/寅亥/辰丑/戌未",
+        "verified": false
+      },
+      "applicability": "爻支与日/月建落六破对（子酉/午卯/巳申/寅亥/辰丑/戌未）——纯破 −0.15、合中带破单列（不破爻但减合力）；世/用被破加重 −0.3；破损不遂之象，无独立 dim，以 patterns 维度登记",
+      "evaluation": {"status": "classical_holdout", "splits": ["tune", "holdout"], "dim": "patterns", "note": "六破域标 verified=false：库内语料暂无逐字六破引文（《增删目录》有'月破'章但未展开六破），破对取值属工程映射非书源验证；引擎 small modifier（≤0.3），对总分影响低；下一增量需暗動章正文语料入库（见 TECH-DEBT §2.5 暗动域备注）后 source adjudication"}
     }
   ]
 }
