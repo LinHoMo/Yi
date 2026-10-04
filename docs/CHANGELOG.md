@@ -1,3 +1,19 @@
+### 2026-10-04e 版本真实性门（Version Truth Gate）：本地/远端/评测三态分离 · 新增 `tools/version_gate.py` + AGENTS.md §七
+
+> **性质**：流程治理（评审后修正）。engine/benchmark/评测读数零变化。
+> 触发：评审方按 GitHub 公共 `main` 审查时发现 10-04 各轮提交全部只在本地
+> （`ls-remote` 实测 REMOTE_HEAD=3cb21e7 Evidence-First，本地领先 8 提交）——
+> 此前轮报只报本地 HEAD、未标同步状态，把本地迭代记录与「远端可验证事实」混同。
+
+- **规则入章程**（AGENTS.md §七，永久条款）：每轮 OBSERVE 第一步必须跑版本真实性门并
+  原样报告 LOCAL_HEAD/REMOTE_HEAD/WORKTREE/LOCAL_AHEAD/REMOTE_AHEAD/SYNC_STATUS；
+  UNSYNCED 须明说「尚未与远端 main 同步」；Agent 自述为二手事实；远端不可达须标
+  REMOTE_UNVERIFIED，不得用本地追踪引用冒充实测。优先级：实际 git 状态 > 代码/测试 >
+  数据 > 文档 > Agent 自述 > 历史计划。
+- **机械执行**：`tools/version_gate.py`——REMOTE_HEAD 以 `git ls-remote` 实测为准
+  （不 fetch、不读本地缓存引用；不可达如实降级并标注参考口径）；
+  SYNC_STATUS ∈ {SYNCED, UNSYNCED, REMOTE_UNVERIFIED}，UNSYNCED 附加明示行。
+
 ### 2026-10-04d 命科日主之根宫位分层：衰旺章任注逐字落地 · 归因修正（禄刃轴不解释外集 2 例失配）
 
 > **性质**：source adjudication → 通用规则落地（TECH-DEBT §2.3 强弱行；注册表 `ming.strength`）。

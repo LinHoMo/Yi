@@ -157,3 +157,32 @@ Yi/
 改 `web/`、`tools/build_web.py`、`web/engine_runtime.py`、`core/yishu_core/report/request.py`
 或任一学科 `scripts/` 的 CLI 契约时，必须跑：
 `python tools/check.py --full`（含站点构建+自检、网页/本地同源验收）。
+
+## 七、版本真实性门（Version Truth Gate，2026-10-04e 增）
+
+任何一轮迭代的 OBSERVE 第一步、任何代码/架构/能力评审之前，必须先确认并报告仓库版本状态。
+三个状态不得混同：**Remote Truth**（`origin/main`，网上可验证的版本）、
+**Local Working Truth**（本地 `HEAD` + 工作区）、**Evaluation Truth**（tests/golden/holdout/external 读数）。
+
+机械执行：`python tools/version_gate.py`（OBSERVE 第一步跑，输出块原样进轮报）。
+
+```
+LOCAL_HEAD:
+REMOTE_HEAD:
+WORKTREE:
+LOCAL_AHEAD:
+REMOTE_AHEAD:
+SYNC_STATUS:
+```
+
+1. 未确认 HEAD 前，不得声称「当前仓库最新状态」。
+2. `SYNC_STATUS: UNSYNCED` 时可以继续工作，但必须明说「当前工作尚未与远端 main 同步」；
+   本地提交在推送前不是远端可验证事实，不得描述成远端最新状态。
+3. 有未提交修改（WORKTREE dirty）时，工作区行为不得描述成已提交事实。
+4. 若本轮任务依赖上一轮 commit，必须确认该 commit 真实存在于当前 HEAD 历史中。
+5. 远端不可访问时必须明确写出「无法验证远端」（`REMOTE_UNVERIFIED`），不得用本地
+   追踪引用冒充实测、不得自行推断。
+6. 任何评审必须注明依据：remote main / local HEAD / working tree / 用户提供的 Agent 报告。
+   **Agent 自述是二手事实**；除非代码/commit 已实际验证，报告中结论不得当作仓库事实。
+
+版本真实性优先级：实际 git 状态 > 实际代码/测试 > 当前数据 > 当前文档 > Agent 自述 > 历史计划。
