@@ -228,6 +228,20 @@
       },
       "applicability": "动爻（含暗动）逢日/月合住＝合绊：忌神合住不成凶、原神/元神合住不济事——引擎以有界方向权重表达（原神贪合忘生 −2.0、日月合绊 −0.2 梯度、动化合绊 −0.3、贪合忘生克效应减半）；梯度分值为工程映射（书源定性二分＋「后逢冲开之日月」应期义）；「如逢合住，沖破成功」的三合侧破局已另见 liuyao.sanhe",
       "evaluation": {"status": "classical_holdout", "splits": ["tune", "holdout"], "dim": "patterns", "note": "合绊效应经 effect/方向聚合进入 verdict 类维度（10-02s 分列验收 tune/holdout 持平）；无独立 dim，此处以 patterns 维度登记标签覆盖"}
+    },
+    {
+      "rule_id": "liuyao.sanxing",
+      "domain": "三刑",
+      "impl": "scripts/effects.py:analyze_three_punishments(1215)（advanced_analysis.three_punishments；刑表取 core 唯一真值源）",
+      "source": {
+        "book": "《增删卜易》",
+        "locator": "凶方向「主事爻與日月動爻作三刑者﹐占事不成……動化刑亦然」＋野鶴驳「少一字不成三刑」旧说立虚一待用（「此乃少一字﹐得後來之申日補之」；语料行1032/1319/1019，逐字回验各恰 1 命中）",
+        "quote_in_data": "disciplines/liuyao/data/rules/verdict_texts.json#pattern_verdict_labels.三刑.古典引文",
+        "quote_in_code": "disciplines/liuyao/scripts/effects.py#三刑少申字，防申日之危；此乃少一字，得後來之申日補之",
+        "verified": true
+      },
+      "applicability": "循环刑寅巳申丑戌未/互刑子卯/自刑辰午酉亥（表取内核）；卦内三字齐备＝完整、月日补足一字＝催刑（力减半，本野鶴虚一待用例）——完整/待刑分值与多处成刑 1.5x/2.0x 折算为工程映射（「凶不可解」一句不在库内语料，如实登记无书源数值）；变卦不参与本卦三刑（化出之爻不构成原局刑伤）",
+      "evaluation": {"status": "classical_holdout", "splits": ["tune", "holdout"], "dim": "patterns", "note": "三刑效应经 step5 调整进入 verdict 类维度（10-02g 起读 advanced_analysis.three_punishments 结构）；无独立 dim，以 patterns 维度登记标签覆盖"}
     }
   ]
 }

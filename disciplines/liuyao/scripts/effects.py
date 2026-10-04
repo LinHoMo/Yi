@@ -1213,7 +1213,12 @@ def analyze_element_strength(result):
 
 
 def analyze_three_punishments(result):
-    """三刑（《卜筮正宗》定量版）：完整/待刑/自刑。循环刑寅巳申丑戌未、互刑子卯、自刑辰午酉亥。"""
+    """三刑（《卜筮正宗》定量版）：完整/待刑/自刑。循环刑寅巳申丑戌未、互刑子卯、自刑辰午酉亥。
+
+    书源（《增删卜易》）：凶方向——「主事爻與日月動爻作三刑者，占事不成……動化刑亦然」；
+    待刑（催刑）口径——「三刑少申字，防申日之危；此乃少一字，得後來之申日補之」
+    （野鶴驳「少一字不成三刑」旧说，虚一待用）。分值折算为工程映射。
+    """
     hex_info = result.get("original_hexagram", {})
     yao_lines = hex_info.get("yao_lines", [])
     if not yao_lines:
