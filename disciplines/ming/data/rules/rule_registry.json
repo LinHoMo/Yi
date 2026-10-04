@@ -73,7 +73,7 @@
    "source": {
     "book": "《神峰通考》",
     "locator": "起大运法阳男阴女/阴男阳女两节（「折除三日，为一岁」＋顺数/逆数至节气折算；语料行 2608/2612 逐字在库——2026-10-04n 核对翻转；机制同《渊海子平》通行口径）",
-    "quote_in_data": "disciplines/ming/data/dayun_quotes.json#yang_male_yin_female.quote",
+    "quote_in_data": "disciplines/ming/data/rules/dayun_quotes.json#yang_male_yin_female.quote",
     "quote_in_code": "core/yishu_core/ming_tables.py#三日折一年",
     "verified": true
    },
