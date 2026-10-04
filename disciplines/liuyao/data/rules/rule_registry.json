@@ -138,11 +138,13 @@
       "impl": "scripts/classical_enhancements.py:analyze_triple_combo(1507)（advanced_analysis.triple_combo）",
       "source": {
         "book": "《增删卜易》",
-        "locator": "三合成局（引文未逐字挂接——登记缺口）",
-        "verified": false
+        "locator": "升遷例（如酉月乙巳日占升遷得澤地萃之天地否）斷曰「虛一待用」＋增刪《黃金策千金賦》第三十四「合遭破以無功」野鶴注「合住沖破成功」（语料 zengshan_buyi.wikitext.txt 行1043/行969，逐字回验各恰 1 命中）",
+        "quote_in_data": "disciplines/liuyao/data/rules/verdict_texts.json#pattern_verdict_labels.三合成局.古典引文",
+        "quote_in_code": "disciplines/liuyao/scripts/classical_enhancements.py#虛一待用：《增删卜易》升遷例「欲成三合，因少卯字，明年卯月必升，此乃虛一待用」",
+        "verified": true
       },
       "applicability": "申子辰/寅午戌/巳酉丑/亥卯未三支成局， completeness 分待用/成局；静爻可参与；局力受冲破条件约束（:_check_sanhui_broken）",
-      "evaluation": {"status": "classical_holdout", "splits": ["tune", "holdout"], "dim": "sanhe_full_combo", "note": "sanhe_full_combo(2)/use_god_in_sanhe(2) 两维度；引文待逐字挂接，verified=false 诚实登记"}
+      "evaluation": {"status": "classical_holdout", "splits": ["tune", "holdout"], "dim": "sanhe_full_combo", "note": "sanhe_full_combo(2)/use_god_in_sanhe(2) 两维度；引文已逐字挂接（虛一待用/沖破成功两段，corpus 回验）"}
     },
     {
       "rule_id": "liuyao.guashen",

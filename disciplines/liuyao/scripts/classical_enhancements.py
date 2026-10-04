@@ -1583,7 +1583,7 @@ def analyze_triple_combo(result):
             # 检查是否能由日/月补齐
             locations = {b: pos_map[b] for b in combo_branches if pos_map[b]}
             if len(locations) == 2:
-                # 缺一个，看日/月是否有
+                # 缺一个，看日/月是否有（虛一待用：《增删卜易》升遷例「欲成三合，因少卯字，明年卯月必升，此乃虛一待用」）
                 missing = [b for b in combo_branches if not pos_map[b]][0]
                 if missing in (day_branch, month_branch):
                     # 由日/月补齐

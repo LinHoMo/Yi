@@ -1,3 +1,26 @@
+### 2026-10-04f 六爻三合局引文逐字挂接：`liuyao.sanhe` verified=false → true · 注册表引文缺口清偿
+
+> **性质**：纯 provenance 增量（TECH-DEBT §2.5 首行预登记债务按其解除路径执行）。
+> **engine/benchmark/评测读数零变化**——`analyze_triple_combo` 判据一字未动，只挂引文锚点。
+
+- **书源取证（`data/sources/zengshan_buyi.wikitext.txt`，程序化逐字回验各恰 1 命中）**：
+  ① 行1043 升遷例（如酉月乙巳日占升遷得澤地萃之天地否）斷曰：「且巳日沖動亥月與發動之未爻﹐
+  欲成三合﹐因少卯字﹐明年卯月必升﹐**此乃虛一待用**﹐果升於卯月﹐豈可謂之少一字不成三合耶」——
+  与引擎 `completeness` 分「完整/待日/待月」（缺一字由日/月补足仍论成局）直接对应；
+  ② 行969《黃金策千金賦》第三十四「合遭破以無功」野鶴注：「予得驗者﹐凡三合六合﹐𨿽不宜目下
+  日月動爻沖克﹐又宜後來之月沖開。正所謂**如逢合住﹐沖破成功**」——与 `_check_sanhui_broken`
+  局力冲破约束对应。引文含 wikisource 转写字（𨿽＝雖、全角逗号﹐）**逐字照录不改**。
+- **落地**：① `verdict_texts.json#pattern_verdict_labels.三合成局.古典引文`（该键组自身声明的
+  「古典引文」槽位，范式同 独发/独静）；② `classical_enhancements.py::analyze_triple_combo`
+  补一行代码锚点注释（needle 供 quote_in_code 回查）；③ 注册表 `liuyao.sanhe` 填
+  `quote_in_data`/`quote_in_code` 双指针并翻 `verified=true`（locator 注明语料行号与回验结果）。
+- **测试口径修正**：`tests/test_rule_registry.py::test_unverified_honest` 原断言
+  「unverified 规则必须存在」是把**缺口本身锁成永久状态**——缺口补挂后合法消失，
+  断言移除；「无引文指针必 verified=false」护栏由 `test_every_rule_has_one_quote_pointer`
+  继续承担（锁 provenance 纪律，不锁具体缺口）。
+- **验收**：`tests/test_rule_registry.py` 全绿；语料引文回验（脚本命中计数 1/1）；
+  render/golden 无消费面变化（三合成局.古典引文 无 narrate 消费者，仅注册表门与证据链回查用）。
+
 ### 2026-10-04e 版本真实性门（Version Truth Gate）：本地/远端/评测三态分离 · 新增 `tools/version_gate.py` + AGENTS.md §七
 
 > **性质**：流程治理（评审后修正）。engine/benchmark/评测读数零变化。

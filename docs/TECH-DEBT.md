@@ -79,7 +79,7 @@
 
 | 债务 | 现状 | 阻塞说明 |
 |---|---|---|
-| **六爻规则注册表引文缺口**：三合局（`liuyao.sanhe`）书源引文未逐字挂接，`verified=false` 如实登记 | 已登记（`data/rules/rule_registry.json`，测试 `tests/test_rule_registry.py` 逐条核查指针） | 补引文须逐字核对《增删卜易》原文后填 `quote_in_data/quote_in_code` 并翻转 verified；**禁止凭印象补引文** |
+| ~~**六爻规则注册表引文缺口**：三合局（`liuyao.sanhe`）书源引文未逐字挂接~~ **✅ 已清偿（2026-10-04f）** | 《增删卜易》升遷例「欲成三合，因少卯字……此乃虛一待用」（`zengshan_buyi.wikitext.txt` 行1043）＋《黃金策千金賦》第三十四「合遭破以無功」野鶴注「如逢合住，沖破成功」（行969）两段逐字挂接，程序化回验各恰 1 命中后翻 `verified=true`；引文落 `verdict_texts.json#pattern_verdict_labels.三合成局.古典引文` + 代码锚点注释，测试缺口在位断言随解锁移除（无指针必 false 护栏保留） | 见 CHANGELOG 2026-10-04f；engine/benchmark 零变化 |
 | **六爻规则注册表未覆盖域**：月破/三刑/六破/暗动/伏藏/游魂归魂/合绊/绝处逢生等 advanced_analysis 块已在 Evidence 里（factor 齐全）但未注册 rule_id | 证据可答责（factor/claim/出处），rule_id 留空 | 按域逐条补注册（每条带出处指针+评测覆盖），不一次堆完；无基准例的域宁可 status=unassessed |
 | ~~**其他科无规则注册表**~~ **已部分收口（2026-10-03b）**：ming（调候/格局成败/从格/大运/神煞 5 域）与 meihua（体用关系/生克之卦/应期 3 域）按六爻同范式建立；ming dayun/shensha 维度案例集 0 applicable 如实标 mechanical_regression | 注册表就位，evidence 挂接自动生效（normalize/guide/agent 同一机制） | ziwei/xiaoliuren/zeji 域少且无案例对齐 dim，注册时须如实标 mechanical_regression/unassessed；ming 无评测 dim 的结构标签域（xunkong/san_hui/tai_yuan/ten_god_combo/tong_guan/pillar_relations/female_fu_zi/tian_ke_di_chong）不注册、沿用学科基线，缺口保持显式；**strength 例外**——2026-10-04 起有 external report-only 读数，如实登记于注册表 `_uncovered ming.strength`（dim 契约所限不入 rules） |
 | **Evidence 评测粒度**：~~学科级默认~~ **规则级覆盖已接通（2026-10-03b）**：`attach_rule_registry` 挂接时以注册表 status 为准（可升也可如实降级），三科重点域按规则分化 | 六爻/ming/meihua 重点解释域规则级覆盖；未注册域仍沿用学科基线 | 其他域照范式逐步推广；**先立尺子再填覆盖**，禁人为制造 expected |

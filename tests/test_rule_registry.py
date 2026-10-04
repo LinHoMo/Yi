@@ -3,7 +3,7 @@
 
 覆盖：registry schema 与九个优先域齐全、出处指针（quote_in_data / quote_in_code）
      逐条可解析（引文真实存在于仓库）、评测覆盖只登记真实维度（dim 必须在
-     liuyao evaluate.py WEIGHTS 里）、verified=false 缺口如实登记、
+     liuyao evaluate.py WEIGHTS 里）、无引文指针必须 verified=false、
      evidence 挂接后 rule_id 可回溯。
 """
 from __future__ import annotations
@@ -146,12 +146,13 @@ class TestEvaluationCoverage:
                     f"{rule['rule_id']}：未知评测分列 {split}"
 
     def test_unverified_honest(self, registry) -> None:
-        """verified=false 的规则必须存在（三合引文缺口），且 status 不虚标外部集。"""
-        unverified = [r for r in registry["rules"] if not r["source"]["verified"]]
-        assert unverified, "缺口登记应在位（宁缺毋滥）"
-        for r in unverified:
-            assert r["evaluation"]["status"] != "external_holdout", \
-                f"{r['rule_id']}：未核引文不得虚标外部验证"
+        """unverified 规则（若有）不得虚标外部验证。不锁「必须存在缺口」——
+        缺口补挂后合法消失（2026-10-04f 三合局引文已逐字挂接翻 verified）；
+        无指针必 verified=false 的护栏由 test_every_rule_has_one_quote_pointer 承担。"""
+        for r in registry["rules"]:
+            if not r["source"]["verified"]:
+                assert r["evaluation"]["status"] != "external_holdout", \
+                    f"{r['rule_id']}：未核引文不得虚标外部验证"
 
 
 class TestEvidenceAttach:
