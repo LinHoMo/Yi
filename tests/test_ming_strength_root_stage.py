@@ -5,10 +5,10 @@
 1. provenance——衰旺章关键引文仍是语料的逐字子串（防凭印象改根权重口径）；
 2. 机械映射——长生/临官/帝旺＝重根 1.0、墓/余气库支＝轻根 0.25，只作用于
    木火金水日主之比劫根；戊己（土寄四隅流派不一）维持藏干层位权重；
-3. 外集隔离——本规则与外部独立集无反馈回路：ZE005/ZE017 改后仍为「中和」
-   （测量记录 Δ=0.0/−0.25，CHANGELOG 2026-10-04d）。此断言是隔离 tripwire：
-   若未来改动翻转两例，说明强弱打分变动已触及外集失配例，必须在
-   CHANGELOG 登记口径变更并复核外集 _provenance，不得静默通过。
+3. 外集隔离——根权重宫位分层与外部独立集无反馈回路：ZE005 改后仍为「中和」。
+   （原断言含 ZE017；2026-10-04l 三支全会聚轴落地后 ZE017 依书源口径翻为
+   「偏旺」，口径变更已登记 CHANGELOG 2026-10-04l，tripwire 相应改锁新读数
+   与 ju_bonus 血缘，防静默回退。）
 
  ming 的 chart/pattern 与他科 scripts/ 同名（conftest sys.path 顺序有约定），
  故按文件路径 importlib 加载，不向 sys.path 插入学科目录（照
@@ -34,9 +34,9 @@ ming_chart = _load("ming_chart_root_stage", "disciplines/ming/scripts/chart.py")
 ming_pattern = _load("ming_pattern_root_stage", "disciplines/ming/scripts/pattern.py")
 
 CORPUS = ROOT / "data" / "sources" / "di-tian-sui-chan-wei.wikitext.txt"
-# 外集两例：书源「太旺」→ 期望偏旺；本轮裁决后引擎仍判中和（失配如实保留，
-# 归因=中和带宽 + 三会/干透未建模，非根轴机制——见 registry ming.strength）
-EXT_ZE = ("ZE005", "ZE017")
+# 外集隔离锁例：ZE005（无三支全会聚，机制未建模须仍中和）；ZE017 的读数锁定
+# 移入 test_external_set_isolation_tripwire（2026-10-04l 会聚轴落地后翻偏旺）
+EXT_ZE = ("ZE005",)
 
 
 def _norm(text: str) -> str:
@@ -97,13 +97,26 @@ def test_earth_day_master_keeps_layer_weights():
 
 
 def test_external_set_isolation_tripwire():
-    """隔离锁：ZE005/ZE017 改后仍为中和。翻转即触发口径登记要求（见模块 docstring）。"""
+    """外集隔离 tripwire（2026-10-04l 口径变更后更新）。
+
+    ZE017 已随三支全会聚轴（JU_BONUS_W，方局章/神峰书源驱动）翻为「偏旺」——
+    该翻转系书源明文驱动的口径变更（CHANGELOG 2026-10-04l），非拿外集调参；
+    此处改为锁定其新读数与 ju_bonus 血缘，防未来静默回退。
+    ZE005（午月午时两刃，无三支全会聚）不受该轴影响，须仍为「中和」——
+    其失配机制（禄刃/天干比劫权重）仍未建模，若翻转须另行登记口径变更。
+    """
     cases_path = ROOT / "disciplines" / "ming" / "data" / "cases" / "ming_external_cases.json"
     cases = {c["id"]: c for c in json.loads(
         cases_path.read_text(encoding="utf-8"))["cases"]}
-    for cid in EXT_ZE:
-        strength, _, _ = _strength(cases[cid]["pillars"])
-        assert strength == "中和", (cid, strength)
+    strength, score, _ = _strength(cases["ZE005"]["pillars"])
+    assert strength == "中和", ("ZE005", strength)
+    strength, score, _ = _strength(cases["ZE017"]["pillars"])
+    assert strength == "偏旺", ("ZE017", strength)
+    cj = ming_chart.chart_from_pillars(cases["ZE017"]["pillars"], gender="男")
+    r = ming_pattern.strength_and_pattern(cj)
+    ju = r["ju_bonus"]
+    assert ju["total"] == 2.0 and ju["items"][0]["kind"] == "三会方", ju
+    assert ju["items"][0]["provenance"] == "engineering_mapping", ju
 
 
 def test_golden_request_chart_strength_stable():

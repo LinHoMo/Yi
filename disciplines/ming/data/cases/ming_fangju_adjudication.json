@@ -67,7 +67,14 @@
  "engine_state_at_adjudication": {
   "date": "2026-10-04k",
   "description": "strength_and_pattern（pattern.py:604）正常强弱分＝四柱藏干十神权重（日主之根按十二长生宫位分层：禄旺长生重根1.0/墓库余气轻根0.25）＋得令±1.2，阈值±1.5 三档。三合局（SAN_HE_GROUPS 三支全）仅两处进入：①从格路径——局内支本气化气、日主根失效、从神+2.0；②流年运支关系标签。两支拱局：无任何处理。三会方（SAN_HUI_GROUPS）：仅结构标签（san_hui），不入分。本节为裁决时点快照（信息性），非永久锁定——未来按 promotion_path 落地后应更新此处。",
-  "verification": "实读 pattern.py:203-272/351-358/604-707；外集 5 旺侧失配中 ZE017/021/022 判语明引会局/拱而引擎判中和"
+  "verification": "实读 pattern.py:203-272/351-358/604-707；外集 5 旺侧失配中 ZE017/021/022 判语明引会局/拱而引擎判中和",
+  "superseded_by": "2026-10-04l 落地：strength_and_pattern 新增三支全会聚生扶侧合势项（JU_BONUS_W=2.0，engineering_mapping，破局口径镜像从格路径），详见 promotion_2026_10_04l"
+ },
+ "promotion_2026_10_04l": {
+  "date": "2026-10-04l",
+  "scope": "通用规则：strength_and_pattern 三支全（三合局/三会方）且局内无支被异类六冲、局气生扶日主（同气或印）时，生扶侧 +2.0（JU_BONUS_W，engineering_mapping，复用库内从格路径同常数先例）；克泄耗侧不加不减（其局力由各支藏干十神权重承载——加负项被 ZE013 证伪：庚金得申子辰水局任注仍判太旺，泄/克/耗差序书源无标定，宁不减分）。从格判据 _from_judge 输入不变（其路径自带会局处理，避免双重计入）。两支拱局仍不实现（权重无书源标定，unresolved 登记）。",
+  "counterfactual": "实现前先模拟后实测，两轮一致：tune 0 触发 0 翻档（100.0 n=30 持平）；holdout 触发 6 例、翻档 2 例（MP134 巳午未三会火局扶丁火 中和→偏旺；MP164 亥卯未三合木局印扶丁火 偏弱→中和）——两例均无 strength expected（四柱对表回归集），holdout 分 96.7（n=246）持平；external 触发 6 例、翻档 1 例（ZE017 支类北方 太旺 miss→hit），外集读数 21/26→22/26；golden ming 请求盘（1990-05-20，无会聚）零漂移。",
+  "external_isolation": "落地依据＝本文件书源明文（方局章理论+神峰对照例），非外集读数；ZE017 翻转按 tripwire 协议登记口径变更（CHANGELOG 2026-10-04l）并复核外集 _provenance。ZE020/021/022 保持失配如实保留。"
  },
  "divergence_cases": [
   {"id": "ZE017", "book_category": "太旺", "source_axis": "支类北方（亥子丑三会）", "engine_judged": "中和"},

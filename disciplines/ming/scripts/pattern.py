@@ -94,6 +94,16 @@ LAYER_WEIGHT = {"本气": 1.0, "中气": 0.5, "余气": 0.25}
 WEAK_THRESHOLD = -1.5
 STRONG_THRESHOLD = 1.5
 
+# 三支全会聚合势（《滴天髓阐微·方局章》「柱中遇三支合势，吉凶之力较大」
+# 「干头无反复者，方局齐来，其气旺盛」；《神峰通考》「只喜巳中有金合局，所以金得乘旺也」）。
+# 书源纯定性序、无数值：JU_BONUS_W=2.0 是**工程映射**（engineering mapping），
+# 取库内从格路径三合局化气 +2.0 的同常数先例，非古法原值。
+# 仅计**生扶侧**（局气＝日主同气或印）：克泄耗侧的局力已由各支藏干十神权重承载
+# （衰旺章衰侧引局例 ZE007/008/011 在无加项下已全对）；克泄侧反向减分被 ZE013 证伪
+# ——庚金得申子辰水局，任注仍判「金太旺」（泄/克/耗的差序书源无标定，宁不减分）。
+# 破局口径与从格路径一致：局内任一支被异类六冲即破（同类库冲不破）。
+JU_BONUS_W = 2.0
+
 
 # 格局成败救应规则（《子平真诠·论用神成败救应/论相神紧要》，机械主干版）。
 # 每格定义：成条件（书源「何谓成」的成格结构，满足即成）、忌神类（破格者）、
@@ -666,6 +676,38 @@ def strength_and_pattern(chart_json: dict) -> dict:
             ke_xie_hao += 1.2
 
     score = round(sheng_fu - ke_xie_hao, 2)
+
+    # 三支全会聚合势（生扶侧限定，工程映射——口径见 JU_BONUS_W 注）。
+    # 从格判据（_from_judge）维持原输入：其路径已自带三合局化气/从神加权，
+    # 此处聚合势只作用于正常强弱分，避免双重计入。
+    sheng_fu_for_from = sheng_fu
+    ju_items = []
+    ju_bonus = 0.0
+    branch_list = [(pillars.get(p) or {}).get("branch") or ""
+                   for p in ("year", "month", "day", "hour")]
+    branch_list = [b for b in branch_list if b]
+    ju_chong: dict = {}
+    for b in branch_list:
+        for o in branch_list:
+            if o != b and ((b, o) in CHONG_PAIRS or (o, b) in CHONG_PAIRS):
+                ju_chong.setdefault(b, set()).add(o)
+    for table, kind in ((SAN_HE_GROUPS, "三合局"), (SAN_HUI_GROUPS, "三会方")):
+        for elem, grp in table.items():
+            members = sorted({b for b in branch_list if b in grp})
+            if len(members) != 3:
+                continue
+            if any(BRANCH_ELEMENTS.get(o) != BRANCH_ELEMENTS.get(m)
+                   for m in members for o in ju_chong.get(m, ())):
+                continue  # 局内支被异类六冲＝破局（凡会忌冲；同类库冲不破）
+            if elem == day_elem or SHENG_CYCLE.get(elem) == day_elem:
+                ju_items.append({"kind": kind, "element": elem,
+                                 "branches": members, "w": JU_BONUS_W,
+                                 "provenance": "engineering_mapping"})
+                ju_bonus += JU_BONUS_W
+    if ju_bonus:
+        sheng_fu += ju_bonus
+        score = round(sheng_fu - ke_xie_hao, 2)
+
     if score >= STRONG_THRESHOLD:
         strength = "偏旺"
     elif score <= WEAK_THRESHOLD:
@@ -685,7 +727,7 @@ def strength_and_pattern(chart_json: dict) -> dict:
     # 从格可判级判定（《滴天髓·从化论/从象/假从》；机械口径见 _from_judge 文档）：
     # 真从/假从/从旺/从强/从气/从势 分级，不再只标 tentative。
     from_kind, from_type, from_basis, tentative_from = _from_judge(
-        chart_json, details, day_stem, decree=decree, sheng_fu=sheng_fu)
+        chart_json, details, day_stem, decree=decree, sheng_fu=sheng_fu_for_from)
 
     if strength == "偏旺":
         useful = ["官杀", "食伤", "财"]
@@ -706,8 +748,9 @@ def strength_and_pattern(chart_json: dict) -> dict:
         "strength": strength,
         "strength_score": score,
         "decree_bonus": decree,
-        "sheng_fu": round(sheng_fu, 2),
+        "sheng_fu": round(sheng_fu_for_from, 2),
         "ke_xie_hao": round(ke_xie_hao, 2),
+        "ju_bonus": {"total": round(ju_bonus, 2), "items": ju_items},
         "pattern": pattern,
         "pattern_basis": pattern_basis,
         "pattern_cheng_bai": cb["pattern_cheng_bai"],
