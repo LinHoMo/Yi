@@ -1,3 +1,18 @@
+### 2026-10-04m 六爻注册表未覆盖域第三批：绝处逢生域注册（`liuyao.juechufengsheng`）· provenance 增量
+
+> **性质**：纯 provenance 增量（TECH-DEBT §2.5「注册表未覆盖域」第三批）。**engine 判据一字未改**。
+
+- **书源取证（`zengshan_buyi.wikitext.txt`，逐字回验各恰 1 命中）**：①千金賦「絕逢生而事成」
+  野鶴注：「大凡世與用神或絕於日或化絕﹐若得日月動爻生者﹐謂之絕處逢生」（行1325，含
+  寅日占卦酉爲用神例）；②疾病章：「用絕逢生危而有救……但得日月動爻有一而生扶者﹐
+  乃爲絕處逢生﹐臨危有救」（行3989）。与 `analyze_desperate_relief`（用神绝/死于日辰→
+  原神发动生扶）直接对应。
+- **落地**：`verdict_texts#pattern_verdict_labels.绝处逢生.古典引文` + docstring 锚点 +
+  注册表 `liuyao.juechufengsheng`（双指针，verified=true，dim=patterns）。
+- **诚实标注**：applicability 明示梯度分值（+2.0/0.5/0.2/−0.8）为工程映射——书源只立
+  「有生扶/无生扶」二分；「凶中反吉只作结构提示」设计边界照旧。
+- **验收**：根套件全绿；六爻学科门＋仓库门绿；render/golden 零变化。
+
 ### 2026-10-04l 命科强弱口径变更：三支全会聚生扶侧合势项落地（JU_BONUS_W=2.0 engineering mapping）· 外集 22/26
 
 > **性质**：通用规则落地（2026-10-04k 三会/拱局轴 source adjudication 的 promotion_path 执行）。

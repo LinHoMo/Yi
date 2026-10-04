@@ -186,6 +186,20 @@
       },
       "applicability": "静爻逢日冲：旺相＝暗动、衰＝日破（两端书源逐字可回查）；中间档（中和 0.4/偏弱 0.2）为**工程映射**非古法原值（GOAL §8 标注）。**已登记 source-engine 分歧**：书源卦例明言「休囚爲日破﹐不爲暗動」，而引擎偏弱(休囚)档给 0.2 暗动——因暗動章定义正文缺书源、孤例不裁决，engine 维持不改，待章正文语料入库后 source adjudication",
       "evaluation": {"status": "classical_holdout", "splits": ["tune", "holdout"], "dim": "patterns", "note": "patterns 维度登记「暗动」标签（2026-10-02g 起读 advanced_analysis.hidden_movement 结构）"}
+    },
+    {
+      "rule_id": "liuyao.juechufengsheng",
+      "domain": "绝处逢生",
+      "impl": "scripts/classical_enhancements.py:analyze_desperate_relief(1813)（advanced_analysis.desperate_relief）",
+      "source": {
+        "book": "《增删卜易》",
+        "locator": "千金賦「絕逢生而事成」野鶴注（用神絕於日/化絕，得日月動爻生＝絕處逢生）＋疾病章「用絕逢生危而有救」",
+        "quote_in_data": "disciplines/liuyao/data/rules/verdict_texts.json#pattern_verdict_labels.绝处逢生.古典引文",
+        "quote_in_code": "disciplines/liuyao/scripts/classical_enhancements.py#世與用神或絕於日或化絕，若得日月動爻生者，謂之絕處逢生",
+        "verified": true
+      },
+      "applicability": "用神（或世爻）绝/死于日辰或动而化绝，得日月动爻生扶＝绝处逢生、临危有救——引擎以原神发动且有力为强判（+2.0）、无力 0.5、原神静现 0.2、不现旬空月破 −0.8；梯度分值为工程映射（书源只立「有生扶/无生扶」二分），凶中反吉只作结构提示",
+      "evaluation": {"status": "classical_holdout", "splits": ["tune", "holdout"], "dim": "patterns", "note": "patterns 维度登记「绝处逢生」标签"}
     }
   ]
 }
