@@ -67,10 +67,11 @@
 |---|---|---|
 | **六爻「用神伏藏 + 合绊」进方向聚合**（2026-10-01u 登记）——**✅ 伏藏半边已清偿（2026-10-02s）**：核实合绊已有有界方向权重（原神贪合忘生 −2.0 / 日月合绊 −0.2 梯度 / 动化合绊 −0.3）；真空缺是「伏而不得出」方向零反馈，已补 −1.0（判据读 step2 `fu_cang_detail.results[].can_emerge` 结构，所本《黄金策·千金赋》"伏无提挈终徒尔"；分列验收全持平、golden 零漂移、`tests/test_liuyao_fu_no_emerge.py` 锁定） | 已清偿（残余：reg_07 引擎「飞空得出 +1.5」与占行人古籍直断的解释分歧，证据链可见；「不得出」书源基准例待建——119 例探针核实评测集暂无触发例） |
 | **六爻评测盲区**（~~旺衰定性、六神临用、墓库零覆盖~~ ✅ 30p 激活；~~卦身、三合零覆盖~~ ✅ 30r **卦身口径修复**：原实现按日干阴阳+代数定爻位，与《卜筮正宗》安月卦身诀（世爻阴阳+世爻位→卦身支）不符，已修并古籍例验证；卦身/三合/用神入三合维度激活；**六合/六冲判据已归一**（2026-10-01u：删手写卦名白名单，改由 core `hexagram_he_chong_kind` 判，tune 96.8 / holdout 89.7）；~~墓库只验临日/月墓~~ ✅ 2026-10-02a 补齐**动墓/化墓**（判据唯一源 `use_god_tomb_tags`，新外部集 `suigui_holdout` 两例书源真例），见 CHANGELOG 10-02a）：剩 ~~反吟/伏吟/进退神/入墓/暗动/月破为格局词子串匹配~~ ✅ 2026-10-02g 已改**读 `advanced_analysis` 结构**（`hidden_movement`/`monthly_break`/`triple_combo`/`three_punishments`/`repetition`；不再扫 `step5`/`summary` 文本），口径变更后读数：holdout 89.7→**90.2**、wikisource 56.3→**56.9**、suigui 92.0→**94.5**，tune 96.8 不变；`tests/test_liuyao_pattern_tags.py` 锁三口径（~~use_god_position 全 N/A~~ ✅ 30o 补 14 例） | 待清偿 | 需继续补基准例；用神多现案例爻位留 N/A 不硬填；卦身/三合无古籍案例锚点，只填主集（对通则对表） |
-| **命科案例评测两维已立（2026-09-30n）**：调候 21 例（tune）+ 四柱 174 例（holdout，《穷通宝鉴》命例表 70 表提取，历法反查真实时刻，引擎 174/174=对表回归，随机基线≈1.7%）；十神/藏干/格局/神煞/大运仍无书源 expected | 待扩 | 需从古籍占验实录建例（**只评书上明写的量，缺的记 null 走 N/A 剔除**）；「状元/词林」等富贵断语已逐字保留于 note 但**不计分**；十神/藏干为四柱派生量（同源性高，价值有限），格局/大运需书例明写 |
+| **命科案例评测已立三批（最新 2026-10-04）**：调候 21 例（tune）+ 四柱 174 例（holdout，对表回归，随机基线≈1.7%）+ **强弱外部独立集首批 19 例（`ming_external_cases.json`，《阐微》衰旺章任注显式标注例，永不调参，report-only 读数 17/19，照六爻应期分列范式不进 WEIGHTS）**；十神/藏干/格局/神煞/大运仍无书源 expected | 待扩（强弱可扩：阐微其余章节显式可判例） | 需从古籍占验实录建例（**只评书上明写的量，缺的记 null 走 N/A 剔除**）；「状元/词林」等富贵断语已逐字保留于 note 但**不计分**；十神/藏干为四柱派生量（同源性高，价值有限），格局/大运需书例明写 |
 | **命科八字缺失判据**：~~从格 kind 缺口~~ ✅ 2026-10-02t（通用规则「官杀当权不落从势」，from_kind 15/15，见 CHANGELOG 10-02t）；~~通关~~ ✅ 2026-10-02b 已落地（《滴天髓·通隔論》逐字入库 + 日主两路「官杀克身得印 / 身财相战得食伤」结构标签，只出结构不批吉凶）、病药、~~格局成败救应~~ ✅ 30t/30u、~~三会~~ ✅ 10-01p、~~四柱间独立刑冲害合~~ ✅ 2026-10-02f 已落地（`pattern.pillar_relations`：四支两两六合/六冲/六害 + 三刑，表取内核；《滴天髓·地支論》逐字三首入库；**合化/争合妒合/冲开墓库**仍欠，须透干与月令条件，语料待拓）、~~天干五合~~ ✅ 2026-10-02h（同函数四干两两，表取 `core.relations.STEM_WUHE`）、~~胎元~~ ✅ 10-01p、~~小运~~ ✅ 10-01p、~~流月~~ ✅ 10-01p、~~岁运并临~~ ✅ 30u、~~天克地冲~~ ✅ 10-01p、~~十神组合~~ ✅ 10-01p、女命夫子星（~~调候用神~~ ✅ 2026-09-30g 已落地，`ming_tables.TIAO_HOU`） | 待清偿 | 新增神煞/起例**无逐字出处者一律标 `verified=false`**，不得把流俗起例写成古法；~~病药（《神峰通考》）~~ ⚠️ 2026-10-03c 落地、**2026-10-03d 口径修正 + 分歧未解**（`pattern.py::bing_yao`：五行层主轴改取月令本气、藏干不入此层——原实现误取「全盘最重五行」，已按原文自注修正；十神层三对病药；每条带 `provenance` 区分`source_backed_exact`／`source_informed_generalization`；命例已入库 `ming_bing_yao_cases.json` external_holdout n=2 逐字取自书源，**但与实现层级分歧、方向相反，不计分**，见 §2.7）；地支合化/争合妒合/冲开墓库（须透干与月令条件，语料待拓）；女命夫子星（《滴天髓·女命章》有子星取法）仓库暂无对应语料，须先拓书源 |
 
 | 新门类：**N1 大六壬落地（骨架+多批深化+课目识别纯结构判据，条数与分组以 `scripts/kemu.py::IMPLEMENTED` 为准）+ 备选一灵棋经落地（第八科，124 课表直录，2026-09-30l）**，④ 已凑足两门；N1 剩余：课目表中**倚赖旺相/神煞/年月/年命**者（含需节气的天祸、二烦、天寇、孤寡、地盘等）/《毕法赋》/应期/涉害口径；N2 奇门：kinqimen MIT 参照已核，**煙波釣叟歌已抓取（5970B，第三轮成功）但实测无定局表**——定局起例表的书源仍未落实（遁甲演义/御定奇门宝鉴均实测不存在），骨架维持不启动；N3 七政四余未动 | 待清偿 | 骨架状态见 `docs/NEW-DISCIPLINES.md` §2.1 落地状态；N2 可参照 kentang2017 MIT 引擎（许可先核实，见 `docs/RESEARCH-HOROSA.md` §四）；相科按铁律不做 |
+| **强弱「禄刃根权重」分歧（2026-10-04 外集首批发现）**：ZE005（丙戌日午月午时两刃）/ZE017（壬子日亥月，支会北方）书源均判「太旺」，引擎均判「中和」——机制同源：`strength_and_pattern` 根权重只按 本气/中气/余气 分层，**禄刃长生之根与普通本气根同权**，而《阐微·衰旺》原文明写「长生禄旺，根之重者也；墓库余气，根之轻者也」「天干得一比肩，不如地支得一余气墓库」 | 待裁决 | 修复属规则变更：须按 `AGENTS.md` §四 完整闭环（衰旺章原文出处 + 通用规则 + tune/holdout/external 分列验收 + golden 零漂移），**禁止拿本集考卷调参**；登记见 ming 规则注册表 `_uncovered ming.strength` |
 | **大六壬课例集扩至 43 例后暴露的 2 例非涉害失配**（2026-10-02p；其余 8 例失配均落在引擎自标 `verified=false` 的涉害门，属已知异说）：`LE036` 癸未「似返吟卦…缘三传申寅申」（引文自述近昴星柔日，引擎按贼克出寅卯辰）、`LE041` 乙巳「传鬼化父母…三传酉巳丑」（引擎出子申辰，两读分属金局/水局） | 待追源 | 须先判定是**书源传抄讹误**还是**引擎通则缺陷**：两例引文已逐字留档（`data/cases/course_examples.json` 的 `source_quote`），可对照《大六壬指南》他本或卷一取传诀复核；**禁止为过此二例写 case 分支**（`AGENTS.md` §四.3），须落通用规则并说明古籍出处 |
 | **Horosa 调研采纳项**：① 报告忠实度审计工具 ✅（`tools/report_faithfulness.py`，12 例语料、确定性 supported/invented/contradicted 分类，已挂根门 [6]）；② 缺参结构化澄清信封 ✅（`core/yishu_core/report/request.py` 结构性缺参门禁：六壬无时刻不起课、灵棋三部缺一即无课等）；③ 合参「分歧披露不平均」✅（`synthesis/cross_rules.py`：分歧如实并列两趋向及触发条件，不平均不调和）；④ 报告机器可读出处块（口径开关+指纹）——部分：report_meta 页头+口径声明页脚已统一单源，机器可读指纹块未建；⑤ kentang2017 MIT 引擎许可核实——未做（奇门 N2 维持不启动，见 NEW-DISCIPLINES） | 部分清偿 | ④ 待建（须评估 render 指纹影响）；⑤ 随 N2 启动一并核（**AGPL 代码不得复制**） |
 
@@ -80,7 +81,7 @@
 |---|---|---|
 | **六爻规则注册表引文缺口**：三合局（`liuyao.sanhe`）书源引文未逐字挂接，`verified=false` 如实登记 | 已登记（`data/rules/rule_registry.json`，测试 `tests/test_rule_registry.py` 逐条核查指针） | 补引文须逐字核对《增删卜易》原文后填 `quote_in_data/quote_in_code` 并翻转 verified；**禁止凭印象补引文** |
 | **六爻规则注册表未覆盖域**：月破/三刑/六破/暗动/伏藏/游魂归魂/合绊/绝处逢生等 advanced_analysis 块已在 Evidence 里（factor 齐全）但未注册 rule_id | 证据可答责（factor/claim/出处），rule_id 留空 | 按域逐条补注册（每条带出处指针+评测覆盖），不一次堆完；无基准例的域宁可 status=unassessed |
-| ~~**其他科无规则注册表**~~ **已部分收口（2026-10-03b）**：ming（调候/格局成败/从格/大运/神煞 5 域）与 meihua（体用关系/生克之卦/应期 3 域）按六爻同范式建立；ming dayun/shensha 维度案例集 0 applicable 如实标 mechanical_regression | 注册表就位，evidence 挂接自动生效（normalize/guide/agent 同一机制） | ziwei/xiaoliuren/zeji 域少且无案例对齐 dim，注册时须如实标 mechanical_regression/unassessed；ming 无评测 dim 的结构标签域（strength/xunkong/san_hui/tai_yuan/ten_god_combo/tong_guan/pillar_relations/female_fu_zi/tian_ke_di_chong）不注册、沿用学科基线，缺口保持显式 |
+| ~~**其他科无规则注册表**~~ **已部分收口（2026-10-03b）**：ming（调候/格局成败/从格/大运/神煞 5 域）与 meihua（体用关系/生克之卦/应期 3 域）按六爻同范式建立；ming dayun/shensha 维度案例集 0 applicable 如实标 mechanical_regression | 注册表就位，evidence 挂接自动生效（normalize/guide/agent 同一机制） | ziwei/xiaoliuren/zeji 域少且无案例对齐 dim，注册时须如实标 mechanical_regression/unassessed；ming 无评测 dim 的结构标签域（xunkong/san_hui/tai_yuan/ten_god_combo/tong_guan/pillar_relations/female_fu_zi/tian_ke_di_chong）不注册、沿用学科基线，缺口保持显式；**strength 例外**——2026-10-04 起有 external report-only 读数，如实登记于注册表 `_uncovered ming.strength`（dim 契约所限不入 rules） |
 | **Evidence 评测粒度**：~~学科级默认~~ **规则级覆盖已接通（2026-10-03b）**：`attach_rule_registry` 挂接时以注册表 status 为准（可升也可如实降级），三科重点域按规则分化 | 六爻/ming/meihua 重点解释域规则级覆盖；未注册域仍沿用学科基线 | 其他域照范式逐步推广；**先立尺子再填覆盖**，禁人为制造 expected |
 | **合参维度词表跨科未统一**：~~仅同名词对照~~ **机制已就位（2026-10-03b）**：`synthesis/concept_map.json`（verified-only、全等匹配、零已验证条目起步）；无验证映射时对照行为与现状逐字段一致（selfcheck 锁定） | 机制债为零；语义债如实登记（含 1 条 verified=false 护栏样例：六爻六合六冲↔梅花体用关系） | 建跨科映射是**新规则工作**：逐字引文落 references/data/sources 后才可翻 verified 并经 CHANGELOG 登记；禁止硬编映射表冒充术语对齐 |
 | **六爻 `event_logger.py`（JSONL 事件日志）未接 canonical FeedbackRecord adapter** | 第三条反馈路径，已在 `core/feedback.SOURCE_SYSTEMS` 预登记 | 接入时写 `from_liuyao_event()` adapter + 测试；在此之前它不进任何效度统计 |
@@ -110,7 +111,7 @@
 
 对在库三书做跨书源取证（`disciplines/ming/data/cases/bingyao_cross_source.json`，
 schema `yi-bingyao-cross-source/1`，**非评测集、不计分**）。**《子平真诠》《滴天髓阐微》
-不在库**（§2.1 外部数据阻塞），故结论仅限已取证三书。
+~~不在库~~ **《滴天髓阐微》已于 2026-10-04 入库**（`data/sources/di-tian-sui-chan-wei.wikitext.txt`，401KB；同格式跨源取证解除）——《子平真诠》仍不在库（维基文库实测 missingtitle），故本节结论仍限已取证三书。
 
 **四问结论**：
 
@@ -133,7 +134,7 @@ schema `yi-bingyao-cross-source/1`，**非评测集、不计分**）。**《子�
 各自标 `provenance`，**彼此不冒充**。这与仓库既有纪律一致（各科成熟度不同、不得互相冒充）。
 
 **仍缺**：四书是否分裂、还是「神峰/穷通各一套 + 子平/滴天另有意」——**当前无法回答**。
-**解除路径**：《子平真诠》《滴天髓阐微》入库（外部数据阻塞），补做同格式取证。
+**解除路径**：《滴天髓阐微》✅ 已入库（2026-10-04，可补做同格式取证）；《子平真诠》维基文库实测 missingtitle，仍待他源。
 在此之前**不得**以「传统病药本应统一」为前提改engine。
 
 ### 2.7 病药口径分歧（2026-10-03 · 经 source adjudication 裁决，**禁止改规则前不动**）

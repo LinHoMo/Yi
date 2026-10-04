@@ -114,12 +114,20 @@
 - 金标准 6 用例与基线一致（**指纹值见 `disciplines/ming/data/golden/digest.json`**）；机械回归 5 例；pytest 覆盖。
 - **案例对齐评测**：**276 例（tune 30 / holdout 246）**——
   - 调候 225 例、格局成败 36 例（全 holdout）、从格 15 例（全 holdout）
-  - 读数（2026-10-02t）：tune 100.0%（30/30 调候）、holdout **strict 97.1%**
+  - 读数（2026-10-04 订正）：tune 100.0%（30/30 调候）、holdout **strict 96.7%**
     （n=246：pillars 189/189、tiaohou 21/21、pattern 28/36、
     cong_ge 13/15、from_kind 15/15——kind「杀势当权」通则补齐后；真/假灰区余 2 例 ZC014/015）
+    ⚠️ **旧记 97.1 系文档讹数**：自 10-02t 起五个提交点（d36df84→HEAD）复跑均为 96.7，
+    维度计数完全相同——均分差来自 8 例 ZP 体系分歧 case 级计 0 的算术，97.1 从未被复现。
   - **表对表回归 + 历法链路验证，不是泛化证据**
-  - **外部独立集（external_holdout）：未建**——评测尺子缺口在册
-    （《滴天髓阐微》语料已取得，判据待照调候批次机制落地；禁人为制造 expected）。
+  - **外部独立集（external_holdout）首批已建（2026-10-04）**：《滴天髓阐微》语料入库
+    （`data/sources/di-tian-sui-chan-wei.wikitext.txt`，401KB），**强弱维度** 19 例
+    （`ming_external_cases.json`，衰旺章任注显式标注例，永不调参；纳入规则/类别映射见其
+    `_provenance`）。读数为 **report-only**（`evaluate.py --split external_holdout`，
+    照六爻应期分列范式，不进 WEIGHTS、不设门槛）：**强弱对齐 17/19**。
+    分歧 2 例（ZE005/ZE017 书源「太旺」vs 引擎「中和」）同指一个机制——引擎根权重未区分
+    「禄刃长生之根」与普通本气根（衰旺章原文明写「长生禄旺，根之重者也」），
+    **登记待裁决（TECH-DEBT §2.3），未改 engine**。
     评测报告分层：机械回归 / 古籍对齐（source alignment）/ 外部独立集（external holdout）/
     现实回填反馈（outcome feedback）四类口径不得互相冒充。
 - **不做**：命运断语、流年吉凶定论
@@ -290,7 +298,9 @@ python tools/eval.py
    ✅ 2026-10-02g 已改**读 `advanced_analysis` 结构**（`hidden_movement`/`monthly_break`/
    `triple_combo`/`three_punishments`/`repetition`），不再扫 `step5`/`summary` 文本；
    新增 `[1.6]` 金标准已把 `patterns` 纳入机械指纹（见 CHANGELOG 10-02g）。
-3. **命科缺口**：四柱/十神/藏干/神煞/大运仍无书源 expected；**10-01p 已补**三会局、
+3. **命科缺口**：~~强弱无书源 expected~~ **2026-10-04 已立首批外集**（《阐微》衰旺章
+   n=19 report-only，17/19，禄刃根权重分歧 2 例登记待裁决，见 §一 命科段）；
+   四柱/十神/藏干/神煞/大运仍无书源 expected；**10-01p 已补**三会局、
    胎元、流月、小运、天克地冲、十神组合（六项机械结构标签，只出结构不批吉凶）；
    **10-02b 已补**通关/关隔（《滴天髓·通隔論》逐字入库 + 日主两路判据）；
    **10-02f 已补**四柱地支**刑冲害合**（`pattern.pillar_relations` 四支两两 +
@@ -305,7 +315,8 @@ python tools/eval.py
    故正确方向是 `discipline/source-specific interpretation`（各书按自身文本实现、
    各自标 provenance、彼此不冒充），**而非统一病药规则**。
    engine 现状：五行层**更接近穷通宝鉴而非神峰通考**（用错书源），但**不得断言字层是唯一语义层**。
-   仍不改engine；四书是否分裂当前无法回答（《子平真诠》《滴天髓阐微》不在库，§2.1 阻塞）。
+   仍不改engine；四书是否分裂当前无法回答——**《滴天髓阐微》2026-10-04 已入库**（同格式
+   跨源取证解除），《子平真诠》仍不在库（§2.1 阻塞）。
    全部登记见 TECH-DEBT §2.7/§2.8，观察集与跨源表**不计分、不入 holdout**。
    - ~~女命夫子星~~ ✅ 2026-10-02q 已补（`analyze.py::female_fu_zi`：官杀夫星/食伤子星，机械标注不批吉凶）。
    - ~~童子关煞~~ ✅ 2026-10-02q 已补（`shensha.py` 童子煞，民间通胜口诀、`verified=false`、只安星不批吉凶）。
@@ -405,7 +416,8 @@ tests/              pytest
 
 | 记号 | 内容 |
 |---|---|
-| 10-02s | 根门 pytest 遮蔽修复 + [1c] 白名单复核收紧 + 孤儿断语处置 + 六爻伏而不得出 −1.0（本棒） |
+| 10-04 | 命科外部独立集首批（《阐微》衰旺章强弱 19 例，report-only 17/19，禄刃根分歧 2 例登记）+ 阐微语料入库 + holdout 读数订正 97.1→96.7（本棒） |
+| 10-02s | 根门 pytest 遮蔽修复 + [1c] 白名单复核收紧 + 孤儿断语处置 + 六爻伏而不得出 −1.0 |
 | 10-01j | 六爻 docstring 瘦身 + 死代码清除 + DEEP-OPTIMIZE-PLAN 删除 |
 | 10-01i | 修"门在干净克隆上必红"两处 + 八科分科门挂进 CI |
 | 10-01h | 修"核心常量进正则"回归（六爻 19/20 报错） |
@@ -430,16 +442,14 @@ tests/              pytest
 
 ### 0. 交接状态
 
-- **代码状态**：工作区含 2026-10-02s 修复+治理批（pytest 遮蔽修复 / [1c] 白名单复核 / 孤儿断语处置 /
-  六爻伏而不得出 −1.0 / 文档同步），待提交。
-- **门状态**：`tools/check.py` 与 `--full` 档**均 EXIT=0**（10-02s 复验）；根 pytest **202 passed**（含伏而不得出 4 例、杀势当权 3 例锁定）；
-  八科行为指纹与六爻金标准（机械/措辞）全绿零漂移。
-- **上一轮交付（2026-10-01j）**：
-  - docstring 瘦身覆盖六爻全部主流程脚本（~1,200 行压缩）
-  - 6 处私有死函数清除（AST + grep 双重验证）
-  - 巨型改造历史档 `DEEP-OPTIMIZE-PLAN.md` 删除（130 KB）+ 对应 HTML 删除（220 KB）
-  - `thinking_chain_tests.py` 分隔符清理（4 处）
-  - CHANGELOG 口径登记（2026-10-01j）
+- **代码状态**：工作区含 2026-10-04 外部独立集批（《滴天髓阐微》语料入库 /
+  `ming_external_cases.json` 强弱 19 例 / evaluate `--split external_holdout` report-only /
+  `tools/eval.py --full` 挂载 / 注册表 `_uncovered ming.strength` / 守护测试 3 例 /
+  HANDOFF-TECH-DEBT-CHANGELOG 读数订正），待提交。
+- **门状态**：`tools/check.py --full` **EXIT=0**（10-04 复验）；根 pytest **364 passed**
+  （含外部集守护 3 例）；八科行为指纹与六爻金标准全绿零漂移。
+- **上一轮交付（2026-10-03e/f）**：病药 source adjudication 两轮——观察集 n=7 入库 +
+  跨书源语义分裂取证（结论「不应建统一病药模型」），engine 零改动（TECH-DEBT §2.7/§2.8）。
 - 跑门环境：Python 3.12+（3.10 见 §五之一 兼容修复）
 
 ### 1. 可执行清单（按优先序）
@@ -449,7 +459,7 @@ tests/              pytest
 | **A** | ~~render 段加 golden 基线~~ ✅ 2026-10-02c：根门 `[6b]` 八科 render MD 逐字节指纹入 `data/golden/render_digest.json` | 改一字即被测出 | `check.py --full` EXIT=0 |
 | **B** | ~~`NON_VERDICT` 白名单逐条复核~~ ✅ 2026-10-02s：过宽的括注两条收紧为「括注+短尾」，新增机械定位前缀剥离（官鬼（落在卯三爻）类真判语交还语料匹配），③修正硬编码、⑦删冗余、⑥b–g 逐条补"为何属非断语" | 复核后 strict 0 句豁免性漏判 | `verdict_audit --strict` EXIT=0 |
 | **C** | ~~孤儿断语清理~~ ✅ 2026-10-02s：删 9 条真孤儿（六爻 4+2、梅花 2、小六壬 3、verdict_texts 错位副本 1 + 死加载量）+ quote_lead 接线（两处内联合一）+ verdict_consumption ALLOWLIST 键级匹配修正与登记 | 清单与处置见 CHANGELOG 10-02s；八科 golden 零漂移（全量门 EXIT=0） | `check.py --full` EXIT=0 |
-| **D** | 命科外部独立集：字面标准（≥20 例书源 holdout 不参与调参）已由 子平真诠 36 例 + 滴天髓阐微 ZC 15 例 满足；更严口径（构建者盲测/跨书源）待命例提取——**2026-10-02s：《滴天髓阐微》维基文库条目已确认可得**，解除路径=照 ZC 批次机制网络提取 | 新 holdout split 读数（永不调参） | 新 split 分列读数 + golden 不漂移 |
+| **D** | 命科外部独立集：~~字面标准（≥20 例书源 holdout 不参与调参）~~ 已由 子平真诠 36 例 + 滴天髓阐微 ZC 15 例 满足；**2026-10-04 跨书源首批已立**：《滴天髓阐微》语料入库 + 强弱维度 19 例（`ming_external_cases.json`，external_holdout 永不调参，report-only 读数 17/19，禄刃根分歧 2 例登记）——扩集方向：阐微其余章节显式可判例（中和/身强弱语）、病药跨书源补证（§2.7/2.8 解除路径已开） | 新 holdout split 读数（永不调参） | ✅ `evaluate.py --split external_holdout`（17/19）+ golden 不漂移 + `check.py --full` 全绿 |
 | **E** | ~~六爻动墓·化墓用例~~ ✅ 2026-10-02a：判据 `use_god_tomb_tags`（日/月/动/化四类）+ 书源真例 `suigui_holdout` | 墓库维度覆盖动/化墓 | tune/holdout strict 不变（96.8/89.7）+ `dev_tools/check.py` EXIT=0 |
 | **F** | `tools/eval.py` 挂 `--full` 档 | 当前 EXIT=0 再挂，否则挂上去就是常红 | `--full` EXIT=0 + eval 分数有输出 |
 

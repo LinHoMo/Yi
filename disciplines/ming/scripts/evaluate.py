@@ -4,6 +4,7 @@
     python scripts/evaluate.py --split tune
     python scripts/evaluate.py --split holdout --verbose
     python scripts/evaluate.py --split all --save
+    python scripts/evaluate.py --split external_holdout   # 外部独立集（永不调参，强弱 report-only）
 
 口径（务必连同分数一起阅读，AGENTS.md 铁律三；方法学见 disciplines/ming/docs/EVAL-PLAN.md）：
   本脚本衡量的是**引擎输出与古籍案例要点的一致性**，不是现实世界预言命中率。
@@ -44,6 +45,7 @@ import analyze as analyze_mod  # noqa: E402
 import chart as chart_mod  # noqa: E402
 
 CASES_PATH = DISC / "data" / "cases" / "ming_classical_cases.json"
+EXTERNAL_PATH = DISC / "data" / "cases" / "ming_external_cases.json"
 OUT_DIR = DISC / "data" / "cases"
 
 WEIGHTS = {
@@ -83,6 +85,13 @@ def load_cases() -> list[dict]:
     return list(load_store().get("cases", []))
 
 
+def load_external_store() -> dict:
+    """外部独立集（external_holdout，永不调参）。文件缺失 = 集未建，如实报 n=0。"""
+    if not EXTERNAL_PATH.is_file():
+        return {}
+    return json.loads(EXTERNAL_PATH.read_text(encoding="utf-8"))
+
+
 # ── 跑引擎 ──────────────────────────────────────────────────────────────────
 
 def _pillars_to_datetime(pillars: dict) -> str | None:
@@ -90,13 +99,15 @@ def _pillars_to_datetime(pillars: dict) -> str | None:
     return pillars.get("datetime")
 
 
-def run_ids(ids: list[str], gender_default: str = "") -> dict:
+def run_ids(ids: list[str], gender_default: str = "",
+            cases_by_id: dict | None = None) -> dict:
     """逐例跑 chart→analyze，收集引擎输出。
 
     案例给公历 datetime → chart（干支历换算）；只给四柱 → chart_from_pillars
     （直填，birth.datetime 置空、不猜公历；大运起运岁数按近似）。
+    `cases_by_id` 供外部分片文件注入案例（缺省用主案例集）。
     """
-    by_id = {c["id"]: c for c in load_cases()}
+    by_id = cases_by_id if cases_by_id is not None else {c["id"]: c for c in load_cases()}
     out: dict = {"cases": [], "errors": []}
     for cid in ids:
         case = by_id.get(cid)
@@ -358,11 +369,51 @@ def print_dim_detail(res: dict) -> None:
             print(f"      · {note}")
 
 
+# ── 强弱外部读数（report-only，照六爻应期日/月/年分列范式：只报数，不设新门槛） ──
+
+# 书源衰旺类别 → 引擎三档的大类化（与 ZC 集 kind 大类化同范式）。
+# 引擎粒度只有三档，映射只向"旺侧/衰侧"归并，不得倒推书源原词。
+STRENGTH_BOOK_CATEGORY = {
+    "太旺": "偏旺", "旺极": "偏旺", "衰": "偏弱", "太衰": "偏弱", "衰极": "偏弱",
+}
+
+
+def strength_tally(engine_out: dict, base_by_id: dict, ids: list[str]) -> list[dict]:
+    """逐例对齐强弱标签：expected.strength（由书源类别大类化而来） vs 引擎 强弱。"""
+    by_e = {c.get("id"): c for c in engine_out.get("cases", [])}
+    rows = []
+    for cid in ids:
+        b = base_by_id.get(cid)
+        e = by_e.get(cid)
+        if b is None or e is None:
+            continue
+        exp = b.get("expected") or {}
+        want = exp.get("strength")
+        if not want:
+            continue
+        got = (e.get("strength") or {}).get("strength") or ""
+        rows.append({"id": cid, "want": want, "got": got, "hit": got == want,
+                     "book_category": exp.get("strength_book_category") or ""})
+    return rows
+
+
+def print_strength_reading(rows: list[dict]) -> None:
+    hit = sum(1 for r in rows if r["hit"])
+    print(f"\n强弱对齐（external_holdout · report-only，不设门槛、非命中率）：{hit}/{len(rows)}")
+    for r in rows:
+        if not r["hit"]:
+            print(f"  · {r['id']}: 书源「{r['book_category']}」→ 期望 {r['want']}"
+                  f" vs 引擎 {r['got'] or '—'}")
+    print("  口径：书源类别按大类化映射（太旺/旺极→偏旺；衰/太衰/衰极→偏弱）；"
+          "映射表与纳入规则见案例文件 _provenance。本集永不调参。")
+
+
 def main() -> int:
     force_utf8_stdio()
     ap = argparse.ArgumentParser(
         description="命科八字古籍案例对齐评分（非现实预测命中率；方法学见 docs/EVAL-PLAN.md）")
-    ap.add_argument("--split", choices=["tune", "holdout", "all"], default="all")
+    ap.add_argument("--split", choices=["tune", "holdout", "all", "external_holdout"],
+                    default="all")
     ap.add_argument("--ids", nargs="*", help="指定案例 ID，优先于 --split")
     ap.add_argument("--stage", choices=["run", "score", "all"], default="all")
     ap.add_argument("--engine-file", type=Path, help="已有的引擎输出（配合 --stage score）")
@@ -370,15 +421,20 @@ def main() -> int:
     ap.add_argument("--save", action="store_true", help="写出 JSON 明细到 data/cases/")
     args = ap.parse_args()
 
+    external = args.split == "external_holdout"
+    ext_store = load_external_store() if external else {}
     if args.ids:
         ids, label = args.ids, "custom"
+    elif external:
+        ids, label = list((ext_store.get("splits") or {}).get("external_holdout") or []), args.split
     else:
         ids, label = load_ids(args.split), args.split
 
     store = load_store()
     if not ids:
         print(f"=== 命科 [{label}] 尚无案例（n=0）===")
-        print("  cases 文件：" + str(CASES_PATH.relative_to(DISC.parent.parent)))
+        src = EXTERNAL_PATH if external else CASES_PATH
+        print("  cases 文件：" + str(src.relative_to(DISC.parent.parent)))
         print("  这不是「无结果」，是「还没有尺子」。建集规范见 disciplines/ming/docs/EVAL-PLAN.md 第三节。")
         print("  口径提醒：只评书上明写的量；未记录的维度记 N/A 并从分母剔除。")
         n_cases = len(store.get("cases") or [])
@@ -392,9 +448,13 @@ def main() -> int:
         label = f"{label}(cached)"
     else:
         print(f"运行 {len(ids)} 例（{label}）…")
-        engine_out = run_ids(ids)
+        cases_by_id = {c["id"]: c for c in ext_store.get("cases", [])} if external else None
+        engine_out = run_ids(ids, cases_by_id=cases_by_id)
 
-    base = {c["id"]: c for c in load_cases()}
+    if external:
+        base = {c["id"]: c for c in ext_store.get("cases", [])}
+    else:
+        base = {c["id"]: c for c in load_cases()}
     res = run_eval(engine_out, base, ids, WEIGHTS, score_case, MODEL, label, args.verbose)
 
     # N/A 计数：run_eval 只统计 score_case **返回过**的维度，于是"基准未记"
@@ -406,6 +466,24 @@ def main() -> int:
         for k in WEIGHTS:
             if k not in row["dims"]:
                 res["dims"][k]["na"] += 1
+
+    # 外部集当前唯一维度是强弱（report-only，无加权 dim）：所有行 applicable=0，
+    # 「平均分」口径不适用——直接给强弱读数，避免"平均分 0%"式的误导输出。
+    if scored_rows and all(r.get("applicable", 0) == 0 for r in scored_rows):
+        rows = strength_tally(engine_out, base, ids)
+        unrunnable0 = [c for c in engine_out.get("cases", []) if "error" in c]
+        if unrunnable0:
+            print(f"不可跑 {len(unrunnable0)} 例（不计分，如实登记）：")
+            for c in unrunnable0:
+                print(f"  · {c.get('id')}: {c.get('error')}")
+        if rows:
+            print_strength_reading(rows)
+        else:
+            print("外部集案例无 strength expected（纳入规则见案例文件 _provenance）")
+        errored0 = [e["id"] for e in engine_out.get("errors", [])]
+        if errored0:
+            print(f"\n引擎报错 {len(errored0)} 例：{', '.join(errored0)}")
+        return 1 if errored0 else 0
 
     report(res)
 

@@ -1,0 +1,23 @@
+{
+  "key": "di-tian-sui-chan-wei",
+  "kind": "八字·用神",
+  "title": "滴天髓闡微",
+  "site": "zh.wikisource.org",
+  "api": "https://zh.wikisource.org/w/api.php",
+  "pages": [
+    "滴天髓闡微"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-04 08:45:11+0800",
+  "sha256": "fca26ffdcd399ae3536d24bfaf8c6612945f0642bb052617b22c2d322c034416",
+  "stats": {
+    "bytes": 401836,
+    "chars": 143726,
+    "lines": 5751,
+    "ganzhi_pairs": 6306,
+    "tables": 0,
+    "headings": 65
+  },
+  "source_file": "data/sources/di-tian-sui-chan-wei.wikitext.txt",
+  "note": "公版古籍原文的字符级转存，未做任何改写或模型转写；子页以 <!-- ==== 标题 ==== --> 分隔。"
+}

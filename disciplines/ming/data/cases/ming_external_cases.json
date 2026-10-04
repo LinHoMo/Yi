@@ -1,0 +1,387 @@
+{
+ "schema": "yi-ming-external-cases/1",
+ "_comment": "命科外部独立集（external_holdout，**永不调参**——不进 tune/holdout、不参与调参、不冒充命中率）。范式照 meihua external_cases.json 与 ming_bing_yao_cases.json。首批评测维度：强弱（引擎三档 偏旺/偏弱/中和）。强弱无加权 dim（evaluate WEIGHTS 不含 strength），读数为 report-only：`python scripts/evaluate.py --split external_holdout`。升级为加权 dim 属口径变更，须先登记 docs/CHANGELOG.md 并冻结本集。",
+ "_provenance": {
+  "book": "《滴天髓阐微》（任铁樵注本）",
+  "source_file": "data/sources/di-tian-sui-chan-wei.wikitext.txt",
+  "location": "通神论·十七、衰旺",
+  "fetched": "2026-10-04（tools/fetch_source.py，维基文库）",
+  "batch_rule": "纳入规则（跑引擎前声明）：衰旺章内任注**显式标注衰旺类别**（太旺/旺极/衰/太衰/衰极）之命例全收；该章第 18 例（四柱皆水）任注无显式类别词，按规则剔除（剔除块不占 ZE 编号，ZE 编号对显式例紧凑递增）。章节尾书源自证：「以上二十造，五行极旺极衰，不得中和之气」。n=19（旺侧 9 / 衰侧 10）。",
+  "pillar_check": "四柱按书源竖排**年月日时序**直录；19 例全部通过时柱五鼠遁与首运（年干阴阳×性别×月柱顺逆）自洽校验；日主与任注所述逐一相符。",
+  "category_mapping": {
+   "太旺": "偏旺",
+   "旺极": "偏旺",
+   "衰": "偏弱",
+   "太衰": "偏弱",
+   "衰极": "偏弱"
+  },
+  "contamination_note": "强弱阈值（±1.5）与层次权重从未以任何案例集调参（本批之前仓库无 strength expected，无可调之尺）；同书从象/假从章 ZC 批曾参与从格 kind 调参（CHANGELOG 10-02t），但强弱标签由生扶−克泄耗阈值独立算出，与从格判据无反馈回路。仍按永不调参纪律执行。"
+ },
+ "splits": {
+  "external_holdout": [
+   "ZE001",
+   "ZE002",
+   "ZE003",
+   "ZE004",
+   "ZE005",
+   "ZE006",
+   "ZE007",
+   "ZE008",
+   "ZE009",
+   "ZE010",
+   "ZE011",
+   "ZE012",
+   "ZE013",
+   "ZE014",
+   "ZE015",
+   "ZE016",
+   "ZE017",
+   "ZE018",
+   "ZE019"
+  ]
+ },
+ "cases": [
+  {
+   "id": "ZE001",
+   "split": "external_holdout",
+   "book": "滴天髓阐微",
+   "location": "通神论·十七、衰旺",
+   "source_quote": "甲子日生卯月，地支两辰，是木之余气也，又辰卯东方，子辰拱水，木太旺者似金也，以丁火为用。",
+   "pillars": {
+    "year": "甲辰",
+    "month": "丁卯",
+    "day": "甲子",
+    "hour": "戊辰"
+   },
+   "gender": "",
+   "expected": {
+    "strength": "偏旺",
+    "strength_book_category": "太旺"
+   }
+  },
+  {
+   "id": "ZE002",
+   "split": "external_holdout",
+   "book": "滴天髓阐微",
+   "location": "通神论·十七、衰旺",
+   "source_quote": "此造四支皆木，又逢水生，六木两水，别无他气。木旺极者，似火也，出身祖业本丰。",
+   "pillars": {
+    "year": "癸卯",
+    "month": "乙卯",
+    "day": "甲寅",
+    "hour": "乙亥"
+   },
+   "gender": "",
+   "expected": {
+    "strength": "偏旺",
+    "strength_book_category": "旺极"
+   }
+  },
+  {
+   "id": "ZE003",
+   "split": "external_holdout",
+   "book": "滴天髓阐微",
+   "location": "通神论·十七、衰旺",
+   "source_quote": "此造地支土金，木无盘根之处，时干辛金，元神发透，木太衰者，似水也，初运癸未壬午，生木制金，刑丧早见，荫疪难丰；辛巳庚辰，金逢生地，白手发财数万；己卯运土无根，木得地，遭回禄，破财万余；至寅而亡 。",
+   "pillars": {
+    "year": "乙丑",
+    "month": "甲申",
+    "day": "甲申",
+    "hour": "辛未"
+   },
+   "gender": "",
+   "expected": {
+    "strength": "偏弱",
+    "strength_book_category": "太衰"
+   }
+  },
+  {
+   "id": "ZE004",
+   "split": "external_holdout",
+   "book": "滴天髓阐微",
+   "location": "通神论·十七、衰旺",
+   "source_quote": "此造地支皆逢克泄，天干又透火土，全无水气。木衰极者，似土也。",
+   "pillars": {
+    "year": "己巳",
+    "month": "己巳",
+    "day": "乙酉",
+    "hour": "丙戌"
+   },
+   "gender": "",
+   "expected": {
+    "strength": "偏弱",
+    "strength_book_category": "衰极"
+   }
+  },
+  {
+   "id": "ZE005",
+   "split": "external_holdout",
+   "book": "滴天髓阐微",
+   "location": "通神论·十七、衰旺",
+   "source_quote": "此丙戌日元，月时两刃，壬水无根，又逢木泄。火太旺者，似水也。",
+   "pillars": {
+    "year": "乙丑",
+    "month": "壬午",
+    "day": "丙戌",
+    "hour": "甲午"
+   },
+   "gender": "",
+   "expected": {
+    "strength": "偏旺",
+    "strength_book_category": "太旺"
+   }
+  },
+  {
+   "id": "ZE006",
+   "split": "external_holdout",
+   "book": "滴天髓阐微",
+   "location": "通神论·十七、衰旺",
+   "source_quote": "此造丙火生孟夏，地支两坐长生而逢禄旺。火旺极者，似土也。",
+   "pillars": {
+    "year": "戊寅",
+    "month": "丁巳",
+    "day": "丙寅",
+    "hour": "甲午"
+   },
+   "gender": "",
+   "expected": {
+    "strength": "偏旺",
+    "strength_book_category": "旺极"
+   }
+  },
+  {
+   "id": "ZE007",
+   "split": "external_holdout",
+   "book": "滴天髓阐微",
+   "location": "通神论·十七、衰旺",
+   "source_quote": "丁火生于八月，秋金秉令，又全金局。火衰者，似木也。",
+   "pillars": {
+    "year": "辛巳",
+    "month": "丁酉",
+    "day": "丁酉",
+    "hour": "辛丑"
+   },
+   "gender": "",
+   "expected": {
+    "strength": "偏弱",
+    "strength_book_category": "衰"
+   }
+  },
+  {
+   "id": "ZE008",
+   "split": "external_holdout",
+   "book": "滴天髓阐微",
+   "location": "通神论·十七、衰旺",
+   "source_quote": "此财生杀，杀功身，丙临申，申辰拱水。火衰极者，似金也。",
+   "pillars": {
+    "year": "辛亥",
+    "month": "壬辰",
+    "day": "丙申",
+    "hour": "己亥"
+   },
+   "gender": "",
+   "expected": {
+    "strength": "偏弱",
+    "strength_book_category": "衰极"
+   }
+  },
+  {
+   "id": "ZE009",
+   "split": "external_holdout",
+   "book": "滴天髓阐微",
+   "location": "通神论·十七、衰旺",
+   "source_quote": "此造重重厚土，生于夏令，土太旺者，似木也，其用在金。",
+   "pillars": {
+    "year": "戊辰",
+    "month": "戊午",
+    "day": "戊申",
+    "hour": "己未"
+   },
+   "gender": "",
+   "expected": {
+    "strength": "偏旺",
+    "strength_book_category": "太旺"
+   }
+  },
+  {
+   "id": "ZE010",
+   "split": "external_holdout",
+   "book": "滴天髓阐微",
+   "location": "通神论·十七、衰旺",
+   "source_quote": "此造四柱火土，全无克泄。土旺极者，似金也。",
+   "pillars": {
+    "year": "戊戌",
+    "month": "丙辰",
+    "day": "己巳",
+    "hour": "己巳"
+   },
+   "gender": "",
+   "expected": {
+    "strength": "偏旺",
+    "strength_book_category": "旺极"
+   }
+  },
+  {
+   "id": "ZE011",
+   "split": "external_holdout",
+   "book": "滴天髓阐微",
+   "location": "通神论·十七、衰旺",
+   "source_quote": "此造支类北方，水势汪洋，天干又透金水。土太衰者，似火也。",
+   "pillars": {
+    "year": "壬辰",
+    "month": "辛亥",
+    "day": "戊子",
+    "hour": "癸丑"
+   },
+   "gender": "",
+   "expected": {
+    "strength": "偏弱",
+    "strength_book_category": "太衰"
+   }
+  },
+  {
+   "id": "ZE012",
+   "split": "external_holdout",
+   "book": "滴天髓阐微",
+   "location": "通神论·十七、衰旺",
+   "source_quote": "此四柱皆水，又得金生。土衰极者，似水也。",
+   "pillars": {
+    "year": "癸酉",
+    "month": "甲子",
+    "day": "戊子",
+    "hour": "戊午"
+   },
+   "gender": "",
+   "expected": {
+    "strength": "偏弱",
+    "strength_book_category": "衰极"
+   }
+  },
+  {
+   "id": "ZE013",
+   "split": "external_holdout",
+   "book": "滴天髓阐微",
+   "location": "通神论·十七、衰旺",
+   "source_quote": "此造秋金秉令，木火全无。金太旺者，似火也。",
+   "pillars": {
+    "year": "壬申",
+    "month": "己酉",
+    "day": "庚子",
+    "hour": "庚辰"
+   },
+   "gender": "",
+   "expected": {
+    "strength": "偏旺",
+    "strength_book_category": "太旺"
+   }
+  },
+  {
+   "id": "ZE014",
+   "split": "external_holdout",
+   "book": "滴天髓阐微",
+   "location": "通神论·十七、衰旺",
+   "source_quote": "此造支类西方，又逢厚土，金旺极者，似水也。",
+   "pillars": {
+    "year": "庚申",
+    "month": "乙酉",
+    "day": "庚戌",
+    "hour": "庚辰"
+   },
+   "gender": "",
+   "expected": {
+    "strength": "偏旺",
+    "strength_book_category": "旺极"
+   }
+  },
+  {
+   "id": "ZE015",
+   "split": "external_holdout",
+   "book": "滴天髓阐微",
+   "location": "通神论·十七、衰旺",
+   "source_quote": "辛金生于促夏，地支皆逢财杀。金太衰者，似土也。",
+   "pillars": {
+    "year": "己卯",
+    "month": "庚午",
+    "day": "辛卯",
+    "hour": "甲午"
+   },
+   "gender": "",
+   "expected": {
+    "strength": "偏弱",
+    "strength_book_category": "太衰"
+   }
+  },
+  {
+   "id": "ZE016",
+   "split": "external_holdout",
+   "book": "滴天髓阐微",
+   "location": "通神论·十七、衰旺",
+   "source_quote": "此造木旺乘权，又得水生，四面皆逢财杀。金衰极者，似木也。",
+   "pillars": {
+    "year": "己亥",
+    "month": "丁卯",
+    "day": "庚寅",
+    "hour": "丙子"
+   },
+   "gender": "",
+   "expected": {
+    "strength": "偏弱",
+    "strength_book_category": "衰极"
+   }
+  },
+  {
+   "id": "ZE017",
+   "split": "external_holdout",
+   "book": "滴天髓阐微",
+   "location": "通神论·十七、衰旺",
+   "source_quote": "此造壬水生于孟冬，支类北方，干皆金水。水太旺者，似土也，喜其寅木吐秀。",
+   "pillars": {
+    "year": "壬寅",
+    "month": "辛亥",
+    "day": "壬子",
+    "hour": "辛丑"
+   },
+   "gender": "",
+   "expected": {
+    "strength": "偏旺",
+    "strength_book_category": "太旺"
+   }
+  },
+  {
+   "id": "ZE018",
+   "split": "external_holdout",
+   "book": "滴天髓阐微",
+   "location": "通神论·十七、衰旺",
+   "source_quote": "此火土当权，又逢木助，五行无金。水太衰者，似金也。",
+   "pillars": {
+    "year": "丙辰",
+    "month": "乙未",
+    "day": "壬午",
+    "hour": "癸卯"
+   },
+   "gender": "",
+   "expected": {
+    "strength": "偏弱",
+    "strength_book_category": "太衰"
+   }
+  },
+  {
+   "id": "ZE019",
+   "split": "external_holdout",
+   "book": "滴天髓阐微",
+   "location": "通神论·十七、衰旺",
+   "source_quote": "此造丙火当权，戊癸从化，枯干壬水。水衰极者，似火也。",
+   "pillars": {
+    "year": "癸卯",
+    "month": "戊午",
+    "day": "壬寅",
+    "hour": "丙午"
+   },
+   "gender": "",
+   "expected": {
+    "strength": "偏弱",
+    "strength_book_category": "衰极"
+   }
+  }
+ ]
+}

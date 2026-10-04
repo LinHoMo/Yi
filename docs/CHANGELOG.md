@@ -1,3 +1,51 @@
+### 2026-10-04 命科外部独立集首批：强弱维度（external_holdout · report-only）+ 《滴天髓阐微》语料入库
+
+> **性质**：独立验证推进（external holdout 从无到有）+ 一处读数订正。**未改 engine 推演一行**。
+> 评测证据链位置：命科从「古籍对齐（source alignment）」右移一层到
+> 「外部独立集（external holdout）」——首批 n=19，永不调参。
+
+- **《滴天髓阐微》语料入库**：`data/sources/di-tian-sui-chan-wei.wikitext.txt`
+  （401,836 字节 / 5,751 行 / 干支对 6,306，维基文库单页全本，通神论 34 章 + 六亲论 29 章，
+  任注命例嵌于正文）。`tools/fetch_source.py` 目录新增 `di-tian-sui-chan-wei` 条目
+  （先 `--check` 实测后登记）。**同时解锁**：命科外部集（HANDOFF §四.D）、
+  病药跨书源补证（TECH-DEBT §2.7/§2.8 解除路径）、命科合化/化格语料缺口。
+- **外部独立集首批（`ming_external_cases.json`，schema `yi-ming-external-cases/1`，n=19）**：
+  - **维度选型**：强弱——命科最基础且此前**零案例覆盖**的维度；引擎扶抑口径出自
+    《渊海子平》通行口径（不在库），与阐微**不同源**，构成真 external。
+  - **纳入规则（跑引擎前声明）**：通神论·衰旺章内任注**显式标注衰旺类别**
+    （太旺/旺极/衰/太衰/衰极）之命例全收；该章第 18 块（四柱皆水）任注无显式类别词，
+    按规则剔除。章节尾书源自证「以上二十造，五行极旺极衰，不得中和之气」。
+  - **四柱校验**：19 例全部通过时柱五鼠遁 + 首运（年干阴阳×月柱顺逆）自洽校验；
+    日主与任注所述逐一相符；书源类别→引擎三档**大类化映射**（太旺/旺极→偏旺；
+    衰/太衰/衰极→偏弱）与 ZC 集 kind 大类化同范式，映射表随集登记（`_provenance`）。
+  - **污染披露**：强弱阈值（±1.5）与层次权重从未以任何案例集调参（本批前仓库无
+    strength expected，无可调之尺）；同书从象/假从章 ZC 批曾参与从格 kind 调参，
+    但强弱标签路径与从格判据无反馈回路。
+- **读数（report-only，照六爻应期日/月/年分列范式：只报数，不设新门槛、不进 WEIGHTS）**：
+  `python scripts/evaluate.py --split external_holdout` → **强弱对齐 17/19**。
+  分歧 2 例（ZE005 丙戌日午月午时两刃 / ZE017 壬子日亥月支会北方）书源均判「太旺」、
+  引擎均判「中和」——**机制同源**：`strength_and_pattern` 根权重只按 本气/中气/余气
+  分层，禄刃长生之根与普通本气根同权，而衰旺章原文明写「长生禄旺，根之重者也；
+  墓库余气，根之轻者也」。**登记待裁决（TECH-DEBT §2.3），不改 engine**；
+  修复须走完整规则变更闭环，禁止拿本集考卷调参。
+- **配套**：`evaluate.py` 增 `--split external_holdout`（外部分片文件装载 + 强弱读数块；
+  全部行 applicable=0 时不打误导性「平均分」，只出强弱对数）；`tools/eval.py --full`
+  增挂 ming 外集（六爻范式），并订正其陈旧 docstring（ming 已有案例对齐评测）；
+  ming 规则注册表 `_uncovered` 增 `ming.strength` 条目（dim 契约所限不入 rules，
+  如实登记 coverage/maturity）；`tests/test_ming_external_cases.py` 3 例守护
+  （provenance 指得回原文 / split 零交集 / report-only 白名单防静默晋升）。
+- **测试污染修复（实踩 conftest 已登记的同名遮蔽陷阱）**：守护测试首版以
+  `spec_from_file_location` 执行 evaluate.py，其模块体裸名 `import chart/analyze`
+  在 conftest 路径序（liuyao/scripts 先于 ming/scripts）下拿到**六爻**模块并缓存进
+  `sys.modules`，使 `test_ming_dayun` 的 `from chart import chart` 拿错科而
+  `TypeError: unexpected keyword 'gender'`。改为 **ast 从源码读取
+  `STRENGTH_BOOK_CATEGORY` 字面量**（不执行模块，不进 sys.modules）。
+- **读数订正（文档讹数，非引擎漂移）**：命科 holdout strict 均分实为 **96.7**，
+  自 10-02t 起文档记 97.1。在 d36df84 / 3c96aaf / 3cb21e7 / e1eb18f / HEAD 五个提交点
+  复跑均为 96.7（维度计数 pillars 189/189、tiaohou 21/21、pattern 28/36、
+  cong_ge 13/15、from_kind 15/15 全同）——均分差来自 8 例 ZP 体系分歧 case 级计 0
+  的算术，97.1 从未被复现。HANDOFF §一 ming 读数同步订正。
+
 ### 2026-10-03f Source Adjudication v2：跨书源语义取证 · **结论是「分裂」，故不应建统一病药模型**
 
 > **性质**：纯取证，**未改 engine 一行**。回答评审指定的四问。

@@ -100,6 +100,11 @@ CATALOG = (
     {"key": "di-tian-sui", "kind": "八字·用神", "title": "滴天髓",
      "pages": [], "status": "ok",
      "note": "2026-10-01 重抓实测 60578 字节（含任注從化論：『從得真者只論從』逐字在库），此前 skeleton 判定过期"},
+    {"key": "di-tian-sui-chan-wei", "kind": "八字·用神", "title": "滴天髓闡微",
+     "pages": [], "status": "ok",
+     "note": "2026-10-04 实测存在：正文 401801 字节 / 干支对 6306，通神论34章+六亲论29章，"
+             "任注命例嵌于各章正文。命科 external holdout（TECH-DEBT §2.3 / HANDOFF §四.D）"
+             "与病药跨书源补证（TECH-DEBT §2.7/2.8 解除路径）的书源前置"},
     {"key": "yuan-hai-zi-ping", "kind": "八字·总纲", "title": "渊海子平",
      "pages": [], "status": "missing", "note": "实测 missingtitle"},
     {"key": "shen-feng-tong-kao", "kind": "八字·病药", "title": "神峰通考",

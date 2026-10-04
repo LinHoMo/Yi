@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 """仓库级案例对齐分一览：转发各科 evaluate，分集合打印，不写第二套给分逻辑。
 
-  python tools/eval.py                 # 六爻 tune + holdout
+  python tools/eval.py                 # 各科 tune + holdout
   python tools/eval.py --split all
-  python tools/eval.py --full          # 加六爻外部集（wikisource / yingqi）
+  python tools/eval.py --full          # 加外部集（六爻 wikisource/yingqi、命科 external_holdout）
 
 分数是古籍案例对齐分，不是现实预测命中率（AGENTS.md 铁律三）。
 评分框架唯一实现见 core/yishu_core/eval.py。
 
-注：命科（ming）是机械推演，**没有案例对齐评测**（机械回归见
-`disciplines/ming/dev_tools/regression.py`），转发时按「无 evaluate.py」跳过、不计失败。
-默认只跑 tune+holdout；`--split all` 会把已排除案例（ZS021–025，无卦名）一并送入，
-触发引擎报错并返回非零——那是刻意保留的体检信号，不是默认路径。
+注：命科（ming）有案例对齐评测（`disciplines/ming/scripts/evaluate.py`，
+tune/holdout 分列 + external_holdout 强弱 report-only 读数）；其机械回归另见
+`disciplines/ming/dev_tools/regression.py`。
+默认只跑 tune+holdout；外部集只随 `--full` 分列追加，**永不并入默认均分**。
 """
 from __future__ import annotations
 
@@ -61,7 +61,8 @@ def main() -> int:
     ap.add_argument("--split", default=None,
                     help="传给各科 evaluate 的 --split（缺省 tune+holdout）")
     ap.add_argument("--full", action="store_true",
-                    help="六爻额外跑外部集（wikisource_holdout/yingqi_holdout）")
+                    help="额外跑外部集（六爻 wikisource_holdout/yingqi_holdout、"
+                         "命科 external_holdout）")
     ap.add_argument("--verbose", action="store_true")
     args = ap.parse_args()
 
@@ -71,6 +72,8 @@ def main() -> int:
         splits = [args.split] if args.split else ["tune", "holdout"]
         if args.full and disc == "liuyao":
             splits = splits + ["wikisource_holdout", "yingqi_holdout"]
+        if args.full and disc == "ming":
+            splits = splits + ["external_holdout"]
         for split in splits:
             print(f"\n=== {disc} · {split} ===")
             code, out = run_eval(disc, split, verbose=args.verbose)
