@@ -1,3 +1,23 @@
+### 2026-10-05c 命科争合结构识别落地：pillar_relations 增「天干争合」标签 · 只标象不批吉凶
+
+> **性质**：通用规则落地（合化 adjudication 10-05b 三层中机械可判的一层）。
+> **评分零变化**——争合为纯结构标签（pillar_relations 无评分 dim），tune/holdout/
+> external 读数全部不动；MG001 机械回归期望带理由更新。
+
+- **书源依据**：《滴天髓阐微》「天干三透戊土，争合癸水，则日主之情，竟无定见」（行6468，
+  争合命例实证）＋「虽合不化，有争合、妒合、分合之别」（行1072，三分定义）；
+  观察 `ming_hehua_adjudication.json`（10-05b）。
+- **实现（pattern.py::pillar_relations，通用规则）**：一干参与 ≥2 个五合对→输出
+  「天干争合」结构条目（每干在五合表中只有唯一合伴，多对必同伴——「三透戊土争合癸水」型；
+  text 如「时干己逢2甲争合」）。docstring 诚实边界同步：合化仍不判（月令表/根气无
+  通则数值），妒合/分合书源未给机械判据、不实现。
+- **反事实（先模拟后回归实证，一致）**：tune 5 / holdout 17 / external 2（ZE012/ZE014）
+  例触发——**全部为纯结构标签新增，无任何评分 dim 消费**（pillar_relations 在
+  tune/holdout/external 均无 expected 维度）；golden ming 盘无争合、render digest
+  零漂移；机械回归仅 MG001 触发（期望列表带理由更新，MG002–005 精确匹配确认
+  无意外触发）。
+- **验收**：机械回归 5 例过；根套件 387 绿；命科学科门＋仓库门绿。
+
 ### 2026-10-05b 命科合化/争合妒合 source adjudication：真化三条件/羁绊语义/争妒三分取证 · 观察集落盘 · 未改 engine
 
 > **性质**：纯 source adjudication（TECH-DEBT §2.3「合化/争合妒合——语料待拓」阻塞

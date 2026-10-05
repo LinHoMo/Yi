@@ -37,8 +37,11 @@ REGRESSION = [
             "tong_guan": [{"name": "身财相战", "克": "木", "被克": "土",
                            "中介": "火", "通关": True}],
             # 四柱 甲子/丙寅/甲戌/己巳：年时与日时两处甲己合（core.relations.STEM_WUHE）；
-            # 支 子寅戌巳：寅巳相害（core.HARM_PAIRS）
-            "pillar_relations": ["年时干甲己合", "月时支寅巳六害", "日时干甲己合"],
+            # 支 子寅戌巳：寅巳相害（core.HARM_PAIRS）；
+            # 2026-10-05c：时干己同参与两对甲己合——新增「天干争合」结构标签
+            # （《滴天髓阐微》「天干三透戊土，争合癸水」；ming_hehua_adjudication.json）
+            "pillar_relations": ["年时干甲己合", "月时支寅巳六害", "日时干甲己合",
+                                 "时干己逢2甲争合"],
         },
     },
     {

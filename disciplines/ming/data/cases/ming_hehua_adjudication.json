@@ -5,7 +5,9 @@
  "_comment": "天干五合／化气／争合妒合 source adjudication 观察集（2026-10-05b）。**不计分、不入 holdout、不参与调参**。TECH-DEBT §2.3「地支合化/争合妒合/冲开墓库——语料待拓」的阻塞在阐微入库后已过时，本文件为该域的书源证据库与未来落地轮起点。engine 未改；升级或落地须反事实测量先行并登记 CHANGELOG。",
  "_provenance": {
   "adjudicated": "2026-10-05b",
-  "corpora": ["data/sources/di-tian-sui-chan-wei.wikitext.txt（阐微）"],
+  "corpora": [
+   "data/sources/di-tian-sui-chan-wei.wikitext.txt（阐微）"
+  ],
   "method": "关键词族穷尽扫描（化气/合而不化/争合/妒合/合化/甲己合）＋段落全文提取；引文程序化逐字回验（source_evidence 各条命中数均为 1）",
   "trigger": "10-02h 天干五合以结构标签落地后，化气/羁绊/争妒三层的书源条件一直缺取证；阐微入库解锁"
  },
@@ -63,8 +65,9 @@
  ],
  "engine_state_at_adjudication": {
   "date": "2026-10-05b",
-  "description": "pattern.py 天干五合＝STEM_WUHE 四干两两结构标签（10-02h，details 带 wuhe 标记），无化气判定、无羁绊/绊住语义输出、无争合妒合识别；大运-命干之合属运年交互（有意只记关系不批吉凶）。本节为裁决时点快照（信息性）。",
-  "verification": "实读 pattern.py 天干五合分支与 TECH-DEBT §2.3 对应行"
+  "description": "pattern.py 天干五合＝STEM_WUHE 四干两两结构标签（10-02h，details 带 wuhe 标记），无化气判定、无羁绊/绊住语义输出、无争合妒合识别；大运-命干之合属运年交互（有意只记关系不批吉凶）。本节为裁决时点快照（信息性）。。**2026-10-05c 部分落地**：争合识别入 pillar_relations（一干≥2 五合对→「天干争合」结构标签，不批吉凶不进分）；化气/羁绊仍不判（本快照其余描述维持裁决时点原样，见 date）。",
+  "verification": "实读 pattern.py 天干五合分支与 TECH-DEBT §2.3 对应行",
+  "superseded_partial": "2026-10-05c 争合识别落地（通用规则，MG001 回归期望带理由更新；ZE012/ZE014 等外集案例仅新增结构标签、无评分影响——外集 expected 只有强弱，pillar_relations 无 dim）"
  },
  "unresolved": [
   "「月令相宜」表：原注给五组配季（甲己/辰、丙辛/冬、戊癸/夏、乙庚/秋、丁壬/春），但戊癸夏月两例（3338/3362）一不化一化——说明月令只是必要条件之一，根气权重无书源数值",

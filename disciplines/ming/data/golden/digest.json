@@ -4,7 +4,7 @@
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
   "digest": "1be8d5b579463a47",
-  "narrate_digest": "aa2dbf4be60b38bf",
+  "narrate_digest": "a405c8149be9881c",
   "drift_log": [
     {
       "from": "57dc7e890af222fa",
@@ -115,6 +115,12 @@
       "to": "aa2dbf4be60b38bf",
       "date": "2026-10-04",
       "reason": "2026-10-04d 日主之根宫位分层（衰旺章任注：长生禄旺=重根1.0、墓库余气=轻根0.25，书源例字仅列木火金水）：weak_zhengguan2 乙木辰中乙根由中气0.5改判衰宫轻根0.25（strength_score -5.20→-5.45，strength标签/格局/用神/大运全不变）；分列验收 tune 100.0(n=30)/holdout 96.7(n=246)/外集17/19 全部持平"
+    },
+    {
+      "from": "aa2dbf4be60b38bf",
+      "to": "a405c8149be9881c",
+      "date": "2026-10-05",
+      "reason": "争合结构标签落地（CHANGELOG 10-05c）：pillar_relations 新增「天干争合」结构条目，narrate 对含争合盘新增该文本；机械层指纹零漂移，仅措辞层 2/6 例变化"
     }
   ]
 }

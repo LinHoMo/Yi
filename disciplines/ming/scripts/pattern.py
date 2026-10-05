@@ -998,6 +998,9 @@ _PILLAR_LABEL = {"year": "年", "month": "月", "day": "日", "hour": "时"}
 _REL_BASIS = {
     "天干合": "天干五合：甲己／乙庚／丙辛／丁壬／戊癸（core.relations.STEM_WUHE）；"
               "《滴天髓·天干論》有丙辛、丁壬、戊癸相合之文；只判合之结构，不判化",
+    "天干争合": "一干参与多个五合对（《滴天髓阐微》「天干三透戊土，争合癸水，则日主之情，"
+               "竟无定见」；「虽合不化，有争合、妒合、分合之别」——ming_hehua_adjudication.json）；"
+               "只标结构，不判化、不批吉凶",
     "六合": "地支六合，两两相合（core.symbols.HE_PAIRS；通行子平）；只判合之结构，不判化",
     "六冲": "《滴天髓·地支論》「支神祇以沖為重，刑與害兮動不動」注：沖者必是相剋，所以必動",
     "六害": "《滴天髓·地支論》「支神祇以沖為重，刑與害兮動不動」；六害为地支相害（core.symbols.HARM_PAIRS）",
@@ -1015,9 +1018,13 @@ def pillar_relations(chart_json: dict) -> list[dict]:
     （`sanxing_hits`）。表一律取自内核（`relations.STEM_WUHE`／`symbols.HE_PAIRS` 等），
     **不在本模块新建第二份干支关系表**（AGENTS.md §二「内核唯一真值源」）。
 
-    诚实边界：**只判「合/冲/害/刑」之结构，不判「化」**。合化须透干、得月令等附加条件，
-    本环境无对应语料可逐字核对，故不落「合化」结论（与 `shensha`/`xiao_yun` 的
-    `verified=false` 同一诚实口径）。只出结构名与位置，不批吉凶（AGENTS.md 铁律三）。
+    诚实边界：**只判「合/冲/害/刑」之结构，不判「化」**。合化须透干、得月令等附加条件
+    （真化三条件：月令相宜＋独自相合＋根气——《滴天髓阐微》合化判据语料已在库，
+    观察 `ming_hehua_adjudication.json`；但「月令相宜」表与根气权重无通则数值，
+    化与不化的机械判定缺标定，仍不落「合化」结论）。**争合**识别已按语料落地：
+    一干参与 ≥2 个五合对即逢争合（任注命例「天干三透戊土，争合癸水，则日主之情，
+    竟无定见」；「虽合不化，有争合、妒合、分合之别」——妒合/分合定义书源未给机械
+    判据，不实现）。只出结构名与位置，不批吉凶（AGENTS.md 铁律三）。
     """
     pillars = chart_json.get("pillars") or {}
     he = {frozenset(p) for p in HE_PAIRS}
@@ -1025,12 +1032,14 @@ def pillar_relations(chart_json: dict) -> list[dict]:
     harm = {frozenset(p) for p in HARM_PAIRS}
 
     out: list[dict] = []
+    wuhe_pairs: list[tuple] = []
     for i, a in enumerate(_PILLAR_ORDER):
         for b in _PILLAR_ORDER[i + 1:]:
             sa = (pillars.get(a) or {}).get("stem") or ""
             sb = (pillars.get(b) or {}).get("stem") or ""
             if sa and sb and stems_wuhe(sa, sb):
                 la, lb = _PILLAR_LABEL[a], _PILLAR_LABEL[b]
+                wuhe_pairs.append((a, b, sa, sb, la, lb))
                 out.append({
                     "type": "天干合",
                     "positions": [la, lb],
@@ -1057,6 +1066,26 @@ def pillar_relations(chart_json: dict) -> list[dict]:
             })
 
     branches = [(pillars.get(k) or {}).get("branch") or "" for k in _PILLAR_ORDER]
+
+    # 天干争合：一干参与 ≥2 个五合对（每干在五合表中只有唯一合伴，
+    # 故多对必然同伴——「三透戊土，争合癸水」型）。纯结构标注，不批吉凶。
+    pair_by_stem_pos: dict = {}
+    for a, b, sa, sb, la, lb in wuhe_pairs:
+        pair_by_stem_pos.setdefault((a, sa), []).append((b, sb, lb))
+        pair_by_stem_pos.setdefault((b, sb), []).append((a, sa, la))
+    for (pos, stem), partners in sorted(pair_by_stem_pos.items()):
+        if len(partners) < 2:
+            continue
+        partner_stem = partners[0][1]
+        labels = sorted({lb for _, _, lb in partners})
+        out.append({
+            "type": "天干争合",
+            "positions": [_PILLAR_LABEL[pos]] + labels,
+            "stems": [stem, partner_stem],
+            "text": f"{_PILLAR_LABEL[pos]}干{stem}逢{len(partners)}{partner_stem}争合",
+            "basis": _REL_BASIS["天干争合"],
+        })
+
     for name in sanxing_hits([b for b in branches if b]):
         out.append({
             "type": "三刑",
