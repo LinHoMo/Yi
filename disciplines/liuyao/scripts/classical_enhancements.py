@@ -1707,6 +1707,8 @@ def analyze_triple_combo(result):
 def analyze_twelve_growth(result):
     """
     十二长生分析：各爻在十二长生中的位置。
+    （《增删卜易》「予用生旺墓絕，其餘不驗」——key/weak 分档只取生旺与死墓绝，
+    其余八宫仅作 stage 标注展示，与书源同构）
     
     返回：
         {
