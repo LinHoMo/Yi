@@ -89,7 +89,9 @@ CATALOG = (
      "pages": [], "status": "ok", "note": "已抓 5970 字节（第三轮重试成功）。实测复核：有机制纲诀"
              "（阴阳遁分界/三元五日/阳遁顺仪奇逆布/值符值使），**无 24 节气×三元定局表与算例**"},
     {"key": "yu-ding-qi-men-bao-jian", "kind": "奇门遁甲", "title": "御定奇门宝鉴",
-     "pages": [], "status": "unverified", "note": "未实测"},
+     "pages": [], "status": "missing",
+     "note": "2026-10-05 实测 missingtitle（此前 unverified 未实测）——N2 奇门定局起例"
+             "书源维持未落实，骨架不启动"},
     # ── 八字（调候 / 格局；命科深度改造的判据与命例来源）──
     {"key": "qiong-tong-bao-jian", "kind": "八字·调候", "title": "穷通宝鉴",
      "pages": [], "status": "ok",
@@ -116,12 +118,15 @@ CATALOG = (
      "note": "2026-10-02 实测有正文：病药说类/雕枯旺弱四病说类/损益生长四药说类"
              "=病药用神判据正文章节在库（命科病药判据的语料阻塞解除）"},
     # ── 备选与旁证 ──
-    {"key": "ling-qi-jing", "kind": "灵棋经", "title": "灵棋经 (四库全书本)",
-     "pages": [], "status": "unverified", "note": "备选门类；124 课查表即断"},
+    # （曾有一条重复的 ling-qi-jing「四库全书本」条目：同 key 被 by_key 首匹配遮蔽、
+    #   不可达，2026-10-05 删除）
     {"key": "tai-yi-jin-jing", "kind": "太乙", "title": "太乙金镜式经",
-     "pages": [], "status": "unverified", "note": "论证中列为不推荐（占域以分野/治乱为纲）"},
+     "pages": [], "status": "missing",
+     "note": "2026-10-05 实测 missingtitle（此前 unverified 未实测）"},
     {"key": "xie-ji-bian-fang", "kind": "择吉", "title": "协纪辨方书",
-     "pages": [], "status": "unverified", "note": "择吉科的口径旁证"},
+     "pages": [], "status": "missing",
+     "note": "2026-10-05 实测 missingtitle（此前 unverified 未实测）——择吉科外部"
+             "书源旁证通道关闭，维持 §2.1 阻塞登记"},
     {"key": "zi-wei-dou-shu-quan-shu", "kind": "紫微斗数", "title": "紫微斗數全書",
      "pages": [], "status": "ok",
      "note": "已抓 214512 字节（卷一/二/三，93 标题）：卷一诸星问答论十四主星性情段 + "
