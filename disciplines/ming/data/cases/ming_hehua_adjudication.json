@@ -79,5 +79,13 @@
   "①若未来落地：按「真化（月令+独合+根气）/羁绊（合而不化）/争妒（识别标签）」三层通用规则实现，禁 case 分支；数值一律 engineering_mapping",
   "②反事实测量先行（tune/holdout/外集 26/golden 全量 before-after）；外集案例不作落地依据",
   "③本文件引文逐字回验由 tests/test_ming_hehua_adjudication.py 锁定；落地时更新 engine_state 快照"
- ]
+ ],
+ "assessment_2026_10_05e": {
+  "topic": "羁绊语义（合而不化=绊住留连）落地影响面评估——仅评估不落地",
+  "dependency_chain": "任注体系：合 → {化（吉/凶两向）, 不化→羁绊}。**羁绊是「合而不化」的补集语义**——在 engine 无化判定的现状下，给天干合毯式标「羁绊」等于断言全部不化，与语料化例（行3362「此则戊癸合而必化」）直接矛盾。**羁绊落地的前置条件＝化判定标定**（月令相宜表机械定案＋根气阈值），不可单独先行。",
+  "blast_radius": "天干合出现频率：tune 15/30、holdout 120/246、external 10/26——任何化/羁绊二分标注波及约半数盘面（含 120 例 holdout 的 narrate 措辞层→golden 措辞漂移＋逐例正确性不可验证）。影响面可量化但合理性不可证明，按 GOAL §15 不落地。",
+  "consumers_audit": "pillar_relations 消费方＝analyze.py（顶层 result + 文本列表行253）→ narrate.py:230（渲染）；ming 侧现无任何贪合/羁绊/绊住表达（grep 实证）。",
+  "rejected_variant": "「合（化否未判）」中间态标注：诚实但零信息增量（docstring 已声明不判化），徒增 golden 措辞漂移——否。",
+  "conclusion": "羁绊与化气绑定为一组前置依赖，落地序列＝化判定标定（blocked-on-calibration，待多例统计或他书《子平真诠》）→ 反事实全量（含 narrate 层）→ 羁绊补集标注。维持不实现。"
+ }
 }
