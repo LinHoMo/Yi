@@ -72,8 +72,12 @@ CATALOG = (
      "pages": [], "status": "ok",
      "note": "2026-09-30l 实测存在（繁体，正文 36912 字节）。第二门类（备选一）书源："
              "查表即断（上中下三部掷数 → 课名/卦象/断语），core 零增补"},
-    {"key": "da-liu-ren-zhi-nan", "kind": "大六壬", "title": "大六壬指南",
-     "pages": [], "status": "missing", "note": "实测 missingtitle"},
+    {"key": "liu-ren-zhi-nan", "kind": "大六壬", "title": "六壬指南",
+     "pages": [], "status": "ok",
+     "note": "2026-10-05 实测翻案：旧条目按「大六壬指南」探得 missingtitle 判不存在，"
+             "系标题变体漏检——维基文库实际书名《六壬指南》（陈公献，清顺治刊，程起鸾序）。"
+             "卷一（心印赋注）/卷二（指掌赋注）已数字化；卷三（占验指南）/卷四（神煞指南）"
+             "实测 missingtitle（正文未数字化，占验例仍缺）。"},
     {"key": "liu-ren-bi-fa-fu", "kind": "大六壬", "title": "六壬毕法赋",
      "pages": [], "status": "missing", "note": "实测 missingtitle"},
     # ── 奇门遁甲（**降级**：主源不存在，"古书自带算例"无法兑现）──

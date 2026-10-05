@@ -1,0 +1,25 @@
+{
+  "key": "liu-ren-zhi-nan",
+  "kind": "大六壬",
+  "title": "六壬指南",
+  "site": "zh.wikisource.org",
+  "api": "https://zh.wikisource.org/w/api.php",
+  "pages": [
+    "六壬指南",
+    "六壬指南/1",
+    "六壬指南/2"
+  ],
+  "page_count": 3,
+  "fetched": "2026-10-05 18:09:58+0800",
+  "sha256": "17e09b68d361452817b8e91ca744117be746b7a18bba4e687743be6e347aa3a7",
+  "stats": {
+    "bytes": 72633,
+    "chars": 25385,
+    "lines": 744,
+    "ganzhi_pairs": 25,
+    "tables": 0,
+    "headings": 4
+  },
+  "source_file": "data/sources/liu-ren-zhi-nan.wikitext.txt",
+  "note": "公版古籍原文的字符级转存，未做任何改写或模型转写；子页以 <!-- ==== 标题 ==== --> 分隔。"
+}

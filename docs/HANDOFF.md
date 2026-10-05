@@ -120,15 +120,17 @@
     ⚠️ **旧记 97.1 系文档讹数**：自 10-02t 起五个提交点（d36df84→HEAD）复跑均为 96.7，
     维度计数完全相同——均分差来自 8 例 ZP 体系分歧 case 级计 0 的算术，97.1 从未被复现。
   - **表对表回归 + 历法链路验证，不是泛化证据**
-  - **外部独立集（external_holdout）已建两批（2026-10-04 首批 / 10-04h 第二批）**：
+  - **外部独立集（external_holdout）已建三批（10-04 首批 / 10-04h 第二批 / 10-05h 第三批）**：
     《滴天髓阐微》语料入库（`data/sources/di-tian-sui-chan-wei.wikitext.txt`，401KB），
-    **强弱维度** n=26（`ming_external_cases.json`；首批＝衰旺章任注显式标注例 19 例，
-    第二批＝章外穷尽扫描 +7 例 ZE020–ZE026；纳入规则/剔除清单/类别映射见其
-    `_provenance`，永不调参）。读数为 **report-only**（`evaluate.py --split external_holdout`，
-    照六爻应期分列范式，不进 WEIGHTS、不设门槛）：**强弱对齐 22/26**。
-    失配 4 例已归因收敛：ZE017 经三支全会聚轴落地修复（10-04l，口径变更已登记）；
-    ZE005 禄刃轴不解释（10-04d 裁决）；ZE020/021/022 两支拱机械项被反事实证伪
-    ——判语层选择性引用无机械标定路径（10-05a），均如实保留（TECH-DEBT §2.3）。
+    **强弱维度** n=37（`ming_external_cases.json`；首批＝衰旺章任注显式标注例 19 例，
+    第二批＝章外穷尽扫描 +7 例 ZE020–ZE026，第三批＝中和带显式判例 +11 例 ZE027–ZE037；
+    纳入规则/剔除清单/类别映射见其 `_provenance`，永不调参）。读数为 **report-only**
+    （`evaluate.py --split external_holdout`，照六爻应期分列范式，不进 WEIGHTS、不设门槛）：
+    **强弱对齐 27/37**。
+    失配 10 例归因在案：旺侧 4 例（ZE017 已由三支全会聚轴修复 10-04l；ZE005 禄刃轴
+    10-04d；ZE020-022 拱局机械项证伪 10-05a——判语层选择性引用无机械标定路径）；
+    **中和带 6 例（ZE027/028/030/034/036/037）＝第三批直接实证：±1.5 带宽与任注
+    中和区域系统性错位**（引擎判偏弱×4/偏旺×1/中和×5），永不调参（TECH-DEBT §2.3）。
     评测报告分层：机械回归 / 古籍对齐（source alignment）/ 外部独立集（external holdout）/
     现实回填反馈（outcome feedback）四类口径不得互相冒充。
 - **不做**：命运断语、流年吉凶定论
@@ -300,7 +302,7 @@ python tools/eval.py
    `triple_combo`/`three_punishments`/`repetition`），不再扫 `step5`/`summary` 文本；
    新增 `[1.6]` 金标准已把 `patterns` 纳入机械指纹（见 CHANGELOG 10-02g）。
 3. **命科缺口**：~~强弱无书源 expected~~ **外集已立两批（10-04 首批 / 10-04h 第二批）**
-   （《阐微》显式判例 n=26 report-only，22/26——ZE017 经会聚轴修复，余 4 例归因在案，
+   （《阐微》显式判例 n=37 report-only，27/37——ZE017 经会聚轴修复，余 4 例归因在案，
    见 §一 命科段）；
    四柱/十神/藏干/神煞/大运仍无书源 expected；**10-01p 已补**三会局、
    胎元、流月、小运、天克地冲、十神组合（六项机械结构标签，只出结构不批吉凶）；
@@ -466,7 +468,7 @@ tests/              pytest
 | **A** | ~~render 段加 golden 基线~~ ✅ 2026-10-02c：根门 `[6b]` 八科 render MD 逐字节指纹入 `data/golden/render_digest.json` | 改一字即被测出 | `check.py --full` EXIT=0 |
 | **B** | ~~`NON_VERDICT` 白名单逐条复核~~ ✅ 2026-10-02s：过宽的括注两条收紧为「括注+短尾」，新增机械定位前缀剥离（官鬼（落在卯三爻）类真判语交还语料匹配），③修正硬编码、⑦删冗余、⑥b–g 逐条补"为何属非断语" | 复核后 strict 0 句豁免性漏判 | `verdict_audit --strict` EXIT=0 |
 | **C** | ~~孤儿断语清理~~ ✅ 2026-10-02s：删 9 条真孤儿（六爻 4+2、梅花 2、小六壬 3、verdict_texts 错位副本 1 + 死加载量）+ quote_lead 接线（两处内联合一）+ verdict_consumption ALLOWLIST 键级匹配修正与登记 | 清单与处置见 CHANGELOG 10-02s；八科 golden 零漂移（全量门 EXIT=0） | `check.py --full` EXIT=0 |
-| **D** | 命科外部独立集：~~字面标准（≥20 例书源 holdout 不参与调参）~~ 已由 子平真诠 36 例 + 滴天髓阐微 ZC 15 例 满足；**跨书源集已立两批（10-04 首批 / 10-04h 第二批）**：《滴天髓阐微》语料入库 + 强弱维度 n=26（`ming_external_cases.json`，external_holdout 永不调参，report-only 读数 **22/26**，失配 4 例归因在案见 §一 命科段）——扩集方向：阐微其余章节显式可判例（中和/身强弱语，10-05a 拱局证伪后弱侧优先）、病药跨书源补证（§2.7/2.8 解除路径已开） | 新 holdout split 读数（永不调参） | ✅ `evaluate.py --split external_holdout`（22/26）+ golden 不漂移 + `check.py --full` 全绿 |
+| **D** | 命科外部独立集：~~字面标准（≥20 例书源 holdout 不参与调参）~~ 已由 子平真诠 36 例 + 滴天髓阐微 ZC 15 例 满足；**跨书源集已立两批（10-04 首批 / 10-04h 第二批）**：《滴天髓阐微》语料入库 + 强弱维度 n=37（`ming_external_cases.json`，external_holdout 永不调参，report-only 读数 **27/37**，失配 4 例归因在案见 §一 命科段）——扩集方向：阐微其余章节显式可判例（中和/身强弱语，10-05a 拱局证伪后弱侧优先）、病药跨书源补证（§2.7/2.8 解除路径已开） | 新 holdout split 读数（永不调参） | ✅ `evaluate.py --split external_holdout`（27/37）+ golden 不漂移 + `check.py --full` 全绿 |
 | **E** | ~~六爻动墓·化墓用例~~ ✅ 2026-10-02a：判据 `use_god_tomb_tags`（日/月/动/化四类）+ 书源真例 `suigui_holdout` | 墓库维度覆盖动/化墓 | tune/holdout strict 不变（96.8/89.7）+ `dev_tools/check.py` EXIT=0 |
 | **F** | `tools/eval.py` 挂 `--full` 档 | 当前 EXIT=0 再挂，否则挂上去就是常红 | `--full` EXIT=0 + eval 分数有输出 |
 
