@@ -1,3 +1,24 @@
+### 2026-10-04q 六爻注册表未覆盖域第六批补登记：游魂归魂（verified=true）＋十二长生/六破（诚实 verified=false）＋六破文本修复 · 含独立复核
+
+> **性质**：文档补登记（b9f1d4b/9d7e4d4/94ab5c1 三个提交落地时缺 CHANGELOG 条目，违反
+> 「口径/状态变更必须登记」纪律——本条由独立复核轮补齐）。**engine 判据零变化**；
+> 评测读数零变化。
+
+- **`liuyao.soul_hexagram`（游魂/归魂）→ verified=true**：引文取《黃金策》（语料行
+  231/1162/1462）＋卷首「安世應要領」卦变/世爻规则（行57/59）；quote_in_code
+  「游魂行无定，归魂回故乡」在实现文件。**独立复核 PASS**：quote_in_data 指针回解析、
+  引文内核在语料逐字命中、代码锚点命中（本复核轮程序化回验）。
+- **`liuyao.shierchangsheng`/`liuyao.liupo` → verified=false 维持（诚实）**：二域只挂
+  代码锚点、书源引文未逐字挂接——按「宁缺毋滥」如实登记，引文逐字核对列为后续小增量。
+- **94ab5c1 修复**：verdict_texts `step5_factor_reasons.six_break` 文本语义错配
+  （「用神逢月破」误述月破而非六破）——该错配由第六批引入、同日修复；仓库门
+  （含 [6b] render digest）绿，报告面无漂移。
+- **注册表结构收口**：六爻注册表现 20 条 rule_id，TECH-DEBT §2.5「未覆盖域」行
+  标记注册完毕（9d7e4d4）；残余债务＝shierchangsheng/liupo 引文挂接＋暗动休囚档分歧
+  （待暗動章正文语料）。
+- **同步状态**：本轮复核与上述三提交均未推送（github 连接失败，代理层网络中断）——
+  SYNC_STATUS: REMOTE_UNVERIFIED，网络恢复后推送并重新过版本门。
+
 ### 2026-10-04p 六爻注册表未覆盖域第五批：三刑域注册（`liuyao.sanxing`）· provenance 增量
 
 > **性质**：纯 provenance 增量。**engine 判据一字未改**。
