@@ -3,8 +3,8 @@
     "what": "大六壬金标准指纹基线（排盘+九宗门+天将逐字段）",
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
-  "digest": "9a508ee7a27bba40",
-  "narrate_digest": "6a3c40fb858b933a",
+  "digest": "0b1397b52ab69cfa",
+  "narrate_digest": "87a0460a43899dba",
   "drift_log": [
     {
       "from": "36005aa05670b1a6",
@@ -35,6 +35,12 @@
       "to": "9a508ee7a27bba40",
       "date": "2026-10-02",
       "reason": "新增日辰关系层（卷三「日辰」歌 10 条结构判据）：analyze 增 richen 字段与 factors 一项、narrate 增该段；判据只出结构标签与书源引文，不改方向输出"
+    },
+    {
+      "from": "9a508ee7a27bba40",
+      "to": "0b1397b52ab69cfa",
+      "date": "2026-10-05",
+      "reason": "合池分支撤销、恢复下贼优先（CHANGELOG 10-05i 口径变更）：《六壬指南》心印赋注显式文本「若有一下克其上神者，虽有二三之上克下不论矣」；43 课例反事实净值 33/43 不变（仅 LE001/LE032 互换）；4 条 golden 请求盘踩合池分支的 san_chuan/men/ke_name 随口径更新"
     }
   ],
   "narrate_drift_log": [
@@ -91,6 +97,12 @@
       "to": "6a3c40fb858b933a",
       "date": "2026-10-02",
       "reason": "新增日辰关系层（卷三「日辰」歌 10 条结构判据）：analyze 增 richen 字段与 factors 一项、narrate 增该段；判据只出结构标签与书源引文，不改方向输出"
+    },
+    {
+      "from": "6a3c40fb858b933a",
+      "to": "87a0460a43899dba",
+      "date": "2026-10-05",
+      "reason": "合池分支撤销、恢复下贼优先（CHANGELOG 10-05i 口径变更）：《六壬指南》心印赋注显式文本「若有一下克其上神者，虽有二三之上克下不论矣」；43 课例反事实净值 33/43 不变（仅 LE001/LE032 互换）；4 条 golden 请求盘踩合池分支的 san_chuan/men/ke_name 随口径更新"
     }
   ]
 }
