@@ -77,9 +77,24 @@
   "external_isolation": "落地依据＝本文件书源明文（方局章理论+神峰对照例），非外集读数；ZE017 翻转按 tripwire 协议登记口径变更（CHANGELOG 2026-10-04l）并复核外集 _provenance。ZE020/021/022 保持失配如实保留。"
  },
  "divergence_cases": [
-  {"id": "ZE017", "book_category": "太旺", "source_axis": "支类北方（亥子丑三会）", "engine_judged": "中和"},
-  {"id": "ZE021", "book_category": "旺极", "source_axis": "戌午拱火（两支拱）", "engine_judged": "中和"},
-  {"id": "ZE022", "book_category": "旺矣", "source_axis": "亥卯拱木局（两支拱）＋两坐禄旺", "engine_judged": "中和"}
+  {
+   "id": "ZE017",
+   "book_category": "太旺",
+   "source_axis": "支类北方（亥子丑三会）",
+   "engine_judged": "中和"
+  },
+  {
+   "id": "ZE021",
+   "book_category": "旺极",
+   "source_axis": "戌午拱火（两支拱）",
+   "engine_judged": "中和"
+  },
+  {
+   "id": "ZE022",
+   "book_category": "旺矣",
+   "source_axis": "亥卯拱木局（两支拱）＋两坐禄旺",
+   "engine_judged": "中和"
+  }
  ],
  "unresolved": [
   "量化缺口：两书均为定性序（力较大/气旺盛/乘旺），无数量值——任何入强弱分的权重都只能是工程映射（GOAL §8 须逐项回答数值来源），不得伪装古法原值",
@@ -91,5 +106,12 @@
   "①若未来落地：改通用规则（strength_and_pattern 增会局入项），禁 case 分支；数值标记 engineering_mapping 并在 details 逐项带 provenance 供审计",
   "②反事实测量先行：tune/holdout（分列出分）/外集 26 例/golden 全量 before-after 翻档统计，任何外集翻转须按 test_ming_strength_root_stage.py tripwire 范式先登记口径变更",
   "③tests/test_ming_fangju_adjudication.py 已锁定本文件 provenance 与 observation-only 纪律；落地时同步改 engine_state_at_adjudication 快照并保留引文血缘"
- ]
+ ],
+ "promotion_attempt_2026_10_05": {
+  "hypothesis": "两支拱局（三合两支/三会两支，生扶侧、无异类冲破）按 JU_BONUS_W 的一半（+1.0）入正常强弱分——序理由：方局章「亦有取二支者，然以旺支为主」表明两支合势有力，且「三支合势，吉凶之力较大」暗示两支<三支。",
+  "counterfactual": "实现前全量模拟（与 10-04l 同法）：**25 例翻档**（tune 3 / holdout 20 / external 2）。决定性反证：ZE026 由命中（偏弱）翻中和——书源明判「虚弱」的案例被拱项推离书源判语；且外集剩余失配仅修复 1 例（ZE022）、ZE020/ZE021 仍不翻。",
+  "verdict": "**拒绝落地（over-firing 证伪）**：四柱中「某局恰缺一支」的出现频率极高（holdout 20 例翻档即证），机械两支项必然系统性过火；任注对两支合势的引用是**判语层的选择性论证**（引作旺证时才用），非逐盘机械通则。与三支全（罕见、书源明言「力较大」）性质不同。",
+  "residual": "ZE020/021/022 的失配机制回到「判语层选择性引用 vs 机械规则」的边界问题——机械层无书源可依的标定路径，登记为 unresolved 维持不实现；除非未来获得书源明文给出两支合势的适用条件（如紧贴性等）。",
+  "discipline": "本轮未改 engine 一行；模拟脚本未入库（一次性，tools/scratch 纪律）；证据登记于本文件。"
+ }
 }
