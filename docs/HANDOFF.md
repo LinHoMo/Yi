@@ -451,14 +451,15 @@ tests/              pytest
 
 ### 0. 交接状态
 
-- **代码状态**：工作区含 2026-10-04 外部独立集批（《滴天髓阐微》语料入库 /
-  `ming_external_cases.json` 强弱 19 例 / evaluate `--split external_holdout` report-only /
-  `tools/eval.py --full` 挂载 / 注册表 `_uncovered ming.strength` / 守护测试 3 例 /
-  HANDOFF-TECH-DEBT-CHANGELOG 读数订正），待提交。
-- **门状态**：`tools/check.py --full` **EXIT=0**（10-04 复验）；根 pytest **364 passed**
-  （含外部集守护 3 例）；八科行为指纹与六爻金标准全绿零漂移。
-- **上一轮交付（2026-10-03e/f）**：病药 source adjudication 两轮——观察集 n=7 入库 +
-  跨书源语义分裂取证（结论「不应建统一病药模型」），engine 零改动（TECH-DEBT §2.7/§2.8）。
+- **代码状态**：工作区干净，HEAD 至 2026-10-05i+j（`59a57bf` 命科外集第三批
+  中和带 ZE027–037 / `b45ce1b` 大六壬合池→下贼优先口径变更 / `dcbdf63` 该轮出处
+  错标订正——《六壬指南》语料入库与目录翻案见 CHANGELOG 10-05h/i）。
+- **门状态**：`tools/check.py` **EXIT=0**（10-05 复验）；根 pytest **387 passed**；
+  八科行为指纹、六爻/大六壬金标准全绿零漂移。
+- **最近交付**：10-05i 大六壬口径变更（《六壬指南》心印赋注显式文本，反事实 43 例
+  净值 33/43 不变，LE001 转入古籍异说桶）；10-05h 命科外集第三批（中和带 +11 例，
+  report-only 27/37）；10-05a–f 合化/拱局/冲开墓库/羁绊 source adjudication 系列
+  （engine 零变化为主，见 CHANGELOG）。
 - 跑门环境：Python 3.12+（3.10 见 §五之一 兼容修复）
 
 ### 1. 可执行清单（按优先序）
