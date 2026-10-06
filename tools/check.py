@@ -136,10 +136,14 @@ def _resolve_pytest_exe() -> list[str]:
     """
     cands = [sys.executable]
     # <binaries>/python/versions/X.Y.Z/python.exe → <binaries>/python/envs/default/{Scripts/python.exe,bin/python}
-    py_root = Path(sys.executable).resolve().parents[2]  # .../python
+    # 系统级 Python（如 C:\Python314\python.exe）祖先层级不够，parents[2] 会 IndexError——
+    # 层级不足时退到最上层：venv 回退候选找不到而已，不影响当前解释器本身。
+    _resolved = Path(sys.executable).resolve()
+    _anc = list(_resolved.parents)
+    py_root = _anc[2] if len(_anc) >= 3 else _anc[-1]
     for rel in ("envs/default/Scripts/python.exe", "envs/default/bin/python"):
         venv_py = py_root / rel
-        if venv_py.is_file() and str(venv_py) != str(Path(sys.executable).resolve()):
+        if venv_py.is_file() and str(venv_py) != str(_resolved):
             cands.append(str(venv_py))
             break
     return cands
