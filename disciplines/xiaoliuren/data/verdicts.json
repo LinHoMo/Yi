@@ -1,6 +1,6 @@
 {
  "schema": "xiaoliuren-verdicts-v2",
- "note": "小六壬六宫断语唯一真值源。断语文字所本：《贺氏六壬小手册》（现代文本，非公版）第一节·六种释义（含义/总诀/主数）与第六节·难点释疑。逐条已标 kind：诀辞（逐字可回指本宫总诀或宫义）/引申（归纳，带标记）/阙（无据阙如）；对应门的数量在 topic_coverage 记账，由 dev_tools/check.py [1c] 机械核对。主速属性（speed_class）与吉凶倾向由各宫含义归纳，属通行口径。**公版书源缺口见 source_gap。**",
+ "note": "小六壬六宫断语唯一真值源。断语文字所本：《贺氏六壬小手册》（现代文本，非公版）第一节·六种释义（含义/总诀/主数）与第六节·难点释疑。逐条已标 kind：诀辞（逐字可回指本宫总诀或宫义）/引申（归纳，带标记）/阙（无据阙如）；对应门的数量在 topic_coverage 记账，由 dev_tools/check.py [1c] 机械核对。主速属性（speed_class）与吉凶倾向由各宫含义归纳，属通行口径。**公版书源缺口见 source_gap。** 2026-10-06 增补：《玉匣記》六壬時課节作为公版对照源入库（见 cross_source），断语所本不变。",
  "palaces": {
   "大安": {
    "五行": "木",
@@ -746,11 +746,149 @@
  },
  "source_gap": {
   "book": "小六壬（无公版书源）",
-  "status": "缺口（如实登记，不编造）",
-  "checked": "2026-10-01",
+  "status": "已部分解除（2026-10-06）：公版书源在库——《玉匣記》雜占篇收《李淳風六壬時課》全节（起例+六宫属神/主数/断曰）；独立小六壬专书仍无公版",
+  "checked": "2026-10-06（更新）",
   "command": "python tools/fetch_source.py --check 小六壬 小六壬掌訣 六壬時課 萬法歸宗 六壬類聚",
   "result": "逐标题实测全部 missingtitle（维基文库无公版小六壬专书）",
   "handling": "不复刻任何「古籍原文」；现行六宫断语所本为《贺氏六壬小手册》（现代文本，非公版），一律标注该书节次；宫象/五行/属神引申一律标「引申」。",
-  "basis_note": "小六壬六宫掌诀属民间口诀传承，无确定公版底本；本仓不以任何现代文本冒充古籍，亦不据记忆补写口诀原文。"
+  "basis_note": "小六壬六宫掌诀属民间口诀传承，无确定公版底本；本仓不以任何现代文本冒充古籍，亦不据记忆补写口诀原文。",
+  "result_update_2026_10_06": "原检索按独立书名实测 missingtitle 结论无误；但漏检『章节点收于在库《玉匣記》雜占篇』——cross_source 块即该节逐字对照（起例引文+六宫断曰+主数/属神/五行一致性）。空亡主数两源分歧（贺氏 3,6,9 vs 玉匣记 1,5,7）如实登记于 cross_source.variance"
+ },
+ "cross_source": {
+  "schema": "xiaoliuren-cross-source-v1",
+  "source": {
+   "book": "《玉匣記》雜占篇·李淳風六壬時課",
+   "file": "data/sources/yuxiaji.wikitext.txt",
+   "sha256_head": "50480c75edf9",
+   "offset": 58015,
+   "license": "原作公版；转录本依维基文库授权条款（见 data/sources/yuxiaji.provenance.json）",
+   "found": "2026-10-06：原 source_gap 检索按独立书名查「小六壬/六壬時課」皆 missingtitle，漏检『内容作为章节点收于《玉匣記》雜占篇』——in-library 复查发现全节（占 ~1.3K 字）"
+  },
+  "chart_method": {
+   "quote": "其法：每從“大安”上起正月，月上起日，日上起時。假如三月初五日辰時，三月在“速喜”上，就“速喜”上起初一，初五在“大安”，“大安”上起子時，數至辰時是“小吉”，就以“小吉”推占。餘皆仿此。",
+   "worked_example": "假如三月初五日辰時，三月在“速喜”上，就“速喜”上起初一，初五在“大安”，“大安”上起子時，數至辰時是“小吉”，就以“小吉”推占。餘皆仿此。",
+   "note": "起课法逐字书源：大安起正月、月上起日、日上起时——与 scripts/chart.py 的落宫算法一致（历法真值落宫不变，此为公版依据补挂）"
+  },
+  "palaces": {
+   "大安": {
+    "yuxiaji_duan": "大安事事昌，求謀在神方，失物去不遠，宅舍保安康，行人身未動，病者主無妨，將軍回田野，仔細與推詳。",
+    "yuxiaji_attr": "大安身不動時，屬木青龍，凡謀事主一、五、七；",
+    "yuxiaji_nums": [
+     1,
+     5,
+     7
+    ],
+    "engine_nums": [
+     1,
+     5,
+     7
+    ],
+    "shushu_match": true,
+    "shenshen_match": true,
+    "wuxing_match": true
+   },
+   "留连": {
+    "yuxiaji_duan": "留連事難成，求謀日示明，官事只宜緩，去者未回程，失物南方見，急討方稱心，更須防口舌，人口且平平。",
+    "yuxiaji_attr": "留連卒未妝時，屬水玄武，凡謀事主二、八、十；",
+    "yuxiaji_nums": [
+     2,
+     8,
+     10
+    ],
+    "engine_nums": [
+     2,
+     8,
+     10
+    ],
+    "shushu_match": true,
+    "shenshen_match": true,
+    "wuxing_match": true
+   },
+   "速喜": {
+    "yuxiaji_duan": "速喜喜來臨，求財向南行，失物申未午，逢人路上尋，官事有福德，病者無禍侵，田定六畜吉，行人有信音。",
+    "yuxiaji_attr": "速喜人便至時，屬火朱雀，凡謀事立三、六、九；",
+    "yuxiaji_nums": [
+     3,
+     6,
+     9
+    ],
+    "engine_nums": [
+     3,
+     6,
+     9
+    ],
+    "shushu_match": true,
+    "shenshen_match": true,
+    "wuxing_match": true
+   },
+   "赤口": {
+    "yuxiaji_duan": "赤日主口舌，官非切要防，失物急去尋，行人有驚慌，雞犬多作怪，病者出西方，更須訪咒詛，恐怕染瘟癀。",
+    "yuxiaji_attr": "赤口官事凶時，屬金白虎，凡謀事主四、七、十；",
+    "yuxiaji_nums": [
+     4,
+     7,
+     10
+    ],
+    "engine_nums": [
+     4,
+     7,
+     10
+    ],
+    "shushu_match": true,
+    "shenshen_match": true,
+    "wuxing_match": true
+   },
+   "小吉": {
+    "yuxiaji_duan": "小吉最吉昌，路上好商量，陰人來報喜，失物在坤方，行人立便至，交關甚是強，凡事皆和合，病者禱上蒼。",
+    "yuxiaji_attr": "小吉人來喜時，屬木六合，凡謀事主一、五、七；",
+    "yuxiaji_nums": [
+     1,
+     5,
+     7
+    ],
+    "engine_nums": [
+     1,
+     5,
+     7
+    ],
+    "shushu_match": true,
+    "shenshen_match": true,
+    "wuxing_match": true
+   },
+   "空亡": {
+    "yuxiaji_duan": "空亡事不長，陰人小乖張，求財無利益，行人有災殃，失物尋不見，官事有刑場，病人逢暗鬼，禳解保安康。",
+    "yuxiaji_attr": "空亡信音稀時，屬土勾陳，凡謀事主一、五、七；",
+    "yuxiaji_nums": [
+     1,
+     5,
+     7
+    ],
+    "engine_nums": [
+     3,
+     6,
+     9
+    ],
+    "shushu_match": false,
+    "shenshen_match": true,
+    "wuxing_match": true
+   }
+  },
+  "variance": {
+   "空亡": {
+    "field": "主数",
+    "engine(贺氏)": [
+     3,
+     6,
+     9
+    ],
+    "yuxiaji": [
+     1,
+     5,
+     7
+    ],
+    "handling": "两源分歧如实保留；engine 固定映射维持贺氏（所本不变），与命科夫子星「两书两体系保留差异」同一纪律，不择一冒充"
+   }
+  },
+  "discipline_note": "cross_source 为书源对照层：palaces 总诀仍以《贺氏六壬小手册》为引擎所本（所本字段不变），本块只登记公版逐字异文与结构一致性，不改任何断语、不回填、不冒充。"
  }
 }
