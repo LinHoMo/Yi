@@ -542,12 +542,12 @@
   "month": 5,
   "branch": "午",
   "stem": "癸",
-  "main": null,
-  "assist": null,
-  "quote": null,
-  "section": null,
-  "via": null,
-  "exact_paragraph": false
+  "main": "庚",
+  "assist": "辛",
+  "quote": "，至弱无根，必须庚辛为生身之本，但丁火司权，金难敌火，安能滋养癸水，宜见比劫，方得辛金之用。五月癸水，庚辛壬参酌并用可也。",
+  "section": "论癸·五月",
+  "via": "XYZ参酌并用",
+  "exact_paragraph": true
  },
  "6甲": {
   "month": 6,
@@ -587,11 +587,11 @@
   "branch": "未",
   "stem": "丁",
   "main": "甲",
-  "assist": null,
-  "quote": "'''六月之丁'''，阴柔退气，但值三伏生寒，丁弱极矣，专取甲木，壬水次之",
-  "section": "论丁（三冬）",
-  "via": "专用X",
-  "exact_paragraph": false
+  "assist": "壬",
+  "quote": "，阴柔退气，但值三伏生寒，丁弱极矣，专取甲木，壬水次之。",
+  "section": "论丁·六月",
+  "via": "专取XY次之",
+  "exact_paragraph": true
  },
  "6戊": {
   "month": 6,
