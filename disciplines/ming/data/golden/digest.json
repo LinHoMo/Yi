@@ -4,7 +4,7 @@
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
   "digest": "1be8d5b579463a47",
-  "narrate_digest": "a405c8149be9881c",
+  "narrate_digest": "ebe6ecb30993dcdc",
   "drift_log": [
     {
       "from": "57dc7e890af222fa",
@@ -121,6 +121,12 @@
       "to": "a405c8149be9881c",
       "date": "2026-10-05",
       "reason": "争合结构标签落地（CHANGELOG 10-05c）：pillar_relations 新增「天干争合」结构条目，narrate 对含争合盘新增该文本；机械层指纹零漂移，仅措辞层 2/6 例变化"
+    },
+    {
+      "from": "a405c8149be9881c",
+      "to": "ebe6ecb30993dcdc",
+      "date": "2026-10-06",
+      "reason": "扩 TIAO_HOU 51→90 格：《穷通宝鉴》逐格机械提取+引文原文子串校验+耑用变体，季节兜底16格；机械层零漂移，仅调候措辞随覆盖扩面变化"
     }
   ]
 }
