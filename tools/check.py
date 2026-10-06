@@ -115,16 +115,34 @@ CHINESE_VERDICT_LITERAL = re.compile(r"[\u4e00-\u9fff]{8,}")
 GANZHI_SEQ_LITERAL = re.compile(r'["\'](?:甲乙丙丁戊己庚辛壬癸|子丑寅卯辰巳午未申酉戌亥)["\']')
 
 
-def _run_py(cmd: list[str], *, label: str, cwd: Path = ROOT) -> tuple[int, str]:
-    """子进程跑一个质量门；返回 (退出码, 输出)。"""
+def _run_py(cmd: list[str], *, label: str, cwd: Path = ROOT,
+            exe: str | None = None) -> tuple[int, str]:
+    """子进程跑一个质量门；返回 (退出码, 输出)。exe 缺省用 sys.executable。"""
     try:
-        p = subprocess.run([sys.executable, *cmd], cwd=cwd,
+        p = subprocess.run([exe or sys.executable, *cmd], cwd=cwd,
                            capture_output=True, text=True, encoding="utf-8",
                            errors="replace", timeout=1200,
                            env=utf8_subprocess_env())
     except subprocess.TimeoutExpired:
         return 1, f"{label}: 超时（>1200s）"
     return p.returncode, (p.stdout or "") + (p.stderr or "")
+
+
+def _resolve_pytest_exe() -> list[str]:
+    """返回可跑 pytest 的 python 候选（按优先级）。
+    优先当前解释器；若其未装 pytest，则回退到同运行时目录下的标准 venv
+    （binary_context：脚本依赖应装进 <runtime>/envs/default）。如此即便用裸受管
+    Python 跑 check.py，单测门也能自动找到 venv 里的 pytest，避免静默失效。
+    """
+    cands = [sys.executable]
+    # <binaries>/python/versions/X.Y.Z/python.exe → <binaries>/python/envs/default/{Scripts/python.exe,bin/python}
+    py_root = Path(sys.executable).resolve().parents[2]  # .../python
+    for rel in ("envs/default/Scripts/python.exe", "envs/default/bin/python"):
+        venv_py = py_root / rel
+        if venv_py.is_file() and str(venv_py) != str(Path(sys.executable).resolve()):
+            cands.append(str(venv_py))
+            break
+    return cands
 
 
 def check_version() -> list[str]:
@@ -1126,7 +1144,17 @@ def main() -> int:
 
     if section("tests") and (args.full or only is not None):
         print("\n[8] 单元测试（pytest tests）")
-        code, out = _run_py(["-m", "pytest", "tests", "-q"], label="pytest tests")
+        cands = _resolve_pytest_exe()
+        code, out = 1, ""
+        for idx, exe in enumerate(cands):
+            code, out = _run_py(["-m", "pytest", "tests", "-q"], label="pytest tests", exe=exe)
+            if code == 0:
+                break
+            # 仅因该解释器未装 pytest 且仍有候选 → 回退到 venv python；
+            # 否则视为真实测试失败，停止尝试。
+            if "No module named pytest" in out and idx < len(cands) - 1:
+                continue
+            break
         if code == 0:
             print("  √ pytest tests")
         else:
