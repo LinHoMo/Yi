@@ -14,12 +14,12 @@
   "month": 1,
   "branch": "寅",
   "stem": "乙",
-  "main": null,
-  "assist": null,
-  "quote": null,
-  "section": null,
-  "via": null,
-  "exact_paragraph": false
+  "main": "丙",
+  "assist": "癸",
+  "quote": "，必须用丙，因天气尤有余寒，非丙不暖，虽有癸水，恐凝寒气，故以丙火为先，癸水次之。",
+  "section": "论乙·正月",
+  "via": "X为先Y次之",
+  "exact_paragraph": true
  },
  "1丙": {
   "month": 1,
@@ -36,34 +36,34 @@
   "month": 1,
   "branch": "寅",
   "stem": "丁",
-  "main": null,
+  "main": "庚",
   "assist": null,
-  "quote": null,
-  "section": null,
-  "via": null,
-  "exact_paragraph": false
+  "quote": "，甲木当权，乃为母旺，非庚不能噼甲，何以引丁，姑用庚金。",
+  "section": "论丁·正月",
+  "via": "专用X",
+  "exact_paragraph": true
  },
  "1戊": {
   "month": 1,
   "branch": "寅",
   "stem": "戊",
-  "main": null,
+  "main": "癸",
   "assist": null,
-  "quote": null,
-  "section": null,
-  "via": null,
+  "quote": "或丙多甲多，宜以癸庚参用",
+  "section": "论戊·三春（季节总论，过泛慎用）",
+  "via": "专用X(season)",
   "exact_paragraph": false
  },
  "1己": {
   "month": 1,
   "branch": "寅",
   "stem": "己",
-  "main": null,
+  "main": "丙",
   "assist": null,
-  "quote": null,
-  "section": null,
-  "via": null,
-  "exact_paragraph": false
+  "quote": "，田园犹冻，盖因腊气未除，余寒未退，故丙为尊。得丙照暖，万物自生，忌见壬水，反为己病，何也？壬乃江湖之水，湖水一发，则田园洗荡，变为沙土，而根苗尽没矣。须戊作堤，以保园圃。壬多要见戊制。有戊出干者，定主玉堂金马。若乏戊制，必属平常。",
+  "section": "论己·正月",
+  "via": "X为尊",
+  "exact_paragraph": true
  },
  "1庚": {
   "month": 1,
@@ -91,12 +91,12 @@
   "month": 1,
   "branch": "寅",
   "stem": "壬",
-  "main": null,
+  "main": "庚",
   "assist": null,
-  "quote": null,
-  "section": null,
-  "via": null,
-  "exact_paragraph": false
+  "quote": "，汪洋之象，能并百川之流，然水性柔弱，宜用庚金之源，庶不致汪洋无度。有庚丙戊三者齐透，科甲功名。或庚戊藏支，丙坐寅支者，亦有恩诰，即一庚透，贡监有之。",
+  "section": "论壬·正月",
+  "via": "专用X",
+  "exact_paragraph": true
  },
  "1癸": {
   "month": 1,
@@ -168,12 +168,12 @@
   "month": 2,
   "branch": "卯",
   "stem": "己",
-  "main": null,
+  "main": "甲",
   "assist": null,
-  "quote": null,
-  "section": null,
-  "via": null,
-  "exact_paragraph": false
+  "quote": "，阳气渐升，虽禾稼未成，万物出土，田园未展，先取甲木疏之，忌合。次取癸水润之。甲癸出干，定主科甲，加以一丙出透，势压百僚。一见壬水，微末官职。",
+  "section": "论己·二月",
+  "via": "用X(宽)",
+  "exact_paragraph": true
  },
  "2庚": {
   "month": 2,
@@ -190,12 +190,12 @@
   "month": 2,
   "branch": "卯",
   "stem": "辛",
-  "main": "丙",
-  "assist": "壬",
-  "quote": "'''十二月辛金'''，寒冻之极，先丙后壬，无丙不能解冻，无壬不能洗淘",
-  "section": "论辛（三冬）",
-  "via": "先X后Y",
-  "exact_paragraph": false
+  "main": "壬",
+  "assist": null,
+  "quote": "，阳和之际，壬水为尊，见戊己为病。得甲制伏，则辛金不致埋没，壬水不致混浊，合此者必身入玉堂。故二月辛金，有壬甲透者贵显。否则，乡绅。或壬坐亥支，不见土出，可能入芥，家亦小康。得申中之壬者，异途名望。无壬者常人。其生剋之理，与正月辛金皆同。",
+  "section": "论辛·二月",
+  "via": "X为尊",
+  "exact_paragraph": true
  },
  "2壬": {
   "month": 2,
@@ -311,12 +311,12 @@
   "month": 3,
   "branch": "辰",
   "stem": "壬",
-  "main": null,
+  "main": "甲",
   "assist": null,
-  "quote": null,
-  "section": null,
-  "via": null,
-  "exact_paragraph": false
+  "quote": "，戊土司权，恐有推山填海之患，先用甲疏季土，次取庚金。甲庚俱透，科甲定然。甲透庚藏，修齐品格。甲藏有根，可云俊秀。有癸滋甲，必主干城。独甲藏支，必富。独庚在柱，常人。无甲、刚暴之徒。乏庚、愚顽之辈。",
+  "section": "论壬·三月",
+  "via": "用X(宽)",
+  "exact_paragraph": true
  },
  "3癸": {
   "month": 3,
@@ -366,23 +366,23 @@
   "month": 4,
   "branch": "巳",
   "stem": "丁",
-  "main": null,
+  "main": "甲",
   "assist": null,
-  "quote": null,
-  "section": null,
-  "via": null,
-  "exact_paragraph": false
+  "quote": "乘旺，虽取甲引丁，必用庚噼甲。伐甲、方云木火通明。甲多、又取庚为先。但四柱忌见癸水。癸水一见，洩金、溼甲、伤丁，故以癸为病。或癸水藏支，壬水出干制丙，不夺丁光，自是雁塔题名，玉堂清贵。",
+  "section": "论丁·四月",
+  "via": "用X(宽)",
+  "exact_paragraph": true
  },
  "4戊": {
   "month": 4,
   "branch": "巳",
   "stem": "戊",
-  "main": null,
+  "main": "甲",
   "assist": null,
-  "quote": null,
-  "section": null,
-  "via": null,
-  "exact_paragraph": false
+  "quote": "，阳气发升，寒气内藏，外实内虚，不畏火炎，无阳气相催，万物不长，故先用甲疏噼，次取丙癸为佐。",
+  "section": "论戊·四月",
+  "via": "用X(宽)",
+  "exact_paragraph": true
  },
  "4己": {
   "month": 4,
@@ -399,12 +399,12 @@
   "month": 4,
   "branch": "巳",
   "stem": "庚",
-  "main": null,
+  "main": "壬",
   "assist": null,
-  "quote": null,
-  "section": null,
-  "via": null,
-  "exact_paragraph": false
+  "quote": "四月庚金，须用壬丙戊，但非拘执先后，宜分病用药",
+  "section": "论庚·四月（作者月度小结）",
+  "via": "用X(宽)(summary)",
+  "exact_paragraph": true
  },
  "4辛": {
   "month": 4,
@@ -454,12 +454,12 @@
   "month": 5,
   "branch": "午",
   "stem": "乙",
-  "main": null,
+  "main": "癸",
   "assist": null,
-  "quote": null,
-  "section": null,
-  "via": null,
-  "exact_paragraph": false
+  "quote": "，丁火司权，禾稼俱旱。上半月属阳，仍用癸水。下半月属阴，三伏生寒，丙癸齐用。柱多金水，丙火为先，余皆用癸水为先。",
+  "section": "论乙·五月",
+  "via": "用X(宽)",
+  "exact_paragraph": true
  },
  "5丙": {
   "month": 5,
@@ -487,12 +487,12 @@
   "month": 5,
   "branch": "午",
   "stem": "戊",
-  "main": null,
-  "assist": null,
-  "quote": null,
-  "section": null,
-  "via": null,
-  "exact_paragraph": false
+  "main": "壬",
+  "assist": "甲",
+  "quote": "，仲夏火炎，先看壬水，次取甲木，丙火酌用，用癸力微。",
+  "section": "论戊·五月",
+  "via": "先看X次取Y",
+  "exact_paragraph": true
  },
  "5己": {
   "month": 5,
@@ -531,12 +531,12 @@
   "month": 5,
   "branch": "午",
   "stem": "壬",
-  "main": null,
+  "main": "癸",
   "assist": null,
-  "quote": null,
-  "section": null,
-  "via": null,
-  "exact_paragraph": false
+  "quote": "，丁旺壬弱，取癸为用，取庚为佐。无庚不能发水，无癸不能伤丁。五月壬水，辛癸亦可参用，其理与四月皆同。",
+  "section": "论壬·五月",
+  "via": "X为用",
+  "exact_paragraph": true
  },
  "5癸": {
   "month": 5,
@@ -565,21 +565,21 @@
   "branch": "未",
   "stem": "乙",
   "main": "丙",
-  "assist": "癸",
-  "quote": "五六月先丙后癸，夏至前仍用癸水",
-  "section": "论乙（三冬）",
-  "via": "先X后Y",
-  "exact_paragraph": false
+  "assist": null,
+  "quote": "，木性且寒，柱多金水，丙火为尊。支成水局，乙得无伤。癸水透干，大富大贵。无癸定作常人，运不行北，困苦一生。",
+  "section": "论乙·六月",
+  "via": "X为尊",
+  "exact_paragraph": true
  },
  "6丙": {
   "month": 6,
   "branch": "未",
   "stem": "丙",
   "main": "壬",
-  "assist": null,
+  "assist": "庚",
   "quote": "退气，三伏生寒，壬水为用，取庚辅佐。",
   "section": "论丙·六月",
-  "via": "X为用",
+  "via": "X为用取Y辅佐",
   "exact_paragraph": true
  },
  "6丁": {
@@ -653,10 +653,10 @@
   "branch": "未",
   "stem": "癸",
   "main": "庚",
-  "assist": null,
+  "assist": "辛",
   "quote": "，有上下月之分。下半月庚辛有气，上半月庚辛休囚。凡六癸日、多不验者，何也？俗士不知此理。因未中有乙己同宫，破而不破，故癸水不能从杀，所以专用庚辛。如上半月金神衰弱，火气炎烈，宜比劫助身，可云富贵。与五月一理。下半月庚辛有气，即无比劫亦可，又忌丁透，即丁在支亦不吉。其生剋制化，与五月略同。",
   "section": "论癸·六月",
-  "via": "专用X",
+  "via": "耑用XY",
   "exact_paragraph": true
  },
  "7甲": {
@@ -685,22 +685,22 @@
   "month": 7,
   "branch": "申",
   "stem": "丙",
-  "main": null,
+  "main": "壬",
   "assist": null,
-  "quote": null,
-  "section": null,
-  "via": null,
-  "exact_paragraph": false
+  "quote": "，太阳转西，阳气衰矣。日近西山，见土皆晦，惟日照湖海，暮夜光天，故仍用壬水，辅映光辉。",
+  "section": "论丙·七月",
+  "via": "用X(宽)",
+  "exact_paragraph": true
  },
  "7丁": {
   "month": 7,
   "branch": "申",
   "stem": "丁",
-  "main": null,
+  "main": "甲",
   "assist": null,
-  "quote": null,
-  "section": null,
-  "via": null,
+  "quote": "三秋丁火，退气柔弱，耑用甲木，金虽乘旺司权，无伤丁之理，仍取庚噼甲，为引火之物，或借丙暖金晒木，不虑丙夺丁火",
+  "section": "论丁·三秋（季节总论，过泛慎用）",
+  "via": "专用X(season)",
   "exact_paragraph": false
  },
  "7戊": {
@@ -710,19 +710,19 @@
   "main": "丙",
   "assist": "癸",
   "quote": "七月戊土，阳气渐入，寒气渐出，先丙后癸，甲木次之",
-  "section": "论戊（三冬）",
-  "via": "先X后Y",
-  "exact_paragraph": false
+  "section": "论戊·七月（作者月度小结）",
+  "via": "先X后Y(summary)",
+  "exact_paragraph": true
  },
  "7己": {
   "month": 7,
   "branch": "申",
   "stem": "己",
-  "main": null,
-  "assist": null,
-  "quote": null,
-  "section": null,
-  "via": null,
+  "main": "癸",
+  "assist": "丙",
+  "quote": "总之，三秋己土，先癸后丙，取辛辅癸",
+  "section": "论己·三秋（季节总论，过泛慎用）",
+  "via": "先X后Y(season)",
   "exact_paragraph": false
  },
  "7庚": {
@@ -740,12 +740,12 @@
   "month": 7,
   "branch": "申",
   "stem": "辛",
-  "main": null,
+  "main": "壬",
   "assist": null,
-  "quote": null,
-  "section": null,
-  "via": null,
-  "exact_paragraph": false
+  "quote": "七月辛金，壬不在多，故书云：水浅金多，号曰体全之象，壬水为尊，甲戊酌用可也，癸水不可为用",
+  "section": "论辛·七月（作者月度小结）",
+  "via": "X为尊(summary)",
+  "exact_paragraph": true
  },
  "7壬": {
   "month": 7,
@@ -795,22 +795,22 @@
   "month": 8,
   "branch": "酉",
   "stem": "丙",
-  "main": null,
+  "main": "壬",
   "assist": null,
-  "quote": null,
-  "section": null,
-  "via": null,
-  "exact_paragraph": false
+  "quote": "，日近黄昏，丙火之余光，存于光湖，仍用壬水辅映。",
+  "section": "论丙·八月",
+  "via": "用X(宽)",
+  "exact_paragraph": true
  },
  "8丁": {
   "month": 8,
   "branch": "酉",
   "stem": "丁",
-  "main": null,
+  "main": "甲",
   "assist": null,
-  "quote": null,
-  "section": null,
-  "via": null,
+  "quote": "三秋丁火，退气柔弱，耑用甲木，金虽乘旺司权，无伤丁之理，仍取庚噼甲，为引火之物，或借丙暖金晒木，不虑丙夺丁火",
+  "section": "论丁·三秋（季节总论，过泛慎用）",
+  "via": "专用X(season)",
   "exact_paragraph": false
  },
  "8戊": {
@@ -828,23 +828,23 @@
   "month": 8,
   "branch": "酉",
   "stem": "己",
-  "main": null,
-  "assist": null,
-  "quote": null,
-  "section": null,
-  "via": null,
+  "main": "癸",
+  "assist": "丙",
+  "quote": "总之，三秋己土，先癸后丙，取辛辅癸",
+  "section": "论己·三秋（季节总论，过泛慎用）",
+  "via": "先X后Y(season)",
   "exact_paragraph": false
  },
  "8庚": {
   "month": 8,
   "branch": "酉",
   "stem": "庚",
-  "main": null,
+  "main": "丁",
   "assist": null,
-  "quote": null,
-  "section": null,
-  "via": null,
-  "exact_paragraph": false
+  "quote": "，刚锐未退，用丁用甲，丙不可少。若丁甲透，又见一丙，功名显赫，且见羊刃，无刑剋，丙杀藏支，名为羊刃驾杀，主出将入相，直介忠臣。",
+  "section": "论庚·八月",
+  "via": "用X(宽)",
+  "exact_paragraph": true
  },
  "8辛": {
   "month": 8,
@@ -917,44 +917,44 @@
   "branch": "戌",
   "stem": "丁",
   "main": "甲",
-  "assist": null,
+  "assist": "庚",
   "quote": "九月耑用甲庚",
   "section": "论丁（三冬）",
-  "via": "专用X",
+  "via": "耑用XY",
   "exact_paragraph": false
  },
  "9戊": {
   "month": 9,
   "branch": "戌",
   "stem": "戊",
-  "main": "丙",
-  "assist": null,
+  "main": "甲",
+  "assist": "癸",
   "quote": "当权，不可专用丙，先看甲木，次取癸水，却忌化合。见金先用癸水，后取丙火，配合支干，方成有生之土，定发云程。",
   "section": "论戊·九月",
-  "via": "专用X",
+  "via": "先看X次取Y",
   "exact_paragraph": true
  },
  "9己": {
   "month": 9,
   "branch": "戌",
   "stem": "己",
-  "main": null,
+  "main": "甲",
   "assist": null,
-  "quote": null,
-  "section": null,
-  "via": null,
+  "quote": "九月土盛，宜甲木疏之，余皆酌用",
+  "section": "论己（三冬）",
+  "via": "专用X",
   "exact_paragraph": false
  },
  "9庚": {
   "month": 9,
   "branch": "戌",
   "stem": "庚",
-  "main": null,
+  "main": "甲",
   "assist": null,
-  "quote": null,
-  "section": null,
-  "via": null,
-  "exact_paragraph": false
+  "quote": "，戊土司令，最怕土厚埋金，宜先用甲疏，后用壬洗，则金自出矣。忌见己土浊壬。",
+  "section": "论庚·九月",
+  "via": "用X(宽)",
+  "exact_paragraph": true
  },
  "9辛": {
   "month": 9,
@@ -974,9 +974,9 @@
   "main": "甲",
   "assist": null,
   "quote": "九月壬水，专用甲木，次用丙火",
-  "section": "论壬（三冬）",
-  "via": "专用X",
-  "exact_paragraph": false
+  "section": "论壬·九月（作者月度小结）",
+  "via": "专用X(summary)",
+  "exact_paragraph": true
  },
  "9癸": {
   "month": 9,
@@ -994,11 +994,11 @@
   "branch": "亥",
   "stem": "甲",
   "main": "庚",
-  "assist": "壬",
-  "quote": "先取庚金，次用壬水",
-  "section": "论甲·三冬（季节总论，过泛慎用）",
-  "via": "先取X次Y(season)",
-  "exact_paragraph": false
+  "assist": null,
+  "quote": "，庚丁为要，丙火次之。忌壬水泛身，须戊土制之。",
+  "section": "论甲·十月",
+  "via": "XY为要(宽)",
+  "exact_paragraph": true
  },
  "10乙": {
   "month": 10,
@@ -1015,11 +1015,11 @@
   "month": 10,
   "branch": "亥",
   "stem": "丙",
-  "main": "壬",
-  "assist": "庚",
-  "quote": "壬庚两透，科甲定然",
-  "section": "论丙·三冬（季节总论，过泛慎用）",
-  "via": "XY两透(season)",
+  "main": null,
+  "assist": null,
+  "quote": null,
+  "section": null,
+  "via": null,
   "exact_paragraph": false
  },
  "10丁": {
@@ -1028,31 +1028,31 @@
   "stem": "丁",
   "main": "庚",
   "assist": "甲",
-  "quote": "庚甲两透，科甲定然",
+  "quote": "三冬丁火微寒，耑用庚甲",
   "section": "论丁·三冬（季节总论，过泛慎用）",
-  "via": "XY两透(season)",
+  "via": "耑用XY(season)",
   "exact_paragraph": false
  },
  "10戊": {
   "month": 10,
   "branch": "亥",
   "stem": "戊",
-  "main": "壬",
-  "assist": "甲",
-  "quote": "壬甲两透，名君臣庆会，自然桃浪先声，权高位显，又得辛透年干，官居一品",
-  "section": "论戊·三冬（季节总论，过泛慎用）",
-  "via": "XY两透(season)",
-  "exact_paragraph": false
+  "main": "甲",
+  "assist": null,
+  "quote": "，时值小阳，阳气略出，先用甲木，次取丙火。非甲、土不灵。非丙、土不暖，安能生发万物。甲丙两出，富贵中人。或甲得长生，遇支藏得地之水，一丙高透，亦主身贵扬名。",
+  "section": "论戊·十月",
+  "via": "用X(宽)",
+  "exact_paragraph": true
  },
  "10己": {
   "month": 10,
   "branch": "亥",
   "stem": "己",
   "main": "丙",
-  "assist": "癸",
-  "quote": "或丙癸两透，又加辛金生癸，此富贵之格，名水火既济，鼎甲之人",
+  "assist": null,
+  "quote": "三冬己土，溼泥寒冻，非丙暖不生，取丙为尊，甲木参酌",
   "section": "论己·三冬（季节总论，过泛慎用）",
-  "via": "XY两透(season)",
+  "via": "X为尊(season)",
   "exact_paragraph": false
  },
  "10庚": {
@@ -1060,10 +1060,10 @@
   "branch": "亥",
   "stem": "庚",
   "main": "丁",
-  "assist": "甲",
+  "assist": "丙",
   "quote": "，水冷性寒，非丁莫造，非丙不暖。丁甲两透，支无水局，一榜有之。支藏丙火，桃浪之仙。支见亥子，得己出制，亦有功名。",
   "section": "论庚·十月",
-  "via": "XY两透",
+  "via": "非X莫造Y不",
   "exact_paragraph": true
  },
  "10辛": {
@@ -1103,12 +1103,12 @@
   "month": 11,
   "branch": "子",
   "stem": "甲",
-  "main": "庚",
-  "assist": null,
-  "quote": "总之十一月甲木，为寒枝，不比春木清茂，耑取庚丁",
-  "section": "论甲（三冬）",
-  "via": "专用X",
-  "exact_paragraph": false
+  "main": "丁",
+  "assist": "庚",
+  "quote": "，木性生寒，丁先庚后，丙火佐之。癸水司权，为火金之病。庚丁两透，支见巳寅，科甲有准，风水不及，选拔有之。若癸透伤丁。无戊己辅救，残疾之人。或壬水重出，丁火全无者，庸人也，得丙方妙。",
+  "section": "论甲·冬月",
+  "via": "X先Y后Z佐",
+  "exact_paragraph": true
  },
  "11乙": {
   "month": 11,
@@ -1116,42 +1116,42 @@
   "stem": "乙",
   "main": "丙",
   "assist": null,
-  "quote": "'''十一月乙木'''，花木寒冻，一阳来复，喜用丙火解冻，则花木有向阳之意，不宜用癸以冻花木，故耑用丙火",
-  "section": "论乙（三冬）",
+  "quote": "，花木寒冻，一阳来复，喜用丙火解冻，则花木有向阳之意，不宜用癸以冻花木，故耑用丙火。",
+  "section": "论乙·冬月",
   "via": "专用X",
-  "exact_paragraph": false
+  "exact_paragraph": true
  },
  "11丙": {
   "month": 11,
   "branch": "子",
   "stem": "丙",
   "main": "壬",
-  "assist": "庚",
-  "quote": "壬庚两透，科甲定然",
-  "section": "论丙·三冬（季节总论，过泛慎用）",
-  "via": "XY两透(season)",
-  "exact_paragraph": false
+  "assist": "戊",
+  "quote": "，冬至一阳生，弱中复强，壬水为最，戊土佐之。",
+  "section": "论丙·冬月",
+  "via": "X为最Y佐之",
+  "exact_paragraph": true
  },
  "11丁": {
   "month": 11,
   "branch": "子",
   "stem": "丁",
-  "main": "庚",
-  "assist": "甲",
-  "quote": "庚甲两透，科甲定然",
-  "section": "论丁·三冬（季节总论，过泛慎用）",
-  "via": "XY两透(season)",
+  "main": null,
+  "assist": null,
+  "quote": null,
+  "section": null,
+  "via": null,
   "exact_paragraph": false
  },
  "11戊": {
   "month": 11,
   "branch": "子",
   "stem": "戊",
-  "main": "壬",
-  "assist": "甲",
-  "quote": "壬甲两透，名君臣庆会，自然桃浪先声，权高位显，又得辛透年干，官居一品",
-  "section": "论戊·三冬（季节总论，过泛慎用）",
-  "via": "XY两透(season)",
+  "main": null,
+  "assist": null,
+  "quote": null,
+  "section": null,
+  "via": null,
   "exact_paragraph": false
  },
  "11己": {
@@ -1159,22 +1159,22 @@
   "branch": "子",
   "stem": "己",
   "main": "丙",
-  "assist": "癸",
-  "quote": "或丙癸两透，又加辛金生癸，此富贵之格，名水火既济，鼎甲之人",
+  "assist": null,
+  "quote": "三冬己土，溼泥寒冻，非丙暖不生，取丙为尊，甲木参酌",
   "section": "论己·三冬（季节总论，过泛慎用）",
-  "via": "XY两透(season)",
+  "via": "X为尊(season)",
   "exact_paragraph": false
  },
  "11庚": {
   "month": 11,
   "branch": "子",
   "stem": "庚",
-  "main": "丙",
+  "main": "丁",
   "assist": "甲",
-  "quote": "丙甲两透，科甲显荣",
-  "section": "论庚·三冬（季节总论，过泛慎用）",
-  "via": "XY两透(season)",
-  "exact_paragraph": false
+  "quote": "，天气严寒，仍取丁甲，次取丙火照暖。或丁甲两透，丙在支中，必主科甲。即无丙火，亦有衣衿。有丁无甲，亦可富中取贵。有甲无丁，只作常人。或丙透丁藏，异途名望。丁藏有甲，武学可许。",
+  "section": "论庚·冬月",
+  "via": "XY两透",
+  "exact_paragraph": true
  },
  "11辛": {
   "month": 11,
@@ -1182,10 +1182,10 @@
   "stem": "辛",
   "main": "壬",
   "assist": "丙",
-  "quote": "'''十一月辛金'''，癸水司令，为寒冬雨露，切忌癸出冻金，而困丙火，壬丙两透，不见戊癸，衣锦腰金",
-  "section": "论辛（三冬）",
+  "quote": "，癸水司令，为寒冬雨露，切忌癸出冻金，而困丙火，壬丙两透，不见戊癸，衣锦腰金。即壬藏丙透，一榜堪图。",
+  "section": "论辛·冬月",
   "via": "XY两透",
-  "exact_paragraph": false
+  "exact_paragraph": true
  },
  "11壬": {
   "month": 11,
@@ -1193,10 +1193,10 @@
   "stem": "壬",
   "main": "戊",
   "assist": "丙",
-  "quote": "'''十一月壬水'''，阳刃帮身，较前更旺，先取戊土，次用丙火，丙戊两透，富贵荣华",
-  "section": "论壬（三冬）",
+  "quote": "，阳刃帮身，较前更旺，先取戊土，次用丙火，丙戊两透，富贵荣华。有戊无丙，略可言富。有丙无戊，好谋无成。",
+  "section": "论壬·冬月",
   "via": "先取X次Y",
-  "exact_paragraph": false
+  "exact_paragraph": true
  },
  "11癸": {
   "month": 11,
@@ -1204,31 +1204,31 @@
   "stem": "癸",
   "main": "丙",
   "assist": null,
-  "quote": "'''十一月癸水'''，值冰冻之时，金水无交欢之象，专用丙火解冻，庶不致成冰，又要辛金滋扶，无丙有辛，不妙",
-  "section": "论癸（三冬）",
+  "quote": "，值冰冻之时，金水无交欢之象，专用丙火解冻，庶不致成冰，又要辛金滋扶，无丙有辛，不妙。凡冬季癸水，有丙透解冻，则金温水暖，两两相生，要不见壬癸，自然豋科及第，紫诰金章。",
+  "section": "论癸·冬月",
   "via": "专用X",
-  "exact_paragraph": false
+  "exact_paragraph": true
  },
  "12甲": {
   "month": 12,
   "branch": "丑",
   "stem": "甲",
   "main": "庚",
-  "assist": "壬",
-  "quote": "先取庚金，次用壬水",
-  "section": "论甲·三冬（季节总论，过泛慎用）",
-  "via": "先取X次Y(season)",
-  "exact_paragraph": false
+  "assist": null,
+  "quote": "，天寒气冻，木性极寒，无生发之象，先用庚噼甲，方引丁火始得木火有通明之象，故丁次之。",
+  "section": "论甲·腊月",
+  "via": "用X(宽)",
+  "exact_paragraph": true
  },
  "12乙": {
   "month": 12,
   "branch": "丑",
   "stem": "乙",
-  "main": "丙",
-  "assist": "癸",
-  "quote": "丙癸两透，科甲定然，或有丙无癸门户阐扬",
+  "main": "戊",
+  "assist": null,
+  "quote": "支成木局，时值小阳，此又如春木同旺，若有癸出，须取戊为尊，加以丙透，科甲之人",
   "section": "论乙·三冬（季节总论，过泛慎用）",
-  "via": "XY两透(season)",
+  "via": "X为尊(season)",
   "exact_paragraph": false
  },
  "12丙": {
@@ -1248,20 +1248,20 @@
   "stem": "丁",
   "main": "庚",
   "assist": "甲",
-  "quote": "庚甲两透，科甲定然",
+  "quote": "三冬丁火微寒，耑用庚甲",
   "section": "论丁·三冬（季节总论，过泛慎用）",
-  "via": "XY两透(season)",
+  "via": "耑用XY(season)",
   "exact_paragraph": false
  },
  "12戊": {
   "month": 12,
   "branch": "丑",
   "stem": "戊",
-  "main": "壬",
-  "assist": "甲",
-  "quote": "壬甲两透，名君臣庆会，自然桃浪先声，权高位显，又得辛透年干，官居一品",
-  "section": "论戊·三冬（季节总论，过泛慎用）",
-  "via": "XY两透(season)",
+  "main": null,
+  "assist": null,
+  "quote": null,
+  "section": null,
+  "via": null,
   "exact_paragraph": false
  },
  "12己": {
@@ -1269,10 +1269,10 @@
   "branch": "丑",
   "stem": "己",
   "main": "丙",
-  "assist": "癸",
-  "quote": "或丙癸两透，又加辛金生癸，此富贵之格，名水火既济，鼎甲之人",
+  "assist": null,
+  "quote": "三冬己土，溼泥寒冻，非丙暖不生，取丙为尊，甲木参酌",
   "section": "论己·三冬（季节总论，过泛慎用）",
-  "via": "XY两透(season)",
+  "via": "X为尊(season)",
   "exact_paragraph": false
  },
  "12庚": {
@@ -1312,11 +1312,11 @@
   "month": 12,
   "branch": "丑",
   "stem": "癸",
-  "main": "辛",
-  "assist": "丙",
-  "quote": "辛丙两透，金榜有名",
-  "section": "论癸·三冬（季节总论，过泛慎用）",
-  "via": "XY两透(season)",
-  "exact_paragraph": false
+  "main": "丙",
+  "assist": null,
+  "quote": "，寒极成冰，万物不能舒泰，宜丙火解冻。或丙透年时，加以壬透，支中多戊，名水辅阳光，主显达名臣，无戊者，异途之职。若有丙无壬，黉门之客。有壬无丙，戊又出干者，皂隶之流。",
+  "section": "论癸·腊月",
+  "via": "专用X",
+  "exact_paragraph": true
  }
 }

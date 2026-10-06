@@ -4,7 +4,7 @@
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
   "digest": "1be8d5b579463a47",
-  "narrate_digest": "ebe6ecb30993dcdc",
+  "narrate_digest": "1233c399b54a8781",
   "drift_log": [
     {
       "from": "57dc7e890af222fa",
@@ -127,6 +127,12 @@
       "to": "ebe6ecb30993dcdc",
       "date": "2026-10-06",
       "reason": "扩 TIAO_HOU 51→90 格：《穷通宝鉴》逐格机械提取+引文原文子串校验+耑用变体，季节兜底16格；机械层零漂移，仅调候措辞随覆盖扩面变化"
+    },
+    {
+      "from": "ebe6ecb30993dcdc",
+      "to": "1233c399b54a8781",
+      "date": "2026-10-06",
+      "reason": "TIAO_HOU 90→106 格（新增作者月度小结层 a0 + 修正十一月月头漏「一」的真 bug + 否定/从格/条件句否决机制 + 季节兜底限用于无精确月头之格）；机械层零漂移，仅调候措辞随覆盖扩面与修正而变"
     }
   ]
 }
