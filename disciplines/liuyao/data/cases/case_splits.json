@@ -119,7 +119,16 @@
     "WS032",
     "WS033",
     "WS034",
-    "WS035"
+    "WS035",
+    "WS036",
+    "WS037",
+    "WS038",
+    "WS039",
+    "WS040",
+    "WS041",
+    "WS042",
+    "WS043",
+    "WS044"
   ],
   "wikisource_direction": [
     "WSD001",
@@ -157,7 +166,9 @@
     "WSD033",
     "WSD034",
     "WSD035",
-    "WSD036"
+    "WSD036",
+    "WSD037",
+    "WSD038"
   ],
   "huozhulin_holdout": [
     "HZL001",

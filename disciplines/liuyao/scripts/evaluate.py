@@ -153,8 +153,13 @@ def _na(value) -> bool:
     return value in (None, "", "?")
 
 
-def score_case(eng: dict, exp: dict, model: str) -> dict:
-    """单例打分。返回 {dim: (earned, applicable_weight, note)}。"""
+def score_case(eng: dict, exp: dict, model: str, case: dict | None = None) -> dict:
+    """单例打分。返回 {dim: (earned, applicable_weight, note)}。
+
+    case —— 完整案例（可选）。相对期基准（"次日/月余/年内"，无应支可排）需要
+    案例顶层的 year/month/day 锚日才能换算天数窗；exp 只是 expected 子字典，
+    拿不到锚日。此前该分支的锚日恒为 None → 相对窗比对从未生效（死代码）。
+    """
     dims: dict[str, tuple[int, int, str]] = {}
 
     # 用神六亲
@@ -276,15 +281,23 @@ def score_case(eng: dict, exp: dict, model: str) -> dict:
         rank = next((i + 1 for i, ch in enumerate(offered) if needed and ch in needed), None)
         if not needed:
             hit = x_yq in probe
-            # 相对窗：有锚日则换算绝对日窗比对引擎日期；否则节奏语义对齐
+            # 相对窗：锚日优先取案例顶层 year/month/day（case_runner 干支反查的
+            # 同一实现落盘），否则退回 expected 内的公历日期；有锚日则换算绝对日窗
+            # 比对引擎日期（引擎的"速应(次日)"等规则输出的就是锚日+N 的日历日期）；
+            # 否则节奏语义对齐。
             from liuyao_timing import relative_window, resolve_case_anchor, date_in_window
             win = relative_window(x_yq)
-            anchor = resolve_case_anchor((exp.get("input") or {}), exp) if isinstance(exp, dict) else None
+            anchor = resolve_case_anchor((case or {}).get("input") or {}, case or {}) \
+                if case else None
+            if anchor is None:
+                anchor = resolve_case_anchor((exp.get("input") or {}), exp) if isinstance(exp, dict) else None
             abs_hit = False
             if win and anchor:
                 lo, hi, label = win
-                dates = [str(d.get("date") if isinstance(d, dict) else d)
-                         for d in (eng.get("yingqi_dates") or [])]
+                yq_dates = eng.get("yingqi_dates") or []
+                if isinstance(yq_dates, dict):
+                    yq_dates = yq_dates.get("dates") or []
+                dates = [str(d.get("date") if isinstance(d, dict) else d) for d in yq_dates]
                 abs_hit = any(date_in_window(anchor, d, lo, hi) for d in dates if d)
             rhythm = any(
                 any(k in x_yq for k in xk) and any(k in probe for k in ek)
@@ -412,7 +425,12 @@ def score_yingqi_loose(eng: dict, exp: dict, case: dict | None = None) -> tuple[
 def evaluate(engine_out: dict, model: str, label: str, ids: list[str], verbose: bool) -> dict:
     """六爻古籍案例对齐评分（框架与 N/A 口径见 yishu_core.eval，此处只给维度比较）。"""
     base = {c["id"]: c for c in case_runner.load_cases()}
-    return run_eval(engine_out, base, ids, WEIGHTS, score_case, model, label, verbose)
+
+    def _score_case(eng: dict, exp: dict, model_: str) -> dict:
+        # 引擎单例带 id，用它找回完整案例（相对期锚日在案例顶层，见 score_case docstring）
+        return score_case(eng, exp, model_, case=base.get(eng.get("id")))
+
+    return run_eval(engine_out, base, ids, WEIGHTS, _score_case, model, label, verbose)
 
 
 def _branches_in(text: str) -> list[str]:

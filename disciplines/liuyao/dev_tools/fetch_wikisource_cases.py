@@ -50,8 +50,10 @@ PROV = SOURCES / "zengshan_buyi.provenance.json"
 OUT = DISC / "data" / "cases" / "wikisource_cases.json"
 SPLITS = DISC / "data" / "cases" / "case_splits.json"
 
-STEMS = sym.HEAVENLY_STEMS
-BRANCHES = sym.EARTHLY_BRANCHES
+# core 常量是 list，进正则字符类前必须 "".join（与 case_runner 同一个坑：直接插值
+# 会把 list 的 repr 写进字符类，在第一个 ] 处提前闭合，正则从此永不匹配）。
+STEMS = "".join(sym.HEAVENLY_STEMS)
+BRANCHES = "".join(sym.EARTHLY_BRANCHES)
 
 # 繁体字头 → 内核（简体）卦名用字。只列六十四卦、八卦前缀与世应/動變会碰到的字。
 TRAD = {
@@ -61,8 +63,19 @@ TRAD = {
     "節": "节", "訟": "讼", "謙": "谦", "隨": "随", "壯": "壮", "過": "过",
     "復": "复", "觀": "观", "暌": "睽", "旣": "既", "卽": "即", "濟": "济",
 }
-# 卦象前缀（天地風雷水火山泽）——四字卦名如"火天同人"要去掉前缀才对上内核名
-TRI_CHARS = set("天地風雷水火山泽泽震巽乾坤坎离艮兑")
+# 卦象前缀（天地風雷水火山泽）——四字卦名如"火天同人"要去掉前缀才对上内核名。
+# 注意：resolve_hex 先过 norm()（繁→简）再比对，此表必须用**简体**字——
+# 曾经写成繁体"風/澤"，而 TRAD 已把 風→风、澤→泽，导致「地風升」「風水渙」
+# 这类三字卦名全部解析失败（实测 2 例白丢）。
+TRI_CHARS = set("天地风雷水火山泽震巽乾坤坎离艮兑")
+
+# 刻本卦名异体/省写 → 内核卦名（resolve_hex 末尾兜底；错映射会被 V1 纳甲校验拦下）。
+NAME_ALIASES = {
+    "即济": "既济",   # 卽濟（水火既济的刻本写法）
+    "騫": "蹇",       # 水山蹇的刻本异体
+    "逐": "遁",       # 天山遁的刻本异体
+    "畜": "大畜",     # 「變畜卦」为山天大畜的省写
+}
 
 # 引例头：〔月建〕〔日辰〕+ 占问 + 得 本卦〔之/變/化 变卦〕
 # 古籍写"革之夬""家人變益""噬嗑化屯"，也写"澤天夬卦變大壯"（變字在卦字之后）。
@@ -78,10 +91,25 @@ _CHG = r"(?:[之變变化]\s*" + _TAIL + r"卦?|卦(?:[之變变化]\s*" + _TAIL
 HEAD = re.compile(
     r"(?:于|於)?(?P<month>[" + BRANCHES + r"])月\s*(?P<day>[" + STEMS + r"]?[" + BRANCHES + r"])日"
     r"(?P<q>[^。\n]{0,40}?)得\s*" + _NAME + _CHG)
+# 「。得」式：占问与"得卦"之间隔着句号（"占將來有官否。得兌化訟卦"）。
+# 与 HEAD 同构，只把 q 尾允许一个句号（\s 已吞换行）。假头会被 V1–V3 拦下，
+# 不会入池；实测该式 16 例全真（2026-10-06 扫描）。
+HEAD_DOT = re.compile(
+    r"(?:于|於)?(?P<month>[" + BRANCHES + r"])月\s*(?P<day>[" + STEMS + r"]?[" + BRANCHES + r"])日"
+    r"(?P<q>[^。\n]{0,40}?)[。﹒]\s*得\s*" + _NAME + _CHG)
 # 无月建的头（"戊戌日占…"式）
 HEAD_NO_MONTH = re.compile(
     r"(?P<day>[" + STEMS + r"][" + BRANCHES + r"])日"
     r"(?P<q>[^。\n]{0,40}?)得\s*" + _NAME + _CHG)
+
+# 相对期（可检，但需锚日）：验句里写"果於次日/當日/月餘/年內"式。
+# 引擎有同名的区间化口径（liuyao_timing.REL_RULES），评分按"锚日+天数窗"比对
+# 引擎给出的日历日期；锚日由干支反查唯一还原（与 case_runner 同一实现），记入案例
+# 顶层 year/month/day。仅收锚词后紧跟的相对期，机制句里的不收。
+REL_TERMS = {"次日": "次日", "當日": "当日", "当日": "当日", "當天": "当天",
+             "月餘": "月余", "月余": "月余", "年內": "年内", "年内": "年内",
+             "經年": "经年", "经年": "经年"}
+YINGQI_REL = re.compile(r"[應果期驗].{0,3}?(" + "|".join(REL_TERMS) + r")")
 
 _REL = r"(兄弟|妻財|財|官鬼|父母|子孫)"
 _MARK = r"([⚊⚋○ㄨ×⚍]?)"
@@ -138,15 +166,32 @@ def norm(name: str) -> str:
 
 
 def resolve_hex(name: str) -> str | None:
-    """原文卦名 → 内核卦名。先去繁简，再剥"火天/澤天"式卦象前缀。"""
+    """原文卦名 → 内核卦名。先去繁简，再剥"火天/澤天"式卦象前缀。
+
+    刻本常把问语黏在卦名前（"得關差否水澤節"），前缀剥离只认八卦字时剥不动，
+    故改取**最长的表内后缀**作卦名：问语残渣（關差否）被自然丢弃；前缀剥到哪一截
+    由"后缀再往前一字是否八卦字、且拼起来是否仍是卦名"决定（火天同人 → 同人，
+    天风姤 → 姤）。异体/省写（即济/騫/逐/畜）走 NAME_ALIASES 兜底；映射错了会被
+    V1 纳甲校验拦下，不会混进案例池。
+    """
     n = norm(name).strip()
     if n in sym.HEXAGRAM_TRIGRAMS:
         return n
-    for cut in (1, 2):
-        if len(n) > cut:
-            tail = n[cut:]
-            if tail in sym.HEXAGRAM_TRIGRAMS and all(c in TRI_CHARS for c in n[:cut]):
-                return tail
+    if n in NAME_ALIASES and NAME_ALIASES[n] in sym.HEXAGRAM_TRIGRAMS:
+        return NAME_ALIASES[n]
+    for L in range(len(n) - 1, 0, -1):
+        raw_tail = n[len(n) - L:]
+        tail = NAME_ALIASES.get(raw_tail, raw_tail)
+        if tail not in sym.HEXAGRAM_TRIGRAMS:
+            continue
+        # 后缀前一字若仍是八卦字、且拼上去也是卦名（如"澤天夬"剥到"夬"时前一字
+        # 是卦象字"天"但"天夬"非卦名），说明前缀是卦象残段，取此后缀即为卦名。
+        prev = n[len(n) - L - 1] if L < len(n) else ""
+        extended = (prev + raw_tail) if prev else ""
+        if prev and prev in TRI_CHARS and (
+                extended in sym.HEXAGRAM_TRIGRAMS or extended in NAME_ALIASES):
+            continue
+        return tail
     return None
 
 
@@ -331,7 +376,7 @@ def main() -> int:
 
     blocks = find_diagrams(segments)
     row_idx = {i for i, (_o, s) in enumerate(segments) if parse_row(s)}
-    heads = {m.start() for pat in (HEAD, HEAD_NO_MONTH) for m in pat.finditer(raw)}
+    heads = {m.start() for pat in (HEAD, HEAD_DOT, HEAD_NO_MONTH) for m in pat.finditer(raw)}
     print(f"爻图块 {len(blocks)} 个；引例头 {len(heads)} 处")
 
     kept, dropped, dir_only = [], [], []
@@ -345,13 +390,36 @@ def main() -> int:
     seen = set()
     prev_end = -1
 
+    def push_dir_only(verdict, clause):
+        """仅方向集登记（有吉凶、无可靠验期：应期 N/A，不造假基准）。"""
+        dir_only.append({
+            "id": f"WSD{len(dir_only) + 1:03d}",
+            "source": "《增刪卜易》（维基文库原本）",
+            "topic": (q or "占事").strip()[:24],
+            "question": (q or "").strip() or f"占{orig}卦事",
+            "input": {"date": f"{month_branch}月{day_gz}日",
+                      "question": (q or "").strip()},
+            "hexagram": {"original": orig, "changed": changed,
+                         "moving": info.get("moving") or [],
+                         "palace": info.get("palace", ""),
+                         "generation": info.get("generation", "")},
+            "expected": {"verdict": verdict, "use_god": "",
+                         "use_god_branch": "", "use_god_position": "",
+                         "yingqi": "", "yingqi_branches": [],
+                         "detail": clause},
+            "provenance": {"page": PAGE,
+                           "sha256_head": hashlib.sha256(raw.encode("utf-8")).hexdigest()[:12],
+                           "offset": blk["start"], "wikitext_head": m.group(0)[:80]},
+            "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A",
+        })
+
     for bi, blk in enumerate(blocks):
         # 引例头在图之前、应验句在图之后；两段都不含爻图行
         before = "".join(segments[i][1] for i in range(prev_end + 1, blk["start"])
                          if i not in row_idx)
         prev_end = blk["end"]
         head = None
-        for pat in (HEAD, HEAD_NO_MONTH):
+        for pat in (HEAD, HEAD_DOT, HEAD_NO_MONTH):
             for mm in pat.finditer(before):
                 # 同一条头会被两个式子各命中一次：带月建的那个起点更早、终点相同，
                 # 必须选它，否则 input.date 只剩"月丁卯日"，月令丢失 → 旺衰无据。
@@ -445,7 +513,7 @@ def main() -> int:
         # 本例正文止于"下一个引例头"。用定长窗口截断，既会砍掉自己的验句，
         # 更坏的是可能把下一例的验句当本例的——那是假基准，不是缺基准。
         cut = len(after)
-        for pat in (HEAD, HEAD_NO_MONTH):
+        for pat in (HEAD, HEAD_DOT, HEAD_NO_MONTH):
             mm = pat.search(after)
             if mm and mm.start() < cut:
                 cut = mm.start()
@@ -456,32 +524,37 @@ def main() -> int:
         duan = re.split(r"[。，,﹐]?果|其驗|後果", after)[0][:220]
         verdict, yq, _ig, clause = outcome_of(m.group(0) + after)
         _, _, use_god, _ = outcome_of(duan, verdict_zone=duan)
+        rel_yq = ""
         if not yq:
+            # 无（干）支+单位期 → 退一步收**锚定相对期**（果於次日/當日/月餘/年內）。
+            # 相对期没有应支可排名次，评分走"锚日+天数窗 vs 引擎日历日期"（evaluate
+            # 的 relative_window 口径），锚日由干支反查还原并记入案例顶层 year/month/day。
+            rm = YINGQI_REL.search(after)
+            if rm:
+                # 验句里同时出现两个不同相对期的不收（分不清哪个是验期）
+                terms = {REL_TERMS[t] for t in YINGQI_REL.findall(after)}
+                if len(terms) == 1:
+                    rel_yq = next(iter(terms))
+        anchor_date = None
+        if rel_yq:
+            try:
+                from case_runner import resolve_case_time
+                resolved = resolve_case_time({"input": {"date": f"{month_branch}月{day_gz}日"}})
+                anchor_date = resolved["dt"].date()
+            except Exception:
+                anchor_date = None
+            if anchor_date is None:
+                # 干支反查失败 → 相对期没有锚，评分无从比对，如实作废相对期
+                rel_yq = ""
+        if not yq and not rel_yq:
             stats["no_yingqi"] += 1
             dropped.append((blk["start"], "no_yingqi", clause))
             # 有明确吉凶、无可靠验期 → 可入「仅方向」集（应期 N/A，不造假基准）
             if verdict:
-                dir_only.append({
-                    "id": f"WSD{len(dir_only) + 1:03d}",
-                    "source": "《增刪卜易》（维基文库原本）",
-                    "topic": (q or "占事").strip()[:24],
-                    "question": (q or "").strip() or f"占{orig}卦事",
-                    "input": {"date": f"{month_branch}月{day_gz}日",
-                              "question": (q or "").strip()},
-                    "hexagram": {"original": orig, "changed": changed,
-                                 "moving": info.get("moving") or [],
-                                 "palace": info.get("palace", ""),
-                                 "generation": info.get("generation", "")},
-                    "expected": {"verdict": verdict, "use_god": "",
-                                 "use_god_branch": "", "use_god_position": "",
-                                 "yingqi": "", "yingqi_branches": [],
-                                 "detail": clause},
-                    "provenance": {"page": PAGE,
-                                   "sha256_head": hashlib.sha256(raw.encode("utf-8")).hexdigest()[:12],
-                                   "offset": blk["start"], "wikitext_head": m.group(0)[:80]},
-                    "note": "有吉凶无可靠验期：只评方向/用神，应期 N/A",
-                })
+                push_dir_only(verdict, clause)
             continue
+        if rel_yq:
+            yq = rel_yq
         if not verdict:
             # 没有明确吉凶不等于坏案例：应期判别力只看应支名次，不看吉凶。
             # 这类例照样入集，只是 expected.verdict=null，评分器该维记 N/A（见 evaluate.py）。
@@ -511,10 +584,17 @@ def main() -> int:
             "expected": {"verdict": verdict, "use_god": use_god,
                          "use_god_branch": ug_br, "use_god_position": ug_pos,
                          "yingqi": yq,
-                         "yingqi_branches": sorted({yq[0]}), "detail": clause},
+                         "yingqi_branches": (sorted({yq[0]})
+                                             if yq[0] in BRANCHES else []),
+                         "detail": clause},
             "provenance": {"page": PAGE,
                            "sha256_head": hashlib.sha256(raw.encode("utf-8")).hexdigest()[:12],
                            "offset": blk["start"], "wikitext_head": m.group(0)[:80]},
+            **({"year": anchor_date.year, "month": anchor_date.month,
+                "day": anchor_date.day,
+                "note": "相对期（" + yq + "）：锚日=干支反查（case_runner 同一实现），"
+                        "评分走 relative_window 天数窗"}
+               if anchor_date is not None else {}),
         })
         if args.limit and len(kept) >= args.limit:
             break
