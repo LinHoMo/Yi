@@ -79,7 +79,10 @@ def test_external_expected_is_report_only():
     若外部集要接入加权维度（pillars/调候/格局…），那是**口径变更**：
     必须先在 docs/CHANGELOG.md 登记，再有意扩展本白名单——不许静默晋升。
     """
-    allowed = {"strength", "strength_book_category"}
+    # 2026-10-06a 登记：external 扩维至天干十神（ten_gods）维度——report-only 测量，
+    # 非静默晋升；详见 docs/CHANGELOG.md。其余加权维度（pillars/调候/大运…）仍禁入。
+    # 2026-10-06b 登记：external 再扩维至格局（pattern）维度（ZE029/038，书源显式点名）。
+    allowed = {"strength", "strength_book_category", "ten_gods", "pattern"}
     for cid, case in _cases().items():
         extra = set(case.get("expected") or {}) - allowed
         assert not extra, f"{cid}：出现未登记的可计分维度 {sorted(extra)}"

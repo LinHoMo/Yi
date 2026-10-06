@@ -587,6 +587,7 @@
    },
    "gender": "",
    "expected": {
+    "ten_gods": {"month": "偏印", "hour": "偏印"},
     "strength": "中和",
     "strength_book_category": "中和纯粹"
    }
@@ -605,6 +606,7 @@
    },
    "gender": "",
    "expected": {
+    "pattern": "正印格",
     "strength": "中和",
     "strength_book_category": "中和纯粹"
    }
@@ -623,6 +625,7 @@
    },
    "gender": "",
    "expected": {
+    "ten_gods": {"month": "正印", "hour": "正官"},
     "strength": "中和",
     "strength_book_category": "中和之象"
    }
@@ -767,6 +770,7 @@
    },
    "gender": "",
    "expected": {
+    "pattern": "建禄格",
     "strength": "偏弱",
     "strength_book_category": "身弱"
    }
@@ -785,6 +789,7 @@
    },
    "gender": "",
    "expected": {
+    "ten_gods": {"month": "食神", "hour": "食神"},
     "strength": "偏旺",
     "strength_book_category": "身旺"
    }
@@ -821,6 +826,7 @@
    },
    "gender": "",
    "expected": {
+    "ten_gods": {"month": "偏印"},
     "strength": "偏旺",
     "strength_book_category": "身旺"
    }
@@ -875,6 +881,7 @@
    },
    "gender": "女",
    "expected": {
+    "ten_gods": {"hour": "正印"},
     "strength": "偏旺",
     "strength_book_category": "身旺"
    }

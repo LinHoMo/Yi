@@ -474,8 +474,29 @@ def main() -> int:
             if k not in row["dims"]:
                 res["dims"][k]["na"] += 1
 
-    # 外部集当前唯一维度是强弱（report-only，无加权 dim）：所有行 applicable=0，
-    # 「平均分」口径不适用——直接给强弱读数，避免"平均分 0%"式的误导输出。
+    # 外部集专属报告（report-only，永不调参）：
+    #  · 强弱读数照旧逐例对齐（如 30/45 这类数字不变）；
+    #  · 已建 expected 的加权维度（如十神）走 print_dim_detail 逐维度报命中率，
+    #    不报"被 N/A 稀释的整卷平均分"——N/A 多的维度自动标 n/a，不计入分母。
+    if external:
+        unrunnable0 = [c for c in engine_out.get("cases", []) if "error" in c]
+        rows = strength_tally(engine_out, base, ids)
+        if rows:
+            print_strength_reading(rows)
+        else:
+            print("外部集案例无 strength expected（纳入规则见案例文件 _provenance）")
+        if unrunnable0:
+            print(f"不可跑 {len(unrunnable0)} 例（不计分，如实登记）：")
+            for c in unrunnable0:
+                print(f"  · {c.get('id')}: {c.get('error')}")
+        # 逐维度明细（full/applicable/na + 命中率；N/A 标 n/a，不稀释、不计入分母）
+        print_dim_detail(res)
+        errored0 = [e["id"] for e in engine_out.get("errors", [])]
+        if errored0:
+            print(f"\n引擎报错 {len(errored0)} 例：{', '.join(errored0)}")
+        return 1 if (errored0 or unrunnable0) else 0
+
+    # 非 external：沿用原 early-return（全无 scored 维度时只报强弱，不报稀释均分）
     if scored_rows and all(r.get("applicable", 0) == 0 for r in scored_rows):
         rows = strength_tally(engine_out, base, ids)
         unrunnable0 = [c for c in engine_out.get("cases", []) if "error" in c]
