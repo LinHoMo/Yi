@@ -361,14 +361,17 @@ web/engine_runtime.py → tools/report.py        # 浏览器侧同进程跑同�
 | 事实类别 | 唯一权威源 |
 |---|---|
 | 科 × 三通道能力矩阵、通道挂载集合 | `llms.txt` |
-| 各科分数与 n、scripts 文件数与行数、案例数、外部集 n | `docs/HANDOFF.md` |
+| 各科分数与 n、scripts 文件数与行数、案例数、外部集 n、交接状态 | `docs/HANDOFF.md` §一/§六 |
 | 金标准行为指纹（机械层 / 措辞层） | `disciplines/<科>/data/golden/digest.json` |
 | 合参裁决规则 | `synthesis/README.md` §二（实现见 `synthesis/cross_rules.py`） |
 | 学科清单 | `core/yishu_core/report/request.py::DISCIPLINES` |
 | 口径变更历史 | `docs/CHANGELOG.md` |
+| 技术债务（已清偿 / 待清偿） | `docs/TECH-DEBT.md` |
+| 调候表「data → 引擎取值层」是否已同步 | 跑 `disciplines/ming/dev_tools/sync_tiaohou_engine.py --check`（唯一同步入口，幂等） |
+| 案例集 `source_quote` 是否为书源逐字 | **暂无自动门禁**——逐条用 `dev_tools/audit_*.py` 人工核；已知 9 条待重建见 `docs/TECH-DEBT.md` §2.4 |
 
 引用行数/分数等读数时必须带**读数时点**（历史上同一指纹曾在库里有两个值，
-故一律以 `docs/HANDOFF.md` §一的当次读数为准）。
+故一律以 `docs/HANDOFF.md` §六 的当次读数为准）。
 
 ### 读数锚点（架构评审改进项 A11 · 与 A8 互引）
 
@@ -409,10 +412,16 @@ web/engine_runtime.py → tools/report.py        # 浏览器侧同进程跑同�
 
 真值源门只拦**取值**复制；以下分层不是违例，是登记在案的合法模式（防止未来误伤）：
 
-- **命科调候**：取值层 `core.yishu_core.ming_tables.TIAO_HOU`（51 格有明文者，
-  引擎查表用的就是它）；引文层 `disciplines/ming/data/tiaohou_quotes.json`
-  （120 格逐格《穷通宝鉴》原文，只供报告引用），由 `dev_tools/build_tiaohou.py`
-  从 `data/sources/qiong-tong-bao-jian.wikitext.txt` 生成。
+- **命科调候**：取值层 `core.yishu_core.ming_tables.TIAO_HOU`（**110 格**有明文者，
+  引擎查表用的就是它；键 = **月支 + 日干**，如 `巳乙`）；引文层
+  `disciplines/ming/data/tiaohou_quotes.json`（**120 格**逐格《穷通宝鉴》原文，
+  只供报告引用；键 = **月序 + 日干**，如 `4乙`），由 `dev_tools/build_tiaohou.py`
+  从 `data/sources/qiong-tong-bao-jian.wikitext.txt` 机械提取。
+  **两套键空间不同（`4乙` vs `巳乙`），勿混**——消费方
+  `disciplines/ming/scripts/narrate.py::_tiaohou_quote` 与 `core/yishu_core/evidence.py`
+  按**月序**键回索引文。取值层由引文层单向同步，唯一入口
+  `dev_tools/sync_tiaohou_engine.py`（`--check` 可作 CI 门，幂等）。
+  ⚠️ **月令 ≠ 月支**：正月建寅，故 6 月为**未**、午月为**五月**——改表前先核月支。
 - **命科格局**：判据逻辑在 `disciplines/ming/scripts/pattern.py`（透干十神有无），
   书源引文在 `disciplines/ming/data/verdicts.json`（`格局成败引文`/`从格引文`）。
 - **大六壬**：门类取值在 `core.yishu_core.liuren_tables` + `scripts/jiuzongmen.py`，

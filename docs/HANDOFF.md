@@ -8,7 +8,8 @@
 > 同域项目调研（Horosa/星阙）：`docs/RESEARCH-HOROSA.md`。
 > 规格归档（历史过程规格，读数停在 2026-09，勿当现状引用）：`archive/compose-spec/`。
 
-**范围（2026-10-01j：八科 + 两条出报告通道 + 代码瘦身完成；2026-10-01l 架构修正落地，见 CHANGELOG）**：
+**范围（八科 + 两条出报告通道 + 代码瘦身完成于 2026-10-01j；2026-10-01l 架构修正落地；
+2026-10-06 调候表扩面至 110 格，见 §一 命科段与 §六）**：
 - **命科**：`ming`（四柱八字，机械推演）、`ziwei`（紫微斗数，安星/四化/格局/大限）
 - **卜科**：`liuyao`（六爻纳甲）、`meihua`（梅花易数）、`xiaoliuren`（小六壬）、`zeji`（择吉通书）、
   `liuren`（大六壬骨架：九宗门三传/天将乘临，机械结构标签，无吉凶断语）、
@@ -23,8 +24,15 @@
   删除巨型历史档 `docs/DEEP-OPTIMIZE-PLAN.md`（130 KB）；引擎行为**零漂移**。
 
 **基线**：`main`（2026-09-30r 锚；上一质量门锚 `5b0c958`）。
-质量门：`tools/check.py --full` 全绿（含站点构建+自检、网页↔本机同源验收、pytest、
-六爻黑箱回归 ≥ 基线 11/18；读数 2026-10-01）。生成物一律 gitignore（工作区脏/净不入本表）。
+**当前交接状态、代码规模、架构要点、取证坑与待拍板事项见 §六~§九（读数时点 2026-10-06 12:00）**。
+
+质量门（**2026-10-06 复验**）：`tools/check.py --full` 全绿 **EXIT=0**
+（含站点构建+自检、网页↔本机同源 13 正例+2 负例、pytest 387 passed、
+六爻黑箱回归 ≥ 基线 11/18）。本轮新增 `[1b-2] doc_deadlinks` 文档死链门
+（27 份活跃文档，真死链 0，已做负例自证）。生成物一律 gitignore。
+
+**远端同步**：`SYNC_STATUS=UNSYNCED`，`LOCAL_HEAD=d1dae16`、`REMOTE_HEAD=a4d13a6`、
+`LOCAL_AHEAD=18`——本地领先远端 18 个提交，**未推送**。以 `tools/version_gate.py` 为准。
 
 ---
 
@@ -331,7 +339,7 @@ python tools/eval.py
 
 流派开关：`YI_GANZHI_BOUNDARY=day|instant`、`--zi-hour-type late`。
 
-金标准验收：`cd disciplines/liuyao && python tools/golden.py verify`。
+金标准验收：`cd disciplines/liuyao && python dev_tools/golden.py verify`。
 
 ---
 
@@ -406,6 +414,9 @@ python tools/eval.py
 3. **命科缺口**：~~强弱无书源 expected~~ **外集已立四批（10-04 / 10-04h / 10-05h / 10-05k）**
    （《阐微》显式判例 n=45 report-only，30/45——失配 15 例归因在案（旺侧 4 / 中和 6 / 身旺 5），
    见 §一 命科段）；
+   **外集 QTBJ 批 9 条引文非书源逐字待重建**（001–005、013–016，详见 §九 待拍板）——
+   `disciplines/ming/dev_tools/audit_qtbj_batch.py` 可逐例对拍定位；重建须**从书源重新取
+   该格月度句**，不得改引擎凑分；
    四柱/十神/藏干/神煞/大运仍无书源 expected；**10-01p 已补**三会局、
    胎元、流月、小运、天克地冲、十神组合（六项机械结构标签，只出结构不批吉凶）；
    **10-02b 已补**通关/关隔（《滴天髓·通隔論》逐字入库 + 日主两路判据）；
@@ -466,124 +477,117 @@ python tools/eval.py
 5. 案例库解读隔离；一卦一事
 6. 金标准 `capture` 必须写理由
 7. 拆分/搬家以**零指纹漂移**验收
+8. **真值源不得复制**：`disciplines/**` 与 `tools/**` 里禁止另写一份干支序列/命理表字面量，
+   必须 `from yishu_core...import`。`tools/check.py` 第 6 项门禁按内容指纹拦，
+   新写工具前先照 `disciplines/ming/dev_tools/sync_tiaohou_engine.py` 的导入范式。
+9. **书源补格三条红线**：① 异源不补（两书标准混用＝口径不诚实）；② 书源明写否定
+   （「不宜用 X」「随宜酌用」）时**留空是正确行为**，不得当缺口填；③ 月令 ≠ 月支
+   （正月建寅 → 6 月为**未**、午月为**五月**），改表前先核月支，勿错位。
 
 ---
 
-## 之一、当前状态
+## 六、交接状态（读数时点 2026-10-06 12:00）
 
-> **读数时点 2026-10-05 17:30**（本机 `splitlines` 口径；统计 `disciplines/<科>/scripts/*.py` 与 `dev_tools/*.py`，
-> 排除 `site/`、`tools/scratch/`、`archive/`、`__pycache__/`、`*.log`）。
-> 行数/文件数一律以本表为唯一出处，别处引用不复制。并行工作流仍在改语料时，读数会随之下移/上移，引用请带此时点。
->
-> **与上一读数（2026-10-02 11:15：合计 81 文件 / 26,934 行）的差异**，可全部归因到已登记事项，
-> 无未知项：命科 `ming` +387 行（外集两批取证登记 + 会聚/争合落地 + 合化/夫子星观察集，
-> 10-04→10-05 各轮）、六爻 `liuyao` +74 行（注册表六域收口的锚点注释，10-04g→10-04r）。
-> ⚠️ 旧表「dev_tools 合计 44」与其自身行合计（47）不符——系旧表合计列讹数，本次以行合计 47 为准。
-> 小六壬、择吉、梅花、大六壬、灵棋经、紫微未变。
+> 以下为本机实测（`git log` / `tools/version_gate.py` / `wc -l`），**不凭记忆**。
+> 并行工作流仍在改语料时读数会变动，引用请带此时点。
 
-| 学科 | scripts/ 文件数 | scripts/ 总行数 | dev_tools/ .py 数（含 `__init__.py`） |
+- **代码状态**：工作区 **clean**，HEAD = `d1dae16`
+  （命科调候表 109→110 格 + 修 3 处提取缺陷 + 缺口逐格定性工具入库）。
+- **远端**：`SYNC_STATUS=UNSYNCED`，`LOCAL_AHEAD=18`（`REMOTE_HEAD=a4d13a6`）。
+  本地领先远端 18 个提交，未推送。
+- **门状态**：`tools/check.py --full` **EXIT=0**（2026-10-06 复验，含网页↔本机同源
+  13 正例 + 2 负例、六爻黑箱 11/18 持平、站点构建/自检 √、synthesis √）；
+  根 pytest **387 passed**；八科行为指纹零漂移（命科机械层 `1be8d5b579463a47`、
+  措辞层 `1233c399b54a8781`）。
+- **命科读数（三集分列禁混）**：tune **100.0%**（n=30）；holdout **96.2%**（n=246，
+  调候 49/51）；外集 tiaohou **14/18**、十神 5/5、格局 2/2、强弱 30/45。
+- **最近交付**：10-06j 调候表 110 格 + 缺口逐格定性；10-06i 调候表 90→109 格 + 修 6 处
+  提取错误；10-06 G6a 前插/多爻化出否证实验 + direction 集定标缺口（11/38）。
+
+### 代码规模（本机 `splitlines` 口径，统计 `disciplines/<科>/{scripts,dev_tools}/*.py`）
+
+> 排除 `site/`、`tools/scratch/`、`archive/`、`__pycache__/`、`*.log`。
+> **本表是唯一出处**，别处引用不复制。
+
+| 学科 | scripts/ 文件数 | scripts/ 行数 | dev_tools/ .py 数 |
 |---|---|---|---|
-| 六爻 `liuyao` | 37 | 18,138 | 17 |
-| 命科 `ming` | 7 | 2,802 | 9 |
+| 六爻 `liuyao` | 37 | 18,210 | 17 |
+| 命科 `ming` | 7 | 2,827 | 13 |
 | 梅花易数 `meihua` | 7 | 1,768 | 3 |
 | 小六壬 `xiaoliuren` | 7 | 1,101 | 2 |
 | 择吉 `zeji` | 7 | 1,086 | 3 |
-| 大六壬 `liuren` | 7 | 1,286 | 5 |
+| 大六壬 `liuren` | 7 | 1,308 | 5 |
 | 灵棋经 `lingqi` | 4 | 271 | 3 |
 | 紫微斗数 `ziwei` | 5 | 943 | 5 |
-| **八科合计** | **81** | **27,395** | **47** |
+| **八科合计** | **81** | **27,514** | **51** |
 
-- 四段契约：`docs/CONTRACT.md` 定义，结构门 + golden/忠实度回归强制。
-- 统一入口：`cli/main.py` → `yi`。
-- 八科 `dev_tools/check.py` 全绿，仓库根 `tools/check.py --full` 全绿。
-- 代码瘦身：见 §一 顶部与 CHANGELOG 2026-10-01j。
-- `docs/DEEP-OPTIMIZE-PLAN.md` 已删（历史档，130 KB）。
+> 与 2026-10-05 读数（81 文件 / 27,395 行 / dev_tools 47）的差异可全部归因到已登记事项：
+> 命科 +25 行（调候提取器 3 处修复）、`dev_tools` +4（10-06j 新增 4 个只读审计/同步工具）。
+> 小六壬、大六壬、灵棋经、紫微、梅花、择吉未变。
 
 ---
 
-## 二、架构要点
+## 七、架构要点
 
 ```
-core/yishu_core     唯一真值源（历法/象数/旬空三刑长生/纳音/三合/星煞/十神/评分）
+core/yishu_core     唯一真值源（历法/象数/旬空三刑长生/纳音/三合/星煞/十神/评分/调候表）
 disciplines/<科>    四段契约 chart→analyze→narrate→render
 synthesis           person + 合参 + outcome-eval
-tools               check / eval / demo / selftests
+tools               check / eval / demo / version_gate / selftests
 tests/              pytest
 ```
 
-- **真值表**：旬空/三刑/十二长生/纳音/三合 已上收 core；看门狗盯同义表名
-- **六爻脚本体系（10-01j 状态）**：`liuyao_step{1-5}.py`（主流程）+
-  `classical_enhancements.py`（古典规则）+ `effects.py`（象数效应）+
-  `narrative_utils.py` / `narrative_rules.py`（叙事辅助）+
-  `liuyao_analyze.py`/`liuyao_narrate.py`/`liuyao_timing.py`（聚合门面）+
-  `thinking_chain.py`（思维链编排）+ `evaluate.py`（评分器）+
-  `event_logger.py`（日志）+ `yi_liuyao.py`（CLI 门面）
-- **已删**：`chain_step5` 假拆死体、`_extra_tombs`、`_next_month_with_branch`/`_add_months`
-  6 处私有函数、`__pycache__`/`guard/` 历史调优快照（~15 MB）
+- **真值表**：旬空/三刑/十二长生/纳音/三合 已上收 core；看门狗盯同义表名与内容指纹副本。
+- **四段契约**：`docs/CONTRACT.md` 定义，结构门 + golden/忠实度回归强制。
+- **统一入口**：`cli/main.py` → `yi`。
+- **六爻脚本体系**：`liuyao_step{1-5}.py`（主流程）+ `classical_enhancements.py`（古典规则）
+  + `effects.py`（象数效应）+ `narrative_utils.py` / `narrative_rules.py`（叙事辅助）
+  + `liuyao_analyze.py` / `liuyao_narrate.py` / `liuyao_timing.py`（聚合门面）
+  + `thinking_chain.py`（思维链编排）+ `evaluate.py`（评分器）+ `event_logger.py`（日志）
+  + `yi_liuyao.py`（CLI 门面）。
+- **命科调候表两套键（务必分清，10-06e 起多次踩）**：
+  - `disciplines/ming/data/tiaohou_quotes.json` 键 = **月序 + 日干**（如 `4乙`），
+    消费方 `narrate.py::_tiaohou_quote` 与 `core/yishu_core/evidence.py` 按此回索引文；
+  - 引擎 `core/yishu_core/ming_tables.TIAO_HOU` 键 = **月支 + 日干**（如 `巳乙`）。
+  - 两者由 `dev_tools/sync_tiaohou_engine.py` 单向同步（`--check` 可作 CI 门）。
+- **已删**：`chain_step5` 假拆死体、`_extra_tombs` 等 6 处私有函数、
+  `__pycache__`/`guard/` 历史调优快照（~15 MB）、`docs/DEEP-OPTIMIZE-PLAN.md`（130 KB）。
 
 ---
 
-## 三、变更索引（查 CHANGELOG）
-
-| 记号 | 内容 |
-|---|---|
-| 10-04 | 命科外部独立集首批（《阐微》衰旺章强弱 19 例，report-only 17/19，禄刃根分歧 2 例登记）+ 阐微语料入库 + holdout 读数订正 97.1→96.7（本棒） |
-| 10-02s | 根门 pytest 遮蔽修复 + [1c] 白名单复核收紧 + 孤儿断语处置 + 六爻伏而不得出 −1.0 |
-| 10-01j | 六爻 docstring 瘦身 + 死代码清除 + DEEP-OPTIMIZE-PLAN 删除 |
-| 10-01i | 修"门在干净克隆上必红"两处 + 八科分科门挂进 CI |
-| 10-01h | 修"核心常量进正则"回归（六爻 19/20 报错） |
-| 10-01g | MCP 全量移除 + 活跃面引用清零 |
-| 10-01f | 取证门语料池瘦身 97% + focus 主语剥离 |
-| 10-01e | 断语外置改为黑箱取证 + 七科 golden 补 narrate |
-| 10-01c | 真值源门升级 + 清 25 处运行时副本 |
-| 30x–30r | 卦身/三合维度激活 + 权重表再分配 |
-| 30l | 灵棋经落地（第八科） |
-| 30g | 命科调候落地：《穷通宝鉴》表入内核 + 51 例 |
-| 30e | 三科评测口径审计："100%"订正 + 报分口径披露 |
-| 30d | 两条出报告通道：纯前端 + 云端固定链接 |
-| 29c | v1.0.0 结构重构（统一 CLI + disciplines/base 共享层） |
-| 29a | 质量门编码修复（子进程 UTF-8）+ 内核命名拆分 |
-
----
-
-## 四、可执行清单（按优先序）
-
-> 每项都写清完成标准与验收命令，做完不通过验收即视为未完成。
-> 叙述版债务见上文 §四，机械登记见 `docs/TECH-DEBT.md`。
-
-### 0. 交接状态
-
-- **代码状态**：工作区干净，HEAD 至 2026-10-05i+j（`59a57bf` 命科外集第三批
-  中和带 ZE027–037 / `b45ce1b` 大六壬合池→下贼优先口径变更 / `dcbdf63` 该轮出处
-  错标订正——《六壬指南》语料入库与目录翻案见 CHANGELOG 10-05h/i）。
-- **门状态**：`tools/check.py` **EXIT=0**（10-05 复验）；根 pytest **387 passed**；
-  八科行为指纹、六爻/大六壬金标准全绿零漂移。
-- **最近交付**：10-05i 大六壬口径变更（《六壬指南》心印赋注显式文本，反事实 43 例
-  净值 33/43 不变，LE001 转入古籍异说桶）；10-05h 命科外集第三批（中和带 +11 例，
-  report-only 30/45）；10-05a–f 合化/拱局/冲开墓库/羁绊 source adjudication 系列
-  （engine 零变化为主，见 CHANGELOG）。
-- 跑门环境：Python 3.12+（3.10 见 §五之一 兼容修复）
-
-### 1. 可执行清单（按优先序）
-
-| # | 任务 | 完成标准 | 验收 |
-|---|---|---|---|
-| **A** | ~~render 段加 golden 基线~~ ✅ 2026-10-02c：根门 `[6b]` 八科 render MD 逐字节指纹入 `data/golden/render_digest.json` | 改一字即被测出 | `check.py --full` EXIT=0 |
-| **B** | ~~`NON_VERDICT` 白名单逐条复核~~ ✅ 2026-10-02s：过宽的括注两条收紧为「括注+短尾」，新增机械定位前缀剥离（官鬼（落在卯三爻）类真判语交还语料匹配），③修正硬编码、⑦删冗余、⑥b–g 逐条补"为何属非断语" | 复核后 strict 0 句豁免性漏判 | `verdict_audit --strict` EXIT=0 |
-| **C** | ~~孤儿断语清理~~ ✅ 2026-10-02s：删 9 条真孤儿（六爻 4+2、梅花 2、小六壬 3、verdict_texts 错位副本 1 + 死加载量）+ quote_lead 接线（两处内联合一）+ verdict_consumption ALLOWLIST 键级匹配修正与登记 | 清单与处置见 CHANGELOG 10-02s；八科 golden 零漂移（全量门 EXIT=0） | `check.py --full` EXIT=0 |
-| **D** | 命科外部独立集：~~字面标准（≥20 例书源 holdout 不参与调参）~~ 已由 子平真诠 36 例 + 滴天髓阐微 ZC 15 例 满足；**跨书源集已立四批（10-04/10-04h/10-05h/10-05k）**：《滴天髓阐微》语料入库 + 强弱维度 n=45（`ming_external_cases.json`，external_holdout 永不调参，report-only 读数 **30/45**，失配 4 例归因在案见 §一 命科段）——扩集方向：阐微其余章节显式可判例（中和/身强弱语，10-05a 拱局证伪后弱侧优先）、病药跨书源补证（§2.7/2.8 解除路径已开） | 新 holdout split 读数（永不调参） | ✅ `evaluate.py --split external_holdout`（30/45）+ golden 不漂移 + `check.py --full` 全绿 |
-| **E** | ~~六爻动墓·化墓用例~~ ✅ 2026-10-02a：判据 `use_god_tomb_tags`（日/月/动/化四类）+ 书源真例 `suigui_holdout` | 墓库维度覆盖动/化墓 | tune/holdout strict 不变（96.8/89.7）+ `dev_tools/check.py` EXIT=0 |
-| **F** | `tools/eval.py` 挂 `--full` 档 | 当前 EXIT=0 再挂，否则挂上去就是常红 | `--full` EXIT=0 + eval 分数有输出 |
-
-### 2. 取证口径的坑（实踩记录）
+## 八、取证口径的坑（实踩记录）
 
 1. 待检句与语料池必须走同一个 `_hanzi` 归一函数
 2. 绝不能在抽汉字前剥 `{...}`——会跨行吞 JSON 区间
 3. `cases/`、`guard/`、`scratch/` 不能当措辞真值源
 4. 模板前缀跟着模板走；`{focus}` 自举剥离
 5. `--verbose` 语料汉字数是关键信号；暴涨 = 语料池被污染
+6. **bash heredoc 会破坏 Python 里的中文正则**（Git Bash 编码问题）——
+   调中文匹配的 Python 必须用编辑器落盘成 `.py` 再跑，不能 `python - <<'EOF'`。
+7. **不要用 Python 整文件重写 Markdown**——会搞乱 CRLF/LF 产生上千行假 diff。
+   改文档用局部编辑，收尾用 `git diff --stat` 确认是局部修改还是纯新增。
+8. **`Path.glob()` 返回 generator，真值恒为 `True`**（哪怕结果为空）。
+   写 `if ROOT.glob(...)` 等于永远成立——本轮死链检查工具第一版就栽在这，
+   造成 24 处死链被静默豁免。**必须 `if list(ROOT.glob(...))`**。
+   这与「0 结果不等于通过」是同一类病：静默豁免比误报危险得多。
+9. **门必须做负例自证**：新挂的门先塞一个明知不存在的路径，确认它真会判红。
+   本轮 `[1b-2] doc_deadlinks` 挂完时是「全绿」的，实为豁免逻辑把负例一起吞了，
+   塞进负例才发现不咬人——**全绿的新门先怀疑，再证明**。
+10. **豁免规则要逐条写死，不要泛化**。本轮最终只保留 3 条逐条豁免
+   （`CONTRACT.md` 的 `Yi/` 是接入方仓库名占位；`HANDOFF` 的「已删」留痕刻意点名旧文件；
+   `__` 双下划线前缀的**举例假路径**），其余靠窗口式语境 + 表头列名判定。
+   宽泛词（如「不存在」）会掩盖真死链。**门的豁免规则要连文档自身的写法一起覆盖**——
+   本轮写文档时用假路径举例，把自己的门判红了（EXIT=1），补豁免后须复验边界：
+   单下划线的真死链仍要 EXIT=1。
 
-### 3. 需要拍板的
+---
+
+## 九、需要拍板的
 
 - 语料池边界：是否还有其他"产物性目录"也须剔？判据 = "这条目录里存的是不是引擎输出"
 - `{focus}` 剥离是否算放宽判据：新增剥离规则须在 CHANGELOG 写明理由
+- **命科外集 QTBJ 批的 9 条非逐字引文**（001–005、013–016）是否本轮重建：
+  其 `source_quote` 为压缩改写而非书源逐字（如「三夏丁火」只是章节标题「=== 三夏丁火 ===」，
+  而「耑用甲木，仍取庚噼甲」唯一出处行 778 已属**三秋**段）。属批次数据缺陷，
+  须**从书源重新取该格月度句**重建，不得改引擎凑分。见 §四 命科段与 CHANGELOG 10-06j。
+

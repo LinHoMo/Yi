@@ -62,7 +62,7 @@ render(analyze)  → 交内核 report 出 HTML/MD，学科只提供盘数据与�
 
 1. 建 `Yi/disciplines/<科名>/`，内含 `SKILL.md`、`scripts/`、`references/`、`data/`
 2. `SKILL.md` 只写该科内容；三条铁律（运算归代码 / 案例隔离 / 口径诚实）引 `Yi/AGENTS.md`，不复制
-3. 实现 `chart`，并为其写金标准用例（照 `disciplines/liuyao/tools/golden.py` 的思路：固定输入 → 全字段指纹）
+3. 实现 `chart`，并为其写金标准用例（照 `disciplines/liuyao/dev_tools/golden.py` 的思路：固定输入 → 全字段指纹）
 4. 准备案例集：至少 10 例 `tune` + 5 例**未参与任何调参**的 `holdout`，
    每例必须有 `source`、可还原的起局信息、`expected` 要点；缺项的进 `excluded` 并写原因
 5. 实现 `analyze` 时，每个判据都要能回答"哪本古籍的哪条法则"，答不上来就不要写

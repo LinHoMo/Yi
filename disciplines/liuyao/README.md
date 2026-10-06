@@ -59,7 +59,7 @@ tune 主应期命中 35.3%（平均名次 2.0）、holdout 25.0%（2.2）、外�
 | `scripts/liuyao_engine.py` | 装卦排盘（唯一排盘入口）：纳甲、世应、六亲、六神、旬空、变卦 |
 | `scripts/classical_analysis.py` | 22 类动变关系检测：伏藏、暗动、月破、三合、进退、反吟伏吟… |
 | `scripts/thinking_chain.py` | 五步思维链：现状 → 取用神 → 旺衰 → 动变 → 综合 |
-| `scripts/human_narrative.py` | 唯一交付正文（师傅口吻），不做"人话/古典"两张皮 |
+| `scripts/narrate.py` + `narrative_rules.py` | 唯一交付正文（师傅口吻），不做"人话/古典"两张皮（原 `human_narrative.py` 已拆入这两块） |
 | `scripts/yi_liuyao.py` | 一键闭环（M3.2）：`python scripts/yi_liuyao.py "问题" --when "..."` → 单文件报告 |
 | `scripts/render.py` | 报告渲染单一出口（M3）：analyze JSON → Markdown / 单文件 HTML |
 | `scripts/visualization.py` | SVG 组件库：卦盘（爻线/六亲/六神/世应/空破/动变）、应期时间线、五行雷达 |
@@ -80,5 +80,5 @@ tune 主应期命中 35.3%（平均名次 2.0）、holdout 25.0%（2.2）、外�
 
 历法与评分已重建（M0 完成）。剩下的按优先级：三处双写的规则表合一（M1）→
 应期法则与用神取法决策表（M2）→ 呈现层（M3，已完成：单一 HTML 出口 + SVG 真卦盘 +
-一键闭环 `yi_liuyao.py` + 门户修伤 + 黄金样例模板 `docs/samples/感情卦_巽之涣.html`）。
-详见仓库外的 `../docs/LIUYAO-PLAN.md`。
+一键闭环 `scripts/yi_liuyao.py` + 门户修伤 + 黄金样例模板 `docs/samples/感情卦_巽之涣.html`）。
+详见仓库内 `docs/LIUYAO-PLAN.md`（从本文件走是 `../../docs/LIUYAO-PLAN.md`）。

@@ -835,6 +835,14 @@ def main() -> int:
     gate("filenames", check_filenames(), "文件名无版本号标记")
     gate("verdict_literals", check_verdict_literals(), "断语/引文外置到 data JSON（文本粗筛）")
 
+    # 文档死链门：文档里点名的仓库内路径（`docs/xxx.md`、`dev_tools/xxx.py`）
+    # 必须真的存在。2026-10-06 实测挖出 7 处真死链，其中 4 处是学科工具目录
+    # 早已从 tools/ 迁到 dev_tools/、文档却还写旧路径——纯靠人读是查不出来的。
+    print("\n[1b-2] 文档死链（活跃文档点名的仓库内路径必须存在）")
+    gate_sub("doc_deadlinks",
+             ["tools/check_doc_deadlinks.py"],
+             "文档死链（活跃文档内仓库路径引用均可解析）")
+
     # 黑箱取证门：不看代码长什么样，只看用户读到什么（verdict_audit.py 的说明）
     # 比上面的文本粗筛准——粗筛会把 docstring/help 当成断语，取证门不会漏真断语。
     # 要跑 10 份真实报告，故归到 --full 档。

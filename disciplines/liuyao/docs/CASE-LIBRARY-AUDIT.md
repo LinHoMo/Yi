@@ -1,6 +1,6 @@
 # 案例库应期抽取审计
 
-抽取器：`tools/build_yingqi_set.py`｜扫描 29 例 → 可评分 2 例｜生成于 2026-09-22
+抽取器：`dev_tools/build_yingqi_set.py`｜扫描 29 例 → 可评分 2 例｜生成于 2026-09-22
 
 四道门：本卦名可解析、卦变自洽（本卦＋动爻⇒变卦）、时间可还原、应期有明确干支。
 **任一道不过即 excluded，不放宽收录。**
@@ -49,13 +49,13 @@
 
 ## 改走原本（2026-09-22 补）：另一条外部集的来源与审计
 
-转写本既然不可信，就去拿未经本仓库之手转写的原文：`tools/fetch_wikisource_cases.py`
+转写本既然不可信，就去拿未经本仓库之手转写的原文：`dev_tools/fetch_wikisource_cases.py`
 从维基文库取《增刪卜易》整书 wikitext（123,927 字，sha256 `897f963b938ec458…`，
 重跑取回同一串；来源/授权/校验和记在 `data/sources/zengshan_buyi.provenance.json`），
 只做字符级解析，再拿内核独立重算来对账。**全程没有语言模型读古籍再抄写这一步**。
 
 三方校验的实测结果（分母是"真的比对了多少"，不是"解析出多少"；下表为 2026-09-22 现值，
-门槛一变分母就变，复核请跑 `python tools/fetch_wikisource_cases.py --no-fetch --report`）：
+门槛一变分母就变，复核请跑 `python dev_tools/fetch_wikisource_cases.py --no-fetch --report`）：
 
 | 比对项 | 原文写法 | 内核算法 | 分母 | 不合 |
 |---|---|---|---|---|
@@ -83,4 +83,4 @@
 
 刻意不做的事：把"七月"按夏正换算成申月。那样能多收几十例，但依赖一种读法，
 读错就是给引擎假基准——宁可少样本，不要假样本。要扩样只能换书（《卜筮正宗》《火珠林》）
-或等 `tools/outcome.py` 攒真实反馈。
+或等 `dev_tools/outcome.py` 攒真实反馈。

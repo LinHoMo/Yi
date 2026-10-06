@@ -78,7 +78,7 @@ case 的 `expected` 字段实际填充率：`detail` 117、`verdict` 96、`yingq
 
 | # | 改哪里 | 古籍依据 | 怎么验收 |
 |---|---|---|---|
-| 1 | `liuyao_step3.py::compute_empty_modifier` 增 `is_true_void` / `is_false_void` | 《增删卜易》"旺空待出，真空难起"——旺相+月日动爻生=假空待出；休囚+日克+无生=真空 | `pattern_reference.md` 已列词，先补进 `evaluate.PATTERNS`；跑 wikisource_holdout(35) 看格局命中率与 strict 均分 |
+| 1 | `liuyao_step3.py::compute_empty_modifier` 增 `is_true_void` / `is_false_void` | 《增删卜易》"旺空待出，真空难起"——旺相+月日动爻生=假空待出；休囚+日克+无生=真空 | `disciplines/liuyao/references/pattern_reference.md` 已列词，先补进 `evaluate.PATTERNS`；跑 wikisource_holdout(35) 看格局命中率与 strict 均分 |
 | 2 | `liuyao_step2.py::_use_god_priority` + `_find_use_god_positions` | 《增删卜易》"用神两现，舍闲取动，舍缓取急，舍静取世" | 加 3 例 `use_god_position` 基准；strict 报 `use_god_position.hit/na`，**NA 必须下降** |
 | 3 | `liuyao_step4.py::_detect_hexagram_harmony_clash_pattern` 增双卦对比 | 《黄金策》"合处逢冲事已散，冲中逢合事迟成" | `变卦六合/变卦六冲` 词已在 `evaluate.py` 但无人产出；补后 tune 均分不得跌破 86.2 |
 | 4 | `liuyao_step5.py::compute_advanced_adjustments` 增三传 | 《增删卜易》"三传俱克，虽旺亦危" | 无含太岁的基准例，属**未验证**；须先自建 3 例标注才可计分 |

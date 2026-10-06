@@ -42,7 +42,7 @@
 | 推演 | `python scripts/analyze.py chart.json -o analyze.json` |
 | 正文 | `python scripts/narrate.py analyze.json` |
 | 报告 | `python scripts/render.py analyze.json -o report.md` |
-| 机械回归 | `python tools/regression.py` |
+| 机械回归 | `python dev_tools/regression.py` |
 
 命科无案例对齐评测（`evaluate.py` 不存在），回归走机械因子校验。
 
