@@ -32,6 +32,7 @@ from yishu_core.symbols import (
     BRANCH_ELEMENTS,
     CHONG_PAIRS,
     HARM_PAIRS,
+    HE_PAIRS,
     KE_CYCLE,
     SAN_HE_GROUPS,
     SHENG_CYCLE,
@@ -59,6 +60,8 @@ IMPLEMENTED: tuple[str, ...] = (
     "九丑", "天网", "游子",
     # 第五批·结构（10-01s；仍只倚赖日柱/三传/四课/时支/天将布法）
     "淫泆", "芜淫", "侵害", "刑伤", "死奇", "鬼墓", "殃咎", "龙战",
+    # 第六批·结构（10-06g；只倚赖日柱/四课，六合表取 core HE_PAIRS）
+    "和美",
 )
 
 # 课名/诀文/释义/判据参数唯一真值源（AGENTS.md §三）：data/kemu.json
@@ -330,4 +333,16 @@ def recognize(chart_out: dict) -> list[dict]:
     if day_branch in ("卯", "酉") and chu in ("卯", "酉"):
         hit("龙战", f"{day_branch}日占而{chu}发用",
             "诀又须「人年立卯酉」，行年条件未并入判据")
+    # 第六批·和美：干支六合相加（六合表唯一真值源 core HE_PAIRS）
+    #   课经释义两面同构：①干上神与支上神作六合（戊辰日干上丑支上子、辛酉日干上未
+    #   支上午）②干上神与日支作六合（乙丑日干上子、丙寅日干上亥）。
+    #   「甲申日干上亥支上巳俱合」一例与六合定义相悖（亥巳为六冲），疑传抄讹误，
+    #   不为凑例改判据。三传三合/上下递互诸式未并入。
+    _he6 = {frozenset(p) for p in HE_PAIRS}
+    if frozenset((_gan_shang, _zhi_shang)) in _he6:
+        hit("和美", f"干支上神作六合（干上{_gan_shang}与支上{_zhi_shang}相合）",
+            "诀兼「三传三合」「上下递互作合」诸式，本判据取「干支上神六合」一面")
+    elif frozenset((_gan_shang, day_branch)) in _he6:
+        hit("和美", f"干上神{_gan_shang}与日支{day_branch}作六合",
+            "诀兼「三传三合」「上下递互作合」诸式，本判据取「干支上下作六合」一面")
     return hits

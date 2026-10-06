@@ -5,7 +5,7 @@
   },
   "md": {
     "lingqi": "9956c452faa824e7",
-    "liuren": "fccde3a8aa44e4b2",
+    "liuren": "aecff4f10762f3b3",
     "liuyao": "e1d588fbcb7d88dc",
     "meihua": "4fad656b06e1dde2",
     "ming": "ad265b523db0f12b",
@@ -118,6 +118,13 @@
       "to": "ad265b523db0f12b",
       "date": "2026-10-06",
       "reason": "扩《穷通宝鉴》TIAO_HOU 51→90格（引擎忠实书源，机械层零漂移）：report MD 调候段因覆盖扩面而变（部分命例新增/补全调候用神，如巳丙补出佐神庚）；非退步，web/本地同源已通过"
+    },
+    {
+      "discipline": "liuren",
+      "from": "fccde3a8aa44e4b2",
+      "to": "aecff4f10762f3b3",
+      "date": "2026-10-06",
+      "reason": "大六壬第六批结构判据「和美」落地（课经释义两面：干上神合支上神/干上神合日支，六合表取 core HE_PAIRS）；金标准四例指纹零漂移；ming 条目未动（并行工作在途）"
     }
   ]
 }
