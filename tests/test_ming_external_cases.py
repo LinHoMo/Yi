@@ -74,7 +74,16 @@ def test_external_cases_provenance_honest():
                 f"{cid}：与评测器映射漂移（{cat} 应为 {mapping[cat]}）"
         elif case["book"] == "穷通宝鉴":
             th = case["expected"].get("tiaohou")
-            assert th is not None, f"{cid}：穷通宝鉴例须带 tiaohou"
+            if th is None:
+                # 2026-10-06m 起：书源明写否定（如五月丁火「不宜乱用甲木」）→ tiaohou
+                # 留空是正确行为（铁律红线②）。但留空必须**双背书**——引文含否定词
+                # 且 provenance 登记了 N/A 缘由：防「解析失败静默变 None」冒充书源否定。
+                assert any(w in case["source_quote"] for w in ("不宜", "不可", "忌")), \
+                    f"{cid}：tiaohou 为空须书源否定背书（引文须含 不宜/不可/忌）"
+                prov_text = json.dumps(case.get("_provenance") or {}, ensure_ascii=False)
+                assert ("N/A" in prov_text or "否定" in prov_text), \
+                    f"{cid}：tiaohou 为空但 provenance 未登记 N/A 缘由"
+                continue
             assert th.get("main") in GAN, f"{cid}：tiaohou.main 须为天干，实得 {th.get('main')}"
             # 书源逐字点名：main 必现于引文；assist 若点名具体天干亦须现于引文
             assert th["main"] in case["source_quote"], \

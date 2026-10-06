@@ -62,7 +62,8 @@
         "QTBJ018"
       ],
       "curation_rule": "每例按书源逐字点名的调候用神入 expected.tiaohou：main 必为书源显式点名之主用神；assist 仅当书源显式点名具体天干（X为佐/以X为佐/X金为佐）才记，仅言「金为佐」等五行未点名天干者记空串（N/A，不扣佐神分）。四柱取自书源四柱命例表，且逐例核验『日主天干==该小节日主、月支柱==该小节月令』，月令错配者剔除（如书源「十一月丁火」小节内实为丑月例，已剔除）。",
-      "honesty_note": "本批命中率低主要反映引擎 TIAO_HOU 表覆盖缺口（丙/丁日主多个月令格未入表→引擎返回空），非预测偏差。report-only，永不调参；不进 tune/holdout，不参与任何引擎调参。"
+      "honesty_note": "本批命中率低主要反映引擎 TIAO_HOU 表覆盖缺口（丙/丁日主多个月令格未入表→引擎返回空），非预测偏差。report-only，永不调参；不进 tune/holdout，不参与任何引擎调参。",
+      "rebuild_2026_10_06m": "9 条 source_quote 非书源逐字（001–005、013–016，TECH-DEBT §2.4 登记）重建：001/002/005 截去『；例：四柱』非书源尾巴；013/014 月令错配（午=五月丁火，书源明写否定）→ 引文改行715 逐字、tiaohou 转 N/A（tiaohou 适用分母 18→16，读数基数变化已登记 CHANGELOG）；015/016 改取七月月头段（行808）逐字、expected 不变。expected 值除 013/014 转 N/A 外一律未动；引擎零改动。防复发：案例引文逐字性机械门 tools/check_case_quotes.py（check.py [1k]）上线。"
     }
   },
   "splits": {
@@ -968,7 +969,7 @@
       "split": "external_holdout",
       "book": "穷通宝鉴",
       "location": "三春丙火（qiong-tong-bao-jian.wikitext.txt 行314）",
-      "source_quote": "正月用壬，庚辛为助；例：丙午庚寅丙午庚寅",
+      "source_quote": "正月用壬，庚辛为助",
       "pillars": {
         "year": "丙午",
         "month": "庚寅",
@@ -984,11 +985,12 @@
       },
       "_provenance": {
         "tiaohou_source": "正月用壬，庚辛为助",
-        "assist_note": "",
+        "assist_note": "书言庚辛为助（点名两干），佐神取首干庚，与引擎一致",
         "engine_actual": {
           "main": "壬",
           "assist": "庚"
-        }
+        },
+        "rebuild_2026_10_06m": "原引文拼有『；例：<四柱>』非书源文字；截去尾巴后为书源行314 逐字子串。expected 壬/庚 未动"
       }
     },
     {
@@ -996,7 +998,7 @@
       "split": "external_holdout",
       "book": "穷通宝鉴",
       "location": "三春丙火（qiong-tong-bao-jian.wikitext.txt 行314）",
-      "source_quote": "正月用壬，庚辛为助；例：庚寅戊寅丙寅壬辰",
+      "source_quote": "正月用壬，庚辛为助",
       "pillars": {
         "year": "庚寅",
         "month": "戊寅",
@@ -1012,11 +1014,12 @@
       },
       "_provenance": {
         "tiaohou_source": "正月用壬，庚辛为助",
-        "assist_note": "",
+        "assist_note": "书言庚辛为助（点名两干），佐神取首干庚，与引擎一致",
         "engine_actual": {
           "main": "壬",
           "assist": "庚"
-        }
+        },
+        "rebuild_2026_10_06m": "原引文拼有『；例：<四柱>』非书源文字；截去尾巴后为书源行314 逐字子串。expected 壬/庚 未动"
       }
     },
     {
@@ -1080,7 +1083,7 @@
       "split": "external_holdout",
       "book": "穷通宝鉴",
       "location": "三夏丙火（行399）",
-      "source_quote": "四月耑用壬水，金为佐；例：丁巳乙巳丙子戊子",
+      "source_quote": "四月耑用壬水，金为佐",
       "pillars": {
         "year": "丁巳",
         "month": "乙巳",
@@ -1100,7 +1103,8 @@
         "engine_actual": {
           "main": "壬",
           "assist": ""
-        }
+        },
+        "rebuild_2026_10_06m": "原引文拼有『；例：<四柱>』非书源文字；截去尾巴后为书源行399 逐字子串。expected 壬/— 未动"
       }
     },
     {
@@ -1303,8 +1307,8 @@
       "id": "QTBJ013",
       "split": "external_holdout",
       "book": "穷通宝鉴",
-      "location": "三夏丁火（行778）",
-      "source_quote": "三夏丁火，耑用甲木，仍取庚噼甲",
+      "location": "三夏丁火·五月丁火（行715）",
+      "source_quote": "五月丁火，时归建禄，不宜乱用甲木",
       "pillars": {
         "year": "庚午",
         "month": "壬午",
@@ -1313,26 +1317,24 @@
       },
       "gender": "",
       "expected": {
-        "tiaohou": {
-          "main": "甲",
-          "assist": "庚"
-        }
+        "tiaohou": null
       },
       "_provenance": {
-        "tiaohou_source": "三夏丁火，耑用甲木，仍取庚噼甲",
-        "assist_note": "",
+        "tiaohou_source": "五月丁火，时归建禄，不宜乱用甲木",
+        "assist_note": "书源明写否定（不宜乱用甲木），未给固定调候处方 → tiaohou 留空（红线②），整维不进分母；引擎对午丁返回 None 属正确行为",
         "engine_actual": {
           "main": "",
           "assist": ""
-        }
+        },
+        "rebuild_2026_10_06m": "原引文『三夏丁火，耑用甲木，仍取庚噼甲』系章节标题+三秋句拼接（书源无逐字形式），expected 甲/庚 系误安——月柱午=五月丁火，书源行715 明写『不宜乱用甲木』；按逐字红线重建引文并将 tiaohou 转为 N/A（TECH-DEBT §2.4）"
       }
     },
     {
       "id": "QTBJ014",
       "split": "external_holdout",
       "book": "穷通宝鉴",
-      "location": "三夏丁火（行778）",
-      "source_quote": "三夏丁火，耑用甲木，仍取庚噼甲",
+      "location": "三夏丁火·五月丁火（行715）",
+      "source_quote": "五月丁火，时归建禄，不宜乱用甲木",
       "pillars": {
         "year": "辛巳",
         "month": "甲午",
@@ -1341,26 +1343,24 @@
       },
       "gender": "",
       "expected": {
-        "tiaohou": {
-          "main": "甲",
-          "assist": "庚"
-        }
+        "tiaohou": null
       },
       "_provenance": {
-        "tiaohou_source": "三夏丁火，耑用甲木，仍取庚噼甲",
-        "assist_note": "",
+        "tiaohou_source": "五月丁火，时归建禄，不宜乱用甲木",
+        "assist_note": "书源明写否定（不宜乱用甲木），未给固定调候处方 → tiaohou 留空（红线②），整维不进分母；引擎对午丁返回 None 属正确行为",
         "engine_actual": {
           "main": "",
           "assist": ""
-        }
+        },
+        "rebuild_2026_10_06m": "原引文『三夏丁火，耑用甲木，仍取庚噼甲』系章节标题+三秋句拼接（书源无逐字形式），expected 甲/庚 系误安——月柱午=五月丁火，书源行715 明写『不宜乱用甲木』；按逐字红线重建引文并将 tiaohou 转为 N/A（TECH-DEBT §2.4）"
       }
     },
     {
       "id": "QTBJ015",
       "split": "external_holdout",
       "book": "穷通宝鉴",
-      "location": "三秋丁火（行778）",
-      "source_quote": "三秋丁火，耑用甲木，仍取庚噼甲",
+      "location": "三秋丁火·七月丁火（行808）",
+      "source_quote": "七月丁火，退气柔弱，端用甲木，金虽乘旺司权，无伤丁之理，仍取庚劈甲",
       "pillars": {
         "year": "辛亥",
         "month": "丙申",
@@ -1375,20 +1375,21 @@
         }
       },
       "_provenance": {
-        "tiaohou_source": "三秋丁火，耑用甲木，仍取庚噼甲",
-        "assist_note": "",
+        "tiaohou_source": "七月丁火，退气柔弱，端用甲木，金虽乘旺司权，无伤丁之理，仍取庚劈甲",
+        "assist_note": "书源明写「仍取庚劈甲」→ assist 庚；引擎申丁佐神现为空，属 TIAO_HOU 覆盖缺口（引擎工作项，禁止按本批凑分）",
         "engine_actual": {
           "main": "",
           "assist": ""
-        }
+        },
+        "rebuild_2026_10_06m": "原引文『三秋丁火，耑用甲木，仍取庚噼甲』系压缩改写（删了『退气柔弱』『金虽乘旺司权，无伤丁之理』）；改取『七月』月头段（行808）逐字重建，expected 甲/庚 不变（该段明写 庚 为佐）"
       }
     },
     {
       "id": "QTBJ016",
       "split": "external_holdout",
       "book": "穷通宝鉴",
-      "location": "三秋丁火（行778）",
-      "source_quote": "三秋丁火，耑用甲木，仍取庚噼甲",
+      "location": "三秋丁火·七月丁火（行808）",
+      "source_quote": "七月丁火，退气柔弱，端用甲木，金虽乘旺司权，无伤丁之理，仍取庚劈甲",
       "pillars": {
         "year": "辛亥",
         "month": "丙申",
@@ -1403,12 +1404,13 @@
         }
       },
       "_provenance": {
-        "tiaohou_source": "三秋丁火，耑用甲木，仍取庚噼甲",
-        "assist_note": "",
+        "tiaohou_source": "七月丁火，退气柔弱，端用甲木，金虽乘旺司权，无伤丁之理，仍取庚劈甲",
+        "assist_note": "书源明写「仍取庚劈甲」→ assist 庚；引擎申丁佐神现为空，属 TIAO_HOU 覆盖缺口（引擎工作项，禁止按本批凑分）",
         "engine_actual": {
           "main": "",
           "assist": ""
-        }
+        },
+        "rebuild_2026_10_06m": "原引文『三秋丁火，耑用甲木，仍取庚噼甲』系压缩改写（删了『退气柔弱』『金虽乘旺司权，无伤丁之理』）；改取『七月』月头段（行808）逐字重建，expected 甲/庚 不变（该段明写 庚 为佐）"
       }
     },
     {

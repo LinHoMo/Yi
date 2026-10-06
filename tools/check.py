@@ -914,6 +914,14 @@ def main() -> int:
                 print(f"      …{_tail(out, 8)}")
         print("  （未纳入本段的构建器见 docs/TECH-DEBT.md §2.4：需先为其补 --check）")
 
+    # 案例引文逐字性（2026-10-06m）：[1j] 只管「构建器重跑==入库」，管不了案例集里
+    # 人工/临时脚本写入的 source_quote——QTBJ 批 9 条压缩改写/拼接引文就是这样静默
+    # 入库且全门 EXIT=0 的。本门对每条引文要求书源逐字子串（剥 wikitext 标记+去空白），
+    # 书源不在库的书逐条披露（不静默跳过）；内置 --selftest 负例自证。
+    print("\n[1k] 案例引文逐字性（data/cases 每条 source_quote 必须是书源逐字子串）")
+    gate_sub("case_quotes", ["tools/check_case_quotes.py"],
+             "案例引文逐字性（压缩/拼接/跨段引文判败；书源不在库逐条披露）")
+
     print("\n[2] 内核自检（干支历/农历/评分器）")
     if section("core"):
         code, out = _run_py(["core/yishu_core/calendar_check.py"], label="内核自检")
