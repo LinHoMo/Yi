@@ -504,10 +504,11 @@ python tools/eval.py
 > 以下为本机实测（`git log` / `tools/version_gate.py` / `wc -l`），**不凭记忆**。
 > 并行工作流仍在改语料时读数会变动，引用请带此时点。
 
-- **代码状态**：工作区 **clean**，HEAD = `a8dc79b`
-  （文档收口 + 新增 `[1b-2] doc_deadlinks` 文档死链门，挖出修 7 处真死链）。
-- **远端**：`SYNC_STATUS=UNSYNCED`，`LOCAL_AHEAD=19`（`REMOTE_HEAD=a4d13a6`）。
-  本地领先远端 19 个提交，未推送。
+- **代码状态**：工作区 **clean**，HEAD = `73d6c84`
+  （案例引文逐字机械门 `[1k]` 入库 + 外集 9 条非逐字引文重建（+BY002）——数据缺陷修复非调参，引擎零改动）。
+- **远端**：`SYNC_STATUS=REMOTE_UNVERIFIED`（代理不通，无法验证远端；
+  本地缓存引用口径 origin/main = `a4d13a6`，非实测）。
+  以 `tools/version_gate.py` 的 OBSERVE 为唯一真值源。
 - **门状态**：`tools/check.py --full` **EXIT=0**（2026-10-06 提交前后各验一次，
   含站点构建+自检、网页↔本机同源 13 正例+2 负例、pytest 387 passed、
   六爻黑箱 11/18 持平）；新门 `[1b-2] doc_deadlinks` 真死链 0、**已做负例自证**；
