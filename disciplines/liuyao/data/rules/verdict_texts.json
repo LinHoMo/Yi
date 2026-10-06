@@ -601,6 +601,50 @@
    "text": "用神休囚，生旺之月",
    "basis": ""
   },
+  "change_branch_value_month": {
+   "text": "化出之支，应于值日之月",
+   "basis": "《增删卜易》：應亥月者父母化出之爻也"
+  },
+  "sanhe_lack_branch_month": {
+   "text": "三合虚一待用，应于所缺之支之月",
+   "basis": "《增删卜易》升遷例：欲成三合，因少卯字……此乃虛一待用"
+  },
+  "use_empty_fill_year": {
+   "text": "用神旬空，出旬填实之年",
+   "basis": "《增删卜易》世爻章：世空者沖空實空之年"
+  },
+  "use_empty_chong_year": {
+   "text": "用神旬空，冲空则实之年",
+   "basis": "《增删卜易》世爻章：世空者沖空實空之年"
+  },
+  "month_break_real_year": {
+   "text": "月破出月，实破之年",
+   "basis": "《增删卜易》：世破者實破之年；動空及動而破者，不妨定破實空之年月也"
+  },
+  "use_tomb_chong_year": {
+   "text": "用神入墓，冲墓之年",
+   "basis": "《增删卜易》：近應日遠應年月"
+  },
+  "fu_hidden_chong_fei_year": {
+   "text": "用神伏藏，冲飞得出之年",
+   "basis": "《增删卜易》：近應日遠應年月"
+  },
+  "use_moving_he_year": {
+   "text": "用神发动，逢合之年",
+   "basis": "《增删卜易》世爻章：動者應在丑年月，餘仿此"
+  },
+  "use_quiet_chong_year": {
+   "text": "用神安静，逢冲之年",
+   "basis": "《增删卜易》世爻章：靜者逢沖逢值之年月，餘仿此"
+  },
+  "use_weak_prosper_year": {
+   "text": "用神休囚，生旺之年",
+   "basis": "《增删卜易》：近應日遠應年月"
+  },
+  "use_value_year": {
+   "text": "用神值年（世爻而值年月）",
+   "basis": "《增删卜易》：應午年發者，世爻而值年月"
+  },
   "hard_to_single_yingqi": {
    "text": "难以确定单一应期，以用神旺衰断时机之迟速",
    "basis": ""

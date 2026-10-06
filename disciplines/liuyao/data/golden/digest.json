@@ -3,7 +3,7 @@
     "what": "金标准指纹基线（排盘+思维链+分析层逐字段；抽样含 narrate 文案哈希）",
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
-  "digest": "d4ccdb7a3050b564",
+  "digest": "fed7f87766486d97",
   "narrate_digest": "25c5eeea2fa7e3b9",
   "drift_log": [
     {
@@ -89,6 +89,12 @@
       "to": "d4ccdb7a3050b564",
       "date": "2026-10-02",
       "reason": "六爻格局标签去子串扫描：反吟/伏吟·进退神·暗动·月破·三合/三刑改为读 advanced_analysis 结构（不再扫 step5/summary 文本）；patterns 字段为措辞层派生标签，机械排盘不变"
+    },
+    {
+      "from": "d4ccdb7a3050b564",
+      "to": "fed7f87766486d97",
+      "date": "2026-10-06",
+      "reason": "应期年级阶梯落地（增删卜易「近應日遠應年月」/世爻章餘仿此）+ 化出之支值月 + 三合虚一待用月级 + 世动逢合 + 化出回头克冲去之支；tune 96.8/holdout 90.2 持平，wikisource 56.9→60.5，suigui 94.5→98.5，口径变更已记 CHANGELOG"
     }
   ],
   "narrate_drift_log": [

@@ -19,6 +19,7 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     EARTHLY_BRANCHES,
     HE_PAIRS,
     KE_CYCLE,
+    SAN_HE_GROUPS,
     SHENG_CYCLE,
     TOMB_MAP,
 )
@@ -508,6 +509,22 @@ def _rank_candidates(r: dict, use_god_branch: str, use_god_element: str, strengt
         _rank(ranked, PEAK_BRANCH.get(use_god_element or "", ""), YINGQI_TXT["use_weak_wait_prosper"]["text"])
     _rank(ranked, use_god_branch, "以用神为主")
     _rank(ranked, day_branch, "日辰值事")
+    # ── 日级末位补充（追加于既有序列之后，只补空槽不挤既有候选）──
+    # G4 世爻发动逢合：《增删卜易》「應辰日者，世動逢合之日也」；天时章
+    # 「動者逢值逢合之日」——用神动逢合已有，世爻动亦同此理；
+    # 世持用神时与用神动规则同 token，由 _rank 去重。
+    _world_yao = next((y for y in yao_lines
+                       if isinstance(y, dict) and y.get("is_world")), None)
+    if _world_yao is not None and _world_yao.get("is_moving"):
+        _wb = _world_yao.get("earthly_branch") or ""
+        if _wb:
+            _rank(ranked, _he(_wb), "世爻发动，逢合之日（世動逢合）")
+    # G6a 化出之支回头克用神，冲去该支：《增删卜易》天时章「父母子水動被未土回頭克，
+    # 丑日而雨。應丑日者，沖去未土合起父母」＋觉子按语「合住爻沖開之日時必晴」。
+    for _b, _c in changed_pairs:
+        _c_el = BRANCH_ELEMENTS.get(_c or "", "")
+        if _c_el and use_god_element and KE_CYCLE.get(_c_el) == use_god_element:
+            _rank(ranked, _chong(_c), f"化出{_c}克用，冲去之支（冲去{_c}）")
 
     # 月级阶梯：《增刪卜易》「遠則應月﹐近則應日」（norm@79289）——同一套"解除障碍之期"
     # 在月单位上另排一遍。
@@ -532,6 +549,43 @@ def _rank_candidates(r: dict, use_god_branch: str, use_god_element: str, strengt
     if strength_level in ("休囚", "囚", "死", "偏弱", "衰") or speed == "应迟":
         _rank(ranked, peak, YINGQI_TXT["use_weak_prosper_month"]["text"], "月")
     _rank(ranked, use_god_branch, "以用神为主", "月")
+    # 月级末位补充（排在既有序列之后，只补空槽不挤既有候选——月序本身是调优资产）：
+    # G2 化出之支值月：《增删卜易》行人例「應亥月者父母化出之爻也」。
+    if changed_pairs and _chg0 and _chg0 not in _empty_list and not hui_tou_sheng:
+        _rank(ranked, _chg0, YINGQI_TXT["change_branch_value_month"]["text"], "月")
+    # G3 三合虚一待用：《增删卜易》升遷例「欲成三合，因少卯字，明年卯月必升，此乃
+    # 虛一待用」——卦中日月已具两支、独缺一支者，应于所缺之支之月（书例只给月级）。
+    if use_god_element and use_god_element in SAN_HE_GROUPS:
+        _combo = SAN_HE_GROUPS[use_god_element]
+        _present = {y.get("earthly_branch") or "" for y in yao_lines if isinstance(y, dict)}
+        _present |= {day_branch or "", month_branch or ""}
+        _missing = [b for b in _combo if b and b not in _present]
+        if len(_missing) == 1:
+            _rank(ranked, _missing[0], YINGQI_TXT["sanhe_lack_branch_month"]["text"], "月")
+
+    # 年级阶梯（G1）：《增删卜易》「近應日遠應年月」（月破章总纲）；世爻章
+    # 「靜者逢沖逢值之年月……動者應在丑年月亦有應子年，餘仿此」「世空者沖空實空之年，
+    # 世破者實破之年」「惟動空及動而破者，不妨定破實空之年月也」——
+    # 同一套解除障碍之期在年单位上再排一遍（远应年月之年半边）。
+    if is_empty:
+        _rank(ranked, use_god_branch, YINGQI_TXT["use_empty_fill_year"]["text"], "年")
+        _rank(ranked, _chong_ug or use_god_branch, YINGQI_TXT["use_empty_chong_year"]["text"], "年")
+    if is_month_break:
+        _rank(ranked, use_god_branch, YINGQI_TXT["month_break_real_year"]["text"], "年")
+    if tomb_branch and tomb_branch in (day_branch, month_branch):
+        _rank(ranked, _chong(tomb_branch), YINGQI_TXT["use_tomb_chong_year"]["text"], "年")
+    if bound_by:
+        _rank(ranked, _chong(bound_by), f"用神被{bound_by}合住，冲开之年", "年")
+    if step2_d.get("has_fu_cang") and (fu_branch or fei_branch):
+        _rank(ranked, _chong(fei_branch) or fu_branch, YINGQI_TXT["fu_hidden_chong_fei_year"]["text"], "年")
+    if use_god_branch:
+        if ug_moving:
+            _rank(ranked, _he(use_god_branch), YINGQI_TXT["use_moving_he_year"]["text"], "年")
+        else:
+            _rank(ranked, _chong_ug, YINGQI_TXT["use_quiet_chong_year"]["text"], "年")
+        _rank(ranked, use_god_branch, YINGQI_TXT["use_value_year"]["text"], "年")
+    if strength_level in ("休囚", "囚", "死", "偏弱", "衰") or speed == "应迟":
+        _rank(ranked, peak, YINGQI_TXT["use_weak_prosper_year"]["text"], "年")
 
     return ranked
 
