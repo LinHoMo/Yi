@@ -46,20 +46,43 @@ def _cases() -> dict:
     return by_id
 
 
+# 多书框架（2026-10-06c）：每书独立 provenance + 维度白名单，不再单书硬编码。
+ALLOWED_BOOKS = {"滴天髓阐微", "穷通宝鉴"}
+
+
 def test_external_cases_provenance_honest():
-    """每例：书源逐字引文含类别原词；expected.strength 与评测器映射一致。"""
+    """每例：书源逐字引文能指回 expected；按书源各自口径校验 provenance。
+
+    多书框架（2026-10-06c）：不再单书硬编码，每书独立 provenance + 维度白名单；
+    strength 改为按需（非每例强制），穷通宝鉴例改校验 tiaohou 主/佐神点名。
+    """
+    GAN = "甲乙丙丁戊己庚辛壬癸"
     mapping = _mapping_from_eval_source()
     for cid, case in _cases().items():
         assert case["split"] == "external_holdout", f"{cid}：须恒为 external_holdout"
-        assert case["book"] == "滴天髓阐微", f"{cid}：书源须为阐微"
-        cat = case["expected"]["strength_book_category"]
-        assert cat in mapping, f"{cid}：未知书源类别 {cat}"
-        assert cat in case["source_quote"], \
-            f"{cid}：引文不含类别原词「{cat}」——expected 必须指得回原文"
-        assert case["expected"]["strength"] == mapping[cat], \
-            f"{cid}：与评测器映射漂移（{cat} 应为 {mapping[cat]}）"
+        assert case["book"] in ALLOWED_BOOKS, \
+            f"{cid}：书源 {case['book']} 不在白名单 {sorted(ALLOWED_BOOKS)}"
         for k in ("year", "month", "day", "hour"):
             assert len(case["pillars"].get(k) or "") == 2, f"{cid}：{k} 柱缺失"
+        if case["book"] == "滴天髓阐微":
+            cat = case["expected"].get("strength_book_category")
+            assert cat is not None, f"{cid}：阐微例须带 strength_book_category"
+            assert cat in mapping, f"{cid}：未知书源类别 {cat}"
+            assert cat in case["source_quote"], \
+                f"{cid}：引文不含类别原词「{cat}」——expected 必须指得回原文"
+            assert case["expected"]["strength"] == mapping[cat], \
+                f"{cid}：与评测器映射漂移（{cat} 应为 {mapping[cat]}）"
+        elif case["book"] == "穷通宝鉴":
+            th = case["expected"].get("tiaohou")
+            assert th is not None, f"{cid}：穷通宝鉴例须带 tiaohou"
+            assert th.get("main") in GAN, f"{cid}：tiaohou.main 须为天干，实得 {th.get('main')}"
+            # 书源逐字点名：main 必现于引文；assist 若点名具体天干亦须现于引文
+            assert th["main"] in case["source_quote"], \
+                f"{cid}：引文不含主用神「{th['main']}」——expected 必须指得回原文"
+            if th.get("assist"):
+                assert th["assist"] in GAN, f"{cid}：tiaohou.assist 须为天干，实得 {th.get('assist')}"
+                assert th["assist"] in case["source_quote"], \
+                    f"{cid}：引文不含佐神「{th['assist']}」"
 
 
 def test_external_split_isolated_from_main_store():
@@ -82,7 +105,9 @@ def test_external_expected_is_report_only():
     # 2026-10-06a 登记：external 扩维至天干十神（ten_gods）维度——report-only 测量，
     # 非静默晋升；详见 docs/CHANGELOG.md。其余加权维度（pillars/调候/大运…）仍禁入。
     # 2026-10-06b 登记：external 再扩维至格局（pattern）维度（ZE029/038，书源显式点名）。
-    allowed = {"strength", "strength_book_category", "ten_gods", "pattern"}
+    # 2026-10-06c 登记：多书框架——穷通宝鉴调候批接入 tiaohou 维度（report-only，
+    #   同源覆盖审计，非独立验证）；strength 改为按需（非每例强制）。详见 docs/CHANGELOG.md。
+    allowed = {"strength", "strength_book_category", "ten_gods", "pattern", "tiaohou"}
     for cid, case in _cases().items():
         extra = set(case.get("expected") or {}) - allowed
         assert not extra, f"{cid}：出现未登记的可计分维度 {sorted(extra)}"

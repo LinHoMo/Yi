@@ -1,3 +1,39 @@
+### 2026-10-06c 命科外集多书框架 + 穷通宝鉴调候（tiaohou）批 · report-only · engine 零变化
+
+> **性质**：外部独立集由「单书硬编码」升级为「多书 + 每书独立 provenance + 维度白名单」；
+> 引入第二部古籍《穷通宝鉴》建调候（tiaohou）批。**engine 推演一行未改**；
+> 穷通宝鉴批为**同源覆盖审计**，非独立外部验证，永不调参。
+
+- **多书框架（`tests/test_ming_external_cases.py`）**：
+  - `book` 由硬编码 `"滴天髓阐微"` 放宽为白名单 `ALLOWED_BOOKS = {"滴天髓阐微","穷通宝鉴"}`；
+  - `strength` 改为按需（非每例强制）：仅阐微例校验 `strength_book_category`；穷通宝鉴例改校验 `tiaohou` 主/佐神点名；
+  - `test_external_expected_is_report_only` 白名单扩至含 `tiaohou`（本条即其登记），其余加权维度
+    （pillars/藏干/神煞/大运/从格）仍禁入——防静默晋升纪律不变。
+- **穷通宝鉴调候批**（`disciplines/ming/data/cases/ming_external_cases.json`，新增 18 例
+  `QTBJ001–018`，external_holdout 现 **63 例**＝45 阐微＋18 穷通）：
+  - 四柱取自书源四柱命例表（`data/sources/qiong-tong-bao-jian.wikitext.txt`，本地缓存；
+    沙箱出站网络屏蔽、未现抓）；逐例核验「日主天干==该小节日主、月支柱==该小节月令」，
+    **月令错配者剔除**（书源「十一月丁火」小节内实为丑月例，已剔除零入库）；
+  - `expected.tiaohou` 严格＝书源逐字点名：main 必点名、assist 仅当书显式点名具体天干
+    （X为佐/以X为佐）才记，仅言「金为佐」等五行不点名天干者记空（N/A，不扣佐神分）。
+- **同源诚实声明（关键）**：引擎 `analyze.tiaohou` 字段**源出** `core/yishu_core/ming_tables.TIAO_HOU`
+  （《穷通宝鉴》月令×日主查表，51/120 格，由 `build_tiaohou.py` 从同书机械提取＋人审）。
+  故本批与引擎**同源，不是独立外部验证**；其价值在：① 回归守护——`TIAO_HOU` 表被改动时本批
+  立刻暴露漂移；② 覆盖审计——暴露表中缺失格（引擎返回空）与佐神抽取差异。任何读数均不得
+  表述为「预测准确率」。
+- **读数（report-only，永不调参，10-06c 实测）**：
+  - 调候 tiaohou：**6/18 满分例（33.3%）**；但此非准确率——
+    - 已覆盖的 4 个 (月令×日主) 格（寅丙/巳丙/未丙/卯丁）`main` 神**全部命中**；
+    - **5 个格引擎返回空**（卯丙/午丙/午丁/申丁/亥丁）——根因＝`TIAO_HOU` 表未收这些格
+      （宁缺勿滥，查不到返回 None），属覆盖缺口非预测偏差；
+    - 佐神（assist）2 处差异：正月丙火/六月丙火书言「庚」为佐，而 `TIAO_HOU` 该格 `assist` 记空——表抽取漏佐。
+  - 其余维度不变：强弱 30/45、天干十神 5/5、格局 2/2，彼此独立不混算。
+- **后续优化方向（非本轮，须另立项、独立登记）**：把 `TIAO_HOU` 表由 51/120 补至更全
+  （补卯丙/午丙/午丁/申丁/亥丁 等缺口，并补正月/六月丙火佐神），同源回归本批即随之提升；
+  亦可引入真正**异源**古籍（如《子平真诠》《三命通会》调候相关章）做独立验证。
+- **验收/test**：`tests/test_ming_external_cases.py` 3 passed；`evaluate.py --split external_holdout`
+  跑通（强弱 30/45、ten_gods 5/5、pattern 2/2、tiaohou 6/18）；`tools/check.py --full` 全绿。
+
 ### 2026-10-06b 命科外集扩维评测覆盖（二）：格局（pattern）维度接入 external_holdout · report-only · engine 零变化
 
 > **性质**：评测覆盖面续扩（external holdout 现三维度：strength＋天干十神＋格局）。
