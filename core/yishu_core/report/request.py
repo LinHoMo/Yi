@@ -12,7 +12,7 @@
 
 设计纪律（缺陷防复发）：
   * 各科起卦/起课方式走**白名单**，表外取值明确报错——不许"转发给 argparse 让它炸"，
-    更不许静默忽略（旧实现里 xiaoliuren `way=numbers` 会被无声地按 datetime 出课，
+    更不许静默忽略（旧实现里某科 `way=numbers` 会被无声地按 datetime 出课，
     求测者拿到的是另一种方式的盘而报告不会说）。
   * 日期一律归一化为 ISO；`2026/09/30`、`2026.9.30`、`20260930` 都吃。
   * 只透传学科 argparse 真正认识的键，不猜。
@@ -23,34 +23,20 @@ from datetime import date, datetime, timedelta, timezone
 
 CST = timezone(timedelta(hours=8))
 
-DISCIPLINES = ("liuyao", "ming", "ziwei", "meihua", "xiaoliuren", "zeji", "liuren", "lingqi")
+DISCIPLINES = ("liuyao", "ming")
 
 DISC_TITLE = {
     "liuyao": "六爻纳甲",
     "ming": "四柱八字",
-    "ziwei": "紫微斗数",
-    "meihua": "梅花易数",
-    "xiaoliuren": "小六壬",
-    "zeji": "择吉",
-    "liuren": "大六壬",
-    "lingqi": "灵棋经",
 }
 
 # 各科起卦/起课方式白名单（与学科 chart.py 的 argparse choices 逐字对齐）
 LIUYAO_MODES = ("coin", "time", "number", "manual")
-MEIHUA_WAYS = ("datetime", "lunar", "numbers", "two_numbers", "manual")
-XIAOLIUREN_WAYS = ("datetime", "lunar", "month_day_hour", "numbers")
 
 # 各科的必填字段（用于早期报错，附人话提示）
 REQUIRED = {
     "liuyao": (),
     "ming": ("datetime",),
-    "ziwei": ("datetime",),
-    "meihua": (),
-    "xiaoliuren": (),
-    "zeji": (),
-    "liuren": ("datetime",),
-    "lingqi": (),
 }
 
 FIELD_HINT = {
@@ -136,33 +122,6 @@ def chart_argv(req: dict, program: str, out_path: str) -> list[str]:
     dt = req.get("datetime", "")
     argv = [program]
 
-    if d == "lingqi":
-        # 三部掷数缺一即无课——结构性澄清门禁（0 为合法面数，只拦"未给"）
-        vals = {}
-        for k, label in (("up", "上"), ("mid", "中"), ("down", "下")):
-            v = req.get(k)
-            if v is None:
-                raise ValueError(
-                    f"lingqi（灵棋经）需要 {k}（{label}部掷面数 0..4）：十二棋分三部，"
-                    "三部掷数缺一不可；请向求测者确认掷棋结果后再试")
-            if not isinstance(v, int) or not 0 <= v <= 4:
-                raise ValueError(f"lingqi {k}（{label}部）必须是 0..4 的整数，收到 {v!r}")
-            vals[k] = v
-        argv += ["--up", str(vals["up"]), "--mid", str(vals["mid"]),
-                 "--down", str(vals["down"])]
-        if req.get("question"):
-            argv += ["--question", req["question"]]
-    if d == "liuren":
-        # 六壬起课=月将加时，无时刻即无课——结构性缺参必须报错并给出澄清话术，
-        # 不允许 AI 脑补一个时刻开算（AGENTS.md 铁律一）
-        if not dt:
-            raise ValueError(
-                "liuren（大六壬）需要 datetime（YYYY-MM-DD HH:MM）：起课以月将加时，"
-                "无时刻不可起课；请向求测者确认起课的公历时刻后再试")
-        argv += ["--datetime", dt]
-        if q:
-            argv += ["--question", q]
-
     if d == "liuyao":
         mode = req.get("mode") or ("time" if dt else "coin")
         if mode not in LIUYAO_MODES:
@@ -188,69 +147,21 @@ def chart_argv(req: dict, program: str, out_path: str) -> list[str]:
         if req.get("longitude") is not None:
             argv += ["--longitude", str(req["longitude"])]
 
-    elif d in ("ming", "ziwei"):
+    elif d == "ming":
         argv += ["--datetime", dt]
         if req.get("gender"):
             argv += ["--gender", req["gender"]]
         if req.get("longitude") is not None:
             argv += ["--longitude", str(req["longitude"])]
-        if d == "ming" and q:
-            argv += ["--question", q]
-
-    elif d == "meihua":
-        way = req.get("way") or ("numbers" if req.get("numbers") else "datetime")
-        if way not in MEIHUA_WAYS:
-            raise ValueError(
-                f"meihua 起卦方式 way 只能是 {'/'.join(MEIHUA_WAYS)}，收到 {way!r}")
-        argv += ["--way", way]
-        if way == "datetime":
-            argv += ["--datetime", norm_iso(dt) if dt else norm_iso(now_str())]
-        elif way == "numbers":
-            # 梅花以数起卦：上卦=(年数+月数+日数) mod 8，下卦再+时数。
-            # numbers 按"年数,月数,日数"三数解释（与学科
-            # chart_from_numbers(year_num, month, day, hour_num) 同序）。
-            a, b, c = split_ints(req.get("numbers", ""), 3, "meihua numbers")
-            argv += ["--year-num", str(a), "--month", str(b), "--day", str(c),
-                     "--hour-num", "0"]
         if q:
             argv += ["--question", q]
-
-    elif d == "xiaoliuren":
-        way = req.get("way") or ("numbers" if req.get("numbers") else "datetime")
-        if way not in XIAOLIUREN_WAYS:
-            raise ValueError(
-                f"xiaoliuren 起课方式 way 只能是 {'/'.join(XIAOLIUREN_WAYS)}，收到 {way!r}")
-        argv += ["--way", way]
-        if way == "datetime":
-            argv += ["--datetime", norm_iso(dt) if dt else norm_iso(now_str())]
-        elif way == "numbers":
-            if not req.get("numbers"):
-                raise ValueError("xiaoliuren way=numbers 需要 numbers（如 7,7,2）")
-            argv += ["--numbers", req["numbers"]]
-        if q:
-            argv += ["--question", q]
-        if req.get("activity"):
-            argv += ["--topic", req["activity"]]
-        if req.get("hour_branch"):
-            argv += ["--hour-branch", req["hour_branch"]]
-        if req.get("direction"):
-            argv += ["--direction", req["direction"]]
-
-    elif d == "zeji":
-        argv += ["--date", norm_date(req.get("date") or now_str().split(" ")[0])]
-        if req.get("activity"):
-            argv += ["--activity", req["activity"]]
-        if q:
-            argv += ["--question", q]
-        if req.get("hour_branch"):
-            argv += ["--hour-branch", req["hour_branch"]]
 
     argv += ["-o", out_path]
     return argv
 
 
 def analyze_argv(req: dict, program: str, chart_path: str, out_path: str) -> list[str]:
-    """analyze 段命令行：八科同形（chart.json → analyze.json）。"""
+    """analyze 段命令行：两科同形（chart.json → analyze.json）。"""
     return [program, chart_path, "-o", out_path]
 
 
@@ -267,7 +178,7 @@ def report_title(req: dict) -> str:
     d = req["discipline"]
     q = req.get("question", "")
     title = DISC_TITLE[d]
-    if d in ("ming", "ziwei"):
+    if d == "ming":
         return f"{title} · 命盘分析"
     return f"{title} · {q}" if q else title
 

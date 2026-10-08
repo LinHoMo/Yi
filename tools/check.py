@@ -38,7 +38,7 @@ CORE = ROOT / "core"
 sys.path.insert(0, str(CORE))
 
 from yishu_core import __version__  # noqa: E402
-# 学科清单唯一真值源：与 build_web.py 同源，避免 check.py 再硬编码一份 8 科名字
+# 学科清单唯一真值源：与 build_web.py 同源，避免 check.py 再硬编码一份学科名字
 from yishu_core.report.request import (  # noqa: E402
     DISCIPLINES as ALL_DISCIPLINES,
     REQUEST_FIELDS,
@@ -50,10 +50,9 @@ from yishu_core.runtime import utf8_subprocess_env  # noqa: E402
 CONTRACT_FILES = ("SKILL.md", "scripts/chart.py", "scripts/analyze.py",
                   "scripts/narrate.py", "scripts/render.py",
                   "data/verdicts.json", "dev_tools/check.py", "dev_tools/golden.py")
-# 四段契约里"查表直录类学科"豁免的条目：这类学科断语直接录自古籍课表
-# （lingqi 的 124 课），不设 data/verdicts.json、也不分案例集，见 docs/CONTRACT.md §四。
+# 四段契约豁免条目（查表直录类学科，已随学科收缩移除）。保留键位防历史配置引用。
 CONTRACT_EXEMPT_FILES = ("data/verdicts.json",)
-TABLE_LOOKUP_DISCIPLINES = ("lingqi",)
+TABLE_LOOKUP_DISCIPLINES = ()
 
 # 目录级预算（架构评审 A3）：单文件看门狗对「几十个文件合计上万行」的分布式巨石无感。
 # 超过基础预算的科必须在 DECLARED_HEAVY 里显式申报上限，否则失败——
@@ -61,9 +60,9 @@ TABLE_LOOKUP_DISCIPLINES = ("lingqi",)
 SCRIPTS_BUDGET_BASE = 6000
 DECLARED_HEAVY = {"liuyao": 22000}
 
-# 快速冒烟门（跑 golden，成本高）只跑这两科；八科的"静态结构门"（文件齐全）由
+# 快速冒烟门（跑 golden，成本高）只跑 ming；两科的"静态结构门"（文件齐全）由
 # check_structure 用 request.DISCIPLINES 全覆盖，新科接入时不必改这里。
-SMOKE_DISCIPLINES = ("ming", "ziwei")
+SMOKE_DISCIPLINES = ("ming",)
 
 # render 段内容指纹基线（架构评审 A6）：render 是四段里唯一无内容指纹的一段。
 # 只锁 Markdown 逐字节（同源验收口径即「MD 逐字节一致」；HTML 页头 runtime 标签是有意差异）。
@@ -89,7 +88,7 @@ CORE_TABLE_ASSIGN = re.compile(
 #   path   —— 把 `disciplines/liuyao/…` 当字符串路径拼进 sys.path 再裸 import
 # 实测教训：ming 的跨科审计脚本用 dotted+dyn 两种形态，旧门两种全漏；它一旦放在
 # 学科目录里，学科→学科的依赖就绕过了结构门（现已移到仓库级 tools/）。
-_CROSS_DISC = "liuyao|ming|ziwei|meihua|xiaoliuren|zeji|liuren|lingqi"
+_CROSS_DISC = "liuyao|ming"
 CROSS_DISC_IMPORT = re.compile(
     r"^\s*(?:from|import)\s+(" + _CROSS_DISC + r")\b")
 CROSS_DISC_DOTTED = re.compile(
@@ -103,17 +102,11 @@ CROSS_DISC_PATHISH = re.compile(
 # 不拦"不宣称现实预测命中率"这类否定式免责句（其后不是数字）。
 BANNED_CLAIM = re.compile(r"(?:命中率|准确率)\s*[:：]?\s*\d|断事如神")
 
-# 报告契约·八科必达字段（analyze.chart_summary 的键 → 其值必须出现在 narrate 正文）。
+# 报告契约·两科必达字段（analyze.chart_summary 的键 → 其值必须出现在 narrate 正文）。
 # 取「实测确认会渲染」的结构化键，专抓「算出来了但报告没呈现」（AGENTS.md §四.6 报告层同步）。
 REPORT_REQUIRED = {
     "liuyao": ("用神", "旺衰"),
     "ming": ("强弱", "格局", "胎元"),
-    "ziwei": ("命宫主星", "格局", "五行局"),
-    "meihua": ("体用规则",),
-    "xiaoliuren": ("落宫",),
-    "zeji": ("日值神", "值宿"),
-    "liuren": ("日干支", "月将"),
-    "lingqi": ("课名", "卦宫"),
 }
 
 # 文件名版本号标记（AGENTS.md §三：名字不携带版本；版本走 git 与 CHANGELOG）
@@ -208,7 +201,7 @@ def check_capability_matrix() -> list[str]:
     except SystemExit:
         pass
     web_ids = [m["id"] for m in mod.DISCIPLINE_META]
-    all_ids = ["liuyao", "ming", "ziwei", "meihua", "xiaoliuren", "zeji", "liuren", "lingqi"]
+    all_ids = ["liuyao", "ming"]
     unknown = [d for d in web_ids if d not in all_ids]
     if unknown:
         fails.append(f"build_web 出现未知学科 id：{unknown}")
@@ -315,13 +308,11 @@ def check_deeplink_keys() -> list[str]:
 
 
 def check_structure() -> list[str]:
-    """学科目录契约：八科四段文件齐全；依赖方向单向。
+    """学科目录契约：八字 / 六爻两科四段文件齐全；依赖方向单向。
 
-    清单取 `request.DISCIPLINES`（唯一真值源），扩展新科时自动覆盖——此前
-    `NEW_DISCIPLINES` 只放 ming/ziwei，其余 6 科靠各学科自己的 dev_tools/check.py，
-    根门对新科是敞的。
-    查表直录类学科（`TABLE_LOOKUP_DISCIPLINES`，如 lingqi 的 124 课本就直录古籍）
-    豁免 `CONTRACT_EXEMPT_FILES`，见 `docs/CONTRACT.md` §四。
+    清单取 `request.DISCIPLINES`（唯一真值源，仅含 ming/liuyao），扩展正式学科时
+    自动覆盖。
+    查表直录类学科豁免 `CONTRACT_EXEMPT_FILES`，见 `docs/CONTRACT.md` §四。
     """
     fails = []
     for disc in ALL_DISCIPLINES:
@@ -339,7 +330,7 @@ def check_structure() -> list[str]:
         cases = d / "data" / "cases"
         if disc not in exempt and not (cases.is_dir() and any(cases.glob("*.json"))):
             print(f"  · {disc} 尚无案例库（data/cases 下没有 *.json）")
-    # 学科互相 import（2026-10-08 扩面：8 科 × 整个学科目录，含 dev_tools/tests/其它子包；
+    # 学科互相 import（全学科目录扫描：含 dev_tools/tests/其它子包；
     # 旧门只扫 `scripts/` 且只认裸模块名，于是学科层用点分路径 / importlib 动态加载别科
     # 完全畅通——实测曾在 ming/dev_tools 里命中两处）
     for p in sorted((ROOT / "disciplines").rglob("*.py")):
@@ -348,7 +339,7 @@ def check_structure() -> list[str]:
         parts = p.relative_to(ROOT).parts
         own = parts[1] if len(parts) > 1 else ""
         if own not in ALL_DISCIPLINES:
-            continue          # 未注册目录（如 jiaoshi/none_tonggang 草稿）由 §2.4 债务行管
+            continue          # 未注册目录由 §2.4 债务行管
         for i, line in enumerate(p.read_text(encoding="utf-8", errors="ignore").splitlines(), 1):
             hits = []
             for pat in (CROSS_DISC_IMPORT, CROSS_DISC_DOTTED,
@@ -386,7 +377,7 @@ def check_structure() -> list[str]:
 
 
 def check_modules_importable() -> list[str]:
-    """八科每个 `scripts/*.py` 都能独立 import 成功。
+    """两科每个 `scripts/*.py` 都能独立 import 成功。
 
     背景（本门的存在理由）：2026-10-02 修 `trigram_symbolism.py` 时把
     `import json` / `from pathlib import Path` 换成了别名导入，模块一进 import
@@ -595,7 +586,7 @@ def check_core_string_tables() -> list[str]:
     上两条门都只比对 dict/list 字面量：裸字符串形式的完整十天干串 / 完整十二地支串
     （GANZHI_SEQ_LITERAL 所匹者）既不匹配 `CORE_TABLE_ASSIGN` 正则，也不是可指纹的
     dict —— 两层门同时放行。且同一函数里常出现"一半用 core 一半手写串"（如
-    meihua/chart.py 手写 stems 串、同行却用 core EARTHLY_BRANCHES），是最容易漏改
+    某科 chart.py 手写 stems 串、同行却用 core EARTHLY_BRANCHES），是最容易漏改
     半截的形态。本函数自身也走 `_truth_source_files()`，故此处不写示例字面量。
     """
     fails: list[str] = []
@@ -791,7 +782,7 @@ def main() -> int:
                     help="全量：三科案例评测（tune/holdout）+ 六爻黑箱回归 + "
                          "网页/本地同源验收 + pytest tests（慢）")
     ap.add_argument("--raise-render", action="store_true",
-                    help="以本次八科 render MD 指纹覆盖基线 data/golden/render_digest.json"
+                    help="以本次两科 render MD 指纹覆盖基线 data/golden/render_digest.json"
                          "（须配合 --reason；架构评审 A6）")
     ap.add_argument("--reason", default="",
                     help="--raise-render 必填：为何允许 render 段漂移（防掩盖退步）")
@@ -865,7 +856,7 @@ def main() -> int:
     gate("tables", check_core_tables(), "内核规则表无学科复制")
 
     gate("structure", check_modules_importable(),
-         "八科 scripts 模块均可独立导入（import 期不得炸、也不得静默降级）")
+         "两科 scripts 模块均可独立导入（import 期不得炸、也不得静默降级）")
 
     print("\n[1b] 命名与断语规范（AGENTS.md §三: 文件名无版本号 + 断语进 data JSON）")
     gate("filenames", check_filenames(), "文件名无版本号标记")
@@ -889,14 +880,14 @@ def main() -> int:
 
     # 语料消费审计（verdict_audit 的反向，SYS-REVIEW #1）：跑报告统计语料池
     # 覆盖率，零消费键打印明细。抽样覆盖有限（主题键合法不触发），只报告不判败；
-    # 发现整块死语料（如 ziwei 命宫格局事件）从手工排查变成机械可见。
+    # 发现整块死语料（如某科命宫格局事件）从手工排查变成机械可见。
     print("\n[1d] 语料消费审计（同一批报告反查语料池覆盖率；报告零消费键）")
     gate_sub("verdict_consumption",
              ["tools/verdict_consumption.py"],
              "语料消费审计（报告制，零消费键可见）", fast=False)
 
     # 能力矩阵锁（SYS-REVIEW #3）：llms.txt 的权威矩阵必须与
-    # tools/build_web.py 的 DISCIPLINE_META 一致，防「文档说八科、网页只能六科」漂移。
+    # tools/build_web.py 的 DISCIPLINE_META 一致，防「文档 / 网页口径漂移（均为八字+六爻）」。
     print("\n[1e] 能力矩阵锁（llms.txt 权威表 ↔ build_web 清单）")
     gate("capability_matrix", check_capability_matrix(), "llms.txt 能力矩阵与站点清单一致")
 
@@ -930,12 +921,6 @@ def main() -> int:
     CORPUS_BUILDERS = (
         ("ming", "disciplines/ming/dev_tools/build_dts_corpus.py"),
         ("ming", "disciplines/ming/dev_tools/build_tiaohou.py"),
-        ("ziwei", "disciplines/ziwei/dev_tools/build_corpus.py"),
-        ("meihua", "disciplines/meihua/dev_tools/build_classics.py"),
-        ("zeji", "disciplines/zeji/dev_tools/build_citations.py"),
-        ("lingqi", "disciplines/lingqi/dev_tools/build_ketable.py"),
-        ("liuren", "disciplines/liuren/dev_tools/build_course_cases.py"),
-        ("liuren", "disciplines/liuren/dev_tools/build_kemu_notes.py"),
     )
     if section("corpus_repro"):
         for disc, script in CORPUS_BUILDERS:
@@ -974,12 +959,7 @@ def main() -> int:
              "纳音使用审计（静态分类+动态反事实双通道；含注入生效负例自证）",
              fast=False)
 
-    # kemu.json 吉凶句混淆审计（Round 3 创建后未挂门）：
-    # 确保 verse/note 字段中的叙事候选词（吉凶方向词）必须标 narrative_candidate=true，
-    # 否则视为"吉凶句混入结构条件层"。纯机械匹配，不出吉凶方向。自带 --selftest 负例。
-    print("\n[1n] kemu 课目 purity（verse/note 叙事候选词必须标 narrative_candidate）")
-    gate_sub("kemu_purity", ["disciplines/liuren/dev_tools/check_kemu_purity.py"],
-             "kemu  purity 门（verse/note 叙事候选词必须标 narrative_candidate；纯结构匹配）")
+    # [1n] 已随大六壬学科移除（kemu purity 仅服务于 liuren）
 
     print("\n[2] 内核自检（干支历/农历/评分器）")
     if section("core"):
@@ -1032,7 +1012,7 @@ def main() -> int:
               f"{'（含案例评测）' if args.full else '（快速：指纹+冒烟）'}")
         gate_sub(disc, [f"disciplines/{disc}/dev_tools/check.py"], disc, fast=not args.full)
 
-    print("\n[5] 八科行为指纹（golden 基线：重构只准改结构，不准改行为）")
+    print("\n[5] 两科行为指纹（golden 基线：重构只准改结构，不准改行为）")
     for disc in ALL_DISCIPLINES:
         g = ROOT / "disciplines" / disc / "dev_tools" / "golden.py"
         if not g.is_file():
@@ -1091,25 +1071,19 @@ def main() -> int:
             print("  × 六爻黑箱回归（低于基线 11/18）")
             print(f"      …{_tail(out)}")
 
-    # render 段是全库唯一无内容保护的段落（架构评审 A6）：八科 golden 均不含 render，
+    # render 段是全库唯一无内容保护的段落（架构评审 A6）：两科 golden 均不含 render，
     # 根门原本只判"产物存在"。这里对**用户真正读到的统一报告**做契约级结构断言：
     # 口径声明句与反馈尾注必须在位，禁用断言词必须为 0。
     if section("report_contract"):
-        print("\n[6b] 报告契约（render 段结构断言 · 八科逐科：口径句/反馈尾注在位，禁用断言词为 0）")
+        print("\n[6b] 报告契约（render 段结构断言 · 两科逐科：口径句/反馈尾注在位，禁用断言词为 0）")
         from yishu_core.report.request import MD_FEEDBACK_NOTE, REPORT_FOOTER  # noqa: E402
         rc_dir = ROOT / "tools" / "scratch" / "report_contract"
         rc_dir.mkdir(parents=True, exist_ok=True)
-        # 每科一条最小请求（覆盖八科 render 路径）；经 --request 传入，避免逐科拼 flag。
+        # 每科一条最小请求（覆盖两科 render 路径）；经 --request 传入，避免逐科拼 flag。
         cases = (
             {"discipline": "liuyao", "question": "占合同能否成交", "mode": "time",
              "datetime": "2026-09-23 10:00"},
             {"discipline": "ming", "question": "命局", "datetime": "1990-05-20 10:30", "gender": "男"},
-            {"discipline": "ziwei", "question": "命盘", "datetime": "1990-05-20 10:30", "gender": "女"},
-            {"discipline": "meihua", "question": "占投资", "way": "numbers", "numbers": "3,5,7"},
-            {"discipline": "xiaoliuren", "question": "占出行", "datetime": "2026-09-30 10:30"},
-            {"discipline": "zeji", "question": "择日", "date": "2026-09-30", "activity": "开市"},
-            {"discipline": "liuren", "question": "占面试", "datetime": "2026-09-30 10:30"},
-            {"discipline": "lingqi", "question": "占求财", "up": 2, "mid": 1, "down": 3},
         )
         problems: list[str] = []
         md_digests: dict[str, str] = {}
@@ -1145,7 +1119,7 @@ def main() -> int:
                         problems.append(f"{disc}：narrate 未呈现 chart_summary.{key}={val}"
                                         "（算出来了但报告看不到）")
 
-        # render 段内容指纹（A6 大动血）：MD 逐字节哈希，八科各一份，漂移即红。
+        # render 段内容指纹（A6 大动血）：MD 逐字节哈希，两科各一份，漂移即红。
         prior_render: dict = {}
         if RENDER_GOLDEN.exists():
             prior_render = json.loads(RENDER_GOLDEN.read_text(encoding="utf-8"))
@@ -1162,7 +1136,7 @@ def main() -> int:
             RENDER_GOLDEN.parent.mkdir(parents=True, exist_ok=True)
             RENDER_GOLDEN.write_text(json.dumps({
                 "_meta": {
-                    "what": "八科 render 段 Markdown 内容指纹基线（逐字节，含反馈尾注）",
+                    "what": "两科 render 段 Markdown 内容指纹基线（逐字节，含反馈尾注）",
                     "how": "改 render 模板/字段后跑 python tools/check.py --only "
                            "report_contract --raise-render --reason \"理由\"；同源验收已保证 "
                            "本地=网页，本基线保证「和上一版一样」（架构评审 A6）",
@@ -1186,7 +1160,7 @@ def main() -> int:
                     elif base[d] != md_digests[d]:
                         problems.append(f"{d}：render MD 指纹漂移 {base[d]} → {md_digests[d]}"
                                         "（有意改版请 --raise-render --reason …）")
-        gate("report_contract", problems, "报告契约（八科：口径句/尾注在位；无禁用词；关键字段必达）")
+        gate("report_contract", problems, "报告契约（两科：口径句/尾注在位；无禁用词；关键字段必达）")
 
     print("\n[7] 合参层（synthesis 自检：person 校验 + 裁决规则 + 归一化）")
     gate_sub("synthesis", ["synthesis/cli.py", "selfcheck"], "synthesis 自检", fast=False)
@@ -1232,7 +1206,7 @@ def main() -> int:
 
     # 各科案例评测一览：把 `tools/eval.py` 纳入门（HANDOFF §四.6 挂账）。
     # 它只转发各科 evaluate.py（不写第二套给分逻辑），故是"汇总可见性"门：
-    # 无 evaluate.py 的学科（ming/ziwei/lingqi）按「无案例对齐评测」跳过、不计失败。
+    # 无 evaluate.py 的学科（如 ming 的部分评测维度）按「无案例对齐评测」跳过、不计失败。
     if section("eval_overview") and (args.full or only is not None):
         print("\n[7d] 各科案例对齐分一览（tools/eval.py 转发各科 evaluate；非预测率）")
         code, out = _run_py(["tools/eval.py"], label="各科评测一览")

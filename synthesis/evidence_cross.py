@@ -272,13 +272,13 @@ def selfcheck() -> None:
 
     # ① 同向：两科同向 → same；输出无 trend/score 键（不制造新事实）
     r = cross_examine([rec("liuyao", "吉", "总判", "吉", "吉"),
-                       rec("meihua", "吉", "总判", "平吉", "平吉")])
+                       rec("ming", "吉", "总判", "平吉", "平吉")])
     assert r["consistency"]["same"] == 1, r["consistency"]
     assert "trend" not in r and "score" not in r, r.keys()
 
     # ② 冲突：同 factor 异向 → conflict 且双方 conditions（applicability）保留
     r = cross_examine([rec("liuyao", "吉", "总判", "吉", "吉", applicability="A 条件"),
-                       rec("zeji", "凶", "总判", "凶", "凶", applicability="B 条件")])
+                       rec("ming", "凶", "总判", "凶", "凶", applicability="B 条件")])
     assert len(r["conflicts"]) == 1 and r["conflicts"][0]["factor"] == "总判", r
     sides = r["conflicts"][0]["sides"]
     assert {s["applicability"] for s in sides} == {"A 条件", "B 条件"}, sides
@@ -286,9 +286,9 @@ def selfcheck() -> None:
     # ③ 缺失：无评测覆盖的证据 → unassessed 登记；未表态学科 → silent
     r = cross_examine([rec("liuyao", "吉", "总判", "吉", "吉",
                            status="unassessed", source=""),
-                       rec("liuren", None, "三传", "遥克", "")])
+                       rec("ming", None, "格局", "平", "")])
     assert r["unassessed"]["evaluation_gaps"], r["unassessed"]
-    assert "liuren" in r["unassessed"]["silent_disciplines"], r["unassessed"]
+    assert "ming" in r["unassessed"]["silent_disciplines"], r["unassessed"]
 
     # ④ 弱状态证据不冒充已验证表态：source_only 仍在 gaps（即便有方向）
     r = cross_examine([rec("liuyao", "吉", "总判", "吉", "吉", status="source_only")])
@@ -306,30 +306,30 @@ def selfcheck() -> None:
         return rec(disc, "吉", factor, effect, effect)
 
     unverified_map = {"mappings": [
-        {"concept": "卦爻冲合",
+        {"concept": "命卜互证",
          "members": [{"discipline": "liuyao", "factor": "六合/六冲"},
-                     {"discipline": "meihua", "factor": "体用关系"}],
+                     {"discipline": "ming", "factor": "三合/三会"}],
          "verified": False}]}
     r = cross_examine([rec_f("liuyao", "六合/六冲", "吉"),
-                       rec_f("meihua", "体用关系", "吉")],
+                       rec_f("ming", "三合/三会", "吉")],
                       concept_map=unverified_map)
     assert r["consistency"]["same"] == 0, "未验证映射不得归并维度"
     verified_map = {"mappings": [dict(unverified_map["mappings"][0], verified=True)]}
     r = cross_examine([rec_f("liuyao", "六合/六冲", "吉"),
-                       rec_f("meihua", "体用关系", "吉")],
+                       rec_f("ming", "三合/三会", "吉")],
                       concept_map=verified_map)
     assert r["consistency"]["same"] == 1, "已验证映射按 concept 归并"
-    dim = next(d for d in r["dimensions"] if d["factor"] == "卦爻冲合")
-    assert sorted(dim["merged_from"]) == sorted(["六合/六冲", "体用关系"]), dim
+    dim = next(d for d in r["dimensions"] if d["factor"] == "命卜互证")
+    assert sorted(dim["merged_from"]) == sorted(["六合/六冲", "三合/三会"]), dim
 
     # ⑦ 真实注册表：当前全部 verified=false → 默认行为与无映射完全一致
     real = load_concept_map()
     assert all(not m.get("verified") for m in real.get("mappings") or []), \
         "concept_map 出现 verified=true 条目：须先落逐字引文并经 CHANGELOG 登记"
     r_plain = cross_examine([rec_f("liuyao", "六合/六冲", "吉"),
-                             rec_f("meihua", "体用关系", "吉")])
+                             rec_f("ming", "三合/三会", "吉")])
     r_real = cross_examine([rec_f("liuyao", "六合/六冲", "吉"),
-                            rec_f("meihua", "体用关系", "吉")], concept_map=real)
+                            rec_f("ming", "三合/三会", "吉")], concept_map=real)
     assert r_plain["consistency"] == r_real["consistency"], \
         "真实 concept_map（全未验证）不得改变对照行为"
     print("evidence_cross 自检通过（同向/冲突保留条件/unassessed/弱状态/旧记录兼容/"

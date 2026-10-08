@@ -20,7 +20,7 @@ from dataclasses import dataclass, asdict
 from datetime import date, datetime, timedelta
 
 # ---------------------------------------------------------------- 基础表（全内核唯一字面量）
-# 天干地支只在内核此处写死一份（AGENTS.md §二）；symbols/ziwei_tables 等模块均由此派生。
+# 天干地支只在内核此处写死一份（AGENTS.md §二）；命·卜两科共用基元均由此派生。
 # 干支五行表唯一真值源在 symbols.STEM_ELEMENTS / symbols.BRANCH_ELEMENTS，不在此重复。
 
 HEAVENLY_STEMS = "甲乙丙丁戊己庚辛壬癸"

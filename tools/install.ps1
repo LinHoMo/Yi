@@ -2,7 +2,7 @@
 #
 #   powershell -ExecutionPolicy Bypass -File tools/install.ps1
 #   powershell -ExecutionPolicy Bypass -File tools/install.ps1 -Check   # 装完跑全仓库质量门
-#   powershell -ExecutionPolicy Bypass -File tools/install.ps1 -Demo   # 装完跑全科演示
+#   powershell -ExecutionPolicy Bypass -File tools/install.ps1 -Demo   # 装完跑两科演示
 #
 # 依赖：Python 3.10+（主计算只用标准库；lunar-python/matplotlib 均为可选）
 $ErrorActionPreference = "Stop"
@@ -42,7 +42,7 @@ function Main {
         if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
     }
     if ($Demo) {
-        Write-Host "== 全科演示 ==" -ForegroundColor Cyan
+        Write-Host "== 两科演示 ==" -ForegroundColor Cyan
         & python "$Root\tools\demo.py"
         if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
     }

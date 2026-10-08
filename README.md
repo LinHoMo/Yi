@@ -16,18 +16,18 @@
 >
 > 需要"某一科怎么调"时，只加载对应 `skills/<科>/SKILL.md`，不要整目录通读。
 
-中国传统术数的统一工程。**八科可用**：命（四柱八字 / 紫微斗数）+
-卜（六爻纳甲 / 梅花易数 / 小六壬 / 择吉通书 / 大六壬骨架 / 灵棋经），八科建在同一份内核
-（`core/yishu_core/`）与同一条四段契约（`docs/CONTRACT.md`）上，由"易"做跨科合参。
+中国传统术数的双科深度系统。**正式两科**：**命**（四柱八字）+ **卜**（六爻纳甲），
+两建在同一份内核（`core/yishu_core/`）与同一条四段契约（`docs/CONTRACT.md`）上，
+由 "易·合参层"（`synthesis/`）做**命卜交叉验证**。
 统一 CLI 入口 `yi <discipline> <command>`。
-**相科（面相、手相、堪舆）明确不做**——不实现、不预留目录、不写占位。
+> 已移除：紫微斗数、梅花易数、小六壬、择吉、大六壬、灵棋经（git history 保留历史存档）。
+**相科（面相、手相、堪舆）明确不做**。
 
 > **科 × 通道能力矩阵**（权威表在 [`llms.txt`](llms.txt)，本处只引用、不复制）：
 > 本地 CLI `yi`、通道 B 云端报告 `tools/report.py`
 > （`yishu_core.report.request.DISCIPLINES`）、通道 A 纯前端网页
-> （`web/engine_runtime.WEB_DISCIPLINES`）**均为八科全通**，无"网页只能跑几科"的落差。
-> 口径：`liuren` 是骨架科（只出机械结构标签，无吉凶断语）；`lingqi` 的断语是
-> 《靈棋經》原文逐字直录（无书外发挥）。
+> （`web/engine_runtime.WEB_DISCIPLINES`）**均为两科全通**，无"网页只能跑几科"的落差。
+> 口径：命卜合参只覆盖 ming + liuyao 两科；其他术数已正式移除（见 git history）。
 
 ## 给网页端 AI：给链接即出报告（无需自建服务器）
 
@@ -53,13 +53,9 @@
 | 学科 | 目录 | 输入 | 回答的问题 | 时间尺度 |
 |---|---|---|---|---|
 | **命**（四柱八字） | `disciplines/ming/` | 出生时空 | 格局与趋势：宜何业、何时起伏 | 一生，粗颗粒 |
-| **命**（紫微斗数） | `disciplines/ziwei/` | 出生时空 | 星盘格局、四化与大限起伏 | 一生，分宫 |
 | **卜·六爻** | `disciplines/liuyao/` | 一念之动 | 具体一事的趋向与应期 | 一事，细颗粒 |
-| **卜·梅花易数** | `disciplines/meihua/` | 年月日时/报数/字画 | 一事之吉凶与象应 | 一事 |
-| **卜·小六壬** | `disciplines/xiaoliuren/` | 月/日/时掌诀 | 一事之快速判断 | 一事 |
-| **卜·择吉** | `disciplines/zeji/` | 日期 + 活动 | 开张/嫁娶/出行等吉凶宜忌 | 一时 |
-| **卜·大六壬** | `disciplines/liuren/` | 占时 | 四课三传的机械结构（月将加时、九宗门、天将乘临）；**骨架，无吉凶断语** | 一事 |
-| **卜·灵棋经** | `disciplines/lingqi/` | 三部掷数 | 查 124 课表直录《靈棋經》原断语（书源逐字，无书外发挥） | 一事 |
+
+> ~~紫微斗数 / 梅花易数 / 小六壬 / 择吉 / 大六壬 / 灵棋经~~ 已移除。`synthesis/` 现为 **ming × liuyao 命卜合参**。
 
 终局目标：对同一个人分别做命与卜的分析，再由易合参，输出阶段性指导与规划。
 合参即可跨命·卜·多视角闭合，不必依赖相科。
@@ -87,17 +83,11 @@ Yi/
 │   ├── report.yml                    # 云端出报告（workflow_dispatch / issues / comment / dispatch）
 │   └── pages.yml                     # 通道 A 站点发布（构建 + 自检 + 网页↔本机同源验收）
 ├── core/yishu_core/                  # 唯一内核：干支历、节气、农历、纳甲、象数基元、评分、shensha、报告
-├── disciplines/                      # 八科，每科四段契约 chart→analyze→narrate→render
+├── disciplines/                      # 两科（ming / liuyao），每科四段契约 chart→analyze→narrate→render
 │   ├── liuyao/                       # 六爻纳甲（最成熟，四段契约 + CLI）
-│   ├── ming/                         # 四柱八字（机械推演）
-│   ├── ziwei/                        # 紫微斗数（安星/四化/格局/大限）
-│   ├── meihua/                       # 梅花易数
-│   ├── xiaoliuren/                   # 小六壬
-│   ├── zeji/                         # 择吉通书
-│   ├── liuren/                       # 大六壬骨架（机械结构标签，无吉凶断语）
-│   └── lingqi/                       # 灵棋经（124 课表查表直录书源原文）
+│   └── ming/                         # 四柱八字（机械推演）
 ├── cli/                              # 统一入口：yi <discipline> <command>
-├── synthesis/                        # 合参层：person 档案 + 八科 normalize + 裁决规则 + 指导生成 + CLI
+├── synthesis/                        # 合参层：person 档案 + 命卜归一 + 裁决 + 指导 + CLI
 ├── tests/                            # pytest（内核层）
 ├── tools/                            # check / report / build_web / eval / ci_*
 └── docs/                             # AI-SOP / ARCHITECTURE / CONTRACT / CHANGELOG / HANDOFF / TECH-DEBT / AUDIT
@@ -124,19 +114,12 @@ yi liuyao analyze chart.json
 yi liuyao narrate analyze.json
 yi liuyao render analyze.json
 
-# 四柱八字 / 紫微斗数
+# 四柱八字
 yi ming chart --datetime "1990-05-20 10:30" --gender 男
 yi ming analyze chart.json
-yi ziwei chart --datetime "1990-05-20 10:30" --gender 男
-yi ziwei analyze chart.json
-
-# 梅花易数 / 小六壬 / 择吉
-yi meihua cast "占投资"
-yi xiaoliuren cast "占出行"
-yi zeji chart --date "2026-10-08" --activity 开市
 ```
 
-### 一条命令统一出 Markdown + HTML（八科通用，云端同款）
+### 一条命令统一出 Markdown + HTML（两科通用，云端同款）
 
 ```bash
 python tools/report.py --discipline liuyao --question "占买房子何时有结果" \
@@ -152,7 +135,7 @@ python tools/report.py --request request.json --outdir reports   # request.json 
 python tools/check.py              # 仓库根：全仓库质量门（--full 加案例评测）
 python tools/check.py --full       # + 黑箱回归 + pytest
 python -m pytest tests -q          # 单测
-python tools/demo.py               # 全科演示
+python tools/demo.py               # 两科演示
 
 # 各科自检（工作目录为学科根）
 disciplines/<科>  → python dev_tools/check.py
@@ -163,9 +146,7 @@ disciplines/<科>  → python dev_tools/check.py
 
 ## 现在的真实水平
 
-> 本表**只镜像读数，不定义读数**。分数与口径的单一真值源是各科
-> `docs/EVAL-AUDIT.md` 与 `docs/HANDOFF.md` §一；两处不一致时以它们为准，
-> 并把本表改回来。报告在报分时也会自动打印 `[口径披露]`（集合名 / n / 是否调参）。
+> 本表**只镜像读数，不定义读数**。分数与口径的单一真值源是 `docs/HANDOFF.md` §一。
 
 **六爻**（`dev_tools/check.py` 全绿，strict 口径）
 
@@ -181,27 +162,16 @@ wikisource **21.1%**（n=44，读数 2026-10-08），
 日/月/年分列已输出（`disciplines/liuyao/dev_tools/check.py`）。
 黑箱回归 18 例 **11/18**（基线 ≥11）。
 
-**梅花易数 / 小六壬 / 择吉**：**这三科目前没有古籍对齐分**（梅花例外，见下）。
-逐例审计（各科 `docs/EVAL-AUDIT.md`，一键复核 `python tools/eval_audit_recheck.py`）
-结论：小六壬/择吉读数性质是**规则自洽回归数**——expected 与引擎口径
-同源（择吉 16 例全部 engine_derived，古籍日例应验 0 例）。对外请照此写法、**带 n 不带百分比**：
-*规则自洽回归数：小六壬与择吉各维度 n/n 命中*（n 均 < 20）。
-梅花已有古籍对齐评测（tune 10 / holdout 13），并于 2026-10-02r 起另有
-**外部独立集 external_holdout n=4**（《梅花易数·卷三·變卦式八則》，永不调参；
-n<20 按纪律只报命中数：relation 4/4、革卦生克体 1/1，**不报百分比**）。
-**想让小六壬/择吉真正可检验，唯一有效动作是建外部独立集**（范式照梅花 4 例与六爻 wikisource 35 例）。
+（已移除学科的读数留档于 git history，不再在 README 镜像）。
 
 **命科**：四柱八字有案例对齐评测——调候 tune 100.0（30/30）、holdout **strict 97.1**
 （n=246；含格局成败 28/36、从格 13/15、from_kind 15/15，2026-10-02t 读数），
 性质是**表对表回归 + 历法链路验证，不是泛化证据**；外部独立集（书源基准例）
 **尚未建立**——该缺口在册（《滴天髓阐微》语料已取得，判据待落地）。
-紫微斗数、大六壬、灵棋经**无案例对齐评测**，只有机械自检与行为指纹（`dev_tools/golden.py`）。
 
 **评测成熟度分层**（机器可读权威表：`core/yishu_core/execution/registry.py`，
-此处只引用）：liuyao / ming / meihua 为 **classical_holdout**（古籍案例对齐评测已建，
-liuyao/meihua 另有外部独立候选集）；ziwei / xiaoliuren / zeji / liuren 为
-**mechanical_regression**（只有规则自洽回归与 golden 指纹）；lingqi 为
-**source_only**（书源直录，忠实度门即其基线）。四类评测口径——
+此处只引用）：liuyao / ming 均为 **classical_holdout**（古籍案例对齐评测已建，
+liuyao 另有外部独立候选集 yingqi_holdout / external_holdout）。四类评测口径——
 机械回归 / 古籍对齐（source alignment）/ 外部独立集（external holdout）/
 现实回填反馈（outcome feedback，当前 n=0 开环）——**不得互相冒充**
 （`AGENTS.md` 铁律三）。

@@ -8,12 +8,6 @@ Usage:
 Disciplines:
     liuyao       六爻纳甲      commands: cast chart analyze narrate render
     ming         命理四柱      commands: chart analyze narrate render
-    meihua       梅花易数      commands: cast chart analyze narrate render
-    xiaoliuren   小六壬        commands: cast analyze narrate render
-    zeji         择吉          commands: chart analyze narrate render
-    ziwei        紫微斗数      commands: chart analyze narrate render
-    liuren       大六壬        commands: chart analyze narrate render
-    lingqi       灵棋经        commands: chart analyze narrate render
 
 统一 Runtime 入口（推荐）:
     yi execute --discipline liuyao --question "占买房子何时有结果"
@@ -62,54 +56,11 @@ DISCIPLINE_COMMANDS: dict[str, dict[str, tuple[str, str]]] = {
         "narrate":  ("ming/scripts/narrate.py",     "命盘解读"),
         "render":   ("ming/scripts/render.py",      "渲染报告"),
     },
-    "meihua": {
-        "cast":     ("meihua/scripts/chart.py",     "一键起卦"),
-        "chart":    ("meihua/scripts/chart.py",     "起卦"),
-        "analyze":  ("meihua/scripts/analyze.py",   "体用生克推演"),
-        "narrate":  ("meihua/scripts/narrate.py",   "人话解读"),
-        "render":   ("meihua/scripts/render.py",    "渲染报告"),
-    },
-    "xiaoliuren": {
-        "cast":     ("xiaoliuren/scripts/chart.py", "一键起课"),
-        "analyze":  ("xiaoliuren/scripts/analyze.py", "推演"),
-        "narrate":  ("xiaoliuren/scripts/narrate.py", "人话解读"),
-        "render":   ("xiaoliuren/scripts/render.py", "渲染报告"),
-    },
-    "zeji": {
-        "chart":    ("zeji/scripts/chart.py",       "择日起局"),
-        "analyze":  ("zeji/scripts/analyze.py",     "神煞/建除推演"),
-        "narrate":  ("zeji/scripts/narrate.py",     "人话解读"),
-        "render":   ("zeji/scripts/render.py",      "渲染报告"),
-    },
-    "ziwei": {
-        "chart":    ("ziwei/scripts/chart.py",      "斗数排盘（纯机械）"),
-        "analyze":  ("ziwei/scripts/analyze.py",    "格局/四化/大限推演"),
-        "narrate":  ("ziwei/scripts/narrate.py",    "命盘因子说明"),
-        "render":   ("ziwei/scripts/render.py",     "命盘报告（Markdown/HTML）"),
-    },
-    "liuren": {
-        "chart":    ("liuren/scripts/chart.py",     "起课（月将加时，天地盘四课三传）"),
-        "analyze":  ("liuren/scripts/analyze.py",   "课体/三传与日干支关系/天将乘临"),
-        "narrate":  ("liuren/scripts/narrate.py",   "人话叙述（机械标签，无吉凶断语）"),
-        "render":   ("liuren/scripts/render.py",    "渲染报告（Markdown）"),
-    },
-    "lingqi": {
-        "chart":    ("lingqi/scripts/chart.py",     "起课（三部掷数查 124 课表）"),
-        "analyze":  ("lingqi/scripts/analyze.py",   "课名/象/卦注/象曰/詩曰直录"),
-        "narrate":  ("lingqi/scripts/narrate.py",   "书源断语叙述（不做书外发挥）"),
-        "render":   ("lingqi/scripts/render.py",    "渲染报告（Markdown）"),
-    },
 }
 
 DISCIPLINE_DESC: dict[str, str] = {
     "liuyao":     "六爻纳甲",
     "ming":       "命理四柱",
-    "meihua":     "梅花易数",
-    "xiaoliuren": "小六壬",
-    "zeji":       "择吉",
-    "ziwei":      "紫微斗数",
-    "liuren":     "大六壬",
-    "lingqi":     "灵棋经",
 }
 
 ALL_DISCIPLINES = list(DISCIPLINE_COMMANDS.keys())

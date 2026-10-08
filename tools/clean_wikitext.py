@@ -27,24 +27,17 @@ SOURCES = ROOT / "data" / "sources"
 MODERN = ROOT / "modernized"
 CST = timezone(timedelta(hours=8))
 
-# key → 学科目录
+# key → 学科目录（仅保留八字 / 六爻 / 通纲共享理论）
 DISCIPLINE_MAP = {
     "di-tian-sui": "ming",
     "di-tian-sui-chan-wei": "ming",
     "qiong-tong-bao-jian": "ming",
     "shen-feng-tong-kao": "ming",
     "yuan-hai-zi-ping": "ming",
-    "zi-wei-dou-shu-quan-shu": "ziwei",
     "zengshan_buyi": "liuyao",
     "huangjin_ce": "liuyao",
     "huozhulin": "liuyao",
     "bushi_zhengzong": "liuyao",
-    "mei-hua-yi-shu": "meihua",
-    "yuxiaji": "zeji",
-    "liu-ren-da-quan": "liurn",
-    "liu-ren-zhi-nan": "liurn",
-    "ling-qi-jing": "lingqi",
-    "yan-bo-diao-sou-ge": "liurn",  # 奇门参考
 }
 
 # 殆知阁异源批（key 以 _dz 结尾；详见 tools/fetch_source.py DZ_CATALOG）。
@@ -77,36 +70,9 @@ DZ_DISCIPLINE_MAP = {
     "qiong_tong_bao_jian_dz": "ming",
     "shenfeng_tongkao_dz": "ming",
     "ditian_sui_chanwei_dz": "ming",
-    # 大六壬
-    "liuren_xinjing_dz": "liurn",
-    "liuren_duanan_dz": "liurn",
-    "liuren_cuiyan_dz": "liurn",
-    "rengui_dz": "liurn",
-    "liuren_zhizhi_yuding_dz": "liurn",
-    "liuren_shending_dz": "liurn",
-    "liuren_zhinan_dz": "liurn",
-    # 择吉
-    "xieji_bianfang_dz": "zeji",
-    "xingli_kaoyuan_dz": "zeji",
-    # 奇门/太乙（仓库无对应学科，单列参考库；烟波钓叟歌先例归 liurn 不再重复）
-    "dunjia_yanyi_dz": "qimen",
-    "qimen_baojian_dz": "qimen",
-    "qimen_tongzong_dz": "qimen",
-    "qimen_faqiao_dz": "qimen",
-    "taiyi_jinjing_dz": "taiyi",
-    "taiyi_mishu_dz": "taiyi",
-    # 通纲 / 易占 / 杂占
+    # 通纲 / 共享理论
     "wuxing_dayi_dz": "tonglun",
     "huangji_jingshi_shu_dz": "tonglun",
-    "jiaoshi_yilin_dz": "yizhan",
-    "tuibeitu_dz": "yizhan",
-    "zhougong_jiemeng_dz": "yizhan",
-    "cezi_midie_dz": "yizhan",
-    "zhuge_shenshu_dz": "yizhan",
-    "yizhangjing_dz": "yizhan",
-    # 梅花 / 灵棋对勘
-    "meihua_yishu_dz": "meihua",
-    "lingqijing_dz": "lingqi",
 }
 
 

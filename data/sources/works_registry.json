@@ -1,70 +1,320 @@
 {
   "_comment": "书源深度解读登记表：data/sources 内 76 份抓取物去重为 54 部著作（dz=殆知阁 v2.0 主源，wikitext=维基文库对勘本）。tools/check_source_readings.py 按本表机械验收 docs/source-readings/ 的解读文档：覆盖完整、引文逐字落在被引行、章节齐全、深度下限。min_quotes/min_lines 为该著作的深度下限。",
   "works": [
-    {"key": "zengshan_buyi_dz", "title": "增刪卜易", "kind": "六爻·对勘", "discipline": "liuyao", "sources": ["zengshan_buyi_dz.dz.txt"], "crosscheck": ["zengshan_buyi.wikitext.txt"], "doc": "docs/source-readings/zengshan_buyi_dz.md"},
-    {"key": "bushi_quanshu_dz", "title": "卜筮全书", "kind": "六爻", "discipline": "liuyao", "sources": ["bushi_quanshu_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/bushi_quanshu_dz.md"},
-    {"key": "bushi_zhengzong_dz", "title": "卜筮正宗", "kind": "六爻", "discipline": "liuyao", "sources": ["bushi_zhengzong_dz.dz.txt"], "crosscheck": ["bushi_zhengzong.wikitext.txt"], "doc": "docs/source-readings/bushi_zhengzong_dz.md"},
-    {"key": "duanyi_tianji_dz", "title": "断易天机", "kind": "六爻", "discipline": "liuyao", "sources": ["duanyi_tianji_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/duanyi_tianji_dz.md"},
-    {"key": "yiin_dz", "title": "易隐", "kind": "六爻", "discipline": "liuyao", "sources": ["yiin_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/yiin_dz.md"},
-    {"key": "yimao_dz", "title": "易冒", "kind": "六爻", "discipline": "liuyao", "sources": ["yimao_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/yimao_dz.md"},
-    {"key": "yilin_buyi_dz", "title": "易林补遗", "kind": "六爻", "discipline": "liuyao", "sources": ["yilin_buyi_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/yilin_buyi_dz.md"},
-    {"key": "huozhulin_dz", "title": "火珠林", "kind": "六爻·对勘", "discipline": "liuyao", "sources": ["huozhulin_dz.dz.txt"], "crosscheck": ["huozhulin.wikitext.txt"], "doc": "docs/source-readings/huozhulin_dz.md"},
-    {"key": "jingshi_yizhuan_dz", "title": "京氏易传", "kind": "六爻·祖源", "discipline": "liuyao", "sources": ["jingshi_yizhuan_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/jingshi_yizhuan_dz.md"},
-    {"key": "zhouyi_shangzhan_dz", "title": "周易尚占", "kind": "六爻", "discipline": "liuyao", "sources": ["zhouyi_shangzhan_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/zhouyi_shangzhan_dz.md"},
-    {"key": "wenwang_jinqianke_dz", "title": "文王金钱课", "kind": "六爻", "discipline": "liuyao", "sources": ["wenwang_jinqianke_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/wenwang_jinqianke_dz.md", "tiny": true},
-    {"key": "huangjince_dz", "title": "黃金策", "kind": "六爻·对勘", "discipline": "liuyao", "sources": ["huangjince_dz.dz.txt"], "crosscheck": ["huangjin_ce.wikitext.txt"], "doc": "docs/source-readings/huangjince_dz.md"},
-
-    {"key": "meihua_yishu_dz", "title": "梅花易數", "kind": "梅花·对勘", "discipline": "meihua", "sources": ["meihua_yishu_dz.dz.txt"], "crosscheck": ["mei-hua-yi-shu.wikitext.txt"], "doc": "docs/source-readings/meihua_yishu_dz.md"},
-
-    {"key": "ditian_sui_chanwei_dz", "title": "滴天髓闡微", "kind": "八字·对勘", "discipline": "ming", "sources": ["ditian_sui_chanwei_dz.dz.txt"], "crosscheck": ["di-tian-sui-chan-wei.wikitext.txt", "di-tian-sui.wikitext.txt"], "doc": "docs/source-readings/ditian_sui_chanwei_dz.md"},
-    {"key": "qiong_tong_bao_jian_dz", "title": "穷通宝鉴", "kind": "八字·对勘", "discipline": "ming", "sources": ["qiong_tong_bao_jian_dz.dz.txt"], "crosscheck": ["qiong-tong-bao-jian.wikitext.txt"], "doc": "docs/source-readings/qiong_tong_bao_jian_dz.md"},
-    {"key": "yuanhai_ziping_dz", "title": "渊海子平", "kind": "八字·对勘", "discipline": "ming", "sources": ["yuanhai_ziping_dz.dz.txt"], "crosscheck": ["yuan-hai-zi-ping.wikitext.txt"], "doc": "docs/source-readings/yuanhai_ziping_dz.md"},
-    {"key": "shenfeng_tongkao_dz", "title": "神峰通考", "kind": "八字·对勘", "discipline": "ming", "sources": ["shenfeng_tongkao_dz.dz.txt"], "crosscheck": ["shen-feng-tong-kao.wikitext.txt"], "doc": "docs/source-readings/shenfeng_tongkao_dz.md"},
-    {"key": "sanming_tonghui_dz", "title": "三命通会", "kind": "八字", "discipline": "ming", "sources": ["sanming_tonghui_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/sanming_tonghui_dz.md"},
-    {"key": "lixuzhong_mingshu_dz", "title": "李虚中命书", "kind": "八字", "discipline": "ming", "sources": ["lixuzhong_mingshu_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/lixuzhong_mingshu_dz.md"},
-    {"key": "lantai_miaoxuan_dz", "title": "兰台妙选", "kind": "八字", "discipline": "ming", "sources": ["lantai_miaoxuan_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/lantai_miaoxuan_dz.md"},
-    {"key": "yuzhao_dingzhen_dz", "title": "玉照定真经", "kind": "八字", "discipline": "ming", "sources": ["yuzhao_dingzhen_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/yuzhao_dingzhen_dz.md"},
-    {"key": "ziping_zhenquan_pingzhu_dz", "title": "子平真诠评注", "kind": "八字", "discipline": "ming", "sources": ["ziping_zhenquan_pingzhu_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/ziping_zhenquan_pingzhu_dz.md"},
-    {"key": "mingli_tanyuan_dz", "title": "命理探源", "kind": "八字", "discipline": "ming", "sources": ["mingli_tanyuan_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/mingli_tanyuan_dz.md"},
-    {"key": "qianli_minggao_dz", "title": "千里命稿", "kind": "八字", "discipline": "ming", "sources": ["qianli_minggao_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/qianli_minggao_dz.md"},
-    {"key": "sanming_zhimi_fu_dz", "title": "三命指迷赋", "kind": "八字", "discipline": "ming", "sources": ["sanming_zhimi_fu_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/sanming_zhimi_fu_dz.md"},
-    {"key": "wuxing_jingji_dz", "title": "五行精纪", "kind": "八字", "discipline": "ming", "sources": ["wuxing_jingji_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/wuxing_jingji_dz.md"},
-
-    {"key": "liu-ren-da-quan", "title": "六壬大全", "kind": "大六壬", "discipline": "liuren", "sources": ["liu-ren-da-quan.wikitext.txt", "liu-ren-da-quan-juan3.wikitext.txt", "liu-ren-da-quan-juan4.wikitext.txt", "liu-ren-da-quan-juan5.wikitext.txt", "liu-ren-da-quan-juan6.wikitext.txt", "liu-ren-da-quan-juan7.wikitext.txt", "liu-ren-da-quan-juan8.wikitext.txt", "liu-ren-da-quan-juan9.wikitext.txt", "liu-ren-da-quan-juan10.wikitext.txt", "liu-ren-da-quan-juan11.wikitext.txt", "liu-ren-da-quan-juan12.wikitext.txt"], "crosscheck": [], "doc": "docs/source-readings/liu-ren-da-quan.md"},
-    {"key": "liuren_zhinan_dz", "title": "六壬指南", "kind": "大六壬", "discipline": "liuren", "sources": ["liuren_zhinan_dz.dz.txt"], "crosscheck": ["liu-ren-zhi-nan.wikitext.txt"], "doc": "docs/source-readings/liuren_zhinan_dz.md"},
-    {"key": "liuren_cuiyan_dz", "title": "六壬粹言", "kind": "大六壬", "discipline": "liuren", "sources": ["liuren_cuiyan_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/liuren_cuiyan_dz.md"},
-    {"key": "liuren_duanan_dz", "title": "六壬断案", "kind": "大六壬", "discipline": "liuren", "sources": ["liuren_duanan_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/liuren_duanan_dz.md"},
-    {"key": "liuren_shending_dz", "title": "六壬神定经", "kind": "大六壬", "discipline": "liuren", "sources": ["liuren_shending_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/liuren_shending_dz.md"},
-    {"key": "liuren_xinjing_dz", "title": "六壬心镜", "kind": "大六壬", "discipline": "liuren", "sources": ["liuren_xinjing_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/liuren_xinjing_dz.md"},
-    {"key": "liuren_zhizhi_yuding_dz", "title": "六壬直指御定", "kind": "大六壬", "discipline": "liuren", "sources": ["liuren_zhizhi_yuding_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/liuren_zhizhi_yuding_dz.md"},
-    {"key": "rengui_dz", "title": "壬归", "kind": "大六壬", "discipline": "liuren", "sources": ["rengui_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/rengui_dz.md"},
-
-    {"key": "dunjia_yanyi_dz", "title": "遁甲演义", "kind": "奇门遁甲", "discipline": "none-qimen", "sources": ["dunjia_yanyi_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/dunjia_yanyi_dz.md"},
-    {"key": "qimen_baojian_dz", "title": "御定奇门宝鉴", "kind": "奇门遁甲", "discipline": "none-qimen", "sources": ["qimen_baojian_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/qimen_baojian_dz.md"},
-    {"key": "qimen_tongzong_dz", "title": "奇门遁甲统宗", "kind": "奇门遁甲", "discipline": "none-qimen", "sources": ["qimen_tongzong_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/qimen_tongzong_dz.md"},
-    {"key": "qimen_faqiao_dz", "title": "奇门法窍", "kind": "奇门遁甲", "discipline": "none-qimen", "sources": ["qimen_faqiao_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/qimen_faqiao_dz.md"},
-    {"key": "yan-bo-diao-sou-ge", "title": "煙波釣叟歌", "kind": "奇门遁甲", "discipline": "none-qimen", "sources": ["yan-bo-diao-sou-ge.wikitext.txt"], "crosscheck": [], "doc": "docs/source-readings/yan-bo-diao-sou-ge.md", "tiny": true},
-
-    {"key": "taiyi_jinjing_dz", "title": "太乙金镜式经", "kind": "太乙", "discipline": "none-taiyi", "sources": ["taiyi_jinjing_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/taiyi_jinjing_dz.md"},
-    {"key": "taiyi_mishu_dz", "title": "太乙秘书", "kind": "太乙", "discipline": "none-taiyi", "sources": ["taiyi_mishu_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/taiyi_mishu_dz.md"},
-
-    {"key": "xieji_bianfang_dz", "title": "钦定协纪辨方书", "kind": "择吉", "discipline": "zeji", "sources": ["xieji_bianfang_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/xieji_bianfang_dz.md"},
-    {"key": "xingli_kaoyuan_dz", "title": "御定星历考原", "kind": "择吉", "discipline": "zeji", "sources": ["xingli_kaoyuan_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/xingli_kaoyuan_dz.md"},
-
-    {"key": "zi-wei-dou-shu-quan-shu", "title": "紫微斗數全書", "kind": "紫微斗数", "discipline": "ziwei", "sources": ["zi-wei-dou-shu-quan-shu.wikitext.txt"], "crosscheck": [], "doc": "docs/source-readings/zi-wei-dou-shu-quan-shu.md"},
-
-    {"key": "lingqijing_dz", "title": "靈棋經", "kind": "灵棋·对勘", "discipline": "lingqi", "sources": ["lingqijing_dz.dz.txt"], "crosscheck": ["ling-qi-jing.wikitext.txt"], "doc": "docs/source-readings/lingqijing_dz.md"},
-
-    {"key": "yizhangjing_dz", "title": "神机妙算一掌经", "kind": "掌诀", "discipline": "xiaoliuren", "sources": ["yizhangjing_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/yizhangjing_dz.md", "tiny": true},
-    {"key": "yuxiaji", "title": "玉匣記", "kind": "外部", "discipline": "xiaoliuren", "sources": ["yuxiaji.wikitext.txt"], "crosscheck": [], "doc": "docs/source-readings/yuxiaji.md"},
-
-    {"key": "jiaoshi_yilin_dz", "title": "焦氏易林", "kind": "易占", "discipline": "none-tonggang", "sources": ["jiaoshi_yilin_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/jiaoshi_yilin_dz.md"},
-    {"key": "huangji_jingshi_shu_dz", "title": "皇极经世书", "kind": "术数通纲", "discipline": "none-tonggang", "sources": ["huangji_jingshi_shu_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/huangji_jingshi_shu_dz.md"},
-    {"key": "wuxing_dayi_dz", "title": "五行大义", "kind": "术数通纲", "discipline": "none-tonggang", "sources": ["wuxing_dayi_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/wuxing_dayi_dz.md"},
-
-    {"key": "cezi_midie_dz", "title": "测字秘牒", "kind": "测字", "discipline": "none-zazhan", "sources": ["cezi_midie_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/cezi_midie_dz.md"},
-    {"key": "tuibeitu_dz", "title": "推背图", "kind": "预言", "discipline": "none-zazhan", "sources": ["tuibeitu_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/tuibeitu_dz.md", "tiny": true},
-    {"key": "zhuge_shenshu_dz", "title": "秘本诸葛神数", "kind": "签占", "discipline": "none-zazhan", "sources": ["zhuge_shenshu_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/zhuge_shenshu_dz.md", "tiny": true},
-    {"key": "zhougong_jiemeng_dz", "title": "周公解梦", "kind": "民俗占", "discipline": "none-zazhan", "sources": ["zhougong_jiemeng_dz.dz.txt"], "crosscheck": [], "doc": "docs/source-readings/zhougong_jiemeng_dz.md", "tiny": true}
+    {
+      "key": "zengshan_buyi_dz",
+      "title": "增刪卜易",
+      "kind": "六爻·对勘",
+      "discipline": "liuyao",
+      "sources": [
+        "zengshan_buyi_dz.dz.txt"
+      ],
+      "crosscheck": [
+        "zengshan_buyi.wikitext.txt"
+      ],
+      "doc": "docs/source-readings/zengshan_buyi_dz.md"
+    },
+    {
+      "key": "bushi_quanshu_dz",
+      "title": "卜筮全书",
+      "kind": "六爻",
+      "discipline": "liuyao",
+      "sources": [
+        "bushi_quanshu_dz.dz.txt"
+      ],
+      "crosscheck": [],
+      "doc": "docs/source-readings/bushi_quanshu_dz.md"
+    },
+    {
+      "key": "bushi_zhengzong_dz",
+      "title": "卜筮正宗",
+      "kind": "六爻",
+      "discipline": "liuyao",
+      "sources": [
+        "bushi_zhengzong_dz.dz.txt"
+      ],
+      "crosscheck": [
+        "bushi_zhengzong.wikitext.txt"
+      ],
+      "doc": "docs/source-readings/bushi_zhengzong_dz.md"
+    },
+    {
+      "key": "duanyi_tianji_dz",
+      "title": "断易天机",
+      "kind": "六爻",
+      "discipline": "liuyao",
+      "sources": [
+        "duanyi_tianji_dz.dz.txt"
+      ],
+      "crosscheck": [],
+      "doc": "docs/source-readings/duanyi_tianji_dz.md"
+    },
+    {
+      "key": "yiin_dz",
+      "title": "易隐",
+      "kind": "六爻",
+      "discipline": "liuyao",
+      "sources": [
+        "yiin_dz.dz.txt"
+      ],
+      "crosscheck": [],
+      "doc": "docs/source-readings/yiin_dz.md"
+    },
+    {
+      "key": "yimao_dz",
+      "title": "易冒",
+      "kind": "六爻",
+      "discipline": "liuyao",
+      "sources": [
+        "yimao_dz.dz.txt"
+      ],
+      "crosscheck": [],
+      "doc": "docs/source-readings/yimao_dz.md"
+    },
+    {
+      "key": "yilin_buyi_dz",
+      "title": "易林补遗",
+      "kind": "六爻",
+      "discipline": "liuyao",
+      "sources": [
+        "yilin_buyi_dz.dz.txt"
+      ],
+      "crosscheck": [],
+      "doc": "docs/source-readings/yilin_buyi_dz.md"
+    },
+    {
+      "key": "huozhulin_dz",
+      "title": "火珠林",
+      "kind": "六爻·对勘",
+      "discipline": "liuyao",
+      "sources": [
+        "huozhulin_dz.dz.txt"
+      ],
+      "crosscheck": [
+        "huozhulin.wikitext.txt"
+      ],
+      "doc": "docs/source-readings/huozhulin_dz.md"
+    },
+    {
+      "key": "jingshi_yizhuan_dz",
+      "title": "京氏易传",
+      "kind": "六爻·祖源",
+      "discipline": "liuyao",
+      "sources": [
+        "jingshi_yizhuan_dz.dz.txt"
+      ],
+      "crosscheck": [],
+      "doc": "docs/source-readings/jingshi_yizhuan_dz.md"
+    },
+    {
+      "key": "zhouyi_shangzhan_dz",
+      "title": "周易尚占",
+      "kind": "六爻",
+      "discipline": "liuyao",
+      "sources": [
+        "zhouyi_shangzhan_dz.dz.txt"
+      ],
+      "crosscheck": [],
+      "doc": "docs/source-readings/zhouyi_shangzhan_dz.md"
+    },
+    {
+      "key": "wenwang_jinqianke_dz",
+      "title": "文王金钱课",
+      "kind": "六爻",
+      "discipline": "liuyao",
+      "sources": [
+        "wenwang_jinqianke_dz.dz.txt"
+      ],
+      "crosscheck": [],
+      "doc": "docs/source-readings/wenwang_jinqianke_dz.md",
+      "tiny": true
+    },
+    {
+      "key": "huangjince_dz",
+      "title": "黃金策",
+      "kind": "六爻·对勘",
+      "discipline": "liuyao",
+      "sources": [
+        "huangjince_dz.dz.txt"
+      ],
+      "crosscheck": [
+        "huangjin_ce.wikitext.txt"
+      ],
+      "doc": "docs/source-readings/huangjince_dz.md"
+    },
+    {
+      "key": "ditian_sui_chanwei_dz",
+      "title": "滴天髓闡微",
+      "kind": "八字·对勘",
+      "discipline": "ming",
+      "sources": [
+        "ditian_sui_chanwei_dz.dz.txt"
+      ],
+      "crosscheck": [
+        "di-tian-sui-chan-wei.wikitext.txt",
+        "di-tian-sui.wikitext.txt"
+      ],
+      "doc": "docs/source-readings/ditian_sui_chanwei_dz.md"
+    },
+    {
+      "key": "qiong_tong_bao_jian_dz",
+      "title": "穷通宝鉴",
+      "kind": "八字·对勘",
+      "discipline": "ming",
+      "sources": [
+        "qiong_tong_bao_jian_dz.dz.txt"
+      ],
+      "crosscheck": [
+        "qiong-tong-bao-jian.wikitext.txt"
+      ],
+      "doc": "docs/source-readings/qiong_tong_bao_jian_dz.md"
+    },
+    {
+      "key": "yuanhai_ziping_dz",
+      "title": "渊海子平",
+      "kind": "八字·对勘",
+      "discipline": "ming",
+      "sources": [
+        "yuanhai_ziping_dz.dz.txt"
+      ],
+      "crosscheck": [
+        "yuan-hai-zi-ping.wikitext.txt"
+      ],
+      "doc": "docs/source-readings/yuanhai_ziping_dz.md"
+    },
+    {
+      "key": "shenfeng_tongkao_dz",
+      "title": "神峰通考",
+      "kind": "八字·对勘",
+      "discipline": "ming",
+      "sources": [
+        "shenfeng_tongkao_dz.dz.txt"
+      ],
+      "crosscheck": [
+        "shen-feng-tong-kao.wikitext.txt"
+      ],
+      "doc": "docs/source-readings/shenfeng_tongkao_dz.md"
+    },
+    {
+      "key": "sanming_tonghui_dz",
+      "title": "三命通会",
+      "kind": "八字",
+      "discipline": "ming",
+      "sources": [
+        "sanming_tonghui_dz.dz.txt"
+      ],
+      "crosscheck": [],
+      "doc": "docs/source-readings/sanming_tonghui_dz.md"
+    },
+    {
+      "key": "lixuzhong_mingshu_dz",
+      "title": "李虚中命书",
+      "kind": "八字",
+      "discipline": "ming",
+      "sources": [
+        "lixuzhong_mingshu_dz.dz.txt"
+      ],
+      "crosscheck": [],
+      "doc": "docs/source-readings/lixuzhong_mingshu_dz.md"
+    },
+    {
+      "key": "lantai_miaoxuan_dz",
+      "title": "兰台妙选",
+      "kind": "八字",
+      "discipline": "ming",
+      "sources": [
+        "lantai_miaoxuan_dz.dz.txt"
+      ],
+      "crosscheck": [],
+      "doc": "docs/source-readings/lantai_miaoxuan_dz.md"
+    },
+    {
+      "key": "yuzhao_dingzhen_dz",
+      "title": "玉照定真经",
+      "kind": "八字",
+      "discipline": "ming",
+      "sources": [
+        "yuzhao_dingzhen_dz.dz.txt"
+      ],
+      "crosscheck": [],
+      "doc": "docs/source-readings/yuzhao_dingzhen_dz.md"
+    },
+    {
+      "key": "ziping_zhenquan_pingzhu_dz",
+      "title": "子平真诠评注",
+      "kind": "八字",
+      "discipline": "ming",
+      "sources": [
+        "ziping_zhenquan_pingzhu_dz.dz.txt"
+      ],
+      "crosscheck": [],
+      "doc": "docs/source-readings/ziping_zhenquan_pingzhu_dz.md"
+    },
+    {
+      "key": "mingli_tanyuan_dz",
+      "title": "命理探源",
+      "kind": "八字",
+      "discipline": "ming",
+      "sources": [
+        "mingli_tanyuan_dz.dz.txt"
+      ],
+      "crosscheck": [],
+      "doc": "docs/source-readings/mingli_tanyuan_dz.md"
+    },
+    {
+      "key": "qianli_minggao_dz",
+      "title": "千里命稿",
+      "kind": "八字",
+      "discipline": "ming",
+      "sources": [
+        "qianli_minggao_dz.dz.txt"
+      ],
+      "crosscheck": [],
+      "doc": "docs/source-readings/qianli_minggao_dz.md"
+    },
+    {
+      "key": "sanming_zhimi_fu_dz",
+      "title": "三命指迷赋",
+      "kind": "八字",
+      "discipline": "ming",
+      "sources": [
+        "sanming_zhimi_fu_dz.dz.txt"
+      ],
+      "crosscheck": [],
+      "doc": "docs/source-readings/sanming_zhimi_fu_dz.md"
+    },
+    {
+      "key": "wuxing_jingji_dz",
+      "title": "五行精纪",
+      "kind": "八字",
+      "discipline": "ming",
+      "sources": [
+        "wuxing_jingji_dz.dz.txt"
+      ],
+      "crosscheck": [],
+      "doc": "docs/source-readings/wuxing_jingji_dz.md"
+    },
+    {
+      "key": "huangji_jingshi_shu_dz",
+      "title": "皇极经世书",
+      "kind": "术数通纲",
+      "discipline": "none-tonggang",
+      "sources": [
+        "huangji_jingshi_shu_dz.dz.txt"
+      ],
+      "crosscheck": [],
+      "doc": "docs/source-readings/huangji_jingshi_shu_dz.md"
+    },
+    {
+      "key": "wuxing_dayi_dz",
+      "title": "五行大义",
+      "kind": "术数通纲",
+      "discipline": "none-tonggang",
+      "sources": [
+        "wuxing_dayi_dz.dz.txt"
+      ],
+      "crosscheck": [],
+      "doc": "docs/source-readings/wuxing_dayi_dz.md"
+    }
   ]
 }

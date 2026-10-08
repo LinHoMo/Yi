@@ -44,8 +44,7 @@ MIRROR_FILES = ("tools/report.py",)
 
 # 学科元数据：字段名与 tools/ci_request.py / docs/AI-SOP.md 的请求契约保持一致
 #
-# 通道 A（纯前端站点）挂载**全部八科**，与本地 CLI、通道 B 的学科集合一致——
-# 不再有"网页只能跑六科"的落差。新增学科时必须四处同步（缺一处即被门锁打死）：
+# 通道 A（纯前端站点）挂载两科（liuyao/ming），与本地 CLI、通道 B 的学科集合一致。
 #    ① core/yishu_core/report/request.py 的 DISCIPLINES（全部学科，协议映射唯一处）；
 #    ② 此处 DISCIPLINE_META（进 web 的学科子集）；
 #    ③ web/engine_runtime.py 的 WEB_DISCIPLINES + DEMO（smoke 自检按 id 取用）；
@@ -55,8 +54,7 @@ MIRROR_FILES = ("tools/report.py",)
 # fields 只声明"要收哪些输入"；请求 → 命令行参数的映射**只有一份**，在内核
 # yishu_core.report.request，三个执行器（本机/CI、浏览器、将来任何宿主）共用。
 # 诚实口径（AGENTS.md 铁律三）在 summary/caveat 里如实标注，不得省略：
-#    · liuren 是骨架科（只出机械结构标签，无吉凶断语）；
-#    · lingqi 的断语是《靈棋經》原文逐字直录（无书外发挥）。
+#    · 两科断语均按机械推演产出，不掺入书外主观发挥。
 DISCIPLINE_META = (
     {
         "id": "liuyao", "name": "六爻纳甲", "kind": "卜",
@@ -79,75 +77,6 @@ DISCIPLINE_META = (
             {"key": "gender", "label": "性别", "type": "select", "required": True,
              "options": [["男", "男"], ["女", "女"]]},
             {"key": "question", "label": "想问的方向（可选）", "type": "text"},
-        ],
-    },
-    {
-        "id": "ziwei", "name": "紫微斗数", "kind": "命",
-        "summary": "安星四化，推格局与大限",
-        "fields": [
-            {"key": "datetime", "label": "出生公历时间", "type": "datetime", "required": True},
-            {"key": "gender", "label": "性别", "type": "select", "required": True,
-             "options": [["男", "男"], ["女", "女"]]},
-        ],
-    },
-    {
-        "id": "meihua", "name": "梅花易数", "kind": "卜",
-        "summary": "体用生克、互变卦与卦气旺衰",
-        "fields": [
-            {"key": "question", "label": "所问之事", "type": "text", "required": True},
-            {"key": "datetime", "label": "起卦时刻（留空用当前时间）", "type": "datetime"},
-            {"key": "way", "label": "起卦方式", "type": "select",
-             "options": [["datetime", "时间起卦"], ["numbers", "数字起卦"]]},
-            {"key": "numbers", "label": "数字（逗号分隔）", "type": "text"},
-        ],
-    },
-    {
-        "id": "xiaoliuren", "name": "小六壬", "kind": "卜",
-        "summary": "六宫掌诀断事，含邻宫速断与方位五行",
-        "fields": [
-            {"key": "question", "label": "所问之事", "type": "text", "required": True},
-            {"key": "datetime", "label": "起课时刻（留空用当前时间）", "type": "datetime"},
-            {"key": "activity", "label": "事类（可选）", "type": "text"},
-            {"key": "numbers", "label": "数字（逗号分隔）", "type": "text"},
-        ],
-    },
-    {
-        "id": "zeji", "name": "择吉", "kind": "卜",
-        "summary": "建除十二神 / 黄黑道 / 二十八宿三因子综合裁决",
-        "fields": [
-            {"key": "date", "label": "用事日期", "type": "date", "required": True},
-            {"key": "activity", "label": "事类", "type": "text",
-             "placeholder": "例：开市 / 嫁娶 / 出行"},
-            {"key": "hour_branch", "label": "时支（可选）", "type": "text"},
-            {"key": "question", "label": "所问之事（可选）", "type": "text"},
-        ],
-    },
-    {
-        "id": "liuren", "name": "大六壬", "kind": "卜",
-        "summary": "月将加时起课，九宗门三传与天将乘临（只出机械结构标签）",
-        "caveat": "骨架科：只出月将加时／九宗门三传／天将乘临的机械结构标签，"
-                  "无吉凶断语，也无应期断言——请勿当作断事结论。",
-        "fields": [
-            {"key": "question", "label": "所问之事", "type": "text", "required": True,
-             "placeholder": "例：占本周面试能否通过"},
-            {"key": "datetime", "label": "起课时刻（月将加时，必填）", "type": "datetime",
-             "required": True},
-        ],
-    },
-    {
-        "id": "lingqi", "name": "灵棋经", "kind": "卜",
-        "summary": "十二棋分三部掷面数，查 124 课表直录《靈棋經》原文断语",
-        "caveat": "断语为《靈棋經》原文逐字直录，不做书外发挥；"
-                  "所列吉凶均为古籍断语，不构成任何现实建议。",
-        "fields": [
-            {"key": "question", "label": "所问之事", "type": "text", "required": True,
-             "placeholder": "例：占求财"},
-            {"key": "up", "label": "上部掷面数", "type": "number", "required": True,
-             "min": 0, "max": 4, "placeholder": "0–4"},
-            {"key": "mid", "label": "中部掷面数", "type": "number", "required": True,
-             "min": 0, "max": 4, "placeholder": "0–4"},
-            {"key": "down", "label": "下部掷面数", "type": "number", "required": True,
-             "min": 0, "max": 4, "placeholder": "0–4"},
         ],
     },
 )

@@ -3,17 +3,17 @@
   "_comment": "跨科概念对齐注册表（Phase 5 Evidence Maturation / Phase 6 Cross-Discipline Knowledge Alignment）。纪律：每条映射必须带古籍出处与适用条件，逐字核对后方可翻 verified=true；**verified=false 的映射不参与任何对照**（evidence_cross.canonical_factor 只认 verified=true）。当前**已验证映射为 0 条**——机制就位、语义债如实登记（TECH-DEBT §2.5「跨科维度词表未统一」）；下面登记的两条是「最容易被拍脑袋合并、但尚无逐字书源依据」的护栏样例，禁止凭印象翻转。匹配为 factor **全等**（不子串），归并结果在 evidence_cross 维度里带 merged_from 标记。翻 verified 的唯一合法路径：在 references/ 或 data/sources/ 落逐字引文，把 quote 指针填进 source，经评审后改 true 并在 docs/CHANGELOG.md 登记。",
   "mappings": [
     {
-      "concept": "卦爻冲合",
+      "concept": "命卜互证",
       "members": [
         {"discipline": "liuyao", "factor": "六合/六冲"},
-        {"discipline": "meihua", "factor": "体用关系"}
+        {"discipline": "ming", "factor": "三合/三会"}
       ],
       "source": {
-        "book": "（《梅花易数》体用总诀 与 《卜筮正宗》六合六冲章 的同源性）",
-        "locator": "缺口：两章是否同一口径未经逐字比对，不得启用",
+        "book": "（《卜筮正宗》六合六冲章 与 《三命通会》三合三会章 的同源性）",
+        "locator": "缺口：两类合会是否同一口径未经逐字比对，不得启用",
         "verified": false
       },
-      "applicability": "直觉上都是『生克/冲合关系定倾向』，但六爻的六合六冲是纳甲支关系、梅花的体用是卦五行生克——对象与判据不同，同源未证",
+      "applicability": "直觉上都是『合会关系定倾向』，但六爻的六合六冲是纳甲支关系、八字的三合三会是大运流年组合——对象与判据不同，同源未证",
       "note": "护栏样例：正是 GOAL 明令禁止的『拍脑袋 ontology』候选。无逐字书源依据，保持 verified=false"
     }
   ]

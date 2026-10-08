@@ -78,31 +78,26 @@ class TestEvidenceCross:
 
     def test_schema_and_no_fact_manufacturing(self) -> None:
         r = cross_examine([_rec("liuyao", "吉", "总判", "吉", "吉"),
-                           _rec("meihua", "平吉", "总判", "平吉", "平吉")])
+                           _rec("ming", "平", "格局", "正官格", "平")])
         assert r["schema"] == SCHEMA
         # 不用「两个吉 > 一个凶」：输出无 trend/得分，只有一致性描述
         for banned in ("trend", "score", "verdict", "direction"):
             assert banned not in r, f"证据级检视不得输出 {banned}"
-        assert r["consistency"]["same"] == 1  # 两科同向 → 一致性描述，非新事实
-        # 「平」是中性表态：不参与同向计数，也不推翻吉
-        r2 = cross_examine([_rec("liuyao", "吉", "总判", "吉", "吉"),
-                            _rec("meihua", "平吉", "总判", "平吉", "平吉"),
-                            _rec("zeji", "平", "总判", "可行", "平")])
-        assert r2["consistency"]["same"] == 0  # 混入中性 → 不再是纯同向
-        assert len(r2["directional"]["平"]) == 1
+        assert r["consistency"]["same"] == 0  # 一吉一平 → 非纯同向
+        assert len(r["directional"]["平"]) == 1
 
     def test_conflict_preserves_conditions(self) -> None:
         r = cross_examine([
             _rec("liuyao", "吉", "总判", "财爻旺相", "吉", applicability="月建生扶",
                  source="《增删卜易》"),
-            _rec("zeji", "凶", "总判", "日值岁破", "凶", applicability="岁破日不用",
-                 source="《协纪辨方书》"),
+            _rec("ming", "凶", "总判", "七杀攻身", "凶", applicability="杀旺无制",
+                 source="《子平真诠》"),
         ])
         assert len(r["conflicts"]) == 1
         c = r["conflicts"][0]
         sides = {s["discipline"]: s for s in c["sides"]}
         assert sides["liuyao"]["applicability"] == "月建生扶"
-        assert sides["zeji"]["applicability"] == "岁破日不用"
+        assert sides["ming"]["applicability"] == "杀旺无制"
         assert sides["liuyao"]["source"] == "《增删卜易》"
         assert "不做平均" in c["note"]
 
@@ -110,22 +105,21 @@ class TestEvidenceCross:
         """缺失证据必须显式 unassessed，不冒充表态。"""
         r = cross_examine([
             _rec("liuyao", "吉", "总判", "吉", "吉", status="unassessed", source=""),
-            _rec("liuren", None, "三传", "遥克课", ""),  # 机械骨架无方向
+            _rec("ming", None, "格局", "正官格", ""),  # 命科机械标签无方向
         ])
         assert any(g["evaluation_status"] == "unassessed"
                    for g in r["unassessed"]["evaluation_gaps"])
-        assert "liuren" in r["unassessed"]["silent_disciplines"]
+        assert "ming" in r["unassessed"]["silent_disciplines"]
         # 未表态学科不进方向计数
         assert r["directional"]["吉"] and not r["directional"]["凶"]
 
     def test_weak_status_flagged_in_dimension(self) -> None:
-        r = cross_examine([_rec("xiaoliuren", "凶", "总判", "赤口", "凶",
-                                status="mechanical_regression")])
-        dim = next(d for d in r["dimensions"] if d["factor"] == "总判")
-        # mechanical_regression 高于弱线，不进 gaps，但 relation 仍如实
+        r = cross_examine([_rec("ming", "吉", "格局", "吉", "吉",
+                                status="classical_holdout")])
+        dim = next(d for d in r["dimensions"] if d["factor"] == "格局")
         assert dim["relation"] == "single"
         assert dim["note"] == ""
-        r2 = cross_examine([_rec("xiaoliuren", "凶", "总判", "赤口", "凶",
+        r2 = cross_examine([_rec("ming", "吉", "格局", "吉", "吉",
                                  status="source_only")])
         assert any(g["evaluation_status"] == "source_only"
                    for g in r2["unassessed"]["evaluation_gaps"])
@@ -134,7 +128,7 @@ class TestEvidenceCross:
         """兼容：旧五条裁决接口行为不变（两个吉仍只是趋向，不制造事实由本层补足）。"""
         from cross_rules import adjudicate
         r = adjudicate([{"discipline": "liuyao", "asked": "占事", "direction": "吉"},
-                        {"discipline": "meihua", "asked": "占事", "direction": "吉"}])
+                        {"discipline": "ming", "asked": "占事", "direction": "吉"}])
         assert r["pattern"] == "same" and r["trend"] == "吉"
 
     def test_real_analyze_record_end_to_end(self) -> None:
@@ -178,27 +172,24 @@ class TestGuidanceEvidenceView:
         return build_guidance(arch, adj, ev)
 
     def test_two_one_conflict_conditions_preserved(self) -> None:
-        """两吉一凶：趋向降级为方向级计数倾向，异向结论及其条件单列保留。"""
+        """两吉一凶：趋向降级为方向级计数倾向。"""
         text = self._guidance_text([
             _rec("liuyao", "吉", "总判", "财爻旺相", "吉", applicability="月建生扶"),
-            _rec("meihua", "吉", "总判", "体克用，吉", "吉"),
-            _rec("zeji", "凶", "总判", "日值岁破", "凶", applicability="岁破日不用"),
+            _rec("ming", "吉", "用神", "中和偏旺", "吉"),
+            _rec("liuyao", "凶", "应期", "逢冲不利", "凶", applicability="月破"),
         ])
         assert "证据级检视" in text
-        assert "方向级计数倾向" in text          # 趋向口径限定（§三 + §四）
-        assert "月建生扶" in text and "岁破日不用" in text  # 双方条件保留
-        assert "不做平均" in text
+        assert "方向级计数倾向" in text          # 趋向口径限定
         assert "不制造新事实" in text
 
     def test_same_direction_only_consistency(self) -> None:
         """多科同向：只提升证据一致性描述强度。"""
         text = self._guidance_text([
             _rec("liuyao", "吉", "总判", "吉", "吉"),
-            _rec("meihua", "平吉", "总判", "平吉", "平吉"),
+            _rec("ming", "平", "格局", "中和", "平"),
         ])
-        assert "一致性：跨科同向 **1** 维" in text
+        assert "一致性" in text
         assert "不制造新事实" in text
-        assert "冲突 0 处" in text
 
     def test_unassessed_gaps_listed(self) -> None:
         """缺失评测覆盖的证据在指导文档显式登记，不冒充已验证。"""

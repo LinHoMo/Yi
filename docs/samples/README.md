@@ -11,14 +11,14 @@
 | `事业卦.html` | `disciplines/liuyao/scripts/render.py` | 六爻事业卦 HTML 报告样例 |
 | `screenshot_golden.png` | 手工截图 | 门户黄金截图（对照 build_portal_assets 输出） |
 | `DEEP-DIVE-PLAN.html` | `python tools/doc_html.py docs/DEEP-DIVE-PLAN.md` | **各科深度改造方案**单文件 HTML（表格多，便于直接给人看） |
-| `NEW-DISCIPLINES.html` | `python tools/doc_html.py docs/NEW-DISCIPLINES.md` | **新门类立项论证**单文件 HTML |
+| ~~`NEW-DISCIPLINES.html`~~ | 已移至 archive/ | 新门类立项论证（历史存档） |
 | `EVAL-PLAN.html` | 由已移除的 `docs/EVAL-PLAN.md` 生成 | **评测体系规划**单文件 HTML（源文档已不在库，此份为存量样例） |
 
 重建规划类文档的 HTML：
 
 ```bash
 python tools/doc_html.py docs/DEEP-DIVE-PLAN.md --outdir docs/samples
-python tools/doc_html.py docs/NEW-DISCIPLINES.md --outdir docs/samples
+python tools/doc_html.py archive/NEW-DISCIPLINES.md --outdir docs/samples  # 已归档文档
 ```
 
 ## 口径提醒

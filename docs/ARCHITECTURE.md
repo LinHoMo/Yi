@@ -20,15 +20,12 @@
 | **命** | 出生时空（公历年月日时 + 性别） | 格局与趋势（机械推演，不作命运断语） | 一生 |
 | **卜** | 一念之动（所问之事 + 起卦方式） | 一事成败与应期 | 一事 |
 
-**范围（八科）**：命科 = `ming`（四柱八字）+ `ziwei`（紫微斗数）；
-卜科 = `liuyao`（六爻纳甲）+ `meihua`（梅花易数）+ `xiaoliuren`（小六壬）+ `zeji`（择吉）
-+ `liuren`（大六壬骨架）+ `lingqi`（灵棋经）。
+**范围（两科）**：命科 = `ming`（四柱八字）；卜科 = `liuyao`（六爻纳甲）。
+两科建在同一份内核（`core/yishu_core/`）与同一条四段契约（chart→analyze→narrate→render）上，
+由 `synthesis/` 做**命卜合参**。紫微斗数、梅花易数、小六壬、择吉、大六壬、灵棋经已正式移除（git history 留存历史存档）。
 
-学科清单的唯一权威源是 `core/yishu_core/report/request.py::DISCIPLINES`（八科元组）；
+学科清单的唯一权威源是 `core/yishu_core/report/request.py::DISCIPLINES`（两科元组）；
 **科 × 本地 CLI / 通道 A 网页 / 通道 B 云端**三通道的能力矩阵见 `llms.txt`（本文件只引用不复制）。
-梅花、小六壬、择吉曾于 2026-09 归档，2026-09-29 已还原至 `disciplines/`；
-`liuren` / `lingqi` 为两个**骨架科**——liuren 只出月将加时／九宗门三传／天将乘临的机械结构标签、**无吉凶断语**，
-lingqi 断语为《靈棋經》原文**逐字直录**、无书外发挥。
 云端出报告见 `.github/workflows/report.yml` 与 `docs/AI-SOP.md`。
 相科（面相、手相、堪舆）明确不做。
 
@@ -55,9 +52,6 @@ Yi/
 │       ├── najia.py            # 纳甲支表/八宫归属/安世应
 │       ├── relations.py        # 五行关系/六亲/生克指数
 │       ├── ming_tables.py      # 藏干十神/大运起法/命宫身宫（仅命科）
-│       ├── ziwei_tables.py     # 紫微斗数安星表（仅命科）
-│       ├── liuren_tables.py    # 大六壬月将/天将表（仅卜科）
-│       ├── zeji_tables.py      # 择吉建除/黄黑道/二十八宿表（仅卜科）
 │       ├── hexagram_texts.py   # 六十四卦卦辞爻辞
 │       ├── lunar.py            # 公历↔农历互转
 │       ├── eval.py             # 全仓库唯一评分器
@@ -73,10 +67,10 @@ Yi/
 │       │   ├── schemas.py      # TypedDict: RequestEnvelope / ChartEnvelope / AnalysisEnvelope / ResultEnvelope
 │       │   └── registry.py     # 学科能力注册表（能力性质 + 评测基线 + evaluation_splits 唯一真值源）
 │       └── report/             # 报告 kit + 输入协议
-│           ├── request.py      # 请求→命令行参数唯一映射（DISCIPLINES 八科元组）
+│           ├── request.py      # 请求→命令行参数唯一映射（DISCIPLINES 两科元组）
 │           └── html.py         # HTML/MD 报告模板
 │
-├── disciplines/                 # 八科；各科 scripts/ **同名**（每科都有 chart.py），浏览器内隔离见 web/
+├── disciplines/                 # 两科（ming / liuyao）；各科 scripts/ **同名**（每科都有 chart.py），浏览器内隔离见 web/
 │   ├── liuyao/                  # 六爻纳甲（卜科）——四段入口 + 域模块，共 37 个 scripts
 │   │   ├── SKILL.md
 │   │   ├── scripts/             # 四段入口 chart/analyze/narrate/render.py
@@ -92,11 +86,7 @@ Yi/
 │   │   ├── dev_tools/           # 学科级门（check/golden/regression/refactor_guard 等）
 │   │   └── guard/               # 重构指纹基线（零漂移验收）
 │   │
-│   ├── ming/                    # 四柱八字（命科）：scripts + references + data + dev_tools
-│   ├── ziwei/                   # 紫微斗数（命科）：scripts + data + dev_tools
-│   ├── meihua/ xiaoliuren/ zeji/   # 卜科薄科（各 7 个 scripts）
-│   ├── liuren/ lingqi/          # 卜科骨架科（liuren 7 / lingqi 4 个 scripts）
-│   └── README.md                # 学科状态表
+│   └── ming/                    # 四柱八字（命科）：scripts + references + data + dev_tools
 │
 ├── synthesis/                   # 合参层（只依赖各科 analyze 输出契约）
 │   ├── cli.py                   # init/validate/add-divination/record-outcome/outcome-eval/evidence-cross/guide/selfcheck
@@ -119,7 +109,7 @@ Yi/
 ├── tools/                       # 仓库级命令
 │   ├── check.py                 # 全仓库质量门（[0]-[8]，含 [0b]/[1b]-[1g] 全部机检）
 │   ├── case_isolation_check.py  # [1g] 案例库隔离（铁律二：import 闭包 BFS + 审计 hook 实跑）
-│   ├── report.py                # 统一报告运行器（八科 chart→analyze→render→MD+HTML）
+│   ├── report.py                # 统一报告运行器（两科 chart→analyze→render→MD+HTML）
 │   ├── report_faithfulness.py   # 叙事忠实度审计（invented / contradicted 即失败）
 │   ├── verdict_audit.py         # 断语外置取证（跑真实报告反查）
 │   ├── verdict_consumption.py   # 语料消费审计（语料池 ⊆ 被消费；报告制）
@@ -127,7 +117,7 @@ Yi/
 │   ├── fetch_source.py          # 唯一外部书源采集器（字符级保存 + provenance）
 │   ├── build_web.py / serve_web.py / check_web_site.py / verify_web_parity.py  # 站点构建/预览/自检/同源验收
 │   ├── ci_request.py / ci_publish_branch.py / ci_deliver.py  # CI 触发 / 发布 / 回评
-│   ├── eval.py / eval_audit_recheck.py   # 对齐分一览 / 三科口径复核
+│   ├── eval.py                    # 对齐分一览（两科口径复核）
 │   ├── demo.py / core_selftest.py / text_keys_selftest.py / doc_html.py
 │   └── install.ps1              # 环境安装
 │
@@ -142,7 +132,7 @@ Yi/
     ├── HANDOFF.md               # 现状交接（**现状读数唯一权威源**）
     ├── CHANGELOG.md             # 仓库级口径变更登记
     ├── TECH-DEBT.md             # 技术债务登记（含已清偿与评审遗留）
-    ├── MIGRATION.md / YI-PLAN.md / DEEP-DIVE-PLAN.md / NEW-DISCIPLINES.md / RESEARCH-HOROSA.md
+    ├── MIGRATION.md / YI-PLAN.md / DEEP-DIVE-PLAN.md / RESEARCH-HOROSA.md / OPT-*.md
     ├── LIUYAO-PLAN.md                   # 六爻路线
     └── samples/                 # 样例报告
 ```
@@ -205,7 +195,7 @@ Runtime 负责 discipline routing、request normalization、provenance、
 | Rule | 学科规则表（如六爻 `data/rules/rule_registry.json`、`verdict_texts.json`） | rule_id → 出处指针/适用条件/评测覆盖 |
 | Engine | 学科 `scripts/` 四段 + core 表 | 盘面 → analyze JSON（verdict/factors/应期…） |
 | Evidence | `core/yishu_core/evidence.py`（唯一实现，纯函数双宿主共用） | analyze JSON → 结构化证据（rule_id/出处/适用条件/观察/评测状态/provenance）+ claim_policy 断言边界 |
-| Evaluation | 各科 `evaluate.py` + `yishu_core.eval` + 注册表评测基线 | 证据/案例 → 对齐分与覆盖状态（口径分层：机械回归/古籍对齐/外部集/现实回填）；规则级覆盖见各科 `data/rules/rule_registry.json`（六爻/ming/meihua） |
+| Evaluation | 各科 `evaluate.py` + `yishu_core.eval` + 注册表评测基线 | 证据/案例 → 对齐分与覆盖状态（口径分层：机械回归/古籍对齐/外部集/现实回填）；规则级覆盖见 `disciplines/{liuyao,ming}/data/rules/rule_registry.json` |
 | Synthesis | `synthesis/cross_rules.py`（方向级裁决）+ `evidence_cross.py`（证据级 same/conflict/unassessed + verified-only 概念映射 `concept_map.json`）+ `feedback.py` adapter | 多科证据 → 一致性/冲突/缺口清单与 canonical 反馈记录 |
 | Narrative | `narrate/render` + LLM 翻译 + `core/yishu_core/agent.py` 五入口 | 证据与裁决 → 当事人可读报告（LLM 只翻译不推断） |
 
@@ -317,13 +307,13 @@ web/engine_runtime.py → tools/report.py        # 浏览器侧同进程跑同�
 - `python tools/check.py` 全绿（结构/内核/断语键/冒烟/合参/分科）
 - `python tools/check.py --full` 全绿（+ 案例评测 + 黑箱回归 + pytest）
 - tune/holdout **分列出分**，禁止 holdout 混进 tune
-- 各科金标准行为指纹零漂移（**当前值见 `disciplines/<科>/data/golden/digest.json`**，八科汇总见 `docs/HANDOFF.md`）
-- **能力矩阵三通道一致**：本地 CLI / 通道 A 站点 / 通道 B Actions **均挂载全部八科、无落差**——权威表在 `llms.txt`，由 `[1e]` 矩阵锁与 `[7c]` 同源验收共同看住
+- 各科金标准行为指纹零漂移（**当前值见 `disciplines/<科>/data/golden/digest.json`**，两科汇总见 `docs/HANDOFF.md`）
+- **能力矩阵三通道一致**：本地 CLI / 通道 A 站点 / 通道 B Actions **均挂载两科、无落差**——权威表在 `llms.txt`，由 `[1e]` 矩阵锁与 `[7c]` 同源验收共同看住
 - 质量门清单（唯一真值源 `tools/check.py` 的输出编号，默认档与 `--full` 档之差见各门 `fast=False` 标注）：
   `[0]` 版本一致性 / **`[0b]` 读数锚点（报告制，不阻断）** / `[1]` 结构契约 / `[1b]` 命名与断语规范 /
   `[1c]` 断语外置取证 / `[1d]` 语料消费审计 / `[1e]` 能力矩阵锁 / `[1f]` 输入协议指纹 /
-  **`[1g]` 案例库隔离（铁律二）** / `[2]` 内核自检 / `[3]` ming 门 / `[4]` ziwei 门 /
-  `[5]` 八科行为指纹 / `[6]` 六爻（含黑箱回归）/ **`[6b]` 报告契约（render 段：结构断言 + 八科 MD 内容指纹）** /
+  **`[1g]` 案例库隔离（铁律二）** / `[2]` 内核自检 / `[3]` ming 门 /
+  `[5]` 两科行为指纹 / `[6]` 六爻（含黑箱回归）/ **`[6b]` 报告契约（render 段：结构断言 + 两科 MD 内容指纹）** /
   `[7]` 合参层 / `[7b]` 站点构建 / `[7c]` 同源验收（MD/HTML/**Evidence** 三列逐例）/
   **`[7d]` 各科案例对齐分一览（口径披露）** / `[8]` pytest
 - `[1g]` 把**铁律二从「文档承诺」变成「机械可达」**（此前它是三条铁律里唯一零机械支撑的一条）：
@@ -424,8 +414,6 @@ web/engine_runtime.py → tools/report.py        # 浏览器侧同进程跑同�
   ⚠️ **月令 ≠ 月支**：正月建寅，故 6 月为**未**、午月为**五月**——改表前先核月支。
 - **命科格局**：判据逻辑在 `disciplines/ming/scripts/pattern.py`（透干十神有无），
   书源引文在 `disciplines/ming/data/verdicts.json`（`格局成败引文`/`从格引文`）。
-- **大六壬**：门类取值在 `core.yishu_core.liuren_tables` + `scripts/jiuzongmen.py`，
-  诀文引文在 `disciplines/liuren/data/verdicts.json` 与 `data/kemu.json`。
 
 判据：**引擎判定读哪份，哪份就是取值层**（必须唯一）；书源引文、出处标注、
 逐格原文属于引文层（可以整份只存于学科 data，不进 core）。

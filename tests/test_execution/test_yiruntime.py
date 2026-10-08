@@ -61,7 +61,6 @@ class TestRuntimeMultiDiscipline:
     @pytest.mark.parametrize("disc,extra", [
         ("liuyao", {"mode": "time"}),
         ("ming", {"datetime": "1990-01-01 12:00", "gender": "男"}),
-        ("meihua", {"way": "numbers", "numbers": "1,2,3"}),
     ])
     def test_execute_min_smoke(self, rt: YiRuntime, disc: str, extra: dict) -> None:
         req = {"discipline": disc, "question": "test", **extra}

@@ -22,8 +22,7 @@ if str(_CORE) not in sys.path:
 from yishu_core.report.request import FOOTER_TEXT  # noqa: E402  口径句唯一真值源
 
 DISC_TITLE = {
-    "liuyao": "六爻纳甲", "ming": "四柱八字", "ziwei": "紫微斗数",
-    "meihua": "梅花易数", "xiaoliuren": "小六壬", "zeji": "择吉",
+    "liuyao": "六爻纳甲", "ming": "四柱八字",
 }
 COMMENT_LIMIT = 65536
 INLINE_MAX = 48000

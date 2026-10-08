@@ -7,21 +7,14 @@
 
 本文件约束所有在本仓库工作的 agent 和 contributor。与任何单个学科的 SKILL.md 冲突时，本文件优先。
 
-**范围**：本仓库有八科可用。各学科 `dev_tools/check.py` 与仓库根 `tools/check.py`
-的全绿状态**只对所登记的 revision 成立**，不是常驻事实——工作区有未提交改动时以实跑为准
-（2026-10-08 实测：HEAD 全绿，同一时间的工作树因进行中改动判红 8 项）。
-复验时点与依据见 `docs/HANDOFF.md` §六 的「读数时点」，改引擎前后请按 §四 自行复跑。
+**范围**：本仓库有**两科**正式术数：**命** → 四柱八字、**卜** → 六爻纳甲。
+其他术数（紫微斗数、梅花易数、小六壬、择吉、大六壬、灵棋经）已正式从产品能力面移除。
+各学科 `dev_tools/check.py` 与仓库根 `tools/check.py` 的全绿状态只对所登记的 revision 成立。
 
 | 学科 | 目录 | 说明 |
 |---|---|---|
 | **命**（四柱八字） | `disciplines/ming/` | 机械推演（强弱/格局/喜用/大运/流年），非命运断言 |
-| **命**（紫微斗数） | `disciplines/ziwei/` | 安星/四化/格局/大限，四段契约 |
 | **卜·六爻** | `disciplines/liuyao/` | 六爻纳甲，四段契约 chart→analyze→narrate→render |
-| **卜·梅花易数** | `disciplines/meihua/` | 体用生克/互变/卦气旺衰 |
-| **卜·小六壬** | `disciplines/xiaoliuren/` | 六宫掌诀断事 |
-| **卜·择吉** | `disciplines/zeji/` | 建除/黄黑道/二十八宿综合裁决 |
-| **卜·大六壬** | `disciplines/liuren/` | 月将加时/九宗门三传/天将乘临（骨架：机械结构标签，无吉凶断语） |
-| **卜·灵棋经** | `disciplines/lingqi/` | 十二棋三部掷数，查 124 课表直录《靈棋經》原文断语（书源逐字，无书外发挥） |
 
 **相科（面相、手相、堪舆）明确不做**——不在路线图内，不预留目录，不写占位实现。
 
@@ -62,12 +55,6 @@ Yi/
 ├── disciplines/
 │   ├── liuyao/           # 六爻纳甲
 │   ├── ming/             # 四柱八字
-│   ├── ziwei/            # 紫微斗数
-│   ├── meihua/           # 梅花易数
-│   ├── xiaoliuren/       # 小六壬
-│   ├── zeji/             # 择吉
-│   ├── liuren/           # 大六壬（骨架：机械结构标签，无吉凶断语）
-│   └── lingqi/           # 灵棋经（124 课表直录书源断语）
 ├── cli/                  # 统一命令行入口：yi <discipline> <command>
 ├── synthesis/            # 合参层，依赖 disciplines 的输出契约，不依赖其内部实现
 ├── tools/                # 仓库级命令：check / eval / demo / install / report / ci_*
@@ -132,8 +119,7 @@ Yi/
   外集 QTBJ 批那 9 条压缩改写**已于 2026-10-06m 从书源重建**（TECH-DEBT §2.4 收口）；
   本段此前写着「待重建」，是落后于事实的过期记载。
   ⚠️ 逐字要求不止案例库：2026-10-08 复现同类病灶于
-  `disciplines/ziwei/data/geju_rules.json`（贪狼三条忌星条文被转成简体，非书源子串），
-  已改回繁体原样并把该来源并入建器产出集合。**任何「照录」字段一律不改字、不转简**。
+  **任何「照录」字段一律不改字、不转简**。
 - **月令 ≠ 月支**：正月建寅，故 6 月为**未**、午月为**五月**。改调候表前先核月支，
   勿把「午月案例」与「6月（未）那一格」混为一谈。
 
@@ -196,7 +182,7 @@ Yi/
 - Pyodide 没有 `subprocess`，故浏览器侧执行器是 `web/engine_runtime.py`（同进程
   `runpy`）；**请求→命令行参数的映射只有一份**，在内核 `yishu_core.report.request`，
   三个执行器（本机/CI 子进程、浏览器同进程、将来任何宿主）共用，禁止各写一份。
-- 浏览器是单一解释器，而八科的 `scripts/` **目录同名**（每科都有 `chart.py`）。
+- 浏览器是单一解释器，而两科的 `scripts/` **目录同名**（每科都有 `chart.py`）。
   跑某科前必须把别科模块清出 `sys.modules` 并把本科 `scripts/` 提到 `sys.path` 最前
   （`engine_runtime._isolate`）——否则同名遮蔽会让某一科拿到别科的盘面。
 - 本地预览：`python tools/serve_web.py`（以仓库为站点根，改完刷新即生效）。

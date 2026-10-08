@@ -28,7 +28,7 @@ yingqi_holdout / mechanical_consistency 等）；具体 split 标识符（含案
 的唯一真值源是各科 `evaluate.py` 的 `--split choices`——内核不持有案例语料名
 （铁律二隔离边界的静态门会拦截）。
 
-agent_available 的回答：`yishu_core.agent` 的五个稳定入口对八科一律可用
+agent_available 的回答：`yishu_core.agent` 的五个稳定入口对两科一律可用
 （capabilities / validate_request / run_report / get_evidence / get_evaluation_status）,
 学科差异全部由本表承载——Agent 不需要知道某科内部用了哪个脚本。
 """
@@ -101,7 +101,7 @@ _REGISTRY: dict[str, DisciplineCapability] = {}
 
 
 def _build_registry() -> dict[str, DisciplineCapability]:
-    """构建能力注册表: 默认八科均 stable, 再逐科覆盖差异。"""
+    """构建能力注册表: 默认两科均 stable, 再逐科覆盖差异。"""
     reg: dict[str, DisciplineCapability] = {}
     for d in DISCIPLINES:
         reg[d] = DisciplineCapability(discipline=d)
@@ -124,61 +124,6 @@ def _build_registry() -> dict[str, DisciplineCapability]:
         evaluation_baseline="classical_holdout",
         evaluation_splits=("tune", "holdout"),
         maturity_note="古籍案例对齐评测已建（调候/格局成败/从格分维度）；外部独立集待建（语料已取得,判据未落地）",
-    )
-    # 紫微：机械结构（安星/格局查找）有 golden+回归锁,但无案例对齐评测
-    reg["ziwei"] = DisciplineCapability(
-        discipline="ziwei",
-        external_evaluation="unavailable",
-        holdout="unavailable",
-        evaluation_baseline="mechanical_regression",
-        maturity_note="无案例对齐评测, 只有机械自检与行为指纹",
-    )
-    # 梅花：古籍对齐评测已建, 另有 n=4 外部独立集（永不调参, 只报命中数不报百分比）
-    reg["meihua"] = DisciplineCapability(
-        discipline="meihua",
-        external_evaluation="stable",
-        holdout="stable",
-        evaluation_baseline="classical_holdout",
-        evaluation_splits=("tune", "holdout", "external_holdout"),
-        maturity_note="external_holdout 已建（n=4, 永不调参；语料与读数见 meihua docs/EVAL-AUDIT.md）",
-    )
-    # 小六壬：只有规则自洽回归（engine_derived）, 无古籍对齐分
-    reg["xiaoliuren"] = DisciplineCapability(
-        discipline="xiaoliuren",
-        external_evaluation="unavailable",
-        holdout="unavailable",
-        evaluation_baseline="mechanical_regression",
-        evaluation_splits=("tune", "holdout"),
-        maturity_note="tune/holdout 为规则自洽回归, 非古籍对齐；外部集待建",
-    )
-    # 择吉：同小六壬——评测框架已搭但基准 engine_derived, 古籍日例应验 0 例
-    reg["zeji"] = DisciplineCapability(
-        discipline="zeji",
-        external_evaluation="unavailable",
-        holdout="unavailable",
-        evaluation_baseline="mechanical_regression",
-        evaluation_splits=("tune", "holdout"),
-        maturity_note="基准 engine_derived（自洽回归）；古籍日例外部集待建",
-    )
-    # 大六壬：机械骨架（结构标签, 无吉凶断语）；43 例三传机械一致率（书源例,测结构非吉凶）
-    reg["liuren"] = DisciplineCapability(
-        discipline="liuren",
-        analyze="mechanical_only",
-        external_evaluation="experimental",
-        holdout="unavailable",
-        evaluation_baseline="mechanical_regression",
-        evaluation_splits=("mechanical_consistency",),
-        maturity_note="机械骨架: 结构标签无吉凶；43 例机械一致率只验三传结构, 非吉凶评测",
-    )
-    # 灵棋经：查表直录 124 课书源断语, 本科不做独立推断
-    reg["lingqi"] = DisciplineCapability(
-        discipline="lingqi",
-        analyze="source_only",
-        narrate="source_only",
-        external_evaluation="unavailable",
-        holdout="unavailable",
-        evaluation_baseline="source_only",
-        maturity_note="查表直录《靈棋經》124 课原文断语, 吉凶属原文文本非本仓推断",
     )
     return reg
 

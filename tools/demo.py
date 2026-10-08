@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """易·交互演示：一条命令看各科在跑什么、合参怎么合。
 
-  python tools/demo.py                       # 全科演示（六爻/命 + 合参），
+  python tools/demo.py                       # 两科演示（六爻/命 + 合参），
                                              #   汇总写到 tools/scratch/demo/（gitignored）
   python tools/demo.py --discipline ming --question "推算此命局强弱与格局"
                                              # 单科问答：chart→analyze→narrate 一条龙
@@ -28,14 +28,10 @@ sys.path.insert(0, str(ROOT / "synthesis"))
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 from yishu_core.runtime import utf8_subprocess_env  # noqa: E402
 
-# 演示科清单（ziwei 含在内；--discipline 可单跑）
+# 演示科清单（六爻 / 命；--discipline 可单跑）
 DISCIPLINES = {
     "liuyao": "六爻纳甲",
     "ming": "命（四柱）",
-    "ziwei": "紫微斗数",
-    "meihua": "梅花易数",
-    "xiaoliuren": "小六壬",
-    "zeji": "择吉",
 }
 
 
@@ -96,20 +92,13 @@ def demo_single(disc: str, question: str) -> tuple[dict, str, str]:
     chart_args = {
         "ming": ["--datetime", "1990-05-20 10:30", "--gender", "男",
                  "--question", question],
-        "ziwei": ["--datetime", "1990-05-20 10:30", "--gender", "男",
-                  "--question", question],
-        "meihua": ["--way", "time", "--question", question],
-        "xiaoliuren": ["--way", "numbers", "--numbers", "7,7,2,3,4",
-                       "--question", question],
-        "zeji": ["--date", "2026-09-30", "--activity", "开市",
-                 "--question", question],
     }[disc]
     return _pipeline(disc, chart_args)
 
 
 def demo_all() -> int:
     SCRATCH.mkdir(parents=True, exist_ok=True)
-    lines: list[str] = ["# 易 · 全科演示", "",
+    lines: list[str] = ["# 易 · 两科演示", "",
                         f"> 生成于 {__import__('datetime').date.today()}，"
                         f"全部走各科真实 CLI。", ""]
 
@@ -135,7 +124,7 @@ def demo_all() -> int:
     summary = "\n".join(lines) + "\n"
     out = SCRATCH / "demo.md"
     out.write_text(summary, encoding="utf-8")
-    print(f"全科演示完成 → {out}")
+    print(f"两科演示完成 → {out}")
     for src in (SCRATCH / "ming_narrate.md",):
         if src.exists():
             src.unlink()
@@ -186,9 +175,9 @@ def _demo_synthesis() -> list[str]:
 
 def main() -> int:
     force_utf8_stdio()
-    ap = argparse.ArgumentParser(description="易·全科演示")
+    ap = argparse.ArgumentParser(description="易·两科演示")
     ap.add_argument("--discipline", choices=list(DISCIPLINES),
-                    help="单科问答（缺省全科演示）")
+                    help="单科问答（缺省两科演示）")
     ap.add_argument("--question", default="占今年财运如何", help="问句")
     ap.add_argument("--list", action="store_true", help="列出可演示学科")
     args = ap.parse_args()

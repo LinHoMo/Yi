@@ -15,7 +15,7 @@ from datetime import datetime
 from pathlib import Path
 
 from yishu_core.feedback import JUDGED  # noqa: F401  断事判定词汇唯一真值源（core/feedback.py）
-from yishu_core.report.request import DISCIPLINES  # 学科清单唯一真值源（八科）
+from yishu_core.report.request import DISCIPLINES  # 学科清单唯一真值源（两科）
 
 _AT_RE = re.compile(r"^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}(:\d{2})?)?$")
 _DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")

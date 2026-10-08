@@ -1,6 +1,6 @@
 # 学科接入契约（Discipline Contract）
 
-新学科（当前范围八科：`ming` / `ziwei` / `liuyao` / `meihua` / `xiaoliuren` / `zeji` / `liuren` / `lingqi`）照本文四步接入，不用重造轮子。
+新学科（当前范围**两科**：`ming` 四柱八字 / `liuyao` 六爻纳甲）照本文四步接入，不用重造轮子；相科（面相、手相、堪舆）不做、不预留目录、目前不再扩科。
 **范围仅命与卜；相科（面相、手相、堪舆）不做，不预留目录。**
 契约是从已跑通的六爻里抽出来的，不是先验设计——**没有真实实现支撑的抽象一律不写进这里**。
 
@@ -73,12 +73,10 @@ render(analyze)  → 交内核 report 出 HTML/MD，学科只提供盘数据与�
    实现不得各写一份（2026-10-02e 前有 6 份互不相同的 subprocess 壳）
 7. 加进 `tools/check.py` 的质量门，基线取首次数值，此后只准前进
 
-> **豁免条款（2026-10-01c）**：**查表直录类学科**（现行仅 `lingqi`，断语直录古籍 124 课、
-> 无干支历法运算）不设 `data/verdicts.json` 与 `data/cases/`，其断语源是
-> `data/ketables.json`。根 `tools/check.py` 以 `TABLE_LOOKUP_DISCIPLINES`、
-> `CONTRACT_EXEMPT_FILES` 两个常量认这一豁免，新增同类学科时照写即可，不必为了让门变绿
-> 去造一份空的 `verdicts.json`。**但该类学科仍须在 `SKILL.md` 写明"本科不接内核、
-> 书源为唯一真值源"**，以免后人误判为漏接。其余七科一律按 1–7 全条核。
+> **豁免条款（2026-10-01c，现空置）**：**查表直录类学科**（原 `lingqi`，断语直录古籍 124 课、
+> 无干支历法运算）设豁免：`TABLE_LOOKUP_DISCIPLINES` / `CONTRACT_EXEMPT_FILES` 两个常量
+> 仍保留在 `tools/check.py` 供将来同类学科复用，当前列表为空（`lingqi` 已随范围收缩移除）。
+> 其余两科一律按 1–7 全条核。
 
 ## 五、验收标准（新学科）
 

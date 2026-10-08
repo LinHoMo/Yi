@@ -21,18 +21,12 @@
 不要替我下"注定会怎样"的结论，按仓库纪律如实呈现引擎输出。
 ```
 
-换成其他学科的字段（照抄即可）：
+换成另一科（四柱八字）的字段（照抄即可）：
 
 | 学科 | 必填字段 | 通道 A 站点 |
 |---|---|---|
 | 六爻 liuyao | question（+可填 datetime/mode） | ✅ |
 | 四柱 ming | datetime 出生公历时间、gender 性别 | ✅ |
-| 紫微 ziwei | datetime、gender | ✅ |
-| 梅花 meihua | question（+可填 datetime/way/numbers） | ✅ |
-| 小六壬 xiaoliuren | question（+可填 datetime/numbers） | ✅ |
-| 择吉 zeji | date 用事日期、activity 事类 | ✅ |
-| 大六壬 liuren | datetime 起课时刻、question | ✅（骨架科：只出机械结构标签，无吉凶断语） |
-| 灵棋经 lingqi | up/mid/down 三部掷面数（各 0–4） | ✅（断语为《靈棋經》原文逐字直录） |
 
 ## 模板二：云端留档 + 回评（通道 B，要报告存进仓库时）
 

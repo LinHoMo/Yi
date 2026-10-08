@@ -52,7 +52,7 @@ schema 与提取器唯一实现在 `core/yishu_core/evidence.py`；评测基线�
   claim + 适用条件（applicability）+ 出处，不做平均、不编调和说；方向级分歧的
   裁决权仍在 §二 的五条规则（`cross_rules.adjudicate`，本层不替代）。
 - **unassessed**：无评测覆盖（`unassessed`）或仅有出处声明（`source_only`）的证据
-  显式登记为缺口——宁登记缺口，不制造假评测。学科无方向表态（liuren 骨架/lingqi
+  显式登记为缺口——宁登记缺口，不制造假评测。学科无方向表态时
   直录/命科机械标签）单列为 silent，不冒充表态。
 - **一致性描述**：跨科同向只提升"证据一致性"的描述强度，**不自动制造新的事实**；
   本层输出无任何趋势/得分字段。

@@ -12,7 +12,7 @@
   * **纯计算**：不读文件、不起进程、不 import 学科代码——浏览器 Pyodide 宿主
     与本机 subprocess 宿主共用同一份提取器（同源要求，同 request.py）。
   * **不制造事实**：提取器只搬运引擎已声明的内容；`effect` 只取学科自己给出
-    的方向字段，缺方向（liuren/lingqi/ming/ziwei）就留空，绝不脑补吉凶。
+    的方向字段，缺方向（命卜两科）就留空，绝不脑补吉凶。
   * **不重写语料**：出处继续留在各科 JSON/references 里，本模块只做引用。
   * 兼容：analyze 输出 schema 不变；Evidence 是**派生视图**，由宿主在 analyze
     之后附加（本机 `YiRuntime.execute` 的 envelope、合参层 normalize 记录）。
@@ -129,7 +129,7 @@ def _headline(discipline: str, a: dict, baseline: str) -> list[Evidence]:
     verdict = _s(con.get("verdict") or con.get("pattern") or "")
     note = _s(con.get("说明") or con.get("note") or "")
     based_on = _s(con.get("所本") or "")
-    # 方向字段不存在（liuren/lingqi）或为空（ming）都不制造吉凶
+    # 方向字段不存在或为空（ming/liuyao）都不制造吉凶
     claim = "；".join(x for x in (verdict, direction, note) if x)
     if not claim and not based_on:
         return []

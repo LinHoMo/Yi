@@ -9,7 +9,7 @@
     执行编排、证据读取与评测状态读取的转发。
 
 五入口：
-  capabilities()             八科 × 能力 × 评测状态（机器可读，注册表唯一真值源）
+  capabilities()             八字·六爻两科 × 能力 × 评测状态（机器可读，注册表唯一真值源）
   validate_request(request)  请求预检：合法 → normalized request；非法 → 人话错误
   run_report(rt, request)    端到端报告（四段契约），envelope 含 markdown/html/evidence
   get_evidence(rt, request)  一次占问的结构化证据（Evidence Contract 派生视图）
@@ -43,7 +43,7 @@ CALIBER_AUTHORITY = "docs/CHANGELOG.md"
 
 
 def capabilities() -> list[dict[str, Any]]:
-    """八科能力矩阵（含评测基线与评测分列）。adapter（MCP/API/CLI）直接转发的形状。"""
+    """八字·六爻两科能力矩阵（含评测基线与评测分列）。adapter（MCP/API/CLI）直接转发的形状。"""
     return capability_matrix()
 
 

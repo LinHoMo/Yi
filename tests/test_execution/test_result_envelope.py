@@ -60,11 +60,11 @@ class TestRuntimeResult:
 
 
 class TestDisciplineRegistry:
-    def test_list_disciplines_8(self) -> None:
+    def test_list_disciplines_2(self) -> None:
         ds = list_disciplines()
-        assert len(ds) == 8
+        assert len(ds) == 2
         assert "liuyao" in ds
-        assert "lingqi" in ds
+        assert "ming" in ds
 
     def test_capability_stable_for_liuyao(self) -> None:
         dc = discipline_capability("liuyao")
@@ -77,9 +77,9 @@ class TestDisciplineRegistry:
             dc = discipline_capability(d)
             assert dc.mcp == "unavailable"
 
-    def test_all_capabilities_8(self) -> None:
+    def test_all_capabilities_2(self) -> None:
         cm = capability_matrix()
-        assert len(cm) == 8
+        assert len(cm) == 2
         assert all(isinstance(row, dict) for row in cm)
 
     def test_supports_true(self) -> None:

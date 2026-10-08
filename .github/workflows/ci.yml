@@ -8,8 +8,8 @@ name: Yi 质量门
 #
 # 两个 job 缺一不可：
 #   root-gate        —— 仓库根门全档（结构/内核表/断语取证/金手指纹/同源/pytest）
-#   discipline-gates —— 八科各自的 dev_tools/check.py（tune/holdout 评测基线）
-# 后者不是重复劳动：根门只冒烟 ming/ziwei 两科，各科评测基线不在根门内。
+#   discipline-gates —— 两科各自的 dev_tools/check.py（tune/holdout 评测基线）
+# 后者不是重复劳动：根门只冒烟 ming 一科，各科评测基线不在根门内。
 # 2026-10-01h 的六爻回归（tune 20 例里 19 例报错）就是被这个缝漏过去的——根门全绿，
 # 而六爻的案例评测其实已经坏了。挂门的前提是先在干净克隆上逐一实跑取得基线。
 #
@@ -49,7 +49,7 @@ jobs:
       - name: 安装测试依赖（pytest）
         run: python -m pip install pytest
 
-      # --full = 结构/内核表/断语取证/金标准指纹/八科行为指纹/六爻黑箱回归/合参/
+      # --full = 结构/内核表/断语取证/金标准指纹/两科行为指纹/六爻黑箱回归/合参/
       # 站点构建+自检/网页↔本机同源/pytest。任一门红即失败。
       - name: 全档质量门
         run: python tools/check.py --full
@@ -61,7 +61,7 @@ jobs:
     strategy:
       fail-fast: false          # 一科红也要看到其余七科的结果
       matrix:
-        discipline: [liuyao, ming, ziwei, meihua, xiaoliuren, zeji, liuren, lingqi]
+        discipline: [liuyao, ming]
     steps:
       - name: 检出仓库
         uses: actions/checkout@v4

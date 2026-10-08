@@ -17,10 +17,6 @@ on:
         options:
           - liuyao
           - ming
-          - ziwei
-          - meihua
-          - xiaoliuren
-          - zeji
         default: liuyao
       question:
         description: 求测问题（卜科；命科可留空）

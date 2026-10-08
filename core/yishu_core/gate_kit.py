@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""学科质量门共享壳（gate kit）—— 八科 `dev_tools/check.py` 共用，禁止各写一份。
+"""学科质量门共享壳（gate kit）—— 八字·六爻两科 `dev_tools/check.py` 共用，禁止各写一份。
 
 CONTRACT.md §四.6 要求学科门复用共享件。此前 7 科各写一份 subprocess 壳，取值互相漂移：
 argv 前缀（内置 `sys.executable` 与否）、超时（无/60/120/300）、子进程环境（无 / utf8）

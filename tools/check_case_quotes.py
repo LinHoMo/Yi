@@ -47,8 +47,10 @@ UNROUTABLE_BOOKS = {
 MARKUP_RE = re.compile(r"''+|={2,}|\{\{[^{}]*\}\}|\{\||\|\}|\|")
 
 # 下限守卫（2026-10-06m 基线）：低于即判败，改基线须在 CHANGELOG 登记理由
-MIN_FILES_WITH_QUOTES = 4
-MIN_QUOTES_TOTAL = 380
+# 2026-10-09 scope-reduction：4→3 份 / 380→341 条 —— 差额正是随范围收缩删除的
+# 已删学科案例文件（zeji/xiaoliuren 等），非扫描面被意外挪动（逐条比对见 CHANGELOG）。
+MIN_FILES_WITH_QUOTES = 3
+MIN_QUOTES_TOTAL = 341
 
 
 def normalize(text: str) -> str:

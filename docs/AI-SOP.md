@@ -42,20 +42,13 @@
 |---|---|---|
 | `liuyao` 六爻 | `discipline`，`question`（所问之事） | `datetime`（给定则按时间起卦，格式 `YYYY-MM-DD HH:MM`；不给则随机摇钱）、`mode`（coin/time/number/manual）、`numbers`（数字起卦 `a,b,c`）、`yao`（manual 模式 6 个爻值 `7,8,9,7,6,8`）、`longitude` |
 | `ming` 四柱八字 | `discipline`，`datetime`（出生公历 `YYYY-MM-DD HH:MM`），`gender`（男/女） | `longitude`（真太阳时）、`question` |
-| `ziwei` 紫微斗数 | `discipline`，`datetime`，`gender` | `longitude` |
-| `meihua` 梅花易数 | `discipline`，`question` | `datetime`（不给则用当前时间）、`way`（datetime/numbers/lunar/two_numbers/manual）、`numbers`（way=numbers 时按"年数,月数,日数"） |
-| `xiaoliuren` 小六壬 | `discipline`，`question` | `datetime`、`way`（datetime/numbers/lunar/month_day_hour）、`numbers`、`activity`（事类）、`hour_branch`、`direction`（目标方位） |
-| `zeji` 择吉 | `discipline`，`date`（`YYYY-MM-DD`，也接受 `2026/09/30`），`activity`（如 开市/嫁娶） | `question`、`hour_branch`（时支） |
-| `liuren` 大六壬（骨架科） | `discipline`，`datetime`（起课时刻，月将加时），`question` | — |
-| `lingqi` 灵棋经 | `discipline`，`up`、`mid`、`down`（十二棋三部掷面数，各 0–4 整数），`question` | — |
 
 > 一卦一事：同一问题不重复占卜；用户换实质角度（换用神、换层面、比较两人、
 > 假设未来）应建议另起一次，不要在原报告里硬推。
 
-> **口径（转述这两科时必须保持）**：`liuren` 是**骨架科**——报告只给月将加时／
-> 九宗门三传／天将乘临的**机械结构标签**，**无吉凶断语**、无应期断言，不得转述成
-> "事情会怎样"；`lingqi` 的断语是《靈棋經》原文**逐字直录**（无书外发挥），
-> 是古籍断语而非现实预言。
+> **口径（转述这两科时必须保持）**：命科（八字）与卜科（六爻）均为机械推演，报告结论
+> 一律由引擎产出，不得让 LLM 心算或替用户下"注定会怎样"的断言；分数为古籍案例对齐分，
+> 不代表现实命中率（铁律三）。
 
 > 表外取值会被**明确拒绝**（报错退非 0），不会静默改方式。若你给的 `way`/`mode`
 > 不在上表，请照上表改正后重试，不要反复重发同一个请求。
@@ -224,7 +217,7 @@ reports/index.json                      ← 各科最近一次的时间/run/相�
 BASE="https://raw.githubusercontent.com/OWNER/REPO/reports"
 curl -s "$BASE/liuyao/latest.md"                 # 六爻最近一次报告
 curl -s "$BASE/liuyao/latest.html" -o report.html
-curl -s "$BASE/index.json"                       # 八科各自最近一次
+curl -s "$BASE/index.json"                       # 两科各自最近一次
 ```
 
 `raw.githubusercontent.com` 是静态 CDN，**不占 REST API 额度**、无需 Token。

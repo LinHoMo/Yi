@@ -38,13 +38,6 @@ CASES = (
     {"discipline": "liuyao", "question": "占求财", "mode": "manual",
      "datetime": "2026-09-22 23:40", "yao": "7,8,9,7,6,8"},
     {"discipline": "ming", "datetime": "1990-05-20 10:30", "gender": "男"},
-    {"discipline": "ziwei", "datetime": "1990-05-20 10:30", "gender": "女"},
-    {"discipline": "meihua", "question": "占投资", "datetime": "2026-09-30 10:30"},
-    {"discipline": "xiaoliuren", "question": "占出行", "datetime": "2026-09-30 10:30"},
-    {"discipline": "zeji", "date": "2026-09-30", "activity": "开市"},
-    {"discipline": "meihua", "question": "占失物", "way": "numbers", "numbers": "3,5,7"},
-    {"discipline": "xiaoliuren", "question": "占寻人", "way": "numbers", "numbers": "7,7,2"},
-    {"discipline": "zeji", "date": "2026/09/30", "activity": "嫁娶"},
 )
 
 MIN_HANZI = 8

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""金标准指纹共享壳：八科 dev_tools/golden.py 共用的 capture/verify 逻辑。
+"""金标准指纹共享壳：八字·六爻两科 dev_tools/golden.py 共用的 capture/verify 逻辑。
 
 指纹分两层（SYS-REVIEW #2，2026-10-01l）：
   机械层 digest      —— fingerprint() 输出中除 narrate_* 外的全部字段；只准机械重构
@@ -61,7 +61,7 @@ def _diff_summary(before: list[dict], after: list[dict]) -> list[tuple[str, list
 def run(disc_name: str, what: str, how: str,
         fingerprint: Callable[[], list[dict]], *,
         out: Path, digest_path: Path) -> int:
-    """八科 golden.py 的 main 主体。capture 必须给理由；verify 漂移退出码 1。"""
+    """两科 golden.py 的 main 主体。capture 必须给理由；verify 漂移退出码 1。"""
     from yishu_core.runtime import force_utf8_stdio
 
     force_utf8_stdio()

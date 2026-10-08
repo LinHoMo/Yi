@@ -75,10 +75,11 @@ DEFAULT_ROOT = Path(__file__).resolve().parents[1]
 # 四段契约的解读入口（解读路径的起点）
 CONTRACT_ENTRIES = ("chart.py", "analyze.py", "narrate.py", "render.py")
 
-# 下限守卫基线（2026-10-08 实测：解读闭包 ∪ 八科 scripts/ 直扫，去掉评测运行器白名单 = 76 模块）
+# 下限守卫基线（2026-10-08 实测：解读闭包 ∪ 两科 scripts/ 直扫，去掉评测运行器白名单 = 76 模块）
+# 2026-10-09 更新：收缩为两科（ming/liuyao）后，实测基线调整为 2 学科 / 46 模块。
 # 取值低于现值、高于"门坏了却全绿"的区间；改扫描范围时必须同步这两个数并登记 CHANGELOG。
-MIN_DISCIPLINES_SCANNED = 8
-MIN_MODULES_SCANNED = 70
+MIN_DISCIPLINES_SCANNED = 2
+MIN_MODULES_SCANNED = 46
 
 # 铁律二允许的"测试/评测运行器"落点（白名单，最小集）
 ALLOWED_READER_BASENAMES = {"case_runner.py", "evaluate.py"}
@@ -387,12 +388,6 @@ PROBE_REQUESTS = {
     "liuyao": {"discipline": "liuyao", "question": "占本周面试能否通过",
                "mode": "time", "datetime": "2026-09-30 10:30"},
     "ming": {"discipline": "ming", "datetime": "1990-05-20 10:30", "gender": "男"},
-    "meihua": {"discipline": "meihua", "question": "占投资", "datetime": "2026-09-30 10:30"},
-    "xiaoliuren": {"discipline": "xiaoliuren", "question": "占出行",
-                   "datetime": "2026-09-30 10:30"},
-    "zeji": {"discipline": "zeji", "date": "2026-09-30", "activity": "开市"},
-    "liuren": {"discipline": "liuren", "question": "占合作",
-               "datetime": "2026-09-30 10:30", "gender": "男"},
 }
 DEFAULT_PROBE = ("ming", "liuyao")
 

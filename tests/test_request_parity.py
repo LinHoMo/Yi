@@ -60,10 +60,6 @@ class TestEntryParity:
          "datetime": "2026-09-30 10:30"},
         {"discipline": "ming", "question": "命盘", "datetime": "1990-05-20 10:30",
          "gender": "男"},
-        {"discipline": "meihua", "question": "占投资", "way": "numbers",
-         "numbers": "3,5,7"},
-        {"discipline": "zeji", "date": "2026-09-30", "activity": "开市"},
-        {"discipline": "lingqi", "up": 2, "mid": 1, "down": 3, "question": "占问"},
     ]
 
     def test_normalize_is_entry_independent(self) -> None:
@@ -75,20 +71,6 @@ class TestEntryParity:
             # 归一化输出只含白名单字段（无入口私有字段混入）
             assert set(a) <= set(REQUEST_FIELDS)
 
-    def test_date_alias_same_argv(self) -> None:
-        """同一日期的等价写法（CLI 习惯 / 深链习惯）→ 同一 chart argv。
-
-        日期别名归一发生在 argv 构建层（request.norm_date），不在
-        normalize_request——语义 parity 的断言点是解析后日期与 argv 一致。
-        """
-        from yishu_core.report.request import norm_date
-        r1 = normalize_request({"discipline": "zeji", "date": "2026/09/30",
-                                "activity": "开市"})
-        r2 = normalize_request({"discipline": "zeji", "date": "2026.9.30",
-                                "activity": "开市"})
-        assert norm_date(r1["date"]) == norm_date(r2["date"])
-        assert chart_argv(r1, "chart.py", "o.json") == chart_argv(r2, "chart.py", "o.json")
-
     def test_equivalent_forms_same_argv(self) -> None:
         """显式给默认值 vs 缺省 → 同一 argv（mode/way 默认逻辑单点在 request.py）。"""
         r1 = normalize_request({"discipline": "liuyao", "question": "q",
@@ -98,7 +80,7 @@ class TestEntryParity:
         assert chart_argv(r1, "chart.py", "o.json") == chart_argv(r2, "chart.py", "o.json")
 
     def test_actions_extra_json_fields_are_request_fields(self) -> None:
-        """通道 B 的 extra 高级字段（mode/numbers/way/date/activity）都在
+        """通道 B 的 extra 高级字段（mode/numbers/date/activity）都在
         REQUEST_FIELDS 白名单内——三条通道共用同一字段宇宙。"""
         for f in ("mode", "numbers", "way", "date", "activity",
                   "datetime", "gender", "question", "discipline"):
@@ -126,13 +108,6 @@ class TestDeeplinkSemanticParity:
         via_deeplink = normalize_request(_apply_deeplink(query))
         full = normalize_request({"discipline": "ming", "datetime": "1990-05-20 10:30",
                                   "gender": "男"})
-        assert via_deeplink == full
-
-    def test_deeplink_zeji_parity(self) -> None:
-        query = "d=zeji&date=2026-09-30&activity=开市"
-        via_deeplink = normalize_request(_apply_deeplink(query))
-        full = normalize_request({"discipline": "zeji", "date": "2026-09-30",
-                                  "activity": "开市"})
         assert via_deeplink == full
 
     def test_deeplink_discipline_shortkey_required(self) -> None:

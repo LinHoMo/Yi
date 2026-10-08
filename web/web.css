@@ -901,8 +901,8 @@ html.reveal-ready .hero .ls-num text:nth-child(9) { animation-delay: 1.11s; }
   :root { --fs-body: 16px; }
   body { line-height: 1.85; }
   .brand-sub { display: none; }
-  /* 八科页签在窄屏换行铺满：单行横滑条会把后几科藏到屏幕外，
-     连滚动条都被隐藏，反而让人找不到——换成换行后八科一屏可见。 */
+  /* 两科页签在窄屏换行铺满：单行横滑条会把后几科藏到屏幕外，
+     连滚动条都被隐藏，反而让人找不到——换成换行后两科一屏可见。 */
   .tabs { gap: var(--s1) var(--s2); }
   .tab { flex: none; padding: 6px 12px; font-size: var(--fs-xs); }
   .result-actions a, .result-actions button { flex: 1 1 auto; text-align: center; }

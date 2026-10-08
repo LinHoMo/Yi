@@ -1,6 +1,6 @@
 # Yi
 
-> 中国传统术数统合引擎：命（四柱八字 / 紫微斗数）+ 卜（六爻纳甲 / 梅花易数 / 小六壬 / 择吉 / 大六壬骨架 / 灵棋经），八科建在同一份内核与四段契约（chart→analyze→narrate→render）上，支持跨科合参。
+> 中国传统术数双科系统：**命**（四柱八字）+ **卜**（六爻纳甲）。两科建在同一份内核与四段契约（chart→analyze→narrate→render）上，由 `synthesis/` 做**命卜合参**。
 >
 > 给 AI 的取用原则：**不要通读本仓库**。先读下面的"核心入口"，按 `docs/AI-SOP.md` 通道 A（GitHub Pages + Pyodide，零凭证）或通道 B（云端 Actions）触发引擎出报告；推演一律由 Python 引擎完成，禁止 LLM 心算排盘。
 
@@ -10,20 +10,13 @@
 |---|---|---|---|
 | 六爻纳甲 liuyao | ✓ | ✓ | ✓ |
 | 四柱八字 ming | ✓ | ✓ | ✓ |
-| 紫微斗数 ziwei | ✓ | ✓ | ✓ |
-| 梅花易数 meihua | ✓ | ✓ | ✓ |
-| 小六壬 xiaoliuren | ✓ | ✓ | ✓ |
-| 择吉 zeji | ✓ | ✓ | ✓ |
-| 大六壬骨架 liuren | ✓ | ✓ | ✓ |
-| 灵棋经 lingqi | ✓ | ✓ | ✓ |
 
-- 通道 A 站点挂载**全部八科**（`tools/build_web.py` 的 `DISCIPLINE_META`，构建期 fail-fast
+- 通道 A 站点挂载**两科**（`tools/build_web.py` 的 `DISCIPLINE_META`，构建期 fail-fast
   校验它落在 `request.DISCIPLINES` 内；另与 `web/engine_runtime.py` 的 `WEB_DISCIPLINES`
   同口径）。本地 CLI、通道 A、通道 B 的学科集合一致，无落差。
-- 八科的 `scripts/` 目录**同名**（每科都有 `chart.py`），浏览器内同进程连跑由
+- 两科的 `scripts/` 目录**同名**（每科都有 `chart.py`），浏览器内同进程连跑由
   `web/engine_runtime._isolate` 清 `sys.modules` + 重排 `sys.path` 隔离，别动那段。
-- 口径：liuren 是**骨架科**，只出月将加时／九宗门三传／天将乘临的机械结构标签，**无吉凶断语**；
-  lingqi 断语为《靈棋經》原文**逐字直录**，无书外发挥。两者都不得被转述成断事结论。
+- 两口均为古籍案例对齐评测（classical_holdout），六爻另有 yingqi_holdout + external_holdout。
 - 本表由四道门共同看住，任一处漂移即红：① `tools/check.py` 的矩阵锁（本表逐行 ↔ `DISCIPLINE_META`）；
   ② `tools/build_web.py` 构建期 fail-fast（`DISCIPLINE_META` ⊆ `request.DISCIPLINES`）；
   ③ `tools/verify_web_parity.py` 的覆盖不变式（同源验收正例覆盖集合 ≡ 站点挂载集合）；
@@ -36,11 +29,9 @@
   **评测基线**（classical_holdout / external_holdout / mechanical_regression / source_only /
   unassessed）的唯一真值源是 `core/yishu_core/execution/registry.py`（机器可读，
   `capability_matrix()`）。本文件只登记出报告通道，**不复制评测状态**。
-  口径要点（与注册表同源，改动以它为准）：liuren 为机械骨架（mechanical_only，
-  不得当成完整吉凶能力）；lingqi 为书源直录（source_only，不得把原文解释成独立
-  预测结论）；liuyao / ming / meihua 有古籍案例对齐评测，ziwei / xiaoliuren / zeji /
-  liuren 只有机械自洽回归——各科成熟度**不同**，报分必带集合名 + n + 是否调参
-  （读数唯一权威源 `docs/HANDOFF.md` §一）。
+  口径要点（与注册表同源，改动以它为准）：liuyao / ming 均有古籍案例对齐
+  （classical_holdout），分数 = 古籍案例对齐分，不代表现实预测命中率，报分必带
+  集合名 + n + 是否调参（读数唯一权威源 `docs/HANDOFF.md` §一）。
 - **Agent 稳定入口**（`core/yishu_core/agent.py`，五入口）：`capabilities()` /
   `validate_request()` / `run_report(rt, req)` / `get_evidence(rt, req)` /
   `get_evaluation_status(disc)`。可跑 Python 的 Agent 走这五个函数即可，
@@ -48,7 +39,7 @@
 - **证据链**：结构化证据契约在 `core/yishu_core/evidence.py`（analyze 输出的派生视图，
   每条证据带 rule_id / 出处 / 适用条件 / 观察事实 / 评测状态；envelope 另带
   `claim_policy` 断言边界——本次证据组合允许说到什么程度）；规则注册表在
-  `disciplines/{liuyao,ming,meihua}/data/rules/rule_registry.json`（rule_id → 书源引文
+  `disciplines/{liuyao,ming}/data/rules/rule_registry.json`（rule_id → 书源引文
   指针 / 适用条件 / 规则级评测覆盖——挂接时状态以注册表为准，可升可如实降级）；
   canonical 反馈模型在 `core/yishu_core/feedback.py`（synthesis 与六爻两条反馈链经
   同一 adapter 折叠，真实/合成数据强制分离）；跨科概念映射注册表
@@ -68,23 +59,11 @@
 
 - [skills/liuyao（六爻纳甲）](skills/liuyao/SKILL.md)
 - [skills/ming（四柱八字）](skills/ming/SKILL.md)
-- [skills/ziwei（紫微斗数）](skills/ziwei/SKILL.md)
-- [skills/meihua（梅花易数）](skills/meihua/SKILL.md)
-- [skills/xiaoliuren（小六壬）](skills/xiaoliuren/SKILL.md)
-- [skills/zeji（择吉通书）](skills/zeji/SKILL.md)
-- [skills/liuren（大六壬骨架）](skills/liuren/SKILL.md)
-- [skills/lingqi（灵棋经）](skills/lingqi/SKILL.md)
 
 ## 学科详细规程（skills 层的被引目标）
 
 - [disciplines/liuyao/SKILL.md](disciplines/liuyao/SKILL.md)
 - [disciplines/ming/SKILL.md](disciplines/ming/SKILL.md)
-- [disciplines/ziwei/SKILL.md](disciplines/ziwei/SKILL.md)
-- [disciplines/meihua/SKILL.md](disciplines/meihua/SKILL.md)
-- [disciplines/xiaoliuren/SKILL.md](disciplines/xiaoliuren/SKILL.md)
-- [disciplines/zeji/SKILL.md](disciplines/zeji/SKILL.md)
-- [disciplines/liuren/SKILL.md](disciplines/liuren/SKILL.md)
-- [disciplines/lingqi/SKILL.md](disciplines/lingqi/SKILL.md)
 
 ## 状态与规划（AI 一般不需要读）
 

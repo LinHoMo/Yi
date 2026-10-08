@@ -163,8 +163,8 @@ case 的 `expected` 字段实际填充率：`detail` 117、`verdict` 96、`yingq
 
 ## 三、梅花 / 小六壬 / 择吉——三科**评测不可信**，先修尺子
 
-现状（2026-09-30 逐例审计**已完成**，全文见各科 `docs/EVAL-AUDIT.md`，一键复核
-`python tools/eval_audit_recheck.py`）：三科 tune/holdout 的 100% 是**规则自洽回归数**，
+现状（2026-09-30 逐例审计**已完成**；复核工具 eval_audit_recheck.py（已移除）
+已随范围收缩移除）：三科 tune/holdout 的 100% 是**规则自洽回归数**，
 不是古籍案例对齐分——expected 与引擎同源（梅花自洽项 70/100 权重、holdout 5 例按本仓
 规则表构造；小六壬四维 100/100 权重全查同一张表；择吉 16/16 与 `analyze()` 逐字段全等，
 古籍日例应验 0 例）。梅花 MH014–MH018 为硬泄漏：expected 出自 `verdicts.json#multi_move_rules`，
@@ -173,7 +173,7 @@ case 的 `expected` 字段实际填充率：`detail` 117、`verdict` 96、`yingq
 **优先级高于任何推演增强**：
 
 1. ~~独立审计~~ ✅ 已完成（2026-09-30）：结论落三科 `docs/EVAL-AUDIT.md`，逐例
-   `provenance` 入 cases，复核工具 `tools/eval_audit_recheck.py`。
+   `provenance` 入 cases；复核工具已随三科一并移除（范围收缩，历史留档见 CHANGELOG）。
 2. ~~分数呈现口径~~ ✅ 已落地：三科 `evaluate.py` 报分自动打印 `[口径披露]`
    （集合名 / n / 是否调参 / 自洽项 / 泄漏警告）；**n<20 不发百分比**，改打逐维度命中数。
 3. **唯一剩余有效动作：扩外部独立案例**（古书原文、非本项目构造；范式照六爻
@@ -182,7 +182,7 @@ case 的 `expected` 字段实际填充率：`detail` 117、`verdict` 96、`yingq
 
 ---
 
-## 四、新门类（见 `docs/NEW-DISCIPLINES.md`）
+## 四、新门类（见 `archive/NEW-DISCIPLINES.md`）
 
 - 推荐落地顺序：**大六壬 → 奇门遁甲（时家转盘）→ 七政四余**；备选灵棋经、大衍筮法。
 - 判据：古书出处可编程取用 / 判据树清晰 / 内核复用度高 / 可建评测集 / 可合参。

@@ -1,16 +1,28 @@
 {
   "_meta": {
     "what": "request.py 输入协议指纹基线（normalize_request 正/负例逐字段）",
-    "how": "改动输入协议后跑 python tools/request_protocol_golden.py capture \"理由\"；与八科 golden 同价，防协议漂移只被同源验收间接发现"
+    "how": "改动输入协议后跑 python tools/request_protocol_golden.py capture \"理由\"；与两科 golden 同价，防协议漂移只被同源验收间接发现"
   },
-  "digest": "70b6244d7c869ddf",
-  "narrate_digest": "dc933251dc9df30a",
+  "digest": "4192932561994f4d",
+  "narrate_digest": "2be778291a412d45",
   "drift_log": [
     {
       "from": null,
       "to": "70b6244d7c869ddf",
       "date": "2026-10-01",
       "reason": "初始基线：输入协议指纹（SYS-REVIEW#4，正例8+负例4）"
+    },
+    {
+      "from": "70b6244d7c869ddf",
+      "to": "1f5addeb03ef6107",
+      "date": "2026-10-08",
+      "reason": "scope-reduction-2026-10-09"
+    },
+    {
+      "from": "1f5addeb03ef6107",
+      "to": "4192932561994f4d",
+      "date": "2026-10-08",
+      "reason": "scope-reduction-2026-10-09 (round2): 协议用例集收敛为六爻2正例+八字1正例+3负例，删去 ziwei/meihua/xiaoliuren/zeji/lingqi 五条已删学科用例"
     }
   ],
   "narrate_drift_log": [
@@ -19,6 +31,18 @@
       "to": "dc933251dc9df30a",
       "date": "2026-10-01",
       "reason": "初始基线：输入协议指纹（SYS-REVIEW#4，正例8+负例4）"
+    },
+    {
+      "from": "dc933251dc9df30a",
+      "to": "bde003509463fe5b",
+      "date": "2026-10-08",
+      "reason": "scope-reduction-2026-10-09"
+    },
+    {
+      "from": "bde003509463fe5b",
+      "to": "2be778291a412d45",
+      "date": "2026-10-08",
+      "reason": "scope-reduction-2026-10-09 (round2): 协议用例集收敛为六爻2正例+八字1正例+3负例，删去 ziwei/meihua/xiaoliuren/zeji/lingqi 五条已删学科用例"
     }
   ]
 }

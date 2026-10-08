@@ -3,7 +3,7 @@
 
 为什么需要这一层：
   * Yi 的学科脚本彼此用**裸模块名**互相 import（`from chart import ...`），
-    而八科的 scripts/ 目录**同名**（每科都有 chart.py）。同一个解释器里连着跑两科
+    而两科的 scripts/ 目录**同名**（每科都有 chart.py）。同一个解释器里连着跑两科
     会互相遮蔽——实测：先跑六爻再跑小六壬，小六壬的 `from chart import PALACES`
     拿到的是六爻的 chart。所以跑某科之前必须把别的学科模块清出 sys.modules。
   * Pyodide 没有 subprocess，`tools/report.py` 那种"分步起子进程"跑不了，
@@ -27,10 +27,8 @@ import traceback
 from pathlib import Path
 
 # web 通道支持的学科：与 tools/build_web.py 的 DISCIPLINE_META 同口径，
-# 也与本地 CLI / 通道 B 的学科集合一致——通道 A 挂载**全部八科**。
-# （八科的 scripts/ 目录同名，跑某科前必须 _isolate 清掉别科模块，见下。）
-WEB_DISCIPLINES = ("liuyao", "ming", "ziwei", "meihua", "xiaoliuren", "zeji",
-                   "liuren", "lingqi")
+# 也与本地 CLI / 通道 B 的学科集合一致——通道 A 挂载两科（liuyao/ming）。
+WEB_DISCIPLINES = ("liuyao", "ming")
 
 RUNTIME_LABEL = "浏览器内 Pyodide"
 
@@ -198,18 +196,6 @@ DEMO = {
     "liuyao": {"discipline": "liuyao", "question": "自检占", "mode": "time",
                "datetime": "2026-09-30 10:30"},
     "ming": {"discipline": "ming", "datetime": "1990-05-20 10:30", "gender": "男"},
-    "ziwei": {"discipline": "ziwei", "datetime": "1990-05-20 10:30", "gender": "男"},
-    "meihua": {"discipline": "meihua", "question": "自检占",
-               "datetime": "2026-09-30 10:30"},
-    "xiaoliuren": {"discipline": "xiaoliuren", "question": "自检占",
-                   "datetime": "2026-09-30 10:30"},
-    "zeji": {"discipline": "zeji", "date": "2026-09-30", "activity": "开市"},
-    # 骨架科：只出机械结构标签，无吉凶断语（口径见 tools/build_web.py 的 caveat）
-    "liuren": {"discipline": "liuren", "question": "自检占",
-               "datetime": "2026-09-30 10:30"},
-    # 查表直录类：三部掷面数各 0..4（缺一即拒）
-    "lingqi": {"discipline": "lingqi", "question": "自检占",
-               "up": 2, "mid": 1, "down": 3},
 }
 
 

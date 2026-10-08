@@ -4,8 +4,7 @@
   python tools/verdict_consumption.py            # 报告零消费键（始终退出 0）
   python tools/verdict_consumption.py --strict   # 白名单外零消费键判失败
 
-verdict_audit 保证「报告里的句子 ⊆ 语料池」，不保证「语料池 ⊆ 被消费」——
-ziwei 命宫格局整块文案零消费却全绿过门（2026-10-01k 手工排查才发现）。
+verdict_audit 保证「报告里的句子 ⊆ 语料池」，不保证「语料池 ⊆ 被消费」。
 本工具把「发现死语料」机械化：跑同一批真实报告（与 verdict_audit 同源 10 例），
 对本科 data/**/*.json 的每个叶子中文串（≥8 汉字）做消费检查。
 
@@ -41,25 +40,10 @@ EXTRA_CASES = (
     {"discipline": "ming", "datetime": "1984-02-10 10:00", "gender": "男"},
     {"discipline": "ming", "datetime": "1996-11-11 22:00", "gender": "男"},
     {"discipline": "ming", "datetime": "2000-08-15 14:00", "gender": "女"},
-    {"discipline": "ziwei", "datetime": "1968-03-15 01:00", "gender": "男"},
-    {"discipline": "ziwei", "datetime": "1984-02-04 08:00", "gender": "女"},
-    {"discipline": "ziwei", "datetime": "2000-08-15 14:00", "gender": "男"},
-    {"discipline": "meihua", "question": "占天气", "datetime": "2026-07-15 12:00"},
-    {"discipline": "meihua", "question": "占婚姻", "way": "numbers", "numbers": "2,4,6"},
-    {"discipline": "xiaoliuren", "question": "占求财", "datetime": "2026-09-30 10:30"},
-    {"discipline": "xiaoliuren", "question": "占婚姻", "way": "numbers", "numbers": "4,8,3"},
-    {"discipline": "zeji", "date": "2026-10-15", "activity": "安葬"},
     {"discipline": "liuyao", "question": "占天气何时有雨", "mode": "time",
      "datetime": "2026-07-15 10:30"},
     {"discipline": "liuyao", "question": "占官司输赢", "mode": "manual",
      "datetime": "2026-09-22 23:40", "yao": "7,7,8,8,9,7"},
-    # 通道 A 已挂八科（2026-10-01），消费审计同步覆盖两个骨架科：
-    #   liuren 起课=月将加时，必须给起课时刻
-    #   lingqi 起课=十二棋三部掷数，up/mid/down 各 0..4（0 是合法面数，缺一即无课）
-    {"discipline": "liuren", "question": "占出行", "datetime": "2026-09-30 10:30"},
-    {"discipline": "liuren", "question": "占求财", "datetime": "2026-10-01 09:00"},
-    {"discipline": "lingqi", "question": "占求财", "up": 2, "mid": 1, "down": 3},
-    {"discipline": "lingqi", "question": "占疾病", "up": 4, "mid": 4, "down": 4},
 )
 CASES = tuple(CASES) + tuple(EXTRA_CASES)
 
@@ -72,17 +56,9 @@ EXCLUDE_DIRS = {"cases", "feedback", "golden", "scratch"}   # 产物/评测库�
 # （2026-10-02 修正：旧实现拿键段去 match 文件路径，永远不命中——白名单名存实亡。）
 ALLOWLIST: dict[str, str] = {
     # —— 元数据 / 口径声明（写给人看，不渲染进报告）——
-    "zeji/expansion_path_ref": "元数据：扩样路径声明，非报告文案",
-    "zeji/validity_gap": "元数据：效度缺口声明（黑箱性质与禁止事项），非报告文案",
-    "zeji/citations_ref": "指针：书证档案位置声明，非报告文案",
-    "zeji/source_gap_ref": "指针：缺书与处置声明，非报告文案",
-    "zeji/basis_pengzu": "口径注：彭祖百忌所本注记；渲染正文直接列 items，不引用此引导",
     "liuyao/_meta": "元数据：verdict_texts 文件内说明（外置范围登记），非渲染文案",
     "liuyao/shensha_policy": "口径政策文档：星煞不进主分的古籍依据（HANDOFF/TECH-DEBT 引用），非渲染文案",
     "liuyao/verified_note": "口径注：判据验证状态注记（如三传克制「未验证」），只登记不渲染",
-    "xiaoliuren/topic_coverage": "元数据：事类×宫位覆盖矩阵说明，非渲染文案",
-    "liuren/charter": "口径章程：乘临/课目只出结构标签的边界声明，非渲染文案",
-    "meihua/classics_ref": "指针：古籍引文档案位置声明，非报告文案",
     # —— 未接线书源内容（有出处、暂无呈现路径；接线上报告前先登记）——
     "liuyao/virtue": "六神性质列（六神所主/所忌，书源归纳）：呈现路径未建，暂不渲染",
     "liuyao/caution": "六神性质列（临忌神/仇神之忌）：同上，未接线",
@@ -113,7 +89,7 @@ def corpus_entries(disc: str) -> list[tuple[str, str]]:
     """学科 data/**/*.json 的叶子中文串 → [(键路径, 汉字串)]。
 
     键路径形如 `disc/data/verdicts.json#/narrate_phrases/open_ping`——ALLOWLIST
-    既可按文件段（`zeji/validity_gap`）也可按键段（`liuyao/verified_note`）登记。
+    既可按文件段（如 `liuyao/_meta`）也可按键段（`liuyao/verified_note`）登记。
     """
     base = ROOT / "disciplines" / disc / "data"
     entries: list[tuple[str, str]] = []

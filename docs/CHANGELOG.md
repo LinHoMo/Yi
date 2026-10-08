@@ -1,3 +1,100 @@
+### 2026-10-09 范围收缩终局：项目正式收敛为「四柱八字 + 六爻」两科
+
+**起因**：项目此前名义上覆盖"八科"，但运行期真值（`report/request.py::DISCIPLINES`）
+一直只有 `liuyao`/`ming`；其余六科（紫微斗数/梅花易数/小六壬/择吉/大六壬/灵棋经）
+要么只是骨架、要么只有查表断语，且**从未真正进入过产品面**。本次把这一长期
+"名义范围 vs 实际范围"的错位正式收敛：删除六科 + 相应资料库，文档与门禁口径统一为两科。
+
+#### 一、范围变更（§二 删除清单生效）
+
+- **保留两科**：`disciplines/liuyao/`（六爻）、`disciplines/ming/`（四柱八字），
+  以及两科共用的 `core/`、`synthesis/`、`cli/`、`web/`、`tests/`、`tools/`、`docs/`。
+- **删除六科**：`ziwei`（紫微斗数）、`meihua`（梅花易数）、`xiaoliuren`（小六壬）、
+  `zeji`（择吉）、`liuren`（大六壬）、`lingqi`（灵棋经）。
+  连带删除其资料库（`modernized/` 分科目录、`data/sources/` 分科底本、
+  `docs/source-readings/` 分科解读、`archive/` 分科文档）——依§八"全部删除"，
+  **历史由 git 保留**（`git log`/`git show` 可完整还原，不另留文件副本）。
+- **保留术数通纲共享理论**：`none_tonggang`（《皇极经世》/《五行大义》）属义理/象数
+  背景理论而非占筮断事书，不随分科删除（`docs/source-readings/` 内解读文档留档）。
+
+#### 二、合参层重定义（§五）
+
+`synthesis/` 的"跨科合参"由"命 ∪ 卜 == 八科"重定义为 **"命科（ming）∪卜科（liuyao）
+== 两科且不相交"**。归一化/交叉规则/概念映射的口径与断言同步收敛
+（`cross_rules.py`、`person.py`、`normalize.py`）。
+
+#### 三、依赖审计先行（§三"不猜，查真实依赖再决定"）
+
+删除前先静态核实"无活跃 import 引用"，确认被删core 表（`ziwei_tables`/`liuren_tables`/
+`zeji_tables`/`xingli_tables`）只被已删学科引用、运行期无一处import，才执行删除。
+
+#### 四、门禁基线随范围调整（逐条登记理由）
+
+| 门 | 变更 | 理由 |
+|---|---|---|
+| `[1f]` 输入协议指纹 | `capture` 重捕：`1f5addeb…` → `41929325…` | 协议 golden 用例集删去 ziwei/meihua/xiaoliuren/zeji/lingqi 五条已删学科用例，剩 6 条（六爻2正例+八字1正例+3负例）。**协议语义零变更**，只是锁定面收窄 |
+| `[1k]` 案例引文逐字性 | 下限 `4份/380条` → `3份/341条` | 差额正是随范围收缩删除的已删学科案例文件；逐条比对确认剩余 3 份（ming_bing_yao_cases / ming_classical_cases / ming_external_cases）引文全部逐字通过，非扫描面意外 |
+| `[1g]` 案例隔离门 | 下限 `学科数<2 / 模块数<46` | 两科现实规模（liuyao 43 + ming 7 = 50 模块 ≥ 46；core 26 文件 ≥ 8），下限守卫防"扫空冒充通过"仍有效 |
+| `[1b-2]` 文档死链 | 真死链 **17 处 → 0 处** | 见下"五、死链收口" |
+
+#### 五、死链收口（17 → 0）
+
+范围收缩使被删文件不再存在，导致活跃文档出现 17 处死链。逐条按根因修复，**未使用
+"加豁免"或"改判定"的方式绕过**：
+
+1. `archive/NEW-DISCIPLINES.md`（9 处引用）：该文件是工作区遗留、从未入git，
+   上轮清理 `archive/` 时被删。补写为**归档存根**（记录五门类各自的终局处置与
+   "相科不做、不预留目录"判定原则），一次修好 9 处引用。
+2. `tools/eval_audit_recheck.py`（3 处）：该复核工具随三科一并删除（其审计对象
+   梅花/小六壬/择吉 已不存在）。引用改写为"工具已随范围收缩移除"，并去掉反引号
+   路径形态（死链门会把反引号包裹的 `tools/xxx` 判为路径引用）。
+3. `core/yishu_core/ziwei_tables.py`（1 处）：紫微表已删，
+   `source-readings/wenwang_jinqianke_dz.md` 的对勘引用改写为"该科已随范围收缩移除，
+   异文登记见 CHANGELOG"，保留异文事实但不指向已删文件。
+4. `archive/source-readings/wenwang_jinqianke_dz.md`（1 处）：路径纠错——文件已移回
+   `docs/source-readings/`，`TECH-DEBT.md` 引用同步纠正。
+5. 已删学科自有文档（3 份）：`docs/liuren-koujing-diff.md`（大六壬）、
+   `docs/references/jiaoshi_yilin_*.md`（焦氏，2 份）属已删学科的活跃文档，
+   按 §八 `git mv` 移入 `archive/discipline-docs/`。archive/ 不在死链扫描面，
+   其内部对已删脚本（`dev_tools/parse_tuo.py`）与已删解读文档的引用不再误判为死链。
+
+#### 六、文档口径统一（§十"两科"幻影清除）
+
+`README.md`/`AGENTS.md`/`SKILL.md`/`llms.txt`/`CONTRACT.md`/`AI-SOP.md`/
+`ARCHITECTURE.md`/`HANDOFF.md`/`TECH-DEBT.md`/`PROMPTS.md`/`web/` 全部改为两科口径：
+- 删除六科的 CLI 示例、评测读数、"八科/全科"表述；
+- `tools/` 内对已删学科的 golden 用例、打分消费白名单、演示脚本同步清理；
+- `web/index.html`/`web.css`/`engine_runtime.py` 文案改两科；
+- **保留为历史记录不动**（§七git 保留历史）：`CHANGELOG.md` 全部历史条目、
+  `HANDOFF.md` 中显式标注"彼时仍八科/读数曾为八科"的回溯注、
+  `TECH-DEBT.md` 中已清偿债务的历史叙述、`modernized/LEDGER.md` 与
+  `docs/source-readings/INDEX.md` 的书目台账、`docs/samples/NEW-DISCIPLINES.html` 快照。
+
+#### 七、验收（§十一）
+
+- `python -m pytest tests -q` → **340 passed**
+- `python tools/check.py --full` → **EXIT=0，仓库级质量门全部通过**（41 段全绿）
+- 运行期真值复核：`report/request.py::DISCIPLINES == ("liuyao","ming")`（本就正确，
+  本次未改运行期逻辑，范围收敛的是磁盘形态与文档口径）
+
+#### 八、本 commit 的入库边界（pre-push audit 修正）
+
+首版候选 commit因 `git add -A` 连带扫入**提交前已存在于工作区、但从未被 Git 追踪**
+的本地资料层，经 pre-push 审查后剔除，不予入库：
+
+- `modernized/`（77 文件 / 18.5 万行）：古籍现代化研究语料，**当前是研究语料而非
+  Yi 运行时资产**，与正式 runtime 面保持隔离。是否长期入库另行决策。
+  （注：本次内容检查**未发现明显第三方源码或许可证污染迹象**；但这不等于证明
+  全部文本的版权状态，具体仍以其来源声明与项目使用政策为准。）
+- `docs/audits/`（6 文件）：审计报告属证据层，其中灵棋经那份更不应出现在
+  两科收缩 commit 里，改为后续单独整理。
+
+因此本 commit 净变化为 **+2,337 / −118,748**（原候选为 +188,367 / −118,748）。
+另新增 5 个文件（2 个 core 对拍脚本 + 3 个命科 references）虽同为工作区未跟踪
+文件，但**属`docs/source-readings/` 已登记「已落实」的 OPT 交付物**，被活跃文档
+引用，缺失会致死链门判红，故随本 commit 入库。
+
+---
 ### 2026-10-08t 六爻增强链静默降级 → 显式 warning（3 处 ImportError 不再 pass）
 
 **起因**：Round 8 OBSERVE（TODO/FIXME 扫描）发现 `liuyao_engine.py` 在 3 个可选模块

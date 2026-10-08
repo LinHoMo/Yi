@@ -1,33 +1,13 @@
 {
   "_meta": {
-    "what": "八科 render 段 Markdown 内容指纹基线（逐字节，含反馈尾注）",
+    "what": "两科 render 段 Markdown 内容指纹基线（逐字节，含反馈尾注）",
     "how": "改 render 模板/字段后跑 python tools/check.py --only report_contract --raise-render --reason \"理由\"；同源验收已保证 本地=网页，本基线保证「和上一版一样」（架构评审 A6）"
   },
   "md": {
-    "lingqi": "9956c452faa824e7",
-    "liuren": "e5715569b2ddfba0",
     "liuyao": "d4a821a8540006fb",
-    "meihua": "dec55bb82d51fa3a",
-    "ming": "fcdb675a50726298",
-    "xiaoliuren": "8c741d88438ab8f5",
-    "zeji": "13fb46b55d3d655f",
-    "ziwei": "7c55065b2601b0c6"
+    "ming": "fcdb675a50726298"
   },
   "drift_log": [
-    {
-      "discipline": "zeji",
-      "from": null,
-      "to": "6a42b641e3aa69e9",
-      "date": "2026-10-02",
-      "reason": "2026-10-02c 建立 render 段 MD 内容指纹基线（架构评审 A6 大动血版）"
-    },
-    {
-      "discipline": "ziwei",
-      "from": null,
-      "to": "7c55065b2601b0c6",
-      "date": "2026-10-02",
-      "reason": "2026-10-02c 建立 render 段 MD 内容指纹基线（架构评审 A6 大动血版）"
-    },
     {
       "discipline": "ming",
       "from": "c67bbb4e95cea0f4",
@@ -78,27 +58,6 @@
       "reason": "扩《穷通宝鉴》TIAO_HOU 51→90格（引擎忠实书源，机械层零漂移）：report MD 调候段因覆盖扩面而变（部分命例新增/补全调候用神，如巳丙补出佐神庚）；非退步，web/本地同源已通过"
     },
     {
-      "discipline": "liuren",
-      "from": "fccde3a8aa44e4b2",
-      "to": "aecff4f10762f3b3",
-      "date": "2026-10-06",
-      "reason": "大六壬第六批结构判据「和美」落地（课经释义两面：干上神合支上神/干上神合日支，六合表取 core HE_PAIRS）；金标准四例指纹零漂移；ming 条目未动（并行工作在途）"
-    },
-    {
-      "discipline": "liuren",
-      "from": "aecff4f10762f3b3",
-      "to": "f105f08cb2cd646c",
-      "date": "2026-10-08",
-      "reason": "OPT-shending-07(伏吟事近/返吟事远 + 日辰天一前后) + OPT-rengui-01(三传七格：全财/全鬼/全脱/俱阳/俱阴/递生/递克) 新增结构标签组自然出现在报告 MD 输出；逐字段比对 men/ke_name/san_chuan/dun_gan/chuan_tianjiang/four_courses 零漂移，仅 structure_tags Tag 行数/条目数增加。"
-    },
-    {
-      "discipline": "meihua",
-      "from": "4fad656b06e1dde2",
-      "to": "dec55bb82d51fa3a",
-      "date": "2026-10-08",
-      "reason": "OPT-shending-07(伏吟事近/返吟事远 + 日辰天一前后) + OPT-rengui-01(三传七格：全财/全鬼/全脱/俱阳/俱阴/递生/递克) 新增结构标签组自然出现在报告 MD 输出；逐字段比对 men/ke_name/san_chuan/dun_gan/chuan_tianjiang/four_courses 零漂移，仅 structure_tags Tag 行数/条目数增加。"
-    },
-    {
       "discipline": "ming",
       "from": "ad265b523db0f12b",
       "to": "13e32273dc7a10dc",
@@ -106,23 +65,9 @@
       "reason": "OPT-shending-07(伏吟事近/返吟事远 + 日辰天一前后) + OPT-rengui-01(三传七格：全财/全鬼/全脱/俱阳/俱阴/递生/递克) 新增结构标签组自然出现在报告 MD 输出；逐字段比对 men/ke_name/san_chuan/dun_gan/chuan_tianjiang/four_courses 零漂移，仅 structure_tags Tag 行数/条目数增加。"
     },
     {
-      "discipline": "zeji",
-      "from": "6a42b641e3aa69e9",
-      "to": "e244c48ddb3e1d36",
-      "date": "2026-10-08",
-      "reason": "OPT-shending-07(伏吟事近/返吟事远 + 日辰天一前后) + OPT-rengui-01(三传七格：全财/全鬼/全脱/俱阳/俱阴/递生/递克) 新增结构标签组自然出现在报告 MD 输出；逐字段比对 men/ke_name/san_chuan/dun_gan/chuan_tianjiang/four_courses 零漂移，仅 structure_tags Tag 行数/条目数增加。"
-    },
-    {
       "discipline": "ming",
       "from": "13e32273dc7a10dc",
       "to": "f35136be0bfe4b47",
-      "date": "2026-10-08",
-      "reason": "2026-10-08 有意改版归因（前序 WIP 漏 raise）：zeji data/citations.json 新增「民俗吉凶日篇·彭祖百忌日」17 条逐字书证，analyze.py:132 通则引文由 1 篇增至 2 篇，narrate 引文块随之变长 → render MD 整页指纹 e244c48→13fb46b5。科内 golden 已于同批 capture 至 e0dc024e；zeji 机械因子与建除/黄黑道/值宿判据零变化（[5] zeji 行为指纹通过为证）"
-    },
-    {
-      "discipline": "zeji",
-      "from": "e244c48ddb3e1d36",
-      "to": "13fb46b55d3d655f",
       "date": "2026-10-08",
       "reason": "2026-10-08 有意改版归因（前序 WIP 漏 raise）：zeji data/citations.json 新增「民俗吉凶日篇·彭祖百忌日」17 条逐字书证，analyze.py:132 通则引文由 1 篇增至 2 篇，narrate 引文块随之变长 → render MD 整页指纹 e244c48→13fb46b5。科内 golden 已于同批 capture 至 e0dc024e；zeji 机械因子与建除/黄黑道/值宿判据零变化（[5] zeji 行为指纹通过为证）"
     },
@@ -139,20 +84,6 @@
       "to": "d4a821a8540006fb",
       "date": "2026-10-08",
       "reason": "2026-10-08 六爻交付口径收口：render 结论行追加数据层档位注记（narrative_templates#narrate_shell.conclusion_grade_note＝「（引擎档位名，非注定断言；细看正文的偏向与信号）」），消除 reports/liuyao_latest.md 里『结论：大凶』与同页『凶象只用偏向／有…信号讲』的自相矛盾；另 liuyao_narrate._dedash 折叠模板拼出的「——，」残句。措辞层已 capture 至 7200af9a、机械层零漂移"
-    },
-    {
-      "discipline": "liuren",
-      "from": "f105f08cb2cd646c",
-      "to": "83e3791bebf08454",
-      "date": "2026-10-08",
-      "reason": "OPT-liuren_cuiyan_dz-01: 退茹命中后 kemu 名写入 factors[].basis 导致 render MD 结构性字段变化（加法命中，非替换）"
-    },
-    {
-      "discipline": "liuren",
-      "from": "83e3791bebf08454",
-      "to": "e5715569b2ddfba0",
-      "date": "2026-10-08",
-      "reason": "OPT-liuren_cuiyan_dz-07: 关格/稼穆命中后 kemu 名写入 factors[].basis 导致 render MD 结构性字段变化（集合条件，非替换）"
     }
   ]
 }

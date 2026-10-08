@@ -4,19 +4,19 @@
 > 本文件只写「现在是什么、怎么跑、还欠什么」。**债务速查见 `docs/TECH-DEBT.md`**。
 > 分数口径见 `AGENTS.md` 铁律三（对齐分≠命中率）。
 > 路线：`docs/YI-PLAN.md`。深度改造清单：`docs/DEEP-DIVE-PLAN.md`；
-> 新门类论证：`docs/NEW-DISCIPLINES.md`；网页端 AI 取用规程：`docs/AI-SOP.md`；
+> 新门类论证：`archive/NEW-DISCIPLINES.md`；网页端 AI 取用规程：`docs/AI-SOP.md`；
 > 同域项目调研（Horosa/星阙）：`docs/RESEARCH-HOROSA.md`。
 > 规格归档（历史过程规格，读数停在 2026-09，勿当现状引用）：`archive/compose-spec/`。
 
-**范围（八科 + 两条出报告通道 + 代码瘦身完成于 2026-10-01j；2026-10-01l 架构修正落地；
-2026-10-06 调候表扩面至 110 格，见 §一 命科段与 §六）**：
-- **命科**：`ming`（四柱八字，机械推演）、`ziwei`（紫微斗数，安星/四化/格局/大限）
-- **卜科**：`liuyao`（六爻纳甲）、`meihua`（梅花易数）、`xiaoliuren`（小六壬）、`zeji`（择吉通书）、
-  `liuren`（大六壬骨架：九宗门三传/天将乘临，机械结构标签，无吉凶断语）、
-  `lingqi`（灵棋经：三部掷数查 124 课表直录书源断语）
-- **八科**各自的 `dev_tools/check.py` 与仓库根 `tools/check.py`：全绿状态**锚 revision
-  不锚工作区**——2026-10-08 实测 HEAD `391b480` 全绿，同一时刻的工作树因进行中改动判红
-  8 项（后由本轮逐项收口）。复跑以 `tools/version_gate.py` + `tools/check.py` 为准。
+**范围（两科 + 两条出报告通道 + 代码瘦身完成于 2026-10-01j；2026-10-01l 架构修正落地；
+2026-10-06 调候表扩面至 110 格，见 §一 命科段与 §六）：
+- **命科**：`ming`（四柱八字，机械推演）
+- **卜科**：`liuyao`（六爻纳甲）
+- 两科建在同一份内核（`core/yishu_core/`）与同一条四段契约（chart→analyze→narrate→render）上，
+  由 `synthesis/` 做**命卜合参**。紫微斗数、梅花易数、小六壬、择吉、大六壬、灵棋经已正式移除
+  （git history 留存历史存档；本文件 §六 读数时点为 2026-10-08，彼时仍八科，供回溯）。
+- **两科**各自的 `dev_tools/check.py` 与仓库根 `tools/check.py`：全绿状态**锚 revision
+  不锚工作区**——复跑以 `tools/version_gate.py` + `tools/check.py` 为准。
 - **两条出报告通道**（同一份引擎、同一条四段契约，产出由 `tools/verify_web_parity.py` 逐字节验收）：
   **A 纯前端**（`web/` + GitHub Pages + Pyodide，**零凭证**）；
   **B 云端 Actions**（`reports` 分支固定链接 + issue 回评）。
@@ -80,7 +80,7 @@
 - 三科均已于 2026-09-29 从 `archive/` 还原至 `disciplines/`，四段管线 + 质量门均通过
   （各科 `dev_tools/check.py` 全绿），金标准指纹未漂移。
 - ⚠️ **此前写的"tune/holdout 均 100%"是误导，已订正**。2026-09-30 逐例审计
-  （`disciplines/<科>/docs/EVAL-AUDIT.md`，一键复核 `python tools/eval_audit_recheck.py`）
+  （`disciplines/<科>/docs/EVAL-AUDIT.md`；一键复核工具已随三科移除）
   的结论是：那 100% 是**规则自洽回归数**，不是古籍案例对齐分，不是精度。
   三科的可评构成如下：
 
@@ -258,7 +258,7 @@
 
 ### 证据链与 Agent 层（2026-10-03 新增，机器可读状态见注册表）
 
-- **Evidence Contract**：`core/yishu_core/evidence.py`——八科 analyze 输出的结构化证据
+- **Evidence Contract**：`core/yishu_core/evidence.py`——两科 analyze 输出的结构化证据
   派生视图（id/claim/factor/rule_id/source/applicability/observation/effect/
   evaluation_status/provenance）。纯函数双宿主共用；本机 `YiRuntime.execute` 与
   浏览器 `web/engine_runtime.build_report` 的 envelope 都挂 `evidence` 信封，
@@ -267,16 +267,14 @@
   能力性质五档（stable/experimental/mechanical_only/source_only/unavailable）+
   评测基线五档（classical_holdout/external_holdout/mechanical_regression/
   source_only/unassessed）+ `evaluation_splits`（分列名是结构事实，分数读数仍以本文件为准）。
-  liuren=mechanical_only、lingqi=source_only；liuyao/ming/meihua=classical_holdout；
-  ziwei/xiaoliuren/zeji/liuren=mechanical_regression。文档引用不复制。
+  liuyao/ming=classical_holdout（古籍案例对齐评测）。文档引用不复制。
 - **六爻规则注册表**：`disciplines/liuyao/data/rules/rule_registry.json`——
   9 个优先规则域（三会局/独发独静/反吟伏吟/六合六冲/旬空真空假空/墓库/进退神/
   用神多现/应期）+ 卦身/三合，逐条带书源引文指针（quote_in_data/quote_in_code，
   测试逐条可解析）、适用条件、实现位置、评测覆盖（dim 必须是 evaluate.py WEIGHTS
   真实维度）；三合局引文未逐字挂接，`verified=false` 如实登记缺口。
-- **ming / meihua 规则注册表（2026-10-03b，Phase 5）**：ming 调候/格局成败/从格/
-  大运/神煞 5 域（穷通宝鉴逐字库/子平真诠/滴天髓引文锚）；meihua 体用关系/
-  生克之卦/应期 3 域（外部独立集覆盖的体用域如实标 external_holdout）。
+- **ming 规则注册表（2026-10-03b，Phase 5）**：ming 调候/格局成败/从格/
+  大运/神煞 5 域（穷通宝鉴逐字库/子平真诠/滴天髓引文锚）。
   挂接时评测状态**以注册表为准**——规则级覆盖是比学科基线更细的真值：
   ming dayun/shensha（案例集 0 applicable）如实降到 mechanical_regression。
 - **canonical 反馈模型**：`core/yishu_core/feedback.py`——synthesis 档案链与六爻
@@ -313,10 +311,6 @@ yi liuyao narrate analyze.json
 yi liuyao render analyze.json
 yi ming chart --datetime "1990-05-20 10:30" --gender 男
 yi ming analyze chart.json
-yi meihua cast "占投资"
-yi meihua chart --way time
-yi xiaoliuren cast "占出行"
-yi zeji chart --date "2026-09-30" --activity 开市
 ```
 
 安装：`pip install -e .`。
@@ -400,7 +394,7 @@ python tools/eval.py
 
 > 债务的**速查登记**见 `docs/TECH-DEBT.md`。
 > **各科"老师傅程度"差距与可执行改造清单见 `docs/DEEP-DIVE-PLAN.md`**；
-> 新门类论证见 `docs/NEW-DISCIPLINES.md`。
+> 新门类论证见 `archive/NEW-DISCIPLINES.md`。
 > **当前进行中的工作项与优先序见 `docs/TECH-DEBT.md` §2.5（证据链收敛）与 §2.6（评审遗留）**
 > （2026-10-03b 起：规则一等实体推广 / 规则级评测覆盖 / claim_policy 断言边界 /
 > verified-only 跨科概念映射）。阶段路线图件已按减法删除——工作项以 TECH-DEBT 为准，
@@ -413,7 +407,7 @@ python tools/eval.py
    - 《火珠林》2 例 scorable + 5 例定性已入库（`huozhulin_holdout`）。
 1. **梅花/小六壬/择吉外部独立集**：三科 100% 读数是规则自洽回归，唯一有效动作
    是建外部独立集（范式照六爻 wikisource）。此硬泄漏（梅花 MH014–MH018）与口径
-   审计（`tools/eval_audit_recheck.py`）已登记。
+   审计（复核工具已随三科移除）已登记。
    - ~~梅花外部集~~ ✅ 2026-10-02r 已建 `external_holdout`（卷三·變卦式八則 4 例，永不调参；
      因该节为物类断且部分互变非标准，verdict 与归妹/夬/履 生克 N/A，仅 体用关系+革 生克 可对齐）。
    - 小六壬/择吉 外部集仍待建（同 §一 梅花段说明）。**2026-10-02s 复核**：《協紀辨方書》维基文库 404、
@@ -463,7 +457,7 @@ python tools/eval.py
    - **2026-10-02s**：《滴天髓阐微》（任铁樵注本，含命例）维基文库存在独立条目（滴天髓 辑要页链接可达）
      → 命科外部独立集（§四.D）解除路径由"用户供书"更新为"书源可网络获取，待照 ZC 批次机制提取命例"。
 4. **report 段行为保护**：~~六爻 golden 只罩 chart+analyze；`render` 全文哈希未入基线，
-   排版改动不会被门拦下~~ ✅ 2026-10-02c 已补（根门 `[6b]` 对八科 render MD 逐字节指纹，
+   排版改动不会被门拦下~~ ✅ 2026-10-02c 已补（根门 `[6b]` 对两科 render MD 逐字节指纹，
    基线 `data/golden/render_digest.json`，负例自证会咬人）。六爻 `dev_tools/golden.py`
    仍只罩 chart+analyze（属各科细粒度指纹，非缺口）。
 5. **从格灰区 3 例 + kind 缺口 2 例**（ZC012/014/015）——**2026-10-02t：kind 缺口已清**
@@ -517,7 +511,7 @@ python tools/eval.py
   远端 CI 最近一次 run 仍是 2026-10-05 的 success，**HEAD 的 22 个提交未经远端 CI 验证**。
 - **门状态**：`tools/check.py`（默认档）与 `--full` 全绿 **EXIT=0**（2026-10-08 本机复验，
   含站点构建+自检、网页↔本机同源 13 正例+2 负例、六爻黑箱 11/18 持平、`pytest tests` 全过）；
-  八科各自 `dev_tools/check.py` 全绿。本轮收口的 8 项工作树红灯与新增机械保障：
+  两科各自 `dev_tools/check.py` 全绿。本轮收口的 8 项工作树红灯与新增机械保障：
   - **新段 `[2b] 门自证`**：五把自带 `--selftest` 的门（案例隔离 / 引文逐字 / 书源解读文档 /
     书源对勘 / 文档死链）从「文档里说做过负例」改为**每次 check 真跑**；
     `--only` 选择器逐名登记，选错名字报错列可用项，不允许"段名匹配不到子门→静默全跳过"。
@@ -526,7 +520,7 @@ python tools/eval.py
     负例自证：往 `tools/` 植地支串 → EXIT=1 点名文件行号。
   - **案例隔离门 `[1g]`**：判据改为只认路径/文件名形态（原 `huozhulin`/`wikisource` 两条裸
     书名正则把 OPT 编号与结构标签键名误判成"触达案例库"）；扫描集由"四段闭包"扩到
-    **闭包 ∪ 本科 `scripts/` 全部模块**；新增**下限守卫**（学科数 <8 或模块数 <70 判红，
+    **闭包 ∪ 本科 `scripts/` 全部模块**；新增**下限守卫**（学科数 <2 或模块数 <46 判红，
     扫空不再冒充通过）；`--selftest` 五负例+一正例，其中「书源 slug 不误报」一条是
     防止后人再把判据放宽回去的哨兵。
   - **文档死链门 `[1b-2]`**：`ACTIVE_GLOBS` 由 `docs/*.md` 改 `docs/**/*.md`，
@@ -535,10 +529,9 @@ python tools/eval.py
     语境豁免新增「新建/待建/拟建/下建/应建/不存在」一族（source-readings 的 OPT 表自定
     「带『新建』二字者为待建目标」约定），并加 `--selftest`：首版误加「真死链」一词被自证
     当场否证（任何描述性散文都会吞掉负例），已删。
-  - **语料可复现 `[1j]`**：ziwei/liuren 两个建器的"手工补录 vs 重算必删"脱钩已把来源
-    并入建器产出集合（ziwei 贪狼三条忌星同时**改回书源繁体逐字**，简体改写系非逐字；
-    liuren 认《六壬指南》旁证键为合法课名来源并校验其 `_book/_note` 出处），
-    两处均做过"注入坏数据必红 + 备份原样恢复"的负例自证。
+  - **语料可复现 `[1j]`**：建器的"手工补录 vs 重算必删"脱钩已把来源
+    并入建器产出集合（来源须逐字对应书源并校验 `_book/_note` 出处），
+    做过"注入坏数据必红 + 备份原样恢复"的负例自证（现行仅覆盖命·卜两科建器）。
   - **巨石门**：`classical_enhancements.py` 2533 → 2196 行，三个 2026-10-07 新增域
     （身爻启用 / 忧解 / 六神旺衰）拆到 `classical_enhancements_shen_yao.py`；
     函数体逐字节搬迁，六爻金标准**机械层零漂移**、回归 11/18 与 tune 96.8 持平。
@@ -549,9 +542,7 @@ python tools/eval.py
   已 capture（liuyao 措辞 `7200af9a`、机械 `2993c3eca10bc21b`）并 raise render 基线。
 - **基线值（本轮 capture/raise 后）**：命科 机械 `1be8d5b579463a47` / 措辞 `ed6476e0ac6a0959`；
   六爻 机械 `2993c3eca10bc21b` / 措辞 `7200af9a70d2df8f`；
-  小六壬 措辞 `a0d95cf2734a8d3d`（10-07 的玉匣记/贺氏空亡主数口径注，本轮补 capture）；
-  择吉 科内 `e0dc024ec8eb96ee`；根 `data/golden/render_digest.json` 的 `md` 段：ming `fcdb675a50726298`、
-  liuyao `d4a821a8540006fb`、zeji `13fb46b55d3d655f`。
+  liuyao `d4a821a8540006fb`。
 - **命科读数（三集分列禁混，2026-10-08 复测）**：tune **100.0%**（n=30）；holdout
   **96.2%**（n=246，调候 **19/21**，见 §一 订正）；外集 tiaohou **14/16**
   （013/014 转 N/A，失配=015/016 申丁佐神缺口如实暴露）、十神 5/5、格局 2/2、强弱 30/45。
@@ -570,17 +561,10 @@ python tools/eval.py
 |---|---|---|---|
 | 六爻 `liuyao` | 37 | 18,210 | 17 |
 | 命科 `ming` | 7 | 2,827 | 13 |
-| 梅花易数 `meihua` | 7 | 1,768 | 3 |
-| 小六壬 `xiaoliuren` | 7 | 1,101 | 2 |
-| 择吉 `zeji` | 7 | 1,086 | 3 |
-| 大六壬 `liuren` | 7 | 1,308 | 5 |
-| 灵棋经 `lingqi` | 4 | 271 | 3 |
-| 紫微斗数 `ziwei` | 5 | 943 | 5 |
-| **八科合计** | **81** | **27,514** | **51** |
+| **两科合计** | **44** | **21,037** | **30** |
 
-> 与 2026-10-05 读数（81 文件 / 27,395 行 / dev_tools 47）的差异可全部归因到已登记事项：
-> 命科 +25 行（调候提取器 3 处修复）、`dev_tools` +4（10-06j 新增 4 个只读审计/同步工具）。
-> 小六壬、大六壬、灵棋经、紫微、梅花、择吉未变。
+> 本次正式范围收缩为「八字 + 六爻」两科，删除紫微/梅花/小六壬/择吉/大六壬/灵棋经的
+> scripts 与 dev_tools（2026-10-08 读数曾为八科 81 文件 / 27,514 行 / dev_tools 51，详见当时 §六）。
 
 ---
 
