@@ -41,6 +41,15 @@
 
 ---
 
+#### Round 3 残骸修复（10-08o-fixup）
+
+Round 3 漏检 `[6b] 报告契约` 中 liuren render MD 指纹漂移
+（`f108…→83e3…`）。原因：Round 3 只验了 `[5] golden`（机械层），
+未跑完整 `check.py`，错过了 `[6b]` render 段指纹也跟着变化。
+本轮 `raise-render` 补正，`drift_log` 加一条 liuren 条目。已验证全绿。
+
+---
+
 ### 2026-10-08n 全面审查后的收口：门的覆盖面/自证补齐 + 8 项工作树红灯清零 + 交付口径两处订正
 
 **起因**：一轮全面审查（依据 = 工作树 + HEAD 干净副本各实跑一次 `tools/check.py`）。

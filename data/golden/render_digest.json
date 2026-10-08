@@ -5,7 +5,7 @@
   },
   "md": {
     "lingqi": "9956c452faa824e7",
-    "liuren": "f105f08cb2cd646c",
+    "liuren": "83e3791bebf08454",
     "liuyao": "d4a821a8540006fb",
     "meihua": "dec55bb82d51fa3a",
     "ming": "fcdb675a50726298",
@@ -14,13 +14,6 @@
     "ziwei": "7c55065b2601b0c6"
   },
   "drift_log": [
-    {
-      "discipline": "ming",
-      "from": null,
-      "to": "c67bbb4e95cea0f4",
-      "date": "2026-10-02",
-      "reason": "2026-10-02c 建立 render 段 MD 内容指纹基线（架构评审 A6 大动血版）"
-    },
     {
       "discipline": "xiaoliuren",
       "from": null,
@@ -153,6 +146,13 @@
       "to": "d4a821a8540006fb",
       "date": "2026-10-08",
       "reason": "2026-10-08 六爻交付口径收口：render 结论行追加数据层档位注记（narrative_templates#narrate_shell.conclusion_grade_note＝「（引擎档位名，非注定断言；细看正文的偏向与信号）」），消除 reports/liuyao_latest.md 里『结论：大凶』与同页『凶象只用偏向／有…信号讲』的自相矛盾；另 liuyao_narrate._dedash 折叠模板拼出的「——，」残句。措辞层已 capture 至 7200af9a、机械层零漂移"
+    },
+    {
+      "discipline": "liuren",
+      "from": "f105f08cb2cd646c",
+      "to": "83e3791bebf08454",
+      "date": "2026-10-08",
+      "reason": "OPT-liuren_cuiyan_dz-01: 退茹命中后 kemu 名写入 factors[].basis 导致 render MD 结构性字段变化（加法命中，非替换）"
     }
   ]
 }
