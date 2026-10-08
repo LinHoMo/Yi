@@ -1,3 +1,28 @@
+### 2026-10-08s 修复 clone-breaker：tests/pathguard.py 未入库（4 个已提交测试必破）
+
+**起因**：Round 7 OBSERVE 发现 `tests/pathguard.py` 是未跟踪文件，但已有 4 个已入库
+测试文件通过 `spec_from_file_location("yi_pathguard", Path(__file__).with_name("pathguard.py"))` 加载它：
+`test_pathguard.py`、`test_rengui_neishiwaishi_yingqi.py`、`test_zhinan_wangxiang.py`
+（均 67a39af 入库），加本轮 Round 6 新增的 `test_liuren_kemu_structure.py`。
+新鲜 clone 直接 `FileNotFoundError`，收集期即崩。
+
+#### 一、改动
+
+- **`tests/pathguard.py`** — 入库（62 行，唯一实现处）
+
+#### 二、验证
+
+- 负例自证：移走 pathguard.py → `test_liuren_kemu_structure.py` 立即收集期 `FileNotFoundError`；恢复后 450/450 全绿
+- 4 个依赖测试专项收集：**57 passed**
+- `tools/check.py` 全部门禁：**全绿**
+
+#### 三、根因
+
+commit 67a39af（"5 个新增测试模块"）提交了引用 pathguard 的测试文件，但未提交
+pathguard.py 本身——属部分提交引入的隐性回归。
+
+---
+
 ### 2026-10-08r 六壬结构课目回归测试 + 完备性对拍工具入库（OPT-liuren_cuiyan_dz-08）
 
 **起因**：Round 3（进茹/退茹/进间/退间）+ Round 5（关格/稼稼）新加的 6 项结构判据
