@@ -1,0 +1,24 @@
+{
+  "key": "wenwang_jinqianke_dz",
+  "kind": "六爻",
+  "title": "文王金钱课",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/文王金钱课.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E6%96%87%E7%8E%8B%E9%87%91%E9%92%B1%E8%AF%BE.txt",
+  "pages": [
+    "易藏/术数/文王金钱课.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:38:49+0800",
+  "sha256": "81a817b94477d3935b4196089e5b347334568ae22715576de56e3d4552307613",
+  "stats": {
+    "bytes": 15294,
+    "chars": 5992,
+    "lines": 228,
+    "ganzhi_pairs": 4,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/wenwang_jinqianke_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}

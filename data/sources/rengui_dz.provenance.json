@@ -1,0 +1,24 @@
+{
+  "key": "rengui_dz",
+  "kind": "大六壬",
+  "title": "壬归",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/壬归.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E5%A3%AC%E5%BD%92.txt",
+  "pages": [
+    "易藏/术数/壬归.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:38:35+0800",
+  "sha256": "585295d450a01d977253b64f201867c9a7a0b9fc23e06b082227370815052bbd",
+  "stats": {
+    "bytes": 95648,
+    "chars": 33878,
+    "lines": 516,
+    "ganzhi_pairs": 35,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/rengui_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}

@@ -1,0 +1,23 @@
+{
+  "key": "yuan-hai-zi-ping",
+  "kind": "八字·总纲",
+  "title": "淵海子平",
+  "site": "zh.wikisource.org",
+  "api": "https://zh.wikisource.org/w/api.php",
+  "pages": [
+    "淵海子平"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:41:13+0800",
+  "sha256": "ba05f95b26f21ce03ea43402815fb8dafc3debab7451abc7ea3e9fae2eda1587",
+  "stats": {
+    "bytes": 173269,
+    "chars": 61349,
+    "lines": 2489,
+    "ganzhi_pairs": 369,
+    "tables": 0,
+    "headings": 73
+  },
+  "source_file": "data/sources/yuan-hai-zi-ping.wikitext.txt",
+  "note": "公版古籍原文的字符级转存，未做任何改写或模型转写；子页以 <!-- ==== 标题 ==== --> 分隔。"
+}

@@ -1,0 +1,24 @@
+{
+  "key": "meihua_yishu_dz",
+  "kind": "梅花·对勘",
+  "title": "梅花易數",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/梅花易数.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E6%A2%85%E8%8A%B1%E6%98%93%E6%95%B0.txt",
+  "pages": [
+    "易藏/术数/梅花易数.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:39:01+0800",
+  "sha256": "3ca14c164ebaab01aa32dffdedefdd6fa757add817ad6c56be0bd811823335d5",
+  "stats": {
+    "bytes": 123921,
+    "chars": 42075,
+    "lines": 981,
+    "ganzhi_pairs": 6,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/meihua_yishu_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}

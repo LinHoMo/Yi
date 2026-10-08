@@ -1,0 +1,24 @@
+{
+  "key": "dunjia_yanyi_dz",
+  "kind": "奇门遁甲",
+  "title": "遁甲演义",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/遁甲演义.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E9%81%81%E7%94%B2%E6%BC%94%E4%B9%89.txt",
+  "pages": [
+    "易藏/术数/遁甲演义.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:38:40+0800",
+  "sha256": "1746e5d482658c9361299a748947a9f49b233c1e7c19a2ab6beba9c739844414",
+  "stats": {
+    "bytes": 127016,
+    "chars": 43070,
+    "lines": 472,
+    "ganzhi_pairs": 560,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/dunjia_yanyi_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}

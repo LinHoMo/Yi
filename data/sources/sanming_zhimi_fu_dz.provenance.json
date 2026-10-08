@@ -1,0 +1,24 @@
+{
+  "key": "sanming_zhimi_fu_dz",
+  "kind": "八字",
+  "title": "三命指迷赋",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/三命指迷赋.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E4%B8%89%E5%91%BD%E6%8C%87%E8%BF%B7%E8%B5%8B.txt",
+  "pages": [
+    "易藏/术数/三命指迷赋.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:38:46+0800",
+  "sha256": "71ef1b718802e210a6df02b37b97e0dfc98120eaf481cb924263bd868786a386",
+  "stats": {
+    "bytes": 75279,
+    "chars": 25139,
+    "lines": 42,
+    "ganzhi_pairs": 262,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/sanming_zhimi_fu_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}

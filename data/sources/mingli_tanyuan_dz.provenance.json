@@ -1,0 +1,24 @@
+{
+  "key": "mingli_tanyuan_dz",
+  "kind": "八字",
+  "title": "命理探源",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/命理探源.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E5%91%BD%E7%90%86%E6%8E%A2%E6%BA%90.txt",
+  "pages": [
+    "易藏/术数/命理探源.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:38:45+0800",
+  "sha256": "c245cca314d385c814a75d15075920d0726d3a73c70a27ee299729a01991c981",
+  "stats": {
+    "bytes": 160154,
+    "chars": 54656,
+    "lines": 713,
+    "ganzhi_pairs": 613,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/mingli_tanyuan_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}

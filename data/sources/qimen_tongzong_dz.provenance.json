@@ -1,0 +1,24 @@
+{
+  "key": "qimen_tongzong_dz",
+  "kind": "奇门遁甲",
+  "title": "奇门遁甲统宗",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/奇门遁甲统宗.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E5%A5%87%E9%97%A8%E9%81%81%E7%94%B2%E7%BB%9F%E5%AE%97.txt",
+  "pages": [
+    "易藏/术数/奇门遁甲统宗.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:38:42+0800",
+  "sha256": "3c7005200e39243c76f53845696181f79d8db1c6c15a313eb7c852c521310f31",
+  "stats": {
+    "bytes": 141748,
+    "chars": 48922,
+    "lines": 665,
+    "ganzhi_pairs": 317,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/qimen_tongzong_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}

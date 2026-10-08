@@ -1,0 +1,24 @@
+{
+  "key": "yuanhai_ziping_dz",
+  "kind": "八字",
+  "title": "渊海子平",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/渊海子平.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E6%B8%8A%E6%B5%B7%E5%AD%90%E5%B9%B3.txt",
+  "pages": [
+    "易藏/术数/渊海子平.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:38:24+0800",
+  "sha256": "247dcf36bb948714abe3bf8a014267dddc6970bef0c35a47cb7f2becdab82af4",
+  "stats": {
+    "bytes": 179388,
+    "chars": 61526,
+    "lines": 2467,
+    "ganzhi_pairs": 371,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/yuanhai_ziping_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}

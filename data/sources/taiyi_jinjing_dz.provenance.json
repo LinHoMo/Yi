@@ -1,0 +1,24 @@
+{
+  "key": "taiyi_jinjing_dz",
+  "kind": "太乙",
+  "title": "太乙金镜式经",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/太乙金镜式经.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E5%A4%AA%E4%B9%99%E9%87%91%E9%95%9C%E5%BC%8F%E7%BB%8F.txt",
+  "pages": [
+    "易藏/术数/太乙金镜式经.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:38:42+0800",
+  "sha256": "c0012983cfc8e3040f42002a781b316001dcd4ce9a62f00c7ce0418058d39459",
+  "stats": {
+    "bytes": 106702,
+    "chars": 36162,
+    "lines": 791,
+    "ganzhi_pairs": 232,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/taiyi_jinjing_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}

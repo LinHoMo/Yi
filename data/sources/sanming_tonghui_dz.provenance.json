@@ -1,0 +1,24 @@
+{
+  "key": "sanming_tonghui_dz",
+  "kind": "八字",
+  "title": "三命通会",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/三命通会.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E4%B8%89%E5%91%BD%E9%80%9A%E4%BC%9A.txt",
+  "pages": [
+    "易藏/术数/三命通会.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:38:28+0800",
+  "sha256": "78f0a710804892700edf06ddfa1e2345bdd1bdac69e6c9f81c898201b00da588",
+  "stats": {
+    "bytes": 1420039,
+    "chars": 477817,
+    "lines": 6561,
+    "ganzhi_pairs": 18339,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/sanming_tonghui_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}

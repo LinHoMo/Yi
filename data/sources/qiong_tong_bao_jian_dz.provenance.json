@@ -1,0 +1,24 @@
+{
+  "key": "qiong_tong_bao_jian_dz",
+  "kind": "八字·对勘",
+  "title": "穷通宝鉴",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/穷通宝鉴.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E7%A9%B7%E9%80%9A%E5%AE%9D%E9%89%B4.txt",
+  "pages": [
+    "易藏/术数/穷通宝鉴.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:39:00+0800",
+  "sha256": "69d1a9e50af943c6c91756d897c5122f617ae500636a24f67f1072e4ddcb2236",
+  "stats": {
+    "bytes": 96648,
+    "chars": 33246,
+    "lines": 1143,
+    "ganzhi_pairs": 77,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/qiong_tong_bao_jian_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}

@@ -1,0 +1,24 @@
+{
+  "key": "yuzhao_dingzhen_dz",
+  "kind": "八字",
+  "title": "玉照定真经",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/玉照定真经.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E7%8E%89%E7%85%A7%E5%AE%9A%E7%9C%9F%E7%BB%8F.txt",
+  "pages": [
+    "易藏/术数/玉照定真经.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:38:46+0800",
+  "sha256": "d1db9d1c53430a251e895b21285a4d42e14f0ae03541e7b2c0db6f223532819e",
+  "stats": {
+    "bytes": 47802,
+    "chars": 15954,
+    "lines": 9,
+    "ganzhi_pairs": 655,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/yuzhao_dingzhen_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}

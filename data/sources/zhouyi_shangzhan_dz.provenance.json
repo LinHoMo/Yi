@@ -1,0 +1,24 @@
+{
+  "key": "zhouyi_shangzhan_dz",
+  "kind": "六爻",
+  "title": "周易尚占",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/周易尚占.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E5%91%A8%E6%98%93%E5%B0%9A%E5%8D%A0.txt",
+  "pages": [
+    "易藏/术数/周易尚占.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:38:48+0800",
+  "sha256": "1516fde062cbff35329504f55105624f964f29d8df6c3f5963891e75c542395b",
+  "stats": {
+    "bytes": 86212,
+    "chars": 33312,
+    "lines": 1098,
+    "ganzhi_pairs": 537,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/zhouyi_shangzhan_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}

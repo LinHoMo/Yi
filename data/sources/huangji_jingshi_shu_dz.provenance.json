@@ -1,0 +1,26 @@
+{
+  "key": "huangji_jingshi_shu_dz",
+  "kind": "术数通纲",
+  "title": "皇极经世书",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/皇极经世书.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E7%9A%87%E6%9E%81%E7%BB%8F%E4%B8%96%E4%B9%A6.txt",
+  "pages": [
+    "易藏/术数/皇极经世书.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:38:53+0800",
+  "sha256": "bff94ca1bf2abe0069a650015b03d9eaeb98def24ced24e04b036e735dbf7486",
+  "stats": {
+    "bytes": 313653,
+    "chars": 108473,
+    "lines": 5358,
+    "ganzhi_pairs": 18,
+    "tables": 0,
+    "headings": 0,
+    "lines_nonempty": 5358,
+    "lines_physical": 5496
+  },
+  "source_file": "data/sources/huangji_jingshi_shu_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。｜2026-10-07 实测澄清：(1) 原 stats.lines=5358 经核为**非空行计数**，与实测非空行完全一致，并非元数据错误；现补 lines_nonempty=5358 / lines_physical=5496 双口径，后者与 cat -n 行号口径一致，供 tools/check_source_readings.py 逐字核验使用。(2) docs/source-readings/huangji_jingshi_shu_dz.md 原登记的「主源全文重影」（L1-2747 与 L2748-5495 重复约 2747 行）经逐行比对**推翻**——两半非空行相同行数为 0，L2749 为「观物内篇」另一篇首，实为不同篇章连续排布，非同一文件被拼两次，故不需截断。书源内容自始至终未改。"
+}

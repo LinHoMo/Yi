@@ -1,0 +1,24 @@
+{
+  "key": "huozhulin_dz",
+  "kind": "六爻·对勘",
+  "title": "火珠林",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/火珠林.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E7%81%AB%E7%8F%A0%E6%9E%97.txt",
+  "pages": [
+    "易藏/术数/火珠林.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:39:02+0800",
+  "sha256": "6601a5c3223a0a6c46eaff71bd51bb363337a4b6a0840b8c95ded0b776afbd2b",
+  "stats": {
+    "bytes": 65120,
+    "chars": 22694,
+    "lines": 596,
+    "ganzhi_pairs": 65,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/huozhulin_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}

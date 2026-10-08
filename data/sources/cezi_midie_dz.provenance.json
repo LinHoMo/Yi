@@ -1,0 +1,24 @@
+{
+  "key": "cezi_midie_dz",
+  "kind": "测字",
+  "title": "测字秘牒",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/测字秘牒.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E6%B5%8B%E5%AD%97%E7%A7%98%E7%89%92.txt",
+  "pages": [
+    "易藏/术数/测字秘牒.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:38:57+0800",
+  "sha256": "cc11d343ce501ee98e369c650a4baca6e61617ca75a1df1f03fe09b7fcefb3f9",
+  "stats": {
+    "bytes": 77961,
+    "chars": 27097,
+    "lines": 662,
+    "ganzhi_pairs": 3,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/cezi_midie_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}

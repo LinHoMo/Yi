@@ -1,0 +1,24 @@
+{
+  "key": "xieji_bianfang_dz",
+  "kind": "择吉",
+  "title": "钦定协纪辨方书",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/钦定协纪辨方书.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E9%92%A6%E5%AE%9A%E5%8D%8F%E7%BA%AA%E8%BE%A8%E6%96%B9%E4%B9%A6.txt",
+  "pages": [
+    "易藏/术数/钦定协纪辨方书.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:38:39+0800",
+  "sha256": "7155da919b79804b1c5cd57a8c2a6b42e5b231f5979ba05ecad422adaa83cc34",
+  "stats": {
+    "bytes": 834869,
+    "chars": 290527,
+    "lines": 6761,
+    "ganzhi_pairs": 5279,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/xieji_bianfang_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}

@@ -1,0 +1,24 @@
+{
+  "key": "huangjince_dz",
+  "kind": "六爻·对勘",
+  "title": "黃金策",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/黄金策.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E9%BB%84%E9%87%91%E7%AD%96.txt",
+  "pages": [
+    "易藏/术数/黄金策.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:38:59+0800",
+  "sha256": "e483214933d8c0865a3440610c5806cd4bb866f94aa288f3553b07a357177d3a",
+  "stats": {
+    "bytes": 301714,
+    "chars": 103216,
+    "lines": 2008,
+    "ganzhi_pairs": 40,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/huangjince_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}

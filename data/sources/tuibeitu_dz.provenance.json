@@ -1,0 +1,24 @@
+{
+  "key": "tuibeitu_dz",
+  "kind": "预言",
+  "title": "推背图",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/推背图.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E6%8E%A8%E8%83%8C%E5%9B%BE.txt",
+  "pages": [
+    "易藏/术数/推背图.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:38:55+0800",
+  "sha256": "43239ac45ee1e471bd43b3f88a3422a28a595a58805ec6b0299a2ced4bd60f41",
+  "stats": {
+    "bytes": 9859,
+    "chars": 3535,
+    "lines": 301,
+    "ganzhi_pairs": 0,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/tuibeitu_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}

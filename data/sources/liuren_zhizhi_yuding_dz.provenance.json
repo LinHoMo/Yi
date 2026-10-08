@@ -1,0 +1,24 @@
+{
+  "key": "liuren_zhizhi_yuding_dz",
+  "kind": "大六壬",
+  "title": "六壬直指御定",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/六壬直指御定.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E5%85%AD%E5%A3%AC%E7%9B%B4%E6%8C%87%E5%BE%A1%E5%AE%9A.txt",
+  "pages": [
+    "易藏/术数/六壬直指御定.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:38:36+0800",
+  "sha256": "cd3eed40acc0d85aae5e118267ca0fd3c4d70f485f6f62105699ddd188fbdba5",
+  "stats": {
+    "bytes": 1093515,
+    "chars": 368939,
+    "lines": 5040,
+    "ganzhi_pairs": 1112,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/liuren_zhizhi_yuding_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}
