@@ -3,8 +3,8 @@
     "what": "金标准指纹基线（排盘+思维链+分析层逐字段；抽样含 narrate 文案哈希）",
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
-  "digest": "fed7f87766486d97",
-  "narrate_digest": "25c5eeea2fa7e3b9",
+  "digest": "2993c3eca10bc21b",
+  "narrate_digest": "7200af9a70d2df8f",
   "drift_log": [
     {
       "from": "bb23797bf6044b95",
@@ -95,6 +95,18 @@
       "to": "fed7f87766486d97",
       "date": "2026-10-06",
       "reason": "应期年级阶梯落地（增删卜易「近應日遠應年月」/世爻章餘仿此）+ 化出之支值月 + 三合虚一待用月级 + 世动逢合 + 化出回头克冲去之支；tune 96.8/holdout 90.2 持平，wikisource 56.9→60.5，suigui 94.5→98.5，口径变更已记 CHANGELOG"
+    },
+    {
+      "from": "fed7f87766486d97",
+      "to": "c57a480af53f1b90",
+      "date": "2026-10-07",
+      "reason": "补对源/补注记批次（OPT-huangjince_dz-03/06/07、yiin_dz-03、yimao_dz-01）：①双卦对比规则出处由误挂《黄金策》改挂《卜筮正宗》冲中逢合合处逢冲论第十五（正文源L3102-3104，两行逐字照录，判定值±1.5零变更）；②liuyao_timing 模块补《易隐》应期四诀/《黄金策》期日九法书源对拍表（只读注记，不新增Rule）；③新增家宅爻位取象叙述模板（黄金策源L2533/L2536，不进评分）；④rule_registry 新增十八法映射条目+恢复三条注记。tune 96.8/holdout 90.2 持平，措辞层25c5eeea2fa7e3b9未变"
+    },
+    {
+      "from": "c57a480af53f1b90",
+      "to": "2993c3eca10bc21b",
+      "date": "2026-10-08",
+      "reason": "OPT-yiin_dz-01/yimao_dz-02/zengshan_buyi_dz-03/zengshan_buyi_dz-04 四项新增结构格局标签，只标象不打分，不改主判"
     }
   ],
   "narrate_drift_log": [
@@ -109,6 +121,18 @@
       "to": "25c5eeea2fa7e3b9",
       "date": "2026-10-01",
       "reason": "删除 liuyao_step4 卦体六合/六冲的手写卦名白名单（10 卦误收六冲、18 卦误收六合、涣离萃两名单并存），改用 core hexagram_he_chong_kind 结构判据；报告层不再出现与同一 analyze 的 clash_harmony 相矛盾的六冲断言"
+    },
+    {
+      "from": "25c5eeea2fa7e3b9",
+      "to": "caed6b98cf4b50b9",
+      "date": "2026-10-08",
+      "reason": "OPT-yiin_dz-01/yimao_dz-02/zengshan_buyi_dz-03/zengshan_buyi_dz-04 四项新增结构格局标签，只标象不打分，不改主判"
+    },
+    {
+      "from": "caed6b98cf4b50b9",
+      "to": "7200af9a70d2df8f",
+      "date": "2026-10-08",
+      "reason": "2026-10-08 交付文本两处收口：①liuyao_narrate._dedash 折叠模板拼接出的「——，」残句（实测交付报告首句『…不是发力的时候——，主要因为…』，纯标点归一，不增删措辞）；②render 结论行追加数据层档位注记（narrative_templates#narrate_shell.conclusion_grade_note），消除与同页口径句『凶象只用偏向讲』的自相矛盾。机械层零漂移，tune 96.8/holdout 90.2、黑箱 11/18 均与 capture 前一致"
     }
   ]
 }

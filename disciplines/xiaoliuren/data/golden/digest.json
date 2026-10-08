@@ -4,7 +4,7 @@
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
   "digest": "9fd0de627fb787a5",
-  "narrate_digest": "c7137023d29a9aac",
+  "narrate_digest": "a0d95cf2734a8d3d",
   "drift_log": [
     {
       "from": null,
@@ -49,6 +49,12 @@
       "to": "c7137023d29a9aac",
       "date": "2026-10-01",
       "reason": "事类断语加句类标注（诀辞/引申/阙）：引申句补「（引申，非诀辞）」标记、新增「人事」默认门（取本宫总诀全文，与旧回退同文）、narrate 增覆盖行与缺口登记；机械层 5 条变化均为 topic_line 标记所致（有意）"
+    },
+    {
+      "from": "c7137023d29a9aac",
+      "to": "a0d95cf2734a8d3d",
+      "date": "2026-10-08",
+      "reason": "2026-10-08 措辞层收口（前序 WIP 未 capture）：空亡宫加两源分歧口径注一行（公版《玉匣记》一五七 vs 本引擎从贺氏三六九，同一宫异所本），narrate 唯一改动；chart 仅加第 7 例 selfcheck 不动文案。机械层零漂移（9fd0de627fb787a5 未变）"
     }
   ]
 }

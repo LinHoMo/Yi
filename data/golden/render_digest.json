@@ -5,43 +5,15 @@
   },
   "md": {
     "lingqi": "9956c452faa824e7",
-    "liuren": "aecff4f10762f3b3",
-    "liuyao": "e1d588fbcb7d88dc",
-    "meihua": "4fad656b06e1dde2",
-    "ming": "ad265b523db0f12b",
+    "liuren": "f105f08cb2cd646c",
+    "liuyao": "d4a821a8540006fb",
+    "meihua": "dec55bb82d51fa3a",
+    "ming": "fcdb675a50726298",
     "xiaoliuren": "8c741d88438ab8f5",
-    "zeji": "6a42b641e3aa69e9",
+    "zeji": "13fb46b55d3d655f",
     "ziwei": "7c55065b2601b0c6"
   },
   "drift_log": [
-    {
-      "discipline": "lingqi",
-      "from": null,
-      "to": "9956c452faa824e7",
-      "date": "2026-10-02",
-      "reason": "2026-10-02c 建立 render 段 MD 内容指纹基线（架构评审 A6 大动血版）"
-    },
-    {
-      "discipline": "liuren",
-      "from": null,
-      "to": "fccde3a8aa44e4b2",
-      "date": "2026-10-02",
-      "reason": "2026-10-02c 建立 render 段 MD 内容指纹基线（架构评审 A6 大动血版）"
-    },
-    {
-      "discipline": "liuyao",
-      "from": null,
-      "to": "e1d588fbcb7d88dc",
-      "date": "2026-10-02",
-      "reason": "2026-10-02c 建立 render 段 MD 内容指纹基线（架构评审 A6 大动血版）"
-    },
-    {
-      "discipline": "meihua",
-      "from": null,
-      "to": "4fad656b06e1dde2",
-      "date": "2026-10-02",
-      "reason": "2026-10-02c 建立 render 段 MD 内容指纹基线（架构评审 A6 大动血版）"
-    },
     {
       "discipline": "ming",
       "from": null,
@@ -125,6 +97,62 @@
       "to": "aecff4f10762f3b3",
       "date": "2026-10-06",
       "reason": "大六壬第六批结构判据「和美」落地（课经释义两面：干上神合支上神/干上神合日支，六合表取 core HE_PAIRS）；金标准四例指纹零漂移；ming 条目未动（并行工作在途）"
+    },
+    {
+      "discipline": "liuren",
+      "from": "aecff4f10762f3b3",
+      "to": "f105f08cb2cd646c",
+      "date": "2026-10-08",
+      "reason": "OPT-shending-07(伏吟事近/返吟事远 + 日辰天一前后) + OPT-rengui-01(三传七格：全财/全鬼/全脱/俱阳/俱阴/递生/递克) 新增结构标签组自然出现在报告 MD 输出；逐字段比对 men/ke_name/san_chuan/dun_gan/chuan_tianjiang/four_courses 零漂移，仅 structure_tags Tag 行数/条目数增加。"
+    },
+    {
+      "discipline": "meihua",
+      "from": "4fad656b06e1dde2",
+      "to": "dec55bb82d51fa3a",
+      "date": "2026-10-08",
+      "reason": "OPT-shending-07(伏吟事近/返吟事远 + 日辰天一前后) + OPT-rengui-01(三传七格：全财/全鬼/全脱/俱阳/俱阴/递生/递克) 新增结构标签组自然出现在报告 MD 输出；逐字段比对 men/ke_name/san_chuan/dun_gan/chuan_tianjiang/four_courses 零漂移，仅 structure_tags Tag 行数/条目数增加。"
+    },
+    {
+      "discipline": "ming",
+      "from": "ad265b523db0f12b",
+      "to": "13e32273dc7a10dc",
+      "date": "2026-10-08",
+      "reason": "OPT-shending-07(伏吟事近/返吟事远 + 日辰天一前后) + OPT-rengui-01(三传七格：全财/全鬼/全脱/俱阳/俱阴/递生/递克) 新增结构标签组自然出现在报告 MD 输出；逐字段比对 men/ke_name/san_chuan/dun_gan/chuan_tianjiang/four_courses 零漂移，仅 structure_tags Tag 行数/条目数增加。"
+    },
+    {
+      "discipline": "zeji",
+      "from": "6a42b641e3aa69e9",
+      "to": "e244c48ddb3e1d36",
+      "date": "2026-10-08",
+      "reason": "OPT-shending-07(伏吟事近/返吟事远 + 日辰天一前后) + OPT-rengui-01(三传七格：全财/全鬼/全脱/俱阳/俱阴/递生/递克) 新增结构标签组自然出现在报告 MD 输出；逐字段比对 men/ke_name/san_chuan/dun_gan/chuan_tianjiang/four_courses 零漂移，仅 structure_tags Tag 行数/条目数增加。"
+    },
+    {
+      "discipline": "ming",
+      "from": "13e32273dc7a10dc",
+      "to": "f35136be0bfe4b47",
+      "date": "2026-10-08",
+      "reason": "2026-10-08 有意改版归因（前序 WIP 漏 raise）：zeji data/citations.json 新增「民俗吉凶日篇·彭祖百忌日」17 条逐字书证，analyze.py:132 通则引文由 1 篇增至 2 篇，narrate 引文块随之变长 → render MD 整页指纹 e244c48→13fb46b5。科内 golden 已于同批 capture 至 e0dc024e；zeji 机械因子与建除/黄黑道/值宿判据零变化（[5] zeji 行为指纹通过为证）"
+    },
+    {
+      "discipline": "zeji",
+      "from": "e244c48ddb3e1d36",
+      "to": "13fb46b55d3d655f",
+      "date": "2026-10-08",
+      "reason": "2026-10-08 有意改版归因（前序 WIP 漏 raise）：zeji data/citations.json 新增「民俗吉凶日篇·彭祖百忌日」17 条逐字书证，analyze.py:132 通则引文由 1 篇增至 2 篇，narrate 引文块随之变长 → render MD 整页指纹 e244c48→13fb46b5。科内 golden 已于同批 capture 至 e0dc024e；zeji 机械因子与建除/黄黑道/值宿判据零变化（[5] zeji 行为指纹通过为证）"
+    },
+    {
+      "discipline": "ming",
+      "from": "f35136be0bfe4b47",
+      "to": "fcdb675a50726298",
+      "date": "2026-10-08",
+      "reason": "2026-10-08 ming 语料接线收口：shi_shen_actions.json 接入 narrate 十神取象段（每神多一行「<god>作用候选：…」，措辞整条取自数据层 hint_prefix/narrative_hint，代码不组句）→ render MD f35136be→fcdb675a。科内 golden 机械层 1be8d5b5 零漂移、措辞已 capture 至 ed6476e0；tune 100.0(n=30)/holdout 96.2(n=246) 不变"
+    },
+    {
+      "discipline": "liuyao",
+      "from": "e1d588fbcb7d88dc",
+      "to": "d4a821a8540006fb",
+      "date": "2026-10-08",
+      "reason": "2026-10-08 六爻交付口径收口：render 结论行追加数据层档位注记（narrative_templates#narrate_shell.conclusion_grade_note＝「（引擎档位名，非注定断言；细看正文的偏向与信号）」），消除 reports/liuyao_latest.md 里『结论：大凶』与同页『凶象只用偏向／有…信号讲』的自相矛盾；另 liuyao_narrate._dedash 折叠模板拼出的「——，」残句。措辞层已 capture 至 7200af9a、机械层零漂移"
     }
   ]
 }

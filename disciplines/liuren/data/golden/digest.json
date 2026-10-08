@@ -3,8 +3,8 @@
     "what": "大六壬金标准指纹基线（排盘+九宗门+天将逐字段）",
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
-  "digest": "0b1397b52ab69cfa",
-  "narrate_digest": "87a0460a43899dba",
+  "digest": "1488c1b3135ee5b4",
+  "narrate_digest": "58b46b4cb26931eb",
   "drift_log": [
     {
       "from": "36005aa05670b1a6",
@@ -41,6 +41,24 @@
       "to": "0b1397b52ab69cfa",
       "date": "2026-10-05",
       "reason": "合池分支撤销、恢复下贼优先（CHANGELOG 10-05i 口径变更）：《六壬指南》心印赋注显式文本「若有一下克其上神者，虽有二三之上克下不论矣」；43 课例反事实净值 33/43 不变（仅 LE001/LE032 互换）；4 条 golden 请求盘踩合池分支的 san_chuan/men/ke_name 随口径更新"
+    },
+    {
+      "from": "0b1397b52ab69cfa",
+      "to": "45995c228c4537c5",
+      "date": "2026-10-07",
+      "reason": "OPT-liuren 2026-10-07 批：新增结构标签 8 维（not_entered/xunkong_grade 三档/sanjian/qian_hou/夹克内战外战/day_night_route 昼夜分途/三宫时/天罗地网/干支鬼煞三杀四门）＋类神类将组＋日辰四气别名字段；天狱课体落判据（旺相依赖解耦为月支判囚死）；课目别名机制（无依/无亲→井栏射、赘婿→赘胥，走 rules.aliases 不另立课目）。逐格对拍：剔除新增的 factors[6].structure_tags 一项后机械摘要复现 HEAD 0b1397b52ab69cfa —— 日干支/时支/月将/门类/课体/三传/遁干/四课/乘临逐字段零漂移，纯增量。"
+    },
+    {
+      "from": "45995c228c4537c5",
+      "to": "8040cb3ee5ff359b",
+      "date": "2026-10-08",
+      "reason": "OPT-liuren_shending_dz-07 新增两正交结构标签：fuyin_fanyin_jiuyuan（伏吟事近／返吟事远，源L342）＋ ri_zao_tian_yi（日辰阴阳在天一前主事速／后主事迟，源L342）。4 条 golden 中 ri_zao 触发 4/4（新增 fields.basis 条目），fuyin 触发 2/4（返吟 two cases）；chuan_tianjiang/four_courses/men/ke_name/san_chuan/dun_gan 逐字段对拍 HEAD 零漂移。"
+    },
+    {
+      "from": "8040cb3ee5ff359b",
+      "to": "1488c1b3135ee5b4",
+      "date": "2026-10-08",
+      "reason": "OPT-rengui_dz-01 新增 J 组 san_chuan_seven_ge：三传七格（全财/全鬼/全脱 via 五行统一关系，俱阳/俱阴 via 阴阳支集合，递生/递克 via 四节点链）。4 golden 中全脱 1/4、俱阳 1/4、递生 2/4；chuan_tianjiang/four_courses/men/ke_name/san_chuan/dun_gan/逐字段对拍 HEAD 零漂移；结构层每条格 basis 新增。"
     }
   ],
   "narrate_drift_log": [
@@ -103,6 +121,24 @@
       "to": "87a0460a43899dba",
       "date": "2026-10-05",
       "reason": "合池分支撤销、恢复下贼优先（CHANGELOG 10-05i 口径变更）：《六壬指南》心印赋注显式文本「若有一下克其上神者，虽有二三之上克下不论矣」；43 课例反事实净值 33/43 不变（仅 LE001/LE032 互换）；4 条 golden 请求盘踩合池分支的 san_chuan/men/ke_name 随口径更新"
+    },
+    {
+      "from": "87a0460a43899dba",
+      "to": "027f96b705d0f3a7",
+      "date": "2026-10-07",
+      "reason": "OPT-liuren 2026-10-07 批：新增结构标签 8 维（not_entered/xunkong_grade 三档/sanjian/qian_hou/夹克内战外战/day_night_route 昼夜分途/三宫时/天罗地网/干支鬼煞三杀四门）＋类神类将组＋日辰四气别名字段；天狱课体落判据（旺相依赖解耦为月支判囚死）；课目别名机制（无依/无亲→井栏射、赘婿→赘胥，走 rules.aliases 不另立课目）。逐格对拍：剔除新增的 factors[6].structure_tags 一项后机械摘要复现 HEAD 0b1397b52ab69cfa —— 日干支/时支/月将/门类/课体/三传/遁干/四课/乘临逐字段零漂移，纯增量。"
+    },
+    {
+      "from": "027f96b705d0f3a7",
+      "to": "85f150339b0b66d6",
+      "date": "2026-10-08",
+      "reason": "OPT-liuren_shending_dz-07 新增两正交结构标签：fuyin_fanyin_jiuyuan（伏吟事近／返吟事远，源L342）＋ ri_zao_tian_yi（日辰阴阳在天一前主事速／后主事迟，源L342）。4 条 golden 中 ri_zao 触发 4/4（新增 fields.basis 条目），fuyin 触发 2/4（返吟 two cases）；chuan_tianjiang/four_courses/men/ke_name/san_chuan/dun_gan 逐字段对拍 HEAD 零漂移。"
+    },
+    {
+      "from": "85f150339b0b66d6",
+      "to": "58b46b4cb26931eb",
+      "date": "2026-10-08",
+      "reason": "OPT-rengui_dz-01 新增 J 组 san_chuan_seven_ge：三传七格（全财/全鬼/全脱 via 五行统一关系，俱阳/俱阴 via 阴阳支集合，递生/递克 via 四节点链）。4 golden 中全脱 1/4、俱阳 1/4、递生 2/4；chuan_tianjiang/four_courses/men/ke_name/san_chuan/dun_gan/逐字段对拍 HEAD 零漂移；结构层每条格 basis 新增。"
     }
   ]
 }

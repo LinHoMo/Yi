@@ -4,7 +4,7 @@
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
   "digest": "9e206e9a93aa3cf3",
-  "narrate_digest": "545addae28127c7c",
+  "narrate_digest": "e0dc024ec8eb96ee",
   "drift_log": [
     {
       "from": null,
@@ -49,6 +49,12 @@
       "to": "545addae28127c7c",
       "date": "2026-10-01",
       "reason": "narrate 在「值宿」后附《玉匣記·二十八宿值日吉凶歌》逐字歌诀（含值宿神将/书证吉凶/出处）；analyze citations 新增 值宿歌诀 字段。不参与评分，tune/holdout 仍 100%"
+    },
+    {
+      "from": "545addae28127c7c",
+      "to": "e0dc024ec8eb96ee",
+      "date": "2026-10-08",
+      "reason": "新增彭祖百忌17条书证（天干十忌+地支十二忌+建除十二忌）逐字可回指 通则引文自1→2篇"
     }
   ]
 }

@@ -4,7 +4,7 @@
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
   "digest": "1be8d5b579463a47",
-  "narrate_digest": "1233c399b54a8781",
+  "narrate_digest": "ed6476e0ac6a0959",
   "drift_log": [
     {
       "from": "57dc7e890af222fa",
@@ -20,24 +20,6 @@
     }
   ],
   "narrate_drift_log": [
-    {
-      "from": "57dc7e890af222fa",
-      "to": "10d46559c6200582",
-      "date": "2026-10-01",
-      "reason": "指纹拆分（SYS-REVIEW#2）：机械/措辞分列；机械字段取值不变（机械digest 2c3eee32 为 57dc7e89 去 narrate_sha 后的机械字段，样例零异常）"
-    },
-    {
-      "from": "10d46559c6200582",
-      "to": "5498585f61e725ae",
-      "date": "2026-10-01",
-      "reason": "narrate 接线新增两行：建禄格走 verdicts.不适用 口径行、从格报滴天髓从化论引文行（引文外置后 _geju_line 补全两分支，机械零漂移）"
-    },
-    {
-      "from": "5498585f61e725ae",
-      "to": "286883c58f448ca7",
-      "date": "2026-10-01",
-      "reason": "narrate 措辞层新增《滴天髓》逐字引文五处（天干論日主体性／衰旺論／體用論／寒暖論／歲運論）与從化論真伪两段（从化格时）；数据来自新增引文层 data/ditian_sui.json（机械提取，出处见 _meta）。机械层零漂移。"
-    },
     {
       "from": "286883c58f448ca7",
       "to": "183589ee3d03af53",
@@ -133,6 +115,30 @@
       "to": "1233c399b54a8781",
       "date": "2026-10-06",
       "reason": "TIAO_HOU 90→106 格（新增作者月度小结层 a0 + 修正十一月月头漏「一」的真 bug + 否定/从格/条件句否决机制 + 季节兜底限用于无精确月头之格）；机械层零漂移，仅调候措辞随覆盖扩面与修正而变"
+    },
+    {
+      "from": "1233c399b54a8781",
+      "to": "7da64a36ec160f93",
+      "date": "2026-10-07",
+      "reason": "补对源/补注记批次（命科 OPT-yuanhai_ziping_dz-01/02、mingli_tanyuan_dz-06、ziping_zhenquan_pingzhu_dz-01/03、ditian_sui_chanwei_dz-02、lantai_miaoxuan_dz-03/04、lixuzhong_mingshu_dz-01、qiong_tong_bao_jian_dz-02）：唯一行为变化=pattern.py 新增「犯岁君」结构标签（源L69/L70，日干克流年干），只进 relations 结构标注、**不评分不批吉凶**；其余全为注释/出处/死链修正（CANG_GAN 出处、LIUQIN_TO_SHISHEN 偏正论证、SAN_HE_GROUPS 兰台出处、ditian_sui 任注层差、shensha+ming_tables 死链改指、遇不遇降级层登记、顺逆用/相神出处、穷通宝鉴三名辞登记）。机械层零漂移；tune 100.0/holdout 96.2 持平"
+    },
+    {
+      "from": "7da64a36ec160f93",
+      "to": "2ab2cc78c2f2d712",
+      "date": "2026-10-07",
+      "reason": "新增四批 OPT 的 narrate 接线（全部为引文/结构标签层，机械层零漂移）：①看命口诀方法论引文块（_kanming_block，三命通会 L5115/L5137，OPT-sanming_tonghui_dz-04）；②从格引文补三命通会弃命从煞/从财并列句（_geju_line，OPT-sanming_tonghui_dz-03）；③十神取象旁证块（_LIUSHEN_IMAGE，千里命稿六神篇，OPT-qianli_minggao_dz-03，仅 narrate 消费）。三处均为书源引文入正文，不改任何判定值、不改机械层（digest 1be8d5b579463a47 未变）；ming tune 100.0/holdout 96.2 持平"
+    },
+    {
+      "from": "2ab2cc78c2f2d712",
+      "to": "b60ab2c4d024df11",
+      "date": "2026-10-08",
+      "reason": "2026-10-08 措辞层接线收口：①shi_shen_actions.json 接入 narrate 十神取象段（每神加一行「作用候选：…」，走 liushen_image 同款仅-narrate 口径，不进 analyze/评分）；②前序 WIP 的看命口诀/三命通会引文块。机械层零漂移，tune 100.0(n=30)/holdout 96.2(n=246) 与 capture 前逐项一致"
+    },
+    {
+      "from": "b60ab2c4d024df11",
+      "to": "ed6476e0ac6a0959",
+      "date": "2026-10-08",
+      "reason": "2026-10-08 二次 capture：把报告行前缀从代码组句（god+『作用候选』）改为整条取自 data/shi_shen_actions.json 的 hint_prefix/narrative_hint——tools/verdict_audit.py [1c] 判代码拼装的中文为未外置断语，故措辞归数据层。机械层零漂移，十神取象段行数不变、仅前缀字面改为「伤官作用候选」等"
     }
   ]
 }
