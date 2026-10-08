@@ -173,10 +173,11 @@ disciplines/<科>  → python dev_tools/check.py
 |---|---|---|---|
 | tune | 20 | **96.8** | 参与过调参 |
 | holdout | 12 | **90.2** | 未参与调参 |
-| wikisource_holdout | 35 | **56.9** | 永不调参（维基文库《增刪卜易》原本，泛化短板） |
+| wikisource_holdout | 44 | **60.8** | 永不调参（维基文库《增刪卜易》原本，泛化短板；strict 均分，应期 top-1 21.1%，读数 2026-10-08；扩样 35→44 见 `69823f2`） |
 | wikisource_direction | 36 | **72.2** | 有吉凶无应期 |
 
-六爻应期：主应期 top-1 tune **58.8%** / holdout **50.0%** / wikisource **20.0%**，
+六爻应期：主应期 top-1 tune **58.8%**（n=20）/ holdout **50.0%**（n=12）/
+wikisource **21.1%**（n=44，读数 2026-10-08），
 日/月/年分列已输出（`disciplines/liuyao/dev_tools/check.py`）。
 黑箱回归 18 例 **11/18**（基线 ≥11）。
 

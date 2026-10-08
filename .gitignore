@@ -45,6 +45,12 @@ synthesis/guidance/
 site/
 _site/
 
+# 通道 B 的报告产物落盘目录（AGENTS.md §六：reports 分支 / site/ / 生成的报告文件
+# 都是产物，遵循 gitignore/分支隔离，不混入主分支历史）。
+# 2026-10-08 补：此前只靠 `*.html` 通配挡住了 HTML，`reports/*.md` 却是可被
+# `git add -A` 误带入主分支的真实占报告。留档一律走 reports 分支。
+reports/
+
 # 生成物（AGENTS.md §三：*.html、*.jsonl 不入库，防误 add 报告/输出）。
 # 白名单：web/index.html（前端源码）、docs/samples/**（留存样例，见 §三）。
 *.html

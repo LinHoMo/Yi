@@ -1,3 +1,358 @@
+### 2026-10-08n 全面审查后的收口：门的覆盖面/自证补齐 + 8 项工作树红灯清零 + 交付口径两处订正
+
+**起因**：一轮全面审查（依据 = 工作树 + HEAD 干净副本各实跑一次 `tools/check.py`）。
+实测事实：**HEAD `391b480` 的 `check.py` 与 `--full` 均 EXIT=0，同一时刻工作树判红 8 项**；
+即"八科全绿"在 HEAD 为真、在工作树为假，而 AGENTS.md §范围 与 HANDOFF 的措辞没有区分二者。
+本轮把 8 项按 §四 逐项收口，并把审查中实测到的**门本身说谎/无牙齿/挂而不跑**一并补齐。
+**改动全部限于门禁、措辞层与数据订正；引擎判定逻辑与评分不变**（各科机械层零漂移为证）。
+
+#### 一、分数与读数（三集分列，禁混；全部为古籍案例对齐分，非命中率——§一 铁律三）
+
+- 命科：tune **100.0%**（n=30）/ holdout **96.2%**（n=246，`tiaohou 19/21`、pillars 189/189、
+  pattern 28/36、cong_ge 13/15）/ 外集 tiaohou **14/16**、十神 5/5、格局 2/2、强弱 30/45。
+  本轮改动（narrate 接线 + 措辞归数据层）**未使任何一项移动**。
+- 六爻：tune **96.8**（n=20）/ holdout **90.2**（n=12）/ 黑箱回归 **11/18**（基线 ≥11）
+  / wikisource_holdout **60.8**（n=44，应期 top-1 21.1%）。巨石拆分后逐列复跑持平。
+- 小六壬/择吉/梅花：`dev_tools/check.py` 全绿；口径披露照旧（n<20 不发百分比）。
+- 单测：`pytest tests` **442 passed**（原 387 + 本轮新增 `tests/test_pathguard.py` 3 例
+  与工作区既有新增测试）。
+- 复跑口径：`python tools/check.py` / `--full` / `python tools/eval.py --full`。
+
+#### 二、文档讹数订正（§四.4：口径不改，但记载必须与实跑一致）
+
+- **`调候 49/51` 查无此数**：`CHANGELOG 10-06i`、`HANDOFF §一/§六` 三处记载的命科 holdout
+  调候计数，在现行 `evaluate.py` 口径下**不可复现**——实测分母是适用案例数 **21**（`19/21`），
+  非 51。三处均就地加订正标注（历史流水不静默改写），并在 §一 命科段写明"疑为格数与例数混记"。
+- **`holdout 96.7 / tiaohou 21/21`**（`HANDOFF §一` 2026-10-04 版）已随 `10-06e` 扩面失效，
+  现值 96.2 / 19/21。
+- **`wikisource_holdout n=35 / 56.9 / 20.0%`**（`HANDOFF §一` 表、`README` 两处）滞后于
+  `69823f2` 的扩样，现值 n=44 / 60.8 / 21.1%。
+- **AGENTS.md §二「外集 QTBJ 批 9 条…待重建」为过期记载**：已于 `73d6c84`（10-06m）重建，
+  该段改为"已重建 + 机械门 `[1k]`"，并补一条通用纪律：**任何「照录」字段不改字、不转简**
+  （本轮在 `disciplines/ziwei/data/geju_rules.json` 复现同类病灶，见下）。
+- **AGENTS.md §范围 / HANDOFF §范围 的「全绿」**加限定：全绿状态锚 revision 不锚工作区，
+  并指向 §六 读数时点。
+
+#### 三、门禁补齐（本轮的重点：不是"发现了 bug"，而是"发现门在说谎或没人跑"）
+
+- **`[2b] 门自证` 新增段**：五把自带 `--selftest` 的门（案例隔离 / 引文逐字 / 书源解读文档 /
+  书源对勘 / 文档死链）由"文档里说做过负例"改为**每次 check 真跑**。段内**逐名登记**——
+  我自己第一版把段名当子门名，导致 `--only gate_selftest` 静默跳过四把门却打印"全部通过"，
+  正是本文件设计口径第 1 条禁止的假绿，已改为选错名字必报错并列可用项。
+- **唯一真值源门（`[1]` 结构契约内「内核规则表无学科复制」）扫描根 `disciplines/` → `disciplines/ + tools/`**。
+  AGENTS.md §二 原写覆盖 `tools/**` 而四条判据一律只 `rglob(disciplines)`——**措辞是空话**。
+  实跑探针（往 `tools/` 植一条完整地支串）原先不判红、扩根后 EXIT=1 且点名文件行号与 core 出处。
+  同步清掉仓内既有两份副本：`tools/report_faithfulness.py` 的 `BRANCHES`（地支串）与
+  `SIX_RELATIONS`（与 `core/relations.py` **同名不同序**，正是 §二 记的历史病灶形态），
+  改引 `yishu_core.symbols.EARTHLY_BRANCHES` / `yishu_core.relations.LIUQIN_NAMES`；
+  行为等价性已证：同集、无互为前缀的元素（正则择一结果与顺序无关）、地支串逐字相等，
+  且 `--corpus` 12 例 71 条断言仍全 supported。
+  顺带修 `disciplines/ming/scripts/narrate.py` 的**旋转地支副本**（`zip("寅卯…子丑", 1..13)`
+  改由 core 序旋转得到，逐格对拍相等）。
+- **`[1g]` 案例库隔离门**（`tools/case_isolation_check.py`）三处改动：
+  ①**判据精确化**——删掉 `huozhulin` / `wikisource` 两条**裸书名正则**，一律要求路径/文件名形态
+  （`_cases.json` 后缀式同时覆盖 `f"{slug}_cases.json"` 组合形态）。原判据把
+  `classical_enhancements_fushi.py` 的 OPT 编号与结构标签键名 `huozhulin_fushi` 判成"触达案例库"，
+  而该模块实测只读 `data/rules/caiguan_fushi.json`——**假阳性逼人放宽判据，是 §四.8 明令的方向**，
+  所以选择收窄判据形状而非加豁免。②**覆盖扩面**——扫描集由"四段 import 闭包"扩到
+  闭包 ∪ 本科 `scripts/` 全部模块，非四段入口的脚本不再是永久盲区；因此暴露的
+  `build_portal_assets.py` 进 `DIRECT_SCAN_EXEMPT` 并写明依据（读 evaluate --save 的派生评测文件、
+  产物进 gitignored `outputs/`，属铁律二"测试运行器"类），**不放宽判据本身**。
+  ③**下限守卫**——扫描学科数 <8 或模块数 <70 一律判红（原 `scripts/` 缺失即 `continue`，
+  扫空与干净不可区分）。`--selftest` 六条：显式路径判红、组合文件名判红、**书源 slug 不误报**
+  （防止后人再把判据放宽回去的哨兵）、扫空必红、下限必咬、真实仓库必过。
+- **`[1b-2]` 文档死链门**：`ACTIVE_GLOBS` 由 `docs/*.md` 改 `docs/**/*.md`，扫描面 **28 → 103 份**
+  （`docs/source-readings` 57 / `docs/audits` 8 等子目录原为盲区）。挖出真死链 34 处，修后 0：
+  其中 4 处是**错误路径形态**（`disciplines/liuyao_timing.py` → 实际在 `scripts/` 下、
+  `liuyao/xxx.py` 简写、`p2.md`/`p3.md` 分读稿缩写）；其余是**指向待建文件的存在性措辞**，
+  按该批文档自定的「带『新建』二字者不属于验收范围」约定处理——语境豁免词新增
+  `新建|待建|拟建|下建|应建|不存在`（窗口判定不变，须贴着引用）。
+  该门补 `--selftest`（裸引用必咬 / 语境豁免精准 / `__` 假路径豁免 / 子目录递归生效）；
+  **首版我多加了「真死链」一个词，被自证当场否证**（任何描述性散文都吞掉负例），已删——
+  这正是 §四.8「全绿的新门先怀疑再证明」的用途。同时补 `argparse`（`--root` / `--selftest`），
+  此前无任何 CLI 入口，违反 §三 入口规范。
+- **`[1l]` 书源解读文档门（新挂）**：`tools/check_source_readings.py`（54 篇解读文档的
+  引文逐字回指书源 + OPT 表六列齐 + OPT ID 前缀与文件名同构）此前**写好了但没有任何地方调度**
+  ——门不排班等于没有。先修它报出的 4 处真缺陷（3 行 OPT 表缺「建议」列、1 行 ID 前缀写成
+  `OPT-liuren_dz-03` 与本表命名不同构，改到空位 `-12`），实测 54/54、引文 3256 条、耗时 2 秒，
+  再挂进默认档。
+- **`[1j]` 语料可复现**：两个建器的"手工补录 vs 重跑必删"脱钩按 §四.6 收口——
+  **改建器产出集合，不手改 data**：ziwei `build_corpus.py` 新增 `build_jixing()`
+  （贪狼三条组合忌星并入产出集合，且**强制逐字回指书源 L417**）；
+  liuren `build_kemu_notes.py` 认 `zhinan_dz_jialin` 旁证键为合法课名来源，并校验每条自带
+  `_book`/`_note` 出处、不得与课经集 entries 重名。两处均做负例自证：
+  ziwei 注入简体改写 → `SystemExit` 点名；liuren 注入无出处旁证条目 → 判红（原文件逐字节备份还原）。
+- **学科互 import 门扩面（`[1]` 结构契约内）**：旧门只扫 `disciplines/<科>/scripts/`，
+  且只认**裸模块名**一种形态（`from liuyao import …`）。于是学科层用
+  `from disciplines.liuyao.scripts.x import …` 或 `importlib.import_module("disciplines.liuyao…")`
+  或把 `disciplines/zeji/…` 当字符串路径拼进去——**三种形态全部畅通**。
+  本轮实测命中一处真违规：`disciplines/ming/dev_tools/audit_nayin_usage.py` 动态加载
+  六爻模块（该脚本的反事实探针本就同时探两科，属跨科审计）。
+  处置：**脚本移到仓库级 `tools/audit_nayin_usage.py`**（依赖方向归位，非加豁免），
+  门同时扩到「整个学科目录 × 四种形态」，负例自证 = 在 `ming/dev_tools/` 植四种形态
+  → 四条全部点名（含行号与"本科=ming"），撤掉后 EXIT=0。
+  ⚠️ 未注册目录（`disciplines/jiaoshi/`、`none_tonggang/`）不在本门判定内，
+  它们的门盲区问题另记 TECH-DEBT §2.4，须人拍板处置。
+- **该脚本还暴露一个"从没真跑过"的缺陷**：`tools/audit_nayin_usage.py` 四处
+  `subprocess.run(…, text=True)` 未带 `encoding="utf-8"`，GBK 控制台（本机 cp936）下
+  子进程读线程 `UnicodeDecodeError` → `r.stdout` 变 `None` → `AttributeError`，
+  脚本从写出之日起就跑不通。补 encoding 后现可复跑：注入自证 `injection_effective: true`、
+  十二项读数逐项不变、EXIT=0。**一个自带"负例自证"的脚本如果没人跑过，
+  它的自证与"文档里写了有测试"同样是空头支票**（§四.8 同一病灶）。
+
+#### 四、数据缺陷订正（§二「数据缺陷 vs 引擎缺陷」：先判责任方，不按读数改数据）
+
+- **ziwei 贪狼三条忌星引文被转成简体**：入库作 `见七杀或配以遭刑` / `遇廉贞也不洁` /
+  `会破军迷花恋酒而丧命`，而书源 `data/sources/zi-wei-dou-shu-quan-shu.wikitext.txt` L417
+  原文为繁体 `見七殺或配以遭刑` / `遇廉貞也不潔` / `會破軍迷花戀酒而喪命`——
+  语义同但**非逐字子串**，违反"引文可指回原文"。已改回繁体原样。
+  ⚠️ 这类病灶 `[1k]` 抓不到：`[1k]` 只管 `data/cases/*/source_quote`，
+  非案例库的"照录"字段目前靠各建器自查（TECH-DEBT §2.4 已登记通用门待议）。
+  行为影响：这三条 engine 从不查询（`analyze.py` 只按固定格局名取规则），故零行为变化。
+- **`nayin_quxiang.json` / `shi_shen_actions.json` 的"已落实"不实记载**：前者文档称
+  `pattern.py` 已有 `nayin_quxiang()` 且接入 `analyze.py`，实测两文件内该串**零命中** →
+  审计表两行由 B 改为 C（待接线），计数 B 8→6、C 0→2 并写明归因；后者被命科
+  `[8] 语料接线` 判红（22 条语料零消费）→ **真接线**：走 `liushen_image` 同款
+  "仅 narrate 可读"口径接入十神取象段，`hint_prefix`/`narrative_hint` 整条取自数据层
+  （代码组句曾被 `[1c]` 判为未外置断语），接线后 7/22 条进报告、`consumed_by_engine` 归真。
+
+#### 五、交付文本口径两处订正（铁律三，措辞层，不动档位取值与评分）
+
+- **「结论：大凶」与同页口径句自相矛盾**：`reports/liuyao_latest.md:8` 写「**结论**：大凶」，
+  同文件 `:43` 声明「凶象只用『偏向／有…信号／结构上』讲，不用『注定／一定』」。
+  修法：`render` 的结论行追加**数据层**档位注记
+  （`disciplines/liuyao/data/narrative_templates.json#narrate_shell.conclusion_grade_note`），
+  产出改为「结论：大凶（引擎档位名，非注定断言；细看正文的偏向与信号）」。
+  分级标签本身保留——`大吉/偏吉/平吉/凶/大凶` 是引擎输出的**结构档位名**，
+  且被 `evaluate.py` 的 expected 与覆写链按名引用，改名会动评分口径，不属本轮。
+- **模板拼出的「——，」残句**：`neg_table` 模板尾部自带「——」，而 `reason_yuan` /
+  `reason_pattern` 模板自带前导「，」，两者相接成「…不是发力的时候——，主要因为…」。
+  由 `liuyao_narrate._dedash` 折叠为「——」（纯标点，不增删词）。
+- 两处均只动措辞：liuyao 机械层 `2993c3eca10bc21b` 零漂移、tune 96.8/holdout 90.2/黑箱 11/18 持平；
+  已 capture（措辞基线 `7200af9a70d2df8f`）并 `--raise-render --reason` 落根 `render_digest.json`。
+
+#### 六、结构与卫生
+
+- **巨石门清账**：`disciplines/liuyao/scripts/classical_enhancements.py` 2533 → **2196 行**
+  （预算 2200）。2026-10-07 批新增的三个域按仓库既有分域范式
+  （`_dufa/_zhugui/_menlei/_fushi/_yimao_zhugui`）拆到 `classical_enhancements_shen_yao.py`：
+  身爻启用（OPT-yiin_dz-01）、忧解忧疑（OPT-zengshan_buyi_dz-03）、六神旺衰。
+  **函数体逐字节搬迁**（搬迁前后各段 sha256 已打印留痕），依赖只出不入
+  （`find_hexagram_body` 留原文件、被拆出模块按路径 import 之，无环）；
+  消费方 `classical_analysis.py` 与 `tests/six_god_wang_shuai_test.py` 改直连新模块。
+- **测试路径隔离（`[8] pytest` 的一项真实回归）**：工作区新增的两个根测试把
+  `disciplines/liuren/scripts` `sys.path.insert(0, …)` 后不还，pytest 共用解释器按字母序收集，
+  于是 `test_yingqi_windows` 的 `from evaluate import RHYTHM_PAIRS` 解析到六壬 `evaluate` →
+  **收集期 ImportError，整门红**。新增 `tests/pathguard.py`（`discipline_scripts()` 上下文：
+  退出时逐位还原 `sys.path` 并按模块文件实际位置清 `sys.modules`）+
+  `tests/test_pathguard.py` 三例（含一条"裸 insert 必须确实造成遮蔽"的负例，证明前两测非空跑）。
+  这是 AGENTS.md §六 为浏览器侧写下的同名遮蔽约束在测试侧的对应物。
+- **`.gitignore` 补 `reports/`**：§六 明写"reports 分支、`site/` 与生成的报告文件都是产物，
+  遵循 gitignore/分支隔离"，但此前只靠 `*.html` 通配挡住了 HTML，`reports/*.md`（真实占报告）
+  仍可被 `git add -A` 带进主分支。本轮实跑量化：`git ls-files --others --exclude-standard`
+  390 个未跟踪 + 69 个已改 = **459 个文件、50,358,969 字节（≈48 MiB）** 会被一次误提交带走
+  （体量集中在 `modernized/` 31 MB + `data/sources/` 17 MB）。
+  工作流侧无影响（`report.yml` 写的是 `reports` **分支**）。
+
+#### 七、遗留（不在本轮做，须人拍板）
+
+- `data/sources/`（17.5 MB，107 个未跟踪文件）与 `modernized/`（31.1 MB，162 文件，
+  FORMAT-SPEC 自述为 `clean_wikitext.py` 派生物，内含硬编码 `C:\Users\…` 的一次性脚本）
+  的入库策略；`disciplines/jiaoshi/` 与 `disciplines/none_tonggang/` 两个未注册目录的归属
+  （弃置 / 移 `tools/scratch/` / 走 `docs/NEW-DISCIPLINES.md` 论证后注册）。
+- 远端真值：本轮实测 `origin/main = a4d13a6`（2026-10-05），**本地领先 22 个提交未推送**，
+  远端 CI 与 Pages 仍停在 10-05——HEAD 的 22 个提交未经远端验证。
+  `version_gate.py` 走代理时会报 `REMOTE_UNVERIFIED`；本轮用 `git -c http.proxy= ls-remote`
+  直连才拿到远端值（代理不通 ≠ 远端不可知，这两件事今后要分开写）。
+- 「照录字段必须逐字」从案例库扩到全 `data/*.json` 的通用机械门；OPT 行内点名的
+  `文件::函数` 由门反查符号存在性（现 `[1b-2]` 只查文件路径存在）。
+
+---
+
+### 2026-10-08c 六条 P1 结构课体 OPT（liuren 6 条）——**纯加和，机械层零回归**
+
+落实 6 条 P1 结构课体 OPT。**不改判定值、不改分数、不改 verdict**。新增单元测试合计 6/6 全绿。
+口径：大六壬全部用例 43 条实例（n=43），三传机械一致率 33/43=76.7%（可验证桶 26/29=89.7%）；
+本轮无 tune/holdout 分流（仅一组机械一致率集），**读数不变、分数不变**。
+
+- **大六壬：九宗门全部 9 门逐条结构定义字段补全** `OPT-liu-ren-da-quan-01`（`disciplines/liuren/data/kemu.json`）：
+  9 门（元首/重审/知一/涉害/遥克/昴星/别责/八专/伏吟/返吟）逐条 `structured_definition` 补全完毕，
+  basis 取自书源（《六壬指南》L23-L29 逐字或《六壬大全》互证）。全部 720 课式（60 日×12 时）门类分布逐条验证；
+  golden 指纹 1488c1b3135ee5b4 不变。
+- **大六壬：行年起法函数** `OPT-liuren_cuiyan_dz-02`（`core/yishu_core/liuren_tables.py`）：
+  `xingnian_of(birth_ganzhi, gender, age)` 按《六壬粹言》L27 安星法落行年起法。
+  720 例（60 日×男女）全枚举闭环自检通过。金标准不变。
+- **大六壬：内战/外战 + 伏吟/返吟 + 天乙结构标签** `OPT-liuren_shending_dz-07`（`disciplines/liuren/scripts/structure_tags.py`）：
+  新增 `fuyin_fanyin_jiuyuan`（伏吟事近/返吟事远，源 L342）、`ri_zao_tian_yi`（日辰阴阳在天一前/后，源 L342）、
+  `jia_ke_nei_wani`（夹克/内战/外战）结构标签。门 [1e] 实测：`structure_tags` 维度 12 维 / 181596 条；
+  golden 指纹 1488c1b3135ee5b4 不变。
+- **大六壬：三光/三阳课体结构条件** `OPT-liuren_zhinan_dz-01`（`disciplines/liuren/data/kemu.json`）：
+  五正向条件（用旺相/吉神临用/日辰旺相当令/日在天乙前/贵顺布）+ 一否决项（忌克破刑冲害）已落
+  三光/三阳 `structured_definition`。basis 逐字对《六壬指南》L443，basis_src 注 L443+L863 互证。
+  条件只依赖旺相与天将布法，无神煞，conditions 内无方向吉凶词。验证：`scratch/test_zhinan_dz_01_04.py` 四测试过门。
+- **大六壬：日辰加临八名补六条纯结构课体** `OPT-liuren_zhinan_dz-04`（`disciplines/liuren/data/kemu.json` + `disciplines/liuren/scripts/kemu.py`）：
+  七新增名（自在/俸就/历虚/归宠/培植/脱骨/无涉）——① 入 `kemu.IMPLEMENTED` 第 8 批；
+  ② 走 `kemu.json#zhinan_dz_jialin` 独立书名键（保《六壬大全》64 条计数门 [1c]）；
+  ③ `kemu.py::recognize` 落 elif 链：「乱首→自在→归宠」「赘胥→俸就→历虚」+「培植」「脱骨」「无涉」。
+  60 日×12 时×12 月将加时全枚举（69120 课式）互斥性自检 855 触发无一破缺，golden 不变。
+- **大六壬：三传结构格标签组（七格）** `OPT-rengui_dz-01`（`disciplines/liuren/data/verdicts.json` + `disciplines/liuren/scripts/structure_tags.py`）：
+  七格（全财/全鬼/全脱/俱阳/俱阴/递生/递克）结构标签落 `verdicts.json#san_chuan` 与 `san_chuan_seven_ge()`，
+  basis 取自《六壬鬼谷》L148-154 逐字。golden 指纹 8040cb3ee5ff359b→1488c1b3135ee5b4（新增 factors 一项，进机械指纹）。
+
+### 2026-10-07b 五条加和型安全 OPT（xiaoliuren 1 + liuren 3 + rengui 1）——**纯加和，机械层零回归**
+
+落实 5 条"加和型安全" OPT。**不改任何判定值、不改分数、不改 verdict**。5 条单测合计 52 全绿。
+新增字段均有 docstring 书源引文，narrate 只出结构标签。
+
+- **小六壬：玉匣记六壬时课实例入** `_selfcheck`（`disciplines/xiaoliuren/scripts/chart.py`）：
+  "三月初五日辰时 → 小吉"（月=3,日=5,时=辰=5）。金标准成功由 6 例进至 7 例。逐字引
+  `data/sources/yuxiaji.wikitext.txt` L3827。
+- **大六壬：闭口课三条件追加 OPT-liuren_zhizhi_yuding_dz-02**（`disciplines/liuren/data/kemu.json`）：
+  4 条件 union——① 主条件（旬尾加旬首，《大全》原文保留不动）＋ 3 个 variant：
+  ② 元武乘神临于旬首（源 L76）、③ 地盘旬首上神乘元武（源 L709）、④ 旬尾遁干为癸（源 L2380）。
+  逐步格对拍：新增 3 条 source_quote 与书源逐字子串相符。
+- **大六壬：narrate 天将输出格式 OPT-liuren_xinjing_dz-03**（`disciplines/liuren/scripts/narrate.py`）：
+  三传行取 `tianjiang_pos`（所乘地盘位）拼接为 "将名×位" 形式（如 "乘天后×亥"）。
+  **不涉吉凶，只变措辞格式**。
+- **大六壬：旺相休囚死状态标签 OPT-liuren_zhinan_dz-02**（`disciplines/liuren/scripts/analyze.py`）：
+  联通 core `wangxiangxiuqiusi(month_branch, element)` 按月支判 用神/日干/日支 的
+  旺／相／休／囚／死。书源《六壬指南》L246-L248。**description 中象数解读类句不入结构层**。
+- **大六壬：用神内外事定位＋六级应期刻度 OPT-rengui_dz-03**（`disciplines/liuren/scripts/`）：
+  `analyze.py` 取初传所在日上两课→「外事」、辰上两课→「内事」（《壬归》L109）；
+  应期映射表 6 级（太岁/年、月建/月、旬首/旬、节气首/半月、本日干/日、气首/五日，
+  《壬归》L112），动态命中月建与旬首（已接入可验证者）。**纯几何结构，不判吉凶/\不计分**。
+
+### 2026-10-07 评估/审计与新增结构表批次（28 条 OPT：liuren 20 + zeji 5 + meihua 3）——**读数全部持平**
+
+落实 `docs/source-readings/` §六 已核验的 28 条 OPT。**本轮以新增机械表与结构标签为主，
+不改任何判定值**；三科读数全部持平（liuren 33/43、zeji tune/holdout 100%/100%、
+meihua tune/holdout 100%/100%）。**口径变更登记如下（§四.4）**。
+
+- **大六壬：新增正交结构标签维度 9 个**（`disciplines/liuren/scripts/structure_tags.py`，
+  与课目**并列输出、互不覆盖**）：`not_entered`（他处发用／入四课）、`xunkong_grade`
+  （旬空落初斩首／中折腰／末刖足三档）、`sanjian`（三奸对冲位）、`qian_hou`
+  （寄宫前／后一位**纯位序**，「已往／将来」方向断语不入层）、`jia_ke/nei_zhan/wai_zhan`
+  （夹克＝下临地盘克用**且**所乘天将五行神克用，据卷11 L227 甲子日辰加寅例实测互证；
+  内／外战按神克将／将克神**互斥**判，粹言 L311「元武无内战」作负例登记）、
+  `day_night_route`、`san_gong_shi`（三宫时）、`tianluo_diwang`、`gui_sha`
+  （干鬼／支鬼／干刑／三杀／金神三杀／四门）。**全部只报机械位置，零吉凶措辞**。
+  新增门 [1e]（9 维全枚举零触发守门＋「他处发用」两桶皆非空＋旬空三档无缺档）。
+- **大六壬：新增 core 表**（`core/yishu_core/liuren_tables.py`）：`FOUR_GATES`（四门，
+  源L120-L123）、`GAN_GUI`/`ZHI_GUI`/`GAN_XING`（源L150/L151/L138，**干鬼十项与干刑十项
+  书源逐字同值**，故加 `assert_gan_gui_matches_gan_xing()` 同值断言）、`THREE_SHA`
+  （四组三合各 3 位，源L155-L158）＋`JINSEN_SHA`（源L159），各配守门断言。
+- **大六壬：天狱课体落判据**（`kemu.py`）：用神落囚／死＋天罡（辰）加日本。**旺相依赖
+  已解耦**——囚／死由 core `wangxiangxiuqiusi` 按**月支**判、「日本」取日干长生位
+  （据卷九注逐字），**不引神煞、不引年命**。新增门 [1g] 月支全枚举（12 月支×60 日×
+  12 时辰＝8640 课式）触发 302。
+- **大六壬：课目别名机制**（OPT-zhinan_dz-05）：「无依」原文**重新定位**——《六壬星纪》
+  L28 确不含，该句在**《六壬指南》L28**（另有 L148-L149 两处）。按「新增课目须走
+  variant 别名勿另立课目」，**不另立课目条目**，改走 `kemu.json#rules.aliases`：
+  无依／无亲→井栏射、赘婿→赘胥。新增门 [1f] 别名门（校验别名不另立课目、
+  KE_NAME_VARIANTS 与登记逐条一致、九宗门课名 key **实算**不手抄）。
+- **大六壬：`day_night_route` 口径改述**（OPT-zhizhi-05）：原拟「昼夜两套将」**改述为**
+  「同神昼夜乘临不同将→生克分途」——十二天将名与其五行神昼夜同一，变的是同一位支昼夜
+  所乘之将不同（贵人昼夜取支异故顺逆异）。口径注记落 `rules.day_night_route_口径`。
+- **大六壬：三条只读报告/工具**（均**不改数据**）：`dev_tools/diff_tomb_vs_head.py`
+  → `docs/liuren-koujing-diff.md`（土墓从火／从水**只读 diff 报告**＋受影响判据清单；
+  涉害「几重」口径核对报表——本书 L1021 只给两例**未言计量**，故**以现状登记为缺证**、
+  `verified=False` 保留、**算法零改动**；直指御定五类脱讹登记）；
+  `dev_tools/parse_tuo.py`（717 局标签解析＋分号体例容错＋重复组告警）；
+  `dev_tools/build_cuiyan_cases.py`（占验集抽取 **32 条**，**断语列不抽**——
+  `fields.narrative="narrative_only"` 只作字段级标记不承载断语文本，grep 复核
+  占验断语在 `core/` 与 `scripts/` 命中 **0**）。新增门 [1h] 三方条数对账
+  （**报告项非硬门**：书源自序 181「篇」vs 卷一段实收 64 条 vs 已落判据 44 条，
+  显式标注 181 与课目条数**口径不同不可比**）。
+- **择吉：三条月内凶神＋两表人神＋鸣吠两表落 core**（`core/yishu_core/zeji_tables.py`）：
+  `tian_gang_branch()`（源L490，附口径注：源文「前后三辰」给的是月建相对三位，通行
+  「天罡＝辰」是其**对冲位**，二者同一件事两种称法）、`jiu_kong_branch()`（源L530）、
+  **独火并入月害**（源L501「独火与月害同，亦名游祸，又名六害」）——**不另立表**，
+  走 core `HARM_PAIRS` 唯一真值源；`REN_SHEN_BY_JIAN_CHU`（源L696）＋
+  `REN_SHEN_BY_DAY_BRANCH`（源L698）经 `ren_shen_of()` 取，**纯机械零吉凶、只接
+  analyze `hints` 提示层、不计分**；`MINGFEI_DAYS`（14 日，源L468）＋
+  `MINGFEI_DUI_DAYS`（10 日，源L470），**甲午照录但标 `disputed=true` 不采为吉**
+  （源L471 书源自疑「恐传者有悮」，不代其改字）。断语解读**分离**落
+  `verdicts.json#an_yue`/`#yue_xiong_shen`/`#ren_shen`。
+- **择吉：新增一致性抽样回归脚本**（`dev_tools/check_zeji_consistency.py`）：按月（12 月）
+  × 每月 ≥5 日**确定性抽样**，逐日用**独立写死的义例起例公式**复算建除与黄黑道再与仓内表
+  对拍（**不抄 core 结果**）。2026 年实跑 **43 日／86 格、差异 0**。**权威层级＝
+  义例／起例 > 立成／年表／月表**（源L4190 逐字自陈编纂次第；L2019「于义例不合…
+  应亦不用官符也」为数据层服从义例的先例）。**只报差异不自动改数据**。
+  **负例自证**：注入错误公式后判红并逐格报明细，撤除后复跑归零。
+- **择吉：二十八宿锚点自证登记**（OPT-xingli-07）：标识符按实际代码 `_XIU_ANCHOR`
+  （非不存在的其他名），已在该处加注并逐字引源L660「但一元起于何年月日则不可得而考矣」，
+  另落 `verdicts.json#xiu_anchor_note`。口径要点：书源**自称不可考**（非「未给」），
+  故任何七元起点属伪精确，改用现代实测锚点 2007-09-13＝角宿。**取值零变化**。
+- **梅花：三项新入口**（`scripts/chart.py`／`analyze.py`）：①`way="words"` 字占平仄声调
+  起卦（源L206「平声为一数，上声为二数，去声为三数，入声为四数」）——**声调判定不入
+  引擎**，`--tones` 由调用方按音韵给出，引擎只做数→卦除法并校验值域 1..4、字数 ≥4；
+  ②`external_signs` 外应可选槽位（源L729/L735/L970/L978），映射表数据化落
+  `verdicts.json#external_signs.映射`（源L970 明列 8 项），**未列者不臆测其卦**；
+  合参次序**先内后外**，修正因子取外应卦对**体卦**的生／克／比和，**只出结构因子、
+  不出吉凶断语、不计分**；无外应时**显式标「外应空缺（静占）」**（源L735）；
+  ③`ti_yong_hu` 体互／用互拆分（源L820「体在上则上互为体之互…体互最紧，用互次之」），
+  按 `body_use_rule` 分派并标权重档，**与既有 `互卦下`／`互卦上` 并存不覆盖**
+  （后者位置命名、前者按体侧分派），**不改方向输出、不计分**。
+- **措辞外置收口（顺带通过仓库级「断语外置取证」门）**：梅花新增两段的**全部措辞**
+  外置到 `data/verdicts.json#narrate_phrases` 与 `#external_signs`，代码零中文断语
+  字面量；`tools/verdict_audit.py` 合计由 4 句降至 **0 句**。
+- **金标准逐格对拍（§四.5）**：
+  | 学科 | 机械层 | 措辞层 | 说明 |
+  |---|---|---|---|
+  | liuren | 剔除新增 `factors[6].structure_tags` 一项后**复现 HEAD `0b1397b52ab69cfa`** | 漂移（新增结构标签/类神/别名三段） | 日干支/时支/月将/门类/课体/三传/遁干/四课/乘临**逐字段零漂移**，纯增量 |
+  | meihua | **`2c9c810d8a265180` 与 HEAD 逐位相同** | 漂移（互卦分派段＋外应段＋措辞外置） | 卦名/体用/生体克体/旺衰/verdict/应期/特断**逐字段未变**；capture 工具自记「仅措辞漂移归因」 |
+  | zeji | **零漂移**（16 例指纹 `9e206e9a93aa3cf3` 与基线一致） | — | `hints` 为新增顶层字段，render 不读，故 render 指纹未受本轮影响 |
+- **纠正若干 OPT 行所载与实测不符处（一律按实测登记，不为凑例改判据）**：
+  | OPT | 所载 | 实测 | 处置 |
+  |---|---|---|---|
+  | `liuren_zhinan_dz-05` | 「无依」在《六壬星纪》L28 | 星纪 L28 **不含**；实在**指南 L28**（另 L148-L149 两处） | 重新定位后按别名机制登记 |
+  | `liuren_zhizhi_yuding_dz-06` | 「干上戊寅重复」疑单字脱漏 | 实为戊寅日**整块重复 12 局**（L433-532 与 L1513-1612 逐局干上全同） | 按实测算登记，**文本零改动** |
+  | `liuren_zhizhi_yuding_dz-06` | 课体分布「重审209／斩关162…」 | `parse_tuo.py` 实算「重审215／斩关164…」（各高 4~6） | **两值并列登记，本轮不改数据不改文档数字**，待复核 |
+  | `meihua_yishu_dz-03` | 验收例「坤上巽下、13÷6余1初爻动」 | 动爻相合（1）；卦名**穷举 5 种除法口径均不能得「坤上巽下」**，本仓得巽上离下·家人 | 如实登记分歧，**不改引擎** |
+- **未落数据项（一律禁改）**：土墓从火／从水分歧、涉害「几重」计法，**均只出只读报告**，
+  `TOMB_MAP` 与 `_she_hai_deep` **零改动**，裁决前 `check.py` 全过。
+
+### 2026-10-07 补对源/补注记批次（20 条 OPT：liuyao 10 + ming 10）——**判定值基本零变更**
+
+落实 `docs/source-readings/` §六 已核验的 20 条 OPT。**本轮以补注记/补对源为主，
+不改判定值**；六爻仅两处机械层漂移（均为有意书名改挂）、命科仅一处措辞层漂移
+（新增结构标签），两科读数全部持平。**口径变更登记如下（§四.4）**。
+
+- **唯一「行为」变化：命科新增「犯岁君」结构标签**（`disciplines/ming/scripts/pattern.py`
+  `dayun_liunian_interactions`）：判据＝**日干克流年干**，源《渊海子平》L69/L70
+  「日犯岁君，灾殃必重；五行有救，其年反必招财」＋「且如甲日见戊年…剋重者死」
+  「或得己合甲亦解之」。因源文明写「有合可解／有救则转吉」，标签**只报结构事实、
+  不批吉凶**（措辞用「结构上成立，是否有救须另看」），与同处既有「岁运并临」同一
+  设计口径。**只进 relations 结构标注、不评分**。命科措辞层指纹 1233c399→7da64a36
+  （capture 归因，机械层 1be8d5b5 零漂移）。
+- **六爻机械层漂移 fed7f877→c57a480a**：因「双卦对比规则」出处由**误挂《黄金策》改挂
+  《卜筮正宗》**（实测黄金策两源全 0 命中「冲中逢合」八字；正源=bushi_zhengzong
+  L32 目录／L55 目录／L3102-3104 正文，源用「逄」为「逢」异体已照录不改字）。
+  **判定值 ±1.5 与 pattern 名零变更**；措辞层 25c5eeea2fa7e3b9 **未变**。
+- **纠正三处 OPT 行号误标**（实测为准，未按 OPT 强改）：
+  | OPT | 原写 | 实测 | 处置 |
+  |---|---|---|---|
+  | `zengshan_buyi_dz-02` | L1306＝旺相入墓不死例 | L1306 是**「墓被冲动解」例**（「辰日冲动戌土」）；**旺相例是 L1322** | 按实测改标，并补总纲 L1330 三修正 |
+  | `yuanhai_ziping_dz-01` | 源 L42-43 | **L42 单行**含全十二支，L43 仅全角空格无正文 | 只标 L42 并说明 |
+  | `ziping_zhenquan_pingzhu_dz-01` | 顺用/逆用在 L209 | L209 是**相神**段；顺用/逆用实在 **L121/L130**（全仓仅 2 命中） | 按实测分挂两处 |
+- **新登记 3 条 rule_registry 条目**（`liuyao.yimao_shibafafa` 十八法映射 18 条、
+  `liuyao.huozhulin_luandong` 乱动对拍、另更新 `liuyao.muku`/`liuyao.guashen`）：
+  十八法映射统计＝**已覆盖 10／部分 6／缺口 2**（缺口：序8「安」、序12「泄气」）；
+  乱动卦逐格对拍＝135 条用例中乱动 12 条但**全在外部集，tune/holdout 内 0 条**
+  （故实现与否两集读数预期 0 变动，属 §四.7「读数不动属预期」）。
+- **修 2 处真死链**（AGENTS.md §四.8 精神）：`core/yishu_core/shensha.py` 与
+  `core/yishu_core/ming_tables.py` 均写「详见 `references/rules.md`」，实测
+  **该文件全仓不存在**（`find -name rules.md` 零命中），已改指真实存在的
+  `disciplines/ming/data/rules/rule_registry.json`（`ming.shensha`）与
+  `disciplines/ming/data/verdicts.json`。
+- **登记不实施（须走 §四全门槛）**：①随鬼入墓旺衰/墓破两修正（改 severity 与
+  score_modifier，且引擎现**完全未读用神旺衰、未检墓支是否被日月动爻冲**）；
+  ②乱动卦「取最旺爻为用神」（改取用结果，且 tune/holdout 无该输入类样本、无护栏）；
+  ③「遇不遇」降级层（前置 `NAYIN_XIANGGE` 全仓不存在，恒不成立）。
+- 读数（古籍案例对齐分，**非预测命中率**）：六爻 tune 96.8%／holdout 90.2%、
+  legacy 99.7%／92.9%，应期 top-1 58.8／50.0，与改动前**逐项一致**；
+  命科 tune 100.0%／holdout 96.2%，**与改动前一致**。
+
 ### 2026-10-06m 案例引文逐字性机械门 `[1k] case_quotes` 入库 + 重建外集 9 条非逐字引文（数据缺陷修复，非调参）
 
 TECH-DEBT §2.4 两项登记债务的清偿轮。**引擎零改动**（命科机械/措辞指纹不变），
