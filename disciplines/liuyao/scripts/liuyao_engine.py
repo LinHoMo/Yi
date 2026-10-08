@@ -16,6 +16,7 @@ import argparse
 
 import json
 
+import logging
 
 import os
 
@@ -24,6 +25,8 @@ import random
 import sys
 
 from datetime import datetime, timedelta
+
+_log = logging.getLogger(__name__)
 
 
 from yishu_core.runtime import force_utf8_stdio as _force_utf8_stdio  # noqa: E402
@@ -336,7 +339,8 @@ def main():
             from classical_analysis import enhance_reading
             enhance_reading(result)
         except ImportError:
-            pass  # 若无 classical_analysis 模块，仅跳过增强
+            _log.warning("classical_analysis 模块未安装：伏藏/暗动/月破/三合局增强跳过（ImportError）。"
+                          "安装后可启用：pip install <liuyao-classical-analysis>")
         
         # 五步思维链断卦分析（基于已输出的机械排盘数据推导结论）
         chain = None
@@ -345,7 +349,7 @@ def main():
             chain_full = run_thinking_chain(result)
             chain = chain_full.get("thinking_chain", chain_full)
         except ImportError:
-            pass  # 若无 thinking_chain 模块，仅跳过思维链
+            _log.warning("thinking_chain 模块未安装：五步思维链分析跳过（ImportError）。")
 
         # ── 分类占法选择建议 (section_advice) ──
         verdict_text = ""
@@ -359,7 +363,7 @@ def main():
             advice_items = generate_advice(verdict_text, category_text, result)
             result["section_advice"] = advice_items
         except ImportError:
-            pass  # 若无 advice_framework 模块，不附加建议
+            _log.warning("advice_framework 模块未安装：分类占法建议跳过（ImportError）。")
 
         # 确定最终输出格式 (--format 优先于 --output)
         output_format = args.format if args.format is not None else args.output

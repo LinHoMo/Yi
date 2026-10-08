@@ -1,3 +1,26 @@
+### 2026-10-08t 六爻增强链静默降级 → 显式 warning（3 处 ImportError 不再 pass）
+
+**起因**：Round 8 OBSERVE（TODO/FIXME 扫描）发现 `liuyao_engine.py` 在 3 个可选模块
+缺失时 `try/except ImportError: pass` 完全静默——`classical_analysis`（伏藏/暗动/月破/三合局）、
+`thinking_chain`（五步思维链）、`advice_framework`（分类占法建议）缺失时用户看不到
+任何信号，误以为功能已覆盖。属用户真实反馈通路的"软缺口"。
+
+#### 一、改动
+
+- **`disciplines/liuyao/scripts/liuyao_engine.py`**：
+  - 新增 `import logging` + 模块级 `_log = logging.getLogger(__name__)`
+  - 3 处 `pass` → `_log.warning("模块名 模块未安装：<功能描述>跳过（ImportError）。")`
+  - **不改变任何行为**：仍然跳过缺失模块，仅补可见信号
+
+#### 二、验证
+
+- 负例保留：无 `classical_analysis` / `thinking_chain` / `advice_framework` 模块 → 仍然跳过
+- stderr 显式输出三行 warning（端到端 liuyao CLI 实测）
+- pytest 全仓 450/450 全绿（warning 不触发退出码、不影响结果 schema）
+- `tools/check.py` 全绿
+
+---
+
 ### 2026-10-08s 修复 clone-breaker：tests/pathguard.py 未入库（4 个已提交测试必破）
 
 **起因**：Round 7 OBSERVE 发现 `tests/pathguard.py` 是未跟踪文件，但已有 4 个已入库
