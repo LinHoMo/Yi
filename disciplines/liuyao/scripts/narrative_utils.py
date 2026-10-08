@@ -346,6 +346,9 @@ def _evaluate_fu_cang_strength(fu_detail: dict, month_branch: str, day_branch: s
         if fei_growth == "绝" and not day_chongs_fu:
             fu_fei_modifier = -1.0
             fu_fei_reason = f"伏神{fu_element}绝于飞神{fei_branch}（{fei_growth}），伏神气绝难出，-1.0"
+        #书源原词（《易隐》源L224逐字）：「伏克飞为出暴，飞克伏则伤身。伏生飞曰泄气，飞生伏而叨生。飞伏比和，则相助而吉也。」
+        # 五态与引擎标签对应：伏克飞=出暴(已落,+0.8)／飞克伏=伤身(已落,-0.8)／伏生飞=泄气(已落,-0.3)／飞生伏=叨生(已落,+0.5)／比和=相助而吉(已落,+0.3)。
+        # 2026-10-07 补注(OPT-yiin_dz-02)：四态语义引擎早已全部落地，缺的是《易隐》原词标签与出处挂靠，本轮仅补注记，判定值与权重零变更。
         elif SHENG_CYCLE.get(fei_element) == fu_element:  # 飞生伏
             fu_fei_modifier = 0.5
             fu_fei_reason = f"飞神{fei_element}生伏神{fu_element}（飞生伏），伏得出，+0.5"

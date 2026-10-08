@@ -12,12 +12,23 @@ if str(CORE) not in sys.path:
     sys.path.insert(0, str(CORE))
 
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
+from yishu_core.symbols import EARTHLY_BRANCHES  # noqa: E402
 
 _DATA = Path(__file__).resolve().parent.parent / "data"
 _VERDICTS = json.loads((_DATA / "verdicts.json").read_text(encoding="utf-8"))
 _TIAO_HOU_QUOTES = json.loads((_DATA / "tiaohou_quotes.json").read_text(encoding="utf-8"))
 _DTS = json.loads((_DATA / "ditian_sui.json").read_text(encoding="utf-8"))
-_MONTH_ORDINAL = dict(zip("寅卯辰巳午未申酉戌亥子丑", range(1, 13)))
+# 十神取象旁证素材（OPT-qianli_minggao_dz-03）：**仅本 narrate 层可读**，
+# analyze/chart/pattern 不得 import（铁律一：象数解读不归机械推演）。
+_LIUSHEN_IMAGE = json.loads((_DATA / "liushen_image.json").read_text(encoding="utf-8"))
+# 十神作用枚举旁证素材（OPT-qianli_minggao_dz-02）：与 liushen_image 同一口径——
+# **仅本 narrate 层可读**，不进 analyze/chart/pattern，不参与任何评分（铁律一/三）。
+_SHI_SHEN_ACTIONS_DOC = json.loads(
+    (_DATA / "shi_shen_actions.json").read_text(encoding="utf-8"))
+_SHI_SHEN_ACTIONS = _SHI_SHEN_ACTIONS_DOC["shi_shen_actions"]
+# 正月建寅：月序表由内核地支序旋转得到，不另抄一份（AGENTS.md §二 唯一真值源）。
+_BRANCH_FROM_YIN = EARTHLY_BRANCHES[2:] + EARTHLY_BRANCHES[:2]
+_MONTH_ORDINAL = dict(zip(_BRANCH_FROM_YIN, range(1, 13)))
 
 
 def _dts_chapter(name: str) -> dict:
@@ -88,9 +99,44 @@ def _geju_line(pattern: str) -> str:
         return f"**格局口径**：{na}"
     cong = _VERDICTS.get("从格引文") or {}
     if cong and pattern.startswith("从"):
-        return (f"**从格所本**：「{cong.get('verse')}」（{cong.get('verse_source')}）"
+        head = (f"**从格所本**：「{cong.get('verse')}」（{cong.get('verse_source')}）"
                 f"{cong.get('verse_note') or ''}。")
+        # 《三命通会》从煞/从财书源句（OPT-sanming_tonghui_dz-03）：按格局名分流补一句，
+        # 与上方《滴天髓》引文并列，不替换。只出书源句，不作吉凶断言（铁律三）。
+        extra = ""
+        if pattern.startswith("从官杀") or pattern.startswith("从煞"):
+            extra = cong.get("cong_sha_sanming") or {}
+        elif pattern.startswith("从财"):
+            extra = cong.get("cong_cai_sanming") or {}
+        if isinstance(extra, dict) and extra.get("verse_quote"):
+            head += (f"《三命通会》另立从煞/从财一节：「{extra['verse_quote']}」"
+                     f"（{extra.get('locator') or ''}）。")
+        return head
     return ""
+
+
+def _kanming_block() -> list[str]:
+    r"""《三命通会》看命总纲方法论引文（OPT-sanming_tonghui_dz-04）。
+
+    只说明「引擎为什么这样取」（月令为命、神煞以五行为本），
+    是方法论登记，**不是判据、不进任何评分**（AGENTS.md 铁律一）。
+
+    排版约束：① 引文一律用「」包成独立分句，且出处括注以 `（《…` 开头、行号置括注内
+    ——`tools/verdict_audit.py` 的 NON_VERDICT ① 以 `（\s*[《＜]` 豁免出处标注行
+    （与 `_dts_line`／`_geju_line` 的 `**X所本**（《书名》…）：「原文」` 同款排版），
+    且若行号紧贴引文尾会被并进同一句误判成「未外置断语」。② 引文本体在
+    `data/verdicts.json#看命口诀`，属已外置。
+    """
+    km = _VERDICTS.get("看命口诀") or {}
+    out = []
+    for label in ("月令为命", "神煞以五行为本"):
+        e = km.get(label) or {}
+        q = e.get("full_quote") or e.get("quote") or ""
+        if not q:
+            continue
+        loc = (e.get("locator") or "").split(":")[-1]
+        out.append(f"> **看命所本**（《三命通会》{loc} 行·{label}）：「{q}」")
+    return out
 
 
 def _tiaohou_quote(a: dict) -> dict | None:
@@ -146,6 +192,7 @@ def narrate(a: dict) -> str:
         "",
     ]
     lines += _dts_line("體用論", "体用所本")
+    lines += _kanming_block()
     lines.append("")
     xunkong = s.get("空亡") or a.get("xunkong") or []
     th = a.get("tiaohou")
@@ -227,6 +274,26 @@ def narrate(a: dict) -> str:
         if tkdc:
             lines.append("- 天克地冲：" + "；".join(t.get("text") for t in tkdc) + "。")
         lines.append("")
+    # 十神取象旁证（《千里命稿·六神篇》）：**只作象数旁证，不进结构、不评分**。
+    # 数据源 data/liushen_image.json 按 OPT-qianli_minggao_dz-03 约定**仅 narrate 可读**；
+    # 措辞守铁律三：用「结构上/有…信号」，且逐字引文自带定位，便于回指原文。
+    img = _LIUSHEN_IMAGE.get("十神取象") or {}
+    if img:
+        lines.append("**十神取象**（《千里命稿·六神篇》引文，结构上旁证、非吉凶断语）：")
+        # 本书按篇合立（偏正印/偏正财/比劫禄刃），作用表按单星登记 → 合篇取首个单星。
+        _HE_PIN = {"偏正印": "正印", "偏正财": "正财", "比劫禄刃": "比劫"}
+        for god, e in img.items():
+            q = e.get("取象") or e.get("能力") or ""
+            if not q:
+                continue
+            loc = (e.get("取象_src") or e.get("能力_src") or "").split(":")[-1]
+            lines.append(f"> **{god}**（《千里命稿》{loc} 行）：「{q}」")
+            act = _SHI_SHEN_ACTIONS.get(_HE_PIN.get(god, god))
+            if act and act.get("narrative_hint"):
+                # 整行前缀与正文都取自本表（hint_prefix / narrative_hint），代码不组句
+                lines.append(f"> {act['hint_prefix']}：{act['narrative_hint']}")
+        lines.append("")
+
     pr = a.get("pillar_relations") or []
     if pr:
         lines.append("**四柱干支关系**（机械关系，不批吉凶）："

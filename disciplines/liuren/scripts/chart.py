@@ -84,6 +84,7 @@ def chart(datetime_str: str, question: str = "", gender: str = "") -> dict:
             "day_ganzhi": day_gz,
             "hour_ganzhi": moment.hour_ganzhi,
             "month_ganzhi": moment.month_ganzhi,
+            "month_branch": moment.month_ganzhi[1],
             "hour_branch": hour_branch,
             "xunkong": xunkong_of(day_gz),
         },

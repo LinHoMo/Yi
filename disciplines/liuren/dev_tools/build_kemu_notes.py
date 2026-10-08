@@ -47,6 +47,9 @@ COMMENT_LINES = [
 CN = re.compile(r"[\u4e00-\u9fff]")
 JUANS = {7: "课经集一", 8: "课经集二", 9: "课经集三", 10: "课经集四"}
 
+# 《六壬指南》日辰加临课目的旁证键（与课经集 entries 并列、不合并）
+JIALIN_KEY = "zhinan_dz_jialin"
+
 # 卷一「课目」歌诀里的前六门（原表缺自编号 1~6 条，此处按书源逐字补齐；诀文照录书源，
 # 含四库本讹字「昂星」「旡」——正字说明另见 kemu.json 的 variant 字段）
 FRONT_SIX = [
@@ -85,6 +88,94 @@ RULES = {
                "辰": "亥", "寅": "亥"},
     "stem_qi": {"甲": "午", "乙": "巳", "丙": "辰", "丁": "卯", "戊": "寅",
                 "己": "丑", "庚": "未", "辛": "申", "壬": "酉", "癸": "戌"},
+    # 课目**别名**（OPT-liuren_zhinan_dz-05，2026-10-07）：书源一课多名者在此登记
+    # 别名 → 本仓课名。**只走别名，不另立课目**——同「赘婿／赘胥」的处理
+    # （书源多作赘婿，本仓课名取卷一歌诀的「赘胥」）。消费方：
+    # scripts/kemu.py::KE_NAME_VARIANTS 与 dev_tools/check.py 门 [1e]。
+    "aliases": {
+        "_meta": "别名 → 本仓课名/课名键。别名不作独立课目，不占卷一「课目」段的 64 条。",
+        "无依": "井栏射",
+        "无亲": "井栏射",
+        "赘婿": "赘胥",
+        "_三合四局": "OPT-liuren_cuiyan_dz-05：三合四局（曲直/炎上/从革/润下）别名与顺逆字段；"
+                     "指向同一课目「全局」，以 ju_name 字段区分；"
+                     "core 唯一真值源 KE_CYCLE/SAN_HE_GROUPS 不另立表",
+        "曲直": "全局",
+        "炎上": "全局",
+        "从革": "全局",
+        "润下": "全局",
+    },
+    # 三合四局（曲直/炎上/从革/润下）的**结构参数**（OPT-liuren_cuiyan_dz-05）：
+    # 支局/顺逆合次序取自《萃言》各局总论段；branches 与 core 的 SAN_HE_GROUPS 同集，
+    # 此处只登记**顺序**（顺合/逆合是课目判据，core 表不含顺序），不另立五行生克表。
+    # `note` 是书源**摘要**（含跨行缀合），不是逐字引文——逐字要求约束的是
+    # 课目 note/verse 与 data/cases/*/source_quote；这里刻意用 note 而非 verbatim 命名。
+    "san_he_ju_extension": {
+        "曲直": {
+            "element": "木", "branches": ["亥", "卯", "未"],
+            "顺合": ["亥卯未", "未亥卯"],
+            "逆合": ["未卯亥", "卯亥未", "亥未卯"],
+            "source": "data/sources/liuren_cuiyan_dz.dz.txt:127-129",
+            "note": "木性本直，又复曲折也。顺合者理势自然，逆者事有曲折。春占取利于求财，诸事皆吉。",
+        },
+        "炎上": {
+            "element": "火", "branches": ["寅", "午", "戌"],
+            "顺合": ["寅午戌"],
+            "逆合": ["戌午寅", "午寅戌", "寅戌午"],
+            "source": "data/sources/liuren_cuiyan_dz.dz.txt:131-133",
+            "note": "火之性也。顺合者凡事光明，逆合者凡事猛烈，主事成急速，虚多实少。",
+        },
+        "从革": {
+            "element": "金", "branches": ["巳", "酉", "丑"],
+            "顺合": ["酉丑巳"],
+            "逆合": ["酉巳丑", "巳丑酉"],
+            "source": "data/sources/liuren_cuiyan_dz.dz.txt:135-137",
+            "note": "金须煅炼而成，有改革之意也。顺则有鼎新之象，逆则有肃杀之威。此课占婚大忌。",
+        },
+        "润下": {
+            "element": "水", "branches": ["申", "子", "辰"],
+            "顺合": ["申子辰", "子辰申", "辰申子"],
+            "逆合": ["子申辰", "申辰子"],
+            "source": "data/sources/liuren_cuiyan_dz.dz.txt:139-141",
+            "note": "就下者水之性也。主悠游长久，事不迫促，然终不能静也。",
+        },
+    },
+    # 九宗门枚举细则的**书源旁证**（OPT-liuren_xinjing_dz-01，2026-10-07）：
+    # 只登记书源自述的枚举名单，作为 scripts/kemu.py 既有判据的第二书源，
+    # **不新增判据**（别责／八专／返吟的判定仍走 jiuzongmen 判据树）。
+    "xinjing_旁证": {
+        "_meta": "《六壬星纪》九宗门枚举旁证。verbatim 为书源逐字，"
+                 "「本仓判据」列记与既有判据的一致性；只作旁证，不引入断语。",
+        "别责": {
+            "verbatim": "刚三柔六共九课辛丑、辛未各有两课，丙辰、戊午、戊辰、丁酉、辛酉各有一课",
+            "源": "《六壬星纪》L198",
+            "本仓判据": "jiuzongmen 门「别责」＋全枚举守门 expect_bieze="
+                        "{戊辰:1, 戊午:1, 丙辰:1, 辛未:2, 辛丑:2, 丁酉:1, 辛酉:1}"
+                        "（刚日 3 柔日 6 共九课，与书源逐日相合）",
+            "结论": "已落，与书源旁证一致（零新增）",
+        },
+        "八专": {
+            "verbatim": "八专之课号芜淫丁未、癸丑、甲寅、己未、庚申，皆两课也",
+            "源": "《六壬星纪》L216",
+            "本仓判据": "jiuzongmen 门「八专」＋全枚举守门 expect_bazhuan_days="
+                        "{甲寅, 庚申, 丁未, 己未, 癸丑}（五日，与书源逐日相合）",
+            "结论": "已落，与书源旁证一致（零新增）",
+        },
+        "返吟无克六日": {
+            "verbatim": "若夫丁未、己未、辛未、丁丑、己丑、辛丑六课无克，乃名无依",
+            "源": "《六壬指南》L28（**重新定位**：星纪 L28 不含「无依」，"
+                   "该句在指南 L28；指南 L148-L149 另有「反吟无依则复旧」"
+                   "「反吟来去不定，故曰无依，无依倚也」两处）",
+            "本仓判据": "jiuzongmen 返吟门 ke_name=井栏射（别名 无依／无亲），"
+                        "全枚举守门 jinglanshe==6（丑未同干丁己辛）",
+            "结论": "已落，别名走 aliases（不另立课目）",
+        },
+    },
+    # 昼夜乘临生克分途的口径注记（OPT-liuren_zhizhi_yuding_dz-05）：
+    # 该书源句**不是**「昼夜两套将」，而是「同一位支昼夜所乘之将不同 → 生克分途」。
+    "day_night_route_口径": "同神昼夜乘临不同将则生克分途（非「昼夜两套将」）："
+                           "十二天将名与其五行神昼夜同一，变的是同一位支昼夜所乘之将"
+                           "（贵人昼夜取支不同故顺逆异、乘临亦异）。源《六壬直指御定》L679。",
 }
 
 
@@ -166,8 +257,18 @@ def main() -> int:
         if _frag not in _hanzi(qi_def):
             bad.append(f"三奇课定义缺「{_frag}」→ RULES 无书源依据")
     # implemented 旗标从 scripts/kemu.py 的 IMPLEMENTED 派生（不在此另立真值）
+    # 课名合法来源 = 《六壬大全》课经集 entries ∪ 《六壬指南》日辰加临旁证键。
+    # 旁证走**独立书名键**是刻意设计：并入 entries 会污染「大全 64 条」计数门（§四.5 对拍口径）。
+    # 但旁证条目必须自带 `_book` + `_note`，否则这个键就成了"无出处名字的收容所"。
+    jialin = data.get(JIALIN_KEY) or []
+    for e in jialin:
+        if not (e.get("name") and e.get("_book") and e.get("_note")):
+            bad.append(f"旁证课目缺 _book/_note 出处：{e.get('name', e)}")
+        if e.get("name") in {x["name"] for x in entries}:
+            bad.append(f"旁证课目与课经集 entries 重名：{e['name']}")
+    jialin_names = {e.get("name") for e in jialin}
     implemented = _implemented()
-    unknown = sorted(implemented - {e["name"] for e in entries})
+    unknown = sorted(implemented - ({e["name"] for e in entries} | jialin_names))
     if unknown:
         bad.append(f"IMPLEMENTED 含表外课名：{'、'.join(unknown)}")
     for e in entries:

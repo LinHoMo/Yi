@@ -21,12 +21,17 @@
 静态层（始终执行）
   1) 解读路径的 import 闭包：`disciplines/<科>/scripts/{chart,analyze,narrate,render}.py`
      及其在本科可解析到的本地 import 的传递闭包（同目录模块 + 学科根下的包）；
+  1b) 本科 `scripts/` 下的**全部**模块（2026-10-08 扩）——非四段入口的脚本（一键闭环、
+     门户/样例资产构建器）过去是永久盲区；评测运行器（`evaluate.py`/`case_runner.py`）
+     与逐条写明理由的 `DIRECT_SCAN_EXEMPT` 除外；
   2) core 层：`core/yishu_core/**/*.py`（内核不该知道案例库的存在）。
   判据（AST 级，注释不计入）：
-    · 字符串字面量命中案例资源路径模式（CASE_PATH_PATTERNS）；
+    · 字符串字面量命中案例资源路径模式（CASE_PATH_PATTERNS，一律要求路径/文件名形态）；
     · 标识符命中案例读取符号名（CASE_SYMBOL_NAMES）；
     · 裸 "cases" 被当作路径分量使用（`Path(...) / "cases"`、`rglob("cases")` 等）；
     · 闭包内某模块 import 到了白名单里的案例读取器。
+  下限守卫：扫描学科数 / 模块数低于 `MIN_*` 基线即判红——"扫空"与"干净"在产出上
+  不可区分，本门不允许在没看任何东西时打印"通过"（AGENTS.md §四.8）。
 运行层（默认执行；`--fast` 可关）
   借 Python 3.8+ 的 `sys.addaudithook` 记录真实 `open` 事件，在**受控子进程**里同进程
   runpy 跑一份正常解读请求（chart→analyze→render），断言没有任何一次打开落在
@@ -35,9 +40,8 @@
   （默认探针学科：ming、liuyao——两者都有真实案例库，liuyao 另带 case_library.md。）
 
 **未覆盖（已知边界，不要当成本门守住了）**：
-  · 只扫"解读路径"这一条链：`tools/report.py`、`cli/`、`synthesis/`、`web/` 的源码不扫
+  · 只扫"学科 scripts/ + core"这两层：`tools/report.py`、`cli/`、`synthesis/`、`web/` 的源码不扫
     （本轮把范围限定为学科 scripts 闭包 + core；这些入口当前对案例库是干净的）；
-  · 非四段入口的解读脚本（如六爻 `scripts/yi_liuyao.py` 一键闭环）不在闭包内 → 不扫；
   · 案例库内容是否被**抄进**断语/语料：那是 [1c] verdict_audit 的职责，不是本门；
   · 运行层只跑固定几例请求，覆盖"这份报告读过什么"，不覆盖任意分支；
   · 运行层是同进程 runpy 跑学科三段（chart→analyze→render），审计 hook 只看得到
@@ -71,23 +75,45 @@ DEFAULT_ROOT = Path(__file__).resolve().parents[1]
 # 四段契约的解读入口（解读路径的起点）
 CONTRACT_ENTRIES = ("chart.py", "analyze.py", "narrate.py", "render.py")
 
+# 下限守卫基线（2026-10-08 实测：解读闭包 ∪ 八科 scripts/ 直扫，去掉评测运行器白名单 = 76 模块）
+# 取值低于现值、高于"门坏了却全绿"的区间；改扫描范围时必须同步这两个数并登记 CHANGELOG。
+MIN_DISCIPLINES_SCANNED = 8
+MIN_MODULES_SCANNED = 70
+
 # 铁律二允许的"测试/评测运行器"落点（白名单，最小集）
 ALLOWED_READER_BASENAMES = {"case_runner.py", "evaluate.py"}
 ALLOWED_TOOL_DIRS = {"dev_tools", "tests"}
 
 # 案例资源路径模式（作用于**字符串字面量**，注释天然不计入）
+# 判据形状要求：一律须是「路径 / 文件名 / 集合名」形态，不匹配裸书名 slug。
+# 2026-10-08 实测教训：原 `huozhulin` / `wikisource` 两条裸 slug 正则会把
+# `classical_enhancements_fushi.py` 的 OPT 编号与结构标签键名（`huozhulin_fushi`）
+# 判成"触达案例库"——那是书源出处名，不是案例文件。门一红，人的第一反应是放宽判据，
+# 所以判据精度比误报本身更要紧：改成路径形态后该模块零误报，而植一条
+# `data/cases/x.json` 仍照样判红（见 --selftest 负例 2）。
 CASE_PATH_PATTERNS = tuple(re.compile(p) for p in (
     r"case_library",           # references/case_library.md
     r"data[/\\]cases",         # 案例库目录
     r"(?<![\w.])cases[/\\]",   # "…/cases/…" 路径片段
     r"[/\\]cases(?![\\/\w.-])",  # "…/cases" 结尾
-    r"[\w-]+_cases\.json",     # huozhulin_cases.json / ming_cases.json …
+    r"_cases\.json",          # huozhulin_cases.json，以及 f"{slug}_cases.json 组合形态
     r"case_splits\.json",
     r"eval_(?:tune|holdout|[a-z0-9_]*holdout)\.json",
     r"course_examples\.json",
-    r"huozhulin",              # 古籍案例来源名（火珠林）
-    r"wikisource",             # 古籍案例来源名（维基文库）
 ))
+# 曾试过加 `\w+_holdout\b`（抓 `--split wikisource_holdout` 这类集合名直用），实测**判不住**：
+# core/yishu_core/execution/registry.py 把 classical_holdout / external_holdout 当**评测状态
+# 词表**用（能力矩阵的取值），照那条判据内核要刷出十几处误报。集合名本身不足以证明"读过案例库"，
+# 故放弃——只认路径/文件名形态。AGENTS.md §四.8：拿不准的规则出 NOTE，不出 FAIL。
+
+# 非四段入口、但确实会读派生评测文件的脚本：逐条写明放行依据，不放宽判据。
+# 新增条目必须有理由，且理由要能指回"它不属于解读交付路径"。
+DIRECT_SCAN_EXEMPT = {
+    "build_portal_assets.py":
+        "本地门户/样例报告构建器：读 evaluate.py --save 落盘的 data/cases/eval_*.json"
+        "（派生评测文件，非古籍案例源 *_cases.json），产物进 gitignored outputs/；"
+        "与 case_runner/evaluate 同属「测试运行器」类（AGENTS.md §一.2 第一种访问场景）",
+}
 
 # 案例读取器接口的符号名（比 "cases"/"CASES" 精确：后者在同仓被当"测试用例"用，误报率高）
 CASE_SYMBOL_NAMES = frozenset({
@@ -282,9 +308,16 @@ def import_closure(entries: list[Path], scripts_dir: Path, disc_dir: Path):
 
 # ── 静态层 ────────────────────────────────────────────────────────────────
 
-def static_scan(root: Path) -> tuple[list[str], dict]:
+def static_scan(root: Path, *, min_disciplines: int | None = None,
+                min_modules: int | None = None) -> tuple[list[str], dict]:
+    """静态层扫描。floor 参数仅供 --selftest 构造小树时放宽，默认用仓库基线下限。"""
+    if min_disciplines is None:
+        min_disciplines = MIN_DISCIPLINES_SCANNED
+    if min_modules is None:
+        min_modules = MIN_MODULES_SCANNED
     fails: list[str] = []
-    info: dict = {"closures": {}, "modules": 0, "core_modules": 0, "notes": []}
+    info: dict = {"closures": {}, "modules": 0, "core_modules": 0, "notes": [],
+                  "disciplines_scanned": 0}
 
     disc_root = root / "disciplines"
     for disc_dir in sorted(p for p in disc_root.glob("*") if p.is_dir()):
@@ -297,13 +330,29 @@ def static_scan(root: Path) -> tuple[list[str], dict]:
             continue
         closure, reached, skipped = import_closure(present, scripts, disc_dir)
         info["closures"][disc_dir.name] = sorted(_rel(root, p) for p in closure)
+        info["disciplines_scanned"] += 1
         for cur, lineno, mod, tgt, label in reached:
             fails.append(f"{_rel(root, cur)}:{lineno}: 解读路径 import 到{label}"
                          f"（{mod} → {_rel(root, tgt)}）——铁律二：解读期案例库不得可达")
         for cur, lineno, tgt in skipped:
             info["notes"].append(f"{_rel(root, cur)}:{lineno}: 解读路径引用开发工具 "
                                  f"{_rel(root, tgt)}（白名单放行，不进入其内部）")
-        for p in sorted(closure):
+        # 扫描集 = 解读闭包 ∪ 本科 scripts/ 全部模块。
+        # 2026-10-08 补：原样只扫闭包，于是「非四段入口的解读脚本」（门户构建器、
+        # 一键闭环脚本）成了永久盲区——门自陈的边界诚实，但盲区不该存在。
+        # 闭包外的脚本若确需读案例派生文件，必须进 DIRECT_SCAN_EXEMPT 并写明理由。
+        scan_set = set(closure) | {p for p in scripts.rglob("*.py")
+                                   if "__pycache__" not in p.parts}
+        for p in sorted(scan_set):
+            if p.name in ALLOWED_READER_BASENAMES:
+                # 铁律明文允许的测试/评测运行器，直扫层同样放行（闭包层由 _reader_label 管）
+                info["notes"].append(f"{_rel(root, p)}: 评测运行器（白名单，允许读案例库）")
+                continue
+            if p.name in DIRECT_SCAN_EXEMPT:
+                if p not in closure:
+                    info["notes"].append(
+                        f"{_rel(root, p)}: 显式豁免（{DIRECT_SCAN_EXEMPT[p.name]}）")
+                continue
             info["modules"] += 1
             for h in scan_module(p):
                 fails.append(f"{_rel(root, p)}:{h['line']}: {h['kind']}——{h['detail']}")
@@ -317,6 +366,17 @@ def static_scan(root: Path) -> tuple[list[str], dict]:
             for h in scan_module(p):
                 fails.append(f"{_rel(root, p)}:{h['line']}: {h['kind']}——{h['detail']}"
                              f"（内核不该知道案例库的存在）")
+
+    # 下限守卫：本门判"没读过案例库"这件事，前提是它真的扫到了东西。
+    # 扫空与干净在产出上不可区分，故一律判红（AGENTS.md §四.8「0 结果先确认不是
+    # 路径解析错了」；2026-10-06 死链门实踩：豁免把负例一起吞了，全绿是假的）。
+    if info["disciplines_scanned"] < min_disciplines:
+        fails.append(f"扫描学科数 {info['disciplines_scanned']} < 下限 "
+                     f"{min_disciplines}——多半是路径解析失效，不是仓库没学科")
+    if info["modules"] < min_modules:
+        fails.append(f"扫描模块数 {info['modules']} < 下限 {min_modules}"
+                     f"——本门「没有触达案例库」的结论无依据"
+                     f"（core {info['core_modules']} 模块已扫）")
     return fails, info
 
 
@@ -435,6 +495,104 @@ def runtime_scan(root: Path, disciplines: tuple[str, ...]) -> tuple[list[str], l
     return fails, lines
 
 
+# ── 负例自证（--selftest） ──────────────────────────────────────────────────
+# AGENTS.md §四.8：新挂/改过的门必须自己证明会红，并报出是哪一条。
+# 这里用临时小树证四件事：真违规抓得到、组合文件名抓得到、书源 slug 不再误报、
+# 扫空不冒充通过；另以真实仓库为**假阳性对照**（已知干净的东西必须过）。
+
+_PROBE_CONTRACT = {
+    "chart.py": "def chart(req):\n    return {}\n",
+    "analyze.py": "def analyze(chart):\n    return {}\n",
+    "render.py": "def render(a):\n    return ''\n",
+}
+
+
+def _mk_tree(base: Path, *, narrate_src: str, with_cases_reader: bool = False) -> Path:
+    """构造一棵最小同布局树：一科四段 + core 一个模块。"""
+    scripts = base / "disciplines" / "probe" / "scripts"
+    scripts.mkdir(parents=True, exist_ok=True)
+    for name, src in _PROBE_CONTRACT.items():
+        (scripts / name).write_text(src, encoding="utf-8")
+    (scripts / "narrate.py").write_text(narrate_src, encoding="utf-8")
+    if with_cases_reader:
+        (scripts / "case_runner.py").write_text(
+            "CASES = 'data/cases/probe_cases.json'\n", encoding="utf-8")
+    core = base / "core" / "yishu_core"
+    core.mkdir(parents=True, exist_ok=True)
+    (core / "__init__.py").write_text("", encoding="utf-8")
+    (core / "symbols.py").write_text("STEMS = ['甲']\n", encoding="utf-8")
+    return base
+
+
+def selftest() -> int:
+    import tempfile
+
+    checks: list[tuple[str, bool, str]] = []
+
+    def record(name: str, ok: bool, detail: str) -> None:
+        checks.append((name, ok, detail))
+
+    with tempfile.TemporaryDirectory() as td:
+        # 负例 1：解读层出现显式案例路径 → 必须判红且点名
+        t1 = _mk_tree(Path(td) / "t1",
+                      narrate_src="_C = 'data/cases/eval_tune.json'\n")
+        f1, _ = static_scan(t1, min_disciplines=0, min_modules=0)
+        hit1 = [x for x in f1 if "narrate.py" in x]
+        record("负例1 显式案例路径被判红且点名", bool(hit1),
+               hit1[0] if hit1 else f"未判红（fails={f1}）")
+
+        # 负例 2：f"{slug}_cases.json" 组合形态 → 改成后缀判据后仍须抓到
+        t2 = _mk_tree(Path(td) / "t2",
+                      narrate_src="def p(slug):\n    return f'{slug}_cases.json'\n")
+        f2, _ = static_scan(t2, min_disciplines=0, min_modules=0)
+        hit2 = [x for x in f2 if "narrate.py" in x]
+        record("负例2 组合案例文件名被判红", bool(hit2),
+               hit2[0] if hit2 else f"未判红（fails={f2}）")
+
+        # 负例 3（误报回归）：书源 slug 作散文/键名出现 → 不得判红
+        # 这就是 2026-10-08 把 `huozhulin`/`wikisource` 裸正则删掉的理由，
+        # 谁再把判据放宽回去，这一条会立刻咬。
+        slug_src = "\n".join([
+            '"""《火珠林》财官伏五乡 —— 只出结构标签。【OPT-huozhulin_dz-01】',
+            'wikisource 三次复核登记。',
+            '"""',
+            'TAGS = {"huozhulin_fushi": 1, "huozhulin_fushi_tags": 2}',
+            "",
+        ])
+        t3 = _mk_tree(Path(td) / "t3", narrate_src=slug_src)
+        f3, _ = static_scan(t3, min_disciplines=0, min_modules=0)
+        record("负例3 书源 slug 不再误报（放宽判据的回归哨兵）", not f3,
+               f"违规误报：{f3}" if f3 else "零误报")
+
+        # 负例 4（no-op 自证）：disciplines/ 里一个可扫模块都没有 → 必须判红
+        empty = Path(td) / "t4"
+        (empty / "disciplines").mkdir(parents=True)
+        core = empty / "core" / "yishu_core"
+        core.mkdir(parents=True)
+        (core / "__init__.py").write_text("", encoding="utf-8")
+        f4, i4 = static_scan(empty)
+        record("负例4 扫空必红（不许把『没扫到』说成『干净』）", bool(f4),
+               f4[0] if f4 else f"扫空却通过（info={i4['modules']}）")
+
+        # 负例 5：下限守卫本身会咬（把下限抬到不可能达到的值）
+        f5, _ = static_scan(t1, min_modules=9999)
+        record("负例5 下限守卫生效", bool([x for x in f5 if "下限" in x]),
+               f5[0] if f5 else "下限未咬")
+
+    # 假阳性对照：真实仓库（已知干净）必须整层通过
+    real_fails, real_info = static_scan(DEFAULT_ROOT.resolve())
+    record("正例 真实仓库静态层通过且过下限", not real_fails,
+           f"真红：{real_fails[:3]}" if real_fails
+           else f"{real_info['modules']} 模块 / {real_info['core_modules']} 内核模块")
+
+    bad = 0
+    for name, ok, detail in checks:
+        print(f"  {'√' if ok else '×'} {name}" + ("" if ok else f"\n      · {detail}"))
+        bad += 0 if ok else 1
+    print("SELFTEST PASS" if not bad else f"SELFTEST FAIL（{bad} 项）")
+    return 0 if not bad else 1
+
+
 # ── CLI ───────────────────────────────────────────────────────────────────
 
 def main() -> int:
@@ -457,8 +615,14 @@ def main() -> int:
     ap.add_argument("--probe", nargs="*", default=None, metavar="学科",
                     help=f"运行层探针覆盖的学科（默认：{'、'.join(DEFAULT_PROBE)}）")
     ap.add_argument("--trace", action="store_true", help="打印解读路径 import 闭包")
+    ap.add_argument("--selftest", action="store_true",
+                    help="负例自证：显式案例路径/组合文件名必被判红，书源 slug 必不误报，"
+                         "扫空必判红，真实仓库必通过（EXIT=0 仅代表自证成立）")
     ap.add_argument("--probe-serve", metavar="学科", help=argparse.SUPPRESS)
     args = ap.parse_args()
+
+    if args.selftest:
+        return selftest()
 
     root = args.root.resolve()
     if args.probe_serve:                       # 子进程入口：只跑探针，不跑门

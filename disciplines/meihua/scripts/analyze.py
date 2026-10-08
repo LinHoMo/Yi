@@ -35,7 +35,12 @@ from yishu_core.symbols import (  # noqa: E402
     STEM_ELEMENTS,
     TRIGRAM_ELEMENTS,
     EIGHT_PALACES,
+    HEXAGRAM_TRIGRAMS,
     wangxiangxiuqiusi,
+)
+from yishu_core.hexagram_texts import (  # noqa: E402
+    HEXAGRAMS,
+    HEXAGRAM_LINE_TEXTS,
 )
 
 # 六十四卦名 → 宫五行（变卦等别卦取其宫五行论生克）
@@ -190,6 +195,140 @@ def _analogy_table(topic: str, body: str, use: str) -> dict:
     return out
 
 
+def _ti_yong_hu(chart_out: dict) -> dict:
+    """体互／用互之分（OPT-meihua_yishu_dz-05）。
+
+    书源《梅花易数》源L820 逐字：「然互卦则分其有体之互，有用之互。**如体在上，则上互为
+    体之互，下互为用之互；体卦在下，则下互为体之互，上互为用之互。体互最紧，用互次之。**」
+
+    实现：由 `chart.body_use_rule` 取体卦所在侧（上／下），据此把 `interacting_upper`／
+    `interacting_lower` 分派为**体互**与**用互**，并按书源给的**权重次序**
+    （卦用最紧 → 互次之 → 变又次之；体互最紧 → 用互次之）标注 `权重档`。
+    **只作结构拆分与权重标注，不改任何方向输出**；权重档供证据层引用，不参与 verdict 计分
+    （本仓 verdict 仍只由体用生克 + 卦气旺衰决定，见 `_verdict_of`）。
+    """
+    body_side = (chart_out.get("body_use_rule") or "")
+    upper = chart_out.get("interacting_upper")
+    lower = chart_out.get("interacting_lower")
+    body_hu = upper if "上" in body_side else lower
+    use_hu = lower if "上" in body_side else upper
+    return {
+        "体互": body_hu,
+        "用互": use_hu,
+        "体互位": "上互" if "上" in body_side else "下互",
+        "用互位": "下互" if "上" in body_side else "上互",
+        "权重档": {"体互": "最紧", "用互": "次之"},
+        "体用位序": "卦用最紧，互次之，变卦又次之（源L820）",
+        "出处": "《梅花易数》源L820",
+        "计分": "否（本项只作证据层结构拆分与权重标注，不参与 verdict 计分）",
+    }
+
+
+_EXTERNAL_SIGNS: dict | None = None
+
+
+def _external_sign_layer(chart_out: dict, external_signs: list | None) -> dict:
+    """外应（三要十应）槽位（OPT-meihua_yishu_dz-04）。
+
+    书源：
+      · L729「凡占卜，体用为内，诸应卦为外卦……**苟不知合内外卦为断，谓体用自体用，
+        三要十应自三要十应，如此则鲜见其有验者**……占卜之精者，无非合内外之道也。」
+      · L735「凡占在静室，无所闻见，则无外卦，即不论外卦。但以全卦年月日值五行衰旺之气，
+        以体用决之。」——**无外应时的口径**。
+      · L970 逐字的外应取象映射：「如见老人、马、金玉圆物，得干。见老妇、牛、土瓦物，得坤之类。」
+      · L978「此十应之理，凡占卜之际，耳闻目见以决吉凶，**并以体卦为主**，而详见生克
+        比和之理。」——合参次序：先内（体用）后外（外应），外应**修正因子**由外应卦
+        与**体卦**的生克比和给出。
+
+    `external_signs` 由调用方**结构化传入**：每项 {物, 卦}（映射表数据化在
+    `data/verdicts.json#external_signs`，见 `_external_sign_map`）。
+    无外应时**显式标「外应空缺（静占）」**（源L735 口径），不静默略过。
+
+    ⚠ 只出**修正因子**（生／克／比和三种结构标签）与外应卦本身，**不出吉凶断语**；
+    因子**不参与 verdict 计分**（修正方向由 LLM 叙述，不由引擎断言）。
+    """
+    _blk = VERDICTS.get("external_signs") or {}
+    if not external_signs:
+        return {
+            "有无外应": False,
+            "口径": _blk.get("空缺提示", ""),
+            "静占原文": _blk.get("静占口径", ""),
+            "修正因子": [],
+            "计分": _blk.get("计分提示", ""),
+        }
+    body_el = chart_out["body_element"]
+    rows = []
+    for item in external_signs:
+        name = str(item.get("物") or item.get("sign") or "").strip()
+        trig = str(item.get("卦") or item.get("trigram") or "").strip()
+        if not trig:
+            trig = _external_sign_map().get(name, "")
+        if not trig:
+            rows.append({"物": name, "卦": None,
+                         "修正因子": None,
+                         "备注": "映射表未收此物——不臆测其卦，须调用方补传或据"
+                                 "verdicts.json#external_signs 补表"})
+            continue
+        kind, el = _interaction(trig, body_el)
+        rows.append({
+            "物": name, "卦": trig, "五行": el, "修正因子": kind,
+            "合参": f"{trig}({el}) 对体卦{body_el}：{kind}",
+        })
+    return {
+        "有无外应": True,
+        "合参次序": "先内（体用）后外（外应）——源L729「合内外之道」、L978「并以体卦为主」",
+        "外应": rows,
+        "计分": _blk.get("计分提示", ""),
+    }
+
+
+def _external_sign_map() -> dict:
+    """外应取象映射（源L970 逐字，数据化在 verdicts.json#external_signs.映射）。"""
+    global _EXTERNAL_SIGNS
+    if _EXTERNAL_SIGNS is None:
+        block = VERDICTS.get("external_signs") or {}
+        _EXTERNAL_SIGNS = dict(block.get("映射") or {})
+    return _EXTERNAL_SIGNS
+
+
+def _yao_ci_ref(movings: list[int], hexagram: str) -> dict | None:
+    """挂《周易》卦辞 / 动爻爻辞到 analyze 输出（OPT-meihua_yishu_dz-02）。
+
+    书源《梅花易数》「端法」（后天端法、物数、声音占例、字画占例等后天取数）：
+    "后天占法，以《周易》爻辞断。**以定卦之主爻（动爻）取爻辞**；兼看本卦卦辞。"
+
+    先天卦（以年月日时、干支、星辰起卦）——按《观梅占》《策数占》等古例，
+    用体用生克 / 卦气旺衰断，**不挂《周易》爻辞**。
+    故函数只在本仓「后天」口径下返回非 None 结构；先天口径返回 None。
+
+    挂法：
+      · `gua_ci`：本卦卦辞（`HEXAGRAMS` 第四列）
+      · `yao_ci_list`：[{pos, cn_name, text}] 逐个动爻（HEXAGRAM_LINE_TEXTS[hexagram] index=pos-1）
+    口径落到 `way` 时才生效 —— 调用方（`analyze`）按 `chart_out.way` 决定是否挂。
+    """
+    ci_list = HEXAGRAM_LINE_TEXTS.get(hexagram)
+    if not ci_list:
+        return None
+    _YAO_NAME = ["初爻", "二爻", "三爻", "四爻", "五爻", "上爻"]
+    gua_ci = next((row for row in HEXAGRAMS if row[1] == hexagram), None)
+    entries = []
+    for pos in movings:
+        if 1 <= pos <= len(ci_list):
+            entries.append({
+                "pos": pos,
+                "cn": _YAO_NAME[pos - 1],
+                "text": ci_list[pos - 1],
+            })
+    return {
+        "gua_ci": gua_ci[4] if gua_ci else None,
+        "yao_ci": entries,
+        "本卦": hexagram,
+        "动爻列表": list(movings),
+        "口径": "后天端法：《系辞》'动则观其变而玩其占'；以动爻爻辞断",
+        "出处": "《周易·系辞》+《梅花易数》后天端法",
+    }
+
+
 def analyze(chart_out: dict) -> dict:
     """chart 段输出 → 因子与判据（结构化，无成段断语）。"""
     body = chart_out["body"]
@@ -253,6 +392,7 @@ def analyze(chart_out: dict) -> dict:
              for h in hinderers]
 
     # 万物类象：机械挂到体/用/互/变（《卷一·八卦万物属类》）
+    ti_yong_hu = _ti_yong_hu(chart_out)
     analogies = {
         "体卦": {"卦": body, "类象": _analogies_of(body)},
         "用卦": {"卦": use, "类象": _analogies_of(use)},
@@ -261,6 +401,14 @@ def analyze(chart_out: dict) -> dict:
         "互卦上": {"卦": chart_out.get("interacting_upper"),
                    "类象": _analogies_of(chart_out.get("interacting_upper"))},
     }
+    # 体互／用互**单列**（源L820）：与上面的「互卦下／互卦上」并存，
+    # 后者是位置命名，前者是按体卦所在侧的分派，二者不冲突、不互相覆盖。
+    analogies["体互"] = {"卦": ti_yong_hu["体互"],
+                       "类象": _analogies_of(ti_yong_hu["体互"]),
+                       "权重档": ti_yong_hu["权重档"]["体互"]}
+    analogies["用互"] = {"卦": ti_yong_hu["用互"],
+                       "类象": _analogies_of(ti_yong_hu["用互"]),
+                       "权重档": ti_yong_hu["权重档"]["用互"]}
     if multi_move and changed_trigrams and len(changed_trigrams) > 1:
         analogies["变卦下"] = {"卦": chart_out.get("changed_lower"),
                               "类象": _analogies_of(chart_out.get("changed_lower"))}
@@ -309,10 +457,32 @@ def analyze(chart_out: dict) -> dict:
             "合参": rules.get("synthesis", ""),
         }
 
+    # ── 后天端法/手动挂《周易》爻辞（OPT-meihua_yishu_dz-02） ──
+    # 后天起卦（以物数 / 声音 / 字画 / 手动定卦）以《周易》爻辞断 → 输出 yao_ci_ref。
+    # 先天起卦（以年月日时 / 干支 / 星辰）不挂。
+    way = chart_out.get("way")
+    yao_ci_ref = None
+    if way in ("manual", "two_numbers"):
+        hexagram = chart_out.get("hexagram")
+        if way == "manual":
+            movings_for_yao = list(movings)
+        else:
+            # two_numbers：动爻由 `movings` 给出（实际自动取或显式指定）
+            movings_for_yao = list(movings)
+        if hexagram and movings_for_yao:
+            ref = _yao_ci_ref(movings_for_yao, hexagram)
+            if ref:
+                ref["way"] = way
+                ref["分轨口径"] = "后天端法挂《周易》爻辞（OPT-meihua_yishu_dz-02）"
+                yao_ci_ref = ref
+
     return {
         "schema": "meihua-analyze-v2",
         "topic": topic,
         "question": question,
+        "external_signs": _external_sign_layer(
+            chart_out, chart_out.get("external_signs")),
+        "ti_yong_hu": ti_yong_hu,
         "chart_summary": {
             "卦名": chart_out.get("hexagram"),
             "动爻": chart_out.get("moving"),
@@ -323,6 +493,8 @@ def analyze(chart_out: dict) -> dict:
             "下卦": chart_out.get("lower"),
             "互卦下": chart_out.get("interacting_lower"),
             "互卦上": chart_out.get("interacting_upper"),
+            "体互": ti_yong_hu["体互"],
+            "用互": ti_yong_hu["用互"],
             "变卦": chart_out.get("changed_hexagram"),
             "变出之卦": chart_out.get("changed_trigram"),
             "起卦方式": chart_out.get("way"),
@@ -347,6 +519,7 @@ def analyze(chart_out: dict) -> dict:
         "timing": timing,
         "classics": _classics(chart_out.get("way"), movings, helpers, hinderers,
                               qi, multi_move, chart_out.get("changed_hexagram")),
+        "yao_ci_ref": yao_ci_ref,
         "conclusion": verdict,
         "factors": [
             {"因子": "体用关系", "权重": 40, "判据": relation,
@@ -455,6 +628,16 @@ if __name__ == "__main__":
         assert ma["multi_move"] and ma["multi_move"]["动爻列表"] == [1, 2], ma["multi_move"]
         print("多爻动 analyze 校验通过：", ma["multi_move"]["体用规则"],
               ma["body_use"]["关系"], ma["conclusion"]["方向"])
+        # OPT-meihua_yishu_dz-02：端法/手动 → 带 yao_ci_ref，先天不带
+        assert ma.get("yao_ci_ref") is not None, "manual 方式应带 yao_ci_ref"
+        assert ma["yao_ci_ref"]["本卦"] == "无妄", ma["yao_ci_ref"]
+        assert len(ma["yao_ci_ref"]["yao_ci"]) == 2
+        print("端法挂爻校验通过：", ma["yao_ci_ref"]["本卦"],
+              [y["cn"] for y in ma["yao_ci_ref"]["yao_ci"]])
+        return_hex = chart_from_numbers(5, 12, 17, 9)
+        ra = analyze(return_hex)
+        assert ra.get("yao_ci_ref") is None, "numbers(先天)方式不带 yao_ci_ref"
+        print("先天分轨校验通过：numbers 方式 yao_ci_ref == None")
         raise SystemExit(0)
 
     chart_out = _json.loads(Path(args.chart_json).read_text(encoding="utf-8"))

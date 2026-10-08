@@ -38,7 +38,9 @@ from yishu_core.symbols import (
     SHENG_CYCLE,
     STEM_ELEMENTS,
     TOMB_MAP,
+    TWELVE_GROWTH,
     sanxing_hits,
+    wangxiangxiuqiusi,
     xunkong_of,
 )
 
@@ -62,7 +64,26 @@ IMPLEMENTED: tuple[str, ...] = (
     "淫泆", "芜淫", "侵害", "刑伤", "死奇", "鬼墓", "殃咎", "龙战",
     # 第六批·结构（10-06g；只倚赖日柱/四课，六合表取 core HE_PAIRS）
     "和美",
+    # 第七批·结构（10-07a；OPT-liuren_zhinan_dz-03，旺相依赖已解耦为「月支判囚死」）
+    "天狱",
+    # 第八批·结构（10-07b；OPT-liuren_zhinan_dz-04，日辰加临六课，只倚赖四课位置）
+    "自在", "俸就", "历虚", "归宠", "培植", "脱骨", "无涉",
 )
+
+# 课目**别名**登记（OPT-liuren_zhinan_dz-05）：书源一课多名者，在此登记别名 →
+# 本仓课名的映射；引擎**只认 IMPLEMENTED 里的课名**，别名仅作显示与检索，
+# **不另立课目**（同「赘婿／赘胥」的处理：书源多作赘婿，本仓课名取卷一歌诀的「赘胥」，
+# 别名走 `aliases` 而非新增条目）。
+# 别名数据源唯一真值源：data/kemu.json#aliases（消费方 dev_tools/check.py [1e] 校验）。
+KE_NAME_VARIANTS: dict[str, str] = {
+    "无依": "井栏射",   # 指南 L28「乃名无依（无亲、井栏）」——返吟无克六日
+    "无亲": "井栏射",   # 同上，指南括注
+    "赘婿": "赘胥",     # 指南／课经集多作赘婿，卷一歌诀作赘胥
+    "曲直": "全局",     # OPT-liuren_cuiyan_dz-05：三合四局指向全局课目；ju_name 区分
+    "炎上": "全局",     # 同上
+    "从革": "全局",     # 同上
+    "润下": "全局",     # 同上
+}
 
 # 课名/诀文/释义/判据参数唯一真值源（AGENTS.md §三）：data/kemu.json
 _KEMU = _json.loads(
@@ -259,6 +280,40 @@ def recognize(chart_out: dict) -> list[dict]:
         hit("赘胥", "支临干上而被干克")
     elif tianpan.get(day_branch) == jigong and _ke(jigong, day_branch):
         hit("赘胥", "干加支上而克支")
+    # ── 结构补充批三（10-07 OPT-liuren_zhinan_dz-04）：日辰加临六课（乱首/赘胥之外六课） ──
+    # 乱首＝支加干上克干，赘胥＝支临干上被克或干加支上克支（已在上面）；本批余六：
+    #   · 支加干上生干→自在；支干相加而生干者                   L374「辰临日而生日」
+    #   · 干支相加干支上神相脱→历虚                           L378「日临辰而生辰」
+    #   · 干支相加干被支生→俸就                               L376「日临辰而受生」
+    #   · 支加干上干来生支→归宠                               L380「辰临日而受生」
+    #   · 干支比和相加→培植                                   L382「同类相加培植和合」
+    #   · 干支上神互盗其气→脱骨                               L383「日辰交生名为脱骨」
+    #   · 干支上神互战并伤→无涉                               L384「日辰交克号曰无涉」
+    # 互斥保证(相同天盘干支位置)：乱首/赘胥/自在/俸就/历虚/归宠/培植 七者由上下位不同
+    # 与生克方向唯一锁定；脱骨/无涉 补充覆盖上神生盗与上神交克。书源《六壬指南》L371-386。
+    _tinggan = tianpan.get(jigong) == day_branch      # 支加干上（辰临日）
+    _tingzhi = tianpan.get(day_branch) == jigong      # 干加支上（日临辰）
+    if _tinggan and _ke(day_branch, day_stem):
+        pass    # 乱首已报支加干上克干
+    elif _tinggan and _sheng(day_branch, day_stem):
+        hit("自在", "支支相临，支来生干（辰临日而生日——恢宏之志）")
+    elif _tinggan and _sheng(day_stem, day_branch):
+        hit("归宠", "支干从上，干来生支（辰临日而受生——福履之来崇）")
+    elif _tingzhi and _ke(jigong, day_branch):
+        pass    # 赘胥已报干加支上而克支
+    elif _tingzhi and _sheng(day_branch, day_stem):
+        hit("俸就", "干来加支上，支生干（日临辰而受生——荣显之机）")
+    elif _tingzhi and _sheng(day_stem, day_branch):
+        hit("历虚", "干来加支上，干生辰（日临辰而生辰——脱气之征）")
+    if STEM_ELEMENTS.get(day_stem, "") and STEM_ELEMENTS[day_stem] == BRANCH_ELEMENTS.get(day_branch, ""):
+        hit("培植", "干支比和，同类相加（五行相等——培植和合）")
+    _shanggan = tianpan.get(jigong) or ""
+    _shangzhi = tianpan.get(day_branch) or ""
+    # 脱骨 = 干支上神相盗其气：生我者为父母，我生者为子孙——上神见子孙盗气
+    if _shanggan and _shangzhi and _sheng(_shanggan, _shangzhi):
+        hit("脱骨", f"干上神{_shanggan}盗支上神{_shangzhi}之气（日辰交生——彼我舒情）")
+    if _shanggan and _shangzhi and _ke(_shangzhi, _shanggan):
+        hit("无涉", f"支上神{_shangzhi}伤干上神{_shanggan}（日辰交克——内外疑忌）")
     if chu in (CHONG_OF.get(jigong), CHONG_OF.get(day_branch)):
         hit("冲破", f"初传{chu}冲日辰", "诀又须岁月破神并，未并入判据")
 
@@ -345,4 +400,26 @@ def recognize(chart_out: dict) -> list[dict]:
     elif frozenset((_gan_shang, day_branch)) in _he6:
         hit("和美", f"干上神{_gan_shang}与日支{day_branch}作六合",
             "诀兼「三传三合」「上下递互作合」诸式，本判据取「干支上下作六合」一面")
+
+    # ── 天狱（OPT-liuren_zhinan_dz-03）：解除「需旺相依赖」的阻塞 ──
+    # 源《六壬指南》L178 逐字：`○凡用神囚死更天罡加日本之上曰天狱卦，主官非口舌、刑罚及身。`
+    #   条件只取前半：**用神落囚／死 ＋ 天罡（辰）加日本**；末句「主官非口舌、刑罚及身」
+    #   是断语，**不入结构层**（大六壬骨架层铁律）。
+    # 「日本」定义取《六壬大全》卷九课经集注逐字：「日本者，亥为甲乙之本，寅为丙丁之本，
+    #   申为戊己壬癸之本，巳为庚辛之本」——即日干长生位，故**不另立日本表**，
+    #   由 core 十二长生（`TWELVE_GROWTH`，唯一真值源）反解长生支。
+    # 旺相依赖已解耦：囚／死由 core `wangxiangxiuqiusi` 按**月支**判，
+    #   本条判据只倚赖月支／日柱／三传／天地盘，**不引神煞、不引年命**。
+    _month_branch = (chart_out.get("moment") or {}).get("month_branch") or ""
+    if _month_branch:
+        _chu_state = wangxiangxiuqiusi(_month_branch, _elem(chu))
+        if _chu_state in ("囚", "死"):
+            _riben_branch = next(
+                (b for b, st in TWELVE_GROWTH.get(STEM_ELEMENTS.get(day_stem, ""), {}).items()
+                 if st == "长生"), "")
+            if _riben_branch and tianpan.get(_riben_branch) == "辰":
+                hit("天狱", f"用神{chu}落{_chu_state}而天罡（辰）加日本"
+                            f"（{day_stem}长生在{_riben_branch}）",
+                    "《六壬大全》卷一诀另含「墓」一面（天狱墓死作囚用），"
+                    "本判据据指南 L178 只取「囚死」一面，未并入「墓」与「四八大过」")
     return hits

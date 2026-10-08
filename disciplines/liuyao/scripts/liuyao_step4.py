@@ -875,7 +875,17 @@ def _detect_hexagram_harmony_clash_pattern(question: str, hex_result: dict, step
                 result["score_adjustment"] = -2.0
                 return result
 
-    # --- 双卦对比：本卦定始、变卦定终（《黄金策》"合处逢冲事已散，冲中逢合事迟成"）---
+    # --- 双卦对比：本卦定始、变卦定终 ---
+    # 出处改挂（OPT-huangjince_dz-03，2026-10-07）：原挂《黄金策》属误挂——黄金策两源
+    # （huangjince_dz.dz.txt／huangjin_ce.wikitext.txt）全 0 命中「冲中逢合」八字。
+    # 正源为《卜筮正宗》：
+    #   目录 L32「合处逢冲冲中逢合论第十五    绝处逢生克处逢生论第十六」
+    #   目录 L55「第十一问冲中逢合合处逢冲　计答占验八卦」
+    #   正文 L3102「第十一问：	冲中逄合，合处逄冲，何以断其吉凶？」
+    #   正文 L3103「答曰：合者聚也，冲者散也．冲中逄合先散后聚，先失后得，先淡后浓．」
+    #   正文 L3104「合处逄冲，反是．」（「逄」为「逢」异体，逐字照录不改字）
+    # 引擎八字「合处逢冲事已散／冲中逢合事迟成」是正文之义约；方向与正文一致
+    # （冲中逢合＝先散后聚＝终局有成；合处逢冲反之＝终局散），判定值 ±1.5 零变更。
     changed_name = (hex_result.get("changed_hexagram") or {}).get("name") or ""
     if changed_name and changed_name != hex_name:
         # 同一口径（对应位三对地支）分别判本卦与变卦，两个 kind 才可比
@@ -887,7 +897,7 @@ def _detect_hexagram_harmony_clash_pattern(question: str, hex_result: dict, step
             result["pattern"] = "合处逢冲事已散"
             result["description"] = (
                 f"本卦{hex_name}六合（始合），变卦{changed_name}六冲（终冲）——"
-                f"合处逢冲，事已散（《黄金策》）"
+                f"合处逢冲，事已散（《卜筮正宗》冲中逢合合处逢冲论第十五）"
             )
             result["impact_on_verdict"] = "先合后散：开头顺、终局散，先成后败之象"
             result["score_adjustment"] = -1.5
@@ -896,7 +906,7 @@ def _detect_hexagram_harmony_clash_pattern(question: str, hex_result: dict, step
             result["pattern"] = "冲中逢合事迟成"
             result["description"] = (
                 f"本卦{hex_name}六冲（始散），变卦{changed_name}六合（终合）——"
-                f"冲中逢合，事迟成（《黄金策》）"
+                f"冲中逢合，事迟成（《卜筮正宗》冲中逢合合处逢冲论第十五）"
             )
             result["impact_on_verdict"] = "先散后合：开头受阻、终局有成，成之迟而非不成"
             result["score_adjustment"] = 1.5

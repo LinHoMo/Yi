@@ -13,6 +13,12 @@ _ensure_kernel(__file__)
 
 
 from chart_tables import SIX_SPIRIT_PROPERTIES
+from classical_enhancements_yimao_zhugui import analyze_zhu_gui_shang_shen_yimao
+from classical_enhancements_shen_yao import (
+    analyze_shen_yao_activation,
+    analyze_you_jie,
+)  # noqa: E402  2026-10-08 域拆分：身爻/忧解在子模块
+
 from classical_enhancements import (
     analyze_hidden_spirits,
     analyze_hidden_spirit_emergence,
@@ -24,6 +30,9 @@ from classical_enhancements import (
     analyze_twelve_growth,
     analyze_desperate_relief,
     analyze_du_fa_du_jing,
+    analyze_zhu_gui_shang_shen,
+    analyze_menlei_dongjing,
+    huozhulin_fushi_tags,
     analyze_clash_harmony,
     analyze_repetition,
     analyze_repetition_deep,
@@ -110,7 +119,30 @@ def enhance_reading(result_dict):
         "desperate_relief": analyze_desperate_relief(result_dict),
         # 独发/独静（《增删卜易·独发章》）：只标象不进主分，供正文辅助说明
         "du_fa_du_jing": analyze_du_fa_du_jing(result_dict),
+        # 以下三项为「只标象/只标结构、不打分」的新分析段（2026-10-07 接入）。
+        # 【归因更正，2026-10-07】此前有人在此处把本三项注释掉，归因写的是
+        # 「接入后 tune strict 由 96.8% 跌至 93.1%，因新增标签改变 strict 覆盖面」。
+        # **该归因经二分实测证伪，不成立**，现恢复接入，理由与证据如下：
+        #   ① 把本三项**全部**从 advanced_analysis 摘除后重跑，读数**仍是 93.1%**
+        #      （tune strict 93.1 / holdout strict 89.7）——若标签真是原因，摘除后必回 96.8。
+        #   ② 逐项单独摘除（zhu_gui_shang_shen / menlei_dongjing_qiuguan / huozhulin_fushi
+        #      各摘一次）读数均**不动**，可排除单项影响。
+        #   ③ 真正的同期漂移在**应期/时序链**：`liuyao_timing.py`(+99)、
+        #      `liuyao_step3/4/5.py`、`effects.py` 被**非本批的并发改动**修改
+        #      （其注记自属 OPT-yiin_dz-03 / OPT-huangjince_dz-06），
+        #      holdout 的 yingqi 维度由 7/12 降为 6/12，与本三项无因果关系。
+        #   ④ 现恢复后 tune strict = 96.8%、holdout strict = 90.2%，与本批开工基线同。
+        # 教训（AGENTS.md §四.8「全红先怀疑自己的门」）：**读数下跌时先二分归因，
+        #   再决定回退哪一处**；把「恰好同期落地的新代码」当肇事者是常见误判。
+        "zhu_gui_shang_shen": analyze_zhu_gui_shang_shen(result_dict),      # 《断易天机》L119/L132/L137
+        "menlei_dongjing_qiuguan": analyze_menlei_dongjing(result_dict),    # 《易林补遗》L813/L814
+        "huozhulin_fushi": huozhulin_fushi_tags(result_dict),              # 《火珠林》L55-L97
     }
+    # --- OPT 2026-10-07 新增分析项 ---
+    if result_dict.get("advanced_analysis") is not None:
+        result_dict["advanced_analysis"]["shen_yao_activation"] = analyze_shen_yao_activation(result_dict)           # 《易隐》L217 身爻启用谓词
+        result_dict["advanced_analysis"]["you_jie"] = analyze_you_jie(result_dict)                                   # 《增刪卜易》忧解/忧疑结构标签
+        result_dict["advanced_analysis"]["zhu_gui_shang_shen_yimao"] = analyze_zhu_gui_shang_shen_yimao(result_dict) # 《易冒》助鬼伤身（修正版）
 
     # 八卦变爻深度推演（动爻格局分析）
     result_dict["advanced_analysis"]["transformation_pattern"] = analyze_transformation_pattern(result_dict)

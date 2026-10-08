@@ -101,11 +101,13 @@ def enumerate_gate() -> tuple[list[str], dict]:
             from kemu import recognize as _kemu_rec
             chart_like = {
                 "moment": {"day_ganzhi": day, "hour_branch": hour,
+                           "month_branch": "子",   # 天狱判据另由 tianyu_gate() 以 12 月支全枚举守门
                            "xunkong": xunkong_of(day)},
                 "san_chuan": res["san_chuan"],
                 "tianpan": tianpan,
                 "men": res["men"],
                 "ke_name": res["ke_name"],
+                "yuejiang": {"branch": "子"},
             }
             for h in _kemu_rec(chart_like):
                 kemu_counts[h["name"]] = kemu_counts.get(h["name"], 0) + 1
@@ -140,6 +142,38 @@ def enumerate_gate() -> tuple[list[str], dict]:
         if richen_counts.get(name, 0) <= 0:
             fails.append(f"日辰关系「{name}」{n_cases} 课式零触发——判据或枚举有误")
     return fails, stats, kemu_counts, n_cases
+
+
+def tianyu_gate() -> tuple[list[str], int, int]:
+    """天狱课体专用守门：12 月支 × 60 日 × 12 时辰全枚举（判据含月支，主枚举不含）。
+
+    天狱（OPT-liuren_zhinan_dz-03）的判据是「用神落囚／死 ＋ 天罡（辰）加日本」，
+    其中「囚／死」由月支决定，故必须把 12 月支也纳入枚举维度——主枚举固定月将、
+    不含月支，故此门独立枚举。零触发即判据写错或枚举不全。
+    返回 (失败项, 触发数, 课式数)。
+    """
+    from yishu_core.ganzhi_calendar import ganzhi_pair
+    from kemu import recognize as _kemu_rec
+    days = [ganzhi_pair(i) for i in range(60)]
+    hits = 0
+    n = 0
+    for mb in EARTHLY_BRANCHES:
+        for hour in EARTHLY_BRANCHES:
+            tianpan = build_tianpan("子", hour)
+            for day in days:
+                res = san_chuan_full(day[0], day[1], tianpan)
+                n += 1
+                co = {"moment": {"day_ganzhi": day, "hour_branch": hour,
+                                 "month_branch": mb, "xunkong": xunkong_of(day)},
+                      "san_chuan": res["san_chuan"], "tianpan": tianpan,
+                      "men": res["men"], "ke_name": res["ke_name"],
+                      "yuejiang": {"branch": "子"}}
+                if any(h["name"] == "天狱" for h in _kemu_rec(co)):
+                    hits += 1
+    fails: list[str] = []
+    if hits <= 0:
+        fails.append(f"课目「天狱」{n} 课式（12 月支×60 日×12 时辰）零触发——判据或枚举有误")
+    return fails, hits, n
 
 
 def _nospace(s: str) -> str:
@@ -384,7 +418,8 @@ def main() -> int:
                  if (e.get("note") or "") and _hanzi(e["note"]) not in blob]
         no_note = [e["name"] for e in entries if not e.get("note")]
         n_impl = sum(1 for e in entries if e.get("implemented"))
-        extra = sorted(set(KEMU_IMPLEMENTED) - {e["name"] for e in entries})
+        _extra_entries = {e["name"] for e in kemu_json.get("zhinan_dz_jialin") or []}
+        extra = sorted(set(KEMU_IMPLEMENTED) - {e["name"] for e in entries} - _extra_entries)
         gate_fail = []
         if bad_v:
             gate_fail.append(f"课目诀文不可回指卷一歌诀：{bad_v}")
@@ -425,6 +460,134 @@ def main() -> int:
     except Exception as exc:
         fails.append(f"引文逐字门异常：{type(exc).__name__}: {exc}")
         print("[1d] 引文逐字门 ×")
+
+    # [1e] 结构标签维度守门（2026-10-07，OPT-liuren_cuiyan_dz-07 / zhinan_dz-06/08 /
+    # rengui_dz-04 / zhizhi_yuding_dz-05 / xinjing_dz-02 / shending_dz-02/05/06）：
+    # 每个标签维度在 60 日×12 时辰全枚举中**至少触发一次**——零触发即判据写错或枚举不全。
+    # 「他处发用」另须与「入四课」两桶皆非空（该维度是二值判据，只报一桶等于判据失效）。
+    try:
+        import structure_tags as _st
+        from collections import Counter as _C
+        from yishu_core.ganzhi_calendar import ganzhi_pair as _gz_pair
+        dim_hits: dict[str, int] = {}
+        bucket: dict[str, int] = {}
+        grade_hits: dict[str, int] = {}
+        sha_hits = 0
+        cg_hits = 0
+        for _mb in EARTHLY_BRANCHES:
+            for _hour in EARTHLY_BRANCHES:
+                _tp = build_tianpan("子", _hour)
+                for _day in [_gz_pair(i) for i in range(60)]:
+                    _r = san_chuan_full(_day[0], _day[1], _tp)
+                    _co = {"moment": {"day_ganzhi": _day, "hour_branch": _hour,
+                                      "month_branch": _mb, "xunkong": xunkong_of(_day)},
+                           "san_chuan": _r["san_chuan"], "tianpan": _tp,
+                           "men": _r["men"], "ke_name": _r["ke_name"],
+                           "yuejiang": {"branch": "子"}}
+                    for _dim, _rows in _st.all_tags(_co).items():
+                        dim_hits[_dim] = dim_hits.get(_dim, 0) + len(_rows)
+                        if _dim == "not_entered":
+                            for _x in _rows:
+                                bucket[_x["name"]] = bucket.get(_x["name"], 0) + 1
+                        if _dim == "xunkong_grade":
+                            for _x in _rows:
+                                grade_hits[_x["name"]] = grade_hits.get(_x["name"], 0) + 1
+                        if _dim == "gui_sha":
+                            sha_hits += len(_rows)
+                    if _st.class_god(_co, "青龙"):
+                        cg_hits += 1
+        tag_fail: list[str] = []
+        for _d, _n in sorted(dim_hits.items()):
+            if _n <= 0:
+                tag_fail.append(f"结构标签维度「{_d}」全枚举零触发——判据或枚举有误")
+        missing_dims = [d for d, _ in _st.TAG_GROUPS if d not in dim_hits]
+        if missing_dims:
+            tag_fail.append(f"结构标签维度全枚举零触发：{missing_dims}")
+        if len(bucket) < 2 or not bucket.get("他处发用") or not bucket.get("入四课"):
+            tag_fail.append(f"「他处发用」两桶未皆非空：{bucket}")
+        if len(grade_hits) < 3:
+            tag_fail.append(f"旬空三档（斩首／折腰／刖足）覆盖不全：{sorted(grade_hits)}")
+        if cg_hits <= 0:
+            tag_fail.append("类神之三传全枚举零触发——判据或枚举有误")
+        fails.extend(tag_fail)
+        print("[1e] 结构标签维度 " + ("×" if tag_fail else "√")
+              + f" {len(dim_hits)} 维／{sum(dim_hits.values())} 条"
+              + f"（干支鬼煞三杀四门 {sha_hits} 条；类神三传 {cg_hits} 课式；"
+              + f"入四课 {bucket.get('入四课', 0)}／他处发用 {bucket.get('他处发用', 0)}；"
+              + f"旬空三档 {'、'.join(f'{k}{v}' for k, v in sorted(grade_hits.items()))}）")
+    except Exception as exc:
+        fails.append(f"结构标签维度守门异常：{type(exc).__name__}: {exc}")
+        print("[1e] 结构标签维度 ×")
+
+    # [1f] 课目别名门（2026-10-07，OPT-liuren_zhinan_dz-05）：别名只在 data/kemu.json#rules.aliases
+    # 登记，**不得**在卷一「课目」段外另立课目条目；KE_NAME_VARIANTS 须与该登记逐条一致。
+    # 允许的三种形态（缺一即判红）：
+    #   ① 别名 → **九宗门 ke_name**（如 无依／无亲 → 井栏射：井栏射是 jiuzongmen 返吟门的
+    #      课名 key，**不在**卷一「课目」条目里，故也不是 IMPLEMENTED 课目）；
+    #   ② 别名 → **已在 IMPLEMENTED 内的课目**（如 赘婿 → 赘胥：书源多作赘婿，
+    #      本仓课名取卷一歌诀的「赘胥」——这正是「新增课目须走 variant 别名勿另立课目」所指）；
+    #   ③ 别名 → **未落判据的课目条目**（表已收、判据未落）。
+    # 禁止的是第四种：别名自身被当作独立课目写进 entries（那会让卷一段 64 条虚增）。
+    try:
+        from yishu_core.ganzhi_calendar import ganzhi_pair as _gz2
+        from kemu import IMPLEMENTED as _IMPL, KE_NAME_VARIANTS as _KV
+        _kj = json.loads((DISC / "data" / "kemu.json").read_text(encoding="utf-8"))
+        _al = ((_kj.get("rules") or {}).get("aliases") or {})
+        _al_map = {k: v for k, v in _al.items() if not k.startswith("_")}
+        # 九宗门课名 key 全集：**实算**（60 日×12 时辰全枚举的 ke_name 去重），
+        # 不另抄一份名单（否则名单本身会静默腐烂）。
+        _ke_names: set[str] = set()
+        for _d in [_gz2(i) for i in range(60)]:
+            for _h in EARTHLY_BRANCHES:
+                _ke_names.add(san_chuan_full(_d[0], _d[1],
+                                             build_tianpan("子", _h))["ke_name"])
+        alias_fail: list[str] = []
+        if _al_map != _KV:
+            alias_fail.append(f"KE_NAME_VARIANTS {_KV} ≠ kemu.json#rules.aliases {_al_map}")
+        _kemu_names = {e["name"] for e in (_kj.get("entries") or [])}
+        for _alias, _canon in _KV.items():
+            if _alias in _kemu_names:
+                alias_fail.append(f"别名「{_alias}」被另立为课目条目——"
+                                  f"须走 rules.aliases，不得新增卷一「课目」段条目")
+            if (_canon not in _IMPL and _canon not in _kemu_names
+                    and _canon not in _ke_names):
+                alias_fail.append(f"别名「{_alias}」的指向「{_canon}」既非已落判据课目、"
+                                  f"亦非课目表条目或九宗门课名 key——指向悬空")
+        fails.extend(alias_fail)
+        print("[1f] 课目别名门 " + ("×" if alias_fail else "√")
+              + f" {len(_KV)} 条（{'、'.join(f'{k}→{v}' for k, v in _KV.items())}）"
+              + f"｜九宗门课名 key 实算 {len(_ke_names)} 个｜别名不另立课目")
+    except Exception as exc:
+        fails.append(f"课目别名门异常：{type(exc).__name__}: {exc}")
+        print("[1f] 课目别名门 ×")
+
+    # [1g] 天狱课体专用守门（判据含月支，主枚举不含月支维度）
+    try:
+        ty_fails, ty_hits, ty_n = tianyu_gate()
+        fails.extend(ty_fails)
+        print("[1g] 天狱月支全枚举 " + ("×" if ty_fails else "√")
+              + f" 触发 {ty_hits}/{ty_n} 课式（12 月支×60 日×12 时辰）")
+    except Exception as exc:
+        fails.append(f"天狱月支全枚举门异常：{type(exc).__name__}: {exc}")
+        print("[1g] 天狱月支全枚举 ×")
+
+    # [1h] 三方条数对账报告（OPT-liuren_xinjing_dz-04）：**只报告，不作硬门**。
+    # 把书源自述条数（《六壬星纪》自序 181 篇）与本仓课目实收条数并列打印；
+    # 口径不同者显式标「不可比」，**禁止按读数改数据**。
+    try:
+        sec = kemu_section_parse()
+        book_n = len(sec["numbers"])
+        engine_n = len(KEMU_IMPLEMENTED)
+        src_181 = 181
+        note = ("《六壬星纪》自序 181 **篇**（书篇数）与本仓课目条数不同口径，**不可比**；"
+                "同口径者为卷一「课目」段自编号 一…六五 实收 %d 条"
+                "（缺号 %s），本仓 IMPLEMENTED 已落判据 %d 条、表收 %d 条。"
+                % (book_n, "、".join(_cn_num(x) for x in sec["missing"]) or "无",
+                   engine_n, engine_n))
+        print(f"[1h] 三方条数对账（报告项，非门） √ 书源自序 {src_181} 篇｜"
+              f"卷一课目段实收 {book_n} 条｜引擎已落判据 {engine_n} 条｜{note}")
+    except Exception as exc:
+        print(f"[1h] 三方条数对账（报告项，非门） × {type(exc).__name__}: {exc}")
 
     code, out = run(["scripts/chart.py", "--datetime", "2024-02-20 10:30",
                      "--question", "占求财", "-o", "scratch/chart.json"])

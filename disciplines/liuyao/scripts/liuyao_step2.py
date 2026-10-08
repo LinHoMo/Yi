@@ -318,6 +318,8 @@ def step2_identify_use_god(r: dict) -> dict:
             "fu_cang": chou_shen_fu,
         },
         "world_position": world_position,
+        # OPT-zengshan_buyi_dz-04，2026-10-07 新增：野鹤反法结构标签——只标象、不打分、不改用神主判。
+        "wild_crane_reverse": _detect_wild_crane_reverse(use_god_positions, empty),
         "summary_text": (
             f"问的是「{question_category}」，用神取{use_god_category}（五行{use_god_element}）。"
             f"{'卦中用神在 ' + '、'.join(str(p.get('position','')) + '爻' for p in use_god_positions) if use_god_positions else '本卦用神不现，须查伏神'}。"
@@ -708,6 +710,67 @@ def _check_fu_cang(
 
 
 
+def _detect_wild_crane_reverse(use_god_positions, empty_branches):
+    """野鹤反法结构检测（《增刪卜易》用神两现章，源 L1396）。**只标象、不打分、不改用神主判**。
+
+    古法（源L1396 上段）：「舍其休囚，用其旺相，舍其静爻，而用动爻，舍其月破，
+    而用不破，舍其旬空，用其不空，舍其被伤，用其不伤。」——即取旺/动/不破/不空者。
+
+    反法（源L1396 下段逐字）：「得其验者，应乎旬空月破，舍其不空，而用旬空，
+    舍其不破，而用月破。」——即两现中有一空/破而另一不空/不破时，
+    反取空/破者。本函数仅**检测是否触发反法条件**，不改主判选择。
+
+    返回 {triggered, candidates, reversed_choice, classical_quote}。
+    triggered 只表示「结构上是否满足反法适用前提」，不含吉凶判断。
+    """
+    classical = (
+        "用神两现，如占父母卦中两爻父母者是也。舍其休囚，用其旺相，舍其静爻，而用动爻，"
+        "舍其月破，而用不破，舍其旬空，用其不空，舍其被伤，用其不伤。此古法也。"
+        "得其验者，应乎旬空月破，舍其不空，而用旬空，舍其不破，而用月破。"
+    )
+    out = {"triggered": False, "candidates": [], "reversed_choice": None, "classical_quote": classical}
+    if not use_god_positions or len(use_god_positions) < 2:
+        return out
+
+    empty_set = set(empty_branches or [])
+    # 检测是否有「一空/一不空」或「一破/一不破」结构
+    has_empty_one = any(p.get("is_empty") for p in use_god_positions)
+    has_non_empty = any(not p.get("is_empty") for p in use_god_positions)
+    has_break = any(p.get("is_month_break") for p in use_god_positions)
+    has_non_break = any(not p.get("is_month_break") for p in use_god_positions)
+
+    triggered = (has_empty_one and has_non_empty) or (has_break and has_non_break)
+    if not triggered:
+        return out
+
+    out["triggered"] = True
+    candidates_info = []
+    for p in use_god_positions:
+        flags = []
+        if p.get("is_empty"):
+            flags.append("旬空")
+        if p.get("is_month_break"):
+            flags.append("月破")
+        candidates_info.append({
+            "position": p.get("position"),
+            "name": p.get("name", ""),
+            "branch": p.get("earthly_branch", ""),
+            "flags": flags,
+        })
+    out["candidates"] = candidates_info
+    # 反法取舍：取空/破者
+    for p in use_god_positions:
+        if p.get("is_empty") or p.get("is_month_break"):
+            out["reversed_choice"] = {
+                "position": p.get("position"),
+                "name": p.get("name", ""),
+                "branch": p.get("earthly_branch", ""),
+                "reason": "舍不空而用旬空，舍不破而用月破（野鹤反法）",
+            }
+            break
+    return out
+
+
 __all__ = [
     "step2_identify_use_god",
     "_use_god_rules",
@@ -722,4 +785,5 @@ __all__ = [
     "_element_to_relation",
     "_branch_to_relation",
     "_check_fu_cang",
+    "_detect_wild_crane_reverse",
 ]

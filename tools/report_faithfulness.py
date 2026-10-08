@@ -29,14 +29,19 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "core"))
 LIUYAO_SCRIPTS = ROOT / "disciplines" / "liuyao" / "scripts"
 if str(LIUYAO_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(LIUYAO_SCRIPTS))
 
+from yishu_core.relations import LIUQIN_NAMES  # noqa: E402
+from yishu_core.symbols import EARTHLY_BRANCHES  # noqa: E402
+
 # ── 词表 ────────────────────────────────────────────────────────────────────
-SIX_RELATIONS = ("父母", "兄弟", "妻财", "官鬼", "子孙")
+# 六亲名与地支序均为内核唯一真值源的派生视图（AGENTS.md §二），此处不另存副本。
+SIX_RELATIONS = tuple(LIUQIN_NAMES)
 SIX_SPIRITS = ("青龙", "朱雀", "勾陈", "螣蛇", "白虎", "玄武")
-BRANCHES = "子丑寅卯辰巳午未申酉戌亥"
+BRANCHES = "".join(EARTHLY_BRANCHES)
 POS_NAMES = {"初": 1, "二": 2, "三": 3, "四": 4, "五": 5, "上": 6}
 STRENGTH_WORDS = ("旺", "相", "休", "囚", "死")
 

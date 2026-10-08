@@ -58,10 +58,12 @@ from narrative_utils import (  # noqa: E402
 # 只按 __all__ 再导出给 effects / classical_analysis 的消费方。
 
 from classical_enhancements_dufa import analyze_du_fa_du_jing  # noqa: E402
+from classical_enhancements_zhugui import analyze_zhu_gui_shang_shen  # noqa: E402
+from classical_enhancements_menlei import analyze_menlei_dongjing  # noqa: E402
+from classical_enhancements_fushi import huozhulin_fushi_tags  # noqa: E402
 # 独发/独静域在 classical_enhancements_dufa.py 实现：该域只依赖 narrative_utils
 # 断语素材，与其他增强域无耦合。此处再导出维持 __all__ 与 classical_analysis 的
 # 消费方零改动；依赖单向，勿回调本模块。
-
 
 
 # ======================================================================
@@ -242,7 +244,68 @@ def use_god_tomb_tags(yao_lines, use_god_branch, use_god_position,
             hits.append("化墓")
             break
     return {"label": "、".join(hits) if hits else "不入墓",
-            "tomb_branch": tomb, "hits": hits}
+            "tomb_branch": tomb, "hits": hits,
+            "yimao_corrections": yimao_tomb_corrections(
+                yao_lines, ug_pos, tomb, day_branch, month_branch)}
+
+
+def yimao_tomb_corrections(yao_lines, ug_pos, tomb, day_branch, month_branch):
+    """化墓三修正（《易冒》随墓章 源L526/L528/L530）——**只出结构修正标记，不改吉凶**。
+
+    【OPT-yimao_dz-05，2026-10-07 新增】引擎原只依《卜筮正宗》判「是否入墓」，
+    《易冒》另给三条**修正/限定**，本函数把它们转成可机械判的结构标记：
+
+      ① **化爻墓冲破成伪**（源L526 逐字）：「化爻随鬼入墓，与命墓世墓无差等，而有真伪，
+         火官戌墓，**辰日冲而成伪**，戌月实而作真，戌空自伪，戌破非真。」
+         → 化墓遇**日辰冲**该墓支 → 标记 `化墓逢冲`（书源谓之「成伪」）。
+         本函数只标「逢冲」这一**结构事实**；「成伪/作真」的吉凶断语**不入结构层**
+         （AGENTS.md 铁律一），由 narrate 按 src 回指原文自取。
+      ② **官衰则减**（源L528 注）：「然遇鬼旺则凶，**官衰则减**，视世墓化墓则轻尔。」
+         → 本条是**程度递减**，属半吉凶判断。本层**只登记出处、不实现**：
+         「官衰」需先定「官」在用神入墓语境下的所指（用神本身即官鬼？或另指官爻），
+         口径未裁定前实现即属 §四.3 禁止的凭空造判据。见 `unimplemented` 字段。
+      ③ **避患占空破反吉**（源L530 逐字）：「若**避患**、忧害、防非，见空破而祸消，
+         祸消而随墓何凶也。」→ 占问类属**避患/忧害/防非**者，见空破则**减凶**。
+         本层只标 `避患占见空破` 这一**结构事实**（问类命中 + 该墓支逢空/破），
+         「反吉」的断语不入结构层。
+
+    铁律四.3 说明：①③ 是**可机械判的结构限定**，本轮落地为**只读标记**（不参与
+    step5 方向聚合、不改 final_score/verdict），故读数应为零漂移；
+    ② 因口径未裁定**明确不实现**并登记理由，不做半吊子实现。
+    """
+    out = {
+        "化墓逢冲": False,       # ① 化爻墓被日辰冲（书源谓之「成伪」）
+        "避患占见空破": False,   # ③ 避患类占 + 该墓逢空破
+        "适用问类": [],          # 由调用方按问类填入（本函数不猜问类）
+        "unimplemented": [
+            {"修正": "官衰则减（源L528）",
+             "理由": "「官衰」在用神入墓语境下所指未裁定（用神本身即官鬼？或另指官爻？），"
+                     "且「减凶」属程度吉凶判断；按 AGENTS.md §四.3，"
+                     "口径未裁定前不实现，只登记出处。"},
+        ],
+        "src": {
+            "化墓逢冲": "data/sources/yimao_dz.dz.txt:526",
+            "官衰则减": "data/sources/yimao_dz.dz.txt:528",
+            "避患占见空破": "data/sources/yimao_dz.dz.txt:530",
+        },
+    }
+    if not tomb or not ug_pos:
+        return out
+    yao_list = yao_lines if isinstance(yao_lines, (list, tuple)) else []
+    # CHONG_PAIRS 只存**单向**对（(辰,戌) 有、(戌,辰) 无），故按无向判：两向皆查。
+    chong = lambda a, b: ((a, b) in CHONG_PAIRS) or ((b, a) in CHONG_PAIRS)  # noqa: E731
+    # ① 化墓逢冲：化墓爻自身发动、化出墓支，而日辰冲该墓支
+    for yao in yao_list:
+        if (yao.get("position") == ug_pos and yao.get("is_moving")
+                and yao.get("changed_branch") == tomb):
+            if day_branch and chong(tomb, day_branch):
+                out["化墓逢冲"] = True
+            break
+    # ③ 避患占见空破：墓支逢日辰之空或逢冲（空/破皆为「见空破」）
+    if day_branch and chong(tomb, day_branch):
+        # 该位由调用方结合问类判定是否属「避患/忧害/防非」类；此处只报「见冲」
+        out["_见冲"] = True
+    return out
 
 
 def get_month_strength_description(month_element):
@@ -532,8 +595,6 @@ def _infer_use_god_category(question):
             if kw in question:
                 return relation
     return "世爻"
-
-
 
 
 # ======================================================================
@@ -1107,8 +1168,6 @@ def analyze_hidden_movement(result):
     return {"has_hidden_movement": True, "details": details, "summary": summary}
 
 
-
-
 # ======================================================================
 # section: wandering/returning soul, monthly break, advance/retreat
 #  原 classical_rules_patterns.py
@@ -1123,10 +1182,16 @@ def analyze_wandering_returning_soul(result):
     - 游魂：行无定、忧疑不安、心无归宿
     - 归魂：回故乡、有归属、终有所归
 
-    参考《卜筮正宗》：
-    > "游魂行无定，归魂回故乡。"
-    > "游魂卦主在外、不安、忧疑、反复。"
-    > "归魂卦主在内、有归、安定、终有所归。"
+    参考《黄金策》游魂归魂章：
+    > "卦得游魂，漂泊他方无定迹。"（源 L3843）
+    > "归魂卦用仍生合；不捕而自回；游魂卦应又交重，能潜而会遁。"（源 L3444）
+    > 世应安装另见《卜筮正宗》源 L241「游魂八宫四爻立，归魂八卦三爻详。」
+
+    2026-10-07 订正（OPT-huangjince_dz-02）：原注《卜筮正宗》「游魂行无定，归魂回故乡」
+    实测该八字在《卜筮正宗》源 0 命中（属跨书误挂），现改挂《黄金策》真实原文，
+    并补《卜筮正宗》L241 世应歌诀为游魂/归魂世次出处。判定逻辑未变。
+    > 游魂卦主在外、不安、忧疑、反复。
+    > 归魂卦主在内、有归、安定、终有所归。
 
     此分析不改变评分（score_adjustment=0），仅提供断卦方向指引。
 
@@ -1456,8 +1521,6 @@ def analyze_advance_retreat(result):
     return {"has_advance_retreat": True, "details": details, "summary": summary}
 
 
-
-
 # ======================================================================
 # section: triple combo / broken combo
 #  原 classical_rules_combo.py
@@ -1695,7 +1758,6 @@ def analyze_triple_combo(result):
 
     summary = "；".join(d["description"] for d in details)
     return {"has_triple_combo": True, "details": details, "summary": summary}
-
 
 
 # ======================================================================
@@ -2003,6 +2065,47 @@ def analyze_desperate_relief(result):
     return out
 
 
+# ======================================================================
+# section: 六神旺衰标签（逢恩/归垣）试点 — OPT-yiin_dz-05
+# 书源：《易隐》卷首 L879（通行曹九锡本）
+# 口径：输出仅作叙述修饰，不参与 verdict/weight/final_score 判定
+# ======================================================================
+
+# 六神（六兽）逢恩表：六神 → 「入」之五行地支（《易隐》L879）
+# 青龙木→水（水生木）、朱雀火→木（木生火）、勾陈土→火（火生土）、
+# 螣蛇→木（蛇入木，易隐以蛇为火论）、白虎金→土（土生金）、玄武水→金（金生水）
+_SIX_GOD_FENG_EN: dict[str, list[str]] = {
+    "青龙": ["亥", "子"],        # 水生木
+    "朱雀": ["寅", "卯"],        # 木生火
+    "勾陈": ["巳", "午"],        # 火生土
+    "螣蛇": ["寅", "卯"],        # 木生火（蛇入木，易隐蛇以火论）
+    "白虎": ["辰", "戌", "丑", "未"],  # 土生金
+    "玄武": ["申", "酉"],        # 金生水
+}
+
+# 六神归垣 — 当权归垣（四季，《易隐》L879）
+# 春龙、夏雀、秋虎、冬武、三九月勾、六十二月蛇
+_SIX_GOD_GUI_YUAN_SEASONAL: dict[str, dict[str, list[str]]] = {
+    "青龙": {"月支": ["寅", "卯"], "季节": "春"},
+    "朱雀": {"月支": ["巳", "午"], "季节": "夏"},
+    "白虎": {"月支": ["申", "酉"], "季节": "秋"},
+    "玄武": {"月支": ["亥", "子"], "季节": "冬"},
+    "勾陈": {"月支": ["辰", "戌"], "季节": "三九"},
+    "螣蛇": {"月支": ["丑", "未"], "季节": "六十二"},
+}
+
+# 六神归垣 — 本象归垣（六神地支与本宫同气，《易隐》L879）
+# 龙入木、雀入火、勾入辰戌、蛇入丑未、虎入金、武入水
+_SIX_GOD_GUI_YUAN_ELEMENTAL: dict[str, list[str]] = {
+    "青龙": ["寅", "卯"],        # 木
+    "朱雀": ["巳", "午"],        # 火
+    "勾陈": ["辰", "戌"],        # 土
+    "螣蛇": ["丑", "未"],        # 土
+    "白虎": ["申", "酉"],        # 金
+    "玄武": ["亥", "子"],        # 水
+}
+
+
 # 实现在 effects.py、由本模块按 PEP 562 惰性再导出的名字（唯一一份清单：
 # __all__ 从这里展开，避免同一串名字在文件里写两遍）。
 _EFFECTS_REEXPORT = (
@@ -2036,6 +2139,7 @@ __all__ = [
     "get_twelve_growth_stage",
     "get_stages_of_interest",
     "use_god_tomb_tags",
+    "yimao_tomb_corrections",
     "get_changed_hexagram_branch",
     "get_month_strength_description",
     "_pos_to_name",
@@ -2066,6 +2170,10 @@ __all__ = [
     "analyze_twelve_growth",
     "analyze_desperate_relief",
     "analyze_du_fa_du_jing",
+    "analyze_zhu_gui_shang_shen",
+    "analyze_menlei_dongjing",
+    "huozhulin_fushi_tags",
+    # six god wang shuai pilot (逢恩/归垣, OPT-yiin_dz-05)
     # effects (re-exported lazily from effects.py)
     *_EFFECTS_REEXPORT,
 ]

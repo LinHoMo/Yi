@@ -82,8 +82,22 @@ CORE_TABLE_ASSIGN = re.compile(
     r"TWELVE_GROWTH_STAGES|SIX_RELATIONS|LIUQIN_NAMES)\s*=\s*[\[\{]", re.M)
 
 # 学科间 import（违反 disciplines 禁止互相 import 的契约）
+# 四种形态都要拦（2026-10-08 扩）：
+#   bare   —— `from liuyao import x` / `import ming`（旧门只有这一条，且只扫 scripts/）
+#   dotted —— `from disciplines.ming.scripts.analyze import …`
+#   dyn    —— `importlib.import_module("disciplines.liuyao.scripts.classical_analysis")`
+#   path   —— 把 `disciplines/liuyao/…` 当字符串路径拼进 sys.path 再裸 import
+# 实测教训：ming 的跨科审计脚本用 dotted+dyn 两种形态，旧门两种全漏；它一旦放在
+# 学科目录里，学科→学科的依赖就绕过了结构门（现已移到仓库级 tools/）。
+_CROSS_DISC = "liuyao|ming|ziwei|meihua|xiaoliuren|zeji|liuren|lingqi"
 CROSS_DISC_IMPORT = re.compile(
-    r"^\s*(from|import)\s+(liuyao|ming|ziwei|meihua|xiaoliuren|zeji|liuren|lingqi)\b", re.M)
+    r"^\s*(?:from|import)\s+(" + _CROSS_DISC + r")\b")
+CROSS_DISC_DOTTED = re.compile(
+    r"(?:from|import)\s+disciplines\.(" + _CROSS_DISC + r")\b")
+CROSS_DISC_DYN = re.compile(
+    r"import_module\(\s*[\"'](?:disciplines\.)?(" + _CROSS_DISC + r")\b")
+CROSS_DISC_PATHISH = re.compile(
+    r"[\"']disciplines[/\\\\](" + _CROSS_DISC + r")[/\\\\]")
 
 # 报告禁用断言词（铁律三）：只拦"肯定式"断言——「命中率/准确率」后紧跟数字，或「断事如神」。
 # 不拦"不宣称现实预测命中率"这类否定式免责句（其后不是数字）。
@@ -325,18 +339,26 @@ def check_structure() -> list[str]:
         cases = d / "data" / "cases"
         if disc not in exempt and not (cases.is_dir() and any(cases.glob("*.json"))):
             print(f"  · {disc} 尚无案例库（data/cases 下没有 *.json）")
-    # 学科互相 import（8 科全扫：此前只扫 liuyao/ming，另 6 科的违规 import 是敞的）
-    for disc in ALL_DISCIPLINES:
-        scripts = ROOT / "disciplines" / disc / "scripts"
-        if not scripts.is_dir():
+    # 学科互相 import（2026-10-08 扩面：8 科 × 整个学科目录，含 dev_tools/tests/其它子包；
+    # 旧门只扫 `scripts/` 且只认裸模块名，于是学科层用点分路径 / importlib 动态加载别科
+    # 完全畅通——实测曾在 ming/dev_tools 里命中两处）
+    for p in sorted((ROOT / "disciplines").rglob("*.py")):
+        if "scratch" in p.parts or "__pycache__" in p.parts:
             continue
-        for p in scripts.rglob("*.py"):
-            if "scratch" in p.parts:
-                continue
-            for i, line in enumerate(p.read_text(encoding="utf-8", errors="ignore").splitlines(), 1):
-                m = CROSS_DISC_IMPORT.match(line)
-                if m and m.group(2) != disc:
-                    fails.append(f"{p.relative_to(ROOT)}:{i}: 学科间 import {m.group(2)}")
+        parts = p.relative_to(ROOT).parts
+        own = parts[1] if len(parts) > 1 else ""
+        if own not in ALL_DISCIPLINES:
+            continue          # 未注册目录（如 jiaoshi/none_tonggang 草稿）由 §2.4 债务行管
+        for i, line in enumerate(p.read_text(encoding="utf-8", errors="ignore").splitlines(), 1):
+            hits = []
+            for pat in (CROSS_DISC_IMPORT, CROSS_DISC_DOTTED,
+                        CROSS_DISC_DYN, CROSS_DISC_PATHISH):
+                m = pat.search(line)
+                if m and m.group(1) != own:
+                    hits.append(m.group(1))
+            for other in sorted(set(hits)):
+                fails.append(f"{p.relative_to(ROOT)}:{i}: 学科间 import {other}"
+                             f"（本科={own}；§二 依赖方向单向，跨科审计请放 tools/）")
     # 巨石看门狗：单文件过长视为架构债（M1b；classical_rules 已按域拆分）
     max_lines = 2200
     for p in (ROOT / "disciplines").rglob("*.py"):
@@ -391,12 +413,31 @@ def check_modules_importable() -> list[str]:
     return fails
 
 
-def check_core_tables() -> list[str]:
-    """内核表唯一：学科内不得重新定义 core 已有规则表（同名 + 改名副本两层检测）。"""
-    fails: list[str] = []
-    for p in (ROOT / "disciplines").rglob("*.py"):
-        if "scratch" in p.parts or "__pycache__" in p.parts:
+def _truth_source_scan_roots() -> list[Path]:
+    """唯一真值源门的扫描根（AGENTS.md §二 声称覆盖 `disciplines/**` 与 `tools/**`）。
+
+    2026-10-08 实测教训：本函数存在之前，四条判据一律只 `rglob(ROOT/"disciplines")`，
+    于是 `tools/report_faithfulness.py` 里的地支串与六亲表副本长期放行——文档说覆盖、
+    代码没覆盖，比"没写这条规则"更危险。改扫描根时请同步 AGENTS.md §二 的措辞。
+    """
+    return [ROOT / "disciplines", ROOT / "tools"]
+
+
+def _truth_source_files() -> list[Path]:
+    """扫描根下的 .py 文件（排除 scratch/__pycache__）。"""
+    out: list[Path] = []
+    for root in _truth_source_scan_roots():
+        if not root.is_dir():
             continue
+        out.extend(p for p in root.rglob("*.py")
+                   if "scratch" not in p.parts and "__pycache__" not in p.parts)
+    return out
+
+
+def check_core_tables() -> list[str]:
+    """内核表唯一：学科/工具层不得重新定义 core 已有规则表（同名 + 改名副本两层检测）。"""
+    fails: list[str] = []
+    for p in _truth_source_files():
         for i, line in enumerate(p.read_text(encoding="utf-8", errors="ignore").splitlines(), 1):
             if CORE_TABLE_ASSIGN.match(line):
                 name = line.strip().split("=", 1)[0].strip()
@@ -534,9 +575,7 @@ def check_core_tables_in_scope() -> list[str]:
     if not core_fps:
         return []
     fails: list[str] = []
-    for p in (ROOT / "disciplines").rglob("*.py"):
-        if "scratch" in p.parts or "__pycache__" in p.parts:
-            continue
+    for p in _truth_source_files():
         rel = p.relative_to(ROOT)
         for fp, scopes in _all_scope_literals(p).items():
             if fp not in core_fps:
@@ -553,15 +592,14 @@ def check_core_tables_in_scope() -> list[str]:
 def check_core_string_tables() -> list[str]:
     """干支序列字符串字面量唯一性（core/yishu_core/ganzhi_calendar.py 为唯一真值源）。
 
-    上两条门都只比对 dict/list 字面量：裸字符串 `stems = "甲乙丙丁戊己庚辛壬癸"`
-    既不匹配 `CORE_TABLE_ASSIGN` 正则，也不是可指纹的 dict —— 两层门同时放行。
-    且同一函数里常出现"一半用 core 一半手写串"（如 meihua/chart.py:327 手写 stems、
-    :328 用 core EARTHLY_BRANCHES），是最容易漏改半截的形态。
+    上两条门都只比对 dict/list 字面量：裸字符串形式的完整十天干串 / 完整十二地支串
+    （GANZHI_SEQ_LITERAL 所匹者）既不匹配 `CORE_TABLE_ASSIGN` 正则，也不是可指纹的
+    dict —— 两层门同时放行。且同一函数里常出现"一半用 core 一半手写串"（如
+    meihua/chart.py 手写 stems 串、同行却用 core EARTHLY_BRANCHES），是最容易漏改
+    半截的形态。本函数自身也走 `_truth_source_files()`，故此处不写示例字面量。
     """
     fails: list[str] = []
-    for p in (ROOT / "disciplines").rglob("*.py"):
-        if "scratch" in p.parts or "__pycache__" in p.parts:
-            continue
+    for p in _truth_source_files():
         rel = p.relative_to(ROOT)
         for i, line in enumerate(p.read_text(encoding="utf-8", errors="ignore").splitlines(), 1):
             m = GANZHI_SEQ_LITERAL.search(line)
@@ -584,9 +622,7 @@ def check_core_table_renames() -> list[str]:
     if not core_fps:
         return []
     fails: list[str] = []
-    for p in (ROOT / "disciplines").rglob("*.py"):
-        if "scratch" in p.parts or "__pycache__" in p.parts:
-            continue
+    for p in _truth_source_files():
         rel = p.relative_to(ROOT)
         for fp, names in _module_table_fingerprints(p).items():
             if fp in core_fps:
@@ -922,6 +958,14 @@ def main() -> int:
     gate_sub("case_quotes", ["tools/check_case_quotes.py"],
              "案例引文逐字性（压缩/拼接/跨段引文判败；书源不在库逐条披露）")
 
+    # 书源深度解读文档门（2026-10-08 挂门）：docs/source-readings/ 五十余篇逐条要求
+    # 引文 ⊆ 书源、OPT 表六列齐、ID 前缀与文件名同构。此前该门**只被 --selftest 引用**、
+    # 真扫描从未排进 check（"写了门不跑"＝死代码，AGENTS.md §四.8 同一病灶）。
+    # 实测 2 秒，故进默认档。
+    print("\n[1l] 书源解读文档（引文逐字 + OPT 表结构 + ID 前缀一致）")
+    gate_sub("source_readings", ["tools/check_source_readings.py"],
+             "书源解读文档门（54 篇：引文逐字回指书源，OPT 行六列齐、ID 前缀同文件名）")
+
     print("\n[2] 内核自检（干支历/农历/评分器）")
     if section("core"):
         code, out = _run_py(["core/yishu_core/calendar_check.py"], label="内核自检")
@@ -945,6 +989,28 @@ def main() -> int:
             failures.append("断语库键一致性失败")
             print("  × 断语库键一致性")
             print(f"      …{_tail(out)}")
+
+    # 门自证（2026-10-08）：负例自证写在文档里、却没被任何地方执行，等于没有负例。
+    # AGENTS.md §四.8 的实踩教训（死链门"全绿"其实是豁免吞掉负例）只有在**每次跑**时
+    # 才防得住，故把四把自带 --selftest 的门排进默认档，而不是留在 CHANGELOG 的叙述里。
+    print("\n[2b] 门自证（负例必须被判红、扫空必须判红；漏挂即死代码）")
+    # 段名与四个子门名一一登记：`--only gate_selftest` 这类"选了段名、子门名对不上"
+    # 的写法必须报错列出可用项，而不是静默跳过后打印"全部通过"（本文件的设计口径第 1 条）。
+    _SELFTESTS = (
+        ("gate_selftest_isolation", ["tools/case_isolation_check.py", "--selftest"],
+         "案例隔离门自证（显式路径/组合名判红、书源 slug 不误报、扫空判红）"),
+        ("gate_selftest_case_quotes", ["tools/check_case_quotes.py", "--selftest"],
+         "引文逐字门自证（尾拼/压缩/跨段三负例）"),
+        ("gate_selftest_source_readings", ["tools/check_source_readings.py", "--selftest"],
+         "书源解读文档门自证（编造引文/空壳/挂错著作判红）"),
+        ("gate_selftest_crosscheck", ["tools/crosscheck_source.py", "--selftest"],
+         "书源对勘门自证（同段自比=1.0、异书互比判对不上）"),
+        ("gate_selftest_doc_deadlinks", ["tools/check_doc_deadlinks.py", "--selftest"],
+         "文档死链门自证（裸引用必咬、语境豁免精准、docs 子目录递归生效）"),
+    )
+    if section(*[n for n, _, _ in _SELFTESTS]):
+        for _st_name, _st_cmd, _st_label in _SELFTESTS:
+            gate_sub(_st_name, _st_cmd, _st_label, fast=False)
 
     for disc in SMOKE_DISCIPLINES:
         print(f"\n[{SMOKE_DISCIPLINES.index(disc) + 3}] {disc} 质量门"

@@ -733,7 +733,11 @@ def compute_fu_shen_adjustment(step2_data: dict, step3_data: dict, r: dict) -> t
       ① 新增**伏而不得出**方向权重 -1.0——旧实现只覆盖「得出/泄气/克伏」各象，
         伏神无提挈（日月生扶、飞神空破、伏克飞皆无）时方向分零反馈，只有应期
         效果；判据读 step2 `fu_cang_detail.results[].can_emerge` 结构，不嗅探文本。
-        所本：《黄金策·千金赋》"伏无提挈终徒尔，飞不推开亦枉然"。
+        所本：《黄金策·千金赋》"伏无提挈终徒尔，飞不推开亦枉然"
+        （2026-10-07 补注：引擎引文取正解「提挈…推开」；两源各讹一字并存——
+         殆知阁 dz 本 data/sources/huangjince_dz.dz.txt L136 作「伏无提挈终徒尔，
+         飞不摧开亦枉然」，维基文库本 huangjin_ce.wikitext.txt 第 42 行作「伏無提拔終徒爾，
+         飛不推開亦枉然」。正解为挈＋推；两读并记，不擅改书源）。
       ② step2_data 为新增入参（结构判据取用）；旧文本路径保留为兜底，先后语义不变。
     """
     step3_reasoning_text = step3_data.get("summary_text", "") if step3_data else ""

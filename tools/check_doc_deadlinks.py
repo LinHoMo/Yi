@@ -10,6 +10,7 @@ v1（临时版）按 basename 全仓匹配且不区分引用类型，产生三�
 """
 from __future__ import annotations
 
+import argparse
 import re
 import sys
 from pathlib import Path
@@ -17,12 +18,16 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]  # tools/ 下为仓库根；放 tools/scratch/ 时需 parents[2]
 
 # 活跃文档：会被新人当现状读的文档。排除 CHANGELOG（历史流水）与 archive/（归档）。
+# 2026-10-08：`docs/*.md` 只扫单层，于是 docs/source-readings（57 份）、docs/audits、
+# docs/references 全是盲区——恰恰是本轮新增、逐份点名脚本与数据路径最多的一批。
+# 改成 `docs/**/*.md` 递归；CHANGELOG/archive 的排除走 CHANGELOG_NAMES/EXCLUDE_PARTS，
+# 不是靠收窄 glob。
 ACTIVE_GLOBS = [
     "AGENTS.md",
     "README.md",
     "SKILL.md",
     "PROMPTS.md",
-    "docs/*.md",
+    "docs/**/*.md",
     "disciplines/*/README.md",
     "disciplines/*/docs/*.md",
     "synthesis/README.md",
@@ -49,6 +54,16 @@ NEG_CTX = re.compile(
     r"禁写|不要写|不得写|反例|禁止|已删除|已删|删除|已移除|移\s*`?archive|"
     r"禁止这样|命名为|仓库外|历史备注|原先定义于|已并入|已归档|零引用|"
     r"已随|一并移除|原本|"
+    # 「拟新建」家族（2026-10-08 补）：source-readings 的 OPT 表有一行的**路径约定**
+    # 明文写着「下表『建议』列中带『新建』二字者…不属于六节验收范围」，即这些路径是
+    # **待建目标**、不是"存在性声明"。按窗口判定（须贴着引用出现），与「已删/仓库外」
+    # 同族；负例见 --selftest 的「裸引用必咬」一条，防止这层豁免把真死链顺走。
+    r"新建|待建|拟建|下建|应建|"
+    # 同族补一条（2026-10-08）：文档里点名一个**不存在**的文件多为「历史死链留痕」
+    # 或「本处曾有此指」，不是存在性声明。窗口判定不变（须贴着引用）。
+    # 曾一并加过「真死链」，被 --selftest 否证：任何描述性散文（「真死链示例：`x.md`」）
+    # 都会把负例吞掉。**拿不准的语义词不进 NEG_CTX**。
+    r"不存在|"
     r"GEMINI\.md|cursor/rules|HANDOFF_V8"
 )
 # 两条**逐条人工定性**过的正当豁免（写死而非泛化，避免顺手放过真死链）：
@@ -110,7 +125,10 @@ def resolve(ref: str, src: Path) -> list[Path]:
     return cands
 
 
-def main() -> int:
+def run_scan(root: Path) -> int:
+    """扫一棵树并打印结果；root 通过模块级 ROOT 生效（resolve/is_active 都读它）。"""
+    global ROOT
+    ROOT = root
     files: list[Path] = []
     for g in ACTIVE_GLOBS:
         for p in sorted(ROOT.glob(g)):
@@ -229,7 +247,7 @@ def main() -> int:
     # 假绿比报错更坏——本轮就踩过一次（tools/ 与 tools/scratch/ 深度不同）。
     if not files:
         print("! 扫描 0 份文档：ROOT 层级有误，本结果无效", file=sys.stderr)
-        return 2
+        return 2, [], 0
     print(f"反例/外部物语境命中 {len(hist)} 处（不计死链）")
     if dead:
         print(f"\n真死链 {len(dead)} 处：")
@@ -238,7 +256,69 @@ def main() -> int:
             print(f"      {txt}")
     else:
         print("\n真死链：0 处。活跃文档内的仓库内路径引用全部可解析。")
-    return 1 if dead else 0
+    rc = 1 if dead else 0
+    return rc, [(f"{f.relative_to(ROOT)}", i, ref) for f, i, ref, _ in dead], len(files)
+
+
+def selftest() -> int:
+    """负例自证（AGENTS.md §四.8）：这轮往 NEG_CTX 加了「新建/待建/不存在/真死链」，
+    必须证明**裸引用照样咬**、豁免只放过带语境的，且 `docs/**/*.md` 递归真的扫到子目录。
+    """
+    import tempfile
+
+    cases = [
+        # (相对路径, 文档内容, 期望该引用被判死链)
+        ("docs/top_dead.md", "真死链示例（应判红）：`docs/_no_such_probe.md`\n", True),
+        ("docs/sub/deep_dead.md",
+         "子目录递归探针（应判红）：`docs/sub/_no_such_deep.md`\n", True),
+        ("docs/planned.md",
+         "拟落地项 | 新建 `docs/_planned_target.md` 登记逐字出处\n", False),
+        ("docs/leftover.md",
+         "- **真死链修正**：原指 `docs/_was_dead.md`，该文件不存在，已改指别处\n", False),
+        ("docs/fake.md", "举例写法：`docs/__fake_example.md`\n", False),
+        ("docs/ok.md", "指向实存文件：`AGENTS.md`\n", False),
+    ]
+    with tempfile.TemporaryDirectory() as td:
+        root = Path(td)
+        (root / "AGENTS.md").write_text("# 探针树\n", encoding="utf-8")
+        for rel, body, _ in cases:
+            p = root / rel
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text(body, encoding="utf-8")
+        _rc, dead_found, n_files = run_scan(root)
+
+    bad = []
+    if n_files < len(cases):
+        bad.append(f"只扫到 {n_files} 份探针文档（应 ≥{len(cases)}）——递归 glob 失效")
+    for rel, body, expect_dead in cases:
+        ref = re.search(r"`([^`]+)`", body)
+        key_ref = ref.group(1) if ref else ""
+        hit = any(key_ref in r for _f, _i, r in dead_found)
+        if hit != expect_dead:
+            bad.append(f"{rel}：期望 {'判红' if expect_dead else '放过'}，"
+                       f"实际 {'判红' if hit else '放过'}")
+    # 恢复指向真仓库，避免同进程后续用到探针树
+    global ROOT
+    ROOT = Path(__file__).resolve().parents[1]
+
+    for line in (bad or ["负例全按预期：裸引用判红、语境豁免精准、子目录递归生效"]):
+        print(f"  {'× ' if bad else '√ '}{line}")
+    print("SELFTEST FAIL" if bad else "SELFTEST PASS")
+    return 1 if bad else 0
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(
+        description="文档死链机械门：活跃文档点名的仓库内路径必须存在")
+    ap.add_argument("--root", type=Path, default=ROOT,
+                    help="仓库根（默认按本文件位置解析；自证/证伪可指向另一棵树）")
+    ap.add_argument("--selftest", action="store_true",
+                    help="负例自证：裸引用必须判红、语境豁免必须精准、递归必须生效")
+    args = ap.parse_args()
+    if args.selftest:
+        return selftest()
+    rc, _dead, _n = run_scan(args.root.resolve())
+    return rc
 
 
 if __name__ == "__main__":

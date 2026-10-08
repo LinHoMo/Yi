@@ -37,6 +37,7 @@ from narrative_utils import QUOTE_DATABASE, SHI_YAO_INTERPRETATION, SHI_YAO_POEM
 from narrative_utils import NARRATIVE_HINTS, PATTERN_RELATED
 from narrative_rules import resolve_marriage_interpretation, select_timing_base
 from chain_tables import HEXAGRAM_LIUCHONG, HEXAGRAM_LIUHE
+from yilin_buyi_maps import jianyao_role, waigua_direction  # noqa: E402
 from chain_tables import _BRANCH_CLASH_MAP, _HE_MAP  # noqa: E402
 
 try:
@@ -683,7 +684,9 @@ def _collect_pattern_tags(context, step3: dict, step4: dict, step5: dict) -> lis
             "久病逢冲": ["格局-久病逢冲为凶", "久病逢冲"],
             "冲中逢合": ["格局-冲中逢合", "冲中逢合"],
             "合处逢冲": ["格局-合处逢冲", "合处逢冲"],
-            # 双卦对比（《黄金策》"合处逢冲事已散，冲中逢合事迟成"）：本卦定始、变卦定终
+            # 双卦对比（《卜筮正宗》冲中逢合合处逢冲论第十五，正文源 L3102-3104
+            # 「冲中逄合先散后聚，先失后得，先淡后浓／合处逄冲，反是」）：
+            # 本卦定始、变卦定终
             "事已散": ["格局-合处逢冲事已散", "合处逢冲", "变卦六冲"],
             "事迟成": ["格局-冲中逢合事迟成", "冲中逢合", "变卦六合"],
             # 三会方局（《三命通会》）：力大于三合，不得被当作三合破局
@@ -789,6 +792,47 @@ def _collect_pattern_tags(context, step3: dict, step4: dict, step5: dict) -> lis
             _add("格局-独发", "独发")
         else:
             _add("格局-独静", "独静")
+
+    # 助鬼伤身（《断易天机》L134-L137）：**只标结构凶格成立与否**，
+    # 不据此出吉凶断语（AGENTS.md 铁律一：吉凶断语不得进结构层）。
+    zg = adv.get("zhu_gui_shang_shen") or {}
+    if isinstance(zg, dict) and zg.get("established"):
+        _add("格局-助鬼伤身", "助鬼伤身")
+
+    # 门类动静反转（求官域，《易林补遗》L813/L814）：**仅问类命中求官族才打**，
+    # 且只报动静结构事实，不据此断吉凶（铁律一）。
+    md = adv.get("menlei_dongjing_qiuguan") or {}
+    if isinstance(md, dict) and md.get("hit") and md.get("zisun_moving"):
+        _add("门类-求官子孙动", "求官子孙动")
+    elif isinstance(md, dict) and md.get("hit") and md.get("guan_moving"):
+        _add("门类-求官官动", "求官官鬼动")
+
+    # 助鬼伤身（《易冒》助伤章，源L541-L550，OPT-yimao_dz-02）：只标结构成立与否。
+    zgy = adv.get("zhu_gui_shang_shen_yimao") or {}
+    if isinstance(zgy, dict) and zgy.get("established"):
+        _add("格局-助鬼伤身_易冒", "助鬼伤身_易冒")
+
+    # 身爻启用（《易隐》安身章，源L217，OPT-yiin_dz-01）：世空/世破时身爻参与取用。
+    sy = adv.get("shen_yao_activation") or {}
+    if isinstance(sy, dict) and sy.get("activated"):
+        _add("格局-身爻启用", "身爻启用")
+
+    # 忧解/忧疑（《增刪卜易》忧神章，源L16/L419/L529，OPT-zengshan_buyi_dz-03）：纯结构标签。
+    yj = adv.get("you_jie") or {}
+    if isinstance(yj, dict):
+        if yj.get("you_jie"):
+            _add("格局-忧解", "忧解")
+        elif yj.get("you_yi"):
+            _add("格局-忧疑", "忧疑")
+
+    # 野鹤反法（OPT-zengshan_buyi_dz-04）：用神两现且一空/破一不空/不破时，标注反法结构。
+    s2w = {}
+    if isinstance(context, dict):
+        tc = context.get("thinking_chain") or {}
+        s2w = tc.get("step2_use_god_identification") or {}
+    wcr = s2w.get("wild_crane_reverse") or {}
+    if isinstance(wcr, dict) and wcr.get("triggered"):
+        _add("格局-野鹤反法", "野鹤反法")
 
     changed_name = ""
     if isinstance(context, dict):
@@ -976,11 +1020,71 @@ def _collect_pattern_details(context) -> list:
         if _d:
             detail_parts.append(f"绝处逢生：{_d}" + (f"——{_v}" if _v else ""))
     # 独发 / 独静（《增删卜易·独发章》）：只作结构性提示
+    #
+    # 叙事口径（OPT-yimao_dz-09，2026-10-07 补注记）：本段只**报「哪一爻独发/独静」**
+    # 这一结构事实，**不得据此对独发爻或独静爻单独赋权定吉凶**。
+    # 书源两处互证：
+    #   《增删卜易》独发章（同章立界）：「事之成敗，由乎用神；應期遲速，亦由乎用神……
+    #     如捨其用神，執之而決事者，謬也。」（见 classical_enhancements_dufa.py docstring）
+    #   《易冒》独发章源L438 逐字：「然後以獨發獨靜之爻定其時，則每有驗，此為論之中也。」
+    #     ——注意原句是「定其**時**」（定应期），前半句才说吉凶：
+    #     「或曰，獨發獨靜，止為吉凶告兆也。……求財遇財旺而有財，求官遇官旺而有官，
+    #       行人遇用神生剋而定其遲速，病人遇用神衰旺而決其死生，然後以獨發獨靜之爻定其時」
+    #     即：**吉凶仍由所问之用的旺衰定，独发独静只定「何时」**。
+    # 故此段只进「格局要点／详释」的机制描述，不产出「独发即为吉/凶」类断语。
     df = adv.get("du_fa_du_jing") or {}
     if isinstance(df, dict) and df.get("driving_note"):
         detail_parts.append(f"{df.get('type')}：{df['driving_note']}")
 
+    # 助鬼伤身（《断易天机》L134-L137）：只陈述**结构上成立与否**＋解救 applicability。
+    #   措辞守铁律三：用「结构上/有…信号」，不出「必凶/注定」一类断语——
+    #   书源原文的吉凶语（「其凶愈甚」「必主身有灾殃」）按铁律一不入结构层。
+    zg = adv.get("zhu_gui_shang_shen") or {}
+    if isinstance(zg, dict) and zg.get("established"):
+        detail_parts.append("助鬼伤身（结构成立）：" + str(zg.get("note") or ""))
+
+    # 求官门类动静（《易林补遗》L813/L814）：只陈述结构上「官动/子动」这一事实。
+    #   书源吉凶语（「子乃忌神，不宜发动」「唯求官鬼动为良」）已内联在 note 里并
+    #   标明源行；措辞守铁律三——只说「结构上如何」，不转成「必不迁/必升迁」。
+    md = adv.get("menlei_dongjing_qiuguan") or {}
+    if isinstance(md, dict) and md.get("hit") and md.get("note"):
+        detail_parts.append(str(md["note"]))
+
+    # 《易林补遗》门类定位（OPT-yilin_buyi_dz-03/-04/-05）：**只定位、不断吉凶**。
+    #   外卦定方（源L2234）＋间爻角色（源L596/L1877/L2056/L1033）按问类命中才出；
+    #   措辞用「结构上定位为」，不接「故必得/定主」一类断语（铁律一/三）。
+    detail_parts.extend(_yilin_locate_lines(context))
+
     return detail_parts
+
+
+def _yilin_locate_lines(context) -> list:
+    """《易林补遗》门类定位层接入 narrate（逃亡定方 + 间爻角色）。"""
+    out = []
+    ctx = context or {}
+    q = str(ctx.get("question") or ctx.get("question_category") or "")
+    hex_info = ctx.get("original_hexagram") or {}
+    yao_lines = hex_info.get("yao_lines") or []
+
+    # 逃亡/失脱问：外卦定方（源 L2234「专以外卦推详」）
+    if any(k in q for k in ("逃亡", "失脱", "走失", "寻人", "被擒")):
+        wg = str(hex_info.get("upper_trigram") or hex_info.get("outer_trigram") or "")
+        wg = wg[:1]
+        if wg:
+            d = waigua_direction(wg)
+            if d:
+                out.append(f"外卦定方（《易林补遗》L2234「专以外卦推详」）：外卦{wg}→{d}。")
+
+    # 间爻专职角色（媒妁/中保/中证/工匠）——按问类命中
+    for cat in ("婚姻", "借贷", "词讼", "起造"):
+        if cat not in q:
+            continue
+        r = jianyao_role(cat)
+        if r and r.get("role"):
+            out.append(f"间爻角色（{cat}问，《易林补遗》{r.get('_src', '')}）："
+                       f"间爻作「{r['role']}」——{r.get('要点', '')}")
+        break
+    return out
 
 
 def _inject_pattern_tags(chain: list, step3: dict, step4: dict, step5: dict, context: dict | None = None):
@@ -1065,6 +1169,11 @@ def _question_focus(question: str) -> str:
     return "所问之事"
 
 
+def _dedash(text: str) -> str:
+    """折叠「——，」：破折号与逗号不得相连（模板拼接产物，非书源原文）。"""
+    return text.replace("——，", "——")
+
+
 def _verdict_opening(verdict: str, focus: str, pattern_label: str = "", yuan_diagnosis: str = "") -> str:
     """第一句：先接住问题、亮明结论，并直接给出最关键的一条理由。"""
     tpl = _NARRATIVE_TPL.get("verdict_openings") or {}
@@ -1080,7 +1189,7 @@ def _verdict_opening(verdict: str, focus: str, pattern_label: str = "", yuan_dia
 
     v = str(verdict or "")
     if v in pos_table:
-        return wrap.format(focus=focus, text=pos_table[v])
+        return _dedash(wrap.format(focus=focus, text=pos_table[v]))
     if v in neg_table:
         raw = neg_table[v]
         if "{reason_part_or_default}" in raw:
@@ -1093,7 +1202,9 @@ def _verdict_opening(verdict: str, focus: str, pattern_label: str = "", yuan_dia
             text = raw.format(focus=focus, reason_part=reason_part)
         else:
             text = raw
-        return wrap.format(focus=focus, text=text)
+        # 模板尾部自带「——」，而 reason_* 模板自带前导「，」→ 拼出「——，」残句
+        # （2026-10-08 实测交付报告首句：`…不是发力的时候——，主要因为…`）。
+        return _dedash(wrap.format(focus=focus, text=text))
     if "凶" in v or "跌" in v:
         return (tpl.get("fallback_xiong") or "").format(focus=focus, v=v, reason_part=reason_part)
     if "吉" in v and "凶" not in v:
@@ -1383,6 +1494,54 @@ def _line_plain(line_name, tpl: dict) -> str:
     return s
 
 
+def _jiazhai_paragraph(result: dict) -> str:
+    """家宅爻位取象短段（《黄金策·千金赋》家宅章）。
+
+    出处（逐字，行号=data/sources/huangjince_dz.dz.txt）：
+      L2533 夹注「凡内卦初爻为宅基，二爻为宅舍，三爻为门外，外卦四爻为父母，
+            五爻为兄弟，六爻为妻财。内卦宅生人吉，外卦宅克人凶。」
+      L2536「合为门，冲为路，不论卦内之有无。」
+
+    口径（AGENTS.md §一 铁律三）：只说「看哪个爻」，**不断宅吉凶**；
+    本段不进评分、不作吉凶断语来源（OPT-huangjince_dz-07）。
+    """
+    tpl = _NARRATIVE_TPL.get("jiazhai_take_image") or {}
+    if not tpl:
+        return ""
+    question = str(result.get("question") or result.get("topic") or "")
+    if not question:
+        return ""
+    if not any(k in question for k in (tpl.get("触发问法词") or [])):
+        return ""
+
+    yao_map = tpl.get("爻位取象_简") or tpl.get("爻位取象") or {}
+    hexa = result.get("original_hexagram") or {}
+    yao_lines = hexa.get("yao_lines") or []
+    if not yao_lines:
+        return ""
+    world_pos = None
+    for y in yao_lines:
+        if isinstance(y, dict) and y.get("is_world"):
+            world_pos = y.get("position")
+            break
+    try:
+        world_pos = int(world_pos)
+    except (TypeError, ValueError):
+        world_pos = None
+
+    pos_name = {1: "初爻", 2: "二爻", 3: "三爻", 4: "四爻", 5: "五爻", 6: "上爻"}
+    parts = []
+    for i in sorted(yao_map):
+        mark = "，今世爻正在此位" if world_pos == int(i) else ""
+        parts.append(f"{yao_map[i]}{mark}")
+    inner_outer = tpl.get("内外生克_叙述") or ""
+    door_road = tpl.get("门路取象_叙述") or ""
+    tpl_str = tpl.get("段落模板") or ""
+    if not tpl_str:
+        return ""
+    return tpl_str.format(yao_map="；".join(parts), inner_outer=inner_outer, door_road=door_road)
+
+
 def _bing_yao_paragraph(result: dict) -> str:
     """病药短段：列出病与药，口吻偏向/有…信号/结构上（口径诚实）。"""
     tpl = _NARRATIVE_TPL.get("bing_yao") or {}
@@ -1503,7 +1662,21 @@ def _pattern_advice_hint(pattern_tag: str, verdict: str, timing: dict) -> str:
         text = text + (HINTS.get("原神绝位·补转机") or "").format(cal=cal)
     if tag == "兄弟持世":
         text = text + ((HINTS.get("兄弟持世·补") or "").format(cal=cal) if cal else (HINTS.get("兄弟持世·补_default") or ""))
+    # 《文王金钱课·诸爻持事诀》书源原句（OPT-wenwang_jinqianke_dz-01）：
+    # **只作叙述层旁证**——在现代意译句后附一句「书云」，不改判定、不进结构、不评分。
+    # 措辞守铁律三：只说「书云/古法云」，不把古判语转成对用户的确定性断言。
+    _wq = _wenwang_quote(tag)
+    if _wq:
+        text = f"{text}（书云：「{_wq}」）"
     return text
+
+
+def _wenwang_quote(tag: str) -> str:
+    """六亲持世 → 《文王金钱课》对应书源原句；无对应返回 ""（不硬配）。"""
+    W = ((_NARRATIVE_TPL.get("pattern_hints") or {}).get("_wenwang_chishi") or {})
+    key = "官鬼持世" if tag == "鬼爻持世" else tag
+    e = W.get(key) or W.get("世爻") or {}
+    return (e.get("quote") or "") if isinstance(e, dict) else ""
 
 
 def _extract_pattern_tags(tc: dict) -> set:
@@ -1747,9 +1920,10 @@ def build_human_narrative(result: dict) -> dict:
     p5 = _meaning_paragraph(verdict, s2, s3, special, question, factor_contribs)
 
     p_bing = _bing_yao_paragraph(result)
+    p_jiazhai = _jiazhai_paragraph(result)
     p_shen = _shensha_paragraph(result, use_pos=use_pos)
 
-    body = [x for x in (p1, p2, p_bing, p_shen, p3, p4, p5) if x]
+    body = [x for x in (p1, p2, p_bing, p_jiazhai, p_shen, p3, p4, p5) if x]
     lead = p1
 
     timing_plain = _timing_sentence(timing, special, s3, s5)

@@ -190,6 +190,13 @@ def step3_analyze_strength(r: dict) -> dict:
 
     # ---------- 3.9: 旺衰定性 ----------
     # 古典规则：用神五行在月建处于"相"位(生月令者)时，即使合分因暗动/刑等被压低，旺衰定性仍应不低于"旺"
+    #
+    # 与《易冒》用神十八法的关系（OPT-yimao_dz-01，2026-10-07 补注记）：
+    #   本段六档（极旺/旺/中和/偏弱/弱/极弱）是**连续合分 0.5-5.0 的强度分档**；
+    #   书源 L698「盖十有八法焉」是**吉凶结构分类**（全吉八象／半吉三象／凶陷七象），
+    #   两套不是同一维度：十八法判「有无玷/有无泄/有无救」，六档判「多旺多弱」。
+    #   逐法映射与缺口登记见 disciplines/liuyao/data/rules/rule_registry.json
+    #   的 liuyao.yimao_shibafafa 条目。**本段分档阈值与判定值零变更。**
     _month_str_for_level = element_strength_in_month(use_god_element, month_element) if use_god_element and month_element else ""
     _xiang_bump = (_month_str_for_level == "相" and effective_score >= 2.5)
     if effective_score >= 4.5:
