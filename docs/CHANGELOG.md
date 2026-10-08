@@ -1,3 +1,33 @@
+### 2026-10-08r 六壬结构课目回归测试 + 完备性对拍工具入库（OPT-liuren_cuiyan_dz-08）
+
+**起因**：Round 3（进茹/退茹/进间/退间）+ Round 5（关格/稼稼）新加的 6 项结构判据
+没有独立 pytest 锁定——仅依赖 `golden_liuren` 行为指纹是间接覆盖（指纹哈希变了才发现，
+且无法区分具体哪条 hit）。本轮补齐单元测试 + 把只读完备性对拍工具正式入库。
+
+#### 一、改动范围
+
+- **`tests/test_liuren_kemu_structure.py`**（新文件，pytest 测试）：
+  - 8 个测试函数，覆盖 6 项新结构课目的正例命中 + 负例不误报 + IMPLEMENTED/kemu.json 旗标自证
+  - 使用 `pathguard.discipline_scripts()` 上下文管理器加载 kemu 模块，解决
+    `kemu.py` 模块级 `from jiuzongmen import …` 在裸 `spec_from_file_location` 下解析不到
+    同名模块的问题；退出时自动还路径、清缓存，不影响后续 test_pathguard / test_yingqi_windows
+- **`disciplines/liuren/dev_tools/check_kemu_completeness.py`**（原 untracked，正式入库）：
+  - 只读 L159 基准 vs IMPLEMENTED 对拍脚本，不改判据；当前读数 15/16 覆盖（四绝仍 MISS）
+
+#### 二、测试验证
+
+- 单独运行 `test_liuren_kemu_structure.py`：**8 passed**
+- 与 `test_pathguard.py` + `test_liuren_le_adjudication.py` 合并收集：**17 passed**
+- 全仓 pytest（450 项）：**450 passed, 0 failed**（含此前 pre-broken 的 test_yingqi_windows 已恢复）
+- `tools/check.py` 全部门禁（含 [1m] NAYIN / [1n] kemu_purity）：**全绿**
+
+#### 三、分数
+
+- liuren 机械一致率：33/43 = **76.7%**（持平——本轮纯测试 + 只读工具，零引擎改动）
+- 196 untracked 文件未进入正式 8 科运行时（jiaoshi/none_tonggang/modernized 等仍隔离）
+
+---
+
 ### 2026-10-08q 六壬课体第十批：关格/稼穑机械检测落地（OPT-liuren_cuiyan_dz-07）
 
 **起因**：L159 十二地盘还剩两课（关格、稼穆）是纯集合条件（三传皆四仲/三传皆季神），
