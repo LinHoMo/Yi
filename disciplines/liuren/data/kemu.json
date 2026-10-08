@@ -721,7 +721,7 @@
   },
   {
    "name": "关格",
-   "implemented": false,
+   "implemented": true,
    "structured_definition": {
     "basis": "四仲相加作三传（子午卯酉四仲三传）",
     "basis_src": "《六壬粹言》L147 逐字",
@@ -737,7 +737,7 @@
   },
   {
    "name": "稼穑",
-   "implemented": false,
+   "implemented": true,
    "structured_definition": {
     "basis": "季神相加作三传（辰戌丑未四季土三传）",
     "basis_src": "《六壬粹言》L151 逐字",
