@@ -1,0 +1,97 @@
+{
+ "_comment": "命·千里命稿·十神（本书称六神）作用枚举（OPT-qianli_minggao_dz-02，2026-10-08 补全其余五条）。本字典作为十神作用的可选结构标签层，只出结构标签、不进评分。_schema=ming-shi-shen-actions/1",
+ "_meta": {
+  "version": "1",
+  "sourced_from": "data/sources/qianli_minggao_dz.dz.txt（六神篇：伤官L1026/七杀L1072/正官L1125/食神L1173/偏正印L1217/偏正财L1264/比劫L1327）",
+  "purpose": "十神作用枚举——供 narrate 取象与将来扩展，**不参与 verdict、不改 final_score**",
+  "scope": "纯数据层；engine 任何结构判定不依赖本表",
+  "narrate_wording": "报告行由本表逐字段拼装：'> ' + hint_prefix + '：' + narrative_hint，两处措辞均在本表内，narrate 不得再拼中文（[1c] 断语外置取证）"
+ },
+ "shi_shen_actions": {
+  "伤官": {
+   "actions": [
+    "泄身",
+    "生财",
+    "敌杀",
+    "损官"
+   ],
+   "source": "data/sources/qianli_minggao_dz.dz.txt L1026 附近",
+   "note": "伤官篇提纲：泄身（泄日主之气）、生财（辗转生财）、敌杀（敌七煞）、损官（损正官）。四作用在不同格局下的主次由子平用神/调候层综合判，本表只列候选不作裁决。",
+   "narrative_hint": "命带伤官——结构上旁证其有四途作用（泄身/生财/敌杀/损官），具体发挥依全局用神定，不作命运断言。",
+   "hint_prefix": "伤官作用候选"
+  },
+  "七杀": {
+   "actions": [
+    "耗财",
+    "生印",
+    "攻身",
+    "制劫"
+   ],
+   "source": "data/sources/qianli_minggao_dz.dz.txt:1072",
+   "note": "七杀篇提纲：耗财（耗盗财气）、生印（生扶印绶）、攻身（克伐日主）、制劫（制伏比劫）。本书「七杀」一名兼指偏官。",
+   "narrative_hint": "命带七杀——结构上旁证其有四途作用（耗财/生印/攻身/制劫），具体发挥依全局用神定。",
+   "hint_prefix": "七杀作用候选"
+  },
+  "正官": {
+   "actions": [
+    "引财",
+    "生印",
+    "拘身",
+    "制劫"
+   ],
+   "source": "data/sources/qianli_minggao_dz.dz.txt:1125",
+   "note": "正官篇提纲：引财（引财气）、生印（生扶印绶）、拘身（拘束日主）、制劫（制伏比劫）。",
+   "narrative_hint": "命带正官——结构上旁证其有四途作用（引财/生印/拘身/制劫），具体发挥依全局用神定。",
+   "hint_prefix": "正官作用候选"
+  },
+  "食神": {
+   "actions": [
+    "泄身",
+    "生财",
+    "制杀",
+    "损害"
+   ],
+   "source": "data/sources/qianli_minggao_dz.dz.txt:1173",
+   "note": "食神篇提纲：泄身（泄日主之气）、生财（生财气）、制杀（制伏七杀）、损害（损害正官——与伤官「损官」同义，本书食神篇也列损害一项）。",
+   "narrative_hint": "命带食神——结构上旁证其有四途作用（泄身/生财/制杀/损害），具体发挥依全局用神定。",
+   "hint_prefix": "食神作用候选"
+  },
+  "正印": {
+   "actions": [
+    "生身",
+    "泄官杀",
+    "御伤",
+    "挫食"
+   ],
+   "source": "data/sources/qianli_minggao_dz.dz.txt:1217",
+   "note": "偏正印之能力篇提纲（本书合论）：生身（生日主）、泄官杀（泄官杀之气）、御伤（御防伤官）、挫食（挫败食神）。",
+   "narrative_hint": "命带印绶——结构上旁证其有四途作用（生身/泄官杀/御伤/挫食），具体发挥依全局用神定。",
+   "hint_prefix": "正印作用候选"
+  },
+  "正财": {
+   "actions": [
+    "生官杀",
+    "泄伤食",
+    "制枭",
+    "坏印"
+   ],
+   "source": "data/sources/qianli_minggao_dz.dz.txt:1264",
+   "note": "偏正财之能力篇提纲（本书合论）：生官杀（生官杀之气）、泄伤食（泄伤食之气）、制枭（制伏枭神）、坏印（破坏印绶）。",
+   "narrative_hint": "命带财星——结构上旁证其有四途作用（生官杀/泄伤食/制枭/坏印），具体发挥依全局用神定。",
+   "hint_prefix": "正财作用候选"
+  },
+  "比劫": {
+   "actions": [
+    "帮身",
+    "任官杀",
+    "代泄",
+    "夺财"
+   ],
+   "source": "data/sources/qianli_minggao_dz.dz.txt:1327",
+   "note": "比劫禄刃篇提纲：帮身（帮助日主）、任官杀（承担官杀压力）、代泄（代日主受泄）、夺财（争夺财星）。",
+   "narrative_hint": "命带比劫——结构上旁证其有四途作用（帮身/任官杀/代泄/夺财），具体发挥依全局用神定。",
+   "hint_prefix": "比劫作用候选"
+  }
+ },
+ "consumed_by_engine": false
+}
