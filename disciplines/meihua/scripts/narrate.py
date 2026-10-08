@@ -125,6 +125,42 @@ def narrate(a: dict) -> str:
         lines.append("")
 
     # 二·五、万物类象（《卷一·八卦万物属类》挂到体用互变，供说人话）
+    # 体互／用互分派（OPT-meihua_yishu_dz-05，源L820「体互最紧，用互次之」）——
+    # 只报「哪个互是体互、哪个是用互」这一结构事实与书源权重档，**不据权重下吉凶断语**。
+    tyh = a.get("ti_yong_hu") or {}
+    if tyh.get("体互") or tyh.get("用互"):
+        lines.append(_NP.get("ti_yong_hu_lead", ""))
+        lines.append("- " + _NP.get("ti_yong_hu_body", "").format(
+            hu=f"**{tyh.get('体互')}**", pos=tyh.get("体互位"),
+            rank=tyh.get("权重档", {}).get("体互")))
+        lines.append("- " + _NP.get("ti_yong_hu_use_body", "").format(
+            hu=f"**{tyh.get('用互')}**", pos=tyh.get("用互位"),
+            rank=tyh.get("权重档", {}).get("用互")))
+        lines.append("  > " + _NP.get("ti_yong_hu_src", "").format(
+            order=tyh.get("体用位序"), src=tyh.get("出处")))
+        lines.append("")
+
+    # 外应（三要十应）槽位（OPT-meihua_yishu_dz-04）：无外应时**显式声明静占**（源L735）。
+    ext = a.get("external_signs") or {}
+    if ext:
+        if not ext.get("有无外应"):
+            lines.append(f"**外应**：{ext.get('口径') or '空缺'}")
+            lines.append("")
+        else:
+            lines.append(_NP.get("external_sign_lead", "").format(
+                order=ext.get("合参次序") or ""))
+            for row in ext.get("外应") or []:
+                if row.get("卦"):
+                    lines.append("- " + _NP.get("external_sign_hit", "").format(
+                        sign=row["物"], trig=row["卦"], elem=row.get("五行"),
+                        relation=row.get("合参")))
+                else:
+                    lines.append("- " + _NP.get("external_sign_miss", "").format(
+                        sign=row.get("物"), note=row.get("备注")))
+            lines.append("  > " + _NP.get("external_sign_note", "").format(
+                score=ext.get("计分") or ""))
+            lines.append("")
+
     analogies = a.get("analogies") or {}
     if analogies:
         picks = []

@@ -13,6 +13,14 @@ ROOT = Path(__file__).resolve().parents[1]
 # 而 `import pattern`（test_ming_dayun）六爻没有，仍落到命科的。
 # 2026-09-30e 记：b329228 给 ming 新增 evaluate.py 后，旧顺序让 ming 遮蔽了
 # 六爻 evaluate，根 pytest 当场收集失败。
+#
+# ⚠️ 需要**别科**的四段脚本时，不要在测试文件里 `sys.path.insert(0, ...)` 后不还：
+# pytest 共用一个解释器、按文件名字母序收集，留下的路径会把该科同名模块
+# 永久发给后面的测试（2026-10-08 实踩：liuren/scripts 抢走 `evaluate`，
+# test_yingqi_windows 收集期 ImportError，[8] 整门判红）。
+# 正确写法见 tests/pathguard.py：
+#     with discipline_scripts("disciplines/<科>/scripts"):
+#         from chart import chart
 for rel in (
     "core",
     "disciplines/ming/scripts",

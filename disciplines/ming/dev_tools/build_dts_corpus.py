@@ -44,6 +44,22 @@ WANTED = {
 PICK: dict[str, list[int]] = {"03": [202, 206, 210]}
 TEN_STEMS = "".join(HEAVENLY_STEMS)   # 取自 core，不在学科内另存一份天干序
 
+# 「任注对照」注记（OPT-ditian_sui_chanwei_dz-02，2026-10-07 补入本构建器产出集合）。
+# 静态注记、不从书源机械提取，故作常量并入 _meta，使入库文件与构建器**可复现同构**
+# （否则 --check 判「入库有、重算无」＝语料层与构建器脱钩，§四.6「静态表与 data 层
+# 不同源时用同步脚本，不手改」的同类要求）。内容只述**注层归属**与引用纪律，
+# 不含任何判定值，故不影响引擎取值与读数。
+REN_ZHU_DUI_ZHAO = {
+    "_说明": "本表所本与主源任注本属**不同注层**，引用时不得混引（OPT-ditian_sui_chanwei_dz-02，2026-10-07 补注记，**取值零变更**）",
+    "_层别": {
+        "本表所本_K层_刘基注本": "《滴天髓》舊題京圖撰·**劉基註**，维基文库公版。源文件 data/sources/di-tian-sui.wikitext.txt（861 行）。本文件 chapters 各章的 verse/notes 均出自此层。",
+        "主源_C层_任铁樵注本": "《滴天髓》**任铁樵**注本（清道光年间任铁樵再为《滴天髓》作疏，阐微发隐）。源文件 data/sources/ditian_sui_chanwei_dz.dz.txt（7608 行，dz 为主源）；另有对勘本 data/sources/di-tian-sui-chan-wei.wikitext.txt（11495 行）。",
+    },
+    "_实测差异": "任注本 L4 自述 layering：「相传其原文为宋之京图撰，明代刘伯温为之注释，到清代道光年间，士人**任铁樵再为《滴天髓》作疏**，结合一生命理实践分篇增注，阐微发隐，使任注《滴天髓》成为传统命理学最重要的典籍」。故任注本＝**刘基注＋任氏疏**两层叠加，行数 7608 远多于刘基注本 861；任注本正文以「**任氏曰：**」起头（如 L72 任氏曰干为天元…、L78 任氏曰大哉乾元…、L83 任氏曰人居覆载之中…），此为刘基注本所无。",
+    "_口径纪律": "①本表 chapters 的取象与判据一律以 **K 层（刘基注）**为准；②任注本（C 层）的文字若要在 narrate 引用，须走 verdicts.json 的逐字引文入口并标 offset，不得直接混入本表；③两层的同章名（如「從化論」「歲運論」「體用論」「衰旺論」「寒暖論」「通隔論」）**文字并不相同**，对同一命例可能给出不同结论——此属注层分歧，已在 docs/source-readings/ditian_sui_chanwei_dz.md §四登记；④本轮已实测：verdicts.json 原 `_meta.说明` 写「《滴天髓》通行本逐字常见句，原书全文未入库，故不标注 offset」这一前提**已失效**（任注本已入库），相关 7 条判据已改入 verdicts.json 的「滴天髓任注本」分支并各标 C 层 offset（见 OPT-ditian_sui_chanwei_dz-01）。",
+    "_禁止": "不得把 C 层（任注）文字当作 K 层（刘基注）引文，也不得反向——两层的 verse/notes 与 offset 不可交叉引用。",
+}
+
 PAGE_RE = re.compile(r"^<!--\s*====\s*滴天髓/(\d+)\s*====")
 TOC_RE = re.compile(r"^==\s*\[\[滴天髓/(\d+)\|([^\]]+)\]\]\s*==\s*$")
 VERSE_RE = re.compile(r"^\{\{color\|red\|\{\{\+\|(.*)$")
@@ -206,6 +222,10 @@ def build() -> dict:
             "口径": "只提取引擎 narrate 实际引用的章节；未引用章不入库，避免死语料。"
                     "`PICK` 所列章为节录（见各章 source_lines 的源行号）",
             "章数": len(chapters),
+            # 「任注对照」是**静态注记**（OPT-ditian_sui_chanwei_dz-02，2026-10-07 补），
+            # 不从书源机械提取，故以常量并入产出集合——否则入库文件会比构建器多出此键，
+            # `build_dts_corpus.py --check` 判「入库有、重算无」而失败（语料层与构建器脱钩）。
+            "任注对照": REN_ZHU_DUI_ZHAO,
         },
         "chapters": chapters,
         "day_stem": stems_flat,

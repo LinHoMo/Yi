@@ -41,8 +41,11 @@ def narrate(a: dict) -> str:
     for row in a.get("san_chuan") or []:
         rels = row.get("relations") or []
         rel_txt = "、".join(x["kind"] for x in rels) if rels else "无关系标签"
+        _tj = row.get("tianjiang") or "—"
+        _tj_pos = row.get("tianjiang_pos") or ""
+        _cheng = f"{_tj}×{_tj_pos}" if _tj_pos else _tj
         lines.append(
-            f"- {row['pos']}传 {row['branch']}（乘{row.get('tianjiang') or '—'}"
+            f"- {row['pos']}传 {row['branch']}（乘{_cheng}"
             f"，遁{row.get('dun_gan') or '—'}）：{rel_txt}"
         )
     tj = v.get("tianjiang") or {}
@@ -60,6 +63,55 @@ def narrate(a: dict) -> str:
             lines.append(f"- **{r['name']}**（{r.get('desc') or ''}）：{r.get('basis') or ''}")
             if r.get("句"):
                 lines.append(f"  > {r['句']}（{r.get('出处') or ''}）")
+    alias = a.get("richen_alias") or {}
+    alias_map = alias.get("别名") or {}
+    if alias_map:
+        lines += ["", "**日辰四气别名**（《六壬鬼谷》L65-L68；别名只为显示层，"
+                       "判定键仍用上列卷三直陈式）："]
+        for name, hits in alias_map.items():
+            lines.append(f"- **{name}**：{'、'.join(hits)}")
+    st = a.get("structure_tags") or {}
+    if st:
+        lines += ["", "**结构标签**（与课目正交；只报机械位置，不判吉凶）："]
+        for dim, rows in st.items():
+            lines.append(f"- **{dim}**：")
+            for r in rows:
+                lines.append(f"  - {r['name']}——{r['basis']}")
+                if r.get("note"):
+                    lines.append(f"    > 判据边界：{r['note']}")
+    cg = a.get("class_god") or {}
+    if cg:
+        jiang = cg.get("类将回退") or {}
+        lines += ["", "**类神类将**（取象派专有层，与九宗门三传并存；只报定位）："]
+        lines.append(f"- 类将取 **{jiang.get('类将') or '—'}**"
+                     f"（位次：{jiang.get('位次') or '—'}；回退链："
+                     f"{' → '.join(jiang.get('回退链') or [])}）——{jiang.get('依据') or ''}")
+        for r in cg.get("类神之三传") or []:
+            lines.append(f"  - {r['name']}——{r['basis']}")
+            if r.get("note"):
+                lines.append(f"    > {r['note']}")
+    wx = a.get("wangxiangxiuqiusi") or {}
+    if wx:
+        lines += ["", "**旺相休囚死**（月令旺衰，core wangxiangxiuqiusi 表；纯结构标签，不判吉凶）："]
+        for label, info in wx.items():
+            lines.append(f"- **{label}**：{info.get('branch') or '—'}（{info.get('element') or '—'}）"
+                         f" → **{info.get('state') or '—'}**（{info.get('basis') or ''}）")
+    rg = a.get("rengui") or {}
+    if rg.get("内外事"):
+        yq = rg.get("应期映射表") or {}
+        lines += ["", "**用神内外事 + 应期层级**（《壬归》L109/L112；纯几何标签，不判吉凶）："]
+        lines.append(f"- 内外事定位：**{rg['内外事']}**（初传落{'日上' if rg['内外事'] == '外事' else '辰上'}两课）")
+        if yq:
+            lines.append(f"- 应期层级映射表（{len(yq)}级）：")
+            for ref, meta in yq.items():
+                lines.append(f"  - {ref} → **{meta.get('granularity')}**（{meta.get('basis')}）")
+        hits = rg.get("动态应期命中") or []
+        if hits:
+            lines.append(f"- 本轮应期命中（{len(hits)}条）：")
+            for h in hits:
+                lines.append(f"  - {h['reference']} → **{h['granularity']}**（{h['basis']}）")
+        else:
+            lines.append("- 本轮应期命中：无（月建/旬首/气首等参考项与初传无直接匹配）")
     kemu_hits = a.get("kemu") or []
     kemu_rows = [h for h in kemu_hits if h.get("verse") or h.get("note")]
     if kemu_rows:

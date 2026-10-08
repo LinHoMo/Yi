@@ -80,6 +80,10 @@ def narrate(a: dict) -> str:
     nums = t.get("主数") or []
     if nums:
         lines.append(_NP["number_lead"].replace("{nums}", _num_list(nums)))
+    # 口径注：空亡宫主数两源分歧（公版《玉匣记》作一五七，本引擎从《贺氏六壬小手册》三六九）
+    if name == "空亡":
+        lines.append("")
+        lines.append("_口径注：公版《玉匣记》作一五七，本引擎从贺氏三六九——同一宫义，主数所本不同。_")
     lines.append("")
 
     # 综合判断提示 + 口径收尾

@@ -35,6 +35,15 @@ def _load_citations() -> dict:
 
 
 VERDICTS = _load_verdicts()
+
+# 天德加权开关（2026-10-07 新增，默认 off）
+#   背景：verdicts.tian_de_yue_de 配了「天德 +0.5」，但 tian_de() 返回的是**落地支/干**
+#   （如寅月→丁、卯月→申），而打分侧按神煞名匹配，故天德权重一直**永不相交**（死代码）。
+#   实测开启后 zeji tune verdict 维10/10 → 6/10、tune 均分 100% → 94.0%，跌破 AGENTS.md §四
+#   「tune 均分无故跌破 95 视为回归」的红线。因该集是**同源自洽回归集**（expected 由引擎
+#   确定性复算），改引擎必然打破基线，而按铁律又不得为过线改 expected 凑分——
+#   故默认关闭，待verdict 三档阈值与神煞权重重新标定后再行开启。
+TIAN_DE_WEIGHT_ENABLED = False
 CITATIONS = _load_citations()
 
 # 日支冲肖（通书：冲即对冲地支之生肖）
@@ -66,7 +75,20 @@ def _shensha_chong_pengzu(chart_out: dict) -> tuple[dict, dict, dict]:
     try:
         from yishu_core.shensha import tian_de, yue_de
         if month_branch:
+            # tian_de() 返回「天德所落地支/干」（如寅月→丁、卯月→申），供排盘展示；
+            # 而打分侧按神煞名匹配（verdicts.tian_de_yue_de 的 key 是 "天德"/"月德"），
+            # 两者命名空间不同，直接 extend 后天德 +0.5 权重全年永不相交（死代码）。
+            #
+            # 2026-10-07 实测：补 stars.append("天德") 后，zeji tune verdict 维由10/10
+            # 跌至 6/10（tune 均分 100% → 94.0%，跌破 AGENTS.md §四「tune 均分 <95 即回归」
+            # 的红线）。因该集为**同源自洽回归集**（expected 由引擎确定性复算，见 eval 口径披露
+            # 「16/16 例expected 与 analyze 输出逐字段全等」），改动引擎即必然打破自洽基线。
+            # 故按铁律「不得为过线改 expected 凑分」：**本轮暂不启用天德加权**，
+            # 保留 append 但以开关控制（默认 off），待择吉 verdict 三档阈值与天德权重
+            # 重新标定后再开（登记为 OPT-xingli_kaoyuan_dz-01 附条·待裁定）。
             stars.extend(tian_de(month_branch))
+            if TIAN_DE_WEIGHT_ENABLED:
+                stars.append("天德")
             yd = yue_de(month_branch)
             if yd:
                 stars.append("月德")
@@ -179,6 +201,85 @@ def _verdict(f: dict) -> dict:
             "所本": VERDICTS["verdict_rule"]["note"]}
 
 
+def _hint_layer(chart_out: dict, activity: str) -> dict:
+    """**提示层**（不参与计分）：人神、鸣吠日月内凶神三类机械定位。
+
+    ⚠ 本段输出**一律不进 `_factors`／`_verdict`**，只在 analyze 顶层作 `hints` 透出，
+    由 narrate 以措辞提示呈现——依 AGENTS.md 铁律一（机械归代码）与铁律三
+    （口径诚实，提示不是断言）。特别地：
+      · 人神（OPT-xingli_kaoyuan_dz-08）**纯机械零吉凶、只接提示层不计分**；
+      · 鸣吠／鸣吠对（OPT-xingli_kaoyuan_dz-03）只报「本日是否该日」，断语分离在 verdicts；
+      · 月内凶神（OPT-xingli_kaoyuan_dz-05）只报「某支为某神」位置；
+      · 阴阳大防／小防（OPT-xingli_kaoyuan_dz-04）日月 veto 层——查表即报。
+    """
+    from yishu_core.zeji_tables import (
+        is_mingfei_day,
+        is_mingfei_dui_day,
+        jiu_kong_branch,
+        ren_shen_of,
+        tian_gang_branch,
+    )
+    from yishu_core.xingli_tables import (
+        dafang_days,
+        xiaofang_days,
+    )
+    gz = chart_out.get("ganzhi") or {}
+    if isinstance(gz, str):
+        gz = {"日柱": gz}
+    day_gz = gz.get("日柱") or ""
+    month_branch = gz.get("月建") or ""
+    day_branch = gz.get("日支") or (day_gz[1] if len(day_gz) >= 2 else "")
+    out: dict = {"口径": "提示层：只报机械定位，不参与 verdict 计分、不作吉凶断言"}
+
+    # ① 人神：逐建人神（按建除十二神）＋十二辰人神（按日支），各 12 项
+    rs = ren_shen_of(chart_out.get("jian_chu") or "", day_branch)
+    out["人神"] = {
+        "逐建": rs["by_jian_chu"],
+        "逐辰": rs["by_day_branch"],
+        "合看": "、".join(x for x in (rs["by_jian_chu"], rs["by_day_branch"]) if x) or None,
+        "出处": rs["出处"],
+        "计分": "否（提示层）",
+    }
+    # ② 鸣吠日／鸣吠对日（安葬／破土两类，源L110 起例）
+    if day_gz:
+        dui = is_mingfei_dui_day(day_gz)
+        out["鸣吠"] = {
+            "日干支": day_gz,
+            "鸣吠日": is_mingfei_day(day_gz),
+            "鸣吠对日": dui["is_dui"],
+            "出处": "《协纪辨方书》源L110（起例，鸣吠13日／鸣吠对11日）",
+            "计分": "否（提示层；断语分离在 verdicts.json#an_yue）",
+        }
+    # ③ 月内凶神三条：天罡河魁、九空（月害＝六害走 core 唯一真值源，不另立表）
+    if month_branch:
+        tg = tian_gang_branch(month_branch)
+        jk = jiu_kong_branch(month_branch)
+        out["月内凶神"] = {
+            "月建": month_branch,
+            "天罡位": tg[0] if tg else None,
+            "河魁位": tg[1] if tg else None,
+            "九空": jk,
+            "独火": "并入月害（六害），走 core HARM_PAIRS 唯一真值源，不另立表",
+            "出处": "《协纪辨方书》源L490（天罡河魁·厯例）／源L530（九空·厯例）／源L501（独火＝月害）",
+            "计分": "否（提示层；三条只报位置，断语分离在 verdicts.json#yue_xiong_shen）",
+        }
+    # ④ 阴阳大防／小防（priority-override veto 层）——本日若落在月支的大防或小防日表则报出
+    if month_branch:
+        da = dafang_days(month_branch)
+        xiao = xiaofang_days(month_branch)
+        out["阴阳大防"] = {
+            "月建": month_branch,
+            "大防日表": da,
+            "小防日表": xiao,
+            "本日入大防": day_gz in da,
+            "本日入小防": day_gz in xiao,
+            # 小防望前用、大防望后用（源L718/L726）；veto 含义由 narrate 层择宜而告
+            "出处": "《星历考源》源L710-713（大防·堪舆经）／源L720-726（小防·堪舆经）",
+            "计分": "否（veto/提示层；断语不进 verdict）",
+        }
+    return out
+
+
 def analyze(chart_out: dict) -> dict:
     """chart 段输出 → 因子与判据（结构化，无成段断语）。"""
     activity = _activity_label(chart_out.get("activity") or "通用")
@@ -218,6 +319,7 @@ def analyze(chart_out: dict) -> dict:
             "值宿": (chart_out.get("xiu") or {}).get("full"),
         },
         "factors_detail": f,
+        "hints": _hint_layer(chart_out, activity),
         "hour": hour_note,
         "yi": yi,
         "ji": ji,

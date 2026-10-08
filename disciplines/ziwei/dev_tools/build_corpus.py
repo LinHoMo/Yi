@@ -362,9 +362,36 @@ def build_sihua(lines: list[str], heads: list[tuple[int, int, str]]) -> dict:
 GEJU_SECTIONS = [("定富局", "富局"), ("定贵局", "贵局"),
                  ("定贫贱局", "贫贱局"), ("定杂局", "杂局")]
 
+# 卷一·諸星問答·贪狼段的三条「组合忌星」结构条文：四局表未收，
+# OPT-zi-wei-dou-shu-quan-shu-03 补录。**建器来源集合之外的手工条目必须在这里声明**，
+# 且逐字回指书源行——否则「入库有、重算无」，重跑即静默删掉补录（§四.6 / TECH-DEBT §2.4）。
+# 引文一律照录书源繁体原样：2026-10-08 复核发现入库三条被转成了简体
+# （「见七杀或配以遭刑」等），虽语义同但非逐字子串，违反 AGENTS.md §二「引文可指回原文」。
+GEJU_JIXING = (
+    ("贪狼七杀忌星", "見七殺或配以遭刑", 417),
+    ("贪狼廉贞忌星", "遇廉貞也不潔", 417),
+    ("贪狼破军忌星", "會破軍迷花戀酒而喪命", 417),
+)
+
+
+def build_jixing(lines: list[str]) -> dict:
+    """组合忌星三条：逐字校验后产出；行内取不到即终止，不静默降级、不改字。"""
+    out: dict[str, dict] = {}
+    for name, quote, lineno in GEJU_JIXING:
+        src = lines[lineno - 1] if 0 < lineno <= len(lines) else ""
+        if quote not in src:
+            raise SystemExit(
+                f"× {name}：引文不是书源 L{lineno} 的逐字子串（{quote}）"
+                f"——照录原样，不转简、不改字（AGENTS.md §二）")
+        out[name] = {"kind": "忌局", "rule": quote,
+                    "location": f"{BOOK}卷一·诸星问答·贪狼（源L{lineno}）",
+                    "_comment": "OPT-zi-wei-dou-shu-quan-shu-03：贪狼组合忌星结构条文"
+                                "（逐字照录书源繁体，无吉凶外延；engine 不查此三条）"}
+    return out
+
 
 def build_geju(lines: list[str], heads: list[tuple[int, int, str]]) -> dict:
-    """定富局/定贵局/定贫贱局/定杂局 → 格局名 + 判据原文。"""
+    """定富局/定贵局/定贫贱局/定杂局 → 格局名 + 判据原文；并合并组合忌星补录。"""
     out: dict[str, dict] = {}
     for title, kind in GEJU_SECTIONS:
         blocks = poems(section_body(lines, heads, title))
@@ -374,6 +401,7 @@ def build_geju(lines: list[str], heads: list[tuple[int, int, str]]) -> dict:
             if m:
                 out[m.group(1)] = {"kind": kind, "rule": m.group(2).strip(),
                                    "location": f"{BOOK}卷一·{title}"}
+    out.update(build_jixing(lines))
     return out
 
 
@@ -500,12 +528,17 @@ def build_anshi(lines: list[str], heads: list[tuple[int, int, str]]) -> dict:
     cur: str | None = None
     buf: list[str] = []
     head_line = 0
+    body_start = 0            # 诀文首行（= 标题行 + 空行数；标题行本身无诀文）
 
     def flush() -> None:
         if cur:
             quote = "".join(buf)
             if quote:
-                out[cur] = {"quote": quote, "行号": head_line}
+                # 行号取**诀文首行**而非标题行：标题行（源L1828「安大限诀」）只作诀名，
+                # 逐字引文在下一非空行（源L1830）。记标题行会使「引文可回指原文」失真
+                # ——引文不在所指行。2026-10-07 订正（OPT-zi-wei-dou-shu-quan-shu-02）。
+                out[cur] = {"quote": quote, "行号": body_start or head_line,
+                            "标题行号": head_line}
 
     for i in range(start, end):
         text = lines[i].strip().replace("'''", "").replace("<nowiki>", "").replace("</nowiki>", "")
@@ -514,7 +547,7 @@ def build_anshi(lines: list[str], heads: list[tuple[int, int, str]]) -> dict:
         if _is_anshi_boundary(text):
             flush()
             if ANSHI_HEAD_RE.match(text):
-                cur, buf, head_line = text, [], i + 1
+                cur, buf, head_line, body_start = text, [], i + 1, 0
             else:
                 cur, buf = None, []
             continue
@@ -523,6 +556,8 @@ def build_anshi(lines: list[str], heads: list[tuple[int, int, str]]) -> dict:
         body = strip_markup(text)
         if not body or ANSHI_SKIP_RE.match(body):
             continue
+        if not buf:
+            body_start = i + 1          # 首个诀文行 = 真正可回指的行号
         buf.append(body)
         if len(buf) >= 12:                # 兜底：诀文不会有 12 行
             flush()

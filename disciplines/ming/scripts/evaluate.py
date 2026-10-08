@@ -24,6 +24,12 @@
   权重刻意选成**能整除各自子项数**：否则"四柱对三柱"会算出 18.75 这种分量，
   取整后显示 72% 或 76%，与"四分之三"的直觉不符，也掩盖了真实误差。
   框架自检（`tools/scratch` 之外的一次性脚本）抓到过这个歧义。
+
+调候与格局冲突时的优先级（OPT-qiong_tong_bao_jian_dz-03，折衷口径，源《穷通宝鉴》L11）：
+  子平格局层为主判（月令为本、透干通根），调候只作佐用。二者冲突时**格局优先**，
+  调候不凌驾格局——「贵在折衷，归於中道，使无有余不足之累」。
+  纳音取象格层（`NAYIN_XIANGGE`）同为旁证层，不独立计格，不参与格局成败评分。
+  引文出处：`data/sources/qiong_tong_bao_jian_dz.dz.txt:11`（见 `OPT-qiong_tong_bao_jian_dz-02` 句）。
 """
 from __future__ import annotations
 
@@ -244,6 +250,11 @@ def score_case(eng: dict, exp: dict, model: str) -> dict:
     # 5) 格局（名 8 分 + 成破救应 4 分）
     # 适用权重 = 实际出现的子项权重之和：只记成败 → w=4；只记格名 → w=8；
     # 都记 → w=12。
+    # ⚠ 行运成格变格缺口（OPT-ziping_zhenquan_pingzhu_dz-02 审计确认）：
+    # pattern.py::judge_pattern_cheng_bai() 仅论本命四柱成破，不参与大运/流年支行。
+    # 书源《子平真诠评注》L325「命之格局，成于八字，然配之以运，亦有成格变格之要权。
+    # 其成格变格，较之喜忌祸福尤重。」—— 此行运触发层未实现，当前格局成败维度
+    # 只反映本命静态结论，不覆盖大运流年引动的成格/变格情形。
     name_na = _na(exp.get("pattern"))
     cb_na = _na(exp.get("pattern_cheng_bai"))
     if not (name_na and cb_na):

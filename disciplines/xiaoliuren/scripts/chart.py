@@ -174,7 +174,12 @@ def _selfcheck() -> None:
     assert palace_name(r5["palace"]) == "空亡", r5
     r6 = chart_from_month_day_hour(10, 6, 6)
     assert palace_name(r6["palace"]) == "留连", r6
-    print("小六壬 chart 校验通过（6 例贺氏实例全部复现）")
+    #   玉匣记·李淳风六壬时课（《玉匣记》L3827 逐字）：
+    #     「三月初五日辰时，三月在速喜上，就速喜上起初一，初五在大安，
+    #       大安上起子时，数至辰时是小吉，就以小吉推占。」
+    r7 = chart_from_month_day_hour(3, 5, 5)
+    assert palace_name(r7["palace"]) == "小吉", r7
+    print("小六壬 chart 校验通过（7 例：6 例贺氏实例＋玉匣记六壬时课 L3827，全部复现）")
 
 
 if __name__ == "__main__":

@@ -1442,3 +1442,31 @@ def bing_yao(chart_json: dict, strength: str = "") -> dict:
         "basis": f"《神峰通考·病药说类》：「{BING_YAO_THESIS}」"
                  "（病＝原所害之神，药＝得一字以去之）",
     }
+
+
+def si_yang_si_yin_tag(pillars: list[tuple[str, str]]) -> dict:
+    """四阳/四阴结构标签（纯机械，无命运断语）。
+
+    统计胎月日时四柱天干阴阳数。阳≥4 标「四阳」，阴≥4 标「四阴」。
+    只输出结构信号，不含"必克母/必丧父"等命定断语（铁律三）。
+
+    出处：《玉照定真经》论四阳/四阴章。
+    """
+    yang_count = 0
+    yin_count = 0
+    for stem, _branch in pillars:
+        if STEM_YINYANG.get(stem) == "阳":
+            yang_count += 1
+        elif STEM_YINYANG.get(stem) == "阴":
+            yin_count += 1
+    tags = []
+    if yang_count >= 4:
+        tags.append(f"四阳（天干阳位数={yang_count}，母宫倾向信号）")
+    if yin_count >= 4:
+        tags.append(f"四阴（天干阴位数={yin_count}，父宫倾向信号）")
+    return {
+        "yang_count": yang_count,
+        "yin_count": yin_count,
+        "tags": tags,
+        "basis": "《玉照定真经》论四阳/四阴章（只标结构偏向，不含命定断语）",
+    }

@@ -4,6 +4,43 @@
 
 分数口径变化必须在此登记，否则 tune/holdout 数字不可比（`AGENTS.md` §四.4）。
 
+## 2026-10-07 四项 P1 OPT 入库（身爻启用 / 助鬼伤身易冒版 / 忧解忧疑 / 野鹤反法）
+
+**口径纪律**：本轮只做结构层扩展（新增 3 个 `advanced_analysis` 键 + 1 个 `step2.wild_crane_reverse`），
+**只标象、不打分、不改吉凶主判、不进主分**。用神主判（selected_use_god）、综合分（final_score）、
+应期（yingqi）均不动——tune/holdout 分数变化只来自 golden 指纹中 `adv_keys` 列表新增 3 键，
+不属于口径或判定值改动。
+
+### 指标影响
+
+| 指标 | 前基线 | 后实测 | 备注 |
+|------|--------|--------|------|
+| tune 对齐分 | 93.9% | **96.8%** | 上升，主因新增结构标签扩覆盖 |
+| holdout 对齐分 | 85.7% | **90.2%** | 上升，未参与调参的外集同步受益 |
+| tune 主应期命中 | 58.8% | 58.8% | 持平（未改应期逻辑） |
+| holdout 主应期命中 | 50% | 50% | 持平 |
+| golden 指纹 | 旧digest | **新digest已重拍** | 预期变化：adv_keys 增 3 键 |
+
+### 逐项明细
+
+| OPT | 落档路径 | 书源 | 策略 |
+|-----|----------|------|------|
+| OPT-yiin_dz-01 身爻启用 | `classical_enhancements.py:analyze_shen_yao_activation` ＋ narrate 钩子 | 《易隐》L217 | 纯结构判定，不打分 |
+| OPT-yimao_dz-02 助鬼伤身（易冒版） | `classical_enhancements_yimao_zhugui.py:analyze_zhu_gui_shang_shen_yimao` ＋ narrate 钩子 | 《易冒》L541/L542/L547 | 双修正＋用官豁免，不打分 |
+| OPT-zengshan_buyi_dz-03 忧解忧疑 | `classical_enhancements.py:analyze_you_jie` ＋ narrate 钩子 | 《增刪卜易》L16/L419/L529 | 域限定反转，不打分 |
+| OPT-zengshan_buyi_dz-04 野鹤反法 | `liuyao_step2.py:_detect_wild_crane_reverse` ＋ narrate 钩子 | 《增刪卜易》L1396 | 只检测不改用神，不打分 |
+
+### 数据层同步
+
+- `data/rules/verdict_texts.json`：新增 4 组 `pattern_verdict_labels`（身爻启用 / 忧解忧疑 / 助鬼伤身\_易冒 / 野鹤反法）
+- `data/rules/rule_registry.json`：新增 4 条规则注册条目（含书源引文与评测覆盖声明）
+
+### 逐格对拍
+
+本轮为纯结构扩展——新增键默认值均为"不触发/不成立"，golden 逐格比对：
+新增格 = 3（shen\_yao\_activation / you\_jie / zhu\_gui\_shang\_shen\_yimao），
+变空 = 0，改值 = 0，应期/主判 = 0 变动。读数变动属预期（新增 structural facts，非判定值改动）。
+
 ## 2026-10-01o 语料占位空壳切除 + "消失的 40 叶子"复核（第三方验证订正）
 
 第三方验证在你的写域查到两处事：一处**真 AI 痕迹**（已删），一处"结构性存疑"经复核

@@ -148,6 +148,54 @@ def _body_use_of(movings: list[int]) -> tuple[str, str, str]:
     return "lower", "upper", "动数相同·初动在上：下体上用"
 
 
+def chart_from_tones(tones: list[int], n_chars: int, hour_num: int = 0,
+                     movings: list[int] | None = None) -> dict:
+    """**字占平仄声调起卦**（way="words"，OPT-meihua_yishu_dz-03）。
+
+    书源《梅花易数》源L206 逐字：「四字为四象，平分上下为卦。又四字以上，不必数画数，
+    只以平仄声音调之。**平声为一数，上声为二数，去声为三数，入声为四数。**」
+
+    实现口径（**只做数→卦除法，声调判定不入本层**）：
+      · `tones` 为调用方逐字给出的声调序号（1=平／2=上／3=去／4=入）。
+        声调判定属**语言数据**，由调用方或音韵表提供——LLM 不心算、引擎也不猜
+        （AGENTS.md 铁律一：机械归代码，象数解读归 LLM；此处严格分界）。
+      · 上卦＝Σ(声调数) ÷ 8 之余（依 `chart_from_two_numbers` 同款「过八递除」）；
+        下卦＝上卦数 ＋ 字数，以 8 除之余；动爻＝三者之和以 6 除之余。
+        源文只给「平分上下为卦」之则，未逐字给下卦与动爻之数，故本仓**沿用两数起卦
+        的成卦之数口径**（物数／时数同构），并在 `basis` 字段显式声明该口径来源，
+        不冒充书源逐字。
+      · 校验：声调值须落在 1..4；字数须 ≥4（源文「四字为四象」「四字以上」）。
+    """
+    if not tones or len(tones) < 4:
+        raise ValueError("字占须至少 4 字（源L206「四字为四象」「四字以上」）")
+    bad = [t for t in tones if t not in (1, 2, 3, 4)]
+    if bad:
+        raise ValueError(f"声调值须为 1..4（平1上2去3入4，源L206），非法：{bad}")
+    if n_chars != len(tones):
+        raise ValueError(f"字数 {n_chars} 与声调序列长度 {len(tones)} 不一致")
+    sum_tones = sum(tones)
+    # 动爻＝(声调和＋字数)÷6 余（源文未逐字给，沿用两数起卦的成卦之数口径，见 basis）
+    use_movings = _normalize_movings(
+        movings if movings is not None
+        else (_normalize((sum_tones + n_chars) % 6, 6) or 6))
+    out = _build_chart(
+        _trigram_from_number(sum_tones % 8), _trigram_from_number(
+            (sum_tones + n_chars) % 8),
+        use_movings,
+        way="words",
+        tones=list(tones),
+        n_chars=n_chars,
+        tone_sum=sum_tones,
+        upper_num=sum_tones, lower_num=n_chars, hour_num=0,
+        total=sum_tones + n_chars,
+        basis=("源L206「平声为一数，上声为二数，去声为三数，入声为四数」"
+               "「平分上下为卦」——声调→数由调用方按音韵给出，引擎不猜；"
+               "下卦＝(声调和＋字数)÷8 余、动爻＝(声调和＋字数)÷6 余，"
+               "此二步沿用本仓两数起卦的成卦之数口径（书源未逐字给），非冒充书源"),
+    )
+    return out
+
+
 def _build_chart(upper: str, lower: str, movings: list[int], **extra) -> dict:
     """经卦 + 动爻列表 → 完整盘数据（单动/多动共用）。"""
     u_lines, l_lines = BAGUA_LINES[upper], BAGUA_LINES[lower]
@@ -223,6 +271,7 @@ def chart_from_numbers(year_num: int, month: int, day: int, hour_num: int,
     use_movings = _normalize_movings(movings if movings is not None else auto)
     return _build_chart(
         upper, lower, use_movings,
+        way="numbers",
         year_num=year_num, month=month, day=day, hour_num=hour_num,
         total=year_num + month + day + hour_num,
     )
@@ -243,6 +292,7 @@ def chart_from_two_numbers(upper_num: int, lower_num: int, hour_num: int = 0,
     use_movings = _normalize_movings(movings if movings is not None else auto)
     return _build_chart(
         upper, lower, use_movings,
+        way="two_numbers",
         upper_num=upper_num, lower_num=lower_num, hour_num=hour_num,
         # 成卦之数（数应迟速用，《老人有忧色占》"成卦之数中分而取其半"）
         total=upper_num + lower_num + hour_num,
@@ -256,7 +306,7 @@ def chart_from_manual(upper: str, lower: str, movings: list[int]) -> dict:
     """
     if upper not in BAGUA_LINES or lower not in BAGUA_LINES:
         raise ValueError(f"上下卦须是八卦名：{upper!r}/{lower!r}")
-    return _build_chart(upper, lower, _normalize_movings(movings))
+    return _build_chart(upper, lower, _normalize_movings(movings), way="manual")
 
 
 def chart_from_datetime(dt: datetime) -> dict:
@@ -360,6 +410,14 @@ def chart(params: dict) -> dict:
         out = chart_from_manual(str(params["upper"]), str(params["lower"]),
                                 movings if movings is not None else params.get("moving"))
         out["month_branch"] = _checked_month_branch(params.get("month_branch"))
+    elif way == "words":
+        tones = params.get("tones")
+        n_chars = params.get("n_chars")
+        if n_chars is None:
+            n_chars = len(tones) if tones else None
+        out = chart_from_tones([int(t) for t in (tones or [])],
+                               int(n_chars or 0), movings=movings)
+        out["month_branch"] = _checked_month_branch(params.get("month_branch"))
     else:
         raise ValueError(f"未知起卦方式：{way}")
     # datetime/lunar 路径若显式给了多动爻，重建体用（自动路径默认单动）
@@ -379,6 +437,11 @@ def chart(params: dict) -> dict:
     out["topic"] = detect_topic(out["question"])
     out["way"] = way
     out["motion"] = params.get("motion", "立")   # 数应迟速：行/立/坐/卧（《占卜总诀》）
+    # 外应槽位（OPT-meihua_yishu_dz-04）：**可选**，由调用方结构化传入（物/卦）。
+    #   缺省不给 → analyze 显式标「外应空缺（静占）」（源L735 口径），不静默略过。
+    _signs = params.get("external_signs") or []
+    out["external_signs"] = [
+        (x if isinstance(x, dict) else {"物": str(x)}) for x in _signs]
     return out
 
 
@@ -404,7 +467,8 @@ if __name__ == "__main__":
     force_utf8_stdio()
 
     ap = argparse.ArgumentParser(description="梅花易数起卦（chart 段）")
-    ap.add_argument("--way", choices=["datetime", "lunar", "numbers", "two_numbers", "manual"],
+    ap.add_argument("--way", choices=["datetime", "lunar", "numbers", "two_numbers",
+                                        "manual", "words"],
                     default="datetime", help="起卦方式（缺省 datetime）")
     ap.add_argument("--datetime", help="datetime 方式：公历时刻 ISO 字符串")
     ap.add_argument("--year", type=int, help="lunar 方式：农历年")
@@ -417,8 +481,14 @@ if __name__ == "__main__":
     ap.add_argument("--lower-num", type=int, help="two_numbers 方式：下卦数")
     ap.add_argument("--upper", help="manual 方式：上经卦名（如 乾）")
     ap.add_argument("--lower", help="manual 方式：下经卦名（如 震）")
+    ap.add_argument("--tones", help="words 方式：逐字声调，逗号分隔（1=平 2=上 3=去 4=入；"
+                                  "声调判定由调用方按音韵给出，引擎不猜）")
+    ap.add_argument("--n-chars", type=int, help="words 方式：字数（缺省取声调序列长度）")
     ap.add_argument("--movings", help="动爻列表，逗号分隔（如 1,2 或 2,4,5）；缺省按起卦数取单动")
-    ap.add_argument("--month-branch", help="numbers/two_numbers/manual 方式的月令地支（旺衰用）")
+    ap.add_argument("--month-branch", help="numbers/two_numbers/manual/words 方式的月令地支（旺衰用）")
+    ap.add_argument("--external-sign", action="append", default=[],
+                    help="外应槽位（可重复），格式 物=卦（如 老人=乾）；"
+                         "映射表见 data/verdicts.json#external_signs（源L970）")
     ap.add_argument("--question", default="")
     ap.add_argument("--motion", default="立", help="数应迟速：行/立/坐/卧")
     ap.add_argument("--selfcheck", action="store_true", help="跑金标准自检")
@@ -458,6 +528,17 @@ if __name__ == "__main__":
         params = {"way": "manual", "upper": args.upper, "lower": args.lower,
                   "movings": movings, "month_branch": args.month_branch,
                   "question": args.question, "motion": args.motion}
+    elif args.way == "words":
+        if not args.tones:
+            ap.error("--way words 需要 --tones（逐字声调 1..4，逗号分隔）")
+        try:
+            tones = [int(x) for x in args.tones.replace("，", ",").split(",") if x.strip()]
+        except ValueError:
+            ap.error(f"--tones 不是整数列表：{args.tones!r}")
+        params = {"way": "words", "tones": tones,
+                  "n_chars": args.n_chars or len(tones),
+                  "month_branch": args.month_branch, "movings": movings,
+                  "question": args.question, "motion": args.motion}
     else:
         if None in (args.upper_num, args.lower_num):
             ap.error("--way two_numbers 需要 --upper-num/--lower-num")
@@ -465,6 +546,17 @@ if __name__ == "__main__":
                   "lower_num": args.lower_num, "hour_num": args.hour_num or 0,
                   "month_branch": args.month_branch, "movings": movings,
                   "question": args.question, "motion": args.motion}
+
+    # 外应槽位（可重复 --external-sign 物=卦）挂到全部非 selfcheck 路径
+    if params is not None and args.external_sign:
+        _signs = []
+        for raw in args.external_sign:
+            if "=" in raw:
+                _w, _g = raw.split("=", 1)
+                _signs.append({"物": _w.strip(), "卦": _g.strip()})
+            else:
+                _signs.append({"物": raw.strip()})
+        params["external_signs"] = _signs
 
     if params is None:
         r = chart_from_numbers(5, 12, 17, 9)

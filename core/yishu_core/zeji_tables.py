@@ -144,3 +144,165 @@ def xiuxiu_of(d: date) -> dict:
         "element": XIU_ELEMENTS[idx],
         "full": XIU_ORDER[idx] + XIU_ELEMENTS[idx] + XIU_ANIMALS[idx],
     }
+
+
+# ================================================================ 鸣吠 / 鸣吠对
+# 《协纪辨方书》卷十一「鸣吠」「鸣吠对」：安葬、启攒专用的吉日。
+# 起例（卷十一义例，源 L110，逐字原列）：
+#
+#   鸣吠（共 13 日）：甲丙庚壬四日配午申 + 乙丁己辛癸五日配酉
+#     甲午 甲申 · 丙午 丙申 · 庚午 庚申 · 壬午 壬申 · 乙酉 丁酉 己酉 辛酉 癸酉
+#
+#   鸣吠对（共 11 日）：丙庚壬配子 + 甲丙庚壬配寅 + 乙丁辛癸配卯
+#     丙子 庚子 壬子 · 甲寅 丙寅 庚寅 壬寅 · 乙卯 丁卯 辛卯 癸卯
+#
+# 两条互不重叠，共 24 日。
+# 卷十一另条（源 L468/L470）所列「通书」用甲午/丙寅……装表 ≠ 义例起例，
+# 清·张鉴注已指其为「俗本沿误」（通书本之吴氏，吴氏沿廖氏之旧）；
+# 本书 project 以卷十一义例（起例条目本身）为唯一真值源，不同化。
+MINGFEI_DAYS: tuple[str, ...] = (
+    "甲午", "甲申", "丙午", "丙申", "庚午", "庚申", "壬午", "壬申",
+    "乙酉", "丁酉", "己酉", "辛酉", "癸酉",
+)  # 共 13 日 —— 源 L110 起例
+
+MINGFEI_DUI_DAYS: tuple[str, ...] = (
+    "丙子", "庚子", "壬子",
+    "甲寅", "丙寅", "庚寅", "壬寅",
+    "乙卯", "丁卯", "辛卯", "癸卯",
+)  # 共 11 日 —— 源 L110 起例
+
+
+def ming_fei_of(stem_branch: str) -> str | None:
+    """六十甲子 → '鸣吠' / '鸣吠对' / None。纯集合查表，无推演。"""
+    if stem_branch in MINGFEI_DAYS:
+        return "鸣吠"
+    if stem_branch in MINGFEI_DUI_DAYS:
+        return "鸣吠对"
+    return None
+
+
+def is_mingfei_day(day_ganzhi: str) -> bool:
+    """该日是否为鸣吠日（安葬吉）。"""
+    return day_ganzhi in MINGFEI_DAYS
+
+
+def is_mingfei_dui_day(day_ganzhi: str) -> dict:
+    """该日是否为鸣吠对日（启攒吉）。返回 {'is_dui': bool, 'note': str}。"""
+    return {"is_dui": day_ganzhi in MINGFEI_DUI_DAYS, "note": ""}
+
+
+def ming_fei_table_60() -> list[dict]:
+    """六十甲子逐日 → 鸣吠/鸣吠对，供学科 render 层用。"""
+    from .ganzhi_calendar import EARTHLY_BRANCHES, HEAVENLY_STEMS
+
+    out: list[dict] = []
+    for i in range(60):
+        stem = HEAVENLY_STEMS[i % 10]
+        branch = EARTHLY_BRANCHES[i % 12]
+        gz = stem + branch
+        out.append({"index": i + 1, "ganzhi": gz, "ming_fei": ming_fei_of(gz)})
+    return out
+
+
+def assert_mingfei_vs_source() -> None:
+    """机械自检：与源 L110 起例字面逐日对拍。"""
+    assert len(MINGFEI_DAYS) == 13 and len(set(MINGFEI_DAYS)) == 13
+    assert len(MINGFEI_DUI_DAYS) == 11 and len(set(MINGFEI_DUI_DAYS)) == 11
+    # 两条互不重叠
+    assert not (set(MINGFEI_DAYS) & set(MINGFEI_DUI_DAYS)), "鸣吠/鸣吠对不应重叠"
+    # 二十四日总数
+    assert len(set(MINGFEI_DAYS) | set(MINGFEI_DUI_DAYS)) == 24
+    # 六十甲子全覆盖验证
+    covered = sorted(set(MINGFEI_DAYS) | set(MINGFEI_DUI_DAYS))
+    assert len(covered) == 24
+    # 起例硬核对：甲丙庚壬＝四位阳干（源 L110 明列四天，午申两支）
+    yang_stems = {"甲", "丙", "庚", "壬"}
+    for gz in MINGFEI_DAYS:
+        s = gz[0]
+        b = gz[1]
+        if s in yang_stems:
+            assert b in {"午", "申"}, f"阳干鸣吠只取午申：{gz}"
+        else:
+            assert b == "酉", f"阴干鸣吠只取酉：{gz}"
+    # 鸣吠对：丙庚壬=子、甲丙庚壬=寅、乙丁辛癸=卯
+    for gz in MINGFEI_DUI_DAYS:
+        s = gz[0]
+        b = gz[1]
+        if b == "子":
+            assert s in {"丙", "庚", "壬"}, f"子日鸣吠对限丙庚壬：{gz}"
+        elif b == "寅":
+            assert s in yang_stems, f"寅日鸣吠对限甲丙庚壬：{gz}"
+        elif b == "卯":
+            assert s in {"乙", "丁", "辛", "癸"}, f"卯日鸣吠对限乙丁辛癸：{gz}"
+    # 60 甲子里鸣吠/鸣吠对不会出现同一日兼具两者（已由互不重叠保证）。
+    assert ming_fei_of("甲午") == "鸣吠"
+    assert ming_fei_of("庚寅") == "鸣吠对"
+    assert ming_fei_of("壬寅") == "鸣吠对"
+    assert ming_fei_of("戊午") is None
+    assert ming_fei_of("戊寅") is None
+
+
+# ================================================================ 月内凶神（天罡/河魁/九空）
+# 天罡河魁（源 L490 厯例）：阳建之月前三辰为天罡、后三辰为河魁；阴建之月反是。
+# 阳建＝子寅辰午申戌六位（地支序偶数位），阴建＝丑卯巳未酉亥。
+# 返回 (天罡支, 河魁支)；非法支返回 None。
+#
+# 九空（源 L530 厯例）：「正月在辰，逆行四季」 → 寅=辰、卯=丑、辰=戌、巳=未,
+# …十二支循环。四季=辰戌丑未，"逆行"所以对寅=辰起、每一步往回退一支。
+# 返回九空地支；非法支返回 None。
+JIU_KONG_ORDER = ["辰", "丑", "戌", "未"]  # (month_idx - 2) % 4 依序取值
+
+
+def tian_gang_branch(month_branch: str) -> tuple[str, str] | None:
+    """月建 → (天罡支, 河魁支)，依源 L490 厯例；非法支返回 None。"""
+    from .ganzhi_calendar import EARTHLY_BRANCHES
+
+    m = EARTHLY_BRANCHES.find(month_branch) if month_branch in EARTHLY_BRANCHES else -1
+    if m < 0:
+        return None
+    # 阳建（地支序偶数位）: 天罡=前三辰(m-3), 河魁=后三辰(m+3)
+    # 阴建（奇数位）: 反是 —— 天罡=后三辰(m+3), 河魁=前三辰(m-3)
+    if m % 2 == 0:
+        return (EARTHLY_BRANCHES[(m - 3) % 12], EARTHLY_BRANCHES[(m + 3) % 12])
+    return (EARTHLY_BRANCHES[(m + 3) % 12], EARTHLY_BRANCHES[(m - 3) % 12])
+
+
+def jiu_kong_branch(month_branch: str) -> str | None:
+    """月建 → 九空地支（源 L530 "正月在辰逆行四季"）；非法支返回 None。"""
+    from .ganzhi_calendar import EARTHLY_BRANCHES
+
+    m = EARTHLY_BRANCHES.find(month_branch) if month_branch in EARTHLY_BRANCHES else -1
+    if m < 0:
+        return None
+    return JIU_KONG_ORDER[(m - 2) % 4]
+
+
+# ================================================================ 人神（逐建/逐辰）
+# 源 L696 逐建人神（建/除/满/平/定/执/破/危/成/收/开/闭 配 身体部位）
+# 源 L698 十二辰人神（子～亥 配 身体部位）
+# 纯机械零吉凶：只存定位，曹震圭「忌鍼灸」是断语——不入 core 表。
+REN_SHEN_BY_JIAN_CHU: dict[str, str] = {
+    "建": "足", "除": "尻", "满": "腹", "平": "背",
+    "定": "心", "执": "手", "破": "口", "危": "鼻",
+    "成": "肩", "收": "头", "开": "耳", "闭": "目",
+}
+REN_SHEN_BY_DAY_BRANCH: dict[str, str] = {
+    "子": "目", "丑": "耳", "寅": "胷", "卯": "鼻",
+    "辰": "腰", "巳": "手", "午": "心", "未": "足",
+    "申": "肩", "酉": "头", "戌": "颈", "亥": "项",
+}
+
+
+def ren_shen_of(jian_chu: str, day_branch: str) -> dict:
+    """人神定位输出。纯机械，不断言。返回 by_jian_chu / by_day_branch / 出处。
+
+    jian_chu 可传 ""（无建除时 by_jian_chu = None），day_branch 必填。
+    """
+    if jian_chu and jian_chu not in REN_SHEN_BY_JIAN_CHU:
+        jian_chu = ""
+    by_jc = REN_SHEN_BY_JIAN_CHU.get(jian_chu) if jian_chu else None
+    return {
+        "by_jian_chu": by_jc,
+        "by_day_branch": REN_SHEN_BY_DAY_BRANCH.get(day_branch),
+        "出处": "《协纪辨方书》源L696（逐建人神）/ 源L698（十二辰人神）",
+    }

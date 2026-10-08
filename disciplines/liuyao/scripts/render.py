@@ -19,6 +19,16 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from narrate import narrate  # noqa: E402
 
 _CSS_PATH = Path(__file__).resolve().parents[1] / "assets" / "report.css"
+_TPL_PATH = Path(__file__).resolve().parents[1] / "data" / "narrative_templates.json"
+
+
+def _grade_note() -> str:
+    """结要里「结论」行的档位注记——措辞归数据层，代码不组句（[1c] 断语外置取证）。"""
+    try:
+        shell = json.loads(_TPL_PATH.read_text(encoding="utf-8")).get("narrate_shell") or {}
+    except (OSError, ValueError):
+        return ""
+    return shell.get("conclusion_grade_note") or ""
 
 
 def _summary_block(a: dict) -> list[str]:
@@ -37,7 +47,9 @@ def _summary_block(a: dict) -> list[str]:
     if ch.get("name"):
         lines.append(f"- **变卦**：{ch['name']}")
     if con.get("方向"):
-        lines.append(f"- **结论**：{con['方向']}")
+        # 档位名（大吉/偏吉/平吉/凶/大凶…）是引擎的结构输出，不带注定含义；
+        # 同页口径句要求凶象只用「偏向／有…信号／结构上」讲，故此处显式标注档位性质。
+        lines.append(f"- **结论**：{con['方向']}{_grade_note()}")
     if con.get("应期"):
         lines.append("- **应期**：" + "、".join(map(str, con["应期"])))
     return lines
