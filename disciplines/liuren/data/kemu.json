@@ -654,6 +654,121 @@
    "implemented": true,
    "note": "凡四课三传俱阳，如三传俱阴，为六纯课。如四课属阳，中一课发用并中末皆阳，为六阳课，宜尊贵占天庭高尊事。初中空，君子畏之减力，常人赖之省力末事得理。若四课阴，中一课发用并中末俱阴，为六阴格。宜卑下占阴谋奸私事，病者死。此六者阴阳皆纯，故名六纯，占孕阳男阴女。统革之体，乃天渊悬隔之象也。",
    "note_src": "《六壬大全》卷10·课经集四"
+  },
+  {
+   "name": "进茹",
+   "implemented": false,
+   "structured_definition": {
+    "basis": "三传之神俱在一方，顺行而进（支序+1相连）",
+    "basis_src": "《六壬粹言》L112 逐字",
+    "conditions": [
+     "三传三支同方（同孟/同仲/同季）",
+     "支序连续+1（如亥子丑、丑寅卯）"
+    ],
+    "implemented": false,
+    "detection": "EARTHLY_BRANCHES 序值 +1 mod 12"
+   },
+   "verse": ""
+  },
+  {
+   "name": "退茹",
+   "implemented": false,
+   "structured_definition": {
+    "basis": "三传之神，俱在一方，逆行而退（支序-1相连）",
+    "basis_src": "《六壬粹言》L116 逐字",
+    "conditions": [
+     "三传三支同方（同孟/同仲/同季）",
+     "支序连续-1（如戌酉申、子亥戌）"
+    ],
+    "implemented": false,
+    "detection": "EARTHLY_BRANCHES 序值 -1 mod 12"
+   },
+   "verse": ""
+  },
+  {
+   "name": "进间",
+   "implemented": false,
+   "structured_definition": {
+    "basis": "凡课得间一位作三传，顺行而进（支序+2隔一位）",
+    "basis_src": "《六壬粹言》L120 逐字",
+    "conditions": [
+     "三传三支同方",
+     "支序连续+2（如子寅辰、辰午申）",
+     "三传俱阳 → 向阳/观光/登天/涉渊",
+     "三传俱阴 → 出户/回轮/势衰/入冥/凝阴/启蒙"
+    ],
+    "implemented": false,
+    "detection": "EARTHLY_BRANCHES 序值 +2 mod 12"
+   },
+   "verse": ""
+  },
+  {
+   "name": "退间",
+   "implemented": false,
+   "structured_definition": {
+    "basis": "谓课得间一位作三传，逆行而退（支序-2隔一位）",
+    "basis_src": "《六壬粹言》L124 逐字",
+    "conditions": [
+     "三传三支同方",
+     "支序连续-2（如戌申午、丑亥酉）",
+     "三传俱阳 → 负暄/顾祖/投暗",
+     "三传俱阴 → 就隐/励明/趋正/归邪/断涧/极阴"
+    ],
+    "implemented": false,
+    "detection": "EARTHLY_BRANCHES 序值 -2 mod 12"
+   },
+   "verse": ""
+  },
+  {
+   "name": "关格",
+   "implemented": false,
+   "structured_definition": {
+    "basis": "四仲相加作三传（子午卯酉四仲三传）",
+    "basis_src": "《六壬粹言》L147 逐字",
+    "conditions": [
+     "三传皆为四仲（子卯午酉 = 卯酉子午）",
+     "顺行：子卯午 / 卯午酉 / 午酉子 / 酉子卯",
+     "逆行：子酉午 / 午卯子"
+    ],
+    "implemented": false,
+    "detection": "EARTHLY_BRANCHES 四仲集合 {子卯午酉} = 索引 {0,3,6,9} 中「子午卯酉」位"
+   },
+   "verse": ""
+  },
+  {
+   "name": "稼穑",
+   "implemented": false,
+   "structured_definition": {
+    "basis": "季神相加作三传（辰戌丑未四季土三传）",
+    "basis_src": "《六壬粹言》L151 逐字",
+    "conditions": [
+     "三传皆为季神（辰戌丑未）",
+     "顺行：辰未戌 / 未戌丑 / 戌丑辰",
+     "逆行：丑戌未 / 戌未辰"
+    ],
+    "implemented": false,
+    "detection": "EARTHLY_BRANCHES 季集 {辰戌丑未} = 索引 {2,5,8,11}"
+   },
+   "verse": ""
+  },
+  {
+   "name": "四绝",
+   "implemented": false,
+   "structured_definition": {
+    "basis": "阴日禄神临于绝地（干寄宫支上神 = 该干五行之绝支）",
+    "basis_src": "《六壬粹言》L155 逐字",
+    "conditions": [
+     "阴日（乙丁己辛癸）",
+     "干寄宫支上神 ∈ 绝支",
+     "乙→卯上神申（木绝）",
+     "丁己→午上神亥（火绝）",
+     "辛→酉上神寅（金绝）",
+     "癸→子上神巳（水绝）"
+    ],
+    "implemented": false,
+    "detection": "JI_GONG → 上神支 → 查 TWELVE_GROWTH/SHENG_CYCLE 该干五行之绝支"
+   },
+   "verse": ""
   }
  ],
  "rules": {
@@ -687,7 +802,18 @@
    "曲直": "全局",
    "炎上": "全局",
    "从革": "全局",
-   "润下": "全局"
+   "润下": "全局",
+   "顺关隔": "关格",
+   "逆关隔": "关格",
+   "顺稼穑": "稼穑",
+   "逆稼穑": "稼穑",
+   "进茹": "",
+   "退茹": "",
+   "进间": "",
+   "退间": "",
+   "关格": "",
+   "稼穑": "",
+   "四绝": ""
   },
   "xinjing_旁证": {
    "_meta": "《六壬星纪》九宗门枚举旁证。verbatim 为书源逐字，「本仓判据」列记与既有判据的一致性；只作旁证，不引入断语。",
