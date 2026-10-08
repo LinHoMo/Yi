@@ -966,6 +966,21 @@ def main() -> int:
     gate_sub("source_readings", ["tools/check_source_readings.py"],
              "书源解读文档门（54 篇：引文逐字回指书源，OPT 行六列齐、ID 前缀同文件名）")
 
+    # 纳音使用审计（OPT-shenfeng_tongkao_dz-02；2026-10-07 创建后未挂门，死代码）：
+    # NAYIN 只作排盘取值/叙述取象，不得参与吉凶判据。静态扫 nayin 消费点 + 动态反事实
+    # （整表替换伪值后跑 eval，读数不变即旁证）。自带注入生效负例自证（铁律四.5）。
+    print("\n[1m] 纳音使用审计（NAYIN 只作取值/叙事，不参与吉凶判据；静态+动态反事实双通道）")
+    gate_sub("nayin_audit", ["tools/audit_nayin_usage.py"],
+             "纳音使用审计（静态分类+动态反事实双通道；含注入生效负例自证）",
+             fast=False)
+
+    # kemu.json 吉凶句混淆审计（Round 3 创建后未挂门）：
+    # 确保 verse/note 字段中的叙事候选词（吉凶方向词）必须标 narrative_candidate=true，
+    # 否则视为"吉凶句混入结构条件层"。纯机械匹配，不出吉凶方向。自带 --selftest 负例。
+    print("\n[1n] kemu 课目 purity（verse/note 叙事候选词必须标 narrative_candidate）")
+    gate_sub("kemu_purity", ["disciplines/liuren/dev_tools/check_kemu_purity.py"],
+             "kemu  purity 门（verse/note 叙事候选词必须标 narrative_candidate；纯结构匹配）")
+
     print("\n[2] 内核自检（干支历/农历/评分器）")
     if section("core"):
         code, out = _run_py(["core/yishu_core/calendar_check.py"], label="内核自检")

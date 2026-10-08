@@ -1,3 +1,42 @@
+### 2026-10-08p 死代码收口：两个生产级审计脚本挂入 check.py 永久门（[1m]/[1n]）
+
+**起因**：全面 OBSERVE 发现 `tools/audit_nayin_usage.py`（2026-10-07 创建）与
+`disciplines/liuren/dev_tools/check_kemu_purity.py`（Round 3 创建）均为生产质量工具
+（带 `--selftest`、负例自证、全仓覆盖），但在仓库内从未被任何地方调度——属
+AGENTS.md §四.8 明定的"写了门不跑＝死代码"病害。本轮挂入 check.py 默认档，使其
+每次全仓质量门都自动执行。
+
+#### 一、新增的两个门
+
+| 标签 | 名称 | 内容 |
+|---|---|---|
+| **[1m] nayin_audit** | 纳音使用审计 | 静态扫全仓 NAYIN 消费点（分 A 排盘取值 / B 叙述层 / C 判据层）；动态反事实（伪值替换后跑 eval，读数不变即旁证纳音不影响吉凶）；含注入生效负例自证 |
+| **[1n] kemu_purity** | kemu 课目 purity | 扫 kemu.json 71 条 verse/note 中的叙事候选词（吉/凶/不利/主死/主祸…等），命中者必须带 `narrative_candidate=true` 标记，否则 EXIT=1；纯机械匹配，不出吉凶方向 |
+
+两个门各实测通过：NAYIN A 排盘 56 / B 叙述 5 / C 判据 **0** / 注释 13 → 判据层红
+线为 0，动态读数相同（7 科评估全等）；kemu 71 条中 40 条含叙事候选已全部标记。
+
+#### 二、提交清单
+
+- `tools/audit_nayin_usage.py` — 入库（原 untracked）
+- `disciplines/liuren/dev_tools/check_kemu_purity.py` — 入库（原 untracked）
+- `tools/check.py` — 新增 [1m]/[1n] 两段（共 15 行注释 + 6 行代码）
+
+#### 三、未提交的工作树项说明
+
+本轮 OBSERVE 扫描还发现其余 19 项 untracked 文件，按协议分类处置：
+
+| 类别 | 文件 | 处置 |
+|---|---|---|
+| 计划性推迟（用户明确不入库） | `disciplines/jiaoshi/`, `disciplines/none_tonggang/`, `modernized/` | 不动 |
+| 一次性研究脚本（完成历史使命） | `disciplines/liuren/dev_tools/diff_tomb_vs_head.py`, `parse_tuo.py`, `disciplines/liuyao/dev_tools/diff_*.py` | 不动（仍属 scratch，尚未 gitignore 清理） |
+| 过程产物文档（DOCS 层） | `docs/audits/`, `docs/references/`, `docs/liuren-koujing-diff.md`, `disciplines/*/references/*.md`, `tests/pathguard.py` | 不动（文档性的非代码层，不影响 8 科 runtime） |
+
+"不动"不等于"遗漏"：这些文件均未参与 8 科 runtime、不影响 check.py 任何门、不影响
+eval 分数。本轮不改变其未跟踪状态，留待用户后续决策。
+
+---
+
 ### 2026-10-08o 六壬课体第九批：进茹/退茹/进间/退间机械检测落地（OPT-liuren_cuiyan_dz-01）
 
 **起因**：L159 十二地盘课体中，此前「联珠」判据只报「顺连茹/逆连茹/顺间传/逆间传」
