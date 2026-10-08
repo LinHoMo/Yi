@@ -657,7 +657,7 @@
   },
   {
    "name": "进茹",
-   "implemented": false,
+   "implemented": true,
    "structured_definition": {
     "basis": "三传之神俱在一方，顺行而进（支序+1相连）",
     "basis_src": "《六壬粹言》L112 逐字",
@@ -672,7 +672,7 @@
   },
   {
    "name": "退茹",
-   "implemented": false,
+   "implemented": true,
    "structured_definition": {
     "basis": "三传之神，俱在一方，逆行而退（支序-1相连）",
     "basis_src": "《六壬粹言》L116 逐字",
@@ -687,7 +687,7 @@
   },
   {
    "name": "进间",
-   "implemented": false,
+   "implemented": true,
    "structured_definition": {
     "basis": "凡课得间一位作三传，顺行而进（支序+2隔一位）",
     "basis_src": "《六壬粹言》L120 逐字",
@@ -704,7 +704,7 @@
   },
   {
    "name": "退间",
-   "implemented": false,
+   "implemented": true,
    "structured_definition": {
     "basis": "谓课得间一位作三传，逆行而退（支序-2隔一位）",
     "basis_src": "《六壬粹言》L124 逐字",

@@ -3,7 +3,7 @@
     "what": "大六壬金标准指纹基线（排盘+九宗门+天将逐字段）",
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
-  "digest": "1488c1b3135ee5b4",
+  "digest": "e02c3fc4d75db355",
   "narrate_digest": "58b46b4cb26931eb",
   "drift_log": [
     {
@@ -59,6 +59,12 @@
       "to": "1488c1b3135ee5b4",
       "date": "2026-10-08",
       "reason": "OPT-rengui_dz-01 新增 J 组 san_chuan_seven_ge：三传七格（全财/全鬼/全脱 via 五行统一关系，俱阳/俱阴 via 阴阳支集合，递生/递克 via 四节点链）。4 golden 中全脱 1/4、俱阳 1/4、递生 2/4；chuan_tianjiang/four_courses/men/ke_name/san_chuan/dun_gan/逐字段对拍 HEAD 零漂移；结构层每条格 basis 新增。"
+    },
+    {
+      "from": "1488c1b3135ee5b4",
+      "to": "e02c3fc4d75db355",
+      "date": "2026-10-08",
+      "reason": "OPT-liuren_cuiyan_dz-01: 实施进茹/退茹/进间/退间四课机械检测（Case4 占讼己亥日戌酉申退茹命中）"
     }
   ],
   "narrate_drift_log": [

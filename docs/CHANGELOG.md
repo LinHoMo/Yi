@@ -1,3 +1,46 @@
+### 2026-10-08o 六壬课体第九批：进茹/退茹/进间/退间机械检测落地（OPT-liuren_cuiyan_dz-01）
+
+**起因**：L159 十二地盘课体中，此前「联珠」判据只报「顺连茹/逆连茹/顺间传/逆间传」
+一个聚合名，未落到《六壬粹言》L112-124 逐字对应的四课目（进茹/退茹/进间/退间）。
+本轮从 IMPLEMENTED 旗标、检测逻辑、kemu.json 三处同步实施。
+
+#### 一、改动范围
+
+- **`disciplines/liuren/scripts/kemu.py`**：IMPLEMENTED 元组增加 4 项；联珠 hit 内
+  按 `_step` 值分支补 4 条 hit()（步长 +1=进茹、-1=退茹、+2=进间、-2=退间），
+  basis 逐字取自《六壬粹言》L112/116/120/124，partial 注明出处，verse/note 留空
+  （该四课未经《六壬大全》卷7-10，不属于 `build_kemu_notes.py` 建器覆盖范围）。
+- **`disciplines/liuren/data/kemu.json`**：进茹/退茹/进间/退间 4 条 `implemented: false → true`
+  （原已存在的 structured_definition + aliases 保持不变，本轮只翻旗标）。
+- **`disciplines/liuren/data/golden/digest.json`**：机械指纹基线 e02c3fc4d75db355
+  （原 1488c1b3135ee5b4），Case4 `2026-09-22 12:00 占讼` 己亥日三传戌酉申
+  step=(11,11) 命中「退茹」，kemu basis 由「元首；斩关；联珠」增为
+  「元首；斩关；联珠；退茹；脱骨」。属**预期的加法行为变化**——新判据在既有
+  联珠结构上多报一名，不替换旧结果。措辞层 SHA 零漂移。
+
+#### 二、分数（口径不变，与 §10-08n 同机同集）
+
+- liuren 机械一致率：**33/43 = 76.7%**（可验证桶 26/29 = 89.7%，异说桶 7/14，
+  门类 4/5）——**读数与上一轮持平**（本轮只加 4 条纯结构名称判据，不涉及九宗门、
+  三传排盘、天将布法等算分链路）。
+- `python tools/check.py`：全绿（含 `[1j] liuren/build_kemu_notes` 语料可复现、
+  `[5] golden_liuren` 行为指纹、`[2b]` 门自证）。
+- `python disciplines/liuren/dev_tools/check_kemu_completeness.py`：**13/16**（上一轮 9/16 →
+  本轮 13/16，+4；余 3 条：关格/稼穑/四绝 仍 implemented=false，留待下轮结构条件就绪再落）。
+
+#### 三、判定与设计说明
+
+- **为何多报而不替代**：联珠是「三传相连」的**结构描述**；进茹/退茹/进间/退间是同一结构在
+  《六壬粹言》中的**名目细分**。同一卦象既满足「联珠」又满足「退茹」，两者不互斥。
+- **verse/note 留空**：该四课经文只见于《六壬粹言》而不在《六壬大全》卷7-10。
+  建器 `build_kemu_notes.py` 只读《六壬大全》wikitext，**不应扩面到《六壬粹言》**
+  （两书体例不同，混读会导致 verse 段来源混乱）。留空 + partial 注明出处，让 render
+  层自然跳过 verse/note 展示即可。
+- **铁律一合规**：全部判定逻辑由 Python 完成（步长字典查表、命中分支），
+  LLM/narrate 层零路径改动。
+
+---
+
 ### 2026-10-08n 全面审查后的收口：门的覆盖面/自证补齐 + 8 项工作树红灯清零 + 交付口径两处订正
 
 **起因**：一轮全面审查（依据 = 工作树 + HEAD 干净副本各实跑一次 `tools/check.py`）。
