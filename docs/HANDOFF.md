@@ -651,7 +651,8 @@ python tools/eval.py
    `docs/TECH-DEBT.md:121 → docs/audits/nayin_usage_audit.md` 等引用；跑完**原样改回**。
 6. **OPT 台账条数按两科重算**：现存 27 部解读文档里的 OPT 行 = **155**
    （liuyao 75／ming 70／none-tonggang 10）；`data/sources/opt_status.json`
-   实测 `done=115 / archived=113 / rejected=21`（并集 245，有 4 个 id 跨集合重复登记），
+   实测 `done=112 / archived=113 / rejected=20`（相加 245＝distinct 245，三集合互斥；
+   2026-10-09 之前有 4 个 id 跨集合重复登记、相加得 249 而对不上 245，已按落点档案去重），
    其中 **90 条 id 的书已不在登记表**（随收缩成为历史记录）。
 7. **`NAYIN_XIANGGE` 从未落地**：`git grep -n "NAYIN_XIANGGE" HEAD -- '*.py'` 只命中
    `disciplines/ming/scripts/evaluate.py` 的一条注释；五个格名（马化龙驹／水绕花堤／

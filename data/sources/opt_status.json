@@ -1,6 +1,6 @@
 {
   "_comment": "已落实/已撤销的 OPT 清单（2026-10-07 全量实测）。check_source_readings.py --index 读此文件，把已处理条目从 INDEX 优化清单中排除，实现 INDEX 只显真正待做项。",
-  "_scope_note_2026-10-09": "【两科收缩后的口径注释，只加注释、不删任何历史 id】2026-10-09 按现存 27 部书源（works_registry.json）逐条重算本文件三个数组的落点在位性：done 115 条中落点已删 7 条／现存 108 条；archived 113 条中已删 73 条／现存 40 条；rejected 21 条中已删 11 条／现存 10 条；合计 249 条登记项、91 条落点已随 commit 60b2403 消失（六科及其书源、docs/source-readings 分科解读）。这些历史 id 一律保留、不回删，但其结论不可再复跑，只作 git 历史证据；现行计数请用「现存」列。另登记两处口径缺陷（本轮不改数据，避免按读数改数据）：① 三数组之和 249 而 distinct id 只有 245——4 条同一 id 跨类重复登记：ditian_sui_chanwei_dz-04 与 zhouyi_shangzhan_dz-04 同列 done 与 archived、sanming_zhimi_fu_dz-04 同列 done 与 rejected、dunjia_yanyi_dz-05 同列 archived 与 rejected，「落实 115／归档 113／撤销 21」不可相加为处理总数；② 本文件与 docs/OPT-LEDGER.md 是两套口径（后者表内实数 318 条：§一 29／§二 22／§三 267，其中 233 条已在本文件登记（§一 18＋§二 20＋§三 195）、85 条未登记（§一 11＋§二 2＋§三 72）），两个数各自成立、不可互相换算，对账过程见 docs/OPT-LEDGER.md 顶部口径横幅。",
+  "_scope_note_2026-10-09": "【两科收缩后的口径注释】2026-10-09 按现存 27 部书源（works_registry.json）逐条重算本文件三个数组的落点在位性：done 112 条中落点已删 7 条／现存 105 条；archived 113 条中已删 73 条／现存 40 条；rejected 20 条中已删 10 条／现存 10 条；合计 245 条登记项、90 条落点已随 commit 60b2403 消失（六科及其书源、docs/source-readings 分科解读）。这些历史 id 一律保留、不回删，但其结论不可再复跑，只作 git 历史证据；现行计数请用「现存」列。口径缺陷①（跨类重复登记）**已于 2026-10-09 按落点档案裁决消除**：原 4 条同一 id 跨类重复——ditian_sui_chanwei_dz-04、zhouyi_shangzhan_dz-04 同列 done＋archived，sanming_zhimi_fu_dz-04 同列 done＋rejected，dunjia_yanyi_dz-05 同列 archived＋rejected。逐条查得：前三条在 docs/OPT-ARCHIVED.md / docs/OPT-LEDGER.md §二 各有且只有一条在位记录（done 侧是重复项，删）；dunjia_yanyi_dz-05 只在 docs/OPT-ARCHIVED.md:90 有记录，§二 撤销表内无此条（rejected 侧是重复项，删）。三数组现**互斥**：112＋113＋20＝245＝distinct id 数，可直接相加为处理总数；tools/check_source_readings.py 有机械守卫，再出现跨类重复即判红。口径缺陷②（与本文件并列的另一套计数）仍在：docs/OPT-LEDGER.md 表内实数 318 条（§一 29／§二 22／§三 267），其中 233 条已在本文件登记（§一 18＋§二 20＋§三 195）、85 条未登记（§一 11＋§二 2＋§三 72），两个数各自成立、不可互相换算，对账过程见 docs/OPT-LEDGER.md 顶部口径横幅。",
   "done": [
     "bushi_quanshu_dz-01",
     "bushi_quanshu_dz-02",
@@ -14,7 +14,6 @@
     "ditian_sui_chanwei_dz-01",
     "ditian_sui_chanwei_dz-02",
     "ditian_sui_chanwei_dz-03",
-    "ditian_sui_chanwei_dz-04",
     "ditian_sui_chanwei_dz-05",
     "ditian_sui_chanwei_dz-06",
     "ditian_sui_chanwei_dz-07",
@@ -67,7 +66,6 @@
     "sanming_zhimi_fu_dz-01",
     "sanming_zhimi_fu_dz-02",
     "sanming_zhimi_fu_dz-03",
-    "sanming_zhimi_fu_dz-04",
     "sanming_zhimi_fu_dz-05",
     "shenfeng_tongkao_dz-01",
     "shenfeng_tongkao_dz-02",
@@ -111,7 +109,6 @@
     "zengshan_buyi_dz-07",
     "zhouyi_shangzhan_dz-01",
     "zhouyi_shangzhan_dz-03",
-    "zhouyi_shangzhan_dz-04",
     "ziping_zhenquan_pingzhu_dz-01",
     "ziping_zhenquan_pingzhu_dz-02",
     "ziping_zhenquan_pingzhu_dz-03",
@@ -236,7 +233,6 @@
   "rejected": [
     "bushi_quanshu_dz-06",
     "bushi_zhengzong_dz-07",
-    "dunjia_yanyi_dz-05",
     "huangji_jingshi_shu_dz-03",
     "huangji_jingshi_shu_dz-05",
     "liuren_cuiyan_dz-10",

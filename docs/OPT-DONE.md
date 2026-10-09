@@ -9,9 +9,13 @@
 > - 本文件表内**只有 7 行**（`grep -c "^| OPT-" docs/OPT-DONE.md` = 7），
 >   是 `docs/OPT-LEDGER.md` §一「已落实」29 行的**摘录**，**不是**已落实项的全集；
 >   把这 7 行当全集会低估落实面。
-> - 已落实项的**机器可读全集**是 `data/sources/opt_status.json` 的 `done` 数组，现值 **115** 条；
->   本文件 7 行全部落在这 115 条内（实测：7/7 命中 `done`，0 命中 `archived`／`rejected`）。
->   三者是**包含关系**（7 ⊂ §一 29 ⊂ done 115），不是三个可互相换算的读数。
+> - 已落实项的**机器可读全集**是 `data/sources/opt_status.json` 的 `done` 数组，现值 **112** 条
+>   （2026-10-09 由 115 条去重而得：`ditian_sui_chanwei_dz-04`、`zhouyi_shangzhan_dz-04`、
+>   `sanming_zhimi_fu_dz-04` 曾同时挂在 done 与 archived/rejected 两处，按落点档案裁决各留一位）。
+>   本文件 7 行全部落在这 112 条内（去重后实测：7/7 命中 `done`，0 命中 `archived`／`rejected`）。
+>   包含关系只成立于「7 ⊂ done」；`§一 29` 与 `done` 是**交集**而非包含
+>   （§一 29 条中 18 条已登记，见 `docs/OPT-LEDGER.md` 顶部实测），原记「7 ⊂ §一 29 ⊂ done 115」
+>   把交集写成了包含，已按实测更正。
 > - 本文件 7 行的落点**全部现存**（六爻 6 行涉《卜筮全书》《卜筮正宗》《易林补遗》《易隐》4 部、
 >   命科 1 行涉《滴天髓闡微》1 部，均在 `works_registry.json` 现登记的 27 部之内），
 >   故无「已随两科收缩删除」标注；§一 里那 11 条已删落点见 `docs/OPT-LEDGER.md`。

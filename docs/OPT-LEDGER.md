@@ -19,11 +19,14 @@
 >   `taiyi_*`、`cezi_*`/`tuibeitu_*`/`zhuge_*`/`zhougong_*`、`jiaoshi_yilin_dz`）。
 >   唯一例外：§二 的 `OPT-huangji_jingshi_dz-04` 是 `huangji_jingshi_shu_dz`（该书**现存**）的
 >   笔误 key，按现存计。
-> - **与 `data/sources/opt_status.json` 不同口径，不可互相换算**：状态文件只登记「已处理」ID，
->   现值 done **115**／archived **113**／rejected **21**——三数相加 **249**，但去重后**只有 245 个不同 ID**
->   （实测 4 条跨类重复登记：`ditian_sui_chanwei_dz-04`、`zhouyi_shangzhan_dz-04` 同列 done＋archived，
->   `sanming_zhimi_fu_dz-04` 同列 done＋rejected，`dunjia_yanyi_dz-05` 同列 archived＋rejected；
->   本轮只登记不改动，详见该文件 `_scope_note_2026-10-09`）。
+> - **与 `data/sources/opt_status.json` 是两套口径，不可互相换算，但状态文件内部现已自洽**：
+>   状态文件只登记「已处理」ID，现值 done **112**／archived **113**／rejected **20**，
+>   相加 **245＝去重后的 245 个不同 ID**（2026-10-09 之前是 115/113/21 相加 249 而 distinct 只有 245，
+>   因为 4 条被跨类重复登记：`ditian_sui_chanwei_dz-04`、`zhouyi_shangzhan_dz-04` 同列 done＋archived，
+>   `sanming_zhimi_fu_dz-04` 同列 done＋rejected，`dunjia_yanyi_dz-05` 同列 archived＋rejected。
+>   现按落点档案逐条裁决去重——前三条在 `docs/OPT-ARCHIVED.md`／本表 §二 各有唯一一条在位记录，
+>   `dunjia_yanyi_dz-05` 只在 `docs/OPT-ARCHIVED.md` 有记录；守卫挂在
+>   `tools/check_source_readings.py`，再出现跨类重复即判红。详见该文件 `_scope_note_2026-10-09`）。
 >   与本台账的实测交集：§一 29 条中 18 条已登记、§二 22 条中 20 条已登记、
 >   §三 267 条中 195 条已登记（余 72 条落点已删、从未登记）。
 >   `docs/source-readings/INDEX.md` 的「待办 0 项」是按**现存 27 部解读文档**现算的
@@ -90,7 +93,7 @@
 | OPT-liuren_xinjing_dz-07 | 行号张冠李戴+书证不存在——书源 grep 九宗门 零命中，「九科门」在L33/L218（非L220），L220内容为"八局之列分为九科" （已随 2026-10-09 两科收缩删除，仅历史） |
 | OPT-lixuzhong_mingshu_dz-06 | 指向错误——L70=庚申/L71=辛酉(内容相同，庚申误作辛酉的复制讹条)，L72 辛酉是另一条不同命式，非同一句重出 |
 | OPT-qimen_faqiao_dz-08 | 行号与计数错——列"五处"实为六处且L452重复计入；L452原文为「奇门占验类神皆本生克而定之故，不可执一而论」非加减规则 （已随 2026-10-09 两科收缩删除，仅历史） |
-| OPT-sanming_zhimi_fu_dz-04 | 整条基于误读——书源 grep 阳奇/阴奇 零命中；L13「顺三竒主少年发逹，遇逆三竒主晚景享荣」之顺逆指运限年龄，非干支行进方向 |
+| OPT-sanming_zhimi_fu_dz-04 | 整条基于误读——书源 `sanming_zhimi_fu_dz.dz.txt` 实测「陽竒/陰竒/阳奇/阴奇」四种写法均 0 命中（三竒 18 次）；书源只分「天上三竒乙丙丁」「地下三竒甲戊庚」，L13 逐字为「若逢顺三竒主少年发逹遇逆三竒者主晚景享荣」（无逗号、作「逆三竒**者**」），其顺逆指运限年龄（少年发达／晚景享荣），非干支行进方向 |
 | OPT-taiyi_mishu_dz-05 | 落点字段不存在——works_registry 无defects 字段，事实成立但须先定schema （已随 2026-10-09 两科收缩删除，仅历史） |
 | OPT-taiyi_mishu_dz-06 | 越界——建议"书源吉凶断语narrative归档"违反骨架层铁律（同大六壬口径），太乙既 none-taiyi，断语归档无消费者 （已随 2026-10-09 两科收缩删除，仅历史） |
 | OPT-xieji_bianfang_dz-05 | 表误认——L246「日表」/L299「二十八宿配日」经Read确认均为目录标题，无逐日二十八宿值数据，无法建抽样回归 （已随 2026-10-09 两科收缩删除，仅历史） |

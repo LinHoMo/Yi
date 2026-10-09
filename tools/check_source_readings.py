@@ -204,6 +204,21 @@ def run_gate() -> int:
             n_quotes_all += nq
             print(f"[PASS] {w['key']}《{w['title']}》 引文{nq} OPT{nopt}")
     print(f"\n合计：{total - failed}/{total} 过，引文 {n_quotes_all} 条")
+    # 台账一致性：opt_status 三个数组必须互斥（同一 id 既"已落实"又"已归档"是矛盾的）。
+    # 2026-10-09 实测曾有 4 条跨类重复登记，令 done+archived+rejected=249 ≠ distinct 245，
+    # 而两处文档各自拿其中一套数当"处理总数"报。守卫挂在这里，重复登记再出现即判红。
+    if OPT_STATUS_PATH.exists():
+        try:
+            dups = opt_status_duplicates(json.loads(OPT_STATUS_PATH.read_text(encoding="utf-8")))
+        except (json.JSONDecodeError, OSError) as e:
+            dups = [f"文件不可读：{e}"]
+        if dups:
+            print("opt_status.json 跨类重复登记：")
+            for x in dups:
+                print(f"  - {x}")
+            print("EXIT=1（OPT 台账自相矛盾）")
+            return 1
+        print("OPT 台账：三数组互斥，落实＋归档＋撤销＝distinct ID 数")
     if failed:
         print(f"EXIT=1（{failed} 部未达标）")
         return 1
@@ -214,11 +229,23 @@ def run_gate() -> int:
 OPT_STATUS_PATH = SRC_DIR / "opt_status.json"
 
 
+def opt_status_duplicates(d: dict) -> list[str]:
+    """跨数组重复登记的 ID（一个 id 同时算"已落实"和"已归档"是自相矛盾的）。"""
+    done, arch, rej = set(d.get("done", [])), set(d.get("archived", [])), set(d.get("rejected", []))
+    out = []
+    for pair, name in (((done & arch), "done＋archived"), ((done & rej), "done＋rejected"),
+                       ((arch & rej), "archived＋rejected")):
+        for i in sorted(pair):
+            out.append(f"{i}（同列 {name}）")
+    return sorted(out)
+
+
 def load_opt_status() -> tuple[set[str], int, int, int]:
     """读已处理 OPT 清单（data/sources/opt_status.json）。
 
     返回 (已处理 ID 集合, 落实数, 归档数, 撤销数)。文件缺失时返回空集——即
     「未登记则全部视为待办」，保证工具在无状态文件时行为与从前一致。
+    跨类重复由 `opt_status_duplicates` 在门禁侧判红，这里不静默吞掉计数。
     """
     if not OPT_STATUS_PATH.exists():
         return set(), 0, 0, 0
@@ -278,15 +305,24 @@ def write_index(works: list[dict]) -> int:
 
     opt_rows = collect_opt_rows(works)
     handled, n_done, n_arch, n_rej = load_opt_status()
+    try:
+        _opt_raw = json.loads(OPT_STATUS_PATH.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        _opt_raw = {}
     todo_rows = [r for r in opt_rows if r["id"].replace("OPT-", "") not in handled]
     lines.append("")
     lines.append(f"## 待办优化清单（{len(todo_rows)} 项，按优先级）")
     lines.append("")
     if handled:
+        dups_now = opt_status_duplicates(_opt_raw) if _opt_raw else []
+        caliber = ("三者取自 `opt_status.json` 的**全局**分类，**三数组互斥、相加即处理总数**"
+                   if not dups_now else
+                   "三者取自 `opt_status.json` 的**全局**分类，含跨类重复登记"
+                   f"（{len(dups_now)} 条：{dups_now[0]}…），**不可相加**")
         lines.append(
             f"> 已处理 **{len(opt_rows) - len(todo_rows)}** 项（另有全局计数：落实 {n_done}／归档不动 {n_arch}／"
-            f"实测推翻撤销 {n_rej}——三者取自 `opt_status.json` 的**全局**分类，含跨类重复登记，"
-            f"**不可与「已处理」相加核对**。逐条归属见 `docs/OPT-LEDGER.md`、`docs/OPT-ARCHIVED.md` 与 "
+            f"实测推翻撤销 {n_rej}——{caliber}，"
+            f"与「已处理」是两个口径、不可互相核对。逐条归属见 `docs/OPT-LEDGER.md`、`docs/OPT-ARCHIVED.md` 与 "
             f"`data/sources/opt_status.json`。本清单只列**真正待做**项。"
         )
         lines.append("")
@@ -300,12 +336,16 @@ def write_index(works: list[dict]) -> int:
         )
     INDEX_MD.parent.mkdir(parents=True, exist_ok=True)
     INDEX_MD.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
+    dups_now = opt_status_duplicates(_opt_raw) if _opt_raw else []
     print(
         f"INDEX.md 已重建：覆盖 {ok}/{len(works)}，待办 {len(todo_rows)} 项"
         f"（共 {len(opt_rows)} 项，已处理 {len(opt_rows) - len(todo_rows)}；"
-        f"全局分类计数 落实 {n_done}／归档 {n_arch}／撤销 {n_rej} 含跨类重复，不可相加） -> {INDEX_MD}"
+        f"全局分类计数 落实 {n_done}／归档 {n_arch}／撤销 {n_rej}"
+        + (f"，含 {len(dups_now)} 条跨类重复、不可相加" if dups_now
+           else f"，三数组互斥、相加 {n_done + n_arch + n_rej}＝处理总数")
+        + f"） -> {INDEX_MD}"
     )
-    return 0
+    return 1 if dups_now else 0
 
 
 def selftest() -> int:
@@ -354,6 +394,18 @@ def selftest() -> int:
         print("SELFTEST FAIL：OPT 挂错著作未被拦截！")
         return 1
     print("负例3（OPT 挂错著作）被判红 ✔")
+    # 台账守卫自证：跨类重复必须被抓、互斥清单不得误报（负例＝本轮真实消除的那四条的形态）
+    dups_hit = opt_status_duplicates(
+        {"done": ["a-01", "dup-01"], "archived": ["dup-01", "b-02"], "rejected": ["c-03"]})
+    dups_clean = opt_status_duplicates(
+        {"done": ["a-01"], "archived": ["b-02"], "rejected": ["c-03"]})
+    if len(dups_hit) != 1 or "dup-01" not in dups_hit[0]:
+        print(f"SELFTEST FAIL：跨类重复守卫没抓到已知重复（实得 {dups_hit}）")
+        return 1
+    if dups_clean:
+        print(f"SELFTEST FAIL：互斥清单被误判为重复（实得 {dups_clean}）")
+        return 1
+    print("  · 台账跨类重复守卫：已知重复被抓、互斥清单不误报")
     print("SELFTEST PASS")
     return 0
 
