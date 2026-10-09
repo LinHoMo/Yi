@@ -29,6 +29,12 @@ _SHI_SHEN_ACTIONS = _SHI_SHEN_ACTIONS_DOC["shi_shen_actions"]
 # 正月建寅：月序表由内核地支序旋转得到，不另抄一份（AGENTS.md §二 唯一真值源）。
 _BRANCH_FROM_YIN = EARTHLY_BRANCHES[2:] + EARTHLY_BRANCHES[:2]
 _MONTH_ORDINAL = dict(zip(_BRANCH_FROM_YIN, range(1, 13)))
+# 纳音取象旁证素材（《五行精纪》纳音性质名）：**仅本 narrate 层可读**，
+# analyze/chart/pattern 不得 import（铁律一：象数解读不归机械推演）。
+# ⚡ 接线状态：已落地（2026-10-09f）。展示为"物性标签旁证"，**不计格、不评分**，
+# 与子平格局层并列输出（engine 为体、纳音性质名为物性标签扩展，并行不混用）。
+_NAYIN_QUXIANG = json.loads((_DATA / "nayin_quxiang.json").read_text(encoding="utf-8"))
+_NAYIN_QUXIANG_MAP = _NAYIN_QUXIANG.get("纳音性质", {})
 
 
 def _dts_chapter(name: str) -> dict:
@@ -293,6 +299,33 @@ def narrate(a: dict) -> str:
                 # 整行前缀与正文都取自本表（hint_prefix / narrative_hint），代码不组句
                 lines.append(f"> {act['hint_prefix']}：{act['narrative_hint']}")
         lines.append("")
+
+    # 纳音取象旁证（《五行精纪》纳音性质名）：**只作物性标签旁证、不进结构、不评分**。
+    # 接线口径（与 liushen_image / shi_shen_actions 同一约束）：仅 narrate 层可读，
+    # 不进 analyze/chart/pattern。性质名出自原书逐字引文，只作物性分类标签。
+    if _NAYIN_QUXIANG_MAP:
+        prs = a.get("pillars") or (a.get("chart_summary") or {}).get("四柱") or {}
+        nq_items = []
+        for pname in ("year", "month", "day", "hour"):
+            if isinstance(prs, dict):
+                gz = (prs.get(pname) or {}).get("ganzhi") if pname in prs else None
+                if not gz and isinstance(prs.get(pname), str):
+                    gz = prs[pname]
+            else:
+                gz = None
+            if not gz or len(gz) < 2:
+                continue
+            qx = _NAYIN_QUXIANG_MAP.get(gz) or {}
+            xm = qx.get("性质名")
+            if not xm:
+                continue
+            loc = str(qx.get("性质行") or "").replace("data/sources/", "").split(".")[0]
+            nq_items.append(f"{pname}={gz}「{xm}」（{loc}）")
+        if nq_items:
+            lines.append("**纳音取象**（《五行精纪》纳音性质名，物性标签旁证、非吉凶断语）：")
+            for it in nq_items:
+                lines.append(f"- {it}")
+            lines.append("")
 
     pr = a.get("pillar_relations") or []
     if pr:

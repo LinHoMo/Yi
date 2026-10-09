@@ -357,7 +357,7 @@
 ## 附录 C：六神临用详解指南
 
 > **LLM 在正文中必须将六神叙事融入，不可省略或仅呈现数值。**
-> 以下数据已存在于工具输出 `thinking_chain.step5_synthesis.spirit_adjustment_reasons[]`（或 `factor_contributions[]` 中 `name==="六神辅助"`），由 `classical_analysis.py` 的 `spirit_yin_yang_factor` 生成。
+> 以下数据已存在于工具输出 `thinking_chain.step5_synthesis.spirit_adjustment_reasons`（六神调整理由列表），由 `liuyao_step5.py` 的 `compute_spirit_adjustment` 经 `classical_enhancements.spirit_yin_yang_factor` 计算写入；`factor_contributions[]` 中**并无**名为「六神辅助」的条目（原引用有误）。
 
 ### C.1 六神基本五行属性与事象
 

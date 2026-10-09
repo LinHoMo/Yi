@@ -5,7 +5,7 @@
   },
   "md": {
     "liuyao": "d4a821a8540006fb",
-    "ming": "4d9fcd8bf97d62ed"
+    "ming": "b9351f60d262bb06"
   },
   "drift_log": [
     {
@@ -91,6 +91,13 @@
       "to": "4d9fcd8bf97d62ed",
       "date": "2026-10-09",
       "reason": "2026-10-09 命科批次有意订正 narrate 尾注口径（原句「格局从格仅作 tentative 标注」落后于引擎实况）。归因证据：用 HEAD 的 worktree 跑同一请求（ming/1990-05-20 10:30/男/命局）与工作树逐行 diff，render MD 全文仅 1 行变化（第 85 行尾注由旧句改为按《滴天髓·从化论/从象/假从》分级的新句），差异行数 2（一减一增），其余 113 行逐字相同；机械层零漂移由命科 dev_tools/golden.py 同轮自报「机械 1be8d5b579463a47 未变」佐证。内核 JIE_SHA/JIN_YU 订正未触及该例盘（同 diff 无神煞行变化）。"
+    },
+    {
+      "discipline": "ming",
+      "from": "4d9fcd8bf97d62ed",
+      "to": "b9351f60d262bb06",
+      "date": "2026-10-09",
+      "reason": "ming narrate 接线纳音取象旁证（nayin_quxiang.json→narrate，只作物性标签不计格不评分）；render 因 narrate 新增段漂移，结构未变"
     }
   ]
 }

@@ -104,11 +104,11 @@ def _leaf_strings(obj) -> list[str]:
 # 「任何 0 结果都要先确认不是路径解析错了」的反面——0 命中必须有名有姓地说出来）。
 # 列在这里的文件一旦真的接上（命中 >0），本门**反而判红**并要求把它从表里摘掉，
 # 于是这张表不会烂成「永久豁免清单」。
+# ⚠️ 2026-10-09f 更新：nayin_quxiang.json 已在 narrate.py 接线（只作旁证展示、不计格不评分），
+# 从 UNWIRED_CORPORA 摘除——若本门 [8] 再报它 0 命中，说明接线回归，必须立刻修。
 UNWIRED_CORPORA = {
-    "nayin_quxiang.json":
-        "《五行精纪》纳音性质名（56 柱）数据已建、narrate/analyze 接线未落地，"
-        "缺口登记见 docs/audits/nayin_usage_audit.md（C 待接线）与 AGENTS.md §二 判据分层；"
-        "接线时须按「只作旁证展示、不计格不评分」落地",
+    # 当前无未接线语料（nayin_quxiang.json 已落地 2026-10-09f）。
+    # 新缺口登记格式："文件名": "接线方案出处 / 待办事项",
 }
 
 

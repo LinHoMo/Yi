@@ -116,6 +116,15 @@ def test_shi_hua_gui_requires_moving_and_officer_change():
         m.detect_direction_caps(no_gui, step2(el="土"), step4({}), "戌", "寅", []))
 
 
+def test_shi_hua_gui_fires_on_dong_ke_without_day_ke():
+    """条件是 (休囚∨月破) ∧ (日克∨动克)；测试动克分支——卯木动爻克辰土世。"""
+    lines = [yao(3, "辰", "妻财", world=True, moving=True, chg_branch="申", chg_rel="官鬼"),
+             yao(1, "卯", "兄弟", moving=True)]  # 卯木克辰土 → 动克
+    caps = m.detect_direction_caps(lines, step2(cat="妻财", el="土"),
+                                   step4({3: "化鬼"}), "戌", "子", [])
+    assert "liuyao.shi_hua_gui" in ids(caps), f"月破+动克应触发变鬼格：{caps}"
+
+
 # ───────────────────────── 4 元神无力 ─────────────────────────
 def test_yuan_shen_wu_li_fires_for_chronic_illness_only():
     lines = [yao(1, "卯", "父母", moving=True), yao(4, "子", "官鬼")]

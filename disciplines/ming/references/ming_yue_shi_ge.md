@@ -46,7 +46,7 @@
 - 源L281/L283：跨年同理，戌时/申时分属丁未年正月与丙午年十二月。
 
 **登记**：以上四例是 `ganzhi_calendar` 年界口径的**书源侧依据**，两引擎函数
-（`year_ganzhi_by_lichun` / `month_ganzhi`）本轮**零改动**。
+（`year_ganzhi_index`（气朔年界）/ `month_ganzhi`（月律建寅））本轮**零改动**。
 
 ## 二、五鼠遁（推时法，源 L297-L301）
 

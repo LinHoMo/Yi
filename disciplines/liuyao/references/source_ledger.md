@@ -85,7 +85,7 @@
 
 ### 这个缺口卡住的是一个已立项的外部验证集
 
-`data/cases/case_splits.json` 里**预留了 `bushi_zhengzong_holdout`，实测条目数为 0**
+`disciplines/liuyao/data/cases/case_splits.json` 里**预留了 `bushi_zhengzong_holdout`，实测条目数为 0**
 （同文件其余外部集：`wikisource_holdout` 44、`wikisource_direction` 38、
 `yingqi_holdout` 2、`huozhulin_holdout` 2；调参集 `tune` 20、`holdout` 12。
 数字为 2026-10-09 从 `case_splits.json` 现数——此前记 35/36 是落后两轮的陈值。

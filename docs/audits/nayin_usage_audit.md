@@ -67,6 +67,18 @@
 | 科 · split | baseline | NAYIN 全表伪值 | 差异 |
 |---|---|---|---|
 | liuyao tune strict | 96.8% | 96.8% | 0 |
+
+### 2026-10-09f 纳音取象接线
+
+**状态**：`nayin_quxiang.json`（《五行精纪》纳音性质名，56 柱 → 171 叶）已在 `disciplines/ming/scripts/narrate.py` 接线（2026-10-09f）。
+
+**接线方式**：narrate 层加载 → 每柱按干支查表得性质名 → 输出「纳音取象」段落。性质名只作物性分类标签旁证，不进 analyze/chart/pattern，不计格，不参与任何评分。
+
+**铁律一合规**：依然合规——纳音取象格层 §二「只作旁证展示」已落地，不在结构层计分；判据层（pattern.py 格局判定、evaluate.py 评分）零消费（C 类 0 命中，与接线前一致）。
+
+**金标准重基线**：机械层零漂移（1be8d5b579463a47）；措辞层哈希从 7d3ddb40bbc74f42 → 568e5bedc0d60500（因 narrate 输出新增纳音取象段，是有意变更，已在 golden.py 登记理由）。
+
+**回归保护**：`check.py` UNWIRED_CORPORA 已摘除该条目——后续再报它 0 命中即为回归。
 | liuyao tune legacy | 99.7% | 99.7% | 0 |
 | liuyao holdout strict | 90.2% | 90.2% | 0 |
 | liuyao holdout legacy | 92.9% | 92.9% | 0 |
@@ -92,8 +104,8 @@
 | ~~core/ziwei_tables.py:193-200~~ | 已移除 | A |
 | `ming/scripts/chart.py:51` `"nayin": nayin_of(gz)` | 四柱排盘**字段** | A |
 | `ming/scripts/render.py:28` | 排盘**表格渲染列** | A |
-| `disciplines/ming/scripts/pattern.py` — **查无 `nayin_quxiang`**（2026-10-08 复核：`grep -n nayin_quxiang pattern.py analyze.py` 零命中） | 《五行精纪》**性质名**数据已建（`disciplines/ming/data/nayin_quxiang.json`，56 柱，命定吉凶词在建表阶段整条弃用），但**接线未落地**；本行 2026-10-08 前写作「pattern.py:1300 已接」，属对代码的不实记载，已订正 | C（待接线） |
-| `disciplines/ming/scripts/analyze.py` — **查无纳音 verdicts 条目**（`:109-111` 实为十神组合/通关/病药） | 上一条的挂载点同样未落地；若接，按 AGENTS.md §判据分层只作**旁证展示、不计格不评分** | C（待接线） |
+| `disciplines/ming/scripts/pattern.py` — **查无 `nayin_quxiang`**（`grep -n nayin_quxiang pattern.py analyze.py` 零命中） | 《五行精纪》**性质名**数据已建（`disciplines/ming/data/nayin_quxiang.json`，56 柱）。**接线已落地 narrate.py**（2026-10-09f，只作物性标签旁证、不进 pattern/analyzer 以遵守铁律一）；pattern.py 按判据分层**不得消费**纳音性质名（不参与格局/喜用判定） | — **(合规 0 命中，非缺口)** |
+| `disciplines/ming/scripts/analyze.py` — **查无纳音 verdicts 条目** | 上一条已接 narrate.py；analyze.py 按 AGENTS.md §二 判据分层**不得消费**纳音性质名（不挂进评分） | — **(合规 0 命中，非缺口)** |
 | `disciplines/liuyao/scripts/classical_enhancements.py:103` `analyze_nayin` | 四柱纳音 + 日柱纳音五行，返回 `description` 字符串 | B |
 | `disciplines/liuyao/scripts/classical_analysis.py:160` | 把上条挂进 `advanced_analysis["nayin"]`（**只挂结构事实，不打分**） | B |
 | `disciplines/liuyao/scripts/liuyao_step5.py:271-275, 384, 1462` | 取 `nayin["description"]` → `nayin_desc` → 拼进**叙述文本尾巴** | B |
@@ -103,13 +115,11 @@
 ## 四、结论
 
 1. **纳音在本项目中只承担「排盘取值」与「叙述取象」两种角色**，
-   静态判据层消费 **0 处**（2026-10-09 复跑分类计数 **A 53／B 6／C 0**，另有注释/文档 14；
-   原记 A 80 是八科时点值。§三 逐消费点表里的 2 行标「C（待接线）」——那是**尚未落地的接线**，
-   不计入脚本的判据层命中，两个数不要混为一谈），与《神峰通考》的批判立场**不冲突**。
-   ⚠️ 2026-10-08 订正：原记 B 8 中有两行（命科 `nayin_quxiang` 的 pattern/analyze 接线）
-   系**对代码的不实记载**——`grep` 复核两处函数与 verdicts 条目均不存在，已改列 C（待接线），
-   数据文件本身确实已入库。计数随之 B 8→6、C 0→2；结论 1 的「静态判据层消费 0 处」不受影响。
-2. **动态反事实证明**：把纳音全表替换成伪值后，**六项读数逐项不变**（2026-10-09 复跑现值；原记「十二项」含三科已删读数），
+   静态判据层消费 **0 处**（2026-10-09f 复跑分类计数 **A 53／B 6／C 0**，另有注释/文档 14）；
+   §三 表中命科 `nayin_quxiang` 接线行（pattern/analyze）已**合规移出判据层**——
+   2026-10-09f 接线落地 narrate.py 后两处**保持 0 命中**（按 AGENTS.md §二 不得进判据层，
+   有意 0 命中非缺口）。与《神峰通考》的批判立场**不冲突**。
+2. **动态反事实证明**：把纳音全表替换成伪值后，**六项读数逐项不变**（2026-10-09f 复跑现值；原记「十二项」含三科已删读数），
    且注入已自证生效。这是「纳音不影响任何判定」的最强证据形式。
 3. **与本书立场的表述关系**（须写明，避免误读）：本项目**并未采纳**《神峰通考》
    「纳音为妄说」的**断语**，只是**不使用**纳音作判据——这是两件事：
@@ -118,7 +128,8 @@
    `symbols.NAYIN` 作为**排盘取象资料**保留，与本书立场并行不悖。
 4. **不采取的动作**（明确边界）：
    - **不删** `NAYIN` 表——现行消费方是**童子煞纳音落点、命宫/身宫与四柱排盘的纳音字段、
-     六爻 `analyze_nayin` 叙述**；原记此列为「紫微五行局、童子煞、纳音取象格三处」——
+     六爻 `analyze_nayin` 叙述、2026-10-09f 新增命科 narrate 纳音取象旁证段落**；
+     原记此列为「紫微五行局、童子煞、纳音取象格三处」——
      紫微斗数已随 2026-10-09 收缩删除，「纳音取象格」表**从未落地**（见 §三 订正行），
      两处指认均已去掉。但**保留表本身不变**：它是 §三 所列 A 类消费点的底层，
      且删表等于改动内核唯一真值源（`AGENTS.md` §二），需走 §四 全门槛；

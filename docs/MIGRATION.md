@@ -12,7 +12,7 @@
 | CLI 重设计 | 统一为 `yi <科> <段>` 子命令风格 | 旧参数调用需改 |
 | 模块路径 | liuyao 58 脚本合并至 ~32 个 | import 路径可能变化 |
 | 文档精简 | 从十余份减至 7 份核心文档 | 部分旧文档已归档 |
-| 学科范围 | meihua/xiaoliuren/zeji 归档至 `archive/` | 日常路径不可达 |
+| 学科范围 | meihua/xiaoliuren/zeji 已随 2026-10-09 两科收缩**删除**（非归档） | 日常路径不可达 |
 | 共享层撤除 | `disciplines/base/`（protocol/cli 基类）2026-10-01 删除（全仓零引用；契约靠 CONTRACT.md + 根 check.py 机械验收） | 新科接入方式见 §3.3 |
 | 内功命名拆分 | `ming_tables` 内的纳音/三合/星煞迁出 | 依赖 ming_tables 中这些表的代码需改 import |
 
@@ -144,7 +144,7 @@
 
 1. `mkdir -p disciplines/xxx/{scripts,data,references,tools}`
 2. 编写 `disciplines/xxx/SKILL.md`——只写该科内容，引用 `AGENTS.md` 不复制
-3. 编写四段 CLI（`chart.py` / `analyze.py` / `narrate.py` / `render.py`），参考 `disciplines/meihua/scripts/chart.py` 的 argparse 范式
+3. 编写四段 CLI（`chart.py` / `analyze.py` / `narrate.py` / `render.py`），参考 `disciplines/liuyao/scripts/chart.py` 的 argparse 范式
 4. 实现四段逻辑，每个判据给出古籍出处
 5. 准备案例集：至少 10 例 `tune` + 5 例**未参与调参**的 `holdout`
 6. 复用 `yishu_core.eval`，禁止另写评分器
@@ -162,4 +162,4 @@
 | 命科从格判定 | tentative，有意保持（AGENTS.md 铁律三） |
 | 报告「格局详释」依赖案例触发 | 非缺陷 |
 | 断语残句 | 已确认多为 argparse help/夹具文本，暂不动 |
-| 五科全通路 | meihua/xiaoliuren/zeji 已归档于 `archive/`，需时还原 |
+| 五科全通路 | meihua/xiaoliuren/zeji 已随 2026-10-09 两科收缩**删除**（仅历史），需时从历史还原 |

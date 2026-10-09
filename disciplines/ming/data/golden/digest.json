@@ -4,7 +4,7 @@
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
   "digest": "1be8d5b579463a47",
-  "narrate_digest": "7d3ddb40bbc74f42",
+  "narrate_digest": "568e5bedc0d60500",
   "drift_log": [
     {
       "from": "57dc7e890af222fa",
@@ -20,12 +20,6 @@
     }
   ],
   "narrate_drift_log": [
-    {
-      "from": "183589ee3d03af53",
-      "to": "0d70d5efb0102b47",
-      "date": "2026-10-01",
-      "reason": "命科加法：小运口径句拆分（措辞层微调，机械层零漂移）"
-    },
     {
       "from": "0d70d5efb0102b47",
       "to": "f43e0cb70bcd5340",
@@ -139,6 +133,12 @@
       "to": "7d3ddb40bbc74f42",
       "date": "2026-10-09",
       "reason": "2026-10-09 命科批次有意订正 narrate 尾注口径（原句「格局从格仅作 tentative 标注」落后于引擎实况：analyze 现已按《滴天髓》从化论出 真从/假从/从旺/从强/从气/从势 分级，灰区例才保留 tentative 复核位）；机械层零漂移，本次仅措辞层。同时内核 JIE_SHA/JIN_YU 订正未触及这 6 例盘（golden 自报「机械层零漂移」即为证据）。"
+    },
+    {
+      "from": "7d3ddb40bbc74f42",
+      "to": "568e5bedc0d60500",
+      "date": "2026-10-09",
+      "reason": "narrate 接线纳音取象旁证（nayin_quxiang.json→narrate 层，只作物性标签不计格不评分）；机械层零漂移 1be8d5b579463a47；措辞层从缺→有即变化"
     }
   ]
 }

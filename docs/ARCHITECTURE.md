@@ -71,7 +71,7 @@ Yi/
 │           └── html.py         # HTML/MD 报告模板
 │
 ├── disciplines/                 # 两科（ming / liuyao）；各科 scripts/ **同名**（每科都有 chart.py），浏览器内隔离见 web/
-│   ├── liuyao/                  # 六爻纳甲（卜科）——四段入口 + 域模块，共 37 个 scripts
+│   ├── liuyao/                  # 六爻纳甲（卜科）——四段入口 + 域模块，共 43 个 *.py（docblock 内部 __init__ 不计）
 │   │   ├── SKILL.md
 │   │   ├── scripts/             # 四段入口 chart/analyze/narrate/render.py
 │   │   │   ├── liuyao_step{1-5}.py        # 主流程（装卦→分析→应期）
@@ -283,8 +283,9 @@ LLM 推断永远不进 Evidence；没有评测覆盖的证据显式标 `unassess
 ```
 disciplines/<科> → core/yishu_core            # 学科只能 import 内核
 synthesis        → disciplines 的 schema       # 合参只依赖输出契约，不依赖其内部实现
-cli/main.py      → core/yishu_core.execution.YiRuntime  # 统一 CLI 走 Runtime
-web/engine_runtime.py → tools/report.py        # 浏览器侧同进程跑同一份引擎
+cli/main.py      → disciplines/<科>（cast/chart/analyze/narrate/render 走 subprocess）
+                   execute 子命令 → core/yishu_core.execution.YiRuntime
+web/engine_runtime.py → core/yishu_core.execution.registry  # 浏览器侧通过注册表导入学科模块（非 import tools/report.py）
 ```
 
 学科之间禁止互相 import（违反此方向视为缺陷，评审直接驳回）。
