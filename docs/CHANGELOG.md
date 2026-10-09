@@ -223,6 +223,14 @@ DEEP-DIVE-PLAN §三/§四、MIGRATION、YI-PLAN、OPT 台账按两科口径重�
 验收：`check_symbol_claims` 扫 64 份文档、符号级指认 **58 处全解析、0 未解析**；
 `check_doc_deadlinks` 真死链 0；`check_source_readings` 全绿；`tools/check.py` 默认门 EXIT=0。
 
+同批又扫了一遍"谁在调用这些工具"（`verify_web_parity` 空壳能活这么久，就是因为没人问过这个）：
+`check.py` 内 15 个门函数**无一漏挂**、`tools/` 29 个脚本**无孤儿**；但 6 个"只被文档提到"的
+人敲入口里查出 `doc_html.py:30` 仍指 `docs/NEW-DISCIPLINES.md`（实存 `archive/NEW-DISCIPLINES.md`），
+且它对不存在目标的处理是**打印「× 跳过」后 return 0**——把人敲的入口做成假绿，违 §三
+「失败退出码非 0」。修法：改指实存路径 + 新增 `--check`（只验在位与可渲染，不落盘）
++ 缺目标即退 1；挂成常驻门 **`[1b-4]`**，其 `--selftest` 挂在 `[2b]`
+（正例 6 条 PLAN_DOCS 全在位、负例"点名不存在仍退 0"必须被抓，口令 `SELFTEST PASS`）。
+
 #### 十一、本地 git 历史重写（远端已删除）
 
 远端仓库已由人工删除，按指令把本地历史重建为单根提交 `677878a`（旧 226 个提交完整保留在

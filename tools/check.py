@@ -1451,6 +1451,15 @@ def main() -> int:
              "文档符号级指认均可解析到真实符号（AST 判，删除公告类语境按窗口跳过）",
              expect=r"CHECK PASS")
 
+    # [1b-4] 文档 HTML 渲染在位：PLAN_DOCS 清单是"人敲一次就废"的典型——
+    # 里面躺着死路径（docs/NEW-DISCIPLINES.md 实测早已迁 archive/）而旧实现
+    # 只打印「× 跳过（不存在）」再 return 0，等于把人敲的入口做成假绿。
+    print("\n[1b-4] 文档渲染清单在位（PLAN_DOCS 全部存在且可渲染）")
+    gate_sub("doc_html",
+             ["tools/doc_html.py", "--check", "--all-plan"],
+             "文档 HTML 渲染清单（规划类文档全部在位且跑得通）",
+             expect=r"DOC-HTML CHECK PASS")
+
     # 黑箱取证门：不看代码长什么样，只看用户读到什么（verdict_audit.py 的说明）
     # 比上面的文本粗筛准——粗筛会把 docstring/help 当成断语，取证门不会漏真断语。
     # 要跑 len(verdict_audit.CASES) 份真实报告（2026-10-09 起从常量现算，见下面 label），
@@ -1596,6 +1605,9 @@ def main() -> int:
          r"SELFTEST PASS"),
         ("gate_selftest_doc_deadlinks", ["tools/check_doc_deadlinks.py", "--selftest"],
          "文档死链门自证（裸引用必咬、语境豁免精准、docs 子目录递归生效、未入库目标判红）",
+         r"SELFTEST PASS"),
+        ("gate_selftest_doc_html", ["tools/doc_html.py", "--selftest"],
+         "文档渲染清单门自证（PLAN_DOCS 死路径、点名不存在仍退 0 两种都必须被抓）",
          r"SELFTEST PASS"),
         ("gate_selftest_symbol_claims", ["tools/check_symbol_claims.py", "--selftest"],
          "符号指认门自证（临时合成文档注入 1 真 1 假指认：假的必判红、真的不误报）",
