@@ -7,7 +7,7 @@
   },
   "cases": [
     {
-      "id": "HZL001",
+      "id": "HZC001",
       "source": "《火珠林》纳音章·占葬地例",
       "topic": "坟茔",
       "question": "占葬地",
@@ -42,7 +42,7 @@
       "validation_v2": "partial"
     },
     {
-      "id": "HZL002",
+      "id": "HZC002",
       "source": "《火珠林》互换干合章·占雨例",
       "topic": "天时",
       "question": "六月甲辰日占雨",
@@ -79,7 +79,7 @@
       "validation_v2": "fail"
     },
     {
-      "id": "HZL003",
+      "id": "HZC003",
       "source": "《火珠林》互换干合章·占阴晴例",
       "topic": "天时",
       "question": "丁酉日占阴晴",

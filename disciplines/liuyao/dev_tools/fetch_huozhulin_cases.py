@@ -799,7 +799,7 @@ def main() -> int:
             expected["spatial_detail"] = c["full_text_excerpt"][:120]
 
         return {
-            "id": f"HZL{idx:03d}",
+            "id": f"HZQ{idx:03d}",
             "source": f"《火珠林》（{_section_to_source(c['section'])}）",
             "topic": c["topic"],
             "question": c["topic"],

@@ -132,6 +132,27 @@ BAD_WORDS = ("死", "卒", "亡", "敗", "凶", "獄", "革職", "降級", "耗"
 # 词条只留原文里真的存在的字（用 `--report` 的覆盖体检核过）：
 # 上面那批简化字在本源出现 0 次，留着只会让人以为"两边都照顾到了"。
 GOOD_WORDS += ("得", "中")
+# 否定前置词：文言的吉凶词大量以"不/無/難/未…"否定形式出现，`k in clause` 会把
+# 「沒有中榜」「功名不必生」「不獨不晴」读成吉证——方向记反的病灶之一。
+NEGATORS = frozenset("不無非難未莫勿豈")
+# 两字否定：「沒有中榜」里紧邻「中」的是「有」，单字表接不住，必须整词判。
+NEG_TWO = frozenset({"沒有"})
+# 否定词与吉凶词之间的虚词（「不必生」「豈得」）：不 只允许隔这一个虚词，
+# 隔两字就不算了——再放宽会把「未必」之外的实义短语误当否定。
+NEG_ADVERB = frozenset("必須獨惟但特亦況豈更重")
+
+
+def _is_negated(clause: str, at: int) -> bool:
+    """吉凶词在 clause[at] 处是否被前置否定。"""
+    pre = clause[max(0, at - 2):at]
+    if not pre:
+        return False
+    if pre[-1:] in NEGATORS or pre in NEG_TWO:
+        return True
+    return len(pre) == 2 and pre[0] in NEGATORS and pre[1] in NEG_ADVERB
+# 锚点模式：先「果/其驗/驗得」，再退到「應…」短句。定在模块级，
+# 免得每次调用都 re.compile 一遍、也让自证能直接引用同一个对象。
+ANCHOR_PATTERNS = (OUTCOME_ANCHOR, re.compile(r"應[^。\n]{0,34}"))
 # 古籍点用神的三种写法："以父母爲用"、"父母爲用神"、"妻占夫官爲用神"。
 # 这一维原来一律抽不到 → 37 例全记 N/A，等于放过了 M2.1 最该被测的地方。
 USE_GOD = re.compile(r"(?:以\s*)?(兄弟|妻財|財|官鬼|父母|子孫)(?:爻)?\s*(?:為|爲|为)\s*用神?")
@@ -291,6 +312,64 @@ def _clip(text: str, limit: int = 600) -> str:
     return text[:limit]
 
 
+def _mangle(text: str) -> tuple[str, list[int]]:
+    """把「後果/后果」拆成「後 果」，让锚词「果」接住文言的"後來果然"；同时返回
+    扫描位→原串位的索引映射。
+
+    ⚠️ 改写只发生在**扫描副本**上。曾经把它直接写进 `text` 再把命中串当产物，
+    结果 expected.detail 里出现書源没有的空格（实测 WSD024「一定不得﹐後 果另選別人」）
+    ——扫描用的规范化不许进照录串。
+    """
+    chars: list[str] = []
+    idx: list[int] = []
+    i = 0
+    while i < len(text):
+        pair = text[i:i + 2]
+        if pair in ("後果", "后果"):
+            chars += [pair[0], " ", pair[1]]
+            idx += [i, i, i + 1]
+            i += 2
+        else:
+            chars.append(text[i])
+            idx.append(i)
+            i += 1
+    return "".join(chars), idx
+
+
+def _hits(clause: str, words: tuple[str, ...]) -> list[str]:
+    """数命中词，跳过否定前置的：「沒有中榜」「功名不必生」「不獨不晴」都不是吉证。
+
+    旧实现用 `k in clause`，于是 WSD006 的「寅月沒有中榜」被当成「中」＝吉，
+    而書源同句明写「命限危功名不必生矣」——方向就是这么记反的。
+    """
+    out = []
+    for w in words:
+        for m in re.finditer(re.escape(w), clause):
+            if _is_negated(clause, m.start()):
+                continue
+            out.append(w)
+            break
+    return out
+
+
+def _first_clause(scan: str) -> tuple[str, int, int]:
+    """取**第一个**能给出可检应期的锚句；一个都没有时退到第一个锚句。
+
+    旧实现 `clause` 每个匹配都覆盖一次、外层又不 break，最终留下的是窗口里
+    **最后**一句锚——案例自身斷曰没有可检应期时，就会漂到后文通论的「果然顚倒昏迷…」
+    上去（实测 WSD016/WSD022 的 detail 取自下一段通论，不是本案斷曰）。
+    """
+    fallback: tuple[str, int, int] = ("", -1, -1)
+    for pat in ANCHOR_PATTERNS:
+        for mm in pat.finditer(scan):
+            c = mm.group(0)
+            if _yingqi_of(c):
+                return c, mm.start(), mm.end()
+            if fallback[1] < 0:
+                fallback = (c, mm.start(), mm.end())
+    return fallback
+
+
 def outcome_of(text: str, verdict_zone: str = "") -> tuple[str | None, str | None, str, str]:
     """取 (吉凶, 应验干支, 用神六亲, 原句)。
 
@@ -299,19 +378,18 @@ def outcome_of(text: str, verdict_zone: str = "") -> tuple[str | None, str | Non
     ——分不清哪个是验期，留着只是给引擎一个假的对照。
     吉凶按验句里的 outcome 词判（愈／到／中試 对 死／敗／下獄）；
     两向词同现即判为不明，返回 None，调用方据此不入六维评分集。
+    给了 verdict_zone 时只在区内扫描，避免判据来自案例正文之外。
     """
-    clause = ""
-    text = text.replace("後果", "後 果").replace("后果", "后 果")   # 别让"後果"两字被当一词跳过
-    for pat in (OUTCOME_ANCHOR, re.compile(r"應[^。\n]{0,34}")):
-        # 逐锚点试，取第一个能给出可检应期的：先出现的"果﹐…"若是按语的果，
-        # 后面那句"果於X日"才是验句。
-        for mm in pat.finditer(text):
-            clause = mm.group(0)
-            if _yingqi_of(clause):
-                break
-    yq = _yingqi_of(clause)
-    good = any(k in clause for k in GOOD_WORDS)
-    bad = any(k in clause for k in BAD_WORDS)
+    src = text
+    if verdict_zone and verdict_zone in text:
+        z = text.find(verdict_zone)
+        src = text[z:z + len(verdict_zone)]
+    scan, idx = _mangle(src)
+    clause_s, s, e = _first_clause(scan)
+    clause = src[idx[s]:idx[e - 1] + 1] if s >= 0 else ""
+    yq = _yingqi_of(clause) or _yingqi_of(clause_s)
+    good = _hits(clause, GOOD_WORDS)
+    bad = _hits(clause, BAD_WORDS)
     verdict = "吉" if good and not bad else ("凶" if bad and not good else None)
     ug = USE_GOD.search(text) or USE_GOD_SHORT.search(text)
     use_god = ""
@@ -338,6 +416,66 @@ def _yingqi_of(clause: str) -> str | None:
     return uniq[0] if len(uniq) == 1 else None
 
 
+def run_selftest() -> int:
+    """负例自证：四条都是本轮在冻结语料上真实复现过的病灶，改回旧写法必须变红。"""
+    neg = (
+        ("空格泄漏进照录串",
+         "申月己亥日占缺得否得井之節卦\n斷曰﹕官生應爻﹐一定不得﹐後果另選別人。",
+         "",
+         lambda v, y, u, c: "後 果" in c,
+         "扫描用的「後果→後 果」改写跑进了产物串（违反 §二 照录不改字；实测 WSD024）"),
+        ("否定盲区把凶读成吉",
+         "戌月甲寅日占候選何時得缺得益變騫\n斷曰﹕世爻變鬼﹐果然在第二年寅月沒有中榜﹐"
+         "命限危功名不必生矣。",
+         "",
+         lambda v, y, u, c: v == "吉",
+         "「沒有中榜」的「中」被当吉证（旧实现 `k in clause`；实测 WSD006 记成吉）"),
+        ("锚句漂到案外通论",
+         "酉月辛未日占終身財福得頤卦\n斷曰﹕財爻持世﹐難許成家﹐果主孤貧﹐東奔西走。"
+         "\n身入墓鄕﹐到老求謀多淚。不逢沖墓之年﹐果然顚倒昏迷﹐如苗逢雨。",
+         "",
+         lambda v, y, u, c: "顚倒昏迷" in c,
+         "clause 被窗口里最后一次匹配覆盖，取了后文通论（实测 18/82 案 detail 在本案斷曰之外）"),
+        ("给了判定区却仍越出区外",
+         "酉月辛未日占終身財福得頤卦\n斷曰﹕財爻持世﹐難許成家﹐東奔西走。\n"
+         "身入墓鄕﹐不逢沖墓之年﹐果然顚倒昏迷。",
+         "斷曰﹕財爻持世﹐難許成家﹐東奔西走。",
+         lambda v, y, u, c: "顚倒昏迷" in c or "墓鄕" in c,
+         "verdict_zone 形同虚设：本案斷曰里没有锚词，宽窗会一路抓进后文通论，"
+         "方向与照录串都取自案例之外"),
+    )
+    pos = (
+        ("应期抽取未被改坏",
+         "未月辛丑日占兄弟得旣濟變革\n斷曰﹕旬空逢沖﹐果於甲戌日出空而會。",
+         "",
+         lambda v, y, u, c: y == "戌日" and "果於甲戌日" in c),
+        ("有可检应期时仍优先取它，不是取第一句",
+         "卯月乙丑日占婚\n斷曰﹕果有阻隔。此後果然不遂﹐期在甲申日。",
+         "",
+         lambda v, y, u, c: y == "申日"),
+    )
+    bad: list[str] = []
+    for name, text, zone, is_defect, why in neg:
+        got = outcome_of(text, verdict_zone=zone)
+        if is_defect(*got):
+            bad.append(f"负例「{name}」仍复现：verdict={got[0]!r} 应期={got[1]!r} "
+                       f"clause={got[3]!r} —— {why}")
+    for name, text, zone, must_hold in pos:
+        got = outcome_of(text, verdict_zone=zone)
+        if not must_hold(*got):
+            bad.append(f"正例「{name}」未成立：{got} —— 修复把可用行为一起改坏了")
+    print(f"抽取器自证：负例 {len(neg)} 条、正例 {len(pos)} 条")
+    for name, *_ in neg:
+        print(f"  · 负例 {name}")
+    if bad:
+        print("× 自证失败：")
+        for b in bad:
+            print("  -", b)
+        return 1
+    print(f"SELFTEST PASS（正例 {len(pos)} 例 + 负例 {len(neg)} 例）")
+    return 0
+
+
 def main() -> int:
     from yishu_core.runtime import force_utf8_stdio
     force_utf8_stdio()
@@ -346,7 +484,12 @@ def main() -> int:
     ap.add_argument("--report", action="store_true")
     ap.add_argument("--show", type=int, default=0, help="报告里附带多少条剔除样本")
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--selftest", action="store_true",
+                    help="抽取器负例自证（空格泄漏／否定盲区／锚句漂移三条必须被抓；"
+                         "纯内存文本，不联网、不读写语料）")
     args = ap.parse_args()
+    if args.selftest:
+        return run_selftest()
 
     SOURCES.mkdir(parents=True, exist_ok=True)
     if args.no_fetch and RAW.exists():
@@ -523,6 +666,27 @@ def main() -> int:
         # 基准错比基准缺更坏：它会把引擎判成"错"。
         duan = re.split(r"[。，,﹐]?果|其驗|後果", after)[0][:220]
         verdict, yq, _ig, clause = outcome_of(m.group(0) + after)
+        # 方向与照录串只认**本案判定段**（爻图之后第一个非空行＝書源的斷曰整行）。
+        # 宽窗留给应期抽取，但基准串不许取到后文通论：实测 18/82 案的 detail
+        # 落在本案斷曰之外（WSD016 取到下一段「身入墓鄕…果然顚倒昏迷」），
+        # 而通论里的"果然"讲的不是本案。
+        judge = ""
+        for i in range(after_idx, min(nxt, len(segments))):
+            if i in row_idx:
+                continue
+            s = segments[i][1].strip()
+            if s:
+                judge = s
+                break
+        if judge:
+            zv, _zy, _zu, zc = outcome_of(m.group(0) + after, verdict_zone=judge)
+            if zc:
+                verdict, clause = zv, zc
+            else:
+                # 判定段里没有锚词＝本案方向不可从斷曰判定：记"不明"（不入评分集），
+                # detail 退回本案判定段本身。旧行为是留下宽窗里**最后**一条锚句，
+                # 等于拿别人的话当本例基准——基准错比基准缺更坏。
+                verdict, clause = None, judge[:160]
         _, _, use_god, _ = outcome_of(duan, verdict_zone=duan)
         rel_yq = ""
         if not yq:

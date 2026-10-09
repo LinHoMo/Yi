@@ -545,9 +545,11 @@ def report(res: dict) -> None:
 def main() -> int:
     force_utf8_stdio()
     ap = argparse.ArgumentParser(description="六爻古籍案例对齐评分（非现实预测命中率）")
+    # huozhulin_qualitative 已从选项中删除：该文件 _meta 自述「仅参考，不参与评分」，
+    # 曾与 huozhulin_holdout 共用 HZL* ID 被误登记成 split（撤除理由见 case_splits 注释）。
     ap.add_argument("--split", choices=["tune", "holdout", "yingqi_holdout",
                                         "wikisource_holdout", "wikisource_direction",
-                                        "huozhulin_holdout", "huozhulin_qualitative",
+                                        "huozhulin_holdout",
                                         "suigui_holdout", "bushi_zhengzong_holdout", "all"],
                     default="all")
     ap.add_argument("--ids", nargs="*", help="指定案例 ID，优先于 --split")

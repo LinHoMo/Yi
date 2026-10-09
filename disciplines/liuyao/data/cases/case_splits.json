@@ -178,13 +178,6 @@
     "SG001",
     "SG002"
   ],
-  "huozhulin_qualitative": [
-    "HZL001",
-    "HZL002",
-    "HZL003",
-    "HZL004",
-    "HZL005"
-  ],
   "bushi_zhengzong_holdout": [],
   "too_weak": [
     {
@@ -208,5 +201,5 @@
       "reason": "维基文库主搜索未命中；术数 Category 下仅4条目不含卜筮全书；shidianguji.com 有内容但无结构化 API"
     }
   ],
-  "note_externals": "yingqi_holdout/wikisource_holdout/wikisource_direction/huozhulin_holdout/suigui_holdout/bushi_zhengzong_holdout 均为外部验证集，永不参与调参；too_weak 为探测后<5 例或不存在之来源，不计入任何集合"
+  "note_externals": "yingqi_holdout/wikisource_holdout/wikisource_direction/huozhulin_holdout/suigui_holdout/bushi_zhengzong_holdout 均为外部验证集，永不参与调参；too_weak 为探测后<5 例或不存在之来源，不计入任何集合。huozhulin_qualitative.json（HZQ*）与 huozhulin_candidates.json（HZC*）按其自身 _meta 是**仅参考、不参与评分**的定性/候选集，过去被误登记成 split 且与 huozhulin_holdout 共用 HZL* ID，导致 --split huozhulin_qualitative 实际拿 holdout 的盘面跑分（假基准，2026-10-09 撤除）"
 }

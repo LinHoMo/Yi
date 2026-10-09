@@ -148,20 +148,37 @@ def load_cases() -> list[dict]:
 
     外部集与 tune/holdout 分开登记在 case_splits.json，永不参与调参；
     评分时按 split 取子集，两集合分别出分（AGENTS.md §四.1）。
+
+    ⚠️ 跨文件重复 ID 直接报错，不像以前那样"先到先留、后到静默丢弃"：
+    三个火珠林文件曾各自从 HZL001 起编号，于是 `--split huozhulin_qualitative`
+    解析到的是 huozhulin_cases 的盘面（乾之大壮）而不是它自己的（遁之姤），
+    报出来的分是拿 A 案盘面套 B 案基准的假基准（实测 n=2、13.1%）。
     """
-    cases = json.loads(CASES.read_text(encoding="utf-8"))["cases"]
-    seen = {c["id"] for c in cases}
-    for extra in sorted((ROOT / "data" / "cases").glob("*_cases.json")):
-        if extra.name == CASES.name:
-            continue
+    files = [CASES] + [p for p in sorted((ROOT / "data" / "cases").glob("*_cases.json"))
+                       if p.name != CASES.name]
+    cases: list[dict] = []
+    by_id: dict[str, str] = {}
+    dup: dict[str, list[str]] = {}
+    for f in files:
         try:
-            data = json.loads(extra.read_text(encoding="utf-8"))
-        except (json.JSONDecodeError, OSError):
-            continue
-        for c in data.get("cases", []):
-            if c.get("id") and c["id"] not in seen:
-                seen.add(c["id"])
-                cases.append(c)
+            data = json.loads(f.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError) as e:
+            raise SystemExit(f"案例文件读取失败 {f}: {e}")
+        for c in (data.get("cases", []) if isinstance(data, dict) else data):
+            cid = c.get("id")
+            if not cid:
+                continue
+            if cid in by_id:
+                dup.setdefault(cid, [by_id[cid]]).append(f.name)
+                continue
+            by_id[cid] = f.name
+            cases.append(c)
+    if dup:
+        detail = "；".join(f"{k}（{'/'.join(v)}）" for k, v in sorted(dup.items()))
+        raise SystemExit(
+            f"案例 ID 跨文件重复：{detail}\n"
+            "同一 ID 指向两份不同盘面时，评分会拿一份的盘面套另一份的基准。"
+            "请给参考集/候选集换独立前缀（如 HZQ/HZC），不要靠加载顺序消歧。")
     return cases
 
 
