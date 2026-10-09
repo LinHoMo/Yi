@@ -40,9 +40,9 @@
 
 | OPT | 落档路径 | 书源 | 策略 |
 |-----|----------|------|------|
-| OPT-yiin_dz-01 身爻启用 | `classical_enhancements.py:analyze_shen_yao_activation` ＋ narrate 钩子 | 《易隐》L217 | 纯结构判定，不打分 |
+| OPT-yiin_dz-01 身爻启用 | `classical_enhancements_shen_yao.py:analyze_shen_yao_activation` ＋ narrate 钩子 | 《易隐》L217 | 纯结构判定，不打分 |
 | OPT-yimao_dz-02 助鬼伤身（易冒版） | `classical_enhancements_yimao_zhugui.py:analyze_zhu_gui_shang_shen_yimao` ＋ narrate 钩子 | 《易冒》L541/L542/L547 | 双修正＋用官豁免，不打分 |
-| OPT-zengshan_buyi_dz-03 忧解忧疑 | `classical_enhancements.py:analyze_you_jie` ＋ narrate 钩子 | 《增刪卜易》L16/L419/L529 | 域限定反转，不打分 |
+| OPT-zengshan_buyi_dz-03 忧解忧疑 | `classical_enhancements_shen_yao.py:analyze_you_jie` ＋ narrate 钩子 | 《增刪卜易》L16/L419/L529 | 域限定反转，不打分 |
 | OPT-zengshan_buyi_dz-04 野鹤反法 | `liuyao_step2.py:_detect_wild_crane_reverse` ＋ narrate 钩子 | 《增刪卜易》L1396 | 只检测不改用神，不打分 |
 
 ### 数据层同步

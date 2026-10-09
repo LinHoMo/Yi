@@ -1442,6 +1442,15 @@ def main() -> int:
              "文档死链（活跃文档内仓库路径引用均可解析、且引用目标已入库）",
              expect=r"扫描活跃文档 [1-9]\d* 份")
 
+    # [1b-3] 符号级指认回验：`[1b-2]` 只判「路径是否存在」，看不见
+    # 「文档写 `mod.py::NAME`，而那个符号从来不存在」——AGENTS.md §二 曾把
+    # `ming_tables.py::NAYIN_XIANGGE` 当已落实实体指认（实测全仓从未存在）。
+    print("\n[1b-3] 文档符号级指认回验（路径存在≠符号存在）")
+    gate_sub("symbol_claims",
+             ["tools/check_symbol_claims.py"],
+             "文档符号级指认均可解析到真实符号（AST 判，删除公告类语境按窗口跳过）",
+             expect=r"CHECK PASS")
+
     # 黑箱取证门：不看代码长什么样，只看用户读到什么（verdict_audit.py 的说明）
     # 比上面的文本粗筛准——粗筛会把 docstring/help 当成断语，取证门不会漏真断语。
     # 要跑 len(verdict_audit.CASES) 份真实报告（2026-10-09 起从常量现算，见下面 label），
@@ -1587,6 +1596,9 @@ def main() -> int:
          r"SELFTEST PASS"),
         ("gate_selftest_doc_deadlinks", ["tools/check_doc_deadlinks.py", "--selftest"],
          "文档死链门自证（裸引用必咬、语境豁免精准、docs 子目录递归生效、未入库目标判红）",
+         r"SELFTEST PASS"),
+        ("gate_selftest_symbol_claims", ["tools/check_symbol_claims.py", "--selftest"],
+         "符号指认门自证（临时合成文档注入 1 真 1 假指认：假的必判红、真的不误报）",
          r"SELFTEST PASS"),
         ("gate_selftest_truth_source", ["tests/test_gate_truth_source.py"],
          "内核真值源门自证（反射名单/tuple/注解/拆串拼接/内容四档，含不误报侧）",

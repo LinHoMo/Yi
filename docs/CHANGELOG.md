@@ -23,7 +23,7 @@
 - **删除只为已删六科存活的内核死码**：`core/yishu_core/lunar.py`（零消费方，且其闰月被排在
   本月之前，与朔望月事实相反）、`symbols.XIAN_TIAN_TRIGRAM_NUMBERS`/`NUMBER_TO_TRIGRAM`、
   `symbols.WANG_XIANG_XIU_QIU_SI`/`wangxiangxiuqiusi()`；`__init__.py` 头注与 `__all__` 同步收。
-  依 §二「其他术数已从产品能力面移除」与 §三「不写占位实现」。`shensha.TIAN_DE/YUE_DE` 暂留待裁定。
+  依 §二「其他术数已从产品能力面移除」与 §三「不写占位实现」。`shensha.TIAN_DE/YUE_DE` 及其访问器亦于同轮删除（见本节末「已一并清掉」段）。
 - **`execution/schemas.py::RequestEnvelope`** 的 8 个已删科字段删除，与 `report.request.FIELD_USAGE`
   对齐并写明"字段宇宙唯一真值源在 request"（此前是第二份副本）；`tests/test_execution` 21 passed。
 - **`ming_tables.py` docstring 真死链** `disciplines/ming/references/rules.md` 改指实存文件
@@ -191,29 +191,72 @@ DEEP-DIVE-PLAN §三/§四、MIGRATION、YI-PLAN、OPT 台账按两科口径重�
    `check_doc_deadlinks.py` EXIT=0、`check.py --full` **EXIT=0**——即"全绿"不再依赖任何
    只存在于本机的文件。
 
-#### 十、未尽项（不掩盖）
+#### 十、深度检查：符号级指认回验固化成门 `[1b-3]`
 
-1. **改动尚未 commit/push**（按人工决定权在人的纪律）。当前工作树偏离量以
-   `python tools/version_gate.py` 实测为准，本文件不抄快照。
-2. **`data/sources/` 三本已删科书源**（`mei-hua-yi-shu`/`ling-qi-jing`/`liu-ren-zhi-nan`
-   的 wikitext + provenance）仍未删——`crosscheck_source.py` 换料已落地，删除可做，但属不可逆
-   资料动作，留待人工点头。
-3. **两条待裁定的数据/口径疑点**（一律**没有**按读数改动）：
-   ① 六爻批次上报某例 `expected` 与书文判语疑异（我按现有线索未定位到具体例，
-   疑点在案）；② `data/sources/opt_status.json` 有 4 条 id 跨 done/archived/rejected 重复登记
-   （三数不可相加），归属需人工裁定。
+重写后又做了一轮"文档指认 vs 代码实体"的深查，并把检测器**从一次性脚本升级成常驻门**
+`tools/check_symbol_claims.py`（挂在 `[1b-3]`，自证挂在 `[2b]`：临时合成文档注入 1 真 1 假指认，
+假的必判红、真的不误报，`SELFTEST PASS` 为口令）。AST 收名含 def/class/模块级赋值/注解赋值/
+**`x["key"] =` 下标键**/dict 键/导入名；语境豁免按**上下各两行**窗口（单行判定会把删除公告误判成
+现存指认——v1 实踩过）；`docs/CHANGELOG.md` 只查本轮条目（按日登记的台账描述当时实体是它的职责）。
+
+本轮深查抓到并修掉的 8 处（多数是**我自己删东西删出来的**，正是"删除无派生清单"的反噬）：
+- `docs/source-readings/yuzhao_dingzhen_dz.md:125`：仍写「**已落实**…函数已落 pattern.py」，
+  而 `si_yang_si_yin_tag` 已因全仓零消费方删除 → 改「未落实（2026-10-09 撤销）」并写明重接路径。
+- `docs/source-readings/huangji_jingshi_shu_dz.md:313/314/363`：「与现有**八科**共用的底层」
+  「`symbols.py:415` 有 `XIAN_TIAN_TRIGRAM_NUMBERS`」及 OPT-05「与 core 先天八卦数表口径分离」
+  → 三处改标（该表已删；OPT-05 前提消失记作废，恢复原文可用 `git show history/pre-squash-2026-10-09:…`）。
+- `docs/audits/yimao_sanhe_riqi_audit.md:156/158`：把月建「旺相休囚死五法」记作 **已归**，
+  而 `wangxiangxiuqiusi()` 全仓零消费方（本轮删除）——**改判为「未归」并写明原记为不实记载**；
+  `docs/source-readings/yimao_dz.md:221` 的「逐项归位」一说同批撤回。
+- `disciplines/liuyao/docs/CHANGELOG.md:43/45`：`classical_enhancements.py:analyze_shen_yao_activation`
+  /`:analyze_you_jie` 两处**从一开始就写错了模块名**（旧历史 `107d1bb` 实证两函数生在卫星模块
+  `classical_enhancements_shen_yao.py`，从未在主模块定义过）→ 改指实存模块。
+- 同批修掉我自己本轮引入的两处工具缺陷：`crosscheck_source.py --selftest` 定义了
+  `SELFTEST_NEG_PAIR` 却仍写死 `mei-hua-yi-shu.wikitext.txt` 当负例底料（**换料只做了一半**，
+  真删梅花资料就会把 `[2b]` 做红）；`docs/CHANGELOG.md` 里「`TIAN_DE/YUE_DE` 暂留待裁定」
+  与后续"已删除"动作自相矛盾。
+- 我的解析器自身先错过两次：两个 `elif isinstance(node, ast.Assign)` 让下标键分支永不触发；
+  临时文档走 `relative_to` 抛 ValueError。修后才敢拿它当判据。
+- 删除三本已删科书源（`mei-hua-yi-shu`/`ling-qi-jing`/`liu-ren-zhi-nan` 的 wikitext+provenance，
+  6 个跟踪文件）：自证在删除**前后都过**，证明清理不再被门禁反向锁死；`wikitext` 由 12 本降至 9 本。
+
+验收：`check_symbol_claims` 扫 64 份文档、符号级指认 **58 处全解析、0 未解析**；
+`check_doc_deadlinks` 真死链 0；`check_source_readings` 全绿；`tools/check.py` 默认门 EXIT=0。
+
+#### 十一、本地 git 历史重写（远端已删除）
+
+远端仓库已由人工删除，按指令把本地历史重建为单根提交 `677878a`（旧 226 个提交完整保留在
+ref `history/pre-squash-2026-10-09` 与离线包 `scratch/Yi-history-pre-squash-20261009.bundle`，
+`git bundle verify` 通过；`backup/scope-reduction-9a61b25`、`feat/internal-depth-pack` 未动）。
+重写后用 **HEAD 的纯 worktree**（不拷索引、无未跟踪文件）跑 `check.py --full` → EXIT=0，
+即提交内容自身完备，不依赖任何只存在于本机的文件。
+`main` 的 upstream 仍指向已失效的 `origin/main`（显示 ahead 1 / behind 226）；重建远端后需
+`git remote remove origin` 或改 URL 再首推，这一步留给人工决定。
+
+
+#### 十二、未尽项（不掩盖）
+
+1. **push 未做**：远端已由人工删除；重建远端后的首推、以及是否
+   `git remote remove origin`/改 URL，留给人工决定。本地已重写为单根提交并含本轮纠偏提交。
+2. **一条数据疑点在案**：六爻批次上报某例 `expected` 与书文判语疑异——我按
+   `卒/殁/死` × `酉月` 在 `disciplines/liuyao/data/cases/` 下搜过未命中（搜法可能不对），
+   正由深度检查批次按书源逐字复核。全程**没有**按读数改动任何 `expected`（§二 明禁）。
+3. **`opt_status.json` 4 条跨类重复 id**（done＋archived／done＋rejected／archived＋rejected）
+   归属待裁定：三数不可相加，已加 `_scope_note_2026-10-09` 如实登记；裁定前不改数据。
 4. `docs/OPT-LEDGER.md` §四「B 类补对源 35」与 19+10+16=45 自身打架且无 ID 清单可重算，
-   已就地标为"不可核验"，未擅自改数。
+   已就地标为「不可核验」，未擅自改数。
+5. `[1c]` 是 3 例采样取证门，看不见未被采样命中的分支（本轮已把同函数同形状的三条
+   硬编码一并外置，扩采样不会新增红）；扩 CASES 属门的覆盖面改进，未在本轮做。
 
-本轮已一并清掉、不再列为待办：`shensha.TIAN_DE/YUE_DE` 及其访问器（表注自陈"择吉用"，
+本轮已一并清掉、不再列为待办：`shensha.TIAN_DE/YUE_DE` 及其访问器（表注自陈「择吉用」，
 全仓零消费方，唯一命中是已删科留下的 gitignored 产物）、`request.norm_iso`/`norm_date`
-与 `report/__init__` 的导出（两科无消费方，属占位实现，违 §三；删除时按 CRLF/LF 原样写回，
+与 `report/__init__` 的导出（两科无消费方，属占位实现，违 §三；删除按原 CRLF/LF 写回，
 避免整文件假 diff）、注册表两条 `quote_in_code` 的语义脱耦（锚点实为**注释**与**简体转写**，
-加 `quote_placement_note` 明写其读法，**不改引文一字**——改字会违 §二 照录不转简）、
-`check_source_readings` 索引里「已处理 155」与全局三分类并排易被读成加和（生成器与 INDEX
-措辞均已明写"含跨类重复，不可相加"，索引由 `--index` 重生成而非手改）。
-7. `[1c]` 是 3 例采样取证门，看不见未被采样命中的分支（本批已把同函数同形状的三条硬编码一并
-   外置，扩采样不会新增红）；扩 CASES 属门的覆盖面改进，未在本轮做。
+加 `quote_placement_note` 明写读法，**不改引文一字**——改字违 §二 照录不转简）、
+`check_source_readings` 索引里「已处理 155」与全局三分类并排易被读成加和（生成器与
+INDEX 措辞均已明写「含跨类重复，不可相加」，索引由 `--index` 重生成而非手改）、
+三本已删科书源及其 provenance（共 6 个跟踪文件；`crosscheck_source --selftest` 在删除
+**前后都过**，清理不再被门禁反向锁死）。
 
 ---
 

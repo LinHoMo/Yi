@@ -122,7 +122,7 @@
 
 | ID | 目标 | 现状 | 建议 | 验收方式 | 优先级 |
 |---|---|---|---|---|---|
-| OPT-yuzhao_dingzhen_dz-01 | 四阳/四阴结构标签 | **[已落实（2026-10-08）]** 函数已落 pattern.py，细节见建议列 | 新建 `disciplines/ming/scripts/pattern.py::si_yang_si_yin_tag(pillars)`，统计四柱天干阴阳数输出纯结构标签，不含命定断语 | 新增函数；golden 不回归 | P2 |
+| OPT-yuzhao_dingzhen_dz-01 | 四阳/四阴结构标签 | **未落实（2026-10-09 撤销）** | 函数 `si_yang_si_yin_tag(pillars)` 曾于 2026-10-08 落 `disciplines/ming/scripts/pattern.py`，复核确认**全仓零消费方**（analyze 不产出、报告不呈现、评测不计）→ 按 §三「不写占位实现」删除；真要接：进 analyze 结构层（只出结构偏向、不出命定断语）＋ golden 带理由重捕 ＋ 注册表登记 | （撤销，无验收对象）| P2 |
 | OPT-yuzhao_dingzhen_dz-02 | 五行多寡计数结构标签层 | 未引擎化；本书约 40 条"X多→某事"赋句中仅"结构可抽"的干支条件有标签价值，断语层不采 | 在 `pattern.py` 或 `data/verdicts.json` 增加"五行多寡结构层"：以五行计数（水/火/木/金/土干支各≥3）为条件，仅输出"水偏多/火偏多"等**中性的结构标签**，不进吉凶断语；配套在 `disciplines/ming/data/` 为本书所涉条目登记"结构层+不采断语" | 新增标签函数；golden 不回归；check.py 全绿 | P2 |
 | OPT-yuzhao_dingzhen_dz-03 | 天将体系归属边界登记 | `shensha.py` 无天将（功曹/传送/天后/玄武等），六壬科有天将；本书赋句中的天干地支职掌命名与两科均不同 | 把"天干地支配天将"命名清单抄录进 `disciplines/ming/data/`（标注"玉照定真经独有用象，不与六壬天将体系混用"）；新建 `disciplines/ming/references/rules.md` 补节 | 登记表每行含书源行号；grep 全仓不混用；评分零变化 | P3 |
 | OPT-yuzhao_dingzhen_dz-04 | 作者归属与转录异体字控制 | 四库已否定郭璞 authorship；转录异体字群（夨/夘////【囚】）需登记清单防评审争议 | 新建 `data/sources/yuzhao_dingzhen_dz.provenance.json`（如尚无）注明（a）四库否认郭璞说归入"旧题佚名"、（b）转录异体字清单（含 L18 中见到的 U+8698 等）说明非录入手误 | provenance 补注后机械扫异体字行号无遗漏；引文逐字核验全绿 | P3 |
