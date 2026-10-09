@@ -86,9 +86,12 @@
 ### 这个缺口卡住的是一个已立项的外部验证集
 
 `data/cases/case_splits.json` 里**预留了 `bushi_zhengzong_holdout`，实测条目数为 0**
-（同文件其余外部集：`wikisource_holdout` 35、`wikisource_direction` 36、
-`yingqi_holdout` 2、`huozhulin_holdout` 2、`huozhulin_qualitative` 5；
-调参集 `tune` 20、`holdout` 12）。
+（同文件其余外部集：`wikisource_holdout` 44、`wikisource_direction` 38、
+`yingqi_holdout` 2、`huozhulin_holdout` 2；调参集 `tune` 20、`holdout` 12。
+数字为 2026-10-09 从 `case_splits.json` 现数——此前记 35/36 是落后两轮的陈值。
+`huozhulin_qualitative`（HZQ*）与 `huozhulin_candidates`（HZC*）按其自身 `_meta`
+是**仅参考、不参与评分**的定性/候选集，已不再是 split：它们曾与 `huozhulin_holdout`
+共用 HZL* ID，令 `--split huozhulin_qualitative` 拿 holdout 的盘面跑分，详见 CHANGELOG）。
 
 也就是说：**缺口不只是"少一本书"，而是让一个已立项的独立验证集无从建立**。
 要立起来必须先有该书正文——而维基文库没有（§二）。在拿到可靠文本之前该 split

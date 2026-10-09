@@ -1533,9 +1533,13 @@ def main() -> int:
     # 人工/临时脚本写入的 source_quote——QTBJ 批 9 条压缩改写/拼接引文就是这样静默
     # 入库且全门 EXIT=0 的。本门对每条引文要求书源逐字子串（剥 wikitext 标记+去空白），
     # 书源不在库的书逐条披露（不静默跳过）；内置 --selftest 负例自证。
-    print("\n[1k] 案例引文逐字性（data/cases 每条 source_quote 必须是书源逐字子串）")
+    # 2026-10-09 扩面：六爻自称"取自原本"的字段是 `expected.detail`（靠 provenance.page
+    # 指回书源），此前无人回验——实测 8 条被改写（爲→为 7 条、字间被插空格 1 条）而全门
+    # EXIT=0。该面走更严一档的口径（保留字间空格），否则插一个空格就能蒙过去。
+    print("\n[1k] 案例引文逐字性（命科 source_quote + 六爻带页源的 expected.detail "
+          "必须是书源逐字子串）")
     gate_sub("case_quotes", ["tools/check_case_quotes.py"],
-             "案例引文逐字性（压缩/拼接/跨段引文判败；书源不在库逐条披露）")
+             "案例引文逐字性（压缩/拼接/跨段/异体改字/插入空格判败；书源不在库逐条披露）")
 
     # 书源深度解读文档门（2026-10-08 挂门）：docs/source-readings/ **全部**文档逐条要求
     # （篇数不写死在注释里，由下面 label 从磁盘现数——2026-10-09 原注释写"五十余篇"、
@@ -1595,8 +1599,13 @@ def main() -> int:
          "案例隔离门自证（显式路径/组合名判红、书源 slug 不误报、扫空判红）",
          r"SELFTEST PASS"),
         ("gate_selftest_case_quotes", ["tools/check_case_quotes.py", "--selftest"],
-         "引文逐字门自证（尾拼/压缩/跨段三负例）",
+         "引文逐字门自证（命科面尾拼/压缩/跨段 4 例 + 六爻面异体改字/插入空格/跨段拼接 4 例）",
          r"负例全被抓、正例通过"),
+        ("gate_selftest_liuyao_case_fetch",
+         ["disciplines/liuyao/dev_tools/fetch_wikisource_cases.py", "--selftest"],
+         "六爻案例生成器自证（扫描改写泄漏进照录串、否定盲区把凶读成吉、"
+         "锚句漂到案外通论、判定区形同虚设四条负例各别咬）",
+         r"SELFTEST PASS"),
         ("gate_selftest_source_readings", ["tools/check_source_readings.py", "--selftest"],
          "书源解读文档门自证（编造引文/空壳/挂错著作判红）",
          r"SELFTEST PASS"),
