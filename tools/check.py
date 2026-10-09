@@ -180,8 +180,10 @@ def check_version() -> list[str]:
     fails = []
     pat = re.compile(r'(__version__\s*=\s*["\']|version\s*=\s*["\']\d)')
     for p in ROOT.rglob("*.py"):
-        if any(seg in p.parts for seg in ("__pycache__", "scratch", ".worktrees",
-                                          "site", "_site", "archive", "egg-info")):
+        parts = _rel_parts(p)
+        if _skip_generated(p, extra_dirs=("site", "_site", "archive", ".worktrees")):
+            continue
+        if any(seg.endswith(".egg-info") for seg in parts):
             continue
         if p == CORE / "yishu_core" / "__init__.py":
             continue
@@ -251,7 +253,7 @@ def check_verdict_literals() -> list[str]:
     fails = []
     KNOWN_DATA_DRIVERS = {"classical_tables"}  # 已走 json.load
     for p in (ROOT / "disciplines").rglob("*.py"):
-        if "__pycache__" in p.parts or "scratch" in p.parts:
+        if _skip_generated(p):
             continue
         stem = p.stem
         if stem in KNOWN_DATA_DRIVERS:
@@ -462,7 +464,7 @@ def check_structure() -> list[str]:
     # 旧门只扫 `scripts/` 且只认裸模块名，于是学科层用点分路径 / importlib 动态加载别科
     # 完全畅通——实测曾在 ming/dev_tools 里命中两处）
     for p in sorted((ROOT / "disciplines").rglob("*.py")):
-        if "scratch" in p.parts or "__pycache__" in p.parts:
+        if _skip_generated(p):
             continue
         parts = p.relative_to(ROOT).parts
         own = parts[1] if len(parts) > 1 else ""
@@ -481,7 +483,7 @@ def check_structure() -> list[str]:
     # 巨石看门狗：单文件过长视为架构债（M1b；classical_rules 已按域拆分）
     max_lines = 2200
     for p in (ROOT / "disciplines").rglob("*.py"):
-        if "scratch" in p.parts:
+        if _skip_generated(p):
             continue
         n = sum(1 for _ in p.open(encoding="utf-8", errors="ignore"))
         if n > max_lines:
@@ -493,7 +495,7 @@ def check_structure() -> list[str]:
             continue
         total = sum(sum(1 for _ in p.open(encoding="utf-8", errors="ignore"))
                     for p in sp.rglob("*.py")
-                    if "scratch" not in p.parts and "__pycache__" not in p.parts)
+                    if not _skip_generated(p))
         budget = DECLARED_HEAVY.get(disc, SCRIPTS_BUDGET_BASE)
         if total > budget:
             extra = "" if disc in DECLARED_HEAVY else \
@@ -567,14 +569,38 @@ def _core_allow(path: Path, name: str) -> bool:
     return key in CORE_TABLE_ALLOW
 
 
+def _rel_parts(p: Path) -> tuple[str, ...]:
+    """仓库内相对路径的段（注入的临时树不在 ROOT 下时退回绝对段）。"""
+    try:
+        return p.relative_to(ROOT).parts
+    except ValueError:
+        return p.parts
+
+
+# 一次性脚本目录（AGENTS.md §三）：必须按**仓库内相对路径**判断，不能看绝对路径里的名字。
+# 教训（2026-10-09 实测）：原判据写成 `"scratch" in p.parts`，把复验用的 worktree 放在
+# `./scratch/clone_wt` 时，整个仓库的每一条路径都含 "scratch" → 真值源门扫到 0 个文件、
+# scripts 行数预算读到 0 行。0 结果既能伪装成"通过"也能伪装成"失败"，两种都不可信。
+SCRATCH_DIRS = (("scratch",), ("tools", "scratch"), ("tests", "scratch"))
+
+
+def _skip_generated(p: Path, *, extra_dirs: tuple[str, ...] = ()) -> bool:
+    """跳过一次性脚本目录、字节码缓存与产物目录（均按相对路径的首段判断）。"""
+    parts = _rel_parts(p)
+    if "__pycache__" in parts:
+        return True
+    if any(parts[:len(seg)] == seg for seg in SCRATCH_DIRS):
+        return True
+    return bool(parts) and parts[0] in extra_dirs
+
+
 def _truth_source_files() -> list[Path]:
-    """扫描根下的 .py 文件（排除 scratch/__pycache__）。"""
+    """扫描根下的 .py 文件（排除一次性脚本目录与 __pycache__）。"""
     out: list[Path] = []
     for root in _truth_source_scan_roots():
         if not root.is_dir():
             continue
-        out.extend(p for p in root.rglob("*.py")
-                   if "scratch" not in p.parts and "__pycache__" not in p.parts)
+        out.extend(p for p in root.rglob("*.py") if not _skip_generated(p))
     return sorted(out)
 
 
