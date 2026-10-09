@@ -234,7 +234,12 @@ WORKTREE:
 LOCAL_AHEAD:
 REMOTE_AHEAD:
 SYNC_STATUS:
+DIVERGED:        （仅双向分叉时多这一行；本地与远端互不包含对方）
 ```
+
+`LOCAL_AHEAD` 与 `REMOTE_AHEAD` **两侧都必须无条件实测**。历史重写后是双向分叉而非"落后待推"，
+只在一支分支里计数会把"没算"印成 `LOCAL_AHEAD: 0`——本工具的这一行会被原样复制进轮报，
+它自己报假数就等于把假事实写进 §七（回归测试 `tests/test_version_gate_shapes.py` 盯四种形态）。
 
 1. 未确认 HEAD 前，不得声称「当前仓库最新状态」。
 2. `SYNC_STATUS: UNSYNCED` 时可以继续工作，但必须明说「当前工作尚未与远端 main 同步」；

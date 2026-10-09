@@ -37,9 +37,13 @@
 复算命令见 §六「本轮文档订正」）。真死链 0。
 生成物一律 gitignore（本轮把 `reports/` 补进 ignore——§六 早定为产物）。
 
-**远端同步**：`SYNC_STATUS=SYNCED`（2026-10-09 直连实测：`git -c http.proxy= ls-remote origin refs/heads/main`
-打出 `60b2403…`，与本地 HEAD 相同，`git rev-list --count origin/main..HEAD` = 0）。
-本行此前写 `UNSYNCED（本地领先远端，未推送）`，是落后于事实的过期记载，已按 §七 订正。
+**远端同步**：`SYNC_STATUS=UNSYNCED（双向分叉）`。2026-10-09 直连实测
+`git -c http.proxy= -c https.proxy= ls-remote origin refs/heads/main` → `60b2403…`（可达，非"已删除"），
+而本地 main 已重写为 11 个提交、根提交 `677878a`：`60b2403..HEAD` = **11**、`HEAD..60b2403` = **226**，
+两侧互不包含。**本轮起以本地 main 为唯一真值**（维护者 2026-10-09 指示：远端不必管，只要本地最新），
+推送方式（覆盖 / 追加 / 新分支）不属于本轮范围。旧历史两处保全：ref `history/pre-squash-2026-10-09`
+与 `scratch/Yi-history-pre-squash-20261009.bundle`（`git bundle verify` 通过）。
+本行此前写 `SYNCED（与本地 HEAD 全等）`，那是重写之前的实测，现已过期。
 精确 HEAD / 领先数以 `tools/version_gate.py` 的 OBSERVE 为**唯一真值源**，当前值见 §六。
 
 ---
@@ -539,19 +543,22 @@ python tools/eval.py
   > （`git merge-base --is-ancestor 391b480 HEAD` EXIT=0，故 §七.4 无疑），
   > 但它**只是当时的 HEAD，不是现在的 HEAD**；未提交项实测为 **2 项**而非 219 项。
   > 按 §七.1「未确认 HEAD 前不得声称当前仓库最新状态」重跑填入现值。
-- **远端**（2026-10-09 实测，走**直连**绕开失效代理）：
+- **远端**（2026-10-09 复测，走**直连**绕开失效代理）：
   `git -c http.proxy= -c https.proxy= ls-remote origin refs/heads/main`
-  → `60b24039f468b5aa25bf6f5263213d184cf88634  refs/heads/main`，与本地 HEAD **全等**；
-  `git rev-list --count origin/main..HEAD` = **0**、`git rev-list --count HEAD..origin/main` = **0**。
-  ⇒ `SYNC_STATUS: SYNCED（直连 ls-remote 实测）`。
-  > ⚠️ 两点必须并记，否则读起来像"远端没问题"是本地推断出来的：
-  > ① `python tools/version_gate.py` 在**默认（走代理）**路径下打的是
-  >    `REMOTE_HEAD: REMOTE_UNVERIFIED（… Failed to connect to github.com:443 over proxy 127.0.0.1 …）`
-  >    与 `SYNC_STATUS: REMOTE_UNVERIFIED`——那是**本机代理故障**，按 §七.5 不得用本地追踪引用冒充实测；
-  >    本行的 SYNCED 判定来自上面那条**直连实测**，不是来自 `origin/main` 这个跟踪引用。
-  >    原样输出：`LOCAL_HEAD: 60b2403…`／`WORKTREE: dirty（2 项：?? docs/audits/; ?? modernized/）`。
-  > ② 本块 2026-10-08 版写「`origin/main = a4d13a6`（2026-10-05），本地领先 **22 个提交未推送**」
-  >    并在文件头写 `SYNC_STATUS=UNSYNCED`——**均为过期记载，已按实测订正**（现值 0 领先 / 0 落后）。
+  → `60b24039f468b5aa25bf6f5263213d184cf88634  refs/heads/main`（**可达，仓库并未被删除**）；
+  但本地 main 已重写，两侧互不包含：`60b2403..HEAD` = **11**、`HEAD..60b2403` = **226**
+  ⇒ `SYNC_STATUS: UNSYNCED` ＋ `DIVERGED: 双向分叉`。
+  > 三点必须并记：
+  > ① 本块 2026-10-09 早先版本写「与本地 HEAD **全等**、`SYNC_STATUS: SYNCED`」——那是
+  >    历史重写**之前**的实测，重写后不再成立。按 §七.1，未确认 HEAD 前不得声称"当前最新"，
+  >    现值一律以 `tools/version_gate.py` 的 OBSERVE 为准。
+  > ② `version_gate.py` 自身此前有缺陷：只在"远端是本地祖先"这一支里数 LOCAL_AHEAD，
+  >    分叉时打 `LOCAL_AHEAD: 0`（本地实有 11 个），把"没算"印成"实测为 0"；另在未设
+  >    `PYTHONIOENCODING` 的裸 GBK 控制台上打 `⚠` 直接 UnicodeEncodeError 退 1。
+  >    两处均已修，并由 `tests/test_version_gate_shapes.py`（4 形态：SYNCED / 仅领先 /
+  >    双向分叉 / 远端不可达）固化——退回旧写法该测试即红（实测 2 例红）。
+  > ③ 维护者 2026-10-09 指示「远端不用管，只要本地最新」，故本块只记录实测，
+  >    不代表任何推送动作已被授权。
 - **远端 CI 的已知红灯**（2026-10-09 本轮新发现，尚未修）：`docs/audits/` 六个审计文件
   **未跟踪也未 gitignore**，而 5 份已提交文档点名引用其中的 3 份
   （`docs/TECH-DEBT.md`、`docs/HANDOFF.md`、`docs/source-readings/{shenfeng_tongkao_dz,yimao_dz,zengshan_buyi_dz}.md`）。

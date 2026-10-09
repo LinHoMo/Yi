@@ -165,6 +165,17 @@ sanming-04 原写「已落实」并把「阳竒顺/阴竒逆」当本条要义�
 仍被排除（不把真排除一起拆掉）。有牙证明是逐处退回旧判据实跑：check.py→3 例红、
 verdict_audit→2 例红、check_doc_deadlinks→1 例红。`pytest` 431 → **439 passed**。
 
+**同族第三处：真值源工具自己报假数。** `tools/version_gate.py` 是 §七 指定的"HEAD 数值唯一
+真值源"，它只在「远端是本地祖先」那一条分支里数 `LOCAL_AHEAD`，历史重写后走的是 else 支，
+于是打印 `LOCAL_AHEAD: 0`——本地实有 **11** 个远端不包含的提交。"没算"被印成了"实测为 0"，
+而这一行会被原样复制进每一轮轮报。另在同一工具里，打印 `⚠` 时未强制 UTF-8，裸 GBK 控制台下
+`UnicodeEncodeError` 直接退 1（本会话早先我带 `PYTHONIOENCODING=utf-8` 跑，掩盖了它）。
+两处都由新增的 `tests/test_version_gate_shapes.py` 固化：**4 种形态**（SYNCED / 仅本地领先 /
+双向分叉 / 远端不可达）全部用**本地文件远端**跑，不依赖网络与代理。有牙证明：把两侧计数
+退回旧写法 → "仅领先"与"双向分叉"两例同时红。`pytest` 439 → **443 passed**。
+分叉现值同时写进 `docs/HANDOFF.md`（该文件此前两处声称"与本地 HEAD 全等 / SYNCED"，
+是重写之前的实测）。
+
 #### 八、口径变更登记（§四.4，后续读数须知）
 
 1. `wikisource_direction` 的 `expected` 口径变了：24/38（63.2%）与历轮的 26/38、72.2%
