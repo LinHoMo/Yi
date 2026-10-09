@@ -408,10 +408,10 @@
       "domain": "游魂归魂",
       "impl": "scripts/classical_enhancements.py:analyze_wandering_returning_soul(1118)（advanced_analysis.soul_hexagram）",
       "source": {
-        "book": "《黄金策·千金赋》",
-        "locator": "游魂归魂断法（游魂行无定，归魂回故乡；各宫七八卦类特质）",
+        "book": "《黄金策》",
+        "locator": "源L3843「卦得游魂，漂泊他方无定迹。」／源L3444「归魂卦用仍生合；不捕而自回；游魂卦应又交重，能潜而会遁。」；世应安装另见《卜筮正宗》源L241「游魂八宫四爻立，归魂八卦三爻详。」。2026-10-07 订正（OPT-huangjince_dz-02）：原 locator 引《黄金策·千金赋》「游魂行无定，归魂回故乡」，该八字在本仓《黄金策》两源（huangjince_dz.dz.txt／huangjin_ce.wikitext.txt）实测均 0 命中，属跨书误挂，现改挂上列可逐字回验的 dz 源原文",
         "quote_in_data": "disciplines/liuyao/data/rules/verdict_texts.json#pattern_verdict_labels.游魂归魂.古典引文",
-        "quote_in_code": "disciplines/liuyao/scripts/classical_enhancements.py#游魂行无定，归魂回故乡",
+        "quote_in_code": "disciplines/liuyao/scripts/classical_enhancements.py#analyze_wandering_returning_soul（源L3843/源L3444 书证见该函数 docstring）",
         "verified": true
       },
       "applicability": "游魂卦（各宫第七卦，六四为世）主行无定、忧疑不安、心无归宿；归魂卦（各宫第八卦，九三为世）主回故乡、有归属、终有所归——卦由 generation 字段自动判定（七/八世之卦），神归则安、游则不安",

@@ -1,3 +1,23 @@
+### 2026-10-09 台账订正：OPT-DONE 7 条补登 CHANGELOG（此前漏登记）
+
+据文本审计报告核验：`docs/OPT-DONE.md` 表内 7 条已实测落实项此前在 `docs/CHANGELOG.md`
+零命中（逐 ID `grep` 实测各 0 次），属"已完成但 changelog 未登记"（AGENTS.md §四.4）。
+本节据 `docs/OPT-DONE.md` 与 `data/sources/opt_status.json#done`（现值 112 条）**补登**这 7 条，
+仅作台账追溯，**非本轮新改动**；各条落实内容与读数以 OPT-DONE 与原 source-readings 条目为准。
+
+| OPT ID | 落实内容（摘自 OPT-DONE） |
+|---|---|
+| `OPT-bushi_quanshu_dz-01` | 暗动口径双源并注（并填补 registry"暗动定义正文缺书源"缺口） |
+| `OPT-bushi_quanshu_dz-02` | 神煞歌例使用审计（final_score 12 项无神煞，旁参不进主分） |
+| `OPT-bushi_zhengzong_dz-02` | fanyin_fuyin locator 补行号 + provenance 登记伏吟章缺段 |
+| `OPT-bushi_zhengzong_dz-03` | 重复块登记（推翻"逐字全同"，定位圆神/圆通神讹字并存） |
+| `OPT-ditian_sui_chanwei_dz-01` | 新增滴天髓任注本分支 7 条判据 + 撤销"原书未入库"失效前提 |
+| `OPT-yilin_buyi_dz-01` | 坟墓族新增已葬/安葬/下葬/伏尸→官鬼（书 L368 用神反转二分） |
+| `OPT-yiin_dz-02` | 伏飞四态补《易隐》原词与出处（引擎五态早已落地） |
+
+> 计数口径（不变）：`OPT-DONE.md` 7 行 ⊂ `opt_status.json#done` 112 条；把7 行当全集会低估落实面，
+> 详见 `OPT-DONE.md` 顶部「计数与覆盖面（2026-10-09 实测登记）」。
+
 ### 2026-10-09 D1 开工：内核进退神表 7 对全错，四条古籍方向凶格进结构层
 
 **起因**：把 §2.11 D1（4 例引擎方向与書源结局相反）立项开工。归因第一步就翻出更大的东西：

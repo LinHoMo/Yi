@@ -543,6 +543,10 @@ python tools/eval.py
   > （`git merge-base --is-ancestor 391b480 HEAD` EXIT=0，故 §七.4 无疑），
   > 但它**只是当时的 HEAD，不是现在的 HEAD**；未提交项实测为 **2 项**而非 219 项。
   > 按 §七.1「未确认 HEAD 前不得声称当前仓库最新状态」重跑填入现值。
+  > ⚠️ **订正痕迹（2026-10-09 晚）**：上填「HEAD = `60b2403`」已**再次过时**——本地 `main`
+  > 在两科收缩后又被 `677878a`（单根重建）等多个 commit 推进，现 `HEAD` 早非 `60b2403`。
+  > `60b2403` 恰与**远端** `origin/main` 的 `60b24039f…` 同短号，属易混点：本行只应记**本地 HEAD**。
+  > 按 §七.1 使用前须 `git rev-parse --short HEAD` 现读现填，勿沿用本行任何 SHA。
 - **远端**（2026-10-09 复测，走**直连**绕开失效代理）：
   `git -c http.proxy= -c https.proxy= ls-remote origin refs/heads/main`
   → `60b24039f468b5aa25bf6f5263213d184cf88634  refs/heads/main`（**可达，仓库并未被删除**）；
