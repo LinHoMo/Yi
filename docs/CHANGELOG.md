@@ -150,6 +150,21 @@ sanming-04 原写「已落实」并把「阳竒顺/阴竒逆」当本条要义�
 本轮所有"干净 worktree 复验"的结论都依赖这条判据成立。守卫（"扫描 0 个文件即判败"）
 正是上一轮加的，这次是它第一次真的救场。
 
+**同一缺陷在另外三个工具里还在**（`0ca894a`）：修完 check.py 再跑 worktree 默认档，仍有
+2 条红，指向同族写法——
+
+| 工具 | 原判据 | 仓库落在该目录下时的后果 | 方向 |
+|---|---|---|---|
+| `tools/verdict_audit.py::_corpus` | `{"cases","guard","scratch"} & set(p.parts)` | 语料池清空 → 报 **285 句"未外置"**（工作树内实测 0 句） | 假红 |
+| `tools/check_doc_deadlinks.py::is_active` | `set(p.parts) & EXCLUDE_PARTS`（含 archive） | **全部**文档判成非活动 → 扫 0 份 → "无死链" | **假绿**（更危险） |
+| `tools/audit_nayin_usage.py::iter_py` | `any(x in p.parts for x in SKIP_PARTS)` | 扫描面归零，"无纳音复制"结论无效 | 假绿 |
+
+三处一律改成按仓库内相对路径判断。回归测试 `tests/test_gate_path_independence.py`（8 例）
+造 `tmp/<outer>/Yi` 假仓库，outer ∈ {scratch, archive, site, guard}，断言扫描面/语料池/
+文档活动性都不随仓库所在位置变化，并**反向**断言仓库内部的 `tools/scratch/`、`archive/`
+仍被排除（不把真排除一起拆掉）。有牙证明是逐处退回旧判据实跑：check.py→3 例红、
+verdict_audit→2 例红、check_doc_deadlinks→1 例红。`pytest` 431 → **439 passed**。
+
 #### 八、口径变更登记（§四.4，后续读数须知）
 
 1. `wikisource_direction` 的 `expected` 口径变了：24/38（63.2%）与历轮的 26/38、72.2%
