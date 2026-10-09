@@ -5,6 +5,7 @@
 """
 from __future__ import annotations
 
+import re
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -13,7 +14,10 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "core"))
 
 from yishu_core.symbols import (  # noqa: E402
+    ADVANCE_PAIRS,
+    BRANCH_ELEMENTS,
     EARTHLY_BRANCHES,
+    RETREAT_PAIRS,
     NAYIN,
     NAYIN_TO_ELEMENT,
     SAN_HE_GROUPS,
@@ -108,6 +112,40 @@ def check_core_apis() -> list[str]:
     for _s, _lu in LU_SHEN.items():
         if JIN_YU.get(_s) != EARTHLY_BRANCHES[(EARTHLY_BRANCHES.index(_lu) + 2) % 12]:
             fails.append(f"{_s} 的金舆违「禄前二辰」")
+
+    # ── 进退神：锚在**书源原文**上，不锚在表自己（第二 oracle）──
+    # 旧表按"隔一支"配对，子→寅（水变木）、卯→巳（木变火）都算进神，7 对里 0 对合书，
+    # 于是「卯化寅」——書源 L1122 点名的退神——落到"化合"零分上（实测 WSD002 因此判吉）。
+    # 这里从 L1120/L1122 现读现比对：书源读不到 / 解析出 0 对 / 对数不等于 7，一律判败，
+    # 绝不允许"解析失败＝通过"。
+    _bt_src = ROOT / "data" / "sources" / "zengshan_buyi_dz.dz.txt"
+    _BT_PAIR = r"([亥子寅卯巳午申酉丑辰未戌])化([亥子寅卯巳午申酉丑辰未戌])"
+    if not _bt_src.is_file():
+        fails.append(f"进退神锚点缺失：书源不存在 {_bt_src}")
+    else:
+        _lines = _bt_src.read_text(encoding="utf-8", errors="replace").splitlines()
+        _adv = set(re.findall(_BT_PAIR, _lines[1119]))
+        _ret = set(re.findall(_BT_PAIR, _lines[1121]))
+        if len(_adv) != 7 or len(_ret) != 7:
+            fails.append(f"进退神书源解析异常：进 {len(_adv)} 对／退 {len(_ret)} 对"
+                         f"（应为 7/7；行号或句式漂移会让本条断言空转）")
+        if set(ADVANCE_PAIRS.items()) != _adv:
+            fails.append(f"ADVANCE_PAIRS 与書源 L1120 不同源：表多 {sorted(set(ADVANCE_PAIRS.items()) - _adv)}"
+                         f"／表缺 {sorted(_adv - set(ADVANCE_PAIRS.items()))}")
+        if set(RETREAT_PAIRS.items()) != _ret:
+            fails.append(f"RETREAT_PAIRS 与書源 L1122 不同源：表多 {sorted(set(RETREAT_PAIRS.items()) - _ret)}"
+                         f"／表缺 {sorted(_ret - set(RETREAT_PAIRS.items()))}")
+        # 结构性不变式：进退必在同五行内，且两表互逆
+        for _a, _b in list(ADVANCE_PAIRS.items()) + list(RETREAT_PAIRS.items()):
+            if BRANCH_ELEMENTS[_a] != BRANCH_ELEMENTS[_b]:
+                fails.append(f"进退神跨五行：{_a}({BRANCH_ELEMENTS[_a]})→{_b}({BRANCH_ELEMENTS[_b]})")
+        if {v: k for k, v in ADVANCE_PAIRS.items()} != RETREAT_PAIRS:
+            fails.append("RETREAT_PAIRS 不是 ADVANCE_PAIRS 的逆表")
+        # 書源明文点名单条（防解析整体错位）
+        if RETREAT_PAIRS.get("卯") != "寅":
+            fails.append(f"「卯化寅」必须是退神（書源 L1122／WSD002 本案），得 {RETREAT_PAIRS.get('卯')}")
+        if ADVANCE_PAIRS.get("寅") != "卯":
+            fails.append("「寅化卯」必须是进神（書源 L1120／卜筮全书 L5630）")
 
     # 纳音唯一写法
     if NAYIN.get("甲午") != "沙中金":

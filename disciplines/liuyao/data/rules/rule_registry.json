@@ -794,6 +794,103 @@
         "opt_id": "OPT-zengshan_buyi_dz-04",
         "added": "2026-10-07"
       }
+    },
+    {
+      "rule_id": "liuyao.chuxian_wuqing",
+      "domain": "方向凶格·出现无情（功名类）",
+      "impl": "scripts/classical_enhancements_direction.py:detect_direction_caps 第1条 → scripts/liuyao_step5.py 5.7b 上限压档",
+      "source": {
+        "book": "《增删卜易》",
+        "locator": "L2786",
+        "cross_refs": [
+          "《卜筮全书》L7692、《黄金策》L2180 同句同释（三源同证）"
+        ],
+        "verified": true,
+        "quote_in_data": "disciplines/liuyao/data/rules/verdict_texts.json#direction_cap_quotes.chuxian_wuqing.quote"
+      },
+      "applicability": "question_class==功名科举；卦中官鬼或父母出现，但无一爻持世、无一爻与世爻相生或六合 → verdict 上限压至「凶」。非功名类不问（其余落点本轮未取证）",
+      "evaluation": {
+        "status": "classical_holdout",
+        "splits": [
+          "tune",
+          "holdout"
+        ],
+        "dim": "verdict",
+        "note": "2026-10-09 落地：WSD006/WSD024 由吉/平吉转凶（基准为凶）；tune 20/20、holdout 10/12 不变"
+      }
+    },
+    {
+      "rule_id": "liuyao.xiong_chi_shi_ke_cai",
+      "domain": "方向凶格·兄弟持世克财（婚姻）",
+      "impl": "scripts/classical_enhancements_direction.py:detect_direction_caps 第2条",
+      "source": {
+        "book": "《增删卜易》",
+        "locator": "L2613",
+        "cross_refs": [
+          "同书 L2612「弟兄持世……不拘问妻问妾，皆不得长年」"
+        ],
+        "verified": true,
+        "quote_in_data": "disciplines/liuyao/data/rules/verdict_texts.json#direction_cap_quotes.xiong_chi_shi_ke_cai.quote"
+      },
+      "applicability": "question_class==婚姻 且 世爻六亲==兄弟 且 卦有妻财 → 上限压至「凶」。只取婚姻章：L419「兄弟持世者难求」属求财章，其限定未逐条取证，硬并入会把自有基准 4 例判吉的失物·求财案压成凶（实测 ZS011/ZS019/WS033/WSD017），求财半边留待办",
+      "evaluation": {
+        "status": "classical_holdout",
+        "splits": [
+          "tune",
+          "holdout"
+        ],
+        "dim": "verdict",
+        "note": "WSD022 由平吉转凶；tune/holdout 无变动"
+      }
+    },
+    {
+      "rule_id": "liuyao.shi_hua_gui",
+      "domain": "方向凶格·世爻变鬼",
+      "impl": "scripts/classical_enhancements_direction.py:detect_direction_caps 第3条",
+      "source": {
+        "book": "《增删卜易》",
+        "locator": "L1643",
+        "cross_refs": [
+          "同书 L3625「化克化鬼，弟兄妻子休逢」"
+        ],
+        "verified": true,
+        "quote_in_data": "disciplines/liuyao/data/rules/verdict_texts.json#direction_cap_quotes.shi_hua_gui.quote"
+      },
+      "applicability": "世爻发动、变出之爻六亲==官鬼，且（休囚或月破旬空）并且（日克或动爻克）——書源该句「休囚，受克」两事并见，单有受克不算（实测 YQ003 旺相受克、原判正确，收紧后不再误压）→ 上限压至「凶」",
+      "evaluation": {
+        "status": "classical_holdout",
+        "splits": [
+          "tune",
+          "holdout"
+        ],
+        "dim": "verdict",
+        "note": "WSD006 由大吉转凶；yingqi_holdout 2/2 保持"
+      }
+    },
+    {
+      "rule_id": "liuyao.yuan_shen_wu_li",
+      "domain": "方向凶格·用神化凶而元神无力（源绝）",
+      "impl": "scripts/classical_enhancements_direction.py:detect_direction_caps 第4条",
+      "source": {
+        "book": "《增删卜易》",
+        "locator": "L551",
+        "cross_refs": [
+          "同书 L948「凡用神原神动化回头克、化绝、化墓、化空、化鬼、化退神皆为化凶」",
+          "同书 L1182「占近事岂可曰退？」、L1287「退神之法有四」——近事/得令不以退论"
+        ],
+        "verified": true,
+        "quote_in_data": "disciplines/liuyao/data/rules/verdict_texts.json#direction_cap_quotes.yuan_shen_wu_li.quote"
+      },
+      "applicability": "限 question_class==疾病·久病（書源落点 L1198/L1206 均为久病占）；用神动而化退化绝化墓化空回头克之一，且元神上卦而无力（休囚＋静而不动/空破/动而化凶/被日月动爻克）→ 上限压至「平凶」。元神不上卦属伏藏另一题，不在本条适用面",
+      "evaluation": {
+        "status": "classical_holdout",
+        "splits": [
+          "tune",
+          "holdout"
+        ],
+        "dim": "verdict",
+        "note": "WSD002 由吉转平凶；HO008/WS001/SG001 三例经限定收窄后不再被压"
+      }
     }
   ]
 }

@@ -67,6 +67,10 @@ _USE_GOD_RULES: list[dict] | None = None
 
 from liuyao_step4 import _detect_special_pattern, _user_reason  # 跨文件引用
 from liuyao_step3 import _real_hidden_can_emerge  # 伏神真实 can_emerge 判据（缺陷 C）
+from classical_enhancements_direction import (  # 古籍方向凶格上限（TECH-DEBT §2.11 D1）
+    apply_caps as apply_direction_caps,
+    detect_direction_caps,
+)
 
 # ═══ chain_step5.py ═══
 
@@ -246,6 +250,32 @@ def step5_synthesize(r: dict) -> dict:
     _verdict_locked = ov["fired"]
     officer_tomb_verdict_note = ov["officer_tomb_verdict_note"]
 
+    # ---------- 5.7b: 古籍方向凶格「上限」----------
+    # 这四格在主分加和里要么无条目、要么被正项冲掉，于是出现「書源本案结局明写凶、
+    # 引擎判吉」（TECH-DEBT §2.11 D1）。做法是**只压档、不加和**：命中即把 verdict
+    # 压到该书规定的档位，避免任何"再叠一个正项"把它平均回去。
+    # 判据与逐字出处见 classical_enhancements_direction 模块头注与 data/rules/rule_registry.json；
+    # 展示句全部取自 verdict_texts.json，代码内无断语字面量（AGENTS.md §三）。
+    _mt_sb = safe_get(div_time, "month_stem_branch", default="")
+    dir_caps = detect_direction_caps(
+        safe_get(r, "original_hexagram", "yao_lines", default=[]),
+        step2_data, step4_data,
+        _mt_sb[1:] if len(_mt_sb) >= 2 else "",
+        day_branch,
+        list(r.get("empty_branches") or []),
+    )
+    if dir_caps:
+        _capped, _cap_fired = apply_direction_caps(verdict, dir_caps)
+        for _c in dir_caps:
+            classical_notes.append(
+                f"{note_text(_c['reason_key'])}（{_c.get('src', '')}；{_c.get('detail', '')}）")
+        if _cap_fired:
+            verdict = _capped
+            _dk = {"大凶": "score_da_xiong", "凶": "score_xiong",
+                   "平凶": "score_ping_xiong"}.get(verdict)
+            if _dk:
+                verdict_desc = vdesc(_dk)
+
     # ---------- 5.8: 信号强度评估 ----------
     signal = _assess_signal_strength(step3_data, step4_data, final_score, strength_level)
     # 保留 confidence 作为向后兼容别名
@@ -335,6 +365,8 @@ def step5_synthesize(r: dict) -> dict:
         # 最终锁定：若强凶格局已触发，不再允许 verdict 被后续逻辑回退到 吉/平吉
         "verdict": verdict if not (_verdict_locked and "凶" not in verdict) else "凶",
         "verdict_description": verdict_desc,
+        # 古籍方向凶格上限的结构事实（供 narrate 与回归断言读取；判定见该模块）
+        "direction_caps": dir_caps,
         "signal_strength": signal,
         "confidence": signal,
         "signal_strength_description": _strength_to_text(signal),

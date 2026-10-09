@@ -3,7 +3,7 @@
     "what": "金标准指纹基线（排盘+思维链+分析层逐字段；抽样含 narrate 文案哈希）",
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
-  "digest": "4e57c796140d872c",
+  "digest": "999d054db09de158",
   "narrate_digest": "7200af9a70d2df8f",
   "drift_log": [
     {
@@ -113,6 +113,12 @@
       "to": "4e57c796140d872c",
       "date": "2026-10-09",
       "reason": "缺陷C修复后有意漂移：伏藏盘 step3 真实 can_emerge 压制(-0.5)首次可达，屯|[]/2026-09-22 23:40|占求财 与 旅|[]/2024-02-03 10:30|占父病 各 score/verdict/strength 下移（逐条见交付报告）；B/D/G/E 未动任何金标准字段（措辞层 narrate 哈希不变，反吟伏吟外置逐字同文）"
+    },
+    {
+      "from": "4e57c796140d872c",
+      "to": "999d054db09de158",
+      "date": "2026-10-09",
+      "reason": "进退神表改为用户源L1120/L1122的7+7同五行对（旧表12对0符合书）+ 四条古籍方向凶格上限（见 rule_registry liuyao.chuxian_wuqing/xiong_chi_shi_ke_cai/shi_hua_gui/yuan_shen_wu_li）；tune 97.2 holdout 90.2 不变"
     }
   ],
   "narrate_drift_log": [
