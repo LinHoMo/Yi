@@ -1,0 +1,111 @@
+{
+  "_meta": {
+    "description": "《火珠林》占例候选（原文摘录；未过全门不入 holdout）",
+    "source_file": "data/sources/huozhulin.wikitext.txt",
+    "policy": "永不参与调参；缺月日者只留候选，不伪造时刻",
+    "note": "三方校验后：3 例均未达 holdout 门槛（卦变不合或缺时刻）。候选留存供复核，禁止考卷调参。"
+  },
+  "cases": [
+    {
+      "id": "HZL001",
+      "source": "《火珠林》纳音章·占葬地例",
+      "topic": "坟茔",
+      "question": "占葬地",
+      "month": null,
+      "day": null,
+      "original": "姤",
+      "changed": "鼎",
+      "moving": [
+        1
+      ],
+      "notes": "原文：如占葬地，得姤之鼎卦，掘地五尺土中有石…并主火灾。世持辛丑，土伏甲子金。",
+      "expected": {
+        "verdict": "凶",
+        "key_points": [
+          "土中有石",
+          "伏尸刀伤",
+          "火灾"
+        ]
+      },
+      "ready_for_holdout": false,
+      "block_reason": "卦变差集为五爻，原文「初爻甲子动」指纳音例说，非变卦动爻；且缺月日",
+      "check": {
+        "original_known": true,
+        "changed_known": true,
+        "line_diff": [
+          5
+        ],
+        "moving_match": false,
+        "palace": "乾",
+        "generation": "一世"
+      },
+      "validation_v2": "partial"
+    },
+    {
+      "id": "HZL002",
+      "source": "《火珠林》互换干合章·占雨例",
+      "topic": "天时",
+      "question": "六月甲辰日占雨",
+      "month": "未",
+      "day": "甲辰",
+      "original": "乾",
+      "changed": "大壮",
+      "moving": [
+        5
+      ],
+      "notes": "原文：如六月甲辰日占雨得乾之大壮，当日申时雷雨骤至。第五爻动。",
+      "expected": {
+        "verdict": "吉",
+        "yingqi": "申时",
+        "key_points": [
+          "乾天震雷",
+          "第五爻动",
+          "申时雨至"
+        ]
+      },
+      "ready_for_holdout": false,
+      "block_reason": "卦变不合：原文只写第五爻动，姤之/乾之大壮差集为[5,6]；V2 不过不入集",
+      "check": {
+        "original_known": true,
+        "changed_known": true,
+        "line_diff": [
+          5,
+          6
+        ],
+        "moving_match": false,
+        "palace": "乾",
+        "generation": "六世"
+      },
+      "validation_v2": "fail"
+    },
+    {
+      "id": "HZL003",
+      "source": "《火珠林》互换干合章·占阴晴例",
+      "topic": "天时",
+      "question": "丁酉日占阴晴",
+      "month": null,
+      "day": "丁酉",
+      "original": "坤",
+      "changed": "坤",
+      "moving": [],
+      "notes": "原文：又问：丁酉日占阴晴，得坤卦…岂得不晴？癸水退让于丁火。",
+      "expected": {
+        "verdict": "吉",
+        "key_points": [
+          "丁日见世爻五癸",
+          "癸水退让于丁火",
+          "不雨而晴"
+        ]
+      },
+      "ready_for_holdout": false,
+      "block_reason": "静卦无卦变；缺月建",
+      "check": {
+        "original_known": true,
+        "changed_known": true,
+        "palace": "坤",
+        "generation": "六世"
+      },
+      "validation_v2": "n/a"
+    }
+  ]
+}

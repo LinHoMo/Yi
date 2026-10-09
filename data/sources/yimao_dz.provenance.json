@@ -1,0 +1,24 @@
+{
+  "key": "yimao_dz",
+  "kind": "六爻",
+  "title": "易冒",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/易冒.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E6%98%93%E5%86%92.txt",
+  "pages": [
+    "易藏/术数/易冒.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:38:14+0800",
+  "sha256": "644999682f836f55bc2b73b582890229545cbb20ed084f06b9cff0109547f7e7",
+  "stats": {
+    "bytes": 322824,
+    "chars": 112800,
+    "lines": 1627,
+    "ganzhi_pairs": 314,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/yimao_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}

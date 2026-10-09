@@ -1,0 +1,144 @@
+{
+  "_meta": {
+    "what": "命科金标准指纹基线（强弱/格局/大运逐字段）",
+    "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
+  },
+  "digest": "1be8d5b579463a47",
+  "narrate_digest": "7d3ddb40bbc74f42",
+  "drift_log": [
+    {
+      "from": "57dc7e890af222fa",
+      "to": "2c3eee326cec8ccd",
+      "date": "2026-10-01",
+      "reason": "指纹拆分（SYS-REVIEW#2）：机械/措辞分列；机械字段取值不变（机械digest 2c3eee32 为 57dc7e89 去 narrate_sha 后的机械字段，样例零异常）"
+    },
+    {
+      "from": "2c3eee326cec8ccd",
+      "to": "1be8d5b579463a47",
+      "date": "2026-10-04",
+      "reason": "2026-10-04d 日主之根宫位分层（衰旺章任注：长生禄旺=重根1.0、墓库余气=轻根0.25，书源例字仅列木火金水）：weak_zhengguan2 乙木辰中乙根由中气0.5改判衰宫轻根0.25（strength_score -5.20→-5.45，strength标签/格局/用神/大运全不变）；分列验收 tune 100.0(n=30)/holdout 96.7(n=246)/外集17/19 全部持平"
+    }
+  ],
+  "narrate_drift_log": [
+    {
+      "from": "183589ee3d03af53",
+      "to": "0d70d5efb0102b47",
+      "date": "2026-10-01",
+      "reason": "命科加法：小运口径句拆分（措辞层微调，机械层零漂移）"
+    },
+    {
+      "from": "0d70d5efb0102b47",
+      "to": "f43e0cb70bcd5340",
+      "date": "2026-10-02",
+      "reason": "2026-10-02a 命科加法：narrate 增《滴天髓·通隔論》通关/关隔段（逐字原文+注），机械层零漂移"
+    },
+    {
+      "from": "f43e0cb70bcd5340",
+      "to": "18de3ab8f3b91fbe",
+      "date": "2026-10-02",
+      "reason": "命科新增四柱地支关系层（六合/六冲/六害/三刑，判据在 pattern.pillar_branch_relations）；narrate 增『四柱地支关系』段并引《滴天髓·地支論》逐字三首。措辞层有意漂移，机械层（强弱/格局/大运）零漂移"
+    },
+    {
+      "from": "18de3ab8f3b91fbe",
+      "to": "f031d282e8cf13cd",
+      "date": "2026-10-02",
+      "reason": "命科四柱干支关系层补入天干五合（甲己/乙庚/丙辛/丁壬/戊癸，表取 core.relations.STEM_WUHE）；pillar_branch_relations 更名 pillar_relations，narrate 段随之变化。机械层（强弱/格局/大运）零漂移"
+    },
+    {
+      "from": "f031d282e8cf13cd",
+      "to": "b51a7836cc89fe4e",
+      "date": "2026-10-02",
+      "reason": "命科四柱干支关系段标题订正为「四柱干支关系」（含天干五合后名实相符）"
+    },
+    {
+      "from": "b51a7836cc89fe4e",
+      "to": "365c1e687f48d64b",
+      "date": "2026-10-02",
+      "reason": "四柱干支关系段：地支所本引文标签限定为「地支关系所本」（该段同时含天干五合，避免引文标签扩大所指）"
+    },
+    {
+      "from": "365c1e687f48d64b",
+      "to": "05f8ebf3f6f9cc0b",
+      "date": "2026-10-02",
+      "reason": "2026-10-02c 命科加法：B1 女命夫子星（analyze 新增 female_fu_zi 机械标注 + narrate 专段，仅女命样例漂移）；B2 童子煞（core 新增民间通胜口诀神煞，3 样例命中入神煞列表）。机械层（强弱/格局/大运）零漂移，措辞层新增呈现段为有意变更。"
+    },
+    {
+      "from": "05f8ebf3f6f9cc0b",
+      "to": "322cebf811a70940",
+      "date": "2026-10-02",
+      "reason": "B5(ming narrate): append short basis ref like '日干起' to shensha output for source attribution"
+    },
+    {
+      "from": "322cebf811a70940",
+      "to": "ccdecd0d01774478",
+      "date": "2026-10-03",
+      "reason": "2026-10-03 病药落地（《神峰通考·病药说类》）：narrate 新增病药段（病/药/十神层病药对+总纲原文），机械层零漂移、tune/holdout 读数持平（holdout pattern 28/36、cong_ge 13/15 未变）"
+    },
+    {
+      "from": "ccdecd0d01774478",
+      "to": "1c9dc4f81cc85b22",
+      "date": "2026-10-03",
+      "reason": "2026-10-03 病药落地二改：移除 narrate 病药段末行口径说明（该句被判为未外置断语，说明属元数据不入报告正文）；机械层零漂移"
+    },
+    {
+      "from": "1c9dc4f81cc85b22",
+      "to": "a4ffadf44d386ad8",
+      "date": "2026-10-03",
+      "reason": "2026-10-03 病药判据按原文修正：主轴取月令本气（原实现误取全盘最重五行），narrate 病药段随之改写；机械层零漂移、tune/holdout 读数未变"
+    },
+    {
+      "from": "a4ffadf44d386ad8",
+      "to": "aa2dbf4be60b38bf",
+      "date": "2026-10-04",
+      "reason": "2026-10-04d 日主之根宫位分层（衰旺章任注：长生禄旺=重根1.0、墓库余气=轻根0.25，书源例字仅列木火金水）：weak_zhengguan2 乙木辰中乙根由中气0.5改判衰宫轻根0.25（strength_score -5.20→-5.45，strength标签/格局/用神/大运全不变）；分列验收 tune 100.0(n=30)/holdout 96.7(n=246)/外集17/19 全部持平"
+    },
+    {
+      "from": "aa2dbf4be60b38bf",
+      "to": "a405c8149be9881c",
+      "date": "2026-10-05",
+      "reason": "争合结构标签落地（CHANGELOG 10-05c）：pillar_relations 新增「天干争合」结构条目，narrate 对含争合盘新增该文本；机械层指纹零漂移，仅措辞层 2/6 例变化"
+    },
+    {
+      "from": "a405c8149be9881c",
+      "to": "ebe6ecb30993dcdc",
+      "date": "2026-10-06",
+      "reason": "扩 TIAO_HOU 51→90 格：《穷通宝鉴》逐格机械提取+引文原文子串校验+耑用变体，季节兜底16格；机械层零漂移，仅调候措辞随覆盖扩面变化"
+    },
+    {
+      "from": "ebe6ecb30993dcdc",
+      "to": "1233c399b54a8781",
+      "date": "2026-10-06",
+      "reason": "TIAO_HOU 90→106 格（新增作者月度小结层 a0 + 修正十一月月头漏「一」的真 bug + 否定/从格/条件句否决机制 + 季节兜底限用于无精确月头之格）；机械层零漂移，仅调候措辞随覆盖扩面与修正而变"
+    },
+    {
+      "from": "1233c399b54a8781",
+      "to": "7da64a36ec160f93",
+      "date": "2026-10-07",
+      "reason": "补对源/补注记批次（命科 OPT-yuanhai_ziping_dz-01/02、mingli_tanyuan_dz-06、ziping_zhenquan_pingzhu_dz-01/03、ditian_sui_chanwei_dz-02、lantai_miaoxuan_dz-03/04、lixuzhong_mingshu_dz-01、qiong_tong_bao_jian_dz-02）：唯一行为变化=pattern.py 新增「犯岁君」结构标签（源L69/L70，日干克流年干），只进 relations 结构标注、**不评分不批吉凶**；其余全为注释/出处/死链修正（CANG_GAN 出处、LIUQIN_TO_SHISHEN 偏正论证、SAN_HE_GROUPS 兰台出处、ditian_sui 任注层差、shensha+ming_tables 死链改指、遇不遇降级层登记、顺逆用/相神出处、穷通宝鉴三名辞登记）。机械层零漂移；tune 100.0/holdout 96.2 持平"
+    },
+    {
+      "from": "7da64a36ec160f93",
+      "to": "2ab2cc78c2f2d712",
+      "date": "2026-10-07",
+      "reason": "新增四批 OPT 的 narrate 接线（全部为引文/结构标签层，机械层零漂移）：①看命口诀方法论引文块（_kanming_block，三命通会 L5115/L5137，OPT-sanming_tonghui_dz-04）；②从格引文补三命通会弃命从煞/从财并列句（_geju_line，OPT-sanming_tonghui_dz-03）；③十神取象旁证块（_LIUSHEN_IMAGE，千里命稿六神篇，OPT-qianli_minggao_dz-03，仅 narrate 消费）。三处均为书源引文入正文，不改任何判定值、不改机械层（digest 1be8d5b579463a47 未变）；ming tune 100.0/holdout 96.2 持平"
+    },
+    {
+      "from": "2ab2cc78c2f2d712",
+      "to": "b60ab2c4d024df11",
+      "date": "2026-10-08",
+      "reason": "2026-10-08 措辞层接线收口：①shi_shen_actions.json 接入 narrate 十神取象段（每神加一行「作用候选：…」，走 liushen_image 同款仅-narrate 口径，不进 analyze/评分）；②前序 WIP 的看命口诀/三命通会引文块。机械层零漂移，tune 100.0(n=30)/holdout 96.2(n=246) 与 capture 前逐项一致"
+    },
+    {
+      "from": "b60ab2c4d024df11",
+      "to": "ed6476e0ac6a0959",
+      "date": "2026-10-08",
+      "reason": "2026-10-08 二次 capture：把报告行前缀从代码组句（god+『作用候选』）改为整条取自 data/shi_shen_actions.json 的 hint_prefix/narrative_hint——tools/verdict_audit.py [1c] 判代码拼装的中文为未外置断语，故措辞归数据层。机械层零漂移，十神取象段行数不变、仅前缀字面改为「伤官作用候选」等"
+    },
+    {
+      "from": "ed6476e0ac6a0959",
+      "to": "7d3ddb40bbc74f42",
+      "date": "2026-10-09",
+      "reason": "2026-10-09 命科批次有意订正 narrate 尾注口径（原句「格局从格仅作 tentative 标注」落后于引擎实况：analyze 现已按《滴天髓》从化论出 真从/假从/从旺/从强/从气/从势 分级，灰区例才保留 tentative 复核位）；机械层零漂移，本次仅措辞层。同时内核 JIE_SHA/JIN_YU 订正未触及这 6 例盘（golden 自报「机械层零漂移」即为证据）。"
+    }
+  ]
+}

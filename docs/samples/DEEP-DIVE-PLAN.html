@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>各科深度改造方案（按&quot;像不像老师傅&quot;排序）</title>
+<style>
+
+:root {
+  --paper: #f4f1ea;
+  --card: #fffdf8;
+  --ink: #2b2924;
+  --muted: #6f6a5e;
+  --accent: #9a3b2d;
+  --accent-soft: #b8675a;
+  --line: #e2dccf;
+  --pre-bg: #efece3;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: "Noto Serif SC", "Songti SC", "SimSun", "Microsoft YaHei", serif;
+  line-height: 1.8; font-size: 16px;
+}
+.report { max-width: 880px; margin: 0 auto; padding: 40px 24px 64px; }
+.report-header {
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+  padding: 28px 32px; margin-bottom: 24px;
+  border-top: 4px solid var(--accent);
+}
+.report-header h1 { margin: 0 0 6px; font-size: 26px; color: var(--ink); }
+.report-header .meta { color: var(--muted); font-size: 14px; margin: 0; }
+.report-body {
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+  padding: 32px 36px;
+}
+.report-body h1 { font-size: 23px; margin: 8px 0 18px; }
+.report-body h2 {
+  font-size: 19px; margin: 34px 0 14px; padding-left: 12px;
+  border-left: 4px solid var(--accent);
+}
+.report-body h3 { font-size: 16px; margin: 24px 0 10px; color: var(--accent); }
+.report-body h4, .report-body h5 { font-size: 15px; margin: 18px 0 8px; }
+.report-body p { margin: 12px 0; }
+.report-body ul { margin: 12px 0; padding-left: 26px; }
+.report-body ol { margin: 12px 0; padding-left: 26px; }
+.report-body li { margin: 5px 0; }
+.report-body hr {
+  border: 0; border-top: 1px dashed var(--line); margin: 26px 0;
+}
+.report-body table {
+  border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 14.5px;
+}
+.report-body th, .report-body td {
+  border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top;
+}
+.report-body th { background: #f3ece4; font-weight: 600; }
+.report-body tbody tr:nth-child(even) { background: #faf7f0; }
+.report-body pre {
+  background: var(--pre-bg); border: 1px solid var(--line); border-radius: 8px;
+  padding: 14px 16px; overflow-x: auto; font-size: 14px; line-height: 1.6;
+  font-family: "Consolas", "Noto Sans Mono", monospace;
+}
+.report-body code {
+  background: var(--pre-bg); padding: 1px 6px; border-radius: 4px;
+  font-family: "Consolas", monospace; font-size: 14px;
+}
+.report-footer {
+  text-align: center; color: var(--muted); font-size: 13px;
+  margin-top: 22px; line-height: 1.7;
+}
+@media (max-width: 640px) {
+  .report { padding: 20px 12px 40px; }
+  .report-header, .report-body { padding: 20px; }
+}
+
+</style>
+</head>
+<body>
+<div class="report">
+  <div class="report-header">
+    <h1>各科深度改造方案（按&quot;像不像老师傅&quot;排序）</h1>
+<p class="meta">源文件：docs/DEEP-DIVE-PLAN.md</p>
+  </div>
+  <div class="report-body">
+<h1>各科深度改造方案（按"像不像老师傅"排序）</h1>
+<p>&gt; 本文是<strong>审计结论 + 可执行清单</strong>，不是进度报告。所有条目都带代码位置、古籍依据与验收方式；<br>&gt; 已完成项在 <code>docs/CHANGELOG.md</code>，现状读数在 <code>docs/HANDOFF.md</code>。<br>&gt; 口径：全文分数均为<strong>古籍案例对齐分</strong>（回归审计用），不是现实命中率。</p>
+<hr>
+<h2>〇、怎么读这份文档</h2>
+<p>&quot;像不像老师傅&quot;拆成三件事，缺一件就露怯：</p>
+<table><thead><tr><th>维度</th><th>含义</th><th>现状问题</th></tr></thead><tbody><tr><td><strong>环节完整</strong></td><td>古法断卦/论命的每一步都有代码，不靠 LLM 临场联想</td><td>六爻缺三会局、独发独静、卦级反吟伏吟等；八字缺调候/通关/病药、格局成败救应</td></tr><tr><td><strong>判据可检</strong></td><td>每个环节的结论都由规则表算出，且<strong>有评测覆盖</strong></td><td>六爻的旺衰定性、六神临用、卦身、墓库开合、独发独静<strong>零评测覆盖</strong>——做错了没人知道</td></tr><tr><td><strong>出处可追</strong></td><td>每条判据能指到具体古籍通则，不是&quot;感觉&quot;</td><td>部分环节只有 <code>references/*.md</code> 有文、代码里没有（文码不一致）</td></tr></tbody></table>
+<p>&gt; 底线（<code>AGENTS.md</code> §四.3）：修某类错误只能改<strong>通用规则</strong>并写明古籍出处；<br>&gt; 禁止为让某个案例过关而写私有别名或 case-specific 分支。</p>
+<hr>
+<h2>一、六爻（`disciplines/liuyao`）——最成熟，差距在"边角与可检性"</h2>
+<h3>1.1 环节覆盖现状</h3>
+<table><thead><tr><th>环节</th><th>态</th><th>代码位置</th><th>备注</th></tr></thead><tbody><tr><td>装卦/纳甲/世应/六亲/六神/旬空</td><td>有</td><td><code>engine_chart.py</code>、<code>chart_tables.py</code></td><td>表全在内核 <code>symbols.py</code></td></tr><tr><td>用神多现取舍</td><td>有</td><td><code>liuyao_step2.py::_use_god_priority</code></td><td>9 级优先序</td></tr><tr><td>原神/忌神/仇神链条</td><td>有</td><td><code>liuyao_step2.py</code></td><td>含伏藏兜底</td></tr><tr><td>伏神飞神</td><td>有</td><td><code>liuyao_step2.py::_check_fu_cang</code>、<code>liuyao_step5.py</code></td><td>飞空得出 / 飞来生伏 / 飞克伏 / 伏泄气</td></tr><tr><td>进神退神</td><td>有</td><td><code>liuyao_step4.py</code></td><td><code>ADVANCE_PAIRS</code> / <code>RETREAT_PAIRS</code></td></tr><tr><td>反吟伏吟</td><td><strong>半有</strong></td><td><code>classical_enhancements.py</code></td><td>只有爻级打分；<strong>无卦级</strong>&quot;内外卦全冲/全同&quot;检测</td></tr><tr><td>六冲六合（含变卦对比）</td><td><strong>半有</strong></td><td><code>effects.py</code>、<code>liuyao_step5.py</code></td><td>只给 ±0.5 加减；无&quot;本卦定始、变卦定终&quot;双卦对比</td></tr><tr><td>三合局/破局/静爻待用</td><td>有</td><td><code>classical_enhancements.py</code></td><td>含&quot;合局待用需日月引动&quot;</td></tr><tr><td><strong>三会局</strong></td><td><strong>无</strong></td><td>全仓无 <code>三会</code></td><td>只有 <code>SAN_HE_GROUPS</code>（三合）</td></tr><tr><td><strong>独发独静</strong></td><td><strong>无</strong></td><td>仅 <code>references/classical_synthesis.md</code> 有文</td><td>文码不一致</td></tr><tr><td>月建日辰权力</td><td>有</td><td><code>liuyao_step3.py</code></td><td>月 0.6 / 日 0.4 + 日辰 ±1</td></tr><tr><td>旬空假空</td><td><strong>半有</strong></td><td><code>liuyao_step3.py::compute_empty_modifier</code></td><td>有旺衰权重；<strong>未产&quot;真空/假空&quot;标签</strong></td></tr><tr><td>墓库开合</td><td><strong>半有</strong></td><td><code>liuyao_step4.py</code>（化墓）、<code>liuyao_step5.py</code></td><td>无&quot;冲开墓库&quot;</td></tr><tr><td>应期细则</td><td>有</td><td><code>liuyao_timing.py::predict_timing_core</code></td><td>出空/填实/逢值/逢冲/待旺/暗动/伏神 7 类</td></tr><tr><td>六亲持世</td><td>有</td><td><code>liuyao_step5.py</code>、<code>liuyao_narrate.py</code></td><td>7 条情境</td></tr><tr><td>卦身 / 游魂归魂</td><td>有</td><td><code>classical_enhancements.py</code></td><td></td></tr><tr><td><strong>三传克制</strong>（太岁+月建+日辰俱克）</td><td><strong>无</strong></td><td>无太岁参与判据</td><td>文码不一致</td></tr></tbody></table>
+<h3>1.2 评测覆盖的盲区（比缺环节更严重）</h3>
+<table><thead><tr><th>集合</th><th>n</th><th>strict 对齐分</th><th>应期 top-1</th></tr></thead><tbody><tr><td>tune</td><td>20</td><td>86.2</td><td>58.8%</td></tr><tr><td>holdout</td><td>12</td><td>81.0</td><td>50.0%</td></tr><tr><td>wikisource_holdout</td><td>35</td><td>54.9</td><td>20.0%</td></tr><tr><td>huozhulin_holdout</td><td>2</td><td>34.8</td><td>0.0%</td></tr></tbody></table>
+<p>case 的 <code>expected</code> 字段实际填充率：<code>detail</code> 117、<code>verdict</code> 96、<code>yingqi</code> 81、<br><code>key_points</code> 42、<strong><code>use_god</code> 仅 48、<code>use_god_branch</code> 34、<code>use_god_position</code> 仅 3</strong>。</p>
+<p><strong>完全无评测覆盖</strong>（做错无人知）：旺衰定性本身（<code>score_case</code> 无 streak 项）；<br>反吟/伏吟/进退神/入墓/暗动/月破/游魂归魂被降级为<strong>格局词子串匹配</strong>而非结构比对；<br>应期法则的&quot;依据&quot;不校验；六神临用、卦身、三合、墓库开合、独发独静、三传克制零覆盖；<br><code>dims.use_god_position</code> 在 tune/holdout <strong>全为 N/A</strong>。</p>
+<h3>1.3 改进清单（按投入产出比）</h3>
+<table><thead><tr><th>#</th><th>改哪里</th><th>古籍依据</th><th>怎么验收</th></tr></thead><tbody><tr><td>1</td><td><code>liuyao_step3.py::compute_empty_modifier</code> 增 <code>is_true_void</code> / <code>is_false_void</code></td><td>《增删卜易》&quot;旺空待出，真空难起&quot;——旺相+月日动爻生=假空待出；休囚+日克+无生=真空</td><td><code>pattern_reference.md</code> 已列词，先补进 <code>evaluate.PATTERNS</code>；跑 wikisource_holdout(35) 看格局命中率与 strict 均分</td></tr><tr><td>2</td><td><code>liuyao_step2.py::_use_god_priority</code> + <code>_find_use_god_positions</code></td><td>《增删卜易》&quot;用神两现，舍闲取动，舍缓取急，舍静取世&quot;</td><td>加 3 例 <code>use_god_position</code> 基准；strict 报 <code>use_god_position.hit/na</code>，<strong>NA 必须下降</strong></td></tr><tr><td>3</td><td><code>liuyao_step4.py::_detect_hexagram_harmony_clash_pattern</code> 增双卦对比</td><td>《黄金策》&quot;合处逢冲事已散，冲中逢合事迟成&quot;</td><td><code>变卦六合/变卦六冲</code> 词已在 <code>evaluate.py</code> 但无人产出；补后 tune 均分不得跌破 86.2</td></tr><tr><td>4</td><td><code>liuyao_step5.py::compute_advanced_adjustments</code> 增三传</td><td>《增删卜易》&quot;三传俱克，虽旺亦危&quot;</td><td>无含太岁的基准例，属<strong>未验证</strong>；须先自建 3 例标注才可计分</td></tr><tr><td>5</td><td><code>classical_enhancements.py</code> + <code>effects.py</code> 增卦级内外卦检测</td><td>《卜筮正宗》&quot;内卦反吟内不安，外卦反吟外不宁&quot;</td><td>造全冲/全同双卦单元测试；格局维度覆盖 <code>反吟/伏吟</code></td></tr><tr><td>6</td><td><code>core/yishu_core/symbols.py</code> 增 <code>SAN_HUI_GROUPS</code>，<code>liuyao_step4.py::_detect_special_pattern</code> 优先三会</td><td>《三命通会》寅卯辰/巳午未/申酉戌/亥子丑三会方局，力大于三合</td><td>单元：三会须优先，且不得被误判&quot;三合破局&quot;</td></tr><tr><td>7</td><td><code>liuyao_step2.py</code> 增女命占婚双官鬼标记</td><td>《卜筮正宗·用神论》</td><td><strong>只给象不给吉凶断言</strong>，避免过度判</td></tr></tbody></table>
+<p><strong>纪律提醒</strong>：第 1–3 项会动推演逻辑，必须按 <code>AGENTS.md</code> §四 跑 tune/holdout 分列，<br>并跑 <code>dev_tools/golden.py verify</code>（指纹 <code>abc7884de0653ee5</code>）确认漂移是<strong>有意</strong>的。</p>
+<hr>
+<h2>二、命科八字（`disciplines/ming`）——差距最大，且**完全没有案例评测**</h2>
+<h3>2.1 已覆盖 / 缺失</h3>
+<p><strong>已覆盖</strong>：四柱（年界立春、月界节气）｜藏干三元权重 1.0/0.5/0.25｜十神｜<br>强弱（生扶−克泄耗 + 得令 ±1.2，阈值 ±1.5）｜正格 12 名｜扶抑喜用（只到&quot;类&quot;不到干支）｜<br>大运 8 步 + 顺逆 + 三日一年｜流年 12 年 + 运年交互（六合/六冲/三合/相刑/比和）｜<br>空亡｜从格 4 类（tentative）｜命宫身宫｜神煞 9 种。</p>
+<p><strong>缺失</strong>（逐条落实）：调候用神｜通关、病药用神｜<strong>格局成败救应</strong>（现为&quot;月令本气一名定局&quot;，<br>无成败/破格/救应）｜三会局（三合有）｜四柱之间独立的刑冲合害检测（现仅运-年两支比对，<br>无合化/争合妒合/冲开墓库）｜胎元｜小运｜流月｜岁运并临、天克地冲｜<br>十神组合（伤官见官/枭神夺食/食神制杀/财滋弱杀）｜女命夫子星｜童子关煞。</p>
+<p>出处纪律：<code>ming_tables.py</code>、<code>shensha.py</code> 自认&quot;无法逐字核对原文 → <code>verified=false</code>&quot;，<br>新增项必须沿用这个标记，<strong>不得把流俗起例写成古法</strong>。</p>
+<h3>2.2 评测缺口（最要紧的一条）</h3>
+<p><code>disciplines/ming</code> 下<strong>没有 <code>evaluate*.py</code></strong>；<code>data/cases/ming_cases.json</code> 的<br><code>tune: []</code>、<code>holdout: []</code>，只有 5 条机械回归，<code>expect</code> 仅含四柱/强弱/格局/空亡/大运方向。<br>结论：<strong>排盘、十神、神煞、命宫、大运流年、narrate 全部零对齐评测。</strong></p>
+<h3>2.3 案例集与诚实打分方案</h3>
+<table><thead><tr><th>书</th><th>可用形态</th><th>能支撑的维度</th></tr></thead><tbody><tr><td>《穷通宝鉴》（栏江网）</td><td>月令×日主→调候用神<strong>表</strong></td><td><strong>最适合逐条对照</strong>（答案是表不是文）</td></tr><tr><td>《子平真诠》</td><td>格局成败救应判词</td><td>格局成败</td></tr><tr><td>《滴天髓》任铁樵注</td><td>旺衰/病药/取用注例</td><td>强弱定性、病药、通关</td></tr><tr><td>《渊海子平》</td><td>命例 + 女命论</td><td>十神取格、女命夫子星</td></tr><tr><td>《三命通会》</td><td>神煞起例、童子关煞</td><td>神煞安法校验</td></tr></tbody></table>
+<p>方案骨架：</p>
+<ol><li>新文件 <code>disciplines/ming/data/cases/ming_classical_cases.json</code>，case 字段</li></ol>
+<p>   `{id, source, book, location, pillars{y,m,d,h}, gender, expected{use_god_stem,<br>   useful_gods, pattern, pattern_cheng_bai, tiaohou, shensha[], strength, dayun_dir},<br>   confidence, notes}`。<br>2. <strong><code>expected</code> 只记书上明写的量</strong>；未记一律 <code>null</code> → 走 <code>yishu_core.eval</code> 的 strict<br>   <strong>N/A 剔除</strong>，禁止 legacy 满分化。<br>3. <strong>可评</strong>：调候用神（表对表）、四柱/藏干/十神、大运顺逆、神煞、从格结构。<br>4. <strong>不可评</strong>：富贵层次、寿夭、六亲克应、吉凶年份——没有客观标的，<br>   任何&quot;命中率&quot;都是编的。古籍&quot;果于某年&quot;只作定性注记，<strong>不计分</strong>。<br>5. 指标口径：每维度报 <code>hit/applicable/na</code> 三列；n 极小（首版 20 例）时**只报命中数与<br>   候选集大小**，不报百分比；防骑墙须同时报随机期望基线。tune 10 / holdout 10 分列。</p>
+<h3>2.4 改进清单（按投入产出比）</h3>
+<table><thead><tr><th>#</th><th>改哪里</th><th>古籍依据</th><th>怎么验收</th></tr></thead><tbody><tr><td>1</td><td><code>core/yishu_core/ming_tables.py</code> 新增 <code>TIAO_HOU</code> 表；<code>pattern.py::strength_and_pattern</code> 输出 <code>tiaohou_god</code></td><td>《穷通宝鉴》按月令×日主定调候（如&quot;正月甲木，丙癸并用&quot;）</td><td>20 例表对表断言；holdout 10 例报命中数（非百分比）</td></tr><tr><td>2</td><td><code>pattern.py</code> 增格局成败救应层级</td><td>《子平真诠》&quot;有用神必有相神，相神破则格败&quot;</td><td>自建 ≥15 例（成/破/救应各 5），strict 报 <code>pattern_cheng_bai</code> 命中/na</td></tr><tr><td>3</td><td><code>pattern.py</code> 从格条件收敛</td><td>《滴天髓》&quot;从得真者只论从，从中有神论不从&quot;</td><td>10 例从/不从标注集；tentative 降到可判级别，holdout 不回归</td></tr><tr><td>4</td><td><code>analyze.py</code> 新增小运、流月</td><td>《三命通会》小运起法；流月自节气起</td><td>小运与大运起运相接、流月单调；12 步单元测试</td></tr><tr><td>5</td><td><code>pattern.py</code> 运年交互增&quot;岁运并临/天克地冲&quot;</td><td>《渊海子平》&quot;岁运并临，灾殃立至&quot;</td><td>断言某例检出；<strong>只标记不批吉凶</strong></td></tr><tr><td>6</td><td><code>shensha.py::shensha_of_chart</code> 补飞刃/金舆/将星/天医/亡神/劫煞/孤辰寡宿/阴差阳错</td><td>《三命通会·神煞》起例；无逐字出处者一律 <code>verified=false</code></td><td>断言新神煞落地支正确；narrate 禁止吉凶断言</td></tr></tbody></table>
+<p><strong>报告层同步</strong>：以上每项落地后，<code>disciplines/ming/scripts/narrate.py</code> 与<br><code>render.py</code> 要按同一口径呈现（如调候用神单列一节），否则&quot;算出来了但用户看不到&quot;。</p>
+<hr>
+<h2>三、梅花 / 小六壬 / 择吉——三科**评测不可信**，先修尺子</h2>
+<p>现状：三科 tune/holdout 均报 <strong>100%</strong>。这个读数不能当&quot;更准&quot;，只能说明<br><strong>在这三科的评测集上引擎与答案同源</strong>（落宫/局数是历法真值 + 诀句同源），<br>样本量小且构造方式决定了必然自洽。</p>
+<p><strong>优先级高于任何推演增强</strong>：</p>
+<ol><li>把三科评测集与打分口径做一次<strong>独立审计</strong>（案例怎么来的、expected 怎么抽的、</li></ol>
+<p>   是否存在&quot;用结论反推&quot;的环路），结论写进各科 <code>docs/</code>。<br>2. 分数呈现必须带 <strong>集合名 + n + 是否调参</strong>，且当 n &lt; 20 时<strong>不报百分比</strong><br>   （三科目前 n=15 上下）。<br>3. 与其扩判据，不如先扩<strong>外部独立案例</strong>（古书原文、非本项目构造）。</p>
+<hr>
+<h2>四、新门类（见 `docs/NEW-DISCIPLINES.md`）</h2>
+<ul><li>推荐落地顺序：<strong>大六壬 → 奇门遁甲（时家转盘）→ 七政四余</strong>；备选灵棋经、大衍筮法。</li><li>判据：古书出处可编程取用 / 判据树清晰 / 内核复用度高 / 可建评测集 / 可合参。</li><li>相科（面相、手相、堪舆）按 <code>AGENTS.md</code> <strong>明确不做</strong>。</li><li>落地任一新科时的验收线：各科 <code>dev_tools/check.py</code> 全绿 + 仓库根 <code>tools/check.py --full</code> 全绿</li></ul>
+<p>  + <code>tools/report.py</code> 六科之外新增一科可端到端出报告（含 <code>web/manifest</code> 与同源验收）。</p>
+<hr>
+<h2>五、执行纪律（改引擎前先读）</h2>
+<ol><li><strong>分列出分</strong>：tune 与 holdout 分别报，禁止混合冒充提升（<code>AGENTS.md</code> §四.1）。</li><li><strong>指纹验收</strong>：六爻跑 <code>cd disciplines/liuyao &amp;&amp; python dev_tools/golden.py verify</code>；</li></ol>
+<p>   有意漂移必须 <code>capture &quot;理由&quot;</code>，理由写清&quot;改的是哪条通则&quot;。<br>3. <strong>通用规则 + 出处</strong>：禁止 case-specific 分支（§四.3）。<br>4. <strong>口径变更登记</strong>：计分方式/词典/缺失字段处理一变就写 <code>docs/CHANGELOG.md</code>（§四.4）。<br>5. <strong>端到端不回归</strong>：改完跑 <code>python tools/check.py --full</code>（含站点构建/自检与<br>   网页↔本机同源验收）。<br>6. <strong>报告层同步</strong>：引擎多算出什么，<code>narrate</code>/<code>render</code> 就要按同一口径呈现出来。</p>
+  </div>
+  <div class="report-footer">本文由 Yi 的文档渲染器生成（与报告同一套样式与转换器）。<br>文档中的分数一律为古籍案例对齐分（回归审计用），不是现实预测命中率。</div>
+</div>
+
+</body>
+</html>

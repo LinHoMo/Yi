@@ -1,0 +1,24 @@
+{
+  "key": "lantai_miaoxuan_dz",
+  "kind": "八字",
+  "title": "兰台妙选",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/兰台妙选.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E5%85%B0%E5%8F%B0%E5%A6%99%E9%80%89.txt",
+  "pages": [
+    "易藏/术数/兰台妙选.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:38:45+0800",
+  "sha256": "c8d98a43be84cb9bc57589e0301b324bf9fcb208a43055f4fad5546ed20b9583",
+  "stats": {
+    "bytes": 53357,
+    "chars": 18165,
+    "lines": 444,
+    "ganzhi_pairs": 598,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/lantai_miaoxuan_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}

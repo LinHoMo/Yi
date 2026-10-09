@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>命科八字 · 案例评测方案（EVAL-PLAN）</title>
+<style>
+
+:root {
+  --paper: #f4f1ea;
+  --card: #fffdf8;
+  --ink: #2b2924;
+  --muted: #6f6a5e;
+  --accent: #9a3b2d;
+  --accent-soft: #b8675a;
+  --line: #e2dccf;
+  --pre-bg: #efece3;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: "Noto Serif SC", "Songti SC", "SimSun", "Microsoft YaHei", serif;
+  line-height: 1.8; font-size: 16px;
+}
+.report { max-width: 880px; margin: 0 auto; padding: 40px 24px 64px; }
+.report-header {
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+  padding: 28px 32px; margin-bottom: 24px;
+  border-top: 4px solid var(--accent);
+}
+.report-header h1 { margin: 0 0 6px; font-size: 26px; color: var(--ink); }
+.report-header .meta { color: var(--muted); font-size: 14px; margin: 0; }
+.report-body {
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+  padding: 32px 36px;
+}
+.report-body h1 { font-size: 23px; margin: 8px 0 18px; }
+.report-body h2 {
+  font-size: 19px; margin: 34px 0 14px; padding-left: 12px;
+  border-left: 4px solid var(--accent);
+}
+.report-body h3 { font-size: 16px; margin: 24px 0 10px; color: var(--accent); }
+.report-body h4, .report-body h5 { font-size: 15px; margin: 18px 0 8px; }
+.report-body p { margin: 12px 0; }
+.report-body ul { margin: 12px 0; padding-left: 26px; }
+.report-body ol { margin: 12px 0; padding-left: 26px; }
+.report-body li { margin: 5px 0; }
+.report-body hr {
+  border: 0; border-top: 1px dashed var(--line); margin: 26px 0;
+}
+.report-body table {
+  border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 14.5px;
+}
+.report-body th, .report-body td {
+  border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top;
+}
+.report-body th { background: #f3ece4; font-weight: 600; }
+.report-body tbody tr:nth-child(even) { background: #faf7f0; }
+.report-body pre {
+  background: var(--pre-bg); border: 1px solid var(--line); border-radius: 8px;
+  padding: 14px 16px; overflow-x: auto; font-size: 14px; line-height: 1.6;
+  font-family: "Consolas", "Noto Sans Mono", monospace;
+}
+.report-body code {
+  background: var(--pre-bg); padding: 1px 6px; border-radius: 4px;
+  font-family: "Consolas", monospace; font-size: 14px;
+}
+.report-footer {
+  text-align: center; color: var(--muted); font-size: 13px;
+  margin-top: 22px; line-height: 1.7;
+}
+@media (max-width: 640px) {
+  .report { padding: 20px 12px 40px; }
+  .report-header, .report-body { padding: 20px; }
+}
+
+</style>
+</head>
+<body>
+<div class="report">
+  <div class="report-header">
+    <h1>命科八字 · 案例评测方案（EVAL-PLAN）</h1>
+<p class="meta">源文件：disciplines/ming/docs/EVAL-PLAN.md</p>
+  </div>
+  <div class="report-body">
+<h1>命科八字 · 案例评测方案（EVAL-PLAN）</h1>
+<p>&gt; 本文件是<strong>方法学规范</strong>：定死&quot;命科的分数怎么来、什么能评、什么不能评&quot;。<br>&gt; 落地实现见 <code>disciplines/ming/scripts/evaluate.py</code> 与 <code>data/cases/ming_classical_cases.json</code>。<br>&gt; <strong>口径铁律</strong>（<code>AGENTS.md</code> §一.3）：本文件与评测输出中的一切分数都是<strong>古籍案例对齐分</strong><br>&gt; （引擎输出与古书案例要点的吻合度），用于回归审计；<strong>不是现实预测命中率</strong>。<br>&gt; 报分必带：集合名 + n + 是否参与调参。</p>
+<hr>
+<h2>一、为什么命科现在没有分数（以及这不是可以用"手感"补的坑）</h2>
+<p>现状（2026-09-30d 审计）：</p>
+<table><thead><tr><th>项</th><th>现状</th></tr></thead><tbody><tr><td><code>disciplines/ming/scripts/evaluate.py</code></td><td><strong>不存在</strong></td></tr><tr><td><code>data/cases/ming_cases.json</code></td><td><code>tune: []</code>、<code>holdout: []</code>，只有 5 条机械回归</td></tr><tr><td>5 条回归的 <code>expect</code></td><td>只含四柱 / 强弱 / 格局 / 空亡 / 大运方向</td></tr><tr><td><code>dev_tools/regression.py</code></td><td>自称&quot;非古籍对齐分&quot;</td></tr></tbody></table>
+<p>后果：<strong>排盘、十神、神煞、命宫身宫、大运流年、narrate 全部零对齐评测</strong>——<br>引擎算错了也没人报警。六爻有 tune 20 / holdout 12 / wikisource 35 三层集合兜底，<br>命科一层都没有。</p>
+<p><strong>为什么不能&quot;随便找些八字来打分&quot;</strong>：命理古书的结论大多是<strong>层次性判断</strong><br>（富贵贫贱、寿夭、六亲克应），没有可比对的客观标的。拿它当&quot;标准答案&quot;打分，<br>得到的数字既不可复现也不可解释——那正是铁律三要禁止的东西。</p>
+<hr>
+<h2>二、可评 / 不可评：先把尺子画在能画的地方</h2>
+<h3>2.1 可评（答案是**离散、可枚举、书上明写**的量）</h3>
+<table><thead><tr><th>维度</th><th>标的是什么</th><th>为什么可评</th><th>古籍来源</th></tr></thead><tbody><tr><td><code>pillars</code></td><td>四柱干支（年月日时）</td><td>公历 → 干支是<strong>历法真值</strong>，有唯一解</td><td>历法（非命理）</td></tr><tr><td><code>hidden_stems</code></td><td>各支藏干</td><td>表驱动，有通行定表</td><td>《三命通会·论藏干》</td></tr><tr><td><code>ten_gods</code></td><td>四柱天干对日主的十神</td><td>定义式，唯一解</td><td>《渊海子平·论十神》</td></tr><tr><td><code>dayun_direction</code></td><td>大运顺逆</td><td>阳年男/阴年女顺，其余逆——定义式</td><td>《渊海子平·论大运》</td></tr><tr><td><code>dayun_start</code></td><td>起运岁数</td><td>三日折一年，可算</td><td>《三命通会·论起运》</td></tr><tr><td><code>kong_wang</code></td><td>旬空二支</td><td>定义式</td><td>内核</td></tr><tr><td><code>shensha</code></td><td>具名神煞落支</td><td><strong>起例是表</strong>，可逐条核</td><td>《三命通会·神煞》</td></tr><tr><td><code>tiaohou</code></td><td>调候用神</td><td>《穷通宝鉴》按月令×日主给出<strong>表</strong>，答案是字段不是文章</td><td>《穷通宝鉴》</td></tr><tr><td><code>pattern_cheng_bai</code></td><td>格局成/破/救应</td><td>《子平真诠》给<strong>判词式条件</strong>（相神受伤即破格）</td><td>《子平真诠》</td></tr><tr><td><code>cong_ge</code></td><td>从格成立与否</td><td>条件可枚举（有根无根、有无生扶）</td><td>《滴天髓》</td></tr></tbody></table>
+<h3>2.2 不可评（**不计分**，只作定性注记）</h3>
+<table><thead><tr><th>项</th><th>为什么不计分</th></tr></thead><tbody><tr><td>富贵层次、社会地位</td><td>无客观标的；同名八字在不同时代/家庭结果不同</td></tr><tr><td>寿夭、疾病</td><td>同上；且涉及医疗，须以专业意见为准（铁律三）</td></tr><tr><td>六亲克应（父母/配偶/子女具体际遇）</td><td>超出可核验范围</td></tr><tr><td>具体吉凶年份</td><td>古书&quot;果于某年&quot;是叙述，不是可复现的标注</td></tr><tr><td>性情描述</td><td>无法离散化比对</td></tr></tbody></table>
+<p>&gt; 处置：这些内容可以在案例的 <code>notes</code> 里<strong>原文抄录</strong>并标注 <code>qualitative: true</code>，<br>&gt; <strong>但一律不进分母</strong>。宁可 n 小，不可混入不可核验项。</p>
+<hr>
+<h2>三、案例集规范</h2>
+<p>文件：<code>disciplines/ming/data/cases/ming_classical_cases.json</code></p>
+<pre>```jsonc
+{
+  &quot;schema&quot;: &quot;yi-ming-cases/1&quot;,
+  &quot;splits&quot;: {
+    &quot;tune&quot;:    [&quot;MX-001&quot;, &quot;...&quot;],   // 参与调参
+    &quot;holdout&quot;: [&quot;MH-001&quot;, &quot;...&quot;]    // 永不调参
+  },
+  &quot;cases&quot;: [
+    {
+      &quot;id&quot;: &quot;MX-001&quot;,
+      &quot;book&quot;: &quot;穷通宝鉴&quot;,
+      &quot;location&quot;: &quot;卷一·正月甲木&quot;,       // 篇名/条名，便于回查
+      &quot;source_quote&quot;: &quot;正月甲木，丙癸并用……&quot;,  // 原文片语，逐字抄录
+      &quot;pillars&quot;: {&quot;year&quot;: &quot;甲子&quot;, &quot;month&quot;: &quot;丙寅&quot;, &quot;day&quot;: &quot;甲午&quot;, &quot;hour&quot;: &quot;庚午&quot;},
+      &quot;gender&quot;: &quot;男&quot;,
+      &quot;expected&quot;: {
+        // 只填书上明写的量；没写的键一律不出现（不是 null，是不写）
+        &quot;tiaohou&quot;: {&quot;main&quot;: &quot;丙&quot;, &quot;assist&quot;: &quot;癸&quot;},
+        &quot;cong_ge&quot;: false,
+        &quot;pattern&quot;: &quot;建禄格&quot;,
+        &quot;pattern_cheng_bai&quot;: &quot;成&quot;
+      },
+      &quot;qualitative&quot;: false,
+      &quot;notes&quot;: &quot;&quot;
+    }
+  ]
+}
+```</pre>
+<h3>硬性规则</h3>
+<ol><li><strong>只填书上明写的量</strong>。<code>expected</code> 里<strong>不出现</strong>的键 = 该项对该案例 N/A，</li></ol>
+<p>   在统计时<strong>从分母里剔除</strong>——不是算错，也不是算对。<br>   （这是六爻 <code>yishu_core.eval</code> 已有的 strict + N/A 剔除口径，命科沿用。）<br>2. <strong><code>source_quote</code> 必须逐字抄录原文</strong>，不得改写、不得由现代命理书转述。<br>   找不到原文的案例<strong>不入库</strong>。<br>3. <strong>一例一条出处</strong>。同一本书的同一节可以出多例，但每例都要能指回具体条名。<br>4. <strong>禁止用引擎输出反推 <code>expected</code></strong>。这一条是本次审计在梅花/小六壬/择吉三科<br>   发现的核心风险（读数 100% 说明评测集与引擎同源）；命科从第一天就不许这么做。<br>   自检方法：<code>expected</code> 的每一项都要能在 <code>source_quote</code> 或该书同一节的表里找到依据。<br>5. <strong>tune / holdout 一次性切分并写进文件</strong>，此后 holdout <strong>永不参与调参</strong><br>   （<code>AGENTS.md</code> §四.1）。首版目标：tune 10 例 / holdout 10 例；不足则如实报 n。<br>6. <strong>流派差异要标注</strong>：起运折算（三日一年 vs 按节气精确到时辰）、年界（立春 vs 春节）、<br>   藏干权重，各家不同。案例里若涉及，在 <code>notes</code> 写明所依流派；<br>   <strong>同一维度只按一种口径建期望</strong>，不得同维度混用流派。</p>
+<hr>
+<h2>四、打分口径</h2>
+<h3>4.1 维度与权重（总分 100）</h3>
+<table><thead><tr><th>维度</th><th>权重</th><th>判法</th><th>N/A 条件</th></tr></thead><tbody><tr><td><code>pillars</code> 四柱</td><td>25</td><td>四个干支全对才得满分，否则按对数比例</td><td>无（必有）</td></tr><tr><td><code>ten_gods</code> 十神</td><td>15</td><td>四柱天干十神逐个比，按命中比例</td><td>无</td></tr><tr><td><code>hidden_stems</code> 藏干</td><td>10</td><td>四支藏干集合比对（本气必中才计该支）</td><td>缺期望则 N/A</td></tr><tr><td><code>tiaohou</code> 调候</td><td>15</td><td>主用神命中得 10，佐神命中再得 5</td><td>期望无 <code>tiaohou</code></td></tr><tr><td><code>pattern</code> 格局</td><td>10</td><td>格局名命中得 6，成/破/救应命中再得 4</td><td>期望无对应键</td></tr><tr><td><code>cong_ge</code> 从格</td><td>5</td><td>布尔一致即得</td><td>期望无 <code>cong_ge</code></td></tr><tr><td><code>shensha</code> 神煞</td><td>10</td><td>期望神煞集合的命中比例（多出不算错）</td><td>期望无 <code>shensha</code></td></tr><tr><td><code>dayun</code> 大运</td><td>10</td><td>顺逆一致得 6；首运起运岁数误差 ≤1 岁再得 4</td><td>期望无 <code>dayun*</code></td></tr></tbody></table>
+<p>&gt; 权重取&quot;越靠定义式越高&quot;的原则：四柱与十神是历法与定义，错就是错；<br>&gt; 调候与格局是判据，允许流派差异但仍须可比。</p>
+<h3>4.2 必须同时报出的三列</h3>
+<p>每个维度报 <strong><code>hit</code> / <code>applicable</code> / <code>na</code></strong>：</p>
+<p><code>`</code><br>调候用神   hit 7 / applicable 9 / na 11   (n=20)<br><code>`</code></p>
+<p><strong>当某维度的 <code>applicable &lt; 5</code> 时，只报命中数，不报百分比。</strong><br>当整个集合 <code>n &lt; 20</code> 时，<strong>总分也只报均分与极值，不报&quot;准确率&quot;字样</strong>。</p>
+<h3>4.3 防骑墙</h3>
+<p>沿用六爻经验：凡&quot;多选一&quot;的维度（如调候用神、格局名），必须同时报<br><strong>候选集大小</strong>与<strong>随机期望基线</strong>（例如调候主神在十干中取一，<br>随机期望 1/10 ≈ 10%）。只报命中率而不报基线 = 骑墙。</p>
+<h3>4.4 禁止事项</h3>
+<ul><li>❌ 不得把 holdout 混进 tune 均分（§四.1）。</li><li>❌ 不得为让某个案例过关写 case-specific 分支或私有别名（§四.3）。</li><li>❌ 不得把 <code>qualitative: true</code> 的案例计入分母。</li><li>❌ 不得输出&quot;准确率/命中率&quot;字样；一律称<strong>古籍案例对齐分</strong>。</li></ul>
+<hr>
+<h2>五、首版落地顺序（与 `docs/DEEP-DIVE-PLAN.md` §2.4 对应）</h2>
+<table><thead><tr><th>步</th><th>做什么</th><th>前置</th></tr></thead><tbody><tr><td>1</td><td>建 <code>evaluate.py</code>：维度框架 + N/A 剔除 + 三列报数 + 防骑墙；案例集可为空（空集也必须能跑通并如实报 <code>n=0</code>）</td><td>无</td></tr><tr><td>2</td><td>先用<strong>纯机械四维</strong>（<code>pillars</code>/<code>ten_gods</code>/<code>hidden_stems</code>/<code>kong_wang</code>）建 baseline —— 这些是历法与定义，案例可从任意可靠排盘表批量构造，<strong>不涉及命理判断</strong></td><td>步 1</td></tr><tr><td>3</td><td>落地《穷通宝鉴》<code>TIAO_HOU</code> 表（月令×日主 → 主/佐调候用神）与 <code>tiaohou</code> 维度</td><td>步 1</td></tr><tr><td>4</td><td>落地《子平真诠》格局成败救应判据与 <code>pattern_cheng_bai</code> 维度</td><td>步 1、2</td></tr><tr><td>5</td><td>收《穷通宝鉴》《子平真诠》案例入 <code>tune</code>（10 例），切 <code>holdout</code>（10 例）并冻结</td><td>步 3、4</td></tr><tr><td>6</td><td>把 <code>tools/eval.py</code> 对命科的&quot;跳过&quot;改为真实评测（此前因无评测器而跳过）</td><td>步 5</td></tr></tbody></table>
+<p><strong>为什么先做机械四维</strong>：它们是历法与定义，<strong>不依赖任何命理流派</strong>，因而可以先把<br>&quot;评测框架本身&quot;验证正确（跑通、报数、N/A 剔除、防骑墙），再往里装需要判据的维度。<br>反过来做会分不清&quot;框架错了&quot;还是&quot;判据错了&quot;。</p>
+<hr>
+<h2>六、与报告层的关系</h2>
+<p><code>narrate</code> / <code>render</code> 新增任何维度（调候、格局成败、小运流月……）时，<br><strong>评测维度与报告章节必须同名同义</strong>，否则&quot;算出来了但看不到&quot;或&quot;看到的没在评&quot;，<br>两边都会慢慢失真。新增维度的提交必须同时给出：维度的古籍出处 + 评测覆盖情况 + 报告位置。</p>
+  </div>
+  <div class="report-footer">本文由 Yi 的文档渲染器生成（与报告同一套样式与转换器）。<br>文档中的分数一律为古籍案例对齐分（回归审计用），不是现实预测命中率。</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "key": "huozhulin",
+  "kind": "六爻",
+  "title": "火珠林",
+  "site": "zh.wikisource.org",
+  "api": "https://zh.wikisource.org/w/api.php",
+  "pages": [
+    "（未留痕：本文件早于 provenance 机制落盘，页面清单未知）"
+  ],
+  "page_count": null,
+  "fetched": "未知（早期抓取未写 provenance；2026-10-01 补写本文件）",
+  "sha256": "2cc29b1e47197a793f1718c89899cd30e00654e4177f60c5349f2a2196619b8e",
+  "stats": {
+    "bytes": 67945,
+    "chars": 25835,
+    "lines": 909,
+    "ganzhi_pairs": 65,
+    "tables": 0,
+    "headings": 84
+  },
+  "source_file": "data/sources/huozhulin.wikitext.txt",
+  "provenance_backfilled_at": "2026-10-01",
+  "note": "公版古籍原文的字符级转存，未做任何改写或模型转写。**补写说明**：正文的抓取时刻与子页清单当时未留痕，故 fetched/page_count 标为未知，不编造；sha256 与 stats 由本次对在盘文件实测得出，可用于后续核对文件是否被改动。"
+}

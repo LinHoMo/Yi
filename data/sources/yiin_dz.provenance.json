@@ -1,0 +1,24 @@
+{
+  "key": "yiin_dz",
+  "kind": "六爻",
+  "title": "易隐",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/易隐.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E6%98%93%E9%9A%90.txt",
+  "pages": [
+    "易藏/术数/易隐.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:38:17+0800",
+  "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+  "stats": {
+    "bytes": 443460,
+    "chars": 151457,
+    "lines": 2245,
+    "ganzhi_pairs": 1334,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/yiin_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}

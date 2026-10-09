@@ -1,0 +1,117 @@
+{
+  "_meta": {
+    "说明": "命科机械因子回归用例（非古籍占验、非对齐分）",
+    "用途": "固定出生样例回归强弱/格局/空亡/四柱；禁止当预测率"
+  },
+  "tune": [],
+  "holdout": [],
+  "regression": [
+    {
+      "id": "MG001",
+      "datetime": "1984-02-10 10:00",
+      "gender": "男",
+      "expect": {
+        "pillars": {
+          "year": "甲子",
+          "month": "丙寅",
+          "day": null,
+          "hour": null
+        },
+        "strength_in": [
+          "中和",
+          "偏旺",
+          "偏弱"
+        ],
+        "pattern": "建禄格",
+        "xunkong": [
+          "申",
+          "酉"
+        ],
+        "dayun_dir": "forward",
+        "tong_guan": [
+          {
+            "name": "身财相战",
+            "克": "木",
+            "被克": "土",
+            "中介": "火",
+            "通关": true
+          }
+        ],
+        "pillar_relations": [
+          "年时干甲己合",
+          "月时支寅巳六害",
+          "日时干甲己合",
+          "时干己逢2甲争合"
+        ]
+      }
+    },
+    {
+      "id": "MG002",
+      "datetime": "1990-05-20 10:30",
+      "gender": "男",
+      "expect": {
+        "strength": "偏弱",
+        "pattern": "伤官格",
+        "dayun_dir": "forward",
+        "tong_guan": [
+          {
+            "name": "官杀克身",
+            "克": "金",
+            "被克": "木",
+            "中介": "水",
+            "通关": false
+          }
+        ],
+        "pillar_relations": [
+          "年日干庚乙合"
+        ]
+      }
+    },
+    {
+      "id": "MG003",
+      "datetime": "1984-12-08 08:00",
+      "gender": "女",
+      "expect": {
+        "strength": "偏弱",
+        "pattern": "正官格",
+        "dayun_dir": "backward",
+        "tong_guan": [
+          {
+            "name": "官杀克身",
+            "克": "水",
+            "被克": "火",
+            "中介": "木",
+            "通关": true
+          }
+        ],
+        "pillar_relations": []
+      }
+    },
+    {
+      "id": "MG004",
+      "datetime": "1996-11-11 22:00",
+      "gender": "男",
+      "expect": {
+        "strength": "偏旺",
+        "pattern": "建禄格",
+        "pillar_relations": [
+          "年时干丙辛合",
+          "自刑"
+        ]
+      }
+    },
+    {
+      "id": "MG005",
+      "datetime": "2000-08-15 14:00",
+      "gender": "男",
+      "expect": {
+        "strength": "偏弱",
+        "pattern": "正官格",
+        "pillar_relations": [
+          "年日干庚乙合",
+          "月日支申巳六合"
+        ]
+      }
+    }
+  ]
+}

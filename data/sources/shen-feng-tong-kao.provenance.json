@@ -1,0 +1,23 @@
+{
+  "key": "shen-feng-tong-kao",
+  "kind": "八字·病药",
+  "title": "神峰通考",
+  "site": "zh.wikisource.org",
+  "api": "https://zh.wikisource.org/w/api.php",
+  "pages": [
+    "神峰通考"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-02 12:30:39+0800",
+  "sha256": "17cb86e9fc27b6175330b2bcae90f0e61af7dd5542c5c06daf32e3f8e23191b5",
+  "stats": {
+    "bytes": 453330,
+    "chars": 156794,
+    "lines": 3026,
+    "ganzhi_pairs": 2218,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/shen-feng-tong-kao.wikitext.txt",
+  "note": "公版古籍原文的字符级转存，未做任何改写或模型转写；子页以 <!-- ==== 标题 ==== --> 分隔。"
+}

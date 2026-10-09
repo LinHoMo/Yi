@@ -1,0 +1,161 @@
+{
+ "schema": "yi-rule-registry-v1",
+ "discipline": "ming",
+ "_comment": "命科规则注册表（Phase 5 Evidence Maturation：评测覆盖降到规则级，范式照六爻）。domain 括号内的英文串是 analyze.conclusion.verdicts 的 code / 顶层键——evidence.factor 互为子串即挂接（attach_rule_registry，先命中先得，顺序即优先级）。仅注册有真实评测 dim 的解释性规则；无评测 dim 的机械结构标签（xunkong/san_hui/tai_yuan/ten_god_combo/tong_guan/pillar_relations/female_fu_zi/tian_ke_di_chong）不注册、沿用学科基线（golden 指纹覆盖），缺口登记 TECH-DEBT §2.5；strength 例外——已有 external_holdout report-only 读数（ming_external_cases.json），如实登记于 _uncovered ming.strength，加权 dim 化待口径变更登记。**回验契约（2026-10-09 起有牙齿，tests/test_ming_rule_registry.py 断言）**：① 评测 dim 必须是 scripts/evaluate.py WEIGHTS 的键；② impl 写成 `<file>:<symbol>`（可带括号说明），`<symbol>` 必须在 `<file>` 里**真的定义**（ast 顶层 def/class/赋值；仅被 import 进来不算——原实现把 pattern.py:tiaohou_of 当定义处、把 dayun 8 步归给 analyze.py，均属指针错误，已改指真定义处）；③ quote_in_data 指针必须可解引用，且其引文逐字命中 source.corpus.files 登记的在库语料（该引文库条目若带 corpus_line，按行级回验）；④ dayun/shensha 维度案例集 0 applicable，如实标 mechanical_regression，不得虚标 classical_holdout。",
+ "rules": [
+  {
+   "rule_id": "ming.tiaohou",
+   "domain": "调候（tiaohou）",
+   "impl": "core/yishu_core/ming_tables.py:tiaohou_of（月支×日干查表定义处；scripts/pattern.py 只在 import 处引用，由 strength_and_pattern 写入 result['tiaohou']，analyze 顶层透出）",
+   "source": {
+    "book": "《穷通宝鉴》",
+    "locator": "调候用神表（按月日干查；逐字引文库 data/tiaohou_quotes.json 120 键）",
+    "quote_in_data": "disciplines/ming/data/tiaohou_quotes.json#1甲.quote",
+    "corpus_files": [
+     "data/sources/qiong-tong-bao-jian.wikitext.txt",
+     "data/sources/qiong_tong_bao_jian_dz.dz.txt"
+    ],
+    "corpus_note": "引文库 110 条 quote 全部逐字命中 wikitext 语料；dz.txt（评注整理本）另有 18 格与之逐字相同。判据按「至少命中一份在库语料」，不放过任何一条改写。",
+    "verified": true
+   },
+   "applicability": "月支本气×日干查调候表；无明文的格返回 None（如实缺省，不硬补）；主神 10 分+佐神 6 分为评测口径",
+   "evaluation": {
+    "status": "classical_holdout",
+    "splits": [
+     "tune",
+     "holdout"
+    ],
+    "dim": "tiaohou",
+    "note": "tiaohou 维度 51 例 expected（tune 30 + holdout 21）全部对齐（2026-10-02t 读数，详见 HANDOFF §一）"
+   }
+  },
+  {
+   "rule_id": "ming.pattern",
+   "domain": "格局成败（pattern）",
+   "impl": "scripts/pattern.py:PATTERN_CB_RULES（strength_and_pattern 成破救应分支）",
+   "source": {
+    "book": "《子平真诠》",
+    "locator": "论用神成败救应/论相神紧要（八格逐条原文见实现文件头注释）",
+    "quote_in_code": "disciplines/ming/scripts/pattern.py#官逢财印，又无刑冲破害",
+    "quote_placement_note": "该锚点落在 pattern.py 的**文件头注释**里（书源照录的说明文字），不是运行时字面量——本字段读作「原文在实现文件里可指回的位置」，不读作「引文住在代码里」；运行时判据只取本表 applicability 描述的机械主干（§三：断语/引文进 data）",
+    "verified": true
+   },
+   "applicability": "只取透干十神有无的主干判据；判定顺序：成条件满足→成格，忌神透→有救应则救成、无救则破，忌未透→成格；地支会合/位置/合化等徐注细节机械层不做",
+   "evaluation": {
+    "status": "classical_holdout",
+    "splits": [
+     "tune",
+     "holdout"
+    ],
+    "dim": "pattern",
+    "note": "pattern 维度（格局名 8 + 成破救应 4）：成破救应 36 例全 holdout，28/36 对齐（灰区 8 例登记，2026-10-02t 读数）"
+   }
+  },
+  {
+   "rule_id": "ming.cong_ge",
+   "domain": "从格（special_pattern）",
+   "impl": "scripts/pattern.py:_from_judge（tentative_special / from_kind / from_type）",
+   "source": {
+    "book": "《滴天髓》",
+    "locator": "从化论/从象/假从章（任铁樵注；诀句原文见实现文件 docstring）",
+    "quote_in_code": "disciplines/ming/scripts/pattern.py#从得真者只论从",
+    "quote_placement_note": "该锚点落在 pattern.py 的 **docstring**，且为**简体转写**；繁体逐字原文另存 `data/verdicts.json#从格引文.verse`。本字段读作「实现处的指路注释」，不读作「引文住在代码里」（改字会违反 §二 照录不转简）",
+    "verified": true
+   },
+   "applicability": "从弱成立下判真/假从与从旺/从强/从气/从势；官杀当权不落从势（当令且透干或双透成党）；根被会夺/比劫虚浮等灰区维持登记不硬填",
+   "evaluation": {
+    "status": "classical_holdout",
+    "splits": [
+     "tune",
+     "holdout"
+    ],
+    "dim": "cong_ge",
+    "note": "cong_ge 维度 15 例全 holdout：布尔 13/15（真/假灰区 2 例登记）、from_kind 15/15（kind 在同 dim 内评，2026-10-02t 读数）"
+   }
+  },
+  {
+   "rule_id": "ming.dayun",
+   "domain": "大运（dayun）",
+   "impl": "scripts/pattern.py:dayun_table（8 步循环定义处；scripts/analyze.py 调它写 result['dayun']；起运折算常量 DAYS_PER_LUCK_YEAR/MONTHS_PER_DAY 与方向判据 dayun_direction 在 core/yishu_core/ming_tables.py）",
+   "source": {
+    "book": "《神峰通考》",
+    "locator": "起大运法阳男阴女/阴男阳女两节（「折除三日，为一岁」＋顺数/逆数至节气折算；语料行 2608/2612 逐字在库——2026-10-04n 核对翻转；机制同《渊海子平》通行口径）",
+    "quote_in_data": "disciplines/ming/data/rules/dayun_quotes.json#yang_male_yin_female.quote",
+    "corpus_files": [
+     "data/sources/shen-feng-tong-kao.wikitext.txt"
+    ],
+    "corpus_note": "dayun_quotes.json 两条引文各带 corpus_line（2608/2612），回验按行级逐字命中；该文件 _provenance.source_file 与本字段须一致。",
+    "quote_in_code": "core/yishu_core/ming_tables.py#三日折一年",
+    "verified": true
+   },
+   "applicability": "顺逆按年干阴阳×性别；起运岁≈距节气日数/3（三日=一年，一日=四月）；只推干支不批吉凶",
+   "evaluation": {
+    "status": "mechanical_regression",
+    "splits": [
+     "tune",
+     "holdout"
+    ],
+    "dim": "dayun",
+    "note": "dayun 维度案例集 0 applicable（expected 缺）——机械覆盖=golden 指纹+回归；对齐覆盖待外部集（禁人为制造 expected）；不得虚标 classical_holdout。书源引文已逐字挂接（2026-10-04n），evaluation 状态维持 mechanical_regression 不变（缺 expected 与引文核对是两回事）"
+   }
+  },
+  {
+   "rule_id": "ming.shensha",
+   "domain": "神煞（shensha）",
+   "impl": "core/yishu_core/shensha.py:shensha_of_chart（analyze 顶层 result['shensha']，只安星不批吉凶）",
+   "source": {
+    "book": "《渊海子平》",
+    "locator": "通行起例（经考证确认不在《三命通会》《渊海子平》《滴天髓》《子平真诠》原文——2026-10-02u 登记；**2026-10-04n 补查在库《神峰通考》**：贵人诀「甲戊庚牛羊」唯一出现系「总论子平谬说类」批判语境——「日贵格，如甲戊庚牛羊，乙巳鼠猴乡之类也。焉有斯理……原取名之不据理出……岂可信乎？」，张楠明斥贵人格虚诞；童子煞两库 0 命中。verified=false 维持：由「待核对」升级为「已核对且在库书源否定/缺载」）",
+    "quote_in_code": "core/yishu_core/shensha.py#甲戊庚牛羊",
+    "verified": false
+   },
+   "applicability": "按通行口诀机械安星；只标所在、不批旺衰吉凶（铁律三）；日时同支去重",
+   "evaluation": {
+    "status": "mechanical_regression",
+    "splits": [
+     "tune",
+     "holdout"
+    ],
+    "dim": "shensha",
+    "note": "shensha 维度案例集 0 applicable——机械覆盖=golden 指纹+回归；对齐覆盖待外部集；不得虚标 classical_holdout"
+   }
+  }
+ ],
+ "_uncovered": [
+  {
+   "rule_id": "ming.bing_yao",
+   "domain": "病药（bing_yao）",
+   "impl": "disciplines/ming/scripts/pattern.py:bing_yao（analyze 顶层 result['bing_yao']）",
+   "source": {
+    "book": "《神峰通考》",
+    "locator": "病药说类 + 雕枯旺弱四病说类；全文 data/sources/shen-feng-tong-kao.wikitext.txt",
+    "quote_in_data": "disciplines/ming/data/verdicts.json#病药引文.thesis",
+    "corpus_files": [
+     "data/sources/shen-feng-tong-kao.wikitext.txt"
+    ],
+    "quote_in_code": "disciplines/ming/scripts/pattern.py#BING_YAO_THESIS",
+    "quote_placement_note": "2026-10-09 断语外置批次：引文本体已从 .py 字面量移到 data/verdicts.json#病药引文（AGENTS.md §三「断语/引文进 data，代码只留算法」）。quote_in_code 仍有效——BING_YAO_THESIS 在 pattern.py 里现为**数据装载位**（BING_YAO_THESIS = _BING[\"thesis\"]），锚点回验的是装载位置而非字面量；同一分支的 label/所本/note 也在那张表。thesis 为书源逐字子串（已按 corpus_files 复核），渲染文本与本表改动前逐字相同。",
+    "verified": true
+   },
+   "why_not_registered": "evaluate.py WEIGHTS 无 bing_yao 维度——注册表 rules 契约要求 dim 必须是评分器真实键，病药无对齐案例集，故不入 rules（如实登记于此，勿虚标 classical_holdout）",
+   "coverage": "mechanical_regression：golden 机械层 + narrate 措辞层指纹 + tests/test_ming_bing_yao.py（5 例）；古籍对齐覆盖待从《神峰通考·人命见验类》提取病药命例后建立，届时再建维度与注册条目",
+   "maturity": "C→B 未完成：古籍→规则→代码已通；古籍命例已入库（ming_bing_yao_cases.json n=2，external_holdout），但与实现存在层级性口径分歧（书源病在藏干、引擎判病在月令主轴，方向相反），故不计分",
+   "layer_divergence": "TECH-DEBT.md §2.7",
+   "provenance_mix": "规则表内混两类知识：土厚埋金=source_backed_exact；金/火/水/木四行病名与「比肩夺财」（含劫财）=source_informed_generalization。评测时两类不得混同，generalization 只作通则回归"
+  },
+  {
+   "rule_id": "ming.strength",
+   "domain": "强弱扶抑（strength）",
+   "impl": "disciplines/ming/scripts/pattern.py:strength_and_pattern（analyze 顶层 result['strength']；三档标签 偏旺/偏弱/中和，阈值 WEAK/STRONG_THRESHOLD=±1.5）",
+   "source": {
+    "book": "《渊海子平》通行口径（身旺喜克泄耗/身弱喜生扶）；根权重机制《滴天髓阐微·衰旺》任注（2026-10-04d 已逐字取证落地）",
+    "locator": "《渊海子平》维基文库实测 missingtitle（不在库）；阐微衰旺章全文 data/sources/di-tian-sui-chan-wei.wikitext.txt（语料行 2452；「奶之轻者也」为 wikisource 转写讹字，通行本作「根」）",
+    "quote_in_code": "disciplines/ming/scripts/pattern.py#ROOT_STAGE_ELEMENTS",
+    "verified": true
+   },
+   "why_not_registered": "evaluate.py WEIGHTS 无 strength 维度（强弱读数为 report-only，不进加权均分）——rules 契约要求 dim 必须是评分器真实键；外部集已立（ming_external_cases.json，split=external_holdout 永不调参），维度加权化属口径变更，须先登记 CHANGELOG 并冻结集合",
+   "coverage": "external_holdout（report-only）：`python scripts/evaluate.py --split external_holdout` → 强弱对齐 17/19（2026-10-04 首批：衰旺章任注显式标注例 n=19，旺侧9/衰侧10；纳入规则与类别映射见案例文件 _provenance）。机械覆盖：日主之根宫位分层已落地（tests/test_ming_strength_root_stage.py 锁引文逐字+映射+外集隔离 tripwire）",
+   "maturity": "2026-10-04d 裁决+落地：①衰旺章根层级（长生禄旺重根/墓库余气轻根/天干比肩最轻）逐字取证，引擎根权重按宫位轴落地（ROOT_STAGE_ELEMENTS 木火金水；土寄四隅流派不一维持层位权重，如实登记）。②归因修正：2026-10-04 首批登记的「ZE005/ZE017 失配同指根权重未区分禄刃长生」经反事实测量证伪——按书源轴重映射后 ZE005 Δ=0.0、ZE017 Δ=−0.25，两例均不翻转（17/19 不变）；剩余失配候选机制=中和带宽（±1.5 无书源标定）/三会支局未入强弱/天干十神零权重（书源「比肩如朋友之相扶」主张正权但量级无书源数），三者均待独立证据，禁止拿外集调参。③分列验收：tune 100.0(n=30)/holdout 96.7(n=246)/外集 17/19 全部持平，金标准带理由重捕（仅 weak_zhengguan2 strength_score −5.20→−5.45，标签/格局不变）"
+  }
+ ]
+}

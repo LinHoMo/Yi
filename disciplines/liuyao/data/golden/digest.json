@@ -1,0 +1,144 @@
+{
+  "_meta": {
+    "what": "金标准指纹基线（排盘+思维链+分析层逐字段；抽样含 narrate 文案哈希）",
+    "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
+  },
+  "digest": "4e57c796140d872c",
+  "narrate_digest": "7200af9a70d2df8f",
+  "drift_log": [
+    {
+      "from": "bb23797bf6044b95",
+      "to": "0e2bb128bfefe831",
+      "date": "2026-09-23",
+      "reason": "应期候选池按单位分列（日5/月3/年2各自有序封顶）。旧实现把月级/年级候选与日级挤在同一个5支窗口，月级答案占掉日级名额、日级又盖住月级，两个单位互相饿死（HANDOFF 四·7 记的那次三集全降即由此）。已逐字段证明漂移只落在 yingqi_branches：288 例中 102 例变化，结构字段（pillars/lines/palace/empty/changed/use_god/strength/verdict/score/adv/patterns）0 处漂移、0 异常。三集判别力同步改善：tune 主应期 29.4→35.3%、平均名次 2.19→2.0；holdout 平均名次 2.5→2.2；wikisource 主应期 17.1→20.0%、平均名次 2.37→2.0。holdout 对齐分 85.1→84.8、wikisource 56.7→56.3 属应期改单位感知后收回的假分（基准写未月而引擎给未日旧口径也算命中），不是退步。"
+    },
+    {
+      "from": "0e2bb128bfefe831",
+      "to": "9b90c24d20ee5f3b",
+      "date": "2026-09-26",
+      "reason": "有意行为变更：古籍通用规则修复（原神失位静卦豁免/伏藏压制封顶/小畜六合六冲双入），黑箱回归 11/18→13/18；指纹漂移为预期内引擎行为修订，见 docs/CHANGELOG.md 2026-09-25b"
+    },
+    {
+      "from": "9b90c24d20ee5f3b",
+      "to": "9b90c24d20ee5f3b",
+      "date": "2026-09-26",
+      "reason": "analyze 输出追加病药/星煞加性字段（bing_yao/shensha_panel），不改已有判定；应期插队规则已回退（tune/名次变差）"
+    },
+    {
+      "from": "9b90c24d20ee5f3b",
+      "to": "2701fda2c925c208",
+      "date": "2026-09-26",
+      "reason": "应期排序按古例规律修订（近病填实/久病冲空/化空出空/伏得出/飞克伏冲飞），yingqi_branches 重排属有意行为变更"
+    },
+    {
+      "from": "2701fda2c925c208",
+      "to": "65e8331c80c4f06a",
+      "date": "2026-09-26",
+      "reason": "应期排序：化空出空前插/空而回头生不作空/飞克伏先冲飞/动爻先值后合——古例通用规则"
+    },
+    {
+      "from": "65e8331c80c4f06a",
+      "to": "a1a7d34c3532f2f2",
+      "date": "2026-09-26",
+      "reason": "step5 接入病药结构化加减（有界）；应期排序不纳入药码（holdout 否证）"
+    },
+    {
+      "from": "a1a7d34c3532f2f2",
+      "to": "5c6e77ee253b0ddd",
+      "date": "2026-09-26",
+      "reason": "金标准抽样补 narrate 文案哈希（HANDOFF 文案搬家盲区）"
+    },
+    {
+      "from": "5c6e77ee253b0ddd",
+      "to": "abc7884de0653ee5",
+      "date": "2026-09-29",
+      "reason": "有意行为变更：叙述层四处缺陷修复（用户报的正文问题+用神旺衰遗漏）。1) 用神旺衰因子理由改以权威 strength_level 为准（原先按 floored base_score 分桶误落「平和」，与 strength_level=极弱 自相矛盾）；2) 应期基础句在已有日级日历日期时改用 timing_with_dates，不再输出「按月计…别拿天来量」的矛盾口径；3) 婚姻持世解读按用神类别分流男/女模板（男测姻缘曾误套「女占婚不利」）；4) 有利面/拖累面选取改为显式 polarity 优先，修复用神旺衰(极弱)因 abs(score) 排序+[:2] 截断被挤出、两边都不落的遗漏。证据：golden 逐条比对 HEAD 快照，288 例中 5 条变化且变化字段仅限 narrate_sha/narrate_len（叙事文案哈希与长度），结构字段 pillars/lines/palace/empty/changed/use_god/strength/verdict/score/yingqi_branches/adv_keys/adv_summary/patterns 全部 0 漂移 0 异常；另经 refactor_guard 115 例零漂移复验，tune 93.9%/holdout 87.5%、思维链 12/12、黑箱回归 12/18 均与基线持平。属「改的正是要改的文案」，不是结构性退步。"
+    },
+    {
+      "from": "abc7884de0653ee5",
+      "to": "6a67db48bbed83fc",
+      "date": "2026-09-30",
+      "reason": "深度改造第一批通则新增（DEEP-DIVE-PLAN §1.3）：①三会方局（寅卯辰/巳午未/申酉戌/亥子丑，卦中二支+月日补一支，±0.5 有界，《三命通会》）；②独发/独静（一爻独动/五爻独静，格局标签与详释，不进主分）；③卦级反吟伏吟（内卦纳支对冲/同支）；④真空/假空标签（旬空定性，不进主分）；⑤本卦↔变卦双卦对比（合处逢冲事已散 -1.5 / 冲中逢合事迟成 +1.5，《黄金策》），卦体六合一/六冲判定由卦名白名单改为内核对应位纳支判——旧白名单两表互相矛盾（同人/夬/姤等同时出现在两表），属通则修复。全部为通用规则，无 case-specific 分支；tune 93.9 / holdout 87.5 / 应期 top-1 58.8/50.0 与黑箱回归 12/18 全部持平"
+    },
+    {
+      "from": "6a67db48bbed83fc",
+      "to": "2e8e48f9bd3a39f4",
+      "date": "2026-09-30",
+      "reason": "修卦身口径：原实现按日干阴阳+代数定爻位，与《卜筮正宗》安月卦身诀（阳世从子月起、阴世从午月起，从初数至世）不符；改为世爻阴阳+世爻位推卦身支。漂移仅卦身叙述文本（6 条抽样子集 narrate 哈希）"
+    },
+    {
+      "from": "2e8e48f9bd3a39f4",
+      "to": "46fd569fbe945814",
+      "date": "2026-09-30",
+      "reason": "叙事模板口径修正：strength_reason 的 base_strong/base_weak 文案去掉「得令/失令」措辞（与月令旺衰脱钩，消除 report_faithfulness 审计 contradicted）"
+    },
+    {
+      "from": "46fd569fbe945814",
+      "to": "eb9977f62de4653f",
+      "date": "2026-10-01",
+      "reason": "指纹拆分（SYS-REVIEW#2）：机械/措辞分列；机械字段取值不变（机械层逐条比对仅 narrate_sha/narrate_len 键移出，机械 digest 回到纯机械口径）"
+    },
+    {
+      "from": "eb9977f62de4653f",
+      "to": "83f3b9d9022d7f22",
+      "date": "2026-10-01",
+      "reason": "删除 liuyao_step4 卦体六合/六冲的手写卦名白名单（10 卦误收六冲、18 卦误收六合、涣离萃两名单并存），改用 core hexagram_he_chong_kind 结构判据；报告层不再出现与同一 analyze 的 clash_harmony 相矛盾的六冲断言"
+    },
+    {
+      "from": "83f3b9d9022d7f22",
+      "to": "d4ccdb7a3050b564",
+      "date": "2026-10-02",
+      "reason": "六爻格局标签去子串扫描：反吟/伏吟·进退神·暗动·月破·三合/三刑改为读 advanced_analysis 结构（不再扫 step5/summary 文本）；patterns 字段为措辞层派生标签，机械排盘不变"
+    },
+    {
+      "from": "d4ccdb7a3050b564",
+      "to": "fed7f87766486d97",
+      "date": "2026-10-06",
+      "reason": "应期年级阶梯落地（增删卜易「近應日遠應年月」/世爻章餘仿此）+ 化出之支值月 + 三合虚一待用月级 + 世动逢合 + 化出回头克冲去之支；tune 96.8/holdout 90.2 持平，wikisource 56.9→60.5，suigui 94.5→98.5，口径变更已记 CHANGELOG"
+    },
+    {
+      "from": "fed7f87766486d97",
+      "to": "c57a480af53f1b90",
+      "date": "2026-10-07",
+      "reason": "补对源/补注记批次（OPT-huangjince_dz-03/06/07、yiin_dz-03、yimao_dz-01）：①双卦对比规则出处由误挂《黄金策》改挂《卜筮正宗》冲中逢合合处逢冲论第十五（正文源L3102-3104，两行逐字照录，判定值±1.5零变更）；②liuyao_timing 模块补《易隐》应期四诀/《黄金策》期日九法书源对拍表（只读注记，不新增Rule）；③新增家宅爻位取象叙述模板（黄金策源L2533/L2536，不进评分）；④rule_registry 新增十八法映射条目+恢复三条注记。tune 96.8/holdout 90.2 持平，措辞层25c5eeea2fa7e3b9未变"
+    },
+    {
+      "from": "c57a480af53f1b90",
+      "to": "2993c3eca10bc21b",
+      "date": "2026-10-08",
+      "reason": "OPT-yiin_dz-01/yimao_dz-02/zengshan_buyi_dz-03/zengshan_buyi_dz-04 四项新增结构格局标签，只标象不打分，不改主判"
+    },
+    {
+      "from": "2993c3eca10bc21b",
+      "to": "4e57c796140d872c",
+      "date": "2026-10-09",
+      "reason": "缺陷C修复后有意漂移：伏藏盘 step3 真实 can_emerge 压制(-0.5)首次可达，屯|[]/2026-09-22 23:40|占求财 与 旅|[]/2024-02-03 10:30|占父病 各 score/verdict/strength 下移（逐条见交付报告）；B/D/G/E 未动任何金标准字段（措辞层 narrate 哈希不变，反吟伏吟外置逐字同文）"
+    }
+  ],
+  "narrate_drift_log": [
+    {
+      "from": "46fd569fbe945814",
+      "to": "ede6f855568a66a1",
+      "date": "2026-10-01",
+      "reason": "指纹拆分（SYS-REVIEW#2）：机械/措辞分列；机械字段取值不变（机械层逐条比对仅 narrate_sha/narrate_len 键移出，机械 digest 回到纯机械口径）"
+    },
+    {
+      "from": "ede6f855568a66a1",
+      "to": "25c5eeea2fa7e3b9",
+      "date": "2026-10-01",
+      "reason": "删除 liuyao_step4 卦体六合/六冲的手写卦名白名单（10 卦误收六冲、18 卦误收六合、涣离萃两名单并存），改用 core hexagram_he_chong_kind 结构判据；报告层不再出现与同一 analyze 的 clash_harmony 相矛盾的六冲断言"
+    },
+    {
+      "from": "25c5eeea2fa7e3b9",
+      "to": "caed6b98cf4b50b9",
+      "date": "2026-10-08",
+      "reason": "OPT-yiin_dz-01/yimao_dz-02/zengshan_buyi_dz-03/zengshan_buyi_dz-04 四项新增结构格局标签，只标象不打分，不改主判"
+    },
+    {
+      "from": "caed6b98cf4b50b9",
+      "to": "7200af9a70d2df8f",
+      "date": "2026-10-08",
+      "reason": "2026-10-08 交付文本两处收口：①liuyao_narrate._dedash 折叠模板拼接出的「——，」残句（实测交付报告首句『…不是发力的时候——，主要因为…』，纯标点归一，不增删措辞）；②render 结论行追加数据层档位注记（narrative_templates#narrate_shell.conclusion_grade_note），消除与同页口径句『凶象只用偏向讲』的自相矛盾。机械层零漂移，tune 96.8/holdout 90.2、黑箱 11/18 均与 capture 前一致"
+    }
+  ]
+}

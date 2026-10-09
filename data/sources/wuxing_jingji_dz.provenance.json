@@ -1,0 +1,24 @@
+{
+  "key": "wuxing_jingji_dz",
+  "kind": "八字",
+  "title": "五行精纪",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/五行精纪.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E4%BA%94%E8%A1%8C%E7%B2%BE%E7%BA%AA.txt",
+  "pages": [
+    "易藏/术数/五行精纪.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:38:32+0800",
+  "sha256": "1d0116a4ea52dc5bd9c18c573083201f81ce79d6a43f088caded632b80a7d364",
+  "stats": {
+    "bytes": 558110,
+    "chars": 189652,
+    "lines": 4294,
+    "ganzhi_pairs": 5351,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/wuxing_jingji_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}

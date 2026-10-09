@@ -1,0 +1,24 @@
+{
+  "key": "qianli_minggao_dz",
+  "kind": "八字",
+  "title": "千里命稿",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/千里命稿.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E5%8D%83%E9%87%8C%E5%91%BD%E7%A8%BF.txt",
+  "pages": [
+    "易藏/术数/千里命稿.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:38:44+0800",
+  "sha256": "a02a8f6eb4f1b42806a9609a80c1b0254da374185012ecc6ba5ac693b14698b5",
+  "stats": {
+    "bytes": 309951,
+    "chars": 107357,
+    "lines": 3970,
+    "ganzhi_pairs": 2524,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/qianli_minggao_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}

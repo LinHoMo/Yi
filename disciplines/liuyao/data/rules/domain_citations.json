@@ -1,0 +1,34 @@
+{
+  "_comment": "六爻分占域判据引文库（易冒卷六-十，OPT-yimao_dz-10）。以占域为单位逐字摘录《易冒》对各类占事的主要判据供叙事层与将来扩域引用；**不参与结构分析/评分；只作叙事候选素材**（铁律一/三）。_schema=liuyao-domain-citations/1",
+  "_meta": {
+    "version": "1",
+    "sourced_from": "data/sources/yimao_dz.dz.txt（卷六-十·类占）",
+    "purpose": "各占域逐字引文库——词讼/行人/疾病/失物/婚姻/胎产/家宅/出行等",
+    "scope": "逐字引文＋行号；供 narrate 引述与将来域扩；engine 结构层不引用",
+    "铁律三提示": "医疗类（疾病/胎产）措辞须「偏向/有…信号」软表述，强制提示以专业意见为准"
+  },
+  "domains": {
+    "词讼": {
+      "_source_lines": "《易冒》类占·词讼章",
+      "_key_points": ["词讼专官（官鬼为用）", "占世应之分：世为我应为鬼", "鬼旺世衰——受刑伤"],
+      "placeholder_note": "本卷占域引文库当前只登记域键骨架作为落档示范；**逐字引文须从书源 L行逐一录入后方可启用**（AGENTS.md §四.3 禁止凭记忆编造书源）。各域的 source_lines、quote、locator 字段候录取足本后补全。"
+    },
+    "行人": {
+      "_source_lines": "《易冒》类占·行人章",
+      "_key_points": ["行人迟速", "去来之向"],
+      "placeholder_note": "逐字引文待补"
+    },
+    "疾病": {
+      "_source_lines": "《易冒》类占·疾病章",
+      "_key_points": ["病证所由", "生死断语属于铁律三红线"],
+      "placeholder_note": "医疗域，措辞受铁律三约束；逐字引文待补"
+    },
+    "失物": {
+      "_source_lines": "《易冒》类占·失物章",
+      "_key_points": ["失物可向方位与得失"],
+      "placeholder_note": "逐字引文待补"
+    },
+    "_extension_note": "其余占域（婚姻/胎产/家宅/出行/功名/求财/晴雨等）各章各有读域纲领与逐条引文；补全时按同一格式：域键下挂书源行号数组（segments）、逐条 quote＋locator＋note（待补）。本表当前只先行落档占域骨架与引用格式示范（对应 OPT-yimao_dz-10 验收项：引文库建库＋tools/check.py 相关门通过；逐字引文补全在此骨架上迭代，不另建表）。"
+  },
+  "consumed_by_engine": false
+}

@@ -1,0 +1,94 @@
+{
+  "_meta": {
+    "description": "古籍格局与六神属性表（classical_tables.py 唯一数据源，代码只留算法不堆砌断语）",
+    "source": "协纪辨方书/增删卜易/卜筮正宗"
+  },
+  "transformation_patterns": {
+    "连续三爻动": {
+      "condition": "三个相邻爻位同时发动",
+      "meaning": "事态集中，变动剧烈",
+      "advice": "三爻齐动事必躁，宜速不宜迟",
+      "weight": 1.5
+    },
+    "间隔动爻": {
+      "condition": "动爻交替排列（如1、3、5或2、4、6）",
+      "meaning": "事多枝节，一波未平一波又起",
+      "advice": "动静相间，事有反复",
+      "weight": 1.2
+    },
+    "上卦全动": {
+      "condition": "上卦三爻（四、五、上）皆动",
+      "meaning": "外局大变，局势动荡",
+      "advice": "外卦全动，迁居出行之象",
+      "weight": 1.3
+    },
+    "下卦全动": {
+      "condition": "下卦三爻（初、二、三）皆动",
+      "meaning": "内局大变，根基动摇",
+      "advice": "内卦全动，家宅不安",
+      "weight": 1.3
+    },
+    "对爻齐动": {
+      "condition": "世爻与应爻同动",
+      "meaning": "我他互动，主体双方关系紧张",
+      "advice": "世应齐动，交涉必有变",
+      "weight": 1.2
+    },
+    "用神原神齐动": {
+      "condition": "用神与原神（生用神之爻）同动",
+      "meaning": "用神有原神暗助，虽弱不死",
+      "advice": "原神助用，有惊无险",
+      "weight": 1.4
+    },
+    "用神忌神齐动": {
+      "condition": "用神与忌神（克用神之爻）同动",
+      "meaning": "用忌齐动，吉凶交战",
+      "advice": "用忌交战，胜负难料，看力量孰强",
+      "weight": 1.4
+    }
+  },
+  "six_spirit_properties": {
+    "青龙": {
+      "nature": "吉神",
+      "element": "木",
+      "direction": "东",
+      "virtue": "喜庆、吉祥、升迁、贵人",
+      "caution": "临忌神/仇神则喜中生忧"
+    },
+    "朱雀": {
+      "nature": "文书/口舌",
+      "element": "火",
+      "direction": "南",
+      "virtue": "文书、言辞、沟通、考试",
+      "caution": "临忌神/仇神则口舌讼事、文书之忧"
+    },
+    "勾陈": {
+      "nature": "中土/迟滞",
+      "element": "土",
+      "direction": "中",
+      "virtue": "稳重、田土、牵连、迟滞",
+      "caution": "临忌神则蹉跎难成、官非牵连"
+    },
+    "螣蛇": {
+      "nature": "惊恐/变动",
+      "element": "土",
+      "direction": "中",
+      "virtue": "机智、交结、惊疑、多变",
+      "caution": "临忌神则惊恐不安、怪异纠缠"
+    },
+    "白虎": {
+      "nature": "凶煞",
+      "element": "金",
+      "direction": "西",
+      "virtue": "威严、决断、医者",
+      "caution": "临忌神/仇神则血光凶丧、重病伤亡"
+    },
+    "玄武": {
+      "nature": "暗昧",
+      "element": "水",
+      "direction": "北",
+      "virtue": "智谋、暗计、盗贼",
+      "caution": "临忌神/仇神则奸邪盗贼、暗昧不明"
+    }
+  }
+}

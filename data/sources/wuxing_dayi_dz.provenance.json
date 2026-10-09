@@ -1,0 +1,24 @@
+{
+  "key": "wuxing_dayi_dz",
+  "kind": "术数通纲",
+  "title": "五行大义",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/五行大义.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E4%BA%94%E8%A1%8C%E5%A4%A7%E4%B9%89.txt",
+  "pages": [
+    "易藏/术数/五行大义.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:38:43+0800",
+  "sha256": "00e29feaa702583077d7dffe5dcbdf7a4b2048ded95bac10088ca03cf2fbaa34",
+  "stats": {
+    "bytes": 245329,
+    "chars": 82095,
+    "lines": 135,
+    "ganzhi_pairs": 159,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/wuxing_dayi_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}

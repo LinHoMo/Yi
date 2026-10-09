@@ -1,0 +1,24 @@
+{
+  "key": "ziping_zhenquan_pingzhu_dz",
+  "kind": "八字",
+  "title": "子平真诠评注",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/子平真诠评注.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E5%AD%90%E5%B9%B3%E7%9C%9F%E8%AF%A0%E8%AF%84%E6%B3%A8.txt",
+  "pages": [
+    "易藏/术数/子平真诠评注.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:38:25+0800",
+  "sha256": "7eeaa403724dde4f11f13aa4b7ff45d6e04ee92aaba2b1ac40d9c11396f95db2",
+  "stats": {
+    "bytes": 83156,
+    "chars": 28518,
+    "lines": 411,
+    "ganzhi_pairs": 529,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/ziping_zhenquan_pingzhu_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}

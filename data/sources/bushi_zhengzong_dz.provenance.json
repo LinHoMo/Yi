@@ -1,0 +1,43 @@
+{
+  "key": "bushi_zhengzong_dz",
+  "kind": "六爻",
+  "title": "卜筮正宗",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/卜筮正宗.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E5%8D%9C%E7%AD%AE%E6%AD%A3%E5%AE%97.txt",
+  "pages": [
+    "易藏/术数/卜筮正宗.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:38:10+0800",
+  "sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
+  "stats": {
+    "bytes": 259295,
+    "chars": 103857,
+    "lines": 3462,
+    "ganzhi_pairs": 220,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。｜2026-10-07 登记缺段：伏吟卦定例第十二（目录有、正文缺），伏吟判据以十八问答第六问 L2742-L2743 为准。",
+  "gaps": [
+    {
+      "id": "fuyin_dingli_ch12",
+      "title": "伏吟卦定例第十二",
+      "kind": "missing_section",
+      "detail": "目录源L30 列有「伏吟卦定例第十二」，但正文缺失：反吟章止于L1074，L1075 为空行，L1076 直跳「绝处逄生克处逄生论第十六」。",
+      "alternative_source": "伏吟判据改取十八问答第六问「伏吟之凶有轻重分别乎」源L2742-L2743（内卦伏吟内不利，外卦伏吟外不利）。",
+      "registered": "2026-10-07 / OPT-bushi_zhengzong_dz-02"
+    },
+    {
+      "id": "duplicated_chapters",
+      "title": "占类章重复出现（第一卷与第二卷各出一次）",
+      "kind": "transcript_duplication",
+      "detail": "词讼(L1915/L2125)、出行(L2062/L2263)、行人(L2084/L2284)、舟船(L2104/L2304)、避乱(L1940/L2151)等占类章在主源中重复出现。",
+      "diff_finding": "经 difflib 逐行比对，**并非逐字全同**（原解读稿断言有误）：词讼 ratio≈0.58、出行≈0.25、行人/舟船≈0.17、避乱≈0.48。其中词讼与避乱两处差异定位到同一句——L1915/L2125 与 L1940/L2151 分别为「据理推占，自得圆**通**神不滞」与「…自得圆**神**不滞」，属同一句的两版本讹字并存（圆/圆通神）。出行/行人/舟船因两卷收录章目范围不同（第二卷多出失脱、船家宅等整章），区间不等，非逐字可比。",
+      "quote_rule": "引用这些占类章时**不可一律取首现行号**：遇上述两版本句（圆神/圆通神）须双行号并列标注，其余章按首现取。",
+      "registered": "2026-10-07 / OPT-bushi_zhengzong_dz-03"
+    }
+  ]
+}

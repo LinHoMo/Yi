@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>新学科可行性论证（通用基座候选评估）</title>
+<style>
+
+:root {
+  --paper: #f4f1ea;
+  --card: #fffdf8;
+  --ink: #2b2924;
+  --muted: #6f6a5e;
+  --accent: #9a3b2d;
+  --accent-soft: #b8675a;
+  --line: #e2dccf;
+  --pre-bg: #efece3;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: "Noto Serif SC", "Songti SC", "SimSun", "Microsoft YaHei", serif;
+  line-height: 1.8; font-size: 16px;
+}
+.report { max-width: 880px; margin: 0 auto; padding: 40px 24px 64px; }
+.report-header {
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+  padding: 28px 32px; margin-bottom: 24px;
+  border-top: 4px solid var(--accent);
+}
+.report-header h1 { margin: 0 0 6px; font-size: 26px; color: var(--ink); }
+.report-header .meta { color: var(--muted); font-size: 14px; margin: 0; }
+.report-body {
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+  padding: 32px 36px;
+}
+.report-body h1 { font-size: 23px; margin: 8px 0 18px; }
+.report-body h2 {
+  font-size: 19px; margin: 34px 0 14px; padding-left: 12px;
+  border-left: 4px solid var(--accent);
+}
+.report-body h3 { font-size: 16px; margin: 24px 0 10px; color: var(--accent); }
+.report-body h4, .report-body h5 { font-size: 15px; margin: 18px 0 8px; }
+.report-body p { margin: 12px 0; }
+.report-body ul { margin: 12px 0; padding-left: 26px; }
+.report-body ol { margin: 12px 0; padding-left: 26px; }
+.report-body li { margin: 5px 0; }
+.report-body hr {
+  border: 0; border-top: 1px dashed var(--line); margin: 26px 0;
+}
+.report-body table {
+  border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 14.5px;
+}
+.report-body th, .report-body td {
+  border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top;
+}
+.report-body th { background: #f3ece4; font-weight: 600; }
+.report-body tbody tr:nth-child(even) { background: #faf7f0; }
+.report-body pre {
+  background: var(--pre-bg); border: 1px solid var(--line); border-radius: 8px;
+  padding: 14px 16px; overflow-x: auto; font-size: 14px; line-height: 1.6;
+  font-family: "Consolas", "Noto Sans Mono", monospace;
+}
+.report-body code {
+  background: var(--pre-bg); padding: 1px 6px; border-radius: 4px;
+  font-family: "Consolas", monospace; font-size: 14px;
+}
+.report-footer {
+  text-align: center; color: var(--muted); font-size: 13px;
+  margin-top: 22px; line-height: 1.7;
+}
+@media (max-width: 640px) {
+  .report { padding: 20px 12px 40px; }
+  .report-header, .report-body { padding: 20px; }
+}
+
+</style>
+</head>
+<body>
+<div class="report">
+  <div class="report-header">
+    <h1>新学科可行性论证（通用基座候选评估）</h1>
+<p class="meta">源文件：docs/NEW-DISCIPLINES.md</p>
+  </div>
+  <div class="report-body">
+<h1>新学科可行性论证（通用基座候选评估）</h1>
+<p>&gt; 范围：在现有六科（<code>ming</code> / <code>ziwei</code> / <code>liuyao</code> / <code>meihua</code> / <code>xiaoliuren</code> / <code>zeji</code>）之外，<br>&gt; 论证哪些术数门类适合作为<strong>下一步新增的通用基座</strong>。本文只做论证，不含实现。<br>&gt; 三条铁律见 <code>AGENTS.md</code>；全文分数一律称<strong>古籍案例对齐分</strong>。<br>&gt; <strong>相科（面相、手相、堪舆）按铁律明确不做</strong>，仅在 §4 作反例，不预留目录。</p>
+<hr>
+<h2>一、评估维度与「通用基座」判定标准</h2>
+<table><thead><tr><th>#</th><th>标准</th><th>含义</th><th>为什么是硬门槛</th></tr></thead><tbody><tr><td>G1</td><td><strong>判据树清晰</strong></td><td>取用/取象走可枚举分支，非灵感联想</td><td>判据树清晰，<code>analyze</code> 才能输出 <code>{因子, 权重, 判据, 所本法则}</code>；靠联想只能塞进 <code>narrate</code>，等于把运算交给 LLM，违反铁律一</td></tr><tr><td>G2</td><td><strong>内核复用度高</strong></td><td>干支历/生克/旬空/长生/神煞可直接用现有 <code>core</code></td><td>复用度低＝第二套内核，违反「唯一真值源」</td></tr><tr><td>G3</td><td><strong>可建评测集</strong></td><td>古书有带结论的实例（起局可还原＋有断语）</td><td>无古例则建不出对齐分，tune/holdout 分离无从谈起</td></tr><tr><td>G4</td><td><strong>可合参</strong></td><td>问题域与六科正交或可对齐，能进 <code>synthesis</code></td><td>只能自说自话者，加进来只增表面积</td></tr></tbody></table>
+<p><strong>「有趣但孤立」的典型形态</strong>：起局漂亮但断法无判据树（纯辞类）；或只有歌诀无实例（无法建评测集）；或问题域与六科完全重叠。</p>
+<h3>候选门类总表（21 项）</h3>
+<p>「内核」列 ✓＝现有 core 已备，✗＝需增补。难度为<strong>净新增</strong>人日估算。</p>
+<table><thead><tr><th>ID</th><th>门类（别名）</th><th>古书出处与可机检结构</th><th>内核需备 ✓/缺 ✗</th><th>判据树</th><th>案例量级</th><th>难度</th><th>通用性</th><th>结论</th></tr></thead><tbody><tr><td><strong>N1</strong></td><td><strong>大六壬</strong>（六壬、壬课）</td><td>《六壬大全》（四库）卷一「起例」逐条列出九宗门取三传法、十干寄宫诀、神煞大表；《毕法赋》百法；《大六壬指南》占验课例</td><td>✓干支/旬空/长生/神煞/生克；✗月将、✗十二天将、✗寄宫</td><td><strong>极强</strong>（九宗门可枚举）</td><td>中–高（数百课）</td><td>25–35</td><td>一事成败/应期，与六爻同域互证</td><td><strong>推荐落地</strong></td></tr><tr><td><strong>N2</strong></td><td><strong>奇门遁甲·时家转盘</strong>（遁甲、奇门）</td><td>《遁甲演义》（四库）四套起例＋超接置闰诀＋<strong>五组带日期算例</strong>；《烟波钓叟歌》纲领歌诀</td><td>✓干支/节气（已有太阳视黄经）/五行旺相；✗局数表、✗九宫飞布、✗八门九星八神</td><td><strong>强</strong>（格局可枚举，百余格）</td><td>低–中</td><td>35–50</td><td>择时/方位，与 <code>zeji</code> 强互补</td><td><strong>推荐落地</strong></td></tr><tr><td><strong>N3</strong></td><td><strong>七政四余</strong>（星宗、果老星宗）</td><td>《果老星宗》（四库存目，<strong>待核</strong>）；《星学大成》（四库，<strong>待核</strong>）——十二宫、星曜庙旺表、赋文</td><td>✓干支历；✗七政四余黄经星历（最大缺口）</td><td>中（庙旺有表，流派杂）</td><td>低</td><td>50–70</td><td>人生趋势，与 <code>ming</code>/<code>ziwei</code> 同域</td><td><strong>备选</strong></td></tr><tr><td><strong>N4</strong></td><td><strong>灵棋经</strong>（十二灵棋卜）</td><td>《灵棋经》（四库）124 课＋混沌未明，每课有繇辞；《南史》引第三十七卦</td><td>✓零增补（不依赖干支历）</td><td><strong>强</strong>（查表即断）</td><td><strong>高</strong>（124 条自带断语）</td><td>8–12</td><td>一事成败，与六爻重叠</td><td><strong>备选（性价比最高）</strong></td></tr><tr><td><strong>N5</strong></td><td><strong>太乙数</strong>（三式之太乙）</td><td>《太乙金镜式经》十卷（四库，唐王希明）——太乙九宫、十六神、计神、八将、掩迫囚击关格</td><td>✓节气/干支；✗积年、✗十六神、✗八将</td><td>中（偏分野）</td><td>低（多论历代治乱）</td><td>40–60</td><td>宏观域，个人事域窄</td><td><strong>不推荐</strong>（域不匹配）</td></tr><tr><td><strong>N6</strong></td><td><strong>金口诀</strong>（大六壬金口诀）</td><td><strong>待核</strong>（古籍版本未证实）</td><td>同 N1 复用</td><td>中强</td><td>低</td><td>12–18</td><td>N1 的子集</td><td><strong>不推荐</strong>（N1 的附庸）</td></tr><tr><td><strong>N7</strong></td><td><strong>紫微流年/飞星派</strong></td><td>已有 <code>ziwei</code> 全部安星，需加流年飞星</td><td>✓全备</td><td>中（流派分歧大）</td><td>低</td><td>15–25</td><td>与 <code>ziwei</code> 完全重叠</td><td><strong>不推荐</strong>（属扩科）</td></tr><tr><td><strong>N8</strong></td><td><strong>皇极经世</strong></td><td>元会运世积年、以运经世</td><td>自成历法</td><td>弱（以史证卦）</td><td>低</td><td>30–45</td><td>宏观，不答个人事</td><td><strong>不推荐</strong></td></tr><tr><td><strong>N9</strong></td><td><strong>太玄数</strong></td><td>《太玄经》729 首，三方九州二十七部八十一家</td><td>自成体例</td><td>中（首辞可查）</td><td>中</td><td>20–30</td><td>起数法无定本</td><td><strong>不推荐</strong>（无共识口径）</td></tr><tr><td><strong>N10</strong></td><td><strong>六壬课式变体</strong></td><td>同 N1</td><td>同 N1</td><td>中</td><td>低</td><td>8–12</td><td>与 N1 重叠</td><td><strong>不推荐</strong>（并入 N1）</td></tr><tr><td><strong>N11</strong></td><td><strong>纳甲筮法变体</strong></td><td>同 <code>liuyao</code></td><td>同 <code>liuyao</code></td><td>中</td><td>中</td><td>8–12</td><td>与 <code>liuyao</code> 重叠</td><td><strong>不推荐</strong>（宜作参数）</td></tr><tr><td><strong>N12</strong></td><td><strong>金钱课/诸葛神数</strong></td><td>签诗</td><td>零</td><td>弱（无判据树）</td><td>中</td><td>3–5</td><td>只出辞不出判</td><td><strong>不推荐</strong></td></tr><tr><td><strong>N13</strong></td><td><strong>称骨算命</strong></td><td>民间通俗本，无可靠古籍出处</td><td>✓干支历</td><td>极弱（一首总评诗）</td><td>低</td><td>2–3</td><td>人生概括</td><td><strong>不推荐</strong></td></tr><tr><td><strong>N14</strong></td><td><strong>铁板神数</strong></td><td><strong>待核</strong>（可靠版本未证实）</td><td>零</td><td>弱（条文检索）</td><td>待核</td><td>不建议估</td><td>一生命运</td><td><strong>不推荐</strong>（真值源无从确立）</td></tr><tr><td><strong>N15</strong></td><td><strong>梅花心易进阶</strong>（外应）</td><td>已有 <code>meihua</code></td><td>✓全备</td><td>弱（靠现场灵感）</td><td>低</td><td>10–15</td><td>与 <code>meihua</code> 重叠</td><td><strong>不推荐</strong>（外应不可机检）</td></tr><tr><td><strong>N16</strong></td><td><strong>大衍筮法/蓍草</strong></td><td>《周易·系辞上》「大衍之数五十」章</td><td>✓卦表/卦爻辞全备</td><td>中（爻辞断法）</td><td>低（古例零散）</td><td>5–8</td><td>与六爻互补</td><td><strong>备选（轻量）</strong></td></tr><tr><td><strong>N17</strong></td><td><strong>焦氏易林</strong></td><td>《焦氏易林》4096 首林辞（维基文库现有转写仅 4/64 篇）</td><td>✓卦表</td><td>中（以卦之卦取辞）</td><td>低（辞为断语，无实例）</td><td>10–15</td><td>宜作共享辞库</td><td><strong>备选（辞库）</strong></td></tr><tr><td><strong>N18</strong></td><td><strong>京房易传体系</strong></td><td>《京氏易传》八宫飞伏积算</td><td>✓八宫/纳甲/世应已备</td><td>中强</td><td>低</td><td>10–15</td><td>与 <code>liuyao</code> 同源</td><td><strong>不推荐</strong>（已内化）</td></tr><tr><td><strong>N19</strong></td><td><strong>文王卦变体</strong></td><td>卦变图</td><td>✓全备</td><td>中</td><td>低</td><td>8–12</td><td>与 <code>liuyao</code> 重叠</td><td><strong>不推荐</strong></td></tr><tr><td><strong>N20</strong></td><td><strong>奇门择吉</strong></td><td>日家奇门＋<code>zeji</code> 现有</td><td>同 N2</td><td>中强</td><td>低</td><td>12–18</td><td>与 <code>zeji</code> 互补</td><td><strong>不推荐</strong>（宜作 N2 第二步）</td></tr><tr><td><strong>N21</strong></td><td><strong>玄空飞星/八宅</strong></td><td>堪舆类</td><td>—</td><td>中强</td><td>低</td><td>15–25</td><td><strong>不适用</strong></td><td><strong>不推荐——铁律明确不做，不预留目录、不写占位实现</strong></td></tr></tbody></table>
+<hr>
+<h2>二、推荐落地三项</h2>
+<h3>2.1 N1 · 大六壬（第一优先）</h3>
+<p><strong>古书出处（均已联网核实，可公开抓取）</strong></p>
+<table><thead><tr><th>书</th><th>版本/来源</th><th>可机检结构</th></tr></thead><tbody><tr><td>《六壬大全》十二卷</td><td>四库子部术数类；[维基文库](https://zh.wikisource.org/zh-hans/%E5%85%AD%E5%A3%AC%E5%A4%A7%E5%85%A8)（[卷一已核对](https://zh.wikisource.org/zh-hans/%E5%85%AD%E5%A3%AC%E5%A4%A7%E5%85%A8/1)）</td><td><strong>卷一「起例」＝可枚举的取三传判据树</strong>：贼克/比用/涉害/遥克/昴星/别责/八专/伏吟/返吟九法逐条给出；十干寄宫诀；岁神煞、十天干神煞、十二地支神煞、逐月神煞四张表；「课目」列 65 课名及识别条件</td></tr><tr><td>《毕法赋》（凌福之）</td><td>收入《六壬大全》；四库提要明列「凌福之《毕法赋》……术家奉为蓍蔡」</td><td>百法赋文，每条即一个可机检判据</td></tr><tr><td>《大六壬指南》（陈公献撰、程翔云辑）</td><td>清初木刻五卷本，有公开影印/排印本</td><td><strong>占验课例（含结论）</strong>——评测集主来源</td></tr><tr><td>《御定星历考原》六卷</td><td>四库本（清李光地等，1713）；[维基文库](https://zh.wikisource.org/zh-hans/%E5%BE%A1%E5%AE%9A%E6%98%9F%E5%8E%AF%E8%80%83%E5%8E%9F_(%E5%9B%9B%E5%BA%AB%E5%85%A8%E6%9B%B8%E6%9C%AC))</td><td>月将与神煞的权威口径（四库提要称其可订前人昼丑夜未之讹）</td></tr></tbody></table>
+<p><strong>内核</strong>：复用 <code>ganzhi_calendar</code>/<code>symbols</code>/<code>shensha</code>/<code>relations</code>。core 增补（标注消费方仅六壬）：<br>①<code>yuejiang</code> 十二月将＋加时定法（太阳过宫口径须照 <code>CONTRACT.md §三</code> 显式化）；<br>②<code>tianjiang</code> 十二天将及昼夜贵人顺逆（含先后天贵人口径开关）；③<code>jigong</code> 十干寄宫。</p>
+<p><strong>第一版 <code>analyze</code> 判据（按序）</strong>：①九宗门取三传（含涉害深浅、昴星刚柔、别责刚三柔六、八专、伏吟、返吟井栏）——<strong>全部推断的入口，须首先 100% 正确</strong>；②三传与日干支关系（鬼/德/合/墓/破/害/刑/冲，卷一「徳煞」篇有起例）；③十二天将临课体；④65 课目识别；⑤应期（三合缺神值日、旬空填实、墓库逢冲）。</p>
+<p><strong>评测集</strong>：案例源为《大六壬指南》占验课例；《六壬大全》课目作<strong>规则覆盖测试</strong>（非对齐分）。抽样 ≥10 tune ＋ ≥5 holdout，holdout 划后<strong>永不调参</strong>。维度：<code>三传正确/课体正确/天将正确/吉凶方向/应期</code>——前三者与古书逐字对照，出的是<strong>机械一致率</strong>；仅后两者是<strong>对齐分</strong>。<strong>两类分数必须分开报，不得混算或互冒</strong>。古籍多只记到时辰（无分钟），精度损失登记于 <code>excluded</code>。</p>
+<pre>**骨架**：
+```
+disciplines/liuren/
+├── SKILL.md                    # 铁律引 AGENTS.md，不复制
+├── scripts/{chart,analyze,narrate,render}.py
+├── data/verdicts.json          # 百法断语（引文＋出处，代码只留算法）
+├── data/cases/{eval_tune.json,eval_holdout.json}
+├── data/golden/digest.json
+├── references/{jiuzongmen.md,tianjiang.md,bifa.md}
+└── dev_tools/check.py
+```
+另在 `core/yishu_core/` 增 `liuren_tables.py`，并在 `synthesis/normalize.py` 注册 `normalize_liuren`。</pre>
+<h3>2.2 N2 · 奇门遁甲（时家转盘）</h3>
+<p><strong>古书出处</strong></p>
+<table><thead><tr><th>书</th><th>版本/来源</th><th>可机检结构</th></tr></thead><tbody><tr><td>《遁甲演义》四卷（明·程道生）</td><td>四库所收；[维基文库已核对](https://zh.wikisource.org/zh-hans/%E9%81%81%E7%94%B2%E6%BC%94%E7%BE%A9)</td><td>年/月/日/时家四套起例；阳遁一局、阴遁九局逐旬值符值使表；<strong>超神接气置闰诀＋五组带日期算例</strong>（淳佑六、七年，万历二十四、二十六、二十七年）＝可做历法回归；九星旺相休囚废表；八门九星十干克应（三奇入墓、六仪击刑、五不遇时、伏吟返吟、门迫宫迫）</td></tr><tr><td>《烟波钓叟歌》</td><td>[维基文库](https://zh.wikisource.org/zh-hans/%E7%85%99%E6%B3%A2%E9%87%A3%E5%8F%9F%E6%AD%8C)（题明·罗通；《遁甲演义》亦全收）</td><td>局数、三奇六仪、八门九星吉凶、格局（青龙回首/飞鸟跌穴/白虎猖狂/青龙逃走/朱雀投江/螣蛇夭矫）、天三门地四户、三遁</td></tr></tbody></table>
+<p>&gt; <strong>待核</strong>：《奇门遁甲统宗》《御定奇门宝鉴》等民间本版本关系未核实；落地<strong>只以《遁甲演义》＋《烟波钓叟歌》为准</strong>。</p>
+<p><strong>内核</strong>：复用 <code>ganzhi_calendar</code>（<strong>已有太阳视黄经求节气——超神接气的关键前提本项目已具备</strong>）、<code>symbols</code>（旺相休囚死已备）。core 增补：①<code>dunjia_jushu</code>（节气×三元×阴阳遁→局数）；②<code>jiugong</code> 九宫飞布与寄宫；③<code>bamen_jiushen</code>（八门/九星/八神）；④超接置闰算法。九宫是 core 新结构，宜与 <code>ziwei_tables</code> 合建统一 <code>palace</code> 原语。</p>
+<p><strong>最大风险</strong>：超神接气置闰<strong>无唯一权威口径</strong>，同日可能落不同局。须做成显式参数（<code>--chaoshen {chao,jie,run}</code>），并把《遁甲演义》五组带日期算例做成回归测试——这是罕见的「古书自带可验证算例」，务必用足。</p>
+<p><strong>第一版 <code>analyze</code> 判据</strong>：①定局与地盘三奇六仪；②值符值使定位；③天盘加临；④三吉门×三奇组合；⑤凶格识别（五不遇时、六仪击刑、三奇入墓、伏吟返吟、门迫宫迫、庚加诸格）。</p>
+<p><strong>评测集</strong>：与 N1 不同，奇门<strong>有算例而无系统占验结论集</strong>。分两块：①<strong>历法回归集</strong>——五组日期断言局数与值符值使，机械一致率、零解读成分；②<strong>对齐集</strong>——明清占验抽 ≥10 例。<strong>若不足 15 例，须如实写「本集 n&lt;15，不足以支撑 tune/holdout 分离」，不得靠扩张判据凑分</strong>。其择时/方位结论宜与 <code>zeji</code> 做<strong>同向性检查</strong>，而非宣称对齐分。</p>
+<p><strong>骨架</strong>：同构于 N1，<code>data/cases/</code> 增设 <code>calendar_regression.json</code>，<code>references/{jushu,chaoshen,geju}.md</code>；core 增 <code>dunjia_tables.py</code>。</p>
+<h3>2.3 N3 · 七政四余（备选一号）</h3>
+<p>出处：《果老星宗》（明人托名张果老；四库存目，<strong>待核</strong>）十二宫/星曜庙旺表/入宫断语；《星学大成》（明·万民英；四库，<strong>待核</strong>）。<br><strong>待核项须以《四库全书总目》原文复核后再写入 <code>references/</code>。</strong></p>
+<p><strong>为何是备选</strong>：G2 不合格——需<strong>七政四余实时黄经</strong>（日月五星＋罗睺计都），现有 <code>ganzhi_calendar</code> 只算太阳视黄经，够节气不够星命；自建星历 50–70 人日，且历表口径本身即流派分歧。G3 偏弱（古例少且多无精确生辰）。但 <strong>G4 最强</strong>：与 <code>ming</code>/<code>ziwei</code> 同属人生趋势域，其十二宫可与 <code>ziwei</code> 十二宫对齐，<code>synthesis</code> 能真正用上。<strong>结论：排在 N1、N2 之后；若先补宫位原语，成本明显下降。</strong></p>
+<hr>
+<h2>三、推荐顺序</h2>
+<table><thead><tr><th>顺序</th><th>门类</th><th>一句话理由</th></tr></thead><tbody><tr><td>1</td><td><strong>大六壬</strong></td><td>九宗门是古书里现成的可枚举取三传判据树，干支/旬空/神煞几乎全可复用 core——<strong>唯一同时满足 G1–G4 的门类</strong></td></tr><tr><td>2</td><td><strong>奇门遁甲</strong></td><td>《遁甲演义》自带五组带日期算例，是罕见的「古书自带可验证算例」；且起局最难的历法前提（太阳视黄经求节气）本项目<strong>已经具备</strong></td></tr><tr><td>3</td><td><strong>七政四余</strong></td><td>唯一能与 <code>ming</code>/<code>ziwei</code> 构成同域三角互证，合参价值最高；星历缺口使其必须排在 N1/N2 之后</td></tr><tr><td>备选 1</td><td><strong>灵棋经</strong></td><td>124 课查表即断、core 零增补、8–12 人日，<strong>性价比全表最高</strong>；仅因与 <code>liuyao</code> 同域而列备选。<strong>若目标只是快速扩充门类数，它就是首选</strong></td></tr><tr><td>备选 2</td><td><strong>大衍筮法/蓍草</strong></td><td>5–8 人日，复用 <code>hexagram_texts</code> 全部卦爻辞，补齐《周易》本经起卦法；但断法靠爻辞，判据树弱于六爻</td></tr></tbody></table>
+<hr>
+<h2>四、明确不推荐（含反例）</h2>
+<p><strong>堪舆类（玄空飞星、八宅）按 <code>AGENTS.md</code> 属相科，明确不做</strong>——不在路线图、<strong>不预留目录、不写占位实现</strong>。<br>列为反例的理由与做六壬的理由同源：其判据树其实清晰（九宫飞星、宅命配卦皆可枚举），<br>但<strong>所断对象是「宅」而非「事」</strong>，无法与六科的占问记录落在同一时间线，也答不了「一事成败与应期」，<br><code>synthesis</code> 取不到可对齐字段。<strong>清晰但不可合参，同样是「有趣但孤立」。</strong></p>
+<p>其余不推荐归四类：</p>
+<table><thead><tr><th>类型</th><th>门类</th><th>共同症结</th></tr></thead><tbody><tr><td><strong>域不匹配</strong></td><td>太乙数、皇极经世</td><td>答历代治乱/宏观史观，个人事域窄，无从对齐</td></tr><tr><td><strong>与现有科重叠</strong></td><td>金口诀、六壬课式变体、纳甲筮法变体、文王卦变体、紫微流年飞星派、梅花心易进阶、京房易传体系、奇门择吉</td><td>属<strong>扩科</strong>（补 <code>analyze</code> 维度或加参数），非新基座；独立立项会制造第二个真值源</td></tr><tr><td><strong>判据树过弱</strong></td><td>称骨算命、金钱课/诸葛神数、铁板神数</td><td>只出一首诗或一条检索条文，无「取用→旺衰→格局→应期」链路；铁板神数<strong>可靠版本未证实</strong></td></tr><tr><td><strong>起数无共识</strong></td><td>太玄数</td><td>729 首体例完整，但起数无定本，同一问题不同起法结果不同，无法建可复现的 <code>chart</code></td></tr></tbody></table>
+<p><strong>焦氏易林</strong>单列：4096 首林辞是<strong>断语库</strong>而非推演体系，且[维基文库现有转写仅 4/64 篇](https://zh.wikisource.org/zh-hans/%E7%84%A6%E6%B0%8F%E6%98%93%E6%9E%97)。<br><strong>不单独立科，宜作 <code>liuyao</code>/<code>meihua</code> 共享辞库</strong>接入。</p>
+<hr>
+<h2>五、口径与免责</h2>
+<ol><li><strong>本文是工程可行性判断，不是对任何门类「灵验程度」的判断。</strong> 不主张亦不否认任何术数的现实效力；G1–G4 衡量的是<strong>可机检性、可复用性、可评测性、可合参性</strong>，与「准不准」无关。</li><li><strong>一切分数称「古籍案例对齐分」</strong>——衡量引擎输出与古籍案例要点的吻合度，用于回归审计，<strong>不是现实预测命中率</strong>。报分必带<strong>集合名＋样本量 n＋是否参与调参</strong>，禁止只给百分比。文中<strong>机械一致率</strong>（三传是否与古书逐字相符、局数是否与算例相符）与<strong>对齐分</strong>是两类指标，<strong>不得混算、不得互相冒充</strong>。</li><li><strong>案例库与解读过程物理隔离</strong>（铁律二）。本文提到的占验课例仅可用于测试运行器、用户明确要求的事后校验、用户主动询问「有无类似案例」三种场景；<strong>解读交付前禁止打开案例库、提及案例名、以案例类比佐证</strong>。</li><li><strong>口径诚实</strong>：凶象用「偏向／有…信号／结构上」，不用「注定／一定／绝无可能」。医疗、法律、投资及重大决策一律提示以专业意见为准。</li><li><strong>文献证据分级</strong>：①<strong>已联网核实</strong>（维基文库页面实际取到，或四库提要原文可见）——《六壬大全》《太乙金镜式经》《灵棋经》《遁甲演义》《烟波钓叟歌》《焦氏易林》《皇极经世》《太玄经》《御定星历考原》《大六壬指南》；②<strong>仅检索旁证、未取到正文</strong>——《星学大成》《果老星宗》《协纪辨方书》，入库前须复核；③<strong>明确标「待核」</strong>——金口诀古籍版本、铁板神数可靠版本、《奇门遁甲统宗》《御定奇门宝鉴》。<strong>凡标待核者，不得以确定语气写入 <code>references/</code>，也不得据以写 <code>analyze</code> 判据。</strong></li><li><strong>难度为置信区间</strong>，非承诺；超接置闰与七政四余星历两项误差最大。</li><li>本文<strong>不修改仓库任何其他文件</strong>，不含实现代码，也不构成对 <code>AGENTS.md</code>／<code>docs/CONTRACT.md</code>／<code>docs/ARCHITECTURE.md</code> 的修订。新增学科须照 <code>CONTRACT.md §四</code> 接入清单执行，由 <code>tools/check.py</code> 验收。</li></ol>
+  </div>
+  <div class="report-footer">本文由 Yi 的文档渲染器生成（与报告同一套样式与转换器）。<br>文档中的分数一律为古籍案例对齐分（回归审计用），不是现实预测命中率。</div>
+</div>
+
+</body>
+</html>

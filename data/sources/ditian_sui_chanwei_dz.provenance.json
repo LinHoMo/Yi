@@ -1,0 +1,24 @@
+{
+  "key": "ditian_sui_chanwei_dz",
+  "kind": "八字·对勘",
+  "title": "滴天髓闡微",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/滴天髓阐微.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E6%BB%B4%E5%A4%A9%E9%AB%93%E9%98%90%E5%BE%AE.txt",
+  "pages": [
+    "易藏/术数/滴天髓阐微.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:39:01+0800",
+  "sha256": "5af7b5d1ecd6118b055dab9361040a6d22f53ec7878ccf92e4c969b39f7e76c9",
+  "stats": {
+    "bytes": 399446,
+    "chars": 139556,
+    "lines": 5815,
+    "ganzhi_pairs": 6317,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/ditian_sui_chanwei_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}

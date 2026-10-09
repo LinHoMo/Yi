@@ -1,0 +1,24 @@
+{
+  "key": "jingshi_yizhuan_dz",
+  "kind": "六爻·祖源",
+  "title": "京氏易传",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/京氏易传.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E4%BA%AC%E6%B0%8F%E6%98%93%E4%BC%A0.txt",
+  "pages": [
+    "易藏/术数/京氏易传.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:38:47+0800",
+  "sha256": "cb51e47fd1158d4af92856b594a59a8eaee776e0a4d9b150a0d1a7c7fbd9cadd",
+  "stats": {
+    "bytes": 71110,
+    "chars": 23776,
+    "lines": 82,
+    "ganzhi_pairs": 524,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/jingshi_yizhuan_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}

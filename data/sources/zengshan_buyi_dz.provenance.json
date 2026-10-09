@@ -1,0 +1,24 @@
+{
+  "key": "zengshan_buyi_dz",
+  "kind": "六爻·对勘",
+  "title": "增刪卜易",
+  "site": "github.com/garychowcmu/daizhigev20",
+  "path": "易藏/术数/增删卜易.txt",
+  "url": "https://raw.githubusercontent.com/garychowcmu/daizhigev20/master/%E6%98%93%E8%97%8F/%E6%9C%AF%E6%95%B0/%E5%A2%9E%E5%88%A0%E5%8D%9C%E6%98%93.txt",
+  "pages": [
+    "易藏/术数/增删卜易.txt"
+  ],
+  "page_count": 1,
+  "fetched": "2026-10-07 08:38:59+0800",
+  "sha256": "81d73e4aaf29a1a591250db9e43bb5d815b5ef4a06555c42c1087e9a3f3a3fa7",
+  "stats": {
+    "bytes": 414747,
+    "chars": 161743,
+    "lines": 3663,
+    "ganzhi_pairs": 316,
+    "tables": 0,
+    "headings": 0
+  },
+  "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须跑 tools/crosscheck_source.py 对勘留痕。"
+}
