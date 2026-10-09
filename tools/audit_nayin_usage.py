@@ -43,7 +43,10 @@ B_SIGNAL = re.compile(
 
 def iter_py():
     for p in sorted(ROOT.rglob("*.py")):
-        if any(x in p.parts for x in SKIP_PARTS):
+        # 按**仓库内相对路径**判断：用绝对路径的 p.parts 时，仓库只要被放在任何名为
+        # scratch/site/archive 的目录里（复验 worktree 就常放 scratch/ 下），
+        # 全仓文件都会被跳过——扫描面静默归零。
+        if any(x in p.relative_to(ROOT).parts for x in SKIP_PARTS):
             continue
         if p.resolve() == SELF:
             continue

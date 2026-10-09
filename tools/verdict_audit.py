@@ -277,7 +277,8 @@ def _corpus(disc: str) -> str:
         # 把它们当语料 = "报告里写出过的句子就算外置"，审计直接变成橡皮图章。
         # 六爻一份 guard 就有 63 万汉字，五份口径叠起来吃掉语料池 67%，
         # 分辨力被稀释到近乎为零（实测剔除后才会暴露真漏外置）。
-        if p.name == "case_library.md" or {"cases", "guard", "scratch"} & set(p.parts):
+        if p.name == "case_library.md" or {"cases", "guard", "scratch"} & set(
+                p.relative_to(base).parts):
             continue
         try:
             parts.append(p.read_text(encoding="utf-8"))

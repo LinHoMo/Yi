@@ -106,8 +106,22 @@ PLACEHOLDER_CTX = re.compile(
 PER_DISC = re.compile(r"^disciplines/[a-z]+/")
 
 
+def _rel_parts(p: Path) -> tuple[str, ...]:
+    """仓库内相对路径的段（注入的临时树不在 ROOT 下时退回绝对段）。
+
+    死链门用绝对段判排除是会自造假绿的：仓库被放在任何名为 `archive/` 的目录里
+    （复验 worktree、归档副本都可能如此），`EXCLUDE_PARTS` 就把**全部**文档判成
+    非活动 → 扫 0 份 → "无死链"。同一类缺陷 2026-10-09 已在 check.py/verdict_audit.py
+    上实测复现过一次。
+    """
+    try:
+        return p.relative_to(ROOT).parts
+    except ValueError:
+        return p.parts
+
+
 def is_active(p: Path) -> bool:
-    if set(p.parts) & EXCLUDE_PARTS or p.name in CHANGELOG_NAMES:
+    if set(_rel_parts(p)) & EXCLUDE_PARTS or p.name in CHANGELOG_NAMES:
         return False
     if p.name in ALWAYS_SCAN_NAMES:      # 入口文档例外（llms.txt 是 .txt）
         return True
