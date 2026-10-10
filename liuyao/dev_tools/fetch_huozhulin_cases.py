@@ -45,8 +45,8 @@ OUT_JSON = DISC / "data" / "cases" / "huozhulin_cases.json"
 OUT_QUAL = DISC / "data" / "cases" / "huozhulin_qualitative.json"
 SPLITS = DISC / "data" / "cases" / "case_splits.json"
 
-STEMS = sym.HEAVENLY_STEMS
-BRANCHES = sym.EARTHLY_BRANCHES
+STEMS = "".join(sym.HEAVENLY_STEMS)
+BRANCHES = "".join(sym.EARTHLY_BRANCHES)
 
 # 繁体字头归一：六十四卦用字 + 天干地支用字
 TRAD = {
@@ -157,85 +157,7 @@ def split_paragraphs(raw: str) -> list[dict]:
 HEXAGRAM_NAMES = sorted(sym.HEXAGRAM_TRIGRAMS.keys(), key=len, reverse=True)
 _HEX_ALTERNATIVES = "|".join(re.escape(n) for n in HEXAGRAM_NAMES)
 
-# 模式 A: "如/假如/占[X]得/[，]...A之B卦" 或 "A化B" 或 "A变B"
-# 模式 B: "A卦" 单独出现（静卦，无变卦）
-# 先匹配有变卦的对（A之B / A化B / A变B）
-HEX_PAIR_RE = re.compile(
-    r"(?:如|假如|得|占.*?得)\s*"
-    r"(?P<ctx>[^。，,；;：:\n]{0,40}?)?"
-    r"(?P<orig>" + _HEX_ALTERNATIVES + r")"
-    r"(?:\s*卦?)?"
-    r"(?:\s*(?:之|化|變|变)\s*"
-    r"(?P<chg>" + _HEX_ALTERNATIVES + r")"
-    r"(?:\s*卦?)?)?")
 
-# 单个卦名（静卦）
-HEX_SINGLE_RE = re.compile(
-    r"(?<![变變化化之])"        # 不匹配在"X之"之后的
-    r"(?P<name>" + _HEX_ALTERNATIVES + r")"
-    r"\s*卦")
-
-
-def extract_hex_pairs(text: str) -> list[dict]:
-    """从一段文本中提取所有 (本卦, 变卦, 上下文) 引用。"""
-    results = []
-    seen_spans = set()
-
-    # 先找有变卦的对
-    for m in HEX_PAIR_RE.finditer(text):
-        orig_raw = m.group("orig")
-        chg_raw = m.group("chg")
-        orig = resolve_hex(orig_raw)
-        if not orig:
-            continue
-        changed = resolve_hex(chg_raw) if chg_raw else None
-
-        # 验证：如果有变卦名存在但解析失败 → 记录为解析失败
-        if chg_raw and not changed:
-            # 变卦名不在六十四卦表内（不应发生，只是为了安全）
-            continue
-
-        span = m.span()
-        if span in seen_spans:
-            continue
-        seen_spans.add(span)
-
-        results.append({
-            "original": orig,
-            "changed": changed,
-            "is_changed": changed is not None and changed != orig,  # True=有变卦且不同
-            "span": span,
-            "context": text[max(0, span[0] - 30):span[1] + 60],
-        })
-
-    # 再找单独的"X卦"（未被上面覆盖的）
-    for m in HEX_SINGLE_RE.finditer(text):
-        name_raw = m.group("name")
-        name = resolve_hex(name_raw)
-        if not name:
-            continue
-        span = m.span()
-        # 如果该 span 已被包含在某个 pair 内则跳过
-        if any(s[0] <= span[0] and span[1] <= s[1] for s in seen_spans):
-            continue
-        # 避免在已有 pair 内重复
-        is_subsumed = False
-        for s in seen_spans:
-            if s[0] <= span[0] and span[1] <= s[1]:
-                is_subsumed = True
-                break
-        if is_subsumed:
-            continue
-
-        results.append({
-            "original": name,
-            "changed": None,
-            "is_changed": False,
-            "span": span,
-            "context": text[max(0, span[0] - 30):span[1] + 60],
-        })
-
-    return results
 
 
 # ──────────────────────────────────────────────

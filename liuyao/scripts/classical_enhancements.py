@@ -19,7 +19,6 @@ from yishu_core.symbols import SHENG_WO  # noqa: E402  原神（生我者）五�
 from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     ADVANCE_PAIRS,
     BRANCH_ELEMENTS,
-    BREAK_PAIRS,
     CHONG_PAIRS,
     HE_PAIRS,
     KE_CYCLE,
@@ -165,14 +164,6 @@ def is_ba_zu_he(b1, b2):
 
 def is_ba_zu_chong(b1, b2):
     for a, b in CHONG_PAIRS:
-        if (b1 == a and b2 == b) or (b1 == b and b2 == a):
-            return True
-    return False
-
-
-def is_ba_zu_po(b1, b2):
-    """判断两地支是否六破"""
-    for a, b in BREAK_PAIRS:
         if (b1 == a and b2 == b) or (b1 == b and b2 == a):
             return True
     return False
@@ -2137,7 +2128,6 @@ __all__ = [
     "determine_six_relation",
     "is_ba_zu_he",
     "is_ba_zu_chong",
-    "is_ba_zu_po",
     "element_strength_in_month",
     "get_twelve_growth_stage",
     "get_stages_of_interest",
