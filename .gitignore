@@ -4,72 +4,26 @@ __pycache__/
 *.egg-info/
 .pytest_cache/
 
-# 生成物（各学科内亦各自忽略，这里兜底）
+# 各学科内生成物（排盘/报告/日志/临时）
 outputs/
 logs/
 scratch/
 *.tmp
-# 门输出日志（各工作流把 check/评测输出直接重定向到仓库根或任意目录，
-# 2026-10-01 实测仓库根散落 4 个 *.log，已移入 tools/scratch/logs-20261001/）。
-# 全仓无被跟踪的 *.log（git ls-files '*.log' 为空），故通配不误伤；
-# 将来若确有需入库的日志，用 `git add -f <file>` 显式豁免，不要放宽本条。
+*.html
+*.jsonl
 *.log
-# 评测生成物与 --raise 抬升基线（脚本重跑生成，不入库）
+
+# 评测生成物（脚本重跑生成，不入库）
 **/data/cases/eval_*.json
 check_baseline.json
 
-# 真实应期反馈数据：恒定不入库（与古籍案例物理隔离，永不参与调参）
-disciplines/*/data/feedback/
+# 真实应期反馈数据：与古籍案例物理隔离，永不参与调参（不入库）
 **/data/feedback/
-
-# 合参层运行产物（人档案与指导，属用户数据，不入库）
-synthesis/person/
-synthesis/guidance/
-
-# 索引与工具缓存（外部工具生成，不入库）
-.codegraph/
-.yanagent/
-.trae-html-share-packages/
-.preview/
-.pytest_cache/
-.archify/
 
 # 编辑器与系统
 .DS_Store
 .idea/
 .vscode/
 
-.worktrees/
-
-# 纯前端站点构建产物（tools/build_web.py 生成，Pages 工作流在 CI 里重建，不入库）
-site/
-_site/
-
-# 通道 B 的报告产物落盘目录（AGENTS.md §六：reports 分支 / site/ / 生成的报告文件
-# 都是产物，遵循 gitignore/分支隔离，不混入主分支历史）。
-# 2026-10-08 补：此前只靠 `*.html` 通配挡住了 HTML，`reports/*.md` 却是可被
-# `git add -A` 误带入主分支的真实占报告。留档一律走 reports 分支。
-reports/
-
-# 古籍现代化中间产物树（AGENTS.md §三：生成物一律 gitignore）。
-# 输出根由工具写死：tools/clean_wikitext.py:27 `MODERN = ROOT/"modernized"`、
-# tools/structure_classical.py:24 同。2026-10-09 实测工作区 78 文件
-# （liuyao/ming/tonglun 三目录 + LEDGER.md/FORMAT-SPEC.md/annotate_generic.py），
-# 未跟踪也未忽略 → `git add -A` 会整片误带（60b2403 的 pre-push 审查正是因此剔除它，
-# 见 docs/CHANGELOG.md「本 commit 的入库边界」）。是否作为研究语料长期入库另行决策，
-# 决策前不得放开本条；确需留样按 §三 进 docs/samples/ 并说明。
-modernized/
-
-# 生成物（AGENTS.md §三：*.html、*.jsonl 不入库，防误 add 报告/输出）。
-# 白名单：web/index.html（前端源码）、docs/samples/**（留存样例，见 §三）。
-*.html
-!web/index.html
-!docs/samples/**
-*.jsonl
-
 # 会话级工作记忆（agent 本地日志，不入库）
 .workbuddy/memory/
-
-# ci_request 本地调试产物（CI 内在 runner 临时目录生成，不入库）
-/meta.json
-/request.json
