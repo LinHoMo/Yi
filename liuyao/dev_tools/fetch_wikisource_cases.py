@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """从维基文库《增刪卜易》原本抓取占验案例，本地确定性解析并三方校验后成外部集。
 
-    python tools/fetch_wikisource_cases.py            # 下载＋解析＋校验＋落盘
-    python tools/fetch_wikisource_cases.py --no-fetch # 用已缓存原文重跑解析
-    python tools/fetch_wikisource_cases.py --report   # 只看校验统计，不落盘
-    python tools/fetch_wikisource_cases.py --report --show 8   # 附带前 8 条剔除样本
+    python dev_tools/fetch_wikisource_cases.py            # 下载＋解析＋校验＋落盘
+    python dev_tools/fetch_wikisource_cases.py --no-fetch # 用已缓存原文重跑解析
+    python dev_tools/fetch_wikisource_cases.py --report   # 只看校验统计，不落盘
+    python dev_tools/fetch_wikisource_cases.py --report --show 8   # 附带前 8 条剔除样本
 
 为什么走"原文＋本地解析"而不是让模型读一遍再抄：
   本仓库现有 `references/case_library.md` 有 29 例，其中 14 例"文记动爻"与卦变差集矛盾

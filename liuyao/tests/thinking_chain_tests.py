@@ -48,7 +48,7 @@ from typing import Callable, NamedTuple, Optional
 
 # ---------------------------------------------------------------------------
 # 推演模块在 ../scripts。
-# 本文件已从 scripts/ 迁出到 tests/（AGENTS.md：生产目录不混测试），故显式指回 scripts/。
+# 本文件已从 scripts/ 迁出到 tests/（SKILL.md：生产目录不混测试），故显式指回 scripts/。
 # ---------------------------------------------------------------------------
 _TEST_DIR = os.path.dirname(os.path.abspath(__file__))              # liuyao/tests
 _SCRIPT_DIR = os.path.join(os.path.dirname(_TEST_DIR), "scripts")   # liuyao/scripts

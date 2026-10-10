@@ -6,7 +6,7 @@
 
 相较于直接透传字段报表，本层额外做四件事（均属适配层职责，不触碰引擎推演逻辑）：
 1. **过滤内部量化暴露**：删除评分明细、综合评分、置信度百分比。
-   这些是引擎内部的推演记账，对齐分≠预测准确率（AGENTS.md §三），
+   这些是引擎内部的推演记账，对齐分≠预测准确率（SKILL.md），
    对外暴露会把技术口径错念成"预测能力指标"。（口径诚实）
 2. **六神临用融入正文**：`spirit_adjustment_reasons` 已是人话化文本
    （如"青龙临用，阳日力增，吉上添吉"），提取后嵌入叙述段落，
@@ -40,7 +40,7 @@ _BOUNDARY_TEXT = _SHELL.get("disclaimer") or ""
 
 
 def _filter_metric_exposure(text: str) -> str:
-    """兜底过滤内部量化暴露——口径诚实（对齐 AGENTS.md §三）。
+    """兜底过滤内部量化暴露——口径诚实（对齐 SKILL.md）。
 
     正常情况下，正文由 human_narrative 生成，不会包含内部评分。
     此函数作为防御性层：若任何路径仍泄漏 format_reading_output 的
@@ -237,7 +237,7 @@ def narrate(a: dict) -> str:
 
     text = "\n\n".join(parts)
 
-    # 9. 防御性过滤：确保无内部评分/百分比泄漏到交付正文（AGENTS.md §三）
+    # 9. 防御性过滤：确保无内部评分/百分比泄漏到交付正文（SKILL.md）
     return _filter_metric_exposure(text)
 
 

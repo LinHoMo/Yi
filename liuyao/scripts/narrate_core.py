@@ -794,7 +794,7 @@ def _collect_pattern_tags(context, step3: dict, step4: dict, step5: dict) -> lis
             _add("格局-独静", "独静")
 
     # 助鬼伤身（《断易天机》L134-L137）：**只标结构凶格成立与否**，
-    # 不据此出吉凶断语（AGENTS.md 铁律一：吉凶断语不得进结构层）。
+    # 不据此出吉凶断语（SKILL.md 铁律一：吉凶断语不得进结构层）。
     zg = adv.get("zhu_gui_shang_shen") or {}
     if isinstance(zg, dict) and zg.get("established"):
         _add("格局-助鬼伤身", "助鬼伤身")
@@ -1419,7 +1419,7 @@ def _meaning_paragraph(verdict, s2, s3, special, question, factor_contribs=None)
             parts.append("拖累面：" + "；".join(neg_strs) + "。")
 
     # 三处判据短语（绝处逢生／克多出暴／回头克自伤）的措辞全部在
-    # data/narrative_templates.json#advice_soft，本层只按卦象结构选分支（AGENTS.md §三）
+    # data/narrative_templates.json#advice_soft，本层只按卦象结构选分支（SKILL.md）
     if any(x in strength for x in ("弱", "囚", "死")) and vdir > 0:
         parts.append((_ADVICE_SOFT.get("weak_but_pattern") or "")
                      + (_ADVICE_SOFT.get("weak_but_pattern_tail") or ""))
@@ -1508,7 +1508,7 @@ def _jiazhai_paragraph(result: dict) -> str:
             五爻为兄弟，六爻为妻财。内卦宅生人吉，外卦宅克人凶。」
       L2536「合为门，冲为路，不论卦内之有无。」
 
-    口径（AGENTS.md §一 铁律三）：只说「看哪个爻」，**不断宅吉凶**；
+    口径（SKILL.md 铁律三）：只说「看哪个爻」，**不断宅吉凶**；
     本段不进评分、不作吉凶断语来源（OPT-huangjince_dz-07）。
     """
     tpl = _NARRATIVE_TPL.get("jiazhai_take_image") or {}
@@ -1760,7 +1760,7 @@ def _ensure_thinking_chain(result: dict) -> dict:
     raise RuntimeError(
         "thinking_chain 缺失，不应在交付路径外就地重建——"
         "请检查上游 analyze / run_thinking_chain 是否执行成功；"
-        "铁律一（AGENTS.md §一）要求机械运算统一由主线引擎完成。"
+        "铁律一（SKILL.md）要求机械运算统一由主线引擎完成。"
     )
 
 

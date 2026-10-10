@@ -4,7 +4,7 @@
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
   "digest": "1be8d5b579463a47",
-  "narrate_digest": "568e5bedc0d60500",
+  "narrate_digest": "e531f56d263192b2",
   "drift_log": [
     {
       "from": "57dc7e890af222fa",
@@ -20,12 +20,6 @@
     }
   ],
   "narrate_drift_log": [
-    {
-      "from": "0d70d5efb0102b47",
-      "to": "f43e0cb70bcd5340",
-      "date": "2026-10-02",
-      "reason": "2026-10-02a 八字科加法：narrate 增《滴天髓·通隔論》通关/关隔段（逐字原文+注），机械层零漂移"
-    },
     {
       "from": "f43e0cb70bcd5340",
       "to": "18de3ab8f3b91fbe",
@@ -139,6 +133,12 @@
       "to": "568e5bedc0d60500",
       "date": "2026-10-09",
       "reason": "narrate 接线纳音取象旁证（nayin_quxiang.json→narrate 层，只作物性标签不计格不评分）；机械层零漂移 1be8d5b579463a47；措辞层从缺→有即变化"
+    },
+    {
+      "from": "568e5bedc0d60500",
+      "to": "e531f56d263192b2",
+      "date": "2026-10-10",
+      "reason": "措辞修正：正文免责句原引用已删除的 AGENTS.md，改为现存 SKILL.md；机械层零漂移，非判定变更"
     }
   ]
 }

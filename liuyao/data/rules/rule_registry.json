@@ -18,11 +18,11 @@
     {
       "rule_id": "liuyao.sanhui",
       "domain": "三会局",
-      "impl": "scripts/liuyao_step4.py:1058（check 3b，SAN_HUI_GROUPS 判定；三会成立不再按三合破局论）",
+      "impl": "scripts/step4.py:1058（check 3b，SAN_HUI_GROUPS 判定；三会成立不再按三合破局论）",
       "source": {
         "book": "《三命通会》",
         "locator": "三会方局",
-        "quote_in_code": "liuyao/scripts/liuyao_step4.py#三会方局：寅卯辰会木",
+        "quote_in_code": "liuyao/scripts/step4.py#三会方局：寅卯辰会木",
         "verified": true
       },
       "applicability": "三会三支俱现于本卦，或月建/日辰补足一字；用神旺（分≥3.5）+0.5、衰（分≤1.5）−0.5、中和 0。寒暖燥湿为取象，不作加减依据",
@@ -102,7 +102,7 @@
     {
       "rule_id": "liuyao.xunkong_zhenjia",
       "domain": "旬空（真空/假空）",
-      "impl": "scripts/liuyao_step3.py:583（真空/假空判定，互斥宁缺勿滥；旬空机械事实唯一真值源在内核 symbols.xunkong_of）",
+      "impl": "scripts/step3.py:583（真空/假空判定，互斥宁缺勿滥；旬空机械事实唯一真值源在内核 symbols.xunkong_of）",
       "source": {
         "book": "《增删卜易》",
         "locator": "旺空待出，真空难起",
@@ -176,7 +176,7 @@
     {
       "rule_id": "liuyao.use_god_multi",
       "domain": "用神多现",
-      "impl": "scripts/liuyao_step2.py:step2_identify_use_god(57)/_find_use_god_positions(556)；取舍优先级 data/rules/use_god_relations.json（逐字引文+偏移）",
+      "impl": "scripts/step2.py:step2_identify_use_god(57)/_find_use_god_positions(556)；取舍优先级 data/rules/use_god_relations.json（逐字引文+偏移）",
       "source": {
         "book": "《增刪卜易》",
         "locator": "用神多现取舍（问法→六亲 per data/rules/question_use_gods.json 195 问法，含引文与偏移）",
@@ -201,11 +201,11 @@
     {
       "rule_id": "liuyao.yingqi_rules",
       "domain": "应期",
-      "impl": "scripts/liuyao_timing.py:predict_timing_core(733)；Rule 8(615)/Rule 9(672) 带书源引文",
+      "impl": "scripts/timing.py:predict_timing_core(733)；Rule 8(615)/Rule 9(672) 带书源引文",
       "source": {
         "book": "《增删卜易》",
         "locator": "应期直读法（Rule 8：静爻旺相逢冲即发；Rule 9：世应生克迟速调节）",
-        "quote_in_code": "liuyao/scripts/liuyao_timing.py#静爻旺相，冲之即发",
+        "quote_in_code": "liuyao/scripts/timing.py#静爻旺相，冲之即发",
         "verified": true,
         "provenance_note_2026_07": "2026-10-07 补《增删卜易》应期总注全章行级对源（OPT-zengshan_buyi_dz-05）：章题源L956「各门类应期总注章第二十六」，正文逐条行号：静而逢值逢冲 L957（对应本条 Rule 8 之书源锚点）／动而逢合逢值 L958／太旺者逢墓逢冲 L959／衰绝者遇生遇旺 L960／入三墓俱喜冲开 L961／遇六合亦宜相击 L962／月破喜填 L963／旬空最爱填冲 L964／化进神逢值逢合 L968／化退神忌值忌冲 L969／远近当分 L972（末条属叙事层判断，不入主分）。"
       },
@@ -338,10 +338,10 @@
     {
       "rule_id": "liuyao.fucang",
       "domain": "伏藏/飞伏",
-      "impl": "scripts/classical_enhancements.py:analyze_hidden_spirit_emergence(763)（advanced_analysis.hidden_spirit_emergence，can_emerge）＋scripts/liuyao_step2.py:_check_fu_cang（本宫首卦寻伏）",
+      "impl": "scripts/classical_enhancements.py:analyze_hidden_spirit_emergence(763)（advanced_analysis.hidden_spirit_emergence，can_emerge）＋scripts/step2.py:_check_fu_cang（本宫首卦寻伏）",
       "source": {
         "book": "《增删卜易》（飞伏神章）＋《易隐》（四态原词与出处）",
-        "locator": "飛伏神章第二十八：飞来生伏得长生/飞克伏受制＋「伏神有用者有六」判据清单＋引《黃金策》「空下伏神，易於引撥」；不得出方向另有所本《黃金策·千金賦》「伏無提挈終徒爾」（2026-10-02s 落地，quote 见 liuyao_step5 方向聚合）｜《易隐》范畴曰源L224 逐字「伏克飞为出暴，飞克伏则伤身。伏生飞曰泄气，飞生伏而叨生。飞伏比和，则相助而吉也。」——四态原词与引擎五态标签（伏克飞=出暴+0.8／飞克伏=伤身-0.8／伏生飞=泄气-0.3／飞生伏=叨生+0.5／比和=相助而吉+0.3）逐项对应。",
+        "locator": "飛伏神章第二十八：飞来生伏得长生/飞克伏受制＋「伏神有用者有六」判据清单＋引《黃金策》「空下伏神，易於引撥」；不得出方向另有所本《黃金策·千金賦》「伏無提挈終徒爾」（2026-10-02s 落地，quote 见 step5 方向聚合）｜《易隐》范畴曰源L224 逐字「伏克飞为出暴，飞克伏则伤身。伏生飞曰泄气，飞生伏而叨生。飞伏比和，则相助而吉也。」——四态原词与引擎五态标签（伏克飞=出暴+0.8／飞克伏=伤身-0.8／伏生飞=泄气-0.3／飞生伏=叨生+0.5／比和=相助而吉+0.3）逐项对应。",
         "quote_in_data": "liuyao/data/rules/verdict_texts.json#pattern_verdict_labels.伏藏/飞伏.古典引文",
         "quote_in_code": "liuyao/scripts/classical_enhancements.py#《增删卜易·飛伏神章》「伏神有用者有六」",
         "verified": true,
@@ -362,12 +362,12 @@
     {
       "rule_id": "liuyao.heban",
       "domain": "合绊/贪合忘生",
-      "impl": "scripts/liuyao_step4.py:4.3/4.3b（贪合忘生克效应减半＋日月合绊检查，进方向聚合）",
+      "impl": "scripts/step4.py:4.3/4.3b（贪合忘生克效应减半＋日月合绊检查，进方向聚合）",
       "source": {
         "book": "《增删卜易》",
         "locator": "千金賦「動逢合而絆住」野鶴注（忌神合不成凶/元神合不濟事，后逢沖開之月日吉凶俱成——应期义）＋「貪生貪合，刑沖克害皆忘……貪合忘克忘沖」",
         "quote_in_data": "liuyao/data/rules/verdict_texts.json#pattern_verdict_labels.合绊.古典引文",
-        "quote_in_code": "liuyao/scripts/liuyao_step4.py#動逢合而絆住：忌神動逢日月相合則不成凶，元神動逢日月合住則不濟事",
+        "quote_in_code": "liuyao/scripts/step4.py#動逢合而絆住：忌神動逢日月相合則不成凶，元神動逢日月合住則不濟事",
         "verified": true
       },
       "applicability": "动爻（含暗动）逢日/月合住＝合绊：忌神合住不成凶、原神/元神合住不济事——引擎以有界方向权重表达（原神贪合忘生 −2.0、日月合绊 −0.2 梯度、动化合绊 −0.3、贪合忘生克效应减半）；梯度分值为工程映射（书源定性二分＋「后逢冲开之日月」应期义）；「如逢合住，沖破成功」的三合侧破局已另见 liuyao.sanhe",
@@ -471,7 +471,7 @@
     {
       "rule_id": "liuyao.yimao_shibafafa",
       "domain": "用神旺衰",
-      "impl": "scripts/liuyao_step3.py",
+      "impl": "scripts/step3.py",
       "source": {
         "book": "《易冒》",
         "locator": "类总章第四十一（用神十八法）— 待扩科/待细化（本轮只登记映射，未进评分器）",
@@ -485,7 +485,7 @@
             "法": "日神",
             "原词": "一曰日神",
             "书源释": "言用临日月也（与下条并列）",
-            "引擎落点": "liuyao_step3.py 日辰修正（日生+1／日克−1／同+0.5）",
+            "引擎落点": "step3.py 日辰修正（日生+1／日克−1／同+0.5）",
             "覆盖": "已覆盖（并入合分）",
             "说明": "引擎把日月生克折成连续合分，不单列『日神』结构档"
           },
@@ -494,7 +494,7 @@
             "法": "月将",
             "原词": "二曰月将",
             "书源释": "言用临日月也（与上条并列）",
-            "引擎落点": "liuyao_step3.py 月令权重 base 0.6",
+            "引擎落点": "step3.py 月令权重 base 0.6",
             "覆盖": "已覆盖（并入合分）",
             "说明": "引擎月 0.6＋日 0.4 的比值口径与本书不同，见 OPT-yimao_dz-07（纯审计）"
           },
@@ -503,7 +503,7 @@
             "法": "旺",
             "原词": "三曰旺，日月之扶也",
             "书源释": "日月之扶",
-            "引擎落点": "liuyao_step3.py:196-198 极旺／旺两档",
+            "引擎落点": "step3.py:196-198 极旺／旺两档",
             "覆盖": "已覆盖",
             "说明": "本书『旺』是日月来扶之因，引擎『旺』是合分≥3.5 之果——因果口径不同但结论同向"
           },
@@ -512,7 +512,7 @@
             "法": "相",
             "原词": "四曰相，日月之生也",
             "书源释": "日月之生",
-            "引擎落点": "liuyao_step3.py:199-201『相』位之爻合分[2.5,3.5)上调为旺（_xiang_bump）",
+            "引擎落点": "step3.py:199-201『相』位之爻合分[2.5,3.5)上调为旺（_xiang_bump）",
             "覆盖": "已覆盖",
             "说明": "引擎已单列『相』位的旺衰上调分支，对应 element_strength_in_month=='相'"
           },
@@ -521,7 +521,7 @@
             "法": "生",
             "原词": "五曰生，生言贪生忘克，转转来生也",
             "书源释": "贪生忘克、辗转来生",
-            "引擎落点": "liuyao_step3.py 生扶合分（贪生合忘克）",
+            "引擎落点": "step3.py 生扶合分（贪生合忘克）",
             "覆盖": "已覆盖（部分）",
             "说明": "『转转来生』（多爻接力相生）引擎只算合分，不显式记『贪生忘克』结构标签"
           },
@@ -530,7 +530,7 @@
             "法": "变生",
             "原词": "六曰变生",
             "书源释": "变生亲（变爻相生，亲）",
-            "引擎落点": "liuyao_step3.py 化出之支生扶合分",
+            "引擎落点": "step3.py 化出之支生扶合分",
             "覆盖": "已覆盖（部分）",
             "说明": "『变生亲而动生疏』的亲疏序未显式建模"
           },
@@ -539,7 +539,7 @@
             "法": "动生",
             "原词": "七曰动生，变生亲而动生疏也",
             "书源释": "动生疏（动爻相生，疏）",
-            "引擎落点": "liuyao_step3.py 动爻生扶合分",
+            "引擎落点": "step3.py 动爻生扶合分",
             "覆盖": "已覆盖（部分）",
             "说明": "同上，亲疏序未建模"
           },
@@ -557,7 +557,7 @@
             "法": "有玷",
             "原词": "九曰有玷，或日克而月生，或月克而日生，吉之半也",
             "书源释": "日月一生一克，吉之半",
-            "引擎落点": "liuyao_step3.py 日辰修正 ±1 与月令权重叠加（净分居中）",
+            "引擎落点": "step3.py 日辰修正 ±1 与月令权重叠加（净分居中）",
             "覆盖": "已覆盖（分数近似）",
             "说明": "引擎以合分中段表达『半吉』，不单列『有玷』标签"
           },
@@ -566,7 +566,7 @@
             "法": "旺相空",
             "原词": "十曰旺相空，吉之又半也",
             "书源释": "旺相而空，吉之又半",
-            "引擎落点": "liuyao_step3.py 旬空修正 × 旺衰分档（旺＋空）",
+            "引擎落点": "step3.py 旬空修正 × 旺衰分档（旺＋空）",
             "覆盖": "已覆盖（分数近似）",
             "说明": "引擎旬空是独立修正项，不区分『旺相空』与『休囚空』"
           },
@@ -575,7 +575,7 @@
             "法": "安空",
             "原词": "十一曰安空，有生无克，求多不得而未至丧也",
             "书源释": "有生无克，安空（未至丧）",
-            "引擎落点": "liuyao_step3.py 旬空修正",
+            "引擎落点": "step3.py 旬空修正",
             "覆盖": "部分（缺结构标签）",
             "说明": "『有生无克』这一条件引擎未单列；且本书明定『泄气重于安空』（见序12），引擎无此轻重序"
           },
@@ -593,7 +593,7 @@
             "法": "死气",
             "原词": "十三曰死气，虽不遇空破，而日月动爻或一再克之，而无明暗之生，亦重于安空也",
             "书源释": "不空破但一再受克且无明暗之生；亦重于安空",
-            "引擎落点": "liuyao_step3.py 克合分递减 → 偏弱／弱／极弱档",
+            "引擎落点": "step3.py 克合分递减 → 偏弱／弱／极弱档",
             "覆盖": "部分（缺结构标签）",
             "说明": "『无明暗之生』（明克暗克皆无救）未单列"
           },
@@ -602,7 +602,7 @@
             "法": "日破",
             "原词": "十四曰日破，日月克伤，时令休囚，爻神被冲，破其半矣，又重于死气也",
             "书源释": "日辰冲破，破其半；**又重于死气**",
-            "引擎落点": "liuyao_step3.py 日辰冲破修正（暗动/日破二分）＋暗动检测",
+            "引擎落点": "step3.py 日辰冲破修正（暗动/日破二分）＋暗动检测",
             "覆盖": "已覆盖（分数近似）",
             "说明": "引擎日破与暗动按本爻旺衰分二路（引《增删卜易》），本书此法按『日月克伤＋休囚＋被冲』三重条件合取，条件更严"
           },
@@ -611,7 +611,7 @@
             "法": "月破",
             "原词": "十五曰月破，破而尚存其质也",
             "书源释": "月破但尚存其质（轻于日破）",
-            "引擎落点": "liuyao_step3.py:653-660 月破修正（逢日合可救 0.5／无救近失效 0.3）",
+            "引擎落点": "step3.py:653-660 月破修正（逢日合可救 0.5／无救近失效 0.3）",
             "覆盖": "已覆盖",
             "说明": "『破而尚存其质』对应引擎『无救近失效』的降权而非归零"
           },
@@ -629,7 +629,7 @@
             "法": "竟无",
             "原词": "十七曰竟无，谓日月飞伏变互，皆不得其用神，又重于克空矣",
             "书源释": "日月飞伏变互皆不得用神；重于克空",
-            "引擎落点": "liuyao_step2.py 伏藏（用神不上卦）＋ classical_enhancements.py 飞伏互断",
+            "引擎落点": "step2.py 伏藏（用神不上卦）＋ classical_enhancements.py 飞伏互断",
             "覆盖": "部分（飞伏有判、变互未合参）",
             "说明": "『飞伏变互』三路皆失才算竟无；引擎伏藏路径完整，但『变互』不参与用神失源判定"
           },
@@ -638,7 +638,7 @@
             "法": "散",
             "原词": "十八曰散，谓动逢日神变动之冲而散，虽救之无从，是谓大凶",
             "书源释": "动爻逢日辰之冲而散；虽救之无从（大凶）",
-            "引擎落点": "liuyao_step3.py 暗动/动散检测＋liuyao_step4.py 卦体六冲对比",
+            "引擎落点": "step3.py 暗动/动散检测＋step4.py 卦体六冲对比",
             "覆盖": "已覆盖（分数近似）",
             "说明": "『虽救之无从』的绝对口径与引擎『有救则减』相反，属口径分歧，登记不采"
           }
@@ -658,7 +658,7 @@
     {
       "rule_id": "liuyao.huozhulin_luandong",
       "domain": "乱动卦取用",
-      "impl": "scripts/liuyao_step4.py",
+      "impl": "scripts/step4.py",
       "source": {
         "book": "《火珠林》",
         "locator": "乱动法（L25 总纲／L27 注云四看口诀／L33 问答「乱动之卦只取旺爻」）（待补引文指针）",
@@ -686,7 +686,7 @@
           "holdout"
         ],
         "dim": "verdict",
-        "note": "卜炉动巳注册在本条目；engine落点 liuyao_step4.py。score仅对齐古籍案例要点（铁律三）。"
+        "note": "卜炉动巳注册在本条目；engine落点 step4.py。score仅对齐古籍案例要点（铁律三）。"
       }
     },
     {
@@ -773,7 +773,7 @@
     {
       "rule_id": "liuyao.wild_crane_reverse",
       "domain": "用神两现野鹤反法",
-      "impl": "scripts/liuyao_step2.py:_detect_wild_crane_reverse（step2.wild_crane_reverse）；narrate钩子 liuyao_narrate.py:_collect_pattern_tags",
+      "impl": "scripts/step2.py:_detect_wild_crane_reverse（step2.wild_crane_reverse）；narrate钩子 narrate_core.py:_collect_pattern_tags",
       "source": {
         "book": "《增刪卜易》",
         "locator": "用神两现章（L1396）",
@@ -798,7 +798,7 @@
     {
       "rule_id": "liuyao.chuxian_wuqing",
       "domain": "方向凶格·出现无情（功名类）",
-      "impl": "scripts/classical_enhancements_direction.py:detect_direction_caps 第1条 → scripts/liuyao_step5.py 5.7b 上限压档",
+      "impl": "scripts/classical_enhancements_direction.py:detect_direction_caps 第1条 → scripts/step5.py 5.7b 上限压档",
       "source": {
         "book": "《增删卜易》",
         "locator": "L2786",

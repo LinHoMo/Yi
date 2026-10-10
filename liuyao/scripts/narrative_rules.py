@@ -10,7 +10,7 @@
    （男问女→妻财为用→子孙为原神持世有利；女问男→官鬼为用→子孙克官不利）。
 3. 应期基础句：已有日级日历日期时，不输出「按月计…别拿天来量」矛盾口径。
 
-所有文本/阈值外置 data/rules/verdict_texts.json（AGENTS.md §三）；本模块仅做查找与组装，
+所有文本/阈值外置 data/rules/verdict_texts.json（SKILL.md）；本模块仅做查找与组装，
 不内嵌任何断语原文。依赖单向：narrative_rules → chain_verdicts。
 """
 from __future__ import annotations

@@ -42,7 +42,7 @@ from yishu_core.symbols import (
     twelve_growth,
 )
 
-# 成败救应/从格 basis 的书源引文唯一真值源在 data/verdicts.json（AGENTS.md §三）
+# 成败救应/从格 basis 的书源引文唯一真值源在 data/verdicts.json（SKILL.md）
 import json as _json
 from pathlib import Path as _Path
 
@@ -976,7 +976,7 @@ def dayun_liunian_interactions(chart_json: dict, dayun: list[dict] | None = None
 
 
 # ================================================================ 四柱结构补充因子
-# 以下均为**机械结构标签**，只出结构名与依据，不批吉凶（AGENTS.md 铁律三）。
+# 以下均为**机械结构标签**，只出结构名与依据，不批吉凶（SKILL.md 铁律三）。
 # 取值层一律取自 core（SAN_HUI_GROUPS / TIGER_MONTH_STEM / CHONG_PAIRS），不另建第二份表。
 
 
@@ -1022,7 +1022,7 @@ def pillar_relations(chart_json: dict) -> list[dict]:
     刑與害兮動不動」（《滴天髓·地支論》）——以相冲为最重，刑、害次之。本层把年/月/日/时
     的**四干两两**与**四支两两**（各六对）按内核关系表逐一判定，并另列四支中的三刑组合
     （`sanxing_hits`）。表一律取自内核（`relations.STEM_WUHE`／`symbols.HE_PAIRS` 等），
-    **不在本模块新建第二份干支关系表**（AGENTS.md §二「内核唯一真值源」）。
+    **不在本模块新建第二份干支关系表**（SKILL.md「内核唯一真值源」）。
 
     诚实边界：**只判「合/冲/害/刑」之结构，不判「化」**。合化须透干、得月令等附加条件
     （真化三条件：月令相宜＋独自相合＋根气——《滴天髓阐微》合化判据语料已在库，
@@ -1030,7 +1030,7 @@ def pillar_relations(chart_json: dict) -> list[dict]:
     化与不化的机械判定缺标定，仍不落「合化」结论）。**争合**识别已按语料落地：
     一干参与 ≥2 个五合对即逢争合（任注命例「天干三透戊土，争合癸水，则日主之情，
     竟无定见」；「虽合不化，有争合、妒合、分合之别」——妒合/分合定义书源未给机械
-    判据，不实现）。只出结构名与位置，不批吉凶（AGENTS.md 铁律三）。
+    判据，不实现）。只出结构名与位置，不批吉凶（SKILL.md 铁律三）。
     """
     pillars = chart_json.get("pillars") or {}
     he = {frozenset(p) for p in HE_PAIRS}
@@ -1309,7 +1309,7 @@ def _ke_wo(elem: str) -> str:
 # ────────────────────────────────────────────────────────────────
 
 # 病药总纲原文（「有病方为贵，无伤不是奇；格中如去病，财禄两相随」）
-# 引文本体在 data/verdicts.json#病药引文.thesis（AGENTS.md §三：断语/引文进 data，
+# 引文本体在 data/verdicts.json#病药引文.thesis（SKILL.md：断语/引文进 data，
 # 代码只留算法）。BING_YAO_THESIS 保留为**数据装载位**——rule_registry.json 的
 # _uncovered[ming.bing_yao].source.quote_in_code 锚点指此名，
 # tests/test_bazi_rule_registry.py::test_quote_in_code_anchor_exists 回锚此串。
@@ -1347,7 +1347,7 @@ BING_RULES_BY_KE: dict[str, tuple[str, str, str]] = {
 #     自相矛盾；按 L726 实测，错的是注释不是标签，已订正注释。
 #   「印重财轻」——**名与义皆书源无此字句**（「印重」仅见 L1010「干支枭印重」的枭神语境，
 #     不是本条命题），机制从 L74「以印为病，喜财为药」的通则结构推得 → generalization
-#     （2026-10-09 由 exact 下调：原标签冒充逐字，违反 AGENTS.md §二 出处诚实；
+#     （2026-10-09 由 exact 下调：原标签冒充逐字，违反 SKILL.md 出处诚实；
 #      取值本身——病神/药神集合——未动，不改判据）。
 BING_RULES_BY_GOD: tuple[tuple[str, frozenset, str, frozenset, str, str], ...] = (
     # (病名, 病神集合, 病之说明, 药神集合, 药之说明, provenance)
@@ -1380,7 +1380,7 @@ def bing_yao(chart_json: dict, strength: str = "") -> dict:
       2. **十神层**：「如用财见比肩为病，喜见官杀为药也。如用食神伤官，
          以印为病，喜财为药也。」→ 病药成对共现则成立，局中见药则「有药」。
 
-    只出结构名与依据，**不批吉凶**（AGENTS.md 铁律三）：有药不等于吉，无药不等于凶。
+    只出结构名与依据，**不批吉凶**（SKILL.md 铁律三）：有药不等于吉，无药不等于凶。
     藏干口径依原文自注「地支虽又藏有别物，且不必看，若再看别物，由混杂不明」——
     五行层只用四干与四支**本气**，藏干不入此层（十神层仍透干，引擎既有口径不变）。
 

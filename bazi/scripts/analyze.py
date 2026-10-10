@@ -43,7 +43,7 @@ def female_fu_zi(chart_json: dict) -> dict | None:
 
     《渊海子平·女命论》：女命以官杀为夫星（正官正夫、七杀偏夫），以食伤为子星
     （食神为女、伤官为男）。机械扫描四柱天干 `ten_god` 与地支藏干 `ten_gods`，
-    标出夫星/子星所在柱与位置；不评旺衰吉凶（AGENTS.md 铁律三）。男命不调用。
+    标出夫星/子星所在柱与位置；不评旺衰吉凶（SKILL.md 铁律三）。男命不调用。
     夫星/子星取法绑定 core.relations.LIUQIN_TO_SHISHEN 单源，不另写字面量。
 
     ⚠️ 跨书源异说（2026-10-04j 登记）：《滴天髓阐微·女命章》任注持弹性体系——
@@ -96,7 +96,7 @@ def analyze(chart_json: dict) -> dict:
     result["tiaohou"] = sp.get("tiaohou")
 
     # 四柱结构补充因子（三会方局 / 胎元 / 流月 / 小运 / 天克地冲 / 十神组合）——
-    # 均为机械结构标签，只出结构名与依据，不批吉凶（AGENTS.md 铁律三）。
+    # 均为机械结构标签，只出结构名与依据，不批吉凶（SKILL.md 铁律三）。
     month_gz = (pillars.get("month") or {}).get("ganzhi") or ""
     year_stem = (pillars.get("year") or {}).get("stem") or ""
     day_stem = (pillars.get("day") or {}).get("stem") or ""

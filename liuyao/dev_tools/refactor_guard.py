@@ -4,7 +4,7 @@
     python dev_tools/refactor_guard.py --write guard/step5.json     # 改动前存基线
     python dev_tools/refactor_guard.py --compare guard/step5.json   # 改动后比对
 
-覆盖两条链路（都是 step3/step5 的下游，`AGENTS.md` 铁律一要求机械运算零漂移）：
+覆盖两条链路（都是 step3/step5 的下游，`SKILL.md` 铁律一要求机械运算零漂移）：
   reading —— format_reading_output + format_text_output 的逐字符报告文本
   chain   —— 五步思维链产出（判语/分数/应期/推理链/叙述）
 

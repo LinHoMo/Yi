@@ -4,7 +4,7 @@
 历史：六爻曾有两套并行报告引擎（visualization 排盘报告 / build_html_report
 解读报告），各自手写 DOCTYPE/head/style/footer，一副卦两种长相。本模块收敛
 "骨架"这一层——任何学科报告都从这里组装单文件 HTML，学科层只提供 body
-内容与要点（CONTRACT.md render 段：render(analyze_out) → 交内核 report 出 HTML/MD）。
+内容与要点（SKILL.md render 段：render(analyze_out) → 交内核 report 出 HTML/MD）。
 """
 
 from __future__ import annotations

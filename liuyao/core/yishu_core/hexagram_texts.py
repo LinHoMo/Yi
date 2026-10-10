@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-"""六十四卦卦辞/爻辞——内核唯一真值源（AGENTS.md §二）。
+"""六十四卦卦辞/爻辞——内核唯一真值源（SKILL.md）。
 
-从 disciplines/liuyao 上收：学科层不得复制此表，统一从这里导入。
+从六爻学科上收：学科层不得复制此表，统一从这里导入。
 """
 
 from __future__ import annotations

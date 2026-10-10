@@ -6,7 +6,7 @@
     python scripts/evaluate.py --split all --save
     python scripts/evaluate.py --split external_holdout   # 外部独立集（永不调参，强弱 report-only）
 
-口径（务必连同分数一起阅读，AGENTS.md 铁律三；方法学见 bazi/docs/EVAL-PLAN.md）：
+口径（务必连同分数一起阅读，SKILL.md 铁律三；方法学见 bazi/docs/EVAL-PLAN.md）：
   本脚本衡量的是**引擎输出与古籍案例要点的一致性**，不是现实世界预言命中率。
 
 三条硬规则（方法论层面的自保，违反则分数没有意义）：
@@ -23,9 +23,9 @@
 
   权重刻意选成**能整除各自子项数**：否则"四柱对三柱"会算出 18.75 这种分量，
   取整后显示 72% 或 76%，与"四分之三"的直觉不符，也掩盖了真实误差。
-  框架自检（`tools/scratch` 之外的一次性脚本）抓到过这个歧义。
+  框架自检（一次性脚本）抓到过这个歧义。
 
-调候与格局的关系（2026-10-09 订正，体例照 `AGENTS.md` §二「判据分层」）：
+调候与格局的关系（2026-10-09 订正，体例照 `SKILL.md` §二「判据分层」）：
   子平格局层为**体**（月令为本、透干通根，`pattern.py::strength_and_pattern` 主判），
   调候层为**用**（`ming_tables.TIAO_HOU` 查表结果作佐用与叙述素材）。
   ⚠ **本优先级只是口径声明，引擎未实现冲突仲裁**：`pattern.py` 的 useful_gods 纯按

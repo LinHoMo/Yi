@@ -69,7 +69,7 @@ def run(disc_name: str, what: str, how: str,
         description=f"{disc_name}金标准指纹：capture 落基线 / verify 比对漂移（默认）")
     ap.add_argument("mode", nargs="?", default="verify", choices=("capture", "verify"))
     ap.add_argument("reason", nargs="?", default="",
-                    help="capture 模式必填：为何允许漂移（防掩盖退步，见 AGENTS.md 四）")
+                    help="capture 模式必填：为何允许漂移（防掩盖退步，见 SKILL.md）")
     args = ap.parse_args()
 
     rows = fingerprint()
@@ -90,7 +90,7 @@ def run(disc_name: str, what: str, how: str,
     if args.mode == "capture":
         if not args.reason.strip():
             print('× 重新落基线必须给理由：python dev_tools/golden.py capture "为何允许漂移"')
-            print("  基线下调/漂移不写理由＝掩盖退步（AGENTS.md 四）。")
+            print("  基线下调/漂移不写理由＝掩盖退步（SKILL.md）。")
             return 2
         if machine_digest == old_machine and narrate_digest == old_narrate:
             print("· 指纹与基线一致，无需 capture（避免无意义滚动）")

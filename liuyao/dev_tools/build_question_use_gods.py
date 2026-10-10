@@ -530,7 +530,7 @@ def main() -> int:
             "built_by": "dev_tools/build_question_use_gods.py",
             "source": str(RAW.relative_to(DISC)),
             "order_warning": "entries 顺序＝打分层 tie-break 依赖的插入顺序，禁止重排/增删；"
-                             "改词典必须重跑 tune/holdout/wikisource 三集（AGENTS.md 四）",
+                             "改词典必须重跑 tune/holdout/wikisource 三集（SKILL.md）",
             "usage": "chain_tables._QUESTION_USE_GOD_MAP 由本表加载；"
                      "取用神顺序＝关系法则(use_god_relations) → 覆盖层 → 本词典 → 世爻兜底",
             "layer_citations": "chain_step2 覆盖层（代码消歧层）的展示引文，同为逐字核验",

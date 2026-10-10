@@ -12,9 +12,9 @@
     s = store.stats()
 
 命中判定（strict / loose）的口径与常量**不在此处持有**：唯一真值源是
-`yishu_core.yingqi`（架构评审 A2——此前本模块与合参层 `synthesis/outcome_eval.py`
-各写一份应期口径，且本地支合表多出两条错项「丑午」「未申」，会造成虚假宽松命中；
-现两处统一读内核一份，门 `tools/check.py [1i]` 锁死）。
+`yishu_core.yingqi`（架构评审 A2——应期口径曾在本模块与合参层各写一份，
+且本地支合表多出两条错项「丑午」「未申」，会造成虚假宽松命中；
+现统一读内核一份，门 `dev_tools/check.py [1i]` 锁死）。
 本模块只做本学科的事：从 analyze JSON 取预测应期、落盘与汇总。
 """
 from __future__ import annotations

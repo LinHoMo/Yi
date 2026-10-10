@@ -8,7 +8,7 @@
   --only 逗号与空格等价（`--only eval,calendar` 同 `--only eval calendar`）；给的名字一个
   都对不上就报错、列出可用项并退出码 2——不会"零门执行却打印通过"。
 
-门槛设计（见 AGENTS.md §四）：
+门槛设计（见 SKILL.md）：
   · 历法自检、段落产出冒烟 —— 必须全绿，任何回退即失败
   · 思维链用例、古籍回归、tune/holdout 对齐分 —— **只准前进不准后退**：
     与 BASELINE 比较，低于基线即失败。基线是 2026-09-22 重建评分器后的实测值，
@@ -25,7 +25,7 @@ from pathlib import Path
 DISC = Path(__file__).resolve().parents[1]          # 学科根：liuyao
 sys.path.insert(0, str(DISC / "scripts"))
 from kernel_path import kernel_dir as _kernel_dir, repo_root as _repo_root  # noqa: E402
-REPO = _repo_root(__file__)                          # 仓库根：含 core/ 与 disciplines/
+REPO = _repo_root(__file__)                          # 学科根：core 的父目录
 ROOT = DISC                                          # 兼容旧变量名：脚本与数据以学科根为基准
 sys.path.insert(0, str(_kernel_dir(__file__)))
 from yishu_core.gate_kit import (  # noqa: E402
@@ -79,7 +79,7 @@ BASELINE = {
     #   reg_13（占子病·伏神得出·旺衰）：因进神表修正关联的 step3 旺衰评分从3.5→3.8,
     #     越过 medium 区间上限(0.5≤score<3.5)→ 旺衰断言 FAIL。方向、区间均 OK（dir=band=OK）。
     # 三条不动保护：① ADVANCE_PAIRS 五源同证是书源被动过，不可回退；② 不为让这 2 例回去而开
-    #    case-specific 分支（违 AGENTS.md §四.3）；③ 退化代价已计入：tune 97.2/holdout 90.2
+    #    case-specific 分支（违 SKILL.md）；③ 退化代价已计入：tune 97.2/holdout 90.2
     #    均稳超基线 93.9/85.7，wikisource_direction 24/38→28/38 净+4，是净正改进。
     # 2026-10-09e 实测：回归 9/18，方向 13/18(72%)，用神 18/18(100%)，区间 14/18(78%)。
     # 0.0.1 批次：动爻变出支补上后"化回头生"法则首次可触发，应期名次 2.13→2.27、
@@ -121,7 +121,7 @@ PORTAL_ARTIFACTS = ("assets/portal_data.json", "index.html")
 
 # ── chart 段纯净门（缺陷 A 回归看门狗，2026-10-09）──────────────────────────
 # CONTRACT §一：chart 段禁一切吉凶措辞。chart JSON 允许出现的「吉/凶/宜/忌」
-# 只有卦辞爻辞引文（排盘素材，AGENTS.md §二 内核卦辞爻辞），字段名白名单外
+# 只有卦辞爻辞引文（排盘素材，SKILL.md 内核卦辞爻辞），字段名白名单外
 # 任何字符串含判语字即红。负例自证：内存植一条明知违规的探针串，扫描器必须
 # 抓到它——抓不到说明门是死的（§四.8），全绿不算通过。
 CHART_VERDICT_WORDS = ("大凶", "凶", "吉", "宜", "忌")
@@ -131,7 +131,7 @@ CHART_QUOTED_FIELDS = {"judgment", "line_text"}   # 卦辞/爻辞引文字段（
 def _scan_chart_verdict_strings(node, path=""):
     """返回 JSON 中越界的断语级字符串 (path, text) 列表。
 
-    豁免：字段名为 judgment/line_text 的卦辞爻辞**引文**（排盘素材，AGENTS.md §二）。
+    豁免：字段名为 judgment/line_text 的卦辞爻辞**引文**（排盘素材，SKILL.md）。
     其余任何字符串含 大凶/凶/吉/宜/忌 即视为 chart 段泄露吉凶断语。
     """
     hits = []

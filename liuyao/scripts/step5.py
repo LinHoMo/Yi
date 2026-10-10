@@ -255,7 +255,7 @@ def step5_synthesize(r: dict) -> dict:
     # 引擎判吉」（TECH-DEBT §2.11 D1）。做法是**只压档、不加和**：命中即把 verdict
     # 压到该书规定的档位，避免任何"再叠一个正项"把它平均回去。
     # 判据与逐字出处见 classical_enhancements_direction 模块头注与 data/rules/rule_registry.json；
-    # 展示句全部取自 verdict_texts.json，代码内无断语字面量（AGENTS.md §三）。
+    # 展示句全部取自 verdict_texts.json，代码内无断语字面量（SKILL.md）。
     _mt_sb = safe_get(div_time, "month_stem_branch", default="")
     dir_caps = detect_direction_caps(
         safe_get(r, "original_hexagram", "yao_lines", default=[]),

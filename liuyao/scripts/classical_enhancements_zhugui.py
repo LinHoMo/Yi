@@ -9,7 +9,7 @@
 **只标象、不打分**（与同目录 `classical_enhancements_dufa.py` 的独发/独静同策略）：
   · 成立/不成立只作为**结构事实**透出，交 narrate 作正文辅助说明；
   · **不改吉凶主判、不进主分**——书源同段的话（「其凶愈甚」「必主身有灾殃」等）
-    是吉凶断语，按 AGENTS.md 铁律一不得进结构层，一概不入本模块；
+    是吉凶断语，按 SKILL.md 铁律一不得进结构层，一概不入本模块；
   · 断语素材（引文/标签句）一律取自 `data/rules/verdict_texts.json`
     的 `pattern_verdict_labels["助鬼伤身"]`（经 narrative_utils 加载），代码内不写字面量。
 
@@ -86,7 +86,7 @@ def _jiejiu(moving_cai: list[str], moving_zisun: list[str]) -> dict:
       财不动·子孙动 → 不成立（无财不助鬼，L120「无财，凶有限」），此时才是纯解救位
     即**「成立」与「可解救」在书源口径下不同真**——这不是实现取巧，
     而是源 L137 亲自设的限制。故本层**如实输出两字段、不合并成单一吉凶档**，
-    由 narrate 按「结构上」措辞转述（AGENTS.md 铁律一/三）。
+    由 narrate 按「结构上」措辞转述（SKILL.md 铁律一/三）。
     """
     if not moving_zisun:
         return {"applicable": False, "reason": "子孙未发动（源L132：若有子孙发动，解神来救）"}

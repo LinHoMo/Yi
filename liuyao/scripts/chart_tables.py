@@ -34,7 +34,7 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
 
 from yishu_core.relations import SIX_RELATIONS  # noqa: E402
 
-from yishu_core.hexagram_texts import HEXAGRAMS, HEXAGRAM_LINE_TEXTS  # noqa: E402  卦辞爻辞唯一真值源（AGENTS.md §二）
+from yishu_core.hexagram_texts import HEXAGRAMS, HEXAGRAM_LINE_TEXTS  # noqa: E402  卦辞爻辞唯一真值源（SKILL.md）
 
 
 import json as _kt_json
@@ -52,7 +52,7 @@ import json as _kt_json
 # ── engine_tables 部分 ──
 # ══════════════════════════════════════════════════════════════════════════════
 
-# 爻序(lines)与卦五行(element)的唯一真值源在内核 BAGUA_LINES / TRIGRAM_ELEMENTS（AGENTS.md §二）。
+# 爻序(lines)与卦五行(element)的唯一真值源在内核 BAGUA_LINES / TRIGRAM_ELEMENTS（SKILL.md）。
 # 历史教训：此处曾就地硬编码一份「上爻在前」的镜像爻序，其中 震/巽/艮/兑 四卦与内核完全相反，
 # 仅靠下方覆盖循环才未暴露成 bug——一旦有人删掉循环即复活。现本地不存任何爻序/五行副本。
 BAGUA = {
@@ -155,12 +155,12 @@ DAY_STEM_SPIRIT_START = {
 # ══════════════════════════════════════════════════════════════════════════════
 
 # BAGUA：engine_tables 版本已包含 element/nature/symbol/lines，为本文件唯一 BAGUA 定义。
-# 卦五行唯一真值源在内核 yishu_core.symbols.TRIGRAM_ELEMENTS（AGENTS.md §二），此处仅派生。
+# 卦五行唯一真值源在内核 yishu_core.symbols.TRIGRAM_ELEMENTS（SKILL.md），此处仅派生。
 
 # PALACE_LOOKUP：engine_tables 已定义（与 classical_tables 同源 EIGHT_PALACES），此处不重复。
 
-# 生我(SHENG_WO)/克我(KE_WO)唯一真值源在内核（AGENTS.md §二），此处仅引用（与 chain_tables 同源）。
-# 三合/十二长生/三刑/纳音：真值源在 core.yishu_core（AGENTS.md §二），此处仅别名。
+# 生我(SHENG_WO)/克我(KE_WO)唯一真值源在内核（SKILL.md），此处仅引用（与 chain_tables 同源）。
+# 三合/十二长生/三刑/纳音：真值源在 core.yishu_core（SKILL.md），此处仅别名。
 SAN_HE = _CORE_SAN_HE
 
 YANG_STEMS = {"甲", "丙", "戊", "庚", "壬"}
@@ -176,7 +176,7 @@ _QUESTION_KEYWORDS_USE_GOD = {
 }
 
 # ── 古籍格局与六神属性表 ──
-# AGENTS.md §三：断语/引文进 data/*.json，代码只留算法。
+# SKILL.md：断语/引文进 data/*.json，代码只留算法。
 # 数据唯一真值源：data/classical_patterns_data.json
 
 

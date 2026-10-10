@@ -8,7 +8,7 @@
 是一张**独立的八宫速览表**（每宫列八卦，按世次一至六世、游魂、归魂排列），
 与 core 同为「乾姤遁否观剥晋大有」一系，是**外部书源证据**。
 
-本脚本**只读、只报差异**（范式同 `disciplines/ming/dev_tools/diff_tiaohou_vs_head.py`）：
+本脚本**只读、只报差异**（范式同 `bazi/dev_tools/diff_tiaohou_vs_head.py`）：
   · 书源侧：解析 L99-L106 八个宫块的卦名序列（并登记源行号）；
   · 引擎侧：取 `core.yishu_core.symbols.EIGHT_PALACES[p]["order"]` 的卦名序；
   · 逐宫逐位比对，报「一致 N 格 / 改值 N 格 / 变空 N 格」，**逐条列出**。
@@ -55,7 +55,7 @@ STAGES = ["一世", "二世", "三世", "四世", "五世", "六世", "游魂", 
 # Private Use Area），即 wikisource 转录时「蒙」字未能正确转码所留的残码。
 # 判据：core.EIGHT_PALACES 离宫为「离 旅 鼎 未济 蒙 涣 讼 同人」，第四位即「蒙」；
 # 且同栏其余七卦（旅鼎未济／涣讼同人）逐字合乎 core 唯此处残缺。
-# 故判为**书源转录残缺**，本门从 core 取该位并在报告里单列（AGENTS.md §四.8：
+# 故判为**书源转录残缺**，本门从 core 取该位并在报告里单列（SKILL.md：
 # 豁免必须可见，不得静默吞掉）。
 PUA_FILL = ""        # 底本残码字符
 PUA_EXPECTED = {"离": {"蒙"}}   # 宫 → {残码位应为何卦}
@@ -76,7 +76,7 @@ def parse_source() -> dict:
     # 故按「行对」解析：第 2k、2k+1 行处理第 k 组。
     # 另注：**底本 L105 左宫名缺字**（该行左 token 直接是卦名「旅鼎未济蒙」，
     # 无「离」字）——按版式左列宫序（乾坎坤离）推定为离宫，并在报告中显式标注，
-    # 不静默补（AGENTS.md §四.8：推定必须可见）。
+    # 不静默补（SKILL.md：推定必须可见）。
     out: dict[str, dict] = {}
     for pair in range(4):
         r1, r2 = SCAN_FROM + pair * 2, SCAN_FROM + pair * 2 + 1

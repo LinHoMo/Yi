@@ -12,7 +12,7 @@ YI-PLAN §二 架构图注明「命科与卜科是同一张表的两侧」，本
 
 真值源纪律：五行生克取自 symbols.py，本模块不另抄一份；此处只加两科共用的
 「关系 → 命名」映射。卜科既有实现 `classical_analysis.determine_six_relation()`
-与本模块 `six_relation()` 逐条一致（同一五行判据），已由 `disciplines/ming` 的断言锁定。
+与本模块 `six_relation()` 逐条一致（同一五行判据），已由 `bazi` 的断言锁定。
 """
 from __future__ import annotations
 

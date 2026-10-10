@@ -24,6 +24,15 @@ check_baseline.json
 .DS_Store
 .idea/
 .vscode/
+.worktrees/
 
 # 会话级工作记忆（agent 本地日志，不入库）
 .workbuddy/memory/
+
+# 学科内工具生成物（覆盖两科，用 **/ 前缀）
+guard/
+**/data/cases/blind_engine_output_*.json
+**/data/cases/*_summary.json
+**/scripts/regression_results.json
+**/scripts/coverage_report.md
+**/assets/portal_data.json

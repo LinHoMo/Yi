@@ -2,7 +2,7 @@
 """
 趋避建议 — 从一开始就说人话，分类按问题关键词，不靠默认「事业」。
 
-断语文案在 data/rules/advice_rules.json，此处只加载与组装（AGENTS.md §三）。
+断语文案在 data/rules/advice_rules.json，此处只加载与组装（SKILL.md）。
 """
 from __future__ import annotations
 

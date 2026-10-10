@@ -147,7 +147,7 @@ def load_cases() -> list[dict]:
     """主案例库 + 外部验证集（yingqi_cases.json 等）。
 
     外部集与 tune/holdout 分开登记在 case_splits.json，永不参与调参；
-    评分时按 split 取子集，两集合分别出分（AGENTS.md §四.1）。
+    评分时按 split 取子集，两集合分别出分（SKILL.md）。
 
     ⚠️ 跨文件重复 ID 直接报错，不像以前那样"先到先留、后到静默丢弃"：
     三个火珠林文件曾各自从 HZL001 起编号，于是 `--split huozhulin_qualitative`

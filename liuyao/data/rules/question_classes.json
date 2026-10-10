@@ -1,11 +1,11 @@
 {
  "_meta": {
-  "description": "问事归类唯一映射表（缺陷 D 修复，2026-10-09）：把散落在 liuyao_step5 与 liuyao_timing 的自由文本子串门控，收敛为 liuyao_step2 单点产出的结构枚举 question_class。判类前文本经 yishu_core.symbols.normalize_question_text 简繁归一，与取用神词典同一归一口径。",
+  "description": "问事归类唯一映射表（缺陷 D 修复，2026-10-09）：把散落在 step5 与 timing 的自由文本子串门控，收敛为 step2 单点产出的结构枚举 question_class。判类前文本经 yishu_core.symbols.normalize_question_text 简繁归一，与取用神词典同一归一口径。",
   "consumers": [
-   "liuyao_step5.compute_classical_adjustment —— 逃亡捕捉/行人/失物·求财/疾病·久病/功名科举/官非词讼 门控（原 :805-810 及同函数 :954/:966/:971/:976-986 兄弟门）",
-   "liuyao_timing._rank_candidates —— 疾病·近病/疾病·久病 应期分岔（原 :512-514）"
+   "step5.compute_classical_adjustment —— 逃亡捕捉/行人/失物·求财/疾病·久病/功名科举/官非词讼 门控（原 :805-810 及同函数 :954/:966/:971/:976-986 兄弟门）",
+   "timing._rank_candidates —— 疾病·近病/疾病·久病 应期分岔（原 :512-514）"
   ],
-  "keyword_provenance": "关键词族**逐字继承** 2026-10-09 前的旧门控（liuyao_step5.py :805-810/:863/:871/:954/:966/:971/:976、liuyao_timing.py :512-514 的关键词元组），属现代问法**启发式**，不是古籍定式——古籍只为本表下游的判定动作所本（各 step5_classical_notes 条目的 basis 字段、rule_registry），本表自身不冒充古法。",
+  "keyword_provenance": "关键词族**逐字继承** 2026-10-09 前的旧门控（step5.py :805-810/:863/:871/:954/:966/:971/:976、timing.py :512-514 的关键词元组），属现代问法**启发式**，不是古籍定式——古籍只为本表下游的判定动作所本（各 step5_classical_notes 条目的 basis 字段、rule_registry），本表自身不冒充古法。",
   "merge_notes": "同一类目在旧代码多处出现且词表不同（久病门：timing 带 沉疴/久疾，step5 带 病久/多月；失物门：:810 带 银，:863/:871 带 银/找回）时，本表取**并集**。并集是本轮的有意行为变化：一处问法判类、全链路口径一致；逐词对拍与漂移分析见交付报告。",
   "priority_semantics": "多个类目同时命中时，取 priority 中靠前的类目（旧代码各布尔门可叠加；收敛为单枚举后必须定序）。顺序依据：追捕压制行人（旧 _is_travel_return 本就含 not _is_catch）；疾病先于财务/行人——疾病问的『何日』曾误触发行人门（旧 :807 '何日' 关键词的静默变向病灶，本次修复有意让其不再触发）；失物先于求财（兄弟/妻财持世失物分支的词族必须整体落失物类才不失灵）。",
   "built_by": "手工维护；与旧门控逐词对拍；改动判类行为须重跑 dev_tools/check.py 的 tune/holdout 并 capture 金标准"
@@ -16,43 +16,43 @@
   {
    "class": "逃亡捕捉",
    "keywords": ["逃", "追回", "可追", "逃仆", "走失", "盗"],
-   "source_gates": ["liuyao_step5 :805 _is_catch"]
+   "source_gates": ["step5 :805 _is_catch"]
   },
   {
    "class": "功名科举",
    "keywords": ["考试", "功名", "学业", "科举", "中第", "得缺", "候选", "升迁", "出仕", "授职", "赴任", "补缺", "官职", "实授", "迁除", "升任", "缺"],
-   "source_gates": ["liuyao_step5 :971"]
+   "source_gates": ["step5 :971"]
   },
   {
    "class": "官非词讼",
    "keywords": ["官司", "官非", "诬告", "诉讼", "官事"],
-   "source_gates": ["liuyao_step5 :976/:986"],
+   "source_gates": ["step5 :976/:986"],
    "note": "旧 :976 的『师尊』排除守卫保留在代码侧（该守卫是调用方语境判断，不属问法词族）"
   },
   {
    "class": "疾病·久病",
    "keywords": ["久病", "沉疴", "久疾", "半年", "病久", "多月", "一年", "多年", "累年", "经年", "宿疾", "旧病", "有餘", "有余"],
-   "source_gates": ["liuyao_timing :514 _is_chronic", "liuyao_step5 :966"]
+   "source_gates": ["timing :514 _is_chronic", "step5 :966"]
   },
   {
    "class": "疾病·近病",
    "keywords": ["病", "疾", "愈", "医"],
-   "source_gates": ["liuyao_timing :513 _is_illness_q"]
+   "source_gates": ["timing :513 _is_illness_q"]
   },
   {
    "class": "失物",
    "keywords": ["失", "找回", "失物", "银"],
-   "source_gates": ["liuyao_step5 :810 之 失/失物/银", "liuyao_step5 :863/:871", "liuyao_step5 :954"]
+   "source_gates": ["step5 :810 之 失/失物/银", "step5 :863/:871", "step5 :954"]
   },
   {
    "class": "求财",
    "keywords": ["财", "投资", "生意", "价", "贸易", "求财", "经营"],
-   "source_gates": ["liuyao_step5 :810 之其余关键词"]
+   "source_gates": ["step5 :810 之其余关键词"]
   },
   {
    "class": "行人",
    "keywords": ["归", "回", "行人", "何日", "出外", "出行"],
-   "source_gates": ["liuyao_step5 :807 _is_travel_return"]
+   "source_gates": ["step5 :807 _is_travel_return"]
   },
   {
    "class": "婚姻",

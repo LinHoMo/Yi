@@ -5,12 +5,12 @@
 
 为什么需要这个门：core 的 `NAJIA_STEMS` / `NAJIA_BRANCHES` / `EIGHT_PALACES`
 目前**没有独立书源对拍**——它若被误改，只能靠现有案例读数事后发现，而读数
-未必覆盖全部 64 卦的纳甲（AGENTS.md §四.5：改静态表须逐格对拍报
+未必覆盖全部 64 卦的纳甲（SKILL.md：改静态表须逐格对拍报
 「新增 N/变空 N/改值 N」）。本书卷下 L924-L1395 的「六十四卦立成表」
 逐卦给出上爻→初爻的**天干纳甲**与**世应**，是 core 纳甲表的独立外部证据。
 
 本脚本**只读、只报差异**，不做任何修复（范式同
-`disciplines/ming/dev_tools/diff_tiaohou_vs_head.py`）：
+`bazi/dev_tools/diff_tiaohou_vs_head.py`）：
   · 书源侧：从 `data/sources/zhouyi_shangzhan_dz.dz.txt` 逐行解析卦名与其六爻纳甲干支；
   · 引擎侧：由 `core.yishu_core.symbols` 的 `HEXAGRAM_TRIGRAMS`（卦→内外卦）
     ＋ `NAJIA_STEMS`（宫→纳甲干）＋ `NAJIA_BRANCHES`（宫→六爻地支）**独立重算**六爻干支；
@@ -61,7 +61,7 @@ RE_PURE = re.compile(r"^(乾|坎|艮|震|巽|离|坤|兑)为[天地雷风水火�
 # 该行五爻作「乙未」，与同行上爻「己巳」、四爻「己酉」自相矛盾，
 # 且与其余 63 卦「同卦同干」之例（乾宫诸卦外卦皆甲/壬…）全异 —— **书源形讹**。
 # 处理：core **不动**（core 的己未 由 NAJIA_STEMS 离 outer=己 推出，自洽）；
-# 本门把该格列入豁免并**在报告里显式打印**，不静默吞掉（AGENTS.md §四.8：
+# 本门把该格列入豁免并**在报告里显式打印**，不静默吞掉（SKILL.md：
 # 全绿的新门先怀疑、再证明——豁免必须可见）。
 SOURCE_TYPOS: dict[str, dict] = {
     "火天大有": {
@@ -101,7 +101,7 @@ def _strip_prefix(gua_name: str) -> str:
     （「泽火革」「天地否」「山天大畜」）。两类需分别处理：
       · 八纯卦「X为Y」（乾为天/艮为山…）→ 取「X」；
       · 其余全称去掉卦宫前缀字即得简称——**按 core 表反查唯一命中**，
-        不建别名表（那是第二份卦名真值源，违反 AGENTS.md §二）；命中不唯一即判失败。
+        不建别名表（那是第二份卦名真值源，违反 SKILL.md）；命中不唯一即判失败。
     """
     if gua_name in HEXAGRAM_TRIGRAMS:
         return gua_name

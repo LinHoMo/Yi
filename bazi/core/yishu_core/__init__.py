@@ -6,7 +6,7 @@
 
 版本号 **全项目唯一真值源** 在此处（易 0.0.1 起）：
 pyproject、门户、SKILL.md、文档与质量门都从这里读，不要再各写一份。
-`python tools/check.py` 会检查是否有人又写了第二份。
+`python dev_tools/check.py` 会检查是否有人又写了第二份。
 """
 __version__ = "0.0.1"
 

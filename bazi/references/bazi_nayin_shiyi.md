@@ -6,7 +6,7 @@
 - 书源：`data/sources/mingli_tanyuan_dz.dz.txt`，段题在 **L54**「六十花甲子纳音五行」，
   正文 **L56-L176**，每条两行（上行＝纳音名、下行＝释义句，中间空一行）。
   故表内行号写作 `L<名行>／释义 L<释义行>` **双行号**（名与释义不同行，只记一个会回验失败）。
-- 归属：八字科 `bazi`（旁证层）。**吉凶断语不入本表**（AGENTS.md 铁律一/三）——
+- 归属：八字科 `bazi`（旁证层）。**吉凶断语不入本表**（SKILL.md 铁律一/三）——
   本书此段只解「何以名此」，不作吉凶推斷，故 30 条释义**零吉凶方向词**，可整段引用。
 - 口径：本表是**释义对照**，**不是判据**。纳音五行的吉凶判断属另一层
   （见 `bazi/data/nayin_quxiang.json`《五行精纪》性质层），两者不合并。
@@ -63,9 +63,9 @@
 ## 三、机械回验
 
 - 30 条纳音名与释义均从 `data/sources/mingli_tanyuan_dz.dz.txt` 按行直接抽取
-  （抽取器：`tools/scratch/_extract_tanyuan.py`，模式 `nayin`；字符集从
+  （按行直接抽取，模式 `nayin`；字符集从
   `core.symbols.HEAVENLY_STEMS`／`EARTHLY_BRANCHES`／`NAYIN` 取，**不手抄**）。
-- **31 条引文逐条机械回验 PASS**（BAD=0，校验器 `tools/scratch/_verify_refs.py`）：
+- **31 条引文逐条机械回验 PASS**（BAD=0，字符级回验）：
   30 条纳音释义 + 1 条 L180《瑞桂堂暇录》引文。
 - 引用纪律：本文件所有 `源L` 行号可经 `python tools/check_source_readings.py --doc
   docs/source-readings/mingli_tanyuan_dz.md` 同款正则逐字回验。

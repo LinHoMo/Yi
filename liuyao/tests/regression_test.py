@@ -23,7 +23,7 @@ from typing import NamedTuple, Optional
 
 # ---------------------------------------------------------------------------
 # 推演模块（engine / thinking_chain）在 ../scripts。
-# 本文件是测试 CLI，已从 scripts/ 迁出到 tests/（AGENTS.md：生产目录不混测试），
+# 本文件是测试 CLI，已从 scripts/ 迁出到 tests/（SKILL.md：生产目录不混测试），
 # 故这里显式把 scripts/ 指回 sys.path——原来靠「与本脚本同目录」是不够的。
 # ---------------------------------------------------------------------------
 _TEST_DIR = os.path.dirname(os.path.abspath(__file__))              # liuyao/tests

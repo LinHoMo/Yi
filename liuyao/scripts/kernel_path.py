@@ -43,5 +43,5 @@ def ensure_kernel_on_path(start_file: str | Path) -> Path:
 
 
 def repo_root(start_file: str | Path) -> Path:
-    """仓库根（含 core/ 与 disciplines/ 的那一级）。"""
+    """学科根（core 的父目录；扁平化后每科自包含 core，故等于本学科目录）。"""
     return kernel_dir(start_file).parent

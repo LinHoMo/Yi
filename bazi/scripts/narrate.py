@@ -26,7 +26,7 @@ _LIUSHEN_IMAGE = json.loads((_DATA / "liushen_image.json").read_text(encoding="u
 _SHI_SHEN_ACTIONS_DOC = json.loads(
     (_DATA / "shi_shen_actions.json").read_text(encoding="utf-8"))
 _SHI_SHEN_ACTIONS = _SHI_SHEN_ACTIONS_DOC["shi_shen_actions"]
-# 正月建寅：月序表由内核地支序旋转得到，不另抄一份（AGENTS.md §二 唯一真值源）。
+# 正月建寅：月序表由内核地支序旋转得到，不另抄一份（SKILL.md 唯一真值源）。
 _BRANCH_FROM_YIN = EARTHLY_BRANCHES[2:] + EARTHLY_BRANCHES[:2]
 _MONTH_ORDINAL = dict(zip(_BRANCH_FROM_YIN, range(1, 13)))
 # 纳音取象旁证素材（《五行精纪》纳音性质名）：**仅本 narrate 层可读**，
@@ -125,7 +125,7 @@ def _kanming_block() -> list[str]:
     r"""《三命通会》看命总纲方法论引文（OPT-sanming_tonghui_dz-04）。
 
     只说明「引擎为什么这样取」（月令为命、神煞以五行为本），
-    是方法论登记，**不是判据、不进任何评分**（AGENTS.md 铁律一）。
+    是方法论登记，**不是判据、不进任何评分**（SKILL.md 铁律一）。
 
     排版约束：① 引文一律用「」包成独立分句，且出处括注以 `（《…` 开头、行号置括注内
     ——`tools/verdict_audit.py` 的 NON_VERDICT ① 以 `（\s*[《＜]` 豁免出处标注行
@@ -351,7 +351,7 @@ def narrate(a: dict) -> str:
         for c in by.get("consumed_by_bing") or []:
             lines.append(f"- 十神层病：{c.get('病')}（{c.get('所病')}）"
                          f"——药{'在局中：' + '、'.join(c.get('所见之药') or []) if c.get('药在局中') else '局中未见'}。")
-        # 「病药总纲」四字是渲染标签，与引文同属数据层（AGENTS.md §三；
+        # 「病药总纲」四字是渲染标签，与引文同属数据层（SKILL.md；
         # 真值源 data/verdicts.json#病药引文.label，与 pattern.py 的 thesis 同分支）
         lines.append(f"> {_VERDICTS['病药引文']['label']}：「{by.get('thesis')}」"
                      f"（{by.get('basis')}）。")
@@ -371,7 +371,7 @@ def narrate(a: dict) -> str:
         "格局取月令本气十神定正格名；从格按《滴天髓·从化论/从象/假从》分级"
         "（真从/假从/从旺/从强/从气/从势），灰区例另以 tentative 标注保留复核位——"
         "都是机械结构结论，不是命运断言。重大决策以专业意见为准。",
-        "本模块不宣称现实预测命中率（`AGENTS.md` 铁律三）。",
+        "本模块不宣称现实预测命中率（`SKILL.md` 铁律三）。",
     ]
     return "\n".join(lines) + "\n"
 

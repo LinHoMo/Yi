@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """命科补表（Ming Tables）—— 八字四柱所需、而 core 此前没有的规则表。
 
-依 CONTRACT.md §二：「学科若需要内核没有的表（如八字的藏干、十神），
+依 SKILL.md：「学科若需要内核没有的表（如八字的藏干、十神），
 加到内核并标注只有哪几科用，不要开第二个真值源。」本模块即命科（四柱八字）的补表，
-**唯一消费方：命科 `disciplines/ming`**（藏干十神 / 大运起法 / 命宫身宫）。
+**唯一消费方：命科 `bazi`**（藏干十神 / 大运起法 / 命宫身宫）。
 
 收录：藏干、大运起法、命宫身宫。十神本身是「关系」，其推演在
 relations.py（十神↔六亲同一张表），本模块只借它给藏干逐个定十神。
@@ -25,11 +25,11 @@ relations.py（十神↔六亲同一张表），本模块只借它给藏干逐�
 本环境无法逐字核对原文者，凡被 analyze 引用为判据，其 `verified` 一律标 false。
 逐字可回指的那部分（`TIAO_HOU` 调候表，出自《穷通宝鉴》在库语料）不在此列。
 出处与评测覆盖的**唯一登记处**：
-  · `disciplines/ming/data/rules/rule_registry.json` → 条目 `ming.shensha`（安星出处
+  · `bazi/data/rules/rule_registry.json` → 条目 `ming.shensha`（安星出处
     与「在库书源否定/缺载」的考证结论）、`ming.tiaohou`（引文库指针 + 语料文件）、
     `ming.dayun`（起例书源 + corpus_line 行级锚点）；指针由
     `tests/test_ming_rule_registry.py` 回验；
-  · `disciplines/ming/data/verdicts.json` → analyze 引用为判据时的书源句。
+  · `bazi/data/verdicts.json` → analyze 引用为判据时的书源句。
 （本段原写「详见 references 下的 rules.md」，该文件全仓不存在——2026-10-09 改指上面两处真路径，
  与 `core/yishu_core/shensha.py` 头注同一处口径。）
 """
@@ -168,9 +168,9 @@ def ming_shen_gong(year_stem: str, month_branch: str, hour_branch: str) -> dict:
 
 # ================================================================ 调候用神表
 # 《穷通宝鉴》按月令×日主定调候（"正月甲木，得丙癸逢"）。本表只收**原文有明文**的
-# 格——由 `disciplines/ming/dev_tools/build_tiaohou.py` 从 data/sources/
+# 格——由 `bazi/dev_tools/build_tiaohou.py` 从 data/sources/
 # qiong-tong-bao-jian.wikitext.txt 机械提取并逐格校验「引文为原文子串」（110/120 格，
-# 逐格引文见 disciplines/ming/data/tiaohou_quotes.json；其中 11 格为季节总论句兜底
+# 逐格引文见 bazi/data/tiaohou_quotes.json；其中 11 格为季节总论句兜底
 # （仅该格无精确月头时才启用），via 标记 season，已知可能过泛，外集批会校验）。未提取到的格不在表里（宁缺勿滥，
 # 查不到返回 None，调用方按"无明文"处理，不得凭记忆补格）。
 # 口径：main = 原文排序在前/为尊之神，assist = 次/佐之神；assist 空串 = 原文只明写一神。

@@ -132,7 +132,7 @@ def enhance_reading(result_dict):
         #      （其注记自属 OPT-yiin_dz-03 / OPT-huangjince_dz-06），
         #      holdout 的 yingqi 维度由 7/12 降为 6/12，与本三项无因果关系。
         #   ④ 现恢复后 tune strict = 96.8%、holdout strict = 90.2%，与本批开工基线同。
-        # 教训（AGENTS.md §四.8「全红先怀疑自己的门」）：**读数下跌时先二分归因，
+        # 教训（SKILL.md「全红先怀疑自己的门」）：**读数下跌时先二分归因，
         #   再决定回退哪一处**；把「恰好同期落地的新代码」当肇事者是常见误判。
         "zhu_gui_shang_shen": analyze_zhu_gui_shang_shen(result_dict),      # 《断易天机》L119/L132/L137
         "menlei_dongjing_qiuguan": analyze_menlei_dongjing(result_dict),    # 《易林补遗》L813/L814

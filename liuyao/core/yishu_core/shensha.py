@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """神煞（Shen Sha）—— 起例明确、可由干支机械安出的通行神煞，安星函数与规则表。
 
-**消费方标注（AGENTS.md §二 / CONTRACT.md §二）**：
-  - 命科 `disciplines/ming`：`shensha_of_chart`（四柱盘内安星）
-  - 卜科 `disciplines/liuyao`：`shensha_at_branches`（六爻按日干日支/年支安星）
+**消费方标注（SKILL.md / SKILL.md）**：
+  - 命科 `bazi`：`shensha_of_chart`（四柱盘内安星）
+  - 卜科 `liuyao`：`shensha_at_branches`（六爻按日干日支/年支安星）
   两科共用，故单独成模块；**吉凶解读不在此处**，只给机械安星结果。
 
 拆分由来：这些表原先住在 `ming_tables.py`，而该模块头声称「唯一消费方：命科，卜科不用」，
@@ -21,13 +21,13 @@ from .symbols import BRANCH_ELEMENTS, NAYIN_TO_ELEMENT, sanhe_group, nayin_of
 #
 # 出处登记（**死链已修**，OPT-lixuzhong_mingshu_dz-01，2026-10-07）：
 #   本处原写「出处见 references/rules.md」，经实测**该文件全仓不存在**
-#   （`find . -name rules.md` 零命中；disciplines/ming/references/ 下只有 api_spec.md）
+#   （`find . -name rules.md` 零命中；bazi/references/ 下只有 api_spec.md）
 #   ——是一条真死链，故改指真实存在的两处：
-#     ① disciplines/ming/data/rules/rule_registry.json → 条目 `ming.shensha`
+#     ① bazi/data/rules/rule_registry.json → 条目 `ming.shensha`
 #        （神煞出处的**唯一权威登记**，含 verified=false 的考证结论）
-#     ② disciplines/ming/data/verdicts.json（引文层）
+#     ② bazi/data/verdicts.json（引文层）
 #   同批修正的另一处死链：core/yishu_core/ming_tables.py:26「详见
-#   disciplines/ming/references/rules.md」——同指该不存在的文件，已一并改指 ①。
+#   bazi/references/rules.md」——同指该不存在的文件，已一并改指 ①。
 
 # 天乙贵人（以日干或年干取）：甲戊庚牛羊、乙己鼠猴乡、丙丁猪鸡位、
 # 壬癸兔蛇藏、六辛逢马虎。
@@ -49,10 +49,10 @@ from .symbols import BRANCH_ELEMENTS, NAYIN_TO_ELEMENT, sanhe_group, nayin_of
 #   【勘误】本注释初稿曾并列举《火珠林》星煞章「甲戊兼牛羊，乙己鼠猴乡……」为第三源，
 #     经实测该句在 data/sources/huozhulin_dz.dz.txt 中 **0 命中**（「牛羊」「鼠猴乡」
 #     「猪鸡位」三词均无），故**不采此说**——不把未入库的书源写进注释
-#     （AGENTS.md「引文必须逐字可指回原文」，无源不引）。
+#     （SKILL.md「引文必须逐字可指回原文」，无源不引）。
 #   **verified 仍为 false**：上述只证明「分组结构在《李虚中命书》有据」，不等于本表逐字
 #   出处已核定；该考证结论登记在 rule_registry.json 的 `ming.shensha` 条目，
-#   本轮不改其 verified 取值（AGENTS.md「宁缺勿造」）。
+#   本轮不改其 verified 取值（SKILL.md「宁缺勿造」）。
 TIAN_YI_GUI_REN = {
     "甲": ["丑", "未"], "戊": ["丑", "未"], "庚": ["丑", "未"],
     "乙": ["子", "申"], "己": ["子", "申"],
@@ -81,7 +81,7 @@ HUA_GAI = {"水": "辰", "火": "戌", "金": "丑", "木": "未"}
 #   ——即寅午戌见卯只是**候选**，还须「天干纳音于地同类」（天干纳音五行 = 落点地支五行）
 #   才算真咸池；纳音不属火（卯）者非是。
 # 口径裁定（本轮只登记、不改判定）：
-#   真假判别属**吉凶倾向**（「非是」即不算真煞），按 AGENTS.md 铁律一
+#   真假判别属**吉凶倾向**（「非是」即不算真煞），按 SKILL.md 铁律一
 #   「机械运算归代码、吉凶归 LLM」与铁律三（凶象用「偏向/有…信号」），
 #   本层**不自动过滤**候选落点——那会改动 shensha_at_branches /
 #   shensha_of_chart 的返回集合，属读数可见变更，须另走 §四 门槛并逐格对拍。

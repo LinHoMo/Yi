@@ -42,7 +42,7 @@ def _resolve_moment(datetime_str: str | None, hour: int | None,
 
     子时口径（2026-10-09 修 G）：旧代码 `except TypeError` 兜底把
     `zi_hour_type=` kwarg 调用静默吞回默认口径——engine_calendar.handle_zi_hour
-    当时根本没有该参数，early/late 旗标全部无效（AGENTS.md 明禁的静默替代）。
+    当时根本没有该参数，early/late 旗标全部无效（SKILL.md 明禁的静默替代）。
     现签名真实支持，兜底删除：再出 TypeError 就直接炸，不允许就地降级。
     --distinguish-zi-hour 只启用夜子/晨子记录，口径仍为默认（当日换日）；
     欲采 23 点换日一派必须显式 --zi-hour-type late。

@@ -42,7 +42,7 @@ from pathlib import Path
 STEMS = list(HEAVENLY_STEMS)
 
 
-# 生我(SHENG_WO)/克我(KE_WO)唯一真值源在内核 yishu_core.symbols（AGENTS.md §二），此处仅引用。
+# 生我(SHENG_WO)/克我(KE_WO)唯一真值源在内核 yishu_core.symbols（SKILL.md），此处仅引用。
 # 历史债务：此前本文件与 classical_tables.py 各就地推导一份，连同内核共 3 份副本。
 
 
@@ -52,7 +52,7 @@ PALACE_GENERATING = dict(SHENG_WO)
 PALACE_OVERCOMING = dict(KE_WO)
 
 
-# 三合/十二长生/旬空：真值源在 core.yishu_core（AGENTS.md §二），此处仅别名。
+# 三合/十二长生/旬空：真值源在 core.yishu_core（SKILL.md），此处仅别名。
 SAN_HE = _CORE_SAN_HE  # core.symbols.SAN_HE_GROUPS 别名
 
 
@@ -95,7 +95,7 @@ SPIRIT_ELEMENT = {
 }
 
 
-TRIGRAM_ELEMENT = _CORE_TRIGRAM_ELEMENTS  # 卦五行唯一真值源在内核（AGENTS.md §二）
+TRIGRAM_ELEMENT = _CORE_TRIGRAM_ELEMENTS  # 卦五行唯一真值源在内核（SKILL.md）
 
 
 XUN_KONG = _CORE_XUN_KONG

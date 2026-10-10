@@ -3,20 +3,20 @@
 
     python dev_tools/check.py            # 全部检查
     python dev_tools/check.py --raise    # 把本次实测对齐分登记为新基线（确认改进后才用）
-    python dev_tools/check.py --fast     # 跳过 [7] 案例评测（根门 tools/check.py 默认这么调）
+    python dev_tools/check.py --fast     # 跳过 [7] 案例评测（根门 dev_tools/check.py 默认这么调）
 
-⚠ `--fast` 下 **[7] 分数下限门不生效**（照六爻同参数口径；根门 `tools/check.py --full`
+⚠ `--fast` 下 **[7] 分数下限门不生效**（照六爻同参数口径；根门 `dev_tools/check.py --full`
   才会不带 --fast 跑一遍）。合入前必须跑一次**不带 --fast** 的本门，否则 tune/holdout
-  回退无人拦（AGENTS.md §四.2）。跳过时本门会在输出里显式写明「未生效」，不假装通过。
+  回退无人拦（SKILL.md）。跳过时本门会在输出里显式写明「未生效」，不假装通过。
 
-分数口径（AGENTS.md 铁律三，务必连同分数一起读）：
+分数口径（SKILL.md 铁律三，务必连同分数一起读）：
   [7] 的分数是**古籍案例对齐分**——引擎输出与《穷通宝鉴》《子平真诠》《滴天髓》等
   案例要点的加权一致性（strict 计分模型），用于回归审计，**衡量不了现实命中率**。
   tune n=30、holdout n=246（holdout 集合未参与本轮判据调参）。
 
-门槛设计（AGENTS.md §四）：
+门槛设计（SKILL.md）：
   · 基线取**实测值**，只准前进不准后退：低于 BASELINE 即判红（范式照六爻
-    `disciplines/liuyao/dev_tools/check.py`）。抬基线走 `--raise`，且必须在
+    `liuyao/dev_tools/check.py`）。抬基线走 `--raise`，且必须在
     `docs/CHANGELOG.md` 登记理由；**下调**基线只能改本文件里的字面量（进 git diff、
     进评审），本地 `check_baseline.json` 覆盖文件一律**不得放宽**（见 `_effective_baseline`）。
   · §四.2「tune 均分无故跌破 95 即视为回归」落在**加权均分**口径上（当前 tune 100.0 /
@@ -51,7 +51,7 @@ BASELINE = {
     "tune": 100.0,        # n=30
     "holdout": 96.2,      # n=246（未参与本轮调参）
 }
-AGENTS_TUNE_FLOOR = 95.0  # AGENTS.md §四.2 的均分硬下限；BASELINE 必须严于它
+AGENTS_TUNE_FLOOR = 95.0  # SKILL.md 的均分硬下限；BASELINE 必须严于它
 
 # 维度绝对命中数下限（= evaluate.py 明细里的「满分例数」；n/a 例不进分母故不影响本数）
 DIM_HITS = {
@@ -100,7 +100,7 @@ def _leaf_strings(obj) -> list[str]:
     return [obj] if isinstance(obj, str) else []
 
 
-# 已知「数据已入库、叙述层未接线」的语料：如实登记而不是静默跳过（AGENTS.md §四.8
+# 已知「数据已入库、叙述层未接线」的语料：如实登记而不是静默跳过（SKILL.md
 # 「任何 0 结果都要先确认不是路径解析错了」的反面——0 命中必须有名有姓地说出来）。
 # 列在这里的文件一旦真的接上（命中 >0），本门**反而判红**并要求把它从表里摘掉，
 # 于是这张表不会烂成「永久豁免清单」。
@@ -119,7 +119,7 @@ def _alignment_floor(baseline: dict, fails: list[str], measured: dict,
     if fast:
         # 不静默跳过：跳过必须写成「未生效」，否则 --fast 的门长得像全绿的门。
         print("  × 本次带 --fast：**分数下限未跑**，[7] 未生效——"
-              "合入前请跑不带 --fast 的门（或 tools/check.py --full）")
+              "合入前请跑不带 --fast 的门（或 dev_tools/check.py --full）")
         return
     splits_ids: dict = {}
     if CASES_FILE.is_file():
@@ -174,16 +174,16 @@ def main() -> int:
                     help="把本次实测 tune/holdout 均分写入本地基线文件（仅在确认改进后使用；"
                          "维度命中数下限 DIM_HITS 不在 --raise 范围内，改它要走代码字面量 + CHANGELOG 登记）")
     ap.add_argument("--fast", action="store_true",
-                    help="跳过 [7] 案例评测（根门 tools/check.py 非 --full 时自动带上；"
+                    help="跳过 [7] 案例评测（根门 dev_tools/check.py 非 --full 时自动带上；"
                          "分数下限本次不生效，输出里会明写）")
     args = ap.parse_args()
     fails: list[str] = []
     measured: dict[str, float] = {}
 
-    # AGENTS.md §四.2 的均分硬下限是「登记基线不得被调到 95 以下」的机械兜底：
+    # SKILL.md 的均分硬下限是「登记基线不得被调到 95 以下」的机械兜底：
     # 有人把 BASELINE["tune"] 改小凑绿时，这里先红，不用等分数跑出来。
     if BASELINE["tune"] < AGENTS_TUNE_FLOOR:
-        fails.append(f"BASELINE['tune']={BASELINE['tune']} 低于 AGENTS.md §四.2 "
+        fails.append(f"BASELINE['tune']={BASELINE['tune']} 低于 SKILL.md "
                      f"的 tune 均分硬下限 {AGENTS_TUNE_FLOOR}")
 
     required = [
@@ -308,7 +308,7 @@ def main() -> int:
             for b in bad:
                 print(f"[8] 语料接线 × {b}")
 
-    # [9] 静态表 ↔ data 层同步（AGENTS.md §四.6：不同源就必须有挂线的同步门，不靠自觉）
+    # [9] 静态表 ↔ data 层同步（SKILL.md：不同源就必须有挂线的同步门，不靠自觉）
     code, out = run(["dev_tools/sync_tiaohou_engine.py", "--check"])
     if code != 0:
         fails.append("TIAO_HOU 引擎表与 data/tiaohou_quotes.json 不同源"
@@ -337,7 +337,7 @@ def main() -> int:
             return 1
 
     print("八字科质量门通过。")
-    print("分数含义：与古籍案例要点的一致性，不代表现实预测命中率（AGENTS.md 铁律三）。")
+    print("分数含义：与古籍案例要点的一致性，不代表现实预测命中率（SKILL.md 铁律三）。")
     return 0
 
 

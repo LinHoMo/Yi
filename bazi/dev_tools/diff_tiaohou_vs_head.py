@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""改动前后逐格对拍（AGENTS.md §四.5）：把当前表与 HEAD 版**逐格**比对，只报差异。
+"""改动前后逐格对拍（SKILL.md）：把当前表与 HEAD 版**逐格**比对，只报差异。
 
     python dev_tools/diff_tiaohou_vs_head.py                    # 两拍：data 层 + 引擎表
     python dev_tools/diff_tiaohou_vs_head.py --table engine     # 只拍 core 引擎表 TIAO_HOU
@@ -30,7 +30,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 # 块定位正则与两张表的唯一路径都由同步脚本给出——本工具不再抄第二份
-# （AGENTS.md §二「同一张表不得存两份」同样适用于「同一套定位逻辑」）
+# （SKILL.md「同一张表不得存两份」同样适用于「同一套定位逻辑」）
 from sync_tiaohou_engine import BLOCK_RE, DATA as DATA_PATH_DEFAULT, ENGINE as ENGINE_PATH_DEFAULT  # noqa: E402
 
 # data 层比对的字段：main/assist 是判据值，quote 是「照录」原文（改字即违反逐字体例）

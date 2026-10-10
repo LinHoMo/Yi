@@ -3,7 +3,7 @@
 
 本仓现存的真实反馈链（架构评审已确认口径差别是真实差别，不合并判定逻辑）：
 
-  · 六爻 `disciplines/liuyao/dev_tools/feedback_store.py`（读学科落盘反馈，容差窗）
+  · 六爻 `liuyao/dev_tools/feedback_store.py`（读学科落盘反馈，容差窗）
 
 本模块把该链的**记录形态**收成一份，并提供**唯一的现实效度评估入口**
 `evaluate_records()`：任何来源的反馈经 adapter 折叠为同一 FeedbackRecord 后，
@@ -19,7 +19,7 @@
   * **应期判定不在此处实现**：judge_record 按 evaluation_policy 转调
     `yishu_core.yingqi` 的 judge_rank / judge_window——评分表、容差常量、支关系表
     仍只有内核一份。
-  * **口径诚实（AGENTS.md §三）**：`evaluate_records` 产出的是**现实回填命中**，
+  * **口径诚实（SKILL.md）**：`evaluate_records` 产出的是**现实回填命中**，
     不是古籍案例对齐分，更不等于「预测率」。任何报分必须带样本量 n 与集合名。
 """
 from __future__ import annotations
@@ -241,7 +241,7 @@ def evaluate_records(records: list[dict]) -> dict:
 
     真实/合成混集直接抛错（`validate_record_set` 强制物理/语义分离）；
     合成回归数据只允许在测试夹具里单独成集，永不进真实效度统计。
-    口径：这是**现实回填命中**，不是古籍案例对齐分，更不等于预测率（AGENTS.md §三）。
+    口径：这是**现实回填命中**，不是古籍案例对齐分，更不等于预测率（SKILL.md）。
     """
     errs = validate_record_set(records)
     if errs:

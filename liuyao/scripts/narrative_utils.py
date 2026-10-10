@@ -39,7 +39,7 @@ from chain_tables import KE_WO, SHENG_WO, STEMS, TWELVE_GROWTH, TWELVE_GROWTH_ST
 # ── chain_verdicts 部分 ──
 # ══════════════════════════════════════════════════════════════════════════════
 
-# ── 断语/引文库：外置 data/verdicts.json 与 data/rules/verdict_texts.json（AGENTS.md §三），代码只留算法与加载 ──
+# ── 断语/引文库：外置 data/verdicts.json 与 data/rules/verdict_texts.json（SKILL.md），代码只留算法与加载 ──
 _DATA_DIR = Path(__file__).resolve().parents[1] / "data"
 _VERDICTS_PATH = _DATA_DIR / "verdicts.json"
 _VERDICT_TEXTS_PATH = _DATA_DIR / "rules" / "verdict_texts.json"

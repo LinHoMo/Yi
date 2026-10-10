@@ -8,7 +8,7 @@
     python dev_tools/outcome.py stats                    # 命中率（必带 n，n 小即拒绝给结论）
     python dev_tools/outcome.py stats --json
 
-为什么需要它：本仓库所有分数都是**古籍案例对齐分**，衡量不了现实命中率（AGENTS.md 铁律三）。
+为什么需要它：本仓库所有分数都是**古籍案例对齐分**，衡量不了现实命中率（SKILL.md 铁律三）。
 唯一能产生现实证据的路径，是把已经发生的占测结果回填进来。`logs/divination_events.jsonl`
 已有数百条真实求测记录，但过去没有任何回收机制——所以"准不准"这个问题一直没有资格被回答。
 

@@ -326,7 +326,7 @@ def determine_six_relations(branch, palace_element):
 
 def get_empty_death(day_stem_branch):
     """
-    根据日柱旬空查空亡（唯一真值源：yishu_core.symbols.xunkong_of，AGENTS.md §二）
+    根据日柱旬空查空亡（唯一真值源：yishu_core.symbols.xunkong_of，SKILL.md）
     """
     return xunkong_of(day_stem_branch)
 

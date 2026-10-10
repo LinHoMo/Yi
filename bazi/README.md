@@ -1,9 +1,9 @@
-# 命 · 四柱机械推演
+# 八字 · 四柱机械推演
 
 > 干支/藏干/十神/空亡来自内核 `yishu_core.ming_tables` / `symbols` / `relations`；
 > **纳音**归 `symbols`、**神煞**（`shensha_of_chart`）归 `yishu_core.shensha`——
-> 两者 2026-09-29 自 `ming_tables` 按「命卜两科共用」拆出（审计 B3）。
-> 合参层只吃 `analyze` 输出的结构化因子；**不产出命运吉凶断语**。
+> 两者 2026-09-29 自 `ming_tables` 按「两科共用」拆出（审计 B3）。
+> 本科只输出 `analyze` 的结构化因子；**不产出命运吉凶断语**。
 
 ## 四段契约
 
@@ -35,4 +35,4 @@ python dev_tools/check.py
 ## 边界
 
 - 机械运算归代码；本层不写吉凶断语。
-- 分数口径见根 `AGENTS.md` 铁律三（古籍对齐分 ≠ 现实预测命中率）。
+- 分数口径见本科 `SKILL.md` 铁律三（古籍对齐分 ≠ 现实预测命中率）。
