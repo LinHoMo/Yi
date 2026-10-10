@@ -36,7 +36,7 @@ for _p in (str(DISC / "scripts"), str(DISC / "core")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from liuyao_engine import build_hexagram_result  # noqa: E402
+from engine import build_hexagram_result  # noqa: E402
 from engine_chart import get_six_spirit  # noqa: E402
 from classical_enhancements import element_strength_in_month, use_god_tomb_tags  # noqa: E402
 from effects import analyze_hexagram_body  # noqa: E402

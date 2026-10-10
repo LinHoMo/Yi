@@ -50,7 +50,7 @@ from classical_enhancements import (
 
 def enhance_reading(result_dict):
     """
-    对 liuyao_engine.py 产出的基础排盘结果进行经典深度分析。
+    对 engine.py 产出的基础排盘结果进行经典深度分析。
     
     参数:
         result_dict: build_hexagram_result() 返回的字典
@@ -127,8 +127,8 @@ def enhance_reading(result_dict):
         #      （tune strict 93.1 / holdout strict 89.7）——若标签真是原因，摘除后必回 96.8。
         #   ② 逐项单独摘除（zhu_gui_shang_shen / menlei_dongjing_qiuguan / huozhulin_fushi
         #      各摘一次）读数均**不动**，可排除单项影响。
-        #   ③ 真正的同期漂移在**应期/时序链**：`liuyao_timing.py`(+99)、
-        #      `liuyao_step3/4/5.py`、`effects.py` 被**非本批的并发改动**修改
+        #   ③ 真正的同期漂移在**应期/时序链**：`timing.py`(+99)、
+        #      `step3/4/5.py`、`effects.py` 被**非本批的并发改动**修改
         #      （其注记自属 OPT-yiin_dz-03 / OPT-huangjince_dz-06），
         #      holdout 的 yingqi 维度由 7/12 降为 6/12，与本三项无因果关系。
         #   ④ 现恢复后 tune strict = 96.8%、holdout strict = 90.2%，与本批开工基线同。
@@ -271,7 +271,7 @@ def _analyze_six_spirits(result_dict):
 
 if __name__ == "__main__":
     import json
-    from liuyao_engine import build_hexagram_result, coin_toss
+    from engine import build_hexagram_result, coin_toss
     from datetime import datetime
 
     # 简单测试

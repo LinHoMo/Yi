@@ -279,7 +279,7 @@ def _evaluate_fu_cang_strength(fu_detail: dict, month_branch: str, day_branch: s
         month_branch: 月建地支
         day_branch: 日辰地支
         can_emerge: 伏神得出真实结构判据（缺陷 C 修复，2026-10-09）。调用方
-            （liuyao_step3）从 advanced_analysis.hidden_spirit_analysis 读取；
+            （step3）从 advanced_analysis.hidden_spirit_analysis 读取；
             旧版读的是 step2 的恒真占位，「不得出 -0.5 压制」永不可达。
             None＝无判据可依，不施加压制。
 
@@ -442,7 +442,7 @@ def strength_to_score(strength: str) -> int:
 def _combined_strength(element: str, month_element: str, day_element: str) -> str:
     """月建、日辰两处旺衰同权累加后分档：旺/相/中和/偏弱/衰。
 
-    唯一实现（classical_enhancements 与 liuyao_step3 原先各有一份逐字相同的副本，
+    唯一实现（classical_enhancements 与 step3 原先各有一份逐字相同的副本，
     阈值与分值表一旦只改一处即口径分叉）。分值表复用 strength_to_score。
     """
     total = (strength_to_score(element_strength_in_month(element, month_element))

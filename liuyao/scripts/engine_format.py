@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""六爻引擎输出格式化：文本输出与报告的拼装编排（报告各段落排版在 engine_format_report），另有分析提示生成与深度裁剪。聚合入口见 liuyao_engine.py。"""
+"""六爻引擎输出格式化：文本输出与报告的拼装编排（报告各段落排版在 engine_format_report），另有分析提示生成与深度裁剪。聚合入口见 engine.py。"""
 
 from __future__ import annotations
 import json

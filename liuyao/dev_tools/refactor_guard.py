@@ -33,7 +33,7 @@ import case_runner  # noqa: E402
 from case_runner import build_hexagram_result, hex2yao, resolve_case_time  # noqa: E402
 from engine_format import format_reading_output, format_text_output  # noqa: E402
 from thinking_chain import run_thinking_chain  # noqa: E402
-from liuyao_narrate import build_human_narrative, render_human_markdown  # noqa: E402
+from narrate_core import build_human_narrative, render_human_markdown  # noqa: E402
 
 # 案例库里本就有少数缺卦名的条目会固定失败；超过这个数就是脚本自己的问题。
 # 教训：曾经因为传错参数让 115 例全挂，两次「指纹一致」其实是两次同样的全失败——

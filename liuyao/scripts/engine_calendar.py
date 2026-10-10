@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""六爻引擎历法：干支历推算（年/月/日/时干支）与真太阳时校正、时辰与子时换算。聚合入口见 liuyao_engine.py。"""
+"""六爻引擎历法：干支历推算（年/月/日/时干支）与真太阳时校正、时辰与子时换算。聚合入口见 engine.py。"""
 
 import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
 

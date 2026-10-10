@@ -51,11 +51,11 @@ def parse_arguments():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 示例用法:
-  python liuyao_engine.py --mode coin --question "我的投资运势如何？"
-  python liuyao_engine.py --mode time --datetime "2026-09-18 14:30"
-  python liuyao_engine.py --mode number --numbers "3,5,8"
-  python liuyao_engine.py --mode manual --yao "7,8,9,7,6,8"
-  python liuyao_engine.py --mode coin --output json
+  python engine.py --mode coin --question "我的投资运势如何？"
+  python engine.py --mode time --datetime "2026-09-18 14:30"
+  python engine.py --mode number --numbers "3,5,8"
+  python engine.py --mode manual --yao "7,8,9,7,6,8"
+  python engine.py --mode coin --output json
         """
     )
 

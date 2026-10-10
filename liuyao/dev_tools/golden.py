@@ -30,7 +30,7 @@ QUESTIONS = ["占求财", "占病", "占行人", "占婚姻", "占讼", "占失�
 
 
 def fingerprint() -> list[dict]:
-    from liuyao_engine import build_hexagram_result
+    from engine import build_hexagram_result
     from thinking_chain import run_thinking_chain
     from classical_analysis import enhance_reading
     import case_runner as cr

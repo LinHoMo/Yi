@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""六爻引擎排盘：起卦（铜钱/时间/数字）与装卦排盘（定宫、六亲、旬空、六神、爻名），产出 build_hexagram_result 基础盘面。聚合入口见 liuyao_engine.py。"""
+"""六爻引擎排盘：起卦（铜钱/时间/数字）与装卦排盘（定宫、六亲、旬空、六神、爻名），产出 build_hexagram_result 基础盘面。聚合入口见 engine.py。"""
 
 import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
 

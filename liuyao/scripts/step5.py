@@ -40,10 +40,10 @@ from chain_tables import (
     _60_CYCLE_BASE,
 )
 
-from liuyao_narrate import (_build_reasoning_chain,
+from narrate_core import (_build_reasoning_chain,
     _get_hexagram_body_summary_note, find_classical_quotes)
 
-from liuyao_timing import predict_timing_core as _predict_timing
+from timing import predict_timing_core as _predict_timing
 
 from narrative_rules import strength_reason, strength_polarity
 
@@ -65,8 +65,8 @@ from narrative_utils import (  # noqa: E402
 # ─── 全局变量 ───
 _USE_GOD_RULES: list[dict] | None = None
 
-from liuyao_step4 import _detect_special_pattern, _user_reason  # 跨文件引用
-from liuyao_step3 import _real_hidden_can_emerge  # 伏神真实 can_emerge 判据（缺陷 C）
+from step4 import _detect_special_pattern, _user_reason  # 跨文件引用
+from step3 import _real_hidden_can_emerge  # 伏神真实 can_emerge 判据（缺陷 C）
 from classical_enhancements_direction import (  # 古籍方向凶格上限（TECH-DEBT §2.11 D1）
     apply_caps as apply_direction_caps,
     detect_direction_caps,

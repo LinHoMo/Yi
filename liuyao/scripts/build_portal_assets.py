@@ -97,7 +97,7 @@ def build_samples() -> list[dict]:
             resolved = cr.resolve_case_time(case)
             dt = resolved["dt"]
             yao = cr.hex2yao(case["hexagram"]["original"], case["hexagram"].get("changed"))
-            from liuyao_engine import build_hexagram_result
+            from engine import build_hexagram_result
             h = build_hexagram_result(yao, case["question"], "manual",
                                       dt.year, dt.month, dt.day, dt.hour)
         except Exception as exc:
@@ -106,7 +106,7 @@ def build_samples() -> list[dict]:
         out = analyze(dict(h))
         tc = dict(out)
         thinking = tc.get("thinking_chain") or {}
-        from liuyao_narrate import build_human_narrative
+        from narrate_core import build_human_narrative
         human = build_human_narrative(tc)
         out_html = OUT_REPORTS / f"report_{cid}.html"
         out_html.write_text(render(out, fmt="html"), encoding="utf-8")
@@ -182,7 +182,7 @@ def main() -> int:
         "samples": build_samples(),
         "pipeline": [
             {"step": "01", "title": "收集信息", "desc": "问题、起卦方式、时间"},
-            {"step": "02", "title": "引擎排盘", "desc": "liuyao_engine.py 纳甲装卦，禁止手排"},
+            {"step": "02", "title": "引擎排盘", "desc": "engine.py 纳甲装卦，禁止手排"},
             {"step": "03", "title": "五步思维链", "desc": "观局→定用→断旺→察变→综合"},
             {"step": "04", "title": "应期择优", "desc": "按用神状态取主/次应期，附法则"},
             {"step": "05", "title": "正文解读", "desc": "human_narrative 唯一正文，不做两张皮"},

@@ -36,7 +36,7 @@ _TEST_DIR = os.path.dirname(os.path.abspath(__file__))              # liuyao/tes
 _SCRIPT_DIR = os.path.join(os.path.dirname(_TEST_DIR), "scripts")   # liuyao/scripts
 sys.path.insert(0, _SCRIPT_DIR)
 
-from liuyao_engine import build_hexagram_result  # noqa: E402
+from engine import build_hexagram_result  # noqa: E402
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 from classical_analysis import (  # noqa: E402
     enhance_reading,

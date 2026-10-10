@@ -1,7 +1,7 @@
 """六爻分析：五步推演 facade。
 
-此文件为纯转发层——所有推演函数实际位于 liuyao_step1-5.py。
-保持向后兼容：from liuyao_analyze import step1_read_situation 等依旧可用。
+此文件为纯转发层——所有推演函数实际位于 step1-5.py。
+保持向后兼容：from analysis_steps import step1_read_situation 等依旧可用。
 """
 from __future__ import annotations
 
@@ -15,16 +15,16 @@ if _ks_d not in _ks_sys.path:
 from kernel_path import ensure_kernel_on_path as _ks_ensure
 _ks_ensure(__file__)
 
-from liuyao_step1 import *  # noqa: F401,F403
-from liuyao_step2 import *  # noqa: F401,F403
-from liuyao_step3 import *  # noqa: F401,F403
-from liuyao_step4 import *  # noqa: F401,F403
-from liuyao_step5 import *  # noqa: F401,F403
+from step1 import *  # noqa: F401,F403
+from step2 import *  # noqa: F401,F403
+from step3 import *  # noqa: F401,F403
+from step4 import *  # noqa: F401,F403
+from step5 import *  # noqa: F401,F403
 
 # 内部别名 / 全局变量，外部模块仍引用
-from liuyao_timing import predict_timing_core as _predict_timing
+from timing import predict_timing_core as _predict_timing
 
-from liuyao_step2 import _USE_GOD_RULES
+from step2 import _USE_GOD_RULES
 
 __all__ = [
     "_analyze_effect_on_use_god",

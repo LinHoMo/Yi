@@ -41,7 +41,7 @@ from narrative_utils import (  # noqa: E402
 # ─── 全局变量 ───
 _USE_GOD_RULES: list[dict] | None = None
 
-from liuyao_step2 import _element_to_relation  # 跨文件引用
+from step2 import _element_to_relation  # 跨文件引用
 
 # ═══ chain_step3.py ═══
 

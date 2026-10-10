@@ -50,7 +50,7 @@ from yishu_core.symbols import (  # noqa: E402
     SHENG_CYCLE,
 )
 
-# 判定上限的档位序（与 liuyao_step5 的 verdict 枚举一致）
+# 判定上限的档位序（与 step5 的 verdict 枚举一致）
 RANK = {"大凶": 0, "凶": 1, "平凶": 2, "平吉": 3, "吉": 4, "大吉": 5}
 
 _HE_SET = {frozenset(p) for p in HE_PAIRS}
@@ -116,7 +116,7 @@ def detect_direction_caps(
 ) -> list[dict]:
     """返回命中的凶格列表：每项 {rule_id, cap, src, reason_key, detail}。
 
-    调用方（liuyao_step5）按 `cap` 把 verdict 压档；一条都不命中时原样返回。
+    调用方（step5）按 `cap` 把 verdict 压档；一条都不命中时原样返回。
     """
     caps: list[dict] = []
     lines = [y for y in (lines or []) if isinstance(y, dict)]

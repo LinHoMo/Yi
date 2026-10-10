@@ -43,7 +43,7 @@ for _p in (str(ROOT / "scripts"), str(kernel_dir(__file__))):
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 from yishu_core.eval import verdict_direction, run_eval, report as _report  # noqa: E402
 from yishu_core.symbols import EARTHLY_BRANCHES  # noqa: E402  地支序唯一真值源
-from liuyao_timing import relative_window, resolve_case_anchor, date_in_window  # noqa: E402
+from timing import relative_window, resolve_case_anchor, date_in_window  # noqa: E402
 import case_runner  # noqa: E402
 
 CASES = ROOT / "data" / "cases" / "classical_cases.json"
@@ -285,7 +285,7 @@ def score_case(eng: dict, exp: dict, model: str, case: dict | None = None) -> di
             # 同一实现落盘），否则退回 expected 内的公历日期；有锚日则换算绝对日窗
             # 比对引擎日期（引擎的"速应(次日)"等规则输出的就是锚日+N 的日历日期）；
             # 否则节奏语义对齐。
-            from liuyao_timing import relative_window, resolve_case_anchor, date_in_window
+            from timing import relative_window, resolve_case_anchor, date_in_window
             win = relative_window(x_yq)
             anchor = resolve_case_anchor((case or {}).get("input") or {}, case or {}) \
                 if case else None

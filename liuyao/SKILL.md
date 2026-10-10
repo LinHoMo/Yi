@@ -17,7 +17,7 @@ description: 六爻占卜预测。使用中国传统易经六爻纳甲法进行�
 > - ❌ 手动定卦宫、排地支纳甲、定世应、推六亲、配六神、算旬空、判变卦
 > - ❌ 任何"心算"排盘或"推算"替代脚本功能
 >
-> 上述操作**必须且只能**由 `liuyao_engine.py` 和 `classical_analysis.py` 完成。
+> 上述操作**必须且只能**由 `engine.py` 和 `classical_analysis.py` 完成。
 
 ---
 
@@ -72,20 +72,20 @@ description: 六爻占卜预测。使用中国传统易经六爻纳甲法进行�
 
 ### 第二步：起卦
 
-使用 `scripts/liuyao_engine.py` 排盘：
+使用 `scripts/engine.py` 排盘：
 
 ```bash
 # 自动铜钱摇卦（推荐）
-python <skill-path>/scripts/liuyao_engine.py --mode coin --question "用户的问题"
+python <skill-path>/scripts/engine.py --mode coin --question "用户的问题"
 
 # 时间起卦
-python <skill-path>/scripts/liuyao_engine.py --mode time --datetime "2026-09-18 14:30"
+python <skill-path>/scripts/engine.py --mode time --datetime "2026-09-18 14:30"
 
 # 数字起卦（用户指定三数）
-python <skill-path>/scripts/liuyao_engine.py --mode number --numbers "3,5,7"
+python <skill-path>/scripts/engine.py --mode number --numbers "3,5,7"
 
 # 手动指定六次摇卦结果（7=少阳 8=少阴 9=老阳(动) 6=老阴(动)，从下往上）
-python <skill-path>/scripts/liuyao_engine.py --mode manual --yao "7,8,9,7,6,8"
+python <skill-path>/scripts/engine.py --mode manual --yao "7,8,9,7,6,8"
 ```
 
 **验证脚本输出**：必须确认返回有效 JSON，且 `original_hexagram`、`divination_time`、`advanced_analysis` 三个核心字段存在。脚本失败时重试一次；仍失败则告知用户排盘异常，**不得手动替代排盘**。
@@ -105,7 +105,7 @@ python scripts/yi_liuyao.py "所问之事" --mode manual --yao "7,8,9,7,6,8" -f 
 
 内部固定 chart→analyze→render（同一份 analyze JSON 出报告，不另行断卦）；
 缺省 `--mode time` 用 `--when` 时刻，不给 `--when` 用当前时刻。旧引擎入口
-`liuyao_engine.py --format html --save-html` 的 HTML 分支同样走 render 单一出口。
+`engine.py --format html --save-html` 的 HTML 分支同样走 render 单一出口。
 
 **四段契约入口（八字科 `bazi` 与本科同构）**：六爻已提供
 chart→analyze→narrate→render 薄适配层，包装既有引擎、不引入新断法：
@@ -257,10 +257,11 @@ analyze 输出的 `conclusion`（方向/应期/所本）与 `chart_summary`（�
 
 ---
 
-#### 3.7 黄金样例验收清单（M3-4，交付门槛）
+#### 3.7 交付验收清单（交付门槛）
 
-以 `docs/samples/感情卦_巽之涣*.html` 为唯一模板（要素完整度最低标准）。**残缺薄版不得交付**——
-任何交付报告（含一键闭环产物）须逐条过以下六项清单，缺一项即打回重做：
+**本清单即验收标准本体**——不依赖任何静态样例文件（历史上的 `docs/samples/*.html` 模板已随门户产物
+一并 gitignore、不再入库，故此处不以其为准）。**残缺薄版不得交付**——任何交付报告（含一键闭环
+产物）须逐条过以下六项，缺一项即打回重做：
 
 | # | 要素 | 判据（报告里必须看得到） | 数据来源 |
 |---|------|--------------------------|----------|
@@ -295,7 +296,7 @@ python scripts/yi_liuyao.py "问感情：目前这段感情能否修成正果" \
 | C. 用户主动问 | 用户问"类似案例"时可引用名称与结论，但必须注明"此案例仅供参考" |
 
 **解读交付前绝对禁止**：
-- ❌ 打开 `case_library.md`
+- ❌ 打开 `references/case_library.md`
 - ❌ 提及任何历史案例名称
 - ❌ 以案例类推或引用案例佐证
 - ❌ 在思维链推理中联想案例

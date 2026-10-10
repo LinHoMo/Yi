@@ -183,7 +183,7 @@ def narrate(a: dict) -> str:
     result = dict(a)
 
     # 1. 构造结构化叙事（human_narrative 提供）
-    from liuyao_narrate import build_human_narrative
+    from narrate_core import build_human_narrative
     narrative = build_human_narrative(result)
 
     # 2. 专项叙事段：六神临用 / 持世 / 卦身 / 用神所本
@@ -213,7 +213,7 @@ def narrate(a: dict) -> str:
     quotes = narrative.get("classical_quotes") or []
     quote_lines = []
     if quotes:
-        # 引导句外置 narrative_templates.json#narrate_shell.quote_lead（与 liuyao_narrate 同一出处）
+        # 引导句外置 narrative_templates.json#narrate_shell.quote_lead（与 narrate_core 同一出处）
         quote_lines = [_SHELL.get("quote_lead") or "古人类似情境也说过："]
         for q in quotes:
             quote_lines.append(f"- （{q['source']}）{q['quote']}")

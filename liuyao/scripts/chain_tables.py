@@ -152,7 +152,7 @@ _QUESTION_USE_GOD_MAP, _QUESTION_USE_GOD_BASIS, _USE_GOD_LAYER_CITATIONS = _load
 # ── 问事归类唯一映射表（缺陷 D 修复，2026-10-09）──────────────────────────
 # 旧病灶：step5/timing 各自用关键词元组对自由文本做子串嗅探决定方向门控与应期
 # 分岔，改写措辞/换简繁即静默变向。现收敛为单一结构枚举 question_class，由
-# liuyao_step2 单点产出；关键词族与取类优先级全部在 data/rules/question_classes.json
+# step2 单点产出；关键词族与取类优先级全部在 data/rules/question_classes.json
 # （§三：判类关键词不写进 .py）。
 _QUESTION_CLASSES_PATH = Path(__file__).resolve().parents[1] / "data" / "rules" / "question_classes.json"
 

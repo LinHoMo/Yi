@@ -78,7 +78,7 @@ def step2_identify_use_god(r: dict) -> dict:
 
     # 问事归类单一结构枚举（缺陷 D 修复，2026-10-09）：与 _decide_use_god 同一
     # normalize 归一口径，判类关键词表在 data/rules/question_classes.json（§三）。
-    # 下游唯一消费者：liuyao_step5.compute_classical_adjustment 与 liuyao_timing.
+    # 下游唯一消费者：step5.compute_classical_adjustment 与 timing.
     # _rank_candidates——两处不再对问题自由文本做子串嗅探。
     question_class = classify_question(f"{question_category} {question_text}")
 

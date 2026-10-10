@@ -46,7 +46,7 @@ ok(all(len(v) == 3 for v in BAGUA_LINES.values()), "八卦皆为三爻")
 ok(len({tuple(v) for v in BAGUA_LINES.values()}) == 8, "八卦爻型互不重复")
 
 # ── 2. 引擎按自下而上解读
-import liuyao_engine as e  # noqa: E402
+import engine as e  # noqa: E402
 from datetime import datetime  # noqa: E402
 DT = datetime(2024, 6, 1, 10)
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """六爻纳甲·起卦（chart 段）—— 纯机械排盘，无解读成分（CONTRACT §一）。
 
-对既有 `liuyao_engine.build_hexagram_result` 的薄适配：不改引擎内部，
+对既有 `engine.build_hexagram_result` 的薄适配：不改引擎内部，
 只负责按契约产出结构化的 chart JSON（排盘 + 干支 + 旬空 + 六亲），供 analyze 段消费。
 
 chart 段**不做**经典增强分析（enhance_reading）：其输出含 summary/comment/meaning
@@ -20,8 +20,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-import liuyao_engine as engine  # noqa: E402
-from liuyao_engine import build_hexagram_result, coin_toss  # noqa: E402
+import engine as engine  # noqa: E402
+from engine import build_hexagram_result, coin_toss  # noqa: E402
 
 
 def _parse_yao_values(text: str) -> list[int]:
@@ -77,7 +77,7 @@ def chart(mode: str, question: str, *, datetime_str: str | None = None,
           distinguish_zi_hour: bool = False, zi_hour_type: str | None = None) -> dict:
     """四段契约 chart：起卦 → 排盘 JSON。
 
-    参数与 `liuyao_engine.py` 对齐：mode ∈ coin|time|number|manual。
+    参数与 `engine.py` 对齐：mode ∈ coin|time|number|manual。
     """
     # 子时口径：--zi-hour-type 是唯一能改日柱的旗标（late=23点换日、early=00点换日）；
     # --distinguish-zi-hour 只记录夜子/晨子，不改口径（旧代码把它映射成 "late"，

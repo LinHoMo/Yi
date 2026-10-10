@@ -3,7 +3,7 @@
 
 本文件由 `scratch/unify_tables.py` 从三份重复副本机械搬入；搬动前已逐条目比对，
 除 EIGHT_PALACES 外三份取值完全一致（取证：`scratch/dup_table_audit.py`）。
-EIGHT_PALACES 以 liuyao_engine 副本为准——thinking_chain 旧副本的兑宫世次排错
+EIGHT_PALACES 以 engine 副本为准——thinking_chain 旧副本的兑宫世次排错
 （把 小过 记作五世、归妹 游魂、谦 归魂）。
 
 **不要在别处再抄一份**：新增关系表先查这里有没有，没有就加进来。

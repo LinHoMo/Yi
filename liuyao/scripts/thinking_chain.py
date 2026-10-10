@@ -19,14 +19,14 @@ _ensure_kernel(__file__)
 
 
 from chain_tables import HEXAGRAM_LIUHE, HEXAGRAM_LIUCHONG
-from liuyao_analyze import (
+from analysis_steps import (
     step1_read_situation,
     step2_identify_use_god,
     step3_analyze_strength,
     step4_analyze_changes,
     step5_synthesize,
 )
-from liuyao_narrate import (
+from narrate_core import (
     analyze_shi_yao_relation,
     find_classical_quotes,
     _build_reasoning_chain,

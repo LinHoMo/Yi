@@ -1,23 +1,42 @@
 # 六爻 CHANGELOG
 
-> ⚠️ **本文件已停止追加（2026-10-09 挂横幅，正文历史条目一字未改）**
+> 📌 **本文件自 2026-10-10 起为六爻科的现行 CHANGELOG**（仓库扁平化为 `liuyao`/`bazi`
+> 两科后，原根 `docs/CHANGELOG.md` 已并入本文件；学科铁律见 `SKILL.md`）。分数口径变化
+> 必须在此登记，否则 tune/holdout 数字不可比。
 >
-> - **现行登记一律写仓库根 `docs/CHANGELOG.md`**（`AGENTS.md` §三：「文件名不带版本；
->   版本走 git 与 `docs/CHANGELOG.md`」；§四.4 的口径变更登记也只认那一份）。
-> - **本文件是 2026-10-09 之前的六爻侧历史留档，不再追加**。实测单向停更证据：
->   本文件最后一次被提交是 `1e83ac1`（2026-10-08，已是 HEAD 的祖先提交），
->   而根 `docs/CHANGELOG.md` 最后一次被提交是 `60b2403`（2026-10-08 23:21，HEAD）——
->   `git log --oneline -- docs/CHANGELOG.md` 113 次 vs `-- liuyao/docs/CHANGELOG.md` 19 次。
->   近若干轮（含两科收缩）只追加根那份，本文件与其并行会读成两个"当前版本"。
-> - **本文里的 tune／holdout／口径记载（实测：`grep -cE "tune|holdout|口径"` = 100 行，
->   其中含 tune 39 行、含 holdout 51 行）都是登记时点的历史读数**，
->   分数口径以根 `docs/CHANGELOG.md` 的变更登记为准；跨文件对不上时以根文件 + 实跑读数为准。
->   按 `AGENTS.md` 铁律三，这些数字都是**古籍案例对齐分**，不是现实预测命中率。
-> - 本文正文条目**未改写、未删行**（历史证据不动）；需要引用现状时请新开根 CHANGELOG 条目。
+> 说明：本文件 2026-10-09~10 曾挂"停止追加"横幅（当时现行登记在根 `docs/CHANGELOG.md`）；
+> 该根文档随扁平化删除后，登记职责回归本文件。下方 2026-10-09 之前的条目**一字未改**，
+> 均为登记时点的历史读数；按 `SKILL.md` 铁律三，这些数字都是**古籍案例对齐分**，
+> 不是现实预测命中率，跨条目对不上时以实跑读数为准。
 
 当前版本 **易 v0.0.1**（2026-09-22 起统一编号；此前文档里的 v6/v7/v8/M3 是各文档自造的代号，不再是版本号）
 
-分数口径变化必须在此登记，否则 tune/holdout 数字不可比（`AGENTS.md` §四.4）。
+分数口径变化必须在此登记，否则 tune/holdout 数字不可比。
+
+## 2026-10-10 仓库扁平化 + 脚本去 liuyao_ 前缀（本轮）
+
+**口径纪律**：本轮**只改结构与命名，不动任何推演逻辑**。金标准指纹 288 例
+`999d054db09de158` 与改名前逐位一致，tune/holdout 对齐分与维度命中数全部持平——即下列
+改名与文档修订对分数**零影响**。
+
+### 变更
+- 仓库扁平化为 `liuyao`/`bazi` 两科（根 `core/cli/tools/data/docs/tests/skills/web/synthesis/archive` 已删）；
+- scripts/ 去掉 `liuyao_` 前缀（9 个文件 `git mv`，引用同步更新）：
+  `liuyao_engine→engine`、`liuyao_analyze→analysis_steps`、`liuyao_narrate→narrate_core`、
+  `liuyao_step1-5→step1-5`、`liuyao_timing→timing`；
+- 修扁平化残留路径断裂（17 处 dev_tools 脚本旧深度 `parents[3]`/`DISC.parents[1]`、源路径，
+  `jingshi_yizhuan` 书源归位六爻等）；
+- 文档全修：README 重写（实测分、断链、去掉不可执行的 `pip install -e .`）、SKILL.md §3.7
+  去掉对不存在且被 gitignore 的样例模板的依赖、删死存根 `docs/HANDOFF.md`、
+  source_ledger 断链清理、本文件恢复为现行登记。
+
+### 指标（2026-10-10 实测，strict；与改名前逐位一致）
+| 指标 | 读数 |
+|---|---|
+| tune 对齐分 | 97.2%（n=20，基线 93.9）|
+| holdout 对齐分 | 90.2%（n=12，基线 85.7）|
+| tune/holdout 主应期 top-1 | 64.7% / 50.0% |
+| golden 指纹 | `999d054db09de158`（288 例，与改名前一致）|
 
 ## 2026-10-07 四项 P1 OPT 入库（身爻启用 / 助鬼伤身易冒版 / 忧解忧疑 / 野鹤反法）
 
@@ -43,7 +62,7 @@
 | OPT-yiin_dz-01 身爻启用 | `classical_enhancements_shen_yao.py:analyze_shen_yao_activation` ＋ narrate 钩子 | 《易隐》L217 | 纯结构判定，不打分 |
 | OPT-yimao_dz-02 助鬼伤身（易冒版） | `classical_enhancements_yimao_zhugui.py:analyze_zhu_gui_shang_shen_yimao` ＋ narrate 钩子 | 《易冒》L541/L542/L547 | 双修正＋用官豁免，不打分 |
 | OPT-zengshan_buyi_dz-03 忧解忧疑 | `classical_enhancements_shen_yao.py:analyze_you_jie` ＋ narrate 钩子 | 《增刪卜易》L16/L419/L529 | 域限定反转，不打分 |
-| OPT-zengshan_buyi_dz-04 野鹤反法 | `liuyao_step2.py:_detect_wild_crane_reverse` ＋ narrate 钩子 | 《增刪卜易》L1396 | 只检测不改用神，不打分 |
+| OPT-zengshan_buyi_dz-04 野鹤反法 | `step2.py:_detect_wild_crane_reverse` ＋ narrate 钩子 | 《增刪卜易》L1396 | 只检测不改用神，不打分 |
 
 ### 数据层同步
 
@@ -154,7 +173,7 @@ added 1 / **changed 0**）。成因是两个纯格式变量：
 
 ### 1. 注释减法（六爻 7 个脚本，删 35 行注释）
 
-另有 5 行注释（`liuyao_step4.py` 死块内 3 行、`liuyao_step2.py` 2 行）随 §2 的死代码一并删，
+另有 5 行注释（`step4.py` 死块内 3 行、`step2.py` 2 行）随 §2 的死代码一并删，
 本轮注释合计 **40 行**、死代码语句 **7 行**、恒真表达式简化 **1 行**（合计 48 处改动）。
 
 判据：**删掉后读者无法从代码本身恢复该信息 → 保留**；能恢复 → 删；不确定 → 不删、登记存疑。
@@ -166,16 +185,16 @@ added 1 / **changed 0**）。成因是两个纯格式变量：
 | 文件 | 删 | 删掉的注释原文 |
 |---|---|---|
 | `effects.py` | 9 | `# Build bidirectional 六合 lookup`／`# Extract 用神 branch…`／`# Also check step3 which has use_god_branch explicitly`／`# Extract 忌神 positions/branches from step2`／`# Also check fu_cang`／`# Build summary`／`# Also match by branch if step3 has it`／`# Check vs 日辰`／`# 检查是否涉及世爻` |
-| `liuyao_step3.py` | 5 | `# Extract yuan_shen/ji_shen elements…`／`# Check if this hidden-moved yao is the use god`／`# Skip explicit moving yao (already 明动)`／`# Check 六冲 relationship: day_branch clashes with yao_branch`／`# Determine the role for reporting` |
-| `liuyao_step4.py` | 13 | `# Find the actual yao…`／`# Apply greedy harmony adjustment…`／`# Build greedy harmony description…`／`# Check if use god is combined by day or month`／`# Check for 六合/六冲 in hexagram name…`／`# Normalize score to float`／`# Check if yuan_shen has any moving line support`／`# Check no major attacking in moving lines`／`# Determine the branch to check for harmony:`＋`# Use the original branch if static/hidden-moved…`（两行）／`# Check 合 with 日辰`／`# Classify by role`／`# Check 合 with 月建` |
-| `liuyao_step5.py` | 4 | `# Get 原神 branches`／`# Sort by date`／`# Determine overall speed`／`# Build summary` |
-| `liuyao_narrate.py` | 2 | `# Determine strength from element_strength if available`／`# Detect question scenario for contextual interpretation` |
+| `step3.py` | 5 | `# Extract yuan_shen/ji_shen elements…`／`# Check if this hidden-moved yao is the use god`／`# Skip explicit moving yao (already 明动)`／`# Check 六冲 relationship: day_branch clashes with yao_branch`／`# Determine the role for reporting` |
+| `step4.py` | 13 | `# Find the actual yao…`／`# Apply greedy harmony adjustment…`／`# Build greedy harmony description…`／`# Check if use god is combined by day or month`／`# Check for 六合/六冲 in hexagram name…`／`# Normalize score to float`／`# Check if yuan_shen has any moving line support`／`# Check no major attacking in moving lines`／`# Determine the branch to check for harmony:`＋`# Use the original branch if static/hidden-moved…`（两行）／`# Check 合 with 日辰`／`# Classify by role`／`# Check 合 with 月建` |
+| `step5.py` | 4 | `# Get 原神 branches`／`# Sort by date`／`# Determine overall speed`／`# Build summary` |
+| `narrate_core.py` | 2 | `# Determine strength from element_strength if available`／`# Detect question scenario for contextual interpretation` |
 | `engine_calendar.py` | 1 | `# Handle rollover` |
 | `classical_enhancements.py` | 1 | docstring `"""判断两地支是否六冲"""`（与函数名 `is_ba_zu_chong` 同义；同文件 `"""获取地支五行"""` **保留**，它锚定 `未知` 兜底约定） |
 
 两类"删得有理"的特例，单列以免下棒误当误删：`# Check vs 日辰`（下一行循环同时遍历
 `日`/`月`，注释只写日辰）、`# Check for 六合/六冲 in hexagram name`（实际查的是
-`hex_type` 而非"卦名"）、`liuyao_step4.py` 的
+`hex_type` 而非"卦名"）、`step4.py` 的
 `# Determine the branch to check for harmony:` 两行（实际是"本卦支+变卦支两支都查"，
 注释却写成静/动二选一）——**这三处是与行为不符/容易误导的过期注释**。
 
@@ -183,9 +202,9 @@ added 1 / **changed 0**）。成因是两个纯格式变量：
 
 | 位置 | 内容 | 判据 |
 |---|---|---|
-| `liuyao_step4.py` 旧 :617–:622 | `orig_branch = detail.get(...)`／`chg_branch = detail.get(...)`／`if chg_branch:` → 只有 `pass` | 两个局部变量在本函数内取完即弃（函数末尾即 `return rules`），分支体为空 |
-| `liuyao_step4.py` 旧 :744–:747 | `div_time = step3_data.get("divination_info", {})`／`if not div_time:` → 只有 `pass` | 该 `div_time` 在本函数内无任何后续使用；空分支内注释"Try hex_result"没有任何实现 |
-| `liuyao_step2.py` 旧 :695–:697 | `# 判断伏神是否得出`＋《增删卜易》引文＋`can_emerge = fei_shen is None or True  # 默认可出` | 表达式恒为 `True`（`fei_shen is None` 是死分支）→ 改为 `can_emerge = True`，并把注释换成**指向真正判据**的诚实指针：`本层不做判定：真正判据在 classical_enhancements._evaluate_hidden_spirit_emergence`。注意：`"fei_shen": fei_shen` 仍写入结果字典、被 `liuyao_step3.py` 读取，**不可删** |
+| `step4.py` 旧 :617–:622 | `orig_branch = detail.get(...)`／`chg_branch = detail.get(...)`／`if chg_branch:` → 只有 `pass` | 两个局部变量在本函数内取完即弃（函数末尾即 `return rules`），分支体为空 |
+| `step4.py` 旧 :744–:747 | `div_time = step3_data.get("divination_info", {})`／`if not div_time:` → 只有 `pass` | 该 `div_time` 在本函数内无任何后续使用；空分支内注释"Try hex_result"没有任何实现 |
+| `step2.py` 旧 :695–:697 | `# 判断伏神是否得出`＋《增删卜易》引文＋`can_emerge = fei_shen is None or True  # 默认可出` | 表达式恒为 `True`（`fei_shen is None` 是死分支）→ 改为 `can_emerge = True`，并把注释换成**指向真正判据**的诚实指针：`本层不做判定：真正判据在 classical_enhancements._evaluate_hidden_spirit_emergence`。注意：`"fei_shen": fei_shen` 仍写入结果字典、被 `step3.py` 读取，**不可删** |
 
 **等价性证据**：`can_emerge` 恒真表达式的真值表不变（`fei_shen` 为 `dict`/`None` 两种取值
 下结果都是 `True`）；两处空 `pass` 分支删除不改变任何控制流；`git` 之外无 `__all__`
@@ -283,19 +302,19 @@ added 1 / **changed 0**）。成因是两个纯格式变量：
 ### 5. 本轮"刻意不动"（记此以免下一棒重复劳动）
 
 - **注释**：`classical_enhancements.py:1888 # Compute combined strength (first match is
-  enough — they share element)`（理由在括号里，属"为什么"）；`liuyao_step4.py` 的
+  enough — they share element)`（理由在括号里，属"为什么"）；`step4.py` 的
   `# Check for 暗动 even in "static" hexagrams`、`# Also include 暗动 lines for greedy
-  harmony check`、`# Also check: 用神被日月生合为凶`；`liuyao_step5.py`
+  harmony check`、`# Also check: 用神被日月生合为凶`；`step5.py`
   `# Use divination date as base for scanning forward`、`# Collect all 应期: list of
   (rule_str, date_or_None, branch, description_parts)`（`tuple` 结构契约）、
   `# Build a synthetic result dict…`＋`# Ensure thinking_chain structure exists…`；
-  `liuyao_step4.py:866` 的 `（_BRANCH_CLASH_MAP 由 core 派生）`；以及**存疑未删**的
+  `step4.py:866` 的 `（_BRANCH_CLASH_MAP 由 core 派生）`；以及**存疑未删**的
   `classical_enhancements.py:157` `"""判断两地支是否六合"""`——它与本轮删掉的 `:165` 六冲版同型
   （函数名已同义），只因"六合/六冲两版要一起裁决、不单独删一个"而留下，下一棒若要动手请两版同删。
 
-  （更正：本条曾把 `liuyao_step3.py` 旧 `:376` 的 `# Skip explicit moving yao (already 明动)`
+  （更正：本条曾把 `step3.py` 旧 `:376` 的 `# Skip explicit moving yao (already 明动)`
   也列入"刻意不动"，与本轮 §1 的删除记录自相矛盾——该行**确已删除**，现从本条移除。
-  `liuyao_step3.py` 现已无任何"明动"字样。）
+  `step3.py` 现已无任何"明动"字样。）
 - **`generation → 世爻位` 有 5 份副本**：权威表 `scripts/chart_tables.py::WORLD_POSITION`，
   `effects.py` 两份就地重定义（缺省 `1` / `0`）、`dev_tools/fetch_*_cases.py` 两份。
   `core` **没有**该数值表（`symbols.EIGHT_PALACES` 只有世代字符串标签，
@@ -322,7 +341,7 @@ added 1 / **changed 0**）。成因是两个纯格式变量：
 | `g_day_cn` | 删（纯 `return element` 壳），2 处调用改为直接传元素名 | 语义零变化 |
 | `get_changed_hexagram_branch` | 两份合一（`classical_enhancements` 是 `return najia_branch(...)` 壳，`narrative_utils` 是自写循环） | 对 core `HEXAGRAM_TRIGRAMS` 全 64 卦 × 6 爻逐爻比对，**diffs = 0** |
 | `element_strength_in_month` | 删本模块副本，改从 `narrative_utils` 导入 | 两份逐语句相同 |
-| `_combined_strength` | 本模块与 `liuyao_step3._combined_strength_for_hm` **逐字相同** → 单一实现移入 `narrative_utils`；分值表改用既有 `strength_to_score` | 阈值 9/7/5/3 与分值表逐字相同；step3 以别名导入，调用点与 `__all__` 不动 |
+| `_combined_strength` | 本模块与 `step3._combined_strength_for_hm` **逐字相同** → 单一实现移入 `narrative_utils`；分值表改用既有 `strength_to_score` | 阈值 9/7/5/3 与分值表逐字相同；step3 以别名导入，调用点与 `__all__` 不动 |
 | `_EFFECTS_REEXPORT` | 11 个名字原在文件里写两遍（`__all__` 字面量 + `frozenset`）→ 收敛为 `__all__` **之前**的一处 tuple，`__all__` 用 `*_EFFECTS_REEXPORT` 展开 | PEP 562 `__getattr__` 链路不变 |
 | `najia_branch` 导入 | 随壳删除变为未用 → 删 | 先确认全仓无 `from classical_enhancements import najia_branch` |
 
@@ -383,7 +402,7 @@ added 1 / **changed 0**）。成因是两个纯格式变量：
 `AGENTS.md` 铁律一要求必须留在 Python 的机械推演（装卦/纳甲/旺衰/格局/应期/评分/渲染），
 不是叙述。剩余可选路径都需挂账决策：① 合并/裁撤分析域（**改行为**，须重跑三集并重新
 capture 金标准）；② 逐行清"复述代码"的注释（不改行为，需人工判读，粗估 −400~−900 行）；
-③ 换度量——看**门面 API 表面积**（`liuyao_analyze.__all__` 条目数、叶子模块数）而非裸 LOC。
+③ 换度量——看**门面 API 表面积**（`analysis_steps.__all__` 条目数、叶子模块数）而非裸 LOC。
 本条目倾向 ③ + ②，**但不擅自改挂账项口径**。
 
 ### 5. 口径与复跑
@@ -414,7 +433,7 @@ capture 金标准）；② 逐行清"复述代码"的注释（不改行为，需
 ## 2026-09-26e 仓库整洁（死代码/文档）
 
 - **删除**：`factor_waterfall.py`、`engine_legacy.py`、`hallucination_guard.py`；
-  `liuyao_engine` 仅 `coin|time|number|manual`；`visualization` 收敛为 SVG 卦盘。
+  `engine` 仅 `coin|time|number|manual`；`visualization` 收敛为 SVG 卦盘。
 - **删除过期研究稿**：`references/precision_gaps.md`、`regression_failure_analysis.md`、`open_source_research.md`（历史见 git）。
 - **文档**：双 HANDOFF 合并至根 `docs/HANDOFF.md`；`LIUYAO-PLAN` 收为路线表。
 - **分数/指纹**：无变化（tune 93.9 / holdout 85.7 / 金标准 `65e8331c80c4f06a`）。
@@ -836,7 +855,7 @@ HEAVENLY_STEMS / EARTHLY_BRANCHES / STEM_ELEMENTS / BRANCH_ELEMENTS / SHENG_CYCL
 HE_PAIRS / CHONG_PAIRS / BREAK_PAIRS / TOMB_MAP / ADVANCE_PAIRS / RETREAT_PAIRS /
 NAJIA_BRANCHES / HEXAGRAM_TRIGRAMS / EIGHT_PALACES，共 15 张表；
 三个源文件里的 **38 处本地副本全部删除**（含 `thinking_chain` 的 `BRANCHES` 别名副本）。
-`liuyao_engine.py` 4042 → 3670 行，`classical_analysis.py` 4318 → 4200 行，
+`engine.py` 4042 → 3670 行，`classical_analysis.py` 4318 → 4200 行，
 `thinking_chain.py` 6396 → 6150 行。
 
 搬动前用 `scratch/dup_table_audit.py` 逐条目比对取值：**14 张表三份完全一致**，合一无行为风险。
@@ -880,7 +899,7 @@ NAJIA_BRANCHES / HEXAGRAM_TRIGRAMS / EIGHT_PALACES，共 15 张表；
   此前中文输出在 GBK 控制台乱码，`✓/✗` 与"※"直接抛 UnicodeEncodeError。
 - 新增 `pyproject.toml`（无必需依赖；lunar-python/matplotlib 列为可选 extras）与 `README.md`。
 - 回归报告默认输出目录由 `scripts/` 改为 `outputs/`（生成物不再污染源码目录）。
-- 删除 `liuyao_engine.py` 中两处从不生效的 `king_wen_sequence` 静默 import（前一条提交已记）。
+- 删除 `engine.py` 中两处从不生效的 `king_wen_sequence` 静默 import（前一条提交已记）。
 
 ## M0.2 / M0.3 唯一评分器与真基线（2026-09-22）
 
@@ -950,7 +969,7 @@ NAJIA_BRANCHES / HEXAGRAM_TRIGRAMS / EIGHT_PALACES，共 15 张表；
 | 3 | 五鼠遁写作 `(start + branch) % 12` 再判 ≥10 减 10 | 戊/癸日辰时之后时柱错（如戊日辰时 甲辰 → 应为 丙辰） |
 | 4 | `handle_zi_hour` 在 `hour == 0` 返回**翌日**日柱 | 00:00–00:59 起卦者日辰整体后移一天，且早/夜子时命名颠倒 |
 
-**删除**：`SOLAR_TERM_DATES` 近似表及其 fallback 分支、`liuyao_engine` 顶部已失效的
+**删除**：`SOLAR_TERM_DATES` 近似表及其 fallback 分支、`engine` 顶部已失效的
 lunar-python/sxtwl 探测块、两处 `from king_wen_sequence import ...`（模块已不存在却被
 `except ImportError: pass` 静默吞掉，从不生效；原文留在 `scratch/legacy_eval/` 备查，
 恢复与否待用户定）。

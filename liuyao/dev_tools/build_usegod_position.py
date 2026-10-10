@@ -19,7 +19,7 @@ for _p in (str(DISC / "scripts"), str(DISC / "core")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from liuyao_engine import build_hexagram_result  # noqa: E402
+from engine import build_hexagram_result  # noqa: E402
 import case_runner as cr  # noqa: E402
 
 CASES = DISC / "data" / "cases" / "classical_cases.json"
