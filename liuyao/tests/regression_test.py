@@ -544,6 +544,12 @@ def run_single_case(case: RegressionCase, verbose: bool = False) -> dict:
     # ── Check 4: 吉凶方向 ──
     actual_band = _verdict_to_band(verdict, final_score)
     direction_ok = (actual_band == case.expected_direction)
+    _lab_band, _score_band = _band_from_label(verdict), _band_from_score(final_score)
+    if _lab_band and _lab_band != _score_band:
+        # 判词字面与分数不同档：这是引擎自身的口径打架，单独记一条，
+        # 不并入方向断言（否则等于让措辞替量作答，正是旧实现的毛病）。
+        reasoning_diff.append(
+            f"判词/分数不一致: {verdict} @ {final_score:+.2f} → 字面判{_lab_band}、分数判{_score_band}")
 
     checks.append({
         "name": "吉凶方向",
@@ -593,8 +599,46 @@ def run_single_case(case: RegressionCase, verbose: bool = False) -> dict:
     }
 
 
+# 引擎自身的分数→判词阈值（唯一真值源：scripts/step5.py:212-226）
+#   >4.0 大吉｜>=1.0 吉｜>=-0.5 平吉｜>=-2.0 凶｜否则 大凶
+_SCORE_VERDICT = ((4.0, "大吉"), (1.0, "吉"), (-0.5, "平吉"), (-2.0, "凶"))
+# 判词 → 用例区间的对照（用例词表：吉/大吉=auspicious，平吉=mixed-fav，
+# 平凶=mixed-unfav，凶/大凶=inauspicious）
+_LABEL_BANDS = (("大吉", "auspicious"), ("吉", "auspicious"), ("平吉", "mixed-fav"),
+                ("平凶", "mixed-unfav"), ("凶", "inauspicious"), ("大凶", "inauspicious"))
+
+
+def _verdict_from_score(score: float) -> str:
+    """按 step5 的同一套阈值，把分数还原成判词字面。"""
+    for threshold, word in _SCORE_VERDICT:
+        if (score > threshold) if threshold == 4.0 else (score >= threshold):
+            return word
+    return "大凶"
+
+
+def _band_from_score(score: float) -> str:
+    """分数 → 区间档：先按引擎阈值还原判词，再查判词→区间对照。"""
+    return _band_from_label(_verdict_from_score(score))
+
+
+def _band_from_label(verdict: str) -> str:
+    """判词字面 → 区间档（字面与分数不一致时用于单独报警）。"""
+    text = str(verdict or "")
+    for word, band in _LABEL_BANDS:
+        if word in text:
+            return band
+    return ""
+
+
 def _verdict_to_band(verdict: str, score: float) -> str:
-    """将引擎 verdict 映射到期望 band."""
+    """将引擎 verdict 映射到期望 band（现行口径，通过与否以此为准）。
+
+    保留字面主导的原口径，是因为 18 例的 expected_direction 当年就是按这套
+    词表标注的；改分档映射会把「改测量口径」混进「改引擎」的收益里，
+    测出 8/18 与 11/18 无法归因。判词与分数打架的缺陷改由
+    `_band_from_score`/`_band_from_label` 交叉核对，在 reasoning_diff 里
+    单独报警（见调用处），不参与通过判定。
+    """
     if "吉" in verdict and "凶" not in verdict and "平" not in verdict:
         if "大" in verdict:
             return "auspicious"
@@ -605,16 +649,8 @@ def _verdict_to_band(verdict: str, score: float) -> str:
         return "mixed-unfav"
     elif "凶" in verdict:
         return "inauspicious"
-    else:
-        # Fallback by score
-        if score >= 3.0:
-            return "auspicious"
-        elif score >= 2.0:
-            return "mixed-fav"
-        elif score >= 1.0:
-            return "mixed-unfav"
-        else:
-            return "inauspicious"
+    # 字面既无吉也无凶：按 step5 的阈值定档
+    return _band_from_score(score)
 
 
 # ===========================================================================

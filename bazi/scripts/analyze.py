@@ -21,7 +21,9 @@ for _p in (str(CORE), str(Path(__file__).resolve().parent)):
 
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 from yishu_core.relations import LIUQIN_TO_SHISHEN  # noqa: E402  单源：官鬼=夫星、子孙=子星
-from pattern import (  # noqa: E402
+from yishu_core.ming_tables import nayin_xiangge_matched  # noqa: E402  纳音取象物性标签旁证
+from yishu_core.conflict_resolution import resolve_tiaohou_vs_pattern  # noqa: E402  调候与格局冲突仲裁层
+from bazi_factors import (  # noqa: E402
     strength_and_pattern,
     dayun_table,
     liunian_table,
@@ -112,6 +114,12 @@ def analyze(chart_json: dict) -> dict:
     by = bing_yao(result, strength=sp.get("strength") or "")
     # 女命夫子星（机械标注；男命返回 None）
     ffz = female_fu_zi(result)
+    # 纳音取象格物性标签旁证（《五行精纪》纳音性质名；不计格、不评分）
+    _day_gz_nx = (pillars.get("day") or {}).get("ganzhi") or ""
+    nxq = nayin_xiangge_matched(_day_gz_nx)
+    # 调候与格局冲突仲裁登记层（只登记差异、不自动选优，交 LLM 转述）
+    day_stem = (pillars.get("day") or {}).get("stem") or ""
+    tpc = resolve_tiaohou_vs_pattern(sp, day_stem)
 
     summary = {
         "四柱": {k: (v or {}).get("ganzhi") for k, v in pillars.items()},
@@ -211,6 +219,18 @@ def analyze(chart_json: dict) -> dict:
                     for m in by["medicines"]),
                 "basis": by["basis"],
             })
+    if nxq:
+        verdicts.append({
+            "code": "nayin_xiangge",
+            "label": f"纳音性质名 {nxq['性质名']}（{nxq['出处']}）",
+            "basis": "纳音取象·物性标签旁证，不计格、不评分；与子平格局层并列",
+        })
+    if tpc:
+        verdicts.append({
+            "code": "tiaohou_pattern_conflict",
+            "label": f"调候格局关系：{tpc['label']}",
+            "basis": tpc["detail"],
+        })
 
     result["female_fu_zi"] = ffz
 
@@ -258,6 +278,22 @@ def analyze(chart_json: dict) -> dict:
             "bing_yao": (_b["病"] if (_b := (by or {}).get("bing")) else ""),
             "bing_yao_has_medicine": bool((by or {}).get("has_medicine")),
             "female_fu_zi": ffz,
+            "tiaohou_pattern_conflict": {
+                "conflict": tpc["conflict"] if tpc else False,
+                "label": tpc["label"] if tpc else "",
+                "tiaohou_perspective": tpc["tiaohou_perspective"] if tpc else "",
+                "pattern_perspective": tpc["pattern_perspective"] if tpc else "",
+                "detail": tpc["detail"] if tpc else "",
+                "basis": "调候与格局冲突仲裁层（只登记差异、不自动选优）；"
+                         "口径依据：《穷通宝鉴》「贵在折衷，归於中道」未给两层排先后",
+            } if tpc else None,
+            "nayin_xiangge": {
+                "性质名": nxq["性质名"] if nxq else "",
+                "出处": nxq["出处"] if nxq else "",
+                "label": nxq["label"] if nxq else "",
+                "basis": "纳音取象·物性标签旁证（《五行精纪》纳音性质名），"
+                         "不计格、不评分，与子平格局层并列",
+            } if nxq else None,
         },
     }
 

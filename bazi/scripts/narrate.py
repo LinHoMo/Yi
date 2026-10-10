@@ -156,6 +156,19 @@ def _tiaohou_quote(a: dict) -> dict | None:
     return _TIAO_HOU_QUOTES.get(f"{n}{day_gz[0]}") if n else None
 
 
+def _gong_text(gong) -> str:
+    """命宫/身宫在内核是 {branch, ganzhi, nayin} 结构体，报告里不能直接印 dict。"""
+    if not gong:
+        return "—"
+    if isinstance(gong, str):
+        return gong
+    gz = gong.get("ganzhi") or gong.get("branch") or ""
+    nayin = gong.get("nayin") or ""
+    if gz and nayin:
+        return f"{gz}（纳音{nayin}）"
+    return gz or "—"
+
+
 def narrate(a: dict) -> str:
     s = a.get("chart_summary") or {}
     con = a.get("conclusion") or {}
@@ -167,7 +180,7 @@ def narrate(a: dict) -> str:
         "# 命局因子说明",
         "",
         f"四柱：{gz}（年月日时）。日主：{s.get('日主') or '—'}。",
-        f"命宫：{s.get('命宫') or '—'}；身宫：{s.get('身宫') or '—'}。",
+        f"命宫：{_gong_text(s.get('命宫'))}；身宫：{_gong_text(s.get('身宫'))}。",
         "",
     ]
     ds = _day_stem_block(a)
@@ -210,7 +223,10 @@ def narrate(a: dict) -> str:
             lines.append(f"（《滴天髓》寒暖論：「{huan}」）")
         tq = _tiaohou_quote(a)
         if tq and tq.get("quote"):
-            lines.append(f"> 调候原文（《穷通宝鉴》·{tq.get('section') or ''}）：{tq['quote']}")
+            # 语料是按句切下来的片段，741 条里有 82 条以「，」起头（切片留下的
+            # 句法残留，不是原文标点）；直接拼进「）：{quote}」会印成"）：，自有丙火…"。
+            _q = str(tq["quote"]).lstrip("，、。；：")
+            lines.append(f"> 调候原文（《穷通宝鉴》·{tq.get('section') or ''}）：{_q}")
         lines.append("")
     shensha = a.get("shensha") or []
     if shensha:

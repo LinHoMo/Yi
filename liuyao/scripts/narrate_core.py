@@ -643,15 +643,19 @@ def _collect_pattern_tags(context, step3: dict, step4: dict, step5: dict) -> lis
             _add("格局-暗动", "暗动")
         if step3.get("is_empty"):
             _add("格局-旬空", "旬空")
-            slevel = str(step3.get("strength_level") or "")
-            if any(x in slevel for x in ("旺", "相", "中和")):
-                _add("出旬有验", "出旬", "填实")
             # 真空 / 假空（《增删卜易》"旺空待出，真空难起"；判定在 compute_empty_modifier）
             _vk = str(step3.get("void_kind") or "")
             if _vk == "true":
                 _add("格局-真空", "真空")
             elif _vk == "false":
                 _add("格局-假空", "假空")
+                # 「出旬有验」与「假空」是同一古籍判据的两面，必须同源：
+                # 《卜筮正宗·旬空论第十》「旺相旬空，或休囚发动，日辰生扶、动爻生扶、
+                # 动爻变空、伏而旺相，此等旬空到底有用，不过待其出旬」——四项条件
+                # 已由 compute_empty_modifier 收进 void_kind=='false'（假空）。
+                # 旧实现另以月令旺衰字符串近似，只覆盖「旺相」一项，实测 156 例假空中
+                # 64 例（41%）漏标，属重复判据导致的假阴（ZS004 亥水相而空即其一）。
+                _add("出旬有验", "出旬", "填实", "出空")
         if step3.get("is_month_break"):
             _add("格局-月破", "月破")
         # 暗动 / 冲空：读结构（`advanced_analysis.hidden_movement` 逐爻），不扫 summary 文本。

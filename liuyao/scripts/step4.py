@@ -41,6 +41,7 @@ from narrative_utils import (  # noqa: E402
     _is_chong,
     _is_he,
     _pos_to_name,
+    element_strength_in_month,
     get_changed_hexagram_branch,
     get_relation_from_element,
     safe_get,
@@ -140,6 +141,7 @@ def step4_analyze_changes(r: dict) -> dict:
             use_god_element,
             change_type,
             line_role,
+            month_branch,
         )
 
         detail = {
@@ -215,19 +217,17 @@ def step4_analyze_changes(r: dict) -> dict:
 
     net_effect += greedy_harmony_score
 
-    # ---------- 4.3c: 进退神力量量化（来自 classical_analysis.advance_score） ----------
-    # 当 enhance_reading 已运行时（advanced_analysis 存在），读取进退神数值评分
-    advance_score_total = 0.0
-    _advanced_data = r.get("advanced_analysis", {})
-    if _advanced_data and isinstance(_advanced_data, dict):
-        _ar_data = _advanced_data.get("advance_retreat", {})
-        if isinstance(_ar_data, dict):
-            for _ar_item in _ar_data.get("details", []):
-                _ascore = _ar_item.get("advance_score", 0.0)
-                if isinstance(_ascore, (int, float)) and _ascore != 0.0:
-                    advance_score_total += _ascore
-    if abs(advance_score_total) > 0.001:
-        net_effect += advance_score_total
+    # ---------- 4.3c: 进退神不再另计一次数值（旧实现为重复计分且符号反向）----------
+    # 旧块把 advanced_analysis.advance_retreat.details[].advance_score 直接累加进
+    # net_effect。而该分数出自 classical_enhancements.analyze_advance_retreat，
+    # 它按「化进=+2~3.5、化退=−2~−1.4」定价，**不含爻的角色**。
+    # 4.3a/b 的逐爻评分已按角色给进退定价（step4.py:487/522/541）：
+    #   原神化进 +1.0 / 化退 −0.5；忌神化进 −1.0 / 化退 +0.5；仇神化退 +0.3。
+    # 于是旧块既重复计数，又把忌神化进的符号覆盖成正——忌神越进，分数越高，
+    # 方向判词随之翻吉（外部验证集 wikisource_direction 10 例方向失分中 9 例偏吉）。
+    # 《增删卜易》L551/L541 的原文也只让「元神旺动」加分、「元神休囚化退」减分，
+    # 从无从忌神化进反加之理。进退神的**文字**仍由 advanced_analysis 呈现，
+    # 数值只走逐爻这一条通道。
 
     # ---------- 4.4: 净效应判断 ----------
     net_effect = round(net_effect, 2)
@@ -260,13 +260,12 @@ def step4_analyze_changes(r: dict) -> dict:
         "tan_he_wan_sheng_ke": tan_he_wan_sheng_ke,
         "greedy_harmony_issues": greedy_harmony_issues,
         "greedy_harmony_score": greedy_harmony_score,
-        "advance_score_total": round(advance_score_total, 2),
         "net_effect": net_effect,
         "net_effect_description": net_description,
         "summary_text": _compose_change_summary(
             moving_lines, favorable_changes, unfavorable_changes,
             tan_sheng_wan_ke, tan_he_wan_sheng_ke, greedy_harmony_summary,
-            advance_score_total, net_effect, net_description,
+            net_effect, net_description,
         ),
     }
 
@@ -313,7 +312,7 @@ __all__ = [
 
 def _compose_change_summary(moving_lines, favorable_changes, unfavorable_changes,
                             tan_sheng_wan_ke, tan_he_wan_sheng_ke, greedy_harmony_summary,
-                            advance_score_total, net_effect, net_description) -> str:
+                            net_effect, net_description) -> str:
     n = len(moving_lines or [])
     if n == 0:
         return "卦中没有动爻，事情安静，吉凶主要看用神自身，而不是中途杀出的变数。"
@@ -337,8 +336,6 @@ def _compose_change_summary(moving_lines, favorable_changes, unfavorable_changes
     reasons = [x.rstrip("；。") for x in reasons if x]
     if reasons:
         parts.append("具体来看：" + "；".join(reasons[:4]) + "。")
-    if abs(advance_score_total or 0) > 0.001:
-        parts.append("进退之势也要计入。")
     net_desc = str(net_description or "").replace("（动变总体有利）", "").replace("（动变总体不利）", "")
     net_desc = net_desc.replace("（动变利弊参半）", "").strip()
     net_val = float(net_effect or 0)
@@ -437,6 +434,7 @@ def _analyze_effect_on_use_god(
     use_god_element: str,
     change_type: dict,
     line_role: str,
+    month_branch: str = "",
 ) -> dict:
     """动爻变化对用神的净效应 → {description, score}（正=有利/负=不利）。"""
     score = 0.0
@@ -488,8 +486,20 @@ def _analyze_effect_on_use_god(
             score = 1.0
             description_parts.append("原神化进，生用有力")
         elif ct == "化退神":
-            score = -0.5
-            description_parts.append("原神化退，生力减弱")
+            # 《增删卜易·元神章》两款并读：L541「元神旺相或临日月或日月动爻生扶」
+            # 即能生用（列在「能生五者」之首），L551 第三款作无力的是
+            # 「元神**休囚**动化退神」。旧实现把化退一律记 −0.5，
+            # 使旺相之元神动化退反被扣分（reg_03 原神辰土旺动即被记 −0.5）。
+            _yuan_state = element_strength_in_month(
+                orig_element, _branch_element(month_branch)) if month_branch else ""
+            if _yuan_state in ("旺", "相"):
+                score = 1.0
+                description_parts.append(
+                    f"原神{orig_element}旺相（{_yuan_state}）虽化退，生用之力不衰"
+                    "——《增删》惟休囚化退方为无力")
+            else:
+                score = -0.5
+                description_parts.append("原神休囚化退，生力减弱")
         elif ct == "化墓":
             score = -1.0
             description_parts.append("原神化墓，无力生用")
@@ -498,8 +508,16 @@ def _analyze_effect_on_use_god(
             description_parts.append("原神合绊，暂难生用")
         elif RETREAT_PAIRS.get(orig_branch) == chg_branch:
             # 二次识别：变化类型未被 _determine_change_type 判为化退神，但进退神表匹配化退
-            score = -0.5
-            description_parts.append("原神化退（进退神判），生力减弱为凶")
+            # 同受 L551「休囚」限定约束，口径与上一支一致（不另设一套旺衰）。
+            _yuan_state2 = element_strength_in_month(
+                orig_element, _branch_element(month_branch)) if month_branch else ""
+            if _yuan_state2 in ("旺", "相"):
+                score = 1.0
+                description_parts.append(
+                    f"原神{orig_element}旺相（{_yuan_state2}），进退神表判化退而不失生用之力")
+            else:
+                score = -0.5
+                description_parts.append("原神休囚化退（进退神判），生力减弱为凶")
         else:
             # 原神动（不论化什么都有一定助用效果）
             # 原神五行生用神 → 生用有力（《增删易》"原神发动，生用有力"）

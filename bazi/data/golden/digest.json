@@ -4,7 +4,7 @@
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
   "digest": "1be8d5b579463a47",
-  "narrate_digest": "e531f56d263192b2",
+  "narrate_digest": "d0c04afaf0a86363",
   "drift_log": [
     {
       "from": "57dc7e890af222fa",
@@ -20,18 +20,6 @@
     }
   ],
   "narrate_drift_log": [
-    {
-      "from": "f43e0cb70bcd5340",
-      "to": "18de3ab8f3b91fbe",
-      "date": "2026-10-02",
-      "reason": "八字科新增四柱地支关系层（六合/六冲/六害/三刑，判据在 pattern.pillar_branch_relations）；narrate 增『四柱地支关系』段并引《滴天髓·地支論》逐字三首。措辞层有意漂移，机械层（强弱/格局/大运）零漂移"
-    },
-    {
-      "from": "18de3ab8f3b91fbe",
-      "to": "f031d282e8cf13cd",
-      "date": "2026-10-02",
-      "reason": "八字科四柱干支关系层补入天干五合（甲己/乙庚/丙辛/丁壬/戊癸，表取 core.relations.STEM_WUHE）；pillar_branch_relations 更名 pillar_relations，narrate 段随之变化。机械层（强弱/格局/大运）零漂移"
-    },
     {
       "from": "f031d282e8cf13cd",
       "to": "b51a7836cc89fe4e",
@@ -139,6 +127,18 @@
       "to": "e531f56d263192b2",
       "date": "2026-10-10",
       "reason": "措辞修正：正文免责句原引用已删除的 AGENTS.md，改为现存 SKILL.md；机械层零漂移，非判定变更"
+    },
+    {
+      "from": "e531f56d263192b2",
+      "to": "28c14deba70f7f88",
+      "date": "2026-10-10",
+      "reason": "报告层修复：命宫/身宫原样印 Python dict（{'branch':'亥','ganzhi':'丁亥','nayin':'屋上土'}）改为「丁亥（纳音屋上土）」；纯措辞层变化，机械层零漂移"
+    },
+    {
+      "from": "28c14deba70f7f88",
+      "to": "d0c04afaf0a86363",
+      "date": "2026-10-10",
+      "reason": "调候原文引文在表示层去掉切片残留的首字符标点（报告不再出现「）：，自有丙火…」）；语料 data/tiaohou_quotes.json 逐字未动（生成器 build_tiaohou.py 有重算比对，须保持字节可复现），纯措辞层漂移，机械层零漂移"
     }
   ]
 }

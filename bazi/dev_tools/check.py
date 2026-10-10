@@ -56,7 +56,7 @@ AGENTS_TUNE_FLOOR = 95.0  # SKILL.md 的均分硬下限；BASELINE 必须严于�
 # 维度绝对命中数下限（= evaluate.py 明细里的「满分例数」；n/a 例不进分母故不影响本数）
 DIM_HITS = {
     "tune": {"tiaohou": 30},
-    "holdout": {"pillars": 189, "tiaohou": 19, "pattern": 28, "cong_ge": 13},
+    "holdout": {"pillars": 189, "tiaohou": 19, "pattern": 29, "cong_ge": 13},
 }
 # 其余维度（ten_gods / hidden_stems / shensha / dayun）案例集 0 applicable，
 # 如实登记在 rule_registry 的 mechanical_regression / _uncovered，不设假下限。
@@ -288,7 +288,13 @@ def main() -> int:
                              f"或整份是非文本表）——接线门看不见它，必须显式处理")
                 print(f"[8] 语料接线 × {path.name}：无可比对叶子串")
                 continue
-            hit = sum(1 for s in leaves if s in out)
+            # 接线判定看「这条语料的内容有没有进报告」，不是看字节是否完全相同：
+            # tiaohou_quotes 的引文是按句切下来的片段，741 条里 82 条以「，」起头，
+            # narrate 表示层会 lstrip 掉切片残留（语料本身逐字不动，生成器有重算比对）。
+            # 早先只比字节，于是那次纯粹的显示修复把读数从 2/302 报成 1/302——
+            # 量的是"没接线"，实际是"接了但首字标点被规范化"。
+            hit = sum(1 for s in leaves
+                      if s in out or s.lstrip("，、。；：") in out)
             declared = UNWIRED_CORPORA.get(path.name)
             if declared:
                 if hit:

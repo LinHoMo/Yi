@@ -679,7 +679,6 @@ def _rank_candidates(r: dict, use_god_branch: str, use_god_element: str, strengt
         _rank(ranked, use_god_branch, YINGQI_TXT["use_value_year"]["text"], "年")
     if strength_level in ("休囚", "囚", "死", "偏弱", "衰") or speed == "应迟":
         _rank(ranked, peak, YINGQI_TXT["use_weak_prosper_year"]["text"], "年")
-
     return ranked
 
 

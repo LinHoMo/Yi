@@ -67,11 +67,8 @@ BASELINE = {
     "calendar": 16,        # 历法自检通过项数（共 16）
     "ordering": 23,        # 爻序断言通过项数（共 23）——P0 事故看门狗
     "smoke": 36,           # 有产出的分析段
-    # case_03 / reg_03 的期望值原是在"卦内三位镜像"位次下标定的，P0 后失配；
-    # 已按古籍理重推（坤宫兄弟土为子孙金之原神，原神动生用 ⇒ 净效应为正），
-    # 不是把爻序改回去凑绿。基线随之回到 8/11。
-    "chain_tests": 8,      # /12
-    "regression": 9,       # /18（2026-10-09e 因 ADVANCE_PAIRS 书源级修正降基线）
+    "chain_tests": 11,     # /12（2026-10-10 上抬，理由见下方归因块）
+    "regression": 11,      # /18（2026-10-09e 曾因 ADVANCE_PAIRS 书源级修正降基线）
     # 退化 2 例（旧表"隔一支配对"把寅→卯误判为"化合"零分）逐条解释：
     #   reg_05（占求财·妻财伏藏·寅→卯 子孙原神化进）：旧表判化合 net_event≈0 → 平吉2.71→PASS；
     #     新书源同五行对 → 化进神 → net_effect+3.5 → 大吉5.16→ 方向 band ≠ expected(mixed)→FAIL。
@@ -81,10 +78,22 @@ BASELINE = {
     # 三条不动保护：① ADVANCE_PAIRS 五源同证是书源被动过，不可回退；② 不为让这 2 例回去而开
     #    case-specific 分支（违 SKILL.md）；③ 退化代价已计入：tune 97.2/holdout 90.2
     #    均稳超基线 93.9/85.7，wikisource_direction 24/38→28/38 净+4，是净正改进。
-    # 2026-10-09e 实测：回归 9/18，方向 13/18(72%)，用神 18/18(100%)，区间 14/18(78%)。
-    # 0.0.1 批次：动爻变出支补上后"化回头生"法则首次可触发，应期名次 2.13→2.27、
-    # 对齐分 −0.1/−0.4，但 top-1 持平、两套测试各多过一例。**基线下调是有意的**，
-    # 理由记于 docs/CHANGELOG.md；不许无凭据下调。
+    # ── 2026-10-10 基线上抬 8→11 / 9→11（只准前进，非凑绿）──
+    # 两处判据修正各自的实测效果（同一批用例、同一份金标准输入集）：
+    #   ① step4 4.3c 去进退神重复计分（旧块加的是**不含角色**的 ±2~3.5，
+    #      把 4.3a/b 已按角色定好号的 忌神化进 −1.0 反盖成正）→ reg_05 回绿，
+    #      正是上面那条「net_effect+3.5 → 大吉5.16 → band≠mixed」的老账，
+    #      同时净效应量级从 7.15/−6.79 回到 ±3 带内；
+    #   ② 原神化退只在休囚时减力（《增删卜易》L541 旺相即能生用，
+    #      L551 第三款作无力的原话是「元神**休囚**动化退神」）→ reg_03/case_03 回绿。
+    # 仍红的 6 例不再由这两处解释，逐条已登记 docs/CHANGELOG.md：reg_01/07/17 的
+    # fixture 与自身书证的卦变差集不自洽（本库对转写本的立场见
+    # docs/CASE-LIBRARY-AUDIT.md：未校勘前不据以定标准，故不在此改数组凑绿）；
+    # reg_14/18 缺泄神、双用神的角色定价；reg_13/16 为 fixture 卦名与书文不符。
+    # 外部集如实记：wikisource_holdout 66.9→63.1（verdict 19/21→17/21），
+    # 新增 2 例失分的形态是「verdict=吉 而 final_score 为负」（−0.53/−0.64），
+    # 即 step5 覆写链的判词与自家分数打架——此前被 ① 的虚高加分掩盖，
+    # 现由 regression_test 的「判词/分数不一致」报警单独显形，不参与通过判定。
     "tune": 93.9,          # 古籍对齐分 strict，n=20
     "holdout": 85.7,       # 古籍对齐分 strict，n=12（未参与调参）
     "tune_top1": 58.8,     # 主应期命中率 %（随机期望 ~38，+20pt）
@@ -408,14 +417,22 @@ def main() -> int:
     if want("chain_tests"):
         print("\n[3] 思维链用例（12 例，逐维度断言）")
         rc, out = run([sys.executable, "tests/thinking_chain_tests.py"])
-        gate("chain_tests", measure("chain_tests", out), minimum=baseline["chain_tests"],
+        _m = measure("chain_tests", out)
+        gate("chain_tests", _m, minimum=baseline["chain_tests"],
              label="用例通过数", raw=out)
+        # 用例脚本「有失败」时本就 exit 1，那是报告不是崩溃；只有连汇总行都没
+        # 解析出来 yet rc!=0，才是脚本挂了却被数数当成通过（旧实现完全不看 rc）。
+        if rc != 0 and _m is None:
+            failures.append(f"思维链用例脚本崩溃（rc={rc} 且汇总行未产出）")
 
     if want("regression"):
         print("\n[4] 古籍回归（18 例，用神/方向/区间三维）")
         rc, out = run([sys.executable, "tests/regression_test.py"])
-        gate("regression", measure("regression", out), minimum=baseline["regression"],
+        _m = measure("regression", out)
+        gate("regression", _m, minimum=baseline["regression"],
              label="回归通过数", raw=out)
+        if rc != 0 and _m is None:
+            failures.append(f"古籍回归脚本崩溃（rc={rc} 且汇总行未产出）")
 
     if want("eval") and not args.fast:
         print("\n[5] 古籍案例对齐分与应期判别力（非现实预测命中率）")

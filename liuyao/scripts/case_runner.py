@@ -182,8 +182,17 @@ def load_cases() -> list[dict]:
     return cases
 
 
+def _excluded_ids() -> set[str]:
+    """case_splits.json 中 excluded 清单的 id 集合。"""
+    if SPLITS.exists():
+        splits_data = json.loads(SPLITS.read_text(encoding="utf-8"))
+        return {e["id"] for e in splits_data.get("excluded", []) if isinstance(e, dict) and "id" in e}
+    return set()
+
+
 def load_ids(split: str | None = None, only: list[str] | None = None) -> list[str]:
-    all_ids = [c["id"] for c in load_cases()]
+    excluded = _excluded_ids()
+    all_ids = [c["id"] for c in load_cases() if c["id"] not in excluded]
     if only:
         return [i for i in only if i in all_ids]
     if split == "tune":
@@ -328,7 +337,7 @@ def run_case(case: dict) -> dict:
                          if isinstance(ln, str) and ("[格局]" in ln or "[格局要点]" in ln)],
         "empty_branches": h.get("empty_branches", []),
         "extra": extra,
-        "classical_quotes": h.get("classical_quotes", []),
+        "classical_quotes": thinking.get("step5_synthesis", {}).get("classical_quotes", []) or h.get("classical_quotes", []),
         "human_narrative": human,
         "human_markdown": render_human_markdown(human),
     }

@@ -3,7 +3,7 @@
     "what": "金标准指纹基线（排盘+思维链+分析层逐字段；抽样含 narrate 文案哈希）",
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
-  "digest": "999d054db09de158",
+  "digest": "a446ee778bac2d21",
   "narrate_digest": "7200af9a70d2df8f",
   "drift_log": [
     {
@@ -119,6 +119,12 @@
       "to": "999d054db09de158",
       "date": "2026-10-09",
       "reason": "进退神表改为用户源L1120/L1122的7+7同五行对（旧表12对0符合书）+ 四条古籍方向凶格上限（见 rule_registry liuyao.chuxian_wuqing/xiong_chi_shi_ke_cai/shi_hua_gui/yuan_shen_wu_li）；tune 97.2 holdout 90.2 不变"
+    },
+    {
+      "from": "999d054db09de158",
+      "to": "a446ee778bac2d21",
+      "date": "2026-10-10",
+      "reason": "去进退神重复计分(4.3c)+原神旺相化退按《增删》L541/551 只限休囚方减力+旬空出旬有验改读 step3 void_kind 同源判据：三处均为有书源的判据修正，机械层随之变档"
     }
   ],
   "narrate_drift_log": [
