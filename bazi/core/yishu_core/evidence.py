@@ -36,9 +36,8 @@ evaluation_status 取值（传播顺序 = 列表顺序，弱 → 强）：
   mechanical_regression 仅被 golden 指纹 / 规则自洽回归覆盖
   classical_holdout    该规则域被古籍案例 tune/holdout 对齐评测覆盖
   external_holdout     另有永不调参的外部独立集覆盖
-学科级默认值来自 `execution.registry.evaluation_baseline_of`（唯一真值源，
-不在此处复制任何学科事实）；规则级覆盖由各科规则注册表（如六爻
-`rule_registry.json`）经 `attach_rule_registry` 升级。
+学科级默认值来自本模块 `evaluation_baseline_of()`（破坏性更新后
+`execution.registry` 已移除，两科评测基线事实于此内联）。
 """
 from __future__ import annotations
 
@@ -287,7 +286,7 @@ def _topic_verdict(discipline: str, a: dict, baseline: str) -> list[Evidence]:
 def _tiaohou_ming(discipline: str, a: dict, baseline: str) -> list[Evidence]:
     """analyze['tiaohou']={main,assist}（《穷通宝鉴》调候查表，命科顶层输出）。
 
-    引文按「月序+日干」键回指 `disciplines/ming/data/tiaohou_quotes.json`
+    引文按「月序+日干」键回指 `bazi/data/tiaohou_quotes.json`
     （本模块零文件读取——source 留给规则注册表挂接书名与指针）。
     """
     t = a.get("tiaohou")
@@ -410,8 +409,8 @@ def evidence_from_analyze(discipline: str, analyze_out: dict, *,
     """学科 analyze 输出 → 结构化证据列表（纯函数，双宿主共用）。
 
     evaluation_baseline : 学科级评测基线默认值
-                          （取 `execution.registry.evaluation_baseline_of(discipline)`，
-                          由调用方传入以保持本模块零依赖注册表）。
+                          （调用方传 `evaluation_baseline_of(discipline)`，
+                          本模块不反向依赖注册表）。
     """
     if not isinstance(analyze_out, dict):
         return []
@@ -492,6 +491,16 @@ def evaluation_gaps(evidence: list[Evidence]) -> list[dict]:
 _WEAK_STATUSES = ("unassessed", "source_only")
 
 
+def evaluation_baseline_of(disc: str) -> str:
+    """学科评测基线（Evidence.evaluation_status 的学科级默认值）。
+
+    旧版在 `yishu_core.execution.registry`，破坏性更新后移入本模块内联
+    （两科基线均为 classical_holdout，与旧 _REGISTRY 保持一致）。
+    """
+    _BASELINES = {"liuyao": "classical_holdout", "ming": "classical_holdout"}
+    return _BASELINES.get(disc, "unassessed")
+
+
 def claim_policy(discipline: str, evidence: list[Evidence]) -> dict:
     """证据组合 → 断言边界（机器可读；Agent 叙事层的越界防护，铁律三）。
 
@@ -499,8 +508,6 @@ def claim_policy(discipline: str, evidence: list[Evidence]) -> dict:
     什么程度**：只统计与归纳，不推断；边界句与能力注册表的 agent_note
     同源（口径诚实约束的机器可读版）。
     """
-    from yishu_core.execution.registry import evaluation_baseline_of
-
     n_by_status: dict[str, int] = {}
     directional_supported = 0
     directional_weak = 0
