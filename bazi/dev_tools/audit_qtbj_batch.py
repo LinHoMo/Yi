@@ -5,13 +5,14 @@ import json
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[3]
+# 扁平化后脚本位于 <学科根>/dev_tools/；学科根=bazi（parents[1]），内核副本在 <学科根>/core。
+ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "core"))
 sys.path.insert(0, str(ROOT))
 
 from yishu_core.ming_tables import tiaohou_of  # noqa: E402
 
-EXT = ROOT / "disciplines" / "ming" / "data" / "cases" / "bazi_external_cases.json"
+EXT = ROOT / "data" / "cases" / "bazi_external_cases.json"
 
 # 月支 → 引擎键直接用月支，无需再转月序（引擎 TIAO_HOU 的键就是月支）
 

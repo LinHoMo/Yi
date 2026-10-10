@@ -30,7 +30,8 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 DISC = HERE.parent
-RAW = DISC.parent.parent / "data" / "sources" / "zengshan_buyi.wikitext.txt"
+# 扁平化后 DISC=liuyao（学科根），源文在 <学科根>/data/sources；DISC.parent.parent 会越过学科根落到 Desktop。
+RAW = DISC / "data" / "sources" / "zengshan_buyi.wikitext.txt"
 OUT = DISC / "data" / "rules" / "question_use_gods.json"
 
 sys.path.insert(0, str(HERE))
@@ -456,10 +457,10 @@ def resolve(families: list[dict]) -> tuple[list[dict], list[str]]:
 
 
 def main() -> int:
-    from yishu_core.runtime import force_utf8_stdio  # noqa: PLC0415
-    for module in (str(DISC / "scripts"), str(DISC.parents[1] / "core")):
+    for module in (str(DISC / "scripts"), str(DISC / "core")):
         if module not in sys.path:
             sys.path.insert(0, module)
+    from yishu_core.runtime import force_utf8_stdio  # noqa: PLC0415
     force_utf8_stdio()
     ap = argparse.ArgumentParser(description="生成问题词典（事项族分组，引文须逐字命中原文）")
     ap.add_argument("--check", action="store_true", help="只复验已生成 JSON 的引文，不写文件")
@@ -527,7 +528,7 @@ def main() -> int:
                            "每族给 label + 取舍依据（citation＝《增刪卜易》逐字引文与偏移，"
                            "inference＝诚实标注的无据推断）",
             "built_by": "dev_tools/build_question_use_gods.py",
-            "source": str(RAW.relative_to(DISC.parent.parent)),
+            "source": str(RAW.relative_to(DISC)),
             "order_warning": "entries 顺序＝打分层 tie-break 依赖的插入顺序，禁止重排/增删；"
                              "改词典必须重跑 tune/holdout/wikisource 三集（AGENTS.md 四）",
             "usage": "chain_tables._QUESTION_USE_GOD_MAP 由本表加载；"
@@ -539,7 +540,7 @@ def main() -> int:
         "families": resolved,
         "layer_citations": layers,
     }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"写入 {OUT.relative_to(DISC.parent.parent)}（{len(resolved)} 族 / {key_count} 键）")
+    print(f"写入 {OUT.relative_to(DISC)}（{len(resolved)} 族 / {key_count} 键）")
     return 0
 
 

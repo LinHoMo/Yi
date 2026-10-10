@@ -17,14 +17,16 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 DISC = Path(__file__).resolve().parents[1]
-CORE = DISC.parents[1] / "core"
+# 扁平化后 DISC=bazi（学科根），内核副本在 <学科根>/core，源文在 <学科根>/data/sources；
+# DISC.parents[1] 会越过学科根落到 Desktop，故一律用 DISC 反推。
+CORE = DISC / "core"
 for _p in (str(DISC / "scripts"), str(CORE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
 from yishu_core.ganzhi_calendar import EARTHLY_BRANCHES, HEAVENLY_STEMS, ganzhi_of  # noqa: E402
 
-SRC = DISC.parents[1] / "data" / "sources" / "qiong-tong-bao-jian.wikitext.txt"
+SRC = DISC / "data" / "sources" / "qiong-tong-bao-jian.wikitext.txt"
 CASES = DISC / "data" / "cases" / "bazi_classical_cases.json"
 
 STEMS = set(HEAVENLY_STEMS)

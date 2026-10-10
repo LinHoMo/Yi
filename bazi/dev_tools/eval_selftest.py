@@ -89,7 +89,7 @@ SCENARIOS = (
 def main() -> int:
     force_utf8_stdio()
     if not CASES.is_file():
-        print(f"× 缺案例文件 {CASES.relative_to(DISC.parent.parent)}")
+        print(f"× 缺案例文件 {CASES.relative_to(DISC)}")
         return 2
     backup = CASES.read_text(encoding="utf-8")
     fails: list[str] = []

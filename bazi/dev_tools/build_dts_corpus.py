@@ -15,7 +15,8 @@ import sys
 from pathlib import Path
 
 DISC = Path(__file__).resolve().parents[1]
-ROOT = Path(__file__).resolve().parents[3]
+# 扁平化后脚本位于 <学科根>/dev_tools/；学科根=bazi（parents[1]），内核副本在 <学科根>/core。
+ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "core"))
 
 from yishu_core.ganzhi_calendar import HEAVENLY_STEMS  # noqa: E402  天干序唯一真值源

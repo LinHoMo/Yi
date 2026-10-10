@@ -31,7 +31,8 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[3]
+# 扁平化后脚本位于 <学科根>/dev_tools/；学科根=liuyao（parents[1]），内核副本在 <学科根>/core。
+ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "core"))
 
 from yishu_core.symbols import (  # noqa: E402

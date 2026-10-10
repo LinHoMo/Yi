@@ -32,7 +32,7 @@ import sys
 from pathlib import Path
 
 DISC = Path(__file__).resolve().parents[1]
-for _p in (str(DISC / "scripts"), str(DISC.parents[1] / "core")):
+for _p in (str(DISC / "scripts"), str(DISC / "core")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 

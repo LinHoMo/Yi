@@ -27,12 +27,12 @@ import sys
 from pathlib import Path
 
 DISC = Path(__file__).resolve().parents[1]
-# 内核路径必须由 DISC 反推（`Path(__file__).parents[2]` 会落到 `disciplines/` 而非仓库根，
-# 在未 `pip install -e .` 的环境里直接 ModuleNotFoundError——本脚本此前正是如此）。
-sys.path.insert(0, str(DISC.parent.parent / "core"))
+# 扁平化后脚本位于 <学科根>/dev_tools/；学科根=bazi（parents[1]），内核副本在 <学科根>/core，
+# 源文在 <学科根>/data/sources。DISC.parent.parent 会越过学科根落到 Desktop，故一律用 DISC 反推。
+sys.path.insert(0, str(DISC / "core"))
 from yishu_core.symbols import HEAVENLY_STEMS  # noqa: E402  天干序唯一真值源
 from yishu_core import corpus_kit  # noqa: E402  语料可复现性比对
-SRC = DISC.parent.parent / "data" / "sources" / "qiong-tong-bao-jian.wikitext.txt"
+SRC = DISC / "data" / "sources" / "qiong-tong-bao-jian.wikitext.txt"
 OUT = DISC / "data" / "tiaohou_quotes.json"
 
 # `HEAVENLY_STEMS` 是 **list**：直接 f-string 插进字符类会变成

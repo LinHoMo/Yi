@@ -44,7 +44,7 @@ from yishu_core.najia import najia_branch, response_position    # noqa: E402
 
 API = "https://zh.wikisource.org/w/api.php"
 PAGE = "增刪卜易"
-SOURCES = DISC.parent.parent / "data" / "sources"
+SOURCES = DISC / "data" / "sources"
 RAW = SOURCES / "zengshan_buyi.wikitext.txt"
 PROV = SOURCES / "zengshan_buyi.provenance.json"
 OUT = DISC / "data" / "cases" / "wikisource_cases.json"
@@ -801,7 +801,7 @@ def main() -> int:
             "partial": partial,
         },
         "cases": kept + dir_only}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"写入 {OUT.relative_to(DISC.parent.parent)}")
+    print(f"写入 {OUT.relative_to(DISC)}")
 
     sp = json.loads(SPLITS.read_text(encoding="utf-8")) if SPLITS.exists() else {}
     sp["wikisource_holdout"] = [c["id"] for c in kept]

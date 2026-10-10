@@ -107,7 +107,7 @@ python scripts/yi_liuyao.py "所问之事" --mode manual --yao "7,8,9,7,6,8" -f 
 缺省 `--mode time` 用 `--when` 时刻，不给 `--when` 用当前时刻。旧引擎入口
 `liuyao_engine.py --format html --save-html` 的 HTML 分支同样走 render 单一出口。
 
-**四段契约入口（命科 `ming` 与本科同构，供合参层消费）**：六爻已提供
+**四段契约入口（八字科 `bazi` 与本科同构）**：六爻已提供
 chart→analyze→narrate→render 薄适配层，包装既有引擎、不引入新断法：
 
 ```bash
@@ -119,9 +119,8 @@ python scripts/render.py scratch/analyze.json -o outputs/report.md     # 报告
 ```
 
 analyze 输出的 `conclusion`（方向/应期/所本）与 `chart_summary`（卦名/用神/旺衰/动爻）
-可直接喂 `synthesis/cli.py add-divination --analyze-json` 进合参层归一化。
-narrate/render 是**薄装配**：正文一律用 `format_reading_output` 生成，不允许 LLM
-在 narrate 里另起炉灶重新断卦。
+即六爻交付所需的全部结构化数据；narrate/render 是**薄装配**：正文一律用
+`format_reading_output` 生成，不允许 LLM 在 narrate 里另起炉灶重新断卦。
 
 历法口径默认值（改动会使断卦结果不同，非必要不动）：交节按"当日即换"（`YI_GANZHI_BOUNDARY=day`）、
 夜子时不作次日（换日派需显式 `--distinguish-zi-hour --zi-hour-type late`）。

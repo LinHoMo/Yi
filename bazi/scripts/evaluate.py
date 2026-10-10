@@ -468,7 +468,7 @@ def main() -> int:
     if not ids:
         print(f"=== 八字科 [{label}] 尚无案例（n=0）===")
         src = EXTERNAL_PATH if external else CASES_PATH
-        print("  cases 文件：" + str(src.relative_to(DISC.parent.parent)))
+        print("  cases 文件：" + str(src.relative_to(DISC)))
         print("  这不是「无结果」，是「还没有尺子」。建集规范见 bazi/docs/EVAL-PLAN.md 第三节。")
         print("  口径提醒：只评书上明写的量；未记录的维度记 N/A 并从分母剔除。")
         n_cases = len(store.get("cases") or [])

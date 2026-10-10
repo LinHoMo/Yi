@@ -194,14 +194,18 @@ def version_report() -> list[str]:
 
     problems = [f"版本号不合语义：{yishu_core.__version__}"] if not re.match(
         r"^\d+\.\d+\.\d+$", yishu_core.__version__) else []
-    proj = _project_header((REPO / "pyproject.toml").read_bytes().decode("utf-8"))
-    if proj.get("name") != "yishu-core":
-        problems.append(f"仓库根 pyproject 包名是 {proj.get('name')}，应为 yishu-core")
-    if "version" in proj:
-        problems.append(f"pyproject [project] 里又写了字面 version={proj['version']}，"
-                        f"应改走 dynamic 从 yishu_core 取")
-    if "version" not in proj.get("dynamic", []):
-        problems.append("pyproject [project].dynamic 未包含 version")
+    # 扁平化后仓库根不再有 pyproject（各学科自包含、内核唯一发版）；
+    # 仅当该文件存在时才核对包名/version 口径，缺失则跳过（不崩溃）。
+    pyproject = REPO / "pyproject.toml"
+    if pyproject.exists():
+        proj = _project_header(pyproject.read_bytes().decode("utf-8"))
+        if proj.get("name") != "yishu-core":
+            problems.append(f"仓库根 pyproject 包名是 {proj.get('name')}，应为 yishu-core")
+        if "version" in proj:
+            problems.append(f"pyproject [project] 里又写了字面 version={proj['version']}，"
+                            f"应改走 dynamic 从 yishu_core 取")
+        if "version" not in proj.get("dynamic", []):
+            problems.append("pyproject [project].dynamic 未包含 version")
     if (DISC / "pyproject.toml").exists():
         problems.append("学科根不该再有一份 pyproject（内核唯一发版）")
 

@@ -39,7 +39,7 @@ ensure_kernel_on_path(__file__)
 from yishu_core import symbols as sym                            # noqa: E402
 from yishu_core.najia import najia_branch, response_position    # noqa: E402
 
-SOURCES = DISC.parent.parent / "data" / "sources"
+SOURCES = DISC / "data" / "sources"
 RAW = SOURCES / "huozhulin.wikitext.txt"
 OUT_JSON = DISC / "data" / "cases" / "huozhulin_cases.json"
 OUT_QUAL = DISC / "data" / "cases" / "huozhulin_qualitative.json"
@@ -844,7 +844,7 @@ def main() -> int:
         },
         "cases": scorable_cases,
     }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"\n写入 {OUT_JSON.relative_to(DISC.parent.parent)} ({len(scorable_cases)} 例)")
+    print(f"\n写入 {OUT_JSON.relative_to(DISC)} ({len(scorable_cases)} 例)")
 
     # 输出定性集
     OUT_QUAL.write_text(json.dumps({
@@ -857,7 +857,7 @@ def main() -> int:
         },
         "cases": qual_cases,
     }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"写入 {OUT_QUAL.relative_to(DISC.parent.parent)} ({len(qual_cases)} 例)")
+    print(f"写入 {OUT_QUAL.relative_to(DISC)} ({len(qual_cases)} 例)")
 
     # 更新 splits
     sp = json.loads(SPLITS.read_text(encoding="utf-8")) if SPLITS.exists() else {}

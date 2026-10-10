@@ -26,7 +26,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[3]
+# 扁平化后脚本位于 <学科根>/dev_tools/；学科根=bazi（parents[1]），内核副本在 <学科根>/core。
+ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 # 块定位正则与两张表的唯一路径都由同步脚本给出——本工具不再抄第二份
 # （AGENTS.md §二「同一张表不得存两份」同样适用于「同一套定位逻辑」）
@@ -37,10 +38,22 @@ DATA_FIELDS = ("main", "assist", "quote")
 ENGINE_FIELDS = ("main", "assist")
 
 
+def _git_root() -> Path:
+    """git 仓库根（扁平化后学科根不再是仓库根，git show 的路径须相对仓库根）。"""
+    proc = subprocess.run(["git", "rev-parse", "--show-toplevel"],
+                          cwd=Path(__file__).resolve().parent, capture_output=True)
+    if proc.returncode != 0:
+        raise SystemExit("× 找不到 git 仓库根")
+    return Path(proc.stdout.decode("utf-8").strip())
+
+
+GIT_ROOT = _git_root()
+
+
 def git_show(ref: str, rel_path: Path) -> str:
-    """取回某 revision 下的文件内容（相对仓库根）。"""
-    rel = rel_path.resolve().relative_to(ROOT.resolve()).as_posix()
-    proc = subprocess.run(["git", "show", f"{ref}:{rel}"], cwd=ROOT,
+    """取回某 revision 下的文件内容（路径相对仓库根，cwd 也用仓库根）。"""
+    rel = rel_path.resolve().relative_to(GIT_ROOT.resolve()).as_posix()
+    proc = subprocess.run(["git", "show", f"{ref}:{rel}"], cwd=GIT_ROOT,
                           capture_output=True)
     if proc.returncode != 0:
         raise SystemExit(f"× git show {ref}:{rel} 失败：{proc.stderr.decode('utf-8', 'replace')[:200]}")

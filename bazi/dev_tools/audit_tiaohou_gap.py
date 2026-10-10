@@ -12,13 +12,14 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[3]
+# 扁平化后脚本位于 <学科根>/dev_tools/；学科根=bazi（parents[1]），内核副本在 <学科根>/core。
+ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "core"))
-# 干支序列与五行字唯一真值源在 core，此处只导入不复制（tools/check.py 第 6 项门禁会拦复制）
+# 干支序列与五行字唯一真值源在 core，此处只导入不复制（内核门禁会拦复制）
 from yishu_core.symbols import HEAVENLY_STEMS, STEM_ELEMENTS  # noqa: E402
 
 SRC = ROOT / "data" / "sources" / "qiong-tong-bao-jian.wikitext.txt"
-QJSON = ROOT / "disciplines" / "ming" / "data" / "tiaohou_quotes.json"
+QJSON = ROOT / "data" / "tiaohou_quotes.json"
 
 STEMS = "".join(HEAVENLY_STEMS)  # HEAVENLY_STEMS 是 list，插进字符类前须展平
 E = "".join(dict.fromkeys(STEM_ELEMENTS.values()))  # 木火土金水

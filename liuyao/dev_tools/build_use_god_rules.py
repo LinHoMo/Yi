@@ -26,7 +26,8 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 DISC = HERE.parent
-RAW = DISC.parent.parent / "data" / "sources" / "zengshan_buyi.wikitext.txt"
+# 扁平化后 DISC=bazi/liuyao（学科根），源文在 <学科根>/data/sources；DISC.parent.parent 会越过学科根落到 Desktop。
+RAW = DISC / "data" / "sources" / "zengshan_buyi.wikitext.txt"
 OUT = DISC / "data" / "rules" / "use_god_relations.json"
 
 # (触发词, 需要的上下文词(可空), 用神, 优先级, 逐字引文)
@@ -110,7 +111,7 @@ def flat() -> str:
 
 
 def main() -> int:
-    for module in (str(DISC / "scripts"), str(DISC.parents[1] / "core")):
+    for module in (str(DISC / "scripts"), str(DISC / "core")):
         sys.path.insert(0, module)
     from yishu_core.runtime import force_utf8_stdio
     force_utf8_stdio()
@@ -148,13 +149,13 @@ def main() -> int:
             "description": "取用神的『关系优先于事项』规则表，出自《增刪卜易》原文，"
                            "每条带逐字引文与偏移量",
             "built_by": "dev_tools/build_use_god_rules.py",
-            "source": str(RAW.relative_to(DISC.parent.parent)),
+            "source": str(RAW.relative_to(DISC)),
             "usage": "chain_step2 取用神时先过本表（先命中先停），未命中再依次过覆盖层与问题词典",
             "order": "priority 小的先判；同优先级里触发词长的先判（更具体）",
             "rule_count": len(rows),
         },
         "rules": rows}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"写入 {OUT.relative_to(DISC.parent.parent)}（{len(rows)} 条）")
+    print(f"写入 {OUT.relative_to(DISC)}（{len(rows)} 条）")
     return 0
 
 

@@ -15,12 +15,13 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[3]
+# 扁平化后脚本位于 <学科根>/dev_tools/；学科根=bazi（parents[1]），内核副本在 <学科根>/core。
+ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "core"))
-# 干支序列唯一真值源在 core（tools/check.py 第 6 项门禁会拦 disciplines 下复制字面量）
+# 干支序列唯一真值源在 core（内核门禁会拦 disciplines 下复制字面量）
 from yishu_core.symbols import HEAVENLY_STEMS  # noqa: E402
 
-DATA = ROOT / "disciplines" / "ming" / "data" / "tiaohou_quotes.json"
+DATA = ROOT / "data" / "tiaohou_quotes.json"
 ENGINE = ROOT / "core" / "yishu_core" / "ming_tables.py"
 
 BRANCH_OF_MONTH = {
