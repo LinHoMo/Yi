@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""六爻引擎排盘：起卦（铜钱/时间/数字）与装卦排盘（定宫、六亲、旬空、六神、爻名），产出 build_hexagram_result 基础盘面。聚合入口见 engine.py。"""
+"""六爻引擎排盘：起卦（铜钱/时间/数字）与装卦排盘（定宫、六亲、旬空、月破、六神、爻名），产出 build_hexagram_result 基础盘面。聚合入口见 engine.py。"""
 
 import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
 
@@ -14,6 +14,7 @@ _ensure_kernel(__file__)
 
 from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     BRANCH_ELEMENTS,
+    CHONG_PAIRS,
     EIGHT_PALACES,
     KE_CYCLE,
     KE_WO,
@@ -428,7 +429,15 @@ def build_hexagram_result(yao_values, question, method, year, month, day, hour,
     
     # 6. 旬空
     empty_branches = get_empty_death(day_sb)
-    
+
+    # 6b. 月破预演集：爻支与月建相冲即月破（《增删卜易·月破章》；判据与
+    #     classical_enhancements.analyze_monthly_break 同源——CHONG_PAIRS 唯一真值源）。
+    #     自建仓起 yao_lines 就不带 is_month_break 键，下游 step1/step2/step3/narrate 的
+    #     `yao.get("is_month_break", False)` 恒为 False：用神取舍 tier 7/8 的「破」分支、
+    #     step3 月破修正（0.3/0.5）、野鹤反法「一破一不破」半边全是死的。本批补上。
+    month_branch = month_sb[1:] if len(month_sb) >= 2 else ""
+    _chong_pair_sets = [frozenset(p) for p in CHONG_PAIRS]
+
     # 7. 日干 (用于六神)
     day_stem = day_sb[0]
     
@@ -469,6 +478,10 @@ def build_hexagram_result(yao_values, question, method, year, month, day, hour,
         
         # 旬空
         is_empty = branch in empty_branches
+
+        # 月破（与月建相冲；判据见上 6b）
+        is_month_break = bool(month_branch) and any(
+            frozenset((branch, month_branch)) == ps for ps in _chong_pair_sets)
         
         # 爻名
         yao_name = get_yao_name(position, nature)
@@ -498,6 +511,7 @@ def build_hexagram_result(yao_values, question, method, year, month, day, hour,
             "is_world": is_world,
             "is_response": is_response,
             "is_empty": is_empty,
+            "is_month_break": is_month_break,
             "line_text": line_text,
         }
         
