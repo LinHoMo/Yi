@@ -1,205 +1,215 @@
 {
-  "version": 1,
-  "note": "tune=ZS001-020 调参集；holdout=未参与词典调参的古籍真例；excluded=残缺或与 tune 重复，不计入均分；外部验证集见 note_externals",
-  "tune": [
-    "ZS001",
-    "ZS002",
-    "ZS003",
-    "ZS004",
-    "ZS005",
-    "ZS006",
-    "ZS007",
-    "ZS008",
-    "ZS009",
-    "ZS010",
-    "ZS011",
-    "ZS012",
-    "ZS013",
-    "ZS014",
-    "ZS015",
-    "ZS016",
-    "ZS017",
-    "ZS018",
-    "ZS019",
-    "ZS020"
-  ],
-  "holdout": [
-    "HO001",
-    "HO002",
-    "HO003",
-    "HO004",
-    "HO005",
-    "HO006",
-    "HO007",
-    "HO008",
-    "HO009",
-    "HO010",
-    "HO011",
-    "HO012"
-  ],
-  "excluded": [
-    {
-      "id": "ZS021",
-      "reason": "无卦名，无法复原装卦"
-    },
-    {
-      "id": "ZS022",
-      "reason": "无卦名；topic 与 question 不符（近病）"
-    },
-    {
-      "id": "ZS023",
-      "reason": "无卦名；topic 与 question 不符（功名）"
-    },
-    {
-      "id": "ZS024",
-      "reason": "无卦名；topic 与 question 不符（赌钱）"
-    },
-    {
-      "id": "ZS025",
-      "reason": "无卦名；topic 与 question 不符（生意）"
-    },
-    {
-      "id": "ZS026",
-      "reason": "与 ZS008 同源（屯之震·师尊官事），不重复计入 holdout"
-    },
-    {
-      "id": "ZS027",
-      "reason": "与 ZS003 同源（革·仆归）但断语相反，基准矛盾，excluded"
-    },
-    {
-      "id": "ZS028",
-      "reason": "与 ZS011 同源（巽之讼·失银）"
-    },
-    {
-      "id": "ZS029",
-      "reason": "与 ZS012 同源（否·婚姻合处逢冲）"
-    },
-    {
-      "id": "ZS030",
-      "reason": "与 ZS014 同源（蹇·逃仆伏神）"
-    }
-  ],
-  "holdout_policy": "禁止为单例新增仅对其命中的私有格局别名；通用古籍术语允许；原神失位/久病逢冲为通用法则",
-  "yingqi_holdout": [
-    "YQ003",
-    "YQ007"
-  ],
-  "wikisource_holdout": [
-    "WS001",
-    "WS002",
-    "WS003",
-    "WS004",
-    "WS005",
-    "WS006",
-    "WS007",
-    "WS008",
-    "WS009",
-    "WS010",
-    "WS011",
-    "WS012",
-    "WS013",
-    "WS014",
-    "WS015",
-    "WS016",
-    "WS017",
-    "WS018",
-    "WS019",
-    "WS020",
-    "WS021",
-    "WS022",
-    "WS023",
-    "WS024",
-    "WS025",
-    "WS026",
-    "WS027",
-    "WS028",
-    "WS029",
-    "WS030",
-    "WS031",
-    "WS032",
-    "WS033",
-    "WS034",
-    "WS035",
-    "WS036",
-    "WS037",
-    "WS038",
-    "WS039",
-    "WS040",
-    "WS041",
-    "WS042",
-    "WS043",
-    "WS044"
-  ],
-  "wikisource_direction": [
-    "WSD001",
-    "WSD002",
-    "WSD003",
-    "WSD004",
-    "WSD005",
-    "WSD006",
-    "WSD007",
-    "WSD008",
-    "WSD009",
-    "WSD010",
-    "WSD011",
-    "WSD012",
-    "WSD013",
-    "WSD014",
-    "WSD015",
-    "WSD016",
-    "WSD017",
-    "WSD018",
-    "WSD019",
-    "WSD020",
-    "WSD021",
-    "WSD022",
-    "WSD023",
-    "WSD024",
-    "WSD025",
-    "WSD026",
-    "WSD027",
-    "WSD028",
-    "WSD029",
-    "WSD030",
-    "WSD031",
-    "WSD032",
-    "WSD033",
-    "WSD034",
-    "WSD035",
-    "WSD036",
-    "WSD037",
-    "WSD038"
-  ],
-  "huozhulin_holdout": [
-    "HZL001",
-    "HZL002"
-  ],
-  "suigui_holdout": [
-    "SG001",
-    "SG002"
-  ],
-  "bushi_zhengzong_holdout": [],
-  "too_weak": [
-    {
-      "source": "黄金策（维基文库）",
-      "reason": "23389 字全文已下载（data/sources/huangjin_ce.wikitext.txt），但全书为理论赋体（总断千金赋+34分类章节+何知章），无任何'X月X日占Y得A之B卦果于C日'形态的占例；0 处应期锚点，不产出 yingqi-scorable 案例"
-    },
-    {
-      "source": "卜筮元龟",
-      "reason": "维基文库 API missingtitle；全文搜索未命中；无结构化数字版本"
-    },
-    {
-      "source": "断易天机",
-      "reason": "维基文库 API missingtitle（简/繁体均搜索未命中）；无结构化数字版本"
-    },
-    {
-      "source": "易冒（程良玉）",
-      "reason": "维基文库 API missingtitle；维基文库术数分类无此目"
-    },
-    {
-      "source": "卜筮全书",
-      "reason": "维基文库主搜索未命中；术数 Category 下仅4条目不含卜筮全书；shidianguji.com 有内容但无结构化 API"
-    }
-  ],
-  "note_externals": "yingqi_holdout/wikisource_holdout/wikisource_direction/huozhulin_holdout/suigui_holdout/bushi_zhengzong_holdout 均为外部验证集，永不参与调参；too_weak 为探测后<5 例或不存在之来源，不计入任何集合。huozhulin_qualitative.json（HZQ*）与 huozhulin_candidates.json（HZC*）按其自身 _meta 是**仅参考、不参与评分**的定性/候选集，过去被误登记成 split 且与 huozhulin_holdout 共用 HZL* ID，导致 --split huozhulin_qualitative 实际拿 holdout 的盘面跑分（假基准，2026-10-09 撤除）"
+ "version": 1,
+ "note": "tune=ZS001-020 调参集；holdout=未参与词典调参的古籍真例；excluded=残缺或与 tune 重复，不计入均分；外部验证集见 note_externals",
+ "tune": [
+  "ZS001",
+  "ZS002",
+  "ZS003",
+  "ZS004",
+  "ZS005",
+  "ZS006",
+  "ZS007",
+  "ZS008",
+  "ZS009",
+  "ZS010",
+  "ZS011",
+  "ZS012",
+  "ZS013",
+  "ZS014",
+  "ZS015",
+  "ZS016",
+  "ZS017",
+  "ZS018",
+  "ZS019",
+  "ZS020"
+ ],
+ "holdout": [
+  "HO001",
+  "HO002",
+  "HO003",
+  "HO004",
+  "HO005",
+  "HO006",
+  "HO007",
+  "HO008",
+  "HO009",
+  "HO010",
+  "HO011",
+  "HO012"
+ ],
+ "excluded": [
+  {
+   "id": "ZS021",
+   "reason": "无卦名，无法复原装卦",
+   "trace_2026_10_12": "底本不可定位：占题为压缩转述，以「占父近病/岳父近病/占后运功名/占赌钱/占生意」等关键语 grep data/sources/ 与 references/ 均 0 命中（卜筮正宗底本 103857 字、含结构化卦名栏，故非繁简差异所致）"
+  },
+  {
+   "id": "ZS022",
+   "reason": "无卦名；topic 与 question 不符（近病）",
+   "trace_2026_10_12": "底本不可定位：占题为压缩转述，以「占父近病/岳父近病/占后运功名/占赌钱/占生意」等关键语 grep data/sources/ 与 references/ 均 0 命中（卜筮正宗底本 103857 字、含结构化卦名栏，故非繁简差异所致）"
+  },
+  {
+   "id": "ZS023",
+   "reason": "无卦名；topic 与 question 不符（功名）",
+   "trace_2026_10_12": "底本不可定位：占题为压缩转述，以「占父近病/岳父近病/占后运功名/占赌钱/占生意」等关键语 grep data/sources/ 与 references/ 均 0 命中（卜筮正宗底本 103857 字、含结构化卦名栏，故非繁简差异所致）"
+  },
+  {
+   "id": "ZS024",
+   "reason": "无卦名；topic 与 question 不符（赌钱）",
+   "trace_2026_10_12": "底本不可定位：占题为压缩转述，以「占父近病/岳父近病/占后运功名/占赌钱/占生意」等关键语 grep data/sources/ 与 references/ 均 0 命中（卜筮正宗底本 103857 字、含结构化卦名栏，故非繁简差异所致）"
+  },
+  {
+   "id": "ZS025",
+   "reason": "无卦名；topic 与 question 不符（生意）",
+   "trace_2026_10_12": "底本不可定位：占题为压缩转述，以「占父近病/岳父近病/占后运功名/占赌钱/占生意」等关键语 grep data/sources/ 与 references/ 均 0 命中（卜筮正宗底本 103857 字、含结构化卦名栏，故非繁简差异所致）"
+  },
+  {
+   "id": "ZS026",
+   "reason": "与 ZS008 同源（屯之震·师尊官事），不重复计入 holdout"
+  },
+  {
+   "id": "ZS027",
+   "reason": "与 ZS003 同源（革·仆归）但断语相反，基准矛盾，excluded"
+  },
+  {
+   "id": "ZS028",
+   "reason": "与 ZS011 同源（巽之讼·失银）"
+  },
+  {
+   "id": "ZS029",
+   "reason": "与 ZS012 同源（否·婚姻合处逢冲）"
+  },
+  {
+   "id": "ZS030",
+   "reason": "与 ZS014 同源（蹇·逃仆伏神）"
+  }
+ ],
+ "holdout_policy": "禁止为单例新增仅对其命中的私有格局别名；通用古籍术语允许；原神失位/久病逢冲为通用法则",
+ "yingqi_holdout": [
+  "YQ003",
+  "YQ007"
+ ],
+ "wikisource_holdout": [
+  "WS001",
+  "WS002",
+  "WS003",
+  "WS004",
+  "WS005",
+  "WS006",
+  "WS007",
+  "WS008",
+  "WS009",
+  "WS010",
+  "WS011",
+  "WS012",
+  "WS013",
+  "WS014",
+  "WS015",
+  "WS016",
+  "WS017",
+  "WS018",
+  "WS019",
+  "WS020",
+  "WS021",
+  "WS022",
+  "WS023",
+  "WS024",
+  "WS025",
+  "WS026",
+  "WS027",
+  "WS028",
+  "WS029",
+  "WS030",
+  "WS031",
+  "WS032",
+  "WS033",
+  "WS034",
+  "WS035",
+  "WS036",
+  "WS037",
+  "WS038",
+  "WS039",
+  "WS040",
+  "WS041",
+  "WS042",
+  "WS043",
+  "WS044",
+  "WS045",
+  "WS046",
+  "WS047",
+  "WS048",
+  "WS049",
+  "WS050"
+ ],
+ "wikisource_direction": [
+  "WSD001",
+  "WSD002",
+  "WSD003",
+  "WSD004",
+  "WSD005",
+  "WSD006",
+  "WSD007",
+  "WSD008",
+  "WSD009",
+  "WSD010",
+  "WSD011",
+  "WSD012",
+  "WSD013",
+  "WSD014",
+  "WSD015",
+  "WSD016",
+  "WSD017",
+  "WSD018",
+  "WSD019",
+  "WSD020",
+  "WSD021",
+  "WSD022",
+  "WSD023",
+  "WSD024",
+  "WSD025",
+  "WSD026",
+  "WSD027",
+  "WSD028",
+  "WSD029",
+  "WSD030",
+  "WSD031"
+ ],
+ "huozhulin_holdout": [],
+ "note_bushi_zhengzong_holdout": "本集**登记为空是有意为之，不是丢数据**（2026-10-12 按 `data/cases/classical_cases.json` 实测）：全书 30 例 ZS* 里 20 例出自《卜筮正宗》（source 计数：『附占验』17、『十八问答』2、『胎孕论』1），而这 20 例中的 ZS001-020 正是 **tune（参与过调参）集**；其余 HO001-012 出自《黄金策》《增删卜易》。『外部验证集』的定义前提是**永不参与调参**（见 note_externals），故卜筮正宗的案例**不能同时充当自己的外部集**——拿调参过的例报「泛化」读数，正是要防的自证。若将来要建这一集，须另取**未进过 tune/holdout** 的卜筮正宗占例并过纳甲/卦变/世应校验，不能从现有 ID 里挪。",
+ "suigui_holdout": [
+  "SG001",
+  "SG002"
+ ],
+ "bushi_zhengzong_holdout": [],
+ "too_weak": [
+  {
+   "source": "黄金策（维基文库）",
+   "reason": "23389 字全文已下载（data/sources/huangjin_ce.wikitext.txt），但全书为理论赋体（总断千金赋+34分类章节+何知章），无任何'X月X日占Y得A之B卦果于C日'形态的占例；0 处应期锚点，不产出 yingqi-scorable 案例"
+  },
+  {
+   "source": "卜筮元龟",
+   "reason": "维基文库 API missingtitle；全文搜索未命中；无结构化数字版本"
+  },
+  {
+   "source": "断易天机",
+   "reason": "维基文库 API missingtitle（简/繁体均搜索未命中）；无结构化数字版本"
+  },
+  {
+   "source": "易冒（程良玉）",
+   "reason": "维基文库 API missingtitle；维基文库术数分类无此目"
+  },
+  {
+   "source": "卜筮全书",
+   "reason": "维基文库主搜索未命中；术数 Category 下仅4条目不含卜筮全书；shidianguji.com 有内容但无结构化 API"
+  }
+ ],
+ "note_externals": "yingqi_holdout/wikisource_holdout/wikisource_direction/huozhulin_holdout/suigui_holdout/bushi_zhengzong_holdout 均为外部验证集，永不参与调参；too_weak 为探测后<5 例或不存在之来源，不计入任何集合。huozhulin_qualitative.json（HZQ*）与 huozhulin_candidates.json（HZC*）按其自身 _meta 是**仅参考、不参与评分**的定性/候选集，过去被误登记成 split 且与 huozhulin_holdout 共用 HZL* ID，导致 --split huozhulin_qualitative 实际拿 holdout 的盘面跑分（假基准，2026-10-09 撤除）",
+ "huozhulin_qualitative": [
+  "HZQ001",
+  "HZQ002",
+  "HZQ003",
+  "HZQ004",
+  "HZQ005"
+ ],
+ "note_excluded_trace_2026_10_12": "excluded 条目新增 trace_2026_10_12 字段：记「无卦名」之外更深一层的实测事实——这五例连占题原文都不在已入库底本里，属**出处不可核**，不只是**残缺可补**。原 reason 一字不动（历史文字只追加不改写）。门 [19] 据此把「补回卦名即可收录」从计划里划掉。"
 }

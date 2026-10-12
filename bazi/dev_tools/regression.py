@@ -9,6 +9,14 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+
+# 控制台编码守卫：须在 import sys 之后（早于 sys 导入时 NameError 被 except 咽掉、静默失效）
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
+
 from pathlib import Path
 
 DISC = Path(__file__).resolve().parents[1]

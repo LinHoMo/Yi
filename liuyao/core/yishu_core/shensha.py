@@ -34,15 +34,15 @@ from .symbols import BRANCH_ELEMENTS, NAYIN_TO_ELEMENT, sanhe_group, nayin_of
 #
 # 并列书源（OPT-lixuzhong_mingshu_dz-01，2026-10-07 补注，**取值零变更**）：
 #   本表取值（甲戊庚→丑未｜乙己→子申｜丙丁→亥酉｜壬癸→卯巳｜辛→午寅）
-#   与下述两份在库书源**逐字同构**，且《李虚中命书》给出更早的分组依据：
-#     · data/sources/lixuzhong_mingshu_dz.dz.txt L76 逐字：
+#   与下述两份在仓书源（底本在八字科 `bazi/data/sources/`，六爻科不入库）**逐字同构**，且《李虚中命书》给出更早的分组依据：
+#     · bazi/data/sources/lixuzhong_mingshu_dz.dz.txt L76 逐字：
 #       「本家贵人命者，如甲人有戊有庚有丑有未是也大贵，如甲人得丁丑辛未，
 #         又其次也。……更有一种贵人，亦为福甚重得者必贵，**甲戊庚得乙丑癸未，
 #         乙得庚子戊申，己得丙子甲申，丙丁得丁酉乙亥，壬癸得乙卯癸巳，
 #         六辛得丙寅戊午**」
 #       ——即本表丑未／子申／亥酉／卯巳／午寅五组**逐组对应**（本书以「本家贵人」
 #       即同干贵人称之，与后世「天乙」名同实异，此处只登记**分组结构**同构）。
-#     · data/sources/lixuzhong_mingshu_dz.dz.txt L82 逐字：
+#     · bazi/data/sources/lixuzhong_mingshu_dz.dz.txt L82 逐字：
 #       「贵合贵食，有贵合则官位穹崇所作契合。……如**甲戊庚贵在丑未**，
 #         甲得己丑己未，戊得癸丑癸未，庚得乙丑乙未，**乙巳贵在申子**……
 #         **丙丁贵在亥酉**，丙得辛酉辛亥……如此之类谓之贵合」
@@ -76,7 +76,7 @@ HUA_GAI = {"水": "辰", "火": "戌", "金": "丑", "木": "未"}
 # 【桃花/咸池「真假」判别，OPT-sanming_tonghui_dz-05，2026-10-07 补注，**取值零变更**】
 # 本表 TAO_HUA 只按三合局取落点（申子辰→酉、寅午戌→卯、巳酉丑→午、亥卯未→子），
 # **未做真假判别**。书源对真假有明文，且是「加一道同类检验」而非改落点：
-#   data/sources/sanming_tonghui_dz.dz.txt L456 逐字：
+#   bazi/data/sources/sanming_tonghui_dz.dz.txt L456 逐字：
 #     「论咸池【按此煞须天干纳音于地同类方是若只论寅午戌在卯天干纳音或不属火非是」
 #   ——即寅午戌见卯只是**候选**，还须「天干纳音于地同类」（天干纳音五行 = 落点地支五行）
 #   才算真咸池；纳音不属火（卯）者非是。
@@ -90,7 +90,6 @@ HUA_GAI = {"水": "辰", "火": "戌", "金": "丑", "木": "未"}
 TAO_HUA_ZHENJIA_NOTE = (
     "论咸池【按此煞须天干纳音于地同类方是若只论寅午戌在卯天干纳音或不属火非是"
 )
-TAO_HUA_ZHENJIA_SRC = "data/sources/sanming_tonghui_dz.dz.txt:456"
 
 
 def taohua_zhenjia(pillar_ganzhi: str, target_branch: str) -> bool | None:

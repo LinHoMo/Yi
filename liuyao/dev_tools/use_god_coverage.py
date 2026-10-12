@@ -33,7 +33,12 @@ import thinking_chain as tc                                       # noqa: E402
 from yishu_core.runtime import force_utf8_stdio                   # noqa: E402
 
 # 词典里可能误命中的单字键（子串匹配，会命中无关词："占买房子"的"子"）
-SINGLE_CHAR_KEYS = {k for k in tc._QUESTION_USE_GOD_MAP if len(k) == 1}
+# 第八十六批修：符号 `_QUESTION_USE_GOD_MAP` 的真身在 chain_tables（step2 从那里 import），
+# 本工具旧写法向 thinking_chain 要它，实测 AttributeError——即该工具在符号迁移后
+# 就再没跑通过，而没有任何门执行过它。
+import step2
+from chain_tables import _QUESTION_USE_GOD_MAP as _QG_MAP, _QUESTION_USE_GOD_BASIS as _QG_BASIS
+SINGLE_CHAR_KEYS = {k for k in _QG_MAP if len(k) == 1}
 
 
 def classify(text: str) -> dict:
@@ -42,7 +47,7 @@ def classify(text: str) -> dict:
     source 取自 chain_step2._decide_use_god 的决策元信息；词典层再按族的
     basis.kind 分 有据(citation)/推断(inference)，覆盖层按有无层引文分。
     """
-    got, meta = tc._decide_use_god("", text)
+    got, meta = step2._decide_use_god("", text)
     source = meta.get("source", "兜底")
     layer = meta.get("label", "")
     citation = meta.get("citation", "")
@@ -50,7 +55,7 @@ def classify(text: str) -> dict:
     basis_kind = ""
     if source == "词典":
         top = max(keys, key=len) if keys else ""
-        basis_kind = (tc._QUESTION_USE_GOD_BASIS.get(top) or {}).get("kind", "")
+        basis_kind = (_QG_BASIS.get(top) or {}).get("kind", "")
     elif source == "覆盖":
         basis_kind = "citation" if citation else "inference"
     return {"use_god": got, "source": source, "layer": layer,

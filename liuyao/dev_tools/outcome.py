@@ -35,6 +35,10 @@ from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 from yishu_core import ganzhi_calendar as gc  # noqa: E402
 
 EVENTS = DISC / "logs" / "divination_events.jsonl"
+QUARANTINE = DISC / "logs" / "divination_events.quarantine.jsonl"
+# 第八十六批：生产日志里曾混入测试期落盘的事件（问题串含「测/试」），
+# 已分流到 QUARANTINE。读取端必须把排除数量说出来——不然是"静默少算"，
+# 与把测试数据当现实证据同样危险（前者让人以为链路上有数据）。
 OUTCOMES = DISC / "data" / "feedback" / "outcomes.jsonl"
 MIN_N_FOR_CONCLUSION = 30      # 低于此数不出"命中率"结论，只报计数
 
@@ -56,6 +60,9 @@ def read_jsonl(path: Path) -> list[dict]:
 
 def load_events() -> dict[str, dict]:
     evs = read_jsonl(EVENTS)
+    _q = read_jsonl(QUARANTINE)
+    if _q:
+        print(f"（已排除测试期落盘事件 {len(_q)} 条，见 logs/divination_events.quarantine.jsonl）")
     by_id = {}
     for e in evs:
         eid = e.get("event_id")

@@ -11,15 +11,33 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+try:  # 实测本 CLI 在 GBK 控制台输出的是 GBK 字节（首字节 `# \xc1\xf9\xd8\xb3`＝「六爻」），UTF-8 消费方必乱码
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
+
+# 内核定位规则只在 kernel_path.py 一份实现（本文件此前只挂了 scripts/，没挂 core/）
+_ks_d = os.path.dirname(os.path.abspath(__file__))
+if _ks_d not in sys.path:
+    sys.path.insert(0, _ks_d)
+
+from kernel_path import ensure_kernel_on_path as _ks_ensure  # noqa: E402
+
+# `python scripts/render.py xxx.json -f html` 原先直接 ModuleNotFoundError: yishu_core，
+# 而本文件 docstring 自称「报告产物只此一个出口」且含 HTML——md 分支能跑，
+# html 分支只在被别处 import 时才侥幸可用。按仓库同一约定补挂内核。
+_ks_ensure(__file__)
 
 from narrate import narrate  # noqa: E402
 
 _CSS_PATH = Path(__file__).resolve().parents[1] / "assets" / "report.css"
 _TPL_PATH = Path(__file__).resolve().parents[1] / "data" / "narrative_templates.json"
+# 章节序号汉字（报告按实际出现的可选节顺延编号）
+_CN = "一二三四五六七八九十"
 
 
 def _grade_note() -> str:
@@ -152,8 +170,38 @@ def render_html(a: dict) -> str:
     </section>
 """
     )
+    # 趋避建议：analyze 层算出的 section_advice 此前只在文本报告与 narrate 里出现，
+    # HTML 完全没这一节（`assets/report.css` 的 `.advice-list` 自定义起无人引用即是旁证）——
+    # 属「算出来了但看不到」。节号按实际出现的可选节顺延，不硬编。
+    sec_no = 3  # 一、结要 / 二、卦盘 / 三、正文 已在上面模板里
+    adv = [str(x).strip() for x in (a.get("section_advice") or []) if str(x).strip()]
+    if adv:
+        sec_no += 1
+        items = "".join(f"<li>{escape(t)}</li>" for t in adv)
+        body += (f'    <section class="card"><h2>{_CN[sec_no - 1]}、趋避建议</h2>'
+                 f'<ul class="advice-list">{items}</ul></section>\n')
+    # 方位层（#23）：advanced_analysis.fangwei 的候选方位必须可见。parity 门此前只盯
+    # 趋避／应期／所本三节，advanced_analysis 的子节掉出 HTML 都查不到——属「算出来了但看不到」。
+    fw = ((a.get("advanced_analysis") or {}).get("fangwei") or {})
+    if fw.get("applicable"):
+        sec_no += 1
+        rows = [f"{c.get('why') or ''}：{c.get('direction') or ''}"
+                f"（{c.get('branch') or ''}，{c.get('strength') or ''}）"
+                for c in (fw.get("candidates") or [])]
+        if fw.get("ji_fang"):
+            rows.append("吉方候选：" + "、".join(fw["ji_fang"])
+                        + ("（同档并列，不代书择一）" if fw.get("tie") else ""))
+        for y in fw.get("yan_yi") or []:
+            rows.append(f"延医{y.get('档') or ''}：{y.get('direction') or ''}（{y.get('branch') or ''}）")
+        if fw.get("yan_yi_note"):
+            rows.append(str(fw["yan_yi_note"]))
+        lis = "".join(f"<li>{escape(r)}</li>" for r in rows)
+        body += (f'    <section class="card"><h2>{_CN[sec_no - 1]}、方位参考</h2>'
+                 f'<ul class="advice-list">{lis}</ul>'
+                 f'<div class="judgment-text">{escape(str(fw.get("basis") or ""))}</div></section>\n')
     if con.get("所本"):
-        body += (f'    <section class="card card-appendix"><h2>四、判据所本</h2>'
+        sec_no += 1
+        body += (f'    <section class="card card-appendix"><h2>{_CN[sec_no - 1]}、判据所本</h2>'
                  f'<div class="judgment-text">{escape(con["所本"])}。</div></section>\n')
     body += """</main>
 

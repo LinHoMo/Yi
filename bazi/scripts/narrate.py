@@ -128,7 +128,7 @@ def _kanming_block() -> list[str]:
     是方法论登记，**不是判据、不进任何评分**（SKILL.md 铁律一）。
 
     排版约束：① 引文一律用「」包成独立分句，且出处括注以 `（《…` 开头、行号置括注内
-    ——`tools/verdict_audit.py` 的 NON_VERDICT ① 以 `（\s*[《＜]` 豁免出处标注行
+    ——历史上 tools/verdict_audit.py 的 NON_VERDICT ① 以「（《」开头豁免出处标注行
     （与 `_dts_line`／`_geju_line` 的 `**X所本**（《书名》…）：「原文」` 同款排版），
     且若行号紧贴引文尾会被并进同一句误判成「未外置断语」。② 引文本体在
     `data/verdicts.json#看命口诀`，属已外置。
@@ -154,6 +154,29 @@ def _tiaohou_quote(a: dict) -> dict | None:
         return None
     n = _MONTH_ORDINAL.get(month_gz[1])
     return _TIAO_HOU_QUOTES.get(f"{n}{day_gz[0]}") if n else None
+
+
+def _pillar_detail(a: dict) -> list[str]:
+    """四柱十神 + 四柱藏干（定义式机械量，不批吉凶）。
+
+    十神按日主对其他三干起（日主自身记作「日主」而非比肩，避免读者把
+    「比肩」误读成「命里比肩多」）；藏干取该支所藏，本气在前。
+    """
+    pil = a.get("pillars") or (a.get("chart_summary") or {}).get("四柱") or {}
+    fac = a.get("factors") or {}
+    if not pil:
+        return []
+    rows = []
+    for key, cn in (("year", "年"), ("month", "月"), ("day", "日"), ("hour", "时")):
+        p = pil.get(key) or {}
+        gz = p.get("ganzhi") or "—"
+        if key == "day":
+            tg = "日主"
+        else:
+            tg = p.get("ten_god") or (fac.get(key) or {}).get("stem_ten_god") or "—"
+        hs = (fac.get(key) or {}).get("hidden_stems") or []
+        rows.append(f"- {cn}柱 {gz}：干十神={tg}；支藏干={'、'.join(str(h) for h in hs) or '—'}")
+    return ["**四柱十神与四柱藏干**（定义式机械量，不批吉凶）："] + rows
 
 
 def _gong_text(gong) -> str:
@@ -186,6 +209,11 @@ def narrate(a: dict) -> str:
     ds = _day_stem_block(a)
     if ds:
         lines += ds + [""]
+    # 四柱十神 / 四柱藏干：这两项都是**计分维度**（ten_gods 16 分、hidden_stems 8 分），
+    # 引擎一直算得出却从不进正文——EVAL-PLAN §六 禁的「算出来了但看不到」正是这种。
+    pd = _pillar_detail(a)
+    if pd:
+        lines += pd + [""]
     lines += [
         f"**强弱**：{con.get('strength') or s.get('强弱') or '—'}（得分 {con.get('strength_score')}）。",
     ]
@@ -296,6 +324,21 @@ def narrate(a: dict) -> str:
         if tkdc:
             lines.append("- 天克地冲：" + "；".join(t.get("text") for t in tkdc) + "。")
         lines.append("")
+    # 行运引动（#31②③）：运干/运支对**本命四柱**的结构标签。独立成列——不并入本命判档、
+    # 不覆写格局成败结论，只把「运到了哪一步动了命里哪一支」摆出来供回指书例。
+    yin = a.get("dayun_ming_yindong") or []
+    sui = a.get("liunian_ming_yindong") or []
+    if yin or sui:
+        lines.append("**行运引动**（运与岁对本命四柱的结构标签，独立成列、不覆写本命结论，不批吉凶）：")
+        for h in yin:
+            seg = "；".join(str(r.get("text") or "") for r in h.get("relations") or [])
+            if seg:
+                lines.append(f"- 大运{h.get('dayun')}：{seg}。")
+        for h in sui[:6]:      # 岁层只列前六个有引动的流年（表长以可读为限）
+            seg = "；".join(str(r.get("text") or "") for r in h.get("relations") or [])
+            if seg:
+                lines.append(f"- 流年{h.get('liunian')}（{h.get('year')}年）：{seg}。")
+        lines.append("")
     # 十神取象旁证（《千里命稿·六神篇》）：**只作象数旁证，不进结构、不评分**。
     # 数据源 data/liushen_image.json 按 OPT-qianli_minggao_dz-03 约定**仅 narrate 可读**；
     # 措辞守铁律三：用「结构上/有…信号」，且逐字引文自带定位，便于回指原文。
@@ -336,7 +379,12 @@ def narrate(a: dict) -> str:
             if not xm:
                 continue
             loc = str(qx.get("性质行") or "").replace("data/sources/", "").split(".")[0]
-            nq_items.append(f"{pname}={gz}「{xm}」（{loc}）")
+            # 带上底本原句：只印一个「从革之金」这类裸标签，读者无从核证它是不是书上的话；
+            # 引文字段是逐字抽取物（[14] 同步门逐字回校验底本），贴出来才算可回指的旁证。
+            yw = str(qx.get("性质引文") or "").strip()
+            nq_items.append(f"{pname}={gz}「{xm}」"
+                            + (f"——原书作「{yw}」" if yw else "")
+                            + f"（{loc}）")
         if nq_items:
             lines.append("**纳音取象**（《五行精纪》纳音性质名，物性标签旁证、非吉凶断语）：")
             for it in nq_items:

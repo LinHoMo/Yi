@@ -108,7 +108,10 @@ def step3_analyze_strength(r: dict) -> dict:
     god_day_score = strength_to_score(god_day_strength)
 
     # ---------- 3.3: 日辰修正 ----------
-    day_modifier, day_modifier_reason = compute_day_modifier(day_element, use_god_element)
+    day_modifier, day_modifier_reason = compute_day_modifier(
+        day_element, use_god_element, day_branch,
+        (selected_use_god or {}).get("earthly_branch") if isinstance(selected_use_god, dict)
+        else str(selected_use_god or ""), yao_lines)
 
     # ---------- 3.4: 旬空修正 ----------
     em = compute_empty_modifier(
@@ -146,7 +149,18 @@ def step3_analyze_strength(r: dict) -> dict:
     desperate_relief_from_stage_reason = tg["desperate_relief_from_stage_reason"]
 
     # ---------- 3.8: 综合评分 ----------
-    # 基础分：月建为主（权重0.6），日辰为辅（权重0.4）
+    # 月日轻重：书上给的是**次序与分工**，不是比例。
+    #   《易冒》源L688「月建以旺相休囚死之法为主」——旺衰定性归月令；
+    #   《易冒》源L688「日将以长生十二法参之」——日辰另以十二运参，本层单列
+    #     twelve_growth_modifier，不混进基础分；
+    #   《卜筮全书》源L8895「月建为甚，日辰次之，出现则不可当也」（《黄金策》源L3217 同句）；
+    #   《增删卜易》源L1537「用爻休囚又被月建日辰制服，纵遇生扶，亦不济事也」——
+    #     月日**双制**才判无救，这一条已在旬空层实现（month_weak 且日克且无一生扶 → 真空）。
+    # 下面的 0.6／0.4 **是本仓的工程口径，不是书上的数**：书里唯一见过的比例是
+    #   《易冒》源L377「若月将为忌克用，则夺其权十分之二」，但它说的是"月将为忌"时的夺权量，
+    #   与"月日两路各占几分"不是同一命题，拿来当 0.6/0.4 的出处就是假托书据。
+    # 因此 0.6/0.4 只满足"月建为甚、日辰次之"的次序，其具体数值未经书目定值；
+    #   受此影响而旺衰断言悬置的例见 tests/regression_test.py 的 reg_16/reg_17。
     base_score = god_month_score * 0.6 + god_day_score * 0.4
     # 加上日辰修正
     adjusted_score = base_score + day_modifier
@@ -567,13 +581,31 @@ def resolve_fu_cang_result(
     return True, {"error": "无法定位用神"}
 
 
-def compute_day_modifier(day_element: str, use_god_element: str) -> tuple:
-    """3.3 日辰修正：同气/生/泄/克/制。"""
+def compute_day_modifier(day_element: str, use_god_element: str,
+                         day_branch: str = "", use_god_branch: str = "",
+                         yao_lines: list | None = None) -> tuple:
+    """3.3 日辰修正：同气/生/泄/克/制。
+
+    「同气」一档按书拆成两式（第九十七批）：《黄金策》源L124 逐字「并不并、冲不冲，因多字眼」
+    的夹注 源L125 逐字「并，日辰与卦中爻相同为并」「如卦中子爻衰弱，因日辰并之，则为旺论」，
+    并给出**唯一性条件**逐字「卦中只有一位子爻与日辰子才能为并，如卦中有两个子爻，而不能成并」。
+    ⇒ 日辰与用神**同支**才是书上的"并"；而该支在卦中现两位以上，书明言"不能成并"，
+    这一档 +0.5 不该给。同五行而不同支（如寅日用神卯木）书上未在此条论及，
+    维持现行同气处理，不因本条改动（无据不收紧，也无处称已按书收紧）。
+    """
     day_modifier = 0.0
     day_modifier_reason = ""
     if day_element == use_god_element:
         day_modifier = 0.5
         day_modifier_reason = "日辰与用神同气（同性相助）"
+        if day_branch and day_branch == use_god_branch:
+            _cnt = sum(1 for y in (yao_lines or [])
+                       if isinstance(y, dict)
+                       and (y.get("earthly_branch") or y.get("branch")) == day_branch)
+            if _cnt >= 2:
+                day_modifier = 0.0
+                day_modifier_reason = (f"日辰{day_branch}与用神同支，但卦中该支现 {_cnt} 位"
+                                       f"——书注明言两位不能成并，故不以并助论")
     elif SHENG_CYCLE.get(day_element) == use_god_element:
         day_modifier = 1.0
         day_modifier_reason = "日辰生用神"

@@ -8,11 +8,21 @@
 口径：只同步 main 非空的格；assist 空串如实写空串。注释里的格数随之重算，
 不手写——避免注释与实际条数长期不一致。
 """
+
 import argparse
 import ast
 import json
 import re
 import sys
+
+# 控制台编码守卫：GBK/cp936 控制台下本器的中文输出会退化成乱码字节（rc 仍为 0，只有这条管得住）。
+# 位置在 __future__ 之后、其余语句之前；import 期解释器告警仍需调用方 PYTHONUTF8=1 才能全拦（见 check.py 编码不变式）。
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
+
 from pathlib import Path
 
 # 扁平化后脚本位于 <学科根>/dev_tools/；学科根=bazi（parents[1]），内核副本在 <学科根>/core。

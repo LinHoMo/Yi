@@ -23,6 +23,15 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from feedback_store import FeedbackStore, WINDOW_CALIBER, _branch_of  # noqa: E402
 
+# 第八十六批：本器是"唯一能产生现实证据"那条链路的读数端，却从未在目标控制台跑过。
+# 实测（cp936 默认控制台，subprocess 干净进程）`--summary` 以 UnicodeEncodeError('⚠')
+# 崩溃退出 1 —— 摘要里一个警示符号就足以让整条反馈链在消费者机器上不可用。
+# 修法是改 stdout 编码，不是删符号（删了就把"证据不足"的提示一起删掉）。
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 
 DAYS_OF_WEEK = "一二三四五六日"
 DAYS_MTWT = ["一", "二", "三", "四", "五", "六", "日"]

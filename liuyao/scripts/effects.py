@@ -652,7 +652,7 @@ def analyze_flying_hidden_interaction(result):
           源L21 剥卦「与艮为飞伏」
           源L22 晋卦「与离为飞伏」
           源L24 震卦「与巽为飞伏」
-          源L3   序言述本书「以八卦分八宫，每宫一纯卦统七变卦，而注其世应飞伏
+          《京氏易传》源L3   四库总目提要述其书「以八卦分八宫每宫一纯卦统七变卦而注其世应飞伏
                  游魂归魂诸例」——即京氏确自有飞伏例，与本宫首卦寻伏不是同一法。
 
     **本轮处置（只注记、不实现第二套飞伏）**：
@@ -661,7 +661,7 @@ def analyze_flying_hidden_interaction(result):
       2. 本条只防**叙述层误引**：输出层若称「对宫伏神／京氏飞伏」而实际取自
          本宫首卦，即为误称。措辞一律以「本宫首卦寻伏」为准。
       3. 八纯卦与归魂卦上两系取值差异最易出误称（八纯无变、归魂「复本宫」，
-         见源L22-23 晋/大有「为游魂」「复本宫曰大有」），叙述层尤须留意。
+         见《京氏易传》源L22-23 晋/大有「为游魂」「复本宫曰大有」），叙述层尤须留意。
     """
     fu_analysis = result.get("advanced_analysis", {}).get("hidden_spirit_analysis", {})
     if not fu_analysis or not fu_analysis.get("has_hidden_spirit"):

@@ -56,6 +56,7 @@ sys.path.insert(0, _SCRIPT_DIR)
 
 from engine import build_hexagram_result  # noqa: E402
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
+from step4 import net_effect_sign  # noqa: E402  净效应档位单一真值源（与 regression_test 同一条链）
 from thinking_chain import (  # noqa: E402
     run_thinking_chain,
     HEXAGRAM_LIUHE,
@@ -515,16 +516,14 @@ def run_test_case(tc: TestCase, verbose: bool = False) -> dict:
     if tc.expected_net_effect_sign is not None:
         net = s4.get("net_effect", 0.0)
         net_val = net if isinstance(net, (int, float)) else 0.0
-        if tc.expected_net_effect_sign == "positive":
-            net_ok = net_val > 0.3
-        elif tc.expected_net_effect_sign == "negative":
-            net_ok = net_val < -0.3
-        else:  # neutral
-            net_ok = abs(net_val) <= 0.5
+        # 与 regression_test 同一份档位（step4.net_effect_sign，±0.5）：
+        # 两套测试各自写阈值是「同一 -0.4 一处算负、一处算中性」的根源。
+        net_ok = net_effect_sign(net_val) == tc.expected_net_effect_sign
         checks.append((
             "动变净效应",
             net_ok,
-            f"expected_sign={tc.expected_net_effect_sign}, net_effect={net_val}",
+            f"expected_sign={tc.expected_net_effect_sign}, net_effect={net_val}, "
+            f"engine_sign={net_effect_sign(net_val)}",
         ))
 
     # ── Check 5: 六合/六冲卦体 (if specified) ──

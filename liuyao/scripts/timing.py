@@ -7,34 +7,34 @@
 列义：书源方法 → 引擎落点（函数:行）→ 覆盖状态（已实现／口径不一致／缺失）。
 逐字引文可回指 `源L<行>`，行号即 data/sources/<书>.dz.txt 的物理行号。
 
-【甲】《易隐》应期四诀（docs/source-readings/yiin_dz.md OPT-yiin_dz-03）
+【甲】《易隐》应期四诀（书源：`data/sources/yiin_dz.dz.txt`，OPT-yiin_dz-03）
 ────────────────────────────────────────────────────────────────────────
 1. 动合日／静冲日／伏值日／休生旺日
    源L1556 逐字：「用动，则以六合之日为期也。用静，则以冲动之日为期也。
    用伏藏旺相，则以用爻值日为期。用出现休囚，则以生旺之日为期也。」
-   引擎：`_build_timing_methods`(306-357) 出 timing_methods 四条
-   （逢值/逢冲/待旺时/出空）+ `_rank_candidates`(489-494) 排
+   引擎：`_build_timing_methods` 出 timing_methods 四条
+   （逢值/逢冲/待旺时/出空）+ `_rank_candidates` 的
    「发动值日」「用神值日」「动逢合日」「静逢冲日」。
    状态：**已实现**（四态齐备；六合日/三合日按 _he()/_collect_key_branches 合支并入）。
 
 2. 行人归期：三合日／六合日／静取冲动月日／旺生月日／衰取旺日／旺取墓日
-   源L2051 逐字：「凡用爻应爻动者，三合日到，或六合日到也。静取冲动月日起程，
+   《易隐》源L2051 逐字：「凡用爻应爻动者，三合日到，或六合日到也。静取冲动月日起程，
    旺生月日到也。衰取旺日到，旺取墓日到也。」
-   引擎：合日→`_collect_key_branches`(190,220) 推 _he 支；静冲月日→日/月/年级
-   三档各有一条「静逢冲日」；衰取旺日→(509) use_weak_wait_prosper 排 PEAK_BRANCH；
-   旺取墓日→(483-484,537-538,575-576) use_tomb_chong_* 三档。
+   引擎：合日→`_collect_key_branches` 推 _he 支；静冲月日→日/月/年级
+   三档各有一条「静逢冲日」；衰取旺日→use_weak_wait_prosper 排 PEAK_BRANCH；
+   旺取墓日→use_tomb_chong_tomb／_month／_year 三档。
    状态：**已实现**（月日级；「三合日」按三合局支并入 key_branches）。
 
 3. 尹逢头断法四句（应期总纲，最紧凑的四条）
-   源L2168 逐字：「用旺还须墓日定，用休生旺日当成，用伏但看用值日，
+   《易隐》源L2168 逐字：「用旺还须墓日定，用休生旺日当成，用伏但看用值日，
    动逢合住待冲辰。」
-   引擎：用旺墓日定→(483) use_tomb_chong_tomb；用休生旺日当成→(509)
-   use_weak_wait_prosper；用伏但看用值日→(482) 「伏神值日」；
-   动逢合住待冲辰→(485) 「用神被X合住，冲开之日」。
+   引擎：用旺墓日定→use_tomb_chong_tomb；用休生旺日当成→
+   use_weak_wait_prosper；用伏但看用值日→「伏神值日」；
+   动逢合住待冲辰→bound_by 分支「用神被X合住，冲开之日」。
    状态：**已实现**（四句逐句有落点；「合住待冲」为 bound_by 分支）。
 
 4. 迟速四段（动速静迟／旺相出现速／囚死伏藏迟／爻位与宫位迟速）
-   源L2168 逐字：「动速静迟，旺相出现速，囚死伏藏迟。…初二爻动速，三四爻动，
+   《易隐》源L2168 逐字：「动速静迟，旺相出现速，囚死伏藏迟。…初二爻动速，三四爻动，
    犹豫迟疑。五动迟，六动更迟。」
    引擎：`_build_timing_methods`(387-395) 只出 speed 三档
    （极旺/旺→应速；中和→应期适中；其余→应迟），**不分爻位、不分宫位**。
@@ -45,35 +45,71 @@
 
 【乙】《黄金策·千金赋》期日九法（OPT-huangjince_dz-06）
 ────────────────────────────────────────────────────────────────────────
-源L264 夹注逐字（九法原文照录，不删不改）：
+源L264「用爻旺相不动，以冲动月日断」 夹注逐字（九法原文照录，不删不改）：
   「用爻旺相不动，以冲动月日断；用爻有气发动，以合日断，或以本日断；
     用爻受制，以制杀月日断；用爻得时旺动，又遇生扶，此为太旺，应以墓库月日断；
     用爻无气发动而遇生扶，即以生扶之月日断；用爻入墓，则以破墓月日断；
     用爻空亡，以冲动月日断；用爻旺空，或空而逢冲、逢并、逢动者，以过旬断；
     若占散事，应以用爻死墓绝日断等等。」
-源L263 逐字：「若遇休囚，必生旺而成事。」／源L265 逐字：「速则动而克世，缓则静而生身。」
+《黄金策》源L263 逐字：「若遇休囚，必生旺而成事。」／源L265 逐字：「速则动而克世，缓则静而生身。」
 
-  #  方法（源L264）                引擎落点                                状态
-  1 旺相不动→冲动月日      _build_timing_methods:312-319 逢冲        已实现
-  2 有气发动→合日/本日      _rank_candidates:489-491 动逢合日        已实现
+  #  方法（《黄金策》源L264「此谈期日之法」）      引擎落点                                状态
+  1 旺相不动→冲动月日      YINGQI_TXT[use_quiet_chong_day] 静逢冲   已实现
+  2 有气发动→合日/本日      use_moving_he_day 动逢合日＋dufa_value_day 独发值日 已实现
   3 受制→制杀月日           ——                                        缺失
-  4 太旺（旺动逢生扶）→墓库 _rank_candidates:483-484 墓库冲开        已实现
-  5 无气发动逢生扶→生扶月日 _rank_candidates:509 待旺                  已实现
-  6 入墓→破墓月日            _rank_candidates:483-484 墓库冲开        已实现
-  7 空亡→冲动月日            _rank_candidates:448-457 空冲/ chronic   已实现
-  8 旺空/空逢冲并动→过旬     _rank_candidates:453「出旬填实」(仅久病支)  部分
+  4 太旺（旺动逢生扶）→墓库 重叠_taiwang_tomb_日/月（主语＝临日月之重叠爻） 已实现(78)
+  5 无气发动逢生扶→生扶月日 use_weak_wait_prosper 待旺／"待旺时"法  已实现
+  6 入墓→破墓月日            YINGQI_TXT[use_tomb_chong_tomb] 冲墓    已实现
+  7 空亡→冲动月日            empty_chong_real／chronic_empty_wait_chong 已实现
+  8 旺空/空逢冲并动→过旬     _rank_candidates 出旬之日支（全局，第 2 位）  已覆盖
   9 散事→用爻死墓绝日        ——                                        缺失
-  ＋ 休囚→生旺（源L263）      _rank_candidates:507-509                  已实现
+  ＋ 休囚→生旺（《黄金策》源L263「若遇休囚，必生旺而成事」）      use_weak_wait_prosper（PEAK_BRANCH）      已实现
   ＋ 速则动而克世/缓则静而生身
-    （源L265）                 ——（speed 只按旺衰分档，未按动克世/静生身） 部分
+    （《黄金策》源L265「速则动而克世，缓则静而生身」）                ——（speed 只按旺衰分档，未按动克世/静生身） 部分
 
-  缺口处置（**本轮不补**，登记待立项）：
+  缺口处置（截至第一百批的现状：第 4 法已实现（第七十八批），第 3/9 法仍不补，各条理由见下；
+  「本轮不补」这一旧措辞已按实改为具名现状，避免读者把它当悬空的待办）：
+  - 第4法「太旺→墓库月日」：**第七十八批已按书接上**（落点见 `_rank_candidates` 内
+    「期日第4法」块）。历史上的坑不是"没有谓词"，而是**谓词挂错了主语**——
+    《黄金策》源L264 夹注字面写「用爻得时旺动」，第六十八批就照字面挂在用神上建了三条件合取，
+  · 第六十八批实做过又**实测后还原**（不是没试）：按夹注三条件合取（用神旺相＋用神自身发动＋日月或动爻生扶）
+    建「太旺」谓词，候选＝值墓库支，日月两级各排一处，另加「已入墓则归第6法冲墓」的避让守卫。
+    实测：[2] 36、[3] 11、[4] 18、tune 97.3／64.7／1.53、holdout 90.2／50／1.6 全不动；但只读外部集
+    wikisource_holdout 66.2→66.0（名次 2.29→2.25 反更好）、suigui_holdout 98.5→97.5（名次 1.5→2.0 变差），
+    288 例机械 52f36e9d→a535d2ed；加守卫后仍是 66.0／97.5（机械 ed345ce9）——假设被自己的实验否掉，
+    且无法把这次下跌归因到具体盘（130 例经典案例里该谓词一例都不触发，可观测信号只剩 eval 集 46 盘）。
+    故按「解释不了就不留」整条还原，第4法**仍记缺失**。
+    下一次动手的前置：先取得一条书上明写「太旺→应墓库月日」的全要素真例（照 reg_19 四步：取要素→
+    derived_hexagrams 验卦名→ganzhi_of 反算干支→expected 只取书判），让这条法有可判落点再谈排序。
+  · 第六十九批：前置真例**已找到**（就在本章）。《增删卜易》源L1673 逐字「如午月戊午日占何日雨得地风升变恒卦」，    爻行源L1674-L1679（初妻财丑土″应／二父母亥水′／三官鬼酉金′／四妻财丑土″世**动**化子孙午火′／五父母亥水″／    上官鬼酉金″），断语源L1680 逐字「午火子孙临日月旺之极矣，乃为用爻重叠，逢墓库以收藏，故知戌必雨。果于戌日申时雨」。    机器核对：`derived_hexagrams([8,7,7,6,8,8]) == ('升','恒')`、`ganzhi_of(2024-06-23)` 实算 午月戊午日、    `TOMB_MAP[火] == 戌`（与书上应期同支）。
+    **关键更正**：书上这条的落点不是「用神太旺」，而是**临日月而重叠之爻（此处化出之子孙午火）取该五行之墓库日**——    用神是父母亥水。第六十八批那次还原的实现正是把谓词挂在用神上（前提错），这解释了它为何只动外部集而不修好任何一例。    重做要以「哪个爻临日月且重叠」为主语，且必须有可判真例在前。
+  · 第七十八批：按第六十九批更正后的主语落地——谓词＝**月建与日辰同支、卦中（本爻或化出）
+    再见该支**之重叠爻，候选＝该支五行之墓库支（日/月两级各排一处）；两条避让：重叠支＝用神支
+    不排（用神太旺入墓于书无据、且与第6法相抵），重叠支旬空不排。真例复算：`升之恒`（午月戊午日）
+    主应期由「亥日（用神值日）」改为**「戌日（重叠之爻临日月太旺，逢墓库之日收藏）」**，
+    与《增删卜易》源L1680「故知戌必雨。果于戌日申时雨」同支（壬戌＝戊午后第四日，实算合）。
+    实测（同批 rc=0 运行）：288 例金标准机械 52f36e9d6760d4c4／措辞 7200af9a70d2df8f **零漂移**；
+    tune 97.3／64.7／1.53、holdout 90.2／50／1.6、外部 87.9／67.4／72.4／98.5 全不变；
+    [2] 36、[3] 11、[4] 18、[14] 493 指针／460 可验／457 逐字命中／0 判红／10 NOTE。
+    逐集实查本法命中数：tune 0、holdout 0、wikisource_holdout 0、suigui 0、huozhulin 0、
+    yingqi_holdout 0、wikisource_direction 2（该集应期为 N/A，只评方向，故方向分不动）。
+    ⇒ 与第六十八批的分水岭：那次挂在用神上，谓词在 130 例经典案例里一例不触发、
+    只晃外部集（66.2→66.0、98.5→97.5）；这次挂在重叠爻上，在**书上那条真例上触发并把主应期
+    改成书上的支**，而在所有已评分集上零命中、零读数漂移——即"补上缺口"而非"调出分数"。
+    仍**不进 tune**：本集里没有任何一张盘满足该条件，所以这条法目前只有一个可判落点（书例本身），
+    扩大验证的路径是给 fixture 增例（见 reg_19 的四步做法），不是给排序加权重。
   - 第3法「制杀月日」：需 define「受制」＝用神被日月动爻克，机械可判但会新增
     候选支 → 动排序 → 动读数，须走 SKILL.md 全门槛（tune/holdout 分列出分）。
-  - 第8法「过旬」：现仅在久病支排「出旬填实」，全局过旬口径缺失。
+  - 第8法「过旬」：已补全局口径（2026-10-10）——旬空案例把**出旬之日**（旬首支+10）
+    排入候选第 2 位（值空支之后）。为什么不排第 1：本块只在**用神旬空**时触发，
+    可检因此只剩 4 例（日级、基准应支落在当日旬空两支之内）——ZS017 用神即出旬支
+    （池内已有，去重跳过）、ZS006 用神为另一空支而书上答出旬日（卯木财空、
+    癸丑日次晨即甲寅，《增删卜易》源L1573「又因卯木财空，次日出空而退灾」，新候选唯一能赢的一例）、
+    ZS002 酉／ZS004 亥 书上就是值空支填实
+    （提到第 1 会反伤这两例），故取第 2。实跑读数 tune 97.2→97.3，其余三套不变。
   - 第9法「散事死墓绝日」：散事域未进本学科门类（见 OPT-zengshan_buyi_dz-08
     「登记不动」同类处置），故不排。
-  - 源L265「动而克世/静而生身」：属**迟速速调**而非定应期日，现 speed 标签
+  - 《黄金策》源L265「速则动而克世，缓则静而生身」：属**迟速速调**而非定应期日，现 speed 标签
     粒度较粗；补则改 output speed 字段，须同上走门槛。
   三项均属「新增判定」而非「补注记」，按本轮范围（补对源/补注记类，
   不改判定值）只登记不实施，见两 doc 的 OPT 行状态说明。
@@ -100,6 +136,7 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     SAN_HE_GROUPS,
     SHENG_CYCLE,
     TOMB_MAP,
+    chu_xun_branch,
 )
 from narrative_utils import safe_get  # noqa: E402
 from narrative_utils import STEP5_YINGQI as YINGQI_TXT  # noqa: E402
@@ -527,7 +564,16 @@ def _rank_candidates(r: dict, use_god_branch: str, use_god_element: str, strengt
     _qclass = str(step2_d.get("question_class") or "")
     _is_illness_q = _qclass in ("疾病·近病", "疾病·久病")
     _is_chronic = _qclass == "疾病·久病"
-    _chg0 = changed_pairs[0][1] if changed_pairs else ""
+    # 取哪一条化出之支：旧写法 `changed_pairs[0][1]` 是按爻位顺序拿第一条动爻的化支，
+    # 与书上口径无关。《增删卜易》源L3322「应亥月者父母化出之爻也」指的是**用神自身**
+    # 所化之支，故优先取用神动爻的化出支；用神不动时才退回原顺序第一条。
+    # 【灰区·如实记】同书并非一律取化出支：源L3008「内卦寅木父母旺而化出子水之官，
+    # 许寅年仍以原品起用」答的是**本爻值年**；源L1353「寅木一爻独发，化出丑父」「寅木一爻独发，化出丑父，
+    # 乃应正月得见父灵」答的又是化出之父。本条只做"选哪一条化出支"的修正，
+    # 不据此断言化出支一定优于本爻值——那需要按门类再分。
+    _chg_ug = next((c for (b0, c) in changed_pairs
+                    if b0 == use_god_branch and c), "")
+    _chg0 = _chg_ug or (changed_pairs[0][1] if changed_pairs else "")
     # 化空 / 回头生优先；动而化回头生则不作空论（ZS005/007/013）
     for _b, _c in changed_pairs:
         if _c and _c in _empty_list:
@@ -535,14 +581,15 @@ def _rank_candidates(r: dict, use_god_branch: str, use_god_element: str, strengt
     if hui_tou_sheng and is_empty:
         _rank(ranked, hui_tou_sheng[0], YINGQI_TXT["change_hui_tou_sheng_empty"]["text"])
     elif hui_tou_sheng:
-        pass  # 后面统一排
+        pass  # 回头生的化出支在下面"其余化出之支"那一档排（《增删卜易》源L1361「此世化申金回头生，
+              # 亦应申月」）——此前该处被 `not hui_tou_sheng` 挡死，这句注释是假的
     if is_empty and not hui_tou_sheng:
         if day_branch and day_branch == _chong_ug:
             _rank(ranked, day_branch, YINGQI_TXT["use_empty_day_chong"]["text"])
         elif _is_chronic and _chong_ug:
             # 久病逢空多应冲空之日（《增删卜易》久病之忌）
             _rank(ranked, _chong_ug, YINGQI_TXT["chronic_empty_wait_chong"]["text"])
-            _rank(ranked, use_god_branch, "出旬填实")
+            _rank(ranked, use_god_branch, YINGQI_TXT["empty_fill"]["text"])
         elif _is_illness_q:
             # 近病逢空即愈：出空填实为应
             _rank(ranked, use_god_branch, YINGQI_TXT["acute_empty_fill"]["text"])
@@ -550,6 +597,30 @@ def _rank_candidates(r: dict, use_god_branch: str, use_god_element: str, strengt
         else:
             _rank(ranked, use_god_branch, YINGQI_TXT["empty_fill"]["text"])
             _rank(ranked, _chong_ug or use_god_branch, YINGQI_TXT["empty_chong_real"]["text"])
+        # ── 出旬之日（此前整个池子都没有这一支）──
+        # 《增删卜易·各门类应期总注章》源L964「旬空最爱填冲」只给填/冲两条落点，
+        # 《卜筮正宗·旬空论第十》源L1066 另补一条：「此等旬空到底有用，不过待其出旬」，
+        # 《增删卜易》源L643「待至出空之日则不空也」、源L894「卦吉者许之出旬」同此口径。
+        # 本块只在**用神旬空**时触发，所以可比案例不是「基准应支落在
+        # 旬空两支之内」的 12 例，而是其中**用神恰为空支**的 4 例：
+        #   ZS017（壬辰日空午未，用神午=出旬支）——池内已有，下面的去重会跳过；
+        #   ZS006（癸丑日空寅卯，用神卯）——书上答「次日出空」（源L1573「又因卯木财空，
+        #     次日出空而退灾」），癸丑是甲辰旬末日、次晨即出旬日甲寅，新候选唯一能赢的一例；
+        #   ZS002（酉）/ZS004（亥）——书上写的就是值空支填实，提到第 1 会反伤它们。
+        # 故取第 2 位。旧实现在此只排了 `empty_fill`（值空支**填实**）却把它标成
+        # 「出旬填实」，名实不符；出旬日本身从未进池
+        # （本文件开头缺口处置清单早就登记过：「全局过旬口径缺失」）。
+        _dgz = str(safe_get(r, "divination_time", "day_stem_branch", default="") or "")
+        _cx = chu_xun_branch(_dgz)
+        # ranked 里存的是**带单位的 token**（"寅日"），比较与定位都必须用同一口径；
+        # 拿裸支去比会得到恒不相等 + next() 抛 StopIteration，把整例打挂在评测之外。
+        _tok = f"{_cx}日"
+        if _cx and all(_tok != t for t, _ in ranked):
+            _rank(ranked, _cx, YINGQI_TXT["chu_xun_day"]["text"])
+            _i = next((i for i, (t, _) in enumerate(ranked) if t == _tok), None)
+            if _i is not None and _i > 1:
+                # 值空支（填实）之后、泛化候选（原神旺日/比和日等）之前
+                ranked.insert(1, ranked.pop(_i))
     if is_month_break:
         _rank(ranked, use_god_branch, YINGQI_TXT["month_break_fill"]["text"])
         _rank(ranked, _he(use_god_branch), YINGQI_TXT["month_break_he"]["text"])
@@ -577,6 +648,24 @@ def _rank_candidates(r: dict, use_god_branch: str, use_god_element: str, strengt
         _rank(ranked, _chong(tomb_branch), YINGQI_TXT["use_tomb_chong_tomb"]["text"])
     if bound_by:
         _rank(ranked, _chong(bound_by), f"用神被{bound_by}合住，冲开之日")
+    # ── 期日第4法：太旺者逢墓库收藏（九法之四，逐字书据见下面三行）──
+    # 主语是**月建与日辰同支、卦中（本爻或化出）再见**之"重叠之爻"，不是用神。
+    # 《黄金策》源L264 逐字「用爻得时旺动，又遇生扶，此为太旺，应以墓库月日断」；
+    # 全要素真例《增删卜易》源L1673 逐字「如午月戊午日占何日雨得地风升变恒卦」
+    # 合断语《增删卜易》源L1680 逐字「午火子孙临日月旺之极矣，乃为用爻重叠，
+    # 逢墓库以收藏，故知戌必雨」——此例用神是父母亥水，书取的墓库属火（化出午火→戌），
+    # 故谓词挂在重叠之爻上；第六十八批挂在用神上，实测不动任何一例而只晃外部集。
+    # 避让两条：重叠支＝用神支时不排（用神太旺入墓于书无据，且与第6法「入墓→冲墓」相抵）；
+    # 重叠支旬空时不排（空则不作旺之极论，另由出空填实一支接手）。
+    _die = sorted({b for b in ({(y.get("earthly_branch") or "") for y in yao_lines
+                                if isinstance(y, dict)}
+                               | {c for _b0, c in changed_pairs})
+                   if b and b == day_branch == month_branch
+                   and b != use_god_branch and b not in _empty_list})
+    for _db in _die:
+        _tomb_die = TOMB_MAP.get(BRANCH_ELEMENTS.get(_db, ""), "")
+        if _tomb_die:
+            _rank(ranked, _tomb_die, YINGQI_TXT["overlap_taiwang_tomb_day"]["text"])
     # 用神不空时，本气值日优先于其他空亡出空
     if use_god_branch and not is_empty:
         if ug_moving:
@@ -586,8 +675,10 @@ def _rank_candidates(r: dict, use_god_branch: str, use_god_element: str, strengt
             _rank(ranked, use_god_branch, "用神值日")
             _rank(ranked, _chong_ug, YINGQI_TXT["use_quiet_chong_day"]["text"])
     # 其余化出之支
-    if changed_pairs and _chg0 and _chg0 not in _empty_list and not hui_tou_sheng:
-        _rank(ranked, _chg0, "化出之支值日")
+    if changed_pairs and _chg0 and _chg0 not in _empty_list:
+        _rank(ranked, _chg0,
+              YINGQI_TXT["hui_tou_sheng_change_branch"]["text"] if hui_tou_sheng
+              else "化出之支值日")
     # 同五行之空亡支
     ug_el = use_god_element or ""
     for e in _empty_list:
@@ -600,6 +691,14 @@ def _rank_candidates(r: dict, use_god_branch: str, use_god_element: str, strengt
         _rank(ranked, use_god_branch, "以用神为主")
     if strength_level in ("休囚", "囚", "死", "偏弱", "衰") or speed == "应迟":
         _rank(ranked, PEAK_BRANCH.get(use_god_element or "", ""), YINGQI_TXT["use_weak_wait_prosper"]["text"])
+    # 独发之爻值日：《增删卜易·应期总注》源L958「动而逢合逢值：如主事爻临子水发动，
+    # 后遇丑日子日而应之」＋《易冒》独发章源L438「然后以独发独静之爻定其时，则每有验」、
+    # 源L439「独发独静可以定时日」。只在**仅一爻动**（独发，主事爻可机械判定）且该爻
+    # 不是用神时补这一支；多爻动时「主事爻」无法机械认定，宁缺不铺。
+    _moving_b = [y.get("earthly_branch") for y in yao_lines
+                 if isinstance(y, dict) and y.get("is_moving") and y.get("earthly_branch")]
+    if len(_moving_b) == 1 and _moving_b[0] != use_god_branch:
+        _rank(ranked, _moving_b[0], YINGQI_TXT["dufa_value_day"]["text"])
     _rank(ranked, use_god_branch, "以用神为主")
     _rank(ranked, day_branch, "日辰值事")
     # ── 日级末位补充（追加于既有序列之后，只补空槽不挤既有候选）──
@@ -633,6 +732,10 @@ def _rank_candidates(r: dict, use_god_branch: str, use_god_element: str, strengt
         _rank(ranked, _chong(bound_by), f"用神被{bound_by}合住，冲开之月", "月")
     if step2_d.get("has_fu_cang") and (fu_branch or fei_branch):
         _rank(ranked, _chong(fei_branch) or fu_branch, YINGQI_TXT["fu_hidden_chong_fei_month"]["text"], "月")
+    for _db in _die:
+        _tomb_die = TOMB_MAP.get(BRANCH_ELEMENTS.get(_db, ""), "")
+        if _tomb_die:
+            _rank(ranked, _tomb_die, YINGQI_TXT["overlap_taiwang_tomb_month"]["text"], "月")
     if use_god_branch:
         if ug_moving:
             _rank(ranked, _he(use_god_branch), YINGQI_TXT["use_moving_he_month"]["text"], "月")
@@ -644,8 +747,10 @@ def _rank_candidates(r: dict, use_god_branch: str, use_god_element: str, strengt
     _rank(ranked, use_god_branch, "以用神为主", "月")
     # 月级末位补充（排在既有序列之后，只补空槽不挤既有候选——月序本身是调优资产）：
     # G2 化出之支值月：《增删卜易》行人例「應亥月者父母化出之爻也」。
-    if changed_pairs and _chg0 and _chg0 not in _empty_list and not hui_tou_sheng:
-        _rank(ranked, _chg0, YINGQI_TXT["change_branch_value_month"]["text"], "月")
+    if changed_pairs and _chg0 and _chg0 not in _empty_list:
+        _rank(ranked, _chg0,
+              YINGQI_TXT["hui_tou_sheng_change_branch"]["text"] + "（月）" if hui_tou_sheng
+              else YINGQI_TXT["change_branch_value_month"]["text"], "月")
     # G3 三合虚一待用：《增删卜易》升遷例「欲成三合，因少卯字，明年卯月必升，此乃
     # 虛一待用」——卦中日月已具两支、独缺一支者，应于所缺之支之月（书例只给月级）。
     if use_god_element and use_god_element in SAN_HE_GROUPS:
@@ -677,6 +782,11 @@ def _rank_candidates(r: dict, use_god_branch: str, use_god_element: str, strengt
         else:
             _rank(ranked, _chong_ug, YINGQI_TXT["use_quiet_chong_year"]["text"], "年")
         _rank(ranked, use_god_branch, YINGQI_TXT["use_value_year"]["text"], "年")
+    # （第一百一十七批实验记录，未落库）各门类应期总注章的「问有应于变爻动爻…有戌日应者，有酉日应者」
+    # 与「大象吉而受克，须待克神受克…后逢申酉日冲克克神」两条曾被作为年级候选试补：
+    # 在 年=2 槽下**完全不生效**（被既有阶梯截断），提到 3 槽则"在池升而 top-1 不升、随机期望反涨"。
+    # 若要取第一百一十六批测得的年 top-1 9.1%→27.3%，须把这两条**前置**，
+    # 而总注章把它们列在末位——**那是拿外部集调参，已拒绝**；候选的排序依据见 #33（「神兆机于动，先重动爻」）。
     if strength_level in ("休囚", "囚", "死", "偏弱", "衰") or speed == "应迟":
         _rank(ranked, peak, YINGQI_TXT["use_weak_prosper_year"]["text"], "年")
     return ranked
@@ -768,10 +878,10 @@ def _apply_rule8_static_movement(r: dict, key_branches: list, day_branch: str,
     《增删卜易》原文：「静爻旺相，冲之即发；静爻休囚，冲之即破。」
 
     书源行号（2026-10-07 补注记，OPT-huangjince_dz-06／OPT-yiin_dz-03 对拍表）：
-      data/sources/zengshan_buyi_dz.dz.txt L957「静而逢值逢冲」＝本条书源锚点
-      data/sources/huangjince_dz.dz.txt L264 夹注「用爻旺相不动，以冲动月日断」
+      data/sources/zengshan_buyi_dz.dz.txt 源L957「静而逢值逢冲」＝本条书源锚点
+      data/sources/huangjince_dz.dz.txt 源L264 夹注「用爻旺相不动，以冲动月日断」
         ——千金赋期日九法之首法，与本条同向（旺相静爻候冲日），互为佐证
-      data/sources/yiin_dz.dz.txt L1556「用静，则以冲动之日为期也。」
+      data/sources/yiin_dz.dz.txt 源L1556「用静，则以冲动之日为期也。」
         ——《易隐》应期四诀之一，同向
     三源口径一致（旺相静爻→冲日），故本条不构成口径分歧。
 
@@ -831,14 +941,14 @@ def _apply_rule9_shi_ying_modulation(r: dict, base_window: int = 0) -> list[dict
     《增删卜易》原文：「世应相克，往来冲合，迟速有别；世应相生，逢值即应。」
 
     书源行号（2026-10-07 补注记，OPT-yiin_dz-03 对拍表）：
-      data/sources/zengshan_buyi_dz.dz.txt L969「化退神忌值忌冲」段末
+      data/sources/zengshan_buyi_dz.dz.txt 源L969「化退神、忌值忌冲：如酉化申，乃为退神，为凶为吉」段末
         「速则动而克世爻缓则静而生身」——**只此一处**把「动而克世→速 /
         静而生身→缓」写成通则；本条 Rule 9 是其**世应位置的同向实现**
         （世应相生收窄＝速／相克放宽＝迟），但**不覆盖「动克世/静生身」本身**
         （那一支只在 speed 粗档，未按动克世细判），故记为部分覆盖、登记不采。
-      data/sources/huangjince_dz.dz.txt L265 逐字「速则动而克世，缓则静而生身。」
+      data/sources/huangjince_dz.dz.txt 源L265 逐字「速则动而克世，缓则静而生身。」
         ——与上同书源同向，《黄金策》亦作通则，可与增删互校。
-      data/sources/yiin_dz.dz.txt L2168「动速静迟，旺相出现速，囚死伏藏迟。」
+      data/sources/yiin_dz.dz.txt 源L2168「动速静迟，旺相出现速，囚死伏藏迟。」
         ——《易隐》同向但按**爻位/宫位**细分，本条不采其细分（见模块 docstring 甲.4）。
 
     条件：

@@ -688,7 +688,7 @@ def _collect_pattern_tags(context, step3: dict, step4: dict, step5: dict) -> lis
             "久病逢冲": ["格局-久病逢冲为凶", "久病逢冲"],
             "冲中逢合": ["格局-冲中逢合", "冲中逢合"],
             "合处逢冲": ["格局-合处逢冲", "合处逢冲"],
-            # 双卦对比（《卜筮正宗》冲中逢合合处逢冲论第十五，正文源 L3102-3104
+            # 双卦对比（《卜筮正宗》冲中逢合合处逢冲论第十五，正文源 L3102「冲中逄合，合处逄冲，何以断其吉凶？」-3104
             # 「冲中逄合先散后聚，先失后得，先淡后浓／合处逄冲，反是」）：
             # 本卦定始、变卦定终
             "事已散": ["格局-合处逢冲事已散", "合处逢冲", "变卦六冲"],
@@ -797,7 +797,7 @@ def _collect_pattern_tags(context, step3: dict, step4: dict, step5: dict) -> lis
         else:
             _add("格局-独静", "独静")
 
-    # 助鬼伤身（《断易天机》L134-L137）：**只标结构凶格成立与否**，
+    # 助鬼伤身（《断易天机》源L134-L137 四条按语）：**只标结构凶格成立与否**，
     # 不据此出吉凶断语（SKILL.md 铁律一：吉凶断语不得进结构层）。
     zg = adv.get("zhu_gui_shang_shen") or {}
     if isinstance(zg, dict) and zg.get("established"):
@@ -811,17 +811,17 @@ def _collect_pattern_tags(context, step3: dict, step4: dict, step5: dict) -> lis
     elif isinstance(md, dict) and md.get("hit") and md.get("guan_moving"):
         _add("门类-求官官动", "求官官鬼动")
 
-    # 助鬼伤身（《易冒》助伤章，源L541-L550，OPT-yimao_dz-02）：只标结构成立与否。
+    # 助鬼伤身（《易冒》助伤章，源L541「助鬼伤身，以世爻受鬼克，而鬼长生于日，是为引祸以自害」-L550，OPT-yimao_dz-02）：只标结构成立与否。
     zgy = adv.get("zhu_gui_shang_shen_yimao") or {}
     if isinstance(zgy, dict) and zgy.get("established"):
         _add("格局-助鬼伤身_易冒", "助鬼伤身_易冒")
 
-    # 身爻启用（《易隐》安身章，源L217，OPT-yiin_dz-01）：世空/世破时身爻参与取用。
+    # 身爻启用（《易隐》安身章，源L217「凡卦之身用之为重，世之身司事还轻，世若不空不破，不须论身」，OPT-yiin_dz-01）：世空/世破时身爻参与取用。
     sy = adv.get("shen_yao_activation") or {}
     if isinstance(sy, dict) and sy.get("activated"):
         _add("格局-身爻启用", "身爻启用")
 
-    # 忧解/忧疑（《增刪卜易》忧神章，源L16/L419/L529，OPT-zengshan_buyi_dz-03）：纯结构标签。
+    # 忧解/忧疑（《增刪卜易》忧神章，源L16「如占避讼防非、仇人为害及行江漂海」/L419/L529，OPT-zengshan_buyi_dz-03）：纯结构标签。
     yj = adv.get("you_jie") or {}
     if isinstance(yj, dict):
         if yj.get("you_jie"):
@@ -1030,7 +1030,7 @@ def _collect_pattern_details(context) -> list:
     # 书源两处互证：
     #   《增删卜易》独发章（同章立界）：「事之成敗，由乎用神；應期遲速，亦由乎用神……
     #     如捨其用神，執之而決事者，謬也。」（见 classical_enhancements_dufa.py docstring）
-    #   《易冒》独发章源L438 逐字：「然後以獨發獨靜之爻定其時，則每有驗，此為論之中也。」
+    #   《易冒》独发章源L438 逐字：「然后以独发独静之爻定其时，则每有验，此为论之中也。」
     #     ——注意原句是「定其**時**」（定应期），前半句才说吉凶：
     #     「或曰，獨發獨靜，止為吉凶告兆也。……求財遇財旺而有財，求官遇官旺而有官，
     #       行人遇用神生剋而定其遲速，病人遇用神衰旺而決其死生，然後以獨發獨靜之爻定其時」
@@ -1040,9 +1040,9 @@ def _collect_pattern_details(context) -> list:
     if isinstance(df, dict) and df.get("driving_note"):
         detail_parts.append(f"{df.get('type')}：{df['driving_note']}")
 
-    # 助鬼伤身（《断易天机》L134-L137）：只陈述**结构上成立与否**＋解救 applicability。
+    # 助鬼伤身（《断易天机》源L134-L137 四条按语）：只陈述**结构上成立与否**＋解救 applicability。
     #   措辞守铁律三：用「结构上/有…信号」，不出「必凶/注定」一类断语——
-    #   书源原文的吉凶语（「其凶愈甚」「必主身有灾殃」）按铁律一不入结构层。
+    #   书源原文的吉凶语（《断易天机》源L120「其凶愈甚」／源L124「必主身有灾殃」）按铁律一不入结构层。
     zg = adv.get("zhu_gui_shang_shen") or {}
     if isinstance(zg, dict) and zg.get("established"):
         detail_parts.append("助鬼伤身（结构成立）：" + str(zg.get("note") or ""))
@@ -1055,7 +1055,7 @@ def _collect_pattern_details(context) -> list:
         detail_parts.append(str(md["note"]))
 
     # 《易林补遗》门类定位（OPT-yilin_buyi_dz-03/-04/-05）：**只定位、不断吉凶**。
-    #   外卦定方（源L2234）＋间爻角色（源L596/L1877/L2056/L1033）按问类命中才出；
+    #   外卦定方（源L2234「凡占逃者在以何处，专以外卦推详」）＋间爻角色（源L596/L1877/L2056/L1033）按问类命中才出；
     #   措辞用「结构上定位为」，不接「故必得/定主」一类断语（铁律一/三）。
     detail_parts.extend(_yilin_locate_lines(context))
 
@@ -1510,7 +1510,7 @@ def _jiazhai_paragraph(result: dict) -> str:
     出处（逐字，行号=data/sources/huangjince_dz.dz.txt）：
       L2533 夹注「凡内卦初爻为宅基，二爻为宅舍，三爻为门外，外卦四爻为父母，
             五爻为兄弟，六爻为妻财。内卦宅生人吉，外卦宅克人凶。」
-      L2536「合为门，冲为路，不论卦内之有无。」
+      源L2536「合为门，冲为路，不论卦内之有无。」
 
     口径（SKILL.md 铁律三）：只说「看哪个爻」，**不断宅吉凶**；
     本段不进评分、不作吉凶断语来源（OPT-huangjince_dz-07）。

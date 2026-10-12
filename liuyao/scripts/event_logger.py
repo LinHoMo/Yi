@@ -12,6 +12,11 @@ import hashlib
 import json
 import sys
 import uuid
+
+try:  # 实测 `event_logger.py list` 输出的是 GBK 字节（首字节 `\xca\xc2\xbc\xfeID`＝「事件ID」），UTF-8 消费方必乱码
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
 from collections import Counter
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
@@ -48,10 +53,13 @@ class DivinationEvent:
     validation_timestamp: str = ""
 
 def get_log_path() -> Path:
-    """
+    """获取日志文件路径：<本学科根>/logs/divination_events.jsonl（目录不存在则自动创建）。
 
-    获取日志文件路径: ~/.meituan-catpaw/<uid>/skills/liu-yao/logs/divination_events.jsonl
-    如果目录不存在则自动创建。
+    路径按**脚本自身位置**向上一级解析（`scripts/` 的父目录即学科根），不依赖固定安装位置；
+    旧注释写的 `~/.meituan-catpaw/<uid>/skills/liu-yao/logs/…` 只是本技能被安装到该处时
+    这条相对规则算出来的**其中一个可能落点**，不是实现里的常量（第八十六批按代码改正）。
+    读取端 `dev_tools/outcome.py` 用的是同一个学科根下的同名文件，两侧必须一致，
+    否则回填看不见自己写下的事件——这条链路是全仓唯一能产生现实证据的路径。
     """
     # 从当前脚本位置向上回溯确定 base 目录
     # 脚本位于 skills/liu-yao/scripts/ 下，日志在 skills/liu-yao/logs/

@@ -12,7 +12,9 @@
 分数口径（SKILL.md 铁律三，务必连同分数一起读）：
   [7] 的分数是**古籍案例对齐分**——引擎输出与《穷通宝鉴》《子平真诠》《滴天髓》等
   案例要点的加权一致性（strict 计分模型），用于回归审计，**衡量不了现实命中率**。
-  tune n=30、holdout n=246（holdout 集合未参与本轮判据调参）。
+  tune n=138、holdout n=532（2026-10-12 按 `scripts/evaluate.py --split …` 实跑更正；
+  原记「tune n=30、holdout n=246」系语料扩容前快照，新旧不可比——见 docs/EVAL-PLAN.md §1.1 与 §四.4）。
+  holdout 集合未参与本轮判据调参。
 
 门槛设计（SKILL.md）：
   · 基线取**实测值**，只准前进不准后退：低于 BASELINE 即判红（范式照六爻
@@ -31,6 +33,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -49,7 +52,7 @@ CASES_FILE = DISC / "data" / "cases" / "bazi_classical_cases.json"
 # 古籍案例对齐分（加权均分 %，strict）——2026-10-09 实测登记，非预测命中率
 BASELINE = {
     "tune": 100.0,        # n=30
-    "holdout": 96.2,      # n=246（未参与本轮调参）
+    "holdout": 96.6,      # n=246（未参与本轮调参；2026-10-10 从格判据改正后实测抬上来的）
 }
 AGENTS_TUNE_FLOOR = 95.0  # SKILL.md 的均分硬下限；BASELINE 必须严于它
 
@@ -68,9 +71,30 @@ DIM_HITS = {
 MIN_LEAF_LEN = 4
 
 
+ENC_WITNESS: list[str] = []
+
+
 def run(cmd: list[str]) -> tuple[int, str]:
     """本门口径：cwd=学科根、60s 超时、argv 前补解释器（实现在内核 gate_kit）。"""
-    return run_step(cmd, cwd=DISC, timeout=60, python=True)
+    _rc, _out = run_step(cmd, cwd=DISC, timeout=60, python=True)
+    witness = None
+    try:
+        import importlib.util as _iu
+        _path = str(DISC / "dev_tools" / "check_cli_encoding.py")
+        _sp = _iu.spec_from_file_location("enc_witness", _path)
+        if _sp is None or _sp.loader is None:
+            raise RuntimeError("载不进门：『" + _path + "』")
+        _mod = _iu.module_from_spec(_sp)
+        _sp.loader.exec_module(_mod)
+        witness = _mod.witness
+    except Exception as _e:
+        ENC_WITNESS.append("编码证人自身没跑成：" + type(_e).__name__ + ": " + str(_e)[:90])
+    if witness is not None:
+        _nm = next((a for a in cmd if str(a).endswith(".py")), str(cmd[-1]))
+        _w = witness(_nm, _out or "")
+        if _w:
+            ENC_WITNESS.append(_w)
+    return _rc, _out
 
 
 def _effective_baseline() -> dict:
@@ -245,7 +269,19 @@ def main() -> int:
         fails.append("金标准指纹漂移")
         print(out)
     else:
-        print("[4] 金标准 √", out.strip())
+        # 空跑必须判红：壳退 0 但没交出「用例 N 条／机械 <16hex>／措辞 <16hex>」三件，
+        # 或 N=0，都不算通过——否则"看门狗没跑到"与"跑过且一致"在报表上长得一模一样。
+        m_n = re.search(r"用例 (\d+) 条", out)
+        m_mech = re.search(r"机械 ([0-9a-f]{16})", out)
+        m_word = re.search(r"措辞 ([0-9a-f]{16})", out)
+        if not (m_n and m_mech and m_word):
+            fails.append("金标准壳输出形状不完整（rc=0 但缺 用例/机械/措辞 行）＝不当作通过")
+            print(out)
+        elif int(m_n.group(1)) == 0:
+            fails.append("金标准跑了 0 例＝空跑，不判通过")
+            print(out)
+        else:
+            print(f"[4] 金标准 √ 用例 {m_n.group(1)} 条／机械 {m_mech.group(1)}／措辞 {m_word.group(1)}")
 
     code, out = run(["dev_tools/regression.py"])
     if code != 0:
@@ -274,10 +310,21 @@ def main() -> int:
     # `if not leaves: continue` 静默跳过，「死语料必判红」的门对它完全无感（2026-10-09 修）。
     # 现在：非空即判、0 命中即红，唯一例外是 UNWIRED_CORPORA 里**点名登记**的缺口，
     # 且登记表里的文件一旦接上反而判红（防豁免清单烂掉）。
-    code, out = run(["scripts/narrate.py", "scratch/analyze.json"])
-    if code != 0:
-        fails.append("narrate 接线自检时跑不通")
+    # 第一百一十七批口径变更（§四.4 已登记）：接线判定的比对面从「一盘 narrate 输出」
+    # 改为「eval_all 全部盘的 narrate 并集」。旧口径读数（单盘）：ditian_sui 17/136、
+    # liushen_image 7/35、nayin_quxiang 12/182、shi_shen_actions 14/29、tiaohou_quotes 2/302、
+    # verdicts 13/90 —— 这些数的分母接近单盘天花板，**与新读数不可比**，历史条目里的旧数不改写。
+    code, out = run(["dev_tools/corpus_reports.py"])
+    cpath = DISC / "scratch" / "corpus_reports.txt"
+    corpus = cpath.read_text(encoding="utf-8") if (code == 0 and cpath.exists()) else ""
+    if not corpus:
+        fails.append("多盘并集未生成（dev_tools/corpus_reports.py 跑不通）——接线门不许退回单盘口径")
         print("[8] 语料接线 ×")
+        out = ""
+    else:
+        out = corpus
+    if code != 0 or not corpus:
+        pass
     else:
         bad = []
         for path in sorted((DISC / "data").glob("*.json")):
@@ -306,9 +353,13 @@ def main() -> int:
                           f"——已登记缺口，不判红（{declared}）")
                 continue
             if hit == 0:
-                bad.append(f"{path.name}：{len(leaves)} 条语料一条未进报告（接线缺失）")
+                bad.append(f"{path.name}：{len(leaves)} 条语料一条未进 276 盘报告并集（接线缺失）")
             else:
-                print(f"[8] 语料接线 √ {path.name}：{hit}/{len(leaves)} 条进入报告")
+                print(f"[8] 语料接线 √ {path.name}：{hit}/{len(leaves)} 条进入多盘报告并集")
+        code2, out2 = run(["dev_tools/corpus_wiring_report.py"])
+        for line in out2.splitlines():          # 归类只作明细，不改变判定：判定仍看「0 命中即红」
+            if line.strip():
+                print("  " + line.strip())
         if bad:
             fails.extend(bad)
             for b in bad:
@@ -324,6 +375,148 @@ def main() -> int:
     else:
         print("[9] 调候表同步 √", out.strip())
 
+    # [10] 参考文档「源L 行号 + 逐字引文」回验。
+    # 此前 references/*.md 写着「可经 python tools/check_source_readings.py 回验」，
+    # 而 tools/ 与 docs/source-readings/ 已随扁平化删除——声明指向不存在的能力，
+    # 且这些行号引文此后再没有任何东西校验过。首轮实跑抓出两处真错并已修：
+    #   · bazi_yue_shi_ge.md 标「源L263 逐字」却把底本第二、三从句调换顺序；
+    #   · 同文标「源L307」的《考原》段实际在 L305（L307 是另一个算例）。
+    print("\n[10] 书证行号逐字回验")
+    code, out = run(["dev_tools/check_source_readings.py", "--selftest"])
+    for line in out.splitlines():
+        if line.strip():
+            print("  " + line.strip())
+    if code != 0:
+        fails.append("参考文档的「源L 逐字」声明与底本不符（或回验器负例失效）")
+
+    # [11]-[13] 引用完整性 / 书源指针 / 案例库隔离（本轮清出的活断链全靠人读出来，
+    # 写进散文的门等于没跑，故一律接进本门）。
+    for title, script in (
+            ("[11] 文档活引用可达性（指向不存在文件的指针）", "dev_tools/check_doc_refs.py"),
+            ("[12] 规则注册表书源指针回验（verified 不许自说自话）", "dev_tools/check_rule_registry.py"),
+            ("[13] 案例库隔离（解读路径不得触达 data/cases）", "dev_tools/check_case_isolation.py")):
+        print(f"\n{title}")
+        code, out = run([script, "--selftest"])
+        for line in out.splitlines():
+            if line.strip():
+                print("  " + line.strip())
+        if code != 0:
+            fails.append(f"{title} 未通过")
+
+    print("\n[14] 纳音取象表 data↔内核同步")
+    code, out = run(["dev_tools/sync_nayin_engine.py", "--check", "--selftest"])
+    for line in out.splitlines():
+        if line.strip():
+            print("  " + line.strip())
+    if code != 0:
+        fails.append("NAYIN_XIANGGE 与 data/nayin_quxiang.json 不同源"
+                     "（同步方向 data→代码：跑 dev_tools/sync_nayin_engine.py --emit 取字面量，"
+                     "不要手改 data 迁就读数）")
+
+    print("\n[15] 评测维度 ↔ 报告面同名同义（EVAL-PLAN §六 / 步 7）")
+    code, out = run(["dev_tools/check_dim_surface.py", "--selftest"])
+    for line in out.splitlines():
+        if line.strip():
+            print("  " + line.strip())
+    if code != 0:
+        fails.append("计分维度与报告章节两侧不一致（维度没落点，或小节既没评又没登记理由）")
+
+    # [16] 断语外置（重建历史上 tools/verdict_audit.py 的等价物；登记于 docs/CHANGELOG.md 第三/五批）
+    code, out = run(["dev_tools/verdict_audit.py", "--selftest"])
+    for line in out.splitlines():
+        if line.strip():
+            print("  " + line.strip())
+    if code != 0:
+        fails.append("报告出现无外置出处的判断措辞（或本器负例失效／一行都没检视）")
+    else:
+        print("[16] 断语外置 √")
+
+    # [17] 命例基准自洽：书载四柱（note/pillars_raw）必须等于内核按 datetime 反算的四柱
+    code, out = run(["dev_tools/check_case_pillars.py", "--selftest"])
+    for line in out.splitlines():
+        if line.strip():
+            print("  " + line.strip())
+    if code != 0:
+        fails.append("命例基准不自洽（书载四柱与内核反算不符，或本器负例失效／一例都没对账）")
+    else:
+        print("[17] 命例基准自洽 √")
+
+    # [18] 行运见证集回验：逐字回底本＋五虎遁自洽＋运序连续＋方向唯一（#31③ 的书据材料）
+    code, out = run(["dev_tools/check_dayun_cases.py", "--selftest"])
+    for line in out.splitlines():
+        if line.strip():
+            print("  " + line.strip())
+    if code != 0:
+        fails.append("行运见证集不自洽（引文不在源行／月柱不符五虎遁／运序不连续／顺逆不唯一，"
+                     "或本器负例失效、一例都没检视）")
+    else:
+        print("[18] 行运见证集回验 √")
+
+    # [19] 藏干独立出处（#14(1)）：书中所写藏干须逐条见于内核表，可核支数 <4 即判红（防空跑）
+    code, out = run(["dev_tools/check_hidden_stems.py", "--selftest"])
+    for line in out.splitlines():
+        if line.strip():
+            print("  " + line.strip())
+    if code != 0:
+        fails.append("藏干出处不自洽（书有而表无＝按书改表或登记分歧；或可核支数不足、负例失效）")
+    else:
+        print("[19] 藏干独立出处回验 √")
+
+    # [20] 排盘入参历法自洽（#14(3)）：五虎遁·五鼠遁**不看日期**，只给结构化四柱的 116 例从此有账
+    code, out = run(["dev_tools/check_pillar_laws.py", "--selftest"])
+    for line in out.splitlines():
+        if line.strip():
+            print("  " + line.strip())
+    if code != 0:
+        fails.append("排盘入参历法不自洽（新违律未登记／可检 0 例＝空跑／负例失效／豁免条目失效未删）")
+    else:
+        print("[20] 排盘入参历法自洽 √")
+
+    # [21] 现实反馈通道（#32）：内核登记与孪生副本一致／负例有牙齿／在册记录合 canonical／空库须说空话
+    code, out = run(["dev_tools/check_feedback.py"])
+    for line in out.splitlines():
+        if line.strip():
+            print("  " + line.strip())
+    if code != 0:
+        fails.append("现实反馈通道回验未过（内核未登记／两副本漂移／负例失效／在册记录不合 schema）")
+    else:
+        print("[21] 现实反馈通道回验 √")
+
+    # [22] 案例考点查重（#39）：台账在册的历史重复不判红，台账之外点名到 id 判红——
+    # 同一考点被计两次以上时，考卷分母与权重都不再是"多少条规则"。
+    code, out = run(["dev_tools/check_case_dupes.py", "--selftest"])
+    for line in out.splitlines():
+        if line.strip():
+            print("  " + line.strip())
+    if code != 0:
+        fails.append("案例考点查重未过（台账之外有重复／台账缺失＝无从分辨新旧／负例失效／空跑）")
+    else:
+        print("[22] 案例考点查重 √")
+
+    # [23] 输出确定性（#40）：三个 hash seed 下金标准 digest 必须全同＋静态层无集合直接 join
+    # ——这类缺陷的特征是单次运行永远自洽，只在换进程时才变。
+    code, out = run(["dev_tools/check_determinism.py", "--selftest"])
+    for line in out.splitlines():
+        if line.strip():
+            print("  " + line.strip())
+    if code != 0:
+        fails.append("输出确定性未过（跨进程 digest 分歧／静态层命中／夹具 0 文件＝没扫／金标准没交形状）")
+    else:
+        print("[23] 输出确定性 √")
+
+    # [24] CLI 编码红线：以 cp936 起子进程跑各 argparse 中文入口的 --help，
+    # 产物字节必须可按 UTF-8 读出中文——守卫写了但位置不对（早于 import sys）也照样被抓。
+    code, out = run(["dev_tools/check_cli_encoding.py", "--selftest"])
+    for line in out.splitlines():
+        if line.strip():
+            print("  " + line.strip())
+    if code != 0:
+        fails.append("CLI 编码红线未过（产物出现 GBK 字节／入口跑挂／零入口可扫＝没跑）")
+    else:
+        print("[24] CLI 编码红线 √")
+
+    if ENC_WITNESS:
+        fails.extend("产物编码退化：" + w for w in ENC_WITNESS)
     if fails:
         print("失败：", *fails, sep="\n  ")
         return 1

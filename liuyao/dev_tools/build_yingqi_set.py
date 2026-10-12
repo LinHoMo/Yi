@@ -19,12 +19,22 @@ import argparse
 import json
 import re
 import sys
+
+# 控制台编码守卫：GBK/cp936 控制台下本器的中文输出会退化成乱码甚至 UnicodeEncodeError
+# （rc 仍为 0、金标准看不见，只有这条守卫管得住）。判据见 dev_tools/check.py 的编码不变式。
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
+
 from datetime import date
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / "scripts"))
 from kernel_path import kernel_dir  # noqa: E402
+
 sys.path.insert(0, str(kernel_dir(__file__)))
 
 from yishu_core.symbols import (  # noqa: E402

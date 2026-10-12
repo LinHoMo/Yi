@@ -99,7 +99,8 @@ def run(disc_name: str, what: str, how: str,
         narrate_drift = narrate_digest != old_narrate
         out.parent.mkdir(exist_ok=True, parents=True)
         out.write_text(json.dumps({"machine": machine_rows, "narrate": narrate_rows},
-                                  ensure_ascii=False, sort_keys=True, indent=1), encoding="utf-8")
+                                  ensure_ascii=False, sort_keys=True, indent=1),
+                       encoding="utf-8", newline="\n")
         digest_path.parent.mkdir(parents=True, exist_ok=True)
         stamp = datetime.now().strftime("%Y-%m-%d")
         machine_log = list(prior.get("drift_log") or [])
@@ -116,7 +117,7 @@ def run(disc_name: str, what: str, how: str,
             "narrate_digest": narrate_digest,
             "drift_log": machine_log[-20:],
             "narrate_drift_log": narrate_log[-20:]}, ensure_ascii=False, indent=2) + chr(10),
-            encoding="utf-8")
+            encoding="utf-8", newline="\n")
         layer = "机械+措辞" if (machine_drift and narrate_drift) else (
             "仅机械" if machine_drift else "仅措辞")
         print(f"金标准已落盘（{layer}漂移归因）→ {digest_path}")

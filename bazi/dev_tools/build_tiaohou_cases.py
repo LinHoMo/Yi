@@ -16,6 +16,7 @@
 from __future__ import annotations
 
 import json
+import re
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -27,6 +28,7 @@ for _p in (str(DISC / "scripts"), str(CORE)):
         sys.path.insert(0, _p)
 
 from yishu_core.ganzhi_calendar import ganzhi_of  # noqa: E402
+from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 from yishu_core.symbols import HEAVENLY_STEMS  # noqa: E402  天干序唯一真值源
 
 QUOTES = DISC / "data" / "tiaohou_quotes.json"
@@ -35,6 +37,20 @@ CASES = DISC / "data" / "cases" / "bazi_classical_cases.json"
 MB = {1: "寅", 2: "卯", 3: "辰", 4: "巳", 5: "午", 6: "未",
       7: "申", 8: "酉", 9: "戌", 10: "亥", 11: "子", 12: "丑"}
 HOLDOUT_MONTHS = {"申", "酉", "戌", "亥", "子", "丑"}
+
+
+def content_key(c: dict) -> tuple:
+    """一例的考点身份：书 + 逐字引文（去空白标点）+ 判准。
+
+    为什么不用 id 查重：本器 id 由 len(cases)+1 顺排，重跑必然撞不到旧 id，
+    于是「按 id 去重」结构性失效——历史上连跑三次就把 12×10 同一批格调了
+    三份（283 组、净多余 326 例，location 一种写「论甲（三春）」一种写
+    「论甲·正月」，是两遍之间 section 命名换了写法）。考点是否重复只看
+    输入盘与书上判准，与 id、location 措辞无关。
+    """
+    quote = re.sub(r"\s+", "", c.get("source_quote") or "").strip("，。、；：「」")
+    return (c.get("book"), quote,
+            json.dumps(c.get("expected"), ensure_ascii=False, sort_keys=True))
 
 
 def find_datetimes() -> dict[tuple[str, str], str]:
@@ -52,11 +68,12 @@ def find_datetimes() -> dict[tuple[str, str], str]:
 
 
 def main() -> int:
+    force_utf8_stdio()
     quotes = json.loads(QUOTES.read_text(encoding="utf-8"))
     dt_map = find_datetimes()
 
     store = json.loads(CASES.read_text(encoding="utf-8"))
-    existing_ids = {c["id"] for c in store.get("cases", [])}
+    existing_keys = {content_key(c) for c in store.get("cases", [])}
 
     cells = sorted(
         (v for v in quotes.values() if v["main"]),
@@ -64,20 +81,16 @@ def main() -> int:
     )
     cases = list(store.get("cases", []))
     next_seq = len(cases) + 1
-    added = 0
+    added = skipped = 0
     for v in cells:
-        cid = f"MT{next_seq:03d}"
-        if cid in existing_ids:
-            next_seq += 1
-            continue
         dt = dt_map.get((MB[v["month"]], v["stem"]))
         if not dt:
             raise SystemExit(f"历法反查失败：{v['month']}月{v['stem']}（不应发生，12×10 全可查）")
         expected = {"tiaohou": {"main": v["main"]}}
         if v["assist"]:
             expected["tiaohou"]["assist"] = v["assist"]
-        cases.append({
-            "id": cid,
+        candidate = {
+            "id": f"MT{next_seq:03d}",
             "split": "holdout" if MB[v["month"]] in HOLDOUT_MONTHS else "tune",
             "book": "穷通宝鉴",
             "location": f"{v['section']}",
@@ -87,7 +100,12 @@ def main() -> int:
             "note": f"{v['month']}月{v['stem']}日主调候（原文明写：主{v['main']}"
                     f"{'/佐' + v['assist'] if v['assist'] else '，佐神原文未单列'}）",
             "expected": expected,
-        })
+        }
+        if content_key(candidate) in existing_keys:
+            skipped += 1
+            continue
+        cases.append(candidate)
+        existing_keys.add(content_key(candidate))
         next_seq += 1
         added += 1
 

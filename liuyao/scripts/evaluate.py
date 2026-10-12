@@ -531,7 +531,7 @@ def yingqi_discrimination(engine_out: dict, ids: list[str]) -> dict:
                         "avg_rank": round(sum(v["ranks"]) / len(v["ranks"]), 2) if v["ranks"] else None,
                         "ranked": len(v["ranks"]),
                         "loose_hit_rate": round(v["loose"] * 100.0 / v["n"], 1) if v["n"] else None,
-                        "loose_rel_hit_rate": round(v["rel"] * 100.0 / v["n"], 1) if v["n"] and v["rel"] else None,
+                        "loose_rel_hit_rate": round(v["rel"] * 100.0 / v["n"], 1) if v["n"] else None,
                         "loose_abs_hit_rate": round(v["abs"] * 100.0 / v["n"], 1) if v["n"] and v["abs"] else None}
                     for u, v in sorted(per_unit.items())},
     }

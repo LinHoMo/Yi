@@ -380,22 +380,39 @@ def _strip_chart_tail(text: str) -> str:
 
 
 def _match_use_god_rule(text: str) -> dict | None:
-    """命中原书取用法则 → 该条规则。priority 小者优先，同级取更长（更具体）的触发词。"""
+    """命中原书取用法则 → 该条规则。priority 小者优先，同级取更长（更具体）的触发词。
+
+    名分层（第八十八批）：「X占Y」里 **X 是问占者、Y 才是所占之人**，用神随 Y 定。
+    《卜筮正宗》源L1123 逐字「用神即如父占子病，吉凶以子孙爻为用神类是也」；
+    《卜筮正宗》源L1095 逐字「又如与人代占，必先明说是何名分，方可就其亲疏、上下分别用神以为占验」，
+    同条又逐字「假如奴仆代主来占，则以父母爻为用神」——书上把"名分说错"直接判成"用神误差、虽吉无益"。
+    实测缺陷：`母占子何日脫厄` 因「母」在句首先命中尊长法则而取父母，所占的却是子。
+    做法：先只取「占」之后的子句找法则；子句里有角色可取就用它，没有（如「占婚」「占何日雨」
+    非角色宾语）再回到全句，保证 `女家代占婚`（书上女占婚以官鬼为用）一类不受影响。
+    """
     from yishu_core.symbols import normalize_question_text
-    text = _strip_chart_tail(normalize_question_text(text))
-    text = _strip_hex_names(text)
-    best = None
-    for rule in _use_god_rules():
-        hits = [t for t in rule.get("trigger") or [] if t and t in text]
-        if not hits:
-            continue
-        ctx = rule.get("context") or []
-        if ctx and not any(c in text for c in ctx):
-            continue
-        rank = (rule.get("priority", 99), -max(len(h) for h in hits))
-        if best is None or rank < best[0]:
-            best = (rank, rule)
-    return best[1] if best else None
+    base = _strip_hex_names(_strip_chart_tail(normalize_question_text(text)))
+
+    def _rule_on(scope: str) -> dict | None:
+        best = None
+        for rule in _use_god_rules():
+            hits = [t for t in rule.get("trigger") or [] if t and t in scope]
+            if not hits:
+                continue
+            ctx = rule.get("context") or []
+            if ctx and not any(c in scope for c in ctx):
+                continue
+            rank = (rule.get("priority", 99), -max(len(h) for h in hits))
+            if best is None or rank < best[0]:
+                best = (rank, rule)
+        return best[1] if best else None
+
+    _ix = base.find("占")
+    if _ix >= 0:
+        picked = _rule_on(base[_ix + 1:])
+        if picked is not None:
+            return picked
+    return _rule_on(base)
 
 
 def _use_god_basis(question_category: str, question_text: str, chosen: str) -> str:
@@ -445,6 +462,21 @@ def _decide_use_god(question_category: str, question_text: str) -> tuple[str, di
     # 关键词表按简体写，而问事文本可能是繁体（《增刪卜易》原文、以及任何繁体输入）。
     # 不归一时"占候文書"匹配不上"文书"，用神静默退化成世爻——外部集上错的那 2 例即此。
     combined = normalize_question_text(f"{question_category} {question_text}")
+
+    # ── 背景天气不夺所问天气（第八十七批）──
+    # 《增删卜易》源L1953 逐字「觉子曰：占雨用父爻，占晴用子孙爻、财爻」——用神由所占之事定。
+    # 实测缺陷：「因連日晴占何日雨」里的「晴」是问事当下的天气背景，却在词典子串匹配里
+    # 抢先用神判成子孙；书上这条占雨该取父母。故当「占」之前含天气字、而「占」之后含
+    # 另一个不同类天气字时，剥掉前段背景天气再匹配。
+    # 只在用神匹配这一步剥：门类判定仍读全文（「久晴／连日雨」本就是识别占雨语境的线索）。
+    _WXS = "雨雪晴暄風风云旱陰阴"
+    _ix = combined.find("占")
+    if _ix >= 0:
+        _pre, _post = combined[:_ix], combined[_ix:]
+        _pw = {c for c in _pre if c in _WXS}
+        _qw = {c for c in _post if c in _WXS}
+        if _pw and _qw and not (_pw & _qw):
+            combined = "".join(c for c in _pre if c not in _pw) + _post
 
     # --- 原书明写的取用法则优先（带引文可核；《增刪卜易·用神章》"占父母弟兄取用神者
     #     皆在用神章內詳之"——关系定了用神就定了，不该由现代问法词典猜） ---
@@ -528,6 +560,27 @@ def _decide_use_god(question_category: str, question_text: str) -> tuple[str, di
                 weight *= 3
             elif keyword in GENERIC_KEYWORDS:
                 weight *= 0.3
+            if relation not in category_scores:
+                category_scores[relation] = 0
+                category_first_pos[relation] = combined.index(keyword)
+            category_scores[relation] += weight
+
+    # 有据优先：同一问句里若已命中**带古籍逐字引文**的键，则纯推断键（何日／何时／归来…「弱时间键」族，
+    # basis.kind=inference）不再参与定用神——书上从不以疑问时间词取用。修「占何日雨」被「何日」
+    # 定成子孙之误（《增删卜易》源L1953 逐字「占雨用父爻，占晴用子孙爻、财爻」，第七十二批）。
+    _cited = [(k, rel) for k, rel in matched_pairs
+              if (_QUESTION_USE_GOD_BASIS.get(k) or {}).get("kind") == "citation"]
+    if _cited:
+        category_scores = {}
+        category_first_pos = {}
+        matched_pairs = []
+        for keyword, relation in _cited:
+            weight = len(keyword) ** 2
+            if keyword in CORE_USE_GOD_KEYWORDS:
+                weight *= 3
+            elif keyword in GENERIC_KEYWORDS:
+                weight *= 0.3
+            matched_pairs.append((keyword, relation))
             if relation not in category_scores:
                 category_scores[relation] = 0
                 category_first_pos[relation] = combined.index(keyword)
@@ -721,7 +774,7 @@ def _check_fu_cang(
 
 
 def _detect_wild_crane_reverse(use_god_positions, empty_branches):
-    """野鹤反法结构检测（《增刪卜易》用神两现章，源 L1396）。**只标象、不打分、不改用神主判**。
+    """野鹤反法结构检测（《增刪卜易》用神两现章，源 L1396「用神两现，如占父母卦中两爻父母者是也」）。**只标象、不打分、不改用神主判**。
 
     古法（源L1396 上段）：「舍其休囚，用其旺相，舍其静爻，而用动爻，舍其月破，
     而用不破，舍其旬空，用其不空，舍其被伤，用其不伤。」——即取旺/动/不破/不空者。

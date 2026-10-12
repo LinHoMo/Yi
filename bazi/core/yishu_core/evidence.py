@@ -559,6 +559,6 @@ def evidence_envelope(discipline: str, evidence: list[Evidence], *,
         "gaps": evaluation_gaps(evidence),
         "claim_policy": claim_policy(discipline, evidence),
         "note": "evidence 为 analyze 输出的派生视图；effect 只含学科自报方向；"
-                "evaluation_status 为评测覆盖登记（古籍对齐分/外部集读数见 docs/HANDOFF.md）；"
+                "evaluation_status 为评测覆盖登记（古籍对齐分/外部集读数见本学科 docs/CHANGELOG.md）；"
                 "claim_policy 为本次证据组合允许的断言边界",
     }

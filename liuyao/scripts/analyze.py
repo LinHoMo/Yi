@@ -12,6 +12,13 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+# 第八十六批：本文件是门面入口，实测在 cp936（GBK）控制台上 `print(text)` 因正文里的
+# 「•」直接 UnicodeEncodeError 崩溃——修法是重定向 stdout 编码，不是删字符。
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))

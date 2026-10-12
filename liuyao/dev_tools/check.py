@@ -68,7 +68,14 @@ BASELINE = {
     "ordering": 23,        # 爻序断言通过项数（共 23）——P0 事故看门狗
     "smoke": 36,           # 有产出的分析段
     "chain_tests": 11,     # /12（2026-10-10 上抬，理由见下方归因块）
-    "regression": 11,      # /18（2026-10-09e 曾因 ADVANCE_PAIRS 书源级修正降基线）
+    "regression": 14,      # 例数以汇总行为准（现 19 例：第八十二批加 reg_19 全要素真例；
+                            # 2026-10-10 第十四批：7 例 fixture 的日期/爻数组与自身书证
+                            # 对不上，校勘后 reg_13 由"假基准下的蒙对"变为真通过，11→12；
+                            # 第十五批：补「近病＋卦逢六冲即愈」（源L17/L19/L21/L23）
+                            # 并把 reg_01 的判词依源L539「果于丑日起床」改正，12→13；
+                            # 第十七批：补「泄用之神」定价（用神生动爻，源L1662
+                            # 「如世去生助他爻，泄尽自己之气也」——第五态此前落闲神恒计 0），
+                            # reg_14 的动变断言依其数组实情改记 N/A，13→14）
     # 退化 2 例（旧表"隔一支配对"把寅→卯误判为"化合"零分）逐条解释：
     #   reg_05（占求财·妻财伏藏·寅→卯 子孙原神化进）：旧表判化合 net_event≈0 → 平吉2.71→PASS；
     #     新书源同五行对 → 化进神 → net_effect+3.5 → 大吉5.16→ 方向 band ≠ expected(mixed)→FAIL。
@@ -109,9 +116,29 @@ PATTERNS = {
 }
 
 
+ENC_WITNESS: list[str] = []
+
+
 def run(cmd: list[str]) -> tuple[int, str]:
     """本门口径：cwd=学科根、无超时、argv 自带解释器（实现在内核 gate_kit）。"""
-    return _run_step(cmd, cwd=ROOT)
+    _rc, _out = _run_step(cmd, cwd=ROOT)
+    try:
+        import importlib.util as _iu
+        _path = str(ROOT / "dev_tools" / "check_cli_encoding.py")
+        _sp = _iu.spec_from_file_location("enc_witness", _path)
+        if _sp is None or _sp.loader is None:
+            raise RuntimeError("载不进门：『" + _path + "』")
+        _mod = _iu.module_from_spec(_sp)
+        _sp.loader.exec_module(_mod)
+        witness = _mod.witness
+    except Exception as _e:
+        ENC_WITNESS.append("编码证人自身没跑成：" + type(_e).__name__ + ": " + str(_e)[:90])
+    if witness is not None:
+        _nm = next((a for a in cmd if str(a).endswith(".py")), str(cmd[-1]))
+        _w = witness(_nm, _out or "")
+        if _w:
+            ENC_WITNESS.append(_w)
+    return _rc, _out
 
 
 def measure(name: str, out: str) -> float | None:
@@ -229,6 +256,92 @@ def version_report() -> list[str]:
         elif m.group(1) != yishu_core.__version__:
             problems.append(f"{rel} 版本是 {m.group(1)}，应为 {yishu_core.__version__}"
                             f"（跑 python scripts/build_portal_assets.py 重建）")
+    return problems
+
+
+def report_parity_problems() -> list[str]:
+    """「算出来了但看不到」看门狗：analyze 产出的每一节都必须在 HTML 报告里出现。
+
+    起因（2026-10-10 实测）：`section_advice`（趋避建议）在文本报告与 narrate 都有，
+    HTML 却整节没有——`assets/report.css` 里 `.advice-list` 自定义好却无人引用即旁证。
+    金标准指纹与对齐分都看不见这类回归（它们只量机械值与判词，不量"某一节有没有出口"）。
+
+    本门自带**负例自证**：把真实产物里的那一节人为摘掉后，检查必须报错——
+    否则「门通过」与「门什么都没查」在报告里长得一样。
+    """
+    sp = str(DISC / "scripts")
+    if sp not in sys.path:
+        sys.path.insert(0, sp)
+    from kernel_path import ensure_kernel_on_path as _ks
+    _ks(Path(sp) / "render.py")
+
+    problems: list[str] = []
+    from datetime import datetime
+
+    from engine import build_hexagram_result
+    from analyze import analyze as _analyze
+    from render import render_html
+    from yishu_core.report.html import escape
+
+    dt = datetime(2024, 3, 5, 10, 30)
+    h = build_hexagram_result([9, 8, 7, 8, 7, 7], "占父病", "manual",
+                              dt.year, dt.month, dt.day, dt.hour)
+    a = dict(_analyze(h))
+    html = render_html(a)
+
+    # 1) 逐节断言：凡 analyze 层有内容的主节，HTML 必须有对应节标题
+    con = a.get("conclusion") or {}
+    expect = []
+    if a.get("section_advice"):
+        expect.append(("趋避建议", "section_advice"))
+    if con.get("应期"):
+        expect.append(("应期", "conclusion.应期"))
+    if con.get("所本"):
+        expect.append(("判据所本", "conclusion.所本"))
+    if not expect:
+        problems.append("取到的样例没有任何可选节可断言（section_advice/应期/所本 全空）"
+                        "——本门等于没跑，请换一例")
+    for title, src in expect:
+        if title not in html:
+            problems.append(f"HTML 报告缺「{title}」节，而 {src} 有 "
+                            f"{len(a.get('section_advice') or con.get('应期') or [''])} 项内容")
+
+    # 1b) 方位层可见性探针（原门只盯上面三节，advanced_analysis 的子节掉出 HTML 查不到）
+    h_fw = build_hexagram_result([9, 8, 7, 8, 7, 7], "占通乡避乱", "manual",
+                                 dt.year, dt.month, dt.day, dt.hour)
+    a_fw = dict(_analyze(h_fw))
+    fw = (a_fw.get("advanced_analysis") or {}).get("fangwei") or {}
+    if not fw.get("applicable"):
+        problems.append("方位探针失效：「占通乡避乱」未触发 fangwei（语域关键词或取爻口径变了）"
+                        "——本项等于没跑，请修探针而不是删门")
+    else:
+        html_fw = render_html(a_fw)
+        if "方位参考" not in html_fw:
+            problems.append(f"HTML 缺「方位参考」节，而 advanced_analysis.fangwei 有 "
+                            f"{len(fw.get('candidates') or [])} 条候选、吉方 {fw.get('ji_fang')}")
+        doctored_fw = html_fw.replace("方位参考", "已删节", 1)
+        if "方位参考" in doctored_fw or "已删节" not in doctored_fw:
+            problems.append("方位负例失效：摘掉一处后 HTML 仍含该节标题，探针无从证明本门有牙")
+
+    # 2) 内容级断言：建议条目逐条出现在 HTML 里，不是只要有个标题
+    for t in (a.get("section_advice") or []):
+        if escape(str(t)) not in html:
+            problems.append(f"趋避建议条目未进 HTML：{str(t)[:24]}")
+
+    # 3) 负例自证：人为摘掉趋避节，检查必须抓到（否则本门是空跑）
+    if "趋避建议" in html:
+        doctored = html.replace("趋避建议", "已删节", 1)
+        if "趋避建议" in doctored:
+            problems.append("负例探针失效：摘掉一处后 HTML 仍含该节标题，"
+                            "说明本节出现多次，探针无法证明本门有牙")
+        if "趋避建议" in doctored or "已删节" not in doctored:
+            problems.append("负例样本构造失败，本门未验证")
+    else:
+        problems.append("负例探针无法执行：正样本本身就不含趋避建议（见上）")
+
+    # 4) 崩溃不得伪装成产物
+    if "Traceback" in html:
+        problems.append("HTML 里泄漏了 Python traceback")
     return problems
 
 
@@ -364,14 +477,39 @@ def main() -> int:
         # 以前它只活在 gitignore 的 scratch/ 里，等于只有我这台机器有看门狗。
         print("\n[1.6] 金标准指纹（行为漂移看门狗）")
         rc, out = run([sys.executable, "dev_tools/golden.py"])
-        if "指纹" in out:
-            d = re.search(r"指纹 ([0-9a-f]{16})", out) or re.search(r"机械 ([0-9a-f]{16})", out)
-            # 用例数只认壳输出（唯一真值源）；取不到就如实说未知，不回落到自写常量。
-            n = re.search(r"用例 (\d+) 条", out)
-            cnt = f"{n.group(1)} 例指纹" if n else "指纹（用例数未知）"
-            print(f"  {'√' if rc == 0 else '×'} {cnt} "
-                  f"{d.group(1) if d else '?'} "
-                  f"{'与基线一致' if rc == 0 else '— 行为已漂移，改的是不是你要改的？'}")
+
+        def _shape(s):
+            return (re.search(r"用例 (\d+) 条", s),
+                    re.search(r"机械 ([0-9a-f]{16})", s),
+                    re.search(r"措辞 ([0-9a-f]{16})", s))
+        n, d, w = _shape(out)
+        # 形状判据的自证：正例必须三件齐，负例（argparse 用法错误那种空跑）必须不被认作通过。
+        _good = "用例 288 条｜机械 3af013c514bf14e9｜措辞 7200af9a70d2df8f｜异常 0 条"
+        _bad = "usage: golden.py [-h] [{capture,verify}] [reason]"
+        if not all(_shape(_good)) or any(x for x in _shape(_bad)):
+            print("  × [selftest] 形状判据失效（正例没认全／用法错误被当成通过）")
+            failures.append("金标准形状判据自证不过——本节的一切结论都不可信")
+        cnt = f"{n.group(1)} 例指纹" if n else "指纹（用例数未知）"
+        if rc == 0 and not (n and d and w):
+            # 壳退 0 却没交出可比对的形状（用例子集为 0、被改坏、或被别的报错吃掉）——
+            # 这正是"空跑长得像测量"的那一类，绝不当作通过。
+            print("  × 壳退出码 0 但输出形状不完整（用例／机械／措辞 三件不齐）＝不能当作通过")
+            for line in out.splitlines()[:6]:
+                if line.strip():
+                    print("    " + line.strip())
+            failures.append("金标准壳输出形状不完整（rc=0 但缺 机械/措辞 指纹行）")
+        elif rc == 0:
+            print(f"  √ {cnt} 机械 {d.group(1)}／措辞 {w.group(1)} 与基线一致")
+        else:
+            # 失败分支过去整段被 `if "指纹" in out` 挡掉——golden 壳的报红文案里没有"指纹"二字，
+            # 于是本节在最需要说话的时候一声不出（只剩汇总行）。漂移摘要必须在这里逐行落地。
+            print(f"  × {cnt} "
+                  f"{('机械 ' + d.group(1) + ' 现在 ') if d else ''}"
+                  f"{'措辞 ' + w.group(1) + ' ' if w else ''}行为已漂移，改的是不是你要改的？")
+            for line in out.splitlines():
+                s = line.strip()
+                if s:
+                    print("    " + s)
         if rc != 0:
             failures.append("金标准指纹与基线不一致")
 
@@ -386,12 +524,72 @@ def main() -> int:
         if not fproblems:
             print("  √ 应期抽取 / 严格·宽松判定 / 读数汇总 / 口径句接线 全部通过（口径取自内核）")
         failures.extend(fproblems)
+        # 第八十六批：反馈链的**两个命令行入口**此前没有任何门跑过，实测 `feedback_report.py
+        # --summary` 在 cp936 控制台以 UnicodeEncodeError 崩溃（一个警示符号就退出 1）——
+        # 假例自检走的是库内函数，替不了"消费者照着 README 敲的那条命令"。
+        # 文档写过的命令必须按字面跑，这是本仓登记过的同一类失守（声明复核轮）。
+        for cmd in (["dev_tools/feedback_report.py", "--summary"],
+                    ["dev_tools/outcome.py", "list"]):
+            rc, out = run([sys.executable] + cmd)
+            tag = f"{cmd[0]} {' '.join(cmd[1:])}"
+            if rc != 0:
+                tail = (out or "").strip().splitlines()
+                failures.append(f"反馈链命令 `python {tag}` 退出码 {rc}"
+                                + (f"：{tail[-1][:90]}" if tail else "（无输出）"))
+            else:
+                print(f"  √ 反馈链命令 `python {tag}` 在当前控制台可跑（rc=0）")
+
+    if want("coherence"):
+        # 判词与自家分数同档（覆写链抬判词却不抬分数，曾产出「平吉 @ −5.33」15 例）
+        print("\n[1.8] 判词↔分数同档（覆写抬档必须把分数也带进档）")
+        rc, out = run([sys.executable, "dev_tools/check_verdict_coherence.py", "--selftest"])
+        for line in out.splitlines():
+            if line.strip():
+                print("  " + line.strip())
+        if rc != 0:
+            failures.append("存在判词比自家得分更乐观的输出（读数自相矛盾）")
 
     if want("smoke"):
         print("\n[2] 分析段落产出冒烟（只验有无产出）")
         rc, out = run([sys.executable, "tests/smoke_test.py"])
         gate("smoke", measure("smoke", out), minimum=baseline["smoke"],
              label="段落有产出数", raw=out)
+
+        # 编码不变式（第一百二十八批）：下列 CLI 实测曾在 GBK/cp936 控制台写出 **GBK 字节**
+        # （narrate 首字节 0xbe、render 0xc1f9、event_logger 0xcac2、thinking_chain 0xc1f9、classical_analysis 0xa1be），
+        # 而 rc 都是 0、分数与金标准指纹**全看不见**——只有"产物能否按 UTF-8 读出中文"这条行为断言拦得住退化。
+        import subprocess as _sp
+
+        def _utf8_with_cjk(argv):
+            r = _sp.run([sys.executable] + argv, capture_output=True, cwd=str(ROOT))
+            b = r.stdout or b""
+            try:
+                u = b.decode("utf-8")
+            except UnicodeDecodeError:
+                return False, r.returncode
+            return any("\u4e00" <= ch <= "\u9fff" for ch in u[:400]), r.returncode
+
+        _enc_bad = []
+        for _nm, _argv in (("scripts/narrate.py", ["scripts/narrate.py", "scratch/analyze.json"]),
+                           ("scripts/render.py", ["scripts/render.py", "scratch/analyze.json"]),
+                           ("scripts/thinking_chain.py", ["scripts/thinking_chain.py"]),
+                           ("scripts/classical_analysis.py", ["scripts/classical_analysis.py"]),
+                           ("scripts/event_logger.py", ["scripts/event_logger.py", "list", "--limit", "1"])):
+            _ok, _rc = _utf8_with_cjk(_argv)
+            if _rc != 0 or not _ok:
+                _enc_bad.append(f"{_nm}（rc={_rc}，UTF-8 可解且含中文={_ok}）")
+        # 判据自身的负例：GBK 字节必须被判不可解，否则这条不变式是摆设。
+        try:
+            "六爻纳甲".encode("gbk").decode("utf-8")
+            _enc_bad.append("负例失效：GBK 字节竟能被 UTF-8 解码——判据不可信")
+        except UnicodeDecodeError:
+            pass
+        for _e in _enc_bad:
+            print(f"  × CLI 编码退化：{_e}")
+        if _enc_bad:
+            failures.append(f"CLI 编码退化（{len(_enc_bad)} 处：产物须为可读 UTF-8 中文）")
+        else:
+            print("  √ 编码不变式：5 个中文 CLI 的 stdout 均可按 UTF-8 读出中文（负例已确判不可解）")
 
     if want("chart_purity"):
         # 缺陷 A 回归看门狗（2026-10-09）：chart 段禁吉凶断语 + 扫描器负例自证。
@@ -414,10 +612,22 @@ def main() -> int:
         if rc != 0:
             failures.append("报告里有类名没定义（样式层缺规则）")
 
+    if want("report_parity"):
+        # 「算出来了但看不到」：HTML 是主交付面，某一节整节缺失时指纹与对齐分都不报警
+        # （趋避建议就这么丢过一次：CSS 里 .advice-list 定义好了，无人引用）。
+        print("\n[2.7] 报告面一致性（analyze 产出的节必须在 HTML 出现；负例先自证）")
+        rp = report_parity_problems()
+        for r in rp:
+            print(f"  × {r}")
+        if not rp:
+            print("  √ 趋避建议/应期/判据所本 逐节逐条进入 HTML；负例探针可被抓到；无 traceback 泄漏")
+        failures.extend(rp)
+
     if want("chain_tests"):
-        print("\n[3] 思维链用例（12 例，逐维度断言）")
         rc, out = run([sys.executable, "tests/thinking_chain_tests.py"])
         _m = measure("chain_tests", out)
+        _mc = re.search(PATTERNS["chain_tests"], out)
+        print(f"\n[3] 思维链用例（{_mc.group(2) if _mc else '?'} 例，逐维度断言）")   # 例数不硬编，同上
         gate("chain_tests", _m, minimum=baseline["chain_tests"],
              label="用例通过数", raw=out)
         # 用例脚本「有失败」时本就 exit 1，那是报告不是崩溃；只有连汇总行都没
@@ -426,11 +636,17 @@ def main() -> int:
             failures.append(f"思维链用例脚本崩溃（rc={rc} 且汇总行未产出）")
 
     if want("regression"):
-        print("\n[4] 古籍回归（18 例，用神/方向/区间三维）")
         rc, out = run([sys.executable, "tests/regression_test.py"])
         _m = measure("regression", out)
+        _mt = re.search(PATTERNS["regression"], out)
+        # 例数由汇总行取，绝不硬编：旧标题写死「18 例」，而实际 19 例、reg_07 独败，
+        # 于是「18 例 / 通过 18」在门面上读起来像全通过——把唯一的诚实失败例抹平了。
+        print(f"\n[4] 古籍回归（{_mt.group(2) if _mt else '?'} 例，用神/方向/区间三维）")
         gate("regression", _m, minimum=baseline["regression"],
              label="回归通过数", raw=out)
+        _bad = re.search(r"方向不一致\(不可接受\):\s*(\[[^\]]*\])", out)
+        if _bad and _bad.group(1) not in ("[]", ""):
+            print(f"  注：不可接受项 {_bad.group(1)}（reg_07 系仿古自设前提，校勘记录见 regression_test 注释）")
         if rc != 0 and _m is None:
             failures.append(f"古籍回归脚本崩溃（rc={rc} 且汇总行未产出）")
 
@@ -452,21 +668,98 @@ def main() -> int:
     if want("yingqi_external") or want("eval"):
         # 外部验证集：只报数、不设门槛。n 太小时设门槛只会逼人去过拟合它。
         print("\n[6] 外部验证集（未参与任何调参；只报数不设门槛）")
-        for split, note in (("yingqi_holdout", "转写本，过六道自洽门"),
-                            ("wikisource_holdout", "维基文库原本，过纳甲/卦变/世应三方校验"),
-                            ("wikisource_direction", "同书有吉凶无验期（应期 N/A，只评方向）"),
-                            ("huozhulin_holdout", "火珠林原本，应期可评（含時级）"),
-                            ("suigui_holdout", "增删卜易·随鬼入墓章真例（动墓/化墓结构）")):
+        _ext_notes = {
+            "yingqi_holdout": "转写本，过六道自洽门",
+            "wikisource_holdout": "维基文库原本，过纳甲/卦变/世应三方校验",
+            "wikisource_direction": "同书有吉凶无验期（应期 N/A，只评方向）",
+            # 「含時级」原为不实：evaluate._expected_unit() 把 時/时 一律
+            # 归到**日池**近似判定，引擎与评分都没有时辰档（2026-10-10 核）。
+            "huozhulin_holdout": "火珠林原本（验期只写到时辰，评测按日池近似）",
+            "suigui_holdout": "增删卜易·随鬼入墓章真例（动墓/化墓结构）",
+        }
+        # 过去这里是一张**写死的清单**：注册表里新增（或留空）一个外部集，本段一个字都不会提。
+        # 实测漏报的形状：`case_splits.json` 登记着 `bushi_zhengzong_holdout`，但列表为空，
+        # 既不在本段的循环里、也不在 `too_weak`（那里只记了 5 个别来源）——**空着且无人说为什么空**。
+        # 改为按注册表驱动：凡 `*_holdout` / `*_direction` 一律过一遍，空集也要出声。
+        try:
+            import json as _json
+            _reg = _json.loads((ROOT / "data/cases/case_splits.json").read_text(encoding="utf-8"))
+            _ext_splits = sorted([k for k, v in _reg.items()
+                                  if isinstance(v, list)
+                                  and (k.endswith("_holdout") or k.endswith("_direction"))])
+        except Exception as _exc:  # 读不到注册表就退回旧清单，但要把原因打出来
+            print(f"  ! 读 case_splits.json 失败（退回写死清单）：{type(_exc).__name__}: {_exc}")
+            _ext_splits = sorted(_ext_notes)
+        for split in _ext_splits:
+            note = _ext_notes.get(split, "（登记于 case_splits.json，无备注）")
             ext = eval_metrics(split)
             if ext.get("error"):
-                print(f"  ! {split} 未跑成：{ext['error'][:200]}")
+                # evaluate 对空集也走"退出码 1"这条错误路径 ⇒ 旧写法把**注册表里的空集**
+                # 报成"未跑成"，读起来像坏了。本段下面本来就有 `n_case == 0` 的准确说法，
+                # 只是永远进不去；这里先分清"空集"与"真跑挂"，两种都要出声但话要说对。
+                try:
+                    import case_runner
+                    _n_reg = len(case_runner.load_ids(split))
+                except Exception:
+                    _n_reg = -1
+                if _n_reg == 0:
+                    print(f"  ! {split}：注册表内 **0 例**（空集／候选未毕业）——"
+                          f"不是故障，也没有可解读的读数（成因见 case_splits.json 与采集侧 block_reason）")
+                else:
+                    print(f"  ! {split} 未跑成：{ext['error'][:200]}")
             elif not ext.get("avg"):
-                print(f"  ! {split} 为空（见 docs/CASE-LIBRARY-AUDIT.md）")
+                # 分两种：真没案例，还是有案例但基准没有任何可评维度。
+                # 后一种报"为空"会误导——读起来像语料没建，其实是基准缺字段。
+                try:
+                    import case_runner                      # scripts/ 已在 sys.path 上
+                    n_case = len(case_runner.load_ids(split))
+                except Exception as exc:
+                    n_case = -1
+                    print(f"  ! {split}：案例数取不到（{type(exc).__name__}: {exc}）"
+                          f"——本行读数不可信，不能当作「集内无案例」")
+                if n_case > 0:
+                    print(f"  ! {split}：{n_case} 例在集，但基准无可评维度（全部 N/A，分母为 0）"
+                          f"——见 [16] 案例基准自洽与 docs/CASE-LIBRARY-AUDIT.md")
+                elif n_case == 0:
+                    print(f"  ! {split} 集内无案例（见 docs/CASE-LIBRARY-AUDIT.md）")
             else:
                 print(f"  · {split}（{note}）对齐分 {ext['avg']}% (n={ext.get('n') or 0})，"
                       f"主应期命中 {ext.get('top1') or '—'}%，应支平均名次 {ext.get('rank') or '—'}")
-        print("    两个集合都是**永不参与调参**的外部集；n 越小越只能当参照，"
-              "别拿它当成绩，也别为过它写私有规则（扩样路线见 HANDOFF 四·三）")
+        print(f"    {len(_ext_splits)} 个集合都登记为**永不参与调参**的外部集；n 越小越只能当参照，"
+              "别拿它当成绩，也别为过它写私有规则（扩样路线见 docs/CASE-LIBRARY-AUDIT.md「改走原本」一节与 references/source_ledger.md）")
+
+    # [11]-[17] 引用完整性 / 书源指针 / 案例库隔离 / 引文逐字回验 / 应期信息量 / 基准与 fixture 自洽。
+    # 这几道门前不存在：本轮清出来的活断链（HANDOFF、tools/*、tests/test_ming_*）
+    # 全部是靠人读出来的，而不是被门拦的——写进散文的门等于没跑，故一律接进本门。
+    for key, title, script in (
+            ("doc_refs", "[11] 文档活引用可达性（指向不存在文件的指针）",
+             "dev_tools/check_doc_refs.py"),
+            ("rule_registry", "[12] 规则注册表书源指针回验（verified 不许自说自话）",
+             "dev_tools/check_rule_registry.py"),
+            ("case_isolation", "[13] 案例库隔离（解读路径不得触达 data/cases）",
+             "dev_tools/check_case_isolation.py"),
+            ("source_readings", "[14] 书证引文逐字回验（《书名》源L行号+引文，含代码注释）",
+             "dev_tools/check_source_readings.py"),
+            ("yingqi_info", "[15] 应期候选池信息量（铺量涨分必须被拦住）",
+             "dev_tools/check_yingqi_information.py"),
+            ("case_selfconsistency", "[16] 案例基准自洽（日辰/应期须出自该例自引书文）",
+             "dev_tools/check_case_selfconsistency.py"),
+            ("fixture_invariants", "[17] 回归 fixture 不变量（声明的干支/卦名须算得出来）",
+             "dev_tools/check_fixture_invariants.py"),
+            ("fangwei", "[18] 方位层回验（避乱取方／延医取方须还出书自断）",
+             "dev_tools/check_fangwei.py"),
+            ("split_ledger", "[19] 分片台账复核（排除理由须能被字面重跑：无卦名／同源／别源 0 锚点）",
+             "dev_tools/check_split_ledger.py"),
+            ("cli_encoding", "[20] CLI 编码红线（cp936 下 argparse 中文入口的产物须为可读 UTF-8）",
+             "dev_tools/check_cli_encoding.py")):
+        if want(key):
+            print(f"\n{title}")
+            rc, out = run([sys.executable, script, "--selftest"])
+            for line in out.splitlines():
+                if line.strip():
+                    print("  " + line.strip())
+            if rc != 0:
+                failures.append(f"{title} 未通过")
 
     print("\n" + "=" * 62)
     if failures:

@@ -22,6 +22,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import engine as engine  # noqa: E402
 from engine import build_hexagram_result, coin_toss  # noqa: E402
+from yishu_core.runtime import force_utf8_stdio  # noqa: E402
+
+# 根 README 的运行示例是 `python liuyao/scripts/chart.py --mode coin … --question "某事如何"`：
+# 不带这行，GBK/cp936 控制台下 JSON 里的中文会输出成乱码（实测 rc=0 但 "question":"ĳ"），
+# 命令"跑通了"却给出读不懂的产物。八字侧 chart.py 早有同名调用，此处补齐孪生差异。
+force_utf8_stdio()
 
 
 def _parse_yao_values(text: str) -> list[int]:

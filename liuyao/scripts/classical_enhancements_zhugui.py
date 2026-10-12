@@ -14,7 +14,7 @@
     的 `pattern_verdict_labels["助鬼伤身"]`（经 narrative_utils 加载），代码内不写字面量。
 
 **applicability（解救条件）——本条最容易被实现错的地方**：
-源 L132 说「若有子孙发动，解神来救，庶可反凶成吉」，但 **L137 逐字限定**：
+《断易天机》源 L132 说「若有子孙发动，解神来救，庶可反凶成吉」，但 **L137 逐字限定**：
     「是指卦中**只有**子孙爻发动的情况。……因为子孙发动可以克官鬼，
       如果**妻财同动**的话，子孙不但不克官鬼，反而子孙生财，财又生官，
       形成连续相生，使官鬼更旺。」
@@ -71,42 +71,42 @@ def _elem(branch: str) -> str:
 
 
 def _jiejiu(moving_cai: list[str], moving_zisun: list[str]) -> dict:
-    """解救条件（源 L132 + L137 的 applicability 排除条件）。
+    """解救条件（《断易天机》源L132「若有子孙发动，解神来救，庶可反凶成吉，变祸为祥」＋源L137「是指卦中只有子孙爻发动的情况」的排除条件）。
 
     返回 {applicable, reason}：
-      · applicable=False 当妻财与子孙**同动**——源 L137 明写此时子孙生财、财生官，
-        「形成连续相生，使官鬼更旺」，故 L132 的「子孙发动来救」**不适用**；
-      · applicable=True 当子孙动而妻财不动（源 L137「是指卦中只有子孙爻发动的情况」）。
+      · applicable=False 当妻财与子孙**同动**——《断易天机》源 L137「如果妻财同动的话，子孙不但不克官鬼，反而子孙生财」 明写此时子孙生财、财生官，
+        「形成连续相生，使官鬼更旺」（《断易天机》源L137 按语），故 《断易天机》源L132 的「若有子孙发动，解神来救」**不适用**；
+      · applicable=True 当子孙动而妻财不动（《断易天机》源 L137「是指卦中只有子孙爻发动的情况」）。
 
     ⚠️ **书源自身的一处互斥（本函数实测四象限已确认，非实现缺陷）**：
     源 L136 的成立式要求「妻财爻又动来助鬼」，而 L132/L137 的解救要求
     「只有子孙爻发动」（即财不与之同动）。二者落在**互斥**的输入上：
       财动·子孙不动 → 成立，但解救不适用（无子可救）
       财动·子孙动   → 成立，但解救**不适用**（L137 明文排除：财子同动反使鬼更旺）
-      财不动·子孙动 → 不成立（无财不助鬼，L120「无财，凶有限」），此时才是纯解救位
+      财不动·子孙动 → 不成立（无财不助鬼，源L120「无财，凶有限」），此时才是纯解救位
     即**「成立」与「可解救」在书源口径下不同真**——这不是实现取巧，
-    而是源 L137 亲自设的限制。故本层**如实输出两字段、不合并成单一吉凶档**，
+    而是《断易天机》源L137「是指卦中只有子孙爻发动的情况」亲自设的限制。故本层**如实输出两字段、不合并成单一吉凶档**，
     由 narrate 按「结构上」措辞转述（SKILL.md 铁律一/三）。
     """
     if not moving_zisun:
-        return {"applicable": False, "reason": "子孙未发动（源L132：若有子孙发动，解神来救）"}
+        return {"applicable": False, "reason": "子孙未发动（《断易天机》源L132「若有子孙发动，解神来救」，今子孙未动，故无从解救）"}
     if moving_cai:
         return {"applicable": False,
-                "reason": "子孙与妻财同动——源L137：「如果妻财同动的话，子孙不但不克官鬼，"
+                "reason": "子孙与妻财同动——《断易天机》源L137：「如果妻财同动的话，子孙不但不克官鬼，"
                           "反而子孙生财，财又生官，形成连续相生，使官鬼更旺」，"
                           "故 L132 的子孙解救在此**不适用**"}
     return {"applicable": True,
-            "reason": "子孙独发、财不与其同动（源L137：「是指卦中只有子孙爻发动的情况」）"}
+            "reason": "子孙独发、财不与其同动（《断易天机》源L137：「是指卦中只有子孙爻发动的情况」）"}
 
 
 def analyze_zhu_gui_shang_shen(result):
-    """助鬼伤身 结构判定（《断易天机》源 L134-L137）。
+    """助鬼伤身 结构判定（《断易天机》源 L134-L137「助鬼之爻只有妻财爻」）。
 
     成立三要件（全部为机械可判）：
-      1. 有妻财爻**发动**（源 L134：助鬼之爻只有妻财爻；L119「不宜发动」故发动方助鬼）；
-      2. 有官鬼爻对世爻（或卦身爻）构成**冲或克**（源 L135：身即世爻或卦身爻，
+      1. 有妻财爻**发动**（源 L134「助鬼：助鬼之爻只有妻财爻」：助鬼之爻只有妻财爻；L119「不宜发动」故发动方助鬼）；
+      2. 有官鬼爻对世爻（或卦身爻）构成**冲或克**（源 L135「鬼爻伤身，也就是卦中鬼爻冲、克世爻或者卦身爻」：身即世爻或卦身爻，
          鬼爻冲、克世爻或卦身爻）；
-      3. 二者同时成立（源 L136 判定式）。
+      3. 二者同时成立（源 L136「在鬼爻可以伤克世爻（卦身）的情况下，妻财爻又动来助鬼」 判定式）。
 
     返回 {established, reason, gui_positions, cai_moving, shen_target,
           moving_zisun, applicability, note, classical_quote}。
@@ -133,7 +133,7 @@ def analyze_zhu_gui_shang_shen(result):
     if len(yao_lines) != 6:
         return out
 
-    # 世爻 / 卦身爻：源 L135「此处所指之“身”，就是世爻，或者是卦身爻」
+    # 世爻 / 卦身爻：《断易天机》源 L135「此处所指之"身"，就是世爻，或者是卦身爻」
     world = next((y for y in yao_lines
                   if isinstance(y, dict) and y.get("is_world")), None)
     guashen = hex_info.get("gua_shen") or hex_info.get("gua_shen_branch") or ""
@@ -150,7 +150,7 @@ def analyze_zhu_gui_shang_shen(result):
     out["cai_moving"] = [_pos_to_name(y.get("position") or 0) for y in moving_cai]
     out["cai_moving_count"] = len(moving_cai)
 
-    # 要件2：官鬼对世/卦身有冲或克（源 L135）
+    # 要件2：官鬼对世/卦身有冲或克（《断易天机》源L135「鬼爻伤身，也就是卦中鬼爻冲、克世爻或者卦身爻」）
     guis = [y for y in yao_lines
             if isinstance(y, dict) and y.get("six_relation") == "官鬼"]
     for g in guis:
@@ -165,7 +165,7 @@ def analyze_zhu_gui_shang_shen(result):
                      "target_branch": tb, "is_moving": bool(g.get("is_moving"))})
                 out["shen_target"] = tname
 
-    # 要件3：合并判定（源 L136）
+    # 要件3：合并判定（《断易天机》源L136「在鬼爻可以伤克世爻（卦身）的情况下，妻财爻又动来助鬼」）
     out["moving_zisun"] = [_pos_to_name(y.get("position") or 0) for y in yao_lines
                           if isinstance(y, dict) and y.get("six_relation") == "子孙"
                           and y.get("is_moving")]
@@ -176,16 +176,16 @@ def analyze_zhu_gui_shang_shen(result):
         out["established"] = True
         out["reason"] = (
             f"妻财发动（{ '、'.join(out['cai_moving']) }，共{out['cai_moving_count']}处，"
-            f"源L134「助鬼之爻只有妻财爻」）＋ 官鬼"
+            f"《断易天机》源L134「助鬼之爻只有妻财爻」）＋ 官鬼"
             f"（{ '、'.join(out['gui_positions']) }）"
             f"{ out['gui_actions'][0]['action'] }{out['shen_target']}"
-            "（源L135「鬼爻伤身……冲、克世爻或者卦身爻」）")
+            "（《断易天机》源L135「鬼爻伤身……冲、克世爻或者卦身爻」）")
     else:
         miss = []
         if not out["cai_moving_count"]:
             miss.append("无妻财发动（源L120「无财，凶有限」——财不发动则不助鬼）")
         if not out["gui_actions"]:
-            miss.append("无官鬼冲克世爻/卦身爻（源L135）")
+            miss.append("无官鬼冲克世爻/卦身爻（源L135「鬼爻伤身，也就是卦中鬼爻冲、克世爻或者卦身爻」）")
         out["reason"] = "；".join(miss)
 
     # 结构标签句（模板来自 verdict_texts.json，代码不写字面量）
@@ -196,7 +196,7 @@ def analyze_zhu_gui_shang_shen(result):
     if jtpl:
         out["note"] = (out["note"] + " " + jtpl.format(out["applicability"]["reason"])).strip()
 
-    # 两财皆动之限（源 L120「若有两财皆动，其祸大凶」）——只登记结构计数，不写成凶量判
+    # 两财皆动之限（《断易天机》源 L120「若有两财皆动，其祸大凶」）——只登记结构计数，不写成凶量判
     if out["cai_moving_count"] >= 2:
-        out["note"] += "（源L120：两财皆动——结构计数上的加倍，不作吉凶量判）"
+        out["note"] += "（《断易天机》源L120「若有两财皆动，其祸大凶」：两财皆动——结构计数上的加倍，不作吉凶量判）"
     return out

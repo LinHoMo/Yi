@@ -47,7 +47,7 @@ POLICY_WINDOW = "window"        # 容差窗：预测日集合，实际日期落�
 POLICY_CALIBERS = {POLICY_RANK: RANK_CALIBER, POLICY_WINDOW: WINDOW_CALIBER}
 
 # 反馈来源系统（provenance.source_system 取值；新学科接入在此登记）
-SOURCE_SYSTEMS = ("liuyao.feedback_store", "liuyao.event_logger")
+SOURCE_SYSTEMS = ("liuyao.feedback_store", "liuyao.event_logger", "bazi.feedback_store")
 
 # 反馈性质（真实 vs 合成——物理语义分离的唯一开关）
 KIND_REAL = "real_outcome"
@@ -155,6 +155,33 @@ def from_liuyao_feedback(rec: dict) -> FeedbackRecord:
         occurred_at=occurred,
         judged="",  # 六爻 store 不断事；不得把应期命中冒充断事判定
         evaluation_policy=POLICY_WINDOW if dates else "",
+        provenance=prov,
+    )
+
+
+def from_bazi_feedback(rec: dict) -> FeedbackRecord:
+    """八字 `reading_events` 落盘记录 → FeedbackRecord（断事判定）。
+
+    八字科不作应期承诺 ⇒ `predicted_timing` 留空、`evaluation_policy` 留空；
+    只把**断事方向**（格局／用神／层次之断）与后来人记的**实际情形**并列，judged 由人填。
+    """
+    prov = {
+        "kind": KIND_REAL,
+        "source_system": "bazi.feedback_store",
+        "recorded_at": str(rec.get("recorded_at") or ""),
+    }
+    if rec.get("source_note"):
+        prov["source_note"] = str(rec["source_note"])
+    return FeedbackRecord(
+        event_id=str(rec.get("event_id") or ""),
+        discipline="bazi",
+        question=str(rec.get("question") or ""),
+        prediction=str(rec.get("engine_claim") or ""),
+        predicted_timing=[],
+        observed_outcome=str(rec.get("actual_outcome") or ""),
+        occurred_at=str(rec.get("occurred_at") or ""),
+        judged=str(rec.get("judged") or ""),
+        evaluation_policy="",
         provenance=prov,
     )
 

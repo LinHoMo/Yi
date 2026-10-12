@@ -28,7 +28,9 @@ relations.py（十神↔六亲同一张表），本模块只借它给藏干逐�
   · `bazi/data/rules/rule_registry.json` → 条目 `ming.shensha`（安星出处
     与「在库书源否定/缺载」的考证结论）、`ming.tiaohou`（引文库指针 + 语料文件）、
     `ming.dayun`（起例书源 + corpus_line 行级锚点）；指针由
-    `tests/test_ming_rule_registry.py` 回验；
+    `dev_tools/check_rule_registry.py` 回验（已接进 `dev_tools/check.py` 的 [12] 段；
+    旧写法指向的 tests/test_ming_rule_registry.py（已随扁平化消失、从未重建）属自述的
+    守卫并不存在——2026-10-10 把这句话说成真：先建校验器，再改指它）；
   · `bazi/data/verdicts.json` → analyze 引用为判据时的书源句。
 （本段原写「详见 references 下的 rules.md」，该文件全仓不存在——2026-10-09 改指上面两处真路径，
  与 `core/yishu_core/shensha.py` 头注同一处口径。）

@@ -242,6 +242,14 @@ def narrate(a: dict) -> str:
 
 
 def main() -> int:
+    # 实测缺陷：本 CLI 在 GBK/cp936 控制台下把中文写成 **GBK 字节**
+    # （stdout 首两字节 `0xbe 0xcd`，UTF-8 解码直接失败），门户与任何 UTF-8 消费方拿到的就是乱码。
+    # 这里显式要求 UTF-8，与内核 `yishu_core.runtime.force_utf8_stdio` 同效；
+    # 写在 main 内是刻意的——不依赖 import 顺序，也不改动任何算法与措辞。
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:  # 极老的/被替换的 stdout：不因此让解读本身失败
+        pass
     ap = argparse.ArgumentParser(description="六爻纳甲解读（narrate 段）")
     ap.add_argument("analyze_json", nargs="?", help="analyze 输出的 JSON 文件（缺省跑演示）")
     ap.add_argument("-o", "--out", type=Path, help="写出解读文本")

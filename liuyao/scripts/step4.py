@@ -225,22 +225,18 @@ def step4_analyze_changes(r: dict) -> dict:
     #   原神化进 +1.0 / 化退 −0.5；忌神化进 −1.0 / 化退 +0.5；仇神化退 +0.3。
     # 于是旧块既重复计数，又把忌神化进的符号覆盖成正——忌神越进，分数越高，
     # 方向判词随之翻吉（外部验证集 wikisource_direction 10 例方向失分中 9 例偏吉）。
-    # 《增删卜易》L551/L541 的原文也只让「元神旺动」加分、「元神休囚化退」减分，
+    # 《增删卜易》源L541 逐字「元神旺动临空化空五也」只让元神旺相/旺动者得力；
+    # 《增删卜易》源L551 逐字「元神休囚动化退神三也」又把休囚化退者列为无力生用神——
+    #   原文也只让元神旺动加分、元神休囚化退减分，
     # 从无从忌神化进反加之理。进退神的**文字**仍由 advanced_analysis 呈现，
     # 数值只走逐爻这一条通道。
 
     # ---------- 4.4: 净效应判断 ----------
     net_effect = round(net_effect, 2)
-    if net_effect >= 1.5:
-        net_description = "大吉（动变全面有利）"
-    elif net_effect >= 0.5:
-        net_description = "偏吉（动变总体有利）"
-    elif net_effect >= -0.5:
-        net_description = "中性（动变利弊参半）"
-    elif net_effect >= -1.5:
-        net_description = "偏凶（动变总体不利）"
-    else:
-        net_description = "大凶（动变全面不利）"
+    # 五档描述与「符号」都从 net_effect_band 一处出：以前回归断言里另写了一套
+    # ±0.3 的符号阈值，与引擎自述的 ±0.5 中性带互相打架（同一个 -0.4，引擎说中性、
+    # 断言算负），见 docs/CHANGELOG.md 第十七批「阈值统一」一条。
+    net_description = NET_BAND_TEXT[net_effect_band(net_effect)]
 
     greedy_harmony_summary = ""
     if greedy_harmony_issues:
@@ -293,6 +289,8 @@ def _user_reason(text: str, fallback: str = "") -> str:
 __all__ = [
     "_compose_change_summary",
     "_classify_line_role",
+    "net_effect_band",
+    "net_effect_sign",
     "_determine_change_type",
     "_analyze_effect_on_use_god",
     "_check_tan_sheng_wan_ke",
@@ -348,6 +346,42 @@ def _compose_change_summary(moving_lines, favorable_changes, unfavorable_changes
     return "".join(parts)
 
 
+NET_STRONG = 1.5   # 大吉/大凶 边界
+NET_MILD = 0.5     # 偏吉/偏凶 与 中性 的边界——净效应的「符号」也用它，别无二处口径
+NET_BAND_TEXT = {
+    "大吉": "大吉（动变全面有利）",
+    "偏吉": "偏吉（动变总体有利）",
+    "中性": "中性（动变利弊参半）",
+    "偏凶": "偏凶（动变总体不利）",
+    "大凶": "大凶（动变全面不利）",
+}
+
+
+def net_effect_band(net) -> str:
+    """净效应五档：唯一一份比较链，描述文字与符号都从这里派生。"""
+    v = float(net or 0)
+    if v >= NET_STRONG:
+        return "大吉"
+    if v >= NET_MILD:
+        return "偏吉"
+    if v >= -NET_MILD:
+        return "中性"
+    if v >= -NET_STRONG:
+        return "偏凶"
+    return "大凶"
+
+
+def net_effect_sign(net) -> str:
+    """净效应符号（positive/neutral/negative）——测试断言用引擎自述的同一档位，
+    不再另立 ±0.3 一套（同一 -0.4 引擎说中性、旧断言算负，见 CHANGELOG 第十七批）。"""
+    band = net_effect_band(net)
+    if band in ("大吉", "偏吉"):
+        return "positive"
+    if band in ("偏凶", "大凶"):
+        return "negative"
+    return "neutral"
+
+
 def _classify_line_role(
     relation: str,
     use_god_category: str,
@@ -357,7 +391,7 @@ def _classify_line_role(
     ji_shen_element: str,
     chou_shen_element: str,
 ) -> str:
-    """动爻身份：用神/用神同气/原神/忌神/仇神/生用/克用/闲神。"""
+    """动爻身份：用神/用神同气/原神/忌神/仇神/泄用/生用/克用/闲神。"""
     if relation == use_god_category:
         return "用神"
     if element == use_god_element:
@@ -373,6 +407,11 @@ def _classify_line_role(
         return "生用神之爻"  # 生用神者
     if KE_CYCLE.get(element) == use_god_element:
         return "克用神之爻"  # 克用神者
+    # 五行对用神只有五态：同我、生我、克我、我克、**我生**。前四态上面都有身份，
+    # 第五态（我生者）过去落到"闲神"，于是用神去生动爻＝泄气这件事在净效应里
+    # 恒等于 0——三例回归（reg_14/17/18）报「动变净效应 实际+0.00」就是同一条漏项。
+    if SHENG_CYCLE.get(use_god_element) == element:
+        return "泄用之神"
     return "闲神"
 
 
@@ -486,7 +525,7 @@ def _analyze_effect_on_use_god(
             score = 1.0
             description_parts.append("原神化进，生用有力")
         elif ct == "化退神":
-            # 《增删卜易·元神章》两款并读：L541「元神旺相或临日月或日月动爻生扶」
+            # 《增删卜易·元神章》两款并读：源L541「元神旺相或临日月或日月动爻生扶」
             # 即能生用（列在「能生五者」之首），L551 第三款作无力的是
             # 「元神**休囚**动化退神」。旧实现把化退一律记 −0.5，
             # 使旺相之元神动化退反被扣分（reg_03 原神辰土旺动即被记 −0.5）。
@@ -569,9 +608,23 @@ def _analyze_effect_on_use_god(
             score = -0.2  # 仇神动总体轻微不利
             description_parts.append("仇神动，间接影响原神")
 
+    elif line_role == "泄用之神":
+        # 用神去生动爻＝泄尽己气。《增删卜易》源L1662 逐字：「古法相生须宜他生我，
+        # 相克还宜我克他。……如世去生助他爻，泄尽自己之气也。」同一"我生他＝泄"的
+        # 定价在本科别处早已存在（《卜筮正宗》源L432「木生火谓之伏去生飞，名为泄气」
+        # → step5 伏生飞 -0.3；《易隐》源L224「伏生飞曰泄气」），只有动爻这一态漏了。
+        # 泄神自己受制时是否"减泄"——**第三十七批逐条查过 13 种底本，书上没有这一条定式**，
+        # 因此不编码（曾按忌神／仇神的形状实现过 -0.3→-0.15 的减半，实测
+        # wikisource_holdout 对齐分 66.2→64.5，即有一例被这个无书据的推论推歪，已回退）。
+        # 书上只给到别处：《卜筮全书》源L3212 逐字「父动生兄，若见财爻动，则父无用而不能生兄矣」
+        # 说的是**元神被克则生助之功废**；《卜筮全书》源L3360 逐字「用逢泄气动摇摇」「最喜元辰相救助，忌神发动切须愁」
+        # ——给的解法是元辰救助用神，而不是去废掉泄神；
+        # 《易冒》源L1213 逐字「泄气动而元神静，升信杳然」同样把关键放在元神动静上。
+        # 三条都指向"泄就是泄"，无一条例外说泄神化退／入墓／回头克就不泄。
+        score = -0.3
+        description_parts.append(f"用神{use_god_element}生{orig_element}动爻，泄尽自己之气")
+
     else:
-        # 与其他爻互动
-        # 变爻与用神的关系
         if chg_branch and chg_element == use_god_element:
             # 动爻化出用神（化用）
             score = 0.5
@@ -727,6 +780,27 @@ def _detect_classical_illness_pattern(question: str, step2_data: dict, step3_dat
             result["pattern"] = "近病逢空即愈"
             result["description"] = f"{void_desc}——近病逢空为病气将退，速愈之象（《增删易》定法）"
             result["impact_on_verdict"] = "近病逢空即愈，强调为吉"
+            result["score_adjustment"] = 5.0
+            return result
+
+    # --- 近病逢六冲即愈（本卦或变卦六冲皆算）---
+    # 四条逐字各配各的锚（一锚一引文同行；跨行会让引文配到下一条锚上，实测被自己判过假红）：
+    # 《增删卜易》源L17「近病者世值旬空或世动化空，或卦逢六冲及卦变六冲，不须服药，即许安痊」
+    # 《增删卜易》源L19「近病者父爻值旬空，父动化空，或卦逢六冲，不药而痊」
+    # 《增删卜易》源L21「近病者，兄爻值旬空及动而化空，卦逢六冲，服药即愈」
+    # 《增删卜易》源L23「近病者子孙爻值旬空及动而化空，卦逢六冲，卦变六冲，不药而愈」
+    # 《增删卜易》源L539「近病逢冲即愈。此卦乃系六冲」
+    # ＋「果于丑日起床」。久病不套此条（书上久病另判），故只在近病/占病分支里生效。
+    if (is_near_illness or is_illness_div) and hex_result:
+        _orig = str(((hex_result.get("original_hexagram") or {}).get("name")) or "")
+        _chg = str(((hex_result.get("changed_hexagram") or {}).get("name")) or "")
+        _chong = [f"{lab}{nm}" for lab, nm in (("本卦", _orig), ("变卦", _chg))
+                  if nm and hexagram_he_chong_kind(nm) == HEXAGRAM_KIND_LIUCHONG]
+        if _chong:
+            result["pattern"] = "近病逢六冲即愈"
+            result["description"] = (f"{'、'.join(_chong)}为六冲卦——近病逢冲即愈，"
+                                     f"病气散而不留（《增删卜易》源L17「或卦逢六冲及卦变六冲，不须服药」/L19/L21/L23）")
+            result["impact_on_verdict"] = "近病逢六冲即愈，断为吉"
             result["score_adjustment"] = 5.0
             return result
 
@@ -897,11 +971,11 @@ def _detect_hexagram_harmony_clash_pattern(question: str, hex_result: dict, step
     # 出处改挂（OPT-huangjince_dz-03，2026-10-07）：原挂《黄金策》属误挂——黄金策两源
     # （huangjince_dz.dz.txt／huangjin_ce.wikitext.txt）全 0 命中「冲中逢合」八字。
     # 正源为《卜筮正宗》：
-    #   目录 L32「合处逢冲冲中逢合论第十五    绝处逢生克处逢生论第十六」
-    #   目录 L55「第十一问冲中逢合合处逢冲　计答占验八卦」
-    #   正文 L3102「第十一问：	冲中逄合，合处逄冲，何以断其吉凶？」
-    #   正文 L3103「答曰：合者聚也，冲者散也．冲中逄合先散后聚，先失后得，先淡后浓．」
-    #   正文 L3104「合处逄冲，反是．」（「逄」为「逢」异体，逐字照录不改字）
+    #   目录 源L32「合处逢冲冲中逢合论第十五    绝处逢生克处逢生论第十六」
+    #   目录 源L55「第十一问冲中逢合合处逢冲　计答占验八卦」
+    #   正文 源L3102「第十一问：	冲中逄合，合处逄冲，何以断其吉凶？」
+    #   正文 源L3103「答曰：合者聚也，冲者散也．冲中逄合先散后聚，先失后得，先淡后浓．」
+    #   正文 源L3104「合处逄冲，反是．」（「逄」为「逢」异体，逐字照录不改字）
     # 引擎八字「合处逢冲事已散／冲中逢合事迟成」是正文之义约；方向与正文一致
     # （冲中逢合＝先散后聚＝终局有成；合处逢冲反之＝终局散），判定值 ±1.5 零变更。
     changed_name = (hex_result.get("changed_hexagram") or {}).get("name") or ""
@@ -1332,6 +1406,8 @@ __all__ = [
     "_user_reason",
     "_compose_change_summary",
     "_classify_line_role",
+    "net_effect_band",
+    "net_effect_sign",
     "_determine_change_type",
     "_analyze_effect_on_use_god",
     "_check_tan_sheng_wan_ke",

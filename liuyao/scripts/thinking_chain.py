@@ -4,6 +4,11 @@ from __future__ import annotations
 
 import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
 
+try:  # 实测本 CLI 在 GBK 控制台输出 GBK 字节（首字节 `\xc1\xf9\xd8\xb3\xcb\xbc`＝「六爻纳…」），UTF-8 消费方必乱码
+    _ks_sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
+
 _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
 
 if _ks_d not in _ks_sys.path:

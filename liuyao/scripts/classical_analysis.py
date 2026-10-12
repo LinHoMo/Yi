@@ -1,6 +1,11 @@
 # 本文件为聚合入口：子模块见 engine_*/chain_*/classical_*。
 import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
 
+try:  # 实测本 CLI 的演示分支在 GBK 控制台输出 GBK 字节（首字节 `\xa1\xbe`＝「【」），UTF-8 消费方必乱码
+    _ks_sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
+
 _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
 
 if _ks_d not in _ks_sys.path:
@@ -14,6 +19,7 @@ _ensure_kernel(__file__)
 
 from chart_tables import SIX_SPIRIT_PROPERTIES
 from classical_enhancements_yimao_zhugui import analyze_zhu_gui_shang_shen_yimao
+from classical_enhancements_fangwei import analyze_fangwei
 from classical_enhancements_shen_yao import (
     analyze_shen_yao_activation,
     analyze_you_jie,
@@ -22,6 +28,7 @@ from classical_enhancements_shen_yao import (
 from classical_enhancements import (
     analyze_hidden_spirits,
     analyze_hidden_spirit_emergence,
+    analyze_tianqi_structure,
     analyze_hidden_movement,
     analyze_wandering_returning_soul,
     analyze_monthly_break,
@@ -114,6 +121,7 @@ def enhance_reading(result_dict):
         "element_strength": analyze_element_strength(result_dict),
         "three_punishments": analyze_three_punishments(result_dict),
         "hidden_spirit_scoring": analyze_hidden_spirit_emergence(result_dict),
+        "tianqi_structure": analyze_tianqi_structure(result_dict),
         "day_month_bonding": analyze_day_month_bonding(result_dict),
         "six_breaks": analyze_six_breaks(result_dict),
         "desperate_relief": analyze_desperate_relief(result_dict),
@@ -142,6 +150,10 @@ def enhance_reading(result_dict):
     if result_dict.get("advanced_analysis") is not None:
         result_dict["advanced_analysis"]["shen_yao_activation"] = analyze_shen_yao_activation(result_dict)           # 《易隐》L217 身爻启用谓词
         result_dict["advanced_analysis"]["you_jie"] = analyze_you_jie(result_dict)                                   # 《增刪卜易》忧解/忧疑结构标签
+        # 方位层（#23）：避乱／迁移取方与延医取方，只出结构与书据、不判吉凶、不参与评分。
+        # 必须挂在这里（而非上面的字面量里）：延医第三档要复用 du_fa_du_jing 的独发判据，
+        # 在同一次字面量求值时它还读不到，另起一套独发定义就是第二个真值源。
+        result_dict["advanced_analysis"]["fangwei"] = analyze_fangwei(result_dict)
         result_dict["advanced_analysis"]["zhu_gui_shang_shen_yimao"] = analyze_zhu_gui_shang_shen_yimao(result_dict) # 《易冒》助鬼伤身（修正版）
 
     # 八卦变爻深度推演（动爻格局分析）

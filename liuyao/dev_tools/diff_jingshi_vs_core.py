@@ -30,6 +30,15 @@ import argparse
 import json
 import re
 import sys
+
+# 控制台编码守卫：GBK/cp936 控制台下本器的中文输出会退化成乱码甚至 UnicodeEncodeError
+# （rc 仍为 0、金标准看不见，只有这条守卫管得住）。判据见 dev_tools/check.py 的编码不变式。
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
+
 from pathlib import Path
 
 # 扁平化后脚本位于 <学科根>/dev_tools/；学科根=liuyao（parents[1]），内核副本在 <学科根>/core。

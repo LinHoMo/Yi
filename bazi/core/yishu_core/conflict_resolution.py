@@ -115,8 +115,10 @@ def resolve_tiaohou_vs_pattern(strength_result: dict,
                 "pattern_perspective": pattern_desc,
                 "detail": detail,
             }
+        # 序：按格局喜用原序取交集，不用 `set & set`——集合迭代序随 PYTHONHASHSEED
+        # 每进程随机，同输入两次跑会写出不同 detail（2026-10-12 实测曾令金标准随机漂移）。
         detail = (f"{tiaohou_desc}；{pattern_desc}。"
-                  f"调候主神与格局扶抑喜用同属{'、'.join(consistent_roles & useful_set)}，"
+                  f"调候主神与格局扶抑喜用同属{'、'.join(r for r in useful if r in consistent_roles)}，"
                   f"两层口径一致，无需仲裁。")
         return {
             "conflict": False,

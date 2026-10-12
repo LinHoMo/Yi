@@ -241,21 +241,21 @@ def use_god_tomb_tags(yao_lines, use_god_branch, use_god_position,
 
 
 def yimao_tomb_corrections(yao_lines, ug_pos, tomb, day_branch, month_branch):
-    """化墓三修正（《易冒》随墓章 源L526/L528/L530）——**只出结构修正标记，不改吉凶**。
+    """化墓三修正（《易冒》随墓章 源L526「火官戌墓，辰日冲而成伪，戌月实而作真，戌空自伪，戌破非真」/L528/L530）——**只出结构修正标记，不改吉凶**。
 
     【OPT-yimao_dz-05，2026-10-07 新增】引擎原只依《卜筮正宗》判「是否入墓」，
     《易冒》另给三条**修正/限定**，本函数把它们转成可机械判的结构标记：
 
       ① **化爻墓冲破成伪**（源L526 逐字）：「化爻随鬼入墓，与命墓世墓无差等，而有真伪，
-         火官戌墓，**辰日冲而成伪**，戌月实而作真，戌空自伪，戌破非真。」
+         火官戌墓，辰日冲而成伪，戌月实而作真，戌空自伪，戌破非真。」
          → 化墓遇**日辰冲**该墓支 → 标记 `化墓逢冲`（书源谓之「成伪」）。
          本函数只标「逢冲」这一**结构事实**；「成伪/作真」的吉凶断语**不入结构层**
          （SKILL.md 铁律一），由 narrate 按 src 回指原文自取。
-      ② **官衰则减**（源L528 注）：「然遇鬼旺则凶，**官衰则减**，视世墓化墓则轻尔。」
+      ② **官衰则减**（源L528 注）：「然遇鬼旺则凶，官衰则减，视世墓化墓则轻尔。」
          → 本条是**程度递减**，属半吉凶判断。本层**只登记出处、不实现**：
          「官衰」需先定「官」在用神入墓语境下的所指（用神本身即官鬼？或另指官爻），
          口径未裁定前实现即属 §四.3 禁止的凭空造判据。见 `unimplemented` 字段。
-      ③ **避患占空破反吉**（源L530 逐字）：「若**避患**、忧害、防非，见空破而祸消，
+      ③ **避患占空破反吉**（《易冒》源L530 逐字）：「若避患、忧害、防非，见空破而祸消，
          祸消而随墓何凶也。」→ 占问类属**避患/忧害/防非**者，见空破则**减凶**。
          本层只标 `避患占见空破` 这一**结构事实**（问类命中 + 该墓支逢空/破），
          「反吉」的断语不入结构层。
@@ -269,7 +269,7 @@ def yimao_tomb_corrections(yao_lines, ug_pos, tomb, day_branch, month_branch):
         "避患占见空破": False,   # ③ 避患类占 + 该墓逢空破
         "适用问类": [],          # 由调用方按问类填入（本函数不猜问类）
         "unimplemented": [
-            {"修正": "官衰则减（源L528）",
+            {"修正": "官衰则减（《易冒》源L528「然遇鬼旺则凶，官衰则减，视世墓化墓则轻尔」）",
              "理由": "「官衰」在用神入墓语境下所指未裁定（用神本身即官鬼？或另指官爻？），"
                      "且「减凶」属程度吉凶判断；按 SKILL.md，"
                      "口径未裁定前不实现，只登记出处。"},
@@ -600,7 +600,7 @@ def _infer_use_god_category(question):
 def _evaluate_hidden_spirit_emergence(hid_elem, hid_branch, cov_rel, cov_branch,
                                        cov_elem, month_branch, day_branch,
                                        month_elem, day_elem, empty_branches,
-                                       covering_yao):
+                                       covering_yao, moving_elems=None):
     """
     评估伏神得出/不得出。
     
@@ -608,7 +608,17 @@ def _evaluate_hidden_spirit_emergence(hid_elem, hid_branch, cov_rel, cov_branch,
       - 日/月生伏神
       - 日/月与伏神同五行（持之）
       - 飞神生伏神
-      - 日/月/动爻冲克飞神
+      - 飞神被月支冲（作"飞神月破"算）
+      **六款落支逐条核对（第五十三批读代码所得，非自述）**：款一 日月生扶→有
+      （crt_008/crt_009）；款二 伏神旺相→**本函数缺**（报告路 analyze_hidden_spirit_emergence
+      有 crt_039/crt_058 两支，属 #17 两路未并一的**剩余分歧**，不在本批口头称已并）；
+      款三 飞神生伏→有（cr_001）；款四 动爻生伏→有（crt_009c，第五十批补）；
+      款五 日月动爻冲克飞神→齐（crt_009b 日冲／crt_009d 动爻冲克／crt_009e 日克／
+      crt_009f 月克，末两支第五十三批补）；款六 飞神空破休囚墓绝→齐（cr_002 空／cr_003 月破／crt_010 休囚／crt_009g 入墓／crt_009h 逢绝，末两支第六十五批补）。
+      旧版本这段把"日/月/动爻冲克飞神"列为已实现，而当时"克"三支全缺，属自述超出实现
+      （第四十九批改正后仍缺两支，本批补齐）。
+      旁证核对：《卜筮全书》源L5524 逐字「六冲最紧，六害不能出」——下面加分项里没有一条
+      以六害作开门手段，与此一致。
       - 飞神旬空、月破、休囚
     
     不得出（凶）：
@@ -618,87 +628,158 @@ def _evaluate_hidden_spirit_emergence(hid_elem, hid_branch, cov_rel, cov_branch,
       - 伏神旬空、月破
     """
     emerge_score = 0
-    reasons = []
+    emerge_reasons: list[str] = []
+    block_reasons: list[str] = []
+    hid_strength_pos = element_strength_in_month(hid_elem, month_elem)
 
     # --- 得出条件 ---
     # 1. 日/月生伏神
     if SHENG_CYCLE.get(day_elem) == hid_elem or day_elem == hid_elem:
         emerge_score += 2
-        reasons.append(ctpl("crt_008", '生' if SHENG_CYCLE.get(day_elem) == hid_elem else '同'))
+        emerge_reasons.append(ctpl("crt_008", '生' if SHENG_CYCLE.get(day_elem) == hid_elem else '同'))
     if SHENG_CYCLE.get(month_elem) == hid_elem or month_elem == hid_elem:
         emerge_score += 1
-        reasons.append(ctpl("crt_009", '生' if SHENG_CYCLE.get(month_elem) == hid_elem else '同'))
+        emerge_reasons.append(ctpl("crt_009", '生' if SHENG_CYCLE.get(month_elem) == hid_elem else '同'))
 
     # 2. 飞神生伏神
     if SHENG_CYCLE.get(cov_elem) == hid_elem:
         emerge_score += 2
-        reasons.append(ctext("cr_001"))
+        emerge_reasons.append(ctext("cr_001"))
 
     # 3. 飞神旬空
     if cov_branch in empty_branches:
         emerge_score += 1
-        reasons.append(ctext("cr_002"))
+        emerge_reasons.append(ctext("cr_002"))
 
     # 4. 飞神月破
     if is_ba_zu_chong(cov_branch, month_branch):
         emerge_score += 1
-        reasons.append(ctext("cr_003"))
+        emerge_reasons.append(ctext("cr_003"))
+
+    # 4b. 日辰冲飞（《增删卜易》源L1055 逐字「伏神得遇日月动爻冲克飞神者五也」的"日冲"半支）
+    #     旧实现只有月支冲飞，日支冲飞漏了——与同文件 analyze_hidden_spirit_emergence
+    #     （报告路）实测 16 条里分歧 3 条，reg_05 妻财被判"难出"而报告路给"极易出"，
+    #     正是这一缺支所致（第四十九批实测）。动爻冲克飞仍缺（本函数拿不到动爻）。
+    if cov_branch and day_branch and is_ba_zu_chong(cov_branch, day_branch):
+        emerge_score += 1
+        emerge_reasons.append(ctpl("crt_009b", day_branch, cov_branch))
 
     # 5. 飞神休囚
     cov_strength = element_strength_in_month(cov_elem, month_elem)
     if cov_strength in ("休", "囚", "死"):
         emerge_score += 1
-        reasons.append(ctpl("crt_010", cov_strength))
+        emerge_reasons.append(ctpl("crt_010", cov_strength))
+
+    # 5b/5c. 动爻一支的两半（《增删卜易》源L1055 逐字「伏神得动爻生者四」
+    #        与「伏神得遇日月动爻冲克飞神者五也」）——旧判据路两款全缺，
+    #        报告路却有，故同一盘两路相反（第五十批对拍量出 3 条）。
+    for me in (moving_elems or []):
+        if not me:
+            continue
+        if SHENG_CYCLE.get(me) == hid_elem:
+            emerge_score += 1
+            emerge_reasons.append(ctpl("crt_009c", me, hid_elem))
+        if is_ba_zu_chong(me, cov_branch) or KE_CYCLE.get(me) == cov_elem:
+            emerge_score += 1
+            emerge_reasons.append(ctpl("crt_009d", me, cov_branch, cov_elem))
+
+    # 4c/4d. 款五的「日月克飞」两支（《增删卜易》源L1055 逐字
+    #        「伏神得遇日月动爻冲克飞神者五也」）：旧判据路只落了"冲"，
+    #        "克"两支漏了——报告路（analyze_hidden_spirit_emergence）却有，
+    #        同一盘两路相反即由此来（第五十二批前的 16 项对拍量出 3 条分歧）。
+    #        动爻一支仍由下面 moving_elems 循环承担。
+    if day_elem and cov_elem and KE_CYCLE.get(day_elem) == cov_elem:
+        emerge_score += 1
+        emerge_reasons.append(ctpl("crt_009e", day_branch, cov_branch))
+    if month_elem and cov_elem and KE_CYCLE.get(month_elem) == cov_elem:
+        emerge_score += 1
+        emerge_reasons.append(ctpl("crt_009f", month_branch, cov_branch))
+
+    # 5d. 款二 伏神旺相（《增删卜易》源L1055 逐字「伏神旺相者二也」——旧判据路**缺这一款**，
+    #        报告路却有，同一盘两路可相反；量级沿用报告路原值，属引擎设计而非书写数字）
+    if hid_strength_pos in ("旺", "相"):
+        emerge_score += 2 if hid_strength_pos == "旺" else 1
+        emerge_reasons.append(ctpl("crt_039" if hid_strength_pos == "旺" else "crt_058", hid_branch))
+
+    # 5e/5f. 款六的「飞神墓·绝」两支（《增删卜易》源L1055 逐字「伏神得遇飞神空破休囚墓绝者六也」）：
+    #        旧判据路只落了 空／破／休囚 三支，墓、绝 两支缺——本批补齐，量级沿用同支的 +1。
+    cov_tomb = TOMB_MAP.get(cov_elem, "")
+    if cov_tomb and day_branch == cov_tomb:
+        emerge_score += 1
+        emerge_reasons.append(ctpl("crt_009g", cov_branch, cov_tomb))
+    cov_stage, _ = get_twelve_growth_stage(cov_elem, day_branch) or (None, None)
+    if cov_stage == "绝":
+        emerge_score += 1
+        emerge_reasons.append(ctpl("crt_009h", cov_branch, cov_elem))
 
     # 6. 伏克飞为出暴（伏神有力反克飞神，出暴为吉）
     if KE_CYCLE.get(hid_elem) == cov_elem:
         emerge_score += 3
-        reasons.append(ctext("cr_004"))
+        emerge_reasons.append(ctext("cr_004"))
 
     # --- 不得出条件 ---
+    # 【书据边界，第六十七批取证后停在明处】《增删卜易》源L1058 逐字「伏神被日月冲克者二也」
+    #   里的"克"，本器目前只在伏神休囚语境下扣分；是否扩到"旺相伏神被日月克也扣"，两条检索都不支持：
+    #   ① 《增删卜易》源L2787 逐字「若伏而旺相，或得日月冲去飞神，生起伏神，准登科及第」——书上对伏而旺相判**吉**；
+    #   ② 本仓案例里"伏藏＋旺相/有气"六条（ZS014/015/016/030/HO002/HO005）中，
+    #      判不得出的三条（ZS014/ZS015/ZS030）给的都是**伏而被飞神克／绝于飞神**，
+    #      没有一例是"伏神旺相而被日月克仍判不得出"。
+    #   故不扩写；要扩须先有一条那样的书转真例。（款四的"绝于飞爻"已由 ZS015
+    #   「财爻伏藏且绝于飞神亥水」这一型支撑，第六十六批①把飞神纳入墓绝位置。）
     # 1. 伏神休囚被日月克
     hid_strength = element_strength_in_month(hid_elem, month_elem)
     if hid_strength in ("死", "囚"):
         emerge_score -= 2
-        reasons.append(ctpl("crt_011", hid_strength))
+        block_reasons.append(ctpl("crt_011", hid_strength))
 
     day_hid_strength = element_strength_in_month(hid_elem, day_elem)
     if day_hid_strength == "死":
         emerge_score -= 2
-        reasons.append(ctext("cr_005"))
+        block_reasons.append(ctext("cr_005"))
 
     # 2. 飞神旺相克伏神
     if KE_CYCLE.get(cov_elem) == hid_elem:
         cov_strength = element_strength_in_month(cov_elem, month_elem)
         if cov_strength in ("旺", "相"):
             emerge_score -= 3
-            reasons.append(ctext("cr_006"))
+            block_reasons.append(ctext("cr_006"))
 
-    # 3. 伏神入墓
-    tomb = TOMB_MAP.get(hid_elem, "")
-    if tomb and day_branch == tomb:
+    # 3. 款四 伏神墓绝于日月飞爻（《增删卜易》源L1058 逐字「伏神墓绝于日月飞爻者四也」）
+    #    旧实现把这一款拆成「日辰入墓 −2」与「日辰逢绝 −2」两条各扣一次＝同一款重复计分，
+    #    且「月建」「飞爻」两个位置全缺。现合为一条：三处任一命中只扣一次，理由逐项列出。
+    _tomb_hid = TOMB_MAP.get(hid_elem, "")
+    _mu_jue = []
+    for _b, _lbl in ((day_branch, "日辰"), (month_branch, "月建"), (cov_branch, "飞神")):
+        if not _b:
+            continue
+        if _tomb_hid and _b == _tomb_hid:
+            _mu_jue.append(f"{_lbl}为墓({_tomb_hid})")
+        _st, _ = get_twelve_growth_stage(hid_elem, _b) or (None, None)
+        if _st == "绝":
+            _mu_jue.append(f"{_lbl}处绝")
+    if _mu_jue:
         emerge_score -= 2
-        reasons.append(ctpl("crt_012", tomb))
+        block_reasons.append(ctpl("crt_009k", "、".join(_mu_jue)))
 
-    # 4. 伏神逢绝
-    stage_name, _ = get_twelve_growth_stage(hid_elem, day_branch) or (None, None)
-    if stage_name == "绝":
+    # 4b. 款二「伏神被日月冲克」里的**日辰冲**一支（《增删卜易》源L1058 逐字
+    #     「伏神被日月冲克者二也」）：旧实现只有月破（`cr_009`），日辰冲整支缺；量级对齐月破 −2。
+    if hid_branch and day_branch and is_ba_zu_chong(hid_branch, day_branch):
         emerge_score -= 2
-        reasons.append(ctext("cr_007"))
+        block_reasons.append(ctpl("crt_009l", day_branch, hid_branch))
 
     # 5. 伏神旬空
     if hid_branch in empty_branches:
         emerge_score -= 1
-        reasons.append(ctext("cr_008"))
+        block_reasons.append(ctext("cr_008"))
 
     # 6. 伏神月破
     if is_ba_zu_chong(hid_branch, month_branch):
         emerge_score -= 2
-        reasons.append(ctext("cr_009"))
+        block_reasons.append(ctext("cr_009"))
 
     can_emerge = emerge_score > 0
-    reason_text = "；".join(reasons) if reasons else "条件平淡"
-    return can_emerge, reason_text
+    reason_text = "；".join(emerge_reasons + block_reasons) if (emerge_reasons or block_reasons) else "条件平淡"
+    return can_emerge, reason_text, emerge_score, emerge_reasons, block_reasons
 
 
 def analyze_hidden_spirits(result):
@@ -775,10 +856,12 @@ def analyze_hidden_spirits(result):
         covering_element = _branch_element(covering_branch)
 
         # 判断伏神得出/不得出
-        can_emerge, reason = _evaluate_hidden_spirit_emergence(
+        can_emerge, reason, _escore, _ereasons, _breasons = _evaluate_hidden_spirit_emergence(
             hidden_element, hidden_branch, covering_relation, covering_branch,
             covering_element, month_branch, day_branch, month_element, day_element,
-            empty_branches, yao_by_position.get(hidden_pos, {})
+            empty_branches, yao_by_position.get(hidden_pos, {}),
+            moving_elems=[_branch_element(y.get("earthly_branch", ""))
+                          for y in yao_lines if y.get("is_moving")]
         )
 
         details.append({
@@ -798,6 +881,7 @@ def analyze_hidden_spirits(result):
                 "element": covering_element,
             },
             "can_emerge": can_emerge,
+            "emerge_score": _escore,
             "reason": reason,
         })
 
@@ -885,123 +969,23 @@ def analyze_hidden_spirit_emergence(result):
         covering_branch = covering_yao.get("earthly_branch", "")
         covering_element = _branch_element(covering_branch)
 
-        # === 评分 ===
-        emerge_score = 0
-        emerge_reasons = []
-        block_reasons = []
-
-        # --- 得出条件 ---
-        # 1. 日辰生扶伏神
-        if SHENG_CYCLE.get(day_element) == hidden_element:
-            emerge_score += 3
-            emerge_reasons.append(ctpl("crt_030", day_branch, day_element, hidden_branch, hidden_element))
-        elif day_element == hidden_element:
-            emerge_score += 2
-            emerge_reasons.append(ctpl("crt_056", day_branch))
-
-        # 2. 月建生扶伏神
-        if SHENG_CYCLE.get(month_element) == hidden_element:
-            emerge_score += 2
-            emerge_reasons.append(ctpl("crt_031", month_branch, month_element, hidden_branch))
-        elif month_element == hidden_element:
-            emerge_score += 1
-            emerge_reasons.append(ctpl("crt_057", month_branch))
-
-        # 3. 日冲飞神（冲开飞神）
-        if is_ba_zu_chong(covering_branch, day_branch):
-            emerge_score += 2
-            emerge_reasons.append(ctpl("crt_032", covering_branch, day_branch, covering_branch))
-
-        # 4. 月冲飞神
-        if is_ba_zu_chong(covering_branch, month_branch):
-            emerge_score += 1
-            emerge_reasons.append(ctpl("crt_033", covering_branch, month_branch, covering_branch))
-
-        # 5. 飞神旬空（空则不挡）
-        if covering_branch in empty_branches:
-            emerge_score += 2
-            emerge_reasons.append(ctpl("crt_034", covering_branch))
-
-        # 6. 飞神月破（破则不挡）
-        if is_ba_zu_chong(covering_branch, month_branch):
-            emerge_score += 2
-            emerge_reasons.append(ctpl("crt_035", covering_branch))
-
-        # 7. 飞神休囚无气
+        # === 评分：唯一真值源在判据路 _evaluate_hidden_spirit_emergence（第六十二批并一）===
+        #   此前两路各写一套条件与权重（报告路有款二伏神旺相、缺款三飞神生伏与伏克飞；
+        #   判据路反之），同一盘可判相反——第五十二批前 16 项对拍量出 3 条分歧即由此来。
+        #   现在**得出与否只由判据路判定**，本路只把分值映射成档位与文案。
+        #   数字口径如实记：《增删卜易》源L1055 逐字「伏神有用者有六：伏神得日月生者一也；伏神旺相者二也；
+        #   伏神得飞神生者三也；伏神得动爻生者四；伏神得遇日月动爻冲克飞神者五也；
+        #   伏神得遇飞神空破休囚墓绝者六也。」与源L1058 逐字「又伏神终不得出者有五」——
+        #   **书只给条件不给分值**，故权重是引擎设计量，集中留在判据路一处，不再有两套。
+        can_emerge, reason_text, emerge_score, emerge_reasons, block_reasons = (
+            _evaluate_hidden_spirit_emergence(
+                hidden_element, hidden_branch,
+                determine_six_relation(covering_branch, palace_element),
+                covering_branch, covering_element, month_branch, day_branch,
+                month_element, day_element, empty_branches, covering_yao,
+                moving_elems=[_branch_element(b) for b in moving_branches if b]))
         cov_strength = element_strength_in_month(covering_element, month_element)
-        if cov_strength in ("休", "囚", "死"):
-            emerge_score += 1
-            emerge_reasons.append(ctpl("crt_036", covering_branch, cov_strength))
-
-        # 8. 飞神被日/月/动爻克
-        day_attacks_cov = KE_CYCLE.get(day_element) == covering_element
-        month_attacks_cov = KE_CYCLE.get(month_element) == covering_element
-        moving_attacks_cov = False
-        for mb in moving_branches:
-            if KE_CYCLE.get(_branch_element(mb)) == covering_element:
-                moving_attacks_cov = True
-                break
-        if day_attacks_cov:
-            emerge_score += 1
-            emerge_reasons.append(ctpl("crt_037", day_element, covering_element))
-        if month_attacks_cov:
-            emerge_score += 1
-            emerge_reasons.append(ctpl("crt_038", month_element, covering_element))
-        if moving_attacks_cov:
-            emerge_score += 1
-            emerge_reasons.append(ctext("cr_016"))
-
-        # 9. 伏神旺相有气
         hid_strength = element_strength_in_month(hidden_element, month_element)
-        if hid_strength == "旺":
-            emerge_score += 2
-            emerge_reasons.append(ctpl("crt_039", hidden_branch))
-        elif hid_strength == "相":
-            emerge_score += 1
-            emerge_reasons.append(ctpl("crt_058", hidden_branch))
-
-        # --- 不得出条件 ---
-        # 1. 伏神被月日双克
-        hid_day_strength = element_strength_in_month(hidden_element, day_element)
-        if hid_strength == "死" and hid_day_strength == "死":
-            emerge_score -= 4
-            block_reasons.append(ctpl("crt_040", hidden_branch))
-
-        # 2. 飞神旺相克伏神（飞克伏）
-        if KE_CYCLE.get(covering_element) == hidden_element:
-            if cov_strength in ("旺", "相"):
-                emerge_score -= 3
-                block_reasons.append(ctpl("crt_059", covering_branch, covering_element, hidden_branch, hidden_element))
-
-        # 3. 伏神入墓
-        tomb = TOMB_MAP.get(hidden_element, "")
-        if tomb and (day_branch == tomb or month_branch == tomb):
-            emerge_score -= 2
-            block_reasons.append(ctpl("crt_041", hidden_branch, tomb))
-
-        # 4. 伏神逢绝
-        stage_name, _ = get_twelve_growth_stage(hidden_element, day_branch) or (None, None)
-        if stage_name == "绝":
-            emerge_score -= 2
-            block_reasons.append(ctpl("crt_042", hidden_branch, day_branch))
-
-        # 5. 伏神旬空
-        if hidden_branch in empty_branches:
-            emerge_score -= 2
-            block_reasons.append(ctpl("crt_043", hidden_branch))
-
-        # 6. 伏神月破
-        if is_ba_zu_chong(hidden_branch, month_branch):
-            emerge_score -= 2
-            block_reasons.append(ctpl("crt_044", hidden_branch))
-
-        # 7. 伏神休囚无气
-        if hid_strength in ("休", "囚", "死"):
-            emerge_score -= 1
-            block_reasons.append(ctpl("crt_045", hidden_branch, hid_strength))
-
-        # 判断得出/不得出
-        can_emerge = emerge_score > 0
         if emerge_score >= 4:
             emerge_level = "极易出"
         elif emerge_score >= 2:
@@ -1012,7 +996,6 @@ def analyze_hidden_spirit_emergence(result):
             emerge_level = "难出"
         else:
             emerge_level = "不得出"
-
         all_reasons = emerge_reasons + block_reasons
         reason_text = "；".join(all_reasons) if all_reasons else "条件平淡"
 
@@ -1040,6 +1023,49 @@ def analyze_hidden_spirit_emergence(result):
         "spirits": spirits,
         "summary": "；".join(summary_parts),
     }
+
+
+def analyze_tianqi_structure(result):
+    """天气占的结构标签：只标"动/空/化出"的事实，不产任何吉凶断语（SKILL.md 铁律一）。
+
+    书据（父动主雨、财动主晴一类机制的行号，断语用语文案另在 verdict_texts.json 取）：
+      《黄金策》源L300 逐字「卦中父动主有雨，财动主晴」；
+      《卜筮全书》源L5770 逐字「五类中，唯父母为雨」；
+      《增删卜易》源L2040 逐字「占雨以父爻为主」。
+    """
+    hex_info = result.get("original_hexagram", {}) or {}
+    yao_lines = hex_info.get("yao_lines", []) or []
+    empty = list(result.get("empty_branches") or [])
+
+    def _flags(rel):
+        lines = [y for y in yao_lines if isinstance(y, dict) and y.get("six_relation") == rel]
+        moving = any(bool(y.get("is_moving")) for y in lines)
+        changed_into = any(bool(y.get("is_moving")) and (
+            (y.get("changed_six_relation") or "") == rel) for y in yao_lines if isinstance(y, dict))
+        quiet = bool(lines) and not moving
+        empt = any((y.get("earthly_branch") or "") in empty for y in lines)
+        return {"present": bool(lines), "moving": moving, "quiet": quiet,
+                "empty": empt, "changed_into": changed_into}
+
+    father = _flags("父母")
+    wealth = _flags("妻财")
+    tags = []
+    if father["moving"]:
+        tags.append("父动")
+    if father["changed_into"]:
+        tags.append("化出父母")
+    if wealth["moving"]:
+        tags.append("财动")
+    if wealth["changed_into"]:
+        tags.append("化出妻财")
+    if father["present"] and father["empty"]:
+        tags.append("父空")
+    if wealth["present"] and wealth["empty"]:
+        tags.append("财空")
+    if father["present"] and not father["moving"] and not wealth["moving"]:
+        tags.append("父财皆静")
+    return {"father": father, "wealth": wealth, "tags": tags,
+            "note": "结构标签，不含吉凶评断；取用以问题词典·天气族为准（占雨父母／占晴子孙财）"}
 
 
 def analyze_hidden_movement(result):
@@ -1177,8 +1203,8 @@ def analyze_wandering_returning_soul(result):
     - 归魂：回故乡、有归属、终有所归
 
     参考《黄金策》游魂归魂章：
-    > "卦得游魂，漂泊他方无定迹。"（源 L3843）
-    > "归魂卦用仍生合；不捕而自回；游魂卦应又交重，能潜而会遁。"（源 L3444）
+    > 「卦得游魂，漂泊他方无定迹」（源 L3843）
+    > 「归魂卦用仍生合；不捕而自回；游魂卦应又交重，能潜而会遁」（源 L3444）
     > 世应安装另见《卜筮正宗》源 L241「游魂八宫四爻立，归魂八卦三爻详。」
 
     2026-10-07 订正（OPT-huangjince_dz-02）：原注《卜筮正宗》「游魂行无定，归魂回故乡」

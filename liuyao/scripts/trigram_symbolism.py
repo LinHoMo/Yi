@@ -13,6 +13,7 @@
 
 参考经典：《周易·说卦传》《黄金策》《卜筮正宗》
 """
+
 # =============================================================================
 # 数据加载（SKILL.md：断语/象征文案进 data/*.json，代码只留算法）
 #
@@ -24,6 +25,14 @@
 # 内核定位规则只在 kernel_path.py 一份实现，不得在此另写路径拼接
 import json
 import sys
+
+# 控制台编码守卫：须在 import sys 之后——早于 sys 导入时 NameError 会被 except 咽掉、静默失效
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
+
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))

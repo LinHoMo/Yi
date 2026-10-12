@@ -11,6 +11,15 @@ from __future__ import annotations
 import hashlib
 import json
 import sys
+
+# 控制台编码守卫：GBK/cp936 控制台下本器的中文输出会退化成乱码甚至 UnicodeEncodeError
+# （rc 仍为 0、金标准看不见，只有这条守卫管得住）。判据见 dev_tools/check.py 的编码不变式。
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
+
 from datetime import datetime
 from pathlib import Path
 
@@ -73,13 +82,21 @@ def fingerprint() -> list[dict]:
                         "verdict": s5.get("verdict"),
                         "score": s5.get("final_score"),
                         "yingqi_branches": (s5.get("timing") or {}).get("key_branches"),
+                        "yingqi_months": (s5.get("timing") or {}).get("yingqi_months"),
+                        "yingqi_years": (s5.get("timing") or {}).get("yingqi_years"),
+                        # 第八十批补：日历应期层此前不在指纹里，实测 116/120 例的日期产出
+                        # 已变（5 条→6–7 条）而指纹仍报"一致"——看门狗对这一层是瞎的。
+                        # 取三元组序列（日期＋支＋规则文本），既盯条目数也盯内容与次序。
+                        "yingqi_dates": [f"{d.get('date')}|{d.get('branch')}|{d.get('rule')}"
+                                         for d in ((s5.get("yingqi_dates") or {}).get("dates")
+                                                   or [])],
                         "adv_keys": sorted(adv.keys()),
                         "adv_summary": {k: json.dumps(v, ensure_ascii=False, sort_keys=True)[:220]
                                         for k, v in sorted(adv.items())},
                         "patterns": [t2 for t2 in (inner.get("reasoning_chain") or [])
                                      if isinstance(t2, str) and t2.startswith("[格局")],
                     }
-                    # 文案门：抽样子集记 narrate 文案哈希（HANDOFF：指纹原不含 narrate）
+                    # 文案门：抽样子集记 narrate 文案哈希（沿革见 docs/CHANGELOG.md：指纹原不含 narrate）
                     if i % 24 == 0 and not moving:
                         try:
                             from analyze import analyze as _analyze

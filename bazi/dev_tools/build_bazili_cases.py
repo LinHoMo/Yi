@@ -11,6 +11,15 @@ expected 只含**书上明写的四柱**（客观标的）；「状元/词林/�
 """
 from __future__ import annotations
 
+
+# 控制台编码守卫：GBK/cp936 控制台下本器的中文输出会退化成乱码字节（rc 仍为 0，只有这条管得住）。
+# 位置在 __future__ 之后、其余语句之前；import 期解释器告警仍需调用方 PYTHONUTF8=1 才能全拦（见 check.py 编码不变式）。
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
+
 import json
 import sys
 from datetime import datetime, timedelta

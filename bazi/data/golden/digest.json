@@ -1,10 +1,10 @@
 {
   "_meta": {
-    "what": "八字科金标准指纹基线（强弱/格局/大运逐字段）",
-    "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
+    "what": "八字科金标准指纹基线（conclusion 全字段哈希＋逐字段快照＋大运方向）",
+    "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化（含 conclusion_sha，任何字段都算），措辞层漂移=narrate 断语变化（两层分列归因）"
   },
-  "digest": "1be8d5b579463a47",
-  "narrate_digest": "d0c04afaf0a86363",
+  "digest": "1b2c1236ea089c4f",
+  "narrate_digest": "02fd92b8097505ff",
   "drift_log": [
     {
       "from": "57dc7e890af222fa",
@@ -17,51 +17,27 @@
       "to": "1be8d5b579463a47",
       "date": "2026-10-04",
       "reason": "2026-10-04d 日主之根宫位分层（衰旺章任注：长生禄旺=重根1.0、墓库余气=轻根0.25，书源例字仅列木火金水）：weak_zhengguan2 乙木辰中乙根由中气0.5改判衰宫轻根0.25（strength_score -5.20→-5.45，strength标签/格局/用神/大运全不变）；分列验收 tune 100.0(n=30)/holdout 96.7(n=246)/外集17/19 全部持平"
+    },
+    {
+      "from": "1be8d5b579463a47",
+      "to": "130d3e37155940ff",
+      "date": "2026-10-12",
+      "reason": "扩样 6→44（按 pattern×strength 分层＋从格＋外部集＋四柱直填路径）且机械层改含 conclusion 全字段哈希；非行为变更，覆盖面扩张"
+    },
+    {
+      "from": "130d3e37155940ff",
+      "to": "f8dfd70426708278",
+      "date": "2026-10-12",
+      "reason": "扩样 6→44（pattern×strength 分层＋从格＋外部集＋四柱直填路径）并补 dayun_len/direction/taboo_gods 具名字段；非行为变更，覆盖面扩张。conclusion 全字段哈希因 #40 跨进程非确定暂未纳入"
+    },
+    {
+      "from": "f8dfd70426708278",
+      "to": "1b2c1236ea089c4f",
+      "date": "2026-10-12",
+      "reason": "引擎确定性修复（conflict_resolution detail 改按格局喜用原序，不再 join 集合交集）后，把 tiaohou_pattern_conflict 与 conclusion 全字段哈希纳回指纹；detail 文案顺序随之变化属预期修复，非判词改口"
     }
   ],
   "narrate_drift_log": [
-    {
-      "from": "f031d282e8cf13cd",
-      "to": "b51a7836cc89fe4e",
-      "date": "2026-10-02",
-      "reason": "八字科四柱干支关系段标题订正为「四柱干支关系」（含天干五合后名实相符）"
-    },
-    {
-      "from": "b51a7836cc89fe4e",
-      "to": "365c1e687f48d64b",
-      "date": "2026-10-02",
-      "reason": "四柱干支关系段：地支所本引文标签限定为「地支关系所本」（该段同时含天干五合，避免引文标签扩大所指）"
-    },
-    {
-      "from": "365c1e687f48d64b",
-      "to": "05f8ebf3f6f9cc0b",
-      "date": "2026-10-02",
-      "reason": "2026-10-02c 八字科加法：B1 女命夫子星（analyze 新增 female_fu_zi 机械标注 + narrate 专段，仅女命样例漂移）；B2 童子煞（core 新增民间通胜口诀神煞，3 样例命中入神煞列表）。机械层（强弱/格局/大运）零漂移，措辞层新增呈现段为有意变更。"
-    },
-    {
-      "from": "05f8ebf3f6f9cc0b",
-      "to": "322cebf811a70940",
-      "date": "2026-10-02",
-      "reason": "B5(ming narrate): append short basis ref like '日干起' to shensha output for source attribution"
-    },
-    {
-      "from": "322cebf811a70940",
-      "to": "ccdecd0d01774478",
-      "date": "2026-10-03",
-      "reason": "2026-10-03 病药落地（《神峰通考·病药说类》）：narrate 新增病药段（病/药/十神层病药对+总纲原文），机械层零漂移、tune/holdout 读数持平（holdout pattern 28/36、cong_ge 13/15 未变）"
-    },
-    {
-      "from": "ccdecd0d01774478",
-      "to": "1c9dc4f81cc85b22",
-      "date": "2026-10-03",
-      "reason": "2026-10-03 病药落地二改：移除 narrate 病药段末行口径说明（该句被判为未外置断语，说明属元数据不入报告正文）；机械层零漂移"
-    },
-    {
-      "from": "1c9dc4f81cc85b22",
-      "to": "a4ffadf44d386ad8",
-      "date": "2026-10-03",
-      "reason": "2026-10-03 病药判据按原文修正：主轴取月令本气（原实现误取全盘最重五行），narrate 病药段随之改写；机械层零漂移、tune/holdout 读数未变"
-    },
     {
       "from": "a4ffadf44d386ad8",
       "to": "aa2dbf4be60b38bf",
@@ -139,6 +115,48 @@
       "to": "d0c04afaf0a86363",
       "date": "2026-10-10",
       "reason": "调候原文引文在表示层去掉切片残留的首字符标点（报告不再出现「）：，自有丙火…」）；语料 data/tiaohou_quotes.json 逐字未动（生成器 build_tiaohou.py 有重算比对，须保持字节可复现），纯措辞层漂移，机械层零漂移"
+    },
+    {
+      "from": "d0c04afaf0a86363",
+      "to": "58a9ed2f3c267b9a",
+      "date": "2026-10-10",
+      "reason": "纳音性质名标签修正：data/nayin_quxiang.json 与 NAYIN_XIANGGE 同步剥掉性质名里混入的系词（己巳为近火之木→近火之木、甲申者自生之水→自生之水、癸巳为自绝之水→自绝之水），并补 data 缺的 戊辰/乙卯/庚申/癸亥 四格（引文照录底本 L224/L298/L308/L309，L298 书中作「已卯」形近写、键用正字）。系词是判断句语法不是名字的一部分，性质引文字段逐字未动；机械层零漂移"
+    },
+    {
+      "from": "58a9ed2f3c267b9a",
+      "to": "df3171a2f7b3e7e6",
+      "date": "2026-10-10",
+      "reason": "纳音取象旁证补上底本原句：此前只印裸标签（如「从革之金」），读者无从核证是否书上有此语；现并列原书逐字引句（引文由 [14] 同步门逐字回校验底本）。纯措辞层，机械层零漂移"
+    },
+    {
+      "from": "df3171a2f7b3e7e6",
+      "to": "ac4623f633fed5f5",
+      "date": "2026-10-10",
+      "reason": "报告面补齐两个计分维度的落点：新增「四柱十神与四柱藏干」小节（ten_gods 16 分 / hidden_stems 8 分一直是计分维度且引擎有值，正文却从不出现——EVAL-PLAN §六 禁止的「算出来了但看不到」，首轮由新门 [15] 抓出）。纯措辞层，机械层零漂移"
+    },
+    {
+      "from": "ac4623f633fed5f5",
+      "to": "c42bd5ee428f0f99",
+      "date": "2026-10-11",
+      "reason": "新增报告小节「行运引动」（#31③ 运对本命四柱的结构标签独立分列）：机械层零漂移、六例本命判档与指纹字段全不变，仅 narrate 措辞层每例新增 4-8 行"
+    },
+    {
+      "from": "c42bd5ee428f0f99",
+      "to": "7cab0608c9de1f69",
+      "date": "2026-10-11",
+      "reason": "行运引动小节增列流年层（#31⑤ 岁支引动）：机械层零漂移，报告 104→110 行，纯增「- 流年X（Y年）…」结构标签行"
+    },
+    {
+      "from": "7cab0608c9de1f69",
+      "to": "f1deef808039f3ce",
+      "date": "2026-10-11",
+      "reason": "行运引动小节增第六种机制「X星入墓」（#31⑤ 余项，书据《千里命稿》源L1955／《三命通会》源L253／DY009 庚入墓）：机械层零漂移，纯增结构标签行"
+    },
+    {
+      "from": "f1deef808039f3ce",
+      "to": "02fd92b8097505ff",
+      "date": "2026-10-12",
+      "reason": "扩样 6→44（按 pattern×strength 分层＋从格＋外部集＋四柱直填路径）且机械层改含 conclusion 全字段哈希；非行为变更，覆盖面扩张"
     }
   ]
 }

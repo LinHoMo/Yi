@@ -53,7 +53,7 @@ def eval_metrics(split: str, *, eval_file, cwd,
     """跑 `scripts/evaluate.py --split <split> --save`，返回 {avg, n, rc, top1, rank}。
 
     `eval_file` 必须由调用方传入：内核不得知道评测落盘目录（铁律二
-    「解读路径不得触达案例库」由 `tools/case_isolation_check.py` 机械守，
+    「解读路径不得触达案例库」由 `dev_tools/check_case_isolation.py` 机械守，
     内核里出现该路径字面量会直接把门判红）。
 
     新鲜度守卫（P0 教训）：先删上一次的落盘文件，跑完若文件不在或 mtime 早于起跑时刻，

@@ -33,9 +33,9 @@ from narrative_utils import _pos_to_name  # noqa: E402  爻位名的唯一实现
 from classical_enhancements import find_hexagram_body  # noqa: E402  安月卦身诀在父模块
 
 def analyze_shen_yao_activation(result):
-    """身爻启用谓词（《易隐》源 L217）——**纯结构判定，不批吉凶**。
+    """身爻启用谓词（《易隐》源 L217「世若不空不破，不须论身，世或空破，祸福方凭身象」）——**纯结构判定，不批吉凶**。
 
-    【OPT-yiin_dz-01，2026-10-07 新增】书源 L217 逐字：
+    【OPT-yiin_dz-01，2026-10-07 新增】书源 L217「凡卦之身用之为重，世之身司事还轻」 逐字：
         「凡卦之身用之为重，世之身司事还轻，世若不空不破，不须论身，
            世或空破，祸福方凭身象，盖取身以代世之劳耳。」
     即：**卦身**（月卦身）权重高于**世身**，但**世爻不空不破时身爻不参与取用**；
@@ -110,27 +110,27 @@ def analyze_shen_yao_activation(result):
             conds.append(f"世爻{world_branch}月破（月建{month_branch}冲）")
         out["reason"] = (
             "身爻启用：" + "、".join(conds)
-            + f"（源L217「世若不空不破，不须论身，世或空破，祸福方凭身象」）；"
+            + f"（《易隐》源L217「世若不空不破，不须论身，世或空破，祸福方凭身象」）；"
             + f"卦身支为{body_branch}，以身代世参与取用")
     else:
         out["activated"] = False
         out["reason"] = (
             f"身爻不参与取用：世爻{world_branch}不空不破"
-            f"（源L217「世若不空不破，不须论身」）；"
+            f"（《易隐》源L217「世若不空不破，不须论身」）；"
             f"卦身支为{body_branch}仅排盘输出")
 
     return out
 
 
 def analyze_you_jie(result):
-    """忧解/忧疑结构标签（《增刪卜易》源 L16/L419/L529/L3406）——**纯结构判定，不批吉凶**。
+    """忧解/忧疑结构标签（《增刪卜易》源 L16「如占避讼防非、仇人为害及行江漂海」/L419/L529/L3406）——**纯结构判定，不批吉凶**。
 
     【OPT-zengshan_buyi_dz-03，2026-10-07 新增】
 
     《增刪卜易》以**官鬼为忧神、子孙为解忧之神**：
       · 源 L419 逐字「如占防忧虑患者，若得子孙持世无忧，官鬼持世忧疑难解」
       · 源 L529 「子孙福德之神…为解忧之神…为剥官之神」
-      · 源 L3406 「鬼作忧神休妄动，福为喜悦而生扶」「子孙乃制鬼之神…乃先去忧神，我无忧也」
+      · 源 L3406 「鬼作忧神休妄动，福为喜悦而生扶」「子孙乃制鬼之神…乃先去忧神，我无优也」（末二字底本即作「无优」，疑「忧」之讹，照底本录字不改）
       · 源 L16 「凡遇一切防火虑患者，但得子孙持世…管许安如泰山，唯忌官鬼持世，忧疑不解」
 
     **用神分域反转**（同书异说，按 SKILL.md「口径分歧登记不采」原则**只标注结构事实**）：
@@ -161,8 +161,8 @@ def analyze_you_jie(result):
         "reason": "",
         "classical_quote": "《增刪卜易》忧神/解忧判据："
                            "源L419「子孙持世无忧，官鬼持世忧疑难解」；"
-                           "源L529「子孙…为解忧之神」；"
-                           "L3406「鬼作忧神…子孙…先去忧神」。",
+                           "《增删卜易》源L529「为制鬼之神、为解忧之神、为剥官之神」；"
+                           "源L3406「鬼作忧神…子孙…先去忧神」。",
     }
 
     hex_info = result.get("original_hexagram")
@@ -228,11 +228,11 @@ def analyze_you_jie(result):
             conds.append(f"子孙动（{'、'.join(out['zisun_moving'])}）")
         rev_note = ""
         if out["reversal_domain"] == "求名（子孙剥官）":
-            rev_note = "（反转域：求名占子孙=剥官，源L529「独占功名者忌之」——此时非忧解而是伤用）"
+            rev_note = "（反转域：求名占子孙=剥官，《增删卜易》源L529「独占功名者忌之」——此时非忧解而是伤用）"
         elif out["reversal_domain"] == "病占父母域":
             rev_note = "（反转域：病占父母域子孙克官但亦泄用——结构上不构成纯忧解）"
         out["reason"] = (
-            f"忧解结构（源L419「子孙持世无忧」）：{'、'.join(conds)}{rev_note}")
+            f"忧解结构（《增删卜易》源L419「子孙持世无忧」）：{'、'.join(conds)}{rev_note}")
     else:
         out["reason"] = "无忧解结构：子孙未持世亦未发动"
 
@@ -244,7 +244,7 @@ def analyze_you_jie(result):
         if out["gu_moving"]:
             conds.append(f"官鬼动（{'、'.join(out['gu_moving'])}）")
         out["reason"] += (
-            f"；忧疑结构（源L419「官鬼持世忧疑难解」）：{'、'.join(conds)}")
+            f"；忧疑结构（《增删卜易》源L419「官鬼持世忧疑难解」）：{'、'.join(conds)}")
     else:
         out["reason"] += "；无忧疑结构：官鬼未持世亦未发动"
 

@@ -148,7 +148,14 @@ def build_samples() -> list[dict]:
 
 
 def embed_into_index(payload: dict) -> None:
+    # 第八十六批：`dev_tools/check.py` 的提示语让用户「跑 scripts/build_portal_assets.py 重建」，
+    # 而本函数在 index.html 不在仓内时直接 FileNotFoundError 崩——一条门里写着的命令跑不起来，
+    # 就是文档失守。缺壳层只是不能内嵌，不该带走 portal_data.json 与样例报告的产出。
     index = ROOT / "index.html"
+    if not index.exists():
+        print("× 未找到 index.html（交付壳层不在仓内），跳过内嵌；"
+              "portal_data.json 与样例报告照常产出")
+        return
     text = index.read_text(encoding="utf-8")
     blob = json.dumps(payload, ensure_ascii=False, indent=2)
     blob = blob.replace("</", "<\\/")            # 防止提前闭合 <script>

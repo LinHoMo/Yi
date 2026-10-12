@@ -28,6 +28,8 @@ from bazi_factors import (  # noqa: E402
     dayun_table,
     liunian_table,
     dayun_liunian_interactions,
+    dayun_ming_yindong,
+    liunian_ming_yindong,
     san_hui_present,
     pillar_relations,
     tai_yuan,
@@ -94,6 +96,9 @@ def analyze(chart_json: dict) -> dict:
     dayun = dayun_table(result)
     liunian = liunian_table(result, n=12)
     interactions = dayun_liunian_interactions(result, dayun=dayun, liunian=liunian)
+    # 行运引动（#31②）：运↔本命四柱的结构标签，独立成列，不参与本命判档、不覆写任何本命结论
+    yindong = dayun_ming_yindong(result, dayun=dayun)
+    sui_dong = liunian_ming_yindong(result, liunian=liunian)
     # 调候用神（《穷通宝鉴》查表结果透出到 analyze 顶层；无明文的格为 None）
     result["tiaohou"] = sp.get("tiaohou")
 
@@ -245,6 +250,8 @@ def analyze(chart_json: dict) -> dict:
         "liu_yue": liuyue,
         "xiao_yun": xiaoyun,
         "tian_ke_di_chong": tkdc,
+        "dayun_ming_yindong": yindong,
+        "liunian_ming_yindong": sui_dong,
         "ten_god_combos": combos,
         "tong_guan": tg,
         "bing_yao": by,

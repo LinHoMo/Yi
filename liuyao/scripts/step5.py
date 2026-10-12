@@ -181,6 +181,7 @@ def step5_synthesize(r: dict) -> dict:
     )
     classical_adj = cl["classical_adj"]
     classical_notes = cl["classical_notes"]
+    pattern_flags = cl["pattern_flags"]
     pattern_verdict_note = cl["pattern_verdict_note"]
     ctx = cl["ctx"]
 
@@ -233,6 +234,7 @@ def step5_synthesize(r: dict) -> dict:
         step4_data=step4_data,
         special_pattern=special_pattern,
         classical_notes=classical_notes,
+        pattern_flags=pattern_flags,
         ctx=ctx,
         xing_he_conflict_override=xing_he_conflict_override,
         officer_tomb={
@@ -264,11 +266,41 @@ def step5_synthesize(r: dict) -> dict:
         day_branch,
         list(r.get("empty_branches") or []),
     )
+    # ---------- 5.7c: 主象随自占／代占换位（第九十二批，只压档不加和）----------
+    # 《卜筮全书》源L7034 逐字「又自占，以世为主；代占，以应为主」；
+    # 《卜筮全书》源L5437 逐字「应受伤，不利代占，盖代占以应为主也；世受伤，不利自占，盖自占以世为主也」；
+    # 《易林补遗》源L965 逐字「倘若他人代卜，反将应象为尊」；《卜筮全书》源L9589 逐字「代占，以应爻论之」。
+    # 书上「不利」不等于「必凶」⇒ 上限取 平吉（不锁死），只压档不进加和。
+    # 名分不明时不猜主象、不压档——《卜筮正宗》源L1095 逐字「必先明说是何名分，方可就其亲疏、上下分别用神以为占验」。
+    _role = _divination_role(str(safe_get(r, "question", default="") or ""))
+    _zhu_kind = {"自占": "is_world", "代占": "is_response"}.get(_role, "")
+    _yl57 = safe_get(r, "original_hexagram", "yao_lines", default=[]) or []
+    if _zhu_kind:
+        _zhu = next((y for y in _yl57 if isinstance(y, dict) and y.get(_zhu_kind)), None)
+        _ze = BRANCH_ELEMENTS.get((_zhu or {}).get("earthly_branch") or "", "")
+        _me57 = _mt_sb[1:] if len(_mt_sb) >= 2 else ""
+        _atk57 = {BRANCH_ELEMENTS.get(x or "", "") for x in (day_branch, _me57)}
+        _atk57 |= {BRANCH_ELEMENTS.get(y.get("earthly_branch") or "")
+                   for y in _yl57 if isinstance(y, dict) and y.get("is_moving")}
+        if _ze and any(KE_CYCLE.get(a) == _ze for a in _atk57 if a):
+            dir_caps.append({
+                "rule_id": "liuyao.zhu_xiang_shou_shang",
+                "cap": "平吉",
+                "src": "《卜筮全书》主象世应之说（逐字书据见上注与 verdict_texts 该键 basis）",
+                "reason_key": "zhu_xiang_hurt_cap",
+                "detail": f"{_role}·主象在{'世' if _role == '自占' else '应'}"
+                          f"爻 {(_zhu or {}).get('earthly_branch')} 受日月动爻之克"})
+    _capped, _cap_fired = apply_direction_caps(verdict, dir_caps)
     if dir_caps:
-        _capped, _cap_fired = apply_direction_caps(verdict, dir_caps)
         for _c in dir_caps:
-            classical_notes.append(
-                f"{note_text(_c['reason_key'])}（{_c.get('src', '')}；{_c.get('detail', '')}）")
+            _cap_note = f"{note_text(_c['reason_key'])}（{_c.get('src', '')}；{_c.get('detail', '')}）"
+            classical_notes.append(_cap_note)
+            # 第九十二批：cap 注此前只进 classical_notes，而该表在 5.5h 之后不再并回产出
+            # ——实测 thinking_chain 的 step5_synthesis 根本没有 classical_notes 键，
+            # 于是所有凶格上限都是**压了档却不说明**。这里把它并进真正外露的 pattern_verdict_note。
+            if _cap_note not in str(pattern_verdict_note or ""):
+                pattern_verdict_note = (f"{pattern_verdict_note}；{_cap_note}"
+                                        if pattern_verdict_note else _cap_note)
         if _cap_fired:
             verdict = _capped
             _dk = {"大凶": "score_da_xiong", "凶": "score_xiong",
@@ -297,6 +329,9 @@ def step5_synthesize(r: dict) -> dict:
         step1_data, step2_data, step3_data, step4_data,
         {"verdict": verdict, "final_score": final_score},
         base_date=base_date,
+        ladder=[(_tr.get("token") or "", _tr.get("rule") or "")
+                for _tr in (timing.get("timing_rules") or [])
+                if isinstance(_tr, dict) and _tr.get("unit") == "日"],
     )
 
     # ---------- 5.10: 推理链 ----------
@@ -849,7 +884,9 @@ def compute_fu_shen_adjustment(step2_data: dict, step3_data: dict, r: dict) -> t
       · 伏生飞（泄气）：《卜筮正宗》源L432「木生火谓之伏去生飞，名为泄气」；
         《易隐》源L224「伏生飞曰泄气」。
       · 伏而不得出：《增删卜易》源L1058「伏神终不得出者有五」；
-        《黄金策·千金赋》「伏无提挈终徒尔，飞不推开亦枉然」。
+        《黄金策·千金赋》源L136「伏无提挈终徒尔，飞不摧开亦枉然」
+        （《增删卜易》源L1535 作「伏无提携终徒耳，飞不冲开亦枉然」；
+        《卜筮正宗》源L1235 作「伏无提拔终徒尔」——三书异文，逐字须按所署底本取）。
     2026-10-02（TECH-DEBT 2.3）保留：新增**伏而不得出**方向权重 -1.0，
       旧实现只覆盖「得出/泄气/克伏」各象，伏神无提挈时方向分零反馈。
     """
@@ -896,6 +933,31 @@ def compute_fu_shen_adjustment(step2_data: dict, step3_data: dict, r: dict) -> t
 
 
 # ---------------------------------------------------------------- 5.5h 古籍通用格局加减
+_ROLE_WORDS = "父母子夫妻兄弟妻女儿孙侄伯叔舅姑姨仆奴婢主师姊妹"
+
+
+def _divination_role(text: str) -> str:
+    """名分三态：自占 | 代占 | 名分不明（第八十九批，供主象改判用，本身不打分）。
+
+    判据只认问句里**写出来的**名分，不做推测：《卜筮正宗》源L1095 逐字
+    「又如与人代占，必先明说是何名分，方可就其亲疏、上下分别用神以为占验」——
+    书上把"没说名分"当作无从取用，故说不清就归第三态，不猜。
+    「X占…」里 X 是亲属/身份称谓 ⇒ 为 X 之外的人所占（如母占子＝母为子占），
+    这与第八十八批的名分链是同一句的两半：名分定用神，自／代定主象。
+    """
+    t = str(text or "")
+    if any(k in t for k in ("自占", "占自身", "自身占", "我自己占", "我占自身")):
+        return "自占"
+    if any(k in t for k in ("代占", "代卜", "代人占", "代占婚", "为代人")):
+        return "代占"
+    _i = t.find("占")
+    if _i > 0 and t[_i - 1] in _ROLE_WORDS:
+        return "代占"
+    if _i > 0 and t[_i - 1] == "自":
+        return "自占"
+    return "名分不明"
+
+
 def compute_classical_adjustment(
     r: dict,
     step1_data: dict,
@@ -907,6 +969,7 @@ def compute_classical_adjustment(
     """5.5h 古籍通用格局加减 + 产出覆用上下文 ctx。"""
     classical_adj = 0.0
     classical_notes = []
+    pattern_flags: list[str] = []
     # 问事归类门控（缺陷 D 修复，2026-10-09）：读 step2 单点产出的结构枚举
     # question_class（映射表 data/rules/question_classes.json，判类前经
     # normalize_question_text 简繁归一）。旧实现对问题自由文本做关键词子串嗅探
@@ -943,13 +1006,16 @@ def compute_classical_adjustment(
         if w_el and SHENG_CYCLE.get(ug_el_s) == w_el:
             classical_adj += 1.5
             classical_notes.append(note_text("travel_use_sheng_world"))
+            pattern_flags.append("travel_use_sheng_world")
         elif w_el and KE_CYCLE.get(ug_el_s) == w_el:
             classical_adj += 0.8
             classical_notes.append(note_text("travel_use_ke_world"))
+            pattern_flags.append("travel_use_ke_world")
         elif w_el and KE_CYCLE.get(w_el) == ug_el_s:
             # 世克用：行人受制，未必即归，但用神有气仍主终归
             classical_adj += 0.3
             classical_notes.append(note_text("travel_world_ke_use"))
+            pattern_flags.append("travel_world_ke_use")
     if _is_travel_return:
         _fu_txt = str((step3_data or {}).get("summary_text") or "")
         _lv = str((step3_data or {}).get("strength_level") or "")
@@ -961,8 +1027,12 @@ def compute_classical_adjustment(
         ):
             classical_adj += 0.6
             classical_notes.append(note_text("travel_use_alive"))
+            pattern_flags.append("travel_use_alive")
 
-    # 2) 兄弟持世 + 求财 — 古籍大忌（《增删》兄弟持世莫求财）
+    # 2) 兄弟持世 + 求财 — 古籍之忌，但本书自带例外
+    #    《卜筮正宗》源L327「兄弟持世莫求财」（《增删卜易》源L419 作「兄弟持世者难求」）；
+    #    例外见《增删卜易》源L3035「虽则兄爻持世无财，但喜卯日即是财星」
+    #    与《增删卜易》源L2342「得日月作财而合世，富而骄」——日辰或月建即本宫之财时不扣。
     _sp_pat_txt = ""
     try:
         if isinstance(special_pattern, dict):
@@ -970,9 +1040,17 @@ def compute_classical_adjustment(
     except Exception:
         _sp_pat_txt = ""
     if world_relation == "兄弟" and _is_wealth and ug_cat == "妻财":
+        _pal_e = _el_of_branch(world_branch) or ""
+        _me2 = str((step3_data or {}).get("month_element") or "")
+        _de2 = str((step3_data or {}).get("day_element") or "")
+        _ri_yue_zuo_cai = bool(_pal_e) and KE_CYCLE.get(_pal_e) in (_me2, _de2)
         if _qclass == "失物" or "冲中逢合" in _sp_pat_txt:
+            # 失物/逢合的轻扣另有书据（《增删卜易》失物章），而"日月作财"的例外只属于求财文脉，
+            # 不外推到失物——故本支照常轻扣，例外只拦下面的 -1.2 重扣。
             classical_adj -= 0.2
             classical_notes.append(note_text("brother_hold_wealth_lost_soft"))
+        elif _ri_yue_zuo_cai:
+            pass  # 《增删卜易》源L3035 逐字「虽则兄爻持世无财，但喜卯日即是财星」，故日月作财时不扣
         else:
             classical_adj -= 1.2
             classical_notes.append(note_text("brother_hold_wealth"))
@@ -982,7 +1060,16 @@ def compute_classical_adjustment(
         classical_adj += 0.8
         classical_notes.append(note_text("wealth_hold_lost"))
 
-    # 5) 原神失位：用神旺相而原神（完全）不在卦中或不动 — 黄金策「用神虽旺亦凶」
+    # 5) 原神失位：用神旺相而原神（完全）不在卦中或不动 — 现行触发（**书据不符，见 #15**）
+    #    按书收窄已落地（第六十批）：《增删卜易》源L1725 逐字「用神虽旺，原神若被伤克者，即如水无泉源，木无根蒂」、
+    #    同书源L551 逐字「元神虽现又有不能生用神者有六：元神休囚，不动或动而休囚又被伤克者一也……以上元神无力
+    #    生用神，无用之元神也，虽有如无」——条件是元神**无力或被伤克**，旧实现用"静而不动"当条件属书据不符。
+    #    两次实测对比（同一条改动，不同底座）：
+    #      旧底座（第五十二批前）：wikisource_direction 74.4→77.0，但 [4] 15→13（reg_01 贪合、reg_13 伏神得出翻转），
+    #        当时**未采纳**，登记为 #15。
+    #      新底座（#16 结构化 flag、#17 判据路补款五之后）：[3] 11、[4] 17、tune 97.3/64.7、holdout 90.2/50 **全不动**，
+    #        外部 wikisource_direction 74.4→75.0（外部集不参与调参，此数只作描述）；
+    #        即那两支豁免不再需要——先前的翻转是"措辞替量作答"的连带效应，#16 拆开后自行消失。
     _lv_ug = str((step3_data or {}).get("strength_level") or "")
     _yuan = (step2_data or {}).get("yuan_shen") or {}
     _yuan_pos = _yuan.get("positions") or []
@@ -1000,20 +1087,47 @@ def compute_classical_adjustment(
         # 静卦(_is_static_hexagram=True)下，只要原神出现在卦中(position有值), 不算"失位";
         # 仅当原神完全不在卦中 (not _yuan_pos) 时, 才扣-1.0
         # 动卦下原神位置存在但未发动时, 仍扣-1.0
-        _yuan_missing = (not _yuan_pos) or (not _is_static_hexagram and not _yuan_moving)
+        _me3 = str((step3_data or {}).get("month_element") or "")
+        _de3 = str((step3_data or {}).get("day_element") or "")
+        _yel = str(_yuan.get("element") or "")
+        _yuan_powered = bool(_yel) and (_yel in (_me3, _de3) or SHENG_CYCLE.get(_me3) == _yel
+                                        or SHENG_CYCLE.get(_de3) == _yel)
+        _yuan_hurt = bool(_yel) and (KE_CYCLE.get(_me3) == _yel or KE_CYCLE.get(_de3) == _yel)
+        _yuan_missing = (not _yuan_pos) or _yuan_hurt or (not _yuan_powered)
         if _yuan_missing and not _skip_yuanshen:
             classical_adj -= 1.0
             classical_notes.append(note_text("static_yuanshen_missing"))
+            pattern_flags.append("yuanshen_missing")
+            pattern_flags.append("no_source_wording")
+
+    # 5b) 天气占的正向一支（第七十七批，验收锚在语料自带的 WS022／WSD014／WS021 三例）：
+    #     占雨而父母动或化父母、占晴而妻财动或化妻财 → 抬升。只做抬升，压低的那一半在
+    #     classical_enhancements_direction 的 caps 第 6 条，两处各扣/加同一事实正是本仓反复修的重复计分。
+    #     量级 +0.8 是引擎设计量：《黄金策》只说主有雨／主晴，全书不给分数（书据见两条 basis）。
+    if _qclass in ("天气·占雨", "天气·占晴") and ug_cat:
+        _yl = safe_get(r, "original_hexagram", "yao_lines", default=[]) or []
+        _mv = {str(y.get("six_relation") or "") for y in _yl if isinstance(y, dict) and y.get("is_moving")}
+        _ch = {str(y.get("changed_six_relation") or "") for y in _yl if isinstance(y, dict) and y.get("is_moving")}
+        _father_up = ("父母" in _mv) or ("父母" in _ch)
+        _wealth_up = ("妻财" in _mv) or ("妻财" in _ch)
+        if _qclass == "天气·占雨" and ug_cat == "父母" and _father_up:
+            classical_adj += 0.8
+            classical_notes.append(note_text("tianqi_fu_dong_zhu_yu"))
+        elif _qclass == "天气·占晴" and ug_cat in ("妻财", "子孙") and _wealth_up:
+            classical_adj += 0.8
+            classical_notes.append(note_text("tianqi_cai_dong_zhu_qing"))
 
     # 6) 久病逢冲为凶（对「近病逢冲即愈」）
     if _qclass == "疾病·久病":
         classical_adj -= 0.8
         classical_notes.append(note_text("chronic_illness"))
+        pattern_flags.append("chronic_illness")
 
     # 7) 兄弟持世 + 功名/考试 — 竞争费力（可中而难前茅）
     if world_relation == "兄弟" and _qclass == "功名科举":
         classical_adj -= 0.4
         classical_notes.append(note_text("brother_hold_exam"))
+        pattern_flags.append("brother_hold_exam")
 
     # 8) 官司：官鬼克世 / 父母月破 → 不利（增删官非章）
     if _qclass == "官非词讼" and "师尊" not in _q_l:
@@ -1024,19 +1138,42 @@ def compute_classical_adjustment(
         if ug_e and w_e and KE_CYCLE.get(ug_e) == w_e:
             classical_adj -= 1.2
             classical_notes.append(note_text("officer_ke_world_lawsuit"))
+            pattern_flags.append("officer_ke_world_lawsuit")
         # 文书月破：从摘要文本识别
         _txt3 = str((step3_data or {}).get("summary_text") or "") + str((step2_data or {}).get("summary_text") or "")
         if "月破" in _txt3 and _qclass == "官非词讼":
             classical_adj -= 0.5
             classical_notes.append(note_text("document_month_break"))
 
-    # 9) 原神失位加强：旺极无生 → 大幅降分（黄金策）
+    # 9) 原神失位加强：旺极无生 → 大幅降分（现行；其 basis 已标"引擎引申，登记待校"，见 #15）
     # 仅当用神为"极旺"时才额外加权；"旺"级已有规则5的-1.0，不再叠加
-    if any("原神失位" in n for n in classical_notes) and _lv_ug == "极旺":
+    if "yuanshen_missing" in pattern_flags and _lv_ug == "极旺":
         classical_adj -= 1.0
         classical_notes.append(note_text("extreme_prosper_no_source"))
+        pattern_flags.append("extreme_no_source")
+        pattern_flags.append("no_source_wording")
 
     # 4) 用神临月建（通用旺格标记分已在旺衰，此处仅补注记）
+
+    # ── 代占／自占的名分三态（第八十九批：只标结构事实，不进加和）──
+    # 《卜筮全书》源L7034 逐字「又自占，以世为主；代占，以应为主」；
+    # 《卜筮全书》源L5437 逐字「应受伤，不利代占，盖代占以应为主也；世受伤，不利自占，盖自占以世为主也」；
+    # 《易林补遗》源L965 逐字「倘若他人代卜，反将应象为尊」。
+    # 书上主象随自占／代占换位，引擎至今只看世爻。本批先把三态标出来（可指回原文），
+    # 主象改判留 #27 第②步——一次只动一层，否则读数涨跌无法归因。
+    _role_q = str(safe_get(r, "question", default="")
+                  or (step2_data or {}).get("question_text") or "")
+    _role = _divination_role(_role_q)
+    if _role == "代占":
+        pattern_flags.append("divination_by_proxy")
+        classical_notes.append(note_text("proxy_use_response"))
+    elif _role == "自占":
+        pattern_flags.append("divination_by_self")
+        classical_notes.append(note_text("self_use_world"))
+    else:
+        # 名分说不清时按书就是"无从定主象"，只标不猜——《卜筮正宗》源L1095 逐字「虽吉无益，不验也」
+        # （同条上文即「必先明说是何名分，方可就其亲疏、上下分别用神以为占验」的告诫）
+        pattern_flags.append("divination_role_unclear")
 
     # 古籍通用格局注记（供标签与人话）— 必须在 classical_notes 生成之后
     if classical_notes:
@@ -1049,6 +1186,7 @@ def compute_classical_adjustment(
     return {
         "classical_adj": classical_adj,
         "classical_notes": classical_notes,
+        "pattern_flags": pattern_flags,
         "pattern_verdict_note": pattern_verdict_note,
         # 后续「断语覆写」与「因子贡献」仍需用到这批上下文，一并带出
         "ctx": {
@@ -1119,6 +1257,7 @@ def apply_verdict_overrides(
     step4_data: dict,
     special_pattern: dict,
     classical_notes: list,
+    pattern_flags: list,
     ctx: dict,
     xing_he_conflict_override: bool,
     officer_tomb: dict,
@@ -1182,11 +1321,18 @@ def apply_verdict_overrides(
 
     # 古籍通用口径：行人「用神生世/克世」主能归；兄弟持世求财主耗
     if classical_notes:
-        if any("原神失位" in n for n in classical_notes) and "冲中逢合" not in _sp_pat_txt:
+        if "yuanshen_missing" in pattern_flags and "冲中逢合" not in _sp_pat_txt:
             if verdict in ("大吉",):
                 verdict = "吉"
                 verdict_desc = vdesc("yuanshen_missing_daji_cap")
-            if any("旺极无源" in n for n in classical_notes) and verdict in ("吉", "大吉", "平吉"):
+            # 「旺极无源」在旧代码里是**注记文案子串**，而 static_yuanshen_missing 的文案本身
+            # 就带这四个字（verdict_texts.json 同名 key），故本条件在外层「原神失位」块内恒真——
+            # 措辞替量作答：-1.0 加权（extreme_no_source）没触发也照样走平吉/凶覆写。
+            # 本条按字面保留旧行为（no_source_wording 由两处生产者同时置位），
+            # "是否应收紧为只认加权已触发"属语义变更，登记为 #15 单独量，不在重构里夹带。
+            # 实测（2026-10-11 第五十二批）：改成只认 extreme_no_source 后 288 例两层指纹与全门逐项读数
+            # 均不变——此差异在现有案例集内不可观测，故既不采纳也不宣布修好，见 CHANGELOG 同批。
+            if "no_source_wording" in pattern_flags and verdict in ("吉", "大吉", "平吉"):
                 if final_score < 1.0:
                     verdict = "凶"
                     verdict_desc = vdesc("extreme_no_source_xiong")
@@ -1196,21 +1342,21 @@ def apply_verdict_overrides(
             elif verdict == "吉" and final_score < 2.0:
                 verdict = "平吉"
                 verdict_desc = vdesc("yuanshen_missing_discount")
-        if any("官鬼克世" in n for n in classical_notes):
+        if "officer_ke_world_lawsuit" in pattern_flags:
             if verdict in ("大吉", "吉"):
                 verdict = "凶"
                 verdict_desc = vdesc("officer_ke_world_xiong")
             elif verdict == "平吉":
                 verdict = "凶"
                 verdict_desc = vdesc("officer_ke_world_tight")
-        if any("兄弟持世求名" in n for n in classical_notes) and verdict in ("吉", "大凶", "凶"):
+        if "brother_hold_exam" in pattern_flags and verdict in ("吉", "大凶", "凶"):
             if verdict in ("凶", "大凶"):
                 verdict = "平吉"
                 verdict_desc = vdesc("brother_exam_not_desperate")
             else:
                 verdict = "平吉"
                 verdict_desc = vdesc("brother_exam_hard")
-        if any("久病" in n for n in classical_notes):
+        if "chronic_illness" in pattern_flags:
             if verdict in ("大吉", "吉"):
                 verdict = "平吉" if verdict == "吉" else "凶"
                 if verdict == "平吉":
@@ -1218,20 +1364,21 @@ def apply_verdict_overrides(
             if verdict == "平吉" and any(k in _q_l for k in ("久病", "半年")):
                 verdict = "凶"
                 verdict_desc = vdesc("chronic_illness_tight")
-        if any("兄弟持世求名" in n for n in classical_notes) and verdict in ("吉", "大吉"):
+        if "brother_hold_exam" in pattern_flags and verdict in ("吉", "大吉"):
             verdict = "平吉"
             verdict_desc = vdesc("brother_exam_hard")
         if _is_travel_return and any(
-            ("用神生世" in n) or ("用神克世" in n) or ("行人用神有气" in n) or ("世克用" in n)
-            for n in classical_notes
+            f in pattern_flags
+            for f in ("travel_use_sheng_world", "travel_use_ke_world",
+                      "travel_use_alive", "travel_world_ke_use")
         ):
             if verdict in ("凶", "大凶"):
                 verdict = "平吉"
                 verdict_desc = vdesc("travel_eventually_back")
-            if any("用神生世" in n for n in classical_notes) and verdict in ("平吉", "凶", "大凶"):
+            if "travel_use_sheng_world" in pattern_flags and verdict in ("平吉", "凶", "大凶"):
                 verdict = "吉"
                 verdict_desc = vdesc("travel_use_sheng_back")
-            elif verdict == "平吉" and any("用神克世" in n for n in classical_notes):
+            elif verdict == "平吉" and "travel_use_ke_world" in pattern_flags:
                 verdict = "吉"
                 verdict_desc = vdesc("travel_use_ke_fast")
         if world_relation == "兄弟" and _is_wealth and ug_cat == "妻财":
@@ -1279,6 +1426,18 @@ def apply_verdict_overrides(
             f"【随官入墓凶象】{officer_tomb.get('reason')}——"
             f"评分调整{officer_tomb.get('adjustment'):+.1f}"
         )
+
+    # ── 判词 ↔ 分数 同档收口 ──
+    # 覆写链多处把 verdict 从「凶」抬到「平吉/吉」（行人用神生世必归、兄弟持世求名
+    # 未绝望、久病尚可调……皆书上有据），却**从不带动 final_score**，于是产出
+    # 「判词平吉 · 得分 −5.33」这种自己跟自己打架的读数（金标准 288 例实测 15 例）。
+    # 同函数内三刑合战分支早就用「保底 0.5」处理过同类问题
+    # （`if final_score < 0.5: final_score = 0.5`），此处把那一步一般化：
+    # 判词进哪一档，分数至少到该档下界。只上抬不下压——压档类覆写（判词比分数更悲观）
+    # 是故意的，一律保留。
+    _floor = {"大吉": 4.0, "吉": 1.0, "平吉": -0.5, "凶": -2.0}.get(verdict)
+    if _floor is not None and final_score < _floor:
+        final_score = round(_floor, 2)
 
     return {
         "verdict": verdict,
@@ -1620,8 +1779,16 @@ def calculate_yingqi(
     step4: dict,
     step5: dict,
     base_date: datetime | None = None,
+    ladder: list | None = None,
 ) -> dict:
-    """应期精确计算（《增删卜易》《黄金策》）：{日期+规则列表, speed, summary_text}。"""
+    """应期精确计算（《增删卜易》《黄金策》）：{日期+规则列表, speed, summary_text}。
+
+    `ladder` 是 `timing._rank_candidates` 排好的日级阶梯 [(token, rule), ...]。
+    接它的原因不是补功能，而是**消除同一次占断里的两个答案**：阶梯把戌日排为主应期，
+    而下面的日期投影此前只按"最早五个日期"出列，报告读的是日期层（narrate 应期段
+    「优先从 yingqi_dates 读」），于是阶梯上所有排序在产出面被丢掉。日期层现在
+    以阶梯名次为主序、同一名次内按日期先后为次序，且阶梯支也进入候选池。
+    """
     use_god_branch = safe_get(step3, "use_god_branch", default="")
     use_god_element = safe_get(step3, "use_god_element", default="")
     strength_level = safe_get(step3, "strength_level", default="中和")
@@ -1760,6 +1927,22 @@ def calculate_yingqi(
                 candidates.append(("原神旺月", d, "",
                                    f"原神{yuan_shen_element}旺月（{pm}月）"))
 
+    # ===== 阶梯接线（第七十九批）：主应期必须在日历层出现，但不许挤掉既有候选 =====
+    # 名次表按阶梯支首次出现建立。此前把阶梯支并进七条规则一起竞争那 5 个日期槽位，
+    # 实测**逐出效应**真实存在（tune loose 100.0→94.1、wikisource_holdout 92.1→73.7——
+    # 排序靠前但日期靠后的阶梯支把原本在窗口内的支顶了出去），故改为**只增不换**：
+    # 日历层的 5 个槽位仍按七条规则的时间序取，阶梯里未被子集覆盖的名次最多追加 2 条。
+    _rank_of: dict[str, int] = {}
+    _BRANCH_LADDER_RULE: dict[str, str] = {}
+    for _i, _item in enumerate(ladder or []):
+        _tok, _rule_txt = (_item if isinstance(_item, (list, tuple)) and len(_item) >= 2
+                           else (str(_item or ""), ""))
+        _b = str(_tok or "")[:1]
+        if not _b or _b in _rank_of or _b not in _BRANCH_CLASH_MAP:
+            continue
+        _rank_of[_b] = _i
+        _BRANCH_LADDER_RULE[_b] = str(_rule_txt or "")[:40]
+
     # ===== Deduplicate: if 逢值 == 填实 or 逢冲 == 冲空, keep more specific rule =====
     seen_dates: dict[str, tuple[str, datetime | None, str, str]] = {}
     for rule, dt, br, desc in candidates:
@@ -1776,8 +1959,22 @@ def calculate_yingqi(
         if existing is None or priority.get(rule, 0) > priority.get(existing[0], 0):
             seen_dates[key] = (rule, dt, br, desc)
 
-    unique_sorted = sorted(seen_dates.values(), key=lambda x: x[1] or datetime.max if x[1] else datetime.max)
+    unique_sorted = sorted(seen_dates.values(),
+                           key=lambda x: x[1] or datetime.max if x[1] else datetime.max)
     top5 = unique_sorted[:5]
+    # 阶梯里名次最靠前、却没被上面 5 个日期覆盖的支，最多补 2 条（只增不换，见上注释）。
+    _covered = {x[2] for x in top5 if x[1]}
+    _extra: list = []
+    for _b, _i in sorted(_rank_of.items(), key=lambda kv: kv[1]):
+        if len(_extra) >= 2 or _b in _covered:
+            continue
+        _d = _next_date_with_day_branch(base, _b)
+        if _d and all(_d != _x[1] for _x in top5 + _extra if _x[1]):
+            _extra.append((_rank_of[_b], _BRANCH_LADDER_RULE.get(_b, f"应期阶梯第{_i + 1}"),
+                           _d, _b, f"主应期阶梯名次 {_i + 1}（{_b}日）"))
+    if _extra:
+        top5 = top5 + [( _ru, _dt, _br, _de) for _rk, _ru, _dt, _br, _de
+                       in sorted(_extra, key=lambda x: x[0])]
 
     # ===== Build result =====
     dates_list = []

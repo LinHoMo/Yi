@@ -23,6 +23,30 @@
 from __future__ import annotations
 
 import argparse
+# 第八十六批守卫：本器会**整文件重写** data/cases/huozhulin_cases.json，
+# 实测它会覆掉手工校勘成果（把已拆回单条占验的 HZL001 重新拼案、把 源L571 的爻名
+# 「九二甲寅财动」再次 harvest 成 expected.yingqi「甲寅日」，并把 2026-10-09 收口掉的
+# wikitext 排版标记 {{返回頁首}} 写回 huozhulin_qualitative.json）。
+# 因此：目标文件里只要存在 reconstruction_note / 照录收口 记录，本器就拒绝覆写并说明原因；
+# 真要重建须显式 `--force`，且事后必须重跑 [16] 案例基准自洽门。
+_FORCE = "--force" in __import__("sys").argv
+
+
+def _refuse_if_handfixed(path) -> bool:
+    import json as _json
+    try:
+        blob = _json.dumps(_json.load(open(path, encoding="utf-8")), ensure_ascii=False)
+    except Exception:
+        return False
+    if _FORCE:
+        return False
+    for mark in ("reconstruction_note", "照录收口"):
+        if mark in blob:
+            print(f"× 拒写 {path}：文件含手工校勘标记「{mark}」，本器的再生成会覆掉校勘成果。"
+                  f"确认要覆写请加 --force，并在跑完后重跑 `python dev_tools/check.py --only selfconsistency`。")
+            return True
+    return False
+
 import hashlib
 import json
 import re

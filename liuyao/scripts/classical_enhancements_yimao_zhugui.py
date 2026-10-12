@@ -13,7 +13,7 @@
   ① 鬼空/鬼破 → 弗能伤 → 不成局；
   ② 世旺相 → 弗能伤 → 不成局。
 
-**用官占豁免**（源 L547）：
+**用官占豁免**（《易冒》源 L547）：
   「若女占夫而官星为用者，遇之反吉也；占官骤升，占武即发。」
   即用神恰为官鬼时（求官擢升类），不以「助鬼伤身」论凶——官鬼为用则不构成此格。
 
@@ -87,16 +87,16 @@ def _gui_changsheng_ri(gui_branch: str, day_branch: str) -> bool:
 
 
 def analyze_zhu_gui_shang_shen_yimao(result):
-    """助鬼伤身 易冒版结构判定（《易冒》助伤章，源 L541-L550）。
+    """助鬼伤身 易冒版结构判定（《易冒》助伤章，源 L541-L550「助鬼伤身，以世爻受鬼克，而鬼长生于日，是为引祸以自害」）。
 
     成立三要件（全部为机械可判）：
-      1. 世爻受官鬼克（源 L541：世爻受鬼克）；
-      2. 官鬼长生于日（源 L541：鬼长生于日）；
+      1. 世爻受官鬼克（源 L541「助鬼伤身，以世爻受鬼克」：世爻受鬼克）；
+      2. 官鬼长生于日（源 L541「而鬼长生于日，是为引祸以自害」：鬼长生于日）；
       3. 双 correction 均不命中：
-         a. 官鬼**不**空破（源 L542：鬼空破弗能伤）；
-         b. 世爻**非**旺相（源 L542：世旺相弗能伤）。
+         a. 官鬼**不**空破（源 L542「然官鬼遇空破者弗能伤」：鬼空破弗能伤）；
+b.世爻**非**旺相（源 L542「世爻逢旺相者弗能伤」）。
 
-    用官占豁免（源 L547）：用神恰为「官鬼」时，遇此格局不以凶论——
+    用官占豁免（《易冒》源 L547）：用神恰为「官鬼」时，遇此格局不以凶论——
     「若女占夫而官星为用者，遇之反吉也；占官骤升，占武即发」。
 
     返回 {established, reason, shen_target, gui_moving, applicability,
@@ -150,10 +150,10 @@ def analyze_zhu_gui_shang_shen_yimao(result):
     tc = result.get("thinking_chain") or {}
     s2 = tc.get("step2_use_god_identification") or {}
     if s2.get("use_god_category") == "官鬼" or use_god_category == "career":
-        # 用官占豁免（源 L547）
+        # 用官占豁免（《易冒》源L547「若女占夫而官星为用者，遇之反吉也；占官骤升，占武即发」）
         out["use_god_exempt"] = True
         out["reason"] = (
-            f"用官占豁免：用神为官鬼（源L547「若女占夫而官星为用者，遇之反吉也；占官骤升，占武即发」）。"
+            f"用官占豁免：用神为官鬼（《易冒》源L547「若女占夫而官星为用者，遇之反吉也；占官骤升，占武即发」）。"
             f"官鬼为用时不以助鬼伤身论凶。")
         return out
 
@@ -167,7 +167,7 @@ def analyze_zhu_gui_shang_shen_yimao(result):
             gui_attacks.append(g)
 
     if not gui_attacks:
-        out["reason"] = "不构成助鬼伤身（源L541）：无官鬼克世爻（世不受鬼克）"
+        out["reason"] = "不构成助鬼伤身（《易冒》源L541「助鬼伤身，以世爻受鬼克」）：无官鬼克世爻（世不受鬼克）"
         return out
 
     # 要件2：鬼长生于日
@@ -177,8 +177,8 @@ def analyze_zhu_gui_shang_shen_yimao(result):
 
     if not changsheng_guis:
         out["reason"] = (
-            f"不构成助鬼伤身（源L541）：官鬼虽克世但无鬼长生于日"
-            f"（日辰{day_branch}，源L543「虽曰长生，临于岁月动变之位者则非」）")
+            f"不构成助鬼伤身（《易冒》源L541「而鬼长生于日」）：官鬼虽克世但无鬼长生于日"
+            f"（日辰{day_branch}，《易冒》源L543「虽曰长生，临于岁月动变之位者则非」）")
         return out
 
     # 双修正
@@ -198,7 +198,7 @@ def analyze_zhu_gui_shang_shen_yimao(result):
     if out["correction_a"]:
         reason_a = "鬼空" if out["gui_empty"] else "鬼破（月冲）"
         out["reason"] = (
-            f"不构成助鬼伤身（源L542 修正一）：官鬼遇{reason_a}——"
+            f"不构成助鬼伤身（《易冒》源L542 修正一）：官鬼遇{reason_a}——"
             f"「然官鬼遇空破者弗能伤」")
         return out
 
@@ -211,7 +211,7 @@ def analyze_zhu_gui_shang_shen_yimao(result):
                 out["world_strong"] = True
                 out["correction_b"] = True
                 out["reason"] = (
-                    f"不构成助鬼伤身（源L542 修正二）：世爻{world_branch}"
+                    f"不构成助鬼伤身（《易冒》源L542「官鬼遇空破者弗能伤，世爻逢旺相者弗能伤」修正二）：世爻{world_branch}"
                     f"「{world_month_strength}」——「世爻逢旺相者弗能伤」")
                 return out
 
@@ -224,8 +224,8 @@ def analyze_zhu_gui_shang_shen_yimao(result):
     out["reason"] = (
         f"助鬼伤身（易冒格）成立：世爻{world_branch}受官鬼"
         f"（{'、'.join(out['gui_branches'])}）克"
-        f"且鬼长生于{day_branch}日（源L541「世爻受鬼克，而鬼长生于日」）；"
-        f"双修正未命中——鬼不空破、世非旺相（源L542）")
+        f"且鬼长生于{day_branch}日（《易冒》源L541「世爻受鬼克，而鬼长生于日」）；"
+        f"双修正未命中——鬼不空破、世非旺相（源L542「然官鬼遇空破者弗能伤，世爻逢旺相者弗能伤」）")
 
     # 结构标签句（模板来自 verdict_texts.json）
     tpl = _LABELS.get("成立" if out["established"] else "不成立提示", "")
