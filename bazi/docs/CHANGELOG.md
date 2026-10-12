@@ -1,5 +1,31 @@
 # 八字 CHANGELOG
 
+## 2026-10-12 第一百六十二批：#14 残项——登记 36 例 expected.pillars（书文自带≥4 干支的命例补全四柱真值）
+
+### 缘起
+
+#14 残项：25 例 classical（MT017＋ZP001/002/008–020/022–028/031/034，source_quote 嵌≥4 干支且过 [20] 历法自洽）＋11 例 DY 行运见证集（DY001/002/004–012）此前未登记 `expected.pillars`。用户裁决范围＝**36 例（含 11 行运见证集）**——覆盖由 0→36。
+
+### 落点（数据层，已落）
+
+- `bazi_classical_cases.json`：对 25 例补 `expected.pillars`＝其书载四柱（`chart_from_pillars` 真值）；其中 MT017 去 `datetime="1984-04-09 10:00"` 夹具、改存书盘 `辛卯/壬辰/癸未/丙辰`（与余 24 例一致，纯 dateless 书载四柱）；
+- `bazi_dayun_cases.json`：对 11 例（DY003 除外，其 pillars_raw 未过 [20]）由 `pillars_raw` 解析落 `expected.pillars`（本集不参与主评分、[17] 因无 datetime 已跳过，仅登记以补覆盖）；
+- 两文件均按原 indent 保真（classical CRLF／indent=1、dayun LF／indent=1 且内嵌短数组保行内），未整文件伪重构；
+- `eval_all.json`／`eval_tune.json`／`eval_holdout.json`：`evaluate.py --save` 重生。
+
+### 读数（evaluate.py 实跑，[5]/[7] rc=0）
+
+- classical 文件级 `expected.pillars` 覆盖 **189→214**（tune 0→1、holdout 189→213）；
+- holdout `pillars` **213/213（100%）**（原 189/189，＋24 例全对——书载值＝`chart_from_pillars` 输出）；
+- tune `pillars` 1/1（100%）；
+- holdout 加权均分 **97.0%→97.6%（n=278）**；tune 维持 100.0%（n=60）；
+- 其余维不变：`tiaohou` 51/53 96.2%｜`pattern` 29/36 80.6%｜`cong_ge` 13/15 86.7%；
+- `check.py` `DIM_HITS` 同步把 holdout `pillars` 下限 189→213（既得 24 例纳入回归护栏）。
+
+### 说明
+
+本次仅登记既有书载四柱为 expected 真值，未引入新判据、未动引擎、未参与调参（外部集永不参与调参铁律不变）；属 #14 覆盖补全，非 §四.4 口径变更，新旧读数可比。
+
 ## 2026-10-12 第一百六十一批：#39 清出 342 例冗余（含 24 例同规则异盘误报＋金标准 QTBJ002/004/006/008 移出使样例 44→40）
 
 ### 缘起

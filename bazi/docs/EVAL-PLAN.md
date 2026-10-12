@@ -181,7 +181,7 @@
 | 3 | 落地《穷通宝鉴》`TIAO_HOU` 表与 `tiaohou` 维度 | ✅ 已完成（holdout 90.5%） |
 | 4 | 落地《子平真诠》格局成败救应与 `pattern_cheng_bai` | ✅ 已完成（cong_ge 86.7% / pattern 80.6%） |
 | 5 | 收案例入 tune / holdout 并冻结 | ✅ 已完成（现跑 **tune 60／holdout 278**；原记「tune 138／holdout 532」系 #39 清出 342 例冗余前口径，分母与均分同时变动，按 §四.4 不可比；更早「tune 30／holdout 246」系扩容前快照） |
-| 6 | 神煞 / 大运流年 / 藏干十神维度补全 | 🔶 **评分面已接，语料侧未验**（2026-10-11 实测更正，原记「⬜ 待做」不确）：`evaluate.py` 八维权重齐备（`check_dim_surface.py` [15] 已验「每维都有引擎结构＋报告落点」），但 `bazi_classical_cases.json` 338 例（tune 60／holdout 278）的 `expected` 键频实测为 pillars 189／tiaohou 113／pattern_cheng_bai 36／cong_ge·from_kind·from_type 各 15，**`shensha`／`hidden_stems`／`ten_gods`／`dayun` 四维 0 例带期望** ⇒ 这四维现按 N/A 剔除、不参与任何一案读数（护栏空档，不是已验证）。行运引动已按 ②③④⑤ 落地（第一百零八～一百一十二批：运岁共用 `yindong_relations` 六条判据〔补第三支·半合·运干引出·冲命支·虚拱填实·X星入墓〕＋报告面独立小节＋`[18]` 三层回验 12/12 排运一致／13 处机制出标签／2/2 起运算例／7 式负例），
+| 6 | 神煞 / 大运流年 / 藏干十神维度补全 | 🔶 **评分面已接，语料侧未验**（2026-10-11 实测更正，原记「⬜ 待做」不确）：`evaluate.py` 八维权重齐备（`check_dim_surface.py` [15] 已验「每维都有引擎结构＋报告落点」），但 `bazi_classical_cases.json` 338 例（tune 60／holdout 278）的 `expected` 键频实测为 pillars 214／tiaohou 113／pattern_cheng_bai 36／cong_ge·from_kind·from_type 各 15，**`shensha`／`hidden_stems`／`ten_gods`／`dayun` 四维 0 例带期望** ⇒ 这四维现按 N/A 剔除、不参与任何一案读数（护栏空档，不是已验证）。行运引动已按 ②③④⑤ 落地（第一百零八～一百一十二批：运岁共用 `yindong_relations` 六条判据〔补第三支·半合·运干引出·冲命支·虚拱填实·X星入墓〕＋报告面独立小节＋`[18]` 三层回验 12/12 排运一致／13 处机制出标签／2/2 起运算例／7 式负例），
 但**未进评分**（本表第 6 行所述护栏空档仍在：主语料 338 例的 `expected` 无行运键）；#31⑤ 余下仅「拱格又忌伤了日时」一项未接（书给原则未给算法，待口径）。 |
 | 7 | narrate 新增维度与评测维度同名同义约束固化 | ✅ 已完成（2026-10-10：`dev_tools/check_dim_surface.py` 接进 `dev_tools/check.py` [15]，两侧互查 + 负例自证） |
 

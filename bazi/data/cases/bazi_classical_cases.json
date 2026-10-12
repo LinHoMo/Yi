@@ -4130,13 +4130,22 @@
    "location": "论癸（三春）",
    "source_quote": "要分清明谷雨。清明后、火气未炽，专用丙火，为阴阳合谐。谷雨后，虽用丙火，尚宜辛甲佐之。如辛卯、壬辰、癸未、丙辰，生上半月，用丙火、显达。生下半月，必无伤辛金癸水、方妙。然丙亦不可少。用丙、木妻、火子",
    "pillars": {
-    "datetime": "1984-04-09 10:00"
+    "year": "辛卯",
+    "month": "壬辰",
+    "day": "癸未",
+    "hour": "丙辰"
    },
    "gender": "男",
    "note": "3月癸日主调候（原文明写：主丙，佐神原文未单列）",
    "expected": {
     "tiaohou": {
      "main": "丙"
+    },
+    "pillars": {
+     "year": "辛卯",
+     "month": "壬辰",
+     "day": "癸未",
+     "hour": "丙辰"
     }
    }
   },
@@ -5143,7 +5152,13 @@
    "gender": "",
    "note": "书源称煞刃格=月刃格用煞制；徐注主判成",
    "expected": {
-    "pattern_cheng_bai": "成格"
+    "pattern_cheng_bai": "成格",
+    "pillars": {
+     "year": "丁卯",
+     "month": "丙午",
+     "day": "丙子",
+     "hour": "壬辰"
+    }
    }
   },
   {
@@ -5161,7 +5176,13 @@
    "gender": "",
    "note": "建禄用食神生财",
    "expected": {
-    "pattern_cheng_bai": "成格"
+    "pattern_cheng_bai": "成格",
+    "pillars": {
+     "year": "丁酉",
+     "month": "丙午",
+     "day": "丁酉",
+     "hour": "己酉"
+    }
    }
   },
   {
@@ -5269,7 +5290,13 @@
    "gender": "",
    "note": "伤官生财身强有根",
    "expected": {
-    "pattern_cheng_bai": "成格"
+    "pattern_cheng_bai": "成格",
+    "pillars": {
+     "year": "壬午",
+     "month": "己酉",
+     "day": "戊午",
+     "hour": "庚申"
+    }
    }
   },
   {
@@ -5287,7 +5314,13 @@
    "gender": "",
    "note": "化伤为财（亥未会局）；三合细节引擎不判，成条件财透主判成",
    "expected": {
-    "pattern_cheng_bai": "成格"
+    "pattern_cheng_bai": "成格",
+    "pillars": {
+     "year": "甲子",
+     "month": "乙亥",
+     "day": "辛未",
+     "hour": "戊子"
+    }
    }
   },
   {
@@ -5305,7 +5338,13 @@
    "gender": "",
    "note": "伤官佩印（印透即佩印成）",
    "expected": {
-    "pattern_cheng_bai": "成格"
+    "pattern_cheng_bai": "成格",
+    "pillars": {
+     "year": "壬申",
+     "month": "丙午",
+     "day": "甲午",
+     "hour": "壬申"
+    }
    }
   },
   {
@@ -5323,7 +5362,13 @@
    "gender": "",
    "note": "伤官用煞印（带煞佩印特例）",
    "expected": {
-    "pattern_cheng_bai": "成格"
+    "pattern_cheng_bai": "成格",
+    "pillars": {
+     "year": "己未",
+     "month": "丙子",
+     "day": "庚子",
+     "hour": "丙子"
+    }
    }
   },
   {
@@ -5341,7 +5386,13 @@
    "gender": "",
    "note": "伤官兼用财印（财印两不相碍）",
    "expected": {
-    "pattern_cheng_bai": "成格"
+    "pattern_cheng_bai": "成格",
+    "pillars": {
+     "year": "壬戌",
+     "month": "己酉",
+     "day": "戊午",
+     "hour": "丁巳"
+    }
    }
   },
   {
@@ -5359,7 +5410,13 @@
    "gender": "",
    "note": "伤官生财（财伤有情），书源以秀气贵论",
    "expected": {
-    "pattern_cheng_bai": "成格"
+    "pattern_cheng_bai": "成格",
+    "pillars": {
+     "year": "己卯",
+     "month": "丁丑",
+     "day": "丙寅",
+     "hour": "庚寅"
+    }
    }
   },
   {
@@ -5377,7 +5434,13 @@
    "gender": "",
    "note": "化伤为财作财旺生官（子申会局细节不判，财透主判成）",
    "expected": {
-    "pattern_cheng_bai": "成格"
+    "pattern_cheng_bai": "成格",
+    "pillars": {
+     "year": "甲子",
+     "month": "壬申",
+     "day": "己亥",
+     "hour": "辛未"
+    }
    }
   },
   {
@@ -5395,7 +5458,13 @@
    "gender": "",
    "note": "伤官见官秀财以解；财透成条件主判成",
    "expected": {
-    "pattern_cheng_bai": "成格"
+    "pattern_cheng_bai": "成格",
+    "pillars": {
+     "year": "壬戌",
+     "month": "己酉",
+     "day": "戊戌",
+     "hour": "乙卯"
+    }
    }
   },
   {
@@ -5413,7 +5482,13 @@
    "gender": "",
    "note": "伤官见官财官同宫转吉；印透带煞佩印特例主判成",
    "expected": {
-    "pattern_cheng_bai": "成格"
+    "pattern_cheng_bai": "成格",
+    "pillars": {
+     "year": "庚午",
+     "month": "己卯",
+     "day": "壬申",
+     "hour": "己酉"
+    }
    }
   },
   {
@@ -5431,7 +5506,13 @@
    "gender": "",
    "note": "冬金用官化伤为财；印透带煞佩印主判成",
    "expected": {
-    "pattern_cheng_bai": "成格"
+    "pattern_cheng_bai": "成格",
+    "pillars": {
+     "year": "丙申",
+     "month": "己亥",
+     "day": "辛未",
+     "hour": "己亥"
+    }
    }
   },
   {
@@ -5449,7 +5530,13 @@
    "gender": "",
    "note": "建禄用官印护",
    "expected": {
-    "pattern_cheng_bai": "成格"
+    "pattern_cheng_bai": "成格",
+    "pillars": {
+     "year": "庚戌",
+     "month": "戊子",
+     "day": "癸酉",
+     "hour": "癸亥"
+    }
    }
   },
   {
@@ -5467,7 +5554,13 @@
    "gender": "",
    "note": "建禄用官财助",
    "expected": {
-    "pattern_cheng_bai": "成格"
+    "pattern_cheng_bai": "成格",
+    "pillars": {
+     "year": "丁酉",
+     "month": "丙午",
+     "day": "丁巳",
+     "hour": "壬寅"
+    }
    }
   },
   {
@@ -5485,7 +5578,13 @@
    "gender": "",
    "note": "建禄财官印三奇",
    "expected": {
-    "pattern_cheng_bai": "成格"
+    "pattern_cheng_bai": "成格",
+    "pillars": {
+     "year": "庚午",
+     "month": "戊子",
+     "day": "癸卯",
+     "hour": "丁巳"
+    }
    }
   },
   {
@@ -5521,7 +5620,13 @@
    "gender": "",
    "note": "建禄食伤泄秀（木火通明）",
    "expected": {
-    "pattern_cheng_bai": "成格"
+    "pattern_cheng_bai": "成格",
+    "pillars": {
+     "year": "甲子",
+     "month": "丙寅",
+     "day": "甲子",
+     "hour": "丙寅"
+    }
    }
   },
   {
@@ -5539,7 +5644,13 @@
    "gender": "",
    "note": "建禄化劫为生（子申会局细节不判，财透主判成）",
    "expected": {
-    "pattern_cheng_bai": "成格"
+    "pattern_cheng_bai": "成格",
+    "pillars": {
+     "year": "庚子",
+     "month": "甲申",
+     "day": "庚子",
+     "hour": "甲申"
+    }
    }
   },
   {
@@ -5557,7 +5668,13 @@
    "gender": "",
    "note": "建禄合煞存财；官财透成条件主判成",
    "expected": {
-    "pattern_cheng_bai": "成格"
+    "pattern_cheng_bai": "成格",
+    "pillars": {
+     "year": "戊辰",
+     "month": "癸亥",
+     "day": "壬午",
+     "hour": "丙午"
+    }
    }
   },
   {
@@ -5575,7 +5692,13 @@
    "gender": "",
    "note": "建禄官煞竞出合煞留官",
    "expected": {
-    "pattern_cheng_bai": "成格"
+    "pattern_cheng_bai": "成格",
+    "pillars": {
+     "year": "辛丑",
+     "month": "庚寅",
+     "day": "甲辰",
+     "hour": "乙亥"
+    }
    }
   },
   {
@@ -5593,7 +5716,13 @@
    "gender": "",
    "note": "建禄官煞竞出制煞留官",
    "expected": {
-    "pattern_cheng_bai": "成格"
+    "pattern_cheng_bai": "成格",
+    "pillars": {
+     "year": "辛亥",
+     "month": "庚寅",
+     "day": "甲申",
+     "hour": "丙寅"
+    }
    }
   },
   {
@@ -5611,7 +5740,13 @@
    "gender": "",
    "note": "建禄用官（己官透）而伤透（乙），庚合乙=去伤存官——第09章何谓救应原文『建禄月劫用官，遇伤而伤被合……是谓之救应也』；徐注『庚合乙而去伤存官』。原 expected=成格 修正为救应成格",
    "expected": {
-    "pattern_cheng_bai": "救应成格"
+    "pattern_cheng_bai": "救应成格",
+    "pillars": {
+     "year": "己酉",
+     "month": "乙亥",
+     "day": "壬戌",
+     "hour": "庚子"
+    }
    }
   },
   {
@@ -5629,7 +5764,13 @@
    "gender": "",
    "note": "建禄用煞制伏；官财透成条件主判成",
    "expected": {
-    "pattern_cheng_bai": "成格"
+    "pattern_cheng_bai": "成格",
+    "pillars": {
+     "year": "丁巳",
+     "month": "壬子",
+     "day": "癸卯",
+     "hour": "己未"
+    }
    }
   },
   {
@@ -5683,7 +5824,13 @@
    "gender": "",
    "note": "煞刃格（偏官+阳刃在支）印透化煞=破；2026-09-30u 煞刃格规则落地后回归入库",
    "expected": {
-    "pattern_cheng_bai": "破格"
+    "pattern_cheng_bai": "破格",
+    "pillars": {
+     "year": "丙子",
+     "month": "戊戌",
+     "day": "壬子",
+     "hour": "庚子"
+    }
    }
   },
   {
@@ -5737,7 +5884,13 @@
    "gender": "",
    "note": "财格七杀透（庚）+乙庚合=合煞存财（书源『合煞存财皆贵格』）",
    "expected": {
-    "pattern_cheng_bai": "救应成格"
+    "pattern_cheng_bai": "救应成格",
+    "pillars": {
+     "year": "乙酉",
+     "month": "庚辰",
+     "day": "甲午",
+     "hour": "戊辰"
+    }
    }
   },
   {

@@ -59,7 +59,7 @@ AGENTS_TUNE_FLOOR = 95.0  # SKILL.md 的均分硬下限；BASELINE 必须严于�
 # 维度绝对命中数下限（= evaluate.py 明细里的「满分例数」；n/a 例不进分母故不影响本数）
 DIM_HITS = {
     "tune": {"tiaohou": 30},
-    "holdout": {"pillars": 189, "tiaohou": 19, "pattern": 29, "cong_ge": 13},
+    "holdout": {"pillars": 213, "tiaohou": 19, "pattern": 29, "cong_ge": 13},
 }
 # 其余维度（ten_gods / hidden_stems / shensha / dayun）案例集 0 applicable，
 # 如实登记在 rule_registry 的 mechanical_regression / _uncovered，不设假下限。
