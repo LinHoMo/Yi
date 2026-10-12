@@ -550,7 +550,8 @@ def main() -> int:
     ap.add_argument("--split", choices=["tune", "holdout", "yingqi_holdout",
                                         "wikisource_holdout", "wikisource_direction",
                                         "huozhulin_holdout",
-                                        "suigui_holdout", "bushi_zhengzong_holdout", "all"],
+                                        "suigui_holdout", "bushi_zhengzong_holdout",
+                                        "zengshan_dz_holdout", "all"],
                     default="all")
     ap.add_argument("--ids", nargs="*", help="指定案例 ID，优先于 --split")
     ap.add_argument("--stage", choices=["run", "score", "all"], default="all")

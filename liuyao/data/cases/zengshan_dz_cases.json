@@ -1,0 +1,2244 @@
+{
+  "_meta": {
+    "description": "《增删卜易》殆知阁转录本抽取的应期外部验证集；六道门＋同案去重；永不参与调参",
+    "built_by": "dev_tools/build_zengshan_dz_cases.py",
+    "source_sha256": "81d73e4aaf29a1a591250db9e43bb5d815b5ef4a06555c42c1087e9a3f3a3fa7",
+    "total_cases": 22,
+    "excluded": [
+      {
+        "id": "ZD001",
+        "reason": "无六爻渲染（规则陈述／行文提及，非占验案例）",
+        "topic": "功名者",
+        "raw_original": "旺官持世",
+        "raw_changed": "",
+        "original": null,
+        "changed": null
+      },
+      {
+        "id": "ZD002",
+        "reason": "无六爻渲染（规则陈述／行文提及，非占验案例）",
+        "topic": "求财若",
+        "raw_original": "财星持世",
+        "raw_changed": "",
+        "original": null,
+        "changed": null
+      },
+      {
+        "id": "ZD003",
+        "reason": "无六爻渲染（规则陈述／行文提及，非占验案例）",
+        "topic": "功名",
+        "raw_original": "旺官持世以成",
+        "raw_changed": "",
+        "original": null,
+        "changed": null
+      },
+      {
+        "id": "ZD004",
+        "reason": "无六爻渲染（规则陈述／行文提及，非占验案例）",
+        "topic": "功名者若",
+        "raw_original": "官鬼持世即许",
+        "raw_changed": "",
+        "original": null,
+        "changed": null
+      },
+      {
+        "id": "ZD005",
+        "reason": "无六爻渲染（规则陈述／行文提及，非占验案例）",
+        "topic": "病者若",
+        "raw_original": "六冲卦近病不",
+        "raw_changed": "",
+        "original": null,
+        "changed": null
+      },
+      {
+        "id": "ZD006",
+        "reason": "时间不可还原：案例前无紧邻的完整日期行",
+        "topic": "求财或是妻财持世或是兄弟持世",
+        "raw_original": "其一者则止",
+        "raw_changed": "",
+        "original": null,
+        "changed": null
+      },
+      {
+        "id": "ZD007",
+        "reason": "无六爻渲染（规则陈述／行文提及，非占验案例）",
+        "topic": "姊丈妹夫以世爻为用神子屡",
+        "raw_original": "验",
+        "raw_changed": "",
+        "original": null,
+        "changed": null
+      },
+      {
+        "id": "ZD008",
+        "reason": "应期锚只剩占测日/占测年自重或预测假设，无可评分令牌",
+        "topic": "父近病",
+        "raw_original": "乾为天",
+        "raw_changed": "天小畜",
+        "original": "乾",
+        "changed": "小畜"
+      },
+      {
+        "id": "ZD009",
+        "reason": "应期锚只剩占测日/占测年自重或预测假设，无可评分令牌",
+        "topic": "求财",
+        "raw_original": "兑为泽",
+        "raw_changed": "雷水解",
+        "original": "兑",
+        "changed": "解"
+      },
+      {
+        "id": "ZD010",
+        "reason": "本卦存疑：卦名不可解析（重罪）",
+        "topic": "兄已",
+        "raw_original": "重罪",
+        "raw_changed": "",
+        "original": null,
+        "changed": null
+      },
+      {
+        "id": "ZD011",
+        "reason": "应期锚只剩占测日/占测年自重或预测假设，无可评分令牌",
+        "topic": "父官事已拟重罪",
+        "raw_original": "泽地萃",
+        "raw_changed": "天火同人",
+        "original": "萃",
+        "changed": "同人"
+      },
+      {
+        "id": "ZD012",
+        "reason": "时间不可还原：案例前无紧邻的完整日期行",
+        "topic": "兄官事同此一案亦拟重罪",
+        "raw_original": "天地否",
+        "raw_changed": "天水讼",
+        "original": "否",
+        "changed": "讼"
+      },
+      {
+        "id": "ZD013",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "弟癌症业已临危",
+        "raw_original": "既济",
+        "raw_changed": "革",
+        "original": "既济",
+        "changed": "革"
+      },
+      {
+        "id": "ZD018",
+        "reason": "应期锚只剩占测日/占测年自重或预测假设，无可评分令牌",
+        "topic": "妹临产吉凶",
+        "raw_original": "火地晋",
+        "raw_changed": "",
+        "original": "晋",
+        "changed": null
+      },
+      {
+        "id": "ZD019",
+        "reason": "弱日期行紧邻（巳月亥日），时间不可还原",
+        "topic": "仆何日回",
+        "raw_original": "夬",
+        "raw_changed": "履",
+        "original": "夬",
+        "changed": "履"
+      },
+      {
+        "id": "ZD020",
+        "reason": "时间不可还原：案例前无紧邻的完整日期行",
+        "topic": "生产",
+        "raw_original": "山地剥",
+        "raw_changed": "风地观",
+        "original": "剥",
+        "changed": "观"
+      },
+      {
+        "id": "ZD021",
+        "reason": "应期锚只剩占测日/占测年自重或预测假设，无可评分令牌",
+        "topic": "兄病",
+        "raw_original": "屯",
+        "raw_changed": "震",
+        "original": "屯",
+        "changed": "震"
+      },
+      {
+        "id": "ZD024",
+        "reason": "应期锚只剩占测日/占测年自重或预测假设，无可评分令牌",
+        "topic": "风水",
+        "raw_original": "困",
+        "raw_changed": "节",
+        "original": "困",
+        "changed": "节"
+      },
+      {
+        "id": "ZD025",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "出外经商贸易财如何",
+        "raw_original": "恒",
+        "raw_changed": "豫",
+        "original": "恒",
+        "changed": "豫"
+      },
+      {
+        "id": "ZD027",
+        "reason": "应期锚只剩占测日/占测年自重或预测假设，无可评分令牌",
+        "topic": "严师训子",
+        "raw_original": "天地否",
+        "raw_changed": "乾",
+        "original": "否",
+        "changed": "乾"
+      },
+      {
+        "id": "ZD028",
+        "reason": "无六爻渲染（规则陈述／行文提及，非占验案例）",
+        "topic": "过数十年只验",
+        "raw_original": "一",
+        "raw_changed": "",
+        "original": null,
+        "changed": null
+      },
+      {
+        "id": "ZD030",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "女痘",
+        "raw_original": "坤",
+        "raw_changed": "师",
+        "original": "坤",
+        "changed": "师"
+      },
+      {
+        "id": "ZD032",
+        "reason": "无六爻渲染（规则陈述／行文提及，非占验案例）",
+        "topic": "主病",
+        "raw_original": "离",
+        "raw_changed": "坎",
+        "original": "离",
+        "changed": "坎"
+      },
+      {
+        "id": "ZD033",
+        "reason": "无六爻渲染（规则陈述／行文提及，非占验案例）",
+        "topic": "主病午月",
+        "raw_original": "离",
+        "raw_changed": "坎",
+        "original": "离",
+        "changed": "坎"
+      },
+      {
+        "id": "ZD034",
+        "reason": "应期锚只剩占测日/占测年自重或预测假设，无可评分令牌",
+        "topic": "升迁",
+        "raw_original": "临",
+        "raw_changed": "中孚",
+        "original": "临",
+        "changed": "中孚"
+      },
+      {
+        "id": "ZD035",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "求财",
+        "raw_original": "家人",
+        "raw_changed": "贲",
+        "original": "家人",
+        "changed": "贲"
+      },
+      {
+        "id": "ZD037",
+        "reason": "卦变不自洽：渲染动爻 [6] ≠ 卦变差集 [3]",
+        "topic": "妻病",
+        "raw_original": "震",
+        "raw_changed": "丰",
+        "original": "震",
+        "changed": "丰"
+      },
+      {
+        "id": "ZD038",
+        "reason": "无六爻渲染（规则陈述／行文提及，非占验案例）",
+        "topic": "求财",
+        "raw_original": "困",
+        "raw_changed": "坎",
+        "original": "困",
+        "changed": "坎"
+      },
+      {
+        "id": "ZD039",
+        "reason": "无六爻渲染（规则陈述／行文提及，非占验案例）",
+        "topic": "图谋",
+        "raw_original": "困卦后逢巳日",
+        "raw_changed": "",
+        "original": null,
+        "changed": null
+      },
+      {
+        "id": "ZD040",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "父何日归"
+      },
+      {
+        "id": "ZD041",
+        "reason": "本卦存疑：卦名不可解析（领）",
+        "topic": "候文书何日",
+        "raw_original": "领",
+        "raw_changed": "",
+        "original": null,
+        "changed": null
+      },
+      {
+        "id": "ZD042",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "父病"
+      },
+      {
+        "id": "ZD043",
+        "reason": "应期锚只剩占测日/占测年自重或预测假设，无可评分令牌",
+        "topic": "乡试",
+        "raw_original": "恒",
+        "raw_changed": "大过",
+        "original": "恒",
+        "changed": "大过"
+      },
+      {
+        "id": "ZD044",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "本年冬今"
+      },
+      {
+        "id": "ZD045",
+        "reason": "本卦存疑：卦名不可解析（出仕否得火天）",
+        "topic": "功名始",
+        "raw_original": "出仕否得火天",
+        "raw_changed": "",
+        "original": null,
+        "changed": null
+      },
+      {
+        "id": "ZD046",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "妻病服药可愈否？",
+        "raw_original": "临",
+        "raw_changed": "泰",
+        "original": "临",
+        "changed": "泰"
+      },
+      {
+        "id": "ZD047",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "母血崩一年有余"
+      },
+      {
+        "id": "ZD048",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "父母近病"
+      },
+      {
+        "id": "ZD049",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "妻母病"
+      },
+      {
+        "id": "ZD051",
+        "reason": "无六爻渲染（规则陈述／行文提及，非占验案例）",
+        "topic": "子病",
+        "raw_original": "大有",
+        "raw_changed": "睽",
+        "original": "大有",
+        "changed": "睽"
+      },
+      {
+        "id": "ZD052",
+        "reason": "时间不可还原：案例前无紧邻的完整日期行",
+        "topic": "子孙亦",
+        "raw_original": "此",
+        "raw_changed": "",
+        "original": null,
+        "changed": null
+      },
+      {
+        "id": "ZD053",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "官府升否"
+      },
+      {
+        "id": "ZD054",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "试中否"
+      },
+      {
+        "id": "ZD055",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "母路隔千里何时来"
+      },
+      {
+        "id": "ZD056",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "开金银器皿店"
+      },
+      {
+        "id": "ZD057",
+        "reason": "无六爻渲染（规则陈述／行文提及，非占验案例）",
+        "topic": "近事",
+        "raw_original": "时而不退者一",
+        "raw_changed": "",
+        "original": null,
+        "changed": null
+      },
+      {
+        "id": "ZD058",
+        "reason": "弱日期行紧邻（申月卯日），时间不可还原",
+        "topic": "兄弟",
+        "raw_original": "兑",
+        "raw_changed": "丰",
+        "original": "兑",
+        "changed": "丰"
+      },
+      {
+        "id": "ZD060",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "贼来否",
+        "raw_original": "大畜",
+        "raw_changed": "泰",
+        "original": "大畜",
+        "changed": "泰"
+      },
+      {
+        "id": "ZD061",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "求财",
+        "raw_original": "风天小畜",
+        "raw_changed": "",
+        "original": "小畜",
+        "changed": null
+      },
+      {
+        "id": "ZD062",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "升迁"
+      },
+      {
+        "id": "ZD063",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "子何日脱厄"
+      },
+      {
+        "id": "ZD064",
+        "reason": "应期锚只剩占测日/占测年自重或预测假设，无可评分令牌",
+        "topic": "乡试",
+        "raw_original": "水地比",
+        "raw_changed": "",
+        "original": "比",
+        "changed": null
+      },
+      {
+        "id": "ZD066",
+        "reason": "弱日期行紧邻（巳月未日），时间不可还原",
+        "topic": "久病",
+        "raw_original": "困",
+        "raw_changed": "兑",
+        "original": "困",
+        "changed": "兑"
+      },
+      {
+        "id": "ZD067",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "升迁",
+        "raw_original": "泽地萃",
+        "raw_changed": "天地否",
+        "original": "萃",
+        "changed": "否"
+      },
+      {
+        "id": "ZD068",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "小舟过关恐盘阻"
+      },
+      {
+        "id": "ZD069",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "文书"
+      },
+      {
+        "id": "ZD070",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "领文书",
+        "raw_original": "风雷益",
+        "raw_changed": "家人",
+        "original": "益",
+        "changed": "家人"
+      },
+      {
+        "id": "ZD071",
+        "reason": "无六爻渲染（规则陈述／行文提及，非占验案例）",
+        "topic": "父亦",
+        "raw_original": "此",
+        "raw_changed": "",
+        "original": null,
+        "changed": null
+      },
+      {
+        "id": "ZD072",
+        "reason": "时间不可还原：案例前无紧邻的完整日期行",
+        "topic": "子病",
+        "raw_original": "姤",
+        "raw_changed": "大过",
+        "original": "姤",
+        "changed": "大过"
+      },
+      {
+        "id": "ZD073",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "脱役",
+        "raw_original": "损",
+        "raw_changed": "节",
+        "original": "损",
+        "changed": "节"
+      },
+      {
+        "id": "ZD074",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "月令"
+      },
+      {
+        "id": "ZD075",
+        "reason": "本卦存疑：卦名不可解析（缺）",
+        "topic": "候选何时",
+        "raw_original": "缺",
+        "raw_changed": "",
+        "original": null,
+        "changed": null
+      },
+      {
+        "id": "ZD076",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "何日雨"
+      },
+      {
+        "id": "ZD077",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "父任云南何时",
+        "raw_original": "信？得地泽临",
+        "raw_changed": "",
+        "original": "临",
+        "changed": null
+      },
+      {
+        "id": "ZD078",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "关差",
+        "raw_original": "否得泰",
+        "raw_changed": "明夷",
+        "original": "泰",
+        "changed": "明夷"
+      },
+      {
+        "id": "ZD079",
+        "reason": "应期锚只剩占测日/占测年自重或预测假设，无可评分令牌",
+        "topic": "南行",
+        "raw_original": "大有",
+        "raw_changed": "大壮",
+        "original": "大有",
+        "changed": "大壮"
+      },
+      {
+        "id": "ZD080",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "求财",
+        "raw_original": "随",
+        "raw_changed": "否",
+        "original": "随",
+        "changed": "否"
+      },
+      {
+        "id": "ZD081",
+        "reason": "时间不可还原：案例前无紧邻的完整日期行",
+        "topic": "妻父病",
+        "raw_original": "水山骞",
+        "raw_changed": "",
+        "original": null,
+        "changed": null
+      },
+      {
+        "id": "ZD082",
+        "reason": "本卦存疑：卦名不可解析（天泽覆）",
+        "topic": "功名",
+        "raw_original": "天泽覆",
+        "raw_changed": "",
+        "original": null,
+        "changed": null
+      },
+      {
+        "id": "ZD083",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "功名"
+      },
+      {
+        "id": "ZD084",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "流年"
+      },
+      {
+        "id": "ZD085",
+        "reason": "应期锚只剩占测日/占测年自重或预测假设，无可评分令牌",
+        "topic": "身病",
+        "raw_original": "坤",
+        "raw_changed": "比",
+        "original": "坤",
+        "changed": "比"
+      },
+      {
+        "id": "ZD086",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "母病"
+      },
+      {
+        "id": "ZD087",
+        "reason": "应期锚只剩占测日/占测年自重或预测假设，无可评分令牌",
+        "topic": "子病",
+        "raw_original": "既济",
+        "raw_changed": "革",
+        "original": "既济",
+        "changed": "革"
+      },
+      {
+        "id": "ZD088",
+        "reason": "应期锚只剩占测日/占测年自重或预测假设，无可评分令牌",
+        "topic": "天何日雨",
+        "raw_original": "小过",
+        "raw_changed": "旅",
+        "original": "小过",
+        "changed": "旅"
+      },
+      {
+        "id": "ZD089",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "天何日雨",
+        "raw_original": "恒",
+        "raw_changed": "大过",
+        "original": "恒",
+        "changed": "大过"
+      },
+      {
+        "id": "ZD090",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "本日阴晴"
+      },
+      {
+        "id": "ZD091",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "何日晴"
+      },
+      {
+        "id": "ZD092",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "本日阴晴",
+        "raw_original": "屯",
+        "raw_changed": "临",
+        "original": "屯",
+        "changed": "临"
+      },
+      {
+        "id": "ZD093",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "何日雨"
+      },
+      {
+        "id": "ZD094",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "何日雨",
+        "raw_original": "大壮",
+        "raw_changed": "升",
+        "original": "大壮",
+        "changed": "升"
+      },
+      {
+        "id": "ZD096",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "本日阴晴",
+        "raw_original": "中孚",
+        "raw_changed": "小畜",
+        "original": "中孚",
+        "changed": "小畜"
+      },
+      {
+        "id": "ZD097",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "何日晴",
+        "raw_original": "离",
+        "raw_changed": "",
+        "original": "离",
+        "changed": null
+      },
+      {
+        "id": "ZD098",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "何日雨"
+      },
+      {
+        "id": "ZD099",
+        "reason": "应期锚只剩占测日/占测年自重或预测假设，无可评分令牌",
+        "topic": "何雨",
+        "raw_original": "离",
+        "raw_changed": "旅",
+        "original": "离",
+        "changed": "旅"
+      },
+      {
+        "id": "ZD100",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "何日晴",
+        "raw_original": "晋",
+        "raw_changed": "归妹",
+        "original": "晋",
+        "changed": "归妹"
+      },
+      {
+        "id": "ZD101",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "何日晴",
+        "raw_original": "观",
+        "raw_changed": "升",
+        "original": "观",
+        "changed": "升"
+      },
+      {
+        "id": "ZD103",
+        "reason": "时间不可还原：案例前无紧邻的完整日期行",
+        "topic": "中秋晴否癸巳日又占",
+        "raw_original": "屯",
+        "raw_changed": "中孚",
+        "original": "屯",
+        "changed": "中孚"
+      },
+      {
+        "id": "ZD104",
+        "reason": "时间不可还原：案例前无紧邻的完整日期行",
+        "topic": "何日雨",
+        "raw_original": "蒙",
+        "raw_changed": "临",
+        "original": "蒙",
+        "changed": "临"
+      },
+      {
+        "id": "ZD105",
+        "reason": "时间不可还原：案例前无紧邻的完整日期行",
+        "topic": "本日何时有雨",
+        "raw_original": "睽",
+        "raw_changed": "履",
+        "original": "睽",
+        "changed": "履"
+      },
+      {
+        "id": "ZD106",
+        "reason": "弱日期行紧邻（卯月申日），时间不可还原",
+        "topic": "终身财福",
+        "raw_original": "复",
+        "raw_changed": "颐",
+        "original": "复",
+        "changed": "颐"
+      },
+      {
+        "id": "ZD107",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "终身财福"
+      },
+      {
+        "id": "ZD108",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "终身财福",
+        "raw_original": "颐",
+        "raw_changed": "",
+        "original": "颐",
+        "changed": null
+      },
+      {
+        "id": "ZD110",
+        "reason": "无六爻渲染（规则陈述／行文提及，非占验案例）",
+        "topic": "身命",
+        "raw_original": "六合",
+        "raw_changed": "",
+        "original": null,
+        "changed": null
+      },
+      {
+        "id": "ZD111",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "终身财福",
+        "raw_original": "未济",
+        "raw_changed": "睽",
+        "original": "未济",
+        "changed": "睽"
+      },
+      {
+        "id": "ZD112",
+        "reason": "本卦存疑：卦名不可解析（卦如下）",
+        "topic": "终身除功名外何事可为？",
+        "raw_original": "卦如下",
+        "raw_changed": "",
+        "original": null,
+        "changed": null
+      },
+      {
+        "id": "ZD113",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "财福"
+      },
+      {
+        "id": "ZD114",
+        "reason": "无六爻渲染（规则陈述／行文提及，非占验案例）",
+        "topic": "财福酉月壬辰日",
+        "raw_original": "恒",
+        "raw_changed": "",
+        "original": "恒",
+        "changed": null
+      },
+      {
+        "id": "ZD115",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "终身财福"
+      },
+      {
+        "id": "ZD116",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "终身财福",
+        "raw_original": "兑",
+        "raw_changed": "",
+        "original": "兑",
+        "changed": null
+      },
+      {
+        "id": "ZD117",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "终身财福"
+      },
+      {
+        "id": "ZD118",
+        "reason": "应期锚只剩占测日/占测年自重或预测假设，无可评分令牌",
+        "topic": "终身功名有无",
+        "raw_original": "地火明夷",
+        "raw_changed": "丰",
+        "original": "明夷",
+        "changed": "丰"
+      },
+      {
+        "id": "ZD119",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "终身功名有无",
+        "raw_original": "蛊",
+        "raw_changed": "",
+        "original": "蛊",
+        "changed": null
+      },
+      {
+        "id": "ZD120",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "终身功名有无",
+        "raw_original": "需",
+        "raw_changed": "",
+        "original": "需",
+        "changed": null
+      },
+      {
+        "id": "ZD121",
+        "reason": "应期锚只剩占测日/占测年自重或预测假设，无可评分令牌",
+        "topic": "终身功名",
+        "raw_original": "旅",
+        "raw_changed": "",
+        "original": "旅",
+        "changed": null
+      },
+      {
+        "id": "ZD122",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "索债",
+        "raw_original": "否得益",
+        "raw_changed": "中孚",
+        "original": "益",
+        "changed": "中孚"
+      },
+      {
+        "id": "ZD123",
+        "reason": "应期锚只剩占测日/占测年自重或预测假设，无可评分令牌",
+        "topic": "梦母叫去已随去矣",
+        "raw_original": "风山渐",
+        "raw_changed": "",
+        "original": "渐",
+        "changed": null
+      },
+      {
+        "id": "ZD126",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "仆人为祸否",
+        "raw_original": "解",
+        "raw_changed": "震",
+        "original": "解",
+        "changed": "震"
+      },
+      {
+        "id": "ZD127",
+        "reason": "应期锚只剩占测日/占测年自重或预测假设，无可评分令牌",
+        "topic": "防流兵",
+        "raw_original": "临",
+        "raw_changed": "睽",
+        "original": "临",
+        "changed": "睽"
+      },
+      {
+        "id": "ZD128",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "通乡避乱",
+        "raw_original": "乾",
+        "raw_changed": "大有",
+        "original": "乾",
+        "changed": "大有"
+      },
+      {
+        "id": "ZD129",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "定何罪",
+        "raw_original": "中孚",
+        "raw_changed": "临",
+        "original": "中孚",
+        "changed": "临"
+      },
+      {
+        "id": "ZD130",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "父寿",
+        "raw_original": "姤",
+        "raw_changed": "",
+        "original": "姤",
+        "changed": null
+      },
+      {
+        "id": "ZD131",
+        "reason": "时间不可还原：案例前无紧邻的完整日期行",
+        "topic": "占母寿",
+        "raw_original": "大壮",
+        "raw_changed": "升",
+        "original": "大壮",
+        "changed": "升"
+      },
+      {
+        "id": "ZD132",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "父寿"
+      },
+      {
+        "id": "ZD133",
+        "reason": "应期锚只剩占测日/占测年自重或预测假设，无可评分令牌",
+        "topic": "祖母寿",
+        "raw_original": "中孚",
+        "raw_changed": "",
+        "original": "中孚",
+        "changed": null
+      },
+      {
+        "id": "ZD134",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "弟兄和好否？",
+        "raw_original": "济否？得大有",
+        "raw_changed": "乾",
+        "original": "大有",
+        "changed": "乾"
+      },
+      {
+        "id": "ZD135",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "兄弟还有",
+        "raw_original": "既济",
+        "raw_changed": "革",
+        "original": "既济",
+        "changed": "革"
+      },
+      {
+        "id": "ZD136",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "夫妇将来和俣否？",
+        "raw_original": "泰",
+        "raw_changed": "",
+        "original": "泰",
+        "changed": null
+      },
+      {
+        "id": "ZD137",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "夫妻偕老否？",
+        "raw_original": "无妄",
+        "raw_changed": "观",
+        "original": "无妄",
+        "changed": "观"
+      },
+      {
+        "id": "ZD138",
+        "reason": "时间不可还原：案例前无紧邻的完整日期行",
+        "topic": "子嗣多少",
+        "raw_original": "坤",
+        "raw_changed": "艮",
+        "original": "坤",
+        "changed": "艮"
+      },
+      {
+        "id": "ZD140",
+        "reason": "时间不可还原：案例前无紧邻的完整日期行",
+        "topic": "子孙有无？",
+        "raw_original": "屯",
+        "raw_changed": "节",
+        "original": "屯",
+        "changed": "节"
+      },
+      {
+        "id": "ZD141",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "子易养否？",
+        "raw_original": "姤",
+        "raw_changed": "旅",
+        "original": "姤",
+        "changed": "旅"
+      },
+      {
+        "id": "ZD142",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "木经能发否",
+        "raw_original": "益",
+        "raw_changed": "观",
+        "original": "益",
+        "changed": "观"
+      },
+      {
+        "id": "ZD143",
+        "reason": "时间不可还原：案例前无紧邻的完整日期行",
+        "topic": "书经",
+        "raw_original": "丰",
+        "raw_changed": "离",
+        "original": "丰",
+        "changed": "离"
+      },
+      {
+        "id": "ZD144",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "道考",
+        "raw_original": "丰",
+        "raw_changed": "革",
+        "original": "丰",
+        "changed": "革"
+      },
+      {
+        "id": "ZD145",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "岁考",
+        "raw_original": "大过",
+        "raw_changed": "鼎",
+        "original": "大过",
+        "changed": "鼎"
+      },
+      {
+        "id": "ZD146",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "岁焉",
+        "raw_original": "地天泰",
+        "raw_changed": "",
+        "original": "泰",
+        "changed": null
+      },
+      {
+        "id": "ZD147",
+        "reason": "无六爻渲染（规则陈述／行文提及，非占验案例）",
+        "topic": "禀若不",
+        "raw_original": "其秘",
+        "raw_changed": "",
+        "original": null,
+        "changed": null
+      },
+      {
+        "id": "ZD148",
+        "reason": "应期锚只剩占测日/占测年自重或预测假设，无可评分令牌",
+        "topic": "会试",
+        "raw_original": "艮",
+        "raw_changed": "益",
+        "original": "艮",
+        "changed": "益"
+      },
+      {
+        "id": "ZD149",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "升迁"
+      },
+      {
+        "id": "ZD150",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "地方",
+        "raw_original": "归妹",
+        "raw_changed": "解",
+        "original": "归妹",
+        "changed": "解"
+      },
+      {
+        "id": "ZD152",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "援例",
+        "raw_original": "豫",
+        "raw_changed": "否",
+        "original": "豫",
+        "changed": "否"
+      },
+      {
+        "id": "ZD153",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "上书",
+        "raw_original": "中孚",
+        "raw_changed": "损",
+        "original": "中孚",
+        "changed": "损"
+      },
+      {
+        "id": "ZD154",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "因避误军粮己被劫",
+        "raw_original": "丰",
+        "raw_changed": "旅",
+        "original": "丰",
+        "changed": "旅"
+      },
+      {
+        "id": "ZD155",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "父何时起用"
+      },
+      {
+        "id": "ZD156",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "求财",
+        "raw_original": "革",
+        "raw_changed": "",
+        "original": "革",
+        "changed": null
+      },
+      {
+        "id": "ZD157",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "求财",
+        "raw_original": "既济",
+        "raw_changed": "涣",
+        "original": "既济",
+        "changed": "涣"
+      },
+      {
+        "id": "ZD158",
+        "reason": "应期锚只剩占测日/占测年自重或预测假设，无可评分令牌",
+        "topic": "出行谒见贵人",
+        "raw_original": "同人",
+        "raw_changed": "",
+        "original": "同人",
+        "changed": null
+      },
+      {
+        "id": "ZD159",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "收货",
+        "raw_original": "颐",
+        "raw_changed": "",
+        "original": "颐",
+        "changed": null
+      },
+      {
+        "id": "ZD161",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "脱货于何时",
+        "raw_original": "贲",
+        "raw_changed": "",
+        "original": "贲",
+        "changed": null
+      },
+      {
+        "id": "ZD162",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "往楚买豆",
+        "raw_original": "临",
+        "raw_changed": "",
+        "original": "临",
+        "changed": null
+      },
+      {
+        "id": "ZD163",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "往粤东探亲可带何货归来",
+        "raw_original": "利得旅",
+        "raw_changed": "",
+        "original": "旅",
+        "changed": null
+      },
+      {
+        "id": "ZD164",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "借贷"
+      },
+      {
+        "id": "ZD165",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "鹌鹑",
+        "raw_original": "渐",
+        "raw_changed": "巽",
+        "original": "渐",
+        "changed": "巽"
+      },
+      {
+        "id": "ZD166",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "婚",
+        "raw_original": "恒",
+        "raw_changed": "鼎",
+        "original": "恒",
+        "changed": "鼎"
+      },
+      {
+        "id": "ZD167",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "婚"
+      },
+      {
+        "id": "ZD168",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "夫妻不和将来如好否？"
+      },
+      {
+        "id": "ZD169",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "婚于何时",
+        "raw_original": "泰",
+        "raw_changed": "",
+        "original": "泰",
+        "changed": null
+      },
+      {
+        "id": "ZD170",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "何命者有子",
+        "raw_original": "革",
+        "raw_changed": "夬",
+        "original": "革",
+        "changed": "夬"
+      },
+      {
+        "id": "ZD171",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "孕男女"
+      },
+      {
+        "id": "ZD172",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "妻孕平安否",
+        "raw_original": "丰",
+        "raw_changed": "小过",
+        "original": "丰",
+        "changed": "小过"
+      },
+      {
+        "id": "ZD173",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "母在外何时来",
+        "raw_original": "旅",
+        "raw_changed": "艮",
+        "original": "旅",
+        "changed": "艮"
+      },
+      {
+        "id": "ZD174",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "仆人何日回"
+      },
+      {
+        "id": "ZD175",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "伯何日来"
+      },
+      {
+        "id": "ZD176",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "父远去何日回"
+      },
+      {
+        "id": "ZD177",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "夫在外还往他省去否"
+      },
+      {
+        "id": "ZD178",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "一路平安否"
+      },
+      {
+        "id": "ZD179",
+        "reason": "应期锚只剩占测日/占测年自重或预测假设，无可评分令牌",
+        "topic": "子近病",
+        "raw_original": "恒",
+        "raw_changed": "解",
+        "original": "恒",
+        "changed": "解"
+      },
+      {
+        "id": "ZD180",
+        "reason": "应期锚只剩占测日/占测年自重或预测假设，无可评分令牌",
+        "topic": "子病",
+        "raw_original": "遁",
+        "raw_changed": "",
+        "original": "遁",
+        "changed": null
+      },
+      {
+        "id": "ZD181",
+        "reason": "时间不可还原：案例前无紧邻的完整日期行",
+        "topic": "病及占兄弟病",
+        "raw_original": "子孙动者",
+        "raw_changed": "",
+        "original": null,
+        "changed": null
+      },
+      {
+        "id": "ZD182",
+        "reason": "变卦存疑：卦名不可解析（中孚卦．）",
+        "topic": "兄病",
+        "raw_original": "屯",
+        "raw_changed": "中孚卦．",
+        "original": "屯",
+        "changed": null
+      },
+      {
+        "id": "ZD183",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "子病",
+        "raw_original": "解",
+        "raw_changed": "坎",
+        "original": "解",
+        "changed": "坎"
+      },
+      {
+        "id": "ZD184",
+        "reason": "时间不可还原：案例前无紧邻的完整日期行",
+        "topic": "侄病",
+        "raw_original": "坤",
+        "raw_changed": "",
+        "original": "坤",
+        "changed": null
+      },
+      {
+        "id": "ZD185",
+        "reason": "时间不可还原：案例前无紧邻的完整日期行",
+        "topic": "用附子可否",
+        "raw_original": "大有",
+        "raw_changed": "大畜",
+        "original": "大有",
+        "changed": "大畜"
+      },
+      {
+        "id": "ZD186",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "父病吃牛黄丸可否",
+        "raw_original": "夬",
+        "raw_changed": "",
+        "original": "夬",
+        "changed": null
+      },
+      {
+        "id": "ZD187",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "择某日入宅是否有碍父母",
+        "raw_original": "萃",
+        "raw_changed": "",
+        "original": "萃",
+        "changed": null
+      },
+      {
+        "id": "ZD189",
+        "reason": "应期锚只剩占测日/占测年自重或预测假设，无可评分令牌",
+        "topic": "地形势",
+        "raw_original": "咸",
+        "raw_changed": "",
+        "original": "咸",
+        "changed": null
+      },
+      {
+        "id": "ZD190",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "何时",
+        "raw_original": "地得复",
+        "raw_changed": "屯",
+        "original": "复",
+        "changed": "屯"
+      },
+      {
+        "id": "ZD191",
+        "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
+        "topic": "穴",
+        "raw_original": "大壮",
+        "raw_changed": "",
+        "original": "大壮",
+        "changed": null
+      },
+      {
+        "id": "ZD192",
+        "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
+        "topic": "以父柩附葬祖苗"
+      }
+    ]
+  },
+  "cases": [
+    {
+      "id": "ZD014",
+      "source": "《增删卜易》（殆知阁转录本）",
+      "topic": "求财",
+      "question": "求财",
+      "input": {
+        "date": "寅月庚戌日",
+        "question": "求财"
+      },
+      "hexagram": {
+        "original": "大有",
+        "changed": null,
+        "moving": []
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "妻财",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "寅日",
+        "yingqi_branches": [
+          "寅"
+        ],
+        "detail": "果于甲寅得之",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
+        "sha256": "81d73e4aaf29a1a591250db9e43bb5d815b5ef4a06555c42c1087e9a3f3a3fa7",
+        "offset": 20661,
+        "text_head": "占求财得火天大有",
+        "day_stem_normalized": false,
+        "hex_name_normalized": null,
+        "hex_prefix_note": null
+      },
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+    },
+    {
+      "id": "ZD015",
+      "source": "《增删卜易》（殆知阁转录本）",
+      "topic": "谒贵",
+      "question": "谒贵",
+      "input": {
+        "date": "酉月丙寅日",
+        "question": "谒贵"
+      },
+      "hexagram": {
+        "original": "蛊",
+        "changed": "蒙",
+        "moving": [
+          3
+        ]
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "子日",
+        "yingqi_branches": [
+          "子"
+        ],
+        "detail": "世临月建之官，定得面见，但被午火回头之克，须待子日冲去午火方得拜谒，果得见于丙子日，故曰逢伤亦伤却有待时之用",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
+        "sha256": "81d73e4aaf29a1a591250db9e43bb5d815b5ef4a06555c42c1087e9a3f3a3fa7",
+        "offset": 21021,
+        "text_head": "占谒贵得山风蛊变山水蒙",
+        "day_stem_normalized": false,
+        "hex_name_normalized": null,
+        "hex_prefix_note": null
+      },
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+    },
+    {
+      "id": "ZD016",
+      "source": "《增删卜易》（殆知阁转录本）",
+      "topic": "弟被讼吉凶",
+      "question": "弟被讼吉凶",
+      "input": {
+        "date": "午月丁未日",
+        "question": "弟被讼吉凶"
+      },
+      "hexagram": {
+        "original": "困",
+        "changed": "恒",
+        "moving": [
+          3,
+          5
+        ]
+      },
+      "expected": {
+        "verdict": "凶",
+        "use_god": "兄弟",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "申年",
+        "yingqi_branches": [
+          "申"
+        ],
+        "detail": "彼问有害否？余曰：午火为月建动于卦中，谓之入卦者更见刚强，又谓之月建作忌神，为祸不浅，大凶之象，又问凶在何时？余曰：酉金兄爻化退神，今岁辰年太岁相合，自是无妨恐，退至申年而无路矣，果于本年下狱至申年而重刑",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
+        "sha256": "81d73e4aaf29a1a591250db9e43bb5d815b5ef4a06555c42c1087e9a3f3a3fa7",
+        "offset": 21647,
+        "text_head": "占弟被讼吉凶得困卦变雷风恒卦",
+        "day_stem_normalized": false,
+        "hex_name_normalized": null,
+        "hex_prefix_note": null
+      },
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+    },
+    {
+      "id": "ZD017",
+      "source": "《增删卜易》（殆知阁转录本）",
+      "topic": "开铺面",
+      "question": "开铺面",
+      "input": {
+        "date": "寅月丁酉日",
+        "question": "开铺面"
+      },
+      "hexagram": {
+        "original": "艮",
+        "changed": "明夷",
+        "moving": [
+          1,
+          6
+        ]
+      },
+      "expected": {
+        "verdict": "凶",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "未月、酉月",
+        "yingqi_branches": [
+          "未",
+          "酉"
+        ],
+        "detail": "彼曰：我是伙计不同心？或是别有他图？余曰：鬼在身边须防疾病，伙伴从此变心，受其累，果于六月疾至，八月伙计盗尽",
+        "same_as_day_branch": true
+      },
+      "provenance": {
+        "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
+        "sha256": "81d73e4aaf29a1a591250db9e43bb5d815b5ef4a06555c42c1087e9a3f3a3fa7",
+        "offset": 22263,
+        "text_head": "占开铺面得艮卦变明夷卦",
+        "day_stem_normalized": false,
+        "hex_name_normalized": null,
+        "hex_prefix_note": null
+      },
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+    },
+    {
+      "id": "ZD022",
+      "source": "《增删卜易》（殆知阁转录本）",
+      "topic": "出门",
+      "question": "出门",
+      "input": {
+        "date": "申月丙子日",
+        "question": "出门"
+      },
+      "hexagram": {
+        "original": "明夷",
+        "changed": "小过",
+        "moving": [
+          1,
+          4
+        ]
+      },
+      "expected": {
+        "verdict": "凶",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "辰日",
+        "yingqi_branches": [
+          "辰"
+        ],
+        "detail": "后因病重，此人未去，女死辰日，夫应不去者，世动而逢合也，女死辰日者，卯木子孙变辰土之故也",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
+        "sha256": "81d73e4aaf29a1a591250db9e43bb5d815b5ef4a06555c42c1087e9a3f3a3fa7",
+        "offset": 25459,
+        "text_head": "占出门，得明夷小过",
+        "day_stem_normalized": false,
+        "hex_name_normalized": {
+          "hex_name_split": [
+            "连写",
+            "明夷",
+            "小过"
+          ]
+        },
+        "hex_prefix_note": null
+      },
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+    },
+    {
+      "id": "ZD023",
+      "source": "《增删卜易》（殆知阁转录本）",
+      "topic": "已悔婚还可成否",
+      "question": "已悔婚还可成否",
+      "input": {
+        "date": "未月丁巳日",
+        "question": "已悔婚还可成否"
+      },
+      "hexagram": {
+        "original": "离",
+        "changed": "旅",
+        "moving": [
+          1
+        ]
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "辰月",
+        "yingqi_branches": [
+          "辰"
+        ],
+        "detail": "断曰：此卦从来难以吉断，因得屡验六冲变合，散而复聚，离而必合，此婚一定还成，果于次年三月仍成婚",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
+        "sha256": "81d73e4aaf29a1a591250db9e43bb5d815b5ef4a06555c42c1087e9a3f3a3fa7",
+        "offset": 25835,
+        "text_head": "占已悔婚还可成否得离卦变火山旅",
+        "day_stem_normalized": false,
+        "hex_name_normalized": null,
+        "hex_prefix_note": null
+      },
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+    },
+    {
+      "id": "ZD026",
+      "source": "《增删卜易》（殆知阁转录本）",
+      "topic": "子久出不归生死如何",
+      "question": "子久出不归生死如何",
+      "input": {
+        "date": "酉月乙未日",
+        "question": "子久出不归生死如何"
+      },
+      "hexagram": {
+        "original": "坤",
+        "changed": null,
+        "moving": []
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "子年、卯年",
+        "yingqi_branches": [
+          "卯",
+          "子"
+        ],
+        "detail": "果于子年建功卯年得意而归，此应静而逢冲之验也",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
+        "sha256": "81d73e4aaf29a1a591250db9e43bb5d815b5ef4a06555c42c1087e9a3f3a3fa7",
+        "offset": 28361,
+        "text_head": "占子久出不归生死如何得坤卦",
+        "day_stem_normalized": false,
+        "hex_name_normalized": null,
+        "hex_prefix_note": null
+      },
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+    },
+    {
+      "id": "ZD029",
+      "source": "《增删卜易》（殆知阁转录本）",
+      "topic": "子痘症",
+      "question": "子痘症",
+      "input": {
+        "date": "寅月庚申日",
+        "question": "子痘症"
+      },
+      "hexagram": {
+        "original": "家人",
+        "changed": "离",
+        "moving": [
+          4,
+          5
+        ]
+      },
+      "expected": {
+        "verdict": "",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "寅日",
+        "yingqi_branches": [
+          "寅"
+        ],
+        "detail": "断曰：巳火子孙既当春令，子孙旺相许之可治，后死于寅日寅时",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
+        "sha256": "81d73e4aaf29a1a591250db9e43bb5d815b5ef4a06555c42c1087e9a3f3a3fa7",
+        "offset": 29265,
+        "text_head": "占子痘症，得风火家人变离卦",
+        "day_stem_normalized": false,
+        "hex_name_normalized": null,
+        "hex_prefix_note": null
+      },
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+    },
+    {
+      "id": "ZD031",
+      "source": "《增删卜易》（殆知阁转录本）",
+      "topic": "父出外一载无音",
+      "question": "父出外一载无音",
+      "input": {
+        "date": "丑月丁酉日",
+        "question": "父出外一载无音"
+      },
+      "hexagram": {
+        "original": "涣",
+        "changed": "坎",
+        "moving": [
+          6
+        ]
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "卯月",
+        "yingqi_branches": [
+          "卯"
+        ],
+        "detail": "世空者还至交春即归，果于二月得意而回",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
+        "sha256": "81d73e4aaf29a1a591250db9e43bb5d815b5ef4a06555c42c1087e9a3f3a3fa7",
+        "offset": 30068,
+        "text_head": "占父出外一载无音得风水涣变坎卦",
+        "day_stem_normalized": false,
+        "hex_name_normalized": null,
+        "hex_prefix_note": null
+      },
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+    },
+    {
+      "id": "ZD036",
+      "source": "《增删卜易》（殆知阁转录本）",
+      "topic": "远行求财",
+      "question": "远行求财",
+      "input": {
+        "date": "子月辛亥日",
+        "question": "远行求财"
+      },
+      "hexagram": {
+        "original": "大畜",
+        "changed": null,
+        "moving": []
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "卯日、卯月",
+        "yingqi_branches": [
+          "卯"
+        ],
+        "detail": "彼曰：去得成否？余曰：甲寅日世爻出空之日，准行无疑，果于乙卯日起程，后到彼地，寅卯月间，诸事顺心，满载而归",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
+        "sha256": "81d73e4aaf29a1a591250db9e43bb5d815b5ef4a06555c42c1087e9a3f3a3fa7",
+        "offset": 33600,
+        "text_head": "占远行求财得大畜",
+        "day_stem_normalized": false,
+        "hex_name_normalized": null,
+        "hex_prefix_note": null
+      },
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+    },
+    {
+      "id": "ZD050",
+      "source": "《增删卜易》（殆知阁转录本）",
+      "topic": "兄何日归来",
+      "question": "兄何日归来",
+      "input": {
+        "date": "辰月己未日",
+        "question": "兄何日归来"
+      },
+      "hexagram": {
+        "original": "履",
+        "changed": "兑",
+        "moving": [
+          6
+        ]
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "戌月",
+        "yingqi_branches": [
+          "戌"
+        ],
+        "detail": "断曰：兄动化退，已有归志，但因戌逢月破，在外诸事未遂，六月可望，后至戌月方回，乃应实破之月也，此乃动破而变日月，岂可谓之退不及也？",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
+        "sha256": "81d73e4aaf29a1a591250db9e43bb5d815b5ef4a06555c42c1087e9a3f3a3fa7",
+        "offset": 46615,
+        "text_head": "占兄何日归来得履之兑",
+        "day_stem_normalized": true,
+        "hex_name_normalized": null,
+        "hex_prefix_note": null
+      },
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+    },
+    {
+      "id": "ZD059",
+      "source": "《增删卜易》（殆知阁转录本）",
+      "topic": "病壬申命",
+      "question": "病壬申命",
+      "input": {
+        "date": "申月己丑日",
+        "question": "病壬申命"
+      },
+      "hexagram": {
+        "original": "恒",
+        "changed": null,
+        "moving": []
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "未日",
+        "yingqi_branches": [
+          "未"
+        ],
+        "detail": "此卦日命随鬼入墓，世爻随鬼入墓，世身又落旬空，卦身又临月破，若执古法断之，百无一生，因世爻旺相，许未日愈，果起床于未日者，冲开丑墓之日而出也",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
+        "sha256": "81d73e4aaf29a1a591250db9e43bb5d815b5ef4a06555c42c1087e9a3f3a3fa7",
+        "offset": 49709,
+        "text_head": "占病壬申命得雷风恒",
+        "day_stem_normalized": false,
+        "hex_name_normalized": null,
+        "hex_prefix_note": null
+      },
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+    },
+    {
+      "id": "ZD065",
+      "source": "《增删卜易》（殆知阁转录本）",
+      "topic": "自陈何如",
+      "question": "自陈何如",
+      "input": {
+        "date": "卯月辛巳日",
+        "question": "自陈何如"
+      },
+      "hexagram": {
+        "original": "恒",
+        "changed": "升",
+        "moving": [
+          4
+        ]
+      },
+      "expected": {
+        "verdict": "凶",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "午月",
+        "yingqi_branches": [
+          "午"
+        ],
+        "detail": "或曰，幸得世应相生，又变升卦，必相救解，余曰，自占自陈，与应何干，此迂腐之论也，果于五月下狱",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
+        "sha256": "81d73e4aaf29a1a591250db9e43bb5d815b5ef4a06555c42c1087e9a3f3a3fa7",
+        "offset": 56056,
+        "text_head": "占自陈何如 得恒之升",
+        "day_stem_normalized": false,
+        "hex_name_normalized": null,
+        "hex_prefix_note": null
+      },
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+    },
+    {
+      "id": "ZD095",
+      "source": "《增删卜易》（殆知阁转录本）",
+      "topic": "何日",
+      "question": "何日",
+      "input": {
+        "date": "申月丙辰日",
+        "question": "何日"
+      },
+      "hexagram": {
+        "original": "坎",
+        "changed": "困",
+        "moving": [
+          4
+        ]
+      },
+      "expected": {
+        "verdict": "",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "申日",
+        "yingqi_branches": [
+          "申"
+        ],
+        "detail": "后卦申金爻动庚申日雨辛酉半阴晴亥时大晴",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
+        "sha256": "81d73e4aaf29a1a591250db9e43bb5d815b5ef4a06555c42c1087e9a3f3a3fa7",
+        "offset": 79652,
+        "text_head": "占何日得坎之困",
+        "day_stem_normalized": false,
+        "hex_name_normalized": null,
+        "hex_prefix_note": null
+      },
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+    },
+    {
+      "id": "ZD102",
+      "source": "《增删卜易》（殆知阁转录本）",
+      "topic": "何日",
+      "question": "何日",
+      "input": {
+        "date": "巳月丙申日",
+        "question": "何日"
+      },
+      "hexagram": {
+        "original": "临",
+        "changed": "蒙",
+        "moving": [
+          1,
+          6
+        ]
+      },
+      "expected": {
+        "verdict": "",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "辰日",
+        "yingqi_branches": [
+          "辰"
+        ],
+        "detail": "卦中辰父发动，当许中秋有雨，殊不知应在初九辰日即雨",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
+        "sha256": "81d73e4aaf29a1a591250db9e43bb5d815b5ef4a06555c42c1087e9a3f3a3fa7",
+        "offset": 84400,
+        "text_head": "占何日得临之蒙",
+        "day_stem_normalized": false,
+        "hex_name_normalized": null,
+        "hex_prefix_note": null
+      },
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+    },
+    {
+      "id": "ZD109",
+      "source": "《增删卜易》（殆知阁转录本）",
+      "topic": "终身财福",
+      "question": "终身财福",
+      "input": {
+        "date": "午月丙戌日",
+        "question": "终身财福"
+      },
+      "hexagram": {
+        "original": "节",
+        "changed": null,
+        "moving": []
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "巳年",
+        "yingqi_branches": [
+          "巳"
+        ],
+        "detail": "此人旺财临世，平素手有余钱，亦因世入戌墓，酷好如痴赌，后至巳年因开铅矿，连开数穴，富冠一乡",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
+        "sha256": "81d73e4aaf29a1a591250db9e43bb5d815b5ef4a06555c42c1087e9a3f3a3fa7",
+        "offset": 88838,
+        "text_head": "占终身财福得节卦",
+        "day_stem_normalized": false,
+        "hex_name_normalized": null,
+        "hex_prefix_note": null
+      },
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+    },
+    {
+      "id": "ZD124",
+      "source": "《增删卜易》（殆知阁转录本）",
+      "topic": "防患",
+      "question": "防患",
+      "input": {
+        "date": "巳月庚辰日",
+        "question": "防患"
+      },
+      "hexagram": {
+        "original": "夬",
+        "changed": null,
+        "moving": []
+      },
+      "expected": {
+        "verdict": "",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "寅日",
+        "yingqi_branches": [
+          "寅"
+        ],
+        "detail": "果结于甲寅日",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
+        "sha256": "81d73e4aaf29a1a591250db9e43bb5d815b5ef4a06555c42c1087e9a3f3a3fa7",
+        "offset": 99026,
+        "text_head": "占防患得夬卦",
+        "day_stem_normalized": false,
+        "hex_name_normalized": null,
+        "hex_prefix_note": null
+      },
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+    },
+    {
+      "id": "ZD125",
+      "source": "《增删卜易》（殆知阁转录本）",
+      "topic": "流年",
+      "question": "流年",
+      "input": {
+        "date": "寅月丁卯日",
+        "question": "流年"
+      },
+      "hexagram": {
+        "original": "益",
+        "changed": "睽",
+        "moving": [
+          2,
+          4,
+          5
+        ]
+      },
+      "expected": {
+        "verdict": "",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "申月",
+        "yingqi_branches": [
+          "申"
+        ],
+        "detail": "此人竟未出门，捱至七月初七，又得凶梦，初八即往东行二十八里，地震房塌，人口被伤，独伊得免",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
+        "sha256": "81d73e4aaf29a1a591250db9e43bb5d815b5ef4a06555c42c1087e9a3f3a3fa7",
+        "offset": 99711,
+        "text_head": "占流年得益之睽",
+        "day_stem_normalized": false,
+        "hex_name_normalized": null,
+        "hex_prefix_note": null
+      },
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+    },
+    {
+      "id": "ZD139",
+      "source": "《增删卜易》（殆知阁转录本）",
+      "topic": "子嗣",
+      "question": "子嗣",
+      "input": {
+        "date": "申月辛卯日",
+        "question": "子嗣"
+      },
+      "hexagram": {
+        "original": "复",
+        "changed": null,
+        "moving": []
+      },
+      "expected": {
+        "verdict": "",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "未月",
+        "yingqi_branches": [
+          "未"
+        ],
+        "detail": "果于次年六月父子相逢",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
+        "sha256": "81d73e4aaf29a1a591250db9e43bb5d815b5ef4a06555c42c1087e9a3f3a3fa7",
+        "offset": 106429,
+        "text_head": "占子嗣得复卦",
+        "day_stem_normalized": false,
+        "hex_name_normalized": null,
+        "hex_prefix_note": null
+      },
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+    },
+    {
+      "id": "ZD151",
+      "source": "《增删卜易》（殆知阁转录本）",
+      "topic": "在任平安否",
+      "question": "在任平安否",
+      "input": {
+        "date": "寅月壬午日",
+        "question": "在任平安否"
+      },
+      "hexagram": {
+        "original": "颐",
+        "changed": "噬嗑",
+        "moving": [
+          4
+        ]
+      },
+      "expected": {
+        "verdict": "凶",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "酉月",
+        "yingqi_branches": [
+          "酉"
+        ],
+        "detail": "彼曰：财非临虎，如何主孝？余曰：迂也，午日冲动子水，父母被戌土财爻克，世化官空，八九月必见，果于八月丁艰",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
+        "sha256": "81d73e4aaf29a1a591250db9e43bb5d815b5ef4a06555c42c1087e9a3f3a3fa7",
+        "offset": 117987,
+        "text_head": "占在任平安否得颐之噬嗑卦",
+        "day_stem_normalized": false,
+        "hex_name_normalized": null,
+        "hex_prefix_note": null
+      },
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+    },
+    {
+      "id": "ZD160",
+      "source": "《增删卜易》（殆知阁转录本）",
+      "topic": "何时",
+      "question": "何时",
+      "input": {
+        "date": "子月己丑日",
+        "question": "何时"
+      },
+      "hexagram": {
+        "original": "归妹",
+        "changed": "兑",
+        "moving": [
+          5
+        ]
+      },
+      "expected": {
+        "verdict": "吉",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "寅月",
+        "yingqi_branches": [
+          "寅"
+        ],
+        "detail": "断曰：卯木财爻子月生之，财有根蒂，目下不得价者，被申金动而克制，待寅月冲去申金，其价必涨，果于正月勃然大长，此乃财爻被克待冲去克神之月",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
+        "sha256": "81d73e4aaf29a1a591250db9e43bb5d815b5ef4a06555c42c1087e9a3f3a3fa7",
+        "offset": 128050,
+        "text_head": "占何时得价得归妹之兑",
+        "day_stem_normalized": false,
+        "hex_name_normalized": null,
+        "hex_prefix_note": null
+      },
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+    },
+    {
+      "id": "ZD188",
+      "source": "《增删卜易》（殆知阁转录本）",
+      "topic": "地",
+      "question": "地",
+      "input": {
+        "date": "寅月戊午日",
+        "question": "地"
+      },
+      "hexagram": {
+        "original": "颐",
+        "changed": "无妄",
+        "moving": [
+          4,
+          5
+        ]
+      },
+      "expected": {
+        "verdict": "",
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "辰年、酉年、子年",
+        "yingqi_branches": [
+          "子",
+          "辰",
+          "酉"
+        ],
+        "detail": "余曰：不妨，不可求全责备，卦中日月世与子孙共成三合，死者安而生者乐，子孙昌盛，何愁不发，后竟葬之，辰年下葬，酉年孙中亚魁，及至子年，次孙又登乡榜",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
+        "sha256": "81d73e4aaf29a1a591250db9e43bb5d815b5ef4a06555c42c1087e9a3f3a3fa7",
+        "offset": 155631,
+        "text_head": "占地 得颐变无妄卦",
+        "day_stem_normalized": false,
+        "hex_name_normalized": null,
+        "hex_prefix_note": null
+      },
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+    }
+  ]
+}
