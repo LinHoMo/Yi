@@ -3,15 +3,9 @@
     "what": "金标准指纹基线（排盘+思维链+分析层逐字段；抽样含 narrate 文案哈希）",
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
-  "digest": "8e421d8db8ea2186",
+  "digest": "f7eb04494ea54a3b",
   "narrate_digest": "7200af9a70d2df8f",
   "drift_log": [
-    {
-      "from": "70b3fcbcf25b746f",
-      "to": "ca202377bc4014ae",
-      "date": "2026-10-11",
-      "reason": "补上求财·兄弟持世压档格（第 5 条方向上限判定）：288 例中 9 例 verdict 变动，且**逐条都是占求财**——无 score/patterns/应期侧连带，正合本格的适用面（question_class==求财 且 世爻六亲==兄弟）。依据《增删卜易》源L419/L1592、《卜筮正宗》源L1102/L327，量级差取《黄金策》源L2416「虽或安静亦主难得，发动尤甚」（安静压平凶／发动压凶）。库内 tune 97.3／holdout 90.2／回归 14/18／思维链 11/12 不变；外部 wikisource_direction 74.4→71.7（WSD017 占終身財福被 question_classes 的单字关键词「财」并入求财所致，已如实登记未据此改窄规则）"
-    },
     {
       "from": "ca202377bc4014ae",
       "to": "ce629fd5d08a0096",
@@ -125,6 +119,12 @@
       "to": "8e421d8db8ea2186",
       "date": "2026-10-12",
       "reason": "把 yingqi_months/yingqi_years 纳入结构化指纹：第一百二十三批实测旧指纹对年池改动完全隐形（UNIT_BUDGET 年 2→4 时仍报√一致、rc=0），本次仅扩可见面，行为已复原为 年=2/月=3/日=5，逐例差异只含这两个新字段"
+    },
+    {
+      "from": "8e421d8db8ea2186",
+      "to": "f7eb04494ea54a3b",
+      "date": "2026-10-12",
+      "reason": "第一百五十六批：应期引擎补《黄金策》期日九法第3法「用爻受制，以制杀月日断」（①回头克＋用神临月建＝增删源L643逢伤原文形，真例ZD015；②动爻本支克＋用神静＋克神化进神，真例ZD160/ZD125）与化空月级梯（对称日级change_branch_empty_fill，真例ZD151「世化官空，八九月必见」＝酉月）。机械层漂移33例、全部限定yingqi_months首位新增「化出之支逢空，出空填实之月」候选（化空日梯的月级对称）；措辞层7200af9a70d2df8f零漂移。tune 97.3/64.7/1.53、holdout 90.2/50.0/1.6、wikisource 62.9/22.7/2.27、suigui 98.5/50/1.5、yingqi_holdout 87.9 全部逐位不变；zengshan_dz 47.7→54.1、top-1 13.6→27.3、名次1.86→1.6"
     }
   ],
   "narrate_drift_log": [

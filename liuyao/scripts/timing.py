@@ -56,7 +56,7 @@
   #  方法（《黄金策》源L264「此谈期日之法」）      引擎落点                                状态
   1 旺相不动→冲动月日      YINGQI_TXT[use_quiet_chong_day] 静逢冲   已实现
   2 有气发动→合日/本日      use_moving_he_day 动逢合日＋dufa_value_day 独发值日 已实现
-  3 受制→制杀月日           ——                                        缺失
+  3 受制→制杀月日           use_god_restrained_zhi_sha_日/月（窄化谓词，见下） 已实现(156)
   4 太旺（旺动逢生扶）→墓库 重叠_taiwang_tomb_日/月（主语＝临日月之重叠爻） 已实现(78)
   5 无气发动逢生扶→生扶月日 use_weak_wait_prosper 待旺／"待旺时"法  已实现
   6 入墓→破墓月日            YINGQI_TXT[use_tomb_chong_tomb] 冲墓    已实现
@@ -67,7 +67,8 @@
   ＋ 速则动而克世/缓则静而生身
     （《黄金策》源L265「速则动而克世，缓则静而生身」）                ——（speed 只按旺衰分档，未按动克世/静生身） 部分
 
-  缺口处置（截至第一百批的现状：第 4 法已实现（第七十八批），第 3/9 法仍不补，各条理由见下；
+  缺口处置（截至第一百五十六批的现状：第 3/4 法已实现（第 3 法第一百五十六批、第 4 法第七十八批），
+  第 9 法仍不补，各条理由见下；
   「本轮不补」这一旧措辞已按实改为具名现状，避免读者把它当悬空的待办）：
   - 第4法「太旺→墓库月日」：**第七十八批已按书接上**（落点见 `_rank_candidates` 内
     「期日第4法」块）。历史上的坑不是"没有谓词"，而是**谓词挂错了主语**——
@@ -98,8 +99,26 @@
     改成书上的支**，而在所有已评分集上零命中、零读数漂移——即"补上缺口"而非"调出分数"。
     仍**不进 tune**：本集里没有任何一张盘满足该条件，所以这条法目前只有一个可判落点（书例本身），
     扩大验证的路径是给 fixture 增例（见 reg_19 的四步做法），不是给排序加权重。
-  - 第3法「制杀月日」：需 define「受制」＝用神被日月动爻克，机械可判但会新增
-    候选支 → 动排序 → 动读数，须走 SKILL.md 全门槛（tune/holdout 分列出分）。
+  - 第3法「制杀月日」：**第一百五十六批已按书接上**（落点见 `_rank_candidates` 内
+    「期日第3法」块；日级置于病药块内、用神值日之前，月级对称置于月梯之首）。
+    书据：《黄金策》源L264 夹注逐字「用爻受制，以制杀月日断」＋《增删卜易》源L643
+    逢伤章逐字「爻值月建乃为旺矣，或被他爻所克，即谓之逢伤……待至冲去伤爻之日则不
+    受其伤矣，病者必愈、事必成」＋源L594「忌神宜克不宜生」。候选＝冲克神之支。
+    **谓词窄化**（广义版实测回归，已整条还原，逐例反例登记在 CHANGELOG 第一百五十六批）：
+    回头克＋任一动爻本支克（无门）→ holdout top-1 50%→37.5%、wikisource 22.7%→18.2%
+    （HO008/WS018 回头克但用神不临月建、WS017 的「克者」实为解神、WS023 用神月破、
+    ZD102 书答辰父发动值日、ZD065 书答忌神值月而非制杀）。现行两道门：
+    ① 回头克（化出支克本支）＋用神临月建＝L643「逢伤」原文形，真例 ZD015（子日）；
+    ② 动爻本支克用神＋用神静＋该动爻化进神（ADVANCE_PAIRS，忌神得势而进），真例
+    ZD160（申金动克卯木财、化酉进神，书答寅月冲申）／ZD125（申月）。
+    实测（同批 rc=0 运行）：tune 97.3／64.7／1.53、holdout 90.2／50.0／1.6、
+    wikisource 62.9／22.7／2.27、suigui 98.5／50.0／1.5、yingqi_holdout 87.9
+    全部逐位不变；zengshan_dz（外部集）47.7→54.1、top-1 13.6→27.3（22 例时点）；
+    288 例金标准机械层 33 例漂移（化空月梯，下条）已具名登记 digest drift_log。
+  ＋ 化空月级梯（与日级 change_branch_empty_fill 对称，真例 ZD151「世化官空，
+    八九月必见，果于八月丁艰」＝酉月）：变卦化出之支逢空 → 该支出空填实之月，
+    与日级同置月阶梯之首。日级原有（病药块之首）、月级缺失，本批补对称；
+    除 ZD151 外各已评分集零触发、零读数漂移。
   - 第8法「过旬」：已补全局口径（2026-10-10）——旬空案例把**出旬之日**（旬首支+10）
     排入候选第 2 位（值空支之后）。为什么不排第 1：本块只在**用神旬空**时触发，
     可检因此只剩 4 例（日级、基准应支落在当日旬空两支之内）——ZS017 用神即出旬支
@@ -128,6 +147,7 @@ from kernel_path import ensure_kernel_on_path as _ensure_kernel
 _ensure_kernel(__file__)
 
 from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
+    ADVANCE_PAIRS,
     BRANCH_ELEMENTS,
     CHONG_PAIRS,
     EARTHLY_BRANCHES,
@@ -666,6 +686,49 @@ def _rank_candidates(r: dict, use_god_branch: str, use_god_element: str, strengt
         _tomb_die = TOMB_MAP.get(BRANCH_ELEMENTS.get(_db, ""), "")
         if _tomb_die:
             _rank(ranked, _tomb_die, YINGQI_TXT["overlap_taiwang_tomb_day"]["text"])
+    # ── 期日第3法：用爻受制，以制杀月日断（九法之三，第一百五十六批补）──
+    # 书据：《黄金策》源L264 夹注逐字「用爻受制，以制杀月日断」；
+    # 《增删卜易》源L594 逐字「忌神者以克少生多为凶，所以忌神宜克不宜生也」；
+    # 《增删卜易》源L643 逐字「爻值月建乃为旺矣，或被他爻所克，即谓之逢伤，占病者
+    # 目下不愈，占事者目下不成，待至冲去伤爻之日则不受其伤矣，病者必愈、事必成。
+    # 故曰：逢伤亦伤却有待时之用」。
+    # 谓词分两支，各有书例与实测反例（**不含日月克用神**——日辰司权场景另论）：
+    #  ① 回头克＋用神临月建＝源L643「爻值月建乃为旺矣，或被他爻所克」的原文形。
+    #    真例 ZD015 蛊之蒙：世官鬼酉临月建，动化午火回头克，书「须待子日冲去午火
+    #    方得拜谒，果得见于丙子日」——断语末句「故曰：逢伤亦伤却有待时之用」即源L643 原句。
+    #    反例（广义形实测会打掉，故加临月建门）：HO008 鼎之既济（用神亥动化丑回头克，
+    #    不临月建，书答亥日＝用神值日）、WS018 小畜之蛊（用神子动化丑，书答子日）。
+    #  ② 动爻本支克用神＋用神静＋该动爻化进神（忌神得势而进）。
+    #    真例 ZD160 归妹之兑（申金动化进神克卯木财，书「待寅月冲去申金，其价必涨…
+    #    此乃财爻被克待冲去克神之月」）、ZD125 益之睽（寅木临月建化进神克辰土世，
+    #    书「六七月衰墓之时」应申月——申冲寅，亦木之绝月，两读同支）。
+    #    反例（三道门各挡一批，全部实测）：动用神不触发——HO008/WS017 比之咸/WS018
+    #    （三例用神均动，书答都是用神值日）；不化进不触发——WS023 既济之革（申动化亥，
+    #    书答实破卯日）、ZD102 临之蒙（巳动化寅，书答辰父发动值日）、ZD065 恒之升
+    #    （午动化丑，书答午月＝忌神值月而非制杀，已连同测量登记 CHANGELOG）。
+    # 候选＝冲克神之支（制杀）。日级置于病药块内、用神值日之前（与空/破/墓/合同级
+    # 「病药解除优先」）；月级对称置于月阶梯用神值月之前。
+    # 注：G6a（日级末位「化出X克用，冲去之支」）与本条同源，保留不动——本条前置后
+    # 同名 token 由 _rank 去重，G6a 只在更早的则都不触发时补位。
+    _ke_shen: list[str] = []
+    _ug_lin_yue = bool(use_god_branch) and use_god_branch == month_branch
+    if _ug_lin_yue:
+        for _b, _c in changed_pairs:
+            if _b == use_god_branch and _c and KE_CYCLE.get(BRANCH_ELEMENTS.get(_c, "")) == use_god_element:
+                _ke_shen.append(_c)                    # ① 回头克（逢伤形）
+    if use_god_branch and not ug_moving:
+        for _y in yao_lines:
+            if isinstance(_y, dict) and _y.get("is_moving"):
+                _b0 = _y.get("earthly_branch") or ""
+                _c0 = _y.get("changed_earthly_branch") or _y.get("changed_branch") or ""
+                if (_b0 and _b0 != use_god_branch
+                        and KE_CYCLE.get(BRANCH_ELEMENTS.get(_b0, "")) == use_god_element
+                        and _c0 and ADVANCE_PAIRS.get(_b0) == _c0):
+                    _ke_shen.append(_b0)               # ② 动爻本支克（化进形）
+    for _ks in dict.fromkeys(_ke_shen):
+        _zs = _chong(_ks)
+        if _zs:
+            _rank(ranked, _zs, YINGQI_TXT["use_god_restrained_zhi_sha_day"]["text"].format(ks=_ks))
     # 用神不空时，本气值日优先于其他空亡出空
     if use_god_branch and not is_empty:
         if ug_moving:
@@ -721,6 +784,13 @@ def _rank_candidates(r: dict, use_god_branch: str, use_god_element: str, strengt
     # 月级阶梯：《增刪卜易》「遠則應月﹐近則應日」（norm@79289）——同一套"解除障碍之期"
     # 在月单位上另排一遍。
     peak = PEAK_BRANCH.get(use_god_element or "", "")
+    # 化空之月：日级 change_branch_empty_fill（病药块之首）的月级对称，同置月阶梯之首。
+    # 真例 ZD151 颐之噬嗑：世妻财戌动化官鬼酉，酉值旬空，书「世化官空，八九月必见，
+    # 果于八月丁艰」＝酉月——日级早有「酉日」（排日池第 1），月级却因 G2 的
+    # `_chg0 not in _empty_list` 守卫一支俱无，书答月级候选池里找不到酉。
+    for _b, _c in changed_pairs:
+        if _c and _c in _empty_list:
+            _rank(ranked, _c, YINGQI_TXT["change_branch_empty_fill_month"]["text"], "月")
     if is_empty:
         _rank(ranked, use_god_branch, YINGQI_TXT["use_empty_fill_month"]["text"], "月")
         _rank(ranked, _chong(use_god_branch) or use_god_branch, YINGQI_TXT["use_empty_chong_month"]["text"], "月")
@@ -736,6 +806,11 @@ def _rank_candidates(r: dict, use_god_branch: str, use_god_element: str, strengt
         _tomb_die = TOMB_MAP.get(BRANCH_ELEMENTS.get(_db, ""), "")
         if _tomb_die:
             _rank(ranked, _tomb_die, YINGQI_TXT["overlap_taiwang_tomb_month"]["text"], "月")
+    # 期日第3法（月级）：与日级同谓词、同候选（冲克神之支），置于用神值月之前。
+    for _ks in dict.fromkeys(_ke_shen):
+        _zs = _chong(_ks)
+        if _zs:
+            _rank(ranked, _zs, YINGQI_TXT["use_god_restrained_zhi_sha_month"]["text"].format(ks=_ks), "月")
     if use_god_branch:
         if ug_moving:
             _rank(ranked, _he(use_god_branch), YINGQI_TXT["use_moving_he_month"]["text"], "月")

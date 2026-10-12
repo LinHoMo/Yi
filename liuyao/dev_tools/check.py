@@ -484,7 +484,7 @@ def main() -> int:
                     re.search(r"措辞 ([0-9a-f]{16})", s))
         n, d, w = _shape(out)
         # 形状判据的自证：正例必须三件齐，负例（argparse 用法错误那种空跑）必须不被认作通过。
-        _good = "用例 288 条｜机械 3af013c514bf14e9｜措辞 7200af9a70d2df8f｜异常 0 条"
+        _good = "用例 288 条｜机械 f7eb04494ea54a3b｜措辞 7200af9a70d2df8f｜异常 0 条"
         _bad = "usage: golden.py [-h] [{capture,verify}] [reason]"
         if not all(_shape(_good)) or any(x for x in _shape(_bad)):
             print("  × [selftest] 形状判据失效（正例没认全／用法错误被当成通过）")
@@ -676,7 +676,7 @@ def main() -> int:
             # 归到**日池**近似判定，引擎与评分都没有时辰档（2026-10-10 核）。
             "huozhulin_holdout": "火珠林原本（验期只写到时辰，评测按日池近似）",
             "suigui_holdout": "增删卜易·随鬼入墓章真例（动墓/化墓结构）",
-            "zengshan_dz_holdout": "增删卜易 dz 底本直抽（七道门＋同案去重，应期语料通道）",
+            "zengshan_dz_holdout": "增删卜易 dz 底本直抽（八道门＋同案去重，应期语料通道）",
         }
         # 过去这里是一张**写死的清单**：注册表里新增（或留空）一个外部集，本段一个字都不会提。
         # 实测漏报的形状：`case_splits.json` 登记着 `bushi_zhengzong_holdout`，但列表为空，

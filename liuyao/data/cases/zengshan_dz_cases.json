@@ -1,9 +1,9 @@
 {
   "_meta": {
-    "description": "《增删卜易》殆知阁转录本抽取的应期外部验证集；六道门＋同案去重；永不参与调参",
+    "description": "《增删卜易》殆知阁转录本抽取的应期外部验证集；七道门＋同案去重；永不参与调参",
     "built_by": "dev_tools/build_zengshan_dz_cases.py",
     "source_sha256": "81d73e4aaf29a1a591250db9e43bb5d815b5ef4a06555c42c1087e9a3f3a3fa7",
-    "total_cases": 22,
+    "total_cases": 21,
     "excluded": [
       {
         "id": "ZD001",
@@ -511,7 +511,7 @@
       {
         "id": "ZD077",
         "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
-        "topic": "父任云南何时",
+        "topic": "父任云南何时得信？",
         "raw_original": "信？得地泽临",
         "raw_changed": "",
         "original": "临",
@@ -520,7 +520,7 @@
       {
         "id": "ZD078",
         "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
-        "topic": "关差",
+        "topic": "关差得否",
         "raw_original": "否得泰",
         "raw_changed": "明夷",
         "original": "泰",
@@ -845,7 +845,7 @@
       {
         "id": "ZD122",
         "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
-        "topic": "索债",
+        "topic": "索债得否",
         "raw_original": "否得益",
         "raw_changed": "中孚",
         "original": "益",
@@ -858,6 +858,15 @@
         "raw_original": "风山渐",
         "raw_changed": "",
         "original": "渐",
+        "changed": null
+      },
+      {
+        "id": "ZD124",
+        "reason": "多占法错位：锚句理据引用本案渲染没有的支（巳），应期属后卦",
+        "topic": "防患",
+        "raw_original": "夬",
+        "raw_changed": "",
+        "original": "夬",
         "changed": null
       },
       {
@@ -931,7 +940,7 @@
       {
         "id": "ZD134",
         "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
-        "topic": "弟兄和好否？",
+        "topic": "弟兄和好否？得济否？",
         "raw_original": "济否？得大有",
         "raw_changed": "乾",
         "original": "大有",
@@ -1157,7 +1166,7 @@
       {
         "id": "ZD163",
         "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
-        "topic": "往粤东探亲可带何货归来",
+        "topic": "往粤东探亲可带何货归来得利",
         "raw_original": "利得旅",
         "raw_changed": "",
         "original": "旅",
@@ -1355,7 +1364,7 @@
       {
         "id": "ZD190",
         "reason": "无应期锚：断语段无「结果标记句＋日期令牌」",
-        "topic": "何时",
+        "topic": "何时得地",
         "raw_original": "地得复",
         "raw_changed": "屯",
         "original": "复",
@@ -1411,9 +1420,10 @@
         "text_head": "占求财得火天大有",
         "day_stem_normalized": false,
         "hex_name_normalized": null,
-        "hex_prefix_note": null
+        "hex_prefix_note": null,
+        "question_retitled": null
       },
-      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/锚句归属本案/不与在册同案 七道门；吉凶判不出记 N/A；永不参与调参"
     },
     {
       "id": "ZD015",
@@ -1450,9 +1460,10 @@
         "text_head": "占谒贵得山风蛊变山水蒙",
         "day_stem_normalized": false,
         "hex_name_normalized": null,
-        "hex_prefix_note": null
+        "hex_prefix_note": null,
+        "question_retitled": null
       },
-      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/锚句归属本案/不与在册同案 七道门；吉凶判不出记 N/A；永不参与调参"
     },
     {
       "id": "ZD016",
@@ -1490,9 +1501,10 @@
         "text_head": "占弟被讼吉凶得困卦变雷风恒卦",
         "day_stem_normalized": false,
         "hex_name_normalized": null,
-        "hex_prefix_note": null
+        "hex_prefix_note": null,
+        "question_retitled": null
       },
-      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/锚句归属本案/不与在册同案 七道门；吉凶判不出记 N/A；永不参与调参"
     },
     {
       "id": "ZD017",
@@ -1531,9 +1543,10 @@
         "text_head": "占开铺面得艮卦变明夷卦",
         "day_stem_normalized": false,
         "hex_name_normalized": null,
-        "hex_prefix_note": null
+        "hex_prefix_note": null,
+        "question_retitled": null
       },
-      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/锚句归属本案/不与在册同案 七道门；吉凶判不出记 N/A；永不参与调参"
     },
     {
       "id": "ZD022",
@@ -1577,9 +1590,10 @@
             "小过"
           ]
         },
-        "hex_prefix_note": null
+        "hex_prefix_note": null,
+        "question_retitled": null
       },
-      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/锚句归属本案/不与在册同案 七道门；吉凶判不出记 N/A；永不参与调参"
     },
     {
       "id": "ZD023",
@@ -1616,9 +1630,10 @@
         "text_head": "占已悔婚还可成否得离卦变火山旅",
         "day_stem_normalized": false,
         "hex_name_normalized": null,
-        "hex_prefix_note": null
+        "hex_prefix_note": null,
+        "question_retitled": null
       },
-      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/锚句归属本案/不与在册同案 七道门；吉凶判不出记 N/A；永不参与调参"
     },
     {
       "id": "ZD026",
@@ -1654,9 +1669,10 @@
         "text_head": "占子久出不归生死如何得坤卦",
         "day_stem_normalized": false,
         "hex_name_normalized": null,
-        "hex_prefix_note": null
+        "hex_prefix_note": null,
+        "question_retitled": null
       },
-      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/锚句归属本案/不与在册同案 七道门；吉凶判不出记 N/A；永不参与调参"
     },
     {
       "id": "ZD029",
@@ -1694,9 +1710,10 @@
         "text_head": "占子痘症，得风火家人变离卦",
         "day_stem_normalized": false,
         "hex_name_normalized": null,
-        "hex_prefix_note": null
+        "hex_prefix_note": null,
+        "question_retitled": null
       },
-      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/锚句归属本案/不与在册同案 七道门；吉凶判不出记 N/A；永不参与调参"
     },
     {
       "id": "ZD031",
@@ -1733,9 +1750,10 @@
         "text_head": "占父出外一载无音得风水涣变坎卦",
         "day_stem_normalized": false,
         "hex_name_normalized": null,
-        "hex_prefix_note": null
+        "hex_prefix_note": null,
+        "question_retitled": null
       },
-      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/锚句归属本案/不与在册同案 七道门；吉凶判不出记 N/A；永不参与调参"
     },
     {
       "id": "ZD036",
@@ -1770,9 +1788,10 @@
         "text_head": "占远行求财得大畜",
         "day_stem_normalized": false,
         "hex_name_normalized": null,
-        "hex_prefix_note": null
+        "hex_prefix_note": null,
+        "question_retitled": null
       },
-      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/锚句归属本案/不与在册同案 七道门；吉凶判不出记 N/A；永不参与调参"
     },
     {
       "id": "ZD050",
@@ -1809,9 +1828,10 @@
         "text_head": "占兄何日归来得履之兑",
         "day_stem_normalized": true,
         "hex_name_normalized": null,
-        "hex_prefix_note": null
+        "hex_prefix_note": null,
+        "question_retitled": null
       },
-      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/锚句归属本案/不与在册同案 七道门；吉凶判不出记 N/A；永不参与调参"
     },
     {
       "id": "ZD059",
@@ -1846,9 +1866,10 @@
         "text_head": "占病壬申命得雷风恒",
         "day_stem_normalized": false,
         "hex_name_normalized": null,
-        "hex_prefix_note": null
+        "hex_prefix_note": null,
+        "question_retitled": null
       },
-      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/锚句归属本案/不与在册同案 七道门；吉凶判不出记 N/A；永不参与调参"
     },
     {
       "id": "ZD065",
@@ -1885,9 +1906,10 @@
         "text_head": "占自陈何如 得恒之升",
         "day_stem_normalized": false,
         "hex_name_normalized": null,
-        "hex_prefix_note": null
+        "hex_prefix_note": null,
+        "question_retitled": null
       },
-      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/锚句归属本案/不与在册同案 七道门；吉凶判不出记 N/A；永不参与调参"
     },
     {
       "id": "ZD095",
@@ -1924,9 +1946,10 @@
         "text_head": "占何日得坎之困",
         "day_stem_normalized": false,
         "hex_name_normalized": null,
-        "hex_prefix_note": null
+        "hex_prefix_note": null,
+        "question_retitled": null
       },
-      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/锚句归属本案/不与在册同案 七道门；吉凶判不出记 N/A；永不参与调参"
     },
     {
       "id": "ZD102",
@@ -1964,9 +1987,10 @@
         "text_head": "占何日得临之蒙",
         "day_stem_normalized": false,
         "hex_name_normalized": null,
-        "hex_prefix_note": null
+        "hex_prefix_note": null,
+        "question_retitled": null
       },
-      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/锚句归属本案/不与在册同案 七道门；吉凶判不出记 N/A；永不参与调参"
     },
     {
       "id": "ZD109",
@@ -2001,46 +2025,10 @@
         "text_head": "占终身财福得节卦",
         "day_stem_normalized": false,
         "hex_name_normalized": null,
-        "hex_prefix_note": null
+        "hex_prefix_note": null,
+        "question_retitled": null
       },
-      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
-    },
-    {
-      "id": "ZD124",
-      "source": "《增删卜易》（殆知阁转录本）",
-      "topic": "防患",
-      "question": "防患",
-      "input": {
-        "date": "巳月庚辰日",
-        "question": "防患"
-      },
-      "hexagram": {
-        "original": "夬",
-        "changed": null,
-        "moving": []
-      },
-      "expected": {
-        "verdict": "",
-        "use_god": "",
-        "use_god_branch": "",
-        "use_god_position": "",
-        "yingqi": "寅日",
-        "yingqi_branches": [
-          "寅"
-        ],
-        "detail": "果结于甲寅日",
-        "same_as_day_branch": false
-      },
-      "provenance": {
-        "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
-        "sha256": "81d73e4aaf29a1a591250db9e43bb5d815b5ef4a06555c42c1087e9a3f3a3fa7",
-        "offset": 99026,
-        "text_head": "占防患得夬卦",
-        "day_stem_normalized": false,
-        "hex_name_normalized": null,
-        "hex_prefix_note": null
-      },
-      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/锚句归属本案/不与在册同案 七道门；吉凶判不出记 N/A；永不参与调参"
     },
     {
       "id": "ZD125",
@@ -2079,9 +2067,10 @@
         "text_head": "占流年得益之睽",
         "day_stem_normalized": false,
         "hex_name_normalized": null,
-        "hex_prefix_note": null
+        "hex_prefix_note": null,
+        "question_retitled": null
       },
-      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/锚句归属本案/不与在册同案 七道门；吉凶判不出记 N/A；永不参与调参"
     },
     {
       "id": "ZD139",
@@ -2116,9 +2105,10 @@
         "text_head": "占子嗣得复卦",
         "day_stem_normalized": false,
         "hex_name_normalized": null,
-        "hex_prefix_note": null
+        "hex_prefix_note": null,
+        "question_retitled": null
       },
-      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/锚句归属本案/不与在册同案 七道门；吉凶判不出记 N/A；永不参与调参"
     },
     {
       "id": "ZD151",
@@ -2155,18 +2145,19 @@
         "text_head": "占在任平安否得颐之噬嗑卦",
         "day_stem_normalized": false,
         "hex_name_normalized": null,
-        "hex_prefix_note": null
+        "hex_prefix_note": null,
+        "question_retitled": null
       },
-      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/锚句归属本案/不与在册同案 七道门；吉凶判不出记 N/A；永不参与调参"
     },
     {
       "id": "ZD160",
       "source": "《增删卜易》（殆知阁转录本）",
-      "topic": "何时",
-      "question": "何时",
+      "topic": "何时得价",
+      "question": "何时得价",
       "input": {
         "date": "子月己丑日",
-        "question": "何时"
+        "question": "何时得价"
       },
       "hexagram": {
         "original": "归妹",
@@ -2194,9 +2185,13 @@
         "text_head": "占何时得价得归妹之兑",
         "day_stem_normalized": false,
         "hex_name_normalized": null,
-        "hex_prefix_note": null
+        "hex_prefix_note": null,
+        "question_retitled": [
+          "何时",
+          "何时得价"
+        ]
       },
-      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/锚句归属本案/不与在册同案 七道门；吉凶判不出记 N/A；永不参与调参"
     },
     {
       "id": "ZD188",
@@ -2236,9 +2231,10 @@
         "text_head": "占地 得颐变无妄卦",
         "day_stem_normalized": false,
         "hex_name_normalized": null,
-        "hex_prefix_note": null
+        "hex_prefix_note": null,
+        "question_retitled": null
       },
-      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参"
+      "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/锚句归属本案/不与在册同案 七道门；吉凶判不出记 N/A；永不参与调参"
     }
   ]
 }

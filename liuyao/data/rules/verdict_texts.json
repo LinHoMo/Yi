@@ -633,6 +633,18 @@
    "text": "化出之支逢空，出空值日",
    "basis": ""
   },
+  "change_branch_empty_fill_month": {
+   "text": "化出之支逢空，出空填实之月",
+   "basis": "日级同 Rule 见 change_branch_empty_fill；月级真例《增删卜易》ZD151（颐之噬嗑，世妻财戌动化官鬼酉值旬空）「世化官空，八九月必见，果于八月丁艰」＝酉月"
+  },
+  "use_god_restrained_zhi_sha_day": {
+   "text": "用神被{ks}克，制杀之日（冲去{ks}）",
+   "basis": "《黄金策》源L264 夹注「用爻受制，以制杀月日断」（期日九法之三）；《增删卜易》源L643「爻值月建乃为旺矣，或被他爻所克，即谓之逢伤……待至冲去伤爻之日则不受其伤矣，病者必愈、事必成」；源L594「忌神者以克少生多为凶，所以忌神宜克不宜生也」。真例 ZD015（蛊之蒙，世官鬼酉动化午火回头克，书答子日冲午）"
+  },
+  "use_god_restrained_zhi_sha_month": {
+   "text": "用神被{ks}克，制杀之月（冲去{ks}）",
+   "basis": "同 use_god_restrained_zhi_sha_day（月级对称）。真例 ZD160（归妹之兑，申金动克卯木财，书答寅月冲申）、ZD125（益之睽，寅木动克辰土世，书答申月——申冲寅，亦木之绝月，两读同支）"
+  },
   "empty_same_element_fill": {
    "text": "空亡之支与用神同五行，出空填实",
    "basis": ""

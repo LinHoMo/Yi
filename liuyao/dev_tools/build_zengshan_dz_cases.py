@@ -16,7 +16,7 @@ dz 本案例形态（与维基文库本不同，逐字示例）：
     …（六爻渲染，动爻带「动」字）…
     断曰：寅日得见财，亦如心。……果于寅日早见木日得财。
 
-七道门（任一门不过即 excluded，写明原因，绝不放宽）：
+八道门（任一门不过即 excluded，写明原因，绝不放宽）：
   1. 本卦名可解析（全名→内核短名；转录讹字按登记表归一，假设由门 2 验证；
      「得X化Y」「得XY」两种无变/之连接字的卦变形态先拆后解，防后缀匹配丢本卦）
   2. 卦变自洽：渲染里「动」标记的爻位 ≡ 本卦⊕变卦 的差集（无变卦时以标记/静卦计）
@@ -24,10 +24,19 @@ dz 本案例形态（与维基文库本不同，逐字示例）：
      （中间不得插入别的案例；标题前 10 字内出现只记支的弱日期行 ⇒ 真实日期行
       就是它，segment 配到的远处完整日期属于别案，不收——ZD019/ZD066 实测）
   4. 断语段有占验实录句（结果标记＋日期令牌），且令牌不宽于三支
-  5. 令牌只取实录：预测句、或曰假设段、「X年占」占测年、占测日自重，一律不计
+  5. 锚句归属本案：块内又起他卦且本案为静卦时，锚句及其理据句（前一句带
+     余曰/断曰/余谓/余断）引用的「支＋五行」若有本案渲染所无 ⇒ 应期属后卦
+     （ZD124 一块三卦实测；ZD036 同属多占块但锚句理据不引支五行，保留；
+      动卦有化出支、无反例，不拦——新规则须有可判真例）
+  6. 令牌只取实录：预测句、或曰假设段、「X年占」占测年、占测日自重，一律不计
      （自重豁免只认 果/竟/卒 强标记；「应卯时者…辰日相合」形的应=解释，不是应验）
-  6. 不与在册案例同案（同卦变＋月建＋日柱，或同卦变＋应期支＋占题）——转录差异不补
-  7. 吉凶判不出记空串（N/A 不进分母），不整例剔除（与维基文库集同口径）
+  7. 不与在册案例同案（同卦变＋月建＋日柱，或同卦变＋应期支＋占题）——转录差异不补
+  8. 吉凶判不出记空串（N/A 不进分母），不整例剔除（与维基文库集同口径）
+
+占题重切（第一百五十六批，ZD160 实测）：题含「得」时（「占何时得价得归妹」），
+CASE_RE 题组排除「得」而 HEX 段不排除——分隔「得」被题吞掉半个，题读成「何时」、
+卦名段顶前面成「价得归妹」，引擎用神错成子孙亥（书答寅月，须妻财卯才可能命中）。
+按解析出的内核卦名回溯补全占题（见 retitle()），变更留痕 provenance.question_retitled。
 """
 from __future__ import annotations
 
@@ -118,6 +127,12 @@ REALIZED_RE = re.compile(r"[果竟卒后应]")
 # 被豁免的辰日/巳月/戌日全是占测日本身，不是应期（三例实测漏收）。
 STRONG_REALIZED_RE = re.compile(r"[果竟卒]")
 OUTCOME_RE = re.compile(r"[果应验竟卒后至待许]")
+# 多占法守卫：块内锚句之前又起他卦的标记（「又于乙酉日占得无妄」「乙酉日又占得
+# 节之坎卦」「又得明夷之丰」三种句式实测都存在）。
+RECAST_RE = re.compile(r"又[^\n。；]{0,16}?(?:占得|得)")
+# 锚句理据里的「支＋五行」引用（「世下巳火变寅木子孙」→ 巳、寅）——
+# 用于多占法守卫：静卦案例的锚句引用了本案渲染里不存在的支，说明应期属后卦。
+BRANCH_ELEMENT_REF_RE = re.compile(r"([%s])([金木水火土])" % BRANCHES)
 # 应期令牌四种记法（《增删卜易》实测都存在）
 YQ_TOKEN_RE = re.compile(r"([%s])(日|月|年)" % BRANCHES)
 YQ_FULL_DAY_RE = re.compile(r"([%s])([%s])日" % (STEMS_SRC, BRANCHES))
@@ -194,6 +209,34 @@ def resolve_hex_name(raw: str) -> tuple[str | None, str]:
                         return cand, f"全名前缀 {prefix} 与卦体 {HEXAGRAM_TRIGRAMS[cand]} 不符"
             return cand, note
     return None, f"卦名不可解析（{raw}）"
+
+
+def retitle(m: re.Match, hex_name: str) -> tuple[str, bool]:
+    """占<题>得<卦>：把被 CASE_RE 切短的占题补全（题含「得」时）。
+
+    CASE_RE 题组排除「得」、HEX 段不排除：「占何时得价得归妹」的分隔「得」
+    被题吞掉半个——题读成「何时」、卦名段顶前面成「价得归妹」（ZD160 实测：
+    题丢「得价」，引擎用神错成子孙亥；补全为「何时得价」后转妻财卯，
+    书答寅月才可能命中）。按解析出的内核卦名回溯：占 与 卦名之间最后一个
+    「得」是分隔字，其间全是占题。
+
+    不会误切的安全性：题组字符集不含「得」，故真占题里不可能出现「得」——
+    若卦名恰好在题内先出现一次（「占求兑得兑为泽」），回溯区间 whole[1:h]
+    整个落在题内、找不到「得」⇒ 原样返回。只有卦名出现在某个「得」之后
+    （真卦名位或其后的巧合位）才可能改写，且改写只会把题补长、不会截短。
+    返回 (占题, 是否补全)。
+    """
+    if not hex_name:
+        return m.group(1).strip(), False
+    whole = m.group(0)
+    h = whole.find(hex_name)
+    if h < 0:
+        return m.group(1).strip(), False
+    d = whole.rfind("得", 1, h)
+    if d < 0:
+        return m.group(1).strip(), False
+    t = whole[1:d].strip("，,。；;：: 、")
+    return (t or m.group(1).strip()), t != m.group(1).strip()
 
 
 def hex_lines(name: str) -> list[int] | None:
@@ -328,6 +371,14 @@ def parse_case(block: dict, seq: int) -> tuple[dict | None, dict]:
     orig, orig_note = resolve_hex_name(raw_orig)
     chg, chg_note = (resolve_hex_name(raw_chg) if raw_chg else (None, ""))
 
+    # 占题重切（ZD160 实测）：题含「得」被 CASE_RE 切短（见 retitle 文档），
+    # 补全后 question 才能驱动引擎用神判定；变更留痕 provenance.question_retitled。
+    topic_retitle = None
+    new_topic, retitled = retitle(m, orig)
+    if retitled:
+        topic_retitle = [m.group(1).strip(), new_topic]
+        topic = new_topic
+
     body = m.string[m.start():block["end"]]
 
     def excl(reason: str, **extra) -> tuple[None, dict]:
@@ -395,12 +446,36 @@ def parse_case(block: dict, seq: int) -> tuple[dict | None, dict]:
 
     # ── 应期锚：第一个**结果标记句＋日期令牌**的句子 ──
     anchor = None
-    for s in sentences:
+    anchor_idx = -1
+    for i, s in enumerate(sentences):
         if OUTCOME_RE.search(s) and _date_tokens(s):
             anchor = s
+            anchor_idx = i
             break
     if anchor is None:
         return excl("无应期锚：断语段无「结果标记句＋日期令牌」")
+
+    # ── 门 5：多占法错位（ZD124 实测）──
+    # 一块三卦（夬→无妄→节之坎）：锚句「果结于甲寅日」连理据「世下巳火变寅木子孙」
+    # 都属第三卦，本案（静卦夬）渲染里没有巳火——收进来就是拿后卦的应期给前卦打分。
+    # 判据：块内又起他卦（RECAST_RE）且本案为静卦时，锚句＋理据句（前一句带
+    # 余曰/断曰/余谓/余断）引用的「支＋五行」，若有本案渲染所无 ⇒ 应期属后卦。
+    # ZD036 同属多占块，但锚句理据（「世爻出空」）不引支五行，保留；
+    # 动卦有化出支、无反例，不拦（新规则须有可判真例）。
+    if not chg:
+        rm = RECAST_RE.search(body)
+        if rm:
+            ctx = anchor
+            if anchor_idx > 0 and re.search(r"余曰|断曰|余谓|余断", sentences[anchor_idx - 1]):
+                ctx = sentences[anchor_idx - 1] + "，" + anchor
+            refs = {x.group(1) for x in BRANCH_ELEMENT_REF_RE.finditer(ctx)}
+            if refs:
+                own = {ym.group(0)[0] for ln in body[:rm.start()].splitlines()
+                       for ym in YIN_YANG_RE.finditer(ln)}
+                missing = refs - own
+                if missing:
+                    return excl(f"多占法错位：锚句理据引用本案渲染没有的支"
+                                f"（{'、'.join(sorted(missing))}），应期属后卦")
 
     # ── 子句级过滤：只收**占验实录**的令牌 ──
     # 锚句常把预测、他人假设、占测年引用和实录混在一句里（实测四类都出现过）：
@@ -501,9 +576,10 @@ def parse_case(block: dict, seq: int) -> tuple[dict | None, dict]:
             "day_stem_normalized": dm.group(2) == "已",
             "hex_name_normalized": normalized or None,
             "hex_prefix_note": (orig_note or "") or (chg_note or "") or None,
+            "question_retitled": topic_retitle,
         },
         "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/"
-                 "实录句有应期令牌/不宽于三支/不与在册同案 六道门；吉凶判不出记 N/A；永不参与调参",
+                 "实录句有应期令牌/不宽于三支/锚句归属本案/不与在册同案 七道门；吉凶判不出记 N/A；永不参与调参",
     }
     return case, None
 
@@ -587,6 +663,7 @@ def main() -> int:
              "收录门：卦名可解析（讹字登记表归一＋卦变门验证；「得X化Y」「得XY」两种无连接字",
              "卦变形态先拆后解）、卦变自洽（渲染动爻≡卦变差集）、时间可还原（紧邻**完整**日期行；",
              "标题前 10 字内出现只记支的弱日期行即不可还原）、实录句有应期令牌且不宽于三支、",
+             "锚句归属本案（块内又起他卦的静卦，锚句理据引用本案渲染没有的支即属后卦）、",
              "令牌只取实录（预测/或曰假设/占测年/占测日自重不计，自重豁免只认果/竟/卒强标记）、",
              "不与在册案例同案。吉凶判不出记 N/A 不进分母。",
              "**任一门不过即 excluded，不放宽收录；与在册同案者不算新例（防重复计数）。**", "",
@@ -598,7 +675,7 @@ def main() -> int:
     lines += ["", "## 剔除清单与原因", "", "| 案例 | 原因 | 占题 |", "|---|---|---|"]
     lines += [f"| {e['id']} {e.get('topic','')} | {e['reason']} |" for e in excluded]
     lines += ["", "## 结论", "",
-              "本通道与 build_yingqi_set.py（case_library.md 通道）平行：同六道门纪律、同外部集身份。",
+              "本通道与 build_yingqi_set.py（case_library.md 通道）平行：同七道门纪律、同外部集身份。",
               "与在册案例同案者一律剔除——重复计数是八字科 #39 的病灶，外部集扩样先过这一关。", ""]
     REPORT.write_text("\n".join(lines), encoding="utf-8")
     print("审计报告 →", REPORT.relative_to(HERE.parent))
@@ -607,7 +684,7 @@ def main() -> int:
         return 0
 
     OUT.write_text(json.dumps({"_meta": {
-        "description": "《增删卜易》殆知阁转录本抽取的应期外部验证集；六道门＋同案去重；永不参与调参",
+        "description": "《增删卜易》殆知阁转录本抽取的应期外部验证集；七道门＋同案去重；永不参与调参",
         "built_by": "dev_tools/build_zengshan_dz_cases.py",
         "source_sha256": hashlib.sha256(SRC.read_bytes()).hexdigest(),
         "total_cases": len(kept),
@@ -617,8 +694,12 @@ def main() -> int:
 
     sp = json.loads(SPLITS.read_text(encoding="utf-8")) if SPLITS.exists() else {}
     sp["zengshan_dz_holdout"] = [c["id"] for c in kept]
-    sp["note_externals"] = (sp.get("note_externals", "") +
-                            "；zengshan_dz_holdout=增删卜易 dz 底本通道，永不参与调参").lstrip("；")
+    # 幂等：早版每次重建都往 note_externals 追加同一句（二次运行即出现重复片段，
+    # case_splits.json 里已留着两条）。只在缺失时补，杜绝第三次。
+    _note_frag = "zengshan_dz_holdout=增删卜易 dz 底本通道，永不参与调参"
+    if _note_frag not in sp.get("note_externals", ""):
+        sp["note_externals"] = (sp.get("note_externals", "") +
+                                "；" + _note_frag).lstrip("；")
     SPLITS.write_text(json.dumps(sp, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print("case_splits.json 已登记 zengshan_dz_holdout")
     return 0
