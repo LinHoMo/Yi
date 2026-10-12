@@ -3,15 +3,9 @@
     "what": "金标准指纹基线（排盘+思维链+分析层逐字段；抽样含 narrate 文案哈希）",
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
-  "digest": "8d315f9a2a78e858",
-  "narrate_digest": "7200af9a70d2df8f",
+  "digest": "0154180984aa868d",
+  "narrate_digest": "d4ec75b0e159adbb",
   "drift_log": [
-    {
-      "from": "ce629fd5d08a0096",
-      "to": "8741ce71dbbb46fd",
-      "date": "2026-10-11",
-      "reason": "第二十九批 #11：给 13 条注记补上底本逐字原句（每条都已核对为该行的完全子串，含原标点）。其中 4 条落在 verdict_texts / narrate_core 的运行时归因串里，故 patterns 字段随之改字；score／verdict／用神／旺衰／应期支未变，措辞层 7200af9a70d2df8f 未变"
-    },
     {
       "from": "8741ce71dbbb46fd",
       "to": "b207db413cb1d42d",
@@ -125,6 +119,12 @@
       "to": "8d315f9a2a78e858",
       "date": "2026-10-12",
       "reason": "第一百五十九批：唤醒月破层——yao_lines 补 is_month_break（装卦时与月建相冲，判据同 analyze_monthly_break）。此前该键自建仓起缺失，step1/step2/step3/narrate 的读取恒 False：用神取舍 tier7/8 破分支、step3 月破修正(0.3/0.5)、野鹤反法一破一不破半边全死。漂移 6/288 例（剥×3、困×3）方向全部合书（月破降级；困例辰不破胜未破合古法序月破键先于旬空键）"
+    },
+    {
+      "from": "8d315f9a2a78e858",
+      "to": "0154180984aa868d",
+      "date": "2026-10-12",
+      "reason": "第一百六十批：#24 用户裁逐出改首条——step5.calculate_yingqi 阶梯第1名置首（已在5槽内则提前不丢条目、不在则挤掉原第5槽至多丢一条），报告首条自此恒等于阶梯主应期。金标准 242/288 例 yingqi_dates 仅次序变化、0 例丢支，评分集读数零代价（tune 97.3/64.7/1.53、holdout 90.2/50.0/1.6、wikisource 61.5/27.3/2.19、zengshan_dz 53.4/33.3/1.64、[15] wikisource loose 88.6 全不变），措辞层仅 5 例 narrate_sha/len 随首条换位变化"
     }
   ],
   "narrate_drift_log": [
@@ -151,6 +151,12 @@
       "to": "7200af9a70d2df8f",
       "date": "2026-10-08",
       "reason": "2026-10-08 交付文本两处收口：①liuyao_narrate._dedash 折叠模板拼接出的「——，」残句（实测交付报告首句『…不是发力的时候——，主要因为…』，纯标点归一，不增删措辞）；②render 结论行追加数据层档位注记（narrative_templates#narrate_shell.conclusion_grade_note），消除与同页口径句『凶象只用偏向讲』的自相矛盾。机械层零漂移，tune 96.8/holdout 90.2、黑箱 11/18 均与 capture 前一致"
+    },
+    {
+      "from": "7200af9a70d2df8f",
+      "to": "d4ec75b0e159adbb",
+      "date": "2026-10-12",
+      "reason": "第一百六十批：#24 用户裁逐出改首条——step5.calculate_yingqi 阶梯第1名置首（已在5槽内则提前不丢条目、不在则挤掉原第5槽至多丢一条），报告首条自此恒等于阶梯主应期。金标准 242/288 例 yingqi_dates 仅次序变化、0 例丢支，评分集读数零代价（tune 97.3/64.7/1.53、holdout 90.2/50.0/1.6、wikisource 61.5/27.3/2.19、zengshan_dz 53.4/33.3/1.64、[15] wikisource loose 88.6 全不变），措辞层仅 5 例 narrate_sha/len 随首条换位变化"
     }
   ]
 }

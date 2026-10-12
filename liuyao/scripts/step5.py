@@ -1786,8 +1786,10 @@ def calculate_yingqi(
     `ladder` 是 `timing._rank_candidates` 排好的日级阶梯 [(token, rule), ...]。
     接它的原因不是补功能，而是**消除同一次占断里的两个答案**：阶梯把戌日排为主应期，
     而下面的日期投影此前只按"最早五个日期"出列，报告读的是日期层（narrate 应期段
-    「优先从 yingqi_dates 读」），于是阶梯上所有排序在产出面被丢掉。日期层现在
-    以阶梯名次为主序、同一名次内按日期先后为次序，且阶梯支也进入候选池。
+    「优先从 yingqi_dates 读」），于是阶梯上所有排序在产出面被丢掉。现行接线
+    （第七十九批＋第一百六十批）：日历层 5 槽按七条规则时间序取，阶梯未覆盖名次
+    最多追加 2 条；随后**逐出改首条**——阶梯第 1 名（主应期）置首（不在槽内则挤掉
+    原第 5 槽），报告首条自此恒等于阶梯主应期。
     """
     use_god_branch = safe_get(step3, "use_god_branch", default="")
     use_god_element = safe_get(step3, "use_god_element", default="")
@@ -1927,11 +1929,15 @@ def calculate_yingqi(
                 candidates.append(("原神旺月", d, "",
                                    f"原神{yuan_shen_element}旺月（{pm}月）"))
 
-    # ===== 阶梯接线（第七十九批）：主应期必须在日历层出现，但不许挤掉既有候选 =====
-    # 名次表按阶梯支首次出现建立。此前把阶梯支并进七条规则一起竞争那 5 个日期槽位，
-    # 实测**逐出效应**真实存在（tune loose 100.0→94.1、wikisource_holdout 92.1→73.7——
-    # 排序靠前但日期靠后的阶梯支把原本在窗口内的支顶了出去），故改为**只增不换**：
+    # ===== 阶梯接线（第七十九批「只增不换」＋第一百六十批用户裁「逐出改首条」）=====
+    # 名次表按阶梯支首次出现建立。第七十九批实测过**逐出效应**（把阶梯支并进七条规则
+    # 一起竞争那 5 个日期槽位：tune loose 100.0→94.1、wikisource_holdout 92.1→73.7——
+    # 排序靠前但日期靠后的阶梯支把原本在窗口内的支顶了出去），故当时改为只增不换：
     # 日历层的 5 个槽位仍按七条规则的时间序取，阶梯里未被子集覆盖的名次最多追加 2 条。
+    # 遗留口径问题：追加条目排在尾部，日期层第一个日期仍不保证等于阶梯主应期。
+    # 第一百六十批用户裁「逐出改首条」——取**最小逐出**而非第七十九批否掉的全序重排：
+    # 阶梯第 1 名（主应期）不在 5 槽内 ⇒ 置首并挤掉原第 5 槽（至多丢一条）；
+    # 已在 5 槽内 ⇒ 提前到首位（一条不丢）。代价实测见 docs/CHANGELOG.md 第一百六十批。
     _rank_of: dict[str, int] = {}
     _BRANCH_LADDER_RULE: dict[str, str] = {}
     for _i, _item in enumerate(ladder or []):
@@ -1975,6 +1981,21 @@ def calculate_yingqi(
     if _extra:
         top5 = top5 + [( _ru, _dt, _br, _de) for _rk, _ru, _dt, _br, _de
                        in sorted(_extra, key=lambda x: x[0])]
+
+    # ===== 逐出改首条（第一百六十批，用户裁）=====
+    # 报告首条必须等于阶梯主应期（第 1 名）。最小逐出：不在 5 槽内则置首并挤掉原第 5 槽；
+    # 已在槽内则提前（不丢条目）。date 为 None 的槽不参与比较。
+    if _rank_of and top5:
+        _top_b = min(_rank_of, key=_rank_of.get)
+        _hit = next((x for x in top5 if x[2] == _top_b), None)
+        if _hit is not None:
+            top5 = [_hit] + [x for x in top5 if x is not _hit]
+        else:
+            _d = _next_date_with_day_branch(base, _top_b)
+            if _d and all(_d != _x[1] for _x in top5 if _x[1]):
+                top5 = [(_BRANCH_LADDER_RULE.get(_top_b, "应期阶梯第1"),
+                         _d, _top_b,
+                         f"主应期阶梯第 1（{_top_b}日）")] + top5[:4]
 
     # ===== Build result =====
     dates_list = []
