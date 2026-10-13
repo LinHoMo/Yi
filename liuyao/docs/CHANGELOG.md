@@ -1,5 +1,91 @@
 # 六爻 CHANGELOG
 
+## 2026-10-13 第一百六十九批：**`[12]` 从没验过 `impl`——文档一直说它验了**；照此实抓两条悬空指针＋一条乱码注册表注记＋一处指错的取用落点，并把 `impl` 回验补进两科门
+
+### 一、`check_doc_refs.py` 声称「impl 由 [12] 逐条回指」，而 [12] 从没看过 impl
+
+- **假话在文档里**（§六.3）：`dev_tools/check_doc_refs.py:18` 写着数据 JSON 的
+  `"impl": "file.py#symbol"`「本就是**可执行契约**（由 [12] 逐条回指），
+  扫得到只会更严，不误伤」。
+- **实读 `[12]`**（`dev_tools/check_rule_registry.py`）：`check()` 只遍历
+  `source.quote_in_data`／`source.quote_in_code`／`source.corpus_files` 三类字段，
+  **`item.get("impl")` 一次都没被读过**。文档承诺的契约从未存在。
+- **这不是无害的措辞不准**：`impl` 是注册表里**唯一的代码落点声明**，读者（含任务 Agent）
+  靠它定位「这条规则的实现在哪」。它没人验 ⇒ 代码重构搬模块后，注册表可以无限期地
+  指着旧位置，而所有门照样全绿。本批抓到的正是这个。
+
+### 二、实抓两条悬空 `impl`：第一百六十六批「域拆分」搬了模块，注册表没跟上
+
+- 两条 `impl` 写着 `scripts/classical_enhancements.py:analyze_shen_yao_activation` 与
+  `…:analyze_you_jie`；实测这两个符号在该文件里 **0 命中**。
+- 真实定义处是 `scripts/classical_enhancements_shen_yao.py`（该文件 `__all__` 正是这三名），
+  由 `classical_analysis.py:23-26` 显式 import，注释写着「2026-10-08 域拆分：身爻/忧解在子模块」。
+  **父模块无 re-export** ⇒ `impl` 指的是一个已经不长这两个名字的文件。
+- 其余 31 条 `impl` 全部可回指（33 条中 5 条带符号，2 条悬空）。
+
+### 三、`liuyao.huozhulin_luandong` 的注记是乱码，且取用落点指错了层
+
+- **注记原文乱码**：`evaluation.note` = 「**卜炉动巳**注册在本条目；engine落点 step4.py…」。
+  追到首次入库 commit `1e83ac1`，此后 14 个 commit 一字未变 ⇒ **不是近期损坏，是入库即如此**。
+  穷举 13 种字符集两两互转（utf-8/gbk/gb18030/big5/shift_jis/euc_jp/utf-16/… ）**均还原不出原字**，
+  判为字符级字形损坏，**不猜原字**，按条目语义据实重写并标注来源。
+- **`impl` 也指错层**：原记 `scripts/step4.py`。实读 `step4.py`——它是**察变**层
+  （`step4_analyze_changes`／`_analyze_effect_on_use_god`），只从 `step2_data`
+  **消费** `use_god_category`／`use_god_element`，**不作选取**。
+  本条 domain 是「乱动卦**取用**」，取用的现行引擎落点是
+  `scripts/step2.py:step2_identify_use_god`（优先序 `_use_god_priority`）。
+- **处置**：`impl` 改指**已落地的那一半**（结构标签
+  `scripts/classical_enhancements_dufa.py:analyze_luandong`），并在括号里写明
+  「取用口径未实现，选取落点应为 `step2.py:step2_identify_use_god`」——
+  **不把未实现写成已实现**，也不让 `impl` 指向一个不产生该判定的层。
+
+### 四、补门：`impl` 回验进 `[12]`（两科同步，判据不同文字）
+
+- 新增 `check_impl(impl)`：只认 `<path>.py` 后紧跟 `:首字符为字母/下划线的标识符`；
+  **行号 `:1058`、版本号式 `:4.3` 一律跳过**——那是定位记号不是符号，
+  照判会逼人改写正确定位记号（本仓 `impl` 大量使用行号，必须「宁可少判」）。
+- `impl` **不看 `verified` 一律判红**：代码指针不存在「诚实未核实」状态，指错就是指错。
+- **负例自证（§四.8）**：`selftest` 增 4 条 `impl` 假指针（文件不存在／符号不在文件内／
+  行号式须放行／纯路径须放行），外加一条**真实事故形态**断言
+  （`classical_enhancements.py:analyze_shen_yao_activation` 必须判红）。实跑：4 条全抓、
+  2 条正例不误伤、事故形态判红。
+- 读数：`[12]` 检视 **41 → 74 条**（+33 条 `impl`），74/74 可回指。
+- 同批把本科 `check_doc_refs.py:18` 那句话改准：`#` 是错的分隔符（实为 `:`），
+  并注明「第一百六十九批前这句话是假的」。
+
+### 五、顺带查出：「tune/holdout 乱动 0 条」是**假 0**——扫了个空字段
+
+- **现象**：注册表 `样本空档` 与 `verification_note_2026_10` 都写着「tune/holdout 乱动卦
+  0 条，缺回归护栏」，且「已实现_乱动标记_20261013」写着「全库 105 例带 moving 字段者
+  与本判据 105/105 一致」。三句都基于**读 `hexagram.moving` 字段**。
+- **实测**：`classical_cases.json` 的 `moving` 字段 **44 例全空**（tune 20／holdout 12／
+  excluded 10 全部为空）。扫空字段必然是 0 —— 这是「扫了个空字段所以是 0」的**假 0**，
+  不是真测出来的 0。`wikisource`／`yingqi`／`zengshan` 三份该字段有值，故它们的计数是准的。
+- **改用卦变差集（引擎 `case_runner.hex2yao` 的同一真值源）重测**：
+  - **tune 2 条**：ZS007 动 3 爻、ZS013 动 3 爻；
+  - **holdout 1 条**：HO008 动 5 爻；
+  - 另 11 例无变卦、不可判动爻。
+  ⇒ **「tune/holdout 乱动 0 条」为假，实为 3 条。**
+- **`本条审计数据已过时` 那条也漏计**：它称外部集 >2 动者仅 WS037/YQ003 两条，
+  实测 wikisource **10 条**（WS007/WS013/WS028/WS037/WS038/WS040/WS043/WSD003/WSD012/
+  WSD018）＋yingqi 1＋zengshan 1＝**12 条**。旧名单里那 11 个 ID 现仅 WS037 仍 >2 动
+  （WS012 现 [1,6]、WSD002 现 [6]），已非同一批案例。
+- **引擎不受影响（不是 P0）**：动爻由 `hex2yao` 依本卦/变卦**差异位**推得，
+  `case_runner.py:250-254` 只取 `hexagram.original/changed`，**从不读案例文件的 `moving` 字段**。
+  故本条是**登记失实**，不是引擎缺陷——责任方判明后再动手（AGENTS.md §二）。
+- **对「为何不实现取用口径」的影响**：原四条理由之一「样本空档 0 条、无回归护栏」现复测为
+  3 条——**由无护栏变成有 3 条护栏**。但 tune 2／holdout 1 极薄，仍不足以支撑改判定值；
+  另外两条理由（口径未裁、与《增删卜易》口径冲突）不受影响。⇒ **结论不变，仍暂不实现**，
+  但理由 4 的事实基础已改正（§六.3：登记里的数字不许是假事实）。
+- 探针 `liuyao/scratch/probe_luandong_splits.py`（`scratch/` 整目录不入库）。
+
+### 六、本批门禁
+
+- `python liuyao/dev_tools/check.py` rc=0（`[12]` 含新增 `impl` 回验、`[5]` 两集读数未动）。
+- 本批**引擎判定值零变更**：只动注册表注记/指针与两科 `[12]` 门，未碰任何 `scripts/` 推演逻辑，
+  故按 §四.7 **读数不动属预期**，不得拿持平当成果。
+- 分数含义：与古籍案例要点的一致性，不代表现实预测命中率（铁律三）。
+
 ## 2026-10-13 第一百六十八批：**推翻 `liuyao.liupo` 的 verified=false**——六破列在《卜筮正宗》dz 本白纸黑字（旧结论当时成立、载体更新后失修）；同表六冲／六穿两列一并回验全同
 
 ### 一、六破：引擎表与《卜筮正宗》dz 本**逐对全同**，此前却记作「在库语料无六破明文」

@@ -15,7 +15,10 @@ tools/、docs/source-readings/ 都随仓库扁平化删除了——照着跑必�
   · **【照八字科第一百六十六批·同步判据不同文字】`.json` 数据文件里的路径字样同样扫**：
     本器此前只走 `.md`/`.py`，于是 `data/rules/rule_registry.json` 一类**声明载体**里
     写的死指针门永远看不见（八字科实抓到三条从未存在的 `tests/*.py` 幽灵指针）。
-    数据 JSON 里 `"impl": "file.py#symbol"` 这类本就是**可执行契约**（由 [12] 逐条回指），
+    数据 JSON 里 `"impl": "file.py:symbol"` 这类本就是**可执行契约**（由 [12] 逐条回指；
+    第一百六十九批前这句话是假的——[12] 当时只验 source.quote_in_*／corpus_files，
+    从没看过 impl，于是两条悬空指针（身爻/忧解第一百六十六批搬进子模块后 impl 仍指父模块）
+    一路无人发现。已补 `check_impl`，见该器 docstring），
     扫得到只会更严，不误伤：字段值以 `/` 分段且带已知扩展名的串本来就该在盘上。
     `data/cases/`（案例正文含内嵌 markdown 与书文）与 `data/sources/`（古籍底本）不扫，
     否则会把史料当声明造出假红——反向激励删史料。

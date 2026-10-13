@@ -664,7 +664,7 @@
   {
    "rule_id": "liuyao.huozhulin_luandong",
    "domain": "乱动卦取用",
-   "impl": "scripts/step4.py",
+   "impl": "scripts/classical_enhancements_dufa.py:analyze_luandong（advanced_analysis.luandong，只标结构象；取用口径未实现，选取落点应为 scripts/step2.py:step2_identify_use_god）",
    "source": {
     "book": "《火珠林》",
     "locator": "乱动法总纲：《火珠林》源L25 逐字「独发易取，乱动难寻」；《火珠林》源L27 逐字「四看独发之爻，旺相最急，休囚事慢」；《火珠林》源L33 逐字「乱动之卦只取旺爻，旺爻即用神也」",
@@ -682,8 +682,8 @@
      "未实现_四看口诀": "《火珠林》源L27 逐字「一看世上旁爻生财旺相，忌应爻克世；二看世下亲爻财官喜静；三看何爻最旺为用神，如发动，动要生世；四看独发之爻，旺相最急，休囚事慢」——四看未拆为四条结构标签（①旁爻生财旺相忌应爻克世 ②世下亲爻财官喜静 ③最旺爻为用神 ④独发之爻旺相最急）；其中④与已落地之 liuyao.dufa_dujing 相通",
      "已实现_乱动标记_20261013": "**本项已关**（第一百六十七批）：advanced_analysis 新增 `luandong` 结构标签（scripts/classical_enhancements_dufa.py::analyze_luandong，判据＝动爻数>2），叙述层经 narrate_core 出「格局-乱动」标签与要点提示。**只标结构象、不打分、不改用神选取**（与独发独静同策略）；断语素材在 data/rules/verdict_texts.json「乱动」条，代码内无字面量。逐例核对：全库 105 例带 moving 字段者与本判据 **105/105 一致**、0 例不一致；金标准 288 例指纹零漂移、[4] 19/19、[5] tune 97.3／holdout 90.2 全未动（§四.7 读数不动属预期）。",
      "未实现_乱动标记": "~~已实现（见上「已实现_乱动标记_20261013」）~~：原缺口「advanced_analysis 无乱动卦结构标签」已由 luandong 段关闭；源L33 的「乱动之卦只取旺爻，旺爻即用神也」**取用口径仍未实现**，见『未实现_取旺爻』。",
-     "样本空档": "tune/holdout 乱动卦 0 条（外部集有：wikisource WS037 动3爻、yingqi YQ003 动6爻），缺回归护栏；**结构标签已可跑**，若日后立项实现取用口径，须先补该输入类样本再动判定值",
-     "本条审计数据已过时_20261013": "本条 verification_note_2026_10 记「乱动 12 条」及其逐例动爻数（如 WS012 动3、WSD002 动5）系对**旧语料**的扫描；按当前盘上 data/cases/*.json 的 moving 字段复测：12 例中仅 **WS037(动3) 与 YQ003(动6)** 过 >2 之阈，其余 10 例为 1–2 动。已用 case_runner.hex2yao 的卦变差集逐例核对 WS012(兑之讼→[1,6])／WSD002(萃之否→[6])／WS037(节之蹇→[1,2,3])，与盘上字段**全部一致** ⇒ 盘上数据正确、**是本条的登记数字过时**。按 AGENTS.md §六.2「文档说的和代码做的不一致即已知问题」据实改注，不改写历史正文。"
+     "样本空档": "【第一百六十九批复测更正——原记『tune/holdout 乱动卦 0 条』是**假 0**】原审计扫的是 `hexagram.moving` 字段，而 classical_cases.json 该字段 **44 例全空**（该文件不逐爻存明细），扫空字段必然得 0。改用**卦变差集**（6/9 为动爻，即引擎 case_runner.hex2yao 所用同一真值源）复测：**tune 2 条（ZS007 动3、ZS013 动3）、holdout 1 条（HO008 动5）**，合计 3 条；另 11 例无变卦、不可判动爻。外部集 >2 动者 wikisource 10／yingqi 1(YQ003)／zengshan 1(ZD125)＝12 条（原记仅 WS037/YQ003 两条，同样漏计）。**引擎不受影响**：动爻由 hex2yao 依本卦变卦差异位推得，从不读案例文件的 moving 字段，故本条只是**登记失实、非 P0**。对『为何不实现取用口径』的影响：原以『样本空档 0 条、无回归护栏』为由之一，现复测为 3 条，该理由**由 0 升为 3 条**——护栏由无到有但极薄（tune 2／holdout 1），仍不足以支撑改判定值；口径未裁与「与增删口径冲突」两条理由不受影响，故**结论不变，仍暂不实现**。探针 liuyao/scratch/probe_luandong_splits.py（scratch 不入库）",
+     "本条审计数据已过时_20261013": "本条 verification_note_2026_10 记「乱动 12 条」及其逐例动爻数（如 WS012 动3、WSD002 动5）系对**旧语料**的扫描。【第一百六十九批补测】按当前盘上复核：wikisource 那 11 个 ID 里**仅 WS037 现仍 >2 动**（WS012 现 [1,6]、WSD002 现 [6]），其余已变 1–2 动；且当前 wikisource >2 动者实为 **10 条**（WS007/WS013/WS028/WS037/WS038/WS040/WS043/WSD003/WSD012/WSD018），与旧名单已非同一批案例。wikisource 81 例 moving 字段与卦变差集逐例对拍 **81/81 一致** ⇒ 盘上数据正确、**是本条的登记数字过时**。按 AGENTS.md §六.2「文档说的和代码做的不一致即已知问题」据实改注，不改写历史正文。"
     }
    },
    "applicability": "**结构标签已落地**（动爻数>2 即出「乱动卦」标签，只标象）；**取用口径仍未实现**——适用条件（未来立项时）：需在六亲用神之外另立「旺爻优先」取用口径（源L33）时，须先裁定「旺」的量化与四看取舍序。",
@@ -694,13 +694,13 @@
      "holdout"
     ],
     "dim": "verdict",
-    "note": "卜炉动巳注册在本条目；engine落点 step4.py（结构标签另有 classical_enhancements_dufa.py::analyze_luandong）。score仅对齐古籍案例要点（铁律三）。"
+    "note": "乱动卦取用注册在本条目（原注此四字为乱码「卜炉动巳」，系字符级损坏、任何字符集都还原不出原字，2026-10-13 按条目语义据实重写，见 docs/CHANGELOG.md 第一百六十九批）。落点分两半：**已落地的是结构标签**——scripts/classical_enhancements_dufa.py:analyze_luandong（动爻数>2 只标象，经 classical_enhancements.py 转出、classical_analysis.py 接入）；**取用口径未实现**，故本条当前**无判定值落点**——用神选取的现行引擎落点是 scripts/step2.py:step2_identify_use_god（优先序 _use_god_priority），而原注的 step4.py 是察变层，只从 step2_data **消费** use_god_category/use_god_element、不作选取，作为取用落点系指错（原 impl 字段同误，已一并改）。score仅对齐古籍案例要点（铁律三）。"
    }
   },
   {
    "rule_id": "liuyao.shen_yao_activation",
    "domain": "身爻启用（世空/世破时身爻参与取用）",
-   "impl": "scripts/classical_enhancements.py:analyze_shen_yao_activation（advanced_analysis.shen_yao_activation）",
+   "impl": "scripts/classical_enhancements_shen_yao.py:analyze_shen_yao_activation（advanced_analysis.shen_yao_activation）",
    "source": {
     "book": "《易隐》",
     "locator": "安身章（L217）",
@@ -754,7 +754,7 @@
   {
    "rule_id": "liuyao.you_jie",
    "domain": "忧解/忧疑结构标签",
-   "impl": "scripts/classical_enhancements.py:analyze_you_jie（advanced_analysis.you_jie）",
+   "impl": "scripts/classical_enhancements_shen_yao.py:analyze_you_jie（advanced_analysis.you_jie）",
    "source": {
     "book": "《增刪卜易》",
     "locator": "忧神/防患章（L16/L419/L529/L3406）",
