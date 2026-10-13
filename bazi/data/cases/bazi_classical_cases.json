@@ -10,7 +10,14 @@
   "expected 只有 tiaohou；公历时刻由内核历法反查（月支/日干为定值，其余任其自然）。",
   "引擎查同一张内核表（ming_tables.TIAO_HOU，提取自同一原文）→ 本集是**表对表",
   "回归 + 历法链路验证**，不是泛化证据；口径披露与随机基线见 scripts/evaluate.py。",
-  "构建器：dev_tools/build_tiaohou.py（提取）+ dev_tools/build_tiaohou_cases.py（建例）。"
+  "构建器：dev_tools/build_tiaohou.py（提取）+ dev_tools/build_tiaohou_cases.py（建例）。",
+  "",
+  "2026-10-13 第一百六十九批（神煞书证回填）：以引擎可安出神煞基名 16 项机械扫",
+  "source_quote+note，书文命中者全部回填 expected.shensha（确定性选取，非按分数",
+  "挑案例）——MT521 书作「羊刃」；ZP006/ZP007/ZP031/MT550 书作异名「阳刃」",
+  "（阳干之刃，与羊刃同义，按引擎规范名存值）。其余 333 例书文 0 处提及神煞名",
+  "⇒ 维持空档；例数由门禁 [25] check_dim_lock.py 双向锁 0/5（tune/holdout），",
+  "多判红、少也判红。选取规则与逐例书证见 docs/CHANGELOG.md 第一百六十九批。"
  ],
  "splits": {
   "tune": [
@@ -10081,7 +10088,10 @@
    "gender": "",
    "note": "月刃格煞制刃；合煞细节不判",
    "expected": {
-    "pattern_cheng_bai": "成格"
+    "pattern_cheng_bai": "成格",
+    "shensha": [
+     "羊刃"
+    ]
    }
   },
   {
@@ -10099,7 +10109,10 @@
    "gender": "",
    "note": "阳刃用官，己印为救应之神，格成",
    "expected": {
-    "pattern_cheng_bai": "成格"
+    "pattern_cheng_bai": "成格",
+    "shensha": [
+     "羊刃"
+    ]
    }
   },
   {
@@ -11168,7 +11181,10 @@
      "hour": [
       "癸"
      ]
-    }
+    },
+    "shensha": [
+     "羊刃"
+    ]
    }
   },
   {
@@ -11970,7 +11986,10 @@
    "expected": {
     "tiaohou": {
      "main": "丁"
-    }
+    },
+    "shensha": [
+     "羊刃"
+    ]
    }
   },
   {
@@ -12287,7 +12306,10 @@
     "tiaohou": {
      "main": "戊",
      "assist": "丙"
-    }
+    },
+    "shensha": [
+     "羊刃"
+    ]
    }
   },
   {

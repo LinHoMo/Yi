@@ -59,6 +59,7 @@ from narrative_utils import (  # noqa: E402
 from classical_enhancements_dufa import (  # noqa: E402
     analyze_du_fa_du_jing,
     analyze_luandong,
+    attach_luandong_looks,
 )
 from classical_enhancements_zhugui import analyze_zhu_gui_shang_shen  # noqa: E402
 from classical_enhancements_menlei import analyze_menlei_dongjing  # noqa: E402
@@ -2197,6 +2198,7 @@ __all__ = [
     "analyze_desperate_relief",
     "analyze_du_fa_du_jing",
     "analyze_luandong",
+    "attach_luandong_looks",
     "analyze_zhu_gui_shang_shen",
     "analyze_menlei_dongjing",
     "huozhulin_fushi_tags",

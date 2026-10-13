@@ -371,6 +371,13 @@ def score_case(eng: dict, exp: dict, model: str) -> dict:
         dims["cong_ge"] = (min(earned, w_app), w_app, " ".join(bits))
 
     # 7) 神煞（期望集合的命中比例；多出不算错——神煞流派差异大）
+    # 书证现状（第一百六十九批实测）：以引擎神煞基名 19 项（机械抽自 core/yishu_core/
+    # shensha.py 的 `_add(` 字面量／f-string／`"name":` 三类写法）扫主评分语料 338 例的
+    # source_quote+note，命中 5 例：MT521「且见羊刃」＋ ZP006/ZP007/ZP031/MT550 书作异名
+    # 「阳刃」（阳干之刃，与羊刃同义，expected 存引擎规范名）——5 例全部回填，其余 333 例
+    # 书文 0 处提及神煞名、维持空档。变体名普查（咸池/贵人/天德/文曲…）0 命中，故
+    # 「书无明写」这一句是**扫全后**的结论，不是名字没扫到。适用例数由
+    # dev_tools/check_dim_lock.py [25] 双向锁死（多了也判红，防引擎反推自证）。
     w = WEIGHTS["shensha"]
     x_s = exp.get("shensha")
     if not _na(x_s):
@@ -379,24 +386,33 @@ def score_case(eng: dict, exp: dict, model: str) -> dict:
         dims["shensha"] = (int(w * ratio), w, note)
 
     # 8) 大运（顺逆一致 8 分；首运起运岁数误差 ≤1 岁再得 4 分）
+    # 分母只算**书实际写了的子项**（同 tiaohou 只注主神那段写明的
+    # 「规则1：没写的量既不进分子也不进分母」）——pattern 只注格名记 8/8 也照此办，
+    # 唯本维旧口径固定拿 12 当分母：只注顺逆的例即使答对也只记 8/12＝66.7%，
+    # 书没写的起运岁数被记成扣分（只注起运则 4/12＝33.3%）。分母改为
+    # w_app = 实际出现的子项权重之和（顺逆 8 ＋ 起运 4）。**当前两集 0 例带
+    # dayun 期望 ⇒ 本修不改任何读数（§四.7 读数不动属预期）**；它清的是
+    # 「一旦接上只注顺逆的例就会被静默压分」这个潜伏缺陷（第一百六十九批）。
     w = WEIGHTS["dayun"]
-    if not _na(exp.get("dayun_direction")) or not _na(exp.get("dayun_start_age")):
+    x_dir, x_age = exp.get("dayun_direction"), exp.get("dayun_start_age")
+    if not _na(x_dir) or not _na(x_age):
+        w_app = (8 if not _na(x_dir) else 0) + (4 if not _na(x_age) else 0)
         dayun = eng.get("dayun") or []
         earned, bits = 0, []
-        if not _na(exp.get("dayun_direction")):
+        if not _na(x_dir):
             got = eng.get("dayun_direction")
-            ok = got is not None and got == exp.get("dayun_direction")
+            ok = got is not None and got == x_dir
             earned += 8 if ok else 0
             bits.append(f"顺逆{'√' if ok else '×'}({got})")
-        if not _na(exp.get("dayun_start_age")):
+        if not _na(x_age):
             if dayun and dayun[0].get("start_age") is not None:
-                delta = abs(float(dayun[0]["start_age"]) - float(exp["dayun_start_age"]))
+                delta = abs(float(dayun[0]["start_age"]) - float(x_age))
                 ok = delta <= 1.0
                 earned += 4 if ok else 0
                 bits.append(f"起运{'√' if ok else f'×Δ{delta:.1f}'}")
             else:
                 bits.append("起运×缺")
-        dims["dayun"] = (min(earned, w), w, " ".join(bits))
+        dims["dayun"] = (min(earned, w_app), w_app, " ".join(bits))
 
     return dims
 
@@ -412,7 +428,9 @@ RANDOM_BASELINE = {
     "tiaohou": 1.0 / 10,        # 调候主神十干取一
     "pattern": 1.0 / 12,        # 正格十二名取一
     "cong_ge": 0.5,             # 布尔 2/4；种类 1/8、真/假 1/2 另计（见维度明细）
-    "shensha": 1.0 / 30,        # 神煞表约 30 项
+    "shensha": 1.0 / 16,       # 引擎 shensha_of_chart 可安出基名 16 项（全表 19 项，
+                               # 另 3 项禄神/红艳/天喜只在择吉安星里出、本维不评；
+                               # 第一百六十九批实测改，原注「约 30 项」系表规模的旧估）
     "dayun": 0.5,               # 顺逆布尔
 }
 

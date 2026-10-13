@@ -100,6 +100,17 @@ def run_thinking_chain(hex_result: dict) -> dict:
         adv["shi_yao_relation"] = analyze_shi_yao_relation(
             hex_result, context["_step2_data"].get("use_god_category")
         )
+        # 《火珠林》源L27 逐字「一看世上旁爻生财旺相，忌应爻克世；二看世下亲爻财官喜静」
+        # 两看（第一百七十批）：同样要读 step2 的用神/世应，
+        # 而 enhance_reading 跑在 step1 之前、那时 step2 还不存在 ⇒ 补挂于此。
+        # 只标象、不打分、不改用神选取（见 classical_enhancements_dufa.attach_luandong_looks）。
+        try:
+            from classical_enhancements import attach_luandong_looks
+            attach_luandong_looks(hex_result, context["_step2_data"])
+        except Exception:
+            import logging
+            logging.getLogger(__name__).warning(
+                "attach_luandong_looks 失败：源L27 一看/二看结构标签本次为空。", exc_info=True)
     context["_step3_data"] = step3_analyze_strength(context)
     context["_step4_data"] = step4_analyze_changes(context)
     context["_step5_data"] = step5_synthesize(context)

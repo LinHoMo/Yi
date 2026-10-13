@@ -34,7 +34,7 @@ from pathlib import Path
 
 from narrative_utils import _pos_to_name
 from narrative_utils import QUOTE_DATABASE, SHI_YAO_INTERPRETATION, SHI_YAO_POEMS, _QUESTION_SCENARIO_KEYWORDS
-from narrative_utils import NARRATIVE_HINTS, PATTERN_RELATED
+from narrative_utils import NARRATIVE_HINTS, PATTERN_RELATED, LUANDONG_LABELS
 from narrative_rules import resolve_marriage_interpretation, select_timing_base
 from chain_tables import HEXAGRAM_LIUCHONG, HEXAGRAM_LIUHE
 from yilin_buyi_maps import jianyao_role, waigua_direction  # noqa: E402
@@ -799,7 +799,8 @@ def _collect_pattern_tags(context, step3: dict, step4: dict, step5: dict) -> lis
 
     # 乱动卦（《火珠林》源L33）：只标「动爻多」这一结构象。
     # 口径边界（AGENTS.md 铁律三）：**不据此改用神、不据此定吉凶**——源L33 的
-    # 「乱动之卦只取旺爻」取用口径本仓未实现（须先裁定旺的量化与四看序）。
+    # 「乱动之卦只取旺爻」取用口径第一百七十批裁定**不另立**（「旺」的书载口径＝
+    # 源L20-23 四季旺相休囚死表，与内核 step3 同一把尺；且该口径与现行用神优先序同向）。
     ld = adv.get("luandong") or {}
     if isinstance(ld, dict) and ld.get("is_luandong"):
         _add("格局-乱动", "乱动")
@@ -1049,9 +1050,18 @@ def _collect_pattern_details(context) -> list:
 
     # 乱动卦（《火珠林》源L33）：只作结构性提示——**只报「动爻多」，不据此取用神**。
     # 与独发独静同策略（AGENTS.md 铁律一：吉凶断语不入结构层；铁律三：只说结构）。
+    # 第一百七十批：《火珠林》源L27 逐字「一看世上旁爻生财旺相，忌应爻克世；二看世下亲爻财官喜静」
+    # 已拆为 look1/look2 两条纯结构标签，一并在此提示；源L33 逐字「乱动之卦只取旺爻，旺爻即用神也」
+    # 的取用口径经该批裁定**不另立**（与现行用神优先序同向）。
     ld = adv.get("luandong") or {}
     if isinstance(ld, dict) and ld.get("is_luandong") and ld.get("note"):
         detail_parts.append(ld["note"])
+    if isinstance(ld, dict):
+        _l1, _l2 = ld.get("look1"), ld.get("look2")
+        if isinstance(_l1, dict) and _l1.get("note"):
+            detail_parts.append(LUANDONG_LABELS["look1提示"].format(note=_l1["note"]))
+        if isinstance(_l2, dict) and _l2.get("note"):
+            detail_parts.append(LUANDONG_LABELS["look2提示"].format(note=_l2["note"]))
 
     # 助鬼伤身（《断易天机》源L134-L137 四条按语）：只陈述**结构上成立与否**＋解救 applicability。
     #   措辞守铁律三：用「结构上/有…信号」，不出「必凶/注定」一类断语——

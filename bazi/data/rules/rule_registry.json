@@ -1,7 +1,7 @@
 {
  "schema": "yi-rule-registry-v1",
  "discipline": "bazi",
- "_comment": "八字科规则注册表（Phase 5 Evidence Maturation：评测覆盖降到规则级，范式照六爻）。domain 括号内的英文串是 analyze.conclusion.verdicts 的 code / 顶层键——evidence.factor 互为子串即挂接（attach_rule_registry，先命中先得，顺序即优先级）。仅注册有真实评测 dim 的解释性规则；无评测 dim 的机械结构标签（xunkong/san_hui/tai_yuan/ten_god_combo/tong_guan/pillar_relations/female_fu_zi/tian_ke_di_chong）不注册、沿用学科基线（golden 指纹覆盖），缺口登记于本表 _uncovered 数组（原登记处 docs/TECH-DEBT.md §2.5，该台账已随扁平化删除、节号不再存在，2026-10-13 按实改注）；strength 例外——已有 external_holdout report-only 读数（bazi_external_cases.json），如实登记于 _uncovered ming.strength，加权 dim 化待口径变更登记。**回验契约（2026-10-09 起有牙齿，现由 dev_tools/check_rule_registry.py＝门禁 [12] 逐条回指；此处此前挂 tests/test_bazi_rule_registry.py，该文件系扁平化前旧树路径、现已不存在，2026-10-13 按实改注）**：① 评测 dim 必须是 scripts/evaluate.py WEIGHTS 的键；② impl 写成 `<file>:<symbol>`（可带括号说明），`<symbol>` 必须在 `<file>` 里**真的定义**（ast 顶层 def/class/赋值；仅被 import 进来不算——原实现把 pattern.py:tiaohou_of 当定义处、把 dayun 8 步归给 analyze.py，均属指针错误，已改指真定义处）；③ quote_in_data 指针必须可解引用，且其引文逐字命中 source.corpus.files 登记的在库语料（该引文库条目若带 corpus_line，按行级回验）；④ dayun/shensha 维度案例集 0 applicable，如实标 mechanical_regression，不得虚标 classical_holdout。",
+ "_comment": "八字科规则注册表（Phase 5 Evidence Maturation：评测覆盖降到规则级，范式照六爻）。domain 括号内的英文串是 analyze.conclusion.verdicts 的 code / 顶层键——evidence.factor 互为子串即挂接（attach_rule_registry，先命中先得，顺序即优先级）。仅注册有真实评测 dim 的解释性规则；无评测 dim 的机械结构标签（xunkong/san_hui/tai_yuan/ten_god_combo/tong_guan/pillar_relations/female_fu_zi/tian_ke_di_chong）不注册、沿用学科基线（golden 指纹覆盖），缺口登记于本表 _uncovered 数组（原登记处 docs/TECH-DEBT.md §2.5，该台账已随扁平化删除、节号不再存在，2026-10-13 按实改注）；strength 例外——已有 external_holdout report-only 读数（bazi_external_cases.json），如实登记于 _uncovered ming.strength，加权 dim 化待口径变更登记。**回验契约（2026-10-09 起有牙齿，现由 dev_tools/check_rule_registry.py＝门禁 [12] 逐条回指；此处此前挂 tests/test_bazi_rule_registry.py，该文件系扁平化前旧树路径、现已不存在，2026-10-13 按实改注）**：① 评测 dim 必须是 scripts/evaluate.py WEIGHTS 的键；② impl 写成 `<file>:<symbol>`（可带括号说明），`<symbol>` 必须在 `<file>` 里**真的定义**（ast 顶层 def/class/赋值；仅被 import 进来不算——原实现把 pattern.py:tiaohou_of 当定义处、把 dayun 8 步归给 analyze.py，均属指针错误，已改指真定义处）；③ quote_in_data 指针必须可解引用，且其引文逐字命中 source.corpus.files 登记的在库语料（该引文库条目若带 corpus_line，按行级回验）；④ 状态必须与「带期望例数」相符：dayun 维度 0 applicable ⇒ 如实标 mechanical_regression，不得虚标 classical_holdout；shensha 第一百六十九批起 5 applicable（书证回填，逐例书证与选取规则见 docs/CHANGELOG.md 第一百六十九批，其 note 明写 n=5、其余 333 例书无明写）⇒ 标 classical_holdout。两维的例数由 dev_tools/check_dim_lock.py（门禁 [25]）双向锁死（多了＝未登记回填判红，少了＝回填静默丢失判红）。",
  "rules": [
   {
    "rule_id": "ming.tiaohou",
@@ -96,7 +96,7 @@
      "holdout"
     ],
     "dim": "dayun",
-    "note": "dayun 维度案例集 0 applicable（expected 缺）——机械覆盖=golden 指纹+回归；对齐覆盖待外部集（禁人为制造 expected）；不得虚标 classical_holdout。书源引文已逐字挂接（2026-10-04n），evaluation 状态维持 mechanical_regression 不变（缺 expected 与引文核对是两回事）"
+    "note": "dayun 维度案例集 0 applicable（expected 缺）——机械覆盖=golden 指纹+回归；对齐覆盖待外部集（禁人为制造 expected）；不得虚标 classical_holdout。【第一百六十九批把「书不写」量化成数】source_quote+note 扫主评分语料 338 例：明言行运方向（顺行/逆行/顺走/逆走…）0 例、明言起运/交运 0 例 ⇒ 空档是书不写、不是漏回填。同批修掉评分面一个潜伏缺陷：dayun 维旧口径固定拿 12 当分母，只注顺逆的例答对也只记 8/12＝66.7%（只注起运则 4/12＝33.3%），把「书没写」记成扣分、违反本评测文件自己写明的规则；现改为按实际写出的子项取 8/4/12，负例自证见 dev_tools/eval_selftest.py 第 8、9 场景（改前必红：66.7%／33.3%）。本维一旦有书证回填即可直接接上、不会被静默压分；例数由门禁 [25] 维度适用数锁锁 0/0。书源引文已逐字挂接（2026-10-04n），evaluation 状态维持 mechanical_regression 不变（缺 expected 与引文核对是两回事）"
    }
   },
   {
@@ -113,15 +113,15 @@
     "书内异文_第二组干支": "「鼠猴乡」一组干支**库内异文并存**：《五行精纪》源L1999 作「**乙庚**鼠猴乡」；《神峰通考》源L25 作「**乙巳**鼠猴乡」（批判语境）；而《五行精纪》另 2 处、《命理探源》源L731、《神峰通考》另 2 处作「**乙己**鼠猴乡」。**引擎从多数作「乙己」**（表 TIAN_YI_GUI_REN：甲戊庚→丑未、乙己→子申、丙丁→亥酉、壬癸→卯巳、辛→午寅）。逐格对拍（§四.5）：《五行精纪》源L1999 贵人诀共**五组**，引擎实得 **4 组逐字全同**（甲戊庚→牛羊＝丑未、丙丁→猪鸡＝亥酉、壬癸→兔蛇＝卯巳、辛→马虎＝午寅）；唯一差异在「鼠猴乡」一组的**冠干**——书L1999 冠「乙庚」、引擎从众本作「乙己」，而该组**地支对「子申」三本一致**。即：异的是「哪些天干落在子申」，不是「子申是不是贵人」。**登记读法而非判错**：若日后定以《五行精纪》单一文本为准，则该格应作「乙庚」——须与神煞其余各表一并复核后再动，本轮**不改引擎**（改则牵动 shensha 全部下游读数，须先有反事实对拍基准）。",
     "驳说并存": "《神峰通考》**dz 本**源L25（总论子平谬说类）与源L864（楠断曰）张楠明斥贵人诸说「原取名之不据理出…甚为虚诞」「飘空而立，不根理出，岂可信乎？」；《三命通会》源L3237 等条下（丁亥日壬寅时「日贵格配合壬寅官印俱全文章显逹子月大贵」）又按「日贵格」**照用**。故本条不是「无据」，而是**同一门内立说与驳说并存**：本仓按「只标所在、不批吉凶」取其安星一面（见 applicability），驳说如实登记不抹平（铁律三）。"
    },
-   "applicability": "按通行口诀机械安星；只标所在、不批旺衰吉凶（铁律三）；日时同支去重。起例书证见 source（2026-10-13 已更正为 verified=true，含「乙己/乙庚」书内异文登记）。shensha 维度仍 0 applicable：安星为表驱动、定义式，但**书源只给起例口诀、绝大多数命例并未在书中明写「本盘有此神煞」**，无书证可回填 expected ⇒ 维持 0 applicable、诚实结案（不虚标、也不用引擎反推）。",
+   "applicability": "按通行口诀机械安星；只标所在、不批旺衰吉凶（铁律三）；日时同支去重。起例书证见 source（2026-10-13 已更正为 verified=true，含「乙己/乙庚」书内异文登记）。shensha 维度 **5 applicable**（第一百六十九批书证回填，选取规则确定性、非挑案例）：以引擎可安出基名 16 项（shensha_of_chart；全表 19 项，另禄神/红艳/天喜只在择吉安星里出、本维不评，实测见 scratch/_probe_name_counts.py）机械扫主评分语料 338 例的 source_quote+note，命中 5 例且全部回填——MT521 书作「羊刃」（《穷通宝鉴》论庚·八月「且见羊刃…名为羊刃驾杀」）；ZP006「此石友三命造，阳刃格」、ZP007「月令阳刃用官」、ZP031「地支阳刃，煞刃格成也」、MT550「阳刃帮身，较前更旺」书作**异名「阳刃」**（阳干之刃，与羊刃同义，expected 存引擎规范名「羊刃」）。变体名普查（阳刃/咸池/贵人/天德/文曲/童子等 18 词）除阳刃这 4 例外 0 命中 ⇒ 其余 **333 例书文 0 处提及神煞名、维持空档**（书不逐盘明写，不是漏回填；按 §三.4 不得由口诀自行推导，那将使该维自证）。例数由门禁 [25] 维度适用数锁锁 0/5（tune/holdout），多了判红。",
    "evaluation": {
-    "status": "mechanical_regression",
+    "status": "classical_holdout",
     "splits": [
      "tune",
      "holdout"
     ],
     "dim": "shensha",
-    "note": "shensha 维度案例集 0 applicable——机械覆盖=golden 指纹+回归；对齐覆盖待外部集；不得虚标 classical_holdout。**为何不注**：书源给的是**起例口诀**（可据以安星），而非逐盘明写「此盘神煞如何」；按 §三.4 禁引擎反推 expected，也不得由口诀自行推导某盘应有何煞（那将使该维**自证**、分数失去意义）。故按 N/A 剔除、不参与读数。"
+    "note": "shensha 维度案例集 **5 applicable**（第一百六十九批书证回填，全部在 holdout：MT521、ZP006、ZP007、ZP031、MT550）⇒ 由 mechanical_regression 升 classical_holdout（core/yishu_core/evidence.py 语义：被古籍案例对齐评测覆盖）。**读数口径**：适用 5/338、其余 333 例按 N/A 剔除，故该维百分比只对这 5 例成立、必须连适用数一起报（本批实测 5/5），不得外推为全库覆盖；机械覆盖仍 = golden 指纹 + 回归。选取规则确定性：书文命中引擎可安出神煞基名者全收（5/5 全中），非按分数挑案例。**为何只回填这 5 例**：书源给的是起例口诀，333 例未在书中逐盘明写「本盘有何神煞」，按 §三.4 不得由口诀自行推导（那将使该维自证），维持空档；例数由 dev_tools/check_dim_lock.py（门禁 [25]）双向锁 0/5（tune/holdout），回填多了少了都判红。"
    }
   },
   {

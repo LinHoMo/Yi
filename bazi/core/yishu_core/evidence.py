@@ -442,9 +442,13 @@ def attach_rule_registry(evidence: list[Evidence],
     匹配纪律（保守）：只在 evidence.factor 与注册表 domain **互为子串**时挂接；
     挂接动作 = 补 rule_id、出处缺省时补书名、**评测状态以注册表
     evaluation.status 为准**——规则级覆盖是比学科级基线更细的真值，
-    注册表说 mechanical_regression 就如实降级（如命科大运/神煞维度
-    案例集 0 applicable），说 external_holdout 就如实升级。匹配不上
+    注册表说 mechanical_regression 就如实降级（如命科大运维度案例集
+    0 applicable），说 external_holdout 就如实升级。匹配不上
     的一律不动——宁缺毋滥。
+
+    状态与例数由 `dev_tools/check_dim_lock.py`（门禁 [25]）双向锁死：
+    命科神煞维度第一百六十九批起 5 applicable（书证回填）⇒ 注册表已升
+    classical_holdout，例数少了（回填静默丢失）或多了（未登记回填）都判红。
     """
     if not registry:
         return evidence

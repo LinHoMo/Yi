@@ -65,7 +65,7 @@ AGENTS_TUNE_FLOOR = 95.0  # SKILL.md 的均分硬下限；BASELINE 必须严于�
 DIM_HITS = {
     "tune": {"tiaohou": 60, "ten_gods": 1, "hidden_stems": 1},
     "holdout": {"pillars": 213, "tiaohou": 51, "pattern": 29, "cong_ge": 13,
-                "ten_gods": 213, "hidden_stems": 213},
+                "ten_gods": 213, "hidden_stems": 213, "shensha": 5},
 }
 # tiaohou 下限原为 tune 30／holdout 19（扁平化提交 e2c77ad 带入，此后语料扩样但
 # 该两格从未回头改）——实测满分数已是 60／51，即**下限只压着实测的 50%／37%**：
@@ -79,7 +79,16 @@ DIM_HITS = {
 # 因为均分 97.578（无此两维）与 97.638（有）都四舍五入成 97.6，两维的 N/A 不进分母，
 # 于是一次「少 214 例 × 24 权重」的静默盲区在分数上完全不可见。命中数是绝对量：
 # 键丢了 → applicable=0 → full=0 < 下限 → 判红。这才是「回填有没有活着」的机械证据。
-# shensha／dayun 仍 0 例带期望，继续如实登记在 rule_registry，不设假下限。
+# shensha／dayun 的空档原先只有「不设假下限」一句注（第一百六十九批前的原话），
+# 该批起改为：shensha 由**书证回填 5 例**（全库 338 例以引擎神煞基名 19 项机械抽自
+# core/yishu_core/shensha.py、扫 source_quote+note，命中者全部回填：MT521 书作「羊刃」
+# 《穷通宝鉴》论庚·八月「且见羊刃…名为羊刃驾杀」；ZP006/ZP007/ZP031/MT550 书作异名
+# 「阳刃」＝阳干之刃，按同义存引擎名「羊刃」，逐例书证见 scratch/_inject_shensha.py
+# 与本批 CHANGELOG；其余 333 例书文 0 处提及神煞名 ⇒ 维持空档）。
+# 故 holdout 加 `shensha: 5` 作**回填存活线**——键在 git 还原里静默丢失
+# ⇒ applicable 归 0、full 归 0 < 下限 5 → 判红。dayun 仍无可回填（书文明写顺逆／起运
+# 实测 0/338），不设假下限；两维的**带期望例数**由 [25] 维度适用数锁双向锁死
+# （多了＝未登记回填判红，少了＝回填丢失判红）。
 
 # 接线门比对的最小叶子长度。原取 12（只想比整句引文），代价是 nayin_quxiang.json
 # 这类「性质名短语库」（227 条叶子全 <12 字、最长 8 字）被 `if not leaves: continue`
@@ -531,6 +540,19 @@ def main() -> int:
         fails.append("CLI 编码红线未过（产物出现 GBK 字节／入口跑挂／零入口可扫＝没跑）")
     else:
         print("[24] CLI 编码红线 √")
+
+    # [25] 维度适用数锁：受控空档维度（shensha/dayun）的「带期望例数」必须与登记逐格相等。
+    # 双向判红：多了＝§三.4 禁止的引擎反推回填（读数当场自证），少了＝回填静默丢失
+    # （第一百六十八批：214 例回填丢失而均分四舍五入后不动）。解锁唯一通道 =
+    # 改 check_dim_lock.py 的 LOCK 字面量（进 git diff）+ docs/CHANGELOG.md 登记书证。
+    code, out = run(["dev_tools/check_dim_lock.py", "--selftest"])
+    for line in out.splitlines():
+        if line.strip():
+            print("  " + line.strip())
+    if code != 0:
+        fails.append("维度适用数锁未过（登记外回填／回填静默丢失／LOCK 维度名拼错）")
+    else:
+        print("[25] 维度适用数锁 √")
 
     if ENC_WITNESS:
         fails.extend("产物编码退化：" + w for w in ENC_WITNESS)

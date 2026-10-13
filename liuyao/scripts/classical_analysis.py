@@ -129,8 +129,10 @@ def enhance_reading(result_dict):
         # 独发/独静（《增删卜易·独发章》）：只标象不进主分，供正文辅助说明
         "du_fa_du_jing": analyze_du_fa_du_jing(result_dict),
         # 乱动卦（《火珠林》源L33 逐字「乱动之卦只取旺爻，旺爻即用神也」）：只标「动爻多」这一结构象，
-        # **不实现该条的「只取旺爻」取用口径**（须先裁定旺的量化与四看序，见
-        # rule_registry liuyao.huozhulin_luandong 条 gap_detail）。故不进主分。
+        # 外加源L27 一看/二看（look1/look2）两条纯结构标签（第一百七十批）。
+        # **不另立该条的「只取旺爻」取用口径**（第一百七十批裁定：「旺」的书载口径＝源L20-23
+        # 四季旺相休囚死表，与内核 step3 同一把尺；且该口径与现行 _use_god_priority 同向，
+        # 见 rule_registry liuyao.huozhulin_luandong 条 gap_detail）。故不进主分。
         "luandong": analyze_luandong(result_dict),
         # 以下三项为「只标象/只标结构、不打分」的新分析段（2026-10-07 接入）。
         # 【归因更正，2026-10-07】此前有人在此处把本三项注释掉，归因写的是
