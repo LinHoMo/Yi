@@ -304,13 +304,20 @@ def score_case(eng: dict, exp: dict, model: str, case: dict | None = None) -> di
                 for xk, ek in RHYTHM_PAIRS
             )
             if abs_hit:
-                dims["yingqi"] = (w, w, "绝对日窗命中")
+                dims["yingqi"] = (w, w, "绝对日窗命中（无语支基准·按日窗判）")
             elif hit:
-                dims["yingqi"] = (w, w, "字面命中")
+                dims["yingqi"] = (w, w, "字面命中（无语支基准）")
             elif rhythm:
-                dims["yingqi"] = (int(w * 0.7), w, "相对窗节奏语义对齐")
+                dims["yingqi"] = (int(w * 0.7), w, "相对窗节奏语义对齐（无语支基准）")
             else:
-                dims["yingqi"] = (0, w, f"未对齐({x_yq})")
+                # 第一百七十二批裁定（用户授权「核心都是最好的预测」）：
+                # 旧口径两种都不对——①整批判 0：可实测 **4/6 例绝对日窗命中**，
+                #   判 0 是把答对的记成答错；②整批 N/A 剔除（143 批提案）：会**抹掉
+                #   那 4 个真实得分**，且书并非没写应期（写了「次日」），
+                #   与「只评书上明写的量」不冲突。
+                # 新口径：答对即满分；答不进窗 ⇒ 本维考的是支级次序、不是窗口运气，
+                # 无语支基准无从按名次判 ⇒ 按 N/A 剔除，**不记失分**。
+                dims["yingqi"] = (0, 0, f"无语支基准且未进日窗 → N/A（{x_yq}）")
         elif rank == 1:
             dims["yingqi"] = (w, w, f"主应期命中（{exp_unit}级）")
         elif rank == 2:

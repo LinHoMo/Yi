@@ -752,7 +752,9 @@ def main() -> int:
             ("split_ledger", "[19] 分片台账复核（排除理由须能被字面重跑：无卦名／同源／别源 0 锚点）",
              "dev_tools/check_split_ledger.py"),
             ("cli_encoding", "[20] CLI 编码红线（cp936 下 argparse 中文入口的产物须为可读 UTF-8）",
-             "dev_tools/check_cli_encoding.py")):
+             "dev_tools/check_cli_encoding.py"),
+            ("yingqi_scoring", "[26] 应期评分口径（无语支基准：答进日窗满分／答不进 N/A，双向都要有牙）",
+             "dev_tools/check_yingqi_scoring.py")):
         if want(key):
             print(f"\n{title}")
             rc, out = run([sys.executable, script, "--selftest"])
