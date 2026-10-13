@@ -16,7 +16,9 @@ tools/、docs/source-readings/ 都随仓库扁平化删除了——照着跑必�
     `.md`/`.py`，于是 `data/rules/rule_registry.json` 的 coverage/_comment 散文里挂着
     `tests/test_bazi_bing_yao.py` 等**三条从未存在过**的幽灵指针（git 全历史 0 命中），
     [11] 却照报「活引用全部可达」——可达性门自己漏了整类载体，正是它要防的病。
-    数据 JSON 里 `"impl": "file.py#symbol"` 这类本就是**可执行契约**（由 [12] 逐条回指），
+    数据 JSON 里 `"impl": "file.py:symbol"` 这类本就是**可执行契约**（由 [12] 逐条回指；
+    第一百六十八批前这句话是假的——[12] 当时只验 source.quote_in_*／corpus_files，
+    从没看过 impl。已补 `check_impl`，见该器 docstring），
     扫得到只会更严，不误伤：字段值以 `/` 分段且带已知扩展名的串本来就该在盘上。
     `data/cases/`（案例正文含内嵌 markdown 与书文）与 `data/sources/`（古籍底本）不扫，
     否则会把史料当声明造出假红——反向激励删史料。

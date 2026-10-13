@@ -1,5 +1,154 @@
 # 八字 CHANGELOG
 
+## 2026-10-13 第一百六十八批：**找回第一百六十三批那批「已登记却从未入库」的十神／藏干回填**——文档一直在说 214 例带期望，盘上 0 例；补 `DIM_HITS` 两维下限让它再也丢不掉（新下限已做负例自证）；并清 `check.py` 三处指向已删 `--full` 的幽灵指针
+
+### 一、问题：三份文档都写着「214 例带期望」，盘上一个键都没有
+
+- **文档侧（一致地）**：`README.md:36-37,48`、`docs/EVAL-PLAN.md:22,25,39,185` 与
+  `docs/CHANGELOG.md` 第一百六十三批／第一百六十五批均登记「ten_gods／hidden_stems
+  已由书载四柱机械派生回填 **214 例**，holdout 213/213、tune 1/1 均 100%」。
+- **盘上实测（相反地）**：`data/cases/bazi_classical_cases.json` 与 `HEAD` **byte-identical**，
+  `expected` 里 `ten_gods`／`hidden_stems` **各 0 例**；`git log -S'"ten_gods"' -- <该文件>`
+  空 ⇒ **从未被 commit 过**。
+- **`--apply` 当时确实跑过**（旁证，非推断）：备份文件 `.bak_20261013115331`／
+  `.bak_20261013115634` 存在过（11:53／11:56 两次 `--apply` 的产物），现已随 scratch 清理消失。
+- **丢失机理是推断、不是实测**：字节 == HEAD 最像「回填后被 `git checkout -- <该路径>` 之类还原掉」
+  （同类事故在 `liuyao/docs/CHANGELOG.md:2501` 有过登记），但**本仓没有留下能证明这一步的证据**。
+  本条只登记「测到了什么」（byte-identical、从未入库、apply 曾运行）与「推断是什么」，不把推断写成事实。
+
+### 二、为什么两科门禁全程绿、一次都没叫——**四舍五入把它藏住了**
+
+- 均分口径是**加权均分**，缺期望的维度按 N/A 剔除、不进分母：
+  - 无这两维：holdout 均分 **97.578**
+  - 有这两维：holdout 均分 **97.638**
+  - 两者四舍五入后**都显示 97.6**，头条数字一位小数都没动。
+- 于是「少 214 例 × 两维权重」的静默盲区在分数面上**完全不可见**：
+  `DIM_HITS` 当时只有 `pillars/tiaohou/pattern/cong_ge`，这两维**连条目都没有**，
+  输出里长成「本次未设下限」——**门看得见它没管，却不会因为它没管而红**。
+
+### 三、处置：补回数据 + 把门补上
+
+1. **回填重做**（`bazi/scratch/inject_def_dims.py --apply`）：214 例带上两维；
+   `git diff --stat` = **5378 insertions(+), 15 deletions(-)**，15 处删除逐条核过**全是逗号**（`"from_type": "真从"` → `"from_type": "真从",`）。属 AGENTS.md §三.4 **定义式维度例外**（表驱动唯一解，由已存书载四柱经 `relations.ten_god` 等规范函数机械派生，不碰强弱/格局/吉凶判读）。
+2. **顺手修掉注入器的一个隐患**：`inject_def_dims.py` 原用 `indent=2` 落盘，而语料契约是
+   `indent=1`——真跑一次会把整文件重排（207937 vs 184301 字节），**把语义变更淹在格式噪声里**。
+   已改 `indent=1` 并加注释说明「格式漂移必须与语义变更可分离」。
+3. **新增逐格对拍工具** `bazi/scratch/diff_inject_vs_head.py`：与 `git show HEAD:<该文件>`
+   逐例比对，断言 id 集不变、`splits`/`schema`/`_comment` 不变、book/quote/split/datetime/
+   location 不变、既有 `expected` 值 byte-equal、无键丢失、且新增键集合
+   `= ADDED if "pillars" in expected else ∅`（**MT* 调候例不带四柱、正确地不回填**）。
+   实跑：`例数 338 → 338 ／ 带新增两维 214 ／ √ 仅新增两维，既有值/引文/分母零改动`。
+4. **补门**：`DIM_HITS` 增 `tune {ten_gods:1, hidden_stems:1}`、`holdout {ten_gods:213, hidden_stems:213}`，
+   并在下方注明这是**回填存活线**。键丢了 → applicable=0 → full=0 < 下限 → 判红。
+5. **负例自证（AGENTS.md §四.8）**：`bazi/scratch/selftest_dim_hits.py` 直接喂
+   **`full=0` 的 eval_holdout.json**——即第一百六十三批那次失效的真实形态——断言必红且点名
+   `ten_gods`；再喂真实读数断言不误伤。实跑：负例 `holdout/ten_gods 绝对命中数 0 低于下限 213`
+   判红、正例不误伤，rc=0。
+
+### 四、回填后的读数（`evaluate.py --split … --save` 实跑）
+
+| 集合 | 均分 | n | 明细 |
+|------|------|---|------|
+| tune | **100.0** | 60 | pillars 1/1、ten_gods **1/1**、hidden_stems **1/1**、tiaohou 60/60 |
+| holdout | **97.6** | 278 | pillars 213/213、ten_gods **213/213**、hidden_stems **213/213**、tiaohou 51/53、pattern 29/36、cong_ge 13/15 |
+
+`shensha`／`dayun` 两维**仍 0 例带期望**（n/a=278），继续如实登记在 `rule_registry`，不设假下限。
+⇒ `README.md:36-37,48` 与 `EVAL-PLAN.md:22,25,39,185` 的说法**恢复为真**——**本批不改文档正文**，
+因为错的一直是数据，不是文档（§六.3 的正确方向是「以实跑读数改文档」，此处实跑已经追上文档）。
+
+### 五、`check.py` 三处指向已删 `--full` 的幽灵指针（§六.3）
+
+- 模块 docstring、`--fast` 的运行时提示、`argparse --fast` 的 help 三处都写着
+  「根门 `dev_tools/check.py --full` 才会不带 --fast 跑一遍」。
+- 实测：本器 argparse **只接受 `--raise`／`--fast`**，跑 `--full` 直接
+  `check.py: error: unrecognized arguments: --full`（rc=2）；且**根门 `tools/check.py` 早已随
+  扁平化删除**（`Test-Path` 无根 `check.py`／根 `dev_tools/`）。三处都在推荐一个**跑不通的命令**。
+- 已按实改写：`--fast` 的正确用法是「省时，但不作为合入依据」；提示改成
+  「合入前请重跑不带 --fast 的 `python dev_tools/check.py`」。
+
+### 六、其余陈旧读数改正（逐条可回验；历史条目一字未改）
+
+| 文件 | 原 | 改 | 依据 |
+|------|----|----|------|
+| `dev_tools/check.py` docstring | tune n=138／holdout n=532 | **n=60／n=278** | `[7]` 实跑 |
+| `dev_tools/check.py` docstring | holdout 96.2 / pattern 77.8% / N/A 210·231 | **97.6 / 80.6% / 242·263** | `eval_holdout.json` 实测（36+242=278、15+263=278） |
+| `dev_tools/check.py` BASELINE 注 | `# n=30`／`# n=246` | **n=60／n=278** | 值 100.0／96.6 未动（只准前进） |
+| `scripts/evaluate.py` 注 | 670 例（138／532）；pillars 363／tiaohou 271；**四维 0 例带期望** | **338 例（60／278）**；三键各 214／tiaohou 113；**只剩 shensha/dayun 0 例** | 键频次实测 |
+| `dev_tools/check_dim_surface.py:67` | 670 例 | 338 例 | 同上 |
+| `dev_tools/golden.py` docstring | **44 样例**；670 例带四柱者 | **40 样例**；338 例（男 287／空 51／**女 0**） | `golden.py verify` 报 40 条；gender 实测 |
+| `data/rules/rule_registry.json:145` | 670 例（138／532）；金标准指纹 `1be8d5b579463a47` | 338 例（60／278）；**`2a4c9258d6c1e4cb`** | `golden.py verify` 当前读数 |
+
+`README.md:54`、`EVAL-PLAN.md:24,184`、`eval_unique_keys.py:4` 与全部历史 CHANGELOG 条文里的
+旧数字**一律不改**——它们已明确标注为「#39 清冗余前口径」，属历史登记事实。
+
+### 七、`[12]` 从没验过 `impl`——文档一直说它验了（§六.3），照六爻科同批拉齐
+
+- **假话在文档里**：`dev_tools/check_doc_refs.py:19` 写着数据 JSON 的
+  `"impl": "file.py:symbol"`「本就是**可执行契约**（由 [12] 逐条回指）」。
+  实读 `[12]`（`check_rule_registry.py`）：它只回验 `source.quote_in_data`／
+  `quote_in_code`／`corpus_files` 三类，**`impl` 一次都没被读过**。
+- **后果不是理论风险**：六爻科同批实抓到两条悬空 `impl`（第一百六十六批「域拆分」把
+  `analyze_shen_yao_activation`／`analyze_you_jie` 搬进子模块、父模块无 re-export，
+  `impl` 仍指父模块）。本科同一潜在缺口。
+- **本科实测：9 条 `impl` 里 1 条是死指针**——`ming.pattern` 记
+  `scripts/pattern.py:PATTERN_CB_RULES`，而该文件第一百六十七批已拆成
+  **薄 re-export 壳**（只留 `from bazi_factors import *`），`PATTERN_CB_RULES`
+  **未进 `bazi_factors.__all__`**，经壳 `hasattr()` 实测 `False` ⇒ 真不可达。
+- **处置**：① 两科 `[12]` 各补 `check_impl`，`impl` 计入检视数并**不看 verified 一律判红**
+  （代码指针没有「诚实未核实」状态）；② 死指针按**真实定义处**更正为
+  `scripts/bazi_factors/_common.py`，另 4 条（`_from_judge`／`dayun_table`／
+  `bing_yao`／`strength_and_pattern`）经壳虽可达，仍一并改指真实定义处
+  `bazi_factors/{congrge,dayun,bingyao,strength}.py`。
+- **口径必须「宁可少判」，否则门会逼人改写正确定位记号**：`impl` 是自由散文
+  （`:1058`／`:4.3`／`func(786)`／`；`＋`→` 多段并存）。只判
+  「`<path>.py` 后紧跟 `:首字符为字母/下划线的标识符」，行号与版本号式一律跳过。
+- **薄壳例外**：符号在壳里不落字面，故壳内含 `from X import *` 时改判**运行时可达性**，
+  否则会造 4 条假红（实测踩到：`_from_judge` 等 4 个符号照字面判全部误伤）。
+- **门反过来咬了我一口（这是它的功劳）**：更正死指针时我在括号注里写了旧写法
+  `scripts/pattern.py:PATTERN_CB_RULES`，`check_impl` **扫整条 `impl` 串、含说明文字**，
+  当场判红。已按其口径改成「只写文件、不拼符号」，并把这条规则写进 `check_impl` 注释——
+  **说明文字里的死指针同样是死指针**。
+- **负例自证（§四.8）**：`selftest` 增 4 例——文件不存在／符号不在文件内／
+  行号式定位记号须放行／纯路径须放行；另加「第一百六十六批真实事故形态」一条
+  （`classical_enhancements.py:analyze_shen_yao_activation` 须判红）。实跑全部符合预期。
+- 读数：`[12]` 检视 **15 → 24 条**（+9 条 `impl`），24/24 可回指。
+
+### 八、`DIM_HITS` 的 `tiaohou` 下限是陈旧字面量——只压着实测的一半，静默丢一半也不红
+
+- **同一类缺陷的第二次出现**：本批刚给 `DIM_HITS` 补两维下限防「回填静默丢失」，
+  但回头查其余各维，发现 `tiaohou` 的下限**从来就是松的**。
+- **实测**（`results.dims[].full`，即门真正比的那个值）vs 下限：
+
+  | 集 | 维 | 满分/适用 | 旧下限 | 下限占实测 |
+  |---|---|---|---|---|
+  | tune | tiaohou | **60/60** | 30 | **50%** |
+  | holdout | tiaohou | **51/53** | 19 | **37%** |
+  | holdout | pillars | 213/213 | 213 | 100% |
+  | holdout | pattern | 29/36 | 29 | 100% |
+  | holdout | cong_ge | 13/15 | 13 | 100% |
+  | holdout | ten_gods | 213/213 | 213 | 100% |
+  | holdout | hidden_stems | 213/213 | 213 | 100% |
+
+- **判定为陈旧而非有意留量**：其余五维下限**一律等于实测满分数**（余量 0），
+  唯 `tiaohou` 一维松到 37%。`git log -S` 追到这两个字面量由扁平化提交
+  `e2c77ad`（2026-10-10）带入，此后语料扩样、该维满分涨到 60/51，
+  **这两格从未回头改过**（§六.2「改实现必须回头改登记」的反面）。
+- **后果**：holdout 的 `tiaohou` 静默丢 **32/53 例**也不会判红——该维大半没了，
+  门照样全绿。这正是本批前半段在清的「静默盲区」，只是换了个藏身处。
+- **处置**：按 §四.2「基线只准前进」上调至实测值 **tune 30→60、holdout 19→51**，
+  与其余各维同口径（下限=实测满分数）。改动写在代码字面量里并加注说明来历。
+- **负例自证（§四.8）**：`scratch/selftest_dim_hits.py` 增**负例 B**——把 holdout
+  `tiaohou` 打到 `full=30`（**旧下限 19 会放行**、新下限 51 必红），断言判红并点名；
+  再喂真实读数断言不误伤。实跑：负例 A（回填丢失）、负例 B（tiaohou 掉一半）
+  双双判红，正例不误伤，rc=0。
+
+### 九、本批门禁
+
+- `python bazi/dev_tools/check.py` rc=0（含 `[7]` 全量、`[22]` 考点查重 405 例＝405 唯一考点、
+  `[23]` 三 seed 指纹全同 `2a4c9258d6c1e4cb`）。
+- `golden.py verify` rc=0，机械+措辞均未漂移 ⇒ **引擎输出未被回填改动**（`expected` 只进评分面）。
+- 分数含义：与古籍案例要点的一致性，不代表现实预测命中率（SKILL.md 铁律三）。
+
 ## 2026-10-13 第一百六十七批：**推翻 `ming.shensha` 的 verified=false**——复核实测三书均有肯定性贵人起例（旧结论系只读了《神峰通考》批判语境）；并登记本批我自己写错的三处（8/9 格数、1712 行号体系、书名错字）
 
 ### 一、`ming.shensha` verified=false 维持四年账（实为 2026-10-04n 登记）的错误被复核推翻

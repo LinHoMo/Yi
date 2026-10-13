@@ -1,20 +1,23 @@
 # -*- coding: utf-8 -*-
 """命·质量门：契约完整性 + 四段冒烟 + 金标准 + **对齐分下限** + **表同步门**。
 
-    python dev_tools/check.py            # 全部检查
+    python dev_tools/check.py            # 全部检查（含 [7] 分数下限门）
     python dev_tools/check.py --raise    # 把本次实测对齐分登记为新基线（确认改进后才用）
-    python dev_tools/check.py --fast     # 跳过 [7] 案例评测（根门 dev_tools/check.py 默认这么调）
+    python dev_tools/check.py --fast     # 跳过 [7] 案例评测（省时；**不作为合入依据**）
 
-⚠ `--fast` 下 **[7] 分数下限门不生效**（照六爻同参数口径；根门 `dev_tools/check.py --full`
-  才会不带 --fast 跑一遍）。合入前必须跑一次**不带 --fast** 的本门，否则 tune/holdout
-  回退无人拦（SKILL.md）。跳过时本门会在输出里显式写明「未生效」，不假装通过。
+⚠ `--fast` 下 **[7] 分数下限门不生效**（照六爻同参数口径）。合入前必须跑一次**不带 --fast**
+  的本门，否则 tune/holdout 回退无人拦（SKILL.md）。跳过时本门会在输出里显式写明
+  「未生效」，不假装通过。
+  （2026-10-13 更正：此处原写「根门 `dev_tools/check.py --full` 才会不带 --fast 跑一遍」，
+   而根 `tools/check.py` 已随扁平化删除、本器也从未接受过 `--full`——推荐的是一个不存在
+   的命令。同一错误提示还在两处注释里，已一并按实改掉，见 docs/CHANGELOG.md 第一百六十八批。）
 
 分数口径（SKILL.md 铁律三，务必连同分数一起读）：
   [7] 的分数是**古籍案例对齐分**——引擎输出与《穷通宝鉴》《子平真诠》《滴天髓》等
   案例要点的加权一致性（strict 计分模型），用于回归审计，**衡量不了现实命中率**。
-  tune n=138、holdout n=532（2026-10-12 按 `scripts/evaluate.py --split …` 实跑更正；
-  原记「tune n=30、holdout n=246」系语料扩容前快照，新旧不可比——见 docs/EVAL-PLAN.md §1.1 与 §四.4）。
-  holdout 集合未参与本轮判据调参。
+  tune n=60、holdout n=278（2026-10-13 按 `scripts/evaluate.py --split … --save` 实跑更正；
+  原记「tune n=138、holdout n=532」系 #39 清出 342 例冗余**前**的口径，新旧不可比——
+  见 docs/EVAL-PLAN.md §1.1 与 §四.4）。holdout 集合未参与本轮判据调参。
 
 门槛设计（SKILL.md）：
   · 基线取**实测值**，只准前进不准后退：低于 BASELINE 即判红（范式照六爻
@@ -22,10 +25,11 @@
     `docs/CHANGELOG.md` 登记理由；**下调**基线只能改本文件里的字面量（进 git diff、
     进评审），本地 `check_baseline.json` 覆盖文件一律**不得放宽**（见 `_effective_baseline`）。
   · §四.2「tune 均分无故跌破 95 即视为回归」落在**加权均分**口径上（当前 tune 100.0 /
-    holdout 96.2，均 ≥95，AGENTS_TUNE_FLOOR 有机械断言兜着）。
+    holdout 97.6，均 ≥95，AGENTS_TUNE_FLOOR 有机械断言兜着）。
   · 维度层不用百分比当门槛，改用**绝对命中数**（`DIM_HITS`）：当前 holdout 的
-    pattern 77.8%／cong_ge 86.7% 是「满分例数/适用例数」的维度内比值（n=36／n=15，
-    另有 210／231 例 N/A），不是 §四.2 说的「均分」；把它当 95 分线是口径错配。
+    pattern 80.6%／cong_ge 86.7% 是「满分例数/适用例数」的维度内比值（n=36／n=15，
+    另有 242／263 例 N/A——本集合 n=278，Applicable+NA 必须等于 278），不是 §四.2 说的「均分」；
+    把它当 95 分线是口径错配。
     而百分比本身不能当回归门槛——新增案例只涨分母、必然压低百分比，拿它设线等于
     逼人调阈值或拒绝扩样。命中数则单调：引擎回归必压低它，扩案例不会。
 """
@@ -51,18 +55,31 @@ CASES_FILE = DISC / "data" / "cases" / "bazi_classical_cases.json"
 
 # 古籍案例对齐分（加权均分 %，strict）——2026-10-09 实测登记，非预测命中率
 BASELINE = {
-    "tune": 100.0,        # n=30
-    "holdout": 96.6,      # n=246（未参与本轮调参；2026-10-10 从格判据改正后实测抬上来的）
+    "tune": 100.0,        # n=60（2026-10-13 按 #39 清冗余后的实测例数更正，原注 n=30）
+    "holdout": 96.6,      # n=278（未参与本轮调参；2026-10-10 从格判据改正后实测抬上来的。
+                          #  原注 n=246 系语料扩容前快照；实测值 97.6 属只准前进，未 --raise）
 }
 AGENTS_TUNE_FLOOR = 95.0  # SKILL.md 的均分硬下限；BASELINE 必须严于它
 
 # 维度绝对命中数下限（= evaluate.py 明细里的「满分例数」；n/a 例不进分母故不影响本数）
 DIM_HITS = {
-    "tune": {"tiaohou": 30},
-    "holdout": {"pillars": 213, "tiaohou": 19, "pattern": 29, "cong_ge": 13},
+    "tune": {"tiaohou": 60, "ten_gods": 1, "hidden_stems": 1},
+    "holdout": {"pillars": 213, "tiaohou": 51, "pattern": 29, "cong_ge": 13,
+                "ten_gods": 213, "hidden_stems": 213},
 }
-# 其余维度（ten_gods / hidden_stems / shensha / dayun）案例集 0 applicable，
-# 如实登记在 rule_registry 的 mechanical_regression / _uncovered，不设假下限。
+# tiaohou 下限原为 tune 30／holdout 19（扁平化提交 e2c77ad 带入，此后语料扩样但
+# 该两格从未回头改）——实测满分数已是 60／51，即**下限只压着实测的 50%／37%**：
+# 该维静默丢掉一半（holdout 丢 32/53）也不会判红，正是本门要防的静默盲区。
+# 其余各维下限均与实测齐平（pillars 213/213、pattern 29/29、cong_ge 13/13、
+# ten_gods 213/213、hidden_stems 213/213），唯 tiaohou 松弛，故判定为陈旧字面量而非有意留量。
+# 按 AGENTS.md §四.2「基线只准前进」上调至实测值，与其余各维同口径（下限=实测满分数）。
+# ten_gods／hidden_stems 的下限是**回填存活线**（2026-10-13 第一百六十八批补）：
+# 这两维由书载四柱机械派生回填（AGENTS.md §三.4 定义式例外），214 例带键。曾经
+# 语料被回填**后**的版本在一次 git 还原中静默丢失、回到回填前版本，而本门全程绿——
+# 因为均分 97.578（无此两维）与 97.638（有）都四舍五入成 97.6，两维的 N/A 不进分母，
+# 于是一次「少 214 例 × 24 权重」的静默盲区在分数上完全不可见。命中数是绝对量：
+# 键丢了 → applicable=0 → full=0 < 下限 → 判红。这才是「回填有没有活着」的机械证据。
+# shensha／dayun 仍 0 例带期望，继续如实登记在 rule_registry，不设假下限。
 
 # 接线门比对的最小叶子长度。原取 12（只想比整句引文），代价是 nayin_quxiang.json
 # 这类「性质名短语库」（227 条叶子全 <12 字、最长 8 字）被 `if not leaves: continue`
@@ -143,7 +160,7 @@ def _alignment_floor(baseline: dict, fails: list[str], measured: dict,
     if fast:
         # 不静默跳过：跳过必须写成「未生效」，否则 --fast 的门长得像全绿的门。
         print("  × 本次带 --fast：**分数下限未跑**，[7] 未生效——"
-              "合入前请跑不带 --fast 的门（或 dev_tools/check.py --full）")
+              "合入前请重跑不带 --fast 的 python dev_tools/check.py")
         return
     splits_ids: dict = {}
     if CASES_FILE.is_file():
@@ -198,8 +215,8 @@ def main() -> int:
                     help="把本次实测 tune/holdout 均分写入本地基线文件（仅在确认改进后使用；"
                          "维度命中数下限 DIM_HITS 不在 --raise 范围内，改它要走代码字面量 + CHANGELOG 登记）")
     ap.add_argument("--fast", action="store_true",
-                    help="跳过 [7] 案例评测（根门 dev_tools/check.py 非 --full 时自动带上；"
-                         "分数下限本次不生效，输出里会明写）")
+                    help="跳过 [7] 案例评测——**跳过即分数下限不生效**，"
+                         "输出里会显式写明「未生效」，不假装通过")
     args = ap.parse_args()
     fails: list[str] = []
     measured: dict[str, float] = {}

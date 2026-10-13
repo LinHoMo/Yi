@@ -282,10 +282,13 @@ def score_case(eng: dict, exp: dict, model: str) -> dict:
     #    故此处一律改引书源行号与本仓 CHANGELOG 批次；结论未变。）
     # —— 此行运触发层未实现：当前格局成败维度只反映本命静态结论，不覆盖运引动的成格/变格。
     # 为什么本仓不硬接（第九十三批取证＋第一百零三批复核）：
-    # 堵点在**我们的结构化语料**，不在书——主评分语料实测 670 例（tune 138／holdout 532），
+    # 堵点在**我们的结构化语料**，不在书——主评分语料实测 338 例（tune 60／holdout 278，
+    # 2026-10-13 按 #39 清冗余后的实测更正；原注 670 例／138／532 系清出 342 例冗余**前**的口径），
     # 其中 `expected` 带行运字段的 **0 例**（整条案例文字里出现「运」者 19 例，均非结构化期望）；
-    # 键频次实测：pillars 363／tiaohou 271／pattern_cheng_bai 36／cong_ge·from_kind·from_type 各 15，
-    # **`shensha`／`hidden_stems`／`ten_gods`／`dayun` 四维语料侧 0 例带期望** ⇒ 现为空转读数：
+    # 键频次实测：pillars·ten_gods·hidden_stems 各 214／tiaohou 113／pattern_cheng_bai 36／
+    # cong_ge·from_kind·from_type 各 15（ten_gods／hidden_stems 由书载四柱机械派生回填，
+    # AGENTS.md §三.4 定义式例外）；
+    # **`shensha`／`dayun` 两维语料侧 0 例带期望** ⇒ 现为空转读数：
     # 加权分按 N/A 剔除，故它们既不加也不减，读者不可把「八维已接」读成「八维已验」。
     # 但底本里"大运干支＋流年干支＋应验"同段的材料实测共 **119 处**：
     # 《滴天髓阐微》72（如源L421 逐字「初运壬子辛亥，暗冲巳午之火，荫庇有余」）、

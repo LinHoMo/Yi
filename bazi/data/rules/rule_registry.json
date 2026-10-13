@@ -32,7 +32,7 @@
   {
    "rule_id": "ming.pattern",
    "domain": "格局成败（pattern）",
-   "impl": "scripts/pattern.py:PATTERN_CB_RULES（strength_and_pattern 成破救应分支）",
+   "impl": "scripts/bazi_factors/_common.py:PATTERN_CB_RULES（strength_and_pattern 成破救应分支；原记 scripts/pattern.py——该文件第一百六十七批已拆为薄 re-export 壳，而本常量未进 bazi_factors.__all__，故经壳不可达，实为死指针，按真实定义处更正。注：原写法把旧壳与本常量拼成一条指针，被本批新挂的 impl 回验门当场判红，故此处只写文件不拼符号）",
    "source": {
     "book": "《子平真诠》",
     "locator": "论用神成败救应/论相神紧要（八格逐条原文见实现文件头注释）",
@@ -54,7 +54,7 @@
   {
    "rule_id": "ming.cong_ge",
    "domain": "从格（special_pattern）",
-   "impl": "scripts/pattern.py:_from_judge（tentative_special / from_kind / from_type）",
+   "impl": "scripts/bazi_factors/congrge.py:_from_judge（tentative_special / from_kind / from_type；原记 scripts/pattern.py，该文件已拆为薄 re-export 壳，此处改指真实定义处）",
    "source": {
     "book": "《滴天髓》",
     "locator": "从化论/从象/假从章（任铁樵注；诀句原文见实现文件 docstring）",
@@ -76,7 +76,7 @@
   {
    "rule_id": "ming.dayun",
    "domain": "大运（dayun）",
-   "impl": "scripts/pattern.py:dayun_table（8 步循环定义处；scripts/analyze.py 调它写 result['dayun']；起运折算常量 DAYS_PER_LUCK_YEAR/MONTHS_PER_DAY 与方向判据 dayun_direction 在 core/yishu_core/ming_tables.py）",
+   "impl": "scripts/bazi_factors/dayun.py:dayun_table（8 步循环定义处；scripts/analyze.py 调它写 result['dayun']；起运折算常量 DAYS_PER_LUCK_YEAR/MONTHS_PER_DAY 与方向判据 dayun_direction 在 core/yishu_core/ming_tables.py。原记 scripts/pattern.py，该文件已拆为薄 re-export 壳，此处改指真实定义处）",
    "source": {
     "book": "《神峰通考》",
     "locator": "起大运法阳男阴女/阴男阳女两节（「折除三日，为一岁」＋顺数/逆数至节气折算；语料行 2608/2612 逐字在库——2026-10-04n 核对翻转；机制同《渊海子平》通行口径）",
@@ -142,7 +142,7 @@
      "holdout"
     ],
     "dim": "dayun",
-    "note": "主评分语料 670 例（tune 138／holdout 532）的 expected 里行运键实测为 0 ⇒ dayun 维度在对齐面空转，本层一律不计分；覆盖由 dev_tools/check_dayun_cases.py（门禁 [18]）三层回验：12 例逐字＋方向唯一、引擎排运 12/12 与书一致、13 处书明言机制出标签、2/2 起运算例、负例自证 8 式（含「反面判据空跑必被抓」：不该出的标签出现同样判红）；本命侧另由金标准机械层 1be8d5b579463a47 守（运岁合流与入墓层两次改动均零漂移）。不得虚标 classical_holdout"
+    "note": "主评分语料 338 例（tune 60／holdout 278，2026-10-13 按 #39 清冗余后的实测更正；原注 670 例／138／532 系清出前口径）的 expected 里行运键实测为 0 ⇒ dayun 维度在对齐面空转，本层一律不计分；覆盖由 dev_tools/check_dayun_cases.py（门禁 [18]）三层回验：12 例逐字＋方向唯一、引擎排运 12/12 与书一致、13 处书明言机制出标签、2/2 起运算例、负例自证 8 式（含「反面判据空跑必被抓」：不该出的标签出现同样判红）；本命侧另由金标准机械层 2a4c9258d6c1e4cb 守（运岁合流与入墓层两次改动均零漂移；原登记 1be8d5b579463a47 系第一百六十批前的旧指纹，按 golden.py verify 当前读数更正）。不得虚标 classical_holdout"
    }
   }
  ],
@@ -150,7 +150,7 @@
   {
    "rule_id": "ming.bing_yao",
    "domain": "病药（bing_yao）",
-   "impl": "bazi/scripts/pattern.py:bing_yao（analyze 顶层 result['bing_yao']）",
+   "impl": "bazi/scripts/bazi_factors/bingyao.py:bing_yao（analyze 顶层 result['bing_yao']；原记 scripts/pattern.py，该文件已拆为薄 re-export 壳，此处改指真实定义处）",
    "source": {
     "book": "《神峰通考》",
     "locator": "病药说类 + 雕枯旺弱四病说类；全文 data/sources/shen-feng-tong-kao.wikitext.txt",
@@ -171,7 +171,7 @@
   {
    "rule_id": "ming.strength",
    "domain": "强弱扶抑（strength）",
-   "impl": "bazi/scripts/pattern.py:strength_and_pattern（analyze 顶层 result['strength']；三档标签 偏旺/偏弱/中和，阈值 WEAK/STRONG_THRESHOLD=±1.5）",
+   "impl": "bazi/scripts/bazi_factors/strength.py:strength_and_pattern（analyze 顶层 result['strength']；三档标签 偏旺/偏弱/中和，阈值 WEAK/STRONG_THRESHOLD=±1.5。原记 scripts/pattern.py，该文件已拆为薄 re-export 壳，此处改指真实定义处）",
    "source": {
     "book": "《渊海子平》通行口径（身旺喜克泄耗/身弱喜生扶）；根权重机制《滴天髓阐微·衰旺》任注（2026-10-04d 已逐字取证落地）",
     "locator": "《渊海子平》维基文库实测 missingtitle（不在库）；阐微衰旺章全文 data/sources/di-tian-sui-chan-wei.wikitext.txt（语料行 2452；「奶之轻者也」为 wikisource 转写讹字，通行本作「根」）",
