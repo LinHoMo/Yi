@@ -56,7 +56,10 @@ from narrative_utils import (  # noqa: E402
 # 唯一实现都在 narrative_utils（各自逐字经快照对照）；本模块不再各留一份，
 # 只按 __all__ 再导出给 effects / classical_analysis 的消费方。
 
-from classical_enhancements_dufa import analyze_du_fa_du_jing  # noqa: E402
+from classical_enhancements_dufa import (  # noqa: E402
+    analyze_du_fa_du_jing,
+    analyze_luandong,
+)
 from classical_enhancements_zhugui import analyze_zhu_gui_shang_shen  # noqa: E402
 from classical_enhancements_menlei import analyze_menlei_dongjing  # noqa: E402
 from classical_enhancements_fushi import huozhulin_fushi_tags  # noqa: E402
@@ -2193,6 +2196,7 @@ __all__ = [
     "analyze_twelve_growth",
     "analyze_desperate_relief",
     "analyze_du_fa_du_jing",
+    "analyze_luandong",
     "analyze_zhu_gui_shang_shen",
     "analyze_menlei_dongjing",
     "huozhulin_fushi_tags",

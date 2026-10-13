@@ -797,6 +797,13 @@ def _collect_pattern_tags(context, step3: dict, step4: dict, step5: dict) -> lis
         else:
             _add("格局-独静", "独静")
 
+    # 乱动卦（《火珠林》源L33）：只标「动爻多」这一结构象。
+    # 口径边界（AGENTS.md 铁律三）：**不据此改用神、不据此定吉凶**——源L33 的
+    # 「乱动之卦只取旺爻」取用口径本仓未实现（须先裁定旺的量化与四看序）。
+    ld = adv.get("luandong") or {}
+    if isinstance(ld, dict) and ld.get("is_luandong"):
+        _add("格局-乱动", "乱动")
+
     # 助鬼伤身（《断易天机》源L134-L137 四条按语）：**只标结构凶格成立与否**，
     # 不据此出吉凶断语（SKILL.md 铁律一：吉凶断语不得进结构层）。
     zg = adv.get("zhu_gui_shang_shen") or {}
@@ -1039,6 +1046,12 @@ def _collect_pattern_details(context) -> list:
     df = adv.get("du_fa_du_jing") or {}
     if isinstance(df, dict) and df.get("driving_note"):
         detail_parts.append(f"{df.get('type')}：{df['driving_note']}")
+
+    # 乱动卦（《火珠林》源L33）：只作结构性提示——**只报「动爻多」，不据此取用神**。
+    # 与独发独静同策略（AGENTS.md 铁律一：吉凶断语不入结构层；铁律三：只说结构）。
+    ld = adv.get("luandong") or {}
+    if isinstance(ld, dict) and ld.get("is_luandong") and ld.get("note"):
+        detail_parts.append(ld["note"])
 
     # 助鬼伤身（《断易天机》源L134-L137 四条按语）：只陈述**结构上成立与否**＋解救 applicability。
     #   措辞守铁律三：用「结构上/有…信号」，不出「必凶/注定」一类断语——

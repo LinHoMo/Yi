@@ -25,10 +25,11 @@ _ensure_kernel(__file__)
 from narrative_utils import (  # noqa: E402
     DUFA_NOTES,
     DUFA_QUOTE,
+    LUANDONG_LABELS,
     _pos_to_name,
 )
 
-__all__ = ["analyze_du_fa_du_jing"]
+__all__ = ["analyze_du_fa_du_jing", "analyze_luandong"]
 
 
 def analyze_du_fa_du_jing(result):
@@ -98,4 +99,51 @@ def analyze_du_fa_du_jing(result):
         role = "用神独静" if out["is_use_god"] else ("世爻独静" if out["is_world"] else "他爻独静")
         out["driving_note"] = DUFA_NOTES["du_jing"].format(
             name=out["name"], branch=out["branch"], role=role)
+    return out
+
+
+# ---------------------------------------------------------------- 乱动卦（纯结构象）
+# 【第一百六十七批】rule_registry liuyao.huozhulin_luandong 条「未实现_乱动标记」的落地。
+# 纪律与独发独静**完全同策略**：只标结构象、不打分、不改用神选取、不改判定值。
+# 为什么放在本模块：`du_fa_du_jing` 已经算出 count{moving,static}（唯一真值源），
+# 另起一套数法就是第二个真值源——本条直接读它。
+# **边界（勿越界）**：《火珠林》源L33 的取用口径「乱动之卦只取旺爻，旺爻即用神也」
+# **未实现**——它须先裁定「旺」的量化与四看取舍序（见该条 gap_detail）。本条只报
+# 「动爻多」这一结构事实，不据此取用神、不据此定吉凶。
+LUANDONG_THRESHOLD = 2      # 动爻数 > 2 即乱动（与注册表 gap_detail 登记口径一致）
+
+
+def analyze_luandong(result):
+    """乱动卦识别（《火珠林·乱动法总纲》）。
+
+    书源：《火珠林》源L33 逐字「乱动之卦只取旺爻，旺爻即用神也。生克吉凶皆在此爻。」；
+    "独发易取，乱动难寻"——以「难寻」点明乱动与独发为难易之别。
+
+    本判据**只取动爻数这一结构事实**（判据 >2），**不实现源L33 的「只取旺爻」取用口径**：
+    那须先裁定「旺」的量化与四看取舍序，属另一立项（rule_registry 同条 gap_detail）。
+    故此处只出「是否乱动」的标签与动爻位置，供叙述层提示，不进主分、不改判定值。
+
+    返回 {is_luandong, moving_count, positions, classical_quote, note}。
+    """
+    out = {
+        "is_luandong": False,
+        "moving_count": 0,
+        "positions": [],
+        "classical_quote": LUANDONG_LABELS.get("古典引文", ""),
+        "note": "",
+    }
+    hex_info = result.get("original_hexagram")
+    if not isinstance(hex_info, dict):
+        return out
+    yao_lines = hex_info.get("yao_lines", []) or []
+    if len(yao_lines) != 6:
+        return out
+
+    moving = [y for y in yao_lines if isinstance(y, dict) and y.get("is_moving")]
+    out["moving_count"] = len(moving)
+    out["positions"] = [y.get("position") for y in moving if isinstance(y.get("position"), int)]
+    out["is_luandong"] = len(moving) > LUANDONG_THRESHOLD
+    _pos = "、".join(f"{p}爻" for p in out["positions"]) or "无"
+    out["note"] = (LUANDONG_LABELS.get("乱动提示" if out["is_luandong"] else "非乱动提示", "")
+                   .format(n=len(moving), positions=_pos))
     return out

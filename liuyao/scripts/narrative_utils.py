@@ -91,6 +91,8 @@ DUFA_NOTES = {
     "du_jing": PATTERN_VERDICT_LABELS.get("独发/独静", {}).get("du_jing", ""),
 }
 SANCHUAN_LABELS = PATTERN_VERDICT_LABELS.get("三传克制", {})
+# 【第一百六十七批】乱动卦（《火珠林》源L33）：只标结构象，取用口径未实现。
+LUANDONG_LABELS = PATTERN_VERDICT_LABELS.get("乱动", {})
 
 
 def pattern_label(group: str, name: str) -> dict:

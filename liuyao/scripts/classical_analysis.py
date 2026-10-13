@@ -37,6 +37,7 @@ from classical_enhancements import (
     analyze_twelve_growth,
     analyze_desperate_relief,
     analyze_du_fa_du_jing,
+    analyze_luandong,
     analyze_zhu_gui_shang_shen,
     analyze_menlei_dongjing,
     huozhulin_fushi_tags,
@@ -127,6 +128,10 @@ def enhance_reading(result_dict):
         "desperate_relief": analyze_desperate_relief(result_dict),
         # 独发/独静（《增删卜易·独发章》）：只标象不进主分，供正文辅助说明
         "du_fa_du_jing": analyze_du_fa_du_jing(result_dict),
+        # 乱动卦（《火珠林》源L33 逐字「乱动之卦只取旺爻，旺爻即用神也」）：只标「动爻多」这一结构象，
+        # **不实现该条的「只取旺爻」取用口径**（须先裁定旺的量化与四看序，见
+        # rule_registry liuyao.huozhulin_luandong 条 gap_detail）。故不进主分。
+        "luandong": analyze_luandong(result_dict),
         # 以下三项为「只标象/只标结构、不打分」的新分析段（2026-10-07 接入）。
         # 【归因更正，2026-10-07】此前有人在此处把本三项注释掉，归因写的是
         # 「接入后 tune strict 由 96.8% 跌至 93.1%，因新增标签改变 strict 覆盖面」。
