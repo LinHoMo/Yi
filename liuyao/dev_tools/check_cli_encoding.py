@@ -37,12 +37,35 @@ CJK_RE = re.compile(r"[\u4e00-\u9fff]")
 # 每条都要写明确切根因与"为什么不在本批改它"。
 EXEMPT: dict[str, str] = {}  # 守卫位置修正后实测无漏码入口；新增豁免须写根因与另批修法（照 [20] 纪律）
 
+# 【静态红线·#36 收尾】第一百五十批登记的开口：`[2]` 的编码不变式**按名单**跑产物，
+# 新增 CJK CLI 入口不会自动进入——"补全"是瞬态，"漏新"才是常态。本判据把"入口必须带守卫"
+# 从散文升级成机器断言：discover() 找到的每一个中文入口（argparse 与无 argparse 一视同仁），
+# 文件内必须有 UTF-8 守卫（reconfigure 或 force_utf8_stdio），缺一即判红。
+# 2026-10-13 实测两科全量入口（liuyao 44／bazi 36）**零缺守卫**，故按红线做而非棘轮。
+# 已知判不到（如实写）：守卫在**被 import 的模块**里而非入口文件自身时会误报——
+# 现库无此形态（逐文件核过）；若日后出现，走 EXEMPT 具名豁免并注明守卫所在模块。
+GUARD_RE = re.compile(r"""reconfigure\(\s*encoding\s*=\s*["']utf-8|force_utf8_stdio""")
+
+
+def guards_missing(disc: pathlib.Path, rels: list[str]) -> list[str]:
+    out: list[str] = []
+    for rel in rels:
+        try:
+            t = (disc / rel).read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            out.append(rel + "（读不到文件）")
+            continue
+        if not GUARD_RE.search(t):
+            out.append(rel)
+    return out
+
 
 def witness(label: str, text: str) -> str | None:
     """子进程产物的编码证人：解码后含 U+FFFD 即为"原始字节不是 UTF-8"的直接痕迹。
 
     为什么需要它：门禁套件本身已经把各 `check_*.py` 跑过一遍并拿到 stdout，
-    而那 26 个**无 argparse** 的入口不能拿 `--help` 自动回验（可能真去跑主逻辑）。
+    而那些**无 argparse 的入口**（现量由本器 discover() 现跑现数，勿在散文里写死）
+    不能拿 `--help` 自动回验（可能真去跑主逻辑）。
     与其为它们另造一次执行，不如在**已经存在的那次**上取证：
     若某个子器在 cp936 下写出 GBK 字节，而本器按 UTF-8 解码（`errors="replace"`），
     替换符 U+FFFD 就会留在字符串里——它是"产物不是 UTF-8"的可判特征。
@@ -124,6 +147,18 @@ def negative_selftest(problems: list[str]) -> None:
         st2, msg2 = probe(root, "scripts/" + "good_cli.py")
         if st2 == "fail":
             problems.append(f"负例自证假阳性：UTF-8 产物被判红 → {msg2}")
+        # 第四式（静态红线）：无守卫的中文入口必被抓；带守卫的不得误伤。
+        noguard = root / "scripts" / ("noguard_" + "cli.py")
+        noguard.write_text("# -*- coding: utf-8 -*-\n中文说明的入口，故意不写守卫\n"
+                           "if __name__ == '__main__':\n    print('中文')\n", encoding="utf-8")
+        withguard = root / "scripts" / ("withguard_" + "cli.py")
+        withguard.write_text("# -*- coding: utf-8 -*-\nimport sys\n中文说明\n"
+                             "sys.stdout.reconfigure(encoding='utf-8', errors='replace')\n", encoding="utf-8")
+        miss = guards_missing(root, ["scripts/" + "noguard_cli.py", "scripts/" + "withguard_cli.py"])
+        if "scripts/" + "noguard_cli.py" not in miss:
+            problems.append("负例自证失效：静态红线没抓到缺守卫入口")
+        if "scripts/" + "withguard_cli.py" in miss:
+            problems.append("负例自证假阳性：静态红线误伤了带守卫入口")
     # 第三式：证人须认出非 UTF-8 产物（GBK 字节按 UTF-8 解码必留 U+FFFD），且不误伤干净文本
     raw = "中文测试".encode("gbk").decode("utf-8", errors="replace")
     if witness("夹具", raw) is None:
@@ -148,7 +183,14 @@ def main() -> int:
         return 1
     if args.selftest:
         negative_selftest(problems)
-        print("  [selftest] 负例已跑（GBK 产物必被抓 / UTF-8 产物不误伤）")
+        print("  [selftest] 负例已跑（GBK 产物必被抓 / UTF-8 产物不误伤 / 缺守卫入口必被抓 / 带守卫不误伤）")
+
+    # 静态红线：每一个中文 CLI 入口（含无 argparse 者）文件内必须自带 UTF-8 守卫。
+    _miss = guards_missing(DISC, sorted(auto + manual))
+    _miss = [m for m in _miss if m not in EXEMPT]
+    for m in _miss:
+        problems.append(f"入口缺 UTF-8 守卫（静态红线）：{m}")
+    print(f"静态红线：中文 CLI 入口 {len(auto) + len(manual)} 个，缺守卫 {len(_miss)} 个")
 
     nok = nnote = 0
     hit_exempt: set[str] = set()

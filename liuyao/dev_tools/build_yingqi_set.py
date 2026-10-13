@@ -47,18 +47,26 @@ from yishu_core.symbols import (  # noqa: E402
 LIB = HERE.parent / "references" / "case_library.md"
 OUT = HERE.parent / "data" / "cases" / "yingqi_cases.json"
 SPLITS = HERE.parent / "data" / "cases" / "case_splits.json"
-REPORT = HERE.parent / "docs" / "CASE-LIBRARY-AUDIT.md"
+# 【第一百六十五批】REPORT 改到**本通道专名**：此前本器与 `build_zengshan_dz_cases.py`
+# （dz 底本通道，21 例）写**同一个** `docs/CASE-LIBRARY-AUDIT.md`——跑一次 `--dry-run`
+# 就把对方那份逐例剔除台账整体覆盖（2026-10-13 实跑踩中，39 增 206 删，靠 git 复原）。
+# 两个通道、两份台账，各写各的文件。
+REPORT = HERE.parent / "docs" / "CASE-LIBRARY-AUDIT-YINGQI.md"
 
 CN_NUM = {"初": 1, "一": 1, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6, "上": 6}
-STEMS = HEAVENLY_STEMS
-BRANCHES = EARTHLY_BRANCHES
+# 【第一百六十五批 P0 修复】内核 symbols 里 HEAVENLY_STEMS/EARTHLY_BRANCHES 是 **list**，
+# 直接 `%s` 插进字符类会把 `['甲', '乙', …]` 的括号引号全数当字面量——正则永不命中，
+# 本抽取器自内核表类型变更后**静默全盲**（每次重跑都报「时间无月建日柱干支」，rc 仍 0、
+# 无人报警），与第一百五十九批「月破层因键缺失而沉睡」同型。同仓 `case_runner.py` 与
+# `build_zengshan_dz_cases.py` 一直用 `"".join(...)` 防此坑，本器是漏改的那一支。
+STEMS = "".join(HEAVENLY_STEMS)
+BRANCHES = "".join(EARTHLY_BRANCHES)
 
 SEC = re.compile(r"^###\s*(.+?)\s*$", re.M)
 CASE = re.compile(r"^##\s*案例([一二三四五六七八九十\d]+)[：:](.*)$", re.M)
 MONTH_DAY = re.compile(r"([%s])月([%s])([%s])日" % (BRANCHES, STEMS, BRANCHES))
 HEX_PAREN = re.compile(r"^([^\s（(]+)")
 MOVING = re.compile(r"([初二三四五六上])爻\s*[动]")
-YINGQI = re.compile(r"([%s])([%s])\s*(日|月)" % (STEMS, BRANCHES))
 
 
 # 六十四卦在案例库里写成全名（乾为天 / 风天小畜 / 地天泰），内核表用短名。
@@ -339,7 +347,11 @@ def main() -> int:
     sp = json.loads(SPLITS.read_text(encoding="utf-8")) if SPLITS.exists() else {}
     sp["yingqi_holdout"] = [c["id"] for c in unique]
     sp.setdefault("note", "")
-    sp["note"] = (sp["note"] + "；yingqi_holdout=应期外部验证集，永不参与调参").lstrip("；")
+    # 幂等（照第一百四十四批 note_externals 的教训）：句子已在册就不再追加，
+    # 否则每重跑一次就多挂一遍。
+    _sent = "yingqi_holdout=应期外部验证集，永不参与调参"
+    if _sent not in sp["note"]:
+        sp["note"] = (sp["note"] + "；" + _sent).lstrip("；")
     SPLITS.write_text(json.dumps(sp, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print("case_splits.json 已登记 yingqi_holdout")
     return 0

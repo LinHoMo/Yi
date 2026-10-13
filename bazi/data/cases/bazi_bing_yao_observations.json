@@ -7,7 +7,7 @@
     "engine_evidence": "本轮未修改 bazi/scripts/pattern.py 任何一行；engine 输出由未改动的 bing_yao() 产出",
     "score_policy": "禁止计算 alignment score——书源病药落在具体字、engine 落在月令五行，两者不同层级，逐位比对无意义",
     "holdout_policy": "禁止入 holdout——split 一律 observation，且永不适格为评测集（schema 亦与 bazi_bing_yao_cases.json 不同）",
-    "sample_size_caveat": "n=7 是 screening，不是充分证据；即便全部同向也不足以证明层级（见 TECH-DEBT §2.7）",
+    "sample_size_caveat": "n=7 是 screening，不是充分证据；即便全部同向也不足以证明层级（见同目录 bingyao_cross_source.json 的 _verdict_summary；原 TECH-DEBT §2.7 台账已随扁平化删除）",
     "correction_log": "2026-10-03 评审纠正两处：(1)旧断言「engine 与书源同向者必须为 0」把已知分歧写成未来必须继续分歧（治理测试过拟合），已改为只锁登记纪律（known_divergence + book_support + 无评分字段）；(2)旧措辞「缺的是『病＝字』这一层本身」说得过满，已改为「把病药过度压缩到月令五行层；字层是必要候选层但尚未证明为唯一语义层」。"
   },
   "extraction": {

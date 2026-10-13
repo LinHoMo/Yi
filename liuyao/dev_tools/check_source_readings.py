@@ -46,7 +46,12 @@ GLOBS = ("scripts/**/*.py", "core/**/*.py", "references/**/*.md",
          # 原先不扫这一层，等于**测试文件里写的书证没有任何东西会拦**——
          # 第二十/二十一给 fixture 补的引文当时是自证过的假象：门根本没读到它们。
          "tests/**/*.py")
-SKIP_NAME_PARTS = ("CHANGELOG", "__pycache__", ".pyc")
+# "_selftest_"：各门自检的临时夹具（`check_doc_refs.py` 第四式会落
+# `data/rules/_selftest_deadref.json` 再删档）。它们是**别的门的负例样本**，
+# 不是本仓的声明；若本器把它们 glob 进来而它们恰好已被撤档，就会 FileNotFoundError
+# 让本器"检视中断"并把 [14] 打成红——2026-10-13 两门并行跑时实踩过。
+# 与 NEGATIVE/病历口径同源：自测样本不作为回验对象。
+SKIP_NAME_PARTS = ("CHANGELOG", "__pycache__", ".pyc", "_selftest_")
 
 LINE_REF = re.compile(r"源\s*L\s*(\d+)")
 RANGE_REF = re.compile(r"源\s*L\s*\d+\s*(?:[-–—~]\s*(?:L\s*)?\d+|/\s*L?\d+)")

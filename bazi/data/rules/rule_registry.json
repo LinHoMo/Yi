@@ -1,7 +1,7 @@
 {
  "schema": "yi-rule-registry-v1",
  "discipline": "bazi",
- "_comment": "八字科规则注册表（Phase 5 Evidence Maturation：评测覆盖降到规则级，范式照六爻）。domain 括号内的英文串是 analyze.conclusion.verdicts 的 code / 顶层键——evidence.factor 互为子串即挂接（attach_rule_registry，先命中先得，顺序即优先级）。仅注册有真实评测 dim 的解释性规则；无评测 dim 的机械结构标签（xunkong/san_hui/tai_yuan/ten_god_combo/tong_guan/pillar_relations/female_fu_zi/tian_ke_di_chong）不注册、沿用学科基线（golden 指纹覆盖），缺口登记 TECH-DEBT §2.5；strength 例外——已有 external_holdout report-only 读数（bazi_external_cases.json），如实登记于 _uncovered ming.strength，加权 dim 化待口径变更登记。**回验契约（2026-10-09 起有牙齿，tests/test_bazi_rule_registry.py 断言）**：① 评测 dim 必须是 scripts/evaluate.py WEIGHTS 的键；② impl 写成 `<file>:<symbol>`（可带括号说明），`<symbol>` 必须在 `<file>` 里**真的定义**（ast 顶层 def/class/赋值；仅被 import 进来不算——原实现把 pattern.py:tiaohou_of 当定义处、把 dayun 8 步归给 analyze.py，均属指针错误，已改指真定义处）；③ quote_in_data 指针必须可解引用，且其引文逐字命中 source.corpus.files 登记的在库语料（该引文库条目若带 corpus_line，按行级回验）；④ dayun/shensha 维度案例集 0 applicable，如实标 mechanical_regression，不得虚标 classical_holdout。",
+ "_comment": "八字科规则注册表（Phase 5 Evidence Maturation：评测覆盖降到规则级，范式照六爻）。domain 括号内的英文串是 analyze.conclusion.verdicts 的 code / 顶层键——evidence.factor 互为子串即挂接（attach_rule_registry，先命中先得，顺序即优先级）。仅注册有真实评测 dim 的解释性规则；无评测 dim 的机械结构标签（xunkong/san_hui/tai_yuan/ten_god_combo/tong_guan/pillar_relations/female_fu_zi/tian_ke_di_chong）不注册、沿用学科基线（golden 指纹覆盖），缺口登记于本表 _uncovered 数组（原登记处 docs/TECH-DEBT.md §2.5，该台账已随扁平化删除、节号不再存在，2026-10-13 按实改注）；strength 例外——已有 external_holdout report-only 读数（bazi_external_cases.json），如实登记于 _uncovered ming.strength，加权 dim 化待口径变更登记。**回验契约（2026-10-09 起有牙齿，现由 dev_tools/check_rule_registry.py＝门禁 [12] 逐条回指；此处此前挂 tests/test_bazi_rule_registry.py，该文件系扁平化前旧树路径、现已不存在，2026-10-13 按实改注）**：① 评测 dim 必须是 scripts/evaluate.py WEIGHTS 的键；② impl 写成 `<file>:<symbol>`（可带括号说明），`<symbol>` 必须在 `<file>` 里**真的定义**（ast 顶层 def/class/赋值；仅被 import 进来不算——原实现把 pattern.py:tiaohou_of 当定义处、把 dayun 8 步归给 analyze.py，均属指针错误，已改指真定义处）；③ quote_in_data 指针必须可解引用，且其引文逐字命中 source.corpus.files 登记的在库语料（该引文库条目若带 corpus_line，按行级回验）；④ dayun/shensha 维度案例集 0 applicable，如实标 mechanical_regression，不得虚标 classical_holdout。",
  "rules": [
   {
    "rule_id": "ming.tiaohou",
@@ -159,9 +159,9 @@
     "verified": true
    },
    "why_not_registered": "evaluate.py WEIGHTS 无 bing_yao 维度——注册表 rules 契约要求 dim 必须是评分器真实键，病药无对齐案例集，故不入 rules（如实登记于此，勿虚标 classical_holdout）",
-   "coverage": "mechanical_regression：golden 机械层 + narrate 措辞层指纹 + tests/test_bazi_bing_yao.py（5 例）；古籍对齐覆盖待从《神峰通考·人命见验类》提取病药命例后建立，届时再建维度与注册条目",
+   "coverage": "mechanical_regression：golden 机械层 + narrate 措辞层指纹＋病药见证集 data/cases/bazi_bing_yao_cases.json（2 例，external_holdout 由 [17] 回验）。【2026-10-13 更正】此文本前挂 tests/test_bazi_bing_yao.py（5 例）——本科从无 tests/ 目录、该文件不存在（git 全历史 0 命中），且见证集实为 2 例非 5 例；古籍对齐覆盖待从《神峰通考·人命见验类》提取病药命例后建立，届时再建维度与注册条目",
    "maturity": "C→B 未完成：古籍→规则→代码已通；古籍命例已入库（bazi_bing_yao_cases.json n=2，external_holdout），但与实现存在层级性口径分歧（书源病在藏干、引擎判病在月令主轴，方向相反），故不计分",
-   "layer_divergence": "TECH-DEBT.md §2.7",
+   "layer_divergence": "data/cases/bingyao_cross_source.json（_verdict_summary/open 两键）；原登记于已删除的 docs/TECH-DEBT.md §2.7，2026-10-13 改指现行可回指处",
    "provenance_mix": "规则表内混两类知识：土厚埋金=source_backed_exact；金/火/水/木四行病名与「比肩夺财」（含劫财）=source_informed_generalization。评测时两类不得混同，generalization 只作通则回归"
   },
   {
@@ -175,7 +175,7 @@
     "verified": true
    },
    "why_not_registered": "evaluate.py WEIGHTS 无 strength 维度（强弱读数为 report-only，不进加权均分）——rules 契约要求 dim 必须是评分器真实键；外部集已立（bazi_external_cases.json，split=external_holdout 永不调参），维度加权化属口径变更，须先登记 CHANGELOG 并冻结集合",
-   "coverage": "external_holdout（report-only）：`python scripts/evaluate.py --split external_holdout` → 强弱对齐 17/19（2026-10-04 首批：衰旺章任注显式标注例 n=19，旺侧9/衰侧10；纳入规则与类别映射见案例文件 _provenance）。机械覆盖：日主之根宫位分层已落地（tests/test_bazi_strength_root_stage.py 锁引文逐字+映射+外集隔离 tripwire）",
+   "coverage": "external_holdout（report-only）：`python scripts/evaluate.py --split external_holdout` → 强弱对齐 30/45（2026-10-13 实跑 python scripts/evaluate.py --split external_holdout；旧值 17/19 系 2026-10-04 首批口径 n=19，按 §四.4 新旧不可比；纳入规则与类别映射见案例文件 _provenance）。机械覆盖：日主之根宫位分层已落地（`source.quote_in_code`＝`bazi_factors/_common.py#ROOT_STAGE_ELEMENTS` 由 [12] 逐条回指；外集隔离另由 [13] 案例库隔离门守）。【2026-10-13 更正】此文本前挂 tests/test_bazi_strength_root_stage.py——本科从无 tests/ 目录、该文件不存在（git 全历史 0 命中），属幽灵指针",
    "maturity": "2026-10-04d 裁决+落地：①衰旺章根层级（长生禄旺重根/墓库余气轻根/天干比肩最轻）逐字取证，引擎根权重按宫位轴落地（ROOT_STAGE_ELEMENTS 木火金水；土寄四隅流派不一维持层位权重，如实登记）。②归因修正：2026-10-04 首批登记的「ZE005/ZE017 失配同指根权重未区分禄刃长生」经反事实测量证伪——按书源轴重映射后 ZE005 Δ=0.0、ZE017 Δ=−0.25，两例均不翻转（17/19 不变）；剩余失配候选机制=中和带宽（±1.5 无书源标定）/三会支局未入强弱/天干十神零权重（书源「比肩如朋友之相扶」主张正权但量级无书源数），三者均待独立证据，禁止拿外集调参。③分列验收：tune 100.0(n=30)/holdout 96.7(n=246)/外集 17/19 全部持平，金标准带理由重捕（仅 weak_zhengguan2 strength_score −5.20→−5.45，标签/格局不变）"
   },
   {

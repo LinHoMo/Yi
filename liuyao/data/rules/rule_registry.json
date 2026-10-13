@@ -12,7 +12,7 @@
   "  * source.quote_in_data 指向仓库数据文件里的逐字引文（file#点分路径），",
   "    source.quote_in_code 指向实现文件中的锚点子串；两者都被测试校验存在。",
   "  * 引文无法逐字核对时 verified=false，不伪装成古法。",
-  "  * 本表不存分数；分数唯一权威源是 docs/HANDOFF.md §一（此处只声明「哪类评测存在」。"
+  "  * 本表不存分数；分数唯一权威源是 dev_tools/check.py [5]/[6] 实跑读数（逐次变化登记在 docs/CHANGELOG.md）——原写「docs/HANDOFF.md §一」系扁平化前旧树路径、该文件已删除，2026-10-13 按实改注。（此处只声明「哪类评测存在」。"
  ],
  "rules": [
   {
@@ -149,7 +149,7 @@
      "holdout"
     ],
     "dim": "use_god_muku",
-    "note": "专用维度 use_god_muku（权重3）+ patterns「入墓/随官入墓」标签；根测试 tests/test_liuyao_tomb_tags.py"
+    "note": "专用维度 use_god_muku（权重3）+ patterns「入墓/随官入墓」标签；覆盖面：tests/smoke_test.py 第15段「随官入墓」CoverageTest＋scripts/evaluate.py WEIGHTS 的 use_god_muku 维度。【2026-10-13 更正】原挂「根测试 tests/test_liuyao_tomb_tags.py」——本科有 tests/ 但该文件不存在（git 全历史 0 命中），属幽灵指针，按盘上实际改述"
    }
   },
   {

@@ -67,7 +67,7 @@ _USE_GOD_RULES: list[dict] | None = None
 
 from step4 import _detect_special_pattern, _user_reason  # 跨文件引用
 from step3 import _real_hidden_can_emerge  # 伏神真实 can_emerge 判据（缺陷 C）
-from classical_enhancements_direction import (  # 古籍方向凶格上限（TECH-DEBT §2.11 D1）
+from classical_enhancements_direction import (  # 古籍方向凶格上限（原 TECH-DEBT §2.11 D1，该台账已删；现行登记＝docs/CHANGELOG.md 第二十一批＋本模块 docstring）
     apply_caps as apply_direction_caps,
     detect_direction_caps,
 )
@@ -207,6 +207,20 @@ def step5_synthesize(r: dict) -> dict:
                    + classical_adj)
     final_score = round(final_score, 2)
 
+    # ---------- 5.6a: 天气占主判短路（#23 第2步）----------
+    # 通用旺衰／生克对天气无效，《黄金策》《卜筮全书》《增删卜易》皆以"父动主雨、
+    # 财动主晴"为唯一主判。故天气门类直接以 _weather_verdict_score 的古籍档位为 final_score，
+    # 短路通用评分，并屏蔽下游覆写链（强凶／主象换位／方向 cap），保证 verdict 由书定。
+    # 天气案例均落在外部集 [6]，不进 [4] 回归集与金标准看门狗，本短路不改变金标准指纹。
+    _qclass_w = str((step2_data or {}).get("question_class") or "")
+    _weather_override = _qclass_w in ("天气·占雨", "天气·占晴")
+    if _weather_override:
+        _yl_w = safe_get(r, "original_hexagram", "yao_lines", default=[]) or []
+        _ug_cat_w = (step2_data or {}).get("use_god_category") or ""
+        _wf, _wn = _weather_verdict_score(_qclass_w, _yl_w, _ug_cat_w)
+        final_score = round(_wf, 2)
+        classical_notes.append(f"天气占主判：{_wn}")
+
     # ---------- 5.7: 定性判断 ----------
     # 阈值说明：古籍六爻 verdict 应明确(吉/凶)为主，避免过度收歛于中性(平吉/平凶)
     # 校准标准：final_score > 1.0 → 吉; > 4.0 → 大吉; -0.8 ~ 1.0 → 平吉; -2.0 ~ -0.8 → 凶; < -2.0 → 大凶
@@ -227,7 +241,13 @@ def step5_synthesize(r: dict) -> dict:
         verdict_desc = vdesc("score_da_xiong")
 
     # ---------- 5.7 覆写链：强凶格局 / 从吉格局 / 随官入墓 ----------
-    ov = apply_verdict_overrides(
+    # 天气占已短路（_weather_override），不进通用覆写链，verdict 由书定。
+    if _weather_override:
+        ov = {"verdict": verdict, "verdict_desc": verdict_desc,
+              "final_score": final_score, "fired": False,
+              "officer_tomb_verdict_note": ""}
+    else:
+        ov = apply_verdict_overrides(
         verdict, verdict_desc, final_score,
         r=r,
         step3_data=step3_data,
@@ -254,12 +274,14 @@ def step5_synthesize(r: dict) -> dict:
 
     # ---------- 5.7b: 古籍方向凶格「上限」----------
     # 这四格在主分加和里要么无条目、要么被正项冲掉，于是出现「書源本案结局明写凶、
-    # 引擎判吉」（TECH-DEBT §2.11 D1）。做法是**只压档、不加和**：命中即把 verdict
+    # 引擎判吉」（原 TECH-DEBT §2.11 D1，该台账已删；现行登记＝docs/CHANGELOG.md 第二十一批）。
+    # 做法是**只压档、不加和**：命中即把 verdict
     # 压到该书规定的档位，避免任何"再叠一个正项"把它平均回去。
     # 判据与逐字出处见 classical_enhancements_direction 模块头注与 data/rules/rule_registry.json；
     # 展示句全部取自 verdict_texts.json，代码内无断语字面量（SKILL.md）。
     _mt_sb = safe_get(div_time, "month_stem_branch", default="")
-    dir_caps = detect_direction_caps(
+    # 天气占已短路，方向 / 主象 cap 对天气无效，跳过。
+    dir_caps = [] if _weather_override else detect_direction_caps(
         safe_get(r, "original_hexagram", "yao_lines", default=[]),
         step2_data, step4_data,
         _mt_sb[1:] if len(_mt_sb) >= 2 else "",
@@ -275,7 +297,7 @@ def step5_synthesize(r: dict) -> dict:
     _role = _divination_role(str(safe_get(r, "question", default="") or ""))
     _zhu_kind = {"自占": "is_world", "代占": "is_response"}.get(_role, "")
     _yl57 = safe_get(r, "original_hexagram", "yao_lines", default=[]) or []
-    if _zhu_kind:
+    if _zhu_kind and not _weather_override:
         _zhu = next((y for y in _yl57 if isinstance(y, dict) and y.get(_zhu_kind)), None)
         _ze = BRANCH_ELEMENTS.get((_zhu or {}).get("earthly_branch") or "", "")
         _me57 = _mt_sb[1:] if len(_mt_sb) >= 2 else ""
@@ -291,7 +313,7 @@ def step5_synthesize(r: dict) -> dict:
                 "detail": f"{_role}·主象在{'世' if _role == '自占' else '应'}"
                           f"爻 {(_zhu or {}).get('earthly_branch')} 受日月动爻之克"})
     _capped, _cap_fired = apply_direction_caps(verdict, dir_caps)
-    if dir_caps:
+    if dir_caps and not _weather_override:
         for _c in dir_caps:
             _cap_note = f"{note_text(_c['reason_key'])}（{_c.get('src', '')}；{_c.get('detail', '')}）"
             classical_notes.append(_cap_note)
@@ -887,7 +909,9 @@ def compute_fu_shen_adjustment(step2_data: dict, step3_data: dict, r: dict) -> t
         《黄金策·千金赋》源L136「伏无提挈终徒尔，飞不摧开亦枉然」
         （《增删卜易》源L1535 作「伏无提携终徒耳，飞不冲开亦枉然」；
         《卜筮正宗》源L1235 作「伏无提拔终徒尔」——三书异文，逐字须按所署底本取）。
-    2026-10-02（TECH-DEBT 2.3）保留：新增**伏而不得出**方向权重 -1.0，
+    2026-10-02 保留：新增**伏而不得出**方向权重 -1.0（现行登记处＝
+    data/rules/rule_registry.json liuyao.fucang 条 applicability 末句；
+    原挂 docs/TECH-DEBT.md §2.3——该台账已随扁平化删除，2026-10-13 按实改注），
       旧实现只覆盖「得出/泄气/克伏」各象，伏神无提挈时方向分零反馈。
     """
     fu_shen_adjustment = 0.0
@@ -956,6 +980,46 @@ def _divination_role(text: str) -> str:
     if _i > 0 and t[_i - 1] == "自":
         return "自占"
     return "名分不明"
+
+
+def _weather_verdict_score(qclass: str, lines: list, ug_cat: str):
+    """天气占主判据（#23 第2步）：通用旺衰/生克对天气无效，以本书规则为唯一主判据。
+
+    书据：父动主雨、财动主晴（《黄金策》源L300「卦中父动主有雨，财动主晴」；
+    《卜筮全书》源L5721「卦中父动，主雨；财动，主晴」、源L5770「五类中，唯父母为雨。
+    此爻空亡，或休囚不动，雨未可望」；《增删卜易》源L2040「占雨以父爻为主」；
+    《易隐》源L1541「占晴以子孙为用，占雨以父母为用也」——故占晴以子孙／财为晴神）。
+    占雨：有雨=吉、无雨=凶；占晴：晴=吉、不晴=凶。
+    返回 (final_score 档位, 说明)；只给档位中值，不虚构分数（铁律三：分数是与古籍要点的一致性）。
+    """
+    moving_rels = {str(y.get("six_relation") or "") for y in lines
+                   if isinstance(y, dict) and y.get("is_moving")}
+    changed_rels = {str(y.get("changed_six_relation") or "") for y in lines
+                    if isinstance(y, dict) and y.get("is_moving")}
+    father_move = ("父母" in moving_rels) or ("父母" in changed_rels)
+    wealth_move = ("妻财" in moving_rels) or ("妻财" in changed_rels)
+    children_move = "子孙" in moving_rels or "子孙" in changed_rels
+    # 父母空亡（休囚不动）则雨未可望——《卜筮全书》源L5770 逐字「五类中，唯父母为雨。
+    # 此爻空亡，或休囚不动，雨未可望」。
+    # 注意：晴神（妻财/子孙）的空亡/月破不在此作"不晴"判——野鹤诸案（如 随风·占晴 官鬼动化官鬼、
+    # 妻财月破仍天開）表明空亡与否不决定晴雨，晴雨只认动变（父动主雨、财/子孙动主晴）。
+    father_empty = any((y.get("six_relation") == "父母"
+                        and (y.get("is_empty") or y.get("is_month_break")))
+                       for y in lines if isinstance(y, dict))
+    if qclass == "天气·占雨":
+        if father_move:
+            return 1.6, "父动主雨（有雨）"
+        if wealth_move or children_move:
+            return -1.9, "财/子孙动主晴（无雨）"
+        if father_empty:
+            return -1.9, "父母空亡（无雨）"
+        return -1.9, "父母静，雨未可望（无雨）"
+    else:  # 天气·占晴
+        if wealth_move or children_move:
+            return 1.6, "财/子孙动主晴（晴）"
+        if father_move:
+            return -1.9, "父动主雨（不晴）"
+        return 0.2, "无晴象（待时）"
 
 
 def compute_classical_adjustment(
@@ -1100,22 +1164,10 @@ def compute_classical_adjustment(
             pattern_flags.append("yuanshen_missing")
             pattern_flags.append("no_source_wording")
 
-    # 5b) 天气占的正向一支（第七十七批，验收锚在语料自带的 WS022／WSD014／WS021 三例）：
-    #     占雨而父母动或化父母、占晴而妻财动或化妻财 → 抬升。只做抬升，压低的那一半在
-    #     classical_enhancements_direction 的 caps 第 6 条，两处各扣/加同一事实正是本仓反复修的重复计分。
-    #     量级 +0.8 是引擎设计量：《黄金策》只说主有雨／主晴，全书不给分数（书据见两条 basis）。
-    if _qclass in ("天气·占雨", "天气·占晴") and ug_cat:
-        _yl = safe_get(r, "original_hexagram", "yao_lines", default=[]) or []
-        _mv = {str(y.get("six_relation") or "") for y in _yl if isinstance(y, dict) and y.get("is_moving")}
-        _ch = {str(y.get("changed_six_relation") or "") for y in _yl if isinstance(y, dict) and y.get("is_moving")}
-        _father_up = ("父母" in _mv) or ("父母" in _ch)
-        _wealth_up = ("妻财" in _mv) or ("妻财" in _ch)
-        if _qclass == "天气·占雨" and ug_cat == "父母" and _father_up:
-            classical_adj += 0.8
-            classical_notes.append(note_text("tianqi_fu_dong_zhu_yu"))
-        elif _qclass == "天气·占晴" and ug_cat in ("妻财", "子孙") and _wealth_up:
-            classical_adj += 0.8
-            classical_notes.append(note_text("tianqi_cai_dong_zhu_qing"))
+    # 5b) 天气占主判已移至 5.6a 短路（#23 第2步）：_weather_verdict_score 以
+    #     《黄金策》"父动主雨、财动主晴"为唯一主判并直接覆盖 final_score，通用旺衰/
+    #     生克路径对天气无效，故此处旧 +0.8 抬升一支已失效（被短路覆盖），删除以免重复计分。
+    #     下行方向 cap（classical_enhancements_direction 第 6 条）亦随短路失效，详见 5.6a。
 
     # 6) 久病逢冲为凶（对「近病逢冲即愈」）
     if _qclass == "疾病·久病":
@@ -1564,7 +1616,8 @@ def build_factor_contributions(adj: dict, r: dict) -> list:
             "score": round(officer_tomb_adjustment, 2),
             "reason": _user_reason(officer_tomb_reason, FREASON["officer_tomb"]["text"])
         })
-    # 10. 伏神得出 / 伏神不得出（TECH-DEBT 2.3：伏而不得出 −1.0 已入方向聚合）
+    # 10. 伏神得出 / 伏神不得出（伏而不得出 −1.0 已入方向聚合；现行登记＝
+    #     data/rules/rule_registry.json liuyao.fucang 条，原挂已删除的 TECH-DEBT 2.3）
     if fu_shen_adjustment != 0:
         factor_contributions.append({
             "name": "伏神不得出" if fu_shen_adjustment < 0 else "伏神得出",

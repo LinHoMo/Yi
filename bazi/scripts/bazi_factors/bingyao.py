@@ -89,7 +89,8 @@ def bing_yao(chart_json: dict, strength: str = "") -> dict:
         },
         "note": ("病药为《神峰通考》正说第一家紧要；此处只标病、药及其在否，"
                  "不批吉凶——有病方为贵是原文命题，落到具体命造须人工复核（铁律三）。"
-                 "命例级分歧见 TECH-DEBT §2.7：书源命例取病取药落在藏干与具体字，"
+                 "命例级分歧见跨书源取证集 bingyao_cross_source.json（_verdict_summary 与 open 两键）："
+                 "书源命例取病取药落在藏干与具体字，"
                  "与本实现层级不同，故该两例不计对齐分。"),
         "basis": f"{_BING['所本']}：「{_BING['thesis']}」{_BING['note']}",
     }

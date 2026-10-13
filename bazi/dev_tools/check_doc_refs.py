@@ -12,6 +12,14 @@ tools/、docs/source-readings/ 都随仓库扁平化删除了——照着跑必�
     运行时产物目录（gitignore，本就不该存在）；
   · **不查 CHANGELOG**：老条目是登记时点的事实（文件头已声明一字未改），
     历史里提到已删除的根文档不是 bug；
+  · **【第一百六十六批扩】`.json` 数据文件里的路径字样同样扫**：本器此前只走
+    `.md`/`.py`，于是 `data/rules/rule_registry.json` 的 coverage/_comment 散文里挂着
+    `tests/test_bazi_bing_yao.py` 等**三条从未存在过**的幽灵指针（git 全历史 0 命中），
+    [11] 却照报「活引用全部可达」——可达性门自己漏了整类载体，正是它要防的病。
+    数据 JSON 里 `"impl": "file.py#symbol"` 这类本就是**可执行契约**（由 [12] 逐条回指），
+    扫得到只会更严，不误伤：字段值以 `/` 分段且带已知扩展名的串本来就该在盘上。
+    `data/cases/`（案例正文含内嵌 markdown 与书文）与 `data/sources/`（古籍底本）不扫，
+    否则会把史料当声明造出假红——反向激励删史料。
   · 找不到 → 判红并点名出处行号。
 
     python dev_tools/check_doc_refs.py
@@ -19,6 +27,7 @@ tools/、docs/source-readings/ 都随仓库扁平化删除了——照着跑必�
 """
 from __future__ import annotations
 
+import json
 import re
 import sys
 from pathlib import Path
@@ -43,6 +52,10 @@ BARE = re.compile(r"(?<![\w/.-])((?:docs|scripts|data|references|dev_tools|core|
 SKIP_MARK = ("<", "…", "...", "http://", "https://")
 # 运行时产物目录：本就不入库，存在性不检查
 RUNTIME_DIRS = ("outputs/", "scratch/", "logs/", "assets/")
+# 【第一百六十六批】上述目录里的**文件本身**也不作为声明载体扫描：RUNTIME_DIRS 的旧口径
+# 只豁免「指向这些目录的引用」，但 scratch/ 下的一次性探针脚本里写死的旧路径字符串
+# （查 git 历史用）会被扫成死指针——那些不是对仓库的声明，判红等于逼工作脚本绕着写。
+SKIP_ROOTS = ("outputs/", "scratch/", "logs/")
 # 历史登记文档：其中提到的旧路径是登记时点事实，不判
 EXEMPT = ("docs/CHANGELOG.md",)
 # 本器自己的源文件里有负例样本的字面死引用，不能自查
@@ -76,14 +89,18 @@ def scan() -> tuple[list[str], int]:
     # --selftest 里连着调三次 scan() 会把跳过数报成三倍（实测 57 vs 真值 21）。
     SKIPPED_HISTORY.clear()
     for p in sorted(DISC.rglob("*")):
-        if not p.is_file() or p.suffix not in (".md", ".py"):
+        if not p.is_file() or p.suffix not in (".md", ".py", ".json"):
             continue
         parts = set(p.parts)
         if "__pycache__" in parts:
             continue
         rel_to_disc = str(p.relative_to(DISC)).replace("\\", "/")
+        if any(rel_to_disc.startswith(s) for s in SKIP_ROOTS):
+            continue      # 一次性工作脚本所在目录：其中的路径字符串不是对仓库的声明
         if any(rel_to_disc.endswith(e) for e in EXEMPT) or rel_to_disc == SELF:
             continue
+        if rel_to_disc.startswith("data/cases/") or rel_to_disc.startswith("data/sources/"):
+            continue      # 语料与古籍底本：正文是案例数据/书文（含内嵌 markdown），不是路径声明载体
         try:
             text = p.read_text(encoding="utf-8")
         except Exception:
@@ -133,15 +150,25 @@ def selftest(problems: list[str]) -> None:
                    "裸路径也要抓（docs/zz_probe_deadref_c.md 无反引号）。\n"
                    f"真路径不得误报：{ok_a} 与 {ok_b} 都在。\n",
                    encoding="utf-8")
+    # 第四式（第一百六十六批）：**JSON 数据文件里**的死指针同样必抓——
+    # 本器旧版只走 .md/.py，rule_registry.json 三条幽灵 tests/ 指针就是这么漏的。
+    tmp_json = DISC / "data" / "rules" / "_selftest_deadref.json"
+    tmp_json.write_text(json.dumps(
+        {"coverage": "见 `docs/zz_probe_deadref_d.md`；真路径不误报 " + ok_a},
+        ensure_ascii=False) + "\n", encoding="utf-8")
     try:
         got, n = scan()
         hits = [g for g in got if "_selftest_deadref.md" in g]
         if len(hits) < 3:
             problems.append(f"负例自证失效：造的 3 条死引用（含 1 条裸路径）只抓到 {len(hits)} 条")
-        if any("_selftest_deadref.md" in g and (ok_a in g or ok_b in g) for g in got):
+        jhits = [g for g in got if "_selftest_deadref.json" in g]
+        if len(jhits) < 1:
+            problems.append("负例自证失效：data/rules/*.json 里的死指针没被抓到（JSON 载体盲区）")
+        if any("_selftest_deadref" in g and ok_a in g for g in got):
             problems.append("负例假阳性：真实存在的裸路径被判成死引用，本器不足以当硬门")
     finally:
         tmp.unlink(missing_ok=True)
+        tmp_json.unlink(missing_ok=True)
     # 复扫：临时文件删掉后不应留下痕迹（防自测污染）
     got2, _ = scan()
     if any("_selftest_deadref" in g for g in got2):
@@ -198,7 +225,7 @@ def main() -> int:
     if ap:
         selftest(problems)
         range_selftest(problems)
-        print("  [selftest] 负例已跑（死路径必被抓 / 写死的门禁区间必被抓 / 病历与逐条列号不误伤）")
+        print("  [selftest] 负例已跑（死路径必被抓／JSON 载体死指针必被抓 / 写死的门禁区间必被抓 / 病历与逐条列号不误伤）")
     print(f"合计：检视 {examined} 条路径引用，{len(problems)} 条指向不存在的文件"
           f"（另有 {len(SKIPPED_HISTORY)} 条按「病历/负例」口径未判）")
     if examined == 0:
