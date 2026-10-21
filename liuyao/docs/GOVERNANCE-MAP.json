@@ -1,9 +1,9 @@
 {
- "count": 56,
+ "count": 57,
  "by_tier": {
   "tool": 3,
   "ondemand": 11,
-  "nightly": 10,
+  "nightly": 11,
   "build": 8,
   "blocking": 24
  },
@@ -167,6 +167,13 @@
    "guards": "§三 house 规矩核对版（211 批：版本名/绝对路径/scratch/产物四判据）",
    "run_by_check_py": true,
    "doc": "House 规矩核对版（AGENTS §三 表第 1/3/5 行＋绝对路径条，第两百一十一批上门）。"
+  },
+  {
+   "script": "check_raise_regression.py",
+   "tier": "nightly",
+   "guards": "--raise 合并基回归守卫（244 批：241 病的常设齿，静态双钉＋bytes 级功能探针自恢复）",
+   "run_by_check_py": false,
+   "doc": "--raise 合并基回归守卫（第两百四十四批）——241 修的病不许无声复发。"
   },
   {
    "script": "check_regex_lists.py",
@@ -367,7 +374,7 @@
   {
    "script": "sweep_selftests.py",
    "tier": "nightly",
-   "guards": "器具全体检扫描器（213 批：声明面 53 器具逐真跑，注入损坏负例即体检；自身与编排器豁免）",
+   "guards": "器具全体检扫描器（213 批：声明面 53 器具逐真跑，注入损坏负例即体检；自身与编排器豁免；242 批增 rc×输出互验与 classify 五态）",
    "run_by_check_py": false,
    "doc": "器具全体检扫描器（第两百一十三批）——55 个声明 --selftest 的器具逐真跑，首次系统化基线。"
   },

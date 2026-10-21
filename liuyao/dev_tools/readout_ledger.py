@@ -116,7 +116,7 @@ def checks():
         ("b7162bfc99e2cce8", "a46f7374276a17a6"))
     add("bazi.golden(2a4c/1a0f)", "176批前", lambda t: _golden("bazi"),
         ("2a4c9258d6c1e4cb", "1a0f165ebfa7b6da"))
-    add("governance(56/36, blk 24/25)", "194批（230 批更新：六爻加批次号体检器）", lambda t: _gov_counts(), ("56", "36", "24", "25"))
+    add("governance(57/36, blk 24/25)", "194批（244 批更新：六爻加 raise 回归守卫；230 批曾加体检器 55→56）", lambda t: _gov_counts(), ("57", "36", "24", "25"))
 
     # 案例分母（234 批）：账台钉率也钉分母——删/添一例而率恰不动时，分母行会红。
     def c_case_denoms(t):
@@ -204,6 +204,12 @@ def checks():
                     n += sum(1 for m in mods if m == other or m.startswith(other + "."))
         return str(n)
     add("两科零耦合 import(0)", "243批（§二铁律五十三批后获断言版）", c_no_cross_import, ("0",))
+
+    # --raise 合并基回归（244 批）：241 病的常设齿（静态双钉＋六爻功能探针，bytes 级自恢复）。
+    def c_raise_guard(t):
+        r = sh(["dev_tools/check_raise_regression.py"])
+        return "PASS" if "全净" in r else (r.strip().splitlines() or ["?"])[-1][:40]
+    add("raise 回归守卫(PASS)", "244批（修过的病必须带齿常驻）", c_raise_guard, ("PASS",))
 
     def c_tier_consistency(t):
         ml = json.loads((ROOT / "liuyao" / "docs" / "GOVERNANCE-MAP.json").read_text(encoding="utf-8"))
