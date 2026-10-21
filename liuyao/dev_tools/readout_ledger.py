@@ -184,6 +184,27 @@ def checks():
         return (str(bd), str(bj))
     add("tracked 完整性(解码0/JSON0)", "238批（353 文件 89 JSON 全量口径首立）", c_tracked_integrity, ("0", "0"))
 
+    # 零耦合铁律（§二）的机器化（243 批）——AGENTS「两科禁止任何相互 import」五十批无门。
+    # 判据只收 import 图（机械可分）；路径字符串启发式已废——实测唯一命中是 docstring
+    # 说明文里的科名（243 探针记录，字符串级误报形态留此供后人不再重蹈）。
+    def c_no_cross_import(t):
+        import ast as _ast
+        n = 0
+        for d, other in (("bazi", "liuyao"), ("liuyao", "bazi")):
+            for p in (ROOT / d).rglob("*.py"):
+                if "__pycache__" in str(p):
+                    continue
+                try:
+                    tree = _ast.parse(p.read_text(encoding="utf-8", errors="replace"))
+                except SyntaxError:
+                    continue
+                for nd in _ast.walk(tree):
+                    mods = ([a.name for a in nd.names] if isinstance(nd, _ast.Import)
+                            else [nd.module] if isinstance(nd, _ast.ImportFrom) and nd.module else [])
+                    n += sum(1 for m in mods if m == other or m.startswith(other + "."))
+        return str(n)
+    add("两科零耦合 import(0)", "243批（§二铁律五十三批后获断言版）", c_no_cross_import, ("0",))
+
     def c_tier_consistency(t):
         ml = json.loads((ROOT / "liuyao" / "docs" / "GOVERNANCE-MAP.json").read_text(encoding="utf-8"))
         mb = json.loads((ROOT / "bazi" / "docs" / "GOVERNANCE-MAP.json").read_text(encoding="utf-8"))
