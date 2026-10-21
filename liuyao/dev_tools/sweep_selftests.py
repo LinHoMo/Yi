@@ -47,6 +47,25 @@ def declared_files():
     return out
 
 
+def classify(rc: int, out: str) -> str:
+    """一器结果的归档：PASS/FAIL/NOTIMPL/RC-LIE。
+
+    242 批的第一版把「退 0 且有 × 行」全判说谎——三击全中**守规矩最好的公民**：
+    harvest/prospective/tianhou 的 × 行是负例自证的演示输出（故意喂坏输入给自己的守卫看，
+    演示完以 √ 收束退 0）。精化：说谎＝有 × 且**全文无 √**；有 √ 收尾即演示形态。
+    """
+    lines = [l.strip() for l in out.splitlines() if l.strip()]
+    has_x = any(l.startswith("×") for l in lines)
+    has_v = any(l.startswith("√") for l in lines)
+    if rc == 2 and "unrecognized arguments: --selftest" in out:
+        return "NOTIMPL"
+    if rc == 0 and has_x and not has_v:
+        return "RC-LIE"
+    if rc == 0:
+        return "PASS"
+    return "FAIL"
+
+
 def sweep() -> tuple:
     files = declared_files()
     npass = nfail = nnot = 0
@@ -56,18 +75,34 @@ def sweep() -> tuple:
                            capture_output=True, text=True, encoding="utf-8",
                            errors="replace", timeout=600, cwd=str(ROOT))
         out = (r.stdout or "") + (r.stderr or "")
-        if r.returncode == 2 and "unrecognized arguments: --selftest" in out:
+        kind = classify(r.returncode, out)
+        if kind == "NOTIMPL":
             nnot += 1
-            bad.append(("NOTIMPL", rel))
-        elif r.returncode == 0:
+            bad.append((kind, rel))
+        elif kind == "PASS":
             npass += 1
         else:
             nfail += 1
-            bad.append(("FAIL(%d)" % r.returncode, rel, (out.strip().splitlines() or [""])[-1][:90]))
+            first = next((l.strip()[:88] for l in out.splitlines() if l.strip().startswith("×")),
+                         (out.strip().splitlines() or ["(无输出)"])[-1][:88])
+            bad.append(("%s(%d)" % (kind, r.returncode), rel, first))
     return len(files), npass, nfail, nnot, bad
 
 
 def selftest() -> int:
+    # 0) classify 四态单元夹具（242 批精化规则的自证：说谎/演示/失败/未声明）
+    uni = [
+        (0, "× 坏了但没人说 √\n", "RC-LIE"),            # 说谎：有 × 无 √
+        (0, "× 故意喂坏输入（守卫演示）\n√ selftest 全过\n", "PASS"),  # 合规负例自证
+        (0, "√ 全过\n", "PASS"),
+        (1, "× 真失败\n", "FAIL"),
+        (2, "usage: x\nerror: unrecognized arguments: --selftest\n", "NOTIMPL"),
+    ]
+    for rc, out, want_kind in uni:
+        got = classify(rc, out)
+        if got != want_kind:
+            print("× classify 单元失配：rc=%s want=%s got=%s" % (rc, want_kind, got))
+            return 1
     # wired 负例：损坏一个真器具→扫描必须报 FAIL→恢复归零。
     # 注入点选择标准（213 批两轮实踩后定死）：①锚文本在 victim 中唯一且必然存在
     # （count 判 1，文案区分"缺失/多命中"）；②注入后该器 --selftest 必返非零，
