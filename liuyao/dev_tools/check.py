@@ -679,6 +679,11 @@ def main() -> int:
         if rc != 0:
             failures.append(f"六神旺衰单测未过（rc={rc}）")
 
+    if want("eval") and args.fast:
+        # 263 批：跳过即显形（对齐八字 [7] 的「不假装通过」）——静默跳过会让
+        # --fast 的输出长得像全绿，分数下限失效无人知。
+        print("\n[5] 古籍案例对齐分 —— × 本次带 --fast：未跑，tune/holdout 分数下限不生效"
+              "（合入前必须重跑不带 --fast 的本门）")
     if want("eval") and not args.fast:
         print("\n[5] 古籍案例对齐分与应期判别力（非现实预测命中率）")
         for split in ("tune", "holdout"):
