@@ -1,9 +1,9 @@
 {
- "count": 49,
+ "count": 50,
  "by_tier": {
   "tool": 3,
   "ondemand": 10,
-  "nightly": 8,
+  "nightly": 9,
   "build": 8,
   "blocking": 20
  },
@@ -198,6 +198,13 @@
    "guards": "尚占↔内核逐格对拍",
    "run_by_check_py": false,
    "doc": "《周易尚占》卷下八宫立成表 → core 纳甲/八宫表 逐格对拍（**外部真值源**）。"
+  },
+  {
+   "script": "draft_candidates.py",
+   "tier": "nightly",
+   "guards": "共识→入册候选草稿器（204 批：10 候选含 dup 点名/question 开口，不进册不评分）",
+   "run_by_check_py": false,
+   "doc": "入册候选草稿器（第两百零四批）——为 201 批 10 条双器共识生成「可签字的草稿盘」。"
   },
   {
    "script": "feedback_report.py",

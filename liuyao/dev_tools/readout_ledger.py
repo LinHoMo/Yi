@@ -108,6 +108,7 @@ def checks():
         ("15", "35", "5", "8"))
     add("liuyao.restorable_recheck(共识10/分歧8)", "201批", lambda t: _json_counts(
         "data/cases/restorable_recheck.json", None, ("consensus", "needs_human")), ("10", "8"))
+    add("liuyao.draft_candidates(10含dup4)", "204批", lambda t: _draft_counts(), ("10", "4"))
 
     # --- 裁决表/治理图/指纹 ---
     add("liuyao.adjudications(7=5+1+1)", "188批", lambda t: _adjud_counts(), ("7", "5", "1", "1"))
@@ -115,7 +116,7 @@ def checks():
         ("b7162bfc99e2cce8", "a46f7374276a17a6"))
     add("bazi.golden(2a4c/1a0f)", "176批前", lambda t: _golden("bazi"),
         ("2a4c9258d6c1e4cb", "1a0f165ebfa7b6da"))
-    add("governance(49/34, blk 20/19)", "194批（203 批更新：+幂等写模块）", lambda t: _gov_counts(), ("49", "34", "20", "19"))
+    add("governance(50/34, blk 20/19)", "194批（204 批更新：+候选草稿器）", lambda t: _gov_counts(), ("50", "34", "20", "19"))
 
     # --- 八字侧 ---
     def c_bazi_holdout(t):
@@ -163,6 +164,13 @@ def _adjud_counts():
         c[e["status"]] += 1
     return (str(d["count"]), str(c["settled_by_source"]), str(c["frozen_by_user"]),
             str(c["open_conflict"]))
+
+
+def _draft_counts():
+    d = json.loads((DISC / "data" / "cases" / "restorable_candidates.json").read_text(encoding="utf-8"))
+    cs = d.get("candidates", [])
+    dup = sum(1 for c in cs if any(str(g).startswith("dup_of") for g in c.get("gaps", [])))
+    return (str(len(cs)), str(dup))
 
 
 def _golden(disc):

@@ -1,0 +1,257 @@
+{
+ "schema": "yi-liuyao-restorable-candidates/1",
+ "built_at": "2026-10-21T18:05:11",
+ "_comment": "草稿≠案例：不进 splits、不被 case_runner 读取、不参与评分（第两百零四批）。verdict 一律 None——书载吉凶不机械硬猜（§三.4），人可另补。签署接受的条目由后续正式批按 §四 并入外部集并走分片台账。dup_of＝同 (日期,卦面,验支) 键的其它验注行（一书多引同案常见）——入册去重是人的决定，机器只点名。",
+ "n": 10,
+ "candidates": [
+  {
+   "id": "RC-VER-zengshan_buyi_wikitext-L1567",
+   "source": {
+    "file": "zengshan_buyi.wikitext.txt",
+    "line": 1567
+   },
+   "status": "draft_pending_human",
+   "question": null,
+   "input": {
+    "date": "酉月甲辰日"
+   },
+   "hexagram": {
+    "original": "遁",
+    "changed": "姤"
+   },
+   "expected": {
+    "verdict": null,
+    "yingqi": "亥日"
+   },
+   "source_quote": "<br>此人閒問﹐家中常見白人﹐必有古窖﹐何時得財﹖予曰﹕卦中鬼變子孫﹐目下子女不利﹐彼小女出花﹐予曰﹕須防亥日﹐果死於亥日。彼問﹕何所問得財﹐神報目下而死女﹖應亥日者﹐午火鬼化亥水子也。又如酉月甲辰日占本月月令。得遁之姤卦。",
+   "quote_verified": true,
+   "gaps": [
+    "话题词典未命中——人需给 question（决定用神）"
+   ]
+  },
+  {
+   "id": "RC-VER-zengshan_buyi_wikitext-L3380",
+   "source": {
+    "file": "zengshan_buyi.wikitext.txt",
+    "line": 3380
+   },
+   "status": "draft_pending_human",
+   "question": null,
+   "input": {
+    "date": "未月丁卯日"
+   },
+   "hexagram": {
+    "original": "晋",
+    "changed": null
+   },
+   "expected": {
+    "verdict": null,
+    "yingqi": "辰日"
+   },
+   "source_quote": "<br>斷曰﹕𨿽則兄爻持世無財﹐但喜卯日卽是財星﹐古以財爻持世沖世者必得﹐況應爻未土旺而生世﹐明日必獲﹐果得財﹐應辰日者﹐世動逢合之日也。",
+   "quote_verified": true,
+   "gaps": [
+    "话题词典未命中——人需给 question（决定用神）"
+   ]
+  },
+  {
+   "id": "RC-VER-zengshan_buyi_dz_dz-L1862",
+   "source": {
+    "file": "zengshan_buyi_dz.dz.txt",
+    "line": 1862
+   },
+   "status": "draft_pending_human",
+   "question": "占功名",
+   "input": {
+    "date": "未月癸亥日"
+   },
+   "hexagram": {
+    "original": "艮",
+    "changed": null
+   },
+   "expected": {
+    "verdict": null,
+    "yingqi": "申日"
+   },
+   "source_quote": "此人已往军前援例，故占流年，只谓命有功名，流年必现，却不知占功名，以官为官，最喜官星持世。占流年以官为鬼，不宜官鬼持世，余以此理告之，彼曰：烦人援例，如不知成否？余曰：此卦官星持世，长生于亥日，业已成矣。亥水为财，财旺生官。果于申日文书实收俱到，应申日者，寅木官星持世，静而逢冲之日也。若以流年作鬼断者，如天远矣。",
+   "quote_verified": true,
+   "gaps": []
+  },
+  {
+   "id": "RC-VER-zengshan_buyi_dz_dz-L1871",
+   "source": {
+    "file": "zengshan_buyi_dz.dz.txt",
+    "line": 1871
+   },
+   "status": "draft_pending_human",
+   "question": null,
+   "input": {
+    "date": "酉月甲辰日"
+   },
+   "hexagram": {
+    "original": "遁",
+    "changed": "姤"
+   },
+   "expected": {
+    "verdict": null,
+    "yingqi": "亥日"
+   },
+   "source_quote": "此人闲问，家中常见白人，必有古窖，何时得财？余曰：卦中鬼变子孙，目下子女不利，彼小女出花，余曰：须防亥日，果死于亥日。彼问：何所问得财，神报目下而死女？应亥日者，午火鬼化亥水子也。又如酉月甲辰日占本月月令。得遁之姤卦。",
+   "quote_verified": true,
+   "gaps": [
+    "话题词典未命中——人需给 question（决定用神）",
+    "dup_of=RC-VER-zengshan_buyi_wikitext-L1567"
+   ]
+  },
+  {
+   "id": "RC-VER-zengshan_buyi_dz_dz-L1887",
+   "source": {
+    "file": "zengshan_buyi_dz.dz.txt",
+    "line": 1887
+   },
+   "status": "draft_pending_human",
+   "question": null,
+   "input": {
+    "date": "酉月甲辰日"
+   },
+   "hexagram": {
+    "original": "遁",
+    "changed": "姤"
+   },
+   "expected": {
+    "verdict": null,
+    "yingqi": "亥日"
+   },
+   "source_quote": "余曰：此卦不应小厮病，而应今秋功名有碍，彼曰：何也？余曰：世临卯木之官化申金子孙回头克，是以知之。彼曰：我问小厮，如何应在功名？余日：神之机常常如此，舍小事而报大凶，公之诸事须宜慎之，果于七月，被论革职，此占他而应我也！",
+   "quote_verified": true,
+   "gaps": [
+    "话题词典未命中——人需给 question（决定用神）",
+    "dup_of=RC-VER-zengshan_buyi_wikitext-L1567"
+   ]
+  },
+  {
+   "id": "RC-VER-zengshan_buyi_dz_dz-L3035",
+   "source": {
+    "file": "zengshan_buyi_dz.dz.txt",
+    "line": 3035
+   },
+   "status": "draft_pending_human",
+   "question": null,
+   "input": {
+    "date": "未月丁卯日"
+   },
+   "hexagram": {
+    "original": "晋",
+    "changed": null
+   },
+   "expected": {
+    "verdict": null,
+    "yingqi": "辰日"
+   },
+   "source_quote": "断曰：虽则兄爻持世无财，但喜卯日即是财星，古以财爻持世冲世者必得，况应爻未土旺而生世，明日必获，果得财，应辰日者，世动逢合之日也。",
+   "quote_verified": true,
+   "gaps": [
+    "话题词典未命中——人需给 question（决定用神）",
+    "dup_of=RC-VER-zengshan_buyi_wikitext-L3380"
+   ]
+  },
+  {
+   "id": "RC-VER-zengshan_buyi_dz_dz-L3198",
+   "source": {
+    "file": "zengshan_buyi_dz.dz.txt",
+    "line": 3198
+   },
+   "status": "draft_pending_human",
+   "question": "占婚",
+   "input": {
+    "date": "寅月丙午日"
+   },
+   "hexagram": {
+    "original": "临",
+    "changed": "既济"
+   },
+   "expected": {
+    "verdict": null,
+    "yingqi": "巳日"
+   },
+   "source_quote": "觉子曰：女家占男，以官为用，以应爻为男家，此古法也，亦死法也，断卦之时，须要人之活变，未必全得显而易见者，即如此卦，女家占男，卯木旺官持世，其婚必成，而应爻受克，又为男家不允，似此何以决之，要知财官为重，世应为轻，虽是女家占男，亦要财爻不致于换陷，此—卦也，男女二人财被回头克又逢丑土之克，如何能生卯木之官？男女不能相合相生，婚虽成终有他变，后果聘定于四月，未及成婚被贼兵劫去，应巳月者亥水逢月破也。",
+   "quote_verified": true,
+   "gaps": []
+  },
+  {
+   "id": "RC-VER-zengshan_buyi_dz_dz-L3213",
+   "source": {
+    "file": "zengshan_buyi_dz.dz.txt",
+    "line": 3213
+   },
+   "status": "draft_pending_human",
+   "question": "占婚",
+   "input": {
+    "date": "寅月丙午日"
+   },
+   "hexagram": {
+    "original": "临",
+    "changed": "既济"
+   },
+   "expected": {
+    "verdict": null,
+    "yingqi": "巳日"
+   },
+   "source_quote": "断曰：女占夫，不宜子孙持世，乃克夫之象，幸寅木子水相生，不能伤之，所以不和，今兼应爻为夫，应逢子丑作合，夫已有外遇，水木相生，两人情密。彼曰：果然。后如何？余曰：两人不是姻缘，虽则不能死别，必有生离，果于次年寅月休妻，此人六月再取彼妇，应寅月者，夫临寅木而冲世也，应六月者未土冲开初爻丑土，子水来生其寅木也。",
+   "quote_verified": true,
+   "gaps": [
+    "dup_of=RC-VER-zengshan_buyi_dz_dz-L3198"
+   ]
+  },
+  {
+   "id": "RC-VER-zengshan_buyi_dz_dz-L3314",
+   "source": {
+    "file": "zengshan_buyi_dz.dz.txt",
+    "line": 3314
+   },
+   "status": "draft_pending_human",
+   "question": null,
+   "input": {
+    "date": "亥月甲子日"
+   },
+   "hexagram": {
+    "original": "革",
+    "changed": "夬"
+   },
+   "expected": {
+    "verdict": null,
+    "yingqi": "巳日"
+   },
+   "source_quote": "此卦若问仆人在外之吉凶者，必不归矣，何也？午火财爻伏而破日月之克，今问何日可到，不以此断，世空者速至，此人来矣，巳日必到，应巳日者，冲空之日也，巳火又是财爻，果于巳日到。",
+   "quote_verified": true,
+   "gaps": [
+    "话题词典未命中——人需给 question（决定用神）"
+   ]
+  },
+  {
+   "id": "RC-VER-zengshan_buyi_dz_dz-L3338",
+   "source": {
+    "file": "zengshan_buyi_dz.dz.txt",
+    "line": 3338
+   },
+   "status": "draft_pending_human",
+   "question": null,
+   "input": {
+    "date": "丑月庚午日"
+   },
+   "hexagram": {
+    "original": "履",
+    "changed": null
+   },
+   "expected": {
+    "verdict": null,
+    "yingqi": "巳日"
+   },
+   "source_quote": "断曰：子水财爻化出巳火父爻，动爻不克变爻，巳日必到，果于巳日到。",
+   "quote_verified": true,
+   "gaps": [
+    "话题词典未命中——人需给 question（决定用神）"
+   ]
+  }
+ ]
+}
