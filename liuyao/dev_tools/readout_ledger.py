@@ -270,8 +270,11 @@ QUICK_SKIP = {"liuyao.wiki top1/top3(27.3/52.3)", "liuyao.baselines 用神18.2/�
 
 def run(quick: bool) -> int:
     bad = 0
-    print("═ 读数对账台（登记值 vs HEAD 重放值）%s ═" % ("quick" if quick else "full"))
-    for cid, src, fn, expect in checks():
+    items = checks()
+    # 总项数由账台自报（218 批：此前 changelog 里「26/28 项」系我凭手感数的假数——
+    # 凡计数自己算、不手打；下面的结论行也带实测 n）。
+    print("═ 读数对账台（登记值 vs HEAD 重放值）%s·全账 %d 项 ═" % ("quick" if quick else "full", len(items)))
+    for cid, src, fn, expect in items:
         if quick and cid in QUICK_SKIP:
             print("  ~ %-46s 跳过（full 才跑）" % cid)
             continue
@@ -291,8 +294,8 @@ def run(quick: bool) -> int:
         print("  %s %-46s（登记：%s）%s" % ("√" if ok else "×", cid, src,
               "" if ok else " 实得 %r ≠ 期望 %r" % (got, expect)))
         bad += 0 if ok else 1
-    print("═ 结论：%s（bad=%d）——任何 × 都是读数与代码分家的现形，按 §六.2 立案处理，"
-          "禁止静默改期望值 ═" % ("全部对账一致" if bad == 0 else "存在分家读数", bad))
+    print("═ 结论：%s（bad=%d/全账 %d）——任何 × 都是读数与代码分家的现形，按 §六.2 立案处理，"
+          "禁止静默改期望值 ═" % ("全部对账一致" if bad == 0 else "存在分家读数", bad, len(items)))
     return 1 if bad else 0
 
 
