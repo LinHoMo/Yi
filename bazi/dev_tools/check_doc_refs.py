@@ -54,6 +54,10 @@ BARE = re.compile(r"(?<![\w/.-])((?:docs|scripts|data|references|dev_tools|core|
 SKIP_MARK = ("<", "…", "...", "http://", "https://")
 # 运行时产物目录：本就不入库，存在性不检查
 RUNTIME_DIRS = ("outputs/", "scratch/", "logs/", "assets/")
+# 评测生成物：.gitignore 已声明「**/data/cases/eval_*.json 脚本重跑生成、不入库」，
+# 代码在运行时真读它（corpus_reports.py 取 eval_all 的 engine_output）。
+# 瘦身清掉盘上生成物后，把它当死链接判红＝把 gitignore 声明的派生物误判成悬空指针。
+GENERATED_ARTIFACT = re.compile(r"(?:^|/)data/cases/eval_[A-Za-z0-9_\-]*\.json$")
 # 【第一百六十六批】上述目录里的**文件本身**也不作为声明载体扫描：RUNTIME_DIRS 的旧口径
 # 只豁免「指向这些目录的引用」，但 scratch/ 下的一次性探针脚本里写死的旧路径字符串
 # （查 git 历史用）会被扫成死指针——那些不是对仓库的声明，判红等于逼工作脚本绕着写。
@@ -130,6 +134,8 @@ def scan() -> tuple[list[str], int]:
                     continue      # 裸文件名（如 SKILL.md）不构成本器的路径声明
                 if ref.startswith(RUNTIME_DIRS):
                     continue
+                if GENERATED_ARTIFACT.match(ref):
+                    continue      # 评测生成物（.gitignore 声明「脚本重跑生成、不入库」）：存在性不检查
                 if SHORTHAND.search(ref):
                     continue      # 「step3/4/5.py」一类散文速记，不是路径声明
                 examined += 1

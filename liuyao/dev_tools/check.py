@@ -558,7 +558,13 @@ def main() -> int:
         # 编码不变式（第一百二十八批）：下列 CLI 实测曾在 GBK/cp936 控制台写出 **GBK 字节**
         # （narrate 首字节 0xbe、render 0xc1f9、event_logger 0xcac2、thinking_chain 0xc1f9、classical_analysis 0xa1be），
         # 而 rc 都是 0、分数与金标准指纹**全看不见**——只有"产物能否按 UTF-8 读出中文"这条行为断言拦得住退化。
+        # 夹具自足（第一百七十六批）：本门此前把夹具写死在未入库的 scratch/analyze.json——第175批清理
+        # gitignored 生成物后，干净工作树上实跑判红两处（rc=1，真因是**文件不存在**，不是编码），
+        # 而第175批登记误归因为「既有环境问题（控制台代码页相关）」。实跑反证：按四段契约现做
+        # chart→analyze 后同两条入口 rc=0、全绿。现依 §一 铁律二（自检夹具只走临时目录）由门内
+        # tempfile 现做夹具——全新 clone 即可复现；构建失败即判红，**不得静默跳过**。
         import subprocess as _sp
+        import tempfile as _tf
 
         def _utf8_with_cjk(argv):
             r = _sp.run([sys.executable] + argv, capture_output=True, cwd=str(ROOT))
@@ -570,14 +576,24 @@ def main() -> int:
             return any("\u4e00" <= ch <= "\u9fff" for ch in u[:400]), r.returncode
 
         _enc_bad = []
-        for _nm, _argv in (("scripts/narrate.py", ["scripts/narrate.py", "scratch/analyze.json"]),
-                           ("scripts/render.py", ["scripts/render.py", "scratch/analyze.json"]),
-                           ("scripts/thinking_chain.py", ["scripts/thinking_chain.py"]),
-                           ("scripts/classical_analysis.py", ["scripts/classical_analysis.py"]),
-                           ("scripts/event_logger.py", ["scripts/event_logger.py", "list", "--limit", "1"])):
-            _ok, _rc = _utf8_with_cjk(_argv)
-            if _rc != 0 or not _ok:
-                _enc_bad.append(f"{_nm}（rc={_rc}，UTF-8 可解且含中文={_ok}）")
+        with _tf.TemporaryDirectory(prefix="yi_enc_fixture_") as _td:
+            _fx_chart = str(Path(_td) / "chart.json")
+            _fx_analyze = str(Path(_td) / "analyze.json")
+            for _fx_argv in (["scripts/chart.py", "--mode", "time", "--datetime",
+                              "2026-09-18 14:30", "-o", _fx_chart],
+                             ["scripts/analyze.py", _fx_chart, "-o", _fx_analyze]):
+                _fx_rc, _fx_out = run([sys.executable] + _fx_argv)
+                if _fx_rc != 0:
+                    _enc_bad.append("临时夹具构建失败（%s rc=%s，本门拒绝在缺夹具时冒充绿）"
+                                    % (_fx_argv[1], _fx_rc))
+            for _nm, _argv in (("scripts/narrate.py", ["scripts/narrate.py", _fx_analyze]),
+                               ("scripts/render.py", ["scripts/render.py", _fx_analyze]),
+                               ("scripts/thinking_chain.py", ["scripts/thinking_chain.py"]),
+                               ("scripts/classical_analysis.py", ["scripts/classical_analysis.py"]),
+                               ("scripts/event_logger.py", ["scripts/event_logger.py", "list", "--limit", "1"])):
+                _ok, _rc = _utf8_with_cjk(_argv)
+                if _rc != 0 or not _ok:
+                    _enc_bad.append(f"{_nm}（rc={_rc}，UTF-8 可解且含中文={_ok}）")
         # 判据自身的负例：GBK 字节必须被判不可解，否则这条不变式是摆设。
         try:
             "六爻纳甲".encode("gbk").decode("utf-8")
@@ -754,7 +770,9 @@ def main() -> int:
             ("cli_encoding", "[20] CLI 编码红线（cp936 下 argparse 中文入口的产物须为可读 UTF-8）",
              "dev_tools/check_cli_encoding.py"),
             ("yingqi_scoring", "[26] 应期评分口径（无语支基准：答进日窗满分／答不进 N/A，双向都要有牙）",
-             "dev_tools/check_yingqi_scoring.py")):
+             "dev_tools/check_yingqi_scoring.py"),
+            ("bing_yao", "[27] 日辰并爻唯一性守卫（成并+0.5／同支≥2位退0且理由引源L125「不能成并」）",
+             "dev_tools/check_bing_yao.py")):
         if want(key):
             print(f"\n{title}")
             rc, out = run([sys.executable, script, "--selftest"])

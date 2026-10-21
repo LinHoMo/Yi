@@ -73,7 +73,9 @@ SRC = HERE.parent / "data" / "sources" / "zengshan_buyi_dz.dz.txt"
 OUT = HERE.parent / "data" / "cases" / "zengshan_dz_cases.json"
 SPLITS = HERE.parent / "data" / "cases" / "case_splits.json"
 REPORT = HERE.parent / "docs" / "CASE-LIBRARY-AUDIT.md"
-CASES_GLOB = (HERE.parent / "data" / "cases").glob("*_cases.json")
+# 固化：glob 返回生成器，赋给模块全局后若被二次迭代会静默返回空（§四.8「扫了 0 份 ≠ 没文档」类隐患）。
+# 此处仅 L595 单次消费，但为防止日后追加扫描时静默全盲，预先 materialize 成 list。
+CASES_GLOB = list((HERE.parent / "data" / "cases").glob("*_cases.json"))
 
 STEMS = "".join(HEAVENLY_STEMS)
 # dz 转录本把日干「己」写作「已」（曾於午月**已**卯日）——已知转录混淆，抽取时归一并登记
