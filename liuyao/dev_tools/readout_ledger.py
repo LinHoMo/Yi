@@ -151,6 +151,15 @@ def checks():
         return f"{len(heads) - len(gone)}/{len(heads)}" + ("" if not gone else " 缺:" + ",".join(gone))
     add("头牌值在位(9/9)", "235批（176 事故族的正向断言）", c_headline_present, ("9/9",))
 
+    # tracked×ignore 漂移（237 批）：任何已跟踪文件不得再命中 ignore 规则（产物规矩的存量面）。
+    def c_ignore_drift(t):
+        import subprocess as sp
+        r = sp.run(["git", "-C", str(ROOT), "ls-files", "-i", "-c", "--exclude-standard"],
+                   capture_output=True, text=True, encoding="utf-8", errors="replace")
+        rows = [x for x in (r.stdout or "").splitlines() if x.strip()]
+        return str(len(rows))
+    add("tracked×ignore 漂移(0)", "237批（236 一次性杂检的常设化）", c_ignore_drift, ("0",))
+
     def c_tier_consistency(t):
         ml = json.loads((ROOT / "liuyao" / "docs" / "GOVERNANCE-MAP.json").read_text(encoding="utf-8"))
         mb = json.loads((ROOT / "bazi" / "docs" / "GOVERNANCE-MAP.json").read_text(encoding="utf-8"))
