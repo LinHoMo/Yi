@@ -105,6 +105,8 @@ def checks():
     add("liuyao.triage(15/35/13)", "199批", lambda t: _json_counts(
         "data/cases/verifications_triage.json", None,
         ("A_有验支候选", "A_无验支结案候选", "B_异写候选"), key="buckets"), ("15", "35", "13"))
+    add("liuyao.restorable_recheck(共识10/分歧8)", "201批", lambda t: _json_counts(
+        "data/cases/restorable_recheck.json", None, ("consensus", "needs_human")), ("10", "8"))
 
     # --- 裁决表/治理图/指纹 ---
     add("liuyao.adjudications(7=5+1+1)", "188批", lambda t: _adjud_counts(), ("7", "5", "1", "1"))
@@ -112,7 +114,7 @@ def checks():
         ("b7162bfc99e2cce8", "a46f7374276a17a6"))
     add("bazi.golden(2a4c/1a0f)", "176批前", lambda t: _golden("bazi"),
         ("2a4c9258d6c1e4cb", "1a0f165ebfa7b6da"))
-    add("governance(47/34, blk 20/19)", "194批（200 批更新计数：新增分诊/对账两器）", lambda t: _gov_counts(), ("47", "34", "20", "19"))
+    add("governance(48/34, blk 20/19)", "194批（201 批更新：+复核器；200 批 +分诊/对账）", lambda t: _gov_counts(), ("48", "34", "20", "19"))
 
     # --- 八字侧 ---
     def c_bazi_holdout(t):

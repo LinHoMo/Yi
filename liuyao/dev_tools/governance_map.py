@@ -117,6 +117,7 @@ CURATED = {
         "tianhou": ("ondemand", "占天候台架（真实运行待授权）"),
         "triage_partials": ("nightly", "partial 机械预分诊（199 批：28 速裁面+35 结案候选待签，不改判）"),
         "readout_ledger": ("nightly", "读数对账台（200 批：登记值 vs HEAD 重放值逐位核对，×＝分家立案）"),
+        "recheck_restorable": ("nightly", "restorable 双解析器共识复核（201 批：10 共识/8 分歧标字段，不升册）"),
         "version_collate": ("ondemand", "两抄本源级对拍（185 批冲突率）"),
         "window_report": ("ondemand", "top-k 覆盖曲线读数器"),
         "governance_map": ("tool", "本器：治理地图生成"),

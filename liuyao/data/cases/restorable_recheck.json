@@ -1,0 +1,315 @@
+{
+ "generated_at": "2026-10-21T17:42:29",
+ "_comment": "双解析器共识复核：consensus 条目人只裁语义；needs_human 标分歧字段。升册永远是人的决定（§三.4），本册不改毕业册状态、不写 expected。",
+ "n": 18,
+ "consensus": 10,
+ "needs_human": 8,
+ "rows": [
+  {
+   "id": "VER-yilin_buyi_dz_dz-L1279",
+   "file": "yilin_buyi_dz.dz.txt",
+   "line": 1279,
+   "a": {
+    "date": "子月戊午日",
+    "original": "观",
+    "changed": "益",
+    "yingqi_branch": "子"
+   },
+   "b": {
+    "original": "观",
+    "changed": "益",
+    "yingqi": "亥"
+   },
+   "verdict": "needs_human:yingqi"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L1567",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 1567,
+   "a": {
+    "date": "酉月甲辰日",
+    "original": "遁",
+    "changed": "姤",
+    "yingqi_branch": "亥"
+   },
+   "b": {
+    "original": "遁",
+    "changed": "姤",
+    "yingqi": "亥"
+   },
+   "verdict": "consensus"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L3380",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 3380,
+   "a": {
+    "date": "未月丁卯日",
+    "original": "晋",
+    "changed": null,
+    "yingqi_branch": "辰"
+   },
+   "b": {
+    "original": "晋",
+    "changed": null,
+    "yingqi": "辰"
+   },
+   "verdict": "consensus"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L550",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 550,
+   "a": {
+    "date": "酉月辛亥日",
+    "original": "兑",
+    "changed": "解",
+    "yingqi_branch": "寅"
+   },
+   "b": {
+    "original": null,
+    "changed": null,
+    "yingqi": "寅"
+   },
+   "verdict": "needs_human:original,changed"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L561",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 561,
+   "a": {
+    "date": "巳月乙未日",
+    "original": "大过",
+    "changed": "鼎",
+    "yingqi_branch": "卯"
+   },
+   "b": {
+    "original": null,
+    "changed": null,
+    "yingqi": "卯"
+   },
+   "verdict": "needs_human:original,changed"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1581",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1581,
+   "a": {
+    "date": "辰月戊子日",
+    "original": "比",
+    "changed": "咸",
+    "yingqi_branch": "卯"
+   },
+   "b": {
+    "original": null,
+    "changed": null,
+    "yingqi": "卯"
+   },
+   "verdict": "needs_human:original,changed"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1680",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1680,
+   "a": {
+    "date": "午月戊午日",
+    "original": "升",
+    "changed": "恒",
+    "yingqi_branch": "戌"
+   },
+   "b": {
+    "original": null,
+    "changed": null,
+    "yingqi": "戌"
+   },
+   "verdict": "needs_human:original,changed"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1798",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1798,
+   "a": {
+    "date": "卯月辛丑日",
+    "original": "晋",
+    "changed": null,
+    "yingqi_branch": "巳"
+   },
+   "b": {
+    "original": "恒",
+    "changed": "大过",
+    "yingqi": "巳"
+   },
+   "verdict": "needs_human:original,changed"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1862",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1862,
+   "a": {
+    "date": "未月癸亥日",
+    "original": "艮",
+    "changed": null,
+    "yingqi_branch": "申"
+   },
+   "b": {
+    "original": "艮",
+    "changed": null,
+    "yingqi": "申"
+   },
+   "verdict": "consensus"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1871",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1871,
+   "a": {
+    "date": "酉月甲辰日",
+    "original": "遁",
+    "changed": "姤",
+    "yingqi_branch": "亥"
+   },
+   "b": {
+    "original": "遁",
+    "changed": "姤",
+    "yingqi": "亥"
+   },
+   "verdict": "consensus"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1887",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1887,
+   "a": {
+    "date": "酉月甲辰日",
+    "original": "遁",
+    "changed": "姤",
+    "yingqi_branch": "亥"
+   },
+   "b": {
+    "original": "遁",
+    "changed": "姤",
+    "yingqi": "亥"
+   },
+   "verdict": "consensus"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2084",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2084,
+   "a": {
+    "date": "未月丙午日",
+    "original": "离",
+    "changed": null,
+    "yingqi_branch": "寅"
+   },
+   "b": {
+    "original": null,
+    "changed": null,
+    "yingqi": "寅"
+   },
+   "verdict": "needs_human:original"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2093",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2093,
+   "a": {
+    "date": "未月丙午日",
+    "original": "离",
+    "changed": null,
+    "yingqi_branch": "寅"
+   },
+   "b": {
+    "original": "坎",
+    "changed": "井",
+    "yingqi": "酉"
+   },
+   "verdict": "needs_human:original,changed,yingqi"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3035",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 3035,
+   "a": {
+    "date": "未月丁卯日",
+    "original": "晋",
+    "changed": null,
+    "yingqi_branch": "辰"
+   },
+   "b": {
+    "original": "晋",
+    "changed": null,
+    "yingqi": "辰"
+   },
+   "verdict": "consensus"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3198",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 3198,
+   "a": {
+    "date": "寅月丙午日",
+    "original": "临",
+    "changed": "既济",
+    "yingqi_branch": "巳"
+   },
+   "b": {
+    "original": "临",
+    "changed": "既济",
+    "yingqi": "巳"
+   },
+   "verdict": "consensus"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3213",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 3213,
+   "a": {
+    "date": "寅月丙午日",
+    "original": "临",
+    "changed": "既济",
+    "yingqi_branch": "巳"
+   },
+   "b": {
+    "original": "临",
+    "changed": "既济",
+    "yingqi": "巳"
+   },
+   "verdict": "consensus"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3314",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 3314,
+   "a": {
+    "date": "亥月甲子日",
+    "original": "革",
+    "changed": "夬",
+    "yingqi_branch": "巳"
+   },
+   "b": {
+    "original": "革",
+    "changed": "夬",
+    "yingqi": "巳"
+   },
+   "verdict": "consensus"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3338",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 3338,
+   "a": {
+    "date": "丑月庚午日",
+    "original": "履",
+    "changed": null,
+    "yingqi_branch": "巳"
+   },
+   "b": {
+    "original": "履",
+    "changed": null,
+    "yingqi": "巳"
+   },
+   "verdict": "consensus"
+  }
+ ]
+}

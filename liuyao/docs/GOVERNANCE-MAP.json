@@ -1,9 +1,9 @@
 {
- "count": 47,
+ "count": 48,
  "by_tier": {
   "tool": 2,
   "ondemand": 10,
-  "nightly": 7,
+  "nightly": 8,
   "build": 8,
   "blocking": 20
  },
@@ -289,6 +289,13 @@
    "guards": "读数对账台（200 批：登记值 vs HEAD 重放值逐位核对，×＝分家立案）",
    "run_by_check_py": false,
    "doc": "读数对账台（第两百批·防御性维护）——登记值 vs 当前 HEAD 重放值，逐位核对。"
+  },
+  {
+   "script": "recheck_restorable.py",
+   "tier": "nightly",
+   "guards": "restorable 双解析器共识复核（201 批：10 共识/8 分歧标字段，不升册）",
+   "run_by_check_py": false,
+   "doc": "restorable 机械复核器（第两百零一批）——双解析器共识，替人把「抽没抽错」核完。"
   },
   {
    "script": "refactor_guard.py",
