@@ -1,0 +1,329 @@
+{
+ "count": 45,
+ "by_tier": {
+  "tool": 2,
+  "ondemand": 10,
+  "nightly": 5,
+  "build": 8,
+  "blocking": 20
+ },
+ "unclassified": [],
+ "curated_but_missing": [],
+ "rows": [
+  {
+   "script": "__init__.py",
+   "tier": "tool",
+   "guards": "包标记",
+   "run_by_check_py": false,
+   "doc": "六爻科工具包。\"\"\""
+  },
+  {
+   "script": "ablation.py",
+   "tier": "ondemand",
+   "guards": "规则消融台架（182 批/186 扫掠，配对 McNemar）",
+   "run_by_check_py": false,
+   "doc": "规则消融台架 v0（第一百八十二批）——固定输入/标签/口径，配对 McNemar 测边际贡献。"
+  },
+  {
+   "script": "abstain_report.py",
+   "tier": "ondemand",
+   "guards": "弃权分型读数（191 批结案器）",
+   "run_by_check_py": false,
+   "doc": "弃权分型读数 v0（第一百九十一批·C2 第一半）——只出观察，不动输出面。"
+  },
+  {
+   "script": "baselines.py",
+   "tier": "ondemand",
+   "guards": "一行规则基线×引擎对照（读数器）",
+   "run_by_check_py": false,
+   "doc": "一行规则基线库（第一百八十三批·A1）——用最小策略丈量整个引擎的保真增量。"
+  },
+  {
+   "script": "build_adjudications.py",
+   "tier": "nightly",
+   "guards": "流派裁决表构建（逐字回验）",
+   "run_by_check_py": false,
+   "doc": "流派裁决表 v0（第一百八十八批·B2）——四书互驳处，引擎采谁、凭什么、状态如何，一次说清。"
+  },
+  {
+   "script": "build_extra_dimensions.py",
+   "tier": "build",
+   "guards": "额外评分维构建",
+   "run_by_check_py": false,
+   "doc": "附加评测维度基准补全器（一次性数据构建，产物入库、脚本留档可复跑）。"
+  },
+  {
+   "script": "build_question_use_gods.py",
+   "tier": "build",
+   "guards": "问题→用神词典构建",
+   "run_by_check_py": false,
+   "doc": "生成问题词典 `data/rules/question_use_gods.json`；带引文的族必须逐字命中原文。"
+  },
+  {
+   "script": "build_use_god_rules.py",
+   "tier": "build",
+   "guards": "用神法则表构建",
+   "run_by_check_py": false,
+   "doc": "生成取用神的关系优先表；每条规则的引文必须在原文里逐字找得到。"
+  },
+  {
+   "script": "build_usegod_position.py",
+   "tier": "build",
+   "guards": "用神位置表构建",
+   "run_by_check_py": false,
+   "doc": "use_god_position 基准例补全器（一次性数据构建，产物入库、脚本留档可复跑）。"
+  },
+  {
+   "script": "build_yingqi_set.py",
+   "tier": "build",
+   "guards": "应期基准集构建",
+   "run_by_check_py": false,
+   "doc": "从 references/case_library.md 抽取**带明确应期**的古籍案例，建成永不参与调参的外部集。"
+  },
+  {
+   "script": "build_zengshan_dz_cases.py",
+   "tier": "build",
+   "guards": "dz 底本案例构建（八道门）",
+   "run_by_check_py": false,
+   "doc": "从《增删卜易》殆知阁转录本（data/sources/zengshan_buyi_dz.dz.txt）抽取带明确应期的占验案例，"
+  },
+  {
+   "script": "check.py",
+   "tier": "blocking",
+   "guards": "两科总闸：全量编排+基线比较",
+   "run_by_check_py": true,
+   "doc": "一条命令跑完全部质量门：`python dev_tools/check.py [--only eval calendar]`"
+  },
+  {
+   "script": "check_bing_yao.py",
+   "tier": "blocking",
+   "guards": "日辰并爻唯一性守卫（[27]）",
+   "run_by_check_py": true,
+   "doc": "日辰并爻唯一性守卫门（2026-10-14 新增，门禁 [27]）。"
+  },
+  {
+   "script": "check_case_isolation.py",
+   "tier": "blocking",
+   "guards": "铁律二静态扫描",
+   "run_by_check_py": true,
+   "doc": "案例库隔离门：解读/推演路径不得触达 `data/cases/`（评测层专用）。"
+  },
+  {
+   "script": "check_case_selfconsistency.py",
+   "tier": "blocking",
+   "guards": "案例日辰/应期自引书文自洽",
+   "run_by_check_py": true,
+   "doc": "案例库自洽门：一条案例的「日辰 / 应期」必须与它**自己引用的那段书文**一致。"
+  },
+  {
+   "script": "check_cli_encoding.py",
+   "tier": "blocking",
+   "guards": "中文 CLI 编码红线",
+   "run_by_check_py": true,
+   "doc": "CLI 编码红线：凡带 argparse 的中文命令行入口，在 **cp936 控制台**下必须交出可读的 UTF-8。"
+  },
+  {
+   "script": "check_doc_refs.py",
+   "tier": "blocking",
+   "guards": "文档活引用可达",
+   "run_by_check_py": true,
+   "doc": "文档/注释里的**活引用**必须指向存在的文件（历史登记散文除外）。"
+  },
+  {
+   "script": "check_fangwei.py",
+   "tier": "blocking",
+   "guards": "方位层还出书自断",
+   "run_by_check_py": true,
+   "doc": "方位层（#23）的门禁：规则必须还出书自己下的那两个结论，否则判红。"
+  },
+  {
+   "script": "check_fixture_invariants.py",
+   "tier": "blocking",
+   "guards": "fixture 声明干支/卦名可算",
+   "run_by_check_py": true,
+   "doc": "回归 fixture 不变量门：注释/声明里的干支与卦名，必须由日期和爻数组**算得出来**。"
+  },
+  {
+   "script": "check_rule_registry.py",
+   "tier": "blocking",
+   "guards": "注册表 verified/impl 指针回验",
+   "run_by_check_py": true,
+   "doc": "规则注册表的书源指针回验器：`verified: true` 不许是自说自话。"
+  },
+  {
+   "script": "check_source_readings.py",
+   "tier": "blocking",
+   "guards": "书证逐字回验（含代码注释）",
+   "run_by_check_py": true,
+   "doc": "六爻科「《书名》源L<行号> + 引文」的逐字回验器（代码注释 + 规则数据 + 文档同一口径）。"
+  },
+  {
+   "script": "check_split_ledger.py",
+   "tier": "blocking",
+   "guards": "分片排除理由可字面重跑",
+   "run_by_check_py": true,
+   "doc": "[19] 分片台账复核门：`case_splits.json` 里每一条**排除理由**都得能按字面重跑。"
+  },
+  {
+   "script": "check_verdict_coherence.py",
+   "tier": "blocking",
+   "guards": "判词与得分同档",
+   "run_by_check_py": true,
+   "doc": "判词 ↔ 分数 同档门：报告里不许出现「判词吉 · 得分 −5.33」这种自相矛盾读数。"
+  },
+  {
+   "script": "check_yingqi_information.py",
+   "tier": "blocking",
+   "guards": "候选池信息量红线（防铺量涨分）",
+   "run_by_check_py": true,
+   "doc": "应期候选池「信息量」硬门：把铺量涨分这条路堵死。"
+  },
+  {
+   "script": "check_yingqi_scoring.py",
+   "tier": "blocking",
+   "guards": "E 类评分口径双向守卫（[26]）",
+   "run_by_check_py": true,
+   "doc": "应期评分口径负例自证（第一百七十二批新增，门禁 [26]）。"
+  },
+  {
+   "script": "diff_jingshi_vs_core.py",
+   "tier": "ondemand",
+   "guards": "京氏传↔内核逐格对拍",
+   "run_by_check_py": false,
+   "doc": "《京氏易传》八宫速览表 → core.EIGHT_PALACES 逐宫对拍（**外部真值源**）。"
+  },
+  {
+   "script": "diff_shangzhan_vs_core.py",
+   "tier": "ondemand",
+   "guards": "尚占↔内核逐格对拍",
+   "run_by_check_py": false,
+   "doc": "《周易尚占》卷下八宫立成表 → core 纳甲/八宫表 逐格对拍（**外部真值源**）。"
+  },
+  {
+   "script": "feedback_report.py",
+   "tier": "nightly",
+   "guards": "反馈汇总报告",
+   "run_by_check_py": true,
+   "doc": "真实应期反馈的独立审计报告 —— 不依赖调参/古籍对齐评分引擎。"
+  },
+  {
+   "script": "feedback_store.py",
+   "tier": "blocking",
+   "guards": "应期反馈存储（口径取内核）",
+   "run_by_check_py": false,
+   "doc": "真实应期反馈存储 —— 与古籍案例和调参引擎完全物理隔离。"
+  },
+  {
+   "script": "fetch_huozhulin_cases.py",
+   "tier": "build",
+   "guards": "火珠林采集通道（0 例待修=E3）",
+   "run_by_check_py": false,
+   "doc": "从维基文库《火珠林》原文抓取占验案例，本地确定性解析并三方校验后成外部集。"
+  },
+  {
+   "script": "fetch_wikisource_cases.py",
+   "tier": "build",
+   "guards": "维基文库案例采集管道",
+   "run_by_check_py": false,
+   "doc": "从维基文库《增刪卜易》原本抓取占验案例，本地确定性解析并三方校验后成外部集。"
+  },
+  {
+   "script": "golden.py",
+   "tier": "blocking",
+   "guards": "288 例指纹（含 193 批扩入的 conclusion 层）",
+   "run_by_check_py": true,
+   "doc": "排盘金标准：对固定输入集产出稳定指纹，用来证明\"纯结构重构不改行为\"。"
+  },
+  {
+   "script": "governance_map.py",
+   "tier": "tool",
+   "guards": "本器：治理地图生成",
+   "run_by_check_py": false,
+   "doc": "治理地图生成器（第一百九十四批·E2 第一半）——把两科 dev_tools 全量脚本变成可导航清单。"
+  },
+  {
+   "script": "graduate_verifications.py",
+   "tier": "nightly",
+   "guards": "自注毕业三态台账（观察册）",
+   "run_by_check_py": false,
+   "doc": "自注毕业管道 v0（第一百八十九批·B3）——把 179 批盘点册升成「可复原性三态」台账。"
+  },
+  {
+   "script": "harvest_verifications.py",
+   "tier": "nightly",
+   "guards": "古籍自验盘点册构建（观察册）",
+   "run_by_check_py": false,
+   "doc": "古籍自验子集收割 v0（第一百七十九批）——只产「盘点册」，不产 expected、不碰评分面。"
+  },
+  {
+   "script": "hexagram_check.py",
+   "tier": "blocking",
+   "guards": "爻序 P0 看门狗（23 断言）",
+   "run_by_check_py": true,
+   "doc": "爻序防复发断言：P0 事故的看门狗。"
+  },
+  {
+   "script": "outcome.py",
+   "tier": "blocking",
+   "guards": "现实回填统计（Wilson/n<30 拒判）",
+   "run_by_check_py": true,
+   "doc": "实占结果回填与真实效度统计。"
+  },
+  {
+   "script": "prospective.py",
+   "tier": "blocking",
+   "guards": "前瞻封存哈希链判卷通道（[28]，在册 0）",
+   "run_by_check_py": true,
+   "doc": "前瞻预测封存登记（第一百七十七批）——预测先冻结，结果后揭晓，判卷口径先写死。"
+  },
+  {
+   "script": "rank_experiment.py",
+   "tier": "ondemand",
+   "guards": "名次键预注册实验（一次性报数器）",
+   "run_by_check_py": false,
+   "doc": "名次键实验（第一百九十批·C1）——预声明四键，tune 选择一次，外部只报数不回碰。"
+  },
+  {
+   "script": "refactor_guard.py",
+   "tier": "ondemand",
+   "guards": "零指纹漂移验收器",
+   "run_by_check_py": false,
+   "doc": "重构看门狗：拆分/搬家前后的「零指纹漂移」验收。"
+  },
+  {
+   "script": "style_check.py",
+   "tier": "blocking",
+   "guards": "CSS 类名有定义（报告面）",
+   "run_by_check_py": true,
+   "doc": "样式层覆盖检查：报告里用到的类名，assets/report.css 必须都有定义。"
+  },
+  {
+   "script": "tianhou.py",
+   "tier": "ondemand",
+   "guards": "占天候台架（真实运行待授权）",
+   "run_by_check_py": false,
+   "doc": "占天候试验台（第一百八十批）——协议见 docs/TIANHOU.md，本文件是它的可执行半边。"
+  },
+  {
+   "script": "use_god_coverage.py",
+   "tier": "nightly",
+   "guards": "用神来源矩阵",
+   "run_by_check_py": false,
+   "doc": "用神取法来源矩阵：每条问法是靠带引文的法则、覆盖层、词典还是兜底定的用神。"
+  },
+  {
+   "script": "version_collate.py",
+   "tier": "ondemand",
+   "guards": "两抄本源级对拍（185 批冲突率）",
+   "run_by_check_py": false,
+   "doc": "版本对拍 v0（第一百八十五批·B1）——同书两抄本的冲突率＝古籍对齐分的天花板估计。"
+  },
+  {
+   "script": "window_report.py",
+   "tier": "ondemand",
+   "guards": "top-k 覆盖曲线读数器",
+   "run_by_check_py": false,
+   "doc": "窗化读数：主应期 top-k 覆盖曲线 vs 随机基线（第一百八十一批）。"
+  }
+ ]
+}

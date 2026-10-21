@@ -1,0 +1,252 @@
+{
+ "count": 34,
+ "by_tier": {
+  "tool": 2,
+  "ondemand": 6,
+  "build": 4,
+  "blocking": 19,
+  "nightly": 3
+ },
+ "unclassified": [],
+ "curated_but_missing": [],
+ "rows": [
+  {
+   "script": "__init__.py",
+   "tier": "tool",
+   "guards": "包标记",
+   "run_by_check_py": false,
+   "doc": "八字科工具包。\"\"\""
+  },
+  {
+   "script": "audit_qtbj_batch.py",
+   "tier": "ondemand",
+   "guards": "全局八字批审计一次性器",
+   "run_by_check_py": false,
+   "doc": "逐例对拍外集 tiaohou 批：打印每个 QTBJ 案例的 expected vs 引擎实际，"
+  },
+  {
+   "script": "audit_tiaohou_gap.py",
+   "tier": "ondemand",
+   "guards": "调候空档审计一次性器",
+   "run_by_check_py": false,
+   "doc": "对 120 格做「缺口归因」：每一格的书源月头来源与状态分类。只读。"
+  },
+  {
+   "script": "baselines.py",
+   "tier": "ondemand",
+   "guards": "八字判断维×常数基线配对对照（187 批 A3 读数器）",
+   "run_by_check_py": false,
+   "doc": "八字基线库（第一百八十七批·A3）——一行规则丈量八字判断维，配对 McNemar 与六爻侧同构。"
+  },
+  {
+   "script": "build_bazili_cases.py",
+   "tier": "build",
+   "guards": "bazili 案例构建",
+   "run_by_check_py": false,
+   "doc": "《穷通宝鉴》四柱命例评测集构建器（一次性数据构建，产物入库、脚本留档可复跑）。"
+  },
+  {
+   "script": "build_dts_corpus.py",
+   "tier": "build",
+   "guards": "滴天髓语料构建",
+   "run_by_check_py": false,
+   "doc": "从《滴天髓》书源机械提取引擎所引章节 → bazi/data/ditian_sui.json（引文层）。"
+  },
+  {
+   "script": "build_tiaohou.py",
+   "tier": "build",
+   "guards": "调候语料构建",
+   "run_by_check_py": false,
+   "doc": "《穷通宝鉴》调候用神表构建器（一次性数据构建，产物入库、脚本留档可复跑）。"
+  },
+  {
+   "script": "build_tiaohou_cases.py",
+   "tier": "build",
+   "guards": "调候案例构建",
+   "run_by_check_py": false,
+   "doc": "调候评测案例集构建器（一次性数据构建，产物入库、脚本留档可复跑）。"
+  },
+  {
+   "script": "check.py",
+   "tier": "blocking",
+   "guards": "两科总闸：全量编排+基线比较",
+   "run_by_check_py": true,
+   "doc": "命·质量门：契约完整性 + 四段冒烟 + 金标准 + **对齐分下限** + **表同步门**。"
+  },
+  {
+   "script": "check_case_dupes.py",
+   "tier": "blocking",
+   "guards": "案例考点查重（#39 冗余防线）",
+   "run_by_check_py": true,
+   "doc": "[22] 案例考点查重门：同一考点（书·逐字引文·判准）在一套考卷里不得出现两次。"
+  },
+  {
+   "script": "check_case_isolation.py",
+   "tier": "blocking",
+   "guards": "铁律二：解读路径不得触案例库",
+   "run_by_check_py": true,
+   "doc": "案例库隔离门：解读/推演路径不得触达 `data/cases/`（评测层专用）。"
+  },
+  {
+   "script": "check_case_pillars.py",
+   "tier": "blocking",
+   "guards": "命例基准自洽（expected 四柱可反算）",
+   "run_by_check_py": true,
+   "doc": "命例基准自洽审计（六爻科 `[16]` 的八字科等价物，2026-10-11 第八批）。"
+  },
+  {
+   "script": "check_cli_encoding.py",
+   "tier": "blocking",
+   "guards": "中文 CLI 编码红线（cp936 行为面）",
+   "run_by_check_py": true,
+   "doc": "CLI 编码红线：凡带 argparse 的中文命令行入口，在 **cp936 控制台**下必须交出可读的 UTF-8。"
+  },
+  {
+   "script": "check_dayun_cases.py",
+   "tier": "blocking",
+   "guards": "行运见证集回验",
+   "run_by_check_py": true,
+   "doc": "`data/cases/bazi_dayun_cases.json`（行运见证集）的回验器。"
+  },
+  {
+   "script": "check_determinism.py",
+   "tier": "blocking",
+   "guards": "三 seed 行为一致＋集合 join 静态扫",
+   "run_by_check_py": true,
+   "doc": "[23] 输出确定性门：同一输入在**任何进程**里必须产出同一份引擎结论。"
+  },
+  {
+   "script": "check_dim_lock.py",
+   "tier": "blocking",
+   "guards": "维度适用数锁（shensha/dayun 台账双向）",
+   "run_by_check_py": true,
+   "doc": "维度适用数锁：受控空档维度的「带期望例数」必须与登记表逐格相等（第一百六十九批）。"
+  },
+  {
+   "script": "check_dim_surface.py",
+   "tier": "blocking",
+   "guards": "评测维↔报告面同名同义＋17 小节登记",
+   "run_by_check_py": true,
+   "doc": "评测维度 ↔ 报告面「同名同义」门（EVAL-PLAN §五 步 7 / §六）。"
+  },
+  {
+   "script": "check_doc_refs.py",
+   "tier": "blocking",
+   "guards": "文档活引用可达性（死指针判红）",
+   "run_by_check_py": true,
+   "doc": "文档/注释里的**活引用**必须指向存在的文件（历史登记散文除外）。"
+  },
+  {
+   "script": "check_feedback.py",
+   "tier": "blocking",
+   "guards": "现实反馈通道 schema/孪生一致",
+   "run_by_check_py": true,
+   "doc": "现实反馈通道的回验门（#32 的门禁那一半）。"
+  },
+  {
+   "script": "check_hidden_stems.py",
+   "tier": "blocking",
+   "guards": "藏干独立出处回验",
+   "run_by_check_py": true,
+   "doc": "`hidden_stems` 维度的**独立出处**回验器（#14 第①项）。"
+  },
+  {
+   "script": "check_pillar_laws.py",
+   "tier": "blocking",
+   "guards": "排盘入参历法自洽",
+   "run_by_check_py": true,
+   "doc": "排盘入参的**历法自洽**回验：五虎遁·五鼠遁（不依赖 datetime，2026-10-11 第一百二十三批）。"
+  },
+  {
+   "script": "check_rule_registry.py",
+   "tier": "blocking",
+   "guards": "规则注册表书源/impl 指针回验",
+   "run_by_check_py": true,
+   "doc": "规则注册表的书源指针回验器：`verified: true` 不许是自说自话。"
+  },
+  {
+   "script": "check_source_readings.py",
+   "tier": "blocking",
+   "guards": "书证引文逐字回验（源L行号）",
+   "run_by_check_py": true,
+   "doc": "八字参考文档「源L<行号> + 引文」的逐字回验器。"
+  },
+  {
+   "script": "corpus_reports.py",
+   "tier": "nightly",
+   "guards": "多盘 narrate 并集（接线门原料，缺件自愈）",
+   "run_by_check_py": true,
+   "doc": "生成**多盘报告并集**文本，供 `[8] 语料接线` 量真正的覆盖率。"
+  },
+  {
+   "script": "corpus_wiring_report.py",
+   "tier": "nightly",
+   "guards": "语料进没进报告的接线读数",
+   "run_by_check_py": true,
+   "doc": "语料接线残差的**归类器**：把 `[8]` 报出的「未进并集」逐条分成四类，防止一个悲观计数被当成结论。"
+  },
+  {
+   "script": "diff_tiaohou_vs_head.py",
+   "tier": "ondemand",
+   "guards": "改表前后逐格对拍范式",
+   "run_by_check_py": true,
+   "doc": "改动前后逐格对拍（SKILL.md）：把当前表与 HEAD 版**逐格**比对，只报差异。"
+  },
+  {
+   "script": "eval_selftest.py",
+   "tier": "blocking",
+   "guards": "评分器九场景校准",
+   "run_by_check_py": true,
+   "doc": "八字科评测框架自检：证明打分器能区分「答对 / 答错 / 未记录 / 不可跑」。"
+  },
+  {
+   "script": "eval_unique_keys.py",
+   "tier": "blocking",
+   "guards": "考点折叠量尺（例=考点核查）",
+   "run_by_check_py": false,
+   "doc": "按考点折叠的加权读数（#39 配套量尺）：同一考点只算一次，看分数会不会变。"
+  },
+  {
+   "script": "feedback_store.py",
+   "tier": "tool",
+   "guards": "现实反馈落盘通道（在册 0）",
+   "run_by_check_py": false,
+   "doc": "八字科现实反馈通道（#32）：把\"当时断了什么\"与\"后来实际如何\"分两次落盘。"
+  },
+  {
+   "script": "golden.py",
+   "tier": "blocking",
+   "guards": "40 例结论级指纹（机械+措辞）漂移看门狗",
+   "run_by_check_py": true,
+   "doc": "命·金标准指纹：40 样例的逐字段快照（机械层覆盖 conclusion **全部字段**）。"
+  },
+  {
+   "script": "regression.py",
+   "tier": "blocking",
+   "guards": "5 例手写出生时刻机械断言",
+   "run_by_check_py": true,
+   "doc": "八字科机械因子回归用例：固定出生样例 → 断言四柱/强弱/格局/空亡/大运方向/通关关隔。"
+  },
+  {
+   "script": "sync_nayin_engine.py",
+   "tier": "ondemand",
+   "guards": "纳音表↔data 同步（--check 挂门）",
+   "run_by_check_py": true,
+   "doc": "纳音取象：`core/yishu_core/ming_tables.py:NAYIN_XIANGGE` ↔ `data/nayin_quxian"
+  },
+  {
+   "script": "sync_tiaohou_engine.py",
+   "tier": "ondemand",
+   "guards": "调候表↔data 同步（--check 挂门）",
+   "run_by_check_py": true,
+   "doc": "把 data/tiaohou_quotes.json（键=月序+日干）同步进引擎表 TIAO_HOU（键=月支+日干）。"
+  },
+  {
+   "script": "verdict_audit.py",
+   "tier": "nightly",
+   "guards": "断语外置审计（断语不进代码）",
+   "run_by_check_py": true,
+   "doc": "断语外置审计（重建 `tools/verdict_audit.py` 的等价物，2026-10-11 第三十八批）。"
+  }
+ ]
+}
