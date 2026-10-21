@@ -160,6 +160,30 @@ def checks():
         return str(len(rows))
     add("tracked×ignore 漂移(0)", "237批（236 一次性杂检的常设化）", c_ignore_drift, ("0",))
 
+    # tracked 完整性（238 批）：全库可 UTF-8 解码＋全 tracked JSON 可解析——
+    # 各门只读自己那几个文件，从未有全量口径；破损会在最意外的运行时现形。
+    def c_tracked_integrity(t):
+        import subprocess as sp
+        files = sp.run(["git", "-C", str(ROOT), "ls-files", "-z"],
+                       capture_output=True).stdout.split(b"\0")
+        bd = bj = 0
+        for f in filter(None, files):
+            p = ROOT / f.decode("utf-8", errors="replace")
+            if not p.exists():
+                continue
+            b = p.read_bytes()
+            try:
+                b.decode("utf-8")
+            except UnicodeDecodeError:
+                bd += 1
+            if p.suffix == ".json":
+                try:
+                    json.loads(b.decode("utf-8", errors="replace"))
+                except Exception:
+                    bj += 1
+        return (str(bd), str(bj))
+    add("tracked 完整性(解码0/JSON0)", "238批（353 文件 89 JSON 全量口径首立）", c_tracked_integrity, ("0", "0"))
+
     def c_tier_consistency(t):
         ml = json.loads((ROOT / "liuyao" / "docs" / "GOVERNANCE-MAP.json").read_text(encoding="utf-8"))
         mb = json.loads((ROOT / "bazi" / "docs" / "GOVERNANCE-MAP.json").read_text(encoding="utf-8"))
