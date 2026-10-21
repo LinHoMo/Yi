@@ -772,7 +772,10 @@ def main() -> int:
             ("yingqi_scoring", "[26] 应期评分口径（无语支基准：答进日窗满分／答不进 N/A，双向都要有牙）",
              "dev_tools/check_yingqi_scoring.py"),
             ("bing_yao", "[27] 日辰并爻唯一性守卫（成并+0.5／同支≥2位退0且理由引源L125「不能成并」）",
-             "dev_tools/check_bing_yao.py")):
+             "dev_tools/check_bing_yao.py"),
+            ("prospective", "[28] 前瞻封存判卷（事件定义/窗口先于结果冻结；哈希链拒绝事后改写；"
+                            "删失/旧口径/小样本显形——现实效度通道，与古籍对齐分永不同源）",
+             "dev_tools/prospective.py")):
         if want(key):
             print(f"\n{title}")
             rc, out = run([sys.executable, script, "--selftest"])
