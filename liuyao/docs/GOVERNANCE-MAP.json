@@ -1,11 +1,11 @@
 {
- "count": 51,
+ "count": 52,
  "by_tier": {
   "tool": 3,
   "ondemand": 10,
   "nightly": 8,
   "build": 8,
-  "blocking": 22
+  "blocking": 23
  },
  "unclassified": [],
  "curated_but_missing": [],
@@ -181,6 +181,13 @@
    "guards": "判词与得分同档",
    "run_by_check_py": true,
    "doc": "判词 ↔ 分数 同档门：报告里不许出现「判词吉 · 得分 −5.33」这种自相矛盾读数。"
+  },
+  {
+   "script": "check_verdict_external.py",
+   "tier": "blocking",
+   "guards": "结构层断语外置审计（210 批：§一.1 核对版 LOCK=0，抓到探针漏网 1 处）",
+   "run_by_check_py": true,
+   "doc": "结构层断语外置审计（第一百六十六批 §一.1 规矩的核对版，第两百一十批上门）。"
   },
   {
    "script": "check_yingqi_information.py",

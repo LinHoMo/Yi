@@ -23,6 +23,8 @@
 #   hexagram_names    —— 六十四卦复合卦名，键为 "上卦/下卦"
 # =============================================================================
 # 内核定位规则只在 kernel_path.py 一份实现，不得在此另写路径拼接
+import labels_loader as _labels  # noqa: E402  210批 §一.1 断语外置
+_TRIG = _labels.load("trigram")
 import json
 import sys
 
@@ -360,7 +362,7 @@ def _career_advice(element_relation: str) -> str:
     elif element_relation == "被生":
         return "需付出心力，终有成就"
     elif element_relation in ("克",):
-        return "阻力较大，宜守不宜攻"
+        return _TRIG["career_ke"]
     elif element_relation == "被克":
         return "需努力争取，不可松懈"
     return "观察形势，待时而动"

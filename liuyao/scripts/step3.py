@@ -1,4 +1,6 @@
 from __future__ import annotations
+import labels_loader as _labels  # noqa: E402  210批 §一.1 断语外置
+_S3 = _labels.load("step3")
 
 import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
 
@@ -787,7 +789,7 @@ def compute_twelve_growth(use_god_element: str, day_branch: str, step2_data: dic
             has_yuan_rescue = any(p.get("is_moving", False) for p in (yuan_shen_positions_for_desperate or []))
             if has_yuan_rescue:
                 desperate_relief_from_stage_modifier = 1.0
-                desperate_relief_from_stage_reason = "绝处逢生：用神虽临绝地，原神发动来生，凶中反吉"
+                desperate_relief_from_stage_reason = _S3["jue_chu_feng_sheng"]
             else:
                 desperate_relief_from_stage_modifier = -1.0
                 desperate_relief_from_stage_reason = "绝地无援：用神临绝地，原神不动/无救援，险上加险"

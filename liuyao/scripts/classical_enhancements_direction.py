@@ -48,6 +48,8 @@
 不是文案。applicability 一律按书源自带限定实现，见各条 `_reason_key` 与注册表。
 """
 from __future__ import annotations
+import labels_loader as _labels  # noqa: E402  210批 §一.1 断语外置
+_DIR = _labels.load("direction")
 
 import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
 
@@ -264,8 +266,7 @@ def detect_direction_caps(
                 "cap": "凶",
                 "src": "zengshan_buyi_dz.dz.txt:3625",
                 "reason_key": "shi_hua_gui",
-                "detail": f"世爻{wb}（{mstate}）动化出官鬼，"
-                          f"又化回头之克（世旺而不救：三合亦不宜变鬼）",
+                "detail": f"世爻{wb}（{mstate}）动化出官鬼，" + _DIR["frag_shi_hua_gui"],
             })
 
     # ── 4 用神化凶而元神无力（源绝）───────────────────────────────

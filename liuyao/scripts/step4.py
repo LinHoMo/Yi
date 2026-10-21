@@ -1,4 +1,6 @@
 from __future__ import annotations
+import labels_loader as _labels  # noqa: E402  210批 §一.1 断语外置
+_S4 = _labels.load("step4")
 
 import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
 
@@ -313,7 +315,7 @@ def _compose_change_summary(moving_lines, favorable_changes, unfavorable_changes
                             net_effect, net_description) -> str:
     n = len(moving_lines or [])
     if n == 0:
-        return "卦中没有动爻，事情安静，吉凶主要看用神自身，而不是中途杀出的变数。"
+        return _S4["jing_dong"]
     parts = [f"卦中有{n}个动爻。"]
     fav, unfav = len(favorable_changes or []), len(unfavorable_changes or [])
     if fav and not unfav:
@@ -348,13 +350,7 @@ def _compose_change_summary(moving_lines, favorable_changes, unfavorable_changes
 
 NET_STRONG = 1.5   # 大吉/大凶 边界
 NET_MILD = 0.5     # 偏吉/偏凶 与 中性 的边界——净效应的「符号」也用它，别无二处口径
-NET_BAND_TEXT = {
-    "大吉": "大吉（动变全面有利）",
-    "偏吉": "偏吉（动变总体有利）",
-    "中性": "中性（动变利弊参半）",
-    "偏凶": "偏凶（动变总体不利）",
-    "大凶": "大凶（动变全面不利）",
-}
+NET_BAND_TEXT = _labels.load("net_band")  # 键面＝五档标签，值面在 data
 
 
 def net_effect_band(net) -> str:
@@ -485,10 +481,10 @@ def _analyze_effect_on_use_god(
         ct = change_type["type"]
         if ct == "回头生":
             score = 1.5
-            description_parts.append("用神动化回头生，大吉")
+            description_parts.append(_S4["huitou_sheng"])
         elif ct == "回头克":
             score = -2.0
-            description_parts.append("用神动化回头克，大凶")
+            description_parts.append(_S4["huitou_ke"])
         elif ct == "化进神":
             score = 1.0
             description_parts.append("用神化进，势盛")
@@ -575,7 +571,7 @@ def _analyze_effect_on_use_god(
             description_parts.append("忌神动化回头生，克用更甚")
         elif ct == "回头克":
             score = 1.5
-            description_parts.append("忌神动化回头克，凶性反制（大吉）")
+            description_parts.append(_S4["ji_ke_fanzhi"])
         elif ct == "化进神":
             score = -1.0
             description_parts.append("忌神化进，克用有力")
@@ -584,10 +580,10 @@ def _analyze_effect_on_use_god(
             description_parts.append("忌神化退，克力渐消")
         elif ct == "化墓":
             score = 1.0
-            description_parts.append("忌神化墓，克用受阻（吉）")
+            description_parts.append(_S4["ji_hua_mu"])
         elif ct == "六合":
             score = 0.3
-            description_parts.append("忌神合绊，克用受阻")
+            description_parts.append(_S4["ji_he_ban"])
         else:
             score = -0.3
             description_parts.append("忌神动，有意克用")
@@ -768,7 +764,7 @@ def _detect_classical_illness_pattern(question: str, step2_data: dict, step3_dat
         if he_bys:
             result["pattern"] = "近病逢合为凶"
             result["description"] = f"用神{use_god_branch}为{'、'.join(he_bys)}所合——近病逢合，病气难退（《卜筮正宗》定法）"
-            result["impact_on_verdict"] = "用神被合，病气难退，凶"
+            result["impact_on_verdict"] = _S4["he_bing_nantui"]
             result["score_adjustment"] = -5.5
             return result
 
@@ -834,7 +830,7 @@ def _detect_classical_illness_pattern(question: str, step2_data: dict, step3_dat
             combine_source = "]".join(filter(None, [f"日辰{day_combine}" if day_combine else "", f"月建{month_combine}" if month_combine else ""]))
             result["pattern"] = "近病逢合为凶"
             result["description"] = f"用神为{combine_source}所合——近病逢合为凶（《卜筮正宗》定法）"
-            result["impact_on_verdict"] = "用神被合，病气难退，凶"
+            result["impact_on_verdict"] = _S4["he_bing_nantui"]
             result["score_adjustment"] = -3.5
             return result
 
@@ -843,7 +839,7 @@ def _detect_classical_illness_pattern(question: str, step2_data: dict, step3_dat
         if use_god_branch and use_god_branch in empty_branches:
             result["pattern"] = "久病逢空为凶"
             result["description"] = f"久病用神{use_god_branch}逢空，久病逢空为危"
-            result["impact_on_verdict"] = "久病逢空为脱象，凶"
+            result["impact_on_verdict"] = _S4["jiu_bing_kong"]
             result["score_adjustment"] = -4.5
             return result
 
@@ -1114,8 +1110,8 @@ def _detect_special_pattern(step3_data: dict, step2_data: dict, step4_data: dict
         if _yuan_absent and not _has_positive_change and (isinstance(net_effect2, (int, float)) and net_effect2 <= 0.1):
             return {
                 "pattern": "原神绝位·用神失源",
-                "description": f"用神弱（{use_god_score:.2f}）原神不现（仅伏藏或无援），绝处逢生反断为凶",
-                "impact_on_verdict": "原神气绝不能生用，用神孤立无援→大凶",
+                "description": f"用神弱（{use_god_score:.2f}" + _S4["frag_yuan_shen"],
+                "impact_on_verdict": _S4["yuan_shen_jue"],
                 "rule_applied": "《增删易》'原神无援，用神气绝，断凶不疑'",
                 "score_adjustment": -2.0,
             }
@@ -1129,7 +1125,7 @@ def _detect_special_pattern(step3_data: dict, step2_data: dict, step4_data: dict
             return {
                 "pattern": "专旺格",
                 "description": f"{max_elem}气独旺（{max_count}/6爻）",
-                "impact_on_verdict": "喜顺泄不宜克逆——用神属此元素大吉，他元素不振无碍",
+                "impact_on_verdict": _S4["zhuan_wang"],
                 "rule_applied": "《卜筮正宗》'专旺喜泄不喜克'",
                 "score_adjustment": 0.0,  # 不直接加分，而是降低忌神惩罚
             }
@@ -1186,7 +1182,7 @@ def _detect_special_pattern(step3_data: dict, step2_data: dict, step4_data: dict
                 "pattern": "三会局",
                 # 断语尾巴的唯一真值_source 在 pattern_notes_extra，此处只做拼装
                 "description": f"{_hui_desc}{PATTERN_NOTES_EXTRA['sanhui_use_weak']}",
-                "impact_on_verdict": "局气虽聚而用神不任，凶中无援之象",
+                "impact_on_verdict": _S4["ju_qi_wu_yuan"],
                 "rule_applied": "《三命通会》三会方局；用神衰则不受局助",
                 "score_adjustment": -0.5,
             }
@@ -1316,7 +1312,7 @@ def _check_greedy_harmony(
                         "relation": orig_relation,
                         "branch": orig_branch,
                         "harmony_with": f"日辰{day_branch}",
-                        "effect": "忌神贪合，暂不克用神（减凶）",
+                        "effect": _S4["tan_he"],
                         "benefit_or_loss": "favorable",
                         "score_effect": effect_score,
                     })
@@ -1379,7 +1375,7 @@ def _check_greedy_harmony(
                         "relation": orig_relation,
                         "branch": orig_branch,
                         "harmony_with": f"月建{month_branch}",
-                        "effect": "忌神与月合绊，暂不克用神（减凶）",
+                        "effect": _S4["yue_he_ban"],
                         "benefit_or_loss": "favorable",
                         "score_effect": effect_score,
                     })

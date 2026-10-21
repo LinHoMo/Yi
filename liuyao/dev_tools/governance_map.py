@@ -96,6 +96,7 @@ CURATED = {
         "check_fixture_invariants": ("blocking", "fixture 声明干支/卦名可算"),
         "check_rule_registry": ("blocking", "注册表 verified/impl 指针回验"),
         "check_source_readings": ("blocking", "书证逐字回验（含代码注释）"),
+        "check_verdict_external": ("blocking", "结构层断语外置审计（210 批：§一.1 核对版 LOCK=0，抓到探针漏网 1 处）"),
         "check_split_ledger": ("blocking", "分片排除理由可字面重跑"),
         "check_verdict_coherence": ("blocking", "判词与得分同档"),
         "check_yingqi_information": ("blocking", "候选池信息量红线（防铺量涨分）"),

@@ -779,7 +779,9 @@ def main() -> int:
                             "删失/旧口径/小样本显形——现实效度通道，与古籍对齐分永不同源）",
              "dev_tools/prospective.py"),
              ("regex_lists", "[29] 正则字符类 list 展平审计（AGENTS §二 硬规矩核对版：10-13 静默全盲案首次有全库机器版）",
-              "dev_tools/check_regex_lists.py")):
+              "dev_tools/check_regex_lists.py"),
+              ("verdict_external", "[30] 结构层断语外置审计（§一.1 核对版：判语字面量零回潮，LOCK=0 解锁唯一通道＝搬家进 labels 册）",
+               "dev_tools/check_verdict_external.py")):
         if want(key):
             print(f"\n{title}")
             rc, out = run([sys.executable, script, "--selftest"])
