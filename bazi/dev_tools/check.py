@@ -565,6 +565,17 @@ def main() -> int:
     else:
         print("[26] 正则字符类 list 展平审计 √")
 
+    # [27] §三 house 规矩核对版（第两百一十一批）：版本号文件名/绝对用户路径/scratch/产物四判据，
+    # tracked 口径；selftest 含注入负例与门不自咬（本器反例串豁免自身）。
+    code, out = run(["dev_tools/check_house_conventions.py", "--selftest"])
+    for line in out.splitlines():
+        if line.strip():
+            print("  " + line.strip())
+    if code != 0:
+        fails.append("§三 house 规矩核对未过")
+    else:
+        print("[27] §三 house 规矩核对 √")
+
     if ENC_WITNESS:
         fails.extend("产物编码退化：" + w for w in ENC_WITNESS)
     if fails:

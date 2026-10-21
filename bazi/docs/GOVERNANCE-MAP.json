@@ -1,10 +1,10 @@
 {
- "count": 35,
+ "count": 36,
  "by_tier": {
   "tool": 2,
   "ondemand": 5,
   "build": 4,
-  "blocking": 24
+  "blocking": 25
  },
  "unclassified": [],
  "curated_but_missing": [],
@@ -154,6 +154,13 @@
    "guards": "藏干独立出处回验",
    "run_by_check_py": true,
    "doc": "`hidden_stems` 维度的**独立出处**回验器（#14 第①项）。"
+  },
+  {
+   "script": "check_house_conventions.py",
+   "tier": "blocking",
+   "guards": "§三 house 规矩核对版（211 批：版本名/绝对路径/scratch/产物四判据）",
+   "run_by_check_py": true,
+   "doc": "House 规矩核对版（AGENTS §三 表第 1/3/5 行＋绝对路径条，第两百一十一批上门）。"
   },
   {
    "script": "check_pillar_laws.py",
