@@ -2,6 +2,8 @@
 
 > **瘦身说明（2026-10-14）**：第49–156批（2026-10-11 及之前）的详细条目已剔除，仅保留一句话结论于 `docs/CHANGELOG-HISTORY-INDEX.md`。源码/数据注释里写到「第X批」若指向已删批次，以该索引为准。
 
+## 2026-10-21 第两百二十五批（两科）：**月巡扩编为"full 账台＋双科＋全新克隆复验"三件套——224 批具名待办提前于 225 兑现（编号偏差如实：待办写"226 批做"，实际 225 完成，不追改前文）**：排程 prompt 更新，worktree 步骤用**实路径**（自家"逐字可跑"标准的对己适用——初稿 `%TEMP%` 是 cmd 方言、bash 下需解释，已消灭解释环节）；月巡自此继承本批 224 的全链动作，克隆级信任进入常态轮值。零代码改动；两科 `check.py` 仓库根实跑 rc=0。
+
 ## 2026-10-21 第两百二十四批（两科）：**全新克隆全链复验通过——184 批病族四十批后的再体检**：`git worktree` 取 HEAD 建全新树（无任何 gitignored 本机产物），六爻与八字 `check.py` 全链各实跑 **rc=0**、`readout_ledger --quick` bad=0/全账 25、`governance_map --strict` rc=0、复放后清理 worktree 零残留——证明 176→223 那四十八批新增的三十余文件**没有一个引入"作者机器依赖"**（176/184 病族未复发；这是 CI 首跑前最后一次本地模拟，且比 CI 更严：worktree 连 .venv 都没有）。既往先例 175/184 各抓出一例真病（scratch 依赖/eval_all 缺件），本批零病——但**零病需要被重新证明而不是被继承**，此类全链复验的节律定为随月巡（full 档 prompt 已含双科 check，加 worktree 步骤登记为 226 批待办而非静默扩排程）。本批零代码改动。两科 `check.py` 仓库根实跑 rc=0。
 
 ## 2026-10-21 第两百二十三批（两科）：**SKILL/README 命令逐字复放 14/14——"照文档命令能跑通"从声称变成今日实况**：222 批对 CAPABILITY 的做法推广到两科 SKILL/README/AGENTS/GOVERNANCE：提取 15 条唯一命令（0 条含网络外部性），引擎四模式（`<skill-path>` 按文档约定代换）、chart→thinking_chain→analyze→narrate→render 全链、yi_liuyao 一键两形态、bazi evaluate×2、check.py 由终验覆盖——**14/14 通过**，render 一条从"改过输出路径的跑法"当场补跑 SKILL 原文 `outputs/report.md` 形归正（复放不许替文档修参数，我 runner 初稿手加 `--json` 在跑前自查剥除——同族教训记两笔）。**副作用如实清账**：engine 每次 CLI 起卦都按一键闭环设计落事件——复放产生的 4 条（问题面全是"测试问题/未指明"占位）已清空 gitignored `logs/divination_events.jsonl`（测试事件非真实占问，留着会污染 outcome 分母）；测试报告留在 ignored outputs/ 不碍事。文档命令线至此闭环：CAPABILITY 15＋SKILL/README 15（含重叠）全部逐字可跑。两科 `check.py` 仓库根实跑 rc=0。
