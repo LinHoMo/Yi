@@ -209,7 +209,7 @@
   {
    "script": "feedback_store.py",
    "tier": "blocking",
-   "guards": "应期反馈存储（口径取内核）",
+   "guards": "应期反馈记录存储（一键闭环落盘；195 批划界：判卷归 prospective）",
    "run_by_check_py": false,
    "doc": "真实应期反馈存储 —— 与古籍案例和调参引擎完全物理隔离。"
   },
@@ -265,14 +265,14 @@
   {
    "script": "outcome.py",
    "tier": "blocking",
-   "guards": "现实回填统计（Wilson/n<30 拒判）",
+   "guards": "现实回填统计出口（Wilson/n<30 拒判；195 批划界：不写封存）",
    "run_by_check_py": true,
    "doc": "实占结果回填与真实效度统计。"
   },
   {
    "script": "prospective.py",
    "tier": "blocking",
-   "guards": "前瞻封存哈希链判卷通道（[28]，在册 0）",
+   "guards": "前瞻封存哈希链判卷通道（[28]，在册 0；195 批划界：唯一封存判卷面）",
    "run_by_check_py": true,
    "doc": "前瞻预测封存登记（第一百七十七批）——预测先冻结，结果后揭晓，判卷口径先写死。"
   },
