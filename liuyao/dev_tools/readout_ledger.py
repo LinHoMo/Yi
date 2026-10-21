@@ -118,6 +118,28 @@ def checks():
         ("2a4c9258d6c1e4cb", "1a0f165ebfa7b6da"))
     add("governance(56/36, blk 24/25)", "194批（230 批更新：六爻加批次号体检器）", lambda t: _gov_counts(), ("56", "36", "24", "25"))
 
+    # 案例分母（234 批）：账台钉率也钉分母——删/添一例而率恰不动时，分母行会红。
+    def c_case_denoms(t):
+        sp = json.loads((DISC / "data" / "cases" / "case_splits.json").read_text(encoding="utf-8"))
+        cl = json.loads((DISC / "data" / "cases" / "classical_cases.json").read_text(encoding="utf-8"))
+        n_cl = cl.get("cases") if isinstance(cl, dict) else cl
+        return tuple(map(str, (len(n_cl if n_cl else cl),
+                                len(sp["tune"]), len(sp["holdout"]),
+                                len(sp["wikisource_holdout"]), len(sp["wikisource_direction"]),
+                                len(sp["zengshan_dz_holdout"]))))
+    add("六爻案例分母(44/20/12/50/31/21)", "234批（率与分母并钉）", c_case_denoms,
+        ("44", "20", "12", "50", "31", "21"))
+
+    def c_bazi_denoms(t):
+        cc = json.loads((ROOT / "bazi" / "data" / "cases" / "bazi_classical_cases.json")
+                        .read_text(encoding="utf-8"))["cases"]
+        ex = json.loads((ROOT / "bazi" / "data" / "cases" / "bazi_external_cases.json")
+                        .read_text(encoding="utf-8"))
+        from collections import Counter
+        c = Counter(x.get("split") for x in cc)
+        return (str(c["tune"]), str(c["holdout"]), str(len(ex.get("cases") or ex)))
+    add("八字案例分母(60/278/53)", "234批", c_bazi_denoms, ("60", "278", "53"))
+
     def c_tier_consistency(t):
         ml = json.loads((ROOT / "liuyao" / "docs" / "GOVERNANCE-MAP.json").read_text(encoding="utf-8"))
         mb = json.loads((ROOT / "bazi" / "docs" / "GOVERNANCE-MAP.json").read_text(encoding="utf-8"))
