@@ -668,6 +668,17 @@ def main() -> int:
         if rc != 0 and _m is None:
             failures.append(f"古籍回归脚本崩溃（rc={rc} 且汇总行未产出）")
 
+    # [4.6] 六神旺衰试点单测（第两百二十批挂闸）：此器曾因拆分事故 import 即炸、
+    # 无门跑两周无人知；孤儿引用全库扫描（156 文件唯此一域）修复后从此入闸——
+    # 它不产 X/Y 汇总行，走硬 rc 判定（6 项断言全过才 0）。
+    if want("six_god"):
+        rc, out = run([sys.executable, "tests/six_god_wang_shuai_test.py"])
+        print("\n[4.6] 六神旺衰试点单测（硬 rc 判定，220 批挂闸）")
+        for line in out.splitlines()[-3:]:
+            print("  " + line.strip())
+        if rc != 0:
+            failures.append(f"六神旺衰单测未过（rc={rc}）")
+
     if want("eval") and not args.fast:
         print("\n[5] 古籍案例对齐分与应期判别力（非现实预测命中率）")
         for split in ("tune", "holdout"):

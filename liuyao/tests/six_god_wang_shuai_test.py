@@ -10,9 +10,12 @@ from __future__ import annotations
 
 # 控制台编码守卫：GBK/cp936 控制台下本器的中文输出会退化成乱码字节（rc 仍为 0，只有这条管得住）。
 # 位置在 __future__ 之后、其余语句之前；import 期解释器告警仍需调用方 PYTHONUTF8=1 才能全拦（见 check.py 编码不变式）。
+# 220 批实修：原守卫在 `import sys` 之前引用 sys，NameError 被 except 吞——守卫是死的，
+# 而 [24] 静态扫描不覆盖 tests/，两处盲区叠加让它在盘上静默存在了十几天（本次直接运行才炸出）。
 try:
-    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    import sys as _sys
+    _sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    _sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 except Exception:
     pass
 
