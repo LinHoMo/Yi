@@ -33,6 +33,9 @@ from ._common import (
 from yishu_core.ganzhi_calendar import next_jie_after, prev_jie_before
 from yishu_core.symbols import xunkong_of
 
+# 缺生日样本的流年窗锚定纪元（260 批，口径常量；改动须按 §四.4 登记新旧不可比）
+LIUNIAN_REF_YEAR = 2026
+
 
 def dayun_table(chart_json: dict) -> list[dict]:
     """大运 8 步（顺逆按年干阴阳×性别；起运岁按距节气日数折算）。"""
@@ -112,7 +115,11 @@ def liunian_table(chart_json: dict, n: int = 12) -> list[dict]:
     try:
         birth_year = datetime.strptime(str(birth_dt_s)[:10], "%Y-%m-%d").year
     except Exception:
-        birth_year = datetime.now().year
+        # 260 批：缺生日的窗锚从「now().year」改钉登记常量 LIUNIAN_REF_YEAR——
+        # 旧回退让 pillars 形样本的流年窗随公历年滑动（移动时钟实验：golden 9/40
+        # 样本随钟漂移）。常量纪元使审计确定；改该值＝口径变更须登记（§四.4）。
+        # 今天恰为 2026，故本改动在活钟下 digest 一字不变（golden 实跑验证）。
+        birth_year = LIUNIAN_REF_YEAR
 
     out = []
     for i in range(int(n)):
