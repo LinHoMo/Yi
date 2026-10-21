@@ -1,5 +1,7 @@
 # 八字 CHANGELOG
 
+## 2026-10-21 第两百一十二批（两科）：**[24] 静态红线补"活性"一维——四例死守卫(bazi)现行修复，形状合规≠守卫会跑**——沿 220 批 six_god 案底做全库探针：首版探针自曝缺陷（第二遍规则漏前置绑定态，虚报 29），严谨版定谳 **bazi 四例死守卫**（audit_qtbj_batch／audit_tiaohou_gap／build_bazili_cases／golden.py——`sys.stdout.reconfigure` 写在 `import sys` **之前**，NameError 被自己的 except 吞，守卫形状在而从不生效；同族源头＝150 批时代批量贴守卫模板没同步贴 import）。修复四例（前置 import 注根因）；两科 `check_cli_encoding` 判据升级：GUARD_RE 命中后再验**绑定先于使用**（try 内紧上 import 形算活），负例三式（死形必抓／前置活不误伤／紧上活不误伤）入 selftest；两科实扫缺守卫 0（本科 40／六爻 67 入口）。机理入册：**存在性判据对"形状对但从不执行"完全放行**——与 [11]「可达≠有效」同族，本仓第三次撞"查形式不查效果"墙（前两次：061 门吞负例、213 假幂等）。探针虚报-修正过程如实留档。两科 `check.py` 仓库根实跑 rc=0。
+
 ## 2026-10-21 第一百九十八批：**更正本仓第五条未经核验话术——197 批给本科登记的『golden 未纳入 conclusion』欠账系虚构**——实核三件：①本科 `golden.py` 模块头明载「机械层覆盖 conclusion 全部字段」；②`fingerprint()` 产 `conclusion_sha`＝conclusion 规范化哈希（第百零六批金标准壳时代即在，早于六爻 193 批）；③`golden_kit.split_rows` 以 `narrate_` 前缀分列，`conclusion_sha` 落机械层。故六爻 193 批的先例对本科**不存在可适用缺口**；197 批与 CAPABILITY 欠账清单第②条均为我未经实搜 extrapolate 的假账——本次是该类话术第五案（前四：eval 入库、31 例排除、huozhulin 待修、及本条），且首次发生在**我自己新造的登记文本**上；规矩补一条入 GOVERNANCE 精神条款：**欠账登记＝关于「不存在」的声称，落笔前须一次 grep/实跑证其不存在**。CAPABILITY.md 欠账②已就地更正（留删除线可审计），197 批原文不改写。零代码零指纹改动；两科 `check.py` 于仓库根实跑 rc=0。
 
 ## 2026-10-21 第两百一十二批（两科，指针）：**§三 argparse 条合规（本科 8 入口转换）＋§五结案登记**——check×7＋corpus_reports --out 手解 argv 全数 argparse 化，--help 本科 8/8 可看，集成验收＝本科 check 全链绿；doc_refs 的 argparse_flags 旧名骗过转换守卫一案（守卫查子串，名实可相反）详见六爻 CHANGELOG 同批。§五 一卦一事按 §六.5 结案（无会话状态载体，机械门＝镀金）。两科 check rc=0（仓库根）。

@@ -4,6 +4,7 @@
 
 # 控制台编码守卫：GBK/cp936 控制台下本器的中文输出会退化成乱码字节（rc 仍为 0，只有这条管得住）。
 # 位置在 __future__ 之后、其余语句之前；import 期解释器告警仍需调用方 PYTHONUTF8=1 才能全拦（见 check.py 编码不变式）。
+import sys  # 221 批：守卫活性修复——原 sys 在本 try 之后才 import，NameError 被 except 吞＝死守卫
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     sys.stderr.reconfigure(encoding="utf-8", errors="replace")

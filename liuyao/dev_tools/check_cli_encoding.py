@@ -47,6 +47,26 @@ EXEMPT: dict[str, str] = {}  # 守卫位置修正后实测无漏码入口；新�
 GUARD_RE = re.compile(r"""reconfigure\(\s*encoding\s*=\s*["']utf-8|force_utf8_stdio""")
 
 
+
+def guard_live(text: str) -> bool:
+    """守卫活性（221 批）：以 sys.stdout.reconfigure 形态做守卫的文件，import sys 必须先于首用处
+    （同 try 内 `import sys as _sys` 紧上式亦算活）。bazi 实测四例「形状在而 sys 未绑」的死守卫，
+    存在性判据对其完全放行——形状合规 ≠ 守卫会跑，与 [11]「可达 ≠ 有效」同族。"""
+    lines = text.splitlines()
+    use_line = None
+    for i, ln in enumerate(lines):
+        if re.search(r"^\s*(sys|_sys)\.\w+\.reconfigure", ln):
+            use_line = i
+            break
+    if use_line is None:
+        return True  # 非 reconfigure 形态（force_utf8_stdio 等）不在本判据射程
+    if re.match(r"^\s*import sys( as _sys)?\b", lines[max(0, use_line - 1)]) and use_line > 0:
+        return True  # try 内紧上 import 形
+    for ln in lines[:use_line]:
+        if re.match(r"^\s*import sys( as _sys)?\b", ln):
+            return True
+    return False
+
 def guards_missing(disc: pathlib.Path, rels: list[str]) -> list[str]:
     out: list[str] = []
     for rel in rels:
@@ -57,6 +77,8 @@ def guards_missing(disc: pathlib.Path, rels: list[str]) -> list[str]:
             continue
         if not GUARD_RE.search(t):
             out.append(rel)
+        elif "force_utf8_stdio" not in t and not guard_live(t):
+            out.append(rel + "（守卫是死的：reconfigure 早于 import sys）")
     return out
 
 
@@ -165,6 +187,15 @@ def negative_selftest(problems: list[str]) -> None:
         problems.append("负例自证失效：witness 没认出 GBK 产物")
     if witness("夹具", "正常中文输出") is not None:
         problems.append("负例自证假阳性：witness 误伤了干净 UTF-8 产物")
+
+    # 第五式（221 批活性判据）：死守卫文件必被抓、try 内紧上 import 形不误伤
+    if guard_live('try:\n    sys.stdout.reconfigure(encoding="utf-8")\nexcept Exception:\n    pass\nimport sys\n'):
+        problems.append("负例自证失效：死守卫（import 在后）没被抓")
+    if not guard_live('import sys\ntry:\n    sys.stdout.reconfigure(encoding="utf-8")\nexcept Exception:\n    pass\n'):
+        problems.append("负例自证假阳性：先绑后用的活守卫被误杀")
+    if not guard_live('try:\n    import sys as _sys\n    _sys.stdout.reconfigure(encoding="utf-8")\nexcept Exception:\n    pass\n'):
+        problems.append("负例自证假阳性：try 内紧上 import 形被误杀")
+
 
 def main() -> int:
     import io
