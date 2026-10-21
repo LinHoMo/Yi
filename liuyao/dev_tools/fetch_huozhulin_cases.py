@@ -43,7 +43,7 @@ def _refuse_if_handfixed(path) -> bool:
     for mark in ("reconstruction_note", "照录收口"):
         if mark in blob:
             print(f"× 拒写 {path}：文件含手工校勘标记「{mark}」，本器的再生成会覆掉校勘成果。"
-                  f"确认要覆写请加 --force，并在跑完后重跑 `python dev_tools/check.py --only selfconsistency`。")
+                  f"确认要覆写请加 --force，并在跑完后重跑 `python dev_tools/check.py --only case_selfconsistency`。")
             return True
     return False
 

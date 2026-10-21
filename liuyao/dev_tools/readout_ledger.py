@@ -211,6 +211,30 @@ def checks():
         return "PASS" if "全净" in r else (r.strip().splitlines() or ["?"])[-1][:40]
     add("raise 回归守卫(PASS)", "244批（修过的病必须带齿常驻）", c_raise_guard, ("PASS",))
 
+    # 嵌入式 --only 声称的键真实性（249 批）：报错文案/注释里让用户去跑
+    # `check.py --only X` 的每一处 X 必须是该科 want 真值源里的真键——
+    # 249 全库首扫抓 1 处坏键（fetch_huozhulin 的 selfconsistency，已修 case_selfconsistency）。
+    def c_embedded_only_keys(t):
+        import re as _re
+
+        def keys_of(dname: str) -> set:
+            ck = (ROOT / dname / "dev_tools" / "check.py").read_text(encoding="utf-8")
+            return (set(_re.findall(r'want\("([a-z_0-9]+)"\)', ck))
+                    | set(_re.findall(r'\("([a-z_0-9]+)",\s*"\[', ck)))
+        K = {d: keys_of(d) for d in ("liuyao", "bazi")}
+        bad = 0
+        for d in ("liuyao", "bazi"):
+            for p in (ROOT / d).rglob("*.py"):
+                if "__pycache__" in str(p) or p.name == "check.py":
+                    continue
+                s = p.read_text(encoding="utf-8", errors="replace")
+                for m in _re.finditer(r"check\.py[^\n\"']*--only\s+([a-z_0-9,\s]+)", s):
+                    for tok in _re.split(r"[,\s]+", m.group(1).strip()):
+                        if tok and tok not in K[d]:
+                            bad += 1
+        return str(bad)
+    add("嵌入式 --only 坏键(0)", "249批（报错文案是 Agent 的行动指令，它自己先得可执行）", c_embedded_only_keys, ("0",))
+
     def c_tier_consistency(t):
         ml = json.loads((ROOT / "liuyao" / "docs" / "GOVERNANCE-MAP.json").read_text(encoding="utf-8"))
         mb = json.loads((ROOT / "bazi" / "docs" / "GOVERNANCE-MAP.json").read_text(encoding="utf-8"))
