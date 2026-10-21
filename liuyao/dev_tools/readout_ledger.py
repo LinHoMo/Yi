@@ -235,6 +235,46 @@ def checks():
         return str(bad)
     add("嵌入式 --only 坏键(0)", "249批（报错文案是 Agent 的行动指令，它自己先得可执行）", c_embedded_only_keys, ("0",))
 
+    # 登记×提交在册（254 批·253 事故的结构性反应）：现代史（≥176）每个 changelog
+    # 标题批号必须被至少一条提交信息（全信息体、中文或阿拉伯数字形）提及——
+    # 防"写了条目没提交"的半个虚构面（72 型虚构若落在 changelog 上，下轮 quick 即红）。
+    # 已知具名历史孤儿：221（误编号案：实体在 8275cef 而信息写 212，勘误文本未入任何信息体）。
+    def c_registration_orphans(t):
+        import re as _re
+        import subprocess as _sp
+        cn = {"〇": 0, "一": 1, "二": 2, "两": 2, "三": 3, "四": 4, "五": 5,
+              "六": 6, "七": 7, "八": 8, "九": 9}
+
+        def parse(s):
+            tot = num = 0
+            for ch in s:
+                if ch in cn:
+                    num = num * 10 + cn[ch]
+                elif ch == "十":
+                    tot += (num or 1) * 10; num = 0
+                elif ch == "百":
+                    tot += (num or 1) * 100; num = 0
+                elif ch == "千":
+                    tot += (num or 1) * 1000; num = 0
+            return tot + num
+        heads = set()
+        for d in ("liuyao", "bazi"):
+            # 读 HEAD 版本而非工作树：巡逻语义＝对已提交态核对；在制批的未提交条目
+            # 不该判红（254 上线首跑即抓到自己诞生瞬间的"条目已写、提交未在册"，
+            # 该误红暴露了口径须钉 HEAD——已按 §六.2 分诊归正）。
+            txt = _sp.run(["git", "-C", str(ROOT), "show", f"HEAD:{d}/docs/CHANGELOG.md"],
+                          capture_output=True, text=True, encoding="utf-8",
+                          errors="replace").stdout
+            heads |= {parse(x) for x in _re.findall(
+                r"^## \d{4}-\d{2}-\d{2} 第([零〇一二两三四五六七八九十百千]+)批", txt, _re.M)}
+        body = _sp.run(["git", "-C", str(ROOT), "log", "--format=%B\x01"],
+                       capture_output=True, text=True, encoding="utf-8", errors="replace").stdout
+        men = ({parse(x) for x in _re.findall(r"第([零〇一二两三四五六七八九十百千]+)批", body)}
+               | {int(x) for x in _re.findall(r"第(\d{1,4})批", body)})
+        orph = sorted(h for h in heads if h and h > 175 and h not in men)
+        return str(len(orph))
+    add("登记×提交在册(1=已知221)", "254批（253 事故的结构反应；新虚构条目即红）", c_registration_orphans, ("1",))
+
     def c_tier_consistency(t):
         ml = json.loads((ROOT / "liuyao" / "docs" / "GOVERNANCE-MAP.json").read_text(encoding="utf-8"))
         mb = json.loads((ROOT / "bazi" / "docs" / "GOVERNANCE-MAP.json").read_text(encoding="utf-8"))
