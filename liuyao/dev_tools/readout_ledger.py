@@ -190,6 +190,20 @@ def checks():
         "0" if not (DISC / "data" / "feedback" / "predictions.jsonl").exists()
         else str(len([1 for _ in open(DISC / "data" / "feedback" / "predictions.jsonl",
                                      encoding="utf-8") if _.strip()])),), ("0",))
+
+    def c_rule_sha(t):
+        code = ("import sys;sys.path.insert(0,'scripts');sys.path.insert(0,'dev_tools');"
+                "from kernel_path import ensure_kernel_on_path;"
+                "ensure_kernel_on_path('dev_tools/prospective.py');"
+                "import prospective;print(prospective.rule_sha())")
+        out = sh(["-c", code]).strip()
+        return out.splitlines()[-1] if out else None
+    # SCORING_RULE 冻结 sha 的**值**自 216 批才首次落盘——180 批加 task=占天候 支时只登记了
+    # 变更事件未记值；本行初稿曾拿会话记忆的 178 时代值（a36243fc6239，盘上与 git 历史均无）
+    # 当期望，实算当场打回 7867316a7303。**期望从此是字面钉桩**：口径再动此行即红，
+    # 改期望的唯一合法路径＝CHANGELOG 注明理由（姊妹条款）。
+    add("prospective 口径sha(7867316a7303)", "180批生效/216批落值入册",
+        c_rule_sha, ("7867316a7303",))
     return out
 
 
