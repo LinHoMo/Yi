@@ -204,6 +204,18 @@ def checks():
     # 改期望的唯一合法路径＝CHANGELOG 注明理由（姊妹条款）。
     add("prospective 口径sha(7867316a7303)", "180批生效/216批落值入册",
         c_rule_sha, ("7867316a7303",))
+
+    # 六爻分析链零随机（217 批 CAPABILITY「三 seed」串号更正的断言化）：随机只许活在起卦层。
+    def c_liuyao_no_random(t):
+        import glob as _glob
+        n = 0
+        for pat in ("scripts/step*.py", "scripts/thinking_chain.py", "scripts/analyze.py",
+                    "scripts/classical*.py", "scripts/narrate_core.py"):
+            for f in _glob.glob(str(DISC / pat)):
+                if "random" in Path(f).read_text(encoding="utf-8", errors="replace"):
+                    n += 1
+        return str(n)
+    add("liuyao 分析链含随机文件数(0)", "217批（串号更正伴生断言）", c_liuyao_no_random, ("0",))
     return out
 
 

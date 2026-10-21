@@ -5,7 +5,7 @@
 **它自己**贡献了多少？还是只是让输出更丰富？本项目此前只有"改前后各跑一遍总分"
 的粗对拍——总分差里混着分母变化、名次漂移与判词措辞。本台架把对照做严：
 
-  - 同一份输入（case_runner 还原时刻与卦面，引擎确定性由门 [23] 三 seed 实证）；
+  - 同一份输入（case_runner 还原时刻与卦面，引擎确定性＝分析链零随机＋门 [1.6] 指纹重放实证；三 seed 是八字科门 [23] 的证据面，本科无此门（217 批串号更正））；
   - 同一套基准标签与同一判卷口径（evaluate.score_case strict 维表，不另建第二套）；
   - 只切换一个模块属性（TOGGLES 注册表，逐条写明书证与作用面）；
   - 逐例二元配对（verdict 满分与否／主应期 top-1 与否），不一致对做 **McNemar 精确检验**。
@@ -187,7 +187,7 @@ def sweep(splits, limit=None, out_path=None) -> dict:
         print("× rule_registry 空——先查路径，33 条失踪不会静默")
         return {}
     by_id = {c["id"]: c for c in case_runner.load_cases()}
-    # 基线（每 split 一次，确定性由门 [23] 三 seed 实证）
+    # 基线（每 split 一次，确定性＝零随机分析链＋[1.6] 重放（217 批串号更正））
     base_cache = {}
     for split in splits:
         ids = case_runner.load_ids(split)[:limit] if limit else case_runner.load_ids(split)

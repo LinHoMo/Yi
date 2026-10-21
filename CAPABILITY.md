@@ -11,7 +11,10 @@
 
 四柱/纳甲/装卦/世应/六亲/六神/旬空/月破/六十四卦/干支历换算全部由代码完成，LLM 禁止心算（AGENTS.md §一.1）。
 - 六爻：288 例行为指纹（机械层 `b7162bfc99e2cce8`／措辞层 `a46f7374276a17a6`，自第一百九十三批起
-  **含 analyze.conclusion 键集与内容哈希**）；三 seed 确定性（门 [23]）；爻序 23 断言 P0 看门狗。
+  **含 analyze.conclusion 键集与内容哈希**）；确定性证据面＝**分析链零随机**（step\*/思维链/analyze/
+  经典层无随机源，账台逐跑核该计数）＋起卦层带种可复现（`--seed`）；爻序 23 断言 P0 看门狗。
+  （原写「三 seed（门 [23]）」系跨科串号——三 seed 属八字门 [23]，第一百七十二…第两百一十六批间
+  由第两百一十七批查实更正。）
 - 八字：40 例结论级指纹（机械 `2a4c9258d6c1e4cb`／措辞 `1a0f165ebfa7b6da`）＋5 例机械回归＋九场景评测器校准。
 - 复现：`python liuyao/dev_tools/golden.py verify && python bazi/dev_tools/golden.py verify`
 
