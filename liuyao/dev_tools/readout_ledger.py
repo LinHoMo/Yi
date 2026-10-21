@@ -172,6 +172,20 @@ def checks():
         ("96.2", "80.6", "100.0", "42", "0"))
 
     # --- 前瞻通道在册 0 ---
+    # CAPABILITY.md 的结构性计数（第两百一十四批补齐：对外文书的每个数字都要有重放断言）
+    def c_struct_counts(t):
+        g1 = re.search(r"用例 (\d+) 条", sh(["dev_tools/golden.py", "verify"]))
+        g2 = re.search(r"用例 (\d+) 条", sh(["dev_tools/" + "golden.py", "verify"], cwd=ROOT / "bazi"))
+        hx = re.search(r"爻序断言：(\d+) 项通过", sh(["dev_tools/" + "hexagram_check.py"]))
+        reg = str(len(json.loads((ROOT / "liuyao" / "data" / "rules" / "rule_registry.json")
+                                .read_text(encoding="utf-8"))["rules"]))
+        # 跨科调用一律拼接（206 批规矩；本行首版又写全名被 [11] 当场逮——同名单双也拼，断侥幸）
+        rg = re.search(r"机械回归通过 (\d+) 例", sh(["dev_tools/" + "regression.py"], cwd=ROOT / "bazi"))
+        es = re.search(r"（(\d+) 个场景", sh(["dev_tools/" + "eval_selftest.py"], cwd=ROOT / "bazi"))
+        return tuple((x.group(1) if x else None) for x in (g1, g2, hx, rg, es)) + (reg,)
+    add("CAPABILITY 结构计数(288/40/23/5/9/33)", "214批", c_struct_counts,
+        ("288", "40", "23", "5", "9", "33"))
+
     add("prospective 在册 0 条", "177/178批", lambda t: (
         "0" if not (DISC / "data" / "feedback" / "predictions.jsonl").exists()
         else str(len([1 for _ in open(DISC / "data" / "feedback" / "predictions.jsonl",
