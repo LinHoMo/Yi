@@ -61,6 +61,8 @@ SCORING_RULE = (
     "polarity=+1（吉组）且 state=occurred → 方向命中；polarity=-1（凶组）且 state=not_occurred → 方向命中；"
     "polarity=0 → 弃权（进弃权率，不进命中分母）；state∈{unverifiable,lost} → 右删失（不进分母，单独报比例）；"
     "应期严格窗 ±%d 日、宽松窗 ±%d 日（内核 yingqi 唯一口径），落窗=应验日∈封存窗口；"
+    "task=占天候 的记录：事件定义即断语本身，occurred→命中、not_occurred→未命中（极性不参与判卷），"
+    "与事项记录分桶列示、汇总同表不混计；"
     "口径改动＝新 scoring_rule_sha，旧口径记录自动剔出汇总、只报在册。"
     % (STRICT_WINDOW_DAYS, LOOSE_WINDOW_DAYS))
 
@@ -163,7 +165,7 @@ def _parse_window(s: str) -> tuple[date, date] | None:
 
 
 def cmd_create(store: Path, analyze_path: str, qtype: str, event: str,
-               window: str, note: str) -> int:
+               window: str, note: str, task: str = "事项") -> int:
     if len(event) < 10:
         print("× 事件定义少于 10 字——「近期有变化」这类无法判卷的措辞不收（这正是本通道存在的原因）")
         return 1
@@ -200,6 +202,7 @@ def cmd_create(store: Path, analyze_path: str, qtype: str, event: str,
         "hexagram": (analyze.get("chart_summary") or {}).get("卦名", "")
         or (analyze.get("original_hexagram") or {}).get("name", ""),
         "input_sha": hashlib.sha256(Path(analyze_path).read_bytes()).hexdigest()[:16],
+        "task": task,
         "strategy_version": _strategy_version(),
         "scoring_rule_sha": rule_sha(),
         "note": note,
@@ -301,6 +304,7 @@ def cmd_report(store: Path, as_json: bool) -> int:
     scorable: list[tuple[dict, dict]] = []   # (seal, resolve) 同口径可判卷
     abstained = censored = stale_rule = 0
     dir_hits = strict_hits = loose_hits = inwin_hits = win_n = 0
+    task_n = task_hits = 0
     for r in reses:
         s = seals.get(r["pid"])
         if s is None:
@@ -312,12 +316,18 @@ def cmd_report(store: Path, as_json: bool) -> int:
             censored += 1
             continue
         scorable.append((s, r))
-        pol = s.get("polarity", 0)
-        if pol == 0:
-            abstained += 1
-        elif (pol > 0) == (r["state"] == "occurred"):
-            dir_hits += 1
-    n_dir = sum(1 for s, _ in scorable if s.get("polarity", 0) != 0)
+        if s.get("task") == "占天候":
+            task_n += 1
+            if r["state"] == "occurred":
+                task_hits += 1
+        else:
+            pol = s.get("polarity", 0)
+            if pol == 0:
+                abstained += 1
+            elif (pol > 0) == (r["state"] == "occurred"):
+                dir_hits += 1
+    n_dir = sum(1 for s, _ in scorable
+                if s.get("task") != "占天候" and s.get("polarity", 0) != 0)
     for s, r in scorable:
         ad = r.get("actual_date") or ""
         if not ad:
@@ -332,6 +342,7 @@ def cmd_report(store: Path, as_json: bool) -> int:
         "stale_rule_excluded": stale_rule, "abstained": abstained,
         "scoring_rule_sha": cur, "chain_head": rows[-1]["digest"] if rows else GENESIS,
         "direction": {"hits": dir_hits, "n": n_dir},
+        "tianhou": {"hits": task_hits, "n": task_n},
         "yingqi_strict": {"hits": strict_hits, "n": win_n},
         "yingqi_loose": {"hits": loose_hits, "n": win_n},
         "in_window": {"hits": inwin_hits, "n": win_n},
@@ -344,7 +355,8 @@ def cmd_report(store: Path, as_json: bool) -> int:
     print("  在册封存 %d 条｜已判卷 %d 条｜删失(unverifiable/lost) %d 条｜旧口径剔除 %d 条｜弃权 %d 条"
           % (len(seals), len(reses), censored, stale_rule, abstained))
     if len(seals):
-        print(_wilson_block("方向命中", dir_hits, n_dir))
+        print(_wilson_block("方向命中（事项）", dir_hits, n_dir))
+        print(_wilson_block("占天候断语（独立桶，不并入上行）", task_hits, task_n))
         print(_wilson_block("应期·严格(±%d日)" % STRICT_WINDOW_DAYS, strict_hits, win_n))
         print(_wilson_block("应期·宽松(±%d日)" % LOOSE_WINDOW_DAYS, loose_hits, win_n))
         print(_wilson_block("应验日落封存窗", inwin_hits, win_n))
@@ -453,12 +465,34 @@ def cmd_selftest() -> int:
         t = buf.getvalue()
         if rc != 0 or "旧口径剔除 1 条" not in t:
             captured.append("旧口径记录未被剔出汇总（口径变更会静默混算）")
+        # 负例8：占天候 task 桶独立判卷（不依赖吉凶极性、不混事项分母）
+        store.unlink()
+        th = json.loads(Path(az).read_text(encoding="utf-8"))
+        th["conclusion"]["方向"] = "晴"   # verdict_direction("晴")=0 → 走极性规则必入弃权
+        Path(az).write_text(json.dumps(th, ensure_ascii=False), encoding="utf-8")
+        if cmd_create(store, az, "天候", "定义：offer 是否发到我手上（以邮件为准）",
+                      _w(), "", "占天候") != 0:
+            captured.append("占天候 create 未走通")
+        pid = read_rows(store)[-1]["payload"]["pid"]
+        cmd_resolve(store, pid, "occurred", date.today().isoformat(), "判据：open-meteo 模拟值")
+        buf2 = io.StringIO()
+        with redirect_stdout(buf2):
+            rc = cmd_report(store, True)
+        rep = {}
+        try:
+            rep = json.loads(buf2.getvalue())
+        except json.JSONDecodeError:
+            captured.append("report --json 输出非纯 JSON")
+        if rc != 0 or rep.get("tianhou", {}).get("hits") != 1 or rep.get("tianhou", {}).get("n") != 1:
+            captured.append("占天候 task 桶未独立判卷：%r" % rep.get("tianhou"))
+        if rep.get("direction", {}).get("n") != 0:
+            captured.append("占天候记录混进了事项方向分母（两桶混算）")
     if captured:
         print("× selftest 抓到漏洞（本模块是摆设）：")
         for c in captured:
             print("  · " + c)
         return 1
-    print("√ selftest：正向链路通；小样本拒判 + 7 类负例（篡改链/悬空引用/二次判卷/缺日期/事后立据/短定义/旧口径混算）全部被抓")
+    print("√ selftest：正向链路通；小样本拒判 + 8 类负例（篡改链/悬空引用/二次判卷/缺日期/事后立据/短定义/旧口径混算/占天候桶独立）全部被抓")
     # 真实库存在时顺手复核（在册数字必须显形，不许静默）
     if STORE_DEFAULT.exists():
         probs = verify(STORE_DEFAULT)
@@ -486,6 +520,7 @@ def main() -> int:
     p_c.add_argument("--event", required=True, help="事件定义：什么算发生，以何为准")
     p_c.add_argument("--window", required=True, help="YYYY-MM-DD..YYYY-MM-DD，止须晚于今日")
     p_c.add_argument("--note", default="")
+    p_c.add_argument("--task", default="事项", help="任务面（事项/占天候），决定判卷分支")
     p_r = sub.add_parser("resolve", help="回填一条结果（只追加，不判卷）")
     p_r.add_argument("--id", required=True)
     p_r.add_argument("--state", required=True, choices=STATES)
@@ -502,7 +537,8 @@ def main() -> int:
         return cmd_selftest()
     store = Path(args.store) if args.store else STORE_DEFAULT
     if args.cmd == "create":
-        return cmd_create(store, args.analyze, args.question_type, args.event, args.window, args.note)
+        return cmd_create(store, args.analyze, args.question_type, args.event,
+                          args.window, args.note, args.task)
     if args.cmd == "resolve":
         return cmd_resolve(store, args.id, args.state, args.actual_date, args.note)
     if args.cmd == "list":
