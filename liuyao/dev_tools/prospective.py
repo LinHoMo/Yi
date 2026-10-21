@@ -17,7 +17,9 @@
         --window 2026-10-25..2026-11-08 [--note …]
     python dev_tools/prospective.py resolve --id <pid前缀> \
         --state occurred|not_occurred|unverifiable|lost [--actual-date YYYY-MM-DD] [--note 核验出处]
-    python dev_tools/prospective.py list [--due]
+    python dev_tools/prospective.py list [--due] [--json]
+    # 外部排程/测试改库存放：设环境变量 YI_PROSPECTIVE_STORE=<路径>（第一百七十八批），
+    # 或顶级 --store 参数（须写在子命令之前）。
     python dev_tools/prospective.py report [--json]
     python dev_tools/prospective.py verify
     python dev_tools/prospective.py --selftest
@@ -47,7 +49,8 @@ from yishu_core.yingqi import LOOSE_WINDOW_DAYS, STRICT_WINDOW_DAYS, judge_windo
 sys.path.insert(0, str(HERE))
 from outcome import MIN_N_FOR_CONCLUSION, wilson  # noqa: E402
 
-STORE_DEFAULT = DISC / "data" / "feedback" / "predictions.jsonl"
+STORE_DEFAULT = Path(os.environ["YI_PROSPECTIVE_STORE"]) if os.environ.get(
+    "YI_PROSPECTIVE_STORE") else DISC / "data" / "feedback" / "predictions.jsonl"
 GENESIS = "GENESIS"
 STATES = ("occurred", "not_occurred", "unverifiable", "lost")
 
@@ -244,21 +247,33 @@ def cmd_resolve(store: Path, id_prefix: str, state: str,
     return 0
 
 
-def cmd_list(store: Path, due_only: bool) -> int:
+def cmd_list(store: Path, due_only: bool, as_json: bool = False) -> int:
     rows = read_rows(store)
     seals = [r["payload"] for r in rows if r.get("kind") == "seal"]
     resolved = {r["payload"].get("pid"): r["payload"] for r in rows if r.get("kind") == "resolve"}
-    due = 0
+    today = date.today().isoformat()
+    due_items = []
     for s in sorted(seals, key=lambda x: x["window"][1]):
         r = resolved.get(s["pid"])
-        status = ("已回填:" + r["state"]) if r else ("逾期未判卷" if s["window"][1] < date.today().isoformat() else "待揭晓")
-        if r is None and s["window"][1] < date.today().isoformat():
-            due += 1
+        overdue = r is None and s["window"][1] < today
+        status = ("已回填:" + r["state"]) if r else ("逾期未判卷" if overdue else "待揭晓")
+        if r is None:
+            due_items.append({"pid": s["pid"], "window_end": s["window"][1],
+                              "direction": s["direction"], "overdue": overdue,
+                              "event_definition": s["event_definition"]})
+        if as_json:
+            continue
         if due_only and r is not None:
             continue
         print("  %s  窗 %s..%s  断=%s  %s  %s" % (s["pid"], s["window"][0], s["window"][1],
                                                   s["direction"] or "—", status, s["event_definition"][:24]))
-    print("在册封存 %d 条，已判卷 %d 条，逾期未判卷 %d 条" % (len(seals), len(resolved), due))
+    overdue_n = sum(1 for d in due_items if d["overdue"])
+    if as_json:
+        print(json.dumps({"seals": len(seals), "judged": len(resolved),
+                          "pending": len(due_items), "overdue_unjudged": overdue_n,
+                          "due": due_items, "today": today}, ensure_ascii=False))
+        return 0
+    print("在册封存 %d 条，已判卷 %d 条，逾期未判卷 %d 条" % (len(seals), len(resolved), overdue_n))
     return 0
 
 
@@ -478,6 +493,7 @@ def main() -> int:
     p_r.add_argument("--note", default="")
     p_l = sub.add_parser("list", help="在册封存与判卷状态")
     p_l.add_argument("--due", action="store_true", help="只列待揭晓/逾期未判卷")
+    p_l.add_argument("--json", action="store_true", help="机器可读到期队列（外部排程回访用，第一百七十八批）")
     p_p = sub.add_parser("report", help="按口径现算命中（必带 n/Wilson CI，n 不足拒判）")
     p_p.add_argument("--json", action="store_true")
     sub.add_parser("verify", help="复核哈希链")
@@ -490,7 +506,7 @@ def main() -> int:
     if args.cmd == "resolve":
         return cmd_resolve(store, args.id, args.state, args.actual_date, args.note)
     if args.cmd == "list":
-        return cmd_list(store, args.due)
+        return cmd_list(store, args.due, args.json)
     if args.cmd == "report":
         return cmd_report(store, args.json)
     if args.cmd == "verify":
