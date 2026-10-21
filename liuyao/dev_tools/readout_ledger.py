@@ -275,6 +275,29 @@ def checks():
         return str(len(orph))
     add("登记×提交在册(1=已知221)", "254批（253 事故的结构反应；新虚构条目即红）", c_registration_orphans, ("1",))
 
+    # 集合互斥（258 批·铁律三的集合面守卫）：六爻 case_splits 十二集两两零交集＋
+    # 八字案例 id 无跨 split 重复。此前八字 tune∩holdout=0 只是叙事，两科皆无断言——
+    # 一例泄漏即让「holdout 未参与调参」的所有句子从根上坏掉，而全账不会红。
+    def c_split_disjoint(t):
+        sp = json.loads((DISC / "data" / "cases" / "case_splits.json").read_text(encoding="utf-8"))
+        sets = {}
+        for k, v in sp.items():
+            if isinstance(v, list):
+                sets[k] = {x if isinstance(x, str) else (x.get("id") or "") for x in v}
+        nm = list(sets)
+        lu = sum(len(sets[a] & sets[b]) for i, a in enumerate(nm) for b in nm[i + 1:])
+        bz = json.loads((ROOT / "bazi" / "data" / "cases" / "bazi_classical_cases.json")
+                        .read_text(encoding="utf-8"))["cases"]
+        seen: dict = {}
+        rep = 0
+        for c in bz:
+            cid, s = c.get("id"), c.get("split")
+            if cid in seen and seen[cid] != s:
+                rep += 1
+            seen.setdefault(cid, s)
+        return str(lu + rep)
+    add("集合互斥泄漏(0)", "258批（铁律三集合面补闸：六爻十二集两两∅＋八字 id 不跨 split）", c_split_disjoint, ("0",))
+
     def c_tier_consistency(t):
         ml = json.loads((ROOT / "liuyao" / "docs" / "GOVERNANCE-MAP.json").read_text(encoding="utf-8"))
         mb = json.loads((ROOT / "bazi" / "docs" / "GOVERNANCE-MAP.json").read_text(encoding="utf-8"))
