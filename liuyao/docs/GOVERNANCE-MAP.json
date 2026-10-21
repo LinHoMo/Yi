@@ -1,9 +1,9 @@
 {
- "count": 54,
+ "count": 55,
  "by_tier": {
   "tool": 3,
   "ondemand": 10,
-  "nightly": 9,
+  "nightly": 10,
   "build": 8,
   "blocking": 24
  },
@@ -34,6 +34,13 @@
    "guards": "弃权分型读数（191 批结案器）",
    "run_by_check_py": false,
    "doc": "弃权分型读数 v0（第一百九十一批·C2 第一半）——只出观察，不动输出面。"
+  },
+  {
+   "script": "adjudication_brief.py",
+   "tier": "nightly",
+   "guards": "待裁简报生成器（226 批：六册汇编一页 81 事项，纯装配零新判断、决策勾选不授权）",
+   "run_by_check_py": false,
+   "doc": "裁决简报生成器（第两百二十六批·值守面）——把六本观察册里等人裁的事汇编成一页。"
   },
   {
    "script": "baselines.py",
