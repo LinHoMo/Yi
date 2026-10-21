@@ -140,6 +140,17 @@ def checks():
         return (str(c["tune"]), str(c["holdout"]), str(len(ex.get("cases") or ex)))
     add("八字案例分母(60/278/53)", "234批", c_bazi_denoms, ("60", "278", "53"))
 
+    # 头牌值在位性（235 批）：现状文档（README×2/CAPABILITY/GOVERNANCE）必须各含每个
+    # 主读数**至少一处**——文档被改回旧值（176 批 97.3 事故族）时现值消失即红。
+    # 不查"旧值不得出现"：更正记录合法引用旧值，absence 判据在该域机械不可分（235 探针实证）。
+    def c_headline_present(t):
+        docs = [(ROOT / x).read_text(encoding="utf-8") for x in
+                ("liuyao/README.md", "bazi/README.md", "CAPABILITY.md", "GOVERNANCE.md")]
+        heads = ("97.9", "90.2", "62.4", "27.3", "33.3", "52.3", "97.6", "96.2", "80.6")
+        gone = [h for h in heads if not any(h in d for d in docs)]
+        return f"{len(heads) - len(gone)}/{len(heads)}" + ("" if not gone else " 缺:" + ",".join(gone))
+    add("头牌值在位(9/9)", "235批（176 事故族的正向断言）", c_headline_present, ("9/9",))
+
     def c_tier_consistency(t):
         ml = json.loads((ROOT / "liuyao" / "docs" / "GOVERNANCE-MAP.json").read_text(encoding="utf-8"))
         mb = json.loads((ROOT / "bazi" / "docs" / "GOVERNANCE-MAP.json").read_text(encoding="utf-8"))
