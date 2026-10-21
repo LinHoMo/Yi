@@ -466,6 +466,7 @@ def yingqi_discrimination(engine_out: dict, ids: list[str]) -> dict:
     base = {c["id"]: c for c in case_runner.load_cases()}
     by_e = {c.get("id"): c for c in engine_out.get("cases", [])}
     sizes, ranks, top1_hit, top1_n, random_p = [], [], 0, 0, []
+    hit_positions: list = []   # 第一百八十一批 additive 读数：每题正确支在池内的名次（None=未覆盖/空池）
     loose_hit, rel_hit, abs_hit, loose_n = 0, 0, 0, 0
     per_unit = {}
 
@@ -489,6 +490,7 @@ def yingqi_discrimination(engine_out: dict, ids: list[str]) -> dict:
                                         "loose": 0, "rel": 0, "abs": 0})
         u["n"] += 1
         if not offered:
+            hit_positions.append(None)
             continue
         k, n = len(needed), len(offered)
         p = 1.0
@@ -499,6 +501,7 @@ def yingqi_discrimination(engine_out: dict, ids: list[str]) -> dict:
             top1_hit += 1
             u["top1"] += 1
         hit_at = next((i + 1 for i, ch in enumerate(offered) if ch in needed), None)
+        hit_positions.append(hit_at)
         if hit_at:
             ranks.append(hit_at)
             u["ranks"].append(hit_at)
@@ -520,8 +523,17 @@ def yingqi_discrimination(engine_out: dict, ids: list[str]) -> dict:
 
     if not sizes:
         return {}
+    # 第一百八十一批 additive 读数：若产品断言从 top-1 改为「top-k 日窗」，覆盖率曲线
+    # 是该断言的实测依据（纯报告字段：不参与评分权重、不触门基线，新旧读数仍可比）。
+    cov = {}
+    for k in (1, 2, 3, 4, 5):
+        h = sum(1 for x in hit_positions if x is not None and x <= k)
+        cov["top%d" % k] = {"hits": h, "n": top1_n,
+                            "rate": round(h * 100.0 / top1_n, 1) if top1_n else None,
+                            "random_rate": round(k * 100.0 / 12, 1)}
     return {
         "cases_with_yingqi": len(sizes),
+        "coverage_by_k": cov,
         "avg_candidate_set_size": round(sum(sizes) / len(sizes), 1),
         "top1_hit_rate": round(top1_hit * 100.0 / top1_n, 1) if top1_n else None,
         "avg_rank_of_correct": round(sum(ranks) / len(ranks), 2) if ranks else None,
