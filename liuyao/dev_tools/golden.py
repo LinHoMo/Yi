@@ -96,6 +96,16 @@ def fingerprint() -> list[dict]:
                         "patterns": [t2 for t2 in (inner.get("reasoning_chain") or [])
                                      if isinstance(t2, str) and t2.startswith("[格局")],
                     }
+                    # 结论层纳入指纹（第一百九十三批，补第一百九十二批登记的盲区）：
+                    # 此前 golden 只看链/增强层，analyze.conclusion 的键集与内容整体在视野外——
+                    # 192 批加「应期窗口」键两枚指纹纹丝不动即其证明（沿革：第八十批以同法补
+                    # 日历应期层盲区，本条照彼例一次性重基线并 drift_log 归因）。
+                    from analyze import _conclusion_from
+                    concl = _conclusion_from(inner, h)
+                    row["concl_keys"] = sorted(concl.keys())
+                    row["concl_sha"] = hashlib.sha256(json.dumps(
+                        concl, ensure_ascii=False, sort_keys=True,
+                        default=str).encode("utf-8")).hexdigest()[:12]
                     # 文案门：抽样子集记 narrate 文案哈希（沿革见 docs/CHANGELOG.md：指纹原不含 narrate）
                     if i % 24 == 0 and not moving:
                         try:

@@ -1389,6 +1389,24 @@ def _timing_sentence(timing: dict, special, s3, s5: dict = None) -> str:
         base += NARRATIVE_HINTS["timing_shown"].format(shown=shown)
     if calendar_str:
         base += NARRATIVE_HINTS["timing_calendar"].format(calendar_str=calendar_str)
+    # 窗句（第一百九十三批·D1 第二半）：名次前 3 个不重复日历日折成区间——
+    # 与 conclusion.应期窗口 同一派生口径；措辞按铁律三钉死为「结构范围提示」不升格必应。
+    _uniq = []
+    for _d in calendar_dates:
+        _v = _d.get("date")
+        if _v and _v not in _uniq:
+            _uniq.append(_v)
+        if len(_uniq) >= 3:
+            break
+    if len(_uniq) >= 2:
+        try:
+            from datetime import date as _dt
+            _ds = sorted(_dt.fromisoformat(x) for x in _uniq)
+            _win = "%s—%s（跨%d日）" % (_ds[0].isoformat(), _ds[-1].isoformat(),
+                                        (_ds[-1] - _ds[0]).days + 1)
+            base += " " + NARRATIVE_HINTS["timing_window"].format(win=_win)
+        except (ValueError, KeyError):
+            pass
     return base
 
 
