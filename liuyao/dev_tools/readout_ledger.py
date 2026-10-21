@@ -116,7 +116,18 @@ def checks():
         ("b7162bfc99e2cce8", "a46f7374276a17a6"))
     add("bazi.golden(2a4c/1a0f)", "176批前", lambda t: _golden("bazi"),
         ("2a4c9258d6c1e4cb", "1a0f165ebfa7b6da"))
-    add("governance(50/34, blk 20/19)", "194批（204 批更新：+候选草稿器）", lambda t: _gov_counts(), ("50", "34", "20", "19"))
+    add("governance(50/34, blk 21/23)", "194批（207 批更新：更正六项误标 tier＋挂闸一致性断言）", lambda t: _gov_counts(), ("50", "34", "21", "23"))
+
+    def c_tier_consistency(t):
+        ml = json.loads((ROOT / "liuyao" / "docs" / "GOVERNANCE-MAP.json").read_text(encoding="utf-8"))
+        mb = json.loads((ROOT / "bazi" / "docs" / "GOVERNANCE-MAP.json").read_text(encoding="utf-8"))
+        hv = [len(ml["tier_link_violations"]["blocking_not_referenced"]),
+              len(mb["tier_link_violations"]["blocking_not_referenced"])]
+        sv = [len(ml["tier_link_violations"]["referenced_not_blocking"]),
+              len(mb["tier_link_violations"]["referenced_not_blocking"])]
+        return tuple(map(str, hv + sv))
+    add("tier一致性(硬0/0软0/1)", "207批（软 bazi=diff_tiaohou_vs_head 的 required 存在性引用，合法在账；冒出未见条目即红）",
+        c_tier_consistency, ("0", "0", "0", "1"))
 
     # --- 八字侧 ---
     def c_bazi_holdout(t):

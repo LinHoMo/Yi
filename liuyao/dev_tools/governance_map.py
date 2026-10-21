@@ -44,7 +44,7 @@ CURATED = {
         "golden": ("blocking", "40 例结论级指纹（机械+措辞）漂移看门狗"),
         "regression": ("blocking", "5 例手写出生时刻机械断言"),
         "eval_selftest": ("blocking", "评分器九场景校准"),
-        "eval_unique_keys": ("blocking", "考点折叠量尺（例=考点核查）"),
+        "eval_unique_keys": ("ondemand", "考点折叠量尺（207 批更正：从未挂闸，194 批误标 blocking——一致性断言自抓）"),
         "check_case_dupes": ("blocking", "案例考点查重（#39 冗余防线）"),
         "check_case_isolation": ("blocking", "铁律二：解读路径不得触案例库"),
         "check_case_pillars": ("blocking", "命例基准自洽（expected 四柱可反算）"),
@@ -59,12 +59,12 @@ CURATED = {
         "check_pillar_laws": ("blocking", "排盘入参历法自洽"),
         "check_rule_registry": ("blocking", "规则注册表书源/impl 指针回验"),
         "check_source_readings": ("blocking", "书证引文逐字回验（源L行号）"),
-        "corpus_reports": ("nightly", "多盘 narrate 并集（接线门原料，缺件自愈）"),
-        "corpus_wiring_report": ("nightly", "语料进没进报告的接线读数"),
-        "verdict_audit": ("nightly", "断语外置审计（断语不进代码）"),
+        "corpus_reports": ("blocking", "多盘并集接线闸（[8]；缺件自愈）——207 批更正 tier：实为挂闸门"),
+        "corpus_wiring_report": ("blocking", "语料进没进报告的接线读数（挂 [8] 系；207 批更正）"),
+        "verdict_audit": ("blocking", "断语外置审计 [16]（207 批更正 tier：实为挂闸门）"),
         "feedback_store": ("tool", "现实反馈落盘通道（在册 0）"),
-        "sync_tiaohou_engine": ("ondemand", "调候表↔data 同步（--check 挂门）"),
-        "sync_nayin_engine": ("ondemand", "纳音表↔data 同步（--check 挂门）"),
+        "sync_tiaohou_engine": ("blocking", "调候表↔data 同步门（§四.6 --check 挂闸；207 批更正）"),
+        "sync_nayin_engine": ("blocking", "纳音表↔data 同步门（§四.6 --check 挂闸；207 批更正）"),
         "diff_tiaohou_vs_head": ("ondemand", "改表前后逐格对拍范式"),
         "baselines": ("ondemand", "八字判断维×常数基线配对对照（187 批 A3 读数器）"),
         "audit_qtbj_batch": ("ondemand", "全局八字批审计一次性器"),
@@ -82,7 +82,7 @@ CURATED = {
         "hexagram_check": ("blocking", "爻序 P0 看门狗（23 断言）"),
         "outcome": ("blocking", "现实回填统计出口（Wilson/n<30 拒判；195 批划界：不写封存）"),
         "feedback_store": ("blocking", "应期反馈记录存储（一键闭环落盘；195 批划界：判卷归 prospective）"),
-        "feedback_report": ("nightly", "反馈汇总报告"),
+        "feedback_report": ("blocking", "反馈汇总口径门（check 362 行 import 消费；207 批更正 tier）"),
         "style_check": ("blocking", "CSS 类名有定义（报告面）"),
         "refactor_guard": ("ondemand", "零指纹漂移验收器"),
         "check_bing_yao": ("blocking", "日辰并爻唯一性守卫（[27]）"),
@@ -139,7 +139,10 @@ def scan_disc(disc: str, curated: dict, dev_dir: Path, check_py: Path):
         src = p.read_text(encoding="utf-8", errors="replace")
         m = re.search(r'"""[ \t]*\n?(.{0,72})', src)
         desc = (m.group(1).strip() if m else "")[:72]
-        in_check = ('dev_tools/%s.py' % stem) in gate_text
+        # 挂闸两源（207 批）：子进程路径字面量 OR 模块 import——只查其一会把
+        # `from feedback_store import ...` 这类真闸门读成未挂（实测漏报两例）。
+        in_check = (('dev_tools/%s.py' % stem) in gate_text
+                    or re.search(r"\b(?:import|from)\s+%s\b" % re.escape(stem), gate_text) is not None)
         if stem in curated:
             tier, guards = curated[stem]
         else:
@@ -159,11 +162,18 @@ def build(strict=False) -> int:
     for disc in ("bazi", "liuyao"):
         dev = ROOT / disc / "dev_tools"
         rows, unc, ghost = scan_disc(disc, CURATED[disc], dev, ROOT / disc / "dev_tools" / "check.py")
-        # 交叉核验：run_by_check 与 curated blocking 的一致性仅报数不判红（新门先挂后归类的窗口期）
+        # 一致性断言（第两百零七批）：tier 定义的机器化。分两级是诚实的分层：
+        # 硬断言 blocking⇒被 check 引用（漏引用＝假闸门，--strict 判红）；
+        # 软清单 引用⇏blocking（被 required 存在性清单提及但未执行属合法形态——
+        # bazi diff_tiaohou_vs_head 实例——但清单内容入账，冒出没见过的条目账台即红）。
+        bnl = [r["script"] for r in rows if r["tier"] == "blocking" and not r["run_by_check_py"]]
+        lnb = sorted(r["script"] for r in rows if r["run_by_check_py"] and r["tier"] != "blocking")
         from collections import Counter
         tc = Counter(r["tier"] for r in rows)
         out["disciplines"][disc] = {"count": len(rows), "by_tier": dict(tc),
                                     "unclassified": unc, "curated_but_missing": ghost,
+                                    "tier_link_violations": {"blocking_not_referenced": bnl,
+                                                            "referenced_not_blocking": lnb},
                                     "rows": rows}
         dst = ROOT / disc / "docs" / "GOVERNANCE-MAP.json"
         write_stable(dst, out["disciplines"][disc])
@@ -173,6 +183,11 @@ def build(strict=False) -> int:
         if unc or ghost:
             print("  × 未分类 %r｜表中有序实无 %r" % (unc, ghost))
             rc = 1 if strict else rc
+        if bnl:
+            print("  × %s blocking 未挂闸（假闸门）：%r" % (disc, bnl))
+            rc = 1 if strict else rc
+        if lnb:
+            print("  · %s 被引用但非 blocking（存在性引用合法，清单已入账）：%r" % (disc, lnb))
     print("（本批只出地图，不删并不；降档候选＝nightly/ondemand 中连续一季零判红者，逐批走 §四）")
     return rc
 
@@ -184,26 +199,40 @@ def selftest() -> int:
         dev = tdp / "dev_tools"
         dev.mkdir()
         (dev / "known.py").write_text('"""已知器。"""\n', encoding="utf-8")
+        (dev / "lonely_gate.py").write_text('"""声称挂了闸其实没有。"""\n', encoding="utf-8")
         (dev / "brand_new_thing.py").write_text('"""新来的没人认领。"""\n', encoding="utf-8")
         check = tdp / "runner_check.py"          # 编排器不放进被扫描目录，否则自己变未分类
         # 运行时拼出完整字面量写入临时文件：本 .py 源码任何处（含注释）都不出现
         # 「dev_tools/known 加后缀」的全文——[11] 把带斜杠串当路径声明，194 批首跑即抓，
         # 夹具与产品同规矩。
         token = "dev_tools/known" + ".py"
-        check.write_text("x = %r\n" % token, encoding="utf-8")
-        rows, unc, ghost = scan_disc("t", {"known": ("blocking", "x"), "vanished": ("tool", "y")},
-                                      dev, check)
+        check.write_text("x = %r\nimport lonely_gate\n" % token, encoding="utf-8")
+        rows, unc, ghost = scan_disc("t", {"known": ("blocking", "x"),
+                                           "lonely_gate": ("ondemand", "y"),
+                                           "vanished": ("tool", "z")}, dev, check)
         if unc != ["brand_new_thing.py"]:
             fails.append("未分类显形错：%r" % unc)
         if ghost != ["vanished"]:
             fails.append("幽灵条目（表里有实无）显形错：%r" % ghost)
         if not any(r["script"] == "known.py" and r["run_by_check_py"] for r in rows):
-            fails.append("run_by_check 关联失效")
+            fails.append("run_by_check 关联失效（子进程字面量源）")
+        if not any(r["script"] == "lonely_gate.py" and r["run_by_check_py"] for r in rows):
+            fails.append("import 源关联失效（模块 import 也须算挂闸，207 批）")
+        # 一致性断言的负例：blocking 却没被任何一种源抓到
+        fake = [dict(r) for r in rows]
+        # 把 known 的关联关掉——blocking 且无关联必须显形
+        for r in fake:
+            if r["script"] == "known.py":
+                r["run_by_check_py"] = False
+        bnl = [r["script"] for r in fake if r["tier"] == "blocking" and not r["run_by_check_py"]]
+        if bnl != ["known.py"]:
+            fails.append("blocking未挂闸负例未显形：%r" % bnl)
     real_rc = build(strict=True)
     if fails:
         print("× selftest：" + "；".join(fails))
         return 1
-    print("√ selftest：未分类/幽灵/关联 三负例全过；真实扫描 strict rc=%s（0=当前无失踪项）" % real_rc)
+    print("√ selftest：未分类/幽灵/双源关联/挂闸硬断言 负例全过；真实扫描 strict rc=%s" % real_rc
+          if not fails else "× " + "；".join(fails))
     return 0
 
 

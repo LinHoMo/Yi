@@ -2,13 +2,18 @@
  "count": 34,
  "by_tier": {
   "tool": 2,
-  "ondemand": 6,
+  "ondemand": 5,
   "build": 4,
-  "blocking": 19,
-  "nightly": 3
+  "blocking": 23
  },
  "unclassified": [],
  "curated_but_missing": [],
+ "tier_link_violations": {
+  "blocking_not_referenced": [],
+  "referenced_not_blocking": [
+   "diff_tiaohou_vs_head.py"
+  ]
+ },
  "rows": [
   {
    "script": "__init__.py",
@@ -173,15 +178,15 @@
   },
   {
    "script": "corpus_reports.py",
-   "tier": "nightly",
-   "guards": "多盘 narrate 并集（接线门原料，缺件自愈）",
+   "tier": "blocking",
+   "guards": "多盘并集接线闸（[8]；缺件自愈）——207 批更正 tier：实为挂闸门",
    "run_by_check_py": true,
    "doc": "生成**多盘报告并集**文本，供 `[8] 语料接线` 量真正的覆盖率。"
   },
   {
    "script": "corpus_wiring_report.py",
-   "tier": "nightly",
-   "guards": "语料进没进报告的接线读数",
+   "tier": "blocking",
+   "guards": "语料进没进报告的接线读数（挂 [8] 系；207 批更正）",
    "run_by_check_py": true,
    "doc": "语料接线残差的**归类器**：把 `[8]` 报出的「未进并集」逐条分成四类，防止一个悲观计数被当成结论。"
   },
@@ -201,8 +206,8 @@
   },
   {
    "script": "eval_unique_keys.py",
-   "tier": "blocking",
-   "guards": "考点折叠量尺（例=考点核查）",
+   "tier": "ondemand",
+   "guards": "考点折叠量尺（207 批更正：从未挂闸，194 批误标 blocking——一致性断言自抓）",
    "run_by_check_py": false,
    "doc": "按考点折叠的加权读数（#39 配套量尺）：同一考点只算一次，看分数会不会变。"
   },
@@ -229,22 +234,22 @@
   },
   {
    "script": "sync_nayin_engine.py",
-   "tier": "ondemand",
-   "guards": "纳音表↔data 同步（--check 挂门）",
+   "tier": "blocking",
+   "guards": "纳音表↔data 同步门（§四.6 --check 挂闸；207 批更正）",
    "run_by_check_py": true,
    "doc": "纳音取象：`core/yishu_core/ming_tables.py:NAYIN_XIANGGE` ↔ `data/nayin_quxian"
   },
   {
    "script": "sync_tiaohou_engine.py",
-   "tier": "ondemand",
-   "guards": "调候表↔data 同步（--check 挂门）",
+   "tier": "blocking",
+   "guards": "调候表↔data 同步门（§四.6 --check 挂闸；207 批更正）",
    "run_by_check_py": true,
    "doc": "把 data/tiaohou_quotes.json（键=月序+日干）同步进引擎表 TIAO_HOU（键=月支+日干）。"
   },
   {
    "script": "verdict_audit.py",
-   "tier": "nightly",
-   "guards": "断语外置审计（断语不进代码）",
+   "tier": "blocking",
+   "guards": "断语外置审计 [16]（207 批更正 tier：实为挂闸门）",
    "run_by_check_py": true,
    "doc": "断语外置审计（重建 `tools/verdict_audit.py` 的等价物，2026-10-11 第三十八批）。"
   }

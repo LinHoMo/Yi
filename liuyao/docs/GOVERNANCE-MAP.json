@@ -3,12 +3,16 @@
  "by_tier": {
   "tool": 3,
   "ondemand": 10,
-  "nightly": 9,
+  "nightly": 8,
   "build": 8,
-  "blocking": 20
+  "blocking": 21
  },
  "unclassified": [],
  "curated_but_missing": [],
+ "tier_link_violations": {
+  "blocking_not_referenced": [],
+  "referenced_not_blocking": []
+ },
  "rows": [
   {
    "script": "__init__.py",
@@ -208,8 +212,8 @@
   },
   {
    "script": "feedback_report.py",
-   "tier": "nightly",
-   "guards": "反馈汇总报告",
+   "tier": "blocking",
+   "guards": "反馈汇总口径门（check 362 行 import 消费；207 批更正 tier）",
    "run_by_check_py": true,
    "doc": "真实应期反馈的独立审计报告 —— 不依赖调参/古籍对齐评分引擎。"
   },
@@ -217,7 +221,7 @@
    "script": "feedback_store.py",
    "tier": "blocking",
    "guards": "应期反馈记录存储（一键闭环落盘；195 批划界：判卷归 prospective）",
-   "run_by_check_py": false,
+   "run_by_check_py": true,
    "doc": "真实应期反馈存储 —— 与古籍案例和调参引擎完全物理隔离。"
   },
   {
