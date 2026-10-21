@@ -115,6 +115,7 @@ CURATED = {
         "build_adjudications": ("nightly", "流派裁决表构建（逐字回验）"),
         "rank_experiment": ("ondemand", "名次键预注册实验（一次性报数器）"),
         "tianhou": ("ondemand", "占天候台架（真实运行待授权）"),
+        "triage_partials": ("nightly", "partial 机械预分诊（199 批：28 速裁面+35 结案候选待签，不改判）"),
         "version_collate": ("ondemand", "两抄本源级对拍（185 批冲突率）"),
         "window_report": ("ondemand", "top-k 覆盖曲线读数器"),
         "governance_map": ("tool", "本器：治理地图生成"),

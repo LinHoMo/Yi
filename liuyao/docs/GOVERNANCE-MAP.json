@@ -1,9 +1,9 @@
 {
- "count": 45,
+ "count": 46,
  "by_tier": {
   "tool": 2,
   "ondemand": 10,
-  "nightly": 5,
+  "nightly": 6,
   "build": 8,
   "blocking": 20
  },
@@ -303,6 +303,13 @@
    "guards": "占天候台架（真实运行待授权）",
    "run_by_check_py": false,
    "doc": "占天候试验台（第一百八十批）——协议见 docs/TIANHOU.md，本文件是它的可执行半边。"
+  },
+  {
+   "script": "triage_partials.py",
+   "tier": "nightly",
+   "guards": "partial 机械预分诊（199 批：28 速裁面+35 结案候选待签，不改判）",
+   "run_by_check_py": false,
+   "doc": "partial 预分诊器（第一百九十九批·B3 人工流的机械半）——把 63 条 partial 变成人可速裁的短单。"
   },
   {
    "script": "use_god_coverage.py",

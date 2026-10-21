@@ -1,0 +1,496 @@
+{
+ "generated_at": "2026-10-21T17:30:20",
+ "_comment": "观察册：分诊不改判——『结案候选』也须人签字后才算 §六.5 诚实结案；B 桶异写候选是 TRAD 表增补提案非既成事实",
+ "input": 63,
+ "buckets": {
+  "A_有验支候选": 15,
+  "A_无验支结案候选": 35,
+  "B_异写候选": 13,
+  "C_深回溯命中": 0,
+  "C_仍缺日期结案候选": 0
+ },
+ "rows": {
+  "A_有验支候选": [
+   {
+    "id": "VER-zengshan_buyi_wikitext-L1092",
+    "line": 1092,
+    "file": "zengshan_buyi.wikitext.txt",
+    "hits": [
+     "應午年"
+    ],
+    "context": "<br>用爻入墓,喜得日辰克破,後果得财。以用空入墓许以無财者,非也,殊不知𨿽空而遇沖,沖空則实,𨿽墓而克破,破墓則開。\n<br>\n<br>野鶴曰:此極有理,屢试屢驗,但要用神有力,方可许之,倘若用神休囚無气,𨿽遇沖開之日,亦难發矣。\n<b"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L804",
+    "line": 804,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "hits": [
+     "果于子年"
+    ],
+    "context": "世持子孙以临月建,未日生之,虽是六冲之卦,此子必归。果于子年建功卯年得意而归,此应静而逢冲之验也。\n又有巳月甲寅日占严师训子得天地否卦变乾卦\n父母戌土′应              父母戌土′世\n兄弟申金′                兄"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L1068",
+    "line": 1068,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "hits": [
+     "果于午日"
+    ],
+    "context": "  午火父母为用神,空而伏于二爻丑土之下,压住难出,许甲午日出空必得,果得于甲午日。\n又酉月丙辰日占子病。得地风升\n官鬼酉金′′\n父母亥水′′ \n子孙午火/妻财丑土′′世\n官鬼酉金′ \n父母亥水′ \n妻财丑土′′应 \n黄金策曰:空下伏神,易"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L1166",
+    "line": 1166,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "hits": [
+     "果于辰年"
+    ],
+    "context": "丑土官动化进神许丑日必得,果得于丑日。古以动日月化空破,谓之不进,此卦动非日月而化空破,亦能进也。\n又如未月丁卯日占功名始得出仕否得火天同人变革卦\n子孙戌土′应    动          子孙未土′′   \n妻财申金′          "
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L1174",
+    "line": 1174,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "hits": [
+     "果于辰年"
+    ],
+    "context": "余曰:若以古法断者,子孙动克财官,终身而无官也,余许辰年出仕,何也?戌土子孙孙虽动幸化退神,不克官也,辰年冲去戌土,是以许之,果于辰年得选岂可谓之动空化日月而不退也。\n又如申月辛卯日占病得泽天夬卦变大壮\n兄弟未土′′            "
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L1412",
+    "line": 1412,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "hits": [
+     "果于辰年",
+     "应巳年",
+     "应巳年"
+    ],
+    "context": "断曰:世爻极旺,既临日建又得月令作官星而合世,但卦中官星两现,一空一破,至辰年官而出空一定高升,然反吟于外卦,当得验者,去而复来,果于辰年,调于河南,五月因他故,又调回楚,十月而升督府,十年两调一升,皆应实空之年也。\n又如亥月丙午日母占子何"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L1515",
+    "line": 1515,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "hits": [
+     "验丙申日"
+    ],
+    "context": "断曰:世爻寅木化出巳爻,寅能刑巳,三刑少申字,防申日之危,果卒于申日,此乃少一字,得后来之申日补之,岂可谓少一字不成三刑耶。\n如酉月乙巳日占升迁得泽地萃之天地否\n父母未土′′    动          父母戌土′应\n兄弟酉金′应     "
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L1555",
+    "line": 1555,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "hits": [
+     "应午年"
+    ],
+    "context": "用爻入墓,喜得日辰克破,后果得财。以用空入墓许以无财者,非也,殊不知虽空而遇冲,冲空则实,虽墓而克破,破墓则开。\n野鹤曰:此极有理,屡试屡验,但要用神有力,方可许之,倘若用神休囚无气,虽遇冲开之日,亦难发矣。\n如未月戊辰日占年运。\n子孙酉金"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L1573",
+    "line": 1573,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "hits": [
+     "果于卯日"
+    ],
+    "context": "问来人病得几时,彼曰三月病起,余曰卯日财空,明日出空,必定退灾,彼曰,医空不药矣。余曰,不妨,此卦亥水子孙独发,克去世爻之鬼,应在明日寅日,寅与亥合,合起子孙之日,尔无忧也,果于次日退灾,不药而愈,亦不独此,又因卯木财空,次日出空而退灾。\n"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L2324",
+    "line": 2324,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "hits": [
+     "果于卯年",
+     "果于午年"
+    ],
+    "context": "余曰:世爻未土之财变出申金之官,明明以财而变官。前卦财旺生官者,因世临月建之官,辰日冲动戌土之财,暗动生世。虽可许名,不敢指以年月,后卦世临未土而逢空,实空之年包出仕。果于卯年援例入临,巳年初任兵马即加纳县令,未年再位江南。旧注官鬼持世疾病"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L2332",
+    "line": 2332,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "hits": [
+     "果于午年"
+    ],
+    "context": "余曰:卦中财福不旺,而官父两旺,如何不问功名?彼曰功名之念已灭。余曰:世临日建月建生身,必主显贵中举,巳午年富贵逼人来也。果于午年保举,虽非科甲,身为科里之官,此岂可谓父母持身辛勤劳碌耶?\n父母临身劳碌贫寒之辈。或曰:黄金策乃卜筮之宗,未有"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L3190",
+    "line": 3190,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "hits": [
+     "应巳月"
+    ],
+    "context": "断曰:酉官持世,戌土财爻动而生世,又得世应相生,戌土虽值旬空,动不为空,明日出空之日,求之必允,果于次日巳时允婚,夫妻白头相守,儿女成行。\n又如寅月丙午日女家代占婚  得临之既济卦\n子孙酉金′′                妻财子水′′应"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L3263",
+    "line": 3263,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "hits": [
+     "果于壬申日"
+    ],
+    "context": "余曰:尔之来意,还是问妻孕平安?还是问孕之男女?彼曰:两事俱问。余曰:日后须宜分占,不可同问。幸此卦两事俱现,兄爻虽动,不克变出之财爻,草正坐草无虞,卦中阳动变阴,必然主女。彼曰:小过卦谓之阴包阳,如何生女?余曰:神兆机于动,先重动爻。果于"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L3306",
+    "line": 3306,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "hits": [
+     "应巳日",
+     "果于巳日"
+    ],
+    "context": "此卦若问父母平安否,父母卯木日月动爻冲克,必不安矣。今问其来否,不以此断,只可断用神伏藏也,克而不来,六合冲亦不来,后果在外平安。\n又如亥月甲子日占仆人何日回得革之夬卦\n官鬼未土′′                官鬼未土′′  \n父母酉金"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L3330",
+    "line": 3330,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "hits": [
+     "果于巳日"
+    ],
+    "context": "断曰:今日乃是午日,午火父爻克世爻,今日必到。果于申时到。\n寅月亥日占主人何时回,以父母为用。得大畜之益\n官鬼寅木′                官鬼卯木′应\n妻财子水′′应  动          父母巳火′  \n兄弟戌土′′     "
+   }
+  ],
+  "A_无验支结案候选": [
+   {
+    "id": "VER-bushi_zhengzong_dz_dz-L1165",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-yiin_dz_dz-L2221",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-yilin_buyi_dz_dz-L227",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_wikitext-L359",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_wikitext-L1032",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_wikitext-L2107",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_wikitext-L2987",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_wikitext-L4464",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L583",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L602",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L661",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L755",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L775",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L812",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L842",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L852",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L880",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L1182",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L1693",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L1741",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L2068",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L2171",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L2180",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L2240",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L2431",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L2451",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L2653",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L2750",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L2807",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L2900",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L3132",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L3174",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L3559",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L3671",
+    "why": "宽松式仍无候选——素材缺验支"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L3682",
+    "why": "宽松式仍无候选——素材缺验支"
+   }
+  ],
+  "B_异写候选": [
+   {
+    "id": "VER-zengshan_buyi_wikitext-L1622",
+    "line": 1622,
+    "file": "zengshan_buyi.wikitext.txt",
+    "near": [
+     {
+      "token": "此凶",
+      "candidates": []
+     }
+    ]
+   },
+   {
+    "id": "VER-zengshan_buyi_wikitext-L2393",
+    "line": 2393,
+    "file": "zengshan_buyi.wikitext.txt",
+    "near": [
+     {
+      "token": "剥",
+      "candidates": [
+       "剥"
+      ]
+     },
+     {
+      "token": "無妄",
+      "candidates": []
+     }
+    ]
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L669",
+    "line": 669,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "near": [
+     {
+      "token": "困卦",
+      "candidates": [
+       "困"
+      ]
+     },
+     {
+      "token": "雷风恒",
+      "candidates": [
+       "恒"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L680",
+    "line": 680,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "near": [
+     {
+      "token": "艮卦",
+      "candidates": [
+       "艮"
+      ]
+     },
+     {
+      "token": "明夷",
+      "candidates": [
+       "明夷"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L708",
+    "line": 708,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "near": [
+     {
+      "token": "夬卦",
+      "candidates": [
+       "夬"
+      ]
+     },
+     {
+      "token": "履",
+      "candidates": [
+       "履"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L857",
+    "line": 857,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "near": [
+     {
+      "token": "巽卦",
+      "candidates": [
+       "巽"
+      ]
+     },
+     {
+      "token": "乾",
+      "candidates": [
+       "乾"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L858",
+    "line": 858,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "near": [
+     {
+      "token": "离卦",
+      "candidates": [
+       "离"
+      ]
+     },
+     {
+      "token": "坎",
+      "candidates": [
+       "坎"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L910",
+    "line": 910,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "near": [
+     {
+      "token": "此卦合前",
+      "candidates": []
+     }
+    ]
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L1076",
+    "line": 1076,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "near": [
+     {
+      "token": "八纯首",
+      "candidates": []
+     }
+    ]
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L1393",
+    "line": 1393,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "near": [
+     {
+      "token": "后",
+      "candidates": []
+     }
+    ]
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L1911",
+    "line": 1911,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "near": [
+     {
+      "token": "此凶",
+      "candidates": []
+     }
+    ]
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L2268",
+    "line": 2268,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "near": [
+     {
+      "token": "六合",
+      "candidates": []
+     }
+    ]
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L3043",
+    "line": 3043,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "near": [
+     {
+      "token": "即济",
+      "candidates": []
+     },
+     {
+      "token": "涣",
+      "candidates": [
+       "涣"
+      ]
+     }
+    ]
+   }
+  ],
+  "C_深回溯命中": [],
+  "C_仍缺日期结案候选": []
+ }
+}
