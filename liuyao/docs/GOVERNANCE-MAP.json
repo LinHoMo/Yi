@@ -293,7 +293,7 @@
   {
    "script": "recheck_restorable.py",
    "tier": "nightly",
-   "guards": "restorable 双解析器共识复核（201 批：10 共识/8 分歧标字段，不升册）",
+   "guards": "restorable 双解析器共识复核（201 批：10 共识/8 分歧标字段；202 批与分诊 B 路共用词袋=器内口径唯一）",
    "run_by_check_py": false,
    "doc": "restorable 机械复核器（第两百零一批）——双解析器共识，替人把「抽没抽错」核完。"
   },
@@ -321,7 +321,7 @@
   {
    "script": "triage_partials.py",
    "tier": "nightly",
-   "guards": "partial 机械预分诊（199 批：28 速裁面+35 结案候选待签，不改判）",
+   "guards": "partial 机械预分诊（202 批：B 路与 recheck 词袋同源，15 速裁/8 真分歧并排/5 兜底/35 结案候选，不改判）",
    "run_by_check_py": false,
    "doc": "partial 预分诊器（第一百九十九批·B3 人工流的机械半）——把 63 条 partial 变成人可速裁的短单。"
   },

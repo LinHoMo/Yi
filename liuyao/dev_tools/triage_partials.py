@@ -29,7 +29,6 @@ sys.path.insert(0, str(HERE))
 from kernel_path import ensure_kernel_on_path  # noqa: E402
 ensure_kernel_on_path(__file__)
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
-from yishu_core.symbols import HEXAGRAM_TRIGRAMS  # noqa: E402
 from version_collate import norm  # noqa: E402
 
 BR = "子丑寅卯辰巳午未申酉戌亥"
@@ -52,6 +51,7 @@ def triage() -> int:
         return 1
     cache = {}
     buckets = {"A_有验支候选": [], "A_无验支结案候选": [], "B_异写候选": [],
+               "B_词袋可解（建议入 restorable 候选）": [], "B_真分歧需人": [],
                "C_深回溯命中": [], "C_仍缺日期结案候选": []}
     for r in rows:
         f = r["file"]
@@ -71,13 +71,23 @@ def triage() -> int:
             else:
                 buckets["A_无验支结案候选"].append({"id": r["source_id"], "why": "宽松式仍无候选——素材缺验支"})
         elif why.startswith("卦名异写"):
-            toks = re.findall(r"'([^']+)'", why)[:2]
-            near = []
-            for t in toks:
-                n = norm(t).rstrip("卦")
-                cands = [k for k in HEXAGRAM_TRIGRAMS if n.endswith(k) or k.endswith(n) or k in n]
-                near.append({"token": t, "candidates": cands[:3]})
-            buckets["B_异写候选"].append({"id": r["source_id"], "line": r["line"], "file": f, "near": near})
+            # B 路解析与 201 批 recheck 的卦名词袋同源（器内口径唯一，第两百零二批统一）——
+            # 原「剥/無妄/困卦」级假分歧 10/13 皆因旧分词无词袋贪婪与剥后缀。
+            from recheck_restorable import parse_b
+            b_o, b_c, b_y = parse_b(block)
+            a = r.get("hex") or {}
+            if b_o and (b_o != a.get("original") or (b_c or None) != (a.get("changed") or None)):
+                buckets["B_真分歧需人"].append({"id": r["source_id"], "line": r["line"], "file": f,
+                                                "a": a, "b": {"original": b_o, "changed": b_c,
+                                                              "yingqi": b_y}})
+            elif b_o:
+                buckets["B_词袋可解（建议入 restorable 候选）"].append(
+                    {"id": r["source_id"], "line": r["line"], "file": f,
+                     "resolved": {"original": b_o, "changed": b_c}})
+            else:
+                toks = re.findall(r"'([^']+)'", why)[:2]
+                buckets["B_异写候选"].append({"id": r["source_id"], "line": r["line"], "file": f,
+                                              "near": [{"token": t, "candidates": []} for t in toks]})
         elif why.startswith("有日期键") or "日期" in why:
             lo2 = max(0, lo - 80)
             seg = "\n".join(norm(x) for x in lines[lo2:lo + 1])
@@ -97,9 +107,11 @@ def triage() -> int:
     OUT.write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")
     print("√ triage 册落成 %s｜partial %d 条 → %s"
           % (OUT.name, len(rows), doc["buckets"]))
-    print("  人可速裁面：A_有候选 %d（一键定夺）＋B 异写 %d（对照候选）＋C 命中 %d；"
-          "结案候选 %d＋%d 待签"
-          % (len(buckets["A_有验支候选"]), len(buckets["B_异写候选"]), len(buckets["C_深回溯命中"]),
+    print("  人可速裁面：A_有候选 %d（一键定夺）＋B_词袋可解 %d（附解析结果待签升级）＋"
+          "B_真分歧 %d（A/B 并排裁决）＋旧词袋兜底 %d；结案候选 %d＋%d 待签"
+          % (len(buckets["A_有验支候选"]),
+             len(buckets["B_词袋可解（建议入 restorable 候选）"]),
+             len(buckets["B_真分歧需人"]), len(buckets["B_异写候选"]),
              len(buckets["A_无验支结案候选"]), len(buckets["C_仍缺日期结案候选"])))
     return 0
 

@@ -102,9 +102,10 @@ def checks():
     add("liuyao.graduation(18/63/161)", "189批", lambda t: _json_counts(
         "data/cases/verifications_graduation.json", "summary",
         ("restorable", "partial_needs_human", "unrestorable")), ("18", "63", "161"))
-    add("liuyao.triage(15/35/13)", "199批", lambda t: _json_counts(
+    add("liuyao.triage(15/35/B兜底5/真分歧8)", "199批（202 批 B 路细分，附理由改期望）", lambda t: _json_counts(
         "data/cases/verifications_triage.json", None,
-        ("A_有验支候选", "A_无验支结案候选", "B_异写候选"), key="buckets"), ("15", "35", "13"))
+        ("A_有验支候选", "A_无验支结案候选", "B_异写候选", "B_真分歧需人"), key="buckets"),
+        ("15", "35", "5", "8"))
     add("liuyao.restorable_recheck(共识10/分歧8)", "201批", lambda t: _json_counts(
         "data/cases/restorable_recheck.json", None, ("consensus", "needs_human")), ("10", "8"))
 

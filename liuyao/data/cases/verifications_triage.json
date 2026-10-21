@@ -1,11 +1,13 @@
 {
- "generated_at": "2026-10-21T17:30:20",
+ "generated_at": "2026-10-21T17:45:49",
  "_comment": "观察册：分诊不改判——『结案候选』也须人签字后才算 §六.5 诚实结案；B 桶异写候选是 TRAD 表增补提案非既成事实",
  "input": 63,
  "buckets": {
   "A_有验支候选": 15,
   "A_无验支结案候选": 35,
-  "B_异写候选": 13,
+  "B_异写候选": 5,
+  "B_词袋可解（建议入 restorable 候选）": 0,
+  "B_真分歧需人": 8,
   "C_深回溯命中": 0,
   "C_仍缺日期结案候选": 0
  },
@@ -306,57 +308,17 @@
     ]
    },
    {
-    "id": "VER-zengshan_buyi_wikitext-L2393",
-    "line": 2393,
-    "file": "zengshan_buyi.wikitext.txt",
-    "near": [
-     {
-      "token": "剥",
-      "candidates": [
-       "剥"
-      ]
-     },
-     {
-      "token": "無妄",
-      "candidates": []
-     }
-    ]
-   },
-   {
-    "id": "VER-zengshan_buyi_dz_dz-L669",
-    "line": 669,
-    "file": "zengshan_buyi_dz.dz.txt",
-    "near": [
-     {
-      "token": "困卦",
-      "candidates": [
-       "困"
-      ]
-     },
-     {
-      "token": "雷风恒",
-      "candidates": [
-       "恒"
-      ]
-     }
-    ]
-   },
-   {
     "id": "VER-zengshan_buyi_dz_dz-L680",
     "line": 680,
     "file": "zengshan_buyi_dz.dz.txt",
     "near": [
      {
       "token": "艮卦",
-      "candidates": [
-       "艮"
-      ]
+      "candidates": []
      },
      {
       "token": "明夷",
-      "candidates": [
-       "明夷"
-      ]
+      "candidates": []
      }
     ]
    },
@@ -367,85 +329,10 @@
     "near": [
      {
       "token": "夬卦",
-      "candidates": [
-       "夬"
-      ]
+      "candidates": []
      },
      {
       "token": "履",
-      "candidates": [
-       "履"
-      ]
-     }
-    ]
-   },
-   {
-    "id": "VER-zengshan_buyi_dz_dz-L857",
-    "line": 857,
-    "file": "zengshan_buyi_dz.dz.txt",
-    "near": [
-     {
-      "token": "巽卦",
-      "candidates": [
-       "巽"
-      ]
-     },
-     {
-      "token": "乾",
-      "candidates": [
-       "乾"
-      ]
-     }
-    ]
-   },
-   {
-    "id": "VER-zengshan_buyi_dz_dz-L858",
-    "line": 858,
-    "file": "zengshan_buyi_dz.dz.txt",
-    "near": [
-     {
-      "token": "离卦",
-      "candidates": [
-       "离"
-      ]
-     },
-     {
-      "token": "坎",
-      "candidates": [
-       "坎"
-      ]
-     }
-    ]
-   },
-   {
-    "id": "VER-zengshan_buyi_dz_dz-L910",
-    "line": 910,
-    "file": "zengshan_buyi_dz.dz.txt",
-    "near": [
-     {
-      "token": "此卦合前",
-      "candidates": []
-     }
-    ]
-   },
-   {
-    "id": "VER-zengshan_buyi_dz_dz-L1076",
-    "line": 1076,
-    "file": "zengshan_buyi_dz.dz.txt",
-    "near": [
-     {
-      "token": "八纯首",
-      "candidates": []
-     }
-    ]
-   },
-   {
-    "id": "VER-zengshan_buyi_dz_dz-L1393",
-    "line": 1393,
-    "file": "zengshan_buyi_dz.dz.txt",
-    "near": [
-     {
-      "token": "后",
       "candidates": []
      }
     ]
@@ -462,17 +349,6 @@
     ]
    },
    {
-    "id": "VER-zengshan_buyi_dz_dz-L2268",
-    "line": 2268,
-    "file": "zengshan_buyi_dz.dz.txt",
-    "near": [
-     {
-      "token": "六合",
-      "candidates": []
-     }
-    ]
-   },
-   {
     "id": "VER-zengshan_buyi_dz_dz-L3043",
     "line": 3043,
     "file": "zengshan_buyi_dz.dz.txt",
@@ -483,11 +359,140 @@
      },
      {
       "token": "涣",
-      "candidates": [
-       "涣"
-      ]
+      "candidates": []
      }
     ]
+   }
+  ],
+  "B_词袋可解（建议入 restorable 候选）": [],
+  "B_真分歧需人": [
+   {
+    "id": "VER-zengshan_buyi_wikitext-L2393",
+    "line": 2393,
+    "file": "zengshan_buyi.wikitext.txt",
+    "a": {
+     "date": [
+      "辰",
+      "乙卯"
+     ]
+    },
+    "b": {
+     "original": "否",
+     "changed": null,
+     "yingqi": null
+    }
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L669",
+    "line": 669,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "a": {
+     "date": [
+      "午",
+      "丁未"
+     ]
+    },
+    "b": {
+     "original": "艮",
+     "changed": null,
+     "yingqi": null
+    }
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L857",
+    "line": 857,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "a": {
+     "date": [
+      "卯",
+      "辛巳"
+     ]
+    },
+    "b": {
+     "original": "巽",
+     "changed": null,
+     "yingqi": null
+    }
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L858",
+    "line": 858,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "a": {
+     "date": [
+      "午",
+      "丙寅"
+     ]
+    },
+    "b": {
+     "original": "离",
+     "changed": null,
+     "yingqi": null
+    }
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L910",
+    "line": 910,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "a": {
+     "date": [
+      "辰",
+      "乙卯"
+     ]
+    },
+    "b": {
+     "original": "大畜",
+     "changed": null,
+     "yingqi": null
+    }
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L1076",
+    "line": 1076,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "a": {
+     "date": [
+      "酉",
+      "丙辰"
+     ]
+    },
+    "b": {
+     "original": "乾",
+     "changed": null,
+     "yingqi": "午"
+    }
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L1393",
+    "line": 1393,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "a": {
+     "date": [
+      "寅",
+      "庚戌"
+     ]
+    },
+    "b": {
+     "original": "师",
+     "changed": "涣",
+     "yingqi": "寅"
+    }
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L2268",
+    "line": 2268,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "a": {
+     "date": [
+      "寅",
+      "乙巳"
+     ]
+    },
+    "b": {
+     "original": "未济",
+     "changed": "睽",
+     "yingqi": "寅"
+    }
    }
   ],
   "C_深回溯命中": [],
