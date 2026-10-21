@@ -13,6 +13,7 @@
 from __future__ import annotations
 
 import sys
+import argparse
 from pathlib import Path
 
 if hasattr(sys.stdout, "reconfigure"):
@@ -130,7 +131,10 @@ def selftest() -> None:
 
 
 def main() -> int:
-    if "--selftest" in sys.argv:
+    _ap = argparse.ArgumentParser(description="check_fangwei：--selftest 负例自证开关（§三）")
+    _ap.add_argument("--selftest", action="store_true", help="负例自证")
+    args = _ap.parse_args()
+    if args.selftest:
         selftest()
         return 0
     problems: list[str] = []

@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import json
 import re
+import argparse
 import sys
 from pathlib import Path
 
@@ -417,7 +418,10 @@ def main() -> int:
         rc = 1
     else:
         print("校验不过项: 无（引文/断语/两遁/运序/方向唯一/性别 全部自洽）")
-    if "--selftest" in sys.argv:
+    _ap = argparse.ArgumentParser(description="check_dayun_cases：--selftest 负例自证开关（§三）")
+    _ap.add_argument("--selftest", action="store_true", help="负例自证")
+    args = _ap.parse_args()
+    if args.selftest:
         try:
             selftest()
         except AssertionError as e:

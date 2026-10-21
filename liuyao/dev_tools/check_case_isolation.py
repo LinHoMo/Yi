@@ -21,6 +21,7 @@
 from __future__ import annotations
 
 import re
+import argparse
 import sys
 from pathlib import Path
 
@@ -72,7 +73,10 @@ def selftest(problems: list[str]) -> None:
 
 
 def main() -> int:
-    if "--selftest" in sys.argv:
+    _ap = argparse.ArgumentParser(description="check_case_isolation：--selftest 负例自证开关（§三）")
+    _ap.add_argument("--selftest", action="store_true", help="负例自证")
+    args = _ap.parse_args()
+    if args.selftest:
         base = scan()
         sink: list[str] = []
         selftest(sink)

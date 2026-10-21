@@ -22,6 +22,7 @@
 from __future__ import annotations
 
 import re
+import argparse
 import sys
 from pathlib import Path
 
@@ -142,7 +143,10 @@ def main() -> int:
     problems = surfaces(a, text)
     print(f"评测维度 {len(ev.WEIGHTS)} 个 / 报告 {len(text.splitlines())} 行 → "
           f"两侧不一致 {len(problems)} 处")
-    if "--selftest" in sys.argv:
+    _ap = argparse.ArgumentParser(description="check_dim_surface：--selftest 负例自证开关（§三）")
+    _ap.add_argument("--selftest", action="store_true", help="负例自证")
+    args = _ap.parse_args()
+    if args.selftest:
         sp = selftest(a, text)
         for x in sp:
             print(f"  × {x}")

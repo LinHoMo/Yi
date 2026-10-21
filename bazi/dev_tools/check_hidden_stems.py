@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import io
 import re
+import argparse
 import sys
 from pathlib import Path
 
@@ -98,7 +99,10 @@ def compare(found: dict, problems: list, notes: list) -> tuple[int, int, int]:
 def main() -> int:
     problems: list[str] = []
     notes: list[str] = []
-    if "--selftest" in sys.argv:
+    _ap = argparse.ArgumentParser(description="check_hidden_stems：--selftest 负例自证开关（§三）")
+    _ap.add_argument("--selftest", action="store_true", help="负例自证")
+    args = _ap.parse_args()
+    if args.selftest:
         fake = ["　　按古法，寅中藏癸水者，正气也（此句为本器自造的负例，底本无此文）"]
         f2, _ = extract(extra_lines=fake)
         p2: list[str] = []

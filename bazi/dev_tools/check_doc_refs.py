@@ -28,6 +28,7 @@ tools/、docs/source-readings/ 都随仓库扁平化删除了——照着跑必�
     python dev_tools/check_doc_refs.py --selftest
 """
 from __future__ import annotations
+import argparse
 
 import json
 import re
@@ -247,7 +248,9 @@ def main() -> int:
 
 
 def argparse_flags() -> bool:
-    return "--selftest" in sys.argv
+    _ap = argparse.ArgumentParser(description="check_doc_refs：--selftest 负例自证开关（§三）")
+    _ap.add_argument("--selftest", action="store_true", help="负例自证")
+    return _ap.parse_args().selftest
 
 
 if __name__ == "__main__":

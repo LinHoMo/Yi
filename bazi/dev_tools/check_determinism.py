@@ -22,6 +22,7 @@ import hashlib
 import json
 import os
 import re
+import argparse
 import subprocess
 import sys
 import tempfile
@@ -104,7 +105,10 @@ def main() -> int:
     if n_files == 0:
         print(f"× 静态层 0 个文件可扫（{SCAN_DIRS}）——本器等于没跑，不判通过")
         return 1
-    if "--selftest" in sys.argv:
+    _ap = argparse.ArgumentParser(description="check_determinism：--selftest 负例自证开关（§三）")
+    _ap.add_argument("--selftest", action="store_true", help="负例自证")
+    args = _ap.parse_args()
+    if args.selftest:
         negative_selftest(problems)
         print("  [selftest] 负例已跑（顺序变更必被 digest 认出 / 集合 join 必被抓 / 确定性写法不误伤）")
 

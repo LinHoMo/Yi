@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 import sys
+import argparse
 from pathlib import Path
 
 if hasattr(sys.stdout, "reconfigure"):
@@ -63,9 +64,9 @@ def build(out_path: Path) -> tuple[int, int, int]:
 
 
 def main() -> int:
-    out = OUT_DEFAULT
-    if "--out" in sys.argv:
-        out = Path(sys.argv[sys.argv.index("--out") + 1])
+    ap = argparse.ArgumentParser(description="corpus_reports：多盘并集报告器（§三 argparse 化）")
+    ap.add_argument("--out", default=str(OUT_DEFAULT), help="输出路径")
+    out = Path(ap.parse_args().out)
     try:
         n, errs, chars = build(out)
     except SystemExit as e:

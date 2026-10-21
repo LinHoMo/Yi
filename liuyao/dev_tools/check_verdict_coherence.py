@@ -16,6 +16,7 @@ step5 的收口已把这类抬升的分数一并托到所在档下界（沿用�
 from __future__ import annotations
 
 import sys
+import argparse
 from pathlib import Path
 
 if hasattr(sys.stdout, "reconfigure"):
@@ -80,7 +81,10 @@ def main() -> int:
     if measured == 0:
         print("× 0 例可判档——本门等于没跑，不判通过")
         return 1
-    if "--selftest" in sys.argv:
+    _ap = argparse.ArgumentParser(description="check_verdict_coherence：--selftest 负例自证开关（§三）")
+    _ap.add_argument("--selftest", action="store_true", help="负例自证")
+    args = _ap.parse_args()
+    if args.selftest:
         sp = selftest()
         for x in sp:
             print(f"  × {x}")
