@@ -26,7 +26,7 @@
      "holdout"
     ],
     "dim": "tiaohou",
-    "note": "tiaohou 维度 51 例 expected（tune 30 + holdout 21）全部对齐（2026-10-02t 读数，详见 HANDOFF §一）"
+    "note": "tiaohou 维度 51 例 expected（tune 30 + holdout 21）全部对齐（2026-10-02 读数，详见 HANDOFF §一）"
    }
   },
   {
@@ -48,7 +48,7 @@
      "holdout"
     ],
     "dim": "pattern",
-    "note": "pattern 维度（格局名 8 + 成破救应 4）：成破救应 36 例全 holdout，28/36 对齐（灰区 8 例登记，2026-10-02t 读数）"
+    "note": "pattern 维度（格局名 8 + 成破救应 4）：成破救应 36 例全 holdout，28/36 对齐（灰区 8 例登记，2026-10-02 读数）"
    }
   },
   {
@@ -70,7 +70,7 @@
      "holdout"
     ],
     "dim": "cong_ge",
-    "note": "cong_ge 维度 15 例全 holdout：布尔 13/15（真/假灰区 2 例登记）、from_kind 15/15（kind 在同 dim 内评，2026-10-02t 读数）"
+    "note": "cong_ge 维度 15 例全 holdout：布尔 13/15（真/假灰区 2 例登记）、from_kind 15/15（kind 在同 dim 内评，2026-10-02 读数）"
    }
   },
   {
