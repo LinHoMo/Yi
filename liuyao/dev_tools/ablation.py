@@ -25,8 +25,10 @@ from __future__ import annotations
 import argparse
 import io
 import json
+import re
 import sys
 from contextlib import redirect_stdout
+from datetime import datetime
 from math import comb
 from pathlib import Path
 
@@ -122,6 +124,165 @@ TOGGLES = {
     "advance_off": _t_advance_off,
     "rank_reverse": _t_rank_reverse,
 }
+
+
+# ── 注册表驱动的全量扫掠（第一百八十六批·A2）─────────────────────────────
+IMPL_ANCHOR = re.compile(r"([A-Za-z_]\w*)\.py[:：]([A-Za-z_]\w*)")
+
+
+def _patch_binding(mod_name: str, fn_name: str, counter: dict):
+    """bind-all 补丁（对象同一级）：原函数可能被 N 个模块 from-import——含**异名别名**
+    （第一百八十六批开发实证两坑：①只打源模块＝25/33 假「未触发」；②step5 的
+    `import predict_timing_core as _predict_timing` 连同名属性扫描都漏——按对象同一收网）。
+    返回 (undo, 打了几个绑定)；打不通返回 None。"""
+    import importlib
+    import types
+
+    def wrapper(*a, **k):
+        counter["refs"] = counter.get("refs", 0) + 1
+        return None
+    try:
+        src = importlib.import_module(mod_name)
+    except ImportError:
+        return None
+    src_fn = getattr(src, fn_name, None)
+    if src_fn is None or not callable(src_fn):
+        return None
+    targets = []
+    for m in list(sys.modules.values()):
+        if not isinstance(m, types.ModuleType):
+            continue
+        for aname, aobj in list(vars(m).items()):
+            if aobj is src_fn:
+                targets.append((m, aname))
+    if not any(m is src and an == fn_name for m, an in targets):
+        targets.append((src, fn_name))
+    for m, an in targets:
+        setattr(m, an, wrapper)
+
+    def undo():
+        for m, an in targets:
+            setattr(m, an, src_fn)
+    return undo, len(targets)
+
+
+def parse_impl(impl: str):
+    """从 impl 串抽 (module, func) 函数锚点。裸行号锚（step3.py:583/4.3 等）
+    与「整文件」指针无法单点切除——不硬造开关，落「不可单切」类显形。"""
+    seen = set()
+    out = []
+    for m in IMPL_ANCHOR.finditer(impl or ""):
+        key = (m.group(1), m.group(2))
+        if key not in seen:
+            seen.add(key)
+            out.append(key)
+    return out
+
+
+def sweep(splits, limit=None, out_path=None) -> dict:
+    import importlib
+    reg = json.loads((DISC / "data" / "rules" / "rule_registry.json").read_text(encoding="utf-8"))
+    rules = reg.get("rules") or []
+    if not rules:
+        print("× rule_registry 空——先查路径，33 条失踪不会静默")
+        return {}
+    by_id = {c["id"]: c for c in case_runner.load_cases()}
+    # 基线（每 split 一次，确定性由门 [23] 三 seed 实证）
+    base_cache = {}
+    for split in splits:
+        ids = case_runner.load_ids(split)[:limit] if limit else case_runner.load_ids(split)
+        if not ids:
+            print("× split=%s 0 例——判红不空跑" % split)
+            return {}
+        bb = {}
+        for cid in ids:
+            try:
+                bb[cid] = _binaries(case_runner.run_case(by_id[cid]), by_id[cid])
+            except Exception:
+                bb[cid] = (None, None, "ERR")
+        base_cache[split] = (ids, bb)
+    rows = []
+    for r in rules:
+        rid = r.get("rule_id", "?")
+        anchors = parse_impl(r.get("impl", ""))
+        if not anchors:
+            rows.append({"rule_id": rid, "class": "不可单切", "note":
+                         "impl 为裸行号/整文件/章节锚，无函数落点（不硬造开关）"})
+            continue
+        per_split = {}
+        crashes = fired = changed = 0
+        bind_hits = []
+        unresolved_mods = []
+        for split, (ids, bb) in base_cache.items():
+            var = {}
+            for cid in ids:
+                counter = {"refs": 0}
+                undos = []
+                try:
+                    for mod_name, fn_name in anchors:
+                        got = _patch_binding(mod_name, fn_name, counter)
+                        if got is None:
+                            if mod_name not in unresolved_mods:
+                                unresolved_mods.append(mod_name)
+                            raise ImportError(mod_name)
+                        u, n = got
+                        undos.append(u)
+                        bind_hits.append(n)
+                    eng = case_runner.run_case(by_id[cid])
+                    var[cid] = _binaries(eng, by_id[cid])
+                except Exception:
+                    crashes += 1
+                    var[cid] = None
+                finally:
+                    for u in undos:
+                        u()
+                fired += 1 if counter["refs"] else 0
+                changed += 1 if (var[cid] is not None and var[cid][2] != bb[cid][2]) else 0
+            b = c = nsc = 0
+            vb = vc = tb = tc = vn = tn = 0
+            for cid in ids:
+                bv, vy = bb[cid], var.get(cid)
+                if vy is None:
+                    continue
+                if bv[0] is not None and vy[0] is not None:
+                    vn += 1
+                    if bv[0] == 1 and vy[0] == 0:
+                        vb += 1
+                    elif bv[0] == 0 and vy[0] == 1:
+                        vc += 1
+                if bv[1] is not None and vy[1] is not None:
+                    tn += 1
+                    if bv[1] == 1 and vy[1] == 0:
+                        tb += 1
+                    elif bv[1] == 0 and vy[1] == 1:
+                        tc += 1
+            per_split[split] = {"v": [vb, vc, vn], "t": [tb, tc, tn],
+                                "p_v": round(mcnemar_exact(vb, vc), 3),
+                                "p_t": round(mcnemar_exact(tb, tc), 3)}
+        total_cases = sum(len(ids) for ids, _ in base_cache.values())
+        if unresolved_mods:
+            cls, note = "指针未落地", "模块不可导入：%s" % ",".join(unresolved_mods)
+        elif fired == 0:
+            cls, note = "全程未触发", "%d 例 refs 全 0——该函数锚点在本语料从未被调用（死接线嫌疑）" % total_cases
+        elif crashes >= total_cases:
+            cls, note = "结构依赖", "补丁即崩（返回形状被下游强依赖）——不可单切"
+        elif changed == 0:
+            cls, note = "零贡献", "触发 %d/%d 例而输出观测零变化%s" % (
+                fired, total_cases, ("（崩溃 %d——部分例结构依赖）" % crashes) if crashes else "")
+        else:
+            cls, note = "有影响", "触发 %d｜变化 %d｜崩溃 %d" % (fired, changed, crashes)
+        rows.append({"rule_id": rid, "class": cls, "note": note, "fired": fired,
+                     "changed": changed, "crashes": crashes, "splits": per_split})
+        print("  %-34s %-6s %s" % (rid, cls, note))
+    out = {"generated_at": datetime.now().isoformat(timespec="seconds"),
+           "splits": list(base_cache), "rows": rows}
+    if out_path:
+        Path(out_path).parent.mkdir(parents=True, exist_ok=True)
+        Path(out_path).write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
+    from collections import Counter
+    cnt = Counter(r["class"] for r in rows)
+    print("═ 扫掠分类汇总 ═ " + "｜".join("%s %d" % (k, v) for k, v in cnt.most_common()))
+    return out
 
 
 def _binaries(eng: dict, case: dict):
@@ -251,7 +412,7 @@ def cmd_selftest() -> int:
     TOGGLES.pop("__passthru__", None)
     if r2b is None or r2b["splits"]["tune"]["rule_refs"] <= 0:
         fails.append("零贡献面被误判死/引用计数未接线（r=%s）" % (r2b is not None))
-    # 4) 可复现：rank_reverse --limit 3 连跑两次，翻转集与 b/c 必须逐一致
+    # 5) 可复现：rank_reverse --limit 3 连跑两次，翻转集与 b/c 必须逐一致
     r3 = None
     r4 = None
     with redirect_stdout(buf):
@@ -261,6 +422,19 @@ def cmd_selftest() -> int:
         fails.append("rank_reverse 自检跑不通（可评 0 例？查接线）")
     elif json.dumps(r3["splits"], sort_keys=True) != json.dumps(r4["splits"], sort_keys=True):
         fails.append("同一消融两次结果不一致——引擎确定性或台架隔离有问题")
+    # 6) 扫掠锚点解析（第一百八十六批）：函数锚可抽、裸行号不可抽
+    a = parse_impl("scripts/effects.py:analyze_repetition(786)/analyze_repetition_deep(914)")
+    if a != [("effects", "analyze_repetition")]:
+        fails.append("parse_impl 函数锚抽错：%r" % a)
+    if parse_impl("scripts/step3.py:583（真空/假空判定）") or parse_impl("scripts/step4.py:4.3/4.3b（贪合忘克）"):
+        fails.append("裸行号/小节锚被当成函数锚（会造出假开关）")
+    if parse_impl("scripts/step3.py:fn_not_anywhere 与 step2.py:583（裸行号）") != [("step3", "fn_not_anywhere")]:
+        fails.append("parse_impl 正则过窄或过宽（假函数锚抽错/裸行号误抽）")
+    # 7) mini 扫掠端到端：1 例 tune 跑全注册表不许崩在框架自身
+    with redirect_stdout(buf):
+        sw = sweep(["tune"], 1, None)
+    if not sw or "rows" not in sw:
+        fails.append("mini 扫掠框架跑不通")
     if fails:
         print("× selftest：")
         for f in fails:
@@ -276,8 +450,10 @@ def main() -> int:
     ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--list", action="store_true", help="列出已注册的消融目标")
     ap.add_argument("--toggle", default=None)
+    ap.add_argument("--sweep", action="store_true", help="注册表驱动全量扫掠（第一百八十六批·A2）")
     ap.add_argument("--splits", nargs="*", default=["wikisource_holdout"])
     ap.add_argument("--limit", type=int, default=None)
+    ap.add_argument("--out", default=None, help="扫掠报告 JSON 落盘路径（建议 scratch/）")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args()
     if args.selftest:
@@ -286,6 +462,13 @@ def main() -> int:
         for name, fn in TOGGLES.items():
             print("%-14s %s" % (name, fn()[0]))
         return 0
+    if args.sweep:
+        res = sweep(args.splits, args.limit, args.out)
+        print("\n注：分类六档——不可单切（锚点是裸行号）/指针未落地（模块导不进）/"
+              "全程未触发（死接线嫌疑）/结构依赖（补丁即崩）/零贡献（触发而输出不变）/"
+              "有影响（出 Δ 与 McNemar）。零贡献≠规则无书据，只说在本语料面上不改判卷——"
+              "裁决链去留须连书证一起读（§四.3），本表不越权代裁。")
+        return 0 if res else 1
     if not args.toggle:
         ap.print_help()
         return 2
