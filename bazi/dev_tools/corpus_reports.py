@@ -26,9 +26,26 @@ OUT_DEFAULT = ROOT / "scratch" / "corpus_reports.txt"
 EVAL_ALL = ROOT / "data" / "cases" / "eval_all.json"
 
 
+def ensure_eval_all() -> None:
+    """干净树自足（第一百八十四批，与 liuyao 第一百七十六批同族）：
+    eval_all.json 是 gitignored 生成物（`**/data/cases/eval_*.json`），全新克隆上不存在——
+    本器此前因此只在作者机器可跑，接线门 [8] 在新树必红。修法＝缺件时按 `evaluate.py`
+    文档头声明的既有生成路径（`--split all --save`）现做；生成失败仍判红，
+    不静默、不回退单盘口径。"""
+    if EVAL_ALL.exists():
+        return
+    import subprocess
+    print("· eval_all.json 缺失（生成物不入库）——现场调用 evaluate --split all --save 生成")
+    r = subprocess.run([sys.executable, str(ROOT / "scripts" / "evaluate.py"),
+                        "--split", "all", "--save"], cwd=str(ROOT))
+    if r.returncode != 0 or not EVAL_ALL.exists():
+        raise SystemExit("FAIL：eval_all.json 现生成失败——接线门不退回单盘口径，也不装绿")
+
+
 def build(out_path: Path) -> tuple[int, int, int]:
     from analyze import analyze
     from narrate import narrate
+    ensure_eval_all()
     data = json.loads(EVAL_ALL.read_text(encoding="utf-8"))
     chunks, errs = [], 0
     for _split, charts in (data.get("engine_output") or {}).items():

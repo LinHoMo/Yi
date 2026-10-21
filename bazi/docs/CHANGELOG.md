@@ -1,5 +1,7 @@
 # 八字 CHANGELOG
 
+## 2026-10-21 第一百八十四批：**E1 CI 落地＋[8] 接线门「只有作者机器绿」缺陷修复（与 liuyao 第一百七十六批同族）**——以 `git worktree` 全新检出实测：liuyao rc=0（176 批夹具自足，复验成立）；**bazi rc=1**——[8] 语料接线门调 `dev_tools/corpus_reports.py`，其直读 `data/cases/eval_all.json`，该文件系 gitignored 生成物（`**/data/cases/eval_*.json`），全新克隆上不存在（作者机器上恒在）——正是 176 批在六爻侧根除过的同族隐性依赖，在八字侧活到本批。修复＝corpus_reports 增 `ensure_eval_all()`：缺件时按 `evaluate.py` 文档头声明的既有生成路径 `--split all --save` 现做；生成失败仍判红（不静默、不回退单盘口径、不装绿）。**单点证明**：worktree 删 eval_all 后直跑 corpus_reports——触发现场生成（338 例，加权均分 98.1%，与历史存盘读数一致）、rc=0；修复后 worktree 全新树 bazi check rc=0（两次），主干回归 bazi/liuyao 均 rc=0（print 被 run() 捕获吞掉一事在日志里显式说明，判定机制以单点直跑为证）。新增根 `.github/workflows/ci.yml`（windows-latest＋python 钉 3.14＋两科 check；fresh checkout＝干净树，CI 绿即直接兑现可复现声称；windows 的理由：[20]/[24] cp936 行为红线的靶是 Windows 控制台，Linux runner 测不到原靶）。**状态如实**：本地实跑全链完成，GitHub runner 从未跑过本仓——首跑即验证，结果与本地结论不符时以实跑读数改本文件与门（§六.3），不调 CI 凑绿。评分面零触碰、门基线不动。
+
 ## 2026-10-13 第一百七十一批：`shensha`／`dayun` 两维空档**独立复扫证实**（shensha 5 例、dayun 0 例的登记成立）；两科门禁全绿；六爻侧同批收口四看口诀与 #33（见六爻第一百七十／一百七十一批）
 
 ### 一、为什么复扫：169 批的「5/333」与「dayun 0 例」都是**扫出来的数**，扫法本身要能被独立复现
