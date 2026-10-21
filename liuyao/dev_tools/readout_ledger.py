@@ -202,6 +202,32 @@ def checks():
     # 变更事件未记值；本行初稿曾拿会话记忆的 178 时代值（a36243fc6239，盘上与 git 历史均无）
     # 当期望，实算当场打回 7867316a7303。**期望从此是字面钉桩**：口径再动此行即红，
     # 改期望的唯一合法路径＝CHANGELOG 注明理由（姊妹条款）。
+    # SKILL 合同路径审计（232 批）：点号路径声称须在真实 analyze 输出可达
+    # （文档根或 step5 简写两形皆认；.py 文件引用不在此族）。合同面是任务 Agent 的取数依据。
+    def c_skill_paths(t):
+        import subprocess as sp
+        sk = (DISC / "SKILL.md").read_text(encoding="utf-8")
+        claims = [x for x in sorted(set(re.findall(r"`([a-z_]+(?:\.[a-z_\[\]0-9]+){1,})`", sk)))
+                  if not x.endswith(".py") and "/" not in x]
+        sp.run([sys.executable, "-X", "utf8", "scripts/chart.py", "--mode", "manual",
+                "--yao", "7,8,9,7,6,8", "-o", "scratch/_ledger_probe_c.json"], capture_output=True)
+        sp.run([sys.executable, "-X", "utf8", "scripts/analyze.py", "scratch/_ledger_probe_c.json",
+                "-o", "scratch/_ledger_probe_a.json"], capture_output=True)
+        doc = json.loads((DISC / "scratch" / "_ledger_probe_a.json").read_text(encoding="utf-8"))
+        s5 = (doc.get("thinking_chain") or {}).get("step5_synthesis") or {}
+        def resolve(d, path):
+            cur = d
+            for seg in path.split("."):
+                seg = seg.replace("[]", "")
+                if isinstance(cur, list):
+                    cur = cur[0] if cur else None
+                if not isinstance(cur, dict) or seg not in cur:
+                    return False
+                cur = cur[seg]
+            return True
+        miss = [x for x in claims if not (resolve(doc, x) or resolve(s5, x))]
+        return f"{len(claims)}/{len(claims) - len(miss)}"
+    add("SKILL 合同路径(20/20 可达)", "232批（22 系含 .py 引用的粗提数，工具正确排除后实算 20——期望又取自记忆非实算，账台首跑即抓）", c_skill_paths, ("20/20",))
     add("prospective 口径sha(7867316a7303)", "180批生效/216批落值入册",
         c_rule_sha, ("7867316a7303",))
 
