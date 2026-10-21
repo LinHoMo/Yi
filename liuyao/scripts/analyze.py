@@ -51,6 +51,32 @@ def _conclusion_from(chain: dict, result: dict) -> dict:
         if speed and str(speed).strip():
             yingqi_list.append(str(speed))
 
+    # 应期窗口（第一百九十二批·D1 第一半）：从名次前 3 的日历候选纯派生——
+    # 不引入新事实、不改任何既有键；断言窗化的结构底座（181 批读数：支池 top-3 对
+    # 书载应支覆盖 52.3%/47.6%，top-1 仅 27.3%/33.3%——信息在窗不在点）。
+    # 本键是事实容器：无概率、无吉凶、无「必应」措辞（铁律三在结构层的落点）。
+    win_dates: list[str] = []
+    _seen_d = set()
+    for _it in yingqi_items:
+        _d = _it.get("date")
+        if _d and _d not in _seen_d:
+            win_dates.append(_d)
+            _seen_d.add(_d)
+        if len(win_dates) >= 3:
+            break
+    _span = 0
+    if win_dates:
+        try:
+            from datetime import date as _date
+            _ds = sorted(_date.fromisoformat(x) for x in win_dates)
+            _span = (_ds[-1] - _ds[0]).days + 1
+        except ValueError:
+            _span = 0
+    window = {"候选": win_dates,
+              "起": min(win_dates) if win_dates else "",
+              "止": max(win_dates) if win_dates else "",
+              "跨日": _span}
+
     return {
         "方向": verdict,
         "verdict": verdict,
@@ -60,6 +86,7 @@ def _conclusion_from(chain: dict, result: dict) -> dict:
         "应期": yingqi_list,
         # 结构化应期候选（date+rule），供合参层现实回填评分；按引擎给出顺序即名次
         "应期明细": yingqi_items,
+        "应期窗口": window,
         "病药": (result.get("bing_yao") or {}),
         "星煞": (result.get("shensha_panel") or {}),
         "所本": "六爻纳甲·思维链五步（用神·旺衰·动变·月日）+ 病药/星煞结构化",

@@ -94,6 +94,7 @@ reg_07 已于第一百六十二批按书二分对齐（伏神子水不空，凶�
 | `scripts/thinking_chain.py` | 五步思维链聚合入口 |
 | `scripts/step1.py`…`step5.py`·`analysis_steps.py` | 五步思维链实现：现状 → 取用神 → 旺衰 → 动变 → 综合 |
 | `scripts/classical_analysis.py` | 31 段经典深度分析（`advanced_analysis`）：伏藏、暗动、月破、三合、进退、反吟伏吟、独发独静、方位、纳音……（实跑枚举为准，`enhance_reading` 产出键即真值） |
+| `scripts/analyze.py` | 结论层含 `应期窗口` 结构键（第一百九十二批，纯派生；正文给窗不升格必应） |
 | `data/cases/` | 古籍案例 + tune/holdout/external_holdout 分层 |
 | `data/rules/`·`data/sources/` | 判据表与古籍底本（引文逐字可回查书源） |
 | `dev_tools/` | 质量门（`check.py` 一条命令跑全部） |

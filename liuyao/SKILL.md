@@ -192,6 +192,7 @@ analyze 输出的 `conclusion`（方向/应期/所本）与 `chart_summary`（�
 | 变卦信息 | `changed_hexagram` |
 | **主/次应期及其法则** | `thinking_chain.step5_synthesis.timing.timing_rules[]`（`{token, rule}`，第一条即主应期） |
 | 应期日历日 | `thinking_chain.step5_synthesis.yingqi_dates.dates[]`（`{date, branch, rule, description}`） |
+| 应期窗口（第一百九十二批） | `conclusion.应期窗口`（`{候选(名次前3日期), 起, 止, 跨日}`）——从应期明细纯派生的结构事实，无概率无吉凶；正文可给窗（"X 日内/至 X 日间"），不得升格为"必应" |
 | 全部候选（仅备查） | `thinking_chain.step5_synthesis.timing.candidates_all[]`——**禁止**当作"重点应期"念给用户 |
 
 #### 3.4 输出模板示例
