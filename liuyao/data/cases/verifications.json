@@ -1,0 +1,2446 @@
+{
+ "generated_at": "2026-10-21T14:29:45",
+ "tool": "harvest_verifications.py",
+ "note": "盘点册：不产 expected、不进评分集；自注有幸存者偏差，不得当命中率证据",
+ "summary": {
+  "total": 242,
+  "by_book": {
+   "卜筮全書(dz)": 17,
+   "卜筮正宗(dz)": 45,
+   "黄金策(dz)": 6,
+   "京氏易傳(dz)": 1,
+   "易隱(dz)": 13,
+   "易林補遺(dz)": 7,
+   "易冒(dz)": 4,
+   "增刪卜易": 26,
+   "增刪卜易(dz)": 123
+  },
+  "by_status": {
+   "仅验语": 41,
+   "可联盘候选": 193,
+   "待人工": 8
+  }
+ },
+ "records": [
+  {
+   "id": "VER-bushi_quanshu_dz_dz-L5408",
+   "book": "卜筮全書(dz)",
+   "file": "bushi_quanshu_dz.dz.txt",
+   "line": 5408,
+   "match": "后果应无事",
+   "time_expr": "",
+   "quote": "主象，绝爻又动，其凶可知矣。幸得日辰未土，克坏官爻，合起主象，所谓灭项以安刘也，后果应无事。",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-bushi_quanshu_dz_dz-L5552",
+   "book": "卜筮全書(dz)",
+   "file": "bushi_quanshu_dz.dz.txt",
+   "line": 5552,
+   "match": "果应",
+   "time_expr": "酉日",
+   "quote": "酉日，占文书，得小畜之蛊卦。五爻动出丙子文书，与世上辛丑作合；此正天地合其德也。果应在戊子日成了文书。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_quanshu_dz_dz-L5561",
+   "book": "卜筮全書(dz)",
+   "file": "bushi_quanshu_dz.dz.txt",
+   "line": 5561,
+   "match": "果至丙子日",
+   "time_expr": "月壬申日",
+   "quote": "月壬申日，占子病，得姤之大过卦。父母旺动，用爻无气，本为凶兆；喜得用爻在空避之，果至丙子日愈。盖至丙子，则前面已过，又遇用爻帝旺之地，故也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_quanshu_dz_dz-L5566",
+   "book": "卜筮全書(dz)",
+   "file": "bushi_quanshu_dz.dz.txt",
+   "line": 5566,
+   "match": "果应",
+   "time_expr": "",
+   "quote": "鬼伤身，本不可脱；喜得日辰未土，六五又变戌土，扶助世上丑土，有气敌之，鬼不能伤。果应无事。",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-bushi_quanshu_dz_dz-L5603",
+   "book": "卜筮全書(dz)",
+   "file": "bushi_quanshu_dz.dz.txt",
+   "line": 5603,
+   "match": "后果应不能济事",
+   "time_expr": "",
+   "quote": "予卜供膳，得临之兑卦，应临财爻生世，本吉；但嫌其化入败爻，后果应不能济事。",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-bushi_quanshu_dz_dz-L5706",
+   "book": "卜筮全書(dz)",
+   "file": "bushi_quanshu_dz.dz.txt",
+   "line": 5706,
+   "match": "果应",
+   "time_expr": "且如丙子日",
+   "quote": "且如丙子日，袁柳庄卜脱役事，得姤卦安静。鬼临应爻，却被日辰冲动，世受六害，果应难脱。又谈朝辅卜诉讼，得蒙之未济卦。官鬼空亡，果应不成。又戊子日周焚松卜官讼，得离之贲卦。日辰扶起官鬼，冲克世爻，财爻又",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_quanshu_dz_dz-L5794",
+   "book": "卜筮全書(dz)",
+   "file": "bushi_quanshu_dz.dz.txt",
+   "line": 5794,
+   "match": "果应",
+   "time_expr": "如八月",
+   "quote": "如八月庚申日，予卜中秋月，得家人之观卦，果应大雨。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_quanshu_dz_dz-L5801",
+   "book": "卜筮全書(dz)",
+   "file": "bushi_quanshu_dz.dz.txt",
+   "line": 5801,
+   "match": "果应",
+   "time_expr": "如五月",
+   "quote": "如五月丁丑日，占晴，得屯之无妄卦。父母虽动，然坐在墓爻，果应晴而阴滞也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_quanshu_dz_dz-L5827",
+   "book": "卜筮全書(dz)",
+   "file": "bushi_quanshu_dz.dz.txt",
+   "line": 5827,
+   "match": "果应",
+   "time_expr": "如辛未日",
+   "quote": "如辛未日占晴，得损之小畜卦。财被合住，喜得日辰带兄，冲破合爻，果应发风而晴也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_quanshu_dz_dz-L5860",
+   "book": "卜筮全書(dz)",
+   "file": "bushi_quanshu_dz.dz.txt",
+   "line": 5860,
+   "match": "果应",
+   "time_expr": "",
+   "quote": "占雨，得屯卦。财不出现，父爻衰空，同是雨晴难定之象。喜得日辰冲并，卦中土鬼暗动，果应有雨。但鬼临土爻克水，所以雨亦不多矣。",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-bushi_quanshu_dz_dz-L5928",
+   "book": "卜筮全書(dz)",
+   "file": "bushi_quanshu_dz.dz.txt",
+   "line": 5928,
+   "match": "果应",
+   "time_expr": "正月辛亥日",
+   "quote": "年正月辛亥日，卜年时，得蒙之中孚卦。水鬼与应上父爻俱动，伤克世爻，妻财又伏；其年果应风雨连月，水溢田中，五谷淹腐殆尽也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_quanshu_dz_dz-L5933",
+   "book": "卜筮全書(dz)",
+   "file": "bushi_quanshu_dz.dz.txt",
+   "line": 5933,
+   "match": "果应",
+   "time_expr": "月庚申日",
+   "quote": "月庚申日，卜倭（6）乱，得困之大过卦。六三午火鬼动，化出酉金兄弟，带刑克害，其年果应倭贼大乱。火主烧，金主杀，兄又劫财，所以，其年劫烧杀伤，不可胜计。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_quanshu_dz_dz-L6439",
+   "book": "卜筮全書(dz)",
+   "file": "bushi_quanshu_dz.dz.txt",
+   "line": 6439,
+   "match": "果应",
+   "time_expr": "",
+   "quote": "如汉班超，为儿时，尝投笔叹曰：“大丈夫当立功异国，安能久事笔砚乎！”后出使西域，果应万里封侯。",
+   "status": "待人工"
+  },
+  {
+   "id": "VER-bushi_quanshu_dz_dz-L6687",
+   "book": "卜筮全書(dz)",
+   "file": "bushi_quanshu_dz.dz.txt",
+   "line": 6687,
+   "match": "果应",
+   "time_expr": "",
+   "quote": "妻临玄武入阴宫，果应梦兰之兆。",
+   "status": "待人工"
+  },
+  {
+   "id": "VER-bushi_quanshu_dz_dz-L7434",
+   "book": "卜筮全書(dz)",
+   "file": "bushi_quanshu_dz.dz.txt",
+   "line": 7434,
+   "match": "果应",
+   "time_expr": "亥日",
+   "quote": "亥日，卜观之讼。世上父母动，化出午火，生合应爻，又遇官鬼旺动，遂与邻人构讼，其田果应卖与他人。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_quanshu_dz_dz-L7595",
+   "book": "卜筮全書(dz)",
+   "file": "bushi_quanshu_dz.dz.txt",
+   "line": 7595,
+   "match": "果应",
+   "time_expr": "如七月",
+   "quote": "如七月乙巳日，因鸡瘟，卜得噬嗑之颐卦。日辰并起子孙，果应不死。后因夜啼，而妻病作。予初不知，及后八月收养蜜蜂，壬寅日卜得屯之坤卦。兄鬼发动，卦无财，凶不必言。未半日，群蜂满身攒",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_quanshu_dz_dz-L8932",
+   "book": "卜筮全書(dz)",
+   "file": "bushi_quanshu_dz.dz.txt",
+   "line": 8932,
+   "match": "果应",
+   "time_expr": "如癸亥日",
+   "quote": "如癸亥日卜得损之临卦，日辰扶助官鬼，动克世爻，并无救制，岂非凶兆？然而世坐空亡，果应无事。 ",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L1165",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 1165,
+   "match": "果得",
+   "time_expr": "孰知辛未年",
+   "quote": "刑伤，自然有验．孰知辛未年丧父、得子．是年父爻入墓之年也，五爻为长房持未土子孙，果得长子．甲戌年生次子，予语一友曰奇哉．此卦五爻持未长子属羊，四爻化戌，次子属犬，初爻持辰，必未子属龙矣．友曰：土主五数，该",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L1478",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 1478,
+   "match": "果应",
+   "time_expr": "",
+   "quote": "用在空亡逢恶煞，何妨坐草之虞；妻临玄武入阴宫，果应梦兰之兆?",
+   "status": "待人工"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L2385",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 2385,
+   "match": "果于本日",
+   "time_expr": "本日酉时",
+   "quote": "果于本日酉时，得名医救活，亥日痊愈．\t\t断曰：酉金兄弟为用神，午月克之，未日生之．似可相敌，但动出午火月建相克，大凶之象．彼云：",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L2386",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 2386,
+   "match": "果至午年",
+   "time_expr": "果至午年",
+   "quote": "果至午年甲月而被重刑．",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L2406",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 2406,
+   "match": "果卒",
+   "time_expr": "卒于卯日",
+   "quote": "果卒于卯日．应卯日者，冲去原神之，日忌神共来克害也．",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L2446",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 2446,
+   "match": "果至六月",
+   "time_expr": "果至六月",
+   "quote": "果至六月病，至八月店中财物被伙计盗尽，鸣之于官．",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L2482",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 2482,
+   "match": "后果斩．",
+   "time_expr": "未土卯月",
+   "quote": "曰：外卦未土卯月克之，况土值春令，气败，又会成亥卯未局克之，全无救助，必至重罪．后果斩．",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L2502",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 2502,
+   "match": "后果死于戌月丁亥日",
+   "time_expr": "死于戌月",
+   "quote": "后果死于戌月丁亥日，应戌月者世入墓之月也，亥日者，克冲之日也",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L2536",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 2536,
+   "match": "后果削职．",
+   "time_expr": "",
+   "quote": "孙持世化回头之克，但嫌世位临之，世为自己，不宜受，克虽有金局生扶，伏官难称无恙，后果削职．",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L2557",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 2557,
+   "match": "后果验．应巳年起用者",
+   "time_expr": "．应巳年",
+   "quote": "后果验．应巳年起用者，世上寅木化出官星之年也，申年生子者，亥水子孙化出申金回头之生也．",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L2574",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 2574,
+   "match": "果死",
+   "time_expr": "",
+   "quote": "症第．嫌申金化出未土，乃是月破旬空，则原神无根矣．目下无碍，恐危于春月．至立春日果死．应正月死者，申金原神亦逄月冲，春月木旺未土又被克也．\t\t断曰：亥水父爻为用，虽值旬空，有酉金原神动来生之，可许无碍．但",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L2595",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 2595,
+   "match": "后果验此虚一待用也．",
+   "time_expr": "",
+   "quote": "后果验此虚一待用也．",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L2613",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 2613,
+   "match": "后果验未月者实空之月也．",
+   "time_expr": "果验未月",
+   "quote": "后果验未月者实空之月也．",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L2631",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 2631,
+   "match": "果于丑日",
+   "time_expr": "乙丑日",
+   "quote": "曰：卯木父母爻为用神，外卦巳酉丑合成金局克之．合丑土旬空，旬内无妨，乙丑日防之．果于丑日酉时卒．应于丑日者出旬之日也．",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L2649",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 2649,
+   "match": "果于申予日",
+   "time_expr": "秋后甲子日",
+   "quote": "，丑土系月破，必待立秋后甲子日到家．后果验．此应立秋后者，丑土月破出月则出破矣．果于申予日归，此其破而逄合也．\t\t断曰：寅午戌三合父局，独有寅字日冲又绝于申日，己亥日必归．果验．己亥日到者，此冲中逄合也，绝处逄",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L2705",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 2705,
+   "match": "果于本月",
+   "time_expr": "未及一载",
+   "quote": "反吟之故也．\t\t断曰：世临卯木月建，官星得长生于日，世与官星同临旺地，许彼升任．果于本月闻由江西升任山东，未及一载，复任江西．此外卦之反吟去而复反也．",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L2778",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 2778,
+   "match": "果于三月",
+   "time_expr": "．交辰月",
+   "quote": "何时．答曰：日辰合戌，目下虽寅卯皆克，可许无妨．交辰月伏吟，又逄月冲，必难逃矣．果于三月乃妻去世矣．",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L2799",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 2799,
+   "match": "后果验．验于巳日者",
+   "time_expr": "到．己巳日",
+   "quote": "之克问其吉凶否？凶也．今问何日回？世空者，迟至，忌神旬空，旬内必到．己巳日必回，后果验．验于巳日者，巳火亦是财星耳，冲其飞而露其伏也．黄金策云：空下伏神易于引拔即此是矣．",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L2852",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 2852,
+   "match": "果于乙酉日",
+   "time_expr": "死．乙酉日",
+   "quote": "危于何日．答曰：午火自化旬空，旬内不能克之，近病逄空不死，旬内不死．乙酉日防之，果于乙酉日卯时而死矣．\t\t断曰：午火子孙伏世爻亥父之下，月建生助亥水克之，目下用神旬空，不受其克，甲午日难逃矣．果死于午日午时，此",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L2870",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 2870,
+   "match": "果至其日",
+   "time_expr": "曰：己亥日",
+   "quote": "病必凶．曰：凶在何日？答曰：己亥日克冲巳火，还在旬空，不妨恐危于出旬，辛亥日也．果至其日而死，此应出旬又被冲克也．",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L2888",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 2888,
+   "match": "果至其日",
+   "time_expr": "．断辛亥日",
+   "quote": "帮比有雨必大，但巳火官爻为原神值旬空安静，静必待冲空，必待出旬．断辛亥日得大雨，果至其日申酉时得雨五寸．\t\t断曰：凡卜至交朋友，以兄弟用，今卜交疏之人当以应爻为用．今应爻旬空得日辰冲起，必待甲辰日到，果验．",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L2922",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 2922,
+   "match": "果于巳年",
+   "time_expr": "曰：巳年",
+   "quote": "官星动而生世，化出寅木长生，显然有官，彼问：应在何年？答曰：巳年必然食禄王家也．果于巳年得县缺．应实破之年也．",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L2940",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 2940,
+   "match": "果于卯日",
+   "time_expr": "卯日",
+   "quote": "不能归也．莫非转往他方也，来而复返也．予以朱雀爻，动而持世，卯日有信，未日必归．果于卯日得信．乙未日到家，此应卯日得信者，破而逄合之日也，未日回家者，父化未土旬出空之日也．\t\t断曰：寅木官星持世，申金动来克之",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L2974",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 2974,
+   "match": "果死",
+   "time_expr": "",
+   "quote": "破，又受金克．惟防损子．彼竟得此屋，迁入不半月，其子出花而死，后执此卦问余曰：子果死矣，此屋自后可居否？予曰：宜再卜可决．",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L3005",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 3005,
+   "match": "果于子日",
+   "time_expr": "．许甲子日",
+   "quote": "克制卯木，终不能逃．但因伏去生飞名为泄气．盗去财物必尽于炉火之家．许甲子日拿获．果于子日得窝赌铁匠之家，申时拿获．应子日者，冲克午火之飞神，生起卯木之伏神也．黄金策云：伏无提挈，终徒尔飞，不推开亦枉然，此卦应",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L3023",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 3023,
+   "match": "次日愈．果",
+   "time_expr": "引拔午日",
+   "quote": "断曰：巳火父母伏于二爻寅木之下，飞来生伏，伏遇长生，许次日愈．果验．\t\t断曰：午火子孙伏于世爻丑土之下，丑土旬空易于引拔午日必愈，果验．",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L3086",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 3086,
+   "match": "果于次年",
+   "time_expr": "次年二月",
+   "quote": "神，虽有阻而无力也．\t\t断曰：世化回头之克，官星化退，子孙化进，内三爻皆非吉兆．果于次年二月拿问．应卯者，子孙出空填破之月也．",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L3101",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 3101,
+   "match": "果于辰年",
+   "time_expr": "予许辰年",
+   "quote": "断曰：若以子孙动而克官是终身无官也．予许辰年出任，果于辰年得选，此理何也．戌土忌神化退神不能克也．卯日合之，合待逄冲，辰也．此是有病有医之法也．",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L3140",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 3140,
+   "match": "果于本月",
+   "time_expr": "未月",
+   "quote": "合处逄冲，总就不吉，彼曰：年庚己经送来，算命又甚佳．答曰：予屡占屡验，故敢此断，果于本月自得病，未月世财亦入墓，此女病故．",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L3157",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 3157,
+   "match": "果于丑日",
+   "time_expr": "丑日",
+   "quote": "彼问：危于何日，得救何日．答曰：金库于丑，丑日防险．甲寅日冲发应上用爻则有救矣，果于丑日人事不知，寅日乃愈．",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L3175",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 3175,
+   "match": "果于次岁寅年",
+   "time_expr": "次岁寅年",
+   "quote": "断曰：此卦六冲处成六合，屡验散而又成，离而复合，又得卯木动来生世，皆婚一定可成，果于次岁寅年三月复成婚．应辰月者，求婚以财爻为用，得六冲卦既变六合，财爻又逄合也．卯木化出之辰土，是卜时所现之机关也．寅年者，应爻暗",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L3218",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 3218,
+   "match": "后果验．此人又问：予曰子孙值日",
+   "time_expr": "本日巳时",
+   "quote": "水绝在巳，本日巳时落草而亡．旁有知易者曰；青龙临子孙，如何此断？予曰：且看验否．后果验．此人又问：予曰子孙值日，青龙附之，如何神断．答曰：日辰子孙今日也，巳时者今时也，落草而亡者，吉神化绝，化鬼也．\t\t断曰：申金子孙持世，化出丑土",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L3235",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 3235,
+   "match": "后果午时寿终．此人又来问？予曰：绝处逄生竟无",
+   "time_expr": "今日午时",
+   "quote": "绝处逄生耶．予曰：是也．又问某翁之父病重无妒乎？答曰：今日午时难保，彼不言而去，后果午时寿终．此人又来问？予曰：绝处逄生竟无用耶？答曰：绝处逄生，屡试危而有救，今申金绝于寅日，不宜日生助，午火回头克之，戌土生金本云是吉．戌土乃是月破，无力生扶，",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L3305",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 3305,
+   "match": "果于七月",
+   "time_expr": "所嫌寅日",
+   "quote": "申金回头之生，虽休囚逄生为旺，所嫌寅日冲申，必待秋令可得美地．世化生申地在西南，果于七月得地．葬后三子皆发科甲．一人问予曰：申金被冲，该断巳月合之，何应申月耶．予曰：巳可合申也，而亥世逄冲，岂能能乎．",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L3377",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 3377,
+   "match": "次日当防．果",
+   "time_expr": "本日辰时",
+   "quote": "本日应见凶；而卦中有子水暗动制火，乃因机所现，今日不死，明日子水受制，忌神遇合，次日当防．果死于本日辰时．",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L3432",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 3432,
+   "match": "后果死于寅日寅时．\t\t断曰：亥水夫星为用",
+   "time_expr": "死于寅日",
+   "quote": "断曰：巳火用神月生日合，可治之症．但不宜月建寅，日建申与巳爻会成三刑，恐危．后果死于寅日寅时．\t\t断曰：亥水夫星为用，戌土生扶酉金动来生，但不宜化入墓，又回头化月建克，又是午日，午酉酉自刑俱全，此病立凶危，果本日午时死．",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L3450",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 3450,
+   "match": "果卒",
+   "time_expr": "本日未时",
+   "quote": "，巳火原神值旬空，月破，巳火又入墓库于日辰，又丑戌未三刑见，全无吉兆，即日防之．果卒本日未时．\t\t断曰：卯木持世，月建合之，日辰生之，今冬必获厚利．彼曰：子尊与子爻刑世，有何吉耶？答曰：凡看卦，世用推尊，",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L3470",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 3470,
+   "match": "果于申年",
+   "time_expr": "果于申年",
+   "quote": "．\t\t断曰：此卦正合前卦，前卦应冲开寅木者，申也．此卦世化申金回头生，亦应申也．果于申年八月寻父回家．应于申年者，前卦冲去忌神，后卦化出申金父母用神生世也．",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L3487",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 3487,
+   "match": "后果验．此用神独发冲而逄合之年也．\t\t一友执",
+   "time_expr": "明岁甲辰年",
+   "quote": "卦动，所失之子必来之象，问曰：何时得见？予曰：明岁甲辰年与酉金相合，定得意而归，后果验．此用神独发冲而逄合之年也．\t\t一友执此卦问？予曰：戌土子孙一爻独发，后日丙戌日，定该天晴如何还雨？答曰：尔爱忧麦水伤神，以子孙发动克去世上之鬼，叫尔勿忧，非",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L3504",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 3504,
+   "match": "果至次年",
+   "time_expr": "明示辰月",
+   "quote": "断曰：以辰土财爻为用，此卦亥水独发化出，明示辰月建可见，果至次年清明后始得见煤．此应独发化出之用神也．\t\t此卦独静，若不看用神断，寅日生耶，寅日死耶．卦中土为用神，巳午火动来生之未土子",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L3539",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 3539,
+   "match": "果于辛卯日",
+   "time_expr": "暑即辛卯日",
+   "quote": "旬空必待出旬合空，虽有半用，须待冲发，交小暑即辛卯日，则酉金值旬不空，冲发必至．果于辛卯日来家，此应静而逄冲也，合而逄冲也．空待出空也．\t\t断曰：酉金原神旬空，日辰冲之，静而逄冲日起．况日辰临应冲世，彼必今日巳",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L3557",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 3557,
+   "match": "后果死无踪迹．\t\t断曰：此卦甚凶",
+   "time_expr": "",
+   "quote": "动，正乱军中象也．以化出巳火父母爻为用，月建克之寅水原神又被日辰冲克恐性命难保，后果死无踪迹．\t\t断曰：此卦甚凶，不必细月．彼曰：坟已造成，即候开金井落葬，卜之以决吾房安否？予力止之不可葬．正论之间有人来报曰：穴场下俱是斗大石块，不",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L3596",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 3596,
+   "match": "果于午年",
+   "time_expr": "曰：午年",
+   "quote": "住巳火，原神动来生用，化子水回头克制，目下不来．问曰：终须来否？答曰：午年必来．果于午年午月到家．应午年月者未土动而日冲，是动冲逄合之年月也．丑土化子水合，合要冲开之年月也．巳火化子水之克，冲去子水是去煞留恩",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L3632",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 3632,
+   "match": "后果不来",
+   "time_expr": "",
+   "quote": "不现，被日月动爻克冲，必不安矣．今问其回来否，不以此断，只可断用神伏藏受克不来，后果不来，在外平安．\t\t此人往军前求名，说占流年，却不知占名以官爻为官，最喜官星持世．占流年以鬼爻为贵，不宜官鬼持世，予以此理告",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L3649",
+   "book": "卜筮正宗(dz)",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 3649,
+   "match": "果至八月",
+   "time_expr": "果至八月",
+   "quote": "师必高中也．彼曰：何以知之．答曰：官局生应不来生世，谓之出现无情与我，无干也．后果至八月酉金实空之月，此人自己头场贴出，其业师中式第四名．\t\t此公因本省有缺出，不便明问，故以现任吉凶而问．殊不知问缺之否，子孙",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-huangjince_dz_dz-L379",
+   "book": "黄金策(dz)",
+   "file": "huangjince_dz.dz.txt",
+   "line": 379,
+   "match": "果应",
+   "time_expr": "如八月",
+   "quote": "螣蛇来克，皆主日月有蚀。阳爻为日，阴爻为月，如八月庚申日，卜中秋月得家人之观卦，果应大雨。）",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-huangjince_dz_dz-L897",
+   "book": "黄金策(dz)",
+   "file": "huangjince_dz.dz.txt",
+   "line": 897,
+   "match": "果应",
+   "time_expr": "",
+   "quote": "大，如汉班超，为儿时尝投笔叹曰：“大丈夫当立功异国，安能久事笔砚！”后出使西域，果应万里封侯。）",
+   "status": "待人工"
+  },
+  {
+   "id": "VER-huangjince_dz_dz-L1185",
+   "book": "黄金策(dz)",
+   "file": "huangjince_dz.dz.txt",
+   "line": 1185,
+   "match": "果应",
+   "time_expr": "",
+   "quote": "　　妻临玄武入阴宫，果应梦兰之兆。",
+   "status": "待人工"
+  },
+  {
+   "id": "VER-huangjince_dz_dz-L1911",
+   "book": "黄金策(dz)",
+   "file": "huangjince_dz.dz.txt",
+   "line": 1911,
+   "match": "果应",
+   "time_expr": "又如辛亥日",
+   "quote": "又如辛亥日卜观之讼，世上父母动化出午火生合应爻，又遇官鬼旺动，遂与邻人构讼，其田果应卖与他人。又如癸巳日卜颐之噬嗑，世临勾陈土财发动，其田果因田主自种而不得成也。）",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-huangjince_dz_dz-L2090",
+   "book": "黄金策(dz)",
+   "file": "huangjince_dz.dz.txt",
+   "line": 2090,
+   "match": "果应",
+   "time_expr": "如七月",
+   "quote": "，临玄武防偷盗，临白虎防跌扑，如七月乙巳日，因鸡瘟卜得噬嗑之颐卦，日辰并起子孙，果应不死，后因夜啼而妻病作。予初不知，及后八月收养蜜蜂，壬寅日卜得屯之坤卦，兄鬼发动，卦无财凶不必言，未半日，群蜂满身攒聚，",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-huangjince_dz_dz-L3256",
+   "book": "黄金策(dz)",
+   "file": "huangjince_dz.dz.txt",
+   "line": 3256,
+   "match": "果应",
+   "time_expr": "如癸亥日",
+   "quote": "如癸亥日卜得损之临卦，日辰扶助，官鬼动克世爻，并无救制，岂非凶兆？然而世坐空亡，果应无事。）",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-jingshi_yizhuan_dz_dz-L98",
+   "book": "京氏易傳(dz)",
+   "file": "jingshi_yizhuan_dz.dz.txt",
+   "line": 98,
+   "match": "果得",
+   "time_expr": "十有四年",
+   "quote": "景迂尝曰余自元丰壬戌偶脱去举子事业便有志学易而辄好王氏本妄以谓弼之外当自有名象者果得京氏而文字颠倒舛讹不可训知迨其服习甚久渐有所窥今三十有四年矣乃能以其象数辨正文字之舛谬于边郡山房寂寞之中而私识之曰是书",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-yiin_dz_dz-L1338",
+   "book": "易隱(dz)",
+   "file": "yiin_dz.dz.txt",
+   "line": 1338,
+   "match": "后果小儿烧死也",
+   "time_expr": "",
+   "quote": "母，皆值旬空，父母为房屋，必是火起，延烧及邻家也。又不宜化出辰土父母，伤克子孙，后果小儿烧死也。",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-yiin_dz_dz-L1348",
+   "book": "易隱(dz)",
+   "file": "yiin_dz.dz.txt",
+   "line": 1348,
+   "match": "后果为盗累也",
+   "time_expr": "",
+   "quote": "三爻门户鬼动，初爻，化爻，二财助鬼刑世，又初爻化出巳火，子孙刑克，世下伏官，后果为盗累也。",
+   "status": "待人工"
+  },
+  {
+   "id": "VER-yiin_dz_dz-L1358",
+   "book": "易隱(dz)",
+   "file": "yiin_dz.dz.txt",
+   "line": 1358,
+   "match": "后果因官捕捉",
+   "time_expr": "",
+   "quote": "，祸不可支。喜世空，己得避脱，而兄弟反遭伤克矣。两爻兄弟俱系他宫，鬼又动化文书，后果因官捕捉，自身逃匿，累及内兄弟也。",
+   "status": "待人工"
+  },
+  {
+   "id": "VER-yiin_dz_dz-L1368",
+   "book": "易隱(dz)",
+   "file": "yiin_dz.dz.txt",
+   "line": 1368,
+   "match": "后果被其缉着",
+   "time_expr": "",
+   "quote": "门户动，初爻化爻二财助鬼刑世，初爻又化出子孙克世，下伏鬼，而世财伏官，动化文书，后果被其缉着，讼官而受刑罚也。",
+   "status": "待人工"
+  },
+  {
+   "id": "VER-yiin_dz_dz-L1378",
+   "book": "易隱(dz)",
+   "file": "yiin_dz.dz.txt",
+   "line": 1378,
+   "match": "后果为投托之人所发",
+   "time_expr": "",
+   "quote": "与动爻辰兄作合，其伏下申金子孙，暗中刑克世上飞神，子辰又会水局，克世下午火伏神，后果为投托之人所发，而反受其累也。",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-yiin_dz_dz-L2099",
+   "book": "易隱(dz)",
+   "file": "yiin_dz.dz.txt",
+   "line": 2099,
+   "match": "果于己酉日",
+   "time_expr": "果于己酉日",
+   "quote": "又空，元神正临身世，独嫌酉宫伏亥水下，名为泄气，故日下未来，直待用爻直日，方到。果于己酉日回也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-yiin_dz_dz-L2211",
+   "book": "易隱(dz)",
+   "file": "yiin_dz.dz.txt",
+   "line": 2211,
+   "match": "果至",
+   "time_expr": "兼以卯日",
+   "quote": "丙子财，伏未土下受害受克，兼以卯日刑之故，必被人阻隔，而不可求，所赖月建并起财爻果至，丙子日得也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-yiin_dz_dz-L2221",
+   "book": "易隱(dz)",
+   "file": "yiin_dz.dz.txt",
+   "line": 2221,
+   "match": "果得",
+   "time_expr": "生于亥日",
+   "quote": "官鬼下，名为耗鬼，岂知午火旬空，透出卯财，况投长生于亥日，后至辛卯日，财值巳辰，果得财也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-yiin_dz_dz-L2251",
+   "book": "易隱(dz)",
+   "file": "yiin_dz.dz.txt",
+   "line": 2251,
+   "match": "后果求之不得",
+   "time_expr": "",
+   "quote": "此为四财，自相冲脱，又财绝于月建巳中，不可云世应是财求易得，日建世应，比和吉也，后果求之不得。",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-yiin_dz_dz-L2404",
+   "book": "易隱(dz)",
+   "file": "yiin_dz.dz.txt",
+   "line": 2404,
+   "match": "果于申酉日",
+   "time_expr": "果于申酉日",
+   "quote": "神独发，又化进神，更得日辰生之，决能生父。惟不宜土财持世，喜岁月与伏下寅木克之，果于申酉日愈也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-yiin_dz_dz-L2414",
+   "book": "易隱(dz)",
+   "file": "yiin_dz.dz.txt",
+   "line": 2414,
+   "match": "果于木日",
+   "time_expr": "更加卯日",
+   "quote": "六爻酉金，子孙独发，化绝于寅，又绝于岁月建中，更加卯日冲破，果于木日死也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-yiin_dz_dz-L2424",
+   "book": "易隱(dz)",
+   "file": "yiin_dz.dz.txt",
+   "line": 2424,
+   "match": "果死",
+   "time_expr": "至甲申日",
+   "quote": "因药不投而后不延医也。只有三传生合官鬼，不过暂时少甦，至甲申日，元神绝而忌神生，果死也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-yiin_dz_dz-L2585",
+   "book": "易隱(dz)",
+   "file": "yiin_dz.dz.txt",
+   "line": 2585,
+   "match": "果得",
+   "time_expr": "",
+   "quote": "墓城塔也。又君平占逃亡，得纯乾，六爻俱动，见纸上六圈，抚几曰，必在六层塔上，索之果得。",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-yilin_buyi_dz_dz-L177",
+   "book": "易林補遺(dz)",
+   "file": "yilin_buyi_dz.dz.txt",
+   "line": 177,
+   "match": "果得",
+   "time_expr": "长生申日",
+   "quote": "之下。水被土伤本不为美，岂知未土空亡透出子水，况逢长生申日，反主亨通，后至戊子日果得厚利也。又论问求财，丑月甲午旬癸卯日，卜得噬嗑卦，此卦辰财落空，未财月破，此二财皆无用也，所喜巽宫辛丑土财正临月建，伏于",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-yilin_buyi_dz_dz-L217",
+   "book": "易林補遺(dz)",
+   "file": "yilin_buyi_dz.dz.txt",
+   "line": 217,
+   "match": "果应",
+   "time_expr": "果应己酉日",
+   "quote": "出辛酉金在三爻亥水之下，又怪伏生飞名为泄气，目下未来，待后申酉用爻值日便得相逢，果应己酉日到也。其中更有主象空亡者，事事嫌凶，谁知空中有真假不同，还宜细辨。且如八月甲辰旬卜得卦中寅卯之爻却是真空者也，纵见",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-yilin_buyi_dz_dz-L227",
+   "book": "易林補遺(dz)",
+   "file": "yilin_buyi_dz.dz.txt",
+   "line": 227,
+   "match": "果得",
+   "time_expr": "直待酉时",
+   "quote": "还怪用爻不透，直待酉时值财当得。又如此月此日问月内何日得财?亦占蒙卦，待后丁酉日果得财也。凡问何日者，须看日辰为主，不可以时辰定之。又如问远路行人，妻占夫本年内何月到，酉年卯月乙酉日卜得旅卦，此卦六位无官",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-yilin_buyi_dz_dz-L330",
+   "book": "易林補遺(dz)",
+   "file": "yilin_buyi_dz.dz.txt",
+   "line": 330,
+   "match": "后果死也",
+   "time_expr": "六月丙午日",
+   "quote": "互出水山蹇，取外卦坎水配为本宫子孙方为有救，又取内卦艮土配作晋卦父母，子被父伤，后果死也。又如夫占妻病，六月丙午日，卜得睽卦安静，此卦六位无才，亲宫子水伏在未土之下，伏被飞伤又无用处，况日月之中皆无才象，本无",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-yilin_buyi_dz_dz-L651",
+   "book": "易林補遺(dz)",
+   "file": "yilin_buyi_dz.dz.txt",
+   "line": 651,
+   "match": "果应",
+   "time_expr": "又如甲申年",
+   "quote": "得成宗之子也。又如甲申年二月子日，问何年得子?卜得师卦，此卦子居旺地之，主早生，果应乙酉年怀胎，丙戌年得子，益为子孙属木，木胎在酉，木养在戌，故此酉年怀胎，而戌年育也。又如己亥年四月丑日，问子有无?卜得大",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-yilin_buyi_dz_dz-L691",
+   "book": "易林補遺(dz)",
+   "file": "yilin_buyi_dz.dz.txt",
+   "line": 691,
+   "match": "果得",
+   "time_expr": "又如四月",
+   "quote": "地，况得日月生扶，该怀双孕，内卦阴包阳是男，外卦阳包阴是女，此卦阳在先而阴在后，果得双胎。先生男而后女也。又如四月辛未日，问男女?卜得归妹卦，此卦阴阳既不相包，六爻内有无子象，伏出兑家亥水更值旬空。难分男",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-yilin_buyi_dz_dz-L1279",
+   "book": "易林補遺(dz)",
+   "file": "yilin_buyi_dz.dz.txt",
+   "line": 1279,
+   "match": "果死",
+   "time_expr": "挨至乙亥日",
+   "quote": "独无用爻，又鬼伏仇爻之下，又值旬空，毫无救。挨至乙亥日用爻透出，免受忌神来伤，夫果死也。假令弟占兄病，十月戊辰日，卜得剥初二三爻皆动，却本卦无兄弟，所喜申金兄弟伏在世爻用爻透出果应病痊。又如父占子病，五月",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-yimao_dz_dz-L209",
+   "book": "易冒(dz)",
+   "file": "yimao_dz.dz.txt",
+   "line": 209,
+   "match": "后果得利",
+   "time_expr": "",
+   "quote": "日占财，得困之坎，木死于午，亥子元神衰弱，本不为吉，不知亥化长生，元神反为有力，后果得利。）",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-yimao_dz_dz-L427",
+   "book": "易冒(dz)",
+   "file": "yimao_dz.dz.txt",
+   "line": 427,
+   "match": "果应",
+   "time_expr": "绝于亥日",
+   "quote": "巳财绝于亥日，兄动夺之，理不应得，然丁巳财当以丁巳日求之，而甲寅旬子兄值空，是日果应得会，可见遇时为卜筮之要。）",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-yimao_dz_dz-L994",
+   "book": "易冒(dz)",
+   "file": "yimao_dz.dz.txt",
+   "line": 994,
+   "match": "后果轻财好施",
+   "time_expr": "卯建辛未日",
+   "quote": "  （楚中商人王氏者，四十乏嗣，癸未卯建辛未日，卜嗣得否，言其无子，以阴功劝之，后果轻财好施；及乙酉鼎革，有感力行善事，丁亥仲春甲申日来杭复卜后嗣得萃，子遇长生，许得二子，彼曰：前言无后言有何也？予曰：公必树德矣",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-yimao_dz_dz-L1524",
+   "book": "易冒(dz)",
+   "file": "yimao_dz.dz.txt",
+   "line": 1524,
+   "match": "后果同行都下",
+   "time_expr": "卯建丙辰日",
+   "quote": "破散绝亦非，应用一病亦非，如卯建丙辰日，占仆与友同行，得否，卯财持世，戌应暗兴，后果同行都下。）",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L359",
+   "book": "增刪卜易",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 359,
+   "match": "果得",
+   "time_expr": "﹐許甲午日",
+   "quote": "<br>午火父母爲用神﹐空而伏於二爻丑土之下﹐壓住難出﹐許甲午日出空必得﹐果得於甲午日。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L454",
+   "book": "增刪卜易",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 454,
+   "match": "果得",
+   "time_expr": "當時卯日",
+   "quote": "旺相﹐當時卯日沖之而暗動﹐又得九五爻上官進神財助生扶﹐不獨今秋折桂﹐來春占鰲頭﹐果得連捷。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L491",
+   "book": "增刪卜易",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 491,
+   "match": "果得",
+   "time_expr": "會於未日",
+   "quote": "<br>父化退神﹐父已歸矣﹐世化進神而欲去﹐父爻生世一定相逢﹐必相會於未日﹐果得遇未日﹐應未日﹐戌父化未﹐又破又空至未日乃實空實破之日也﹐若執古法動日月而化空破﹐謂之退其爻﹐豈有歸來之日也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L502",
+   "book": "增刪卜易",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 502,
+   "match": "果得",
+   "time_expr": "神許丑日",
+   "quote": "<br>丑土官動化進神許丑日必得﹐果得於丑日。古以動日月化空破﹐謂之不進﹐此卦動非日月而化空破﹐亦能進也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L546",
+   "book": "增刪卜易",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 546,
+   "match": "果卒",
+   "time_expr": "卒於丑月",
+   "quote": "妙藥難醫﹐𨿽化退神﹐非病退也﹐乃精神命脈漸漸消枯之象也﹐防日月沖破未土而無路矣﹐果卒於丑月。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L557",
+   "book": "增刪卜易",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 557,
+   "match": "果卒",
+   "time_expr": "﹐至丑月",
+   "quote": "旺相水生﹐精血太旺﹐至丑月土旺﹐令父母爻旣無水養且化退神﹐正以絕其源﹐源絕危險﹐果卒於丑月﹐此乃父臨日建不化空破﹐亦能退也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L568",
+   "book": "增刪卜易",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 568,
+   "match": "次日退災﹐果",
+   "time_expr": "",
+   "quote": "<br>斷曰﹕未土父母動化進神﹐戌值旬空﹐近病逢空卽愈﹐許次日退災﹐果於甲戌出空卽愈﹐此乃父爻休囚而化空也﹐若以古法動日月化空破尙且不進﹐今休囚而化空﹐可得愈耶﹖",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L590",
+   "book": "增刪卜易",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 590,
+   "match": "果卒",
+   "time_expr": "須防戌日",
+   "quote": "<br>斷曰﹕子水父爻動化未土回頭克父母﹐上爻未土又化進神以克父﹐須防戌日﹐果卒於甲戌日﹐乃戌土出空之日也﹐古法散如無也﹐此卦未土發動﹐丑日沖之﹐又化旬空月破﹐竟不見其散也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L1032",
+   "book": "增刪卜易",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 1032,
+   "match": "果卒",
+   "time_expr": "﹐防申日",
+   "quote": "<br>斷曰﹕世爻寅木化出巳爻﹐寅能刑巳﹐三刑少申字﹐防申日之危﹐果卒於申日﹐此乃少一字﹐得後來之申日補之﹐豈可謂少一字不成三刑耶。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L1043",
+   "book": "增刪卜易",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 1043,
+   "match": "果升",
+   "time_expr": "﹐且巳日",
+   "quote": "升﹐且巳日沖動亥月與發動之未爻﹐欲成三合﹐因少卯字﹐明年卯月必升﹐此乃虛一待用﹐果升於卯月﹐豈可謂之少一字不成三合耶。",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L1092",
+   "book": "增刪卜易",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 1092,
+   "match": "果得",
+   "time_expr": "",
+   "quote": "<br>用爻入墓﹐喜得日辰克破﹐後果得財。以用空入墓許以無財者﹐非也﹐殊不知𨿽空而遇沖﹐沖空則實﹐𨿽墓而克破﹐破墓則開。",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L1567",
+   "book": "增刪卜易",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 1567,
+   "match": "果死",
+   "time_expr": "須防亥日",
+   "quote": "有古窖﹐何時得財﹖予曰﹕卦中鬼變子孫﹐目下子女不利﹐彼小女出花﹐予曰﹕須防亥日﹐果死於亥日。彼問﹕何所問得財﹐神報目下而死女﹖應亥日者﹐午火鬼化亥水子也。又如酉月甲辰日占本月月令。得遁之姤卦。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L1622",
+   "book": "增刪卜易",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 1622,
+   "match": "果死",
+   "time_expr": "難過酉月",
+   "quote": "﹐難過酉月卯日。還有救否﹖予曰﹕向占母病﹐已應八月死子。今又得此凶卦﹐何以救之﹖果死於卯日。夫應於卯日者﹐乃實破之日也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L1921",
+   "book": "增刪卜易",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 1921,
+   "match": "次日又占﹐又是鬼父同動﹐果",
+   "time_expr": "",
+   "quote": "<br>斷曰﹕父鬼疊見﹐乃連朝風雨之象。次日又占﹐又是鬼父同動﹐果雨旬日。",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L2107",
+   "book": "增刪卜易",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 2107,
+   "match": "果至卯年",
+   "time_expr": "之﹐亥日",
+   "quote": ">斷曰﹕世爻𨿽空﹐月建合之﹐亥日生之﹐子水財爻動而生世﹐卯年一定成家﹐丑年占卦﹐果至卯年立業成家。彼時定鼎之初﹐雲貴才平﹐此人於川中帶出附子黃蓮桑材數擔﹐勃然家蓄數千餘金﹐從此立業成家﹐連年豐足﹐此豈可謂終身",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L2277",
+   "book": "增刪卜易",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 2277,
+   "match": "果至巳月",
+   "time_expr": "今年五月",
+   "quote": "之克﹐上爻未土又克﹐目下𨿽則無妨﹐今年五月沖開其合﹐或是酉月沖開卯木﹐須防不測。果至巳月而生惡瘡﹐卒於酉月。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L2393",
+   "book": "增刪卜易",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 2393,
+   "match": "果卒",
+   "time_expr": "不宜寅月",
+   "quote": "r>斷曰﹕世化申金回頭之生﹐不宜寅月沖破﹐又嫌戌土未土動而克而無生也﹐須防卯歲﹐果卒於卯年﹐乃應戌土逢合之年而克世也。",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L2953",
+   "book": "增刪卜易",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 2953,
+   "match": "果得",
+   "time_expr": "世﹐申日",
+   "quote": "寅木旺官持世﹐申日沖之﹐暗動又得日辰會成財局﹐不惟不克世爻﹐反來生世﹐一定高捷﹐果得及第。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L2987",
+   "book": "增刪卜易",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 2987,
+   "match": "果得",
+   "time_expr": "",
+   "quote": "<br>此卦官星持世﹐𨿽則不旺﹐初爻官生父旺﹐與前卦相合﹐許之吉兆﹐果得成名。凡得六沖卦﹐官父世爻俱旺者﹐不必再占﹐竟許必得。如父旺者﹐須再占一卦﹐再得吉者﹐以吉斷之﹐後卦凶者﹐卽以凶推。凡得",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L3074",
+   "book": "增刪卜易",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 3074,
+   "match": "果得",
+   "time_expr": "墓於未日",
+   "quote": "<br>斷曰﹕卯木旺官持世﹐子水財動相生﹐𨿽則墓於未日﹐幸世反得助﹐無妨﹐果得升於亥月。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L3087",
+   "book": "增刪卜易",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 3087,
+   "match": "果得",
+   "time_expr": "亡﹐十一月",
+   "quote": "生助午火之鬼﹐火鬼克世﹐乃爲助鬼傷身。幸辰土生申金﹐午火貪生忘克﹐今年冬月必升﹐果得升於冬月。應冬月者﹐辰土化子水空亡﹐十一月則不空矣。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L3089",
+   "book": "增刪卜易",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 3089,
+   "match": "果得",
+   "time_expr": "前篇亥月",
+   "quote": "<br>古以晉升爲吉﹐又云屯蹇爲凶。晉卦升卦﹐果得屢驗。亦要世爻得地﹐若失陷﹐亦不爲吉。屯卦蹇卦﹐世爻旺者何妨。前篇亥月丙寅日占驗﹐世爻旺者﹐竟超升﹐豈非屯卦耶﹖",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L3104",
+   "book": "增刪卜易",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 3104,
+   "match": "果得",
+   "time_expr": "",
+   "quote": "星﹐許之眞定。彼曰﹕何也﹖予曰﹕巳火官星﹐乃南方也﹐必得眞定﹐眞定乃都門之南也。果得眞定。又有以初爻爲內地﹐以五爻六爻爲邊缺。應初爻者﹐世與官星皆在初爻者是也。應五六爻者﹐或世在五爻﹐官在六爻﹔或世在六爻",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L3319",
+   "book": "增刪卜易",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 3319,
+   "match": "果得",
+   "time_expr": "亦應辰年",
+   "quote": "之鼎甲也。公曰﹕此數暗含我機﹐我少年得一預兆﹐亦應辰年。傷畢卽回﹐至甲辰科殿試﹐果得首唱傳臚。以教人指其事而占者﹐無不驗也﹐何必諄諄執古法而猜耶。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L3380",
+   "book": "增刪卜易",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 3380,
+   "match": "果得",
+   "time_expr": "但喜卯日",
+   "quote": "世無財﹐但喜卯日卽是財星﹐古以財爻持世沖世者必得﹐況應爻未土旺而生世﹐明日必獲﹐果得財﹐應辰日者﹐世動逢合之日也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L4464",
+   "book": "增刪卜易",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 4464,
+   "match": "果得",
+   "time_expr": "公郎五年",
+   "quote": "紅原乳﹐入數百錢內﹐公可設下香案﹐禱告於天﹐得紅原錢者﹐卽其穴也﹐令人徧地灑之﹐果得原錢於紅花之下﹐掘之周圍僅有丈予﹐皆泥土也﹐予皆石塊﹐此公次年開府﹐兩公郎五年之內俱登甲榜。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L31",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 31,
+   "match": "果于辰日",
+   "time_expr": "如一日",
+   "quote": "而又以我未占之事告我也。如一日占求财，旺财持世，是我明知辰日得财，次日再占一卦，果于辰日得财否？卦得申金兄动而不得，是何说耶？及到辰日得财，至申日因他事而破财。而悟辰日之得财，次日而再问之，神不告矣，报我申日",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L539",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 539,
+   "match": "果于丑日",
+   "time_expr": "须待丑日",
+   "quote": "单受寅木之克，不得午火之生，故此病体沉重，须待丑日冲去未土而午火无合，其土灾退。果于丑日起床。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L550",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 550,
+   "match": "果于寅日",
+   "time_expr": "待甲寅日",
+   "quote": "言散，正因巳火化空，所以目下不见，待甲寅日出空而相见。寅木之财以生官，官来生世，果于寅日早见木日得财。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L561",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 561,
+   "match": "果卒",
+   "time_expr": "卒于癸卯日",
+   "quote": "为吉。其如亥水月冲日克，值月破而被克，虽有生扶生之不起，如树无根，寒谷不回春也。果卒于癸卯日，应卯日者冲去元神之日也。此谓之用神无根，元神有力亦难生。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L583",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 583,
+   "match": "果至",
+   "time_expr": "卯月",
+   "quote": "外卦未土父母，卯月克之，内卦亥卯未合成木局又相克制，月克日刑全无助，果至重刑。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L602",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 602,
+   "match": "果于本日",
+   "time_expr": "弟赖申日",
+   "quote": "断日：月建辰土虽克亥水，兄弟赖申日以生之，又得动爻相生，临危有救，果于本日酉时遇名医救活也，至巳亥日以全生。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L642",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 642,
+   "match": "果于",
+   "time_expr": "要到甲寅日",
+   "quote": "断曰：寅木财爻为用神，财爻克世，此财必得，但目下尚空，要到甲寅日出空可得。果于甲寅得之。若以逢空不空非也。若在旬内还作空亡，待出旬不为空也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L651",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 651,
+   "match": "果得",
+   "time_expr": "须待子日",
+   "quote": "世临月建之官，定得面见，但被午火回头之克，须待子日冲去午火方得拜谒，果得见于丙子日，故曰逢伤亦伤却有待时之用。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L661",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 661,
+   "match": "果于三月",
+   "time_expr": "虽被申日",
+   "quote": "世临月建而旺相，虽被申日冲克，喜申子辰合成水局，以生官，不独无害，定然三月高迁，果于三月升任云南太守，即升者乃因爻得水局生扶，应三月者辰土出空之月也，应云南者，世与官星皆在六爻之故耳。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L669",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 669,
+   "match": "果于本年",
+   "time_expr": "今岁辰年",
+   "quote": "凶在何时？余曰：酉金兄爻化退神，今岁辰年太岁相合，自是无妨恐，退至申年而无路矣，果于本年下狱至申年而重刑。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L680",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 680,
+   "match": "果于六月",
+   "time_expr": "果于六月",
+   "quote": "曰：我是伙计不同心？或是别有他图？余曰：鬼在身边须防疾病，伙伴从此变心，受其累，果于六月疾至，八月伙计盗尽。鸣之于官，分文不复。此谓之当时旺相无伤，过时有害。应六月者，木墓于未，伙计变心者，应爻申金秋天当令，",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L689",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 689,
+   "match": "果于次日",
+   "time_expr": "卯日卯时",
+   "quote": "酉金兄爻为用神，月令克之，日建生之，许之无碍，卯日卯时必生，果于次日卯时生，母子平安，应卯时者，酉金与辰日相合。黄金策曰：若逢合住，必待冲开，此月克而日生，无增克制或帮扶也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L708",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 708,
+   "match": "果于午月",
+   "time_expr": "果于午月",
+   "quote": "日建而不破，不宜重叠四重土动以伤之，谚云：双拳不敌四手，不独难望归期，预防不测，果于午月卯日得信中途已遭害矣。此章当与月建章参看。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L755",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 755,
+   "match": "果于次年",
+   "time_expr": "次年三月",
+   "quote": "断曰：此卦从来难以吉断，因得屡验六冲变合，散而复聚，离而必合，此婚一定还成，果于次年三月仍成婚。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L775",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 775,
+   "match": "后果劝散",
+   "time_expr": "",
+   "quote": "酉丑合金局来克木，幸衰金不克旺木，不足畏也。况系六冲卦变六冲，有人解散必不成讼，后果劝散。",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L804",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 804,
+   "match": "果于子年",
+   "time_expr": "未日",
+   "quote": "世持子孙以临月建，未日生之，虽是六冲之卦，此子必归。果于子年建功卯年得意而归，此应静而逢冲之验也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L812",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 812,
+   "match": "后果两月",
+   "time_expr": "后果两月",
+   "quote": "不久之兆，彼问曰：因何事而不久？余日：子水子孙值旬空，卦中未土父动，防子孙灾变，后果两月，其子得病，辞师未久而子死矣。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L842",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 842,
+   "match": "果于申时",
+   "time_expr": "今日未申时",
+   "quote": "日冲动丑土，土动生金，花虽密以全生。彼曰：目下甚危。余曰：不妨，今日未申时有救，果于申时遇明医救治，何当缓也？",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L852",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 852,
+   "match": "果于二月",
+   "time_expr": "果于二月",
+   "quote": "卯木父爻发动而生世，又化子水回头生许之，在外平安。世空者还至交春即归，果于二月得意而回。此非卯动酉日冲之？何当散也？李我平日：黄金策以空亡为重，冲散为轻。易冒最重冲散，细阅占验多因错课。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L857",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 857,
+   "match": "果于削职后七月",
+   "time_expr": "职后七月",
+   "quote": "从不敢断，幸此卦而易见，巽木化乾金，即为化回头克，为绝卦也，不必问名，寿命不长，果于削职后七月而终。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L858",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 858,
+   "match": "果卒",
+   "time_expr": "月丙寅日",
+   "quote": "月丙寅日占主病，得离卦变坎卦，离火变坎水，回头来克，但因午月火旺，许之冬令必危。果卒于九月丁亥日。此皆不看用神之衰旺也。李我平曰：易冒墓绝章云，日月当令非真，却不知凶事将来，神机早兆，日月当时虽旺，过时则",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L880",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 880,
+   "match": "果于本月",
+   "time_expr": "生于亥日",
+   "quote": "断曰：世临卯木月建之官，又长生于亥日，世与官星同临旺地，许之即升，果于本月闻报，由江西升任山东，未及一载复任江西，应本月升者卯官而值月令升山东者，官临卯木，复任江西者，外卦反伏，去之而复反也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L910",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 910,
+   "match": "后果全无",
+   "time_expr": "",
+   "quote": "则空而有气，后卦子水财空伏于五爻未土之下，伏而又空，空而被克，知其无财而无疑也，后果全无。",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L926",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 926,
+   "match": "果于乙卯日",
+   "time_expr": "曰：甲寅日",
+   "quote": "月也，逢子亥财生，满心如愿。彼曰：去得成否？余曰：甲寅日世爻出空之日，准行无疑，果于乙卯日起程，后到彼地，寅卯月间，诸事顺心，满载而归。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1006",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1006,
+   "match": "果于巳年",
+   "time_expr": "果于巳年",
+   "quote": "得官临世位，食禄王家终须有日。彼问：应在何年？余曰：前卦官临月破，定于实破之年，果于巳年承袭长房世职，若以月破，百无所用，霄壤之隔也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1014",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1014,
+   "match": "果于卯日",
+   "time_expr": "卯日",
+   "quote": "而无气，其父不能归也。余不以此论之，竟断朱雀临父动而持世，卯日有信，午未日必归，果于卯日得信，乙未日到家，应卯日得信者，破而逢合之日也。应未日归者，父化未土旬空出空之日到也。古诀用神之论谓之动逢月破，我位既失",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1022",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1022,
+   "match": "果于七月",
+   "time_expr": "果于七月",
+   "quote": "有因，所以断之降级而已。若在冬至月，始有此验，倘在他月，子水而未实破，还不可知。果于七月，成大非，冬至月事结降级调用。余彼时，已往他省，复来呼唤，至彼而又卜之。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1030",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1030,
+   "match": "果于甲子年",
+   "time_expr": "将来子年",
+   "quote": "不允。余曰：被日克，将来子年亥水旺也，又合前卦，五爻子水值太岁而不破，起用无疑。果于甲子年巳月仍以原品起用专补两任，卯年而开督府。余劝离荣，公曰：何也？余曰：仍以前卦决。因申金克世，子虽动临破化空，不能生世生官",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1068",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1068,
+   "match": "果得",
+   "time_expr": "许甲午日",
+   "quote": "  午火父母为用神，空而伏于二爻丑土之下，压住难出，许甲午日出空必得，果得于甲午日。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1076",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1076,
+   "match": "果于午日",
+   "time_expr": "许午日",
+   "quote": "下伏神，易于引拨，此卦午火子孙伏于丑土之下，丑土旬空伏易出，许午日子孙出现必愈，果于午日起床。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1132",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1132,
+   "match": "果得",
+   "time_expr": "当时卯日",
+   "quote": "旺相，当时卯日冲之而暗动，又得九五爻上官进神财助生扶，不独今秋折桂，来春占鳌头，果得联捷。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1140",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1140,
+   "match": "果于午日",
+   "time_expr": "必待午日",
+   "quote": "火子动而生世，但因巳火化子水回头之克，必待午日冲去子水，午火又合世爻，其婚必成，果于午日允婚。或曰：间爻酉金鬼动，岂无阻耶？余曰：鬼化退神虽有被阻而无力也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1149",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1149,
+   "match": "果于次年",
+   "time_expr": "",
+   "quote": "断曰：世化回头之克，官化退神，子孙化进神，三爻皆非吉象，大凶之兆，果于次年革职拿问。",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1158",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1158,
+   "match": "果得",
+   "time_expr": "会于未日",
+   "quote": "父化退神，父已归矣，世化进神而欲去，父爻生世一定相逢，必相会于未日，果得遇未日，应未日，戌父化未，又破又空至未日乃实空实破之日也，若执古法动日月而化空破，谓之退其爻，岂有归来之日也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1166",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1166,
+   "match": "果得",
+   "time_expr": "神许丑日",
+   "quote": "丑土官动化进神许丑日必得，果得于丑日。古以动日月化空破，谓之不进，此卦动非日月而化空破，亦能进也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1174",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1174,
+   "match": "果于辰年",
+   "time_expr": "余许辰年",
+   "quote": "，余许辰年出仕，何也？戌土子孙孙虽动幸化退神，不克官也，辰年冲去戌土，是以许之，果于辰年得选岂可谓之动空化日月而不退也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1182",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1182,
+   "match": "果于次日",
+   "time_expr": "明日辰日",
+   "quote": "此公因抱危症。余曰：子孙持世，明日辰日必遇良医，果于次日用针而愈。或曰：子孙化退神，何其用药亦效？余曰：动变皆属秋金，当相得令，占近事岂可曰退？若占久远之事，待休囚之时而退者得",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1198",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1198,
+   "match": "果卒",
+   "time_expr": "卒于丑月",
+   "quote": "妙药难医，虽化退神，非病退也，乃精神命脉渐渐消枯之象也，防日月冲破未土而无路矣，果卒于丑月。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1206",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1206,
+   "match": "果卒",
+   "time_expr": "至丑月",
+   "quote": "旺相水生，精血太旺，至丑月土旺，令父母爻既无水养且化退神，正以绝其源，源绝危险，果卒于丑月，此乃父临日建不化空破，亦能退也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1214",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1214,
+   "match": "果于",
+   "time_expr": "",
+   "quote": "断曰：未土父母动化进神，戌值旬空，近病逢空即愈，许次日退灾，果于甲戌出空即愈，此乃父爻休囚而化空也，若以古法动日月化空破尚且不进，今休囚而化空，可得愈耶？",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1230",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1230,
+   "match": "果卒",
+   "time_expr": "须防戌日",
+   "quote": "断曰：子水父爻动化未土回头克父母，上爻未土又化进神以克父，须防戌日，果卒于甲戌日，乃戌土出空之日也，古法散如无也，此卦未土发动，丑日冲之，又化旬空月破，竟不见其散也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1270",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1270,
+   "match": "果于寅日",
+   "time_expr": "果于寅日",
+   "quote": "断曰：未父化进神，巳火官动而生世，吉兆显然，坐以待报，果于寅日揭榜，中第八名，古法动破散化日月尚不能进，此卦动散化空亦能中矣。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1278",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1278,
+   "match": "果于次年",
+   "time_expr": "次年三月",
+   "quote": "来，幸得未土生起酉金兄爻，兄化退神而合世，父母必不来，兄弟必来。彼曰：有妹无弟。果于次年三月妹至，此乃兄弟化空，爻空亦能退也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1306",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1306,
+   "match": "果于次日",
+   "time_expr": "",
+   "quote": "冲动戌土以生申金，因世爻亥水空亡不受其生，明日己巳冲起亥水，得遇金生，其病如失，果于次日大愈。",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1330",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1330,
+   "match": "果于次年",
+   "time_expr": "明岁酉年",
+   "quote": "古以为凶，余以为吉。断日月生世，丑墓月破，破罗破网，容易而出。明岁酉年定蒙赦免。果于次年辰月蒙赦而出。余因屡试而得验者，只验世爻入墓有三：世爻随鬼入日墓，入动墓，动而化墓。此三墓者，自占看世爻，旺相者非真，代",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1369",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1369,
+   "match": "果于卯日",
+   "time_expr": "卯日",
+   "quote": "，即以此卦而决阴晴，卯日必大晴也，彼曰：何也？余曰：动而逢合之日晴，则尔无忧也。果于卯日大晴。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1393",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1393,
+   "match": "果于寅日",
+   "time_expr": "曰：寅日",
+   "quote": "，近病逢空即愈，出空之日也。与前卦相合。余曰：寅日大愈，目下病体虽重，管许无虞。果于寅日全愈。此虽应前卦一爻独静，必应用神之旺也，又得后卦显然，方敢以寅日决之。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1412",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1412,
+   "match": "果于辰年",
+   "time_expr": "至辰年",
+   "quote": "中官星两现，一空一破，至辰年官而出空一定高升，然反吟于外卦，当得验者，去而复来，果于辰年，调于河南，五月因他故，又调回楚，十月而升督府，十年两调一升，皆应实空之年也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1456",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1456,
+   "match": "果于卯年",
+   "time_expr": "巳月",
+   "quote": "巳月父爻当月建文星旺矣，独嫌官星持世，卯木旬空，许之卯科方得遂意。子年占，果于卯年登科。卯年者，太岁填实不空也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1466",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1466,
+   "match": "果于五月",
+   "time_expr": "果于五月",
+   "quote": "或曰，幸得世应相生，又变升卦，必相救解，余曰，自占自陈，与应何干，此迂腐之论也，果于五月下狱。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1488",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1488,
+   "match": "果于巳年",
+   "time_expr": "：防巳年",
+   "quote": "问，后日何如。余曰：防巳年太岁冲害，刑申，不无蹭蹬荣归之日，只落得四海一空囊耳。果于巳年被论，宦囊消索。此乃世逢合而绊住，逢冲之年月则开。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1506",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1506,
+   "match": "果于本日",
+   "time_expr": "子日",
+   "quote": "断：世临午火，子日冲之，休囚为日破，不为暗动，今日若审，必有责罚，果于本日见官责杖二十，此即卦见二午，岂可谓之一子不冲二午耶，又曰寅巳申为三刑，若有寅巳二字，而无申字，或有寅申二字，而无巳字，但",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1515",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1515,
+   "match": "果卒",
+   "time_expr": "防申日",
+   "quote": "断曰：世爻寅木化出巳爻，寅能刑巳，三刑少申字，防申日之危，果卒于申日，此乃少一字，得后来之申日补之，岂可谓少一字不成三刑耶。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1523",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1523,
+   "match": "果升",
+   "time_expr": "且巳日",
+   "quote": "升，且巳日冲动亥月与发动之未爻，欲成三合，因少卯字，明年卯月必升，此乃虚一待用，果升于卯月，岂可谓之少一字不成三合耶。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1555",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1555,
+   "match": "后果得财",
+   "time_expr": "",
+   "quote": "用爻入墓，喜得日辰克破，后果得财。以用空入墓许以无财者，非也，殊不知虽空而遇冲，冲空则实，虽墓而克破，破墓则开。",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1573",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1573,
+   "match": "果于次日",
+   "time_expr": "明日寅日",
+   "quote": "此卦亥水子孙独发，克去世爻之鬼，应在明日寅日，寅与亥合，合起子孙之日，尔无忧也，果于次日退灾，不药而愈，亦不独此，又因卯木财空，次日出空而退灾。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1581",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1581,
+   "match": "果于卯日",
+   "time_expr": "果于卯日",
+   "quote": "世爻之鬼，乃满腹忧疑之象，申金克去身边之鬼则无忧也。果于卯日过关，并无阻滞。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1659",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1659,
+   "match": "果于八月",
+   "time_expr": "果于八月",
+   "quote": "则子动生财，生之不起，况世与子孙，一同变鬼，不独营运难图，今秋必因子女以致官非。果于八月，因子赌博送官，子受杖刑而死。此应酉金子孙应变鬼，",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1680",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1680,
+   "match": "果于戌日",
+   "time_expr": "果于戌日",
+   "quote": "如何得雨？余曰：午火子孙临日月旺之极矣，乃为用爻重叠，逢墓库以收藏，故知戌必雨。果于戌日申时雨。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1693",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1693,
+   "match": "后果无音讯",
+   "time_expr": "四年",
+   "quote": "日克音信茫然之兆也。而世爻卯木虽遇日生月合，何益于事。杀生身勿将吉断，此之谓也，后果无音讯，四年知父而遇害矣。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1723",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1723,
+   "match": "果于丁亥日",
+   "time_expr": "生于申日",
+   "quote": "：亥水子孙长生于申日，世遇日建逢生，虽化戌土之克，春令土衰，卯月克制，有杀无妨。果于丁亥日全愈。岂知卯木虽克戌土，还有相合之意，亥水虽长生，戌土亦得长生于申，后至巳月亥逢月破，巳火生助戌土，谚语：斩草不除根，萌",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1741",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1741,
+   "match": "果于七月",
+   "time_expr": "果于七月",
+   "quote": "与前卦，卦名虽殊，其理一也。又是亥水财爻被回头克，不独难以到任，还妨秋令危灾。后果于七月，先得泻疾，略好后，因服补药太过，吃一次药，只能喝一两水，后竟渴死。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1798",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1798,
+   "match": "果于巳年",
+   "time_expr": "果于巳年",
+   "quote": "报出行文拿问；又见邸报，江南抚军果以原品起用；又本府府尊命下，不准复职，后援刑例果于巳年补陕庆阳府知府。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1862",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1862,
+   "match": "果于申日",
+   "time_expr": "生于亥日",
+   "quote": "援例，如不知成否？余曰：此卦官星持世，长生于亥日，业已成矣。亥水为财，财旺生官。果于申日文书实收俱到，应申日者，寅木官星持世，静而逢冲之日也。若以流年作鬼断者，如天远矣。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1871",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1871,
+   "match": "果死",
+   "time_expr": "须防亥日",
+   "quote": "有古窖，何时得财？余曰：卦中鬼变子孙，目下子女不利，彼小女出花，余曰：须防亥日，果死于亥日。彼问：何所问得财，神报目下而死女？应亥日者，午火鬼化亥水子也。又如酉月甲辰日占本月月令。得遁之姤卦。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1887",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1887,
+   "match": "果于七月",
+   "time_expr": "果于七月",
+   "quote": "我问小厮，如何应在功名？余日：神之机常常如此，舍小事而报大凶，公之诸事须宜慎之，果于七月，被论革职，此占他而应我也！",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1903",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1903,
+   "match": "果于八月",
+   "time_expr": "初生两月",
+   "quote": "近病，卦得六冲即愈，只不宜爻中现出子孙变鬼，伊曰：小儿初生两月。余日：八月防之。果于八月其子惊风，又来卜之。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1911",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1911,
+   "match": "果死",
+   "time_expr": "难过酉月",
+   "quote": "，难过酉月卯日。还有救否？余曰：向占母病，已应八月死子。今又得此凶卦，何以救之？果死于卯日。夫应于卯日者，乃实破之日也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1971",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1971,
+   "match": "果于次日",
+   "time_expr": "明日卯时",
+   "quote": "断曰：两爻火鬼暗动，今日还是阴天，卯木财爻化出子孙子水，明日卯时必晴。果于次日卯时，云开日出，此子水者既临月建，又有亥月拱之，旺之无比。若以之为霜雪，不独不晴，既当雪深十尺。所以占天时，不论旺衰，亦",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1980",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1980,
+   "match": "果于戌时",
+   "time_expr": "戌亥时",
+   "quote": "断日寅木子孙化进神，今日大晴，五爻戌土鬼动，戌亥时必主黑云。果于戌时，星辰无光。若以一日之烟雾断者，错也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1992",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1992,
+   "match": "果于辰日",
+   "time_expr": "余断辰日",
+   "quote": "不晴矣。余断辰日天阴，巳日必雨。何以知其巳日雨？卦中申金父爻暗动，动而逢令之日，果于辰日天变，巳日大雨，故曰，子孙爻、财爻、化鬼，晴之不久，父爻动化子，乃雨之不久，非阴晴而难定。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2002",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2002,
+   "match": "果于酉时",
+   "time_expr": "今日酉时",
+   "quote": "彼曰：何也？余曰：六爻酉父化子，今日酉时落日。初爻卯木化辰鬼，明朝辰日必是阴云。果于酉时忽然天开，见日色。次日迷云而雨。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2038",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2038,
+   "match": "果于酉时",
+   "time_expr": "果于酉时",
+   "quote": "断曰：鬼化退神雨将止矣，果于酉时雾散天开。凡得父化退神，雨亦将止。兄动化退神，云将开。于子孙财爻化退神者，晴不久矣。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2068",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2068,
+   "match": "果于次日",
+   "time_expr": "明日辰日",
+   "quote": "，月建又是父爻，明日辰日冲动，戌父必然有雨。余曰：戌临月破，如何有雨？阴云而已，果于次日常见阴云。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2084",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2084,
+   "match": "果于寅日",
+   "time_expr": "故知卯日",
+   "quote": "寅木鬼动值旬空，出空之日，必定天变。前卦卯木父变辰土子孙，故知卯日必雨辰日必晴。果于寅日云卯日大雨辰日大晴。所以动则不为空矣。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2093",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2093,
+   "match": "果于酉日",
+   "time_expr": "酉日",
+   "quote": "：非也，化出酉父，酉日就当有雨。但因日建，又因午火，必待戌日午火入墓，方晓有雨。果于酉日天变，戌日而雨，午火财爻墓于戌也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2127",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2127,
+   "match": "果于次日",
+   "time_expr": "",
+   "quote": "断曰：卯木财现，明日必晴。但卦得内外反吟，晴而还雨，果于次日晴还又雨。",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2171",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2171,
+   "match": "果于",
+   "time_expr": "",
+   "quote": "一卦财动，一卦子动，不见父鬼爻动，知其晴，果于中秋夜，月明星稀。",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2180",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2180,
+   "match": "果于本日",
+   "time_expr": "今日申戌时",
+   "quote": "彼以父动有雨，余曰：应时日看，今日申戌时而无雨者，明日必有雨也。果于本日申时雨。彼：又是如何申时雨？余曰：戌土是长生在申。又问：雨至何时？余曰：父化退神，雨不久。明日必晴。果于次日大晴，野鹤曰",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2240",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2240,
+   "match": "果至卯年",
+   "time_expr": "亥日",
+   "quote": "断曰：世爻虽空，月建合之，亥日生之，子水财爻动而生世，卯年一定成家，丑年占卦，果至卯年立业成家。彼时定鼎之初，云贵才平，此人于川中带出附子黄莲桑材数担，勃然家蓄数千余金，从此立业成家，连年丰足，此岂可谓终身",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2268",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2268,
+   "match": "果于寅年",
+   "time_expr": "未年",
+   "quote": "未年定登金榜。伊曰：予知不能，竟无此念。余曰：尔虽以财为问，而神告将来可成名。后果于寅年医好富翁，厚赠读书。午年一榜，富翁及亲友又赠，援例县令，未几丁艰，及至补缺未几，里误而归，囊筐消然。应寅年者，寅年而实空",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2324",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2324,
+   "match": "果于卯年",
+   "time_expr": "果于卯年",
+   "quote": "戌土之财，暗动生世。虽可许名，不敢指以年月，后卦世临未土而逢空，实空之年包出仕。果于卯年援例入临，巳年初任兵马即加纳县令，未年再位江南。旧注官鬼持世疾病缠绵，若是贵人。勿以此断。此人原非贵人。岂谓之疾病缠绵耶",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2332",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2332,
+   "match": "果于午年",
+   "time_expr": "巳午年",
+   "quote": "名？彼曰功名之念已灭。余曰：世临日建月建生身，必主显贵中举，巳午年富贵逼人来也。果于午年保举，虽非科甲，身为科里之官，此岂可谓父母持身辛勤劳碌耶？",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2354",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2354,
+   "match": "果至巳月",
+   "time_expr": "今年五月",
+   "quote": "之克，上爻未土又克，目下虽则无妨，今年五月冲开其合，或是酉月冲开卯木，须防不测。果至巳月而生恶疮，卒于酉月。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2431",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2431,
+   "match": "果卒",
+   "time_expr": "不宜寅月",
+   "quote": "断曰：世化申金回头之生，不宜寅月冲破，又嫌戌土未土动而克而无生也，须防卯岁，果卒于卯年，乃应戌土逢合之年而克世也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2451",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2451,
+   "match": "果于正月",
+   "time_expr": "正月亥日",
+   "quote": "为少女，勿贪幼妇。彼曰：应在何时？余曰：交春可以避之。彼曰：年岁逼如何远去？不意果于正月亥日宿于妾房，被贼明火入室，席卷一空，身受木器所伤，若不宿于少妇之室，或者扒墙而出，未必受其伤。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2465",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2465,
+   "match": "果于九月",
+   "time_expr": "果于九月",
+   "quote": "断曰：世爻亥水临日辰，岂当重重土克？今冬防厄。果于九月成痨，腊月而死。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2532",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2532,
+   "match": "后果从北来",
+   "time_expr": "",
+   "quote": "此议论，兄动化进神乃破财之象，午火得令而生世，往南避之为吉。信余之言，皆从南避，后果从北来，放火烧村而去，房屋稻毂尽成灰烬，乃申金兄动破财之故耳，所以生方为吉，子孙之方亦吉，又当以旺衰分别，火乃鬼方，生我何碍。",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2606",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2606,
+   "match": "后果异母有出",
+   "time_expr": "",
+   "quote": "之兄爻，如何亦不得济。余曰：第四爻申金化出之亥水，即是此爻，卦之微妙，尔岂得知。后果异母有出，父亡而扶之。余曰：投真成人，后事未老。古法父母而有兄弟胞于异母，余未得试。（此句不知所谓，乃鲁鱼之讹，待有善本者告知其",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2653",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2653,
+   "match": "果于次年",
+   "time_expr": "次年六月",
+   "quote": "从六爻动来生世，此子见归。彼曰：何时得见？曰：明岁申辰与酉金相合，定然得意而归。果于次年六月父子相逢。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2704",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2704,
+   "match": "果于",
+   "time_expr": "今日子日",
+   "quote": "旺父持世，官动生之，因今日子日冲午火伤金，此经相宜。下科壬子冲去午火，管许高发，果于子科中魁。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2750",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2750,
+   "match": "后果取超等补禀",
+   "time_expr": "",
+   "quote": "未土财爻虽动，喜其生助酉金，酉官生世，名为接续相生，一定篇篇华锦。财生官旺优等。后果取超等补禀。野鹤曰：大凡卦遇六冲变冲及六爻乱动，父旺世旺，还考平等。倘若父衰受刑克及世爻休囚受克及变凶者，孙山无疑。",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2784",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2784,
+   "match": "果得",
+   "time_expr": "申日",
+   "quote": "寅木旺官持世，申日冲之，暗动又得日辰会成财局，不唯不克世爻，反来生世，一定高捷，果得及第。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2807",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2807,
+   "match": "果得",
+   "time_expr": "",
+   "quote": "此卦官星持世，虽则不旺，初爻官生父旺，与前卦相合，许之吉兆，果得成名。凡得六冲卦，官父世爻俱旺者，不必再占，竟许必得。如父旺者，须再占一卦，再得吉者，以吉断之，后卦凶者，即以凶推。凡得",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2838",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2838,
+   "match": "后果另选别人",
+   "time_expr": "",
+   "quote": "，不来生世，正所谓出现无情，此缺不得。彼曰：如何不得？余曰：官生应爻，一定不得，后果另选别人。",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2859",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2859,
+   "match": "果得",
+   "time_expr": "墓于未日",
+   "quote": "   断曰：卯木旺官持世，子水财动相生，虽则墓于未日，幸世反得助，无妨，果得升于亥月。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2868",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2868,
+   "match": "果得",
+   "time_expr": "十一月",
+   "quote": "生助午火之鬼，火鬼克世，乃为助鬼伤身。幸辰土生申金，午火贪生忘克，今年冬月必升，果得升于冬月。应冬月者，辰土化子水空亡，十一月则不空矣。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2869",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2869,
+   "match": "果得",
+   "time_expr": "前篇亥月",
+   "quote": "古以晋升为吉，又云屯蹇为凶。晋卦升卦，果得屡验。亦要世爻得地，若失陷，亦不为吉。屯卦蹇卦，世爻旺者何妨。前篇亥月丙寅日占验，世爻旺者，竟超升，岂非屯卦耶？",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2879",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2879,
+   "match": "果得",
+   "time_expr": "",
+   "quote": "官星，许之真定。彼曰：何也？余曰：巳火官星，乃南方也，必得真定，真乃都门之南也。果得真定。又有以初爻为内地，以五爻六爻为边缺。应初爻者，世与官星皆在初爻者是也。应五六爻者，或世在五爻，官在六爻；或世在六爻",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2900",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2900,
+   "match": "果于八月",
+   "time_expr": "午日",
+   "quote": "虎，如何主孝？余曰：迂也，午日冲动子水，父母被戌土财爻克，世化官空，八九月必见，果于八月丁艰。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2990",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2990,
+   "match": "后果降调而归",
+   "time_expr": "又子月",
+   "quote": "星持世后，果官至命事，又子月乙亥日官至方伯。问将来能于开府否？连占三卦子孙持世，后果降调而归。又因占会试许之必中，又问可能鼎甲否？余曰：必须再占一卦。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2998",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2998,
+   "match": "果得",
+   "time_expr": "亦应辰年",
+   "quote": "甲也。公曰：此数暗含我机，我少年得一预兆，亦应辰年。伤(毕)即回，至甲辰科殿试，果得首唱传(胪)。以教人指其事而占者，无不验也，何必谆谆执古法而猜耶。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3008",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 3008,
+   "match": "果应",
+   "time_expr": "许寅年",
+   "quote": "内卦寅木父母旺而化出子水之官，许寅年仍以原品起用，果应于寅年。后终于未年。又以此卦悟之，初爻寅年而起用，上爻卯木父动而化未年，占时未墓爻空，谓之空墓以待死，所以终于实墓之年，",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3035",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 3035,
+   "match": "果得",
+   "time_expr": "但喜卯日",
+   "quote": "世无财，但喜卯日即是财星，古以财爻持世冲世者必得，况应爻未土旺而生世，明日必获，果得财，应辰日者，世动逢合之日也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3043",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 3043,
+   "match": "果于次日",
+   "time_expr": "",
+   "quote": "爻日破月破，不克变出之财，日月俱作财来冲世，只因应爻而逢空，明日冲实，定送财来，果于次日送来。",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3067",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 3067,
+   "match": "果于出空之日",
+   "time_expr": "出亥日",
+   "quote": "断曰：官星持世而空，出亥日得见，官府财利如心，果于出空之日见官，财利得意，月建财爻生世之故耳，官世相合，财动相生，财持世，官无缺陷，再得日月照临，彼此缘投有幸。日月照临者，日月生",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3107",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 3107,
+   "match": "果于正月",
+   "time_expr": "财爻子月",
+   "quote": "财爻子月生之，财有根蒂，目下不得价者，被申金动而克制，待寅月冲去申金，其价必涨，果于正月勃然大长，此乃财爻被克待冲去克神之月。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3132",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 3132,
+   "match": "后果中间人作弊",
+   "time_expr": "",
+   "quote": "地豆子必贱，子水日建而生世爻，必能得厚利。但闲间爻兄弟月生日合，耗费的钱一定多。后果中间人作弊，告到官府，误了一个月。幸好到地头上价格上涨，果然得了厚利。此乃指其地而占者无不验也。",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3152",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 3152,
+   "match": "果于辰日",
+   "time_expr": "明日辰日",
+   "quote": "财，卯木财爻化退神酉金兄动亦化退神，幸得财临日辰旺而不退，明日辰日合住酉爻必得，果于辰日。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3164",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 3164,
+   "match": "后果买马七十余匹",
+   "time_expr": "",
+   "quote": "，外卦未土子孙，又临月破，不宜买，幸而间爻酉财暗动生世，马虽多死，财不致于大耗，后果买马七十余匹，一路多死，仅存二十八匹，幸而得价不然大亏其本。",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3174",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 3174,
+   "match": "果于",
+   "time_expr": "今日巳午时",
+   "quote": "，虽可制火，今日巳午时切不可斗。彼曰：何也？余曰：巳午时午火父母得令，必克子孙，果于早胜，午时又大败破财。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3190",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 3190,
+   "match": "果于次日",
+   "time_expr": "次日巳时",
+   "quote": "戌土财爻动而生世，又得世应相生，戌土虽值旬空，动不为空，明日出空之日，求之必允，果于次日巳时允婚，夫妻白头相守，儿女成行。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3198",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 3198,
+   "match": "后果聘定于四月",
+   "time_expr": "定于四月",
+   "quote": "二人财被回头克又逢丑土之克，如何能生卯木之官？男女不能相合相生，婚虽成终有他变，后果聘定于四月，未及成婚被贼兵劫去，应巳月者亥水逢月破也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3213",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 3213,
+   "match": "果于次年",
+   "time_expr": "次年寅月",
+   "quote": "相生，两人情密。彼曰：果然。后如何？余曰：两人不是姻缘，虽则不能死别，必有生离，果于次年寅月休妻，此人六月再取彼妇，应寅月者，夫临寅木而冲世也，应六月者未土冲开初爻丑土，子水来生其寅木也。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3263",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 3263,
+   "match": "果于壬申日",
+   "time_expr": "果于壬申日",
+   "quote": "动变阴，必然主女。彼曰：小过卦谓之阴包阳，如何生女？余曰：神兆机于动，先重动爻。果于壬申日生女，产母平安。觉子曰：占妻平安及占男女，原宜分占，彼若闲时而问兼问者，还可同断，若在临产危急时而问者，切不可以男女而断",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3306",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 3306,
+   "match": "后果在外平安",
+   "time_expr": "",
+   "quote": "冲克，必不安矣。今问其来否，不以此断，只可断用神伏藏也，克而不来，六合冲亦不来，后果在外平安。",
+   "status": "仅验语"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3314",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 3314,
+   "match": "果于巳日",
+   "time_expr": "巳日",
+   "quote": "，不以此断，世空者速至，此人来矣，巳日必到，应巳日者，冲空之日也，巳火又是财爻，果于巳日到。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3330",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 3330,
+   "match": "果于申时",
+   "time_expr": "乃是午日",
+   "quote": "断曰：今日乃是午日，午火父爻克世爻，今日必到。果于申时到。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3338",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 3338,
+   "match": "果于巳日",
+   "time_expr": "巳日",
+   "quote": "断曰：子水财爻化出巳火父爻，动爻不克变爻，巳日必到，果于巳日到。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3347",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 3347,
+   "match": "果于巳日",
+   "time_expr": "曰：巳日",
+   "quote": "扶，夫生世爻必有归志。问曰：何日可到。余曰：巳日必到，应巳日者，合住申金之日也。果于巳日到。或曰：用爻有病，莫问归期，此卦申金化进神以克寅木，如何许回？余曰：彼问夫之平安，即以不利断之，今加往他处去否，夫爻受",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3559",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 3559,
+   "match": "果于次年",
+   "time_expr": "寅日",
+   "quote": "断曰：午火官鬼持世，寅日生之，外卦巳合官局，明年、巳年、午年连升大位，果于次年一岁两升，午年又升官至二品。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3671",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 3671,
+   "match": "果得",
+   "time_expr": "公郎五年",
+   "quote": "红原乳，入数百钱内，公可设下香案，祷告于天，得红原钱者，即其穴也，令人遍地洒之，果得原钱于红花之下，掘之周围仅有丈余，皆泥土也，余皆石块，此公次年开府，两公郎五年之内俱登甲榜。",
+   "status": "可联盘候选"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3682",
+   "book": "增刪卜易(dz)",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 3682,
+   "match": "后果歪者仍归于正向",
+   "time_expr": "",
+   "quote": "地洼终无消水之法，不得不选地而迁也。或因地风吹歪棺木者，前得挖坑二三尺，以探之，后果歪者仍归于正向，命道安坟则吉。",
+   "status": "仅验语"
+  }
+ ]
+}
