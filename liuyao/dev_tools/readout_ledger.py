@@ -116,7 +116,7 @@ def checks():
         ("b7162bfc99e2cce8", "a46f7374276a17a6"))
     add("bazi.golden(2a4c/1a0f)", "176批前", lambda t: _golden("bazi"),
         ("2a4c9258d6c1e4cb", "1a0f165ebfa7b6da"))
-    add("governance(55/36, blk 24/25)", "194批（226 批更新：六爻加待裁简报生成器）", lambda t: _gov_counts(), ("55", "36", "24", "25"))
+    add("governance(56/36, blk 24/25)", "194批（230 批更新：六爻加批次号体检器）", lambda t: _gov_counts(), ("56", "36", "24", "25"))
 
     def c_tier_consistency(t):
         ml = json.loads((ROOT / "liuyao" / "docs" / "GOVERNANCE-MAP.json").read_text(encoding="utf-8"))

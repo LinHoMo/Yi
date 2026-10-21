@@ -1,8 +1,8 @@
 {
- "count": 55,
+ "count": 56,
  "by_tier": {
   "tool": 3,
-  "ondemand": 10,
+  "ondemand": 11,
   "nightly": 10,
   "build": 8,
   "blocking": 24
@@ -48,6 +48,13 @@
    "guards": "一行规则基线×引擎对照（读数器）",
    "run_by_check_py": false,
    "doc": "一行规则基线库（第一百八十三批·A1）——用最小策略丈量整个引擎的保真增量。"
+  },
+  {
+   "script": "batchnum_audit.py",
+   "tier": "ondemand",
+   "guards": "批次号标题级体检（230 批常设化：唯一+单调，锚与字符类教训铸成 fixture；审计非门）",
+   "run_by_check_py": false,
+   "doc": "批次号体检器（第两百三十批）——229 批一次性探针的常设化（\"随月巡可重放\"须有可放之物）。"
   },
   {
    "script": "build_adjudications.py",
