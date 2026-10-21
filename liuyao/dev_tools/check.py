@@ -833,7 +833,9 @@ def main() -> int:
         return 1
 
     if args.raise_baseline:
-        new = dict(BASELINE)
+        # 241 批修：合并基＝盘上已生效基线（含历史 --raise），非代码字面默认——
+        # 旧形在 --only/--fast 部分跑时把未参与本轮的键静默打回默认（抬过的地板暗降）。
+        new = dict(baseline)
         new.update({k: v for k, v in measured.items()})
         BASELINE_FILE.write_text(json.dumps(new, ensure_ascii=False, indent=2) + "\n",
                                  encoding="utf-8")

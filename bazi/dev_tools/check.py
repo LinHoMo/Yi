@@ -584,7 +584,9 @@ def main() -> int:
 
     if args.raise_baseline:
         if measured:
-            new = dict(BASELINE)
+            # 241 批修：合并基取 _effective_baseline()（含盘上抬过的覆盖）非字面默认——
+            # 旧形在 --fast 部分跑时把未测键的覆盖整段丢弃（读守卫防"写低"防不了"删键"）。
+            new = dict(_effective_baseline())
             new.update(measured)
             BASELINE_FILE.write_text(json.dumps(new, ensure_ascii=False, indent=1) + "\n",
                                      encoding="utf-8")
