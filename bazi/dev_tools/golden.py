@@ -4,9 +4,10 @@
    python dev_tools/golden.py verify            # 默认；漂移退出码 1
    python dev_tools/golden.py capture "理由"    # 有意漂移后落基线（必须给理由）
 
-为什么从 6 例扩到 44 例，并且改哈希面（2026-10-12 第一百二十九批）：
+为什么从 6 例扩到 44 例，并且改哈希面（2026-10-12 第一百二十九批；233 批改写计数措辞）：
 1. **旧机械层只取 6 个字段**（strength/strength_score/pattern/useful_gods/dayun 首行
-   ＋pillars），而 `analyze()` 的 conclusion 实测有 **28 个顶层键**——`pattern_cheng_bai`
+   ＋pillars），而 `analyze()` 的 conclusion 顶层键远多于此（原注"实测 28 个"系单输入观察值，
+   随条件键起落会漂移——233 批按 218 规去除手写计数）——`pattern_cheng_bai`
    `tong_guan` `tian_ke_di_chong` `san_hui` `pillar_relations` `ten_god_combos`
    `nayin_xiangge` `timing` `verdicts` `female_fu_zi` `taboo_gods` … 行为变了，
    机械层**一概看不见**，只能靠措辞层偶然发现，且发现不了"改了字段没改措辞"这一类。

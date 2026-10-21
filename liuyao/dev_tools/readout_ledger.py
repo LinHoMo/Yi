@@ -228,6 +228,35 @@ def checks():
         miss = [x for x in claims if not (resolve(doc, x) or resolve(s5, x))]
         return f"{len(claims)}/{len(claims) - len(miss)}"
     add("SKILL 合同路径(20/20 可达)", "232批（22 系含 .py 引用的粗提数，工具正确排除后实算 20——期望又取自记忆非实算，账台首跑即抓）", c_skill_paths, ("20/20",))
+
+    # 八字 api_spec 合同键审计（233 批）：反引号小写键须现算可达。
+    # 探针教训铸死在此：chart 无 dayun（analyze 现算）、dayun 需 gender——两次空结果
+    # 皆探针形错非文档漂移（§四.8 第三次救「冤枉文档」）。
+    def c_bazi_api_keys(t):
+        import subprocess as sp
+        B = ROOT / "bazi"
+        sp.run([sys.executable, "-X", "utf8", "scripts/chart.py", "--datetime", "1990-06-15 10:00",
+                "--gender", "男", "-o", "scratch/_led_bz_c.json"], capture_output=True, cwd=str(B))
+        sp.run([sys.executable, "-X", "utf8", "scripts/analyze.py", "scratch/_led_bz_c.json",
+                "-o", "scratch/_led_bz_a.json"], capture_output=True, cwd=str(B))
+        doc = json.loads((B / "scratch" / "_led_bz_a.json").read_text(encoding="utf-8"))
+        keys = set()
+        def walk(o, d=0):
+            if d > 7:
+                return
+            if isinstance(o, dict):
+                keys.update(o.keys())
+                for v in o.values():
+                    walk(v, d + 1)
+            elif isinstance(o, list):
+                for v in o[:8]:
+                    walk(v, d + 1)
+        walk(doc)
+        spec = (B / "references" / "api_spec.md").read_text(encoding="utf-8")
+        toks = [x for x in sorted(set(re.findall(r"`([a-z][a-z0-9_]{2,30})`", spec))) if "." not in x and "/" not in x]
+        miss = [x for x in toks if x not in keys]
+        return f"{len(toks)}/{len(toks) - len(miss)}"
+    add("八字 api 合同键(19/19 可达)", "233批（合同面两科对齐；探针形错两次已铸死于注释）", c_bazi_api_keys, ("19/19",))
     add("prospective 口径sha(7867316a7303)", "180批生效/216批落值入册",
         c_rule_sha, ("7867316a7303",))
 
