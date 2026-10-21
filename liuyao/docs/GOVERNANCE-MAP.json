@@ -171,7 +171,7 @@
   {
    "script": "check_raise_regression.py",
    "tier": "nightly",
-   "guards": "--raise 合并基回归守卫（244 批：241 病的常设齿，静态双钉＋bytes 级功能探针自恢复）",
+   "guards": "--raise 回归守卫（244 静态双钉+六爻秒档；246 八字慢档=入口拒绝守卫+失败零副作用——两科病防在不同层）",
    "run_by_check_py": false,
    "doc": "--raise 合并基回归守卫（第两百四十四批）——241 修的病不许无声复发。"
   },

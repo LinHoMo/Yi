@@ -34,6 +34,35 @@ except Exception:
 
 PIN_LU = "new = dict(baseline)"       # 241 修复行（六爻）
 PIN_BZ = "new = dict(_effective_baseline())"  # 241 修复行（八字）
+BZ_CHECK_PY = BZ_CHECK
+BZ_BASE = ROOT / "bazi" / "dev_tools" / "check_baseline.json"
+
+
+def functional_probe_bazi() -> list:
+    """慢档（分钟级，月巡用）：八字的病防在**另一层**——246 批两轮实探发现：
+    `--fast --raise` 被八字 raise 入口守卫直接拒绝（"未取到任何对齐分，拒绝登记基线"），
+    部分跑路径在八字侧本就被封。故本探针验的是**拒绝守卫**而非键存活：
+    预埋 tune:100.1 → `--fast --raise` → 必 rc≠0（拒登）且文件原样未动（失败路径零副作用）。
+    （顺带首验了读侧"覆盖只准抬"守卫：低于登记值的预埋会被拒——本探针换 100.1 过境。）"""
+    bak = BZ_BASE.read_bytes() if BZ_BASE.exists() else None
+    try:
+        BZ_BASE.write_bytes(json.dumps({"tune": 100.1}, ensure_ascii=False).encode("utf-8"))
+        r = subprocess.run([sys.executable, "-X", "utf8", str(BZ_CHECK_PY), "--raise", "--fast"],
+                           capture_output=True, text=True, encoding="utf-8", errors="replace",
+                           timeout=1200, cwd=str(BZ_CHECK_PY.parent.parent))
+        out = (r.stdout or "") + (r.stderr or "")
+        if r.returncode == 0:
+            return ["八字 --fast --raise 竟被接受——入口拒绝守卫失效（246 语义）"]
+        if "拒绝登记基线" not in out:
+            return [f"八字 rc={r.returncode} 但非因拒绝守卫，需人工定性: {out[-120:]}"]
+        if not BZ_BASE.exists() or json.loads(BZ_BASE.read_text(encoding="utf-8")).get("tune") != 100.1:
+            return ["八字拒绝路径动了基线文件（失败应零副作用）——异常"]
+    finally:
+        if bak is not None:
+            BZ_BASE.write_bytes(bak)
+        elif BZ_BASE.exists():
+            BZ_BASE.unlink()
+    return []
 
 
 def static_pins() -> list:
@@ -99,13 +128,18 @@ def selftest() -> int:
 def main() -> int:
     ap = argparse.ArgumentParser(description="--raise 合并基回归守卫（241 病的常设齿）")
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--with-bazi", action="store_true",
+                    help="加八字慢档探针（分钟级，月巡第⑤步用；周度只跑秒级形）")
     args = ap.parse_args()
     if args.selftest:
         return selftest()
-    bad = run_all()
+    bad = static_pins() + functional_probe()
+    if args.with_bazi:
+        bad += functional_probe_bazi()
     for b in bad:
         print("× " + b)
-    print("√ raise 回归守卫全净（静钉×2＋功能探针）" if not bad else "判红 %d 处" % len(bad))
+    scope = "静钉×2＋六爻探针＋八字慢档" if args.with_bazi else "静钉×2＋功能探针（秒级形）"
+    print(("√ raise 回归守卫全净（%s）" % scope) if not bad else "判红 %d 处" % len(bad))
     return 1 if bad else 0
 
 
