@@ -389,10 +389,20 @@ def checks():
         sk = (DISC / "SKILL.md").read_text(encoding="utf-8")
         claims = [x for x in sorted(set(re.findall(r"`([a-z_]+(?:\.[a-z_\[\]0-9]+){1,})`", sk)))
                   if not x.endswith(".py") and "/" not in x]
-        sp.run([sys.executable, "-X", "utf8", "scripts/chart.py", "--mode", "manual",
-                "--yao", "7,8,9,7,6,8", "-o", "scratch/_ledger_probe_c.json"], capture_output=True)
-        sp.run([sys.executable, "-X", "utf8", "scripts/analyze.py", "scratch/_ledger_probe_c.json",
-                "-o", "scratch/_ledger_probe_a.json"], capture_output=True)
+        # 262 批双修：①mkdir——全新克隆无 scratch/（git 不存空目录），克隆复验 85 轮现形；
+        # ②显式 cwd＋rc 硬失败——本行自 232 起在根目录 cwd 下从未真跑过 chart（相对路径
+        #   落空、异常被 capture_output 吞、json.loads 吃的是旧交互残留文件＝活僵尸）。
+        #   教训：写盘型账行必须验证被调进程 rc，否则审计的是缓存而不是现势。
+        (DISC / "scratch").mkdir(exist_ok=True)
+        r1 = sp.run([sys.executable, "-X", "utf8", "scripts/chart.py", "--mode", "manual",
+                     "--yao", "7,8,9,7,6,8", "-o", "scratch/_ledger_probe_c.json"],
+                    capture_output=True, cwd=str(DISC))
+        if r1.returncode != 0:
+            raise RuntimeError("chart 探针未真跑 rc=%s" % r1.returncode)
+        r2 = sp.run([sys.executable, "-X", "utf8", "scripts/analyze.py", "scratch/_ledger_probe_c.json",
+                     "-o", "scratch/_ledger_probe_a.json"], capture_output=True, cwd=str(DISC))
+        if r2.returncode != 0:
+            raise RuntimeError("analyze 探针未真跑 rc=%s" % r2.returncode)
         doc = json.loads((DISC / "scratch" / "_ledger_probe_a.json").read_text(encoding="utf-8"))
         s5 = (doc.get("thinking_chain") or {}).get("step5_synthesis") or {}
         def resolve(d, path):
@@ -415,10 +425,15 @@ def checks():
     def c_bazi_api_keys(t):
         import subprocess as sp
         B = ROOT / "bazi"
-        sp.run([sys.executable, "-X", "utf8", "scripts/chart.py", "--datetime", "1990-06-15 10:00",
-                "--gender", "男", "-o", "scratch/_led_bz_c.json"], capture_output=True, cwd=str(B))
-        sp.run([sys.executable, "-X", "utf8", "scripts/analyze.py", "scratch/_led_bz_c.json",
-                "-o", "scratch/_led_bz_a.json"], capture_output=True, cwd=str(B))
+        (B / "scratch").mkdir(exist_ok=True)  # 同 262 修①：本行幸免因 bazi chart 自建目录，仍防其变
+        r1 = sp.run([sys.executable, "-X", "utf8", "scripts/chart.py", "--datetime", "1990-06-15 10:00",
+                     "--gender", "男", "-o", "scratch/_led_bz_c.json"], capture_output=True, cwd=str(B))
+        if r1.returncode != 0:  # 同 262 修②：rc 硬验（233 时代缺此，幸其一直带 cwd 真跑过）
+            raise RuntimeError("bazi chart 探针未真跑 rc=%s" % r1.returncode)
+        r2 = sp.run([sys.executable, "-X", "utf8", "scripts/analyze.py", "scratch/_led_bz_c.json",
+                     "-o", "scratch/_led_bz_a.json"], capture_output=True, cwd=str(B))
+        if r2.returncode != 0:
+            raise RuntimeError("bazi analyze 探针未真跑 rc=%s" % r2.returncode)
         doc = json.loads((B / "scratch" / "_led_bz_a.json").read_text(encoding="utf-8"))
         keys = set()
         def walk(o, d=0):
