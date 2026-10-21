@@ -21,9 +21,12 @@ VOLATILE = ("generated_at", "built_at")  # 时间戳变体字段：内容比较�
 
 
 def content_equal(a: dict, b: dict) -> bool:
+    """规范 JSON 序列化后比较——免疫 tuple/list 型别差（203 批实锤：graduate 的 date_key
+    是 tuple，落盘成 list，dict 相等永远 False → 每跑必空转重写；哈希双跑曾假阳性）。"""
     ka = {k: v for k, v in a.items() if k not in VOLATILE}
     kb = {k: v for k, v in b.items() if k not in VOLATILE}
-    return ka == kb
+    return (json.dumps(ka, sort_keys=True, ensure_ascii=False, default=list)
+            == json.dumps(kb, sort_keys=True, ensure_ascii=False, default=list))
 
 
 def write_stable(path: Path, doc: dict, indent: int = 1) -> bool:

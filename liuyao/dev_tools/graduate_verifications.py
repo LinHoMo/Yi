@@ -83,18 +83,18 @@ def classify(rec, lines):
         return "unrestorable", "块内（回溯 %d 行）无「X月Y日」日期键" % MAX_BACK, {}
     hm = HEX_FORMS.search(block)
     if not hm:
-        return "unrestorable", "有日期键但块内无「得X卦/得X之Y卦」卦面式", {"date": date_key}
+        return "unrestorable", "有日期键但块内无「得X卦/得X之Y卦」卦面式", {"date": list(date_key)}
     if hm.group(1):
         o, ch = resolve_hex(hm.group(1)), resolve_hex(hm.group(2))
     else:
         o, ch = resolve_hex(hm.group(3)), None
     if not o or (hm.group(2) and not ch):
-        return "partial_needs_human", "卦名异写不可唯一落表：%r" % (hm.groups(),), {"date": date_key}
+        return "partial_needs_human", "卦名异写不可唯一落表：%r" % (hm.groups(),), {"date": list(date_key)}
     ym = YING_PAT.search(block)
     ybranch = next((g for g in (ym.groups() if ym else ()) if g), None)
     if not ybranch:
         return "partial_needs_human", "卦面齐但书载验支不可提（块内无应X日/果于X日）", \
-            {"date": date_key, "original": o, "changed": ch}
+            {"date": list(date_key), "original": o, "changed": ch}
     try:
         yao = case_runner.hex2yao(o, ch)
         built = yao is not None
@@ -102,7 +102,7 @@ def classify(rec, lines):
         built = False
     if not built:
         return "partial_needs_human", "卦面对（%s→%s）但 hex2yao 装配失败——异写或表缺" % (o, ch), \
-            {"date": date_key, "original": o, "changed": ch}
+            {"date": list(date_key), "original": o, "changed": ch}
     return "restorable", "", {"date": "%s月%s日" % date_key, "original": o, "changed": ch,
                               "yingqi_branch": ybranch}
 
