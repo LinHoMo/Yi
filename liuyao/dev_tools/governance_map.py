@@ -101,7 +101,7 @@ CURATED = {
         "use_god_coverage": ("nightly", "用神来源矩阵"),
         "diff_jingshi_vs_core": ("ondemand", "京氏传↔内核逐格对拍"),
         "diff_shangzhan_vs_core": ("ondemand", "尚占↔内核逐格对拍"),
-        "fetch_huozhulin_cases": ("build", "火珠林采集通道（0 例待修=E3）"),
+        "fetch_huozhulin_cases": ("build", "火珠林采集管道（通道活：评分 2<5 未入集/定性 5 在册；196 批 selftest 八件证网无盲）"),
         "fetch_wikisource_cases": ("build", "维基文库案例采集管道"),
         "build_extra_dimensions": ("build", "额外评分维构建"),
         "build_question_use_gods": ("build", "问题→用神词典构建"),

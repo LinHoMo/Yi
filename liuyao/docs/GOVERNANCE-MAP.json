@@ -216,7 +216,7 @@
   {
    "script": "fetch_huozhulin_cases.py",
    "tier": "build",
-   "guards": "火珠林采集通道（0 例待修=E3）",
+   "guards": "火珠林采集管道（通道活：评分 2<5 未入集/定性 5 在册；196 批 selftest 八件证网无盲）",
    "run_by_check_py": false,
    "doc": "从维基文库《火珠林》原文抓取占验案例，本地确定性解析并三方校验后成外部集。"
   },

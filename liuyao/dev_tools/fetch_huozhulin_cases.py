@@ -543,6 +543,35 @@ def bounded_yingqi_context(text: str, start_pos: int) -> str:
 # ──────────────────────────────────────────────
 # 主流程
 # ──────────────────────────────────────────────
+def selftest() -> int:
+    """§四.8 负例自证（第一百九十六批补）：证明「可评 2 例」是鱼少不是网破。"""
+    fails = []
+    if resolve_hex("澤天夬") != "夬" or resolve_hex("天雷无妄") != "无妄":
+        fails.append("resolve_hex 归一/剥前缀失效")
+    if resolve_hex("不存在卦名甲乙") is not None:
+        fails.append("表外卦名被臆造解析")
+    ok, notes = validate_hex_pair("乾", "大壮")
+    if not ok:
+        fails.append("合法卦变被拒（乾之大壮）：%r" % (notes,))
+    pts = find_example_points("曰：如六月甲辰日占雨，得乾之大壮，应申时雨至。")
+    if not pts:
+        fails.append("合成可评案例 0 命中——抽取正则静默全盲（「2 例」读数作废）")
+    if find_example_points("乾为天，天行健，君子以自强不息。"):
+        fails.append("纯理论句被当成占例（假阳性）")
+    if not extract_date("六月甲辰日占雨"):
+        fails.append("extract_date 正向失效")
+    if extract_date("明日占雨"):
+        fails.append("无干支日却产出日期（假阳性）")
+    if "申" not in "".join(extract_all_yingqi("应申时雨至")):
+        fails.append("extract_all_yingqi 未提取申时")
+    if fails:
+        print("× selftest：" + "；".join(fails))
+        return 1
+    print("√ selftest：卦名归一/表外拒绝/卦变自洽/案例点命中/理论句假阳性/日期与应期提取 八件全过"
+          "——「可评 2 例」是书本身理论体的素材事实，通道无盲")
+    return 0
+
+
 def main() -> int:
     from yishu_core.runtime import force_utf8_stdio
     force_utf8_stdio()
@@ -550,7 +579,10 @@ def main() -> int:
     ap.add_argument("--report", action="store_true", help="只看统计，不落盘")
     ap.add_argument("--show", type=int, default=0, help="报告附带剔除样本数")
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--selftest", action="store_true", help="负例自证（§四.8，第一百九十六批）")
     args = ap.parse_args()
+    if args.selftest:
+        return selftest()
 
     SOURCES.mkdir(parents=True, exist_ok=True)
     if not RAW.exists():
