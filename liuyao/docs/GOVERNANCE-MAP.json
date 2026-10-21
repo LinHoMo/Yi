@@ -1,9 +1,9 @@
 {
- "count": 46,
+ "count": 47,
  "by_tier": {
   "tool": 2,
   "ondemand": 10,
-  "nightly": 6,
+  "nightly": 7,
   "build": 8,
   "blocking": 20
  },
@@ -282,6 +282,13 @@
    "guards": "名次键预注册实验（一次性报数器）",
    "run_by_check_py": false,
    "doc": "名次键实验（第一百九十批·C1）——预声明四键，tune 选择一次，外部只报数不回碰。"
+  },
+  {
+   "script": "readout_ledger.py",
+   "tier": "nightly",
+   "guards": "读数对账台（200 批：登记值 vs HEAD 重放值逐位核对，×＝分家立案）",
+   "run_by_check_py": false,
+   "doc": "读数对账台（第两百批·防御性维护）——登记值 vs 当前 HEAD 重放值，逐位核对。"
   },
   {
    "script": "refactor_guard.py",
