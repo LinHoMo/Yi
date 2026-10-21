@@ -131,6 +131,7 @@ CURATED = {
         "window_report": ("ondemand", "top-k 覆盖曲线读数器"),
         "governance_map": ("tool", "本器：治理地图生成"),
         "stable_write": ("tool", "观察册幂等写共享模块（203 批：时间戳=内容最后变化，杜绝空转脏文件）"),
+        "sweep_selftests": ("nightly", "器具全体检扫描器（213 批：声明面 53 器具逐真跑，注入损坏负例即体检；自身与编排器豁免）"),
         "__init__": ("tool", "包标记"),
     },
 }

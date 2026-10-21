@@ -1,9 +1,9 @@
 {
- "count": 53,
+ "count": 54,
  "by_tier": {
   "tool": 3,
   "ondemand": 10,
-  "nightly": 8,
+  "nightly": 9,
   "build": 8,
   "blocking": 24
  },
@@ -349,6 +349,13 @@
    "guards": "CSS 类名有定义（报告面）",
    "run_by_check_py": true,
    "doc": "样式层覆盖检查：报告里用到的类名，assets/report.css 必须都有定义。"
+  },
+  {
+   "script": "sweep_selftests.py",
+   "tier": "nightly",
+   "guards": "器具全体检扫描器（213 批：声明面 53 器具逐真跑，注入损坏负例即体检；自身与编排器豁免）",
+   "run_by_check_py": false,
+   "doc": "器具全体检扫描器（第两百一十三批）——55 个声明 --selftest 的器具逐真跑，首次系统化基线。"
   },
   {
    "script": "tianhou.py",
