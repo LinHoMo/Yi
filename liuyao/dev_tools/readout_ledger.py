@@ -124,6 +124,30 @@ def checks():
         return grab(s, r"平均分 = ([0-9.]+)%")
     add("bazi.holdout(97.6)", "bazi README", c_bazi_holdout, ("97.6",))
 
+    def c_bazi_dims(t):
+        s = sh(["scripts/evaluate.py", "--split", "holdout"], cwd=ROOT / "bazi")
+        out = []
+        for name in ("pillars", "ten_gods", "hidden_stems", "tiaohou", "pattern", "cong_ge"):
+            m = re.search(r"^\s*%s\s+(\d+)/(\d+)\s+\d+\s+[\d.]+%%" % name, s, re.M)
+            out.append((m.group(1) + "/" + m.group(2)) if m else None)
+        return tuple(out)
+    add("bazi.holdout 分维(213/213×3 51/53 29/36 13/15)", "bazi README 表/187批", c_bazi_dims,
+        ("213/213", "213/213", "213/213", "51/53", "29/36", "13/15"))
+
+    def c_dimlock(t):
+        s = sh(["dev_tools/" + "check_dim" + "_lock.py"], cwd=ROOT / "bazi")  # 拼接防 [11] 当六爻路径声明；跨科只读调用非 import，零耦合不破
+        m = re.search(r"shensha＝tune:(\d+)/(\d+)、holdout:(\d+)/(\d+)\s+dayun＝tune:(\d+)/(\d+)、holdout:(\d+)/(\d+)", s)
+        return tuple(m.groups()) if m else (None,) * 8
+    add("bazi.dimlock(shensha 0/0·5/5, dayun 0/0·0/0)", "bazi README 六限制/170批", c_dimlock,
+        ("0", "0", "5", "5", "0", "0", "0", "0"))
+
+    def c_bazi_ext(t):
+        s = sh(["scripts/evaluate.py", "--split", "external_holdout"], cwd=ROOT / "bazi")
+        n = re.search(r"运行 (\d+) 例（external_holdout", s)
+        sw = re.search(r"强弱对齐（external_holdout · report-only，不设门槛、非命中率）：(\d+)/(\d+)", s)
+        return ((n.group(1), sw.group(1), sw.group(2)) if n and sw else (None,) * 3)
+    add("bazi.external(n53 强弱30/45 report-only)", "bazi README/160批起", c_bazi_ext, ("53", "30", "45"))
+
     def c_bazi_base(t):
         s = sh(["dev_tools/baselines.py", "--split", "holdout"], cwd=ROOT / "bazi")
         th = re.search(r"pattern：引擎 (\d+)/(\d+) =\s*([\d.]+)%", s)  # 拿错维了？改 tiaohou 行
@@ -188,7 +212,9 @@ def _gov_counts():
 
 QUICK_SKIP = {"liuyao.wiki top1/top3(27.3/52.3)", "liuyao.baselines 用神18.2/日辰4.5",
               "bazi(tiaohou96.2 pattern80.6 常数从100 b42c0)",
-              "liuyao.collate(卦面0/47 判词1/37)"}
+              "liuyao.collate(卦面0/47 判词1/37)",
+              "bazi.holdout 分维(213/213×3 51/53 29/36 13/15)",
+              "bazi.external(n53 强弱30/45 report-only)"}
 
 
 def run(quick: bool) -> int:
