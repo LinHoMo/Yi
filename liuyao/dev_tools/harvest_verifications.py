@@ -32,6 +32,8 @@ sys.path.insert(0, str(DISC / "scripts"))
 from kernel_path import ensure_kernel_on_path  # noqa: E402
 ensure_kernel_on_path(__file__)
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
+sys.path.insert(0, str(HERE))
+from stable_write import write_stable  # noqa: E402  203 批：幂等写，时间戳=内容最后变化
 
 SOURCES = DISC / "data" / "sources"
 OUT_DEFAULT = DISC / "data" / "cases" / "verifications.json"
@@ -146,7 +148,7 @@ def cmd_run(sources_dir: Path, out_path: Path, book_filter) -> int:
            "note": "盘点册：不产 expected、不进评分集；自注有幸存者偏差，不得当命中率证据",
            "summary": _summary(records), "records": records}
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")
+    write_stable(out_path, doc)
     s = doc["summary"]
     print("√ 盘点册落成 %s｜总命中 %d 条（可联盘候选是其中 %d 条）"
           % (out_path.name, s["total"], s["by_status"].get("可联盘候选", 0)))

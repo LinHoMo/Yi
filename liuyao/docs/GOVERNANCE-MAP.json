@@ -1,7 +1,7 @@
 {
- "count": 48,
+ "count": 49,
  "by_tier": {
-  "tool": 2,
+  "tool": 3,
   "ondemand": 10,
   "nightly": 8,
   "build": 8,
@@ -303,6 +303,13 @@
    "guards": "零指纹漂移验收器",
    "run_by_check_py": false,
    "doc": "重构看门狗：拆分/搬家前后的「零指纹漂移」验收。"
+  },
+  {
+   "script": "stable_write.py",
+   "tier": "tool",
+   "guards": "观察册幂等写共享模块（203 批：时间戳=内容最后变化，杜绝空转脏文件）",
+   "run_by_check_py": false,
+   "doc": "观察册幂等写（第两百零三批）——内容不变则文件一字不动，时间戳＝内容最后变化时刻。"
   },
   {
    "script": "style_check.py",

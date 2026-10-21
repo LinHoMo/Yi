@@ -34,6 +34,7 @@ sys.path.insert(0, str(HERE))
 from kernel_path import ensure_kernel_on_path  # noqa: E402
 ensure_kernel_on_path(__file__)
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
+from stable_write import write_stable  # noqa: E402  203 批：幂等写，时间戳=内容最后变化
 import case_runner  # noqa: E402
 from version_collate import norm  # noqa: E402  繁简归一＝185 批同一函数（科内口径唯一）
 from yishu_core.symbols import HEXAGRAM_TRIGRAMS  # noqa: E402  64 卦名唯一真值源＝内核表键
@@ -142,7 +143,7 @@ def build() -> int:
                        "另批入册（§三.4：expected 只抄书载明写的验支）。179 批「可联盘候选 193」系"
                        "±3 行线索判据过度承诺，本册按块界重判为准（§六.2 回头改登记）。",
            "summary": cnt, "rows": rows}
-    OUT.write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")
+    write_stable(OUT, doc)
     print("√ 毕业台账落成 %s｜restorable %d｜partial %d｜unrestorable %d｜共 %d"
           % (OUT.name, cnt["restorable"], cnt["partial_needs_human"], cnt["unrestorable"], len(rows)))
     by_book = {}

@@ -30,6 +30,8 @@ sys.path.insert(0, str(DISC / "scripts"))
 from kernel_path import ensure_kernel_on_path  # noqa: E402
 ensure_kernel_on_path(__file__)
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
+sys.path.insert(0, str(HERE))
+from stable_write import write_stable  # noqa: E402  203 批：幂等写，时间戳=内容最后变化
 
 SRC = DISC / "data" / "sources" / "zengshan_buyi_dz.dz.txt"
 OUT = DISC / "data" / "rules" / "adjudications.json"
@@ -141,7 +143,7 @@ def cmd_build() -> int:
                        "不改引擎不进评分面不挂门（§176 冻结声明）。状态三值见 builder docstring。",
            "count": len(ENTRIES),
            "entries": ENTRIES}
-    OUT.write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")
+    write_stable(OUT, doc)
     print("√ 裁决表落成 %s｜%d 项分歧点（settled %d／frozen %d／open %d），书证 %d 条全部逐字回验过"
           % (OUT.name, len(ENTRIES),
              sum(1 for e in ENTRIES if e["status"] == "settled_by_source"),

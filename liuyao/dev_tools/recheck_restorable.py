@@ -29,6 +29,7 @@ sys.path.insert(0, str(HERE))
 from kernel_path import ensure_kernel_on_path  # noqa: E402
 ensure_kernel_on_path(__file__)
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
+from stable_write import write_stable  # noqa: E402  203 批：幂等写，时间戳=内容最后变化
 from yishu_core.symbols import HEXAGRAM_TRIGRAMS  # noqa: E402
 from version_collate import norm  # noqa: E402
 
@@ -110,7 +111,7 @@ def recheck() -> int:
            "_comment": "双解析器共识复核：consensus 条目人只裁语义；needs_human 标分歧字段。"
                        "升册永远是人的决定（§三.4），本册不改毕业册状态、不写 expected。",
            "n": len(rows), "consensus": n_ok, "needs_human": len(rows) - n_ok, "rows": rows}
-    OUT.write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")
+    write_stable(OUT, doc)
     print("√ 复核册落成 %s｜restorable %d → 双器共识 %d｜需人看分歧 %d"
           % (OUT.name, len(rows), n_ok, len(rows) - n_ok))
     for r in rows:

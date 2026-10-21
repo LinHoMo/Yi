@@ -115,7 +115,7 @@ def checks():
         ("b7162bfc99e2cce8", "a46f7374276a17a6"))
     add("bazi.golden(2a4c/1a0f)", "176批前", lambda t: _golden("bazi"),
         ("2a4c9258d6c1e4cb", "1a0f165ebfa7b6da"))
-    add("governance(48/34, blk 20/19)", "194批（201 批更新：+复核器；200 批 +分诊/对账）", lambda t: _gov_counts(), ("48", "34", "20", "19"))
+    add("governance(49/34, blk 20/19)", "194批（203 批更新：+幂等写模块）", lambda t: _gov_counts(), ("49", "34", "20", "19"))
 
     # --- 八字侧 ---
     def c_bazi_holdout(t):

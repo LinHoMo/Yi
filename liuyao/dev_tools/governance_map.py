@@ -26,10 +26,13 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT / "liuyao" / "scripts"))
 from kernel_path import ensure_kernel_on_path  # noqa: E402
 ensure_kernel_on_path(__file__)
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
+sys.path.insert(0, str(HERE))
+from stable_write import write_stable  # noqa: E402  203 批：幂等写，时间戳=内容最后变化
 
 TIERS = ("blocking", "nightly", "ondemand", "build", "tool")
 
@@ -121,6 +124,7 @@ CURATED = {
         "version_collate": ("ondemand", "两抄本源级对拍（185 批冲突率）"),
         "window_report": ("ondemand", "top-k 覆盖曲线读数器"),
         "governance_map": ("tool", "本器：治理地图生成"),
+        "stable_write": ("tool", "观察册幂等写共享模块（203 批：时间戳=内容最后变化，杜绝空转脏文件）"),
         "__init__": ("tool", "包标记"),
     },
 }
@@ -161,8 +165,7 @@ def build(strict=False) -> int:
                                     "unclassified": unc, "curated_but_missing": ghost,
                                     "rows": rows}
         dst = ROOT / disc / "docs" / "GOVERNANCE-MAP.json"
-        dst.write_text(json.dumps(out["disciplines"][disc], ensure_ascii=False, indent=1),
-                       encoding="utf-8")
+        write_stable(dst, out["disciplines"][disc])
         print("%s：%d 脚本｜blocking %s｜nightly %s｜ondemand %s｜build %s｜tool %s"
               % (disc, len(rows), tc.get("blocking", 0), tc.get("nightly", 0),
                  tc.get("ondemand", 0), tc.get("build", 0), tc.get("tool", 0)))

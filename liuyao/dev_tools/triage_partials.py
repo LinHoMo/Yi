@@ -29,6 +29,7 @@ sys.path.insert(0, str(HERE))
 from kernel_path import ensure_kernel_on_path  # noqa: E402
 ensure_kernel_on_path(__file__)
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
+from stable_write import write_stable  # noqa: E402  203 批：幂等写，时间戳=内容最后变化
 from version_collate import norm  # noqa: E402
 
 BR = "子丑寅卯辰巳午未申酉戌亥"
@@ -104,7 +105,7 @@ def triage() -> int:
                        "B 桶异写候选是 TRAD 表增补提案非既成事实",
            "input": len(rows), "buckets": {k: len(v) for k, v in buckets.items()},
            "rows": buckets}
-    OUT.write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")
+    write_stable(OUT, doc)
     print("√ triage 册落成 %s｜partial %d 条 → %s"
           % (OUT.name, len(rows), doc["buckets"]))
     print("  人可速裁面：A_有候选 %d（一键定夺）＋B_词袋可解 %d（附解析结果待签升级）＋"
