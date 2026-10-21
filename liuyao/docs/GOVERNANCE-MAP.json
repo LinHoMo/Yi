@@ -192,7 +192,7 @@
   {
    "script": "check_verdict_external.py",
    "tier": "blocking",
-   "guards": "结构层断语外置审计（210 批：§一.1 核对版 LOCK=0，抓到探针漏网 1 处）",
+   "guards": "结构层断语外置审计（210 判语族 LOCK=0；215 扩 advisory 语族同锁，抓到过迁移错节 bug）",
    "run_by_check_py": true,
    "doc": "结构层断语外置审计（第一百六十六批 §一.1 规矩的核对版，第两百一十批上门）。"
   },

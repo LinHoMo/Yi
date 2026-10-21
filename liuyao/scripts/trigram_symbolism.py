@@ -25,6 +25,7 @@
 # 内核定位规则只在 kernel_path.py 一份实现，不得在此另写路径拼接
 import labels_loader as _labels  # noqa: E402  210批 §一.1 断语外置
 _TRIG = _labels.load("trigram")
+_TRIGA = _labels.load("advice")  # 215批：advisory 语族另节（本节键名不与 career_ke 混用）
 import json
 import sys
 
@@ -351,26 +352,26 @@ def _body_use_analysis(upper: str, lower: str, elem_u: str, elem_l: str, relatio
     elif relation == "被克":
         return f"{body}；体克用——我为主动，需费力争取"
     elif relation == "比和":
-        return f"{body}；体用比和——内外谐顺，事多圆满"
+        return f"{body}" + _TRIGA["bihe"]
     else:
-        return f"{body}；体用关系待察"
+        return f"{body}" + _TRIGA["dai_cha"]
 
 def _career_advice(element_relation: str) -> str:
     """根据体用关系给事业建议"""
     if element_relation in ("生", "比和"):
-        return "顺势而为，可积极进取"
+        return _TRIGA["shunshi"]
     elif element_relation == "被生":
-        return "需付出心力，终有成就"
+        return _TRIGA["fuzhu"]
     elif element_relation in ("克",):
         return _TRIG["career_ke"]
     elif element_relation == "被克":
-        return "需努力争取，不可松懈"
-    return "观察形势，待时而动"
+        return _TRIGA["zhengqu"]
+    return _TRIGA["daishi"]
 
 def _health_advice(relation: str, elem_u: str, elem_l: str) -> str:
     """根据体用关系给健康分析"""
     if relation == "克":
-        return f"用克体不利健康——{elem_u}克{elem_l}，病情有进展之象，宜早治"
+        return _TRIGA["ke_ti_pre"] + f"{elem_u}克{elem_l}" + _TRIGA["ke_ti_post"]
     elif relation == "被克":
         return f"体克用——{elem_l}克{elem_u}，抗病有力，但耗费体力"
     elif relation == "生":
@@ -391,7 +392,7 @@ def _relationship_dynamic(upper: str, lower: str, relation: str) -> str:
     family_map = f"上卦{u_fam}外，下卦{l_fam}内"
 
     if relation == "比和":
-        return f"{family_map}；两气相投，和睦之美——交涉顺利，感情融洽"
+        return f"{family_map}" + _TRIGA["liangqi"]
     elif relation == "生":
         return f"{family_map}；外助内生——对方主动付出，关系中有施予之象"
     elif relation == "被生":
@@ -416,7 +417,7 @@ def _travel_advice(lower: str) -> str:
         return f"下卦{trait}——宜缓行，稳扎稳打"
     elif "险" in trait or "陷" in trait:
         return f"下卦{trait}——出行有险，须防不测"
-    return f"下卦类象{body}——出行宜备周全"
+    return f"下卦类象{body}" + _TRIGA["chuxing"]
 
 def _general_overview(upper: str, lower: str, u: dict, l: dict, relation: str) -> str:
     """通用总论"""

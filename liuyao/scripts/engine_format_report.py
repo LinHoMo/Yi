@@ -375,7 +375,7 @@ def build_timing(step5: dict, W: int = REPORT_WIDTH) -> list:
         # fallback: use step5 verdict to estimate timing
         verdict_now = step5.get("verdict", "")
         if verdict_now in ("大吉", "吉"):
-            lines.append("  应期推断：事顺势而为，逢值逢合应速。")
+            lines.append(_labels.load("advice")["yingqi_sushi"])
         elif verdict_now in ("凶", "平凶"):
             lines.append("  应期推断：守静安时，待用神旺相之月可转。")
         else:
