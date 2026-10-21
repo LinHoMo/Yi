@@ -554,6 +554,17 @@ def main() -> int:
     else:
         print("[25] 维度适用数锁 √")
 
+    # [26] 正则字符类 list 展平审计（AGENTS §二 硬规矩核对版，第两百零九批）：
+    # 内核 HEAVENLY_STEMS/EARTHLY_BRANCHES 是 list，`[%s] % 列表` 静默全盲无报错。
+    code, out = run(["dev_tools/check_regex_lists.py", "--selftest"])
+    for line in out.splitlines():
+        if line.strip():
+            print("  " + line.strip())
+    if code != 0:
+        fails.append("正则字符类 list 展平审计未过（负例无牙／本科存在直插违规）")
+    else:
+        print("[26] 正则字符类 list 展平审计 √")
+
     if ENC_WITNESS:
         fails.extend("产物编码退化：" + w for w in ENC_WITNESS)
     if fails:

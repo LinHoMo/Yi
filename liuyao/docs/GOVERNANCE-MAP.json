@@ -1,11 +1,11 @@
 {
- "count": 50,
+ "count": 51,
  "by_tier": {
   "tool": 3,
   "ondemand": 10,
   "nightly": 8,
   "build": 8,
-  "blocking": 21
+  "blocking": 22
  },
  "unclassified": [],
  "curated_but_missing": [],
@@ -146,6 +146,13 @@
    "guards": "fixture 声明干支/卦名可算",
    "run_by_check_py": true,
    "doc": "回归 fixture 不变量门：注释/声明里的干支与卦名，必须由日期和爻数组**算得出来**。"
+  },
+  {
+   "script": "check_regex_lists.py",
+   "tier": "blocking",
+   "guards": "正则字符类 list 展平审计（209 批：§二 静默全盲规矩的核对版）",
+   "run_by_check_py": true,
+   "doc": "正则字符类 list 展平审计门（第一百六十六批 §二 硬规矩的核对版，第两百零九批上门）。"
   },
   {
    "script": "check_rule_registry.py",

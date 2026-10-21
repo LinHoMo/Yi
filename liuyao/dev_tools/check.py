@@ -777,7 +777,9 @@ def main() -> int:
              "dev_tools/check_bing_yao.py"),
             ("prospective", "[28] 前瞻封存判卷（事件定义/窗口先于结果冻结；哈希链拒绝事后改写；"
                             "删失/旧口径/小样本显形——现实效度通道，与古籍对齐分永不同源）",
-             "dev_tools/prospective.py")):
+             "dev_tools/prospective.py"),
+             ("regex_lists", "[29] 正则字符类 list 展平审计（AGENTS §二 硬规矩核对版：10-13 静默全盲案首次有全库机器版）",
+              "dev_tools/check_regex_lists.py")):
         if want(key):
             print(f"\n{title}")
             rc, out = run([sys.executable, script, "--selftest"])

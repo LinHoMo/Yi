@@ -2,6 +2,8 @@
 
 ## 2026-10-21 第一百九十八批：**更正本仓第五条未经核验话术——197 批给本科登记的『golden 未纳入 conclusion』欠账系虚构**——实核三件：①本科 `golden.py` 模块头明载「机械层覆盖 conclusion 全部字段」；②`fingerprint()` 产 `conclusion_sha`＝conclusion 规范化哈希（第百零六批金标准壳时代即在，早于六爻 193 批）；③`golden_kit.split_rows` 以 `narrate_` 前缀分列，`conclusion_sha` 落机械层。故六爻 193 批的先例对本科**不存在可适用缺口**；197 批与 CAPABILITY 欠账清单第②条均为我未经实搜 extrapolate 的假账——本次是该类话术第五案（前四：eval 入库、31 例排除、huozhulin 待修、及本条），且首次发生在**我自己新造的登记文本**上；规矩补一条入 GOVERNANCE 精神条款：**欠账登记＝关于「不存在」的声称，落笔前须一次 grep/实跑证其不存在**。CAPABILITY.md 欠账②已就地更正（留删除线可审计），197 批原文不改写。零代码零指纹改动；两科 `check.py` 于仓库根实跑 rc=0。
 
+## 2026-10-21 第两百零九批（两科，指针）：**门 [26] 上线：正则字符类 list 展平审计（§二 静默全盲规矩首个核对版）**——AST 扫本科 68 份 .py 的动态正则构造，内核 list 直插/无展平别名判红、join 展平放行；器内三负例＋扫描数下限守卫（防「扫 0 报干净」），实跑违规 0。接线小案：路径拼接破坏治理图挂闸检测（拼接只服务不存在示例串，真实文件写字面量），已归正。六爻门号 [29]，全文见六爻 CHANGELOG 同批；治理图 35 脚本 blocking 24。两科 check rc=0（仓库根）。
+
 ## 2026-10-21 第两百零七批（两科，指针）：**tier 一致性断言落地，本科五项误标更正**——corpus_reports/corpus_wiring_report/verdict_audit/sync_tiaohou/sync_nayin 实为 check 挂闸执行（§四.6 与 [8]/[16]）却被 194 批人工初判标成 nightly/ondemand，eval_unique_keys 反向（标 blocking 从未挂闸）降为 ondemand；更正后本科 blocking 23、nightly 0（真实形态：本科观察器少闸门密）。断言两级分层的理由与全文见六爻 CHANGELOG 同批。两科 check rc=0（仓库根）。
 
 ## 2026-10-21 第一百九十七批（两科）：**F1 能力声明落成于根 `CAPABILITY.md`；并补登两笔欠账指针（第一百九十四/一百九十六批）**——①F1 三层：T1 已验证（本科 40 例双指纹 2a4c9258d6c1e4cb／1a0f165ebfa7b6da＋5 机械回归＋9 场景校准）；T2 已量化含上限（判断维单列：tiaohou 坐实、pattern 未证、cong_ge 不可判；「历法维抬起总分」警告升格为文书主体）；T3 现实预测不可测不声称（在册 0）。规矩入本科：**能力面变动须回改 CAPABILITY.md**（§六.2 对等适用）；本科 golden 纳入 conclusion 层登记为欠账（193 批先例适用）。②**补账**：第一百九十四批（治理地图）提交说明曾声称「登记于八字 CHANGELOG 一行指针」——当轮两次编辑实际未落盘未重试，本批按 170 批补登记先例如实补上：194 批治理图八字 34 脚本归类（blocking 19/nightly 3/ondemand 6/build 4/tool 2）与「eval 快照从未 tracked」更正的正文均在六爻 CHANGELOG 同批；196 批为六爻侧 huozhulin 通道查实，本科无涉仅指针。两科 `check.py` 于仓库根实跑 rc=0。

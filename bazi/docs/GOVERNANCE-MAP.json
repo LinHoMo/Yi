@@ -1,10 +1,10 @@
 {
- "count": 34,
+ "count": 35,
  "by_tier": {
   "tool": 2,
   "ondemand": 5,
   "build": 4,
-  "blocking": 23
+  "blocking": 24
  },
  "unclassified": [],
  "curated_but_missing": [],
@@ -161,6 +161,13 @@
    "guards": "排盘入参历法自洽",
    "run_by_check_py": true,
    "doc": "排盘入参的**历法自洽**回验：五虎遁·五鼠遁（不依赖 datetime，2026-10-11 第一百二十三批）。"
+  },
+  {
+   "script": "check_regex_lists.py",
+   "tier": "blocking",
+   "guards": "正则字符类 list 展平审计（209 批：§二 静默全盲规矩的核对版）",
+   "run_by_check_py": true,
+   "doc": "正则字符类 list 展平审计门（第一百六十六批 §二 硬规矩的核对版，第两百零九批上门）。"
   },
   {
    "script": "check_rule_registry.py",
