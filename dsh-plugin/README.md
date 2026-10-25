@@ -119,16 +119,16 @@ node scripts/install-preset.mjs <你的profile>
 
 发布包只含运行必需部分，**不含评测数据**。
 
-**以下为 `npm pack --dry-run --json` 实测值**（159 个文件，非估算）：
+**以下为 `npm pack --dry-run --json` 实测值**（160 个文件，非估算）：
 
 | 内容 | 解包体积 |
 |---|---|
 | 引擎（core + scripts + data/rules + data/*.json + references，两科，138 文件） | 2.21 MB |
 | 知识库（技能目录下 9 篇判据文档 + SKILL.md + INDEX，11 文件） | 0.17 MB |
-| 插件源码（4 文件） | 0.03 MB |
+| 插件源码（5 文件） | 0.04 MB |
 | 文档与配置（README/SKILL/LICENSE/package.json/patch/preset） | ≈ 0.02 MB |
-| **解包合计** | **2.43 MB** |
-| **npm 分发 `.tgz`** | **0.71 MB** |
+| **解包合计** | **2.44 MB** |
+| **npm 分发 `.tgz`** | **0.72 MB** |
 
 | 未打包 | 体积 | 原因 |
 |---|---|---|
@@ -145,7 +145,7 @@ node scripts/install-preset.mjs <你的profile>
 
 ```sh
 npm run build          # = build-engine（打包引擎）+ build-skills（组装技能目录与知识库）
-npm run selftest       # 12 段包级自检，含 8 处负例自证
+npm run selftest       # 13 段包级自检，含负例自证
 npm run verify-in-dsh  # DSH 内验证：技能条目形状 + 真实执行工具回调 + render 产出
 npm run check          # 以上三件一起跑
 ```
@@ -169,7 +169,7 @@ Python 定位（含指向不存在路径必须报错）/ 打包引擎完整性 /
 Agent preset 声明合法性（含负例）/ 安装脚本幂等与 YAML 安全性 /
 引擎目录不被运行期派生文件污染（含负例）。
 
-当前实跑：**48 项通过 / 0 失败**。
+当前实跑：**58 项通过 / 0 失败**。
 
 一致性门是**逐文件全量**的，不是抽查：137 个引擎文件 + 9 篇知识库逐篇与两科真源对拍，
 外加「真源有、包里缺」的反向核对（案例库按铁律二豁免）。

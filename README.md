@@ -51,7 +51,7 @@ python bazi/scripts/chart.py --datetime "1990-05-20 12:00" --gender 男
 
 上面的用法要求先有本仓库、再让 agent 敲 `python ...` 命令。若想**装了即用**，
 可把它作为 DeepSeek Harness（DSH）插件安装——插件自带引擎与运行必需数据，
-模型直接调用 `yi_liuyao` / `yi_bazi` 两个工具，无需另装 Python（DSH 桌面自带运行时会被自动发现）：
+模型直接调用 `yi_liuyao` / `yi_bazi` / `yi_kb` 三个工具，无需另装 Python（DSH 桌面自带运行时会被自动发现）：
 
 ```bash
 # 1) 装插件
@@ -65,11 +65,11 @@ node dsh-plugin/scripts/install-preset.mjs <你的profile>
 
 | 层 | 机制 | 落点 |
 |---|---|---|
-| 工具 | `ctx.tools.register()` | `yi_liuyao` / `yi_bazi` |
+| 工具 | `ctx.tools.register()` | `yi_liuyao` / `yi_bazi` / `yi_kb` |
 | 技能 + 知识库 | `ctx.skills.registerProvider()` + `bundledSkillDir` | `dsh-plugin/skills/yi-divination/`（9 篇判据文档） |
 | Agent 预设 | `@deepseek-ai/dsh-agent-preset` | `dsh-plugin/presets/yi-divination.yml` |
 
-发布包（`npm pack` 实测）解包 **2.43 MB**、`.tgz` **0.71 MB**；**不含** `data/cases/`（38MB）、
+发布包（`npm pack` 实测）解包 **2.44 MB**、`.tgz` **0.72 MB**；**不含** `data/cases/`（38MB）、
 `data/sources/`（9.5MB）与 `references/case_library.md`（165KB）——前者只服务古籍对齐分与回归门，
 后者按 AGENTS.md §一.2 铁律二必须与解读物理隔离。
 
@@ -78,6 +78,6 @@ node dsh-plugin/scripts/install-preset.mjs <你的profile>
 - 插件源码：`dsh-plugin/src/`（node 半：工具注册、技能注册、系统提示词段）
 - 引擎打包：`dsh-plugin/scripts/build-engine.mjs`（**白名单**从两科收集，产物 `engine/` 不入库）
 - 知识库组装：`dsh-plugin/scripts/build-skills.mjs`（产物 `skills/` 不入库）
-- 自检：`npm --prefix dsh-plugin run check`（包级 12 段 + DSH 内验证，含负例自证）
+- 自检：`npm --prefix dsh-plugin run check`（包级 13 段 + DSH 内验证，含负例自证）
 
 

@@ -60,6 +60,25 @@ order、fallback 必须给 `output.render`、`PYTHONDONTWRITEBYTECODE` 等）逐
 （「两个工具」→「三个工具」）、SKILL.md（单一真源）、INDEX.md 模板、README、预设注释
 同步提法。
 
-**验证（全绿）**：`selftest` 新增 [12] 六断言 + 2 负例自证——扫描层排除用「探针文件
+**验证（全绿）**：`selftest` 新增 [12] 十断言（含 4 项负例性质）——扫描层排除用「探针文件
 确实存在但不在可检索清单」证明判据在起作用（不是目录为空）；`verify-in-dsh` 新增
 yi_kb 注册／执行／render 三查。
+
+## 2026-10-25 第两百七十一批（dsh-plugin）：遗留项清账 + 文档实测对齐
+
+纯文档/配置批：未动引擎、检索逻辑与构建脚本；`engine/`、`skills/` 产物与 270 批一致。
+
+- **default 预设维持 `standard`（落纸决策，非改数）**：Yi 预设刻意最小化子插件列表
+  （术数本体 + 技能通道，不塞 bash/web/search），设为默认会改变**所有新会话**的可用
+  工具面；术数会话按需在新建时选择。仓内 preset 注释保留一行指引，要翻默认改一行即可。
+- **desktop profile 补丁注释同步**：工具清单补 `yi_kb`（与仓内 `presets/yi-divination.yml`
+  对齐）。该文件在仓库外（用户自有 profile），不入库；`install-preset.mjs` 不含该注释
+  文本，无第二修复点。
+- **计数对齐**（消灭「文档说的和做的不一致」）：`npm pack --dry-run --json` 复测 =
+  **160 文件 / 2.44 MB / tgz 0.72 MB**（270 加 `kb.mjs`：插件源码 4→5 文件、0.03→0.04 MB；
+  引擎 2.21 / 知识库 0.17 不变），两处 README 体积表按实数更新；selftest 复跑全绿
+  **58 项 / 0 失败**（269 记 48 项 + [12] 段十项），README「12 段」→「13 段」、
+  「48 项」→「58 项」，负例数改定性表述；270 条目「六断言 + 2 负例」系实现中途口径，
+  已就地更正为终态十断言；根 README 工具清单两处补 `yi_kb`。
+- 复现注记：`npm pack` 对 `--prefix` 不生效（按 CWD 找 package.json），须
+  `cd dsh-plugin && npm pack --dry-run --json`（README 复现命令本就如此写）。
