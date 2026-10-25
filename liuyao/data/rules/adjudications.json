@@ -1,9 +1,9 @@
 {
  "schema": "yi-liuyao-adjudications/1",
  "discipline": "liuyao",
- "built_at": "2026-10-26T03:04:32",
+ "built_at": "2026-10-26T03:13:42",
  "_comment": "流派裁决表：「与古书吻合」的展开定义。引用任何吻合率须能指回本表行。不改引擎不进评分面不挂门（§176 冻结声明）。状态三值见 builder docstring。",
- "count": 24,
+ "count": 25,
  "entries": [
   {
    "id": "liuyao.xunkong_variants",
@@ -388,6 +388,34 @@
    "engine_anchor": "scripts/step2.py question_classes 疾病分轨；scripts/timing.py 疾病空亡双轨；案例 wikisource WS006",
    "status": "open_conflict",
    "note": "第两百一十四批登记。近病应期轨（L539「冲去未土而午火无合」=冲去绊神/合住生用之爻）与已实装的冲去忌神（第二八五/二八六批）同构但对象不同（绊神），框架批候选。久病应期（L1198 冲破化出退神=无路）依赖 verdict 凶侧，随本条目框架批。"
+  },
+  {
+   "id": "liuyao.yuanshen_rootless",
+   "dispute": "用神无根（月破+日克双伤）时元神接续相生是否仍然有效：书证通则「用神无根，元神有力亦难生」（如树无根，寒谷不回春），元神动而生用接续相生的结构不救无根之用",
+   "parties": [
+    {
+     "who": "通则句",
+     "quote": "此谓之用神无根，元神有力亦难生",
+     "source": "《增刪卜易》（zengshan_buyi_dz.dz.txt）",
+     "line": 561
+    },
+    {
+     "who": "无根结构（月破+日克双伤）",
+     "quote": "其如亥水月冲日克，值月破而被克，虽有生扶生之不起，如树无根，寒谷不回春也",
+     "source": "《增刪卜易》（zengshan_buyi_dz.dz.txt）",
+     "line": 561
+    },
+    {
+     "who": "实案应期（凶应=冲去元神之日）",
+     "quote": "果卒于癸卯日，应卯日者冲去元神之日也",
+     "source": "《增刪卜易》（zengshan_buyi_dz.dz.txt）",
+     "line": 561
+    }
+   ],
+   "engine_position": "第二八六批忌神生元神接续相生链（未→酉→亥）计价无「用神无根」折扣；本条目登记后，实装需书证给出幅度（「难生」未量化），暂不硬编码系数。应期侧「冲去元神=凶应」与已实装冲去忌神/绊神（吉应）轨向相反，凶应期联动框架批候选",
+   "engine_anchor": "scripts/step4.py 原神计价；scripts/step5.py 5.5 段",
+   "status": "open_conflict",
+   "note": "第两百一十六批登记。L561 实案未入任何评测 split（zengshan 21 例外），实装无外部验证点，按 §四.3/§四.7 登记待书证扩充。"
   },
   {
    "id": "liuyao.shikao_usegod_dual",
