@@ -41,3 +41,25 @@ order、fallback 必须给 `output.render`、`PYTHONDONTWRITEBYTECODE` 等）逐
 **安装态**：desktop profile 已装（link:）且预设已追加（`scripts/install-preset.mjs`
 幂等）；预设注册表 `default: standard` 未动，是否把 `yi-divination` 设为默认预设待
 用户决定（改一行即可）。
+
+## 2026-10-25 第两百七十批（dsh-plugin）：**新增 `yi_kb` 判据知识库检索工具——先定位再读节段，省上下文**
+
+**动机**：知识库 9 篇单篇最大 52KB，模型凭 INDEX.md 路由表整篇盲读，读错一篇就白占
+一大块上下文。`yi_kb` 让模型先关键词定位（返回 文件:行 + 节标题 + 摘录），再按行读
+具体节段。
+
+**实现**（`src/kb.mjs`，纯 Node、确定性、零 LLM 零 Python）：
+- 只扫 `skills/yi-divination/references/` 下 `.md`；`case_library.md` 在**扫描层**按
+  文件名硬排除——与打包层（`build-skills.mjs` NEVER_SHIP）、自检 [1.5] 包内断言构成
+  铁律二的三道闸。
+- 检索：按 1–3 级标题切节；词频计分（标题命中 ×4、文件名命中 ×3、正文词频封顶 12、
+  覆盖词数 ×6）；每文件最多 2 条防单篇刷屏；`limit` 夹在 1..10（默认 5）。
+- 无关词返回空清单不编造；缺 `query` 抛错（对齐 [7] 参数语义校验口径）。
+
+**注册与文档**：`src/index.mjs` 恒注册（纯 Node，与 `enableBazi` 无关）；系统提示词段
+（「两个工具」→「三个工具」）、SKILL.md（单一真源）、INDEX.md 模板、README、预设注释
+同步提法。
+
+**验证（全绿）**：`selftest` 新增 [12] 六断言 + 2 负例自证——扫描层排除用「探针文件
+确实存在但不在可检索清单」证明判据在起作用（不是目录为空）；`verify-in-dsh` 新增
+yi_kb 注册／执行／render 三查。

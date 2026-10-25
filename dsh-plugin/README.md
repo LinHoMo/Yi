@@ -11,7 +11,8 @@
 `python liuyao/scripts/chart.py --mode coin --question "..."` → 再敲 analyze → 再敲 narrate。
 每一步都可能因为路径、工作目录、编码而失败。
 
-装上本插件后，模型直接调用 `yi_liuyao` / `yi_bazi` 两个工具，一次拿到结构化结论与正文。
+装上本插件后，模型直接调用 `yi_liuyao` / `yi_bazi` 排盘、用 `yi_kb` 检索随包判据知识库，
+一次拿到结构化结论与正文。
 
 ## 安装
 
@@ -42,7 +43,7 @@ node scripts/install-preset.mjs <你的profile>
 
 | 层 | 机制 | 在哪 |
 |---|---|---|
-| **工具** | `ctx.tools.register()` | `src/tools.mjs` → `yi_liuyao` / `yi_bazi` |
+| **工具** | `ctx.tools.register()` | `src/tools.mjs` → `yi_liuyao` / `yi_bazi` / `yi_kb` |
 | **技能** | `ctx.skills.registerProvider()` + 官方 `bundledSkillDir` | `skills/yi-divination/SKILL.md` |
 | **预设** | `@deepseek-ai/dsh-agent-preset` 的 Cordis YAML | `presets/yi-divination.yml` |
 
@@ -51,7 +52,8 @@ node scripts/install-preset.mjs <你的profile>
 
 ### 知识库
 
-`skills/yi-divination/references/` 内含 9 篇判据文档，先从 `INDEX.md` 看该读哪一篇：
+`skills/yi-divination/references/` 内含 9 篇判据文档，先从 `INDEX.md` 看该读哪一篇；
+也可用 `yi_kb` 工具关键词检索定位（返回 文件:行 + 节标题 + 摘录）：
 
 | 学科 | 文档 |
 |---|---|
@@ -62,7 +64,7 @@ node scripts/install-preset.mjs <你的profile>
 > 铁律二，案例库与解读必须物理隔离——断卦时不得联想、类比或引用历史案例。
 > 打包脚本按文件名硬排除，自检 [1.5] 有一条专门断言它不在包内（带负例自证）。
 
-## 两个工具
+## 三个工具
 
 ### `yi_liuyao` — 六爻纳甲
 
@@ -87,6 +89,18 @@ node scripts/install-preset.mjs <你的profile>
 | `longitude` | | 出生地东经，用于真太阳时校正 |
 
 返回：四柱（干支·纳音·十神）/旺衰/格局/喜用/忌神/大运流年/正文。
+
+### `yi_kb` — 判据知识库检索
+
+| 参数 | 必填 | 说明 |
+|---|---|---|
+| `query` | ✅ | 关键词，可多个，空格分隔（如 `"用神 取法"`） |
+| `discipline` | | `liuyao`／`bazi`（缺省两科都搜） |
+| `limit` | | 最多返回几条（默认 5，上限 10） |
+
+返回「文件:行 + 节标题 + 摘录」。纯 Node 实现（`src/kb.mjs`），不依赖 Python；
+先检索定位、再按 `file:line` 读具体节段。案例库在扫描层硬排除（铁律二第三道闸：
+打包层 `build-skills.mjs` 排除 + 自检 [1.5] 断言 + 本工具扫描层排除）。
 
 ## Python 解释器怎么找
 

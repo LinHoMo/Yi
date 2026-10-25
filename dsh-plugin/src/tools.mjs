@@ -1,5 +1,5 @@
 /**
- * 面向模型的工具：yi_liuyao / yi_bazi。
+ * 面向模型的工具：yi_liuyao / yi_bazi / yi_kb。
  *
  * 设计取向（与官方 adding-a-tool 指南一致）：
  *  · `output.schema` 是可编程的规范值——把排盘与结论的关键字段**结构化**交出去，
@@ -200,4 +200,37 @@ export async function runBazi(args, exec) {
   const argv = buildBaziArgs(args)
   const result = await cast('bazi', argv, { signal: exec?.signal })
   return baziValue(result)
+}
+
+/**
+ * yi_kb：随包判据知识库检索（实现在 ./kb.mjs，纯 Node、确定性、零 LLM）。
+ * 这里只放工具定义：schema、说明与 render。案例库在扫描层硬排除（铁律二）。
+ */
+export function createKbTool() {
+  return {
+    name: 'yi_kb',
+    description:
+      '检索随包判据知识库（纳甲规则、断卦指南、格局速查、四经典综合、书源台账、' +
+      '十神/纳音术语、月支格局、接口速查）。返回 文件:行 + 节标题 + 摘录；' +
+      '先检索定位，再用 read 按 file:line 读具体节段，避免整篇读入占满上下文。' +
+      '古籍案例库按铁律二不在检索范围（永不返回）。核对判据、确认术语、查格局依据时使用。',
+    parameters: {
+      query: { type: 'string', required: true, description: '关键词，可多个，空格分隔（如 "用神 取法"）' },
+      discipline: { type: 'string', enum: ['liuyao', 'bazi'], description: '限定学科（缺省两科都搜）' },
+      limit: { type: 'number', description: '最多返回几条（默认 5，上限 10）' },
+    },
+    render: (_args, value) => {
+      const ms = value?.matches ?? []
+      if (!ms.length) {
+        return [
+          {
+            type: 'text',
+            text: `知识库无匹配（query="${value?.query ?? ''}"）。可换关键词重试，或读 references/INDEX.md 按篇路由。`,
+          },
+        ]
+      }
+      const text = ms.map((m) => `${m.file}:${m.line}  §${m.title}\n  ${m.snippet}`).join('\n---\n')
+      return [{ type: 'text', text }]
+    },
+  }
 }

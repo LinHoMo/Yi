@@ -479,6 +479,74 @@ await section('[9] 引擎目录未被派生文件污染', async () => {
   else pass('负例自证：造一个 __pycache__ 能被扫到（已清理）')
 })
 
+// ── 12. yi_kb 判据知识库检索 ────────────────────────────────────────────────
+await section('[12] yi_kb 判据知识库检索（含铁律二扫描层排除）', async () => {
+  const fsp = await import('node:fs/promises')
+  const os = await import('node:os')
+  const { runKb, searchKb, listKbFiles } = await import('../src/kb.mjs')
+
+  // 真库端到端：纳甲相关 query 应召回 najia_rules.md（考召回不考排名）
+  const r1 = await runKb({ query: '纳甲 装卦 世应' })
+  r1.files_scanned >= 9
+    ? pass(`扫描 ${r1.files_scanned} 篇`)
+    : fail(`扫描篇数异常：${r1.files_scanned}（应 ≥9）`)
+  r1.matches.length >= 1
+    ? pass(`命中 ${r1.matches.length} 条，首条 ${r1.matches[0].file}:${r1.matches[0].line} §${r1.matches[0].title}`)
+    : fail('真库检索零命中')
+  r1.matches.some((m) => m.file.includes('najia_rules'))
+    ? pass('召回包含 najia_rules.md')
+    : fail(`未召回 najia_rules.md：${r1.matches.map((m) => m.file).join(', ')}`)
+  r1.matches[0]?.snippet
+    ? pass(`摘录非空（${r1.matches[0].snippet.length} 字）`)
+    : fail('首条摘录为空')
+
+  // 学科过滤：discipline=bazi 时命中必须全在 bazi/ 下
+  const r2 = await runKb({ query: '十神', discipline: 'bazi' })
+  const wrong = r2.matches.filter((m) => !m.file.startsWith('bazi/'))
+  wrong.length === 0
+    ? pass(`discipline=bazi 过滤生效（${r2.matches.length} 条全在 bazi/）`)
+    : fail(`过滤失效：${wrong.map((w) => w.file).join(', ')}`)
+
+  // 无关词：不报错、不编造，返回空匹配
+  const r3 = await runKb({ query: '汽车维修zzz不存在的词' })
+  r3.matches.length === 0
+    ? pass('无关词返回空匹配（不编造结果）')
+    : fail(`无关词竟有匹配：${r3.matches.map((m) => m.file).join(', ')}`)
+
+  // 缺 query 必须报错（对齐 [7] 参数语义校验口径）
+  try {
+    await runKb({})
+    fail('负例失效：缺 query 竟未报错')
+  } catch {
+    pass('缺 query 会报错')
+  }
+
+  // 铁律二（扫描层）：case_library.md 即使被放进知识库目录也检不到
+  const tmp = await fsp.mkdtemp(join(os.tmpdir(), 'yikb-'))
+  try {
+    const dir = join(tmp, 'liuyao')
+    await fsp.mkdir(dir, { recursive: true })
+    await fsp.writeFile(join(dir, 'case_library.md'), '# 案例库\n\n探针词青龙伏吟不存在的案例库内容zzz\n', 'utf8')
+    const listed = await listKbFiles(tmp)
+    listed.length === 0
+      ? pass('扫描层排除：case_library.md 不在可检索清单')
+      : fail(`扫描层漏排：${listed.join(', ')}`)
+    const r4 = await searchKb({ query: '探针词青龙伏吟', kbRoot: tmp })
+    r4.matches.length === 0
+      ? pass('检索层排除：对 case_library.md 内容的检索零命中')
+      : fail(`检索漏排：${JSON.stringify(r4.matches[0])}`)
+    // 负例自证：文件确实在那里——排除来自判据，不是目录为空
+    const exists = await fsp
+      .stat(join(dir, 'case_library.md'))
+      .then(() => true, () => false)
+    exists
+      ? pass('负例自证：探针文件确实存在（排除来自判据而非目录为空）')
+      : fail('负例失效：探针文件没写成功，本段排除判据未被真正考验')
+  } finally {
+    await fsp.rm(tmp, { recursive: true, force: true })
+  }
+})
+
 console.log('\n' + '='.repeat(52))
 if (failures === 0) {
   console.log('自检全部通过。')

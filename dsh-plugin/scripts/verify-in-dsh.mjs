@@ -68,6 +68,7 @@ if (inject.includes('tools') && inject.includes('systemPrompt')) {
 }
 registry.has('yi_liuyao') ? pass('工具 yi_liuyao 已注册') : fail('工具 yi_liuyao 未注册')
 registry.has('yi_bazi') ? pass('工具 yi_bazi 已注册') : fail('工具 yi_bazi 未注册')
+registry.has('yi_kb') ? pass('工具 yi_kb 已注册') : fail('工具 yi_kb 未注册')
 sections.length === 1 ? pass(`系统提示词段已注册：${sections[0].name}`) : fail(`提示词段数量异常：${sections.length}`)
 sections[0] && Number.isFinite(sections[0].order) ? pass(`section.order 是有限数：${sections[0].order}`) : fail('section.order 不是有限数')
 providers.length === 1 ? pass('技能 provider 已注册') : fail(`技能 provider 数量异常：${providers.length}`)
@@ -148,6 +149,21 @@ try {
   value?.narrative?.text?.length > 50 ? pass(`八字正文 ${value.narrative.text.length} 字`) : fail('八字正文缺失')
 } catch (err) {
   fail(`yi_bazi 执行异常：${err?.message ?? err}`)
+}
+
+try {
+  const def = registry.get('yi_kb')
+  const value = await def.execute({ query: '用神 取法' }, fakeExec)
+  Array.isArray(value?.matches) && value.matches.length > 0
+    ? pass(`yi_kb 命中 ${value.matches.length} 条（首条 ${value.matches[0].file}:${value.matches[0].line}）`)
+    : fail('yi_kb 无命中')
+  value?.files_scanned >= 9 ? pass(`扫描 ${value.files_scanned} 篇`) : fail(`扫描篇数异常：${value?.files_scanned}`)
+  const kbChunks = def.output?.render ? def.output.render({}, value) : null
+  Array.isArray(kbChunks) && kbChunks[0]?.type === 'text' && kbChunks[0].text.length > 0
+    ? pass('yi_kb output.render 产出非空文本块')
+    : fail('yi_kb output.render 未产出文本块')
+} catch (err) {
+  fail(`yi_kb 执行异常：${err?.message ?? err}`)
 }
 
 // ── 4. 负例自证：坏的技能条目必须被本脚本的判据识破 ─────────────────────────

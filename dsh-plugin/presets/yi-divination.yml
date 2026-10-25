@@ -41,7 +41,7 @@
           Python 引擎完成，模型只负责把结论翻译成当事人听得懂的话。
         order: 10
         plugins:
-          # 术数本体：工具（yi_liuyao / yi_bazi）+ 技能（yi-divination）+ 系统提示词段
+          # 术数本体：工具（yi_liuyao / yi_bazi / yi_kb）+ 技能（yi-divination）+ 系统提示词段
           - name: dsh-yi-divination
           # 技能通道：让本 preset 的 Agent 能按需加载 SKILL.md 与 references/ 知识库
           - name: '@deepseek-ai/dsh-skill-filesystem'
