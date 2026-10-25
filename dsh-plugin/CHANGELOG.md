@@ -104,3 +104,24 @@ yi_kb 注册／执行／render 三查。
 - **文档**：SKILL.md（单一真源）、README、工具 description／参数说明同步
   「2-gram 兜底 + 同义词展开」。
 - pack 复测：**161 文件**（+kb-synonyms.json）/ 2.44 MB / tgz 0.72 MB（体积表按实数更新）。
+
+## 2026-10-25 第两百七十三批（dsh-plugin）：yi_bazi 结构化岁运字段
+
+迭代地图第 3 项（缺口：`baziValue` 只给四柱+结论梗概，模型讲大运流年只能复述 narrative）：
+
+- **`baziValue` 重构**（`src/tools.mjs`）：新增三块结构化字段，全部引擎产出、node 只整形——
+  - `conclusion` 补全：旺衰/分数/格局/成败/特格外加 调候、空亡与病药（从 verdicts 平铺）、
+    胎元、通关、天克地冲、喜忌（`useful_gods`/`taboo_gods` 此前取自 `c.useful_gods` 本就有值，
+    本批补 `strength_score`/`pattern_cheng_bai`/`special_pattern` 等）；
+  - `dayun`：8 步基础表（干支/起讫岁/十神），并把大运明动按 `dayun_index` 并回对应步；
+  - `liunian`：12 年逐年行（干支/十神），并入两类事件——明动（流年×命局）与
+    岁运交叉（流年×所临大运，含 `dayun` 字段标明所临何运）；
+  - `liuyue`：12 月干支十神。
+- **事件 text 一律 clip（140/80 字）**：`basis` 逐字书证是对账层，不进结构化字段
+  （analyze JSON 全量保留，铁律二的「引文可指回」不受影响）。
+- **自检**：[6] 增 5 断言（dayun 8 步／liunian 12 年且首年 1990 庚午／liuyue 12 月／
+  conclusion 旺衰格局真值／verdicts 平铺空亡）。实测发现 `conclusion.liunian` 是
+  **12 年**（1990–2001）而非 8 年——首版断言按 8 年写，实跑抓出后改正。
+  selftest 全绿 **68 项 / 0 失败**；verify-in-dsh 全绿。
+- **文档**：SKILL.md（yi_bazi 节加「结构化岁运字段」说明：讲大运流年直接引字段，
+  不要凭 narrative 复述）、README 同步。

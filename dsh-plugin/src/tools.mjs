@@ -17,6 +17,26 @@ function bounded(text, max = 6000) {
   return { text: text.slice(0, max), truncated: true }
 }
 
+/** 有界纯文本（结构化字段用；区别于 bounded() 的 {text,truncated} 形态）。 */
+function clip(text, max = 140) {
+  if (typeof text !== 'string') return ''
+  return text.length <= max ? text : text.slice(0, max)
+}
+
+/**
+ * 岁运「明动」relation → 紧凑事件。丢 `basis` 长引文——那是对账层
+ * （逐字书证在 analyze JSON 里全量保留，随包 SKILL 的口径也只要求结论可复核），
+ * `text` 已是引擎写好的一句话结论，clip 后进结构化字段。
+ */
+function yunEvents(relations) {
+  return (relations ?? []).map((r) => ({
+    kind: r.kind ?? '',
+    value: r.value ?? '',
+    rel: r.shishen_rel ?? '',
+    text: clip(r.text, 140),
+  }))
+}
+
 /** 六爻：结论 + 关键结构事实。字段名与 analyze JSON 保持同名，便于复核。 */
 function liuyaoValue(result) {
   const a = result.analyze
@@ -71,11 +91,12 @@ function liuyaoValue(result) {
   }
 }
 
-/** 八字：四柱 + 结论要点。 */
+/** 八字：四柱 + 旺衰格局 + 大运/流年/流月结构化字段（全部引擎产出，这里只整形搬运）。 */
 function baziValue(result) {
   const a = result.analyze
   const chart = result.chart
   const c = a.conclusion ?? {}
+  const s = a.strength ?? {}
   const pillars = chart.pillars ?? {}
   const pick = (p) =>
     p
@@ -87,6 +108,53 @@ function baziValue(result) {
           ten_god: p.ten_god ?? '',
         }
       : null
+  // conclusion 顶层就有 strength/pattern/useful_gods/taboo_gods 等直读键；
+  // verdicts 另有 {code,label,basis} 判词表，平铺成 code→label 供速览（空亡/病药只在这里有）。
+  const verdict = {}
+  for (const v of c.verdicts ?? []) if (v?.code) verdict[v.code] = v.label ?? ''
+  // 大运 8 步基础表；把大运「明动」按 dayun_index 并回对应步（有事件才带 events 键）。
+  const yindongByIndex = new Map(
+    (a.dayun_ming_yindong ?? []).map((x) => [x.dayun_index, yunEvents(x.relations)]),
+  )
+  const dayun = (c.dayun ?? a.dayun ?? []).map((d) => {
+    const events = yindongByIndex.get(d.index)
+    return {
+      ganzhi: d.ganzhi ?? '',
+      start_age: d.start_age ?? null,
+      end_age: d.end_age ?? null,
+      ten_god: d.ten_god ?? '',
+      ...(events && events.length ? { events } : {}),
+    }
+  })
+  // 流年逐年行：conclusion.liunian（干支+十神）为主干，并入两类事件——
+  // 明动（流年×命局，liunian_ming_yindong）与岁运交叉（流年×所临大运，dayun_liunian）。
+  const mingByYear = new Map((a.liunian_ming_yindong ?? []).map((x) => [x.year, x]))
+  const crossByYear = new Map((c.dayun_liunian ?? []).map((x) => [x.year, x]))
+  const liunian = (c.liunian ?? []).map((x) => {
+    const cross = crossByYear.get(x.year)
+    const events = [
+      ...yunEvents(mingByYear.get(x.year)?.relations),
+      ...(cross?.relations ?? []).map((r) => ({
+        kind: r.kind ?? '',
+        value: r.value ?? '',
+        rel: '',
+        text: clip(r.text, 80),
+      })),
+    ]
+    return {
+      year: x.year ?? null,
+      liunian: x.ganzhi ?? '',
+      age: x.age ?? null,
+      ten_god: x.ten_god ?? '',
+      ...(cross?.dayun ? { dayun: cross.dayun } : {}),
+      ...(events.length ? { events } : {}),
+    }
+  })
+  const liuyue = (a.liu_yue ?? []).map((m) => ({
+    ganzhi: m.ganzhi ?? '',
+    branch: m.branch ?? '',
+    ten_god: m.ten_god ?? '',
+  }))
   return {
     discipline: 'bazi',
     birth: chart.birth ?? {},
@@ -99,11 +167,24 @@ function baziValue(result) {
     conclusion: {
       direction: c.方向 ?? '',
       description: c.说明 ?? '',
-      strength: c.strength ?? '',
-      pattern: c.pattern ?? '',
-      useful_gods: c.useful_gods ?? [],
-      taboo_gods: c.taboo_gods ?? [],
+      strength: c.strength ?? s.strength ?? '',
+      strength_score: c.strength_score ?? s.strength_score ?? null,
+      pattern: c.pattern ?? s.pattern ?? '',
+      pattern_cheng_bai: c.pattern_cheng_bai ?? '',
+      special_pattern: s.tentative_special ?? '',
+      tiaohou: { main: s.tiaohou?.main ?? '', assist: s.tiaohou?.assist ?? '' },
+      useful_gods: c.useful_gods ?? s.useful_gods ?? [],
+      taboo_gods: c.taboo_gods ?? s.taboo_gods ?? [],
+      xunkong: verdict.xunkong ?? '',
+      tai_yuan: c.tai_yuan ?? verdict.tai_yuan ?? '',
+      tong_guan: (c.tong_guan ?? []).map((t) => clip(t, 100)),
+      tian_ke_di_chong: (c.tian_ke_di_chong ?? []).map((t) => clip(t, 100)),
+      bing_yao: c.bing_yao ?? '',
+      bing_yao_medicine: verdict.bing_yao_medicine ?? '',
     },
+    dayun,
+    liunian,
+    liuyue,
     narrative: bounded(result.narrative, 8000),
   }
 }
@@ -144,7 +225,8 @@ export function createBaziTool() {
     name: 'yi_bazi',
     description:
       '八字（四柱）排盘与格局分析。子平四柱、十神、藏干、旺衰、格局、喜用、大运流年、' +
-      '调候用神全部由内置 Python 引擎计算，本工具返回结构化结论与已生成的正文。' +
+      '调候用神全部由内置 Python 引擎计算，本工具返回结构化结论与已生成的正文：' +
+      '含旺衰/格局/喜忌/空亡，以及大运 8 步（含明动事件）、流年明动逐年、流月干支结构化字段。' +
       '用户问八字、排盘、命理、四柱、大运、流年、喜用神时使用。' +
       '需要出生时间；时辰不确定时须先问清，不可臆测。',
     parameters: {

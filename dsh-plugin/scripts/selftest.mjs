@@ -249,6 +249,25 @@ await section('[6] 八字端到端（排盘 → 格局 → 正文）', async () 
   narrative && narrative.length > 50
     ? pass(`正文已生成（${narrative.length} 字）`)
     : fail(`正文异常（长度 ${narrative?.length}）`)
+
+  // ── 273 批：baziValue 结构化岁运字段（大运/流年/流月）────────────────────
+  const { runBazi } = await import('../src/tools.mjs')
+  const value = await runBazi({ datetime: '1990-05-20 12:00', gender: '男' })
+  Array.isArray(value.dayun) && value.dayun.length === 8
+    ? pass(`dayun 结构化：8 步（${value.dayun[0].ganzhi}→${value.dayun[7].ganzhi}）`)
+    : fail(`dayun 结构化异常（${value.dayun?.length ?? typeof value.dayun}）`)
+  Array.isArray(value.liunian) && value.liunian.length === 12 && value.liunian[0].liunian === '庚午'
+    ? pass(`liunian 结构化：12 年（${value.liunian[0].year} ${value.liunian[0].liunian} 起），含事件 ${value.liunian.filter((x) => x.events?.length).length} 条`)
+    : fail('liunian 结构化异常（应为 12 年且首年 1990 庚午）')
+  Array.isArray(value.liuyue) && value.liuyue.length === 12
+    ? pass(`liuyue 结构化：12 月（首月 ${value.liuyue[0].ganzhi}）`)
+    : fail(`liuyue 结构化异常（${value.liuyue?.length ?? typeof value.liuyue}）`)
+  value.conclusion?.strength === '偏弱' && value.conclusion?.pattern === '伤官格'
+    ? pass('conclusion 结构化取到旺衰/格局真值')
+    : fail(`conclusion 结构化异常（${value.conclusion?.strength}/${value.conclusion?.pattern}）`)
+  value.conclusion?.xunkong
+    ? pass(`verdict 平铺：空亡=${value.conclusion.xunkong}`)
+    : fail('conclusion.xunkong 为空（verdicts 平铺失效）')
 })
 
 // ── 7. 参数校验 ─────────────────────────────────────────────────────────────
