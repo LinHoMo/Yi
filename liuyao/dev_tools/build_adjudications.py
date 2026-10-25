@@ -285,6 +285,19 @@ ENTRIES = [
         "note": "ZD023（占婚悔而复成）use_god 基准因此留空——书断不取用神（dz L756），引擎 use_god 维度对该例不评属预期。",
     },
     {
+        "id": "liuyao.sanxing_yingqi_track",
+        "dispute": "三刑应期轨：占子痘症书以三刑（寅刑巳）断死于寅日寅时——但觉子自注三刑得验极罕（数十年一卦），通用候选轨若收三刑将引入书内自认的高噪声",
+        "parties": [
+            {"who": "实案（ZD029 占子痘症）", "quote": "后悟月建在寅，日建在申，与巳爻子孙共作三刑，独此一卦，无他爻之伤也", "source": "zengshan_buyi_dz.dz.txt", "line": 831},
+            {"who": "通则与自认低频（觉子曰）", "quote": "夫三刑者，余屡试之，或因用神休囚又兼他爻犯之，刑者则见凶，而独犯三刑得验者少，占过数十年只验得一卦。", "source": "zengshan_buyi_dz.dz.txt", "line": 823},
+            {"who": "长生边界（论刑不论生）", "quote": "巳爻虽长生於寅，倘日月动爻及变出之爻又逢申金者，谓之三刑，论刑不论生也。", "source": "zengshan_buyi_dz.dz.txt", "line": 935},
+        ],
+        "engine_position": "引擎应期候选无三刑轨（timing.py 候选阶梯：值日/冲值/合/墓/空/破/伏/合绊等）——ZD029（书答寅日）strict 判 0；不机械化：书内自认「独犯三刑得验者少」+库内单实案，收作通用候选会把书内标低频的轨抬到与值日同列；「论刑不论生」（L935）属长生章边界注已由长生轨消费",
+        "engine_anchor": "scripts/timing.py 年月日候选阶梯（值日轨 use_value_year 等）；案例 zengshan ZD029",
+        "status": "open_conflict",
+        "note": "与 six_break_evidence 同族：书内自认低频/无逐字计价处的轨，登记不实装；若后批得三刑应期通用章书证再评估。",
+    },
+    {
         "id": "liuyao.xiaofu_track_liunian",
         "dispute": "流年孝服轨：占在任/流年问自身，书以世爻财断自身平安之外，另以父母受克断孝服（丁艰）——流年吉凶定性取诸亲受克叠加，非单看世爻",
         "parties": [
