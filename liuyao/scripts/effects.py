@@ -95,6 +95,7 @@ def analyze_day_month_bonding(result):
                 break
 
     ji_shen_branches = []
+    ji_shen_moving = set()
     ji_shen_data = use_god_data.get("ji_shen", {})
     if isinstance(ji_shen_data, dict):
         ji_positions = ji_shen_data.get("positions", [])
@@ -104,6 +105,8 @@ def analyze_day_month_bonding(result):
                     jb = jp.get("earthly_branch", "")
                     if jb:
                         ji_shen_branches.append(jb)
+                        if jp.get("is_moving"):
+                            ji_shen_moving.add(jb)
         ji_fu = ji_shen_data.get("fu_cang")
         if isinstance(ji_fu, dict):
             jb = ji_fu.get("branch", "")
@@ -139,12 +142,28 @@ def analyze_day_month_bonding(result):
             and (use_god_branch, month_branch) in HE_SET_BI):
         findings.append({"bond": "月日同合用神", "effect": EFFECT_PHRASES["day_month_he_use_peak"], "score": 0.3})
 
-    # 忌神合日/月 (negative effect)
+    # 忌神合日/月 —— 第两百八十四批按动静分计：
+    #   忌神"动"爻逢日月合住 = 合绊，凶不成、对用神为利，记 +0.3。书证：
+    #   《增删卜易》源L1480「动逢合而绊住。旧注忌神动逢日月相合，则不成凶」；
+    #   《增删卜易》源L1480「此亦有理，余得验者，后逢冲开之日月，吉凶俱成」；
+    #   《增删卜易》源L738「动而逢合，合谓之合绊」（合起/合绊总纲）；
+    #   《增删卜易》源L3152「明日辰日合住酉爻必得，果于辰日」（求财实案）。
+    #   忌神"静"爻被日月合 = 日月扶起忌神（合起），忌神有力为祸，维持旧计
+    #   −0.3/−0.25：《增删卜易》源L738「静而逢合，谓之合起」。
     for ji_b in ji_shen_branches:
+        _ji_moving = ji_b in ji_shen_moving
         if ji_b and day_branch and (ji_b, day_branch) in HE_SET_BI:
-            findings.append({"bond": "日合忌神", "effect": EFFECT_PHRASES["day_he_taboo_harm"], "score": -0.3})
+            if _ji_moving:
+                findings.append({"bond": "忌神动逢日合绊住", "effect": EFFECT_PHRASES["moving_taboo_bonded"],
+                                 "score": 0.3})
+            else:
+                findings.append({"bond": "日合忌神", "effect": EFFECT_PHRASES["day_he_taboo_harm"], "score": -0.3})
         if ji_b and month_branch and (ji_b, month_branch) in HE_SET_BI:
-            findings.append({"bond": "月合忌神", "effect": EFFECT_PHRASES["month_he_taboo_stick"], "score": -0.25})
+            if _ji_moving:
+                findings.append({"bond": "忌神动逢月合绊住", "effect": EFFECT_PHRASES["moving_taboo_bonded"],
+                                 "score": 0.3})
+            else:
+                findings.append({"bond": "月合忌神", "effect": EFFECT_PHRASES["month_he_taboo_stick"], "score": -0.25})
 
     total_modifier = sum(f["score"] for f in findings)
 
