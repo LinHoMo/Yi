@@ -87,6 +87,14 @@ Yi/
   已排除）。改两科后必须 `npm --prefix dsh-plugin run check`（build → selftest →
   verify-in-dsh）再提交；selftest 的逐文件一致性门会把过期副本判红。手工改
   `engine/`/`skills/` 视为产物污染（selftest 判红）。
+- **月巡挂钩（275 批起）**：对两科 `references/`、`core/`、`scripts/` 的任何例行巡查
+  （含月巡），末尾加跑一次 `npm --prefix dsh-plugin run check`——两科改动会静默使
+  `engine/`、`skills/` 构建产物过期，这条是唯一能在提交前抓到漂移的门。GOVERNANCE
+  的月巡名册如后续建立，须把本条登记进去。
+- **版本号纪律（275 批起）**：`package.json` 的 semver 只是 npm 包的粗粒度坐标，
+  **批次号仍是唯一真源**。映射规则：功能批 → minor+1，修复/文档批 → patch+1，
+  破坏性变更须跨 1.0.0 并单独说明。映射表由 275 批起逐批补记在
+  `dsh-plugin/CHANGELOG.md` 各批条目。
 - 插件面向会话交付，分数口径同 §一.3：排盘与解读照常，**不得**出现"预测准确率"类表述。
 - 插件自身批次登记在 `dsh-plugin/CHANGELOG.md`，批次号沿用全仓流水。
 

@@ -57,11 +57,41 @@ async function main() {
     }
   }
 
-  // 3) 写一份索引，供模型判断「该读哪一篇」而不必盲扫
+  // 3) 写一份索引，供模型判断「该读哪一篇」而不必盲扫。
+  //    体积**构建时实测**（消灭手写 KB 漂移——275 批前这里全是手抄数字）。
+  //    每篇都必须登记描述；两科新加 references 文件而忘登记 → 构建即红（负例纪律）。
+  const { stat } = await import('node:fs/promises')
+  const KB_DOC = new Map([
+    ['liuyao/najia_rules.md', '需要核对纳甲装卦规则：八宫次序、纳支口诀、世应定位、六亲六神推演、旬空'],
+    ['liuyao/interpretation_guide.md', '需要查用神取法、旺衰体系、动变规则、应期推断'],
+    ['liuyao/pattern_reference.md', '判断十二大经典格局（先查这篇，短且直接可用）'],
+    ['liuyao/classical_synthesis.md', '需要理论深度：四经典综合、虚空月破墓绝刑冲'],
+    ['liuyao/source_ledger.md', '需要确认某条判据的书源出处'],
+    ['bazi/bazi_shishen_terminology.md', '十神术语释义'],
+    ['bazi/bazi_nayin_shiyi.md', '纳音释义'],
+    ['bazi/bazi_yue_shi_ge.md', '月支与格局'],
+    ['bazi/api_spec.md', '八字模块接口速查'],
+  ])
+  const missing = shipped.filter((s) => !KB_DOC.has(s))
+  const stale = [...KB_DOC.keys()].filter((s) => !shipped.includes(s))
+  if (missing.length > 0 || stale.length > 0) {
+    if (missing.length > 0) console.error('[build-skills] 失败: 以下知识库文件未登记 KB_DOC 描述——请在 scripts/build-skills.mjs 补登记:\n  ' + missing.join('\n  '))
+    if (stale.length > 0) console.error('[build-skills] 失败: KB_DOC 登记了已不随包的文件——请清理:\n  ' + stale.join('\n  '))
+    process.exitCode = 1
+    return
+  }
+  const kbSize = new Map()
+  for (const s of shipped) {
+    const st = await stat(join(SKILL_DIR, 'references', s))
+    kbSize.set(s, Math.max(1, Math.round(st.size / 1024)) + 'KB')
+  }
+  const biggest = Math.max(...shipped.map((s) => parseInt(kbSize.get(s))))
+  const kbRow = (s) => `| \`${s.split('/')[1]}\`（${kbSize.get(s)}） | ${KB_DOC.get(s)} |`
+  const kbRows = (discipline) => [...KB_DOC.keys()].filter((s) => s.startsWith(discipline + '/')).map(kbRow)
   const index = [
     '# Yi 知识库索引',
     '',
-    '按需读取：先看这一行判断该读哪篇，再读具体文件。**不要整本读**——单篇最大 52KB，',
+    `按需读取：先看这一行判断该读哪篇，再读具体文件。**不要整本读**——单篇最大 ${biggest}KB，`,
     '读错一篇就白占一大块上下文。',
     '',
     '懒得挑篇时用 `yi_kb` 工具关键词检索（返回 文件:行 + 节标题 + 摘录），先定位再读节段。',
@@ -70,20 +100,13 @@ async function main() {
     '',
     '| 文件 | 什么时候读 |',
     '|---|---|',
-    '| `najia_rules.md`（47KB） | 需要核对纳甲装卦规则：八宫次序、纳支口诀、世应定位、六亲六神推演、旬空 |',
-    '| `interpretation_guide.md`（24KB） | 需要查用神取法、旺衰体系、动变规则、应期推断 |',
-    '| `pattern_reference.md`（8KB） | 判断十二大经典格局（先查这篇，短且直接可用） |',
-    '| `classical_synthesis.md`（52KB） | 需要理论深度：四经典综合、虚空月破墓绝刑冲 |',
-    '| `source_ledger.md`（11KB） | 需要确认某条判据的书源出处 |',
+    ...kbRows('liuyao'),
     '',
     '## 八字（references/bazi/）',
     '',
     '| 文件 | 什么时候读 |',
     '|---|---|',
-    '| `bazi_shishen_terminology.md`（7KB） | 十神术语释义 |',
-    '| `bazi_nayin_shiyi.md`（8KB） | 纳音释义 |',
-    '| `bazi_yue_shi_ge.md`（7KB） | 月支与格局 |',
-    '| `api_spec.md`（1KB） | 八字模块接口速查 |',
+    ...kbRows('bazi'),
     '',
     '## ⛔ 不在此目录的内容',
     '',

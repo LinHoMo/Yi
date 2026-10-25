@@ -4,6 +4,31 @@
 > CHANGELOG）。插件是两科的**打包层**：引擎与知识库都是构建产物（不入库），两科缺陷
 > 修复的判据与实跑记录仍以两科 `docs/CHANGELOG.md` 为准；本卷只记插件半的事
 > （架构、构建、安装、验证、发现）。
+>
+> **semver 映射（275 批起，规则见 AGENTS.md §二 dsh-plugin 契约）**：功能批 minor+1、
+> 修复/文档批 patch+1，破坏性变更跨 1.0.0 并单独说明；**批次号是唯一真源**。
+> 回溯补记：269→0.1.0（建成）、270→0.2.0（yi_kb）、271→0.2.1（清账文档）、
+> 272→0.3.0（2-gram+同义词）、273→0.4.0（baziValue 结构化岁运）、274→0.5.0
+> （yi_report）、275→**0.5.1**（本批，构建与治理，无运行时改动）。
+
+## 2026-10-25 第两百七十五批（dsh-plugin）：INDEX 体积自动再生 + 月巡挂钩 + semver 纪律（0.5.1）
+
+迭代地图第 5、6、7 项（收尾批）：
+
+- **INDEX 体积自动再生**（`scripts/build-skills.mjs`）：知识库索引里的 KB 数字从手抄
+  改为**构建时 `stat` 实测**——首跑即抓到手写漂移（najia_rules 手写 47KB 实测 46KB、
+  classical_synthesis 手写 52KB 实测 51KB，「单篇最大」行同步自动算出）。知识库篇目
+  描述集中进 `KB_DOC` 表，**双向校验**：两科新加 references 文件未登记描述 → 构建红；
+  登记了已不随包的文件 → 构建红（负例 `_fake_probe.md` 实测 EXIT=1 后撤除）。
+  行序改由 `KB_DOC` 键序定，不再随 `readdir` 次序漂。
+- **月巡挂钩**（AGENTS.md §二 dsh-plugin 契约新增一条）：对两科 `references/`、
+  `core/`、`scripts/` 的例行巡查末尾必须加跑 `npm --prefix dsh-plugin run check`——
+  两科改动会静默使 `engine/`、`skills/` 构建产物过期，此门是提交前抓漂移的唯一机制；
+  GOVERNANCE 月巡名册如建立须登记。本批即按该口径从仓库根用 `--prefix` 实跑验证。
+- **semver 纪律**：`package.json` 0.1.0→**0.5.1**，映射表回溯补记在卷首（见上）；
+  此后逐批补记。npm 包版本只是粗坐标，批次号仍是唯一真源。
+- 验证：`npm --prefix dsh-plugin run check` 全绿（selftest 77 项 / verify-in-dsh 27 项）；
+  纯构建与治理批，无运行时改动（src/ 零 diff，semver 故只走 patch）。
 
 ## 2026-10-25 第两百七十四批（dsh-plugin）：`yi_report` 完整排盘报告——引擎 render 段 + 八字可视化排版层
 
