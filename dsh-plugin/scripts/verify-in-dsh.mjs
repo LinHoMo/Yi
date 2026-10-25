@@ -69,6 +69,7 @@ if (inject.includes('tools') && inject.includes('systemPrompt')) {
 registry.has('yi_liuyao') ? pass('工具 yi_liuyao 已注册') : fail('工具 yi_liuyao 未注册')
 registry.has('yi_bazi') ? pass('工具 yi_bazi 已注册') : fail('工具 yi_bazi 未注册')
 registry.has('yi_kb') ? pass('工具 yi_kb 已注册') : fail('工具 yi_kb 未注册')
+registry.has('yi_report') ? pass('工具 yi_report 已注册') : fail('工具 yi_report 未注册')
 sections.length === 1 ? pass(`系统提示词段已注册：${sections[0].name}`) : fail(`提示词段数量异常：${sections.length}`)
 sections[0] && Number.isFinite(sections[0].order) ? pass(`section.order 是有限数：${sections[0].order}`) : fail('section.order 不是有限数')
 providers.length === 1 ? pass('技能 provider 已注册') : fail(`技能 provider 数量异常：${providers.length}`)

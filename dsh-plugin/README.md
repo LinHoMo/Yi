@@ -64,7 +64,7 @@ node scripts/install-preset.mjs <你的profile>
 > 铁律二，案例库与解读必须物理隔离——断卦时不得联想、类比或引用历史案例。
 > 打包脚本按文件名硬排除，自检 [1.5] 有一条专门断言它不在包内（带负例自证）。
 
-## 三个工具
+## 四个工具
 
 ### `yi_liuyao` — 六爻纳甲
 
@@ -104,6 +104,19 @@ node scripts/install-preset.mjs <你的profile>
 先检索定位、再按 `file:line` 读具体节段。案例库在扫描层硬排除（铁律二第三道闸：
 打包层 `build-skills.mjs` 排除 + 自检 [1.5] 断言 + 本工具扫描层排除）。
 
+### `yi_report` — 完整排盘报告（文件）
+
+| 参数 | 必填 | 说明 |
+|---|---|---|
+| `discipline` | ✅ | `liuyao`／`bazi` |
+| `format` | | `html`（默认）／`md` |
+| 其余 | | 与对应排盘工具相同（六爻 `question` 等；八字 `datetime`/`gender`） |
+
+先判读（yi_liuyao / yi_bazi）、后出报告。六爻 html 与两科 md 走**引擎 render 段**；
+八字 html 由插件排版层（`src/report.mjs`）生成——四柱卡、旺衰格局喜忌徽章、大运时间条、
+流年结构事件表、流月格，文字全部来自引擎字段、零新断语，页脚自带口径说明
+（古籍对齐分≠命中率）。返回 `{path, format, bytes, generator, preview}`，把路径转告用户。
+
 ## Python 解释器怎么找
 
 按优先级：
@@ -121,15 +134,15 @@ node scripts/install-preset.mjs <你的profile>
 
 发布包只含运行必需部分，**不含评测数据**。
 
-**以下为 `npm pack --dry-run --json` 实测值**（161 个文件，非估算）：
+**以下为 `npm pack --dry-run --json` 实测值**（162 个文件，非估算）：
 
 | 内容 | 解包体积 |
 |---|---|
 | 引擎（core + scripts + data/rules + data/*.json + references，两科，138 文件） | 2.21 MB |
 | 知识库（技能目录下 9 篇判据文档 + SKILL.md + INDEX，11 文件） | 0.17 MB |
-| 插件源码（6 文件） | 0.04 MB |
+| 插件源码（7 文件） | 0.06 MB |
 | 文档与配置（README/SKILL/LICENSE/package.json/patch/preset） | ≈ 0.02 MB |
-| **解包合计** | **2.44 MB** |
+| **解包合计** | **2.46 MB** |
 | **npm 分发 `.tgz`** | **0.72 MB** |
 
 | 未打包 | 体积 | 原因 |
@@ -171,7 +184,7 @@ Python 定位（含指向不存在路径必须报错）/ 打包引擎完整性 /
 Agent preset 声明合法性（含负例）/ 安装脚本幂等与 YAML 安全性 /
 引擎目录不被运行期派生文件污染（含负例）。
 
-当前实跑：**68 项通过 / 0 失败**。
+当前实跑：**77 项通过 / 0 失败**。
 
 一致性门是**逐文件全量**的，不是抽查：137 个引擎文件 + 9 篇知识库逐篇与两科真源对拍，
 外加「真源有、包里缺」的反向核对（案例库按铁律二豁免）。

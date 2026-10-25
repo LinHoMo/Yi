@@ -8,7 +8,8 @@
  *  · 机械运算全部在 Python 引擎里完成；这里只搬运参数、整形结果、拼装正文。
  *    （仓库铁律一：LLM 与 node 层都不许自己算卦。）
  */
-import { cast } from './engine.mjs'
+import { cast, report } from './engine.mjs'
+import { baziHtml, writeReportFile } from './report.mjs'
 
 /** 把可能很长的正文做有界截断，附原文长度，避免把整篇报告塞进上下文。 */
 function bounded(text, max = 6000) {
@@ -282,6 +283,80 @@ export async function runBazi(args, exec) {
   const argv = buildBaziArgs(args)
   const result = await cast('bazi', argv, { signal: exec?.signal })
   return baziValue(result)
+}
+
+/**
+ * 报告工具（274 批）：跑完整 cast 后渲染报告文件。
+ * 六爻 html/md 与八字 md 走**引擎 render 段**（两科已验证的报告器）；
+ * 八字 html 走插件排版层（src/report.mjs，文字全部来自引擎结构化字段，零新断语）。
+ */
+export async function runReport(args, exec) {
+  const discipline = args.discipline
+  if (discipline !== 'liuyao' && discipline !== 'bazi') {
+    throw new Error(`discipline 必须是 liuyao 或 bazi（收到：${discipline}）`)
+  }
+  const fmt = args.format === 'md' ? 'md' : 'html'
+  const argv = discipline === 'liuyao' ? buildLiuyaoArgs(args) : buildBaziArgs(args)
+  const result = await cast(discipline, argv, { signal: exec?.signal })
+  let content
+  let generator
+  if (discipline === 'liuyao') {
+    content = await report('liuyao', result.analyze, { fmt, signal: exec?.signal })
+    generator = `引擎 render 段（${fmt}）`
+  } else if (fmt === 'md') {
+    content = await report('bazi', result.analyze, { fmt: 'md', signal: exec?.signal })
+    generator = '引擎 render 段（md）'
+  } else {
+    content = baziHtml(baziValue(result))
+    generator = '插件排版层（数据全部来自引擎结构化字段）'
+  }
+  const path = await writeReportFile(discipline, fmt, content)
+  const preview = clip(content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(), 200)
+  return {
+    discipline,
+    format: fmt,
+    path,
+    bytes: Buffer.byteLength(content, 'utf8'),
+    generator,
+    preview,
+  }
+}
+
+/**
+ * yi_report：完整报告文件（274 批）。判据与正文仍是引擎产出；这里只编排
+ * cast → render 段（或八字 html 排版层）→ 落临时文件，返回路径交用户打开。
+ */
+export function createReportTool() {
+  return {
+    name: 'yi_report',
+    description:
+      '生成完整排盘报告文件（单文件，浏览器可开）。六爻报告由引擎 render 段产出' +
+      '（含装卦全表、旺衰、应期与断卦正文，html/md）；八字 html 含四柱卡、旺衰格局喜忌、' +
+      '大运时间条、流年结构事件表、流月格（插件排版层，文字全部来自引擎字段）。' +
+      '先完成 yi_liuyao / yi_bazi 的判读；用户要「出报告/可视化/存档」时调用，' +
+      '把返回的文件路径转告用户。机械运算仍全部由 Python 引擎完成。',
+    parameters: {
+      discipline: { type: 'string', enum: ['liuyao', 'bazi'], required: true, description: '报告学科' },
+      format: { type: 'string', enum: ['html', 'md'], description: '输出格式，默认 html' },
+      question: { type: 'string', description: 'discipline=liuyao 时必填：求测问题（与 yi_liuyao 相同）' },
+      mode: { type: 'string', enum: ['coin', 'time', 'number', 'manual'], description: 'liuyao 起卦方式（默认 coin）' },
+      datetime: { type: 'string', description: 'liuyao=起卦时刻；bazi=出生时间 "YYYY-MM-DD HH:MM"（bazi 必填）' },
+      numbers: { type: 'string', description: 'mode=number 时必填，格式 "a,b,c"' },
+      yao: { type: 'string', description: 'mode=manual 时必填，6 个爻值如 "7,8,9,7,6,8"' },
+      seed: { type: 'number', description: '铜钱摇卦的随机种子，用于复现同一卦' },
+      gender: { type: 'string', enum: ['男', '女'], description: '性别（bazi 必填；liuyao 占婚恋时重要）' },
+      longitude: { type: 'number', description: 'bazi 出生地东经，用于真太阳时校正（可选）' },
+    },
+    render: (_args, value) => [
+      {
+        type: 'text',
+        text:
+          `报告已生成：${value?.path ?? '（失败）'}\n` +
+          `格式 ${value?.format} / ${Math.round((value?.bytes ?? 0) / 1024)} KB / ${value?.generator ?? ''}\n` +
+          `预览：${value?.preview ?? ''}`,
+      },
+    ],
+  }
 }
 
 /**

@@ -38,6 +38,9 @@ await section('[1] 包结构完整性', async () => {
     'src/engine.mjs',
     'src/python.mjs',
     'src/tools.mjs',
+    'src/kb.mjs',
+    'src/kb-synonyms.json',
+    'src/report.mjs',
     'SKILL.md',
     'cordis.patch.yml',
     'engine/MANIFEST.json',
@@ -586,6 +589,46 @@ await section('[12] yi_kb 判据知识库检索（含铁律二扫描层排除）
       : fail('负例失效：探针文件没写成功，本段排除判据未被真正考验')
   } finally {
     await fsp.rm(tmp, { recursive: true, force: true })
+  }
+})
+
+// ── 13. 报告工具（274 批）：引擎 render 段 + 插件排版层 + 落文件 ─────────────
+await section('[13] yi_report 报告（六爻引擎 HTML / 八字排版层 HTML / 落文件 / 负例）', async () => {
+  const { runReport } = await import('../src/tools.mjs')
+  const { stat } = await import('node:fs/promises')
+
+  const bl = await runReport({ discipline: 'liuyao', question: '占今日工作进展', mode: 'time' })
+  bl.format === 'html' && bl.path.endsWith('.html')
+    ? pass(`六爻报告（引擎 render 段）：${Math.round(bl.bytes / 1024)} KB`)
+    : fail(`六爻报告异常：${bl.format} ${bl.path}`)
+  const lTxt = await import('node:fs/promises').then((m) => m.readFile(bl.path, 'utf8'))
+  lTxt.includes('<html') && lTxt.includes('爻')
+    ? pass('六爻报告含完整 HTML 与卦象内容')
+    : fail('六爻报告内容异常（缺 <html> 或爻）')
+
+  const bb = await runReport({ discipline: 'bazi', datetime: '1990-05-20 12:00', gender: '男' })
+  bb.format === 'html' && bb.bytes > 2000
+    ? pass(`八字报告（插件排版层）：${Math.round(bb.bytes / 1024)} KB`)
+    : fail(`八字报告异常：${bb.format} ${bb.bytes}B`)
+  const bTxt = await import('node:fs/promises').then((m) => m.readFile(bb.path, 'utf8'))
+  bTxt.includes('四柱') && bTxt.includes('壬午') && bTxt.includes('古籍案例对齐分')
+    ? pass('八字报告含四柱卡/大运/口径页脚（文字全部来自引擎字段）')
+    : fail('八字报告内容异常（缺四柱/干支/口径页脚）')
+
+  const bm = await runReport({ discipline: 'bazi', datetime: '1990-05-20 12:00', gender: '男', format: 'md' })
+  bm.format === 'md'
+    ? pass('八字 md 报告（引擎 render 段）可出')
+    : fail('八字 md 报告异常')
+  for (const p of [bl.path, bb.path, bm.path]) {
+    const ok = await stat(p).then(() => true, () => false)
+    if (!ok) fail(`报告文件未落盘：${p}`)
+  }
+
+  try {
+    await runReport({ discipline: 'tarot', datetime: '1990-05-20 12:00', gender: '男' })
+    fail('负例失效：discipline=tarot 竟未报错')
+  } catch {
+    pass('负例自证：discipline 非法时明确报错')
   }
 })
 

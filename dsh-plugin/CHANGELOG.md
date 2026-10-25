@@ -5,6 +5,34 @@
 > 修复的判据与实跑记录仍以两科 `docs/CHANGELOG.md` 为准；本卷只记插件半的事
 > （架构、构建、安装、验证、发现）。
 
+## 2026-10-25 第两百七十四批（dsh-plugin）：`yi_report` 完整排盘报告——引擎 render 段 + 八字可视化排版层
+
+迭代地图第 4 项（缺口：报告只能靠模型手写 Markdown，排版不受控、可视化为零）：
+
+- **引擎报告段接入**（`src/engine.mjs`）：`DISCIPLINES` 各科加 `reportScript`，新增
+  `report(discipline, analyzeJson, {fmt})`——复用 cast 同一条 `runStage` 通道，六爻追加
+  `-f html|md` 走 `liuyao/scripts/render.py`（单文件 HTML，引擎已验证报告器）、两科 md
+  走各自 `render.py`。**不引入新断语，只呈现引擎已产出的判读**。
+- **八字 HTML 排版层**（`src/report.mjs` 新建）：四柱卡（干支+纳音+十神）、旺衰/格局/
+  喜忌徽章、大运时间条（含交叉事件）、流年结构化事件表、流月格——文字全部来自 273 批
+  baziValue 的引擎结构化字段（`conclusion` 直取），页脚自带口径说明（古籍案例对齐分
+  ≠现实命中率，§一.3）。生成文件落 `%TEMP%/yi-reports/yi-<科>-<时间戳>.<fmt>`。
+- **新工具 `yi_report`**（`src/tools.mjs` `createReportTool`/`runReport`）：参数
+  `discipline`（必填，非两科即抛错）/`format`/排盘同款参数；返回
+  `{discipline, format, path, bytes, generator, preview}`（预览=去标签 clip 200）。
+  注册顺序：yi_liuyao → yi_bazi → yi_kb → yi_report；系统提示词段「三个工具」→「四个工具」。
+- **流程约束写进文档**：SKILL.md/README 均注明「先判读、后报告」——报告是判读的呈现，
+  不替代判读；模型须把返回的文件路径转告用户。
+- **测试**：selftest 新增 [13] 段（六爻 html 引擎渲染 ≈9KB 且含卦象、八字 html ≈10KB
+  且含四柱/干支/口径页脚、八字 md、三文件 stat 落盘、负例 `discipline=tarot` 报错）；
+  verify-in-dsh [1] 增 `registry.has('yi_report')`。check 全绿：selftest **77 项**、
+  verify-in-dsh 26 项。
+- **体积复测**：npm pack（cd 进插件目录）= **162 文件 / 2.46 MB / tgz 0.72 MB**
+  （插件源码 6→7 文件、0.04→0.06 MB），README 两处体积表按实数更新。
+- 踩坑两笔：①生成目录漏 `mkdir` 报 ENOENT（writeReportFile 已补 recursive mkdir）；
+  ②一次 edit 误伤 createKbTool 函数头，check 前自查发现补回——「先 node --check 再
+  上门」的既有纪律再次兜底。
+
 ## 2026-10-25 第两百六十九批（dsh-plugin）：**Yi 术数 DSH 插件建成入库——agent 预设 + skills 加载 + 知识库 + 内置引擎的分层架构**
 
 **是什么**：把两科包装成 `dsh plugin --profile <p> add "link:<repo>/dsh-plugin"` 一键

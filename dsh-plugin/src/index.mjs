@@ -18,7 +18,15 @@ import { basename, dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { selftest } from './engine.mjs'
 import { runKb } from './kb.mjs'
-import { createBaziTool, createKbTool, createLiuyaoTool, runBazi, runLiuyao } from './tools.mjs'
+import {
+  createBaziTool,
+  createKbTool,
+  createLiuyaoTool,
+  createReportTool,
+  runBazi,
+  runLiuyao,
+  runReport,
+} from './tools.mjs'
 
 /**
  * 取 `defineTool`：它是 dsh-tools 的具名导出，由宿主提供（插件不打包它）。
@@ -60,13 +68,14 @@ const PROVIDER_NAME = 'yi-bundled'
  */
 const SECTION_TEXT = `## Yi（六爻 / 八字）
 
-本机装有一套确定性术数引擎与随包判据知识库，通过三个工具调用。**排盘与推演全部由内置
+本机装有一套确定性术数引擎与随包判据知识库，通过四个工具调用。**排盘与推演全部由内置
 Python 代码完成，你不得自己心算或推算任何卦象、干支、纳甲、旺衰、应期。**
 
 - \`yi_liuyao\`：六爻纳甲。起卦（铜钱/时间/数字/手动）→ 装卦 → 断卦 → 出正文。
 - \`yi_bazi\`：八字四柱。排盘 → 十神/藏干/旺衰/格局/喜用/大运流年 → 出正文。
 - \`yi_kb\`：判据知识库关键词检索（纳甲/用神/格局/应期等判据表）。返回 文件:行 + 节标题
   + 摘录，先检索定位再按行读具体节段，不要整篇读入。
+- \`yi_report\`：完整排盘报告文件（单文件 HTML）。先判读后出报告；把返回的文件路径转告用户。
 
 使用要点：
 
@@ -196,6 +205,9 @@ export function apply(ctx, config) {
 
       // 判据知识库检索：纯 Node、不依赖 Python，与 enableBazi 无关，恒注册。
       yield toolsCtx.tools.register(build(createKbTool(), runKb))
+
+      // 完整报告文件（274 批）：cast → render 段（或八字 html 排版层）→ 临时文件。
+      yield toolsCtx.tools.register(build(createReportTool(), runReport))
     }, 'yi: divination tools')
   })
 

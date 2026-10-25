@@ -29,12 +29,14 @@ const DISCIPLINES = {
     chartScript: ['scripts', 'chart.py'],
     analyzeScript: ['scripts', 'analyze.py'],
     narrateScript: ['scripts', 'narrate.py'],
+    reportScript: ['scripts', 'render.py'],
   },
   bazi: {
     label: '八字（四柱）',
     chartScript: ['scripts', 'chart.py'],
     analyzeScript: ['scripts', 'analyze.py'],
     narrateScript: ['scripts', 'narrate.py'],
+    reportScript: ['scripts', 'render.py'],
   },
 }
 
@@ -176,6 +178,24 @@ export async function cast(discipline, chartArgs, options = {}) {
   const analyzeJson = await analyze(discipline, chartJson, options)
   const narrative = await narrate(discipline, analyzeJson, options)
   return { chart: chartJson, analyze: analyzeJson, narrative }
+}
+
+/**
+ * 报告：render 阶段把 analyze JSON 渲染成报告全文（引擎自己的报告器，插件不重写判据）。
+ * liuyao 支持 fmt='html'（render.py 单文件 HTML）与 'md'；bazi 只有 md。
+ * @returns {string} 报告全文（stdout）
+ */
+export async function report(discipline, analyzeJson, { fmt = 'md', signal } = {}) {
+  const dir = await mkdtemp(join(tmpdir(), 'yi-dsh-'))
+  try {
+    const analyzePath = join(dir, 'analyze.json')
+    await writeFile(analyzePath, JSON.stringify(analyzeJson), 'utf8')
+    const extra = discipline === 'liuyao' ? ['-f', fmt === 'html' ? 'html' : 'md'] : []
+    const { stdout } = await runStage(discipline, 'report', [analyzePath, ...extra], { signal })
+    return stdout
+  } finally {
+    await rm(dir, { recursive: true, force: true })
+  }
 }
 
 /** 引擎自检：确认打包的引擎目录与入口脚本都在。 */
