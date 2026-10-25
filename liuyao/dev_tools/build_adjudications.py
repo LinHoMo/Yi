@@ -252,7 +252,7 @@ ENTRIES = [
         "id": "liuyao.douqin_zisun_track",
         "dispute": "斗类娱乐题取用双轨：斗殴打架以兄弟（对手）为用，斗禽斗蟋蟀书以子孙持世为我方禽畜、父爻动为敌禽（父母克子孙=彼伤我）——同「斗」字两轨",
         "parties": [
-            {"who": "实案（斗禽轨：WSD023 占鵪鶉）", "quote": "子孫持世以臨日辰﹐父爻𨿽動﹐亥水制之﹐獨不宜亥爲月破﹐𨻿可制火﹐今日巳午時切不可斗", "source": "zengshan_buyi.wikitext.txt", "line": 3616},
+            {"who": "实案（斗禽轨：WSD023 占鵪鶉）", "quote": "子孫持世以臨日辰﹐父爻𨿽動﹐亥水制之﹐獨不宜亥爲月破﹐𨿽可制火﹐今日巳午時切不可斗", "source": "zengshan_buyi.wikitext.txt", "line": 3616},
         ],
         "engine_position": "引擎判类无斗禽轨（「斗」未入用神词典），占鵪鶉落泛问轨→category 失分；不机械化：斗禽娱乐题库内仅此一实案，且斗殴族书证（兄弟为对手）与斗禽轨（子孙为我方）语义相反，误并则两伤",
         "engine_anchor": "data/rules/question_use_gods.json；案例 wikisource WSD023",
