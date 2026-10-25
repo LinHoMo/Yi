@@ -248,6 +248,29 @@ ENTRIES = [
         "status": "open_conflict",
         "note": "wikitext L1393 全句续：「但嫌巳火墓於戌月而又化墓﹐生我之官爻卽又入墓耶﹐兼且又是六沖﹐疑爲不吉。」——官星入墓+六冲论行程疑虑，断对象全程是官星非世爻。",
     },
+    {
+        "id": "liuyao.douqin_zisun_track",
+        "dispute": "斗类娱乐题取用双轨：斗殴打架以兄弟（对手）为用，斗禽斗蟋蟀书以子孙持世为我方禽畜、父爻动为敌禽（父母克子孙=彼伤我）——同「斗」字两轨",
+        "parties": [
+            {"who": "实案（斗禽轨：WSD023 占鵪鶉）", "quote": "子孫持世以臨日辰﹐父爻𨻿動﹐亥水制之﹐獨不宜亥爲月破﹐𨻿可制火﹐今日巳午時切不可斗", "source": "zengshan_buyi.wikitext.txt", "line": 3616},
+        ],
+        "engine_position": "引擎判类无斗禽轨（「斗」未入用神词典），占鵪鶉落泛问轨→category 失分；不机械化：斗禽娱乐题库内仅此一实案，且斗殴族书证（兄弟为对手）与斗禽轨（子孙为我方）语义相反，误并则两伤",
+        "engine_anchor": "data/rules/question_use_gods.json；案例 wikisource WSD023",
+        "status": "open_conflict",
+        "note": "书内应期轨亦特殊：父爻得令之时（巳午时）不可斗——应期取忌神当令时段，非寻常用神受制应凶轨。",
+    },
+    {
+        "id": "liuyao.youshen_guan_track",
+        "dispute": "忧神轨：占六亲病书以官鬼持世为「忧」（忧去即愈，官鬼非病之用神而是心忧之象）——与常轨「官鬼为疾病类用神/忌神」语义相反，且觉子自划边界（占自身兄弟妻儿此法是也，父母妻夫不宜）",
+        "parties": [
+            {"who": "实案（忧神轨：WSD027 占子病）", "quote": "官鬼持世﹐憂也﹐今日子日沖去憂心﹐管許立愈﹐果於本日愈", "source": "zengshan_buyi.wikitext.txt", "line": 3981},
+            {"who": "轨边界（觉子曰自注）", "quote": "如占自身及兄弟妻兒者﹐此法是也﹐若占父母之災﹐官鬼爲父母之元神﹐豈宜子動而傷耶", "source": "zengshan_buyi.wikitext.txt", "line": 3981},
+        ],
+        "engine_position": "引擎占病走用神旺衰轨（占子孙病取子孙），官鬼持世记忌神持世凶侧→WSD027 verdict 反向；不机械化：忧神轨须先识别「忧象断」与「病象断」的题面分歧，库内单实案不足定通用判据；觉子边界注（占父母/妻夫不宜）本身即书内自认的适用域限制",
+        "engine_anchor": "scripts/step5.py verdict 化轨；案例 wikisource WSD027",
+        "status": "open_conflict",
+        "note": "应期轨同例：子日冲去忧心=冲去持世官鬼应愈（冲忌神应吉，与第二八五批应期③支同源但断对象是忧非病）。",
+    },
 ]
 
 
