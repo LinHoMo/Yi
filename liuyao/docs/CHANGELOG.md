@@ -1,5 +1,30 @@
 # 六爻 CHANGELOG
 
+## 2026-10-26 第三百批（六爻）：行人归占化退归志层（ZD050 闭环）
+
+**性质**：judgment（行人区修正层）｜299 批裁决表 `huaxtui_xingren_gui` 的 verdict 侧闭环
+
+### 书证（dz 底本）
+- 总诀：《卜筮正宗》行人章归期歌诀 dz L3298「**动化进神不返，用神化退而归**」——
+  通用轨（歌诀总诀非单实案），化退在成败占主衰（dz L551）、在归期占主归志
+- 实案双证：dz L1246「兄动化退，已有归志……此乃动破而变日月，岂可谓之退不及也」
+  （ZD050）、dz L1158「父化退神，父已归矣」
+
+### 实现（step5.py compute_classical_adjustment 行人区 1a 支）
+- 门：`_is_travel_return`（question_class==行人 且非逃亡捕捉）
+- 检测：step4_data.details[].change_type 含「化退」（结构化，非 summary 嗅探）
+- 计价：+1.0 抵回 step4 用神化退 −1.0 衰价（格局层化退 −2.0 不动，保守只抵一处）；
+  note=travel_huatui_guizhi（verdict_texts.json 新条目，书证入 basis）
+- 踩坑：首版读 `_step4_data.summary_text` 恒空（step4 summary 不逐字含「化退」）→
+  次版误猜 `change.type` 键名 → 实键为 `change_type`（step4.py:160），spy 后改准
+
+### 读数（七 split 对账）
+- **zengshan_dz_holdout 50.5→53.4（+2.9）**：ZD050 verdict 凶→**吉**，单案复位 100，
+  完全回补 298 批六冲门的交叉漏账（299 批登记的 open_conflict 就此 verdict 侧闭环）
+- tune 97.9 / holdout 90.2 / wiki 75.1 / direction 74.3 / suigui 98.5 / yingqi 87.9
+  全持平；金标准 288 条零漂移（行人+化退组合在合成探针轮转中无对应格）
+- check --fast 全绿；裁决表 14 条不变（engine_position 语义更新留待下批随手）
+
 ## 2026-10-26 第两百九十九批（六爻）：WSD 词典三族补齐 + zengshan 漏账归因（六冲门×原神失位交叉）
 
 **性质**：词典数据（judgment 面）+ 读数漏账申报（§六）

@@ -1090,6 +1090,22 @@ def compute_classical_adjustment(
     def _el_of_branch(b):
         return BRANCH_ELEMENTS.get(b or "", "")
 
+    # 1a) 行人归占·化退归志（《卜筮正宗》行人章总诀「动化进神不返，用神化退而归」，
+    #     dz L3298）：化退在成败占主衰象（dz L551 通用轨），在归期占主归志——
+    #     实案双证 dz L1246（兄动化退，已有归志，应实破之月归）、dz L1158（父化退神，
+    #     父已归矣）。故归期占用神（或动爻）化退时抵回 step4 用神化退 −1.0 的衰价。
+    if _is_travel_return:
+        _s4d = safe_get(r, "_step4_data", default={}) or {}
+        _s4_txt = str(_s4d.get("summary_text") or "")
+        for _det in (_s4d.get("details") or []):
+            _ct = str(_det.get("change_type") or "")
+            if _ct:
+                _s4_txt += " " + _ct + " " + str(_det.get("change_detail") or _det.get("detail") or "")
+        if "化退" in _s4_txt:
+            classical_adj += 1.0
+            classical_notes.append(note_text("travel_huatui_guizhi"))
+            pattern_flags.append("travel_huatui_guizhi")
+
     # 1) 行人/归期：用神生世/克世 — 迟归或速至，皆主能归（《黄金策》出行章）
     if _is_travel_return and ug_el_s and world_branch:
         w_el = _el_of_branch(world_branch) or ""
@@ -1113,8 +1129,7 @@ def compute_classical_adjustment(
         if (not _dead) and (
             "得出" in _fu_txt
             or _lv in ("旺", "相", "极旺", "中和", "中和偏旺")
-            or "伏神" in _fu_txt
-        ):
+            or "伏神" in _fu_txt        ):
             classical_adj += 0.6
             classical_notes.append(note_text("travel_use_alive"))
             pattern_flags.append("travel_use_alive")
