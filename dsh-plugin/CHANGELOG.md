@@ -16,6 +16,15 @@
 > 无插件自身代码改动）、281→**1.0.3**（随包引擎同步六爻 281 批占差事词典+WS003
 > 校勘）。
 
+## 2026-10-25 第两百八十九批（dsh-plugin）：随包裁决表新增六破证据缺口条目（1.0.11）
+
+- 六爻 `data/rules/adjudications.json` 9→10 条：liuyao.six_break_evidence
+  （open_conflict）——六破（相破）计价在库内全部书源无逐字书证（增删零提及、
+  卜筮正宗仅目录词 L120），A/B 撤除实测净退化（tune −1.9/wiki −1.5）故保留，
+  证据缺口如实登记。完整叙事见 `liuyao/docs/CHANGELOG.md` 第两百八十九批。
+- 纯登记批：读数与金标准零变化；`npm run check` 全绿。
+- `package.json` 1.0.10→**1.0.11**（data/rules 随包内容更新，patch+1）。
+
 ## 2026-10-25 第两百八十八批（dsh-plugin）：随包裁决表新增两条分歧登记（1.0.10）
 
 - 六爻 `data/rules/adjudications.json` 7→9 条：liuyao.xiangfa_duan_guiqi
