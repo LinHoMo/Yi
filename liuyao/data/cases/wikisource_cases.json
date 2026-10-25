@@ -483,7 +483,7 @@
    "expected": {
     "verdict": "吉",
     "use_god": "妻财",
-    "use_god_branch": "",
+    "use_god_branch": "未",
     "use_god_position": "",
     "yingqi": "戌日",
     "yingqi_branches": [
@@ -630,7 +630,7 @@
    "expected": {
     "verdict": null,
     "use_god": "官鬼",
-    "use_god_branch": "",
+    "use_god_branch": "卯",
     "use_god_position": "",
     "yingqi": "卯日",
     "yingqi_branches": [
@@ -808,8 +808,8 @@
    },
    "expected": {
     "verdict": null,
-    "use_god": "妻财",
-    "use_god_branch": "",
+    "use_god": "官鬼",
+    "use_god_branch": "午",
     "use_god_position": "",
     "yingqi": "亥日",
     "yingqi_branches": [
