@@ -119,6 +119,8 @@ def step3_analyze_strength(r: dict) -> dict:
     em = compute_empty_modifier(
         selected_use_god, use_god_element, month_element, day_element,
         day_branch, yao_lines, god_month_score,
+        question_class=(step2_data or {}).get("question_class", "")
+        if isinstance(step2_data, dict) else "",
     )
     is_empty = em["is_empty"]
     empty_modifier = em["empty_modifier"]
@@ -664,6 +666,7 @@ def compute_empty_modifier(
     day_branch: str,
     yao_lines: list,
     god_month_score: float,
+    question_class: str = "",
 ) -> dict:
     """3.4 旬空：有气论70%/休囚论30% + 真空/假空标签（互斥，宁缺勿滥）。"""
     is_empty = selected_use_god.get("is_empty", False)
@@ -719,8 +722,23 @@ def compute_empty_modifier(
             if is_false_void and void_label.get("reason"):
                 empty_modifier_reason = void_label["reason"]
         else:
-            empty_modifier = 0.3  # 休囚论
-            empty_modifier_reason = void_label.get("reason") or "用神休囚旬空，论30%（真空亡，难应）"
+            # 第两百八十三批：久远类占题的空亡不作真死——《增删卜易》近远分层
+            # 书证链：L524「占近事豈可曰退？若占久遠之事，待休囚之時而退者得也」
+            # （近/远分层的通则句）；L823「近病逢空卽愈，出空之日也」（空亡在近占
+            # 侧是应期而非死凶）；L1415「目下𨿽破入墓，明年三月沖開戌墓…當時
+            # 不破不空，旺相而生世矣」（远占功名的应期化实案）；L1358 久远类清单
+            # 「凡占身命、家宅、功名、墳墓、貿易等事，欲其久遠者」（判类映射取
+            # 功名科举/终身财福两类；贸易属目下/久远双断，保守不收）。
+            # 幅度：休囚空 0.3 → 0.55（待出空中途档，仍弱于有气空 0.7）。
+            if question_class in ("功名科举", "终身财福"):
+                empty_modifier = 0.55  # 远占空亡待出空，不作真死
+                empty_modifier_reason = (
+                    "用神休囚旬空，然占属久远（功名/终身财福），空亡待出空而不作真死，论55%"
+                    "——近应日远应年月（L249），出空冲空之年月应之（L524/L1415）"
+                )
+            else:
+                empty_modifier = 0.3  # 休囚论
+                empty_modifier_reason = void_label.get("reason") or "用神休囚旬空，论30%（真空亡，难应）"
     return {
         "is_empty": is_empty,
         "empty_modifier": empty_modifier,
