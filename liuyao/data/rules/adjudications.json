@@ -1,9 +1,9 @@
 {
  "schema": "yi-liuyao-adjudications/1",
  "discipline": "liuyao",
- "built_at": "2026-10-25T21:15:54",
+ "built_at": "2026-10-26T00:07:59",
  "_comment": "流派裁决表：「与古书吻合」的展开定义。引用任何吻合率须能指回本表行。不改引擎不进评分面不挂门（§176 冻结声明）。状态三值见 builder docstring。",
- "count": 10,
+ "count": 11,
  "entries": [
   {
    "id": "liuyao.xunkong_variants",
@@ -212,33 +212,56 @@
    "dispute": "六破（相破对：子酉/午卯/巳申/寅亥/辰丑/戌未）计价的书证缺口：《增删卜易》三底本全文零提及「六破/相破」，《卜筮正宗》dz 整理本仅目录行出现词名（L120）、正文无论——现计价（世/用被破−0.3、他爻−0.15）无逐字书证支撑",
    "parties": [
     {
-     "who": "主书源（增删）",
-     "quote": "（无「六破」「相破」正文，《增删卜易》月破即月冲论破，见 liuyao.month_break_day_stem 条）",
-     "source": "《增刪卜易》（zengshan_buyi_dz.dz.txt）全文检索",
-     "line": 0
-    },
-    {
-     "who": "库内 16 源全查补记",
+     "who": "库内 16 源全查唯一概念源",
      "quote": "休王相破资益可定吉凶也",
      "source": "《焦氏易传》（jingshi_yizhuan_dz.dz.txt）——汉代京房体系「休王相破」与旺衰并提，系相破概念之源，但无六爻纳甲六破计价细节",
      "line": 43
     },
     {
      "who": "卜筮正宗",
-     "quote": "合局 六冲 六破 六穿 六刑",
-     "source": "《卜筮正宗》（bushi_zhengzong_dz.dz.txt）绪论名词目录行",
+     "quote": "合局\t六冲\t六破\t六穿\t六刑",
+     "source": "《卜筮正宗》（bushi_zhengzong_dz.dz.txt）绪论名词目录行（原文制表符分隔）",
      "line": 120
-    },
-    {
-     "who": "外部读数实证",
-     "quote": "撤除六破计价实测（第两百八十九批 A/B）：tune strict 97.9→96.0、wikisource_holdout 70.5→69.0、holdout/direction/zengshan 持平——净退化，相破扣分方向与外部案例书答一致",
-     "source": "evaluate.py 七 split A/B 实验记录（本条目与两科 CHANGELOG 289 批）",
-     "line": 0
     }
    ],
-   "engine_position": "保留六破计价（effects.analyze_six_breaks，step5 5.5e 消费）：外部读数实证其方向正确（撤除净退化 −1.9/−1.5）；书证缺口如实登记——若后批找到《卜筮正宗》正文或他源六破逐字书证，按书证重估幅度与条件（如旺衰门/久远占适用性）；在此之前不作书证洁癖式撤除，也不虚构出处",
+   "engine_position": "保留六破计价（effects.analyze_six_breaks，step5 5.5e 消费）：外部读数实证其方向正确（第两百八十九批 A/B：撤除计价 tune strict 97.9→96.0、wikisource_holdout 70.5→69.0、holdout/direction/zengshan 持平——净退化）；书证缺口如实登记——若后批找到《卜筮正宗》正文或他源六破逐字书证，按书证重估幅度与条件（如旺衰门/久远占适用性）；在此之前不作书证洁癖式撤除，也不虚构出处",
    "engine_anchor": "scripts/effects.py:analyze_six_breaks；scripts/step5.py:615-619（5.5e 六破损伤消费）",
-   "status": "open_conflict"
+   "status": "open_conflict",
+   "note": "《增删卜易》三底本全文检索记录与 A/B 实验数据原文见两科 CHANGELOG 第两百八十九批（检索类记录无逐字行号，不入 parties 回验面）。"
+  },
+  {
+   "id": "liuyao.bing_use_god_dual",
+   "dispute": "自占病取用双轨：问吉凶生死以世爻为用（通则句＋实案世爻亥水）vs 问愈期用药以子孙为用（用针而愈实案围绕子孙展开）——《增删》总纲两句并提，实占两例取向相反",
+   "parties": [
+    {
+     "who": "总纲（自占病通例）",
+     "quote": "占病者如自占病，若得世爻旺相或日月动爻生合世爻",
+     "source": "《增刪卜易》（zengshan_buyi_dz.dz.txt）",
+     "line": 17
+    },
+    {
+     "who": "通则句",
+     "quote": "自占吉凶者以世爻为用神",
+     "source": "《增刪卜易》（zengshan_buyi_dz.dz.txt）",
+     "line": 436
+    },
+    {
+     "who": "实案（生死取向）",
+     "quote": "自占病世爻亥水为用神",
+     "source": "《增刪卜易》（zengshan_buyi_dz.dz.txt）",
+     "line": 561
+    },
+    {
+     "who": "实案（愈期取向）",
+     "quote": "果于次日用针而愈。或曰：子孙化退神，何其用药亦效",
+     "source": "《增刪卜易》（zengshan_buyi_dz.dz.txt）",
+     "line": 1182
+    }
+   ],
+   "engine_position": "引擎按通则句默认世爻为用（第两百九十四批自占病层：无六亲主体的纯占病→世爻，置于疾病→官鬼词典之前）；问愈期重子孙医药的变体未机械化（单一实案不可作通用判据）；E 类应期基准 WS005 na→hit 随本口径更新（check_yingqi_scoring.E_CLASS_EXPECTED，本批登记）",
+   "engine_anchor": "scripts/step2.py 自占病覆盖层；dev_tools/check_yingqi_scoring.py E_CLASS_EXPECTED；案例 wikisource WS005/WS008/WS020",
+   "status": "open_conflict",
+   "note": "wikitext 底本对应句（行号见两科 CHANGELOG 第两百九十四批）：「自占者，宜世爻旺相……占他人以應爻爲用」「自占看世爻，旺相者非眞，代占看用神」「自占病亥水克世」（繁体原文，出处背景）。dz 底本行号：宜世爻旺相句=L1468、入墓自占看世爻句=L1330、自占病亥水克世句=L1100。"
   }
  ]
 }

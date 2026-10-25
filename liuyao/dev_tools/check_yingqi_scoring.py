@@ -35,11 +35,13 @@ import evaluate as ev  # noqa: E402
 
 # wikisource E 类六例（书载应期写「次日」，无支级答案）。
 # 真实读数（第一百七十二批实测）：WS024/WS027/WS040/WS042 绝对日窗命中（满分），
-# WS005/WS028 答不进窗（N/A）。这两个数是本门的对拍基准，改动须先改本文件＋CHANGELOG。
+# WS028 答不进窗（N/A）。这些数是本门的对拍基准，改动须先改本文件＋CHANGELOG。
+# WS005 第两百九十四批 na→hit：自占病层使 WS005 用神官鬼→世爻（裁决表
+# liuyao.bing_use_god_dual 口径），yingqi 语支随之变化，实测 hit/applicable=11。
 E_CLASS_EXPECTED = {
     "WS024": ("hit", 11), "WS027": ("hit", 11),
     "WS040": ("hit", 11), "WS042": ("hit", 11),
-    "WS005": ("na", 0), "WS028": ("na", 0),
+    "WS005": ("hit", 11), "WS028": ("na", 0),
 }
 
 

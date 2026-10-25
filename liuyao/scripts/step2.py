@@ -498,6 +498,21 @@ def _decide_use_god(question_category: str, question_text: str) -> tuple[str, di
     # 久病占取世爻为用（书名归属《卜筮正宗》，该书原文未入库——覆盖层不挂逐字引文）
     if "久病" in combined:
         return _layer("久病→世爻", "世爻")
+    # 自占病（第二九四批）：无六亲主体的纯占病默认自占 → 世爻为用。书证三处
+    # （dz 底本逐字）：《增删卜易》源L17「占病者如自占病，若得世爻旺相或日月动爻
+    # 生合世爻」、源L436「自占吉凶者以世爻为用神」、源L561「自占病世爻亥水为用
+    # 神」。占病取用有书内双轨（问吉凶重世爻旺衰／问愈期重子孙医药，dz L17 总纲
+    # 并提），引擎按通则句取世爻为主用，双轨歧义另登记裁决表 open_conflict。
+    # 须置于
+    # question_category 精确匹配（疾病→官鬼）之前——category 层会先行截走。
+    # 带主体词的占病（父病/妻病/子病…）与代占（某人/他人）由关系法则与词典
+    # 按六亲取用，不经此层。
+    if "病" in combined and not any(
+        k in combined for k in ("父亲", "母亲", "父病", "母病", "妻", "子病", "孙",
+                                 "兄", "夫", "仆", "奴", "婢", "岳", "翁", "媳", "婿",
+                                 "他人", "他占", "某人", "别人")
+    ):
+        return _layer("自占病→世爻", "世爻")
     # 出行/行人占取世爻为用（仅当没有提到具体人时生效；出行章"世為出行人"见层引文表）
     if any(k in combined for k in ("出行", "行人")):
         return _layer("出行行人→世爻", "世爻", "出行")
@@ -519,7 +534,7 @@ def _decide_use_god(question_category: str, question_text: str) -> tuple[str, di
     # 胎孕：以子孙为胎息，优先于句中「妻」
     if any(k in combined for k in ("怀孕", "胎", "孕", "产", "怀")):
         return _layer("胎孕→子孙", "子孙", "胎孕")
-    # 久病/自身/自占病：以世爻为己身
+    # 久病/自身/自占病：以世爻为己身（自占病无主体判定已上移至覆盖层区，见前）
     if any(k in combined for k in ("久病", "自占病", "自身", "自测")) or (
         "病" in combined and any(k in combined for k in ("半年", "多月", "已久", "沉重"))
     ):

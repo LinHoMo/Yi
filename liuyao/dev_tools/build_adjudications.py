@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -118,14 +119,76 @@ ENTRIES = [
         "engine_anchor": "step2._use_god_rules；门 [26]/取舍序冻结登记见 CHANGELOG 第一百七十二批",
         "status": "frozen_by_user",
     },
+    {
+        "id": "liuyao.xiangfa_duan_guiqi",
+        "dispute": "占父何日归：用神旺衰论断凶（古法：父母持世破而化空无生助→不能归）vs 象法断应期（野鹤自认「余不以此论之」，改断朱雀临父动持世→卯日有信、未日出空归）。书内两断法并存，野鹤明言弃古法从象",
+        "parties": [
+            {"who": "野鹤自认（古法结论）", "quote": "以古法断者，作用神而无气，其父不能归也", "source": Z, "line": 1014},
+            {"who": "野鹤弃古法从象", "quote": "余不以此论之，竟断朱雀临父动而持世，卯日有信，午未日必归", "source": Z, "line": 1014},
+            {"who": "象法应期逻辑", "quote": "应未日归者，父化未土旬空出空之日到也", "source": Z, "line": 1014},
+        ],
+        "engine_position": "引擎忠于用神旺衰框架（判凶与古法结论一致，wikisource WS001 verdict 维度按古法立场计分）；象法断（六神临身象＋出空应期归）属灵机应变，未机械化为通用判据（单一实案＋六神象不可量化），登记不修（第两百八十八批）",
+        "engine_anchor": "scripts/step3.py（用神旺衰框架）；案例 liuyao/data/cases/wikisource_cases.json WS001",
+        "status": "open_conflict",
+    },
+    {
+        "id": "liuyao.bianyao_usegod",
+        "dispute": "求财用神候选：古法变爻不作用神（伏藏妻财午飞克伏判凶）vs 野鹤灵机（兄临世爻日破月破不克变出之财＋日月俱作财来冲世→明日冲实必得）。且书内同案自认久远/目下双断（久远无财、目下必得）",
+        "parties": [
+            {"who": "野鹤灵机断", "quote": "兄临世爻日破月破，不克变出之财，日月俱作财来冲世，只因应爻而逢空，明日冲实，定送财来，果于次日送来", "source": Z, "line": 3043},
+            {"who": "书内双断自认", "quote": "若逢久远之财有否，则无财。若问目下之财，明日戊午必得", "source": Z, "line": 3043},
+        ],
+        "engine_position": "引擎取用神伏藏评估（妻财午伏于亥水下飞克伏，WS040 判凶）；「变出之爻作用神」「日月冲世作财来」属灵机应变，未入用神候选规则（变爻不作用神是引擎既有通则，翻转须多实案＋总论书证，现仅单例），登记不修（第两百八十八批）",
+        "engine_anchor": "scripts/step3.py resolve_fu_cang_result（伏藏评估）；案例 liuyao/data/cases/wikisource_cases.json WS040",
+        "status": "open_conflict",
+    },
+    {
+        "id": "liuyao.six_break_evidence",
+        "dispute": "六破（相破对：子酉/午卯/巳申/寅亥/辰丑/戌未）计价的书证缺口：《增删卜易》三底本全文零提及「六破/相破」，《卜筮正宗》dz 整理本仅目录行出现词名（L120）、正文无论——现计价（世/用被破−0.3、他爻−0.15）无逐字书证支撑",
+        "parties": [
+            {"who": "库内 16 源全查唯一概念源", "quote": "休王相破资益可定吉凶也", "source": "《焦氏易传》（jingshi_yizhuan_dz.dz.txt）——汉代京房体系「休王相破」与旺衰并提，系相破概念之源，但无六爻纳甲六破计价细节", "line": 43},
+            {"who": "卜筮正宗", "quote": "合局\t六冲\t六破\t六穿\t六刑", "source": "《卜筮正宗》（bushi_zhengzong_dz.dz.txt）绪论名词目录行（原文制表符分隔）", "line": 120},
+        ],
+        "engine_position": "保留六破计价（effects.analyze_six_breaks，step5 5.5e 消费）：外部读数实证其方向正确（第两百八十九批 A/B：撤除计价 tune strict 97.9→96.0、wikisource_holdout 70.5→69.0、holdout/direction/zengshan 持平——净退化）；书证缺口如实登记——若后批找到《卜筮正宗》正文或他源六破逐字书证，按书证重估幅度与条件（如旺衰门/久远占适用性）；在此之前不作书证洁癖式撤除，也不虚构出处",
+        "engine_anchor": "scripts/effects.py:analyze_six_breaks；scripts/step5.py:615-619（5.5e 六破损伤消费）",
+        "status": "open_conflict",
+        "note": "《增删卜易》三底本全文检索记录与 A/B 实验数据原文见两科 CHANGELOG 第两百八十九批（检索类记录无逐字行号，不入 parties 回验面）。",
+    },
+    {
+        "id": "liuyao.bing_use_god_dual",
+        "dispute": "自占病取用双轨：问吉凶生死以世爻为用（通则句＋实案世爻亥水）vs 问愈期用药以子孙为用（用针而愈实案围绕子孙展开）——《增删》总纲两句并提，实占两例取向相反",
+        "parties": [
+            {"who": "总纲（自占病通例）", "quote": "占病者如自占病，若得世爻旺相或日月动爻生合世爻", "source": Z, "line": 17},
+            {"who": "通则句", "quote": "自占吉凶者以世爻为用神", "source": Z, "line": 436},
+            {"who": "实案（生死取向）", "quote": "自占病世爻亥水为用神", "source": Z, "line": 561},
+            {"who": "实案（愈期取向）", "quote": "果于次日用针而愈。或曰：子孙化退神，何其用药亦效", "source": Z, "line": 1182},
+        ],
+        "engine_position": "引擎按通则句默认世爻为用（第两百九十四批自占病层：无六亲主体的纯占病→世爻，置于疾病→官鬼词典之前）；问愈期重子孙医药的变体未机械化（单一实案不可作通用判据）；E 类应期基准 WS005 na→hit 随本口径更新（check_yingqi_scoring.E_CLASS_EXPECTED，本批登记）",
+        "engine_anchor": "scripts/step2.py 自占病覆盖层；dev_tools/check_yingqi_scoring.py E_CLASS_EXPECTED；案例 wikisource WS005/WS008/WS020",
+        "status": "open_conflict",
+        "note": "wikitext 底本对应句（行号见两科 CHANGELOG 第两百九十四批）：「自占者，宜世爻旺相……占他人以應爻爲用」「自占看世爻，旺相者非眞，代占看用神」「自占病亥水克世」（繁体原文，出处背景）。dz 底本行号：宜世爻旺相句=L1468、入墓自占看世爻句=L1330、自占病亥水克世句=L1100。",
+    },
 ]
 
 
 def verify_entries(entries) -> list[str]:
-    lines = SRC.read_text(encoding="utf-8").splitlines()
+    src_lines = SRC.read_text(encoding="utf-8").splitlines()
+    # 跨书书证按 parties[].source 括号内文件名路由到对应底本回验（第二九四批）：
+    # 裁决表允许多方书证来自库内不同底本（焦氏易传/卜筮正宗等），单一 SRC 机制
+    # 会把别书逐字引文误判为不命中。source 缺文件名时默认 SRC（增删 dz）。
+    lines_cache = {SRC.name: src_lines}
     bad = []
     for e in entries:
         for q in e["parties"]:
+            src_name = SRC.name
+            m = re.search(r"([A-Za-z_]+\.[a-z]+\.txt)", str(q.get("source", "")))
+            if m:
+                cand = DISC / "data" / "sources" / m.group(1)
+                if cand.exists():
+                    src_name = m.group(1)
+                    if src_name not in lines_cache:
+                        lines_cache[src_name] = cand.read_text(encoding="utf-8").splitlines()
+            lines = lines_cache[src_name]
             ln = lines[q["line"] - 1] if 0 < q["line"] <= len(lines) else ""
             if q["quote"] not in ln:
                 bad.append("%s: 书证非该 L%d 行逐字子串（%s…）" % (e["id"], q["line"], q["quote"][:24]))
