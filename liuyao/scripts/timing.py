@@ -153,6 +153,7 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     EARTHLY_BRANCHES,
     HE_PAIRS,
     KE_CYCLE,
+    RETREAT_PAIRS,
     SAN_HE_GROUPS,
     SHENG_CYCLE,
     TOMB_MAP,
@@ -725,6 +726,25 @@ def _rank_candidates(r: dict, use_god_branch: str, use_god_element: str, strengt
                         and KE_CYCLE.get(BRANCH_ELEMENTS.get(_b0, "")) == use_god_element
                         and _c0 and ADVANCE_PAIRS.get(_b0) == _c0):
                     _ke_shen.append(_b0)               # ② 动爻本支克（化进形）
+    #  ③ 动爻本支克用神＋用神静＋动爻化退神（第两百八十五批补，与②对称的退形）。
+    #    书据：《增删卜易》源L1174 逐字「戌土子孙孙虽动幸化退神，不克官也，辰年冲去
+    #    戌土，是以许之，果于辰年得选岂可谓之动空化日月而不退也」（WS004 占功名，
+    #    用神官鬼亥静，忌神戌动化未退神——化退已减其克，冲去忌神之年彻底除患）；
+    #    同书源L2050「子孙爻动化回头克，或被动爻克，须待冲去克神之日始晴」、
+    #    源L2058「应丑日者，冲去未土合起父母」（占天时同构实案）。
+    #    准入门：用神必须静（动用神书答值日，HO008/WS017/WS018 实测反例同②）；
+    #    须化退（WS023 申动化亥书答实破、ZD065 午动化丑书答忌神值月，均非退形）；
+    #    用神发动的不触发（ZD102 巳动化寅退神，书答辰父**发动**值日，由 ug_moving
+    #    门挡下）。
+    if use_god_branch and not ug_moving:
+        for _y in yao_lines:
+            if isinstance(_y, dict) and _y.get("is_moving"):
+                _b0 = _y.get("earthly_branch") or ""
+                _c0 = _y.get("changed_earthly_branch") or _y.get("changed_branch") or ""
+                if (_b0 and _b0 != use_god_branch
+                        and KE_CYCLE.get(BRANCH_ELEMENTS.get(_b0, "")) == use_god_element
+                        and _c0 and RETREAT_PAIRS.get(_b0) == _c0):
+                    _ke_shen.append(_b0)               # ③ 动忌化退克用（冲去忌神）
     for _ks in dict.fromkeys(_ke_shen):
         _zs = _chong(_ks)
         if _zs:
