@@ -3,15 +3,9 @@
     "what": "金标准指纹基线（排盘+思维链+分析层逐字段；抽样含 narrate 文案哈希）",
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
-  "digest": "ef1567281fd83dbb",
+  "digest": "a86b36e78cc50335",
   "narrate_digest": "405bc8e03a6a99e0",
   "drift_log": [
-    {
-      "from": "3af013c514bf14e9",
-      "to": "8e421d8db8ea2186",
-      "date": "2026-10-12",
-      "reason": "把 yingqi_months/yingqi_years 纳入结构化指纹：第一百二十三批实测旧指纹对年池改动完全隐形（UNIT_BUDGET 年 2→4 时仍报√一致、rc=0），本次仅扩可见面，行为已复原为 年=2/月=3/日=5，逐例差异只含这两个新字段"
-    },
     {
       "from": "8e421d8db8ea2186",
       "to": "f7eb04494ea54a3b",
@@ -125,6 +119,12 @@
       "to": "ef1567281fd83dbb",
       "date": "2026-10-26",
       "reason": "第两百一十五批：应期第3法补通用主支⑤（动忌克用+用神月令旺相有根→冲去忌神，书证 dz L3099 总纲+L3107/L651/L1140 实案）——13 条漂移全部为 yingqi 候选池扩展及应期叙述句（concl_sha），无 verdict/计价翻档"
+    },
+    {
+      "from": "ef1567281fd83dbb",
+      "to": "a86b36e78cc50335",
+      "date": "2026-10-26",
+      "reason": "第两百三十七批：月窗口 3→4 与三合虚一待用暗动修正——yingqi_months 池形状全局扩展（月槽+1），无 verdict/计价/措辞翻档；WS016 卯月等虚缺支得以入池"
     }
   ],
   "narrate_drift_log": [

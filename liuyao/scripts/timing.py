@@ -871,13 +871,26 @@ def _rank_candidates(r: dict, use_god_branch: str, use_god_element: str, strengt
               else YINGQI_TXT["change_branch_value_month"]["text"], "月")
     # G3 三合虚一待用：《增删卜易》升遷例「欲成三合，因少卯字，明年卯月必升，此乃
     # 虛一待用」——卦中日月已具两支、独缺一支者，应于所缺之支之月（书例只给月级）。
-    if use_god_element and use_god_element in SAN_HE_GROUPS:
-        _combo = SAN_HE_GROUPS[use_god_element]
-        _present = {y.get("earthly_branch") or "" for y in yao_lines if isinstance(y, dict)}
-        _present |= {day_branch or "", month_branch or ""}
-        _missing = [b for b in _combo if b and b not in _present]
-        if len(_missing) == 1:
-            _rank(ranked, _missing[0], YINGQI_TXT["sanhe_lack_branch_month"]["text"], "月")
+    # 三合组的锚是「卦中日月爻已具两支」的组本身，而非用神所属之组：
+    # 书例 WS016 用神巳火，三合缺支却在亥卯未组（月建亥+动爻未，缺卯）——
+    # 若按用神组查会误入寅午戌组。故扫描四组、取「已具两支且缺一支」者补缺。
+    # 三合成局的两支须来自动爻或日月（静爻不成局）；缺的一支待其值日月时补齐。
+    _active = {(y.get("earthly_branch") or "") for y in yao_lines
+               if isinstance(y, dict) and y.get("is_moving")}
+    _active |= {day_branch or "", month_branch or ""}
+    # 静爻被日辰所冲=暗动（《增删易》重动轻静），暗动之支亦可成局之形：
+    # 书例 WS016 亥爻被巳日冲动、与动爻未欲成亥卯未三合（L1523 逐字）。
+    _day_chong = _chong(day_branch) if day_branch else ""
+    for y in yao_lines:
+        if isinstance(y, dict) and not y.get("is_moving"):
+            _b = y.get("earthly_branch") or ""
+            if _b and _b == _day_chong:
+                _active.add(_b)
+    for _combo in SAN_HE_GROUPS.values():
+        _ins = [b for b in _combo if b and b in _active]
+        _miss = [b for b in _combo if b and b not in _active]
+        if len(_ins) == 2 and len(_miss) == 1:
+            _rank(ranked, _miss[0], YINGQI_TXT["sanhe_lack_branch_month"]["text"], "月")
 
     # 年级阶梯（G1）：《增删卜易》「近應日遠應年月」（月破章总纲）；世爻章
     # 「靜者逢沖逢值之年月……動者應在丑年月亦有應子年，餘仿此」「世空者沖空實空之年，
@@ -918,7 +931,9 @@ def _assemble_timing(ranked: list, timing_methods: list, speed: str,
                      special_pattern, step4_data: dict, use_god_branch: str,
                      candidates_all: list) -> dict:
     # 分级预算：单位不同不可同窗排序，否则加一个"生旺之月"就把正确的日支挤出窗口。
-    UNIT_BUDGET = (("日", 5), ("月", 3), ("年", 2))
+    # 月窗口 3→4：三合虚一待用（L1507「虚一待用，待后时之月日可以填之」）等
+    # 月级通用轨曾被 3 槽截断（WS016 卯月排第 4 进不了输出）；A/B 全 split 无退化。
+    UNIT_BUDGET = (("日", 5), ("月", 4), ("年", 2))
     by_unit = {u: [] for u, _ in UNIT_BUDGET}
     for token, rule in ranked:
         unit = token[-1]
