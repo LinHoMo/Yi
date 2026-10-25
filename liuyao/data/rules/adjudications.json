@@ -1,9 +1,9 @@
 {
  "schema": "yi-liuyao-adjudications/1",
  "discipline": "liuyao",
- "built_at": "2026-10-26T02:59:35",
+ "built_at": "2026-10-26T03:04:32",
  "_comment": "流派裁决表：「与古书吻合」的展开定义。引用任何吻合率须能指回本表行。不改引擎不进评分面不挂门（§176 冻结声明）。状态三值见 builder docstring。",
- "count": 23,
+ "count": 24,
  "entries": [
   {
    "id": "liuyao.xunkong_variants",
@@ -342,6 +342,52 @@
    "engine_anchor": "scripts/step2.py question_classes 天气剥离（第八十七批背景）；verdict 架构 step5",
    "status": "open_conflict",
    "note": "第两百一十三批登记。黄金策「四时五行论雨大小」（L1963 父临金水雨大、临火土雨小）被觉子批驳删（「古法之错，何以不删」）——天时实装时不得引入季节五行权重；冬天以子孙为霜雪（L1963/L1971）同为被删旧注。"
+  },
+  {
+   "id": "liuyao.jibing_liujin_track",
+   "dispute": "疾病占六冲卦的双轨：同是卦逢六冲+用神逢空/被冲，近病断愈（不药而愈），久病断死（灵丹莫救）——方向由病龄决定，题面通常不可得（WS006 题面纯「占病」，书按久病诀断）",
+   "parties": [
+    {
+     "who": "总诀（方向分界=病龄）",
+     "quote": "占疾病近病逢冲逢空，不药而愈；外病逢冲逢空灵丹莫救",
+     "source": "《增刪卜易》（zengshan_buyi_dz.dz.txt）",
+     "line": 31
+    },
+    {
+     "who": "占医章总纲（两向并列）",
+     "quote": "久病逢冲、逢空、随鬼入墓，此皆无药而医也。病之即愈，神亦不现其医。近病者，若非卦得六冲，即观用值旬空，或用神化回头生",
+     "source": "《增刪卜易》（zengshan_buyi_dz.dz.txt）",
+     "line": 3413
+    },
+    {
+     "who": "实案（近病+六冲判据句）",
+     "quote": "近病逢冲即愈。此卦乃系六冲，但父病之甚",
+     "source": "《增刪卜易》（zengshan_buyi_dz.dz.txt）",
+     "line": 539
+    },
+    {
+     "who": "实案（应期=冲去绊神之日）",
+     "quote": "须待丑日冲去未土而午火无合，其土灾退。果于丑日起床",
+     "source": "《增刪卜易》（zengshan_buyi_dz.dz.txt）",
+     "line": 539
+    },
+    {
+     "who": "实案（近病逢冲即愈二）",
+     "quote": "辰土财爻为用神，近病逢冲即愈，许之当愈於辰日，不然酉日必愈",
+     "source": "《增刪卜易》（zengshan_buyi_dz.dz.txt）",
+     "line": 943
+    },
+    {
+     "who": "实案（久病+六冲+化退→死，WS006 占病 卒丑月）",
+     "quote": "久病逢冲莫治，又是父爻持世，妙药难医，虽化退神，非病退也，乃精神命脉渐渐消枯之象也，防日月冲破未土而无路矣，果卒于丑月",
+     "source": "《增刪卜易》（zengshan_buyi_dz.dz.txt）",
+     "line": 1198
+    }
+   ],
+   "engine_position": "引擎占病 verdict 走通用计价（六冲卦性计价有 287/298 批用神旺衰门）；题面带「久/新」字时 qclass 已分 疾病·久病/近病 两类（timing 空亡层已按此分轨）。WS006 题面纯「占病」无病龄信号，书按久病诀断——评测侧不可知的语境信息，双轨方向依赖病龄，不机械化。WS006 verdict（凶/吉）与 yingqi（丑月）双 miss 归因落此条目",
+   "engine_anchor": "scripts/step2.py question_classes 疾病分轨；scripts/timing.py 疾病空亡双轨；案例 wikisource WS006",
+   "status": "open_conflict",
+   "note": "第两百一十四批登记。近病应期轨（L539「冲去未土而午火无合」=冲去绊神/合住生用之爻）与已实装的冲去忌神（第二八五/二八六批）同构但对象不同（绊神），框架批候选。久病应期（L1198 冲破化出退神=无路）依赖 verdict 凶侧，随本条目框架批。"
   },
   {
    "id": "liuyao.shikao_usegod_dual",
