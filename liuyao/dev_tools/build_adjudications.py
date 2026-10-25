@@ -189,6 +189,7 @@ ENTRIES = [
             {"who": "总纲（官鬼轨）", "quote": "占功名者以官鬼爻为用神，此卦午火官星即为用神", "source": Z, "line": 456},
             {"who": "实案（官星持世轨：WSD001 占鄕試）", "quote": "斷曰﹕酉金官星持世旺相﹐當時卯日沖之而暗動", "source": "zengshan_buyi.wikitext.txt", "line": 454},
             {"who": "实案（父母文书轨：WS012 占試中否）", "quote": "未父化進神﹐巳火官動而生世﹐吉兆顯然﹐坐以待報﹐果於寅日揭榜", "source": "zengshan_buyi.wikitext.txt", "line": 645},
+            {"who": "实案（官空破舍官论世轨：WS014 占升遷，官星两现一空一破）", "quote": "世爻極旺﹐旣臨日建又得月令作官星而合世﹐但卦中官星兩現﹐一空一破", "source": "zengshan_buyi.wikitext.txt", "line": 852},
         ],
         "engine_position": "引擎词典试考族→父母（第两百九十五批 WS012 书证落库）；WSD001/018 两例书取官星持世，基准按断辞落、引擎按词典走父母轨——category 失分为书内两轨显形的诚实代价（第两百九十九批归因登记）。不机械改词典：改之则伤 WS012 同族书证",
         "engine_anchor": "data/rules/question_use_gods.json 试考族；案例 wikisource WS012/WSD001/WSD018",
