@@ -1,9 +1,9 @@
 {
  "schema": "yi-liuyao-adjudications/1",
  "discipline": "liuyao",
- "built_at": "2026-10-26T03:13:42",
+ "built_at": "2026-10-26T03:27:44",
  "_comment": "流派裁决表：「与古书吻合」的展开定义。引用任何吻合率须能指回本表行。不改引擎不进评分面不挂门（§176 冻结声明）。状态三值见 builder docstring。",
- "count": 25,
+ "count": 26,
  "entries": [
   {
    "id": "liuyao.xunkong_variants",
@@ -416,6 +416,34 @@
    "engine_anchor": "scripts/step4.py 原神计价；scripts/step5.py 5.5 段",
    "status": "open_conflict",
    "note": "第两百一十六批登记。L561 实案未入任何评测 split（zengshan 21 例外），实装无外部验证点，按 §四.3/§四.7 登记待书证扩充。"
+  },
+  {
+   "id": "liuyao.shibang_block_track",
+   "dispute": "世（用）动而逢合的吉凶方向：忌神动逢合=合绊不克为吉（第二八四批已计价），但世用自身动逢合=「合住必有事绊，不能动身」——出行/动身类占题合绊即阻（事不成），与忌神侧轨向相反",
+   "parties": [
+    {
+     "who": "实案（出门，世动逢合不去）",
+     "quote": "世动破，余曰：合住必有事绊，不能动身",
+     "source": "《增刪卜易》（zengshan_buyi_dz.dz.txt）",
+     "line": 747
+    },
+    {
+     "who": "应期与定性总结句",
+     "quote": "后因病重，此人未去，女死辰日，夫应不去者，世动而逢合也",
+     "source": "《增刪卜易》（zengshan_buyi_dz.dz.txt）",
+     "line": 747
+    },
+    {
+     "who": "轨类通则（遇合之验）",
+     "quote": "此乃爻之遇合、卦逢六合之验也",
+     "source": "《增刪卜易》（zengshan_buyi_dz.dz.txt）",
+     "line": 747
+    }
+   ],
+   "engine_position": "第二八四批忌神合绊轨（动忌被合=绊而不克，+0.3）与本题世用被合（自身被绊=阻）主体互补但引擎无世用合绊减分轨；「有事绊」未量化幅度，暂不硬编码——出行/动身题类域限与通则句的边界待书证扩充",
+   "engine_anchor": "scripts/step4.py 合绊计价；scripts/step5.py 5.5 段",
+   "status": "open_conflict",
+   "note": "第两百三十八批登记。ZD022 verdict 凶/引擎吉 即本轨显形（合绊在出行题=阻）。"
   },
   {
    "id": "liuyao.shikao_usegod_dual",
