@@ -764,6 +764,10 @@
     "change_hui_tou_sheng_empty": {
       "text": "动而化回头生，虽空不作空论，期于生我之日",
       "basis": "ZS005/007/013 用例规律"
+    },
+    "use_god_restrained_zhi_sha_year": {
+      "text": "用神被{ks}克，制杀之年（冲去{ks}）",
+      "basis": "同 use_god_restrained_zhi_sha_day（年级对称）。真例《增删卜易》源L1174 逐字「戌土子孙孙虽动幸化退神，不克官也，辰年冲去戌土，是以许之，果于辰年得选」（WS004/WS021 同案火天同人变乾，年单位实案）"
     }
   },
   "classical_interpretations": {

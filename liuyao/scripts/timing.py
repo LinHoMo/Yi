@@ -896,6 +896,11 @@ def _rank_candidates(r: dict, use_god_branch: str, use_god_element: str, strengt
     # 「靜者逢沖逢值之年月……動者應在丑年月亦有應子年，餘仿此」「世空者沖空實空之年，
     # 世破者實破之年」「惟動空及動而破者，不妨定破實空之年月也」——
     # 同一套解除障碍之期在年单位上再排一遍（远应年月之年半边）。
+    # 制杀之年（年级对称，第两百三十四批）：书据《增删卜易》源L1174 逐字「辰年冲去戌土，是以许之，果于辰年得选」（WS004/WS021 同案，年单位实案）；书序源L3099 总纲「被克者冲去克神之秋」属解障组，置于解障组之首实测（A/B 见 324 批 CHANGELOG）。
+    for _ks_y in dict.fromkeys(_ke_shen):
+        _zs_y = _chong(_ks_y)
+        if _zs_y:
+            _rank(ranked, _zs_y, YINGQI_TXT["use_god_restrained_zhi_sha_year"]["text"].format(ks=_ks_y), "年")
     if is_empty:
         _rank(ranked, use_god_branch, YINGQI_TXT["use_empty_fill_year"]["text"], "年")
         _rank(ranked, _chong_ug or use_god_branch, YINGQI_TXT["use_empty_chong_year"]["text"], "年")

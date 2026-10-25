@@ -3,15 +3,9 @@
     "what": "金标准指纹基线（排盘+思维链+分析层逐字段；抽样含 narrate 文案哈希）",
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
-  "digest": "a86b36e78cc50335",
+  "digest": "af8965bfcad0ff9e",
   "narrate_digest": "405bc8e03a6a99e0",
   "drift_log": [
-    {
-      "from": "8e421d8db8ea2186",
-      "to": "f7eb04494ea54a3b",
-      "date": "2026-10-12",
-      "reason": "第一百五十六批：应期引擎补《黄金策》期日九法第3法「用爻受制，以制杀月日断」（①回头克＋用神临月建＝增删源L643逢伤原文形，真例ZD015；②动爻本支克＋用神静＋克神化进神，真例ZD160/ZD125）与化空月级梯（对称日级change_branch_empty_fill，真例ZD151「世化官空，八九月必见」＝酉月）。机械层漂移33例、全部限定yingqi_months首位新增「化出之支逢空，出空填实之月」候选（化空日梯的月级对称）；措辞层7200af9a70d2df8f零漂移。tune 97.3/64.7/1.53、holdout 90.2/50.0/1.6、wikisource 62.9/22.7/2.27、suigui 98.5/50/1.5、yingqi_holdout 87.9 全部逐位不变；zengshan_dz 47.7→54.1、top-1 13.6→27.3、名次1.86→1.6"
-    },
     {
       "from": "f7eb04494ea54a3b",
       "to": "8d315f9a2a78e858",
@@ -125,6 +119,12 @@
       "to": "a86b36e78cc50335",
       "date": "2026-10-26",
       "reason": "第两百三十七批：月窗口 3→4 与三合虚一待用暗动修正——yingqi_months 池形状全局扩展（月槽+1），无 verdict/计价/措辞翻档；WS016 卯月等虚缺支得以入池"
+    },
+    {
+      "from": "a86b36e78cc50335",
+      "to": "af8965bfcad0ff9e",
+      "date": "2026-10-26",
+      "reason": "第两百三十四批：制杀之年（冲去忌神）入年池年级对称——yingqi_years 候选池扩展，无 verdict/计价翻档；WS004 辰年书证实案入池"
     }
   ],
   "narrate_drift_log": [
