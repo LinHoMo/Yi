@@ -74,13 +74,15 @@ ENTRIES = [
     },
     {
         "id": "liuyao.month_break_day_stem",
-        "dispute": "月破是否永破：「破而不破（临日建/有生扶）」vs 一律论破",
+        "dispute": "月破是否永破：「破而不破（临日建/有生扶）」vs 一律论破；例外＝忌神发动伤用（寡不敌众，破亦为破）",
         "parties": [
             {"who": "《增删》例文", "quote": "亥为月破，临日建而不破", "source": Z, "line": 708},
             {"who": "《增删》总论", "quote": "逢月破而不破", "source": Z, "line": 692},
+            {"who": "野鹤总论", "quote": "惟而不动又无日辰动爻生助者则到底而破矣", "source": Z, "line": 991},
+            {"who": "《增删》实案例外", "quote": "卯木子孙，临月破，又动出申金伤克，虽值日辰，难过酉月卯日", "source": Z, "line": 1911},
         ],
-        "engine_position": "月破层存在且带日建/生扶豁免（第一百五十九批唤醒 is_month_break 死键后外部 top-1 22.7→27.3 为该立场的读数侧写）",
-        "engine_anchor": "rule_registry: liuyao.yuepo → scripts/classical_enhancements.py:analyze_monthly_break",
+        "engine_position": "月破层存在且救法集条件化（第两百八十批）：临日建1.0/日合0.5/日辰生扶0.5，例外＝卦中忌神类动爻克伤用神时救法不给（L692 寡不敌众；L1911 临日辰仍凶）；第一百五十九批唤醒 is_month_break 死键后外部 top-1 22.7→27.3 为该立场的读数侧写",
+        "engine_anchor": "rule_registry: liuyao.yuepo → scripts/classical_enhancements.py:analyze_monthly_break；step3.compute_month_break_modifier（280 批条件化）",
         "status": "settled_by_source",
     },
     {

@@ -130,7 +130,16 @@ def step3_analyze_strength(r: dict) -> dict:
     void_kind = em["void_kind"]
 
     # ---------- 3.5: 月破修正 ----------
-    mb = compute_month_break_modifier(selected_use_god, day_branch)
+    # 条件化救法（280 批）：卦中忌神类明动爻（支克用神五行）伤用时，救法不给
+    ji_shen_moving = any(
+        yao.get("is_moving", False)
+        and _branch_ke(yao.get("earthly_branch", ""), use_god_element)
+        for yao in yao_lines
+    )
+    mb = compute_month_break_modifier(
+        selected_use_god, day_branch, day_element, use_god_element,
+        ji_shen_moving=ji_shen_moving,
+    )
     is_month_break = mb["is_month_break"]
     month_break_modifier = mb["month_break_modifier"]
     month_break_modifier_reason = mb["month_break_modifier_reason"]
@@ -725,16 +734,62 @@ def compute_empty_modifier(
     }
 
 
-def compute_month_break_modifier(selected_use_god: dict, day_branch: str) -> dict:
-    """3.5 月破修正：月破逢日合可救（0.5），无救近失效（0.3）。"""
+def compute_month_break_modifier(
+    selected_use_god: dict,
+    day_branch: str,
+    day_element: str = "",
+    use_god_element: str = "",
+    ji_shen_moving: bool = False,
+) -> dict:
+    """3.5 月破修正（第两百八十批：救法集条件化，书证逐字在库）。
+
+    通则（《增删卜易》月破章总论 zengshan_buyi_dz.dz.txt L990-991）：
+    野鹤曰「惟而不动又无日辰动爻生助者则到底而破矣」——反面即：不动而得
+    日辰或动爻生助者，不到底破。故救法集合（强→弱）：
+    - 用神临日建而不破（1.0）——月破章例文 L708「亥水财爻为用神，亥为
+      月破，临日建而不破」；
+    - 月破逢日合，可救（0.5）——现行；
+    - 月破逢日辰生扶（0.5）——L692「逢月破而不破」＋ L999「而破者又无
+      日辰动爻之生」（无生才真废，反证有生可救）。
+
+    例外条件（本批新增）：卦中有忌神类动爻克伤用神时，救法一律不给，
+    破亦为破——L692「动出忌神之金，破亦为破（寡不敌众）」；书内自记
+    实案 L1911「卯木子孙临月破，又动出申金伤克，虽值日辰，难过酉月卯日」
+    （临日辰仍凶，因忌神发动）。占父寿巽之姤案（L2563-2570，亥父月破而
+    四爻未土忌神动）书断「不许长年」，同此口径。
+
+    登记的简化边界（防日后拿这行封嘴）：① 忌神判定只看明动爻的支，
+    不含动化出的变爻支（动化回头克由回头克条款另行计价，避免双重扣）；
+    ② 动爻生扶救法（假破的另一半）本批不动，防一次动两面——要动须单独
+    成批带书证与对拍。
+    """
     is_month_break = selected_use_god.get("is_month_break", False)
     month_break_modifier = 1.0
     month_break_modifier_reason = ""
     if is_month_break:
-        # 月破日合可救
-        if _is_he(selected_use_god.get("earthly_branch", ""), day_branch):
-            month_break_modifier = 0.5  # 有救
+        use_branch = selected_use_god.get("earthly_branch", "")
+        if ji_shen_moving:
+            # 例外：忌神动爻伤用，救法不给（寡不敌众，破亦为破）
+            month_break_modifier = 0.3
+            month_break_modifier_reason = (
+                "月破且忌神发动克伤，救法不给，破亦为破（寡不敌众）"
+            )
+        elif use_branch and use_branch == day_branch:
+            # 救法一：临日建（日支＝用神支）——书文明言「而不破」，全额解除
+            month_break_modifier = 1.0
+            month_break_modifier_reason = "月破临日建而不破（增删卜易月破章例文）"
+        elif _is_he(use_branch, day_branch):
+            # 救法二：月破逢日合可救
+            month_break_modifier = 0.5
             month_break_modifier_reason = "月破逢日合，可救"
+        elif (
+            day_element
+            and use_god_element
+            and SHENG_CYCLE.get(day_element) == use_god_element
+        ):
+            # 救法三：日辰生扶——L692「逢月破而不破」/ L999 反证
+            month_break_modifier = 0.5
+            month_break_modifier_reason = "月破逢日辰生扶，犹可救（破而不破）"
         else:
             month_break_modifier = 0.3  # 几乎失效
             month_break_modifier_reason = "月破且无救，力量近乎消亡"
@@ -743,8 +798,6 @@ def compute_month_break_modifier(selected_use_god: dict, day_branch: str) -> dic
         "month_break_modifier": month_break_modifier,
         "month_break_modifier_reason": month_break_modifier_reason,
     }
-
-
 def compute_an_dong(selected_use_god: dict, day_branch: str, god_month_score: float) -> dict:
     """3.6 暗动修正：旺相受日冲为暗动（0.7），休囚受日冲为日破（0.3）。"""
     is_an_dong = False
