@@ -745,6 +745,15 @@ def _rank_candidates(r: dict, use_god_branch: str, use_god_element: str, strengt
                         and KE_CYCLE.get(BRANCH_ELEMENTS.get(_b0, "")) == use_god_element
                         and _c0 and RETREAT_PAIRS.get(_b0) == _c0):
                     _ke_shen.append(_b0)               # ③ 动忌化退克用（冲去忌神）
+                # ④ 忌神动化回头生（得源）克用＋用神静→冲去化出之源（第两百八十六批）。
+                #    书据：《增删卜易》源L2570 逐字「果终于本年冬至日，应子日者冲去午火
+                #    而未土以克亥水」（WS035 占父寿，忌神未土动化午火回头生——冲去生
+                #    忌之源则忌失其生）；同书源L1206「至丑月土旺…且化退神，正以绝其源，
+                #    源绝危险」反证「源」于应期的分量（源绝则事败，源旺则待除）。
+                elif (_b0 and _b0 != use_god_branch
+                        and KE_CYCLE.get(BRANCH_ELEMENTS.get(_b0, "")) == use_god_element
+                        and _c0 and SHENG_CYCLE.get(BRANCH_ELEMENTS.get(_c0, "")) == BRANCH_ELEMENTS.get(_b0, "")):
+                    _ke_shen.append(_c0)               # ④ 动忌化回头生得源（冲去生源）
     for _ks in dict.fromkeys(_ke_shen):
         _zs = _chong(_ks)
         if _zs:
