@@ -1,9 +1,9 @@
 {
  "schema": "yi-liuyao-adjudications/1",
  "discipline": "liuyao",
- "built_at": "2026-10-26T00:07:59",
+ "built_at": "2026-10-26T00:22:37",
  "_comment": "流派裁决表：「与古书吻合」的展开定义。引用任何吻合率须能指回本表行。不改引擎不进评分面不挂门（§176 冻结声明）。状态三值见 builder docstring。",
- "count": 11,
+ "count": 12,
  "entries": [
   {
    "id": "liuyao.xunkong_variants",
@@ -262,6 +262,34 @@
    "engine_anchor": "scripts/step2.py 自占病覆盖层；dev_tools/check_yingqi_scoring.py E_CLASS_EXPECTED；案例 wikisource WS005/WS008/WS020",
    "status": "open_conflict",
    "note": "wikitext 底本对应句（行号见两科 CHANGELOG 第两百九十四批）：「自占者，宜世爻旺相……占他人以應爻爲用」「自占看世爻，旺相者非眞，代占看用神」「自占病亥水克世」（繁体原文，出处背景）。dz 底本行号：宜世爻旺相句=L1468、入墓自占看世爻句=L1330、自占病亥水克世句=L1100。"
+  },
+  {
+   "id": "liuyao.tiantim_heri_track",
+   "dispute": "占天时问「何日雨/晴」的取用轨分歧：通用六亲轨（占雨用父爻、占晴用子孙财爻）vs 何日反断轨（旺极晴神入墓之日应雨——用神收藏日为变天应期）。通用轨可机械化且引擎已实现；反断轨仅单一实案，不可作通用判据",
+   "parties": [
+    {
+     "who": "通用六亲轨（总纲）",
+     "quote": "觉子曰：占雨用父爻，占晴用子孙爻、财爻，世应何干",
+     "source": "《增刪卜易》（zengshan_buyi_dz.dz.txt）",
+     "line": 1953
+    },
+    {
+     "who": "实案（通用轨：暗动父爻应雨日）",
+     "quote": "卦中申金父爻暗動﹐動而逢令之日﹐果於辰日天變﹐巳日大雨",
+     "source": "zengshan_buyi.wikitext.txt",
+     "line": 1744
+    },
+    {
+     "who": "实案（反断轨：旺极子孙入墓应雨）",
+     "quote": "午火子孫臨日月旺之極矣﹐乃爲用爻重疊﹐逢墓庫以收藏﹐故知戌必雨。果於戌日申時雨",
+     "source": "zengshan_buyi.wikitext.txt",
+     "line": 1281
+    }
+   ],
+   "engine_position": "引擎实现通用轨（第两百八十七批占雨用父母/占晴用子孙财，verdict_texts 收总纲句）；反断轨未实现（单一实案不可机械化，登记不修）。wikisource 评测 WS019/WS025/WS027/WS028 四例 category 失分系书内两轨显形的诚实代价：基准按断辞落（WS019 子孙=反断轨、其余通用轨），引擎恒走通用轨",
+   "engine_anchor": "scripts/step2.py 占天时通用轨（第八十七批背景天气剥离）；verdict_texts.json 占雨占晴总纲句；案例 wikisource WS019/WS025/WS027/WS028",
+   "status": "open_conflict",
+   "note": "wikitext 对应行：总纲句=L1686、WS025 实案=L1744、WS019 实案=L1281（繁体原文，出处背景）。另 WS028 占何日晴书取妻财（占晴通用轨内「子孙、财爻」两用并许，L1750），引擎取子孙——同轨内两用，亦不判引擎错。"
   }
  ]
 }
