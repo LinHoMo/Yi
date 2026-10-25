@@ -95,11 +95,11 @@
     {
       "id": "WS003",
       "source": "《增刪卜易》（维基文库原本）",
-      "topic": "占本年冬今",
-      "question": "占本年冬今",
+      "topic": "占本年冬今得關差否",
+      "question": "占本年冬今得關差否",
       "input": {
         "date": "戌月癸亥日",
-        "question": "占本年冬今"
+        "question": "占本年冬今得關差否"
       },
       "hexagram": {
         "original": "节",
@@ -125,7 +125,7 @@
         "page": "增刪卜易",
         "sha256_head": "a1d6086c3de3",
         "offset": 260,
-        "wikitext_head": "戌月癸亥日占本年冬今得關差否水澤節變需卦"
+        "wikitext_head": "戌月癸亥日占本年冬今得關差否得關差否水澤節變需卦"
       }
     },
     {
