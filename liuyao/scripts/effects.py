@@ -414,6 +414,16 @@ def analyze_officer_tomb(result):
             total_score_modifier += (-0.2 if self_tomb else -0.3)
 
         # 场景b: 世随官入墓 -- 世爻地支 = 官鬼墓库
+        # ⚠ 去重（2026-10-25）：占问用神取世爻时，世与用是**同一支**，场景 b 与场景 c
+        # 描述的是同一支位上的同一件事。旧实现两句各扣一次（-1.0 与 -1.5），
+        # 同一个事实被罚两遍——实测「乾·全静·占问」因此从 2.01/中和 被压到 -2.8 判大凶。
+        # 处理：同一支位只计最高档一次。用随档更高，故本场景在「用神即世爻」时
+        # 只保留标签与描述，**不再重复加分**。
+        _same_as_use_god = (
+            use_god_category == "世爻"
+            and use_god_branch is not None
+            and use_god_branch == world_branch
+        )
         if world_branch and world_branch == tomb:
             if ctext("cr_040") not in scenarios:
                 scenarios.append(ctext("cr_040"))
@@ -425,7 +435,8 @@ def analyze_officer_tomb(result):
                 "description": ctpl("crt_076", world_branch, off_element, tomb),
             })
             worst_severity = "severe"
-            total_score_modifier += -1.0
+            if not _same_as_use_god:
+                total_score_modifier += -1.0
 
         # 场景c: 用随官入墓 -- 用神地支 = 官鬼墓库
         if use_god_branch and use_god_branch == tomb:

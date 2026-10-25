@@ -59,7 +59,16 @@ def fingerprint() -> list[dict]:
                                               dt.year, dt.month, dt.day, dt.hour)
                     enriched = run_thinking_chain(h)
                     inner = enriched.get("thinking_chain", {})
-                    adv = enhance_reading(h) or {}
+                    # 增强段取**链后**已修正的值：`run_thinking_chain` 已在 step2 之后
+                    # 重算过 advanced_analysis（attach_luandong_looks / attach_desperate_relief
+                    # 等），此处再调 `enhance_reading(h)` 会把那些修正**覆盖回 step1 前的
+                    # 旧值**——看门狗因此对这一层是瞎的（实测：绝处逢生修正后链内为
+                    # 「绝地待原神 +0.2」，重算后被打回 `{}`）。故改成读链后结果。
+                    # 第两百六十四批。
+                    adv = h.get("advanced_analysis") or {}
+                    if not adv:
+                        from classical_analysis import enhance_reading
+                        adv = enhance_reading(h) or {}
                     s2 = inner.get("step2_use_god_identification", {}) or {}
                     s5 = inner.get("step5_synthesis", {}) or {}
                     sel = s2.get("selected_use_god") or {}

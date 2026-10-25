@@ -226,6 +226,79 @@ def chart_purity_problems() -> list[str]:
     return problems
 
 
+# ── 铜钱起卦有效性门（2026-10-25）─────────────────────────────────────────────
+# 抓到的缺陷：`scripts/chart.py` 的 coin 分支写成
+#   `yao_values = [coin_toss(rng) for _ in range(6)]`
+# 而 `coin_toss()` 本就摇满六爻、返回 6 个爻值 —— 外面再套一层循环，得到的是
+# **6 个子列表**。下游 `val in (7, 9)` / `val in (6, 9)` 对 list 恒为 False，
+# 于是六爻恒阴、恒成「坤」、永无动爻：起卦功能整个失效，但退出码 0、JSON 完整、
+# 金标准指纹不动（金标准走 manual 数组），冒烟测试也只验段落有无产出——
+# 全部既有门都看不见。唯一能抓它的是"同一提问连摇多次必须摇出不同的卦"。
+COIN_GATE_SEEDS = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
+COIN_GATE_MIN_DISTINCT = 8       # 12 次里至少 8 种卦（64 卦均匀期望≈11.4）
+COIN_GATE_MIN_MOVING = 1         # 总动爻数必须 > 0（合法爻值下几乎不可能恰好全静）
+
+
+def _coin_cast_problems(casts: list[dict]) -> list[str]:
+    """判一组已排好的盘是否像"真摇出来的"。抽出来便于负例自证复用。"""
+    problems: list[str] = []
+    names: list[str] = []
+    moving_total = 0
+    for i, r in enumerate(casts):
+        h = (r or {}).get("original_hexagram") or {}
+        lines = h.get("yao_lines") or []
+        if len(lines) != 6:
+            problems.append(f"第 {i + 1} 次起卦爻数不是 6（实为 {len(lines)}）")
+            continue
+        bad = [l for l in lines if not isinstance(l.get("earthly_branch"), str)]
+        if bad:
+            problems.append(f"第 {i + 1} 次起卦有 {len(bad)} 爻的爻位数据不是标量"
+                            "（疑似爻值被嵌套成 list，下游 `val in (6,9)` 恒假）")
+            continue
+        names.append(str(h.get("name")))
+        moving_total += sum(1 for l in lines if l.get("is_moving"))
+    if names:
+        if len(set(names)) < COIN_GATE_MIN_DISTINCT:
+            problems.append(
+                f"{len(names)} 次铜钱起卦只摇出 {len(set(names))} 种卦"
+                f"（{sorted(set(names))}），低于门槛 {COIN_GATE_MIN_DISTINCT}"
+                "——起卦未真正随机/爻值未被正确消费")
+        if moving_total < COIN_GATE_MIN_MOVING:
+            problems.append(f"{len(names)} 次起卦总动爻为 {moving_total}，几乎不可能"
+                            "——动爻判定失效（老阳/老阴被当静爻）")
+    return problems
+
+
+def coin_cast_problems() -> list[str]:
+    """跑多次固定种子的铜钱起卦，验「能摇出不同的卦、且有动爻」；负例自证不可省。"""
+    from chart import chart as _chart
+
+    problems: list[str] = []
+
+    # 负例自证（§四.8）：把本门要抓的那个缺陷**按原写法**重演一遍，判据必须报红。
+    # 用真随机器摇出真爻值，再套回旧的嵌套写法交给同一个排盘器——得到的就是当年
+    # 那批"坤/全静"盘。抓不到它，说明本门是死的，全绿不算通过。
+    from engine import build_hexagram_result, coin_toss
+    import random as _random
+    _rng = _random.Random(20261025)
+    _broken = build_hexagram_result([coin_toss(_rng) for _ in range(6)], "负例", "coin",
+                                   2026, 10, 25, 11)
+    if not _coin_cast_problems([_broken]):
+        problems.append("铜钱起卦门负例自证失败：把 `[coin_toss() for _ in range(6)]` 这"
+                        "个已知缺陷写法重现后没被抓到，门是死的")
+        return problems
+
+    casts = []
+    for seed in COIN_GATE_SEEDS:
+        try:
+            casts.append(_chart("coin", "起卦有效性门", datetime_str="2026-10-25 11:36",
+                                seed=seed))
+        except Exception as exc:  # noqa: BLE001
+            problems.append(f"seed={seed} 的铜钱起卦抛异常：{type(exc).__name__}: {exc}")
+    problems.extend(_coin_cast_problems(casts))
+    return problems
+
+
 def version_report() -> list[str]:
     """返回不一致项。版本唯一真值源是 yishu_core.__version__。"""
     import yishu_core
@@ -618,6 +691,18 @@ def main() -> int:
         if not cp:
             print("  √ chart JSON 仅卦辞/爻辞引文含吉凶字；无 advanced_analysis；负例探针可被抓到")
         failures.extend(cp)
+
+    if want("coin"):
+        # 起卦有效性（2026-10-25）：coin 分支的嵌套 bug 让六爻恒阴、恒成坤、永无动爻，
+        # 退出码 0、JSON 完整、指纹不动——只有"连摇多次得不同卦"能抓。
+        print("\n[2.3] 铜钱起卦有效性（12 次固定种子须摇出多卦且有动爻；负例先自证）")
+        coinp = coin_cast_problems()
+        for c in coinp:
+            print(f"  × {c}")
+        if not coinp:
+            print(f"  √ {len(COIN_GATE_SEEDS)} 次起卦卦名分散、动爻存在；"
+                  "嵌套爻值负例可被抓到")
+        failures.extend(coinp)
 
     if want("style"):
         # 报告外观：用到的类名必须有定义。评分与金标准指纹看不见"内容对、外观散架"这一类回归。

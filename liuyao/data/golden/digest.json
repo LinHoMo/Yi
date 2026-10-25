@@ -3,27 +3,9 @@
     "what": "金标准指纹基线（排盘+思维链+分析层逐字段；抽样含 narrate 文案哈希）",
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
-  "digest": "b7162bfc99e2cce8",
-  "narrate_digest": "a46f7374276a17a6",
+  "digest": "c757994709dec67e",
+  "narrate_digest": "cb65fa7e36c13d83",
   "drift_log": [
-    {
-      "from": "dac005eb3b866598",
-      "to": "d8815b8c3dea3923",
-      "date": "2026-10-11",
-      "reason": "第四十二批：求财·兄弟持世压档新增\"日月作财\"豁免，书据为《增删卜易》源L3035 逐字「虽则兄爻持世无财，但喜卯日即是财星」（立盘见源L3028 逐字「如未月丁卯日借贷得晋卦」：乾宫金、兄弟酉金持世、日辰卯木即本宫之财，断曰果得财）＋源L2342 逐字「得日月作财而合世，富而骄」把该例外写成通则。实跑读数全不变：[4] 15/18（基线 14）、[3] 11/12、tune 97.3、holdout 90.2、yingqi_holdout 87.9、wikisource_holdout 66.2、wikisource_direction 74.4、suigui 98.5、候选池与名次同旧——现有案例里没有任何一盘同时满足\"兄弟持世求财＋日月作财\"，故本豁免不改变任何一条判定，漂移落在被哈希但未计分的结构/文本字段上【同批勘误：此归因不实——golden 逐条比对显示漂移在 `verdict` 字段（泰、讼等 占求财 例的判词档随豁免改变）。准确说法：判词确有改变，但 [4] 15/18、[3] 11/12、tune 97.3、holdout 90.2 与四组外部集读数逐条与旧基线一致，即改变落在同档/同判定的例上，无一例因本豁免跨过基线】；本批不为凑绿而改期望，也不据外部读数调参"
-    },
-    {
-      "from": "d8815b8c3dea3923",
-      "to": "8c0072e36bb75c32",
-      "date": "2026-10-11",
-      "reason": "第四十五批：pattern 层兄弟持世·求财的 -1.2 补上本书自带的例外（《增删卜易》源L3035 逐字「虽则兄爻持世无财，但喜卯日即是财星」、源L2342 逐字「得日月作财而合世，富而骄」）——日辰或月建即本宫之财时不重扣；失物/逢合的 -0.2 轻扣照常保留（例外只属求财文脉，不外推）。实跑：机械层 11 例变化且全部只动 score、不动 verdict/档位；措辞层 7200af9a70d2df8f 未变；[4] 15/18（基线 14）不变、[3] 11/12 不变、tune 97.3、holdout 90.2、yingqi 87.9、wikisource_holdout 66.2、wikisource_direction 74.4、suigui 98.5 逐条与旧基线一致。同批把\"元神无力按书收窄\"的实验**回退**：收窄版把 direction 抬到 77.0 却让 [4] 掉到 13（reg_01 原神贪合、reg_13 伏神得出翻转），说明书上条件之外还缺\"伏神得出/贪合\"两支豁免，该发现连同 11/19 例的量级证据登记为 #15，不带未跑通的改动进基线"
-    },
-    {
-      "from": "8c0072e36bb75c32",
-      "to": "9e2673c03bad39c4",
-      "date": "2026-10-11",
-      "reason": "第五十批：伏藏得出判据补上《增删卜易》源L1055 逐字「伏神得遇日月动爻冲克飞神者五也」的日辰冲飞半支——旧实现只做到月支冲飞（算作飞神月破），日支冲飞漏判。实测：机械层 9 例变化且全部只动 patterns（[格局] 推理步多出「日辰X冲飞神Y」一条），score/verdict/用神/旺衰/应支字段一律不变，措辞层 7200af9a70d2df8f 未变；[4] 17/18（基线 14）、[3] 11/12、tune 97.3、holdout 90.2、yingqi 87.9、wikisource_holdout 66.2、wikisource_direction 74.4、suigui 98.5 逐条与旧基线一致。起因是 #17 的对拍量出判据路与报告路对同一盘结论相反：reg_05 妻财 判据路 False 而报告路 True（score 6、档极易出），reg_11 兄弟与子孙两向相反（16 条可比对中 3 条分歧）；本批只补这一条缺支，两套实现的合并、以及动爻生伏与动爻冲克飞两款（需把动爻传入判据路）仍留在 #17"
-    },
     {
       "from": "9e2673c03bad39c4",
       "to": "c0e344031f91b62a",
@@ -125,6 +107,24 @@
       "to": "b7162bfc99e2cce8",
       "date": "2026-10-21",
       "reason": "第一百九十三批：结论层纳入机械指纹（补192批登记盲区，coverage-only 重基线——concl_keys/concl_sha 两字段新增所致，行为零改动；措辞指纹 d4ec75b0e159adbb 不变可自证）"
+    },
+    {
+      "from": "b7162bfc99e2cce8",
+      "to": "aaa31c32f2800e5b",
+      "date": "2026-10-21",
+      "reason": "【已被本批第二次 capture 取代，保留以备审计】修确定性缺陷前的中间落盘：此时绝处逢生四处修正已就位，但 hidden_spirit 的 moving_branches 仍是 set，emerge_reasons 顺序随 PYTHONHASHSEED 变（seed0≠seed1），故本值不可复现，随后按爻位有序化并重落 cc4bcd8fd19dd919。"
+    },
+    {
+      "from": "aaa31c32f2800e5b",
+      "to": "cc4bcd8fd19dd919",
+      "date": "2026-10-21",
+      "reason": "第两百六十四批：①绝处逢生用神来源改为 step2 真实用神（旧实现回退世爻，4/50 例断言用神与实际不符，2 例凭空+2.0 把书证判凶案翻吉）；②同源双路径改为单一应用（旧 3.7b 先加、advanced 再覆盖叠加，同现象计价两次）；③看门狗 golden.py 改读链后 advanced_analysis（旧实现链后重跑 enhance_reading 覆盖回 step1 前旧值）；④修确定性缺陷：hidden_spirit 的 moving_branches 由 set 改为按爻位有序列表（emerge_reasons 顺序随 PYTHONHASHSEED 变，实测 seed0≠seed1，指纹虚报漂移）。tune 97.9/holdout 90.2 持平，外部集 wikisource_holdout strict 62.4→65.4、verdict 18→20。"
+    },
+    {
+      "from": "cc4bcd8fd19dd919",
+      "to": "c757994709dec67e",
+      "date": "2026-10-25",
+      "reason": "第两百六十八批：随官入墓在『用神取世爻』时对同一支位重复计价（世随-1.0 与用随-1.5 指向同一爻）。修法为同一支位只计最高档一次，单档分值未动。逐盘对拍 6 例中 1 例受影响（乾·全静 −2.80→−1.80）。机械层 7 条 score/concl_sha 变化，措辞层零漂移；tune 97.9/holdout 90.2 均未跌破基线，外部集读数不变。"
     }
   ],
   "narrate_drift_log": [
@@ -163,6 +163,24 @@
       "to": "a46f7374276a17a6",
       "date": "2026-10-21",
       "reason": "第一百九十三批·D1第二半：narrate 时间段末追加应期窗句（措辞变更有意，机械层零漂移——窗句纯从日历候选派生不改结论内容）；6 条 narrate 样本 sha/len 变化，与 conclusion.应期窗口 同口径"
+    },
+    {
+      "from": "a46f7374276a17a6",
+      "to": "9f865e77c0c28ccb",
+      "date": "2026-10-21",
+      "reason": "第两百六十四批：绝处逢生用神来源改为 step2 真实用神（旧实现回退世爻，实测 4/50 例断言用神与实际不符，其中 2 例凭空+2.0 把书证判凶案翻吉）；同源双路径改为单一应用（旧实现 3.7b 先加分、advanced 再覆盖加分，同现象计价两次）；看门狗 golden.py 改为读链后 advanced_analysis（旧实现链后重跑 enhance_reading，把 step2 修正覆盖回 step1 前旧值，对 adv 层是瞎的）。tune 97.9→97.9 / holdout 90.2→90.2 持平，外部集 wikisource_holdout strict 62.4→65.4、verdict 18/27→20/27。"
+    },
+    {
+      "from": "9f865e77c0c28ccb",
+      "to": "ed885e6eb82090ad",
+      "date": "2026-10-25",
+      "reason": "第两百六十六批：verdict_openings.neg_table 的『凶』首句删去恒真假事实『六冲散离加用神独旺无源』。该串对非六冲卦（如蛊·中和）与不旺的用神均不成立，属无据断言（AGENTS §一.3 口径诚实／SKILL.md 实践箴言2『不把象当判』）。改后仅随真实 reason_part 走。仅措辞层漂移，机械层零漂移。"
+    },
+    {
+      "from": "ed885e6eb82090ad",
+      "to": "cb65fa7e36c13d83",
+      "date": "2026-10-25",
+      "reason": "第两百六十七批：narrate 正文漏出内部量化分数（SKILL.md §3.2 禁贴评分公式）。step4 special_pattern.description 形如『用神弱（1.71）原神不现…』，_special_sentence 把整段原样填进 {desc}，交付正文出现裸评分（实测蛊之未济报告第30行）。新增 _strip_internal_scores 在翻译层把（数字）折成偏弱/乏力语气、（量化参考…）整句剔除；分数仍留 JSON 供复核，不动判据。仅措辞层漂移 2 条，机械层零漂移。"
     }
   ]
 }

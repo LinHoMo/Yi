@@ -1300,12 +1300,58 @@ def _change_sentence(s4: dict, s2: dict) -> str:
     return "；".join(bits) + "。" + tail
 
 
+def _strip_internal_scores(text: str) -> str:
+    """抹掉会漏进正文的内部量化分数（SKILL.md §3.2：禁把字段/评分公式贴进正文）。
+
+    缺陷来源（2026-10-25 第两百六十七批）：step4 的格局 description 是给**引擎/备查**用的
+    结构化文本，形如「用神弱（1.71）原神不现（仅伏藏或无援），绝处逢生反断为凶」。
+    `_special_sentence` 把整段 `description` 原样填进 {desc}，于是交付正文里出现了
+    「用神弱（1.71）」这类裸评分——实测见蛊之未济报告第 30 行。
+    narrate 是**翻译层**，不得转贴内部读数：把 `（数字）` 折成「偏弱／乏力」的语气，
+    分数照旧留在 JSON 里供复核，不动任何判据。
+    """
+    if not text:
+        return text
+
+    def _band(raw: str) -> str:
+        try:
+            v = float(raw)
+        except ValueError:
+            return ""
+        # 与 step3 strength_level 的档位口径一致（仅供措辞，不参与判分）
+        if v >= 3.5:
+            return "有力"
+        if v >= 2.0:
+            return "不旺不弱"
+        if v >= 0.0:
+            return "偏弱"
+        return "极弱"
+
+    # 「用神弱（1.71）」→「用神偏弱」；「用神极弱（-1.63）」→「用神极弱」
+    _BAND_RE = re.compile(r"(用神|世爻|原神)?(极弱|弱|偏弱|中和|旺)?（(-?\d+\.\d+)）")
+
+    def _sub_band(m: re.Match) -> str:
+        band = _band(m.group(3)) or (m.group(2) or "")
+        word = f"{m.group(1) or ''}{band}"
+        # 原串是「用神弱（1.71）原神不现」——括号一去，两词会粘成「偏弱原神」，
+        # 故后面紧跟中文时补一个逗号断句。
+        rest = text[m.end():m.end() + 1]
+        if word and rest and "\u4e00" <= rest <= "\u9fff":
+            word += "，"
+        return word
+
+    text = _BAND_RE.sub(_sub_band, text)
+    # 「（量化参考 4.56，信号强度 70）」整句剔除
+    text = re.sub(r"（\s*量化参考[^）]*）", "", text)
+    return text
+
+
 def _special_sentence(special, s3, s2, question: str) -> str:
     if not isinstance(special, dict):
         return ""
     tpl = _NARRATIVE_TPL.get("special_sentences") or {}
     pat = str(special.get("pattern") or "")
-    desc = str(special.get("description") or "")
+    desc = _strip_internal_scores(str(special.get("description") or ""))
     focus = _question_focus(question)
     empty = bool(s3.get("is_empty")) if s3 else False
     strength = str((s3 or {}).get("strength_level") or "")

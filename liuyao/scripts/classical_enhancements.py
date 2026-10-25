@@ -950,10 +950,18 @@ def analyze_hidden_spirit_emergence(result):
     empty_branches = result.get("empty_branches", [])
 
     # 收集动爻地支
-    moving_branches = set()
-    for yao in yao_lines:
+    # 【确定性红线】必须是**有序**容器：旧实现用 `set()`，下面的 `moving_elems`
+    # 循环据此追加 emerge_reasons，迭代顺序随 PYTHONHASHSEED 变（str 哈希随进程
+    # 随机化），于是同一卦在不同进程里产出不同次序的「取得出」理由串。
+    # 实测：同一案例（小畜，动爻五六）PYTHONHASHSEED=0 与 =1 得到顺序相反的
+    # emerge_reasons，金标准指纹因此虚报行为漂移（第两百六十四批查获）。
+    # 按爻位（下→上）固定顺序，与全仓「爻序自下而上」的约定同向。
+    moving_branches = []
+    for yao in sorted(yao_lines, key=lambda y: y.get("position", 0)):
         if yao.get("is_moving", False):
-            moving_branches.add(yao.get("earthly_branch", ""))
+            _b = yao.get("earthly_branch", "")
+            if _b and _b not in moving_branches:
+                moving_branches.append(_b)
 
     yao_by_position = {yao["position"]: yao for yao in yao_lines}
 
@@ -1955,21 +1963,21 @@ def analyze_desperate_relief(result):
         return out
 
     # ── Determine 用神 element ──
+    # 用神只能来自 step2。**禁止回退世爻**：书证主语是「世與用神」（《增删卜易》
+    # 源L1706「大凡世与用神或绝于日或化绝，若得日月动爻生者，谓之绝处逢生」），
+    # 世爻不是用神的替代品——回退世爻会把「用神绝处逢生」错算成「世爻绝处逢生」，
+    # 与书证主语不符，且实测造成 4 例用神错位加分（2026-10-21 第两百六十四批：
+    # WS007 用神父母@卯木，本条断言却写「用神水（亥）」并给出 +2.0）。
+    # 本函数在 enhance_reading 阶段（step1 之前）调用时 `_step2_data` 尚不存在，
+    # 那时**不产结论**；由 thinking_chain 在 step2 之后经
+    # `attach_desperate_relief` 重算（既有范式同 `attach_luandong_looks`）。
     use_god_element = ""
-    # Prefer _step2_data (thinking chain) if present (put there by analyze)
     step2_data = result.get("_step2_data")
     if isinstance(step2_data, dict):
-        use_god_element = step2_data.get("use_god_element", "")
+        use_god_element = step2_data.get("use_god_element", "") or ""
         use_god_position = step2_data.get("use_god_position")
     else:
         use_god_position = None
-
-    # Fallback: use 世爻 element
-    if not use_god_element:
-        for yao in yao_lines:
-            if yao.get("is_world"):
-                use_god_element = _branch_element(yao.get("earthly_branch", ""))
-                break
 
     if not use_god_element:
         return out
@@ -2093,6 +2101,28 @@ def analyze_desperate_relief(result):
     return out
 
 
+def attach_desperate_relief(result, step2_data):
+    """step2 之后重算「绝处逢生」并回写 advanced_analysis（第两百六十四批·六爻）。
+
+    为什么必须补挂而不是在 `analyze_desperate_relief` 里就地算：`enhance_reading`
+    运行在 `thinking_chain` 的 step1 **之前**，那时 `_step2_data` 还不存在。
+    旧实现在此情况下回退取世爻当用神，于是：
+      · 断言句写出的用神与实际 step2 用神不符（实测 4/50 例，WS007/WS023/WS024/WS040）；
+      · 其中 2 例因此凭空拿到 +2.0「凶中反吉」，把书证判凶的案例翻成吉。
+    既有范式：`shi_yao_relation`、`attach_luandong_looks` 同样在 step2 后补挂。
+
+    只重算这一个段，不改用神选取、不动其他增强段的判据。
+    """
+    if not isinstance(result, dict) or not isinstance(step2_data, dict):
+        return
+    adv = result.get("advanced_analysis")
+    if not isinstance(adv, dict):
+        return
+    with_step2 = dict(result)
+    with_step2["_step2_data"] = step2_data
+    adv["desperate_relief"] = analyze_desperate_relief(with_step2)
+
+
 # ======================================================================
 # section: 六神旺衰标签（逢恩/归垣）试点 — OPT-yiin_dz-05
 # 书源：《易隐》卷首 L879（通行曹九锡本）
@@ -2165,6 +2195,7 @@ __all__ = [
     # growth
     "analyze_twelve_growth",
     "analyze_desperate_relief",
+    "attach_desperate_relief",
     "analyze_du_fa_du_jing",
     "analyze_luandong",
     "attach_luandong_looks",

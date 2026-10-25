@@ -176,20 +176,28 @@ def step3_analyze_strength(r: dict) -> dict:
     effective_score += twelve_growth_modifier
 
     # ---------- 3.8b: 绝处逢生修正（来自 advanced_analysis 和步骤 3.7b 绝地检测）----------
+    # 【单一应用】两条路径描述的是**同一个现象**（用神临绝地／死地），书证同一：
+    #   《增删卜易》源L1706「大凡世与用神或绝于日或化绝，若得日月动爻生者，谓之绝处逢生」；
+    #   《卜筮全书·二、绝处逢生》「用爻属木，木见申则绝…若得水爻发动来相生」。
+    # 旧实现把 3.7b 的 stage 修正**先加进 effective_score**，再用 advanced 的
+    # score_modifier **覆盖报告变量并再加一次** ⇒ 同一现象被计价两次（且报告值与
+    # 实扣分值不一致：变量只留后者）。第两百六十四批改为**只应用一次**：
+    # 以 advanced_analysis 为准（它带原神是否发动/旬空/月破的书证判据，粒度更细），
+    # 仅在 advanced 未判定（step1 前调用、_step2_data 缺失等）时退回 3.7b 的 stage 档。
     desperate_relief_modifier = 0.0
     desperate_relief_info = None
-    # 3.7b: 绝处逢生 / 绝地无援（由 step3 自身识别）
-    if desperate_relief_from_stage_modifier != 0.0:
-        desperate_relief_modifier += desperate_relief_from_stage_modifier
-        effective_score += desperate_relief_from_stage_modifier
-    # advanced_analysis: 绝处逢生（由 enhance_reading 预计算）
     advanced = r.get("advanced_analysis") if isinstance(r, dict) else None
+    _dr_adv_fired = False
     if isinstance(advanced, dict):
         dr = advanced.get("desperate_relief")
         if isinstance(dr, dict) and dr.get("has_desperate_relief"):
             desperate_relief_modifier = dr.get("score_modifier", 0.0)
             desperate_relief_info = dr
-            effective_score += desperate_relief_modifier
+            _dr_adv_fired = True
+    if not _dr_adv_fired and desperate_relief_from_stage_modifier != 0.0:
+        desperate_relief_modifier = desperate_relief_from_stage_modifier
+    if desperate_relief_modifier != 0.0:
+        effective_score += desperate_relief_modifier
 
     # ---------- 3.8c: 随官入墓标记（随官入墓信息，主修正已在 step5 应用）----------
     officer_tomb_ref = None

@@ -104,8 +104,11 @@ def chart(mode: str, question: str, *, datetime_str: str | None = None,
             datetime_str, hour, zi_type, distinguish_zi_hour)
 
     if mode == "coin":
+        # coin_toss() 自身即摇满六爻、返回 6 个爻值；外面再套一层 range(6) 会把
+        # 6 个子列表当成 6 个爻值，`val in (6, 9)` 恒 False → 恒阴、恒坤、永无动爻。
+        # 2026-10-25 实测：连续五次铜钱起卦全部得「坤」，静卦无动，起卦彻底失效。
         rng = engine.random.Random(seed) if seed is not None else None
-        yao_values = [coin_toss(rng) for _ in range(6)]
+        yao_values = coin_toss(rng)
     elif mode == "number":
         if not numbers:
             raise ValueError("--mode number 需要 --numbers \"a,b,c\"")
@@ -117,7 +120,7 @@ def chart(mode: str, question: str, *, datetime_str: str | None = None,
         yao_values = _parse_yao_values(yao)
     else:  # coin 兜底
         rng = engine.random.Random(seed) if seed is not None else None
-        yao_values = [coin_toss(rng) for _ in range(6)]
+        yao_values = coin_toss(rng)
 
     result = build_hexagram_result(
         yao_values, question, mode, yy, mm, dd, hh, minute=minute,

@@ -111,6 +111,19 @@ def run_thinking_chain(hex_result: dict) -> dict:
             import logging
             logging.getLogger(__name__).warning(
                 "attach_luandong_looks 失败：源L27 一看/二看结构标签本次为空。", exc_info=True)
+        # 绝处逢生：主语是**用神**，而 `analyze_desperate_relief` 在 enhance_reading
+        # 阶段跑、那时 step2 还没有用神。故与两看同法，step2 之后重算一次。
+        # 书证一：《增删卜易》源L1706「大凡世与用神或绝于日或化绝，若得日月动爻生者，谓之绝处逢生」。
+        # 书证二：《卜筮全书》源L3072「遇用爻属木，木见申则绝，木爻无用矣。若得水爻发动来相生，木爻仍复有用」。
+        # 第两百六十四批：旧实现回退世爻当用神，实测 4/50 例断言与真实用神不符，
+        # 其中 2 例凭空 +2.0 把书证判凶的案例翻成吉（WS023「果死於卯日」）。
+        try:
+            from classical_enhancements import attach_desperate_relief
+            attach_desperate_relief(hex_result, context["_step2_data"])
+        except Exception:
+            import logging
+            logging.getLogger(__name__).warning(
+                "attach_desperate_relief 失败：绝处逢生段本次按 step1 前的空结论处理。", exc_info=True)
     context["_step3_data"] = step3_analyze_strength(context)
     context["_step4_data"] = step4_analyze_changes(context)
     context["_step5_data"] = step5_synthesize(context)
