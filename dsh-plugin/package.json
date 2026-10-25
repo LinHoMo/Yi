@@ -1,0 +1,47 @@
+{
+  "name": "dsh-yi-divination",
+  "version": "0.1.0",
+  "description": "DSH 插件：六爻纳甲与八字四柱的确定性排盘与解读。内置 Python 引擎，装了即用，无需另外 clone 仓库或手敲命令。 / Deterministic I Ching (Liu Yao) & BaZi engine as a DSH plugin — ships its own Python engine so no manual repo checkout is needed.",
+  "type": "module",
+  "license": "MIT",
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "engine",
+    "skills",
+    "presets",
+    "SKILL.md",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "node scripts/build-engine.mjs && node scripts/build-skills.mjs",
+    "selftest": "node scripts/selftest.mjs",
+    "check": "npm run build && npm run selftest && npm run verify-in-dsh",
+    "verify-in-dsh": "node scripts/verify-in-dsh.mjs"
+  },
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "dsh-plugin",
+    "iching",
+    "liuyao",
+    "bazi",
+    "六爻",
+    "八字",
+    "术数"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

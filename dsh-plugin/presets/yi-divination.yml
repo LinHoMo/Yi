@@ -1,0 +1,57 @@
+# Yi 的 Agent preset 声明。
+#
+# 这是什么：在 DSH 里，「agent preset」= 一段声明某类 Agent **子插件列表**的普通 Cordis YAML
+# （官方包 @deepseek-ai/dsh-agent-preset）。会话创建时选一个 preset，该 Agent 就只带那些插件
+# 与技能。用户设想里「agent 预设 + 知识库」在官方机制中就是这个东西，不必另发明一套。
+#
+# 用法（二选一）：
+#   A. 本机试用：把下面内容贴进 `$DSH_HOME/profiles/<你的profile>/cordis.patch.yml`，
+#      重启 DSH，在新建会话时选「Yi 术数」。
+#   B. 随包安装：`node dsh-plugin/scripts/install-preset.mjs <profile>` 会把本文件合并进
+#      该 profile 的用户补丁层（并保留你已有的其它条目）。
+#
+# ⚠ 补丁层方言（2026-10-25 真机实测踩过）：
+#   profile 的 `cordis.patch.yml` 是**补丁列表**，不是插件列表。一个不带 `insert:` 的
+#   `- id: xxx` 被解释成「修改已存在的行 id=xxx」，没有该行时宿主报
+#   `patch: entry "xxx" not found` 并跳过——插件根本不会加载。
+#   新增插件必须写成 `- insert: [ ... ]`。本文件即按此书写。
+#
+# 设计要点：
+#  · `config.id` 才是会话保存的 preset 标识符；行 id 只是 Loader 的编辑地址。
+#  · 子插件列表**刻意最小**：术数本体 + 技能通道两件事。不塞 bash/web/search——
+#    那些由外层组建提供；preset 只声明「这个 Agent 额外要什么」。
+#  · 技能用官方 `bundledSkillDir`（rank 600，最低优先级，不会盖掉用户自己的技能）指向
+#    本插件随包发出的 skills/ 目录；插件内另有一个自建 provider 作无 skill-filesystem
+#    时的兜底——两条路指向同一份 SKILL.md。
+
+- insert:
+    - id: agent-preset-registry
+      name: '@deepseek-ai/dsh-agent-preset-registry'
+      config:
+        # 想让它成为新会话的默认预设，把下面这行改成 yi-divination
+        default: standard
+
+    - id: preset-yi-divination
+      name: '@deepseek-ai/dsh-agent-preset'
+      config:
+        id: yi-divination
+        name: Yi 术数（六爻 / 八字）
+        description: >-
+          六爻纳甲与八字四柱的确定性排盘与解读。排盘、装卦、旺衰、应期、格局全部由内置
+          Python 引擎完成，模型只负责把结论翻译成当事人听得懂的话。
+        order: 10
+        plugins:
+          # 术数本体：工具（yi_liuyao / yi_bazi）+ 技能（yi-divination）+ 系统提示词段
+          - name: dsh-yi-divination
+          # 技能通道：让本 preset 的 Agent 能按需加载 SKILL.md 与 references/ 知识库
+          - name: '@deepseek-ai/dsh-skill-filesystem'
+            config:
+              # 随包技能根（官方 rank 600 挂载点），指向插件包内的 skills/
+              bundledSkillDir: !!js >-
+                process.getBuiltinModule('node:path').join(
+                  process.getBuiltinModule('node:path').dirname(
+                    process.getBuiltinModule('node:module').createRequire(baseUrl).resolve('dsh-yi-divination/package.json')
+                  ),
+                  'skills')
+          - name: '@deepseek-ai/dsh-tool-skill'
+

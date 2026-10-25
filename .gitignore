@@ -36,3 +36,13 @@ guard/
 **/scripts/regression_results.json
 **/scripts/coverage_report.md
 **/assets/portal_data.json
+
+# DSH 插件：engine/ 与 skills/ 都是构建产物（由 scripts/build-*.mjs 按白名单从两科收集），
+# 一条命令即可再生，故不入库——入库等于给「引擎/知识库 vs 两科真源」多存一份副本，
+# 正是 AGENTS.md §二 警告过的「同表多存、取值不一致」事故土壤。
+dsh-plugin/engine/
+dsh-plugin/skills/
+dsh-plugin/node_modules/
+dsh-plugin/pnpm-lock.yaml
+dsh-plugin/package-lock.json
+

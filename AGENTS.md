@@ -65,15 +65,30 @@ Yi/
 │   ├── core/yishu_core/ # 该科私有内核副本
 │   ├── scripts/ data/ references/ dev_tools/ docs/ tests/
 │   └── README.md  SKILL.md
-└── bazi/                # 八字（独立，暂无 tests/，回归走 dev_tools/check.py）
-    ├── core/yishu_core/
-    ├── scripts/ data/ references/ dev_tools/ docs/
-    └── README.md  SKILL.md
+├── bazi/                # 八字（独立，暂无 tests/，回归走 dev_tools/check.py）
+│   ├── core/yishu_core/
+│   ├── scripts/ data/ references/ dev_tools/ docs/
+│   └── README.md  SKILL.md
+└── dsh-plugin/          # DSH 插件（Node 半，独立于两科；契约见下）
 ```
 
 依赖方向单向：`<科>/scripts → <科>/core`。**两科之间禁止任何相互 import**，也不存在
 合参层（`synthesis` 已移除且不得复活）。两科内核副本文件名相同、内容各自演进——这是
 "零耦合、各自可独立运行"的刻意结果，不是待修的重复。
+
+### dsh-plugin 契约（2026-10-25 第两百六十九批起）
+
+`dsh-plugin/` 是把两科包装成 DeepSeek Harness（DSH）插件的 Node 半，与两科零 import：
+`scripts/build-engine.mjs` 按白名单把两科 `core/scripts/data` **机械收集**到 `engine/`，
+`scripts/build-skills.mjs` 把两科 `references/` 判据文档组装到 `skills/`（**永不**收录
+`case_library.md`，§一.2）。skill 与知识库随包分发，解读口径仍以各科 SKILL.md 为准。
+
+- `engine/`、`skills/`、`node_modules/` 与锁文件是**构建产物，不入库**（根 .gitignore
+  已排除）。改两科后必须 `npm --prefix dsh-plugin run check`（build → selftest →
+  verify-in-dsh）再提交；selftest 的逐文件一致性门会把过期副本判红。手工改
+  `engine/`/`skills/` 视为产物污染（selftest 判红）。
+- 插件面向会话交付，分数口径同 §一.3：排盘与解读照常，**不得**出现"预测准确率"类表述。
+- 插件自身批次登记在 `dsh-plugin/CHANGELOG.md`，批次号沿用全仓流水。
 
 ### 内核唯一真值源（科内口径）
 

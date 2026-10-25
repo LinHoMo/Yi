@@ -1,0 +1,8 @@
+# dsh plugin bundle for DeepSeek Harness.
+# 安装方式：dsh plugin --profile <name> add link:<本目录绝对路径>
+# 插件行按包名从 profile 的 node_modules 解析；node 半注册工具与技能。
+- insert:
+    - id: yi
+      name: 'dsh-yi-divination'
+      config:
+        enableBazi: true
