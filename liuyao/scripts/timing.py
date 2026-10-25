@@ -918,6 +918,12 @@ def _rank_candidates(r: dict, use_god_branch: str, use_god_element: str, strengt
         else:
             _rank(ranked, _chong_ug, YINGQI_TXT["use_quiet_chong_year"]["text"], "年")
         _rank(ranked, use_god_branch, YINGQI_TXT["use_value_year"]["text"], "年")
+        # ⑧ 动用神逢冲之年（第两百四十六批；324 批曾试限「世动」回退——年窗 3 后
+        #   WS049 酉年可入第 3 槽）。书据：《增删卜易》源L3634 逐字「应酉年者，谓之再冲之年」
+        #   （WS049 占地，世爻卯动临月建，应爻酉冲克动世，四年之内二男一女相继而亡）；
+        #   六冲章注源L1705「动逢冲而事散」——占吉事散、占凶事应，冲应之年。
+        if _chong_ug:
+            _rank(ranked, _chong_ug, YINGQI_TXT["use_moving_chong_year"]["text"], "年")
     # （第一百一十七批实验记录，未落库）各门类应期总注章的「问有应于变爻动爻…有戌日应者，有酉日应者」
     # 与「大象吉而受克，须待克神受克…后逢申酉日冲克克神」两条曾被作为年级候选试补：
     # 在 年=2 槽下**完全不生效**（被既有阶梯截断），提到 3 槽则"在池升而 top-1 不升、随机期望反涨"。
@@ -938,7 +944,7 @@ def _assemble_timing(ranked: list, timing_methods: list, speed: str,
     # 分级预算：单位不同不可同窗排序，否则加一个"生旺之月"就把正确的日支挤出窗口。
     # 月窗口 3→4：三合虚一待用（L1507「虚一待用，待后时之月日可以填之」）等
     # 月级通用轨曾被 3 槽截断（WS016 卯月排第 4 进不了输出）；A/B 全 split 无退化。
-    UNIT_BUDGET = (("日", 5), ("月", 4), ("年", 2))
+    UNIT_BUDGET = (("日", 5), ("月", 4), ("年", 3))
     by_unit = {u: [] for u, _ in UNIT_BUDGET}
     for token, rule in ranked:
         unit = token[-1]

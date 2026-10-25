@@ -3,15 +3,9 @@
     "what": "金标准指纹基线（排盘+思维链+分析层逐字段；抽样含 narrate 文案哈希）",
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
-  "digest": "af8965bfcad0ff9e",
+  "digest": "4ceef1eed62dafe2",
   "narrate_digest": "405bc8e03a6a99e0",
   "drift_log": [
-    {
-      "from": "f7eb04494ea54a3b",
-      "to": "8d315f9a2a78e858",
-      "date": "2026-10-12",
-      "reason": "第一百五十九批：唤醒月破层——yao_lines 补 is_month_break（装卦时与月建相冲，判据同 analyze_monthly_break）。此前该键自建仓起缺失，step1/step2/step3/narrate 的读取恒 False：用神取舍 tier7/8 破分支、step3 月破修正(0.3/0.5)、野鹤反法一破一不破半边全死。漂移 6/288 例（剥×3、困×3）方向全部合书（月破降级；困例辰不破胜未破合古法序月破键先于旬空键）"
-    },
     {
       "from": "8d315f9a2a78e858",
       "to": "0154180984aa868d",
@@ -125,6 +119,12 @@
       "to": "af8965bfcad0ff9e",
       "date": "2026-10-26",
       "reason": "第两百三十四批：制杀之年（冲去忌神）入年池年级对称——yingqi_years 候选池扩展，无 verdict/计价翻档；WS004 辰年书证实案入池"
+    },
+    {
+      "from": "af8965bfcad0ff9e",
+      "to": "4ceef1eed62dafe2",
+      "date": "2026-10-26",
+      "reason": "第两百四十六批：动用神逢冲之年轨（L4401 再沖之年）+年窗 2→3——yingqi_years 池形扩展，无 verdict/计价翻档；WS049 酉年/WS038 寅年入池"
     }
   ],
   "narrate_drift_log": [
