@@ -16,6 +16,16 @@
 > 无插件自身代码改动）、281→**1.0.3**（随包引擎同步六爻 281 批占差事词典+WS003
 > 校勘）。
 
+## 2026-10-25 第两百九十一批（dsh-plugin）：六破检索记录补全随包（1.0.12）
+
+- 六爻 `data/rules/adjudications.json` six_break_evidence 条目补检索记录：
+  库内 16 源全查，唯一额外命中《焦氏易传》L43「休王相破」（概念之源，无纳甲
+  计价细节）。结论不变：六破计价无逐字书证，保留与缺口登记并存（289 批）。
+- check.py 过时归因块清理在 dev_tools 层（不随包），登记见六爻 CHANGELOG
+  第两百九十一批。
+- 零判据批：读数与金标准零变化；`npm run check` 全绿。
+- `package.json` 1.0.11→**1.0.12**。
+
 ## 2026-10-25 第两百八十九批（dsh-plugin）：随包裁决表新增六破证据缺口条目（1.0.11）
 
 - 六爻 `data/rules/adjudications.json` 9→10 条：liuyao.six_break_evidence
