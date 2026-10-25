@@ -96,6 +96,17 @@ def step5_synthesize(r: dict) -> dict:
     # ---------- 5.2: 动变效应加成 ----------
     change_net_effect = safe_get(step4_data, "net_effect", default=0.0)
 
+    # ---------- 5.2b: 克神待解（第二零九批）----------
+    # 《增删卜易》dz L965 逐字：「大象吉而受克，须待克神受克：如用神临辰土，
+    # 得日月动爻生扶，乃为大象吉也。倘被寅卯克害，后逢申酉日冲克克神则吉，余仿此。」
+    # 用神得月令生扶（旺/相）而动爻克伤＝克而待解（冲克克神之期应吉），减凶半档；
+    # 书证只明「生扶」总条件，本批仅取月令半边（日辰/动爻生扶半边不入，防扩权）。
+    _gms_ke = str(safe_get(step3_data, "god_month_strength", default="") or "")
+    _ke_resolved = 0.0
+    if change_net_effect < -0.3 and _gms_ke in ("旺", "相"):
+        _ke_resolved = 0.5
+        change_net_effect = round(change_net_effect + _ke_resolved, 2)
+
     # ---------- 5.3: 卦体调候 ----------
     hex_name = safe_get(step1_data, "hexagram_name", default="")
     palace = safe_get(step1_data, "palace", default="")
@@ -415,6 +426,8 @@ def step5_synthesize(r: dict) -> dict:
         "classical_notes": classical_notes,
         "bing_yao_adjustment": bing_yao_adjustment,
         "bing_yao_reasons": bing_yao_reasons,
+        "god_month_strength": str(safe_get(step3_data, "god_month_strength", default="") or ""),
+        "ke_resolved": _ke_resolved,
     }, r)
 
     return {
@@ -1595,6 +1608,18 @@ def build_factor_contributions(adj: dict, r: dict) -> list:
             FREASON["change_balance"]["text"]
         )
     })
+    # 2b. 克神待解（第二零九批）：《增删卜易》dz L965「大象吉而受克，须待克神受克：
+    #     如用神临辰土，得日月动爻生扶，乃为大象吉也。倘被寅卯克害，后逢申酉日
+    #     冲克克神则吉，余仿此。」——用神得月令生扶（旺/相）而被动爻克伤＝克而
+    #     待解（冲克克神之期应吉），非无解之凶；书证只明「生扶」总条件，本批
+    #     仅取月令半边（日辰/动爻生扶半边不入，防扩权），登记于 CHANGELOG。
+    if adj.get("ke_resolved", 0.0) > 0:
+        factor_contributions.append({
+            "name": "克神待解",
+            "factor": "change_resolved",
+            "score": round(adj["ke_resolved"], 2),
+            "reason": _user_reason("", FREASON["change_ke_resolved"]["text"]),
+        })
     # 3. 合冲卦性
     if hex_adjustment != 0:
         factor_contributions.append({

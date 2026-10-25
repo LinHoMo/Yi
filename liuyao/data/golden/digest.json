@@ -3,15 +3,9 @@
     "what": "金标准指纹基线（排盘+思维链+分析层逐字段；抽样含 narrate 文案哈希）",
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
-  "digest": "2be9b87cc0316da8",
+  "digest": "0f2dbec4c0f69717",
   "narrate_digest": "405bc8e03a6a99e0",
   "drift_log": [
-    {
-      "from": "adba30d7460b3005",
-      "to": "8c438ac6da9feb4c",
-      "date": "2026-10-11",
-      "reason": "第八十八批：新增名分链法则与占子触发词（据《卜筮正宗》源L1016/源L1009/源L1123），占子久病一类例的用神由父母改判子孙，属按书改判的有意行为变化；tune/holdout 全数不变、wikisource_holdout n=50 同分母下 62.5→62.7（该例书上判子孙），故登记基线换值"
-    },
     {
       "from": "8c438ac6da9feb4c",
       "to": "3af013c514bf14e9",
@@ -125,6 +119,12 @@
       "to": "2be9b87cc0316da8",
       "date": "2026-10-26",
       "reason": "第两百九十八批：step5 六冲卦性计价加用神旺衰门（书证源L780/L844），六冲卦+用神旺相合成探针计价上移属预期行为语义变化；297 批 WSD 基准落库不进金标准"
+    },
+    {
+      "from": "2be9b87cc0316da8",
+      "to": "0f2dbec4c0f69717",
+      "date": "2026-10-26",
+      "reason": "第两百零九批：克神待解计价（dz L965 大象吉而受克须待克神受克——用神月令旺相而动爻克伤 +0.5 减凶）；12 条漂移全部为忌神动克且用神旺相的合成探针（concl_sha/score 变化，归妹占婚姻 verdict 翻档），预期行为语义变化"
     }
   ],
   "narrate_drift_log": [
