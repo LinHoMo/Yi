@@ -1,0 +1,13 @@
+# 278 批：检出行为统一——仓库索引一贯是 LF，强制工作树检出也是 LF，
+# 消除 Windows autocrlf 检出差异对行级判据门的干扰（CI 首跑实抓：selftest [2]
+# 硬编码 '\n' 在 CRLF 检出下假红，selftest 判据已同步归一化，双保险）。
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.tgz binary
+*.zip binary
+*.gz binary
+*.woff binary
+*.woff2 binary

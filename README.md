@@ -51,21 +51,29 @@ python bazi/scripts/chart.py --datetime "1990-05-20 12:00" --gender 男
 
 上面的用法要求先有本仓库、再让 agent 敲 `python ...` 命令。若想**装了即用**，
 可把它作为 DeepSeek Harness（DSH）插件安装——插件自带引擎与运行必需数据，
-模型直接调用 `yi_liuyao` / `yi_bazi` / `yi_kb` 三个工具，无需另装 Python（DSH 桌面自带运行时会被自动发现）：
+模型直接调用 `yi_liuyao` / `yi_bazi` / `yi_kb` / `yi_report` 四个工具，无需另装 Python（DSH 桌面自带运行时会被自动发现）：
 
 ```bash
-# 1) 装插件
+# 0) 发布版（推荐）：从 GitHub Release 下载 tgz
+#    https://github.com/LinHoMo/Yi/releases/tag/v1.0.0
+dsh plugin --profile <你的profile> install ./dsh-yi-divination-1.0.0.tgz
+
+# 1) 开发版：从本仓库 link 安装
 dsh plugin --profile <你的profile> add "link:<本仓库>/dsh-plugin"
 
 # 2) 装 agent preset（可选但推荐：新建会话可选「Yi 术数」）
 node dsh-plugin/scripts/install-preset.mjs <你的profile>
 ```
 
+> 口径提醒（AGENTS.md §一.3 铁律三）：本插件一切分数都是**古籍案例对齐分**（回归审计用），
+> **不是现实命中率**——现实侧样本为零，六爻外部集主应期 top-1（27.3%）目前**低于**同池随机期望
+> （31.1%，n=50，`liuyao/README.md` 同屏）。它是排盘与推演参考工具，不是预言；重大决策以专业意见为准。
+
 它同时提供 DSH 的三层能力：
 
 | 层 | 机制 | 落点 |
 |---|---|---|
-| 工具 | `ctx.tools.register()` | `yi_liuyao` / `yi_bazi` / `yi_kb` |
+| 工具 | `ctx.tools.register()` | `yi_liuyao` / `yi_bazi` / `yi_kb` / `yi_report` |
 | 技能 + 知识库 | `ctx.skills.registerProvider()` + `bundledSkillDir` | `dsh-plugin/skills/yi-divination/`（9 篇判据文档） |
 | Agent 预设 | `@deepseek-ai/dsh-agent-preset` | `dsh-plugin/presets/yi-divination.yml` |
 

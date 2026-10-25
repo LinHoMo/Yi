@@ -106,9 +106,11 @@ await section('[1.5] 知识库随包 + 案例库被隔离（铁律二）', async
 })
 
 // ── 2. SKILL.md frontmatter（负例：坏 frontmatter 必须被识破）────────────────
+// CRLF 兼容（278 批 CI 实测）：Windows runner 按 autocrlf=true 检出时 SKILL.md
+// 是 \r\n，硬编码 '\n' 的判据会假红——归一后再判，判据测的是产物不是检出配置。
 await section('[2] SKILL.md frontmatter', async () => {
   const { readFileSync } = await import('node:fs')
-  const raw = readFileSync(join(PLUGIN_ROOT, 'SKILL.md'), 'utf8')
+  const raw = readFileSync(join(PLUGIN_ROOT, 'SKILL.md'), 'utf8').replace(/\r\n/g, '\n')
   const end = raw.indexOf('\n---\n', 4)
   if (!raw.startsWith('---\n') || end < 0) {
     fail('SKILL.md 没有合法 frontmatter')

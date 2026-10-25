@@ -11,15 +11,19 @@
 `python liuyao/scripts/chart.py --mode coin --question "..."` → 再敲 analyze → 再敲 narrate。
 每一步都可能因为路径、工作目录、编码而失败。
 
-装上本插件后，模型直接调用 `yi_liuyao` / `yi_bazi` 排盘、用 `yi_kb` 检索随包判据知识库，
-一次拿到结构化结论与正文。
+装上本插件后，模型直接调用 `yi_liuyao` / `yi_bazi` 排盘、用 `yi_kb` 检索随包判据知识库、
+用 `yi_report` 出单文件 HTML 报告，一次拿到结构化结论与正文。
 
 ## 安装
 
-两步：先装插件，再装 agent preset。
+**发布版（推荐）**：从 GitHub Release 下载 tgz 后安装——
+<https://github.com/LinHoMo/Yi/releases/tag/v1.0.0>
 
 ```sh
-# 1) 装插件（用本机路径）
+# 0) 发布版：tgz 换成实际下载路径
+dsh plugin --profile <你的profile> install ./dsh-yi-divination-1.0.0.tgz
+
+# 1) 开发版（用本机路径）
 dsh plugin --profile <你的profile> add "link:<本目录绝对路径>"
 
 # 2) 装 agent preset（可选但推荐：让新建会话能选「Yi 术数」）
@@ -199,6 +203,20 @@ Agent preset 声明合法性（含负例）/ 安装脚本幂等与 YAML 安全�
 - 医疗、法律、投资、重大决策请以专业意见为准。
 - 八字结论是机械推演（旺衰/格局/喜用/调候），**不含命运吉凶断言**；
   方向字段为空是正常的，不是缺数据。
+- 六爻外部验证集（未参与调参，n=50）主应期 top-1 **27.3% < 同池随机期望 31.1%**——
+  应期判别目前不优于随机期望（`liuyao/README.md` 同屏）。如实摆出，不进任何宣传话术。
+
+## 已知限制（1.0.0）
+
+- **时区口径**：引擎按你提供的本地钟表时**直接**排盘（`calendar_policy` 只管换日边界与
+  子时归属，不做时区换算）；海外生辰请先自行换算成出生地当地钟表时再输入，
+  `longitude` 参数只做真太阳时经度校正。
+- **报告文件**：`yi_report` 产物写入系统临时目录（Windows `%TEMP%/yi-reports/`），
+  工具返回值带绝对路径与预览；目录只增不清，需要留存的卷面请自行拷出，其余可手动清理。
+- **平台实测**：开发与实测为 Windows；CI（277 批起）在 windows + ubuntu 双平台跑插件门禁，
+  Linux 侧以 CI 首跑为准。
+- **反馈通道**：现实占断反馈在册 0 条（`liuyao/data/feedback/`），八字侧无通道——
+  本插件**没有**任何现实命中率数据，也请勿替它宣称。
 
 ## 兼容性
 
