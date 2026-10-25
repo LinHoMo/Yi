@@ -1,7 +1,7 @@
 {
  "schema": "yi-liuyao-adjudications/1",
  "discipline": "liuyao",
- "built_at": "2026-10-26T01:45:21",
+ "built_at": "2026-10-26T01:53:32",
  "_comment": "流派裁决表：「与古书吻合」的展开定义。引用任何吻合率须能指回本表行。不改引擎不进评分面不挂门（§176 冻结声明）。状态三值见 builder docstring。",
  "count": 17,
  "entries": [
@@ -348,7 +348,7 @@
      "line": 1246
     }
    ],
-   "engine_position": "双轨均已实装：应期侧=第二八五批应期第3法③支（动忌化退克用+用神静→冲去忌神本支，书证即上方 parties 反用轨同源总诀）；verdict 侧=第三百批行人归占化退归志层（+1.0 抵回用神化退衰价，检测 step4 details[].change_type，书证即上方 parties 归期歌诀）。zengshan 50.5→53.4 全额回补（ZD050 凶→吉复位）",
+   "engine_position": "双轨均已实装：应期侧=第二八五批应期第3法③支（动忌化退克用+用神静→冲去忌神本支，书证源L1174）；verdict 侧=第三百批行人归占化退归志层（+1.0 抵回用神化退衰价，检测 step4 details[].change_type，书证 dz L3298 歌诀总诀）。zengshan 50.5→53.4 全额回补（ZD050 凶→吉复位）",
    "engine_anchor": "liuyao/scripts/step5.py 行人区 1a 支（travel_huatui_guizhi）；timing.py 应期第3法③支；案例 zengshan ZD050",
    "status": "settled",
    "note": "dz L1246 全句：「断曰：兄动化退，已有归志，但因戌逢月破，在外诸事未遂，六月可望，后至戌月方回，乃应实破之月也，此乃动破而变日月，岂可谓之退不及也？」wikitext 对应=L612。"
@@ -408,9 +408,15 @@
      "quote": "竟断朱雀临父动而持世，卯日有信，午未日必归",
      "source": "《增刪卜易》（zengshan_buyi_dz.dz.txt）",
      "line": 1014
+    },
+    {
+     "who": "一卦两事轨（WSD008 占母病：题面母病六冲即愈记吉，现卦子孫變鬼另报子灾）",
+     "quote": "此卦不現母病﹐而現子女有災",
+     "source": "zengshan_buyi.wikitext.txt",
+     "line": 1611
     }
    ],
-   "engine_position": "引擎 verdict 按用神旺衰+吉凶化轨（第两百六十四批体系）；「应验即吉」「问来否不按平安断」「归期用神克世反吉」三支时间题口径未机械化（条件组合属框架批：须先识别时间题类+书内应验句式，单一实案族不足以定通用判据）。wikisource WSD003 verdict 失分=口径双轨显形的诚实代价；WSD024/025 引擎读数与书答同向（基准吉、引擎吉侧）不受影响",
+   "engine_position": "引擎 verdict 按用神旺衰+吉凶化轨（第两百六十四批体系）；「应验即吉」「问来否不按平安断」「归期用神克世反吉」三支时间题口径未机械化（条件组合属框架批：须先识别时间题类+书内应验句式，单一实案族不足以定通用判据）。wikisource WSD003 verdict 失分=口径双轨显形的诚实代价；WSD024/025 引擎读数与书答同向（基准吉、引擎吉侧）不受影响；WSD008 题面母病轨吉（六冲即愈）与现卦子灾轨凶并现，verdict 反向为一卦两事双轨显形",
    "engine_anchor": "scripts/step5.py verdict 化轨；案例 wikisource WSD003/WSD024/WSD025",
    "status": "open_conflict",
    "note": "WS001 案（dz L1014）已有专条 xiangfa_duan_guiqi 登记，本条引其反例面：并非所有归期题都记应验吉，书自认不能归者仍以凶断——双轨边界在书内自述。"
