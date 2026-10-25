@@ -1,4 +1,4 @@
-# 质量门 CI（第一百八十四批·E1）
+# 质量门 CI（第一百八十四批·E1；第二百七十七批增 plugin-gates job）
 # 设计要点：
 # - fresh checkout 本身就是「干净树」：gitignored 生成物（scratch/、eval_*.json、
 #   data/feedback/、logs/）在 CI 上不存在——两科门禁须靠门内自足夹具跑通
@@ -8,6 +8,9 @@
 # - 本地验证状态（如实）：git worktree 全新检出实跑两科 check.py rc=0
 #   （Python 3.14.7 / Windows）。GitHub runner 结果以首次运行定夺；若与本地
 #   结论不一致，按 §六.3 以实跑读数更正本文件与 CHANGELOG，不反向「调 CI 凑绿」。
+# - 277 批：插件三连门（build→selftest→verify-in-dsh）补进 CI。ubuntu 侧是
+#   src/python.mjs 双平台解析的**首次实测**——runner 上无 DSH 自带运行时、
+#   无 DSH_PYTHON，只能落到 PATH 的 python/python3；红则修插件，不跳过不豁免。
 name: quality-gates
 on:
   push:
@@ -26,3 +29,20 @@ jobs:
         run: python bazi/dev_tools/check.py
       - name: liuyao quality gate (fresh tree)
         run: python liuyao/dev_tools/check.py
+  plugin-gates:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"   # 与 DSH 自带运行时同代（3.12.14）
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: plugin gates (build + selftest + verify-in-dsh)
+        run: npm --prefix dsh-plugin run check

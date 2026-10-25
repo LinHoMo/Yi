@@ -9,8 +9,29 @@
 > 修复/文档批 patch+1，破坏性变更跨 1.0.0 并单独说明；**批次号是唯一真源**。
 > 回溯补记：269→0.1.0（建成）、270→0.2.0（yi_kb）、271→0.2.1（清账文档）、
 > 272→0.3.0（2-gram+同义词）、273→0.4.0（baziValue 结构化岁运）、274→0.5.0
-> （yi_report）、275→0.5.1（构建与治理，无运行时改动）、276→**0.6.0**
-> （本批，报告美学统一 + assets 打包修复）。
+> （yi_report）、275→0.5.1（构建与治理，无运行时改动）、276→0.6.0（报告美学
+> 统一 + assets 打包修复）、277→**1.0.0**（本批，API 冻结 + CI 补盲，见下）。
+
+## 2026-10-25 第两百七十七批（dsh-plugin）：1.0.0——API 冻结 + CI 插件门补盲
+
+发布计划 1/3（用户已批：tgz 手动分发，不上 npm 公网；远端恢复在 278 批）：
+
+- **1.0 API 冻结（AGENTS §二 dsh-plugin 契约新增条）**：对外契约冻结为四工具
+  `yi_liuyao` / `yi_bazi` / `yi_kb` / `yi_report` 的工具名、参数 schema、输出 value
+  结构（含 `output.render` 文本块形状）与技能条目 `yi-divination`。1.0 后新增可选
+  参数/字段 = minor+1；改名/删字段/改语义 = 破坏性，跨 1.0.0 单独声明。自检 [1]
+  必存在清单是冻结清单的机械面——动清单先动契约条。`package.json` **0.6.0→1.0.0**。
+- **CI 插件门补盲（`.github/workflows/ci.yml` 新增 `plugin-gates` job）**：此前 CI
+  只跑两科 `check.py`，插件 build/selftest/verify-in-dsh 三门只活在开发者本机。
+  新 job 以 matrix 跑 **windows-latest + ubuntu-latest** 双 runner——ubuntu 侧是
+  `src/python.mjs` 三级解析（DSH 自带运行时 → `DSH_PYTHON` → PATH）的**首次实测**：
+  runner 上前两级必然缺席，只能落 PATH。Python 定 3.12（与 DSH 自带运行时 3.12.14
+  同代），Node 22（`engines` 下限）。**首跑结果以 push 后实际运行为准**；红则按
+  §六.3 以实跑读数修插件，不跳过不豁免不调 CI 凑绿。
+- **本批零运行时改动**：工具、引擎、排版层一字未动——1.0.0 是契约语义上的里程碑，
+  不是功能批。
+- **本地验证**：`npm run check` 全绿（selftest 77 项 + verify-in-dsh 27 项）。
+- **semver**：0.6.0 → **1.0.0**（里程碑；配合 AGENTS 冻结条生效）。
 
 ## 2026-10-25 第两百七十六批（dsh-plugin + 六爻）：报告美学统一（宣纸卷面）+ build-engine 补收 assets（真修）
 
