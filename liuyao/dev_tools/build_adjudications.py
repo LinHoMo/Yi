@@ -203,7 +203,7 @@ ENTRIES = [
             {"who": "通用轨（近占/久远分层）", "quote": "占近事岂可曰退？若占久远之事，待休囚之时而退者得也", "source": Z, "line": 1182},
             {"who": "实案反用轨（ZD050 兄何日归来）", "quote": "断曰：兄动化退，已有归志，但因戌逢月破", "source": Z, "line": 1246},
         ],
-        "engine_position": "双轨均已实装：应期侧=第二八五批应期第3法③支（动忌化退克用+用神静→冲去忌神本支，书证源L1174）；verdict 侧=第三百批行人归占化退归志层（+1.0 抵回用神化退衰价，检测 step4 details[].change_type，书证 dz L3298 歌诀总诀）。zengshan 50.5→53.4 全额回补（ZD050 凶→吉复位）",
+        "engine_position": "双轨均已实装：应期侧=第二八五批应期第3法③支（动忌化退克用+用神静→冲去忌神本支，书证即 parties 反用轨同源）；verdict 侧=第三百批行人归占化退归志层（+1.0 抵回用神化退衰价，检测 step4 details[].change_type，书证即 parties 归期歌诀）。zengshan 50.5→53.4 全额回补（ZD050 凶→吉复位）",
         "engine_anchor": "liuyao/scripts/step5.py 行人区 1a 支（travel_huatui_guizhi）；timing.py 应期第3法③支；案例 zengshan ZD050",
         "status": "settled",
         "note": "dz L1246 全句：「断曰：兄动化退，已有归志，但因戌逢月破，在外诸事未遂，六月可望，后至戌月方回，乃应实破之月也，此乃动破而变日月，岂可谓之退不及也？」wikitext 对应=L612。",
