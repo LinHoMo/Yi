@@ -17,21 +17,25 @@ LINE_HEIGHT = 10
 YIN_GAP = 8  # 阴爻中间缺口宽度
 
 
-def generate_hexagram_diagram(result_data, width=700, height=500):
-    """生成本卦 + 变卦并列的卦象图"""
+def generate_hexagram_diagram(result_data, width=700, height=240):
+    """生成本卦 + 变卦并列的卦象图
+
+    高度缺省 240（2026-10-25 前 500）：六爻自下而上画到 y≈174、动变框到 y≈186，
+    500 留下 ~320px 死白把后续正文顶出一屏。改高度属纯呈现，爻位计算不动。
+    """
     orig = result_data.get("original_hexagram", {})
     changed = result_data.get("changed_hexagram")
 
     svg_parts = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" width="100%">']
     svg_parts.append(
         '<style>'
-        '.hex-title{font:bold 14px "Microsoft YaHei",sans-serif;fill:#333}'
-        '.hex-sub{font:11px "Microsoft YaHei",sans-serif;fill:#666}'
-        '.yang-line{stroke:#1a1a1a;stroke-width:6;stroke-linecap:round}'
-        '.yin-line-l,.yin-line-r{stroke:#1a1a1a;stroke-width:6;stroke-linecap:round}'
-        '.moving-marker{fill:#d32f2f;font:bold 16px sans-serif}'
-        '.world-mark{fill:#1565c0;font:bold 12px sans-serif}'
-        '.response-mark{fill:#2e7d32;font:bold 12px sans-serif}'
+        '.hex-title{font:bold 14px "Noto Serif SC","Songti SC","Microsoft YaHei",serif;fill:#332e26}'
+        '.hex-sub{font:11px "Noto Serif SC","Songti SC","Microsoft YaHei",serif;fill:#8c8271}'
+        '.yang-line{stroke:#332e26;stroke-width:6;stroke-linecap:round}'
+        '.yin-line-l,.yin-line-r{stroke:#332e26;stroke-width:6;stroke-linecap:round}'
+        '.moving-marker{fill:#a8402f;font:bold 16px sans-serif}'
+        '.world-mark{fill:#a8402f;font:bold 12px sans-serif}'
+        '.response-mark{fill:#41586a;font:bold 12px sans-serif}'
         '</style>'
     )
 
@@ -100,11 +104,11 @@ def generate_hexagram_diagram(result_data, width=700, height=500):
                 svg_parts.append(f'<line x1="{mid+YIN_GAP}" y1="{y_pos}" x2="{start_x_r+LINE_WIDTH}" y2="{y_pos}" class="yin-line-r"/>')
             if pos in changed_positions:
                 svg_parts.append(
-                    f'<rect x="{start_x_r-2}" y="{y_pos-8}" width="{LINE_WIDTH+4}" height="20" fill="none" stroke="#d32f2f" stroke-width="1.5"/>'
+                    f'<rect x="{start_x_r-2}" y="{y_pos-8}" width="{LINE_WIDTH+4}" height="20" fill="none" stroke="#a8402f" stroke-width="1.5"/>'
                 )
                 # 本卦原爻（虚线示意）
                 old_yang2 = yao.get("nature") == "yang"
-                col = "#aaa"
+                col = "#b3a88f"
                 if old_yang2:
                     svg_parts.append(f'<line x1="{start_x_r}" y1="{y_pos-2}" x2="{start_x_r+LINE_WIDTH}" y2="{y_pos-2}" stroke="{col}" stroke-width="2" stroke-dasharray="4 2"/>')
                 else:

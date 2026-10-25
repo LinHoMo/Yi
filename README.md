@@ -69,7 +69,7 @@ node dsh-plugin/scripts/install-preset.mjs <你的profile>
 | 技能 + 知识库 | `ctx.skills.registerProvider()` + `bundledSkillDir` | `dsh-plugin/skills/yi-divination/`（9 篇判据文档） |
 | Agent 预设 | `@deepseek-ai/dsh-agent-preset` | `dsh-plugin/presets/yi-divination.yml` |
 
-发布包（`npm pack` 实测）解包 **2.44 MB**、`.tgz` **0.72 MB**；**不含** `data/cases/`（38MB）、
+发布包（`npm pack` 实测）解包 **2.6 MB**、`.tgz` **0.77 MB**；**不含** `data/cases/`（38MB）、
 `data/sources/`（9.5MB）与 `references/case_library.md`（165KB）——前者只服务古籍对齐分与回归门，
 后者按 AGENTS.md §一.2 铁律二必须与解读物理隔离。
 

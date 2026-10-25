@@ -105,9 +105,9 @@ def render_html(a: dict) -> str:
 
     meta = []
     if s.get("datetime"):
-        meta.append(f'<span class="meta-item">🕐 {escape(s["datetime"])}</span>')
+        meta.append(f'<span class="meta-item">{escape(s["datetime"])}</span>')
     meta.append(
-        f'<span class="meta-item">☰ {escape(oh.get("name") or "?")}'
+        f'<span class="meta-item">{escape(oh.get("name") or "?")}'
         + (f'（{escape(oh.get("palace") or "")}宫·{escape(oh.get("generation") or "")}）' if oh.get("palace") else "")
         + (f' → {escape(ch.get("name") or "")}' if ch.get("name") else "")
         + "</span>"
@@ -139,13 +139,14 @@ def render_html(a: dict) -> str:
         f"""
 <header class="report-header">
     <div class="header-inner">
-        <div class="header-symbol">☯</div>
+        <div class="seal">易</div>
         <h1>六爻纳甲占报告</h1>
         <div class="header-meta">
-            <span class="meta-item">❓ {escape(question)}</span>
+            <span class="meta-item">问：{escape(question)}</span>
             {''.join(meta)}
         </div>
         <div class="header-sub">{sub}</div>
+        <div class="header-rule"></div>
     </div>
 </header>
 

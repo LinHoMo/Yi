@@ -134,16 +134,16 @@ node scripts/install-preset.mjs <你的profile>
 
 发布包只含运行必需部分，**不含评测数据**。
 
-**以下为 `npm pack --dry-run --json` 实测值**（162 个文件，非估算）：
+**以下为 `npm pack --dry-run --json` 实测值**（163 个文件，非估算）：
 
 | 内容 | 解包体积 |
 |---|---|
-| 引擎（core + scripts + data/rules + data/*.json + references，两科，138 文件） | 2.21 MB |
+| 引擎（core + scripts + data/rules + data/*.json + references + assets，两科，139 文件） | 2.35 MB |
 | 知识库（技能目录下 9 篇判据文档 + SKILL.md + INDEX，11 文件） | 0.17 MB |
 | 插件源码（7 文件） | 0.06 MB |
 | 文档与配置（README/SKILL/LICENSE/package.json/patch/preset） | ≈ 0.02 MB |
-| **解包合计** | **2.46 MB** |
-| **npm 分发 `.tgz`** | **0.72 MB** |
+| **解包合计** | **2.6 MB** |
+| **npm 分发 `.tgz`** | **0.77 MB** |
 
 | 未打包 | 体积 | 原因 |
 |---|---|---|

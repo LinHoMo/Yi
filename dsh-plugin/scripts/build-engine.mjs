@@ -15,6 +15,7 @@
  * 只会因为「忘了收录」而在自检里报红——后者是安全的失效方向。
  */
 import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { existsSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -23,9 +24,11 @@ const PLUGIN_ROOT = resolve(HERE, '..')
 const REPO_ROOT = resolve(PLUGIN_ROOT, '..')
 const ENGINE_DIR = join(PLUGIN_ROOT, 'engine')
 
-/** 每科要收进去的相对路径（相对该科根目录）。 */
+/** 每科要收进去的相对路径（相对该科根目录）。
+ *  276 批补 liuyao/assets：render.py 的 report.css 样式层原先没随包，
+ *  插件侧六爻 HTML 报告一直走 css="" 裸排版（_CSS_PATH.exists() 为 False）。 */
 const RUNTIME_INCLUDE = {
-  liuyao: ['core', 'scripts', 'data/rules', 'references'],
+  liuyao: ['core', 'scripts', 'data/rules', 'references', 'assets'],
   bazi: ['core', 'scripts', 'data/rules', 'references'],
 }
 
@@ -87,6 +90,8 @@ async function main() {
     await mkdir(destRoot, { recursive: true })
 
     for (const rel of includes) {
+      // 白名单目录允许缺席（如 bazi 无 assets/）：不炸构建，MANIFEST 里如实记 includes
+      if (!existsSync(join(srcRoot, rel))) continue
       await copyTree(join(srcRoot, rel), join(destRoot, rel), {
         excludeNames: rel === 'references' ? REFERENCE_EXCLUDE : null,
       })
