@@ -754,6 +754,20 @@ def _rank_candidates(r: dict, use_god_branch: str, use_god_element: str, strengt
                         and KE_CYCLE.get(BRANCH_ELEMENTS.get(_b0, "")) == use_god_element
                         and _c0 and SHENG_CYCLE.get(BRANCH_ELEMENTS.get(_c0, "")) == BRANCH_ELEMENTS.get(_b0, "")):
                     _ke_shen.append(_c0)               # ④ 动忌化回头生得源（冲去生源）
+    # ⑤ 通用主支：动忌克用＋用神静＋用神月令旺相（有根）→冲去忌神本支（第两百一十五批补）。
+    #    书据：《增删卜易》源L3099 应期总纲逐字「被克者冲去克神之秋」；
+    #    源L3107 实案逐字「此乃财爻被克待冲去克神之月」（ZD160 同案，前文「财有根蒂」）；
+    #    源L651 逐字「须待子日冲去午火方得拜谒」（回头克形）；源L1140 逐字「必待午日冲去子水」。
+    #    准入门：用神静（同②③④）；月令旺相=有根（L3107「财有根蒂」；L780 用神失陷虽冲
+    #    不破反证失陷者不在此轨；WS023 用神月破不触发）；本支为任意动忌（化进/退/生/克
+    #    皆可）的兜底，与①—④经 dict.fromkeys 去重后并入。
+    if use_god_branch and not ug_moving and strength_level in ("极旺", "旺", "相"):
+        for _y in yao_lines:
+            if isinstance(_y, dict) and _y.get("is_moving"):
+                _b0 = _y.get("earthly_branch") or ""
+                if (_b0 and _b0 != use_god_branch
+                        and KE_CYCLE.get(BRANCH_ELEMENTS.get(_b0, "")) == use_god_element):
+                    _ke_shen.append(_b0)               # ⑤ 动忌克用（通用主支，冲去忌神）
     for _ks in dict.fromkeys(_ke_shen):
         _zs = _chong(_ks)
         if _zs:
