@@ -1,5 +1,30 @@
 # 八字 CHANGELOG
 
+## 2026-10-26 第三百二十批（八字）：从格试探档不再吞正格成败
+
+**性质**：judgment（格局成败判定域修正）｜**假设-实验-落库**（goal round 40，六爻 39 轮后转向八字侧弱面）
+
+### 归因（pattern 29/36 的 7 例全 miss 根因）
+- 现象：ZP004/005/020/029/032/034/036（子平真诠·论用神成败救应章）pattern 维度
+  「成败×」全挂——引擎 pattern 正确（伤官/建禄/正官/偏财格）但 pattern_cheng_bai
+  全为空串。
+- 根因（spy 实证）：`judge_pattern_cheng_bai` 早退条件 `tentative_from or pattern
+  not in PATTERN_CB_RULES`——七例全部命中「从格试探档」（_from_judge 试探未定），
+  正格成败被「从格不判」口径整体吞掉。
+- 书证对读：《子平真诠》格局法以月令定格论成败救应，身弱疑似从时书仍按正格
+  论成败（七例书答：成格三/救应成格二/破格二，全部在正格框架内；「从格不判」
+  只适用于确定从格——彼时 pattern 已是从格名，不在 PATTERN_CB_RULES）。
+
+### 实现（bazi_factors/congrge.py judge）
+- 早退条件收窄为 `pattern not in PATTERN_CB_RULES`；试探档照判成败救应，
+  basis 追加「另有从格试探未定，成败按正格论备参」。
+
+### 读数（口径变更声明：tentative 档 pattern_cheng_bai 由「不判」改为「按正格论」，新旧读数不可比）
+- pattern **29/36 → 36/36（100.0%）**；cong_ge 13/15 持平；holdout 96.6→**99.5**、
+  tune 100 持平、all 99.6。
+- 金标准 40 例机械+措辞指纹漂移（tentative 档成败段新增）带理由重落 digest；
+  check --fast 全绿。
+
 ## 2026-10-21 第两百六十四批（八字，六爻侧指针）：**外部集强弱三档 15 例失分的责任判定——真缺陷是"不计天干"，但按书取权重实测净负，故不落库**
 
 > 正文对盘见六爻 `docs/CHANGELOG.md` 第两百六十四批（本轮同一会话、同一口径）。

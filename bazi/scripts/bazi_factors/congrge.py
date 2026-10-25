@@ -369,7 +369,11 @@ def judge_pattern_cheng_bai(pattern: str, chart_json: dict,
       2. 否则忌神透干：救应透 → 救应成格；无救 → 破格
       3. 忌神未透 → 成格
     """
-    if tentative_from or pattern not in PATTERN_CB_RULES:
+    # 第三百二十批：从格「试探档」不再吞正格成败——《子平真诠》格局法以月令定格
+    # 论成败，身弱疑似从（tentative）时书仍按正格论成败救应（ZP004/005/020/029/
+    # 032/034/036 七例书答皆在正格框架）；「从格不判」只适用于确定从格（彼时
+    # pattern 已是从格名，不在 PATTERN_CB_RULES，自然早退）。试探档照判 + 备注备参。
+    if pattern not in PATTERN_CB_RULES:
         return {"pattern_cheng_bai": "", "basis": _CONG["cong_bu_pan"]}
     rule = PATTERN_CB_RULES[pattern]
     gods_detail = _god_detail(chart_json)
@@ -381,6 +385,8 @@ def judge_pattern_cheng_bai(pattern: str, chart_json: dict,
     jiu_hit = [c for c in rule["jiu"] if c in roles]
 
     basis_parts = [f"月令本气十神定格={pattern}"]
+    if tentative_from:
+        basis_parts.append("另有从格试探未定，成败按正格论备参")
     if cheng_hit:
         basis_parts.append(f"成条件透:{'/'.join(cheng_hit)}")
     if ji_hit:
