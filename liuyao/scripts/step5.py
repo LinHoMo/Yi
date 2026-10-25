@@ -51,6 +51,7 @@ from narrative_utils import (  # noqa: E402
     _branch_element,
     _is_chong,
     _twelve_growth_at_day,
+    element_strength_in_month,
     note_text,
     safe_get,
     SANCHUAN_LABELS,
@@ -653,12 +654,28 @@ def compute_advanced_adjustments(r: dict, step2_data: dict, step3_data: dict, di
             elif officer_tomb_severity == "severe":
                 officer_tomb_verdict_override = None  # let score adjust naturally but log
 
-            # 疾病占修正（P0-4）：官鬼=病气，入墓为收藏之象，凶力大减
-            q_txt = r.get("question", "") or ""
-            if any(kw in q_txt for kw in ["病", "疾", "痛", "恙", "染"]):
+            # 随官入墓旺衰条件（第两百八十二批）：随鬼入墓章覺子总论（zengshan_buyi
+            # wikitext L685）结论句逐字「便是世爻用爻隨鬼入日墓入動墓或動而化墓，
+            # 亦是休囚無气始見危，若旺而有扶亦有求解」——入墓凶断以休囚无气为
+            # 条件；旺相有扶者「有求解」，重档减免。旺衰取入墓者（用神支，
+            # 退而世爻支）的月令状态；减免幅度沿用 P0-4 病占 ×0.3 通道。
+            _tomb_target = (
+                ot_data.get("use_god_branch")
+                or ot_data.get("world_branch")
+                or ot_data.get("tomb_branch")
+                or ""
+            )
+            _tomb_elem = BRANCH_ELEMENTS.get(_tomb_target, "")
+            _tomb_month_elem = (step3_data or {}).get("month_element") or ""
+            _tomb_state = (
+                element_strength_in_month(_tomb_elem, _tomb_month_elem)
+                if _tomb_elem and _tomb_month_elem else ""
+            )
+            if _tomb_state in ("旺", "相"):
                 officer_tomb_adjustment = round(officer_tomb_adjustment * 0.3, 2)
                 officer_tomb_severity = "mild"
-                officer_tomb_description += note_text("illness_officer_tomb_mild")
+                officer_tomb_description += note_text("officer_tomb_wang_you_jiu")
+            # 休囚无气：保持原价（书断「始見危」），不再按占题域减半。
 
     # ---------- 5.5c: 三合破局惩罚 (Gap 9) ----------
     combo_break_adjustment = 0.0
