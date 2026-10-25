@@ -500,6 +500,27 @@ await section('[12] yi_kb 判据知识库检索（含铁律二扫描层排除）
     ? pass(`摘录非空（${r1.matches[0].snippet.length} 字）`)
     : fail('首条摘录为空')
 
+  // 2-gram 兜底：无空格长 query 整串不在库中，靠二字窗仍应召回（考召回不考排名）
+  const rb = await runKb({ query: '世应怎么安' })
+  rb.matches.length >= 1
+    ? pass(`2-gram 兜底召回 ${rb.matches.length} 条`)
+    : fail('2-gram 兜底失效：「世应怎么安」零命中')
+  rb.matches.some((m) => m.file.includes('najia_rules'))
+    ? pass('2-gram 兜底召回包含 najia_rules.md')
+    : fail(`2-gram 兜底未召回 najia_rules.md：${rb.matches.map((m) => m.file).join(', ')}`)
+  rb.expanded?.bigrams?.includes('世应')
+    ? pass('2-gram 展开清单可复核（expanded.bigrams）')
+    : fail(`expanded.bigrams 异常：${JSON.stringify(rb.expanded?.bigrams)}`)
+
+  // 同义词展开：库里没有「用爻」，展开成「用神」后应召回（考展开不考排名）
+  const rs = await runKb({ query: '用爻' })
+  rs.matches.length >= 1
+    ? pass(`同义词展开召回 ${rs.matches.length} 条`)
+    : fail('同义词展开失效：「用爻」零命中')
+  rs.expanded?.synonyms?.includes('用神') && rs.matches[0]?.snippet?.includes('用神')
+    ? pass('同义词展开：用爻→用神（摘录含「用神」可复核）')
+    : fail(`同义词展开异常：${JSON.stringify(rs.expanded?.synonyms)} / ${(rs.matches[0]?.snippet ?? '').slice(0, 40)}`)
+
   // 学科过滤：discipline=bazi 时命中必须全在 bazi/ 下
   const r2 = await runKb({ query: '十神', discipline: 'bazi' })
   const wrong = r2.matches.filter((m) => !m.file.startsWith('bazi/'))
@@ -507,8 +528,10 @@ await section('[12] yi_kb 判据知识库检索（含铁律二扫描层排除）
     ? pass(`discipline=bazi 过滤生效（${r2.matches.length} 条全在 bazi/）`)
     : fail(`过滤失效：${wrong.map((w) => w.file).join(', ')}`)
 
-  // 无关词：不报错、不编造，返回空匹配
-  const r3 = await runKb({ query: '汽车维修zzz不存在的词' })
+  // 无关词：不报错、不编造，返回空匹配。
+  // （2-gram 兜底上线后，探针词的每个 ≥3 字汉字串的二字窗也必须不在库中——
+  //   旧探针「不存在的词」的二字窗「存在」在库中大量出现，已换。）
+  const r3 = await runKb({ query: '汽车维修zzz量子塌缩' })
   r3.matches.length === 0
     ? pass('无关词返回空匹配（不编造结果）')
     : fail(`无关词竟有匹配：${r3.matches.map((m) => m.file).join(', ')}`)

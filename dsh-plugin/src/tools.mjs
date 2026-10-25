@@ -212,10 +212,12 @@ export function createKbTool() {
     description:
       '检索随包判据知识库（纳甲规则、断卦指南、格局速查、四经典综合、书源台账、' +
       '十神/纳音术语、月支格局、接口速查）。返回 文件:行 + 节标题 + 摘录；' +
+      '支持同义词自动展开（用爻↔用神、世应↔世爻/应爻、六神↔六兽）与中文 2-gram 兜底' +
+      '（无空格长词如「世应怎么安」也能召回）。' +
       '先检索定位，再用 read 按 file:line 读具体节段，避免整篇读入占满上下文。' +
       '古籍案例库按铁律二不在检索范围（永不返回）。核对判据、确认术语、查格局依据时使用。',
     parameters: {
-      query: { type: 'string', required: true, description: '关键词，可多个，空格分隔（如 "用神 取法"）' },
+      query: { type: 'string', required: true, description: '关键词，可多个，空格分隔（如 "用神 取法"）；无空格的中文长词自动 2-gram 兜底' },
       discipline: { type: 'string', enum: ['liuyao', 'bazi'], description: '限定学科（缺省两科都搜）' },
       limit: { type: 'number', description: '最多返回几条（默认 5，上限 10）' },
     },

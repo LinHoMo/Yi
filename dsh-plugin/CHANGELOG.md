@@ -82,3 +82,25 @@ yi_kb 注册／执行／render 三查。
   已就地更正为终态十断言；根 README 工具清单两处补 `yi_kb`。
 - 复现注记：`npm pack` 对 `--prefix` 不生效（按 CWD 找 package.json），须
   `cd dsh-plugin && npm pack --dry-run --json`（README 复现命令本就如此写）。
+
+## 2026-10-25 第两百七十二批（dsh-plugin）：yi_kb 召回质量——中文 2-gram 兜底 + 同义词展开
+
+迭代地图第 1、2 项（缺口：无空格长 query 整串匹配漏召；术语别称检索不到）：
+
+- **中文 2-gram 兜底分词**（`src/kb.mjs` 新增 `cjkBigrams`）：query 里 ≥3 字的连续汉字串
+  自动切出相邻二字窗（「世应怎么安」→ 世应/应怎/怎么/么安），减权重计分（标题 ×1、
+  正文封顶 4、不计覆盖）——整串匹配不到时仍能召回，且不压过精确命中；2 字词不切
+  （整串即词），不跨中英文边界。返回值新增 `expanded.bigrams` 供复核。
+- **同义词展开**（新增 `src/kb-synonyms.json` + `expandWithSynonyms`）：组内任一词命中
+  即整组全权重展开；返回值新增 `expanded.synonyms`。只收「确定同义」，不收近义
+  （忌神/仇神、旺相/休囚是不同概念，禁止入组）；当前 KB 无「喜用神/调候」覆盖，
+  相关组暂不收录（防假扩充）。词表放 `src/` 随 files 白名单进包，不改打包配置。
+- **真 Bug 修于自检**：首版把 `if (!covered) continue` 留在 bigram 计分之后——只有二字窗
+  命中的节被整节丢弃（「世应怎么安」零命中）；修正为 `if (!covered && !bigramHit) continue`。
+- **测试**：selftest [12] 10→15 断言（2-gram 召回／含 najia_rules／expanded.bigrams 可复核；
+  同义词 用爻→用神 召回／摘录含「用神」可复核）；无关词探针换「汽车维修zzz量子塌缩」——
+  其每个 ≥3 字汉字串的二字窗已验证零库内命中（旧探针「不存在的词」二字窗「存在」在库中
+  大量出现，会被兜底误召回）。selftest 全绿 **63 项 / 0 失败**；verify-in-dsh 全绿。
+- **文档**：SKILL.md（单一真源）、README、工具 description／参数说明同步
+  「2-gram 兜底 + 同义词展开」。
+- pack 复测：**161 文件**（+kb-synonyms.json）/ 2.44 MB / tgz 0.72 MB（体积表按实数更新）。

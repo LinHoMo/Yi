@@ -12,10 +12,16 @@
  *
  * 算法（刻意简单、可复现）：
  *  · 按 1–3 级标题切节（代码块里的 `#` 注释可能造成多切，只影响节粒度不影响正确性）；
- *  · 词频计分：标题命中 ×4、文件名命中 ×3、正文词频（封顶 12）、覆盖词数 ×6；
+ *  · 词频计分（全权重词）：标题命中 ×4、文件名命中 ×3、正文词频（封顶 12）、覆盖词数 ×6；
+ *  · 中文 2-gram 兜底：query 里 ≥3 字的连续汉字串自动切出相邻二字窗（「世应怎么安」→
+ *    世应/应怎/怎么/么安），减权重计分（标题 ×1、正文封顶 4、不计覆盖）——无空格长词
+ *    整串匹配不到时仍能召回，且不会压过精确命中；
+ *  · 同义词展开：src/kb-synonyms.json 组内任一词命中即整组全权重展开（用爻→用神）；
+ *    只收确定同义，不收近义（忌神/仇神是不同概念，禁止入组）；
  *  · 每文件最多 2 条（防单篇刷屏），全局上限 limit（默认 5，≤10）。
  */
 import { readFile, readdir } from 'node:fs/promises'
+import { readFileSync } from 'node:fs'
 import { basename, dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -78,15 +84,66 @@ function countOccurrences(haystack, needle) {
   return n
 }
 
+/** 同义词组：<pkg>/src/kb-synonyms.json（缺文件/坏 JSON = 无同义词，不炸检索）。模块级缓存。 */
+let synIndexCache = null
+function synonymIndex() {
+  if (synIndexCache) return synIndexCache
+  synIndexCache = new Map()
+  try {
+    const moduleDir = dirname(fileURLToPath(import.meta.url))
+    const raw = JSON.parse(readFileSync(join(moduleDir, 'kb-synonyms.json'), 'utf8'))
+    for (const group of raw.groups ?? []) {
+      for (const w of group) {
+        const set = synIndexCache.get(w) ?? new Set()
+        for (const other of group) if (other !== w) set.add(other)
+        synIndexCache.set(w, set)
+      }
+    }
+  } catch {
+    /* 同义词表缺失或损坏时按「无同义词」运行——检索主体不受影响 */
+  }
+  return synIndexCache
+}
+
+/** query 词展开：主词 = 用户词 + 同义词（全权重）。返回 { primary, synonymsAdded }。 */
+function expandWithSynonyms(terms) {
+  const idx = synonymIndex()
+  const primary = []
+  const synonymsAdded = []
+  for (const t of terms) {
+    primary.push(t)
+    for (const s of idx.get(t) ?? []) {
+      if (!primary.includes(s)) {
+        primary.push(s)
+        synonymsAdded.push(s)
+      }
+    }
+  }
+  return { primary, synonymsAdded }
+}
+
+/** 连续汉字串（≥3 字）的相邻二字窗；2 字词不切（整串即词），不跨中英文边界。 */
+export function cjkBigrams(term) {
+  const out = new Set()
+  for (const run of String(term).match(/[\u4e00-\u9fff]+/gu) ?? []) {
+    if (run.length >= 3) {
+      for (let i = 0; i + 2 <= run.length; i++) out.add(run.slice(i, i + 2))
+    }
+  }
+  return [...out]
+}
+
 /**
  * 检索。query 必填（缺省/空白抛错）；discipline 限定 'liuyao'|'bazi'；
  * kbRoot 可注入（selftest 的负例自证用临时目录探针）。
  */
 export async function searchKb({ query, discipline, limit = 5, maxPerFile = 2, kbRoot = resolveKbRoot() }) {
-  const terms = [...new Set(String(query ?? '').toLowerCase().split(/\s+/u).filter(Boolean))]
-  if (!terms.length) {
+  const rawTerms = [...new Set(String(query ?? '').toLowerCase().split(/\s+/u).filter(Boolean))]
+  if (!rawTerms.length) {
     throw new Error('yi_kb 需要 query（关键词，可多个，空格分隔，如 "用神 取法"）')
   }
+  const { primary: terms, synonymsAdded } = expandWithSynonyms(rawTerms)
+  const bigrams = [...new Set(rawTerms.flatMap((t) => cjkBigrams(t)))].filter((t) => !terms.includes(t))
   const cap = Math.min(Math.max(Number(limit) || 5, 1), 10)
 
   const files = (await listKbFiles(kbRoot)).filter((f) =>
@@ -120,7 +177,20 @@ export async function searchKb({ query, discipline, limit = 5, maxPerFile = 2, k
         }
         if (inTitle || inFile || count) covered += 1
       }
-      if (!covered) continue
+      // 2-gram 兜底（减权重：标题 ×1、正文封顶 4、不计覆盖——兜底召回不该压过精确命中）
+      let bigramHit = false
+      for (const t of bigrams) {
+        if (terms.includes(t)) continue
+        const inTitle = titleLower.includes(t)
+        const count = countOccurrences(bodyLower, t)
+        if (inTitle) score += 1
+        if (count) {
+          score += Math.min(count, 4)
+          bigramHit = true
+          if (!firstHit) firstHit = sec.lines.find((l) => l.text.toLowerCase().includes(t))
+        }
+      }
+      if (!covered && !bigramHit) continue
       score += covered * 6
       const hit = firstHit ?? sec.lines.find((l) => l.text.trim()) ?? { n: sec.startLine, text: '' }
       matches.push({
@@ -149,6 +219,7 @@ export async function searchKb({ query, discipline, limit = 5, maxPerFile = 2, k
     kb: 'yi-divination',
     query: String(query),
     terms,
+    expanded: { synonyms: synonymsAdded, bigrams },
     discipline: discipline ?? 'all',
     files_scanned: files.length,
     matches: picked,
