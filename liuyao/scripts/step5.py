@@ -108,10 +108,19 @@ def step5_synthesize(r: dict) -> dict:
         hex_adjustment += 0.5
         hex_adjustment_reason = FREASON["hex_liuhe_reason"]["text"]
 
-    # 六冲卦检查
+    # 六冲卦检查（用神旺衰门，第两百九十八批）：第两百八十七批已将 step4 六冲
+    # 主散计价加用神旺衰门；本层卦体调候的六冲 −0.5 同属冲散之害，门同构。
+    # 书证《增删卜易》源L780 逐字「必兼用神而言，用神旺虽冲不破」。
+    # 又《增删卜易》源L844 逐字「予屡试之，旺相者冲之不散」——用神月令旺相时减免，
+    # 失陷维持旧计。
+    _ug_el5 = str(safe_get(step3_data, "use_god_element", default="") or "")
+    _ug_ms5 = str(safe_get(step3_data, "god_month_strength", default="") or "")
     if hex_name in HEXAGRAM_LIUCHONG:
-        hex_adjustment -= 0.5
-        hex_adjustment_reason = FREASON["hex_liuchong_reason"]["text"]
+        if _ug_el5 and _ug_ms5 in ("旺", "相"):
+            hex_adjustment_reason = FREASON["hex_liuchong_wang_reason"]["text"]
+        else:
+            hex_adjustment -= 0.5
+            hex_adjustment_reason = FREASON["hex_liuchong_reason"]["text"]
 
     # ---------- 5.4: 六神辅助调整（协纪辨方书—六兽分阴阳日）----------
     spirit_adjustment, spirit_adjustment_reasons = compute_spirit_adjustment(

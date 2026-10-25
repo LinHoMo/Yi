@@ -393,6 +393,10 @@
       "text": "六冲卦，事主散离",
       "basis": ""
     },
+    "hex_liuchong_wang_reason": {
+      "text": "六冲卦本主散，然用神旺相，冲之不散，散害减免",
+      "basis": "《增删卜易》源L844「予屡试之，旺相者冲之不散」（六冲用神旺门主证；旁证《增删卜易》源L780 见 step5.py 注释）"
+    },
     "spirit_fallback": {
       "text": "六神加临用神",
       "basis": ""
