@@ -242,6 +242,9 @@ def step2_identify_use_god(r: dict) -> dict:
                 # 动而自伤：劣于「静而完整」（数值更大=优先级更低）
                 return 8
             return 0
+        # 0.5 动而旬空非自伤（两现章野鹤反法：「捨其不空，而用旬空」——动而空者应验）
+        if pos_info.get("is_moving") and not _self_hurt(p, brk):
+            return 2.5
         # 1 旬空逢日冲填实（空亡反被激活）
         if pos_info.get("is_empty") and _is_chong(brk, day_branch):
             return 1
