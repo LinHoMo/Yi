@@ -268,6 +268,10 @@ ENTRIES = [
             {"who": "轨边界（觉子曰自注）", "quote": "如占自身及兄弟妻兒者﹐此法是也﹐若占父母之災﹐官鬼爲父母之元神﹐豈宜子動而傷耶", "source": "zengshan_buyi.wikitext.txt", "line": 3981},
         ],
         "engine_position": "引擎占病走用神旺衰轨（占子孙病取子孙），官鬼持世记忌神持世凶侧→WSD027 verdict 反向；不机械化：忧神轨须先识别「忧象断」与「病象断」的题面分歧，库内单实案不足定通用判据；觉子边界注（占父母/妻夫不宜）本身即书内自认的适用域限制",
+        "engine_anchor": "scripts/step5.py verdict 化轨；案例 wikisource WSD027",
+        "status": "open_conflict",
+        "note": "应期轨同例：子日冲去忧心=冲去持世官鬼应愈（冲忌神应吉，与第二八五批应期③支同源但断对象是忧非病）。",
+    },
     {
         "id": "liuyao.liuchong_bianhe_track",
         "dispute": "六冲变合轨：六冲主散（常轨），但六冲卦变六合书内明示通则级例外——不看用神竟以吉断（散而复聚）",

@@ -1,9 +1,9 @@
 {
  "schema": "yi-liuyao-adjudications/1",
  "discipline": "liuyao",
- "built_at": "2026-10-26T02:06:38",
+ "built_at": "2026-10-26T02:31:20",
  "_comment": "流派裁决表：「与古书吻合」的展开定义。引用任何吻合率须能指回本表行。不改引擎不进评分面不挂门（§176 冻结声明）。状态三值见 builder docstring。",
- "count": 19,
+ "count": 21,
  "entries": [
   {
    "id": "liuyao.xunkong_variants",
@@ -486,6 +486,50 @@
    "engine_anchor": "scripts/step5.py verdict 化轨；案例 wikisource WSD027",
    "status": "open_conflict",
    "note": "应期轨同例：子日冲去忧心=冲去持世官鬼应愈（冲忌神应吉，与第二八五批应期③支同源但断对象是忧非病）。"
+  },
+  {
+   "id": "liuyao.liuchong_bianhe_track",
+   "dispute": "六冲变合轨：六冲主散（常轨），但六冲卦变六合书内明示通则级例外——不看用神竟以吉断（散而复聚）",
+   "parties": [
+    {
+     "who": "例外轨（书内通则自注）",
+     "quote": "诸合皆以用神旺者为吉，独此六冲卦变六合得不看用神，竟以吉断。",
+     "source": "zengshan_buyi_dz.dz.txt",
+     "line": 756
+    },
+    {
+     "who": "常轨（六冲主散）",
+     "quote": "予屡试之，旺相者冲之不散",
+     "source": "zengshan_buyi_dz.dz.txt",
+     "line": 844
+    }
+   ],
+   "engine_position": "引擎六冲主散按用神旺衰门计价（第二八七/二九八批），变六合化散为聚的例外轨未入判据（卦变六合形态识别缺载）——ZD023 verdict 引擎侧无从命中；不机械化：例外轨书证为通则自注+单实案，须先补「六冲变合」卦形识别与散聚语义层框架批",
+   "engine_anchor": "scripts/step4.py _detect_hexagram_harmony_clash_pattern（六冲主散）；scripts/step5.py hex_adjustment（六冲卦性门）",
+   "status": "open_conflict",
+   "note": "ZD023（占婚悔而复成）use_god 基准因此留空——书断不取用神（dz L756），引擎 use_god 维度对该例不评属预期。"
+  },
+  {
+   "id": "liuyao.xiaofu_track_liunian",
+   "dispute": "流年孝服轨：占在任/流年问自身，书以世爻财断自身平安之外，另以父母受克断孝服（丁艰）——流年吉凶定性取诸亲受克叠加，非单看世爻",
+   "parties": [
+    {
+     "who": "实案（ZD151 占在任平安）",
+     "quote": "财休囚得午火生之，自身不妨，须防孝服",
+     "source": "zengshan_buyi_dz.dz.txt",
+     "line": 2900
+    },
+    {
+     "who": "孝服机理（同案）",
+     "quote": "午日冲动子水，父母被戌土财爻克，世化官空，八九月必见，果于八月丁艰。",
+     "source": "zengshan_buyi_dz.dz.txt",
+     "line": 2900
+    }
+   ],
+   "engine_position": "引擎流年轨按世爻旺衰断自身（平吉），父母受克辅断孝服并升格整体凶定性未入判据——ZD151 verdict 平吉/书凶方向相反；不机械化：孝服轨需「流年定性=世爻自身+诸亲受克事件加权」的框架批，库内单实案",
+   "engine_anchor": "scripts/step5.py verdict 化轨（流年世体）；案例 zengshan ZD151",
+   "status": "open_conflict",
+   "note": "与 youshen_guan_track 同族：流年/忧问的凶定性常不在世爻自身而在六亲事件（孝服/忧去），verdict 维度对这类案例的 miss 属框架显形。"
   }
  ]
 }
