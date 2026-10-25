@@ -3,7 +3,7 @@
  "discipline": "liuyao",
  "built_at": "2026-10-25T21:15:54",
  "_comment": "流派裁决表：「与古书吻合」的展开定义。引用任何吻合率须能指回本表行。不改引擎不进评分面不挂门（§176 冻结声明）。状态三值见 builder docstring。",
- "count": 7,
+ "count": 9,
  "entries": [
   {
    "id": "liuyao.xunkong_variants",
@@ -158,6 +158,54 @@
    "engine_position": "A 古法序为第一键并冻结（第一百七十二批：B 易冒键书注样本 4/7 反书注、C 与 A 同分无增益）；例外条款在册不实现——n=6 不足以普适（该批自注），强判反违书",
    "engine_anchor": "step2._use_god_rules；门 [26]/取舍序冻结登记见 CHANGELOG 第一百七十二批",
    "status": "frozen_by_user"
+  },
+  {
+   "id": "liuyao.xiangfa_duan_guiqi",
+   "dispute": "占父何日归：用神旺衰论断凶（古法：父母持世破而化空无生助→不能归）vs 象法断应期（野鹤自认「余不以此论之」，改断朱雀临父动持世→卯日有信、未日出空归）。书内两断法并存，野鹤明言弃古法从象",
+   "parties": [
+    {
+     "who": "野鹤自认（古法结论）",
+     "quote": "以古法断者，作用神而无气，其父不能归也",
+     "source": "《增刪卜易》（zengshan_buyi_dz.dz.txt）",
+     "line": 1014
+    },
+    {
+     "who": "野鹤弃古法从象",
+     "quote": "余不以此论之，竟断朱雀临父动而持世，卯日有信，午未日必归",
+     "source": "《增刪卜易》（zengshan_buyi_dz.dz.txt）",
+     "line": 1014
+    },
+    {
+     "who": "象法应期逻辑",
+     "quote": "应未日归者，父化未土旬空出空之日到也",
+     "source": "《增刪卜易》（zengshan_buyi_dz.dz.txt）",
+     "line": 1014
+    }
+   ],
+   "engine_position": "引擎忠于用神旺衰框架（判凶与古法结论一致，wikisource WS001 verdict 维度按古法立场计分）；象法断（六神临身象＋出空应期归）属灵机应变，未机械化为通用判据（单一实案＋六神象不可量化），登记不修（第两百八十八批）",
+   "engine_anchor": "scripts/step3.py（用神旺衰框架）；案例 liuyao/data/cases/wikisource_cases.json WS001",
+   "status": "open_conflict"
+  },
+  {
+   "id": "liuyao.bianyao_usegod",
+   "dispute": "求财用神候选：古法变爻不作用神（伏藏妻财午飞克伏判凶）vs 野鹤灵机（兄临世爻日破月破不克变出之财＋日月俱作财来冲世→明日冲实必得）。且书内同案自认久远/目下双断（久远无财、目下必得）",
+   "parties": [
+    {
+     "who": "野鹤灵机断",
+     "quote": "兄临世爻日破月破，不克变出之财，日月俱作财来冲世，只因应爻而逢空，明日冲实，定送财来，果于次日送来",
+     "source": "《增刪卜易》（zengshan_buyi_dz.dz.txt）",
+     "line": 3043
+    },
+    {
+     "who": "书内双断自认",
+     "quote": "若逢久远之财有否，则无财。若问目下之财，明日戊午必得",
+     "source": "《增刪卜易》（zengshan_buyi_dz.dz.txt）",
+     "line": 3043
+    }
+   ],
+   "engine_position": "引擎取用神伏藏评估（妻财午伏于亥水下飞克伏，WS040 判凶）；「变出之爻作用神」「日月冲世作财来」属灵机应变，未入用神候选规则（变爻不作用神是引擎既有通则，翻转须多实案＋总论书证，现仅单例），登记不修（第两百八十八批）",
+   "engine_anchor": "scripts/step3.py resolve_fu_cang_result（伏藏评估）；案例 liuyao/data/cases/wikisource_cases.json WS040",
+   "status": "open_conflict"
   }
  ]
 }
