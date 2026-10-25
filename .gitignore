@@ -45,4 +45,6 @@ dsh-plugin/skills/
 dsh-plugin/node_modules/
 dsh-plugin/pnpm-lock.yaml
 dsh-plugin/package-lock.json
+# npm pack 产物（发布工件走 GitHub Release，不入库）
+dsh-plugin/*.tgz
 
