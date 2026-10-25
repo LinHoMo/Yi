@@ -202,10 +202,23 @@ ENTRIES = [
             {"who": "通用轨（近占/久远分层）", "quote": "占近事岂可曰退？若占久远之事，待休囚之时而退者得也", "source": Z, "line": 1182},
             {"who": "实案反用轨（ZD050 兄何日归来）", "quote": "断曰：兄动化退，已有归志，但因戌逢月破", "source": Z, "line": 1246},
         ],
-        "engine_position": "引擎走通用轨（step4 化退计价 + step5 原神失位 −1.0 与 no_source 凶化轨）；ZD050 书断吉而引擎凶。第二九八批六冲用神旺门把该案总分从 −0.52 抬到 −0.02，verdict 初判由「凶」移入「平吉」，恰好落进 no_source 凶化轨（score<1.0 且吉侧才凶化）——zengshan 53.4→50.5 全额由该单案构成（100→39.7）。反用轨单实案不机械化：待「占行人+化退+动破而变日月」组合条件的框架批，不为本案开私有分支",
-        "engine_anchor": "liuyao/scripts/step5.py no_source_wording 凶化轨与 433 行 verdict 锁定；step4 化退计价；案例 zengshan ZD050",
-        "status": "open_conflict",
+        "engine_position": "双轨均已实装：应期侧=第二八五批应期第3法③支（动忌化退克用+用神静→冲去忌神本支，书证源L1174）；verdict 侧=第三百批行人归占化退归志层（+1.0 抵回用神化退衰价，检测 step4 details[].change_type，书证 dz L3298 歌诀总诀）。zengshan 50.5→53.4 全额回补（ZD050 凶→吉复位）",
+        "engine_anchor": "liuyao/scripts/step5.py 行人区 1a 支（travel_huatui_guizhi）；timing.py 应期第3法③支；案例 zengshan ZD050",
+        "status": "settled",
         "note": "dz L1246 全句：「断曰：兄动化退，已有归志，但因戌逢月破，在外诸事未遂，六月可望，后至戌月方回，乃应实破之月也，此乃动破而变日月，岂可谓之退不及也？」wikitext 对应=L612。",
+    },
+    {
+        "id": "liuyao.liunian_shiguan_dual",
+        "dispute": "流年取用双轨：总纲以世爻为的（官鬼持世=灾非凶象），题面与实占意图分离时（因功名故占流年）书取官星持世轨并明确否决流年作鬼断——占遠應近框架的流年支",
+        "parties": [
+            {"who": "总纲（流年世爻轨）", "quote": "若遇官鬼持世，得日月动爻作财星生合世爻者，必见灾非", "source": Z, "line": 12},
+            {"who": "占遠應近总纲（题面分离）", "quote": "有为婚姻故，占月令者。因功名，故占流年", "source": Z, "line": 1855},
+            {"who": "实案反用轨（WS021 占流年·援例功名）", "quote": "占功名，以官为官，最喜官星持世。占流年以官为鬼，不宜官鬼持世", "source": Z, "line": 1862},
+        ],
+        "engine_position": "引擎判类「流年」→世爻轨（通用轨正确）；WS021 expected 按断辞落官鬼@寅（书以官星持世断援例成败），category 失分为书内双轨显形的诚实代价。dz L1855 占遠應近章是题面分离的总纲（婚姻故占月令/功名故占流年/现任官府故占在任），与第二八一批 WS022 登记同框架——题面意图分离的组合条件待框架批，不为本案开私有分支",
+        "engine_anchor": "data/rules/question_classes.json 流年类；step2 用神选取世爻轨；案例 wikisource WS021",
+        "status": "open_conflict",
+        "note": "dz L1862 全句尾：「若以流年作鬼断者，如天远矣。」wikitext 对应=L1554、L1545。",
     },
 ]
 
