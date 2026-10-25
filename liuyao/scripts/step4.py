@@ -925,6 +925,22 @@ def _detect_hexagram_harmony_clash_pattern(question: str, hex_result: dict, step
         SCATTER_KEYWORDS = ["合伙", "合作", "婚姻", "婚", "出行", "外出", "交易", "买卖",
                             "生意", "官讼", "官司", "求财", "谋事", "开店", "签约", "合同"]
         if any(k in q for k in SCATTER_KEYWORDS):
+            # 用神旺衰门（第两百八十七批）：《增删卜易》源L780 逐字「冲者散也，凡占
+            # 凶事宜于冲散、占吉事而不宜，必兼用神而言，用神旺虽冲不破，用神失陷
+            # 凶而又凶」——六冲卦性散害必兼用神旺衰：用神旺相（月令旺相档）虽冲
+            # 不破，散害不计；失陷维持旧计。同书源L692 逐字「独余屡试不验，偏不应乎散」、
+            # 源L692 逐字「旺相者冲之愈强，休囚无气者，间乎有散，亦百中仅一二也」；
+            # 源L844 逐字「予屡试之，旺相者冲之不散，有气者冲之不散」——野鹤对冲散通则的实证收缩。
+            _ug3 = (hex_result.get("thinking_chain", {}) or {}).get("step3_strength_analysis", {}) or {}
+            _ug_el = str(_ug3.get("use_god_element", "") or "")
+            _ug_strength = str(_ug3.get("god_month_strength", "") or "")
+            if _ug_el and _ug_strength in ("旺", "相"):
+                result["pattern"] = "六冲用神旺不破"
+                result["description"] = (f"六冲卦{hex_name}本主散，然用神{_ug_el}临{_ug_strength}"
+                                         f"，用神旺虽冲不破，散害不计")
+                result["impact_on_verdict"] = "冲者散也必兼用神而言，用神旺虽冲不破"
+                result["score_adjustment"] = 0.0
+                return result
             result["pattern"] = "六冲主散"
             result["description"] = f"六冲卦主散，{hex_name}卦世应相冲，事难成合"
             result["impact_on_verdict"] = "六冲事散，合伙/婚恋/出行/交易类不利"
