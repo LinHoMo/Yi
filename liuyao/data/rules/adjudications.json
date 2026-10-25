@@ -1,9 +1,9 @@
 {
  "schema": "yi-liuyao-adjudications/1",
  "discipline": "liuyao",
- "built_at": "2026-10-26T00:22:37",
+ "built_at": "2026-10-26T01:22:24",
  "_comment": "流派裁决表：「与古书吻合」的展开定义。引用任何吻合率须能指回本表行。不改引擎不进评分面不挂门（§176 冻结声明）。状态三值见 builder docstring。",
- "count": 12,
+ "count": 14,
  "entries": [
   {
    "id": "liuyao.xunkong_variants",
@@ -290,6 +290,62 @@
    "engine_anchor": "scripts/step2.py 占天时通用轨（第八十七批背景天气剥离）；verdict_texts.json 占雨占晴总纲句；案例 wikisource WS019/WS025/WS027/WS028",
    "status": "open_conflict",
    "note": "wikitext 对应行：总纲句=L1686、WS025 实案=L1744、WS019 实案=L1281（繁体原文，出处背景）。另 WS028 占何日晴书取妻财（占晴通用轨内「子孙、财爻」两用并许，L1750），引擎取子孙——同轨内两用，亦不判引擎错。"
+  },
+  {
+   "id": "liuyao.shikao_usegod_dual",
+   "dispute": "试考类取用双轨：总纲以官鬼为用（求名章），实占亦有以父母（文书/榜）为主应者。两轨各有逐字书证与实案，单案不足以改词典通用轨",
+   "parties": [
+    {
+     "who": "总纲（官鬼轨）",
+     "quote": "占功名者以官鬼爻为用神，此卦午火官星即为用神",
+     "source": "《增刪卜易》（zengshan_buyi_dz.dz.txt）",
+     "line": 456
+    },
+    {
+     "who": "实案（官星持世轨：WSD001 占鄕試）",
+     "quote": "斷曰﹕酉金官星持世旺相﹐當時卯日沖之而暗動",
+     "source": "zengshan_buyi.wikitext.txt",
+     "line": 454
+    },
+    {
+     "who": "实案（父母文书轨：WS012 占試中否）",
+     "quote": "未父化進神﹐巳火官動而生世﹐吉兆顯然﹐坐以待報﹐果於寅日揭榜",
+     "source": "zengshan_buyi.wikitext.txt",
+     "line": 645
+    }
+   ],
+   "engine_position": "引擎词典试考族→父母（第两百九十五批 WS012 书证落库）；WSD001/018 两例书取官星持世，基准按断辞落、引擎按词典走父母轨——category 失分为书内两轨显形的诚实代价（第两百九十九批归因登记）。不机械改词典：改之则伤 WS012 同族书证",
+   "engine_anchor": "data/rules/question_use_gods.json 试考族；案例 wikisource WS012/WSD001/WSD018",
+   "status": "open_conflict",
+   "note": "wikitext 对应行：WSD001 断辞=L454、WS012 断辞=L645。dz L456 总纲同时覆盖「占鬼崇、妖蘖、乱臣、贼盗都以官鬼爻为用神」。"
+  },
+  {
+   "id": "liuyao.huaxtui_xingren_gui",
+   "dispute": "化退在行人归占的反用：通用轨以化退为衰象计凶侧，行人归占实案明言化退主归志（动破而变日月，岂可谓之退不及）——verdict 侧反用轨单实案未机械化，应期侧同书证家族的冲去忌神支已实装（第二八五批）",
+   "parties": [
+    {
+     "who": "通用轨（化退=元神无力六之一）",
+     "quote": "元神休囚动化退神三也",
+     "source": "《增刪卜易》（zengshan_buyi_dz.dz.txt）",
+     "line": 551
+    },
+    {
+     "who": "通用轨（近占/久远分层）",
+     "quote": "占近事岂可曰退？若占久远之事，待休囚之时而退者得也",
+     "source": "《增刪卜易》（zengshan_buyi_dz.dz.txt）",
+     "line": 1182
+    },
+    {
+     "who": "实案反用轨（ZD050 兄何日归来）",
+     "quote": "断曰：兄动化退，已有归志，但因戌逢月破",
+     "source": "《增刪卜易》（zengshan_buyi_dz.dz.txt）",
+     "line": 1246
+    }
+   ],
+   "engine_position": "引擎走通用轨（step4 化退计价 + step5 原神失位 −1.0 与 no_source 凶化轨）；ZD050 书断吉而引擎凶。第二九八批六冲用神旺门把该案总分从 −0.52 抬到 −0.02，verdict 初判由「凶」移入「平吉」，恰好落进 no_source 凶化轨（score<1.0 且吉侧才凶化）——zengshan 53.4→50.5 全额由该单案构成（100→39.7）。反用轨单实案不机械化：待「占行人+化退+动破而变日月」组合条件的框架批，不为本案开私有分支",
+   "engine_anchor": "liuyao/scripts/step5.py no_source_wording 凶化轨与 433 行 verdict 锁定；step4 化退计价；案例 zengshan ZD050",
+   "status": "open_conflict",
+   "note": "dz L1246 全句：「断曰：兄动化退，已有归志，但因戌逢月破，在外诸事未遂，六月可望，后至戌月方回，乃应实破之月也，此乃动破而变日月，岂可谓之退不及也？」wikitext 对应=L612。"
   }
  ]
 }
