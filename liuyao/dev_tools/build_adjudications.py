@@ -175,6 +175,7 @@ ENTRIES = [
             {"who": "通用六亲轨（总纲）", "quote": "觉子曰：占雨用父爻，占晴用子孙爻、财爻，世应何干", "source": Z, "line": 1953},
             {"who": "实案（通用轨：暗动父爻应雨日）", "quote": "卦中申金父爻暗動﹐動而逢令之日﹐果於辰日天變﹐巳日大雨", "source": "zengshan_buyi.wikitext.txt", "line": 1744},
             {"who": "实案（反断轨：旺极子孙入墓应雨）", "quote": "午火子孫臨日月旺之極矣﹐乃爲用爻重疊﹐逢墓庫以收藏﹐故知戌必雨。果於戌日申時雨", "source": "zengshan_buyi.wikitext.txt", "line": 1281},
+            {"who": "实案（本日阴晴两断轨：兄爻为云先阴后晴，WSD009 占本日陰晴）", "quote": "申金兄爻爲云﹐化卯木財爻﹐是由雲霧中變出日色之象﹐果一日陰雲申時而見日色﹐次日卯時大晴", "source": "zengshan_buyi.wikitext.txt", "line": 1699},
         ],
         "engine_position": "引擎实现通用轨（第两百八十七批占雨用父母/占晴用子孙财，verdict_texts 收总纲句）；反断轨未实现（单一实案不可机械化，登记不修）。wikisource 评测 WS019/WS025/WS027/WS028 四例 category 失分系书内两轨显形的诚实代价：基准按断辞落（WS019 子孙=反断轨、其余通用轨），引擎恒走通用轨",
         "engine_anchor": "scripts/step2.py 占天时通用轨（第八十七批背景天气剥离）；verdict_texts.json 占雨占晴总纲句；案例 wikisource WS019/WS025/WS027/WS028",
@@ -219,6 +220,32 @@ ENTRIES = [
         "engine_anchor": "data/rules/question_classes.json 流年类；step2 用神选取世爻轨；案例 wikisource WS021",
         "status": "open_conflict",
         "note": "dz L1862 全句尾：「若以流年作鬼断者，如天远矣。」wikitext 对应=L1554、L1545。",
+    },
+    {
+        "id": "liuyao.shijian_tiying_verdict_dual",
+        "dispute": "时间题（何时来/何日到）的 verdict 口径双轨：书以应验为吉（果至/果到即记吉），且问「来否」时书明言不按平安断；引擎 verdict 走用神旺衰吉凶轨（用神受制记凶）——两轨对同一卦给反向结论",
+        "parties": [
+            {"who": "实案（应验吉轨：WSD003 占母路隔千里何时来，父母不来而妹至）", "quote": "父母必不來﹐兄弟必來。彼曰﹕有妹無弟。果於次年三月妹至﹐此乃兄弟化空﹐爻空亦能退也", "source": "zengshan_buyi.wikitext.txt", "line": 656},
+            {"who": "实案（问题转换轨：WSD024 占母在外何时来，野鹤明言不按平安断）", "quote": "此卦若问父母平安否，父母卯木日月动爻冲克，必不安矣。今问其来否，不以此断，只可断用神伏藏也，克而不来，六合冲亦不来，后果在外平安", "source": Z, "line": 3306},
+            {"who": "实案（归期克世反吉轨：WSD025 占父远去何日回）", "quote": "断曰：今日乃是午日，午火父爻克世爻，今日必到。果于申时到", "source": Z, "line": 3330},
+            {"who": "反例轨（书自认凶：WS001 占父何日归）", "quote": "竟断朱雀临父动而持世，卯日有信，午未日必归", "source": Z, "line": 1014},
+        ],
+        "engine_position": "引擎 verdict 按用神旺衰+吉凶化轨（第两百六十四批体系）；「应验即吉」「问来否不按平安断」「归期用神克世反吉」三支时间题口径未机械化（条件组合属框架批：须先识别时间题类+书内应验句式，单一实案族不足以定通用判据）。wikisource WSD003 verdict 失分=口径双轨显形的诚实代价；WSD024/025 引擎读数与书答同向（基准吉、引擎吉侧）不受影响",
+        "engine_anchor": "scripts/step5.py verdict 化轨；案例 wikisource WSD003/WSD024/WSD025",
+        "status": "open_conflict",
+        "note": "WS001 案（dz L1014）已有专条 xiangfa_duan_guiqi 登记，本条引其反例面：并非所有归期题都记应验吉，书自认不能归者仍以凶断——双轨边界在书内自述。",
+    },
+    {
+        "id": "liuyao.direction_usegod_dual",
+        "dispute": "出行/方向题取用双轨：总纲自占吉凶以世爻为用；南行实案以应爻官星动而生世为断主体（官贵相生论吉凶）——方向题的断对象是「行程吉凶」还是「生我之源」",
+        "parties": [
+            {"who": "总纲（自占吉凶世爻轨）", "quote": "自占吉凶者以世爻为用神", "source": Z, "line": 436},
+            {"who": "实案（应爻官星生世轨：WSD006 予占南行）", "quote": "予以應爻爲官星動而生世﹐官貴相生者﹐𨿽則可喜", "source": "zengshan_buyi.wikitext.txt", "line": 1393},
+        ],
+        "engine_position": "引擎判类「出行/南行」→世爻轨（总纲正确）；WSD006 expected 按断辞落官鬼@巳（书以应爻官星为断主体），category/branch 失分为书内双轨显形的诚实代价。不机械化：改词典则伤 WSD019（住京都占地方）等世爻轨同 split 书证",
+        "engine_anchor": "data/rules/question_use_gods.json 出行族；step2 用神选取世爻轨；案例 wikisource WSD006/WSD019",
+        "status": "open_conflict",
+        "note": "wikitext L1393 全句续：「但嫌巳火墓於戌月而又化墓﹐生我之官爻卽又入墓耶﹐兼且又是六沖﹐疑爲不吉。」——官星入墓+六冲论行程疑虑，断对象全程是官星非世爻。",
     },
 ]
 

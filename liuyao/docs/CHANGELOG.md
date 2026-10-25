@@ -1,5 +1,22 @@
 # 六爻 CHANGELOG
 
+## 2026-10-26 第三百零二批（六爻）：direction 三案双轨登记（verdict 口径/出行取用/占天时补 party）
+
+**性质**：纯登记（零读数变化，direction 74.3 / wiki 75.1 复测持平；金标准随 --fast 零漂移）
+
+### 归因（direction 31 例 rows dims 明细）
+- verdict 反向 4 例：WSD003（书断「父母必不來…果於次年三月妹至」基准吉/引擎凶——时间题以应验为吉 vs 引擎用神旺衰轨）、WSD007/008（基准空，卦不应题族）、WSD009（category 兄弟轨 vs 引擎占晴子孙轨）
+- WSD006：category/branch 失分（书以应爻官星动而生世为断主体 vs 引擎世爻轨）
+
+### 裁决表 15→17 条
+- 新增 `liuyao.shijian_tiying_verdict_dual`（open_conflict，4 parties：wikitext L656 WSD003 应验吉／dz L3306 WSD024「今问其来否，不以此断」问题转换／dz L3330 WSD025「午火父爻克世爻，今日必到」归期克世反吉／dz L1014 WS001 反例轨——书自认不能归者仍凶，双轨边界在书内自述）
+- 新增 `liuyao.direction_usegod_dual`（open_conflict，2 parties：dz L436「自占吉凶者以世爻为用神」总纲 vs wikitext L1393 WSD006「予以應爻爲官星動而生世」南行官贵轨）
+- `liuyao.tiantim_heri_track` 补 WSD009 party（wikitext L1699「申金兄爻爲云，化卯木財爻」本日阴晴先阴后晴两断轨）
+
+### 门与书证过程
+- builder 落盘门四度拦截真实错误：dz L436 引文多写一个逗号（原文「自占吉凶者以世爻为用神」无逗号）、WSD006 断辞行号 1384→1393（1384 是 head 行）、引文「𨻿」码位经复制路径失真（改由源文件字节切片直接写入）、huaxtui engine_position 内「源L1174/dz L3298」被 [14] 判裸指针（改指 parties 同源）
+- builder --selftest 全过（正验/篡改拒/行号挪移拒/id 唯一/未决项保留）；check --fast 全部通过
+
 ## 2026-10-26 第三百零一批（六爻）：流年取用双轨登记 + huaxtui 条目结案
 
 **性质**：纯登记（零读数变化）

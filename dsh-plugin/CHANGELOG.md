@@ -16,6 +16,12 @@
 > 无插件自身代码改动）、281→**1.0.3**（随包引擎同步六爻 281 批占差事词典+WS003
 > 校勘）。
 
+## 2026-10-26 第三百零二批（dsh-plugin）：随包引擎同步六爻 292–302 批 + 补登记欠账（1.0.19）
+
+- **补登记（§六.2）**：第两百九十二至三百零一批随包版本号已依次升至 1.0.13–1.0.18（六爻 wikisource 用神基准 46 例、direction 基准 26 例、两现排序档 0.5、自占病层、试考/过关/贼/定罪/贸易词典三族、六冲用神旺衰门、行人化退归志层、流年双轨登记、裁决表 15 条），但本 CHANGELOG 未逐批具名——本条补索引，此后恢复逐批登记。
+- 本批（六爻第三百零二批）随包：direction 三案双轨登记（裁决表 15→17 条：shijian_tiying_verdict_dual / direction_usegod_dual 新增，tiantim_heri_track 补 WSD009 party）；build-engine 白名单收 data/rules → engine/，check 全绿（selftest 77 项 + verify-in-dsh 27 项）。
+- 读数口径（随包六爻 292–302 批累计）：wikisource_holdout strict 65.4→75.1、wikisource_direction 73.4→74.3（297 口径切换后 67.1→74.3）、zengshan 53.4→50.5→53.4（298 门引入 299 回补）、tune 97.9 / holdout 90.2 持平；均为古籍案例对齐分，不代表现实预测命中率。
+
 ## 2026-10-25 第两百九十一批（dsh-plugin）：六破检索记录补全随包（1.0.12）
 
 - 六爻 `data/rules/adjudications.json` six_break_evidence 条目补检索记录：
