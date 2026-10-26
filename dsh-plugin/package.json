@@ -1,9 +1,19 @@
 {
   "name": "dsh-yi-divination",
-  "version": "1.0.22",
+  "version": "1.0.23",
   "description": "DSH 插件：六爻纳甲与八字四柱的确定性排盘与解读。内置 Python 引擎，装了即用，无需另外 clone 仓库或手敲命令。 / Deterministic I Ching (Liu Yao) & BaZi engine as a DSH plugin — ships its own Python engine so no manual repo checkout is needed.",
   "type": "module",
   "license": "MIT",
+  "author": "Yi contributors",
+  "homepage": "https://github.com/LinHoMo/Yi",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LinHoMo/Yi.git",
+    "directory": "dsh-plugin"
+  },
+  "bugs": {
+    "url": "https://github.com/LinHoMo/Yi/issues"
+  },
   "main": "src/index.mjs",
   "exports": {
     ".": "./src/index.mjs",
@@ -36,12 +46,46 @@
     "八字",
     "术数"
   ],
+  "engines": {
+    "node": ">=22"
+  },
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
+    },
+    "compatibility": {
+      "node": ">=22",
+      "dsh": ">=0.2.1-rc.2",
+      "tested": {
+        "dsh": "0.2.1-rc.2 (build 332895e), 0.2.1-rc.3 (2026-10-23)",
+        "node": "22.x, 24.x"
+      }
+    },
+    "permissions": {
+      "files": {
+        "granted": true,
+        "scope": "read bundled engine + skills; write temp files under os.tmpdir()/yi-* and %TEMP%/yi-reports for report output; read SKILL.md at load",
+        "reason": "The deterministic engine and skill docs ship inside the package (read-only); generated reports are written only to the OS temp directory, never into user project folders."
+      },
+      "commands": {
+        "granted": true,
+        "scope": "spawn the local Python interpreter (DSH-bundled runtime, PATH python, or Windows py launcher) to run the bundled, read-only engine; no shell, no arbitrary command execution",
+        "reason": "All calendrical/numerological computation runs in the bundled Python engine. The Node half performs no divination math and never execs user-supplied commands."
+      },
+      "credentials": {
+        "granted": true,
+        "scope": "read a whitelist of non-secret environment variables only: DSH_HOME, DSH_PYTHON, PATH, PYTHONIOENCODING, PYTHONDONTWRITEBYTECODE",
+        "reason": "Used solely to locate the Python interpreter and set UTF-8/bytecode env. The plugin never reads secrets, keychains, tokens, API keys, or network credentials, and makes zero outbound network calls."
+      }
+    },
+    "externalServices": {
+      "network": "none — fully offline; no outbound connections of any kind",
+      "dataExfiltration": "none"
+    },
+    "failureBounds": {
+      "pythonMissing": "Tools return a clear error listing every interpreter path tried; the plugin never silently falls back to an unknown interpreter.",
+      "engineStageTimeoutMs": 120000,
+      "engineMissing": "Startup self-test warns; tool calls error at invocation time rather than producing partial results."
     }
-  },
-  "engines": {
-    "node": ">=22"
   }
 }

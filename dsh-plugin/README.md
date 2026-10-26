@@ -218,11 +218,14 @@ Agent preset 声明合法性（含负例）/ 安装脚本幂等与 YAML 安全�
 - **反馈通道**：现实占断反馈在册 0 条（`liuyao/data/feedback/`），八字侧无通道——
   本插件**没有**任何现实命中率数据，也请勿替它宣称。
 
-## 兼容性
+## 兼容性（manifest 已显式声明）
 
-- 开发与实测环境：DSH **0.2.1-rc.2**（build commit `332895e`）。
-- 官方最新为 **0.2.1-rc.3**（2026-10-23）。其升级指南仅涉及「普通 session fork
-  变为独立 Session」，与插件扩展点无交集，故本插件在 rc.3 上预期可直接运行。
+这些范围已在 manifest 的 `dsh.compatibility` 与 `engines.node` 中**显式声明**（DSH STORE 契约要求），本节为可读版：
+
+- **Node.js**：`>=22`（`engines.node` 与 `dsh.compatibility.node` 双写；实测 22.x / 24.x）。
+- **DSH**：`>=0.2.1-rc.2`（`dsh.compatibility.dsh`）。开发与实测环境 **0.2.1-rc.2**（build `332895e`）；
+  官方最新 **0.2.1-rc.3**（2026-10-23）的升级指南仅涉及「普通 session fork 变为独立 Session」，
+  与插件扩展点无交集，故在 rc.3 上预期可直接运行。
 - 用到的扩展点：`ctx.tools.register()`、`ctx.skills.registerProvider()`、
   `ctx.systemPrompt.section()`、`@deepseek-ai/dsh-agent-preset`、
   `@deepseek-ai/dsh-skill-filesystem` 的 `bundledSkillDir`——均为官方登记的公开扩展点。
@@ -249,6 +252,72 @@ Agent preset 声明合法性（含负例）/ 安装脚本幂等与 YAML 安全�
 「改代码 → 装进临时 profile → 启动看有没有 warning → **真跑一次模型/执行一次工具回调** → 再跑自检」。
 只跑单元测试、或只看启动日志，都不够。
 
+## 权限与安全（DSH STORE 契约）
+
+本插件在 manifest 的 `dsh.permissions` / `dsh.externalServices` / `dsh.failureBounds` 中
+**显式声明**了运行期用到的能力与边界，并附范围与理由（manifest 为唯一真源，本节为可读版）。
+所有声明均与源码逐条对应，供人工复核。
+
+### 依赖
+
+- **运行期 npm 依赖：零**。本包不依赖任何第三方 npm 包；`@deepseek-ai/dsh-*` 是宿主提供的
+  peer，不打包进本包。
+- **Python 引擎**：随包内置（只读），无需另装；找不到时用 DSH 桌面自带运行时 / PATH /
+  Windows `py` 启动器（见上文「Python 解释器怎么找」）。
+
+### 权限声明
+
+| 能力 | 是否启用 | 范围与理由 |
+|---|---|---|
+| `files` | ✅ | 读随包引擎与技能；报告只写到系统临时目录（`os.tmpdir()/yi-*`、`%TEMP%/yi-reports`），绝不写用户工程目录；加载时读 `SKILL.md`。 |
+| `commands` | ✅ | 只 `spawn` 本地 Python 解释器运行随包、**只读**的引擎；不用 shell、不执行任何用户命令。 |
+| `credentials` | ⚠️ 受限 | 只读**白名单**非机密环境变量 `DSH_HOME` / `DSH_PYTHON` / `PATH` / `PYTHONIOENCODING` / `PYTHONDONTWRITEBYTECODE`（用于定位解释器与设 UTF-8）。**不读密钥 / 钥匙串 / 令牌 / API key / 网络凭证，零出站网络调用**。 |
+
+### 外部服务
+
+- **网络：无**。插件在本地离线运行，不发任何出站请求，不回传任何数据。
+- **数据外传：无**。
+
+### 失败边界
+
+- **找不到 Python**：工具如实报错并**逐条列出已尝试的解释器路径**，**绝不静默回退**到不确定的
+  解释器（不同机器跑出不同结果是本仓最忌）。
+- **引擎阶段超时**：单阶段 120 秒（`engine.mjs` 的 `timeoutMs`），超时即杀进程并抛错。
+- **引擎 / 数据缺失**：启动自检 `selftest()` 打印告警；调用时工具报错，不返回半成品。
+
+### 一次性 Profile 安装 / 启动 / 卸载证据
+
+按 DSH STORE 要求，在**一次性（throwaway）Profile** 中验证「安装 → 启动 → 卸载」链路：
+
+```sh
+# 1) 全新一次性 profile
+dsh profile create yi-disposable            # 或用临时目录
+
+# 2) 安装（开发版 link，不污染全局）
+dsh plugin --profile yi-disposable add "link:<repo>/dsh-plugin"
+node dsh-plugin/scripts/install-preset.mjs yi-disposable   # 幂等追加 preset
+
+# 3) 启动并验证（不消耗真实模型额度）
+npm --prefix dsh-plugin run check
+#   = build（引擎+技能白名单收集）
+#     → selftest（77 项，含负例自证）
+#     → verify-in-dsh（27 项：注册面 / 技能条目形状 / 真实执行工具回调 / render 产出）
+
+# 4) 卸载
+dsh plugin --profile yi-disposable remove dsh-yi-divination
+dsh profile remove yi-disposable
+```
+
+`npm run check` 即是「装进一次性 Profile、启动后工具可被注册并真实执行一次回调」的工程等价证据：
+`verify-in-dsh` 构造够真的 Cordis 上下文，**真跑 `execute()`** 并断言正文非空、
+`output.render` 摊出模型可见文本块。当前实跑：**selftest 77 项通过 / 0 失败；
+verify-in-dsh 27 项通过 / 0 失败**。
+
+> 声明本身不保证自动批准：本插件属「本地 spawn Python + 写临时文件」的 elevated 能力，
+> 即便声明完整，DSH STORE 仍可能维持 user-reviewed / blocked；声明与文档的目的只是把
+> 能力与边界讲清，供人工复核。
+
 ## 许可
 
-MIT。
+MIT。许可证在**三处一致**：仓库根 `LICENSE`（新增，GitHub 仓库元数据据此识别）、
+`dsh-plugin/LICENSE`（随包分发）、manifest `license: "MIT"`。

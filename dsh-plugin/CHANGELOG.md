@@ -16,6 +16,25 @@
 > 无插件自身代码改动）、281→**1.0.3**（随包引擎同步六爻 281 批占差事词典+WS003
 > 校勘）。
 
+## 2026-10-26 第三百零三批（dsh-plugin）：DSH STORE 上架契约修复（1.0.23）
+
+- 修复 DSH STORE fixed-Commit 自动检查（AI-Scarlett/DSH-Store#1581）的 **Catalog blocked** 项：
+  - manifest 新增 `repository`（指向 canonical GitHub 仓库 `LinHoMo/Yi`，`directory: dsh-plugin`），
+    消除「manifest repository does not match the canonical GitHub repository」。
+  - 仓库根新增 `LICENSE`（MIT，与 `dsh-plugin/LICENSE`、manifest `license: "MIT"` 三处一致），
+    消除 GitHub 仓库 license 元数据 `NOASSERTION` 与「固定源许可证证据需人工复核」。
+  - manifest `dsh` 块新增 `compatibility`：显式声明 Node `>=22` 与 DSH `>=0.2.1-rc.2` 兼容范围及实测版本，
+    消除「DSH 兼容性未显式声明」。
+  - manifest `dsh` 块新增 `permissions`（files / commands / credentials 显式声明 + 范围与理由）、
+    `externalServices`（零网络）、`failureBounds`（找不到 Python / 超时 / 缺失的失败边界），
+    消除「runtime source contains the files/commands/credentials permission signal」与安全复核待办。
+  - `dsh-plugin/README.md` 新增「权限与安全（DSH STORE 契约）」一节：依赖、权限声明、外部服务、失败边界、
+    一次性 Profile 安装 / 启动 / 卸载证据。
+- 声明本身不保证自动批准：本地 spawn Python + 写临时文件属 elevated 能力，DSH STORE 可能仍维持
+  user-reviewed / blocked；声明与文档的目的只是把能力与边界讲清，供人工复核。
+- 纯契约 / 文档批：**四工具 API 面与引擎零改动**；`npm run check` 全绿（selftest 77 项 + verify-in-dsh 27 项）。
+- `package.json` 1.0.22→**1.0.23**（修复 / 文档批，patch+1）。
+
 ## 2026-10-26 第三百零二批（dsh-plugin）：随包引擎同步六爻 292–302 批 + 补登记欠账（1.0.19）
 
 - **补登记（§六.2）**：第两百九十二至三百零一批随包版本号已依次升至 1.0.13–1.0.18（六爻 wikisource 用神基准 46 例、direction 基准 26 例、两现排序档 0.5、自占病层、试考/过关/贼/定罪/贸易词典三族、六冲用神旺衰门、行人化退归志层、流年双轨登记、裁决表 15 条），但本 CHANGELOG 未逐批具名——本条补索引，此后恢复逐批登记。
