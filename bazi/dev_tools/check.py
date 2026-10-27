@@ -25,9 +25,11 @@
     `docs/CHANGELOG.md` 登记理由；**下调**基线只能改本文件里的字面量（进 git diff、
     进评审），本地 `check_baseline.json` 覆盖文件一律**不得放宽**（见 `_effective_baseline`）。
   · §四.2「tune 均分无故跌破 95 即视为回归」落在**加权均分**口径上（当前 tune 100.0 /
-    holdout 97.6，均 ≥95，AGENTS_TUNE_FLOOR 有机械断言兜着）。
+    holdout 99.5（308 批实测，原登记 97.6），均 ≥95，AGENTS_TUNE_FLOOR 有机械断言兜着）。
+  · ⚠ tune 已 **100.0% 满分饱和**（60/60，min=max）。按 AGENTS.md §三.4 自引口径，
+    该集**已丧失区分能力**，只能当回归哨兵，不得作为能力证据引用（308 批标注）。
   · 维度层不用百分比当门槛，改用**绝对命中数**（`DIM_HITS`）：当前 holdout 的
-    pattern 80.6%／cong_ge 86.7% 是「满分例数/适用例数」的维度内比值（n=36／n=15，
+    pattern 100.0%（308 批实测 36/36，原 80.6%）／cong_ge 86.7% 是「满分例数/适用例数」的维度内比值（n=36／n=15，
     另有 242／263 例 N/A——本集合 n=278，Applicable+NA 必须等于 278），不是 §四.2 说的「均分」；
     把它当 95 分线是口径错配。
     而百分比本身不能当回归门槛——新增案例只涨分母、必然压低百分比，拿它设线等于
@@ -56,21 +58,22 @@ CASES_FILE = DISC / "data" / "cases" / "bazi_classical_cases.json"
 # 古籍案例对齐分（加权均分 %，strict）——2026-10-09 实测登记，非预测命中率
 BASELINE = {
     "tune": 100.0,        # n=60（2026-10-13 按 #39 清冗余后的实测例数更正，原注 n=30）
-    "holdout": 96.6,      # n=278（未参与本轮调参；2026-10-10 从格判据改正后实测抬上来的。
-                          #  原注 n=246 系语料扩容前快照；实测值 97.6 属只准前进，未 --raise）
+    # 308 批只准前进：96.6 → 99.5（实测；抬基线即收紧门，与 AGENTS.md §四.2 同口径）。
+    "holdout": 99.5,      # n=278（未参与本轮调参；原 96.6 系 2026-10-10 从格判据改正后登记，
+                          #  原注 n=246 系语料扩容前快照；308 批按实测抬到 99.5，只准前进）
 }
 AGENTS_TUNE_FLOOR = 95.0  # SKILL.md 的均分硬下限；BASELINE 必须严于它
 
 # 维度绝对命中数下限（= evaluate.py 明细里的「满分例数」；n/a 例不进分母故不影响本数）
 DIM_HITS = {
     "tune": {"tiaohou": 60, "ten_gods": 1, "hidden_stems": 1},
-    "holdout": {"pillars": 213, "tiaohou": 51, "pattern": 29, "cong_ge": 13,
+    "holdout": {"pillars": 213, "tiaohou": 51, "pattern": 36, "cong_ge": 13,
                 "ten_gods": 213, "hidden_stems": 213, "shensha": 5},
 }
 # tiaohou 下限原为 tune 30／holdout 19（扁平化提交 e2c77ad 带入，此后语料扩样但
 # 该两格从未回头改）——实测满分数已是 60／51，即**下限只压着实测的 50%／37%**：
 # 该维静默丢掉一半（holdout 丢 32/53）也不会判红，正是本门要防的静默盲区。
-# 其余各维下限均与实测齐平（pillars 213/213、pattern 29/29、cong_ge 13/13、
+# 其余各维下限均与实测齐平（pillars 213/213、pattern 36/36（308 批由 29 抬上）、cong_ge 13/13、
 # ten_gods 213/213、hidden_stems 213/213），唯 tiaohou 松弛，故判定为陈旧字面量而非有意留量。
 # 按 AGENTS.md §四.2「基线只准前进」上调至实测值，与其余各维同口径（下限=实测满分数）。
 # ten_gods／hidden_stems 的下限是**回填存活线**（2026-10-13 第一百六十八批补）：

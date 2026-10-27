@@ -11,12 +11,12 @@
 ## T1 确定性排盘与推演 —— **已验证**
 
 四柱/纳甲/装卦/世应/六亲/六神/旬空/月破/六十四卦/干支历换算全部由代码完成，LLM 禁止心算（AGENTS.md §一.1）。
-- 六爻：288 例行为指纹（机械层 `b7162bfc99e2cce8`／措辞层 `a46f7374276a17a6`，自第一百九十三批起
+- 六爻：288 例行为指纹（机械层 `4ceef1eed62dafe2`／措辞层 `405bc8e03a6a99e0`（308 批实测，原登记 b716/a46f），自第一百九十三批起
   **含 analyze.conclusion 键集与内容哈希**）；确定性证据面＝**分析链零随机**（step\*/思维链/analyze/
   经典层无随机源，账台逐跑核该计数）＋起卦层带种可复现（`--seed`）；爻序 23 断言 P0 看门狗。
   （原写「三 seed（门 [23]）」系跨科串号——三 seed 属八字门 [23]，第一百七十二…第两百一十六批间
   由第两百一十七批查实更正。）
-- 八字：40 例结论级指纹（机械 `2a4c9258d6c1e4cb`／措辞 `1a0f165ebfa7b6da`）＋5 例机械回归＋九场景评测器校准。
+- 八字：40 例结论级指纹（机械 `fda7482656967518`／措辞 `3512deff79fa1f72`（308 批实测，原登记 2a4c/1a0f））＋5 例机械回归＋九场景评测器校准。
 - 复现：`python liuyao/dev_tools/golden.py verify && python bazi/dev_tools/golden.py verify`
 
 ## T2 古籍忠实复原 —— **已量化（含上限）**
@@ -28,19 +28,23 @@
 | 读数 | 值 | 出处 | 复现（自仓库根） |
 |---|---|---|---|
 | tune / holdout 对齐 | 97.9%（n=20）／90.2%（n=12） | 172 批口径 | `python liuyao/scripts/evaluate.py --split tune`（同 `--split holdout`） |
-| 外部 ⚗ wikisource 对齐 | 62.4%（n=50）；direction 子集 76.6%（n=31） | README 表 | `python liuyao/scripts/evaluate.py --split wikisource_holdout` |
-| 外部 ⚗ zengshan_dz 对齐 | 53.4%（n=21） | 同上 | `python liuyao/scripts/evaluate.py --split zengshan_dz_holdout` |
-| 主应期 top-1 ⚗ | 27.3%／33.3%——对均匀零 p=0.00019／0.00113，CI[16.3, 41.8]／[17.2, 54.6] | 181 批 | `python liuyao/dev_tools/window_report.py` |
-| top-3 窗 ⚗ | 52.3%／47.6%（信息在窗不在点→193 批 `应期窗口` 键） | 181/192/193 批 | 同上（`window_report.py` 一张表含 k=1..5） |
+| 外部 ⚗ wikisource 对齐 | **75.8%**（n=50；308 批实测，原登记 62.4）；direction 子集 76.6%（n=31） | README 表 | `python liuyao/scripts/evaluate.py --split wikisource_holdout` |
+| 外部 ⚗ zengshan_dz 对齐 | **61.5%**（n=21；308 批实测，原登记 53.4） | 同上 | `python liuyao/scripts/evaluate.py --split zengshan_dz_holdout` |
+| 主应期 top-1 ⚗ | **31.8%**／33.3%（308 批实测，原登记 27.3），CI[20.0, 46.6]／[17.2, 54.6]；k=1 随机 8.3% | 181 批→308 批 | `python liuyao/dev_tools/window_report.py` |
+| top-3 窗 ⚗ | **61.4%**／57.1%（308 批实测，原登记 52.3／47.6；信息在窗不在点→193 批 `应期窗口` 键） | 181/192/193 批→308 批 | 同上（`window_report.py` 一张表含 k=1..5） |
 | 版本冲突上限 | 卦面分歧 0/47、判词分歧 1/37→判词保真天花板 ≈98.6%（等权估计式） | 185 批 | `python liuyao/dev_tools/version_collate.py` |
 | 规则边际 | 33 条全扫：无一单点显著（11 条有影响全 p≥0.375、top-1 零不一致）；信号在择支/日月/阶梯三底座 | 182/186 批 | `python liuyao/dev_tools/ablation.py --sweep`（分钟级） |
 | 名次键 | 四个预声明重排键全部不胜现行序；#33 排序问题按预注册结案 | 190 批 | `python liuyao/dev_tools/rank_experiment.py` |
-| 流派裁决 | 7 项分歧点：5 照书执行／1 用户裁定冻结／**1 项 open_conflict**（应期动爻主位——引擎与书的已知偏差） | 188 批 `liuyao/data/rules/adjudications.json` | `python liuyao/dev_tools/build_adjudications.py --selftest` |
+| 流派裁决 | **27 项**分歧点：5 照书执行／1 用户裁定冻结／**20 项 open_conflict**／1 项 `settled`（词汇表外，待裁）——分歧表自 248 批起扩容，原登记「7 项／1 open_conflict」少报一个数量级（308 批更正） | 188 批→308 批 `liuyao/data/rules/adjudications.json` | `python liuyao/dev_tools/build_adjudications.py --selftest` |
 
-**八字**：holdout 97.6%（n=278）**由历法与定义维抬起**，判断维单列——
+**八字**：holdout **99.5%**（n=278，308 批实测，原登记 97.6）**由历法与定义维抬起**，判断维单列——
 tiaohou 96.2% vs 常数基线 17.0%（配对 b=42 c=0 p<0.001，**表忠实复原坐实**）；
-pattern 80.6% vs 常数『定答成格』75.0%（p=0.727，**未证明赢过常数**）；
-cong_ge 86.7% 但类分布 15/15 退化（**不可作任何判别声称**）；shensha 5 例／dayun 0 例／女命 0 例——证据边界。〔187 批〕
+pattern **100.0%（36/36）** vs 常数『定答成格』75.0%（配对 b=9 c=0 **McNemar p=0.004，已显著优于常数**——
+187 批登记时是 80.6%／p=0.727「未证明赢过常数」，308 批按实测**翻转**）；
+cong_ge 86.7% 但类分布 15/15 退化，且常数『定答从』100.0% **高于**引擎（p=0.500）——
+**本维未过「不劣于常数回答」的最低门槛，不可作任何判别声称**；shensha 5 例／dayun 0 例／女命 0 例——证据边界。〔187 批→308 批更正〕
+⚠ **tune 集已 100.0% 满分饱和**（60/60，min=max）：按 AGENTS.md §三.4 自引口径，该集**已丧失区分能力**，
+只能当回归哨兵，**不得作为能力证据引用**。
 复现：`python bazi/scripts/evaluate.py --split holdout`、`python bazi/dev_tools/baselines.py --split holdout`、
 `python bazi/scripts/evaluate.py --split external_holdout`、`python bazi/dev_tools/check_dim_lock.py`。
 

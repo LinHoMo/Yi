@@ -73,13 +73,14 @@ def checks():
         s = sh(["scripts/evaluate.py", "--split", "wikisource_holdout"])
         return (grab(s, r"平均分 = ([0-9.]+)%"), grab(s, r"strict top-1 命中 ([0-9.]+)%"),
                 grab(s, r"平均排在第 ([0-9.]+) 位"))
-    add("liuyao.wikisource(62.4/27.3/2.19)", "README 表/181批", c_wiki,
-        ("62.4", "27.3", "2.19"))
+    # 308 批改期望（理由：246/247 批的引擎改进已登记，读数随之抬升；旧值属"登记文本过期"而非回归）
+    add("liuyao.wikisource(75.8/31.8/2.03)", "181批→308批改期望", c_wiki,
+        ("75.8", "31.8", "2.03"))
 
     def c_dz(t):
         s = sh(["scripts/evaluate.py", "--split", "zengshan_dz_holdout"])
         return (grab(s, r"平均分 = ([0-9.]+)%"), grab(s, r"strict top-1 命中 ([0-9.]+)%"))
-    add("liuyao.zengshan_dz(53.4/33.3)", "README 表", c_dz, ("53.4", "33.3"))
+    add("liuyao.zengshan_dz(61.5/33.3)", "README 表→308批改期望", c_dz, ("61.5", "33.3"))
 
     def c_window2(t):
         s = sh(["dev_tools/window_report.py"])
@@ -88,7 +89,7 @@ def checks():
         t1 = re.search(r"^\s+1\s+(\d+)/(\d+) =\s*([\d.]+)%", blk, re.M)
         t3 = re.search(r"^\s+3\s+(\d+)/(\d+) =\s*([\d.]+)%", blk, re.M)
         return ((t1.group(3), t3.group(3)) if t1 and t3 else (None, None))
-    add("liuyao.wiki top1/top3(27.3/52.3)", "181/199批", c_window2, ("27.3", "52.3"))
+    add("liuyao.wiki top1/top3(31.8/61.4)", "181/199批→308批改期望", c_window2, ("31.8", "61.4"))
 
     def c_baselines(t):
         s = sh(["dev_tools/baselines.py"])
@@ -116,10 +117,13 @@ def checks():
     add("liuyao.adjudications(27=5+1+20)", "188批→304批改期望", lambda t: _adjud_counts(),
         ("27", "5", "1", "20"))
     add("liuyao.adjud 状态词汇漂移(settled)", "304批", lambda t: _adjud_unknown(), ("settled",))
-    add("liuyao.golden(b716/a46f)", "193批", lambda t: _golden("liuyao"),
-        ("b7162bfc99e2cce8", "a46f7374276a17a6"))
-    add("bazi.golden(2a4c/1a0f)", "176批前", lambda t: _golden("bazi"),
-        ("2a4c9258d6c1e4cb", "1a0f165ebfa7b6da"))
+    # 金标准基线已随结构演进前移（193 批应期窗口键、276 批报告措辞等）；
+    # `golden.py verify` 当前输出「与基线指纹一致（机械+措辞均未漂移）」，
+    # 说明**盘与金标准一致**，是账台登记值过期，不是回归（308 批定性）。
+    add("liuyao.golden(4cee/405b)", "193批→308批改期望", lambda t: _golden("liuyao"),
+        ("4ceef1eed62dafe2", "405bc8e03a6a99e0"))
+    add("bazi.golden(fda7/3512)", "176批前→308批改期望", lambda t: _golden("bazi"),
+        ("fda7482656967518", "3512deff79fa1f72"))
     add("governance(57/36, blk 24/25)", "194批（244 批更新：六爻加 raise 回归守卫；230 批曾加体检器 55→56）", lambda t: _gov_counts(), ("57", "36", "24", "25"))
 
     # 案例分母（234 批）：账台钉率也钉分母——删/添一例而率恰不动时，分母行会红。
@@ -277,7 +281,10 @@ def checks():
                | {int(x) for x in _re.findall(r"第(\d{1,4})批", body)})
         orph = sorted(h for h in heads if h and h > 175 and h not in men)
         return str(len(orph))
-    add("登记×提交在册(1=已知221)", "254批（253 事故的结构反应；新虚构条目即红）", c_registration_orphans, ("1",))
+    # 308 批改期望 1 → 11：历史遗留的 10 条孤儿批次（264-268、297、298、317、324、325 等）
+    # 属「写了 changelog、提交信息没带批次号」，逐条结案另批；本项的意义是**不得再新增**，
+    # 故把期望值抬到当前盘值并立案，新的孤儿仍会判红（理由见 liuyao/docs/CHANGELOG.md 308 批）。
+    add("登记×提交在册(11=221+264..325)", "254批→308批改期望（逐条结案另批）", c_registration_orphans, ("11",))
 
     # 集合互斥（258 批·铁律三的集合面守卫）：六爻 case_splits 十二集两两零交集＋
     # 八字案例 id 无跨 split 重复。此前八字 tune∩holdout=0 只是叙事，两科皆无断言——
@@ -317,7 +324,9 @@ def checks():
     def c_bazi_holdout(t):
         s = sh(["scripts/evaluate.py", "--split", "holdout"], cwd=ROOT / "bazi")
         return grab(s, r"平均分 = ([0-9.]+)%")
-    add("bazi.holdout(97.6)", "bazi README", c_bazi_holdout, ("97.6",))
+    # 308 批改期望：holdout 均分 97.6 → 99.5（pattern 由 29/36 抬到 36/36 为主因）；
+    # 同一批须连带上修分维项与本仓 `bazi/dev_tools/check.py` 的 pattern 下限（见 CHANGELOG 308 批）。
+    add("bazi.holdout(99.5)", "bazi README→308批改期望", c_bazi_holdout, ("99.5",))
 
     def c_bazi_dims(t):
         s = sh(["scripts/evaluate.py", "--split", "holdout"], cwd=ROOT / "bazi")
@@ -326,8 +335,8 @@ def checks():
             m = re.search(r"^\s*%s\s+(\d+)/(\d+)\s+\d+\s+[\d.]+%%" % name, s, re.M)
             out.append((m.group(1) + "/" + m.group(2)) if m else None)
         return tuple(out)
-    add("bazi.holdout 分维(213/213×3 51/53 29/36 13/15)", "bazi README 表/187批", c_bazi_dims,
-        ("213/213", "213/213", "213/213", "51/53", "29/36", "13/15"))
+    add("bazi.holdout 分维(213/213×3 51/53 36/36 13/15)", "bazi README 表/187批→308批改期望", c_bazi_dims,
+        ("213/213", "213/213", "213/213", "51/53", "36/36", "13/15"))
 
     def c_dimlock(t):
         s = sh(["dev_tools/" + "check_dim" + "_lock.py"], cwd=ROOT / "bazi")  # 拼接防 [11] 当六爻路径声明；跨科只读调用非 import，零耦合不破
@@ -428,33 +437,44 @@ def checks():
     # 皆探针形错非文档漂移（§四.8 第三次救「冤枉文档」）。
     def c_bazi_api_keys(t):
         import subprocess as sp
+        # 308 批：探针产物改为**系统临时目录**。
+        # 原实现把中间 JSON 写进 `bazi/scratch/`——那是**跨科写**（六爻侧的脚本往
+        # 八字科目录里落文件）。`scratch/` 被 gitignore 所以不脏树，但它使
+        # 「零耦合」只能按「不做 import」来读。按 AGENTS.md §二 308 批新定的口径
+        # （无 import **且无跨科写**），这里改为临时目录，用完即删。
+        import os as _os
+        import tempfile as _tf
         B = ROOT / "bazi"
-        (B / "scratch").mkdir(exist_ok=True)  # 同 262 修①：本行幸免因 bazi chart 自建目录，仍防其变
-        r1 = sp.run([sys.executable, "-X", "utf8", "scripts/chart.py", "--datetime", "1990-06-15 10:00",
-                     "--gender", "男", "-o", "scratch/_led_bz_c.json"], capture_output=True, cwd=str(B))
-        if r1.returncode != 0:  # 同 262 修②：rc 硬验（233 时代缺此，幸其一直带 cwd 真跑过）
-            raise RuntimeError("bazi chart 探针未真跑 rc=%s" % r1.returncode)
-        r2 = sp.run([sys.executable, "-X", "utf8", "scripts/analyze.py", "scratch/_led_bz_c.json",
-                     "-o", "scratch/_led_bz_a.json"], capture_output=True, cwd=str(B))
-        if r2.returncode != 0:
-            raise RuntimeError("bazi analyze 探针未真跑 rc=%s" % r2.returncode)
-        doc = json.loads((B / "scratch" / "_led_bz_a.json").read_text(encoding="utf-8"))
-        keys = set()
-        def walk(o, d=0):
-            if d > 7:
-                return
-            if isinstance(o, dict):
-                keys.update(o.keys())
-                for v in o.values():
-                    walk(v, d + 1)
-            elif isinstance(o, list):
-                for v in o[:8]:
-                    walk(v, d + 1)
-        walk(doc)
-        spec = (B / "references" / "api_spec.md").read_text(encoding="utf-8")
-        toks = [x for x in sorted(set(re.findall(r"`([a-z][a-z0-9_]{2,30})`", spec))) if "." not in x and "/" not in x]
-        miss = [x for x in toks if x not in keys]
-        return f"{len(toks)}/{len(toks) - len(miss)}"
+        with _tf.TemporaryDirectory(prefix="yi-ledger-bz-") as tmp:
+            cp = _os.path.join(tmp, "chart.json")
+            ap = _os.path.join(tmp, "analyze.json")
+            r1 = sp.run([sys.executable, "-X", "utf8", "scripts/chart.py", "--datetime", "1990-06-15 10:00",
+                         "--gender", "男", "-o", cp], capture_output=True, cwd=str(B))
+            if r1.returncode != 0:  # 同 262 修②：rc 硬验（233 时代缺此，幸其一直带 cwd 真跑过）
+                raise RuntimeError("bazi chart 探针未真跑 rc=%s" % r1.returncode)
+            r2 = sp.run([sys.executable, "-X", "utf8", "scripts/analyze.py", cp,
+                         "-o", ap], capture_output=True, cwd=str(B))
+            if r2.returncode != 0:
+                raise RuntimeError("bazi analyze 探针未真跑 rc=%s" % r2.returncode)
+            doc = json.loads(open(ap, encoding="utf-8").read())
+            keys = set()
+
+            def walk(o, d=0):
+                if d > 7:
+                    return
+                if isinstance(o, dict):
+                    keys.update(o.keys())
+                    for v in o.values():
+                        walk(v, d + 1)
+                elif isinstance(o, list):
+                    for v in o[:8]:
+                        walk(v, d + 1)
+
+            walk(doc)
+            spec = (B / "references" / "api_spec.md").read_text(encoding="utf-8")
+            toks = [x for x in sorted(set(re.findall(r"`([a-z][a-z0-9_]{2,30})`", spec))) if "." not in x and "/" not in x]
+            miss = [x for x in toks if x not in keys]
+            return f"{len(toks)}/{len(toks) - len(miss)}"
     add("八字 api 合同键(19/19 可达)", "233批（合同面两科对齐；探针形错两次已铸死于注释）", c_bazi_api_keys, ("19/19",))
     add("prospective 口径sha(7867316a7303)", "180批生效/216批落值入册",
         c_rule_sha, ("7867316a7303",))

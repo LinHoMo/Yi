@@ -470,6 +470,25 @@ head(7)
   rmSync(probeDir, { recursive: true, force: true })
   if (!caught) bad('负例自证失败：禁语扫描器抓不到明知存在的禁语')
   else if (clean) ok(`对外文本与工具描述无禁语（扫了 ${targets.length} 处）＋负例自证通过`)
+
+  // [7b] 口径声明覆盖门（308 批新增）：**每一份对外文书都必须自带口径声明**
+  // （「古籍案例对齐分，不是现实命中率」）。立这条门的直接原因是 304 批抓到的
+  // 「诚实徽章反向失真」——一句本该示弱的话因数字过期变成了失真，而它所在的那份
+  // 文档当时根本没写口径。声明到人、到文档，比只写在仓库铁律里更不容易漏。
+  const CALIBER = /(古籍案例对齐分|不是现实命中率|不代表现实预测命中率|不是现实预测命中率)/u
+  // 只盯**文档**：`targets` 里混着 `plugins/mcp/tools.mjs`（它是源码模块，禁语该扫、
+  // 口径声明不该要求——308 批首跑就是这么误伤的，两个目标面必须分开）。
+  const docTargets = targets.filter((f) => !f.endsWith('.mjs'))
+  const bare = docTargets.filter((f) => !CALIBER.test(readFileSync(f, 'utf8')))
+  if (bare.length) for (const f of bare) bad(`缺口径声明：${f.replace(REPO_ROOT, '')}`)
+  else ok(`对外文书口径声明全覆盖（${docTargets.length} 份文档）`)
+  const probeDir2 = mkdtempSync(join(tmpdir(), 'yi-caliber-probe-'))
+  const probeFile2 = join(probeDir2, '_probe.md')
+  writeFileSync(probeFile2, '# 某插件\n\n装了即用。')
+  const missed = !CALIBER.test(readFileSync(probeFile2, 'utf8'))
+  rmSync(probeDir2, { recursive: true, force: true })
+  if (missed) ok('负例自证：缺口径声明的文档会被抓到')
+  else bad('负例自证失败：口径声明扫描器抓不到明知缺失的文档')
 }
 
 console.log('\n' + '─'.repeat(60))
