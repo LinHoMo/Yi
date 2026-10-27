@@ -65,10 +65,10 @@ node plugins/scripts/publish.mjs --check   # 只校验：入口齐备 / 零案�
 
 | 宿主 | 远程 |
 |---|---|
-| Claude Code | `/plugin marketplace add <owner/yi-plugins>` → `/plugin install yi`（**未真机验证**，见下） |
+| Claude Code | `/plugin marketplace add LinHoMo/yi-plugins` → `/plugin install yi`（**未真机验证**，见下） |
 | Codex | 仓库根 `.agents/plugins/marketplace.json` 已生成，登记后即可装 |
-| Gemini CLI | `gemini extensions install <git url>`（仓库根本身即扩展，入口指进 `gemini-plugin/`） |
-| Yan Agent | 市场添加来源 `<git url>`，稀疏路径填 `yan-plugin` |
+| Gemini CLI | `gemini extensions install https://github.com/LinHoMo/yi-plugins`（仓库根本身即扩展，入口指进 `gemini-plugin/`） |
+| Yan Agent | 市场添加来源 `https://github.com/LinHoMo/yi-plugins`，稀疏路径填 `yan-plugin` |
 | DSH | 不走 git；用 npm 包或 `dsh plugin add` |
 
 > ⚠ Claude 的 `marketplace.json` 把插件指向**同仓子目录**，而官方示例是

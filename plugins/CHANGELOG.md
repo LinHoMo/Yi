@@ -34,9 +34,26 @@
 零案例库 + 知识库 9 篇）；`selftest` rc=0。产物 ≈15MB（五份引擎副本，
 但相同内容在 git 里只存一份 blob，进仓远小于此）。
 
+### 已发布（本批后续动作）
+
+- 发行仓 **https://github.com/LinHoMo/yi-plugins** 已建（public，默认分支 `main`，828 文件，
+  `.git` 1.6MB——五份引擎副本内容相同，git 只存一份 blob）；
+  已打 **v1.0.0** release：https://github.com/LinHoMo/yi-plugins/releases/tag/v1.0.0
+- **通道实测（唯一一条真跑过的远程通道）**：按 Yan 的方式
+  `git clone --depth 1 --filter=blob:none --sparse` + `sparse-checkout set --cone yan-plugin`
+  拉取发行仓，结果——清单指向的 12 个文件（instructions + skills + 10 条 resources）
+  **零缺失**、两科 `engine` 入口与内核副本在位、`src/server.mjs` 在位、
+  **无 `case_library.md` 混入**。即「产物不入库」与「远程可装」第一次同时成立。
+- 踩坑记（以免复发）：`publish.mjs` 开头会 `rm -rf dist/`，**会把 dist 里手工 init 的
+  `.git` 一起删掉**；之后在 `dist/` 里敲 git 命令会沿目录向上找到**源仓**的 `.git`，
+  于是提交落进了源仓。故同步发行仓一律走**克隆**而不是在 dist 里 init。
+
 ### 未做的事（如实）
 
-- **没有真的发布**：脚本不 push，本批也未建发行仓/分支——那是你的外部动作。
+- **其余四条通道仍未真机验证**：Claude 的 `marketplace.json`、Codex 的
+  `.agents/plugins/marketplace.json`、Gemini 的根扩展、DSH 的 npm 包——
+  本机一家宿主都没有，只做了 Yan 那条通道的拉取级验证。
+：脚本不 push，本批也未建发行仓/分支——那是你的外部动作。
 - **Claude 的 marketplace.json 未真机验证**：官方示例是「市场仓 → 独立插件仓」，
   这里改指**同仓子目录**，能否被 Claude 接受未测。文件里写了 `_note` 提示，
   README 也标了；未跑通前请用 `claude --plugin-dir ./claude-plugin` 本地试装。

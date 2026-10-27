@@ -110,6 +110,7 @@ node plugins/scripts/selftest.mjs    # 共享层 7 段自检（判红即 exit≠
 > 所以远程走一棵独立的**发行树**——`node plugins/scripts/publish.mjs` 生成 `plugins/dist/`
 > （五家各自的完整可安装目录），推成独立发行仓或同仓发行分支即可被各家远程拉取。
 > 详见 [`plugins/README.md`](plugins/README.md) 的「发布」节。
+> 发行仓：**https://github.com/LinHoMo/yi-plugins**（v1.0.0 已发布）。
 
 ## 作为 Yan Agent 插件安装
 

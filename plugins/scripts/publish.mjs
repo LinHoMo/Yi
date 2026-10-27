@@ -31,11 +31,11 @@ const DIST = join(PLUGINS_ROOT, 'dist')
 
 /** 与 build.mjs 的 ADAPTERS 同序；这里只声明「dist 里要不要、叫什么」。 */
 const ADAPTERS = [
-  { id: 'dsh', dir: 'dsh-plugin', install: 'dsh plugin --profile <profile> add "link:./dsh-plugin"' },
-  { id: 'claude', dir: 'claude-plugin', install: '/plugin marketplace add <owner/yi-plugins>  →  /plugin install yi' },
-  { id: 'codex', dir: 'codex-plugin', install: '在 $REPO_ROOT/.agents/plugins/marketplace.json 登记后 codex plugins install' },
-  { id: 'gemini', dir: 'gemini-plugin', install: 'gemini extensions install <git url>' },
-  { id: 'yan', dir: 'yan-plugin', install: 'Yan 插件市场添加来源 <git url>，稀疏路径填 yan-plugin' },
+  { id: 'dsh', dir: 'dsh-plugin', install: '`dsh plugin --profile <profile> add "link:./dsh-plugin"`' },
+  { id: 'claude', dir: 'claude-plugin', install: '`/plugin marketplace add LinHoMo/yi-plugins` → `/plugin install yi`（未真机验证）' },
+  { id: 'codex', dir: 'codex-plugin', install: '`codex plugins install https://github.com/LinHoMo/yi-plugins` 或登记 .agents/plugins/marketplace.json' },
+  { id: 'gemini', dir: 'gemini-plugin', install: '`gemini extensions install https://github.com/LinHoMo/yi-plugins`' },
+  { id: 'yan', dir: 'yan-plugin', install: 'Yan 市场添加来源 `https://github.com/LinHoMo/yi-plugins`，稀疏路径填 `yan-plugin`' },
 ]
 
 /** 不进发布树的东西（源仓的开发残留）。 */
