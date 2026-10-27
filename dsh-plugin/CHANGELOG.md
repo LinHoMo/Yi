@@ -16,6 +16,25 @@
 > 无插件自身代码改动）、281→**1.0.3**（随包引擎同步六爻 281 批占差事词典+WS003
 > 校勘）。
 
+## 2026-10-27 第三百零五批（dsh-plugin）：共享打包层收敛（1.0.24，仅构建与产物面变动）
+
+- **本批没有运行时改动**：四工具契约、技能正文、判据知识库内容全部不变，
+  变的是「这些东西从哪儿来」。
+- `dsh-plugin/src/{engine,python,tools,kb,report}.mjs` 与 `kb-synonyms.json`
+  **不再是本包的源码**，改为由 `plugins/scripts/build.mjs` 从 `plugins/mcp/` 分发
+  （真源唯一）。手工改它们会被共享自检 [1] 段（逐字节同源门）判红；
+  `src/index.mjs`（DSH 宿主入口）仍是源码并显式入库。
+- `SKILL.md` 真源迁到 `plugins/SKILL.md`，包根的 `SKILL.md` 改为构建产物。
+- 删除 `scripts/build-engine.mjs` 与 `scripts/build-skills.mjs`；
+  `package.json` 的 `build` 改为 `node ../plugins/scripts/build.mjs`。
+- `python.mjs` 合成全宿主一份：`DSH_PYTHON` → `YI_PYTHON` → DSH 桌面自带运行时
+  → PATH `python`/`python3` → `py`。
+- `scripts/selftest.mjs` 里两条「请跑 node scripts/build-*.mjs」的提示文案改为新命令，
+  **判据本身未动**。
+- 实跑：`npm --prefix dsh-plugin run selftest` **13 段全绿 rc=0**（含 yi_report 与负例）；
+  `node plugins/scripts/selftest.mjs` 全绿。
+- 未重跑 `verify-in-dsh`（需 DSH 宿主）。
+
 ## 2026-10-26 第三百零三批（dsh-plugin）：DSH STORE 上架契约修复（1.0.23）
 
 - 修复 DSH STORE fixed-Commit 自动检查（AI-Scarlett/DSH-Store#1581）的 **Catalog blocked** 项：

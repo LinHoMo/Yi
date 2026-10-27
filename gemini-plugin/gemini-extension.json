@@ -1,0 +1,13 @@
+{
+  "name": "gemini-plugin",
+  "version": "1.0.0",
+  "description": "六爻纳甲与八字四柱的确定性排盘与解读。起卦、装卦、纳甲、世应、六亲、六神、旬空、旺衰、应期、格局全部由随包 Python 引擎计算，模型不得自行心算。判据文档随包分发；古籍案例库按隔离纪律永不随包。库内一切分数是古籍案例对齐分，不是现实命中率。",
+  "mcpServers": {
+    "yi": {
+      "command": "node",
+      "args": ["${extensionPath}/src/server.mjs"],
+      "cwd": "${extensionPath}"
+    }
+  },
+  "contextFileName": "GEMINI.md"
+}

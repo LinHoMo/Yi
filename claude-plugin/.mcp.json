@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "yi": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/src/server.mjs"],
+      "env": {
+        "YI_PYTHON": ""
+      }
+    }
+  }
+}

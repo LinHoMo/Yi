@@ -106,7 +106,7 @@ node scripts/install-preset.mjs <你的profile>
 
 返回「文件:行 + 节标题 + 摘录」。纯 Node 实现（`src/kb.mjs`），不依赖 Python；
 先检索定位、再按 `file:line` 读具体节段。案例库在扫描层硬排除（铁律二第三道闸：
-打包层 `build-skills.mjs` 排除 + 自检 [1.5] 断言 + 本工具扫描层排除）。
+打包层 `plugins/scripts/build.mjs` 排除 + 自检 [1.5] 断言 + 本工具扫描层排除）。
 
 ### `yi_report` — 完整排盘报告（文件）
 
@@ -157,7 +157,7 @@ node scripts/install-preset.mjs <你的profile>
 
 复现：`cd dsh-plugin && npm pack --dry-run --json`
 
-`scripts/build-engine.mjs` 用**白名单**收集文件：新增目录不会因为「忘了排除」
+`plugins/scripts/build.mjs` 用**白名单**收集文件：新增目录不会因为「忘了排除」
 而被悄悄打进包，只会因为「忘了收录」在自检里报红——后者是安全的失效方向。
 
 ## 构建与自检

@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "id": "yi-divination",
+  "version": "1.0.0",
+  "name": "Yi 术数（六爻 / 八字）",
+  "description": "六爻纳甲与八字四柱的确定性排盘与解读。起卦、装卦、纳甲、世应、六亲、六神、旬空、旺衰、应期、格局全部由随包 Python 引擎计算，模型不得自行心算。知识库与排盘报告随包分发；古籍案例库按隔离纪律永不随包。库内一切分数是古籍案例对齐分，不是现实命中率。",
+  "author": "Yi contributors",
+  "license": "MIT",
+  "instructions": "INSTRUCTIONS.md",
+  "skills": [
+    {
+      "id": "yi-divination",
+      "name": "Yi 术数排盘与解读",
+      "description": "六爻纳甲与八字四柱的确定性排盘与解读。当用户提到六爻、摇卦起卦、占卜测吉凶、八卦、纳甲、用神、世应、应期，或八字、四柱、排盘、十神、格局、喜用神、大运流年时使用。所有排盘与推演由内置 Python 引擎完成。",
+      "path": "skills/yi-divination/SKILL.md"
+    }
+  ],
+  "resources": [
+    { "id": "kb-index", "name": "INDEX.md", "path": "skills/yi-divination/references/INDEX.md" },
+    { "id": "kb-liuyao-najia-rules", "name": "liuyao/najia_rules.md", "path": "skills/yi-divination/references/liuyao/najia_rules.md" },
+    { "id": "kb-liuyao-interpretation-guide", "name": "liuyao/interpretation_guide.md", "path": "skills/yi-divination/references/liuyao/interpretation_guide.md" },
+    { "id": "kb-liuyao-pattern-reference", "name": "liuyao/pattern_reference.md", "path": "skills/yi-divination/references/liuyao/pattern_reference.md" },
+    { "id": "kb-liuyao-classical-synthesis", "name": "liuyao/classical_synthesis.md", "path": "skills/yi-divination/references/liuyao/classical_synthesis.md" },
+    { "id": "kb-liuyao-source-ledger", "name": "liuyao/source_ledger.md", "path": "skills/yi-divination/references/liuyao/source_ledger.md" },
+    { "id": "kb-bazi-bazi-shishen-terminology", "name": "bazi/bazi_shishen_terminology.md", "path": "skills/yi-divination/references/bazi/bazi_shishen_terminology.md" },
+    { "id": "kb-bazi-bazi-nayin-shiyi", "name": "bazi/bazi_nayin_shiyi.md", "path": "skills/yi-divination/references/bazi/bazi_nayin_shiyi.md" },
+    { "id": "kb-bazi-bazi-yue-shi-ge", "name": "bazi/bazi_yue_shi_ge.md", "path": "skills/yi-divination/references/bazi/bazi_yue_shi_ge.md" },
+    { "id": "kb-bazi-api-spec", "name": "bazi/api_spec.md", "path": "skills/yi-divination/references/bazi/api_spec.md" }
+  ],
+  "mcpServers": [
+    {
+      "id": "yi",
+      "type": "local",
+      "command": "$node",
+      "args": ["${pluginRoot}/src/server.mjs"],
+      "env": { "YI_PYTHON": "${config.pythonPath}" },
+      "timeoutMs": 120000
+    }
+  ],
+  "configuration": {
+    "pythonPath": {
+      "label": "Python 解释器路径",
+      "description": "可选。留空时依次从 PATH 找 python / python3 / py。机器上 Python 不在 PATH 时，填 python.exe 的绝对路径（如 C:\\Python313\\python.exe）。",
+      "required": false
+    }
+  },
+  "environment": [
+    { "name": "YI_PYTHON", "description": "可选。显式指定运行引擎的 Python 解释器；由插件配置「Python 解释器路径」注入，一般无需手工设置。", "required": false }
+  ],
+  "platforms": ["win32", "darwin", "linux"],
+  "requiredCommands": []
+}

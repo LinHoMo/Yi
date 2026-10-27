@@ -48,3 +48,40 @@ dsh-plugin/package-lock.json
 # npm pack 产物（发布工件走 GitHub Release，不入库）
 dsh-plugin/*.tgz
 
+# 发布树（plugins/scripts/publish.mjs 产出，供各家 git 通道消费；不入库）
+plugins/dist/
+
+# plugins/：共享层（SKILL.md + mcp/ + scripts/）入库，engine/ 与 skills/ 是构建产物
+plugins/engine/
+plugins/skills/
+
+# 各适配器里的共享运行时由 plugins/scripts/build.mjs 分发，属产物：
+# 手工改它们会被 plugins/scripts/selftest.mjs [1] 段（逐字节同源门）判红。
+dsh-plugin/src/*.mjs
+dsh-plugin/src/*.json
+!dsh-plugin/src/index.mjs
+dsh-plugin/SKILL.md
+yan-plugin/src/
+
+# Yan Agent 插件：engine/ 与 skills/ 同为构建产物；yan-plugin.json、INSTRUCTIONS.md
+# 等宿主专属文件是源，入库。
+yan-plugin/engine/
+yan-plugin/skills/
+yan-plugin/node_modules/
+yan-plugin/package-lock.json
+
+# Codex / Gemini 插件：同为构建产物；各自的清单与上下文文件是源，入库。
+codex-plugin/engine/
+codex-plugin/skills/
+codex-plugin/src/
+gemini-plugin/engine/
+gemini-plugin/skills/
+gemini-plugin/src/
+
+# Claude Code 插件：同为构建产物；.claude-plugin/plugin.json、.mcp.json 是源，入库。
+claude-plugin/engine/
+claude-plugin/skills/
+claude-plugin/src/
+claude-plugin/node_modules/
+claude-plugin/package-lock.json
+

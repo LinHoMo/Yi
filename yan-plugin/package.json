@@ -1,0 +1,33 @@
+{
+  "name": "yan-yi-divination",
+  "version": "1.0.1",
+  "description": "Yan Agent 插件：六爻纳甲与八字四柱的确定性排盘与解读。随包 Python 引擎 + 判据知识库，装了即用。",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "author": "Yi contributors",
+  "homepage": "https://github.com/LinHoMo/Yi",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LinHoMo/Yi.git",
+    "directory": "yan-plugin"
+  },
+  "scripts": {
+    "build": "node ../plugins/scripts/build.mjs",
+    "selftest": "node ../plugins/scripts/selftest.mjs",
+    "check": "npm run build && npm run selftest"
+  },
+  "keywords": [
+    "yan-agent",
+    "yan-plugin",
+    "iching",
+    "liuyao",
+    "bazi",
+    "六爻",
+    "八字",
+    "术数"
+  ],
+  "engines": {
+    "node": ">=20"
+  }
+}

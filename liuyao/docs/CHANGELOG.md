@@ -1,5 +1,52 @@
 # 六爻 CHANGELOG
 
+## 2026-10-27 第三百零四批（六爻/账台）：裁决表那道门是哑的——`KeyError: 'settled'` 修复＋剩余 6 项分家读数立案
+
+**性质**：gate-fix（门自身修复）＋ registration（分诊立案，**不代做裁定**）。零判据、零引擎改动。
+
+- **门哑了（真缺陷，本批修复）**：`dev_tools/readout_ledger.py` 的 `_adjud_counts()`
+  写作 `c[e["status"]] += 1`，而裁决表自 248 批起出现状态 `settled`
+  （`liuyao.huaxtui_xingren_gui`，builder docstring 声明的是**三值**词汇表），
+  于是每次 `--quick` 都抛 `KeyError: 'settled'`——账台只打印「取数异常 'settled'」，
+  **既不判红也不推动任何人**（捕获后当异常显示，exit 不受它影响）。
+  改法：`dict.get` 计数，未知状态另立一个账台项 `_adjud_unknown()` 显形。
+  这是「门会说谎」的第三种形态：前两种是「无条件打 √」与「0/False 成片」，
+  这一种是「抛异常被吞」——**异常不等于判红**。
+- **改期望 7=5+1+1 → 27=5+1+20**（理由：分歧表自 248 批起从 7 项扩到 27 项，
+  盘上实测 `count=27`、分布 `open_conflict 20 / settled_by_source 5 / frozen_by_user 1`
+  （另 1 条 `settled` 不在词汇表内）；旧期望属「登记文本过期」而非读数回归，
+  按账台规矩具名改值并注明理由，不静默刷新）。
+- **新增账台项** `liuyao.adjud 状态词汇漂移(settled)`：期望值登记为 `settled`
+  （**不代裁定**——是补进词汇表还是改回 `settled_by_source` 属判据语义问题，
+  AGENTS.md §二 禁止按读数改数据），只把它显形为一行账，再冒新状态名即判红。
+- **实跑**：`python dev_tools/readout_ledger.py --quick` → 全账 **38** 项
+  （原 37，新增 1），`bad` **7→6**，两项 adjudications 均 √，门恢复工作。
+
+### 立案：账台剩余 6 项分家读数（本批**不改**，逐条另批处置）
+
+全部属「登记文本过期」型（代码/引擎前进了，对外文书没跟上），但**处置动作不同**，
+故不批量刷新——批量刷新等于用一次提交把六种性质不同的账糊成一条：
+
+| # | 项 | 登记值（出处） | 实得 | 建议处置 |
+|---|---|---|---|---|
+| 1 | `liuyao.wikisource` | 62.4/27.3/2.19（`README.md:28`、`CAPABILITY.md:31`） | **75.8/31.8/2.03** | 回改对外文书；**连带根 `README.md:69`「top-1 27.3% 低于随机期望 31.1%」已反向失真**（实得 31.8% > 31.1%，原句是主动示弱，示弱幅度已不成立），`dsh-plugin/README.md:206-207` 同样过期 |
+| 2 | `liuyao.zengshan_dz` | 53.4/33.3 | **61.5/33.3** | 同上 |
+| 3 | `liuyao.golden` | `b716…/a46f…`（`CAPABILITY.md:14`） | `4cee…/405b…` | 需先确认是「措辞层随引擎演进」还是真回归，再改期望；**不得直接刷新** |
+| 4 | `bazi.golden` | `2a4c…/1a0f…`（`CAPABILITY.md:19`、`bazi/data/rules/rule_registry.json:145`） | `fda7…/3512…` | 同上 |
+| 5 | `登记×提交在册` | 1（已知 221） | **11**（221/264/265/266/267/268/297/298/317/324/325） | 逐条补提交批次号或具名结案（254 批立的「写进 changelog 却没提交」门） |
+| 6 | `bazi.holdout` | 97.6（`bazi/README.md:37`、`CAPABILITY.md:40`） | **99.5**（n=278，`pattern 36/36`） | 回改后须重算 `CAPABILITY.md:42`「pattern 未证明赢过常数」的结论；并复核 `bazi/dev_tools/check.py:67` 的 `DIM_HITS pattern=29`（实测满分数已是 36，该门可静默丢 7 例而不判红） |
+
+> 另注（未列入账台、本批不处置）：`bazi` tune 集已 **100.0% 满分饱和**（60/60，min=max），
+> 按 AGENTS.md §三.4 自引的口径，该集已丧失区分能力，**只能当回归哨兵，不能当能力证据**——
+> 建议在 `bazi/README.md` 显式标注，避免被当成能力数字引用。
+
+### 本批**没有**做的事（如实）
+
+- 未实跑 `liuyao/dev_tools/check.py` 全量（非 `--fast`）与两集评测的**双集出分**
+  （本批零引擎改动，按 §四 不需要；但上述 6 项如需定性为「真回归」则必须补跑）。
+- 未改任何 `data/` 与 `core/`；未改 `CAPABILITY.md` / 根 `README.md` / `bazi/README.md`
+  的任何对外数字（等逐条裁定）。
+
 ## 2026-10-26 第两百四十八批（六爻）：凶占应期冲破用神轨登记（裁决表 26→27 项）＋ wiki yingqi 剩余 miss 终审归因
 
 **性质**：registration（框架批候选第二实案落纸）＋零判据

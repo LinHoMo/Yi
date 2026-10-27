@@ -111,7 +111,11 @@ def checks():
     add("liuyao.draft_candidates(10含dup4)", "204批", lambda t: _draft_counts(), ("10", "4"))
 
     # --- 裁决表/治理图/指纹 ---
-    add("liuyao.adjudications(7=5+1+1)", "188批", lambda t: _adjud_counts(), ("7", "5", "1", "1"))
+    # 304 批改期望 7=5+1+1 → 27=5+1+20：分歧表自 248 批起扩容（新增流派分歧点逐条入册），
+    # 旧值属于「登记文本过期」而非读数回归；改值理由登记在 liuyao/docs/CHANGELOG.md 304 批。
+    add("liuyao.adjudications(27=5+1+20)", "188批→304批改期望", lambda t: _adjud_counts(),
+        ("27", "5", "1", "20"))
+    add("liuyao.adjud 状态词汇漂移(settled)", "304批", lambda t: _adjud_unknown(), ("settled",))
     add("liuyao.golden(b716/a46f)", "193批", lambda t: _golden("liuyao"),
         ("b7162bfc99e2cce8", "a46f7374276a17a6"))
     add("bazi.golden(2a4c/1a0f)", "176批前", lambda t: _golden("bazi"),
@@ -483,12 +487,34 @@ def _json_counts(rel, top, keys, key=None):
 
 
 def _adjud_counts():
+    """
+    裁决表分布。**不再用 `c[e["status"]] += 1`**——248 批起盘上出现了词汇表外的
+    `settled`，那行写法直接 `KeyError: 'settled'`，门从「报数」退化成「抛异常」
+    （304 批实测：账台只打印「取数异常 'settled'」，既不判红也不推动任何人）。
+    改成 `dict.get` 计数，未知状态另由一个独立账台项盯（见下 `_adjud_unknown`）。
+    """
     d = json.loads((DISC / "data" / "rules" / "adjudications.json").read_text(encoding="utf-8"))
     c = {"settled_by_source": 0, "frozen_by_user": 0, "open_conflict": 0}
     for e in d["entries"]:
-        c[e["status"]] += 1
+        c[e["status"]] = c.get(e["status"], 0) + 1
     return (str(d["count"]), str(c["settled_by_source"]), str(c["frozen_by_user"]),
             str(c["open_conflict"]))
+
+
+def _adjud_unknown():
+    """
+    裁决表状态词汇漂移哨兵：返回**不在三值词汇表内**的状态名（逗号分隔，无则空串）。
+
+    存在理由：`build_adjudications.py` 的 docstring 声明状态为三值
+    （settled_by_source / frozen_by_user / open_conflict），而盘上有 1 条
+    `settled`——是补进词汇表还是改回 `settled_by_source` 属**判据语义裁定**，
+    AGENTS.md §二 禁止按读数改数据，故这里不代为裁定，只把它显形为一行账。
+    再冒出新状态名时本项立即判红。
+    """
+    VOCAB = {"settled_by_source", "frozen_by_user", "open_conflict"}
+    d = json.loads((DISC / "data" / "rules" / "adjudications.json").read_text(encoding="utf-8"))
+    unknown = sorted({str(e.get("status")) for e in d["entries"]} - VOCAB)
+    return (",".join(unknown),)
 
 
 def _draft_counts():

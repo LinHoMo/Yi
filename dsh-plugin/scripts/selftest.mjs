@@ -342,7 +342,7 @@ await section('[8] 打包产物与两科真源一致（防「悄悄过期」：�
   if (engineStale === 0) {
     pass(`引擎 ${engineChecked} 个文件逐个与真源一致（无过期副本）`)
   } else {
-    fail(`引擎共 ${engineStale}/${engineChecked} 个文件过期 → 请跑 node scripts/build-engine.mjs`)
+    fail(`引擎共 ${engineStale}/${engineChecked} 个文件过期 → 请跑 node ../plugins/scripts/build.mjs`)
   }
 
   // ── 8b 知识库：随包 skills/references 与两科 references 逐篇对拍 ────────────
@@ -362,7 +362,7 @@ await section('[8] 打包产物与两科真源一致（防「悄悄过期」：�
       kbChecked += 1
       if (digest(srcPath) !== digest(join(pkgDir, rel))) {
         kbStale += 1
-        fail(`知识库过期：${discipline}/${rel} → 请跑 node scripts/build-skills.mjs`)
+        fail(`知识库过期：${discipline}/${rel} → 请跑 node ../plugins/scripts/build.mjs`)
       }
     }
   }

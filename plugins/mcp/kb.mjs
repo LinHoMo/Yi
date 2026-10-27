@@ -28,11 +28,35 @@ import { fileURLToPath } from 'node:url'
 /** 永不进入检索范围的文件（铁律二）。 */
 const NEVER_SHIP = new Set(['case_library.md'])
 
-/** 知识库根：<pkg>/skills/yi-divination/references（与 bundledSkillDir 同源）。 */
+/**
+ * 知识库文件 → Yan 资源句柄（`resource:<id>`）。
+ *
+ * 为什么要有这一层：Yan 的插件资源装在包目录里，**不在模型的工作区内**，
+ * 模型的 `read` 读不到（workspace 沙箱）。所以 `yi_kb` 不只返回 `file:line`，
+ * 还要把「该去 plugins_read_resource 读哪一个 resource」一并交出去。
+ * id 生成规则与 `yan-plugin.json` 的 `resources[].id` **必须同式**
+ * （`scripts/build.mjs` 有双向闸门逐条对账，见 yan-plugin/CHANGELOG.md 304 批）。
+ */
+export function resourceIdFor(rel) {
+  const slug = String(rel)
+    .replace(/\.md$/u, '')
+    .replace(/[^a-zA-Z0-9]+/gu, '-')
+    .replace(/^-+|-+$/gu, '')
+    .toLowerCase()
+  return `resource:kb-${slug}`
+}
+
+/**
+ * 知识库根：<root>/skills/yi-divination/references（与 bundledSkillDir 同源）。
+ *
+ * 305 批修真 bug：旧写法按目录名判定层级（`src` 上一级、`lib` 上两级），
+ * 而共享真源现在放在 `plugins/mcp/`——命中 else 分支后多跳一级到**仓库根**，
+ * 于是 `files_scanned: 0`、检索永远空手（自检 [4] 段当场抓到）。
+ * 统一约定：这几个模块永远位于 `<root>/mcp/` 或 `<root>/src/`，故包根恒为 `..`。
+ */
 export function resolveKbRoot() {
   const moduleDir = dirname(fileURLToPath(import.meta.url))
-  const pkgRoot = basename(moduleDir) === 'src' ? resolve(moduleDir, '..') : resolve(moduleDir, '../..')
-  return join(pkgRoot, 'skills', 'yi-divination', 'references')
+  return join(resolve(moduleDir, '..'), 'skills', 'yi-divination', 'references')
 }
 
 /** 列出可检索的 .md（相对 kbRoot、正斜杠）。case_library.md 永不在列。 */
@@ -195,6 +219,7 @@ export async function searchKb({ query, discipline, limit = 5, maxPerFile = 2, k
       const hit = firstHit ?? sec.lines.find((l) => l.text.trim()) ?? { n: sec.startLine, text: '' }
       matches.push({
         file: rel,
+        resource: resourceIdFor(rel),
         discipline: rel.startsWith('liuyao/') ? 'liuyao' : rel.startsWith('bazi/') ? 'bazi' : 'index',
         title: sec.title,
         line: hit.n,
@@ -235,6 +260,11 @@ export async function runKb(args = {}) {
   })
   return {
     ...value,
-    hint: '按 file:line 用 read 工具读具体节段（不要整篇读）；总路由表在 references/INDEX.md。',
+    // 两个宿主的读法不同，但共用一条提示：DSH 侧直接 read 包内路径，
+    // Yan 侧包资源不在工作区，须走 plugins_read_resource 的 resource 句柄。
+    hint:
+      '按 file:line 只读那一节，不要整篇读；总路由表在 references/INDEX.md。' +
+      'Yan 宿主的包资源不在工作区内，改用每条的 resource 句柄经 plugins_read_resource 读' +
+      '（如 resource:kb-bazi-api-spec）。',
   }
 }
