@@ -1,7 +1,7 @@
 {
  "schema": "yi-liuyao-adjudications/1",
  "discipline": "liuyao",
- "built_at": "2026-10-26T15:28:44",
+ "built_at": "2026-10-27T09:56:10",
  "_comment": "流派裁决表：「与古书吻合」的展开定义。引用任何吻合率须能指回本表行。不改引擎不进评分面不挂门（§176 冻结声明）。状态三值见 builder docstring。",
  "count": 27,
  "entries": [
@@ -526,7 +526,7 @@
    ],
    "engine_position": "双轨均已实装：应期侧=第二八五批应期第3法③支（动忌化退克用+用神静→冲去忌神本支，书证即 parties 反用轨同源）；verdict 侧=第三百批行人归占化退归志层（+1.0 抵回用神化退衰价，检测 step4 details[].change_type，书证即 parties 归期歌诀）。zengshan 50.5→53.4 全额回补（ZD050 凶→吉复位）",
    "engine_anchor": "liuyao/scripts/step5.py 行人区 1a 支（travel_huatui_guizhi）；timing.py 应期第3法③支；案例 zengshan ZD050",
-   "status": "settled",
+   "status": "settled_by_source",
    "note": "dz L1246 全句：「断曰：兄动化退，已有归志，但因戌逢月破，在外诸事未遂，六月可望，后至戌月方回，乃应实破之月也，此乃动破而变日月，岂可谓之退不及也？」wikitext 对应=L612。"
   },
   {

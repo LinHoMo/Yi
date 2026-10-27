@@ -276,7 +276,11 @@ ENTRIES = [
         ],
         "engine_position": "双轨均已实装：应期侧=第二八五批应期第3法③支（动忌化退克用+用神静→冲去忌神本支，书证即 parties 反用轨同源）；verdict 侧=第三百批行人归占化退归志层（+1.0 抵回用神化退衰价，检测 step4 details[].change_type，书证即 parties 归期歌诀）。zengshan 50.5→53.4 全额回补（ZD050 凶→吉复位）",
         "engine_anchor": "liuyao/scripts/step5.py 行人区 1a 支（travel_huatui_guizhi）；timing.py 应期第3法③支；案例 zengshan ZD050",
-        "status": "settled",
+        # 309 批裁定：原值 `settled` 不在本表声明的三值词汇内（文件头明文「状态只有三种，不许含糊」），
+        # 是**词汇漂移**而非第四态。该条目 engine_position 自述「双轨均已实装」——
+        # 通用轨与实案反用轨各自在其书证域内执行，即「照所据书文执行」，故归为 settled_by_source。
+        # 若维护者确要增设第四态，须先改本文件的词汇声明，再回退本行（二选一，不可并存）。
+        "status": "settled_by_source",
         "note": "dz L1246 全句：「断曰：兄动化退，已有归志，但因戌逢月破，在外诸事未遂，六月可望，后至戌月方回，乃应实破之月也，此乃动破而变日月，岂可谓之退不及也？」wikitext 对应=L612。",
     },
     {

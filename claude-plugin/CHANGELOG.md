@@ -4,6 +4,20 @@
 > 共享层的改动（构建、运行时、技能正文、知识库）登记在 `plugins/CHANGELOG.md`，
 > 本卷只记宿主侧那点事。
 
+## 2026-10-27 第三百零九批（claude-plugin）：真机安装验证通过（原「未验证」条款作废）
+
+`claude plugin validate ./claude-plugin` → **√ Validation passed**；
+`plugin marketplace add LinHoMo/yi-plugins` → `plugin install yi@yi-plugins` →
+`claude plugin details yi` 显示 **Skills (1) yi-divination、MCP servers (1) yi**；
+`claude mcp list` 显示 `plugin:yi:yi: node …/src/server.mjs — √ Connected`。
+
+- 补图标 `assets/icon.png`（512×512 PNG，纯标准库生成，3KB），消除 ICON_MISSING 告警。
+- README 补官方要求的一行市场安装命令。
+- **首装是空壳**（Skills 0 / MCP 0）：市场条目写 `path` 指向同仓子目录会被官方静默忽略，
+  已改为独立插件仓 `LinHoMo/yi-claude`（详见 `plugins/CHANGELOG.md` 309 批）。
+
+未做：模型端到端 `tools/call`（非交互模式在本机超时）。
+
 ## 2026-10-27 第三百零六批（claude-plugin）：Claude Code 插件建成（1.0.0）
 
 依托 305 批建成的共享打包层接入第二家新宿主——**本批新增的宿主专属文件只有 3 个**

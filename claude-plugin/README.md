@@ -30,17 +30,19 @@ node plugins/scripts/build.mjs
 claude --plugin-dir ./claude-plugin
 ```
 
-### B. 从 git 市场装
+### B. 从市场装（309 批真机验证通过）
 
 ```bash
-/plugin marketplace add LinHoMo/Yi
-/plugin install yi@<marketplace 名>
+/plugin marketplace add LinHoMo/yi-plugins
+/plugin install yi@yi-plugins
 ```
 
-> ⚠ **远程市场在当前仓库纪律下装不起来**：Claude Code 的市场是 git 仓库，
-> 只会拿到**已提交**的文件，而 `engine/`、`skills/`、`src/` 按仓库纪律不入库。
-> 要开这条通道，需要一条只放构建产物的发行分支（如 `plugins-dist`）——尚未开。
-> 在那之前请走 A。
+发行链：源仓 `LinHoMo/Yi`（产物不入库）→ `plugins/scripts/publish.mjs` 生成发行树
+→ 市场仓 `LinHoMo/yi-plugins` ＋ **独立的 Claude 插件仓 `LinHoMo/yi-claude`**。
+
+> ⚠ 为什么 Claude 要单独一个仓：官方 `marketplace.json` 的插件条目**没有子目录字段**
+> （写 `path` 会被静默忽略），市场仓必须指向「根就是插件」的独立仓库。
+> 309 批前把条目指向同仓子目录，装出来是 Skills 0 / MCP 0 的**空壳**——已改为独立仓。
 
 ### C. 自检
 

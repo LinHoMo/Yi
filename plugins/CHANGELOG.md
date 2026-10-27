@@ -4,6 +4,46 @@
 > 305 批起，各宿主适配器（`dsh-plugin/`、`yan-plugin/`）自身只留宿主专属文件，
 > 共享的运行时、技能正文、构建与自检都归本目录，各宿主卷只记「宿主侧那点事」。
 
+## 2026-10-27 第三百零九批（plugins）：Claude Code 与 Codex **真机安装验证通过**（两条远程通道实测）
+
+本机实际装有 Claude Code 2.1.310 与 Codex CLI 0.164.0，故 306-307 批挂着的
+「五宿主未真机验证」第一次被真正跑掉两条。
+
+### Claude Code（远程市场 → 装 → 起服务，全通）
+
+1. `claude plugin validate ./claude-plugin` → **√ Validation passed**
+   （首跑报 ICON_MISSING 与「README 缺市场安装行」，均已补：512×512 PNG 图标、安装命令行）。
+2. `claude plugin marketplace add LinHoMo/yi-plugins` → √ added。
+3. `claude plugin install yi@yi-plugins` → √ installed。
+4. `claude plugin details yi` → **Skills (1) yi-divination、MCP servers (1) yi**。
+5. `claude mcp list` → `plugin:yi:yi: node …\src\server.mjs — √ Connected`
+   （宿主真的拉起了我们的 MCP 服务并完成握手）。
+
+**途中抓到一个真缺陷（306 批登记的"未验证"正好命中）**：
+首装出来是 **Skills 0 / MCP 0 的空壳**。原因——`marketplace.json` 的插件条目
+**没有子目录字段**：写 `path: "./claude-plugin"` 会被官方**静默忽略**
+（`claude plugin validate` 明确报 `Unknown field 'path'. Claude Code ignores it at load time`），
+于是装的是仓库根。官方模型是「市场仓 → 独立插件仓」，故新建 **`LinHoMo/yi-claude`**，
+市场条目改用 `{ source: 'github', repo: 'LinHoMo/yi-claude' }` 后即通
+（`url` 形式在此版本未被采用，装出来的仍是市场仓本身）。
+
+### Codex（市场 → 装，通；MCP spawn 未实测）
+
+1. `codex plugin marketplace add https://github.com/LinHoMo/yi-plugins` →
+   首跑被宿主**明确拒绝**：`unknown variant ON_FIRST_USE, expected ON_INSTALL or ON_USE`
+   ——我们 `.agents/plugins/marketplace.json` 的 `policy.authentication` 写错了枚举。改 `ON_USE` 后 √ added。
+2. `codex plugin add yi@yi-plugins` → √ installed, enabled 1.0.0，插件根正确指向 `codex-plugin/`
+   （**Codex 支持 `source: local + path` 子目录**，与 Claude 不同）。
+3. `codex mcp get yi` → 条目已注册（command node、args `${CODEX_PLUGIN_ROOT}/src/server.mjs`、enabled）。
+   ⚠ **未实测**：`${CODEX_PLUGIN_ROOT}` 是否在 spawn 时展开、以及模型端到端发起 `tools/call`
+   都没跑（非交互模式在本机沙箱里超时/被拦截）。
+
+### 仍未验证
+
+- Gemini CLI、Yan Agent、DSH 三家：本机无宿主（Gemini 未安装）；Yan 那条只做到
+  「按 Yan 的方式稀疏克隆发行仓」的拉取级验证。
+- Claude 的模型端到端 `tools/call`（非交互 `-p` 在本机超时未完成）。
+
 ## 2026-10-27 第三百零八批（plugins）：新增「对外文书口径声明覆盖门」
 
 - `scripts/selftest.mjs` [7b] 段：**每一份对外文档都必须自带口径声明**

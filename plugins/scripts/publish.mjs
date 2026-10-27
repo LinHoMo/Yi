@@ -32,7 +32,7 @@ const DIST = join(PLUGINS_ROOT, 'dist')
 /** 与 build.mjs 的 ADAPTERS 同序；这里只声明「dist 里要不要、叫什么」。 */
 const ADAPTERS = [
   { id: 'dsh', dir: 'dsh-plugin', install: '`dsh plugin --profile <profile> add "link:./dsh-plugin"`' },
-  { id: 'claude', dir: 'claude-plugin', install: '`/plugin marketplace add LinHoMo/yi-plugins` → `/plugin install yi`（未真机验证）' },
+  { id: 'claude', dir: 'claude-plugin', install: '`/plugin marketplace add LinHoMo/yi-plugins` → `/plugin install yi@yi-plugins`（309 批真机通过）' },
   { id: 'codex', dir: 'codex-plugin', install: '`codex plugins install https://github.com/LinHoMo/yi-plugins` 或登记 .agents/plugins/marketplace.json' },
   { id: 'gemini', dir: 'gemini-plugin', install: '`gemini extensions install https://github.com/LinHoMo/yi-plugins`' },
   { id: 'yan', dir: 'yan-plugin', install: 'Yan 市场添加来源 `https://github.com/LinHoMo/yi-plugins`，稀疏路径填 `yan-plugin`' },
@@ -70,22 +70,24 @@ async function copyPlugin(dir) {
 async function writeRootFiles() {
   await writeFile(join(DIST, 'LICENSE'), await readFile(join(REPO_ROOT, 'LICENSE'), 'utf8'), 'utf8')
 
-  // Claude 市场目录（仓库根）——插件指向同仓子目录。
-  // ⚠ 未真机验证：Claude 的 marketplace.json 能否把 source 指到同仓子目录，
-  //    官方文档示例是「市场仓 → 独立插件仓」。真机跑通前请以 --plugin-dir 为准。
+  // Claude 市场目录（仓库根）。
+  // **309 批真机实测**：marketplace.json 的插件条目**没有子目录字段**——写
+  // `path: "./claude-plugin"` 会被官方静默忽略（`claude plugin validate` 直接报
+  // "Unknown field 'path'. Claude Code ignores it at load time"），装出来的就是
+  // 仓库根，Skills 0 / MCP 0，是个**空壳**。官方模型是「市场仓 → 独立插件仓」，
+  // 故这里指向独立仓 `LinHoMo/yi-claude`（由 `publish.mjs` 的 claude-plugin 内容推送）。
   await mkdir(join(DIST, '.claude-plugin'), { recursive: true })
   await writeFile(
     join(DIST, '.claude-plugin', 'marketplace.json'),
     JSON.stringify(
       {
-        _note: '本目录**未真机验证**：Claude Code 的市场条目通常指向独立插件仓库，此处改为指向同仓子目录，需实测确认。未跑通前请用 claude --plugin-dir ./claude-plugin 本地试装。',
         name: 'yi-plugins',
         owner: { name: 'Yi contributors' },
+        description: 'Yi 术数插件：六爻纳甲与八字四柱的确定性排盘与解读，随包 Python 引擎。',
         plugins: [
           {
             name: 'yi',
-            source: { source: 'url', url: 'https://github.com/LinHoMo/yi-plugins.git' },
-            path: './claude-plugin',
+            source: { source: 'github', repo: 'LinHoMo/yi-claude' },
             description: '六爻纳甲与八字四柱的确定性排盘与解读（随包 Python 引擎）',
             version: '1.0.0',
           },
@@ -109,7 +111,8 @@ async function writeRootFiles() {
           {
             name: 'yi',
             source: { source: 'local', path: './codex-plugin' },
-            policy: { installation: 'AVAILABLE', authentication: 'ON_FIRST_USE' },
+            // 309 批真机实测：Codex 0.164 只接受 ON_INSTALL / ON_USE（写 ON_FIRST_USE 会直接拒绝加载市场）
+            policy: { installation: 'AVAILABLE', authentication: 'ON_USE' },
             category: 'Utilities',
           },
         ],

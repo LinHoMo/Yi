@@ -65,15 +65,15 @@ node plugins/scripts/publish.mjs --check   # 只校验：入口齐备 / 零案�
 
 | 宿主 | 远程 |
 |---|---|
-| Claude Code | `/plugin marketplace add LinHoMo/yi-plugins` → `/plugin install yi`（**未真机验证**，见下） |
+| Claude Code | `/plugin marketplace add LinHoMo/yi-plugins` → `/plugin install yi@yi-plugins`（309 批真机通过；插件内容在独立仓 `LinHoMo/yi-claude`） |
 | Codex | 仓库根 `.agents/plugins/marketplace.json` 已生成，登记后即可装 |
 | Gemini CLI | `gemini extensions install https://github.com/LinHoMo/yi-plugins`（仓库根本身即扩展，入口指进 `gemini-plugin/`） |
 | Yan Agent | 市场添加来源 `https://github.com/LinHoMo/yi-plugins`，稀疏路径填 `yan-plugin` |
 | DSH | 不走 git；用 npm 包或 `dsh plugin add` |
 
-> ⚠ Claude 的 `marketplace.json` 把插件指向**同仓子目录**，而官方示例是
-> 「市场仓 → 独立插件仓」——这条**未真机验证**，未跑通前请用
-> `claude --plugin-dir ./claude-plugin` 本地试装。脚本只生成文件，不 commit、不 push。
+> Claude 的插件内容在**独立仓 `LinHoMo/yi-claude`**：官方 `marketplace.json` 的插件条目
+> 没有子目录字段（写 `path` 被静默忽略），市场仓必须指向「根就是插件」的仓库。
+> 309 批真机跑通（安装后 Skills 1 / MCP 1）。脚本只生成文件，不 commit、不 push。
 
 
 ## 新增一个宿主要做什么

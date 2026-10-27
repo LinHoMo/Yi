@@ -114,9 +114,13 @@ def checks():
     # --- 裁决表/治理图/指纹 ---
     # 304 批改期望 7=5+1+1 → 27=5+1+20：分歧表自 248 批起扩容（新增流派分歧点逐条入册），
     # 旧值属于「登记文本过期」而非读数回归；改值理由登记在 liuyao/docs/CHANGELOG.md 304 批。
-    add("liuyao.adjudications(27=5+1+20)", "188批→304批改期望", lambda t: _adjud_counts(),
-        ("27", "5", "1", "20"))
-    add("liuyao.adjud 状态词汇漂移(settled)", "304批", lambda t: _adjud_unknown(), ("settled",))
+    # 309 批改期望 5→6：原第四态 `settled` 已按三值词汇归位为 settled_by_source
+    # （builder 文件头明文「状态只有三种，不许含糊」，原值属词汇漂移）。
+    add("liuyao.adjudications(27=6+1+20)", "188批→304/309批改期望", lambda t: _adjud_counts(),
+        ("27", "6", "1", "20"))
+    # 309 批：漂移已裁定归零（settled → settled_by_source），期望值转为空串；
+    # 本项继续当哨兵——再冒出词汇表外的状态名仍会判红。
+    add("liuyao.adjud 状态词汇漂移(空)", "304批→309批改期望", lambda t: _adjud_unknown(), ("",))
     # 金标准基线已随结构演进前移（193 批应期窗口键、276 批报告措辞等）；
     # `golden.py verify` 当前输出「与基线指纹一致（机械+措辞均未漂移）」，
     # 说明**盘与金标准一致**，是账台登记值过期，不是回归（308 批定性）。
@@ -247,6 +251,24 @@ def checks():
     # 标题批号必须被至少一条提交信息（全信息体、中文或阿拉伯数字形）提及——
     # 防"写了条目没提交"的半个虚构面（72 型虚构若落在 changelog 上，下轮 quick 即红）。
     # 已知具名历史孤儿：221（误编号案：实体在 8275cef 而信息写 212，勘误文本未入任何信息体）。
+    # 孤儿批次**结案表**（309 批）：batch → 结案依据（真实提交 hash + 为什么机械匹配不到）。
+    # 有提交不等于匹配得上——本表的意义是把「匹配失败的原因」逐条钉死，
+    # 而不是把 11 条当成「没提交」一笔带过（那正是 253 批那类"叙事代替核查"的复辟）。
+    SETTLED_ORPHANS = {
+        221: "提交 8275cef：标题写作『第两百一十二…不，第两百二十一』，**编号后没跟『批』字**，正则匹配不到；实际即 221 的 [24] 活性判据",
+        264: "提交 21990da『第两百六十四～两百六十八批合并入库』：范围简写只匹配到首号",
+        265: "同 21990da（合并入库，范围简写未逐条展开）",
+        266: "同 21990da",
+        267: "同 21990da",
+        268: "同 21990da",
+        297: "提交 e8c12a0『第两百九十七、两百九十八批』：顿号并列只匹配到首号",
+        298: "同 e8c12a0（顿号并列未逐条展开）",
+        317: "提交 71f55ad：提交标 237、changelog 记 317，**编号不一致**，待编号勘误批统一",
+        324: "提交 fbd9e22：提交标 234、changelog 记 324，编号不一致，待统一",
+        325: "提交 b9f49ff：提交标 235、changelog 记 325，编号不一致，待统一",
+    }
+    _ORPHAN_CACHE = {}
+
     def c_registration_orphans(t):
         import re as _re
         import subprocess as _sp
@@ -280,11 +302,23 @@ def checks():
         men = ({parse(x) for x in _re.findall(r"第([零〇一二两三四五六七八九十百千]+)批", body)}
                | {int(x) for x in _re.findall(r"第(\d{1,4})批", body)})
         orph = sorted(h for h in heads if h and h > 175 and h not in men)
+        _ORPHAN_CACHE['orph'] = orph
         return str(len(orph))
+
+    def c_registration_unsettled(t):
+        orph = _ORPHAN_CACHE.get('orph') or c_registration_orphans(t) and _ORPHAN_CACHE['orph']
+        return str(len([h for h in orph if h not in SETTLED_ORPHANS]))
     # 308 批改期望 1 → 11：历史遗留的 10 条孤儿批次（264-268、297、298、317、324、325 等）
     # 属「写了 changelog、提交信息没带批次号」，逐条结案另批；本项的意义是**不得再新增**，
     # 故把期望值抬到当前盘值并立案，新的孤儿仍会判红（理由见 liuyao/docs/CHANGELOG.md 308 批）。
     add("登记×提交在册(11=221+264..325)", "254批→308批改期望（逐条结案另批）", c_registration_orphans, ("11",))
+    # 309 批：孤儿**逐条结案**。查清根因不是"没提交"，而是三种机械匹配失败：
+    #   ① 合并入库用了范围简写「第A～B批」→ 只匹配到首号（264-268 全部落进 21990da）；
+    #   ② 顿号并列「第A、B批」→ 只匹配到首号（297/298 落进 e8c12a0）；
+    #   ③ 提交标题里的编号**没带『批』字**（221 落进 8275cef，写作「第两百一十二…不，第两百二十一」）。
+    # 另有 317/324/325 属**提交编号与 changelog 编号不一致**（提交标 237/234/235），
+    # 已具名登记、待编号勘误批统一。本项断言「**表外不得新增**」，新的未结案孤儿即判红。
+    add("登记×提交 未结案孤儿(0)", "309批（逐条结案表见 SETTLED_ORPHANS）", c_registration_unsettled, ("0",))
 
     # 集合互斥（258 批·铁律三的集合面守卫）：六爻 case_splits 十二集两两零交集＋
     # 八字案例 id 无跨 split 重复。此前八字 tune∩holdout=0 只是叙事，两科皆无断言——
