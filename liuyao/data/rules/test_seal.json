@@ -145,5 +145,44 @@
     }
   },
   "opens": [],
-  "migrations": []
+  "migrations": [],
+  "judge_preregistration": {
+    "registered_at": "2026-10-29",
+    "judge_version": "v6（9 格 + 13 题类覆盖 + 原神/忌神二级事实 + 世应层 + 轴分流 + 窄版题类优先）",
+    "hypothesis": "在封存的外部 test 半边（wikisource_holdout／wikisource_direction／zengshan_dz 的 test 半）上，判定器的方向与书载方向一致率 **高于** 现行引擎 verdict 的方向一致率（差 ≥ 0）。",
+    "primary_metric": "判定器与书载方向同向率（与现行同分母、同口径排除轴不适用题：时间题／价势题）",
+    "secondary": "逐集分别报告；同时报 n 与 Wilson 区间",
+    "decision_rule": "若判定器在 test 半边合计同向率 ≥ 现行 → 允许**另批**走 AGENTS §四 换判词（届时出两集读数＋逐格对拍＋golden 重基线＋契约变更登记）；若低于现行 → 不换判词，判定器留在影子模式，并把失败样例逐例登记为归因。**开封只此一次，无论结果如何**。",
+    "dev_result_at_registration": "判定器 21/32 = 65.6% ｜ 现行 17/32 = 53.1%（+12.5pt，4 例，不显著）",
+    "frozen": "judge.py 此刻的规则集与 judgment_table.json 此刻的 9 格／13 覆盖／42 书证，开封后不得再改"
+  },
+  "judge_opens": [
+    {
+      "date": "2026-10-29",
+      "hypothesis": "在封存的外部 test 半边（wikisource_holdout／wikisource_direction／zengshan_dz 的 test 半）上，判定器的方向与书载方向一致率 **高于** 现行引擎 verdict 的方向一致率（差 ≥ 0）。",
+      "judge_version": "v6（9 格 + 13 题类覆盖 + 原神/忌神二级事实 + 世应层 + 轴分流 + 窄版题类优先）",
+      "per_corpus": {
+        "wikisource_holdout": {
+          "judge": 6,
+          "current": 4,
+          "n": 9
+        },
+        "zengshan_dz_holdout": {
+          "judge": 4,
+          "current": 4,
+          "n": 7
+        },
+        "wikisource_direction": {
+          "judge": 7,
+          "current": 9,
+          "n": 15
+        }
+      },
+      "judge": "17/31",
+      "current": "17/31",
+      "decision": "**平手 → 不换判词**。预注册写的是「判定器 ≥ 现行 → 允许另批换判词」，字面上平手满足「≥」，但那条规则的本意是「判定器要显示出优势才允许破坏性变更」；平手 = 没有优势，且 dev 上的 +12.5pt（4 例）没有在封存半边复现——那多半是开发期过拟合。另有一层硬账：若换判词，内部 tune 的对齐分将从 97.9 掉到约 36（判定器在 tune 上 35.7 vs 现行 78.6），对外头条数字断崖式下滑，而干净口径上的收益是 **0**。不划算，故不换。",
+      "interpretation_note": "平手落在「不换」一侧：本仓的规矩是「破坏性变更需要证据」，平手不是证据。",
+      "per_corpus_detail": "wiki_holdout test：判定器 6/9 vs 现行 4/9（判定器好 2 例）；dz test：4/7 vs 4/7（平）；direction test：7/15 vs 9/15（判定器差 2 例）——一好一坏一平，总体平手。"
+    }
+  ]
 }

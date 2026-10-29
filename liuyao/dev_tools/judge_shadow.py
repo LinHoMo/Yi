@@ -53,15 +53,20 @@ def main() -> int:
     ap.add_argument("--diff", action="store_true", help="只列分歧例")
     ap.add_argument("--dev-only", action="store_true",
                     help="只跑封存册的 dev 半边（判据开发必须在 dev 上做，test 不许看）")
+    ap.add_argument("--half", choices=("dev", "test"), default="dev",
+                    help="跑哪一半（默认 dev；test 半边须凭 --open 一次性开封）")
+    ap.add_argument("--open", action="store_true",
+                    help="正式开封：跑 test 半边并把结果记账进封存册（须先预注册）")
     args = ap.parse_args()
     vmap = json.loads(TABLE.read_text(encoding="utf-8"))["verdict_map"]
     splits = args.split or list(SPLITS)
 
     for split in splits:
         ids = case_runner.load_ids(split)
-        if args.dev_only and split in SEAL_CORPUS:
+        if split in SEAL_CORPUS:
             seal = json.loads(SEAL.read_text(encoding="utf-8"))
-            ids = [i for i in ids if i in set(seal["corpora"][SEAL_CORPUS[split]]["dev"])]
+            half = "test" if (args.half == "test" or args.open) else "dev"
+            ids = [i for i in ids if i in set(seal["corpora"][SEAL_CORPUS[split]][half])]
         by_id = {c["id"]: c for c in case_runner.load_cases()}
         agree = n = 0
         ov_hit = 0
@@ -122,6 +127,60 @@ def main() -> int:
 
     if args.dev_only:
         print("\n（--dev-only：wiki/dz 只跑 dev 半边；test 半边未参与，见 data/rules/test_seal.json）")
+    # ── 正式开封：一次性跑封存的 test 半边并记账 ──
+    if args.open:
+        seal = json.loads(SEAL.read_text(encoding="utf-8"))
+        pre = seal.get("judge_preregistration") or {}
+        if not pre:
+            print("  × 没有预注册：开封前须先在 test_seal.json 的 judge_preregistration 写明假设与判据")
+            return 1
+        if seal.get("judge_opens"):
+            print(f"  × 已经开过卷了（{len(seal['judge_opens'])} 次）：考卷不重复开封")
+            return 1
+        tot_j = tot_c = tot_n = 0
+        per = {}
+        for split in ("wikisource_holdout", "zengshan_dz_holdout", "wikisource_direction"):
+            ids = case_runner.load_ids(split)
+            sc = seal["corpora"][SEAL_CORPUS[split]]
+            ids = [i for i in ids if i in set(sc["test"])]
+            by = {c["id"]: c for c in case_runner.load_cases()}
+            j_hits = c_hits = n = 0
+            for cid in ids:
+                case = by.get(cid)
+                if not case:
+                    continue
+                exp = (case.get("expected") or {}).get("verdict")
+                if not exp:
+                    continue
+                row = case_runner.run_case(case, full=True)
+                jj = judge(row["_full"])
+                if jj.get("direction") is None:
+                    continue
+                cur = _dir_of(row.get("verdict"), vmap)
+                gd = _dir_of(exp, vmap)
+                if gd is None:
+                    continue
+                n += 1
+                j_hits += int(jj["direction"] == gd)
+                c_hits += int(cur == gd)
+            per[split] = {"judge": j_hits, "current": c_hits, "n": n}
+            tot_j += j_hits
+            tot_c += c_hits
+            tot_n += n
+        rec = {"date": __import__("datetime").date.today().isoformat(),
+               "hypothesis": pre.get("hypothesis"), "judge_version": pre.get("judge_version"),
+               "per_corpus": per, "judge": f"{tot_j}/{tot_n}", "current": f"{tot_c}/{tot_n}"}
+        seal.setdefault("judge_opens", []).append(rec)
+        SEAL.write_text(json.dumps(seal, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        print(f"\n══ 一次性开封（test 半边 · 预注册假设已记）══")
+        for k, v in per.items():
+            print(f"  {k:26s} 判定器 {v['judge']}/{v['n']} ｜ 现行 {v['current']}/{v['n']}")
+        print(f"  合计：判定器 {tot_j}/{tot_n} = {tot_j * 100 / max(tot_n, 1):.1f}%"
+              f" ｜ 现行 {tot_c}/{tot_n} = {tot_c * 100 / max(tot_n, 1):.1f}%")
+        print(f"  决策规则：{pre.get('decision_rule')}")
+        print("  · 已记账进 data/rules/test_seal.json（judge_opens）")
+        return 0
+
     print("\n注：以上为**古籍案例对齐**口径，不是现实预测命中率；判定器仍处影子模式，"
           "未参与 verdict 计算（放行须另批走 §四）。")
     return 0

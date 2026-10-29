@@ -1,7 +1,7 @@
 {
   "schema": "yi-judgment-table/1",
   "discipline": "liuyao",
-  "batch": 327,
+  "batch": 328,
   "status": "accepted",
   "sealed": null,
   "_comment": "A3 判定表的机器判据（唯一真值源）。本文件只声明，不接引擎：改成 accepted 并接进 step5 前，必须先由人签 adjudications 四条。改本文件须同批改 docs/JUDGMENT-TABLE.md 与 docs/CHANGELOG.md。",
@@ -983,8 +983,8 @@
       "新增世应层：用神生世/持世（Z12 生世者反得其济）＋反面条款（Z13 忌旺用衰）"
     ],
     "acceptance_criterion": "外部 dev 半边 ≥ 现行引擎（达标：wiki +18.8pt、dz +25.0pt）；内部 tune/holdout 作回归护栏",
-    "verdict": "外部干净集合并 21/32=65.6% vs 现行 17/32=53.1%（+12.5pt，但**不显著**）；内部 tune 35.7 vs 78.6（现行调参集占优）、holdout 63.6 vs 54.5。结论修正：证据基数已从 n=18 扩到 n=32，方向由『判定器更差』变为『判定器更好但不显著』；仍**不换判词**——要么等 n≥60 再验，要么先补齐剩余归因（②九格缺事实、③书内冲突）把差距拉大到显著。",
-    "not_wired_reason": "judge 已接线为 conclusion.judgment（可关），但**尚未取代 verdict**——证据基数不足（见 verdict 字段）",
+    "verdict": "最终结论：**不换判词**。外部干净口径下，判定器与现行引擎在封存 test 半边平手（17/31 vs 17/31）；dev 上的优势未复现，属开发期过拟合。判定表与判定器留在仓里作为已签规格与影子通道，step5 的 verdict 不动。若将来要再议，须**重新采集新案例**做新一轮预注册开封，不能重开这批考卷。",
+    "not_wired_reason": "328 批开封结论：不换（平手）。判定器仅作影子通道存在（conclusion.judgment，可关）。",
     "v4_changes": [
       "覆盖层扩到 13 条：新增合伙（Z14）、讼事（Z17）、婚姻（Z16）三类",
       "Z15 为书证例外（官鬼持世而日月动爻冲克世者反为吉），已登记 exception_not_implemented，未实现"
@@ -1011,7 +1011,20 @@
       "新增事实（不参与判定，只在判断块里报出来）：世受克／用神克世／忌神克世、题类",
       "**已回退的第二个试验**：世受克→不成·中（书证 Z18「诸占最怕克世」）——钉住基线复测 wiki·dev 75.0→41.7、wiki_direction·dev 50.0→35.7，大幅变差 → 回退。底本紧跟着给了反例（Z19「用克世勿作凶看」），且忌神克世在实践中极常见；这条只能进题类覆盖层按题类分别判，不能作通用九格规则"
     ],
-    "baseline_note": "327 批的方法论补丁：**基线会漂**。并行会话当时正在改 liuyao/scripts/evaluate.py（未提交），工作树上的「现行引擎」读数从 7/12 变 6/12。处置：用 `git worktree add /tmp/<名> HEAD --detach` 把基线钉在 HEAD 上量；在钉住的副本上复测，325 批的记录逐位复现（wiki·dev 75.0／direction·dev 50.0）。今后凡做「判定器 vs 现行」的对比，必须在钉住基线上量，否则结论会被别人的在制改动带走。"
+    "baseline_note": "327 批的方法论补丁：**基线会漂**。并行会话当时正在改 liuyao/scripts/evaluate.py（未提交），工作树上的「现行引擎」读数从 7/12 变 6/12。处置：用 `git worktree add /tmp/<名> HEAD --detach` 把基线钉在 HEAD 上量；在钉住的副本上复测，325 批的记录逐位复现（wiki·dev 75.0／direction·dev 50.0）。今后凡做「判定器 vs 现行」的对比，必须在钉住基线上量，否则结论会被别人的在制改动带走。",
+    "sealed_test_open": {
+      "opened_at": "2026-10-29",
+      "preregistered": true,
+      "judge_version": "v6",
+      "result": {
+        "judge": "17/31 = 54.8%",
+        "current": "17/31 = 54.8%",
+        "verdict": "平手"
+      },
+      "decision": "**不换判词**。平手不是证据：dev 上的 +12.5pt（4 例）没有在封存半边复现，属开发期过拟合；且若换，内部 tune 对齐分将从 97.9 掉到约 36，而干净口径收益为 0——断崖换平手，不划算。",
+      "consequence": "判定表（9 格 + 13 覆盖 + 42 书证）作为**已签规格**留在仓里，判定器以 conclusion.judgment 并列存在（可关）；step5 的 verdict 维持现状。这不是「做了一半」，是一次有预注册、有封存、有记账的完整结论：不换。",
+      "cost": "封存的 test 半边已开封一次，工具拒绝二次开封（judge_shadow --open 会红）。"
+    }
   },
   "overlays": [
     {
