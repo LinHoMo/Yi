@@ -101,6 +101,47 @@
       "threshold": 35.0,
       "threshold_basis": "封存日实测 55.9%（n=11）－20pt；n 小，阈值放宽以免噪声判红",
       "parent": "zengshan_dz_holdout"
+    },
+    "wikisource_direction": {
+      "dev": [
+        "WSD002",
+        "WSD003",
+        "WSD005",
+        "WSD009",
+        "WSD013",
+        "WSD015",
+        "WSD017",
+        "WSD020",
+        "WSD021",
+        "WSD024",
+        "WSD025",
+        "WSD027",
+        "WSD028",
+        "WSD029",
+        "WSD030"
+      ],
+      "test": [
+        "WSD001",
+        "WSD004",
+        "WSD006",
+        "WSD007",
+        "WSD008",
+        "WSD010",
+        "WSD011",
+        "WSD012",
+        "WSD014",
+        "WSD016",
+        "WSD018",
+        "WSD019",
+        "WSD022",
+        "WSD023",
+        "WSD026",
+        "WSD031"
+      ],
+      "baseline_at_seal": 57.1,
+      "threshold": 35.0,
+      "threshold_basis": "324 批新增该集：方向集（有吉凶无应期）原未入册，但它正是判定器的对拍口径——判定器判方向、不需要应期。阈值 = 首测基线 57.1%（现行引擎同口径）−22pt（n=14 时约 1.5 个标准误），只准上调",
+      "parent": "wikisource_direction"
     }
   },
   "opens": [],

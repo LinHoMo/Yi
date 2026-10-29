@@ -1,7 +1,7 @@
 {
   "schema": "yi-judgment-table/1",
   "discipline": "liuyao",
-  "batch": 324,
+  "batch": 325,
   "status": "accepted",
   "sealed": null,
   "_comment": "A3 判定表的机器判据（唯一真值源）。本文件只声明，不接引擎：改成 accepted 并接进 step5 前，必须先由人签 adjudications 四条。改本文件须同批改 docs/JUDGMENT-TABLE.md 与 docs/CHANGELOG.md。",
@@ -944,25 +944,36 @@
         "judge": 35.7,
         "current": 78.6,
         "n_expected": 14,
-        "axis_excluded": 6
+        "axis_excluded": 6,
+        "kind": "内部（现行调参集）"
       },
       "holdout": {
         "judge": 63.6,
         "current": 54.5,
         "n_expected": 11,
-        "axis_excluded": 1
+        "axis_excluded": 1,
+        "kind": "内部（现行回归集）"
       },
       "wikisource_dev": {
         "judge": 75.0,
         "current": 58.3,
         "n_expected": 12,
-        "axis_excluded": 4
+        "axis_excluded": 4,
+        "kind": "外部·干净"
       },
       "zengshan_dz_dev": {
         "judge": 83.3,
         "current": 33.3,
         "n_expected": 6,
-        "axis_excluded": 2
+        "axis_excluded": 2,
+        "kind": "外部·干净"
+      },
+      "wikisource_direction_dev": {
+        "judge": 50.0,
+        "current": 57.1,
+        "n_expected": 14,
+        "axis_excluded": 1,
+        "kind": "外部·干净"
       }
     },
     "delta": "v5→v6：窄版题类优先（只对功名/求财/婚姻三类，本类规则未命中即判「待时/未决」）→ holdout 45.5→63.6（超现行 54.5）；tune 42.9→35.7（落后现行 78.6）；外部 dev 两半边不变",
@@ -972,7 +983,7 @@
       "新增世应层：用神生世/持世（Z12 生世者反得其济）＋反面条款（Z13 忌旺用衰）"
     ],
     "acceptance_criterion": "外部 dev 半边 ≥ 现行引擎（达标：wiki +18.8pt、dz +25.0pt）；内部 tune/holdout 作回归护栏",
-    "verdict": "外部 dev 两半边 75.0／83.3（现行 58.3／33.3）；内部 holdout 63.6（超现行 54.5）、tune 35.7（落后现行 78.6）。**证据基数不足以取代 verdict**：干净口径的外部 dev 只有 n=12 与 n=6 两集，而现行引擎的对外头条数字来自 tune/holdout——用 n=18 的干净集去推翻 n=32 的污染集，证据不成比例。下一步应先扩题库（B3）与补齐剩余归因（②九格缺事实、③书内冲突），而不是先换判词。",
+    "verdict": "外部干净集合并 21/32=65.6% vs 现行 17/32=53.1%（+12.5pt，但**不显著**）；内部 tune 35.7 vs 78.6（现行调参集占优）、holdout 63.6 vs 54.5。结论修正：证据基数已从 n=18 扩到 n=32，方向由『判定器更差』变为『判定器更好但不显著』；仍**不换判词**——要么等 n≥60 再验，要么先补齐剩余归因（②九格缺事实、③书内冲突）把差距拉大到显著。",
     "not_wired_reason": "judge 已接线为 conclusion.judgment（可关），但**尚未取代 verdict**——证据基数不足（见 verdict 字段）",
     "v4_changes": [
       "覆盖层扩到 13 条：新增合伙（Z14）、讼事（Z17）、婚姻（Z16）三类",
@@ -987,7 +998,15 @@
     "v6_changes": [
       "窄版题类优先：仅功名（Z3「子孙持世且待时」）、求财（Z4「兄弟持世者难求」）、婚姻（Z16「诸合皆以用神旺者为吉」）三类接管",
       "323 批的全量版题类接管（7 类）实测更差已回退：书的总纲与分类占法是叠加关系，不是替代关系"
-    ]
+    ],
+    "clean_evidence": {
+      "scope": "三个外部 dev 半边合并（wiki_holdout dev 12 + wiki_direction dev 14 + dz dev 6）",
+      "judge": "21/32 = 65.6%",
+      "current": "17/32 = 53.1%",
+      "delta": "+12.5pt（多对 4 例）",
+      "significance": "**不显著**：差 4 例，两 Wilson 区间大幅重叠；方向为正但证据不足以下结论",
+      "why_direction_set_added": "方向集（有吉凶无应期）原未入册，但判定器判的正是方向、不需要应期，故纳为第三个外部集"
+    }
   },
   "overlays": [
     {
