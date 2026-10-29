@@ -15,6 +15,8 @@ scratch/
 
 # 评测生成物（脚本重跑生成，不入库）
 **/data/cases/eval_*.json
+# 337 批 A3-2：生成物统一落 data/cache/（不含案例源与古籍底本，清掉即现场重生）
+**/data/cache/
 check_baseline.json
 
 # 真实应期反馈数据：与古籍案例物理隔离，永不参与调参（不入库）

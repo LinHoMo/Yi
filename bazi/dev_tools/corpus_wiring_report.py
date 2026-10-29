@@ -58,7 +58,7 @@ def walk(node, path=(), out=None):
 
 def reachable():
     """276 盘里可达的索引键集合：调候（月序+日干）与纳音（六十甲子）。"""
-    eo = json.loads((ROOT / "data" / "cases" / "eval_all.json").read_text(encoding="utf-8"))
+    eo = json.loads((ROOT / "data" / "cache" / "eval_all.json").read_text(encoding="utf-8"))
     tiao, nayin = set(), set()
     for charts in (eo.get("engine_output") or {}).values():
         for ch in charts or []:

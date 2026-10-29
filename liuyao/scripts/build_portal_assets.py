@@ -4,7 +4,7 @@
     python scripts/build_portal_assets.py            # 用已有评测结果重建门户
     python scripts/build_portal_assets.py --run-eval # 先跑 evaluate 再重建
 
-分数一律取自 `scripts/evaluate.py --save` 落盘的 data/cases/eval_{tune,holdout}.json，
+分数一律取自 `scripts/evaluate.py --save` 落盘的 data/cache/eval_{tune,holdout}.json，
 **不再手写常量**：上一版把 v8 的 100.0 硬编在脚本里，引擎改了、门户照旧显示满分。
 """
 from __future__ import annotations
@@ -23,8 +23,8 @@ sys.path.insert(0, str(ROOT / "scripts"))
 sys.path.insert(0, str(kernel_dir(__file__)))
 
 OUT_REPORTS = ROOT / "outputs" / "reports"
-EVAL_FILES = {"tune": ROOT / "data" / "cases" / "eval_tune.json",
-              "holdout": ROOT / "data" / "cases" / "eval_holdout.json"}
+EVAL_FILES = {"tune": ROOT / "data" / "cache" / "eval_tune.json",
+              "holdout": ROOT / "data" / "cache" / "eval_holdout.json"}
 SHOWCASE = ("ZS001", "ZS005", "ZS007", "ZS012", "ZS015", "ZS016")
 
 
@@ -38,7 +38,7 @@ def load_eval(split: str) -> dict | None:
 def build_blind() -> dict:
     tune, holdout = load_eval("tune"), load_eval("holdout")
     if not tune:
-        print("× 缺 data/cases/eval_tune.json，先跑：python scripts/evaluate.py --split tune --save")
+        print("× 缺 data/cache/eval_tune.json，先跑：python scripts/evaluate.py --split tune --save")
         return {}
     strict = tune["results"]["strict"]
     disc = tune["results"].get("yingqi_discrimination") or {}

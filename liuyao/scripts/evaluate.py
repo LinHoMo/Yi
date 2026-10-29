@@ -4,7 +4,7 @@
     python scripts/evaluate.py                      # 跑全部合并出分
     python scripts/evaluate.py --split tune
     python scripts/evaluate.py --split holdout --verbose
-    python scripts/evaluate.py --stage score --engine-file data/cases/eval_all.json
+    python scripts/evaluate.py --stage score --engine-file data/cache/eval_all.json
     python scripts/evaluate.py --split wikisource_holdout --yingqi-mode both
 
 口径说明（务必连同分数一起阅读）：
@@ -47,7 +47,7 @@ from timing import relative_window, resolve_case_anchor, date_in_window  # noqa:
 import case_runner  # noqa: E402
 
 CASES = ROOT / "data" / "cases" / "classical_cases.json"
-OUT_DIR = ROOT / "data" / "cases"
+OUT_DIR = ROOT / "data" / "cache"   # 337 批 A3-2：评测生成物统一落 cache/，不再混进案例源目录
 
 DAY_CHARS = EARTHLY_BRANCHES
 # 进正则字符类前必须先 "".join：DAY_CHARS 是 core 的 list，直接插值会把 list 的
@@ -577,7 +577,7 @@ def main() -> int:
     ap.add_argument("--stage", choices=["run", "score", "all"], default="all")
     ap.add_argument("--engine-file", type=Path, help="已有的引擎输出（配合 --stage score）")
     ap.add_argument("--verbose", action="store_true")
-    ap.add_argument("--save", action="store_true", help="写出 JSON 明细到 data/cases/")
+    ap.add_argument("--save", action="store_true", help="写出 JSON 明细到 data/cache/")
     ap.add_argument("--yingqi-mode", choices=["strict", "loose", "both"], default="both",
                     help="应期体检评分模型（strict=精确支命中, loose=区间化命中, both=双列对比）")
     args = ap.parse_args()
@@ -657,6 +657,7 @@ def main() -> int:
     print("提示：本分数衡量与古籍案例要点的一致性，不代表现实预测命中率。")
 
     if args.save:
+        OUT_DIR.mkdir(parents=True, exist_ok=True)
         out = OUT_DIR / f"eval_{label}.json"
         out.write_text(json.dumps({"results": results, "engine_output": engine_out},
                                   ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

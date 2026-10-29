@@ -74,7 +74,7 @@ import chart as chart_mod  # noqa: E402
 
 CASES_PATH = DISC / "data" / "cases" / "bazi_classical_cases.json"
 EXTERNAL_PATH = DISC / "data" / "cases" / "bazi_external_cases.json"
-OUT_DIR = DISC / "data" / "cases"
+OUT_DIR = DISC / "data" / "cache"   # 337 批 A3-2：评测生成物统一落 cache/，不再混进案例源目录
 
 WEIGHTS = {
     "pillars": 24,      # 四柱，每柱 6
@@ -523,7 +523,7 @@ def main() -> int:
     ap.add_argument("--stage", choices=["run", "score", "all"], default="all")
     ap.add_argument("--engine-file", type=Path, help="已有的引擎输出（配合 --stage score）")
     ap.add_argument("--verbose", action="store_true")
-    ap.add_argument("--save", action="store_true", help="写出 JSON 明细到 data/cases/")
+    ap.add_argument("--save", action="store_true", help="写出 JSON 明细到 data/cache/")
     args = ap.parse_args()
 
     if args.cases:

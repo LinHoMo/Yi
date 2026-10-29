@@ -55,10 +55,11 @@ BARE = re.compile(r"(?<![\w/.-])((?:docs|scripts|data|references|dev_tools|core|
 SKIP_MARK = ("<", "…", "...", "http://", "https://")
 # 运行时产物目录：本就不入库，存在性不检查
 RUNTIME_DIRS = ("outputs/", "scratch/", "logs/", "assets/")
-# 评测生成物：.gitignore 已声明「**/data/cases/eval_*.json 脚本重跑生成、不入库」，
+# 评测生成物：.gitignore 已声明「**/data/cache/ 脚本重跑生成、不入库」（337 批 A3-2 起
+# 统一落 data/cache/；旧 `data/cases/` 口径仍认，历史文档里的写法不制造假红）。
 # 代码在运行时真读它（scripts/evaluate.py --engine-file、case_runner 等）。
 # 瘦身清掉盘上生成物后，把它当死链接判红＝把 gitignore 声明的派生物误判成悬空指针。
-GENERATED_ARTIFACT = re.compile(r"(?:^|/)data/cases/eval_[A-Za-z0-9_\-]*\.json$")
+GENERATED_ARTIFACT = re.compile(r"(?:^|/)data/(?:cases|cache)/eval_[A-Za-z0-9_\-]*\.json$")
 # 校勘/对拍衍生件：.gitignore 第 23–30 行声明「**/data/collation/ 不入库」（抓取件与衍生比对件同批定调）。
 # 本器**必须**同步排除——否则脚本重跑生成、被 `git clean -fdX` 清掉之后，
 # 引用它的入库文档会被本门判成死指针（实测 330 批并行清理后即触发）。

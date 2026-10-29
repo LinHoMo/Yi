@@ -149,7 +149,7 @@ def measure(name: str, out: str) -> float | None:
 def eval_metrics(split: str) -> dict:
     """跑一个集合，返回 {avg, top1, rank}（新鲜度守卫与落盘点在内核 gate_kit）。"""
     return _kit_eval_metrics(split, model_key="strict", cwd=ROOT,
-                             eval_file=ROOT / "data" / "cases" / f"eval_{split}.json")
+                             eval_file=ROOT / "data" / "cache" / f"eval_{split}.json")
 
 
 # 本地门户产物，gitignore 的构建物。新克隆里没有 → 版本门跳过并说明，

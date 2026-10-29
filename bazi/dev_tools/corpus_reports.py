@@ -4,7 +4,7 @@
 
 旧口径的缺陷（第一百一十七批按 §四.4 变更）：接线门只拿 `scratch/analyze.json` **一盘**的
 narrate 输出去比语料叶子串，于是「2/302」这类读数其实接近**单盘天花板**——语料里绝大多数条目
-本就不该在这一盘出现，门既证明不了「接上了」，也看不见「接错了」。本器把 `data/cases/eval_all.json`
+本就不该在这一盘出现，门既证明不了「接上了」，也看不见「接错了」。本器把 `data/cache/eval_all.json`
 里 `engine_output` 的全部盘逐条 `analyze → narrate` 拼成并集，覆盖率才有分母意义：
 一条语料在 276 盘里**一次都没出现**，才是真的没接线。
 
@@ -24,12 +24,12 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 sys.path.insert(0, str(ROOT / "core"))
 OUT_DEFAULT = ROOT / "scratch" / "corpus_reports.txt"
-EVAL_ALL = ROOT / "data" / "cases" / "eval_all.json"
+EVAL_ALL = ROOT / "data" / "cache" / "eval_all.json"
 
 
 def ensure_eval_all() -> None:
     """干净树自足（第一百八十四批，与 liuyao 第一百七十六批同族）：
-    eval_all.json 是 gitignored 生成物（`**/data/cases/eval_*.json`），全新克隆上不存在——
+    eval_all.json 是 gitignored 生成物（`**/data/cache/`），全新克隆上不存在——
     本器此前因此只在作者机器可跑，接线门 [8] 在新树必红。修法＝缺件时按 `evaluate.py`
     文档头声明的既有生成路径（`--split all --save`）现做；生成失败仍判红，
     不静默、不回退单盘口径。"""

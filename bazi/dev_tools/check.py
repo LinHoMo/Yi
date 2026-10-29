@@ -186,7 +186,7 @@ def _alignment_floor(baseline: dict, fails: list[str], measured: dict,
                          f"禁止用清空案例集的方式过门")
             print(f"  × {split} n=0 → 无法比对基线")
             continue
-        eval_file = DISC / "data" / "cases" / f"eval_{split}.json"
+        eval_file = DISC / "data" / "cache" / f"eval_{split}.json"
         m = eval_metrics(split, eval_file=eval_file, cwd=DISC, model_key=None)
         if m.get("error"):
             fails.append(f"{split} 评测未跑成：{str(m['error'])[:200]}")
