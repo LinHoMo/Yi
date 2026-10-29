@@ -4,6 +4,20 @@
 > 305 批起，各宿主适配器（`dsh-plugin/`、`yan-plugin/`）自身只留宿主专属文件，
 > 共享的运行时、技能正文、构建与自检都归本目录，各宿主卷只记「宿主侧那点事」。
 
+## 2026-10-29 第三百三十八批（A4-CI）：**CI 四 job 齐备＋五宿主×2 OS 矩阵**
+
+- `.github/workflows/ci.yml` 现有四 job：`root-gates`（331 批 A0-4）、`kernel-sync`
+  （本批：`kernel/sync_kernel.py --check` ＋ `devkit/sync_devkit.py --check`）、
+  `gates`（两科 check.py，保持不动）、`plugin-gates`（本批扩成
+  `{dsh,claude,codex,gemini,yan} × {windows-latest,ubuntu-latest}`）。
+- `plugin-gates` 每格：build once → shared selftest → dsh 格加 `npm run check` →
+  该宿主清单在位断言（dsh 3 项／claude 3 项／codex 3 项／gemini 3 项／yan 4 项）。
+- 本地实跑：`node plugins/scripts/build.mjs` rc=0；`node plugins/scripts/selftest.mjs`
+  全绿（7 段、含负例自证）；`npm --prefix dsh-plugin run check` rc=0；五份清单断言
+  全 rc=0。无 `continue-on-error`。
+- 实跑抓到并修掉一条宿主侧缺陷：DSH `src/index.mjs` 的 CRLF frontmatter 读取
+  （详见 `dsh-plugin/CHANGELOG.md` 同批）。
+
 ## 2026-10-29 第三百三十八批（A4-2）：**六份 CHANGELOG 合并评估——结论：维持现状，不合并**
 
 **性质**：评估（零改动）。读数来源：`scratch/changelog_overlap.py`（一次性器，按「第…批」

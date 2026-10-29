@@ -138,7 +138,8 @@ core/yishu_core   ←（唯一允许方向）—  scripts/*
 
 **结论：八字侧新增欠账 0 条**——这不是"八字干净"的奖状，而是**已按同一套判据问过**的读数。
 六爻侧 7 条里在八字侧没有对应物的两项（1 的 `trigram_interpretation`、7 的 `reasoning_chain`）
-如实标 N/A，不冒充"通过"；三件套同步见第 336 批两份 `docs/CHANGELOG.md`。
+如实标 N/A，不冒充"通过"；三件套同步见第 336 批 `liuyao/docs/CHANGELOG.md` 与
+`bazi/docs/CHANGELOG.md`。
 
 ## §七 变更规程
 

@@ -1,16 +1,13 @@
 {
- "count": 64,
+ "count": 63,
  "by_tier": {
   "tool": 3,
   "ondemand": 12,
   "nightly": 11,
-  "build": 9,
-  "UNCLASSIFIED": 1,
-  "blocking": 28
+  "build": 10,
+  "blocking": 27
  },
- "unclassified": [
-  "build_yiin_cases.py"
- ],
+ "unclassified": [],
  "curated_but_missing": [],
  "tier_link_violations": {
   "blocking_not_referenced": [],
@@ -96,8 +93,8 @@
   },
   {
    "script": "build_yiin_cases.py",
-   "tier": "UNCLASSIFIED",
-   "guards": "",
+   "tier": "build",
+   "guards": "《易隐》dz 底本案例构建（337 批 A5-1 按实登记）",
    "run_by_check_py": false,
    "doc": "从《易隐》殆知阁转录本（data/sources/yiin_dz.dz.txt）抽取完整占例，"
   },
@@ -156,13 +153,6 @@
    "guards": "文档活引用可达",
    "run_by_check_py": true,
    "doc": "文档/注释里的**活引用**必须指向存在的文件（历史登记散文除外）。"
-  },
-  {
-   "script": "check_docs_index.py",
-   "tier": "blocking",
-   "guards": "文档索引完整性：DOCS.md 覆盖全部 .md 且路径可达（[36]；330 批新增）",
-   "run_by_check_py": true,
-   "doc": "文档索引完整性门（第三百三十批）：`DOCS.md` 必须与仓里的实际文档对得上。"
   },
   {
    "script": "check_fangwei.py",

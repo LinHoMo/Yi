@@ -1,6 +1,6 @@
 # 治理地图（GOVERNANCE.md · 第一百九十四批）
 
-> 存在理由：两科 dev_tools 已 79 个脚本（六爻 45／八字 34），「门禁守门禁」的膨胀与
+> 存在理由：两科 dev_tools 已 106 个脚本（六爻 63／八字 43，第 339 批实跑），「门禁守门禁」的膨胀与
 > 「哪些门还在干活」的不可见同时发生。本文件＋机器图 `*/docs/GOVERNANCE-MAP.json`
 > （由 `liuyao/dev_tools/governance_map.py` 生成，`--strict` 可挂 CI）把每个脚本
 > 的档位与守护对象显名化。**本批只出地图，一删一并不做**；降档/删除逐批走 §四 验收。
@@ -18,14 +18,30 @@
 | **build** | 语料/案例构建管道（产物进 data/，重建可复现） | 不设降档；改管道＝改数据口径，按 §四.4 登记 |
 | **tool** | 开发辅助（无守护对象） | —— |
 
-## 当前分布（第两百四十四批重放；首扫见 194 批）
+## 当前分布（第三百三十九批 A5-1 实跑重放；首扫见 194 批）
 
 | 科 | 脚本 | blocking | nightly | ondemand | build | tool | 未分类/幽灵 |
 |---|---|---|---|---|---|---|---|
-| 六爻 | 57 | 24 | 11 | 11 | 8 | 3 | 0 |
-| 八字 | 36 | 25 | 0 | 5 | 4 | 2 | 0 |
+| 六爻 | 63 | 27 | 11 | 12 | 10 | 3 | 0 |
+| 八字 | 43 | 26 | 0 | 7 | 8 | 2 | 0 |
+
+读数取自 `python liuyao/dev_tools/governance_map.py` 的本次实跑（两科 `未分类 []`、
+`表中有序实无 []`），不抄旧快照。八字 43 含 `build_siku_dz.py`（外部三命通会会话
+尚未提交的工作区文件）；该会话提交后数字不变，clean clone 在该提交前会是 42——
+账台按实跑登记并注明这条依赖，不为了对上数而把在盘脚本从地图里藏掉。
+
+**A5-1 存量过档结论（第 339 批）：本批无降档、无删除。** 判据逐条对照 §一 门槛：
+blocking → nightly 须「连续一季 0 判红＋负例自证仍可跑＋CHANGELOG 具名」，本仓没有
+按工具维度的季度判红台账，三项不可机检，故**不降**；ondemand → 删除须「两季 0 使用
+记录＋活引用检查」，同样无台账，故**不删**。本批只做两件不改判据的事：①把 7 个存量
+未分类脚本按服务对象登记（八字 6：`build_dts_cases`/`build_t2s_table`/`build_siku_dz`/
+`fetch_siku_sanming` 归 build，`diff_siku_sanming`/`scan_siku_gaps` 归 ondemand；六爻 1：
+`build_yiin_cases` 归 build）；②删掉 `check_docs_index` 的旧条目（门已上提到
+`devkit/root/`，不再属于六爻 dev_tools）。**降档 ≠ 删除**：本批两者都没动。
 
 账台计数由 `readout_ledger` 首尾行自报（本表为快照）。SKILL 合同路径审计 20/20 亦在账（232 批）。
+墓碑：六爻 `[8][9][10][21]–[25]` 是已下线门的编号，不回填；新门从 `[37]` 续（同文见
+`liuyao/docs/CHANGELOG.md` 第 331–334 批登记）。
 
 > 207 批更正六项 tier 误标（首版人工初判未对照实引用）：bazi 的 corpus×2／verdict_audit／
 > sync×2 实为挂闸执行却标 nightly/ondemand；eval_unique_keys 标 blocking 却从未挂闸；

@@ -5,6 +5,36 @@
 > 按批号/关键词检索见 [`CHANGELOG-HISTORY-INDEX.md`](CHANGELOG-HISTORY-INDEX.md)。
 > 口径同 AGENTS.md §六：归档只搬不改写正文，唯一例外是路径修正——链接要活。
 
+## 2026-10-29 第三百三十九批（八字，A5-1）：**按 GOVERNANCE 五档过存量——本批无降档、无删除**
+
+- 实跑 `python dev_tools/governance_map.py`：八字 **43 脚本｜blocking 26｜nightly 0｜
+  ondemand 7｜build 8｜tool 2｜未分类 0｜表中有序实无 0**（旧快照 36/25/0/5/4/2 已过期）。
+- 登记 6 个存量未分类脚本：`build_dts_cases`/`build_t2s_table`/`build_siku_dz`/
+  `fetch_siku_sanming` 归 build，`diff_siku_sanming`/`scan_siku_gaps` 归 ondemand
+  （后三者属外部三命通会会话，**只登记不改文件**）。
+- **降档/删除判据逐条对照 §一**：blocking→nightly 需连续一季 0 判红＋负例可跑＋CHANGELOG
+  具名，本仓无按工具的季度判红台账；ondemand 删除需两季 0 使用记录＋活引用检查，同样
+  无台账。故本批**不降不删**，只让地图不再报"未分类"。
+- `readout_ledger.py --quick` 同步改期望并注明理由：governance `37→43`（含外部会话的
+  `build_siku_dz.py`，clean clone 在其提交前为 42）、八字案例分母 `53→62`（语料扩样）、
+  `bazi.external n53→n62（33/54）`；`tracked×ignore` 由 9 回 0（9 份历史 wikitext
+  显式 negated，新增抓取件仍不入库）。账台实跑 **bad=0/全账 39**。
+
+## 2026-10-29 第三百三十七批（八字，A3-1/A3-2）：**core 产物显式化 ＋ data/cache 层**
+
+- **A3-1**：`.gitattributes` 给两科 `core/yishu_core/**` 标 `linguist-generated`（D1=C：
+  仍入库，不 gitignore）；`kernel/sync_kernel.py` 新增 `--standalone <科> --out <目录>`，
+  产出 `core＋scripts＋data/rules/golden＋data/*.json` 的独立可拷目录。
+  实测：`python kernel/sync_kernel.py --standalone bazi --out %TEMP%\yi_bz_standalone`
+  rc=0；`python …/scripts/chart.py --help` rc=0 且 cp936 下产物可按 UTF-8 读；
+  负例：手改 `core/yishu_core/runtime.py` → `--check` rc=1 并点名，`--write` 后回绿。
+- **A3-2**：`.gitignore` 加 `**/data/cache/`；`scripts/evaluate.py --save` 改落
+  `data/cache/eval_*.json`；`dev_tools/corpus_reports.py` / `corpus_wiring_report.py` 与
+  八字 `check.py` 的 eval_file 同步改读 cache。**迁移 0 个 / 落空 0 个**（330 批已清空盘上
+  旧产物，本次无存量可迁；改写的是写入点与读取点）。
+  关键验收：清空两科 `data/cache/` 后 `python dev_tools/check.py` 仍 rc=0（现场重生成
+  13 个 eval 文件），`git ls-files '*/data/cache/*'` = 0。
+
 ## 2026-10-29 第三百三十六批（八字，A2-B）：**CHANGELOG 三件套瘦身 ＋ 契约文档修正 ＋ 八字侧欠账审计**
 
 **性质**：docs。零引擎行为、零评分口径、零键面改动。

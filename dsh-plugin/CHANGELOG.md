@@ -16,6 +16,19 @@
 > 无插件自身代码改动）、281→**1.0.3**（随包引擎同步六爻 281 批占差事词典+WS003
 > 校勘）。
 
+## 2026-10-29 第三百三十八批（dsh-plugin，A4-CI）：**verify-in-dsh 的 CRLF 读取端修复＋CI 五宿主矩阵**
+
+**性质**：fix + CI。零工具行为、零 API 冻结面改动；semver 不升（补丁在宿主侧验证链，不在包能力面）。
+
+- **实跑发现的真缺陷**：`npm --prefix dsh-plugin run check` 在 windows 工作树红在
+  `[2] 技能条目形状`，报 `SKILL.md frontmatter 不合法`。根因不是 SKILL 坏了，是
+  `src/index.mjs` 的 `bundledSkillProvider()` 只按 `\n` 找 frontmatter 定界，
+  而 Windows 工作树的 `skills/yi-divination/SKILL.md` 是 CRLF（git 索引是 LF）。
+  修复：读取端先 `.replace(/\r\n/g, '\n')` 再解析；修复后 `verify-in-dsh` 全部通过。
+- **CI**：`plugin-gates` 从 `dsh × 2 OS` 扩成 `{dsh,claude,codex,gemini,yan} × 2 OS`；
+  每格先 `node plugins/scripts/build.mjs` + `node plugins/scripts/selftest.mjs`，
+  dsh 格再跑完整 `npm run check`，五格各自跑一遍**宿主清单断言**（文件在位）。
+
 ## 2026-10-27 第三百零五批（dsh-plugin）：共享打包层收敛（1.0.24，仅构建与产物面变动）
 
 - **本批没有运行时改动**：四工具契约、技能正文、判据知识库内容全部不变，

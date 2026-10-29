@@ -4,7 +4,8 @@
 > **T3 现实预测不可测、不声称**）；治理面（哪些门在守什么）见 [`GOVERNANCE.md`](GOVERNANCE.md)；
 > **全仓文档地图**（每份文档是什么、活文档还是归档）见 [`DOCS.md`](DOCS.md)；
 > **架构整改总方案**（七个架构级问题、理想架构、可分发 TODO 与验收标准）见
-> [`ARCHITECTURE-PLAN.md`](ARCHITECTURE-PLAN.md)。
+> [`ARCHITECTURE-PLAN.md`](ARCHITECTURE-PLAN.md)；
+> **门禁内核与根级门**见 `devkit/`（331–334 批归并，`sync_devkit.py --check` 守同源）。
 
 本仓库只保留两个**相互独立、零耦合**的术数学科，各自携带一套完整可运行的实现：
 

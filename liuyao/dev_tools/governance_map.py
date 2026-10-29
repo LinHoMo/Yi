@@ -76,6 +76,13 @@ CURATED = {
         "build_dts_corpus": ("build", "滴天髓语料构建"),
         "build_tiaohou": ("build", "调候语料构建"),
         "build_tiaohou_cases": ("build", "调候案例构建"),
+        # 337 批 A5-1：把存量未分类项按实登记（不删并不；只让地图不再报"未分类"）
+        "build_dts_cases": ("build", "滴天髓案例构建"),
+        "build_t2s_table": ("build", "繁简对照表构建（t2s_table.json）"),
+        "build_siku_dz": ("build", "四库本转校订件（外部三命通会会话；待该会话提交）"),
+        "fetch_siku_sanming": ("build", "《三命通会》四库本抓取（外部三命通会会话）"),
+        "diff_siku_sanming": ("ondemand", "四库本↔dz 本逐章对拍（外部三命通会会话）"),
+        "scan_siku_gaps": ("ondemand", "四库本缺口扫描（外部三命通会会话）"),
         "__init__": ("tool", "包标记"),
     },
     # ---- liuyao/dev_tools ----
@@ -100,7 +107,8 @@ CURATED = {
         "check_rule_registry": ("blocking", "注册表 verified/impl 指针回验"),
         "check_layer_contract": ("blocking", "分层契约：四段键白名单＋禁边表（[32]；312 批补登记）"),
         "check_judgment_table": ("blocking", "判定表：9 格／书证逐字／覆写表随码动（[33]；314 批新增）"),
-        "check_docs_index": ("blocking", "文档索引完整性：DOCS.md 覆盖全部 .md 且路径可达（[36]；330 批新增）"),
+        # check_docs_index 于 A0-5（331 批）上提到 devkit/root/：不再是六爻 dev_tools 的脚本，
+        # 故本表删条目（"表中有序实无"从此不再报它）；门本身仍在 CI 的 root-gates 里跑。
         "check_test_sentinel": ("blocking", "考卷哨兵：只给红绿／阈值单调／开卷记账（[34]；315 批新增）"),
         "check_source_readings": ("blocking", "书证逐字回验（含代码注释）"),
         "check_verdict_external": ("blocking", "结构层断语外置审计（210 判语族 LOCK=0；215 扩 advisory 语族同锁，抓到过迁移错节 bug）"),
@@ -123,6 +131,7 @@ CURATED = {
         "build_use_god_rules": ("build", "用神法则表构建"),
         "build_usegod_position": ("build", "用神位置表构建"),
         "build_yingqi_set": ("build", "应期基准集构建"),
+        "build_yiin_cases": ("build", "《易隐》dz 底本案例构建（337 批 A5-1 按实登记）"),
         "build_zengshan_dz_cases": ("build", "dz 底本案例构建（八道门）"),
         "ablation": ("ondemand", "规则消融台架（182 批/186 扫掠，配对 McNemar）"),
         "abstain_report": ("ondemand", "弃权分型读数（191 批结案器）"),

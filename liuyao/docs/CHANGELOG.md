@@ -1,5 +1,32 @@
 # 六爻 CHANGELOG
 
+## 2026-10-29 第三百三十九批（六爻，A5-1）：**按 GOVERNANCE 五档过存量＋账台期望同步**
+
+- 实跑 `python dev_tools/governance_map.py`：六爻 **63 脚本｜blocking 27｜nightly 11｜
+  ondemand 12｜build 10｜tool 3｜未分类 0｜表中有序实无 0**（旧快照 57/24/11/11/8/3 已过期）。
+- 登记 1 个存量未分类脚本 `build_yiin_cases`（build，《易隐》dz 底本案例构建）；
+  删除 `check_docs_index` 旧条目（331 批 A0-5 已把该门移到 `devkit/root/`）。
+- **降档/删除**：逐条对照 §一 门槛后**本批不降不删**——blocking 降 nightly 需连续一季
+  0 判红＋负例可跑＋CHANGELOG 具名，本仓无按工具的季度台账；ondemand 删除需两季 0
+  使用记录，同样无台账。降档只改调用频率、不改判据；本批连频率也没动。
+- `readout_ledger.py --quick` 同步改期望并注明理由：governance 六爻 blocking `28→27`
+  （[36] 上提）、`liuyao.wikisource` 与 `wiki top1/top3` 按 315 封存后口径更新
+  （69.8/29.5/2.16、29.5/59.1；旧 308 登记值属"文本过期"非引擎回归）、
+  `tracked×ignore` 由 9 回 0（9 份历史 wikitext 显式 negated）。账台 **bad=0/全账 39**。
+- 墓碑句（A5-1 要求）：**六爻 `[8][9][10][21]–[25]` 是已下线门的墓碑，不回填；新门从 [37] 续。**
+
+## 2026-10-29 第三百三十七批（六爻，A3-1/A3-2）：**core 产物显式化 ＋ data/cache 层**
+
+- **A3-1**：`.gitattributes` 给 `liuyao/core/yishu_core/**` 标 `linguist-generated`（D1=C）；
+  `kernel/sync_kernel.py --standalone liuyao --out %TEMP%\yi_ly_standalone` rc=0，
+  `python …/scripts/chart.py --help` rc=0；负例：手改 core 产物 → `--check` rc=1 并点名。
+- **A3-2**：生成物统一改落 `data/cache/`：`scripts/evaluate.py --save`（OUT_DIR）、
+  `scripts/build_portal_assets.py`（EVAL_FILES）、`dev_tools/check.py` 的 eval_file；
+  `.gitignore` 加 `**/data/cache/`；`check_doc_refs` 的 GENERATED_ARTIFACT 同时认
+  `data/cases/` 与 `data/cache/`（历史文档不造假红）。
+  **迁移 0 个 / 落空 0 个**（330 批已清空旧产物）；清空 `data/cache/` 后
+  `python dev_tools/check.py` 仍 rc=0（现场重生成 10 个 eval 文件）。
+
 ## 2026-10-29 第三百三十六批（六爻侧，A2-B）：**CONTRACT §二-bis／路径修正／八字欠账审计（键面未改）**
 
 **性质**：docs（六爻侧只受契约文档正文影响）。零引擎行为、零键面、零禁边改动。

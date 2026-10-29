@@ -73,9 +73,10 @@ def checks():
         s = sh(["scripts/evaluate.py", "--split", "wikisource_holdout"])
         return (grab(s, r"平均分 = ([0-9.]+)%"), grab(s, r"strict top-1 命中 ([0-9.]+)%"),
                 grab(s, r"平均排在第 ([0-9.]+) 位"))
-    # 308 批改期望（理由：246/247 批的引擎改进已登记，读数随之抬升；旧值属"登记文本过期"而非回归）
-    add("liuyao.wikisource(75.8/31.8/2.03)", "181批→308批改期望", c_wiki,
-        ("75.8", "31.8", "2.03"))
+    # 339 批 A5-1 实跑改期望（理由：315 批 test 半封存后外集组成/分母变了，308 批登记值过期；
+    # 这是"登记文本过期"而非 308→339 的引擎回归——两科 check.py 的 [7] 同期仍全绿）。
+    add("liuyao.wikisource(69.8/29.5/2.16)", "181批→308批→339批改期望（315 封存后口径）", c_wiki,
+        ("69.8", "29.5", "2.16"))
 
     def c_dz(t):
         s = sh(["scripts/evaluate.py", "--split", "zengshan_dz_holdout"])
@@ -89,7 +90,8 @@ def checks():
         t1 = re.search(r"^\s+1\s+(\d+)/(\d+) =\s*([\d.]+)%", blk, re.M)
         t3 = re.search(r"^\s+3\s+(\d+)/(\d+) =\s*([\d.]+)%", blk, re.M)
         return ((t1.group(3), t3.group(3)) if t1 and t3 else (None, None))
-    add("liuyao.wiki top1/top3(31.8/61.4)", "181/199批→308批改期望", c_window2, ("31.8", "61.4"))
+    add("liuyao.wiki top1/top3(29.5/59.1)", "181/199批→308批→339批改期望（315 封存后口径）",
+        c_window2, ("29.5", "59.1"))
 
     def c_baselines(t):
         s = sh(["dev_tools/baselines.py"])
@@ -128,7 +130,11 @@ def checks():
         ("6f707fbad75b2a1b", "405bc8e03a6a99e0"))
     add("bazi.golden(fda7/3512)", "176批前→308批改期望", lambda t: _golden("bazi"),
         ("fda7482656967518", "3512deff79fa1f72"))
-    add("governance(63/37, blk 28/26)", "194批（312 补 310；315 补 314/315 两门；317 补 judge_shadow；329 补 fetch_zengshan_dz_cases；330 补 check_docs_index → 六爻 62→63、blk 27→28）", lambda t: _gov_counts(), ("63", "37", "28", "26"))
+    add("governance(63/43, blk 27/26)",
+        "194批（312 补 310；315 补 314/315 两门；317 补 judge_shadow；329 补 fetch_zengshan_dz_cases；"
+        "331 批 check_docs_index 上提到 devkit/root → 六爻 blk 28→27、脚本仍 63；"
+        "339 批 A5-1 按实登记 7 个存量未分类脚本 → 八字 37→43）",
+        lambda t: _gov_counts(), ("63", "43", "27", "26"))
 
     # 案例分母（234 批）：账台钉率也钉分母——删/添一例而率恰不动时，分母行会红。
     def c_case_denoms(t):
@@ -150,7 +156,8 @@ def checks():
         from collections import Counter
         c = Counter(x.get("split") for x in cc)
         return (str(c["tune"]), str(c["holdout"]), str(len(ex.get("cases") or ex)))
-    add("八字案例分母(60/278/53)", "234批", c_bazi_denoms, ("60", "278", "53"))
+    add("八字案例分母(60/278/62)", "234批；339 批实跑 53→62（326/329 批语料扩样后外部集 +9 例）",
+        c_bazi_denoms, ("60", "278", "62"))
 
     # 头牌值在位性（235 批）：现状文档（README×2/CAPABILITY/GOVERNANCE）必须各含每个
     # 主读数**至少一处**——文档被改回旧值（176 批 97.3 事故族）时现值消失即红。
@@ -395,7 +402,8 @@ def checks():
         n = re.search(r"运行 (\d+) 例（external_holdout", s)
         sw = re.search(r"强弱对齐（external_holdout · report-only，不设门槛、非命中率）：(\d+)/(\d+)", s)
         return ((n.group(1), sw.group(1), sw.group(2)) if n and sw else (None,) * 3)
-    add("bazi.external(n53 强弱30/45 report-only)", "bazi README/160批起", c_bazi_ext, ("53", "30", "45"))
+    add("bazi.external(n62 强弱33/54 report-only)",
+        "bazi README/160批起；339 批实跑 53→62（外部集扩样后同步）", c_bazi_ext, ("62", "33", "54"))
 
     def c_bazi_base(t):
         s = sh(["dev_tools/baselines.py", "--split", "holdout"], cwd=ROOT / "bazi")
@@ -602,11 +610,11 @@ def _gov_counts():
     return ((l.group(1), b.group(1), l.group(2), b.group(2)) if l and b else (None,) * 4)
 
 
-QUICK_SKIP = {"liuyao.wiki top1/top3(27.3/52.3)", "liuyao.baselines 用神18.2/日辰4.5",
+QUICK_SKIP = {"liuyao.wiki top1/top3(29.5/59.1)", "liuyao.baselines 用神18.2/日辰4.5",
               "bazi(tiaohou96.2 pattern80.6 常数从100 b42c0)",
               "liuyao.collate(卦面0/47 判词1/37)",
               "bazi.holdout 分维(213/213×3 51/53 29/36 13/15)",
-              "bazi.external(n53 强弱30/45 report-only)"}
+              "bazi.external(n62 强弱33/54 report-only)"}
 
 
 def run(quick: bool) -> int:

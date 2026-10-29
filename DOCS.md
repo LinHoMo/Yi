@@ -71,13 +71,15 @@
 | `liuyao/references/source_ledger.md` | 六爻书源台账（可得性与出处状态） | 活文档 |
 | `liuyao/references/odd_questions.md` | 奇问杂占读法（问得怪、问得虚） | 活文档 |
 
-## 四、八字（`bazi/`，13 份）
+## 四、八字（`bazi/`，15 份）
 
 | 文件 | 一句话 | 状态 |
 |---|---|---|
 | `bazi/SKILL.md` | 八字科宿主模型操作合同 | 活文档 |
 | `bazi/README.md` | 八字科说明与读数表 | 活文档 |
-| `bazi/docs/CHANGELOG.md` | 八字批次流水 | 活文档 |
+| `bazi/docs/CHANGELOG.md` | 八字批次流水，**只保留最近窗口**（2026-10-27 起） | 活文档 |
+| `bazi/docs/CHANGELOG-ARCHIVE.md` | 更早全文（336 批归档，原文 2500 行**一字未删**） | 归档留证 |
+| `bazi/docs/CHANGELOG-HISTORY-INDEX.md` | 归档 71 节的逐节一句话索引 | 历史索引 |
 | `bazi/docs/EVAL-PLAN.md` | 八字案例评测方案（分维与门槛的出处） | 活文档 |
 | `bazi/docs/SANMING-SIKU-COLLATION.md` | 《三命通会》两转录渠道对拍报告 | 归档留证 |
 | `bazi/references/bazi_liuqin_gongwei.md` | 六亲·家宅·家人读法 | 活文档 |

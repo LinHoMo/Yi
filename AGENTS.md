@@ -62,23 +62,32 @@
 Yi/
 ├── AGENTS.md            # 本文件：项目级铁律（贡献者读）
 ├── CONTRACT.md          # 四段契约：chart→analyze→narrate→render 的判据本体（310 批重建）
-├── kernel/              # 内核单一真源（316 批起）：common/ 两科共用 + variants/<名>.<科>.py 在册分叉
+├── kernel/              # 引擎内核单一真源（316 批起）：common/ 两科共用 + variants/<名>.<科>.py 在册分叉
+├── devkit/              # **门禁内核**单一真源（331–334 批）：shared/ 11 共享件 + variants/ 4 变体；
+│                        #   root/ 根级门（不分发）；sync_devkit.py --write/--check；handoff/ 不入库
 ├── liuyao/              # 六爻（独立）
 │   ├── core/yishu_core/ # **产物**：由 kernel/sync_kernel.py 生成，勿手改
 │   ├── scripts/ data/ references/ dev_tools/ docs/ tests/
 │   └── README.md  SKILL.md
-├── bazi/                # 八字（独立，暂无 tests/，回归走 dev_tools/check.py）
+├── bazi/                # 八字（独立）
 │   ├── core/yishu_core/ # **产物**：同上（316 批起不再携带卦辞/纳甲/历法核对三个六爻专用模块）
-│   ├── scripts/ data/ references/ dev_tools/ docs/
+│   ├── scripts/ data/ references/ dev_tools/ docs/ tests/   # tests/ 335 批补建（smoke+regression）
 │   └── README.md  SKILL.md
 └── dsh-plugin/          # DSH 插件（Node 半，独立于两科；契约见下）
 ```
 
-依赖方向单向：`<科>/scripts → <科>/core`。**两科之间禁止任何相互 import**，也不存在
-合参层（`synthesis` 已移除且不得复活）。两科内核副本文件名相同、内容各自演进——这是
-"零耦合、各自可独立运行"的刻意结果，不是待修的重复。
+依赖方向单向：`<科>/scripts → <科>/core`（门禁侧 `<科>/dev_tools → devkit/shared` 同理）。
+**两科之间禁止任何相互 import**，也不存在合参层（`synthesis` 已移除且不得复活）。
+两科 `core/` 与 `dev_tools/` 里的共享件都是**生成产物**（316／334 批起）——手改即被
+`[35]`／`[37]` 字节比对判红；改内核改 `kernel/`，改共享门改 `devkit/shared/`，再跑
+`--write`。这是"零耦合、各自可独立运行"的刻意结果，不是待修的重复。
 
-**文档地图（第三百三十批新增）**：根 `DOCS.md` 是全仓 52 份 Markdown 的总索引——
+**门禁内核真源（第三百三十四批）**：11 个同名门/器已归并——7 个进 `devkit/shared/`
+单一真源，4 个因两科逻辑不同按 kernel 变体范式登记（`devkit/MANIFEST.json` 的
+`variants` ＋ `variant_reasons`）。`data/cache/`（337 批）收所有评测/构建生成物，
+整目录 gitignore，清掉即由脚本现场重生。
+
+**文档地图（第三百三十批新增）**：根 `DOCS.md` 是全仓 55 份 Markdown 的总索引——
 每份文档一句话职责 ＋ 状态（活文档／生成物／归档留证／历史索引）＋ 三条阅读路径。
 **新增文档必须同批在 `DOCS.md` 登记一行**，不登记等于没有；文档转归档只搬不改写正文
 （唯一例外是路径修正——链接要活）。

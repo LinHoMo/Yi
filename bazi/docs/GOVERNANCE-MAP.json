@@ -2,19 +2,11 @@
  "count": 43,
  "by_tier": {
   "tool": 2,
-  "ondemand": 5,
-  "build": 4,
-  "UNCLASSIFIED": 6,
+  "ondemand": 7,
+  "build": 8,
   "blocking": 26
  },
- "unclassified": [
-  "build_dts_cases.py",
-  "build_siku_dz.py",
-  "build_t2s_table.py",
-  "diff_siku_sanming.py",
-  "fetch_siku_sanming.py",
-  "scan_siku_gaps.py"
- ],
+ "unclassified": [],
  "curated_but_missing": [],
  "tier_link_violations": {
   "blocking_not_referenced": [],
@@ -60,8 +52,8 @@
   },
   {
    "script": "build_dts_cases.py",
-   "tier": "UNCLASSIFIED",
-   "guards": "",
+   "tier": "build",
+   "guards": "滴天髓案例构建",
    "run_by_check_py": false,
    "doc": "从《滴天髓阐微》（维基文库本）抽「日主强弱有**显式标注**」的命例，"
   },
@@ -74,15 +66,15 @@
   },
   {
    "script": "build_siku_dz.py",
-   "tier": "UNCLASSIFIED",
-   "guards": "",
+   "tier": "build",
+   "guards": "四库本转校订件（外部三命通会会话；待该会话提交）",
    "run_by_check_py": false,
    "doc": "把维基文库转写件规范化为**校订件**形态：`*_siku.dz.txt` ＋ `*_siku.provenance.json`。"
   },
   {
    "script": "build_t2s_table.py",
-   "tier": "UNCLASSIFIED",
-   "guards": "",
+   "tier": "build",
+   "guards": "繁简对照表构建（t2s_table.json）",
    "run_by_check_py": false,
    "doc": "生成繁简字表 `dev_tools/t2s_table.json`（四库本繁体 → dz 本简体字形）。"
   },
@@ -242,8 +234,8 @@
   },
   {
    "script": "diff_siku_sanming.py",
-   "tier": "UNCLASSIFIED",
-   "guards": "",
+   "tier": "ondemand",
+   "guards": "四库本↔dz 本逐章对拍（外部三命通会会话）",
    "run_by_check_py": false,
    "doc": "《三命通会》两转录渠道内容级对拍：四库本（维基文库逐卷） vs 殆知阁本（dz）。"
   },
@@ -277,8 +269,8 @@
   },
   {
    "script": "fetch_siku_sanming.py",
-   "tier": "UNCLASSIFIED",
-   "guards": "",
+   "tier": "build",
+   "guards": "《三命通会》四库本抓取（外部三命通会会话）",
    "run_by_check_py": false,
    "doc": "抓取维基文库《四庫全書本·三命通會》卷一–卷十二原文，落盘为新底本。"
   },
@@ -298,8 +290,8 @@
   },
   {
    "script": "scan_siku_gaps.py",
-   "tier": "UNCLASSIFIED",
-   "guards": "",
+   "tier": "ondemand",
+   "guards": "四库本缺口扫描（外部三命通会会话）",
    "run_by_check_py": false,
    "doc": "《三命通会》两转录渠道的**全量**缺失扫描（第三百二十八批）。"
   },

@@ -405,6 +405,37 @@ node plugins/scripts/build.mjs
 > 每张卡自含：阶段 / 波次 / 批次 / 独占写域 / 依赖 / 步骤 / 验收 / 交付 / 禁止。
 > 派发时把卡片原文整段粘进 §六 的提示词即可。
 
+### 完成台账（2026-10-29 单 Agent 串行收口；批次 × 提交不变量见 `git log`）
+
+| 卡 | 状态 | 批次 | 提交（短 hash） |
+|---|---|---|---|
+| A0-0 | ✅ 已完成 | 331 | `96ddd2b` |
+| A0-1 | ✅ 已完成 | 331 | `209cd24` |
+| A0-2 | ✅ 已完成（上线恰判红四处） | 331 | `b8bbfbb` |
+| A0-3 | ✅ 已完成（四处改指 `<科>/docs/`） | 331 | `7f38f4c` |
+| A0-5 | ✅ 已完成（[36] 上提，编号空出） | 331 | `fe7b5bd` |
+| A0-4 | ✅ 已完成（`root-gates` job） | 331 | `623a05f` |
+| A1-1-01/02/03 | ✅ 已完成（L0 三件逐字节同源） | 334 | `a1e68f2` |
+| A1-1-04…11 | ✅ 已完成（L1/L2：7 单源＋4 变体） | 332–334 | `377252f` |
+| A1-2 | ✅ 已完成（两科挂 [37]） | 334 | `7b5ffd7` |
+| A1-3 | ✅ 已完成（11 共享件＋4 变体＋8 门编号） | 334 | `7b5ffd7` |
+| A2-A | ✅ 已完成（八字 tests＋[38]） | 335 | `fe4f831` |
+| A2-B | ✅ 已完成（三件套＋契约修正＋审计） | 336 | `83133a7` |
+| A3-1 | ✅ 已完成（`linguist-generated`＋`--standalone`） | 337 | `07880d8` |
+| A3-2 | ✅ 已完成（`data/cache/`，清空即重生） | 337 | `28fd659` |
+| A4-CI | ✅ 已完成（四 job＋五宿主×2 OS） | 338 | `be60113` |
+| A4-2 | ✅ 已完成（10 批/最大重叠 2，维持现状） | 338 | `226531c` |
+| A5-1 | ✅ 已完成（未分类清零；不降不删；墓碑句） | 339 | 见收口提交 |
+| A6-INT | ✅ 已完成（本表＋验证链＋DOCS 合入） | — | 见收口提交 |
+
+**执行方式偏差（如实登记）**：本方案假定 25 个 Agent 各开 worktree；本收口由
+**单 Agent 串行**完成，因此没有 25 条 `arch/*` 分支，改为**主工作区逐批提交**
+（每卡仍按批次号与独占写域落盘；外部三命通会会话的 7 个路径全程未改、未替它提交）。
+A1-1 的 4 个逻辑不同项按 kernel 变体范式登记，而不是硬合成一份——理由见
+`devkit/MANIFEST.json` 的 `variant_reasons`。A1-1 期间为让 `sync_devkit --write` 认得
+新件，MANIFEST 的 `files.shared` 随归并逐步追加（本应由 A1-3 独占，串行模式下合并到同一执行者，
+最终由 A1-3 复核为 11 项）。
+
 ### 通用契约：每个执行 Agent 必守（不分批、不分卡）
 
 1. **改动范围纪律**：改引擎/推演逻辑必须两集（tune / holdout）分别出分（AGENTS.md §四.1）；
@@ -1091,6 +1122,31 @@ python liuyao/dev_tools/readout_ledger.py --quick   # 项数与实一致
 2. 撤掉负例 → 门回到 rc=0
 3. 命令 + 输出片段写进该批 CHANGELOG
 ```
+
+### 收口实测（2026-10-29，单 Agent 串行收口；逐条对应 V1–V15）
+
+| # | 实测 | 读数 |
+|---|---|---|
+| V1 | 两科 `check.py` | `rc=0` / `rc=0`（liuyao 含 [37]，bazi 含 [37]/[38]） |
+| V2 | `node plugins/scripts/build.mjs` + `selftest.mjs` | `rc=0`；自检 7 段全绿（含负例自证） |
+| V3 | `python devkit/root/check_root_docs.py` | `rc=0`（8 份根级 md，129 条引用，0 死链）；`--selftest` rc=0（4 类负例） |
+| V4 | `python devkit/root/check_docs_index.py` | `rc=0`（55 份文档全部登记可达）；负例（`__probe.md` git add）判红后撤掉回绿 |
+| V5 | `python devkit/sync_devkit.py --check` | `rc=0`（11 共享件 × 2 科）；`--selftest` 6 类负例全抓 |
+| V6 | `python kernel/sync_kernel.py --check` | `rc=0`（17/15 文件＋4 变体）；CI `kernel-sync` job 已挂 |
+| V7 | 契约三件套 | 本轮未改键面/禁边，两科 `check_layer_contract.py --selftest` 均 rc=0；结论行已写进 CONTRACT §六 |
+| V8 | 八字形状 | `tests/smoke+regression` 在册、CHANGELOG 三件套（2500/460/76 行）、§六 八字审计表在册 |
+| V9 | CI 四 job | `root-gates`/`kernel-sync`/`gates`/`plugin-gates`（五宿主 × 2 OS），无 `continue-on-error` |
+| V10 | 治理地图 | `governance_map.py --strict` rc=0（两科未分类 0）；本批不降不删，结论与墓碑句在册 |
+| V11 | 口径 | `selftest.mjs` [7] 段禁语扫描全绿；本轮全部文字用"古籍案例对齐分/非预测命中率" |
+| V12 | 登记 × 提交 | `readout_ledger.py --quick` rc=0（bad=0/全账 39，含"登记×提交在册"一项） |
+| V13 | 并发合规 | 单 Agent 串行（见 §五 完成台账下的偏差登记）；外部三命通会 7 路径未改未提交；`devkit/handoff/` 不入库 |
+| V14 | handoff | 25 张卡＋A6-INT 报告齐备，均在 `devkit/handoff/`（gitignore） |
+| V15 | 集成后全链 | 每 merge 等价动作后均跑两科 `check.py`＋`sync_devkit --check`＋`kernel --check`，最终 rc 全 0 |
+
+**已知欠账（诚实登记）**：`devkit/root/check_batch_num.py` 尚未实现（A6-INT 步骤 4
+的"门尚未就位时先记欠账"）；批次×提交不变量暂由 `readout_ledger` 的
+"登记×提交在册"项守。本项不影响 V12 的现有读数，但若要把它升级成独立门，需另批实现
+（扫描七份 CHANGELOG 的批次号并对 `git log` 逐批回指）。
 
 ---
 

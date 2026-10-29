@@ -26,6 +26,17 @@ check_baseline.json
 # 不入库——校订件 *.dz.txt + *.provenance.json 才是真源。它们常是脚本自身输出目标，
 # 缺席即被 [11] 活引用门误判死链，故既 gitignore 又把 [11]/[14] 扫描范围排除（见两门脚本）。
 **/data/sources/*.wikitext.txt
+# 237 批 tracked×ignore 不变量：下列 9 份 wikitext 是历史已入库底本（不是"忘了排除"），
+# 显式 negated 让账台回到 0；新增抓取件仍按上一行不入库。
+!bazi/data/sources/di-tian-sui-chan-wei.wikitext.txt
+!bazi/data/sources/di-tian-sui.wikitext.txt
+!bazi/data/sources/qiong-tong-bao-jian.wikitext.txt
+!bazi/data/sources/shen-feng-tong-kao.wikitext.txt
+!bazi/data/sources/yuan-hai-zi-ping.wikitext.txt
+!liuyao/data/sources/bushi_zhengzong.wikitext.txt
+!liuyao/data/sources/huangjin_ce.wikitext.txt
+!liuyao/data/sources/huozhulin.wikitext.txt
+!liuyao/data/sources/zengshan_buyi.wikitext.txt
 **/data/sources/*.meta.json
 **/data/**/*_diff.json
 # 转录/对拍产物目录（diff_siku_sanming.py、scan_siku_gaps.py 的输出）：不入库
