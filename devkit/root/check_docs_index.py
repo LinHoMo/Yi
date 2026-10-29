@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
-"""文档索引完整性门（第三百三十批）：`DOCS.md` 必须与仓里的实际文档对得上。
+"""文档索引完整性门（第三百三十批建，第三百三十一批 A0-5 上提到根）。
+
+**迁出登记**：本门第三百三十批建于 `liuyao/dev_tools/check_docs_index.py`（[36]），
+A0-5 把它搬到 `devkit/root/`——因为它守的是**全仓** `DOCS.md`，不是六爻一科；
+留在学科侧会把"跨科索引"挂在单科门禁里，八字侧自然就没有。
+六爻 `check.py` 的 [36] 段随迁出移除，编号空出、**不回填**（A5-1 墓碑口径）。
 
 为什么需要它：330 批新增 `DOCS.md` 当全仓文档地图——但地图自己也会烂：
 新增文档忘了登记、或登记了已删的文件，读者按图去找会扑空，而**没有任何门看得见**。
@@ -10,8 +15,8 @@
 
 只读不改：`DOCS.md` 是索引不是真值源，但**它必须能导航到真值源**。
 
-    python dev_tools/check_docs_index.py
-    python dev_tools/check_docs_index.py --selftest
+    python devkit/root/check_docs_index.py
+    python devkit/root/check_docs_index.py --selftest
 """
 from __future__ import annotations
 
@@ -21,8 +26,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-DISC = Path(__file__).resolve().parents[1]
-ROOT = DISC.parent
+ROOT = Path(__file__).resolve().parents[2]
 INDEX = ROOT / "DOCS.md"
 
 PATH_RE = re.compile(r"`([A-Za-z0-9_./\-]+\.md)`")
@@ -62,11 +66,10 @@ def check(index_text: str | None = None) -> list[str]:
             continue
         if f not in listed:
             problems.append(f"未登记：`{f}` 不在 DOCS.md 里（新增文档必须同批登记）")
-    # 2. 可达（只查仓库内相对路径；像 `docs/CHANGELOG.md` 这类按学科相对写的行会解析不到，按科限定）
+    # 2. 可达：只按仓库根解析。DOCS.md 是全仓索引，第一列路径一律写成仓内全路径
+    #    （`liuyao/docs/CHANGELOG.md` 这种），不再有"按科兜底"——兜底会让漏写前缀的行蒙混过关。
     for p in sorted(listed):
         if (ROOT / p).exists():
-            continue
-        if (DISC / p).exists() or (ROOT / "bazi" / p).exists() or (ROOT / "plugins" / p).exists():
             continue
         problems.append(f"指向不存在的文件：`{p}`")
     return problems
