@@ -56,7 +56,7 @@ node scripts/install-preset.mjs <你的profile>
 
 ### 知识库
 
-`skills/yi-divination/references/` 内含 9 篇判据文档，先从 `INDEX.md` 看该读哪一篇；
+`skills/yi-divination/references/` 内含 13 篇判据文档，先从 `INDEX.md` 看该读哪一篇；
 也可用 `yi_kb` 工具关键词检索定位（返回 文件:行 + 节标题 + 摘录）：
 
 | 学科 | 文档 |
@@ -143,7 +143,7 @@ node scripts/install-preset.mjs <你的profile>
 | 内容 | 解包体积 |
 |---|---|
 | 引擎（core + scripts + data/rules + data/*.json + references + assets，两科，139 文件） | 2.35 MB |
-| 知识库（技能目录下 9 篇判据文档 + SKILL.md + INDEX，11 文件） | 0.17 MB |
+| 知识库（技能目录下 13 篇判据文档 + SKILL.md + INDEX，15 文件） | 0.17 MB |
 | 插件源码（7 文件） | 0.06 MB |
 | 文档与配置（README/SKILL/LICENSE/package.json/patch/preset） | ≈ 0.02 MB |
 | **解包合计** | **2.6 MB** |

@@ -22,9 +22,14 @@
     { "id": "kb-liuyao-pattern-reference", "name": "liuyao/pattern_reference.md", "path": "skills/yi-divination/references/liuyao/pattern_reference.md" },
     { "id": "kb-liuyao-classical-synthesis", "name": "liuyao/classical_synthesis.md", "path": "skills/yi-divination/references/liuyao/classical_synthesis.md" },
     { "id": "kb-liuyao-source-ledger", "name": "liuyao/source_ledger.md", "path": "skills/yi-divination/references/liuyao/source_ledger.md" },
+    { "id": "kb-liuyao-odd-questions", "name": "liuyao/odd_questions.md", "path": "skills/yi-divination/references/liuyao/odd_questions.md" },
     { "id": "kb-bazi-bazi-shishen-terminology", "name": "bazi/bazi_shishen_terminology.md", "path": "skills/yi-divination/references/bazi/bazi_shishen_terminology.md" },
     { "id": "kb-bazi-bazi-nayin-shiyi", "name": "bazi/bazi_nayin_shiyi.md", "path": "skills/yi-divination/references/bazi/bazi_nayin_shiyi.md" },
     { "id": "kb-bazi-bazi-yue-shi-ge", "name": "bazi/bazi_yue_shi_ge.md", "path": "skills/yi-divination/references/bazi/bazi_yue_shi_ge.md" },
+    { "id": "kb-bazi-bazi-tiaohou", "name": "bazi/bazi_tiaohou.md", "path": "skills/yi-divination/references/bazi/bazi_tiaohou.md" },
+    { "id": "kb-bazi-bazi-liuqin-gongwei", "name": "bazi/bazi_liuqin_gongwei.md", "path": "skills/yi-divination/references/bazi/bazi_liuqin_gongwei.md" },
+    { "id": "kb-bazi-bazi-jibing-tizhi", "name": "bazi/bazi_jibing_tizhi.md", "path": "skills/yi-divination/references/bazi/bazi_jibing_tizhi.md" },
+    { "id": "kb-bazi-bazi-qianshi-yanpan", "name": "bazi/bazi_qianshi_yanpan.md", "path": "skills/yi-divination/references/bazi/bazi_qianshi_yanpan.md" },
     { "id": "kb-bazi-api-spec", "name": "bazi/api_spec.md", "path": "skills/yi-divination/references/bazi/api_spec.md" }
   ],
   "mcpServers": [

@@ -1,12 +1,19 @@
 {
- "count": 37,
+ "count": 42,
  "by_tier": {
   "tool": 2,
   "ondemand": 5,
   "build": 4,
+  "UNCLASSIFIED": 5,
   "blocking": 26
  },
- "unclassified": [],
+ "unclassified": [
+  "build_dts_cases.py",
+  "build_t2s_table.py",
+  "diff_siku_sanming.py",
+  "fetch_siku_sanming.py",
+  "scan_siku_gaps.py"
+ ],
  "curated_but_missing": [],
  "tier_link_violations": {
   "blocking_not_referenced": [],
@@ -51,11 +58,25 @@
    "doc": "《穷通宝鉴》四柱命例评测集构建器（一次性数据构建，产物入库、脚本留档可复跑）。"
   },
   {
+   "script": "build_dts_cases.py",
+   "tier": "UNCLASSIFIED",
+   "guards": "",
+   "run_by_check_py": false,
+   "doc": "从《滴天髓阐微》（维基文库本）抽「日主强弱有**显式标注**」的命例，"
+  },
+  {
    "script": "build_dts_corpus.py",
    "tier": "build",
    "guards": "滴天髓语料构建",
    "run_by_check_py": false,
    "doc": "从《滴天髓》书源机械提取引擎所引章节 → bazi/data/ditian_sui.json（引文层）。"
+  },
+  {
+   "script": "build_t2s_table.py",
+   "tier": "UNCLASSIFIED",
+   "guards": "",
+   "run_by_check_py": false,
+   "doc": "生成繁简字表 `dev_tools/t2s_table.json`（四库本繁体 → dz 本简体字形）。"
   },
   {
    "script": "build_tiaohou.py",
@@ -212,6 +233,13 @@
    "doc": "语料接线残差的**归类器**：把 `[8]` 报出的「未进并集」逐条分成四类，防止一个悲观计数被当成结论。"
   },
   {
+   "script": "diff_siku_sanming.py",
+   "tier": "UNCLASSIFIED",
+   "guards": "",
+   "run_by_check_py": false,
+   "doc": "《三命通会》两转录渠道内容级对拍：四库本（维基文库逐卷） vs 殆知阁本（dz）。"
+  },
+  {
    "script": "diff_tiaohou_vs_head.py",
    "tier": "ondemand",
    "guards": "改表前后逐格对拍范式",
@@ -240,6 +268,13 @@
    "doc": "八字科现实反馈通道（#32）：把\"当时断了什么\"与\"后来实际如何\"分两次落盘。"
   },
   {
+   "script": "fetch_siku_sanming.py",
+   "tier": "UNCLASSIFIED",
+   "guards": "",
+   "run_by_check_py": false,
+   "doc": "抓取维基文库《四庫全書本·三命通會》卷一–卷十二原文，落盘为新底本。"
+  },
+  {
    "script": "golden.py",
    "tier": "blocking",
    "guards": "40 例结论级指纹（机械+措辞）漂移看门狗",
@@ -252,6 +287,13 @@
    "guards": "5 例手写出生时刻机械断言",
    "run_by_check_py": true,
    "doc": "八字科机械因子回归用例：固定出生样例 → 断言四柱/强弱/格局/空亡/大运方向/通关关隔。"
+  },
+  {
+   "script": "scan_siku_gaps.py",
+   "tier": "UNCLASSIFIED",
+   "guards": "",
+   "run_by_check_py": false,
+   "doc": "《三命通会》两转录渠道的**全量**缺失扫描（第三百二十八批）。"
   },
   {
    "script": "sync_nayin_engine.py",

@@ -511,17 +511,23 @@ def print_strength_reading(rows: list[dict]) -> None:
 
 
 def main() -> int:
+    global CASES_PATH
     force_utf8_stdio()
     ap = argparse.ArgumentParser(
         description="八字科八字古籍案例对齐评分（非现实预测命中率；方法学见 docs/EVAL-PLAN.md）")
     ap.add_argument("--split", choices=["tune", "holdout", "all", "external_holdout"],
                     default="all")
     ap.add_argument("--ids", nargs="*", help="指定案例 ID，优先于 --split")
+    ap.add_argument("--cases", type=Path,
+                    help="覆盖主案例集路径（自检夹具只走系统临时目录，不得指向 data/cases/）")
     ap.add_argument("--stage", choices=["run", "score", "all"], default="all")
     ap.add_argument("--engine-file", type=Path, help="已有的引擎输出（配合 --stage score）")
     ap.add_argument("--verbose", action="store_true")
     ap.add_argument("--save", action="store_true", help="写出 JSON 明细到 data/cases/")
     args = ap.parse_args()
+
+    if args.cases:
+        CASES_PATH = args.cases.resolve()
 
     external = args.split == "external_holdout"
     ext_store = load_external_store() if external else {}

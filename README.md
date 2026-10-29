@@ -84,7 +84,7 @@ node dsh-plugin/scripts/install-preset.mjs <你的profile>
 | 层 | 机制 | 落点 |
 |---|---|---|
 | 工具 | `ctx.tools.register()` | `yi_liuyao` / `yi_bazi` / `yi_kb` / `yi_report` |
-| 技能 + 知识库 | `ctx.skills.registerProvider()` + `bundledSkillDir` | `dsh-plugin/skills/yi-divination/`（9 篇判据文档） |
+| 技能 + 知识库 | `ctx.skills.registerProvider()` + `bundledSkillDir` | `dsh-plugin/skills/yi-divination/`（13 篇判据文档） |
 | Agent 预设 | `@deepseek-ai/dsh-agent-preset` | `dsh-plugin/presets/yi-divination.yml` |
 
 发布包（`npm pack` 实测）解包 **2.6 MB**、`.tgz` **0.77 MB**；**不含** `data/cases/`（38MB）、

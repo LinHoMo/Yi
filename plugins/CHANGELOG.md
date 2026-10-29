@@ -4,6 +4,82 @@
 > 305 批起，各宿主适配器（`dsh-plugin/`、`yan-plugin/`）自身只留宿主专属文件，
 > 共享的运行时、技能正文、构建与自检都归本目录，各宿主卷只记「宿主侧那点事」。
 
+## 2026-10-29 第三百二十六批（共享层）：**知识库 14 → 15 篇（新增八字调候判据篇）＋ 修正一处名不副实的登记**
+
+**性质**：content（登记表增一条 + 描述修正一条）。运行时、工具名、参数 schema、输出结构**一律未动**——
+1.0 API 冻结面未触碰。
+
+### 一、新增《调候》判据篇
+
+`KB_DOC` 增列 `bazi/bazi_tiaohou.md`：**需要取用神的气候一路（调候）：某月某日干先取什么、次取什么，
+及调候的边界**。
+
+此前该判据**数据在**（`bazi/data/tiaohou_quotes.json` 120 条）、**引擎在**（`analyze` 已出 `tiaohou`
+维度），但**成文判据不在知识库里**——会话中要讲「这个月生人取什么用」，模型没有可依据的成文依据。
+本篇补上这一段，13 条引文全部逐字可回验（`check_source_readings.py --doc` 实测 13/13 命中，0 判红）。
+
+### 二、修正一处名不副实的登记
+
+`bazi/bazi_yue_shi_ge.md` 原登记为「月支与格局」，而该文件实际是**五虎遁／五鼠遁歌诀**
+（推月推时法），与登记描述不符。按现文改登记为「需要核对推月推时：五虎遁（年上起月）、
+五鼠遁（日上起时）歌诀与引擎对源」——**按现文改登记，不按登记改文**。
+
+### 三、宿主侧同步
+
+`yan-plugin/yan-plugin.json` 的 `resources[]` 增登 `kb-bazi-bazi-tiaohou`（Yan 无 `skills/` 目录机制，
+知识库只能靠工具返回 + 资源表，故须逐篇登记）。
+
+`node plugins/scripts/build.mjs && node plugins/scripts/selftest.mjs`：知识库 **15 篇**，
+Yan 资源表双向一致（15 条），负例自证（抽掉一篇即红、多塞一篇即红）仍成立，自检全绿。
+`npm --prefix dsh-plugin run selftest` 亦全绿。
+
+## 2026-10-29 第三百一十九批（plugins）：**知识库 9→13 篇（四篇"读人"文档随包）＋ yi_kb 二字窗打分修正**
+
+**性质**：content＋runtime。1.0 冻结面（四工具名／参数 schema／value 结构／技能条目）未动。
+
+### 一、四篇新判据文档进包
+
+| 文档 | 学科 | 一句话 |
+|---|---|---|
+| `bazi/bazi_liuqin_gongwei.md` | 八字 | 六亲·家宅·家人：宫位与星双参，含不断生死／不数人数／不判离婚的禁句表 |
+| `bazi/bazi_jibing_tizhi.md` | 八字 | 疾病·体质：五行配脏腑、取伤重、虚实、相生亦生病，含不诊断的硬边界 |
+| `bazi/bazi_qianshi_yanpan.md` | 八字 | 前事·验盘：时刻切法、三件事校时辰、已过往运只讲感受层 |
+| `liuyao/odd_questions.md` | 六爻 | 奇问杂占：失联寻宠、怪梦、异象、越界提问，含不可占清单与拒答话术 |
+
+- `scripts/kb-docs.mjs` 登记四条"何时读"；构建后 `references/INDEX.md` 自动重排（13 篇 + INDEX）；
+- `yan-plugin/yan-plugin.json` 的 `resources[]` 同步 10→**14 条**（该清单是手工维护的，
+  漏登记会被自检 [6] 判红——本批已实测双向一致）；
+- 对外文书的篇数同步：`plugins/SKILL.md`、根 `README.md`、`claude-plugin/README.md`、
+  `dsh-plugin/README.md` 由 9 篇改 13 篇（dsh 包体表 11→15 文件）；`mcp/kb.mjs` 头注同步。
+  篇数以 `references/INDEX.md` 为准，此后新增文档须一并回改这几处。
+
+### 二、`yi_kb` 打分修正（五宿主同源）
+
+新文档进包后，DSH 自检 [12] 抓到真缺陷：`世应怎么安` 召不回 `najia_rules.md`。
+
+- **停用表**：22 个疑问／功能二字窗（怎么、什么、如何、是否、可以…）不进召回；
+- **稀有度权重**：`1 + 3*(1 - df/总节数)`，让「世应」这类实词压过「怎么」这类高频词；
+- **对数饱和**：`log2(1+count)` 取代线性封顶，重复出现不再线性加分。
+
+复测：`世应怎么安` 前五含 `najia_rules.md`；`纳甲 装卦 世应` 首位 `najia_rules.md`；
+`用爻→用神` 同义展开仍召回；无关词仍零命中。**只改召回排序，不改返回结构**（仍是
+`{kb,query,terms,expanded,discipline,files_scanned,matches}`）。
+
+### 三、读数（本批实跑）
+
+- `node plugins/scripts/build.mjs` → 知识库 **13 篇 + INDEX**；五宿主 engine／skills／src 全量重发；
+- `node plugins/scripts/selftest.mjs` → **全绿**（含 [1] 逐字节同源、[3] 篇数对账、[6] Yan 双向一致、[7b] 口径声明）；
+- `npm --prefix dsh-plugin run selftest` → **自检全部通过**（[8] 引擎逐文件对拍 145 件、
+  [12] 召回四例、[13] 报告）；
+- 未跑 `publish.mjs`（发行树生成是外部动作，且本机无发布授权）。
+
+### 四、开口
+
+- **知识库篇数在四处硬编码**（本批手工同步）：理想形态是由 `kb-docs.mjs` 生成为常量再注入文书，
+  但四份文书分属不同宿主、格式各异，暂不统一；已在本条写明"以 INDEX 为准"作为口径兜底。
+- **只重建未真机验证**：Claude Code／Codex 上次真机验证在 309 批；本批改动只在 kb 运行时与文档，
+  各宿主 MCP 契约未变，故未重跑远程安装。
+
 ## 2026-10-27 第三百零九批（plugins）：Claude Code 与 Codex **真机安装验证通过**（两条远程通道实测）
 
 本机实际装有 Claude Code 2.1.310 与 Codex CLI 0.164.0，故 306-307 批挂着的

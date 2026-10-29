@@ -13,7 +13,7 @@
 |---|---|---|
 | 工具 | 插件根的 `.mcp.json`（本地 stdio MCP） | `yi_liuyao` / `yi_bazi` / `yi_kb` / `yi_report`（会话里带 `mcp__yi__` 前缀） |
 | 技能 | 插件根的 `skills/<name>/SKILL.md`，按插件名做命名空间 | `skills/yi-divination/SKILL.md` |
-| 知识库 | 同上目录的 `references/`（9 篇判据文档 + INDEX） | `skills/yi-divination/references/` |
+| 知识库 | 同上目录的 `references/`（13 篇判据文档 + INDEX） | `skills/yi-divination/references/` |
 
 **没有**的东西（刻意）：古籍案例库 `case_library.md` 按 AGENTS.md §一.2 铁律二
 **永不随包**——打包层、扫描层、自检层三道闸各排除一次。
