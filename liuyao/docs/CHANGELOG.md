@@ -5,6 +5,29 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-10-29 第三百五十三批（全仓）：**跨科共用契约信封 schema 落地（§3.6 关闭）**
+
+**性质**：schema＋shared gate。零引擎、零数据、零读数改动。
+
+- 新增 `devkit/layer_contract.schema.json`（JSON Schema 2020-12）：约束两科
+  `layer_contract.json` 的顶级信封 `schema/contract/batch/fixtures/stages/edges`，
+  以及 `edges.forbidden[]` 的 `from/to/known/why`；各科 stage 键名仍由各自 JSON 判。
+- `devkit/shared/check_layer_contract.py` 增 `validate_contract_envelope()`
+  （零依赖 JSON Schema 子集：required/type/items/minLength/minItems），
+  `SCHEMA_PATH` 按 `parents[2]/devkit/` 定位；selftest 增 3 类负例
+  （真契约误判／缺 stages／禁边 why 为空）。同时修掉旧 `main()` 里
+  `problems` 先使用后定义、`fixtures` 空时只挂空壳的潜伏 bug。
+- `devkit/sync_devkit.py --write` 分发 11 个共享件；两科
+  `check_layer_contract.py --selftest` 均 rc=0：
+  六爻 chart 7/analyze 15、7 条禁边；八字 chart 9/analyze 26、4 条禁边；
+  两科都打印「信封 schema 通过」。
+- `CONTRACT.md` §四 增信封 schema 段；§七 变更规程增「动顶级结构须同批改 schema
+  并跑 sync_devkit --check」。
+- 347 批 triage 的 §3.6「正式 JSON Schema 未建」由此关闭；schema 是 root 唯一真源，
+  **不增加共享件数**（仍 11 件，不随科分叉）。
+
+分数含义：与古籍案例要点的一致性，不代表现实预测命中率（AGENTS.md §一.3）。
+
 ## 2026-10-29 第三百五十二批（六爻）：**同名 helper 去重（第一批）——`_branch_element`／`get_twelve_growth_stage` 归 util**
 
 **性质**：refactor（行为保持）。零判词、零评分、零读数改动。

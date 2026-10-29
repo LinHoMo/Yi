@@ -40,6 +40,8 @@ from yishu_core.gate_kit import (  # noqa: E402
 )
 
 CONTRACT_PATH = DISC / "data" / "rules" / "layer_contract.json"
+# 353 批：跨科共用信封 schema（root 单一真源；两科 dev_tools 副本按 parents[2] 定位）
+SCHEMA_PATH = Path(__file__).resolve().parents[2] / "devkit" / "layer_contract.schema.json"
 
 # 夹具由契约文件声明（`fixtures`），不在代码里写死：两科共用同一份驱动，
 # 差异只在各自的 layer_contract.json。只跑一种起卦方式会漏掉该方式特有字段。
@@ -111,6 +113,80 @@ def edge_problems(schema: dict) -> tuple[list[str], list[str]]:
     return problems, notes
 
 
+def validate_contract_envelope(data: dict, schema_def: dict) -> list[str]:
+    """353 批：按 `devkit/layer_contract.schema.json` 的required/properties 校验信封。
+
+    零外部依赖：只实现本仓用到的 JSON Schema 子集（required/type/items/minLength/
+    minItems/minProperties）。各科 stage 键名不在信封层，仍由 contract_stage_problems 判。
+    """
+    problems: list[str] = []
+    if not isinstance(data, dict):
+        return ["契约不是 JSON object"]
+    for key in schema_def.get("required", []):
+        if key not in data:
+            problems.append(f"信封缺顶级键 {key}")
+    props = schema_def.get("properties", {})
+
+    def _typed(name: str, value, spec: dict) -> None:
+        t = spec.get("type")
+        if t == "integer" and not isinstance(value, int):
+            problems.append(f"信封 {name} 应为 integer，实得 {type(value).__name__}")
+        elif t == "string" and not isinstance(value, str):
+            problems.append(f"信封 {name} 应为 string，实得 {type(value).__name__}")
+        elif t == "array" and not isinstance(value, list):
+            problems.append(f"信封 {name} 应为 array，实得 {type(value).__name__}")
+        elif t == "object" and not isinstance(value, dict):
+            problems.append(f"信封 {name} 应为 object，实得 {type(value).__name__}")
+        elif t == "boolean" and not isinstance(value, bool):
+            problems.append(f"信封 {name} 应为 boolean，实得 {type(value).__name__}")
+        if isinstance(value, (str, list, dict)) and spec.get("minLength") and len(value) < spec["minLength"]:
+            problems.append(f"信封 {name} 长度 < {spec['minLength']}")
+        if isinstance(value, (str, list, dict)) and spec.get("minItems") and len(value) < spec["minItems"]:
+            problems.append(f"信封 {name} 项数 < {spec['minItems']}")
+
+    for key, spec in props.items():
+        if key in data:
+            _typed(key, data[key], spec)
+
+    fixtures = data.get("fixtures")
+    if isinstance(fixtures, list):
+        for i, fx in enumerate(fixtures):
+            if not isinstance(fx, dict):
+                problems.append(f"信封 fixtures[{i}] 不是 object")
+                continue
+            for key in ("name", "args"):
+                if key not in fx:
+                    problems.append(f"信封 fixtures[{i}] 缺 {key}")
+            if "name" in fx and (not isinstance(fx["name"], str) or not fx["name"].strip()):
+                problems.append(f"信封 fixtures[{i}].name 非空 string")
+            if "args" in fx and not isinstance(fx["args"], list):
+                problems.append(f"信封 fixtures[{i}].args 应为 array")
+
+    stages = data.get("stages")
+    if isinstance(stages, dict) and not stages:
+        problems.append("信封 stages 为空（没有段就没有契约）")
+
+    edges = data.get("edges")
+    if isinstance(edges, dict):
+        forbidden = edges.get("forbidden")
+        if not isinstance(forbidden, list):
+            problems.append("信封 edges.forbidden 应为 array")
+        else:
+            for i, rule in enumerate(forbidden):
+                if not isinstance(rule, dict):
+                    problems.append(f"信封 edges.forbidden[{i}] 不是 object")
+                    continue
+                for key in ("from", "to", "known", "why"):
+                    if key not in rule:
+                        problems.append(f"信封 edges.forbidden[{i}] 缺 {key}")
+                for key in ("from", "to", "why"):
+                    if key in rule and (not isinstance(rule[key], str) or not rule[key].strip()):
+                        problems.append(f"信封 edges.forbidden[{i}].{key} 非空 string")
+                if "known" in rule and not isinstance(rule["known"], bool):
+                    problems.append(f"信封 edges.forbidden[{i}].known 应为 boolean")
+    return problems
+
+
 def selftest() -> list[str]:
     """负例自证（AGENTS.md §四.8）：先证明判据抓得住，再谈它是不是绿的。"""
     problems: list[str] = []
@@ -152,6 +228,24 @@ def selftest() -> list[str]:
     for name, spec_ in (schema.get("stages") or {}).items():
         if not set(spec_.get("required") or ()) <= set(spec_.get("allowed") or ()):
             problems.append(f"契约自身不合规：{name}.required 有键不在 allowed 内")
+
+    # 353 批：信封 schema 负例——真契约放行；缺 stages／禁边 why 为空必须判红
+    try:
+        schema_def = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        schema_def = None
+    if schema_def is not None:
+        if validate_contract_envelope(schema, schema_def):
+            problems.append("信封 schema 自证失败：真契约被误判")
+        broken = json.loads(json.dumps(schema))
+        broken.pop("stages", None)
+        if not validate_contract_envelope(broken, schema_def):
+            problems.append("信封 schema 自证失败：缺 stages 没被抓到")
+        broken = json.loads(json.dumps(schema))
+        if (broken.get("edges") or {}).get("forbidden"):
+            broken["edges"]["forbidden"][0]["why"] = ""
+            if not validate_contract_envelope(broken, schema_def):
+                problems.append("信封 schema 自证失败：禁边 why 为空没被抓到")
     return problems
 
 
@@ -162,17 +256,29 @@ def main() -> int:
                     help="先跑负例自证（8 类），再照常跑实测——与本科其它门的约定一致")
     args = ap.parse_args()
 
+    problems: list[str] = []
     schema = json.loads(CONTRACT_PATH.read_text(encoding="utf-8"))
     if not schema.get("fixtures"):
         problems.append("契约自身不合规：fixtures 为空——没有夹具就没有键面证据")
-    problems: list[str] = []
+    try:
+        schema_def = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        schema_def = None
+        problems.append(f"信封 schema 缺失：{SCHEMA_PATH}（跨科共用契约无 schema）")
+    if schema_def is not None:
+        env_problems = validate_contract_envelope(schema, schema_def)
+        for p in env_problems:
+            print(f"  × {p}")
+        problems.extend(env_problems)
+        if not env_problems:
+            print("  √ 信封 schema 通过（devkit/layer_contract.schema.json）")
 
     if args.selftest:
         own = selftest()
         for p in own:
             print(f"  × {p}")
         if not own:
-            print("  √ selftest：键面（多键/缺键/嵌套/类型/夹具缺失）＋禁边（在册/已还/新增）负例全部抓到")
+            print("  √ selftest：键面（多键/缺键/嵌套/类型/夹具缺失）＋禁边（在册/已还/新增）＋信封 schema 负例全部抓到")
         problems.extend(own)
 
     st_problems, st_notes = stage_problems(schema)

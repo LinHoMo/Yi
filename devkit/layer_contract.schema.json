@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Yi 分层契约信封（跨科共用）",
+  "description": "两科 data/rules/layer_contract.json 的共用信封 schema。只约束契约文件的顶级结构（schema/contract/batch/fixtures/stages/edges）与禁边条目必备字段；各科 stage 键名仍由各自 JSON 的 allowed/required 决定。机器校验在 devkit/shared/check_layer_contract.py 的 validate_contract_envelope()（零外部依赖的最小 JSON Schema 子集）。",
+  "type": "object",
+  "required": ["schema", "contract", "batch", "fixtures", "stages", "edges"],
+  "properties": {
+    "schema": {"type": "integer", "minimum": 1},
+    "contract": {"type": "string", "minLength": 1},
+    "batch": {"type": "integer", "minimum": 1},
+    "fixtures": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "args"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "args": {"type": "array"}
+        }
+      }
+    },
+    "stages": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "allowed": {"type": "array"},
+          "required": {"type": "array"},
+          "nested": {"type": "object"}
+        }
+      }
+    },
+    "edges": {
+      "type": "object",
+      "required": ["forbidden"],
+      "properties": {
+        "forbidden": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["from", "to", "known", "why"],
+            "properties": {
+              "from": {"type": "string", "minLength": 1},
+              "to": {"type": "string", "minLength": 1},
+              "known": {"type": "boolean"},
+              "why": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      }
+    }
+  }
+}

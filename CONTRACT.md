@@ -96,6 +96,12 @@ core/yishu_core   ←（唯一允许方向）—  scripts/*
 | 六爻 | 7 | 15 | `trigram_interpretation` 22 键（analyze 段，350 批迁入）／`conclusion` 12 键 |
 | 八字 | 9 | 26 | `conclusion` 27 键 |
 
+**信封 schema（353 批）**：跨科共用的顶级结构由 `devkit/layer_contract.schema.json`
+（JSON Schema 2020-12）约束；`check_layer_contract.py` 的
+`validate_contract_envelope()` 零依赖校验 required/type/fixtures/stages/edges/
+forbidden 条目字段。**各科 stage 键名仍以各自 JSON 的 `allowed`/`required` 为准**，
+信封 schema 只管“契约文件本身是不是一份契约”。
+
 **`conclusion.judgment`（第三百二十批新增，optional）**：九格判定的结构化产出
 （`direction` 成/滞/不成 × `confidence` 高/中/低，附 `why`／`cites`／`support`／`dissent`／`base_cell`／`overlay`）。
 **为什么属于这一段**：它由推演事实（用神旺衰、动变净效、空破、原神忌神、题类）判定，不是文案；
@@ -140,7 +146,9 @@ core/yishu_core   ←（唯一允许方向）—  scripts/*
 ## §七 变更规程
 
 1. 改段界 / 改键面 → 同一批改 **JSON + 本文件 + CHANGELOG**，跑
-   `python dev_tools/check_layer_contract.py --selftest`；
+   `python dev_tools/check_layer_contract.py --selftest`；若动**顶级信封结构**
+   （`schema`/`contract`/`batch`/`fixtures`/`stages`/`edges`），同批改
+   `devkit/layer_contract.schema.json`，并跑 `devkit/sync_devkit.py --check`；
 2. 禁边表条目只准减不准增；新增一条须在本文件 §三 写明"为什么暂时必须"；
 3. 欠账条目只准减不准增；新增欠账须写明"哪一批还"；
 4. 本文件不写读数、不写分数、不写"准确率"——口径见 AGENTS.md §一.3。

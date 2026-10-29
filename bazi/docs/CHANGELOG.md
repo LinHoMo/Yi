@@ -6,6 +6,19 @@
 > 下面历史条目若提到 ARCHIVE，一律按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 3 节标题已并入索引。
 
+## 2026-10-29 第三百五十三批（全仓）：**跨科共用契约信封 schema 落地（§3.6 关闭；八字侧同步）**
+
+**性质**：schema＋shared gate。零引擎、零数据、零读数改动。
+
+- 新增 `devkit/layer_contract.schema.json`；`devkit/shared/check_layer_contract.py`
+  增 `validate_contract_envelope()` 零依赖信封校验（含 3 类负例），并由
+  `sync_devkit.py --write` 分发到两科 `dev_tools/`。
+- 八字 `check_layer_contract.py --selftest` rc=0：chart 9/analyze 26、4 条禁边、
+  「信封 schema 通过」。
+- 详见同批 `liuyao/docs/CHANGELOG.md` 第三百五十三批；`CONTRACT.md §四/§七` 同批回改。
+
+分数含义：与古籍案例要点的一致性，不代表现实预测命中率（AGENTS.md §一.3）。
+
 ## 2026-10-29 第三百四十八批（八字）：**bazi README 回改 308 批读数（pattern 100.0／外部 62）＋根级文档同步**
 
 **性质**：docs。零引擎、零数据、零读数改动。
