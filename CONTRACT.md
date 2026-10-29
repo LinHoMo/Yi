@@ -107,7 +107,7 @@ core/yishu_core   ←（唯一允许方向）—  scripts/*
 | 4 | §四 白名单 | ~~八字侧 JSON 未建~~ **第三百一十批同批建成**（chart 9／analyze 26／conclusion 27），门 `[28]` 已挂进八字 `check.py` | 已关闭 |
 | 5 | §一 render 不许当第二个 narrate | `engine_format.py` 仍有一套 `format_reading_output` 字段报表（narrate 注释称"已弃用"，但 `engine.py --text` 仍挂） | 已关闭（第三百一十一批审计：消费者在册 4 处——`engine.py --text`、`dev_tools/refactor_guard.py` 对拍基准、`narrate.py` 防御层、`SKILL.md` 合同文本——下线条件不成立，裁定维持，非下线） |
 | 6 | §三 `narrative_utils` 混装 | **312 批已关闭**：拆成 `scripts/util.py`（纯工具）／`scripts/chain_verdicts.py`（断语装载）／`scripts/chain_assembly.py`（装配，属 analyze 段），`narrative_utils` 与 `narrative_rules` 两模块撤编；禁边表对应条目随之转零容忍 | 已关闭 |
-| 7 | §一.2 analyze 不许写文章 | **312 批体检新登记**：`analyze` 实测输出 `thinking_chain.reasoning_chain` 9 条成句（85–759 字）＋`summary_text` 354 字＋`section_advice` 4 句；`[32]` 只白名单两层子键（`trigram_interpretation`/`conclusion`），看不出这一层。且 `narrate_core` 反向从 `reasoning_chain` 的 `[格局] A|B` 串里正则反解标签（§一.3 的隐性违反） | 随 A3 分层批做：叙述句改由 fact 渲染，`reasoning_chain` 降为内部键或迁 narrate；届时把该键加入 `[32]` 的嵌套白名单判据 |
+| 7 | §一.2 analyze 不许写文章 | **312 批体检新登记**：`analyze` 实测输出 `thinking_chain.reasoning_chain` 9 条成句（85–759 字）＋`summary_text` 354 字＋`section_advice` 4 句；`[32]` 只白名单两层子键（`trigram_interpretation`/`conclusion`），看不出这一层。且 `narrate_core` 反向从 `reasoning_chain` 的 `[格局] A|B` 串里正则反解标签（§一.3 的隐性违反） | 随 A3 分层批做：叙述句改由 fact 渲染，`reasoning_chain` 降为内部键或迁 narrate；届时把该键加入 `[32]` 的嵌套白名单判据。书证与优先级草案见 `liuyao/docs/JUDGMENT-TABLE.md`（313 批） |
 
 ## §七 变更规程
 
