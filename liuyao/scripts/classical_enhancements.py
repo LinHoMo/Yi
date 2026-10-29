@@ -36,8 +36,6 @@ from chart_tables import (  # noqa: E402
     SHENG_WO,
     SIX_RELATIONS,
     TWELVE_GROWTH,
-    TWELVE_GROWTH_STAGES,
-    TWELVE_GROWTH_TABLES,
     YANG_STEMS,
     _QUESTION_KEYWORDS_USE_GOD,
 )
@@ -50,9 +48,11 @@ from chain_verdicts import (  # noqa: E402  断语/引文装载（原 narrative_
     ctpl,
 )
 from util import (  # noqa: E402  通用机械工具（原 narrative_utils，311 批拆分）
+    _branch_element,
     _combined_strength,
     element_strength_in_month,
     get_changed_hexagram_branch,
+    get_twelve_growth_stage,
 )
 # element_strength_in_month / get_changed_hexagram_branch / _combined_strength 的
 # 唯一实现都在 util（各自逐字经快照对照）；本模块不再各留一份，
@@ -133,11 +133,6 @@ def analyze_nayin(result):
     }
 
 
-def _branch_element(branch):
-    """获取地支五行"""
-    return BRANCH_ELEMENTS.get(branch, "未知")
-
-
 def determine_six_relation(branch, palace_element):
     """
     根据爻的地支五行确定六亲。
@@ -173,21 +168,6 @@ def is_ba_zu_chong(b1, b2):
         if (b1 == a and b2 == b) or (b1 == b and b2 == a):
             return True
     return False
-
-
-def get_twelve_growth_stage(element, day_branch):
-    """
-    获取某五行元素在指定日支的十二长生阶段。
-    返回 (stage_name, index) 或 None（如果branch不在表中）
-    """
-    table = TWELVE_GROWTH_TABLES.get(element)
-    if table is None:
-        return None
-    try:
-        idx = table.index(day_branch)
-        return TWELVE_GROWTH_STAGES[idx], idx
-    except ValueError:
-        return None
 
 
 def get_stages_of_interest(stage):

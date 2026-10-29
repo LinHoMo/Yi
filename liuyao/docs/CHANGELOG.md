@@ -5,6 +5,25 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-10-29 第三百五十二批（六爻）：**同名 helper 去重（第一批）——`_branch_element`／`get_twelve_growth_stage` 归 util**
+
+**性质**：refactor（行为保持）。零判词、零评分、零读数改动。
+
+- `classical_enhancements.py` 的本地 `_branch_element` 与 `get_twelve_growth_stage`
+  与 `util.py` 的实现在语义上逐行一致；本批改为从 `util` 导入并删除本地副本
+  （`__all__` 的再导出面不变）；同时删掉不再使用的 `TWELVE_GROWTH_STAGES`／
+  `TWELVE_GROWTH_TABLES` 导入。
+- **不合并的两组**：`_pos_to_name` 的非法位置回落不同（`f"{pos}爻"` vs `f"第{pos}爻"`），
+  属真实语义差异；`_element_to_relation`／`_find_use_god_positions` 两份实现不同
+  （15 vs 3 行、40 vs 50 行），须另批做行为对拍，不在本批夹带。
+- 同名函数扫描由 347 批的 10 组降至 **8 组**（`main` 9 个 CLI 属预期，`_chong/_he/_elem/
+  _world_line` 为域内局部实现，`_pos_to_name` 与另两组见上）；剩余项仍挂 347 批 triage。
+- 复验：`golden.py verify` **6f70/405b 零漂移**；`get_twelve_growth_stage('木','卯')`
+  `('帝旺', 4)`、`_branch_element('子')` `'水'`、`__all__` 再导出名仍在；
+  `python dev_tools/check.py` 全绿（352 批实跑）。
+
+分数含义：与古籍案例要点的一致性，不代表现实预测命中率（AGENTS.md §一.3）。
+
 ## 2026-10-29 第三百五十一批（六爻）：**`pattern_tags` 结构化——narrate 不再正则反解 reasoning_chain（§六-7 第一半）**
 
 **性质**：refactor（行为保持）。零判词、零评分、零读数改动。
