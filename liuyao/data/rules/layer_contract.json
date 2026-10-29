@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "_comment": "四段契约的机器判据（唯一真值源）。'why' 字段是给下一次改契约的人看的：写不清为什么这个键属于这一段，就不要加。改本文件必须同批改 CONTRACT.md §四 与 docs/CHANGELOG.md，并跑 dev_tools/check_layer_contract.py --selftest。",
+  "_comment": "四段契约的机器判据（唯一真值源）。'why' 字段是给下一次改契约的人看的：写不清为什么这个键属于这一段，就不要加。改本文件必须同批改 CONTRACT.md §四 与 docs/CHANGELOG.md（320 批：conclusion 增 judgment 判定块，optional——judgment_enabled=False 时该键缺省），并跑 dev_tools/check_layer_contract.py --selftest。",
   "contract": "CONTRACT.md",
-  "batch": 312,
+  "batch": 320,
   "fixtures": [
     {
       "name": "manual动",
@@ -151,6 +151,7 @@
       "nested": {
         "conclusion": {
           "allowed": [
+            "judgment",
             "verdict",
             "信号强度",
             "应期",

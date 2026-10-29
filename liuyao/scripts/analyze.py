@@ -118,8 +118,55 @@ def _chart_summary(result: dict, chain: dict) -> dict:
     }
 
 
-def analyze(chart_json: dict) -> dict:
-    """chart JSON → analyze JSON（含 thinking_chain + conclusion）。"""
+def _judgment_block(chain: dict, result: dict) -> dict:
+    """判定块：九格判定的结构化产出（第三百二十批）。
+
+    失败不静默：判定器导入不了或内部出错，就**不产出该键**并在日志里说明，
+    绝不塞一个看起来像结论的空块。
+    """
+    try:
+        from judge import judge_with_overlay
+    except Exception as exc:  # pragma: no cover - 导入失败路径
+        import logging
+        logging.getLogger(__name__).warning(
+            "judge 导入失败：判定块跳过（verdict 不受影响）。排查 sys.path 是否含 scripts/。",
+            exc_info=True)
+        return {}
+    try:
+        j = judge_with_overlay({
+            "thinking_chain": chain,
+            "question": result.get("question"),
+            "original_hexagram": result.get("original_hexagram"),
+        })
+    except Exception as exc:  # pragma: no cover - 运行失败路径
+        import logging
+        logging.getLogger(__name__).warning("判定块生成失败：跳过（verdict 不受影响）。", exc_info=True)
+        return {}
+    ov = j.get("overlay") or {}
+    return {
+        "direction": j.get("direction"),
+        "confidence": j.get("confidence"),
+        "cell": j.get("cell"),
+        "base_cell": j.get("base_cell"),
+        "why": j.get("why"),
+        "cites": j.get("cites") or [],
+        "support": j.get("support") or [],
+        "dissent": j.get("dissent") or [],
+        "domain": j.get("domain") or "",
+        "overlay": ov.get("id") or "",
+        "verdict_now": (chain.get("step5_synthesis") or {}).get("verdict") or "",
+    }
+
+
+def analyze(chart_json: dict, judgment_enabled: bool = True) -> dict:
+    """chart JSON → analyze JSON（含 thinking_chain + conclusion）。
+
+    `judgment_enabled`（第三百二十批）：是否在 `conclusion` 里附上**判定块**
+    （方向 × 置信的九格判定，与 `verdict` 并列对照）。
+    默认开＝产物里有；关＝**该键整个不出现**（不是空块），契约面随之少一维。
+    接线期 `verdict` 仍由现行引擎产出——两者并列，是为了能逐例对拍，
+    不是因为判定器已经取代判词（`judgment_table.json.implementation.verdict` 在册）。
+    """
     result = dict(chart_json)
     chain_full = run_thinking_chain(result)
     chain = chain_full.get("thinking_chain", chain_full)
@@ -153,11 +200,16 @@ def analyze(chart_json: dict) -> dict:
             "advice_framework 导入失败：分类占法建议跳过（section_advice 缺失）。"
             "排查 sys.path 是否含 scripts/ 目录。", exc_info=True)
 
+    conclusion = _conclusion_from(chain, result)
+    if judgment_enabled:
+        jb = _judgment_block(chain, result)
+        if jb:
+            conclusion["judgment"] = jb
     return {
         **result,
         "thinking_chain": chain,
         "chart_summary": _chart_summary(result, chain),
-        "conclusion": _conclusion_from(chain, result),
+        "conclusion": conclusion,
     }
 
 
@@ -165,6 +217,8 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="六爻纳甲推演（analyze 段）")
     ap.add_argument("chart_json", nargs="?", help="chart 段输出的 JSON 文件（缺省跑演示）")
     ap.add_argument("-o", "--out", type=Path, help="写出 analyze JSON（缺省打印 stdout）")
+    ap.add_argument("--no-judgment", action="store_true",
+                    help="不产出结论里的判定块（conclusion.judgment 整个不出现）")
     args = ap.parse_args()
 
     if args.chart_json:
@@ -173,7 +227,7 @@ def main() -> int:
         from chart import chart as _chart
         chart_data = _chart("coin", "占当前所问之事", seed=42)
 
-    out = analyze(chart_data)
+    out = analyze(chart_data, judgment_enabled=not args.no_judgment)
     text = json.dumps(out, ensure_ascii=False, indent=2, default=str)
     if args.out:
         args.out.parent.mkdir(parents=True, exist_ok=True)

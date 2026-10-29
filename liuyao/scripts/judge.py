@@ -162,34 +162,34 @@ def overlay(result: dict) -> dict | None:
     liuchong = (result.get("original_hexagram") or {}).get("name") in HEXAGRAM_LIUCHONG
     void = bool(s3.get("is_true_void"))
 
-    def rule(dom_, direction, confidence, why, cites):
-        return {"domain": dom_, "direction": direction, "confidence": confidence,
+    def rule(oid, dom_, direction, confidence, why, cites):
+        return {"id": oid, "domain": dom_, "direction": direction, "confidence": confidence,
                 "why": why, "cites": cites}
 
     if dom == "疾病":
         if any(k in q for k in ("近病", "新病", "乍病")) and (liuchong or void):
-            return rule(dom, "成", "中", "近病逢冲逢空，不药而愈", ["Z1", "Z2"])
+            return rule("OV-D1", dom, "成", "中", "近病逢冲逢空，不药而愈", ["Z1", "Z2"])
         if any(k in q for k in ("久病", "沉疴", "久疾")) and (liuchong or void):
-            return rule(dom, "不成", "中", "久病逢冲逢空，妙药难调", ["Z1", "Z2"])
+            return rule("OV-D2", dom, "不成", "中", "久病逢冲逢空，妙药难调", ["Z1", "Z2"])
     if dom == "功名":
         if holds and cat == "官鬼":
-            return rule(dom, "成", "中", "官鬼持世即许成名", ["Z3"])
+            return rule("OV-G1", dom, "成", "中", "官鬼持世即许成名", ["Z3"])
         if holds and cat == "子孙":
-            return rule(dom, "不成", "中", "子孙持世，功名且待时", ["Z3"])
+            return rule("OV-G2", dom, "不成", "中", "子孙持世，功名且待时", ["Z3"])
     if dom == "求财":
         if holds and cat == "妻财":
-            return rule(dom, "成", "中", "妻财持世者必得", ["Z4"])
+            return rule("OV-C1", dom, "成", "中", "妻财持世者必得", ["Z4"])
         if kills_world and cat == "妻财":
-            return rule(dom, "成", "中", "财爻克世者必得（用克世不作凶看）", ["Z5"])
+            return rule("OV-C2", dom, "成", "中", "财爻克世者必得（用克世不作凶看）", ["Z5"])
         if holds and cat == "兄弟":
-            return rule(dom, "不成", "低", "兄弟持世者难求", ["Z4"])
+            return rule("OV-C3", dom, "不成", "低", "兄弟持世者难求", ["Z4"])
     if dom == "行人":
         if kills_world:
-            return rule(dom, "成", "中", "用神克世者即至", ["Z5", "Z6"])
+            return rule("OV-X1", dom, "成", "中", "用神克世者即至", ["Z5", "Z6"])
         if world_kills:
-            return rule(dom, "不成", "中", "世克用兮人未动", ["Z6"])
+            return rule("OV-X2", dom, "不成", "中", "世克用兮人未动", ["Z6"])
         if liuchong:
-            return rule(dom, "不成", "低", "卦逢六冲，行人无定而不返", ["Z7"])
+            return rule("OV-X3", dom, "不成", "低", "卦逢六冲，行人无定而不返", ["Z7"])
     return None
 
 

@@ -1,5 +1,47 @@
 # 六爻 CHANGELOG
 
+## 2026-10-29 第三百二十批（六爻）：**判定块接线——`conclusion.judgment` 进产品（可关）；`verdict` 未动；golden coverage-only 重基线**
+
+**性质**：contract（契约面新增一个 optional 键）。**判词一字未改**：两集读数与 verdict 全线未动。
+
+### 一、接了什么
+
+- `scripts/analyze.py`：`analyze(chart_json, judgment_enabled=True)`；CLI `--no-judgment`。
+  `conclusion` 里多一个 `judgment` 块（12 键：`direction`／`confidence`／`cell`／`base_cell`／`why`／
+  `cites`／`support`／`dissent`／`domain`／`overlay`／`verdict_now`）。
+  判定器导入或运行失败时**不产出该键**并写日志——绝不塞一个像结论的空块。
+- `judgment` 与 `verdict` **并列**：前者是九格判定，后者仍是现行引擎的档位。
+  并列是为了能逐例对拍，不是因为判定器已取代判词（`judgment_table.json.implementation.verdict` 在册）。
+- `scripts/judge.py`：题类覆盖层的 10 条规则补上 id（`OV-D1`…`OV-X3`），判定块能报出"哪条规则改的"。
+
+### 二、契约面（三处同步）
+
+- `data/rules/layer_contract.json`：`conclusion.allowed` 加 `judgment`（**不在 `required` 里**——
+  `judgment_enabled=False` 时该键整个不出现）；门 `[32]` 复跑绿。
+- `CONTRACT.md` §四：六爻 `conclusion` 键数 11→12，并写明"为什么属于这一段"（由推演事实判定、不是文案）。
+- `SKILL.md` **故意不动**：判定块尚未取代判词，暴露给宿主模型等于让它拿未定稿的判据下结论；
+  插件 1.0 冻结面因此零变更。
+
+### 三、golden：先补盲区，再重基线
+
+第一次 `golden.py verify` **没漂移**——因为它直接调 `_conclusion_from`，新增的 `judgment` 落在指纹之外：
+**新键没有看门狗**。照 193 批的办法把判定块并进指纹，于是漂移被正常抓到，
+再按规程 `capture`（附归因）重基线：机械 `4ceef1ee…`→`ffa4944b941a2755`、**措辞 `405bc8e0…` 未动**。
+归因写进 `digest.json.drift_log`：coverage-only 重基线，非行为退化。账台期望同步并注明。
+
+### 四、读数与逐格对拍（§四 要求的两样）
+
+- **两集出分**：tune 97.9%（n=20）／holdout 90.2%（n=12）——**与接线前逐位相同**（verdict 未动）。
+- **逐格对拍**（判定器 vs 现行 verdict vs 书载方向，内部两集）：
+  tune 现行 80.0% / 判定器 40.0%；holdout 现行 58.3% / 判定器 41.7%。
+  内部集差距仍大（下一批处理）；外部 dev 半边达标状态不变。
+
+### 五、两条不在本批的红（并行会话在制改动）
+
+- 账台 `governance` 实得 62/38（期望 61/37）：对方给八字加了 dev_tools 脚本。
+- 账台 `八字案例分母` 第三项 53→62：对方给八字外部集加了 9 例。
+两条都不属本批，期望值未动（等对方提交后由其批次登记）。
+
 ## 2026-10-29 第三百一十九批（六爻）：**判定器 v2 加原神/忌神二级事实——外部两个 dev 半边达标（wiki 反超现行 6.3pt）**
 
 **性质**：shadow（A3 第五步）。仍零判词改动，golden 未触碰。

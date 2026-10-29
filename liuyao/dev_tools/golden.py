@@ -111,6 +111,16 @@ def fingerprint() -> list[dict]:
                     # 日历应期层盲区，本条照彼例一次性重基线并 drift_log 归因）。
                     from analyze import _conclusion_from
                     concl = _conclusion_from(inner, h)
+                    # 判定块纳入指纹（第三百二十批）：conclusion 增 `judgment` 键后，
+                    # 若只哈希 `_conclusion_from` 的产物，新键就落在指纹之外——
+                    # 改它指纹纹丝不动，等于新键没有看门狗。照 193 批的办法补进来。
+                    try:
+                        from analyze import _judgment_block
+                        jb = _judgment_block(inner, h)
+                    except Exception:
+                        jb = {}
+                    if jb:
+                        concl = dict(concl, judgment=jb)
                     row["concl_keys"] = sorted(concl.keys())
                     row["concl_sha"] = hashlib.sha256(json.dumps(
                         concl, ensure_ascii=False, sort_keys=True,

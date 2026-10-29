@@ -81,8 +81,15 @@ core/yishu_core   ←（唯一允许方向）—  scripts/*
 
 | 科 | chart 顶层键 | analyze 顶层键 | 嵌套白名单 |
 |---|---|---|---|
-| 六爻 | 8 | 15 | `trigram_interpretation` 22 键（含 4 个欠账字段，见 §六-1）／`conclusion` 11 键 |
+| 六爻 | 8 | 15 | `trigram_interpretation` 22 键（含 4 个欠账字段，见 §六-1）／`conclusion` 12 键 |
 | 八字 | 9 | 26 | `conclusion` 27 键 |
+
+**`conclusion.judgment`（第三百二十批新增，optional）**：九格判定的结构化产出
+（`direction` 成/滞/不成 × `confidence` 高/中/低，附 `why`／`cites`／`support`／`dissent`／`base_cell`／`overlay`）。
+**为什么属于这一段**：它由推演事实（用神旺衰、动变净效、空破、原神忌神、题类）判定，不是文案；
+`verdict` 仍是现行引擎的档位，**两者并列对照**——接线期判定器尚未取代判词
+（`data/rules/judgment_table.json` 的 `implementation.verdict` 在册）。
+`judgment_enabled=False`（CLI `--no-judgment`）时**该键整个不出现**，故它不在 `required` 里。
 
 **新增一个键 = 改契约**。同批必须做三件事：改 JSON、改本表、在 `docs/CHANGELOG.md` 写一句
 "为什么这个键属于这一段"。只改代码不改契约，新键会在下一轮被门拦下——这是刻意的：
