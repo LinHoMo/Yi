@@ -5,6 +5,24 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-10-29 第三百四十九批（六爻）：**还 `engine.py→render` 禁边——CLI 三路输出迁 `output.py`**
+
+**性质**：refactor（行为保持）。零判词、零评分、零输出文案改动。
+
+- 新增 `scripts/output.py`：`append_advice` ＋ `output_result` 从 `engine.py` 整段搬出，
+  HTML/JSON/Text 三路分支、`--save-html` 路径处理、`--open-browser`、`render` 缺失时
+  回退 JSON 的旧行为逐行照搬。`engine.py` 只 `from output import output_result`，
+  不再 import `render`，也不再 import `engine_format` 的四个输出helper。
+- `data/rules/layer_contract.json`：删除 `scripts/engine.py → render` 禁边条目，
+  `batch` 320→349；`CONTRACT.md §三` 增允许行 `engine.py→output.py`，
+  `§六-3` 由「2 条现存禁边」改为「1 条」（只剩 `engine_chart→trigram_symbolism`）。
+- 复验：`check_layer_contract.py --selftest` rc=0（扫 69 模块、8 条禁边、1 条在册欠账）；
+  `golden.py verify` **机械 6f70／措辞 405b 零漂移**；`engine.py --mode manual --output json`
+  冒烟通过；`check_case_isolation`／`check_house_conventions`／`check_cli_encoding` rc=0；
+  `python dev_tools/check.py` 全绿。
+
+分数含义：与古籍案例要点的一致性，不代表现实预测命中率（AGENTS.md §一.3）。
+
 ## 2026-10-29 第三百四十八批（全仓）：**根级文档同步——bazi README 308 读数、GOVERNANCE 43、ARCHITECTURE V9/V12/V13**
 
 **性质**：docs。零代码、零数据、零读数改动。

@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "_comment": "四段契约的机器判据（唯一真值源）。'why' 字段是给下一次改契约的人看的：写不清为什么这个键属于这一段，就不要加。改本文件必须同批改 CONTRACT.md §四 与 docs/CHANGELOG.md（320 批：conclusion 增 judgment 判定块，optional——judgment_enabled=False 时该键缺省），并跑 dev_tools/check_layer_contract.py --selftest。",
+  "_comment": "四段契约的机器判据（唯一真值源）。'why' 字段是给下一次改契约的人看的：写不清为什么这个键属于这一段，就不要加。改本文件必须同批改 CONTRACT.md §四 与 docs/CHANGELOG.md（320 批：conclusion 增 judgment 判定块，optional——judgment_enabled=False 时该键缺省；349 批：engine.py→render 禁边已还，CLI 输出迁 output.py），并跑 dev_tools/check_layer_contract.py --selftest。",
   "contract": "CONTRACT.md",
-  "batch": 320,
+  "batch": 349,
   "fixtures": [
     {
       "name": "manual动",
@@ -181,12 +181,6 @@
         "to": "trigram_symbolism",
         "known": true,
         "why": "排盘直连类象解读：build_hexagram_result 内 import，产出 overview/body_use（CONTRACT §六-1 的成因）"
-      },
-      {
-        "from": "scripts/engine.py",
-        "to": "render",
-        "known": true,
-        "why": "引擎门面在 CLI 的 --html 分支里调呈现层"
       },
       {
         "from": "scripts/thinking_chain.py",

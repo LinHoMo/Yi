@@ -72,16 +72,20 @@ core/yishu_core   ←（唯一允许方向）—  scripts/*
 | `analyze → narrate?` **否** | 推演段不得为了取文案去 import 叙述层 |
 | `narrate → analyze 输出` | 只能读 JSON，不 import analyze 模块 |
 | `render → narrate` | 呈现层可以调用正文生成（现状如此） |
+| `engine.py → output.py` | CLI 输出装配（349 批）；`output.py` 才触 `render`/`engine_format`，`engine.py` 不再直连呈现层 |
 
 **禁边表**（机器判据见 JSON `edges.forbidden`，只准减不准增）：
 
 | 起点 | 终点 | 现状 | 判定 |
 |---|---|---|---|
 | `engine_chart.py` | `trigram_symbolism` | 存在 | 欠账：排盘直连类象解读（§一 第 1 条） |
-| `engine.py` | `render` | 存在 | 欠账：引擎门面在 CLI 分支里调呈现层 |
 | `thinking_chain.py` / `step5.py` / `step1..4` | `narrate_core` | 不存在（312 批已还） | **零容忍**：装配函数已搬回 `chain_assembly`，回潮即红 |
 | `core/**` | `scripts/**` | 不存在 | 零容忍，任何新增即红 |
 | `chart.py` | `narrate*` / `chain_verdicts` / `advice_framework` | 不存在 | 零容忍（`chain_verdicts` 承接原 `narrative_utils` 的断语面） |
+
+> **349 批已还**：原 `engine.py → render` 禁边——CLI 三路输出（HTML/JSON/Text）整段搬到
+> `scripts/output.py`，`engine.py` 只调 `output_result`；JSON 的 `edges.forbidden` 条目同批删除。
+> 禁边由 2 条降为 1 条，只剩 `engine_chart → trigram_symbolism`（§六-1/§六-3）。
 
 ## §四 输出键白名单
 
@@ -117,7 +121,7 @@ core/yishu_core   ←（唯一允许方向）—  scripts/*
 | # | 条款 | 现状 | 计划 |
 |---|---|---|---|
 | 1 | §一 chart 不许下判断 | `trigram_interpretation` 里 `overview` / `body_use` / `outer_personality` / `inner_personality` / `element_relation` 是成句评价（如「体生用有所付出，待时收功」） | 迁到 analyze 段产出；会动 golden 双指纹，单独一批做，不在 310 批夹带 |
-| 3 | §三 禁边表 | **2 条现存禁边**（`engine_chart→trigram_symbolism`、`engine.py→render`）；312 批还清 3 条（`thinking_chain`/`step5`/`step1..4 → narrate_core`），条目由 `known:true` 转为 `known:false` 零容忍 | 剩余 2 条按 §四 单批还；禁边只准减 |
+| 3 | §三 禁边表 | **1 条现存禁边**（`engine_chart→trigram_symbolism`）；349 批还清 `engine.py→render`（输出迁 `output.py`）；312 批还清 3 条（`thinking_chain`/`step5`/`step1..4 → narrate_core`），条目由 `known:true` 转为 `known:false` 零容忍 | 剩余 1 条按 §四 单批还；禁边只准减 |
 | 7 | §一.2 analyze 不许写文章 | **312 批体检新登记**：`analyze` 实测输出 `thinking_chain.reasoning_chain` 9 条成句（85–759 字）＋`summary_text` 354 字＋`section_advice` 4 句；`[32]` 只白名单两层子键（`trigram_interpretation`/`conclusion`），看不出这一层。且 `narrate_core` 反向从 `reasoning_chain` 的 `[格局] A|B` 串里正则反解标签（§一.3 的隐性违反） | 随 A3 分层批做：叙述句改由 fact 渲染，`reasoning_chain` 降为内部键或迁 narrate；届时把该键加入 `[32]` 的嵌套白名单判据。书证与优先级草案见 `liuyao/docs/JUDGMENT-TABLE.md`（313 批） |
 
 > **已关闭项**：原 2（`analyze` docstring 与实测不符）已于 310 批改文档、346 批复核后关闭
