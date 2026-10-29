@@ -42,11 +42,24 @@ jobs:
         run: python bazi/dev_tools/check.py
       - name: liuyao quality gate (fresh tree)
         run: python liuyao/dev_tools/check.py
+  kernel-sync:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+      - name: kernel single source
+        run: |
+          python kernel/sync_kernel.py --check
+          python devkit/sync_devkit.py --check
   plugin-gates:
     strategy:
       fail-fast: false
       matrix:
         os: [windows-latest, ubuntu-latest]
+        host: [dsh, claude, codex, gemini, yan]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     steps:
@@ -57,5 +70,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - name: plugin gates (build + selftest + verify-in-dsh)
+      - name: build once, distribute to all adapters
+        run: node plugins/scripts/build.mjs
+      - name: shared runtime selftest
+        run: node plugins/scripts/selftest.mjs
+      - name: dsh full check (build + selftest + verify-in-dsh)
+        if: matrix.host == 'dsh'
         run: npm --prefix dsh-plugin run check
+      - name: host manifest assertion
+        env:
+          HOST: ${{ matrix.host }}
+        run: |
+          node -e "const fs=require('fs');const H=process.env.HOST;const must={dsh:['package.json','src/index.mjs','SKILL.md'],claude:['.claude-plugin/plugin.json','.mcp.json','src/server.mjs'],codex:['.codex-plugin/plugin.json','.mcp.json','src/server.mjs'],gemini:['gemini-extension.json','GEMINI.md','src/server.mjs'],yan:['yan-plugin.json','INSTRUCTIONS.md','src/server.mjs','skills/yi-divination/SKILL.md']};const dir={dsh:'dsh-plugin',claude:'claude-plugin',codex:'codex-plugin',gemini:'gemini-plugin',yan:'yan-plugin'}[H];const miss=must[H].filter(p=>!fs.existsSync(dir+'/'+p));if(miss.length){console.error(H+' missing: '+miss.join(', '));process.exit(1)}console.log(H+' manifest ok')"

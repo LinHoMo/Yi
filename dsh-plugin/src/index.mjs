@@ -114,7 +114,10 @@ function resolveSkillPath() {
 
 function bundledSkillProvider() {
   const { path: skillPath, pkgRoot } = resolveSkillPath()
-  const raw = readFileSync(skillPath, 'utf8')
+  // 2026-10-29（A4-CI 实跑）：Windows 工作树里 SKILL.md 可能是 CRLF（git 索引是 LF，
+  // 但历史上以 autocrlf 检出过）。本器原先只认 `\n` 定界，CRLF 下端界一次都匹配不上，
+  // verify-in-dsh 报「frontmatter 不合法」——这不是 SKILL 坏了，是读取端没归一。
+  const raw = readFileSync(skillPath, 'utf8').replace(/\r\n/g, '\n')
   const end = raw.indexOf('\n---\n', 4)
   if (!raw.startsWith('---\n') || end < 0) {
     throw new Error(`[yi] SKILL.md frontmatter 不合法：${skillPath}`)
