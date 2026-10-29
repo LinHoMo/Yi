@@ -1,7 +1,7 @@
 {
   "schema": "yi-judgment-table/1",
   "discipline": "liuyao",
-  "batch": 325,
+  "batch": 327,
   "status": "accepted",
   "sealed": null,
   "_comment": "A3 判定表的机器判据（唯一真值源）。本文件只声明，不接引擎：改成 accepted 并接进 step5 前，必须先由人签 adjudications 四条。改本文件须同批改 docs/JUDGMENT-TABLE.md 与 docs/CHANGELOG.md。",
@@ -1006,7 +1006,12 @@
       "delta": "+12.5pt（多对 4 例）",
       "significance": "**不显著**：差 4 例，两 Wilson 区间大幅重叠；方向为正但证据不足以下结论",
       "why_direction_set_added": "方向集（有吉凶无应期）原未入册，但判定器判的正是方向、不需要应期，故纳为第三个外部集"
-    }
+    },
+    "v7_changes": [
+      "新增事实（不参与判定，只在判断块里报出来）：世受克／用神克世／忌神克世、题类",
+      "**已回退的第二个试验**：世受克→不成·中（书证 Z18「诸占最怕克世」）——钉住基线复测 wiki·dev 75.0→41.7、wiki_direction·dev 50.0→35.7，大幅变差 → 回退。底本紧跟着给了反例（Z19「用克世勿作凶看」），且忌神克世在实践中极常见；这条只能进题类覆盖层按题类分别判，不能作通用九格规则"
+    ],
+    "baseline_note": "327 批的方法论补丁：**基线会漂**。并行会话当时正在改 liuyao/scripts/evaluate.py（未提交），工作树上的「现行引擎」读数从 7/12 变 6/12。处置：用 `git worktree add /tmp/<名> HEAD --detach` 把基线钉在 HEAD 上量；在钉住的副本上复测，325 批的记录逐位复现（wiki·dev 75.0／direction·dev 50.0）。今后凡做「判定器 vs 现行」的对比，必须在钉住基线上量，否则结论会被别人的在制改动带走。"
   },
   "overlays": [
     {

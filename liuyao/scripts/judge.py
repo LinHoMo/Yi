@@ -145,15 +145,20 @@ def facts(result: dict) -> dict:
     holds = bool(sel.get("position")) and sel.get("position") == s2.get("world_position")
     sheng_world = bool(ug_el and w_el and SHENG.get(ug_el) == w_el)
     # 世爻六亲与兄爻发动（322 批：合伙题覆盖层用）
+    ji_el = (s2.get("ji_shen") or {}).get("element") or ""
+    world_killed_by_god = bool(ug_el and w_el and KE.get(ug_el) == w_el)
+    world_killed_by_ji = bool(ji_el and w_el and KE.get(ji_el) == w_el)
     world_is_brother = (wl.get("six_relation") or "") == "兄弟"
     brother_moving = any((y.get("six_relation") or "") == "兄弟" and y.get("is_moving")
                           for y in (result.get("original_hexagram") or {}).get("yao_lines") or [])
     changed_liuhe = (result.get("changed_hexagram") or {}).get("name") in HEXAGRAM_LIUHE
 
     return {
-        "旺衰标签": level, "日辰生扶": day_mod > 1.0,
+        "旺衰标签": level, "日辰生扶": day_mod > 1.0, "题类": domain_of(str(result.get("question") or "")),
         "用神持世": holds, "用神生世": sheng_world,
         "世临兄弟": world_is_brother, "兄弟爻发动": brother_moving, "变卦六合": changed_liuhe,
+        "世受克": (world_killed_by_god or world_killed_by_ji),
+        "用神克世": world_killed_by_god, "忌神克世": world_killed_by_ji,
         "用神现": present, "用神有根": rooted, "动变净效": net, "有救有帮": rescued,
         "用神月破": month_break, "用神发动": moving, "用神真空": true_void,
         "忌神发动": ji_moving, "合处逢冲": he_chong, "冲中逢合": chong_he,
@@ -299,6 +304,11 @@ def judge(result: dict) -> dict:
     if not f["用神现"]:
         dissent.append("用神不现（书证 B2 以日月为用，须另判）")
 
+    # 327 批**试过"世受克 → 不成"并已回退**：书证说「诸占最怕克世」（Z18），但底本紧跟着
+    # 就给了反例「用克世勿作凶看」（占财／行人／医药反作吉），且忌神克世在实践中极常见——
+    # 做成通用规则实测 wiki·dev 75.0→33.3、wiki_direction·dev 50.0→35.7，**大幅变差**。
+    # 结论：这条只能进**题类覆盖层**（按题类分别判），不能作通用九格规则。
+    # 事实仍保留（判断块会报"世受克/用神克世/忌神克世"），供后续按题类取用。
     # ── R4c 不成·中：忌神发动而用神无根，虽有生世亦不吉 ──
     # 书证反面条款：Z13「谓忌神既旺，用衰矣，世虽逢生何益」（忌旺用衰时不因生世转吉）
     if (not f["用神有根"]) and f["忌神发动"] and (f["用神生世"] or f["用神持世"]):
