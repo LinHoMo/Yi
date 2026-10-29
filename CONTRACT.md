@@ -91,7 +91,7 @@ core/yishu_core   ←（唯一允许方向）—  scripts/*
 （`data/rules/judgment_table.json` 的 `implementation.verdict` 在册）。
 `judgment_enabled=False`（CLI `--no-judgment`）时**该键整个不出现**，故它不在 `required` 里。
 
-**新增一个键 = 改契约**。同批必须做三件事：改 JSON、改本表、在 `docs/CHANGELOG.md` 写一句
+**新增一个键 = 改契约**。同批必须做三件事：改 JSON、改本表、在 `<科>/docs/CHANGELOG.md` 写一句
 "为什么这个键属于这一段"。只改代码不改契约，新键会在下一轮被门拦下——这是刻意的：
 过去 `analysis_hints` 与 `trigram_interpretation` 就是这样凭空长在 chart 段里的。
 

@@ -197,7 +197,7 @@ plugins/
 
 | 规则 | 禁止 | 要求 |
 |------|------|------|
-| 文件名 | `run_blind_v5.py`、`HANDOFF_V8.md` | 名字不携带版本；版本走 git 与 `docs/CHANGELOG.md` |
+| 文件名 | `run_blind_v5.py`、`HANDOFF_V8.md` | 名字不携带版本；版本走 git 与 `<科>/docs/CHANGELOG.md` |
 | 调试脚本 | `data/cases/_patch_xxx.py`、`_debug_yyy.py` | 一次性脚本放各科 `scratch/`（**整目录不入库**：`.gitignore` 的 `scratch/` 无斜杠锚定，同时覆盖仓库根与两科内） |
 | 产物 | `outputs/`、`*.html`、`*.jsonl` 入库 | 全部生成物 gitignore，需要留存样例的进 `docs/` 并说明 |
 | 入口 | `sys.argv` 手解、无 `--help` | 每个 CLI 用 argparse，`--help` 可看，失败退出码非 0；中文入口必须自带 UTF-8 守卫（见 §四.9） |
@@ -223,7 +223,7 @@ plugins/
    `baseline` 表里，只准前进）。
 3. 修复某类错误时，改**通用规则**并说明其古籍出处；**禁止为让某个案例过关而写
    私有别名或 case-specific 分支**。外部集只报数、不设门槛，**不得为过外部集写私有规则**。
-4. 指标口径变了（计分方式、词典、缺失字段处理）必须在 `docs/CHANGELOG.md` 写明，
+4. 指标口径变了（计分方式、词典、缺失字段处理）必须在 `<科>/docs/CHANGELOG.md` 写明，
    并声明**新旧读数不可比**；否则分数失去意义。
 5. **逐格对拍证明「真改进」**：改静态表/提取器前后，用 `git show HEAD:<file>` 抽旧表
    与新表逐格比对，报「新增 N 格 / 变空 N 格 / 改值 N 格」——**「变空」与「改值」
@@ -259,7 +259,7 @@ plugins/
 
 ## 六、已知问题与文档说明的台账纪律（本仓库的"清空"口径）
 
-1. **一切登记进 `docs/CHANGELOG.md`，逐批具名**：不另建 TECH-DEBT/OPT 台账文件
+1. **一切登记进 `<科>/docs/CHANGELOG.md`，逐批具名**：不另建 TECH-DEBT/OPT 台账文件
    （`docs/TECH-DEBT.md` 已随扁平化删除，其 §2.3／§2.7／§2.11 等节号**不再存在**，
    活引用一律改指登记批次或现行门）。
 2. **改实现必须回头改登记**——改了判据而注释还写「未实现」、修了缺陷而台账还写
