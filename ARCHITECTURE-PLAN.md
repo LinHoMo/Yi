@@ -86,11 +86,11 @@ devkit/  ─sync_devkit──▶  <科>/dev_tools         （产物，[37] 字�
 | V6 | 内核单一真源 | `python kernel/sync_kernel.py --check` rc=0（17/15 文件＋4 变体；CI `kernel-sync`） |
 | V7 | 契约三件套同步 | 340 批未改键面/禁边；两科 `check_layer_contract.py --selftest` rc=0 |
 | V8 | 两科形状对称 | 八字 `tests/`（smoke+regression）、CHANGELOG 三件套、CONTRACT §六 审计表在册 |
-| V9 | CI 四 job | `root-gates` / `kernel-sync` / `gates` / `plugin-gates`（五宿主 × 2 OS），无 `continue-on-error` |
+| V9 | CI 五 job | `root-gates` / `kernel-sync` / `gates` / `ledger`（344 批新增，full 账台）/ `plugin-gates`（五宿主 × 2 OS），无 `continue-on-error` |
 | V10 | 门禁档位在册 | `governance_map.py --strict` rc=0（两科未分类 0；不降不删已具名） |
 | V11 | 口径 | `selftest.mjs` [7] 段禁语扫描全绿；全部文字用"古籍案例对齐分/非预测命中率" |
-| V12 | 登记 × 提交 | `readout_ledger.py --quick` rc=0（bad=0/全账 39，含"登记×提交在册"） |
-| V13 | 并发合规 | 单 Agent 串行（偏差见 §五）；外部三命通会 7 路径未改未提交；handoff 未入库 |
+| V12 | 登记 × 提交 | `readout_ledger.py --quick` rc=0（bad=0；收口时 39 项，344 批起 40 项；full bad=0/40，含"登记×提交在册"） |
+| V13 | 并发合规 | 单 Agent 串行（偏差见 §五）；外部三命通会 327–329 批 6 路径已于 345 批补交；handoff 未入库 |
 | V14 | handoff 齐备 | 27 份报告齐备，含实测输出片段 |
 | V15 | 集成后全链 | 每批收口均跑两科 `check.py`＋`sync_devkit`＋`kernel`，最终 rc 全 0 |
 

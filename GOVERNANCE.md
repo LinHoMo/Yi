@@ -28,9 +28,8 @@
 读数取自 `python liuyao/dev_tools/governance_map.py` 的本次实跑（两科 `未分类 []`、
 `表中有序实无 []`），不抄旧快照。344 批新增六爻 `check_expected_coverage`（blocking；
 门 [38]，守案例构建器不得静默清空 expected 书证字段），六爻 63→64／blocking 27→28。
-八字 43 含 `build_siku_dz.py`（外部三命通会会话
-尚未提交的工作区文件）；该会话提交后数字不变，clean clone 在该提交前会是 42——
-账台按实跑登记并注明这条依赖，不为了对上数而把在盘脚本从地图里藏掉。
+八字 43 已含 `build_siku_dz.py`（327–329 批，345 批补交入库）；clean clone 现为 43，
+不再有「工作区未提交 → 42」的依赖，账台按实跑登记。
 
 **A5-1 存量过档结论（第 339 批）：本批无降档、无删除。** 判据逐条对照 §一 门槛：
 blocking → nightly 须「连续一季 0 判红＋负例自证仍可跑＋CHANGELOG 具名」，本仓没有

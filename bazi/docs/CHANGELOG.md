@@ -6,6 +6,22 @@
 > 下面历史条目若提到 ARCHIVE，一律按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 3 节标题已并入索引。
 
+## 2026-10-29 第三百四十八批（八字）：**bazi README 回改 308 批读数（pattern 100.0／外部 62）＋根级文档同步**
+
+**性质**：docs。零引擎、零数据、零读数改动。
+
+- `bazi/README.md` 的判断维×常数段仍停在 187 批旧读：`pattern 80.6%／p=0.727 未达显著`、
+  `外部 53 集`。308 批已实测 **pattern 100.0%（36/36，配对 b=9 c=0，McNemar p=0.004，
+  已显著优于常数）**，339 批外部集扩样后为 **62 例**。本批按 308/339 实测回改，
+  **不是新提升**（旧值保留为历史注记）。
+- `GOVERNANCE.md`：八字 43 的 `build_siku_dz.py` 已随 345 批入库，clean clone 不再是 42；
+  `ARCHITECTURE-PLAN.md` V9 改五 job（344 批新增 ledger）、V12 改 40 项/full bad=0、
+  V13 改「327–329 六路径已补交」。
+- 复验：`python bazi/dev_tools/check.py` rc=0；`readout_ledger.py` full **bad=0/40**；
+  `check_root_docs.py`／`check_docs_index.py`／`check_batch_num.py` 全 rc=0。
+
+分数含义：与古籍案例要点的一致性，不代表现实预测命中率（AGENTS.md §一.3）。
+
 ## 2026-10-29 第三百四十七批（全仓）：**329 批结构分层体检 10 项 triage（八字侧只读结论）**
 
 **性质**：docs。零引擎、零数据。
