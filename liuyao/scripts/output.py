@@ -25,6 +25,25 @@ from engine_format import (
 )
 
 
+def attach_trigram(result: dict) -> dict:
+    """第三百五十批：chart 段不再产卜象解读；CLI 输出层在此补出。
+
+    `engine.py` 直接消费 `build_hexagram_result`（chart），不再触达
+    `trigram_symbolism`；为保持 engine 的 JSON/Text/HTML 输出面不变，本模块
+    在输出前补键。`analyze.py` 走四段管道时自行产出同一键，二者不重复计算。
+    """
+    if not isinstance(result, dict) or "trigram_interpretation" in result:
+        return result
+    out = dict(result)
+    try:
+        from trigram_symbolism import build_trigram_interpretation
+        out["trigram_interpretation"] = build_trigram_interpretation(
+            out, category="general")
+    except Exception:
+        out["trigram_interpretation"] = None
+    return out
+
+
 def append_advice(text: str, result: dict, sep: str, title: str) -> str:
     """将 section_advice 追加到文本报告末尾，统一两种分隔符格式。"""
     if not result.get("section_advice"):
@@ -40,6 +59,7 @@ def output_result(result: dict, chain, output_format: str, depth: str, args) -> 
     349 批：本模块是 CLI 呈现层，`engine.py` 不再直接 import `render`；
     `render` 的 import 仍留在函数内，保持“未安装时回退 JSON”的旧行为。
     """
+    result = attach_trigram(result)
     if output_format == "html":
         try:
             from render import render_html

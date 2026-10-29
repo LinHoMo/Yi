@@ -78,14 +78,14 @@ core/yishu_core   ←（唯一允许方向）—  scripts/*
 
 | 起点 | 终点 | 现状 | 判定 |
 |---|---|---|---|
-| `engine_chart.py` | `trigram_symbolism` | 存在 | 欠账：排盘直连类象解读（§一 第 1 条） |
 | `thinking_chain.py` / `step5.py` / `step1..4` | `narrate_core` | 不存在（312 批已还） | **零容忍**：装配函数已搬回 `chain_assembly`，回潮即红 |
 | `core/**` | `scripts/**` | 不存在 | 零容忍，任何新增即红 |
 | `chart.py` | `narrate*` / `chain_verdicts` / `advice_framework` | 不存在 | 零容忍（`chain_verdicts` 承接原 `narrative_utils` 的断语面） |
 
-> **349 批已还**：原 `engine.py → render` 禁边——CLI 三路输出（HTML/JSON/Text）整段搬到
-> `scripts/output.py`，`engine.py` 只调 `output_result`；JSON 的 `edges.forbidden` 条目同批删除。
-> 禁边由 2 条降为 1 条，只剩 `engine_chart → trigram_symbolism`（§六-1/§六-3）。
+> **349/350 批已还**：原 `engine.py → render` 由 `output.py` 承接；原
+> `engine_chart → trigram_symbolism` 由 analyze 段产卜象解读、CLI 输出层补键。
+> `edges.forbidden` 的 `known` 欠账已归零，余下全是零容忍条目。
+> （349 批注释：CLI 三路输出搬到 `scripts/output.py`，`engine.py` 只调 `output_result`。）
 
 ## §四 输出键白名单
 
@@ -93,7 +93,7 @@ core/yishu_core   ←（唯一允许方向）—  scripts/*
 
 | 科 | chart 顶层键 | analyze 顶层键 | 嵌套白名单 |
 |---|---|---|---|
-| 六爻 | 8 | 15 | `trigram_interpretation` 22 键（含 4 个欠账字段，见 §六-1）／`conclusion` 12 键 |
+| 六爻 | 7 | 15 | `trigram_interpretation` 22 键（analyze 段，350 批迁入）／`conclusion` 12 键 |
 | 八字 | 9 | 26 | `conclusion` 27 键 |
 
 **`conclusion.judgment`（第三百二十批新增，optional）**：九格判定的结构化产出
@@ -120,21 +120,21 @@ core/yishu_core   ←（唯一允许方向）—  scripts/*
 
 | # | 条款 | 现状 | 计划 |
 |---|---|---|---|
-| 1 | §一 chart 不许下判断 | `trigram_interpretation` 里 `overview` / `body_use` / `outer_personality` / `inner_personality` / `element_relation` 是成句评价（如「体生用有所付出，待时收功」） | 迁到 analyze 段产出；会动 golden 双指纹，单独一批做，不在 310 批夹带 |
-| 3 | §三 禁边表 | **1 条现存禁边**（`engine_chart→trigram_symbolism`）；349 批还清 `engine.py→render`（输出迁 `output.py`）；312 批还清 3 条（`thinking_chain`/`step5`/`step1..4 → narrate_core`），条目由 `known:true` 转为 `known:false` 零容忍 | 剩余 1 条按 §四 单批还；禁边只准减 |
 | 7 | §一.2 analyze 不许写文章 | **312 批体检新登记**：`analyze` 实测输出 `thinking_chain.reasoning_chain` 9 条成句（85–759 字）＋`summary_text` 354 字＋`section_advice` 4 句；`[32]` 只白名单两层子键（`trigram_interpretation`/`conclusion`），看不出这一层。且 `narrate_core` 反向从 `reasoning_chain` 的 `[格局] A|B` 串里正则反解标签（§一.3 的隐性违反） | 随 A3 分层批做：叙述句改由 fact 渲染，`reasoning_chain` 降为内部键或迁 narrate；届时把该键加入 `[32]` 的嵌套白名单判据。书证与优先级草案见 `liuyao/docs/JUDGMENT-TABLE.md`（313 批） |
 
-> **已关闭项**：原 2（`analyze` docstring 与实测不符）已于 310 批改文档、346 批复核后关闭
-> （docstring 现为「结构推演 + 定性结论」；本表不再列）。原 4＝八字侧键白名单（310 批建成）、
-> 原 5＝render 不当第二个 narrate（311 批审计裁定维持非下线）、原 6＝`narrative_utils` 混装
-> （312 批拆模块关闭）。关闭登记仍在各科 CHANGELOG，本表只列**尚未满足**的条款；
+> **已关闭项**：原 1（chart 段卜象解读迁 analyze）于 350 批关闭——`trigram_interpretation`
+> 由 analyze 段产出、CLI 输出层补键，golden 6f70/405b 零漂移；原 2（`analyze` docstring）
+> 于 310/346 关闭；原 3（禁边表）于 349/350 关闭——`known` 欠账归零，只剩零容忍条目；
+> 原 4＝八字侧键白名单（310 批建成）、原 5＝render 不当第二个 narrate（311 批裁定维持）、
+> 原 6＝`narrative_utils` 混装（312 批拆模块）。本表只列**尚未满足**的条款；
 > 编号保留原号，避免外部引用失指。
 
 **八字侧契约欠账审计（第三百三十六批 A2-B，逐条问过）**
 
 结论：**八字侧新增欠账 0 条**——这不是"八字干净"的奖状，而是已按同一套判据问过的读数。
-开放项 1／2／3／7 在八字侧实测均 0 条；无对应物的 1（`trigram_interpretation`）与
-7（`reasoning_chain`）如实标 N/A，不冒充"通过"；已关闭的原 4/5/6 不再重列。
+336 批时开放项 1／2／3／7 在八字侧实测均 0 条；其中 1／2／3 已于 346/349/350 关闭，
+**7 仍是全表唯一开放项**；无对应物的 1（`trigram_interpretation`）与 7（`reasoning_chain`）
+在八字侧如实标 N/A，不冒充"通过"；已关闭的原 4/5/6 不再重列。
 逐条实测与三件套登记见 336 批 `liuyao/docs/CHANGELOG.md` 与 `bazi/docs/CHANGELOG.md`。
 
 ## §七 变更规程

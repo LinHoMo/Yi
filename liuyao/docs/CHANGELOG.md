@@ -5,6 +5,33 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-10-29 第三百五十批（六爻）：**还 `engine_chart→trigram_symbolism` 禁边——卜象解读迁 analyze／CLI 输出层补键**
+
+**性质**：refactor（行为保持）。零判词、零评分、零读数改动；`known` 禁边欠账归零。
+
+- `engine_chart.py` 不再 import `trigram_symbolism`、不再产 `trigram_interpretation`；
+  chart 顶层键 **8→7**（`CONTRACT §四` 同批回改）。
+- `analyze.py`：在 `result = dict(chart_json)` 后补 `build_trigram_interpretation`
+  （旧 chart 段的 graceful degradation 照搬：失败记 `None`，不阻塞推演）；
+  analyze 顶层键仍 15，`trigram_interpretation` 进 `required`，22 键嵌套白名单从
+  chart 迁到 analyze。
+- `output.py`：`attach_trigram` 在 CLI 输出前补键——`engine.py` 直接消费 chart 时，
+  JSON/Text/HTML 输出面不变（`engine.py` 不触 `trigram_symbolism`）；四段管道的
+  analyze 自行产出同一键，不重复计算。
+- `data/rules/layer_contract.json`：删除 `engine_chart→trigram_symbolism` 禁边，
+  `batch 350`；`edges.forbidden` 只剩 7 条零容忍规则，**known 欠账 0**。
+- `CONTRACT.md`：§三 禁边表删除该行；§四 chart 7／analyze 15，嵌套行改「analyze 段，
+  350 批迁入」；§六-1/§六-3 销账，§六 只余 **7**（analyze 仍吐 reasoning_chain 成句 +
+  narrate 反解标签）。
+- 复验：`check_layer_contract.py --selftest` rc=0（5 夹具 × chart 7/analyze 15、7 条禁边、
+  0 在册欠账）；`golden.py verify` **6f70/405b 零漂移**；`engine.py --output json` 仍含
+  `trigram_interpretation`；`chart.py` 输出**不含**该键、`analyze.py` 输出**含**该键
+  （实测 False/True）；`python dev_tools/check.py` 全绿。
+- 插件 1.0 面不受影响：`yi_liuyao` 的 value 由 analyze/`narrate` 组装，本就不搬
+  chart 的 `trigram_interpretation`；chart 内部 JSON 形状变化属引擎内部面。
+
+分数含义：与古籍案例要点的一致性，不代表现实预测命中率（AGENTS.md §一.3）。
+
 ## 2026-10-29 第三百四十九批（六爻）：**还 `engine.py→render` 禁边——CLI 三路输出迁 `output.py`**
 
 **性质**：refactor（行为保持）。零判词、零评分、零输出文案改动。

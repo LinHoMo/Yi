@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "_comment": "四段契约的机器判据（唯一真值源）。'why' 字段是给下一次改契约的人看的：写不清为什么这个键属于这一段，就不要加。改本文件必须同批改 CONTRACT.md §四 与 docs/CHANGELOG.md（320 批：conclusion 增 judgment 判定块，optional——judgment_enabled=False 时该键缺省；349 批：engine.py→render 禁边已还，CLI 输出迁 output.py），并跑 dev_tools/check_layer_contract.py --selftest。",
+  "_comment": "四段契约的机器判据（唯一真值源）。'why' 字段是给下一次改契约的人看的：写不清为什么这个键属于这一段，就不要加。改本文件必须同批改 CONTRACT.md §四 与 docs/CHANGELOG.md（320 批：conclusion 增 judgment 判定块，optional——judgment_enabled=False 时该键缺省；349 批：engine.py→render 禁边已还，CLI 输出迁 output.py），并跑 dev_tools/check_layer_contract.py --selftest。 350 批：chart 段 trigram_interpretation 迁 analyze（§六-1 关闭），engine_chart→trigram_symbolism 禁边同步删除。",
   "contract": "CONTRACT.md",
-  "batch": 349,
+  "batch": 350,
   "fixtures": [
     {
       "name": "manual动",
@@ -71,8 +71,7 @@
         "empty_branches",
         "method",
         "original_hexagram",
-        "question",
-        "trigram_interpretation"
+        "question"
       ],
       "required": [
         "analysis_hints",
@@ -81,44 +80,9 @@
         "empty_branches",
         "method",
         "original_hexagram",
-        "question",
-        "trigram_interpretation"
+        "question"
       ],
-      "nested": {
-        "trigram_interpretation": {
-          "allowed": [
-            "body_use",
-            "compound_name",
-            "element_relation",
-            "inner_direction",
-            "inner_element",
-            "inner_meaning",
-            "inner_nature",
-            "inner_personality",
-            "inner_symbols",
-            "inner_trigram",
-            "inner_weather",
-            "nature",
-            "outer_direction",
-            "outer_element",
-            "outer_meaning",
-            "outer_nature",
-            "outer_personality",
-            "outer_symbols",
-            "outer_trigram",
-            "outer_weather",
-            "overview",
-            "symbol_meaning"
-          ],
-          "debt": [
-            "overview",
-            "body_use",
-            "outer_personality",
-            "inner_personality"
-          ],
-          "debt_note": "成句评价长在排盘段（CONTRACT §六-1）；迁 analyze 会动 golden 双指纹，单独一批做。debt 只准减不准增。"
-        }
-      }
+      "nested": {}
     },
     "analyze": {
       "role": "结构推演 + 定性结论：允许判词与结论级短建议，不允许成段正文",
@@ -146,7 +110,8 @@
         "thinking_chain",
         "original_hexagram",
         "divination_time",
-        "method"
+        "method",
+        "trigram_interpretation"
       ],
       "nested": {
         "conclusion": {
@@ -170,18 +135,38 @@
             "说明",
             "所本"
           ]
+        },
+        "trigram_interpretation": {
+          "allowed": [
+            "body_use",
+            "compound_name",
+            "element_relation",
+            "inner_direction",
+            "inner_element",
+            "inner_meaning",
+            "inner_nature",
+            "inner_personality",
+            "inner_symbols",
+            "inner_trigram",
+            "inner_weather",
+            "nature",
+            "outer_direction",
+            "outer_element",
+            "outer_meaning",
+            "outer_nature",
+            "outer_personality",
+            "outer_symbols",
+            "outer_trigram",
+            "outer_weather",
+            "overview",
+            "symbol_meaning"
+          ]
         }
       }
     }
   },
   "edges": {
     "forbidden": [
-      {
-        "from": "scripts/engine_chart.py",
-        "to": "trigram_symbolism",
-        "known": true,
-        "why": "排盘直连类象解读：build_hexagram_result 内 import，产出 overview/body_use（CONTRACT §六-1 的成因）"
-      },
       {
         "from": "scripts/thinking_chain.py",
         "to": "narrate_core",

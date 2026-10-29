@@ -544,21 +544,6 @@ def build_hexagram_result(yao_values, question, method, year, month, day, hour,
             y["changed_element"] = BRANCH_ELEMENTS.get(cb, "")
             y["changed_six_relation"] = determine_six_relations(cb, palace_element)
     
-    # 八卦卜象解读（trigram symbolism interpretation）
-    try:
-        import os as _os
-        _scripts_dir = _os.path.dirname(_os.path.abspath(__file__))
-        if _scripts_dir not in sys.path:
-            sys.path.insert(0, _scripts_dir)
-        from trigram_symbolism import build_trigram_interpretation as _build_trigram_interp
-        trigram_interp = _build_trigram_interp(
-            {"original_hexagram": {"upper_trigram": upper_trigram_name, "lower_trigram": lower_trigram_name}},
-            category="general"
-        )
-    except Exception as _e:
-        # pragma: no cover - graceful degradation
-        trigram_interp = None
-
     # 构建输出
     result = {
         "question": question,
@@ -571,7 +556,6 @@ def build_hexagram_result(yao_values, question, method, year, month, day, hour,
         },
         "method": method,
         "empty_branches": empty_branches,
-        "trigram_interpretation": trigram_interp,
         "original_hexagram": {
             "name": hex_name,
             "sequence": seq,

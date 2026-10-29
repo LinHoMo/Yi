@@ -168,6 +168,15 @@ def analyze(chart_json: dict, judgment_enabled: bool = True) -> dict:
     不是因为判定器已经取代判词（`judgment_table.json.implementation.verdict` 在册）。
     """
     result = dict(chart_json)
+    # 第三百五十批：chart 段不再产 `trigram_interpretation`（CONTRACT §六-1）；
+    # 由 analyze 段补出。旧 chart 段的 graceful degradation 照搬：失败记 None，
+    # 不阻塞推演；`[32]` 的 analyze 嵌套白名单同批接收该键。
+    try:
+        from trigram_symbolism import build_trigram_interpretation
+        result["trigram_interpretation"] = build_trigram_interpretation(
+            result, category="general")
+    except Exception:
+        result["trigram_interpretation"] = None
     chain_full = run_thinking_chain(result)
     chain = chain_full.get("thinking_chain", chain_full)
 
