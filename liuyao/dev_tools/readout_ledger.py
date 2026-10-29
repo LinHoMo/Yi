@@ -299,11 +299,15 @@ def checks():
             # 读 HEAD 版本而非工作树：巡逻语义＝对已提交态核对；在制批的未提交条目
             # 不该判红（254 上线首跑即抓到自己诞生瞬间的"条目已写、提交未在册"，
             # 该误红暴露了口径须钉 HEAD——已按 §六.2 分诊归正）。
-            txt = _sp.run(["git", "-C", str(ROOT), "show", f"HEAD:{d}/docs/CHANGELOG.md"],
-                          capture_output=True, text=True, encoding="utf-8",
-                          errors="replace").stdout
-            heads |= {parse(x) for x in _re.findall(
-                r"^## \d{4}-\d{2}-\d{2} 第([零〇一二两三四五六七八九十百千]+)批", txt, _re.M)}
+            # 批号在册口径（330 批文档整理后）：主 CHANGELOG **与它的归档文件**都算数——
+            # 330 批把 10-25 之前的 154 批全文移进 `docs/CHANGELOG-ARCHIVE.md`，
+            # 批号一个没少，只是换了文件；只读主文件会把它们全判成孤儿。
+            for fn in ("docs/CHANGELOG.md", "docs/CHANGELOG-ARCHIVE.md"):
+                txt = _sp.run(["git", "-C", str(ROOT), "show", f"HEAD:{d}/{fn}"],
+                              capture_output=True, text=True, encoding="utf-8",
+                              errors="replace").stdout
+                heads |= {parse(x) for x in _re.findall(
+                    r"^## \d{4}-\d{2}-\d{2} 第([零〇一二两三四五六七八九十百千]+)批", txt, _re.M)}
         body = _sp.run(["git", "-C", str(ROOT), "log", "--format=%B\x01"],
                        capture_output=True, text=True, encoding="utf-8", errors="replace").stdout
         men = ({parse(x) for x in _re.findall(r"第([零〇一二两三四五六七八九十百千]+)批", body)}
