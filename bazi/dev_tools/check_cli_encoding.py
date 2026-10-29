@@ -2,8 +2,8 @@
 """CLI 编码红线：凡带 argparse 的中文命令行入口，在 **cp936 控制台**下必须交出可读的 UTF-8。
 
 为什么不是静态 grep 就算：本会话两次实测证明静态判据会两头出错——
-①漏报：`[2]`/`[23]` 一类按**名单**跑产器的写法，清单外新增的入口一概不查——
-   本科静态数一遍才发现缺守卫者 7 个（含 `dev_tools/regression.py` 这种连守卫都没写过的）；
+①漏报：`[2]` 的旧写法按**名单**跑产物（5 个 CLI），清单外新增的入口与
+   7 个 `dev_tools/*` 一概不查——两科实扫各数出 7–8 个缺守卫者；
 ②假阳：`golden.py` 自己不写守卫、守卫在 `golden_kit` 里，纯按"本文件有没有 reconfigure"判会错怪它。
 所以本器**跑真产物**：以 `PYTHONIOENCODING=cp936` 起子进程执行 `<入口> --help`，
 把 stdout/stderr 的原始字节拿来判——能按 UTF-8 解码且出现中文＝守卫生效；
@@ -35,12 +35,13 @@ CJK_RE = re.compile(r"[\u4e00-\u9fff]")
 
 # 具名豁免（照 [20] 的纪律）：命中即 NOTE 而非判红；**若该文件不再漏，必须删除本条**（反向判红）。
 # 每条都要写明确切根因与"为什么不在本批改它"。
-EXEMPT: dict[str, str] = {}  # 实测无漏码入口；新增豁免须写根因与另批修法（照 [20] 纪律）
+EXEMPT: dict[str, str] = {}  # 守卫位置修正后实测无漏码入口；新增豁免须写根因与另批修法（照 [20] 纪律）
 
-# 【静态红线·照六爻第一百六十五批】"入口必须自带守卫"从散文升级成机器断言：
-# discover() 找到的每一个中文入口（argparse 与无 argparse 一视同仁）文件内必须有
-# UTF-8 守卫（reconfigure 或 force_utf8_stdio），缺一即判红。
-# 2026-10-13 实测本科全量入口（36 个）零缺守卫 ⇒ 按红线做而非棘轮。
+# 【静态红线·#36 收尾】第一百五十批登记的开口：`[2]` 的编码不变式**按名单**跑产物，
+# 新增 CJK CLI 入口不会自动进入——"补全"是瞬态，"漏新"才是常态。本判据把"入口必须带守卫"
+# 从散文升级成机器断言：discover() 找到的每一个中文入口（argparse 与无 argparse 一视同仁），
+# 文件内必须有 UTF-8 守卫（reconfigure 或 force_utf8_stdio），缺一即判红。
+# 2026-10-13 实测两科全量入口（liuyao 44／bazi 36）**零缺守卫**，故按红线做而非棘轮。
 # 已知判不到（如实写）：守卫在**被 import 的模块**里而非入口文件自身时会误报——
 # 现库无此形态（逐文件核过）；若日后出现，走 EXEMPT 具名豁免并注明守卫所在模块。
 GUARD_RE = re.compile(r"""reconfigure\(\s*encoding\s*=\s*["']utf-8|force_utf8_stdio""")
@@ -168,7 +169,7 @@ def negative_selftest(problems: list[str]) -> None:
         st2, msg2 = probe(root, "scripts/" + "good_cli.py")
         if st2 == "fail":
             problems.append(f"负例自证假阳性：UTF-8 产物被判红 → {msg2}")
-        # 第四式（静态红线·照六爻）：无守卫的中文入口必被抓；带守卫的不得误伤。
+        # 第四式（静态红线）：无守卫的中文入口必被抓；带守卫的不得误伤。
         noguard = root / "scripts" / ("noguard_" + "cli.py")
         noguard.write_text("# -*- coding: utf-8 -*-\n中文说明的入口，故意不写守卫\n"
                            "if __name__ == '__main__':\n    print('中文')\n", encoding="utf-8")

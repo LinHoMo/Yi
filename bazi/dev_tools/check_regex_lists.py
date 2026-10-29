@@ -24,7 +24,7 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-DISC = HERE.parent  # 门是纯文本/AST 审计，不依赖内核——两科各持私有副本（零耦合；八字私有副本）
+DISC = HERE.parent  # 门是纯文本/AST 审计，不依赖内核——两科各持私有副本（零耦合）
 
 def force_utf8_stdio():
     try:

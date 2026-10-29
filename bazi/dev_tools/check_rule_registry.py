@@ -96,9 +96,10 @@ def _iter_entries(doc: dict):
 # ⚠ 扫描面是**整条 impl 串，含括号内的说明文字**：注释里若把「旧壳 + 符号」拼成一条
 # `path.py:symbol`，本器一样判红（本批实踩——更正死指针时在注里写了旧写法，当场被抓）。
 # 这是**特性不是误伤**：说明文字里的死指针同样是死指针。登记旧值时**只写文件、不拼符号**。
-_PATH_RE = re.compile(r"(?<![\w/])((?:bazi/)?(?:scripts|core|dev_tools)/[\w/]+\.py)")
+# A1-1 归并：路径前缀两科都认（原八字版只认 bazi/，六爻版只认 liuyao/）
+_PATH_RE = re.compile(r"(?<![\w/])((?:(?:liuyao|bazi)/)?(?:scripts|core|dev_tools)/[\w/]+\.py)")
 _SYM_RE = re.compile(r":([A-Za-z_][A-Za-z0-9_]*)")
-# 薄 re-export 壳（`scripts/pattern.py` 这类）：职责拆走后只留 `from X import *`，
+# 薄 re-export 壳（职责拆走后只留 `from X import *` 的模块）：
 # 符号**在壳里不落字面**但运行时可达——照字面判会造 4 条假红（实测踩到）。
 _REEXPORT = re.compile(r"from\s+[\w.]+\s+import\s+\*")
 
@@ -240,7 +241,7 @@ def selftest(problems: list[str]) -> None:
         {"rule_id": "test.impl_missing_file",
          "impl": "dev_tools/__does_not_exist__.py:analyze_x", "source": {"verified": True}},
         {"rule_id": "test.impl_missing_symbol",
-         "impl": "scripts/pattern.py:__no_such_symbol__", "source": {"verified": True}},
+         "impl": "scripts/chart.py:__no_such_symbol__", "source": {"verified": True}},
     ], "_uncovered": []}
     p: list[str] = []
     n: list[str] = []
@@ -253,10 +254,15 @@ def selftest(problems: list[str]) -> None:
         problems.append(f"负例不该产生 NOTE（verified=true 应判红）→ {n}")
 
     # 【第一百六十八批】正例不误伤：行号/版本号式定位记号无符号可验，必须放行
-    if check_impl("scripts/pattern.py:128（成破救应分支）"):
+    if check_impl("scripts/chart.py:128（成破救应分支）"):
         problems.append("正例被误伤：行号式定位记号不该判")
-    if check_impl("scripts/pattern.py"):
+    if check_impl("scripts/chart.py"):
         problems.append("正例被误伤：纯路径不该判")
+    # 六爻专属负例（A1-1 归并保留，不在八字侧跑）：第一百六十六批域拆分后，
+    # 父模块无 re-export 的悬空符号必须仍被抓住。
+    _hist = "scripts/" + "classical_enhancements.py" + ":analyze_shen_yao_activation"
+    if DISC.name == "liuyao" and not check_impl(_hist):
+        problems.append("负例未抓到：父模块并无该符号（已搬入 shen_yao 子模块）")
 
 
 def main() -> int:

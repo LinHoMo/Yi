@@ -12,13 +12,13 @@ tools/、docs/source-readings/ 都随仓库扁平化删除了——照着跑必�
     运行时产物目录（gitignore，本就不该存在）；
   · **不查 CHANGELOG**：老条目是登记时点的事实（文件头已声明一字未改），
     历史里提到已删除的根文档不是 bug；
-  · **【第一百六十六批扩】`.json` 数据文件里的路径字样同样扫**：本器此前只走
-    `.md`/`.py`，于是 `data/rules/rule_registry.json` 的 coverage/_comment 散文里挂着
-    `tests/test_bazi_bing_yao.py` 等**三条从未存在过**的幽灵指针（git 全历史 0 命中），
-    [11] 却照报「活引用全部可达」——可达性门自己漏了整类载体，正是它要防的病。
+  · **【照八字科第一百六十六批·同步判据不同文字】`.json` 数据文件里的路径字样同样扫**：
+    本器此前只走 `.md`/`.py`，于是 `data/rules/rule_registry.json` 一类**声明载体**里
+    写的死指针门永远看不见（八字科实抓到三条从未存在的 `tests/*.py` 幽灵指针）。
     数据 JSON 里 `"impl": "file.py:symbol"` 这类本就是**可执行契约**（由 [12] 逐条回指；
-    第一百六十八批前这句话是假的——[12] 当时只验 source.quote_in_*／corpus_files，
-    从没看过 impl。已补 `check_impl`，见该器 docstring），
+    第一百六十九批前这句话是假的——[12] 当时只验 source.quote_in_*／corpus_files，
+    从没看过 impl，于是两条悬空指针（身爻/忧解第一百六十六批搬进子模块后 impl 仍指父模块）
+    一路无人发现。已补 `check_impl`，见该器 docstring），
     扫得到只会更严，不误伤：字段值以 `/` 分段且带已知扩展名的串本来就该在盘上。
     `data/cases/`（案例正文含内嵌 markdown 与书文）与 `data/sources/`（古籍底本）不扫，
     否则会把史料当声明造出假红——反向激励删史料。
@@ -46,8 +46,8 @@ ROOT = DISC.parent          # 学科根之外的仓库根：注释里 `bazi/...`
 # 反引号内、含 / 且带已知扩展名的串
 REF = re.compile(r"`([A-Za-z0-9_\-./\u4e00-\u9fff]+\.(?:md|py|json|txt|css|html))(?![A-Za-z])`")
 # 2026-10-10 补：**没打反引号的路径**同样是活引用。本器原先只认反引号内串，
-# 六爻科就这样漏过一条指向扁平化已删目录的活引用（该科曾以「84 条全可达」报绿）——
-# 两科同一实现，同步修。
+# 于是 `scripts/timing.py` 头部「【甲】《易隐》应期四诀（docs/source-readings/yiin_dz.md …）」
+# 这条指向扁平化时已删除目录的指针，一路以「84 条全可达」的身份躲过了门。
 # 只认以真实顶层目录开头的串，避免把散文里的 `a/b.md` 之类速记当声明。
 BARE = re.compile(r"(?<![\w/.-])((?:docs|scripts|data|references|dev_tools|core|tests"
                   r"|bazi|liuyao)/[A-Za-z0-9_\-./\u4e00-\u9fff]*"
@@ -56,15 +56,22 @@ SKIP_MARK = ("<", "…", "...", "http://", "https://")
 # 运行时产物目录：本就不入库，存在性不检查
 RUNTIME_DIRS = ("outputs/", "scratch/", "logs/", "assets/")
 # 评测生成物：.gitignore 已声明「**/data/cases/eval_*.json 脚本重跑生成、不入库」，
-# 代码在运行时真读它（corpus_reports.py 取 eval_all 的 engine_output）。
+# 代码在运行时真读它（scripts/evaluate.py --engine-file、case_runner 等）。
 # 瘦身清掉盘上生成物后，把它当死链接判红＝把 gitignore 声明的派生物误判成悬空指针。
 GENERATED_ARTIFACT = re.compile(r"(?:^|/)data/cases/eval_[A-Za-z0-9_\-]*\.json$")
+# 校勘/对拍衍生件：.gitignore 第 23–30 行声明「**/data/collation/ 不入库」（抓取件与衍生比对件同批定调）。
+# 本器**必须**同步排除——否则脚本重跑生成、被 `git clean -fdX` 清掉之后，
+# 引用它的入库文档会被本门判成死指针（实测 330 批并行清理后即触发）。
+COLLATION_ARTIFACT = re.compile(r"(?:^|/)data/collation/[A-Za-z0-9_\-]*\.json$")
 # 【第一百六十六批】上述目录里的**文件本身**也不作为声明载体扫描：RUNTIME_DIRS 的旧口径
 # 只豁免「指向这些目录的引用」，但 scratch/ 下的一次性探针脚本里写死的旧路径字符串
 # （查 git 历史用）会被扫成死指针——那些不是对仓库的声明，判红等于逼工作脚本绕着写。
 SKIP_ROOTS = ("outputs/", "scratch/", "logs/")
 # 历史登记文档：其中提到的旧路径是登记时点事实，不判
-EXEMPT = ("docs/CHANGELOG.md",)
+# 330 批：CHANGELOG 归档后，**归档文件与 CHANGELOG 同口径豁免**——
+# 归档段是逐字搬过来的历史散文，里面指向当年临时文件的路径照样是"登记时点的事实"；
+# 把它当活文档查，等于要求历史文字永远指向今天还存在的文件。
+EXEMPT = ("docs/CHANGELOG.md", "docs/CHANGELOG-ARCHIVE.md")
 # 本器自己的源文件里有负例样本的字面死引用，不能自查
 SELF = "dev_tools/check_doc_refs.py"
 SUFFIXES = (".md", ".py", ".json", ".txt", ".css", ".html")
@@ -106,7 +113,8 @@ def scan() -> tuple[list[str], int]:
             continue      # 一次性工作脚本所在目录：其中的路径字符串不是对仓库的声明
         if any(rel_to_disc.endswith(e) for e in EXEMPT) or rel_to_disc == SELF:
             continue
-        if rel_to_disc.startswith("data/cases/") or rel_to_disc.startswith("data/sources/"):
+        if rel_to_disc.startswith("data/cases/") or rel_to_disc.startswith("data/sources/") \
+                or rel_to_disc.startswith("data/collation/"):
             continue      # 语料与古籍底本：正文是案例数据/书文（含内嵌 markdown），不是路径声明载体
         if rel_to_disc.endswith((".wikitext.txt", ".meta.json", "_diff.json")):
             continue      # 抓取/校对原始件与衍生比对件：gitignore 不入库，其引用是脚本自身输出目标，非对仓库声明
@@ -139,6 +147,8 @@ def scan() -> tuple[list[str], int]:
                     continue
                 if GENERATED_ARTIFACT.match(ref):
                     continue      # 评测生成物（.gitignore 声明「脚本重跑生成、不入库」）：存在性不检查
+                if COLLATION_ARTIFACT.match(ref):
+                    continue      # 校勘衍生件（同上，.gitignore 声明「不入库」）：存在性不检查
                 if ref.endswith((".wikitext.txt", ".meta.json", "_diff.json")):
                     continue      # 抓取/校对原始件与衍生比对件（gitignore 不入库）：存在性不检查
                 if SHORTHAND.search(ref):
@@ -163,8 +173,8 @@ def selftest(problems: list[str]) -> None:
                    "裸路径也要抓（docs/zz_probe_deadref_c.md 无反引号）。\n"
                    f"真路径不得误报：{ok_a} 与 {ok_b} 都在。\n",
                    encoding="utf-8")
-    # 第四式（第一百六十六批）：**JSON 数据文件里**的死指针同样必抓——
-    # 本器旧版只走 .md/.py，rule_registry.json 三条幽灵 tests/ 指针就是这么漏的。
+    # 第四式（照八字科第一百六十六批·同步判据不同文字）：**JSON 数据文件里**的死指针
+    # 同样必抓——本器旧版只走 .md/.py，rule_registry.json 的 HANDOFF 幽灵指针就是这么漏的。
     tmp_json = DISC / "data" / "rules" / "_selftest_deadref.json"
     tmp_json.write_text(json.dumps(
         {"coverage": "见 `docs/zz_probe_deadref_d.md`；真路径不误报 " + ok_a},

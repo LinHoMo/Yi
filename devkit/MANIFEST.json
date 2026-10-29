@@ -7,13 +7,33 @@
     "shared": [
       "check_case_isolation.py",
       "check_house_conventions.py",
-      "check_layer_contract.py"
+      "check_layer_contract.py",
+      "check_cli_encoding.py",
+      "check_doc_refs.py",
+      "check_regex_lists.py",
+      "check_rule_registry.py",
+      "golden.py",
+      "baselines.py",
+      "feedback_store.py",
+      "check_source_readings.py"
     ],
     "root": [
       "check_root_docs.py",
       "check_docs_index.py",
       "check_batch_num.py"
     ]
+  },
+  "variants": {
+    "check_source_readings.py": ["liuyao", "bazi"],
+    "golden.py": ["liuyao", "bazi"],
+    "baselines.py": ["liuyao", "bazi"],
+    "feedback_store.py": ["liuyao", "bazi"]
+  },
+  "variant_reasons": {
+    "check_source_readings.py": "两科书证体例不同：六爻扫 scripts/core/references/docs/data/tests 的源L+引文，八字扫 references 文档的底本行号；判定层不同（六爻有 WRONG_BOOK/裸指针硬判），照 kernel 变体范式保留两份实现",
+    "golden.py": "指纹覆盖对象不同：六爻是 64 卦×三时刻×三爻型的排盘/思维链快照，八字是 40 例 conclusion 全字段哈希；没有可共用的样例表",
+    "baselines.py": "基线对象不同：六爻是应期支层（用神支/世爻支/日辰/月建/频率），八字是判断维（pattern/cong_ge/tiaohou）；公式同式但案例接口不同",
+    "feedback_store.py": "存储 schema 与 CLI 不同：六爻是 FeedbackStore 库（被 feedback_report import），八字是 reading_events.jsonl 命令行通道；API 面不重合"
   },
   "gate_ids": {},
   "targets": {

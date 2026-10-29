@@ -34,9 +34,21 @@ def load_manifest() -> dict:
     return json.loads(MANIFEST.read_text(encoding="utf-8"))
 
 
-def expected_shared(manifest: dict, devkit: Path) -> dict[str, Path]:
-    """{共享件名: 真源路径}。"""
-    return {name: devkit / SHARED / name for name in manifest["files"]["shared"]}
+def variant_path(devkit: Path, name: str, disc: str) -> Path:
+    """登记为变体的共享件：`shared/variants/<名去 .py>.<科>.py`（照 kernel 变体范式）。"""
+    return devkit / SHARED / "variants" / f"{name[:-3]}.{disc}.py"
+
+
+def expected_shared(manifest: dict, devkit: Path, disc: str) -> dict[str, Path]:
+    """{共享件名: 该科真源路径}。变体按科取，其余取 shared/ 根。"""
+    variants = manifest.get("variants", {})
+    out: dict[str, Path] = {}
+    for name in manifest["files"]["shared"]:
+        if disc in (variants.get(name) or []):
+            out[name] = variant_path(devkit, name, disc)
+        else:
+            out[name] = devkit / SHARED / name
+    return out
 
 
 def source_hygiene(manifest: dict, devkit: Path) -> list[str]:
@@ -48,25 +60,45 @@ def source_hygiene(manifest: dict, devkit: Path) -> list[str]:
         if not d.exists():
             problems.append(f"真源目录缺 {sub}/")
             continue
-        for p in sorted(d.glob("*.py")):
-            if p.name not in registered:
-                problems.append(f"{sub}/ 里多出未登记文件 {p.name}（该删或该进 MANIFEST）")
-        for name in sorted(registered):
-            if not (d / name).exists():
-                # root 门允许"登记在前、落地在后"（A6-INT 的 check_batch_num 就是这种情况），
-                # 但 shared 分发物缺源一定是缺陷。
-                if key == "shared":
+        if key == "shared":
+            # 共享根只放非变体项；变体项在 shared/variants/ 下按科登记
+            variants = manifest.get("variants", {})
+            plain = {n for n in registered if not variants.get(n)}
+            for p in sorted(d.glob("*.py")):
+                if p.name not in plain:
+                    problems.append(f"{sub}/ 里多出未登记文件 {p.name}（该删或该进 MANIFEST）")
+            for name in sorted(plain):
+                if not (d / name).exists():
                     problems.append(f"{sub}/ 缺已登记真源 {name}")
+            vd = d / "variants"
+            registered_v = {variant_path(devkit, n, disc).name
+                            for n, discs in variants.items() for disc in discs}
+            if vd.exists():
+                for p in sorted(vd.glob("*.py")):
+                    if p.name not in registered_v:
+                        problems.append(f"{sub}/variants/ 里多出未登记文件 {p.name}")
+            for n, discs in variants.items():
+                for disc in discs:
+                    if not variant_path(devkit, n, disc).exists():
+                        problems.append(f"{sub}/variants/ 缺登记变体 {n}（{disc}）")
+        else:
+            for p in sorted(d.glob("*.py")):
+                if p.name not in registered:
+                    problems.append(f"{sub}/ 里多出未登记文件 {p.name}（该删或该进 MANIFEST）")
     return problems
 
 
 def drift(manifest: dict, devkit: Path, disc: str, target_dir: Path) -> list[str]:
     """返回某科共享件与真源的差异（空列表＝同源）。"""
     problems: list[str] = []
-    want = expected_shared(manifest, devkit)
+    want = expected_shared(manifest, devkit, disc)
     for name, src in want.items():
         if not src.exists():
-            problems.append(f"{disc}：真源缺 {SHARED}/{name}")
+            try:
+                shown = src.relative_to(devkit)
+            except ValueError:
+                shown = src
+            problems.append(f"{disc}：真源缺 {shown}")
             continue
         dst = target_dir / name
         if not dst.exists():
@@ -80,7 +112,7 @@ def write_target(manifest: dict, devkit: Path, disc: str, target_dir: Path) -> l
     """按 MANIFEST 重生成共享件；**不删**学科自有的其他门（那不是产物）。"""
     actions: list[str] = []
     target_dir.mkdir(parents=True, exist_ok=True)
-    for name, src in sorted(expected_shared(manifest, devkit).items()):
+    for name, src in sorted(expected_shared(manifest, devkit, disc).items()):
         if not src.exists():
             continue
         data = src.read_bytes()
@@ -98,7 +130,9 @@ def write_target(manifest: dict, devkit: Path, disc: str, target_dir: Path) -> l
 def selftest() -> int:
     """负例走临时目录（AGENTS.md §四.8）：干净副本放行、改产物／缺产物／野文件都判红。"""
     manifest = {
-        "files": {"shared": ["probe_shared.py"], "root": ["probe_root.py"]},
+        "files": {"shared": ["probe_shared.py", "probe_variant.py"],
+                  "root": ["probe_root.py"]},
+        "variants": {"probe_variant.py": ["alpha", "beta"]},
         "targets": {"alpha": "alpha/dev_tools", "beta": "beta/dev_tools"},
     }
     fails: list[str] = []
@@ -106,9 +140,13 @@ def selftest() -> int:
         t = Path(td)
         dk = t / "devkit"
         (dk / SHARED).mkdir(parents=True)
+        (dk / SHARED / "variants").mkdir(parents=True)
         (dk / ROOT_GATES).mkdir(parents=True)
         src = dk / SHARED / "probe_shared.py"
         src.write_text("# shared probe\n", encoding="utf-8")
+        for disc in manifest["targets"]:
+            (dk / SHARED / "variants" / f"probe_variant.{disc}.py").write_text(
+                f"# variant for {disc}\n", encoding="utf-8")
         (dk / ROOT_GATES / "probe_root.py").write_text("# root probe\n", encoding="utf-8")
         for disc in manifest["targets"]:
             target = t / manifest["targets"][disc]
