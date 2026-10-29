@@ -5,6 +5,24 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-10-29 第三百四十六批（全仓）：**`check_batch_num.py` 落地——批次×提交有了根级门**
+
+**性质**：root gate。零引擎、零数据改动。
+
+- 新增 `devkit/root/check_batch_num.py`：读 HEAD 版本的两科
+  `docs/CHANGELOG.md`＋`docs/CHANGELOG-HISTORY-INDEX.md` 的 `## 日期 第N批` 标题，
+  读 `git log` 全信息体的「第N批」，**已登记但无提交提及**的批号判红。
+- 允许名单**不另抄**：从 `liuyao/dev_tools/readout_ledger.py` 的 `SETTLED_ORPHANS`
+  经 AST 读取（单源）；读取失败即判红。提交提及但标题没有的批号只报 NOTE
+  （历史合并入库/范围简写的已知形态），不反向考古。
+- 负例五类（中文批号解析／一致误伤／登记未提交／已结案误伤／0 结果）全抓到；
+  实跑：CHANGELOG 标题批号 151 个、提交提及 158 个、未结案孤儿 **0**。
+- 挂 CI `root-gates`（`python devkit/root/check_batch_num.py`）；`ARCHITECTURE-PLAN §五.5`
+  的「尚未实现」欠账关闭。`devkit/MANIFEST.json` 的 root 列表本就登记该文件，
+  本批只是让名单里那个名字真的存在。
+
+分数含义：与古籍案例要点的一致性，不代表现实预测命中率（AGENTS.md §一.3）。
+
 ## 2026-10-29 第三百四十四批（六爻）：**恢复 wikisource 被清空的书证标签 ＋ [38] expected 覆盖生存线 ＋ 账台 full 口径修正**
 
 **性质**：data＋gate＋docs。零引擎行为改动、零判词改动；恢复的是 292/297/298/282 批

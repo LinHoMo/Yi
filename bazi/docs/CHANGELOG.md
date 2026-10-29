@@ -6,6 +6,18 @@
 > 下面历史条目若提到 ARCHIVE，一律按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 3 节标题已并入索引。
 
+## 2026-10-29 第三百四十六批（全仓）：**`check_batch_num.py` 落地——八字 CHANGELOG 批号纳入根级门**
+
+**性质**：root gate。零引擎、零数据改动。
+
+- 根级 `devkit/root/check_batch_num.py` 已挂 CI `root-gates`：读两科
+  `CHANGELOG.md`＋`CHANGELOG-HISTORY-INDEX.md` 的标题批号，与 `git log` 的「第N批」
+  对账；允许名单从 `readout_ledger.py` 的 `SETTLED_ORPHANS` 单源读取。
+- 实跑：标题批号 151、提交提及 158、未结案孤儿 0；负例五类全过。
+- 详见同批 `liuyao/docs/CHANGELOG.md` 第三百四十六批；`ARCHITECTURE-PLAN §五.5` 欠账关闭。
+
+分数含义：与古籍案例要点的一致性，不代表现实预测命中率（AGENTS.md §一.3）。
+
 ## 2026-10-29 第三百四十五批（八字）：**《三命通会》校订件补交入库 ＋ 抓取/校订链复跑 ＋ 报告元数据口径修正**
 
 **性质**：content＋tooling＋docs。把 327–329 批一直留在工作区、导致干净 HEAD 判红的

@@ -30,6 +30,7 @@ jobs:
           python devkit/sync_devkit.py --check
           python devkit/root/check_root_docs.py
           python devkit/root/check_docs_index.py
+          python devkit/root/check_batch_num.py
   gates:
     runs-on: windows-latest
     timeout-minutes: 45

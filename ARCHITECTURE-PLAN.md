@@ -32,7 +32,7 @@ Yi/
 │   ├── MANIFEST.json           # 11 共享件 + 4 变体 + 8 门编号
 │   ├── sync_devkit.py          # --write / --check / --selftest
 │   ├── shared/                 # 7 个单源 + variants/ 4 个学科专属实现
-│   ├── root/                   # check_root_docs / check_docs_index（不分发）
+│   ├── root/                   # check_root_docs / check_docs_index / check_batch_num（不分发）
 │   ├── pending/                # 登记暂存区（A2-B 合入 DOCS 后已空）
 │   └── handoff/                # 27 份交接报告（gitignore，不入库）
 ├── kernel/                     # 引擎内核真源：common + variants（316 批起）
@@ -105,10 +105,11 @@ devkit/  ─sync_devkit──▶  <科>/dev_tools         （产物，[37] 字�
    未替外部会话提交其它文件。
 4. **A4-CI 实跑额外修复**：DSH `src/index.mjs` 只按 LF 找 frontmatter 定界，Windows CRLF
    工作树下解析失败——已修为读取端归一（`dsh-plugin/CHANGELOG.md` 具名）。
-5. **欠账**：`devkit/root/check_batch_num.py` 尚未实现（A6-INT 步骤 4 的"门未就位先记欠账"）；
-   批次×提交暂由 `readout_ledger` 的"登记×提交在册"项守。要升级成独立门需另批实现。
-6. **未决外部项**：三命通会会话仍有 6 个路径未提交（3 modified + 3 untracked），
-   本方案全程未触碰、未替其提交。
+5. **已关闭（346 批）**：`devkit/root/check_batch_num.py` 已实现并挂进 CI `root-gates`；
+   它从 `readout_ledger.py` 的 `SETTLED_ORPHANS` 单源读取允许名单（AST），不另抄一份；
+   原「门未就位先记欠账」句已删除，不再是现状。
+6. **未决外部项已关闭（345 批）**：三命通会会话的 6 个路径（3 modified + 3 untracked）
+   已随 327–329 批补交入库；不再是未决项。
 
 ## 六、显式不做的事（原方案 §八，保留编号供引用）
 
