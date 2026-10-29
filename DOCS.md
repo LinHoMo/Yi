@@ -48,7 +48,7 @@
 
 | 文件 | 一句话 | 状态 |
 |---|---|---|
-| `liuyao/docs/CHANGELOG.md` | 批次流水，**只保留最近窗口**（2026-10-25 起） | 活文档 |
+| `liuyao/docs/CHANGELOG.md` | 批次流水，**只保留最近窗口**（2026-10-29 起；更早见索引） | 活文档 |
 | `liuyao/docs/CHANGELOG-HISTORY-INDEX.md` | **逐批一句话索引**（342 批精简：原 154 批事实标题＋更早 49–156 批一句话；全文归档已删） | 历史索引 |
 | `liuyao/docs/JUDGMENT-TABLE.md` | 判定表：书证底稿、9 格、13 条题类覆盖、27 处覆写清单，**含"不换判词"的结论** | 活文档 |
 | `liuyao/docs/CASE-LIBRARY-AUDIT.md` | 案例库应期抽取审计（dz 底本通道） | 活文档 |
@@ -74,7 +74,7 @@
 |---|---|---|
 | `bazi/SKILL.md` | 八字科宿主模型操作合同 | 活文档 |
 | `bazi/README.md` | 八字科说明与读数表 | 活文档 |
-| `bazi/docs/CHANGELOG.md` | 八字批次流水，**只保留最近窗口**（2026-10-27 起） | 活文档 |
+| `bazi/docs/CHANGELOG.md` | 八字批次流水，**只保留最近窗口**（2026-10-29 起；更早见索引） | 活文档 |
 | `bazi/docs/CHANGELOG-HISTORY-INDEX.md` | **逐批一句话索引**（342 批精简：原 81 节标题保留；全文归档已删） | 历史索引 |
 | `bazi/docs/EVAL-PLAN.md` | 八字案例评测方案（分维与门槛的出处） | 活文档 |
 | `bazi/docs/SANMING-SIKU-COLLATION.md` | 《三命通会》两转录渠道对拍报告 | 归档留证 |
