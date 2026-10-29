@@ -107,6 +107,7 @@ CURATED = {
         "check_rule_registry": ("blocking", "注册表 verified/impl 指针回验"),
         "check_layer_contract": ("blocking", "分层契约：四段键白名单＋禁边表（[32]；312 批补登记）"),
         "check_judgment_table": ("blocking", "判定表：9 格／书证逐字／覆写表随码动（[33]；314 批新增）"),
+        "check_expected_coverage": ("blocking", "expected 书证覆盖生存线（[38]；344 批新增）"),
         # check_docs_index 于 A0-5（331 批）上提到 devkit/root/：不再是六爻 dev_tools 的脚本，
         # 故本表删条目（"表中有序实无"从此不再报它）；门本身仍在 CI 的 root-gates 里跑。
         "check_test_sentinel": ("blocking", "考卷哨兵：只给红绿／阈值单调／开卷记账（[34]；315 批新增）"),

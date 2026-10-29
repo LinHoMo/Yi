@@ -41,7 +41,7 @@ except Exception:
     pass
 
 DISC = Path(__file__).resolve().parents[1]
-SIKU = DISC / "data" / "sources" / "sanming_tonghui_siku.wikitext.txt"
+SIKU = DISC / "data" / "sources" / "sanming_tonghui_siku.dz.txt"
 DZ = DISC / "data" / "sources" / "sanming_tonghui_dz.dz.txt"
 T2S = DISC / "dev_tools" / "t2s_table.json"
 OUT = DISC / "data" / "collation" / "sanming_tonghui_siku_diff.json"
@@ -128,16 +128,17 @@ def main() -> int:
     siku_raw_lines = siku_raw.splitlines()
 
     # ── 正向：四库本逐章，章内窗口在 dz 本中的命中率 ──────────────────────────
-    parts = re.split(r"\{\{SK anchor\|([^}]*)\}\}", siku_raw)
-    anchor_lines = [siku_raw[:m.start()].count("\n") + 1
-                    for m in re.finditer(r"\{\{SK anchor\|([^}]*)\}\}", siku_raw)]
+    # 章节切分：校订件的章名**顶格**（正文行一律全角空格缩进，顶格者即章名）
+    slines = siku_raw.splitlines()
+    heads = [(i, ln.strip()) for i, ln in enumerate(slines) if ln.strip() and not ln.startswith("\u3000")]
     sections = []
-    for i in range(1, len(parts) - 1, 2):
-        title, body = parts[i], parts[i + 1]
+    for hi, (idx, title) in enumerate(heads):
+        end = heads[hi + 1][0] if hi + 1 < len(heads) else len(slines)
+        body = "\n".join(slines[idx + 1:end])
         nb, _ = norm_map(body, tbl)
         if len(nb) < WIN:
             continue
-        line_no = anchor_lines[i // 2] if (i // 2) < len(anchor_lines) else 0
+        line_no = idx + 1
         wins = [nb[k:k + WIN] for k in range(0, len(nb) - WIN + 1, STEP)]
         miss = [w for w in wins if w not in dz_norm]
         ratio = 1.0 - len(miss) / len(wins) if wins else 0.0
@@ -311,7 +312,7 @@ def main() -> int:
         "schema": "bazi.sanming_siku_diff/2",
         "_meta": {
             "purpose": "《三命通会》四库本（维基文库逐卷转录）与殆知阁本（dz）的内容级对拍",
-            "siku_file": "data/sources/sanming_tonghui_siku.wikitext.txt",
+            "siku_file": "data/sources/sanming_tonghui_siku.dz.txt",
             "dz_file": "data/sources/sanming_tonghui_dz.dz.txt",
             "t2s_table": "dev_tools/t2s_table.json",
             "built_by": "dev_tools/diff_siku_sanming.py",

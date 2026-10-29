@@ -1,0 +1,95 @@
+{
+  "key": "sanming_tonghui_siku",
+  "kind": "八字",
+  "title": "三命通会（四库全书本）",
+  "work": "《三命通会》明·万民英撰（四库全书本）",
+  "origin": "维基文库《三命通會 (四庫全書本)》卷01–卷12 逐页转写",
+  "site": "zh.wikisource.org",
+  "api": "https://zh.wikisource.org/w/api.php",
+  "retrieved": "2026-10-29",
+  "license": "原作明代，公有领域；转录本依维基文库授权条款",
+  "source_file": "data/sources/sanming_tonghui_siku.dz.txt",
+  "raw_transcription": "data/sources/sanming_tonghui_siku.wikitext.txt（抓取件，按 .gitignore 不入库）",
+  "chars": 483593,
+  "bytes": 1419789,
+  "sha256": "47028eb5df323e77657cd6cdc696d133b3d923e31f7b537bad31feb6f7f9194f",
+  "sha256_convention": "对落盘字节取哈希（与在盘文件一致）",
+  "eol_on_disk": "LF",
+  "punctuation": "无标点（四库扫描版原文如此，卷首自注「加標點請另外建立頁面」）",
+  "normalization": "只改标记形态，正文与注文一字不改：SK anchor→章名行、SK notes→【】、版式包装（SKQS header/poem/onlyinclude/注释）删除",
+  "relation_to_dz": "与在库 `sanming_tonghui_dz.dz.txt`（殆知阁转录）是**同一四库底本的两条转录渠道**，不是两个版本；两者差异即转录脱漏，可逐段对拍。",
+  "volumes": [
+    {
+      "volume": 1,
+      "page": "三命通會 (四庫全書本)/卷01",
+      "chars": 40191,
+      "sha256": "9b9f86a4f1f859dc9da60db672a00b37a5956c3ea141132f6f879c3a1a172c07"
+    },
+    {
+      "volume": 2,
+      "page": "三命通會 (四庫全書本)/卷02",
+      "chars": 39385,
+      "sha256": "748da85cc60441c0e0ffe783644db152b70b4320b134650d80a086bb27987273"
+    },
+    {
+      "volume": 3,
+      "page": "三命通會 (四庫全書本)/卷03",
+      "chars": 39508,
+      "sha256": "a3fed515e8167657e7fbc2be7bf95dbb5d356d18b608c9bd260e006a66fd6ebe"
+    },
+    {
+      "volume": 4,
+      "page": "三命通會 (四庫全書本)/卷04",
+      "chars": 43117,
+      "sha256": "8919d99f6d48b0c420b0c885534b3988c5039a296acc0ad056723c8255387d76"
+    },
+    {
+      "volume": 5,
+      "page": "三命通會 (四庫全書本)/卷05",
+      "chars": 41104,
+      "sha256": "1268b6c220a88d06d49e8b8709b94cf19c2fdceef87ac897e7621af202d58f00"
+    },
+    {
+      "volume": 6,
+      "page": "三命通會 (四庫全書本)/卷06",
+      "chars": 46156,
+      "sha256": "af1c6faccc1e42d224b86e2216a130eadfd2510abd8da46f47f6cb36450acf0c"
+    },
+    {
+      "volume": 7,
+      "page": "三命通會 (四庫全書本)/卷07",
+      "chars": 38113,
+      "sha256": "df2002e56bf3f96b43b8ce3e6972863682948207cea0cb4aa680efee3d543372"
+    },
+    {
+      "volume": 8,
+      "page": "三命通會 (四庫全書本)/卷08",
+      "chars": 63890,
+      "sha256": "2bf8df667cb92d371d5d01c09ef6919be019d4f6da619a525bb5a872871a74d4"
+    },
+    {
+      "volume": 9,
+      "page": "三命通會 (四庫全書本)/卷09",
+      "chars": 61773,
+      "sha256": "08716c6eb49c8ccb2e51d749b950060b0063d725bfee7886a02ffb9f109861d7"
+    },
+    {
+      "volume": 10,
+      "page": "三命通會 (四庫全書本)/卷10",
+      "chars": 38959,
+      "sha256": "0a20dc53a4156211b5c8ba89dbb6a8f07f056fde573e37699e28b021b6d026b6"
+    },
+    {
+      "volume": 11,
+      "page": "三命通會 (四庫全書本)/卷11",
+      "chars": 51767,
+      "sha256": "d1bd610ac7878b19cc5270ccd17ffb213cd3e219611317d0d1621bbb0a09698d"
+    },
+    {
+      "volume": 12,
+      "page": "三命通會 (四庫全書本)/卷12",
+      "chars": 34574,
+      "sha256": "089270bfb30b00a359ce69b282c5184c752f1cf56417db8fb42dc5946005d163"
+    }
+  ]
+}

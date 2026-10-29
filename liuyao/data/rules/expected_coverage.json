@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "batch": 344,
+  "file": "data/cases/wikisource_cases.json",
+  "_comment": "expected 书证/机械派生字段的**覆盖生存线**。案例构建器重生成时必须保留人工 expected 字段：1592923 曾把 292/297/298/282 批的 74 use_god／52 branch／32 note／3 组 wangshuai-muku-six_spirit 与 WS035 verdict 一次性清空，而聚合分只掉 6 分、所有门全绿。min 为单调下限（新增标签只许更高，不许下调）；allowed_blank 逐条列名，出现未登记空值即判红。",
+  "cases": {
+    "wikisource_cases.json": {
+      "case_count": 81,
+      "meta_sum_required": true,
+      "fields": {
+        "use_god": {
+          "min": 78,
+          "allowed_blank": ["WS045", "WSD007", "WSD008"],
+          "allowed_values": ["父母", "兄弟", "子孙", "妻财", "官鬼", "世爻", "应爻"]
+        },
+        "use_god_branch": {
+          "min": 55
+        },
+        "use_god_position": {
+          "min": 3
+        },
+        "use_god_note": {
+          "min": 32
+        },
+        "use_god_wangshuai": {
+          "min": 3
+        },
+        "use_god_muku": {
+          "min": 3
+        },
+        "use_god_six_spirit": {
+          "min": 3
+        },
+        "verdict": {
+          "min": 58
+        }
+      }
+    }
+  }
+}

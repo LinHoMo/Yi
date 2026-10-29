@@ -5,6 +5,75 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-10-29 第三百四十四批（六爻）：**恢复 wikisource 被清空的书证标签 ＋ [38] expected 覆盖生存线 ＋ 账台 full 口径修正**
+
+**性质**：data＋gate＋docs。零引擎行为改动、零判词改动；恢复的是 292/297/298/282 批
+已落库的书证/机械派生基准字段。
+
+### 一、事故：1592923 把基准标签清空了，聚合分只掉 6 分
+
+`1592923`（易隐批）重跑 `fetch_wikisource_cases.py` 生成
+`liuyao/data/cases/wikisource_cases.json`，只写自动解析字段，未保留人工 expected：
+
+| 字段（非空数） | 1592923 前 | 事故后 | 恢复后 |
+|---|---:|---:|---:|
+| `expected.use_god` | 78/81 | 4/81 | **78/81** |
+| `use_god_branch` | 55/81 | 3/81 | **55/81** |
+| `use_god_note` | 32 | 0 | **32** |
+| `use_god_wangshuai`／`muku`／`six_spirit` | 各 3 | 0 | **各 3** |
+| `WS035` verdict（282 批校勘） | 凶 | 吉 | **凶** |
+| `WS003` 题面 | 占本年冬今得關差否 | 占本年冬今 | **原题面** |
+
+后果：wiki strict **75.8→69.8**、top-1 **31.8→29.5**、名次 2.03→2.16；
+direction 反而 **76.6→83.0**（弱维被 N/A 剔除的假上升）。339 批把 69.8 登记成新期望，
+并归因「315 封存后外集组成/分母变了」——**该归因是错的**：315 只把 50 例切 dev/test，
+n 与标签都没变；真正原因是本条事故。同 HEAD 引擎放回 308 标签后逐位回到
+75.8/31.8/2.03，direction 76.7，证明**引擎未回归，是基准被削薄**。
+
+恢复方式：以 `1592923^` 的 expected 为源，逐字段并回当前文件；保留本次抓取的
+`_meta.retrieved=2026-10-29` 与 WS003 `wikitext_head` 的去重修正，新增
+`_meta.curation` 说明。不是按读数改 expected：恢复后的读数与原 308 登记一致。
+
+### 二、新门 [38]：expected 覆盖生存线
+
+新增 `dev_tools/check_expected_coverage.py` ＋ `data/rules/expected_coverage.json`：
+A 案例数不得低于登记数；B 每个受控字段非空数不得低于下限；C `use_god` 空白 ID 必须
+逐条列名（只允许 WS045/WSD007/WSD008）且取值须在七类内。负例五类（整批清空／未登记
+空值／乱写取值／删例／清空 note）全部抓到。门 [38] 挂进 `check.py`；
+`governance_map` 登记 blocking，六爻 63→64、blocking 27→28。
+
+### 三、账台与对外文书同步
+
+- `liuyao.wikisource` 69.8/29.5/2.16 → **75.8/31.8/2.03**；top1/top3 29.5/59.1 → **31.8/61.4**。
+- `liuyao.baselines` 用神 18.2 → **25.0**（恢复题面后实测；事故态为 22.7——
+  WS003 题面截短改动了起卦输入）。基线变强是引擎用神取支改进，**未登记**，不是评分口径变化。
+- `bazi(tiaohou… pattern)` 80.6 → **100.0**（308 批已实测，账台漏登；零引擎改动）。
+- 新增账台项 `liuyao.expected_coverage(78/55/3/32/3/3/3/58)`。
+- `--quick` 不再在跳过 6 项时自称「全账 bad=0」：改为「已跑 34/40，跳过 6」，
+  结论写「已跑项全部一致（未跑项不计入结论）」；`--selftest` 增两项断言
+  （结论口径＋QUICK_SKIP 无死 id）。
+- `liuyao/README.md` 基线 18.2/19.0 → 25.0/19.0；重算双侧 exact McNemar
+  **p=0.549/0.453**（183 批 18.2 基线时 p=0.34/0.45）——引擎仍高于最强基线，
+  但「优于择支基线」照旧不声称。
+- `CAPABILITY.md` T1 机械指纹 4cee…→**6f70…**（320–324 批 judgment 块纳入后的现行值；
+  措辞层 405b 始终未变）。
+- `GOVERNANCE.md` 当前分布 63/27→**64/28**。
+- CI 新增 `ledger` job（windows-latest，跑默认 full）：此前全账只有本地 quick，
+  被跳过的 6 项（baseline／pattern／wiki top1-top3／collate／bazi 分维／bazi.external）
+  长期没有 CI 面；344 批起 full 账台进 CI。
+
+### 四、复验
+
+- `python liuyao/scripts/evaluate.py --split wikisource_holdout`：75.8%（n=50），top-1 31.8%、名次 2.03；
+- `--split wikisource_direction`：76.7%（n=31）；
+- `python liuyao/dev_tools/baselines.py --split wikisource_holdout`：用神值支 25.0/44；
+- `python liuyao/dev_tools/check_expected_coverage.py --selftest` rc=0；
+- `python liuyao/dev_tools/governance_map.py --strict` rc=0（64/28 与 43/26）；
+- `python liuyao/dev_tools/readout_ledger.py` **full：bad=0，已跑 40/40**；
+- `python liuyao/dev_tools/readout_ledger.py --quick` rc=0，输出明确「已跑 34/40，跳过 6」。
+
+分数含义：与古籍案例要点的一致性，不代表现实预测命中率（AGENTS.md §一.3）。
+
 ## 2026-10-29 第三百四十三批（六爻）：**主 CHANGELOG 再瘦身——只留 10-29，51 节标题并入索引**
 
 - 把 10-27 及更早的 51 个 `##` 节从主文件移入 `docs/CHANGELOG-HISTORY-INDEX.md`

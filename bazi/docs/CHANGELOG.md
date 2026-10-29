@@ -6,6 +6,44 @@
 > 下面历史条目若提到 ARCHIVE，一律按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 3 节标题已并入索引。
 
+## 2026-10-29 第三百四十五批（八字）：**《三命通会》校订件补交入库 ＋ 抓取/校订链复跑 ＋ 报告元数据口径修正**
+
+**性质**：content＋tooling＋docs。把 327–329 批一直留在工作区、导致干净 HEAD 判红的
+三命通会文件正式落库；零引擎、零评分口径改动。
+
+- **补交文件**：`data/sources/sanming_tonghui_siku.dz.txt`（1,419,789 字节，
+  sha256 `47028eb5…`）、`data/sources/sanming_tonghui_siku.provenance.json`、
+  `dev_tools/build_siku_dz.py`、`dev_tools/diff_siku_sanming.py`（改读校订件、章名顶格切分、
+  `_meta.siku_file` 改 `.dz.txt`）、`dev_tools/scan_siku_gaps.py`（改读校订件、【】注文统一）、
+  `docs/SANMING-SIKU-COLLATION.md`。
+- **可复跑实测**：`fetch_siku_sanming.py` 重新抓取 12 卷，raw 1,467,204 字节／sha256
+  `2d070238…`；`fetch_siku_sanming.py --check` rc=0；`build_siku_dz.py --check` rc=0
+  （校订件 1,419,789 字节／sha256 `47028eb5…` 与重算一致）。
+- **报告口径修正**：原底部注记把 `.meta.json` 说成“旧命名、应改 `.provenance.json`”，
+  与抓取链实际契约相反——`.meta.json` 是抓取侧车（gitignore），`.provenance.json` 是
+  入库真源；`build_siku_dz.py` 读前者写后者。注记已按实改写。
+- **干净 HEAD**：此前 `[11]` 判红（`scan_siku_gaps.py:6` 指向旧路径）与账台
+  `governance 42≠43` 均因这批文件未提交；本批落库后 clean worktree 复跑见下。
+- 复验：`python bazi/dev_tools/check.py` rc=0；clean worktree `bazi check.py --fast`
+  与 `readout_ledger --quick` 均 rc=0；`diff_siku_sanming.py`／`scan_siku_gaps.py`
+  实跑产出可重现报告读数。
+
+分数含义：与古籍案例要点的一致性，不代表现实预测命中率（AGENTS.md §一.3）。
+
+## 2026-10-29 第三百四十四批（八字）：**账台 pattern 期望回填 80.6→100.0（308 批实测漏登）**
+
+**性质**：docs/账台。零引擎、零判据、零读数改动。
+
+- `readout_ledger.py` 的 `bazi(tiaohou96.2 pattern80.6 …)` 行仍停在 187 批旧值；
+  308 批已实测 pattern **100.0%（36/36，McNemar p=0.004）** 并写入 CAPABILITY／check.py，
+  但账台期望漏改。本批按 308 实测回填为 `pattern100.0`，并删掉该函数里一行重复正则
+  （`th` 死变量）。
+- `readout_ledger.py` full 实跑：**bad=0，已跑 40/40**；quick 实跑 rc=0，输出明确
+  「已跑 34/40，跳过 6」（不再自称「全账」）。
+- `python bazi/dev_tools/check.py` 全量 rc=0（本批未改八字门）。
+
+分数含义：与古籍案例要点的一致性，不代表现实预测命中率（AGENTS.md §一.3）。
+
 ## 2026-10-29 第三百四十三批（八字）：**主 CHANGELOG 再瘦身——只留 10-29，3 节标题并入索引**
 
 - 把 10-27 及更早的 3 个 `##` 节移入 `docs/CHANGELOG-HISTORY-INDEX.md`（标题保留、批号不变）。

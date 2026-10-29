@@ -19,7 +19,8 @@
     },
     "partial": {
       "verdict_missing": 23
-    }
+    },
+    "curation": "344 批：1592923 重生成清空了 282/292/297/298 批人工书证与机械派生 expected 字段；本文件按 1592923^ 恢复（74 use_god／52 branch／32 note／3 组 wangshuai-muku-six_spirit／WS035 verdict／WS003 题面），并保留本次抓取的 wikitext_head 修正。重跑 fetch_wikisource_cases.py 前须先保留 expected 人工字段。"
   },
   "cases": [
     {
@@ -42,7 +43,7 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
+        "use_god": "父母",
         "use_god_branch": "",
         "use_god_position": "",
         "yingqi": "卯日",
@@ -95,11 +96,11 @@
     {
       "id": "WS003",
       "source": "《增刪卜易》（维基文库原本）",
-      "topic": "占本年冬今",
-      "question": "占本年冬今",
+      "topic": "占本年冬今得關差否",
+      "question": "占本年冬今得關差否",
       "input": {
         "date": "戌月癸亥日",
-        "question": "占本年冬今"
+        "question": "占本年冬今得關差否"
       },
       "hexagram": {
         "original": "节",
@@ -112,8 +113,8 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "官鬼",
+        "use_god_branch": "丑",
         "use_god_position": "",
         "yingqi": "丑日",
         "yingqi_branches": [
@@ -148,7 +149,7 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
+        "use_god": "官鬼",
         "use_god_branch": "",
         "use_god_position": "",
         "yingqi": "辰年",
@@ -184,7 +185,7 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
+        "use_god": "子孙",
         "use_god_branch": "",
         "use_god_position": "",
         "yingqi": "次日",
@@ -222,14 +223,15 @@
       },
       "expected": {
         "verdict": "凶",
-        "use_god": "",
+        "use_god": "父母",
         "use_god_branch": "",
         "use_god_position": "",
         "yingqi": "丑月",
         "yingqi_branches": [
           "丑"
         ],
-        "detail": "果卒於丑月。"
+        "detail": "果卒於丑月。",
+        "use_god_note": "书按久病诀断（父爻持世+化退神，防冲破化出未土无路，卒丑月）；题面纯「占病」无病龄信号——疾病六冲双轨见裁决表 liuyao.jibing_liujin_track（314 批）"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -262,8 +264,8 @@
       },
       "expected": {
         "verdict": "凶",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "父母",
+        "use_god_branch": "卯",
         "use_god_position": "",
         "yingqi": "丑月",
         "yingqi_branches": [
@@ -298,8 +300,8 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "世爻",
+        "use_god_branch": "寅",
         "use_god_position": "",
         "yingqi": "未月",
         "yingqi_branches": [
@@ -335,8 +337,8 @@
       },
       "expected": {
         "verdict": "凶",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "父母",
+        "use_god_branch": "子",
         "use_god_position": "",
         "yingqi": "戌日",
         "yingqi_branches": [
@@ -371,8 +373,8 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "世爻",
+        "use_god_branch": "寅",
         "use_god_position": "",
         "yingqi": "亥月",
         "yingqi_branches": [
@@ -407,8 +409,8 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "官鬼",
+        "use_god_branch": "申",
         "use_god_position": "",
         "yingqi": "巳月",
         "yingqi_branches": [
@@ -444,8 +446,8 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "父母",
+        "use_god_branch": "未",
         "use_god_position": "",
         "yingqi": "寅日",
         "yingqi_branches": [
@@ -482,8 +484,8 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "妻财",
+        "use_god_branch": "未",
         "use_god_position": "",
         "yingqi": "戌日",
         "yingqi_branches": [
@@ -519,14 +521,15 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "世爻",
+        "use_god_branch": "午",
         "use_god_position": "",
         "yingqi": "辰年",
         "yingqi_branches": [
           "辰"
         ],
-        "detail": "果於辰年﹐調於河南﹐五月因他故﹐又調回楚﹐十月而升督府﹐十年兩調一升﹐皆應實空之年也。"
+        "detail": "果於辰年﹐調於河南﹐五月因他故﹐又調回楚﹐十月而升督府﹐十年兩調一升﹐皆應實空之年也。",
+        "use_god_note": "自占升迁书以世爻极旺起断（官星两现俱空破、舍官论世，官出空为应期）——功名双轨族，裁决表 shikao_usegod_dual 第三 party（open_conflict）"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -556,7 +559,7 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
+        "use_god": "子孙",
         "use_god_branch": "",
         "use_god_position": "",
         "yingqi": "巳年",
@@ -592,8 +595,8 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "官鬼",
+        "use_god_branch": "巳",
         "use_god_position": "",
         "yingqi": "卯月",
         "yingqi_branches": [
@@ -629,8 +632,8 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "官鬼",
+        "use_god_branch": "卯",
         "use_god_position": "",
         "yingqi": "卯日",
         "yingqi_branches": [
@@ -666,8 +669,8 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "父母",
+        "use_god_branch": "子",
         "use_god_position": "",
         "yingqi": "子日",
         "yingqi_branches": [
@@ -702,8 +705,8 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "子孙",
+        "use_god_branch": "午",
         "use_god_position": "",
         "yingqi": "戌日",
         "yingqi_branches": [
@@ -738,7 +741,7 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
+        "use_god": "世爻",
         "use_god_branch": "",
         "use_god_position": "",
         "yingqi": "亥日",
@@ -772,14 +775,15 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "官鬼",
+        "use_god_branch": "寅",
         "use_god_position": "",
         "yingqi": "申日",
         "yingqi_branches": [
           "申"
         ],
-        "detail": "果於申日文書實收俱到﹐應申日者﹐寅木官星持世﹐靜而逢沖之日也。若以流年作鬼斷者﹐如天遠矣。"
+        "detail": "果於申日文書實收俱到﹐應申日者﹐寅木官星持世﹐靜而逢沖之日也。若以流年作鬼斷者﹐如天遠矣。",
+        "use_god_note": "流年题书内双轨：官鬼持世论灾（病轨，本例断辞以官论）与世体轨并立，裁决表 liunian_shiguan_dual（open_conflict）——书断以官轨为断主体故基准取官鬼"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -808,8 +812,8 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "官鬼",
+        "use_god_branch": "午",
         "use_god_position": "",
         "yingqi": "亥日",
         "yingqi_branches": [
@@ -844,8 +848,8 @@
       },
       "expected": {
         "verdict": "凶",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "子孙",
+        "use_god_branch": "卯",
         "use_god_position": "",
         "yingqi": "卯日",
         "yingqi_branches": [
@@ -880,8 +884,8 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "子孙",
+        "use_god_branch": "子",
         "use_god_position": "",
         "yingqi": "次日",
         "yingqi_branches": [],
@@ -918,8 +922,8 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "父母",
+        "use_god_branch": "申",
         "use_god_position": "",
         "yingqi": "辰日",
         "yingqi_branches": [
@@ -954,8 +958,8 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "父母",
+        "use_god_branch": "子",
         "use_god_position": "",
         "yingqi": "丑日",
         "yingqi_branches": [
@@ -988,7 +992,7 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
+        "use_god": "父母",
         "use_god_branch": "",
         "use_god_position": "",
         "yingqi": "次日",
@@ -1029,8 +1033,8 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "妻财",
+        "use_god_branch": "卯",
         "use_god_position": "",
         "yingqi": "次日",
         "yingqi_branches": [],
@@ -1067,8 +1071,8 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "妻财",
+        "use_god_branch": "子",
         "use_god_position": "",
         "yingqi": "卯年",
         "yingqi_branches": [
@@ -1103,7 +1107,7 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
+        "use_god": "妻财",
         "use_god_branch": "",
         "use_god_position": "",
         "yingqi": "子年",
@@ -1139,8 +1143,8 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "世爻",
+        "use_god_branch": "丑",
         "use_god_position": "",
         "yingqi": "午年",
         "yingqi_branches": [
@@ -1176,8 +1180,8 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "世爻",
+        "use_god_branch": "亥",
         "use_god_position": "",
         "yingqi": "巳月",
         "yingqi_branches": [
@@ -1213,8 +1217,8 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "世爻",
+        "use_god_branch": "丑",
         "use_god_position": "",
         "yingqi": "未年",
         "yingqi_branches": [
@@ -1249,7 +1253,7 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
+        "use_god": "世爻",
         "use_god_branch": "",
         "use_god_position": "",
         "yingqi": "亥日",
@@ -1284,9 +1288,9 @@
         "generation": "六世"
       },
       "expected": {
-        "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "verdict": "凶",
+        "use_god": "父母",
+        "use_god_branch": "亥",
         "use_god_position": "",
         "yingqi": "子日",
         "yingqi_branches": [
@@ -1321,8 +1325,8 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "官鬼",
+        "use_god_branch": "卯",
         "use_god_position": "",
         "yingqi": "亥月",
         "yingqi_branches": [
@@ -1359,8 +1363,8 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "世爻",
+        "use_god_branch": "巳",
         "use_god_position": "",
         "yingqi": "辰年",
         "yingqi_branches": [
@@ -1398,7 +1402,7 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
+        "use_god": "父母",
         "use_god_branch": "",
         "use_god_position": "",
         "yingqi": "寅年",
@@ -1432,8 +1436,8 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "妻财",
+        "use_god_branch": "卯",
         "use_god_position": "",
         "yingqi": "辰日",
         "yingqi_branches": [
@@ -1471,7 +1475,7 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
+        "use_god": "妻财",
         "use_god_branch": "",
         "use_god_position": "",
         "yingqi": "次日",
@@ -1510,8 +1514,8 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "妻财",
+        "use_god_branch": "卯",
         "use_god_position": "",
         "yingqi": "辰日",
         "yingqi_branches": [
@@ -1546,8 +1550,8 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "妻财",
+        "use_god_branch": "戌",
         "use_god_position": "",
         "yingqi": "次日",
         "yingqi_branches": [],
@@ -1593,7 +1597,13 @@
         "yingqi_branches": [
           "巳"
         ],
-        "detail": "果聘定於四月﹐未及成婚被賊兵劫去﹐應巳月者亥水逢月破也。"
+        "detail": "果聘定於四月﹐未及成婚被賊兵劫去﹐應巳月者亥水逢月破也。",
+        "use_god_wangshuai": "旺",
+        "use_god_wangshuai_basis": "机械派生：用神卯(木)临寅(木)月",
+        "use_god_muku": "不入墓",
+        "use_god_muku_basis": "机械判定：木墓在未，日午/月寅，动墓/化墓另核动爻",
+        "use_god_six_spirit": "勾陈",
+        "use_god_six_spirit_basis": "机械派生：丙日2爻按六神起例"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -1623,8 +1633,8 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "官鬼",
+        "use_god_branch": "寅",
         "use_god_position": "",
         "yingqi": "寅月",
         "yingqi_branches": [
@@ -1695,8 +1705,8 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "妻财",
+        "use_god_branch": "午",
         "use_god_position": "",
         "yingqi": "巳日",
         "yingqi_branches": [
@@ -1738,7 +1748,13 @@
         "yingqi_branches": [
           "亥"
         ],
-        "detail": "應亥月者父母化出之爻也"
+        "detail": "應亥月者父母化出之爻也",
+        "use_god_wangshuai": "相",
+        "use_god_wangshuai_basis": "机械派生：用神申(金)临未(土)月",
+        "use_god_muku": "不入墓",
+        "use_god_muku_basis": "机械判定：金墓在丑，日戌/月未，动墓/化墓另核动爻",
+        "use_god_six_spirit": "玄武",
+        "use_god_six_spirit_basis": "机械派生：戊日4爻按六神起例"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -1775,7 +1791,13 @@
         "yingqi_branches": [
           "巳"
         ],
-        "detail": "果於巳日到。或曰﹕用爻有病﹐莫問歸期﹐此卦申金化進神以克寅木﹐如何許回﹖予曰﹕彼問夫之平安"
+        "detail": "果於巳日到。或曰﹕用爻有病﹐莫問歸期﹐此卦申金化進神以克寅木﹐如何許回﹖予曰﹕彼問夫之平安",
+        "use_god_wangshuai": "相",
+        "use_god_wangshuai_basis": "机械派生：用神寅(木)临亥(水)月",
+        "use_god_muku": "不入墓",
+        "use_god_muku_basis": "机械判定：木墓在未，日子/月亥，动墓/化墓另核动爻",
+        "use_god_six_spirit": "朱雀",
+        "use_god_six_spirit_basis": "机械派生：甲日2爻按六神起例"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -1805,7 +1827,7 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
+        "use_god": "世爻",
         "use_god_branch": "",
         "use_god_position": "",
         "yingqi": "酉年",
@@ -1841,7 +1863,7 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
+        "use_god": "世爻",
         "use_god_branch": "",
         "use_god_position": "",
         "yingqi": "子年",
@@ -1877,12 +1899,13 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "官鬼",
+        "use_god_branch": "酉",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "果得連捷。"
+        "detail": "果得連捷。",
+        "use_god_note": "第两百九十七批书证核定：占试书取官星持世旺相（非占试→父母通用轨）源L445「酉金官星持世旺相」"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -1912,12 +1935,13 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "父母",
+        "use_god_branch": "未",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "果於甲戌出空卽愈﹐此乃父爻休囚而化空也﹐若以古法動日月化空破尙且不進﹐今休囚而化空﹐可得愈"
+        "detail": "果於甲戌出空卽愈﹐此乃父爻休囚而化空也﹐若以古法動日月化空破尙且不進﹐今休囚而化空﹐可得愈",
+        "use_god_note": "第两百九十七批书证核定：源L559「未土父母動化進神」"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -1950,12 +1974,13 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
+        "use_god": "父母",
         "use_god_branch": "",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "果於次年三月妹至﹐此乃兄弟化空﹐爻空亦能退也。"
+        "detail": "果於次年三月妹至﹐此乃兄弟化空﹐爻空亦能退也。",
+        "use_god_note": "第两百九十七批书证核定：未/丑两现不唯一（未父化進神/初爻化出丑父）源L647"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -1985,12 +2010,13 @@
       },
       "expected": {
         "verdict": "凶",
-        "use_god": "",
+        "use_god": "官鬼",
         "use_god_branch": "",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "應自身之死者﹐世臨破鬼而入日墓﹐女之死者﹐上爻鬼變子孫之故耳"
+        "detail": "應自身之死者﹐世臨破鬼而入日墓﹐女之死者﹐上爻鬼變子孫之故耳",
+        "use_god_note": "第两百九十七批书证核定：世临破鬼支未明示 源L739「世臨破鬼而入日墓」"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -2021,12 +2047,13 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "世爻",
+        "use_god_branch": "辰",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "應解救者﹐因得日月之土幫扶也"
+        "detail": "應解救者﹐因得日月之土幫扶也",
+        "use_god_note": "第两百九十七批书证核定：占月令自占轨 源L1202「世爻辰土﹐月建助之」"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -2056,12 +2083,13 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "官鬼",
+        "use_god_branch": "巳",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "應爻為官星動而生世﹐官貴相生者﹐𨿽則可喜﹐但嫌巳火墓於戌月而又化墓﹐生"
+        "detail": "應爻為官星動而生世﹐官貴相生者﹐𨿽則可喜﹐但嫌巳火墓於戌月而又化墓﹐生",
+        "use_god_note": "第两百九十七批书证核定：源L1384「應爻爲官星動而生世」"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -2162,12 +2190,13 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "兄弟",
+        "use_god_branch": "申",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "果一日陰雲申時而見日色﹐次日卯時大晴。"
+        "detail": "果一日陰雲申時而見日色﹐次日卯時大晴。",
+        "use_god_note": "第两百九十七批书证核定：占本日阴晴主断兄动为云 源L1690「申金兄爻爲云」"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -2197,12 +2226,13 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "子孙",
+        "use_god_branch": "午",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "果於酉時霧散天開。凡得父化退神﹐雨亦將止。兄動化退神﹐云將開。於子孫財爻化退神者﹐晴不久矣"
+        "detail": "果於酉時霧散天開。凡得父化退神﹐雨亦將止。兄動化退神﹐云將開。於子孫財爻化退神者﹐晴不久矣",
+        "use_god_note": "占晴用子孙（通用轨 源L1953「占晴用子孫爻、財爻」）；书断辞「鬼化退神雨將止矣」是雨止判据非用神——第两百九十五批自纠（初版误落官鬼/酉，把断辞观察对象当用神）"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -2232,12 +2262,13 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
+        "use_god": "父母",
         "use_god_branch": "",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "應在卯戌日﹐而雨卻應長生亥日"
+        "detail": "應在卯戌日﹐而雨卻應長生亥日",
+        "use_god_note": "占雨得父動（父母卯木○動）；应期取长生日，支不唯一留空"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -2269,12 +2300,13 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "子孙",
+        "use_god_branch": "戌",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "應戌時晴者﹐戌土子孫而值時也"
+        "detail": "應戌時晴者﹐戌土子孫而值時也",
+        "use_god_note": "断辞明示「應戌時晴者，戌土子孫而值時也」"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -2304,12 +2336,13 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
+        "use_god": "兄弟",
         "use_god_branch": "",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "應寅木父爻生﹐又是筆墨營生"
+        "detail": "應寅木父爻生﹐又是筆墨營生",
+        "use_god_note": "第两百九十七批书证核定：占终身财福兄爻持世耗财 源L2167「兄爻持世﹐耗財之神」"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -2339,12 +2372,13 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
+        "use_god": "世爻",
         "use_god_branch": "",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "果從北來﹐放火燒村而去﹐房屋稻穀盡成灰燼﹐乃申金兄動破財之故耳﹐所以生方為吉﹐子孫之方亦吉"
+        "detail": "果從北來﹐放火燒村而去﹐房屋稻穀盡成灰燼﹐乃申金兄動破財之故耳﹐所以生方為吉﹐子孫之方亦吉",
+        "use_god_note": "第两百九十七批书证核定：避乱自占，书以午火生世往南为吉 源L2532"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -2375,12 +2409,13 @@
       },
       "expected": {
         "verdict": "凶",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "官鬼",
+        "use_god_branch": "卯",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "果議絞罪﹐後蒙駁番撥活罪。"
+        "detail": "果議絞罪﹐後蒙駁番撥活罪。",
+        "use_god_note": "第两百九十七批书证核定：木鬼临白虎 源L2549「木鬼臨白虎﹐絞罪定矣」"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -2410,12 +2445,13 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
+        "use_god": "兄弟",
         "use_god_branch": "",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "果一位捨弟已得顚狂之癥﹐所以再問有無。予曰﹕必有﹐乃異母所生。彼曰﹕何也﹖予曰﹕父母化出之"
+        "detail": "果一位捨弟已得顚狂之癥﹐所以再問有無。予曰﹕必有﹐乃異母所生。彼曰﹕何也﹖予曰﹕父母化出之",
+        "use_god_note": "第两百九十七批书证核定：亥世/子应两现不唯一 源L2642"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -2446,12 +2482,13 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "妻财",
+        "use_god_branch": "未",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "果此公美妾十餘﹐正夫人賢而無妒﹐夫妻同庚而生﹐妻活八旬有一﹐夫年八十二歲。此卦若以世應相沖"
+        "detail": "果此公美妾十餘﹐正夫人賢而無妒﹐夫妻同庚而生﹐妻活八旬有一﹐夫年八十二歲。此卦若以世應相沖",
+        "use_god_note": "第两百九十七批书证核定：世爻变出之未土财为正妻 源L2685「此未土之財﹐乃正妻也」"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -2483,12 +2520,13 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "官鬼",
+        "use_god_branch": "寅",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "果得及第。"
+        "detail": "果得及第。",
+        "use_god_note": "第两百九十七批书证核定：占会试书取寅木旺官持世 源L2944"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -2518,12 +2556,13 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "官鬼",
+        "use_god_branch": "巳",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "果得眞定。又有以初爻為內地﹐以五爻六爻為邊缺。應初爻者﹐世與官星皆在初爻者是也。應五六爻者"
+        "detail": "果得眞定。又有以初爻為內地﹐以五爻六爻為邊缺。應初爻者﹐世與官星皆在初爻者是也。應五六爻者",
+        "use_god_note": "第两百九十七批书证核定：占地方官星为用 源L3095「此卦巳火官星﹐許之眞定」"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -2551,12 +2590,13 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "妻财",
+        "use_god_branch": "亥",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "果去﹐不數日﹐得價出脫。此乃爻逢六合﹐財逢月合﹐及時脫貨也。"
+        "detail": "果去﹐不數日﹐得價出脫。此乃爻逢六合﹐財逢月合﹐及時脫貨也。",
+        "use_god_note": "第两百九十七批书证核定：源L3508「亥水財爻﹐酉日生之」"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -2584,12 +2624,13 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "妻财",
+        "use_god_branch": "亥",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "果中間人作獘﹐告到官府﹐誤了一个月。幸好到地頭上價格上漲﹐果然得了厚利。此乃指其地而占者無"
+        "detail": "果中間人作獘﹐告到官府﹐誤了一个月。幸好到地頭上價格上漲﹐果然得了厚利。此乃指其地而占者無",
+        "use_god_note": "第两百九十七批书证核定：源L3539「亥水財爻休囚於外」"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -2617,12 +2658,13 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "妻财",
+        "use_god_branch": "酉",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "應相生﹐此行遂意﹐如問置實何貨﹐予無此法﹐不敢相誤﹐但喜旣得吉卦﹐任爾"
+        "detail": "應相生﹐此行遂意﹐如問置實何貨﹐予無此法﹐不敢相誤﹐但喜旣得吉卦﹐任爾",
+        "use_god_note": "第两百九十七批书证核定：断辞明示酉金为财（作者拒以五行定货）源L3555「此卦酉金爲財」"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -2652,12 +2694,13 @@
       },
       "expected": {
         "verdict": "凶",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "子孙",
+        "use_god_branch": "申",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "果於早勝﹐午時又大敗破財。"
+        "detail": "果於早勝﹐午時又大敗破財。",
+        "use_god_note": "第两百九十七批书证核定：斗鹌鹑子孙持世临日辰 源L3607"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -2687,12 +2730,13 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "父母",
+        "use_god_branch": "卯",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "果在外平安。"
+        "detail": "果在外平安。",
+        "use_god_note": "第两百九十七批书证核定：用神伏藏书自认 源L3843「只可斷用神伏藏也」+「父母卯木」"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -2720,12 +2764,13 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "父母",
+        "use_god_branch": "午",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "果於申時到。"
+        "detail": "果於申時到。",
+        "use_god_note": "第两百九十七批书证核定：源L3875「午火父爻克世爻」"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -2755,12 +2800,13 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
+        "use_god": "世爻",
         "use_god_branch": "",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "果泊五日﹐巳日天晴得風順矣﹐自此始悟子孫乃行舟之順風也。"
+        "detail": "果泊五日﹐巳日天晴得風順矣﹐自此始悟子孫乃行舟之順風也。",
+        "use_god_note": "第两百九十七批书证核定：自占一路平安（自占轨）官鬼持世为忧象 源L3908"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -2788,12 +2834,13 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "官鬼",
+        "use_god_branch": "午",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "果於本日愈。覺子曰﹕如占自身及兄弟妻兒者﹐此法是也﹐若占父母之災﹐官鬼為父母之元神﹐豈宜子"
+        "detail": "果於本日愈。覺子曰﹕如占自身及兄弟妻兒者﹐此法是也﹐若占父母之災﹐官鬼為父母之元神﹐豈宜子",
+        "use_god_note": "第两百九十七批书证核定：占子病书取官鬼持世忧神轨（卦不应题变体）源L3972「官鬼持世﹐憂也」"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -2823,12 +2870,13 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "父母",
+        "use_god_branch": "未",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "果於雞鳴蘇醒﹐次日不藥而愈。"
+        "detail": "果於雞鳴蘇醒﹐次日不藥而愈。",
+        "use_god_note": "第两百九十七批书证核定：逐字明示 源L4116「子占父病﹐父爻爲用神」"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -2859,12 +2907,13 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
+        "use_god": "应爻",
         "use_god_branch": "",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "應為醫人﹐不宜應爻與巳火克申金﹐又有卯木生火﹐世爻𨿽旺﹐巳日一定添災﹐"
+        "detail": "應為醫人﹐不宜應爻與巳火克申金﹐又有卯木生火﹐世爻𨿽旺﹐巳日一定添災﹐",
+        "use_god_note": "第两百九十七批书证核定：占医以应为医人（应爻轨超出六亲值域，如实登记）源L4140「應爲醫人」"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -2894,12 +2943,13 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
+        "use_god": "世爻",
         "use_god_branch": "",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "應﹐世應相生如何有犯﹖廟前另有一物﹐未土發動刑世﹐乃此故耳"
+        "detail": "應﹐世應相生如何有犯﹖廟前另有一物﹐未土發動刑世﹐乃此故耳",
+        "use_god_note": "第两百九十七批书证核定：世为本宅（题面缺失，据断辞与旧宅章情境）源L4281「世爲本宅」"
       },
       "provenance": {
         "page": "增刪卜易",
@@ -2927,12 +2977,13 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "世爻",
+        "use_god_branch": "午",
         "use_god_position": "",
         "yingqi": "",
         "yingqi_branches": [],
-        "detail": "果得原錢於紅花之下﹐掘之周圍僅有丈予﹐皆泥土也﹐予皆石塊﹐此公次年開府﹐兩公郎五年之內俱登"
+        "detail": "果得原錢於紅花之下﹐掘之周圍僅有丈予﹐皆泥土也﹐予皆石塊﹐此公次年開府﹐兩公郎五年之內俱登",
+        "use_god_note": "第两百九十七批书证核定：占穴世为穴 源L4455「世在四爻﹐穴在中段﹐因午火持世」"
       },
       "provenance": {
         "page": "增刪卜易",

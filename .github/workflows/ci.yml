@@ -42,6 +42,18 @@ jobs:
         run: python bazi/dev_tools/check.py
       - name: liuyao quality gate (fresh tree)
         run: python liuyao/dev_tools/check.py
+  # 344 批：full 账台进 CI。此前只有本地 quick（跳过 6 项）被当「全账」，
+  # 实际 full 的 stale 期望（baseline/pattern）长期无人拦；本 job 跑默认 full。
+  ledger:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+      - name: readout ledger (full)
+        run: python liuyao/dev_tools/readout_ledger.py
   kernel-sync:
     runs-on: windows-latest
     timeout-minutes: 15

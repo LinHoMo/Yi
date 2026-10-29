@@ -73,10 +73,12 @@ def checks():
         s = sh(["scripts/evaluate.py", "--split", "wikisource_holdout"])
         return (grab(s, r"平均分 = ([0-9.]+)%"), grab(s, r"strict top-1 命中 ([0-9.]+)%"),
                 grab(s, r"平均排在第 ([0-9.]+) 位"))
-    # 339 批 A5-1 实跑改期望（理由：315 批 test 半封存后外集组成/分母变了，308 批登记值过期；
-    # 这是"登记文本过期"而非 308→339 的引擎回归——两科 check.py 的 [7] 同期仍全绿）。
-    add("liuyao.wikisource(69.8/29.5/2.16)", "181批→308批→339批改期望（315 封存后口径）", c_wiki,
-        ("69.8", "29.5", "2.16"))
+    # 339 批曾按 69.8/29.5/2.16 登记，理由是「315 封存后口径变了」——344 批查实该归因错误：
+    # 315 只把 50 例切 dev/test，n 与标签都没变；真正原因是 1592923（易隐批）重生成
+    # wikisource_cases.json 时清空了 292/297/298 批的 74 use_god／52 branch／32 note。
+    # 344 批按 1592923^ 恢复字段后，同 HEAD 引擎逐位回到 308 读数（75.8/31.8/2.03）。
+    add("liuyao.wikisource(75.8/31.8/2.03)", "181批→308批；344批恢复被 1592923 清空的标签后实跑改回", c_wiki,
+        ("75.8", "31.8", "2.03"))
 
     def c_dz(t):
         s = sh(["scripts/evaluate.py", "--split", "zengshan_dz_holdout"])
@@ -90,15 +92,19 @@ def checks():
         t1 = re.search(r"^\s+1\s+(\d+)/(\d+) =\s*([\d.]+)%", blk, re.M)
         t3 = re.search(r"^\s+3\s+(\d+)/(\d+) =\s*([\d.]+)%", blk, re.M)
         return ((t1.group(3), t3.group(3)) if t1 and t3 else (None, None))
-    add("liuyao.wiki top1/top3(29.5/59.1)", "181/199批→308批→339批改期望（315 封存后口径）",
-        c_window2, ("29.5", "59.1"))
+    add("liuyao.wiki top1/top3(31.8/61.4)", "181/199批→308批；344批恢复标签后实跑改回",
+        c_window2, ("31.8", "61.4"))
 
     def c_baselines(t):
         s = sh(["dev_tools/baselines.py"])
         yong = re.search(r"用神值支\s+(\d+)/\s*\d+ =\s*([\d.]+)%", s)
         day = re.search(r"日辰即答\s+(\d+)/\s*\d+ =\s*([\d.]+)%", s)
         return ((yong.group(2), day.group(2)) if yong and day else (None, None))
-    add("liuyao.baselines 用神18.2/日辰4.5", "183批", c_baselines, ("18.2", "4.5"))
+    # 344 批：18.2 是 183 批旧值；引擎「用神值支」基线随用神取支改进升到 25.0
+    #（1592923 的 WS003 题面截短会把它打到 22.7，恢复题面后回到 25.0）。
+    # 这是未登记的**基线变强**，不是引擎回归；README 的「31.8 > 18.2」须同批改为 25.0。
+    add("liuyao.baselines 用神25.0/日辰4.5", "183批→344批改期望（用神取支改进，非评分口径变化）",
+        c_baselines, ("25.0", "4.5"))
 
     # --- 版本对拍/毕业/分诊（JSON 直读 + 现场重生成核对） ---
     add("liuyao.collate(卦面0/47 判词1/37)", "185批", lambda t: _collate_now(), ("0/47", "1/37"))
@@ -130,11 +136,25 @@ def checks():
         ("6f707fbad75b2a1b", "405bc8e03a6a99e0"))
     add("bazi.golden(fda7/3512)", "176批前→308批改期望", lambda t: _golden("bazi"),
         ("fda7482656967518", "3512deff79fa1f72"))
-    add("governance(63/43, blk 27/26)",
+    add("governance(64/43, blk 28/26)",
         "194批（312 补 310；315 补 314/315 两门；317 补 judge_shadow；329 补 fetch_zengshan_dz_cases；"
         "331 批 check_docs_index 上提到 devkit/root → 六爻 blk 28→27、脚本仍 63；"
-        "339 批 A5-1 按实登记 7 个存量未分类脚本 → 八字 37→43）",
-        lambda t: _gov_counts(), ("63", "43", "27", "26"))
+        "339 批 A5-1 按实登记 7 个存量未分类脚本 → 八字 37→43；"
+        "344 批新增 check_expected_coverage → 六爻 63→64、blk 27→28）",
+        lambda t: _gov_counts(), ("64", "43", "28", "26"))
+
+    # 344 批：expected 书证/机械派生字段的覆盖生存线（门 [38]）。
+    # 1592923 的事故证明「聚合分掉 6 分、所有门全绿」可以并存；本项把非空计数
+    # 直接入账，任何整批清空都会在同一条账上显形。
+    def c_expected_coverage(t):
+        s = sh(["dev_tools/check_expected_coverage.py"])
+        fields = ("use_god", "use_god_branch", "use_god_position", "use_god_note",
+                  "use_god_wangshuai", "use_god_muku", "use_god_six_spirit", "verdict")
+        found = dict(re.findall(r"·\s+([A-Za-z_]+)\s+(\d+)/", s))
+        return tuple(found.get(f, "") for f in fields)
+    add("liuyao.expected_coverage(78/55/3/32/3/3/3/58)",
+        "344批（恢复 1592923 清空的 292/297/298 批书证标签；门 [38]）",
+        c_expected_coverage, ("78", "55", "3", "32", "3", "3", "3", "58"))
 
     # 案例分母（234 批）：账台钉率也钉分母——删/添一例而率恰不动时，分母行会红。
     def c_case_denoms(t):
@@ -408,15 +428,17 @@ def checks():
 
     def c_bazi_base(t):
         s = sh(["dev_tools/baselines.py", "--split", "holdout"], cwd=ROOT / "bazi")
-        th = re.search(r"pattern：引擎 (\d+)/(\d+) =\s*([\d.]+)%", s)  # 拿错维了？改 tiaohou 行
         m_t = re.search(r"tiaohou：引擎 (\d+)/(\d+) =\s*([\d.]+)%", s)
         m_p = re.search(r"pattern：引擎 (\d+)/(\d+) =\s*([\d.]+)%", s)
         m_c = re.search(r"先验定答从\s+(\d+)/(\d+) =\s*([\d.]+)%", s)
         vals = tuple(x.group(3) if x else None for x in (m_t, m_p, m_c))
         mb = re.search(r"定答\(tune边际\)\s+\d+/\s*\d+ =\s*[\d.]+% ｜配对 b=(\d+) c=(\d+)", s)
         return vals + ((mb.group(1), mb.group(2)) if mb else (None, None))
-    add("bazi(tiaohou96.2 pattern80.6 常数从100 b42c0)", "187批", c_bazi_base,
-        ("96.2", "80.6", "100.0", "42", "0"))
+    # 344 批：pattern 80.6 是 187 批旧值；308 批已实测 100.0（36/36，McNemar p=0.004），
+    # 但账台行漏改。此处按 308 实测回填，不是新提升。
+    add("bazi(tiaohou96.2 pattern100.0 常数从100 b42c0)",
+        "187批→308批实测（344 批回填漏登）", c_bazi_base,
+        ("96.2", "100.0", "100.0", "42", "0"))
 
     # --- 前瞻通道在册 0 ---
     # CAPABILITY.md 的结构性计数（第两百一十四批补齐：对外文书的每个数字都要有重放断言）
@@ -611,22 +633,37 @@ def _gov_counts():
     return ((l.group(1), b.group(1), l.group(2), b.group(2)) if l and b else (None,) * 4)
 
 
-QUICK_SKIP = {"liuyao.wiki top1/top3(29.5/59.1)", "liuyao.baselines 用神18.2/日辰4.5",
-              "bazi(tiaohou96.2 pattern80.6 常数从100 b42c0)",
+QUICK_SKIP = {"liuyao.wiki top1/top3(31.8/61.4)", "liuyao.baselines 用神25.0/日辰4.5",
+              "bazi(tiaohou96.2 pattern100.0 常数从100 b42c0)",
               "liuyao.collate(卦面0/47 判词1/37)",
-              "bazi.holdout 分维(213/213×3 51/53 29/36 13/15)",
+              "bazi.holdout 分维(213/213×3 51/53 36/36 13/15)",
               "bazi.external(n62 强弱33/54 report-only)"}
+
+
+def _verdict(bad: int, skipped: int) -> str:
+    """结论行口径（344 批）：有跳过项时不得说「全部对账一致」。"""
+    if bad:
+        return "存在分家读数"
+    if skipped:
+        return "已跑项全部一致（未跑项不计入结论）"
+    return "全部对账一致"
 
 
 def run(quick: bool) -> int:
     bad = 0
+    skipped = 0
     items = checks()
+    planned_skip = sum(1 for cid, _, _, _ in items if quick and cid in QUICK_SKIP)
     # 总项数由账台自报（218 批：此前 changelog 里「26/28 项」系我凭手感数的假数——
     # 凡计数自己算、不手打；下面的结论行也带实测 n）。
-    print("═ 读数对账台（登记值 vs HEAD 重放值）%s·全账 %d 项 ═" % ("quick" if quick else "full", len(items)))
+    # 344 批：quick 跳过的项**不再冒充「全账」**——旧文案在跳过 5 项时仍打印
+    # 「全部对账一致（bad=0/全账 39）」，正是本仓反复清掉的假绿形态。
+    print("═ 读数对账台（登记值 vs HEAD 重放值）%s·登记 %d 项（本轮跑 %d，跳 %d）═"
+          % ("quick" if quick else "full", len(items), len(items) - planned_skip, planned_skip))
     for cid, src, fn, expect in items:
         if quick and cid in QUICK_SKIP:
             print("  ~ %-46s 跳过（full 才跑）" % cid)
+            skipped += 1
             continue
         try:
             got = fn(None)
@@ -644,8 +681,10 @@ def run(quick: bool) -> int:
         print("  %s %-46s（登记：%s）%s" % ("√" if ok else "×", cid, src,
               "" if ok else " 实得 %r ≠ 期望 %r" % (got, expect)))
         bad += 0 if ok else 1
-    print("═ 结论：%s（bad=%d/全账 %d）——任何 × 都是读数与代码分家的现形，按 §六.2 立案处理，"
-          "禁止静默改期望值 ═" % ("全部对账一致" if bad == 0 else "存在分家读数", bad, len(items)))
+    verdict = _verdict(bad, skipped)
+    print("═ 结论：%s（bad=%d，已跑 %d/%d，跳过 %d）——任何 × 都是读数与代码分家的现形，"
+          "按 §六.2 立案处理，禁止静默改期望值 ═"
+          % (verdict, bad, len(items) - skipped, len(items), skipped))
     return 1 if bad else 0
 
 
@@ -655,7 +694,17 @@ def selftest() -> int:
     s = sh(["dev_tools/golden.py", "verify"], cwd=ROOT / "liuyao")
     if not re.search(r"机械 ([0-9a-f]{16})｜措辞 ([0-9a-f]{16})", s):
         fails.append("golden 解析式失配（对账器瞎了）")
-    print("√ selftest：抽取器在线（golden 双指纹可抽）" if not fails else "× " + "；".join(fails))
+    # 344 批：证明 quick 跳过项时不再自称「全部对账一致」，且 QUICK_SKIP 没有死 id
+    if _verdict(0, 0) != "全部对账一致":
+        fails.append("结论口径：无跳过时应为「全部对账一致」")
+    if _verdict(0, 2) != "已跑项全部一致（未跑项不计入结论）":
+        fails.append("结论口径：有跳过时仍自称全部一致（假绿）")
+    ids = {cid for cid, _, _, _ in checks()}
+    missing = sorted(QUICK_SKIP - ids)
+    if missing:
+        fails.append(f"QUICK_SKIP 指向不存在的项：{missing}")
+    print("√ selftest：抽取器在线（golden 双指纹可抽）；结论口径与 QUICK_SKIP 在册"
+          if not fails else "× " + "；".join(fails))
     return 0 if not fails else 1
 
 

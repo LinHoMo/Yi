@@ -3,7 +3,7 @@
 
     python dev_tools/scan_siku_gaps.py [--dry-run]
 
-产出 `data/sanming_tonghui_siku_gaps.json`：双向「一方有、另一方无」的**连续区段清单**。
+产出 `data/collation/sanming_tonghui_siku_gaps.json`：双向「一方有、另一方无」的**连续区段清单**。
 
 与 `dev_tools/diff_siku_sanming.py` 的分工：
   · 对拍脚本＝**抽样**（dz 本每 1500 字取一窗），给出比例与分布；
@@ -50,7 +50,7 @@ _diff = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_diff)
 norm_map = _diff.norm_map
 
-SIKU = DISC / "data" / "sources" / "sanming_tonghui_siku.wikitext.txt"
+SIKU = DISC / "data" / "sources" / "sanming_tonghui_siku.dz.txt"
 DZ = DISC / "data" / "sources" / "sanming_tonghui_dz.dz.txt"
 T2S = DISC / "dev_tools" / "t2s_table.json"
 OUT = DISC / "data" / "collation" / "sanming_tonghui_siku_gaps.json"
@@ -135,7 +135,7 @@ def main() -> int:
     # 这是「两本互补」最硬的证据（比窗口匹配更直接，不受一字之差干扰）。
     import re
     dz_notes = [norm_map(x, tbl)[0] for x in re.findall(r"【([^】]*)】", dz_raw)]
-    sk_notes = [norm_map(x, tbl)[0] for x in re.findall(r"\{\{SK notes\|([^\n]*)\}\}", siku_raw)]
+    sk_notes = [norm_map(x, tbl)[0] for x in re.findall(r"【([^】]*)】", siku_raw)]
     dz_set = {x for x in dz_notes if x}
     sk_set = {x for x in sk_notes if x}
     only_dz_notes = dz_set - sk_set
@@ -153,7 +153,7 @@ def main() -> int:
     }
     # 去注文后的正文互相覆盖率（正文与注文分开量，正文才是「同一本书」的主体）
     dz_body = norm_map(re.sub(r"【[^】]*】", "", dz_raw), tbl)[0]
-    sk_body = norm_map(re.sub(r"\{\{SK notes\|[^\n]*\}\}", "", siku_raw), tbl)[0]
+    sk_body = norm_map(re.sub(r"【[^】]*】", "", siku_raw), tbl)[0]
     g_dz = {dz_body[i:i + GRAM] for i in range(0, max(0, len(dz_body) - GRAM + 1))}
     g_sk = {sk_body[i:i + GRAM] for i in range(0, max(0, len(sk_body) - GRAM + 1))}
     body_cov = {
