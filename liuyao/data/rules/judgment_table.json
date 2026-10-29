@@ -1,7 +1,7 @@
 {
   "schema": "yi-judgment-table/1",
   "discipline": "liuyao",
-  "batch": 323,
+  "batch": 324,
   "status": "accepted",
   "sealed": null,
   "_comment": "A3 判定表的机器判据（唯一真值源）。本文件只声明，不接引擎：改成 accepted 并接进 step5 前，必须先由人签 adjudications 四条。改本文件须同批改 docs/JUDGMENT-TABLE.md 与 docs/CHANGELOG.md。",
@@ -938,16 +938,16 @@
     "module": "scripts/judge.py",
     "mode": "shadow（已接线为 conclusion.judgment，verdict 未动）",
     "wired_into_step5": false,
-    "version": "v5（九格 + 题类覆盖 13 条 + 原神/忌神二级事实 + 世应层 + 轴分流）",
+    "version": "v6（九格 + 题类覆盖 13 条 + 原神/忌神二级事实 + 世应层 + 轴分流 + 窄版题类优先）",
     "shadow_dev": {
       "tune": {
-        "judge": 42.9,
+        "judge": 35.7,
         "current": 78.6,
         "n_expected": 14,
         "axis_excluded": 6
       },
       "holdout": {
-        "judge": 45.5,
+        "judge": 63.6,
         "current": 54.5,
         "n_expected": 11,
         "axis_excluded": 1
@@ -965,15 +965,15 @@
         "axis_excluded": 2
       }
     },
-    "delta": "v4→v5：轴分流＋题类关键词修正（裸「讼」曾命中卦名「巽之讼」）＋疾病六冲条；外部 dev 两半边 75.0／83.3（现行 58.3／33.3）",
+    "delta": "v5→v6：窄版题类优先（只对功名/求财/婚姻三类，本类规则未命中即判「待时/未决」）→ holdout 45.5→63.6（超现行 54.5）；tune 42.9→35.7（落后现行 78.6）；外部 dev 两半边不变",
     "v3_changes": [
       "修 bug：忌神无力 曾写成列表（真值判断失效，恒为真）",
       "有气口径改回书证：旺相为有气（中和/偏旺/偏弱皆非有气）",
       "新增世应层：用神生世/持世（Z12 生世者反得其济）＋反面条款（Z13 忌旺用衰）"
     ],
     "acceptance_criterion": "外部 dev 半边 ≥ 现行引擎（达标：wiki +18.8pt、dz +25.0pt）；内部 tune/holdout 作回归护栏",
-    "verdict": "外部两个 dev 半边 75.0／83.3 vs 现行 58.3／33.3；内部 tune 42.9 vs 78.6、holdout 45.5 vs 54.5 仍落后——差距归因：①分流错误（已修）②九格缺事实（如「用神无气但事成」的第三层）③书载判断超出九格可表达范围（如 ZS002 近病逢空书判凶，与近病逢空条 冲突）④内部集是现行引擎的调参集，引擎天然占优",
-    "not_wired_reason": "judge 已接线为 conclusion.judgment（可关），但**尚未取代 verdict**；取代须另批走 §四",
+    "verdict": "外部 dev 两半边 75.0／83.3（现行 58.3／33.3）；内部 holdout 63.6（超现行 54.5）、tune 35.7（落后现行 78.6）。**证据基数不足以取代 verdict**：干净口径的外部 dev 只有 n=12 与 n=6 两集，而现行引擎的对外头条数字来自 tune/holdout——用 n=18 的干净集去推翻 n=32 的污染集，证据不成比例。下一步应先扩题库（B3）与补齐剩余归因（②九格缺事实、③书内冲突），而不是先换判词。",
+    "not_wired_reason": "judge 已接线为 conclusion.judgment（可关），但**尚未取代 verdict**——证据基数不足（见 verdict 字段）",
     "v4_changes": [
       "覆盖层扩到 13 条：新增合伙（Z14）、讼事（Z17）、婚姻（Z16）三类",
       "Z15 为书证例外（官鬼持世而日月动爻冲克世者反为吉），已登记 exception_not_implemented，未实现"
@@ -983,6 +983,10 @@
       "题类关键词修正：去掉裸「讼」（会命中卦名 巽之讼），新增「失物」类",
       "疾病覆盖补一条：卦六冲/用神真空且非久病 → 近病愈（Z1/Z2）",
       "**已回退的试验**：题类接管（题类在场而本类规则未命中即判「待时/未决」）实测 tune 42.9→28.6、wiki·dev 75.0→66.7 —— 书的总纲与分类占法是叠加关系，不是替代关系，故回退"
+    ],
+    "v6_changes": [
+      "窄版题类优先：仅功名（Z3「子孙持世且待时」）、求财（Z4「兄弟持世者难求」）、婚姻（Z16「诸合皆以用神旺者为吉」）三类接管",
+      "323 批的全量版题类接管（7 类）实测更差已回退：书的总纲与分类占法是叠加关系，不是替代关系"
     ]
   },
   "overlays": [

@@ -3,15 +3,9 @@
     "what": "金标准指纹基线（排盘+思维链+分析层逐字段；抽样含 narrate 文案哈希）",
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
-  "digest": "fe956051ba5828b1",
+  "digest": "6f707fbad75b2a1b",
   "narrate_digest": "405bc8e03a6a99e0",
   "drift_log": [
-    {
-      "from": "b7162bfc99e2cce8",
-      "to": "aaa31c32f2800e5b",
-      "date": "2026-10-21",
-      "reason": "【已被本批第二次 capture 取代，保留以备审计】修确定性缺陷前的中间落盘：此时绝处逢生四处修正已就位，但 hidden_spirit 的 moving_branches 仍是 set，emerge_reasons 顺序随 PYTHONHASHSEED 变（seed0≠seed1），故本值不可复现，随后按爻位有序化并重落 cc4bcd8fd19dd919。"
-    },
     {
       "from": "aaa31c32f2800e5b",
       "to": "cc4bcd8fd19dd919",
@@ -125,6 +119,12 @@
       "to": "fe956051ba5828b1",
       "date": "2026-10-29",
       "reason": "第三百二十三批：轴分流（时间/价势题不参与吉凶轴）＋题类关键词修正＋疾病六冲条 → 判定块内容变化致 concl_sha 漂移；verdict 未动（tune 97.9／holdout 90.2 未变）、措辞指纹未变"
+    },
+    {
+      "from": "fe956051ba5828b1",
+      "to": "6f707fbad75b2a1b",
+      "date": "2026-10-29",
+      "reason": "第三百二十四批：窄版题类优先（功名/求财/婚姻三类按本类口径判「待时」）→ 判定块内容变化致 concl_sha 漂移；verdict 未动（tune 97.9／holdout 90.2 未变）、措辞指纹未变"
     }
   ],
   "narrate_drift_log": [

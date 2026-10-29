@@ -247,6 +247,12 @@ def overlay(result: dict) -> dict | None:
             return rule("OV-X2", dom, "不成", "中", "世克用兮人未动", ["Z6"])
         if liuchong:
             return rule("OV-X3", dom, "不成", "低", "卦逢六冲，行人无定而不返", ["Z7"])
+    # 324 批：窄版题类优先——只对书证明说"且待时/难求"的题类（功名/求财/婚姻），
+    # 本类规则未命中时按本类默认口径判"待时/未决"；其余题类仍走九格。
+    # （323 批的全量版题类接管实测更差，已回退——书的总纲与分类占法是叠加关系。）
+    default = DOMAIN_DEFAULT.get(dom) if dom in ("功名", "求财", "婚姻") else None
+    if default:
+        return rule(f"OV-{dom}-DEF", dom, "滞", "低", default["why"], default["cites"])
     # 323 批**试过"题类接管"并已回退**：题类在场而本类规则未命中时改判"待时/未决"，
     # 实测 tune 42.9→28.6、wiki·dev 75.0→66.7 —— **书的总纲与分类占法是叠加关系，不是替代关系**。
     # 结论：分类规则命中就接管，没命中就仍走九格（DOMAIN_DEFAULT 已废，保留在此作反面记录）。
