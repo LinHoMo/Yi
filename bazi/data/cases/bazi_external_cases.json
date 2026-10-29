@@ -64,6 +64,30 @@
       "curation_rule": "每例按书源逐字点名的调候用神入 expected.tiaohou：main 必为书源显式点名之主用神；assist 仅当书源显式点名具体天干（X为佐/以X为佐/X金为佐）才记，仅言「金为佐」等五行未点名天干者记空串（N/A，不扣佐神分）。四柱取自书源四柱命例表，且逐例核验『日主天干==该小节日主、月支柱==该小节月令』，月令错配者剔除（如书源「十一月丁火」小节内实为丑月例，已剔除）。",
       "honesty_note": "本批命中率低主要反映引擎 TIAO_HOU 表覆盖缺口（丙/丁日主多个月令格未入表→引擎返回空），非预测偏差。report-only，永不调参；不进 tune/holdout，不参与任何引擎调参。",
       "rebuild_2026_10_06m": "9 条 source_quote 非书源逐字（001–005、013–016，原 TECH-DEBT §2.4 登记，该台账已随扁平化删除）重建：001/002/005 截去『；例：四柱』非书源尾巴；013/014 月令错配（午=五月丁火，书源明写否定）→ 引文改行715 逐字、tiaohou 转 N/A（tiaohou 适用分母 18→16，读数基数变化已登记 CHANGELOG）；015/016 改取七月月头段（行808）逐字、expected 不变。expected 值除 013/014 转 N/A 外一律未动；引擎零改动。防复发：案例引文逐字性机械门 tools/check_case_quotes.py（check.py [1k]）上线。"
+    },
+    "dts_batch_2026_10_29": {
+      "n": 9,
+      "built_by": "dev_tools/build_dts_cases.py",
+      "book": "《滴天髓阐微》（任铁樵注本）",
+      "source_file": "data/sources/di-tian-sui-chan-wei.wikitext.txt",
+      "batch_rule": "机器只负责定位与自洽（四柱竖排解析、日主/月支自洽、原话逐字命中、公历反查、四柱去重）；**认定「这句到底在说谁的旺衰」由人工做**，结论固化在脚本 APPROVED 表里，可审计可复跑。",
+      "category_mapping": {
+        "太旺": "偏旺",
+        "旺极": "偏旺",
+        "身旺": "偏旺",
+        "旺矣": "偏旺",
+        "太衰": "偏弱",
+        "衰极": "偏弱",
+        "身弱": "偏弱",
+        "衰": "偏弱",
+        "衰弱": "偏弱",
+        "中和纯粹": "中和",
+        "中和之象": "中和",
+        "中和之气": "中和"
+      },
+      "skew_note": "本批 9 例中偏弱 8、中和 1，**这是文本特征不是抽样偏差**：任注多言「病」（身弱、财多身弱、君衰），少言「旺」。故本集**不可用于推断总体强弱分布**，只作逐例对拍与回归。",
+      "not_included": "① 主语非日主者（「地旺极矣」「财官太旺」「木旺金衰」「劫刃太旺」「金水太旺」…）；② 成语与通理（「旺者冲衰衰者拔」「衰神冲旺旺神发」「身旺者杀皆是官」）。人工认定 12 条中另有 3 条与在册案例同四柱，已去重。",
+      "date_limit": "datetime 为四柱反查所得（1900–2100 窗口内首个命中），**年份不是命例真实年份**；本批只作四柱级与强弱级校验，不用于大运/流年判断。"
     }
   },
   "splits": {
@@ -120,7 +144,16 @@
       "QTBJ009",
       "QTBJ011",
       "QTBJ013",
-      "QTBJ015"
+      "QTBJ015",
+      "DT001",
+      "DT002",
+      "DT003",
+      "DT004",
+      "DT005",
+      "DT006",
+      "DT007",
+      "DT008",
+      "DT009"
     ]
   },
   "cases": [
@@ -1177,6 +1210,249 @@
           "assist": ""
         },
         "rebuild_2026_10_06m": "原引文『三秋丁火，耑用甲木，仍取庚噼甲』系压缩改写（删了『退气柔弱』『金虽乘旺司权，无伤丁之理』）；改取『七月』月头段（行808）逐字重建，expected 甲/庚 不变（该段明写 庚 为佐）"
+      }
+    },
+    {
+      "id": "DT001",
+      "split": "external_holdout",
+      "book": "滴天髓阐微",
+      "location": "di-tian-sui-chan-wei.wikitext.txt 语料行982",
+      "source_quote": "此全酉、亥、子西北之阴寒。寒木更宜向阳，以丙火为用，壬水即其病也。然喜壬水远隔，与日主紧贴，日主本衰，未尝不喜其生，又有己土透干，亦能砥定中流。且喜天干水木火土，各立门户，相生有情；地支午火紧制七杀，年月火土，通根禄旺。更喜行运东南阳暖之地",
+      "pillars": {
+        "year": "丙子",
+        "month": "己亥",
+        "day": "乙酉",
+        "hour": "壬午",
+        "datetime": "2056-11-29 11:30"
+      },
+      "pillars_raw": "丙子 己亥 乙酉 壬午",
+      "gender": "",
+      "expected": {
+        "strength": "偏弱",
+        "strength_book_category": "日主本衰"
+      },
+      "note": "书原话「日主本衰」→ 偏弱（原话直指日主，不是别的五行）。判语原文见 source_quote；富贵层次断语不入 expected（EVAL-PLAN §2.2）。**datetime 是四柱反查所得，年份不是命例的真实年份**（同一四柱在 1900–2100 窗口内多解，取首个命中）——本集只作四柱级与强弱级校验，**不用于大运/流年判断**。",
+      "provenance": {
+        "source_file": "data/sources/di-tian-sui-chan-wei.wikitext.txt",
+        "pillars_line": 982,
+        "speech_line": 1000,
+        "date_rebuild": "内核历法反查：穷举 1900–2100 逐日，取四柱全同的首个时刻；年份非命例真实年份，只用于四柱级校验"
+      }
+    },
+    {
+      "id": "DT002",
+      "split": "external_holdout",
+      "book": "滴天髓阐微",
+      "location": "di-tian-sui-chan-wei.wikitext.txt 语料行2398",
+      "source_quote": "戊寅日元，生于立春十五日后，正当甲木司令，地支两寅紧克辰戌之土，天干甲木，又制日干之戊，似乎煞旺身弱。然喜无金，则日元之气不泄，更妙无水，则丙火之印不坏，尤羡铁身透丙，化杀生身。由甲傍而悬青绶，从副尹以跻黄堂，名利双收也。",
+      "pillars": {
+        "year": "甲戌",
+        "month": "丙寅",
+        "day": "戊寅",
+        "hour": "丙辰",
+        "datetime": "2054-02-06 07:30"
+      },
+      "pillars_raw": "甲戌 丙寅 戊寅 丙辰",
+      "gender": "",
+      "expected": {
+        "strength": "偏弱",
+        "strength_book_category": "煞旺身弱"
+      },
+      "note": "书原话「煞旺身弱」→ 偏弱（“身弱”二字直书）。判语原文见 source_quote；富贵层次断语不入 expected（EVAL-PLAN §2.2）。**datetime 是四柱反查所得，年份不是命例的真实年份**（同一四柱在 1900–2100 窗口内多解，取首个命中）——本集只作四柱级与强弱级校验，**不用于大运/流年判断**。",
+      "provenance": {
+        "source_file": "data/sources/di-tian-sui-chan-wei.wikitext.txt",
+        "pillars_line": 2398,
+        "speech_line": 2416,
+        "date_rebuild": "内核历法反查：穷举 1900–2100 逐日，取四柱全同的首个时刻；年份非命例真实年份，只用于四柱级校验"
+      }
+    },
+    {
+      "id": "DT003",
+      "split": "external_holdout",
+      "book": "滴天髓阐微",
+      "location": "di-tian-sui-chan-wei.wikitext.txt 语料行2912",
+      "source_quote": "此以金为源头，流至寅木，印绶生身更妙。巳时得禄，财又逢生，官星透露，清有精神，中和纯粹，起处亦佳，归局尤美，词林出身，仕至通政，一生无险，名利双辉。",
+      "pillars": {
+        "year": "辛酉",
+        "month": "庚子",
+        "day": "丙寅",
+        "hour": "癸巳",
+        "datetime": "1981-12-14 09:30"
+      },
+      "pillars_raw": "辛酉 庚子 丙寅 癸巳",
+      "gender": "",
+      "expected": {
+        "strength": "中和",
+        "strength_book_category": "中和纯粹"
+      },
+      "note": "书原话「中和纯粹」→ 中和（原话四字即类别词）。判语原文见 source_quote；富贵层次断语不入 expected（EVAL-PLAN §2.2）。**datetime 是四柱反查所得，年份不是命例的真实年份**（同一四柱在 1900–2100 窗口内多解，取首个命中）——本集只作四柱级与强弱级校验，**不用于大运/流年判断**。",
+      "provenance": {
+        "source_file": "data/sources/di-tian-sui-chan-wei.wikitext.txt",
+        "pillars_line": 2912,
+        "speech_line": 2930,
+        "date_rebuild": "内核历法反查：穷举 1900–2100 逐日，取四柱全同的首个时刻；年份非命例真实年份，只用于四柱级校验"
+      }
+    },
+    {
+      "id": "DT004",
+      "split": "external_holdout",
+      "book": "滴天髓阐微",
+      "location": "di-tian-sui-chan-wei.wikitext.txt 语料行5318",
+      "source_quote": "此造杀官当令，嫌其甲木透干，不能弃命从杀，只得杀重用印，则忌卯酉逢冲，去甲木之旺地。所生妻生八女，妾生入女，竟儿子。所谓身衰印作和，此财星坏印之故也，。",
+      "pillars": {
+        "year": "癸亥",
+        "month": "甲子",
+        "day": "丁酉",
+        "hour": "癸卯",
+        "datetime": "2043-12-20 05:30"
+      },
+      "pillars_raw": "癸亥 甲子 丁酉 癸卯",
+      "gender": "",
+      "expected": {
+        "strength": "偏弱",
+        "strength_book_category": "身衰印作和"
+      },
+      "note": "书原话「身衰印作和」→ 偏弱（“身衰”直书）。判语原文见 source_quote；富贵层次断语不入 expected（EVAL-PLAN §2.2）。**datetime 是四柱反查所得，年份不是命例的真实年份**（同一四柱在 1900–2100 窗口内多解，取首个命中）——本集只作四柱级与强弱级校验，**不用于大运/流年判断**。",
+      "provenance": {
+        "source_file": "data/sources/di-tian-sui-chan-wei.wikitext.txt",
+        "pillars_line": 5318,
+        "speech_line": 5336,
+        "date_rebuild": "内核历法反查：穷举 1900–2100 逐日，取四柱全同的首个时刻；年份非命例真实年份，只用于四柱级校验"
+      }
+    },
+    {
+      "id": "DT005",
+      "split": "external_holdout",
+      "book": "滴天髓阐微",
+      "location": "di-tian-sui-chan-wei.wikitext.txt 语料行6972",
+      "source_quote": "前造因财官太旺，以致夭亡，此则日坐长生，又生夏令，财官为用，伤官为喜，伤生财，财又生官，似乎生化有情。殊不知前则财多身弱，以官作杀，此则财绝官休，恐难厚享。癸水官星生未月，火土枯干，余气在丑，蓄水藏金，然己土当头伤癸，丑未冲去金水根源，时上",
+      "pillars": {
+        "year": "癸丑",
+        "month": "己未",
+        "day": "丙寅",
+        "hour": "辛卯",
+        "datetime": "2033-07-14 05:30"
+      },
+      "pillars_raw": "癸丑 己未 丙寅 辛卯",
+      "gender": "",
+      "expected": {
+        "strength": "偏弱",
+        "strength_book_category": "财多身弱"
+      },
+      "note": "书原话「财多身弱」→ 偏弱（“身弱”二字直书）。判语原文见 source_quote；富贵层次断语不入 expected（EVAL-PLAN §2.2）。**datetime 是四柱反查所得，年份不是命例的真实年份**（同一四柱在 1900–2100 窗口内多解，取首个命中）——本集只作四柱级与强弱级校验，**不用于大运/流年判断**。",
+      "provenance": {
+        "source_file": "data/sources/di-tian-sui-chan-wei.wikitext.txt",
+        "pillars_line": 6972,
+        "speech_line": 6990,
+        "date_rebuild": "内核历法反查：穷举 1900–2100 逐日，取四柱全同的首个时刻；年份非命例真实年份，只用于四柱级校验"
+      }
+    },
+    {
+      "id": "DT006",
+      "split": "external_holdout",
+      "book": "滴天髓阐微",
+      "location": "di-tian-sui-chan-wei.wikitext.txt 语料行8889",
+      "source_quote": "甲寅日元，年月皆寅，满盘皆木，时上庚金无根，臣盛君衰极矣。喜其午时流通木性，则戊土弱而有根，臣心顺矣，又逢丙辰、丁巳、戊午己未带土之火，生化不悖，臣顺君安。早登科甲，仕至侍郎；庚申运，不能和臣，不禄。",
+      "pillars": {
+        "year": "戊寅",
+        "month": "甲寅",
+        "day": "甲寅",
+        "hour": "庚午",
+        "datetime": "2058-02-21 11:30"
+      },
+      "pillars_raw": "戊寅 甲寅 甲寅 庚午",
+      "gender": "",
+      "expected": {
+        "strength": "偏弱",
+        "strength_book_category": "臣盛君衰极矣"
+      },
+      "note": "书原话「臣盛君衰极矣」→ 偏弱（“君”即日主戊土）。判语原文见 source_quote；富贵层次断语不入 expected（EVAL-PLAN §2.2）。**datetime 是四柱反查所得，年份不是命例的真实年份**（同一四柱在 1900–2100 窗口内多解，取首个命中）——本集只作四柱级与强弱级校验，**不用于大运/流年判断**。",
+      "provenance": {
+        "source_file": "data/sources/di-tian-sui-chan-wei.wikitext.txt",
+        "pillars_line": 8889,
+        "speech_line": 8907,
+        "date_rebuild": "内核历法反查：穷举 1900–2100 逐日，取四柱全同的首个时刻；年份非命例真实年份，只用于四柱级校验"
+      }
+    },
+    {
+      "id": "DT007",
+      "split": "external_holdout",
+      "book": "滴天髓阐微",
+      "location": "di-tian-sui-chan-wei.wikitext.txt 语料行8929",
+      "source_quote": "此造三逢戊午，时杀虽坐禄支，局中无水，火土燥烈，臣盛君衰，且寅午拱会，木从火势，转生日主，君恩虽重，而日主之意向，反不以甲木为念，故运走西主金地，功名显赫，甚重私情，不以君恩为念也。运逢水旺，又不能存君之子，诖误落职。",
+      "pillars": {
+        "year": "戊午",
+        "month": "戊午",
+        "day": "戊午",
+        "hour": "甲寅",
+        "datetime": "2038-06-10 03:30"
+      },
+      "pillars_raw": "戊午 戊午 戊午 甲寅",
+      "gender": "",
+      "expected": {
+        "strength": "偏弱",
+        "strength_book_category": "臣盛君衰"
+      },
+      "note": "书原话「臣盛君衰」→ 偏弱（“君”即日主戊土）。判语原文见 source_quote；富贵层次断语不入 expected（EVAL-PLAN §2.2）。**datetime 是四柱反查所得，年份不是命例的真实年份**（同一四柱在 1900–2100 窗口内多解，取首个命中）——本集只作四柱级与强弱级校验，**不用于大运/流年判断**。",
+      "provenance": {
+        "source_file": "data/sources/di-tian-sui-chan-wei.wikitext.txt",
+        "pillars_line": 8929,
+        "speech_line": 8947,
+        "date_rebuild": "内核历法反查：穷举 1900–2100 逐日，取四柱全同的首个时刻；年份非命例真实年份，只用于四柱级校验"
+      }
+    },
+    {
+      "id": "DT008",
+      "split": "external_holdout",
+      "book": "滴天髓阐微",
+      "location": "di-tian-sui-chan-wei.wikitext.txt 语料行9517",
+      "source_quote": "甲寅日元，生于巳月，丙火司令，虽坐禄支，其精泄尽，火旺木焚，喜土以行之，此衰极从弱之理。初运戊午己未，顺其火土之性，祖业颇丰，又得一衿；庚申逆火之性，泄土之气；至癸亥年，冲激火势而亡。",
+      "pillars": {
+        "year": "戊戌",
+        "month": "丁巳",
+        "day": "甲寅",
+        "hour": "己巳",
+        "datetime": "2078-05-07 09:30"
+      },
+      "pillars_raw": "戊戌 丁巳 甲寅 己巳",
+      "gender": "",
+      "expected": {
+        "strength": "偏弱",
+        "strength_book_category": "此衰极从弱之理"
+      },
+      "note": "书原话「此衰极从弱之理」→ 偏弱（本造自述为衰极从弱）。判语原文见 source_quote；富贵层次断语不入 expected（EVAL-PLAN §2.2）。**datetime 是四柱反查所得，年份不是命例的真实年份**（同一四柱在 1900–2100 窗口内多解，取首个命中）——本集只作四柱级与强弱级校验，**不用于大运/流年判断**。",
+      "provenance": {
+        "source_file": "data/sources/di-tian-sui-chan-wei.wikitext.txt",
+        "pillars_line": 9517,
+        "speech_line": 9535,
+        "date_rebuild": "内核历法反查：穷举 1900–2100 逐日，取四柱全同的首个时刻；年份非命例真实年份，只用于四柱级校验"
+      }
+    },
+    {
+      "id": "DT009",
+      "split": "external_holdout",
+      "book": "滴天髓阐微",
+      "location": "di-tian-sui-chan-wei.wikitext.txt 语料行10159",
+      "source_quote": "己亥日元，生于丑月虚湿之地，辰丑蓄水藏金，庚壬透而通根，只得任其虚湿之气，反以水为用而从财也。初运庚寅辛卯，天干逢金生水，地支遇水克土，荫疪有余；壬辰癸巳，不但财业日增，抑且名列宫墙；巳运克妻破财。此造四柱无火，得申时壬水逢生，格成假从财，",
+      "pillars": {
+        "year": "庚辰",
+        "month": "己丑",
+        "day": "己亥",
+        "hour": "壬申",
+        "datetime": "2061-01-21 15:30"
+      },
+      "pillars_raw": "庚辰 己丑 己亥 壬申",
+      "gender": "",
+      "expected": {
+        "strength": "偏弱",
+        "strength_book_category": "财多身弱"
+      },
+      "note": "书原话「财多身弱」→ 偏弱（“身弱”二字直书）。判语原文见 source_quote；富贵层次断语不入 expected（EVAL-PLAN §2.2）。**datetime 是四柱反查所得，年份不是命例的真实年份**（同一四柱在 1900–2100 窗口内多解，取首个命中）——本集只作四柱级与强弱级校验，**不用于大运/流年判断**。",
+      "provenance": {
+        "source_file": "data/sources/di-tian-sui-chan-wei.wikitext.txt",
+        "pillars_line": 10159,
+        "speech_line": 10177,
+        "date_rebuild": "内核历法反查：穷举 1900–2100 逐日，取四柱全同的首个时刻；年份非命例真实年份，只用于四柱级校验"
       }
     }
   ]
