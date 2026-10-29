@@ -2,7 +2,7 @@
   "schema": "yi-judgment-table/1",
   "discipline": "liuyao",
   "batch": 314,
-  "status": "proposed",
+  "status": "accepted",
   "sealed": null,
   "_comment": "A3 判定表的机器判据（唯一真值源）。本文件只声明，不接引擎：改成 accepted 并接进 step5 前，必须先由人签 adjudications 四条。改本文件须同批改 docs/JUDGMENT-TABLE.md 与 docs/CHANGELOG.md。",
   "source_doc": "docs/JUDGMENT-TABLE.md",
@@ -751,11 +751,13 @@
         "F2 分破而静/破而动"
       ],
       "agent_recommendation": "F2",
-      "status": "pending",
+      "status": "signed",
       "cites": [
         "F1",
         "F2"
-      ]
+      ],
+      "chosen": "F2",
+      "signed_at": "2026-10-29"
     },
     {
       "id": "JT-B",
@@ -765,14 +767,16 @@
         "改 0.5/0.5（须独立批走 §四）"
       ],
       "agent_recommendation": "前者",
-      "status": "pending",
+      "status": "signed",
       "cites": [
         "A1",
         "A2",
         "A5",
         "A6",
         "E3"
-      ]
+      ],
+      "chosen": "标为非书证·工程默认（不改读数）",
+      "signed_at": "2026-10-29"
     },
     {
       "id": "JT-C",
@@ -782,11 +786,13 @@
         "世参与方向判定"
       ],
       "agent_recommendation": "前者",
-      "status": "pending",
+      "status": "signed",
       "cites": [
         "B4",
         "F5"
-      ]
+      ],
+      "chosen": "方向由用神定，世只降置信",
+      "signed_at": "2026-10-29"
     },
     {
       "id": "JT-D",
@@ -796,10 +802,12 @@
         "合表（按题类格内特判）"
       ],
       "agent_recommendation": "前者",
-      "status": "pending",
+      "status": "signed",
       "cites": [
         "F5"
-      ]
+      ],
+      "chosen": "判定表只管吉凶题，时间题另表",
+      "signed_at": "2026-10-29"
     }
   ],
   "stats": {
@@ -811,5 +819,33 @@
       "exception": 5,
       "domain_overlay": 19
     }
+  },
+  "signed_at": "2026-10-29",
+  "signed_by": "用户授权按建议签（317 批）",
+  "implementation": {
+    "module": "scripts/judge.py",
+    "mode": "shadow",
+    "wired_into_step5": false,
+    "shadow_dev": {
+      "tune": {
+        "judge": 30.0,
+        "current": 80.0,
+        "n": 20,
+        "note": "in-sample：判定器在此集上调过谓词"
+      },
+      "holdout": "见 CHANGELOG 317 批",
+      "wikisource_dev": {
+        "judge": 50.0,
+        "current": 56.2,
+        "n_expected": 16
+      },
+      "zengshan_dz_dev": {
+        "judge": 12.5,
+        "current": 37.5,
+        "n_expected": 8
+      }
+    },
+    "acceptance_criterion": "dev 半边与书载同向率 ≥ 现行引擎，且不再只靠 8 条谓词（缺题类层）——未达则不得接线",
+    "verdict": "未达标：9 格 v0 缺题类覆盖层，dz 半边 12.5% vs 现行 37.5%"
   }
 }

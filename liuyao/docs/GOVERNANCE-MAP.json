@@ -1,8 +1,8 @@
 {
- "count": 60,
+ "count": 61,
  "by_tier": {
   "tool": 3,
-  "ondemand": 11,
+  "ondemand": 12,
   "nightly": 11,
   "build": 8,
   "blocking": 27
@@ -335,6 +335,13 @@
    "guards": "爻序 P0 看门狗（23 断言）",
    "run_by_check_py": true,
    "doc": "爻序防复发断言：P0 事故的看门狗。"
+  },
+  {
+   "script": "judge_shadow.py",
+   "tier": "ondemand",
+   "guards": "判定器影子对拍：现行/判定器/书载三方方向（317 批；不改判）",
+   "run_by_check_py": false,
+   "doc": "判定器影子对拍（A3·第三百一十七批）：判定器 vs 现行 verdict vs 书载方向。"
   },
   {
    "script": "outcome.py",

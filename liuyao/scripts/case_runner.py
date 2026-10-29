@@ -242,8 +242,12 @@ def _extra_element(branch: str) -> str:
     return BRANCH_ELEMENTS.get(branch, "")
 
 
-def run_case(case: dict) -> dict:
-    """单例：还原时刻 → 排盘 → 五步思维链 → 抽取评分所需字段。"""
+def run_case(case: dict, full: bool = False) -> dict:
+    """单例：还原时刻 → 排盘 → 五步思维链 → 抽取评分所需字段。
+
+    full=True 时另挂 `_full`（analyze 全量产物），供判定器影子对拍用；
+    默认 False 保持评分器拿到的形状不变（多一个键会动指纹）。
+    """
     cid = case["id"]
     q = case.get("question") or (case.get("input") or {}).get("question", "")
     inp = case.get("input") or {}
@@ -340,7 +344,7 @@ def run_case(case: dict) -> dict:
         "classical_quotes": thinking.get("step5_synthesis", {}).get("classical_quotes", []) or h.get("classical_quotes", []),
         "human_narrative": human,
         "human_markdown": render_human_markdown(human),
-    }
+    } | ({"_full": tc} if full else {})
 
 
 def run_ids(ids: list[str], verbose: bool = True) -> dict:

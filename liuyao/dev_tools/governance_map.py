@@ -111,6 +111,7 @@ CURATED = {
         "harvest_verifications": ("nightly", "古籍自验盘点册构建（观察册）"),
         "graduate_verifications": ("nightly", "自注毕业三态台账（观察册）"),
         "use_god_coverage": ("nightly", "用神来源矩阵"),
+        "judge_shadow": ("ondemand", "判定器影子对拍：现行/判定器/书载三方方向（317 批；不改判）"),
         "diff_jingshi_vs_core": ("ondemand", "京氏传↔内核逐格对拍"),
         "diff_shangzhan_vs_core": ("ondemand", "尚占↔内核逐格对拍"),
         "fetch_huozhulin_cases": ("build", "火珠林采集管道（通道活：评分 2<5 未入集/定性 5 在册；196 批 selftest 八件证网无盲）"),

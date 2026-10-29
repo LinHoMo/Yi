@@ -219,6 +219,9 @@ def selftest() -> int:
 
     t = json.loads(json.dumps(base))
     t["status"] = "accepted"
+    if t.get("adjudications"):
+        t["adjudications"][0]["status"] = "pending"
+        t["adjudications"][0].pop("chosen", None)
     cases.append(("未签就 accepted", t))
 
     fails = []
