@@ -1,0 +1,2101 @@
+{
+  "_meta": {
+    "book": "易隐",
+    "author": "清·曹九锡（辑）",
+    "source": "殆知阁转录本（github.com/garychowcmu/daizhigev20）",
+    "source_file": "data/sources/yiin_dz.dz.txt",
+    "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+    "built_by": "dev_tools/build_yiin_cases.py",
+    "split": "yiin_holdout",
+    "blocks": 59,
+    "passed": 56,
+    "excluded": 3,
+    "duplicates": 0,
+    "n": 56,
+    "with_yingqi": 7,
+    "verdict_policy": "吉凶一律 null：本书断语为散文，映射吉/凶属解读，越铁律一。本集为应期语料通道。",
+    "note": "外部验证集，永不参与调参；与 zengshan_dz_holdout 同定位。"
+  },
+  "cases": [
+    {
+      "id": "YI001",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "寿命",
+      "question": "子占父寿",
+      "input": {
+        "date": "丙辰年丙申月己丑日庚午时",
+        "question": "子占父寿"
+      },
+      "hexagram": {
+        "original": "节",
+        "changed": null,
+        "moving": [],
+        "palace": "坎",
+        "generation": "一世",
+        "note": "六合"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "癸卯日",
+        "yingqi_branches": [
+          "卯"
+        ],
+        "yingqi_claim": "",
+        "detail": "此卦用爻正旺，更得辰年丑日来生，理宜多寿，直至戊寅年，甲子月，癸卯日故"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 1020,
+        "day_line": 1017,
+        "table_line": 1020,
+        "quote": "丙辰年丙申月己丑日庚午时，子占父寿，得节卦，安静。",
+        "speech_head": "此卦用爻正旺，更得辰年丑日来生，理宜多寿，直至戊寅年，甲子月，癸卯日故。此年正值"
+      }
+    },
+    {
+      "id": "YI002",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "寿命",
+      "question": "夫占妻寿",
+      "input": {
+        "date": "戊寅年己未月戊戌日戊午时",
+        "question": "夫占妻寿"
+      },
+      "hexagram": {
+        "original": "师",
+        "changed": null,
+        "moving": [],
+        "palace": "坎",
+        "generation": "三世",
+        "note": "归魂"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "庚辰日",
+        "yingqi_branches": [
+          "辰"
+        ],
+        "yingqi_claim": "",
+        "detail": "财爻有气，年月日俱克兄，故今无咎，直至丙子年丙申月，庚辰日故，财虽不值岁旬空亡，以遇流年天克地冲，又被岁月日，会而成水局，克制火财，所以终命也"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 1030,
+        "day_line": 1027,
+        "table_line": 1030,
+        "quote": "戊寅年，己未月，戊戌日，戊午时，夫占妻寿，得师卦，安静。",
+        "speech_head": "财爻有气，年月日俱克兄，故今无咎，直至丙子年丙申月，庚辰日故，财虽不值岁旬空亡，"
+      }
+    },
+    {
+      "id": "YI003",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "寿命",
+      "question": "卜自己寿命",
+      "input": {
+        "date": "庚寅年庚辰月丁卯日甲辰时",
+        "question": "卜自己寿命"
+      },
+      "hexagram": {
+        "original": "颐",
+        "changed": "复",
+        "moving": [
+          6
+        ],
+        "palace": "巽",
+        "generation": "四世",
+        "note": "游魂"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "癸卯日",
+        "yingqi_branches": [
+          "卯"
+        ],
+        "yingqi_claim": "",
+        "detail": "世动化丑来刑，太岁并寅兄动克戌世，又流年神，飞廉大杀，白虎，在戌，会月虎，日虎，时虎，俱在戌，名为四虎改牙，此极凶之卦，决难免死，故其人病起正月，至四月癸卯日故也"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 1040,
+        "day_line": 1037,
+        "table_line": 1040,
+        "quote": "庚寅年，庚辰月，丁卯日，甲辰时，卜自己寿命，得颐之复。",
+        "speech_head": "世动化丑来刑，太岁并寅兄动克戌世，又流年神，飞廉大杀，白虎，在戌，会月虎，日虎，"
+      }
+    },
+    {
+      "id": "YI004",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "迁移",
+      "question": "占迁移",
+      "input": {
+        "date": "庚寅年戊寅月甲寅旬癸亥日",
+        "question": "占迁移"
+      },
+      "hexagram": {
+        "original": "夬",
+        "changed": "大过",
+        "moving": [
+          1
+        ],
+        "palace": "坤",
+        "generation": "五世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "世居酉福，正西吉也。火能克金，南方大忌。鬼临寅上，东北莫居。土虽生金，终嫌兄弟。况丑为世墓，戌为世害，西北东北，尤不宜居"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 1215,
+        "day_line": 1212,
+        "table_line": 1215,
+        "quote": "庚寅年戊寅月甲寅旬癸亥日，占迁移，得夬之大过。",
+        "speech_head": "世居酉福，正西吉也。火能克金，南方大忌。鬼临寅上，东北莫居。土虽生金，终嫌兄弟。"
+      }
+    },
+    {
+      "id": "YI005",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "迁移",
+      "question": "占迁移",
+      "input": {
+        "date": "庚寅年庚辰月甲寅旬丁巳日",
+        "question": "占迁移"
+      },
+      "hexagram": {
+        "original": "豫",
+        "changed": "小过",
+        "moving": [
+          3
+        ],
+        "palace": "震",
+        "generation": "一世",
+        "note": "六合"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "木来克世，不利东迁。土赖火生，宜居巳上。岂知土绝在巳，东南不宜。戌财刑未，西北难居。鬼在申方，西南尤忌。止喜福居午上，宜"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 1225,
+        "day_line": 1222,
+        "table_line": 1225,
+        "quote": "庚寅年庚辰月甲寅旬丁巳日，占迁移，得豫之小过。",
+        "speech_head": "木来克世，不利东迁。土赖火生，宜居巳上。岂知土绝在巳，东南不宜。戌财刑未，西北难"
+      }
+    },
+    {
+      "id": "YI006",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "六畜",
+      "question": "占六畜",
+      "input": {
+        "date": "庚寅年辛巳月甲辰旬戊申日",
+        "question": "占六畜"
+      },
+      "hexagram": {
+        "original": "蒙",
+        "changed": "师",
+        "moving": [
+          6
+        ],
+        "palace": "离",
+        "generation": "四世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "子孙持世，又投长生于申日，但嫌太岁寅木动来克世，喜其为旬空日绝，变出酉财克之，不能为害，故许十分之利也。以本命生肖爻推之"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 1293,
+        "day_line": 1290,
+        "table_line": 1293,
+        "quote": "庚寅年辛巳月甲辰旬戊申日占六畜。得蒙之师卦。",
+        "speech_head": "子孙持世，又投长生于申日，但嫌太岁寅木动来克世，喜其为旬空日绝，变出酉财克之，不"
+      }
+    },
+    {
+      "id": "YI007",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "",
+      "question": "虑火灾",
+      "input": {
+        "date": "庚寅年己卯月甲申旬庚寅日",
+        "question": "虑火灾"
+      },
+      "hexagram": {
+        "original": "萃",
+        "changed": "困",
+        "moving": [
+          2
+        ],
+        "palace": "兑",
+        "generation": "二世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "世临乙巳鬼动，岁日刑之，乃自身有祸也。不合克应上兄弟，则遗祸及他人矣。卦内两重父母，皆值旬空，父母为房屋，必是火起，延烧"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 1332,
+        "day_line": 1329,
+        "table_line": 1332,
+        "quote": "庚寅年己卯月甲申旬庚寅日，用有虑火灾者，卜得萃之困，",
+        "speech_head": "世临乙巳鬼动，岁日刑之，乃自身有祸也。不合克应上兄弟，则遗祸及他人矣。卦内两重父"
+      }
+    },
+    {
+      "id": "YI008",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "盗贼",
+      "question": "盗抜",
+      "input": {
+        "date": "庚寅年庚辰月甲子旬戊辰日",
+        "question": "盗抜"
+      },
+      "hexagram": {
+        "original": "井",
+        "changed": "节",
+        "moving": [
+          1,
+          3
+        ],
+        "palace": "震",
+        "generation": "五世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "三爻门户鬼动，初爻，化爻，二财助鬼刑世，又初爻化出巳火，子孙刑克，世下伏官，后果为盗累也。"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 1342,
+        "day_line": 1339,
+        "table_line": 1342,
+        "quote": "庚寅年庚辰月甲子旬戊辰日，有恐盗抜者，卜得井之节，",
+        "speech_head": "三爻门户鬼动，初爻，化爻，二财助鬼刑世，又初爻化出巳火，子孙刑克，世下伏官，后果"
+      }
+    },
+    {
+      "id": "YI009",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "词讼",
+      "question": "讼累",
+      "input": {
+        "date": "庚寅年庚辰月甲戌旬辛巳日",
+        "question": "讼累"
+      },
+      "hexagram": {
+        "original": "需",
+        "changed": "蹇",
+        "moving": [
+          1,
+          2
+        ],
+        "palace": "坤",
+        "generation": "四世",
+        "note": "游魂"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "寅兄发动冲世，更逢财动助鬼伤世，日辰又刑世，祸不可支。喜世空，己得避脱，而兄弟反遭伤克矣。两爻兄弟俱系他宫，鬼又动化文书"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 1352,
+        "day_line": 1349,
+        "table_line": 1352,
+        "quote": "庚寅年庚辰月甲戌旬辛巳日，有恐讼累者，卜得需之蹇，",
+        "speech_head": "寅兄发动冲世，更逢财动助鬼伤世，日辰又刑世，祸不可支。喜世空，己得避脱，而兄弟反"
+      }
+    },
+    {
+      "id": "YI010",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "",
+      "question": "避难，投托一人",
+      "input": {
+        "date": "庚寅年己卯月甲申日",
+        "question": "避难，投托一人"
+      },
+      "hexagram": {
+        "original": "大畜",
+        "changed": "损",
+        "moving": [
+          3
+        ],
+        "palace": "艮",
+        "generation": "二世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "应持子水，生世上寅木，人皆云吉，不知子水与动爻辰兄作合，其伏下申金子孙，暗中刑克世上飞神，子辰又会水局，克世下午火伏神，"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 1372,
+        "day_line": 1369,
+        "table_line": 1372,
+        "quote": "庚寅年己卯月甲申日，有欲避难，投托一人者，卜得大畜之损，",
+        "speech_head": "应持子水，生世上寅木，人皆云吉，不知子水与动爻辰兄作合，其伏下申金子孙，暗中刑克"
+      }
+    },
+    {
+      "id": "YI011",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "家宅",
+      "question": "占坟茔",
+      "input": {
+        "date": "丙辰年丙子月甲子旬丁卯日",
+        "question": "占坟茔"
+      },
+      "hexagram": {
+        "original": "睽",
+        "changed": "归妹",
+        "moving": [
+          6
+        ],
+        "palace": "艮",
+        "generation": "四世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "鬼为亡人，子为后嗣，财为产业，父为棺椁。占坟喜官鬼旺静，今有气而动，非吉也。旁爻火父，衰而又空，是坟决在古塚之畔，坐下无"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 1507,
+        "day_line": 1504,
+        "table_line": 1507,
+        "quote": "丙辰年丙子月甲子旬丁卯日，占坟茔，得睽之归妹。",
+        "speech_head": "鬼为亡人，子为后嗣，财为产业，父为棺椁。占坟喜官鬼旺静，今有气而动，非吉也。旁爻"
+      }
+    },
+    {
+      "id": "YI012",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "",
+      "question": "宋太祖即位，召陈搏问享国长短",
+      "input": {
+        "date": "庚申年戊子月甲子日",
+        "question": "宋太祖即位，召陈搏问享国长短"
+      },
+      "hexagram": {
+        "original": "离",
+        "changed": "明夷",
+        "moving": [
+          4,
+          6
+        ],
+        "palace": "离",
+        "generation": "六世",
+        "note": "六冲"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "搏曰，陛下得国中原，而逢南方，火盛 之卦，非吉也。太祖曰，朕寿几何。丙子年庚子月子日，陛下终于火日之下。离为火日，陛下之"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 1615,
+        "day_line": 1612,
+        "table_line": 1615,
+        "quote": "庚申年戊子月甲子日，宋太祖即位，召陈搏问享国长短，得离之明夷。",
+        "speech_head": "搏曰，陛下得国中原，而逢南方，火盛 之卦，非吉也。太祖曰，朕寿几何。丙子年庚子月"
+      }
+    },
+    {
+      "id": "YI013",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "",
+      "question": "卜一方年时",
+      "input": {
+        "date": "戊寅月甲寅日",
+        "question": "卜一方年时"
+      },
+      "hexagram": {
+        "original": "咸",
+        "changed": null,
+        "moving": [],
+        "palace": "兑",
+        "generation": "三世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "兄居申酉正西，西南荒歉，申犯月日刑破克，西南尤甚。子在亥爻，月日合之，正北丰稔。父在辰未，东南西南蠶畜不利。鬼居午位，南"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 1633,
+        "day_line": 1630,
+        "table_line": 1633,
+        "quote": "戊寅月甲寅日，卜一方年时，得咸卦，安静。",
+        "speech_head": "兄居申酉正西，西南荒歉，申犯月日刑破克，西南尤甚。子在亥爻，月日合之，正北丰稔。"
+      }
+    },
+    {
+      "id": "YI014",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "婚姻",
+      "question": "女占姻",
+      "input": {
+        "date": "己丑年丁卯月甲戌旬戊寅日",
+        "question": "女占姻"
+      },
+      "hexagram": {
+        "original": "剥",
+        "changed": "观",
+        "moving": [
+          5
+        ],
+        "palace": "乾",
+        "generation": "五世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "本宫寅财，伏巳火鬼干，又居应上，乃有夫之妇。寅巳相刑，必夫妻不睦，而欲改嫁也。又本宫寅财，与午鬼相生合，决是与人私通，而"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 1676,
+        "day_line": 1673,
+        "table_line": 1676,
+        "quote": "己丑年丁卯月甲戌旬戊寅日，女占姻，得剥之观。",
+        "speech_head": "本宫寅财，伏巳火鬼干，又居应上，乃有夫之妇。寅巳相刑，必夫妻不睦，而欲改嫁也。又"
+      }
+    },
+    {
+      "id": "YI015",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "婚姻",
+      "question": "男占婚",
+      "input": {
+        "date": "己丑年丙子月甲子旬丁卯日",
+        "question": "男占婚"
+      },
+      "hexagram": {
+        "original": "睽",
+        "changed": "归妹",
+        "moving": [
+          6
+        ],
+        "palace": "艮",
+        "generation": "四世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "本宫子水财，正值月建，离卦无气，而财爻有气，家虽贫而貌则美。但性急贪淫，色黑而面圆耳。奈财伏兄下，世应化爻俱兄，克财者多"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 1686,
+        "day_line": 1683,
+        "table_line": 1686,
+        "quote": "己丑年丙子月甲子旬丁卯日，男占婚，得睽之归妹。",
+        "speech_head": "本宫子水财，正值月建，离卦无气，而财爻有气，家虽贫而貌则美。但性急贪淫，色黑而面"
+      }
+    },
+    {
+      "id": "YI016",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "婚姻",
+      "question": "男占婚",
+      "input": {
+        "date": "己丑年丙子月甲寅旬戊午日",
+        "question": "男占婚"
+      },
+      "hexagram": {
+        "original": "困",
+        "changed": "解",
+        "moving": [
+          5
+        ],
+        "palace": "兑",
+        "generation": "一世",
+        "note": "六合"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "世应生合，本宜成就，却被酉兄动冲卯财，化出申兄，又刑冲克世上寅财，必被人破也。"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 1696,
+        "day_line": 1693,
+        "table_line": 1696,
+        "quote": "己丑年丙子月甲寅旬戊午日，男占婚，得困之解。",
+        "speech_head": "世应生合，本宜成就，却被酉兄动冲卯财，化出申兄，又刑冲克世上寅财，必被人破也。"
+      }
+    },
+    {
+      "id": "YI017",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "婚姻",
+      "question": "男占婚",
+      "input": {
+        "date": "庚寅年戊寅月甲寅旬癸亥日",
+        "question": "男占婚"
+      },
+      "hexagram": {
+        "original": "复",
+        "changed": "颐",
+        "moving": [
+          6
+        ],
+        "palace": "坤",
+        "generation": "一世",
+        "note": "六合"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "六爻酉子动化寅官与亥财合，月日又值财官世应又合，两家俱肯，婚大吉也。但五爻亥财自刑，妇性峭刻，貌美，面尖微黑，初爻单，则"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 1706,
+        "day_line": 1703,
+        "table_line": 1706,
+        "quote": "庚寅年戊寅月甲寅旬癸亥日，男占婚，得复之颐。",
+        "speech_head": "六爻酉子动化寅官与亥财合，月日又值财官世应又合，两家俱肯，婚大吉也。但五爻亥财自"
+      }
+    },
+    {
+      "id": "YI018",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "功名",
+      "question": "占求官",
+      "input": {
+        "date": "己丑年壬申月甲子旬乙丑日",
+        "question": "占求官"
+      },
+      "hexagram": {
+        "original": "震",
+        "changed": "豫",
+        "moving": [
+          1
+        ],
+        "palace": "震",
+        "generation": "六世",
+        "note": "六冲"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "此卦己事不成，代占则成也。但费心力多用财耳，盖子水动化未土，文书受伤，又应财亦克文书，所云克我者，他来就我易，我克者，我"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 1883,
+        "day_line": 1880,
+        "table_line": 1883,
+        "quote": "己丑年壬申月甲子旬乙丑日，占求官，得震之豫。",
+        "speech_head": "此卦己事不成，代占则成也。但费心力多用财耳，盖子水动化未土，文书受伤，又应财亦克"
+      }
+    },
+    {
+      "id": "YI019",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "功名",
+      "question": "婿占岳翁，在京选官否",
+      "input": {
+        "date": "己丑年癸酉月甲子旬丁酉日",
+        "question": "婿占岳翁，在京选官否"
+      },
+      "hexagram": {
+        "original": "晋",
+        "changed": "噬嗑",
+        "moving": [
+          1
+        ],
+        "palace": "乾",
+        "generation": "四世",
+        "note": "游魂"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "此卦父临岁破，巳官旬空，又初爻动化福来伤官，木宫午官伏酉兄之下，火死于酉，且月日冲动卯财，克伏下辰土父母，戌土父母，虽伏"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 1893,
+        "day_line": 1890,
+        "table_line": 1893,
+        "quote": "己丑年癸酉月甲子旬丁酉日，婿占岳翁，在京选官否，得晋之噬嗑。",
+        "speech_head": "此卦父临岁破，巳官旬空，又初爻动化福来伤官，木宫午官伏酉兄之下，火死于酉，且月日"
+      }
+    },
+    {
+      "id": "YI020",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "功名",
+      "question": "占求官",
+      "input": {
+        "date": "己丑年丙子月甲子旬丁卯日",
+        "question": "占求官"
+      },
+      "hexagram": {
+        "original": "睽",
+        "changed": "归妹",
+        "moving": [
+          6
+        ],
+        "palace": "艮",
+        "generation": "四世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "本官寅宫，动合世下戌兄，所托贵人得力，父母属火，文书难立时空，得日辰生扶，必可成也，但本宫午火自刑，求仕文书，字眼必有踈"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 1903,
+        "day_line": 1900,
+        "table_line": 1903,
+        "quote": "己丑年丙子月甲子旬丁卯日，占求官，得睽之归妹。",
+        "speech_head": "本官寅宫，动合世下戌兄，所托贵人得力，父母属火，文书难立时空，得日辰生扶，必可成"
+      }
+    },
+    {
+      "id": "YI021",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "功名",
+      "question": "占为官安否",
+      "input": {
+        "date": "庚寅年庚辰月甲戌旬戊寅日",
+        "question": "占为官安否"
+      },
+      "hexagram": {
+        "original": "剥",
+        "changed": "观",
+        "moving": [
+          5
+        ],
+        "palace": "乾",
+        "generation": "五世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "本宫午官，伏墓戌土下，午为自刑，傍爻子动冲官伤官，必曾冒犯官长，官不蒞事。本宫父母，又值旬空季空，此因文书不明，而忤上台"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 1913,
+        "day_line": 1910,
+        "table_line": 1913,
+        "quote": "庚寅年庚辰月甲戌旬戊寅日，占为官安否，得剥之观。",
+        "speech_head": "本宫午官，伏墓戌土下，午为自刑，傍爻子动冲官伤官，必曾冒犯官长，官不蒞事。本宫父"
+      }
+    },
+    {
+      "id": "YI022",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "功名",
+      "question": "占求官",
+      "input": {
+        "date": "庚寅年辛巳月甲申旬壬辰日",
+        "question": "占求官"
+      },
+      "hexagram": {
+        "original": "需",
+        "changed": null,
+        "moving": [],
+        "palace": "坤",
+        "generation": "四世",
+        "note": "游魂"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "本宫巳火文书，临月建，伏在官鬼之下，又巳火生世丁丑土，求官必得。所嫌旁爻申金持世，与月建六合来克官，日辰又生之，主暂时阻"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 1923,
+        "day_line": 1920,
+        "table_line": 1923,
+        "quote": "庚寅年辛巳月甲申旬壬辰日，占求官，得需卦安静。",
+        "speech_head": "本宫巳火文书，临月建，伏在官鬼之下，又巳火生世丁丑土，求官必得。所嫌旁爻申金持世"
+      }
+    },
+    {
+      "id": "YI023",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "功名",
+      "question": "占求官",
+      "input": {
+        "date": "庚寅年辛巳月甲子旬丁酉日",
+        "question": "占求官"
+      },
+      "hexagram": {
+        "original": "乾",
+        "changed": "离",
+        "moving": [
+          2,
+          5
+        ],
+        "palace": "乾",
+        "generation": "六世",
+        "note": "六冲"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "二五爻辞，俱有利见大人本吉，但六冲化六冲，又寅财动克文书中，兄动多阻隔，目下不成。直待辰戌印绶年可求，午火官鬼年，可得官"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 1933,
+        "day_line": 1930,
+        "table_line": 1933,
+        "quote": "庚寅年辛巳月甲子旬丁酉日，占求官，得乾之离。",
+        "speech_head": "二五爻辞，俱有利见大人本吉，但六冲化六冲，又寅财动克文书中，兄动多阻隔，目下不成"
+      }
+    },
+    {
+      "id": "YI024",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "",
+      "question": "占在任安否",
+      "input": {
+        "date": "庚寅年壬午月甲戌日",
+        "question": "占在任安否"
+      },
+      "hexagram": {
+        "original": "归妹",
+        "changed": "泰",
+        "moving": [
+          3,
+          4
+        ],
+        "palace": "兑",
+        "generation": "三世",
+        "note": "归魂"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "午得化入戌墓，丑印化入辰墓，主灾死，惟致仕可免也。"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 1943,
+        "day_line": 1940,
+        "table_line": 1943,
+        "quote": "庚寅年壬午月甲戌日，占在任安否，得归妹之泰。",
+        "speech_head": "午得化入戌墓，丑印化入辰墓，主灾死，惟致仕可免也。"
+      }
+    },
+    {
+      "id": "YI025",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "功名",
+      "question": "代占求文书",
+      "input": {
+        "date": "庚寅年戊寅月乙卯日",
+        "question": "代占求文书"
+      },
+      "hexagram": {
+        "original": "剥",
+        "changed": "观",
+        "moving": [
+          5
+        ],
+        "palace": "乾",
+        "generation": "五世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "傍爻巳官临应，受岁月日生，人多云吉，终是被岁月刑巳，又世上旁爻子动伤官，本宫辰戌文书，皆值时空，三传克之，且世应相克，人"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 1968,
+        "day_line": 1965,
+        "table_line": 1968,
+        "quote": "庚寅年戊寅月乙卯日，代占求文书，得剥之观。",
+        "speech_head": "傍爻巳官临应，受岁月日生，人多云吉，终是被岁月刑巳，又世上旁爻子动伤官，本宫辰戌"
+      }
+    },
+    {
+      "id": "YI026",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "功名",
+      "question": "占托人求文书",
+      "input": {
+        "date": "庚寅年庚辰月己巳日",
+        "question": "占托人求文书"
+      },
+      "hexagram": {
+        "original": "丰",
+        "changed": "复",
+        "moving": [
+          3,
+          4
+        ],
+        "palace": "坎",
+        "generation": "五世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "主文书却在，其人必死也。缘申金文书，与月辰巳火六合，而动爻亥水兄弟，化入辰墓，又犯月破，况病于岁建寅，申墓于月建辰，申绝"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 1978,
+        "day_line": 1975,
+        "table_line": 1978,
+        "quote": "庚寅年庚辰月己巳日，占托人求文书，得丰之复。",
+        "speech_head": "主文书却在，其人必死也。缘申金文书，与月辰巳火六合，而动爻亥水兄弟，化入辰墓，又"
+      }
+    },
+    {
+      "id": "YI027",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "功名",
+      "question": "求占文书",
+      "input": {
+        "date": "庚寅年甲申月庚辰日",
+        "question": "求占文书"
+      },
+      "hexagram": {
+        "original": "升",
+        "changed": "小过",
+        "moving": [
+          2,
+          4
+        ],
+        "palace": "震",
+        "generation": "四世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "二爻亥水文书，动化午火子孙，水胎于午，是为文收化入胎爻，乃小墓也，主事难成。却喜申月旺生，文书化胎不能为害，后于子日成就"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 1988,
+        "day_line": 1985,
+        "table_line": 1988,
+        "quote": "庚寅年甲申月庚辰日，求占文书，得升之小过。",
+        "speech_head": "二爻亥水文书，动化午火子孙，水胎于午，是为文收化入胎爻，乃小墓也，主事难成。却喜"
+      }
+    },
+    {
+      "id": "YI028",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "功名",
+      "question": "日占托人求文书",
+      "input": {
+        "date": "丁亥月丁酉日",
+        "question": "日占托人求文书"
+      },
+      "hexagram": {
+        "original": "大壮",
+        "changed": null,
+        "moving": [],
+        "palace": "坤",
+        "generation": "四世",
+        "note": "六冲"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "主本月可成，出月则不成也。盖世持午火文书，生本宫世下丑土，应上飞神，子与世下丑合，应下伏神未，与世上午合，故可成也。若出"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 1998,
+        "day_line": 1995,
+        "table_line": 1998,
+        "quote": "寅年丁亥月丁酉日，日占托人求文书，得大壮安静。",
+        "speech_head": "主本月可成，出月则不成也。盖世持午火文书，生本宫世下丑土，应上飞神，子与世下丑合"
+      }
+    },
+    {
+      "id": "YI029",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "行人",
+      "question": "妻卜夫远行。年内何月到",
+      "input": {
+        "date": "庚寅年辛巳月乙未日",
+        "question": "妻卜夫远行。年内何月到"
+      },
+      "hexagram": {
+        "original": "小畜",
+        "changed": null,
+        "moving": [],
+        "palace": "巽",
+        "generation": "一世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "丙辰日",
+        "detail": "但嫌用爻不现，直待酉月丙辰日，官临月建，又待日辰天地合德，其夫果到也"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 2063,
+        "day_line": 2060,
+        "table_line": 2063,
+        "quote": "庚寅年辛巳月乙未日，妻卜夫远行。年内何月到，得小畜安静。",
+        "speech_head": "六爻无官，喜本宫酉官，伏辰土之下，官赖财生，年内必到。但嫌用爻不现，直待酉月丙辰"
+      }
+    },
+    {
+      "id": "YI030",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "行人",
+      "question": "父卜子回",
+      "input": {
+        "date": "庚寅年己卯月癸卯日",
+        "question": "父卜子回"
+      },
+      "hexagram": {
+        "original": "艮",
+        "changed": "蛊",
+        "moving": [
+          2
+        ],
+        "palace": "艮",
+        "generation": "六世",
+        "note": "六冲"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "甲戌日",
+        "yingqi_branches": [
+          "戌"
+        ],
+        "yingqi_claim": "",
+        "detail": "二爻午父独发，得三传生之，申金子孙，又绝于岁建，胎于月日建，不能当此旺父，子果本年壬午月甲戌日，客死他乡"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 2073,
+        "day_line": 2070,
+        "table_line": 2073,
+        "quote": "庚寅年己卯月癸卯日，父卜子回，得艮之蛊。",
+        "speech_head": "二爻午父独发，得三传生之，申金子孙，又绝于岁建，胎于月日建，不能当此旺父，子果本"
+      }
+    },
+    {
+      "id": "YI031",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "行人",
+      "question": "父占子被盗捉去，何日归",
+      "input": {
+        "date": "庚寅年癸未月乙巳日",
+        "question": "父占子被盗捉去，何日归"
+      },
+      "hexagram": {
+        "original": "乾",
+        "changed": "鼎",
+        "moving": [
+          1,
+          5
+        ],
+        "palace": "乾",
+        "generation": "六世",
+        "note": "六冲"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "丁未日",
+        "detail": "初爻子孙带龙动，理宜即归，奈月建害之，又绝子巳日，喜五爻申金旺动，生合子孙，所云绝处逢生也，又嫌子化丑土合住用爻，待丁未日冲破丑合，果回家也"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 2083,
+        "day_line": 2080,
+        "table_line": 2083,
+        "quote": "庚寅年癸未月乙巳日，父占子被盗捉去，何日归，得乾之鼎。",
+        "speech_head": "初爻子孙带龙动，理宜即归，奈月建害之，又绝子巳日，喜五爻申金旺动，生合子孙，所云"
+      }
+    },
+    {
+      "id": "YI032",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "行人",
+      "question": "妻占夫回",
+      "input": {
+        "date": "庚寅年丁亥月甲辰日",
+        "question": "妻占夫回"
+      },
+      "hexagram": {
+        "original": "家人",
+        "changed": "益",
+        "moving": [
+          3
+        ],
+        "palace": "巽",
+        "generation": "二世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "己酉日",
+        "yingqi_branches": [
+          "酉"
+        ],
+        "yingqi_claim": "",
+        "detail": "果于己酉日回也"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 2093,
+        "day_line": 2090,
+        "table_line": 2093,
+        "quote": "庚寅年丁亥月甲辰日，妻占夫回，得家人之益。",
+        "speech_head": "此卦忌神不动，仇神又空，元神正临身世，独嫌酉宫伏亥水下，名为泄气，故日下未来，直"
+      }
+    },
+    {
+      "id": "YI033",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "求财",
+      "question": "占求财",
+      "input": {
+        "date": "己丑年丙子月丁卯日",
+        "question": "占求财"
+      },
+      "hexagram": {
+        "original": "睽",
+        "changed": "归妹",
+        "moving": [
+          6
+        ],
+        "palace": "艮",
+        "generation": "四世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "丙子日",
+        "yingqi_branches": [
+          "子"
+        ],
+        "yingqi_claim": "",
+        "detail": "此卦六爻无财，只本宫丙子财，伏未土下受害受克，兼以卯日刑之故，必被人阻隔，而不可求，所赖月建并起财爻果至，丙子日得也"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 2205,
+        "day_line": 2202,
+        "table_line": 2205,
+        "quote": "己丑年丙子月丁卯日占求财，得睽之归妹。",
+        "speech_head": "此卦六爻无财，只本宫丙子财，伏未土下受害受克，兼以卯日刑之故，必被人阻隔，而不可"
+      }
+    },
+    {
+      "id": "YI034",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "求财",
+      "question": "卜求财",
+      "input": {
+        "date": "庚寅年己卯月甲申旬丁亥日",
+        "question": "卜求财"
+      },
+      "hexagram": {
+        "original": "谦",
+        "changed": "小过",
+        "moving": [
+          4
+        ],
+        "palace": "兑",
+        "generation": "五世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "辛卯日",
+        "detail": "六爻无财，只本宫卯财，伏午火官鬼下，名为耗鬼，岂知午火旬空，透出卯财，况投长生于亥日，后至辛卯日，财值巳辰，果得财也"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 2215,
+        "day_line": 2212,
+        "table_line": 2215,
+        "quote": "庚寅年己卯月甲申旬丁亥日，卜求财，得谦之小过。",
+        "speech_head": "六爻无财，只本宫卯财，伏午火官鬼下，名为耗鬼，岂知午火旬空，透出卯财，况投长生于"
+      }
+    },
+    {
+      "id": "YI035",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "求财",
+      "question": "卜求财",
+      "input": {
+        "date": "庚寅年庚辰月壬申日",
+        "question": "卜求财"
+      },
+      "hexagram": {
+        "original": "屯",
+        "changed": null,
+        "moving": [],
+        "palace": "坎",
+        "generation": "二世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "六爻无财，惟本宫午火财，伏辰宫下，飞来耗财，又辰午皆为匿刑，此必不义之财，为小人欺骗而不得也。"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 2225,
+        "day_line": 2222,
+        "table_line": 2225,
+        "quote": "庚寅年庚辰月壬申日，卜求财，得屯卦安静。",
+        "speech_head": "六爻无财，惟本宫午火财，伏辰宫下，飞来耗财，又辰午皆为匿刑，此必不义之财，为小人"
+      }
+    },
+    {
+      "id": "YI036",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "求财",
+      "question": "占求财",
+      "input": {
+        "date": "庚寅年己卯月丁酉日",
+        "question": "占求财"
+      },
+      "hexagram": {
+        "original": "临",
+        "changed": "中孚",
+        "moving": [
+          5,
+          6
+        ],
+        "palace": "坤",
+        "generation": "二世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "亥财动来生合世，只因化绝在巳，虽有酉日，不能生绝水，故当日不得，次日戊申，财爻绝处逢生，方入手也。(绝惟贞也，己亥能生)"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 2235,
+        "day_line": 2232,
+        "table_line": 2235,
+        "quote": "庚寅年己卯月丁酉日，占求财，得临之中孚。",
+        "speech_head": "亥财动来生合世，只因化绝在巳，虽有酉日，不能生绝水，故当日不得，次日戊申，财爻绝"
+      }
+    },
+    {
+      "id": "YI037",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "求财",
+      "question": "占求财",
+      "input": {
+        "date": "庚寅年辛巳月丙戌日",
+        "question": "占求财"
+      },
+      "hexagram": {
+        "original": "随",
+        "changed": "屯",
+        "moving": [
+          4
+        ],
+        "palace": "震",
+        "generation": "三世",
+        "note": "归魂"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "此卦辰财持世，戊日冲之，未财持应，化丑冲之，此为四财，自相冲脱，又财绝于月建巳中，不可云世应是财求易得，日建世应，比和吉"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 2245,
+        "day_line": 2242,
+        "table_line": 2245,
+        "quote": "庚寅年辛巳月丙戌日，占求财，得随之屯。",
+        "speech_head": "此卦辰财持世，戊日冲之，未财持应，化丑冲之，此为四财，自相冲脱，又财绝于月建巳中"
+      }
+    },
+    {
+      "id": "YI038",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "",
+      "question": "问月内何日",
+      "input": {
+        "date": "庚寅年甲戌月癸亥日",
+        "question": "问月内何日"
+      },
+      "hexagram": {
+        "original": "涣",
+        "changed": null,
+        "moving": [],
+        "palace": "离",
+        "generation": "五世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "癸酉日",
+        "detail": "但嫌用爻不透，直待癸酉日得"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 2255,
+        "day_line": 2252,
+        "table_line": 2255,
+        "quote": "庚寅年甲戌月癸亥日，问月内何日得财，遇涣卦安静。",
+        "speech_head": "六爻无财，惟本宫酉财，伏未土下受生，终必得财。但嫌用爻不透，直待癸酉日得。若问本"
+      }
+    },
+    {
+      "id": "YI039",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "求财",
+      "question": "占求财",
+      "input": {
+        "date": "庚寅年己丑月甲午旬癸卯日",
+        "question": "占求财"
+      },
+      "hexagram": {
+        "original": "噬嗑",
+        "changed": null,
+        "moving": [],
+        "palace": "巽",
+        "generation": "五世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "此卦辰财旬空，未财月破，喜本宫丑财，正值月建，又伏子水下，伏克飞神为出暴。又土旺于子，稍嫌卯日克丑，故当日未得，次日甲辰"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 2265,
+        "day_line": 2262,
+        "table_line": 2265,
+        "quote": "庚寅年己丑月甲午旬癸卯日，占求财，得噬嗑安静。",
+        "speech_head": "此卦辰财旬空，未财月破，喜本宫丑财，正值月建，又伏子水下，伏克飞神为出暴。又土旺"
+      }
+    },
+    {
+      "id": "YI040",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "求财",
+      "question": "占脱货",
+      "input": {
+        "date": "庚寅年辛巳月甲辰日",
+        "question": "占脱货"
+      },
+      "hexagram": {
+        "original": "需",
+        "changed": null,
+        "moving": [],
+        "palace": "坤",
+        "generation": "四世",
+        "note": "游魂"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "申金子孙持世，人皆云吉。岂知四月金空，不能生财。 经云，用爻最怕立时空也。本宫亥财，伏辰土兄下，本宫世应俱持兄弟，日辰又"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 2307,
+        "day_line": 2304,
+        "table_line": 2307,
+        "quote": "庚寅年辛巳月甲辰日，占脱货，得需卦安静。",
+        "speech_head": "申金子孙持世，人皆云吉。岂知四月金空，不能生财。 经云，用爻最怕立时空也。本宫亥"
+      }
+    },
+    {
+      "id": "YI041",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "疾病",
+      "question": "代占人病",
+      "input": {
+        "date": "庚寅年戊寅月己巳日",
+        "question": "代占人病"
+      },
+      "hexagram": {
+        "original": "坎",
+        "changed": "蹇",
+        "moving": [
+          2,
+          3
+        ],
+        "palace": "坎",
+        "generation": "六世",
+        "note": "六冲"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "应爻相气，岁月生之，日辰比之，但嫌化出申金，冲刑寅木子孙，服药不效。辰宫化午财，刑应上午，是以多进食而受伤也。官属土，脾"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 2388,
+        "day_line": 2385,
+        "table_line": 2388,
+        "quote": "庚寅年戊寅月己巳日，代占人病，得坎之蹇。",
+        "speech_head": "应爻相气，岁月生之，日辰比之，但嫌化出申金，冲刑寅木子孙，服药不效。辰宫化午财，"
+      }
+    },
+    {
+      "id": "YI042",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "疾病",
+      "question": "子占父病",
+      "input": {
+        "date": "庚寅年戊寅月辛未日",
+        "question": "子占父病"
+      },
+      "hexagram": {
+        "original": "解",
+        "changed": "困",
+        "moving": [
+          5
+        ],
+        "palace": "震",
+        "generation": "二世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "申酉日",
+        "yingqi_branches": [
+          "申",
+          "酉"
+        ],
+        "yingqi_claim": "",
+        "detail": "惟不宜土财持世，喜岁月与伏下寅木克之，果于申酉日愈也"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 2398,
+        "day_line": 2395,
+        "table_line": 2398,
+        "quote": "庚寅年戊寅月辛未日，子占父病，得解之困。",
+        "speech_head": "本宫子水父母，伏寅木之下，虽云泄气，喜申金，元神独发，又化进神，更得日辰生之，决"
+      }
+    },
+    {
+      "id": "YI043",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "疾病",
+      "question": "父占子病",
+      "input": {
+        "date": "庚寅年戊寅月丁卯日",
+        "question": "父占子病"
+      },
+      "hexagram": {
+        "original": "临",
+        "changed": "损",
+        "moving": [
+          6
+        ],
+        "palace": "坤",
+        "generation": "二世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "六爻酉金，子孙独发，化绝于寅，又绝于岁月建中，更加卯日冲破，果于木日死也。"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 2408,
+        "day_line": 2405,
+        "table_line": 2408,
+        "quote": "庚寅年戊寅月丁卯日，父占子病，得临之损。",
+        "speech_head": "六爻酉金，子孙独发，化绝于寅，又绝于岁月建中，更加卯日冲破，果于木日死也。"
+      }
+    },
+    {
+      "id": "YI044",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "疾病",
+      "question": "妻占夫病",
+      "input": {
+        "date": "庚寅年戊寅月戊寅日",
+        "question": "妻占夫病"
+      },
+      "hexagram": {
+        "original": "剥",
+        "changed": "观",
+        "moving": [
+          5
+        ],
+        "palace": "乾",
+        "generation": "五世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "甲申日",
+        "detail": "只有三传生合官鬼，不过暂时少甦，至甲申日，元神绝而忌神生，果死也"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 2418,
+        "day_line": 2415,
+        "table_line": 2418,
+        "quote": "庚寅年戊寅月戊寅日，妻占夫病，得剥之观。",
+        "speech_head": "官爻受三传生合，人皆云吉。不知本宫午官自刑，伏墓戌土下，傍爻子动冲克官，极凶。子"
+      }
+    },
+    {
+      "id": "YI045",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "疾病",
+      "question": "妻占夫病",
+      "input": {
+        "date": "庚寅年庚辰月丁卯日",
+        "question": "妻占夫病"
+      },
+      "hexagram": {
+        "original": "涣",
+        "changed": "姤",
+        "moving": [
+          3,
+          4
+        ],
+        "palace": "离",
+        "generation": "五世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "乙亥日",
+        "detail": "至乙亥日，透出用爻，才受忌伤，而夫死也"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 2428,
+        "day_line": 2425,
+        "table_line": 2428,
+        "quote": "庚寅年庚辰月丁卯日，妻占夫病，得涣之姤。",
+        "speech_head": "鬼伏三爻下，值旬空，子为忌神，兄为讐神，二爻并发，独喜用爻伏藏耳。至乙亥日，透出"
+      }
+    },
+    {
+      "id": "YI046",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "疾病",
+      "question": "妻占夫病",
+      "input": {
+        "date": "庚寅年癸未月戊戌日",
+        "question": "妻占夫病"
+      },
+      "hexagram": {
+        "original": "革",
+        "changed": "困",
+        "moving": [
+          1,
+          2,
+          3
+        ],
+        "palace": "坎",
+        "generation": "四世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "戊申日",
+        "detail": "岂知本宫辰土，得寅木动生午火相扶，后至戊申日，忌神逢绝，官遇长生而愈也"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 2438,
+        "day_line": 2435,
+        "table_line": 2438,
+        "quote": "庚寅年癸未月戊戌日，妻占夫病，得革之困。",
+        "speech_head": "土用为神，丑土月破，化入辰墓，兄生子而子克官，人皆云凶。岂知本宫辰土，得寅木动生"
+      }
+    },
+    {
+      "id": "YI047",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "疾病",
+      "question": "夫占妻病",
+      "input": {
+        "date": "庚寅年甲申月乙丑日",
+        "question": "夫占妻病"
+      },
+      "hexagram": {
+        "original": "震",
+        "changed": "豫",
+        "moving": [
+          1
+        ],
+        "palace": "震",
+        "generation": "六世",
+        "note": "六冲"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "巳午日",
+        "detail": "逢巳午日，子旺生财，始病退"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 2448,
+        "day_line": 2445,
+        "table_line": 2448,
+        "quote": "庚寅年甲申月乙丑日，夫占妻病，得震之豫。",
+        "speech_head": "世下戌财，正值旬空，日辰丑又刑戌，应爻辰财又自刑，初下子水动，化未土，与世下戌土"
+      }
+    },
+    {
+      "id": "YI048",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "疾病",
+      "question": "夫占妻病",
+      "input": {
+        "date": "庚寅年甲申月癸酉日",
+        "question": "夫占妻病"
+      },
+      "hexagram": {
+        "original": "履",
+        "changed": "小畜",
+        "moving": [
+          3,
+          4
+        ],
+        "palace": "艮",
+        "generation": "五世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "甲申日",
+        "detail": "后至甲申日，财遇长生而愈然也"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 2458,
+        "day_line": 2455,
+        "table_line": 2458,
+        "quote": "庚寅年甲申月癸酉日，夫占妻病，得履之小畜。",
+        "speech_head": "五爻财伏世下，飞上申金生之，三爻兄弟虽动，喜五爻子动，兄乃贪生忘克，而子得生气，"
+      }
+    },
+    {
+      "id": "YI049",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "词讼",
+      "question": "占讼事",
+      "input": {
+        "date": "己丑年癸酉月甲申旬戊子日",
+        "question": "占讼事"
+      },
+      "hexagram": {
+        "original": "观",
+        "changed": "艮",
+        "moving": [
+          3,
+          5
+        ],
+        "palace": "乾",
+        "generation": "四世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "世应俱值旬空，两家皆宜退悔。但问官有欲耳，盖卯财动生，巳官又犯月破，化爻申兄，又克财合官，必有人代官府索贿者。木三数衰空"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 2503,
+        "day_line": 2500,
+        "table_line": 2503,
+        "quote": "己丑年癸酉月甲申旬戊子日，占讼事，得观之艮。",
+        "speech_head": "世应俱值旬空，两家皆宜退悔。但问官有欲耳，盖卯财动生，巳官又犯月破，化爻申兄，又"
+      }
+    },
+    {
+      "id": "YI050",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "词讼",
+      "question": "占讼事",
+      "input": {
+        "date": "庚寅年戊寅月甲戌旬己卯日",
+        "question": "占讼事"
+      },
+      "hexagram": {
+        "original": "观",
+        "changed": "剥",
+        "moving": [
+          5
+        ],
+        "palace": "乾",
+        "generation": "四世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "若自己讼未到官即散。盖世下伏兄虽动，喜值旬空，又被日冲，旁爻子孙持世，子动伤官，又助岁月刑官，此讼决然罪归他人，不干于己"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 2513,
+        "day_line": 2510,
+        "table_line": 2513,
+        "quote": "庚寅年戊寅月甲戌旬己卯日，占讼事，得观之剥。",
+        "speech_head": "若自己讼未到官即散。盖世下伏兄虽动，喜值旬空，又被日冲，旁爻子孙持世，子动伤官，"
+      }
+    },
+    {
+      "id": "YI051",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "词讼",
+      "question": "占讼事",
+      "input": {
+        "date": "庚寅年己卯月甲午旬戊戌日",
+        "question": "占讼事"
+      },
+      "hexagram": {
+        "original": "豫",
+        "changed": "小过",
+        "moving": [
+          3
+        ],
+        "palace": "震",
+        "generation": "一世",
+        "note": "六合"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "世坐未土财，勾陈为田土，岁月克之，日辰刑之，间爻兄弟又动克之，此讼当经三四番费用，囊槖告匮。至于鬻田而后巳，然应爻生世，"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 2523,
+        "day_line": 2520,
+        "table_line": 2523,
+        "quote": "庚寅年己卯月甲午旬戊戌日，占讼事，得豫之小过，",
+        "speech_head": "世坐未土财，勾陈为田土，岁月克之，日辰刑之，间爻兄弟又动克之，此讼当经三四番费用"
+      }
+    },
+    {
+      "id": "YI052",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "词讼",
+      "question": "占讼",
+      "input": {
+        "date": "庚寅年辛巳月甲申旬壬辰日",
+        "question": "占讼"
+      },
+      "hexagram": {
+        "original": "需",
+        "changed": null,
+        "moving": [],
+        "palace": "坤",
+        "generation": "四世",
+        "note": "游魂"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "本宫卯官，克世下丑土，卯官伏辰兄下，辰土兄弟自刑，日辰并起，此决争婚夺财之事。盖兄弟为劫财之神也，又况亥财自刑更伏兄下，"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 2533,
+        "day_line": 2530,
+        "table_line": 2533,
+        "quote": "庚寅年辛巳月甲申旬壬辰日，占讼，得需卦安静。",
+        "speech_head": "本宫卯官，克世下丑土，卯官伏辰兄下，辰土兄弟自刑，日辰并起，此决争婚夺财之事。盖"
+      }
+    },
+    {
+      "id": "YI053",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "词讼",
+      "question": "占讼",
+      "input": {
+        "date": "庚寅年甲申月甲子旬乙丑日",
+        "question": "占讼"
+      },
+      "hexagram": {
+        "original": "震",
+        "changed": "豫",
+        "moving": [
+          1
+        ],
+        "palace": "震",
+        "generation": "六世",
+        "note": "六冲"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "值金宫正旺，初爻水父，动遇长生，世应辰戌又冲，其讼紧急。喜子水变未土财回头克之，若能用财贿于吏书差役之属，买得宽缓，此讼"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 2543,
+        "day_line": 2540,
+        "table_line": 2543,
+        "quote": "庚寅年，甲申月甲子旬乙丑日，占讼，得震之豫。",
+        "speech_head": "值金宫正旺，初爻水父，动遇长生，世应辰戌又冲，其讼紧急。喜子水变未土财回头克之，"
+      }
+    },
+    {
+      "id": "YI054",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "词讼",
+      "question": "占讼",
+      "input": {
+        "date": "庚寅年戊子月甲子旬丁卯日",
+        "question": "占讼"
+      },
+      "hexagram": {
+        "original": "睽",
+        "changed": "归妹",
+        "moving": [
+          6
+        ],
+        "palace": "艮",
+        "generation": "四世",
+        "note": ""
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "六爻寅官动，十一月水旺木相，卯日占，木又旺，况寅官与卯日，共克世下戌土，为三合六合，故目下事急也。父母为文案，本宫寅官，"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 2553,
+        "day_line": 2550,
+        "table_line": 2553,
+        "quote": "庚寅年戊子月甲子旬丁卯日，占讼，得睽之归妹。",
+        "speech_head": "六爻寅官动，十一月水旺木相，卯日占，木又旺，况寅官与卯日，共克世下戌土，为三合六"
+      }
+    },
+    {
+      "id": "YI055",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "",
+      "question": "占婢，走失",
+      "input": {
+        "date": "庚寅年壬午月甲戌旬辛巳日",
+        "question": "占婢，走失"
+      },
+      "hexagram": {
+        "original": "无妄",
+        "changed": "履",
+        "moving": [
+          2
+        ],
+        "palace": "巽",
+        "generation": "四世",
+        "note": "六冲"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "财伏世下，飞神生之，终必得见。二爻木兄独发，化出兄爻，且临玄武，必从后门出。有东方草木姓氏人家兄弟二人收留之。而兄生世子"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 2594,
+        "day_line": 2591,
+        "table_line": 2594,
+        "quote": "庚寅年壬午月甲戌旬辛巳日，占婢，走失，得无妄之履。",
+        "speech_head": "财伏世下，飞神生之，终必得见。二爻木兄独发，化出兄爻，且临玄武，必从后门出。有东"
+      }
+    },
+    {
+      "id": "YI056",
+      "source": "《易隱》（殆知阁转录本）",
+      "topic": "盗贼",
+      "question": "卜捕贼",
+      "input": {
+        "date": "己丑年壬申月甲子旬乙丑日",
+        "question": "卜捕贼"
+      },
+      "hexagram": {
+        "original": "震",
+        "changed": "豫",
+        "moving": [
+          1
+        ],
+        "palace": "震",
+        "generation": "六世",
+        "note": "六冲"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "yingqi_claim": "",
+        "detail": "申官出现，必可捕，但嫌墓于丑日，不免潜伏，况世财旬空，丑巳刑之，动爻子水，及金官，又与应下辰财三合，其贼有伴藏护也。然终"
+      },
+      "provenance": {
+        "source_file": "data/sources/yiin_dz.dz.txt",
+        "sha256": "a9a8ff45daf8dd1f80844c1a5e2114ea98a793a82268615b2f1a912b69d62075",
+        "line": 2667,
+        "day_line": 2664,
+        "table_line": 2667,
+        "quote": "己丑年壬申月甲子旬乙丑日，卜捕贼，得震之豫。",
+        "speech_head": "申官出现，必可捕，但嫌墓于丑日，不免潜伏，况世财旬空，丑巳刑之，动爻子水，及金官"
+      }
+    }
+  ]
+}
