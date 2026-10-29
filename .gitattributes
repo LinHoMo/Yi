@@ -11,3 +11,7 @@
 *.gz binary
 *.woff binary
 *.woff2 binary
+# 316/337 批（D1=C）：两科 core 是 kernel/ 的生成产物（入库以保「单目录拷走」），
+# 标为生成物让 diff/语言统计别把它们当真源；判据是 [35] 字节比对与 --standalone。
+liuyao/core/yishu_core/** linguist-generated
+bazi/core/yishu_core/** linguist-generated

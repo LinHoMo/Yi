@@ -13,6 +13,8 @@
     python kernel/sync_kernel.py --check    # 只比对（check.py 的 [35] 调它）
     python kernel/sync_kernel.py --write    # 重生成两科内核（会删掉产物里的多余 .py）
     python kernel/sync_kernel.py --selftest # 负例：证明"改了产物"与"多了野文件"都抓得住
+    python kernel/sync_kernel.py --standalone liuyao --out <目录>
+                                            # 产出可独立拷走的目录（D1=C 的显式命令）
 
 **这不是跨科写**：AGENTS §二 禁的是"某一科的脚本往另一科目录里写"。本器在 `kernel/` 下，
 不属于任何一科，且产物本来就分属两科——它是构建器，不是学科脚本。
@@ -87,6 +89,36 @@ def write_target(manifest: dict, disc: str, target_dir: Path) -> list[str]:
     return actions
 
 
+def standalone(disc: str, out: Path) -> int:
+    """产出一份可独立拷走的学科目录（D1=C）：core ＋ scripts ＋ 运行必需 data。
+
+    为什么不带 `data/cases/` 与 `data/sources/`：那是语料/古籍底本（八字侧 49MB），
+    拷贝它们会把"单目录可运行"变成"单目录 65MB"；chart/analyze/narrate/render 的
+    运行只需 `data/rules`、`data/golden` 与顶层 `data/*.json`。
+    """
+    src = ROOT / disc
+    if not src.is_dir():
+        print(f"  × 学科不存在：{src}")
+        return 1
+    if out.exists():
+        print(f"  × 输出目录已存在，拒绝覆盖：{out}（请换一个空路径）")
+        return 1
+    ignore = shutil.ignore_patterns("__pycache__", "*.pyc")
+    shutil.copytree(src / "core" / "yishu_core", out / "core" / "yishu_core", ignore=ignore)
+    shutil.copytree(src / "scripts", out / "scripts", ignore=ignore)
+    for sub in ("rules", "golden"):
+        d = src / "data" / sub
+        if d.is_dir():
+            shutil.copytree(d, out / "data" / sub, ignore=ignore)
+    for p in sorted((src / "data").glob("*.json")):
+        (out / "data").mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(p, out / "data" / p.name)
+    files = sum(1 for _ in (out / "core" / "yishu_core").glob("*.py"))
+    print(f"  √ standalone：{out}（{disc}：core {files} 文件＋scripts＋data/rules/golden/*.json）")
+    print(f"    试跑：python \"{out / 'scripts' / 'chart.py'}\" --help")
+    return 0
+
+
 def selftest() -> int:
     manifest = load_manifest()
     fails = []
@@ -124,7 +156,15 @@ def main() -> int:
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--write", action="store_true")
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--standalone", choices=["liuyao", "bazi"],
+                    help="产出可独立拷走的学科目录（core＋scripts＋运行必需 data）")
+    ap.add_argument("--out", type=Path, help="--standalone 的输出目录（须为空/不存在）")
     args = ap.parse_args()
+    if args.standalone:
+        if not args.out:
+            print("  × --standalone 必须同时给 --out <目录>")
+            return 2
+        return standalone(args.standalone, args.out.resolve())
     if not (args.check or args.write or args.selftest):
         ap.print_help()
         return 2
