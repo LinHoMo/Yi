@@ -128,7 +128,7 @@ def checks():
         ("4ceef1eed62dafe2", "405bc8e03a6a99e0"))
     add("bazi.golden(fda7/3512)", "176批前→308批改期望", lambda t: _golden("bazi"),
         ("fda7482656967518", "3512deff79fa1f72"))
-    add("governance(58/37, blk 25/26)", "194批（244/230 批更新；312 批补记：310 批新增 check_layer_contract.py 两科各一 → 57/36→58/37、blk 24/25→25/26）", lambda t: _gov_counts(), ("58", "37", "25", "26"))
+    add("governance(60/37, blk 27/26)", "194批（312 批补记 310 门；315 批再补记 314/315 两道新门 → 六爻 58→60、blk 26→27）", lambda t: _gov_counts(), ("60", "37", "27", "26"))
 
     # 案例分母（234 批）：账台钉率也钉分母——删/添一例而率恰不动时，分母行会红。
     def c_case_denoms(t):

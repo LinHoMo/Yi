@@ -1,5 +1,19 @@
 # 八字 CHANGELOG
 
+## 2026-10-29 第三百一十六批（八字，六爻侧主批）：**内核降为生成物 + 删掉三个用不到的六爻模块（−874 行）**
+
+**性质**：architecture（C2）。字节层不改行为：保留下来的文件与原文逐字节相同，只删未引用模块。
+
+1. **内核改由 `kernel/` 生成**：八字收 10 个共用 + 1 个专用（`conflict_resolution.py`）+ 4 个在册变体，
+   共 **15 文件**（原 18）。`core/yishu_core/` 从此是产物，由 `python kernel/sync_kernel.py --write` 写，
+   手改会被六爻 `check.py` 的 `[35]` 判红。
+2. **删除** `hexagram_texts.py`（591）／`calendar_check.py`（244）／`najia.py`（39）——AST 全扫确认
+   八字侧无任何 import，却一直被塞进发布包。**`yingqi.py` 不删**：`core/yishu_core/feedback.py`
+   有两处转调用。
+3. **口径**：`AGENTS.md` §二 与根 `README.md` 的「17 同名 13 相同」改写成"单一真源 + 4 变体 + 产物"。
+4. **读数**：`bazi/dev_tools/check.py` **rc=0**（28 节）；40 例指纹 `fda7482656967518`／
+   `3512deff79fa1f72` 未动；holdout 99.5%（n=278）未动。
+
 ## 2026-10-29 第三百一十二批（八字，六爻侧主批）：**仅治理图补登记与读数归位，零引擎零判据**
 
 **性质**：bookkeeping（承接六爻 312 批归位）。本批对八字只有两处副作用，逐条记：

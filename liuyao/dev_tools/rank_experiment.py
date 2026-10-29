@@ -125,7 +125,7 @@ def run_protocol() -> int:
         (h2, _) = top1_hits(rows, winner)
         lo1, hi1 = wilson(h1, n)
         lo2, hi2 = wilson(h2, n)
-        print("═ 外部一次性报数 %s（%d 例，永不调参）═" % (split, n))
+        print("═ 外部集一次性报数 %s（%d 例；已参与调参，test 半封存）═" % (split, n))
         print("  现行键  %d/%d = %.1f%% [CI %.1f–%.1f]" % (h1, n, h1 * 100 / n, lo1 * 100, hi1 * 100))
         print("  胜出键  %d/%d = %.1f%% [CI %.1f–%.1f]  Δ%+.1fpt"
               % (h2, n, h2 * 100 / n, lo2 * 100, hi2 * 100, (h2 - h1) * 100.0 / n))

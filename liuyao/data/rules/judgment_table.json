@@ -1,0 +1,815 @@
+{
+  "schema": "yi-judgment-table/1",
+  "discipline": "liuyao",
+  "batch": 314,
+  "status": "proposed",
+  "sealed": null,
+  "_comment": "A3 判定表的机器判据（唯一真值源）。本文件只声明，不接引擎：改成 accepted 并接进 step5 前，必须先由人签 adjudications 四条。改本文件须同批改 docs/JUDGMENT-TABLE.md 与 docs/CHANGELOG.md。",
+  "source_doc": "docs/JUDGMENT-TABLE.md",
+  "axes": {
+    "direction": [
+      "成",
+      "滞",
+      "不成"
+    ],
+    "confidence": [
+      "高",
+      "中",
+      "低"
+    ]
+  },
+  "verdict_map": {
+    "大吉": {
+      "direction": "成",
+      "confidence": "高",
+      "legacy": false
+    },
+    "吉": {
+      "direction": "成",
+      "confidence": "中",
+      "legacy": false
+    },
+    "平吉": {
+      "direction": "滞",
+      "confidence": "中",
+      "legacy": false
+    },
+    "平": {
+      "direction": "滞",
+      "confidence": "低",
+      "legacy": false
+    },
+    "平/不利": {
+      "direction": "滞",
+      "confidence": "低",
+      "legacy": true,
+      "note": "非标准值（ZS012 实测），三态化时须改 expected"
+    },
+    "下跌": {
+      "direction": "不成",
+      "confidence": "低",
+      "legacy": true,
+      "note": "财类专用词（OV07 产出），义为价跌不是事败，不得直接映射"
+    },
+    "凶": {
+      "direction": "不成",
+      "confidence": "中",
+      "legacy": false
+    },
+    "不利": {
+      "direction": "不成",
+      "confidence": "低",
+      "legacy": false
+    },
+    "大凶": {
+      "direction": "不成",
+      "confidence": "高",
+      "legacy": false
+    },
+    "平凶": {
+      "direction": "不成",
+      "confidence": "低",
+      "legacy": true,
+      "note": "非标准值（OV04 产出），三态化时并入不成"
+    }
+  },
+  "citations": [
+    {
+      "id": "A1",
+      "book": "增刪卜易",
+      "line": 1446,
+      "quote": "日辰为六爻之主宰，月将是万卜之提纲。"
+    },
+    {
+      "id": "A2",
+      "book": "增刪卜易",
+      "line": 692,
+      "quote": "日辰为六爻之主宰，司四时之旺相…操生杀大权与月建同功。"
+    },
+    {
+      "id": "A3",
+      "book": "增刪卜易",
+      "line": 1546,
+      "quote": "日伤爻真罹其祸，爻伤日徒受其名。日月如天如君，六爻如臣如万物。日辰能刑冲克害得卦爻，而卦爻不能刑冲克害日月。"
+    },
+    {
+      "id": "A4",
+      "book": "增刪卜易",
+      "line": 1447,
+      "quote": "太岁虽司一年之令，尊而不亲，难仰吉凶，皆不及日月…爻之衰者，太岁不能生之，爻旺者太岁不能制之"
+    },
+    {
+      "id": "A5",
+      "book": "黃金策",
+      "line": 28,
+      "quote": "日辰为六爻之主宰，喜其灭项以安刘。"
+    },
+    {
+      "id": "A6",
+      "book": "黃金策",
+      "line": 32,
+      "quote": "月建乃万卜之提纲，岂可助桀为虐。"
+    },
+    {
+      "id": "B1",
+      "book": "增刪卜易",
+      "line": 1109,
+      "quote": "黄金策曰，飞爻变爻俱无用神者，始寻伏神。"
+    },
+    {
+      "id": "B2",
+      "book": "增刪卜易",
+      "line": 1033,
+      "quote": "若用神不现，即以日月为用神，倘日月非用神者，则于宫首卦寻之"
+    },
+    {
+      "id": "B3a",
+      "book": "增刪卜易",
+      "line": 1055,
+      "quote": "伏神有用者有六：伏神得日月生者一也；伏神旺相者二也；伏神得飞神生者三也；"
+    },
+    {
+      "id": "B3b",
+      "book": "增刪卜易",
+      "line": 1055,
+      "quote": "伏神得动爻生者四；伏神得遇日月动爻冲克飞神者五也；伏神得遇飞神空破休囚墓绝者六也。"
+    },
+    {
+      "id": "B4",
+      "book": "增刪卜易",
+      "line": 436,
+      "quote": "自占吉凶者以世爻为用神"
+    },
+    {
+      "id": "C1",
+      "book": "增刪卜易",
+      "line": 1396,
+      "quote": "用神两现…舍其休囚，用其旺相，舍其静爻，而用动爻，舍其月破，而用不破，舍其旬空，用其不空，舍其被伤，用其不伤。此古法也。"
+    },
+    {
+      "id": "C2",
+      "book": "增刪卜易",
+      "line": 1396,
+      "quote": "得其验者，应乎旬空月破，舍其不空，而用旬空，舍其不破，而用月破。"
+    },
+    {
+      "id": "D1",
+      "book": "增刪卜易",
+      "line": 1494,
+      "quote": "贪生贪合，刑冲克害皆忘。"
+    },
+    {
+      "id": "D2",
+      "book": "增刪卜易",
+      "line": 1495,
+      "quote": "又如用爻临巳字，卦中动出亥水，动克一火，若得卯木同动，亥卯未合成木局，反来生火，亦谓之贪合忘克忘冲"
+    },
+    {
+      "id": "D3",
+      "book": "增刪卜易",
+      "line": 1467,
+      "quote": "动为始，变为终，最怕交争。动爻为事之始，变爻为事之终，不宜互相冲克。"
+    },
+    {
+      "id": "D4",
+      "book": "增刪卜易",
+      "line": 1628,
+      "quote": "变爻戌土从无帮助正卦之爻"
+    },
+    {
+      "id": "E1",
+      "book": "增刪卜易",
+      "line": 1663,
+      "quote": "用神旺相可以敌之，必然无妨，得祸亦轻。惟怕日辰动爻助他为害"
+    },
+    {
+      "id": "E2",
+      "book": "增刪卜易",
+      "line": 1620,
+      "quote": "若得日月动爻帮助用爻，可以敌之，不伤于彼，事亦可成"
+    },
+    {
+      "id": "E3",
+      "book": "增刪卜易",
+      "line": 2422,
+      "quote": "世爻未土，月拱日克，可以敌之"
+    },
+    {
+      "id": "F1",
+      "book": "增刪卜易",
+      "line": 990,
+      "quote": "诸书皆以用神临月破如悖时也…虽有日辰之生，亦不能生，动而作忌神者不能为害，作变爻者不能伤克动爻。"
+    },
+    {
+      "id": "F2",
+      "book": "增刪卜易",
+      "line": 991,
+      "quote": "余得其验，动则能伤于爻，变则能伤于动…不动又无日辰动爻生助者则到底而破矣。"
+    },
+    {
+      "id": "F3",
+      "book": "增刪卜易",
+      "line": 1619,
+      "quote": "凡占近病，用神得遇旬空者，不拘日月动爻克害，用神出空之日即愈。即独此一事，论空不论克也。"
+    },
+    {
+      "id": "F4",
+      "book": "黃金策",
+      "line": 73,
+      "quote": "有伤属不吉。救，是指卦中的动爻或日辰等来克制伤害用爻之爻。"
+    },
+    {
+      "id": "F5",
+      "book": "黃金策",
+      "line": 68,
+      "quote": "用爻有气无他故，所作皆成；主象徒存更被伤，凡谋不遂。"
+    }
+  ],
+  "priority": [
+    {
+      "layer": 0,
+      "rule": "取用：本卦现爻 > 变爻 > 伏神",
+      "cites": [
+        "B1",
+        "B2"
+      ]
+    },
+    {
+      "layer": 0,
+      "rule": "用神两现：古法序（C1）；应期语境的空破例外（C2）按冻结条目在册、不重开",
+      "cites": [
+        "C1",
+        "C2"
+      ]
+    },
+    {
+      "layer": 0,
+      "rule": "自占吉凶以世为用",
+      "cites": [
+        "B4"
+      ]
+    },
+    {
+      "layer": 1,
+      "rule": "月建 = 日辰（并列最高，同功）> 动爻 > 静爻 > 太岁/星煞",
+      "cites": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6"
+      ]
+    },
+    {
+      "layer": 2,
+      "rule": "合/局 > 生 > 克 > 刑冲（夺取而非加权）；变爻只作用本爻",
+      "cites": [
+        "D1",
+        "D2",
+        "D3",
+        "D4"
+      ]
+    },
+    {
+      "layer": 3,
+      "rule": "旺相可敌克；忌神得日辰/动爻助则不可敌",
+      "cites": [
+        "E1",
+        "E2",
+        "E3"
+      ]
+    },
+    {
+      "layer": 4,
+      "rule": "例外：近病逢空论空不论克",
+      "cites": [
+        "F3"
+      ]
+    },
+    {
+      "layer": 4,
+      "rule": "例外：月破兼动（F1 vs F2 待裁，默认采 F2）",
+      "cites": [
+        "F1",
+        "F2"
+      ]
+    }
+  ],
+  "cells": [
+    {
+      "direction": "成",
+      "confidence": "高",
+      "enter": "用神有根 ∧ (无克 ∨ 克有救) ∧ ¬合处逢冲",
+      "cites": [
+        "E1",
+        "F4",
+        "D1"
+      ]
+    },
+    {
+      "direction": "成",
+      "confidence": "中",
+      "enter": "用神旺相，但有一处克已被救或被合解",
+      "cites": [
+        "E1",
+        "D1",
+        "F4"
+      ]
+    },
+    {
+      "direction": "成",
+      "confidence": "低",
+      "enter": "用神可取但取用有争（两现 / 伏神勉强出）",
+      "cites": [
+        "C1",
+        "B3a",
+        "B3b"
+      ]
+    },
+    {
+      "direction": "滞",
+      "confidence": "高",
+      "enter": "生克相抵（日月一拱一克）",
+      "cites": [
+        "E3"
+      ]
+    },
+    {
+      "direction": "滞",
+      "confidence": "中",
+      "enter": "合冲并见（合处逢冲 / 冲中逢合）",
+      "cites": [
+        "D1",
+        "F4"
+      ]
+    },
+    {
+      "direction": "滞",
+      "confidence": "低",
+      "enter": "用神中和而关键事实缺失（空破待填）",
+      "cites": [
+        "F3"
+      ]
+    },
+    {
+      "direction": "不成",
+      "confidence": "高",
+      "enter": "用神休囚无根 ∧ 受克无救",
+      "cites": [
+        "E1"
+      ]
+    },
+    {
+      "direction": "不成",
+      "confidence": "中",
+      "enter": "用神月破而静 ∧ 无日辰动爻生助",
+      "cites": [
+        "F1",
+        "F2"
+      ]
+    },
+    {
+      "direction": "不成",
+      "confidence": "低",
+      "enter": "忌神动而无制 ∨ 用神不现而日月非用神",
+      "cites": [
+        "E1",
+        "B2"
+      ]
+    }
+  ],
+  "overrides": [
+    {
+      "id": "OV01",
+      "line": 1390,
+      "cond": "verdict in (\"吉\", \"大吉\", \"平吉\")",
+      "assigns": [
+        "verdict = \"凶\""
+      ],
+      "kind": "domain_overlay",
+      "domain": "行人",
+      "layer": "domain",
+      "status": "mapped",
+      "classified_by": "agent-314"
+    },
+    {
+      "id": "OV02",
+      "line": 1396,
+      "cond": "verdict in (\"吉\", \"大吉\", \"平吉\")",
+      "assigns": [
+        "verdict = \"凶\""
+      ],
+      "kind": "domain_overlay",
+      "domain": "合伙",
+      "layer": "domain",
+      "status": "mapped",
+      "classified_by": "agent-314"
+    },
+    {
+      "id": "OV03",
+      "line": 1401,
+      "cond": "verdict == \"平吉\" and final_score < 0.0",
+      "assigns": [
+        "verdict = \"凶\""
+      ],
+      "kind": "priority",
+      "domain": null,
+      "layer": "judge",
+      "status": "mapped",
+      "classified_by": "agent-314"
+    },
+    {
+      "id": "OV04",
+      "line": 1412,
+      "cond": "xing_he_conflict_override and verdict in (\"吉\", \"大吉\", \"平吉\")",
+      "assigns": [
+        "verdict = \"平凶\""
+      ],
+      "kind": "exception",
+      "domain": null,
+      "layer": "judge",
+      "status": "mapped",
+      "classified_by": "agent-314"
+    },
+    {
+      "id": "OV05",
+      "line": 1420,
+      "cond": "\"合处逢冲\" in _sp_pat and verdict in (\"凶\", \"大凶\", \"平吉\")",
+      "assigns": [
+        "verdict = \"平/不利\"",
+        "verdict = \"凶\""
+      ],
+      "kind": "exception",
+      "domain": null,
+      "layer": "judge",
+      "status": "mapped",
+      "classified_by": "agent-314"
+    },
+    {
+      "id": "OV06",
+      "line": 1424,
+      "cond": "verdict == \"大凶\"",
+      "assigns": [
+        "verdict = \"凶\""
+      ],
+      "kind": "exception",
+      "domain": null,
+      "layer": "judge",
+      "status": "mapped",
+      "classified_by": "agent-314"
+    },
+    {
+      "id": "OV07",
+      "line": 1426,
+      "cond": "any(k in _qtext for k in (\"价\", \"贵贱\", \"桑叶\", \"涨跌\")) and verdict in (\"凶\", \"大凶\")",
+      "assigns": [
+        "verdict = \"下跌\""
+      ],
+      "kind": "domain_overlay",
+      "domain": "财货",
+      "layer": "domain",
+      "status": "mapped",
+      "classified_by": "agent-314"
+    },
+    {
+      "id": "OV08",
+      "line": 1433,
+      "cond": "verdict in (\"大吉\",)",
+      "assigns": [
+        "verdict = \"吉\""
+      ],
+      "kind": "priority",
+      "domain": null,
+      "layer": "judge",
+      "status": "mapped",
+      "classified_by": "agent-314"
+    },
+    {
+      "id": "OV09",
+      "line": 1443,
+      "cond": "\"no_source_wording\" in pattern_flags and verdict in (\"吉\", \"大吉\", \"平吉\")",
+      "assigns": [
+        "verdict = \"凶\"",
+        "verdict = \"平吉\""
+      ],
+      "kind": "exception",
+      "domain": null,
+      "layer": "judge",
+      "status": "mapped",
+      "classified_by": "agent-314"
+    },
+    {
+      "id": "OV10",
+      "line": 1450,
+      "cond": "verdict == \"吉\" and final_score < 2.0",
+      "assigns": [
+        "verdict = \"平吉\""
+      ],
+      "kind": "priority",
+      "domain": null,
+      "layer": "judge",
+      "status": "mapped",
+      "classified_by": "agent-314"
+    },
+    {
+      "id": "OV11",
+      "line": 1454,
+      "cond": "verdict in (\"大吉\", \"吉\")",
+      "assigns": [
+        "verdict = \"凶\"",
+        "verdict = \"凶\""
+      ],
+      "kind": "domain_overlay",
+      "domain": "讼事",
+      "layer": "domain",
+      "status": "mapped",
+      "classified_by": "agent-314"
+    },
+    {
+      "id": "OV12",
+      "line": 1457,
+      "cond": "verdict == \"平吉\"",
+      "assigns": [
+        "verdict = \"凶\""
+      ],
+      "kind": "domain_overlay",
+      "domain": "讼事",
+      "layer": "domain",
+      "status": "mapped",
+      "classified_by": "agent-314"
+    },
+    {
+      "id": "OV13",
+      "line": 1460,
+      "cond": "\"brother_hold_exam\" in pattern_flags and verdict in (\"吉\", \"大凶\", \"凶\")",
+      "assigns": [
+        "verdict = \"平吉\"",
+        "verdict = \"平吉\""
+      ],
+      "kind": "domain_overlay",
+      "domain": "考试",
+      "layer": "domain",
+      "status": "mapped",
+      "classified_by": "agent-314"
+    },
+    {
+      "id": "OV14",
+      "line": 1461,
+      "cond": "verdict in (\"凶\", \"大凶\")",
+      "assigns": [
+        "verdict = \"平吉\"",
+        "verdict = \"平吉\""
+      ],
+      "kind": "domain_overlay",
+      "domain": "考试",
+      "layer": "domain",
+      "status": "mapped",
+      "classified_by": "agent-314"
+    },
+    {
+      "id": "OV15",
+      "line": 1468,
+      "cond": "verdict in (\"大吉\", \"吉\")",
+      "assigns": [
+        "verdict = \"平吉\" if verdict == \"吉\" else \"凶\""
+      ],
+      "kind": "domain_overlay",
+      "domain": "疾病",
+      "layer": "domain",
+      "status": "mapped",
+      "classified_by": "agent-314"
+    },
+    {
+      "id": "OV16",
+      "line": 1472,
+      "cond": "verdict == \"平吉\" and any(k in _q_l for k in (\"久病\", \"半年\"))",
+      "assigns": [
+        "verdict = \"凶\""
+      ],
+      "kind": "domain_overlay",
+      "domain": "疾病",
+      "layer": "domain",
+      "status": "mapped",
+      "classified_by": "agent-314"
+    },
+    {
+      "id": "OV17",
+      "line": 1475,
+      "cond": "\"brother_hold_exam\" in pattern_flags and verdict in (\"吉\", \"大吉\")",
+      "assigns": [
+        "verdict = \"平吉\""
+      ],
+      "kind": "domain_overlay",
+      "domain": "考试",
+      "layer": "domain",
+      "status": "mapped",
+      "classified_by": "agent-314"
+    },
+    {
+      "id": "OV18",
+      "line": 1483,
+      "cond": "verdict in (\"凶\", \"大凶\")",
+      "assigns": [
+        "verdict = \"平吉\""
+      ],
+      "kind": "domain_overlay",
+      "domain": "行人",
+      "layer": "domain",
+      "status": "mapped",
+      "classified_by": "agent-314"
+    },
+    {
+      "id": "OV19",
+      "line": 1486,
+      "cond": "\"travel_use_sheng_world\" in pattern_flags and verdict in (\"平吉\", \"凶\", \"大凶\")",
+      "assigns": [
+        "verdict = \"吉\"",
+        "verdict = \"吉\""
+      ],
+      "kind": "domain_overlay",
+      "domain": "行人",
+      "layer": "domain",
+      "status": "mapped",
+      "classified_by": "agent-314"
+    },
+    {
+      "id": "OV20",
+      "line": 1489,
+      "cond": "verdict == \"平吉\" and \"travel_use_ke_world\" in pattern_flags",
+      "assigns": [
+        "verdict = \"吉\""
+      ],
+      "kind": "domain_overlay",
+      "domain": "行人",
+      "layer": "domain",
+      "status": "mapped",
+      "classified_by": "agent-314"
+    },
+    {
+      "id": "OV21",
+      "line": 1495,
+      "cond": "verdict in (\"凶\", \"大凶\") and final_score >= 0",
+      "assigns": [
+        "verdict = \"吉\"",
+        "verdict = \"吉\""
+      ],
+      "kind": "domain_overlay",
+      "domain": "失物",
+      "layer": "domain",
+      "status": "mapped",
+      "classified_by": "agent-314"
+    },
+    {
+      "id": "OV22",
+      "line": 1498,
+      "cond": "verdict == \"平吉\" and final_score >= 0",
+      "assigns": [
+        "verdict = \"吉\""
+      ],
+      "kind": "domain_overlay",
+      "domain": "失物",
+      "layer": "domain",
+      "status": "mapped",
+      "classified_by": "agent-314"
+    },
+    {
+      "id": "OV23",
+      "line": 1502,
+      "cond": "verdict in (\"大吉\",)",
+      "assigns": [
+        "verdict = \"吉\"",
+        "verdict = \"平吉\""
+      ],
+      "kind": "domain_overlay",
+      "domain": "失物",
+      "layer": "domain",
+      "status": "mapped",
+      "classified_by": "agent-314"
+    },
+    {
+      "id": "OV24",
+      "line": 1505,
+      "cond": "verdict == \"吉\" and final_score < 2.5",
+      "assigns": [
+        "verdict = \"平吉\"",
+        "verdict = \"平/不利\""
+      ],
+      "kind": "domain_overlay",
+      "domain": "失物",
+      "layer": "domain",
+      "status": "mapped",
+      "classified_by": "agent-314"
+    },
+    {
+      "id": "OV25",
+      "line": 1508,
+      "cond": "verdict in (\"平吉\",) and final_score <= 0.2",
+      "assigns": [
+        "verdict = \"平/不利\""
+      ],
+      "kind": "domain_overlay",
+      "domain": "失物",
+      "layer": "domain",
+      "status": "mapped",
+      "classified_by": "agent-314"
+    },
+    {
+      "id": "OV26",
+      "line": 1511,
+      "cond": "_is_travel_return and verdict in (\"凶\", \"大凶\")",
+      "assigns": [
+        "verdict = \"平吉\""
+      ],
+      "kind": "domain_overlay",
+      "domain": "行人",
+      "layer": "domain",
+      "status": "mapped",
+      "classified_by": "agent-314"
+    },
+    {
+      "id": "OV27",
+      "line": 1523,
+      "cond": "officer_tomb_verdict_override",
+      "assigns": [
+        "verdict = officer_tomb_verdict_override"
+      ],
+      "kind": "exception",
+      "domain": null,
+      "layer": "judge",
+      "status": "mapped",
+      "classified_by": "agent-314"
+    }
+  ],
+  "override_policy": "每处覆写必须登记 kind（priority/exception/domain_overlay）；domain_overlay 必须带 domain。新增/删除覆写而本表未同步＝判红（表随码动）。",
+  "adjudications": [
+    {
+      "id": "JT-A",
+      "question": "月破兼动：F1（日生不能生、动不能害）vs F2（动则能伤）",
+      "options": [
+        "F1 绝对论",
+        "F2 分破而静/破而动"
+      ],
+      "agent_recommendation": "F2",
+      "status": "pending",
+      "cites": [
+        "F1",
+        "F2"
+      ]
+    },
+    {
+      "id": "JT-B",
+      "question": "月日权重：书证称同功，引擎为 6:4",
+      "options": [
+        "标为非书证·工程默认（不改读数）",
+        "改 0.5/0.5（须独立批走 §四）"
+      ],
+      "agent_recommendation": "前者",
+      "status": "pending",
+      "cites": [
+        "A1",
+        "A2",
+        "A5",
+        "A6",
+        "E3"
+      ]
+    },
+    {
+      "id": "JT-C",
+      "question": "用神与世谁主方向",
+      "options": [
+        "方向由用神定，世只降置信",
+        "世参与方向判定"
+      ],
+      "agent_recommendation": "前者",
+      "status": "pending",
+      "cites": [
+        "B4",
+        "F5"
+      ]
+    },
+    {
+      "id": "JT-D",
+      "question": "时间题（何时来）与吉凶题是否分流",
+      "options": [
+        "判定表只管吉凶题，时间题另表",
+        "合表（按题类格内特判）"
+      ],
+      "agent_recommendation": "前者",
+      "status": "pending",
+      "cites": [
+        "F5"
+      ]
+    }
+  ],
+  "stats": {
+    "citations": 25,
+    "cells": 9,
+    "overrides": 27,
+    "by_kind": {
+      "priority": 3,
+      "exception": 5,
+      "domain_overlay": 19
+    }
+  }
+}

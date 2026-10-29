@@ -1,0 +1,44 @@
+{
+  "schema": "yi-kernel-manifest/1",
+  "batch": 316,
+  "_comment": "yishu_core 的单一真源。common/ 两科共用；variants/<名>.<科>.py 是登记在册的分叉；liuyao_only/bazi_only 只发给一科。generate 由 kernel/sync_kernel.py 执行，产物写回 <科>/core/yishu_core/；手改产物会被 [35] 判红（比对字节）。",
+  "source": "kernel/yishu_core",
+  "files": {
+    "common": [
+      "__init__.py",
+      "corpus_kit.py",
+      "eval.py",
+      "feedback.py",
+      "ganzhi_calendar.py",
+      "gate_kit.py",
+      "golden_kit.py",
+      "relations.py",
+      "runtime.py",
+      "yingqi.py"
+    ],
+    "liuyao_only": [
+      "calendar_check.py",
+      "hexagram_texts.py",
+      "najia.py"
+    ],
+    "bazi_only": [
+      "conflict_resolution.py"
+    ]
+  },
+  "variants": [
+    "evidence.py",
+    "ming_tables.py",
+    "shensha.py",
+    "symbols.py"
+  ],
+  "variant_reasons": {
+    "symbols.py": "两科象数基元集合不同（六爻要卦表/纳甲支，八字要十神/藏干表），拆表工作量大于收益，按变体登记",
+    "ming_tables.py": "八字专用命理表混在共用模块名下，六爻副本未收全；按变体登记",
+    "shensha.py": "两科神煞清单不同（六爻以日干起、八字以年/日支起），各自演进",
+    "evidence.py": "两科证据面字段不同（六爻支/爻位，八字柱/十神）"
+  },
+  "targets": {
+    "liuyao": "liuyao/core/yishu_core",
+    "bazi": "bazi/core/yishu_core"
+  }
+}

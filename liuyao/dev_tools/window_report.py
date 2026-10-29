@@ -50,7 +50,7 @@ def measure(split: str):
         print("× split=%s 引擎产出 0 例可评（ errs=%d）——只报数不猜" % (split, errs))
         return None
     print("═ %s（%s）═ 评 %d 例｜引擎错 %d"
-          % (split, "内部集·参与过口径史" if split in TUNED else "外部原本集·永不调参",
+          % (split, "内部集·参与过口径史" if split in TUNED else "外部集·已参与调参（test 半自 315 批封存）",
              disc.get("cases_with_yingqi", 0), errs))
     cov = disc.get("coverage_by_k") or {}
     print("  k  覆盖率(窗断言强度)      Wilson95%CI          随机k/12  超出")

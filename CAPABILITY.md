@@ -23,15 +23,18 @@
 
 所有分数是**古籍案例对齐分**（AGENTS.md §一.3 口径诚实），衡量「引擎与书载要点吻合」，不衡量现实。
 
-**六爻**（分母均注 n，未调参集加 ⚗）：
+**六爻**（分母均注 n）。⚠ **本表已无「未调参」集**：外部集在 181–309 批被用来做取舍
+（wiki 涨 0.1 就落库、跌 0.1 就回退，见 CHANGELOG 324/319/237 批），故下表外部读数是**开发集口径**；
+315 批起每集切出 test 半（25／11 例）封存，哨兵只给红绿不给分数，正式开卷须预注册
+（`python liuyao/dev_tools/check_test_sentinel.py --open --hypothesis …`）。
 
 | 读数 | 值 | 出处 | 复现（自仓库根） |
 |---|---|---|---|
 | tune / holdout 对齐 | 97.9%（n=20）／90.2%（n=12） | 172 批口径 | `python liuyao/scripts/evaluate.py --split tune`（同 `--split holdout`） |
-| 外部 ⚗ wikisource 对齐 | **75.8%**（n=50；308 批实测，原登记 62.4）；direction 子集 76.6%（n=31） | README 表 | `python liuyao/scripts/evaluate.py --split wikisource_holdout` |
-| 外部 ⚗ zengshan_dz 对齐 | **61.5%**（n=21；308 批实测，原登记 53.4） | 同上 | `python liuyao/scripts/evaluate.py --split zengshan_dz_holdout` |
-| 主应期 top-1 ⚗ | **31.8%**／33.3%（308 批实测，原登记 27.3），CI[20.0, 46.6]／[17.2, 54.6]；k=1 随机 8.3% | 181 批→308 批 | `python liuyao/dev_tools/window_report.py` |
-| top-3 窗 ⚗ | **61.4%**／57.1%（308 批实测，原登记 52.3／47.6；信息在窗不在点→193 批 `应期窗口` 键） | 181/192/193 批→308 批 | 同上（`window_report.py` 一张表含 k=1..5） |
+| 外部·开发集 wikisource 对齐 | **75.8%**（n=50；308 批实测，原登记 62.4）；direction 子集 76.6%（n=31） | README 表 | `python liuyao/scripts/evaluate.py --split wikisource_holdout` |
+| 外部·开发集 zengshan_dz 对齐 | **61.5%**（n=21；308 批实测，原登记 53.4） | 同上 | `python liuyao/scripts/evaluate.py --split zengshan_dz_holdout` |
+| 主应期 top-1（开发集） | **31.8%**／33.3%（308 批实测，原登记 27.3），CI[20.0, 46.6]／[17.2, 54.6]；k=1 随机 8.3% | 181 批→308 批 | `python liuyao/dev_tools/window_report.py` |
+| top-3 窗（开发集） | **61.4%**／57.1%（308 批实测，原登记 52.3／47.6；信息在窗不在点→193 批 `应期窗口` 键） | 181/192/193 批→308 批 | 同上（`window_report.py` 一张表含 k=1..5） |
 | 版本冲突上限 | 卦面分歧 0/47、判词分歧 1/37→判词保真天花板 ≈98.6%（等权估计式） | 185 批 | `python liuyao/dev_tools/version_collate.py` |
 | 规则边际 | 33 条全扫：无一单点显著（11 条有影响全 p≥0.375、top-1 零不一致）；信号在择支/日月/阶梯三底座 | 182/186 批 | `python liuyao/dev_tools/ablation.py --sweep`（分钟级） |
 | 名次键 | 四个预声明重排键全部不胜现行序；#33 排序问题按预注册结案 | 190 批 | `python liuyao/dev_tools/rank_experiment.py` |

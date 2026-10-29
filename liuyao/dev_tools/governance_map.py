@@ -99,6 +99,8 @@ CURATED = {
         "check_fixture_invariants": ("blocking", "fixture 声明干支/卦名可算"),
         "check_rule_registry": ("blocking", "注册表 verified/impl 指针回验"),
         "check_layer_contract": ("blocking", "分层契约：四段键白名单＋禁边表（[32]；312 批补登记）"),
+        "check_judgment_table": ("blocking", "判定表：9 格／书证逐字／覆写表随码动（[33]；314 批新增）"),
+        "check_test_sentinel": ("blocking", "考卷哨兵：只给红绿／阈值单调／开卷记账（[34]；315 批新增）"),
         "check_source_readings": ("blocking", "书证逐字回验（含代码注释）"),
         "check_verdict_external": ("blocking", "结构层断语外置审计（210 判语族 LOCK=0；215 扩 advisory 语族同锁，抓到过迁移错节 bug）"),
         "check_split_ledger": ("blocking", "分片排除理由可字面重跑"),

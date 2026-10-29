@@ -1,11 +1,11 @@
 {
- "count": 58,
+ "count": 60,
  "by_tier": {
   "tool": 3,
   "ondemand": 11,
   "nightly": 11,
   "build": 8,
-  "blocking": 25
+  "blocking": 27
  },
  "unclassified": [],
  "curated_but_missing": [],
@@ -169,6 +169,13 @@
    "doc": "House 规矩核对版（AGENTS §三 表第 1/3/5 行＋绝对路径条，第两百一十一批上门）。"
   },
   {
+   "script": "check_judgment_table.py",
+   "tier": "blocking",
+   "guards": "判定表：9 格／书证逐字／覆写表随码动（[33]；314 批新增）",
+   "run_by_check_py": true,
+   "doc": "判定表门（A3·第三百一十四批）：`data/rules/judgment_table.json` 的六条判据。"
+  },
+  {
    "script": "check_layer_contract.py",
    "tier": "blocking",
    "guards": "分层契约：四段键白名单＋禁边表（[32]；312 批补登记）",
@@ -209,6 +216,13 @@
    "guards": "分片排除理由可字面重跑",
    "run_by_check_py": true,
    "doc": "[19] 分片台账复核门：`case_splits.json` 里每一条**排除理由**都得能按字面重跑。"
+  },
+  {
+   "script": "check_test_sentinel.py",
+   "tier": "blocking",
+   "guards": "考卷哨兵：只给红绿／阈值单调／开卷记账（[34]；315 批新增）",
+   "run_by_check_py": true,
+   "doc": "考卷哨兵门（B1·第三百一十五批）：只给红绿，不给分数。"
   },
   {
    "script": "check_verdict_coherence.py",

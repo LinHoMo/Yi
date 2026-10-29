@@ -62,12 +62,13 @@
 Yi/
 ├── AGENTS.md            # 本文件：项目级铁律（贡献者读）
 ├── CONTRACT.md          # 四段契约：chart→analyze→narrate→render 的判据本体（310 批重建）
+├── kernel/              # 内核单一真源（316 批起）：common/ 两科共用 + variants/<名>.<科>.py 在册分叉
 ├── liuyao/              # 六爻（独立）
-│   ├── core/yishu_core/ # 该科私有内核副本
+│   ├── core/yishu_core/ # **产物**：由 kernel/sync_kernel.py 生成，勿手改
 │   ├── scripts/ data/ references/ dev_tools/ docs/ tests/
 │   └── README.md  SKILL.md
 ├── bazi/                # 八字（独立，暂无 tests/，回归走 dev_tools/check.py）
-│   ├── core/yishu_core/
+│   ├── core/yishu_core/ # **产物**：同上（316 批起不再携带卦辞/纳甲/历法核对三个六爻专用模块）
 │   ├── scripts/ data/ references/ dev_tools/ docs/
 │   └── README.md  SKILL.md
 └── dsh-plugin/          # DSH 插件（Node 半，独立于两科；契约见下）
@@ -89,9 +90,14 @@ Yi/
   2. **无跨科写**：某一科的脚本**不得往另一科的目录里写任何文件**（含 `scratch/`——
      被 gitignore 不脏树，但仍是跨科副作用）。跨科**只读**（统计、探针、对拍）允许，
      但必须在调用处写明"跨科只读"，且产物一律落系统临时目录。
- 两科 `core/yishu_core/` 的 17 个同名文件中 13 个**逐字节相同**（308 批 `cmp -s` 实测，
- 仅 evidence/ming_tables/shensha/symbols 4 个分叉），这是"同一份内核的两份拷贝"，
- **不是**"各自独立优化"——对外表述按此口径，不要给人两科内核已分家的印象。
+ 两科 `core/yishu_core/` 的 17 个同名文件中 13 个曾**逐字节相同**（308 批 `cmp -s` 实测，
+ 仅 evidence/ming_tables/shensha/symbols 4 个分叉）。**316 批起口径改写**：内核收进
+ `kernel/`（10 个共用 + 3 个六爻专用 + 1 个八字专用 + 4 个在册变体），两科 `core/` 降为
+ **生成物**，由 `kernel/sync_kernel.py` 写、由 check 的 `[35]` 比对字节。因此：
+ ① "零耦合"仍指**运行时**不跨科 import、不跨科写，与源码是否同源无关；
+ ② 改内核一律改 `kernel/`，**直接改 `<科>/core/` 会被 [35] 判红**；
+ ③ 两科不再"各自演进"同一份代码——变体只有 4 个，且理由写在 `kernel/MANIFEST.json`。
+ （313 批前此处写作"同一份内核的两份拷贝…不是待修的重复"，316 批把"拷贝"换成了生成的产物。）
 
 ### plugins 共享打包层契约（2026-10-27 第三百零五批起；取代 269 批的 dsh 契约与 304 批的 yan 契约）
 

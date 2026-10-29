@@ -784,8 +784,9 @@ def main() -> int:
                      label=f"{split} 应支平均名次")
 
     if want("yingqi_external") or want("eval"):
-        # 外部验证集：只报数、不设门槛。n 太小时设门槛只会逼人去过拟合它。
-        print("\n[6] 外部验证集（未参与任何调参；只报数不设门槛）")
+        # 外部集：181–309 批曾被用来做 ±0.1 取舍，故**不再是未调参集**。
+        # 315 批起每集切出 test 半封存（data/rules/test_seal.json，门 [34] 只给红绿）。
+        print("\n[6] 外部集（开发集：已参与调参；test 半自 2026-10-29 封存，见 [34]）")
         _ext_notes = {
             "yingqi_holdout": "转写本，过六道自洽门",
             "wikisource_holdout": "维基文库原本，过纳甲/卦变/世应三方校验",
@@ -885,7 +886,13 @@ def main() -> int:
                ("house_conventions", "[31] §三 house 规矩核对版（A 版本号文件名/B 绝对路径/C scratch/D 产物；tracked 口径，负例含注入）",
                 "dev_tools/check_house_conventions.py"),
                ("layer_contract", "[32] 分层契约（四段输出键白名单／禁边表；判据换 schema，不再靠措辞黑名单）",
-                "dev_tools/check_layer_contract.py")):
+                "dev_tools/check_layer_contract.py"),
+               ("judgment_table", "[33] 判定表（A3：9 格／书证逐字／覆写表随码动；proposed 不得当 accepted 用）",
+                "dev_tools/check_judgment_table.py"),
+               ("test_sentinel", "[34] 考卷哨兵（只给红绿：跌破封存阈值即红；要分数须 --open 并预注册）",
+                "dev_tools/check_test_sentinel.py"),
+               ("kernel_sync", "[35] 内核同源（kernel/ 唯一真源；两科 core 是产物，手改/野文件即红）",
+                "../kernel/sync_kernel.py")):
         if want(key):
             print(f"\n{title}")
             rc, out = run([sys.executable, script, "--selftest"])
