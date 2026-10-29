@@ -1,5 +1,19 @@
 # 六爻 CHANGELOG
 
+## 2026-10-29 第三百四十批（全仓文档收口）：**删除已执行的派发件＋把总方案压成完成记录**
+
+**性质**：docs。零代码、零门禁判据改动。
+
+- **删除 `DISPATCH.md`**：26 个位（25 卡＋A6-INT）全部执行完毕，提示词与派发清单已无接收方；
+  留着会让读者以为还有任务可领。
+- **`ARCHITECTURE-PLAN.md` 压缩**：只保留 D1–D3 决策、最终形态、完成台账、V1–V15 收口实测、
+  偏差与欠账、显式不做；已修好的"七个问题"、25 张卡的步骤/验收/禁止与派发提示词
+  **从正文删除**（逐卡证据留在本卷 331–339 批与 `devkit/handoff/`）。
+- `DOCS.md`：根级 8→7、总 55→54，`DISPATCH.md` 行删除，`ARCHITECTURE-PLAN.md` 状态改
+  "归档留证"；`README.md`／`AGENTS.md`／`CONTRACT.md` 的指路与计数同步。
+- 实测：`check_root_docs` rc=0（7 份根级 md、0 死链）；`check_docs_index` rc=0（54 份全部
+  登记可达）；两科 `check.py` rc=0。
+
 ## 2026-10-29 第三百三十九批（六爻，A5-1）：**按 GOVERNANCE 五档过存量＋账台期望同步**
 
 - 实跑 `python dev_tools/governance_map.py`：六爻 **63 脚本｜blocking 27｜nightly 11｜

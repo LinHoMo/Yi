@@ -5,6 +5,16 @@
 > 按批号/关键词检索见 [`CHANGELOG-HISTORY-INDEX.md`](CHANGELOG-HISTORY-INDEX.md)。
 > 口径同 AGENTS.md §六：归档只搬不改写正文，唯一例外是路径修正——链接要活。
 
+## 2026-10-29 第三百四十批（全仓文档收口）：**删除已执行的派发件＋把总方案压成完成记录**
+
+**性质**：docs。零代码、零门禁判据改动。
+
+- 删除 `DISPATCH.md`（26 个位全部执行完毕）；`ARCHITECTURE-PLAN.md` 压成完成记录
+  （D1–D3、最终形态、完成台账、V1–V15 实测、偏差/欠账、显式不做），已修好的问题描述
+  与 25 张卡的逐步指令从正文删除。
+- `DOCS.md` 根级 8→7、总 55→54；`README.md`／`AGENTS.md`／`CONTRACT.md` 指路同步。
+- 实测：`check_root_docs` rc=0、`check_docs_index` rc=0（54 份）、两科 `check.py` rc=0。
+
 ## 2026-10-29 第三百三十九批（八字，A5-1）：**按 GOVERNANCE 五档过存量——本批无降档、无删除**
 
 - 实跑 `python dev_tools/governance_map.py`：八字 **43 脚本｜blocking 26｜nightly 0｜

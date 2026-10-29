@@ -18,12 +18,12 @@
 |---|---|---|---|
 | **第一次接触本仓** | `README.md`（做什么、现在什么水平） | `CAPABILITY.md`（对外口径与读数） | `AGENTS.md`（改代码前必读的三条铁律） |
 | **要改代码的贡献者** | `AGENTS.md` | `CONTRACT.md`（四段契约：chart→analyze→narrate→render） | 本表 → 对应学科的 `SKILL.md` |
-| **要排队/领任务的人** | `ARCHITECTURE-PLAN.md`（七个问题 + 理想架构 + TODO 清单） | `GOVERNANCE.md`（工具台账与档位门槛） | 本表 → 对应批次 |
+| **要查本次架构整改结果的人** | `ARCHITECTURE-PLAN.md`（完成台账 + V1–V15 收口实测 + 偏差/欠账） | `GOVERNANCE.md`（工具台账与档位门槛） | 本表 → 对应批次 |
 | **要引用对外数字的人** | `CAPABILITY.md` | `liuyao/README.md`／`bazi/README.md` | `docs/CHANGELOG.md`（最近窗口）＋ `docs/CHANGELOG-ARCHIVE.md`（更早明细） |
 
 ---
 
-## 二、根级（8 份）
+## 二、根级（7 份）
 
 | 文件 | 一句话 | 状态 |
 |---|---|---|
@@ -33,8 +33,7 @@
 | `CAPABILITY.md` | 对外能力声明与全部读数（每行带 n 与出处，**口径不许省**） | 活文档 |
 | `GOVERNANCE.md` | 治理地图：工具台账、批次在册、待人面事项 | 活文档 |
 | `DOCS.md` | 本表：全仓文档索引 | 活文档 |
-| `ARCHITECTURE-PLAN.md` | **架构整改总方案**：现状实测读数、七个架构级问题、理想架构与已定决策、并发协议、25 张 TODO 卡与验收总账 | 活文档 |
-| `DISPATCH.md` | **派发件**：提示词 A（执行 Agent）／B（集成 Agent）的唯一真源 + 26 位派发清单 | 活文档 |
+| `ARCHITECTURE-PLAN.md` | **架构整改完成记录**（原总方案 340 批压缩）：D1–D3 决策、完成台账、V1–V15 收口实测、偏差与欠账 | 归档留证 |
 
 ## 三、六爻（`liuyao/`，18 份）
 
