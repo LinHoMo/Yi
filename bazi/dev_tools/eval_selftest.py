@@ -21,12 +21,19 @@
 
 口径（`SKILL.md` 铁律三）：一切分数是古籍案例对齐分，不是现实预测命中率。
 本脚本**只校验打分器行为**，不产生任何"精度"结论。
+
+⚠️ 第三百一十七批：本脚本曾把夹具**写进真实案例集** `data/cases/bazi_classical_cases.json`
+再靠 `finally` 还原。进程被硬杀（超时、内存、Ctrl-C 之外的信号）时 `finally` 不执行，
+真实案例集就被一份 `（框架自检，非古籍）` 的夹具永久覆盖——实测已发生过一次，
+后果是 holdout 清零、评测门全线报"空集合"。现改为**夹具只走系统临时目录**
+（`--cases` 指向临时文件），真实案例集全程只读。这也是 AGENTS.md §四.8 的既定口径。
 """
 from __future__ import annotations
 
 import json
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 DISC = Path(__file__).resolve().parents[1]
@@ -44,8 +51,10 @@ DT = "1990-05-20 10:30"
 PILLARS = {"year": "庚午", "month": "辛巳", "day": "乙酉", "hour": "辛巳"}
 
 
-def _run_eval(extra: list[str] | None = None) -> str:
+def _run_eval(extra: list[str] | None = None, cases: Path | None = None) -> str:
     argv = [sys.executable, "scripts/evaluate.py", "--split", "tune"]
+    if cases is not None:
+        argv += ["--cases", str(cases)]
     if extra:
         argv += extra
     p = subprocess.run(argv, cwd=DISC, capture_output=True, text=True,
@@ -100,15 +109,19 @@ def main() -> int:
     if not CASES.is_file():
         print(f"× 缺案例文件 {CASES.relative_to(DISC)}")
         return 2
-    backup = CASES.read_text(encoding="utf-8")
+    if "（框架自检" in CASES.read_text(encoding="utf-8", errors="replace"):
+        print(f"× {CASES.relative_to(DISC)} 里残留着自检夹具（历史事故），"
+              "真实案例集已被覆盖，请先从版本库恢复再跑本自检")
+        return 2
     fails: list[str] = []
-    try:
+    with tempfile.TemporaryDirectory(prefix="yi-bazi-selftest-") as td:
+        tmp_cases = Path(td) / "cases.json"
         for name, cases, expect, extra in SCENARIOS:
-            CASES.write_text(json.dumps(
+            tmp_cases.write_text(json.dumps(
                 {"schema": "yi-bazi-cases/1",
                  "splits": {"tune": [c["id"] for c in cases], "holdout": []},
                  "cases": cases}, ensure_ascii=False, indent=2), encoding="utf-8")
-            out = _run_eval(extra)
+            out = _run_eval(extra, cases=tmp_cases)
             missing = [s for s in expect if s not in out]
             if missing:
                 fails.append(f"{name}（缺 {missing}）")
@@ -117,8 +130,6 @@ def main() -> int:
                     print("      " + line)
             else:
                 print(f"  √ {name}")
-    finally:
-        CASES.write_text(backup, encoding="utf-8")
 
     if fails:
         print(f"\n评测框架自检失败 {len(fails)}/{len(SCENARIOS)} 项：")

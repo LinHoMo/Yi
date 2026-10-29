@@ -47,16 +47,40 @@ def _source_titles() -> dict:
     return m
 
 
-def _anchor_is_foreign(pos: int, ln: str, home_title: str, titles: dict) -> bool:
-    """锚点左边紧邻的《书名》若指向别的底本，则本器按声明底本无从回验它。"""
-    if not home_title:
-        return False
+# 书名归一（第三百一十七批）：provenance 的 title 有繁有简（滴天髓闡微／增刪卜易），
+# 而文档正文写简体是常态。不归一的话，《滴天髓阐微》查不到 → 锚点回落主底本 →
+# 一条逐字正确的引文被判成"引文与底本不符"。只归一书名用字，不动正文。
+_TITLE_FOLD = str.maketrans({
+    "闡": "阐", "刪": "删", "淵": "渊", "黃": "黄", "峯": "峰",
+    "羣": "群", "裏": "里", "啓": "启", "寜": "宁", "蔵": "藏",
+})
+
+
+def _fold_title(s: str) -> str:
+    return "".join(s.split()).translate(_TITLE_FOLD)
+
+
+def _anchor_owner(pos: int, ln: str, titles: dict, declared: set[str],
+                  home_file: str) -> tuple[str, bool]:
+    """锚点归哪一本底本：返回 (底本文件名, 是否属于未声明底本)。
+
+    第三百一十七批前，本器只认文档头声明的**一个**底本：锚点左边的《书名》若指向
+    另一本书，整条锚被剔除并记「跨书锚点，按底本无从回验」——于是多书合写的读法
+    文档（六亲、疾病这类天然跨书的题目）一半引文落在门的盲区里，NOTE 还把盲区
+    说成"已尽力"。现在文档可用 `附底本：data/sources/….dz.txt` 显式声明多本，
+    锚点按最近的《书名》绑到对应底本，逐字回验照跑；未声明的书仍只记不判
+    （宁可显式说"没核"，不给假绿）。
+    """
     tail = ln[max(0, pos - 16):pos]
     ms = re.findall(r"《([^》]{2,12})》", tail)
     if not ms:
-        return False
-    book = ms[-1]
-    return book in titles and titles[book] != titles.get(home_title, home_title)
+        return home_file, False
+    f = titles.get(_fold_title(ms[-1]))
+    if not f:
+        return home_file, False
+    if f in declared:
+        return f, False
+    return home_file, True
 
 
 # 范围式（「源 L261-L292」）与回指式（「引文在源L180 处本身截断」）都不是逐字声明：
@@ -108,8 +132,10 @@ def _same_line_quotes(txt: str) -> list[str]:
     return out
 
 
-def _line_pairs(ln: str, home_title: str = "", titles=None) -> tuple[list[tuple[int, str]], list[tuple[int, int]], int]:
-    """本行的 **(锚行号, 该锚自己的引文)** 与 **没有引文的锚**。
+def _line_pairs(ln: str, home_title: str = "", titles=None,
+                declared: set[str] | None = None,
+                home_file: str = "") -> tuple[list[tuple[str, int, str]], list[tuple[str, int, int]], int]:
+    """本行的 **（底本, 锚行号, 该锚自己的引文）** 与 **没有引文的锚**。
 
     旧实现根本不做绑定：它取「本行最长的一条引文」去配本行**所有**锚
     （`for m in LINE_REF.finditer(ln): q = max(quotes, key=len)`）。
@@ -119,11 +145,21 @@ def _line_pairs(ln: str, home_title: str = "", titles=None) -> tuple[list[tuple[
     而文档从未声明 265 上有这句。**门自己造出一条声明再把它判为可疑**，
     比漏检更坏：它教人去改本来正确的引文。绑法与六爻科同：
     距离最小者优先，同距取左锚（引文紧跟的那条）。
+
+    第三百一十七批：锚点带底本归属（多底本文档），单底本文档 `declared`
+    只有一本时与旧行为逐字等价。
     """
-    refs = [(m.start(), int(m.group(1)), m.end(), m.start()) for m in LINE_REF.finditer(ln)]
+    refs = [(m.start(), int(m.group(1)), m.end()) for m in LINE_REF.finditer(ln)]
     _titles = titles or {}
-    foreign = [r for r in refs if _anchor_is_foreign(r[3], ln, home_title, _titles)]
-    refs = [r for r in refs if r not in foreign]
+    _declared = declared or {home_file}
+    owned: list[tuple[int, int, int, str]] = []
+    foreign = 0
+    for pos, n, end in refs:
+        f, is_foreign = _anchor_owner(pos, ln, _titles, _declared, home_file or "")
+        if is_foreign:
+            foreign += 1
+        else:
+            owned.append((pos, n, end, f))
     rng = [(m.start(), m.end()) for m in RANGE_REF.finditer(ln)]
     quotes = []
     for pat in (QUOTE_CORNER, QUOTE_BACKTICK):
@@ -131,18 +167,19 @@ def _line_pairs(ln: str, home_title: str = "", titles=None) -> tuple[list[tuple[
             q = m.group(1).strip()
             if _is_classical_quote(q) and not LINE_REF.search(q):
                 quotes.append((m.start(), q))
-    pairs: list[tuple[int, str]] = []
+    pairs: list[tuple[str, int, str]] = []
     used: set[int] = set()
     for qs, q in quotes:
-        if not refs:
+        if not owned:
             break
-        best = min(refs, key=lambda r: (abs(qs - r[2]), 0 if r[2] <= qs else 1))
-        pairs.append((best[1], q))
+        best = min(owned, key=lambda r: (abs(qs - r[2]), 0 if r[2] <= qs else 1))
+        pairs.append((best[3], best[1], q))
         used.add(best[0])
     # 范围式锚（源L261-L292）不是"某一行的逐字声明"，不能算成"有锚无引文"
-    bare = [(n, p) for p, n, _e, _s in refs
+    bare = [(f, n, p) for p, n, _e, f in owned
             if p not in used and not any(a <= p < b for a, b in rng)]
-    return pairs, bare, len(foreign)
+
+    return pairs, bare, foreign
 
 
 def verify_doc(md: Path, problems: list[str], notes: list[str]) -> tuple[int, int]:
@@ -168,9 +205,26 @@ def verify_doc(md: Path, problems: list[str], notes: list[str]) -> tuple[int, in
     if not src_path.exists():
         problems.append(f"{md.name}：底本不存在 {src_path.name}")
         return 0, 0
-    titles = _source_titles()
-    home_title = next((k for k, v in titles.items() if v == src_path.name), "")
-    src_lines = src_path.read_text(encoding="utf-8", errors="replace").splitlines()
+    # 第三百一十七批：文档可用「附底本：data/sources/….dz.txt」把多本书一起声明；
+    # SOURCE_DECL 会把它们按出现顺序全抓出来，第一本即主底本（home）。
+    declared: list[str] = []
+    for name in src_names:
+        p = SRC_DIR / name
+        if not p.exists():
+            problems.append(f"{md.name}：声明的底本不存在 {name}")
+            continue
+        if name not in declared:
+            declared.append(name)
+    if not declared:
+        problems.append(f"{md.name}：没有任何可读底本，无法回验")
+        return 0, 0
+    home_file = declared[0]
+    titles = {_fold_title(k): v for k, v in _source_titles().items()}
+    home_title = next((k for k, v in titles.items() if v == home_file), "")
+    corpus: dict[str, list[str]] = {
+        f: (SRC_DIR / f).read_text(encoding="utf-8", errors="replace").splitlines()
+        for f in declared}
+    declared_set = set(declared)
 
     checked = passed = 0
     # ── 第一遍：凡"锚点＋同行引文"者逐一回验，并把**通过**的行号记下来 ──
@@ -178,41 +232,44 @@ def verify_doc(md: Path, problems: list[str], notes: list[str]) -> tuple[int, in
     # 「该行无同行引文，未检视」，于是 56 条"其实已验过"的项与"真的没证据"的项混在
     # 同一个桶里，门只报总数不报因果。第八十五批把两者分开：回指＝已验可豁免，
     # 无同行引文且本文档从未验过该行＝**真欠账**。
-    verified_lines: set[int] = set()
+    # 多底本后行号不再是唯一键（两本书都有 L54），键改成 (底本, 行号)。
+    verified_lines: set[tuple[str, int]] = set()
     for i, ln in enumerate(lines):
         if RANGE_REF.search(ln) and not _same_line_quotes(ln):
             # 纯范围引用（如「推月法 L261-L292」的行号总述）不是逐字声明
             continue
-        pairs, bare, n_foreign = _line_pairs(ln, home_title, titles)
+        pairs, bare, n_foreign = _line_pairs(ln, home_title, titles, declared_set, home_file)
         if n_foreign:
-            notes.append(f"{md.name} 第{i+1}行：{n_foreign} 处锚点属别书《书名》源L，按本文声明底本无从回验，只记不判")
-        for lineno, q in pairs:
+            notes.append(f"{md.name} 第{i+1}行：{n_foreign} 处锚点属别书《书名》源L"
+                         "（未在「附底本」声明），按本文已声明底本无从回验，只记不判")
+        for f, lineno, q in pairs:
             nq = norm(q)
             checked += 1
+            src_lines = corpus[f]
             if lineno < 1 or lineno > len(src_lines):
-                problems.append(f"{md.name} 源L{lineno}：超出底本行数（共 {len(src_lines)} 行）")
+                problems.append(f"{md.name} 《{f}》源L{lineno}：超出底本行数（共 {len(src_lines)} 行）")
                 continue
             # 底本一段常被排成多行，窗口取 L(n-1)..L(n+3)；两桶同样归一化
             window = "".join(norm(x) for x in src_lines[max(0, lineno - 2):lineno + 3])
             if nq in window:
                 passed += 1
-                verified_lines.add(lineno)
+                verified_lines.add((f, lineno))
             elif len(nq) >= FAIL_MIN:
-                problems.append(f"{md.name} 源L{lineno}：引文与底本该行邻域不符 → {q[:38]}…")
+                problems.append(f"{md.name} 《{f}》源L{lineno}：引文与底本该行邻域不符 → {q[:38]}…")
             else:
-                notes.append(f"{md.name} 源L{lineno}：短引文未命中（{q[:24]}），只记不判")
+                notes.append(f"{md.name} 《{f}》源L{lineno}：短引文未命中（{q[:24]}），只记不判")
     # ── 第二遍：只处理裸指针（无同行引文的锚点），按是否"已在他处验过该行"分流 ──
     for i, ln in enumerate(lines):
         if RANGE_REF.search(ln) and not _same_line_quotes(ln):
             continue
-        pairs, bare, n_foreign = _line_pairs(ln, home_title, titles)
-        for lineno, at in bare:
+        pairs, bare, n_foreign = _line_pairs(ln, home_title, titles, declared_set, home_file)
+        for f, lineno, at in bare:
             if BACK_REF.search(ln[:at + 24]):
-                notes.append(f"{md.name} 源L{lineno}：回指式引用（指回已验的引文），未检视")
-            elif lineno in verified_lines:
-                notes.append(f"{md.name} 源L{lineno}：回指（本文档他处已逐字回验通过），不计欠账")
+                notes.append(f"{md.name} 《{f}》源L{lineno}：回指式引用（指回已验的引文），未检视")
+            elif (f, lineno) in verified_lines:
+                notes.append(f"{md.name} 《{f}》源L{lineno}：回指（本文档他处已逐字回验通过），不计欠账")
             else:
-                notes.append(f"{md.name} 源L{lineno}：该行无同行引文，未检视（真欠账：本文档从未验过该行）")
+                notes.append(f"{md.name} 《{f}》源L{lineno}：该行无同行引文，未检视（真欠账：本文档从未验过该行）")
     return checked, passed
 
 
@@ -269,6 +326,55 @@ def selftest(problems: list[str]) -> None:
                             f"实得 {passed}（可验 {checked}）")
     finally:
         tmp.unlink(missing_ok=True)
+
+    # ── 多底本自证（第三百一十七批）──
+    # 文档用「附底本」声明第二本书后，锚点按《书名》绑过去逐字回验。
+    # 没有这条自证，"支持多底本"只是措辞：旧实现会把跨书锚点整条跳过，
+    # 可验条数照样涨（来自 home 书的引文），假绿看不出来。
+    titles = _source_titles()
+    aux = ""
+    for pf in sorted(SRC_DIR.glob("*.dz.txt")):
+        if pf.name == real.name:
+            continue
+        if any(v == pf.name for v in titles.values()):
+            aux = pf.name
+            break
+    if not aux:
+        problems.append("多底本自证无法执行：找不到第二本带 provenance 的底本")
+        return
+    aux_book = next(k for k, v in titles.items() if v == aux)
+    aux_lines = (SRC_DIR / aux).read_text(encoding="utf-8", errors="replace").splitlines()
+    aux_no, aux_good = 1, ""
+    for n, t in enumerate(aux_lines, 1):
+        if len(norm(t)) >= FAIL_MIN:
+            aux_no, aux_good = n, norm(t)
+            break
+    if not aux_good:
+        problems.append(f"多底本自证无法执行：《{aux_book}》找不到够长的行")
+        return
+    tmp2 = REF_DIR / "_selftest_multi_source.md"
+    fake_no = aux_no + 40 if aux_no + 40 <= len(aux_lines) else max(1, aux_no - 1)
+    tmp2.write_text(
+        f"书源：data/sources/{real.name}\n"
+        f"附底本：data/sources/{aux}\n\n"
+        f"真引文（《{aux_book}》源L{aux_no} 逐字）：`{aux_good[:30]}`\n\n"
+        f"假引文（《{aux_book}》源L{fake_no} 逐字）：`此串绝无可能出现在任何古籍里用来测试多底本`\n",
+        encoding="utf-8")
+    try:
+        sub_p2: list[str] = []
+        sub_n2: list[str] = []
+        checked2, passed2 = verify_doc(tmp2, sub_p2, sub_n2)
+        real2_flagged = any(f"源L{aux_no}：" in x and "不符" in x for x in sub_p2)
+        fake2_flagged = any("绝无可能出现在任何古籍里" in x for x in sub_p2)
+        if passed2 < 1:
+            problems.append(f"多底本自证失效：《{aux_book}》的真实引文没被回验命中"
+                            f"（可验 {checked2}／命中 {passed2}）→ {sub_p2}｜{sub_n2}")
+        if not fake2_flagged:
+            problems.append(f"多底本自证失效：挂在《{aux_book}》名下的编造引文没被判红 → {sub_p2}")
+        if real2_flagged:
+            problems.append(f"多底本自证假阳性：真引文被判错 → {sub_p2}")
+    finally:
+        tmp2.unlink(missing_ok=True)
 
 
 def main() -> int:
