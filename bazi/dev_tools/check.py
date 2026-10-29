@@ -603,6 +603,21 @@ def main() -> int:
     else:
         print("[37] 门禁同源 √")
 
+    # [38] 八字 tests（A2-A·第三百三十五批）：smoke＝四段接线有产出，
+    # regression＝固定 3 例的四柱与 conclusion 指纹。编号取当前最大号 +1（[37] 之后）。
+    print("\n[38] 八字 tests（smoke 接线 + regression 定点）")
+    tests_ok = True
+    for script in ("tests/smoke_test.py", "tests/regression_test.py"):
+        code, out = run([script])
+        for line in out.splitlines():
+            if line.strip():
+                print("  " + line.strip())
+        if code != 0:
+            fails.append(f"{script} 未过")
+            tests_ok = False
+    if tests_ok:
+        print("[38] 八字 tests √")
+
     if ENC_WITNESS:
         fails.extend("产物编码退化：" + w for w in ENC_WITNESS)
     if fails:
