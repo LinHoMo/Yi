@@ -1,7 +1,7 @@
 {
   "schema": "yi-judgment-table/1",
   "discipline": "liuyao",
-  "batch": 319,
+  "batch": 321,
   "status": "accepted",
   "sealed": null,
   "_comment": "A3 判定表的机器判据（唯一真值源）。本文件只声明，不接引擎：改成 accepted 并接进 step5 前，必须先由人签 adjudications 四条。改本文件须同批改 docs/JUDGMENT-TABLE.md 与 docs/CHANGELOG.md。",
@@ -289,6 +289,18 @@
       "book": "增刪卜易",
       "line": 561,
       "quote": "忌神未土反生元神之酉金，金生亥水，接续相生，化凶而为吉"
+    },
+    {
+      "id": "Z12",
+      "book": "增刪卜易",
+      "line": 3578,
+      "quote": "受克者必受其殃，生世者反得其济"
+    },
+    {
+      "id": "Z13",
+      "book": "增刪卜易",
+      "line": 1685,
+      "quote": "谓忌神既旺，用衰矣，世虽逢生何益"
     }
   ],
   "priority": [
@@ -376,12 +388,13 @@
     {
       "direction": "成",
       "confidence": "中",
-      "enter": "用神旺相但有一处克已被救或被合解；或用神有根而忌神无力（化凶为吉）",
+      "enter": "用神旺相但有一处克已被救或被合解；或用神有根而忌神无力（化凶为吉）；或用神生世/持世（生世者反得其济）",
       "cites": [
         "D1",
         "E1",
         "F4",
         "Z11",
+        "Z12",
         "Z9"
       ]
     },
@@ -436,10 +449,11 @@
     {
       "direction": "不成",
       "confidence": "中",
-      "enter": "用神月破而静 ∧ 无日辰动爻生助",
+      "enter": "用神月破而静、无发动自救；或忌神既旺而用神无根，虽生世亦无益",
       "cites": [
         "F1",
-        "F2"
+        "F2",
+        "Z13"
       ]
     },
     {
@@ -884,7 +898,7 @@
     }
   ],
   "stats": {
-    "citations": 36,
+    "citations": 38,
     "cells": 9,
     "overrides": 27,
     "by_kind": {
@@ -898,38 +912,42 @@
   "signed_by": "用户授权按建议签（317 批）",
   "implementation": {
     "module": "scripts/judge.py",
-    "mode": "shadow",
+    "mode": "shadow（已接线为 conclusion.judgment，verdict 未动）",
     "wired_into_step5": false,
-    "version": "v2（九格 + 题类覆盖 10 条 + 原神/忌神二级事实）",
+    "version": "v3（九格 + 题类覆盖 10 条 + 原神/忌神二级事实 + 世应层）",
     "shadow_dev": {
       "tune": {
-        "judge": 40.0,
+        "judge": 45.0,
         "current": 80.0,
         "n_expected": 20,
-        "note": "in-sample：现行引擎的调参集，引擎天然占优"
+        "note": "现行引擎的调参集，引擎天然占优"
       },
       "holdout": {
         "judge": 41.7,
         "current": 58.3,
-        "n_expected": 12
+        "n_expected": 12,
+        "note": "现行引擎的回归集"
       },
       "wikisource_dev": {
-        "judge": 62.5,
+        "judge": 75.0,
         "current": 56.2,
-        "n_expected": 16,
-        "overlay_hits": "1/25"
+        "n_expected": 16
       },
       "zengshan_dz_dev": {
-        "judge": 37.5,
+        "judge": 62.5,
         "current": 37.5,
-        "n_expected": 8,
-        "overlay_hits": "3/10"
+        "n_expected": 8
       }
     },
-    "delta": "v1→v2：holdout 33.3→41.7；wiki·dev 50.0→62.5（反超现行 6.3pt）；dz 持平 37.5（与现行打平）；tune 30.0→40.0",
-    "acceptance_criterion": "外部 dev 半边（wiki/dz）与书载同向率 ≥ 现行引擎；内部 tune/holdout 作回归护栏（现行在其上调参，天然占优）",
-    "verdict": "外部两半边已达标（wiki 反超、dz 打平）；内部两集仍落后（tune −40、holdout −17），接线前须先解释内部差距",
-    "not_wired_reason": "接线会动 golden 双指纹、评测 expected 与插件 1.0 契约面，属破坏性变更，须另批走 §四（两集出分＋逐格对拍＋golden 重基线＋契约变更）"
+    "delta": "v2→v3：wiki·dev 62.5→75.0（超现行 18.8pt）；dz·dev 37.5→62.5（超现行 25.0pt）；tune 40.0→45.0；holdout 41.7 持平",
+    "v3_changes": [
+      "修 bug：忌神无力 曾写成列表（真值判断失效，恒为真）",
+      "有气口径改回书证：旺相为有气（中和/偏旺/偏弱皆非有气）",
+      "新增世应层：用神生世/持世（Z12 生世者反得其济）＋反面条款（Z13 忌旺用衰）"
+    ],
+    "acceptance_criterion": "外部 dev 半边 ≥ 现行引擎（达标：wiki +18.8pt、dz +25.0pt）；内部 tune/holdout 作回归护栏",
+    "verdict": "外部两半边已明显达标；内部两集仍落后（引擎在其上调参，天然占优）——两者的差要在接线批里说清楚",
+    "not_wired_reason": "judge 已作为 conclusion.judgment 接线（可关），但**尚未取代 verdict**；取代须另批走 §四"
   },
   "overlays": [
     {

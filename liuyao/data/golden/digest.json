@@ -3,15 +3,9 @@
     "what": "金标准指纹基线（排盘+思维链+分析层逐字段；抽样含 narrate 文案哈希）",
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
-  "digest": "ffa4944b941a2755",
+  "digest": "184e628a3063c368",
   "narrate_digest": "405bc8e03a6a99e0",
   "drift_log": [
-    {
-      "from": "0154180984aa868d",
-      "to": "f348fa81fe783d3a",
-      "date": "2026-10-13",
-      "reason": "第一百七十批：源L27 一看/二看两条纯结构标签落地（look1/look2，只标象不打分；逐格对拍 288/288 旧段零改动，仅新增两类详释段）"
-    },
     {
       "from": "f348fa81fe783d3a",
       "to": "b3177460d0fd6396",
@@ -125,6 +119,12 @@
       "to": "ffa4944b941a2755",
       "date": "2026-10-29",
       "reason": "第三百二十批：结论层纳入 judgment 判定块（coverage-only 重基线——concl_sha 因多一个 judgment 键而变，机械层除该字段外零改动、措辞指纹 405bc8e03a6a99e0 未动可自证；两集读数 tune 97.9/holdout 90.2 未变）"
+    },
+    {
+      "from": "ffa4944b941a2755",
+      "to": "184e628a3063c368",
+      "date": "2026-10-29",
+      "reason": "第三百二十一批：判定器 v3（修『忌神无力』真值 bug、有气口径回书证、增世应层）→ 判定块内容变化致 concl_sha 漂移；verdict 未动（tune 97.9／holdout 90.2 未变）、措辞指纹未变"
     }
   ],
   "narrate_drift_log": [

@@ -45,9 +45,10 @@ DOMAIN_KW = {
     "行人": ("行人", "归", "回", "来否", "何日到", "在外"),
 }
 KE = {"木": "土", "土": "水", "水": "火", "火": "金", "金": "木"}  # 克
+SHENG = {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}  # 生
 
 # 月令旺衰里算"有根"的档（书证 E1：用神旺相可以敌之；原文见 judgment_table.json）
-ROOTED = {"旺", "相", "中和"}   # 「有气」：旺相为有气，中和不弱（书证 F5 及其注文口径）
+ROOTED = {"旺", "相", "极旺"}   # 「有气」＝旺相（书证 F5 注文：旺相为有气，休囚为无气）
 
 
 def _s2(tc: dict) -> dict:
@@ -110,10 +111,21 @@ def facts(result: dict) -> dict:
     # 元神有力：动（书证 Z8）或接续相生克忌（书证 Z11）
     yuan_power = yuan_moving or yuan_ke_ji
     # 忌神无力：静临空破／与元神同动（书证 Z9）／忌神反生元神（接续相生，书证 Z11）
-    ji_no_power = (ji_void or ji_hidden or (not ji_moving and ji_pos)) or yuan_ji_both or yuan_ke_ji
+    # 321 批修 bug：此处原写成 `... or ji_pos`，而 ji_pos 是**列表**——
+    # 于是 `if 忌神无力` 恒真（任何忌神都在位即成立）。此处必须是 bool。
+    ji_no_power = bool((ji_void or ji_hidden or (not ji_moving and ji_pos))
+                       or yuan_ji_both or yuan_ke_ji)
+
+    # 世应关系（321 批）：用神持世 / 用神生世
+    wl = _world_line(result)
+    w_el = BRANCH_ELEMENTS.get(wl.get("earthly_branch") or "") or ""
+    ug_el = s2.get("use_god_element") or ""
+    holds = bool(sel.get("position")) and sel.get("position") == s2.get("world_position")
+    sheng_world = bool(ug_el and w_el and SHENG.get(ug_el) == w_el)
 
     return {
         "旺衰标签": level, "日辰生扶": day_mod > 1.0,
+        "用神持世": holds, "用神生世": sheng_world,
         "用神现": present, "用神有根": rooted, "动变净效": net, "有救有帮": rescued,
         "用神月破": month_break, "用神发动": moving, "用神真空": true_void,
         "忌神发动": ji_moving, "合处逢冲": he_chong, "冲中逢合": chong_he,
@@ -233,6 +245,13 @@ def judge(result: dict) -> dict:
     if not f["用神现"]:
         dissent.append("用神不现（书证 B2 以日月为用，须另判）")
 
+    # ── R4c 不成·中：忌神发动而用神无根，虽有生世亦不吉 ──
+    # 书证反面条款：Z13「谓忌神既旺，用衰矣，世虽逢生何益」（忌旺用衰时不因生世转吉）
+    if (not f["用神有根"]) and f["忌神发动"] and (f["用神生世"] or f["用神持世"]):
+        return cell("不成", "中", "忌神既旺、用神无根，虽生世亦无益", ["Z13"])
+    # ── R4d 成·中：生世或持世（书证 Z12：生世者反得其济）──
+    if (not f["用神有根"]) and (f["用神生世"] or f["用神持世"]) and not f["忌神发动"]:
+        return cell("成", "中", "用神生世或持世，生世者反得其济", ["Z12"])
     # ── R0′ 成·低：无根，但原神有力且忌神无力（接续相生）──
     # 书证两面：Z8 元神能生用神者有五；Z10 末句「倘若用神无根，谓之元神有力亦难生」
     # → 方向可成，但**置信只能是低**（无根难生）。这正是 v0 漏掉的那类事实。
