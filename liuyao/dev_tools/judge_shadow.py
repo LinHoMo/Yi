@@ -30,7 +30,7 @@ sys.path.insert(0, str(DISC / "core"))
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 
 import case_runner  # noqa: E402
-from judge import judge  # noqa: E402
+from judge import judge_with_overlay as judge  # noqa: E402  九格 + 题类覆盖
 
 TABLE = DISC / "data" / "rules" / "judgment_table.json"
 SEAL = DISC / "data" / "rules" / "test_seal.json"
@@ -63,6 +63,7 @@ def main() -> int:
             ids = [i for i in ids if i in set(seal["corpora"][SEAL_CORPUS[split]]["dev"])]
         by_id = {c["id"]: c for c in case_runner.load_cases()}
         agree = n = 0
+        ov_hit = 0
         cur_hit = judge_hit = exp_n = 0
         conf = Counter()
         diffs = []
@@ -77,6 +78,7 @@ def main() -> int:
                 errs += 1
                 continue
             j = judge(row["_full"])
+            ov_hit += int(bool(j.get("overlay")))
             cur = _dir_of(row.get("verdict"), vmap)
             exp = _dir_of((case.get("expected") or {}).get("verdict"), vmap)
             n += 1
@@ -97,6 +99,7 @@ def main() -> int:
             continue
 
         print(f"\n═ {split}（n={n}，引擎错 {errs}）═")
+        print(f"  题类覆盖命中：{ov_hit}/{n} 例（其余走九格）")
         print(f"  现行 vs 判定器 方向一致：{agree}/{n} = {agree * 100 / max(n, 1):.1f}%"
               f"（不一致即「换掉会动」的规模）")
         if exp_n:

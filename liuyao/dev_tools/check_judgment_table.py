@@ -139,7 +139,7 @@ def check(table_path: Path = TABLE) -> list[str]:
     # 3. 引用闭合
     ids = {c.get("id") for c in table.get("citations", [])}
     used: set = set()
-    for grp in ("cells", "priority", "adjudications"):
+    for grp in ("cells", "priority", "adjudications", "overlays"):
         for item in table.get(grp, []):
             for cid in item.get("cites", []):
                 used.add(cid)
@@ -148,6 +148,21 @@ def check(table_path: Path = TABLE) -> list[str]:
     orphans = sorted(ids - used)
     if orphans:
         problems.append(f"孤儿书证（未被任何格/优先级/裁决引用）：{orphans}")
+
+    # 3b. 题类覆盖层（v1）：条件/产出/书证三件齐全，方向置信必须在轴内
+    for o in table.get("overlays", []):
+        oid = o.get("id")
+        if not str(o.get("domain") or "").strip():
+            problems.append(f"覆盖层 {oid} 缺 domain")
+        if not str(o.get("when") or "").strip():
+            problems.append(f"覆盖层 {oid} 缺 when 条件")
+        emit = o.get("emit") or {}
+        if emit.get("direction") not in dirs:
+            problems.append(f"覆盖层 {oid} 的 emit.direction 不在轴内：{emit.get('direction')}")
+        if emit.get("confidence") not in confs:
+            problems.append(f"覆盖层 {oid} 的 emit.confidence 不在轴内：{emit.get('confidence')}")
+        if o.get("book_verified") and not o.get("cites"):
+            problems.append(f"覆盖层 {oid} 声称有书证却没有 cites")
 
     # 4/5. 表随码动 + 覆写分类
     src = STEP5.read_text(encoding="utf-8")
@@ -218,6 +233,16 @@ def selftest() -> int:
     cases.append(("判词未登记", t))
 
     t = json.loads(json.dumps(base))
+    if t.get("overlays"):
+        t["overlays"][0]["emit"] = {"direction": "大吉", "confidence": "中"}
+    cases.append(("覆盖层方向不在轴内", t))
+
+    t = json.loads(json.dumps(base))
+    if t.get("overlays"):
+        t["overlays"][0]["cites"] = ["Z9"]
+    cases.append(("覆盖层引用不存在的书证", t))
+
+    t = json.loads(json.dumps(base))
     t["status"] = "accepted"
     if t.get("adjudications"):
         t["adjudications"][0]["status"] = "pending"
@@ -261,6 +286,7 @@ def main() -> int:
     t = json.loads(TABLE.read_text(encoding="utf-8"))
     st = t.get("stats", {})
     print(f"  √ 格面 {st.get('cells')}／书证 {st.get('citations')}／覆写 {st.get('overrides')}"
+          f"／覆盖层 {st.get('overlays', 0)}"
           f"（priority {st.get('by_kind', {}).get('priority')}·exception "
           f"{st.get('by_kind', {}).get('exception')}·domain "
           f"{st.get('by_kind', {}).get('domain_overlay')}），status={t.get('status')}")

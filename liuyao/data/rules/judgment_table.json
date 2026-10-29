@@ -1,7 +1,7 @@
 {
   "schema": "yi-judgment-table/1",
   "discipline": "liuyao",
-  "batch": 314,
+  "batch": 318,
   "status": "accepted",
   "sealed": null,
   "_comment": "A3 判定表的机器判据（唯一真值源）。本文件只声明，不接引擎：改成 accepted 并接进 step5 前，必须先由人签 adjudications 四条。改本文件须同批改 docs/JUDGMENT-TABLE.md 与 docs/CHANGELOG.md。",
@@ -223,6 +223,48 @@
       "book": "黃金策",
       "line": 68,
       "quote": "用爻有气无他故，所作皆成；主象徒存更被伤，凡谋不遂。"
+    },
+    {
+      "id": "Z1",
+      "book": "增刪卜易",
+      "line": 31,
+      "quote": "占疾病近病逢冲逢空，不药而愈；外病逢冲逢空灵丹莫救。"
+    },
+    {
+      "id": "Z2",
+      "book": "增刪卜易",
+      "line": 419,
+      "quote": "占病者若得六冲卦近病不药而愈，久病妙药难调。"
+    },
+    {
+      "id": "Z3",
+      "book": "增刪卜易",
+      "line": 419,
+      "quote": "占功名者若得官鬼持世即许成名，子孙持世且待时。"
+    },
+    {
+      "id": "Z4",
+      "book": "增刪卜易",
+      "line": 419,
+      "quote": "占求财妻财持世者必得，兄弟持世者难求。"
+    },
+    {
+      "id": "Z5",
+      "book": "增刪卜易",
+      "line": 1694,
+      "quote": "占财财为用神，财爻克世者必得。占行人用神克世者即至"
+    },
+    {
+      "id": "Z6",
+      "book": "增刪卜易",
+      "line": 3298,
+      "quote": "世克用兮人未动，用爻克世必然归"
+    },
+    {
+      "id": "Z7",
+      "book": "增刪卜易",
+      "line": 3298,
+      "quote": "卦逢六冲，行人无定而不返。"
     }
   ],
   "priority": [
@@ -811,14 +853,15 @@
     }
   ],
   "stats": {
-    "citations": 25,
+    "citations": 32,
     "cells": 9,
     "overrides": 27,
     "by_kind": {
       "priority": 3,
       "exception": 5,
       "domain_overlay": 19
-    }
+    },
+    "overlays": 10
   },
   "signed_at": "2026-10-29",
   "signed_by": "用户授权按建议签（317 批）",
@@ -826,26 +869,164 @@
     "module": "scripts/judge.py",
     "mode": "shadow",
     "wired_into_step5": false,
+    "version": "v1（九格 + 题类覆盖 10 条）",
     "shadow_dev": {
-      "tune": {
-        "judge": 30.0,
-        "current": 80.0,
-        "n": 20,
-        "note": "in-sample：判定器在此集上调过谓词"
+      "holdout": {
+        "judge": 33.3,
+        "current": 58.3,
+        "n_expected": 12
       },
-      "holdout": "见 CHANGELOG 317 批",
       "wikisource_dev": {
         "judge": 50.0,
         "current": 56.2,
-        "n_expected": 16
+        "n_expected": 16,
+        "overlay_hits": "1/25"
       },
       "zengshan_dz_dev": {
-        "judge": 12.5,
+        "judge": 37.5,
         "current": 37.5,
-        "n_expected": 8
+        "n_expected": 8,
+        "overlay_hits": "3/10"
       }
     },
-    "acceptance_criterion": "dev 半边与书载同向率 ≥ 现行引擎，且不再只靠 8 条谓词（缺题类层）——未达则不得接线",
-    "verdict": "未达标：9 格 v0 缺题类覆盖层，dz 半边 12.5% vs 现行 37.5%"
-  }
+    "delta": "dz 12.5→37.5（与现行打平）；wiki 50.0 持平；holdout 30.0→33.3",
+    "acceptance_criterion": "dev 半边与书载同向率 ≥ 现行引擎（三集全数）",
+    "verdict": "未达标但已逼近：dz 打平、wiki 差 6pt、holdout 差 25pt；差口在九格对『用神无气但事成』的处理，不在题类层"
+  },
+  "overlays": [
+    {
+      "id": "OV-D1",
+      "domain": "疾病",
+      "when": "近病 ∧ (六冲卦 ∨ 真空)",
+      "emit": {
+        "direction": "成",
+        "confidence": "中"
+      },
+      "cites": [
+        "Z1",
+        "Z2"
+      ],
+      "book_verified": true
+    },
+    {
+      "id": "OV-D2",
+      "domain": "疾病",
+      "when": "久病 ∧ (六冲卦 ∨ 真空)",
+      "emit": {
+        "direction": "不成",
+        "confidence": "中"
+      },
+      "cites": [
+        "Z1",
+        "Z2"
+      ],
+      "book_verified": true
+    },
+    {
+      "id": "OV-G1",
+      "domain": "功名",
+      "when": "官鬼持世",
+      "emit": {
+        "direction": "成",
+        "confidence": "中"
+      },
+      "cites": [
+        "Z3"
+      ],
+      "book_verified": true
+    },
+    {
+      "id": "OV-G2",
+      "domain": "功名",
+      "when": "子孙持世",
+      "emit": {
+        "direction": "不成",
+        "confidence": "中"
+      },
+      "cites": [
+        "Z3"
+      ],
+      "book_verified": true
+    },
+    {
+      "id": "OV-C1",
+      "domain": "求财",
+      "when": "妻财持世",
+      "emit": {
+        "direction": "成",
+        "confidence": "中"
+      },
+      "cites": [
+        "Z4"
+      ],
+      "book_verified": true
+    },
+    {
+      "id": "OV-C2",
+      "domain": "求财",
+      "when": "妻财克世",
+      "emit": {
+        "direction": "成",
+        "confidence": "中"
+      },
+      "cites": [
+        "Z5"
+      ],
+      "book_verified": true
+    },
+    {
+      "id": "OV-C3",
+      "domain": "求财",
+      "when": "兄弟持世",
+      "emit": {
+        "direction": "不成",
+        "confidence": "低"
+      },
+      "cites": [
+        "Z4"
+      ],
+      "book_verified": true
+    },
+    {
+      "id": "OV-X1",
+      "domain": "行人",
+      "when": "用神克世",
+      "emit": {
+        "direction": "成",
+        "confidence": "中"
+      },
+      "cites": [
+        "Z5",
+        "Z6"
+      ],
+      "book_verified": true
+    },
+    {
+      "id": "OV-X2",
+      "domain": "行人",
+      "when": "世克用神",
+      "emit": {
+        "direction": "不成",
+        "confidence": "中"
+      },
+      "cites": [
+        "Z6"
+      ],
+      "book_verified": true
+    },
+    {
+      "id": "OV-X3",
+      "domain": "行人",
+      "when": "六冲卦",
+      "emit": {
+        "direction": "不成",
+        "confidence": "低"
+      },
+      "cites": [
+        "Z7"
+      ],
+      "book_verified": true
+    }
+  ],
+  "overlay_policy": "题类覆盖层：只允许改方向或降置信，条件与产出都必须带书证（book_verified=true）。覆盖层不替代九格，只在题类明确时接管。"
 }

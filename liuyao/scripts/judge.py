@@ -30,9 +30,21 @@ from kernel_path import ensure_kernel_on_path as _ensure  # noqa: E402
 
 _ensure(__file__)
 
+from yishu_core.symbols import BRANCH_ELEMENTS  # noqa: E402  五行真值源，不在本模块复制
+from chain_tables import HEXAGRAM_LIUCHONG  # noqa: E402  六冲卦表真值源
+
 # 方向三态；置信三档。与 data/rules/judgment_table.json 的 axes 同义。
 DIRECTIONS = ("成", "滞", "不成")
 CONFIDENCES = ("高", "中", "低")
+
+# ── 题类覆盖层（v1）：书证 Z1–Z7 见 judgment_table.json.overlays ──
+DOMAIN_KW = {
+    "疾病": ("病", "疾", "沉疴", "痘", "症"),
+    "功名": ("功名", "考试", "科", "升迁", "求名", "乡试", "会试", "面圣", "官运", "编制", "面试"),
+    "求财": ("财", "利", "生意", "买卖", "开张", "索债", "借贷", "价"),
+    "行人": ("行人", "归", "回", "来否", "何日到", "在外"),
+}
+KE = {"木": "土", "土": "水", "水": "火", "火": "金", "金": "木"}  # 克
 
 # 月令旺衰里算"有根"的档（书证 E1：用神旺相可以敌之；原文见 judgment_table.json）
 ROOTED = {"旺", "相", "中和"}   # 「有气」：旺相为有气，中和不弱（书证 F5 及其注文口径）
@@ -88,6 +100,76 @@ def facts(result: dict) -> dict:
         "忌神发动": ji_moving, "合处逢冲": he_chong, "冲中逢合": chong_he,
         "特殊格局": sp_text,
     }
+
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 题类覆盖层（v1）
+# ─────────────────────────────────────────────────────────────────────────────
+def domain_of(question: str) -> str:
+    """题类分流：先按关键词定题类；定不出就返回空串（不猜）。"""
+    q = str(question or "")
+    for dom, kws in DOMAIN_KW.items():
+        if any(k in q for k in kws):
+            return dom
+    return ""
+
+
+def _world_line(result: dict) -> dict:
+    for y in (result.get("original_hexagram") or {}).get("yao_lines") or []:
+        if y.get("is_world"):
+            return y
+    return {}
+
+
+def overlay(result: dict) -> dict | None:
+    """四条题类规则（疾病/功名/求财/行人），条件全部来自书证，见 judgment_table.json.overlays。"""
+    tc = result.get("thinking_chain") or result
+    q = str(result.get("question") or "")
+    dom = domain_of(q)
+    if not dom:
+        return None
+    s2, s3 = _s2(tc), _s3(tc)
+    sel = s2.get("selected_use_god") or {}
+    cat = s2.get("use_god_category") or ""
+    ug_el = s2.get("use_god_element") or ""
+    wl = _world_line(result)
+    w_el = BRANCH_ELEMENTS.get(wl.get("earthly_branch") or "") or ""
+    holds = bool(sel.get("position")) and sel.get("position") == s2.get("world_position")
+    kills_world = bool(ug_el and w_el and KE.get(ug_el) == w_el)
+    world_kills = bool(ug_el and w_el and KE.get(w_el) == ug_el)
+    liuchong = (result.get("original_hexagram") or {}).get("name") in HEXAGRAM_LIUCHONG
+    void = bool(s3.get("is_true_void"))
+
+    def rule(dom_, direction, confidence, why, cites):
+        return {"domain": dom_, "direction": direction, "confidence": confidence,
+                "why": why, "cites": cites}
+
+    if dom == "疾病":
+        if any(k in q for k in ("近病", "新病", "乍病")) and (liuchong or void):
+            return rule(dom, "成", "中", "近病逢冲逢空，不药而愈", ["Z1", "Z2"])
+        if any(k in q for k in ("久病", "沉疴", "久疾")) and (liuchong or void):
+            return rule(dom, "不成", "中", "久病逢冲逢空，妙药难调", ["Z1", "Z2"])
+    if dom == "功名":
+        if holds and cat == "官鬼":
+            return rule(dom, "成", "中", "官鬼持世即许成名", ["Z3"])
+        if holds and cat == "子孙":
+            return rule(dom, "不成", "中", "子孙持世，功名且待时", ["Z3"])
+    if dom == "求财":
+        if holds and cat == "妻财":
+            return rule(dom, "成", "中", "妻财持世者必得", ["Z4"])
+        if kills_world and cat == "妻财":
+            return rule(dom, "成", "中", "财爻克世者必得（用克世不作凶看）", ["Z5"])
+        if holds and cat == "兄弟":
+            return rule(dom, "不成", "低", "兄弟持世者难求", ["Z4"])
+    if dom == "行人":
+        if kills_world:
+            return rule(dom, "成", "中", "用神克世者即至", ["Z5", "Z6"])
+        if world_kills:
+            return rule(dom, "不成", "中", "世克用兮人未动", ["Z6"])
+        if liuchong:
+            return rule(dom, "不成", "低", "卦逢六冲，行人无定而不返", ["Z7"])
+    return None
 
 
 def judge(result: dict) -> dict:
@@ -147,3 +229,24 @@ def judge(result: dict) -> dict:
         return cell("滞", "低", "空破待填，关键事实未定", ["F3", "F2"])
     # ── R8 默认：未决 ──
     return cell("滞", "低", "九格未覆盖，按未决处理（不冒充平吉）", ["F5"])
+
+
+def judge_with_overlay(result: dict) -> dict:
+    """九格 + 题类覆盖。base 与 overlay 都留在返回值里，便于对拍时看清是谁改的。"""
+    base = judge(result)
+    ov = overlay(result)
+    if not ov:
+        base["domain"] = domain_of(result.get("question") or "")
+        base["overlay"] = None
+        base["base_cell"] = base["cell"]
+        return base
+    out = dict(base)
+    out["base_cell"] = base["cell"]
+    out["cell"] = f"{ov['direction']}·{ov['confidence']}"
+    out["direction"] = ov["direction"]
+    out["confidence"] = ov["confidence"]
+    out["why"] = "题类覆盖：" + ov["why"]
+    out["cites"] = sorted(set(base.get("cites", [])) | set(ov["cites"]))
+    out["domain"] = ov["domain"]
+    out["overlay"] = ov
+    return out
