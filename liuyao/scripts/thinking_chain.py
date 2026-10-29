@@ -37,6 +37,7 @@ from chain_assembly import (  # noqa: E402  311 批自 narrate_core 搬回推演
     _build_reasoning_chain,
     _build_overall_summary,
     _clean_internal_keys,
+    _collect_pattern_tags,
 )
 
 def run_thinking_chain(hex_result: dict) -> dict:
@@ -148,6 +149,14 @@ def run_thinking_chain(hex_result: dict) -> dict:
     )
     chain["reasoning_chain"] = full_reasoning_chain
     chain["summary_text"] = _build_overall_summary(context)
+    # 第三百五十一批：格局标签的结构化事实。narrate 不再从 reasoning_chain 的
+    # `[格局] A|B` 串里正则反解（CONTRACT §六-7 的第一半）；旧输入仍保留正则回落。
+    chain["pattern_tags"] = _collect_pattern_tags(
+        context,
+        context["_step3_data"],
+        context["_step4_data"],
+        context["_step5_data"],
+    )
 
     # 清理内部引用键（不对外暴露）
     chain = _clean_internal_keys(chain)

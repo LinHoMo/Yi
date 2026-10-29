@@ -5,6 +5,26 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-10-29 第三百五十一批（六爻）：**`pattern_tags` 结构化——narrate 不再正则反解 reasoning_chain（§六-7 第一半）**
+
+**性质**：refactor（行为保持）。零判词、零评分、零读数改动。
+
+- `thinking_chain.run_thinking_chain` 在 `thinking_chain` 里新增结构化事实
+  `pattern_tags = _collect_pattern_tags(...)`（同一批标签，`[格局]` 行仍保留给旧消费方）。
+- `narrate_core._extract_pattern_tags` 优先读 `thinking_chain.pattern_tags`，**不再**
+  从 `reasoning_chain` 的 `[格局] A|B` 串正则反解；旧 analyze JSON 无该键时保留回落。
+- `data/rules/layer_contract.json` `batch 351`：`analyze.nested` 新增 `thinking_chain`
+  8 键白名单（step1–5／reasoning_chain／summary_text／pattern_tags）；`[32]` 从此能看见
+  这一层（此前只白名单 `trigram_interpretation`/`conclusion`）。
+- `CONTRACT.md §六-7` 改为**部分还**：反解已修、白名单已就位；`analyze` 仍吐
+  `reasoning_chain` 9 条成句＋`summary_text` 354 字＋`section_advice` 4 句，叙述句迁移
+  仍开放（另批）。
+- 复验：`check_layer_contract.py --selftest` rc=0（chart 7/analyze 15、7 条禁边、0 在册欠账、
+  thinking_chain 8 键）；`golden.py verify` **6f70/405b 零漂移**；`python dev_tools/check.py`
+  全绿（351 批实跑）。
+
+分数含义：与古籍案例要点的一致性，不代表现实预测命中率（AGENTS.md §一.3）。
+
 ## 2026-10-29 第三百五十批（六爻）：**还 `engine_chart→trigram_symbolism` 禁边——卜象解读迁 analyze／CLI 输出层补键**
 
 **性质**：refactor（行为保持）。零判词、零评分、零读数改动；`known` 禁边欠账归零。

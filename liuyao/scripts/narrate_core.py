@@ -697,34 +697,51 @@ def _wenwang_quote(tag: str) -> str:
 
 
 def _extract_pattern_tags(tc: dict) -> set:
-    """从 reasoning_chain 提取标准化格局标签集合（含所有「格局-」前缀 tag）。"""
+    """提取标准化格局标签集合（含所有「格局-」前缀 tag）。
+
+    第三百五十一批：优先读 analyze 产出的结构化 `thinking_chain.pattern_tags`
+    （CONTRACT §六-7 第一半）；只有旧输入没有该键时才回落正则解析
+    `reasoning_chain` 的 `[格局] A|B` 串（兼容历史 analyze JSON）。
+    """
     tags: set = set()
-    chain = tc.get("reasoning_chain") or []
-    for entry in chain:
-        s = str(entry)
-        if "[格局]" in s:
-            try:
-                body = s.split("]", 1)[1].strip()
-                for token in body.split("|"):
-                    t = token.strip()
-                    if not t:
-                        continue
-                    tags.add(t)
-                    if t.startswith("格局-"):
-                        tags.add(t[3:])
-                    else:
-                        tags.add("格局-" + t)
-            except Exception:
+    structured = tc.get("pattern_tags")
+    if structured:
+        for token in structured:
+            t = str(token).strip()
+            if not t:
                 continue
-        elif "[格局要点]" in s:
-            try:
-                body = s.split("]", 1)[1].strip()
-                for token in body.split("|"):
-                    t = token.strip()
-                    if t:
+            tags.add(t)
+            if t.startswith("格局-"):
+                tags.add(t[3:])
+            else:
+                tags.add("格局-" + t)
+    else:
+        chain = tc.get("reasoning_chain") or []
+        for entry in chain:
+            s = str(entry)
+            if "[格局]" in s:
+                try:
+                    body = s.split("]", 1)[1].strip()
+                    for token in body.split("|"):
+                        t = token.strip()
+                        if not t:
+                            continue
                         tags.add(t)
-            except Exception:
-                continue
+                        if t.startswith("格局-"):
+                            tags.add(t[3:])
+                        else:
+                            tags.add("格局-" + t)
+                except Exception:
+                    continue
+            elif "[格局要点]" in s:
+                try:
+                    body = s.split("]", 1)[1].strip()
+                    for token in body.split("|"):
+                        t = token.strip()
+                        if t:
+                            tags.add(t)
+                except Exception:
+                    continue
     sp = (tc.get("step5_synthesis") or {}).get("special_pattern") or {}
     if isinstance(sp, dict) and sp.get("pattern"):
         tags.add(str(sp["pattern"]))

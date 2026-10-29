@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "_comment": "四段契约的机器判据（唯一真值源）。'why' 字段是给下一次改契约的人看的：写不清为什么这个键属于这一段，就不要加。改本文件必须同批改 CONTRACT.md §四 与 docs/CHANGELOG.md（320 批：conclusion 增 judgment 判定块，optional——judgment_enabled=False 时该键缺省；349 批：engine.py→render 禁边已还，CLI 输出迁 output.py），并跑 dev_tools/check_layer_contract.py --selftest。 350 批：chart 段 trigram_interpretation 迁 analyze（§六-1 关闭），engine_chart→trigram_symbolism 禁边同步删除。",
+  "_comment": "四段契约的机器判据（唯一真值源）。'why' 字段是给下一次改契约的人看的：写不清为什么这个键属于这一段，就不要加。改本文件必须同批改 CONTRACT.md §四 与 docs/CHANGELOG.md（320 批：conclusion 增 judgment 判定块，optional——judgment_enabled=False 时该键缺省；349 批：engine.py→render 禁边已还，CLI 输出迁 output.py），并跑 dev_tools/check_layer_contract.py --selftest。 350 批：chart 段 trigram_interpretation 迁 analyze（§六-1 关闭），engine_chart→trigram_symbolism 禁边同步删除。 351 批：thinking_chain 增结构化 pattern_tags（narrate 不再正则反解 reasoning_chain）。",
   "contract": "CONTRACT.md",
-  "batch": 350,
+  "batch": 351,
   "fixtures": [
     {
       "name": "manual动",
@@ -160,6 +160,18 @@
             "outer_weather",
             "overview",
             "symbol_meaning"
+          ]
+        },
+        "thinking_chain": {
+          "allowed": [
+            "step1_situational_reading",
+            "step2_use_god_identification",
+            "step3_strength_analysis",
+            "step4_change_analysis",
+            "step5_synthesis",
+            "reasoning_chain",
+            "summary_text",
+            "pattern_tags"
           ]
         }
       }
