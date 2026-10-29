@@ -894,7 +894,9 @@ def main() -> int:
                ("test_sentinel", "[34] 考卷哨兵（只给红绿：跌破封存阈值即红；要分数须 --open 并预注册）",
                 "dev_tools/check_test_sentinel.py"),
                ("kernel_sync", "[35] 内核同源（kernel/ 唯一真源；两科 core 是产物，手改/野文件即红）",
-                "../kernel/sync_kernel.py")):
+                "../kernel/sync_kernel.py"),
+               ("docs_index", "[36] 文档索引完整性（DOCS.md 每份文档都要登记且可达；地图烂掉即红）",
+                "dev_tools/check_docs_index.py")):
         if want(key):
             print(f"\n{title}")
             rc, out = run([sys.executable, script, "--selftest"])
