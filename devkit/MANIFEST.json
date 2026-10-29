@@ -1,0 +1,19 @@
+{
+  "schema": "yi-devkit-manifest/1",
+  "batch": 331,
+  "source": "devkit",
+  "_comment": "门禁内核的单一真源。shared/ 下的文件由 sync_devkit.py 分发到两科 dev_tools/（产物，手改即被 [37] 判红）；root/ 下的根级门只在本目录运行，不分发。gate_ids 记录共享门的稳定编号（A1-3 按实际归并结果填，不预填猜测值）。",
+  "files": {
+    "shared": [],
+    "root": [
+      "check_root_docs.py",
+      "check_docs_index.py",
+      "check_batch_num.py"
+    ]
+  },
+  "gate_ids": {},
+  "targets": {
+    "liuyao": "liuyao/dev_tools",
+    "bazi": "bazi/dev_tools"
+  }
+}

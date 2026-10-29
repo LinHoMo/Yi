@@ -35,6 +35,9 @@ check_baseline.json
 .vscode/
 .worktrees/
 
+# 并发 Agent 的交接报告（不入库；模板见 DISPATCH.md §五）
+devkit/handoff/
+
 # 会话级工作记忆（agent 本地日志，不入库）
 .workbuddy/memory/
 
