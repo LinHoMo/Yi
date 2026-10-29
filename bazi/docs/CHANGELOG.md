@@ -5,6 +5,16 @@
 > 按批号/关键词检索见 [`CHANGELOG-HISTORY-INDEX.md`](CHANGELOG-HISTORY-INDEX.md)。
 > 口径同 AGENTS.md §六：归档只搬不改写正文，唯一例外是路径修正——链接要活。
 
+## 2026-10-29 第三百四十一批（全仓文档收口·续）：**已关闭/已完成内容从活文档删除**
+
+- `docs/EVAL-PLAN.md` §五：删除已完成步 1–5、7，只留未闭合的步 6（关闭登记在本卷 CHANGELOG）；
+  节名改为「剩余落地项」。
+- `CONTRACT.md` §六 删除已关闭原 4/5/6；`CAPABILITY.md` 删除已更正虚构欠账；
+  `GOVERNANCE.md` 删除已结案案例清单；`AGENTS.md` 删一条措辞沿革；`dsh-plugin/README.md`
+  删已修踩坑表。
+- 复验：`check_root_docs` rc=0、`check_docs_index` rc=0（54 份）、`dev_tools/check.py` rc=0、
+  `plugins/selftest.mjs` 全绿。
+
 ## 2026-10-29 第三百四十批（全仓文档收口）：**删除已执行的派发件＋把总方案压成完成记录**
 
 **性质**：docs。零代码、零门禁判据改动。

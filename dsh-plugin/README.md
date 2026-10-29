@@ -231,27 +231,14 @@ Agent preset 声明合法性（含负例）/ 安装脚本幂等与 YAML 安全�
   `ctx.systemPrompt.section()`、`@deepseek-ai/dsh-agent-preset`、
   `@deepseek-ai/dsh-skill-filesystem` 的 `bundledSkillDir`——均为官方登记的公开扩展点。
 
-## 开发时踩到的坑（全部已修，留档给后来者）
+## 开发流程硬性要求（历史踩坑清单已删，逐条见 CHANGELOG）
 
-| # | 坑 | 后果 | 为什么本地测试看不见 |
-|---|---|---|---|
-| 1 | `systemPrompt` / `skills` 没写进 `inject` | 整条插件不激活 | 假 `ctx` 测试全过；真机只打一行 warning 就继续启动 |
-| 2 | `section()` 漏了 `order` | 同上 | 同上；官方只说「外部贡献可用任何有限 order」，没说漏了会失败 |
-| 3 | 子进程未设 `PYTHONDONTWRITEBYTECODE` | 每次运行长出 ≈1.2MB `__pycache__`；只读安装位上会写失败 | 自检只看「能不能跑通」，不看跑完目录脏没脏 |
-| 4 | 补丁层写成裸 `- id:` 而非 `- insert:` | 宿主报 `entry "xxx" not found`，插件不加载 | 必须真的 `--dump-config` 才看见 |
-| 5 | 安装脚本把条目追加到空 flow `[]` 之后 | YAML 非法，**整个 profile 起不来** | 单元测试不解析 YAML |
-| 6 | 幂等判定只匹配行首 `- id:` | 重复安装插入第二份 | 需要「连跑两次比对 md5」才暴露 |
-| 7 | 技能的 `invocation` 写成字符串 `'model'` | **整轮会话 error 退出**，模型一个字都答不了 | 加载无 warning；只有真跑模型才触发 |
-| 8 | 技能条目缺 `rank` | 同上（`invalid rank`） | 同上 |
-| 9 | fallback 注册路径漏了 `output.render` | 工具能执行但**模型看不到正文** | 需要真的执行回调并检查 render 产出 |
+历史踩坑（`inject` 缺声明、`section()` 缺 `order`、`invocation` 写成字符串、`rank` 缺失、
+`output.render` 漏接等）均已修复，逐条登记在 `CHANGELOG.md`，不再占用 README。
 
-第 7–9 条是**同一轮真机验证**里连锁暴露的：把 `dsh` 当完整运行时真跑一次模型，
-才从 `turn_end.reason` 里看到 `non-object invocation policy` → 修完又是
-`invalid rank` → 修完才发现 render 缺失。前六轮验证全部绿，一条都没碰到。
-
-共同点：**它们全都在"看起来装好了"与"真的装好了"之间**。所以本项目的开发流程硬性要求是
-「改代码 → 装进临时 profile → 启动看有没有 warning → **真跑一次模型/执行一次工具回调** → 再跑自检」。
-只跑单元测试、或只看启动日志，都不够。
+留下的硬性流程只有一条：**改代码 → 装进临时 profile → 启动看有没有 warning →
+真跑一次模型/执行一次工具回调 → 再跑自检**。只跑单元测试、或只看启动日志，都不够——
+这些坑的共同点就是"看起来装好了"与"真的装好了"之间的差距。
 
 ## 权限与安全（DSH STORE 契约）
 

@@ -119,27 +119,19 @@ core/yishu_core   ←（唯一允许方向）—  scripts/*
 | 1 | §一 chart 不许下判断 | `trigram_interpretation` 里 `overview` / `body_use` / `outer_personality` / `inner_personality` / `element_relation` 是成句评价（如「体生用有所付出，待时收功」） | 迁到 analyze 段产出；会动 golden 双指纹，单独一批做，不在 310 批夹带 |
 | 2 | §一 analyze 不许写文章 | `analyze.py` docstring 自称「纯机械断卦，无解读成分」，与实测 `verdict="大吉"` + 4 条建议不符 | 310 批改文档（不改行为）：改为「结构推演 + 定性结论」 |
 | 3 | §三 禁边表 | **2 条现存禁边**（`engine_chart→trigram_symbolism`、`engine.py→render`）；312 批还清 3 条（`thinking_chain`/`step5`/`step1..4 → narrate_core`），条目由 `known:true` 转为 `known:false` 零容忍 | 剩余 2 条按 §四 单批还；禁边只准减 |
-| 4 | §四 白名单 | ~~八字侧 JSON 未建~~ **第三百一十批同批建成**（chart 9／analyze 26／conclusion 27），门 `[28]` 已挂进八字 `check.py` | 已关闭 |
-| 5 | §一 render 不许当第二个 narrate | `engine_format.py` 仍有一套 `format_reading_output` 字段报表（narrate 注释称"已弃用"，但 `engine.py --text` 仍挂） | 已关闭（第三百一十一批审计：消费者在册 4 处——`engine.py --text`、`dev_tools/refactor_guard.py` 对拍基准、`narrate.py` 防御层、`SKILL.md` 合同文本——下线条件不成立，裁定维持，非下线） |
-| 6 | §三 `narrative_utils` 混装 | **312 批已关闭**：拆成 `scripts/util.py`（纯工具）／`scripts/chain_verdicts.py`（断语装载）／`scripts/chain_assembly.py`（装配，属 analyze 段），`narrative_utils` 与 `narrative_rules` 两模块撤编；禁边表对应条目随之转零容忍 | 已关闭 |
 | 7 | §一.2 analyze 不许写文章 | **312 批体检新登记**：`analyze` 实测输出 `thinking_chain.reasoning_chain` 9 条成句（85–759 字）＋`summary_text` 354 字＋`section_advice` 4 句；`[32]` 只白名单两层子键（`trigram_interpretation`/`conclusion`），看不出这一层。且 `narrate_core` 反向从 `reasoning_chain` 的 `[格局] A|B` 串里正则反解标签（§一.3 的隐性违反） | 随 A3 分层批做：叙述句改由 fact 渲染，`reasoning_chain` 降为内部键或迁 narrate；届时把该键加入 `[32]` 的嵌套白名单判据。书证与优先级草案见 `liuyao/docs/JUDGMENT-TABLE.md`（313 批） |
+
+> **已关闭项（原 4/5/6）从本表删除**（340/341 批文档收口）：原 4＝八字侧键白名单
+> （310 批建成）、原 5＝render 不当第二个 narrate（311 批审计裁定维持非下线）、
+> 原 6＝`narrative_utils` 混装（312 批拆模块关闭）。关闭登记仍在各科 CHANGELOG，
+> 本表只列**尚未满足**的条款；编号保留原号，避免外部引用失指。
 
 **八字侧契约欠账审计（第三百三十六批 A2-B，逐条问过）**
 
-| §六 条款 | 八字侧实测 | 结论 |
-|---|---|---|
-| 1 chart 不许下判断 | `chart()` 顶层 9 键无成句评价；递归扫输出字符串 >40 字命中 0 | 0 条 |
-| 2 analyze 不许写文章 | `analyze()` 顶层无 >80 字字符串；39 处 >40 字全部是 `basis` 书证/判据说明（最长 123 字），不构成成段正文 | 0 条 |
-| 3 禁边表 | `bazi/data/rules/layer_contract.json` 4 条零容忍禁边，`[28]` 实跑全绿 | 0 条 |
-| 4 键白名单 | chart 9／analyze 26／conclusion 27，`[28]` 实跑全绿 | 已关闭（310 批） |
-| 5 render 不许当第二个 narrate | `render()` = `narrate(a)` ＋机械因子表，无新增断语字面量 | 0 条 |
-| 6 模块混装 | 八字无 `narrative_utils`/`narrative_rules` 形态；`scripts/bazi_factors/` 是 analyze 段内实现 | 0 条 |
-| 7 reasoning_chain 成句 | 八字无 `thinking_chain.reasoning_chain` 键 | N/A（无对应物） |
-
-**结论：八字侧新增欠账 0 条**——这不是"八字干净"的奖状，而是**已按同一套判据问过**的读数。
-六爻侧 7 条里在八字侧没有对应物的两项（1 的 `trigram_interpretation`、7 的 `reasoning_chain`）
-如实标 N/A，不冒充"通过"；三件套同步见第 336 批 `liuyao/docs/CHANGELOG.md` 与
-`bazi/docs/CHANGELOG.md`。
+结论：**八字侧新增欠账 0 条**——这不是"八字干净"的奖状，而是已按同一套判据问过的读数。
+开放项 1／2／3／7 在八字侧实测均 0 条；无对应物的 1（`trigram_interpretation`）与
+7（`reasoning_chain`）如实标 N/A，不冒充"通过"；已关闭的原 4/5/6 不再重列。
+逐条实测与三件套登记见 336 批 `liuyao/docs/CHANGELOG.md` 与 `bazi/docs/CHANGELOG.md`。
 
 ## §七 变更规程
 
