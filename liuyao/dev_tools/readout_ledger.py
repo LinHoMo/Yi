@@ -124,8 +124,8 @@ def checks():
     # 金标准基线已随结构演进前移（193 批应期窗口键、276 批报告措辞等）；
     # `golden.py verify` 当前输出「与基线指纹一致（机械+措辞均未漂移）」，
     # 说明**盘与金标准一致**，是账台登记值过期，不是回归（308 批定性）。
-    add("liuyao.golden(af96/405b)", "193批→308批改期望；320 批纳入 judgment 判定块；321／322 批判定器 v3／v4 内容变化再重基线（机械指纹变、措辞始终未变）", lambda t: _golden("liuyao"),
-        ("af965c95a95e3776", "405bc8e03a6a99e0"))
+    add("liuyao.golden(fe95/405b)", "193批→308批改期望；320 批纳入 judgment 判定块；321–323 批判定器 v3–v5 内容变化再重基线（机械指纹变、措辞始终未变）", lambda t: _golden("liuyao"),
+        ("fe956051ba5828b1", "405bc8e03a6a99e0"))
     add("bazi.golden(fda7/3512)", "176批前→308批改期望", lambda t: _golden("bazi"),
         ("fda7482656967518", "3512deff79fa1f72"))
     add("governance(61/37, blk 27/26)", "194批（312 补 310；315 补 314/315 两门；317 补 judge_shadow（ondemand）→ 六爻 60→61）", lambda t: _gov_counts(), ("61", "37", "27", "26"))

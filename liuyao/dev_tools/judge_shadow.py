@@ -64,6 +64,7 @@ def main() -> int:
         by_id = {c["id"]: c for c in case_runner.load_cases()}
         agree = n = 0
         ov_hit = 0
+        skipped = 0
         cur_hit = judge_hit = exp_n = 0
         conf = Counter()
         diffs = []
@@ -87,10 +88,12 @@ def main() -> int:
                 agree += 1
             else:
                 diffs.append((cid, row.get("verdict"), j["cell"], j["why"]))
-            if exp:
+            if exp and j.get("direction") is not None:
                 exp_n += 1
                 cur_hit += int(cur == exp)
                 judge_hit += int(j["direction"] == exp)
+            elif exp:
+                skipped += 1
 
         if args.diff:
             print(f"\n═ {split}：{len(diffs)} 例分歧 ═")
@@ -105,6 +108,8 @@ def main() -> int:
         if exp_n:
             print(f"  与书载方向同向：现行 {cur_hit}/{exp_n} = {cur_hit * 100 / exp_n:.1f}%"
                   f" ｜ 判定器 {judge_hit}/{exp_n} = {judge_hit * 100 / exp_n:.1f}%")
+        if skipped:
+            print(f"  轴不适用（时间/价势题，不参与吉凶轴）：{skipped} 例（现行与判定器同口径排除）")
         print("  迁移矩阵（行=现行，列=判定器）：")
         print("        " + "".join(f"{d:>8s}" for d in DIRS))
         for a in DIRS:

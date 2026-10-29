@@ -44,9 +44,28 @@ DOMAIN_KW = {
     "求财": ("财", "利", "生意", "买卖", "开张", "索债", "借贷", "价"),
     "行人": ("行人", "归", "回", "来否", "何日到", "在外"),
     "合伙": ("合伙", "合伙做", "合作", "合资"),
-    "讼事": ("词讼", "官司", "诉讼", "争讼", "打官司", "讼"),
+    # 323 批修：裸「讼」会命中卦名（巽之讼／天水讼），把行人/失物题误判成讼事题；
+    # 只留确实指打官司的词。
+    "讼事": ("词讼", "官司", "诉讼", "争讼", "打官司", "官非"),
     "婚姻": ("婚姻", "嫁娶", "娶妻", "嫁女", "配偶", "夫妻", "婚"),
+    "失物": ("失银", "失物", "失脱", "失落", "遗失", "寻物", "丢东西"),
 }
+
+# 323 批：两个"轴不适用"判据（依据已签的 JT-D「时间题另表」＋ verdict_map 里
+# 「下跌」那条的注「义为价跌不是事败，不得直接映射」）
+TIME_KEYS = ("何日", "何时", "几时", "哪天", "何年月日", "几日", "何月")
+
+# 题类默认口径（题类在场而本类规则未命中时用）：每条都有书证
+DOMAIN_DEFAULT = {
+    "功名": {"why": "功名只以官鬼持世为成，余者且待时", "cites": ["Z3"]},
+    "求财": {"why": "求财以妻财持世为必得，余者未可定", "cites": ["Z4"]},
+    "疾病": {"why": "不逢六冲不遇旬空，旺不旺而衰不衰，不可断", "cites": ["Z1", "Z2"]},
+    "行人": {"why": "行人以用神克世为至，世克用为未动", "cites": ["Z6"]},
+    "讼事": {"why": "官鬼持世忧疑难解，余者未可定", "cites": ["Z17"]},
+    "合伙": {"why": "世应临兄不吉，余者未可定", "cites": ["Z14"]},
+    "婚姻": {"why": "诸合皆以用神旺者为吉，余者未可定", "cites": ["Z16"]},
+}
+PRICE_KEYS = ("价", "贵贱", "涨跌", "市价", "大例", "行情")
 KE = {"木": "土", "土": "水", "水": "火", "火": "金", "金": "木"}  # 克
 SHENG = {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}  # 生
 
@@ -193,10 +212,10 @@ def overlay(result: dict) -> dict | None:
                 "why": why, "cites": cites}
 
     if dom == "疾病":
-        if any(k in q for k in ("近病", "新病", "乍病")) and (liuchong or void):
-            return rule("OV-D1", dom, "成", "中", "近病逢冲逢空，不药而愈", ["Z1", "Z2"])
         if any(k in q for k in ("久病", "沉疴", "久疾")) and (liuchong or void):
             return rule("OV-D2", dom, "不成", "中", "久病逢冲逢空，妙药难调", ["Z1", "Z2"])
+        if (liuchong or void) and any(k in q for k in ("近病", "新病", "乍病", "病")):
+            return rule("OV-D1", dom, "成", "中", "近病逢冲逢空，不药而愈", ["Z1", "Z2"])
     if dom == "功名":
         if holds and cat == "官鬼":
             return rule("OV-G1", dom, "成", "中", "官鬼持世即许成名", ["Z3"])
@@ -228,6 +247,9 @@ def overlay(result: dict) -> dict | None:
             return rule("OV-X2", dom, "不成", "中", "世克用兮人未动", ["Z6"])
         if liuchong:
             return rule("OV-X3", dom, "不成", "低", "卦逢六冲，行人无定而不返", ["Z7"])
+    # 323 批**试过"题类接管"并已回退**：题类在场而本类规则未命中时改判"待时/未决"，
+    # 实测 tune 42.9→28.6、wiki·dev 75.0→66.7 —— **书的总纲与分类占法是叠加关系，不是替代关系**。
+    # 结论：分类规则命中就接管，没命中就仍走九格（DOMAIN_DEFAULT 已废，保留在此作反面记录）。
     return None
 
 
@@ -312,8 +334,39 @@ def judge(result: dict) -> dict:
     return cell("滞", "低", "九格未覆盖，按未决处理（不冒充平吉）", ["F5"])
 
 
+def axis_of(result: dict) -> tuple[str, str]:
+    """判断这道题属不属于"吉凶轴"。
+
+    返回 (axis, 理由)：``吉凶`` 正常入九格；``时间`` / ``价势`` 两类**不参与吉凶方向**
+    ——时间题问的是"何时"（已签 JT-D：判定表只管吉凶题，时间题另表），
+    价势题问的是"价涨还是价跌"（verdict_map 注：下跌义为价跌不是事败，不得直接映射）。
+    """
+    q = str(result.get("question") or "")
+    dom = domain_of(q)
+    if dom == "求财" and any(k in q for k in PRICE_KEYS):
+        return "价势", "题问价势（涨落），方向轴是价不是事成败"
+    if any(k in q for k in TIME_KEYS):
+        return "时间", "题问时间（何日/何时），吉凶轴不判"
+    return "吉凶", ""
+
+
 def judge_with_overlay(result: dict) -> dict:
     """九格 + 题类覆盖。base 与 overlay 都留在返回值里，便于对拍时看清是谁改的。"""
+    axis, why_axis = axis_of(result)
+    if axis != "吉凶":
+        base = judge(result)
+        out = dict(base)
+        out["base_cell"] = base["cell"]
+        out["cell"] = f"不适用·{axis}"
+        out["direction"] = None
+        out["confidence"] = None
+        out["axis"] = axis
+        out["why"] = why_axis
+        out["support"] = []
+        out["dissent"] = []
+        out["overlay"] = None
+        out["domain"] = domain_of(result.get("question") or "")
+        return out
     base = judge(result)
     ov = overlay(result)
     if not ov:
@@ -330,4 +383,5 @@ def judge_with_overlay(result: dict) -> dict:
     out["cites"] = sorted(set(base.get("cites", [])) | set(ov["cites"]))
     out["domain"] = ov["domain"]
     out["overlay"] = ov
+    out["axis"] = "吉凶"
     return out

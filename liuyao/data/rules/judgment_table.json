@@ -1,7 +1,7 @@
 {
   "schema": "yi-judgment-table/1",
   "discipline": "liuyao",
-  "batch": 322,
+  "batch": 323,
   "status": "accepted",
   "sealed": null,
   "_comment": "A3 判定表的机器判据（唯一真值源）。本文件只声明，不接引擎：改成 accepted 并接进 step5 前，必须先由人签 adjudications 四条。改本文件须同批改 docs/JUDGMENT-TABLE.md 与 docs/CHANGELOG.md。",
@@ -938,48 +938,58 @@
     "module": "scripts/judge.py",
     "mode": "shadow（已接线为 conclusion.judgment，verdict 未动）",
     "wired_into_step5": false,
-    "version": "v4（九格 + 题类覆盖 13 条 + 原神/忌神二级事实 + 世应层）",
+    "version": "v5（九格 + 题类覆盖 13 条 + 原神/忌神二级事实 + 世应层 + 轴分流）",
     "shadow_dev": {
       "tune": {
-        "judge": 45.0,
-        "current": 80.0,
-        "n_expected": 20
+        "judge": 42.9,
+        "current": 78.6,
+        "n_expected": 14,
+        "axis_excluded": 6
       },
       "holdout": {
-        "judge": 41.7,
-        "current": 58.3,
-        "n_expected": 12
+        "judge": 45.5,
+        "current": 54.5,
+        "n_expected": 11,
+        "axis_excluded": 1
       },
       "wikisource_dev": {
         "judge": 75.0,
-        "current": 56.2,
-        "n_expected": 16
+        "current": 58.3,
+        "n_expected": 12,
+        "axis_excluded": 4
       },
       "zengshan_dz_dev": {
-        "judge": 75.0,
-        "current": 37.5,
-        "n_expected": 8
+        "judge": 83.3,
+        "current": 33.3,
+        "n_expected": 6,
+        "axis_excluded": 2
       }
     },
-    "delta": "v3→v4：dz·dev 62.5→75.0（超现行 37.5pt）；wiki·dev 75.0 持平；tune 45.0 持平；holdout 41.7 持平",
+    "delta": "v4→v5：轴分流＋题类关键词修正（裸「讼」曾命中卦名「巽之讼」）＋疾病六冲条；外部 dev 两半边 75.0／83.3（现行 58.3／33.3）",
     "v3_changes": [
       "修 bug：忌神无力 曾写成列表（真值判断失效，恒为真）",
       "有气口径改回书证：旺相为有气（中和/偏旺/偏弱皆非有气）",
       "新增世应层：用神生世/持世（Z12 生世者反得其济）＋反面条款（Z13 忌旺用衰）"
     ],
     "acceptance_criterion": "外部 dev 半边 ≥ 现行引擎（达标：wiki +18.8pt、dz +25.0pt）；内部 tune/holdout 作回归护栏",
-    "verdict": "外部两个 dev 半边 75.0% vs 现行 56.2／37.5（+18.8／+37.5pt）；内部两集仍落后（引擎在其上调参）",
+    "verdict": "外部两个 dev 半边 75.0／83.3 vs 现行 58.3／33.3；内部 tune 42.9 vs 78.6、holdout 45.5 vs 54.5 仍落后——差距归因：①分流错误（已修）②九格缺事实（如「用神无气但事成」的第三层）③书载判断超出九格可表达范围（如 ZS002 近病逢空书判凶，与近病逢空条 冲突）④内部集是现行引擎的调参集，引擎天然占优",
     "not_wired_reason": "judge 已接线为 conclusion.judgment（可关），但**尚未取代 verdict**；取代须另批走 §四",
     "v4_changes": [
       "覆盖层扩到 13 条：新增合伙（Z14）、讼事（Z17）、婚姻（Z16）三类",
       "Z15 为书证例外（官鬼持世而日月动爻冲克世者反为吉），已登记 exception_not_implemented，未实现"
+    ],
+    "v5_changes": [
+      "轴分流：时间题与价势题不参与吉凶方向比较（依据 JT-D 与 verdict_map 的「下跌」注）",
+      "题类关键词修正：去掉裸「讼」（会命中卦名 巽之讼），新增「失物」类",
+      "疾病覆盖补一条：卦六冲/用神真空且非久病 → 近病愈（Z1/Z2）",
+      "**已回退的试验**：题类接管（题类在场而本类规则未命中即判「待时/未决」）实测 tune 42.9→28.6、wiki·dev 75.0→66.7 —— 书的总纲与分类占法是叠加关系，不是替代关系，故回退"
     ]
   },
   "overlays": [
     {
       "id": "OV-D1",
       "domain": "疾病",
-      "when": "近病 ∧ (六冲卦 ∨ 真空)",
+      "when": "（近病|新病|乍病|病） ∧ (六冲卦 ∨ 用神真空)",
       "emit": {
         "direction": "成",
         "confidence": "中"
@@ -988,12 +998,13 @@
         "Z1",
         "Z2"
       ],
-      "book_verified": true
+      "book_verified": true,
+      "why": "近病逢冲逢空，不药而愈"
     },
     {
       "id": "OV-D2",
       "domain": "疾病",
-      "when": "久病 ∧ (六冲卦 ∨ 真空)",
+      "when": "（久病|沉疴|久疾） ∧ (六冲卦 ∨ 用神真空)",
       "emit": {
         "direction": "不成",
         "confidence": "中"
@@ -1154,5 +1165,6 @@
       ]
     }
   ],
-  "overlay_policy": "题类覆盖层：只允许改方向或降置信，条件与产出都必须带书证（book_verified=true）。覆盖层不替代九格，只在题类明确时接管。"
+  "overlay_policy": "题类覆盖层：只允许改方向或降置信，条件与产出都必须带书证（book_verified=true）。覆盖层不替代九格，只在题类明确时接管。",
+  "axes_note": "323 批：方向轴只管吉凶。**时间题**（问「何日/何时」）与**价势题**（问价涨落）不参与吉凶方向比较——依据已签 JT-D（时间题另表）与 verdict_map 里「下跌」那条的注（义为价跌不是事败，不得直接映射）。两引擎在同一口径下比较，排除例数随题面而定。"
 }

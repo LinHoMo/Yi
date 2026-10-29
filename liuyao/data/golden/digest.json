@@ -3,15 +3,9 @@
     "what": "金标准指纹基线（排盘+思维链+分析层逐字段；抽样含 narrate 文案哈希）",
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
-  "digest": "af965c95a95e3776",
+  "digest": "fe956051ba5828b1",
   "narrate_digest": "405bc8e03a6a99e0",
   "drift_log": [
-    {
-      "from": "b3177460d0fd6396",
-      "to": "b7162bfc99e2cce8",
-      "date": "2026-10-21",
-      "reason": "第一百九十三批：结论层纳入机械指纹（补192批登记盲区，coverage-only 重基线——concl_keys/concl_sha 两字段新增所致，行为零改动；措辞指纹 d4ec75b0e159adbb 不变可自证）"
-    },
     {
       "from": "b7162bfc99e2cce8",
       "to": "aaa31c32f2800e5b",
@@ -125,6 +119,12 @@
       "to": "af965c95a95e3776",
       "date": "2026-10-29",
       "reason": "第三百二十二批：覆盖层扩到 13 条（合伙／讼事／婚姻三类；例外 Z15 登记未实现）→ 判定块内容变化致 concl_sha 漂移；verdict 未动（tune 97.9／holdout 90.2 未变）、措辞指纹未变"
+    },
+    {
+      "from": "af965c95a95e3776",
+      "to": "fe956051ba5828b1",
+      "date": "2026-10-29",
+      "reason": "第三百二十三批：轴分流（时间/价势题不参与吉凶轴）＋题类关键词修正＋疾病六冲条 → 判定块内容变化致 concl_sha 漂移；verdict 未动（tune 97.9／holdout 90.2 未变）、措辞指纹未变"
     }
   ],
   "narrate_drift_log": [
