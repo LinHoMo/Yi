@@ -23,6 +23,7 @@ from engine_format import (
     format_reading_output,
     format_text_output,
 )
+from narrative_assembly import attach_narrative
 
 
 def attach_trigram(result: dict) -> dict:
@@ -60,6 +61,9 @@ def output_result(result: dict, chain, output_format: str, depth: str, args) -> 
     `render` 的 import 仍留在函数内，保持“未安装时回退 JSON”的旧行为。
     """
     result = attach_trigram(result)
+    result = attach_narrative(result)
+    if isinstance(chain, dict) and isinstance(result.get("thinking_chain"), dict):
+        chain = result["thinking_chain"]
     if output_format == "html":
         try:
             from render import render_html

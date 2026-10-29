@@ -254,7 +254,7 @@ analyze 输出的 `conclusion`（方向/应期/所本）与 `chart_summary`（�
 
 #### 3.6 [格局详释] 必须是正文的第二核心依据
 
-`thinking_chain.step5_synthesis.reasoning_chain` 中 `[格局详释]` 段已由脚本将三刑/六冲含义/六神动爻/十二长生/伏藏等合并为一行文本，是当前数据最集中的格局源。模型在写格局分析时，**必须逐条对照此段**，将其中出现的每个要素渲染为正文：
+`thinking_chain.pattern_lines` 中 `[格局详释]` 段已由脚本将三刑/六冲含义/六神动爻/十二长生/伏藏等合并为一行文本，是当前数据最集中的格局源。模型在写格局分析时，**必须逐条对照此段**，将其中出现的每个要素渲染为正文：
 
 | 格局详释要素 | 正文中必须讲什么 |
 |-------------|----------------|
@@ -284,7 +284,7 @@ analyze 输出的 `conclusion`（方向/应期/所本）与 `chart_summary`（�
 | 1 | **六神临用** | 明确指出用神临哪个六神并解释语义（如"螣蛇临用，事带惊恐/变动"），不能只给数字 | `advanced_analysis.six_spirit_analysis` / `thinking_chain.step5_synthesis.spirit_adjustment_reasons` |
 | 2 | **持世** | 明确指出世爻六亲并引古籍出处（如"兄弟持世——男占婚不利…（《火珠林·婚姻章》）"） | `advanced_analysis.shi_yao_relation`（`scenario_interpretation` + `poem`） |
 | 3 | **卦身** | 指出卦身所在爻位与六亲（如"卦身在初爻（妻财）"） | `advanced_analysis.hexagram_body` |
-| 4 | **格局详释** | 对推理链 `[格局详释]` 段逐条渲染（三刑/六冲/三合/暗动/月破/进退神），不能一笔带过 | `thinking_chain.step5_synthesis.reasoning_chain` 的 `[格局详释]` 段 |
+| 4 | **格局详释** | 对推理链 `[格局详释]` 段逐条渲染（三刑/六冲/三合/暗动/月破/进退神），不能一笔带过 | `thinking_chain.pattern_lines` 的 `[格局详释]` 段 |
 | 5 | **公历应期** | 应期必须给公历日期＋推出法则（如"2026-09-24 丑日——逢值"），不能只罗列地支 | `thinking_chain.step5_synthesis.yingqi_dates.dates[]` 或 `conclusion.应期明细` |
 | 6 | **边界克制** | 凶象用"偏向／有…信号／结构上"，不说"注定"；含"象征推演与方向参考"声明与专业意见提示 | narrate 输出的【象判边界】段 |
 

@@ -34,9 +34,8 @@ from analysis_steps import (
 from chain_assembly import (  # noqa: E402  311 批自 narrate_core 搬回推演段（CONTRACT §三 禁边还账）
     analyze_shi_yao_relation,
     find_classical_quotes,
-    _build_reasoning_chain,
-    _build_overall_summary,
     _clean_internal_keys,
+    _collect_pattern_details,
     _collect_pattern_tags,
 )
 
@@ -60,7 +59,8 @@ def run_thinking_chain(hex_result: dict) -> dict:
         - step3_strength_analysis
         - step4_change_analysis
         - step5_synthesis
-        以及 summary_text（总摘要）和 reasoning_chain（推理链）。
+        以及 pattern_tags / pattern_lines（结构化格局事实；reasoning_chain/summary_text
+        由 narrate 用 narrative_assembly 重建，不再由 analyze 产出）。
     """
     # 创建内部引用字典，使各步骤可以互相引用
     context = dict(hex_result)  # 浅拷贝
@@ -139,24 +139,23 @@ def run_thinking_chain(hex_result: dict) -> dict:
     }
 
     # 构建总摘要（使用完整五步数据重新生成推理链，包含卦身等辅助分析）
-    full_reasoning_chain = _build_reasoning_chain(
-        context["_step1_data"],
-        context["_step2_data"],
-        context["_step3_data"],
-        context["_step4_data"],
-        context["_step5_data"],
-        context=context,
-    )
-    chain["reasoning_chain"] = full_reasoning_chain
-    chain["summary_text"] = _build_overall_summary(context)
-    # 第三百五十一批：格局标签的结构化事实。narrate 不再从 reasoning_chain 的
-    # `[格局] A|B` 串里正则反解（CONTRACT §六-7 的第一半）；旧输入仍保留正则回落。
-    chain["pattern_tags"] = _collect_pattern_tags(
+    # 第三百五十五批：reasoning_chain/summary_text 是**叙述**，不再由 analyze 生成；
+    # analyze 只保留结构化 pattern_tags/pattern_lines，narrate 用 narrative_assembly 重建。
+    tags = _collect_pattern_tags(
         context,
         context["_step3_data"],
         context["_step4_data"],
         context["_step5_data"],
     )
+    details = _collect_pattern_details(context)
+    chain["pattern_tags"] = tags
+    pattern_lines = []
+    if tags:
+        pattern_lines.append("[格局] " + " | ".join(tags))
+        pattern_lines.append("[格局要点] " + "、".join(t.replace("格局-", "") for t in tags))
+    if details:
+        pattern_lines.append("[格局详释] " + " | ".join(details))
+    chain["pattern_lines"] = pattern_lines
 
     # 清理内部引用键（不对外暴露）
     chain = _clean_internal_keys(chain)

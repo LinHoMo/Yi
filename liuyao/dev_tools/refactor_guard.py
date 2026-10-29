@@ -39,6 +39,7 @@ from kernel_path import ensure_kernel_on_path  # noqa: E402
 ensure_kernel_on_path(ROOT / "scripts" / "kernel_path.py")
 
 import case_runner  # noqa: E402
+from narrative_assembly import build_reasoning_chain  # noqa: E402  355 批 fact builder
 from case_runner import build_hexagram_result, hex2yao, resolve_case_time  # noqa: E402
 from engine_format import format_reading_output, format_text_output  # noqa: E402
 from thinking_chain import run_thinking_chain  # noqa: E402
@@ -80,7 +81,7 @@ def snapshot() -> dict:
             thinking = tc.get("thinking_chain", tc)
             s5 = thinking.get("step5_synthesis") or {}
             timing = s5.get("timing") or {}
-            rc = thinking.get("reasoning_chain", []) or []
+            rc = thinking.get("reasoning_chain") or build_reasoning_chain(tc)
             human = build_human_narrative(tc)
             out[cid] = {
                 "reading": format_reading_output(h, tc),

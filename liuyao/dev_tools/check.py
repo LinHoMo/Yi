@@ -66,7 +66,7 @@ def _project_header(text: str) -> dict:
 BASELINE = {
     "calendar": 16,        # 历法自检通过项数（共 16）
     "ordering": 23,        # 爻序断言通过项数（共 23）——P0 事故看门狗
-    "smoke": 36,           # 有产出的分析段
+    "smoke": 35,           # 有产出的分析段（355 批：section_advice 迁 render，analyze 少一段；渲染面由 [2.7] 守）
     "chain_tests": 11,     # /12（2026-10-10 上抬，理由见下方归因块）
     "regression": 14,      # 例数以汇总行为准（现 19 例：第八十二批加 reg_19 全要素真例；
                             # 2026-10-10 第十四批：7 例 fixture 的日期/爻数组与自身书证

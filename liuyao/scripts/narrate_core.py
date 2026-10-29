@@ -35,6 +35,8 @@ try:
 except ImportError:
     from scripts.advice_framework import generate_advice
 
+from narrative_assembly import build_reasoning_chain, build_summary  # noqa: E402  355 批 fact builder
+
 _NARRATIVE_TEMPLATES_PATH = Path(__file__).resolve().parents[1] / "data" / "narrative_templates.json"
 
 
@@ -999,6 +1001,10 @@ def build_human_narrative(result: dict) -> dict:
         if text:
             process.append({"label": label, "text": str(text)})
 
+    # 355 批：analyze 不再产叙述链/总摘要；从同一批 step 事实重建（旧 JSON 仍优先原键）
+    rc_lines = tc.get("reasoning_chain") or build_reasoning_chain(result)
+    summary_text = tc.get("summary_text") or build_summary(result)
+
     return {
         "title": title,
         "question": question,
@@ -1029,8 +1035,8 @@ def build_human_narrative(result: dict) -> dict:
             "strength_plain": _strength_sentence(strength, use_cat, use_br, use_pos),
         },
         "special_pattern": special_pat or "",
-        "reasoning_chain": tc.get("reasoning_chain") or [],
-        "summary_text": tc.get("summary_text") or "",
+        "reasoning_chain": rc_lines,
+        "summary_text": summary_text,
         "factor_contributions": factor_contribs,
         "explain_summary": explain_summary,
     }

@@ -72,6 +72,7 @@ core/yishu_core   ←（唯一允许方向）—  scripts/*
 | `analyze → narrate?` **否** | 推演段不得为了取文案去 import 叙述层 |
 | `narrate → analyze 输出` | 只能读 JSON，不 import analyze 模块 |
 | `render → narrate` | 呈现层可以调用正文生成（现状如此） |
+| `narrate → narrative_assembly` | 355 批：叙述重建（`reasoning_chain`/`summary_text`）；只消费 analyze JSON 的 step facts，**不 import analyze.py**；`narrative_assembly` 可复用 `chain_assembly` 的事实装配器 |
 | `engine.py → output.py` | CLI 输出装配（349 批）；`output.py` 才触 `render`/`engine_format`，`engine.py` 不再直连呈现层 |
 
 **禁边表**（机器判据见 JSON `edges.forbidden`，只准减不准增）：
@@ -124,9 +125,11 @@ forbidden 条目字段。**各科 stage 键名仍以各自 JSON 的 `allowed`/`r
 
 ## §六 已知欠账（本契约尚未满足的条款）
 
-| # | 条款 | 现状 | 计划 |
-|---|---|---|---|
-| 7 | §一.2 analyze 不许写文章 | **351/354 批部分还**：`narrate_core` 已改为优先读 analyze 产出的结构化 `thinking_chain.pattern_tags`，不再从 `reasoning_chain` 的 `[格局] A|B` 串正则反解（旧输入仍保留回落）；`section_advice` 已从 analyze 迁呈现层（`render`/`output` 用 `advice_framework.ensure_section_advice` 补出）；`[32]` 已加 `thinking_chain` 嵌套白名单（8 键）。**仍开放**：`analyze` 实测吐 `reasoning_chain` 9 条成句（85–759 字）＋`summary_text` 354 字，叙述句尚未迁 narrate | 剩余成句迁移另批做：叙述句改由 fact 渲染，`reasoning_chain` 降为内部键或迁 narrate；`[32]` 白名单已就位。书证与优先级草案见 `liuyao/docs/JUDGMENT-TABLE.md`（313 批） |
+> 355 批起本表为空（0 条）。原 7（`analyze` 吐 `reasoning_chain` 9 条＋`summary_text`
+> 354 字）于 355 批关闭：叙述改由 `narrative_assembly` 在 narrate/呈现层从 step facts
+> 重建；analyze 只留 `pattern_tags`/`pattern_lines` 与 step1–5 的一句事实摘要。
+> `[32]` 的 `thinking_chain` 嵌套白名单同步为 7 键（step1–5／pattern_tags／pattern_lines）。
+> 原 1/2/3/4/5/6 关闭记录见下方已关闭项注记。
 
 > **已关闭项**：原 1（chart 段卜象解读迁 analyze）于 350 批关闭——`trigram_interpretation`
 > 由 analyze 段产出、CLI 输出层补键，golden 6f70/405b 零漂移；原 2（`analyze` docstring）
@@ -139,7 +142,7 @@ forbidden 条目字段。**各科 stage 键名仍以各自 JSON 的 `allowed`/`r
 
 结论：**八字侧新增欠账 0 条**——这不是"八字干净"的奖状，而是已按同一套判据问过的读数。
 336 批时开放项 1／2／3／7 在八字侧实测均 0 条；其中 1／2／3 已于 346/349/350 关闭，
-**7 仍是全表唯一开放项**；无对应物的 1（`trigram_interpretation`）与 7（`reasoning_chain`）
+**7 于 355 关闭**；无对应物的 1（`trigram_interpretation`）与 7（`reasoning_chain`）
 在八字侧如实标 N/A，不冒充"通过"；已关闭的原 4/5/6 不再重列。
 逐条实测与三件套登记见 336 批 `liuyao/docs/CHANGELOG.md` 与 `bazi/docs/CHANGELOG.md`。
 

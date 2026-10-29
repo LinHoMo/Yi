@@ -5,6 +5,33 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-10-29 第三百五十五批（六爻）：**`reasoning_chain`/`summary_text` 迁叙述层——CONTRACT §六 归零**
+
+**性质**：refactor（行为保持）。零判词、零评分、零读数改动；golden 双指纹零漂移。
+
+- 新增 `scripts/narrative_assembly.py`：从 analyze JSON 的 step1–5 facts 重建
+  `reasoning_chain`（9 条）与 `summary_text`（约 355 字）；只消费 analyze JSON，
+  **不 import `analyze.py`**，复用 `chain_assembly` 的事实装配器。
+- `thinking_chain.py`：删除顶层 `reasoning_chain`/`summary_text`，新增结构化
+  `pattern_lines`（`[格局]`/`[格局要点]`/`[格局详释]`，与旧推理链同位同序）；
+  `step5.py` 删除 5.10 推理链生成与 `step5_synthesis.reasoning_chain` 键。
+- `narrate_core` / `output.py` / `case_runner` / `build_portal_assets` / `refactor_guard`
+  在需要旧字段处调用 `narrative_assembly` 重建；`golden.py` 的 patterns 改读
+  `pattern_lines`（源在 `devkit/shared/variants/golden.liuyao.py`，已 sync）。
+- `layer_contract.json` `batch 355`：`thinking_chain` 嵌套白名单 8→**7 键**
+  （step1–5／pattern_tags／pattern_lines），删 `reasoning_chain`/`summary_text`；
+  `CONTRACT §六` **归零**（原 7 关闭），§三 增 `narrate → narrative_assembly` 允许行。
+- 连带口径：`[2] 段落有产出数` 基线 36→**35**（`section_advice` 354 批已迁 render，
+  analyze 少一段；渲染面由 `[2.7]` parity 守）；`judgment_table` 27 处覆写行号 **-4**
+  （step5 5.10 删除导致），`[33]` 8 类负例全过。
+- 复验：`golden.py verify` **6f70/405b 零漂移**；`check_layer_contract.py --selftest`
+  rc=0（chart 7/analyze 14、7 禁边、信封 schema 通过）；`analyze` 输出无
+  `reasoning_chain`/`summary_text`（实测 False/False）；`narrative_assembly` 重建 9 条、
+  summary 355 字；`engine --output text --depth full` 五步链正常；`case_runner` rc 9 条；
+  `python dev_tools/check.py` 全绿（355 批实跑）。
+
+分数含义：与古籍案例要点的一致性，不代表现实预测命中率（AGENTS.md §一.3）。
+
 ## 2026-10-29 第三百五十四批（六爻）：**`section_advice` 从 analyze 迁呈现层（§六-7 第二半）**
 
 **性质**：refactor（行为保持）。零判词、零评分、零读数改动。

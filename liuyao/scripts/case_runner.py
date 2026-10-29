@@ -24,6 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 for _p in (str(ROOT / "scripts"), str(kernel_dir(__file__))):
     if _p not in sys.path:
         sys.path.insert(0, _p)
+from narrative_assembly import build_reasoning_chain  # noqa: E402  355 批 fact builder
 
 from yishu_core import ganzhi_calendar as gc  # noqa: E402
 
@@ -277,7 +278,7 @@ def run_case(case: dict, full: bool = False) -> dict:
     s2 = thinking.get("step2_use_god_identification") or {}
     s3 = thinking.get("step3_strength_analysis") or {}
     s5 = thinking.get("step5_synthesis") or {}
-    rc_lines = thinking.get("reasoning_chain", []) or []
+    rc_lines = thinking.get("reasoning_chain") or build_reasoning_chain(tc)
     timing = s5.get("timing") or {}
     sel = s2.get("selected_use_god") or {}
 

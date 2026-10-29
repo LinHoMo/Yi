@@ -102,7 +102,8 @@ def fingerprint() -> list[dict]:
                         "adv_keys": sorted(adv.keys()),
                         "adv_summary": {k: json.dumps(v, ensure_ascii=False, sort_keys=True)[:220]
                                         for k, v in sorted(adv.items())},
-                        "patterns": [t2 for t2 in (inner.get("reasoning_chain") or [])
+                        "patterns": [t2 for t2 in (inner.get("pattern_lines")
+                                                     or inner.get("reasoning_chain") or [])
                                      if isinstance(t2, str) and t2.startswith("[格局")],
                     }
                     # 结论层纳入指纹（第一百九十三批，补第一百九十二批登记的盲区）：

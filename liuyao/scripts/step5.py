@@ -48,8 +48,7 @@ from chain_tables import (
     _60_CYCLE_BASE,
 )
 
-from chain_assembly import (_build_reasoning_chain,
-    _get_hexagram_body_summary_note, find_classical_quotes)
+from chain_assembly import (_get_hexagram_body_summary_note, find_classical_quotes)
 
 from timing import predict_timing_core as _predict_timing
 
@@ -388,10 +387,8 @@ def step5_synthesize(r: dict) -> dict:
     )
 
     # ---------- 5.10: 推理链 ----------
-    reasoning_chain = _build_reasoning_chain(step1_data, step2_data, step3_data, step4_data, step5_data={
-        "verdict": verdict,
-        "final_score": final_score,
-    }, context=r)
+    # 355 批：叙述链不再由 step5 生成（CONTRACT §六-7）；narrate 用
+    # narrative_assembly 从 step1–5 事实重建。step5 只留结构与分数。
 
     # ---------- 5.11: 纳音信息（六十甲子纳音取象）----------
     nayin_info = {}
@@ -463,7 +460,6 @@ def step5_synthesize(r: dict) -> dict:
         "confidence_description": _strength_to_text(signal),
         "timing": timing,
         "yingqi_dates": yingqi_dates,
-        "reasoning_chain": reasoning_chain,
         "hidden_movement_count": hm_count,
         "hidden_movement_modifier": hm_modifier,
         "hidden_movement_reason": hm_reason,

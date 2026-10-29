@@ -21,6 +21,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 sys.path.insert(0, str(kernel_dir(__file__)))
+from narrative_assembly import build_reasoning_chain  # noqa: E402  355 批 fact builder
 
 OUT_REPORTS = ROOT / "outputs" / "reports"
 EVAL_FILES = {"tune": ROOT / "data" / "cache" / "eval_tune.json",
@@ -106,6 +107,7 @@ def build_samples() -> list[dict]:
         out = analyze(dict(h))
         tc = dict(out)
         thinking = tc.get("thinking_chain") or {}
+        rc_lines = thinking.get("reasoning_chain") or build_reasoning_chain(tc)
         from narrate_core import build_human_narrative
         human = build_human_narrative(tc)
         out_html = OUT_REPORTS / f"report_{cid}.html"
@@ -131,9 +133,9 @@ def build_samples() -> list[dict]:
             "yingqi": timing.get("summary_text"),
             "yingqi_branches": timing.get("key_branches") or [],
             "yingqi_rules": timing.get("timing_rules") or [],
-            "pattern_tags": thinking.get("reasoning_chain", []),
+            "pattern_tags": thinking.get("pattern_tags") or rc_lines,
             "human": human,
-            "reasoning_chain": thinking.get("reasoning_chain", []),
+            "reasoning_chain": rc_lines,
             "yao_lines": tc["original_hexagram"]["yao_lines"],
             # 变卦逐爻数据：门户卦盘要画"某爻动、变出什么支"，只给卦名画不出来
             "changed_yao_lines": (tc.get("changed_hexagram") or {}).get("yao_lines") or [],
