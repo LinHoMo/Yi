@@ -6,7 +6,7 @@
 >
 > **三件套分工**：
 > - 本文件解释「**为什么**要这样切」；
-> - `data/rules/layer_contract.json` 声明「**是什么**」（机器可读的键白名单与禁边表）；
+> - `<科>/data/rules/layer_contract.json` 声明「**是什么**」（机器可读的键白名单与禁边表）；
 > - `dev_tools/check_layer_contract.py` 守「**守不守得住**」（实跑 + AST + 负例自证）。
 >
 > **效力**：与 `AGENTS.md` 冲突时以 `AGENTS.md` 为准（AGENTS.md §二 明文）；与任何单个学科
@@ -34,17 +34,25 @@
    指不回去的即"叙述层自造事实"，按铁律一处理。
 4. **render 不许当第二个 narrate**。排版层出现断语字面量，等于绕过外置册直接写文案。
 
-## §二 五步推演的位置
+## §二 四段职责的通用边界
 
-`step1.py`–`step5.py`（现状 → 取用神 → 旺衰 → 动变 → 综合）**是 analyze 段的内部实现**，
-不是第二条交付管道。对外只暴露 `analyze` 输出里的 `thinking_chain` 键。
+四段分工是两科**共同判据**，不因推演链形状不同而改变：chart 只产盘面，analyze 只产
+结构标签与定性结论，narrate 是成段正文的唯一出口，render 只排版。某一科把推演实现
+拆成几步、模块叫什么名字，都是**段内实现**，不构成第二条交付管道。
 
-因此：
+共同遵守的边界（机器判据见各科 `layer_contract.json` 的 `edges.forbidden`）：
 
-- `step*` 可以互相 import（现状 `step3 → step2`、`step4 → step2`、`step5 → step3/step4`）；
-- `step*` 不得 import 叙述层（`narrate_core` / `narrate` / `advice_framework`）；
-  `chain_verdicts` 是**数据装载面**（断语表），推演段取断语走它不算越界；
-- 叙述层不得 import `step*`（要数据请走 analyze JSON）。
+- `core/**` 不得 import `scripts/**`（AGENTS.md §二 单向依赖）；
+- `chart` 不得 import `analyze` / `narrate`（起盘段不依赖推演/正文）；
+- `analyze` 不得 import `render`（推演段不依赖呈现段）；
+- 叙述层不得 import 推演实现内部模块（要数据请走 analyze JSON）。
+
+### §二-bis 各科剖面
+
+| 科 | analyze 段的内部实现 | 对外键 | 说明 |
+|---|---|---|---|
+| 六爻 | `step1.py`–`step5.py` 五步链（现状 → 取用神 → 旺衰 → 动变 → 综合），装配在 `chain_assembly` | `thinking_chain` | `step*` 可互相 import（现状 `step3 → step2`、`step4 → step2`、`step5 → step3/step4`）；`step*` 不得 import 叙述层（`narrate_core` / `narrate` / `advice_framework`）；`chain_verdicts` 是数据装载面（断语表），推演段取断语走它不算越界 |
+| 八字 | 单体 `analyze.py`：`bazi_factors.strength_and_pattern` → `dayun_table` / `liunian_table` → `conclusion`（`scripts/pattern.py` 提供格局判定，属同一 analyze 段） | `conclusion` 等 26 键 | 八字**无** `step1`–`step5` 的对应物；不存在可照搬的推演链，也不为对称而克隆（ARCHITECTURE-PLAN.md §八.3） |
 
 ## §三 层间调用矩阵
 
@@ -77,7 +85,7 @@ core/yishu_core   ←（唯一允许方向）—  scripts/*
 
 ## §四 输出键白名单
 
-真值源是 `data/rules/layer_contract.json`，本表只是摘要（键数随批更新，**以 JSON 为准**）：
+真值源是 `<科>/data/rules/layer_contract.json`（两科各一份，**根目录没有**此文件），本表只是摘要（键数随批更新，**以 JSON 为准**）：
 
 | 科 | chart 顶层键 | analyze 顶层键 | 嵌套白名单 |
 |---|---|---|---|
@@ -88,7 +96,7 @@ core/yishu_core   ←（唯一允许方向）—  scripts/*
 （`direction` 成/滞/不成 × `confidence` 高/中/低，附 `why`／`cites`／`support`／`dissent`／`base_cell`／`overlay`）。
 **为什么属于这一段**：它由推演事实（用神旺衰、动变净效、空破、原神忌神、题类）判定，不是文案；
 `verdict` 仍是现行引擎的档位，**两者并列对照**——接线期判定器尚未取代判词
-（`data/rules/judgment_table.json` 的 `implementation.verdict` 在册）。
+（`liuyao/data/rules/judgment_table.json` 的 `implementation.verdict` 在册；八字侧无判定表）。
 `judgment_enabled=False`（CLI `--no-judgment`）时**该键整个不出现**，故它不在 `required` 里。
 
 **新增一个键 = 改契约**。同批必须做三件事：改 JSON、改本表、在 `<科>/docs/CHANGELOG.md` 写一句
@@ -97,7 +105,7 @@ core/yishu_core   ←（唯一允许方向）—  scripts/*
 
 ## §五 结构层与断语的分界
 
-沿用 AGENTS.md §一.1：结构层只出**标签与数值**；判语字面量进 `data/rules/*.json`
+沿用 AGENTS.md §一.1：结构层只出**标签与数值**；判语字面量进 `<科>/data/rules/*.json`
 （现状：`verdict_texts.json` 92K、`scripts_labels.json`）。机械门 `[30]`
 （`check_verdict_external.py`），LOCK=0。
 
@@ -115,6 +123,22 @@ core/yishu_core   ←（唯一允许方向）—  scripts/*
 | 5 | §一 render 不许当第二个 narrate | `engine_format.py` 仍有一套 `format_reading_output` 字段报表（narrate 注释称"已弃用"，但 `engine.py --text` 仍挂） | 已关闭（第三百一十一批审计：消费者在册 4 处——`engine.py --text`、`dev_tools/refactor_guard.py` 对拍基准、`narrate.py` 防御层、`SKILL.md` 合同文本——下线条件不成立，裁定维持，非下线） |
 | 6 | §三 `narrative_utils` 混装 | **312 批已关闭**：拆成 `scripts/util.py`（纯工具）／`scripts/chain_verdicts.py`（断语装载）／`scripts/chain_assembly.py`（装配，属 analyze 段），`narrative_utils` 与 `narrative_rules` 两模块撤编；禁边表对应条目随之转零容忍 | 已关闭 |
 | 7 | §一.2 analyze 不许写文章 | **312 批体检新登记**：`analyze` 实测输出 `thinking_chain.reasoning_chain` 9 条成句（85–759 字）＋`summary_text` 354 字＋`section_advice` 4 句；`[32]` 只白名单两层子键（`trigram_interpretation`/`conclusion`），看不出这一层。且 `narrate_core` 反向从 `reasoning_chain` 的 `[格局] A|B` 串里正则反解标签（§一.3 的隐性违反） | 随 A3 分层批做：叙述句改由 fact 渲染，`reasoning_chain` 降为内部键或迁 narrate；届时把该键加入 `[32]` 的嵌套白名单判据。书证与优先级草案见 `liuyao/docs/JUDGMENT-TABLE.md`（313 批） |
+
+**八字侧契约欠账审计（第三百三十六批 A2-B，逐条问过）**
+
+| §六 条款 | 八字侧实测 | 结论 |
+|---|---|---|
+| 1 chart 不许下判断 | `chart()` 顶层 9 键无成句评价；递归扫输出字符串 >40 字命中 0 | 0 条 |
+| 2 analyze 不许写文章 | `analyze()` 顶层无 >80 字字符串；39 处 >40 字全部是 `basis` 书证/判据说明（最长 123 字），不构成成段正文 | 0 条 |
+| 3 禁边表 | `bazi/data/rules/layer_contract.json` 4 条零容忍禁边，`[28]` 实跑全绿 | 0 条 |
+| 4 键白名单 | chart 9／analyze 26／conclusion 27，`[28]` 实跑全绿 | 已关闭（310 批） |
+| 5 render 不许当第二个 narrate | `render()` = `narrate(a)` ＋机械因子表，无新增断语字面量 | 0 条 |
+| 6 模块混装 | 八字无 `narrative_utils`/`narrative_rules` 形态；`scripts/bazi_factors/` 是 analyze 段内实现 | 0 条 |
+| 7 reasoning_chain 成句 | 八字无 `thinking_chain.reasoning_chain` 键 | N/A（无对应物） |
+
+**结论：八字侧新增欠账 0 条**——这不是"八字干净"的奖状，而是**已按同一套判据问过**的读数。
+六爻侧 7 条里在八字侧没有对应物的两项（1 的 `trigram_interpretation`、7 的 `reasoning_chain`）
+如实标 N/A，不冒充"通过"；三件套同步见第 336 批两份 `docs/CHANGELOG.md`。
 
 ## §七 变更规程
 

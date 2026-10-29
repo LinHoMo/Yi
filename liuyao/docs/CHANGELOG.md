@@ -1,5 +1,34 @@
 # 六爻 CHANGELOG
 
+## 2026-10-29 第三百三十六批（六爻侧，A2-B）：**CONTRACT §二-bis／路径修正／八字欠账审计（键面未改）**
+
+**性质**：docs（六爻侧只受契约文档正文影响）。零引擎行为、零键面、零禁边改动。
+
+- `CONTRACT.md`：`data/rules/layer_contract.json` → `<科>/data/rules/layer_contract.json`
+  （根目录没有此文件）；§二 改为「四段职责的通用边界」并新增 §二-bis 各科剖面
+  （六爻 = `step1`–`step5`；八字 = 单体 `analyze.py`，无推演链对应物）；
+  §六 新增「八字侧契约欠账审计」表（新增欠账 0 条，两项无对应物标 N/A）。
+- 本轮**未改键面/禁边**，`liuyao/data/rules/layer_contract.json` 不动；§七.1 三件套条件未触发。
+- 实测：`python dev_tools/check_layer_contract.py --selftest` rc=0（5 夹具 × 两段键面、
+  9 条禁边、2 条在册欠账）。
+
+## 2026-10-29 第三百三十一～三百三十四批（六爻，A0-2/A0-3/A0-5/A1-1/A1-2/A1-3）：**devkit 门禁内核＋[37]**
+
+| 批次 | 内容 |
+|---|---|
+| 331 | `devkit/` 骨架：`MANIFEST.json` ＋ `sync_devkit.py`（`--write/--check/--selftest`）；`devkit/handoff/` gitignore |
+| 331 | `devkit/root/check_root_docs.py`：根级 8 份 `.md`，禁 basename 兜底；上线恰判红四处 `docs/CHANGELOG.md`，A0-3 修正后 rc=0 |
+| 331 | `[36]` 文档索引门从 `liuyao/dev_tools/` 上提到 `devkit/root/`；六爻 `check.py` 的 [36] 段位移除，编号空出**不回填** |
+| 331 | 根 `AGENTS.md`/`CONTRACT.md` 四处 `docs/CHANGELOG.md` → `<科>/docs/CHANGELOG.md` |
+| 331 | CI 加 `root-gates` job（`sync_devkit --check` ＋两道根级文档门） |
+| 332–334 | 11 个同名门/器归并：7 个 `devkit/shared/` 单源；`check_source_readings`/`golden`/`baselines`/`feedback_store` 按 kernel 变体范式登记 4 个变体 |
+| 334 | 六爻 `check.py` 挂 **[37] 门禁同源**：手改共享产物、dev_tools 野文件、第二份拷贝判红 |
+| 334 | `devkit/MANIFEST.json` 登记 `gate_ids`（六爻侧 13/31/32/20/11/29/12/14）＋墓碑说明：`[8][9][10][21]–[25]` 不回填、新门从 [37] 续 |
+
+归并前后逐格对拍：`python dev_tools/check.py` 均 rc=0；`[11]` 检视数 781→774
+（差异为 `.wikitext/.meta/_diff` 非声明载体排除与迁出文件的引用），0 条死链不变；
+`[12]` 74 条指针 74 条可回指（并入八字的 re-export 可达性判据后仍全绿）。
+
 ## 2026-10-29 第三百三十批（六爻）：**文档整理与清垃圾——CHANGELOG 瘦身 522KB→167KB（全文明档）、新增全仓文档索引 DOCS.md**
 
 **性质**：docs（文档整理）。**零行为改动**：两集读数、golden 双指纹、门数全不变。
