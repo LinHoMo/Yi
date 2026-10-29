@@ -58,7 +58,7 @@ from chart_tables import (
     THREE_PUNISHMENTS_MUTUAL,
     TRANSFORMATION_PATTERNS,
 )
-from narrative_utils import EFFECT_LABELS, EFFECT_PHRASES, CLASSICAL_INTERPRETATIONS as CINTERP, ctext, ctpl
+from chain_verdicts import EFFECT_LABELS, EFFECT_PHRASES, CLASSICAL_INTERPRETATIONS as CINTERP, ctext, ctpl  # noqa: E402  断语装载（原 narrative_utils）
 
 
 # ─────────────────────────────────────────────────────────────────────────────

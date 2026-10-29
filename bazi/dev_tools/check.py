@@ -579,6 +579,18 @@ def main() -> int:
     else:
         print("[27] §三 house 规矩核对 √")
 
+    # [28] 分层契约（第三百一十批）：四段输出键白名单 + 层间禁边表。
+    # 判据是 schema，不是措辞黑名单（旧 [2.2] 式只查五个字，成句评价照样漏）；
+    # 真值源 data/rules/layer_contract.json，驱动与六爻逐字节同源。
+    code, out = run(["dev_tools/check_layer_contract.py", "--selftest"])
+    for line in out.splitlines():
+        if line.strip():
+            print("  " + line.strip())
+    if code != 0:
+        fails.append("分层契约未过（键面越界／新增禁边／契约与文档不同步）")
+    else:
+        print("[28] 分层契约 √")
+
     if ENC_WITNESS:
         fails.extend("产物编码退化：" + w for w in ENC_WITNESS)
     if fails:

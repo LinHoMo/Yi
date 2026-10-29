@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
-"""六爻思维链：基元表 / 断语库 / 通用辅助 / 五步推演 / 应期 / 叙事组装 / 断语/模板取用器。聚合入口见 thinking_chain.py。"""
+"""通用机械工具（util）——六爻科 scripts 层共享的纯函数集（CONTRACT §六-6 还账）。
+
+从 narrative_utils 拆出：这里只有结构与五行的机械工具（safe_get / 支五行 / 爻位名 /
+旬空 / 十二长生 / 伏藏强弱评估…），不含任何断语装载与措辞——断语取用一律走
+chain_verdicts。依赖方向：util → core / chain_tables（数据表），任何段都可安全 import。
+"""
 
 from __future__ import annotations
 
@@ -26,121 +31,16 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     palace_of_key,
 )
 
-
-import json
-
-
-from pathlib import Path
-
-from chain_tables import KE_WO, SHENG_WO, STEMS, TWELVE_GROWTH, TWELVE_GROWTH_STAGES, TWELVE_GROWTH_TABLES, XUN_KONG, _TWELVE_GROWTH_SCORE
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# ── chain_verdicts 部分 ──
-# ══════════════════════════════════════════════════════════════════════════════
-
-# ── 断语/引文库：外置 data/verdicts.json 与 data/rules/verdict_texts.json（SKILL.md），代码只留算法与加载 ──
-_DATA_DIR = Path(__file__).resolve().parents[1] / "data"
-_VERDICTS_PATH = _DATA_DIR / "verdicts.json"
-_VERDICT_TEXTS_PATH = _DATA_DIR / "rules" / "verdict_texts.json"
-
-
-def _load_json(path: Path) -> dict:
-    try:
-        return json.loads(path.read_text(encoding="utf-8"))
-    except OSError as exc:
-        raise SystemExit(f"缺断语库 {path}（应随仓库一起检出）：{exc}")
-
-
-_VERDICTS = _load_json(_VERDICTS_PATH)
-SHI_YAO_INTERPRETATION = _VERDICTS["shi_yao_interpretation"]
-SHI_YAO_POEMS = _VERDICTS["shi_yao_poems"]
-QUOTE_DATABASE = _VERDICTS["quote_database"]
-
-_VERDICT_TEXTS = _load_json(_VERDICT_TEXTS_PATH)
-STEP5_CLASSICAL_NOTES = _VERDICT_TEXTS["step5_classical_notes"]
-STEP5_VERDICT_DESCS = _VERDICT_TEXTS["step5_verdict_descs"]
-STEP5_SPIRIT_REASONS = _VERDICT_TEXTS["step5_spirit_reasons"]
-STEP5_FACTOR_REASONS = _VERDICT_TEXTS["step5_factor_reasons"]
-STEP5_CONFIDENCE = _VERDICT_TEXTS["step5_confidence"]
-STEP5_YINGQI = _VERDICT_TEXTS["step5_yingqi_texts"]
-CLASSICAL_INTERPRETATIONS = _VERDICT_TEXTS["classical_interpretations"]
-CLASSICAL_RULES_NOTES = _VERDICT_TEXTS.get("classical_rules_notes", {})
-CLASSICAL_RULES_TEMPLATES = _VERDICT_TEXTS.get("classical_rules_templates", {})
-PATTERN_VERDICTS = _VERDICT_TEXTS.get("pattern_verdicts", {})
-EFFECT_LABELS = _VERDICT_TEXTS.get("effect_labels", {})
-EFFECT_PHRASES = _VERDICT_TEXTS.get("effect_phrases", {})
-BING_YAO_LABELS = _VERDICT_TEXTS.get("bing_yao_labels", {})
-NARRATIVE_HINTS = _VERDICT_TEXTS.get("narrative_hints", {})
-STRENGTH_REASON_MAP = _VERDICT_TEXTS.get("strength_reason_map", {})
-STRENGTH_POLARITY_MAP = _VERDICT_TEXTS.get("strength_polarity_map", {})
-PATTERN_RELATED = _VERDICT_TEXTS.get("pattern_related", {})
-PATTERN_NOTES_EXTRA = _VERDICT_TEXTS.get("pattern_notes_extra", {})
-# step3 旺衰口语结论（level → 断语）；结构见 data/rules/verdict_texts.json#strength_summary_say
-STRENGTH_SUMMARY_SAY = _VERDICT_TEXTS.get("strength_summary_say", {})
-SHENSHA_POLICY = _VERDICT_TEXTS.get("shensha_policy", {})
-# 格局标签句（真空/假空…）：键 = 格局组名 → 标签名 → {label, strength_text, reason, verdict, basis}
-PATTERN_VERDICT_LABELS = _VERDICT_TEXTS.get("pattern_verdict_labels", {})
-VOID_KIND_LABELS = {
-    "true": PATTERN_VERDICT_LABELS.get("真空/假空", {}).get("真空", {}),
-    "false": PATTERN_VERDICT_LABELS.get("真空/假空", {}).get("假空", {}),
-}
-DUFA_QUOTE = PATTERN_VERDICT_LABELS.get("独发/独静", {}).get("古典引文", "")
-DUFA_NOTES = {
-    "du_fa": PATTERN_VERDICT_LABELS.get("独发/独静", {}).get("du_fa", ""),
-    "du_jing": PATTERN_VERDICT_LABELS.get("独发/独静", {}).get("du_jing", ""),
-}
-SANCHUAN_LABELS = PATTERN_VERDICT_LABELS.get("三传克制", {})
-# 【第一百六十七批】乱动卦（《火珠林》源L33）：只标结构象，取用口径第一百七十批裁定不另立。
-LUANDONG_LABELS = PATTERN_VERDICT_LABELS.get("乱动", {})
-
-
-def pattern_label(group: str, name: str) -> dict:
-    """取格局标签句；缺库时返回空 dict（调用方按"无断语"处理，不硬编一份）。"""
-    return (PATTERN_VERDICT_LABELS.get(group) or {}).get(name) or {}
-
-
-def note_text(key: str, **fmt) -> str:
-    """取 step5 注记展示句；key 为结构化 id。"""
-    entry = STEP5_CLASSICAL_NOTES[key]
-    text = entry["text"]
-    return text.format(**fmt) if entry.get("template") or fmt else text
-
-
-def vdesc(key: str) -> str:
-    """取 step5 综合定性说明展示句。"""
-    return STEP5_VERDICT_DESCS[key]["text"]
-
-
-def ctext(key: str, **fmt) -> str:
-    """取 classical_rules 可交付断语；key 见 data/rules/verdict_texts.json#classical_rules_notes。
-
-    **断语/模板取用的唯一实现**：此前 `classical_rules_{hidden,patterns}` 与
-    `effects_{change,harmony,structure}` 五处各写一份完全相同的副本（五份逐字节同 sha256），
-    改口径要改五处、漏改一处就出现两种说法——同类缺陷即审计 F2/F3 的副本问题。
-    现五处一律 `from chain_verdicts import ctext, ctpl`。
-    """
-    entry = CLASSICAL_RULES_NOTES[key]
-    text = entry["text"]
-    return text.format(**fmt) if fmt else text
-
-
-def ctpl(key: str, *args) -> str:
-    """取 classical_rules 拼装句模板；{0}{1}… 为位置参数。"""
-    text = CLASSICAL_RULES_TEMPLATES[key]["text"]
-    return text.format(*args) if args else text
-
-
-_QUESTION_SCENARIO_KEYWORDS = {
-    "marriage": ["婚", "恋", "感情", "喜欢", "女朋友", "男朋友", "对象", "正缘", "伴侣", "相亲", "姻缘", "爱"],
-    "wealth": ["财", "投资", "求财", "赚钱", "收入", "利", "生意", "经营", "破财"],
-    "illness": ["病", "健康", "疾", "医", "症", "身体", "患", "康复", "瘤", "炎"],
-    "career": ["官", "升", "职", "事业", "工作", "仕", "考功", "升职", "提拔", "领导", "加薪"],
-    "exam": ["考", "试", "学业", "成绩", "中", "秀才", "举人", "文", "读书", "高考", "笔试", "面试"],
-    "lawsuit": ["讼", "官非", "法律", "诉讼", "被告", "原告", "起诉", "纠纷", "合同", "赔偿", "牢狱"],
-    "travel": ["行", "出远门", "出行", "去某地", "旅行", "出差", "搬家", "移", "归", "返程"],
-    "parents_illness": ["父病", "母病", "爸", "妈", "父亲", "母亲", "公公", "婆婆", "岳父", "岳母"],
-}
+from chain_tables import (  # noqa: E402
+    KE_WO,
+    SHENG_WO,
+    STEMS,
+    TWELVE_GROWTH,
+    TWELVE_GROWTH_STAGES,
+    TWELVE_GROWTH_TABLES,
+    XUN_KONG,
+    _TWELVE_GROWTH_SCORE,
+)
 
 
 # ══════════════════════════════════════════════════════════════════════════════

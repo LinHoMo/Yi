@@ -38,7 +38,7 @@ from chain_tables import _BRANCH_CLASH_MAP, _HE_MAP, _HEXAGRAM_HARMONY_SET, JUE_
 
 
 
-from narrative_utils import (  # noqa: E402
+from util import (  # noqa: E402  311批拆分：纯工具归 util（CONTRACT §六-6）
     _branch_element,
     _is_chong,
     _is_he,
@@ -47,8 +47,8 @@ from narrative_utils import (  # noqa: E402
     get_changed_hexagram_branch,
     get_relation_from_element,
     safe_get,
-    PATTERN_NOTES_EXTRA,
 )
+from chain_verdicts import PATTERN_NOTES_EXTRA  # noqa: E402  断语表装载
 
 # ─── 全局变量 ───
 _USE_GOD_RULES: list[dict] | None = None

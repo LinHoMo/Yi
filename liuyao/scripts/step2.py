@@ -38,7 +38,7 @@ from chain_tables import (
 
 
 
-from narrative_utils import (  # noqa: E402
+from util import (  # noqa: E402  通用工具（原 narrative_utils，311 批拆分）
     _branch_element,
     _is_chong,
     _pos_to_name,

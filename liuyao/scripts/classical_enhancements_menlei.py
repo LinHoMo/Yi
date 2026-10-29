@@ -46,10 +46,8 @@ from kernel_path import ensure_kernel_on_path as _ensure_kernel
 
 _ensure_kernel(__file__)
 
-from narrative_utils import (  # noqa: E402
-    PATTERN_VERDICT_LABELS,
-    _pos_to_name,
-)
+from chain_verdicts import PATTERN_VERDICT_LABELS  # noqa: E402  断语装载（原 narrative_utils）
+from util import _pos_to_name  # noqa: E402  爻位名的唯一实现
 
 __all__ = ["analyze_menlei_dongjing"]
 

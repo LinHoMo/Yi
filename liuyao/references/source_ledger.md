@@ -118,8 +118,10 @@
 
 **处置：本轮不改这 18 条。** 理由有三：① 逐条判定"是否忠实于《卜筮正宗》"需要
 原文，而原文不可得，任何"修正"都会变成凭印象改写，正好是铁律三要防的事；
-② 实测 `QUOTE_DATABASE` 只被 `narrate_core.py`（第 399 行的查表循环）使用，
-是渲染期文案，不进入判定/评分（`narrative_utils.py:58` 只做一次性取值）；
+② 实测 `QUOTE_DATABASE` 只被 `chain_assembly.find_classical_quotes`（其查表循环）使用，
+是渲染期文案，不进入判定/评分（`chain_verdicts.QUOTE_DATABASE` 只做一次性取值）；
+（312 批：本句原写 `narrate_core.py:399` 与 `narrative_utils.py:58`，两个模块一拆一撤后
+双双击空。改指**符号名不指行号**——行号随搬迁必腐，符号名由 import 关系兜住。）
 ③ 正确处置方式（给每条加 `verified: bool` 或 `provenance` 字段）会改动
 `data/verdicts.json` 的结构，须与渲染层一起设计并重跑 golden，属独立一批的量。
 **留给下一棒，本文件已把"不能核验"的事实钉住。**

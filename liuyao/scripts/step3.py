@@ -24,7 +24,7 @@ from chain_tables import _BRANCH_CLASHES
 
 
 
-from narrative_utils import (  # noqa: E402
+from util import (  # noqa: E402  311批拆分：纯工具归 util（CONTRACT §六-6）
     _branch_element,
     _combined_strength as _combined_strength_for_hm,
     _evaluate_fu_cang_strength,
@@ -36,9 +36,8 @@ from narrative_utils import (  # noqa: E402
     get_twelve_growth_stage,
     safe_get,
     strength_to_score,
-    STRENGTH_SUMMARY_SAY,
-    VOID_KIND_LABELS,
 )
+from chain_verdicts import STRENGTH_SUMMARY_SAY, VOID_KIND_LABELS  # noqa: E402  断语表装载
 
 # ─── 全局变量 ───
 _USE_GOD_RULES: list[dict] | None = None

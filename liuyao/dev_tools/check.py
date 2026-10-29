@@ -883,7 +883,9 @@ def main() -> int:
               ("verdict_external", "[30] 结构层断语外置审计（§一.1 核对版：判语字面量零回潮，LOCK=0 解锁唯一通道＝搬家进 labels 册）",
                "dev_tools/check_verdict_external.py"),
                ("house_conventions", "[31] §三 house 规矩核对版（A 版本号文件名/B 绝对路径/C scratch/D 产物；tracked 口径，负例含注入）",
-                "dev_tools/check_house_conventions.py")):
+                "dev_tools/check_house_conventions.py"),
+               ("layer_contract", "[32] 分层契约（四段输出键白名单／禁边表；判据换 schema，不再靠措辞黑名单）",
+                "dev_tools/check_layer_contract.py")):
         if want(key):
             print(f"\n{title}")
             rc, out = run([sys.executable, script, "--selftest"])

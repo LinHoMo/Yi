@@ -78,3 +78,80 @@ def eval_metrics(split: str, *, eval_file, cwd,
     disc = results.get("yingqi_discrimination") or {}
     return {"avg": agg.get("avg"), "n": agg.get("n"), "rc": rc,
             "top1": disc.get("top1_hit_rate"), "rank": disc.get("avg_rank_of_correct")}
+
+# ── 四段契约判据（第三百一十批，CONTRACT.md §四／§三）────────────────────────
+# 放在共享门壳而不是各科 dev_tools：两科若各写一份，键面比对与禁边扫描必然漂移，
+# 正是本模块开头说的「同一语义多份实现」。学科侧只提供自己的 layer_contract.json。
+
+def py_imports(path) -> set[str]:
+    """一个 .py 的顶层 import 模块名集合（`ast.walk`，含函数内延迟 import）。"""
+    import ast
+    tree = ast.parse(Path(path).read_text(encoding="utf-8"))
+    out: set[str] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            out |= {a.name.split(".")[0] for a in node.names}
+        elif isinstance(node, ast.ImportFrom) and node.module:
+            out.add(node.module.split(".")[0])
+    return out
+
+
+def rel_files(root, pattern: str) -> list[str]:
+    """`root` 下匹配 glob 的相对路径（正斜杠），按字典序——与平台路径分隔符无关。"""
+    root = Path(root)
+    return sorted(p.relative_to(root).as_posix() for p in root.glob(pattern) if p.is_file())
+
+
+def contract_stage_problems(observed: dict, spec: dict, *, label: str = "") -> list[str]:
+    """比对一次实跑输出与契约分节；返回问题串（空列表＝合规）。
+
+    三条判据：**多键即红**（越界新增）、**必填键缺失即红**（静默丢字段）、
+    nested 白名单同样只准减不准增。`debt` 不参与判定——它只是给人看的欠账清单。
+    """
+    tag = f"{label}." if label else ""
+    problems: list[str] = []
+    keys = set(observed or {})
+    allowed = set(spec.get("allowed") or ())
+    required = set(spec.get("required") or ())
+    for k in sorted(keys - allowed):
+        problems.append(f"{tag}{k} 不在契约白名单内（越界新增字段）")
+    for k in sorted(required - keys):
+        problems.append(f"{tag}{k} 必填键缺失（契约声明它必须出现）")
+    for name, sub in (spec.get("nested") or {}).items():
+        if name not in keys:
+            continue
+        value = observed.get(name)
+        if not isinstance(value, dict):
+            problems.append(f"{tag}{name} 应为对象，实为 {type(value).__name__}")
+            continue
+        sub_allowed = set(sub.get("allowed") or ())
+        sub_required = set(sub.get("required") or ())
+        for k in sorted(set(value) - sub_allowed):
+            problems.append(f"{tag}{name}.{k} 不在契约白名单内（越界新增字段）")
+        for k in sorted(sub_required - set(value)):
+            problems.append(f"{tag}{name}.{k} 必填键缺失")
+    return problems
+
+
+def contract_edge_problems(edges: dict, rules: list, *, base: str = "") -> tuple[list[str], list[str]]:
+    """按禁边表核对 import 图；返回 (problems, notes)。
+
+    `edges` = {相对路径: {import 的模块名}}。`rules` 里的 `from` 支持 glob。
+    语义是「只准减不准增」：known 的边出现＝记一笔欠账（note，不红）；
+    known 的边消失＝欠账已还，条目必须删（红，防台账变假事实）。
+    """
+    import fnmatch
+    problems: list[str] = []
+    notes: list[str] = []
+    for rule in rules or ():
+        pattern, target, known = rule.get("from"), rule.get("to"), bool(rule.get("known"))
+        hits = [f for f in edges
+                if fnmatch.fnmatch(f, pattern) and target in edges[f]]
+        if known and hits:
+            notes.append(f"欠账在册：{hits[0] if len(hits) == 1 else pattern} → {target}"
+                         f"（{len(hits)} 处；{rule.get('why', '')[:60]}）")
+        elif known and not hits:
+            problems.append(f"欠账已还但条目还在：{pattern} → {target}——请从 layer_contract.json 删除该条")
+        elif not known and hits:
+            problems.append(f"新增禁边：{', '.join(hits)} → {target}（CONTRACT 零容忍）")
+    return problems, notes

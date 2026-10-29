@@ -21,7 +21,7 @@ from chain_tables import TRIGRAM_ELEMENT
 
 
 
-from narrative_utils import _branch_element, _pos_to_name, get_empty_branches, safe_get  # noqa: E402
+from util import _branch_element, _pos_to_name, get_empty_branches, safe_get  # noqa: E402  通用工具（原 narrative_utils）
 
 # ─── 全局变量 ───
 _USE_GOD_RULES: list[dict] | None = None

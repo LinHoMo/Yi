@@ -1,5 +1,141 @@
 # 六爻 CHANGELOG
 
+## 2026-10-29 第三百一十二批（六爻，两科联动）：**把 311 批的分层大清账做完并归位——3 条禁边还清、账台 bad 11→0、金标准零漂移；顺手修掉一处长期假阳性**
+
+**性质**：engineering（完成未提交的重构＋补登记）。引擎判定逻辑零改动，288 例指纹逐位未动，两集读数不变。
+
+### 一、接手时的真实状态（别人看到的是绿的，盘上不是）
+
+311 批的「分层大清账」只做了一半就留在工作区：`narrative_utils.py` 与 `narrative_rules.py` 已删，
+`util.py` / `chain_verdicts.py` / `chain_assembly.py` 已建，但 **10 个模块仍 import 已删模块**——
+`dev_tools/check.py` rc=1、`readout_ledger.py --quick` **bad=11**，而 CHANGELOG 311 批写着「两科全量实跑 rc=0／rc=0」。
+同时 `CONTRACT.md`、`layer_contract.json`、两个 `check_layer_contract.py` 全在**未跟踪**状态（310 批的产物没进 git）。
+本批先按 §六.2 把「登记先于事实」这个洞补上：先修好，再逐条登记。
+
+### 二、改动清单
+
+1. **import 收敛（行为零改动）**：`classical_enhancements{,_dufa,_menlei,_shen_yao,_yimao_zhugui,_zhugui}`、`effects`、`step1`、`step2`、`timing` 共 10 处改指 `util`（机械工具）／`chain_verdicts`（断语装载）；
+   `thinking_chain` 的 5 个装配函数改指 `chain_assembly`（311 批从 `narrate_core` 搬出的那一批）。
+   逐字对拍依据：13 个被搬函数在旧 `narrative_utils` 与新模块中**源码逐字节相同**（本批 AST 抽取比对，13/13 相同），所以这是纯搬迁，不是改写。
+2. **修一处真 bug**：`chain_verdicts.strength_reason` 引用 `FREASON` 而该别名未随搬迁带过来（旧 `narrative_rules` 里是 `STEP5_FACTOR_REASONS as FREASON`）——首跑即 `NameError`，改指 `STEP5_FACTOR_REASONS`。
+3. **撤四份 `.bak-20261027`**：三份与 `git show HEAD:` 逐字节相同（可复原）、一份与现文件相同（纯副本）。已移到系统临时目录留档，不进树——版本走 git，不写进文件名（§三 A 条）。
+4. **禁边还清三条**：`thinking_chain → narrate_core`、`step5 → narrate_core`、`step1..4 → narrative_utils` 均不再存在。
+   `layer_contract.json` 里这三条由 `known:true` 改为 **`known:false` 零容忍**（不是删除——把已修的债转成硬规矩，回潮即红）；`chart.py → narrative_utils` 一条改指其后继 `chain_verdicts`。
+   门首跑即按设计判红「欠账已还但条目还在」，逼出这次同步——**这是该门第一次以这种方式生效**。
+   `CONTRACT.md` 同步：§二 叙述层定义、§三 层间图与禁边表、§六 第 3／6 条。
+5. **补两条治理登记**：`check_layer_contract.py` 两科各一，310 批新增时未入 curated 表（`--strict` 会判 UNCLASSIFIED）。
+   补后重生成 `GOVERNANCE-MAP.json`：六爻 57→**58**（blk 24→**25**）、八字 36→**37**（blk 25→**26**）；
+   账台 `governance` 期望值同步改并注明来由（310 批新增门），不是静默刷新。
+6. **修账台一处长期假阳性**：`tracked 完整性(解码0/JSON0)` 的判据是「全库可 UTF-8 解码」，把 `claude-plugin/assets/icon.png` 当破损件，
+   该项自 238 批起**恒计 1**、长期挂在 × 里被当噪声——而「恒红的哨兵等于没有哨兵」。判据改为二进制按扩展名豁免，**期望值不动（仍是 0/0）**：修的是尺子，不是读数。
+7. **新登记一条欠账（§六-7）**：`analyze` 实测仍吐 `reasoning_chain` 9 条成句＋`summary_text` 354 字，`[32]` 只白名单两层子键看不出来；
+   `narrate_core` 还反向从 `[格局] A|B` 串里正则反解标签。这条不在本批修（动叙述结构要单独一批），按 §七.3 写明由 A3 分层批还。
+
+### 三、读数
+
+- `golden.py verify`：288 例｜机械 `4ceef1eed62dafe2`｜措辞 `405bc8e03a6a99e0`——**与基线逐位一致**
+- `evaluate`：tune 97.9%（n=20）／holdout 90.2%（n=12），与上批同
+- 质量门：`liuyao/dev_tools/check.py` **rc=0**（32 节全绿）／`bazi/dev_tools/check.py` **rc=0**（28 节）
+- 账台：`readout_ledger.py --quick` **bad=0／全账 39**（接手时 11）
+- 契约门：5 个夹具 × 两段键面在册；禁边 9 条规则、欠账由 5 条降为 **2 条**
+
+### 四、未做（下一批起按 A3 → B2/B1 → C1→C2 的顺序）
+
+本批只归位，不动判定结构。A3（判定表＋可关闭判定模块）从**古籍书证分析**起步，见下一批。
+
+## 2026-10-27 第三百一十一批（六爻，两科联动）：**台账清点日——全树待做标记 225 处逐条分诊，四项据实收口；零引擎零读数**
+
+**性质**：bookkeeping（AGENTS §六.4 全仓标记清点＋收口登记，163 批「收口待裁项」同型）。零代码改动、零读数变化、金标准与两集读数未触碰。
+
+### 一、清点口径
+
+- 扫描器：`待立项|待办|待补|待重测|待裁|欠账|未实现` 全树正则（一次性脚本落 `scratch/` 不入库，排除古籍底本与 plugins 构建产物），全树命中 **225 处**，逐条按 §六.4 分诊：
+  - **断事文案（非待办）**：`narrative_templates.json`／`verdict_texts.json` 的「月破待补」判词族、评测集 `reading`／`human_markdown` 里的引文；
+  - **回验器 META（非待办）**：`gate_kit.py`／`check_layer_contract.py`／`check_source_readings.py`／`adjudication_brief.py` 自身的词表与断言文本；
+  - **历史登记（非待办）**：两本账既往批次的收口记录——#37 已于 141 批闭（裁定＋边界＋瓶颈落档）；#33 排序问题已于 190 批按预注册结案（四个预声明重排键全部不胜现行序）；wikisource 用神基准已于 292 批全量补齐（46 例书证校勘）；`qianjin_fu_map` 第 39 条系 95 批「诚实登记不实施」；`rule_registry` 未实现_乱动标记已划线关闭；`dayun_quotes` 「待补」93 批已按实改写。
+- 清点后的**开口面**见 §三（全部维持登记）；本批收口四项见 §二。
+
+### 二、本批收口（零行为改动）
+
+1. **天干/地支定量分级（264 批登记待裁，主登记在八字侧）→ 已裁定：不实施，缺定量书证前置**。264 批实测已完备：外部集 30/45→29/45（净负）、权重扫描 0～0.33 全停 29–30（不灵敏，主因在天干/地支分级尺度本身）、书证《子平真诠评注》源L107 只给次序（「三比肩不如得一长生禄刃」）不给比例。实施前置属**书源侧缺口**而非调参机会（§四.2「基线只准前进」／§四.3「禁止为过外部集写规则」）——照 `qianjin_fu_map` 第 39 条「诚实登记不实施」体例，状态由「待裁」改记「**已裁定不实施（缺前置）**」；日后获得书证则另轮开。
+2. **ZD017「四爻子财」（206 批 note 待裁）→ 已核结案：底本如此，照录不改字**。206 批已核书源自身与纳甲对表两处不合系底本差异（§二 照录义），expected 按书载照录、`use_god_note` 双线（题类营谋轨／书吉凶主由世论）已登记——裁决无剩余自由度，「待裁」改记「已核结案（照录）」。
+3. **prospective（177 批）欠账①②③ 对账**：①「到期自动回访未挂」——252 批已按用户令（"真实运行这一侧我们不弄"）撤销对接、机件保留，随之关闭；②「八字侧封存登记待定义任务」——用户已裁定现实反馈通道不扩展（233／264 批「几乎没有机会使用」），关闭；③「三重对照未建」——前置＝在册 n≥30、当前在册 0，属**条件未达**而非可执行任务，维持条件明示不另立。CAPABILITY 欠账③「现实侧永久悬置除非用户重启」与此同口径，不动。
+4. **（两科联动）CONTRACT §六-5 engine_format 下线审计完成**：`format_reading_output` 消费者在册 **4 处**（`engine.py --text` 分支／`dev_tools/refactor_guard.py` 对拍基准／`narrate.py` 防御性层／`SKILL.md` 合同文本）——下线条件不成立，**裁定维持**，CONTRACT 表已回改（§六.2）。该条不在禁边表，门读数不受影响。
+
+### 三、开口面清单（维持登记，非本批可清）
+
+- **工程族**：①分层契约还债 5 条（310 批立，门 [32] 盯「只准减不准增」：`trigram_interpretation` 评价四键迁 analyze〔动 golden 双指纹，单独一批〕、`engine_chart→trigram_symbolism`、`engine.py→render`、`thinking_chain`/`step5→narrate_core` 私有函数、`narrative_utils` 拆分〔§六-6〕）；②占天时第二判读通道（213 批正式化，framework 级；裁决条目 `liuyao.tiantim_state_track` 在册）；③「措辞与盘面不符」语义门（266 批待办）；④legacy 计分不对称（264 批待裁，须独立批按 §四.4；292 批已补齐 wiki 用神基准，剩余面＝计分规则本身）。
+- **数据族**：verifications 册 ①跨抄本语义重复归并 ③正式案例集（179 批）；huozhulin 采集通道（195 批欠账，现 2 例）。
+- **等人族（裁决签字，非可清项）**：63 分诊＋18 复核签字（208 批起降级为逐条签字，简报 `docs/ADJUDICATION-BRIEF.md` 在册）、20 项 open_conflict、判词冲突 1/37（185 批戌月丙午日具名待人工）、#33 残余「是否改双主位」（裁决表在册，留用户裁，§四.3）。
+
+两科 `dev_tools/check.py` 全量实跑 rc=0／rc=0。
+
+## 2026-10-27 第三百一十批（六爻）：分层契约重建 + 门 [32]——判据从「措辞黑名单」换成「schema 白名单」
+
+**性质**：architecture（补判据本体＋加门）。零引擎改动、零读数变化——本批不动任何推演逻辑，
+`evaluate` 两集读数与 golden 双指纹均未触碰。
+
+### 一、`CONTRACT.md` 重建：分层判据第一次有本体
+
+查实：`chart.py:2,8,137` / `analyze.py:2` / `narrate.py:2` / `dev_tools/check.py:160` /
+`bazi/scripts/chart.py:2` 共 5 个文件把「CONTRACT §一」当段界判据引用，而
+`find . -iname "*contract*"` 零命中——该文件在仓库扁平化时丢失，此后所有"四段契约"的
+争论都没有可回指的文本。本批在仓库根重建：
+
+| 件 | 职责 |
+|---|---|
+| `CONTRACT.md` | 解释**为什么**这样切：四段职责、四条不许越的界、五步推演的位置、变更规程 |
+| `data/rules/layer_contract.json` | 声明**是什么**：各段键白名单、禁边表（机器判据真值源） |
+| `dev_tools/check_layer_contract.py` | 守**守不守得住**：实跑 + AST + 负例自证 |
+
+### 二、新门 `[32] 分层契约`
+
+判据换了，不是加严了旧判据：
+
+- **旧 `[2.2] chart 纯净门`**：查「大凶/凶/吉/宜/忌」五个字，只跑 `--mode manual` 一个夹具。
+- **新 `[32]`**：查**键面**。chart 8 键 / analyze 15 键 / `trigram_interpretation` 22 子键 /
+  `conclusion` 11 子键，多一键即红、必填键少一个即红；5 个夹具（manual 动/静、coin、number、time）
+  全部过一遍，避免"只测一种起卦方式"。
+
+为什么必须换：实跑 chart 段输出 `trigram_interpretation.overview = "…体生用有所付出，待时收功。"`、
+`body_use = "体生用——耗费心力，我求于外"`——**成句评价**，但不含那五个字，旧门恒绿。
+措辞黑名单永远枚举不完，键面可以。
+
+禁边 9 条：5 条在册欠账（`engine_chart→trigram_symbolism`、`engine→render`、
+`thinking_chain→narrate_core`、`step5→narrate_core`、`step*→narrative_utils`）、
+4 条零容忍（chart→叙述层三条 + `core/**→scripts`）。语义是**只准减不准增**：
+在册的欠账出现只记一笔，欠账消失了反而判红（条目没删＝台账变假事实，§六.2）。
+
+**负例自证（真机注入，非只跑单测）**：往 `chart.py` 注入 `result["negative_probe"] = {}` 与
+`from narrate_core import find_classical_quotes` → 门报 10 处键面越界 + 1 条新增禁边，
+rc=1；`git checkout` 撤销后回绿 rc=0。
+
+### 三、悬空引用修复（§六.3 同批回改）
+
+| 位置 | 原文 | 现文 |
+|---|---|---|
+| `scripts/analyze.py:2` | 「纯机械断卦，无解读成分」 | 「结构推演 + 定性结论，不含成段正文」——实测该段输出 `verdict="大吉"`，旧说法与代码不符 |
+| `scripts/analyze.py:6,87,97` | 供「合参层 `synthesis.normalize_liuyao`」归一化 | 该层已移除（AGENTS §二）；改指 `dev_tools/outcome.py` 回填通道与 MCP/报告层 |
+| `core/yishu_core/yingqi.py` | 「唯一真值源（架构评审 A2）」＋「门 `[1i]` 检查」 | 评审文档不在库；`[1i]` 门不存在 → 改指实际覆盖它的 `[1.7]` 与 `[26]` |
+| `core/yishu_core/shensha.py` | 「即审计 B3…」作为判据 | 补注「该审计文档已随扁平化不在库，判据按 AGENTS.md §二」 |
+
+`yingqi.py` 与八字侧逐字节同步改（两科仍同源）；`shensha.py` 两侧同文改（该文件本就因
+行尾与注释路径分叉，见 310 批体检 §2.4）。
+
+### 四、本批**没做**的三件事（明确划界，不冒充已完成）
+
+1. `chart` 段 4 个评价字段（`overview`/`body_use`/`outer_personality`/`inner_personality`）
+   迁 `analyze`：会改动 analyze 输出结构与 golden 双指纹，须按 §四 重跑两集并声明
+   "新旧读数不可比"，**另批**做。本批只在 JSON 里登记为 `debt`。
+2. 模块双身份（`chart` 与 `scripts.chart` 两个实例）：包化涉及 46 个模块的导入改写，另批。
+3. ~~八字侧 `layer_contract.json`~~ **同批建成**（chart 9 / analyze 26 / conclusion 27，门 `[28]` 挂进八字 check.py，驱动与本文件逐字节同源）。
+
+### 五、实跑
+
+- `python dev_tools/check_layer_contract.py` → 5 夹具键面合规、9 条禁边 5 在册 4 零容忍，rc=0
+- `python dev_tools/check.py --only layer_contract` → rc=0（约 9 秒）
+- `python dev_tools/check.py --fast` → 全绿
+
 ## 2026-10-27 第三百零九批（六爻）：孤儿批次逐条结案 + 裁决表第四态归位
 
 ### 一、孤儿批次**逐条结案**（不再是一句"历史遗留"）

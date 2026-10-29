@@ -40,20 +40,22 @@ from chain_tables import (
     _60_CYCLE_BASE,
 )
 
-from narrate_core import (_build_reasoning_chain,
+from chain_assembly import (_build_reasoning_chain,
     _get_hexagram_body_summary_note, find_classical_quotes)
 
 from timing import predict_timing_core as _predict_timing
 
-from narrative_rules import strength_reason, strength_polarity
+from chain_verdicts import strength_reason, strength_polarity
 
-from narrative_utils import (  # noqa: E402
+from util import (  # noqa: E402  311批拆分：纯工具归 util（CONTRACT §六-6）
     _branch_element,
     _is_chong,
     _twelve_growth_at_day,
     element_strength_in_month,
-    note_text,
     safe_get,
+)
+from chain_verdicts import (  # noqa: E402  断语表装载（原 narrative_utils/narrative_rules）
+    note_text,
     SANCHUAN_LABELS,
     STEP5_CONFIDENCE as CONF_TXT,
     STEP5_FACTOR_REASONS as FREASON,

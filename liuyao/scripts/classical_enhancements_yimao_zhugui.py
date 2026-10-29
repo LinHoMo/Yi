@@ -21,7 +21,7 @@
   · 成立/不成立作为**结构事实**透出，交 narrate 作正文辅助说明；
   · **不改吉凶主判、不进主分**；
   · 断语素材（引文/标签句）取自 `data/rules/verdict_texts.json`
-    的 `pattern_verdict_labels["助鬼伤身_易冒"]`（经 narrative_utils 加载），代码内不写字面量。
+    的 `pattern_verdict_labels["助鬼伤身_易冒"]`（经 chain_verdicts 加载），代码内不写字面量。
 """
 
 from __future__ import annotations
@@ -43,11 +43,8 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     TWELVE_GROWTH_STAGES,
 )
 
-from narrative_utils import (  # noqa: E402
-    PATTERN_VERDICT_LABELS,
-    _pos_to_name,
-    element_strength_in_month,
-)
+from chain_verdicts import PATTERN_VERDICT_LABELS  # noqa: E402  断语装载（原 narrative_utils）
+from util import _pos_to_name, element_strength_in_month  # noqa: E402  通用工具
 
 __all__ = ["analyze_zhu_gui_shang_shen_yimao"]
 

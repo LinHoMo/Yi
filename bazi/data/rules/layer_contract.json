@@ -1,0 +1,173 @@
+{
+  "schema": 1,
+  "_comment": "四段契约的机器判据（八字侧）。'why' 字段是给下一次改契约的人看的：写不清为什么这个键属于这一段，就不要加。改本文件必须同批改 CONTRACT.md §四 与 docs/CHANGELOG.md，并跑 dev_tools/check_layer_contract.py --selftest。",
+  "contract": "CONTRACT.md",
+  "batch": 310,
+  "fixtures": [
+    {
+      "name": "男1984",
+      "args": [
+        "--datetime",
+        "1984-02-15 08:30",
+        "--gender",
+        "男",
+        "--question",
+        "命局排盘"
+      ]
+    },
+    {
+      "name": "女1990",
+      "args": [
+        "--datetime",
+        "1990-07-01 14:20",
+        "--gender",
+        "女",
+        "--question",
+        "占问事业"
+      ]
+    },
+    {
+      "name": "男2001",
+      "args": [
+        "--datetime",
+        "2001-11-05 23:10",
+        "--question",
+        "命局排盘"
+      ]
+    }
+  ],
+  "stages": {
+    "chart": {
+      "role": "四柱起盘：只产盘面与机械因子，不写命运断语",
+      "entry": "scripts/chart.py",
+      "allowed": [
+        "birth",
+        "calendar_policy",
+        "discipline",
+        "factors",
+        "ming_shen_gong",
+        "pillars",
+        "question",
+        "shensha",
+        "xunkong"
+      ],
+      "required": [
+        "birth",
+        "calendar_policy",
+        "discipline",
+        "factors",
+        "ming_shen_gong",
+        "pillars",
+        "question",
+        "shensha",
+        "xunkong"
+      ],
+      "nested": {}
+    },
+    "analyze": {
+      "role": "结构推演 + 定性结论：允许机械标签与 verdicts，不允许成段正文",
+      "entry": "scripts/analyze.py",
+      "allowed": [
+        "bing_yao",
+        "birth",
+        "calendar_policy",
+        "chart_summary",
+        "conclusion",
+        "dayun",
+        "dayun_ming_yindong",
+        "discipline",
+        "factors",
+        "female_fu_zi",
+        "liu_yue",
+        "liunian_ming_yindong",
+        "ming_shen_gong",
+        "pillar_relations",
+        "pillars",
+        "question",
+        "san_hui",
+        "shensha",
+        "strength",
+        "tai_yuan",
+        "ten_god_combos",
+        "tian_ke_di_chong",
+        "tiaohou",
+        "tong_guan",
+        "xiao_yun",
+        "xunkong"
+      ],
+      "required": [
+        "conclusion",
+        "chart_summary",
+        "pillars",
+        "factors"
+      ],
+      "nested": {
+        "conclusion": {
+          "allowed": [
+            "bing_yao",
+            "bing_yao_has_medicine",
+            "dayun",
+            "dayun_liunian",
+            "female_fu_zi",
+            "liunian",
+            "nayin_xiangge",
+            "pattern",
+            "pattern_cheng_bai",
+            "pattern_cheng_bai_basis",
+            "pillar_relations",
+            "san_hui",
+            "strength",
+            "strength_score",
+            "taboo_gods",
+            "tai_yuan",
+            "ten_god_combos",
+            "tian_ke_di_chong",
+            "tiaohou_pattern_conflict",
+            "timing",
+            "tong_guan",
+            "useful_gods",
+            "verdicts",
+            "应期",
+            "所本",
+            "方向",
+            "说明"
+          ],
+          "required": [
+            "verdicts",
+            "说明",
+            "所本",
+            "方向"
+          ]
+        }
+      }
+    }
+  },
+  "edges": {
+    "forbidden": [
+      {
+        "from": "core/**",
+        "to": "scripts",
+        "known": false,
+        "why": "零容忍：内核不得反向依赖学科脚本（AGENTS §二 单向依赖）"
+      },
+      {
+        "from": "scripts/chart.py",
+        "to": "narrate",
+        "known": false,
+        "why": "零容忍：起盘段不得触达正文层"
+      },
+      {
+        "from": "scripts/chart.py",
+        "to": "analyze",
+        "known": false,
+        "why": "零容忍：起盘段不得依赖推演段（方向反了）"
+      },
+      {
+        "from": "scripts/analyze.py",
+        "to": "render",
+        "known": false,
+        "why": "零容忍：推演段不得依赖呈现段"
+      }
+    ]
+  }
+}

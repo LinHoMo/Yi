@@ -1,0 +1,234 @@
+{
+  "schema": 1,
+  "_comment": "四段契约的机器判据（唯一真值源）。'why' 字段是给下一次改契约的人看的：写不清为什么这个键属于这一段，就不要加。改本文件必须同批改 CONTRACT.md §四 与 docs/CHANGELOG.md，并跑 dev_tools/check_layer_contract.py --selftest。",
+  "contract": "CONTRACT.md",
+  "batch": 312,
+  "fixtures": [
+    {
+      "name": "manual动",
+      "args": [
+        "--mode",
+        "manual",
+        "--yao",
+        "7,8,9,7,6,8",
+        "--question",
+        "占病"
+      ]
+    },
+    {
+      "name": "manual静",
+      "args": [
+        "--mode",
+        "manual",
+        "--yao",
+        "7,8,7,8,7,8",
+        "--question",
+        "占财"
+      ]
+    },
+    {
+      "name": "coin",
+      "args": [
+        "--mode",
+        "coin",
+        "--seed",
+        "42",
+        "--question",
+        "占事业"
+      ]
+    },
+    {
+      "name": "number",
+      "args": [
+        "--mode",
+        "number",
+        "--numbers",
+        "3,8,5",
+        "--question",
+        "占失物"
+      ]
+    },
+    {
+      "name": "time",
+      "args": [
+        "--mode",
+        "time",
+        "--datetime",
+        "2026-10-27 21:30",
+        "--question",
+        "占行人"
+      ]
+    }
+  ],
+  "stages": {
+    "chart": {
+      "role": "起卦与排盘：只产盘面与素材，不下判断",
+      "entry": "scripts/chart.py",
+      "allowed": [
+        "analysis_hints",
+        "changed_hexagram",
+        "divination_time",
+        "empty_branches",
+        "method",
+        "original_hexagram",
+        "question",
+        "trigram_interpretation"
+      ],
+      "required": [
+        "analysis_hints",
+        "changed_hexagram",
+        "divination_time",
+        "empty_branches",
+        "method",
+        "original_hexagram",
+        "question",
+        "trigram_interpretation"
+      ],
+      "nested": {
+        "trigram_interpretation": {
+          "allowed": [
+            "body_use",
+            "compound_name",
+            "element_relation",
+            "inner_direction",
+            "inner_element",
+            "inner_meaning",
+            "inner_nature",
+            "inner_personality",
+            "inner_symbols",
+            "inner_trigram",
+            "inner_weather",
+            "nature",
+            "outer_direction",
+            "outer_element",
+            "outer_meaning",
+            "outer_nature",
+            "outer_personality",
+            "outer_symbols",
+            "outer_trigram",
+            "outer_weather",
+            "overview",
+            "symbol_meaning"
+          ],
+          "debt": [
+            "overview",
+            "body_use",
+            "outer_personality",
+            "inner_personality"
+          ],
+          "debt_note": "成句评价长在排盘段（CONTRACT §六-1）；迁 analyze 会动 golden 双指纹，单独一批做。debt 只准减不准增。"
+        }
+      }
+    },
+    "analyze": {
+      "role": "结构推演 + 定性结论：允许判词与结论级短建议，不允许成段正文",
+      "entry": "scripts/analyze.py",
+      "allowed": [
+        "advanced_analysis",
+        "analysis_hints",
+        "bing_yao",
+        "changed_hexagram",
+        "chart_summary",
+        "conclusion",
+        "divination_time",
+        "empty_branches",
+        "method",
+        "original_hexagram",
+        "question",
+        "section_advice",
+        "shensha_panel",
+        "thinking_chain",
+        "trigram_interpretation"
+      ],
+      "required": [
+        "conclusion",
+        "chart_summary",
+        "thinking_chain",
+        "original_hexagram",
+        "divination_time",
+        "method"
+      ],
+      "nested": {
+        "conclusion": {
+          "allowed": [
+            "verdict",
+            "信号强度",
+            "应期",
+            "应期明细",
+            "应期窗口",
+            "所本",
+            "方向",
+            "星煞",
+            "最终得分",
+            "病药",
+            "说明"
+          ],
+          "required": [
+            "verdict",
+            "方向",
+            "说明",
+            "所本"
+          ]
+        }
+      }
+    }
+  },
+  "edges": {
+    "forbidden": [
+      {
+        "from": "scripts/engine_chart.py",
+        "to": "trigram_symbolism",
+        "known": true,
+        "why": "排盘直连类象解读：build_hexagram_result 内 import，产出 overview/body_use（CONTRACT §六-1 的成因）"
+      },
+      {
+        "from": "scripts/engine.py",
+        "to": "render",
+        "known": true,
+        "why": "引擎门面在 CLI 的 --html 分支里调呈现层"
+      },
+      {
+        "from": "scripts/thinking_chain.py",
+        "to": "narrate_core",
+        "known": false,
+        "why": "零容忍（312 批由欠账转硬）：装配函数已搬回 chain_assembly，推演段不得再触叙述层；回潮即红"
+      },
+      {
+        "from": "scripts/step5.py",
+        "to": "narrate_core",
+        "known": false,
+        "why": "零容忍（312 批由欠账转硬）：综合步改用 chain_assembly；回潮即红"
+      },
+      {
+        "from": "scripts/step*.py",
+        "to": "narrate_core",
+        "known": false,
+        "why": "零容忍（312 批由欠账转硬）：narrative_utils 撤编后 step1-4 只许依赖 util / chain_verdicts"
+      },
+      {
+        "from": "scripts/chart.py",
+        "to": "narrate_core",
+        "known": false,
+        "why": "零容忍：排盘段不得触达叙述层"
+      },
+      {
+        "from": "scripts/chart.py",
+        "to": "chain_verdicts",
+        "known": false,
+        "why": "零容忍：chain_verdicts 是断语装载面（narrative_utils 撤编后的继承者），排盘段不得取断语"
+      },
+      {
+        "from": "scripts/chart.py",
+        "to": "advice_framework",
+        "known": false,
+        "why": "零容忍：排盘段不得产趋避建议"
+      },
+      {
+        "from": "core/**",
+        "to": "scripts",
+        "known": false,
+        "why": "零容忍：内核不得反向依赖学科脚本（AGENTS §二 单向依赖）"
+      }
+    ]
+  }
+}

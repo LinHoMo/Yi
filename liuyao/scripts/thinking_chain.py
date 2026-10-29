@@ -31,7 +31,7 @@ from analysis_steps import (
     step4_analyze_changes,
     step5_synthesize,
 )
-from narrate_core import (
+from chain_assembly import (  # noqa: E402  311 批自 narrate_core 搬回推演段（CONTRACT §三 禁边还账）
     analyze_shi_yao_relation,
     find_classical_quotes,
     _build_reasoning_chain,

@@ -42,18 +42,20 @@ from chart_tables import (  # noqa: E402
     _QUESTION_KEYWORDS_USE_GOD,
 )
 
-from narrative_utils import (  # noqa: E402
+from chain_verdicts import (  # noqa: E402  断语/引文装载（原 narrative_utils，311 批拆分）
     CLASSICAL_INTERPRETATIONS as CINTERP,
     PATTERN_NOTES_EXTRA,
     PATTERN_VERDICTS,
-    _combined_strength,
     ctext,
     ctpl,
+)
+from util import (  # noqa: E402  通用机械工具（原 narrative_utils，311 批拆分）
+    _combined_strength,
     element_strength_in_month,
     get_changed_hexagram_branch,
 )
 # element_strength_in_month / get_changed_hexagram_branch / _combined_strength 的
-# 唯一实现都在 narrative_utils（各自逐字经快照对照）；本模块不再各留一份，
+# 唯一实现都在 util（各自逐字经快照对照）；本模块不再各留一份，
 # 只按 __all__ 再导出给 effects / classical_analysis 的消费方。
 
 from classical_enhancements_dufa import (  # noqa: E402
@@ -64,8 +66,8 @@ from classical_enhancements_dufa import (  # noqa: E402
 from classical_enhancements_zhugui import analyze_zhu_gui_shang_shen  # noqa: E402
 from classical_enhancements_menlei import analyze_menlei_dongjing  # noqa: E402
 from classical_enhancements_fushi import huozhulin_fushi_tags  # noqa: E402
-# 独发/独静域在 classical_enhancements_dufa.py 实现：该域只依赖 narrative_utils
-# 断语素材，与其他增强域无耦合。此处再导出维持 __all__ 与 classical_analysis 的
+# 独发/独静域在 classical_enhancements_dufa.py 实现：该域只依赖 util / chain_verdicts
+# 的素材，与其他增强域无耦合。此处再导出维持 __all__ 与 classical_analysis 的
 # 消费方零改动；依赖单向，勿回调本模块。
 
 
@@ -2151,7 +2153,7 @@ _EFFECTS_REEXPORT = (
 
 
 __all__ = [
-    # narrative_utils (re-exported)
+    # chain_verdicts (re-exported)
     "ctext",
     "ctpl",
     # classical_support.py helpers

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-"""六爻纳甲·推演（analyze 段）—— 纯机械断卦，无解读成分（CONTRACT §一）。
+"""六爻纳甲·推演（analyze 段）—— 结构推演 + 定性结论，不含成段正文（CONTRACT §一）。
 
 读 chart 段输出的排盘 JSON，跑既有 `thinking_chain.run_thinking_chain`
 与 `advice_framework.generate_advice`，输出带 conclusion 的 analyze JSON：
-供 narrate/render 消费，也供合参层 `synthesis.normalize_liuyao` 归一化。
+供 narrate/render 消费——本段是唯一产出 `conclusion` 的地方（CONTRACT §四）。
 
 不引入任何新断法：结论全部来自既有引擎推演。
 """
@@ -84,7 +84,7 @@ def _conclusion_from(chain: dict, result: dict) -> dict:
         "最终得分": step5.get("final_score"),
         "信号强度": step5.get("signal_strength", step5.get("confidence")),
         "应期": yingqi_list,
-        # 结构化应期候选（date+rule），供合参层现实回填评分；按引擎给出顺序即名次
+        # 结构化应期候选（date+rule），供现实回填评分（dev_tools/outcome.py 通道）；按引擎给出顺序即名次
         "应期明细": yingqi_items,
         "应期窗口": window,
         "病药": (result.get("bing_yao") or {}),
@@ -94,7 +94,7 @@ def _conclusion_from(chain: dict, result: dict) -> dict:
 
 
 def _chart_summary(result: dict, chain: dict) -> dict:
-    """盘面摘要：卦名/时刻/动爻/用神/旺衰——供合参层与其他科对齐。"""
+    """盘面摘要：卦名/时刻/动爻/用神/旺衰——供 MCP 层与报告层取用。"""
     dt = result.get("divination_time") or {}
     oh = result.get("original_hexagram") or {}
     ch = result.get("changed_hexagram") or {}

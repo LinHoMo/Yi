@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """六爻古典增强：独发 / 独静识别域（自 classical_enhancements.py 按域切出）。
 
-巨石看门狗（学科 .py > 2200 行）触发后的拆分：独发独静只依赖 narrative_utils 的
-断语素材与本模块内的卦爻结构判定，与其他增强域（伏神/暗动/三合/长生）无耦合，
-单独成域依赖最单向：classical_enhancements → 本模块 → narrative_utils。
+巨石看门狗（学科 .py > 2200 行）触发后的拆分：独发独静只依赖 util 的机械工具与
+chain_verdicts 的断语素材，加上本模块内的卦爻结构判定，与其他增强域（伏神/暗动/三合/长生）无耦合，
+单独成域依赖最单向：classical_enhancements → 本模块 → util / chain_verdicts。
 
 断语素材（引文/标签句）一律取自 `data/rules/verdict_texts.json`
-（经 narrative_utils 加载），代码内不写字面量。
+（经 chain_verdicts 加载），代码内不写字面量。
 """
 
 from __future__ import annotations
@@ -22,12 +22,12 @@ from kernel_path import ensure_kernel_on_path as _ensure_kernel
 
 _ensure_kernel(__file__)
 
-from narrative_utils import (  # noqa: E402
+from chain_verdicts import (  # noqa: E402  断语装载（原 narrative_utils）
     DUFA_NOTES,
     DUFA_QUOTE,
     LUANDONG_LABELS,
-    _pos_to_name,
 )
+from util import _pos_to_name  # noqa: E402  爻位名的唯一实现
 
 __all__ = ["analyze_du_fa_du_jing", "analyze_luandong", "attach_luandong_looks"]
 

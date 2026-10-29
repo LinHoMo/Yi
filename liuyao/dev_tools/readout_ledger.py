@@ -128,7 +128,7 @@ def checks():
         ("4ceef1eed62dafe2", "405bc8e03a6a99e0"))
     add("bazi.golden(fda7/3512)", "176批前→308批改期望", lambda t: _golden("bazi"),
         ("fda7482656967518", "3512deff79fa1f72"))
-    add("governance(57/36, blk 24/25)", "194批（244 批更新：六爻加 raise 回归守卫；230 批曾加体检器 55→56）", lambda t: _gov_counts(), ("57", "36", "24", "25"))
+    add("governance(58/37, blk 25/26)", "194批（244/230 批更新；312 批补记：310 批新增 check_layer_contract.py 两科各一 → 57/36→58/37、blk 24/25→25/26）", lambda t: _gov_counts(), ("58", "37", "25", "26"))
 
     # 案例分母（234 批）：账台钉率也钉分母——删/添一例而率恰不动时，分母行会红。
     def c_case_denoms(t):
@@ -176,12 +176,19 @@ def checks():
     # 各门只读自己那几个文件，从未有全量口径；破损会在最意外的运行时现形。
     def c_tracked_integrity(t):
         import subprocess as sp
+        # 312 批修：本项原判据"全库可 UTF-8 解码"把二进制资产当破损件
+        # （实抓 claude-plugin/assets/icon.png 恒计 1，导致该项长期 × 而被当噪声）——
+        # 二进制按扩展名豁免；文本仍全量解码，JSON 仍全量解析。
+        BINARY_SUFFIX = {".png", ".jpg", ".jpeg", ".gif", ".ico", ".webp", ".bmp",
+                         ".woff", ".woff2", ".ttf", ".otf", ".tgz", ".zip", ".gz", ".pdf"}
         files = sp.run(["git", "-C", str(ROOT), "ls-files", "-z"],
                        capture_output=True).stdout.split(b"\0")
         bd = bj = 0
         for f in filter(None, files):
             p = ROOT / f.decode("utf-8", errors="replace")
             if not p.exists():
+                continue
+            if p.suffix.lower() in BINARY_SUFFIX:
                 continue
             b = p.read_bytes()
             try:

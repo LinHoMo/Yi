@@ -1,10 +1,10 @@
 {
- "count": 36,
+ "count": 37,
  "by_tier": {
   "tool": 2,
   "ondemand": 5,
   "build": 4,
-  "blocking": 25
+  "blocking": 26
  },
  "unclassified": [],
  "curated_but_missing": [],
@@ -161,6 +161,13 @@
    "guards": "§三 house 规矩核对版（211 批：版本名/绝对路径/scratch/产物四判据）",
    "run_by_check_py": true,
    "doc": "House 规矩核对版（AGENTS §三 表第 1/3/5 行＋绝对路径条，第两百一十一批上门）。"
+  },
+  {
+   "script": "check_layer_contract.py",
+   "tier": "blocking",
+   "guards": "分层契约：四段键白名单＋禁边表（[32]；312 批补登记）",
+   "run_by_check_py": true,
+   "doc": "分层契约门：四段输出键白名单 + 层间禁边表（CONTRACT.md §三／§四）。"
   },
   {
    "script": "check_pillar_laws.py",

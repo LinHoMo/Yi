@@ -61,6 +61,7 @@
 ```
 Yi/
 ├── AGENTS.md            # 本文件：项目级铁律（贡献者读）
+├── CONTRACT.md          # 四段契约：chart→analyze→narrate→render 的判据本体（310 批重建）
 ├── liuyao/              # 六爻（独立）
 │   ├── core/yishu_core/ # 该科私有内核副本
 │   ├── scripts/ data/ references/ dev_tools/ docs/ tests/
@@ -75,6 +76,13 @@ Yi/
 依赖方向单向：`<科>/scripts → <科>/core`。**两科之间禁止任何相互 import**，也不存在
 合参层（`synthesis` 已移除且不得复活）。两科内核副本文件名相同、内容各自演进——这是
 "零耦合、各自可独立运行"的刻意结果，不是待修的重复。
+
+**四段契约的判据是根 `CONTRACT.md`**（第三百一十批重建；此前 5 个模块 docstring 引它
+而文件已随扁平化丢失）。`chart → analyze → narrate → render` 的职责、四条不许越的界、
+层间调用矩阵与各段输出键白名单都在那里；机器判据是同目录 `data/rules/layer_contract.json`，
+门是各科 `dev_tools/check_layer_contract.py`（六爻 `[32]`、八字 `[28]`，第三百一十批同时挂上）。
+**改层界 = 同批改 CONTRACT.md + JSON + CHANGELOG**，三者不同步即算缺陷（§六.3）。
+引用它时写节号，不写裸编号（同 §一 沿革条的口径）。
 
 **「零耦合」的口径（308 批定级，此前未定义，导致同一句话两种读法）**：
   1. **无 import**：两科之间不得有任何 `import` 与 `sys.path` 越界引用（AST 级扫描，账台有断言）；

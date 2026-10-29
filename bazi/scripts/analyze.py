@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """命·因子推演（analyze 段）—— 机械格局/强弱/大运，不写命运断语。
 
-输出契约与合参层对齐：
+输出契约（字面以 CONTRACT.md 为准；八字侧 layer_contract.json 第三百一十一批补）：
   {question, pillars, factors, shensha, ming_shen_gong,
    conclusion: {方向: "", verdicts: [机械标签], 说明, 所本,
                 strength, pattern, useful_gods, dayun},

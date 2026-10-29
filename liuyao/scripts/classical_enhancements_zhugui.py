@@ -37,10 +37,8 @@ _ensure_kernel(__file__)
 
 from yishu_core.symbols import CHONG_PAIRS, KE_CYCLE  # noqa: E402
 
-from narrative_utils import (  # noqa: E402
-    PATTERN_VERDICT_LABELS,
-    _pos_to_name,
-)
+from chain_verdicts import PATTERN_VERDICT_LABELS  # noqa: E402  断语装载（原 narrative_utils）
+from util import _pos_to_name  # noqa: E402  爻位名的唯一实现
 
 __all__ = ["analyze_zhu_gui_shang_shen"]
 

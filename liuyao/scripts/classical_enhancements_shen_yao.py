@@ -6,7 +6,7 @@
 既有范式（classical_enhancements_{dufa,zhugui,menlei,fushi,yimao_zhugui} 同构）。
 **函数体逐字节未改**，故六爻行为指纹（机械层）必须零漂移。
 
-依赖方向：本模块 → yishu_core / narrative_utils / chart_tables / classical_enhancements，
+依赖方向：本模块 → yishu_core / util / chain_tables / classical_enhancements，
 **不得回调本模块的名字到父文件**（父文件不 import 本模块，消费方直连此处）。
 """
 
@@ -28,7 +28,7 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     CHONG_PAIRS,
 )
 
-from narrative_utils import _pos_to_name  # noqa: E402  爻位名的唯一实现
+from util import _pos_to_name  # noqa: E402  爻位名的唯一实现
 
 from classical_enhancements import find_hexagram_body  # noqa: E402  安月卦身诀在父模块
 

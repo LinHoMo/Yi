@@ -159,8 +159,8 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     TOMB_MAP,
     chu_xun_branch,
 )
-from narrative_utils import safe_get  # noqa: E402
-from narrative_utils import STEP5_YINGQI as YINGQI_TXT  # noqa: E402
+from util import safe_get  # noqa: E402  通用工具（原 narrative_utils）
+from chain_verdicts import STEP5_YINGQI as YINGQI_TXT  # noqa: E402  断语装载（原 narrative_utils）
 
 import json as _json  # noqa: E402
 from pathlib import Path as _P  # noqa: E402
