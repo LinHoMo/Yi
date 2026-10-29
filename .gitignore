@@ -20,6 +20,15 @@ check_baseline.json
 # 真实应期反馈数据：与古籍案例物理隔离，永不参与调参（不入库）
 **/data/feedback/
 
+# 抓取/校对原始件（维基文库转写 *.wikitext.txt、元数据 *.meta.json）与衍生比对件 *_diff.json：
+# 不入库——校订件 *.dz.txt + *.provenance.json 才是真源。它们常是脚本自身输出目标，
+# 缺席即被 [11] 活引用门误判死链，故既 gitignore 又把 [11]/[14] 扫描范围排除（见两门脚本）。
+**/data/sources/*.wikitext.txt
+**/data/sources/*.meta.json
+**/data/**/*_diff.json
+# 转录/对拍产物目录（diff_siku_sanming.py、scan_siku_gaps.py 的输出）：不入库
+**/data/collation/
+
 # 编辑器与系统
 .DS_Store
 .idea/

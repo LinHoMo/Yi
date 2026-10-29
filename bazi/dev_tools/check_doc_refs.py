@@ -108,6 +108,8 @@ def scan() -> tuple[list[str], int]:
             continue
         if rel_to_disc.startswith("data/cases/") or rel_to_disc.startswith("data/sources/"):
             continue      # 语料与古籍底本：正文是案例数据/书文（含内嵌 markdown），不是路径声明载体
+        if rel_to_disc.endswith((".wikitext.txt", ".meta.json", "_diff.json")):
+            continue      # 抓取/校对原始件与衍生比对件：gitignore 不入库，其引用是脚本自身输出目标，非对仓库声明
         try:
             text = p.read_text(encoding="utf-8")
         except Exception:
@@ -137,6 +139,8 @@ def scan() -> tuple[list[str], int]:
                     continue
                 if GENERATED_ARTIFACT.match(ref):
                     continue      # 评测生成物（.gitignore 声明「脚本重跑生成、不入库」）：存在性不检查
+                if ref.endswith((".wikitext.txt", ".meta.json", "_diff.json")):
+                    continue      # 抓取/校对原始件与衍生比对件（gitignore 不入库）：存在性不检查
                 if SHORTHAND.search(ref):
                     continue      # 「step3/4/5.py」一类散文速记，不是路径声明
                 examined += 1

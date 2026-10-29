@@ -52,6 +52,9 @@ GLOBS = ("scripts/**/*.py", "core/**/*.py", "references/**/*.md",
 # 让本器"检视中断"并把 [14] 打成红——2026-10-13 两门并行跑时实踩过。
 # 与 NEGATIVE/病历口径同源：自测样本不作为回验对象。
 SKIP_NAME_PARTS = ("CHANGELOG", "__pycache__", ".pyc", "_selftest_")
+# 抓取/校对原始件与衍生比对件：与 [11] 同源，gitignore 不入库、是脚本自身输出，
+# 不是对本仓逐字书证的声明载体，进硬门只会随抓取/生成时机变红。
+SKIP_SUFFIXES = (".wikitext.txt", ".meta.json", "_diff.json")
 
 LINE_REF = re.compile(r"源\s*L\s*(\d+)")
 RANGE_REF = re.compile(r"源\s*L\s*\d+\s*(?:[-–—~]\s*(?:L\s*)?\d+|/\s*L?\d+)")
@@ -589,13 +592,14 @@ def iter_targets(one: str) -> list[Path]:
             return []
         # 单文件模式也必须守住口径：CHANGELOG 的旧条目按文件头承诺是登记时点原文，
         # 逐字回验一旦判红，唯一"修法"就是去改历史条目——那是门在逼人伪造历史。
-        if any(x in p.name for x in SKIP_NAME_PARTS):
-            print(f"  （{one} 属历史散文/编译产物，本器不检视；见文件头口径）")
+        if any(x in p.name for x in SKIP_NAME_PARTS) or p.name.endswith(SKIP_SUFFIXES):
+            print(f"  （{one} 属历史散文/编译产物/抓取原始件，本器不检视；见文件头口径）")
             return []
         return [p]
     for g in GLOBS:
         for p in sorted(DISC.glob(g)):
-            if p.is_file() and not any(x in p.name for x in SKIP_NAME_PARTS):
+            if (p.is_file() and not any(x in p.name for x in SKIP_NAME_PARTS)
+                    and not p.name.endswith(SKIP_SUFFIXES)):
                 out.append(p)
     return out
 
@@ -616,8 +620,8 @@ def main() -> int:
     total_c = total_p = total_refs = 0
     targets = iter_targets(args.file)
     if args.file and not targets:
-        if any(x in Path(args.file).name for x in SKIP_NAME_PARTS):
-            print("本器按口径不检视该文件（历史散文/编译产物），不判红也不判通过")
+        if any(x in Path(args.file).name for x in SKIP_NAME_PARTS) or Path(args.file).name.endswith(SKIP_SUFFIXES):
+            print("本器按口径不检视该文件（历史散文/编译产物/抓取原始件），不判红也不判通过")
             return 0
         print(f"× 文件不存在：{args.file}")
         return 1
