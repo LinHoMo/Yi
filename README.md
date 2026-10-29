@@ -2,7 +2,9 @@
 
 > **能力边界一页看清**：[`CAPABILITY.md`](CAPABILITY.md)（T1 排盘已验证／T2 古籍忠实已量化含上限／
 > **T3 现实预测不可测、不声称**）；治理面（哪些门在守什么）见 [`GOVERNANCE.md`](GOVERNANCE.md)；
-> **全仓文档地图**（52 份文档各自是什么、活文档还是归档）见 [`DOCS.md`](DOCS.md)。
+> **全仓文档地图**（每份文档是什么、活文档还是归档）见 [`DOCS.md`](DOCS.md)；
+> **架构整改总方案**（七个架构级问题、理想架构、可分发 TODO 与验收标准）见
+> [`ARCHITECTURE-PLAN.md`](ARCHITECTURE-PLAN.md)。
 
 本仓库只保留两个**相互独立、零耦合**的术数学科，各自携带一套完整可运行的实现：
 
