@@ -17,6 +17,19 @@ on:
   pull_request:
   workflow_dispatch:
 jobs:
+  root-gates:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+      - name: root gates
+        run: |
+          python devkit/sync_devkit.py --check
+          python devkit/root/check_root_docs.py
+          python devkit/root/check_docs_index.py
   gates:
     runs-on: windows-latest
     timeout-minutes: 45
