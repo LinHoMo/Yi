@@ -69,10 +69,10 @@ COLLATION_ARTIFACT = re.compile(r"(?:^|/)data/collation/[A-Za-z0-9_\-]*\.json$")
 # （查 git 历史用）会被扫成死指针——那些不是对仓库的声明，判红等于逼工作脚本绕着写。
 SKIP_ROOTS = ("outputs/", "scratch/", "logs/")
 # 历史登记文档：其中提到的旧路径是登记时点事实，不判
-# 330 批：CHANGELOG 归档后，**归档文件与 CHANGELOG 同口径豁免**——
-# 归档段是逐字搬过来的历史散文，里面指向当年临时文件的路径照样是"登记时点的事实"；
-# 把它当活文档查，等于要求历史文字永远指向今天还存在的文件。
-EXEMPT = ("docs/CHANGELOG.md", "docs/CHANGELOG-ARCHIVE.md")
+# 342 批精简后：`CHANGELOG-HISTORY-INDEX.md` 取代归档全文，与 `CHANGELOG.md` 同口径豁免——
+# 标题里指向当年临时文件的路径照样是"登记时点的事实"；把它当活文档查，
+# 等于要求历史文字永远指向今天还存在的文件。
+EXEMPT = ("docs/CHANGELOG.md", "docs/CHANGELOG-HISTORY-INDEX.md")
 # 本器自己的源文件里有负例样本的字面死引用，不能自查
 SELF = "dev_tools/check_doc_refs.py"
 SUFFIXES = (".md", ".py", ".json", ".txt", ".css", ".html")

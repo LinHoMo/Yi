@@ -1,9 +1,22 @@
 # 八字 CHANGELOG
 
-> **第三百三十六批（A2-B）瘦身**：本文件只留最近窗口（2026-10-27 及之后的条目）；
-> 更早的全文**一字未删**地移入 [`CHANGELOG-ARCHIVE.md`](CHANGELOG-ARCHIVE.md)，
-> 按批号/关键词检索见 [`CHANGELOG-HISTORY-INDEX.md`](CHANGELOG-HISTORY-INDEX.md)。
-> 口径同 AGENTS.md §六：归档只搬不改写正文，唯一例外是路径修正——链接要活。
+> **第三百三十六批（A2-B）瘦身**：本文件只留最近窗口（2026-10-27 及之后的条目）。
+> **第三百四十二批精简**：更早条目压成逐批一句话索引
+> [`CHANGELOG-HISTORY-INDEX.md`](CHANGELOG-HISTORY-INDEX.md)，`CHANGELOG-ARCHIVE.md` 全文已删除；
+> 下面历史条目若提到 ARCHIVE，一律按索引读（不再保留全文）。
+
+## 2026-10-29 第三百四十二批（八字）：**历史记录精简——删除 240KB 归档全文，只留逐批索引**
+
+**性质**：docs（用户令"历史记录文件可以删减，精简为主"）。零代码、零判据改动。
+
+- 删除 `docs/CHANGELOG-ARCHIVE.md`（239,520 B／81 个 `##` 标题）；
+- `docs/CHANGELOG-HISTORY-INDEX.md` 改为**逐批标题索引**：原 81 节保留
+  `## 日期 第N批` 标题（截 120 字），14.7KB；
+- `readout_ledger` 的「登记×提交」扫描面改扫 `CHANGELOG-HISTORY-INDEX.md`；
+  `check_doc_refs` 的 EXEMPT 同步；
+- `DOCS.md` 八字 15→14、全仓 54→51；`AGENTS.md` 历史记录政策改为"索引为主，不保留全文"。
+- 复验：`check_docs_index` rc=0（51 份）、`check_root_docs` rc=0、
+  `check_doc_refs` rc=0（432 条/0 死链）、`dev_tools/check.py` rc=0、`readout_ledger --quick` rc=0。
 
 ## 2026-10-29 第三百四十一批（全仓文档收口·续）：**已关闭/已完成内容从活文档删除**
 

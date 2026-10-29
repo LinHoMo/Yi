@@ -19,7 +19,7 @@
 | **第一次接触本仓** | `README.md`（做什么、现在什么水平） | `CAPABILITY.md`（对外口径与读数） | `AGENTS.md`（改代码前必读的三条铁律） |
 | **要改代码的贡献者** | `AGENTS.md` | `CONTRACT.md`（四段契约：chart→analyze→narrate→render） | 本表 → 对应学科的 `SKILL.md` |
 | **要查本次架构整改结果的人** | `ARCHITECTURE-PLAN.md`（完成台账 + V1–V15 收口实测 + 偏差/欠账） | `GOVERNANCE.md`（工具台账与档位门槛） | 本表 → 对应批次 |
-| **要引用对外数字的人** | `CAPABILITY.md` | `liuyao/README.md`／`bazi/README.md` | `docs/CHANGELOG.md`（最近窗口）＋ `docs/CHANGELOG-ARCHIVE.md`（更早明细） |
+| **要引用对外数字的人** | `CAPABILITY.md` | `liuyao/README.md`／`bazi/README.md` | `docs/CHANGELOG.md`（最近窗口）＋ `docs/CHANGELOG-HISTORY-INDEX.md`（逐批一句话） |
 
 ---
 
@@ -35,7 +35,7 @@
 | `DOCS.md` | 本表：全仓文档索引 | 活文档 |
 | `ARCHITECTURE-PLAN.md` | **架构整改完成记录**（原总方案 340 批压缩）：D1–D3 决策、完成台账、V1–V15 收口实测、偏差与欠账 | 归档留证 |
 
-## 三、六爻（`liuyao/`，18 份）
+## 三、六爻（`liuyao/`，16 份）
 
 ### 主入口
 
@@ -49,14 +49,12 @@
 | 文件 | 一句话 | 状态 |
 |---|---|---|
 | `liuyao/docs/CHANGELOG.md` | 批次流水，**只保留最近窗口**（2026-10-25 起） | 活文档 |
-| `liuyao/docs/CHANGELOG-ARCHIVE.md` | 更早 154 个批次的**全文**（330 批归档，一字未删） | 归档留证 |
-| `liuyao/docs/CHANGELOG-HISTORY-INDEX.md` | 全部批号的一句话索引（含 330 批新增的 154 行） | 历史索引 |
+| `liuyao/docs/CHANGELOG-HISTORY-INDEX.md` | **逐批一句话索引**（342 批精简：原 154 批事实标题＋更早 49–156 批一句话；全文归档已删） | 历史索引 |
 | `liuyao/docs/JUDGMENT-TABLE.md` | 判定表：书证底稿、9 格、13 条题类覆盖、27 处覆写清单，**含"不换判词"的结论** | 活文档 |
 | `liuyao/docs/CASE-LIBRARY-AUDIT.md` | 案例库应期抽取审计（dz 底本通道） | 活文档 |
 | `liuyao/docs/YIIN-CASE-AUDIT.md` | 《易隐》案例集审计（`yiin_holdout`） | 活文档 |
 | `liuyao/docs/ADJUDICATION-BRIEF.md` | 待裁简报（**生成物**：`dev_tools/adjudication_brief.py` 重生成） | 生成物 |
 | `liuyao/docs/TIANHOU.md` | 占天候试验台协议（读数规则、换源即改口径） | 活文档 |
-| `liuyao/docs/ARCHIVE/P0-INVENTORY-20261014.md` | 一次 P0 静默缺陷盘点（结论：两科已无活动性 P0 全盲） | 归档留证 |
 
 ### 参考（`liuyao/references/`）
 
@@ -70,15 +68,14 @@
 | `liuyao/references/source_ledger.md` | 六爻书源台账（可得性与出处状态） | 活文档 |
 | `liuyao/references/odd_questions.md` | 奇问杂占读法（问得怪、问得虚） | 活文档 |
 
-## 四、八字（`bazi/`，15 份）
+## 四、八字（`bazi/`，14 份）
 
 | 文件 | 一句话 | 状态 |
 |---|---|---|
 | `bazi/SKILL.md` | 八字科宿主模型操作合同 | 活文档 |
 | `bazi/README.md` | 八字科说明与读数表 | 活文档 |
 | `bazi/docs/CHANGELOG.md` | 八字批次流水，**只保留最近窗口**（2026-10-27 起） | 活文档 |
-| `bazi/docs/CHANGELOG-ARCHIVE.md` | 更早全文（336 批归档，原文 2500 行**一字未删**） | 归档留证 |
-| `bazi/docs/CHANGELOG-HISTORY-INDEX.md` | 归档 71 节的逐节一句话索引 | 历史索引 |
+| `bazi/docs/CHANGELOG-HISTORY-INDEX.md` | **逐批一句话索引**（342 批精简：原 81 节标题保留；全文归档已删） | 历史索引 |
 | `bazi/docs/EVAL-PLAN.md` | 八字案例评测方案（分维与门槛的出处） | 活文档 |
 | `bazi/docs/SANMING-SIKU-COLLATION.md` | 《三命通会》两转录渠道对拍报告 | 归档留证 |
 | `bazi/references/bazi_liuqin_gongwei.md` | 六亲·家宅·家人读法 | 活文档 |

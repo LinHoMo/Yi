@@ -1,5 +1,24 @@
 # 六爻 CHANGELOG
 
+> **第三百四十二批精简**：`CHANGELOG-ARCHIVE.md` 全文本已删除；更早条目压成逐批一句话索引
+> [`CHANGELOG-HISTORY-INDEX.md`](CHANGELOG-HISTORY-INDEX.md)。下面历史条目若提到
+> ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
+
+## 2026-10-29 第三百四十二批（六爻）：**历史记录精简——删除 355KB 归档全文，只留逐批索引**
+
+**性质**：docs（用户令"历史记录文件可以删减，精简为主"）。零代码、零判据改动。
+
+- 删除 `docs/CHANGELOG-ARCHIVE.md`（355,751 B／154 个批次全文）；
+- `docs/CHANGELOG-HISTORY-INDEX.md` 改为**逐批标题索引**：原 154 批的 `## 日期 第N批`
+  标题保留（截 120 字）＋ 2026-10-14 已剔除的第49–156批一句话（208 行），共 72KB；
+- 删除一次性盘点 `docs/ARCHIVE/P0-INVENTORY-20261014.md`（结论已在历史索引/CHANGELOG）；
+- `readout_ledger` 的「登记×提交」扫描面由 `CHANGELOG-ARCHIVE.md` 改为
+  `CHANGELOG-HISTORY-INDEX.md`（批号与日期原样保留，孤儿计数不变）；
+- `check_doc_refs` 的 EXEMPT 同步改为 `CHANGELOG-HISTORY-INDEX.md`；
+- `DOCS.md` 六爻 18→16、全仓 54→51；`AGENTS.md` 历史记录政策改为"索引为主，不保留全文"。
+- 复验：`check_docs_index` rc=0（51 份）、`check_root_docs` rc=0（7 份/0 死链）、
+  `check_doc_refs` rc=0（761 条/0 死链）、两科 `check.py` rc=0、`readout_ledger --quick` rc=0。
+
 ## 2026-10-29 第三百四十一批（全仓文档收口·续）：**已关闭/已完成内容从活文档删除**
 
 **性质**：docs。零代码、零判据改动。
