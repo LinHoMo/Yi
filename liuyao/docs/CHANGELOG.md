@@ -5,6 +5,46 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-10-29 第三百四十七批（全仓）：**结构分层体检 10 项 triage＋step5 补 docstring＋契约 §六-2 销账**
+
+**性质**：docs＋极低风险代码（只加 docstring）。零推演行为、零判词、零读数改动。
+
+### 一、代码/文档改动
+
+- `liuyao/scripts/step5.py` 补模块 docstring（329 批体检原句「step5 连 docstring 都没有」）；
+  明确「推演实现，不是叙述层；体量约 2,000 行是既定技术债，拆分另批走 §四」。
+- `CONTRACT.md §六` 删除原 2（`analyze` docstring 与实测不符）——310 批已改文档、
+  347 批复核 docstring 现为「结构推演 + 定性结论」；已关闭项注记合并原 2/4/5/6。
+- `AGENTS.md §一.2` 标题与正文按实改写：运行时隔离的机器判据是
+  `check_case_isolation.py` 的**文件白名单**，不是物理目录隔离；`evaluate.py`/
+  `case_runner.py` 仍在 `scripts/`，物理搬迁未做、不冒充已做。
+- `data/rules/judgment_table.json` 的 27 处覆写 `line` 全部 +8：step5 顶部插入
+  docstring 使行号整体下移；`[33]` 首跑即按“盘上 L1398 vs 表内 L1390”抓到，
+  逐条同步后 `check_judgment_table.py` 与 `--selftest`（8 类负例）全过。
+
+### 二、329 批结构分层体检 10 项——逐项复核结论
+
+| 条目 | 复核结论（347 批实跑/源码证据） | 处置 |
+|---|---|---|
+| §3.1 三条 import 环 | **不成立**：`liuyao/scripts/*.py` 模块级 import 边 122 条、**环 0 个**（AST 全扫）；`engine.py` 192/378/388/402/419 五处是函数体内懒加载可选功能，不构成模块环 | 结案 |
+| §3.2 三处反向依赖 | **不成立**：`[32]` 的 `core→scripts` 零容忍边全绿；模块级扫描未复现 | 结案（原件证据随 scratch 删除，按 §六.5 记“证据不足”） |
+| §3.3 私有名当公共 API | **不成立（显式再导出）**：`effects.py` 导入的 10 个下划线名全部在 `classical_enhancements.__all__` 内，属 PEP 562 再导出面，不是私有名泄漏 | 结案 |
+| §3.4 同名函数并存 7 组 | **部分成立**：AST 实测 10 组——`main`（9 个 CLI）属预期；`_chong/_he/_elem/_world_line` 为域内局部实现（语义不同，接受）；`_branch_element/_pos_to_name/get_twelve_growth_stage/_element_to_relation/_find_use_god_positions` 五组跨模块重复**仍未并** | 接受局部项；五组重复另批做行为保持合并（会动 golden，须 §四） |
+| §3.5 评测层与交付层同目录 | **成立**：`evaluate.py`/`case_runner.py` 仍在 `scripts/`，隔离靠文件名白名单 | 文档已按实改写；物理搬迁列待办（会改 README/CAPABILITY 的复现命令，须单批） |
+| §3.6 跨科共用契约无 schema | **部分成立**：`layer_contract.json` 有 `schema:1`，`[32]` 校验键面/禁边；正式 JSON Schema 文件未建 | 接受现状；正式 schema 若建须两科同批＋`devkit` 分发 |
+| §4.1 三个 2,000 行级模块 | **成立（体量）**：实测 `step5.py` 1987 行、`classical_enhancements.py` 1932 行；329 批原记 2176/2227 系行数口径差 | step5 docstring 已补；拆分/瘦身另批（§四 两集出分） |
+| §4.2 两科结构不对称 | **不成立（设计）**：D3 中档明确「不克隆六爻 step1–5 与 9 个 classical_enhancements_*」 | 结案（ARCHITECTURE-PLAN §六.3） |
+| §4.3 呈现层两套语言 | **不成立（两运行时设计）**：六爻 HTML 在 Python（CLI/报告），八字 HTML 在 Node（MCP 宿主），共用一套运行时反而要跨语言嵌入 | 结案；若统一须先定宿主边界 |
+| §4.5 文档覆盖不到一半 | **不成立（无可测分母）**：DOCS 现 51 份源文档；329 批 53 系含已删副本的粗计 | 结案；不设“文档数/脚本数”假指标 |
+
+### 三、复验
+
+- `python liuyao/dev_tools/golden.py verify`：双指纹零漂移（docstring 不进指纹）；
+- `python liuyao/dev_tools/check.py`：全绿（含 [32] 分层契约、[38] expected 覆盖）；
+- `python liuyao/dev_tools/check_batch_num.py`（根级）：未结案孤儿 0。
+
+分数含义：与古籍案例要点的一致性，不代表现实预测命中率（AGENTS.md §一.3）。
+
 ## 2026-10-29 第三百四十六批（全仓）：**`check_batch_num.py` 落地——批次×提交有了根级门**
 
 **性质**：root gate。零引擎、零数据改动。

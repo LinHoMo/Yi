@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+"""第五步·综合（analyze 段内最后一步）：把 step1–step4 的现状／用神／旺衰／动变
+事实合成为 verdict、分数、应期与格局标签，供 `chain_assembly` 装配。
+
+边界（CONTRACT.md §一.2）：本模块是推演实现，不是叙述层；不产出成段正文。
+历史：329 批结构分层体检登记「step5 连 docstring 都没有」；346 批补本节。
+模块体量（约 2,000 行）是既定技术债，拆分/瘦身须另批走 §四 验收，不在本批夹带。
+"""
 from __future__ import annotations
 
 import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现

@@ -117,14 +117,14 @@ core/yishu_core   ←（唯一允许方向）—  scripts/*
 | # | 条款 | 现状 | 计划 |
 |---|---|---|---|
 | 1 | §一 chart 不许下判断 | `trigram_interpretation` 里 `overview` / `body_use` / `outer_personality` / `inner_personality` / `element_relation` 是成句评价（如「体生用有所付出，待时收功」） | 迁到 analyze 段产出；会动 golden 双指纹，单独一批做，不在 310 批夹带 |
-| 2 | §一 analyze 不许写文章 | `analyze.py` docstring 自称「纯机械断卦，无解读成分」，与实测 `verdict="大吉"` + 4 条建议不符 | 310 批改文档（不改行为）：改为「结构推演 + 定性结论」 |
 | 3 | §三 禁边表 | **2 条现存禁边**（`engine_chart→trigram_symbolism`、`engine.py→render`）；312 批还清 3 条（`thinking_chain`/`step5`/`step1..4 → narrate_core`），条目由 `known:true` 转为 `known:false` 零容忍 | 剩余 2 条按 §四 单批还；禁边只准减 |
 | 7 | §一.2 analyze 不许写文章 | **312 批体检新登记**：`analyze` 实测输出 `thinking_chain.reasoning_chain` 9 条成句（85–759 字）＋`summary_text` 354 字＋`section_advice` 4 句；`[32]` 只白名单两层子键（`trigram_interpretation`/`conclusion`），看不出这一层。且 `narrate_core` 反向从 `reasoning_chain` 的 `[格局] A|B` 串里正则反解标签（§一.3 的隐性违反） | 随 A3 分层批做：叙述句改由 fact 渲染，`reasoning_chain` 降为内部键或迁 narrate；届时把该键加入 `[32]` 的嵌套白名单判据。书证与优先级草案见 `liuyao/docs/JUDGMENT-TABLE.md`（313 批） |
 
-> **已关闭项（原 4/5/6）从本表删除**（340/341 批文档收口）：原 4＝八字侧键白名单
-> （310 批建成）、原 5＝render 不当第二个 narrate（311 批审计裁定维持非下线）、
-> 原 6＝`narrative_utils` 混装（312 批拆模块关闭）。关闭登记仍在各科 CHANGELOG，
-> 本表只列**尚未满足**的条款；编号保留原号，避免外部引用失指。
+> **已关闭项**：原 2（`analyze` docstring 与实测不符）已于 310 批改文档、346 批复核后关闭
+> （docstring 现为「结构推演 + 定性结论」；本表不再列）。原 4＝八字侧键白名单（310 批建成）、
+> 原 5＝render 不当第二个 narrate（311 批审计裁定维持非下线）、原 6＝`narrative_utils` 混装
+> （312 批拆模块关闭）。关闭登记仍在各科 CHANGELOG，本表只列**尚未满足**的条款；
+> 编号保留原号，避免外部引用失指。
 
 **八字侧契约欠账审计（第三百三十六批 A2-B，逐条问过）**
 
