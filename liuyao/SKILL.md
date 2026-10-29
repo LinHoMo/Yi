@@ -82,6 +82,9 @@ description: 六爻占卜预测。使用中国传统易经六爻纳甲法进行�
 
 不确定时主动询问，其余默认。
 
+**若属奇问（对象非人、不可验证、涉他人隐私或生死、由恐惧驱动），先读
+`references/odd_questions.md`，判断该不该用卦回答；不该答的，给替代问法而不是起一卦。**
+
 ### 第二步：起卦
 
 使用 `scripts/engine.py` 排盘：
@@ -413,6 +416,7 @@ python scripts/yi_liuyao.py "问感情：目前这段感情能否修成正果" \
 | `references/interpretation_guide.md` | 断卦方法论详解（用神取法、旺衰体系、动变规则、经典断语、世应关系、六神辅助、应期推断） | 需要查用神或断卦规则时 |
 | `references/pattern_reference.md` | 六爻十二大经典格局速查（原文出处、识别条件、应期规则） | 判断特殊格局时 |
 | `references/classical_synthesis.md` | 六爻四大经典综合（火珠林·黄金策·卜筮正宗·含十八论、实占案例、附录十三细微格局补遗、十四火珠林纳甲条文） | 需要理论深度时，尤其涉及虚空月破墓绝刑冲 |
+| `references/odd_questions.md` | 奇问杂占读法（失联寻宠、怪梦、异象、"他有没有骗我"、不可占清单与拒答话术） | 所问不是标准题类，或涉生死／隐私／灵异时，**先读这篇判断该不该用卦答** |
 | `references/case_library.md` | 六爻经典案例库（黑箱测试用，严禁预测时引用做类比） | 仅场景 A/B/C |
 | `core/yishu_core/hexagram_texts.py` | 六十四卦卦辞/爻辞唯一真值源 | 需要查卦辞爻辞时 |
 

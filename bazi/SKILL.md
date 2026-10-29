@@ -6,6 +6,12 @@
 ## 意图路由
 
 - 问「一生格局 / 命运趋势 / 宜何业」→ 本层给机械因子与趋势骨架；解读归 LLM 转述，禁止宿命断言。
+- 问「父母 / 配偶 / 子女 / 家里人」「家庭氛围」→ 读 `references/bazi_liuqin_gongwei.md`
+  （宫位与星双参；不断生死、不数人数、不判离婚）。
+- 问「体质 / 身体哪一路要留心 / 老毛病」→ 读 `references/bazi_jibing_tizhi.md`
+  （五行配脏腑、虚实、取伤重；**不诊断、不预测生死、一律建议就医**）。
+- 问「你先说我以前 / 我这盘准不准 / 出生时辰记不清」→ 读 `references/bazi_qianshi_yanpan.md`
+  （定时辰与已过往运反推；两件对不上就承认这张盘可能不是他）。
 - 问具体一事 → 走卜科（**六爻** `liuyao`），不越位。
 
 ## 能力
@@ -23,6 +29,17 @@
 - LLM 心算四柱或十神（铁律一）。
 - 在 narrate 里编命运结论（必富必贵、某年一定）。
 - 把机械推演说成「命已算准」或现实预测命中率。
+
+## 参考文档（读法层，均带源L逐字回验）
+
+| 文件 | 管什么 | 何时读 |
+|---|---|---|
+| `references/bazi_liuqin_gongwei.md` | 六亲·家宅·家人：宫位与星双参、五种「破」的关系语义、禁句表 | 问父母/配偶/子女/家庭氛围 |
+| `references/bazi_jibing_tizhi.md` | 疾病·体质：五行配脏腑、虚实、相生亦生病、措辞边界 | 问身体、体检该留意什么 |
+| `references/bazi_qianshi_yanpan.md` | 前事·验盘：时刻切法、定时辰流程、已过往运反推 | 问「我以前」或校出生时辰 |
+| `references/bazi_shishen_terminology.md` | 十神术语释义 | 术语对不上时 |
+| `references/bazi_yue_shi_ge.md` | 五虎遁/五鼠遁与月支格局 | 排盘口径有疑时 |
+| `references/bazi_nayin_shiyi.md` | 纳音释义 | 用到纳音取象时 |
 
 ## 另两条铁律（操作版；全文见仓库根 `AGENTS.md` §一）
 

@@ -10,7 +10,7 @@ description: 六爻纳甲与八字四柱的确定性排盘与解读。当用户�
 
 ## 知识库（按需读取，别整本读）
 
-本技能随包带 9 篇判据文档，在 `references/` 下：
+本技能随包带 13 篇判据文档，在 `references/` 下（篇数以 `references/INDEX.md` 为准，随批更新）：
 
 - 先读 **`references/INDEX.md`** —— 它是一张「什么问题读哪一篇」的表，只有几十行。
 - 常见用法：判断经典格局查 `liuyao/pattern_reference.md`（8KB，短）；

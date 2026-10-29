@@ -1,7 +1,7 @@
 /**
  * yi_kb：随包判据知识库的关键词检索（纯 Node、确定性、零 LLM、零 Python）。
  *
- * 动机：知识库 9 篇单篇最大 52KB，模型凭 INDEX.md 路由表盲选整篇读，
+ * 动机：知识库 13 篇单篇最大 52KB，模型凭 INDEX.md 路由表盲选整篇读，
  * 读错一篇就白占一大块上下文。本模块让模型先关键词定位（返回 文件:行 +
  * 节标题 + 摘录），再按行读具体节段。
  *
@@ -147,6 +147,17 @@ function expandWithSynonyms(terms) {
 }
 
 /** 连续汉字串（≥3 字）的相邻二字窗；2 字词不切（整串即词），不跨中英文边界。 */
+/**
+ * 二字窗兜底的停用表（第三百一十七批）：疑问词与功能词几乎出现在每一篇里，
+ * 拿它们当召回依据等于按"谁话多"排序。实测「世应怎么安」——真正讲世应的
+ * najia_rules 被满篇「怎么」的新文档挤出前五。停用表只挡这些词，
+ * 实词（世应／用神／纳甲）一律照旧，且精确词项优先于本表。
+ */
+const STOP_BIGRAMS = new Set([
+  '怎么', '什么', '如何', '为什', '么办', '怎样', '可以', '这个', '那个', '这些', '那些',
+  '我们', '你们', '他们', '是不', '不是', '有没', '没有', '要不', '能不', '会不', '是否',
+])
+
 export function cjkBigrams(term) {
   const out = new Set()
   for (const run of String(term).match(/[\u4e00-\u9fff]+/gu) ?? []) {
@@ -167,7 +178,8 @@ export async function searchKb({ query, discipline, limit = 5, maxPerFile = 2, k
     throw new Error('yi_kb 需要 query（关键词，可多个，空格分隔，如 "用神 取法"）')
   }
   const { primary: terms, synonymsAdded } = expandWithSynonyms(rawTerms)
-  const bigrams = [...new Set(rawTerms.flatMap((t) => cjkBigrams(t)))].filter((t) => !terms.includes(t))
+  const bigrams = [...new Set(rawTerms.flatMap((t) => cjkBigrams(t)))]
+    .filter((t) => !terms.includes(t) && !STOP_BIGRAMS.has(t))
   const cap = Math.min(Math.max(Number(limit) || 5, 1), 10)
 
   const files = (await listKbFiles(kbRoot)).filter((f) =>
@@ -175,6 +187,7 @@ export async function searchKb({ query, discipline, limit = 5, maxPerFile = 2, k
   )
 
   const matches = []
+  const sections = []
   for (const rel of files) {
     let text
     try {
@@ -184,49 +197,73 @@ export async function searchKb({ query, discipline, limit = 5, maxPerFile = 2, k
     }
     const fileLower = rel.toLowerCase()
     for (const sec of splitSections(text)) {
-      const bodyLower = sec.lines.map((l) => l.text).join('\n').toLowerCase()
-      const titleLower = sec.title.toLowerCase()
-      let score = 0
-      let covered = 0
-      let firstHit = null
-      for (const t of terms) {
-        const inTitle = titleLower.includes(t)
-        const inFile = fileLower.includes(t)
-        const count = countOccurrences(bodyLower, t)
-        if (inTitle) score += 4
-        if (inFile) score += 3
-        if (count) {
-          score += Math.min(count, 12)
-          if (!firstHit) firstHit = sec.lines.find((l) => l.text.toLowerCase().includes(t))
-        }
-        if (inTitle || inFile || count) covered += 1
-      }
-      // 2-gram 兜底（减权重：标题 ×1、正文封顶 4、不计覆盖——兜底召回不该压过精确命中）
-      let bigramHit = false
-      for (const t of bigrams) {
-        if (terms.includes(t)) continue
-        const inTitle = titleLower.includes(t)
-        const count = countOccurrences(bodyLower, t)
-        if (inTitle) score += 1
-        if (count) {
-          score += Math.min(count, 4)
-          bigramHit = true
-          if (!firstHit) firstHit = sec.lines.find((l) => l.text.toLowerCase().includes(t))
-        }
-      }
-      if (!covered && !bigramHit) continue
-      score += covered * 6
-      const hit = firstHit ?? sec.lines.find((l) => l.text.trim()) ?? { n: sec.startLine, text: '' }
-      matches.push({
-        file: rel,
-        resource: resourceIdFor(rel),
-        discipline: rel.startsWith('liuyao/') ? 'liuyao' : rel.startsWith('bazi/') ? 'bazi' : 'index',
-        title: sec.title,
-        line: hit.n,
-        score,
-        snippet: hit.text.trim().slice(0, 240),
+      sections.push({
+        rel,
+        fileLower,
+        sec,
+        bodyLower: sec.lines.map((l) => l.text).join('\n').toLowerCase(),
+        titleLower: sec.title.toLowerCase(),
       })
     }
+  }
+
+  // 2-gram 权重按「稀有度」定（第三百一十七批）：新增读法文档后，「世应怎么安」这类
+  // 无空格问句整串不在库中，只能靠二字窗；旧实现给每个二字窗封顶 4 分且不看稀有度，
+  // 于是满篇「怎么」的文档与真正讲「世应」的文档同分，再按文件名排序——bazi/ 在前，
+  // 纳甲规则反被挤出前 5。这是召回层的真缺陷，不是测试挑剔：用户问装卦，检索给的是
+  // 不相干的篇。权重取 1+3*(1-df/总节数)：df 越小的字窗越贵，「世应」压过「怎么」。
+  const df = new Map()
+  for (const s of sections) {
+    for (const t of new Set(bigrams)) {
+      if (s.bodyLower.includes(t) || s.titleLower.includes(t)) df.set(t, (df.get(t) ?? 0) + 1)
+    }
+  }
+  const totalSections = Math.max(sections.length, 1)
+  const bigramWeight = (t) => 1 + 3 * (1 - (df.get(t) ?? 0) / totalSections)
+
+  for (const { rel, fileLower, sec, bodyLower, titleLower } of sections) {
+    let score = 0
+    let covered = 0
+    let firstHit = null
+    for (const t of terms) {
+      const inTitle = titleLower.includes(t)
+      const inFile = fileLower.includes(t)
+      const count = countOccurrences(bodyLower, t)
+      if (inTitle) score += 4
+      if (inFile) score += 3
+      if (count) {
+        score += Math.min(count, 12)
+        if (!firstHit) firstHit = sec.lines.find((l) => l.text.toLowerCase().includes(t))
+      }
+      if (inTitle || inFile || count) covered += 1
+    }
+    // 2-gram 兜底（减权重：标题 ×1、正文封顶 4、不计覆盖——兜底召回不该压过精确命中）
+    let bigramHit = false
+    for (const t of bigrams) {
+      if (terms.includes(t)) continue
+      const inTitle = titleLower.includes(t)
+      const count = countOccurrences(bodyLower, t)
+      if (inTitle) score += 1 * bigramWeight(t)
+      if (count) {
+        // 对数饱和：出现 12 次的「怎么」不比出现 3 次的更相关。线性封顶会让
+        // 一篇口径松散的文档靠重复常用词挤掉真正对题的那篇（317 批实测）。
+        score += Math.log2(1 + Math.min(count, 12)) * bigramWeight(t)
+        bigramHit = true
+        if (!firstHit) firstHit = sec.lines.find((l) => l.text.toLowerCase().includes(t))
+      }
+    }
+    if (!covered && !bigramHit) continue
+    score += covered * 6
+    const hit = firstHit ?? sec.lines.find((l) => l.text.trim()) ?? { n: sec.startLine, text: '' }
+    matches.push({
+      file: rel,
+      resource: resourceIdFor(rel),
+      discipline: rel.startsWith('liuyao/') ? 'liuyao' : rel.startsWith('bazi/') ? 'bazi' : 'index',
+      title: sec.title,
+      line: hit.n,
+      score,
+      snippet: hit.text.trim().slice(0, 240),
+    })
   }
 
   matches.sort((a, b) => b.score - a.score || a.file.localeCompare(b.file) || a.line - b.line)
