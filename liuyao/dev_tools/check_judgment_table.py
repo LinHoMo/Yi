@@ -239,7 +239,7 @@ def selftest() -> int:
 
     t = json.loads(json.dumps(base))
     if t.get("overlays"):
-        t["overlays"][0]["cites"] = ["Z9"]
+        t["overlays"][0]["cites"] = ["Z99"]
     cases.append(("覆盖层引用不存在的书证", t))
 
     t = json.loads(json.dumps(base))

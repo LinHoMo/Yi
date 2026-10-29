@@ -93,11 +93,32 @@ def facts(result: dict) -> dict:
     he_chong = "合处逢冲" in sp_text
     chong_he = "冲中逢合" in sp_text
 
+    # ── 二级事实（319 批）：原神有力／忌神无力 ──
+    # 书证：Z8（元神能生用神者有五）／Z9（忌神不能克用神者有七）／Z11（接续相生化凶为吉）
+    yuan = s2.get("yuan_shen") or {}
+    ji = s2.get("ji_shen") or {}
+    yuan_pos = yuan.get("positions") or []
+    ji_pos = ji.get("positions") or []
+    yuan_moving = any(p.get("is_moving") for p in yuan_pos if isinstance(p, dict))
+    ji_moving = any(p.get("is_moving") for p in ji_pos if isinstance(p, dict))
+    ji_void = any(p.get("is_empty") for p in ji_pos if isinstance(p, dict))
+    ji_hidden = bool(ji.get("fu_cang")) and not ji_pos
+    yuan_el = yuan.get("element") or ""
+    ji_el = ji.get("element") or ""
+    yuan_ke_ji = bool(yuan_el and ji_el and KE.get(yuan_el) == ji_el)
+    yuan_ji_both = yuan_moving and ji_moving
+    # 元神有力：动（书证 Z8）或接续相生克忌（书证 Z11）
+    yuan_power = yuan_moving or yuan_ke_ji
+    # 忌神无力：静临空破／与元神同动（书证 Z9）／忌神反生元神（接续相生，书证 Z11）
+    ji_no_power = (ji_void or ji_hidden or (not ji_moving and ji_pos)) or yuan_ji_both or yuan_ke_ji
+
     return {
         "旺衰标签": level, "日辰生扶": day_mod > 1.0,
         "用神现": present, "用神有根": rooted, "动变净效": net, "有救有帮": rescued,
         "用神月破": month_break, "用神发动": moving, "用神真空": true_void,
         "忌神发动": ji_moving, "合处逢冲": he_chong, "冲中逢合": chong_he,
+        "原神发动": yuan_moving, "原神有力": yuan_power, "忌神无力": ji_no_power,
+        "接续相生": yuan_ke_ji, "元神忌神同动": yuan_ji_both,
         "特殊格局": sp_text,
     }
 
@@ -203,12 +224,24 @@ def judge(result: dict) -> dict:
         dissent.append("合处逢冲（书证 D1／F4 合被冲破则无功）")
     if f["冲中逢合"]:
         support.append("冲中逢合（书证 D1 贪合忘冲）")
+    if f["原神有力"]:
+        support.append("原神有力：发动或接续相生（书证 Z8）")
+    if f["忌神无力"]:
+        support.append("忌神无力：静临空破／与元神同动／反生元神（书证 Z9、Z11）")
+    else:
+        dissent.append("忌神有力：可克害用神（书证 Z9 反面）")
     if not f["用神现"]:
         dissent.append("用神不现（书证 B2 以日月为用，须另判）")
 
-    # ── R1 不成·高：无根 + 受克 + 无救 ──
-    if (not f["用神有根"]) and f["动变净效"] < 0 and not f["有救有帮"]:
-        return cell("不成", "高", "用神无根而受克，且无救无帮", ["E1"])
+    # ── R0′ 成·低：无根，但原神有力且忌神无力（接续相生）──
+    # 书证两面：Z8 元神能生用神者有五；Z10 末句「倘若用神无根，谓之元神有力亦难生」
+    # → 方向可成，但**置信只能是低**（无根难生）。这正是 v0 漏掉的那类事实。
+    if (not f["用神有根"]) and f["原神有力"] and f["忌神无力"]:
+        return cell("成", "低", "用神无根，然原神有力且忌神无力，接续相生（无根难生，故置信低）",
+                    ["Z8", "Z9", "Z10", "Z11"])
+    # ── R1 不成·高：无根 + 受克 + 无救 + 忌神有力 ──
+    if (not f["用神有根"]) and f["动变净效"] < 0 and not f["有救有帮"] and not f["忌神无力"]:
+        return cell("不成", "高", "用神无根而受克，无救，且忌神有力", ["E1", "Z9"])
     # ── R2 不成·中：月破而静（F2 的分界：破而动仍能伤，破而静到底破）──
     if f["用神月破"] and not f["用神发动"]:
         return cell("不成", "中", "用神月破而静、无发动自救", ["F1", "F2"])
@@ -218,6 +251,9 @@ def judge(result: dict) -> dict:
     # ── R4 成·高：有根 + 净效不逆 + 无合冲 ──
     if f["用神有根"] and f["动变净效"] >= 0 and not f["合处逢冲"] and not f["用神真空"]:
         return cell("成", "高", "用神旺相有根，动变不逆，无合冲", ["E1", "F4"])
+    # ── R4b 成·中：用神有根，而忌神无力（化凶为吉）──
+    if f["用神有根"] and f["忌神无力"] and f["动变净效"] >= 0:
+        return cell("成", "中", "用神有根，忌神无力，化凶为吉", ["Z9", "Z11"])
     # ── R5 成·中：有根但受克，克有救 ──
     if f["用神有根"] and f["动变净效"] < 0 and f["有救有帮"]:
         return cell("成", "中", "用神有根受克，克有救", ["E1", "D1", "F4"])
