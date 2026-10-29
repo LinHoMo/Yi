@@ -2,7 +2,7 @@
   "schema": "yi-devkit-manifest/1",
   "batch": 331,
   "source": "devkit",
-  "_comment": "门禁内核的单一真源。shared/ 下的文件由 sync_devkit.py 分发到两科 dev_tools/（产物，手改即被 [37] 判红）；root/ 下的根级门只在本目录运行，不分发。gate_ids 记录共享门的稳定编号（A1-3 按实际归并结果填，不预填猜测值）。",
+  "_comment": "门禁内核的单一真源。shared/ 下的文件由 sync_devkit.py 分发到两科 dev_tools/（产物，手改即被 [37] 判红）；root/ 下的根级门只在本目录运行，不分发。gate_ids 记录共享门在各科 check.py 里的现行编号（同一文件两科编号可以不同；共享件在 check.py 里不另设统一编号，[37] 只守字节同源）。墓碑：六爻 [8][9][10][21]–[25] 是已下线门的编号，**不回填**；新门从 [37] 续。",
   "files": {
     "shared": [
       "check_case_isolation.py",
@@ -35,7 +35,16 @@
     "baselines.py": "基线对象不同：六爻是应期支层（用神支/世爻支/日辰/月建/频率），八字是判断维（pattern/cong_ge/tiaohou）；公式同式但案例接口不同",
     "feedback_store.py": "存储 schema 与 CLI 不同：六爻是 FeedbackStore 库（被 feedback_report import），八字是 reading_events.jsonl 命令行通道；API 面不重合"
   },
-  "gate_ids": {},
+  "gate_ids": {
+    "check_case_isolation.py": {"liuyao": 13, "bazi": 13},
+    "check_house_conventions.py": {"liuyao": 31, "bazi": 27},
+    "check_layer_contract.py": {"liuyao": 32, "bazi": 28},
+    "check_cli_encoding.py": {"liuyao": 20, "bazi": 24},
+    "check_doc_refs.py": {"liuyao": 11, "bazi": 11},
+    "check_regex_lists.py": {"liuyao": 29, "bazi": 26},
+    "check_rule_registry.py": {"liuyao": 12, "bazi": 12},
+    "check_source_readings.py": {"liuyao": 14, "bazi": 10}
+  },
   "targets": {
     "liuyao": "liuyao/dev_tools",
     "bazi": "bazi/dev_tools"

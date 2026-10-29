@@ -591,6 +591,18 @@ def main() -> int:
     else:
         print("[28] 分层契约 √")
 
+    # [37] 门禁同源（第三百三十一批 A1-2）：devkit/ 是共享门的唯一真源，两科
+    # dev_tools/ 里的同名文件是产物；手改、野文件、第二份拷贝都判红。
+    # 编号 [29]–[36] 在八字侧未使用（[37] 与六爻统一，便于跨科对表）。
+    code, out = run(["../devkit/sync_devkit.py", "--selftest"])
+    for line in out.splitlines():
+        if line.strip():
+            print("  " + line.strip())
+    if code != 0:
+        fails.append("门禁同源未过（共享件被手改／产物缺失／dev_tools 野文件／第二份拷贝）")
+    else:
+        print("[37] 门禁同源 √")
+
     if ENC_WITNESS:
         fails.extend("产物编码退化：" + w for w in ENC_WITNESS)
     if fails:

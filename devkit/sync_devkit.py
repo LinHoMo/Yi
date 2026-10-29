@@ -105,6 +105,26 @@ def drift(manifest: dict, devkit: Path, disc: str, target_dir: Path) -> list[str
             problems.append(f"{disc}：产物缺 {name}")
         elif dst.read_bytes() != src.read_bytes():
             problems.append(f"{disc}：{name} 与 devkit/shared/ 不一致（产物被手改？）")
+    # 野文件两类（A1-2 负例口径）：
+    #  ① 以 `_` 开头的 .py（除 `__init__.py`）＝一次性脚本/探针，该进 scratch/；
+    #  ② 与任一共享源逐字节相同的**异名**文件＝第二份手抄拷贝。
+    src_bytes = {}
+    for name, src in want.items():
+        if src.exists():
+            src_bytes[src.read_bytes()] = name
+    for p in sorted(target_dir.glob("*.py")):
+        if p.name in want or p.name == "__init__.py":
+            continue
+        if p.name.startswith("_"):
+            problems.append(f"{disc}：dev_tools/ 里多出野文件 {p.name}（一次性脚本该进 scratch/）")
+            continue
+        try:
+            data = p.read_bytes()
+        except Exception:
+            continue
+        if data in src_bytes:
+            problems.append(f"{disc}：{p.name} 是 {src_bytes[data]} 的第二份拷贝"
+                            "（共享件只准有分发产物这一个名字）")
     return problems
 
 
@@ -174,11 +194,24 @@ def selftest() -> int:
         src.unlink()
         if not source_hygiene(manifest, dk):
             fails.append("真源缺文件没抓到")
+        src.write_text("# shared probe\n", encoding="utf-8")
+        # 负例 5：dev_tools 野文件（_ 前缀）
+        alpha = t / manifest["targets"]["alpha"]
+        (alpha / "_stray_probe.py").write_text("# probe\n", encoding="utf-8")
+        if not drift(manifest, dk, "alpha", alpha):
+            fails.append("dev_tools 野文件没抓到")
+        (alpha / "_stray_probe.py").unlink()
+        # 负例 6：第二份拷贝（异名、逐字节同源）
+        (alpha / "probe_copy.py").write_bytes(src.read_bytes())
+        if not drift(manifest, dk, "alpha", alpha):
+            fails.append("共享件第二份拷贝没抓到")
+        (alpha / "probe_copy.py").unlink()
     if fails:
         for f in fails:
             print(f"  × selftest：{f}")
         return 1
-    print("  √ selftest：改产物／缺产物／真源野文件／真源缺文件四类负例全部抓到；干净副本放行")
+    print("  √ selftest：改产物／缺产物／真源野文件／真源缺文件／dev_tools 野文件／"
+          "第二份拷贝六类负例全部抓到；干净副本放行")
     return 0
 
 
