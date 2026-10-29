@@ -36,8 +36,11 @@ TABLE = DISC / "data" / "rules" / "judgment_table.json"
 SEAL = DISC / "data" / "rules" / "test_seal.json"
 # 分片 → 封存册里的集名（只有这两集有考卷；其余集本身就是开发/回归集）
 SEAL_CORPUS = {"wikisource_holdout": "wikisource", "zengshan_dz_holdout": "zengshan_dz",
-               "wikisource_direction": "wikisource_direction"}
-SPLITS = ("tune", "holdout", "wikisource_holdout", "zengshan_dz_holdout", "wikisource_direction")
+               "wikisource_direction": "wikisource_direction",
+               "zengshan_dz_prose_holdout": "zengshan_dz_prose",
+               "zengshan_dz_prose_direction": "zengshan_dz_prose"}
+SPLITS = ("tune", "holdout", "wikisource_holdout", "zengshan_dz_holdout", "wikisource_direction",
+          "zengshan_dz_prose_holdout", "zengshan_dz_prose_direction")
 DIRS = ("成", "滞", "不成")
 
 
@@ -66,7 +69,8 @@ def main() -> int:
         if split in SEAL_CORPUS:
             seal = json.loads(SEAL.read_text(encoding="utf-8"))
             half = "test" if (args.half == "test" or args.open) else "dev"
-            ids = [i for i in ids if i in set(seal["corpora"][SEAL_CORPUS[split]][half])]
+            pool = set(seal["corpora"][SEAL_CORPUS[split]][half]) or set(seal["corpora"][SEAL_CORPUS[split]]["dev"])
+            ids = [i for i in ids if i in pool]
         by_id = {c["id"]: c for c in case_runner.load_cases()}
         agree = n = 0
         ov_hit = 0

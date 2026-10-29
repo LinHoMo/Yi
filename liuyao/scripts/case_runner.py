@@ -210,6 +210,11 @@ def load_ids(split: str | None = None, only: list[str] | None = None) -> list[st
         if SPLITS.exists():
             return [i for i in json.loads(SPLITS.read_text(encoding="utf-8")).get("wikisource_holdout", [])
                     if i in all_ids]
+    if split in ("zengshan_dz_prose_holdout", "zengshan_dz_prose_direction"):
+        if SPLITS.exists():
+            return [i for i in json.loads(SPLITS.read_text(encoding="utf-8")).get(split, [])
+                    if i in all_ids]
+        return []
     if split == "wikisource_direction":
         if SPLITS.exists():
             return [i for i in json.loads(SPLITS.read_text(encoding="utf-8")).get("wikisource_direction", [])

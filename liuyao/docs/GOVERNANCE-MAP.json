@@ -1,13 +1,16 @@
 {
- "count": 61,
+ "count": 63,
  "by_tier": {
   "tool": 3,
   "ondemand": 12,
   "nightly": 11,
-  "build": 8,
+  "build": 9,
+  "UNCLASSIFIED": 1,
   "blocking": 27
  },
- "unclassified": [],
+ "unclassified": [
+  "build_yiin_cases.py"
+ ],
  "curated_but_missing": [],
  "tier_link_violations": {
   "blocking_not_referenced": [],
@@ -90,6 +93,13 @@
    "guards": "用神位置表构建",
    "run_by_check_py": false,
    "doc": "use_god_position 基准例补全器（一次性数据构建，产物入库、脚本留档可复跑）。"
+  },
+  {
+   "script": "build_yiin_cases.py",
+   "tier": "UNCLASSIFIED",
+   "guards": "",
+   "run_by_check_py": false,
+   "doc": "从《易隐》殆知阁转录本（data/sources/yiin_dz.dz.txt）抽取完整占例，"
   },
   {
    "script": "build_yingqi_set.py",
@@ -300,6 +310,13 @@
    "guards": "维基文库案例采集管道",
    "run_by_check_py": false,
    "doc": "从维基文库《增刪卜易》原本抓取占验案例，本地确定性解析并三方校验后成外部集。"
+  },
+  {
+   "script": "fetch_zengshan_dz_cases.py",
+   "tier": "build",
+   "guards": "《增删卜易》dz 底本案例采集管道（329 批新增，散文体卦画）",
+   "run_by_check_py": false,
+   "doc": "《增刪卜易》**dz 底本**占例采集器（B3·第三百二十九批）。"
   },
   {
    "script": "golden.py",

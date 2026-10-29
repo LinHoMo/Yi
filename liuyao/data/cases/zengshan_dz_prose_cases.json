@@ -1,0 +1,885 @@
+{
+ "_meta": {
+  "source": "zengshan_buyi_dz.dz.txt",
+  "source_kind": "dz 底本散文排印（六亲+地支+′″+世应 两列式）",
+  "generated_by": "dev_tools/fetch_zengshan_dz_cases.py",
+  "date": "2026-10-29",
+  "note": "与 wikisource_cases.json 同结构；三方校验同源，不另造口径"
+ },
+ "cases": [
+  {
+   "input": {
+    "date": "酉月乙未日",
+    "question": "占子久出不归生死如何"
+   },
+   "hexagram": {
+    "original": "坤",
+    "changed": "",
+    "moving": [],
+    "palace": "坤",
+    "generation": "六世"
+   },
+   "expected": {
+    "verdict": "吉",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "子年",
+    "yingqi_branches": [],
+    "detail": "果于子年建功卯年得意而归，此应静而逢冲之验也。又有巳月甲寅日占严师训子得天地否卦变乾卦父母"
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L797",
+   "id": "ZDP001"
+  },
+  {
+   "input": {
+    "date": "巳月甲寅日",
+    "question": "占严师训子"
+   },
+   "hexagram": {
+    "original": "否",
+    "changed": "乾",
+    "moving": [
+     1,
+     2,
+     3
+    ],
+    "palace": "乾",
+    "generation": "三世"
+   },
+   "expected": {
+    "verdict": "",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "",
+    "yingqi_branches": [],
+    "detail": "果两月，其子得病，辞师未久而子死矣。凡得六合变六冲者，诸占先合后离、先亲后疏、先浓后淡，始"
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L805",
+   "id": "ZDP002"
+  },
+  {
+   "input": {
+    "date": "卯月丙辰日",
+    "question": "占父病"
+   },
+   "hexagram": {
+    "original": "复",
+    "changed": "",
+    "moving": [],
+    "palace": "坤",
+    "generation": "一世"
+   },
+   "expected": {
+    "verdict": "",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "",
+    "yingqi_branches": [],
+    "detail": ""
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L1078",
+   "id": "ZDP003"
+  },
+  {
+   "input": {
+    "date": "戌月丙子日",
+    "question": "占父任云南何时"
+   },
+   "hexagram": {
+    "original": "临",
+    "changed": "",
+    "moving": [],
+    "palace": "坤",
+    "generation": "二世"
+   },
+   "expected": {
+    "verdict": "凶",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "",
+    "yingqi_branches": [],
+    "detail": "果无音讯，四年知父而遇害矣。用克世勿作凶看者，乃用为克世也，旧注主事爻动来克世，乃是事来赶"
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L1686",
+   "id": "ZDP004"
+  },
+  {
+   "input": {
+    "date": "卯月辛丑日",
+    "question": ""
+   },
+   "hexagram": {
+    "original": "晋",
+    "changed": "",
+    "moving": [],
+    "palace": "乾",
+    "generation": "游魂"
+   },
+   "expected": {
+    "verdict": "吉",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "巳年",
+    "yingqi_branches": [],
+    "detail": "果以原品起用；又本府府尊命下，不准复职，后援刑例果于巳年补陕庆阳府知府。余于彼地三五月，了"
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L1783",
+   "id": "ZDP005"
+  },
+  {
+   "input": {
+    "date": "未月癸亥日",
+    "question": "占流年"
+   },
+   "hexagram": {
+    "original": "艮",
+    "changed": "",
+    "moving": [],
+    "palace": "艮",
+    "generation": "六世"
+   },
+   "expected": {
+    "verdict": "吉",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "申日",
+    "yingqi_branches": [],
+    "detail": "果于申日文书实收俱到，应申日者，寅木官星持世，静而逢冲之日也。若以流年作鬼断者，如天远矣。"
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L1855",
+   "id": "ZDP006"
+  },
+  {
+   "input": {
+    "date": "辰月癸卯日",
+    "question": ""
+   },
+   "hexagram": {
+    "original": "蹇",
+    "changed": "",
+    "moving": [],
+    "palace": "兑",
+    "generation": "四世"
+   },
+   "expected": {
+    "verdict": "",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "寅日",
+    "yingqi_branches": [],
+    "detail": "果于寅日云卯"
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L2061",
+   "id": "ZDP007"
+  },
+  {
+   "input": {
+    "date": "辰月甲戌日",
+    "question": ""
+   },
+   "hexagram": {
+    "original": "大壮",
+    "changed": "震",
+    "moving": [
+     2,
+     3
+    ],
+    "palace": "坤",
+    "generation": "四世"
+   },
+   "expected": {
+    "verdict": "",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "",
+    "yingqi_branches": [],
+    "detail": ""
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L2129",
+   "id": "ZDP008"
+  },
+  {
+   "input": {
+    "date": "酉月辛未日",
+    "question": "占终身财福"
+   },
+   "hexagram": {
+    "original": "颐",
+    "changed": "",
+    "moving": [],
+    "palace": "巽",
+    "generation": "游魂"
+   },
+   "expected": {
+    "verdict": "吉",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "",
+    "yingqi_branches": [],
+    "detail": "果然颠倒昏迷，及逢墓库冲开，如苗逢雨。谚云：福至心灵，爻中再有财福相生，或财福旺相者，陡然"
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L2241",
+   "id": "ZDP009"
+  },
+  {
+   "input": {
+    "date": "午月丙戌日",
+    "question": "占终身财福"
+   },
+   "hexagram": {
+    "original": "节",
+    "changed": "",
+    "moving": [],
+    "palace": "坎",
+    "generation": "一世"
+   },
+   "expected": {
+    "verdict": "吉",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "寅年",
+    "yingqi_branches": [],
+    "detail": "果于寅年医好富翁，厚赠读书。午年一榜，富翁及亲友又赠，援例县令，未几丁艰，及至补缺未几，里"
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L2250",
+   "id": "ZDP010"
+  },
+  {
+   "input": {
+    "date": "酉月壬辰日",
+    "question": "占财福酉月壬辰日"
+   },
+   "hexagram": {
+    "original": "恒",
+    "changed": "",
+    "moving": [],
+    "palace": "震",
+    "generation": "三世"
+   },
+   "expected": {
+    "verdict": "",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "卯年",
+    "yingqi_branches": [],
+    "detail": "果于卯年援例入临，巳年初任兵马即加纳县令，未年再位江南。旧注官鬼持世疾病缠绵，若是贵人。勿"
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L2309",
+   "id": "ZDP011"
+  },
+  {
+   "input": {
+    "date": "子月乙未日",
+    "question": "占终身财福"
+   },
+   "hexagram": {
+    "original": "兑",
+    "changed": "",
+    "moving": [],
+    "palace": "兑",
+    "generation": "六世"
+   },
+   "expected": {
+    "verdict": "",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "",
+    "yingqi_branches": [],
+    "detail": ""
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L2334",
+   "id": "ZDP012"
+  },
+  {
+   "input": {
+    "date": "戌月戊辰日",
+    "question": "占终身功名有无"
+   },
+   "hexagram": {
+    "original": "蛊",
+    "changed": "",
+    "moving": [],
+    "palace": "巽",
+    "generation": "归魂"
+   },
+   "expected": {
+    "verdict": "",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "",
+    "yingqi_branches": [],
+    "detail": ""
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L2369",
+   "id": "ZDP013"
+  },
+  {
+   "input": {
+    "date": "戌月丁卯日",
+    "question": "占终身功名有无"
+   },
+   "hexagram": {
+    "original": "需",
+    "changed": "",
+    "moving": [],
+    "palace": "坤",
+    "generation": "游魂"
+   },
+   "expected": {
+    "verdict": "",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "",
+    "yingqi_branches": [],
+    "detail": ""
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L2379",
+   "id": "ZDP014"
+  },
+  {
+   "input": {
+    "date": "巳月乙卯日",
+    "question": "占终身功名"
+   },
+   "hexagram": {
+    "original": "旅",
+    "changed": "",
+    "moving": [],
+    "palace": "离",
+    "generation": "一世"
+   },
+   "expected": {
+    "verdict": "",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "",
+    "yingqi_branches": [],
+    "detail": ""
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L2388",
+   "id": "ZDP015"
+  },
+  {
+   "input": {
+    "date": "辰月乙巳日",
+    "question": "占寿"
+   },
+   "hexagram": {
+    "original": "中孚",
+    "changed": "",
+    "moving": [],
+    "palace": "艮",
+    "generation": "游魂"
+   },
+   "expected": {
+    "verdict": "吉",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "未年",
+    "yingqi_branches": [],
+    "detail": "果终于未年七月。元神宜于安静。占寿，世为根本，元神为滋生之物，宜旺而静不宜动摇，其故何也？"
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L2398",
+   "id": "ZDP016"
+  },
+  {
+   "input": {
+    "date": "巳月庚辰日",
+    "question": "占防患"
+   },
+   "hexagram": {
+    "original": "夬",
+    "changed": "",
+    "moving": [],
+    "palace": "坤",
+    "generation": "五世"
+   },
+   "expected": {
+    "verdict": "",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "寅日",
+    "yingqi_branches": [],
+    "detail": "果结于甲寅日。克在内，世在外，宜于外避。克神若在内卦，动而克世，宜出外避之，克神若在外卦，"
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L2474",
+   "id": "ZDP017"
+  },
+  {
+   "input": {
+    "date": "丑月庚子日",
+    "question": "占父寿"
+   },
+   "hexagram": {
+    "original": "姤",
+    "changed": "",
+    "moving": [],
+    "palace": "乾",
+    "generation": "一世"
+   },
+   "expected": {
+    "verdict": "",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "子年",
+    "yingqi_branches": [],
+    "detail": "果终于子年。若以古法，阳为父，阴为母，前卦丑戌两现，俱以旺而断者，如天远矣。又如巳月乙酉日"
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L2548",
+   "id": "ZDP018"
+  },
+  {
+   "input": {
+    "date": "酉月辛巳日",
+    "question": "占夫妇将来和俣否？"
+   },
+   "hexagram": {
+    "original": "泰",
+    "changed": "",
+    "moving": [],
+    "palace": "坤",
+    "generation": "三世"
+   },
+   "expected": {
+    "verdict": "",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "",
+    "yingqi_branches": [],
+    "detail": ""
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L2614",
+   "id": "ZDP019"
+  },
+  {
+   "input": {
+    "date": "申月辛卯日",
+    "question": "占子嗣"
+   },
+   "hexagram": {
+    "original": "复",
+    "changed": "",
+    "moving": [],
+    "palace": "坤",
+    "generation": "一世"
+   },
+   "expected": {
+    "verdict": "",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "",
+    "yingqi_branches": [],
+    "detail": "果于次年六月父子相逢。财化子，可辨正出庶出。卦有财而无子孙者，须看变出之爻，变爻子孙。庶出"
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L2646",
+   "id": "ZDP020"
+  },
+  {
+   "input": {
+    "date": "午月乙卯日",
+    "question": "占岁焉"
+   },
+   "hexagram": {
+    "original": "泰",
+    "changed": "",
+    "moving": [],
+    "palace": "坤",
+    "generation": "三世"
+   },
+   "expected": {
+    "verdict": "",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "",
+    "yingqi_branches": [],
+    "detail": ""
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L2753",
+   "id": "ZDP021"
+  },
+  {
+   "input": {
+    "date": "午月丙辰日",
+    "question": ""
+   },
+   "hexagram": {
+    "original": "兑",
+    "changed": "",
+    "moving": [],
+    "palace": "兑",
+    "generation": "六世"
+   },
+   "expected": {
+    "verdict": "吉",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "",
+    "yingqi_branches": [],
+    "detail": "果得成名。凡得六冲卦，官父世爻俱旺者，不必再占，竟许必得。如父旺者，须再占一卦，再得吉者，"
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L2791",
+   "id": "ZDP022"
+  },
+  {
+   "input": {
+    "date": "申月戊寅日",
+    "question": ""
+   },
+   "hexagram": {
+    "original": "夬",
+    "changed": "",
+    "moving": [],
+    "palace": "坤",
+    "generation": "五世"
+   },
+   "expected": {
+    "verdict": "吉",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "亥月",
+    "yingqi_branches": [],
+    "detail": "果得升于亥月。    又如戌月辛酉日占何日补官得蹇之需子孙子水″"
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L2843",
+   "id": "ZDP023"
+  },
+  {
+   "input": {
+    "date": "丑月乙卯日",
+    "question": "占援例"
+   },
+   "hexagram": {
+    "original": "豫",
+    "changed": "否",
+    "moving": [
+     5,
+     6
+    ],
+    "palace": "震",
+    "generation": "一世"
+   },
+   "expected": {
+    "verdict": "",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "",
+    "yingqi_branches": [],
+    "detail": ""
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L2904",
+   "id": "ZDP024"
+  },
+  {
+   "input": {
+    "date": "酉月戊午日",
+    "question": "占求财"
+   },
+   "hexagram": {
+    "original": "革",
+    "changed": "",
+    "moving": [],
+    "palace": "坎",
+    "generation": "四世"
+   },
+   "expected": {
+    "verdict": "吉",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "",
+    "yingqi_branches": [],
+    "detail": "果得财，应辰日者，世动逢合之日也。    又如巳月丁巳日占求财得即济变涣卦兄弟子水″应"
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L3016",
+   "id": "ZDP025"
+  },
+  {
+   "input": {
+    "date": "未月丁卯日",
+    "question": ""
+   },
+   "hexagram": {
+    "original": "晋",
+    "changed": "",
+    "moving": [],
+    "palace": "乾",
+    "generation": "游魂"
+   },
+   "expected": {
+    "verdict": "吉",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "",
+    "yingqi_branches": [],
+    "detail": "果得财，应辰日者，世动逢合之日也。    又如巳月丁巳日占求财得即济变涣卦兄弟子水″应"
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L3028",
+   "id": "ZDP026"
+  },
+  {
+   "input": {
+    "date": "寅月己亥日",
+    "question": "占收货"
+   },
+   "hexagram": {
+    "original": "颐",
+    "changed": "",
+    "moving": [],
+    "palace": "巽",
+    "generation": "游魂"
+   },
+   "expected": {
+    "verdict": "吉",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "",
+    "yingqi_branches": [],
+    "detail": "果于正月勃然大长，此乃财爻被克待冲去克神之月。财逢合而当令。遇合者有应动而逢合之月而得价也"
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L3088",
+   "id": "ZDP027"
+  },
+  {
+   "input": {
+    "date": "寅月己酉日",
+    "question": "占脱货于何时"
+   },
+   "hexagram": {
+    "original": "贲",
+    "changed": "",
+    "moving": [],
+    "palace": "艮",
+    "generation": "一世"
+   },
+   "expected": {
+    "verdict": "吉",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "",
+    "yingqi_branches": [],
+    "detail": "果去，不数日，得价出脱。此乃爻逢六合，财逢月合，及时脱货也。财逢冲而当起；财旺而静或旺而空"
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L3109",
+   "id": "ZDP028"
+  },
+  {
+   "input": {
+    "date": "午月戊子日",
+    "question": "占往楚买豆"
+   },
+   "hexagram": {
+    "original": "临",
+    "changed": "",
+    "moving": [],
+    "palace": "坤",
+    "generation": "二世"
+   },
+   "expected": {
+    "verdict": "吉",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "",
+    "yingqi_branches": [],
+    "detail": "果中间人作弊，告到官府，误了一个月。幸好到地头上价格上涨，果然得了厚利。此乃指其地而占者无"
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L3125",
+   "id": "ZDP029"
+  },
+  {
+   "input": {
+    "date": "未月戊申日",
+    "question": "占往粤东探亲可带何货归来"
+   },
+   "hexagram": {
+    "original": "旅",
+    "changed": "",
+    "moving": [],
+    "palace": "离",
+    "generation": "一世"
+   },
+   "expected": {
+    "verdict": "",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "",
+    "yingqi_branches": [],
+    "detail": ""
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L3135",
+   "id": "ZDP030"
+  },
+  {
+   "input": {
+    "date": "巳月丁卯日",
+    "question": "占婚于何时 "
+   },
+   "hexagram": {
+    "original": "泰",
+    "changed": "",
+    "moving": [],
+    "palace": "坤",
+    "generation": "三世"
+   },
+   "expected": {
+    "verdict": "",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "",
+    "yingqi_branches": [],
+    "detail": ""
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L3216",
+   "id": "ZDP031"
+  },
+  {
+   "input": {
+    "date": "丑月庚午日",
+    "question": "占父远去何日回"
+   },
+   "hexagram": {
+    "original": "履",
+    "changed": "",
+    "moving": [],
+    "palace": "艮",
+    "generation": "五世"
+   },
+   "expected": {
+    "verdict": "吉",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "巳日",
+    "yingqi_branches": [],
+    "detail": "果于巳日到。亥月甲子日占夫在外还往他省去否得大壮之大过兄弟戌土″"
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L3323",
+   "id": "ZDP032"
+  },
+  {
+   "input": {
+    "date": "申月壬子日",
+    "question": "占子病"
+   },
+   "hexagram": {
+    "original": "遁",
+    "changed": "",
+    "moving": [],
+    "palace": "乾",
+    "generation": "二世"
+   },
+   "expected": {
+    "verdict": "吉",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "",
+    "yingqi_branches": [],
+    "detail": "果於本日愈。觉子曰：如占自身及兄弟妻儿者，此法是也，若占父母之灾，官鬼为父母之元神，岂宜子"
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L3381",
+   "id": "ZDP033"
+  },
+  {
+   "input": {
+    "date": "子月丁酉日",
+    "question": "占择某日入宅是否有碍父母"
+   },
+   "hexagram": {
+    "original": "萃",
+    "changed": "",
+    "moving": [],
+    "palace": "兑",
+    "generation": "二世"
+   },
+   "expected": {
+    "verdict": "",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "",
+    "yingqi_branches": [],
+    "detail": ""
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L3524",
+   "id": "ZDP034"
+  },
+  {
+   "input": {
+    "date": "丑月庚申日",
+    "question": "占地形势"
+   },
+   "hexagram": {
+    "original": "咸",
+    "changed": "",
+    "moving": [],
+    "palace": "兑",
+    "generation": "三世"
+   },
+   "expected": {
+    "verdict": "",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "",
+    "yingqi_branches": [],
+    "detail": "果一一无错，此地吉否？余曰：此乃占地穴之形势耳，非关吉凶祸福，余笑前贤以一卦而断父子弟兄妻"
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L3640",
+   "id": "ZDP035"
+  },
+  {
+   "input": {
+    "date": "未月乙巳日",
+    "question": "占穴 "
+   },
+   "hexagram": {
+    "original": "大壮",
+    "changed": "",
+    "moving": [],
+    "palace": "坤",
+    "generation": "四世"
+   },
+   "expected": {
+    "verdict": "吉",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "",
+    "yingqi_branches": [],
+    "detail": "果得原钱于红花之下，掘之周围仅有丈余，皆泥土也，余皆石块，此公次年开府，两公郎五年之内俱登"
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L3664",
+   "id": "ZDP036"
+  }
+ ]
+}

@@ -1,7 +1,7 @@
 {
   "schema": "yi-judgment-table/1",
   "discipline": "liuyao",
-  "batch": 328,
+  "batch": 329,
   "status": "accepted",
   "sealed": null,
   "_comment": "A3 判定表的机器判据（唯一真值源）。本文件只声明，不接引擎：改成 accepted 并接进 step5 前，必须先由人签 adjudications 四条。改本文件须同批改 docs/JUDGMENT-TABLE.md 与 docs/CHANGELOG.md。",
@@ -1000,12 +1000,13 @@
       "323 批的全量版题类接管（7 类）实测更差已回退：书的总纲与分类占法是叠加关系，不是替代关系"
     ],
     "clean_evidence": {
-      "scope": "三个外部 dev 半边合并（wiki_holdout dev 12 + wiki_direction dev 14 + dz dev 6）",
-      "judge": "21/32 = 65.6%",
-      "current": "17/32 = 53.1%",
-      "delta": "+12.5pt（多对 4 例）",
-      "significance": "**不显著**：差 4 例，两 Wilson 区间大幅重叠；方向为正但证据不足以下结论",
-      "why_direction_set_added": "方向集（有吉凶无应期）原未入册，但判定器判的正是方向、不需要应期，故纳为第三个外部集"
+      "scope": "四个外部 dev 集合并（wiki_holdout dev 12 + wiki_direction dev 14 + dz dev 6 + dz_prose dev 14）",
+      "judge": "33/46 = 71.7%",
+      "current": "29/46 = 63.0%",
+      "delta": "+8.7pt（多对 4 例）",
+      "significance": "**仍不显著**：多对 4 例，Wilson 区间重叠",
+      "new_corpus": "zengshan_dz_prose（329 批新采，两边都没调过的全新外部例 n=14）：判定器 12/14=85.7% vs 现行 12/14=85.7%——**又一次平手，且这次是最干净的对比（谁都没在这批上调过）**",
+      "conclusion": "跨三个批次、三个独立口径（dev 32 例／封存 test 31 例／全新 dz_prose 14 例），判定器与现行引擎的对比结果是 **一次领先、两次平手**。没有稳定优势 → 维持 328 批结论：不换判词。"
     },
     "v7_changes": [
       "新增事实（不参与判定，只在判断块里报出来）：世受克／用神克世／忌神克世、题类",

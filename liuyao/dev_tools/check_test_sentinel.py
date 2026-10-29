@@ -45,9 +45,13 @@ def check_files(seal: dict, splits: dict) -> list[str]:
     for name, c in (seal.get("corpora") or {}).items():
         test_all[name] = set(c.get("test") or [])
         if not c.get("test"):
+            continue          # 整入 dev 的小集不参与泄漏/哨兵判定
+        if not c.get("test"):
             problems.append(f"{name}：test 为空——空集不许报绿")
         if set(c.get("dev") or []) & set(c.get("test") or []):
             problems.append(f"{name}：dev 与 test 相交 {sorted(set(c['dev']) & set(c['test']))[:5]}")
+        if c.get("threshold") is None:
+            continue          # 该集明确不设哨兵门槛（n 太小，见 threshold_basis）
         if not isinstance(c.get("threshold"), (int, float)):
             problems.append(f"{name}：threshold 缺失或非数")
         if not str(c.get("threshold_basis") or "").strip():
@@ -152,6 +156,8 @@ def main() -> int:
     fails = []
     detail = []
     for name, c in seal["corpora"].items():
+        if c.get("threshold") is None:
+            continue          # 不参与哨兵的集（n 太小，不设门槛）
         score = _score(c["test"])
         if score is None:
             fails.append(name)
@@ -186,8 +192,11 @@ def main() -> int:
         for d in detail:
             print(f"  × {d}")
         return 1
-    print(f"  √ 考卷哨兵通过：{len(seal['corpora'])} 个集均不低于封存阈值"
-          f"（封存 {seal['sealed_at']}；只报红绿，分数须 --open）")
+    guarded = [c for c in seal["corpora"].values() if c.get("threshold") is not None]
+    skipped = [c for c in seal["corpora"].values() if c.get("threshold") is None]
+    extra = f"；{len(skipped)} 个小集不设门槛（n 太小，见 threshold_basis）" if skipped else ""
+    print(f"  √ 考卷哨兵通过：{len(guarded)} 个集均不低于封存阈值"
+          f"（封存 {seal['sealed_at']}；只报红绿，分数须 --open{extra}）")
     return 0
 
 

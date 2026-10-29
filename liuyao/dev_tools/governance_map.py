@@ -116,6 +116,7 @@ CURATED = {
         "diff_shangzhan_vs_core": ("ondemand", "尚占↔内核逐格对拍"),
         "fetch_huozhulin_cases": ("build", "火珠林采集管道（通道活：评分 2<5 未入集/定性 5 在册；196 批 selftest 八件证网无盲）"),
         "fetch_wikisource_cases": ("build", "维基文库案例采集管道"),
+        "fetch_zengshan_dz_cases": ("build", "《增删卜易》dz 底本案例采集管道（329 批新增，散文体卦画）"),
         "build_extra_dimensions": ("build", "额外评分维构建"),
         "build_question_use_gods": ("build", "问题→用神词典构建"),
         "build_use_god_rules": ("build", "用神法则表构建"),

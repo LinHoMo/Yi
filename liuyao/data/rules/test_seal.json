@@ -142,6 +142,35 @@
       "threshold": 35.0,
       "threshold_basis": "324 批新增该集：方向集（有吉凶无应期）原未入册，但它正是判定器的对拍口径——判定器判方向、不需要应期。阈值 = 首测基线 57.1%（现行引擎同口径）−22pt（n=14 时约 1.5 个标准误），只准上调",
       "parent": "wikisource_direction"
+    },
+    "zengshan_dz_prose": {
+      "dev": [
+        "ZDP001",
+        "ZDP004",
+        "ZDP005",
+        "ZDP006",
+        "ZDP007",
+        "ZDP009",
+        "ZDP010",
+        "ZDP011",
+        "ZDP016",
+        "ZDP017",
+        "ZDP018",
+        "ZDP022",
+        "ZDP023",
+        "ZDP025",
+        "ZDP026",
+        "ZDP027",
+        "ZDP028",
+        "ZDP029",
+        "ZDP032",
+        "ZDP033",
+        "ZDP036"
+      ],
+      "test": [],
+      "baseline_at_seal": null,
+      "threshold": null,
+      "threshold_basis": "329 批新增：《增删卜易》**dz 底本**新采的 21 例（17 带吉凶）。**整入 dev、不切半**：n=21 切半后每半 n≈10，哨兵在 n<15 的集上设阈值等于设噪声门槛；小集只作判据开发与回归观察，不设封存阈值（threshold=null 表示该集不参与哨兵）。"
     }
   },
   "opens": [],

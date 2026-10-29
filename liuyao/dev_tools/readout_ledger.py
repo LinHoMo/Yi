@@ -128,7 +128,7 @@ def checks():
         ("6f707fbad75b2a1b", "405bc8e03a6a99e0"))
     add("bazi.golden(fda7/3512)", "176批前→308批改期望", lambda t: _golden("bazi"),
         ("fda7482656967518", "3512deff79fa1f72"))
-    add("governance(61/37, blk 27/26)", "194批（312 补 310；315 补 314/315 两门；317 补 judge_shadow（ondemand）→ 六爻 60→61）", lambda t: _gov_counts(), ("61", "37", "27", "26"))
+    add("governance(62/37, blk 27/26)", "194批（312 补 310；315 补 314/315 两门；317 补 judge_shadow；329 补 fetch_zengshan_dz_cases → 六爻 61→62）", lambda t: _gov_counts(), ("62", "37", "27", "26"))
 
     # 案例分母（234 批）：账台钉率也钉分母——删/添一例而率恰不动时，分母行会红。
     def c_case_denoms(t):
