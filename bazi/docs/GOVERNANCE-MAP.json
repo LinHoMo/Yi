@@ -1,14 +1,15 @@
 {
- "count": 42,
+ "count": 43,
  "by_tier": {
   "tool": 2,
   "ondemand": 5,
   "build": 4,
-  "UNCLASSIFIED": 5,
+  "UNCLASSIFIED": 6,
   "blocking": 26
  },
  "unclassified": [
   "build_dts_cases.py",
+  "build_siku_dz.py",
   "build_t2s_table.py",
   "diff_siku_sanming.py",
   "fetch_siku_sanming.py",
@@ -70,6 +71,13 @@
    "guards": "滴天髓语料构建",
    "run_by_check_py": false,
    "doc": "从《滴天髓》书源机械提取引擎所引章节 → bazi/data/ditian_sui.json（引文层）。"
+  },
+  {
+   "script": "build_siku_dz.py",
+   "tier": "UNCLASSIFIED",
+   "guards": "",
+   "run_by_check_py": false,
+   "doc": "把维基文库转写件规范化为**校订件**形态：`*_siku.dz.txt` ＋ `*_siku.provenance.json`。"
   },
   {
    "script": "build_t2s_table.py",

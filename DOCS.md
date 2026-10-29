@@ -46,27 +46,27 @@
 
 | 文件 | 一句话 | 状态 |
 |---|---|---|
-| `CHANGELOG.md` | 批次流水，**只保留最近窗口**（2026-10-25 起） | 活文档 |
-| `CHANGELOG-ARCHIVE.md` | 更早 154 个批次的**全文**（330 批归档，一字未删） | 归档留证 |
-| `CHANGELOG-HISTORY-INDEX.md` | 全部批号的一句话索引（含 330 批新增的 154 行） | 历史索引 |
-| `JUDGMENT-TABLE.md` | 判定表：书证底稿、9 格、13 条题类覆盖、27 处覆写清单，**含"不换判词"的结论** | 活文档 |
-| `CASE-LIBRARY-AUDIT.md` | 案例库应期抽取审计（dz 底本通道） | 活文档 |
-| `YIIN-CASE-AUDIT.md` | 《易隐》案例集审计（`yiin_holdout`） | 活文档 |
-| `ADJUDICATION-BRIEF.md` | 待裁简报（**生成物**：`dev_tools/adjudication_brief.py` 重生成） | 生成物 |
-| `TIANHOU.md` | 占天候试验台协议（读数规则、换源即改口径） | 活文档 |
-| `ARCHIVE/P0-INVENTORY-20261014.md` | 一次 P0 静默缺陷盘点（结论：两科已无活动性 P0 全盲） | 归档留证 |
+| `liuyao/docs/CHANGELOG.md` | 批次流水，**只保留最近窗口**（2026-10-25 起） | 活文档 |
+| `liuyao/docs/CHANGELOG-ARCHIVE.md` | 更早 154 个批次的**全文**（330 批归档，一字未删） | 归档留证 |
+| `liuyao/docs/CHANGELOG-HISTORY-INDEX.md` | 全部批号的一句话索引（含 330 批新增的 154 行） | 历史索引 |
+| `liuyao/docs/JUDGMENT-TABLE.md` | 判定表：书证底稿、9 格、13 条题类覆盖、27 处覆写清单，**含"不换判词"的结论** | 活文档 |
+| `liuyao/docs/CASE-LIBRARY-AUDIT.md` | 案例库应期抽取审计（dz 底本通道） | 活文档 |
+| `liuyao/docs/YIIN-CASE-AUDIT.md` | 《易隐》案例集审计（`yiin_holdout`） | 活文档 |
+| `liuyao/docs/ADJUDICATION-BRIEF.md` | 待裁简报（**生成物**：`dev_tools/adjudication_brief.py` 重生成） | 生成物 |
+| `liuyao/docs/TIANHOU.md` | 占天候试验台协议（读数规则、换源即改口径） | 活文档 |
+| `liuyao/docs/ARCHIVE/P0-INVENTORY-20261014.md` | 一次 P0 静默缺陷盘点（结论：两科已无活动性 P0 全盲） | 归档留证 |
 
 ### 参考（`liuyao/references/`）
 
 | 文件 | 一句话 | 状态 |
 |---|---|---|
-| `case_library.md` | 六爻古籍案例库（**解读路径禁止读取**，见 AGENTS 铁律二） | 活文档 |
-| `classical_synthesis.md` | 四大经典文献综合参考 | 活文档 |
-| `najia_rules.md` | 纳甲装卦规则参考 | 活文档 |
-| `interpretation_guide.md` | 断卦方法论详解 | 活文档 |
-| `pattern_reference.md` | 十五大经典格局参考 | 活文档 |
-| `source_ledger.md` | 六爻书源台账（可得性与出处状态） | 活文档 |
-| `odd_questions.md` | 奇问杂占读法（问得怪、问得虚） | 活文档 |
+| `liuyao/references/case_library.md` | 六爻古籍案例库（**解读路径禁止读取**，见 AGENTS 铁律二） | 活文档 |
+| `liuyao/references/classical_synthesis.md` | 四大经典文献综合参考 | 活文档 |
+| `liuyao/references/najia_rules.md` | 纳甲装卦规则参考 | 活文档 |
+| `liuyao/references/interpretation_guide.md` | 断卦方法论详解 | 活文档 |
+| `liuyao/references/pattern_reference.md` | 十五大经典格局参考 | 活文档 |
+| `liuyao/references/source_ledger.md` | 六爻书源台账（可得性与出处状态） | 活文档 |
+| `liuyao/references/odd_questions.md` | 奇问杂占读法（问得怪、问得虚） | 活文档 |
 
 ## 四、八字（`bazi/`，13 份）
 
@@ -93,11 +93,18 @@
 | `plugins/SKILL.md` | 共享技能正文唯一真源 | 活文档 |
 | `plugins/README.md` | 共享打包层说明（一次构建、N 份分发） | 活文档 |
 | `plugins/CHANGELOG.md` | 共享层批次流水 | 活文档 |
-| `dsh-plugin/README.md`／`CHANGELOG.md` | DSH 宿主适配 | 活文档 |
-| `yan-plugin/README.md`／`INSTRUCTIONS.md`／`CHANGELOG.md` | Yan Agent 适配 | 活文档 |
-| `claude-plugin/README.md`／`CHANGELOG.md` | Claude Code 适配 | 活文档 |
-| `codex-plugin/README.md`／`CHANGELOG.md` | Codex 适配 | 活文档 |
-| `gemini-plugin/README.md`／`GEMINI.md`／`CHANGELOG.md` | Gemini CLI 适配 | 活文档 |
+| `dsh-plugin/README.md` | DSH 宿主说明 | 活文档 |
+| `dsh-plugin/CHANGELOG.md` | DSH 宿主批次流水 | 活文档 |
+| `yan-plugin/README.md` | Yan Agent 说明 | 活文档 |
+| `yan-plugin/INSTRUCTIONS.md` | Yan 插件使用说明 | 活文档 |
+| `yan-plugin/CHANGELOG.md` | Yan 批次流水 | 活文档 |
+| `claude-plugin/README.md` | Claude Code 适配说明 | 活文档 |
+| `claude-plugin/CHANGELOG.md` | Claude Code 批次流水 | 活文档 |
+| `codex-plugin/README.md` | Codex 适配说明 | 活文档 |
+| `codex-plugin/CHANGELOG.md` | Codex 批次流水 | 活文档 |
+| `gemini-plugin/README.md` | Gemini CLI 适配说明 | 活文档 |
+| `gemini-plugin/GEMINI.md` | Gemini 扩展说明 | 活文档 |
+| `gemini-plugin/CHANGELOG.md` | Gemini 批次流水 | 活文档 |
 
 > 宿主侧的 `engine/`、`skills/`、`src/` 是**构建产物**（不入库），由
 > `node plugins/scripts/build.mjs` 生成、`node plugins/scripts/selftest.mjs` 自检——**不在本表内**。

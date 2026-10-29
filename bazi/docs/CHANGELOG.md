@@ -1,5 +1,77 @@
 # 八字 CHANGELOG
 
+## 2026-10-29 第三百二十九批（八字，兼全仓整理）：**四库本转成「校订件」真源形态（可入库）＋ 清掉 55 MB 垃圾产物 ＋ 承接《结构分层体检》的未决条目立案**
+
+**性质**：content＋tooling（新增规范化脚本 ＋ 底本换形态 ＋ 全仓清理 ＋ 未决项登记）。零引擎行为改动、零评分口径改动、golden 指纹未触碰。
+
+### 一、底本形态没按仓库约定走＝交付物不入库
+
+`.gitignore` 第 23–30 行早已定调（commit 17c8407）：抓取/校对原始件（维基文库转写 `*.wikitext.txt`、
+元数据 `*.meta.json`）与衍生比对件 `*_diff.json` **不入库**——**校订件 `*.dz.txt` + `*.provenance.json`
+才是真源**；注释里甚至直接点名 `diff_siku_sanming.py`、`scan_siku_gaps.py`。
+本批前半程把四库本留在抓取件形态，**等于交付物不入库**。
+
+新增 `dev_tools/build_siku_dz.py`：抓取件 → 校订件（只动标记形态，正文与注文**一字不改**）——
+`SK anchor` → 顶格章名行（981 个）、`SK notes` → `【】`（3,272 条，**与在库 dz 本同一套注文标记**）、
+版式包装（`SKQS header/footer`、`poem/onlyinclude`、注释、页脚标记）删除。
+
+**底本形态统一后对拍口径又简化一层**（注文标记两边一致，不必再靠归一化剥【】消解差异）：
+
+| 读数 | 327 批 | 328 批 | **329 批（校订件）** |
+|---|---|---|---|
+| 逐字一致章数 | 180 | 319 | **328 / 765（42.9%）** |
+| dz 本无此段 | 0 | 0 | **0** |
+| 反向真脱漏候选 | 92 | 26 | **16** |
+| 去注文后正文互相覆盖 | — | 76.4% / 88.5% | **92.9% / 89.8%** |
+
+校订件：`data/sources/sanming_tonghui_siku.dz.txt`（483,593 字 / 1,419,789 字节）＋
+`data/sources/sanming_tonghui_siku.provenance.json`（title=「三命通会（四库全书本）」，
+与在库 dz 本的「三命通会」区分开，否则 `_source_titles()` 的 title→`.dz.txt` 映射会指错底本）。
+
+### 二、文档整理：清掉 55 MB 垃圾产物
+
+盘点发现全仓 593 个 `.md` 里**只有 61 个是源文档**，其余全是构建产物副本
+（`plugins/{engine,skills,dist}` 与五个适配器各一份同一文件）。清理清单：
+
+| 删除 | 体积 | 理由 |
+|---|---|---|
+| `scratch/dist-clone/` `scratch/yi-claude/` `scratch/yan-verify/` | 24 MB | 仓库/适配器副本，`build.mjs`／`publish.mjs` 可重建 |
+| `plugins/dist/` | 15 MB | 发行树产物（`publish.mjs` 生成） |
+| `liuyao/outputs/` `liuyao/scratch/` | 10 MB | 一次性报告与探针产物（`.gitignore` 已定） |
+| `scratch/*.png|log|txt|json|py`（38 件） | 1.5 MB | 截图、日志、一次性探针 |
+| `scratch/REVIEW-2026-10-27.md` | 12 KB | **自述不入库**（结论已拆进 CHANGELOG） |
+| `scratch/release-notes-v1.0.0.md` | 4 KB | 已被 `dsh-plugin/README.md` 取代（后者口径章节更全：含 CI、随机期望、封存状态） |
+| `scratch/incident-20261029/` `scratch/311/` | — | 1 例自检夹具与旧批产物 |
+
+**保留**：`dsh-plugin/dsh-yi-divination-1.0.0.tgz`（发布包）、`scratch/` 目录本身。
+**未动任何被 git 跟踪的文件**（`git status` 无 ` D` 条目）。清理后 175 MB → **120 MB**。
+
+### 三、承接《结构分层体检》的未决条目（原件按 scratch 规矩不入库，此处只留条目）
+
+2026-10-27 全仓审查（304 批过程稿）的未决条目，原件在 scratch 一次性区、按 AGENTS §六.1
+「不另立台账」不入库；删除前把条目与出处登记在此，**链不断**：
+
+| 条目 | 要点 | 状态 |
+|---|---|---|
+| §3.1 三条 import 环 | `effects.py:34` 引 `classical_enhancements` 三个私有名；`engine.py` 函数体内 5 处 import（192/378/388/402/419 行） | 未修，待复核 |
+| §3.2 三处明确的反向依赖 | — | 未修，待复核 |
+| §3.3 私有名当公共 API | 与 §3.1 同源 | 未修，待复核 |
+| §3.4 同名函数并存 7 组 | — | 未修，待复核 |
+| §3.5 评测层与交付层同目录 | `case_runner.py`（365 行）、`evaluate.py`（672 行）住在 `scripts/`，隔离靠 `check_case_isolation.py:34` 的**文件名白名单**——AGENTS §一.2 承诺的是「物理隔离」，实际是「名单隔离」 | 未修，待复核 |
+| §3.6 跨科「共用契约」无 schema | — | 未修，待复核 |
+| §4.1 三个 2,000 行级模块 | `liuyao/scripts/step5.py` 2,176 行、`classical_enhancements.py` 2,227 行；step5 连 docstring 都没有 | **仍成立**（329 批实测） |
+| §4.2 两科结构不对称 | 同一份规程两种落地 | 未修，待复核 |
+| §4.3 呈现层分裂成两套语言 | 六爻 HTML 在 Python（`render.py`＋`visualization.py`＋`core/report/html.py`），八字 HTML 在 Node（`plugins/mcp/report.mjs` 315 行） | 未修，待复核 |
+| §4.5 文档覆盖不到一半 | 329 批源文档 53 篇 | 待复核 |
+
+**已解决，不再列**：§4.4「分发副本没有同源门」——`plugins/scripts/selftest.mjs` **[1] 段现为逐字节同源门**
+（含负例自证，329 批实跑全绿）。
+
+### 四、门
+
+八字全量门 ✓、六爻全量门 ✓、`plugins/scripts/selftest.mjs` ✓、`dsh-plugin` selftest ✓；
+`fetch_siku_sanming.py --check` 哈希一致、`build_siku_dz.py --check` 可复跑。
+
 ## 2026-10-29 第三百二十八批（八字）：**修掉 327 批埋的四层口径缺陷（吞字＋漏转）＋ 全量扫描与注文集合比对：结论是「两本各有所取，必须并用」**
 
 **性质**：content＋tooling（修脚本缺陷 ＋ 新增扫描脚本 ＋ 读数更新 ＋ 结论改写）。零引擎行为改动、零评分口径改动、golden 指纹未触碰。
