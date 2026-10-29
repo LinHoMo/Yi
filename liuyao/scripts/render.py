@@ -33,6 +33,7 @@ from kernel_path import ensure_kernel_on_path as _ks_ensure  # noqa: E402
 _ks_ensure(__file__)
 
 from narrate import narrate  # noqa: E402
+from advice_framework import ensure_section_advice  # noqa: E402  354 批：建议迁呈现层
 
 _CSS_PATH = Path(__file__).resolve().parents[1] / "assets" / "report.css"
 _TPL_PATH = Path(__file__).resolve().parents[1] / "data" / "narrative_templates.json"
@@ -94,6 +95,9 @@ def render(a: dict, fmt: str = "md") -> str:
 
 def render_html(a: dict) -> str:
     """analyze JSON → 单文件 HTML 报告（render 段唯一 HTML 出口）。"""
+    # 354 批：analyze 不再产 section_advice；呈现层按同一 verdict/问题补出，
+    # 既保住 HTML 的「趋避建议」节，也让 check.py [2.7] 的 parity 断言有源。
+    ensure_section_advice(a)
     from yishu_core.report.html import render_page, escape, md_to_html
     from visualization import generate_hexagram_diagram
 

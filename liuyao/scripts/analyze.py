@@ -193,21 +193,8 @@ def analyze(chart_json: dict, judgment_enabled: bool = True) -> dict:
     result["bing_yao"] = bing_yao
     result["shensha_panel"] = shensha
 
-    verdict = ""
-    step5 = chain.get("step5_synthesis") or {}
-    if isinstance(step5, dict):
-        verdict = step5.get("verdict", "")
-    try:
-        from advice_framework import generate_advice
-        result["section_advice"] = generate_advice(
-            verdict, result.get("question", ""), result)
-    except ImportError:
-        # 显式告警（缺陷 F，2026-10-09）：advice_framework 是 scripts/ 同目录兄弟
-        # 文件而非 pip 包；静默 pass 会让「趋避建议」整段消失且无痕迹。
-        import logging
-        logging.getLogger(__name__).warning(
-            "advice_framework 导入失败：分类占法建议跳过（section_advice 缺失）。"
-            "排查 sys.path 是否含 scripts/ 目录。", exc_info=True)
+    # 354 批：`section_advice` 从 analyze 迁呈现层（render/output 用
+    # advice_framework.ensure_section_advice 补出）；analyze 不再产这段成句。
 
     conclusion = _conclusion_from(chain, result)
     if judgment_enabled:

@@ -5,6 +5,24 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-10-29 第三百五十四批（六爻）：**`section_advice` 从 analyze 迁呈现层（§六-7 第二半）**
+
+**性质**：refactor（行为保持）。零判词、零评分、零读数改动。
+
+- `analyze.py` 不再调用 `generate_advice`、不再产 `section_advice`；`analyze` 顶层键
+  **15→14**（`layer_contract.json` batch 354；`CONTRACT §四` 表同批回改）。
+- `advice_framework.ensure_section_advice(result)`：已存在原样返回；缺失按
+  step5 verdict + 问题类别生成（失败回空，不静默造节）。`render_html` 在开场调用它
+  并写回传入 dict，所以 HTML 的「趋避建议」节与 `check.py [2.7]` 的 parity 断言仍有源。
+  `engine.py` 原本就自产 advice；`narrate_core` 原本就自调 `generate_advice`；两者零改动。
+- `CONTRACT §六-7` 改为：narrate 反解已修（351）＋ section_advice 已迁（354）；
+  **仍开放**只剩 `reasoning_chain` 9 条成句＋`summary_text` 354 字。
+- 复验：`check_layer_contract.py --selftest` rc=0（chart 7/analyze 14、7 禁边、信封 schema 通过）；
+  `golden.py verify` **6f70/405b 零漂移**；`analyze` 输出无 `section_advice`（False）、
+  `render` HTML 有「趋避建议」（True）；`python dev_tools/check.py` 全绿（354 批实跑）。
+
+分数含义：与古籍案例要点的一致性，不代表现实预测命中率（AGENTS.md §一.3）。
+
 ## 2026-10-29 第三百五十三批（全仓）：**跨科共用契约信封 schema 落地（§3.6 关闭）**
 
 **性质**：schema＋shared gate。零引擎、零数据、零读数改动。

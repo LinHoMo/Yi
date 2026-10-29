@@ -93,7 +93,7 @@ core/yishu_core   ←（唯一允许方向）—  scripts/*
 
 | 科 | chart 顶层键 | analyze 顶层键 | 嵌套白名单 |
 |---|---|---|---|
-| 六爻 | 7 | 15 | `trigram_interpretation` 22 键（analyze 段，350 批迁入）／`conclusion` 12 键 |
+| 六爻 | 7 | 14 | `trigram_interpretation` 22 键（analyze 段，350 批迁入）／`conclusion` 12 键 |
 | 八字 | 9 | 26 | `conclusion` 27 键 |
 
 **信封 schema（353 批）**：跨科共用的顶级结构由 `devkit/layer_contract.schema.json`
@@ -126,7 +126,7 @@ forbidden 条目字段。**各科 stage 键名仍以各自 JSON 的 `allowed`/`r
 
 | # | 条款 | 现状 | 计划 |
 |---|---|---|---|
-| 7 | §一.2 analyze 不许写文章 | **351 批部分还**：`narrate_core` 已改为优先读 analyze 产出的结构化 `thinking_chain.pattern_tags`，不再从 `reasoning_chain` 的 `[格局] A|B` 串正则反解（旧输入仍保留回落）；`[32]` 已加 `thinking_chain` 嵌套白名单（8 键）。**仍开放**：`analyze` 实测吐 `reasoning_chain` 9 条成句（85–759 字）＋`summary_text` 354 字＋`section_advice` 4 句，叙述句尚未迁 narrate | 剩余成句迁移另批做：叙述句改由 fact 渲染，`reasoning_chain` 降为内部键或迁 narrate；`[32]` 白名单已就位。书证与优先级草案见 `liuyao/docs/JUDGMENT-TABLE.md`（313 批） |
+| 7 | §一.2 analyze 不许写文章 | **351/354 批部分还**：`narrate_core` 已改为优先读 analyze 产出的结构化 `thinking_chain.pattern_tags`，不再从 `reasoning_chain` 的 `[格局] A|B` 串正则反解（旧输入仍保留回落）；`section_advice` 已从 analyze 迁呈现层（`render`/`output` 用 `advice_framework.ensure_section_advice` 补出）；`[32]` 已加 `thinking_chain` 嵌套白名单（8 键）。**仍开放**：`analyze` 实测吐 `reasoning_chain` 9 条成句（85–759 字）＋`summary_text` 354 字，叙述句尚未迁 narrate | 剩余成句迁移另批做：叙述句改由 fact 渲染，`reasoning_chain` 降为内部键或迁 narrate；`[32]` 白名单已就位。书证与优先级草案见 `liuyao/docs/JUDGMENT-TABLE.md`（313 批） |
 
 > **已关闭项**：原 1（chart 段卜象解读迁 analyze）于 350 批关闭——`trigram_interpretation`
 > 由 analyze 段产出、CLI 输出层补键，golden 6f70/405b 零漂移；原 2（`analyze` docstring）

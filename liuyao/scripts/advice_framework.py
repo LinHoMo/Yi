@@ -82,3 +82,27 @@ def generate_advice(verdict: str, category: str, result: dict) -> list:
         advice_list = advice_list + [short]
 
     return advice_list[:4]
+
+
+def ensure_section_advice(result: dict) -> list:
+    """第三百五十四批：`section_advice` 从 analyze 迁到呈现层后的统一补出。
+
+    `analyze` 不再产这段成句（CONTRACT §六-7）；`render`/报告需要时调用本函数。
+    已存在原样返回；缺失则按 step5 verdict + 问题类别生成；失败返回空列表，
+    不把异常静默成"没有建议"以外的形状（调用方会显式看到空）。
+    """
+    if isinstance(result, dict) and isinstance(result.get("section_advice"), list) \
+            and result["section_advice"]:
+        return result["section_advice"]
+    verdict = ""
+    if isinstance(result, dict):
+        tc = result.get("thinking_chain") or {}
+        s5 = tc.get("step5_synthesis") or {} if isinstance(tc, dict) else {}
+        verdict = str(s5.get("verdict") or (result.get("conclusion") or {}).get("verdict") or "")
+    try:
+        items = generate_advice(verdict, str((result or {}).get("question") or ""), result or {})
+    except Exception:
+        items = []
+    if isinstance(result, dict):
+        result["section_advice"] = items
+    return items
