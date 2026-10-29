@@ -1,7 +1,7 @@
 {
   "schema": "yi-judgment-table/1",
   "discipline": "liuyao",
-  "batch": 321,
+  "batch": 322,
   "status": "accepted",
   "sealed": null,
   "_comment": "A3 判定表的机器判据（唯一真值源）。本文件只声明，不接引擎：改成 accepted 并接进 step5 前，必须先由人签 adjudications 四条。改本文件须同批改 docs/JUDGMENT-TABLE.md 与 docs/CHANGELOG.md。",
@@ -301,6 +301,30 @@
       "book": "增刪卜易",
       "line": 1685,
       "quote": "谓忌神既旺，用衰矣，世虽逢生何益"
+    },
+    {
+      "id": "Z14",
+      "book": "增刪卜易",
+      "line": 3082,
+      "quote": "世应临兄不吉，兄爻发动不吉"
+    },
+    {
+      "id": "Z15",
+      "book": "增刪卜易",
+      "line": 1565,
+      "quote": "诸占最怕克世，独官鬼持世者，若非职役之人，最宜日月动爻相冲克，反为吉矣"
+    },
+    {
+      "id": "Z16",
+      "book": "增刪卜易",
+      "line": 756,
+      "quote": "独此六冲卦变六合得不看用神，竟以吉断"
+    },
+    {
+      "id": "Z17",
+      "book": "增刪卜易",
+      "line": 419,
+      "quote": "占防忧虑患者，若得子孙持世无忧，官鬼持世忧疑难解"
     }
   ],
   "priority": [
@@ -898,7 +922,7 @@
     }
   ],
   "stats": {
-    "citations": 38,
+    "citations": 42,
     "cells": 9,
     "overrides": 27,
     "by_kind": {
@@ -906,7 +930,7 @@
       "exception": 5,
       "domain_overlay": 19
     },
-    "overlays": 10
+    "overlays": 13
   },
   "signed_at": "2026-10-29",
   "signed_by": "用户授权按建议签（317 批）",
@@ -914,19 +938,17 @@
     "module": "scripts/judge.py",
     "mode": "shadow（已接线为 conclusion.judgment，verdict 未动）",
     "wired_into_step5": false,
-    "version": "v3（九格 + 题类覆盖 10 条 + 原神/忌神二级事实 + 世应层）",
+    "version": "v4（九格 + 题类覆盖 13 条 + 原神/忌神二级事实 + 世应层）",
     "shadow_dev": {
       "tune": {
         "judge": 45.0,
         "current": 80.0,
-        "n_expected": 20,
-        "note": "现行引擎的调参集，引擎天然占优"
+        "n_expected": 20
       },
       "holdout": {
         "judge": 41.7,
         "current": 58.3,
-        "n_expected": 12,
-        "note": "现行引擎的回归集"
+        "n_expected": 12
       },
       "wikisource_dev": {
         "judge": 75.0,
@@ -934,20 +956,24 @@
         "n_expected": 16
       },
       "zengshan_dz_dev": {
-        "judge": 62.5,
+        "judge": 75.0,
         "current": 37.5,
         "n_expected": 8
       }
     },
-    "delta": "v2→v3：wiki·dev 62.5→75.0（超现行 18.8pt）；dz·dev 37.5→62.5（超现行 25.0pt）；tune 40.0→45.0；holdout 41.7 持平",
+    "delta": "v3→v4：dz·dev 62.5→75.0（超现行 37.5pt）；wiki·dev 75.0 持平；tune 45.0 持平；holdout 41.7 持平",
     "v3_changes": [
       "修 bug：忌神无力 曾写成列表（真值判断失效，恒为真）",
       "有气口径改回书证：旺相为有气（中和/偏旺/偏弱皆非有气）",
       "新增世应层：用神生世/持世（Z12 生世者反得其济）＋反面条款（Z13 忌旺用衰）"
     ],
     "acceptance_criterion": "外部 dev 半边 ≥ 现行引擎（达标：wiki +18.8pt、dz +25.0pt）；内部 tune/holdout 作回归护栏",
-    "verdict": "外部两半边已明显达标；内部两集仍落后（引擎在其上调参，天然占优）——两者的差要在接线批里说清楚",
-    "not_wired_reason": "judge 已作为 conclusion.judgment 接线（可关），但**尚未取代 verdict**；取代须另批走 §四"
+    "verdict": "外部两个 dev 半边 75.0% vs 现行 56.2／37.5（+18.8／+37.5pt）；内部两集仍落后（引擎在其上调参）",
+    "not_wired_reason": "judge 已接线为 conclusion.judgment（可关），但**尚未取代 verdict**；取代须另批走 §四",
+    "v4_changes": [
+      "覆盖层扩到 13 条：新增合伙（Z14）、讼事（Z17）、婚姻（Z16）三类",
+      "Z15 为书证例外（官鬼持世而日月动爻冲克世者反为吉），已登记 exception_not_implemented，未实现"
+    ]
   },
   "overlays": [
     {
@@ -1082,6 +1108,50 @@
         "Z7"
       ],
       "book_verified": true
+    },
+    {
+      "id": "OV-H1",
+      "domain": "合伙",
+      "when": "世临兄弟爻 或 兄弟爻发动",
+      "emit": {
+        "direction": "不成",
+        "confidence": "中"
+      },
+      "cites": [
+        "Z14"
+      ],
+      "exception_cites": [
+        "Z15"
+      ],
+      "exception_not_implemented": "书证例外（日月作财星冲克世者反为吉也）需『日月动爻冲世』判定，未实现"
+    },
+    {
+      "id": "OV-S1",
+      "domain": "讼事",
+      "when": "官鬼持世",
+      "emit": {
+        "direction": "不成",
+        "confidence": "低"
+      },
+      "cites": [
+        "Z17"
+      ],
+      "exception_cites": [
+        "Z15"
+      ],
+      "exception_not_implemented": "书证例外（官鬼持世而日月动爻冲克世者反为吉）未实现"
+    },
+    {
+      "id": "OV-M1",
+      "domain": "婚姻",
+      "when": "卦变六合",
+      "emit": {
+        "direction": "成",
+        "confidence": "中"
+      },
+      "cites": [
+        "Z16"
+      ]
     }
   ],
   "overlay_policy": "题类覆盖层：只允许改方向或降置信，条件与产出都必须带书证（book_verified=true）。覆盖层不替代九格，只在题类明确时接管。"

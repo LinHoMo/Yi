@@ -141,7 +141,7 @@ def check(table_path: Path = TABLE) -> list[str]:
     used: set = set()
     for grp in ("cells", "priority", "adjudications", "overlays"):
         for item in table.get(grp, []):
-            for cid in item.get("cites", []):
+            for cid in list(item.get("cites", [])) + list(item.get("exception_cites", [])):
                 used.add(cid)
                 if cid not in ids:
                     problems.append(f"{grp} 引用了不存在的书证 id：{cid}")
@@ -163,6 +163,8 @@ def check(table_path: Path = TABLE) -> list[str]:
             problems.append(f"覆盖层 {oid} 的 emit.confidence 不在轴内：{emit.get('confidence')}")
         if o.get("book_verified") and not o.get("cites"):
             problems.append(f"覆盖层 {oid} 声称有书证却没有 cites")
+        if o.get("exception_cites") and not o.get("exception_not_implemented"):
+            problems.append(f"覆盖层 {oid} 列了例外书证却没写未实现说明")
 
     # 4/5. 表随码动 + 覆写分类
     src = STEP5.read_text(encoding="utf-8")

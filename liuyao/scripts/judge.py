@@ -31,7 +31,7 @@ from kernel_path import ensure_kernel_on_path as _ensure  # noqa: E402
 _ensure(__file__)
 
 from yishu_core.symbols import BRANCH_ELEMENTS  # noqa: E402  五行真值源，不在本模块复制
-from chain_tables import HEXAGRAM_LIUCHONG  # noqa: E402  六冲卦表真值源
+from chain_tables import HEXAGRAM_LIUCHONG, HEXAGRAM_LIUHE  # noqa: E402  六冲/六合卦表真值源
 
 # 方向三态；置信三档。与 data/rules/judgment_table.json 的 axes 同义。
 DIRECTIONS = ("成", "滞", "不成")
@@ -43,6 +43,9 @@ DOMAIN_KW = {
     "功名": ("功名", "考试", "科", "升迁", "求名", "乡试", "会试", "面圣", "官运", "编制", "面试"),
     "求财": ("财", "利", "生意", "买卖", "开张", "索债", "借贷", "价"),
     "行人": ("行人", "归", "回", "来否", "何日到", "在外"),
+    "合伙": ("合伙", "合伙做", "合作", "合资"),
+    "讼事": ("词讼", "官司", "诉讼", "争讼", "打官司", "讼"),
+    "婚姻": ("婚姻", "嫁娶", "娶妻", "嫁女", "配偶", "夫妻", "婚"),
 }
 KE = {"木": "土", "土": "水", "水": "火", "火": "金", "金": "木"}  # 克
 SHENG = {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}  # 生
@@ -122,10 +125,16 @@ def facts(result: dict) -> dict:
     ug_el = s2.get("use_god_element") or ""
     holds = bool(sel.get("position")) and sel.get("position") == s2.get("world_position")
     sheng_world = bool(ug_el and w_el and SHENG.get(ug_el) == w_el)
+    # 世爻六亲与兄爻发动（322 批：合伙题覆盖层用）
+    world_is_brother = (wl.get("six_relation") or "") == "兄弟"
+    brother_moving = any((y.get("six_relation") or "") == "兄弟" and y.get("is_moving")
+                          for y in (result.get("original_hexagram") or {}).get("yao_lines") or [])
+    changed_liuhe = (result.get("changed_hexagram") or {}).get("name") in HEXAGRAM_LIUHE
 
     return {
         "旺衰标签": level, "日辰生扶": day_mod > 1.0,
         "用神持世": holds, "用神生世": sheng_world,
+        "世临兄弟": world_is_brother, "兄弟爻发动": brother_moving, "变卦六合": changed_liuhe,
         "用神现": present, "用神有根": rooted, "动变净效": net, "有救有帮": rescued,
         "用神月破": month_break, "用神发动": moving, "用神真空": true_void,
         "忌神发动": ji_moving, "合处逢冲": he_chong, "冲中逢合": chong_he,
@@ -173,6 +182,11 @@ def overlay(result: dict) -> dict | None:
     world_kills = bool(ug_el and w_el and KE.get(w_el) == ug_el)
     liuchong = (result.get("original_hexagram") or {}).get("name") in HEXAGRAM_LIUCHONG
     void = bool(s3.get("is_true_void"))
+    _wl = _world_line(result)
+    f_brother_world = (_wl.get("six_relation") or "") == "兄弟"
+    f_brother_moving = any((y.get("six_relation") or "") == "兄弟" and y.get("is_moving")
+                            for y in (result.get("original_hexagram") or {}).get("yao_lines") or [])
+    f_changed_liuhe = (result.get("changed_hexagram") or {}).get("name") in HEXAGRAM_LIUHE
 
     def rule(oid, dom_, direction, confidence, why, cites):
         return {"id": oid, "domain": dom_, "direction": direction, "confidence": confidence,
@@ -195,6 +209,18 @@ def overlay(result: dict) -> dict | None:
             return rule("OV-C2", dom, "成", "中", "财爻克世者必得（用克世不作凶看）", ["Z5"])
         if holds and cat == "兄弟":
             return rule("OV-C3", dom, "不成", "低", "兄弟持世者难求", ["Z4"])
+    if dom == "合伙":
+        # 书证 Z14：世应临兄不吉、兄爻发动不吉（除非日月作财星冲克世，反为吉也——例外未实现）
+        if f_brother_world or f_brother_moving:
+            return rule("OV-H1", dom, "不成", "中", "世应临兄不吉，兄爻发动不吉", ["Z14"])
+    if dom == "讼事":
+        # 书证 Z17：官鬼持世忧疑难解（其例外「日月动爻冲克世者反为吉」需日月动爻冲世判定，未实现）
+        if holds and cat == "官鬼":
+            return rule("OV-S1", dom, "不成", "低", "官鬼持世，忧疑难解", ["Z17"])
+    if dom == "婚姻":
+        # 书证 Z16：独此六冲卦变六合得不看用神，竟以吉断
+        if f_changed_liuhe:
+            return rule("OV-M1", dom, "成", "中", "卦变六合，不看用神亦以吉断", ["Z16"])
     if dom == "行人":
         if kills_world:
             return rule("OV-X1", dom, "成", "中", "用神克世者即至", ["Z5", "Z6"])

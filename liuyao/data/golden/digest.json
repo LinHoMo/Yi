@@ -3,15 +3,9 @@
     "what": "金标准指纹基线（排盘+思维链+分析层逐字段；抽样含 narrate 文案哈希）",
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
-  "digest": "184e628a3063c368",
+  "digest": "af965c95a95e3776",
   "narrate_digest": "405bc8e03a6a99e0",
   "drift_log": [
-    {
-      "from": "f348fa81fe783d3a",
-      "to": "b3177460d0fd6396",
-      "date": "2026-10-13",
-      "reason": "第一百七十批（补）：look1/look2 展示句按 [14] 补同行逐字引文后重落；逐格对拍仍为旧段零改动＋两类纯新增段"
-    },
     {
       "from": "b3177460d0fd6396",
       "to": "b7162bfc99e2cce8",
@@ -125,6 +119,12 @@
       "to": "184e628a3063c368",
       "date": "2026-10-29",
       "reason": "第三百二十一批：判定器 v3（修『忌神无力』真值 bug、有气口径回书证、增世应层）→ 判定块内容变化致 concl_sha 漂移；verdict 未动（tune 97.9／holdout 90.2 未变）、措辞指纹未变"
+    },
+    {
+      "from": "184e628a3063c368",
+      "to": "af965c95a95e3776",
+      "date": "2026-10-29",
+      "reason": "第三百二十二批：覆盖层扩到 13 条（合伙／讼事／婚姻三类；例外 Z15 登记未实现）→ 判定块内容变化致 concl_sha 漂移；verdict 未动（tune 97.9／holdout 90.2 未变）、措辞指纹未变"
     }
   ],
   "narrate_drift_log": [
