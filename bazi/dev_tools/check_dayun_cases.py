@@ -25,6 +25,7 @@ import json
 import re
 import argparse
 import sys
+import tempfile
 from pathlib import Path
 
 if hasattr(sys.stdout, "reconfigure"):
@@ -374,7 +375,37 @@ def selftest() -> None:
     assert any("必须按书证回填" in x for x in pg), f"书证出现而未被要求回填：{pg}"
     assert any("登记漂移" in x for x in pg), f"登记漂移未被抓：{pg}"
 
-    print(f"SELFTEST OK：11 个负例全部被抓出（假引文／方向翻面／性别依据／余日篡改／运序断链／岁层十神／墓层未接必被记漏标／反面判据空跑必被抓／成格变格裁决篡改必被抓／主语料书证必被要求回填／近失登记漂移必被抓）"
+    # ⑦ 化格命例下限必须有牙齿（385 批，§四.8）：把一条期望改反 → 命中 9/10 必报红。
+    #    夹具只走系统临时目录，真见证集全程只读。
+    bad = _copy(json.loads(HUA_CASE_FILE.read_text(encoding="utf-8")))
+    c0 = bad["cases"][0]
+    want = (c0.get("expected") or {}).get("hua_type") or ""
+    c0["expected"]["hua_type"] = "假化" if want != "假化" else "真化"
+    with tempfile.TemporaryDirectory() as td:
+        probe = Path(td) / "hua_cases_probe.json"
+        probe.write_text(json.dumps(bad, ensure_ascii=False), encoding="utf-8")
+        old_file = HUA_CASE_FILE
+        globals()["HUA_CASE_FILE"] = probe
+        try:
+            import contextlib
+            import io
+            ph: list[str] = []
+            with contextlib.redirect_stdout(io.StringIO()):   # 负例的判红明细不混进正常输出
+                hua_case_check(ph, [])
+        finally:
+            globals()["HUA_CASE_FILE"] = old_file
+    assert any("低于登记下限" in x for x in ph), f"化格命例下限未生效：{ph}"
+
+    # ⑧ 干级十二长生表必须有牙齿（385 批）：把乙的长生位改成错值 卯，本器必须判红。
+    from yishu_core.symbols import YIN_STEM_CHANGSHENG
+    keep_bs = YIN_STEM_CHANGSHENG["乙"]
+    YIN_STEM_CHANGSHENG["乙"] = "卯"
+    pgs: list[str] = []
+    growth_stem_check(pgs, [])
+    YIN_STEM_CHANGSHENG["乙"] = keep_bs
+    assert any("乙长生应在午" in x for x in pgs), f"干级长生表改错未被抓：{pgs}"
+
+    print(f"SELFTEST OK：13 个负例全部被抓出（假引文／方向翻面／性别依据／余日篡改／运序断链／岁层十神／墓层未接必被记漏标／反面判据空跑必被抓／成格变格裁决篡改必被抓／主语料书证必被要求回填／近失登记漂移必被抓／化格命例下限必被报红／干级长生表改错必被抓）"
           f" → 对象 {first}／{fifth}，月柱 {m}")
 
 
@@ -451,8 +482,11 @@ QIYUN_SPEC = [(308, "甲子", 5, "己巳", 140, 6, "初五", ["乙丑", "丙寅"
 
 # ── 第五层：化格（《滴天髓·從化論》真/假两章）的**书定义例**（383 批）────────────
 # 与岁运五式同法：用书自己给的定义例（「甲己化土生於四季」「丙辛生於冬月」……），
-# 期望来自**书的那句话**，不是从实现反推，故不循环。书里没有化格命例的明确定性，
-# 故本层只验「书的定义例」，命例留在 384 批以后按逐字取证另立。
+# 期望来自**书的那句话**，不是从实现反推，故不循环。
+# 命例另立第六层（384 批）：书对 10 造的判语逐字照录，验的是判据在**实际用例**上是否成立。
+# 385 批按命例重写判据后，撤下两条被书自己的命例反证的定义例（「日主有本气根则不真」
+# 「遇官杀之干则不真」），改写两条为**程度**判据（「化神要通月令」→ 化神有力；
+# 「不遇印劫官」→ 只否决**有力**的印劫，官不作硬否决）。逐条理由写在各条 why 里。
 # 每条 = (说明, 年月日时四柱, 期望类型, 书证)
 HUA_SPEC = [
     ("甲己化土・辰月・月干作合", ("丙午", "己辰", "甲子", "丁酉"), "真化",
@@ -465,17 +499,53 @@ HUA_SPEC = [
      "《從化論－真》「丁壬生於春月…皆為真化」"),
     ("戊癸化火・午月・月干作合", ("辛寅", "癸午", "戊亥", "庚酉"), "真化",
      "《從化論－真》「戊癸生於夏月…皆為真化」"),
-    ("化神不得月令则不真", ("丙寅", "己申", "甲子", "丁酉"), "假化",
-     "化神土不生於申月（非四季），《從化論》「化神要通月令」"),
-    ("日主有本气根则不真", ("丙午", "己辰", "甲子", "丁寅"), "假化",
-     "日主甲得寅中本气甲为根，《從化論》「日主孤弱無氣…絕無一毫生扶之意」"),
-    ("遇印劫之干则不真", ("乙午", "己辰", "甲子", "丁酉"), "假化",
-     "乙为甲之劫，《從化論》「不遇壬癸甲乙庚（印，劫，官）」"),
-    ("遇官杀之干则不真", ("庚午", "己辰", "甲子", "丁酉"), "假化",
-     "庚为甲之官，《從化論》「不遇…庚（印，劫，官）」（庚能剋甲）"),
+    ("化神不得令且被旺令所克则不真", ("丙寅", "己子", "甲子", "丁酉"), "假化",
+     "化神土生于子月：非四季（非当令），又被子水旺令所克，且己土无根——《從化論》「化神要通月令」"
+     "＋「日主孤弱無氣…絕無一毫生扶之意」。【385 批改写：旧例「甲己化土于申」不得令，"
+     "但命例 HU001 同为申月而书断「乃谓真化」——故不得令只是程度，须并「被旺令所克且无根」才是假化】"),
+    # 385 批撤下「日主有本气根则不真」：命例 HU010「虽时逢禄印，而化神当令…日干不得不从合而化矣」
+    # 证明**有根/有印不作硬否决**，把关的是「有力」的劫/印（HU008「年之禄比」有力 ⇒ 假化）。
+    # 383 批那条注仍然有效：根只认本气（否则「甲日生於四季」那条书证永远不成立）。
+    ("遇有力之劫则不真", ("乙卯", "己辰", "甲子", "丁酉"), "假化",
+     "年干乙为甲之劫且得卯根为力——《從化論》「不遇壬癸甲乙庚（印，劫，官）」。"
+     "【385 批改写：旧例「甲见乙劫」（乙无根）不成立——命例 HU004 时干癸劫存在而书仍断真化，"
+     "故须「有力」才作否决】"),
     ("年干作合不作数", ("己丑", "甲辰", "甲子", "丁酉"), "不化",
      "《從化論－真》「在月時上作合，（在年幹不是）」——合在年干不算化"),
 ]
+
+
+# ── 化格前置：干级十二长生表回验（385 批）──────────────────────────────
+# 化格第三态（日主帝旺 ⇒ 不化）必须用**干级**表：五行级表分不出壬／癸在亥的区别。
+# 表的唯一书证：《命理探原》源L605「甲木长生在亥，乙木长生在午，丙火、戊土长生俱在寅，
+# 丁火、己土长生俱在酉，庚金长生在巳，辛金长生在子，癸水长生在卯。阳干顺行，阴干逆行。」
+# 这一层钉三件事：① 十干长生位逐干回书；② 壬亥＝临官（L5251「非壬之禄旺」）；
+# ③ 癸亥＝帝旺（L5238「日主虽旺地」）。缺一刻，化格第三态就是无源之水。
+CHANGSHENG_STEM_BOOK = {"甲": "亥", "乙": "午", "丙": "寅", "戊": "寅", "丁": "酉",
+                         "己": "酉", "庚": "巳", "辛": "子", "壬": "申", "癸": "卯"}
+
+
+def growth_stem_check(problems: list[str], notes: list[str]) -> int:
+    """干级十二长生表回书；返回十干回验命中数。"""
+    from yishu_core.symbols import twelve_growth_stem
+
+    ok = 0
+    for stem, br in CHANGSHENG_STEM_BOOK.items():
+        got = twelve_growth_stem(stem, br)
+        if got == "长生":
+            ok += 1
+        else:
+            problems.append(f"干级十二长生未回书：{stem}长生应在{br}"
+                            f"（《命理探原》源L605「{stem}…长生在{br}」），实得 {got}")
+    if twelve_growth_stem("壬", "亥") != "临官":
+        problems.append("干级十二长生未回书：壬亥应为临官（禄）——"
+                        "《滴天髓·從化論》源L5251「亥水非壬之禄旺」")
+    if twelve_growth_stem("癸", "亥") != "帝旺":
+        problems.append("干级十二长生未回书：癸亥应为帝旺——"
+                        "《滴天髓·從化論》源L5238「癸水…日主虽旺地」")
+    notes.append(f"干级十二长生：{ok}/10 干长生位回《命理探原》源L605；"
+                 "壬亥＝临官／癸亥＝帝旺（从化论 L5251／L5238）")
+    return ok
 
 
 def hua_check(problems: list[str], notes: list[str], spec=None) -> int:
@@ -493,7 +563,9 @@ def hua_check(problems: list[str], notes: list[str], spec=None) -> int:
         return {"pillars": ps, "factors": factors}
 
     ok = 0
+    dist: dict[str, int] = {}
     for name, cols, want, why in spec:
+        dist[want] = dist.get(want, 0) + 1
         r = hua_judge(build(cols))
         got = r.get("type") or "不化"
         if got == want:
@@ -501,21 +573,22 @@ def hua_check(problems: list[str], notes: list[str], spec=None) -> int:
         else:
             problems.append(f"化格定义例未落实：{name} 应为 {want}（{why}），实得 {got}"
                             f"（{r.get('reason')}）")
-    notes.append(f"化格定义例：{ok}/{len(spec)} 条出对名（真化5／假化4／不化1）；"
-                 f"判据四条见《從化論》——合在月時、化神通月令、日主无生扶无本气根、不遇印劫官")
+    notes.append(f"化格定义例：{ok}/{len(spec)} 条出对名（"
+                 + "／".join(f"{k}{v}" for k, v in dist.items())
+                 + "）；判据（385 批按命例重写）——合神在月/时干且专一、化神有力、"
+                   "日主无有力印劫、日主临帝旺则不化")
     return ok
 
 
 # ── 第六层：化格**命例**见证集（384 批）────────────────────────────────────
 # 前五层证的是「书的定义例」；这一层证的是「书自己的命例」——判据在命例上是否也成立。
-# 读数从实测起步（只准前进）：HUA_CASE_FLOOR 是 384 批实测的命中数，不是拍出来的目标。
+# 读数从实测起步（只准前进）：HUA_CASE_FLOOR 是实测命中数（384 批 3 → 385 批 10），不是拍出来的目标。
 HUA_CASE_FILE = ROOT / "data" / "cases" / "bazi_hua_cases.json"
-HUA_CASE_FLOOR = 3          # 384 批实测 3/10（真化5／假化4／不化1 全在）
+HUA_CASE_FLOOR = 10         # 384 批实测 3 → 385 批按命例重写判据后实测 10/10；只准前进
 HUA_CASE_NOTE = (
-    "384 批实测 3/10：书证到齐前的第一把尺子。七处失配已逐条定性（见 CHANGELOG 384），"
-    "根因是判据把书的**程度语**当成了**硬否决**（「化神要通月令」「不遇印劫官」），"
-    "而命例里这些条件常以「泄气不足」「虽时逢禄印」「嫌其时透壬水克丙」等**程度/提醒**出现；"
-    "重写判据是下一批的活。")
+    "385 批实测 10/10（384 批首测 3/10）。命中已到本集上限（10 例），"
+    "再要前进只能扩样，不能靠调判据过门。若出现未命中，先判是判据回归还是案例/期望有误"
+    "（§二「数据缺陷 vs 引擎缺陷」），不得把 expected 改成迎合引擎。")
 
 
 def hua_case_check(problems: list[str], notes: list[str]) -> tuple[int, int]:
@@ -552,7 +625,8 @@ def hua_case_check(problems: list[str], notes: list[str]) -> tuple[int, int]:
     if ok < HUA_CASE_FLOOR:
         problems.append(f"化格命例命中 {ok}/{len(cases)} 低于登记下限 {HUA_CASE_FLOOR}")
     notes.append(f"化格命例：{ok}/{len(cases)} 命中（下限 {HUA_CASE_FLOOR}）；"
-                 f"未命中 {len(miss)} 条逐条列在下方——这是欠账，不是通过")
+                 + (f"未命中 {len(miss)} 条逐条列在下方——这是欠账，不是通过"
+                    if miss else "未命中 0 条（命例层已到本集上限）"))
     print(f"  化格命例见证：{ok}/{len(cases)} 命中（下限 {HUA_CASE_FLOOR}）")
     for mid, loc, want, got, why, quote in miss:
         print(f"    · {mid} {loc}：期望 {want}，实得 {got}（{why}）")
@@ -733,6 +807,7 @@ def main() -> int:
     seq_ok, mech_ok, verdict_ok = engine_check(data, problems, notes)
     qy = qiyun_check(problems, notes)
     ws = wushi_check(problems, notes)
+    gs = growth_stem_check(problems, notes)
     hs = hua_check(problems, notes)
     hcs, hcn = hua_case_check(problems, notes)
     gap_n, gap_ph = 0, 0
@@ -748,6 +823,7 @@ def main() -> int:
           f"{verdict_ok} 处成格变格裁决与见证集一致")
     print(f"运岁四层：{ws}/{len(WUSHI_SPEC)} 个《歲運論》定义例出对名（運伐歲／歲伐運／和／好；"
           "三条负例：方向反面／同支误标／空值臆造）")
+    print(f"化格前置：{gs}/10 干长生位回《命理探原》源L605；壬亥＝临官／癸亥＝帝旺")
     print(f"化格五层：{hs}/{len(HUA_SPEC)} 个《從化論》定义例出对名（真化／假化／不化）")
     print(f"化格六层（命例）：{hcs}/{hcn} 命中，详见下方逐条")
     print(f"起运三层：{qy}/{len(QIYUN_SPEC)} 条《千里明镜》算例回验通过"

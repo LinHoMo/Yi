@@ -203,6 +203,32 @@ def twelve_growth(element: str, branch: str) -> str | None:
     return TWELVE_GROWTH.get(element, {}).get(branch)
 
 
+# ── 干级十二长生（385 批）──────────────────────────────────────────────
+# 上面的 TWELVE_GROWTH 是**五行级**（阳干顺行），分不出同五行的阴阳两干。
+# 但《滴天髓·從化論》化格命例正要用这个差别：
+#   L5251「辛金不能生水，则亥水**非壬之禄旺**，乃甲之长生」——壬在亥（按阳干序是临官＝禄），
+#   书不认它是旺；
+#   L5238「癸水…日主**虽旺地**」——癸在亥，按阴干逆行正是**帝旺**。
+# ⇒ 必须有**干级**十二长生：阳干顺行用上表，阴干逆行另起。
+# 阴干长生位逐字据《命理探原》源L605：「甲木长生在亥，乙木长生在午，丙火、戊土长生俱在寅，
+# 丁火、己土长生俱在酉，庚金长生在巳，辛金长生在子，癸水长生在卯。阳干顺行，阴干逆行。」
+YIN_STEM_CHANGSHENG = {"乙": "午", "丁": "酉", "己": "酉", "辛": "子", "癸": "卯"}
+BRANCH_ORDER = ("子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥")
+
+
+def twelve_growth_stem(stem: str, branch: str) -> str | None:
+    """天干 + 地支 → 十二长生阶段名；阳干顺行、阴干逆行；非法返回 None。"""
+    el = STEM_ELEMENTS.get(stem)
+    if not el:
+        return None
+    start = YIN_STEM_CHANGSHENG.get(stem)
+    if start:
+        i0 = BRANCH_ORDER.index(start)
+        seq = [BRANCH_ORDER[(i0 - i) % 12] for i in range(12)]
+        return dict(zip(seq, TWELVE_GROWTH_STAGES)).get(branch)
+    return TWELVE_GROWTH.get(el, {}).get(branch)
+
+
 def twelve_growth_index(element: str, branch: str) -> int | None:
     """五行 + 地支 → 长生序号（0=长生 … 11=养）；非法返回 None。"""
     stage = twelve_growth(element, branch)

@@ -23,6 +23,7 @@ from ._common import (
     STEM_YINYANG,
     stems_wuhe,
     twelve_growth,
+    twelve_growth_stem,
     wuhe_hua_element,
     _HUA,
 )
@@ -543,19 +544,24 @@ _HUA_TONG_LING = {
 
 
 def hua_judge(chart_json: dict) -> dict:
-    """化格判定——**只出结构名（真化/假化/不化），不判吉凶**。
+    """化格判定——**只出结构名（真化／假化／不化），不判吉凶**。385 批按命例重写。
 
-    书证（《滴天髓·從化論》）：
-      真化：「如甲日主，生於四季，單遇一位己土，在月時上作合，（在年幹不是）
-            不遇壬癸甲乙庚（印，劫，官），乃為化得真」
-            「又如丙辛生於冬月，（化神要通月令）戊癸生於夏月，乙庚生於秋月，
-              丁壬生於春月，獨相作合，皆為真化」
-      假化：「日主孤弱，而遇合神，不能不化，但有暗扶日主，如合神虛弱，則化不真」
+    书证（《滴天髓·從化論》真/假两章 ＋ 化象段/假化章命例）：
+      真化定义：「如甲日主，生於四季，單遇一位己土，在月時上作合，（在年幹不是）
+                不遇壬癸甲乙庚（印，劫，官），乃為化得真」
+                「又如丙辛生於冬月，（化神要通月令）戊癸生於夏月，乙庚生於秋月，
+                  丁壬生於春月，獨相作合，皆為真化」
+      假化定义：「日主孤弱，而遇合神，不能不化，但有暗扶日主，如合神虛弱，則化不真」
       日主前提：「日主孤弱無氣，天地人三元，絕無一毫生扶之意」
+      不能从合：「合神真而且旺，日主不能从合矣」（命例 L5238）
 
-    四条真化要件（本函数的判据，与书一一对应）：
-      ① 合在**月干或时干**（年在干不算）；② 化神**通月令**；③ 日主**无生扶**（无印比透干、
-         无本气/中气根）；④ 不遇**印、劫、官**之干（对甲日即壬癸、甲乙、庚）。
+    385 批据 10 条命例重写（384 批首测仅 3/10）：把书的**程度语**从硬否决改回程度——
+      「化神要通月令」不是「非当令即假」而是**化神须有力**（当令／月生／有根／得有力之印）；
+      「不遇印劫官」不是「有干即废」而是**印劫须有力**（无根或被制者不算生扶）；
+      **官不作硬否决**：五组化气里四组的官是化神的印／比，只有甲己化土的庚泄化神，
+      而命例 HU001（秋金当令泄化神）书仍断真化——泄不废真化；HU003 壬日见己官仍真化；
+      「單遇一位」是**合神须专一**（两甲逢两己则不专 ⇒ 假化）；
+      另立第三态：**日主临帝旺则旺而不从合**（不化）。
 
     为什么只标结构不批吉凶：书把吉凶挂在「化神喜忌」与「岁运」上（方向），且明说
     「土遇陰寒，要火為印」这类随宜命题属**量级/取向**判断，与 363 批 `dayun_cheng_bai`、
@@ -565,14 +571,34 @@ def hua_judge(chart_json: dict) -> dict:
            "tong_ling": False, "reason": ""}
     pillars = chart_json.get("pillars") or {}
     day = (pillars.get("day") or {}).get("stem") or ""
-    month_stem = (pillars.get("month") or {}).get("stem") or ""
-    hour_stem = (pillars.get("hour") or {}).get("stem") or ""
-    year_stem = (pillars.get("year") or {}).get("stem") or ""
+    stems = {"year": (pillars.get("year") or {}).get("stem") or "",
+             "month": (pillars.get("month") or {}).get("stem") or "",
+             "hour": (pillars.get("hour") or {}).get("stem") or ""}
+    month_stem, hour_stem, year_stem = stems["month"], stems["hour"], stems["year"]
     month_branch = (pillars.get("month") or {}).get("branch") or ""
+    day_branch = (pillars.get("day") or {}).get("branch") or ""
     if not day:
         return out
 
-    # ① 合在月干或时干（年干不算——《書明写「在年幹不是」）
+    hidden = {}
+    for key in ("year", "month", "day", "hour"):
+        hidden[key] = list(((chart_json.get("factors") or {}).get(key) or {})
+                           .get("hidden_stems") or [])
+
+    def root_of(stem: str) -> bool:
+        """该干在任一支**本气**有根（中气以下不作根，见 383 批注）。"""
+        el = STEM_ELEMENTS.get(stem) or ""
+        for hs in hidden.values():
+            if hs and STEM_ELEMENTS.get(hs[0]) == el:
+                return True
+        return False
+
+    # 月支本气：用月支的藏干首字（藏干表按本气在前）
+    month_main = (hidden.get("month") or [""])[0]
+    month_elem = STEM_ELEMENTS.get(month_main) or ""
+
+    # ① 合在月干或时干（年干不算——《書明写「在年幹不是」）；并数「与日干相合的干」个数（专一与否）
+    cands = [x for x in (year_stem, month_stem, hour_stem) if x and stems_wuhe(day, x)]
     partner = ""
     if stems_wuhe(day, month_stem):
         partner = month_stem
@@ -587,55 +613,93 @@ def hua_judge(chart_json: dict) -> dict:
     if not element:
         out["reason"] = "合而无化气"
         return out
+    out["kind"] = "化" + element
+    out["tong_ling"] = month_branch in _HUA_TONG_LING.get(element, ())
 
-    # ② 化神通月令
-    tong = month_branch in _HUA_TONG_LING.get(element, ())
-    out["tong_ling"] = tong
-
-    # ③ 日主无生扶：其余天干中不生我、不同我（印劫），且支中无同类根；④ 不遇官杀
     day_elem = STEM_ELEMENTS.get(day) or ""
-    others = [x for x in (year_stem, month_stem, hour_stem) if x and x != partner]
-    bing = False       # 印/劫之干
-    guan = False      # 官杀之干
-    for x in others:
-        xe = STEM_ELEMENTS.get(x) or ""
-        if not xe:
-            continue
-        if xe == day_elem or SHENG_CYCLE.get(xe) == day_elem:
-            bing = True
-        elif KE_CYCLE.get(xe) == day_elem:
-            guan = True
-    yougen = False     # 日主在支中的本气/中气根（藏干表取自盘面 factors，与本文件其余判据同源）
-    for key in ("year", "month", "day", "hour"):
-        hid = ((chart_json.get("factors") or {}).get(key) or {}).get("hidden_stems") or []
-        # 只认**本气**根：书明写「如甲日主，生於四季…乃為化得真」，而四季（辰戌丑未）里
-        # 甲只得**中气**余根（辰中乙、未中乙、戌中丁、丑中己）。若把中气也算根，
-        # 「甲日生四季化真」这条书证就永远不成立——与书直接矛盾。故本气以下不作根。
-        for h in hid[:1]:
-            he = STEM_ELEMENTS.get(h) or ""
-            if he == day_elem:
-                yougen = True
-                break
-        if yougen:
-            break
 
-    if tong and not bing and not guan and not yougen:
-        out["kind"] = "化" + element
+    def _stem_strong(stem: str, el: str) -> bool:
+        """该干在局中是否**有力**：有本气根 ∧ 未被旺令所克 ∧ 未被有力者所制。
+
+        384/385 批命例实证（「克去壬水」「辛金无根临绝」「申金制化」「则火亦虚脱」）：
+        **无根、被克、被旺令所制者，都不算"有力"**——书的程度语落在这一层，不在"有没有干"那一层。
+        """
+        if not el or not root_of(stem):
+            return False
+        if KE_CYCLE.get(month_elem) == el:      # 被旺令所克 ⇒ 虚脱（如子月之火）
+            return False
+        for other in stems.values():
+            if not other or other == stem:
+                continue
+            oe = STEM_ELEMENTS.get(other) or ""
+            if not oe or KE_CYCLE.get(oe) != el:
+                continue
+            if oe == month_elem or root_of(other):   # 被当令或有力者所制
+                return False
+        return True
+
+    def _support_strong(stem: str) -> bool:
+        """该干作为日主的**印或劫**时是否有力（劫＝同我，亦算生扶）。"""
+        el = STEM_ELEMENTS.get(stem) or ""
+        if not el:
+            return False
+        if el != day_elem and SHENG_CYCLE.get(el) != day_elem:
+            return False            # 既非同我（劫）也不是生我（印）
+        return _stem_strong(stem, el)
+
+    def _has_strong_yuan(elem: str) -> bool:
+        """化神 elem 是否得**有力**的生扶（其印有力）。"""
+        for other in stems.values():
+            if not other:
+                continue
+            oe = STEM_ELEMENTS.get(other) or ""
+            if not oe or SHENG_CYCLE.get(oe) != elem:
+                continue
+            if _stem_strong(other, oe):
+                return True
+        return False
+
+    # ② 化神是否有力：当令／月令生之／本身有根／得有力之印
+    hua_strong = (month_elem == element
+                  or SHENG_CYCLE.get(month_elem) == element
+                  or any(STEM_ELEMENTS.get(hs[0]) == element for hs in hidden.values() if hs)
+                  or _has_strong_yuan(element))
+
+    # ③ 日主本气根：**不作硬否决**（385 批命例实证：HU010「虽时逢禄印，而化神当令…
+    #    日干不得不从合而化矣」——日主有禄有印仍真化）。把关的是「**有力**的劫/印」：
+    #    HU008 因「年之禄比」**有力**（年干甲得寅根）而书断假化。
+    #    383 批的注仍然有效：根只认本气（否则「甲日生於四季」那条书证永远不成立）。
+
+    # ④ 日主是否有**有力**的生扶（印/劫），合神本身不计入（它已化去）
+    others = [x for x in (year_stem, month_stem, hour_stem) if x and x != partner]
+    bing = any(_support_strong(x) for x in others)
+
+    # ⑤ 合神是否专一（「單遇一位」；两甲逢两己则不专 ⇒ 假化）
+    exclusive = len(cands) <= 1
+
+    # ⑥ 日主临帝旺 ⇒ 旺而不从合（命例 L5238「日主不能从合矣」）
+    # 干级（阴干逆行）：壬在亥＝临官而书不认其旺，癸在亥＝帝旺而书说「日主虽旺地」——
+    # 五行级表分不出同五行的阴阳两干，故这里必须走 **twelve_growth_stem**（385 批内核新增）。
+    day_is_wang = bool(day_branch) and twelve_growth_stem(day, day_branch) == "帝旺"
+
+    if day_is_wang:
+        out["type"] = "不化"
+        out["basis"] = "《滴天髓·從化論》源文「%s」" % _HUA["hua_bu"]
+        out["reason"] = "日主临帝旺（%s在%s），旺而不从合" % (day, day_branch)
+        return out
+    if hua_strong and not bing and exclusive:
         out["type"] = "真化"
         out["basis"] = "《滴天髓·從化論》源文「%s」；「%s」" % (_HUA["hua_zhen"], _HUA["hua_tong_ling"])
-        out["reason"] = "合在月/时干、化神通月令、日主无生扶无根、不遇印劫官"
+        out["reason"] = "合神专一且有力、化神有力、日主无有力生扶"
         return out
-    out["kind"] = "化" + element
     out["type"] = "假化"
     out["basis"] = "《滴天髓·從化論》源文「%s」" % _HUA["hua_jia"]
     why = []
-    if not tong:
-        why.append("化神不得月令")
+    if not exclusive:
+        why.append("合神不专一（两合相并）")
+    if not hua_strong:
+        why.append("化神无力")
     if bing:
-        why.append("有印劫暗扶日主")
-    if guan:
-        why.append("遇官杀之干")
-    if yougen:
-        why.append("日主有根")
+        why.append("日主有有力生扶")
     out["reason"] = "合而不真：" + "、".join(why)
     return out

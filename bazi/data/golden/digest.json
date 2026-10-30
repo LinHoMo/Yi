@@ -4,7 +4,7 @@
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化（含 conclusion_sha，任何字段都算），措辞层漂移=narrate 断语变化（两层分列归因）"
   },
   "digest": "21a4ff76a5e75662",
-  "narrate_digest": "e3f064db5d3b4abf",
+  "narrate_digest": "872bde611188a5e9",
   "drift_log": [
     {
       "from": "57dc7e890af222fa",
@@ -68,12 +68,6 @@
     }
   ],
   "narrate_drift_log": [
-    {
-      "from": "ed6476e0ac6a0959",
-      "to": "7d3ddb40bbc74f42",
-      "date": "2026-10-09",
-      "reason": "2026-10-09 八字科批次有意订正 narrate 尾注口径（原句「格局从格仅作 tentative 标注」落后于引擎实况：analyze 现已按《滴天髓》从化论出 真从/假从/从旺/从强/从气/从势 分级，灰区例才保留 tentative 复核位）；机械层零漂移，本次仅措辞层。同时内核 JIE_SHA/JIN_YU 订正未触及这 6 例盘（golden 自报「机械层零漂移」即为证据）。"
-    },
     {
       "from": "7d3ddb40bbc74f42",
       "to": "568e5bedc0d60500",
@@ -187,6 +181,12 @@
       "to": "e3f064db5d3b4abf",
       "date": "2026-10-30",
       "reason": "383 批：新增化格维度（《滴天髓·從化論》真/假两章）——strength 段增 hua_kind/hua_type/hua_basis/hua_reason，narrate 在有化格时多一行「**化格**：化X·真化/假化（…）」与章句。只出结构名与依据，不判吉凶、不进任何维度（与 363 批 dayun_cheng_bai、373 批岁运五式同口径）。机械层零漂移（conclusion 未变）。"
+    },
+    {
+      "from": "e3f064db5d3b4abf",
+      "to": "872bde611188a5e9",
+      "date": "2026-10-30",
+      "reason": "385 批：化格判据按 10 条书载命例重写（3/10→10/10）。机械层零漂移；措辞层 4 例：mid_jianlu／corpus_MP118 仅 hua_reason 措辞更新，corpus_MP066 由假化改不化（丙午日·午帝旺），corpus_MP222 由假化改真化（己卯日合甲、日主本气根不再硬否决）。后两造书未给判语，属判据重写外溢，不构成读数变化，也不得声称修对（§四.7）。"
     }
   ]
 }

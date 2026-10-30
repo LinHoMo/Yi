@@ -35,6 +35,7 @@ from yishu_core.symbols import (  # noqa: E402
     SAN_HUI_GROUPS,
     sanxing_hits,
     twelve_growth,
+    twelve_growth_stem,
 )
 
 # 成败救应/从格 basis 的书源引文唯一真值源在 data/verdicts.json（SKILL.md）
