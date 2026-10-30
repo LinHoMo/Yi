@@ -15,6 +15,9 @@ bazi 也没有 tests/ 目录。也就是说 `rule_registry.json` 里每一条
   · `source.quote_in_code` = "<file>#<text|IDENT>" → 目标文件里能找到该字串，
         或该标识符作为名字存在（`BING_YAO_THESIS` 这类是常量名，不是引文）；
   · `source.corpus_files` 自身必须存在；
+  · 【362 批】`source.quote_in_source` = "<底本>:<行号>" → 该行逐字含本条 `quote`
+        （quote2/quote3 同理）。写了行号就是在声称「引文在此」，故不看 verified 一律判红——
+        此前本形态无人守，六爻 2 条 `verified=false` 因此长期挂着（362 批回验 4/4 命中后转真）；
   · **【第一百六十八批】`impl`** = "<file>.py[:symbol]" → 文件在，且 `:标识符` 形态时
         该符号确在文件内（`:1058`／`:4.3` 是定位记号不是符号，跳过）。此前本器从不看
         `impl`，六爻科同批实抓到两条悬空指针，本科是同一潜在缺口，本批两侧拉齐。
@@ -215,6 +218,43 @@ def check(doc: dict, problems: list[str], notes: list[str]) -> tuple[int, int]:
                 (problems if verified else notes).append(f"{rid}.corpus_files：不存在 → {c}")
             else:
                 passed += 1
+        # 【第三百六十二批】`quote_in_source`（"底本文件:行号" 形态）此前**没有任何门在守**：
+        # 门只认 `#` 形态的 quote_in_data/quote_in_code，而六爻 33 条里有 2 条用的是行号形态，
+        # 于是它们的 `verified=false` 从登记那天起躺到今天——不是"无法核实"，是"没人核实"
+        # （362 批回验：4 条引文 4/4 逐字命中底本该行）。本判据补上这个空档。
+        for key, ptr_key in (("quote", "quote_in_source"),
+                             ("quote2", "quote2_in_source"),
+                             ("quote3", "quote3_in_source")):
+            ref = src.get(ptr_key)
+            quote = src.get(key)
+            if not ref or ":" not in str(ref) or not quote:
+                continue
+            checked += 1
+            target, _, ln = str(ref).rpartition(":")
+            tp = _resolve_any(target)
+            if tp is None:
+                (problems if verified else notes).append(
+                    f"{rid}.{ptr_key}：底本不存在 → {target}")
+                continue
+            try:
+                lines = tp.read_text(encoding="utf-8", errors="replace").split("\n")
+                body = lines[int(ln) - 1]
+            except (ValueError, IndexError):
+                (problems if verified else notes).append(
+                    f"{rid}.{ptr_key}：行号不可解析或越界 → {ref}")
+                continue
+            # 行号形态的指针是「引文就在这一行」的强声明：命中即过，不命中即红
+            # （不看 verified——既然写了行号，就是在声称引文在此）
+            if norm(quote) in norm(body):
+                passed += 1
+            else:
+                a, b = norm(quote), norm(body)
+                i = next((k for k in range(min(len(a), len(b))) if a[k] != b[k]),
+                         min(len(a), len(b)))
+                (problems if verified else notes).append(
+                    f"{rid}.{ptr_key}：引文不在 {ref} 该行（首异于第 {i} 字："
+                    f"…{a[max(0, i - 12):i + 12]}… ≠ …{b[max(0, i - 12):i + 12]}…）"
+                    + ("" if verified else "（verified=false，只记）"))
         # 【第一百六十八批】`impl` 回验：代码指针没有「诚实未核实」状态，指错即指错，
         # 故不看 verified 一律判红（§六.3 文实不符等同代码缺陷）。
         impl = item.get("impl")
@@ -242,14 +282,23 @@ def selftest(problems: list[str]) -> None:
          "impl": "dev_tools/__does_not_exist__.py:analyze_x", "source": {"verified": True}},
         {"rule_id": "test.impl_missing_symbol",
          "impl": "scripts/chart.py:__no_such_symbol__", "source": {"verified": True}},
+        # 【362 批】行号形态（quote_in_source）两式负例：①引文不在该行 ②底本不存在
+        {"rule_id": "test.quote_in_source_mismatch", "source": {
+            "verified": True,
+            "quote": "这句话绝不在底本该行",
+            "quote_in_source": "data/rules/rule_registry.json:1"}},
+        {"rule_id": "test.quote_in_source_missing_file", "source": {
+            "verified": True,
+            "quote": "任意引文",
+            "quote_in_source": "data/sources/__no_such__.dz.txt:1"}},
     ], "_uncovered": []}
     p: list[str] = []
     n: list[str] = []
     checked, passed = check(fake, p, n)
-    if checked < 4 or passed != 0:
-        problems.append(f"负例自证失效：应为 ≥4 检视 0 通过，实得 检视 {checked} 通过 {passed}")
-    if len(p) < 4:
-        problems.append(f"负例自证失效：4 条假指针只判红 {len(p)} 条 → {p}")
+    if checked < 6 or passed != 0:
+        problems.append(f"负例自证失效：应为 ≥6 检视 0 通过，实得 检视 {checked} 通过 {passed}")
+    if len(p) < 6:
+        problems.append(f"负例自证失效：6 条假指针只判红 {len(p)} 条 → {p}")
     if n:
         problems.append(f"负例不该产生 NOTE（verified=true 应判红）→ {n}")
 

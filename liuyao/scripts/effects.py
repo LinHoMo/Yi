@@ -128,19 +128,48 @@ def analyze_day_month_bonding(result):
 
     findings = []
 
+    # 用神合日／合月 —— 【第三百六十四批·六爻欠账】按**动静**分计，不再无条件加分。
+    # 书证（同一句里两式并列，底本逐字）：《增删卜易》源L738
+    #   「静而逢合，谓之合起。动而逢合，合谓之合绊。」
+    #   「爻静或与日月动爻合者得合而起。即使爻值休囚亦有旺相之意。」
+    #   「爻动或与日月动爻合者谓之动逢合而绊住，反不能动之意。」
+    # 旧码只对**忌神**做了动静分计（第两百八十四批，见下），对**用神**却无条件
+    # 套《卜筮正宗》"用神合日切近有力、合月事必成就"——那是"合起"的说法，
+    # 用神自家人动的时候根本不适用。后果是同一条合在两层反号：
+    # step4 贪合忘生克判「用神被合绊，暂受阻滞」−0.2，step5 这儿又判「切近有力」
+    # +0.5，合起来净 +0.3——合绊反倒成了加分项（reg_02 占升官·官鬼极弱、
+    # 古典断凶，引擎却给 +0.18 平吉，正是这一处抬上去的）。
+    # 分计口径：
+    #   · 用神**动**逢日月合 → 合绊（"反不能动之意"）→ 此处计 0 并写明；
+    #     合绊的减分由 step4 贪合忘生克独家承担，不在这里重复计负。
+    #   · 用神**静**逢日月合 → 合起 → 维持 +0.5/+0.4。底本明说「即使爻值休囚
+    #     亦有旺相之意」，故**不**因用神休囚再打折（别拿"枯木难生"去改这一条，
+    #     那是另一句、指另一种情形）。
+    _ug_moving = bool(isinstance(selected, dict) and selected.get("is_moving"))
+    _ug_bond_note = "（用神动而逢合＝合绊，反不能动之意；减分见 step4 贪合忘生克，此处不重复计）"
+
     # 用神合日
     if use_god_branch and day_branch and (use_god_branch, day_branch) in HE_SET_BI:
-        findings.append({"bond": "日合用神", "effect": EFFECT_PHRASES["day_he_use_close"], "score": 0.5})
+        findings.append({"bond": "日合用神" if not _ug_moving else "用神动逢日合（合绊）",
+                         "effect": (EFFECT_PHRASES["day_he_use_close"] if not _ug_moving
+                                    else "合绊" + _ug_bond_note),
+                         "score": 0.5 if not _ug_moving else 0.0})
 
     # 用神合月
     if use_god_branch and month_branch and (use_god_branch, month_branch) in HE_SET_BI:
-        findings.append({"bond": "月合用神", "effect": EFFECT_PHRASES["month_he_use_success"], "score": 0.4})
+        findings.append({"bond": "月合用神" if not _ug_moving else "用神动逢月合（合绊）",
+                         "effect": (EFFECT_PHRASES["month_he_use_success"] if not _ug_moving
+                                    else "合绊" + _ug_bond_note),
+                         "score": 0.4 if not _ug_moving else 0.0})
 
     # 月日同合 check
     if (use_god_branch and day_branch and month_branch
             and (use_god_branch, day_branch) in HE_SET_BI
             and (use_god_branch, month_branch) in HE_SET_BI):
-        findings.append({"bond": "月日同合用神", "effect": EFFECT_PHRASES["day_month_he_use_peak"], "score": 0.3})
+        findings.append({"bond": "月日同合用神" if not _ug_moving else "用神动逢月日同合（合绊）",
+                         "effect": (EFFECT_PHRASES["day_month_he_use_peak"] if not _ug_moving
+                                    else "合绊" + _ug_bond_note),
+                         "score": 0.3 if not _ug_moving else 0.0})
 
     # 忌神合日/月 —— 第两百八十四批按动静分计：
     #   忌神"动"爻逢日月合住 = 合绊，凶不成、对用神为利，记 +0.3。书证：

@@ -112,6 +112,7 @@ CURATED = {
         "check_expected_coverage": ("blocking", "expected 书证覆盖生存线（[38]；344 批新增）"),
         "check_xiang": ("blocking", "象层门：象目带出处／类别随题类联动／象层禁倒灌评分（[39]；362 批新增）"),
         "xiang_coverage": ("nightly", "象层覆盖读数器（只报有没有出，不报准不准；362 批新增）"),
+        "check_bond_polarity": ("blocking", "合绊极性门：同一条合在 step4／step5 不得反号、动用神逢合不得加分（[40]；364 批新增）"),
         # check_docs_index 于 A0-5（331 批）上提到 devkit/root/：不再是六爻 dev_tools 的脚本，
         # 故本表删条目（"表中有序实无"从此不再报它）；门本身仍在 CI 的 root-gates 里跑。
         "check_test_sentinel": ("blocking", "考卷哨兵：只给红绿／阈值单调／开卷记账（[34]；315 批新增）"),

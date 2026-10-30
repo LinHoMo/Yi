@@ -3,15 +3,9 @@
     "what": "金标准指纹基线（排盘+思维链+分析层逐字段；抽样含 narrate 文案哈希）",
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
-  "digest": "6f707fbad75b2a1b",
+  "digest": "3a192fa993ec7578",
   "narrate_digest": "79603215e5863f71",
   "drift_log": [
-    {
-      "from": "aaa31c32f2800e5b",
-      "to": "cc4bcd8fd19dd919",
-      "date": "2026-10-21",
-      "reason": "第两百六十四批：①绝处逢生用神来源改为 step2 真实用神（旧实现回退世爻，4/50 例断言用神与实际不符，2 例凭空+2.0 把书证判凶案翻吉）；②同源双路径改为单一应用（旧 3.7b 先加、advanced 再覆盖叠加，同现象计价两次）；③看门狗 golden.py 改读链后 advanced_analysis（旧实现链后重跑 enhance_reading 覆盖回 step1 前旧值）；④修确定性缺陷：hidden_spirit 的 moving_branches 由 set 改为按爻位有序列表（emerge_reasons 顺序随 PYTHONHASHSEED 变，实测 seed0≠seed1，指纹虚报漂移）。tune 97.9/holdout 90.2 持平，外部集 wikisource_holdout strict 62.4→65.4、verdict 18→20。"
-    },
     {
       "from": "cc4bcd8fd19dd919",
       "to": "c757994709dec67e",
@@ -125,6 +119,12 @@
       "to": "6f707fbad75b2a1b",
       "date": "2026-10-29",
       "reason": "第三百二十四批：窄版题类优先（功名/求财/婚姻三类按本类口径判「待时」）→ 判定块内容变化致 concl_sha 漂移；verdict 未动（tune 97.9／holdout 90.2 未变）、措辞指纹未变"
+    },
+    {
+      "from": "6f707fbad75b2a1b",
+      "to": "3a192fa993ec7578",
+      "date": "2026-10-30",
+      "reason": "第三百六十四批：用神合日月按动静分计——动用神逢日月合＝合绊（《增删卜易》源L738「动而逢合，合谓之合绊」「爻动或与日月动爻合者谓之动逢合而绊住，反不能动之意」）不再按《卜筮正宗》「切近有力」记 +0.5/+0.4；静用神逢合＝合起（同句「静而逢合，谓之合起」「即使爻值休囚亦有旺相之意」）维持原分。旧码对忌神早已动静分计（284 批）却漏了用神那一半，致同一条合在 step4（贪合忘生克判合绊 −0.2）与 step5（判切近有力 +0.5）反号、两边都进总分，一条合绊净成 +0.3 加分项。金标准 4 条机械漂移（蒙·占伯何日回 1 例 verdict 翻档；措辞指纹未动），tune 97.9/holdout 90.2 与全部外部集读数零变化，古籍回归 18/19→19/19（reg_02 占升官由 +0.18 平吉变 −0.32 凶，合《黄金策》古典断凶）。新增 [40] 合绊极性门禁反号重来。"
     }
   ],
   "narrate_drift_log": [

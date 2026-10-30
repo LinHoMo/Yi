@@ -44,8 +44,15 @@ class RegressionCase(NamedTuple):
     yao: list
     question: str
     classical_verdict: str
-    expected_direction: str
-    expected_use_god: str
+    # 362 批：`expected_direction=None` 表示**方向不可评**（该例无古籍判词可据），
+    # 方向/区间两条断言跳过，只评用神、旺衰、净效应等机械项。
+    # 为什么需要这一档：此前无书据的"仿古"例也硬写一个 classical_verdict 与方向，
+    # 于是引擎判得再合理也是红，而红灯又没人能说清是引擎错还是基准错——
+    # 把不可评的例继续当可评来判，等于让门替假基准背书（照 162 批 reg_07 的校勘先例）。
+    expected_direction: Optional[str] = None
+    # 默认空串只为满足 NamedTuple「有默认值字段不得在前」的约束；实际每例必填——
+    # 缺了会在用神断言上直接显形，不会被默认值悄悄糊过去。
+    expected_use_god: str = ""
     key_reasoning: list = []
     acceptable_bands: list = []
     expected_net_effect_sign: Optional[str] = None
@@ -100,8 +107,24 @@ REGRESSION_CASES = [
 
     # ------------------------------------------------------------------
     # Case 02 — 占升官·原神缺位致凶 (《黄金策·功名章》)
-    # 古典: 午月甲午日, 官鬼极旺于日月但原神妻财不动, 升官无望
-    # 引擎: 火风鼎, 官鬼水在午月极弱 → 方向吻合(凶)
+    # 362 批校勘：原注释「官鬼极旺于日月但原神妻财不动」与下一行自注
+    # 「官鬼水在午月极弱」**自相矛盾**，且全例无书证行号/引文。现补书证并改正矛盾句：
+    #   书据《黄金策》源L2140 逐字「凡占功名，以父为文章，鬼为官职，二者一卦之主，
+    #   缺一则不成。若父爻旺相，文章必佳；官鬼得地，功名有望。」
+    #   ⇒ 官鬼**不得地**（午月火旺、官鬼水极弱）＋原神妻财不动（无源）⇒ 功名无望＝凶。
+    #   书证成立，故本例**不是假基准**。
+    #
+    # 364 批：**红灯由引擎侧修掉**（不是改考卷）。旧引擎总分 +0.18 落平吉档，
+    #   拆账为 旺衰 0.50（弱，吻合）＋动变 −0.35 ＋神煞 +0.12 ＋三会局 −0.50
+    #   ＋**日月合 +0.80** ＋六破 −0.30 ＋随官入墓 −0.09 ＝ +0.18。
+    #   唯一的正向异常是「日月合 +0.80」：其中「日合用神 +0.5」来自用神官鬼亥水
+    #   与日辰寅的寅亥合——而 step4 贪合忘生克对**同一条合**判的是
+    #   「用神被合绊，暂受阻滞」−0.2。同一事实两层反号，一条**合绊**净成 +0.3 加分。
+    #   书证《增删卜易》源L738 逐字：「静而逢合，谓之合起。动而逢合，合谓之合绊。」
+    #   「爻动或与日月动爻合者谓之动逢合而绊住，反不能动之意。」
+    #   ⇒ 用神**动**而逢合是合绊，不适用《卜筮正宗》「用神合日切近有力」（那是静爻合起）。
+    #   按动静分计后该条归 0（合绊的减分仍由 step4 独家承担），总分 0.18 → **−0.32 凶**，
+    #   与古典断凶一致。新门 [40] 合绊极性门守这条不再反号。
     # ------------------------------------------------------------------
     RegressionCase(
         id="reg_02",
@@ -292,13 +315,23 @@ REGRESSION_CASES = [
         date=(2024, 6, 15, 10),
         yao=[8, 8, 7, 7, 8, 8],
         question="测事业",
-        classical_verdict="凶",
-        expected_direction="inauspicious",
+        classical_verdict="—（362 批校勘：本例无古籍判词可据，见下）",
+        # 362 批校勘：本例的 `classical_verdict="凶"` 是**假基准**——
+        # ① 上方注释自注「(仿古从格案例)」，即非书载占验；
+        # ② key_reasoning 写的是「从格检测为思维链推理的一部分」「special_pattern字段应存在」，
+        #    是**功能存在性测试**，不是吉凶基准；
+        # ③ 全例无任何书证行号/引文可回指。
+        # 让引擎为一个没有书据的方向负责，等于让门替假基准背书——照 162 批 reg_07
+        # （「断言凶无书据」→ 依书二分校勘改 expected）的先例，本例方向改**不可评**，
+        # 只保留用神/旺衰/净效应等机械断言。引擎实测平吉 @ -0.36，登记不判成败。
+        expected_direction=None,
         expected_use_god="官鬼",
         key_reasoning=["从格检测为思维链推理的一部分", "special_pattern字段应存在"],
-        acceptable_bands=["inauspicious", "mixed-unfav"],
+        acceptable_bands=[],
         expected_net_effect_sign="neutral",
         expected_strength_pattern="weak",
+        classical_notes="362 批校勘：仿古功能测试（验 special_pattern 字段存在），"
+                        "非古籍占验，古典结论无书据 → 方向不可评；引擎实测平吉 @ -0.36 仅作登记。",
     ),
 
     # ------------------------------------------------------------------
@@ -729,7 +762,10 @@ def run_single_case(case: RegressionCase, verbose: bool = False) -> dict:
     # 保留严格等于是有意的：它把"书上说果得财、引擎只给平吉"这类保真缺口如实报出来，
     # 而不是让 acceptable_bands 把它糊掉（缺口本身登记在 #15/#8）。
     actual_band = _verdict_to_band(verdict, final_score)
-    direction_ok = (actual_band == case.expected_direction)
+    # 362 批：方向不可评（expected_direction 为空/None）→ 方向与区间两条断言整体跳过，
+    # 但仍把实测值写进 reasoning_diff，读数不因"跳过"而消失。
+    _dir_assessable = bool(case.expected_direction)
+    direction_ok = (actual_band == case.expected_direction) if _dir_assessable else True
     _lab_band, _score_band = _band_from_label(verdict), _band_from_score(final_score)
     if _lab_band and _lab_band != _score_band:
         # 判词字面与分数不同档：这是引擎自身的口径打架，单独记一条，
@@ -749,7 +785,7 @@ def run_single_case(case: RegressionCase, verbose: bool = False) -> dict:
                               "（区间内则不判失败，见「可接受区间」）")
 
     # ── Check 5: Band acceptable ──
-    band_acceptable = actual_band in case.acceptable_bands
+    band_acceptable = (actual_band in case.acceptable_bands) if _dir_assessable else True
     checks.append({
         "name": "可接受区间",
         "expected": case.acceptable_bands,
@@ -758,6 +794,10 @@ def run_single_case(case: RegressionCase, verbose: bool = False) -> dict:
     })
     if not band_acceptable:
         reasoning_diff.append(f"可接受区间: 期望{case.acceptable_bands}, 实际{actual_band}")
+    if not _dir_assessable:
+        reasoning_diff.append(
+            f"方向不可评（本例无古籍判词可据，362 批校勘）；引擎实测 {actual_band}"
+            f" @ {final_score:+.2f}，仅作登记，不计成败")
 
     # 通过判定只吃**门槛项**；`gating: False` 的逐项（如"吉凶逐字档"）照样计算、照样打印，
     # 但不再与「可接受区间」双重计同一件事（口径变更与理由见 docs/CHANGELOG.md 第四十七批）

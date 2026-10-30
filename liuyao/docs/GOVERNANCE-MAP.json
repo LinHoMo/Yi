@@ -1,11 +1,11 @@
 {
- "count": 66,
+ "count": 67,
  "by_tier": {
   "tool": 3,
   "ondemand": 12,
   "nightly": 12,
   "build": 10,
-  "blocking": 29
+  "blocking": 30
  },
  "unclassified": [],
  "curated_but_missing": [],
@@ -125,6 +125,13 @@
    "guards": "日辰并爻唯一性守卫（[27]）",
    "run_by_check_py": true,
    "doc": "日辰并爻唯一性守卫门（2026-10-14 新增，门禁 [27]）。"
+  },
+  {
+   "script": "check_bond_polarity.py",
+   "tier": "blocking",
+   "guards": "合绊极性门：同一条合在 step4／step5 不得反号、动用神逢合不得加分（[40]；364 批新增）",
+   "run_by_check_py": true,
+   "doc": "合绊极性门：**同一条「用神/忌神 × 日/月」合，两层不得反号**。"
   },
   {
    "script": "check_case_isolation.py",

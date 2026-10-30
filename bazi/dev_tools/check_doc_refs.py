@@ -82,7 +82,10 @@ HISTORY = re.compile(r"曾[并未已在经]|勘误|不采此说|已失效|原有
                      r"无此文件|负例|造的|自测|selftest")
 SKIPPED_HISTORY: list[str] = []
 # 故意编造的负例文件名（各门 selftest 里造的靶子）不是对仓库的声明
-NEGATIVE = ("__does_not_exist__", "definitely_missing", "nope.py", "_selftest_")
+# 【362 批·六爻欠账】补 `__no_such__`：check_rule_registry 的行号形态负例
+# 「data/sources/__no_such__.dz.txt:1」是造出来验证「底本不存在必判红」的靶子，
+# 被本器当活引用扫出来了——把它判红等于逼各门把负例样本删掉（与 HISTORY 同因反向激励）。
+NEGATIVE = ("__does_not_exist__", "definitely_missing", "nope.py", "_selftest_", "__no_such__")
 # 「step3/4/5.py」这类散文速记：出现纯数字段就不是一个真路径
 SHORTHAND = re.compile(r"(^|/)\d+(?=/|\.|$)")
 

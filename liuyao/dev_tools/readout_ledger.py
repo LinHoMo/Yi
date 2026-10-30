@@ -132,17 +132,22 @@ def checks():
     # 金标准基线已随结构演进前移（193 批应期窗口键、276 批报告措辞等）；
     # `golden.py verify` 当前输出「与基线指纹一致（机械+措辞均未漂移）」，
     # 说明**盘与金标准一致**，是账台登记值过期，不是回归（308 批定性）。
-    add("liuyao.golden(6f70/7960)", "193批→308批改期望；320 批纳入 judgment 判定块；321–324 批判定器 v3–v6 内容变化再重基线（机械指纹变、措辞始终未变）；362 批象层上线：正文增【象上看】段与用神口径提示 → 措辞指纹 405b→7960（机械层未动，评分未改）", lambda t: _golden("liuyao"),
-        ("6f707fbad75b2a1b", "79603215e5863f71"))
-    add("bazi.golden(fda7/baa1)", "176批前→308批改期望；362 批象层上线：正文增【象上看】段（宫位/六亲/脏腑）→ 措辞指纹 3512→baa1（机械层未动，评分未改）", lambda t: _golden("bazi"),
-        ("fda7482656967518", "baa156000cf1d8cc"))
-    add("governance(66/45, blk 29/27)",
+    add("liuyao.golden(3a19/7960)", "193批→308批改期望；320 批纳入 judgment 判定块；321–324 批判定器 v3–v6 内容变化再重基线（机械指纹变、措辞始终未变）；362 批象层上线：正文增【象上看】段与用神口径提示 → 措辞指纹 405b→7960（机械层未动，评分未改）；364 批用神合日月按动静分计（源L738）：机械指纹 6f70→3a19（288 例中 4 条读数变化、1 例 verdict 翻档），措辞指纹仍未动", lambda t: _golden("liuyao"),
+        ("3a192fa993ec7578", "79603215e5863f71"))
+    add("bazi.golden(fda7/72b4)", "176批前→308批改期望；362 批象层上线：正文增【象上看】段（宫位/六亲/脏腑）→ 措辞指纹 3512→baa1（机械层未动，评分未改）；"
+        "363 批行运成格变格分列读数：narrate 增【行运成格变格】段（只命名结构引动，不覆写本命格局成败、不进评分）→ 措辞指纹 baa1→168c→72b4（末次为裁决行去重），机械层始终未动。"
+        "（364 批六爻欠账清理时账台报分家：bazi/dev_tools/golden.py 已 capture 而本账期望值仍停在 baa1，属登记过期不是回归，按 drift_log 归因回补。"
+        "注意：八字 363 批当时仍在并行推进，本值随其 capture 同步；若再分家，先读 bazi/data/golden/digest.json 的 drift_log 再改，勿凭记忆填。）",
+        lambda t: _golden("bazi"),
+        ("fda7482656967518", "72b4802cb4065f96"))
+    add("governance(67/45, blk 30/27)",
         "194批（312 补 310；315 补 314/315 两门；317 补 judge_shadow；329 补 fetch_zengshan_dz_cases；"
         "331 批 check_docs_index 上提到 devkit/root → 六爻 blk 28→27、脚本仍 63；"
         "339 批 A5-1 按实登记 7 个存量未分类脚本 → 八字 37→43；"
         "344 批新增 check_expected_coverage → 六爻 63→64、blk 27→28；"
-        "362 批两科各新增 check_xiang（blocking）＋xiang_coverage（nightly）→ 六爻 64→66、blk 28→29，八字 43→45、blk 26→27）",
-        lambda t: _gov_counts(), ("66", "45", "29", "27"))
+        "362 批两科各新增 check_xiang（blocking）＋xiang_coverage（nightly）→ 六爻 64→66、blk 28→29，八字 43→45、blk 26→27；"
+        "364 批六爻新增 check_bond_polarity（门 [40]，blocking）→ 六爻 66→67、blk 29→30，八字不变）",
+        lambda t: _gov_counts(), ("67", "45", "30", "27"))
 
     # 344 批：expected 书证/机械派生字段的覆盖生存线（门 [38]）。
     # 1592923 的事故证明「聚合分掉 6 分、所有门全绿」可以并存；本项把非空计数
