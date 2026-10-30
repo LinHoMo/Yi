@@ -84,10 +84,11 @@
  },
 
  "从格引文": {
-  "_meta": "从格判定 basis 的书源短语唯一真值源。原文见 data/sources/di-tian-sui.wikitext.txt（從化論/從象/假從章，2026-10-01 重抓实测 60578 字节）。机械量（权重/计数/根气）由 pattern.py 拼装，书源短语只在此。",
+  "_meta": "从格判定 basis 的书源短语唯一真值源。原文见 data/sources/di-tian-sui.wikitext.txt（從化論/從象/假從章，2026-10-01 重抓实测 60578 字节）；cong_er 一条（388 批）见另一底本 data/sources/ditian_sui_chanwei_dz.dz.txt 源L5265（《顺局》十六，该本作「从儿不管身强弱，只要吾儿又得儿」）。机械量（权重/计数/根气）由 pattern.py 拼装，书源短语只在此。",
   "cong_wang_qiang": "《从象》任注『从旺者四柱皆比劫，从强者印绶重重比劫叠叠』",
   "cong_qi": "《从象》任注『从气者气势在木火/金水』",
   "cong_shi": "《从象》任注『从势者日主无根，财官食伤并旺』",
+  "cong_er": "《顺局》『从儿不管身强弱，只要吾儿又得儿』",
   "zhen_cong": "《从象》『绝无一毫生扶之意，乃为真从』",
   "jia_cong": "《假从》『中有比劫暗生，从之不真』",
   "cong_shen_chong": "从神主导支被冲，从之不纯",

@@ -30,7 +30,8 @@ from ._common import (
 
 
 def _from_judge(chart_json: dict, details: list[dict], day_stem: str,
-                decree: float = 0.0, sheng_fu: float = 0.0) -> tuple:
+                decree: float = 0.0, sheng_fu: float = 0.0,
+                strength: str = "") -> tuple:
     """从格可判级判定（《滴天髓·从化论/从象/假从》章）。
 
     返回 (from_kind, from_type, from_basis, from_label)；
@@ -63,6 +64,9 @@ def _from_judge(chart_json: dict, details: list[dict], day_stem: str,
         皆书不作从论，实测改正后 pattern 28/36→29/36。
       - 从旺/从强须 得令 且 sheng_fu≥5.0（「旺之极矣」），防月刃/建禄等正格误入
       - 从气须 失令 且 日主有根 且 四支本气集中于金水/木火
+      - 从儿（顺局，388 批）另立一门，不走「从弱侧」：日主偏弱＋食伤有藏根（≥1.5）＋
+        印/官不透干＋顺局链（食伤+财）≥4.0 且 > 印+比劫＋食伤成气（≥3.5，或 ≥3.0 且财紧贴，
+        或财居首而食伤第二且差 <0.8）；书证《顺局》「从儿不管身强弱，只要吾儿又得儿」
       - 灰区（① 于 368 批部分收口，② 仍登记）：
         ① 真/假从判据＝「有本气根／有力印比／**天干层有气印比**」三者任一 → 假从。
           仍有一例书判假从而此处判真（ZC014 辛金天干丙丁庚辛）；ZC015（丁印被癸克）
@@ -341,6 +345,63 @@ def _from_judge(chart_json: dict, details: list[dict], day_stem: str,
                      "两行——" + _CONG["cong_qi"])
             return kind, "真从", basis, label
 
+    # 从神权重（从儿/从势共用：底权重 + 透干 +1 + 三合 +2）
+    role_score = {"财": weight_by_role["财"], "官杀": weight_by_role["官杀"],
+                  "食伤": weight_by_role["食伤"]}
+    for pname in ("year", "month", "hour"):
+        tg = (pillars.get(pname) or {}).get("ten_god") or ""
+        if tg in ("正财", "偏财"):
+            role_score["财"] += 1.0
+        elif tg in ("正官", "偏官", "七杀"):
+            role_score["官杀"] += 1.0
+        elif tg in ("食神", "伤官"):
+            role_score["食伤"] += 1.0
+    if sanhe_elem and day_elem:
+        sanhe_role = _role_of_elem(day_elem, sanhe_elem)
+        if sanhe_role in role_score:
+            role_score[sanhe_role] += 2.0
+    ordered = sorted(role_score.items(), key=lambda kv: kv[1], reverse=True)
+    top_role, top_w = ordered[0]
+    second_role, second_w = ordered[1] if len(ordered) > 1 else ("", 0.0)
+
+    # ── 从儿（顺局，《滴天髓》十六）：食伤成气 ＋ 财为儿之儿（388 批）──
+    # 书证：《顺局》诗「从儿不管身强弱，只要吾儿又得儿」（dz 源L5265）＋任注「只见儿者，
+    # 食伤多也……不论身强弱者，四柱虽有比劫仍去生助食伤也；吾儿又得儿者，必要局中有财」。
+    # 与从财/官的「从弱侧」门**不同**：本门不要求日主无根、不失令——「不论身强弱」是书明文；
+    # 但也不许把正格食伤/伤官吞成从儿，故加四道守（均以 386 批 9 造见证与全库 0 翻转为验收）：
+    #   ① **印/官透干**即不作从儿：任注「如见印绶……焉能容子」「见官杀必为已害」；
+    #      9 造见证的印/官都只在支，无一透干（CE007 辰戊、CE009 亥壬皆为藏支）。
+    #   ② 日主**偏弱**且食伤有藏干之根（底权重 ≥1.5）：「不论身强弱」是说比劫/禄不碍事
+    #      （CE005 甲坐寅禄、CE006 戊生辰月仍从），不是说旺刃/建禄的正格也算从儿；
+    #      9 造见证全为偏弱，全库中和/偏旺的食伤格 0 翻转（ZP008/MP072/MT037/MT512…）。
+    #      纯透干虚浮的食伤不算成气（MT533 食伤底权重 0 → 不作从儿）。
+    #   ③ 顺局链（食伤＋财）≥4.0 且 > 印＋比劫：「只见儿」「食伤多也」是量级判据。
+    #   ④ 食伤须成气：≥3.5；或 ≥3.0 且财紧贴（差 <0.8）；或财居首而食伤第二且差 <0.8。
+    tou_gods = {(pillars.get(pn) or {}).get("ten_god") or ""
+                for pn in ("year", "month", "hour")}
+    yin_tou = bool(tou_gods & {"正印", "偏印"})
+    guan_tou = bool(tou_gods & {"正官", "偏官", "七杀"})
+    chain_w = role_score["食伤"] + role_score["财"]
+    if (strength == "偏弱" and weight_by_role["食伤"] >= 1.5
+            and not yin_tou and not guan_tou
+            and role_score["食伤"] > 0 and role_score["财"] > 0
+            and chain_w >= 4.0
+            and chain_w > weight_by_role["印"] + weight_by_role["比劫"]
+            and ((top_role == "食伤"
+                  and (role_score["食伤"] >= 3.5
+                       or (role_score["食伤"] >= 3.0 and top_w - second_w < 0.8)))
+                 or (top_role == "财" and second_role == "食伤"
+                     and top_w - second_w < 0.8 and role_score["食伤"] >= 2.5))):
+        kind = "从儿"
+        ftype = "真从" if (not day_root and not strong_yinbi
+                           and not dry_yinbi_youqi) else "假从"
+        label = f"{kind}·{ftype}"
+        basis = ("食伤成气（%.1f）＋财（%.1f）成顺局，印/官不透干，日主强弱不论——%s"
+                 % (role_score["食伤"], role_score["财"], _CONG["cong_er"]))
+        if ftype == "真从" and dry_has_yinbi:
+            basis += "；" + _CONG["yinbi_wuqi"]
+        return kind, ftype, basis, label
+
     dry_bijie_count = sum(
         1 for pname in ("year", "month", "hour")
         if (pillars.get(pname) or {}).get("ten_god") in ("比肩", "劫财"))
@@ -354,23 +415,6 @@ def _from_judge(chart_json: dict, details: list[dict], day_stem: str,
             and dry_bijie_count < 3 \
             and not (dry_yinbi_zhongqi or yin_zhongqi_hidden) \
             and not support_strong:
-        role_score = {"财": weight_by_role["财"], "官杀": weight_by_role["官杀"],
-                      "食伤": weight_by_role["食伤"]}
-        for pname in ("year", "month", "hour"):
-            tg = (pillars.get(pname) or {}).get("ten_god") or ""
-            if tg in ("正财", "偏财"):
-                role_score["财"] += 1.0
-            elif tg in ("正官", "偏官", "七杀"):
-                role_score["官杀"] += 1.0
-            elif tg in ("食神", "伤官"):
-                role_score["食伤"] += 1.0
-        if sanhe_elem and day_elem:
-            sanhe_role = _role_of_elem(day_elem, sanhe_elem)
-            if sanhe_role in role_score:
-                role_score[sanhe_role] += 2.0
-        ordered = sorted(role_score.items(), key=lambda kv: kv[1], reverse=True)
-        top_role, top_w = ordered[0]
-        second_w = ordered[1][1] if len(ordered) > 1 else 0.0
         if top_w - second_w < 0.8:
             kind = "从势"
             guansha_chou = sum(

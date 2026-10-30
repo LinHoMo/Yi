@@ -147,7 +147,8 @@ def strength_and_pattern(chart_json: dict) -> dict:
         pattern_basis = "缺月令十神"
 
     from_kind, from_type, from_basis, tentative_from = _from_judge(
-        chart_json, details, day_stem, decree=decree, sheng_fu=sheng_fu_for_from)
+        chart_json, details, day_stem, decree=decree, sheng_fu=sheng_fu_for_from,
+        strength=strength)
 
     # 化格（《滴天髓·從化論》真/假两章，383 批）：与从格并列的另一条主线。
     # 只出结构名（真化/假化），不判吉凶——与 373 批岁运五式、363 批 dayun_cheng_bai 同口径。
