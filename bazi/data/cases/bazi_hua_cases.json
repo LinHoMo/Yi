@@ -1,6 +1,6 @@
 {
  "schema": "bazi-hua-cases/1",
- "_comment": "化格命例见证集（384 批）：《滴天髓》化象段 5 例＋假化章 5 例的**逐字书证**与书中判语。excluded 里三例是**从儿格**（「格成水木从儿」「亦水木从儿」「格成火土从儿」），不是化格，故不计入——若混入，期望无从指回原文（§三.4）。本集只作见证与回验材料，不作对齐分、不进任何维度。",
+ "_comment": "化格命例见证集（384 批）：《滴天髓》化象段 5 例＋假化章 5 例的**逐字书证**与书中判语；393 批扩《千里命稿·化气格》12 造（构成 5／转败为成 5／必不可成 2；破败 3 例登记 excluded 与理由）——两书合计 22 例。excluded 里另 3 例是《滴天髓》的**从儿格**（「格成水木从儿」「亦水木从儿」「格成火土从儿」），不是化格，故不计入——若混入，期望无从指回原文（§三.4）。本集只作见证与回验材料，不作对齐分、不进任何维度。",
  "built_at": "2026-10-30",
  "cases": [
   {
@@ -202,6 +202,246 @@
     "line": 5251,
     "note": "《滴天髓》化格命例：书断语逐字照录，expected 取书中判语（真化/假化/不化）"
    }
+  },
+  {
+   "id": "QH001",
+   "chapter": "千里命稿·化气格",
+   "location": "qianli_minggao_dz.dz.txt 源L1754",
+   "pillars": {
+    "year": "戊辰",
+    "month": "壬戌",
+    "day": "甲辰",
+    "hour": "己巳"
+   },
+   "source_quote": "甲木生於九秋，土旺乘权，甲己合而化土，不见他木，则无克破，而格局纯粹矣。",
+   "expected": {
+    "hua_type": "真化"
+   },
+   "provenance": {
+    "file": "data/sources/qianli_minggao_dz.dz.txt",
+    "line": 1754,
+    "note": "《千里命稿》化气格命例（化气格之构成·化土）：四柱与书判逐字照录；expected 取书中判语（构成/转败为成⇒真化，必不可成⇒不化）"
+   }
+  },
+  {
+   "id": "QH002",
+   "chapter": "千里命稿·化气格",
+   "location": "qianli_minggao_dz.dz.txt 源L1756",
+   "pillars": {
+    "year": "甲申",
+    "month": "癸酉",
+    "day": "乙丑",
+    "hour": "庚辰"
+   },
+   "source_quote": "乙庚合而化金，时在仲秋，化神得令，四柱无火之克破，殆杰出之造也。",
+   "expected": {
+    "hua_type": "真化"
+   },
+   "provenance": {
+    "file": "data/sources/qianli_minggao_dz.dz.txt",
+    "line": 1756,
+    "note": "《千里命稿》化气格命例（化气格之构成·化金）：四柱与书判逐字照录；expected 取书中判语（构成/转败为成⇒真化，必不可成⇒不化）"
+   }
+  },
+  {
+   "id": "QH003",
+   "chapter": "千里命稿·化气格",
+   "location": "qianli_minggao_dz.dz.txt 源L1758",
+   "pillars": {
+    "year": "甲辰",
+    "month": "丙子",
+    "day": "辛丑",
+    "hour": "壬辰"
+   },
+   "source_quote": "冬水方旺，丙辛合而化水，又见壬水元神美妙无伦。辰丑皆润土，不以克破论也。",
+   "expected": {
+    "hua_type": "真化"
+   },
+   "provenance": {
+    "file": "data/sources/qianli_minggao_dz.dz.txt",
+    "line": 1758,
+    "note": "《千里命稿》化气格命例（化气格之构成·化水）：四柱与书判逐字照录；expected 取书中判语（构成/转败为成⇒真化，必不可成⇒不化）"
+   }
+  },
+  {
+   "id": "QH004",
+   "chapter": "千里命稿·化气格",
+   "location": "qianli_minggao_dz.dz.txt 源L1760",
+   "pillars": {
+    "year": "乙卯",
+    "month": "丁卯",
+    "day": "壬午",
+    "hour": "癸卯"
+   },
+   "source_quote": "丁壬合而化木，因在仲春，为木之最旺时令，格局更粹，八字无金，尤为可贵耳。",
+   "expected": {
+    "hua_type": "真化"
+   },
+   "provenance": {
+    "file": "data/sources/qianli_minggao_dz.dz.txt",
+    "line": 1760,
+    "note": "《千里命稿》化气格命例（化气格之构成·化木）：四柱与书判逐字照录；expected 取书中判语（构成/转败为成⇒真化，必不可成⇒不化）"
+   }
+  },
+  {
+   "id": "QH005",
+   "chapter": "千里命稿·化气格",
+   "location": "qianli_minggao_dz.dz.txt 源L1762",
+   "pillars": {
+    "year": "丙戌",
+    "month": "戊戌",
+    "day": "癸巳",
+    "hour": "甲寅"
+   },
+   "source_quote": "戊癸合而化火，虽不在夏火当旺之令，然有丙巳两火之引化，甲寅两木之助化，且不见水星之克，自亦化而有余之象。",
+   "expected": {
+    "hua_type": "真化"
+   },
+   "provenance": {
+    "file": "data/sources/qianli_minggao_dz.dz.txt",
+    "line": 1762,
+    "note": "《千里命稿》化气格命例（化气格之构成·化火）：四柱与书判逐字照录；expected 取书中判语（构成/转败为成⇒真化，必不可成⇒不化）"
+   }
+  },
+  {
+   "id": "QH009",
+   "chapter": "千里命稿·化气格",
+   "location": "qianli_minggao_dz.dz.txt 源L1776",
+   "pillars": {
+    "year": "辛酉",
+    "month": "丙申",
+    "day": "乙丑",
+    "hour": "庚辰"
+   },
+   "source_quote": "乙庚化金於秋月，所畏丙火之破金，幸年干辛金合绊，丙火害而不害，此因合而转败为成也。",
+   "expected": {
+    "hua_type": "真化"
+   },
+   "provenance": {
+    "file": "data/sources/qianli_minggao_dz.dz.txt",
+    "line": 1776,
+    "note": "《千里命稿》化气格命例（化气格之转败为成·因合）：四柱与书判逐字照录；expected 取书中判语（构成/转败为成⇒真化，必不可成⇒不化）"
+   }
+  },
+  {
+   "id": "QH010",
+   "chapter": "千里命稿·化气格",
+   "location": "qianli_minggao_dz.dz.txt 源L1778",
+   "pillars": {
+    "year": "甲子",
+    "month": "戊辰",
+    "day": "丙申",
+    "hour": "辛卯"
+   },
+   "source_quote": "时在辰月，支全申子辰，丙辛合而化水，独畏戊土破化，然有甲先制戊。戊不能为化神之害，此因克而转败为成也。",
+   "expected": {
+    "hua_type": "真化"
+   },
+   "provenance": {
+    "file": "data/sources/qianli_minggao_dz.dz.txt",
+    "line": 1778,
+    "note": "《千里命稿》化气格命例（化气格之转败为成·因克）：四柱与书判逐字照录；expected 取书中判语（构成/转败为成⇒真化，必不可成⇒不化）"
+   }
+  },
+  {
+   "id": "QH011",
+   "chapter": "千里命稿·化气格",
+   "location": "qianli_minggao_dz.dz.txt 源L1780",
+   "pillars": {
+    "year": "甲戌",
+    "month": "丁丑",
+    "day": "甲申",
+    "hour": "己巳"
+   },
+   "source_quote": "甲己化土而得令，憾于年头甲木之破土，所幸丁火居月上，盗泄甲木而生助化神此，因生而转败为成也。",
+   "expected": {
+    "hua_type": "真化"
+   },
+   "provenance": {
+    "file": "data/sources/qianli_minggao_dz.dz.txt",
+    "line": 1780,
+    "note": "《千里命稿》化气格命例（化气格之转败为成·因生）：四柱与书判逐字照录；expected 取书中判语（构成/转败为成⇒真化，必不可成⇒不化）"
+   }
+  },
+  {
+   "id": "QH012",
+   "chapter": "千里命稿·化气格",
+   "location": "qianli_minggao_dz.dz.txt 源L1783",
+   "pillars": {
+    "year": "壬寅",
+    "month": "丁未",
+    "day": "壬子",
+    "hour": "丁未"
+   },
+   "source_quote": "壬日左右皆丁，纵在未月，因妒而化木不成，然年干亦壬，成两丁两壬如璧人双双，何妒之有。则仍化木而无疑矣，此因合而转败为成也。",
+   "expected": {
+    "hua_type": "真化"
+   },
+   "provenance": {
+    "file": "data/sources/qianli_minggao_dz.dz.txt",
+    "line": 1783,
+    "note": "《千里命稿》化气格命例（化气格之转败为成·妒合得配）：四柱与书判逐字照录；expected 取书中判语（构成/转败为成⇒真化，必不可成⇒不化）"
+   }
+  },
+  {
+   "id": "QH013",
+   "chapter": "千里命稿·化气格",
+   "location": "qianli_minggao_dz.dz.txt 源L1785",
+   "pillars": {
+    "year": "丁丑",
+    "month": "辛亥",
+    "day": "丙午",
+    "hour": "辛卯"
+   },
+   "source_quote": "丙火冬生，凝于两辛妒合，不能化水，尚幸年丁克去月辛，丙日仍可合时上之辛，而化为水也，此因克而转败为成耳。",
+   "expected": {
+    "hua_type": "真化"
+   },
+   "provenance": {
+    "file": "data/sources/qianli_minggao_dz.dz.txt",
+    "line": 1785,
+    "note": "《千里命稿》化气格命例（化气格之转败为成·克去妒神）：四柱与书判逐字照录；expected 取书中判语（构成/转败为成⇒真化，必不可成⇒不化）"
+   }
+  },
+  {
+   "id": "QH014",
+   "chapter": "千里命稿·化气格",
+   "location": "qianli_minggao_dz.dz.txt 源L1789",
+   "pillars": {
+    "year": "辛亥",
+    "month": "庚子",
+    "day": "丙寅",
+    "hour": "壬辰"
+   },
+   "source_quote": "丙生子月辛透年上，年日之地位远隔，合且勉强，岂可进而化水哉？",
+   "expected": {
+    "hua_type": "不化"
+   },
+   "provenance": {
+    "file": "data/sources/qianli_minggao_dz.dz.txt",
+    "line": 1789,
+    "note": "《千里命稿》化气格命例（化气格之必不可成·隔位）：四柱与书判逐字照录；expected 取书中判语（构成/转败为成⇒真化，必不可成⇒不化）"
+   }
+  },
+  {
+   "id": "QH015",
+   "chapter": "千里命稿·化气格",
+   "location": "qianli_minggao_dz.dz.txt 源L1792",
+   "pillars": {
+    "year": "丙午",
+    "month": "戊戌",
+    "day": "丁亥",
+    "hour": "壬寅"
+   },
+   "source_quote": "丁壬虽紧贴相合，然以时非木令，岂能化木，纵化矣，亦不得旺乘极，格局焉能成立，虽不必春日木令，方可化木，但亦须在亥未之月，盖木生於亥而库在未也。",
+   "expected": {
+    "hua_type": "不化"
+   },
+   "provenance": {
+    "file": "data/sources/qianli_minggao_dz.dz.txt",
+    "line": 1792,
+    "note": "《千里命稿》化气格命例（化气格之必不可成·不得月令）：四柱与书判逐字照录；expected 取书中判语（构成/转败为成⇒真化，必不可成⇒不化）"
+   }
   }
  ],
  "excluded": [
@@ -251,6 +491,54 @@
    "provenance": {
     "file": "data/sources/ditian_sui_chanwei_dz.dz.txt",
     "line": 5296
+   }
+  },
+  {
+   "id": "QHX01",
+   "location": "qianli_minggao_dz.dz.txt 源L1766",
+   "pillars": {
+    "year": "庚戌",
+    "month": "戊子",
+    "day": "辛未",
+    "hour": "丙申"
+   },
+   "source_quote": "丙辛相合，时在仲冬，化水成立，乃戊土，未土，戌土竞相克水，格局破矣。",
+   "excluded_reason": "书只判「破败」，未给真化/假化/不化三态定性；映射到本仓三态需判断，按 §三.4 不入期望",
+   "provenance": {
+    "file": "data/sources/qianli_minggao_dz.dz.txt",
+    "line": 1766
+   }
+  },
+  {
+   "id": "QHX02",
+   "location": "qianli_minggao_dz.dz.txt 源L1769",
+   "pillars": {
+    "year": "甲戌",
+    "month": "丁卯",
+    "day": "壬午",
+    "hour": "丁未"
+   },
+   "source_quote": "仲春木旺，丁壬可以化木，然化由合而成，今夫两丁妒合一壬，合且因妒而分力，遑论化耶。",
+   "excluded_reason": "书只判「破败」，未给真化/假化/不化三态定性；映射到本仓三态需判断，按 §三.4 不入期望",
+   "provenance": {
+    "file": "data/sources/qianli_minggao_dz.dz.txt",
+    "line": 1769
+   }
+  },
+  {
+   "id": "QHX03",
+   "location": "qianli_minggao_dz.dz.txt 源L1772",
+   "pillars": {
+    "year": "壬辰",
+    "month": "丁未",
+    "day": "甲子",
+    "hour": "己巳"
+   },
+   "source_quote": "甲己化土於季夏，只因丁壬化木於年月，木来克土，是谓化神，破化神，格亦败矣。",
+   "excluded_reason": "书只判「破败」，未给真化/假化/不化三态定性；映射到本仓三态需判断，按 §三.4 不入期望",
+   "provenance": {
+    "file": "data/sources/qianli_minggao_dz.dz.txt",
+    "line": 1772
    }
   }
  ]

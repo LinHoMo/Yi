@@ -375,12 +375,12 @@ def selftest() -> None:
     assert any("必须按书证回填" in x for x in pg), f"书证出现而未被要求回填：{pg}"
     assert any("登记漂移" in x for x in pg), f"登记漂移未被抓：{pg}"
 
-    # ⑦ 化格命例下限必须有牙齿（385 批，§四.8）：把一条期望改反 → 命中 9/10 必报红。
-    #    夹具只走系统临时目录，真见证集全程只读。
+    # ⑦ 化格命例下限必须有牙齿（385 批，§四.8）：393 批扩到 19/22 后，单条改反仍过线，
+    #    故改反**前四条**（19-4=18 < 下限 19）；夹具只走系统临时目录，真见证集全程只读。
     bad = _copy(json.loads(HUA_CASE_FILE.read_text(encoding="utf-8")))
-    c0 = bad["cases"][0]
-    want = (c0.get("expected") or {}).get("hua_type") or ""
-    c0["expected"]["hua_type"] = "假化" if want != "假化" else "真化"
+    for c0 in bad["cases"][:4]:
+        want = (c0.get("expected") or {}).get("hua_type") or ""
+        c0["expected"]["hua_type"] = "假化" if want != "假化" else "真化"
     with tempfile.TemporaryDirectory() as td:
         probe = Path(td) / "hua_cases_probe.json"
         probe.write_text(json.dumps(bad, ensure_ascii=False), encoding="utf-8")
@@ -601,13 +601,14 @@ def hua_check(problems: list[str], notes: list[str], spec=None) -> int:
 
 # ── 第六层：化格**命例**见证集（384 批）────────────────────────────────────
 # 前五层证的是「书的定义例」；这一层证的是「书自己的命例」——判据在命例上是否也成立。
-# 读数从实测起步（只准前进）：HUA_CASE_FLOOR 是实测命中数（384 批 3 → 385 批 10），不是拍出来的目标。
+# 读数从实测起步（只准前进）：HUA_CASE_FLOOR 是实测命中数（384 批 3 → 385 批 10 → 393 批 19/22），
+# 不是拍出来的目标。393 批把《千里命稿·化气格》12 造并入本集（两书合计 22 例）。
 HUA_CASE_FILE = ROOT / "data" / "cases" / "bazi_hua_cases.json"
-HUA_CASE_FLOOR = 10         # 384 批实测 3 → 385 批按命例重写判据后实测 10/10；只准前进
+HUA_CASE_FLOOR = 19         # 384 首测 3/10 → 385 10/10 → 393 扩千里 12 造后 19/22；只准前进
 HUA_CASE_NOTE = (
-    "385 批实测 10/10（384 批首测 3/10）。命中已到本集上限（10 例），"
-    "再要前进只能扩样，不能靠调判据过门。若出现未命中，先判是判据回归还是案例/期望有误"
-    "（§二「数据缺陷 vs 引擎缺陷」），不得把 expected 改成迎合引擎。")
+    "393 批实测 19/22：滴天髓 10 造全中；《千里命稿》12 造中 9——QH012／QH013（日主帝旺、"
+    "妒合被年干配平/克去）与 QH015（年支午禄＋戌月不得木令）三处失配逐条列在下方。"
+    "这是 394 批重写判据的欠账，不是通过；不得把 expected 改成迎合引擎（§二「数据缺陷 vs 引擎缺陷」）。")
 
 
 def hua_case_check(problems: list[str], notes: list[str]) -> tuple[int, int]:
