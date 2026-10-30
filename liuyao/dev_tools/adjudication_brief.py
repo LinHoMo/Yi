@@ -76,17 +76,34 @@ def build() -> int:
 
     # C. 分诊真分歧＋兜底
     tz = tri["rows"]
-    parts.append(f"\n## C. 分诊真分歧 {len(tz.get('B_真分歧需人', []))} 条＋兜底 {len(tz.get('B_异写候选', []))} 条（202 批）\n")
-    for r in tz.get("B_真分歧需人", []):
+    _c1 = tz.get("B_真分歧需人", [])
+    _c2 = tz.get("B_异写候选", [])
+    _c1d = [r for r in _c1 if r.get("decision")]
+    _c1p = [r for r in _c1 if not r.get("decision")]
+    _c2d = [r for r in _c2 if r.get("decision")]
+    _c2p = [r for r in _c2 if not r.get("decision")]
+    parts.append(f"\n## C. 分诊真分歧 {len(_c1p)} 条＋兜底 {len(_c2p)} 条待裁（202 批；"
+                 f"已裁 {len(_c1d) + len(_c2d)} 条见 C2）\n")
+    for r in _c1p:
         parts.append("- [ ] **%s**（L%d）A=%s｜B=%s" % (
             r["id"].replace("VER-", ""), r["line"],
             json.dumps(r.get("a"), ensure_ascii=False)[:70],
             json.dumps(r.get("b"), ensure_ascii=False)[:70]))
         parts.append("      决策：□取A　□取B　□另裁＿＿＿＿")
-    for r in tz.get("B_异写候选", []):
+    for r in _c2p:
         parts.append("- [ ] 兜底 **%s**（L%d）毕业报错串疑为噪声：%s——决策：□结案（写明噪声根因）　□重读　"
                      % (r["id"].replace("VER-", ""), r["line"],
                         json.dumps(r.get("near"), ensure_ascii=False)[:80]))
+    if _c1d or _c2d:
+        parts.append(f"\n## C2. 已裁 {len(_c1d) + len(_c2d)} 条（逐字取证回原文真头）\n")
+        for r in _c1d:
+            parts.append("- [x] **%s**（L%d）→ **%s**" % (
+                r["id"].replace("VER-", ""), r["line"], r["decision"]))
+            parts.append("      依据：%s" % (r.get("decision_basis") or "")[:200])
+        for r in _c2d:
+            parts.append("- [x] 兜底 **%s**（L%d）→ **%s**" % (
+                r["id"].replace("VER-", ""), r["line"], r["decision"]))
+            parts.append("      依据：%s" % (r.get("decision_basis") or "")[:200])
 
     # D. 验支候选速裁
     _dz_all = tz.get("A_有验支候选", [])
@@ -124,7 +141,7 @@ def build() -> int:
     n = sum(len(v) for k, v in tri["rows"].items()) + len(nb) + len(cs)
     print("√ 简报%s：%d 事项入册 %s（A%d B%d C%d D%d(已裁%d) E批%d）"
           % ("已刷新" if changed else "无变化保持", n, OUT.name,
-             len(cs), len(nb), len(tz.get("B_真分歧需人", [])) + len(tz.get("B_异写候选", [])),
+             len(cs), len(nb), len(_c1p) + len(_c2p),
              len(dz_pend), len(dz_dec), len(tz.get("A_无验支结案候选", []))))
     return 0
 
