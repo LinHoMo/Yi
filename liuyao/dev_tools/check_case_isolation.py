@@ -12,8 +12,9 @@
 口径（第三百五十六批起按科分两档，不再是单一白名单）：
   · **物理隔离档**（`<科>/eval/` 已建）：实现层 `eval/` 下的 case_runner / evaluate /
     build_portal_assets 允许读案例库；`scripts/` 下一律不给目录白名单——同名文件只准
-    是纯 re-export shim，凡出现案例库字面路径 / expected 取数即红；`eval/` 内必须同时
-    存在 case_runner.py 与 evaluate.py（正面断言，防止"宣称搬了其实没搬"）。
+    是纯 re-export shim，凡出现案例库字面路径 / expected 取数即红；`eval/` 内必须
+    存在 evaluate.py，若该科原本有 case_runner.py 则它也必须存在于 `eval/`
+    （正面断言，防止"宣称搬了其实没搬"）。
   · **白名单档**（尚未物理搬迁的科）：沿用 346 批口径，`scripts/` 下 evaluate.py /
     case_runner.py / build_portal_assets.py 允许读案例库，其余解读模块禁读。
   两档都按「源码里出现案例库字面路径或 expected 取数」判定，纯静态、零依赖。
@@ -35,9 +36,9 @@ DISC = Path(__file__).resolve().parents[1]
 SCRIPTS = DISC / "scripts"
 EVAL = DISC / "eval"
 
-# 评测实现文件名（两档共用）；是否允许住在 scripts/ 取决于该科有没有 eval/
+# 评测实现文件名（两档共用）；该科 eval/ 里已有实现即走物理隔离档
 WHITELIST = {"evaluate.py", "case_runner.py", "build_portal_assets.py"}
-PHYSICAL = (EVAL / "case_runner.py").is_file()
+PHYSICAL = (EVAL / "evaluate.py").is_file() or (EVAL / "case_runner.py").is_file()
 ALLOWED: set[str] = set() if PHYSICAL else set(WHITELIST)
 # 案例库/期望值的字面痕迹
 FORBIDDEN = re.compile(
@@ -51,7 +52,10 @@ def scan() -> list[str]:
         return [f"目录不存在：{SCRIPTS}"]
     # 正面断言：物理隔离档下，案例装载/评分的真实实现必须在 eval/
     if PHYSICAL:
-        for name in ("case_runner.py", "evaluate.py"):
+        required = ["evaluate.py"]
+        if (DISC / "scripts" / "case_runner.py").exists() or (EVAL / "case_runner.py").exists():
+            required.append("case_runner.py")
+        for name in required:
             if not (EVAL / name).is_file():
                 problems.append(f"评测实现不在 eval/{name}——物理搬迁缺失，scripts/ 里的 shim 不能当实现")
     for p in sorted(SCRIPTS.rglob("*.py")):

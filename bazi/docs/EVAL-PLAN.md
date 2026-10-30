@@ -1,7 +1,7 @@
 # 八字科八字 · 案例评测方案（EVAL-PLAN）
 
 > 本文件是**方法学规范**：定死"八字科的分数怎么来、什么能评、什么不能评"。
-> 落地实现见 `bazi/scripts/evaluate.py` 与 `data/cases/bazi_classical_cases.json`。
+> 落地实现见 `bazi/eval/evaluate.py` 与 `data/cases/bazi_classical_cases.json`。
 > **口径铁律**（`SKILL.md` §一.3）：本文件与评测输出中的一切分数都是**古籍案例对齐分**
 > （引擎输出与古书案例要点的吻合度），用于回归审计；**不是现实预测命中率**。
 > 报分必带：集合名 + n + 是否参与调参。
@@ -16,7 +16,7 @@
 
 | 项 | 现状 |
 |---|---|
-| `bazi/scripts/evaluate.py` | **已建**（多维度评测 + split 选择 + 防骑墙报数） |
+| `bazi/eval/evaluate.py` | **已建**（多维度评测 + split 选择 + 防骑墙报数；359 批起在 `eval/`，`scripts/` 同名文件为兼容 shim） |
 | `bazi_classical_cases.json` | **338 例**（tune 60／holdout 278，schema `yi-bazi-cases/1`）——实测：`json` 载入取 `len(cases)` |
 | tune 加权均分 | **100.0%（n=60，门内基线 ≥100）**，其中 `tiaohou` 满分 60/60 |
 | holdout 加权均分 | **99.5%（n=278，门内基线 ≥99.5）**（308 批实测；163 批 ten_gods／hidden_stems 回填后曾记 97.6%，现行基线已抬到 99.5） |
@@ -140,7 +140,7 @@
 | `shensha` 神煞 | 8 | 期望神煞集合的命中比例（多出不算错） | 期望无 `shensha` |
 | `dayun` 大运 | 12 | 顺逆一致得 8；首运起运岁数误差 ≤1 岁再得 4 | 期望无 `dayun*` |
 
-> **本表的唯一真值源是 `scripts/evaluate.py:WEIGHTS`**（该处有
+> **本表的唯一真值源是 `eval/evaluate.py:WEIGHTS`**（该处有
 > `assert sum(WEIGHTS.values()) == 100` 兜底）。2026-10-10 校正：此表原写的是
 > 25/15/10/15/10/5/10/10 的初稿权重，与代码长期不一致——文档改到与代码相同，
 > 不改代码（分数口径以实跑为准，`SKILL.md` 铁律三）。

@@ -37,7 +37,7 @@ def ensure_eval_all() -> None:
         return
     import subprocess
     print("· eval_all.json 缺失（生成物不入库）——现场调用 evaluate --split all --save 生成")
-    r = subprocess.run([sys.executable, str(ROOT / "scripts" / "evaluate.py"),
+    r = subprocess.run([sys.executable, str(ROOT / "eval" / "evaluate.py"),
                         "--split", "all", "--save"], cwd=str(ROOT))
     if r.returncode != 0 or not EVAL_ALL.exists():
         raise SystemExit("FAIL：eval_all.json 现生成失败——接线门不退回单盘口径，也不装绿")

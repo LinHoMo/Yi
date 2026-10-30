@@ -5,6 +5,18 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-10-30 第三百五十九批（六爻/共享门）：**物理隔离档检测泛化（六爻行为不变）**
+
+**性质**：shared gate（行为保持）。零引擎、零数据、零读数改动。
+
+- `devkit/shared/check_case_isolation.py`：`PHYSICAL` 由「`eval/case_runner.py` 存在」
+  改为「`eval/` 内有 `evaluate.py` 或 `case_runner.py`」，以容纳八字（只有 evaluate、
+  无 case_runner）的物理搬迁；正面断言只要求 evaluate，原 `case_runner` 科再追加验。
+- 六爻仍走物理隔离档：51 模块 0 触达、`--selftest` 通过；`sync_devkit --write` 分发
+  后 `[37]` 11 件同源。详见同批 `bazi/docs/CHANGELOG.md` 第三百五十九批。
+
+分数含义：与古籍案例要点的一致性，不代表现实预测命中率（AGENTS.md §一.3）。
+
 ## 2026-10-30 第三百五十七批（六爻）：**§3.4 剩余同名函数结案——两组重命名去重，行为零漂移**
 
 **性质**：refactor（行为保持）。零判词、零评分、零读数改动；golden 双指纹零漂移。

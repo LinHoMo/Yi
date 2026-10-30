@@ -15,7 +15,7 @@
 分数口径（SKILL.md 铁律三，务必连同分数一起读）：
   [7] 的分数是**古籍案例对齐分**——引擎输出与《穷通宝鉴》《子平真诠》《滴天髓》等
   案例要点的加权一致性（strict 计分模型），用于回归审计，**衡量不了现实命中率**。
-  tune n=60、holdout n=278（2026-10-13 按 `scripts/evaluate.py --split … --save` 实跑更正；
+  tune n=60、holdout n=278（2026-10-13 按 `eval/evaluate.py --split … --save` 实跑更正；
   原记「tune n=138、holdout n=532」系 #39 清出 342 例冗余**前**的口径，新旧不可比——
   见 docs/EVAL-PLAN.md §1.1 与 §四.4）。holdout 集合未参与本轮判据调参。
 
@@ -320,8 +320,8 @@ def main() -> int:
         print("[5] 机械回归 √", out.strip().splitlines()[-1] if out.strip() else "")
 
     # 评测器存在性 + 框架自检（八字科评测是新立的尺子，必须校准）；分数下限见 [7]
-    if not (DISC / "scripts" / "evaluate.py").is_file():
-        fails.append("缺 scripts/evaluate.py（八字科评测器）")
+    if not (DISC / "eval" / "evaluate.py").is_file():
+        fails.append("缺 eval/evaluate.py（八字科评测器实现；scripts/ 同名文件只是兼容 shim）")
         print("[6] 评测器 ×")
     else:
         code, out = run(["dev_tools/eval_selftest.py"])

@@ -123,7 +123,7 @@ def main() -> int:
         "2026-09-30f 调候批（《穷通宝鉴》）：每个「原文有明文」的月支×日主格一例，",
         "expected 只有 tiaohou；公历时刻由内核历法反查（月支/日干为定值，其余任其自然）。",
         "引擎查同一张内核表（ming_tables.TIAO_HOU，提取自同一原文）→ 本集是**表对表",
-        "回归 + 历法链路验证**，不是泛化证据；口径披露与随机基线见 scripts/evaluate.py。",
+        "回归 + 历法链路验证**，不是泛化证据；口径披露与随机基线见 eval/evaluate.py。",
         "构建器：dev_tools/build_tiaohou.py（提取）+ dev_tools/build_tiaohou_cases.py（建例）。",
     ]
     CASES.write_text(json.dumps(store, ensure_ascii=False, indent=1), encoding="utf-8")

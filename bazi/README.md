@@ -25,11 +25,13 @@
 ## 评测
 
 ```bash
-python scripts/evaluate.py --split tune      # 参与过调参的 60 例
-python scripts/evaluate.py --split holdout   # 未参与调参的 278 例
+python eval/evaluate.py --split tune      # 参与过调参的 60 例
+python eval/evaluate.py --split holdout   # 未参与调参的 278 例
 ```
 
-2026-10-13 实测（`python dev_tools/check.py` ＋ `scripts/evaluate.py` 逐字可回指）：
+（359 批起评测实现位于 `eval/`；`python scripts/evaluate.py ...` 仍可用，是纯 re-export 兼容入口。）
+
+2026-10-13 实测（`python dev_tools/check.py` ＋ `eval/evaluate.py` 逐字可回指）：
 
 | 集合 | 古籍案例对齐分 | n | 维度明细（满分例数／适用例数｜该维随机基线） |
 |---|---|---|---|

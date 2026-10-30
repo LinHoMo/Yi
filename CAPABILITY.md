@@ -53,8 +53,9 @@ cong_ge 86.7% 但类分布 15/15 退化，且常数『定答从』100.0% **高�
 **本维未过「不劣于常数回答」的最低门槛，不可作任何判别声称**；shensha 5 例／dayun 0 例／女命 0 例——证据边界。〔187 批→308 批更正〕
 ⚠ **tune 集已 100.0% 满分饱和**（60/60，min=max）：按 AGENTS.md §三.4 自引口径，该集**已丧失区分能力**，
 只能当回归哨兵，**不得作为能力证据引用**。
-复现：`python bazi/scripts/evaluate.py --split holdout`、`python bazi/dev_tools/baselines.py --split holdout`、
-`python bazi/scripts/evaluate.py --split external_holdout`、`python bazi/dev_tools/check_dim_lock.py`。
+复现：`python bazi/eval/evaluate.py --split holdout`、`python bazi/dev_tools/baselines.py --split holdout`、
+`python bazi/eval/evaluate.py --split external_holdout`、`python bazi/dev_tools/check_dim_lock.py`。
+（359 批起八字评测实现位于 `eval/`；旧 `python bazi/scripts/evaluate.py ...` 仍可用，为兼容 shim。）
 
 ## T3 现实预测能力 —— **不可测，不声称**
 

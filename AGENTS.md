@@ -37,15 +37,14 @@
 脚本失败时重试一次；仍失败则告知"排盘异常"，**不得手动替代**。
 吉凶断语不得进结构层：结构层只出标签与数值，断语字面量进 `data/*.json`（见 §三 表）。
 
-### 2. 案例库与预测过程物理隔离（现状：六爻已物理隔离，八字仍白名单）
+### 2. 案例库与预测过程物理隔离（两科均已物理隔离）
 
-> **第三百五十六批**：六爻评测实现已物理迁至 `liuyao/eval/`（case_runner / evaluate /
-> build_portal_assets），`liuyao/scripts/` 下同名文件只剩纯 re-export 兼容 shim。
-> `check_case_isolation.py` 对六爻改为**物理隔离档**：`eval/` 实现必须存在（正面断言）
-> ＋ `scripts/` 零白名单（出现案例库字面路径/expected 取数即红）。
-> **八字尚未搬迁**，仍按 346 批口径走**白名单档**（`scripts/` 下三个评测文件允许读
-> `data/cases`）；同一共享门按该科有没有 `eval/` 自动选档。物理搬迁八字须另批走 §四，
-> 未做，不冒充已做。
+> **第三百五十六／三百五十九批**：两科评测实现均已物理迁出 `scripts/`——六爻进
+> `liuyao/eval/`（case_runner / evaluate / build_portal_assets），八字进
+> `bazi/eval/`（evaluate）；`scripts/` 下同名文件只剩纯 re-export 兼容 shim。
+> `check_case_isolation.py` 按该科有无 `eval/` 选档：两科现均走**物理隔离档**
+> （`eval/` 实现必须存在（正面断言）＋ `scripts/` 零白名单，出现案例库字面路径/
+> expected 取数即红）；白名单档仅作为未来新科的过渡判据保留，当前无科在用。
 
 `*/data/cases/` 与 `references/case_library.md` 中的古籍案例，只允许三种访问场景：
 测试运行器读取、用户明确要求事后校验、用户主动询问"有无类似案例"（须注明仅供参考）。

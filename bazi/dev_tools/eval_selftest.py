@@ -52,7 +52,7 @@ PILLARS = {"year": "庚午", "month": "辛巳", "day": "乙酉", "hour": "辛巳
 
 
 def _run_eval(extra: list[str] | None = None, cases: Path | None = None) -> str:
-    argv = [sys.executable, "scripts/evaluate.py", "--split", "tune"]
+    argv = [sys.executable, "eval/evaluate.py", "--split", "tune"]
     if cases is not None:
         argv += ["--cases", str(cases)]
     if extra:

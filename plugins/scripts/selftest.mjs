@@ -164,20 +164,25 @@ head(2)
   if (missing.length) for (const m of missing) bad(`缺少 ${m}`)
   else ok('共享层与各适配器的两科入口 + 内核副本 + MANIFEST 齐备')
 
-  // 356 批：liuyao 评测实现已迁 eval/，scripts/ 同名文件是开发期 shim；
+  // 356/359 批：两科评测实现已迁 eval/，scripts/ 同名文件是开发期 shim；
   // 交付包若带上它们，会 `import eval` 失败（包内没有 eval/）。
-  const EVAL_SHIMS = ['scripts/evaluate.py', 'scripts/case_runner.py', 'scripts/build_portal_assets.py']
-  const evalShimsPresent = (root) => EVAL_SHIMS.filter(
-    (rel) => existsSync(join(root, 'engine', 'liuyao', ...rel.split('/'))))
+  const DEV_ONLY_SHIMS = {
+    liuyao: ['scripts/evaluate.py', 'scripts/case_runner.py', 'scripts/build_portal_assets.py'],
+    bazi: ['scripts/evaluate.py'],
+  }
+  const evalShimsPresent = (root) => Object.entries(DEV_ONLY_SHIMS).flatMap(
+    ([d, rels]) => rels
+      .filter((rel) => existsSync(join(root, 'engine', d, ...rel.split('/'))))
+      .map((rel) => `${d}/${rel}`))
   const roots = [PLUGINS_ROOT, ...ADAPTERS.map((a) => join(REPO_ROOT, a.dir))]
   const leaked = roots.flatMap((root) => evalShimsPresent(root).map(
-    (rel) => `${root.replace(REPO_ROOT, '')}/engine/liuyao/${rel}`))
-  if (leaked.length) for (const m of leaked) bad(`liuyao 评测 shim 不应随包：${m}`)
-  else ok('liuyao 评测 shim 未随包（evaluate/case_runner/build_portal_assets 只在开发树）')
+    (rel) => `${root.replace(REPO_ROOT, '')}/engine/${rel}`))
+  if (leaked.length) for (const m of leaked) bad(`评测 shim 不应随包：${m}`)
+  else ok('两科评测 shim 未随包（liuyao×3／bazi evaluate 只在开发树）')
   const probe = mkdtempSync(join(tmpdir(), 'yi-shim-probe-'))
   try {
-    mkdirSync(join(probe, 'engine', 'liuyao', 'scripts'), { recursive: true })
-    writeFileSync(join(probe, 'engine', 'liuyao', 'scripts', 'evaluate.py'), '')
+    mkdirSync(join(probe, 'engine', 'bazi', 'scripts'), { recursive: true })
+    writeFileSync(join(probe, 'engine', 'bazi', 'scripts', 'evaluate.py'), '')
     if (evalShimsPresent(probe).length === 1) ok('负例自证：交付包里有评测 shim 会被抓到')
     else bad('负例自证失效：探针目录里的评测 shim 未被抓到')
   } finally {

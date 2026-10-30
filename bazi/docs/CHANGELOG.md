@@ -6,6 +6,31 @@
 > 下面历史条目若提到 ARCHIVE，一律按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 3 节标题已并入索引。
 
+## 2026-10-30 第三百五十九批（八字）：**评测层物理搬迁至 `eval/`——两科隔离形态对齐**
+
+**性质**：refactor（行为保持）。零引擎、零数据、零评分改动；八字 golden 双指纹零漂移。
+
+- `git mv bazi/scripts/evaluate.py bazi/eval/evaluate.py`，新增 `bazi/eval/__init__.py`；
+  `scripts/evaluate.py` 改为纯 re-export 兼容 shim（入口自带 UTF-8 守卫，保留 `main()`
+  分发）。旧命令 `python scripts/evaluate.py ...` 仍可用；新命令/文档统一写 `python eval/...`。
+- 调用方同步：`dev_tools/check.py` 的存在性断言改 `eval/evaluate.py`；
+  `eval_selftest.py`、`corpus_reports.py` 子进程改走 `eval/`；`baselines`／
+  `check_dim_lock`／`check_dim_surface`／`eval_unique_keys` 仍 `import evaluate`，
+  由 shim 星号导出与 `__getattr__` 代理维持原属性面。
+- `check_case_isolation.py`（源 `devkit/shared/`）：`PHYSICAL` 检测改为「`eval/` 内
+  有 `evaluate.py` 或 `case_runner.py`」；八字因此进入**物理隔离档**（14 模块 0 触达），
+  正面断言只要求 `evaluate.py`（有 `case_runner` 的科才加验）。liuyao 行为不变。
+- `plugins/scripts/build.mjs`：`DEV_ONLY.bazi` 排除 `scripts/evaluate.py`（包内无 `eval/`，
+  随包会 import 失败）；`selftest.mjs [2]` 的「shim 未随包」断言扩到两科。
+- 文档：`bazi/README.md`、`docs/EVAL-PLAN.md`、根 `CAPABILITY.md` 的复现命令改 `eval/`；
+  `AGENTS.md §一.2` 改为「两科均已物理隔离」，白名单档仅留作未来新科过渡判据。
+- 复验：`python bazi/dev_tools/check.py` 全绿；八字 golden **fda7/3512 零漂移**（40 例）；
+  `python eval/evaluate.py --help`、`python scripts/evaluate.py --help` rc=0；
+  full ledger 40/40；`node plugins/scripts/build.mjs`＋`selftest.mjs` 全绿；
+  `sync_devkit --check` 11 件同源。
+
+分数含义：与古籍案例要点的一致性，不代表现实预测命中率（AGENTS.md §一.3）。
+
 ## 2026-10-30 第三百五十八批（八字）：**EVAL-PLAN 与实测对齐——shensha 5 例／holdout 99.5**
 
 **性质**：docs（口径更正）。零引擎、零数据、零评分改动。
