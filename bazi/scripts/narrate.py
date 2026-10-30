@@ -233,6 +233,18 @@ def narrate(a: dict) -> str:
     gy = _geju_line(con.get("pattern") or s.get("格局") or "")
     if gy:
         lines.append(gy)
+    # 化格（383 批）：与从格并列的另一条主线——《滴天髓·從化論》真/假两章。
+    # 只出结构名与依据，不作吉凶断言（铁律三：凶象用「偏向/有…信号」，此处连方向都不给）。
+    _st = a.get("strength") or {}      # 化格字段挂在 strength 段内（chart_summary 不含）
+    _hk = _st.get("hua_kind") or ""
+    _ht = _st.get("hua_type") or ""
+    if _hk and _ht:
+        _hq = _VERDICTS.get("化格引文") or {}
+        _verb = _hq.get("verse") or ""
+        _vv = _verb[1] if isinstance(_verb, list) and len(_verb) > 1 else ""
+        lines.append(f"**化格**：{_hk}·{_ht}（{_st.get('hua_reason') or ''}）")
+        if _vv:
+            lines.append(f"> 化格所本（《滴天髓·從化論》）：{_vv}")
     lines += _cong_hua_block(con.get("pattern") or s.get("格局") or "")
     lines.append("")
     cb = con.get("pattern_cheng_bai") or ""

@@ -23,6 +23,8 @@ from ._common import (
     STEM_YINYANG,
     stems_wuhe,
     twelve_growth,
+    wuhe_hua_element,
+    _HUA,
 )
 
 
@@ -525,3 +527,115 @@ def judge_pattern_cheng_bai(pattern: str, chart_json: dict,
             return _cb("救应成格", _CB["jiu_cheng"])
         return _cb("破格", _CB["po_no_jiu"])
     return _cb("成格", _CB["cheng_wu_ji"])
+
+
+# ── 化格（《滴天髓·從化論》真/假两章，383 批）──────────────────────────────
+# 化神通月令的月支集合，逐条对着书里的「生於某月」写：
+#   甲己化土「生於四季」→ 辰戌丑未（土旺四季）；乙庚化金「生於秋月」→ 申酉戌；
+#   丙辛化水「生於冬月」→ 亥子丑；戊癸化火「生於夏月」→ 巳午未；丁壬化木「生於春月」→ 寅卯。
+_HUA_TONG_LING = {
+    "土": ("辰", "戌", "丑", "未"),
+    "金": ("申", "酉", "戌"),
+    "水": ("亥", "子", "丑"),
+    "火": ("巳", "午", "未"),
+    "木": ("寅", "卯"),
+}
+
+
+def hua_judge(chart_json: dict) -> dict:
+    """化格判定——**只出结构名（真化/假化/不化），不判吉凶**。
+
+    书证（《滴天髓·從化論》）：
+      真化：「如甲日主，生於四季，單遇一位己土，在月時上作合，（在年幹不是）
+            不遇壬癸甲乙庚（印，劫，官），乃為化得真」
+            「又如丙辛生於冬月，（化神要通月令）戊癸生於夏月，乙庚生於秋月，
+              丁壬生於春月，獨相作合，皆為真化」
+      假化：「日主孤弱，而遇合神，不能不化，但有暗扶日主，如合神虛弱，則化不真」
+      日主前提：「日主孤弱無氣，天地人三元，絕無一毫生扶之意」
+
+    四条真化要件（本函数的判据，与书一一对应）：
+      ① 合在**月干或时干**（年在干不算）；② 化神**通月令**；③ 日主**无生扶**（无印比透干、
+         无本气/中气根）；④ 不遇**印、劫、官**之干（对甲日即壬癸、甲乙、庚）。
+
+    为什么只标结构不批吉凶：书把吉凶挂在「化神喜忌」与「岁运」上（方向），且明说
+    「土遇陰寒，要火為印」这类随宜命题属**量级/取向**判断，与 363 批 `dayun_cheng_bai`、
+    373 批岁运五式同一口径——本层不做。
+    """
+    out = {"kind": "", "type": "", "basis": "", "partner": "", "element": "",
+           "tong_ling": False, "reason": ""}
+    pillars = chart_json.get("pillars") or {}
+    day = (pillars.get("day") or {}).get("stem") or ""
+    month_stem = (pillars.get("month") or {}).get("stem") or ""
+    hour_stem = (pillars.get("hour") or {}).get("stem") or ""
+    year_stem = (pillars.get("year") or {}).get("stem") or ""
+    month_branch = (pillars.get("month") or {}).get("branch") or ""
+    if not day:
+        return out
+
+    # ① 合在月干或时干（年干不算——《書明写「在年幹不是」）
+    partner = ""
+    if stems_wuhe(day, month_stem):
+        partner = month_stem
+    elif stems_wuhe(day, hour_stem):
+        partner = hour_stem
+    if not partner:
+        out["reason"] = "无月/时干之合（《從化論》合神須在月時上作合）"
+        return out
+    out["partner"] = partner
+    element = wuhe_hua_element(day, partner) or ""
+    out["element"] = element
+    if not element:
+        out["reason"] = "合而无化气"
+        return out
+
+    # ② 化神通月令
+    tong = month_branch in _HUA_TONG_LING.get(element, ())
+    out["tong_ling"] = tong
+
+    # ③ 日主无生扶：其余天干中不生我、不同我（印劫），且支中无同类根；④ 不遇官杀
+    day_elem = STEM_ELEMENTS.get(day) or ""
+    others = [x for x in (year_stem, month_stem, hour_stem) if x and x != partner]
+    bing = False       # 印/劫之干
+    guan = False      # 官杀之干
+    for x in others:
+        xe = STEM_ELEMENTS.get(x) or ""
+        if not xe:
+            continue
+        if xe == day_elem or SHENG_CYCLE.get(xe) == day_elem:
+            bing = True
+        elif KE_CYCLE.get(xe) == day_elem:
+            guan = True
+    yougen = False     # 日主在支中的本气/中气根（藏干表取自盘面 factors，与本文件其余判据同源）
+    for key in ("year", "month", "day", "hour"):
+        hid = ((chart_json.get("factors") or {}).get(key) or {}).get("hidden_stems") or []
+        # 只认**本气**根：书明写「如甲日主，生於四季…乃為化得真」，而四季（辰戌丑未）里
+        # 甲只得**中气**余根（辰中乙、未中乙、戌中丁、丑中己）。若把中气也算根，
+        # 「甲日生四季化真」这条书证就永远不成立——与书直接矛盾。故本气以下不作根。
+        for h in hid[:1]:
+            he = STEM_ELEMENTS.get(h) or ""
+            if he == day_elem:
+                yougen = True
+                break
+        if yougen:
+            break
+
+    if tong and not bing and not guan and not yougen:
+        out["kind"] = "化" + element
+        out["type"] = "真化"
+        out["basis"] = "《滴天髓·從化論》源文「%s」；「%s」" % (_HUA["hua_zhen"], _HUA["hua_tong_ling"])
+        out["reason"] = "合在月/时干、化神通月令、日主无生扶无根、不遇印劫官"
+        return out
+    out["kind"] = "化" + element
+    out["type"] = "假化"
+    out["basis"] = "《滴天髓·從化論》源文「%s」" % _HUA["hua_jia"]
+    why = []
+    if not tong:
+        why.append("化神不得月令")
+    if bing:
+        why.append("有印劫暗扶日主")
+    if guan:
+        why.append("遇官杀之干")
+    if yougen:
+        why.append("日主有根")
+    out["reason"] = "合而不真：" + "、".join(why)
+    return out

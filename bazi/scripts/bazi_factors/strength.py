@@ -35,7 +35,7 @@ from ._common import (
     STEM_ELEMENTS,
     tiaohou_of,
 )
-from .congrge import _from_judge, judge_pattern_cheng_bai
+from .congrge import _from_judge, hua_judge, judge_pattern_cheng_bai
 
 
 def strength_and_pattern(chart_json: dict) -> dict:
@@ -149,6 +149,10 @@ def strength_and_pattern(chart_json: dict) -> dict:
     from_kind, from_type, from_basis, tentative_from = _from_judge(
         chart_json, details, day_stem, decree=decree, sheng_fu=sheng_fu_for_from)
 
+    # 化格（《滴天髓·從化論》真/假两章，383 批）：与从格并列的另一条主线。
+    # 只出结构名（真化/假化），不判吉凶——与 373 批岁运五式、363 批 dayun_cheng_bai 同口径。
+    hua = hua_judge(chart_json)
+
     if strength == "偏旺":
         useful = ["官杀", "食伤", "财"]
         taboo = ["印", "比劫"]
@@ -178,6 +182,10 @@ def strength_and_pattern(chart_json: dict) -> dict:
         "from_kind": from_kind,
         "from_type": from_type,
         "from_basis": from_basis,
+        "hua_kind": hua.get("kind") or "",
+        "hua_type": hua.get("type") or "",
+        "hua_basis": hua.get("basis") or "",
+        "hua_reason": hua.get("reason") or "",
         "tiaohou": tiaohou_of(month_branch, day_stem),
         "useful_gods": useful,
         "taboo_gods": taboo,

@@ -4,7 +4,7 @@
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化（含 conclusion_sha，任何字段都算），措辞层漂移=narrate 断语变化（两层分列归因）"
   },
   "digest": "21a4ff76a5e75662",
-  "narrate_digest": "0bb8f5821ed79eb1",
+  "narrate_digest": "e3f064db5d3b4abf",
   "drift_log": [
     {
       "from": "57dc7e890af222fa",
@@ -68,12 +68,6 @@
     }
   ],
   "narrate_drift_log": [
-    {
-      "from": "b60ab2c4d024df11",
-      "to": "ed6476e0ac6a0959",
-      "date": "2026-10-08",
-      "reason": "2026-10-08 二次 capture：把报告行前缀从代码组句（god+『作用候选』）改为整条取自 data/shi_shen_actions.json 的 hint_prefix/narrative_hint——tools/verdict_audit.py [1c] 判代码拼装的中文为未外置断语，故措辞归数据层。机械层零漂移，十神取象段行数不变、仅前缀字面改为「伤官作用候选」等"
-    },
     {
       "from": "ed6476e0ac6a0959",
       "to": "7d3ddb40bbc74f42",
@@ -187,6 +181,12 @@
       "to": "0bb8f5821ed79eb1",
       "date": "2026-10-30",
       "reason": "374 批：运岁五式定义例门（[18] 第四层）当场抓出「合先于克」的次序错——乙庚既合又克，旧次序把书上「如乙運庚年…則和（乙庚化金）」判成了「歲伐運」。已把五合判定提到克之前；conclusion.dayun_liunian 中凡运干与岁干成五合者，标签由 sui_fa_yun/yun_fa_sui 改为 sui_yun_he_gan。只动结构名，不动吉凶与维度。"
+    },
+    {
+      "from": "0bb8f5821ed79eb1",
+      "to": "e3f064db5d3b4abf",
+      "date": "2026-10-30",
+      "reason": "383 批：新增化格维度（《滴天髓·從化論》真/假两章）——strength 段增 hua_kind/hua_type/hua_basis/hua_reason，narrate 在有化格时多一行「**化格**：化X·真化/假化（…）」与章句。只出结构名与依据，不判吉凶、不进任何维度（与 363 批 dayun_cheng_bai、373 批岁运五式同口径）。机械层零漂移（conclusion 未变）。"
     }
   ]
 }

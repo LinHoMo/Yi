@@ -15,7 +15,12 @@ from yishu_core.ming_tables import (  # noqa: E402
     tiaohou_of,
 )
 from yishu_core.ganzhi_calendar import TIGER_MONTH_STEM  # noqa: E402
-from yishu_core.relations import STEM_YINYANG, stems_wuhe, ten_god  # noqa: E402
+from yishu_core.relations import (  # noqa: E402
+    STEM_YINYANG,
+    stems_wuhe,
+    ten_god,
+    wuhe_hua_element,
+)
 from yishu_core.symbols import (  # noqa: E402
     BRANCH_ELEMENTS,
     EARTHLY_BRANCHES,
@@ -38,6 +43,7 @@ _MING_VERDICTS = _json.loads((_MING_DATA / "verdicts.json").read_text(encoding="
 _CB = _MING_VERDICTS["格局成败引文"]
 _CONG = _MING_VERDICTS["从格引文"]
 _BING = _MING_VERDICTS["病药引文"]
+_HUA = _MING_VERDICTS["化格引文"]
 
 # 十神 → 作用类
 TEN_GOD_GROUP = {
