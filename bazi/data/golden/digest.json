@@ -3,8 +3,8 @@
     "what": "八字科金标准指纹基线（conclusion 全字段哈希＋逐字段快照＋大运方向）",
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化（含 conclusion_sha，任何字段都算），措辞层漂移=narrate 断语变化（两层分列归因）"
   },
-  "digest": "9a615f9bcb53f1be",
-  "narrate_digest": "297a70b7a37498e5",
+  "digest": "21a4ff76a5e75662",
+  "narrate_digest": "0bb8f5821ed79eb1",
   "drift_log": [
     {
       "from": "57dc7e890af222fa",
@@ -59,15 +59,15 @@
       "to": "9a615f9bcb53f1be",
       "date": "2026-10-30",
       "reason": "373 批：运岁交互因子新增《滴天髓·歲運論》五式结构名（運伐歲／歲伐運／和〔干五合〕／好〔干同类〕，支合支冲沿用既有 liuhe/liuchong），并修复「运支与岁支同支仍标三合木局」的误标（丁卯运·丁卯年）。只加结构标签与逐字书证，不判吉凶、不进评分；conclusion.dayun_liunian 各例多 0–1 条 relation，narrate 相应多一句对照。"
+    },
+    {
+      "from": "9a615f9bcb53f1be",
+      "to": "21a4ff76a5e75662",
+      "date": "2026-10-30",
+      "reason": "374 批：运岁五式定义例门（[18] 第四层）当场抓出「合先于克」的次序错——乙庚既合又克，旧次序把书上「如乙運庚年…則和（乙庚化金）」判成了「歲伐運」。已把五合判定提到克之前；conclusion.dayun_liunian 中凡运干与岁干成五合者，标签由 sui_fa_yun/yun_fa_sui 改为 sui_yun_he_gan。只动结构名，不动吉凶与维度。"
     }
   ],
   "narrate_drift_log": [
-    {
-      "from": "2ab2cc78c2f2d712",
-      "to": "b60ab2c4d024df11",
-      "date": "2026-10-08",
-      "reason": "2026-10-08 措辞层接线收口：①shi_shen_actions.json 接入 narrate 十神取象段（每神加一行「作用候选：…」，走 liushen_image 同款仅-narrate 口径，不进 analyze/评分）；②前序 WIP 的看命口诀/三命通会引文块。机械层零漂移，tune 100.0(n=30)/holdout 96.2(n=246) 与 capture 前逐项一致"
-    },
     {
       "from": "b60ab2c4d024df11",
       "to": "ed6476e0ac6a0959",
@@ -181,6 +181,12 @@
       "to": "297a70b7a37498e5",
       "date": "2026-10-30",
       "reason": "373 批：运岁交互因子新增《滴天髓·歲運論》五式结构名（運伐歲／歲伐運／和〔干五合〕／好〔干同类〕，支合支冲沿用既有 liuhe/liuchong），并修复「运支与岁支同支仍标三合木局」的误标（丁卯运·丁卯年）。只加结构标签与逐字书证，不判吉凶、不进评分；conclusion.dayun_liunian 各例多 0–1 条 relation，narrate 相应多一句对照。"
+    },
+    {
+      "from": "297a70b7a37498e5",
+      "to": "0bb8f5821ed79eb1",
+      "date": "2026-10-30",
+      "reason": "374 批：运岁五式定义例门（[18] 第四层）当场抓出「合先于克」的次序错——乙庚既合又克，旧次序把书上「如乙運庚年…則和（乙庚化金）」判成了「歲伐運」。已把五合判定提到克之前；conclusion.dayun_liunian 中凡运干与岁干成五合者，标签由 sui_fa_yun/yun_fa_sui 改为 sui_yun_he_gan。只动结构名，不动吉凶与维度。"
     }
   ]
 }

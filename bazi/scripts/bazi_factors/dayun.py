@@ -183,7 +183,15 @@ def dayun_liunian_interactions(chart_json: dict, dayun: list[dict] | None = None
             _de = STEM_ELEMENTS.get(d_stem) or ""
             _ye = STEM_ELEMENTS.get(y_stem) or ""
             if _de and _ye:
-                if KE_CYCLE.get(_de) == _ye:
+                # 次序要紧：**合先于克**。乙庚既合又克（庚金克乙木），而书明写「如乙運庚年…則和
+                # （乙庚化金）」——若把克判在合前面，书上这条例就被标成「歲伐運」，与书相反。
+                # （374 批由五式定义例门当场抓出：运乙酉/年庚辰 旧输出 sui_fa_yun。）
+                if stems_wuhe(d_stem, y_stem):
+                    rels.append({"kind": "sui_yun_he_gan", "value": f"{d_stem}{y_stem}",
+                                 "text": f"运干{d_stem}与岁干{y_stem}五合——《歲運論》谓之「和」",
+                                 "basis": "《滴天髓·歲運論》源L382 逐字「如乙運庚年，庚運乙年，則和"
+                                          "（乙庚化金），日主喜金則吉，日主喜木則不吉。」"})
+                elif KE_CYCLE.get(_de) == _ye:
                     rels.append({"kind": "yun_fa_sui", "value": f"{d_stem}{y_stem}",
                                  "text": f"运干{d_stem}剋岁干{y_stem}——《歲運論》谓之「運伐歲」",
                                  "basis": "《滴天髓·歲運論》源L365 逐字「如丙運庚年，謂之運伐（剋）歲。」"})
@@ -192,11 +200,6 @@ def dayun_liunian_interactions(chart_json: dict, dayun: list[dict] | None = None
                                  "text": f"岁干{y_stem}剋运干{d_stem}——《歲運論》谓之「歲伐運」",
                                  "basis": "《滴天髓·歲運論》源L370 逐字「如庚運丙年，謂之歲伐（剋）運，"
                                           "日主喜庚，得戊己以和丙者吉（通關）。」"})
-                elif stems_wuhe(d_stem, y_stem):
-                    rels.append({"kind": "sui_yun_he_gan", "value": f"{d_stem}{y_stem}",
-                                 "text": f"运干{d_stem}与岁干{y_stem}五合——《歲運論》谓之「和」",
-                                 "basis": "《滴天髓·歲運論》源L382 逐字「如乙運庚年，庚運乙年，則和"
-                                          "（乙庚化金），日主喜金則吉，日主喜木則不吉。」"})
                 elif _de == _ye and d_gz != y_gz:
                     rels.append({"kind": "sui_yun_hao", "value": _de,
                                  "text": f"运干{d_stem}与岁干{y_stem}同类（{_de}）——《歲運論》谓之「好」",

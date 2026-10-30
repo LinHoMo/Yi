@@ -378,6 +378,72 @@ def selftest() -> None:
           f" → 对象 {first}／{fifth}，月柱 {m}")
 
 
+# ── 第四层：歲運論 五式的**书自己给的定义例**（373 批实现、374 批挂门）──────────────
+# 为什么用定义例而不是命例：书里只有《歲運論》把「运与岁」的关系**命名**了（运伐岁／岁伐运／和／好），
+# 而它给的全是定义例（「如丙運庚年，謂之運伐…」），不是命例。用定义例断言，判据是书的那句话，
+# 期望不是我从实现里反推的——不循环。命例只能验吉凶（§2.2 判不可评），验不了结构名。
+WUSHI_SPEC = [
+    ("yun_fa_sui", "丙午", "庚午",
+     "源L365「如丙運庚年，謂之運伐（剋）歲。」——运干丙剋岁干庚"),
+    ("sui_fa_yun", "庚午", "丙午",
+     "源L370「如庚運丙年，謂之歲伐（剋）運…」——岁干丙剋运干庚（与上条互为反面，方向写反必红）"),
+    ("sui_yun_he_gan", "乙酉", "庚辰",
+     "源L382「如乙運庚年，庚運乙年，則和（乙庚化金）…」——运干与岁干五合"),
+    ("liuhe", "甲子", "乙丑",
+     "源L383「如子運丑年，丑運子年，則和（子丑合而化土）…」——支六合（由既有 liuhe 承担）"),
+    ("sui_yun_hao", "庚午", "辛未",
+     "源L387「如庚運辛年，辛運庚年…則好。」——两干同类"),
+    ("bihe", "甲申", "乙酉",
+     "源L387「…申運酉年，酉運申年，則好。」——两支同类（由既有 bihe 承担）"),
+]
+
+
+def wushi_check(problems: list[str], notes: list[str], spec=None) -> int:
+    """第四层：把《歲運論》自己给的六个定义例喂进引擎，看它出不出书上那个名。
+
+    三条负例同处（§四.8）：
+      ① 方向反面的那一对**不得**出正向名（丙運庚年 vs 庚運丙年——方向写反必红）；
+      ② 同支（岁运并临）**不得**出三合/比和（373 批修的误标：两支且同支不是局）；
+      ③ 空干支不得产出任何关系（不臆造）。
+    """
+    spec = WUSHI_SPEC if spec is None else spec
+    from bazi_factors.dayun import dayun_liunian_interactions
+    chart_stub = {"pillars": {"year": {"ganzhi": "甲子", "stem": "甲", "branch": "子"},
+                              "month": {"ganzhi": "丙寅", "stem": "丙", "branch": "寅"},
+                              "day": {"ganzhi": "甲子", "stem": "甲", "branch": "子"},
+                              "hour": {"ganzhi": "甲子", "stem": "甲", "branch": "子"}}}
+
+    def kinds(d_gz: str, y_gz: str) -> set:
+        rows = dayun_liunian_interactions(chart_stub, dayun=[{"ganzhi": d_gz}],
+                                          liunian=[{"ganzhi": y_gz}])
+        out = set()
+        for r in rows:
+            for rel in r.get("relations") or []:
+                if not rel.get("kind", "").startswith("ten_god"):
+                    out.add(rel["kind"])
+        return out
+
+    ok = 0
+    for kind, d_gz, y_gz, why in spec:
+        ks = kinds(d_gz, y_gz)
+        if kind in ks:
+            ok += 1
+        else:
+            problems.append(f"歲運論五式未落实：运{d_gz}/年{y_gz} 应出 {kind}（{why}），实得 {sorted(ks)}")
+    # 负例①：方向反面
+    if "yun_fa_sui" in kinds("庚午", "丙午"):
+        problems.append("负例①失效：庚運丙年 也出了 yun_fa_sui——剋的方向没区分")
+    # 负例②：同支不得标三合/比和
+    same = kinds("丁卯", "丁卯")
+    if {"sanhe", "bihe"} & same:
+        problems.append(f"负例②失效：岁运同支（丁卯/丁卯）仍标出 {sorted({'sanhe','bihe'} & same)}")
+    # 负例③：空干支不得臆造
+    if kinds("", ""):
+        problems.append("负例③失效：空干支仍产出关系")
+    notes.append(f"歲運論五式：{ok}/{len(spec)} 个书定义例出对了名；三条负例（方向反面/同支误标/空值臆造）已跑")
+    return ok
+
+
 # (源行, 起算年干支, 书给岁数, 书给交运年干支, 余日, 书给月, 书给日, 运序列举, 书给第一部运)
 QIYUN_SPEC = [(308, "甲子", 5, "己巳", 140, 6, "初五", ["乙丑", "丙寅", "丁卯", "戊辰", "己巳"], "丁卯"),
               (329, "甲子", 4, "戊辰", 190, 7, "廿五", ["乙丑", "丙寅", "丁卯", "戊辰"], "乙丑")]
@@ -553,6 +619,7 @@ def main() -> int:
         return 1
     seq_ok, mech_ok, verdict_ok = engine_check(data, problems, notes)
     qy = qiyun_check(problems, notes)
+    ws = wushi_check(problems, notes)
     gap_n, gap_ph = 0, 0
     n_main = 0
     if MAIN_CASES.is_file():
@@ -564,6 +631,8 @@ def main() -> int:
     print(f"行运见证集：{n} 例／{nseg} 段书判 已回底本逐字＋五虎遁＋运序连续＋方向唯一 自检")
     print(f"引擎二层：{seq_ok}/{n} 例引擎排运与书一致；{mech_ok} 处书明言机制已出引动标签；"
           f"{verdict_ok} 处成格变格裁决与见证集一致")
+    print(f"运岁四层：{ws}/{len(WUSHI_SPEC)} 个《歲運論》定义例出对名（運伐歲／歲伐運／和／好；"
+          "三条负例：方向反面／同支误标／空值臆造）")
     print(f"起运三层：{qy}/{len(QIYUN_SPEC)} 条《千里明镜》算例回验通过"
           "（干支序差＝岁数／运序合六十甲子／30 日成月余日投射）")
     print(f"主语料空档：{n_main} 例全文扫描 → 命例级顺逆/起运书证 {gap_n} 例（须 0）；"
