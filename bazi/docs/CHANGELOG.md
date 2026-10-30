@@ -6,6 +6,39 @@
 > 下面历史条目若提到 ARCHIVE，一律按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 3 节标题已并入索引。
 
+## 2026-10-30 第三百六十六批（八字）：**收口校勘——批号/编号冲突修正、两处陈旧口径、冗余收敛、分发产物重建**
+
+**性质**：校勘与收口（不新增判据、不改评分面、不改读数）。起因是对 365 批做一轮完整复查，
+查出四类问题，全部当场修掉。
+
+1. **编号冲突（365 批自己引入）**：门 `[18]` 的 docstring 早已用 ①–⑤ 标注各层，其中 **④＝方向唯一**
+   并写明「④ 是本器存在的主要理由」；365 批却把新的空档核验段标成「④」，docstring 里又写
+   「第六至八层」「⑥／⑦」——三种说法并存。**统一为 ⑥**，改遍 8 个文件（门内 3 处 + 外部引用 6 处：
+   `evaluate.py`×3、`check.py`、`CONTRACT.md`×2、`EVAL-PLAN.md`、`README.md`、`rule_registry.json`）。
+2. **两处陈旧口径（非本批引入，复查时暴露）**：① `evaluate.py` 原写「`shensha`／`dayun` 两维
+   0 例带期望」——`shensha` 自 169 批起已 5 例书证回填，改为「`dayun` 一维 0 例」并注明缘由；
+   ② `EVAL-PLAN.md` 步 6 单元格仍写「待书载起运岁数入册后整维接入」，与 365 批的结项结论**相抵**，
+   改为「不注 + 已证回填不可行」，与本表末注一致。
+3. **冗余收敛**：365 批把同一组证据（338/0/9/52/51-51/99.5）在 8 处写了全文。现定
+   **`docs/EVAL-PLAN.md` §五 末注为唯一详版**，其余各处只留结论与指针（`evaluate.py` ⑥ 段压到
+   14 行、`CONTRACT.md` §六 压到 9 行、`README.md` 压到 4 行、`check.py`/`check_dayun_cases.py`
+   注释与 `rule_registry` 注同步缩短）。除本条登记外，上述各文件逐项净减，事实一条未删。
+4. **分发产物过期（真缺陷）**：365 批改了 `bazi/scripts/` 与 `data/rules/` 却未重跑打包，
+   五家插件 `engine/` 里的 `dayun.py` 仍无 `judge_dayun_cheng_bai`；`dsh-plugin` 自检 [8]
+   当场判红（「已过期：bazi/data/rules/rule_registry.json、bazi/README.md，引擎 2/149 文件过期」）。
+   已 `node plugins/scripts/build.mjs` 重建，五家分发包均含新函数，`plugins/selftest.mjs` 七段
+   与 `dsh-plugin` 自检全绿。
+   - **操作规程（写进本批以免重犯）**：`bazi/README.md`、`data/rules/*.json` 都在分发包体内，
+     故顺序必须是「**先改完 → 再 build → 再自检**」；build 之后再动这些文件，包体立刻过期。
+   - 环境注记：本次 build 在 `gemini-plugin/engine` 处被安全删除器拦下（`trash` 操作 aborted），
+     导致 gemini／yan 未被更新；清掉该 gitignore 产物目录后重建即通过，非代码缺陷。
+
+**读数**：`tune` 100.0／`holdout` 99.5 及各维命中数不变（本轮不触碰任何 `expected`）。
+
+**全门复验**：`bazi/dev_tools/check.py`、`liuyao/dev_tools/check.py`、`check_dayun_cases.py --selftest`
+（11 负例）、根级三闸（批次／文档索引／根文档引用）、`devkit/sync_devkit.py --check`、
+`plugins/scripts/selftest.mjs`、`npm --prefix dsh-plugin run selftest` 全绿。
+
 ## 2026-10-30 第三百六十五批（八字）：**行运维度结项——「回填主评分语料行运键」实测判定不可行，空档改为被监控的边界**
 
 **性质**：口径结项（governance/scope closure），**不改引擎、不改评分面、不改任何分数**（§四.7 读数不动属预期）。golden 指纹零漂移（本批未碰 narrate）。
@@ -15,7 +48,7 @@
 本批按此推进，实测发现该前提**不成立**，于是把它从「待办」结项为「不可行（已证）」，并把证据
 做成机械可重跑的读数，防止下一批又从头怀疑同一个 0。
 
-**三条证据**（均由门禁 `[18]` 新增第④段 `corpus_gap_check` 现场重跑，非一次性断言）：
+**三条证据**（均由门禁 `[18]` 新增第⑥段 `corpus_gap_check` 现场重跑，非一次性断言）：
 
 1. **书文侧无书证**。决定性语汇（`顺行|逆行|顺排|逆排|顺布|逆布` ＋ `起运|交运` ＋
    `[0-9一二三四五六七八九十百]+岁.{0,4}(行|起|上|交)运`）扫 338 例 `source_quote+note+location`
@@ -31,33 +64,27 @@
    即便将来补到书证，这类案例也拿不出可比对的引擎值。
 3. **顺逆不能靠定义式回填**。顺逆是「年干阴阳×性别」的唯一定义（`ming_tables.dayun_direction`）；
    按 AGENTS.md §三.4 定义式例外把 338 例全填上，等于让该项恒真、零信息——那是自证，不是评测。
-   §四.7 要求「读数不动」，正是为防这类自证悄悄进评分面。其代价见下一段实测（不是「虚涨分数」，
-   而是「均分根本不动、却多出一个 100% 维度」）。
 
 **实测代价（本批一次性对照，临时副本，未落盘、不改案例文件）**：把 52 例带显式四柱的案例按定义式
 填上 `dayun_direction` 后 —— `dayun` 维 holdout **0/0 → 51/51（100%）**、tune **0/0 → 1/1（100%）**，
-而 holdout 均分仍是 **99.5**、tune 仍是 **100.0**，**一位都没动**。也就是说：一个恒真的 100% 新维度
-可以完全静默地长出来，没有任何读数会报警——这正是第一百六十八批「少 214 例而均分四舍五入不动」的
-同型盲区，只是方向相反（那次是**丢**数据看不见，这次是**加**自证看不见）。防它的不是分数，
-是 `[25]` 的 0/0 锁（多一例即判红）。复现方法：读主案例集 → 对 `pillars.year` 存在者
-`dayun_direction(年干, 性别)` 写入 `expected.dayun_direction` → `evaluate --ids <holdout>` 对照。
+而均分 holdout **99.5**、tune **100.0** 一位都没动。即：一个恒真的 100% 新维度可以完全静默地长出来，
+没有任何读数会报警——与第一百六十八批「少 214 例而均分四舍五入不动」同型，只是方向相反
+（那次是**丢**数据看不见，这次是**加**自证看不见）。防它的不是分数，是 `[25]` 的 0/0 锁。
+复现：读主案例集 → 对 `pillars.year` 存在者写 `dayun_direction(年干, 性别)` → `evaluate --ids <holdout>` 对照。
 
-**改动**：
+**改动**（八处同步，证据细节以 `docs/EVAL-PLAN.md` §五 末注为准，其余各点只留结论与指针）：
 
-- `dev_tools/check_dayun_cases.py`（门禁 `[18]`）新增第④段 `corpus_gap_check`：扫主语料全文，
+- `dev_tools/check_dayun_cases.py`（门禁 `[18]`）新增第⑥段 `corpus_gap_check`：扫主语料全文，
   断言 ① 决定性语汇命中＝0（命中即判红并要求「必须按书证回填」）；② 广义「运」字案例集合与
   `YUN_NEAR_MISS` 登记表**逐格相等**（多一例＝新增未登记语境判红；少一例＝登记漂移判红）；
   ③ 四柱-only 案例的起运取值唯一值个数＝1（若将来引擎真能算，本项判红提示口径须重判）。
-  `selftest` 增第 10、11 个负例（塞「顺行＋五岁起运」假案例必被要求回填／近失登记漂移必被抓），
+  `selftest` 增第 10、11 个负例（「顺行＋五岁起运」假案例必被要求回填／近失登记漂移必被抓），
   现 11 个负例全部被抓。
-- `eval/evaluate.py`：`dayun` 计分段上方补 ⑥ 关账段（三条证据＋结论＋将来触发条件）；
-  维内注释改「0 不是待办而是真实读数」。
-- `dev_tools/check.py`：`DIM_HITS` 上方注释补 365 批说明——`dayun` **继续不设下限是对的，不是漏设**；
-  设下限只会逼人拿定义式或占位常数凑 expected。
-- `data/rules/rule_registry.json`：`ming.dayun.evaluation.note` 增 365 批结项说明
-  （状态维持 `mechanical_regression`——缺 expected 与引文核对是两回事，不改状态）。
-- `docs/EVAL-PLAN.md`：§摘要「大运从待收移出」、§五 步 6 末尾增结项注（三条证据＋结论）。
-- `CONTRACT.md` §六：363 段后增「行运键回填（365 批结项）」段，写明三条证据与前瞻边界。
+- 口径回写：`eval/evaluate.py` ⑥ 关账段、`dev_tools/check.py`（`DIM_HITS` 注释：
+  **不设下限是对的，不是漏设**）、`data/rules/rule_registry.json`（`ming.dayun` 注，状态维持
+  `mechanical_regression`）、`docs/EVAL-PLAN.md`（摘要 + §五 末注）、`CONTRACT.md` §六、`bazi/README.md`。
+- 顺手清掉两处陈旧口径：`evaluate.py` 原写「`shensha`／`dayun` 两维 0 例带期望」（shensha 自 169 批起
+  已 5 例）；`EVAL-PLAN` 步 6 单元格原写「待书载起运岁数入册后整维接入」（与本批结项结论相抵）。
 
 **读数**：`tune`／`holdout` 加权均分与各维命中数**一格未动**（本批不触碰任何案例文件的
 `expected`；`[25]` 维度适用数锁仍为 `dayun` 0/0）。这不等于「跑了没事」——是**本批的设计目标**：
