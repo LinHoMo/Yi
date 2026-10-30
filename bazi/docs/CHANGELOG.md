@@ -6,6 +6,25 @@
 > 下面历史条目若提到 ARCHIVE，一律按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 3 节标题已并入索引。
 
+## 2026-10-30 第三百五十八批（八字）：**EVAL-PLAN 与实测对齐——shensha 5 例／holdout 99.5**
+
+**性质**：docs（口径更正）。零引擎、零数据、零评分改动。
+
+- `docs/EVAL-PLAN.md` 两处旧真值按实测改正：
+  ① 「`shensha`／`dayun` 仍 0 例带期望」→ `shensha` **5 例**（169 批神煞书证回填，
+     holdout 5/5、`check_dim_lock` 锁死，仅算薄覆盖）；`dayun` 仍 0 例、整维 N/A；
+  ② holdout 加权均分 **97.6%／门内基线 ≥96.6** → **99.5%／基线 ≥99.5**（308 批实测；
+     163 批的 97.6 保留为历史注记）。表内「上表 holdout 97.6」与「96.6 是现行下限」
+     两句同步改正。
+- `bazi/README.md` 同款旧句改正：96.6 是 2026-10-10 快照期下限，现行基线 99.5。
+- 依据：`bazi_classical_cases.json` 338 例 `expected` 键频实测（shensha 5、dayun 0、
+  pillars/ten_gods/hidden_stems 214、tiaohou 113、pattern_cheng_bai 36、cong_ge 15）；
+  `python bazi/dev_tools/check.py` 的 `[24]/[25]` 实测锁 `shensha holdout 5/5`。
+- 复验：`python bazi/dev_tools/check.py` 全绿；`check_doc_refs.py` 0 死链；
+  full ledger 40/40（无读数变化）。
+
+分数含义：与古籍案例要点的一致性，不代表现实预测命中率（AGENTS.md §一.3）。
+
 ## 2026-10-30 第三百五十六批（共享门）：**`check_case_isolation` 两档化——八字仍白名单**
 
 **性质**：shared gate（行为保持）。零引擎、零数据、零读数改动。
