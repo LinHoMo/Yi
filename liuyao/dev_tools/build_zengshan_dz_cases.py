@@ -618,6 +618,8 @@ def load_existing_keys() -> tuple[set, set]:
 def main() -> int:
     ap = argparse.ArgumentParser(description="从增删卜易 dz 底本抽取应期案例作外部验证集")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--reject-stats", action="store_true",
+                    help="按「哪一道门」归并打印剔除原因直方图——回答「扩容该改哪一处」而不是逐条问")
     ap.add_argument("--why", action="append", default=[], metavar="ID",
                     help="打印指定案例 id 的去留理由（可重复）。为什么不默认全打：剔除例逾百条，"
                          "全打会淹掉 √ 清单；而**只打前 20 条**又让「某条为什么没进册」变成查不到——"
@@ -660,6 +662,25 @@ def main() -> int:
         print("按 id 查去留：")
         for i in args.why:
             print(f"  · {i}: {_hit.get(i, '★ 不在任何一份名单里（segment 未产出该块）')}")
+    if args.reject_stats:
+        import re as _re
+        from collections import Counter as _C
+        def _bucket(r: str) -> str:
+            # 归并到「哪一道门」——剔除理由文案前后改过，故按关键词归桶而不是按整串
+            for k, name in (("无应期锚", "应期锚缺失"), ("应期锚只剩", "应期锚不可评（只剩占测日）"),
+                            ("同案", "与在册同案"),
+                            ("卦名不可解析", "卦名不可解析"), ("无六爻渲染", "无六爻渲染（非占验）"),
+                            ("日期", "日期不可还原"), ("弱日期", "日期不可还原")):
+                if k in r:
+                    return name
+            return "其他：" + r[:24]
+        cnt = _C(_bucket(e["reason"]) for e in excluded)
+        print(f"剔除归因（共 {len(excluded)} 例）：")
+        for name, c in cnt.most_common():
+            print(f"  {c:>4}  {name}")
+        _recov = sum(c for n, c in cnt.items() if n in ("应期锚缺失", "卦名不可解析", "日期不可还原"))
+        print(f"  —— 其中「可修但未修」的候选（应期锚/卦名/日期三类）共 {_recov} 例；"
+              f"其余是「同案重复」或「非占验文本」，改了也进不来。")
     print(f"可评分 {len(kept)} 例，剔除 {len(excluded)} 例")
     for e in excluded[:20]:
         print(f"  × {e['id']}: {e['reason']}")
