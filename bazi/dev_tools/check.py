@@ -462,9 +462,12 @@ def main() -> int:
             else:
                 print(f"[8] 语料接线 √ {path.name}：{hit}/{len(leaves)} 条进入多盘报告并集")
         code2, out2 = run(["dev_tools/corpus_wiring_report.py"])
-        for line in out2.splitlines():          # 归类只作明细，不改变判定：判定仍看「0 命中即红」
+        for line in out2.splitlines():          # 明细照印；D 类现在也入门（390 批）
             if line.strip():
                 print("  " + line.strip())
+        if code2 != 0:
+            bad.append(f"corpus_wiring_report.py rc={code2}：残差 D 类未清零——"
+                       "每条 D 必须逐条点名定性（B/F/G），D>0 不再只给提示")
         if bad:
             fails.extend(bad)
             for b in bad:

@@ -7,17 +7,20 @@
       · `tiaohou_quotes.json` 键 =「月序+日干」（12×10=120 格），一盘只占 1 格；
       · `nayin_quxiang.json` 键 = 六十甲子，一盘四柱只占 4 支。
   B 元数据/自述串      —— 路径、行号、`OPT-*` 编号、给工程师看的按语（含「本表」「条目为」「data/sources」等），
-      设计上就不进报告。
+      设计上就不进报告；**平行底本的同义章句/注文也归此**（判据已在另一底本实现，本串只作逐字回指，
+      不另立判据——390 批「從化論－假」三句、化格引文首句）。
   C 键名/模板串        —— 形如 `X为先Y次之`、`专用X(season)`、`论乙·正月` 的键名或占位模板，不是正文。
   F 判据未实现         —— 书证在库、引擎无对应判据 ⇒ 论说句无处可引。**这是真欠账**，逐容器登记理由。
   G 按题意取用         —— 象层／取象语料按 SKILL.md 意图路由取用，不常驻默认正文（正确不引）。
   D **未归类**         —— 既在可达盘内、又像正文的漏网条目：**这一类必须点名**，它是真缺陷的候选。
-      （372 批把原 D 的 68 条逐容器定性后分入 F／G／B 三桶，见下方 CLASS_F／CLASS_G 表。）
+      （372 批把原 D 的 68 条逐容器定性后分入 F／G／B 三桶，见下方 CLASS_F／CLASS_G 表；
+      390 批把最后 4 条 D 逐条定性进 B，并把「D>0 即 rc=1」写成门。）
 
 本器**不替换** `[8]` 的判定（0 命中即红、豁免表过期即红都留在原处），只补「计数看不懂」这一段。
 """
 from __future__ import annotations
 
+import argparse
 import json
 import re
 import sys
@@ -50,6 +53,16 @@ CLASS_F = {   # 判据论述在库、引擎无对应判据 ⇒ 论说句无处�
 CLASS_B = {   # 方法论登记：_meta 自述「不是判据、不进任何评分」，只供逐字回指
     ("verdicts.json", "看命口诀"):
         "《三命通会》看命总纲方法论引文，_meta 明写「不是判据、不进任何评分」，只作 narrate 与文档的逐字回指",
+    # 390 批：最后 4 条 D 逐条定性——三句是 dz 平行底本的「假從／假化」章句与注文，
+    # 同一判据已在 di-tian-sui.wikitext.txt 实现（_CONG.jia_cong／_HUA.hua_jia），
+    # 本串只作逐字回指，不另立判据；第 4 条是《從化論》成对章句的首句（narrate 引第二句）。
+    ("ditian_sui.json", "chapters›從化論－假"):
+        "dz 平行底本的假從／假化章句与注文；判据已在 di-tian-sui.wikitext.txt 实现"
+        "（_CONG.jia_cong「中有比劫暗生，从之不真」／_HUA.hua_jia「合神虛弱，則化不真」），"
+        "本串只作逐字回指，不另立判据",
+    ("verdicts.json", "化格引文›verse"):
+        "《從化論》成对章句；narrate 只引第二句（假化之人亦可貴…），首句「化得真者只論化…」"
+        "只作成对保留，不是判据本体",
 }
 CLASS_G = {   # 按 SKILL.md 意图路由取用：问到对应话题才引用，不常驻默认正文
     ("ditian_sui.json", "chapters›歲運論"):
@@ -105,7 +118,60 @@ def reachable():
     return tiao, nayin
 
 
+def classify_leaf(fname: str, top: str, s: str, hit_by_cont: dict,
+                  obj, tiao_reach: set, nayin_reach: set) -> str:
+    """一条叶子串 → A/B/C/E/F/G/D。判据与 372/390 批定性表同源，`--selftest` 直接调用它。"""
+    _top1 = top.split("›")[0]     # 容器可能到二级（看命口诀›月令为命），表按一/二级都可登记
+    if fname == "tiaohou_quotes.json" and top not in tiao_reach:
+        return "A"
+    if fname == "nayin_quxiang.json" and top not in nayin_reach:
+        return "A"
+    if META.search(s) or (BOOKHEAD.search(s) and "·" in s):
+        return "B"
+    if TPL.search(s) or s in (obj if isinstance(obj, dict) else {}):
+        return "C"
+    if not hit_by_cont.get(top):
+        return "E"        # 同容器**一条都没被引** ⇒ 该容器在 276 盘里从未触发（盘外，正确不引）
+    if (fname, top) in CLASS_B or (fname, _top1) in CLASS_B:
+        return "B"        # 方法论登记／平行底本同义串（不另立判据）
+    if (fname, top) in CLASS_F:
+        return "F"        # 判据在库、引擎无判据 ⇒ 真欠账（已登记）
+    if (fname in CLASS_G or (fname, top) in CLASS_G
+            or (fname, _top1) in CLASS_G):
+        return "G"        # 按题意取用，不常驻正文
+    return "D"
+
+
+def selftest() -> int:
+    """负例自证：未定性的普通正文必落 D；已定性的 B/F/G 不误伤。"""
+    hit = {"chapters›X": 1, "chapters›從化論－假": 1,
+           "chapters›體用論": 1, "宫位": 1}
+    obj = {"chapters": {"X": ["已在并集的句子", "一条未定性的普通正文"]}}
+    cases = [
+        ("fake.json", "chapters›X", "一条未定性的普通正文", hit, obj, set(), set(), "D"),
+        ("ditian_sui.json", "chapters›從化論－假", "真從之像有幾人，假從亦可發其身。",
+         hit, {}, set(), set(), "B"),
+        ("ditian_sui.json", "chapters›體用論", "日主为体用神为用不专以顺逆为凭",
+         hit, {}, set(), set(), "F"),
+        ("xiang_layer.json", "宫位", "宫位取象随题取用……",
+         hit, {}, set(), set(), "G"),
+    ]
+    for fname, top, s, h, o, tr, nr, want in cases:
+        got = classify_leaf(fname, top, s, h, o, tr, nr)
+        if got != want:
+            print(f"FAIL SELFTEST：{fname}〔{top}〕应判 {want}，实判 {got}")
+            return 1
+    print("SELFTEST OK：未定性正文必落 D；B/F/G 已定性串不误伤")
+    return 0
+
+
 def main() -> int:
+    ap = argparse.ArgumentParser(description="语料接线残差归类器（D>0 即 rc=1）")
+    ap.add_argument("--selftest", action="store_true", help="负例自证")
+    args = ap.parse_args()
+    if args.selftest:
+        return selftest()
+
     big = ROOT / "scratch" / "corpus_reports.txt"
     if not big.exists():
         print("FAIL：先跑 dev_tools/corpus_reports.py 生成多盘并集")
@@ -125,36 +191,12 @@ def main() -> int:
         for top, s in leaves:
             if s in text or s.lstrip("，、。；：") in text:
                 continue
-            _top1 = top.split("›")[0]     # 容器可能到二级（看命口诀›月令为命），表按一/二级都可登记
-            if f.name == "tiaohou_quotes.json" and top not in tiao_reach:
-                tot["A"] += 1
-                continue
-            if f.name == "nayin_quxiang.json" and top not in nayin_reach:
-                tot["A"] += 1
-                continue
-            if META.search(s) or (BOOKHEAD.search(s) and "·" in s):
-                tot["B"] += 1
-                continue
-            if TPL.search(s) or s in (obj if isinstance(obj, dict) else {}):
-                tot["C"] += 1
-                continue
-            if not hit_by_cont.get(top):
-                tot["E"] += 1        # 同容器**一条都没被引** ⇒ 该容器在 276 盘里从未触发（盘外，正确不引）
-                continue
-            if (f.name, top) in CLASS_B or (f.name, _top1) in CLASS_B:
-                tot["B"] += 1        # 方法论登记（_meta 自述不进评分）
-                continue
-            if (f.name, top) in CLASS_F:
-                tot["F"] += 1        # 判据在库、引擎无判据 ⇒ 真欠账（已登记）
-                continue
-            if (f.name in CLASS_G or (f.name, top) in CLASS_G
-                    or (f.name, _top1) in CLASS_G):
-                tot["G"] += 1        # 按题意取用，不常驻正文
-                continue
-                continue
-            tot["D"] += 1
-            unk.append(f"{f.name}〔{top or '?'}〕{s[:60]}")
-            conts[top] = (hit_by_cont.get(top, 0), sum(1 for x, _ in leaves if x == top))
+            cat = classify_leaf(f.name, top, s, hit_by_cont, obj, tiao_reach, nayin_reach)
+            tot[cat] += 1
+            if cat == "D":
+                unk.append(f"{f.name}〔{top or '?'}〕{s[:60]}")
+                conts[top] = (hit_by_cont.get(top, 0),
+                              sum(1 for x, _ in leaves if x == top))
     print(f"接线残差归类：A 键不可达（盘外，正确）{tot['A']} ｜ B 元数据/自述串 {tot['B']} ｜ "
           f"C 键名/模板串 {tot['C']} ｜ E 容器未触发（盘外，正确）{tot['E']} ｜ "
           f"F 判据未实现（真欠账）{tot['F']} ｜ G 按题意取用（正确不常驻）{tot['G']} ｜ D 未归类 {tot['D']}")
@@ -166,10 +208,10 @@ def main() -> int:
     if not tot["D"]:
         print(f"√ D 未归类 0 条——残差已全部逐容器定性：F {tot['F']}（判据未实现，真欠账）／"
               f"G {tot['G']}（按题意取用，正确不常驻）／B 方法论登记（并入 B {tot['B']}）")
-    if tot["D"]:
-        print(f"提示：D 类 {tot['D']} 条**未归类**（既在可达键内、又不像元数据）——是缺陷候选而非定论，"
-          "须逐条点名定性后才决定是否入门判红；本器不静默改分母，也不把 D 当通过。")
-    return 0
+        return 0
+    print(f"FAIL：D 类 {tot['D']} 条未归类（既在可达键内、又不像元数据）——"
+          "每一条都须逐条点名定性；D>0 即 rc=1，不再只给提示。")
+    return 1
 
 
 if __name__ == "__main__":
