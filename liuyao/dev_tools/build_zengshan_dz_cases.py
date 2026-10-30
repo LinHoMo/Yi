@@ -678,6 +678,35 @@ def main() -> int:
         print(f"剔除归因（共 {len(excluded)} 例）：")
         for name, c in cnt.most_common():
             print(f"  {c:>4}  {name}")
+        # 应期锚缺失再拆一层：书里真没写验期，还是规则没配上（381 批实测，见 CHANGELOG）
+        import re as _re2
+        _sub = _C()
+        for _e in excluded:
+            if "无应期锚" not in _e["reason"]:
+                continue
+            _i = int(_e["id"][2:])
+            _b = blocks[_i - 1]
+            _m = _b["case"]
+            _body = _m.string[_m.start():_b["end"]]
+            _rows = [x for x in _body.splitlines() if YIN_YANG_RE.search(x)]
+            _tail = _body[_body.find(_rows[-1]) + len(_rows[-1]):] if _rows else _body
+            _cut = len(_tail)
+            for _cm in CHAPTER_RE.finditer(_tail):
+                _ls = _tail.rfind("\n", 0, _cm.start()) + 1
+                if _tail[_ls:_cm.end()] == _cm.group(0):
+                    _cut = min(_cut, _ls)
+            _sents = [x for x in _re2.split(r"[。；\n]", _tail[:_cut]) if x.strip()]
+            _has_date = [x for x in _sents if _date_tokens(x)]
+            _has_out = [x for x in _sents if OUTCOME_RE.search(x)]
+            if not _has_date:
+                _sub["① 书里没写验期（真没有）"] += 1
+            elif _has_out:
+                _sub["② 结果词与日期跨句（须逐条读）"] += 1
+            else:
+                _sub["③ 有日期无结果词（结果词表外）"] += 1
+        print("  —— 应期锚缺失 %d 条再拆：" % sum(_sub.values()))
+        for _n, _c in _sub.most_common():
+            print(f"       {_c:>4} {_n}")
         _recov = sum(c for n, c in cnt.items() if n in ("应期锚缺失", "卦名不可解析", "日期不可还原"))
         print(f"  —— 其中「可修但未修」的候选（应期锚/卦名/日期三类）共 {_recov} 例；"
               f"其余是「同案重复」或「非占验文本」，改了也进不来。")
