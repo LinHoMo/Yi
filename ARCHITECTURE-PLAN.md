@@ -40,7 +40,9 @@ Yi/
 ├── bazi/                       # 八字：core（产物）+ scripts + dev_tools + tests + data/cache
 ├── plugins/                    # 共享打包层（SKILL.md + mcp/ + scripts/）
 ├── 5 个宿主适配器              # dsh / claude / codex / gemini / yan
-└── .github/workflows/ci.yml    # 四 job：root-gates / kernel-sync / gates / plugin-gates
+└── .github/workflows/ci.yml    # 六 job（361 批新增 min-python-smoke）：
+                                #   root-gates / min-python-smoke / kernel-sync /
+                                #   gates / ledger / plugin-gates
 ```
 
 依赖方向（四条硬约束均已机检）：
@@ -86,7 +88,7 @@ devkit/  ─sync_devkit──▶  <科>/dev_tools         （产物，[37] 字�
 | V6 | 内核单一真源 | `python kernel/sync_kernel.py --check` rc=0（17/15 文件＋4 变体；CI `kernel-sync`） |
 | V7 | 契约三件套同步 | 340 批未改键面/禁边；两科 `check_layer_contract.py --selftest` rc=0 |
 | V8 | 两科形状对称 | 八字 `tests/`（smoke+regression）、CHANGELOG 三件套、CONTRACT §六 审计表在册 |
-| V9 | CI 五 job | `root-gates` / `kernel-sync` / `gates` / `ledger`（344 批新增，full 账台）/ `plugin-gates`（五宿主 × 2 OS），无 `continue-on-error` |
+| V9 | CI 六 job | `root-gates` / `min-python-smoke`（361 批新增，声明最低版 3.10 的两科冒烟）/ `kernel-sync` / `gates` / `ledger`（344 批新增，full 账台）/ `plugin-gates`（五宿主 × 2 OS），无 `continue-on-error` |
 | V10 | 门禁档位在册 | `governance_map.py --strict` rc=0（两科未分类 0；不降不删已具名） |
 | V11 | 口径 | `selftest.mjs` [7] 段禁语扫描全绿；全部文字用"古籍案例对齐分/非预测命中率" |
 | V12 | 登记 × 提交 | `readout_ledger.py --quick` rc=0（bad=0；收口时 39 项，344 批起 40 项；full bad=0/40，含"登记×提交在册"） |

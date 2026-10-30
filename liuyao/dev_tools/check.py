@@ -66,9 +66,12 @@ def _project_header(text: str) -> dict:
 BASELINE = {
     "calendar": 16,        # 历法自检通过项数（共 16）
     "ordering": 23,        # 爻序断言通过项数（共 23）——P0 事故看门狗
-    "smoke": 35,           # 有产出的分析段（355 批：section_advice 迁 render，analyze 少一段；渲染面由 [2.7] 守）
-    "chain_tests": 11,     # /12（2026-10-10 上抬，理由见下方归因块）
-    "regression": 14,      # 例数以汇总行为准（现 19 例：第八十二批加 reg_19 全要素真例；
+    "smoke": 36,           # 有产出的分析段（361 批：s5_10 改为走 narrative_assembly 重建推理链、
+                           # 恒真断言改成目标键/非空后 36/36，基线抬到全量；渲染面由 [2.7] 守）
+    "chain_tests": 12,     # /12（361 批：case_07 与 reg_07 oracle 统一后 12/12，基线抬到全量）
+    "regression": 17,      # /19（361 批抬到实测 17：reg_02/reg_09 方向不一致仍红且逐条在册，
+                           # 再多退一例即拦；两例的校勘/待裁记录见 regression_test 注释）
+                            # 历史沿革（旧计数注释，保留出处）：
                             # 2026-10-10 第十四批：7 例 fixture 的日期/爻数组与自身书证
                             # 对不上，校勘后 reg_13 由"假基准下的蒙对"变为真通过，11→12；
                             # 第十五批：补「近病＋卦逢六冲即愈」（源L17/L19/L21/L23）
@@ -295,6 +298,51 @@ def coin_cast_problems() -> list[str]:
         except Exception as exc:  # noqa: BLE001
             problems.append(f"seed={seed} 的铜钱起卦抛异常：{type(exc).__name__}: {exc}")
     problems.extend(_coin_cast_problems(casts))
+    return problems
+
+
+def time_mode_problems() -> list[str]:
+    """时间起卦门（361 批）：mode=time 必须确定性，且不得再落到铜钱随机分支。
+
+    为什么需要它：`chart.py` 曾只有 coin/number/manual 分支，`mode="time"` 被 coin
+    兜底接走——同一时刻连摇两次得不同卦（实测「小畜」/「谦」），退出码 0、JSON 完整、
+    盘面仍标 time，既有门一条都没红。判据三条：①同参两次必须同盘；②与登记的时间算法
+    爻值一致（走 manual 同爻值对拍，避免只验"两次一样"把恒阴恒坤也判成过）；
+    ③time 不接受 seed（它本就不是随机起卦）。
+    """
+    from chart import chart as _chart
+
+    problems: list[str] = []
+    dt = "2024-01-01 12:00"
+    try:
+        a = _chart("time", "时间起卦门", datetime_str=dt)
+        b = _chart("time", "时间起卦门", datetime_str=dt)
+    except Exception as exc:  # noqa: BLE001
+        return [f"time 起卦抛异常：{type(exc).__name__}: {exc}"]
+    ha, hb = (a.get("original_hexagram") or {}), (b.get("original_hexagram") or {})
+    if ha != hb:
+        problems.append(
+            f"同一时刻 {dt} 两次 time 起卦不同：{ha.get('name')} vs {hb.get('name')}"
+            "——mode=time 未走确定性算法（疑似落回 coin 随机分支）")
+    # 登记的时间算法爻值（engine_chart.time_based_hexagram(2024,1,1,12)）：与 manual
+    # 同爻值对拍；更改时间算法须同批更新本向量并说明理由，不得静默刷新。
+    yao = "6,7,7,8,7,8"
+    try:
+        m = _chart("manual", "时间起卦门", datetime_str=dt, yao=yao)
+    except Exception as exc:  # noqa: BLE001
+        problems.append(f"manual 对拍失败：{type(exc).__name__}: {exc}")
+        return problems
+    hm = m.get("original_hexagram") or {}
+    if hm.get("name") != ha.get("name"):
+        problems.append(f"time 起卦 {ha.get('name')} 与登记时间算法爻值 {yao} 的卦 {hm.get('name')} 不一致")
+    try:
+        _chart("time", "时间起卦门", datetime_str=dt, seed=42)
+    except ValueError:
+        pass
+    except Exception as exc:  # noqa: BLE001
+        problems.append(f"time 模式带 seed 的报错类型异常：{type(exc).__name__}: {exc}")
+    else:
+        problems.append("time 模式接受 --seed 且未报错：确定性起卦不该带随机种子")
     return problems
 
 
@@ -702,6 +750,17 @@ def main() -> int:
             print(f"  √ {len(COIN_GATE_SEEDS)} 次起卦卦名分散、动爻存在；"
                   "嵌套爻值负例可被抓到")
         failures.extend(coinp)
+
+    if want("time_mode"):
+        # 时间起卦确定性（361 批）：mode=time 曾缺分支落到 coin 兜底，同参两次不同卦
+        # 而退出码 0、JSON 完整、盘面仍标 time——只有"同参两次必须同盘 + 与登记爻值对拍"能抓。
+        print("\n[2.4] 时间起卦确定性（同参两次同盘、与登记爻值一致、seed 须报错）")
+        tp = time_mode_problems()
+        for t in tp:
+            print(f"  × {t}")
+        if not tp:
+            print("  √ 同一时刻两次 time 起卦同盘；与登记时间算法爻值一致；time 拒收 seed")
+        failures.extend(tp)
 
     if want("style"):
         # 报告外观：用到的类名必须有定义。评分与金标准指纹看不见"内容对、外观散架"这一类回归。

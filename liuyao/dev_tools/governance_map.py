@@ -257,8 +257,12 @@ def selftest() -> int:
     if fails:
         print("× selftest：" + "；".join(fails))
         return 1
-    print("√ selftest：未分类/幽灵/双源关联/挂闸硬断言 负例全过；真实扫描 strict rc=%s" % real_rc
-          if not fails else "× " + "；".join(fails))
+    # 361 批：真实 strict 扫描的 rc 此前只打印、不返回——真仓出现未分类/幽灵/blocking
+    # 未挂闸时 selftest 照样退 0，「自证」因此不可信。真实扫描失败必须传播出去。
+    if real_rc != 0:
+        print("× selftest：真实仓 strict 扫描 rc=%s（未分类/幽灵/挂闸不一致），负例过不代表本图可用" % real_rc)
+        return real_rc
+    print("√ selftest：未分类/幽灵/双源关联/挂闸硬断言 负例全过；真实扫描 strict rc=0")
     return 0
 
 

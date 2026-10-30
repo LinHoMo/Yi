@@ -109,6 +109,12 @@ def chart(mode: str, question: str, *, datetime_str: str | None = None,
         # 2026-10-25 实测：连续五次铜钱起卦全部得「坤」，静卦无动，起卦彻底失效。
         rng = engine.random.Random(seed) if seed is not None else None
         yao_values = coin_toss(rng)
+    elif mode == "time":
+        # 四段契约 chart 段的时间起卦必须走梅花易数时间算法；早期实现里本分支缺失，
+        # mode="time" 落到下面 coin 兜底，导致同一时刻两次起卦得不同卦（实测 小畜/谦）。
+        if seed is not None:
+            raise ValueError("--mode time 是确定性起卦，不接受 --seed")
+        yao_values = engine.time_based_hexagram(yy, mm, dd, hh)
     elif mode == "number":
         if not numbers:
             raise ValueError("--mode number 需要 --numbers \"a,b,c\"")
@@ -118,9 +124,11 @@ def chart(mode: str, question: str, *, datetime_str: str | None = None,
         yao_values = engine.number_based_hexagram(*parts)
     elif mode == "manual":
         yao_values = _parse_yao_values(yao)
-    else:  # coin 兜底
+    elif mode == "coin":
         rng = engine.random.Random(seed) if seed is not None else None
         yao_values = coin_toss(rng)
+    else:
+        raise ValueError(f"未知起卦方式：{mode}（可用 coin/time/number/manual）")
 
     result = build_hexagram_result(
         yao_values, question, mode, yy, mm, dd, hh, minute=minute,

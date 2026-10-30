@@ -24,7 +24,14 @@
   手改即判红。因此两科仍可各自独立运行、单目录拷走——**"零耦合"约束的是运行时依赖，不是源码来源**。
   （旧口径「17 个同名文件里 13 个逐字节相同」是 308 批的手抄实测，316 批已被本机制取代；
   八字侧同时去掉 3 个用不到的六爻模块，共 −874 行。）
-- **各自自包含**：每科目录内均有 `scripts/`（机械推演）、`data/`（案例、古籍底本、规则）、`references/`、`dev_tools/`、`docs/`，并自带 `README.md` 与 `SKILL.md`。**一处不一致要说清**：`tests/` 目前**只有六爻有**（`liuyao/tests/`）；八字侧**没有 `tests/` 目录**，其回归/冒烟/回验全部走 `bazi/dev_tools/`（`check.py`，小节号会随门禁增补变化，故此处**不写死区间**——此前写 `[0]–[21]` 时 `[22]`／`[23]`／`[24]` 已存在，属本行自禁的那类"文档里的旧真值"，2026-10-13 按实改正；现行全量以 `python bazi/dev_tools/check.py` 实跑输出为准）。本行此前写作两科均有 `tests/`，与实际不符（2026-10-12 按 `ls -d bazi/tests` 实跑更正：`No such file or directory`）。
+- **各自自包含**：每科目录内均有 `scripts/`（机械推演）、`data/`（案例、古籍底本、规则）、`references/`、`dev_tools/`、`docs/`、`tests/`，并自带 `README.md` 与 `SKILL.md`。
+  两科 `tests/` 形态不对称（刻意，D3 中档）：六爻有 `smoke_test.py`／`regression_test.py`／
+  `thinking_chain_tests.py`／`six_god_wang_shuai_test.py`；八字只有 `smoke_test.py` 与
+  `regression_test.py`（第三百三十五批补建），更深一层的回归/回验仍走 `bazi/dev_tools/check.py`
+  （小节号会随门禁增补变化，故此处**不写死区间**——此前写 `[0]–[21]` 时 `[22]`／`[23]`／`[24]`
+  已存在，属本行自禁的那类"文档里的旧真值"；现行全量以 `python bazi/dev_tools/check.py` 实跑输出为准）。
+  本行此前写「`tests/` 只有六爻有、八字侧没有」——与现状不符（第三百六十一批按 `ls bazi/tests`
+  实跑更正：`__init__.py`／`smoke_test.py`／`regression_test.py` 均在）。
 
 ## 目录结构
 
@@ -37,7 +44,7 @@ Yi/
 │   └── README.md  SKILL.md
 └── bazi/             # 八字（独立）
     ├── core/yishu_core/   # 八字私有的引擎副本
-    ├── scripts/ data/ references/ dev_tools/ docs/   # 八字暂无 tests/（见上）
+    ├── scripts/ data/ references/ dev_tools/ docs/ tests/   # 八字 tests/ 仅 smoke+regression（见上）
     └── README.md  SKILL.md
 ```
 

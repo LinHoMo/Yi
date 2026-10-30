@@ -13,8 +13,9 @@
  *  · 口径页脚照抄本仓铁律三：分数是古籍案例对齐分；象征推演非预言。
  */
 import { tmpdir } from 'node:os'
-import { mkdir, writeFile } from 'node:fs/promises'
+import { mkdir, readdir, rm, stat, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import { randomUUID } from 'node:crypto'
 
 function esc(s) {
   return String(s ?? '')
@@ -309,7 +310,33 @@ export async function writeReportFile(discipline, format, content) {
   const stamp = new Date().toISOString().replace(/[:T]/g, '-').slice(0, 19)
   const dir = join(tmpdir(), 'yi-reports')
   await mkdir(dir, { recursive: true })
-  const path = join(dir, `yi-${discipline}-${stamp}.${format}`)
-  await writeFile(path, content, 'utf8')
+  // 旧文件名只精确到秒且用覆盖写：同秒同格式的两次报告会互相盖掉（后一次静默丢失）。
+  // 加随机后缀 + 'wx' 排他写，撞名即失败而不是覆盖。
+  const path = join(dir, `yi-${discipline}-${stamp}-${randomUUID().slice(0, 8)}.${format}`)
+  await writeFile(path, content, 'utf8', { flag: 'wx' })
+  // 临时目录不清理会一直堆积；只认本目录里本工具自己命名的 yi-*.html/md，且 24h 前
+  // 的才删，删失败不影响本次交付。
+  await pruneOldReports(dir).catch(() => {})
   return path
+}
+
+/** 清掉 24 小时前的旧报告（只删 `yi-<学科>-*.html|md`，绝不出这个目录）。 */
+async function pruneOldReports(dir) {
+  const cutoff = Date.now() - 24 * 60 * 60 * 1000
+  let entries = []
+  try {
+    entries = await readdir(dir)
+  } catch {
+    return
+  }
+  for (const name of entries) {
+    if (!/^yi-(liuyao|bazi)-.+\.(html|md)$/.test(name)) continue
+    const p = join(dir, name)
+    try {
+      const st = await stat(p)
+      if (st.isFile() && st.mtimeMs < cutoff) await rm(p, { force: true })
+    } catch {
+      // 单个文件删不掉就算了：清理是顺手，不是断言。
+    }
+  }
 }

@@ -5,6 +5,42 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-10-30 第三百六十一批（六爻）：**时间起卦分支缺失修复 ＋ 三处门禁/文档硬伤**
+
+**性质**：bug fix（行为变更，修的是缺陷不是调参）。零判词、零评分口径改动；
+golden 双指纹零漂移（六爻 288 例，见复验）。
+
+- **P0 · `mode=time` 曾落到铜钱随机分支**：`scripts/chart.py` 只有 coin/number/manual
+  三个分支，time 被 `else` 兜底接去 `coin_toss()`。实测同一时刻
+  `2024-01-01 12:00` 连调两次得「小畜」/「谦」，退出码 0、JSON 完整、盘面仍标 time。
+  现补 `elif mode == "time": engine.time_based_hexagram(yy, mm, dd, hh)`；
+  未知 mode 不再静默摇卦而是 `ValueError`；time 拒收 `--seed`（确定性起卦不带种子）。
+- **新门 `[2.4] 时间起卦确定性`**（挂在 `dev_tools/check.py`，`--only time_mode`）：
+  同参两次必须同盘 ＋ 与登记时间算法爻值 `6,7,7,8,7,8`（走 manual 对拍，防止"两次一样"
+  把恒阴恒坤也判成过）＋ time 带 seed 必须报错。旧自检只跑 `mode=coin/seed=42`、
+  `check.py` 只在编码门用 time 夹具，两条都看不见这个缺陷。
+- **冒烟门去恒真断言**：`tests/smoke_test.py` 的 `_seg()/_tc()` 缺段也返回 `{}`，
+  于是 `isinstance(..., dict)` 恒真。cov_10/15/17/20、s5_12、bnd_03/04 改为目标键/非空断言；
+  `s5_10` 的 `reasoning_chain` 改走 `narrative_assembly.build_reasoning_chain`
+  （355 批起该键是叙述层产物，analyze 不再直产——旧断言因此恒红且被基线吸收）。
+  改后 36/36、rc=0，基线 `smoke` 35→36。
+- **两套测试的矛盾 oracle 收口**：`tests/thinking_chain_tests.py` 的 `case_07`
+  仍用旧基准（2024-12-12／凶／net negative），而 `tests/regression_test.py` 的 `reg_07`
+  已在 162 批按书二分校勘为 2024-12-28／吉向／net neutral。case_07 现与 reg_07 同 oracle
+  （同一盘、同一结论），chain 基线 11→12（12/12）。regression 仍 17/19（reg_02/reg_09
+  方向不一致在册待裁），基线 14→17——再退一例即拦，不再允许 5 例被基线吃掉。
+- **治理图自证可信度**：`dev_tools/governance_map.py --selftest` 此前算到真实
+  `strict` 扫描 rc 却仍 `return 0`；现在真实 rc 非 0 即外传。
+- **CI/文档**：`.github/workflows/ci.yml` 新增 `min-python-smoke`（声明最低版 3.10
+  跑两科冒烟＋八字回归＋六神单测），root-gates 补三个根级门的 `--selftest` 与治理图自证；
+  根 `README.md` 关于「八字无 `tests/`」的旧真值按实更正（335 批已补建），
+  `ARCHITECTURE-PLAN.md` 的 CI job 数四/五→六。
+- 复验：`python liuyao/dev_tools/check.py` 全绿（含 golden 双指纹零漂移、smoke 36、
+  chain 12、regression 17、time_mode 新门）；`python liuyao/dev_tools/governance_map.py
+  --selftest` rc=0；`python liuyao/tests/time_mode` 判据见 `[2.4]`。
+
+分数含义：与古籍案例要点的一致性，不代表现实预测命中率（AGENTS.md §一.3）。
+
 ## 2026-10-30 第三百六十批（全仓）：**AGENTS 目录图与依赖线补上 `eval/` 层**
 
 **性质**：docs（结构同步）。零引擎、零数据、零读数改动。

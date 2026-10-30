@@ -8,6 +8,7 @@
  *  · 机械运算全部在 Python 引擎里完成；这里只搬运参数、整形结果、拼装正文。
  *    （仓库铁律一：LLM 与 node 层都不许自己算卦。）
  */
+import { randomInt } from 'node:crypto'
 import { cast, report } from './engine.mjs'
 import { baziHtml, writeReportFile } from './report.mjs'
 
@@ -212,8 +213,8 @@ export function createLiuyaoTool(_defineTool) {
       datetime: { type: 'string', description: '起卦时刻 "YYYY-MM-DD HH:MM"，缺省用当前时间' },
       numbers: { type: 'string', description: 'mode=number 时必填，格式 "a,b,c"' },
       yao: { type: 'string', description: 'mode=manual 时必填，6 个爻值如 "7,8,9,7,6,8"（6/7/8/9）' },
-      seed: { type: 'number', description: '铜钱摇卦的随机种子，用于复现同一卦' },
-      gender: { type: 'string', enum: ['男', '女'], description: '求测者性别（占婚恋等用神取法不同时重要）' },
+      seed: { type: 'number', description: '铜钱摇卦的随机种子，用于复现同一卦；不传时引擎会生成并在返回值里回传 seed' },
+      gender: { type: 'string', enum: ['男', '女'], description: '求测者性别；仅在问句没有“男占/女占/男家/女家”等立场词时补成“男占/女占”，由引擎按既有法则取用神' },
     },
     render: (args, value) => [
       { type: 'text', text: value.narrative.text || '（引擎未产出正文）' },
@@ -245,10 +246,25 @@ export function createBaziTool() {
   }
 }
 
+/**
+ * 六爻性别（361 批）：引擎没有独立 gender 字段，`step2` 的用神法则按**问句文本**
+ * 里的立场词取用（`use_god_relations.json` 的「女家/女方/女占/妻占 → 官鬼」、
+ * 「男家/男方/男占/夫占 → 妻财」）。旧实现把 schema 里的 gender 直接丢掉，
+ * 于是模型按描述传了性别却毫无作用。现在：问题文本已带立场词时不改（不覆盖当事人
+ * 原话），否则在问句前补一个 `${gender}占`，让引擎自己按既有法则取用。
+ */
+const GENDER_STANCE_RE = /(男|女)(家|方|占|测)|妻占|夫占|代男|代女|占夫|占妻/
+
+export function withGenderStance(question, gender) {
+  const q = String(question ?? '')
+  if ((gender !== '男' && gender !== '女') || GENDER_STANCE_RE.test(q)) return q
+  return `${gender}占${q}`
+}
+
 /** 把模型给的参数翻译成引擎命令行参数。参数校验由宿主先做，这里只做语义组装。 */
 export function buildLiuyaoArgs(args) {
   const mode = args.mode ?? 'coin'
-  const argv = ['--question', args.question ?? '']
+  const argv = ['--question', withGenderStance(args.question ?? '', args.gender)]
   argv.push('--mode', mode)
 
   if (args.datetime) argv.push('--datetime', String(args.datetime))
@@ -272,11 +288,25 @@ export function buildBaziArgs(args) {
   return argv
 }
 
-/** 供工具 execute 复用的两个薄封装。 */
+/**
+ * 六爻铜钱卦默认会回传一个可复现种子（361 批）：
+ * 旧行为下 `yi_report` 用同一份原始参数重跑 `cast()`，coin 模式没有 seed 就会
+ * **摇出另一卦**——「先断卦、后出报告」实际交付的是两个不相干的卦。
+ * 现在每次 coin 起卦都显式带随机种子，并在返回值里回传 `seed`；
+ * `yi_report` 传回该 seed 才能复现同一个卦，否则拒绝出报告（不交付对不上的报告）。
+ */
 export async function runLiuyao(args, exec) {
   const argv = buildLiuyaoArgs(args)
+  let replaySeed = args.seed ?? null
+  const mode = args.mode ?? 'coin'
+  if (mode === 'coin' && (replaySeed === undefined || replaySeed === null)) {
+    replaySeed = randomInt(1, 2_147_483_647)
+    argv.push('--seed', String(replaySeed))
+  }
   const result = await cast('liuyao', argv, { signal: exec?.signal })
-  return liuyaoValue(result)
+  const value = liuyaoValue(result)
+  value.seed = replaySeed
+  return value
 }
 
 export async function runBazi(args, exec) {
@@ -294,6 +324,13 @@ export async function runReport(args, exec) {
   const discipline = args.discipline
   if (discipline !== 'liuyao' && discipline !== 'bazi') {
     throw new Error(`discipline 必须是 liuyao 或 bazi（收到：${discipline}）`)
+  }
+  // 六爻铜钱卦：无 seed 时重跑一次就是另一卦（旧行为会把报告挂到不相干的卦上），
+  // 故要求回传 `yi_liuyao` 返回的 seed；确定性起卦方式（time/number/manual）不受影响。
+  if (discipline === 'liuyao' && (args.mode ?? 'coin') === 'coin' &&
+      (args.seed === undefined || args.seed === null)) {
+    throw new Error('六爻铜钱卦出报告必须传 seed：用 yi_liuyao 返回值里的 seed 复现同一卦；'
+      + '或改用 time/number/manual 等确定性起卦方式')
   }
   const fmt = args.format === 'md' ? 'md' : 'html'
   const argv = discipline === 'liuyao' ? buildLiuyaoArgs(args) : buildBaziArgs(args)
@@ -334,7 +371,8 @@ export function createReportTool() {
       '（含装卦全表、旺衰、应期与断卦正文，html/md）；八字 html 含四柱卡、旺衰格局喜忌、' +
       '大运时间条、流年结构事件表、流月格（插件排版层，文字全部来自引擎字段）。' +
       '先完成 yi_liuyao / yi_bazi 的判读；用户要「出报告/可视化/存档」时调用，' +
-      '把返回的文件路径转告用户。机械运算仍全部由 Python 引擎完成。',
+      '把返回的文件路径转告用户。六爻 coin 模式须回传 yi_liuyao 返回值里的 seed，' +
+      '否则无法复现同一卦、本工具会拒绝出报告。机械运算仍全部由 Python 引擎完成。',
     parameters: {
       discipline: { type: 'string', enum: ['liuyao', 'bazi'], required: true, description: '报告学科' },
       format: { type: 'string', enum: ['html', 'md'], description: '输出格式，默认 html' },
@@ -343,8 +381,8 @@ export function createReportTool() {
       datetime: { type: 'string', description: 'liuyao=起卦时刻；bazi=出生时间 "YYYY-MM-DD HH:MM"（bazi 必填）' },
       numbers: { type: 'string', description: 'mode=number 时必填，格式 "a,b,c"' },
       yao: { type: 'string', description: 'mode=manual 时必填，6 个爻值如 "7,8,9,7,6,8"' },
-      seed: { type: 'number', description: '铜钱摇卦的随机种子，用于复现同一卦' },
-      gender: { type: 'string', enum: ['男', '女'], description: '性别（bazi 必填；liuyao 占婚恋时重要）' },
+      seed: { type: 'number', description: '铜钱摇卦的随机种子；liuyao 的 coin 模式必填（用 yi_liuyao 返回值里的 seed 复现同一卦）' },
+      gender: { type: 'string', enum: ['男', '女'], description: '性别（bazi 必填；liuyao 仅在问句无性别立场词时补成“男占/女占”参与用神取法）' },
       longitude: { type: 'number', description: 'bazi 出生地东经，用于真太阳时校正（可选）' },
     },
     render: (_args, value) => [

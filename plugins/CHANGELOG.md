@@ -4,6 +4,30 @@
 > 305 批起，各宿主适配器（`dsh-plugin/`、`yan-plugin/`）自身只留宿主专属文件，
 > 共享的运行时、技能正文、构建与自检都归本目录，各宿主卷只记「宿主侧那点事」。
 
+## 2026-10-30 第三百六十一批（共享打包层）：**报告不再挂到另一卦 ＋ gender 不再是死参数**
+
+**性质**：bug fix（行为变更）。工具名/参数集/冻结面未动（`yi_liuyao` 参数键仍
+`datetime,gender,mode,numbers,question,seed,yao`）；输出新增可选 `seed` 字段（minor 级）。
+
+- **P0 · `yi_report` 会重摇一卦**：`runReport()` 用原始参数重新 `cast()`，而六爻默认
+  `mode=coin` 无 seed 时每次都是新卦——「先 `yi_liuyao` 断卦、后出报告」实际交付的是
+  两个不相干的卦。现在：①`runLiuyao()` 在 coin 且未给 seed 时**显式生成随机种子**并在
+  返回值里回传 `seed`；②`yi_report` 的 liuyao+coin 缺 seed 直接报错拒出报告；
+  确定性方式（time/number/manual）不受影响。
+- **`gender` 从死参数变成真输入**：schema 一直声明「占婚恋等用神取法不同时重要」，
+  但 `buildLiuyaoArgs()` 从不转发、六爻脚本也没有 gender 字段——模型按描述传了性别却无效。
+  引擎按**问句文本**取用神（`use_god_relations.json`：女家/女方/女占→官鬼，
+  男家/男方/男占→妻财），故工具层在问句无性别立场词时补 `男占/女占`，有立场词时不改写
+  当事人原话。实测同一问句：女→官鬼、男→妻财。
+- **报告落盘不再互相覆盖**：`writeReportFile()` 旧文件名只精确到秒且覆盖写，同秒同格式
+  第二次会静默盖掉第一次；现加随机后缀 ＋ `wx` 排他写，并对 `yi-reports` 临时目录做
+  24h 前旧文件清理（只认本工具命名的 `yi-<学科>-*.html|md`）。
+- 复验：`node plugins/scripts/build.mjs` rc=0；`node plugins/scripts/selftest.mjs` 全绿
+  （含 [5] 参数冻结面、[7] 禁语扫描）；实测 `runLiuyao` 回传 seed 且同 seed 复现同卦；
+  `runReport` 缺 seed 报错、带 seed 出报告；连续两次落盘路径不同。
+
+分数口径不变（详见同批 `liuyao/docs/CHANGELOG.md`）。
+
 ## 2026-10-30 第三百五十九批（共享打包层）：**bazi 评测 shim 不随包——两科 DEV_ONLY 对齐**
 
 **性质**：build fix（行为保持）。零运行时、零工具契约改动。

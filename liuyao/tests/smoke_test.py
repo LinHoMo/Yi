@@ -68,6 +68,9 @@ from thinking_chain import (  # noqa: E402
     HEXAGRAM_LIUHE,
     HEXAGRAM_LIUCHONG,
 )
+# 355 批起 `reasoning_chain` 是叙述层产物（CONTRACT §六-7），analyze 不再直接产出；
+# 冒烟要验的是「能从 step facts 重建出推理链」，故走 narrative_assembly 的 fact builder。
+from narrative_assembly import build_reasoning_chain  # noqa: E402
 
 class CoverageTest(NamedTuple):
     id: str
@@ -237,8 +240,11 @@ COVERAGE_TESTS = [
         yao_values=[7, 7, 7, 7, 7, 7],        # 乾卦: 寅(二), 辰(三), 申(五) → 寅巳申? No, 辰≠巳
         date=(2024, 6, 15, 10),
         question="合作纠纷",
-        expected_check="three_punishments analysis ran",
-        assertion_fn=lambda r: isinstance(_seg(r, "three_punishments"), dict),
+        expected_check="three_punishments 段在且含 has_punishment/punishments 键",
+        # 旧写法 `isinstance(..., dict)` 恒真：_seg() 缺段也返回 {}，段整段消失仍判"有产出"。
+        assertion_fn=lambda r: isinstance(_seg(r, "three_punishments"), dict)
+            and "has_punishment" in _seg(r, "three_punishments")
+            and "punishments" in _seg(r, "three_punishments"),
     ),
 
     # ── 11. 伏藏力量(伏神得出不得出) ──────────────────────────────
@@ -301,8 +307,10 @@ COVERAGE_TESTS = [
         yao_values=[8, 7, 8, 8, 7, 8],        # 离卦(上下离)
         date=(2024, 9, 20, 10),               # 戌月入墓
         question="健康问题",
-        expected_check="officer_tomb ran and returned dict",
-        assertion_fn=lambda r: isinstance(_seg(r, "officer_tomb"), dict),
+        expected_check="officer_tomb 段在且含 has_officer_tomb/severity 键",
+        assertion_fn=lambda r: isinstance(_seg(r, "officer_tomb"), dict)
+            and "has_officer_tomb" in _seg(r, "officer_tomb")
+            and "severity" in _seg(r, "officer_tomb"),
     ),
 
     # ── 16. 游魂归魂 ──────────────────────────────────────────────
@@ -326,7 +334,8 @@ COVERAGE_TESTS = [
         date=(2024, 6, 15, 10),
         question="投资理财",
         expected_check="nayin has description",
-        assertion_fn=lambda r: isinstance(_seg(r, "nayin"), dict),
+        assertion_fn=lambda r: isinstance(_seg(r, "nayin"), dict)
+            and len(_seg(r, "nayin").get("description", "")) > 0,
     ),
 
     # ── 18. 飞伏互断 ──────────────────────────────────────────────
@@ -362,8 +371,10 @@ COVERAGE_TESTS = [
         yao_values=[7, 7, 7, 7, 7, 7],        # 乾卦, 世在6爻
         date=(2024, 6, 15, 10),
         question="吉凶总体",
-        expected_check="hexagram_body ran and returned dict",
-        assertion_fn=lambda r: isinstance(_seg(r, "hexagram_body"), dict),
+        expected_check="hexagram_body 段在且含 body_branch/body_element 键",
+        assertion_fn=lambda r: isinstance(_seg(r, "hexagram_body"), dict)
+            and "body_branch" in _seg(r, "hexagram_body")
+            and "body_element" in _seg(r, "hexagram_body"),
     ),
 ]
 
@@ -510,8 +521,8 @@ STEP5_ADJ_TESTS = [
         yao_values=[7, 7, 7, 7, 7, 7],        # 乾卦
         date=(2024, 6, 15, 10),
         question="综合预测",
-        expected_check="len(reasoning_chain) > 0",
-        assertion_fn=lambda r: len(_tc(r, "thinking_chain", "reasoning_chain", default=[])) > 0,
+        expected_check="len(build_reasoning_chain(result)) > 0（355 批起 reasoning_chain 由叙述层从 step facts 重建）",
+        assertion_fn=lambda r: len(build_reasoning_chain(r)) > 0,
     ),
 
     # ── S5-11: 置信度(confidence) ─────────────────────────────────
@@ -537,7 +548,8 @@ STEP5_ADJ_TESTS = [
         date=(2024, 6, 15, 10),
         question="何时应验",
         expected_check="timing dict has content",
-        assertion_fn=lambda r: isinstance(_tc(r, "thinking_chain", "step5_synthesis", "timing", default={}), dict),
+        # 旧写法 `isinstance(..., dict)` 恒真：默认空 dict 也过，应期整段消失不报警。
+        assertion_fn=lambda r: len(_tc(r, "thinking_chain", "step5_synthesis", "timing", default={})) > 0,
     ),
 ]
 
@@ -583,8 +595,11 @@ BOUNDARY_TESTS = [
         yao_values=[7, 7, 7, 7, 7, 7],        # 乾卦, 子/辰/申(子孙)多现
         date=(2024, 6, 15, 10),
         question="投资求财(妻财多现)",
-        expected_check="step2 handles multi-use case",
-        assertion_fn=lambda r: isinstance(_tc(r, "thinking_chain", "step2_use_god_identification", default={}), dict),
+        expected_check="step2 段在且含 use_god_count/use_god_positions 键",
+        # 旧写法 `isinstance(..., dict)` 恒真：step2 整段缺失也返回 {} 判"处理了多现"。
+        assertion_fn=lambda r: isinstance(_tc(r, "thinking_chain", "step2_use_god_identification", default={}), dict)
+            and "use_god_count" in _tc(r, "thinking_chain", "step2_use_god_identification", default={})
+            and "use_god_positions" in _tc(r, "thinking_chain", "step2_use_god_identification", default={}),
         is_boundary=True,
     ),
 
@@ -596,8 +611,9 @@ BOUNDARY_TESTS = [
         yao_values=[7, 7, 7, 7, 7, 7],        # 乾卦: 子/寅/辰/午/申/戌
         date=(2024, 9, 1, 10),                # 申月申日(冲寅)
         question="逢冲必动",
-        expected_check="analysis handles multi-clash",
-        assertion_fn=lambda r: isinstance(r.get("advanced_analysis", {}), dict),
+        expected_check="advanced_analysis 非空（多冲场景须真的跑出增强段）",
+        assertion_fn=lambda r: isinstance(r.get("advanced_analysis", {}), dict)
+            and len(r.get("advanced_analysis", {})) > 0,
         is_boundary=True,
     ),
 ]

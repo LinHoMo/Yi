@@ -29,8 +29,30 @@ jobs:
         run: |
           python devkit/sync_devkit.py --check
           python devkit/root/check_root_docs.py
+          python devkit/root/check_root_docs.py --selftest
           python devkit/root/check_docs_index.py
-          python devkit/root/check_batch_num.py
+          python devkit/root/check_docs_index.py --selftest
+          # 批号门本体自带 normal + selftest（--selftest 会一并跑真实仓）
+          python devkit/root/check_batch_num.py --selftest
+          # 治理图：--selftest 内含真实仓 strict 扫描（361 批起真实 rc 会外传）＋负例自证
+          python liuyao/dev_tools/governance_map.py --selftest
+  # 361 批：对外声明 Python 3.10+（README/yan/codex），但核心门此前只跑 3.14，
+  # 最低版本回归无处显形。本 job 用声明的最低版跑两科冒烟＋八字回归＋六神单测；
+  # 六爻古籍回归当前 17/19（reg_02/reg_09 在册待裁）不在此层拦，避免把待裁项当版本不兼容。
+  min-python-smoke:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: declared minimum python smoke
+        run: |
+          python bazi/tests/smoke_test.py
+          python bazi/tests/regression_test.py
+          python liuyao/tests/smoke_test.py
+          python liuyao/tests/six_god_wang_shuai_test.py
   gates:
     runs-on: windows-latest
     timeout-minutes: 45
