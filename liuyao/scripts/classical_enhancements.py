@@ -52,6 +52,7 @@ from util import (  # noqa: E402  通用机械工具（原 narrative_utils，311
     _combined_strength,
     element_strength_in_month,
     get_changed_hexagram_branch,
+    get_relation_from_element,
     get_twelve_growth_stage,
 )
 # element_strength_in_month / get_changed_hexagram_branch / _combined_strength 的
@@ -319,8 +320,8 @@ def _find_stage_at(lines_out, position):
     return ""
 
 
-def _find_use_god_positions(result):
-    """找到用神六亲对应的所有爻位"""
+def _find_use_god_positions_by_question(result):
+    """按问题类别推断用神六亲，返回其在卦中的爻位（与 step2 的候选构造不同义）。"""
     hex_info = result.get("original_hexagram", {})
     yao_lines = hex_info.get("yao_lines", [])
     # 从 thinking_chain 或 category 推断用神六亲
@@ -374,7 +375,7 @@ def _get_use_god_strength_level(result):
     yao_lines = hex_info.get("yao_lines", [])
     palace_element = hex_info.get("palace_element", "")
 
-    use_positions = _find_use_god_positions(result)
+    use_positions = _find_use_god_positions_by_question(result)
     if not use_positions:
         return "中和"
 
@@ -497,7 +498,7 @@ def _score_fuyin(scope, use_god_strength, result, basic_detail):
         parts.append(ctext("cr_067"))
 
     # 用神伏吟
-    use_positions = _find_use_god_positions(result)
+    use_positions = _find_use_god_positions_by_question(result)
     if any(p in changed_lines for p in use_positions):
         score -= 0.4
         parts.append(ctext("cr_068"))
@@ -549,21 +550,15 @@ def _relation_element(relation, palace_element):
     return mapping.get(relation, "")
 
 
-def _element_to_relation(element, palace_element):
-    """五行 → 六亲（辅助函数）"""
+def _element_to_relation_or_none(element, palace_element):
+    """五行 → 六亲；缺失输入返回 None（effects 以 None 作缺省，与 util 的「未知」不同）。
+
+    有效五行（木火土金水×5）与 `util.get_relation_from_element` 逐格一致；
+    本函数只多一层空值守卫，357 批已对拍 25 格零差异。
+    """
     if not element or not palace_element:
         return None
-    if element == SHENG_WO.get(palace_element):
-        return "父母"
-    elif element == SHENG_CYCLE.get(palace_element):
-        return "子孙"
-    elif element == KE_WO.get(palace_element):
-        return "官鬼"
-    elif element == KE_CYCLE.get(palace_element):
-        return "妻财"
-    elif element == palace_element:
-        return "兄弟"
-    return None
+    return get_relation_from_element(element, palace_element)
 
 
 def _infer_use_god_category(question):
@@ -2154,13 +2149,13 @@ __all__ = [
     "_combined_strength",
     "_strength_score",
     "_find_stage_at",
-    "_find_use_god_positions",
+    "_find_use_god_positions_by_question",
     "_get_use_god_strength_level",
     "_score_fanyin",
     "_score_fuyin",
     "find_hexagram_body",
     "_relation_element",
-    "_element_to_relation",
+    "_element_to_relation_or_none",
     "_infer_use_god_category",
     # hidden
     "_evaluate_hidden_spirit_emergence",

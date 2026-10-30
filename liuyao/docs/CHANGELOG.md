@@ -5,6 +5,27 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-10-30 第三百五十七批（六爻）：**§3.4 剩余同名函数结案——两组重命名去重，行为零漂移**
+
+**性质**：refactor（行为保持）。零判词、零评分、零读数改动；golden 双指纹零漂移。
+
+- `classical_enhancements._find_use_god_positions` → `_find_use_god_positions_by_question`：
+  两份同名函数签名/语义本就不同——step2 版按 `yao_lines + 用神六亲` 构造候选 dict，
+  classical 版按 `question_category/问题关键词` 推断六亲后只返回爻位列表。改名消除
+  同名误读，`effects.py` 用 `as` 别名保持内部旧名；`__all__` 同步新名。
+- `classical_enhancements._element_to_relation` → `_element_to_relation_or_none`：
+  实现改为委托 `util.get_relation_from_element`，仅保留空值守卫。**逐格对拍**：
+  木火土金水×5 共 25 格与 util 完全一致；含空/未知的 23 格差异只在「返回 None vs
+  返回『未知』」，旧实现本来就返回 None，故行为逐字保持（`effects` 以 None 作缺省）。
+- 同名函数组由 347/352 批的 **10 组降至 7 组**：剩余为 `__getattr__`（PEP 562 协议）、
+  `main`（7 个 CLI，预期）、`_chong/_he/_elem/_world_line`（域内局部实现）、
+  `_pos_to_name`（非法位置回落 `f"{pos}爻"` vs `f"第{pos}爻"`，真实文案差异，接受）。
+  **§3.4 不再有可合并的跨模块重复**，本条结案。
+- 复验：`golden.py verify` **6f70/405b 零漂移**（288 例）；AST 同名扫描 7 组；
+  `python dev_tools/check.py` 全绿；full ledger **40/40**。
+
+分数含义：与古籍案例要点的一致性，不代表现实预测命中率（AGENTS.md §一.3）。
+
 ## 2026-10-30 第三百五十六批（六爻）：**评测层物理搬迁至 `eval/`——§3.5 关闭**
 
 **性质**：refactor（行为保持）。零判词、零评分、零读数改动；golden 双指纹零漂移。

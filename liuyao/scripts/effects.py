@@ -34,8 +34,8 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
 from classical_enhancements import (
     _branch_element,
     _combined_strength,
-    _element_to_relation,
-    _find_use_god_positions,
+    _element_to_relation_or_none as _element_to_relation,  # 357 批：旧名仅本模块内部沿用
+    _find_use_god_positions_by_question as _find_use_god_positions,
     _get_use_god_strength_level,
     _infer_use_god_category,
     _pos_to_name,
