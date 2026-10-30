@@ -957,7 +957,9 @@ def main() -> int:
                ("devkit_sync", "[37] 门禁同源（devkit/ 唯一真源；两科共享门是产物，手改/野文件/第二份拷贝即红）",
                 "../devkit/sync_devkit.py"),
                ("expected_coverage", "[38] expected 书证覆盖生存线（案例构建器重生成不得静默清空书证/机械派生字段）",
-                "dev_tools/check_expected_coverage.py")):
+                "dev_tools/check_expected_coverage.py"),
+               ("xiang", "[39] 象层门（象目须带出处／类别随题类联动／象层禁倒灌评分；362 批补的能力线）",
+                "dev_tools/check_xiang.py")):
         # [36] 文档索引门于 A0-5（第三百三十一批）上提到 `devkit/root/check_docs_index.py`：
         # 它守全仓 DOCS.md，不属六爻一科。编号 36 空出，**不回填**（墓碑口径见 A5-1）。
         if want(key):

@@ -4,6 +4,22 @@
 > 305 批起，各宿主适配器（`dsh-plugin/`、`yan-plugin/`）自身只留宿主专属文件，
 > 共享的运行时、技能正文、构建与自检都归本目录，各宿主卷只记「宿主侧那点事」。
 
+## 2026-10-30 第三百六十二批（共享打包层）：**象层进工具输出面（两科）＋ 补上爻辞**
+
+**性质**：能力建设（共享运行时只做搬運与整形，不新增判定逻辑）。
+
+- `mcp/tools.mjs` 的 `liuyaoValue` 增 `xiang` 结构化块：`category`／`ti_yong`／`hu_gua`／
+  `guaci`／`yaoci`（限 8 条）／`spirit`／`fangwei`／`class_image`／`basis`；
+  缺则整块为 `null`（不塞空壳冒充覆盖）。
+- `liuyaoValue.lines[]` 补 **`line_text`（爻辞）**——此前插件面只搬盘面机械字段，
+  爻辞一项实测为零出口（爻辞真值源一直在 `kernel/yishu_core/hexagram_texts.py`）。
+- `baziValue` 增 `xiang`：`gongwei`（宫位）／`liugin`（六亲，按性别分野）／`zangfu`
+  （五行脏腑，带「非医学诊断」声明）。
+- 纪律（CONTRACT §五-bis）：象层是素材，不进 `conclusion`、不进评分；两科 `[39] 象层门`
+  守「评分侧禁读 `xiang`」，负例自证：偷读即红。
+- `node plugins/scripts/build.mjs && node plugins/scripts/selftest.mjs` 全绿；
+  新文件（`scripts/xiang.py`、`data/xiang_layer.json`）已随 build 分发到五个宿主。
+
 ## 2026-10-30 第三百六十一批（共享打包层）：**报告不再挂到另一卦 ＋ gender 不再是死参数**
 
 **性质**：bug fix（行为变更）。工具名/参数集/冻结面未动（`yi_liuyao` 参数键仍

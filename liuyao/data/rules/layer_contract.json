@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "_comment": "四段契约的机器判据（唯一真值源）。'why' 字段是给下一次改契约的人看的：写不清为什么这个键属于这一段，就不要加。改本文件必须同批改 CONTRACT.md §四 与 docs/CHANGELOG.md（320 批：conclusion 增 judgment 判定块，optional——judgment_enabled=False 时该键缺省；349 批：engine.py→render 禁边已还，CLI 输出迁 output.py），并跑 dev_tools/check_layer_contract.py --selftest。 350 批：chart 段 trigram_interpretation 迁 analyze（§六-1 关闭），engine_chart→trigram_symbolism 禁边同步删除。 351 批：thinking_chain 增结构化 pattern_tags（narrate 不再正则反解 reasoning_chain）。 354 批：section_advice 从 analyze 迁呈现层（render/output 用 ensure_section_advice 补出）。 355 批：thinking_chain 去 reasoning_chain/summary_text，增 pattern_lines；叙述由 narrative_assembly 重建。",
+  "_comment": "四段契约的机器判据（唯一真值源）。'why' 字段是给下一次改契约的人看的：写不清为什么这个键属于这一段，就不要加。改本文件必须同批改 CONTRACT.md §四 与 docs/CHANGELOG.md（320 批：conclusion 增 judgment 判定块，optional——judgment_enabled=False 时该键缺省；349 批：engine.py→render 禁边已还，CLI 输出迁 output.py），并跑 dev_tools/check_layer_contract.py --selftest。 350 批：chart 段 trigram_interpretation 迁 analyze（§六-1 关闭），engine_chart→trigram_symbolism 禁边同步删除。 351 批：thinking_chain 增结构化 pattern_tags（narrate 不再正则反解 reasoning_chain）。 354 批：section_advice 从 analyze 迁呈现层（render/output 用 ensure_section_advice 补出）。 355 批：thinking_chain 去 reasoning_chain/summary_text，增 pattern_lines；叙述由 narrative_assembly 重建。 362 批：analyze 增 xiang 象层（optional——素材不齐或象层装配失败时整块不产），并放开 trigram_interpretation 的题类专属键（category 不再恒 general）；象层禁评分见 CONTRACT §五-bis。",
   "contract": "CONTRACT.md",
-  "batch": 355,
+  "batch": 362,
   "fixtures": [
     {
       "name": "manual动",
@@ -101,7 +101,8 @@
         "question",
         "shensha_panel",
         "thinking_chain",
-        "trigram_interpretation"
+        "trigram_interpretation",
+        "xiang"
       ],
       "required": [
         "conclusion",
@@ -137,8 +138,21 @@
         },
         "trigram_interpretation": {
           "allowed": [
+            "advice",
             "body_use",
+            "career",
             "compound_name",
+            "direction_suggestion",
+            "dynamic",
+            "favorable_direction",
+            "health_advice",
+            "lower_organ_risk",
+            "organ_risk",
+            "upper_organ_risk",
+            "relationship_dynamic",
+            "search_direction",
+            "search_hint",
+            "travel_advice",
             "element_relation",
             "inner_direction",
             "inner_element",
@@ -159,6 +173,20 @@
             "outer_weather",
             "overview",
             "symbol_meaning"
+          ]
+        },
+        "xiang": {
+          "allowed": [
+            "basis",
+            "category",
+            "class_image",
+            "fangwei",
+            "guaci",
+            "hu_gua",
+            "spirit",
+            "ti_yong",
+            "trigram",
+            "yaoci"
           ]
         },
         "thinking_chain": {

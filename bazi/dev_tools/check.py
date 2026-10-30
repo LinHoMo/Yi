@@ -618,6 +618,19 @@ def main() -> int:
     if tests_ok:
         print("[38] 八字 tests √")
 
+    # [39] 象层门（第三百六十二批）：宫位/六亲/脏腑三象须齐且带出处、六亲按性别
+    # 分野须真生效、象层不得倒灌评分。此前宫位与六亲在正文实测为 0——素材在盘面里、
+    # 能力不在交付面，这种缺口原有门一条都拦不住。
+    print("\n[39] 象层门（三象齐备／六亲分野／禁倒灌评分）")
+    code, out = run(["dev_tools/check_xiang.py", "--selftest"])
+    for line in out.splitlines():
+        if line.strip():
+            print("  " + line.strip())
+    if code != 0:
+        fails.append("象层门未过（象目缺出处／六亲未按性别分野／象层倒灌评分）")
+    else:
+        print("[39] 象层门 √")
+
     if ENC_WITNESS:
         fails.extend("产物编码退化：" + w for w in ENC_WITNESS)
     if fails:

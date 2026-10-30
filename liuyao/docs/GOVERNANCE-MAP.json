@@ -1,11 +1,11 @@
 {
- "count": 64,
+ "count": 66,
  "by_tier": {
   "tool": 3,
   "ondemand": 12,
-  "nightly": 11,
+  "nightly": 12,
   "build": 10,
-  "blocking": 28
+  "blocking": 29
  },
  "unclassified": [],
  "curated_but_missing": [],
@@ -253,6 +253,13 @@
    "doc": "结构层断语外置审计（第一百六十六批 §一.1 规矩的核对版，第两百一十批上门）。"
   },
   {
+   "script": "check_xiang.py",
+   "tier": "blocking",
+   "guards": "象层门：象目带出处／类别随题类联动／象层禁倒灌评分（[39]；362 批新增）",
+   "run_by_check_py": true,
+   "doc": "象层门（362 批）：象目必须有出处、象类别必须随题类走、象层不得倒灌评分。"
+  },
+  {
    "script": "check_yingqi_information.py",
    "tier": "blocking",
    "guards": "候选池信息量红线（防铺量涨分）",
@@ -461,6 +468,13 @@
    "guards": "top-k 覆盖曲线读数器",
    "run_by_check_py": false,
    "doc": "窗化读数：主应期 top-k 覆盖曲线 vs 随机基线（第一百八十一批）。"
+  },
+  {
+   "script": "xiang_coverage.py",
+   "tier": "nightly",
+   "guards": "象层覆盖读数器（只报有没有出，不报准不准；362 批新增）",
+   "run_by_check_py": false,
+   "doc": "象层覆盖读数器（362 批）：量「象出没出」，不量「象准不准」。"
   }
  ]
 }

@@ -214,6 +214,15 @@ def narrate(a: dict) -> str:
     pd = _pillar_detail(a)
     if pd:
         lines += pd + [""]
+    # 362 批：象段（宫位／六亲／脏腑）——只呈现素材，不进评分、不作命运断言。
+    # 装配失败（analyze 未产 xiang）时整段不出，不留空壳。
+    try:
+        from xiang import format_xiang_text
+        _xt = format_xiang_text(a.get("xiang") or {})
+    except Exception:  # pragma: no cover - 象段缺失不得拖垮正文
+        _xt = ""
+    if _xt:
+        lines += [_xt, ""]
     lines += [
         f"**强弱**：{con.get('strength') or s.get('强弱') or '—'}（得分 {con.get('strength_score')}）。",
     ]

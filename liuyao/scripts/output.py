@@ -31,15 +31,24 @@ def attach_trigram(result: dict) -> dict:
 
     `engine.py` 直接消费 `build_hexagram_result`（chart），不再触达
     `trigram_symbolism`；为保持 engine 的 JSON/Text/HTML 输出面不变，本模块
-    在输出前补键。`analyze.py` 走四段管道时自行产出同一键，二者不重复计算。
+    在输出前补键。    `analyze.py` 走四段管道时自行产出同一键，二者不重复计算。
+
+    362 批：category 不再恒 `general`，与 analyze 段同一口径——由 step2 的
+    `question_class` 经 xiang.resolve_xiang_category 推导，避免同一问句在
+    两条路径上取到不同的象类别。
     """
     if not isinstance(result, dict) or "trigram_interpretation" in result:
         return result
     out = dict(result)
     try:
         from trigram_symbolism import build_trigram_interpretation
+        from xiang import resolve_xiang_category
+        _step2 = ((out.get("thinking_chain") or {})
+                  .get("step2_use_god_identification") or {})
+        _cat = resolve_xiang_category(
+            _step2.get("question_class", ""), out.get("question", ""))
         out["trigram_interpretation"] = build_trigram_interpretation(
-            out, category="general")
+            out, category=_cat)
     except Exception:
         out["trigram_interpretation"] = None
     return out

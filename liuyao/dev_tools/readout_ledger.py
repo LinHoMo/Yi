@@ -132,16 +132,17 @@ def checks():
     # 金标准基线已随结构演进前移（193 批应期窗口键、276 批报告措辞等）；
     # `golden.py verify` 当前输出「与基线指纹一致（机械+措辞均未漂移）」，
     # 说明**盘与金标准一致**，是账台登记值过期，不是回归（308 批定性）。
-    add("liuyao.golden(6f70/405b)", "193批→308批改期望；320 批纳入 judgment 判定块；321–324 批判定器 v3–v6 内容变化再重基线（机械指纹变、措辞始终未变）", lambda t: _golden("liuyao"),
-        ("6f707fbad75b2a1b", "405bc8e03a6a99e0"))
-    add("bazi.golden(fda7/3512)", "176批前→308批改期望", lambda t: _golden("bazi"),
-        ("fda7482656967518", "3512deff79fa1f72"))
-    add("governance(64/43, blk 28/26)",
+    add("liuyao.golden(6f70/7960)", "193批→308批改期望；320 批纳入 judgment 判定块；321–324 批判定器 v3–v6 内容变化再重基线（机械指纹变、措辞始终未变）；362 批象层上线：正文增【象上看】段与用神口径提示 → 措辞指纹 405b→7960（机械层未动，评分未改）", lambda t: _golden("liuyao"),
+        ("6f707fbad75b2a1b", "79603215e5863f71"))
+    add("bazi.golden(fda7/baa1)", "176批前→308批改期望；362 批象层上线：正文增【象上看】段（宫位/六亲/脏腑）→ 措辞指纹 3512→baa1（机械层未动，评分未改）", lambda t: _golden("bazi"),
+        ("fda7482656967518", "baa156000cf1d8cc"))
+    add("governance(66/45, blk 29/27)",
         "194批（312 补 310；315 补 314/315 两门；317 补 judge_shadow；329 补 fetch_zengshan_dz_cases；"
         "331 批 check_docs_index 上提到 devkit/root → 六爻 blk 28→27、脚本仍 63；"
         "339 批 A5-1 按实登记 7 个存量未分类脚本 → 八字 37→43；"
-        "344 批新增 check_expected_coverage → 六爻 63→64、blk 27→28）",
-        lambda t: _gov_counts(), ("64", "43", "28", "26"))
+        "344 批新增 check_expected_coverage → 六爻 63→64、blk 27→28；"
+        "362 批两科各新增 check_xiang（blocking）＋xiang_coverage（nightly）→ 六爻 64→66、blk 28→29，八字 43→45、blk 26→27）",
+        lambda t: _gov_counts(), ("66", "45", "29", "27"))
 
     # 344 批：expected 书证/机械派生字段的覆盖生存线（门 [38]）。
     # 1592923 的事故证明「聚合分掉 6 分、所有门全绿」可以并存；本项把非空计数

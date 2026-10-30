@@ -1,10 +1,11 @@
 {
- "count": 43,
+ "count": 45,
  "by_tier": {
   "tool": 2,
   "ondemand": 7,
   "build": 8,
-  "blocking": 26
+  "blocking": 27,
+  "nightly": 1
  },
  "unclassified": [],
  "curated_but_missing": [],
@@ -219,6 +220,13 @@
    "doc": "八字参考文档「源L<行号> + 引文」的逐字回验器。"
   },
   {
+   "script": "check_xiang.py",
+   "tier": "blocking",
+   "guards": "象层门：宫位/六亲/脏腑三象齐备且带出处、六亲按性别分野、象层禁倒灌评分（[39]；362 批新增）",
+   "run_by_check_py": true,
+   "doc": "八字象层门（362 批）：宫位/六亲/脏腑三象须齐、须带出处、且不得倒灌评分。"
+  },
+  {
    "script": "corpus_reports.py",
    "tier": "blocking",
    "guards": "多盘并集接线闸（[8]；缺件自愈）——207 批更正 tier：实为挂闸门",
@@ -315,6 +323,13 @@
    "guards": "断语外置审计 [16]（207 批更正 tier：实为挂闸门）",
    "run_by_check_py": true,
    "doc": "断语外置审计（重建 `tools/verdict_audit.py` 的等价物，2026-10-11 第三十八批）。"
+  },
+  {
+   "script": "xiang_coverage.py",
+   "tier": "nightly",
+   "guards": "象层覆盖读数器（只报有没有出，不报准不准；362 批新增）",
+   "run_by_check_py": false,
+   "doc": "八字象层覆盖读数器（362 批）：量「象出没出」，不量「象准不准」。"
   }
  ]
 }

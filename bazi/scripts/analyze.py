@@ -239,6 +239,20 @@ def analyze(chart_json: dict) -> dict:
 
     result["female_fu_zi"] = ffz
 
+    # 362 批：象层——宫位象／六亲象／五行脏腑象。纪律（CONTRACT §五-bis）：
+    # 象层只呈现素材，不进 strength/pattern/verdict 评分；装配失败整块不产。
+    try:
+        from xiang import build_xiang
+        # `by`（病药）在 return 处才并入返回面，此处显式补上：象层的脏腑象
+        # 要读 element_counts，同源同一份（不另算一遍五行）。
+        _xiang = build_xiang({**result, "bing_yao": by})
+        if _xiang:
+            result["xiang"] = _xiang
+    except Exception as exc:  # pragma: no cover - 象层失败不得拖垮推演
+        import logging
+        logging.getLogger(__name__).warning(
+            "八字象层装配失败：跳过（推演与结论不受影响）：%s", exc, exc_info=True)
+
     return {
         **result,
         "chart_summary": summary,

@@ -56,8 +56,33 @@ function liuyaoValue(result) {
     is_response: l.is_response,
     is_empty: l.is_empty,
     changed_branch: l.changed_branch ?? null,
+    // 362 批：爻辞随爻出（此前插件面只搬盘面机械字段，爻辞一项实测为零）
+    ...(l.line_text ? { line_text: l.line_text } : {}),
   }))
   const s5 = a.thinking_chain?.step5_synthesis ?? {}
+  // 362 批：象层——类象/卦爻辞/互体/六神象义/方位。
+  // 纪律（CONTRACT §五-bis）：象层是素材，不进 conclusion、不进评分；缺则整块为 null。
+  const _x = a.xiang ?? null
+  const xiang = _x
+    ? {
+        category: _x.category ?? '',
+        ti_yong: _x.ti_yong ?? null,
+        hu_gua: _x.hu_gua ?? null,
+        guaci: _x.guaci ?? null,
+        yaoci: (_x.yaoci?.lines ?? []).slice(0, 8).map((l) => ({
+          position: l.position ?? null,
+          name: l.name ?? '',
+          line_text: l.line_text ?? '',
+          six_spirit: l.six_spirit ?? '',
+          is_moving: !!l.is_moving,
+          is_world: !!l.is_world,
+        })),
+        spirit: _x.spirit ?? null,
+        fangwei: _x.fangwei ?? null,
+        class_image: _x.class_image ?? null,
+        basis: _x.basis ?? null,
+      }
+    : null
   return {
     discipline: 'liuyao',
     question: chart.question ?? '',
@@ -89,6 +114,7 @@ function liuyaoValue(result) {
       name: f.name,
       reason: f.reason,
     })),
+    xiang,
     narrative: bounded(result.narrative),
   }
 }
@@ -187,6 +213,8 @@ function baziValue(result) {
     dayun,
     liunian,
     liuyue,
+    // 362 批：象层——宫位象/六亲象/五行脏腑象（素材型，不进结论、不进评分）
+    xiang: a.xiang ?? null,
     narrative: bounded(result.narrative, 8000),
   }
 }

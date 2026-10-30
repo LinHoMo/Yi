@@ -4,7 +4,7 @@
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化（含 conclusion_sha，任何字段都算），措辞层漂移=narrate 断语变化（两层分列归因）"
   },
   "digest": "fda7482656967518",
-  "narrate_digest": "3512deff79fa1f72",
+  "narrate_digest": "baa156000cf1d8cc",
   "drift_log": [
     {
       "from": "57dc7e890af222fa",
@@ -50,12 +50,6 @@
     }
   ],
   "narrate_drift_log": [
-    {
-      "from": "a405c8149be9881c",
-      "to": "ebe6ecb30993dcdc",
-      "date": "2026-10-06",
-      "reason": "扩 TIAO_HOU 51→90 格：《穷通宝鉴》逐格机械提取+引文原文子串校验+耑用变体，季节兜底16格；机械层零漂移，仅调候措辞随覆盖扩面变化"
-    },
     {
       "from": "ebe6ecb30993dcdc",
       "to": "1233c399b54a8781",
@@ -169,6 +163,12 @@
       "to": "3512deff79fa1f72",
       "date": "2026-10-26",
       "reason": "第三百二十批：从格试探档不再吞正格成败——judge 早退条件收窄（tentative_from 档照判成败救应+basis 备参注），书据《子平真诠》格局法月令定格论成败（ZP 七例书答均在正格框架）；pattern 29/36→36/36，holdout 96.6→99.5"
+    },
+    {
+      "from": "3512deff79fa1f72",
+      "to": "baa156000cf1d8cc",
+      "date": "2026-10-30",
+      "reason": "第三百六十二批：八字象层上线——①analyze 增 xiang（宫位象/六亲象/五行脏腑象），象目逐块带 basis，六亲按性别分野（男命正财为妻、女命正官为夫），五类六亲反查内核 LIUQIN_TO_SHISHEN；②正文增【象上看】段，并在 check_dim_surface.NON_SCORED_SECTIONS 登记「象只呈现不评分」的理由；③象层进 yi_bazi 结构化输出；④新增 [39] 象层门与 dev_tools/xiang_coverage.py 读数器；⑤smoke 键面接收 xiang。机械层零漂移（评分未动），措辞层漂移全部来自新增象段。"
     }
   ]
 }

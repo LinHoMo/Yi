@@ -4,7 +4,7 @@
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
   "digest": "6f707fbad75b2a1b",
-  "narrate_digest": "405bc8e03a6a99e0",
+  "narrate_digest": "79603215e5863f71",
   "drift_log": [
     {
       "from": "aaa31c32f2800e5b",
@@ -187,6 +187,12 @@
       "to": "405bc8e03a6a99e0",
       "date": "2026-10-25",
       "reason": "第两百八十二批：随官入墓计价旺衰条件化（随鬼入墓章覺子总论 L685 逐字「亦是休囚無气始見危，若旺而有扶亦有求解」——入墓者旺相有扶减免×0.3、休囚无气原价），替换旧占病嗅探×0.3；87条漂移全部为入墓命中案例的score/concl变化，方向与书证一致，tune/holdout/全部外部集split读数零退化"
+    },
+    {
+      "from": "405bc8e03a6a99e0",
+      "to": "79603215e5863f71",
+      "date": "2026-10-30",
+      "reason": "第三百六十二批：象层上线——①analyze 增 xiang（类象/卦爻辞/互体/六神象义/方位），象目逐块带 basis；②trigram_interpretation 的 category 由恒 general 改为随 step2.question_class 联动（映射表 data/rules/xiang_layer.json）；③正文增【象上看】段；④象层进 yi_liuyao 结构化输出并补爻辞；⑤现代问法政策标记 use_god_policy（只标记不取值）。机械层零漂移（评分未动），措辞层漂移全部来自新增象段与口径提示。"
     }
   ]
 }

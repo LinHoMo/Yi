@@ -5,6 +5,59 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-10-30 第三百六十二批（六爻＋八字）：**象层上线——把「象分析」从素材变成能力**
+
+**性质**：能力建设（capability），不是调参、不是 bug fix。起因是深度审查的判据：
+断八字、断六爻，除了卦理还有**象分析**；而本仓的象此前**素材在、能力不在**——
+八卦类象表、卦辞爻辞、六神属性、四柱十神都在盘面里，正文实测命中数为 0
+（六爻 1087 字正文里 类象/方位/爻辞/互/六亲 全为 0；八字 4303 字正文里 宫位/六亲/身体 全为 0）。
+**两科 golden 机械层均零漂移**（评分未动），措辞层漂移全部来自新增的【象上看】段与口径提示，
+已 capture 记入 `narrate_drift_log`。
+
+### 六爻侧
+
+- **新增 `scripts/xiang.py`**（象层唯一装配点）＋ 数据源 `data/rules/xiang_layer.json`：
+  `category`（题类→象类别）／`trigram`（类象）／`ti_yong`（体用）／`guaci`（卦辞）／
+  `yaoci`（动爻与世爻爻辞）／`hu_gua`（互体：京房二三四为下互、三四五为上互，此前全仓无此算法）／
+  `spirit`（世/应/用神/动爻六神象义）／`fangwei`（体用方位）／`class_image`（题类专属类象）。
+- **`category` 不再恒 `general`**：`analyze.py` 原有一行写死 `build_trigram_interpretation(result, category="general")`，
+  类象永远只出通用档。现由 `step2.question_class` 经映射表推导，装配点移到 chain 之后；
+  `output.py` 的 `attach_trigram` 同口径（两条路径不再取到不同的象类别）。
+  实测：疾病→health、失物→loss、功名→career、婚姻→relationship、行人→travel。
+- **正文与插件出口**：`narrate.py` 增【象上看】段（无素材则整段不出，不留空壳）；
+  `plugins/mcp/tools.mjs` 的 `liuyaoValue` 增 `xiang` 结构化块，并补上此前从未输出的 **`line_text`（爻辞）**。
+- **现代问法政策标记**：`step2` 增 `use_god_policy`（只标记、**不改用神取值、不进评分**）。
+  兜底层（实测 219 条问法中 44 条）标 `fallback_shi_yao`、词典单字键层（88 条）标
+  `thin_single_char_key`，把「薄在哪、建议怎么转问」写进产物面；正文增「用神口径提示」一行。
+- **新门 `[39] 象层门`**（`dev_tools/check_xiang.py`，`--only xiang`）：象目须带非空 `basis`／
+  类别须随题类联动（负例：恒 general）／评分侧 18 个模块禁读 `xiang` 且 `xiang` 不得进 `WEIGHTS`。
+- **新读数器 `dev_tools/xiang_coverage.py`**：13 题类 × 2 种子 = 26 路实跑，报象目产出率与
+  题类→象类别分布。**只报「有没有出」，不报「准不准」**——象不进评测维度，故不产任何质量分。
+  首轮读数：8 个象目全部 26/26；「天气·占雨」示例问句落到 `travel`（问句「何日有雨」
+  未命中 question_classes 的占雨词族，被行人词族「何日」接走）——**登记为待办，不在本批改**
+  （改题类关键词会动 step5 门控与评分，属另一条线）。
+
+### 八字侧
+
+- **新增 `scripts/xiang.py`** ＋ 数据源 `data/xiang_layer.json`：`gongwei`（宫位：年为根／月为苗／
+  日为花／时为果，含时限与身位）／`liugin`（六亲：五类反查内核 `LIUQIN_TO_SHISHEN`，
+  子平分野按性别——男命正财为妻、女命正官为夫；传统歧异处两说并记不裁决）／
+  `zangfu`（五行脏腑，**象意提示、非医学诊断**，交付面强制带此声明）。
+  **不借道叙述层私表**：narrate 的 `liushen_image.json`／十神行事表（铁律一）不在读取范围。
+- **正文与插件出口**：`narrate.py` 增【象上看】段；`baziValue` 增 `xiang`。
+  八字侧 `check_dim_surface.NON_SCORED_SECTIONS` 已登记「象上看」的**不评分理由**
+  （§六 要求「看到的没在评」必须说明，不许沉默）。
+- **新门 `[39] 象层门`**（`dev_tools/check_xiang.py`）：三象齐备且带出处／六亲性别分野真生效
+  （定盘甲辰·己巳·甲子·辛未：男命月干正财应「妻」、女命时干正官应「夫」）／评分侧禁读 `xiang`。
+- **新读数器 `dev_tools/xiang_coverage.py`**：5 定盘 × 男女 = 10 盘，三象均 10/10，
+  5/5 定盘男女六亲口径均有差异。
+
+### 契约与文档
+
+- `CONTRACT.md` 新增 **§五-bis 象层：象与断的分界**（象在 analyze 产出、象不进断、
+  象目带出处、象不冒充成绩）；两科 `data/rules/layer_contract.json` 同步接收 `xiang`
+  键与题类专属子键，`batch` 抬到 362；八字 `tests/smoke_test.py` 的 `ANALYZE_KEYS` 接收 `xiang`。
+
 ## 2026-10-30 第三百六十一批（六爻）：**时间起卦分支缺失修复 ＋ 三处门禁/文档硬伤**
 
 **性质**：bug fix（行为变更，修的是缺陷不是调参）。零判词、零评分口径改动；

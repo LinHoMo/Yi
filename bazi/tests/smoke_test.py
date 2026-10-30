@@ -32,7 +32,9 @@ ANALYZE_KEYS = {"birth", "calendar_policy", "chart_summary", "conclusion", "dayu
                 "dayun_ming_yindong", "discipline", "factors", "female_fu_zi", "liu_yue",
                 "liunian_ming_yindong", "ming_shen_gong", "pillar_relations", "pillars",
                 "question", "san_hui", "shensha", "strength", "tai_yuan", "ten_god_combos",
-                "tian_ke_di_chong", "tiaohou", "tong_guan", "xiao_yun", "xunkong", "bing_yao"}
+                "tian_ke_di_chong", "tiaohou", "tong_guan", "xiao_yun", "xunkong", "bing_yao",
+                # 362 批：象层（宫位/六亲/脏腑）——optional，素材不齐或装配失败时整块不产
+                "xiang"}
 
 
 def run_case(name: str, use_pillars: bool, verbose: bool) -> list[str]:

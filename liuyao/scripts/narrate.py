@@ -134,6 +134,22 @@ def _use_god_basis_narrative(chain: dict) -> str:
     return ""
 
 
+def _use_god_policy_narrative(chain: dict) -> str:
+    """362 批：现代问法政策——用神落在薄底座层时，把「薄在哪、怎么办」说出来。
+
+    只陈述，不改判：用神取值与 verdict 一律不动（step2 的 policy 标记同为只标记）。
+    """
+    s2 = chain.get("step2_use_god_identification") or {}
+    pol = s2.get("use_god_policy") or {}
+    if not pol:
+        return ""
+    if pol.get("kind") == "fallback_shi_yao":
+        return f"用神口径提示：{pol.get('why','')}——{pol.get('advice','')}"
+    if pol.get("kind") == "thin_single_char_key":
+        return f"用神口径提示：{pol.get('why','')}——{pol.get('advice','')}"
+    return ""
+
+
 def _build_narrative_block(a: dict, chain: dict) -> str:
     """构造正文的额外叙事段落，注入到数据展示之前给读者"读卦引导"。"""
     parts = []
@@ -153,6 +169,10 @@ def _build_narrative_block(a: dict, chain: dict) -> str:
     use_basis = _use_god_basis_narrative(chain)
     if use_basis:
         parts.append(use_basis)
+
+    use_policy = _use_god_policy_narrative(chain)
+    if use_policy:
+        parts.append(use_policy)
 
     if not parts:
         return ""
@@ -197,6 +217,16 @@ def narrate(a: dict) -> str:
     elif narrative_block:
         body_paragraphs = [narrative_block]
 
+    # 3.5 象段（362 批）：类象/卦爻辞/互体/六神象义/方位——素材型象分析。
+    # 与「断」分流：象段只呈现素材，不写吉凶判词，不进评分（CONTRACT §五-bis）。
+    # 象层装配失败（analyze 未产 xiang）时本段整体不出，不留空壳。
+    xiang_text = ""
+    try:
+        from xiang import format_xiang_text
+        xiang_text = format_xiang_text(a.get("xiang") or {})
+    except Exception:  # pragma: no cover - 象段缺失不得拖垮正文
+        xiang_text = ""
+
     # 4. 应期段
     timing_plain = narrative.get("timing_plain") or ""
     timing_section = f"**时间上**：{timing_plain}" if timing_plain else ""
@@ -226,6 +256,8 @@ def narrate(a: dict) -> str:
     for p in body_paragraphs:
         if p:
             parts.append(p)
+    if xiang_text:
+        parts.append(xiang_text)
     if timing_section:
         parts.append(timing_section)
     if advice_lines:

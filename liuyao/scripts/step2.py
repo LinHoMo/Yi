@@ -301,6 +301,8 @@ def step2_identify_use_god(r: dict) -> dict:
     return {
         "question_category": question_category,
         "question_class": question_class,
+        # 362 批：现代问法政策标记（只标记不取值：不改用神、不进评分）
+        "use_god_policy": _use_god_policy(question_category, question_text),
         "use_god_category": use_god_category,
         "use_god_basis": use_god_basis,
         "use_god_element": use_god_element,
@@ -444,6 +446,43 @@ def _use_god_basis(question_category: str, question_text: str, chosen: str) -> s
             return f"《增刪卜易》：{b['citation']}（问题词典·{label}）"
         return f"问题词典推断（{label}·无古籍逐条出处）"
     return "问题词典默认（无古籍逐条出处，未见过的问法会退化）"
+
+
+def _use_god_policy(question_category: str, question_text: str) -> dict | None:
+    """362 批：现代问法政策标记——**只标记，不改取值、不进评分**。
+
+    用神取法四层里，语义底座最薄的是两处（use_god_coverage.py 实测 219 条问法：
+    法则 69／覆盖 20／词典 86／兜底 44，其中 88 条靠单字键）：
+      · 兜底层：没命中任何定式，用神退到世爻；
+      · 词典单字键：靠问句里一个字（如「财」「官」）命中。
+    这两处此前与「法则·有引文」层在产物面上长得一样——读者无从分辨，也没人
+    统计过它们占多少。本标记把「落在哪一层、薄在哪、该怎么办」写出来，
+    **不改 use_god_category 的取值**，也不进任何评分项（改动即 [39] 门红）。
+    """
+    _, meta = _decide_use_god(question_category, question_text)
+    src = meta.get("source")
+    if src == "兜底":
+        return {
+            "kind": "fallback_shi_yao",
+            "layer": "兜底",
+            "why": "问法未命中法则／覆盖／词典三层的任何取用神定式，用神退到世爻（权宜口径）",
+            "advice": "建议转问：把问句压到古籍有定式的事类（求财／求官／疾病／失物／行人），"
+                      "或补出所问之「何人何物」再占",
+            "affects_score": False,
+        }
+    if src == "词典":
+        keys = meta.get("keys") or []
+        top = max(keys, key=len) if keys else ""
+        if top and len(top) == 1:
+            return {
+                "kind": "thin_single_char_key",
+                "layer": "词典·单字键",
+                "key": top,
+                "why": f"用神由问句里的单字「{top}」命中，语义底座薄于多字定式",
+                "advice": "可补出所问的具体事类再占，让用神落到法则／覆盖层",
+                "affects_score": False,
+            }
+    return None
 
 
 def _decide_use_god(question_category: str, question_text: str) -> tuple[str, dict]:

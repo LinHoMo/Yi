@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "_meta": {
+    "what": "象层（类象/卦爻辞/互体/六神象义/方位）的类别映射与象目出处登记",
+    "batch": 362,
+    "why_here": "AGENTS.md §三：断语/象征文案进 data/*.json，代码只留算法",
+    "discipline": [
+      "象层只呈现素材，不做吉凶判定：不进 verdict、不进 WEIGHTS、不参与评分（CONTRACT §五-bis）",
+      "每个象目必须带 basis（出处）；无出处的象目不得产出",
+      "题类→象类别的映射是**现代问法启发式**，与 question_classes.json 同源同口径，不冒充古籍定式"
+    ],
+    "consumers": [
+      "scripts/xiang.py —— build_xiang()",
+      "scripts/analyze.py —— analyze 段挂载 xiang 键",
+      "scripts/narrate.py —— 正文【象】段"
+    ]
+  },
+  "category_by_class": {
+    "功名科举": "career",
+    "求财": "career",
+    "终身财福": "career",
+    "疾病·近病": "health",
+    "疾病·久病": "health",
+    "婚姻": "relationship",
+    "行人": "travel",
+    "失物": "loss",
+    "逃亡捕捉": "loss",
+    "官非词讼": "general",
+    "天气·占雨": "general",
+    "天气·占晴": "general",
+    "其他": "general"
+  },
+  "category_fallback_keywords": {
+    "why": "question_class 缺失或判为『其他』时，用问句直判；逐类顺序扫描，先中先得，都不中落 general",
+    "career": ["工作", "事业", "升职", "升迁", "面试", "offer", "跳槽", "创业", "项目", "生意", "投资", "财运", "薪资"],
+    "health": ["病", "身体", "健康", "手术", "住院", "体检", "康复", "吃药", "疼"],
+    "relationship": ["感情", "婚姻", "恋爱", "分手", "复合", "相亲", "配偶", "对象", "结婚"],
+    "travel": ["出行", "旅行", "旅游", "出差", "归期", "回家", "回不来"],
+    "loss": ["丢", "失物", "找不", "遗失", "不见了", "落哪"]
+  },
+  "basis": {
+    "trigram": "liuyao/data/trigram_symbolism.json（八卦万物类象/方位/复合卦名）",
+    "spirit": "liuyao/data/classical_patterns_data.json#six_spirit_properties",
+    "texts": "kernel/yishu_core/hexagram_texts.py（卦辞/爻辞唯一真值源，SKILL.md）",
+    "question_class": "liuyao/data/rules/question_classes.json",
+    "hu_gua": "算法：京房互体——二三四爻为下互、三四五爻为上互；卦名取 trigram_symbolism.json#hexagram_names",
+    "fangwei": "算法：体卦（下卦）取本方、用卦（上卦）取对方；方位表同源 trigram_symbolism.json#trigram_directions"
+  },
+  "render": {
+    "why": "正文【象】段的引导句与收束句外置，与 narrative_templates.json 同一纪律（文案不内嵌代码）",
+    "lead": "**象上看**：",
+    "separator": "；",
+    "hu_gua_none": "本卦无互体可析",
+    "spirit_none": "六神象义未出（盘面缺六神）"
+  }
+}

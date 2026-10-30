@@ -168,17 +168,35 @@ def analyze(chart_json: dict, judgment_enabled: bool = True) -> dict:
     不是因为判定器已经取代判词（`judgment_table.json.implementation.verdict` 在册）。
     """
     result = dict(chart_json)
-    # 第三百五十批：chart 段不再产 `trigram_interpretation`（CONTRACT §六-1）；
-    # 由 analyze 段补出。旧 chart 段的 graceful degradation 照搬：失败记 None，
-    # 不阻塞推演；`[32]` 的 analyze 嵌套白名单同批接收该键。
-    try:
-        from trigram_symbolism import build_trigram_interpretation
-        result["trigram_interpretation"] = build_trigram_interpretation(
-            result, category="general")
-    except Exception:
-        result["trigram_interpretation"] = None
     chain_full = run_thinking_chain(result)
     chain = chain_full.get("thinking_chain", chain_full)
+
+    # 第三百五十批：chart 段不再产 `trigram_interpretation`（CONTRACT §六-1）；
+    # 由 analyze 段补出。362 批：category 不再恒 `general`——改由 step2 的
+    # `question_class` 推导（映射表 data/rules/xiang_layer.json），故装配点
+    # 必须移到 chain 之后。graceful degradation 照旧：失败记 None，不阻塞推演。
+    _cat = "general"
+    try:
+        from xiang import resolve_xiang_category
+        _step2 = chain.get("step2_use_god_identification") or {}
+        _cat = resolve_xiang_category(
+            _step2.get("question_class", ""), result.get("question", ""))
+        from trigram_symbolism import build_trigram_interpretation
+        result["trigram_interpretation"] = build_trigram_interpretation(
+            result, category=_cat)
+    except Exception:
+        result["trigram_interpretation"] = None
+    # 362 批：象层——把卦爻辞/互体/六神象义/类象/方位收成一处带出处的块。
+    # 纪律（CONTRACT §五-bis）：象层不进评分、不参与 verdict；失败即整块不产。
+    try:
+        from xiang import build_xiang
+        _xiang = build_xiang(result, chain, category=_cat)
+        if _xiang:
+            result["xiang"] = _xiang
+    except Exception as exc:  # pragma: no cover - 象层失败不得拖垮推演
+        import logging
+        logging.getLogger(__name__).warning(
+            "象层装配失败：跳过（推演与 verdict 不受影响）：%s", exc, exc_info=True)
 
     step2 = chain.get("step2_use_god_identification") or {}
     step3 = chain.get("step3_strength_analysis") or {}
