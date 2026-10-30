@@ -15,9 +15,9 @@
 分数口径（SKILL.md 铁律三，务必连同分数一起读）：
   [7] 的分数是**古籍案例对齐分**——引擎输出与《穷通宝鉴》《子平真诠》《滴天髓》等
   案例要点的加权一致性（strict 计分模型），用于回归审计，**衡量不了现实命中率**。
-  tune n=60、holdout n=278（2026-10-13 按 `eval/evaluate.py --split … --save` 实跑更正；
+  tune n=60、holdout **n=276**（368 批清例：删掉 MT529／MT540 两份重复考点，278→276；
   原记「tune n=138、holdout n=532」系 #39 清出 342 例冗余**前**的口径，新旧不可比——
-  见 docs/EVAL-PLAN.md §1.1 与 §四.4）。holdout 集合未参与本轮判据调参。
+  见 docs/EVAL-PLAN.md §1.1 与 §四.4）。holdout 集合未参与判据调参。
 
 门槛设计（SKILL.md）：
   · 基线取**实测值**，只准前进不准后退：低于 BASELINE 即判红（范式照六爻
@@ -25,13 +25,15 @@
     `docs/CHANGELOG.md` 登记理由；**下调**基线只能改本文件里的字面量（进 git diff、
     进评审），本地 `check_baseline.json` 覆盖文件一律**不得放宽**（见 `_effective_baseline`）。
   · §四.2「tune 均分无故跌破 95 即视为回归」落在**加权均分**口径上（当前 tune 100.0 /
-    holdout 99.5（308 批实测，原登记 97.6），均 ≥95，AGENTS_TUNE_FLOOR 有机械断言兜着）。
+    holdout 100.0（368 批实测，原登记 97.6／99.5），均 ≥95，AGENTS_TUNE_FLOOR 有机械断言兜着）。
   · ⚠ tune 已 **100.0% 满分饱和**（60/60，min=max）。按 AGENTS.md §三.4 自引口径，
     该集**已丧失区分能力**，只能当回归哨兵，不得作为能力证据引用（308 批标注）。
-  · 维度层不用百分比当门槛，改用**绝对命中数**（`DIM_HITS`）：当前 holdout 的
-    pattern 100.0%（308 批实测 36/36，原 80.6%）／cong_ge 86.7% 是「满分例数/适用例数」的维度内比值（n=36／n=15，
-    另有 242／263 例 N/A——本集合 n=278，Applicable+NA 必须等于 278），不是 §四.2 说的「均分」；
-    把它当 95 分线是口径错配。
+  · 维度层不用百分比当门槛，改用**绝对命中数**（`DIM_HITS` 与 368 批新增的 `FULL_CASES`）：
+    当前 holdout 的 pattern 100.0%（36/36，原 80.6%）／cong_ge **93.3%**（14/15，368 批由 13 抬上）
+    是「满分例数/适用例数」的维度内比值（另有 240／261 例 N/A——本集合 n=276，
+    Applicable+NA 必须等于 276），不是 §四.2 说的「均分」；把它当 95 分线是口径错配。
+    `FULL_CASES` 数的是「pct==100 的例数」，专堵**均分四舍五入掩盖余量**：均分打印 100.0 时，
+    唯一还看得见余量的就是这一项（当前 holdout 275/276，未满分的是 ZC014 的从格真假）。
     而百分比本身不能当回归门槛——新增案例只涨分母、必然压低百分比，拿它设线等于
     逼人调阈值或拒绝扩样。命中数则单调：引擎回归必压低它，扩案例不会。
 """
@@ -59,21 +61,36 @@ CASES_FILE = DISC / "data" / "cases" / "bazi_classical_cases.json"
 BASELINE = {
     "tune": 100.0,        # n=60（2026-10-13 按 #39 清冗余后的实测例数更正，原注 n=30）
     # 308 批只准前进：96.6 → 99.5（实测；抬基线即收紧门，与 AGENTS.md §四.2 同口径）。
-    "holdout": 99.5,      # n=278（未参与本轮调参；原 96.6 系 2026-10-10 从格判据改正后登记，
-                          #  原注 n=246 系语料扩容前快照；308 批按实测抬到 99.5，只准前进）
+    "holdout": 100.0,     # n=276（368 批清例：278→276，删两例重复考点；未参与调参）
+                          #  97.6（2026-10-10）→ 99.5（308 批）→ 100.0（367 批按书证校正 2 份
+                          #  写错的期望、368 批清例后实测；抬基线即收紧门，§四.2 只准前进）。
+                          #  ⚠ 100.0 是**打印值**，真实均分 99.99x——百分比到顶后已看不出余量，
+                          #  故同批新增 FULL_CASES（满分例数）当第二条绝对量门槛。
 }
 AGENTS_TUNE_FLOOR = 95.0  # SKILL.md 的均分硬下限；BASELINE 必须严于它
 
 # 维度绝对命中数下限（= evaluate.py 明细里的「满分例数」；n/a 例不进分母故不影响本数）
 DIM_HITS = {
     "tune": {"tiaohou": 60, "ten_gods": 1, "hidden_stems": 1},
-    "holdout": {"pillars": 213, "tiaohou": 53, "pattern": 36, "cong_ge": 13,
+    "holdout": {"pillars": 213, "tiaohou": 51, "pattern": 36, "cong_ge": 14,
                 "ten_gods": 213, "hidden_stems": 213, "shensha": 5},
+}
+# 满分例数下限（368 批新增）：**专门堵「均分四舍五入掩盖余量」这个洞**。
+# 为什么需要它：holdout 现在打印 100.0%（=99.99x），可仍有例不满分——一个回落只要不足以
+# 把均分压过 99.95，就会**完全静默**。本仓已有两次同型事故（第一百六十八批丢 214 例、
+# 365 批一个恒真新维度静默长出，均分都是一位未动），故把「满分例数」也写成绝对量下限。
+# 只数 pct==100 的例：新增案例只涨分母、不会压低它（§四.2 同口径）。
+FULL_CASES = {
+    "tune": 60,
+    "holdout": 275,
 }
 # tiaohou 下限沿革：30／19（扁平化带入的陈旧字面量）→ 60／51（按实测上调）→ 60／**53**
 # （367 批：校正 MT042/MT046 两份写错的期望后，该维 holdout 满分数 51→53，下限随实测同升，
-# 依 §四.2「只准前进」）。注意 53/53 是**该维命中数**，不等于"引擎在调候上全对"：
-# 全库 120 格里仍有未引满的格（可达性读数见 EVAL-PLAN 步 6），此处只数带书证的 53 例。
+# 依 §四.2「只准前进」）→ 60／**51**（368 批：清例删掉 MT529／MT540 两份重复考点，
+# 该维适用数 53→51，**分母同步缩小**故下限随之下调 2——删掉的两例原本就是满分例，
+# 这不是放宽：同批 cong_ge 下限由 13 抬到 14，满分例数下限新立为 275/276）。
+# 注意 51/51 是**该维命中数**，不等于"引擎在调候上全对"：全库 120 格里仍有未引满的格
+# （覆盖率读数见 EVAL-PLAN 步 6），此处只数带书证的 51 例。
 # tiaohou 下限原为 tune 30／holdout 19（扁平化提交 e2c77ad 带入，此后语料扩样但
 # 该两格从未回头改）——实测满分数已是 60／51，即**下限只压着实测的 50%／37%**：
 # 该维静默丢掉一半（holdout 丢 32/53）也不会判红，正是本门要防的静默盲区。
@@ -226,6 +243,31 @@ def _alignment_floor(baseline: dict, fails: list[str], measured: dict,
             else:
                 print(f"      · {dim:<13s} 满分 {full}/{applicable}（{rate}%）"
                       f"—— 本次未设下限；扩样后请把实测命中数登记进 DIM_HITS")
+
+        # 满分例数（368 批）：均分四舍五入到 100.0 时，唯一还能看见余量的读数是这个。
+        rows = (json.loads(eval_file.read_text(encoding="utf-8")).get("results")
+                or {}).get("rows") or []
+        if rows:
+            perfect = sum(1 for r in rows if float(r.get("pct") or 0) >= 100.0 - 1e-9)
+            need_full = FULL_CASES.get(split)
+            if need_full is None:
+                print(f"      · 满分例数 {perfect}/{len(rows)} —— 本次未设下限")
+            else:
+                ok_full = perfect >= need_full
+                print(f"      · 满分例数 {perfect}/{len(rows)}（下限 ≥{need_full}）"
+                      f"{'√' if ok_full else '×'}")
+                if not ok_full:
+                    fails.append(f"{split} 满分例数 {perfect} 低于下限 {need_full}"
+                                 f"（n={len(rows)}）：有案例回落但均分被四舍五入掩盖")
+            below = sorted((r for r in rows if float(r.get("pct") or 0) < 100.0 - 1e-9),
+                           key=lambda r: float(r.get("pct") or 0))
+            for r in below[:5]:
+                lost = [f"{k}:{v[0]}/{v[1]}" for k, v in (r.get("dims") or {}).items()
+                        if v[1] and v[0] < v[1]]
+                print(f"      · 未满分 {r.get('id')} {r.get('pct')}%"
+                      f"（{'；'.join(lost) if lost else '—'}）")
+            if len(below) > 5:
+                print(f"      · …另有 {len(below) - 5} 例未满分（合计 {len(below)} 例）")
 
 def main() -> int:
     force_utf8_stdio()

@@ -60,17 +60,17 @@ def _from_judge(chart_json: dict, details: list[dict], day_stem: str,
         皆书不作从论，实测改正后 pattern 28/36→29/36。
       - 从旺/从强须 得令 且 sheng_fu≥5.0（「旺之极矣」），防月刃/建禄等正格误入
       - 从气须 失令 且 日主有根 且 四支本气集中于金水/木火
-      - 灰区（仍登记，未解）：
-        ① 真/假从仍只认「无本气根且无有力印比」，故透干比劫虚浮无根而书判假从者
-          此处按真从（ZC014 辛金天干丙丁庚辛、ZC015 丁印被癸克）。**367 批（2026-10-30）
-          把这一条从"约数"改成实测，并证明它不是"再调一次阈值"能收的**：
+      - 灰区（① 于 368 批部分收口，② 仍登记）：
+        ① 真/假从判据＝「有本气根／有力印比／**天干层有气印比**」三者任一 → 假从。
+          仍有一例书判假从而此处判真（ZC014 辛金天干丙丁庚辛）；ZC015（丁印被癸克）
+          已由 368 批的天干层判据收掉。**367 批（2026-10-30）起本条由"约数"改为实测，
+          并证明 ZC014 不是"再调一次阈值"能收的**：
           · 旧注写「改读任一层生扶使 ZC001/ZC005/ZC010 三例反吐、净 −1」——实测不符：
             ZC001 根本没有印比透干（戊丙丙，全是财伤），不会翻转；实际翻转的是
             ZC002/ZC003/ZC005/ZC009/ZC010 **五例**（+2 −5，净 −3，15 例中 13→10）。
             旧注的三例名单与净数一并作废，勿再引用。
           · 另测四种更细的读法（坐支藏干生之／坐支有同类根／再加"不受月令克"／
-            再加"得月令旺相休"），15 例命中分别为 9／9／11／12，**没有一种超过现行 13**；
-            现行 13/15 仍是这一族判据的最好成绩。
+            再加"得月令旺相休"），15 例命中分别为 9／9／11／12，**没有一种超过当时的 13**。
           · **ZC014 不可能由"印比自身状态"修复**（这不是没试，是有反例的证明）：
             ZC003 与 ZC014 的印比局部配置逐项相同——同一颗庚金、同坐寅、同在寅月、
             同被丙火克——而书判 ZC003 真从（「一点庚金临绝，丙火力能锻之，从财格真」）、
@@ -78,14 +78,15 @@ def _from_judge(chart_json: dict, details: list[dict], day_stem: str,
             故必有一例判错。要分开它们只能引入日主/从神侧的特征（如日主克从神＝从财、
             从神克日主＝从杀），而该线索在 15 例里与"从官杀→假"高度重合（6 例从官杀
             中 5 例假，唯一反例 ZC005 因支全金局），样本不足以立判据，强立即过拟合
-            （AGENTS.md §四.3）。⇒ 本项按「读得懂、不能机械判」结案，缺的前置是
-            **从神纯度 / 日主与从神生克方向**这一层判据，未立。
-          · ZC015 单独看是可收的（印比透干＋得坐支之生＋不受月令克 ⇒ 假从，实测 +1、
-            15 例内零回归）；但同一判据会把 10 例**无书证**的从格（从儿/从势/从官杀/
-            从财，含 ZP005、ZP020、MT546）由真从一并翻成假从，全书无文可验对错。
-            按 §四.7「改的格在外集没有对应案例，读数本就不该动」的反面——此处是
-            "改了会动 10 例、却一例都验不了"，故**不落码**，登记为「等书证」：将来
-            收到书文明写真假从的案例再复核，届时一并改判据与 [7] 下限。
+            （AGENTS.md §四.3）。⇒ **ZC014 一例按「读得懂、不能机械判」结案**，缺的前置是
+            **从神纯度 / 日主与从神生克方向**这一层判据，未立（368 批复核后仍无变化）。
+          · **ZC015 已于 368 批收掉**：落的是「天干层有气生扶」判据（见下方
+            `dry_yinbi_youqi` 段）——印比透干 + 其五行得月令（旺/相/休）+ 坐支有效五行
+            生我或同我 ⇒ 仍算「有微弱生扶之意」⇒ 假从；无气（囚/死/坐支不生）⇒ 真从。
+            实测 15 例 13→**14**，零回归；带书证的读数变化只有 ZC015 一例。
+            代价如实登记：另有 **15 例不带 `from_type` 期望的从格**由真从改判假从
+            （MP158/164/356/382、MT023/465/488/489/538/539/544/546/560、ZP005/036），
+            书文对它们未定性，故**不构成读数变化**，也不得据此声称"修对了"（§四.7）。
         ② 「有气生扶」阈值取 ≥2 处：单处有气根的正格（ZP004/ZP020/ZP029/ZP032 等）
           仍会误入从格而抑制成败判定，收到 1 处则 ZC009（印伏戌中）等书例反判不从，
           两侧不可同时满足，须先引入六合化气与透干通根的联合判据再复核。
@@ -269,6 +270,36 @@ def _from_judge(chart_json: dict, details: list[dict], day_stem: str,
             _qi_roots.extend(_root_pillars(_e))
     support_strong = len(set(_qi_roots)) >= 2
 
+    # ── 天干层「有气生扶」（368 批）────────────────────────────────────
+    # 《假从》任注：「局中虽有劫印，亦自顾不暇」＋「虽有比劫印绶生扶，而…」——
+    # 假从的门槛不是「有没有印比透干」，而是**那点半透的印比还有没有气**：
+    #   有气 → 仍算「有（微弱的）生扶之意」，从之不真 ⇒ 假从；
+    #   无气（囚/死、坐支无生、根被合冲） → 「绝无一毫生扶之意」⇒ 真从。
+    # 这与 `support_strong` 分工不同：那条问「有几处通根」（≥2 处即不入从格），
+    # 这条问「透干的那点印比是否还有气」——1 处有气不足以自立，却足以令从之不真。
+    # 书证：ZC015「时干丁火，被年上癸水克去」——丁相于卯月、坐卯得乙木生（本可有气），
+    # 故其从为假；反之 ZC002「戊土虽生犹死」（戊死于寅月）、ZC003「一点庚金临绝」
+    # （庚囚于寅月）、ZC005/ZC009/ZC010 的印比同属死囚，皆书判真从。
+    dry_yinbi_youqi = False
+    for pname in ("year", "month", "hour"):
+        p = pillars.get(pname) or {}
+        tg = p.get("ten_god") or ""
+        if tg not in ("正印", "偏印", "比肩", "劫财"):
+            continue
+        br = p.get("branch") or ""
+        e = STEM_ELEMENTS.get(p.get("stem") or "") or ""
+        if not e or not br or _tightly_clashed(pname):
+            continue
+        if _yinyang_state(e) not in ("旺", "相", "休"):
+            continue
+        # 坐支的**有效五行**：三合局内按局五行，否则按本气。
+        # 注意三合只化「根」，不化「生」——ZC015 的卯在亥卯未局内，木仍是木，仍生丁火；
+        # 若照「根被合化」的写法整支排除，就会把「被合」误当成「断了生」。
+        br_elem = sanhe_elem if br in sanhe_branches else BRANCH_ELEMENTS.get(br, "")
+        if br_elem and (br_elem == e or SHENG_CYCLE.get(br_elem) == e):
+            dry_yinbi_youqi = True
+            break
+
     # 从神权重
     from_weight = weight_by_role["财"] + weight_by_role["官杀"] + weight_by_role["食伤"]
     for pname in ("year", "month", "hour"):
@@ -352,9 +383,13 @@ def _from_judge(chart_json: dict, details: list[dict], day_stem: str,
             else:
                 basis = ("日主失令无自立，财官食伤并旺（主导差 <0.8）——"
                          + _CONG["cong_shi"])
-            ftype = "真从" if (not day_root and not strong_yinbi) else "假从"
+            ftype = "真从" if (not day_root and not strong_yinbi
+                               and not dry_yinbi_youqi) else "假从"
             label = f"{kind}·{ftype}"
-            basis += "；生扶口径：%s" % (_CONG["sheng_fu_jue_wu"] if ftype == "真从" else _CONG["zhong_you_yin_bi"])
+            basis += "；生扶口径：%s" % (
+                _CONG["yinbi_wuqi"] if (ftype == "真从" and dry_has_yinbi)
+                else _CONG["sheng_fu_jue_wu"] if ftype == "真从"
+                else _CONG["zhong_you_yin_bi"])
             cong_shen_chong = False
             for p, r in main_roles.items():
                 br = (pillars.get(p) or {}).get("branch") or ""
@@ -370,12 +405,17 @@ def _from_judge(chart_json: dict, details: list[dict], day_stem: str,
                 basis += "；" + _CONG["cong_shen_chong"]
             return kind, ftype, basis, label
         kind = {"财": "从财", "官杀": "从官杀", "食伤": "从儿"}[top_role]
-        ftype = "真从" if (not day_root and not strong_yinbi) else "假从"
+        ftype = "真从" if (not day_root and not strong_yinbi
+                           and not dry_yinbi_youqi) else "假从"
         label = f"{kind}·{ftype}"
         basis = ("从神压倒（%s=%.1f），日主失令%s——%s" % (
             top_role, top_w,
             "无本气根" if not day_root else "有本气根",
             _CONG["zhen_cong"] if ftype == "真从" else _CONG["jia_cong"]))
+        if ftype == "真从" and dry_has_yinbi:
+            # 别让报告自相矛盾：此处书判真从、干上确有印比，则必须说清「那点印比无气」，
+            # 不能照抄「绝无一毫生扶」——ZC002/ZC003 的书文正是这么写的（虽生犹死／临绝）。
+            basis += "；" + _CONG["yinbi_wuqi"]
         return kind, ftype, basis, label
 
     return None, None, "", None
