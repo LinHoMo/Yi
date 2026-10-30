@@ -64,10 +64,15 @@ def build() -> int:
     if decided:
         parts.append(f"\n## B2. 已裁 {len(decided)} 条（逐字取证，不再待裁）\n")
         for r in decided:
-            parts.append("- [x] **%s**（%s L%d）→ 取 A：%s" % (
-                r["id"].replace("VER-", ""), r["file"], r["line"],
-                json.dumps(r["a"], ensure_ascii=False)[:90]))
-            parts.append("      依据：%s" % (r.get("decision_basis") or "")[:160])
+            side = (r.get("decision") or "?").upper()
+            chosen = r.get("a") if side == "A" else r.get("b") if side == "B" else None
+            parts.append("- [x] **%s**（%s L%d）→ 取 %s：%s" % (
+                r["id"].replace("VER-", ""), r["file"], r["line"], side,
+                json.dumps(chosen, ensure_ascii=False)[:90]))
+            parts.append("      依据：%s" % (r.get("decision_basis") or "")[:200])
+            if r.get("decision_stale_b"):
+                parts.append("      ⚠ B 器输出已变（当时 B=%s），请复核裁决是否仍成立"
+                             % json.dumps(r["decision_stale_b"], ensure_ascii=False)[:80])
 
     # C. 分诊真分歧＋兜底
     tz = tri["rows"]

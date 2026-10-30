@@ -48,8 +48,13 @@ _HEXNAMES = sorted(list(HEXAGRAM_TRIGRAMS) +
                     "节", "節", "中孚", "小过", "過", "既济", "未济", "旣濟", "未濟"],
                    key=len, reverse=True)
 _HEX_ALT = "|".join(re.escape(h) for h in _HEXNAMES)
-GET_PAIR = re.compile(r"(?:得|占得|化|变|變)\s*(?P<hx>" + _HEX_ALT + r")"
-                      r"(?:\s*(?:之|化|變|变)\s*(?P<hx2>" + _HEX_ALT + r")|(?P<hx2b>卦))?")
+# 卦宫前缀（371 批补）：「得**泽风**大过变**火风**鼎」——底本常把上下卦名冠在卦名前
+# （泽风大过=兑上巽下）。旧文法只认裸卦名，遇到带冠名的头就整条采不到，
+# 于是窗口回退又抓到**上一例**的头，把 K 值记到 K+1 身上。前缀只吃两个字，且必须紧跟识别到的卦名。
+_TRIGRAM_CH = "乾坤震巽坎离艮兑天泽火雷风水山地"
+GET_PAIR = re.compile(r"(?:得|占得|化|变|變)\s*(?:[" + _TRIGRAM_CH + r"]{2})?(?P<hx>" + _HEX_ALT + r")"
+                      r"(?:\s*(?:为[" + _TRIGRAM_CH + r"])?\s*卦?\s*(?:之|化|變|变)\s*"
+                      r"(?:[" + _TRIGRAM_CH + r"]{2})?(?P<hx2>" + _HEX_ALT + r")|(?P<hx2b>卦))?")
 YING_B = re.compile(r"[应應验驗果定]于?\s*[" + GAN + r"]?([" + BR + r"])\s*(?:日|月|年)")
 
 
@@ -85,13 +90,30 @@ def recheck() -> int:
             cache[f] = (SRC_DIR / f).read_text(encoding="utf-8", errors="replace").splitlines()
         lines = cache[f]
         lo = it["line"] - 1
-        # B 器窗口独立推导（与 A 器的块界法不同源）：从验注行向上找**最近的干支日行**作开案行，
-        # 窗口=开案行..验注行；找不到则回退 3 行窗（并因此产生真分歧→人裁）。
+        # B 器窗口（371 批改写）：找**卦例头**，不找「X日」行。
+        # 旧写法从 lo（验注行自身）开始向上找「[干][支]日」，而验注行几乎总含「寅日/亥日」这类
+        # 应期用语 ⇒ 循环第一次就 break 在验注行自己身上，窗口退化为单行、卦名永远采不到。
+        # 这不是"句式缺口"，是**窗口自证**：判据（日行）在被判对象自己身上必真。
+        # 现按「卦名在哪儿」定窗，三级回退：
+        #   ① 验注行自身含「得X卦」→ 该行即命例（林氏一行为多例的写法）；
+        #   ② 否则向上找最近的**含卦名的行**作卦例头，窗口=头..验注行；
+        #   ③ 都没有才退回旧的「最近日行／三行窗」。
         win_start = max(0, lo - 2)
-        for j in range(lo, max(-1, lo - 40), -1):
-            if re.search(r"[" + GAN + r"][" + BR + r"]日", lines[j]):
-                win_start = j
-                break
+        if GET_PAIR.search(norm(lines[lo])):
+            win_start = lo
+        else:
+            head = None
+            for j in range(lo - 1, max(-1, lo - 60), -1):
+                if GET_PAIR.search(norm(lines[j])):
+                    head = j
+                    break
+            if head is not None:
+                win_start = head
+            else:
+                for j in range(lo - 1, max(-1, lo - 60), -1):
+                    if re.search(r"[" + GAN + r"][" + BR + r"]日", lines[j]):
+                        win_start = j
+                        break
         block = "\n".join(norm(x) for x in lines[win_start:lo + 1])
         b_o, b_c, b_y = parse_b(block)
         a = it.get("hex", {})
@@ -106,11 +128,31 @@ def recheck() -> int:
                      "a": {k: a.get(k) for k in ("date", "original", "changed", "yingqi_branch")},
                      "b": {"original": b_o, "changed": b_c, "yingqi": b_y},
                      "verdict": "consensus" if not diffs else ("needs_human:" + ",".join(diffs))})
+    # 371 批：**保留已裁记录**。复核器每次重写本册，旧写法会把 decision/decision_basis
+    # 一起冲掉——于是「人已经裁过」这件事在下一轮重跑后消失，值守又要从头读一遍。
+    # 按 id 继承；b 若已变化，用 decision_stale_b 记下当时的 B 值，供人复核是否仍成立。
+    if OUT.exists():
+        try:
+            old = json.loads(OUT.read_text(encoding="utf-8")).get("rows") or []
+        except Exception:
+            old = []
+        prev = {r.get("id"): r for r in old if r.get("decision")}
+        for r in rows:
+            o = prev.get(r["id"])
+            if not o:
+                continue
+            r["decision"] = o["decision"]
+            r["decision_basis"] = o.get("decision_basis", "")
+            if o.get("b") != r["b"]:
+                r["decision_stale_b"] = o.get("b")
     n_ok = sum(1 for r in rows if r["verdict"] == "consensus")
     doc = {"generated_at": datetime.now().isoformat(timespec="seconds"),
            "_comment": "双解析器共识复核：consensus 条目人只裁语义；needs_human 标分歧字段。"
                        "升册永远是人的决定（§三.4），本册不改毕业册状态、不写 expected。",
-           "n": len(rows), "consensus": n_ok, "needs_human": len(rows) - n_ok, "rows": rows}
+           "n": len(rows), "consensus": n_ok,
+           "needs_human": sum(1 for r in rows
+                              if r["verdict"] != "consensus" and not r.get("decision")),
+           "rows": rows}
     write_stable(OUT, doc)
     print("√ 复核册落成 %s｜restorable %d → 双器共识 %d｜需人看分歧 %d"
           % (OUT.name, len(rows), n_ok, len(rows) - n_ok))
@@ -132,7 +174,18 @@ def selftest() -> int:
     o3, _, y3 = parse_b("占病得泰卦，验于丙子日而愈。")
     if o3 != "泰" or y3 != "子":
         fails.append("单卦+干支日扩动词例解析错：%r" % ((o3, y3),))
-    print("√ selftest：合成共识/假阳性/单卦扩动词 三例全过" if not fails else "× " + "；".join(fails))
+    # 371 批补三例：这三类是 B 器真实踩过的坑，修好后必须留证
+    p1 = parse_b("例：巳月乙未日自占病得泽风大过变火风鼎卦")
+    if p1[:2] != ("大过", "鼎"):
+        fails.append("卦宫前缀例解析错（得泽风大过变火风鼎）：%r" % (p1,))
+    p2 = parse_b("得兑为泽卦变雷水解卦")
+    if p2[:2] != ("兑", "解"):
+        fails.append("宫名+卦+变例解析错（得兑为泽卦变雷水解卦）：%r" % (p2,))
+    p3 = parse_b("再占一卦。得离卦不动")
+    if (p3[0], p3[1]) != ("离", None):
+        fails.append("单卦不动例解析错（得离卦不动）：%r" % (p3,))
+    print("√ selftest：合成共识/假阳性/单卦扩动词/卦宫前缀/宫名变卦/单卦不动 六例全过"
+          if not fails else "× " + "；".join(fails))
     return 0 if not fails else 1
 
 
