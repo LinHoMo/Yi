@@ -89,12 +89,28 @@ def build() -> int:
                         json.dumps(r.get("near"), ensure_ascii=False)[:80]))
 
     # D. 验支候选速裁
-    parts.append(f"\n## D. 验支宽松候选 {len(tz.get('A_有验支候选', []))} 条（199/202 批命中，人只定夺是否采信）\n")
-    for r in tz.get("A_有验支候选", []):
+    _dz_all = tz.get("A_有验支候选", [])
+    dz_dec = [r for r in _dz_all if r.get("decision")]
+    dz_pend = [r for r in _dz_all if not r.get("decision")]
+    parts.append(f"\n## D. 验支宽松候选 {len(dz_pend)} 条待裁（199/202 批命中，人只定夺是否采信；"
+                 f"已裁 {len(dz_dec)} 条见 D2）\n")
+    for r in dz_pend:
         parts.append("- [ ] **%s**（%s L%d）命中 %s｜块：%s" % (
             r["id"].replace("VER-", ""), r["file"], r["line"],
             "、".join(r.get("hits") or [])[:60], (r.get("context") or "").replace("\n", " ")[:70]))
         parts.append("      决策：□采信入候选　□否（结案）")
+
+    if dz_dec:
+        n_y = sum(1 for r in dz_dec if r["decision"] == "采信")
+        parts.append(f"\n## D2. 验支宽松候选·已裁 {len(dz_dec)} 条"
+                     f"（同案采信 {n_y}／异案否 {len(dz_dec) - n_y}）\n")
+        parts.append("判定口径：**验支上方最近的卦例头是否等于本条卦例头**——同头即同案；"
+                     "异头说明验支落在下一个卦例里，是串味，不得采信。逐条行号见依据。\n")
+        for r in dz_dec:
+            parts.append("- [x] **%s**（%s L%d）→ **%s**：%s" % (
+                r["id"].replace("VER-", ""), r["file"], r["line"], r["decision"],
+                "／".join(r.get("hits") or [])))
+            parts.append("      依据：%s" % (r.get("decision_basis") or "")[:180])
 
     # E. 结案候选批量签字
     parts.append(f"\n## E. 结案候选 {len(tz.get('A_无验支结案候选', []))} 条（宽松式亦无验支——§六.5 类，一次签字批量结案）\n")
@@ -106,10 +122,10 @@ def build() -> int:
     if changed or not OUT.exists():
         OUT.write_text(text, encoding="utf-8")
     n = sum(len(v) for k, v in tri["rows"].items()) + len(nb) + len(cs)
-    print("√ 简报%s：%d 事项入册 %s（A%d B%d C%d D%d E批%d）"
+    print("√ 简报%s：%d 事项入册 %s（A%d B%d C%d D%d(已裁%d) E批%d）"
           % ("已刷新" if changed else "无变化保持", n, OUT.name,
              len(cs), len(nb), len(tz.get("B_真分歧需人", [])) + len(tz.get("B_异写候选", [])),
-             len(tz.get("A_有验支候选", [])), len(tz.get("A_无验支结案候选", []))))
+             len(dz_pend), len(dz_dec), len(tz.get("A_无验支结案候选", []))))
     return 0
 
 
