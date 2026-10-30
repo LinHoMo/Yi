@@ -690,8 +690,14 @@ def main() -> int:
     lines += ["", "## 结论", "",
               "本通道与 build_yingqi_set.py（case_library.md 通道）平行：同七道门纪律、同外部集身份。",
               "与在册案例同案者一律剔除——重复计数是八字科 #39 的病灶，外部集扩样先过这一关。", ""]
-    REPORT.write_text("\n".join(lines), encoding="utf-8")
-    print("审计报告 →", REPORT.relative_to(HERE.parent))
+    # 379 批：「dry-run」此前并不 dry——它照样把审计报告写回 docs/。后果不是"多一个文件"，
+    # 而是**探测动作会改仓库**：378 批只是跑了几次 --dry-run 查 id，就把该文档的日期戳
+    # 从 2026-10-12 改成 2026-10-30 并混进了提交。现按语义分开：dry-run 只算不写。
+    if args.dry_run:
+        print("（--dry-run：审计报告未写盘；去掉该参数才落 %s）" % REPORT.relative_to(HERE.parent))
+    else:
+        REPORT.write_text("\n".join(lines), encoding="utf-8")
+        print("审计报告 →", REPORT.relative_to(HERE.parent))
 
     if args.dry_run or not kept:
         return 0

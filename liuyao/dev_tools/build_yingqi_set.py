@@ -331,9 +331,14 @@ def main() -> int:
                "卦变不自洽者为多数时，说明该库内容不可直接用于评分："
                "须先按《京房》卦变与纳甲逐例校勘（人工或对照可靠整理本），修好后重跑本工具。",
                "在校勘完成前，**不设置 yingqi_holdout 外部集**，以免用一个错数据集得出好看的假指标。", ""]
+    # 379 批：dry-run 此前**先写盘再判**——校勘清单会落进 docs/，探测动作改了仓库。
+    # 与 build_zengshan_dz_cases.py 同病（那处的后果是审计文档日期戳被改）。
+    if args.dry_run:
+        print("（--dry-run：校勘清单未写盘；去掉该参数才落 %s）" % REPORT.relative_to(HERE.parent))
+        return 0
     REPORT.write_text(chr(10).join(report), encoding="utf-8")
     print("校勘清单 →", REPORT.relative_to(HERE.parent))
-    if args.dry_run or not unique:
+    if not unique:
         return 0
 
     OUT.write_text(json.dumps({"_meta": {
