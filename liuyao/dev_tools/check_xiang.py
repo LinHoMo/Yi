@@ -53,6 +53,18 @@ CATEGORY_CASES = (
     ("占问行人何时归来", "travel"),
 )
 
+# 题类回归锚（362 批）：象类别依赖题类，题类判错则象必错。
+# 前 3 条是**全语料对拍查出的漏判**——曾落「其他」/被行人的「何日」抢走；
+# 后 3 条是同期必须保持不倒退的古籍问法。问句取自 data/cases 真实例。
+CLASS_REGRESSION = (
+    ("本日何时有雨", "天气·占雨"),
+    ("何雨", "天气·占雨"),
+    ("占何日雨", "天气·占雨"),
+    ("中秋晴否癸巳日又占", "天气·占晴"),
+    ("占何日晴", "天气·占晴"),
+    ("本日阴晴", "天气·占晴"),
+)
+
 
 def _xiang_of(question: str) -> dict:
     """实跑一路 analyze，取其象层。失败即抛（不静默降级——门不能假装通过）。"""
@@ -88,6 +100,23 @@ def category_problems(samples: dict[str, dict]) -> list[str]:
     from xiang import resolve_xiang_category
     if resolve_xiang_category("", "占问此事如何") != "general":
         problems.append("无题类信号的问句未落 general（关键词兜底表过宽）")
+    return problems
+
+
+def class_problems(regression=CLASS_REGRESSION) -> list[str]:
+    """②-bis 题类回归：题类本身不得漏判（象类别是题类的下游）。
+
+    为什么单列一条：362 批查实「本日何时有雨」被行人的「何日」词族抢走、
+    「何雨」「中秋晴否…」漏判为「其他」——象类别因此落到 travel/general。
+    这类缺陷在象门里看不出来（象门只验类别联动），只能靠题类锚点拦。
+    """
+    from chain_tables import classify_question
+    problems: list[str] = []
+    for q, want in regression:
+        got = classify_question(q)
+        if got != want:
+            problems.append(f"题类漏判：{q!r} 应为 {want}，实得 {got}"
+                            "——题类判错则象类别必错（见 CLASS_REGRESSION 注）")
     return problems
 
 
@@ -136,13 +165,34 @@ def selftest() -> int:
     if category_problems(good):
         problems.append("自证失败：合规联动被误判")
 
+    if class_problems():
+        problems.append("自证失败：题类回归锚未过（先确认正跑是否真的绿）")
+    # 负例：把天气词族退化回 362 批前的极简形态，漏判必须被抓到
+    # 负例：把天气词族退化回 362 批前的极简形态（只留「占雨」/「占晴」），
+    # 「本日何时有雨」「何雨」「中秋晴否…」必须重新漏判并被本判据抓到。
+    # 只改内存里的常量（不动盘上 JSON），finally 还原，不给数据文件留风险。
+    import chain_tables as _ct
+    degenerate = (("本日何时有雨", "天气·占雨"), ("何雨", "天气·占雨"),
+                  ("中秋晴否癸巳日又占", "天气·占晴"))
+    _saved = _ct.QUESTION_CLASS_KEYWORDS
+    try:
+        _ct.QUESTION_CLASS_KEYWORDS = {
+            c: (["占雨"] if c == "天气·占雨"
+                else ["占晴"] if c == "天气·占晴" else list(k))
+            for c, k in _saved.items()
+        }
+        if not class_problems(degenerate):
+            problems.append("自证失败：天气词族退化后漏判没被抓到（判据无牙）")
+    finally:
+        _ct.QUESTION_CLASS_KEYWORDS = _saved
+
     if problems:
         print("FAIL：负例自证未通过")
         for p in problems:
             print("  " + p)
         return 1
-    print("selftest：三类负例（缺出处／恒 general／整块缺失）全部抓到；"
-          "合规输入放行")
+    print("selftest：四类负例（缺出处／恒 general／整块缺失／天气词族退化致题类漏判）"
+          "全部抓到；合规输入放行")
     return 0
 
 
@@ -160,11 +210,13 @@ def main() -> int:
     problems: list[str] = []
     problems.extend(basis_problems(samples))
     problems.extend(category_problems(samples))
+    problems.extend(class_problems())
     problems.extend(no_scoring_problems())
 
     cats = {q: (x.get("category") or "—") for q, x in samples.items()}
     print(f"象层门：{len(samples)} 路实跑；象类别 {list(cats.values())}")
-    print(f"      象目出处逐块核对；评分侧 {len(SCORING_MODULES)} 个模块禁读象")
+    print(f"      题类回归锚 {len(CLASS_REGRESSION)} 条（占雨/占晴漏判回归）；"
+          f"评分侧 {len(SCORING_MODULES)} 个模块禁读象")
     if problems:
         print(f"FAIL：{len(problems)} 项")
         for p in problems:
