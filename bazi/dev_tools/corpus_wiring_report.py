@@ -12,9 +12,11 @@
   C 键名/模板串        —— 形如 `X为先Y次之`、`专用X(season)`、`论乙·正月` 的键名或占位模板，不是正文。
   F 判据未实现         —— 书证在库、引擎无对应判据 ⇒ 论说句无处可引。**这是真欠账**，逐容器登记理由。
   G 按题意取用         —— 象层／取象语料按 SKILL.md 意图路由取用，不常驻默认正文（正确不引）。
+  H 书有法不可机械判   —— 书给了方法但缺机械阈值/定义，引擎「有层、无体用指派」；按 §六.5 结案，
+      写明缺什么前置，**不再算 F 欠账**（392 批体用六法）。H 不是「通过」，是「已结案」。
   D **未归类**         —— 既在可达盘内、又像正文的漏网条目：**这一类必须点名**，它是真缺陷的候选。
       （372 批把原 D 的 68 条逐容器定性后分入 F／G／B 三桶，见下方 CLASS_F／CLASS_G 表；
-      390 批把最后 4 条 D 逐条定性进 B，并把「D>0 即 rc=1」写成门。）
+      390 批把最后 4 条 D 逐条定性进 B，并把「D>0 即 rc=1」写成门；391 批 F 10→6、392 批六法入 H。）
 
 本器**不替换** `[8]` 的判定（0 命中即红、豁免表过期即红都留在原处），只补「计数看不懂」这一段。
 """
@@ -44,10 +46,8 @@ BOOKHEAD = re.compile(r"^《.{2,12}》")     # 书题／章题行（如《滴天
 # 对应话题时引用，不常驻默认正文）。混在一起，前者（真欠账）就被后者的数量淹没了。
 # 本表**只做归类，不改判定**：判定仍是「0 命中即红」；下面两桶都是「不引用是正确的」。
 CLASS_F = {   # 判据论述在库、引擎无对应判据 ⇒ 论说句无处可引（**真欠账，已登记**）
-    ("ditian_sui.json", "chapters›體用論"):
-        "体用八法的**正法两条**（日主为体／提纲为体，取用扶抑）已由 `useful_gods` 表达，按 G 取用；"
-        "其余六法（暗神为用／化神为用／化神为体／岁运为用／喜神为辅／格象为体）的分支前置"
-        "（暗神模型、喜神、体用指派）未建模，仍为真欠账——论说句无处可引。",
+    # 392 批：原體用論 8 条已分诊——2 条正法→G、6 条不可机械判→H；本桶现为空。
+    # 新出现的「书证在库、引擎无判据」仍落此桶（D 门会先逼你逐条定性）。
 }
 CLASS_B = {   # 方法论登记：_meta 自述「不是判据、不进任何评分」，只供逐字回指
     ("verdicts.json", "看命口诀"):
@@ -83,6 +83,16 @@ CLASS_G = {   # 按 SKILL.md 意图路由取用：问到对应话题才引用，
 CLASS_G_PREFIX = {
     ("ditian_sui.json", "chapters›體用論"):
         ("有以日主為體", "有以提綱為體"),   # 体用之「正法」两条，对应 useful_gods 扶抑取用
+}
+# 392 批：书有法、不可机械判 ⇒ H（§六.5 结案，不再算 F 欠账）。
+# 体用六法：暗神无定义（书未说暗冲暗合取哪支）、喜神无「用/喜」分区、化神/岁运/格象只有层、
+# 没有「体/用指派」判据；缺的前置逐条写明，不再拿「未单列判据」当泛欠账。
+CLASS_H = {
+    ("ditian_sui.json", "chapters›體用論"):
+        "体用六法（暗神为用／化神为用／化神为体／岁运为用／喜神为辅／格象为体）书有法而无机械判据："
+        "暗神书未说「暗冲暗合」取哪支、喜神书未分「用/喜」、化神/岁运/格象有层但无体用指派。"
+        "缺的前置＝暗神模型／喜神分区／体用指派层；按 §六.5 结案为 H，不再算 F 欠账。"
+        "（两条「正法」已由 useful_gods 覆盖 → G，见 CLASS_G_PREFIX。）",
 }
 TPL = re.compile(r"^X|^论.|[（(]season[)]]|^[A-Z]{1,2}[为两先]")
 
@@ -150,11 +160,13 @@ def classify_leaf(fname: str, top: str, s: str, hit_by_cont: dict,
     if (fname in CLASS_G or (fname, top) in CLASS_G
             or (fname, _top1) in CLASS_G):
         return "G"        # 按题意取用，不常驻正文
+    if (fname, top) in CLASS_H or (fname, _top1) in CLASS_H:
+        return "H"        # 书有法、不可机械判（§六.5 结案，不再算 F 欠账）
     return "D"
 
 
 def selftest() -> int:
-    """负例自证：未定性的普通正文必落 D；已定性的 B/F/G 不误伤。"""
+    """负例自证：未定性的普通正文必落 D；已定性的 B/G/H 不误伤。"""
     hit = {"chapters›X": 1, "chapters›從化論－假": 1,
            "chapters›體用論": 1, "chapters›寒暖論": 1, "宫位": 1}
     obj = {"chapters": {"X": ["已在并集的句子", "一条未定性的普通正文"]}}
@@ -163,7 +175,7 @@ def selftest() -> int:
         ("ditian_sui.json", "chapters›從化論－假", "真從之像有幾人，假從亦可發其身。",
          hit, {}, set(), set(), "B"),
         ("ditian_sui.json", "chapters›體用論", "有以四柱為體，暗神為用者，必四柱俱無可用",
-         hit, {}, set(), set(), "F"),
+         hit, {}, set(), set(), "H"),
         ("ditian_sui.json", "chapters›體用論", "有以日主為體，提綱之食神財官，皆為我用",
          hit, {}, set(), set(), "G"),
         ("ditian_sui.json", "chapters›寒暖論", "陰支為寒，陽支為暖，金水為寒，木火為暖",
@@ -176,7 +188,7 @@ def selftest() -> int:
         if got != want:
             print(f"FAIL SELFTEST：{fname}〔{top}〕应判 {want}，实判 {got}")
             return 1
-    print("SELFTEST OK：未定性正文必落 D；B/F/G 已定性串不误伤")
+    print("SELFTEST OK：未定性正文必落 D；B/G/H 已定性串不误伤")
     return 0
 
 
@@ -193,7 +205,7 @@ def main() -> int:
         return 1
     text = big.read_text(encoding="utf-8")
     tiao_reach, nayin_reach = reachable()
-    tot = {"A": 0, "B": 0, "C": 0, "D": 0, "E": 0, "F": 0, "G": 0}
+    tot = {"A": 0, "B": 0, "C": 0, "D": 0, "E": 0, "F": 0, "G": 0, "H": 0}
     unk: list[str] = []
     conts: dict[str, tuple[int, int]] = {}
     for f in sorted((ROOT / "data").glob("*.json")):
@@ -214,7 +226,8 @@ def main() -> int:
                               sum(1 for x, _ in leaves if x == top))
     print(f"接线残差归类：A 键不可达（盘外，正确）{tot['A']} ｜ B 元数据/自述串 {tot['B']} ｜ "
           f"C 键名/模板串 {tot['C']} ｜ E 容器未触发（盘外，正确）{tot['E']} ｜ "
-          f"F 判据未实现（真欠账）{tot['F']} ｜ G 按题意取用（正确不常驻）{tot['G']} ｜ D 未归类 {tot['D']}")
+          f"F 判据未实现（真欠账）{tot['F']} ｜ G 按题意取用（正确不常驻）{tot['G']} ｜ "
+          f"H 书有法不可机械判（已结案）{tot['H']} ｜ D 未归类 {tot['D']}")
     for (fn, cn), why in CLASS_F.items():
         print(f"  F· {fn}〔{cn}〕{why[:110]}")
     print(f"可达键：调候 {len(tiao_reach)}/120 格、纳音 {len(nayin_reach)}/60 支")
@@ -222,7 +235,8 @@ def main() -> int:
         print("  D·", u)
     if not tot["D"]:
         print(f"√ D 未归类 0 条——残差已全部逐容器定性：F {tot['F']}（判据未实现，真欠账）／"
-              f"G {tot['G']}（按题意取用，正确不常驻）／B 方法论登记（并入 B {tot['B']}）")
+              f"G {tot['G']}（按题意取用，正确不常驻）／H {tot['H']}（书有法不可机械判，已结案）／"
+              f"B 方法论登记（并入 B {tot['B']}）")
         return 0
     print(f"FAIL：D 类 {tot['D']} 条未归类（既在可达键内、又不像元数据）——"
           "每一条都须逐条点名定性；D>0 即 rc=1，不再只给提示。")
