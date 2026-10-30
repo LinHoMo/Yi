@@ -45,10 +45,9 @@ BOOKHEAD = re.compile(r"^《.{2,12}》")     # 书题／章题行（如《滴天
 # 本表**只做归类，不改判定**：判定仍是「0 命中即红」；下面两桶都是「不引用是正确的」。
 CLASS_F = {   # 判据论述在库、引擎无对应判据 ⇒ 论说句无处可引（**真欠账，已登记**）
     ("ditian_sui.json", "chapters›體用論"):
-        "论「日主为体、用神为用」的方法论层；引擎以「用神／格局」表达体用，未单列体用判据，"
-        "故其论说句不逐条引用。",
-    ("ditian_sui.json", "chapters›寒暖論"):
-        "与调候同旨而表述不同（寒暖 vs 调候表）；引擎走 `TIAO_HOU` 查表，不逐句引用寒暖论述。",
+        "体用八法的**正法两条**（日主为体／提纲为体，取用扶抑）已由 `useful_gods` 表达，按 G 取用；"
+        "其余六法（暗神为用／化神为用／化神为体／岁运为用／喜神为辅／格象为体）的分支前置"
+        "（暗神模型、喜神、体用指派）未建模，仍为真欠账——论说句无处可引。",
 }
 CLASS_B = {   # 方法论登记：_meta 自述「不是判据、不进任何评分」，只供逐字回指
     ("verdicts.json", "看命口诀"):
@@ -71,9 +70,19 @@ CLASS_G = {   # 按 SKILL.md 意图路由取用：问到对应话题才引用，
         "论说句仍不进报告，是因为**正文只印结构名、不印 basis**（与 363 批 `dayun_cheng_bai` 同）——"
         "属渲染取舍，不是判据缺失。（372 批曾按「判据未实现」登记，本批据实移出 F。）",
 
+    ("ditian_sui.json", "chapters›寒暖論"):
+        "**391 批更正**：与调候同旨——`TIAO_HOU` 表（月支×日干用神，[9] 同步门守）就是其实施，"
+        "寒暖／燥湿只是同一判据的另一种表述；论说句不逐句引用属渲染取舍，按 G 取用"
+        "（372 批曾误登 F）。",
     "xiang_layer.json": "象层（宫位／脏腑／六亲）：SKILL.md 意图路由决定是否取用，不常驻正文",
     "liushen_image.json": "十神取象：随题意取用（问六亲／性格时才引）",
     "shi_shen_actions.json": "十神作用：随题意取用",
+}
+# 391 批：容器内**逐条**定性（容器级 F 之下，个别叶子已有对应判据 → G）。
+# 键 = (文件, 容器)，值 = 该容器内按**句首**匹配的 G 前缀（长句不改，前缀稳定）。
+CLASS_G_PREFIX = {
+    ("ditian_sui.json", "chapters›體用論"):
+        ("有以日主為體", "有以提綱為體"),   # 体用之「正法」两条，对应 useful_gods 扶抑取用
 }
 TPL = re.compile(r"^X|^论.|[（(]season[)]]|^[A-Z]{1,2}[为两先]")
 
@@ -134,6 +143,8 @@ def classify_leaf(fname: str, top: str, s: str, hit_by_cont: dict,
         return "E"        # 同容器**一条都没被引** ⇒ 该容器在 276 盘里从未触发（盘外，正确不引）
     if (fname, top) in CLASS_B or (fname, _top1) in CLASS_B:
         return "B"        # 方法论登记／平行底本同义串（不另立判据）
+    if any(s.startswith(p) for p in CLASS_G_PREFIX.get((fname, top), ())):
+        return "G"        # 容器级 F 之下的逐条例外：该条已有对应判据（391 批）
     if (fname, top) in CLASS_F:
         return "F"        # 判据在库、引擎无判据 ⇒ 真欠账（已登记）
     if (fname in CLASS_G or (fname, top) in CLASS_G
@@ -145,14 +156,18 @@ def classify_leaf(fname: str, top: str, s: str, hit_by_cont: dict,
 def selftest() -> int:
     """负例自证：未定性的普通正文必落 D；已定性的 B/F/G 不误伤。"""
     hit = {"chapters›X": 1, "chapters›從化論－假": 1,
-           "chapters›體用論": 1, "宫位": 1}
+           "chapters›體用論": 1, "chapters›寒暖論": 1, "宫位": 1}
     obj = {"chapters": {"X": ["已在并集的句子", "一条未定性的普通正文"]}}
     cases = [
         ("fake.json", "chapters›X", "一条未定性的普通正文", hit, obj, set(), set(), "D"),
         ("ditian_sui.json", "chapters›從化論－假", "真從之像有幾人，假從亦可發其身。",
          hit, {}, set(), set(), "B"),
-        ("ditian_sui.json", "chapters›體用論", "日主为体用神为用不专以顺逆为凭",
+        ("ditian_sui.json", "chapters›體用論", "有以四柱為體，暗神為用者，必四柱俱無可用",
          hit, {}, set(), set(), "F"),
+        ("ditian_sui.json", "chapters›體用論", "有以日主為體，提綱之食神財官，皆為我用",
+         hit, {}, set(), set(), "G"),
+        ("ditian_sui.json", "chapters›寒暖論", "陰支為寒，陽支為暖，金水為寒，木火為暖",
+         hit, {}, set(), set(), "G"),
         ("xiang_layer.json", "宫位", "宫位取象随题取用……",
          hit, {}, set(), set(), "G"),
     ]
