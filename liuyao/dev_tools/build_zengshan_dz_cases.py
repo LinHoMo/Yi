@@ -618,6 +618,10 @@ def load_existing_keys() -> tuple[set, set]:
 def main() -> int:
     ap = argparse.ArgumentParser(description="从增删卜易 dz 底本抽取应期案例作外部验证集")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--why", action="append", default=[], metavar="ID",
+                    help="打印指定案例 id 的去留理由（可重复）。为什么不默认全打：剔除例逾百条，"
+                         "全打会淹掉 √ 清单；而**只打前 20 条**又让「某条为什么没进册」变成查不到——"
+                         "378 批加此参数就是为了不再靠猜。")
     args = ap.parse_args()
 
     text = SRC.read_text(encoding="utf-8")
@@ -649,6 +653,13 @@ def main() -> int:
         k1.add(key1)
         k2.add(key2)
 
+    if args.why:
+        _want = set(args.why)
+        _hit = {c["id"]: "KEPT" for c in kept}
+        _hit.update({e["id"]: e["reason"] for e in excluded})
+        print("按 id 查去留：")
+        for i in args.why:
+            print(f"  · {i}: {_hit.get(i, '★ 不在任何一份名单里（segment 未产出该块）')}")
     print(f"可评分 {len(kept)} 例，剔除 {len(excluded)} 例")
     for e in excluded[:20]:
         print(f"  × {e['id']}: {e['reason']}")

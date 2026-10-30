@@ -37,8 +37,11 @@ def build() -> int:
 
     # A. 候选入册（签字面）
     cs = cand["candidates"]
-    parts.append(f"\n## A. 入册候选 {len(cs)} 条（213/215 批双器共识草稿；含 dup_of 标记者与首现者同盘多注）\n")
-    for c in cs:
+    cs_dec = [c for c in cs if c.get("enroll_verdict")]
+    cs_pend = [c for c in cs if not c.get("enroll_verdict")]
+    parts.append(f"\n## A. 入册候选 {len(cs_pend)} 条待裁（213/215 批双器共识草稿；"
+                 f"已判 {len(cs_dec)} 条见 A2）\n")
+    for c in cs_pend:
         g = c.get("gaps") or []
         parts.append("- [ ] **%s**｜%s｜%s之%s｜应期 %s｜question=%s" % (
             c["id"].replace("RC-VER-", ""), c["input"].get("date"),
@@ -48,6 +51,17 @@ def build() -> int:
         if g:
             parts.append("      开口：%s" % "；".join(g))
         parts.append("      决策：□入（去重后并入外部集）　□弃（登记理由）　□改＿＿＿＿")
+
+    if cs_dec:
+        parts.append(f"\n## A2. 入册候选·已判 {len(cs_dec)} 条（逐条查建器去留理由）\n")
+        parts.append("查法：`python dev_tools/build_zengshan_dz_cases.py --dry-run --why <ID>`——"
+                     "建器会给出「与在册同案／无应期锚／未产出块」三类理由之一。\n")
+        for c in cs_dec:
+            parts.append("- [x] **%s**｜%s之%s｜→ **%s**" % (
+                c["id"].replace("RC-VER-", ""), c["input"].get("date"),
+                (c["hexagram"] or {}).get("original"),
+                c["enroll_verdict"]))
+            parts.append("      依据：%s" % (c.get("enroll_basis") or "")[:200])
 
     # B. 双器分歧（读数裁决面）
     # 370 批：已裁的（带 decision）不再进待裁桶——否则「裁过」与「没裁」在简报里长得一样，
@@ -139,9 +153,9 @@ def build() -> int:
     if changed or not OUT.exists():
         OUT.write_text(text, encoding="utf-8")
     n = sum(len(v) for k, v in tri["rows"].items()) + len(nb) + len(cs)
-    print("√ 简报%s：%d 事项入册 %s（A%d B%d C%d D%d(已裁%d) E批%d）"
+    print("√ 简报%s：%d 事项入册 %s（A%d(已判%d) B%d C%d D%d(已裁%d) E批%d）"
           % ("已刷新" if changed else "无变化保持", n, OUT.name,
-             len(cs), len(nb), len(_c1p) + len(_c2p),
+             len(cs_pend), len(cs_dec), len(nb), len(_c1p) + len(_c2p),
              len(dz_pend), len(dz_dec), len(tz.get("A_无验支结案候选", []))))
     return 0
 
