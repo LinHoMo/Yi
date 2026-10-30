@@ -707,6 +707,47 @@ def main() -> int:
         print("  —— 应期锚缺失 %d 条再拆：" % sum(_sub.values()))
         for _n, _c in _sub.most_common():
             print(f"       {_c:>4} {_n}")
+        # ② 类逐条读（382 批实测）：结果句自带日期的只有 1 条，且是「申时」——
+        # 时辰档在引擎与评分里都没有（既有登记：evaluate._expected_unit 把 时/时 归日池近似），
+        # 故 ② 类**可回收 0 条**；其余结果句是评注（野鹤曰/觉子曰/黄金策/应期章有注）
+        # 或无验期的后果叙述。这一层把「18 条跨句」的可读性留给复核者。
+        _cross = []
+        for _e in excluded:
+            if "无应期锚" not in _e["reason"]:
+                continue
+            _i = int(_e["id"][2:])
+            _b = blocks[_i - 1]
+            _m = _b["case"]
+            _body = _m.string[_m.start():_b["end"]]
+            _rows = [x for x in _body.splitlines() if YIN_YANG_RE.search(x)]
+            _tail = _body[_body.find(_rows[-1]) + len(_rows[-1]):] if _rows else _body
+            _cut = len(_tail)
+            for _cm in CHAPTER_RE.finditer(_tail):
+                _ls = _tail.rfind("\n", 0, _cm.start()) + 1
+                if _tail[_ls:_cm.end()] == _cm.group(0):
+                    _cut = min(_cut, _ls)
+            _sents = [x.strip() for x in _re2.split(r"[。；\n]", _tail[:_cut]) if x.strip()]
+            _hd = [x for x in _sents if _date_tokens(x)]
+            _ho = [x for x in _sents if OUTCOME_RE.search(x)]
+            if not (_hd and _ho):
+                continue
+            _d_here = [x for x in _ho if _date_tokens(x)]
+            _shi_here = [x for x in _ho if not _date_tokens(x)
+                         and _re2.search(r"[子丑寅卯辰巳午未申酉戌亥].{0,2}时", x)]
+            if _d_here:
+                _cross.append((_e["id"], "结果句自带日期（可回收）", _d_here[0][:40]))
+            elif _shi_here:
+                _cross.append((_e["id"], "结果句是时辰（时辰档不可评）", _shi_here[0][:40]))
+            else:
+                _cross.append((_e["id"], "结果句无日期（评注／无验期叙述）", (_ho[0][:34] if _ho else "")))
+        if _cross:
+            _rec = [c for c in _cross if c[1].startswith("结果句自带日期")]
+            _shi = [c for c in _cross if c[1].startswith("结果句是时辰")]
+            print(f"       —— ② 类 {len(_cross)} 条逐条读：自带日期 {len(_rec)} 条／"
+                  f"时辰 {len(_shi)} 条／无日期 {len(_cross) - len(_rec) - len(_shi)} 条"
+                  f" ⇒ **可回收 {len(_rec)} 条**")
+            for _cid, _why, _txt in _cross:
+                print(f"          {_cid} {_why}：{_txt}")
         _recov = sum(c for n, c in cnt.items() if n in ("应期锚缺失", "卦名不可解析", "日期不可还原"))
         print(f"  —— 其中「可修但未修」的候选（应期锚/卦名/日期三类）共 {_recov} 例；"
               f"其余是「同案重复」或「非占验文本」，改了也进不来。")
