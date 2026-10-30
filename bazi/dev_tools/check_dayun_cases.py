@@ -405,7 +405,26 @@ def selftest() -> None:
     YIN_STEM_CHANGSHENG["乙"] = keep_bs
     assert any("乙长生应在午" in x for x in pgs), f"干级长生表改错未被抓：{pgs}"
 
-    print(f"SELFTEST OK：13 个负例全部被抓出（假引文／方向翻面／性别依据／余日篡改／运序断链／岁层十神／墓层未接必被记漏标／反面判据空跑必被抓／成格变格裁决篡改必被抓／主语料书证必被要求回填／近失登记漂移必被抓／化格命例下限必被报红／干级长生表改错必被抓）"
+    # ⑨ 从儿命例下限必须有牙齿（386 批）：把 9 条期望全部改反 → 0/9 必报红。
+    bad = _copy(json.loads(CONG_ER_FILE.read_text(encoding="utf-8")))
+    for c in bad["cases"]:
+        c["expected"]["from_kind"] = "从势"
+    with tempfile.TemporaryDirectory() as td:
+        probe = Path(td) / "cong_er_cases_probe.json"
+        probe.write_text(json.dumps(bad, ensure_ascii=False), encoding="utf-8")
+        old_file = CONG_ER_FILE
+        globals()["CONG_ER_FILE"] = probe
+        try:
+            import contextlib
+            import io
+            pc: list[str] = []
+            with contextlib.redirect_stdout(io.StringIO()):
+                cong_er_case_check(pc, [])
+        finally:
+            globals()["CONG_ER_FILE"] = old_file
+    assert any("低于登记下限" in x for x in pc), f"从儿命例下限未生效：{pc}"
+
+    print(f"SELFTEST OK：14 个负例全部被抓出（假引文／方向翻面／性别依据／余日篡改／运序断链／岁层十神／墓层未接必被记漏标／反面判据空跑必被抓／成格变格裁决篡改必被抓／主语料书证必被要求回填／近失登记漂移必被抓／化格命例下限必被报红／干级长生表改错必被抓／从儿命例下限必被报红）"
           f" → 对象 {first}／{fifth}，月柱 {m}")
 
 
@@ -636,6 +655,64 @@ def hua_case_check(problems: list[str], notes: list[str]) -> tuple[int, int]:
     return ok, len(cases)
 
 
+# ── 第七层：从儿格（《滴天髓·顺局》）命例见证集（386 批）────────────────────
+# 化格见证集（384）的 excluded 里躺着 3 例「从儿格」，本批把《顺局》一章的 **9 造**
+# 逐字取证（书明写「格成水木从儿」「格取从儿」「格成顺局从儿」），单独立集。
+# expected 只收书明写的两项：cong_ge=true、from_kind=从儿；书未给真/假，故 from_type
+# 不入期望（§三.4）。本层测的是**引擎的 from_kind**，不是化格判据。
+CONG_ER_FILE = ROOT / "data" / "cases" / "bazi_cong_er_cases.json"
+CONG_ER_FLOOR = 4           # 386 批实测 4/9；只准前进
+CONG_ER_NOTE = (
+    "386 批首测 4/9：五处失配分三类——① CE002／CE008 的食伤与财本是一条顺局链，"
+    "现行「主导差 <0.8 ⇒ 从势」把它们判成了从势；② CE004（未未中气丁比劫）／CE005（寅禄比）"
+    "被「日主有根即拒判」挡住，而书明写「从儿不论身强弱」；③ CE007 辰中本气戊印挡住，书仍判从儿。"
+    "根因是从儿格**没有独立的门**，一直在借用从财/从官的「从弱侧」门。重写判据是下一批的活；"
+    "本层只立尺子，未命中逐条打印，不藏。")
+
+
+def cong_er_case_check(problems: list[str], notes: list[str]) -> tuple[int, int]:
+    """第七层：从儿命例回验。命中数 ≥ CONG_ER_FLOOR 才算过；未命中的逐条打印。"""
+    sys.path.insert(0, str(ROOT / "scripts"))
+    sys.path.insert(0, str(ROOT / "core"))
+    from chart import chart_from_pillars
+    from analyze import analyze
+
+    if not CONG_ER_FILE.is_file():
+        problems.append(f"从儿命例见证集不存在 {CONG_ER_FILE.name}")
+        return 0, 0
+    doc = json.loads(CONG_ER_FILE.read_text(encoding="utf-8"))
+    cases = doc.get("cases") or []
+
+    ok = 0
+    miss = []
+    for c in cases:
+        want = (c.get("expected") or {}).get("from_kind") or "从儿"
+        try:
+            ch = chart_from_pillars(c["pillars"], gender="男", question=c["id"])
+            st = analyze(ch).get("strength") or {}
+            got, basis = st.get("from_kind") or "", st.get("from_basis") or ""
+        except Exception as e:                       # 单例异常不拖垮整门，但要留名
+            got, basis = f"<{type(e).__name__}>", ""
+        if got == want:
+            ok += 1
+        else:
+            miss.append((c["id"], c["location"], want, got, basis,
+                         (c.get("source_quote") or "")[:60]))
+    if ok < CONG_ER_FLOOR:
+        problems.append(f"从儿命例命中 {ok}/{len(cases)} 低于登记下限 {CONG_ER_FLOOR}")
+    notes.append(f"从儿命例：{ok}/{len(cases)} 命中（下限 {CONG_ER_FLOOR}）；"
+                 + (f"未命中 {len(miss)} 条逐条列在下方——这是欠账，不是通过"
+                    if miss else "未命中 0 条"))
+    print(f"  从儿命例见证：{ok}/{len(cases)} 命中（下限 {CONG_ER_FLOOR}）")
+    for mid, loc, want, got, why, quote in miss:
+        detail = f"（{why[:80]}）" if why else ""
+        print(f"    · {mid} {loc}：期望 {want}，实得 {got or '（未判从）'}{detail}")
+        print(f"        书：{quote}")
+    if miss:
+        print(f"    → {CONG_ER_NOTE}")
+    return ok, len(cases)
+
+
 def qiyun_check(problems: list[str], notes: list[str], spec=None) -> int:
     """第三层：起运算术自检（#31④）。《千里明镜》源L308／L329 是**自足的算例**
     （给了起算日、岁数、余日、交运日期与运序列举），故无需节气即可回验我们的历算口径。
@@ -810,6 +887,7 @@ def main() -> int:
     gs = growth_stem_check(problems, notes)
     hs = hua_check(problems, notes)
     hcs, hcn = hua_case_check(problems, notes)
+    ces, cen = cong_er_case_check(problems, notes)
     gap_n, gap_ph = 0, 0
     n_main = 0
     if MAIN_CASES.is_file():
@@ -826,6 +904,7 @@ def main() -> int:
     print(f"化格前置：{gs}/10 干长生位回《命理探原》源L605；壬亥＝临官／癸亥＝帝旺")
     print(f"化格五层：{hs}/{len(HUA_SPEC)} 个《從化論》定义例出对名（真化／假化／不化）")
     print(f"化格六层（命例）：{hcs}/{hcn} 命中，详见下方逐条")
+    print(f"从儿见证（顺局）：{ces}/{cen} 命中，详见下方逐条")
     print(f"起运三层：{qy}/{len(QIYUN_SPEC)} 条《千里明镜》算例回验通过"
           "（干支序差＝岁数／运序合六十甲子／30 日成月余日投射）")
     print(f"主语料空档：{n_main} 例全文扫描 → 命例级顺逆/起运书证 {gap_n} 例（须 0）；"
