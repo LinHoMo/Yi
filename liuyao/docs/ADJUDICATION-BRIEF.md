@@ -44,40 +44,33 @@
       开口：话题词典未命中——人需给 question（决定用神）
       决策：□入（去重后并入外部集）　□弃（登记理由）　□改＿＿＿＿
 
-## B. 复部分歧 8 条（201 批 A/B 双解析器不一致，需裁读数）
+## B. 复部分歧 3 条（201 批 A/B 双解析器不一致，需裁读数；已裁 5 条见 B2）
 
 - [ ] **yilin_buyi_dz_dz-L1279**（yilin_buyi_dz.dz.txt L1279）needs_human:yingqi
       A={"date": "子月戊午日", "original": "观", "changed": "益", "yingqi_branch": "子"}
       B={"original": "观", "changed": "益", "yingqi": "亥"}
       决策：□A 对　□B 对　□都错（改写）＿＿＿＿
-- [ ] **zengshan_buyi_dz_dz-L550**（zengshan_buyi_dz.dz.txt L550）needs_human:original,changed
-      A={"date": "酉月辛亥日", "original": "兑", "changed": "解", "yingqi_branch": "寅"}
-      B={"original": null, "changed": null, "yingqi": "寅"}
-      决策：□A 对　□B 对　□都错（改写）＿＿＿＿
-- [ ] **zengshan_buyi_dz_dz-L561**（zengshan_buyi_dz.dz.txt L561）needs_human:original,changed
-      A={"date": "巳月乙未日", "original": "大过", "changed": "鼎", "yingqi_branch": "卯"}
-      B={"original": null, "changed": null, "yingqi": "卯"}
-      决策：□A 对　□B 对　□都错（改写）＿＿＿＿
-- [ ] **zengshan_buyi_dz_dz-L1581**（zengshan_buyi_dz.dz.txt L1581）needs_human:original,changed
-      A={"date": "辰月戊子日", "original": "比", "changed": "咸", "yingqi_branch": "卯"}
-      B={"original": null, "changed": null, "yingqi": "卯"}
-      决策：□A 对　□B 对　□都错（改写）＿＿＿＿
-- [ ] **zengshan_buyi_dz_dz-L1680**（zengshan_buyi_dz.dz.txt L1680）needs_human:original,changed
-      A={"date": "午月戊午日", "original": "升", "changed": "恒", "yingqi_branch": "戌"}
-      B={"original": null, "changed": null, "yingqi": "戌"}
-      决策：□A 对　□B 对　□都错（改写）＿＿＿＿
 - [ ] **zengshan_buyi_dz_dz-L1798**（zengshan_buyi_dz.dz.txt L1798）needs_human:original,changed
       A={"date": "卯月辛丑日", "original": "晋", "changed": null, "yingqi_branch": "巳"}
       B={"original": "恒", "changed": "大过", "yingqi": "巳"}
-      决策：□A 对　□B 对　□都错（改写）＿＿＿＿
-- [ ] **zengshan_buyi_dz_dz-L2084**（zengshan_buyi_dz.dz.txt L2084）needs_human:original
-      A={"date": "未月丙午日", "original": "离", "changed": null, "yingqi_branch": "寅"}
-      B={"original": null, "changed": null, "yingqi": "寅"}
       决策：□A 对　□B 对　□都错（改写）＿＿＿＿
 - [ ] **zengshan_buyi_dz_dz-L2093**（zengshan_buyi_dz.dz.txt L2093）needs_human:original,changed,yingqi
       A={"date": "未月丙午日", "original": "离", "changed": null, "yingqi_branch": "寅"}
       B={"original": "坎", "changed": "井", "yingqi": "酉"}
       决策：□A 对　□B 对　□都错（改写）＿＿＿＿
+
+## B2. 已裁 5 条（逐字取证，不再待裁）
+
+- [x] **zengshan_buyi_dz_dz-L550**（zengshan_buyi_dz.dz.txt L550）→ 取 A：{"date": "酉月辛亥日", "original": "兑", "changed": "解", "yingqi_branch": "寅"}
+      依据：原文卦例头逐字（zengshan_buyi_dz.dz.txt L543）：「例：酉月辛亥日占求财得兑为泽卦变雷水解卦」——A 的 date/original/changed 三项与之一致；B 记 null 系解析器只认「例：」+「得…卦变…卦」以外的句式时漏采
+- [x] **zengshan_buyi_dz_dz-L561**（zengshan_buyi_dz.dz.txt L561）→ 取 A：{"date": "巳月乙未日", "original": "大过", "changed": "鼎", "yingqi_branch": "卯"}
+      依据：原文卦例头逐字（L554）：「例：巳月乙未日自占病得泽风大过变火风鼎卦」——A 三项一致；B 漏采同上
+- [x] **zengshan_buyi_dz_dz-L1581**（zengshan_buyi_dz.dz.txt L1581）→ 取 A：{"date": "辰月戊子日", "original": "比", "changed": "咸", "yingqi_branch": "卯"}
+      依据：原文卦例头逐字（L1574）：「曾如辰月戊子日占小舟过关恐盘阻得水地比变泽山咸卦。」——A 三项一致；B 漏采因该头**不以「例：」开头**（这是 B 解析器的句式缺口，不是文本歧义）
+- [x] **zengshan_buyi_dz_dz-L1680**（zengshan_buyi_dz.dz.txt L1680）→ 取 A：{"date": "午月戊午日", "original": "升", "changed": "恒", "yingqi_branch": "戌"}
+      依据：原文卦例头逐字（L1673）：「如午月戊午日占何日雨得地风升变恒卦。」——A 三项一致；B 漏采同上
+- [x] **zengshan_buyi_dz_dz-L2084**（zengshan_buyi_dz.dz.txt L2084）→ 取 A：{"date": "未月丙午日", "original": "离", "changed": null, "yingqi_branch": "寅"}
+      依据：原文逐字（L2077）：「再占一卦。得离卦不动」——卦为离、无变卦，A 的 original=离/changed=null 与之一致；B 记 null 系未识别「得X卦不动」句式
 
 ## C. 分诊真分歧 8 条＋兜底 5 条（202 批）
 

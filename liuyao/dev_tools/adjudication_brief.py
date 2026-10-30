@@ -50,13 +50,24 @@ def build() -> int:
         parts.append("      决策：□入（去重后并入外部集）　□弃（登记理由）　□改＿＿＿＿")
 
     # B. 双器分歧（读数裁决面）
-    nb = [r for r in rec["rows"] if r["verdict"] != "consensus"]
-    parts.append(f"\n## B. 复部分歧 {len(nb)} 条（201 批 A/B 双解析器不一致，需裁读数）\n")
+    # 370 批：已裁的（带 decision）不再进待裁桶——否则「裁过」与「没裁」在简报里长得一样，
+    # 下一轮值守还要把它们重新读一遍。裁决与依据落在 restorable_recheck.json 的 row 上。
+    decided = [r for r in rec["rows"] if r["verdict"] != "consensus" and r.get("decision")]
+    nb = [r for r in rec["rows"] if r["verdict"] != "consensus" and not r.get("decision")]
+    parts.append(f"\n## B. 复部分歧 {len(nb)} 条（201 批 A/B 双解析器不一致，需裁读数；已裁 {len(decided)} 条见 B2）\n")
     for r in nb:
         parts.append("- [ ] **%s**（%s L%d）%s" % (r["id"].replace("VER-", ""), r["file"], r["line"], r["verdict"]))
         parts.append("      A=%s" % json.dumps(r["a"], ensure_ascii=False)[:110])
         parts.append("      B=%s" % json.dumps(r["b"], ensure_ascii=False)[:110])
         parts.append("      决策：□A 对　□B 对　□都错（改写）＿＿＿＿")
+
+    if decided:
+        parts.append(f"\n## B2. 已裁 {len(decided)} 条（逐字取证，不再待裁）\n")
+        for r in decided:
+            parts.append("- [x] **%s**（%s L%d）→ 取 A：%s" % (
+                r["id"].replace("VER-", ""), r["file"], r["line"],
+                json.dumps(r["a"], ensure_ascii=False)[:90]))
+            parts.append("      依据：%s" % (r.get("decision_basis") or "")[:160])
 
     # C. 分诊真分歧＋兜底
     tz = tri["rows"]
