@@ -506,6 +506,62 @@ def hua_check(problems: list[str], notes: list[str], spec=None) -> int:
     return ok
 
 
+# ── 第六层：化格**命例**见证集（384 批）────────────────────────────────────
+# 前五层证的是「书的定义例」；这一层证的是「书自己的命例」——判据在命例上是否也成立。
+# 读数从实测起步（只准前进）：HUA_CASE_FLOOR 是 384 批实测的命中数，不是拍出来的目标。
+HUA_CASE_FILE = ROOT / "data" / "cases" / "bazi_hua_cases.json"
+HUA_CASE_FLOOR = 3          # 384 批实测 3/10（真化5／假化4／不化1 全在）
+HUA_CASE_NOTE = (
+    "384 批实测 3/10：书证到齐前的第一把尺子。七处失配已逐条定性（见 CHANGELOG 384），"
+    "根因是判据把书的**程度语**当成了**硬否决**（「化神要通月令」「不遇印劫官」），"
+    "而命例里这些条件常以「泄气不足」「虽时逢禄印」「嫌其时透壬水克丙」等**程度/提醒**出现；"
+    "重写判据是下一批的活。")
+
+
+def hua_case_check(problems: list[str], notes: list[str]) -> tuple[int, int]:
+    """第六层：化格命例回验。命中数 ≥ HUA_CASE_FLOOR 才算过；未命中的逐条打印（欠账可见）。"""
+    from bazi_factors.congrge import hua_judge
+    from yishu_core.ming_tables import CANG_GAN
+
+    if not HUA_CASE_FILE.is_file():
+        problems.append(f"化格命例见证集不存在 {HUA_CASE_FILE.name}")
+        return 0, 0
+    doc = json.loads(HUA_CASE_FILE.read_text(encoding="utf-8"))
+    cases = doc.get("cases") or []
+
+    def build(pill) -> dict:
+        ps = {}
+        factors = {}
+        for key, gz in zip(("year", "month", "day", "hour"),
+                           (pill["year"], pill["month"], pill["day"], pill["hour"])):
+            ps[key] = {"stem": gz[0], "branch": gz[1]}
+            factors[key] = {"hidden_stems": list(CANG_GAN.get(gz[1], []))}
+        return {"pillars": ps, "factors": factors}
+
+    ok = 0
+    miss = []
+    for c in cases:
+        want = ((c.get("expected") or {}).get("hua_type")) or ""
+        r = hua_judge(build(c["pillars"]))
+        got = r.get("type") or "不化"
+        if got == want:
+            ok += 1
+        else:
+            miss.append((c["id"], c["location"], want, got, r.get("reason") or "",
+                         (c.get("source_quote") or "")[:60]))
+    if ok < HUA_CASE_FLOOR:
+        problems.append(f"化格命例命中 {ok}/{len(cases)} 低于登记下限 {HUA_CASE_FLOOR}")
+    notes.append(f"化格命例：{ok}/{len(cases)} 命中（下限 {HUA_CASE_FLOOR}）；"
+                 f"未命中 {len(miss)} 条逐条列在下方——这是欠账，不是通过")
+    print(f"  化格命例见证：{ok}/{len(cases)} 命中（下限 {HUA_CASE_FLOOR}）")
+    for mid, loc, want, got, why, quote in miss:
+        print(f"    · {mid} {loc}：期望 {want}，实得 {got}（{why}）")
+        print(f"        书：{quote}")
+    if miss:
+        print(f"    → {HUA_CASE_NOTE}")
+    return ok, len(cases)
+
+
 def qiyun_check(problems: list[str], notes: list[str], spec=None) -> int:
     """第三层：起运算术自检（#31④）。《千里明镜》源L308／L329 是**自足的算例**
     （给了起算日、岁数、余日、交运日期与运序列举），故无需节气即可回验我们的历算口径。
@@ -678,6 +734,7 @@ def main() -> int:
     qy = qiyun_check(problems, notes)
     ws = wushi_check(problems, notes)
     hs = hua_check(problems, notes)
+    hcs, hcn = hua_case_check(problems, notes)
     gap_n, gap_ph = 0, 0
     n_main = 0
     if MAIN_CASES.is_file():
@@ -692,6 +749,7 @@ def main() -> int:
     print(f"运岁四层：{ws}/{len(WUSHI_SPEC)} 个《歲運論》定义例出对名（運伐歲／歲伐運／和／好；"
           "三条负例：方向反面／同支误标／空值臆造）")
     print(f"化格五层：{hs}/{len(HUA_SPEC)} 个《從化論》定义例出对名（真化／假化／不化）")
+    print(f"化格六层（命例）：{hcs}/{hcn} 命中，详见下方逐条")
     print(f"起运三层：{qy}/{len(QIYUN_SPEC)} 条《千里明镜》算例回验通过"
           "（干支序差＝岁数／运序合六十甲子／30 日成月余日投射）")
     print(f"主语料空档：{n_main} 例全文扫描 → 命例级顺逆/起运书证 {gap_n} 例（须 0）；"
