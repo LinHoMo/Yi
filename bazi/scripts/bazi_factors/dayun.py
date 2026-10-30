@@ -26,6 +26,7 @@ from ._common import (
     TIGER_MONTH_STEM,
     dayun_direction,
     sanxing_hits,
+    stems_wuhe,
     ten_god,
     STEM_ELEMENTS,
     CHONG_PAIRS as _CHONG_PAIRS,
@@ -169,8 +170,45 @@ def dayun_liunian_interactions(chart_json: dict, dayun: list[dict] | None = None
             if tg:
                 rels.append({"kind": "ten_god_stem",
                              "text": f"流年干{y_stem}对运干{d_stem}={tg}", "value": tg})
+
+            # ── 《滴天髓·歲運論》五式：戰（伐）／和／好（373 批）──────────────
+            # 书证逐字：data/sources/di-tian-sui.wikitext.txt
+            #   L365「如丙運庚年，謂之運伐（剋）歲。」
+            #   L370「如庚運丙年，謂之歲伐（剋）運，日主喜庚，得戊己以和丙者吉（通關）。」
+            #   L382「如乙運庚年，庚運乙年，則和（乙庚化金），日主喜金則吉，日主喜木則不吉。」
+            #   L383「如子運丑年，丑運子年，則和（子丑合而化土），日主喜土則吉。喜水則不吉。」← 支合，已由 liuhe 承担
+            #   L387「如庚運辛年，辛運庚年，申運酉年，酉運申年，則好。」
+            # 只标**结构名**，不判吉凶：書把吉凶挂在「日主喜X」上（方向），且明说「勢大則太歲無權」
+            # 要看力量对比——那是量级判断，本层不做（与 363 批 `dayun_cheng_bai` 同一口径）。
+            _de = STEM_ELEMENTS.get(d_stem) or ""
+            _ye = STEM_ELEMENTS.get(y_stem) or ""
+            if _de and _ye:
+                if KE_CYCLE.get(_de) == _ye:
+                    rels.append({"kind": "yun_fa_sui", "value": f"{d_stem}{y_stem}",
+                                 "text": f"运干{d_stem}剋岁干{y_stem}——《歲運論》谓之「運伐歲」",
+                                 "basis": "《滴天髓·歲運論》源L365 逐字「如丙運庚年，謂之運伐（剋）歲。」"})
+                elif KE_CYCLE.get(_ye) == _de:
+                    rels.append({"kind": "sui_fa_yun", "value": f"{y_stem}{d_stem}",
+                                 "text": f"岁干{y_stem}剋运干{d_stem}——《歲運論》谓之「歲伐運」",
+                                 "basis": "《滴天髓·歲運論》源L370 逐字「如庚運丙年，謂之歲伐（剋）運，"
+                                          "日主喜庚，得戊己以和丙者吉（通關）。」"})
+                elif stems_wuhe(d_stem, y_stem):
+                    rels.append({"kind": "sui_yun_he_gan", "value": f"{d_stem}{y_stem}",
+                                 "text": f"运干{d_stem}与岁干{y_stem}五合——《歲運論》谓之「和」",
+                                 "basis": "《滴天髓·歲運論》源L382 逐字「如乙運庚年，庚運乙年，則和"
+                                          "（乙庚化金），日主喜金則吉，日主喜木則不吉。」"})
+                elif _de == _ye and d_gz != y_gz:
+                    rels.append({"kind": "sui_yun_hao", "value": _de,
+                                 "text": f"运干{d_stem}与岁干{y_stem}同类（{_de}）——《歲運論》谓之「好」",
+                                 "basis": "《滴天髓·歲運論》源L387 逐字「如庚運辛年，辛運庚年，申運酉年，"
+                                          "酉運申年，則好。」（支同类已由 bihe 承担，此处只标干）"})
             pair = frozenset((d_branch, y_branch))
-            if pair in he_set:
+            if d_branch == y_branch:
+                # 运支与岁支同支（岁运并临必属此列）：**同支之间不构成三合/比和/生克**。
+                # 373 批修复：旧写法会让「丁卯运·丁卯年」标出「三合木局」——三合须三支，
+                # 两支（且同支）不是局；同支也不是「比和」（比和指同五行不同支，如寅卯）。
+                pass
+            elif pair in he_set:
                 rels.append({"kind": "liuhe",
                              "text": f"流年支{y_branch}与运支{d_branch}六合"})
             elif pair in chong_set:

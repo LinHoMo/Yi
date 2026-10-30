@@ -41,10 +41,6 @@ BOOKHEAD = re.compile(r"^《.{2,12}》")     # 书题／章题行（如《滴天
 # 对应话题时引用，不常驻默认正文）。混在一起，前者（真欠账）就被后者的数量淹没了。
 # 本表**只做归类，不改判定**：判定仍是「0 命中即红」；下面两桶都是「不引用是正确的」。
 CLASS_F = {   # 判据论述在库、引擎无对应判据 ⇒ 论说句无处可引（**真欠账，已登记**）
-    ("ditian_sui.json", "chapters›歲運論"):
-        "论「运岁生克和」五式（运伐岁／岁伐运／运冲岁／岁冲运／和解），"
-        "引擎只有「流年 vs 命局」的引动（xing_ru_mu／san_he_ban_he／zhi_chong_ming），"
-        "**没有运与岁之间那一层**；故其论说句无处可引。欠账登记见 CHANGELOG 372 批。",
     ("ditian_sui.json", "chapters›體用論"):
         "论「日主为体、用神为用」的方法论层；引擎以「用神／格局」表达体用，未单列体用判据，"
         "故其论说句不逐条引用。",
@@ -56,6 +52,12 @@ CLASS_B = {   # 方法论登记：_meta 自述「不是判据、不进任何评�
         "《三命通会》看命总纲方法论引文，_meta 明写「不是判据、不进任何评分」，只作 narrate 与文档的逐字回指",
 }
 CLASS_G = {   # 按 SKILL.md 意图路由取用：问到对应话题才引用，不常驻默认正文
+    ("ditian_sui.json", "chapters›歲運論"):
+        "**373 批已实现**：运岁五式（運伐歲／歲伐運／和〔干五合〕／好〔干同类〕）已落进 "
+        "`dayun_liunian_interactions`，书证逐字挂各 relation 的 `basis`（源L365/370/382/387）。"
+        "论说句仍不进报告，是因为**正文只印结构名、不印 basis**（与 363 批 `dayun_cheng_bai` 同）——"
+        "属渲染取舍，不是判据缺失。（372 批曾按「判据未实现」登记，本批据实移出 F。）",
+
     "xiang_layer.json": "象层（宫位／脏腑／六亲）：SKILL.md 意图路由决定是否取用，不常驻正文",
     "liushen_image.json": "十神取象：随题意取用（问六亲／性格时才引）",
     "shi_shen_actions.json": "十神作用：随题意取用",
@@ -123,6 +125,7 @@ def main() -> int:
         for top, s in leaves:
             if s in text or s.lstrip("，、。；：") in text:
                 continue
+            _top1 = top.split("›")[0]     # 容器可能到二级（看命口诀›月令为命），表按一/二级都可登记
             if f.name == "tiaohou_quotes.json" and top not in tiao_reach:
                 tot["A"] += 1
                 continue
@@ -138,14 +141,14 @@ def main() -> int:
             if not hit_by_cont.get(top):
                 tot["E"] += 1        # 同容器**一条都没被引** ⇒ 该容器在 276 盘里从未触发（盘外，正确不引）
                 continue
-            _top1 = top.split("›")[0]     # 容器可能到二级（看命口诀›月令为命），表按一/二级都可登记
             if (f.name, top) in CLASS_B or (f.name, _top1) in CLASS_B:
                 tot["B"] += 1        # 方法论登记（_meta 自述不进评分）
                 continue
             if (f.name, top) in CLASS_F:
                 tot["F"] += 1        # 判据在库、引擎无判据 ⇒ 真欠账（已登记）
                 continue
-            if f.name in CLASS_G:
+            if (f.name in CLASS_G or (f.name, top) in CLASS_G
+                    or (f.name, _top1) in CLASS_G):
                 tot["G"] += 1        # 按题意取用，不常驻正文
                 continue
                 continue
@@ -161,8 +164,8 @@ def main() -> int:
     for u in unk[:12]:
         print("  D·", u)
     if not tot["D"]:
-        print("√ D 未归类 0 条——原 68 条已逐容器定性：26 条 F（判据未实现，真欠账）＋"
-              "41 条 G（按题意取用）＋1 条 B（方法论登记）")
+        print(f"√ D 未归类 0 条——残差已全部逐容器定性：F {tot['F']}（判据未实现，真欠账）／"
+              f"G {tot['G']}（按题意取用，正确不常驻）／B 方法论登记（并入 B {tot['B']}）")
     if tot["D"]:
         print(f"提示：D 类 {tot['D']} 条**未归类**（既在可达键内、又不像元数据）——是缺陷候选而非定论，"
           "须逐条点名定性后才决定是否入门判红；本器不静默改分母，也不把 D 当通过。")

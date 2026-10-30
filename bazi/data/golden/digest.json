@@ -3,8 +3,8 @@
     "what": "八字科金标准指纹基线（conclusion 全字段哈希＋逐字段快照＋大运方向）",
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化（含 conclusion_sha，任何字段都算），措辞层漂移=narrate 断语变化（两层分列归因）"
   },
-  "digest": "101df45844078c13",
-  "narrate_digest": "72b4802cb4065f96",
+  "digest": "9a615f9bcb53f1be",
+  "narrate_digest": "297a70b7a37498e5",
   "drift_log": [
     {
       "from": "57dc7e890af222fa",
@@ -53,15 +53,15 @@
       "to": "101df45844078c13",
       "date": "2026-10-30",
       "reason": "368 批两处行为变化：①从格真/假新增「天干层有气印比」判据（印比透干+得月令旺相休+坐支有效五行生我/同我 ⇒ 仍算有微弱生扶 ⇒ 假从），weak_zhengguan（甲子丙子丙子壬辰，甲偏印相于子月、坐子得水生）由真从改判假从——只动试探档 tentative_special 与从格标签，pattern/strength/用神未尽变动；②真从但干上确有印比者，basis 由「绝无一毫生扶」改为「透干印比无气，不作生扶论」，消除报告与盘面自相矛盾（书例：戊土虽生犹死／一点庚金临绝）。ZD/ZC 15 例真假定性 13→14（ZC015 收掉，ZC014 结案留案）"
+    },
+    {
+      "from": "101df45844078c13",
+      "to": "9a615f9bcb53f1be",
+      "date": "2026-10-30",
+      "reason": "373 批：运岁交互因子新增《滴天髓·歲運論》五式结构名（運伐歲／歲伐運／和〔干五合〕／好〔干同类〕，支合支冲沿用既有 liuhe/liuchong），并修复「运支与岁支同支仍标三合木局」的误标（丁卯运·丁卯年）。只加结构标签与逐字书证，不判吉凶、不进评分；conclusion.dayun_liunian 各例多 0–1 条 relation，narrate 相应多一句对照。"
     }
   ],
   "narrate_drift_log": [
-    {
-      "from": "7da64a36ec160f93",
-      "to": "2ab2cc78c2f2d712",
-      "date": "2026-10-07",
-      "reason": "新增四批 OPT 的 narrate 接线（全部为引文/结构标签层，机械层零漂移）：①看命口诀方法论引文块（_kanming_block，三命通会 L5115/L5137，OPT-sanming_tonghui_dz-04）；②从格引文补三命通会弃命从煞/从财并列句（_geju_line，OPT-sanming_tonghui_dz-03）；③十神取象旁证块（_LIUSHEN_IMAGE，千里命稿六神篇，OPT-qianli_minggao_dz-03，仅 narrate 消费）。三处均为书源引文入正文，不改任何判定值、不改机械层（digest 1be8d5b579463a47 未变）；ming tune 100.0/holdout 96.2 持平"
-    },
     {
       "from": "2ab2cc78c2f2d712",
       "to": "b60ab2c4d024df11",
@@ -175,6 +175,12 @@
       "to": "72b4802cb4065f96",
       "date": "2026-10-30",
       "reason": "363批 行运成格变格 narrate 段去重：裁决行只保留 detail（已含结构引动文本），不再与 结构引动 重复"
+    },
+    {
+      "from": "72b4802cb4065f96",
+      "to": "297a70b7a37498e5",
+      "date": "2026-10-30",
+      "reason": "373 批：运岁交互因子新增《滴天髓·歲運論》五式结构名（運伐歲／歲伐運／和〔干五合〕／好〔干同类〕，支合支冲沿用既有 liuhe/liuchong），并修复「运支与岁支同支仍标三合木局」的误标（丁卯运·丁卯年）。只加结构标签与逐字书证，不判吉凶、不进评分；conclusion.dayun_liunian 各例多 0–1 条 relation，narrate 相应多一句对照。"
     }
   ]
 }
