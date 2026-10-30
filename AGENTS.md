@@ -74,16 +74,19 @@ Yi/
 │                        #   root/ 根级门（不分发）；sync_devkit.py --write/--check；handoff/ 不入库
 ├── liuyao/              # 六爻（独立）
 │   ├── core/yishu_core/ # **产物**：由 kernel/sync_kernel.py 生成，勿手改
+│   ├── eval/            # 评测层（356 批起）：案例装载/评分/门户；scripts/ 同名文件为兼容 shim
 │   ├── scripts/ data/ references/ dev_tools/ docs/ tests/
 │   └── README.md  SKILL.md
 ├── bazi/                # 八字（独立）
 │   ├── core/yishu_core/ # **产物**：同上（316 批起不再携带卦辞/纳甲/历法核对三个六爻专用模块）
+│   ├── eval/            # 评测层（359 批起）：评测器实现；scripts/ 同名文件为兼容 shim
 │   ├── scripts/ data/ references/ dev_tools/ docs/ tests/   # tests/ 335 批补建（smoke+regression）
 │   └── README.md  SKILL.md
 └── dsh-plugin/          # DSH 插件（Node 半，独立于两科；契约见下）
 ```
 
-依赖方向单向：`<科>/scripts → <科>/core`（门禁侧 `<科>/dev_tools → devkit/shared` 同理）。
+依赖方向单向：`<科>/scripts → <科>/core`；`<科>/eval → <科>/scripts + <科>/core`
+（评测层可读 `data/cases`；交付路径不得反向 import `eval/`；门禁侧 `<科>/dev_tools → devkit/shared` 同理）。
 **两科之间禁止任何相互 import**，也不存在合参层（`synthesis` 已移除且不得复活）。
 两科 `core/` 与 `dev_tools/` 里的共享件都是**生成产物**（316／334 批起）——手改即被
 `[35]`／`[37]` 字节比对判红；改内核改 `kernel/`，改共享门改 `devkit/shared/`，再跑

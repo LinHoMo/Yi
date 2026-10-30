@@ -5,6 +5,20 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-10-30 第三百六十批（全仓）：**AGENTS 目录图与依赖线补上 `eval/` 层**
+
+**性质**：docs（结构同步）。零引擎、零数据、零读数改动。
+
+- `AGENTS.md §二` 目录树为两科补 `eval/` 行（六爻 356 批、八字 359 批迁入），
+  依赖线由「`scripts → core`」补为「`eval → scripts + core`」，并写明
+  「评测层可读 `data/cases`；交付路径不得反向 import `eval/`」。
+- 与 `check_case_isolation.py` 的物理隔离档、两科 `eval/__init__.py` 的边界声明同义；
+  无代码改动。
+- 复验：`devkit/root/check_root_docs.py`、两科 `check_doc_refs.py` 0 死链；
+  `check_docs_index.py` 51 份文档齐；full ledger 40/40（读数不变）。
+
+分数含义：与古籍案例要点的一致性，不代表现实预测命中率（AGENTS.md §一.3）。
+
 ## 2026-10-30 第三百五十九批（六爻/共享门）：**物理隔离档检测泛化（六爻行为不变）**
 
 **性质**：shared gate（行为保持）。零引擎、零数据、零读数改动。
