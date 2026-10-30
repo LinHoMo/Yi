@@ -337,12 +337,23 @@ def narrate(a: dict) -> str:
     # 不覆写格局成败结论，只把「运到了哪一步动了命里哪一支」摆出来供回指书例。
     yin = a.get("dayun_ming_yindong") or []
     sui = a.get("liunian_ming_yindong") or []
-    if yin or sui:
+    cheng = a.get("dayun_cheng_bai") or []
+    yin_map = {h.get("dayun"): h for h in yin}
+    if yin or sui or cheng:
         lines.append("**行运引动**（运与岁对本命四柱的结构标签，独立成列、不覆写本命结论，不批吉凶）：")
-        for h in yin:
-            seg = "；".join(str(r.get("text") or "") for r in h.get("relations") or [])
-            if seg:
-                lines.append(f"- 大运{h.get('dayun')}：{seg}。")
+        if cheng:
+            lines.append("**行运成格变格（分列读数：运层结构命名，不覆写本命格局成败、不批吉凶）**：")
+            for c in cheng:
+                gz = c.get("dayun")
+                verdict = "、".join(c.get("verdict") or [])
+                seg = "；".join(str(r.get("text") or "") for r in
+                              (yin_map.get(gz, {}) or {}).get("relations") or [])
+                line = f"- 大运{gz}（{c.get('start_age')}岁起）：裁决【{verdict}】"
+                if c.get("detail"):
+                    line += f"；{c['detail']}"
+                elif seg:
+                    line += f"；结构引动：{seg}"
+                lines.append(line)
         for h in sui[:6]:      # 岁层只列前六个有引动的流年（表长以可读为限）
             seg = "；".join(str(r.get("text") or "") for r in h.get("relations") or [])
             if seg:

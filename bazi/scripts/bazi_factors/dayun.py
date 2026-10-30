@@ -491,3 +491,77 @@ def xiao_yun_table(chart_json: dict, n: int = 12) -> list[dict]:
             "verified": False,
         })
     return out
+
+
+# —— 行运成格变格裁决层（第三百六十三批；关闭第九十三批起登记的「行运成格变格」欠账）——
+# 书《子平真诠评注》源L325 逐字「命之格局，成于八字，然配之以运，亦有成格变格之要权。
+# 其成格变格，较之喜忌祸福尤重」；《穷通宝鉴》源L11 把本命层通则明确延伸到行运。
+# 但书只给方向（运亦须折衷）不给量级与优先序，故本层**只做结构命名、不赋吉凶分、
+# 不覆写本命格局成败结论**——纯分列读数（CONTRACT §五-bis「象与断分界」同型：运层是
+# 结构读数，不是判决）。判定只依赖 dayun_ming_yindong 已逐字回验的机制 kind，不重新推导本命格局。
+# 类别与书据（复用 yindong_relations 各机制之 basis 源行，避免另起一套未回验判据）：
+_CHENG_VERDICT_BY_KIND = {
+    # 成格引动：运支补命局三合局第三支／补半合／运干引出本具之局 ⇒ 运成局、引动成格
+    "bu_san_he_di_san_zhi": ("成格引动",
+        "运支补命局三合局第三支 ⇒ 会局成格（《神峰通考》源L1856 逐字「行丁丑，是巳酉丑会金局」同型）"),
+    "san_he_ban_he": ("成格引动",
+        "运支补成三合半合 ⇒ 引动成局（《神峰通考》源L2531 逐字「亥卯合局印授扶身」／源L2528「及岁支财神会局」同型）"),
+    "gan_yin_chu_yi_ju": ("成格引动",
+        "运干引出本具之局 ⇒ 成格引动（《渊海子平》源L387 逐字「引出亥卯未木局」）"),
+    # 变格引动：运至墓支某神入墓／运支六冲命支（冲提纲尤重）／运伤拱格／所拱落空破拱 ⇒ 变格破损
+    "xing_ru_mu": ("变格引动",
+        "运至墓支、命局某神入墓 ⇒ 变格破损（《千里命稿》源L1955「正官格，行墓运，即是官星入墓」；《三命通会》源L253「火命逢之则为入墓」）"),
+    "zhi_chong_ming": ("变格引动",
+        "运支六冲命局之支（冲提纲尤重）⇒ 变格引动（《神峰通考》源L1848 逐字「冲破甲子」同型）"),
+    "gong_ge_shou_shang": ("变格引动",
+        "运伤拱格（冲拱位／克日干七杀）⇒ 变格破损（《神峰通考》源L917「忌刑冲了日时拱位，又怕四柱中有伤日干七杀」）"),
+    "gong_ge_luo_kong": ("变格引动",
+        "所拱落空 ⇒ 拱格破、无格可伤（分列读数，不等同吉凶）（《三命通会》源L1816「伤了日时拱不住贵气大忌塡实空亡」）"),
+    # 填实引动：运支填实日时虚拱之支
+    "zhi_tian_shi": ("填实引动",
+        "运支填实日时虚拱之支 ⇒ 填实（《神峰通考》源L1848 逐字「行辛卯运填实卒」；「四柱不可占了贵禄之宫，则填实不容物」）"),
+}
+# 书未给优先级，故 verdict 保留**触发的所有类别**（可多类并存），不强行压成单一胜者。
+
+
+def judge_dayun_cheng_bai(chart_json: dict, dayun: list[dict] | None = None,
+                          yindong: list[dict] | None = None) -> list[dict]:
+    """大运成格变格裁决层：把「运↔本命四柱」结构引动标签映射为成格/变格/填实/守局四类读数。
+
+    每步独立成列（分列读数），只命名结构、不批吉凶、不覆写本命格局成败结论。
+    判定只看 dayun_ming_yindong 的机制 kind（已逐字回验），不重新推导本命格局。
+    """
+    if dayun is None:
+        dayun = dayun_table(chart_json)
+    if yindong is None:
+        yindong = dayun_ming_yindong(chart_json, dayun=dayun)
+    rel_map = {h.get("dayun"): h.get("relations") or [] for h in (yindong or [])}
+    out = []
+    for d in dayun or []:
+        gz = d.get("ganzhi") or ""
+        if len(gz) < 2:
+            continue
+        rels = rel_map.get(gz, [])
+        cats: dict[str, list[tuple[str, str, str]]] = {}
+        for r in rels:
+            kind = r.get("kind")
+            if kind in _CHENG_VERDICT_BY_KIND:
+                cat, basis = _CHENG_VERDICT_BY_KIND[kind]
+                cats.setdefault(cat, []).append((kind, str(r.get("text", "")), basis))
+        if cats:
+            verdict = sorted(cats.keys())
+            detail = "；".join(dict.fromkeys(t for _, t, _ in
+                              [item for items in cats.values() for item in items]))
+            basis = "；".join(sorted({b for items in cats.values() for _, _, b in items}))
+            out.append({"dayun": gz, "dayun_index": d.get("index"),
+                        "start_age": d.get("start_age"),
+                        "verdict": verdict, "detail": detail, "basis": basis,
+                        "不覆写本命结论": True, "不批吉凶": True})
+        else:
+            out.append({"dayun": gz, "dayun_index": d.get("index"),
+                        "start_age": d.get("start_age"),
+                        "verdict": ["守局"], "detail": "",
+                        "basis": "该运步无成格/变格结构引动（运支运干不补局、不冲克本命四柱），"
+                                 "本命格局成败结论维持不变（分列读数，不覆写）",
+                        "不覆写本命结论": True, "不批吉凶": True})
+    return out

@@ -11,6 +11,11 @@
 ④ 是本器存在的主要理由：机械链检测会把段内别处干支（含日柱本身）算进链长而虚增命中，
 只有「反方向无此运」才证明运序确实出自本命的排法。
 
+第六至八层（第三百六十五批加 ⑥／⑦，即本文件 `corpus_gap_check`）不看见证集，改看
+**主评分语料**：把「主评分语料按行运评分 = 0 例」这句空档，变成三条可重跑的读数
+（决定性语汇 0 命中／广义「运」字 9 例逐例登记语境／四柱-only 起运取值是占位常数）。
+详见该函数上方注释。
+
 用法：
     python dev_tools/check_dayun_cases.py            # 回验，有问题退码 1
     python dev_tools/check_dayun_cases.py --selftest # 负例自证：造假引文／反方向运序必须被抓
@@ -192,11 +197,13 @@ def engine_check(data: dict, problems: list[str], notes: list[str]) -> tuple[int
     sys.path.insert(0, str(ROOT / "scripts"))
     sys.path.insert(0, str(ROOT / "core"))
     try:
-        from bazi_factors.dayun import dayun_ming_yindong, dayun_table, liunian_ming_yindong
+        from bazi_factors.dayun import (dayun_ming_yindong, dayun_table,
+                                        liunian_ming_yindong, judge_dayun_cheng_bai)
     except Exception as e:
         problems.append(f"引擎回验起不来（import 失败）：{e}")
         return 0, 0
     seq_ok = mech_ok = 0
+    verdict_ok = want_verdict = 0
     for case in data["cases"]:
         gzs = case["pillars_raw"].split()
         sex = "男" if case.get("gender", "").startswith("男") else "女"
@@ -254,10 +261,26 @@ def engine_check(data: dict, problems: list[str], notes: list[str]) -> tuple[int
                                 f"（期望 {(want['value'], want['rel'])}，实得 {got[want['kind']]}）")
             else:
                 mech_ok += 1
+        # 行运成格变格裁决层回验（363 批）：见证集登记的「成格变格」期望须与引擎
+        # judge_dayun_cheng_bai 输出一致；裁决类别由 dayun_ming_yindong 已回验的结构标签派生。
+        cb = judge_dayun_cheng_bai(chart, dayun=dy, yindong=hits)
+        cb_map = {c["dayun"]: set(c.get("verdict") or []) for c in cb}
+        for exp in case["expected"]["dayun"].get("成格变格", []) or []:
+            want_verdict += 1
+            gz = exp.get("运")
+            want_v = set(exp.get("裁决") or [])
+            got_v = cb_map.get(gz, set())
+            if not want_v <= got_v:
+                problems.append(f"{case['id']} 运{gz}：成格变格裁决应为 {sorted(want_v)}，"
+                                f"引擎得 {sorted(got_v)}（结构标签派生，须与书据机制一致）")
+            else:
+                verdict_ok += 1
     want_mech = sum(len(v) for v in ENGINE_EXPECT.values()) + sum(len(v) for v in SUI_EXPECT.values())
     if mech_ok < want_mech:
         problems.append(f"引擎回验命中机制数 {mech_ok} 低于登记值 {want_mech}，疑似负例失效")
-    return seq_ok, mech_ok
+    if verdict_ok < want_verdict:
+        problems.append(f"成格变格裁决回验命中 {verdict_ok} 低于登记值 {want_verdict}，疑似负例失效")
+    return seq_ok, mech_ok, verdict_ok
 
 
 def validate(data: dict) -> tuple[list[str], list[str], int, int]:
@@ -333,7 +356,26 @@ def selftest() -> None:
     engine_check(data, pq5, [])
     ENGINE_FORBID.pop("DY012", None)
     assert any("DY012" in x and "不该出的标签仍出现" in x for x in pq5), f"反面判据空跑未被抓：{pq5}"
-    print(f"SELFTEST OK：8 个负例全部被抓出（假引文／方向翻面／性别依据／余日篡改／运序断链／岁层十神／墓层未接必被记漏标／反面判据空跑必被抓）"
+
+    # 裁决层空转防护：给见证集塞一条与引擎实际裁决不符的期望，必须被记作不符（门没白跑）
+    bad = _copy(data)
+    pick(bad, "DY007")["expected"]["dayun"]["成格变格"].append(
+        {"运": "辛亥", "裁决": ["守局"]})   # 引擎实际为 成格引动，与「守局」不符
+    pq6: list[str] = []
+    engine_check(bad, pq6, [])
+    assert any("DY007" in x and "成格变格裁决应为" in x for x in pq6), f"裁决层篡改未被抓：{pq6}"
+
+    # ④ 主语料空档核验也必须证明自己在扫（365 批）：
+    # 塞一条「书明写顺行 + 五岁起运」的假案例 → 必须判红并要求按书证回填；
+    # 同一份假集合里登记表那 9 例一个都不在 → 必须另报一条登记漂移。
+    fake = {"schema": "x", "cases": [
+        {"id": "GAP1", "source_quote": "此造运行顺行，初运乙丑，五岁起运", "note": ""}]}
+    pg: list[str] = []
+    corpus_gap_check(fake, pg, [], engine_probe=False)
+    assert any("必须按书证回填" in x for x in pg), f"书证出现而未被要求回填：{pg}"
+    assert any("登记漂移" in x for x in pg), f"登记漂移未被抓：{pg}"
+
+    print(f"SELFTEST OK：11 个负例全部被抓出（假引文／方向翻面／性别依据／余日篡改／运序断链／岁层十神／墓层未接必被记漏标／反面判据空跑必被抓／成格变格裁决篡改必被抓／主语料书证必被要求回填／近失登记漂移必被抓）"
           f" → 对象 {first}／{fifth}，月柱 {m}")
 
 
@@ -393,6 +435,116 @@ def qiyun_check(problems: list[str], notes: list[str], spec=None) -> int:
     return ok
 
 
+# ── ④ 主评分语料「行运可评量」空档核验（第三百六十五批）────────────────────
+# 为什么归在本器而不另立一门：全库只有本器认得「运层书证长什么样」，而这里要判的
+# 正是「主语料里有没有这种书证」——判据同源，故同门（§四.8 一门一判据）。
+#
+# 要关的欠账：把运层接进对齐分的前置条件是「主评分语料带行运键」，实测 0/338。
+# 但「0」这个数自己说不清两件事：是书真的没写，还是扫描/解析漏了；以及将来会不会
+# 有人在没有书证的情况下把它补上，凭空长出一个恒真的 100% 维度。本段把两件事都变成可重跑的读数：
+#   ① 决定性语汇（命例级顺逆、起运岁数）在 338 例全文 **0 命中** ⇒ 回填无书证来源；
+#   ② 广义「运」字 9 命中，逐例登记语境（调候正文／吉凶断语，无干支、无岁数）；
+#   ③ 四柱-only 例的引擎起运值**全部相同** ⇒ 该值是占位常数、不含命例信息 ⇒
+#      「起运」子项对这类案例不可评（四柱无公历，距节气日数无从算）。
+# 三条合起来才配说「不是没做，是书文侧没有可评的量」。将来新收案例若书文真写了
+# 顺逆/起运，①立刻判红并要求回填——空档是被监控的边界，不是永久豁免
+# （同 check.py 的 UNWIRED_CORPORA「接上了反而判红」范式）。
+MAIN_CASES = ROOT / "data" / "cases" / "bazi_classical_cases.json"
+
+DECISIVE_YUN = {
+    "顺逆": re.compile(r"顺行|逆行|顺排|逆排|顺布|逆布"),
+    "起交运": re.compile(r"起运|交运"),
+    "岁数运": re.compile(r"[0-9一二三四五六七八九十百]+岁.{0,4}(行|起|上|交)运"),
+}
+
+# 近失语汇（广义「运」字）：逐例登记语境。机器只比 ID 集合（多一例少一例都判红），
+# 说明只给人看——「这一例为什么不算书证」必须写下来，否则下一个人还得重新怀疑这个 0。
+YUN_NEAR_MISS = {
+    "MP064": "「庚运夺魁」——行运吉凶断语，无干支、无岁数",
+    "MT011": "「但要运用相生」——「运用」是常语，非大运",
+    "MT019": "「须要大运相扶」——泛论，无干支",
+    "MT023": "「要运行北地为隹」——只言方位",
+    "MT034": "「即运行西北，亦不死也」——只言方位",
+    "MT045": "「运入火乡，亦主显达」——只言方位",
+    "MT497": "「运不行北，困苦一生」——只言方位",
+    "ZC012": "「运根拔尽」——《滴天髓》从杀章断语，无干支",
+    "ZP003": "徐注「运上败中有成」——转述，无干支",
+}
+
+
+def corpus_gap_check(store: dict, problems: list[str], notes: list[str],
+                     engine_probe: bool = True) -> tuple[int, int]:
+    """主语料空档核验。返回 (决定性语汇命中例数, 四柱-only 起运唯一值个数)。
+
+    两者都应当是 (0, 1)：前者 = 无书证可回填；后者 = 起运对该类案例只是占位常数。
+    判红即表示口径须重判，不得「看着不习惯就改回绿」。
+    """
+    cases = store.get("cases") or []
+    if not cases:
+        problems.append("主语料 0 例——行运空档核验无从谈起（不得当作已验）")
+        return 0, 0
+
+    decisive: list[str] = []
+    near: list[str] = []
+    for c in cases:
+        cid = c.get("id") or "?"
+        blob = " ".join(str(c.get(k) or "") for k in ("source_quote", "note", "location"))
+        for name, pat in DECISIVE_YUN.items():
+            found = pat.findall(blob)
+            if found:
+                decisive.append(f"{cid}（{name}：{'/'.join(sorted(set(found)))}）")
+        if "运" in blob:
+            near.append(cid)
+
+    if decisive:
+        problems.append(
+            f"主语料出现命例级行运书证 {len(decisive)} 例：" + "、".join(decisive)
+            + "——书已经把顺逆/起运写出来了，必须按书证回填 expected.dayun_direction／"
+              "expected.dayun_start_age 后重跑（AGENTS.md §三.4：回填须有书证，不得由引擎反推）")
+
+    got, want = set(near), set(YUN_NEAR_MISS)
+    if got - want:
+        problems.append("主语料新增「运」字案例而未登记语境（先判定是不是书证，再登记本表）："
+                        + "、".join(sorted(got - want)))
+    if want - got:
+        problems.append("登记表里的「运」字案例已不在主语料（登记漂移，须同批同步）："
+                        + "、".join(sorted(want - got)))
+
+    ph: set = set()
+    if engine_probe:
+        sys.path.insert(0, str(ROOT / "scripts"))
+        sys.path.insert(0, str(ROOT / "core"))
+        try:
+            import analyze as analyze_mod
+            import chart as chart_mod
+        except Exception as e:                       # 引擎起不来如实登记，不当已验
+            problems.append(f"起运占位核验起不来（import 失败）：{e}")
+            return len(decisive), 0
+        for c in cases:
+            p = c.get("pillars") or {}
+            if p.get("datetime"):
+                continue
+            gz = {k: p.get(k) for k in PILLAR_KEYS}
+            if not all(gz.values()):
+                continue
+            try:
+                ch = chart_mod.chart_from_pillars(gz, gender=c.get("gender") or "男")
+                an = analyze_mod.analyze(ch)
+            except Exception as e:                   # 单例异常不拖垮整门，但要留名
+                notes.append(f"{c.get('id')}：起运占位核验跳过（{type(e).__name__}）")
+                continue
+            dy = an.get("dayun") or []
+            ph.add(dy[0].get("start_age") if dy else None)
+        if len(ph) > 1:
+            problems.append(
+                f"四柱-only 案例的起运值出现 {len(ph)} 个不同取值 {sorted(ph, key=str)}——"
+                "起运不再是占位常数，说明引擎已能对四柱-only 案例真算起运；"
+                "「起运子项对该类不可评」这条口径须重判，并检查 [25] 是否该解锁")
+        elif not ph:
+            notes.append("主语料无四柱-only 案例，起运占位核验本条不适用")
+    return len(decisive), len(ph)
+
+
 def main() -> int:
     if not CASES.exists():
         print(f"FAIL：见证集不存在 {CASES}")
@@ -402,12 +554,24 @@ def main() -> int:
     if n == 0:
         print("FAIL：见证集一条案例都没有（本器一行都没检视，不得当作已验）")
         return 1
-    seq_ok, mech_ok = engine_check(data, problems, notes)
+    seq_ok, mech_ok, verdict_ok = engine_check(data, problems, notes)
     qy = qiyun_check(problems, notes)
+    gap_n, gap_ph = 0, 0
+    n_main = 0
+    if MAIN_CASES.is_file():
+        main_store = json.loads(MAIN_CASES.read_text(encoding="utf-8"))
+        n_main = len(main_store.get("cases") or [])
+        gap_n, gap_ph = corpus_gap_check(main_store, problems, notes)
+    else:
+        problems.append(f"主语料不存在 {MAIN_CASES.name}——行运空档核验无从谈起")
     print(f"行运见证集：{n} 例／{nseg} 段书判 已回底本逐字＋五虎遁＋运序连续＋方向唯一 自检")
-    print(f"引擎二层：{seq_ok}/{n} 例引擎排运与书一致；{mech_ok} 处书明言机制已出引动标签")
+    print(f"引擎二层：{seq_ok}/{n} 例引擎排运与书一致；{mech_ok} 处书明言机制已出引动标签；"
+          f"{verdict_ok} 处成格变格裁决与见证集一致")
     print(f"起运三层：{qy}/{len(QIYUN_SPEC)} 条《千里明镜》算例回验通过"
           "（干支序差＝岁数／运序合六十甲子／30 日成月余日投射）")
+    print(f"主语料空档：{n_main} 例全文扫描 → 命例级顺逆/起运书证 {gap_n} 例（须 0）；"
+          f"广义「运」字 {len(YUN_NEAR_MISS)} 例逐例登记语境；"
+          f"四柱-only 起运取值 {gap_ph} 个（须 1＝占位常数，故起运对该类不可评）")
     for x in notes:
         print(f"NOTE  {x}")
     rc = 0

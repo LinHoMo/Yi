@@ -30,6 +30,7 @@ from bazi_factors import (  # noqa: E402
     dayun_liunian_interactions,
     dayun_ming_yindong,
     liunian_ming_yindong,
+    judge_dayun_cheng_bai,
     san_hui_present,
     pillar_relations,
     tai_yuan,
@@ -99,6 +100,9 @@ def analyze(chart_json: dict) -> dict:
     # 行运引动（#31②）：运↔本命四柱的结构标签，独立成列，不参与本命判档、不覆写任何本命结论
     yindong = dayun_ming_yindong(result, dayun=dayun)
     sui_dong = liunian_ming_yindong(result, liunian=liunian)
+    # 行运成格变格裁决层（#31③，363 批）：把结构引动标签命名为 成格引动/变格引动/填实引动/守局，
+    # 纯分列读数，不赋吉凶分、不覆写本命格局成败结论（CONTRACT §五-bis）。
+    cheng_bai = judge_dayun_cheng_bai(result, dayun=dayun, yindong=yindong)
     # 调候用神（《穷通宝鉴》查表结果透出到 analyze 顶层；无明文的格为 None）
     result["tiaohou"] = sp.get("tiaohou")
 
@@ -266,6 +270,7 @@ def analyze(chart_json: dict) -> dict:
         "tian_ke_di_chong": tkdc,
         "dayun_ming_yindong": yindong,
         "liunian_ming_yindong": sui_dong,
+        "dayun_cheng_bai": cheng_bai,
         "ten_god_combos": combos,
         "tong_guan": tg,
         "bing_yao": by,

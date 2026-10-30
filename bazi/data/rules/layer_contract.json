@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "_comment": "四段契约的机器判据（八字侧）。'why' 字段是给下一次改契约的人看的：写不清为什么这个键属于这一段，就不要加。改本文件必须同批改 CONTRACT.md §四 与 docs/CHANGELOG.md，并跑 dev_tools/check_layer_contract.py --selftest。 362 批：analyze 增 xiang 象层（optional——素材不齐或装配失败时整块不产），含宫位象/六亲象/五行脏腑象；象层不进评分（CONTRACT §五-bis）。",
+  "_comment": "四段契约的机器判据（八字侧）。'why' 字段是给下一次改契约的人看的：写不清为什么这个键属于这一段，就不要加。改本文件必须同批改 CONTRACT.md §四 与 docs/CHANGELOG.md，并跑 dev_tools/check_layer_contract.py --selftest。 362 批：analyze 增 xiang 象层（optional——素材不齐或装配失败时整块不产），含宫位象/六亲象/五行脏腑象；象层不进评分（CONTRACT §五-bis）。 363 批：analyze 增 dayun_cheng_bai（行运成格变格裁决层，纯分列读数——把 dayun_ming_yindong 的结构引动命名为 成格引动/变格引动/填实引动/守局；不赋吉凶分、不覆写本命格局成败结论，不进评分面）。",
   "contract": "CONTRACT.md",
-  "batch": 362,
+  "batch": 363,
   "fixtures": [
     {
       "name": "男1984",
@@ -75,6 +75,7 @@
         "conclusion",
         "dayun",
         "dayun_ming_yindong",
+        "dayun_cheng_bai",
         "discipline",
         "factors",
         "female_fu_zi",

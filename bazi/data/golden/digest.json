@@ -4,7 +4,7 @@
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化（含 conclusion_sha，任何字段都算），措辞层漂移=narrate 断语变化（两层分列归因）"
   },
   "digest": "fda7482656967518",
-  "narrate_digest": "baa156000cf1d8cc",
+  "narrate_digest": "72b4802cb4065f96",
   "drift_log": [
     {
       "from": "57dc7e890af222fa",
@@ -50,18 +50,6 @@
     }
   ],
   "narrate_drift_log": [
-    {
-      "from": "ebe6ecb30993dcdc",
-      "to": "1233c399b54a8781",
-      "date": "2026-10-06",
-      "reason": "TIAO_HOU 90→106 格（新增作者月度小结层 a0 + 修正十一月月头漏「一」的真 bug + 否定/从格/条件句否决机制 + 季节兜底限用于无精确月头之格）；机械层零漂移，仅调候措辞随覆盖扩面与修正而变"
-    },
-    {
-      "from": "1233c399b54a8781",
-      "to": "7da64a36ec160f93",
-      "date": "2026-10-07",
-      "reason": "补对源/补注记批次（八字科 OPT-yuanhai_ziping_dz-01/02、mingli_tanyuan_dz-06、ziping_zhenquan_pingzhu_dz-01/03、ditian_sui_chanwei_dz-02、lantai_miaoxuan_dz-03/04、lixuzhong_mingshu_dz-01、qiong_tong_bao_jian_dz-02）：唯一行为变化=pattern.py 新增「犯岁君」结构标签（源L69/L70，日干克流年干），只进 relations 结构标注、**不评分不批吉凶**；其余全为注释/出处/死链修正（CANG_GAN 出处、LIUQIN_TO_SHISHEN 偏正论证、SAN_HE_GROUPS 兰台出处、ditian_sui 任注层差、shensha+ming_tables 死链改指、遇不遇降级层登记、顺逆用/相神出处、穷通宝鉴三名辞登记）。机械层零漂移；tune 100.0/holdout 96.2 持平"
-    },
     {
       "from": "7da64a36ec160f93",
       "to": "2ab2cc78c2f2d712",
@@ -169,6 +157,18 @@
       "to": "baa156000cf1d8cc",
       "date": "2026-10-30",
       "reason": "第三百六十二批：八字象层上线——①analyze 增 xiang（宫位象/六亲象/五行脏腑象），象目逐块带 basis，六亲按性别分野（男命正财为妻、女命正官为夫），五类六亲反查内核 LIUQIN_TO_SHISHEN；②正文增【象上看】段，并在 check_dim_surface.NON_SCORED_SECTIONS 登记「象只呈现不评分」的理由；③象层进 yi_bazi 结构化输出；④新增 [39] 象层门与 dev_tools/xiang_coverage.py 读数器；⑤smoke 键面接收 xiang。机械层零漂移（评分未动），措辞层漂移全部来自新增象段。"
+    },
+    {
+      "from": "baa156000cf1d8cc",
+      "to": "168cfe8e474fe7c4",
+      "date": "2026-10-30",
+      "reason": "363批 新增行运成格变格分列读数（dayun_cheng_bai 裁决层）：narrate 新增【行运成格变格】段，属有意措辞扩展，只命名结构引动，不覆写本命格局成败结论、不进评分"
+    },
+    {
+      "from": "168cfe8e474fe7c4",
+      "to": "72b4802cb4065f96",
+      "date": "2026-10-30",
+      "reason": "363批 行运成格变格 narrate 段去重：裁决行只保留 detail（已含结构引动文本），不再与 结构引动 重复"
     }
   ]
 }

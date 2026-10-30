@@ -34,7 +34,9 @@ ANALYZE_KEYS = {"birth", "calendar_policy", "chart_summary", "conclusion", "dayu
                 "question", "san_hui", "shensha", "strength", "tai_yuan", "ten_god_combos",
                 "tian_ke_di_chong", "tiaohou", "tong_guan", "xiao_yun", "xunkong", "bing_yao",
                 # 362 批：象层（宫位/六亲/脏腑）——optional，素材不齐或装配失败时整块不产
-                "xiang"}
+                "xiang",
+                # 363 批：行运成格变格裁决层——分列读数，不进评分（见 CONTRACT §五-bis/§六）
+                "dayun_cheng_bai"}
 
 
 def run_case(name: str, use_pillars: bool, verbose: bool) -> list[str]:
