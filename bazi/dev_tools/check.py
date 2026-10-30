@@ -26,6 +26,9 @@
     进评审），本地 `check_baseline.json` 覆盖文件一律**不得放宽**（见 `_effective_baseline`）。
   · §四.2「tune 均分无故跌破 95 即视为回归」落在**加权均分**口径上（当前 tune 100.0 /
     holdout 100.0（368 批实测，原登记 97.6／99.5），均 ≥95，AGENTS_TUNE_FLOOR 有机械断言兜着）。
+  · **均分只在分母不变时可比（369 批 `BASELINE_N`）**：`BASELINE_N` 锁住登记时的 n，
+    n 变小判红（删例凑绿）、n 变大则均分不作门槛（扩样按 §四.2 走绝对量）。
+    不绑 n 的后果是**结构性禁止扩样**——均分顶到 100 之后，任何一例不过都会被当回归。
   · ⚠ tune 已 **100.0% 满分饱和**（60/60，min=max）。按 AGENTS.md §三.4 自引口径，
     该集**已丧失区分能力**，只能当回归哨兵，不得作为能力证据引用（308 批标注）。
   · 维度层不用百分比当门槛，改用**绝对命中数**（`DIM_HITS` 与 368 批新增的 `FULL_CASES`）：
@@ -68,6 +71,17 @@ BASELINE = {
                           #  故同批新增 FULL_CASES（满分例数）当第二条绝对量门槛。
 }
 AGENTS_TUNE_FLOOR = 95.0  # SKILL.md 的均分硬下限；BASELINE 必须严于它
+
+# 均分基线的**分母锁定**（369 批）：AVG 只在「分母没变」时可比。
+# 为什么必须绑 n：均分是「满分例数／适用例数」的加权平均，一旦扩样（n 变大），
+# 新例哪怕全错也会压低均分——此时拿旧基线判红，等于**结构性禁止扩样**，
+# 与 AGENTS.md §四.2「扩样按绝对命中数当门槛」正相反。367 批把基线抬到 100.0 后
+# 这个洞变成硬阻塞：任何一例不过就红，扩样永远合不进来。
+# 口径：n < 登记值 → 判红（分母缩水＝删案例凑绿，最省力的作弊路）；
+#       n > 登记值 → 均分**不可比**，只报 NOTE，门槛交给 DIM_HITS 与 FULL_CASES
+#                    （两者都是绝对量，扩样不会压低它们）；
+#       n = 登记值 → 照旧按均分判。改本表须与 BASELINE 同批改并登记 CHANGELOG。
+BASELINE_N = {"tune": 60, "holdout": 276}
 
 # 维度绝对命中数下限（= evaluate.py 明细里的「满分例数」；n/a 例不进分母故不影响本数）
 DIM_HITS = {
@@ -218,13 +232,26 @@ def _alignment_floor(baseline: dict, fails: list[str], measured: dict,
             continue
         avg, n = m.get("avg"), m.get("n")
         floor = baseline[split]
-        measured[split] = avg
-        ok = avg is not None and avg >= floor - 1e-9
-        print(f"  {'√' if ok else '×'} {split} 加权均分 {avg}%（n={n}，基线 ≥{floor:g}）")
-        if not ok:
-            fails.append(f"{split} 对齐分均分 {avg} 低于基线 {floor}（n={n}；"
-                         f"分数是古籍案例对齐分，非预测率——铁律三）")
+        base_n = BASELINE_N.get(split)
+        if base_n is not None and n is not None and n < base_n:
+            print(f"  × {split} 分母缩水 n={n}（登记 {base_n}）——不得用删案例的方式过门")
+            fails.append(f"{split} 分母由登记的 {base_n} 缩到 {n}：删例属口径变更，"
+                         f"须同批改 BASELINE_N 并登记 CHANGELOG，不得静默缩水")
             continue
+        grew = base_n is not None and n is not None and n > base_n
+        if grew:
+            # 扩样：均分与登记值不可比，不作门槛（§四.2）。绝对量门槛照跑。
+            print(f"  √ {split} 加权均分 {avg}%（n={n} > 登记 {base_n}：**扩样，均分不可比**，"
+                  f"本项不作门槛；门槛见 DIM_HITS／满分例数）")
+            measured.setdefault("_note", {})[split] = f"n={n}≠{base_n}，均分未登记"
+        else:
+            measured[split] = avg
+            ok = avg is not None and avg >= floor - 1e-9
+            print(f"  {'√' if ok else '×'} {split} 加权均分 {avg}%（n={n}，基线 ≥{floor:g}）")
+            if not ok:
+                fails.append(f"{split} 对齐分均分 {avg} 低于基线 {floor}（n={n}；"
+                             f"分数是古籍案例对齐分，非预测率——铁律三）")
+                continue
         dims = (json.loads(eval_file.read_text(encoding="utf-8")).get("results")
                 or {}).get("dims") or {}
         want = DIM_HITS.get(split) or {}
