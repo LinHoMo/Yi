@@ -22,6 +22,7 @@ import argparse
 import hashlib
 import json
 import pathlib
+import re
 import sys
 
 DISC = pathlib.Path(__file__).resolve().parents[1]
@@ -65,6 +66,64 @@ def group(cases: list[dict]) -> dict[str, list[dict]]:
     return g
 
 
+def quote_key(c: dict) -> tuple:
+    """判准冲突的比对键：书 + 逐字引文（去空白标点），**刻意不含 expected**。
+
+    与 content_key 的差别就是全部要害：content_key 把 expected 算进身份，于是
+    「同一句书证配两种互斥期望」会被当成两个不同考点而双双放行——两道门都看不见。
+    """
+    quote = re.sub(r"\s+", "", c.get("source_quote") or "").strip("，。、；：「」")
+    return (c.get("book"), quote)
+
+
+def _leaves(exp, prefix: str = "") -> dict[str, str]:
+    """expected → {"维.键": 取值}；叶级标量逐键展开，dict/list 整体当一个值。"""
+    out: dict[str, str] = {}
+    for k, v in (exp or {}).items():
+        key = f"{prefix}{k}"
+        if isinstance(v, dict) and v:
+            out.update(_leaves(v, key + "."))
+        elif isinstance(v, (str, int, float, bool)):
+            out[key] = str(v)
+        else:
+            out[key] = json.dumps(v, ensure_ascii=False, sort_keys=True)
+    return out
+
+
+def conflicts(cases: list[dict]) -> tuple[list[str], int]:
+    """同书·同逐字引文下，同一 expected 叶键出现 ≥2 个不同取值 → 判准冲突。
+
+    为什么单列这一条：判重门管的是"同一考点被数了两次"（分母失真），这一条管的是
+    "同一句书证被判了两个互不相容的答案"——后者更毒：至多一个是对的，另一个是
+    **写错的标准答案**，而它不改变分母、只静默压低读数，看起来像"引擎在这一格不稳"。
+    2026-10-30（367 批）实测：全库 4 组同引文案例里 2 组是真冲突（MT042/MT529、
+    MT046/MT540），另 2 组只是"记了主神/记了主+佐"的粒度差，故判据只认**同键异值**，
+    不把"少记一个键"（N/A）当冲突——那是 §三 规则 1 允许的如实留空。
+    """
+    buckets: dict[tuple, list[dict]] = {}
+    for c in cases:
+        buckets.setdefault(quote_key(c), []).append(c)
+    problems: list[str] = []
+    n_conf = 0
+    for _k, v in sorted(buckets.items(), key=lambda kv: str(kv[0])):
+        if len(v) < 2:
+            continue
+        per_leaf: dict[str, dict[str, list[str]]] = {}
+        for c in v:
+            for leaf, val in _leaves(c.get("expected")).items():
+                per_leaf.setdefault(leaf, {}).setdefault(val, []).append(c.get("id") or "?")
+        bad = {leaf: m for leaf, m in per_leaf.items() if len(m) > 1}
+        if bad:
+            n_conf += 1
+            detail = "；".join(
+                f"{leaf}=" + " vs ".join(f"{val}←{sorted(ids)}" for val, ids in sorted(m.items()))
+                for leaf, m in sorted(bad.items()))
+            problems.append(
+                f"判准冲突：同一句书证被判了两个答案 [{v[0].get('book')}] "
+                f"{(v[0].get('source_quote') or '')[:32]}… → {detail}")
+    return problems, n_conf
+
+
 def audit(cases: list[dict], registered: set[str]) -> tuple[list[str], list[str], dict]:
     problems: list[str] = []
     rows: list[str] = []
@@ -99,7 +158,8 @@ def audit(cases: list[dict], registered: set[str]) -> tuple[list[str], list[str]
 
 def selftest(problems: list[str]) -> None:
     """三件：造重复且台账没有，必须点名判红（有牙齿）；不同考点不得误伤（不假阳性）；
-    台账在册的重复不判红（否则历史债把门关死）；查 0 例必须报 0（不冒充测过）。"""
+    台账在册的重复不判红（否则历史债把门关死）；查 0 例必须报 0（不冒充测过）。
+    另加判准冲突两件：同引文异值必抓、同引文只是少记一键不得误伤。"""
     base = {"book": "测试书", "source_quote": "丙火救甲，主显达", "split": "tune",
             "pillars": {"datetime": "1984-01-01 10:00"},
             "expected": {"tiaohou": {"main": "丙"}}}
@@ -120,6 +180,19 @@ def selftest(problems: list[str]) -> None:
     _p4, _r4, i4 = audit([], registered=set())
     if i4["raw"] != 0 or i4["unique"] != 0:
         problems.append(f"空跑自曝失效：0 例却报出非零计数 → {i4}")
+
+    # 判准冲突：同引文、同键、异值 → 必须点名判红
+    clash = [dict(base, id="C1"),
+             dict(base, id="C2", expected={"tiaohou": {"main": "甲"}})]
+    cp, n = conflicts(clash)
+    if not cp or n != 1 or "C1" not in cp[0] or "C2" not in cp[0]:
+        problems.append(f"负例自证失效：同引文异值（丙 vs 甲）没判红或没点名 → {cp}")
+    # 判准冲突：同引文、只是少记一键（N/A）→ 不得误伤
+    sub = [dict(base, id="C3"),
+           dict(base, id="C4", expected={"tiaohou": {"main": "丙", "assist": "癸"}})]
+    cp2, n2 = conflicts(sub)
+    if cp2 or n2:
+        problems.append(f"负例自证假阳性：少记一键（N/A）被当成判准冲突 → {cp2}")
 
 
 def main() -> int:
@@ -146,6 +219,11 @@ def main() -> int:
                          "不含夹具日期与 id），值＝当次在册 id。",
                          "本文件只登记不改判：台账之外的新重复才判红。清例后请人工重跑 "
                          "python dev_tools/check_case_dupes.py --update-ledger。",
+                         "367 批（2026-10-30）登记 2 组：MT042≡MT529、MT046≡MT540——同一考点被"
+                         "早期 MT0xx 批次与后期 MT4xx/MT5xx 批次各建一份，早期那份的判准曾漂移"
+                         "（MT042 记主丙，与原文「不可专用丙」相反；MT046 记佐甲，系误读成格句"
+                         "「丁甲两透」）。本批按书证校正早期那份，重复即随之显形。**清例（每组"
+                         "删 1 份）属口径变更，须另批裁定**，本批不动分母。",
                          "生成器：dev_tools/check_case_dupes.py（2026-10-12 实测）。"],
             "generated": "2026-10-12",
             "dup_groups": len(dups),
@@ -162,26 +240,34 @@ def main() -> int:
     registered = set(json.loads(LEDGER.read_text(encoding="utf-8")).get("ledger") or {})
 
     dup_problems, rows, info = audit(cases, registered)
+    conflict_problems, n_conf = conflicts(cases)
 
     if args.selftest:
         selftest(problems)
-        print("  [selftest] 负例已跑（新增重复点名判红 / 在册重复不误伤 / 不同考点不误伤 / 空跑报 0）")
+        print("  [selftest] 负例已跑（新增重复点名判红 / 在册重复不误伤 / 不同考点不误伤 / "
+              "空跑报 0 / 同引文异值必抓 / 少记一键不误伤）")
 
     print(f"合计：案例 {info['raw']} 例，唯一考点 {info['unique']} 个，"
           f"重复组 {info['groups']} 组（台账在册 {len(registered)}），"
-          f"净多余 {info['redundant']} 例，台账之外 {info['new']} 组")
+          f"净多余 {info['redundant']} 例，台账之外 {info['new']} 组；"
+          f"判准冲突 {n_conf} 组")
     if info["groups"] < len(registered):
         print(f"· 较台账已清 {len(registered) - info['groups']} 组——"
               f"如属裁定过的删例，请重跑 --update-ledger 并按 §四.4 声明口径变更")
     if args.verbose:
         for r in rows:
-            print(r)
+            print("  " + r)
     if dup_problems:
         print("× 台账之外存在考点重复——同一考点被计了两次以上，考卷分母失真")
         for x in dup_problems:
             print("  " + x)
+    if conflict_problems:
+        print("× 同一句书证被判了两个答案——至多一个对，另一个是写错的标准答案")
+        for x in conflict_problems:
+            print("  " + x)
+    if dup_problems or conflict_problems:
         return 1
-    print("√ 考点重复全部在册（构建器已改按考点查重，重跑实测新增 0 例、语料指纹不变）")
+    print("√ 考点重复全部在册、无判准冲突（构建器已改按考点查重，重跑实测新增 0 例、语料指纹不变）")
     for x in problems:
         print("× " + x)
     return 1 if problems else 0

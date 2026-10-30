@@ -67,9 +67,13 @@ AGENTS_TUNE_FLOOR = 95.0  # SKILL.md 的均分硬下限；BASELINE 必须严于�
 # 维度绝对命中数下限（= evaluate.py 明细里的「满分例数」；n/a 例不进分母故不影响本数）
 DIM_HITS = {
     "tune": {"tiaohou": 60, "ten_gods": 1, "hidden_stems": 1},
-    "holdout": {"pillars": 213, "tiaohou": 51, "pattern": 36, "cong_ge": 13,
+    "holdout": {"pillars": 213, "tiaohou": 53, "pattern": 36, "cong_ge": 13,
                 "ten_gods": 213, "hidden_stems": 213, "shensha": 5},
 }
+# tiaohou 下限沿革：30／19（扁平化带入的陈旧字面量）→ 60／51（按实测上调）→ 60／**53**
+# （367 批：校正 MT042/MT046 两份写错的期望后，该维 holdout 满分数 51→53，下限随实测同升，
+# 依 §四.2「只准前进」）。注意 53/53 是**该维命中数**，不等于"引擎在调候上全对"：
+# 全库 120 格里仍有未引满的格（可达性读数见 EVAL-PLAN 步 6），此处只数带书证的 53 例。
 # tiaohou 下限原为 tune 30／holdout 19（扁平化提交 e2c77ad 带入，此后语料扩样但
 # 该两格从未回头改）——实测满分数已是 60／51，即**下限只压着实测的 50%／37%**：
 # 该维静默丢掉一半（holdout 丢 32/53）也不会判红，正是本门要防的静默盲区。
