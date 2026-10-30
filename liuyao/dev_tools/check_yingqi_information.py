@@ -12,7 +12,7 @@
 
 也就是说：**铺到 12 支里的 11.4 支只换来 +0.2 分**，而名次这一项"才见真章"的读数在退步。
 分数基线又是"只准前进"的，这 +0.2 会被登记成"抬高基线"——没有硬门时，门禁自己会奖励作弊。
-本门把两条无信息量判据变成红线（口径来自 `scripts/evaluate.py:yingqi_discrimination` 的注释）。
+本门把两条无信息量判据变成红线（口径来自 `eval/evaluate.py:yingqi_discrimination` 的注释）。
 
     python dev_tools/check_yingqi_information.py             # 量 tune + 外部两集
     python dev_tools/check_yingqi_information.py --selftest  # 负例：证明铺量样本会被判红

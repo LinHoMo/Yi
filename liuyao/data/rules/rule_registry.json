@@ -7,7 +7,7 @@
   "经 attach_rule_registry 按 domain 互为子串匹配挂接）。",
   "口径纪律：",
   "  * evaluation.status 只登记真实存在的评测覆盖——patterns/use_god_*/yingqi 等维度是",
-  "    liuyao/scripts/evaluate.py WEIGHTS 里的真实维度，tune/holdout 分列出分；",
+  "    liuyao/eval/evaluate.py WEIGHTS 里的真实维度，tune/holdout 分列出分；",
   "    没有基准例的域宁可登记缺口（status=unassessed + gap），不制造假评测。",
   "  * source.quote_in_data 指向仓库数据文件里的逐字引文（file#点分路径），",
   "    source.quote_in_code 指向实现文件中的锚点子串；两者都被测试校验存在。",
@@ -149,7 +149,7 @@
      "holdout"
     ],
     "dim": "use_god_muku",
-    "note": "专用维度 use_god_muku（权重3）+ patterns「入墓/随官入墓」标签；覆盖面：tests/smoke_test.py 第15段「随官入墓」CoverageTest＋scripts/evaluate.py WEIGHTS 的 use_god_muku 维度。【2026-10-13 更正】原挂「根测试 tests/test_liuyao_tomb_tags.py」——本科有 tests/ 但该文件不存在（git 全历史 0 命中），属幽灵指针，按盘上实际改述"
+    "note": "专用维度 use_god_muku（权重3）+ patterns「入墓/随官入墓」标签；覆盖面：tests/smoke_test.py 第15段「随官入墓」CoverageTest＋eval/evaluate.py WEIGHTS 的 use_god_muku 维度。【2026-10-13 更正】原挂「根测试 tests/test_liuyao_tomb_tags.py」——本科有 tests/ 但该文件不存在（git 全历史 0 命中），属幽灵指针，按盘上实际改述"
    }
   },
   {

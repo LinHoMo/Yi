@@ -100,6 +100,7 @@ reg_07 已于第一百六十二批按书二分对齐（伏神子水不空，凶�
 | `scripts/step1.py`…`step5.py`·`analysis_steps.py` | 五步思维链实现：现状 → 取用神 → 旺衰 → 动变 → 综合 |
 | `scripts/classical_analysis.py` | 31 段经典深度分析（`advanced_analysis`）：伏藏、暗动、月破、三合、进退、反吟伏吟、独发独静、方位、纳音……（实跑枚举为准，`enhance_reading` 产出键即真值） |
 | `scripts/analyze.py` | 结论层含 `应期窗口` 结构键（第一百九十二批，纯派生；正文给窗不升格必应） |
+| `eval/` | 评测层（356 批起物理隔离）：`case_runner.py`（案例装载/时刻还原）、`evaluate.py`（唯一评分器）、`build_portal_assets.py`（门户/样例报告）；`scripts/` 下同名文件是纯 re-export 兼容入口 |
 | `data/cases/` | 古籍案例 + tune/holdout/external_holdout 分层 |
 | 现实反馈三通道（第一百九十五批划界，均不并入古籍评分面） | `feedback_store.py`＝一键闭环（yi_liuyao）落的**应期反馈记录**（schema 在内核 feedback.py）；`outcome.py`＝**回填与统计出口**（Wilson、n<30 拒判），读 events 不写封存；`prospective.py`＝**前瞻封存判卷**（哈希链、口径现算、门 [28]）。三者职责正交、当前均不合并；合并须带迁移与回归另批议。在册全为 0——通道存在≠证据存在。 |
 | `data/rules/`·`data/sources/` | 判据表与古籍底本（引文逐字可回查书源） |

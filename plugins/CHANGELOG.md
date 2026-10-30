@@ -4,6 +4,23 @@
 > 305 批起，各宿主适配器（`dsh-plugin/`、`yan-plugin/`）自身只留宿主专属文件，
 > 共享的运行时、技能正文、构建与自检都归本目录，各宿主卷只记「宿主侧那点事」。
 
+## 2026-10-30 第三百五十六批（共享打包层）：**liuyao 评测 shim 不随包**
+
+**性质**：build fix（行为保持）。零运行时、零工具契约改动。
+
+- `build.mjs` 新增 `DEV_ONLY` 登记表：liuyao 的 `scripts/` 不随包
+  `evaluate.py` / `case_runner.py` / `build_portal_assets.py`。原因：356 批这
+  三件实现已迁 `liuyao/eval/`，`scripts/` 同名文件只是开发期 re-export shim；
+  包内没有 `eval/`，随包会让 `import eval` 直接失败（本地实测
+  `plugins/engine/liuyao/scripts/evaluate.py` 报 `ModuleNotFoundError`）。
+  bazi 的 `scripts/evaluate.py` 是真实实现，不在排除表内。
+- `selftest.mjs [2]` 新增「liuyao 评测 shim 未随包」正面断言（共享层＋五宿主
+  各查一次）＋临时探针负例（造一份 `engine/liuyao/scripts/evaluate.py` 必须被抓到）。
+- 实跑：`node plugins/scripts/build.mjs` rc=0；`node plugins/scripts/selftest.mjs`
+  全绿（yan 包体 177 文件 / 2.67MB，无符号链接）；`publish.mjs` 生成 `plugins/dist`
+  并自检「发布树可安装性全绿」；`npm --prefix dsh-plugin run selftest` 全部通过。
+- 分数口径不变（详见同批 `liuyao/docs/CHANGELOG.md`）。
+
 ## 2026-10-29 第三百三十八批（A4-CI）：**CI 四 job 齐备＋五宿主×2 OS 矩阵**
 
 - `.github/workflows/ci.yml` 现有四 job：`root-gates`（331 批 A0-4）、`kernel-sync`

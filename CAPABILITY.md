@@ -31,15 +31,19 @@
 
 | 读数 | 值 | 出处 | 复现（自仓库根） |
 |---|---|---|---|
-| tune / holdout 对齐 | 97.9%（n=20）／90.2%（n=12） | 172 批口径 | `python liuyao/scripts/evaluate.py --split tune`（同 `--split holdout`） |
-| 外部·开发集 wikisource 对齐 | **75.8%**（n=50；308 批实测，原登记 62.4）；direction 子集 76.6%（n=31） | README 表 | `python liuyao/scripts/evaluate.py --split wikisource_holdout` |
-| 外部·开发集 zengshan_dz 对齐 | **61.5%**（n=21；308 批实测，原登记 53.4） | 同上 | `python liuyao/scripts/evaluate.py --split zengshan_dz_holdout` |
+| tune / holdout 对齐 | 97.9%（n=20）／90.2%（n=12） | 172 批口径 | `python liuyao/eval/evaluate.py --split tune`（同 `--split holdout`） |
+| 外部·开发集 wikisource 对齐 | **75.8%**（n=50；308 批实测，原登记 62.4）；direction 子集 76.6%（n=31） | README 表 | `python liuyao/eval/evaluate.py --split wikisource_holdout` |
+| 外部·开发集 zengshan_dz 对齐 | **61.5%**（n=21；308 批实测，原登记 53.4） | 同上 | `python liuyao/eval/evaluate.py --split zengshan_dz_holdout` |
 | 主应期 top-1（开发集） | **31.8%**／33.3%（308 批实测，原登记 27.3），CI[20.0, 46.6]／[17.2, 54.6]；k=1 随机 8.3% | 181 批→308 批 | `python liuyao/dev_tools/window_report.py` |
 | top-3 窗（开发集） | **61.4%**／57.1%（308 批实测，原登记 52.3／47.6；信息在窗不在点→193 批 `应期窗口` 键） | 181/192/193 批→308 批 | 同上（`window_report.py` 一张表含 k=1..5） |
 | 版本冲突上限 | 卦面分歧 0/47、判词分歧 1/37→判词保真天花板 ≈98.6%（等权估计式） | 185 批 | `python liuyao/dev_tools/version_collate.py` |
 | 规则边际 | 33 条全扫：无一单点显著（11 条有影响全 p≥0.375、top-1 零不一致）；信号在择支/日月/阶梯三底座 | 182/186 批 | `python liuyao/dev_tools/ablation.py --sweep`（分钟级） |
 | 名次键 | 四个预声明重排键全部不胜现行序；#33 排序问题按预注册结案 | 190 批 | `python liuyao/dev_tools/rank_experiment.py` |
 | 流派裁决 | **27 项**分歧点：**6 项 settled_by_source**（照所据书文执行，含 309 批把词汇表外的 `settled` 归位的一条）／1 项 frozen_by_user／**20 项 open_conflict**——分歧表自 248 批起扩容，308 批更正计数（原登记「7 项／1 open_conflict」少报一个数量级），309 批裁定**不增设第四态**、`settled` 归位为 `settled_by_source`（311 批按现状回改本行） | 188 批→309 批 `liuyao/data/rules/adjudications.json` | `python liuyao/dev_tools/build_adjudications.py --selftest` |
+
+> **356 批起**六爻评测实现物理位于 `liuyao/eval/`（`case_runner.py`／`evaluate.py`／
+> `build_portal_assets.py`），`scripts/` 下同名文件只是纯 re-export 兼容入口。
+> 上表已按 `eval/` 路径书写；旧 `python liuyao/scripts/evaluate.py ...` 仍可用。
 
 **八字**：holdout **99.5%**（n=278，308 批实测，原登记 97.6）**由历法与定义维抬起**，判断维单列——
 tiaohou 96.2% vs 常数基线 17.0%（配对 b=42 c=0 p<0.001，**表忠实复原坐实**）；

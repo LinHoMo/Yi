@@ -44,6 +44,13 @@ const RUNTIME_INCLUDE = {
 /** ⛔ 铁律二：案例库永不随包（按文件名排除，三层闸之一）。 */
 const NEVER_SHIP = new Set(['case_library.md'])
 
+/** 交付包不收开发/评测入口：liuyao 356 批起评测实现迁 `eval/`，
+ *  `scripts/` 下的同名文件只是开发期兼容 shim，随包会 import 不到 `eval`。 */
+const DEV_ONLY = {
+  liuyao: new Set(['evaluate.py', 'case_runner.py', 'build_portal_assets.py']),
+  bazi: new Set(),
+}
+
 /** 语言运行时不需要、且会让包变大的东西。 */
 const JUNK = /(__pycache__|\.pyc$|\.pyo$|\.pytest_cache|\.mypy_cache)/
 
@@ -174,7 +181,9 @@ async function buildEngine() {
     for (const rel of includes) {
       if (!existsSync(join(srcRoot, rel))) continue
       await copyTree(join(srcRoot, rel), join(destRoot, rel), {
-        excludeNames: rel === 'references' ? NEVER_SHIP : null,
+        excludeNames: rel === 'references'
+          ? NEVER_SHIP
+          : (rel === 'scripts' ? DEV_ONLY[discipline] : null),
       })
     }
 

@@ -37,12 +37,15 @@
 脚本失败时重试一次；仍失败则告知"排盘异常"，**不得手动替代**。
 吉凶断语不得进结构层：结构层只出标签与数值，断语字面量进 `data/*.json`（见 §三 表）。
 
-### 2. 案例库与预测过程物理隔离（现状机检＝文件白名单；物理搬迁待办）
+### 2. 案例库与预测过程物理隔离（现状：六爻已物理隔离，八字仍白名单）
 
-> **346 批复核口径**：运行时隔离由各科 `check_case_isolation.py` 的**文件名白名单**强制
-> （`scripts/` 下仅 `evaluate.py` / `case_runner.py` / `build_portal_assets.py` 允许读
-> `data/cases`，其余解读路径一律判红）。这不是“物理目录隔离”——`evaluate.py` /
-> `case_runner.py` 仍住在 `scripts/`；物理搬迁须另批走 §四，未做，不冒充已做。
+> **第三百五十六批**：六爻评测实现已物理迁至 `liuyao/eval/`（case_runner / evaluate /
+> build_portal_assets），`liuyao/scripts/` 下同名文件只剩纯 re-export 兼容 shim。
+> `check_case_isolation.py` 对六爻改为**物理隔离档**：`eval/` 实现必须存在（正面断言）
+> ＋ `scripts/` 零白名单（出现案例库字面路径/expected 取数即红）。
+> **八字尚未搬迁**，仍按 346 批口径走**白名单档**（`scripts/` 下三个评测文件允许读
+> `data/cases`）；同一共享门按该科有没有 `eval/` 自动选档。物理搬迁八字须另批走 §四，
+> 未做，不冒充已做。
 
 `*/data/cases/` 与 `references/case_library.md` 中的古籍案例，只允许三种访问场景：
 测试运行器读取、用户明确要求事后校验、用户主动询问"有无类似案例"（须注明仅供参考）。

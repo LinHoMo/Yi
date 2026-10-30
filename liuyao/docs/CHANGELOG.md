@@ -5,6 +5,45 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-10-30 第三百五十六批（六爻）：**评测层物理搬迁至 `eval/`——§3.5 关闭**
+
+**性质**：refactor（行为保持）。零判词、零评分、零读数改动；golden 双指纹零漂移。
+
+- `git mv` 三件实现：`scripts/case_runner.py`、`scripts/evaluate.py`、
+  `scripts/build_portal_assets.py` → `liuyao/eval/`，新增 `eval/__init__.py`；
+  `scripts/` 下同名文件改为纯 re-export 兼容 shim（`evaluate`/`build_portal_assets`
+  保留 `main()` 分发，`case_runner` 无 CLI）。旧命令 `python scripts/evaluate.py ...`
+  仍可用；新命令与文档统一写 `python eval/...`。
+- `eval/evaluate.py` 把 `EVAL_DIR` 置于 `sys.path` 最前，保证 `import case_runner`
+  解析到实现而不是 `scripts/` shim；`eval` 三文件先加 `scripts/` 再 import
+  `kernel_path`，direct run 可自定位。**356 首跑实踩**：此前顺序反了，
+  `python eval/evaluate.py --help` 报 `ModuleNotFoundError: kernel_path`；修复后 rc=0。
+- `scripts/evaluate.py` 增模块级 `__getattr__` 代理：Python 星号导出不带下划线名，
+  而 `dev_tools/baselines.py` / `rank_experiment.py` / `version_collate.py` 仍按旧路径
+  `import evaluate` 调 `_branches_in` / `_expected_unit` / `_offered_branches` /
+  `_unit_pool`。**356 首跑实踩**：缺代理时 `baselines.py` AttributeError，
+  full ledger `liuyao.baselines` 读到 `(None, None)` 判红；加代理后回 25.0/4.5。
+- 两个 CLI shim 在**入口文件自身**加 UTF-8 守卫（AGENTS.md §四.9）；
+  `[20]` 静态红线由「缺守卫 2 个」回到 0。
+- `check_case_isolation.py`（源 `devkit/shared/`）两档化：**物理隔离档**（有 `eval/`：
+  `eval/` 实现必须存在 + `scripts/` 零白名单）／**白名单档**（八字仍走 346 批口径）。
+  六爻走物理档：51 模块 0 触达；新增「`eval/` 实现缺失」负例自证。共享 docstring 里
+  原写 `eval/case_runner.py` 在八字科是死链（`[11]` 首跑判红），改为「`eval/` 内
+  文件名」表述后两科 doc refs 0 死链。
+- `check_test_sentinel.py` 的评测路径改 `eval/evaluate.py`；`README` 目录表、
+  `CAPABILITY` 复现命令、`YIIN-CASE-AUDIT` 复现段、`rule_registry` 评测覆盖注记
+  同步改指 `eval/`（历史 CHANGELOG 条目按登记时点事实不改）。
+- `plugins/scripts/build.mjs`：liuyao `scripts/` 排除三个评测 shim（包内没有 `eval/`，
+  随包会 import 失败）；`selftest.mjs [2]` 加「shim 未随包」正面断言＋临时探针负例。
+- 复验（356 实跑）：`python liuyao/dev_tools/check.py` 全绿；`python bazi/dev_tools/check.py`
+  全绿；full ledger **40/40**（quick 34/40、跳过 6）；`check_batch_num` 通过；
+  `check_case_isolation --selftest` 两科通过；`sync_devkit --check` 11 件逐字节同源；
+  `node plugins/scripts/build.mjs` ＋ `selftest.mjs` 全绿；`publish.mjs` 发布树检查全绿；
+  `python eval/evaluate.py --help`、`python eval/build_portal_assets.py --help` rc=0；
+  golden 双指纹零漂移。
+
+分数含义：与古籍案例要点的一致性，不代表现实预测命中率（AGENTS.md §一.3）。
+
 ## 2026-10-29 第三百五十五批（六爻）：**`reasoning_chain`/`summary_text` 迁叙述层——CONTRACT §六 归零**
 
 **性质**：refactor（行为保持）。零判词、零评分、零读数改动；golden 双指纹零漂移。

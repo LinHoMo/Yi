@@ -329,7 +329,7 @@ def version_report() -> list[str]:
             problems.append(f"{rel} 找不到 version 字段")
         elif m.group(1) != yishu_core.__version__:
             problems.append(f"{rel} 版本是 {m.group(1)}，应为 {yishu_core.__version__}"
-                            f"（跑 python scripts/build_portal_assets.py 重建）")
+                            f"（跑 python eval/build_portal_assets.py 重建）")
     return problems
 
 

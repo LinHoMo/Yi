@@ -91,7 +91,8 @@ case 形态（逐字，L1037–L1046）：
 
 ## 五、读数与口径
 
-`python scripts/evaluate.py --split yiin_holdout`（第三百二十六批实测）：
+`python eval/evaluate.py --split yiin_holdout`（第三百二十六批实测；356 批起实现位于
+`eval/`，旧 `scripts/evaluate.py` 入口为兼容 shim）：
 
 - strict 对齐分 **43.9%**（n=56）
 - 应期 strict top-1 **28.6%**、loose **71.4%**（n=7）
@@ -119,6 +120,6 @@ case 形态（逐字，L1037–L1046）：
 ```bash
 python dev_tools/build_yiin_cases.py --dry-run   # 只看门禁结果
 python dev_tools/build_yiin_cases.py             # 写出 cases + 登记 case_splits.json
-python scripts/evaluate.py --split yiin_holdout
+python eval/evaluate.py --split yiin_holdout
 python dev_tools/check.py --fast
 ```

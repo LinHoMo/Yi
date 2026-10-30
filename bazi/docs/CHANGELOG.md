@@ -6,6 +6,22 @@
 > 下面历史条目若提到 ARCHIVE，一律按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 3 节标题已并入索引。
 
+## 2026-10-30 第三百五十六批（共享门）：**`check_case_isolation` 两档化——八字仍白名单**
+
+**性质**：shared gate（行为保持）。零引擎、零数据、零读数改动。
+
+- `devkit/shared/check_case_isolation.py` 按科有无 `eval/` 自动选档：六爻走**物理隔离档**
+  （实现必须在 `eval/`，`scripts/` 零白名单）；八字无 `eval/`，继续 346 批**白名单档**
+  （`scripts/` 下 evaluate / case_runner / build_portal_assets 允许读 `data/cases`）。
+  八字 13 模块 0 触达，行为与判据均未变。
+- 修正共享 docstring 的路径写法：原写 `eval/case_runner.py`，在八字科是死链，
+  `[11]` doc refs 首跑判红（436 条引用 1 条不存在）；改为「`eval/` 内文件名」后
+  434 条引用 0 条不存在。
+- `sync_devkit.py --write` 分发 11 件；`[37]` 同源门通过；`python bazi/dev_tools/check.py`
+  全绿。详见同批 `liuyao/docs/CHANGELOG.md` 第三百五十六批。
+
+分数含义：与古籍案例要点的一致性，不代表现实预测命中率（AGENTS.md §一.3）。
+
 ## 2026-10-29 第三百五十三批（全仓）：**跨科共用契约信封 schema 落地（§3.6 关闭；八字侧同步）**
 
 **性质**：schema＋shared gate。零引擎、零数据、零读数改动。

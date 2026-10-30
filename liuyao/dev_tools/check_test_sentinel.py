@@ -33,7 +33,7 @@ from yishu_core.runtime import force_utf8_stdio, utf8_subprocess_env  # noqa: E4
 
 SEAL = DISC / "data" / "rules" / "test_seal.json"
 SPLITS = DISC / "data" / "cases" / "case_splits.json"
-EVAL = DISC / "scripts" / "evaluate.py"
+EVAL = DISC / "eval" / "evaluate.py"
 
 SCORE_RE = re.compile(r"\[strict\] 平均分 = ([\d.]+)%")
 
