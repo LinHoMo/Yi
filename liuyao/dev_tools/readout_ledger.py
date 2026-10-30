@@ -115,8 +115,11 @@ def checks():
         "data/cases/verifications_triage.json", None,
         ("A_有验支候选", "A_无验支结案候选", "B_异写候选", "B_真分歧需人"), key="buckets"),
         ("15", "35", "5", "8"))
-    add("liuyao.restorable_recheck(共识10/分歧8)", "201批", lambda t: _json_counts(
-        "data/cases/restorable_recheck.json", None, ("consensus", "needs_human")), ("10", "8"))
+    # 387 批改期望 10/8 → 13/0：377 批 C 类 13 条裁清（C 待裁 13→0），
+    # 5 条原分歧已带 `decision`（按本册口径「有 decision 即不计 needs_human」），
+    # consensus +3；重放值直读 `restorable_recheck.json` 顶层计数，不是拍值。
+    add("liuyao.restorable_recheck(共识13/分歧0)", "201批→377批改期望", lambda t: _json_counts(
+        "data/cases/restorable_recheck.json", None, ("consensus", "needs_human")), ("13", "0"))
     add("liuyao.draft_candidates(10含dup4)", "204批", lambda t: _draft_counts(), ("10", "4"))
 
     # --- 裁决表/治理图/指纹 ---
@@ -134,12 +137,13 @@ def checks():
     # 说明**盘与金标准一致**，是账台登记值过期，不是回归（308 批定性）。
     add("liuyao.golden(3a19/7960)", "193批→308批改期望；320 批纳入 judgment 判定块；321–324 批判定器 v3–v6 内容变化再重基线（机械指纹变、措辞始终未变）；362 批象层上线：正文增【象上看】段与用神口径提示 → 措辞指纹 405b→7960（机械层未动，评分未改）；364 批用神合日月按动静分计（源L738）：机械指纹 6f70→3a19（288 例中 4 条读数变化、1 例 verdict 翻档），措辞指纹仍未动", lambda t: _golden("liuyao"),
         ("3a192fa993ec7578", "79603215e5863f71"))
-    add("bazi.golden(fda7/72b4)", "176批前→308批改期望；362 批象层上线：正文增【象上看】段（宫位/六亲/脏腑）→ 措辞指纹 3512→baa1（机械层未动，评分未改）；"
-        "363 批行运成格变格分列读数：narrate 增【行运成格变格】段（只命名结构引动，不覆写本命格局成败、不进评分）→ 措辞指纹 baa1→168c→72b4（末次为裁决行去重），机械层始终未动。"
+    add("bazi.golden(21a4/872b)", "176批前→308批改期望；362 批象层上线：正文增【象上看】段（宫位/六亲/脏腑）→ 措辞指纹 3512→baa1（机械层未动，评分未改）；"
+        "363 批行运成格变格分列读数：narrate 增【行运成格变格】段（只命名结构引动，不覆写本命格局成败、不进评分）→ 措辞指纹 baa1→168c→72b4（末次为裁决行去重），机械层始终未动；"
+        "374 批岁运五式（合先于克）与 383／385 批化格字段 → 机械 21a4ff76a5e75662、措辞 872bde611188a5e9（见 bazi/data/golden/digest.json 的 drift_log，逐条有因）。"
         "（364 批六爻欠账清理时账台报分家：bazi/dev_tools/golden.py 已 capture 而本账期望值仍停在 baa1，属登记过期不是回归，按 drift_log 归因回补。"
-        "注意：八字 363 批当时仍在并行推进，本值随其 capture 同步；若再分家，先读 bazi/data/golden/digest.json 的 drift_log 再改，勿凭记忆填。）",
+        "注意：本值随 capture 同步；若再分家，先读 drift_log 再改，勿凭记忆填。）",
         lambda t: _golden("bazi"),
-        ("fda7482656967518", "72b4802cb4065f96"))
+        ("21a4ff76a5e75662", "872bde611188a5e9"))
     add("governance(67/45, blk 30/27)",
         "194批（312 补 310；315 补 314/315 两门；317 补 judge_shadow；329 补 fetch_zengshan_dz_cases；"
         "331 批 check_docs_index 上提到 devkit/root → 六爻 blk 28→27、脚本仍 63；"
@@ -182,8 +186,9 @@ def checks():
         from collections import Counter
         c = Counter(x.get("split") for x in cc)
         return (str(c["tune"]), str(c["holdout"]), str(len(ex.get("cases") or ex)))
-    add("八字案例分母(60/278/62)", "234批；339 批实跑 53→62（326/329 批语料扩样后外部集 +9 例）",
-        c_bazi_denoms, ("60", "278", "62"))
+    add("八字案例分母(60/276/62)", "234批；339 批实跑 53→62（326/329 批语料扩样后外部集 +9 例）；"
+        "368 批清例后 holdout 278→276（两例同考点双建被清，非引擎回归）",
+        c_bazi_denoms, ("60", "276", "62"))
 
     # 头牌值在位性（235 批）：现状文档（README×2/CAPABILITY/GOVERNANCE）必须各含每个
     # 主读数**至少一处**——文档被改回旧值（176 批 97.3 事故族）时现值消失即红。
@@ -191,10 +196,14 @@ def checks():
     def c_headline_present(t):
         docs = [(ROOT / x).read_text(encoding="utf-8") for x in
                 ("liuyao/README.md", "bazi/README.md", "CAPABILITY.md", "GOVERNANCE.md")]
-        heads = ("97.9", "90.2", "62.4", "27.3", "33.3", "52.3", "97.6", "96.2", "80.6")
+        # 235 批清单按当时现值；308 批 bazi holdout 97.6→99.5、368 批再→100.0，
+        # 97.6 只作历史注记（163 批），不再入「现值在位」清单；387 批按现状把该位
+        # 换成 93.3（cong_ge 14/15，现行八字唯一留余量的维度）。其余 8 值仍为现行主读数。
+        heads = ("97.9", "90.2", "62.4", "27.3", "33.3", "52.3", "93.3", "96.2", "80.6")
         gone = [h for h in heads if not any(h in d for d in docs)]
         return f"{len(heads) - len(gone)}/{len(heads)}" + ("" if not gone else " 缺:" + ",".join(gone))
-    add("头牌值在位(9/9)", "235批（176 事故族的正向断言）", c_headline_present, ("9/9",))
+    add("头牌值在位(9/9)", "235批（176 事故族的正向断言）；387 批 97.6→93.3（97.6 是 308 前旧值）",
+        c_headline_present, ("9/9",))
 
     # tracked×ignore 漂移（237 批）：任何已跟踪文件不得再命中 ignore 规则（产物规矩的存量面）。
     def c_ignore_drift(t):
@@ -404,8 +413,8 @@ def checks():
         s = sh(["scripts/evaluate.py", "--split", "holdout"], cwd=ROOT / "bazi")
         return grab(s, r"平均分 = ([0-9.]+)%")
     # 308 批改期望：holdout 均分 97.6 → 99.5（pattern 由 29/36 抬到 36/36 为主因）；
-    # 同一批须连带上修分维项与本仓 `bazi/dev_tools/check.py` 的 pattern 下限（见 CHANGELOG 308 批）。
-    add("bazi.holdout(99.5)", "bazi README→308批改期望", c_bazi_holdout, ("99.5",))
+    # 368 批清例后再 → 100.0（n=276，满分 275/276、仍有 1 例不满分；打印值 99.99x 四舍五入）。
+    add("bazi.holdout(100.0)", "bazi README→308批→368批改期望", c_bazi_holdout, ("100.0",))
 
     def c_bazi_dims(t):
         s = sh(["scripts/evaluate.py", "--split", "holdout"], cwd=ROOT / "bazi")
@@ -414,8 +423,9 @@ def checks():
             m = re.search(r"^\s*%s\s+(\d+)/(\d+)\s+\d+\s+[\d.]+%%" % name, s, re.M)
             out.append((m.group(1) + "/" + m.group(2)) if m else None)
         return tuple(out)
-    add("bazi.holdout 分维(213/213×3 51/53 36/36 13/15)", "bazi README 表/187批→308批改期望", c_bazi_dims,
-        ("213/213", "213/213", "213/213", "51/53", "36/36", "13/15"))
+    add("bazi.holdout 分维(213/213×3 51/51 36/36 14/15)", "bazi README 表/187批→308批→368批改期望"
+        "（368 批 ZC015 收掉：cong 13/15→14/15；清例后 tiaohou 适用 53→51）", c_bazi_dims,
+        ("213/213", "213/213", "213/213", "51/51", "36/36", "14/15"))
 
     def c_dimlock(t):
         s = sh(["dev_tools/" + "check_dim" + "_lock.py"], cwd=ROOT / "bazi")  # 拼接防 [11] 当六爻路径声明；跨科只读调用非 import，零耦合不破
@@ -442,9 +452,9 @@ def checks():
         return vals + ((mb.group(1), mb.group(2)) if mb else (None, None))
     # 344 批：pattern 80.6 是 187 批旧值；308 批已实测 100.0（36/36，McNemar p=0.004），
     # 但账台行漏改。此处按 308 实测回填，不是新提升。
-    add("bazi(tiaohou96.2 pattern100.0 常数从100 b42c0)",
-        "187批→308批实测（344 批回填漏登）", c_bazi_base,
-        ("96.2", "100.0", "100.0", "42", "0"))
+    add("bazi(tiaohou100.0 pattern100.0 常数从100 b42c0)",
+        "187批→308批实测（344 批回填漏登）；368 批清例后 tiaohou 96.2→100.0（51/51）", c_bazi_base,
+        ("100.0", "100.0", "100.0", "42", "0"))
 
     # --- 前瞻通道在册 0 ---
     # CAPABILITY.md 的结构性计数（第两百一十四批补齐：对外文书的每个数字都要有重放断言）
