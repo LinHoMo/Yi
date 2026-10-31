@@ -607,6 +607,12 @@ def hua_judge(chart_json: dict) -> dict:
       「單遇一位」是**合神须专一**（两甲逢两己则不专 ⇒ 假化）；
       另立第三态：**日主临帝旺则旺而不从合**（不化）。
 
+    394 批扩《千里命稿》12 造（两书合计 22 例）后补三处：
+      ① **妒合两两相配**（合神数 == 日主侧同五行干数，且 ≥2）⇒ 仍算专一，帝旺 veto 让位
+         （QH012「两丁两壬如璧人双双」、QH013「年丁克去月辛…仍可合时上之辛」）；
+      ② **日主有本气根 ∧ 化神不通月令** ⇒ 不化（QH015；日主不孤弱，不能从合）；
+      ③ 与 385 的「化神有力即可」不冲突：HU001 日主无本气根、HU010 化神当令，均仍真化。
+
     为什么只标结构不批吉凶：书把吉凶挂在「化神喜忌」与「岁运」上（方向），且明说
     「土遇陰寒，要火為印」这类随宜命题属**量级/取向**判断，与 363 批 `dayun_cheng_bai`、
     373 批岁运五式同一口径——本层不做。
@@ -719,22 +725,44 @@ def hua_judge(chart_json: dict) -> dict:
     bing = any(_support_strong(x) for x in others)
 
     # ⑤ 合神是否专一（「單遇一位」；两甲逢两己则不专 ⇒ 假化）
-    exclusive = len(cands) <= 1
+    # 394 批（《千里命稿》QH012/QH013）：两合神与日主侧**两两相配**时，妒合已被配平
+    # （「两丁两壬如璧人双双，何妒之有」）或被克去（「年丁克去月辛…仍可合时上之辛」），
+    # 不再算「不专一」。判据：合神个数 == 日主侧同五行干数（日主本身算一个），且 ≥2。
+    day_side_count = sum(1 for x in (day, year_stem, month_stem, hour_stem)
+                         if x and STEM_ELEMENTS.get(x) == day_elem)
+    pairing = len(cands) >= 2 and len(cands) == day_side_count
+    exclusive = len(cands) <= 1 or pairing
 
     # ⑥ 日主临帝旺 ⇒ 旺而不从合（命例 L5238「日主不能从合矣」）
     # 干级（阴干逆行）：壬在亥＝临官而书不认其旺，癸在亥＝帝旺而书说「日主虽旺地」——
     # 五行级表分不出同五行的阴阳两干，故这里必须走 **twelve_growth_stem**（385 批内核新增）。
+    # 394 批：妒合已配平时（QH012 壬子帝旺、QH013 丙午帝旺），书仍判化——帝旺 veto 让位。
     day_is_wang = bool(day_branch) and twelve_growth_stem(day, day_branch) == "帝旺"
 
-    if day_is_wang:
+    if day_is_wang and not pairing:
         out["type"] = "不化"
         out["basis"] = "《滴天髓·從化論》源文「%s」" % _HUA["hua_bu"]
         out["reason"] = "日主临帝旺（%s在%s），旺而不从合" % (day, day_branch)
         return out
+    # 394 批（QH015）：日主**临官/帝旺（有气之禄旺）**而化神**不通月令** ⇒ 日主不孤弱，不能从合。
+    # 为什么不写「有本气根」：385 批据 HU010 已证「日主本气根不作硬否决」——冠带/墓/余气根
+    # 不构成「旺而不从」；只有禄/旺（临官/帝旺）才是「日主有气」。HU010 壬亥禄但化神当令
+    # （卯月木通令）故仍真化；HU001 日主无禄旺（申月土不得令仍真化）。QH015 丁午临官、
+    # 化神木在戌月不通 ⇒ 不化。
+    branches = [(pillars.get(p) or {}).get("branch") or ""
+                for p in ("year", "month", "day", "hour")]
+    day_lu_wang = any(b and twelve_growth_stem(day, b) in ("临官", "帝旺") for b in branches)
+    if not pairing and day_lu_wang and not out["tong_ling"]:
+        out["type"] = "不化"
+        out["basis"] = "《滴天髓·從化論》源文「%s」" % _HUA["hua_tong_ling"]
+        out["reason"] = ("日主得禄旺（%s）、化神%s不通月令（%s月）——日主不孤弱，不能从合"
+                         % (day, element, month_branch))
+        return out
     if hua_strong and not bing and exclusive:
         out["type"] = "真化"
         out["basis"] = "《滴天髓·從化論》源文「%s」；「%s」" % (_HUA["hua_zhen"], _HUA["hua_tong_ling"])
-        out["reason"] = "合神专一且有力、化神有力、日主无有力生扶"
+        out["reason"] = ("合神专一且有力、化神有力、日主无有力生扶"
+                         + ("（妒合已配平/克去）" if pairing else ""))
         return out
     out["type"] = "假化"
     out["basis"] = "《滴天髓·從化論》源文「%s」" % _HUA["hua_jia"]
