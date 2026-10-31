@@ -134,6 +134,13 @@ def _from_judge(chart_json: dict, details: list[dict], day_stem: str,
             sanhe_elem = elem
             sanhe_branches = {b for b in branch_list if b in grp}
             break
+    # 395 批：三会方局（寅卯辰／巳午未／申酉戌／亥子丑）与三合同为「成局」，
+    # 从格 role_score 若只认三合，会把「申酉戌财局」的从财例判成从势（QH-C1 实测）。
+    sanhui_elem = ""
+    for elem, grp in SAN_HUI_GROUPS.items():
+        if set(grp) <= set(branch_list):
+            sanhui_elem = elem
+            break
     chong_map: dict = {}
     for b in branch_list:
         for o in branch_list:
@@ -313,7 +320,7 @@ def _from_judge(chart_json: dict, details: list[dict], day_stem: str,
         tg = (pillars.get(pname) or {}).get("ten_god") or ""
         if tg in ("正财", "偏财", "正官", "偏官", "七杀", "食神", "伤官"):
             from_weight += 1.0
-    if sanhe_elem and day_elem:
+    if (sanhe_elem or sanhui_elem) and day_elem:
         from_weight += 2.0
 
     # ── 从旺/从强
@@ -356,10 +363,11 @@ def _from_judge(chart_json: dict, details: list[dict], day_stem: str,
             role_score["官杀"] += 1.0
         elif tg in ("食神", "伤官"):
             role_score["食伤"] += 1.0
-    if sanhe_elem and day_elem:
-        sanhe_role = _role_of_elem(day_elem, sanhe_elem)
-        if sanhe_role in role_score:
-            role_score[sanhe_role] += 2.0
+    ju_elem = sanhe_elem or sanhui_elem
+    if ju_elem and day_elem:
+        ju_role = _role_of_elem(day_elem, ju_elem)
+        if ju_role in role_score:
+            role_score[ju_role] += 2.0
     ordered = sorted(role_score.items(), key=lambda kv: kv[1], reverse=True)
     top_role, top_w = ordered[0]
     second_role, second_w = ordered[1] if len(ordered) > 1 else ("", 0.0)

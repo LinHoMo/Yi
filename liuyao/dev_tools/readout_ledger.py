@@ -187,9 +187,10 @@ def checks():
         from collections import Counter
         c = Counter(x.get("split") for x in cc)
         return (str(c["tune"]), str(c["holdout"]), str(len(ex.get("cases") or ex)))
-    add("八字案例分母(60/276/62)", "234批；339 批实跑 53→62（326/329 批语料扩样后外部集 +9 例）；"
-        "368 批清例后 holdout 278→276（两例同考点双建被清，非引擎回归）",
-        c_bazi_denoms, ("60", "276", "62"))
+    add("八字案例分母(61/279/62)", "234批；339 批实跑 53→62（326/329 批语料扩样后外部集 +9 例）；"
+        "368 批清例后 holdout 278→276（两例同考点双建被清，非引擎回归）；"
+        "395 批《千里命稿》从格 4 例入册（QL001 进 tune、QL002-004 进 holdout）→ 60/276→61/279",
+        c_bazi_denoms, ("61", "279", "62"))
 
     # 头牌值在位性（235 批）：现状文档（README×2/CAPABILITY/GOVERNANCE）必须各含每个
     # 主读数**至少一处**——文档被改回旧值（176 批 97.3 事故族）时现值消失即红。
@@ -198,12 +199,13 @@ def checks():
         docs = [(ROOT / x).read_text(encoding="utf-8") for x in
                 ("liuyao/README.md", "bazi/README.md", "CAPABILITY.md", "GOVERNANCE.md")]
         # 235 批清单按当时现值；308 批 bazi holdout 97.6→99.5、368 批再→100.0，
-        # 97.6 只作历史注记（163 批），不再入「现值在位」清单；387 批按现状把该位
-        # 换成 93.3（cong_ge 14/15，现行八字唯一留余量的维度）。其余 8 值仍为现行主读数。
-        heads = ("97.9", "90.2", "62.4", "27.3", "33.3", "52.3", "93.3", "96.2", "80.6")
+        # 97.6 只作历史注记（163 批），不再入「现值在位」清单；387 批换成 93.3；
+        # 395 批千里 3 造入 holdout 后 cong 14/15→17/18，按现状改为 94.4。
+        heads = ("97.9", "90.2", "62.4", "27.3", "33.3", "52.3", "94.4", "96.2", "80.6")
         gone = [h for h in heads if not any(h in d for d in docs)]
         return f"{len(heads) - len(gone)}/{len(heads)}" + ("" if not gone else " 缺:" + ",".join(gone))
-    add("头牌值在位(9/9)", "235批（176 事故族的正向断言）；387 批 97.6→93.3（97.6 是 308 前旧值）",
+    add("头牌值在位(9/9)", "235批（176 事故族的正向断言）；387 批 97.6→93.3（97.6 是 308 前旧值）；"
+        "395 批 93.3→94.4（cong 14/15→17/18）",
         c_headline_present, ("9/9",))
 
     # tracked×ignore 漂移（237 批）：任何已跟踪文件不得再命中 ignore 规则（产物规矩的存量面）。
@@ -424,9 +426,9 @@ def checks():
             m = re.search(r"^\s*%s\s+(\d+)/(\d+)\s+\d+\s+[\d.]+%%" % name, s, re.M)
             out.append((m.group(1) + "/" + m.group(2)) if m else None)
         return tuple(out)
-    add("bazi.holdout 分维(213/213×3 51/51 36/36 14/15)", "bazi README 表/187批→308批→368批改期望"
-        "（368 批 ZC015 收掉：cong 13/15→14/15；清例后 tiaohou 适用 53→51）", c_bazi_dims,
-        ("213/213", "213/213", "213/213", "51/51", "36/36", "14/15"))
+    add("bazi.holdout 分维(213/213×3 51/51 36/36 17/18)", "bazi README 表/187批→308批→368批→395批改期望"
+        "（368 批 ZC015 收掉：cong 13/15→14/15；395 批千里 3 造入 holdout：cong 14/15→17/18）", c_bazi_dims,
+        ("213/213", "213/213", "213/213", "51/51", "36/36", "17/18"))
 
     def c_dimlock(t):
         s = sh(["dev_tools/" + "check_dim" + "_lock.py"], cwd=ROOT / "bazi")  # 拼接防 [11] 当六爻路径声明；跨科只读调用非 import，零耦合不破

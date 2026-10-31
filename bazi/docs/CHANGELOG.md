@@ -99,6 +99,51 @@
 **全门复验**：`bazi/dev_tools/check.py`（39 项）、`liuyao/dev_tools/check.py`、根级三闸、
 `devkit/sync_devkit.py --check`、`plugins` 构建＋自检、`dsh-plugin` 自检全绿。
 
+## 2026-10-30 第三百九十五批（八字）：**三会方局入从格判据＋《千里命稿》4 例入册——holdout 276→279，cong_ge 17/18**
+
+**性质**：判据修复（三会方局）＋主评分语料扩样。读数口径变更（n 与分维分母同时变动，§四.4）。
+
+### 一、三会方局：从格 role_score 少算了一整类局
+
+《千里命稿·从财格之构成》第一例（庚戌/乙酉/丙申/己丑）书判「地支全成申酉戌财地…从财格」，
+引擎只认**三合**（`SAN_HE_GROUPS`），不认**三会**（`SAN_HUI_GROUPS`），于是把申酉戌财局
+的从财例判成**从势**（QH-C1 首测）。修法（通用，非私有分支）：
+- `_from_judge` 增 `sanhui_elem`；`role_score` 的成局加权取 `sanhe_elem or sanhui_elem`；
+- `from_weight` 同样把三会算 +2.0。
+书证：三会方局与三合局同属「成局」，从财定义明写「地支纯属财地，或结财局」。
+全库 336 例与 HEAD 对拍：**0 例** `from_kind`/`from_type`/`pattern`/`strength` 变化——
+修的只是「三会成局、原先漏算」这一格。
+
+### 二、扩样：4 例入主评分语料（3 holdout＋1 tune）
+
+| id | 四柱 | 书判 | split | 为什么这样分 |
+|---|---|---|---|---|
+| QL001 | 庚戌/乙酉/丙申/己丑 | 从财格 | **tune** | 申酉戌三会财局正是三会权重的发现例，不进 holdout |
+| QL002 | 戊申/辛酉/丁巳/辛丑 | 从财格 | holdout | 未参与判据设计；引擎从财 √ |
+| QL003 | 戊戌/辛酉/乙酉/乙酉 | 从杀格 | holdout | 书判「从杀格」，本仓规范名从官杀 √ |
+| QL004 | 壬子/癸卯/甲子/甲子 | 从强格 | holdout | 引擎从强 √ |
+
+`expected` 只收书明写的 `cong_ge=true`＋`from_kind`；书只判「格之构成」，未用真从/假从字样，
+故 `from_type` **不入期望**（§三.4）。四例在适用面上均满分（3/3）。
+
+### 三、读数与锁（口径变更，§四.4）
+
+- tune **60→61**、holdout **276→279**；`BASELINE_N` 同步改为 61/279。
+- holdout 均分仍 **100.0%**（4 例全满分）；满分例数 **275→278**（n=279，ZC014 仍 1 例不满分）；
+  `cong_ge` **14/15→17/18（94.4%）**；`DIM_HITS` holdout cong 14→17、tune 新增 cong 1；
+  `FULL_CASES` tune 60→61、holdout 275→278。
+- **这不是能力提升**：4 例是新增满分例（扩样），不是引擎变好；三会修复只让 QH-C1 从
+  「从势」回到书判「从财」，全库其余 0 变化。
+- `[17]` 案例扫描 **443→447**（4 例无 datetime，不计入已验）；`[22]` **447 例/447 考点/0 重复**；
+  `[20]` 4 例五虎遁/五鼠遁全合法。
+- 金标准 40 例**未漂移**（4 例不在样例集），不用 capture；`readout_ledger` 的
+  `八字案例分母`（60/276/62→61/279/62）与 `bazi.holdout 分维`（…14/15→17/18）同批回补。
+- `bazi/README.md`、`CAPABILITY.md`、`EVAL-PLAN` 的 n／满分例数／cong_ge 数字同批回改。
+
+**全门复验**：`bazi/dev_tools/check.py`（39 项）、`check_dayun_cases.py`（七层＋前置层全过、14 负例）、
+`liuyao/dev_tools/check.py`、`readout_ledger.py`（full bad=0）、根级三闸、
+`devkit/sync_devkit.py --check`、`plugins` 构建＋自检、`dsh-plugin` 自检全绿。
+
 ## 2026-10-30 第三百九十四批（八字）：**化格判据收口三处失配——22/22，见证集结案不评分**
 
 **性质**：判据实现（补三条）＋见证下限抬升。化格仍**不进任何维度**。
