@@ -424,7 +424,26 @@ def selftest() -> None:
             globals()["CONG_ER_FILE"] = old_file
     assert any("低于登记下限" in x for x in pc), f"从儿命例下限未生效：{pc}"
 
-    print(f"SELFTEST OK：14 个负例全部被抓出（假引文／方向翻面／性别依据／余日篡改／运序断链／岁层十神／墓层未接必被记漏标／反面判据空跑必被抓／成格变格裁决篡改必被抓／主语料书证必被要求回填／近失登记漂移必被抓／化格命例下限必被报红／干级长生表改错必被抓／从儿命例下限必被报红）"
+    # ⑩ 五行专旺下限必须有牙齿（396 批）：把 10 条期望全部改反 → 0/10 必报红。
+    bad = _copy(json.loads(ZW_CASE_FILE.read_text(encoding="utf-8")))
+    for c in bad["cases"]:
+        c["expected"]["from_kind"] = "从势"
+    with tempfile.TemporaryDirectory() as td:
+        probe = Path(td) / "zhuan_wang_cases_probe.json"
+        probe.write_text(json.dumps(bad, ensure_ascii=False), encoding="utf-8")
+        old_file = ZW_CASE_FILE
+        globals()["ZW_CASE_FILE"] = probe
+        try:
+            import contextlib
+            import io
+            pz: list[str] = []
+            with contextlib.redirect_stdout(io.StringIO()):
+                zhuan_wang_case_check(pz, [])
+        finally:
+            globals()["ZW_CASE_FILE"] = old_file
+    assert any("低于登记下限" in x for x in pz), f"五行专旺命例下限未生效：{pz}"
+
+    print(f"SELFTEST OK：15 个负例全部被抓出（假引文／方向翻面／性别依据／余日篡改／运序断链／岁层十神／墓层未接必被记漏标／反面判据空跑必被抓／成格变格裁决篡改必被抓／主语料书证必被要求回填／近失登记漂移必被抓／化格命例下限必被报红／干级长生表改错必被抓／从儿命例下限必被报红／五行专旺下限必被报红）"
           f" → 对象 {first}／{fifth}，月柱 {m}")
 
 
@@ -717,6 +736,60 @@ def cong_er_case_check(problems: list[str], notes: list[str]) -> tuple[int, int]
     return ok, len(cases)
 
 
+# ── 第八层：五行专旺五格（《千里命稿》外格）命例见证集（396 批）────────────
+# 曲直／炎上／稼穑／从革／润下，每格 2 造；书判逐字照录。expected 只收书明写的
+# cong_ge=true＋from_kind；书只判「格之构成」，未用真从/假从字样，from_type 不入期望（§三.4）。
+# 本层测的是**引擎的 from_kind**（396 批新增专旺门），不进任何评分维度。
+ZW_CASE_FILE = ROOT / "data" / "cases" / "bazi_zhuan_wang_cases.json"
+ZW_CASE_FLOOR = 10          # 396 批实测 10/10；只准前进
+ZW_CASE_NOTE = (
+    "396 批实测 10/10：五格各 2 造全中。命中已到本集上限（10 例），再前进只能扩样；"
+    "若出现未命中，先判判据回归还是案例/期望有误（§二），不得把 expected 改成迎合引擎。")
+
+
+def zhuan_wang_case_check(problems: list[str], notes: list[str]) -> tuple[int, int]:
+    """第八层：五行专旺命例回验。命中数 ≥ ZW_CASE_FLOOR 才算过；未命中的逐条打印。"""
+    sys.path.insert(0, str(ROOT / "scripts"))
+    sys.path.insert(0, str(ROOT / "core"))
+    from chart import chart_from_pillars
+    from analyze import analyze
+
+    if not ZW_CASE_FILE.is_file():
+        problems.append(f"五行专旺命例见证集不存在 {ZW_CASE_FILE.name}")
+        return 0, 0
+    doc = json.loads(ZW_CASE_FILE.read_text(encoding="utf-8"))
+    cases = doc.get("cases") or []
+
+    ok = 0
+    miss = []
+    for c in cases:
+        want = (c.get("expected") or {}).get("from_kind") or ""
+        try:
+            ch = chart_from_pillars(c["pillars"], gender="男", question=c["id"])
+            st = analyze(ch).get("strength") or {}
+            got, basis = st.get("from_kind") or "", st.get("from_basis") or ""
+        except Exception as e:                       # 单例异常不拖垮整门，但要留名
+            got, basis = f"<{type(e).__name__}>", ""
+        if got == want:
+            ok += 1
+        else:
+            miss.append((c["id"], c["location"], want, got, basis,
+                         (c.get("source_quote") or "")[:60]))
+    if ok < ZW_CASE_FLOOR:
+        problems.append(f"五行专旺命例命中 {ok}/{len(cases)} 低于登记下限 {ZW_CASE_FLOOR}")
+    notes.append(f"五行专旺命例：{ok}/{len(cases)} 命中（下限 {ZW_CASE_FLOOR}）；"
+                 + (f"未命中 {len(miss)} 条逐条列在下方——这是欠账，不是通过"
+                    if miss else "未命中 0 条"))
+    print(f"  五行专旺命例见证：{ok}/{len(cases)} 命中（下限 {ZW_CASE_FLOOR}）")
+    for mid, loc, want, got, why, quote in miss:
+        detail = f"（{why[:80]}）" if why else ""
+        print(f"    · {mid} {loc}：期望 {want}，实得 {got or '（未判从）'}{detail}")
+        print(f"        书：{quote}")
+    if miss:
+        print(f"    → {ZW_CASE_NOTE}")
+    return ok, len(cases)
+
+
 def qiyun_check(problems: list[str], notes: list[str], spec=None) -> int:
     """第三层：起运算术自检（#31④）。《千里明镜》源L308／L329 是**自足的算例**
     （给了起算日、岁数、余日、交运日期与运序列举），故无需节气即可回验我们的历算口径。
@@ -892,6 +965,7 @@ def main() -> int:
     hs = hua_check(problems, notes)
     hcs, hcn = hua_case_check(problems, notes)
     ces, cen = cong_er_case_check(problems, notes)
+    zws, zwn = zhuan_wang_case_check(problems, notes)
     gap_n, gap_ph = 0, 0
     n_main = 0
     if MAIN_CASES.is_file():
@@ -909,6 +983,7 @@ def main() -> int:
     print(f"化格五层：{hs}/{len(HUA_SPEC)} 个《從化論》定义例出对名（真化／假化／不化）")
     print(f"化格六层（命例）：{hcs}/{hcn} 命中，详见下方逐条")
     print(f"从儿见证（顺局）：{ces}/{cen} 命中，详见下方逐条")
+    print(f"五行专旺见证（外格）：{zws}/{zwn} 命中，详见下方逐条")
     print(f"起运三层：{qy}/{len(QIYUN_SPEC)} 条《千里明镜》算例回验通过"
           "（干支序差＝岁数／运序合六十甲子／30 日成月余日投射）")
     print(f"主语料空档：{n_main} 例全文扫描 → 命例级顺逆/起运书证 {gap_n} 例（须 0）；"

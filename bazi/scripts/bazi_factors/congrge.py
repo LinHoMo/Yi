@@ -137,9 +137,11 @@ def _from_judge(chart_json: dict, details: list[dict], day_stem: str,
     # 395 批：三会方局（寅卯辰／巳午未／申酉戌／亥子丑）与三合同为「成局」，
     # 从格 role_score 若只认三合，会把「申酉戌财局」的从财例判成从势（QH-C1 实测）。
     sanhui_elem = ""
+    sanhui_branches: set = set()
     for elem, grp in SAN_HUI_GROUPS.items():
         if set(grp) <= set(branch_list):
             sanhui_elem = elem
+            sanhui_branches = {b for b in branch_list if b in grp}
             break
     chong_map: dict = {}
     for b in branch_list:
@@ -322,6 +324,34 @@ def _from_judge(chart_json: dict, details: list[dict], day_stem: str,
             from_weight += 1.0
     if (sanhe_elem or sanhui_elem) and day_elem:
         from_weight += 2.0
+
+    # ── 五行专旺格（《千里命稿》外格：曲直／炎上／稼穑／从革／润下，396 批）
+    # 书证逐格：甲乙春月支全寅卯辰或亥卯未、无庚辛申酉（曲直）；丙丁夏月巳午未或寅午戌、
+    # 无壬癸亥子（炎上）；戊己四季月辰戌丑未或纯土、无甲乙寅卯（稼穑）；庚辛秋月申酉戌或
+    # 巳酉丑、无丙丁午未（从革）；壬癸冬月亥子丑或申子辰、无戊己未戌（润下）。
+    # 「无官杀」= 天干官杀不透（合日主者不算，QH 壬合丁）且支中官杀本气不在三合/三会局内
+    # （QX08 巳中丙、QX09 辰中戊、QX10 丑中己都被合化）。
+    _zw_name = {"木": "曲直", "火": "炎上", "土": "稼穑", "金": "从革", "水": "润下"}
+    _zw_season = {"木": ("寅", "卯", "辰"), "火": ("巳", "午", "未"),
+                  "土": ("辰", "戌", "丑", "未"), "金": ("申", "酉", "戌"),
+                  "水": ("亥", "子", "丑")}
+    _guan = next((k for k, v in KE_CYCLE.items() if v == day_elem), "")
+    _guan_tou = any(
+        (STEM_ELEMENTS.get((pillars.get(pn) or {}).get("stem") or "") or "") == _guan
+        and not stems_wuhe((pillars.get(pn) or {}).get("stem") or "", day_stem)
+        for pn in ("year", "month", "hour"))
+    _guan_br = any(
+        (BRANCH_ELEMENTS.get(b) or "") == _guan
+        and b not in sanhe_branches and b not in sanhui_branches
+        for b in branch_list)
+    _zw_group = (sanhe_elem == day_elem or sanhui_elem == day_elem
+                 or (day_elem == "土" and all(BRANCH_ELEMENTS.get(b) == "土" for b in branch_list)))
+    if (day_elem in _zw_name and month_branch in _zw_season.get(day_elem, ())
+            and _zw_group and not _guan_tou and not _guan_br):
+        kind = _zw_name[day_elem]
+        key = {"木": "mu", "火": "huo", "土": "tu", "金": "jin", "水": "shui"}[day_elem]
+        basis = "《千里命稿·%s格之构成》『%s』" % (kind, _CONG["zhuan_wang_" + key])
+        return kind, "真从", basis, f"{kind}·真从"
 
     # ── 从旺/从强
     branch_roles = list(main_roles.values())

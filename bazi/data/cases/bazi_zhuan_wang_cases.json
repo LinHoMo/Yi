@@ -1,0 +1,217 @@
+{
+ "schema": "bazi-zhuan-wang-cases/1",
+ "_comment": "五行专旺五格（《千里命稿》外格篇：曲直／炎上／稼穑／从革／润下）命例见证集（396 批）：每格 2 造，四柱起于各例首行，书判逐字照录。expected 只收书明写的 cong_ge=true＋from_kind；书只判「格之构成」，未用真从/假从字样，故 from_type 不入期望（§三.4）。本集只作见证与回验材料，不作对齐分、不进任何维度。",
+ "built_at": "2026-10-30",
+ "cases": [
+  {
+   "id": "QW001",
+   "chapter": "外格·曲直格之构成",
+   "location": "qianli_minggao_dz.dz.txt 源L1658",
+   "pillars": {
+    "year": "壬寅",
+    "month": "癸卯",
+    "day": "甲辰",
+    "hour": "甲子"
+   },
+   "source_quote": "甲木生於卯月，支全寅卯辰东方一片秀气天干又得壬癸甲资生比辅，全无庚辛申酉之冲克，是为曲直格。",
+   "expected": {
+    "cong_ge": true,
+    "from_kind": "曲直"
+   },
+   "provenance": {
+    "file": "data/sources/qianli_minggao_dz.dz.txt",
+    "line": 1658,
+    "note": "《千里命稿》外格·曲直格之构成命例：四柱与书判逐字照录；expected 取书中「曲直格」。"
+   }
+  },
+  {
+   "id": "QW002",
+   "chapter": "外格·曲直格之构成",
+   "location": "qianli_minggao_dz.dz.txt 源L1661",
+   "pillars": {
+    "year": "癸亥",
+    "month": "乙卯",
+    "day": "乙卯",
+    "hour": "癸未"
+   },
+   "source_quote": "乙木生於卯月，地支亥卯未结成木局，天干又得癸乙资生比辅，全无庚辛申酉之冲克亦，为曲直格。",
+   "expected": {
+    "cong_ge": true,
+    "from_kind": "曲直"
+   },
+   "provenance": {
+    "file": "data/sources/qianli_minggao_dz.dz.txt",
+    "line": 1661,
+    "note": "《千里命稿》外格·曲直格之构成命例：四柱与书判逐字照录；expected 取书中「曲直格」。"
+   }
+  },
+  {
+   "id": "QW003",
+   "chapter": "外格·炎上格之构成",
+   "location": "qianli_minggao_dz.dz.txt 源L1668",
+   "pillars": {
+    "year": "丁巳",
+    "month": "丙午",
+    "day": "丙寅",
+    "hour": "乙未"
+   },
+   "source_quote": "丙火生於午月，支全巳午未南方，一片真火之气，天干又得乙丙丁资生比辅，全无壬癸亥子之冲克，无是为炎上格。",
+   "expected": {
+    "cong_ge": true,
+    "from_kind": "炎上"
+   },
+   "provenance": {
+    "file": "data/sources/qianli_minggao_dz.dz.txt",
+    "line": 1668,
+    "note": "《千里命稿》外格·炎上格之构成命例：四柱与书判逐字照录；expected 取书中「炎上格」。"
+   }
+  },
+  {
+   "id": "QW004",
+   "chapter": "外格·炎上格之构成",
+   "location": "qianli_minggao_dz.dz.txt 源L1671",
+   "pillars": {
+    "year": "丙戌",
+    "month": "甲午",
+    "day": "丁卯",
+    "hour": "壬寅"
+   },
+   "source_quote": "丁火生於午月，柱中虽有壬水全无水气，且与日干丁火作合，地支寅午戌结成火局，天干又得甲丙资生比辅，无癸水子水，亦为炎上格。",
+   "expected": {
+    "cong_ge": true,
+    "from_kind": "炎上"
+   },
+   "provenance": {
+    "file": "data/sources/qianli_minggao_dz.dz.txt",
+    "line": 1671,
+    "note": "《千里命稿》外格·炎上格之构成命例：四柱与书判逐字照录；expected 取书中「炎上格」。"
+   }
+  },
+  {
+   "id": "QW005",
+   "chapter": "外格·稼穑格之构成",
+   "location": "qianli_minggao_dz.dz.txt 源L1678",
+   "pillars": {
+    "year": "戊戌",
+    "month": "己未",
+    "day": "戊辰",
+    "hour": "癸丑"
+   },
+   "source_quote": "戊土生于未月，支全辰戌丑未一片土气，天干又得戊已比辅，甲乙寅卯之冲克，是为稼穑格。",
+   "expected": {
+    "cong_ge": true,
+    "from_kind": "稼穑"
+   },
+   "provenance": {
+    "file": "data/sources/qianli_minggao_dz.dz.txt",
+    "line": 1678,
+    "note": "《千里命稿》外格·稼穑格之构成命例：四柱与书判逐字照录；expected 取书中「稼穑格」。"
+   }
+  },
+  {
+   "id": "QW006",
+   "chapter": "外格·稼穑格之构成",
+   "location": "qianli_minggao_dz.dz.txt 源L1681",
+   "pillars": {
+    "year": "戊辰",
+    "month": "己未",
+    "day": "己未",
+    "hour": "戊辰"
+   },
+   "source_quote": "己土日生于未月，地支辰未皆是土位，天干又成戊己一片土气，并无甲乙寅卯之冲克，亦为稼穑格。",
+   "expected": {
+    "cong_ge": true,
+    "from_kind": "稼穑"
+   },
+   "provenance": {
+    "file": "data/sources/qianli_minggao_dz.dz.txt",
+    "line": 1681,
+    "note": "《千里命稿》外格·稼穑格之构成命例：四柱与书判逐字照录；expected 取书中「稼穑格」。"
+   }
+  },
+  {
+   "id": "QW007",
+   "chapter": "外格·从革格之构成",
+   "location": "qianli_minggao_dz.dz.txt 源L1688",
+   "pillars": {
+    "year": "戊申",
+    "month": "辛酉",
+    "day": "庚戌",
+    "hour": "乙酉"
+   },
+   "source_quote": "庚金生於酉月，地支全申酉戌西方，一片金气。天干戊辛又资生比畏全无丙丁午未之冲克，是为从革格。",
+   "expected": {
+    "cong_ge": true,
+    "from_kind": "从革"
+   },
+   "provenance": {
+    "file": "data/sources/qianli_minggao_dz.dz.txt",
+    "line": 1688,
+    "note": "《千里命稿》外格·从革格之构成命例：四柱与书判逐字照录；expected 取书中「从革格」。"
+   }
+  },
+  {
+   "id": "QW008",
+   "chapter": "外格·从革格之构成",
+   "location": "qianli_minggao_dz.dz.txt 源L1691",
+   "pillars": {
+    "year": "戊戌",
+    "month": "辛酉",
+    "day": "辛巳",
+    "hour": "己丑"
+   },
+   "source_quote": "辛金生於酉月，地支巳酉丑，结成金局。天干又得戊己辛资生比辅，无丙丁午未之冲克。亦为从革格。",
+   "expected": {
+    "cong_ge": true,
+    "from_kind": "从革"
+   },
+   "provenance": {
+    "file": "data/sources/qianli_minggao_dz.dz.txt",
+    "line": 1691,
+    "note": "《千里命稿》外格·从革格之构成命例：四柱与书判逐字照录；expected 取书中「从革格」。书载四柱「戊戌辛酉辛己己丑」中「辛己」为形近误刻，五虎遁/五鼠遁反算日柱应为辛巳（辛日丑时＝己丑），按正字入盘；引文仍逐字。"
+   }
+  },
+  {
+   "id": "QW009",
+   "chapter": "外格·润下格之构成",
+   "location": "qianli_minggao_dz.dz.txt 源L1698",
+   "pillars": {
+    "year": "壬申",
+    "month": "壬子",
+    "day": "壬辰",
+    "hour": "庚子"
+   },
+   "source_quote": "壬水生於子月，地支申子辰结成水局。天干又得庚壬资生比辅，无戊己未戌之冲克，是为润下格。",
+   "expected": {
+    "cong_ge": true,
+    "from_kind": "润下"
+   },
+   "provenance": {
+    "file": "data/sources/qianli_minggao_dz.dz.txt",
+    "line": 1698,
+    "note": "《千里命稿》外格·润下格之构成命例：四柱与书判逐字照录；expected 取书中「润下格」。"
+   }
+  },
+  {
+   "id": "QW010",
+   "chapter": "外格·润下格之构成",
+   "location": "qianli_minggao_dz.dz.txt 源L1701",
+   "pillars": {
+    "year": "辛亥",
+    "month": "庚子",
+    "day": "癸丑",
+    "hour": "癸丑"
+   },
+   "source_quote": "癸水生於子月，地支全亥子丑北方。天干又得庚辛癸资生比辅，无戊己未戌等冲克，亦为润下格。",
+   "expected": {
+    "cong_ge": true,
+    "from_kind": "润下"
+   },
+   "provenance": {
+    "file": "data/sources/qianli_minggao_dz.dz.txt",
+    "line": 1701,
+    "note": "《千里命稿》外格·润下格之构成命例：四柱与书判逐字照录；expected 取书中「润下格」。"
+   }
+  }
+ ]
+}
