@@ -12,6 +12,9 @@
   C. `case_quote_exempt.json` 登记的「夹注段/跨段摘录不在库内连续子串」逐条豁免；
      若豁免项的引文后来能在底本连续命中 → 判红（豁免过期，必须回接）；
      每条豁免同时报**最长连续块**（432 批），让「不在库」是实测数而不是一句声明；
+  C2. 多底本（如《子平真诠评注》＝dz 本＋《命理探原》第二底本）逐本比对：
+     只在第二底本命中、主底本不含 → `wrongbook` 判红（434 批；拼成一串时看不见）；
+
   D. 下限守卫：含引文文件数、引文总数、逐字比对数低于登记基线即判红
      （0 结果 ≠ 通过；路径挪动/解析失败必须先显形）。
 
@@ -42,7 +45,8 @@ BOOK_SOURCES = {
     "神峰通考": ["data/sources/shen-feng-tong-kao.wikitext.txt"],
     "渊海子平": ["data/sources/yuan-hai-zi-ping.wikitext.txt"],
     "千里命稿": ["data/sources/qianli_minggao_dz.dz.txt"],
-    # 案例夹注段在 dz 本只部分可寻；命理探原同段可作第二底本（逐条仍须连续命中）
+    # 第一项为主底本（必须命中）；命理探原作第二底本只用于对照：
+    # 只在第二底本命中 → wrongbook 判红（434 批；旧版把两本拼成一串，分辨不出）。
     "子平真诠评注": ["data/sources/ziping_zhenquan_pingzhu_dz.dz.txt",
                      "data/sources/mingli_tanyuan_dz.dz.txt"],
 }
@@ -95,12 +99,13 @@ def resolve_sources(case: dict) -> tuple[list[str] | None, str | None]:
     return None, f"未登记书源：{book or '<无 book>'!r}（请登记 BOOK_SOURCES/UNROUTABLE_BOOKS 或 provenance.file）"
 
 
-def load_corpus(names: tuple[str, ...]) -> str:
-    return "\n".join((DISC / n).read_text(encoding="utf-8") for n in names)
+def load_corpus(names: tuple[str, ...]) -> tuple[str, ...]:
+    """每本底本单独归一化（不拼在一起）：多底本时须能分辨引文落在哪一本。"""
+    return tuple(norm((DISC / n).read_text(encoding="utf-8")) for n in names)
 
 
 def verify_case(case: dict, corpus_by_names: dict, exempt: dict) -> tuple[str, str | None]:
-    """返回 (状态, 消息)。状态 ∈ ok / exempt / unrouted / missing / stale / error。"""
+    """返回 (状态, 消息)。状态 ∈ ok / exempt / unrouted / missing / wrongbook / stale / error。"""
     cid = str(case.get("id") or "?")
     q = case.get("source_quote")
     if q is not None and (not isinstance(q, str) or not q.strip()):
@@ -112,14 +117,19 @@ def verify_case(case: dict, corpus_by_names: dict, exempt: dict) -> tuple[str, s
         return "unrouted", f"{cid} book={book_name(case) or '?'}：{why}"
     key = tuple(names)
     if key not in corpus_by_names:
-        corpus_by_names[key] = norm(load_corpus(key))
-    hit = norm(q) in corpus_by_names[key]
+        corpus_by_names[key] = load_corpus(key)
+    nq = norm(q)
+    hits = [nq in text for text in corpus_by_names[key]]
+    hit, primary = any(hits), hits[0]
     if cid in exempt["ids"]:
-        if hit:
-            return "stale", f"{cid}：豁免项已能在底本连续命中（{names[0]}）——豁免过期，请回接逐字"
+        if primary:
+            return "stale", f"{cid}：豁免项已能在主底本连续命中（{names[0]}）——豁免过期，请回接逐字"
         return "exempt", f"{cid}：{exempt['reason']}"
     if not hit:
         return "missing", f"{cid}：引文非书源逐字子串（{names[0]}）→ {q[:70]!r}"
+    if not primary:
+        return "wrongbook", (f"{cid}：引文只在第二底本命中（{names[1]}），"
+                             f"所署《{book_name(case)}》主底本不含——书源归属不成立 → {q[:50]!r}")
     return "ok", None
 
 
@@ -169,13 +179,15 @@ def check_all(exempt: dict) -> tuple[list[str], dict]:
                 seen_exempt.add(cid)
                 _names, _why = resolve_sources(case)
                 _q = norm(case.get("source_quote") or "")
-                _blk = longest_block(_q, corpus[tuple(_names)])
+                _blk = max(longest_block(_q, t) for t in corpus[tuple(_names)])
                 stats["exempt_detail"].append(
                     f"  {cid}：最长连续 {_blk}/{len(_q)} 字（夹注段不在库，逐条披露）")
             elif status == "unrouted":
                 stats["unrouted"] += 1
                 stats["unrouted_detail"].append(f"  {rel}: {msg}")
             elif status == "stale":
+                failures.append(f"{rel}: {msg}")
+            elif status == "wrongbook":
                 failures.append(f"{rel}: {msg}")
             elif status == "missing":
                 failures.append(f"{rel}: {msg}")
@@ -201,8 +213,11 @@ def check_all(exempt: dict) -> tuple[list[str], dict]:
 
 def selftest() -> int:
     needle = "五月丁火，时归建禄，不宜乱用甲木"
-    qiong = norm(load_corpus(tuple(BOOK_SOURCES["穷通宝鉴"])))
-    corpus = {tuple(BOOK_SOURCES["穷通宝鉴"]): qiong}
+    qiong = load_corpus(tuple(BOOK_SOURCES["穷通宝鉴"]))[0]
+    zip_key = tuple(BOOK_SOURCES["子平真诠评注"])
+    corpus = {tuple(BOOK_SOURCES["穷通宝鉴"]): (qiong,),
+              # 多底本夹具：主底本不含、第二底本含——用来判「只命中副底本」。
+              zip_key: ("甲子乙丑", "本书没有这句话")}
     exempt = {"reason": "夹具：夹注段不在库", "ids": ["ZP001"]}
     cases = [
         ({"id": "POS", "book": "穷通宝鉴", "source_quote": needle}, "ok", "正例：书源逐字"),
@@ -210,6 +225,10 @@ def selftest() -> int:
          "missing", "负例：尾拼非书源"),
         ({"id": "NEG2", "book": "穷通宝鉴", "source_quote": "本书没有这句话"},
          "missing", "负例：凭空句"),
+        ({"id": "POS2", "book": "子平真诠评注", "source_quote": "甲子乙丑"},
+         "ok", "正例：多底本时命中主底本"),
+        ({"id": "WB", "book": "子平真诠评注", "source_quote": "本书没有这句话"},
+         "wrongbook", "负例：只在第二底本命中＝书源归属不成立"),
         ({"id": "ZP001", "book": "子平真诠评注", "source_quote": "本书没有这句话"},
          "exempt", "豁免：夹注段在册披露、不判红"),
         ({"id": "ZP001", "book": "穷通宝鉴", "source_quote": needle},
@@ -234,7 +253,7 @@ def selftest() -> int:
     if bad:
         print(f"  × selftest 失败 {bad} 例——比对逻辑/路由漂移，先修器")
         return 1
-    print(f"  √ selftest：{len(cases)} 件（正例/尾拼/凭空句/豁免/豁免过期/不可路由）"
+    print(f"  √ selftest：{len(cases)} 件（正例×2/尾拼/凭空句/副底本误挂/豁免/豁免过期/不可路由）"
           f"＋最长连续块全过")
     return 0
 
