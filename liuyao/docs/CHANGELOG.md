@@ -5,6 +5,39 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-02 第四百五十五批（六爻·selftest 路径补真实面）：**象层门提前 return，真实象层/禁评分未跑；考卷哨兵 `--selftest` 只验封存册结构、门槛跌破从未在例行门里判**
+
+**性质**：门自身路径覆盖修复（不改判据、不改数据、不改读数）。
+
+### 一、缺陷
+
+`liuyao/dev_tools/check.py` 对所有脚本门只跑 `--selftest`：
+1. `check_xiang`（[39]）原 `return selftest()` 提前返回——真实 5 路象层、题类联动、
+   ③ 禁评分只在主入口执行；selftest 只证判据有牙。
+2. `check_test_sentinel`（[34]）的 `--selftest` 只跑「封存册结构」负例；
+   **门槛面（逐集评测、跌破 threshold 即红）只写在提前 return 之后的主路径**——
+   该门标题宣称的「跌破封存阈值即红」在例行流程里从未执行（假闸门）。
+
+### 二、改法
+
+- `check_xiang`：`--selftest` 取 `selftest()` 返回码，失败即红；通过后继续跑真实三项。
+- `check_test_sentinel`：抽出 `audit_thresholds(seal)`，主入口与 `--selftest` 共用；
+  selftest 在结构负例通过后**也跑门槛面**（3 集：wikisource／zengshan_dz／
+  wikisource_direction），跌破即 FAIL。代价是例行门多跑 3 次评测子进程（如实登记）。
+
+### 三、自证（§四.8）
+
+- 真实探针：把 `test_seal.json` 的 wikisource `threshold` 65.0→100.0 后跑
+  `--selftest` → `wikisource: 跌破阈值（阈值 100.0）`，EXIT=**1**；原字节回填
+  （`restored True`）。
+- `check_xiang --selftest` 现在同时打印真实面：5 路实跑、类别 health/loss/career/
+  relationship/travel、题类回归锚 6 条、评分侧 18 模块禁读象。
+- 读数：tune **97.9%**（n=20）／holdout **90.2%**（n=12）／外部各集逐位不变（§四.7）。
+
+**全门复验**：两科 `check.py` 全过（[0]–[43]）；账台 44/44 bad=0；
+`sync_devkit.py --check` 12 件逐字节一致。
+
+
 ## 2026-11-02 第四百五十三批（两科·selftest 路径补实数据面）：**[18] 方位层门只在主入口跑真实数据、[29] 正则门不判“扫到 0 文件”——全量流程里两处都是盲区，本批一并补齐**
 
 **性质**：门自身路径覆盖修复（不改判据、不改数据、不改读数）。

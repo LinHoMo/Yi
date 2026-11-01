@@ -12,6 +12,9 @@
   2. **阈值单调**：`threshold` 只准上调（下调＝放宽＝失去哨兵意义）；上调须写明理由。
   3. **开卷记账**：`opens` 每条必须有 date/commit/hypothesis/aggregate；缺一即红。
   4. **迁移记账**：`migrations` 每条必须有 id/date/reason；且该 id 必须真在某个 test 里。
+  5. **门槛面**：逐封存集跑评测，跌破 `threshold` 即 FAIL（`audit_thresholds`）。
+     455 批：`--selftest` 在结构负例通过后**也跑门槛面**——此前该分支只验封存册结构，
+     而 check.py 只以 `--selftest` 调本门，跌破阈值从未在例行门里判过。
 
     python dev_tools/check_test_sentinel.py                 # 哨兵：只打 PASS/FAIL
     python dev_tools/check_test_sentinel.py --open --hypothesis "..."   # 正式开卷（打印分数并记账）
@@ -91,6 +94,24 @@ def _score(ids: list[str]) -> float | None:
     return float(m.group(1)) if m else None
 
 
+def audit_thresholds(seal: dict) -> tuple[list[str], list[str]]:
+    """门槛面：逐个封存集跑评测，跌破 threshold 即红（455 批抽成共用）。"""
+    fails: list[str] = []
+    detail: list[str] = []
+    for name, c in seal["corpora"].items():
+        if c.get("threshold") is None:
+            continue          # 不参与哨兵的集（n 太小，不设门槛）
+        score = _score(c["test"])
+        if score is None:
+            fails.append(name)
+            detail.append(f"{name}: 取数失败（评测器没交出平均分）")
+            continue
+        if score < c["threshold"]:
+            fails.append(name)
+            detail.append(f"{name}: 跌破阈值（阈值 {c['threshold']}）")
+    return fails, detail
+
+
 def selftest() -> int:
     seal = json.loads(SEAL.read_text(encoding="utf-8"))
     splits = json.loads(SPLITS.read_text(encoding="utf-8"))
@@ -130,7 +151,16 @@ def selftest() -> int:
     if fails:
         print(f"  × selftest 失败：{fails}")
         return 1
-    print(f"  √ selftest：{len(cases)} 类负例全部抓到；现行封存册放行")
+    # 455 批：--selftest 路径也要真正判门槛——此前该分支只验封存册结构，
+    # 而 check.py 只以 --selftest 调本门，跌破阈值从未在例行门里判过。
+    tfails, tdetail = audit_thresholds(seal)
+    if tfails:
+        print("  × 门槛面判红：")
+        for d in tdetail:
+            print("    " + d)
+        return 1
+    print(f"  √ selftest：{len(cases)} 类负例全部抓到；现行封存册放行；"
+          f"门槛面 {sum(1 for c in seal['corpora'].values() if c.get('threshold') is not None)} 集全过")
     return 0
 
 
@@ -155,17 +185,9 @@ def main() -> int:
 
     fails = []
     detail = []
-    for name, c in seal["corpora"].items():
-        if c.get("threshold") is None:
-            continue          # 不参与哨兵的集（n 太小，不设门槛）
-        score = _score(c["test"])
-        if score is None:
-            fails.append(name)
-            detail.append(f"{name}: 取数失败（评测器没交出平均分）")
-            continue
-        if score < c["threshold"]:
-            fails.append(name)
-            detail.append(f"{name}: 跌破阈值（阈值 {c['threshold']}）")
+    tfails, tdetail = audit_thresholds(seal)
+    fails.extend(tfails)
+    detail.extend(tdetail)
 
     if args.open:
         if not args.hypothesis.strip():

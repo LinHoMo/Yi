@@ -148,7 +148,9 @@ def no_scoring_problems() -> list[str]:
 
 
 def selftest() -> int:
-    """负例自证：先证明判据抓得住，再谈它是不是绿的。"""
+    """负例自证：先证明判据抓得住，再谈它是不是绿的。
+    455 批：本函数只证判据；`--selftest` 分支在其通过后仍继续跑真实数据面。
+    """
     problems: list[str] = []
     ok = {"trigram": {"basis": "x"}, "ti_yong": {"basis": "x"}}
     if basis_problems({"占": ok}):
@@ -201,7 +203,10 @@ def main() -> int:
     ap.add_argument("--selftest", action="store_true", help="负例自证")
     args = ap.parse_args()
     if args.selftest:
-        return selftest()
+        st = selftest()
+        if st != 0:
+            return st
+        # 455 批：负例通过后继续跑真实数据面（不提前 return；check.py 只以 --selftest 调本门）
 
     samples: dict[str, dict] = {}
     for q, _ in CATEGORY_CASES:
