@@ -171,9 +171,9 @@
   {
    "script": "check_expected_coverage.py",
    "tier": "blocking",
-   "guards": "expected 书证覆盖生存线（[38]；344 批新增，425 批扩到 yiin）",
+   "guards": "expected 书证覆盖生存线（[38]；344 批新增，425/426 批扩到 8 个案例文件）",
    "run_by_check_py": true,
-   "doc": "expected 书证/机械派生字段的覆盖生存线（门禁 [38]，第三百四十四批新增；419 批扩到 dz／bushi，425 批补 yiin）"
+   "doc": "expected 书证/机械派生字段的覆盖生存线（门禁 [38]，第三百四十四批新增；419 批扩到 dz／bushi，425 批补 yiin，"
   },
   {
    "script": "check_fangwei.py",

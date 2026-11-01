@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""expected 书证/机械派生字段的覆盖生存线（门禁 [38]，第三百四十四批新增；419 批扩到 dz／bushi，425 批补 yiin）。
+"""expected 书证/机械派生字段的覆盖生存线（门禁 [38]，第三百四十四批新增；419 批扩到 dz／bushi，425 批补 yiin，426 批补齐四集共 8 个文件）。
 
     python dev_tools/check_expected_coverage.py            # 对拍真实案例文件
     python dev_tools/check_expected_coverage.py --selftest # 加负例：证明本门抓得住
@@ -22,6 +22,13 @@ wangshuai-muku-six_spirit 和 WS035 校勘 verdict 一次性清空；聚合 stri
 该集没有 `use_god`，受控字段是 `yingqi`（≥11）、`yingqi_branches`（≥11）、
 `yingqi_claim`（≥5）、`detail`（≥56），并用 `allowed_values: []` 把 `verdict` 钉死
 在 null（本书断语是散文，映射吉/凶属解读）。
+
+**426 批为什么补齐其余四集**：`fetch_zengshan_dz_cases.py`（prose）、
+`build_yingqi_set.py`（yingqi）、`fetch_huozhulin_cases.py`（huozhulin 两件）都是
+**整文件重写**的构建器，此前不在本门——重生成清空 `yingqi`／`detail`／`verdict`
+不会有门报警。补入后 8 个案例文件全受控：prose（yingqi≥4／verdict≥23／detail≥16）、
+yingqi（yingqi≥2／use_god≥2／detail≥2）、huozhulin（yingqi≥1／detail≥2）、
+huozhulin_qual（detail≥5）。
 
 本门守三条：
   A. 案例数不得低于登记数（整文件重生成丢例即红）；

@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "batch": 425,
+  "batch": 426,
   "file": "data/cases/wikisource_cases.json",
-  "_comment": "expected 书证/机械派生字段的**覆盖生存线**。案例构建器重生成时必须保留人工 expected 字段：1592923 曾把 292/297/298/282 批的 74 use_god／52 branch／32 note／3 组 wangshuai-muku-six_spirit 与 WS035 verdict 一次性清空；403 批又把 dz 建器扩样时 206／208 批的 18 例 use_god／branch／note（ZD188 另有 yingqi_note）整段清空——两次都是聚合分只掉一点、旧门全绿。419 批起本门覆盖所有有建器的案例文件（wikisource／dz／bushi）；425 批补 yiin（yingqi 11 条实录、verdict 必须保持 null、detail 不得清空）。min 为单调下限（新增标签只许更高，不许下调）；allowed_blank 逐条列名，出现未登记空值即判红。",
+  "_comment": "expected 书证/机械派生字段的**覆盖生存线**。案例构建器重生成时必须保留人工 expected 字段：1592923 曾把 292/297/298/282 批的 74 use_god／52 branch／32 note／3 组 wangshuai-muku-six_spirit 与 WS035 verdict 一次性清空；403 批又把 dz 建器扩样时 206／208 批的 18 例 use_god／branch／note（ZD188 另有 yingqi_note）整段清空——两次都是聚合分只掉一点、旧门全绿。419 批起本门覆盖有建器的案例文件（wikisource／dz／bushi）；425 批补 yiin；426 批补齐会**整文件重写**的 prose／yingqi／huozhulin 两件，至此 8 个案例文件全受控。min 为单调下限（新增标签只许更高，不许下调）；allowed_blank 逐条列名，出现未登记空值即判红。",
   "cases": {
     "wikisource_cases.json": {
       "case_count": 81,
@@ -104,6 +104,73 @@
         "verdict": {
           "min": 0,
           "allowed_values": []
+        }
+      }
+    },
+    "zengshan_dz_prose_cases.json": {
+      "label": "prose",
+      "case_count": 38,
+      "meta_sum_required": false,
+      "fields": {
+        "yingqi": {
+          "min": 4
+        },
+        "yingqi_branches": {
+          "min": 4
+        },
+        "verdict": {
+          "min": 23,
+          "allowed_values": ["吉", "凶"]
+        },
+        "detail": {
+          "min": 16
+        }
+      }
+    },
+    "yingqi_cases.json": {
+      "label": "yingqi",
+      "case_count": 2,
+      "meta_sum_required": false,
+      "fields": {
+        "yingqi": {
+          "min": 2
+        },
+        "yingqi_branches": {
+          "min": 2
+        },
+        "verdict": {
+          "min": 2,
+          "allowed_values": ["吉", "凶"]
+        },
+        "use_god": {
+          "min": 2,
+          "allowed_values": ["父母", "兄弟", "子孙", "妻财", "官鬼", "世爻", "应爻"]
+        },
+        "detail": {
+          "min": 2
+        }
+      }
+    },
+    "huozhulin_cases.json": {
+      "label": "huozhulin",
+      "case_count": 2,
+      "meta_sum_required": false,
+      "fields": {
+        "yingqi": {
+          "min": 1
+        },
+        "detail": {
+          "min": 2
+        }
+      }
+    },
+    "huozhulin_qualitative.json": {
+      "label": "huozhulin_qual",
+      "case_count": 5,
+      "meta_sum_required": false,
+      "fields": {
+        "detail": {
+          "min": 5
         }
       }
     }

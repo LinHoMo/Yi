@@ -969,7 +969,7 @@ def main() -> int:
                 "../kernel/sync_kernel.py"),
                ("devkit_sync", "[37] 门禁同源（devkit/ 唯一真源；两科共享门是产物，手改/野文件/第二份拷贝即红）",
                 "../devkit/sync_devkit.py"),
-               ("expected_coverage", "[38] expected 书证覆盖生存线（案例构建器重生成不得静默清空书证/机械派生字段；344 批建，419 批扩到 dz／bushi，425 批补 yiin）",
+               ("expected_coverage", "[38] expected 书证覆盖生存线（案例构建器重生成不得静默清空书证/机械派生字段；344 批建，419 批扩到 dz／bushi，425 批补 yiin，426 批补齐 8 个案例文件）",
                 "dev_tools/check_expected_coverage.py"),
                ("xiang", "[39] 象层门（象目须带出处／类别随题类联动／象层禁倒灌评分；362 批补的能力线）",
                 "dev_tools/check_xiang.py"),

@@ -5,6 +5,48 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-02 第四百二十六批（六爻·覆盖生存线补全）：**[38] 补齐 prose／yingqi／huozhulin 四集——8 个案例文件全受控；真实探针两件判红，读数零变化**
+
+**性质**：门覆盖扩展（只改登记表与门文案，不改数据、引擎、评分）。
+
+### 一、缺口
+
+419 批定的口径是「生存线须覆盖**每一个有建器的案例文件**」，但此后仍有四个集不在
+[38]：`zengshan_dz_prose_cases.json`（`fetch_zengshan_dz_cases.py` 整文件重写）、
+`yingqi_cases.json`（`build_yingqi_set.py`）、`huozhulin_cases.json`／
+`huozhulin_qualitative.json`（`fetch_huozhulin_cases.py` 整文件重写）。
+- prose 的吉凶有 [41] 书证门，但 `yingqi`／`detail` 被清空没人报警；
+- yingqi／huozhulin 两集连吉凶／断语都没有任何生存线。
+这四集的 `detail` 参与评分基线词、`yingqi` 进应期分母，静默清空会直接改读数。
+
+### 二、改法
+
+`data/rules/expected_coverage.json` 增四集（下限取当前非空数，只许更高）：
+- prose：`case_count` 38；`yingqi` ≥4、`yingqi_branches` ≥4、`verdict` ≥23
+  （取值限 吉/凶）、`detail` ≥16（detail 只在有实现句时非空，故不是 38）；
+- yingqi：`case_count` 2；`yingqi` ≥2、`yingqi_branches` ≥2、`verdict` ≥2、
+  `use_god` ≥2（六亲取值集）、`detail` ≥2；
+- huozhulin：`case_count` 2；`yingqi` ≥1、`detail` ≥2；
+- huozhulin_qual：`case_count` 5；`detail` ≥5。
+
+425 批已把 selftest 改成按各集**在册字段**注入负例，这四个集直接复用，无需再改门逻辑。
+
+### 三、自证（§四.8）
+
+- `--selftest` 按字段注入的负例全抓；8 个受控文件逐字段对拍全过。
+- **真实探针（两件）**：清空 ZDP001 的 `yingqi` → 门报 `prose.yingqi 3/38（下限 4）`；
+  清空 HZL 首例 `detail` → 门报 `huozhulin.detail 1/2（下限 2）`——各自 EXIT=1，
+  恢复后转绿。
+
+### 四、读数
+
+- 零漂移：tune／holdout／wiki／dz／bushi／yiin／prose／yingqi／huozhulin 逐位不变
+  （只加生存线，不动评分）。
+
+**全门复验**：`liuyao/dev_tools/check.py` 全过；`readout_ledger.py` 全量 bad=0；
+`golden.py verify` 零漂移；根级四闸全过。
+
+
 ## 2026-11-02 第四百二十五批（六爻·应期数据集门覆盖）：**[16] 纳入 YIIN（日柱片段只认 detail，月支不冒充应期支）＋[38] 生存线补 YIIN（yingqi≥11／verdict 钉 null／detail 不清空）；可判 83→139，读数零变化**
 
 **性质**：门覆盖扩展（不改数据、不改引擎、不改读数）。
