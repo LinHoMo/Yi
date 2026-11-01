@@ -14,6 +14,8 @@
      每条豁免同时报**最长连续块**（432 批），让「不在库」是实测数而不是一句声明；
   C2. 多底本（如《子平真诠评注》＝dz 本＋《命理探原》第二底本）逐本比对：
      只在第二底本命中、主底本不含 → `wrongbook` 判红（434 批；拼成一串时看不见）；
+  C3. 豁免项的四柱一旦在底本出现 → `exempt_bad` 判红（436 批）：
+     「不在库」不能只靠自述；四柱是案例身份里可机械对的那一半（人名仍靠人工复核）；
 
   D. 下限守卫：含引文文件数、引文总数、逐字比对数低于登记基线即判红
      （0 结果 ≠ 通过；路径挪动/解析失败必须先显形）。
@@ -68,6 +70,16 @@ def norm(text: str) -> str:
     return re.sub(r"\s+", "", MARKUP_RE.sub("", str(text)))
 
 
+# 仅用于「四柱在不在底本」这一项：连标点一起折掉，免得因底本顿号/逗号用法不同漏判。
+FOLD = re.compile(r"[\s，。、；：,.;:]+")
+
+
+def pillars_key(case: dict) -> str:
+    p = case.get("pillars") or {}
+    parts = [str(p.get(k) or "") for k in ("year", "month", "day", "hour")]
+    return FOLD.sub("", "、".join(parts)) if all(parts) else ""
+
+
 def longest_block(text: str, corpus: str) -> int:
     """归一化引文与底本的最长**连续**公共块长度（豁免项的实测证据）。"""
     if not text or not corpus:
@@ -105,7 +117,7 @@ def load_corpus(names: tuple[str, ...]) -> tuple[str, ...]:
 
 
 def verify_case(case: dict, corpus_by_names: dict, exempt: dict) -> tuple[str, str | None]:
-    """返回 (状态, 消息)。状态 ∈ ok / exempt / unrouted / missing / wrongbook / stale / error。"""
+    """返回 (状态, 消息)。状态 ∈ ok / exempt / exempt_bad / unrouted / missing / wrongbook / stale / error。"""
     cid = str(case.get("id") or "?")
     q = case.get("source_quote")
     if q is not None and (not isinstance(q, str) or not q.strip()):
@@ -124,6 +136,10 @@ def verify_case(case: dict, corpus_by_names: dict, exempt: dict) -> tuple[str, s
     if cid in exempt["ids"]:
         if primary:
             return "stale", f"{cid}：豁免项已能在主底本连续命中（{names[0]}）——豁免过期，请回接逐字"
+        pk = pillars_key(case)
+        if pk and any(pk in FOLD.sub("", text) for text in corpus_by_names[key]):
+            return "exempt_bad", (f"{cid}：豁免项的四柱「{pk}」已在底本出现——"
+                                  f"「不在库」理由不成立，请回接逐字")
         return "exempt", f"{cid}：{exempt['reason']}"
     if not hit:
         return "missing", f"{cid}：引文非书源逐字子串（{names[0]}）→ {q[:70]!r}"
@@ -186,8 +202,12 @@ def check_all(exempt: dict) -> tuple[list[str], dict]:
                 stats["unrouted"] += 1
                 stats["unrouted_detail"].append(f"  {rel}: {msg}")
             elif status == "stale":
+                seen_exempt.add(cid)   # 豁免项确实存在，只是过期；别误报「册内 id 找不到」
                 failures.append(f"{rel}: {msg}")
             elif status == "wrongbook":
+                failures.append(f"{rel}: {msg}")
+            elif status == "exempt_bad":
+                seen_exempt.add(cid)   # 同上：id 在案例集里，失败原因是四柱回潮
                 failures.append(f"{rel}: {msg}")
             elif status == "missing":
                 failures.append(f"{rel}: {msg}")
@@ -216,8 +236,9 @@ def selftest() -> int:
     qiong = load_corpus(tuple(BOOK_SOURCES["穷通宝鉴"]))[0]
     zip_key = tuple(BOOK_SOURCES["子平真诠评注"])
     corpus = {tuple(BOOK_SOURCES["穷通宝鉴"]): (qiong,),
-              # 多底本夹具：主底本不含、第二底本含——用来判「只命中副底本」。
-              zip_key: ("甲子乙丑", "本书没有这句话")}
+              # 多底本夹具：主底本不含该句、第二底本含——用来判「只命中副底本」；
+              # 主底本另含一组四柱，用来判「豁免项四柱已在底本」。
+              zip_key: ("甲子乙丑丙寅丁卯", "本书没有这句话")}
     exempt = {"reason": "夹具：夹注段不在库", "ids": ["ZP001"]}
     cases = [
         ({"id": "POS", "book": "穷通宝鉴", "source_quote": needle}, "ok", "正例：书源逐字"),
@@ -231,6 +252,12 @@ def selftest() -> int:
          "wrongbook", "负例：只在第二底本命中＝书源归属不成立"),
         ({"id": "ZP001", "book": "子平真诠评注", "source_quote": "本书没有这句话"},
          "exempt", "豁免：夹注段在册披露、不判红"),
+        ({"id": "ZP001", "book": "子平真诠评注", "source_quote": "本书没有这句话",
+          "pillars": {"year": "戊辰", "month": "己巳", "day": "庚午", "hour": "辛未"}},
+         "exempt", "豁免：四柱也不在底本"),
+        ({"id": "ZP001", "book": "子平真诠评注", "source_quote": "本书没有这句话",
+          "pillars": {"year": "甲子", "month": "乙丑", "day": "丙寅", "hour": "丁卯"}},
+         "exempt_bad", "负例：豁免项四柱已在底本出现"),
         ({"id": "ZP001", "book": "穷通宝鉴", "source_quote": needle},
          "stale", "豁免过期：登记为不在库却已能连续命中"),
         ({"id": "XF001", "book": "珞琭子三命消息赋注", "source_quote": "任意"},
@@ -253,8 +280,8 @@ def selftest() -> int:
     if bad:
         print(f"  × selftest 失败 {bad} 例——比对逻辑/路由漂移，先修器")
         return 1
-    print(f"  √ selftest：{len(cases)} 件（正例×2/尾拼/凭空句/副底本误挂/豁免/豁免过期/不可路由）"
-          f"＋最长连续块全过")
+    print(f"  √ selftest：{len(cases)} 件（正例×2/尾拼/凭空句/副底本误挂/豁免×2/豁免四柱回潮/"
+          f"豁免过期/不可路由）＋最长连续块全过")
     return 0
 
 
