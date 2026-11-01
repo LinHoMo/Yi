@@ -58,6 +58,10 @@ locator 从未被读取。现按声明核对：行号在册、`quote/full_quote/
 是今译。现要求每条声明 `quote_kind`：`verbatim` 必须带 `source_ref`（`file[:line]`）
 且逐字命中（折叠标点）；`paraphrase` 只要求非空 `source`（所本篇章）。报告层标题
 沿用「经典引文」的问题登记为下一批（468）。两科 selftest 都跑夹具。
+
+469 批追加（仅六爻册）：**六亲持世括注口径**。`shi_yao_interpretation` 19 条断语
+文末标「（《火珠林·X章》）」，全库实测无一条逐字（全是今译）。现要求今译标记
+改为 `（据《…》今译）`，出现裸 `（《…》）` 即判红；标记数下限 19。两科 selftest 都跑夹具。
 """
 from __future__ import annotations
 
@@ -705,6 +709,32 @@ def check_quote_database(doc: dict, problems: list[str], text_of=None) -> tuple[
     return n_v, n_p
 
 
+def check_shi_yao_interp(doc: dict, problems: list[str]) -> int:
+    """六亲持世断语的括注口径（469 批）。返回『据《…》今译』标记数。
+
+    为什么需要它：`shi_yao_interpretation` 有 19 条纹末标「（《火珠林·X章》）」，
+    但 469 批全库实测这些句子**没有一条能逐字回原文**（都是现代今译）。括号直接
+    署书等于把今译当引文（§六.3）。本函数要求今译标记必须是
+    `（据《…》今译）`，出现裸 `（《…》）` 即判红。
+    """
+    vals = (doc or {}).get("shi_yao_interpretation")
+    if not isinstance(vals, dict) or not vals:
+        problems.append("六亲持世：shi_yao_interpretation 缺失或为空——0 结果 ≠ 通过")
+        return 0
+    n_claim = 0
+    for god, e in vals.items():
+        if not isinstance(e, dict):
+            continue
+        for k, v in e.items():
+            if not isinstance(v, str):
+                continue
+            if re.search(r"（《[^》]+》）", v):
+                problems.append(f"六亲持世：{god}.{k} 仍用裸书证括注（《…》）——"
+                                f"今译须标『（据《…》今译）』→ {v[:36]!r}")
+            n_claim += len(re.findall(r"（据《[^》]+》今译）", v))
+    return n_claim
+
+
 def selftest(problems: list[str]) -> None:
     """负例：造一条 verified=true 却指向不存在文件/解不到值的条目，必须判红。"""
     fake = {"schema": "yi-rule-registry-v1", "rules": [
@@ -940,6 +970,24 @@ def selftest(problems: list[str]) -> None:
                    "source_ref", "data/sources/__no_such__q.txt:99"))):
         problems.append("负例未抓到：verbatim source_ref 行号越界")
 
+    # 469 批：六亲持世的括注口径（今译标『据…』，裸书证括注必红）
+    _interp = {"shi_yao_interpretation":
+               {"妻财": {"marriage": "妻财持世……（据《火珠林·婚姻章》今译）"}}}
+    p_i: list[str] = []
+    n_i = check_shi_yao_interp(_interp, p_i)
+    if p_i or n_i != 1:
+        problems.append(f"六亲持世正例被误伤：{p_i}（标记 {n_i}）")
+    p_bad: list[str] = []
+    check_shi_yao_interp(
+        {"shi_yao_interpretation":
+         {"妻财": {"marriage": "妻财持世……（《火珠林·婚姻章》）"}}}, p_bad)
+    if not any("裸书证括注" in x for x in p_bad):
+        problems.append("负例未抓到：六亲持世仍用裸书证括注")
+    p_empty: list[str] = []
+    check_shi_yao_interp({}, p_empty)
+    if not any("缺失或为空" in x for x in p_empty):
+        problems.append("负例未抓到：六亲持世整块缺失")
+
 
 def main() -> int:
     if not REG.exists():
@@ -999,6 +1047,10 @@ def main() -> int:
                             f"（下限 1/48/49）——先确认字段/路径")
         print(f"  引文库：{qv + qp} 条（verbatim {qv}／paraphrase {qp}）；"
               f"quote_kind 与逐字回验已核对")
+        n_claim = check_shi_yao_interp(qdoc, problems)
+        if n_claim < 19:
+            problems.append(f"六亲持世：『据《…》今译』标记只有 {n_claim}（下限 19）")
+        print(f"  六亲持世：{n_claim} 条『据《…》今译』标记；裸书证括注 0 条")
     _ap = argparse.ArgumentParser(description="check_rule_registry：--selftest 负例自证开关（§三）")
     _ap.add_argument("--selftest", action="store_true", help="负例自证")
     args = _ap.parse_args()

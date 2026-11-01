@@ -523,7 +523,7 @@ def main() -> int:
     # 写进散文的门等于没跑，故一律接进本门）。
     for title, script in (
             ("[11] 文档活引用可达性（指向不存在文件的指针）", "dev_tools/check_doc_refs.py"),
-            ("[12] 规则注册表书源指针回验（verified 不许自说自话；大运起例引文行锚；裁决引文 locator/分支总则；六神取象/十神作用行号出处；引文库 quote_kind（本科同名文件结构不同，跳过）；462/465–467 批扩）", "dev_tools/check_rule_registry.py"),
+            ("[12] 规则注册表书源指针回验（verified 不许自说自话；大运起例引文行锚；裁决引文 locator/分支总则；六神取象/十神作用行号出处；引文库 quote_kind（本科同名文件结构不同，跳过）；六亲持世括注（本科无册，跳过）；462/465–469 批扩）", "dev_tools/check_rule_registry.py"),
             ("[13] 案例库隔离（解读路径不得触达 data/cases）", "dev_tools/check_case_isolation.py")):
         print(f"\n{title}")
         code, out = run([script, "--selftest"])
