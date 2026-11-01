@@ -402,8 +402,11 @@ def step5_synthesize(r: dict) -> dict:
     classical_quotes = find_classical_quotes(r)
     classical_quotes_text = ""
     if classical_quotes:
-        classical_quotes_text = "【经典引文】" + "".join(
-            f"• {q['source']}：{q['quote']}" for q in classical_quotes
+        # 468 批：词条按 quote_kind 分标——verbatim 保持「经典引文」，今译加「（今译）」，
+        # 标题同步改为「经典引文与今译」，不再把 48 条今译统称「引文」。
+        classical_quotes_text = "【经典引文与今译】" + "".join(
+            f"• {q['source']}{'（今译）' if q.get('quote_kind') == 'paraphrase' else ''}"
+            f"：{q['quote']}" for q in classical_quotes
         )
 
     # ---------- 5.13: 可解释性因子贡献（SHAP 风格）----------
@@ -1859,7 +1862,7 @@ def _compose_synthesis_summary(**kw) -> str:
         parts.append(" ".join(str(x) for x in note_bits))
     qt = kw.get("classical_quotes_text") or ""
     if qt:
-        parts.append(str(qt).replace("【经典引文】", FREASON["quote_prefix"]["text"]))
+        parts.append(str(qt).replace("【经典引文与今译】", FREASON["quote_prefix"]["text"]))
     return "".join(parts)
 
 

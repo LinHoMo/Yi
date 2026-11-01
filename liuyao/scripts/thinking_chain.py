@@ -170,8 +170,9 @@ def run_thinking_chain(hex_result: dict) -> dict:
     if fresh_quotes and "step5_synthesis" in chain:
         # 替换原来的 classical_quotes（原来的往往是空或不完整的）
         chain["step5_synthesis"]["classical_quotes"] = fresh_quotes
-        chain["step5_synthesis"]["classical_quotes_text"] = "【经典引文】" + "".join(
-            f"• {q['source']}：{q['quote']}" for q in fresh_quotes
+        chain["step5_synthesis"]["classical_quotes_text"] = "【经典引文与今译】" + "".join(
+            f"• {q['source']}{'（今译）' if q.get('quote_kind') == 'paraphrase' else ''}"
+            f"：{q['quote']}" for q in fresh_quotes
         )
     
     return hex_result

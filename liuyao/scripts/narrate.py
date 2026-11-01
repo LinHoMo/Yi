@@ -246,7 +246,8 @@ def narrate(a: dict) -> str:
         # 引导句外置 narrative_templates.json#narrate_shell.quote_lead（与 narrate_core 同一出处）
         quote_lines = [_SHELL.get("quote_lead") or "古人类似情境也说过："]
         for q in quotes:
-            quote_lines.append(f"- （{q['source']}）{q['quote']}")
+            tag = "（今译）" if q.get("quote_kind") == "paraphrase" else ""
+            quote_lines.append(f"- （{q['source']}）{tag}{q['quote']}")
 
     # 7. 象判边界
     boundary = _BOUNDARY_TEXT

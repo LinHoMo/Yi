@@ -4,7 +4,7 @@
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
   "digest": "3a192fa993ec7578",
-  "narrate_digest": "79603215e5863f71",
+  "narrate_digest": "53e1f9ee326d43d0",
   "drift_log": [
     {
       "from": "cc4bcd8fd19dd919",
@@ -193,6 +193,12 @@
       "to": "79603215e5863f71",
       "date": "2026-10-30",
       "reason": "第三百六十二批：象层上线——①analyze 增 xiang（类象/卦爻辞/互体/六神象义/方位），象目逐块带 basis；②trigram_interpretation 的 category 由恒 general 改为随 step2.question_class 联动（映射表 data/rules/xiang_layer.json）；③正文增【象上看】段；④象层进 yi_liuyao 结构化输出并补爻辞；⑤现代问法政策标记 use_god_policy（只标记不取值）。机械层零漂移（评分未动），措辞层漂移全部来自新增象段与口径提示。"
+    },
+    {
+      "from": "79603215e5863f71",
+      "to": "53e1f9ee326d43d0",
+      "date": "2026-11-02",
+      "reason": "468批：经典引文按 quote_kind 分标——标题改「经典引文与今译」、paraphrase 词条加（今译），并让 narrate_core 的引文投影保留 quote_kind；机械层零漂移，纯显示口径修正"
     }
   ]
 }

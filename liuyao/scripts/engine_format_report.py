@@ -416,16 +416,17 @@ def build_verdict(step5: dict, W: int = REPORT_WIDTH) -> list:
             lines.append("")
             lines.append(f"　　※ {otn}")
 
-        # 经典引文
+        # 经典引文与今译（468 批：按 quote_kind 分标）
         cqs = step5.get("classical_quotes", [])
         if isinstance(cqs, list) and cqs:
             lines.append("")
-            lines.append("　　【经典引文】")
+            lines.append("　　【经典引文与今译】")
             for cq in cqs:
                 if isinstance(cq, dict):
                     src = cq.get("source", "")
                     quote = cq.get("quote", "")
-                    lines.append(f"　　· {src}：「{quote}」")
+                    tag = "（今译）" if cq.get("quote_kind") == "paraphrase" else ""
+                    lines.append(f"　　· {src}{tag}：「{quote}」")
 
         # 卦身摘要
         body_note = step5.get("hexagram_body_note", "")

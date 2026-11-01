@@ -5,6 +5,41 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-02 第四百六十八批（六爻·报告层引文分标）：**467 批立的 `quote_kind` 传到 5 个渲染点；标题改「经典引文与今译」、paraphrase 词条加（今译），narrate_core 投影不再丢标签**
+
+**性质**：输出口径修复（不改判读、不改评分）。
+
+### 一、缺陷
+
+467 批把 49 条引文分成 `verbatim`（1）与 `paraphrase`（48），但报告层仍统一冠以
+「【经典引文】」，48 条今译继续以「古籍引文」身份出现；且 `narrate_core.py` 的
+`_select_relevant_quotes()` 在投影时只保留 `source/quote` 两键，**丢掉 `quote_kind`**
+——即便渲染代码想分标也拿不到标签。
+
+### 二、改法
+
+- 5 个渲染点改用统一口径：标题「经典引文与今译」；`paraphrase` 词条在来源后加
+  「（今译）」：
+  - `step5.py`（`classical_quotes_text` 与 `【…】→FREASON.quote_prefix` 的替换 token 同步）
+  - `thinking_chain.py`（fresh_quotes 重建同文本）
+  - `engine_format_report.py`（`【经典引文与今译】` 与逐条 `（今译）`）
+  - `narrate.py` / `narrate_core.py`（`- （《书》）（今译）…`）
+- `narrate_core._select_relevant_quotes()` 的两处投影补 `quote_kind`（两分支都补），
+  否则标签在链路中途丢失。
+- `judgment_table.json` 的 27 条 `overrides.line` 同步 +3：step5 插入 3 行后，
+  「覆写表随码动」判据立即报出「盘上 L1397 vs 表内 L1394」——按码动表，不豁免。
+
+### 三、自证
+
+- 四段管线（手动泰卦·占近病）实测：`classical_quotes_text` 为
+  `【经典引文与今译】• 《卜筮正宗·六合论》（今译）：…`；narrate 输出
+  `- （《卜筮正宗·月破论》）（今译）…`。
+- [33] 判定表门复跑：`√ selftest：8 类负例全部抓到；健康副本放行`。
+- 金标准：措辞 digest `79603215e5863f71 → 53e1f9ee326d43d0`（288 例中 6 条变化），
+  机械层 `3a192fa993ec7578` 零漂移（`golden.py capture` 已入 drift log）。
+- 引擎读数：tune 97.9（n=20）、holdout 90.2（n=12）逐位不变（§四.7）。
+
+
 ## 2026-11-02 第四百六十七批（六爻·引文库 quote_kind）：**`quote_database` 自称「古籍出处」，全库实测 49 条只有 1 条逐字可回原文；其余 48 条是今译，先立 `quote_kind` 并挂机械判据**
 
 **性质**：数据声明修正＋[12] 覆盖扩展（不改判读、不改读数）。

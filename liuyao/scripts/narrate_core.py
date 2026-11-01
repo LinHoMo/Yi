@@ -755,7 +755,9 @@ def _select_relevant_quotes(tc: dict) -> list:
     tags = _extract_pattern_tags(tc)
     if not tags:
         raw = (tc.get("step5_synthesis", {}) or {}).get("classical_quotes") or []
-        return [{"source": q.get("source", "经典"), "quote": q.get("quote")} for q in raw[:2] if isinstance(q, dict) and q.get("quote")]
+        return [{"source": q.get("source", "经典"), "quote": q.get("quote"),
+                 "quote_kind": q.get("quote_kind")}
+                for q in raw[:2] if isinstance(q, dict) and q.get("quote")]
 
     raw_quotes = (tc.get("step5_synthesis", {}) or {}).get("classical_quotes") or []
     scored: list = []
@@ -782,7 +784,8 @@ def _select_relevant_quotes(tc: dict) -> list:
     scored.sort(key=lambda x: (-x[0], x[1]))
     filtered = [item for item in scored if item[0] > 0]
     top = filtered[:2] if filtered else scored[:2]
-    return [{"source": q.get("source", "经典"), "quote": q.get("quote")} for _, _, q in top]
+    return [{"source": q.get("source", "经典"), "quote": q.get("quote"),
+             "quote_kind": q.get("quote_kind")} for _, _, q in top]
 
 
 def _ensure_thinking_chain(result: dict) -> dict:
@@ -1062,7 +1065,8 @@ def render_human_markdown(narrative: dict) -> str:
         # 各内联一份字面量，语料审计判该键零消费——两处合一后单一出处）
         lines += ["", _NARRATIVE_TPL.get("narrate_shell", {}).get("quote_lead", "古人类似情境也说过：")]
         for q in narrative["classical_quotes"]:
-            lines.append(f"- （{q['source']}）{q['quote']}")
+            tag = "（今译）" if q.get("quote_kind") == "paraphrase" else ""
+            lines.append(f"- （{q['source']}）{tag}{q['quote']}")
     process = narrative.get("process") or []
     if process:
         lines += ["", "---", "", "## 推演过程（备查）", ""]
