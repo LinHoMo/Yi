@@ -476,6 +476,9 @@ def main() -> int:
                 print(f"[8] 语料接线 × {b}")
 
     # [9] 静态表 ↔ data 层同步（SKILL.md：不同源就必须有挂线的同步门，不靠自觉）
+    # 463 批：`tiaohou_quotes.json` 自称「引文逐字保留」，其构建器 `build_tiaohou.py`
+    # 自带两道自校验——build_table 把「原文找不到的 quote」强制置空（宁缺勿滥）、
+    # `--check` 与重算逐格比对——但从未接进本门（声明有校验、实际没跑）。
     code, out = run(["dev_tools/sync_tiaohou_engine.py", "--check"])
     if code != 0:
         fails.append("TIAO_HOU 引擎表与 data/tiaohou_quotes.json 不同源"
@@ -484,6 +487,14 @@ def main() -> int:
         print(out.strip()[-800:])
     else:
         print("[9] 调候表同步 √", out.strip())
+    code_q, out_q = run(["dev_tools/build_tiaohou.py", "--check"])
+    if code_q != 0:
+        fails.append("tiaohou_quotes.json 与底本重算不一致（引文逐字/构建漂移）"
+                     f"（跑 dev_tools/build_tiaohou.py 重建，不要手改数据）：{out_q.strip()[:200]}")
+        print("[9] 调候引文重算 ×")
+        print(out_q.strip()[-800:])
+    else:
+        print("[9] 调候引文重算 √", out_q.strip())
 
     # [10] 参考文档「源L 行号 + 逐字引文」回验。
     # 此前 references/*.md 写着「可经 python tools/check_source_readings.py 回验」，
