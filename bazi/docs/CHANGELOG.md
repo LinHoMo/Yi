@@ -9,6 +9,58 @@
 > 399/400/401 撞号，按提交顺序归位为 **408/409/410/411**；原提交 `46d8bc1` 的提交信息
 > 保留旧号作历史，不再改。跨文件引用一律按新号。
 
+## 2026-11-02 第四百六十批（八字·[41] 引文面扩到 excluded/source_evidence）：**`cases[].source_quote` 之外的 7＋12 条「自称书源逐字」此前无门；先实测全符再挂门，模板包裹的行要用「保留正文」口径**
+
+**性质**：门覆盖面扩展（不改判据、不改数据判读、不改读数）。
+
+### 一、缺陷
+
+[41] 的循环只认 `cases[]` 数组；[11] 又整目录跳过 `data/cases/`。于是同一批文件里
+**另外两类明写书源引文的字段**长期无人核对：
+
+| 载体 | 字段 | 条数 | 声明形式 |
+|---|---|---|---|
+| `bazi_cong_er_cases.json` / `bazi_hua_cases.json` | `excluded[].source_quote` | 1＋6 | `provenance.file`＋`line` |
+| `bazi_fangju_adjudication.json` / `bazi_hehua_adjudication.json` | `source_evidence[].quote` | 6＋6 | `book`＋`corpus_line` |
+
+裁决册的 `source_evidence` 尤其像「已锁定」：三件套齐全、行号具名，却没有任何门读它。
+
+### 二、先实测再挂门（§四.8 的反向顺序）
+
+- 12 条 `source_evidence`：`corpus_line` 所指行**单行逐字命中 12/12**。
+- 7 条 `excluded`：`provenance.line` **不是引文行**——滴天髓 dz 本是「一格一行」的
+  表格布局，CEX01 的 L5336 只有「辛丑」；引文正文在同文件内不远处。故 excluded 按
+  **整文件**比对，line 只当定位坐标（与「行号即引文在处」的 source_evidence 分开）。
+- **归一化是第一道坑**：旧 `norm` 把 `{{…}}` 整块当标记删掉，而滴天髓/穷通宝鉴
+  wikitext 常用 `{{annotate|任氏曰：…}}` 包住整段——删块后该行变空，引文永远对不上。
+  新面改用 `norm_plain`（只去 `{{ }}`/`|`/`''`/`==` 符号，保留正文）：7/7、12/12 全符。
+
+### 三、改法
+
+- [41] 新增 F/G 两面：`audit_surfaces()` 逐份案例 JSON 扫 `excluded[]` 与
+  `source_evidence[]`；`excluded_problem()` 按 `provenance.file` 整文件比对；
+  `evidence_problem()` 要求 `book` 已登记、`corpus_line` 为整数且在范围内、引文在该行。
+- 下限守卫：`MIN_EXCLUDED=7`、`MIN_EVIDENCE=12`；任一面扫到 0 条即判红（0 结果 ≠ 通过）。
+- `check.py` 的 [41] 标题同步写明「excluded/source_evidence 引文逐字」。
+
+### 四、自证（§四.8）
+
+- selftest 增 8 式：模板包裹的行内引文**仍能命中**（正例）、行内尾拼必红、行号越界必红、
+  书源未登记必红；excluded 整文件命中（正例）、简繁一字之差必红、缺 provenance.file 必红、
+  空引文必红。全部通过。
+- 真实探针：CEX01 引文「戊」改「己」→ `× … CEX01 excluded 引文非书源逐字`，EXIT=**1**；
+  fangju `corpus_line` 改 99999 → `× … source_evidence[0] 引文不在所署行 L99999`，
+  EXIT=**1**；两份文件逐字节还原（`还原逐字节一致：True`，`git status` 无数据改动）。
+- 读数：tune 100.0（n=61）、holdout 100.0（n=279）、外部 69 例逐位不变（§四.7）。
+
+### 五、仍欠（下一批）
+
+`observations[].source_quote`／`book_support`（7＋7，按 `……` 分段）与
+`cross_source_observations[].quote`（24 条，含 `**` 标记与 `source_ref` 行锚）同样是
+「自称书源逐字、却不在 `cases[]` 内」的引文面；本批已实测其 `plain` 口径下可回底本，
+但尚未接门，留待下一批（§六.1，逐批具名）。
+
+
 ## 2026-11-02 第四百五十九批（八字·案例目录幽灵 tests 指针）：**四份案例/裁决文件写着「回验由 tests/…承担」而该测试从不存在；[41] 补扫 `data/cases/*.json` 的 tests 指针，首版锚点写错被负例当场抓到**
 
 **性质**：数据声明修正＋[41] 覆盖扩展（不改判据、不改数据判读、不改读数）。

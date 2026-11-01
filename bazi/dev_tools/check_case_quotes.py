@@ -29,6 +29,18 @@
      指针在四份案例/裁决文件里长期无人抓。本门逐行抓 `tests/*.py` 并解析（学科根/
      仓库根/同名文件），不可达即判红；显式病史行（从未存在等）豁免。
 
+  F. `excluded[].source_quote`（460 批）：案例集里被剔除的候选同样自称书源逐字，
+     按 `provenance.file` **整文件**比对（line 只是定位坐标；滴天髓 dz 本是
+     「一格一行」表格，行号落在四柱格上，不是引文行）。
+
+  G. `source_evidence[].quote`（460 批）：裁决册的书证三件套 `book`＋`corpus_line`
+     ＋`quote` 必须自洽——`corpus_line` 就是在声称「引文在此行」，按该行逐字核对
+     （行号越界/书源未登记/引文不在该行均判红）。
+
+  F/G 的归一化用 `norm_plain`（去 `{{ }}`/`|` 模板符号而**保留正文**）：旧 `norm`
+     把 `{{annotate|…}}` 整块当标记删掉，被包住的整行随即变空、引文永远对不上
+     （460 批实测；`plain` 口径下 7/7、12/12 全符）。
+
     python dev_tools/check_case_quotes.py            # 全量对拍
     python dev_tools/check_case_quotes.py --selftest # 正负例自证
 """
@@ -103,6 +115,10 @@ MARKUP_RE = re.compile(r"''+|={2,}|\{\{[^{}]*\}\}|\{\||\|\}|\|")
 MIN_FILES = 7       # 有 source_quote 的案例文件
 MIN_QUOTES = 464    # 340 classical + 69 external + 12 dayun + 22 hua + 9 cong + 10 zhuan + 2 bing
 MIN_ROUTED = 445    # 464 - 7 不可路由 - 12 夹注段豁免（431 批 10 条连续化、432 批 ZP025 截短后命中）
+# 460 批：cases[].source_quote 之外的两类引文面（excluded / source_evidence）也有下限，
+# 防止路径挪动或字段改名后「扫到 0 条 = 通过」。
+MIN_EXCLUDED = 7    # cong_er 1 + hua 6
+MIN_EVIDENCE = 12   # fangju 6 + hehua 6
 
 
 def norm(text: str) -> str:
@@ -211,7 +227,6 @@ def iter_cases():
 
 def audit_exempt_ledger(exempt: dict) -> list[str]:
     """豁免册自身一致性（446 批）：专名/说明不得指向册外或不存在的 id。
-
     为什么需要它：`case_names` 只对 `ids` 里的案例执行核对，可一旦出现
     「case_names 有、ids 没有」的 key，那组专名**永远不会被比对**（静默死登记）；
     反过来，`ids` 里既无专名也未在 `_case_names_note` 披露的项，等于「不机械判」
@@ -243,6 +258,121 @@ def audit_exempt_ledger(exempt: dict) -> list[str]:
     return failures
 
 
+# 460 批：案例目录里另外两类「自称书源逐字」的引文面——[41] 原先只走 `cases[].source_quote`。
+# 归一化必须**去掉模板符号而保留正文**：滴天髓/穷通宝鉴 wikitext 常用
+# `{{annotate|任氏曰：…}}` 把整段包住，旧 `norm` 把 `{{…}}` 整块当标记删掉，
+# 该行随即变空、引文永远对不上（460 批实测；`plain` 口径下 7/7、12/12 全符）。
+PLAIN_MARK = re.compile(r"''+|={2,}|\{\{|\}\}|\||")
+
+
+def norm_plain(text: str) -> str:
+    return re.sub(r"\s+", "", PLAIN_MARK.sub("", str(text)))
+
+
+def evidence_problem(rel: str, idx: int, e: dict, lines_of) -> str | None:
+    """`source_evidence[]`：book＋corpus_line＋quote 三件套必须自洽（460 批）。
+
+    `corpus_line` 就是在声称「引文在此行」，故按该行逐字核对（多底本时任一底本
+    该行命中即可）；行号越界、书源未登记、引文不在该行 → 判红。
+    """
+    book = str(e.get("book") or "").strip("《》 ")
+    names = BOOK_SOURCES.get(book)
+    if not names:
+        return (f"{rel}: source_evidence[{idx}] 书源未登记 → {e.get('book')!r}"
+                f"（请登记 BOOK_SOURCES）")
+    q = e.get("quote")
+    if not isinstance(q, str) or not q.strip():
+        return f"{rel}: source_evidence[{idx}] quote 必须是非空字符串，实为 {q!r}"
+    ln = e.get("corpus_line")
+    try:
+        k = int(str(ln).strip())
+    except Exception:
+        return f"{rel}: source_evidence[{idx}] corpus_line 非整数 → {ln!r}"
+    nq = norm_plain(q)
+    for f in names:
+        lines = lines_of(f)
+        if not lines:
+            continue
+        if 1 <= k <= len(lines) and nq in norm_plain(lines[k - 1]):
+            return None
+    return (f"{rel}: source_evidence[{idx}] 引文不在所署行 L{k}（{names[0]}）→ {q[:60]!r}")
+
+
+def excluded_problem(rel: str, e: dict, body_of) -> str | None:
+    """`excluded[]` 的 source_quote：按 `provenance.file` 整文件逐字（460 批）。
+
+    不按 `provenance.line` 锚定：滴天髓 dz 本是「一格一行」的表格布局，
+    line 指向四柱表格格（实测 CEX01 的 L5336 只有「辛丑」），引文正文在不远处。
+    line 是定位坐标，不是「引文就在这一行」的断言——故以文件为界。
+    """
+    eid = e.get("id") or "?"
+    prov = e.get("provenance") or {}
+    f = str(prov.get("file") or "") if isinstance(prov, dict) else ""
+    q = e.get("source_quote")
+    if not isinstance(q, str) or not q.strip():
+        return f"{rel}: {eid} excluded 引文必须是非空字符串，实为 {q!r}"
+    if not f:
+        return f"{rel}: {eid} excluded 引文缺 provenance.file（无法回书源）"
+    body = body_of(f)
+    if body is None:
+        return f"{rel}: {eid} provenance.file 不存在 → {f}"
+    if norm_plain(q) not in body:
+        return f"{rel}: {eid} excluded 引文非书源逐字（{f}）→ {q[:60]!r}"
+    return None
+
+
+def _iter_case_docs():
+    """逐个案例 JSON 产出 (相对路径, 解析后的 dict)；解析失败只跳过（[41] 主循环已报）。"""
+    for p in sorted(CASE_DIR.glob("*.json")):
+        if p.name == "eval_all.json":
+            continue
+        try:
+            d = json.loads(p.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        if isinstance(d, dict):
+            yield str(p.relative_to(DISC)), d
+
+
+def audit_surfaces() -> tuple[list[str], int, int]:
+    """F/G 两面：`excluded[].source_quote` 与 `source_evidence[].quote`（460 批）。"""
+    problems: list[str] = []
+    cache_b: dict[str, str | None] = {}
+    cache_l: dict[str, list[str] | None] = {}
+
+    def body_of(f: str) -> str | None:
+        if f not in cache_b:
+            p = DISC / f
+            cache_b[f] = norm_plain(p.read_text(encoding="utf-8")) if p.is_file() else None
+        return cache_b[f]
+
+    def lines_of(f: str) -> list[str] | None:
+        if f not in cache_l:
+            p = DISC / f
+            # 行锚必须保留原始行边界：模板展开只在行内判定，不能跨行拼。
+            cache_l[f] = ([norm_plain(x) for x in p.read_text(encoding="utf-8").splitlines()]
+                          if p.is_file() else None)
+        return cache_l[f]
+
+    n_ex = n_ev = 0
+    for rel, d in _iter_case_docs():
+        for e in d.get("excluded") or []:
+            if not isinstance(e, dict) or not e.get("source_quote"):
+                continue
+            n_ex += 1
+            msg = excluded_problem(rel, e, body_of)
+            if msg:
+                problems.append(msg)
+        for i, e in enumerate(d.get("source_evidence") or []):
+            if not isinstance(e, dict):
+                continue
+            n_ev += 1
+            msg = evidence_problem(rel, i, e, lines_of)
+            if msg:
+                problems.append(msg)
+    return problems, n_ex, n_ev
+
+
 def check_all(exempt: dict) -> tuple[list[str], dict]:
     failures: list[str] = audit_exempt_ledger(exempt)
     # 459 批：案例目录 tests 指针可达性（[11] 不扫 data/cases，本门补上）
@@ -255,7 +385,8 @@ def check_all(exempt: dict) -> tuple[list[str], dict]:
             continue
         failures.extend(pointer_problems(txt, str(p.relative_to(DISC))))
     stats = {"files": 0, "quotes": 0, "routed": 0, "unrouted": 0, "exempt": 0,
-             "per_file": [], "unrouted_detail": [], "exempt_detail": []}
+             "excluded": 0, "evidence": 0,
+             "per_file": [], "unrouted_detail": [], "exempt_detail": [], "surface_detail": []}
     corpus: dict = {}
     seen_exempt: set[str] = set()
     for path, cases, err in iter_cases():
@@ -315,6 +446,17 @@ def check_all(exempt: dict) -> tuple[list[str], dict]:
     if stats["routed"] < MIN_ROUTED:
         failures.append(f"逐字比对只到 {stats['routed']} 条（基线 {MIN_ROUTED}）——"
                         "有引文被静默漏掉，这半边等于没挂门")
+    # 460 批：excluded[] / source_evidence[] 两面
+    s_problems, stats["excluded"], stats["evidence"] = audit_surfaces()
+    failures.extend(s_problems)
+    stats["surface_detail"].append(
+        f"  excluded[] 引文 {stats['excluded']} 条（下限 {MIN_EXCLUDED}）"
+        f"／source_evidence[] 行锚书证 {stats['evidence']} 条（下限 {MIN_EVIDENCE}）")
+    if stats["excluded"] < MIN_EXCLUDED or stats["evidence"] < MIN_EVIDENCE:
+        failures.append(f"下限守卫：excluded {stats['excluded']}／evidence {stats['evidence']} 条，"
+                        f"低于基线 {MIN_EXCLUDED}／{MIN_EVIDENCE}——先确认字段/路径没挪动")
+    if stats["excluded"] == 0 or stats["evidence"] == 0:
+        failures.append("excluded/source_evidence 有一面扫到 0 条——0 结果 ≠ 通过")
     return failures, stats
 
 
@@ -410,6 +552,41 @@ def selftest() -> int:
         print("  × 正例被误伤：可达的 tests 指针")
     else:
         print("  √ 正例放行：可达 tests 指针")
+    # 460 批：excluded[] / source_evidence[] 两面（纯函数夹具，不落盘）
+    ev_fixture = ["{{annotate|任氏曰：地支有三位相合而成局者}}"]
+    ev_cases = [
+        ({"book": "《滴天髓阐微》", "corpus_line": 1,
+          "quote": "地支有三位相合而成局者"}, False,
+         "正例：模板包裹的行内引文仍能命中"),
+        ({"book": "《滴天髓阐微》", "corpus_line": 1,
+          "quote": "地支有三位相合而成局者，例"}, True, "负例：行内引文尾拼"),
+        ({"book": "《滴天髓阐微》", "corpus_line": 9,
+          "quote": "地支有三位相合而成局者"}, True, "负例：行号越界"),
+        ({"book": "《子平真诠》", "corpus_line": 1, "quote": "随意"}, True,
+         "负例：书源未登记"),
+    ]
+    for ev, want_bad, why in ev_cases:
+        got = evidence_problem("夹具", 0, ev, lambda _f: ev_fixture)
+        ok = bool(got) == want_bad
+        if not ok:
+            bad += 1
+        print(f"  {'√' if ok else '×'} {why}（期望{'判红' if want_bad else '放行'}）")
+    ex_body = "戊土生于季冬，辛金并透通根坐下申金，旺而逢生"
+    ex_cases = [
+        ({"id": "F1", "provenance": {"file": "data/sources/__no_such__x.txt"},
+          "source_quote": "戊土生于季冬，辛金并透"}, False, "正例：excluded 整文件命中"),
+        ({"id": "F2", "provenance": {"file": "data/sources/__no_such__x.txt"},
+          "source_quote": "戊土生於季冬，辛金并透"}, True, "负例：简繁一字之差"),
+        ({"id": "F3", "source_quote": "戊土生于季冬"}, True, "负例：缺 provenance.file"),
+        ({"id": "F4", "provenance": {"file": "data/sources/__no_such__x.txt"}}, True,
+         "负例：空引文"),
+    ]
+    for ex, want_bad, why in ex_cases:
+        got = excluded_problem("夹具", ex, lambda _f: ex_body)
+        ok = bool(got) == want_bad
+        if not ok:
+            bad += 1
+        print(f"  {'√' if ok else '×'} {why}（期望{'判红' if want_bad else '放行'}）")
     full = longest_block(norm(needle), qiong)
     part = longest_block(norm("本书并无此语"), qiong)
     ok_blk = full == len(norm(needle)) and part < 6
@@ -420,10 +597,11 @@ def selftest() -> int:
     if bad:
         print(f"  × selftest 失败 {bad} 例——比对逻辑/路由漂移，先修器")
         return 1
-    print(f"  √ selftest：{len(cases) + len(name_cases) + len(ledger_cases)} 件"
+    print(f"  √ selftest：{len(cases) + len(name_cases) + len(ledger_cases)} ＋"
+          f" tests 指针×3 ＋ excluded/evidence×8 件"
           f"（正例×2/尾拼/凭空句/副底本误挂/"
           f"豁免×2/豁免四柱回潮/豁免专名×2/豁免过期/不可路由/豁免册自洽×5/"
-          f"tests 指针×3）＋最长连续块全过")
+          f"tests 指针×3/excluded×4/evidence×4）＋最长连续块全过")
     return 0
 
 
@@ -442,6 +620,8 @@ def main() -> int:
     for line in stats["unrouted_detail"]:
         print(f"  （披露·书源不在库）{line}")
     for line in stats["exempt_detail"]:
+        print(line)
+    for line in stats["surface_detail"]:
         print(line)
     st_fail = selftest() if args.selftest else 0
     if failures:
