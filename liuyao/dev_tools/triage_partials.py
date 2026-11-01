@@ -43,6 +43,22 @@ LOOSE_YING = re.compile(r"([" + BR + r"])(?:日|月|年)(?:而|则)?[应應验�
                         r"后[一二两三四五六七八九十0-9]+日[而]?[应應验驗]?")
 DATE_PAT = re.compile(r"([子丑寅卯辰巳午未申酉戌亥])月([甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥])日")
 
+# 399 批：本册是「生成物＋人工裁决」的混合体——裁决字段由后续正式批按 id 追加，
+# 重建时若一律重算就会把已裁的结论静默抹掉（下一次值守会重读一遍，且看起来像没裁）。
+# 口径：只搬运「裁决/复核」字段，不搬运机械桶归属；桶归属永远按当前分诊逻辑重算。
+CARRY_KEYS = ("decision", "decision_basis", "decision_kind", "postcheck")
+# 顶层的授权/签署记录同样是人工写上的，重建时保留（不含 generated_at/_comment）。
+META_KEEP = ("decision_authority",)
+
+
+def _carry(row: dict, prev: dict | None) -> None:
+    """把上版同 id 的裁决字段搬到新行（只搬 CARRY_KEYS）。"""
+    if not prev:
+        return
+    for k in CARRY_KEYS:
+        if k in prev:
+            row[k] = prev[k]
+
 
 def triage() -> int:
     grad = json.loads(GRAD.read_text(encoding="utf-8"))
@@ -50,10 +66,26 @@ def triage() -> int:
     if not rows:
         print("× partial 条目 0——先核毕业册，不静默出空 triage")
         return 1
+    prev_doc = {}
+    if OUT.exists():
+        try:
+            prev_doc = json.loads(OUT.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            prev_doc = {}
+    prev_by_id = {}
+    for items in (prev_doc.get("rows") or {}).values():
+        for r in items:
+            if isinstance(r, dict) and r.get("id"):
+                prev_by_id[r["id"]] = r
     cache = {}
     buckets = {"A_有验支候选": [], "A_无验支结案候选": [], "B_异写候选": [],
                "B_词袋可解（建议入 restorable 候选）": [], "B_真分歧需人": [],
                "C_深回溯命中": [], "C_仍缺日期结案候选": []}
+
+    def add(bucket: str, row: dict) -> None:
+        _carry(row, prev_by_id.get(row.get("id")))
+        buckets.setdefault(bucket, []).append(row)
+
     for r in rows:
         f = r["file"]
         if f not in cache:
@@ -65,12 +97,12 @@ def triage() -> int:
         if why.startswith("卦面齐但书载验支"):
             ms = list(LOOSE_YING.finditer(block))
             if ms:
-                buckets["A_有验支候选"].append({
+                add("A_有验支候选", {
                     "id": r["source_id"], "line": r["line"], "file": f,
                     "hits": [m.group(0) for m in ms[:4]],
                     "context": block[:120]})
             else:
-                buckets["A_无验支结案候选"].append({"id": r["source_id"], "why": "宽松式仍无候选——素材缺验支"})
+                add("A_无验支结案候选", {"id": r["source_id"], "why": "宽松式仍无候选——素材缺验支"})
         elif why.startswith("卦名异写"):
             # B 路解析与 201 批 recheck 的卦名词袋同源（器内口径唯一，第两百零二批统一）——
             # 原「剥/無妄/困卦」级假分歧 10/13 皆因旧分词无词袋贪婪与剥后缀。
@@ -78,33 +110,38 @@ def triage() -> int:
             b_o, b_c, b_y = parse_b(block)
             a = r.get("hex") or {}
             if b_o and (b_o != a.get("original") or (b_c or None) != (a.get("changed") or None)):
-                buckets["B_真分歧需人"].append({"id": r["source_id"], "line": r["line"], "file": f,
-                                                "a": a, "b": {"original": b_o, "changed": b_c,
-                                                              "yingqi": b_y}})
+                add("B_真分歧需人", {"id": r["source_id"], "line": r["line"], "file": f,
+                                     "a": a, "b": {"original": b_o, "changed": b_c,
+                                                   "yingqi": b_y}})
             elif b_o:
-                buckets["B_词袋可解（建议入 restorable 候选）"].append(
+                add("B_词袋可解（建议入 restorable 候选）",
                     {"id": r["source_id"], "line": r["line"], "file": f,
                      "resolved": {"original": b_o, "changed": b_c}})
             else:
                 toks = re.findall(r"'([^']+)'", why)[:2]
-                buckets["B_异写候选"].append({"id": r["source_id"], "line": r["line"], "file": f,
-                                              "near": [{"token": t, "candidates": []} for t in toks]})
+                add("B_异写候选", {"id": r["source_id"], "line": r["line"], "file": f,
+                                   "near": [{"token": t, "candidates": []} for t in toks]})
         elif why.startswith("有日期键") or "日期" in why:
             lo2 = max(0, lo - 80)
             seg = "\n".join(norm(x) for x in lines[lo2:lo + 1])
             hits = list(DATE_PAT.finditer(seg))
             if hits:
-                buckets["C_深回溯命中"].append({"id": r["source_id"], "line": r["line"], "file": f,
-                                                "date_hit": hits[-1].group(0)})
+                add("C_深回溯命中", {"id": r["source_id"], "line": r["line"], "file": f,
+                                     "date_hit": hits[-1].group(0)})
             else:
-                buckets["C_仍缺日期结案候选"].append({"id": r["source_id"], "why": "80 行内仍无日期键"})
+                add("C_仍缺日期结案候选", {"id": r["source_id"], "why": "80 行内仍无日期键"})
         else:
-            buckets.setdefault("Z_其他", []).append({"id": r["source_id"], "why": why[:40]})
+            add("Z_其他", {"id": r["source_id"], "why": why[:40]})
     doc = {"generated_at": datetime.now().isoformat(timespec="seconds"),
            "_comment": "观察册：分诊不改判——『结案候选』也须人签字后才算 §六.5 诚实结案；"
-                       "B 桶异写候选是 TRAD 表增补提案非既成事实",
+                       "B 桶异写候选是 TRAD 表增补提案非既成事实。"
+                       "399 批：D 8 条采信补 postcheck、E 35 条补 decision_kind/decision_basis；"
+                       "重建本册时按 id 保留这些裁决字段（不再被重算抹掉）。",
            "input": len(rows), "buckets": {k: len(v) for k, v in buckets.items()},
            "rows": buckets}
+    for k in META_KEEP:
+        if k in prev_doc:
+            doc[k] = prev_doc[k]
     write_stable(OUT, doc)
     print("√ triage 册落成 %s｜partial %d 条 → %s"
           % (OUT.name, len(rows), doc["buckets"]))
@@ -127,7 +164,15 @@ def selftest() -> int:
         fails.append("日期式正向失效")
     if DATE_PAT.search("明日复占"):
         fails.append("日期式假阳性")
-    print("√ selftest：验支宽松式/日期式正负例 全过" if not fails else "× " + "；".join(fails))
+    # 399 批负例：裁决字段必须按 id 搬运；机械桶字段不搬（桶归属永远重算）
+    row = {"id": "X", "why": "机械值"}
+    prev = {"id": "X", "decision": "结案", "decision_kind": "已在册",
+            "decision_basis": "b", "postcheck": {"status": "已在册"}, "why": "旧机械值"}
+    _carry(row, prev)
+    if row.get("decision") != "结案" or row.get("decision_kind") != "已在册" \
+            or not row.get("postcheck") or row.get("why") != "机械值":
+        fails.append("裁决字段搬运/机械字段隔离失效：%r" % row)
+    print("√ selftest：验支宽松式/日期式/裁决字段搬运 全过" if not fails else "× " + "；".join(fails))
     return 0 if not fails else 1
 
 

@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from collections import Counter
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -33,7 +34,8 @@ def build() -> int:
     cand = json.loads((DISC / "data" / "cases" / "restorable_candidates.json").read_text(encoding="utf-8"))
     parts = []
     parts.append("# 六爻·待裁简报（机械汇编，零新判断）\n")
-    parts.append("> 生成器 `dev_tools/adjudication_brief.py`；勾选后由**后续正式批**执行，本简报不构成变更授权。\n")
+    parts.append("> 生成器 `dev_tools/adjudication_brief.py`；未勾选项由**后续正式批**执行，"
+                 "已执行的裁决与依据见各段「已判／已裁／已复核」小节（本简报不构成变更授权）。\n")
 
     # A. 候选入册（签字面）
     cs = cand["candidates"]
@@ -133,30 +135,65 @@ def build() -> int:
 
     if dz_dec:
         n_y = sum(1 for r in dz_dec if r["decision"] == "采信")
+        _pc = [r.get("postcheck") for r in dz_dec if r.get("postcheck")]
+        _n_in = sum(1 for p in _pc if p.get("status") == "已在册")
+        _n_bad = sum(1 for p in _pc if p.get("status") == "验收有误")
+        _n_open = sum(1 for p in _pc if p.get("status") == "未入册")
+        _extra = (f"；采信复核后可升 0：已在册 {_n_in}／验收有误 {_n_bad}／未入册 {_n_open}"
+                  if _pc else "")
         parts.append(f"\n## D2. 验支宽松候选·已裁 {len(dz_dec)} 条"
-                     f"（同案采信 {n_y}／异案否 {len(dz_dec) - n_y}）\n")
+                     f"（同案采信 {n_y}／异案否 {len(dz_dec) - n_y}{_extra}）\n")
         parts.append("判定口径：**验支上方最近的卦例头是否等于本条卦例头**——同头即同案；"
-                     "异头说明验支落在下一个卦例里，是串味，不得采信。逐条行号见依据。\n")
+                     "异头说明验支落在下一个卦例里，是串味，不得采信。逐条行号见依据。"
+                     "399 批另对 8 条采信做升册复核：已在册者不重复计数，串味者更正，"
+                     "无独立日期者记未入册。\n")
         for r in dz_dec:
             parts.append("- [x] **%s**（%s L%d）→ **%s**：%s" % (
                 r["id"].replace("VER-", ""), r["file"], r["line"], r["decision"],
                 "／".join(r.get("hits") or [])))
             parts.append("      依据：%s" % (r.get("decision_basis") or "")[:180])
+            p = r.get("postcheck")
+            if p:
+                parts.append("      升册复核：**%s**%s" % (
+                    p.get("status") or "?", ("（%s）" % p["case_id"]) if p.get("case_id") else ""))
+                parts.append("      复核依据：%s" % (p.get("basis") or "")[:200])
 
-    # E. 结案候选批量签字
-    parts.append(f"\n## E. 结案候选 {len(tz.get('A_无验支结案候选', []))} 条（宽松式亦无验支——§六.5 类，一次签字批量结案）\n")
-    parts.append("- [ ] **整批签字**：确认这 %d 条按「素材缺验支」结案（逐条 id 见 verifications_triage.json 同名桶）；"
-                 "任一不服者单独上提进 D 形。\n" % len(tz.get("A_无验支结案候选", [])))
+    # E. 结案候选批量签字（399 批：已复核的进 E2，未复核的才留待签）
+    e_all = tz.get("A_无验支结案候选", [])
+    e_dec = [r for r in e_all if r.get("decision")]
+    e_pend = [r for r in e_all if not r.get("decision")]
+    parts.append(f"\n## E. 结案候选 {len(e_pend)} 条待签"
+                 f"（宽松式亦无验支——§六.5 类；已复核 {len(e_dec)} 条见 E2）\n")
+    if e_pend:
+        parts.append("- [ ] **整批签字**：确认这 %d 条按「素材缺验支」结案"
+                     "（逐条 id 见 verifications_triage.json 同名桶）；任一不服者单独上提进 D 形。\n"
+                     % len(e_pend))
+    if e_dec:
+        n_close = sum(1 for r in e_dec if r.get("decision") == "结案")
+        n_open = len(e_dec) - n_close
+        parts.append(f"\n## E2. 已复核 {len(e_dec)} 条（结案 {n_close}／未入册 {n_open}）\n")
+        _close_kinds = Counter(r.get("decision_kind") or "未分类" for r in e_dec
+                               if r.get("decision") == "结案")
+        parts.append("399 批口径：结案 %d 条细分＝%s；未入册 %d 条单列。"
+                     "**整批签字的前提（35 条全按素材缺验支）不成立**：书载有验支、已在册、"
+                     "只有时辰/相对日/节日、终身叙述各自单列，未硬签。\n"
+                     % (n_close, "／".join("%s %d" % (k, v)
+                                          for k, v in _close_kinds.most_common()), n_open))
+        for r in e_dec:
+            parts.append("- [x] **%s** → **%s**（%s）" % (
+                r["id"].replace("VER-", ""), r.get("decision") or "?",
+                r.get("decision_kind") or "未分类"))
+            parts.append("      依据：%s" % (r.get("decision_basis") or "")[:240])
 
     text = "\n".join(parts) + "\n"
     changed = OUT.exists() and OUT.read_text(encoding="utf-8") != text
     if changed or not OUT.exists():
         OUT.write_text(text, encoding="utf-8")
     n = sum(len(v) for k, v in tri["rows"].items()) + len(nb) + len(cs)
-    print("√ 简报%s：%d 事项入册 %s（A%d(已判%d) B%d C%d D%d(已裁%d) E批%d）"
+    print("√ 简报%s：%d 事项入册 %s（A%d(已判%d) B%d C%d D%d(已裁%d) E%d(已复核%d)）"
           % ("已刷新" if changed else "无变化保持", n, OUT.name,
              len(cs_pend), len(cs_dec), len(nb), len(_c1p) + len(_c2p),
-             len(dz_pend), len(dz_dec), len(tz.get("A_无验支结案候选", []))))
+             len(dz_pend), len(dz_dec), len(e_pend), len(e_dec)))
     return 0
 
 
@@ -170,8 +207,9 @@ def selftest() -> int:
     if not fails:
         build()
         t = OUT.read_text(encoding="utf-8") if OUT.exists() else ""
-        if "待裁简报" not in t or "决策" not in t:
-            fails.append("简报未产出或缺决策栏")
+        # 399 批：A/B/C/D/E 全部裁清后简报不再有「决策：□」行；改用稳定标记「依据」＋E2。
+        if "待裁简报" not in t or "依据" not in t or "## E2." not in t:
+            fails.append("简报未产出或缺已裁依据/E2 段")
         if "可能" in t or "大概" in t or "或许" in t:
             fails.append("简报混入猜测措辞（装配器不许判断）")
     print("√ selftest：三前置册在、产物非空、无猜测措辞" if not fails else "× " + "；".join(fails))
