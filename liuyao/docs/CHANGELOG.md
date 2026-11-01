@@ -5,6 +5,45 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-02 第四百四十四批（两科·[42] 登记元数据）：**`page_count↔pages`、`eol_on_disk`、`sha256_lf_text` 首次机械复算；六爻 17 项全符，三处真实探针即红，读数零变化**
+
+**性质**：共享门覆盖扩展（不改引擎、不改案例、不改任何登记值、不改读数）。
+
+### 一、缺陷（换行口径事故处理过，常设哨没设）
+
+provenance 顶层声明了 `page_count`（与 `pages` 列表对应）、`eol_on_disk`（在盘
+LF/CRLF）、`sha256_lf_text`（CRLF 折 LF 后的哈希），[42] 一项都没复算。433 批
+`huozhulin` 的 CRLF/LF 失配是真实事故——事故当时修了登记，但「声明与在盘是否一致」
+仍只靠人工复核。
+
+### 二、定义与全量实测（0 处改值）
+
+- `page_count` ＝ `len(pages)`：**36/36** 相符；
+- `eol_on_disk`：原始字节全 LF→"LF"、全 CRLF→"CRLF"、兼有→"mixed"、无换行→"none"，
+  3 份登记**全符**（`zengshan_buyi` CRLF、`huangjin_ce` LF、`sanming_tonghui_siku` LF）；
+- `sha256_lf_text` ＝ `sha256(raw.replace(b"\r\n", b"\n"))`：`zengshan_buyi` 的
+  `897f963b…` **实测相符**。
+
+### 三、改法
+
+- `_eol()`＋`measure()`＋`audit()`：仅对已登记的三类元数据比对，未登记不强制补；
+  输出行加「元数据 N 项」（六爻 17＝14 份 page_count＋2 份 eol＋1 份 LF 哈希）。
+- selftest 增 4 件（三类正例＋各一负例），总数 23→**27**；并修掉夹具
+  `write_text` 在 Windows 下把 LF 写成 CRLF 的缺陷（改 `write_bytes`）。
+- 共享真源改后 `sync_devkit.py --write` 重生成两科副本。
+
+### 四、自证（§四.8）
+
+- 真实数据探针：增删卜易 `eol_on_disk` CRLF→LF、`sha256_lf_text` 改全 0、
+  黄金策 `page_count` 1→2，三次均 EXIT=1 并精确点名；原字节回填后 `all restored`。
+- 六爻元数据 17 项**全符**；selftest 27 件全过。
+- 读数：tune **97.9%**（n=20）／holdout **90.2%**（n=12）／外部各集逐位不变
+  （只扩门不触判据，读数不动属预期，§四.7）。
+
+**全门复验**：`liuyao/dev_tools/check.py` 全过（[0]–[43]）；`sync_devkit.py --check`
+12 件逐字节一致。
+
+
 ## 2026-11-02 第四百四十三批（两科·[42] 扩展统计）：**`ganzhi_pairs／tables／headings` 三项由 36/36 逐格复算各得唯一定义并纳入门；六爻 14 份 42 项全符，读数零变化**
 
 **性质**：共享门覆盖扩展（不改引擎、不改案例、不改任何登记值、不改读数）。

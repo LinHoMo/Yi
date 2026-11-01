@@ -25,6 +25,12 @@
             三项均由 443 批对全仓 36 份**登记了该字段**的 provenance 逐格重算验证：
             0 处改值、0 处变空，定义由「36/36 命中」反推并固定下来，不是猜的。
 
+444 批补核三项**登记元数据**（同样只在登记时才核）：
+  page_count  —— 必须等于 `pages` 列表长度（36 份登记，实测 36/36 相符）；
+  eol_on_disk —— 在盘换行形态：全 LF→"LF"、全 CRLF→"CRLF"、两者兼有→"mixed"、
+                 无换行→"none"（3 份登记，实测全符；这是 433 批 CRLF/LF 事故的常设哨）；
+  sha256_lf_text —— 把原始字节里的 `\r\n` 折成 `\n` 后取 SHA-256（1 份登记，实测相符）。
+
 435 批追加：`references/` 下的「在库书源」台账表是 provenance 的第二份抄本，
 433 批刚发现它六行里有四行陈旧（字节/哈希/行数）——本门把该表一并核对
 （字节、sha256 前 16 位、非空行、provenance 存在性）。表不存在则跳过（八字当前无此表）。
@@ -73,6 +79,18 @@ BRANCHES = "子丑寅卯辰巳午未申酉戌亥"
 STEM_BRANCH = re.compile(f"[{STEMS}][{BRANCHES}]")
 
 
+def _eol(raw: bytes) -> str:
+    """在盘换行形态（供 eol_on_disk 复核；mixed/none 也是合法实测值）。"""
+    crlf = raw.count(b"\r\n")
+    cr = raw.count(b"\r") - crlf
+    lf = raw.count(b"\n") - crlf
+    if crlf == 0 and cr == 0:
+        return "LF" if lf else "none"
+    if lf == 0 and cr == 0:
+        return "CRLF"
+    return "mixed"
+
+
 def measure(source: Path) -> dict:
     raw = source.read_bytes()
     text = raw.decode("utf-8", errors="replace")
@@ -85,6 +103,9 @@ def measure(source: Path) -> dict:
         "ganzhi_pairs": len(STEM_BRANCH.findall(text)),
         "tables": text.count("{|"),
         "headings": sum(1 for ln in text.splitlines() if ln.startswith("=")),
+        # 444 批：登记元数据的可复算值（有登记才核，见 audit）
+        "eol": _eol(raw),
+        "sha256_lf_text": hashlib.sha256(raw.replace(b"\r\n", b"\n")).hexdigest(),
         # 442 批：双口径行数（仅在 provenance 登记时才核，见 audit）。
         # lines_nonempty 与 lines 同义（非空行）；lines_physical 是 `cat -n`／
         # 文件迭代器口径的物理行数 = len(splitlines())，**不是**换行符数 +1
@@ -97,7 +118,7 @@ def measure(source: Path) -> dict:
 def audit(prov_dir: Path, base: Path) -> tuple[list[str], dict]:
     """逐份核对 provenance ↔ 底本。`base` 是学科根（source_file 相对它解析）。"""
     problems: list[str] = []
-    stats = {"files": 0, "checked": 0, "fields": 0, "ext": 0, "dual": 0}
+    stats = {"files": 0, "checked": 0, "fields": 0, "ext": 0, "dual": 0, "meta": 0}
     for pv in sorted(prov_dir.glob("*.provenance.json")):
         stats["files"] += 1
         try:
@@ -142,6 +163,23 @@ def audit(prov_dir: Path, base: Path) -> tuple[list[str], dict]:
             if int(reg) != got[key]:
                 problems.append(f"{pv.name}：stats.{key} {reg} ≠ 在盘 {got[key]}"
                                 f"（口径见 check_source_provenance.measure）")
+        # 444 批：登记元数据自洽（有登记才核；定义见 measure/_eol）。
+        pages, pc = d.get("pages"), d.get("page_count")
+        if isinstance(pages, list) and isinstance(pc, int):
+            stats["meta"] += 1
+            if pc != len(pages):
+                problems.append(f"{pv.name}：page_count {pc} ≠ pages 长度 {len(pages)}")
+        if "eol_on_disk" in d:
+            stats["meta"] += 1
+            if str(d["eol_on_disk"]) != got["eol"]:
+                problems.append(f"{pv.name}：eol_on_disk 登记 {d['eol_on_disk']} ≠ "
+                                f"在盘 {got['eol']}（口径见 check_source_provenance._eol）")
+        if "sha256_lf_text" in d:
+            stats["meta"] += 1
+            reg_lf = str(d["sha256_lf_text"] or "")
+            if reg_lf != got["sha256_lf_text"]:
+                problems.append(f"{pv.name}：sha256_lf_text 失配（登记 {reg_lf[:12]}… ≠ "
+                                f"LF 折行实测 {got['sha256_lf_text'][:12]}…）")
         # 442 批：可选双口径行数一旦登记就必须复算相符——它们被逐字回验按行号引用，
         # 登记值错一位就会把「源L」指向另一行，而 sha/bytes/chars 全绿时无人发现。
         # 定义见 measure()；未登记的 provenance 不强制补（保留历史登记形态）。
@@ -219,8 +257,10 @@ def _fixture(root: Path, source_text: str = "甲子\n\n乙丑\n", **overrides) -
     src_dir = root / "data" / "sources"
     src_dir.mkdir(parents=True, exist_ok=True)
     # 夹具源文件放在临时根下、源名不带 `/`：避免死链门把「data/sources/…」当成仓库真路径。
+    # 用 write_bytes 而非 write_text：Windows 文本模式会把 \n 转成 \r\n，
+    # 会让 eol_on_disk 的正例变成 CRLF（444 批自测实踩）。
     src = root / "jubu.txt"
-    src.write_text(source_text, encoding="utf-8")
+    src.write_bytes(source_text.encode("utf-8"))
     m = measure(src)
     prov = {
         "sha256": overrides.get("sha256", m["sha256"]),
@@ -238,6 +278,12 @@ def _fixture(root: Path, source_text: str = "甲子\n\n乙丑\n", **overrides) -
     # 442 批：可选双口径字段（`extra` 里的键直接并入 stats；不传即保持历史形态）
     for k, v in (overrides.get("extra") or {}).items():
         prov["stats"][k] = v
+    # 444 批：登记元数据（page_count/pages/eol_on_disk/sha256_lf_text）；
+    # 哨兵 "__LF__" 让正例不必在夹具外重算 LF 折行哈希。
+    for k, v in (overrides.get("top") or {}).items():
+        if v == "__LF__":
+            v = m["sha256_lf_text"]
+        prov[k] = v
     (src_dir / "jubu.provenance.json").write_text(
         json.dumps(prov, ensure_ascii=False), encoding="utf-8")
     return src_dir
@@ -285,7 +331,7 @@ def _ledger_fixture(root: Path, *, bytes_cell=None, lines_cell=None,
 def selftest() -> int:
     def tamper(root: Path) -> Path:
         src_dir = _fixture(root)
-        (root / "jubu.txt").write_text("甲子\n\n乙丑\n丙\n", encoding="utf-8")
+        (root / "jubu.txt").write_bytes("甲子\n\n乙丑\n丙\n".encode("utf-8"))
         return src_dir
 
     def empty(root: Path) -> Path:
@@ -322,6 +368,16 @@ def selftest() -> int:
                             extra={"tables": 2, "headings": 1})),
         ("负例：headings 未按行首 `=` 计", "stats.headings",
          lambda r: _fixture(r, source_text="== 标题 ==\n", extra={"headings": 2})),
+        # 444 批：登记元数据（夹具底本为 LF）
+        ("正例：page_count/eol/LF 折行哈希全符", None,
+         lambda r: _fixture(r, top={"pages": ["p1"], "page_count": 1,
+                                    "eol_on_disk": "LF", "sha256_lf_text": "__LF__"})),
+        ("负例：page_count 与 pages 长度不符", "page_count",
+         lambda r: _fixture(r, top={"pages": ["p1"], "page_count": 2})),
+        ("负例：eol_on_disk 登记 CRLF 但在盘为 LF", "eol_on_disk",
+         lambda r: _fixture(r, top={"eol_on_disk": "CRLF"})),
+        ("负例：sha256_lf_text 失配", "sha256_lf_text",
+         lambda r: _fixture(r, top={"sha256_lf_text": "0" * 64})),
     ]
     ledger_cases = [
         ("台账正例：行值与底本一致", None, lambda r: _ledger_fixture(r)),
@@ -391,9 +447,10 @@ def main() -> int:
         problems.append(f"references/source_ledger.md 不存在（台账下限 {ledger_floor} 行）")
     ledger_desc = f"台账 {ledger_rows} 行" if LEDGER.is_file() else "台账 —（无此表）"
     ext_desc = f"、扩展 {stats['ext']} 项" if stats["ext"] else ""
+    meta_desc = f"、元数据 {stats['meta']} 项" if stats["meta"] else ""
     dual_desc = f"、双口径 {stats['dual']} 项" if stats["dual"] else ""
     print(f"[42] 底本完整性：{stats['files']} 份 provenance（核到 {stats['checked']} 份底本、"
-          f"{stats['fields']} 项基础统计{ext_desc}{dual_desc}）；{ledger_desc}")
+          f"{stats['fields']} 项基础统计{ext_desc}{meta_desc}{dual_desc}）；{ledger_desc}")
     st_fail = selftest() if args.selftest else 0
     if problems:
         print(f"\n失败 {len(problems)} 项：")
