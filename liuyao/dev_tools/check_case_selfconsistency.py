@@ -23,6 +23,8 @@
     的逐字子串（427 批）；窗口口径与建器 `build_yiin_cases.case_window` 同源。
   · 卦变自洽（428 批）：本卦 + `moving` 的差集必须等于 `changed`，所有带 `moving`
     列表的案例都查（classical 用 moving_count，不适用）；手工重建后的盘面由此受控。
+  · 应期词表（429 批）：`expected.yingqi` 只准空、干支应期、或 `timing.REL_RULES`
+    登记的相对窗词；判词（「不安」「难成」）混进应期即红。
   · **判据只用干支，不用整句**：底本多作繁体（大壯／離／粵東帶貨），而片段是抓取时
     把 `<br>` 归一成换行的产物，拿整句回底本找必然假红——本器第一版就是这样
     一口气报出 8 条"片段在底本里找不到"。干支与地支繁简同形，"日辰""应期支"
@@ -46,7 +48,9 @@ if hasattr(sys.stdout, "reconfigure"):
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
+sys.path.insert(0, str(DISC / "scripts"))
 import build_yiin_cases as YB  # noqa: E402  卦表块/日柱行定位与建器同一口径
+from timing import REL_RULES  # noqa: E402  相对窗词表单一真源（不在本器里另抄一份）
 
 CASE_DIR = DISC / "data" / "cases"
 YIIN_SRC = DISC / "data" / "sources" / "yiin_dz.dz.txt"
@@ -59,6 +63,8 @@ GZ = "甲乙丙丁戊己庚辛壬癸"
 BRS = "子丑寅卯辰巳午未申酉戌亥"
 DAY_RE = re.compile(f"[{GZ}][{BRS}]日")
 BR_RE = re.compile(f"[{BRS}]")
+YQ_TOKEN = re.compile(r"[%s]?[%s]{1,2}(?:年|月|日|时)" % (GZ, BRS))
+REL_WORDS = tuple(k for keys, *_ in REL_RULES for k in keys)
 NOTE: list[str] = []
 
 
@@ -159,6 +165,21 @@ def check_hexagram_transform(case: dict) -> list[str]:
     return []
 
 
+def check_yingqi_vocabulary(case: dict) -> list[str]:
+    """`expected.yingqi` 必须是空（N/A）、干支应期，或 timing 登记的相对窗词（429 批）。
+
+    判词（「不安」「难成」）混进应期会让该维静默变 N/A，还会被后续相对窗规则误读；
+    本判据把「应期」这个词位的取值面钉死。
+    """
+    cid = str(case.get("id") or "?")
+    v = str((case.get("expected") or {}).get("yingqi") or "")
+    if not v:
+        return []
+    if YQ_TOKEN.search(v) or any(k in v for k in REL_WORDS):
+        return []
+    return [f"{cid}：expected.yingqi「{v}」既非干支应期也非登记相对窗（像是判词误填）"]
+
+
 def load_sets() -> list[tuple[str, dict]]:
     out: list[tuple[str, dict]] = []
     for name in SETS:
@@ -242,9 +263,20 @@ def selftest(problems: list[str], examined: int, yiin_lines, yiin_blocks) -> Non
         problems.append("负例失效：乾→大壮 动爻[5] 未判红")
     if not check_hexagram_transform(hx("乾", "", [5])):
         problems.append("负例失效：有动无变未判红")
+
+    # 429 批：应期词表——判词不得混进 expected.yingqi
+    def yq(v: str) -> dict:
+        return {"id": "YQ_PROBE", "expected": {"yingqi": v}}
+
+    if check_yingqi_vocabulary(yq("癸卯日")):
+        problems.append("应期词表正例（癸卯日）被误伤")
+    if check_yingqi_vocabulary(yq("次日")):
+        problems.append("应期词表正例（相对窗「次日」）被误伤")
+    if not check_yingqi_vocabulary(yq("不安")):
+        problems.append("负例失效：判词「不安」混进应期未判红")
     if examined == 0:
         problems.append("全量 0 条被检视，本门等于没跑")
-    print("  [selftest] 负例已跑（串档 / 一致 / 无书文 / YIIN 日柱片段 / YIIN 断语逐字 / 卦变自洽 六件）")
+    print("  [selftest] 负例已跑（串档 / 一致 / 无书文 / YIIN 日柱片段 / YIIN 断语逐字 / 卦变自洽 / 应期词表 七件）")
 
 
 def main() -> int:
@@ -262,6 +294,7 @@ def main() -> int:
     for name, c in load_sets():
         n, ps = check_case(c, name)
         ps = ps + check_hexagram_transform(c)
+        ps = ps + check_yingqi_vocabulary(c)
         if name == "yiin_cases.json" and yiin_lines is not None:
             ps = ps + check_detail_verbatim(c, yiin_lines, yiin_blocks)
         examined += 1 if n else 0

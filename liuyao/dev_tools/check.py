@@ -936,7 +936,7 @@ def main() -> int:
              "dev_tools/check_source_readings.py"),
             ("yingqi_info", "[15] 应期候选池信息量（铺量涨分必须被拦住）",
              "dev_tools/check_yingqi_information.py"),
-            ("case_selfconsistency", "[16] 案例基准自洽（日辰/应期须出自该例自引书文；YIIN 断语逐字；卦变自洽）",
+            ("case_selfconsistency", "[16] 案例基准自洽（日辰/应期须出自该例自引书文；YIIN 断语逐字；卦变自洽；应期词表）",
              "dev_tools/check_case_selfconsistency.py"),
             ("fixture_invariants", "[17] 回归 fixture 不变量（声明的干支/卦名须算得出来）",
              "dev_tools/check_fixture_invariants.py"),
