@@ -1,6 +1,6 @@
 {
   "schema": "yi-bazi-bingyao-observations/1",
-  "_comment": "病药 source adjudication 观察集（2026-10-03 评审指定任务）。**这不是评测集**：不计 alignment score、不入 holdout、不参与调参、不作任何 pass/fail 判据。用途只有一个——记录书源原文怎么说、engine 怎么说、差在哪里，供人工判断原文支持哪一种语义层级。字段一律书源逐字，禁止本仓推断填值（书中未载→null）。",
+  "_comment": "病药 source adjudication 观察集（2026-10-03 评审指定任务）。**这不是评测集**：不计 alignment score、不入 holdout、不参与调参、不作任何 pass/fail 判据。用途只有一个——记录书源原文怎么说、engine 怎么说、差在哪里，供人工判断原文支持哪一种语义层级。引文类字段（source_quote／book_support）一律书源逐字：`……` 表示省略，按省略号分段、各段须按序逐段回原文（第四百六十一批起由 [41] 机械核对）；其余字段是摘述不是引文。禁止本仓推断填值（书中未载→null）。",
   "_discipline_note": {
     "task": "source adjudication（认识规则），不是修规则",
     "engine_frozen": true,

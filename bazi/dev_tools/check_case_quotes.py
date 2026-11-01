@@ -41,6 +41,15 @@
      把 `{{annotate|…}}` 整块当标记删掉，被包住的整行随即变空、引文永远对不上
      （460 批实测；`plain` 口径下 7/7、12/12 全符）。
 
+  H. `observations[].source_quote`／`book_support`（461 批）：底本取
+     `extraction.source`（`data/sources/<书>.txt`）；`……`／`…` 表示省略，
+     按省略号分段、各段须**按序**逐段回底本（防拆句重排）。
+
+  I. `cross_source_observations[].quote`（461 批）：按条目 `source` 标签路由
+     （`CROSS_SOURCES` 登记，未登记判红）；同样分段有序。底本多为白文（滴天髓
+     原文卷无标点）且 JSON 用 `**` 强调，故该面折叠标点并去 `*`；有 `source_ref`
+     时还须：所指底本与 `source` 路由一致、行号在册、引文落在该行 ±2 行邻域。
+
     python dev_tools/check_case_quotes.py            # 全量对拍
     python dev_tools/check_case_quotes.py --selftest # 正负例自证
 """
@@ -119,6 +128,17 @@ MIN_ROUTED = 445    # 464 - 7 不可路由 - 12 夹注段豁免（431 批 10 条
 # 防止路径挪动或字段改名后「扫到 0 条 = 通过」。
 MIN_EXCLUDED = 7    # cong_er 1 + hua 6
 MIN_EVIDENCE = 12   # fangju 6 + hehua 6
+# 461 批：观察集与交叉来源两面（分段引文）
+MIN_OBSERVATION_FIELDS = 14   # observations 7 例 × (source_quote + book_support)
+MIN_CROSS_QUOTES = 24         # bingyao_cross_source 的 cross_source_observations
+
+# 交叉来源的 `source` 标签 → 底本。新增来源必须登记，否则判红（不许悄悄漏检）。
+CROSS_SOURCES = {
+    "穷通宝鉴": "data/sources/qiong-tong-bao-jian.wikitext.txt",
+    "滴天髓": "data/sources/di-tian-sui.wikitext.txt",
+    "滴天髓阐微（任注）": "data/sources/di-tian-sui-chan-wei.wikitext.txt",
+    "神峰通考": "data/sources/shen-feng-tong-kao.wikitext.txt",
+}
 
 
 def norm(text: str) -> str:
@@ -373,6 +393,131 @@ def audit_surfaces() -> tuple[list[str], int, int]:
     return problems, n_ex, n_ev
 
 
+# 461 批：观察集与交叉来源。两类引文都用 `……`/`…` 表示省略，故按省略号**分段**、
+# 各段须**按序**（防拆句重排）逐段回底本。交叉来源的底本常是白文（滴天髓原文卷
+# 本身无标点），且 JSON 里用 `**` 强调——故该面折叠标点并去 `*`（记录在 CHANGELOG）。
+SEG_SPLIT = re.compile(r"……|…")
+PLAIN_FOLD = re.compile(r"[，。、；：「」『』“”\"'‘’（）()\[\]【】《》〈〉·．\-—_/\\+=:;,]+")
+
+
+def norm_cross(text: str) -> str:
+    return PLAIN_FOLD.sub("", norm_plain(text).replace("*", ""))
+
+
+def segments_problem(label: str, q: str, body: str, keyf) -> str | None:
+    """分段有序核对：每段都须是底本连续子串，且后段从前段的终点之后开始。"""
+    segs = [s for s in SEG_SPLIT.split(str(q)) if keyf(s)]
+    if not segs:
+        return f"{label}：去掉省略号后没有可核对内容（空引文）"
+    pos = 0
+    for k, s in enumerate(segs, 1):
+        n = keyf(s)
+        i = body.find(n, pos)
+        if i < 0:
+            return f"{label} 第 {k} 段非书源逐字（或跨段乱序）→ {n[:50]!r}"
+        pos = i + len(n)
+    return None
+
+
+def observation_problem(rel: str, eid: str, key: str, q, body: str) -> str | None:
+    if not isinstance(q, str) or not q.strip():
+        return f"{rel}: {eid}.{key} 必须是非空字符串，实为 {q!r}"
+    return segments_problem(f"{rel}: {eid}.{key}", q, body, norm_plain)
+
+
+def cross_problem(rel: str, idx: int, e: dict, text_of, lines_of) -> str | None:
+    eid = str(e.get("id") or f"cross_source_observations[{idx}]")
+    src = str(e.get("source") or "")
+    f = CROSS_SOURCES.get(src)
+    if not f:
+        return (f"{rel}: {eid} 来源未登记 → {src!r}"
+                f"（请登记 CROSS_SOURCES）")
+    q = e.get("quote")
+    if not isinstance(q, str) or not q.strip():
+        return f"{rel}: {eid} quote 必须是非空字符串"
+    body = text_of(f)
+    if body is None:
+        return f"{rel}: {eid} 底本不存在 → {f}"
+    msg = segments_problem(f"{rel}: {eid}.quote", q, body, norm_cross)
+    if msg:
+        return msg
+    ref = str(e.get("source_ref") or "")
+    m = re.search(r"#L(\d+)$", ref)
+    if m:
+        if ref.split("#", 1)[0].strip() != f:
+            return (f"{rel}: {eid} source_ref 指向 "
+                    f"{ref.split('#', 1)[0]} 与来源底本 {f} 不符")
+        lines = lines_of(f)
+        n = int(m.group(1))
+        if not lines or not (1 <= n <= len(lines)):
+            return f"{rel}: {eid} source_ref 行号越界 L{n}"
+        if norm_cross(q) not in norm_cross("".join(lines[max(0, n - 3): n + 2])):
+            return f"{rel}: {eid} source_ref L{n} 邻域未含该引文"
+    return None
+
+
+def audit_observation_surfaces() -> tuple[list[str], int, int]:
+    """H/I 两面：`observations[]`（分段）与 `cross_source_observations[]`（461 批）。"""
+    problems: list[str] = []
+    cache_p: dict[str, str | None] = {}
+    cache_c: dict[str, str | None] = {}
+    cache_cl: dict[str, list[str] | None] = {}
+
+    def plain_of(f: str) -> str | None:
+        if f not in cache_p:
+            p = DISC / f
+            cache_p[f] = norm_plain(p.read_text(encoding="utf-8")) if p.is_file() else None
+        return cache_p[f]
+
+    def cross_of(f: str) -> str | None:
+        if f not in cache_c:
+            p = DISC / f
+            cache_c[f] = norm_cross(p.read_text(encoding="utf-8")) if p.is_file() else None
+        return cache_c[f]
+
+    def cross_lines(f: str) -> list[str] | None:
+        if f not in cache_cl:
+            p = DISC / f
+            cache_cl[f] = ([norm_cross(x) for x in p.read_text(encoding="utf-8").splitlines()]
+                           if p.is_file() else None)
+        return cache_cl[f]
+
+    n_obs = n_cross = 0
+    for rel, d in _iter_case_docs():
+        obs = d.get("observations")
+        if isinstance(obs, list):
+            src = str((d.get("extraction") or {}).get("source") or "")
+            path = src.split("（")[0].strip()
+            body = plain_of(path) if path else None
+            if not path:
+                problems.append(f"{rel}: observations 缺 extraction.source（无法回书源）")
+            elif body is None:
+                problems.append(f"{rel}: extraction.source 指向不存在的文件 → {path}")
+            for i, o in enumerate(obs):
+                if not isinstance(o, dict):
+                    continue
+                for key in ("source_quote", "book_support"):
+                    q = o.get(key)
+                    if not q:
+                        continue
+                    n_obs += 1
+                    if body is not None:
+                        eid = str(o.get("id") or f"observations[{i}]")
+                        msg = observation_problem(rel, eid, key, q, body)
+                        if msg:
+                            problems.append(msg)
+        cross = d.get("cross_source_observations")
+        if isinstance(cross, list):
+            for i, e in enumerate(cross):
+                if not isinstance(e, dict):
+                    continue
+                n_cross += 1
+                msg = cross_problem(rel, i, e, cross_of, cross_lines)
+                if msg:
+                    problems.append(msg)
+    return problems, n_obs, n_cross
+
+
 def check_all(exempt: dict) -> tuple[list[str], dict]:
     failures: list[str] = audit_exempt_ledger(exempt)
     # 459 批：案例目录 tests 指针可达性（[11] 不扫 data/cases，本门补上）
@@ -385,7 +530,7 @@ def check_all(exempt: dict) -> tuple[list[str], dict]:
             continue
         failures.extend(pointer_problems(txt, str(p.relative_to(DISC))))
     stats = {"files": 0, "quotes": 0, "routed": 0, "unrouted": 0, "exempt": 0,
-             "excluded": 0, "evidence": 0,
+             "excluded": 0, "evidence": 0, "obs_fields": 0, "cross_quotes": 0,
              "per_file": [], "unrouted_detail": [], "exempt_detail": [], "surface_detail": []}
     corpus: dict = {}
     seen_exempt: set[str] = set()
@@ -457,6 +602,18 @@ def check_all(exempt: dict) -> tuple[list[str], dict]:
                         f"低于基线 {MIN_EXCLUDED}／{MIN_EVIDENCE}——先确认字段/路径没挪动")
     if stats["excluded"] == 0 or stats["evidence"] == 0:
         failures.append("excluded/source_evidence 有一面扫到 0 条——0 结果 ≠ 通过")
+    # 461 批：observations / cross_source_observations 两面
+    o_problems, stats["obs_fields"], stats["cross_quotes"] = audit_observation_surfaces()
+    failures.extend(o_problems)
+    stats["surface_detail"].append(
+        f"  observations[] 分段引文 {stats['obs_fields']} 字段（下限 {MIN_OBSERVATION_FIELDS}）"
+        f"／cross_source_observations[] {stats['cross_quotes']} 条（下限 {MIN_CROSS_QUOTES}）")
+    if stats["obs_fields"] < MIN_OBSERVATION_FIELDS or stats["cross_quotes"] < MIN_CROSS_QUOTES:
+        failures.append(f"下限守卫：observations {stats['obs_fields']} 字段／cross_source "
+                        f"{stats['cross_quotes']} 条，低于基线 "
+                        f"{MIN_OBSERVATION_FIELDS}／{MIN_CROSS_QUOTES}——先确认字段/路径没挪动")
+    if stats["obs_fields"] == 0 or stats["cross_quotes"] == 0:
+        failures.append("observations/cross_source 有一面扫到 0 条——0 结果 ≠ 通过")
     return failures, stats
 
 
@@ -587,6 +744,44 @@ def selftest() -> int:
         if not ok:
             bad += 1
         print(f"  {'√' if ok else '×'} {why}（期望{'判红' if want_bad else '放行'}）")
+    # 461 批：observations / cross_source 两面
+    obs_body = norm_plain("辛金坐未杀星多，丁火伤辛苦太过。……辛生未月，丁火过多。")
+    obs_cases = [
+        ("辛金坐未杀星多……辛生未月", False, "正例：分段有序命中"),
+        ("辛生未月……辛金坐未杀星多", True, "负例：分段乱序"),
+        ("辛金坐未杀星多……辛生未月，木多", True, "负例：末段尾拼"),
+    ]
+    for q, want_bad, why in obs_cases:
+        got = observation_problem("夹具", "OBS01", "source_quote", q, obs_body)
+        ok = bool(got) == want_bad
+        if not ok:
+            bad += 1
+        print(f"  {'√' if ok else '×'} {why}（期望{'判红' if want_bad else '放行'}）")
+    cross_body = norm_cross("地支有三位相合而成局者，亥卯未木局，寅午戌火局")
+    cross_lines_fixture = ["", "{{annotate|任氏曰：地支有三位相合而成局者，亥卯未木局}}"]
+    cross_cases = [
+        ({"source": "滴天髓阐微（任注）", "quote": "地支有三位相合而成局者，**亥卯未木局**"},
+         False, "正例：** 强调不影响判定"),
+        ({"source": "滴天髓阐微（任注）", "quote": "亥卯未木局……地支有三位"},
+         True, "负例：分段乱序"),
+        ({"source": "子平真诠", "quote": "随意"}, True, "负例：来源未登记"),
+        ({"source": "滴天髓阐微（任注）", "quote": "地支有三位相合而成局者",
+          "source_ref": "data/sources/di-tian-sui-chan-wei.wikitext.txt#L99"},
+         True, "负例：source_ref 行号越界"),
+        ({"source": "滴天髓阐微（任注）", "quote": "地支有三位相合而成局者",
+          "source_ref": "data/sources/__no_such__other.txt#L1"},
+         True, "负例：source_ref 底本与来源不符"),
+        ({"source": "滴天髓阐微（任注）", "quote": "地支有三位相合而成局者",
+          "source_ref": "data/sources/di-tian-sui-chan-wei.wikitext.txt#L2"},
+         False, "正例：source_ref 邻域命中"),
+    ]
+    for cx, want_bad, why in cross_cases:
+        got = cross_problem("夹具", 0, cx, lambda _f: cross_body,
+                            lambda _f: cross_lines_fixture)
+        ok = bool(got) == want_bad
+        if not ok:
+            bad += 1
+        print(f"  {'√' if ok else '×'} {why}（期望{'判红' if want_bad else '放行'}）")
     full = longest_block(norm(needle), qiong)
     part = longest_block(norm("本书并无此语"), qiong)
     ok_blk = full == len(norm(needle)) and part < 6
@@ -598,10 +793,10 @@ def selftest() -> int:
         print(f"  × selftest 失败 {bad} 例——比对逻辑/路由漂移，先修器")
         return 1
     print(f"  √ selftest：{len(cases) + len(name_cases) + len(ledger_cases)} ＋"
-          f" tests 指针×3 ＋ excluded/evidence×8 件"
+          f" tests 指针×3 ＋ excluded/evidence×8 ＋ obs/cross×9 件"
           f"（正例×2/尾拼/凭空句/副底本误挂/"
           f"豁免×2/豁免四柱回潮/豁免专名×2/豁免过期/不可路由/豁免册自洽×5/"
-          f"tests 指针×3/excluded×4/evidence×4）＋最长连续块全过")
+          f"tests 指针×3/excluded×4/evidence×4/observations×3/cross×6）＋最长连续块全过")
     return 0
 
 
