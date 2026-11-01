@@ -94,7 +94,11 @@
       "source": "Wikisource 在线版（https://zh.wikisource.org/zh-hans/珞琭子三命消息赋注）；本仓无本地源文件，curl 被沙箱拦截，逐字原文由 Wikisource 显示层转录。",
       "not_in_corpus": "语料 data/sources/ 仅有《三命指迷赋》（sanming_zhimi_fu），无《消息赋》；grep 全仓『珞琭子／消息赋』仅在 data/sources/*.dz.txt 与 collation/（后世书征引）出现，scripts/verdicts.json/rules/ 等判据设计材料零命中 → 未参与任何 judge 设计，无训练—测试污染。",
       "n": 3,
-      "ids": ["XF001", "XF002", "XF003"],
+      "ids": [
+        "XF001",
+        "XF002",
+        "XF003"
+      ],
       "batch_rule": "纳入规则（扫描与提取先于引擎评分声明）：穷尽扫描全文含**完整四柱**且附**明确判语**之命例；凡书源显式点名『三奇／三奇之贵／禄马同乡／飞天禄马』者全收。剔除留痕：①缺年/月柱者（如『王中命，甲寅日，甲子时』）——四柱不全不可评；②纯理论段（赋文＋注疏无具体四柱）；③富贵层次/吉凶断语（如『贵命也』『不三台而八座』『提纲罢权』）——属 EVAL-PLAN §2.2 非计分，不入 expected；④四柱机械自洽失败者（无）。",
       "pillar_check": "3 例四柱按书源竖排年月日时序直录；全部通过五虎遁（年×月）＋五鼠遁（日×时）自洽校验：XF001 戊年子月=甲子、乙日辰时=庚辰；XF002 丁年戌月=庚戌、戊日亥时=癸亥；XF003 丙年子月=庚子、壬日午时=丙午。",
       "dimension_mapping": {
@@ -171,7 +175,8 @@
       "DT009",
       "XF001",
       "XF002",
-      "XF003"
+      "XF003",
+      "MY001"
     ]
   },
   "cases": [
@@ -1487,7 +1492,9 @@
       },
       "gender": "",
       "expected": {
-        "shensha": ["三奇贵人"]
+        "shensha": [
+          "三奇贵人"
+        ]
       },
       "note": "书原话「是名乙戊向庚为三奇之贵也」→ expected.shensha 记『三奇贵人』（珞琭子之三奇特指乙戊庚：乙日干·戊年干·庚时干，与通行天上三奇甲戊庚异读，如实存名并注）。富贵层次断语（『宗族贵家』『三任方面』）不入 expected（EVAL-PLAN §2.2）。引擎 shensha.py 不实现三奇贵人 → 本例为缺口曝光型（读数 0/N，永不调参）。",
       "provenance": {
@@ -1510,7 +1517,10 @@
       },
       "gender": "",
       "expected": {
-        "shensha": ["三奇贵人", "禄马同乡"]
+        "shensha": [
+          "三奇贵人",
+          "禄马同乡"
+        ]
       },
       "note": "书原话「有两三奇……皆禄马同乡」→ expected.shensha 记『三奇贵人』『禄马同乡』。富贵层次断语（『不三台而八座』『提纲罢权』）与运程（『八岁八个月退运』）不入 expected（EVAL-PLAN §2.2；外集不评大运）。引擎 shensha.py 不实现此二神 → 缺口曝光型（读数 0/N，永不调参）。",
       "provenance": {
@@ -1533,13 +1543,41 @@
       },
       "gender": "",
       "expected": {
-        "shensha": ["三奇贵人", "禄马同乡"]
+        "shensha": [
+          "三奇贵人",
+          "禄马同乡"
+        ]
       },
       "note": "书原话「庚午居干又是三奇禄马同乡，此云飞天禄马也」→ expected.shensha 记『三奇贵人』『禄马同乡』（『飞天禄马』为外格名，引擎 pattern 层亦不产出，附记不单列）。富贵层次断语（『两丙皆历贵地』）不入 expected（EVAL-PLAN §2.2）。引擎 shensha.py 不实现此二神 → 缺口曝光型（读数 0/N，永不调参）。",
       "provenance": {
         "source_url": "https://zh.wikisource.org/zh-hans/珞琭子三命消息赋注",
         "transcription": "逐字转录自 Wikisource 显示层；本仓无本地源文件、curl 被沙箱拦截，故 source_file 不指向 data/sources。",
         "pillar_check": "五虎遁 丙年子月=庚子、五鼠遁 壬日午时=丙午，自洽。"
+      }
+    },
+    {
+      "id": "MY001",
+      "split": "external_holdout",
+      "book": "命理约言",
+      "location": "卷四杂论·附张神峰辟五行诸谬（陈素庵，清）",
+      "source_quote": "如黄县兵部尚书谭二华八字，庚辰甲申丁未丙午，本系身强煞浅，假煞为权，喜行煞旺之地。",
+      "pillars": {
+        "year": "庚辰",
+        "month": "甲申",
+        "day": "丁未",
+        "hour": "丙午"
+      },
+      "gender": "",
+      "expected": {
+        "strength": "偏旺",
+        "strength_book_category": "身强"
+      },
+      "note": "书明言「身强煞浅，假煞为权」→ expected.strength 取『偏旺』（身强≡身旺，映射表见 evaluate.py:502 『身旺→偏旺』；strength_book_category 存书原文『身强』）。官职断语（兵部尚书）与用神取向「假煞为权」不入 expected（EVAL-PLAN §2.2 富贵层次/用神取向非评分面）。本例为「新书强弱分歧型」：命理约言不在 data/sources（not_in_corpus 已审）。实测引擎算 丁火申月、未午为根、丙劫甲印 此造为 **偏弱**，与书「身强」相左——属引擎与古书在 强弱 判定上的真实分歧（非取数错误：引擎确有输出）。与 401 批珞琭子『缺口曝光型』（引擎缺三奇/禄马）互补：二者共同证明 external_holdout 能稳定曝出引擎在未见书上的分歧点。本集永不调参，分歧照实登记（report-only）。",
+      "provenance": {
+        "source_url": "https://www.suanzhun.net/dianji/mingliyueyan/963.html",
+        "transcription": "逐字转录自 suanzhun.net《命理约言》卷四杂论显示层；Wikisource 无本帖（空红链），本仓 data/sources 未收本书，故 source_file 不指向 data/sources。",
+        "not_in_corpus_audit": "data/sources 列 48 件，无 命理约言（mingli_yueyan）任何文件；本书为清初陈素庵《命理约言》四卷，确属未收录之时间检验古籍。",
+        "pillar_check": "五虎遁 庚年申月=甲申、五鼠遁 丁日午时=丙午，自洽；丁日主，月申金耗、坐未、时午为根，丙劫帮身 → 身强，与书『身强』合。"
       }
     }
   ]

@@ -29,7 +29,32 @@
 
 - **缺口曝光型**：引擎 core/yishu_core/shensha.py 不实现三奇贵人/禄马同乡（grep 全仓『三奇』无 .py 实现，shensha 基名 19 项无此二神），故三例引擎必不命中，`--split external_holdout` 读数 **shensha 0/3（适用 3=n/a 62）** 如实报出——这是 external_holdout 暴露真实能力缺口的本职，非调参对象。
 - 门禁安全：外集维度锁 [25] 只锁 bazi_classical_cases.json（实测 shensha＝tune:0/0、holdout:5/5 未动），不覆盖 external_holdout；逐字源文件门 [1k] 亦不覆盖外集（无本地源文件，curl 被沙箱拦截，source_quote 由 Wikisource 显示层逐字转录并注明出处 URL）。
-- 复验：本批后 `python scripts/evaluate.py --split external_holdout` 正常出报（强弱 33/54 不变、shensha 0/3）；`python dev_tools/check.py` 全 39 门 EXIT=0（八字科质量门通过）。
+  - 复验：本批后 `python scripts/evaluate.py --split external_holdout` 正常出报（强弱 33/54 不变、shensha 0/3）；`python dev_tools/check.py` 全 39 门 EXIT=0（八字科质量门通过）。
+
+## 2026-11-01 第四百一十二批（八字）：**外部集扩《命理约言》强弱分歧案例（MY001），收第二未见书**
+
+**性质**：评估扩样（external_holdout 再引入一本未收录的、经时间检验的古籍真实命例）。本批不入 tune/holdout、永不调参、不参与任何引擎调参；只动 `data/cases/bazi_external_cases.json`。
+
+### 一、选书理由（落实 category ③：引入新书、非设计污染）
+
+- 选《命理约言》（清·陈素庵相国撰，韦千里校刊《精选命理约言》四卷）：子平法重要理论兼案例典籍，**不在本仓语料**（data/sources 列 48 件，无 命理约言／mingli_yueyan 任何文件）。
+- 候选排查：仅余确属未收录的时间检验古籍为《命理约言》与《星平会海》。二者 Wikisource 均为空红链；前者 theory-heavy、卷四杂论嵌有真实命例，后者网络「命例」多系后世附会（如某站托名万民英、列康熙/曾国藩等跨代造，不可作逐字书证）。故取《命理约言》卷四杂论·附张神峰辟五行诸谬 所引 谭二华 八字。
+- 污染审计：全仓 grep「命理约言/陈素庵」在 data/sources 与 judge 设计材料零命中 → 未参与任何 judge 设计，无训练—测试污染。
+
+### 二、纳入与维度
+
+- 纳入规则：取书源**显式标注身强身弱**且附完整四柱之命例。卷四杂论原文：「如黄县兵部尚书谭二华八字，庚辰甲申丁未丙午，本系身强煞浅，假煞为权，喜行煞旺之地。」——书明言「身强」，且四柱完整。
+- 四柱自洽：五虎遁 庚年申月=甲申、五鼠遁 丁日午时=丙午，自洽。
+- 维度：expected.strength＝『偏旺』（身强≡身旺，映射表见 evaluate.py:502『身旺→偏旺』）；strength_book_category 存书原文『身强』。官职断语（兵部尚书）与用神取向「假煞为权」不入 expected（EVAL-PLAN §2.2 富贵层次/用神取向非评分面）。
+- 取舍：未用 expected.shensha（书未点名三奇/禄马等具体神煞）；未用 ten_gods（书未逐柱枚举十神，逐字派生于柱将违反「expected 只填书载明示值」铁律）。
+
+### 三、口径与读数
+
+- **强弱分歧型**（与 411 批珞琭子『缺口曝光型』互补）：
+  - 411 批曝引擎**缺三奇/禄马同乡**（shensha 0/3，能力缺口）。
+  - 本批曝引擎在真实古书上的**强弱判定分歧**——书言「身强」，引擎实算 丁火申月·未午为根·丙劫甲印 此造为 **偏弱**，`--split external_holdout` 读数 MY001：书源「身强」→ 期望 偏旺 vs 引擎 偏弱。属引擎与古书在 强弱 上的真实分歧（非取数错误：引擎确有输出），external_holdout 收口即为此类分歧照实登记。
+- 门禁安全：外集维度锁 [25] 只锁 bazi_classical_cases.json，不覆盖 external_holdout；[8] 语料接线仅扫 corpus leaf，MY001 在 external_holdout（report-only）不受影响（D 0/F 0/C 0 不变）。
+- 复验：本批后 `python scripts/evaluate.py --split external_holdout` 正常出报（强弱读数含 MY001 → 书源 vs 引擎 偏弱 分歧照登；shensha 仍 0/3 来自 XF001–003）；`python dev_tools/check.py` 全 39 门 EXIT=0（八字科质量门通过）；`[22]` 跨文件 external_holdout 79→**80**、评分 splits 数组 65→**66**。
 
 ## 2026-11-01 第四百一十批（八字）：**报告层补十神作用篇提纲书证（闭合「十神作用算出来了但看不到」）**
 
