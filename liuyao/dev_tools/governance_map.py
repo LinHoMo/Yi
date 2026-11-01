@@ -84,7 +84,7 @@ CURATED = {
         # 337 批 A5-1：把存量未分类项按实登记（不删并不；只让地图不再报"未分类"）
         "build_dts_cases": ("build", "滴天髓案例构建"),
         "build_t2s_table": ("build", "繁简对照表构建（t2s_table.json）"),
-        "build_siku_dz": ("build", "四库本转校订件（外部三命通会会话；待该会话提交）"),
+        "build_siku_dz": ("build", "四库本转校订件（[43] 以 --check 消费；439 批挂上）"),
         "fetch_siku_sanming": ("build", "《三命通会》四库本抓取（外部三命通会会话）"),
         "diff_siku_sanming": ("ondemand", "四库本↔dz 本逐章对拍（外部三命通会会话）"),
         "scan_siku_gaps": ("ondemand", "四库本缺口扫描（外部三命通会会话）"),

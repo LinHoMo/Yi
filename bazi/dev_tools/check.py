@@ -15,9 +15,9 @@
 分数口径（SKILL.md 铁律三，务必连同分数一起读）：
   [7] 的分数是**古籍案例对齐分**——引擎输出与《穷通宝鉴》《子平真诠》《滴天髓》等
   案例要点的加权一致性（strict 计分模型），用于回归审计，**衡量不了现实命中率**。
-  tune n=60、holdout **n=276**（368 批清例：删掉 MT529／MT540 两份重复考点，278→276；
-  原记「tune n=138、holdout n=532」系 #39 清出 342 例冗余**前**的口径，新旧不可比——
-  见 docs/EVAL-PLAN.md §1.1 与 §四.4）。holdout 集合未参与判据调参。
+  tune **n=61**、holdout **n=279**（395 批《千里命稿》4 例入册；368 批清例把 holdout
+  278→276 是此前一步；原记「tune n=138、holdout n=532」系 #39 清出 342 例冗余**前**的口径，
+  新旧不可比——见 docs/EVAL-PLAN.md §1.1 与 §四.4）。holdout 集合未参与判据调参。
 
 门槛设计（SKILL.md）：
   · 基线取**实测值**，只准前进不准后退：低于 BASELINE 即判红（范式照六爻
@@ -44,6 +44,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import sys
@@ -747,6 +748,41 @@ def main() -> int:
         fails.append("底本完整性门未过（provenance 与在盘底本失配/缺登记）")
     else:
         print("[42] 底本完整性 √")
+
+    # [43] 三命通会四库本 raw→dz 重算（第四百三十九批）：raw 是 .gitignore 的抓取件，
+    # 不在盘时显式跳过；在盘时核对 meta 并跑 builder --check，防 raw 已换而 dz 未重建。
+    print("\n[43] 三命通会四库本 raw→dz 重算一致性（raw 不在盘时显式跳过）")
+    raw_siku = DISC / "data" / "sources" / "sanming_tonghui_siku.wikitext.txt"
+    meta_siku = DISC / "data" / "sources" / "sanming_tonghui_siku.meta.json"
+    if not raw_siku.is_file():
+        print("  · raw 转写件不在盘（按 .gitignore 不入库）→ 本门未核，不冒充通过")
+    else:
+        ok_meta = True
+        try:
+            meta = json.loads(meta_siku.read_text(encoding="utf-8"))
+        except Exception as exc:
+            ok_meta = False
+            print(f"  × meta 读取失败：{exc}")
+        if ok_meta:
+            raw_bytes = raw_siku.read_bytes()
+            raw_text = raw_bytes.decode("utf-8", errors="replace")
+            sha = hashlib.sha256(raw_bytes).hexdigest()
+            for key, got in (("sha256", sha), ("bytes", len(raw_bytes)), ("chars", len(raw_text))):
+                if meta.get(key) != got:
+                    ok_meta = False
+                    print(f"  × meta.{key} {meta.get(key)} ≠ 在盘 {got}")
+            if ok_meta:
+                print(f"  √ meta 与 raw 一致（{len(raw_bytes)} 字节 / {len(raw_text)} 字）")
+        code, out = run(["dev_tools/build_siku_dz.py", "--check"])
+        for line in out.splitlines():
+            if line.strip():
+                print("  " + line.strip())
+        if code != 0:
+            fails.append("四库本 raw→dz 重算不一致（先跑 build_siku_dz.py 重建）")
+        elif not ok_meta:
+            fails.append("四库本 raw 的 meta 与在盘转写件失配")
+        else:
+            print("[43] 四库本 raw→dz 重算 √")
 
     if ENC_WITNESS:
         fails.extend("产物编码退化：" + w for w in ENC_WITNESS)

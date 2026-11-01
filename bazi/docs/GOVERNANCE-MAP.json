@@ -12,6 +12,7 @@
  "tier_link_violations": {
   "blocking_not_referenced": [],
   "referenced_not_blocking": [
+   "build_siku_dz.py",
    "diff_tiaohou_vs_head.py"
   ]
  },
@@ -68,8 +69,8 @@
   {
    "script": "build_siku_dz.py",
    "tier": "build",
-   "guards": "四库本转校订件（外部三命通会会话；待该会话提交）",
-   "run_by_check_py": false,
+   "guards": "四库本转校订件（[43] 以 --check 消费；439 批挂上）",
+   "run_by_check_py": true,
    "doc": "把维基文库转写件规范化为**校订件**形态：`*_siku.dz.txt` ＋ `*_siku.provenance.json`。"
   },
   {

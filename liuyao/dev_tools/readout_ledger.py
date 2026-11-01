@@ -481,8 +481,8 @@ def checks():
         sv = [len(ml["tier_link_violations"]["referenced_not_blocking"]),
               len(mb["tier_link_violations"]["referenced_not_blocking"])]
         return tuple(map(str, hv + sv))
-    add("tier一致性(硬0/0软0/1)", "207批（软 bazi=diff_tiaohou_vs_head 的 required 存在性引用，合法在账；冒出未见条目即红）",
-        c_tier_consistency, ("0", "0", "0", "1"))
+    add("tier一致性(硬0/0软0/2)", "207批（软 bazi=diff_tiaohou_vs_head 的 required 存在性引用，合法在账；冒出未见条目即红）；439 批 build_siku_dz 由 [43] 以 --check 消费，软引用 1→2（同属合法存在性引用）",
+        c_tier_consistency, ("0", "0", "0", "2"))
 
     # --- 八字侧 ---
     def c_bazi_holdout(t):
