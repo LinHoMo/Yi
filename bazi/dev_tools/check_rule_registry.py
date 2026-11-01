@@ -62,6 +62,11 @@ locator 从未被读取。现按声明核对：行号在册、`quote/full_quote/
 469 批追加（仅六爻册）：**六亲持世括注口径**。`shi_yao_interpretation` 19 条断语
 文末标「（《火珠林·X章》）」，全库实测无一条逐字（全是今译）。现要求今译标记
 改为 `（据《…》今译）`，出现裸 `（《…》）` 即判红；标记数下限 19。两科 selftest 都跑夹具。
+
+470 批追加（仅六爻册）：**叙述层持世引文的行锚**。`narrative_templates.json` 的
+`pattern_hints._wenwang_chishi._meta` 明写「每条 quote 为底本逐字子串，src 为主源行号」，
+但 14 个 quote/补 字段此前无门（[14] 认「源L」形态，这里的 `file:NNNN` 不在扫描面）。
+现核 `src`/`补_src` 行号在册、值落在该行；字段数下限 14。两科 selftest 都跑夹具。
 """
 from __future__ import annotations
 
@@ -89,6 +94,8 @@ LIUSHEN = DISC / "data" / "liushen_image.json"
 SHISHEN = DISC / "data" / "shi_shen_actions.json"
 # 467 批：六爻引文库（仅六爻有该结构；八字同名文件结构不同）。
 LIUYAO_QUOTES = DISC / "data" / "verdicts.json"
+# 470 批：叙述层模板（仅六爻有该册）。
+NARRATIVE_TPL = DISC / "data" / "narrative_templates.json"
 _VERDICT_LOCATOR = re.compile(r"(data/sources/[^:]+):(\d+)")
 _VERDICT_MARK = re.compile(r"''+|={2,}|\{\{|\}\}|\||\*")
 _VERDICT_FIELDS = ("quote", "full_quote", "cond_quote", "verse_quote")
@@ -735,6 +742,57 @@ def check_shi_yao_interp(doc: dict, problems: list[str]) -> int:
     return n_claim
 
 
+def check_wenwang_chishi(doc: dict, problems: list[str], lines_of=None) -> int:
+    """《文王金钱课》六亲持世引文的行锚回验（470 批）。返回字段数。
+
+    为什么需要它：`narrative_templates.json` 的 `pattern_hints._wenwang_chishi._meta`
+    明写「每条 `quote` 为 wenwang_jinqianke_dz.dz.txt 的逐字子串，
+    `src` 为主源行号」；`补`/`补_src` 同构。但此前没有任何门读这 14 个字段——
+    [14] 认的是「源L」形态，这里的 `file:NNNN` 不在其扫描面。470 批实测 14/14 全符，
+    本函数把声明变成常设判据；`lines_of` 供 selftest 注入夹具底本。
+    """
+    W = ((doc or {}).get("pattern_hints") or {}).get("_wenwang_chishi")
+    if not isinstance(W, dict) or not W:
+        problems.append("文王持世：pattern_hints._wenwang_chishi 缺失或为空——0 结果 ≠ 通过")
+        return 0
+    cache: dict[str, list[str] | None] = {}
+
+    def get_lines(f: str) -> list[str] | None:
+        if lines_of is not None:
+            return lines_of(f)
+        if f not in cache:
+            p = _resolve_any(f)
+            cache[f] = (p.read_text(encoding="utf-8", errors="replace").splitlines()
+                        if p else None)
+        return cache[f]
+
+    n = 0
+    for k, v in W.items():
+        if not isinstance(v, dict):
+            continue
+        for field, skey in (("quote", "src"), ("补", "补_src")):
+            q = v.get(field)
+            if not q:
+                continue
+            n += 1
+            src = str(v.get(skey) or "").strip()
+            m = _VERDICT_LOCATOR.fullmatch(src)
+            if not m:
+                problems.append(f"文王持世：{k}.{skey} 缺行号出处 → {src!r}")
+                continue
+            f, ln = m.group(1), int(m.group(2))
+            L = get_lines(f)
+            if L is None:
+                problems.append(f"文王持世：{k}.{skey} 的底本不存在 {f}")
+                continue
+            if not (1 <= ln <= len(L)):
+                problems.append(f"文王持世：{k}.{skey} 行号 L{ln} 超出底本（共 {len(L)} 行）")
+                continue
+            if _verdict_plain(q) not in _verdict_plain(L[ln - 1]):
+                problems.append(f"文王持世：{k}.{field} 不在所署行 {f}:{ln} → {str(q)[:28]!r}")
+    return n
+
+
 def selftest(problems: list[str]) -> None:
     """负例：造一条 verified=true 却指向不存在文件/解不到值的条目，必须判红。"""
     fake = {"schema": "yi-rule-registry-v1", "rules": [
@@ -988,6 +1046,35 @@ def selftest(problems: list[str]) -> None:
     if not any("缺失或为空" in x for x in p_empty):
         problems.append("负例未抓到：六亲持世整块缺失")
 
+    # 470 批：文王持世行锚（夹具底本注入）
+    _wtext = {"data/sources/__no_such__w.txt": ["", "世爻旺相最为强，作事享通大吉昌。"]}
+    wdoc = {"pattern_hints": {"_wenwang_chishi": {"世爻": {
+        "quote": "世爻旺相最为强，作事享通大吉昌。",
+        "src": "data/sources/__no_such__w.txt:2"}}}}
+    p_w: list[str] = []
+    n_w = check_wenwang_chishi(wdoc, p_w, lambda f: _wtext.get(f))
+    if p_w or n_w != 1:
+        problems.append(f"文王持世正例被误伤：{p_w}（字段 {n_w}）")
+
+    def _wbad(mut) -> list[str]:
+        d = json.loads(json.dumps(wdoc, ensure_ascii=False))
+        mut(d)
+        p: list[str] = []
+        check_wenwang_chishi(d, p, lambda f: _wtext.get(f))
+        return p
+
+    if not any("缺行号出处" in x for x in
+               _wbad(lambda d: d["pattern_hints"]["_wenwang_chishi"]["世爻"].pop("src", None))):
+        problems.append("负例未抓到：文王持世缺 src")
+    if not any("不在所署行" in x for x in
+               _wbad(lambda d: d["pattern_hints"]["_wenwang_chishi"]["世爻"].__setitem__(
+                   "src", "data/sources/__no_such__w.txt:1"))):
+        problems.append("负例未抓到：文王持世行号错")
+    if not any("行号 L99 超出底本" in x for x in
+               _wbad(lambda d: d["pattern_hints"]["_wenwang_chishi"]["世爻"].__setitem__(
+                   "src", "data/sources/__no_such__w.txt:99"))):
+        problems.append("负例未抓到：文王持世行号越界")
+
 
 def main() -> int:
     if not REG.exists():
@@ -1051,6 +1138,15 @@ def main() -> int:
         if n_claim < 19:
             problems.append(f"六亲持世：『据《…》今译』标记只有 {n_claim}（下限 19）")
         print(f"  六亲持世：{n_claim} 条『据《…》今译』标记；裸书证括注 0 条")
+        # 470 批：叙述层《文王金钱课》持世引文行锚
+        if not NARRATIVE_TPL.is_file():
+            problems.append("文王持世：narrative_templates.json 不存在——0 结果 ≠ 通过")
+        else:
+            tpl = json.loads(NARRATIVE_TPL.read_text(encoding="utf-8"))
+            n_w = check_wenwang_chishi(tpl, problems)
+            if n_w < 14:
+                problems.append(f"文王持世：行锚字段只有 {n_w}（下限 14）")
+            print(f"  文王持世：{n_w} 个 quote/补 字段；src/补_src 行内逐字已核对")
     _ap = argparse.ArgumentParser(description="check_rule_registry：--selftest 负例自证开关（§三）")
     _ap.add_argument("--selftest", action="store_true", help="负例自证")
     args = _ap.parse_args()
