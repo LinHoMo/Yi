@@ -23,6 +23,13 @@ bazi 也没有 tests/ 目录。也就是说 `rule_registry.json` 里每一条
         `impl`，六爻科同批实抓到两条悬空指针，本科是同一潜在缺口，本批两侧拉齐。
 `verified: true` 而上述任一步失败 → 判红；`verified: false` 只作 NOTE（那是诚实的未核实）。
 **`impl` 例外：不看 `verified` 一律判红**——代码指针不存在「诚实未核实」状态，指错就是指错。
+
+447 批追加（仅六爻册；八字无此文件时跳过）：`qianjin_fu_map.json` 的**统计块自洽**——
+`统计.联句总数` 必须等于 `联句映射` 条数；每个状态分项必须等于实际条目数（状态允许
+`已落地_<机制>_<日期>` 后缀，按 `_` 前前缀计数）；统计键必须是 `_meta` 状态词汇的子集，
+词汇表里的每个状态也必须出现在统计里（防漏项）；`registry_未被本表联句直接挂上`
+里的 id 必须都存在于 `rule_registry`。本批首跑抓到 `_meta` 仍写「四态」而实际条目已用
+第五态「已落地」——文档与实际状态词汇分家（§六.2），同批改为「五态」。
 """
 from __future__ import annotations
 
@@ -38,6 +45,8 @@ if hasattr(sys.stdout, "reconfigure"):
 DISC = Path(__file__).resolve().parents[1]
 ROOT = DISC.parent
 REG = DISC / "data" / "rules" / "rule_registry.json"
+# 447 批：千金赋联句映射（仅六爻有该册；八字无文件则跳过，不判红）。
+QIANJIN = DISC / "data" / "rules" / "qianjin_fu_map.json"
 
 _DROP = re.compile(r"[\s，。、；：「」『』“”\"'‘’（）()【】\[\]《》<>·．\-—_/\\|+=:;,.*]+")
 VARIANT = str.maketrans({"剋": "克", "裏": "里", "羣": "群", "徧": "遍", "啓": "启",
@@ -268,6 +277,65 @@ def check(doc: dict, problems: list[str], notes: list[str]) -> tuple[int, int]:
     return checked, passed
 
 
+def check_qianjin_map(doc: dict, problems: list[str],
+                      registry_ids: set[str] | None = None) -> tuple[int, int]:
+    """千金赋联句映射的统计自洽（447 批）。返回 (联句数, 状态种数)。"""
+    entries = doc.get("联句映射")
+    if not isinstance(entries, list) or not entries:
+        problems.append("千金赋映射：联句映射缺失或为空——0 结果 ≠ 通过")
+        return 0, 0
+    meta = doc.get("_meta") or {}
+    states = meta.get("五态") or meta.get("四态") or {}   # 兼容旧键名，词表仍须覆盖实际状态
+    if not isinstance(states, dict) or not states:
+        problems.append("千金赋映射：_meta 未登记状态词汇（五态/四态）")
+        states = {}
+
+    def state_of(e: dict) -> str:
+        return str(e.get("状态") or "").split("_", 1)[0]
+
+    usage: dict[str, int] = {}
+    unknown: dict[str, str] = {}
+    for e in entries:
+        s = state_of(e)
+        usage[s] = usage.get(s, 0) + 1
+        if states and s not in states:
+            unknown.setdefault(s, str(e.get("句") or "")[:16])
+    for s, q in unknown.items():
+        problems.append(f"千金赋映射：状态「{s}」未在 _meta 状态词汇中登记（{q}…）")
+
+    stats = doc.get("统计") or {}
+    total = stats.get("联句总数")
+    if total != len(entries):
+        problems.append(f"千金赋映射：统计.联句总数 {total} ≠ 实际 {len(entries)}")
+    per_state = 0
+    for key, val in stats.items():
+        if key == "联句总数":
+            continue
+        if states and key not in states:
+            problems.append(f"千金赋映射：统计里有未登记的状态键「{key}」")
+        if not isinstance(val, int) or val != usage.get(key, 0):
+            problems.append(f"千金赋映射：统计.{key} {val} ≠ 实际 {usage.get(key, 0)}")
+        if isinstance(val, int):
+            per_state += val
+    if per_state != len(entries):
+        problems.append(f"千金赋映射：统计分项之和 {per_state} ≠ 联句总数 {len(entries)}")
+    if states:
+        absent = sorted(set(states) - set(stats))
+        if absent:
+            problems.append(f"千金赋映射：状态词汇 {absent} 未在统计中列出")
+
+    registry = doc.get("registry_未被本表联句直接挂上")
+    if registry is not None:
+        if not isinstance(registry, list):
+            problems.append("千金赋映射：registry_未被本表联句直接挂上 必须是列表")
+        elif registry_ids is not None:
+            missing = [str(x) for x in registry if str(x) not in registry_ids]
+            if missing:
+                problems.append(f"千金赋映射：registry 列表有 {len(missing)} 个 id "
+                                f"不在 rule_registry：{missing[:4]}")
+    return len(entries), len(usage)
+
+
 def selftest(problems: list[str]) -> None:
     """负例：造一条 verified=true 却指向不存在文件/解不到值的条目，必须判红。"""
     fake = {"schema": "yi-rule-registry-v1", "rules": [
@@ -313,6 +381,40 @@ def selftest(problems: list[str]) -> None:
     if DISC.name == "liuyao" and not check_impl(_hist):
         problems.append("负例未抓到：父模块并无该符号（已搬入 shen_yao 子模块）")
 
+    # 447 批：千金赋映射统计自洽（正例不误伤＋四类负例必须抓到）
+    _states = ("已挂", "已落地", "未实现", "不适用", "无对应")
+    qbase = {
+        "_meta": {"五态": {s: "" for s in _states}},
+        "统计": {"联句总数": 3, "已挂": 1, "已落地": 1, "未实现": 0,
+                 "不适用": 1, "无对应": 0},
+        "联句映射": [{"句": "甲", "状态": "已挂"},
+                     {"句": "乙", "状态": "已落地_日辰并爻_20261014"},
+                     {"句": "丙", "状态": "不适用"}],
+        "registry_未被本表联句直接挂上": ["liuyao.andong"],
+    }
+    p_q: list[str] = []
+    n_q = check_qianjin_map(qbase, p_q, {"liuyao.andong"})
+    if p_q or n_q != (3, 3):
+        problems.append(f"千金赋映射正例被误伤：{p_q}")
+
+    def _qbad(mut) -> list[str]:
+        d = json.loads(json.dumps(qbase, ensure_ascii=False))
+        mut(d)
+        p: list[str] = []
+        check_qianjin_map(d, p, {"liuyao.andong"})
+        return p
+
+    if not any("统计.已挂" in x for x in _qbad(lambda d: d["统计"].__setitem__("已挂", 2))):
+        problems.append("负例未抓到：统计分项与实际条目数不符")
+    if not any("未在 _meta 状态词汇" in x for x in
+               _qbad(lambda d: d["联句映射"][0].__setitem__("状态", "新态"))):
+        problems.append("负例未抓到：条目用了未登记的状态")
+    if not any("不在 rule_registry" in x for x in
+               _qbad(lambda d: d["registry_未被本表联句直接挂上"].__setitem__(0, "liuyao.nope"))):
+        problems.append("负例未抓到：registry 列表含 rule_registry 不存在的 id")
+    if not any("未在统计中列出" in x for x in _qbad(lambda d: d["统计"].pop("无对应"))):
+        problems.append("负例未抓到：状态词汇漏进统计块")
+
 
 def main() -> int:
     if not REG.exists():
@@ -323,15 +425,26 @@ def main() -> int:
     notes: list[str] = []
     checked, passed = check(doc, problems, notes)
     print(f"{DISC.name}：检视 {checked} 条书源指针，{passed} 条可回指")
+    registry_ids = {str(item.get("rule_id") or item.get("id"))
+                    for _bucket, item in _iter_entries(doc)}
+    registry_ids.discard("None")
+    # 447 批：千金赋联句映射（仅六爻有该册；八字无文件则跳过，不判红）
+    if QIANJIN.is_file():
+        qdoc = json.loads(QIANJIN.read_text(encoding="utf-8"))
+        q_total, q_states = check_qianjin_map(qdoc, problems, registry_ids)
+        print(f"  千金赋映射：{q_total} 联、{q_states} 个状态；统计块与 registry 列表已逐项核对")
+    elif DISC.name == "liuyao":
+        problems.append(f"千金赋映射：{QIANJIN.name} 不存在——0 结果 ≠ 通过，先确认路径")
     _ap = argparse.ArgumentParser(description="check_rule_registry：--selftest 负例自证开关（§三）")
     _ap.add_argument("--selftest", action="store_true", help="负例自证")
     args = _ap.parse_args()
     if args.selftest:
         before = len(problems)
         selftest(problems)
-        print(f"  [selftest] 负例已跑（{'抓到' if len(problems) == before else '异常'}）")
-        # 负例本身故意造的错不计入本学科判定，只验「抓到了」这件事
-        problems = problems[:before] if len(problems) > before else problems
+        added = len(problems) - before
+        # 447 批修旧缺陷：原文 `problems = problems[:before]` 会把**自证失败**的消息一起截掉，
+        # 于是「负例没抓到」也以 EXIT=0 通过。自证失败必须保留并判红；通过则无新增。
+        print(f"  [selftest] {'异常：' + str(added) + ' 条自证失败（保留并判红）' if added else '负例已跑（抓到）'}")
     if checked == 0:
         print("× 0 条指针可检视——本器等于没跑，不判通过")
         return 1
