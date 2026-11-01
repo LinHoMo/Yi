@@ -97,6 +97,14 @@ GENERIC_MAX_BACK = 30
 REL_DAY_RE = re.compile(r"(次日|明日|翌日|本日|今日|即日)")
 REL_AFTER_RE = re.compile(r"果(?:于)?(次日|明日|翌日|本日|今日|即日)")
 REL_MAX_BACK = 30
+# 414 批：结果句把同一支连列成多个单位、且单位间以**问号**设问
+# （「此人果死于卯年？卯月？卯日卯时」）时，左起 YING_PAT 先抓到的「卯年」是设问枚举，
+# 不是书判定的单位；本书紧随「应卯日时者」自答实际单位。有自答按自答落档；
+# 无自答或自答支不符即判歧义剔除。问号是唯一触发信号——「果于午年午月到家」
+# 是同年月双单位实录（两者都成立），不得误判成歧义。
+MULTI_UNIT_GAP = set("？?，,、．.。；; \t\n")
+RESOLVE_UNIT_RE = re.compile(r"应(?:于|在)?([%s])(日|月|年)时?者" % BRANCHES)
+RESOLVE_UNIT_MAX_GAP = 25
 # 412 批：用神从断语「X为用神」直取（书载明示，不由引擎回填）。简称按 zengshan 同一张
 # REL_SHORTHAND 归一；「卦中土为用神」这类只给五行的形态不可判六亲，留 N/A。
 USE_GOD_BRANCH_RE = re.compile(
@@ -244,6 +252,41 @@ def _relative_yingqi(text: str, date: dict):
         if t.group(1) != nxt:
             return None, None, gm, "相对日 (次日→%s日) 与近旁显式%s日冲突" % (nxt, t.group(1))
     return nxt, "日", gm, ""
+
+
+def _multi_unit_resolution(text: str, ym):
+    """结果句同支连列多年月日单位时，按书自答「应X日/月/年…者」落档（414 批）。
+
+    返回 (支, 单位, 拒绝原因)：
+      · 无同支多单位枚举 → 全空（走原有 YING_PAT 路径）；
+      · 有枚举且有同支自答 → (支, 自答单位, "")；
+      · 有枚举但无自答、或自答支与枚举支不符 → 支 None＋原因（不猜单位）。
+    """
+    if not ym:
+        return None, None, ""
+    toks = list(re.finditer(r"([%s])(日|月|年)" % BRANCHES, text))
+    i0 = next((i for i, t in enumerate(toks)
+               if t.start() >= ym.start() and t.start() <= ym.end()), None)
+    if i0 is None:
+        return None, None, ""
+    run = [toks[i0]]
+    for t in toks[i0 + 1:]:
+        gap = text[run[-1].end():t.start()]
+        if (t.group(1) == run[0].group(1)
+                and ("？" in gap or "?" in gap)
+                and all(ch in MULTI_UNIT_GAP for ch in gap)):
+            run.append(t)
+        else:
+            break
+    if len(run) < 2 or len({t.group(2) for t in run}) < 2:
+        return None, None, ""
+    rm = RESOLVE_UNIT_RE.search(text, run[-1].end())
+    if not rm or rm.start() - run[-1].end() > RESOLVE_UNIT_MAX_GAP:
+        return None, None, "同支连列 %d 个单位且书无「应X者」自答" % len(run)
+    if rm.group(1) != run[0].group(1):
+        return None, None, "「应%s者」自答支与枚举支「%s」不符" % (
+            rm.group(1), run[0].group(1))
+    return rm.group(1), rm.group(2), ""
 
 
 def _use_god(text: str):
@@ -522,9 +565,14 @@ def _case_from_block(lines: list[str], start: int, end: int, cid: str, sha: str)
                               "reason": "验语自述月建%s与表月%s冲突" % (claimed, date["month"])})
                 continue
         ym = YING_PAT.search(text)
-        yb, yu = _ying_branch(ym), _ying_unit(ym)
+        um_b, um_u, um_why = _multi_unit_resolution(text, ym)
+        if um_why:
+            cases.append({"id": cid if n == 1 else cid + str(side + 1),
+                          "reason": "结果句应期单位歧义（%s）" % um_why})
+            continue
+        yb, yu = (um_b, um_u) if um_b else (_ying_branch(ym), _ying_unit(ym))
         gm = None
-        yingqi_src = "ying_pat"
+        yingqi_src = "multi_unit_resolve" if um_b else "ying_pat"
         if not yb:
             gb, gu, gm, gwhy = _generic_yingqi(text, date)
             if gb:
@@ -587,9 +635,10 @@ def _case_from_block(lines: list[str], start: int, end: int, cid: str, sha: str)
                 "verdict_quote": (vd_quote or "")[:80],
                 "verdict_reason": vd_reason or None,
             },
-            "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-413 批），过表栏/日期/"
+            "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/"
                      "卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、"
-                     "通用确认句回溯或相对期换算）；用神取断语明示句；吉凶取结果句强结果词"
+                     "通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；"
+                     "用神取断语明示句；吉凶取结果句强结果词"
                      "（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。",
         })
     good = [c for c in cases if "input" in c]
@@ -754,13 +803,30 @@ def selftest() -> int:
         fails.append("无强结果词未拒")
     if _verdict("即愈矣，果验．若以入库必死，螣蛇动主死")[0] != "吉":
         fails.append("结果后的格言覆盖了结果")
+    # 414 多单位枚举：书以「应X者」自答时按自答落档；无自答/自答支不符即拒；
+    # 单一单位结果不得被本规则误触
+    mt = "此人果死于卯年？卯月？卯日卯时，应卯日时者，生助午火克冲原神也．"
+    if _multi_unit_resolution(mt, YING_PAT.search(mt))[:2] != ("卯", "日"):
+        fails.append("多单位枚举自答未落档到卯日")
+    mt1 = "此人果死于卯年？卯月？卯日卯时，生助午火克冲原神也．"
+    if _multi_unit_resolution(mt1, YING_PAT.search(mt1))[0] is not None:
+        fails.append("多单位枚举无自答未拒")
+    mt2 = "此人果死于卯年？卯月？卯日卯时，应巳日者．"
+    if _multi_unit_resolution(mt2, YING_PAT.search(mt2))[0] is not None:
+        fails.append("自答支与枚举支不符未拒")
+    mt3 = "果于己巳日全愈．"
+    if _multi_unit_resolution(mt3, YING_PAT.search(mt3))[0] is not None:
+        fails.append("单一单位结果被多单位规则误触")
+    mt4 = "果于午年午月到家．应午年月者"
+    if _multi_unit_resolution(mt4, YING_PAT.search(mt4))[0] is not None:
+        fails.append("同年月双单位实录被误判歧义")
     if not YING_PAT.search("果于本日酉时，得名医救活，亥日痊愈"):
         fails.append("验支正例未命中")
     if YING_PAT.search("此卦亥水兄弟为用神，辰月克之，申日生之"):
         fails.append("验支负例（无结果标记）误命中")
     print("√ selftest：单/双栏/尾空列日期解码、空串拒绝、卦名别名、动标五字形、"
           "非单点/月序范围/自述月建、通用确认句回溯五负例、相对期换算四负例、"
-          "用神六负例、吉凶三真五假、验支正负例 全过"
+          "用神六负例、吉凶三真五假、多单位自答一真四假、验支正负例 全过"
           if not fails else "× " + "；".join(fails))
     return 0 if not fails else 1
 
@@ -821,6 +887,9 @@ def main() -> int:
         e = starts[bi + 1] if bi + 1 < len(starts) else len(lines)
         cid = "BZ%03d" % (bi + 1)
         keep, bad = _case_from_block(lines, s, e, cid, sha)
+        # 414 批：排除条目一律带 offset（此前 125 条里 90 条无行号，无法回指源文）。
+        for r in bad:
+            r.setdefault("offset", s)
         excluded.extend(bad)
         for c in keep:
             hx = c["hexagram"]
@@ -829,7 +898,9 @@ def main() -> int:
             key1 = (md.group(1), day, hx["original"], hx["changed"])
             key2 = (hx["original"], hx["changed"], c["expected"]["yingqi_branches"][0])
             if key1 in k1 or key2 in k2:
-                excluded.append({"id": c["id"], "reason": "与全库在册案例同案", "date": c["input"]["date"]})
+                excluded.append({"id": c["id"], "reason": "与全库在册案例同案",
+                                 "date": c["input"]["date"],
+                                 "offset": c["provenance"]["offset"]})
                 continue
             cases.append(c)
             k1.add(key1)
@@ -848,7 +919,8 @@ def main() -> int:
         "schema": "yi-liuyao-cases/1",
         "_meta": {
             "description": "《卜筮正宗》dz 表格式段落抽取的应期/用神/吉凶外部集；八道门＋同案去重；"
-                           "409 通用确认句、410 相对期、412 用神、413 吉凶结果句；永不参与调参",
+                           "409 通用确认句、410 相对期、412 用神、413 吉凶结果句、"
+                           "414 多单位自答（应X者）；排除条目一律带 offset；永不参与调参",
             "source": "《卜筮正宗》（殆知阁转录本）",
             "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
             "source_sha256": sha,
@@ -872,7 +944,9 @@ def main() -> int:
         "或 410 批相对期换算（次日/明日 → 占测日 +1 日；本日不换算），"
         "逐例 provenance.yingqi_source 留痕。detail 为断语原文（供格局维比对）；"
         "用神取断语「X为用神」明示句（412 批；未写明的留空，N/A 不进分母）；"
-        "吉凶取结果句强结果词（413 批；无强结果词/多主体并存 → N/A）。" % len(cases))
+        "吉凶取结果句强结果词（413 批；无强结果词/多主体并存 → N/A）；"
+        "同支「？年月日」设问序列按书自答「应X者」落档（414 批，BZ0462 卯年→卯日），"
+        "排除条目一律带 offset。" % len(cases))
     write_stable(SPLITS, sp, indent=2)  # 原文件 indent=2：默认 indent=1 会把全文重排（408 实踩）
     print("√ 落盘 %s｜%d 例；case_splits.bushi_zhengzong_holdout=%d"
           % (OUT.name, len(cases), len(cases)))
