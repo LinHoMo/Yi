@@ -110,7 +110,7 @@ CURATED = {
         "check_rule_registry": ("blocking", "注册表 verified/impl 指针回验"),
         "check_layer_contract": ("blocking", "分层契约：四段键白名单＋禁边表（[32]；312 批补登记）"),
         "check_judgment_table": ("blocking", "判定表：9 格／书证逐字／覆写表随码动（[33]；314 批新增）"),
-        "check_expected_coverage": ("blocking", "expected 书证覆盖生存线（[38]；344 批新增）"),
+        "check_expected_coverage": ("blocking", "expected 书证覆盖生存线（[38]；344 批新增，425 批扩到 yiin）"),
         "check_xiang": ("blocking", "象层门：象目带出处／类别随题类联动／象层禁倒灌评分（[39]；362 批新增）"),
         "xiang_coverage": ("nightly", "象层覆盖读数器（只报有没有出，不报准不准；362 批新增）"),
         "check_bond_polarity": ("blocking", "合绊极性门：同一条合在 step4／step5 不得反号、动用神逢合不得加分（[40]；364 批新增）"),

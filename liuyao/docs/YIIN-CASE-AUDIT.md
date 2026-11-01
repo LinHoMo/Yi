@@ -77,6 +77,12 @@ case 形态（逐字，L1037–L1046）：
 分派给四五个不同占题演示（如「睽之归妹·丙子月丁卯日」分别占坟茔／婚姻／求官／求财），
 那是同盘异题、用神各各不同，不是重复占验。判定键改为含占题后，误杀归零。
 
+**425 批扩门**：`check_case_selfconsistency` [16] 纳入本集——日辰对 `provenance.quote`
+（日柱行），应期支须在 `expected.detail`（断语句）里出现。日柱行本身含年/月/日支，
+不能拿它当应期支证据（否则月支会冒充应期支；YI034 探针实测）。
+同批 [38] expected 覆盖生存线也补入本集：`yingqi`／`yingqi_branches` ≥11、
+`yingqi_claim` ≥5、`detail` ≥56，`verdict` 用 `allowed_values: []` 钉死为 null。
+
 ---
 
 ## 四、入库分布（n=56）

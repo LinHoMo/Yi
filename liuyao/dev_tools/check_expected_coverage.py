@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""expected 书证/机械派生字段的覆盖生存线（门禁 [38]，第三百四十四批新增；419 批扩到 dz／bushi）。
+"""expected 书证/机械派生字段的覆盖生存线（门禁 [38]，第三百四十四批新增；419 批扩到 dz／bushi，425 批补 yiin）。
 
     python dev_tools/check_expected_coverage.py            # 对拍真实案例文件
     python dev_tools/check_expected_coverage.py --selftest # 加负例：证明本门抓得住
@@ -17,11 +17,18 @@ wangshuai-muku-six_spirit 和 WS035 校勘 verdict 一次性清空；聚合 stri
 57.4 级别悄悄回到 53 级别却无门报警。生存线须覆盖**每一个有建器的案例文件**，
 否则同一事故换个集就能重演。
 
+**425 批为什么补 yiin**：423 批给该集补了 4 条实录应期（7→11），但它的 expected
+字段没有任何生存线；构建器重生成把 `yingqi`／`yingqi_branches` 清空不会有门报警。
+该集没有 `use_god`，受控字段是 `yingqi`（≥11）、`yingqi_branches`（≥11）、
+`yingqi_claim`（≥5）、`detail`（≥56），并用 `allowed_values: []` 把 `verdict` 钉死
+在 null（本书断语是散文，映射吉/凶属解读）。
+
 本门守三条：
   A. 案例数不得低于登记数（整文件重生成丢例即红）；
   B. 每个受控字段的非空数不得低于登记下限（整批清空即红）；
   C. 登记了 `allowed_blank` 的字段，空值 ID 必须逐条列名；出现未登记空值即红。
-  `use_god` 另校验取值集合，防止用任意字符串把计数凑回去。
+  登记了 `allowed_values` 的字段另校验取值集合，防止用任意字符串把计数凑回去。
+  selftest 按各集**在册字段**注入负例（不再假定每集都有 `use_god`）。
 
 口径：这是**生存线**，不是逐例值锁。逐例书证仍由 `check_source_readings.py` 与
 292/297/298 批 CHANGELOG 的书证条目守；本门只防“整批被构建器静默抹掉”。
@@ -117,16 +124,38 @@ def selftest(data_by_file: dict, registry: dict) -> list[str]:
             fails.append(f"负例未抓到（{name}）：{label}")
 
     for name, spec in registry["cases"].items():
-        must_catch("整批清空 use_god", name,
-                   lambda d: [c.setdefault("expected", {}).__setitem__("use_god", "")
-                              for c in d["cases"]])
-        must_catch("单例未登记空值", name, lambda d: _blank_first_nonempty(d))
-        must_catch("use_god 乱写取值", name,
-                   lambda d: d["cases"][0].setdefault("expected", {}).__setitem__("use_god", "乱写"))
+        fields = spec["fields"]
+        data = data_by_file[name]
+
+        def count(field: str, d: dict = data) -> int:
+            return sum(1 for c in d["cases"]
+                       if _nonempty((c.get("expected") or {}).get(field)))
+
+        # 代表字段：优先 use_god（原有受控文件），否则取第一个有下限的字段。
+        # YIIN 没有 use_god，代表字段是 yingqi（11 条实录）——425 批扩围。
+        probe = ("use_god" if int(fields.get("use_god", {}).get("min", 0)) > 0
+                 else next((f for f, r in fields.items() if int(r["min"]) > 0), None))
+        if probe:
+            must_catch(f"整批清空 {probe}", name,
+                       lambda d, f=probe: [c.setdefault("expected", {}).__setitem__(f, "")
+                                           for c in d["cases"]])
+            # 单例置空：非空数已等于下限时，置空一个必跌破；有余量则跳过（不制造假负例）
+            if count(probe) <= int(fields[probe]["min"]):
+                must_catch(f"单例置空 {probe}", name,
+                           lambda d, f=probe: _blank_first_nonempty(d, f))
+        val_field = next((f for f, r in fields.items()
+                          if r.get("allowed_values") is not None), None)
+        if val_field is not None:
+            must_catch(f"{val_field} 乱写取值", name,
+                       lambda d, f=val_field: d["cases"][0].setdefault("expected", {}).__setitem__(f, "乱写"))
         must_catch("删掉一例", name, lambda d: d["cases"].pop())
-        if "use_god_note" in spec["fields"]:
+        if "use_god_note" in fields:
             must_catch("清空 use_god_note", name,
                        lambda d: [c.setdefault("expected", {}).pop("use_god_note", None)
+                                  for c in d["cases"]])
+        if "detail" in fields:
+            must_catch("整批清空 detail", name,
+                       lambda d: [c.setdefault("expected", {}).__setitem__("detail", "")
                                   for c in d["cases"]])
         if audit(data_by_file[name], spec):
             fails.append(f"完好夹具被误伤（{name}）——本门自身口径有误")
@@ -167,7 +196,7 @@ def main() -> int:
     if args.selftest:
         st_fail = selftest(data_by_file, registry)
         print(f"  [selftest] 负例{'全部抓到' if not st_fail else '失效'}"
-              "（每集 5 类：整批清空／未登记空值／乱写取值／删例／清空 note）")
+              "（按各集在册字段注入：整批清空/单例/坏取值/删例，note·detail 在册即测）")
         for p in st_fail:
             print("  ×", p)
 

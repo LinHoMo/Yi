@@ -5,6 +5,58 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-02 第四百二十五批（六爻·应期数据集门覆盖）：**[16] 纳入 YIIN（日柱片段只认 detail，月支不冒充应期支）＋[38] 生存线补 YIIN（yingqi≥11／verdict 钉 null／detail 不清空）；可判 83→139，读数零变化**
+
+**性质**：门覆盖扩展（不改数据、不改引擎、不改读数）。
+
+### 一、缺陷
+
+- `check_case_selfconsistency.py` [16] 只认 `provenance.context_head` / `wikitext_head`，
+  `yiin_cases.json` 的 `provenance.quote`（日柱行）不在内——本集一直被排除在
+  「有自引书文可判」之外。423 批补了 4 例实录后，YIIN 的 **11 条应期**没有任何
+  机械自洽线。
+- 直接接入会踩一个坑：**日柱行本身含年/月/日支**（如「己卯月」），应期支若与月支
+  同字，即使 `detail` 不含它也会「命中」。真实探针：把 YI034 的 detail 改成
+  「后至乙丑日…」而 yingqi 仍是辛卯日，第一版判据仍全绿——假牙。
+
+### 二、改法
+
+- `book_text()` 收 `provenance.quote`；`SETS` 增 `yiin_cases.json`。
+- 新增 `DATE_LINE_SETS = {"yiin_cases.json"}`：该集跳过③卦名 NOTE（日柱行不含卦名
+  是常态）；②应期支的 haystack **只用 `expected.detail`**，不用日柱行。
+- `check_case(case, name="")` 增集名参数；selftest 增 YIIN 四件（应期不在 detail→红／
+  在 detail→放行／日柱行不冒充／卦名 NOTE 不新增）。
+
+### 三、[38] 生存线补 YIIN
+
+- `expected_coverage.json` 增 `yiin_cases.json`：`case_count` 56；受控字段
+  `yingqi` ≥11、`yingqi_branches` ≥11、`yingqi_claim` ≥5、`detail` ≥56；
+  `verdict` 用 `min: 0 + allowed_values: []` 钉死为 null（本书断语是散文，
+  映射吉/凶属解读）。
+- selftest 改为**按各集在册字段注入**：此前硬写 `use_god`，而 YIIN 没有该字段，
+  通用负例全是空转。现在代表字段取第一个 `min>0` 的字段（YIIN＝`yingqi`），
+  单例置空仅在「非空数已等于下限」时注入（避免假负例），坏取值取任一有
+  `allowed_values` 的字段，`detail` 在册即测整批清空。
+- 真实探针：把 YI034 的 `yingqi` 置空 → 门报 `yiin.yingqi 10/56（下限 11）`
+  （EXIT=1）；恢复后转绿。受控文件 3→4。
+
+### 四、自证（§四.8）
+
+- [16] `--selftest` 四件全过；全量 **139 例可判**（83→139，新增 56 例 YIIN）、
+  无书文仍 46 例、信息性 NOTE 仍 61 条（YIIN 未造成卦名假提示）。
+- [38] `--selftest` 按字段注入的负例全抓。
+- **真实探针（两件）**：YI034 的 detail 改成「后至乙丑日…」→ [16] 报
+  `YI034：应期「辛卯日」的支['卯']…都不出现`；YI034 的 yingqi 置空 → [38] 报
+  `yiin.yingqi 10/56（下限 11）`——各自 EXIT=1，恢复后转绿。
+
+### 五、读数
+
+- 零漂移：tune／holdout／wiki／dz／bushi／yiin／prose 两片逐位不变（只加门，不动评分）。
+
+**全门复验**：`liuyao/dev_tools/check.py` 全过；`readout_ledger.py` 全量 bad=0；
+`golden.py verify` 零漂移；根级四闸全过。
+
+
 ## 2026-11-02 第四百二十四批（六爻·登记回接）：**423 补 YI034 应期后 basis 仍写「空档」——两处裁决册回接＋重生成 ADJUDICATION-BRIEF（生成物不手改）**
 
 **性质**：登记同步（不改数据、不改引擎、不改读数）。

@@ -15,8 +15,10 @@
     python dev_tools/check_case_selfconsistency.py --verbose  # 看信息性 NOTE
 
 判定口径（为什么这样判，第一版的假红都在这儿）：
-  · 只判"案例自己引用了书文片段"的条目（`provenance.context_head` / `wikitext_head`）；
-    没有自引书文的（classical_cases、yingqi_cases）不计入已验，并报出条数；
+  · 只判"案例自己引用了书文片段"的条目（`provenance.context_head` / `wikitext_head` /
+    `quote`）；没有自引书文的（classical_cases、yingqi_cases）不计入已验，并报出条数；
+    `quote` 是 YIIN 集的书证（日柱行，不含断语），该集只跑日辰/应期两条判据，
+    卦名不在日柱行里是常态，不记 NOTE（425 批扩围）。
   · **判据只用干支，不用整句**：底本多作繁体（大壯／離／粵東帶貨），而片段是抓取时
     把 `<br>` 归一成换行的产物，拿整句回底本找必然假红——本器第一版就是这样
     一口气报出 8 条"片段在底本里找不到"。干支与地支繁简同形，"日辰""应期支"
@@ -40,7 +42,10 @@ if hasattr(sys.stdout, "reconfigure"):
 
 CASE_DIR = DISC / "data" / "cases"
 SETS = ("wikisource_cases.json", "huozhulin_cases.json", "yingqi_cases.json",
-        "classical_cases.json")
+        "classical_cases.json", "yiin_cases.json")
+# 该集的 provenance.quote 只是日柱行（不是整段书文）：①日辰、②应期照判，
+# ③卦名不在日柱行里是常态，跳过。
+DATE_LINE_SETS = {"yiin_cases.json"}
 GZ = "甲乙丙丁戊己庚辛壬癸"
 BRS = "子丑寅卯辰巳午未申酉戌亥"
 DAY_RE = re.compile(f"[{GZ}][{BRS}]日")
@@ -51,10 +56,10 @@ NOTE: list[str] = []
 def book_text(case: dict) -> str:
     """该案例**自己引用**的书文片段；没有就返回空串（→ 不计入已验）。"""
     pv = case.get("provenance") or {}
-    return str(pv.get("context_head") or pv.get("wikitext_head") or "")
+    return str(pv.get("context_head") or pv.get("wikitext_head") or pv.get("quote") or "")
 
 
-def check_case(case: dict) -> tuple[int, list[str]]:
+def check_case(case: dict, name: str = "") -> tuple[int, list[str]]:
     """返回 (本例命中的判据数, 判红清单)。纯函数：负例可以直接喂构造数据。"""
     frag = book_text(case)
     if not frag:
@@ -79,16 +84,20 @@ def check_case(case: dict) -> tuple[int, list[str]]:
     if yq:                                        # ② 应期支必须出现在片段或断语里
         checked += 1
         brs = BR_RE.findall(str(yq))
-        hay = frag + str((case.get("expected") or {}).get("detail") or "")
+        detail = str((case.get("expected") or {}).get("detail") or "")
+        # YIIN 的 fragment 是日柱行，本身含年/月/日支；应期支只认断语（detail），
+        # 否则月支会冒充应期支（425 批探针实测）。
+        hay = detail if name in DATE_LINE_SETS else frag + detail
         if brs and not any(b in hay for b in brs):
             problems.append(f"{cid}：应期「{yq}」的支{brs}在自引片段与断语里都不出现"
                             f"——多半是把动爻或别条的字当成了验期")
 
     hx = case.get("hexagram") or {}               # ③ 卦名：繁简差异不足以硬判
-    for label, nm in (("本卦", str(hx.get("original") or "")),
-                      ("变卦", str(hx.get("changed") or ""))):
-        if nm and nm not in frag:
-            NOTE.append(f"{cid}：{label}「{nm}」未以简体形出现在片段里（底本多繁体，只记不判）")
+    if name not in DATE_LINE_SETS:
+        for label, nm in (("本卦", str(hx.get("original") or "")),
+                          ("变卦", str(hx.get("changed") or ""))):
+            if nm and nm not in frag:
+                NOTE.append(f"{cid}：{label}「{nm}」未以简体形出现在片段里（底本多繁体，只记不判）")
     return checked, problems
 
 
@@ -123,9 +132,29 @@ def selftest(problems: list[str], examined: int) -> None:
              "hexagram": {"original": "乾"}, "expected": {"yingqi": "午日"}}
     if check_case(ghost)[0] != 0:
         problems.append("没有自引书文的条目被算成了已检视")
+
+    # 425 批：YIIN 的 quote 只是日柱行——应期支仍须在 quote+detail 里；
+    # 该集跳过卦名 NOTE（日柱行不含卦名是常态）。
+    yq_head = "庚寅年己卯月丁亥日，占求财，得谦之小过。"
+
+    def mk_yiin(yq: str, detail: str) -> dict:
+        return {"id": "NEG_YIIN", "input": {"date": "庚寅年己卯月丁亥日"},
+                "hexagram": {"original": "谦", "changed": "小过"},
+                "expected": {"yingqi": yq, "detail": detail},
+                "provenance": {"quote": yq_head}}
+
+    if not check_case(mk_yiin("甲子日", "后至乙丑日，果得财也"), "yiin_cases.json")[1]:
+        problems.append("负例失效：YIIN 应期支不在 quote/detail 里没被判红")
+    if check_case(mk_yiin("辛卯日", "后至辛卯日，财值巳辰，果得财也"),
+                  "yiin_cases.json")[1]:
+        problems.append("负例假阳性：YIIN 应期支在 detail 里却被判红")
+    note0 = len(NOTE)
+    check_case(mk_yiin("辛卯日", "后至辛卯日，财值巳辰，果得财也"), "yiin_cases.json")
+    if len(NOTE) != note0:
+        problems.append("YIIN 日柱片段被误判为卦名缺失（③ 未跳过）")
     if examined == 0:
         problems.append("全量 0 条被检视，本门等于没跑")
-    print("  [selftest] 负例已跑（串档 / 一致 / 无书文三件）")
+    print("  [selftest] 负例已跑（串档 / 一致 / 无书文 / YIIN 日柱片段四件）")
 
 
 def main() -> int:
@@ -137,7 +166,7 @@ def main() -> int:
     problems: list[str] = []
     examined = skipped = 0
     for name, c in load_sets():
-        n, ps = check_case(c)
+        n, ps = check_case(c, name)
         examined += 1 if n else 0
         skipped += 0 if n else 1
         problems.extend(f"[{name}] {x}" for x in ps)
