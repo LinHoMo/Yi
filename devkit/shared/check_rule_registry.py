@@ -30,6 +30,11 @@ bazi 也没有 tests/ 目录。也就是说 `rule_registry.json` 里每一条
 词汇表里的每个状态也必须出现在统计里（防漏项）；`registry_未被本表联句直接挂上`
 里的 id 必须都存在于 `rule_registry`。本批首跑抓到 `_meta` 仍写「四态」而实际条目已用
 第五态「已落地」——文档与实际状态词汇分家（§六.2），同批改为「五态」。
+
+457 批追加：**逐联书源回指**。`_meta.纪律` 写着「联句与 src 逐字从书源抄来」，但 447
+只核统计块，100 条联句与行号从未对拍。现按 [14] 同口径（所指行 ±2 行拼接、去空白标点）
+逐条验证：`src` 必须带行号（`L8` 或 `《黄金策》源L124…`），行号须在底本范围内，联句须
+在该行邻域逐字命中。首跑 100/100 全符（0 处改值）。
 """
 from __future__ import annotations
 
@@ -47,6 +52,8 @@ ROOT = DISC.parent
 REG = DISC / "data" / "rules" / "rule_registry.json"
 # 447 批：千金赋联句映射（仅六爻有该册；八字无文件则跳过，不判红）。
 QIANJIN = DISC / "data" / "rules" / "qianjin_fu_map.json"
+QIANJIN_SRC = DISC / "data" / "sources" / "huangjince_dz.dz.txt"
+_QN_DROP = re.compile(r"[\s，。、；：「」『』“”\"'‘’（）()\[\]【】《》〈〉·．\-—_]+")
 
 _DROP = re.compile(r"[\s，。、；：「」『』“”\"'‘’（）()【】\[\]《》<>·．\-—_/\\|+=:;,.*]+")
 VARIANT = str.maketrans({"剋": "克", "裏": "里", "羣": "群", "徧": "遍", "啓": "启",
@@ -278,8 +285,9 @@ def check(doc: dict, problems: list[str], notes: list[str]) -> tuple[int, int]:
 
 
 def check_qianjin_map(doc: dict, problems: list[str],
-                      registry_ids: set[str] | None = None) -> tuple[int, int]:
-    """千金赋联句映射的统计自洽（447 批）。返回 (联句数, 状态种数)。"""
+                      registry_ids: set[str] | None = None,
+                      src_lines: list[str] | None = None) -> tuple[int, int]:
+    """千金赋联句映射的统计自洽＋逐联书源回指（447／457 批）。返回 (联句数, 状态种数)。"""
     entries = doc.get("联句映射")
     if not isinstance(entries, list) or not entries:
         problems.append("千金赋映射：联句映射缺失或为空——0 结果 ≠ 通过")
@@ -333,6 +341,37 @@ def check_qianjin_map(doc: dict, problems: list[str],
             if missing:
                 problems.append(f"千金赋映射：registry 列表有 {len(missing)} 个 id "
                                 f"不在 rule_registry：{missing[:4]}")
+
+    # 457 批：逐联书源回指——`_meta.纪律` 声明「联句与 src 逐字从书源抄来」，
+    # 此前只核统计块，联句与行号从未对拍。窗口与 [14] 同口径（所指行 ±2 行拼接）。
+    lines = src_lines
+    if lines is None:
+        if not QIANJIN_SRC.is_file():
+            problems.append(f"千金赋映射：底本不存在 {QIANJIN_SRC.name}——无从回指")
+            lines = []
+        else:
+            lines = QIANJIN_SRC.read_text(encoding="utf-8", errors="replace").splitlines()
+    line_ref = re.compile(r"(?:源)?L(\d+)")
+    qbad = 0
+    for e in entries:
+        m = line_ref.search(str(e.get("src") or ""))
+        if not m:
+            problems.append(f"千金赋映射：条目缺行号 src（{(e.get('句') or '')[:16]}…）")
+            qbad += 1
+            continue
+        n = int(m.group(1))
+        if lines and (n < 1 or n > len(lines)):
+            problems.append(f"千金赋映射：src 行号 L{n} 超出底本（共 {len(lines)} 行）")
+            qbad += 1
+            continue
+        q = _QN_DROP.sub("", str(e.get("句") or ""))
+        window = "".join(_QN_DROP.sub("", x) for x in lines[max(0, n - 2):n + 3])
+        if not q or q not in window:
+            problems.append(f"千金赋映射：联句与底本源L{n} 邻域不符 → "
+                            f"{(e.get('句') or '')[:24]}…")
+            qbad += 1
+    if qbad:
+        problems.append(f"千金赋映射：逐联回指失败 {qbad}/{len(entries)} 条")
     return len(entries), len(usage)
 
 
@@ -383,17 +422,18 @@ def selftest(problems: list[str]) -> None:
 
     # 447 批：千金赋映射统计自洽（正例不误伤＋四类负例必须抓到）
     _states = ("已挂", "已落地", "未实现", "不适用", "无对应")
+    _qlines = ["天玄地黄", "宇宙洪荒", "日月盈昃", "辰宿列张"]
     qbase = {
         "_meta": {"五态": {s: "" for s in _states}},
         "统计": {"联句总数": 3, "已挂": 1, "已落地": 1, "未实现": 0,
                  "不适用": 1, "无对应": 0},
-        "联句映射": [{"句": "甲", "状态": "已挂"},
-                     {"句": "乙", "状态": "已落地_日辰并爻_20261014"},
-                     {"句": "丙", "状态": "不适用"}],
+        "联句映射": [{"句": "天玄地黄", "src": "L1", "状态": "已挂"},
+                     {"句": "宇宙洪荒", "src": "L2", "状态": "已落地_日辰并爻_20261014"},
+                     {"句": "日月盈昃", "src": "L3", "状态": "不适用"}],
         "registry_未被本表联句直接挂上": ["liuyao.andong"],
     }
     p_q: list[str] = []
-    n_q = check_qianjin_map(qbase, p_q, {"liuyao.andong"})
+    n_q = check_qianjin_map(qbase, p_q, {"liuyao.andong"}, _qlines)
     if p_q or n_q != (3, 3):
         problems.append(f"千金赋映射正例被误伤：{p_q}")
 
@@ -401,7 +441,7 @@ def selftest(problems: list[str]) -> None:
         d = json.loads(json.dumps(qbase, ensure_ascii=False))
         mut(d)
         p: list[str] = []
-        check_qianjin_map(d, p, {"liuyao.andong"})
+        check_qianjin_map(d, p, {"liuyao.andong"}, _qlines)
         return p
 
     if not any("统计.已挂" in x for x in _qbad(lambda d: d["统计"].__setitem__("已挂", 2))):
@@ -414,6 +454,13 @@ def selftest(problems: list[str]) -> None:
         problems.append("负例未抓到：registry 列表含 rule_registry 不存在的 id")
     if not any("未在统计中列出" in x for x in _qbad(lambda d: d["统计"].pop("无对应"))):
         problems.append("负例未抓到：状态词汇漏进统计块")
+    # 457 批：联句与 src 不符必须抓到；缺行号也必须抓到
+    if not any("联句与底本源L1 邻域不符" in x for x in
+               _qbad(lambda d: d["联句映射"][0].__setitem__("句", "绝无此语"))):
+        problems.append("负例未抓到：联句与 src 行不符")
+    if not any("缺行号 src" in x for x in
+               _qbad(lambda d: d["联句映射"][0].pop("src", None))):
+        problems.append("负例未抓到：条目缺行号 src")
 
 
 def main() -> int:
@@ -432,7 +479,8 @@ def main() -> int:
     if QIANJIN.is_file():
         qdoc = json.loads(QIANJIN.read_text(encoding="utf-8"))
         q_total, q_states = check_qianjin_map(qdoc, problems, registry_ids)
-        print(f"  千金赋映射：{q_total} 联、{q_states} 个状态；统计块与 registry 列表已逐项核对")
+        print(f"  千金赋映射：{q_total} 联、{q_states} 个状态；"
+              f"统计块/五态词表/registry 列表/逐联书源回指已逐项核对")
     elif DISC.name == "liuyao":
         problems.append(f"千金赋映射：{QIANJIN.name} 不存在——0 结果 ≠ 通过，先确认路径")
     _ap = argparse.ArgumentParser(description="check_rule_registry：--selftest 负例自证开关（§三）")

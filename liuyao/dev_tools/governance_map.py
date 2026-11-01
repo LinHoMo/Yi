@@ -109,7 +109,7 @@ CURATED = {
         "check_house_conventions": ("blocking", "§三 house 规矩核对版（211 批：版本名/绝对路径/scratch/产物四判据）"),
         "check_fangwei": ("blocking", "方位层还出书自断"),
         "check_fixture_invariants": ("blocking", "fixture 声明干支/卦名可算"),
-        "check_rule_registry": ("blocking", "注册表 verified/impl 指针回验＋千金赋统计块/五态词表/registry 列表自洽（447 批扩）"),
+        "check_rule_registry": ("blocking", "注册表 verified/impl 指针回验＋千金赋统计块/五态词表/registry 列表/逐联书源回指（447/457 批扩）"),
         "check_layer_contract": ("blocking", "分层契约：四段键白名单＋禁边表（[32]；312 批补登记）"),
         "check_judgment_table": ("blocking", "判定表：9 格／书证逐字／覆写表随码动（[33]；314 批新增）"),
         "check_expected_coverage": ("blocking", "expected 书证覆盖生存线（[38]；344 批新增，425/426 批扩到 8 个案例文件）"),

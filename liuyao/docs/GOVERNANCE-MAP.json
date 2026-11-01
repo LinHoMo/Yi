@@ -241,7 +241,7 @@
   {
    "script": "check_rule_registry.py",
    "tier": "blocking",
-   "guards": "注册表 verified/impl 指针回验＋千金赋统计块/五态词表/registry 列表自洽（447 批扩）",
+   "guards": "注册表 verified/impl 指针回验＋千金赋统计块/五态词表/registry 列表/逐联书源回指（447/457 批扩）",
    "run_by_check_py": true,
    "doc": "规则注册表的书源指针回验器：`verified: true` 不许是自说自话。"
   },
