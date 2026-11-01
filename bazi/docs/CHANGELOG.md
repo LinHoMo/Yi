@@ -9,6 +9,40 @@
 > 399/400/401 撞号，按提交顺序归位为 **408/409/410/411**；原提交 `46d8bc1` 的提交信息
 > 保留旧号作历史，不再改。跨文件引用一律按新号。
 
+## 2026-11-02 第四百四十一批（两科·死链门补 `tools` 前缀）：**已删除的 `tools/` 路径首次纳入裸路径扫描；历史语境加显式豁免词、负例自证 3→4；顺改 `check_case_isolation` 过时头注**
+
+**性质**：共享门覆盖扩展＋文档串修正（不改引擎、不改案例、不改读数）。
+
+### 一、缺陷（440 只守住了 provenance 注记，扫描器仍漏 `tools/`）
+
+`check_doc_refs` 的裸路径前缀集原本是
+`docs|scripts|data|references|dev_tools|core|tests|bazi|liuyao`，**不含 `tools`**。
+440 批把 provenance 的 note 清干净了，但 `.py`/`.md`/`.json` 里的活引用仍在门外观测区：
+`dev_tools/check_case_isolation.py` 头注就写着「由 tools/case_isolation_check.py 机械守」，
+而该目录早已随扁平化删除。
+
+### 二、改法
+
+- `BARE` 前缀集加入 `tools`（`(?<![\w/.-])` 仍保证不会把 `dev_tools/` 里的
+  `tools` 误当前缀）。
+- `HISTORY`（病历/历史语境豁免词）补 `历史上|旧写法|扁平化删除|原抓取|登记时点`，
+  让明确标注为历史的旧路径不被当活引用；否则会逼人删掉事故记录（反向激励）。
+- selftest 增加一条裸 `tools/zz_probe_deadref_tool.py`，负例下限 3→**4**。
+- `check_case_isolation` 头注改正：原文说「没有任何东西在守它」——本器就是补上的门，
+  改为「那段时间这句话是空话——本器就是补上的那道门」，并把旧脚本标注为已删除。
+
+### 三、自证（§四.8）
+
+- 首跑两科各精确抓到 1 条：
+  `dev_tools/check_case_isolation.py:5 指向不存在的文件 → tools/case_isolation_check.py`；
+  改正 + 历史豁免后两科均 **0 条**（检视 793/819 条引用）。
+- selftest 4 条死引用全抓到；`dev_tools/` 现行路径不误伤。
+- 读数：tune 100.0（n=61）、holdout 100.0（n=279）、外部 69 例逐位不变。
+
+**全门复验**：两科 `check.py` 全过；账台全量 bad=0；两科 golden 零漂移；
+根级四闸全过；`sync_devkit.py --check` 12 件逐字节一致。
+
+
 ## 2026-11-02 第四百四十批（两科·扁平化残留引用清理）：**29 份 provenance 的 `tools/crosscheck_source.py` 活指令、3 个六爻工具 docstring、`liushen_image.json` 的 `tools/eval.py` 全改为现行路径/人工对勘；[42] 增 note 守卫（`dev_tools/` 不误伤），探针即红**
 
 **性质**：数据/meta 注记与文档串修正＋共享门扩展（不改引擎、不改案例、不改读数）。

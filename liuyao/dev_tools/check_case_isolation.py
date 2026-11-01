@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """案例库隔离门：解读/推演路径不得触达 `data/cases/`（评测层专用）。
 
-为什么需要它（2026-10-10）：`core/yishu_core/gate_kit.py` 头注写着
-「解读路径不得触达案例库」由 tools/case_isolation_check.py 机械守，
-而 `tools/` 随仓库扁平化已删除——这句话自那以后就是空话，**没有任何东西在守它**。
+为什么需要它（2026-10-10）：`core/yishu_core/gate_kit.py` 头注曾写
+「解读路径不得触达案例库」由 tools/case_isolation_check.py 机械守（该脚本已随扁平化删除），
+那段时间这句话是空话——本器就是补上的那道门。
 
 这条纪律为什么是 P0：一旦 narrate/render/step 层读到 `expected`，
 「引擎输出 vs 古籍要点」就不再是两个独立量，对齐分可以被动inflate 而门禁全绿——

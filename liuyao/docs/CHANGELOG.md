@@ -5,6 +5,33 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-02 第四百四十一批（两科·死链门补 `tools` 前缀）：**已删除的 `tools/` 路径首次纳入裸路径扫描；历史语境加显式豁免词、负例自证 3→4；顺改 `check_case_isolation` 过时头注**
+
+**性质**：共享门覆盖扩展＋文档串修正（不改引擎、不改案例、不改读数）。
+
+### 一、缺陷（440 只守住了 provenance 注记，扫描器仍漏 `tools/`）
+
+`check_doc_refs` 的裸路径前缀集不含 `tools`，所以 `.py`/`.md`/`.json` 里的
+`tools/...` 活引用仍在门外。六爻侧同样复现：`dev_tools/check_case_isolation.py`
+头注仍写「由 tools/case_isolation_check.py 机械守」。
+
+### 二、改法
+
+- `BARE` 前缀集加入 `tools`；`(?<![\w/.-])` 保证 `dev_tools/` 里的 `tools` 不被误抓。
+- `HISTORY` 补 `历史上|旧写法|扁平化删除|原抓取|登记时点`，让标注为历史的旧路径不判红。
+- selftest 增加裸 `tools/zz_probe_deadref_tool.py`，负例下限 3→**4**。
+- `check_case_isolation` 头注改为「那段时间这句话是空话——本器就是补上的那道门」。
+
+### 三、自证（§四.8）
+
+- 首跑六爻精确抓到 `dev_tools/check_case_isolation.py:5`；改正 + 历史豁免后
+  **0 条**（检视 819 条引用），selftest 4 条全抓。
+- 读数：tune **97.9%**（n=20）／holdout **90.2%**（n=12）／外部各集逐位不变。
+
+**全门复验**：`liuyao/dev_tools/check.py` 全过；账台全量 bad=0；`golden.py verify`
+机械 3a19／措辞 7960 零漂移；根级四闸全过；`sync_devkit.py --check` 12 件逐字节一致。
+
+
 ## 2026-11-02 第四百四十批（两科·扁平化残留引用清理）：**12 份六爻 provenance 的 `tools/crosscheck_source.py` 活指令与 3 个工具 docstring 改为现行路径/人工对勘；[42] 增 note 守卫（`dev_tools/` 不误伤），探针即红**
 
 **性质**：数据/meta 注记与文档串修正＋共享门扩展（不改引擎、不改案例、不改读数）。

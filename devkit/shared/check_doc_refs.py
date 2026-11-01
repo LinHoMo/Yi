@@ -50,7 +50,7 @@ REF = re.compile(r"`([A-Za-z0-9_\-./\u4e00-\u9fff]+\.(?:md|py|json|txt|css|html)
 # 这条指向扁平化时已删除目录的指针，一路以「84 条全可达」的身份躲过了门。
 # 只认以真实顶层目录开头的串，避免把散文里的 `a/b.md` 之类速记当声明。
 BARE = re.compile(r"(?<![\w/.-])((?:docs|scripts|data|references|dev_tools|core|tests"
-                  r"|bazi|liuyao)/[A-Za-z0-9_\-./\u4e00-\u9fff]*"
+                  r"|bazi|liuyao|tools)/[A-Za-z0-9_\-./\u4e00-\u9fff]*"
                   r"\.(?:md|py|json|txt|css|html)(?![A-Za-z]))")
 SKIP_MARK = ("<", "…", "...", "http://", "https://")
 # 运行时产物目录：本就不入库，存在性不检查
@@ -79,7 +79,7 @@ SUFFIXES = (".md", ".py", ".json", ".txt", ".css", ".html")
 # 「曾在四处各存一份…」「同指该不存在的文件」「负例：dev_tools/nope.py」这类行是**病历与自测样本**，
 # 不是可照跑的指针。把它们判红，等于逼文档把事故记录删干净——那是反向激励。
 HISTORY = re.compile(r"曾[并未已在经]|勘误|不采此说|已失效|原有|原挂|已删除|已随|随仓库|不存在|改指|作废|"
-                     r"无此文件|负例|造的|自测|selftest")
+                     r"无此文件|负例|造的|自测|selftest|历史上|旧写法|扁平化删除|原抓取|登记时点")
 SKIPPED_HISTORY: list[str] = []
 # 故意编造的负例文件名（各门 selftest 里造的靶子）不是对仓库的声明
 # 【362 批·六爻欠账】补 `__no_such__`：check_rule_registry 的行号形态负例
@@ -175,6 +175,7 @@ def selftest(problems: list[str]) -> None:
     ok_b = "scripts/" + real_py[0].name
     tmp.write_text("见 `docs/zz_probe_deadref_a.md` 与 `dev_tools/zz_probe_deadref_b.py`。\n"
                    "裸路径也要抓（docs/zz_probe_deadref_c.md 无反引号）。\n"
+                   "tools 目录也要抓（tools/zz_probe_deadref_tool.py）。\n"
                    f"真路径不得误报：{ok_a} 与 {ok_b} 都在。\n",
                    encoding="utf-8")
     # 第四式（照八字科第一百六十六批·同步判据不同文字）：**JSON 数据文件里**的死指针
@@ -186,8 +187,8 @@ def selftest(problems: list[str]) -> None:
     try:
         got, n = scan()
         hits = [g for g in got if "_selftest_deadref.md" in g]
-        if len(hits) < 3:
-            problems.append(f"负例自证失效：造的 3 条死引用（含 1 条裸路径）只抓到 {len(hits)} 条")
+        if len(hits) < 4:
+            problems.append(f"负例自证失效：造的 4 条死引用（含裸路径与已删除 tools/）只抓到 {len(hits)} 条")
         jhits = [g for g in got if "_selftest_deadref.json" in g]
         if len(jhits) < 1:
             problems.append("负例自证失效：data/rules/*.json 里的死指针没被抓到（JSON 载体盲区）")
