@@ -283,7 +283,7 @@
   {
    "script": "check_verdict_external.py",
    "tier": "blocking",
-   "guards": "结构层断语外置审计（210 判语族 LOCK=0；215 扩 advisory 语族同锁，抓到过迁移错节 bug）",
+   "guards": "结构层断语外置审计（§一.1：判语字面量零回潮＋0 文件守卫＋verdict_texts/scripts_labels 目录无非空值；210/452 批）",
    "run_by_check_py": true,
    "doc": "结构层断语外置审计（第一百六十六批 §一.1 规矩的核对版，第两百一十批上门）。"
   },

@@ -955,7 +955,7 @@ def main() -> int:
              "dev_tools/prospective.py"),
              ("regex_lists", "[29] 正则字符类 list 展平审计（AGENTS §二 硬规矩核对版：10-13 静默全盲案首次有全库机器版）",
               "dev_tools/check_regex_lists.py"),
-              ("verdict_external", "[30] 结构层断语外置审计（§一.1 核对版：判语字面量零回潮，LOCK=0 解锁唯一通道＝搬家进 labels 册）",
+              ("verdict_external", "[30] 结构层断语外置审计（§一.1 核对版：判语字面量零回潮＋0 文件守卫＋verdict_texts/scripts_labels 目录无非空值；452 批扩）",
                "dev_tools/check_verdict_external.py"),
                ("house_conventions", "[31] §三 house 规矩核对版（A 版本号文件名/B 绝对路径/C scratch/D 产物；tracked 口径，负例含注入）",
                 "dev_tools/check_house_conventions.py"),

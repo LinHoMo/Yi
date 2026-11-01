@@ -123,7 +123,7 @@ CURATED = {
         # 故本表删条目（"表中有序实无"从此不再报它）；门本身仍在 CI 的 root-gates 里跑。
         "check_test_sentinel": ("blocking", "考卷哨兵：只给红绿／阈值单调／开卷记账（[34]；315 批新增）"),
         "check_source_readings": ("blocking", "书证逐字回验（含代码注释）"),
-        "check_verdict_external": ("blocking", "结构层断语外置审计（210 判语族 LOCK=0；215 扩 advisory 语族同锁，抓到过迁移错节 bug）"),
+        "check_verdict_external": ("blocking", "结构层断语外置审计（§一.1：判语字面量零回潮＋0 文件守卫＋verdict_texts/scripts_labels 目录无非空值；210/452 批）"),
         "check_split_ledger": ("blocking", "分片排除理由可字面重跑"),
         "check_verdict_coherence": ("blocking", "判词与得分同档"),
         "check_yingqi_information": ("blocking", "候选池信息量红线（防铺量涨分）"),

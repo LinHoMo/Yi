@@ -11,12 +11,19 @@
   · 书证串（含《》/源L/「」）：照录引文，§三 引文面合法。
 基线 LOCK=0：任何结构层新断语字面量判红；解锁唯一通道＝同 §四.6 搬家进 labels 册（不是改 LOCK）。
 
+452 批追加：① 扫描层判据抽成 `audit_scan`，**`--selftest` 与主入口共用**——此前 selftest
+只验「无回潮」，不验「扫到 0 文件」，`scripts/` 路径挪动或空目录会假绿（§四.8 的
+0 结果守卫在 selftest 路径上是空的）；② 外置目录形状：`verdict_texts.json` 与
+`scripts_labels.json` 不得有空节、空字符串、空列表/空对象（`basis` 按目录自带 _meta
+的「可空」声明豁免）——断语搬家后被静默清空时，报告缺句没有任何别的门看得见。
+
     python dev_tools/check_verdict_external.py --selftest
 """
 from __future__ import annotations
 
 import argparse
 import ast
+import json
 import sys
 from pathlib import Path
 
@@ -39,6 +46,77 @@ JUE = ("大吉", "大凶", "偏吉", "偏凶", "反断", "凶中反吉", "凶性
 EXEMPT_FILES = ("narrate", "narrative_utils")
 LOCK = 0
 MIN_FILES = 40
+# 452 批：外置目录本身也要守——断语搬进 JSON 后，若某条被清空，报告会静默缺句。
+LABEL_FILES = ("data/rules/verdict_texts.json", "data/rules/scripts_labels.json")
+META_KEYS = ("_meta", "schema", "_comment", "discipline")
+
+
+def audit_scan(rows: list[str], n: int) -> list[str]:
+    """扫描层的判据（主入口与 --selftest 共用，0 结果与回潮都在这里判）。"""
+    problems: list[str] = []
+    if n < MIN_FILES:
+        problems.append("仅扫 %d 文件（<%d）——接线可疑；0 结果 ≠ 通过" % (n, MIN_FILES))
+    if len(rows) > LOCK:
+        problems.append("结构层判语字面量回潮 %d 处（LOCK=%d）——搬家进 labels 册，不解锁"
+                        % (len(rows), LOCK))
+    return problems
+
+
+def _empty_leaves(obj, path: str = "") -> list[tuple[str, str]]:
+    out: list[tuple[str, str]] = []
+    if isinstance(obj, dict):
+        if not obj:
+            out.append((path or "<root>", "空对象"))
+        for k, v in obj.items():
+            out.extend(_empty_leaves(v, "%s/%s" % (path, k)))
+    elif isinstance(obj, list):
+        if not obj:
+            out.append((path, "空列表"))
+        for i, v in enumerate(obj):
+            out.extend(_empty_leaves(v, "%s[%d]" % (path, i)))
+    elif isinstance(obj, str) and not obj.strip():
+        # 452 批：`basis` 按 verdict_texts 自身的 _meta 声明「可空」，不判；
+        # 其余展示字段（text／label／template…）空即判红。
+        if path.rsplit("/", 1)[-1] != "basis":
+            out.append((path, "空字符串"))
+    return out
+
+
+def audit_doc(doc, rel: str) -> list[str]:
+    """外置目录的结构完整性：非空节、无空值、无空列表/空对象（`_meta` 等说明节豁免）。"""
+    problems: list[str] = []
+    if not isinstance(doc, dict):
+        return ["%s：顶层不是对象" % rel]
+    for sec, v in doc.items():
+        if sec in META_KEYS:
+            continue
+        if isinstance(v, (dict, list)) and not v:
+            problems.append("%s：节「%s」为空" % (rel, sec))
+    for path, why in _empty_leaves(doc):
+        if path.startswith("/_meta") or path.startswith("/schema") or path.startswith("/_comment"):
+            continue
+        problems.append("%s%s：%s" % (rel, path, why))
+    return problems
+
+
+def audit_label_files() -> tuple[int, list[str]]:
+    problems: list[str] = []
+    n = 0
+    for rel in LABEL_FILES:
+        p = DISC / rel
+        if not p.is_file():
+            problems.append("%s：文件不存在" % rel)
+            continue
+        try:
+            doc = json.loads(p.read_text(encoding="utf-8"))
+        except Exception as exc:
+            problems.append("%s：JSON 解析失败（%s）" % (rel, exc))
+            continue
+        n += 1
+        problems.extend(audit_doc(doc, rel))
+    if n == 0:
+        problems.append("外置目录 0 份读入——0 结果 ≠ 通过")
+    return n, problems
 
 
 def scan(root: Path):
@@ -95,13 +173,27 @@ def selftest() -> int:
             if must_absent in joined:
                 fails.append("豁免面误杀：" + must_absent)
     rows_real, n_real = scan(DISC / "scripts")
-    if len(rows_real) > LOCK:
-        print("× 结构层判语字面量回潮 %d 处（LOCK=%d）：" % (len(rows_real), LOCK))
-        for r in rows_real:
-            print("   ", r)
+    probs = audit_scan(rows_real, n_real)
+    # 452 批负例：0 文件/0 判语不得当通过（照 §四.8「0 结果 ≠ 通过」）
+    if not audit_scan([], 0):
+        fails.append("负例未抓到：扫描 0 文件应判红")
+    if audit_scan([], MIN_FILES + 1):
+        fails.append("正例被误伤：管线正常时应 0 问题")
+    # 452 批：外置目录形状负例（空字符串、空节必须抓到；正常节不误伤）
+    if len(audit_doc({"section": {"k": ""}, "empty": {}}, "夹具")) < 2:
+        fails.append("负例未抓到：空字符串/空节应至少 2 条")
+    if audit_doc({"section": {"k": "正常文本"}}, "夹具"):
+        fails.append("正例被误伤：正常外置目录不该判")
+    n_lab, lab_probs = audit_label_files()
+    if n_lab != len(LABEL_FILES):
+        fails.append("外置目录只读入 %d/%d 份——接线断" % (n_lab, len(LABEL_FILES)))
+    if probs or lab_probs or fails:
+        for x in (probs + lab_probs + fails):
+            print("× " + x)
         return 1
-    print("√ selftest：判红/三豁免全中；本科 scripts 实扫 %d 文件，结构层判语 %d 处（≤LOCK %d）"
-          % (n_real, len(rows_real), LOCK))
+    print("√ selftest：判红/三豁免/0 文件/空目录全中；本科 scripts 实扫 %d 文件、"
+          "结构层判语 %d 处（≤LOCK %d）；外置目录 %d 份无非空值"
+          % (n_real, len(rows_real), LOCK, n_lab))
     return 0
 
 
@@ -112,15 +204,15 @@ def main() -> int:
     if args.selftest:
         return selftest()
     rows, n = scan(DISC / "scripts")
-    if n < MIN_FILES:
-        print("× 仅扫 %d 文件（<%d）——接线可疑" % (n, MIN_FILES))
-        return 1
-    if len(rows) > LOCK:
-        for r in rows:
+    probs = audit_scan(rows, n)
+    n_lab, lab_probs = audit_label_files()
+    if probs or lab_probs:
+        for r in rows[:20]:
             print("× " + r)
-        print("结构层判语回潮 %d 处——搬家进 scripts_labels.json，不解锁" % len(rows))
+        for x in probs + lab_probs:
+            print("× " + x)
         return 1
-    print("√ 结构层判语字面量 0 处（扫 %d 文件）" % n)
+    print("√ 结构层判语字面量 0 处（扫 %d 文件）；外置目录 %d 份无非空值" % (n, n_lab))
     return 0
 
 
