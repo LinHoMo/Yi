@@ -86,8 +86,17 @@ BRANCHES = "".join(EARTHLY_BRANCHES)
 # 卦名段**不含**「变之」但**含**「卦」（尾卦由 strip 处理）——早期版把「卦」排除在卦名段外，
 # 懒惰匹配＋可选「变」组会把「得离卦变火山旅」截成「得离卦」（变卦整段丢失，ZD017 实测）。
 HEX = r"[^\n。；：，、变之\s]{1,6}"
+# 402 批：占题字符类不再排除「之」、最短降到 1 字——「占官之升迁」「占寿」「自占病」
+# 三类真实占例头此前整条不被 segment 识别。1 字题由 ONE_CHAR_BLOCK 挡行文（「占又得…」）。
 CASE_RE = re.compile(
-    r"占([^\n。；：，、变之卦得]{2,24}?)[，,]?得(%s)(?:(?:变(%s))|之(%s))?" % (HEX, HEX, HEX))
+    r"占([^\n。；：，、变卦得]{1,24}?)[，,]?得(%s)(?:(?:变(%s))|之(%s))?" % (HEX, HEX, HEX))
+# 单字题黑名单：这些是行文连接词，不是占题（「占又得大有之大壮」实测假头）。
+ONE_CHAR_BLOCK = set("又此其之者事卦得问曰也而即")
+
+
+def topic_allowed(topic: str) -> bool:
+    """单字题只挡行文连接词；真实单字题（寿/病/财/梦/时/缺/地…）放行。"""
+    return not (len(topic) == 1 and topic in ONE_CHAR_BLOCK)
 # 日期行：前缀不限（例：/又如：/如/曾於/即如…）；日字可省（「申月癸巳占父外任」）；
 # 须月建＋日柱俱全（日柱＝干＋支）。弱日期（只记支不记干）另有守卫，见 segment()。
 DATE_RE = re.compile(r"([%s])月([%s])([%s])日?" % (BRANCHES, STEMS_SRC, BRANCHES))
@@ -390,6 +399,10 @@ def parse_case(block: dict, seq: int) -> tuple[dict | None, dict]:
         rec.update(extra)
         return None, rec
 
+    # 402 批：单字行文题（占又得…）不是占例头；真实单字题（寿/病/财/梦…）保留。
+    if not topic_allowed(topic):
+        return excl("单字占题疑为行文（占%s得…）" % topic)
+
     # 弱日期紧邻守卫：标题前 10 字内有「X月Y日」（只记支）⇒ 本案真实日期行是它，
     # segment 配到的完整日期属于别案（ZD019/ZD066 实测张冠李戴）
     pre = m.string[max(0, m.start() - 10):m.start()]
@@ -446,14 +459,23 @@ def parse_case(block: dict, seq: int) -> tuple[dict | None, dict]:
     tail = tail[:cut]
     sentences = [s for s in re.split(r"[。；\n]", tail) if s.strip()]
 
-    # ── 应期锚：第一个**结果标记句＋日期令牌**的句子 ──
+    # ── 应期锚：**先找强实现句（果/竟/卒）＋日期令牌**，再退回弱结果词 ──
+    # 402 批：旧写法按 OUTCOME_RE（含 待/许/应）取第一句，遇到「待甲寅日出空」
+    # 这类预测句就先锁定，后面的「果于寅日…」反而读不到（L550/L2084 实测）。
+    # 强实现句优先，弱结果句只作退路；预测句不再抢占实录锚。
     anchor = None
     anchor_idx = -1
     for i, s in enumerate(sentences):
-        if OUTCOME_RE.search(s) and _date_tokens(s):
+        if STRONG_REALIZED_RE.search(s) and _date_tokens(s):
             anchor = s
             anchor_idx = i
             break
+    if anchor is None:
+        for i, s in enumerate(sentences):
+            if OUTCOME_RE.search(s) and _date_tokens(s):
+                anchor = s
+                anchor_idx = i
+                break
     if anchor is None:
         return excl("无应期锚：断语段无「结果标记句＋日期令牌」")
 
@@ -615,9 +637,96 @@ def load_existing_keys() -> tuple[set, set]:
     return k1, k2
 
 
+def assign_stable_ids(kept: list[dict], excluded: list[dict], old_doc: dict) -> tuple[list[dict], list[dict]]:
+    """保留在册 id，新条目取 max+1；不因 parser 扩块而整体重编号（test_seal 依赖旧 id）。
+
+    旧 id 匹配键：kept＝(日期, 本卦, 变卦)；excluded＝(占题, 原始卦名, 变卦名)。
+    匹配不上的新条目按块序（临时 ZD{seq}）追加，从 max(旧 id)+1 起编。
+    """
+    old_cases = old_doc.get("cases") or []
+    old_ex = (old_doc.get("_meta") or {}).get("excluded") or []
+    by_kept = {}
+    for c in old_cases:
+        hx = c.get("hexagram") or {}
+        key = ((c.get("input") or {}).get("date"), hx.get("original"), hx.get("changed"))
+        by_kept.setdefault(key, c.get("id"))
+    by_ex = {}
+    for e in old_ex:
+        key = (e.get("topic"), e.get("raw_original"), e.get("raw_changed"))
+        by_ex.setdefault(key, e.get("id"))
+    claimed: set[str] = set()
+    pending: list[dict] = []
+    for c in kept:
+        hx = c.get("hexagram") or {}
+        key = ((c.get("input") or {}).get("date"), hx.get("original"), hx.get("changed"))
+        oid = by_kept.get(key)
+        if oid and oid not in claimed:
+            c["id"] = oid
+            claimed.add(oid)
+        else:
+            pending.append(c)
+    for e in excluded:
+        key = (e.get("topic"), e.get("raw_original"), e.get("raw_changed"))
+        oid = by_ex.get(key)
+        if oid and oid not in claimed:
+            e["id"] = oid
+            claimed.add(oid)
+        else:
+            pending.append(e)
+    nums = []
+    for rec in old_cases + old_ex:
+        mm = re.search(r"ZD(\d+)", str(rec.get("id") or ""))
+        if mm:
+            nums.append(int(mm.group(1)))
+    next_id = (max(nums) if nums else 0) + 1
+    # 新条目按块序（临时 id 的序号）编，不按 kept/excluded 分列表的顺序
+    def _seq(obj: dict) -> int:
+        mm = re.search(r"ZD(\d+)", str(obj.get("id") or ""))
+        return int(mm.group(1)) if mm else 0
+    for obj in sorted(pending, key=_seq):
+        while True:
+            cand = f"ZD{next_id:03d}"
+            next_id += 1
+            if cand not in claimed:
+                obj["id"] = cand
+                claimed.add(cand)
+                break
+    return kept, excluded
+
+
+def selftest() -> int:
+    fails = []
+    for s in ("占官之升迁得艮卦变山雷颐", "占寿得剥之无妄卦", "自占病得泽风大过变火风鼎卦"):
+        if not CASE_RE.search(s):
+            fails.append("真实占例头未被识别：%r" % s)
+    if topic_allowed("又"):
+        fails.append("行文单字题「又」未被挡住")
+    if not topic_allowed("寿"):
+        fails.append("真实单字题「寿」被误挡")
+    old = {"cases": [{"id": "ZD001", "input": {"date": "卯月壬辰日"},
+                      "hexagram": {"original": "贲", "changed": None}}], "_meta": {"excluded": []}}
+    kept = [{"id": "ZD999", "input": {"date": "卯月壬辰日"},
+             "hexagram": {"original": "贲", "changed": None}}]
+    kept, _ = assign_stable_ids(kept, [], old)
+    if kept[0]["id"] != "ZD001":
+        fails.append("旧 kept id 未保留：%r" % kept[0]["id"])
+    old2 = {"cases": [], "_meta": {"excluded": [
+        {"id": "ZD100", "topic": "t", "raw_original": "o", "raw_changed": ""}]}}
+    ex = [{"id": "ZD999", "topic": "t", "raw_original": "o", "raw_changed": ""},
+          {"id": "ZD998", "topic": "n", "raw_original": "n", "raw_changed": ""}]
+    _, ex = assign_stable_ids([], ex, old2)
+    ids = {e["id"] for e in ex}
+    if "ZD100" not in ids or "ZD101" not in ids:
+        fails.append("旧 excluded id 未保留/新 id 未取 max+1：%r" % ids)
+    print("√ selftest：之/单字题识别、行文黑名单、稳定 id 三件全过"
+          if not fails else "× " + "；".join(fails))
+    return 0 if not fails else 1
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="从增删卜易 dz 底本抽取应期案例作外部验证集")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--reject-stats", action="store_true",
                     help="按「哪一道门」归并打印剔除原因直方图——回答「扩容该改哪一处」而不是逐条问")
     ap.add_argument("--why", action="append", default=[], metavar="ID",
@@ -625,9 +734,17 @@ def main() -> int:
                          "全打会淹掉 √ 清单；而**只打前 20 条**又让「某条为什么没进册」变成查不到——"
                          "378 批加此参数就是为了不再靠猜。")
     args = ap.parse_args()
+    if args.selftest:
+        return selftest()
 
     text = SRC.read_text(encoding="utf-8")
     blocks = segment(text)
+    old_doc = {}
+    if OUT.exists():
+        try:
+            old_doc = json.loads(OUT.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            old_doc = {}
     print(f"分段：{len(blocks)} 个案例块")
 
     k1, k2 = load_existing_keys()
@@ -654,6 +771,9 @@ def main() -> int:
         kept.append(case)
         k1.add(key1)
         k2.add(key2)
+
+    # 402 批：parser 扩块会改变临时序号；按旧册键保留 id，新条目取 max+1。
+    kept, excluded = assign_stable_ids(kept, excluded, old_doc)
 
     if args.why:
         _want = set(args.why)

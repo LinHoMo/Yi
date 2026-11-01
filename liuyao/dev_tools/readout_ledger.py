@@ -83,7 +83,9 @@ def checks():
     def c_dz(t):
         s = sh(["scripts/evaluate.py", "--split", "zengshan_dz_holdout"])
         return (grab(s, r"平均分 = ([0-9.]+)%"), grab(s, r"strict top-1 命中 ([0-9.]+)%"))
-    add("liuyao.zengshan_dz(61.5/33.3)", "README 表→308批改期望", c_dz, ("61.5", "33.3"))
+    add("liuyao.zengshan_dz(60.3/37.9)",
+        "README 表→308批→402批改期望（dz 扩样 21→29；priority-anchor＋CASE_RE 之/单字题）",
+        c_dz, ("60.3", "37.9"))
 
     def c_window2(t):
         s = sh(["dev_tools/window_report.py"])
@@ -187,8 +189,8 @@ def checks():
                                 len(sp["tune"]), len(sp["holdout"]),
                                 len(sp["wikisource_holdout"]), len(sp["wikisource_direction"]),
                                 len(sp["zengshan_dz_holdout"]))))
-    add("六爻案例分母(44/20/12/50/31/21)", "234批（率与分母并钉）", c_case_denoms,
-        ("44", "20", "12", "50", "31", "21"))
+    add("六爻案例分母(44/20/12/50/31/29)", "234批（率与分母并钉）；402 批 zengshan_dz 21→29",
+        c_case_denoms, ("44", "20", "12", "50", "31", "29"))
 
     def c_bazi_denoms(t):
         cc = json.loads((ROOT / "bazi" / "data" / "cases" / "bazi_classical_cases.json")
