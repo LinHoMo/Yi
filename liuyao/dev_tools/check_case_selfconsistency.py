@@ -19,6 +19,8 @@
     `quote`）；没有自引书文的（classical_cases、yingqi_cases）不计入已验，并报出条数；
     `quote` 是 YIIN 集的书证（日柱行，不含断语），该集只跑日辰/应期两条判据，
     卦名不在日柱行里是常态，不记 NOTE（425 批扩围）。
+  · YIIN 另跑「断语逐字」：`expected.detail` 必须是本案书文窗口（日柱行→下一卦表块）
+    的逐字子串（427 批）；窗口口径与建器 `build_yiin_cases.case_window` 同源。
   · **判据只用干支，不用整句**：底本多作繁体（大壯／離／粵東帶貨），而片段是抓取时
     把 `<br>` 归一成换行的产物，拿整句回底本找必然假红——本器第一版就是这样
     一口气报出 8 条"片段在底本里找不到"。干支与地支繁简同形，"日辰""应期支"
@@ -40,7 +42,12 @@ DISC = Path(__file__).resolve().parents[1]
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+import build_yiin_cases as YB  # noqa: E402  卦表块/日柱行定位与建器同一口径
+
 CASE_DIR = DISC / "data" / "cases"
+YIIN_SRC = DISC / "data" / "sources" / "yiin_dz.dz.txt"
 SETS = ("wikisource_cases.json", "huozhulin_cases.json", "yingqi_cases.json",
         "classical_cases.json", "yiin_cases.json")
 # 该集的 provenance.quote 只是日柱行（不是整段书文）：①日辰、②应期照判，
@@ -101,6 +108,28 @@ def check_case(case: dict, name: str = "") -> tuple[int, list[str]]:
     return checked, problems
 
 
+def check_detail_verbatim(case: dict, lines: list[str], blocks: list[tuple[int, int]]) -> list[str]:
+    """YIIN：`expected.detail` 必须是本案书文窗口里的逐字子串（427 批）。
+
+    423 的建器写盘前验过引文，但没有常设门——重生成或手改把断语换成别案/凭空句，
+    [38] 只数非空、[16] 只查应期支，都发现不了。窗口口径与建器 `case_window` 同源。
+    """
+    cid = str(case.get("id") or "?")
+    pv = case.get("provenance") or {}
+    ln = pv.get("line")
+    det = str((case.get("expected") or {}).get("detail") or "")
+    if not det:
+        return [f"{cid}：expected.detail 为空，无可回指的断语"]
+    if not ln:
+        return [f"{cid}：缺 provenance.line，无法定位书文窗口"]
+    win = YB.case_window(lines, blocks, int(ln))
+    if not win:
+        return [f"{cid}：provenance.line={ln} 定位不到书文窗口"]
+    if det not in win:
+        return [f"{cid}：expected.detail 不在本案书文窗口里（不是逐字引文）"]
+    return []
+
+
 def load_sets() -> list[tuple[str, dict]]:
     out: list[tuple[str, dict]] = []
     for name in SETS:
@@ -113,7 +142,7 @@ def load_sets() -> list[tuple[str, dict]]:
     return out
 
 
-def selftest(problems: list[str], examined: int) -> None:
+def selftest(problems: list[str], examined: int, yiin_lines, yiin_blocks) -> None:
     """负例＝HZL001 校勘**前**的真实状态；正例＝校勘后；再加"无书文不算已验"。"""
     head = ("又问：壬癸动雨要言克日定时取验，何如?曰：如六月甲辰日占雨得乾之大壮，"
             "当日申时雷雨骤至，此壬癸克日定时")
@@ -152,9 +181,29 @@ def selftest(problems: list[str], examined: int) -> None:
     check_case(mk_yiin("辛卯日", "后至辛卯日，财值巳辰，果得财也"), "yiin_cases.json")
     if len(NOTE) != note0:
         problems.append("YIIN 日柱片段被误判为卦名缺失（③ 未跳过）")
+
+    # 427 批：YIIN 的 expected.detail 必须是本案书文窗口的逐字子串
+    if yiin_lines and yiin_blocks:
+        ln = yiin_blocks[0][0] + 1
+        win = YB.case_window(yiin_lines, yiin_blocks, ln)
+        if win:
+            pos = {"id": "POS_YIIN_DETAIL", "provenance": {"line": ln},
+                   "expected": {"detail": win[:20]}}
+            if check_detail_verbatim(pos, yiin_lines, yiin_blocks):
+                problems.append("YIIN detail 正例被误伤")
+            neg = {"id": "NEG_YIIN_DETAIL", "provenance": {"line": ln},
+                   "expected": {"detail": "本书没有这句话"}}
+            if not check_detail_verbatim(neg, yiin_lines, yiin_blocks):
+                problems.append("负例失效：YIIN detail 不在本案窗口没被判红")
+            empty = {"id": "NEG_YIIN_EMPTY", "provenance": {"line": ln},
+                     "expected": {"detail": ""}}
+            if not check_detail_verbatim(empty, yiin_lines, yiin_blocks):
+                problems.append("负例失效：YIIN detail 为空没被判红")
+        else:
+            problems.append("YIIN 窗口为空，detail 负例无从构造")
     if examined == 0:
         problems.append("全量 0 条被检视，本门等于没跑")
-    print("  [selftest] 负例已跑（串档 / 一致 / 无书文 / YIIN 日柱片段四件）")
+    print("  [selftest] 负例已跑（串档 / 一致 / 无书文 / YIIN 日柱片段 / YIIN 断语逐字 五件）")
 
 
 def main() -> int:
@@ -165,14 +214,20 @@ def main() -> int:
 
     problems: list[str] = []
     examined = skipped = 0
+    yiin_lines = yiin_blocks = None
+    if YIIN_SRC.exists():
+        yiin_lines = YIIN_SRC.read_text(encoding="utf-8", errors="replace").splitlines()
+        yiin_blocks = YB.split_blocks(yiin_lines)
     for name, c in load_sets():
         n, ps = check_case(c, name)
+        if name == "yiin_cases.json" and yiin_lines is not None:
+            ps = ps + check_detail_verbatim(c, yiin_lines, yiin_blocks)
         examined += 1 if n else 0
         skipped += 0 if n else 1
         problems.extend(f"[{name}] {x}" for x in ps)
     print(f"  对账：{examined} 例有自引书文可判，{skipped} 例无书文（不计入已验）")
     if args.selftest:
-        selftest(problems, examined)
+        selftest(problems, examined, yiin_lines, yiin_blocks)
     if args.verbose:
         for x in NOTE[:20]:
             print(f"  · {x}")

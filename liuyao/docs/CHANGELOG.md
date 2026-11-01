@@ -5,6 +5,40 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-02 第四百二十七批（六爻·yiin 断语逐字门）：**[16] 加 YIIN `expected.detail` 须为本案书文窗口逐字子串——56 例全过、探针改一句即红；读数零变化**
+
+**性质**：门覆盖扩展（不改数据、不改引擎、不改读数）。
+
+### 一、缺口
+
+423 批在**建器写盘前**验过 yiin 断语引文，但盘上没有常设门：`yiin_cases.json` 的
+`expected.detail` 若被重生成/手改成别案句子或凭空造句，[38] 只数非空（≥56）、
+[16] 只查应期支（支若仍出现就放过），两者都发现不了。prose 通道已有 [41] 逐字书证，
+yiin 的断语逐字仍缺。
+
+### 二、改法
+
+- `build_yiin_cases.py` 新增 `case_window(lines, blocks, line_no)`：本案书文窗口
+  （日柱行 → 下一卦表块的日柱行），与建器解析同一口径。
+- [16] 新增 `check_detail_verbatim()`：对 yiin 每例要求 `expected.detail` 是该窗口的
+  **逐字子串**；空 detail、缺 `provenance.line`、定位不到窗口、不在窗口内都判红。
+- selftest 加三件：真实窗口片段正例、伪造句负例、空 detail 负例。
+
+### 三、自证（§四.8）
+
+- 全量 139 例可判（其中 yiin 56 例断语逐字全过），46 例无书文、61 条 NOTE 不变。
+- `--selftest` 五件全过（串档／一致／无书文／YIIN 日柱片段／YIIN 断语逐字）。
+- **真实探针**：把 YI001 的 `expected.detail` 改成「本书没有这句话」→ 门报
+  `expected.detail 不在本案书文窗口里`（同时应期支检查也失配）（EXIT=1）；恢复后转绿。
+
+### 四、读数
+
+- 零漂移：tune／holdout／wiki／dz／bushi／yiin／prose 两片逐位不变（只加门，不动评分）。
+
+**全门复验**：`liuyao/dev_tools/check.py` 全过；`readout_ledger.py` 全量 bad=0；
+`golden.py verify` 零漂移；根级四闸全过。
+
+
 ## 2026-11-02 第四百二十六批（六爻·覆盖生存线补全）：**[38] 补齐 prose／yingqi／huozhulin 四集——8 个案例文件全受控；真实探针两件判红，读数零变化**
 
 **性质**：门覆盖扩展（只改登记表与门文案，不改数据、引擎、评分）。

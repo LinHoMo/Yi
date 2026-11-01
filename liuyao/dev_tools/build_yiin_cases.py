@@ -180,6 +180,35 @@ def split_blocks(lines: list[str]) -> list[tuple[int, int]]:
     return blocks
 
 
+def case_window(lines: list[str], blocks: list[tuple[int, int]], line_no: int) -> str:
+    """该案的书文窗口：日柱行 → 下一卦表块的日柱行。
+
+    `expected.detail` 必须是这个窗口里的**逐字子串**（427 批：[16] 据此验证
+    yiin 的断语没有在重生成/手改里被换成别案或凭空造句）。
+    """
+    a = int(line_no) - 1
+    b = next((bb for aa, bb in blocks if aa == a), None)
+    if b is None:
+        return ""
+    start = a
+    for k in (2, 3, 4):
+        if a - k >= 0 and DAY_LINE.search(lines[a - k]) and "▅" not in lines[a - k]:
+            start = a - k
+            break
+    stop = len(lines)
+    for aa, bb in blocks:
+        if aa > b:
+            for k in (2, 3, 4):
+                if (aa - k >= 0 and aa - k > a and DAY_LINE.search(lines[aa - k])
+                        and "▅" not in lines[aa - k]):
+                    stop = aa - k
+                    break
+            else:
+                stop = aa
+            break
+    return "\n".join(lines[start:stop])
+
+
 def parse_yao(lines: list[str], a: int, b: int) -> tuple[list[dict] | None, str]:
     """解析六爻，行序为上爻→初爻；返回按**初→上**排列的列表。"""
     ys = lines[a:b + 1]

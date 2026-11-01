@@ -82,6 +82,8 @@ case 形态（逐字，L1037–L1046）：
 不能拿它当应期支证据（否则月支会冒充应期支；YI034 探针实测）。
 同批 [38] expected 覆盖生存线也补入本集：`yingqi`／`yingqi_branches` ≥11、
 `yingqi_claim` ≥5、`detail` ≥56，`verdict` 用 `allowed_values: []` 钉死为 null。
+**427 批**：[16] 再加一条「断语逐字」——`expected.detail` 必须是本案书文窗口
+（日柱行→下一卦表块）的逐字子串；56 例全过，探针改一句即判红。
 
 ---
 
