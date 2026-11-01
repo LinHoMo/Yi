@@ -12,6 +12,7 @@
  "tier_link_violations": {
   "blocking_not_referenced": [],
   "referenced_not_blocking": [
+   "build_dts_corpus.py",
    "build_siku_dz.py",
    "build_tiaohou.py",
    "diff_tiaohou_vs_head.py"
@@ -64,7 +65,7 @@
    "script": "build_dts_corpus.py",
    "tier": "build",
    "guards": "滴天髓语料构建",
-   "run_by_check_py": false,
+   "run_by_check_py": true,
    "doc": "从《滴天髓》书源机械提取引擎所引章节 → bazi/data/ditian_sui.json（引文层）。"
   },
   {

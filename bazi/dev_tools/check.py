@@ -495,6 +495,15 @@ def main() -> int:
         print(out_q.strip()[-800:])
     else:
         print("[9] 调候引文重算 √", out_q.strip())
+    # 464 批：`ditian_sui.json` 的构建器同样自带「与重算一致」自校验，此前从未接线。
+    code_d, out_d = run(["dev_tools/build_dts_corpus.py", "--check"])
+    if code_d != 0:
+        fails.append("ditian_sui.json 与底本重算不一致（引文层/章节提取漂移）"
+                     f"（跑 dev_tools/build_dts_corpus.py 重建，不要手改数据）：{out_d.strip()[:200]}")
+        print("[9] 滴天髓引文层重算 ×")
+        print(out_d.strip()[-800:])
+    else:
+        print("[9] 滴天髓引文层重算 √", (out_d.strip().splitlines() or [""])[-1])
 
     # [10] 参考文档「源L 行号 + 逐字引文」回验。
     # 此前 references/*.md 写着「可经 python tools/check_source_readings.py 回验」，

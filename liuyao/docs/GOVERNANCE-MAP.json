@@ -11,7 +11,10 @@
  "curated_but_missing": [],
  "tier_link_violations": {
   "blocking_not_referenced": [],
-  "referenced_not_blocking": []
+  "referenced_not_blocking": [
+   "build_question_use_gods.py",
+   "build_use_god_rules.py"
+  ]
  },
  "rows": [
   {
@@ -81,14 +84,14 @@
    "script": "build_question_use_gods.py",
    "tier": "build",
    "guards": "问题→用神词典构建",
-   "run_by_check_py": false,
+   "run_by_check_py": true,
    "doc": "生成问题词典 `data/rules/question_use_gods.json`；带引文的族必须逐字命中原文。"
   },
   {
    "script": "build_use_god_rules.py",
    "tier": "build",
    "guards": "用神法则表构建",
-   "run_by_check_py": false,
+   "run_by_check_py": true,
    "doc": "生成取用神的关系优先表；每条规则的引文必须在原文里逐字找得到。"
   },
   {

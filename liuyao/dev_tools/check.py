@@ -995,6 +995,19 @@ def main() -> int:
             if rc != 0:
                 failures.append(f"{title} 未通过")
 
+    # 464 批：两份规则数据构建器自带「引文逐字命中原文」复验，此前从未接线。
+    # 声明见各自 docstring：「引文逐字对不上原文就不出表」——不跑等于没声明。
+    if want("rule_registry"):
+        for script, label in (("dev_tools/build_question_use_gods.py", "问题词典"),
+                              ("dev_tools/build_use_god_rules.py", "用神法则表")):
+            print(f"\n[12] 规则数据引文复验（{label}）")
+            rc, out = run([sys.executable, script, "--check"])
+            for line in out.splitlines():
+                if line.strip():
+                    print("  " + line.strip())
+            if rc != 0:
+                failures.append(f"[12] 规则数据引文复验（{label}）未通过")
+
     print("\n" + "=" * 62)
     if failures:
         print("质量门未通过：")
