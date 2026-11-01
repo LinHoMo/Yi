@@ -10,8 +10,11 @@
   "license": "原作明代，公有领域；转录本依维基文库授权条款",
   "source_file": "data/sources/sanming_tonghui_siku.dz.txt",
   "raw_transcription": "data/sources/sanming_tonghui_siku.wikitext.txt（抓取件，按 .gitignore 不入库）",
-  "chars": 483593,
-  "bytes": 1419789,
+  "stats": {
+    "bytes": 1419789,
+    "chars": 483593,
+    "lines": 6715
+  },
   "sha256": "47028eb5df323e77657cd6cdc696d133b3d923e31f7b537bad31feb6f7f9194f",
   "sha256_convention": "对落盘字节取哈希（与在盘文件一致）",
   "eol_on_disk": "LF",

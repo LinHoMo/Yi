@@ -1,11 +1,11 @@
 {
- "count": 69,
+ "count": 70,
  "by_tier": {
   "tool": 3,
   "ondemand": 12,
   "nightly": 12,
   "build": 11,
-  "blocking": 31
+  "blocking": 32
  },
  "unclassified": [],
  "curated_but_missing": [],
@@ -237,6 +237,13 @@
    "guards": "注册表 verified/impl 指针回验",
    "run_by_check_py": true,
    "doc": "规则注册表的书源指针回验器：`verified: true` 不许是自说自话。"
+  },
+  {
+   "script": "check_source_provenance.py",
+   "tier": "blocking",
+   "guards": "底本完整性门：provenance 的 sha256/bytes/chars/lines 须与在盘底本逐项相符（[42]；433 批新增）",
+   "run_by_check_py": true,
+   "doc": "底本完整性门（[42]，第四百三十三批）：provenance 登记值必须与在盘底本逐项相等。"
   },
   {
    "script": "check_source_readings.py",

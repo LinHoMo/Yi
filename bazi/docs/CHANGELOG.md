@@ -9,6 +9,48 @@
 > 399/400/401 撞号，按提交顺序归位为 **408/409/410/411**；原提交 `46d8bc1` 的提交信息
 > 保留旧号作历史，不再改。跨文件引用一律按新号。
 
+## 2026-11-02 第四百三十三批（八字·底本完整性门）：**三命通会四库本 provenance 补 `stats`（builder 同步产出）＋新共享门 [42] 核对 23 份底本；探针改坏哈希即红，读数零变化**
+
+**性质**：门禁新增＋登记修正（不改引擎、不改案例、不改读数）。
+
+### 一、缺陷（底本是所有逐字回验的根，却无门核对）
+
+`data/sources/*.provenance.json` 的 note 普遍写着「sha256 与 stats 由对在盘文件实测得出，
+可用于后续核对文件是否被改动」，但全仓没有任何门执行这句话。433 批首跑 23 份，
+22 份四项全相符；唯一缺陷是 `sanming_tonghui_siku.provenance.json`：
+它只有顶层 `bytes`/`chars`（由 `build_siku_dz.py` 写出），没有 `stats`、没有行数，
+按「四项核对」口径缺一项，且 builder 重生成会一直缺。
+
+### 二、改法
+
+- `dev_tools/build_siku_dz.py` 产出 `stats`（bytes／chars／**非空行**），同批重生成
+  provenance；校订件 `sanming_tonghui_siku.dz.txt` 字节未变（sha `47028eb5…`，
+  `--check` 与重算一致）。
+- 新增共享门 `devkit/shared/check_source_provenance.py`（`devkit/shared/` 第 12 个共享件；
+  两科 `dev_tools/` 同名文件为产物，由 `sync_devkit.py --write` 分发，手改被 [37] 判红）。
+- 两科 `dev_tools/check.py` 挂 **[42]**；下限：bazi 23 份、liuyao 16 份。
+- 核对口径（四项均机械可复算）：`sha256`＝原始字节哈希、`bytes`＝原始字节数、
+  `chars`＝UTF-8 解码后长度、`lines`＝**非空行数**（不是 `splitlines()`）。
+  不核 `ganzhi_pairs／tables／headings`：抽取口径散在历史脚本里、无单一定义，
+  本门显式写「不核」，不拿半定义判红（§六.5）。
+- 治理同步：八字 scripts 47→48、blocking 29→30（六爻 69→70、31→32）；
+  `readout_ledger` 的 governance 期望同步改为 (70/48, blk 32/30)。
+
+### 三、自证（§四.8）
+
+- 全量：**23 份 provenance／23 份底本／69 项统计全部相符**。
+- 7 件 selftest 全过：正例／sha256 失配／底本追加一字节／缺 source_file／缺 sha256／
+  `lines` 用含空行口径必被抓／0 份 provenance 必被抓。
+- **真实探针**：把 `mingli_tanyuan_dz.provenance.json` 的 `sha256` 改为全 0 →
+  [42] 报 `sha256 失配（登记 000000000000… ≠ 在盘 c245cca314d3…）`（EXIT=1）；
+  恢复后转绿。
+- 读数：tune **100.0**（n=61）、holdout **100.0**（n=279）、外部 69 例逐位不变
+  （底本正文一字未改，只改登记值；§四.7：读数不动属预期）。
+
+**全门复验**：`bazi/dev_tools/check.py` 全过（新增 [42]）；账台全量 bad=0；
+`golden.py verify` 零漂移；根级四闸全过；`sync_devkit.py --check` 12 件逐字节一致。
+
+
 ## 2026-11-02 第四百三十二批（八字·豁免册收敛与实测披露）：**ZP025 底本只有句末一字之讹（「官」作「这」）——截到「乙亥」后逐字比对 444→445、豁免 13→12；余 12 条附最长连续块实测，确认为诚实下限**
 
 **性质**：数据修正＋门禁披露增强（不改引擎、不改 expected、不改读数）。

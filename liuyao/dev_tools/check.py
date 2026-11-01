@@ -977,7 +977,10 @@ def main() -> int:
                 "dev_tools/check_bond_polarity.py"),
                ("prose_readings", "[41] prose 吉凶书证门（非空吉凶须本案断语段逐字书证；册↔案例↔分片三方同源；"
                                   "421 批跨案引文事故的常驻线；422 批新增）",
-                "dev_tools/check_prose_readings.py")):
+                "dev_tools/check_prose_readings.py"),
+               ("source_provenance", "[42] 底本完整性（provenance 的 sha256/bytes/chars/lines 须与在盘底本逐项相等；"
+                                     "433 批新增）",
+                "dev_tools/check_source_provenance.py")):
         # [36] 文档索引门于 A0-5（第三百三十一批）上提到 `devkit/root/check_docs_index.py`：
         # 它守全仓 DOCS.md，不属六爻一科。编号 36 空出，**不回填**（墓碑口径见 A5-1）。
         if want(key):

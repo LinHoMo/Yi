@@ -15,7 +15,8 @@
       "golden.py",
       "baselines.py",
       "feedback_store.py",
-      "check_source_readings.py"
+      "check_source_readings.py",
+      "check_source_provenance.py"
     ],
     "root": [
       "check_root_docs.py",
@@ -43,7 +44,8 @@
     "check_doc_refs.py": {"liuyao": 11, "bazi": 11},
     "check_regex_lists.py": {"liuyao": 29, "bazi": 26},
     "check_rule_registry.py": {"liuyao": 12, "bazi": 12},
-    "check_source_readings.py": {"liuyao": 14, "bazi": 10}
+    "check_source_readings.py": {"liuyao": 14, "bazi": 10},
+    "check_source_provenance.py": {"liuyao": 42, "bazi": 42}
   },
   "targets": {
     "liuyao": "liuyao/dev_tools",

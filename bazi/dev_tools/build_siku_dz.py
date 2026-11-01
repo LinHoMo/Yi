@@ -141,8 +141,13 @@ def main() -> int:
         "license": "原作明代，公有领域；转录本依维基文库授权条款",
         "source_file": "data/sources/sanming_tonghui_siku.dz.txt",
         "raw_transcription": "data/sources/sanming_tonghui_siku.wikitext.txt（抓取件，按 .gitignore 不入库）",
-        "chars": len(text),
-        "bytes": len(raw_bytes),
+        # stats 与其余 provenance 同形（433 批底本完整性门 [42] 按此四项核对）；
+        # lines 用**非空行数**，与 2026-10-01 补写 provenance 时的口径一致。
+        "stats": {
+            "bytes": len(raw_bytes),
+            "chars": len(text),
+            "lines": sum(1 for ln in text.splitlines() if ln.strip()),
+        },
         "sha256": sha,
         "sha256_convention": "对落盘字节取哈希（与在盘文件一致）",
         "eol_on_disk": "LF",

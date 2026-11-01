@@ -5,6 +5,58 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-02 第四百三十三批（六爻·底本完整性门）：**provenance 首次有门核对——火珠林/黄金策 CRLF→LF 失配、增刪卜易 LF 文本哈希与在盘 CRLF 不符；三册按在盘重测＋台账六行重测；新共享门 [42]，读数零变化**
+
+**性质**：门禁新增＋登记修正（不改引擎、不改案例、不改读数）。
+
+### 一、缺陷（底本是逐字回验的根，却无门核对）
+
+`data/sources/*.provenance.json` 的 note 普遍写着「sha256 与 stats 可用于后续核对文件
+是否被改动」，但全仓没有门执行。433 批首跑 16 份，抓出 3 册失配：
+
+- **火珠林**（`huozhulin.wikitext.txt`）：登记 `2cc29b1e…`／67945 字节／25835 字；
+  在盘 `b3bed441…`／66666／24556。差值 **1279 字节/字恰等于文件换行数**，
+  即 CRLF 版被规范成 LF 后 provenance 未重测；正文未变。
+- **黄金策**（`huangjin_ce.wikitext.txt`）：同一行尾规范化。旧 `sha256_file_bytes`
+  `54bca094…` 与 `chars` 25167（CRLF 版）失效；在盘 LF 为 `51843f47…`／65909／23389；
+  且缺 `source_file`。
+- **增刪卜易**（`zengshan_buyi.wikitext.txt`）：旧 `sha256` `897f963b…` 是 **LF 文本**
+  哈希，在盘为 CRLF（原始字节 `522068be…`／330663）；旧 `chars` 123927 是 LF 长度，
+  在盘 128438（差 4511 恰为 CRLF 行数）；且缺 `source_file`。
+
+`references/source_ledger.md` 同源失修：黄金策 67,687→65,909、火珠林 67,945→66,666、
+卜筮正宗 2,796／`2b0641fc…`→2,741／`9bbfabac…`、易冒行 1736→1627、易隐 2675→2245
+（「行」原混用总行数/非空行）；「四份正文均为 CRLF」也与实测不符。
+
+### 二、改法
+
+- 新增共享门 `devkit/shared/check_source_provenance.py`（`devkit/shared/` 第 12 个共享件；
+  两科 `dev_tools/` 同名文件为产物）。核对 sha256／bytes／chars／**非空行**四项，
+  缺任一项或失配即红；下限 liuyao 16 份、bazi 23 份。两科 check.py 挂 **[42]**。
+- 三册 provenance 按在盘重测：火珠林更新 sha256/bytes/chars；黄金策补 `source_file`
+  与 `stats`、`sha256` 改为在盘字节哈希、旧 CRLF 值收进 `sha256_history`；增刪卜易补
+  `source_file`/`stats`、`sha256` 改为在盘字节哈希、旧 LF 哈希保留 `sha256_lf_text`。
+- `references/source_ledger.md` 六行按在盘重测，并把「行」统一为非空行、行尾说明改为实测
+  （增刪卜易 CRLF、其余五份 LF）。
+- 治理同步：六爻 scripts 69→70、blocking 31→32（八字 47→48、29→30）；
+  `readout_ledger` 期望改为 (70/48, blk 32/30)。
+
+### 三、自证（§四.8）
+
+- 全量：**16 份 provenance／16 份底本／48 项统计全部相符**。
+- 7 件 selftest 全过：正例／sha256 失配／底本追加一字节／缺 source_file／缺 sha256／
+  `lines` 用含空行口径必被抓／0 份 provenance 必被抓。
+- **真实探针**：把 `huozhulin.provenance.json` 的 `sha256` 改为全 0 →
+  [42] 报 `sha256 失配（登记 000000000000… ≠ 在盘 b3bed441a997…）`（EXIT=1）；
+  恢复后转绿。
+- 读数：tune **97.9%**（n=20）／holdout **90.2%**（n=12）／外部各集逐位不变
+  （底本正文一字未改，只改登记值与台账；§四.7：读数不动属预期）。
+
+**全门复验**：`liuyao/dev_tools/check.py` 全过（新增 [42]）；账台全量 bad=0；
+`golden.py verify` 机械 3a19／措辞 7960 零漂移；根级四闸全过；
+`sync_devkit.py --check` 12 件逐字节一致。
+
+
 ## 2026-11-02 第四百二十九批（六爻·应期词表门）：**ZS012/ZS029 的 yingqi「不安／难成」是判词不是应期——置空为 N/A＋[16] 钉死应期取值面；探针改回即红，读数零变化**
 
 **性质**：数据语义修正＋门覆盖扩展（不改引擎、不改评分、不改读数）。

@@ -70,7 +70,7 @@ Yi/
 ├── AGENTS.md            # 本文件：项目级铁律（贡献者读）
 ├── CONTRACT.md          # 四段契约：chart→analyze→narrate→render 的判据本体（310 批重建）
 ├── kernel/              # 引擎内核单一真源（316 批起）：common/ 两科共用 + variants/<名>.<科>.py 在册分叉
-├── devkit/              # **门禁内核**单一真源（331–334 批）：shared/ 11 共享件 + variants/ 4 变体；
+├── devkit/              # **门禁内核**单一真源（331–334 批）：shared/ 12 共享件 + variants/ 4 变体；
 │                        #   root/ 根级门（不分发）；sync_devkit.py --write/--check；handoff/ 不入库
 ├── liuyao/              # 六爻（独立）
 │   ├── core/yishu_core/ # **产物**：由 kernel/sync_kernel.py 生成，勿手改
@@ -94,7 +94,10 @@ Yi/
 
 **门禁内核真源（第三百三十四批）**：11 个同名门/器已归并——7 个进 `devkit/shared/`
 单一真源，4 个因两科逻辑不同按 kernel 变体范式登记（`devkit/MANIFEST.json` 的
-`variants` ＋ `variant_reasons`）。`data/cache/`（337 批）收所有评测/构建生成物，
+`variants` ＋ `variant_reasons`）。**第四百三十三批新增第 12 个共享件
+`check_source_provenance`（底本完整性门 [42]）**：provenance 的 sha256/bytes/chars/lines
+须与在盘底本逐项相符（首跑即抓到《火珠林》wikitext 的 CRLF→LF 失配与两份旧册缺
+source_file）。`data/cache/`（337 批）收所有评测/构建生成物，
 整目录 gitignore，清掉即由脚本现场重生。
 
 **文档地图（第三百三十批新增）**：根 `DOCS.md` 是全仓 51 份 Markdown 的总索引——

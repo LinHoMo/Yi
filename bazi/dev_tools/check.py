@@ -736,6 +736,18 @@ def main() -> int:
     else:
         print("[41] 案例引文逐字性 √")
 
+    # [42] 底本完整性（第四百三十三批）：所有逐字回验的根是 data/sources/*.txt；
+    # provenance 的 sha256/stats 与在盘底本逐项核对，根上漂移会让上面所有门失去意义。
+    print("\n[42] 底本完整性（provenance 的 sha256/bytes/chars/lines 须与在盘底本逐项相等）")
+    code, out = run(["dev_tools/check_source_provenance.py", "--selftest"])
+    for line in out.splitlines():
+        if line.strip():
+            print("  " + line.strip())
+    if code != 0:
+        fails.append("底本完整性门未过（provenance 与在盘底本失配/缺登记）")
+    else:
+        print("[42] 底本完整性 √")
+
     if ENC_WITNESS:
         fails.extend("产物编码退化：" + w for w in ENC_WITNESS)
     if fails:

@@ -4,7 +4,16 @@
   "page": "增刪卜易",
   "api": "https://zh.wikisource.org/w/api.php",
   "retrieved": "2026-10-29",
-  "sha256": "897f963b938ec4582bc892465301b831a6439216f317841f44b888117704ca07",
+  "source_file": "data/sources/zengshan_buyi.wikitext.txt",
+  "sha256": "522068be9311bafe9329a2e2bae5c793251ddc859aa3d04a3d46184cd3720d7c",
+  "sha256_convention": "对落盘字节取哈希（433 批复核：2026-10-29 登记的 sha256 是对 LF 文本取的；在盘为 CRLF，故按原始字节重测，原 LF 文本哈希保留在 sha256_lf_text）",
+  "sha256_lf_text": "897f963b938ec4582bc892465301b831a6439216f317841f44b888117704ca07",
+  "eol_on_disk": "CRLF",
+  "stats": {
+    "bytes": 330663,
+    "chars": 128438,
+    "lines": 4475
+  },
   "license": "原作清代，公有领域；转录本依维基文库授权条款",
-  "chars": 123927
+  "note": "433 批：底本完整性门 [42] 首跑发现本文件缺 source_file 与原文行数；sha256 原为 LF 文本哈希（897f963b…），在盘为 CRLF，故把 sha256 改为在盘字节哈希、原 LF 哈希保留在 sha256_lf_text，并补 stats（原登记 chars 123927 是 LF 文本长度，在盘 128438，差 4511 恰为 CRLF 行数）。正文未改。"
 }

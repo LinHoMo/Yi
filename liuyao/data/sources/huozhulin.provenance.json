@@ -9,10 +9,10 @@
   ],
   "page_count": null,
   "fetched": "未知（早期抓取未写 provenance；2026-10-01 补写本文件）",
-  "sha256": "2cc29b1e47197a793f1718c89899cd30e00654e4177f60c5349f2a2196619b8e",
+  "sha256": "b3bed441a997370275ab2e5988038ae3a55fcf9986e8f4a344f0083b78c60b64",
   "stats": {
-    "bytes": 67945,
-    "chars": 25835,
+    "bytes": 66666,
+    "chars": 24556,
     "lines": 909,
     "ganzhi_pairs": 65,
     "tables": 0,
@@ -20,5 +20,6 @@
   },
   "source_file": "data/sources/huozhulin.wikitext.txt",
   "provenance_backfilled_at": "2026-10-01",
-  "note": "公版古籍原文的字符级转存，未做任何改写或模型转写。**补写说明**：正文的抓取时刻与子页清单当时未留痕，故 fetched/page_count 标为未知，不编造；sha256 与 stats 由本次对在盘文件实测得出，可用于后续核对文件是否被改动。"
+  "provenance_refreshed_at": "2026-11-02",
+  "note": "公版古籍原文的字符级转存，未做任何改写或模型转写。**补写说明**：正文的抓取时刻与子页清单当时未留痕，故 fetched/page_count 标为未知，不编造。**433 批复核**：在盘为 LF 版；2026-10-01 登记的 sha256 `2cc29b1e…`、67945 字节、25835 字对应的是 CRLF 版，差 1279 字节/字恰为 1279 个换行各少一个 \\r，正文未变；sha256/bytes/chars 按在盘文件重测，非空行 909 与 headings 84 不变。"
 }

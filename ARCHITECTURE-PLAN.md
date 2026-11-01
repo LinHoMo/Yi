@@ -19,7 +19,7 @@
 | 决策 | 内容 | 落地结果 |
 |---|---|---|
 | **D1 = C** | 两科 `core/yishu_core/` 维持入库；CI 强制 `kernel/sync_kernel.py --check`；core 标 `linguist-generated`；新增 `--standalone <科>` | `.gitattributes` 已标；CI `kernel-sync` job 已挂；`--standalone` 实测可拷走并 `--help` rc=0 |
-| **D2 = 复制分发** | `devkit/shared` 走 `sync_devkit.py --write/--check`，不用 import | 11 个共享件＋4 个变体分发两科；`[37]` 字节比对门已挂 |
+| **D2 = 复制分发** | `devkit/shared` 走 `sync_devkit.py --write/--check`，不用 import | 12 个共享件＋4 个变体分发两科（433 批新增 check_source_provenance）；`[37]` 字节比对门已挂 |
 | **D3 = 中档** | 八字做到"受同等审计"，不克隆六爻 `step1–step5` 与 9 个 `classical_enhancements_*` | 八字补 `tests/`＋`[38]`；CHANGELOG 三件套；CONTRACT §六 八字审计 0 条新增欠账 |
 
 ## 二、最终形态（2026-10-29 收口实测）
@@ -29,9 +29,9 @@ Yi/
 ├── 根 7 份治理 md：AGENTS.md / CONTRACT.md / README.md / CAPABILITY.md /
 │                   GOVERNANCE.md / DOCS.md / ARCHITECTURE-PLAN.md（本文件）
 ├── devkit/                     # 门禁内核真源（331–334 批）
-│   ├── MANIFEST.json           # 11 共享件 + 4 变体 + 8 门编号
+│   ├── MANIFEST.json           # 12 共享件 + 4 变体 + 9 门编号
 │   ├── sync_devkit.py          # --write / --check / --selftest
-│   ├── shared/                 # 7 个单源 + variants/ 4 个学科专属实现
+│   ├── shared/                 # 8 个单源 + variants/ 4 个学科专属实现
 │   ├── root/                   # check_root_docs / check_docs_index / check_batch_num（不分发）
 │   ├── pending/                # 登记暂存区（A2-B 合入 DOCS 后已空）
 │   └── handoff/                # 27 份交接报告（gitignore，不入库）
@@ -83,8 +83,8 @@ devkit/  ─sync_devkit──▶  <科>/dev_tools         （产物，[37] 字�
 | V1 | 两科门禁不低于基线 | `python liuyao/dev_tools/check.py` rc=0；`python bazi/dev_tools/check.py` rc=0 |
 | V2 | 分发面不漂移 | `node plugins/scripts/build.mjs` + `selftest.mjs` rc=0（7 段全绿） |
 | V3 | 根级文档无悬空引用 | `python devkit/root/check_root_docs.py` rc=0（7 份根级 md、0 死链；负例已做） |
-| V4 | 文档索引对账 | `python devkit/root/check_docs_index.py` rc=0（54 份全部登记可达） |
-| V5 | 门禁单一真源 | `python devkit/sync_devkit.py --check` rc=0（11 共享件 × 2 科；6 类负例） |
+| V4 | 文档索引对账 | `python devkit/root/check_docs_index.py` rc=0（51 份全部登记可达） |
+| V5 | 门禁单一真源 | `python devkit/sync_devkit.py --check` rc=0（12 共享件 × 2 科；6 类负例） |
 | V6 | 内核单一真源 | `python kernel/sync_kernel.py --check` rc=0（17/15 文件＋4 变体；CI `kernel-sync`） |
 | V7 | 契约三件套同步 | 340 批未改键面/禁边；两科 `check_layer_contract.py --selftest` rc=0 |
 | V8 | 两科形状对称 | 八字 `tests/`（smoke+regression）、CHANGELOG 三件套、CONTRACT §六 审计表在册 |
