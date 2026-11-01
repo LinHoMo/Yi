@@ -177,7 +177,9 @@
       "XF002",
       "XF003",
       "MY001",
-      "MY002"
+      "MY002",
+      "YP001",
+      "YP002"
     ]
   },
   "cases": [
@@ -1604,6 +1606,57 @@
         "transcription": "逐字转录自 suanzhun.net《命理约言》卷四杂论·附张神峰辟五行诸谬显示层；与 MY001 同源同页，Wikisource 无本帖（空红链），本仓 data/sources 未收本书。",
         "not_in_corpus_audit": "data/sources 列 48 件，无 命理约言（mingli_yueyan）任何文件（同 MY001）；本书为清初陈素庵《命理约言》四卷，确属未收录之时间检验古籍。",
         "pillar_check": "五虎遁 庚年申月=甲申、五鼠遁 癸日亥时=癸亥，自洽；癸日主，申月金生水、坐亥、时亥，水极旺，与书『水多为病』合。"
+      }
+    },
+    {
+      "id": "YP001",
+      "split": "external_holdout",
+      "book": "袁氏命谱",
+      "location": "《命谱》一、黄兴（袁树珊，民国）",
+      "source_quote": "甲戌 甲戌 甲寅 甲戌…日主专禄，天元一气，而八字又得纯阳之力，故以书生，崛起草莽，种族革命，卒以收功，其生盖有自来矣。甲为参天之木，虽值秋令，能耐肃杀，所谓松柏后凋者。四比助之，行戊运，身戊任财，一鸣惊人，亦固其所…专禄格。旺气所聚，畏官煞克制，又畏比肩分禄，二者并值，必无幸矣。",
+      "pillars": {
+        "year": "甲戌",
+        "month": "甲戌",
+        "day": "甲寅",
+        "hour": "甲戌"
+      },
+      "gender": "男",
+      "expected": {
+        "strength": "偏旺",
+        "strength_book_category": "旺气所聚（专禄格）"
+      },
+      "note": "书明言「专禄格。旺气所聚」——甲木日主，天元一气（四甲）、坐寅禄，袁树珊断为极旺（偏旺）。expected.strength 取『偏旺』（身旺≡身强，映射 evaluate.py:502『身旺→偏旺』；strength_book_category 存书原文『旺气所聚』）。官职/革命功业断语不入 expected（EVAL-PLAN §2.2 富贵层次/吉凶非评分面）。本例为「新书强弱分歧型」：袁氏命谱不在 data/sources（not_in_corpus 已审；同作者袁树珊另著《命理探源》在库，但《命谱》是独立未收录书）。实测引擎算 甲木戌月、四甲天元一气、寅禄 此造为 **偏弱（score -6.2）**，与书「旺气所聚（偏旺）」相左——属引擎与古书在 强弱 判定上的真实分歧（非取数错误：引擎确有输出），与 MY001（丁火 偏弱 vs 书 身强）同属「引擎在临界/特殊结构造上分歧」一类。本集永不调参，分歧照实登记（report-only）。",
+      "provenance": {
+        "source_url": "https://suanzhun.net/book/1376.html",
+        "transcription": "逐字转录自 suanzhun.net《命谱·黄兴》显示层；Wikisource 无本帖，本仓 data/sources 未收本书。",
+        "not_in_corpus_audit": "data/sources 列 48 件，无 袁氏命谱／mingpu／yuan_shi_mingpu 任何文件；同作者袁树珊《命理探源》(mingli_tanyuan) 在库且被 shensha.py 引为金舆诗出处，但《命谱》是独立著作、未收录，未参与任何 judge 设计——按字面审计（书不在 sources）通过；同作者重叠已在此透明标注。",
+        "pillar_check": "五虎遁 甲年戌月=甲戌、五鼠遁 甲日寅时=甲寅，自洽；甲日主，四甲天元一气、坐寅禄，与书「专禄格·旺气所聚」合。"
+      }
+    },
+    {
+      "id": "YP002",
+      "split": "external_holdout",
+      "book": "袁氏命谱",
+      "location": "《命谱》三、袁世凯（袁树珊，民国）",
+      "source_quote": "己未 癸酉 丁巳 丁未…未酉中拱申马（正财为马），巳未中拱午禄，是谓夹拱禄马，一贵也；未年生人，以丑为帝阙，八字见巳酉而不见丑，且巳酉会局，邀出丑字，是谓虚邀帝阙，二贵也。",
+      "pillars": {
+        "year": "己未",
+        "month": "癸酉",
+        "day": "丁巳",
+        "hour": "丁未"
+      },
+      "gender": "男",
+      "expected": {
+        "shensha": [
+          "禄马同乡"
+        ]
+      },
+      "note": "书明言「夹拱禄马…虚邀帝阙」——未酉拱申（申为马/正财）、巳未拱午（午为禄），即古典「禄马同乡/拱禄马」之格。expected.shensha 取『禄马同乡』。引擎 shensha_of_chart 输出为 天乙贵人/文昌/驿马/华盖/将星，**不含禄马同乡**（与 XF002/XF003 同源缺口：core/yishu_core/shensha.py 19 基名无此神），故本例 shensha 必 0/1，属「缺口曝光型」——为 XF002/XF003 的**独立第三文本佐证**（不同书、不同造、同一引擎缺口）。袁世凯功业/帝阙断语不入 expected（§2.2 非评分面）。本集永不调参，缺口照实登记（report-only）。",
+      "provenance": {
+        "source_url": "https://suanzhun.net/book/1376.html",
+        "transcription": "逐字转录自 suanzhun.net《命谱·袁世凯》显示层；Wikisource 无本帖，本仓 data/sources 未收本书。",
+        "not_in_corpus_audit": "data/sources 列 48 件，无 袁氏命谱 任何文件（同 YP001 审计；同作者《命理探源》在库但不等于《命谱》参与 judge 设计）。",
+        "pillar_check": "五虎遁 己年酉月=癸酉、五鼠遁 丁日未时=丁未，自洽；丁日主，巳未为根、丁比帮身，与书「夹拱禄马」结构合。"
       }
     }
   ]
