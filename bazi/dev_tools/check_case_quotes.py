@@ -14,8 +14,9 @@
      每条豁免同时报**最长连续块**（432 批），让「不在库」是实测数而不是一句声明；
   C2. 多底本（如《子平真诠评注》＝dz 本＋《命理探原》第二底本）逐本比对：
      只在第二底本命中、主底本不含 → `wrongbook` 判红（434 批；拼成一串时看不见）；
-  C3. 豁免项的四柱一旦在底本出现 → `exempt_bad` 判红（436 批）：
-     「不在库」不能只靠自述；四柱是案例身份里可机械对的那一半（人名仍靠人工复核）；
+  C3. 豁免项的四柱/已登记专名一旦在底本出现 → `exempt_bad` 判红
+     （436 批四柱、437 批专名）：「不在库」不能只靠自述；泛称（某侍郎/某知府）
+     与无专名项不做人名机械判，见 `case_quote_exempt.json` 的 `_case_names_note`；
 
   D. 下限守卫：含引文文件数、引文总数、逐字比对数低于登记基线即判红
      （0 结果 ≠ 通过；路径挪动/解析失败必须先显形）。
@@ -140,6 +141,11 @@ def verify_case(case: dict, corpus_by_names: dict, exempt: dict) -> tuple[str, s
         if pk and any(pk in FOLD.sub("", text) for text in corpus_by_names[key]):
             return "exempt_bad", (f"{cid}：豁免项的四柱「{pk}」已在底本出现——"
                                   f"「不在库」理由不成立，请回接逐字")
+        for nm in (exempt.get("case_names") or {}).get(cid) or []:
+            fn = FOLD.sub("", str(nm))
+            if fn and any(fn in FOLD.sub("", text) for text in corpus_by_names[key]):
+                return "exempt_bad", (f"{cid}：豁免项的人名「{nm}」已在底本出现——"
+                                      f"「不在库」理由不成立，请回接逐字")
         return "exempt", f"{cid}：{exempt['reason']}"
     if not hit:
         return "missing", f"{cid}：引文非书源逐字子串（{names[0]}）→ {q[:70]!r}"
@@ -270,6 +276,20 @@ def selftest() -> int:
         if not ok:
             bad += 1
         print(f"  {'√' if ok else '×'} {why}（期望 {want}，实为 {got}）")
+    name_cases = [
+        (dict(exempt, ids=["ZP002"], case_names={"ZP002": ["龙济光"]}), "exempt",
+         "豁免：登记专名也不在底本"),
+        (dict(exempt, ids=["ZP002"], case_names={"ZP002": ["甲子乙丑"]}), "exempt_bad",
+         "负例：豁免项登记专名已在底本出现"),
+    ]
+    for ex, want, why in name_cases:
+        case = {"id": "ZP002", "book": "子平真诠评注", "source_quote": "本书没有这句话",
+                "pillars": {"year": "戊辰", "month": "己巳", "day": "庚午", "hour": "辛未"}}
+        got, _msg = verify_case(case, corpus, ex)
+        ok = got == want
+        if not ok:
+            bad += 1
+        print(f"  {'√' if ok else '×'} {why}（期望 {want}，实为 {got}）")
     full = longest_block(norm(needle), qiong)
     part = longest_block(norm("本书并无此语"), qiong)
     ok_blk = full == len(norm(needle)) and part < 6
@@ -280,8 +300,8 @@ def selftest() -> int:
     if bad:
         print(f"  × selftest 失败 {bad} 例——比对逻辑/路由漂移，先修器")
         return 1
-    print(f"  √ selftest：{len(cases)} 件（正例×2/尾拼/凭空句/副底本误挂/豁免×2/豁免四柱回潮/"
-          f"豁免过期/不可路由）＋最长连续块全过")
+    print(f"  √ selftest：{len(cases) + len(name_cases)} 件（正例×2/尾拼/凭空句/副底本误挂/"
+          f"豁免×2/豁免四柱回潮/豁免专名×2/豁免过期/不可路由）＋最长连续块全过")
     return 0
 
 
