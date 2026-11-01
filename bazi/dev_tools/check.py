@@ -724,6 +724,18 @@ def main() -> int:
     else:
         print("[40] expected 覆盖生存线 √")
 
+    # [41] 案例引文逐字性（第四百三十批恢复）：扁平化删除了旧 tools/check_case_quotes.py
+    # 与 [1k]，464 条 source_quote 从此无门；本门按书源路由 + 豁免册逐条披露。
+    print("\n[41] 案例引文逐字性（source_quote 必须回书源逐字；不可路由/夹注段逐条披露）")
+    code, out = run(["dev_tools/check_case_quotes.py", "--selftest"])
+    for line in out.splitlines():
+        if line.strip():
+            print("  " + line.strip())
+    if code != 0:
+        fails.append("案例引文逐字性门未过（书源不在库的书/伪造引文/豁免过期）")
+    else:
+        print("[41] 案例引文逐字性 √")
+
     if ENC_WITNESS:
         fails.extend("产物编码退化：" + w for w in ENC_WITNESS)
     if fails:

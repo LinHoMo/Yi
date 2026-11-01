@@ -1,10 +1,10 @@
 {
- "count": 46,
+ "count": 47,
  "by_tier": {
   "tool": 2,
   "ondemand": 7,
   "build": 8,
-  "blocking": 28,
+  "blocking": 29,
   "nightly": 1
  },
  "unclassified": [],
@@ -120,6 +120,13 @@
    "guards": "命例基准自洽（expected 四柱可反算）",
    "run_by_check_py": true,
    "doc": "命例基准自洽审计（六爻科 `[16]` 的八字科等价物，2026-10-11 第八批）。"
+  },
+  {
+   "script": "check_case_quotes.py",
+   "tier": "blocking",
+   "guards": "案例引文逐字性门（source_quote 回书源逐字；不可路由/夹注段逐条披露；430 批恢复旧 [1k]）",
+   "run_by_check_py": true,
+   "doc": "八字科案例引文逐字性门（[41]，第四百三十批恢复；前身是扁平化前已删除的旧案例引文门）。"
   },
   {
    "script": "check_cli_encoding.py",
