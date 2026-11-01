@@ -34,10 +34,11 @@ from outcome import wilson  # noqa: E402
 
 
 def _pool_by_unit(eng, exp):
+    """418 批：与评分器同一基准支来源（`evaluate._gold_branches`）；
+    旧写法只取标签首令牌，多支基准（多事件/连写日）会漏计。"""
     x = str((exp or {}).get("yingqi") or "")
     unit = evaluate._expected_unit(x)
-    m = evaluate.YQ_UNIT_RE.search(x)
-    needed = [m.group(1)] if m else evaluate._branches_in(x)
+    needed = evaluate._gold_branches(exp or {}, x)
     pool = evaluate._offered_branches(evaluate._unit_pool(eng, unit))
     return needed, pool, unit
 
@@ -150,7 +151,14 @@ def cmd_selftest() -> int:
         fails.append("键特征不存在时未保持原序（稳定性破）")
     if len(KEYS) != 4 or "k1_current" not in KEYS:
         fails.append("候选键集合被改动（协议要求恰四键含现行）")
-    print("√ selftest：四键行为/稳定性/协议锁 全过" if not fails else "× " + "；".join(fails))
+    # 多支基准（418 批）：与评分器同源，全部书载支都进 needed（旧写法只取首令牌）
+    need, pool, unit = _pool_by_unit(
+        {"yingqi_years": ["卯年", "酉年"]},
+        {"yingqi": "子年、卯年", "yingqi_branches": ["卯", "子"]})
+    if need != ["卯", "子"] or unit != "年" or not pool or pool[0] != "卯":
+        fails.append("多支基准未全纳入（%r/%r/%r）" % (need, pool, unit))
+    print("√ selftest：四键行为/稳定性/协议锁/多支基准 全过"
+          if not fails else "× " + "；".join(fails))
     return 0 if not fails else 1
 
 

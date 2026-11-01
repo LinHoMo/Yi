@@ -5,6 +5,47 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-02 第四百一十八批（六爻·口径同源）：**名次键/基线/版本对拍三处回接评分器——多支基准不再只认首令牌；读数零漂移**
+
+**性质**：口径同源修正（不改引擎、不改语料、不改评分权重）。415 批把「基准应支」的单一来源
+定为 `evaluate._gold_branches`（优先 `expected.yingqi_branches`），但三个 dev_tools 仍各自
+保留旧写法 `needed = [m_unit.group(1)]`——**同一规则三份拷贝**，多支基准（多事件/连写日）
+在这三处仍只取标签首令牌。
+
+### 一、改动（三处同源，一行级）
+
+- `devkit/shared/variants/baselines.liuyao.py`（**真源**）`needed_branch()` → `evaluate._gold_branches(exp, x)`，
+  再 `sync_devkit.py --write` 重生成 `liuyao/dev_tools/baselines.py`（产物不手改，[37] 检字节同源）；
+- `dev_tools/rank_experiment.py` `_pool_by_unit()` → 同上（本科私有，非共享件）；
+- `dev_tools/version_collate.py` 配对 McNemar 的 `need` → 同上（本科私有）。
+三处均已写注释指向 415/418 批口径来源，后续改规则只改 `evaluate.py` 一处。
+
+### 二、自证（§四.8）
+
+- `baselines.py --selftest` 增：多支基准须返回 `["卯","子"]`（旧写法只返回 `["子"]`）；
+  无支标签（「次日」）须返回 `None`。
+- `rank_experiment.py --selftest` 增：`_pool_by_unit` 对「子年、卯年」须带全部书载支。
+- `version_collate.py --selftest` 原判据（含 McNemar 同函数）不变。
+三件 selftest 全过。
+
+### 三、读数对拍（§四.5）
+
+- `baselines.py`：wikisource 用神值支 **25.0%**／日辰 **4.5%** 不变；zengshan 用神值支
+  **17.2%**（5/29）不变——两集无多支基准参与本表。
+- `rank_experiment.py`：tune 四键 **64.7/35.3/5.9/47.1** 不变；外部现行键 wikisource 31.8%、
+  zengshan **41.4%**（与 415 批更新后的读数一致）。
+- `version_collate.py`：卦面 **0/47**、判词 **1/37** 不变；应期支双侧可比 14 对、集合不等 1
+  （旧写法在 `wikisource` 侧只取首令牌，改为全支后该行如实照登，不作为版本冲突门槛）。
+- **无任何已登记读数变动，新旧可比**（与 415 的口径变更不同，本批只统一实现）。
+
+### 四、登记同步
+
+`dev_tools/check.py` 无新增门（三件已有 selftest 在册）；`readout_ledger.py` 不新增项
+（既有的 `liuyao.baselines`／`liuyao.collate` 两项照旧 √）。
+
+**全门复验**：`liuyao/dev_tools/check.py` 全过；`readout_ledger.py` 42/42 bad=0；
+`golden.py verify` 机械 3a19／措辞 7960 零漂移；根级四闸全过。
+
 ## 2026-11-02 第四百一十七批（六爻·外部集用神扩样）：**「X为用」简写纳入直取——明示 8/38→14/38；六亲 11/14、支 7/10；strict 64.7→65.3（新旧不可比）**
 
 **性质**：外部集字段扩样（不改引擎、不改评分、不调参）。

@@ -188,9 +188,10 @@ def cmd_paired_baseline() -> int:
         b = c = n = 0
         for cid in ids:
             case = by_id[cid]
-            x = str((case.get("expected") or {}).get("yingqi") or "")
-            m = evaluate.YQ_UNIT_RE.search(x)
-            need = [m.group(1)] if m else evaluate._branches_in(x)
+            exp = case.get("expected") or {}
+            x = str(exp.get("yingqi") or "")
+            # 418 批：与评分器同源，多支基准按全部书载支计（旧写法只取首令牌）
+            need = evaluate._gold_branches(exp, x)
             if not need:
                 continue
             try:

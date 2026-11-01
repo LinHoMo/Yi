@@ -45,10 +45,14 @@ RANDOM_P = 1.0 / 12.0
 
 
 def needed_branch(case: dict):
-    """书载应支列表（不分单位）；无支可核 → None（该例对本表不可评，显形不充数）。"""
-    x = str((case.get("expected") or {}).get("yingqi") or "")
-    m = evaluate.YQ_UNIT_RE.search(x)
-    brs = [m.group(1)] if m else evaluate._branches_in(x)
+    """书载应支列表（不分单位）；无支可核 → None（该例对本表不可评，显形不充数）。
+
+    418 批：改走 `evaluate._gold_branches`——同一条多支基准（多事件/连写日）在评分器
+    已按全部书载支计（415 批），本表此前只取标签首令牌，两处口径分家。
+    """
+    exp = case.get("expected") or {}
+    x = str(exp.get("yingqi") or "")
+    brs = evaluate._gold_branches(exp, x)
     return brs or None
 
 
@@ -228,7 +232,14 @@ def cmd_selftest() -> int:
             case_runner.load_ids = real_load_ids
     if r is not None:
         fails.append("0 例可评未判红")
-    print("√ selftest：泄漏防护/缺键显形/0 例判红 全过" if not fails else "× " + "；".join(fails))
+    # 4) 多支基准（418 批）：needed_branch 必须返回**全部**书载支（旧写法只取首令牌）
+    mb = needed_branch({"expected": {"yingqi": "子年、卯年", "yingqi_branches": ["卯", "子"]}})
+    if mb != ["卯", "子"]:
+        fails.append("多支基准未全纳入（needed_branch=%r）" % (mb,))
+    if needed_branch({"expected": {"yingqi": "次日"}}) is not None:
+        fails.append("无支标签未返回 None")
+    print("√ selftest：泄漏防护/缺键显形/0 例判红/多支基准 全过"
+          if not fails else "× " + "；".join(fails))
     return 0 if not fails else 1
 
 
