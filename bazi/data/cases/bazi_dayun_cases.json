@@ -4,7 +4,7 @@
   "cases": [
     {
       "id": "DY001",
-      "split": "external_holdout",
+      "split": "witness",
       "book": "《渊海子平》",
       "location": "yuanhai_ziping_dz.dz.txt 源L251",
       "source_quote": "如【戊子，丁巳，甲辰，丙寅】：此命甲日生于四月下旬",
@@ -57,7 +57,7 @@
     },
     {
       "id": "DY002",
-      "split": "external_holdout",
+      "split": "witness",
       "book": "《渊海子平》",
       "location": "yuanhai_ziping_dz.dz.txt 源L388",
       "source_quote": "如【甲戌，丙寅，甲戌，壬申】：此命甲戌日，甲见丙食神",
@@ -95,7 +95,7 @@
     },
     {
       "id": "DY003",
-      "split": "external_holdout",
+      "split": "witness",
       "book": "《神峰通考》",
       "location": "shenfeng_tongkao_dz.dz.txt 源L1829",
       "source_quote": "此蔡文辉八字，术士皆许读书有功名之造，后学医，行辛巳运，庚子年不禄",
@@ -128,7 +128,7 @@
     },
     {
       "id": "DY004",
-      "split": "external_holdout",
+      "split": "witness",
       "book": "《渊海子平》",
       "location": "yuanhai_ziping_dz.dz.txt 源L387",
       "source_quote": "如【丁未，丁未，己亥，丁卯】：此命己亥日，己临亥上，身弱于亥",
@@ -179,7 +179,7 @@
     },
     {
       "id": "DY005",
-      "split": "external_holdout",
+      "split": "witness",
       "book": "《神峰通考》",
       "location": "shenfeng_tongkao_dz.dz.txt 源L2483",
       "source_quote": "辛亥 庚寅 丙子 丁酉 此造六丙生人，自坐官星，喜庚辛酉金为财",
@@ -217,7 +217,7 @@
     },
     {
       "id": "DY006",
-      "split": "external_holdout",
+      "split": "witness",
       "book": "《神峰通考》",
       "location": "shenfeng_tongkao_dz.dz.txt 源L2528",
       "source_quote": "癸卯 庚申 庚戌 甲申 此造庚金，日坐火库，得煅成器",
@@ -261,7 +261,7 @@
     },
     {
       "id": "DY007",
-      "split": "external_holdout",
+      "split": "witness",
       "book": "《神峰通考》",
       "location": "shenfeng_tongkao_dz.dz.txt 源L2531",
       "source_quote": "癸丑 甲寅 乙卯 己卯 此造乙日坐卯，虽禄得坦，奈生于寅月，阳木得令，阴木反弱",
@@ -307,7 +307,7 @@
     },
     {
       "id": "DY008",
-      "split": "external_holdout",
+      "split": "witness",
       "book": "《神峰通考》",
       "location": "shenfeng_tongkao_dz.dz.txt 源L1864",
       "source_quote": "辛巳，庚子，丙子，癸巳，此八字官旺行丙申运",
@@ -354,7 +354,7 @@
     },
     {
       "id": "DY009",
-      "split": "external_holdout",
+      "split": "witness",
       "book": "《神峰通考》",
       "location": "shenfeng_tongkao_dz.dz.txt 源L1868",
       "source_quote": "庚戌，甲申，癸丑，丁巳，此命月中正气，庚金印绶，主本杂气",
@@ -402,7 +402,7 @@
     },
     {
       "id": "DY010",
-      "split": "external_holdout",
+      "split": "witness",
       "book": "《神峰通考》",
       "location": "shenfeng_tongkao_dz.dz.txt 源L1856",
       "source_quote": "乙酉，辛巳，乙卯，辛巳，此乃朱举人命",
@@ -454,7 +454,7 @@
     },
     {
       "id": "DY011",
-      "split": "external_holdout",
+      "split": "witness",
       "book": "《神峰通考》",
       "location": "shenfeng_tongkao_dz.dz.txt 源L1848",
       "source_quote": "假如丁巳，丙午，甲寅，甲子，此是王郎中之命",
@@ -513,7 +513,7 @@
     },
     {
       "id": "DY012",
-      "split": "external_holdout",
+      "split": "witness",
       "book": "《神峰通考》",
       "location": "shenfeng_tongkao_dz.dz.txt 源L1848",
       "source_quote": "庚戌，戊子，壬辰，壬寅，此乃戴大宝命",

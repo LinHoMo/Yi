@@ -62,6 +62,28 @@
   `run_by_check_py:true`＋软项 `referenced_not_blocking`（该字段口径见 `governance_map.py`
   第两百零七批注释：存在性引用合法、清单入账；手改会在下次重生成时被覆盖）。
 
+## 2026-11-01 第四百一十三批（八字）：**收口 external_holdout 孤儿标签——BY/DY 14 例改标 `witness`（治理修正，非扩样、非调参）**
+
+**性质**：治理修正（标签口径对齐），不实评扩样、永不调参。只动 `data/cases/bazi_bing_yao_cases.json`（顶层 `splits.external_holdout→witness`＋逐例 `split`）与 `data/cases/bazi_dayun_cases.json`（12 例逐例 `split:"external_holdout"→"witness"`）；同步刷新 EVAL-PLAN §一.1 读数（80→66）与 §五 末注（待裁定→已收口）。
+
+### 一、问题（412 批 §五 末注遗留的待裁定项）
+
+- `[22]` 跨文件扫得 **80** 例带 `external_holdout` 标签，但 `evaluate.py`／`baselines.py` 实际评分所用 `bazi_external_cases.json → splits.external_holdout` 数组仅 **66** 例。差额 14 例：`bazi_bing_yao_cases.json` 的 BY001–002（2 例）与 `bazi_dayun_cases.json` 的 DY001–012（12 例）案例对象虽标 `split:"external_holdout"`，却未登记进任一 `splits` 数组、也不在评分集——属「标签打了、评分集没收录」的孤儿标签。
+
+### 二、裁定与执行
+
+- 经核查 `evaluate.py:307-309` 明示「bing_yao/dayun 不参与对齐分」，二者分别由专用 scorer 与 [18]（运层二层 12/12 逐字一致）独立验证，本就**不进主评分加权分**；其 `external_holdout` 标签是历史误标，非缺口曝光型外集。
+- **裁定：不改评分接线、不补登 `splits.external_holdout`**，而是把 14 例的 `split` 由 `external_holdout` 改为 `witness`：
+  - `bazi_bing_yao_cases.json`：顶层 `splits → {"witness": ["BY001","BY002"]}`，BY001/BY002 逐例 `split:"witness"`；
+  - `bazi_dayun_cases.json`：12 例 DY001–DY012 逐例 `split:"witness"`（顶层本无 `splits` 键，保持）。
+- 标签语义对齐 `witness`＝独立回归/见证集（report-only，永不调参），与 external_holdout 的「缺口曝光/强弱分歧」定位区分开。
+
+### 三、收口读数
+
+- `[22]` census 复扫：external_holdout **66 = 评分集 66**、witness **14**、全库合计 **461**、0 组重复、判准冲突 0 组——标签与评分集口径已对齐。
+- 门禁安全：bing_yao/dayun 不参与对齐分，`[22]` 仅按 `split` 字段做普查，改标签不影响任何评分接线；`check_dayun_cases.py` 的 `split` 仅作字符串 `.split()`，不读 per-case 字段，安全。
+- 复验：本批后 `python dev_tools/check.py` 全 **39 门 EXIT=0**（八字科质量门通过）；external_holdout 评分集（66 例）读数不变，bing_yao/dayun 本就不参与对齐分，改标签仅影响 `[22]` 普查归类、不触任何评分接线。
+
 ## 2026-11-01 第四百一十批（八字）：**报告层补十神作用篇提纲书证（闭合「十神作用算出来了但看不到」）**
 
 **性质**：报告层（narrate·十神取象块）补 `shi_shen_actions` 各十神 `note`（十神作用篇提纲，直引《千里命稿·六神篇》带行号出处）。
