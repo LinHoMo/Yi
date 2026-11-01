@@ -9,16 +9,21 @@
 即 CRLF 版被规范成 LF 版后 provenance 未重测。底本是全部「逐字回验」的根，
 根上的一字节漂移会让上面所有门失去意义，故设本门。
 
-核对口径（四项都是机械可复算，不做启发式）：
+核对口径（下列各项都是机械可复算，不做启发式）：
   sha256 —— 原始字节的 SHA-256；
   bytes  —— 原始字节数（UTF-8 未解码）；
   chars  —— `len(text)`（UTF-8 解码后，含换行符）；
   lines  —— **非空行数**（`sum(1 for ln in text.splitlines() if ln.strip())`）。
             ⚠ 不是 `len(text.splitlines())`：早期 provenance 脚本按非空行统计
             （433 批实测 36/37 份按此口径全相符；用含空行口径会误报 22+14 份）。
-
-不核 `stats.ganzhi_pairs／tables／headings`：它们的抽取口径散在多个历史脚本里，
-没有单一可复算定义；本门宁可显式说「不核」，也不拿半定义去判红（§六.5）。
+  443 批补核三项（帮助登记注记里的「统计由 [42] 核对」成为字面事实）：
+  ganzhi_pairs —— 相邻「一字干＋一字支」的出现数，`re.findall("[十干][十二支]", text)`；
+            **不要求六十甲子配对合法**（实测按合法配对计数只有 8/36 相符，按全组合
+            36/36 逐格相符，故历史口径就是全组合）。
+  tables   —— 维基表格开标签数 `text.count("{|")`（dz 本与 wikitext 本同口径）。
+  headings —— 行首为 `=` 的行数（维基标题行；dz 本无此形态，登记值均为 0）。
+            三项均由 443 批对全仓 36 份**登记了该字段**的 provenance 逐格重算验证：
+            0 处改值、0 处变空，定义由「36/36 命中」反推并固定下来，不是猜的。
 
 435 批追加：`references/` 下的「在库书源」台账表是 provenance 的第二份抄本，
 433 批刚发现它六行里有四行陈旧（字节/哈希/行数）——本门把该表一并核对
@@ -62,6 +67,12 @@ MIN_FILES = {"bazi": 23, "liuyao": 16}
 MIN_LEDGER_ROWS = {"bazi": 0, "liuyao": 6}
 
 
+# 六十干支的构成元件：只用于「相邻干支组合」统计，不参与任何判读，故不引内核表。
+STEMS = "甲乙丙丁戊己庚辛壬癸"
+BRANCHES = "子丑寅卯辰巳午未申酉戌亥"
+STEM_BRANCH = re.compile(f"[{STEMS}][{BRANCHES}]")
+
+
 def measure(source: Path) -> dict:
     raw = source.read_bytes()
     text = raw.decode("utf-8", errors="replace")
@@ -70,6 +81,10 @@ def measure(source: Path) -> dict:
         "bytes": len(raw),
         "chars": len(text),
         "lines": sum(1 for ln in text.splitlines() if ln.strip()),
+        # 443 批：三项可复算扩展统计（定义与 36/36 验证见模块 docstring）
+        "ganzhi_pairs": len(STEM_BRANCH.findall(text)),
+        "tables": text.count("{|"),
+        "headings": sum(1 for ln in text.splitlines() if ln.startswith("=")),
         # 442 批：双口径行数（仅在 provenance 登记时才核，见 audit）。
         # lines_nonempty 与 lines 同义（非空行）；lines_physical 是 `cat -n`／
         # 文件迭代器口径的物理行数 = len(splitlines())，**不是**换行符数 +1
@@ -82,7 +97,7 @@ def measure(source: Path) -> dict:
 def audit(prov_dir: Path, base: Path) -> tuple[list[str], dict]:
     """逐份核对 provenance ↔ 底本。`base` 是学科根（source_file 相对它解析）。"""
     problems: list[str] = []
-    stats = {"files": 0, "checked": 0, "fields": 0, "dual": 0}
+    stats = {"files": 0, "checked": 0, "fields": 0, "ext": 0, "dual": 0}
     for pv in sorted(prov_dir.glob("*.provenance.json")):
         stats["files"] += 1
         try:
@@ -117,6 +132,16 @@ def audit(prov_dir: Path, base: Path) -> tuple[list[str], dict]:
                 problems.append(f"{pv.name}：stats.{key} 未登记")
             elif int(reg) != got[key]:
                 problems.append(f"{pv.name}：stats.{key} {reg} ≠ 在盘 {got[key]}")
+        # 443 批：已登记的扩展示性统计逐项复算（未登记的不强制补：如《三命通会》四库本
+        # 与两份 wikitext 原始件本就没有这三项）。定义见 measure()；36/36 实测相符。
+        for key in ("ganzhi_pairs", "tables", "headings"):
+            if key not in (d.get("stats") or {}):
+                continue
+            stats["ext"] += 1
+            reg = d["stats"][key]
+            if int(reg) != got[key]:
+                problems.append(f"{pv.name}：stats.{key} {reg} ≠ 在盘 {got[key]}"
+                                f"（口径见 check_source_provenance.measure）")
         # 442 批：可选双口径行数一旦登记就必须复算相符——它们被逐字回验按行号引用，
         # 登记值错一位就会把「源L」指向另一行，而 sha/bytes/chars 全绿时无人发现。
         # 定义见 measure()；未登记的 provenance 不强制补（保留历史登记形态）。
@@ -287,6 +312,16 @@ def selftest() -> int:
         ("负例：lines_nonempty 登记错", "stats.lines_nonempty",
          lambda r: _fixture(r, extra={"lines_nonempty": 3, "lines_physical": 3})),
         ("正例：未登记双口径不强制补", None, lambda r: _fixture(r)),
+        # 443 批：三项扩展统计（夹具底本 "甲子\n\n乙丑\n" = 干支相邻 2、无表、无标题行）
+        ("正例：三项扩展统计与底本一致", None,
+         lambda r: _fixture(r, extra={"ganzhi_pairs": 2, "tables": 0, "headings": 0})),
+        ("负例：ganzhi_pairs 登记错", "stats.ganzhi_pairs",
+         lambda r: _fixture(r, extra={"ganzhi_pairs": 3})),
+        ("负例：tables 按表格行数而非 `{|` 计", "stats.tables",
+         lambda r: _fixture(r, source_text="== 标题 ==\n{|\n|}\n",
+                            extra={"tables": 2, "headings": 1})),
+        ("负例：headings 未按行首 `=` 计", "stats.headings",
+         lambda r: _fixture(r, source_text="== 标题 ==\n", extra={"headings": 2})),
     ]
     ledger_cases = [
         ("台账正例：行值与底本一致", None, lambda r: _ledger_fixture(r)),
@@ -355,9 +390,10 @@ def main() -> int:
     elif not LEDGER.is_file() and ledger_floor:
         problems.append(f"references/source_ledger.md 不存在（台账下限 {ledger_floor} 行）")
     ledger_desc = f"台账 {ledger_rows} 行" if LEDGER.is_file() else "台账 —（无此表）"
+    ext_desc = f"、扩展 {stats['ext']} 项" if stats["ext"] else ""
     dual_desc = f"、双口径 {stats['dual']} 项" if stats["dual"] else ""
     print(f"[42] 底本完整性：{stats['files']} 份 provenance（核到 {stats['checked']} 份底本、"
-          f"{stats['fields']} 项统计{dual_desc}）；{ledger_desc}")
+          f"{stats['fields']} 项基础统计{ext_desc}{dual_desc}）；{ledger_desc}")
     st_fail = selftest() if args.selftest else 0
     if problems:
         print(f"\n失败 {len(problems)} 项：")
@@ -366,7 +402,7 @@ def main() -> int:
         return 1
     if st_fail:
         return 1
-    print("  √ sha256/bytes/chars/lines（含已登记双口径）与在盘底本逐项相符（台账表同源）")
+    print("  √ sha256/bytes/chars/lines 与已登记扩展统计（含双口径）逐项相符（台账表同源）")
     return 0
 
 
