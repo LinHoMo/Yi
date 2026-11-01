@@ -35,6 +35,11 @@ bazi 也没有 tests/ 目录。也就是说 `rule_registry.json` 里每一条
 只核统计块，100 条联句与行号从未对拍。现按 [14] 同口径（所指行 ±2 行拼接、去空白标点）
 逐条验证：`src` 必须带行号（`L8` 或 `《黄金策》源L124…`），行号须在底本范围内，联句须
 在该行邻域逐字命中。首跑 100/100 全符（0 处改值）。
+
+462 批追加（仅八字册）：**大运起例引文库的行锚**。`dayun_quotes.json` 自称「引文必须与
+`corpus_line` 那一行逐字一致」，而本器此前只验 quote_in_data「值在语料某处出现过」，
+不看行号——声明比门宽。现按该声明核对：`_provenance.source_file` 在盘、`corpus_line`
+在册、`quote` 落在该行（[14] 同归一化）。两科 selftest 都跑夹具（六爻无此册则跳过）。
 """
 from __future__ import annotations
 
@@ -53,6 +58,8 @@ REG = DISC / "data" / "rules" / "rule_registry.json"
 # 447 批：千金赋联句映射（仅六爻有该册；八字无文件则跳过，不判红）。
 QIANJIN = DISC / "data" / "rules" / "qianjin_fu_map.json"
 QIANJIN_SRC = DISC / "data" / "sources" / "huangjince_dz.dz.txt"
+# 462 批：大运起例引文库（仅八字有该册；六爻无文件则跳过，不判红）。
+DAYUN = DISC / "data" / "rules" / "dayun_quotes.json"
 _QN_DROP = re.compile(r"[\s，。、；：「」『』“”\"'‘’（）()\[\]【】《》〈〉·．\-—_]+")
 
 _DROP = re.compile(r"[\s，。、；：「」『』“”\"'‘’（）()【】\[\]《》<>·．\-—_/\\|+=:;,.*]+")
@@ -375,6 +382,53 @@ def check_qianjin_map(doc: dict, problems: list[str],
     return len(entries), len(usage)
 
 
+def check_dayun_quotes(doc: dict, problems: list[str],
+                       lines: list[str] | None = None) -> int:
+    """大运起例引文库的行锚回验（462 批）。返回条目数。
+
+    为什么需要它：`dayun_quotes.json` 的 `_comment` 声明「引文必须与 …
+    `corpus_line` 那一行逐字一致」，但 [12] 的 `quote_in_data` 只验「值在语料
+    某处出现过」，从不看行号——声明比门宽（§六.3）。本函数按该声明逐条核对：
+    `_provenance.source_file` 在盘、`corpus_line` 在册、`quote` 落在该行。
+
+    `lines` 参数供 selftest 注入夹具底本；正式路径由 `source_file` 现场读。
+    """
+    entries = [(k, v) for k, v in doc.items()
+               if isinstance(v, dict) and "quote" in v and "corpus_line" in v]
+    if not entries:
+        problems.append("大运起例引文：0 条 corpus_line+quote——0 结果 ≠ 通过")
+        return 0
+    if len(entries) < 2:
+        problems.append(f"大运起例引文：只扫到 {len(entries)} 条（下限 2）——先确认字段/路径")
+    if lines is None:
+        src = str((doc.get("_provenance") or {}).get("source_file") or "")
+        rp = _resolve_any(src) if src else None
+        if rp is None:
+            problems.append(f"大运起例引文：source_file 不存在 → {src!r}")
+            return len(entries)
+        lines = rp.read_text(encoding="utf-8", errors="replace").splitlines()
+    bad = 0
+    for key, e in entries:
+        try:
+            n = int(str(e.get("corpus_line")).strip())
+        except Exception:
+            problems.append(f"大运起例引文：{key} 的 corpus_line 非整数 → {e.get('corpus_line')!r}")
+            bad += 1
+            continue
+        if not (1 <= n <= len(lines)):
+            problems.append(f"大运起例引文：{key} 的行号 L{n} 超出底本（共 {len(lines)} 行）")
+            bad += 1
+            continue
+        q = _QN_DROP.sub("", str(e.get("quote") or ""))
+        if not q or q not in _QN_DROP.sub("", lines[n - 1]):
+            problems.append(f"大运起例引文：{key} 的引文不在所署行 L{n} → "
+                            f"{str(e.get('quote') or '')[:30]!r}")
+            bad += 1
+    if bad:
+        problems.append(f"大运起例引文：行锚不符 {bad}/{len(entries)} 条")
+    return len(entries)
+
+
 def selftest(problems: list[str]) -> None:
     """负例：造一条 verified=true 却指向不存在文件/解不到值的条目，必须判红。"""
     fake = {"schema": "yi-rule-registry-v1", "rules": [
@@ -462,6 +516,38 @@ def selftest(problems: list[str]) -> None:
                _qbad(lambda d: d["联句映射"][0].pop("src", None))):
         problems.append("负例未抓到：条目缺行号 src")
 
+    # 462 批：大运起例引文行锚（正例不误伤＋四类负例必抓）
+    _dlines = ["如乙丑年，乙庚之岁戊为头，正月起戊寅",
+               "如甲子年，甲己之年丙作首，正月逢丙寅"]
+    dbase = {"_provenance": {"source_file": "data/sources/shen-feng-tong-kao.wikitext.txt"},
+             "a": {"corpus_line": 2, "quote": "甲己之年丙作首"},
+             "b": {"corpus_line": 1, "quote": "乙庚之岁戊为头"}}
+    p_d: list[str] = []
+    n_d = check_dayun_quotes(dbase, p_d, _dlines)
+    if p_d or n_d != 2:
+        problems.append(f"大运起例引文正例被误伤：{p_d}")
+
+    def _dbad(mut) -> list[str]:
+        d = json.loads(json.dumps(dbase, ensure_ascii=False))
+        mut(d)
+        p: list[str] = []
+        check_dayun_quotes(d, p, _dlines)
+        return p
+
+    if not any("不在所署行 L1" in x for x in
+               _dbad(lambda d: d["a"].__setitem__("corpus_line", 1))):
+        problems.append("负例未抓到：行号错（引文不在所署行）")
+    if not any("超出底本" in x for x in
+               _dbad(lambda d: d["a"].__setitem__("corpus_line", 99))):
+        problems.append("负例未抓到：corpus_line 超出底本")
+    if not any("0 条" in x for x in _dbad(lambda d: (d.pop("a"), d.pop("b")))):
+        problems.append("负例未抓到：0 条目")
+    p_m: list[str] = []
+    check_dayun_quotes({"_provenance": {"source_file": "data/sources/__no_such__dayun.txt"},
+                        "a": {"corpus_line": 1, "quote": "任意"}}, p_m)
+    if not any("source_file 不存在" in x for x in p_m):
+        problems.append("负例未抓到：source_file 不存在")
+
 
 def main() -> int:
     if not REG.exists():
@@ -483,6 +569,11 @@ def main() -> int:
               f"统计块/五态词表/registry 列表/逐联书源回指已逐项核对")
     elif DISC.name == "liuyao":
         problems.append(f"千金赋映射：{QIANJIN.name} 不存在——0 结果 ≠ 通过，先确认路径")
+    # 462 批：大运起例引文行锚（仅八字有该册；六爻无文件则跳过，不判红）
+    if DAYUN.is_file():
+        ddoc = json.loads(DAYUN.read_text(encoding="utf-8"))
+        d_total = check_dayun_quotes(ddoc, problems)
+        print(f"  大运起例引文：{d_total} 条 corpus_line+quote；source_file/行号/行内逐字已核对")
     _ap = argparse.ArgumentParser(description="check_rule_registry：--selftest 负例自证开关（§三）")
     _ap.add_argument("--selftest", action="store_true", help="负例自证")
     args = _ap.parse_args()
