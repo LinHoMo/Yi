@@ -216,13 +216,14 @@ def checks():
         from collections import Counter
         c = Counter(x.get("split") for x in cc)
         return (str(c["tune"]), str(c["holdout"]), str(len(ex.get("cases") or ex)))
-    add("八字案例分母(61/279/67)", "234批；339 批实跑 53→62（326/329 批语料扩样后外部集 +9 例）；"
+    add("八字案例分母(61/279/69)", "234批；339 批实跑 53→62（326/329 批语料扩样后外部集 +9 例）；"
         "368 批清例后 holdout 278→276（两例同考点双建被清，非引擎回归）；"
         "395 批《千里命稿》从格 4 例入册（QL001 进 tune、QL002-004 进 holdout）→ 60/276→61/279；"
         "411 批（原 401）外部集《消息赋》3 例入册 → 62→65；"
         "412 批《命理约言》MY001 入册 → 65→66（该批只改语料未回改本账，408 批补登）；"
-        "414 批 MY002 入册 → 66→67（同批未回改本账，414 六爻批补登）",
-        c_bazi_denoms, ("61", "279", "67"))
+        "414 批 MY002 入册 → 66→67（同批未回改本账，414 六爻批补登）；"
+        "415 批 YP001/YP002 入册 → 67→69（同批未回改本账，416 批补登）",
+        c_bazi_denoms, ("61", "279", "69"))
 
     # 头牌值在位性（235 批）：现状文档（README×2/CAPABILITY/GOVERNANCE）必须各含每个
     # 主读数**至少一处**——文档被改回旧值（176 批 97.3 事故族）时现值消失即红。
@@ -474,11 +475,12 @@ def checks():
         n = re.search(r"运行 (\d+) 例（external_holdout", s)
         sw = re.search(r"强弱对齐（external_holdout · report-only，不设门槛、非命中率）：(\d+)/(\d+)", s)
         return ((n.group(1), sw.group(1), sw.group(2)) if n and sw else (None,) * 3)
-    add("bazi.external(n67 强弱34/56 report-only)",
+    add("bazi.external(n69 强弱34/57 report-only)",
         "bazi README/160批起；339 批实跑 53→62；411 批（原 401）消息赋 3 例 → 65（外集扩样后同步）；"
         "412 批命理约言 MY001 → 66（强弱读数同批改 33/55；该批未回改本账，408 批补登）；"
-        "414 批 MY002 → 67（强弱 34/56；同批未回改本账，414 六爻批补登）",
-        c_bazi_ext, ("67", "34", "56"))
+        "414 批 MY002 → 67（强弱 34/56；同批未回改本账，414 六爻批补登）；"
+        "415 批 YP001/YP002 → 69（强弱 34/57：YP001 分歧进分母不进分子；同批未回改本账，416 批补登）",
+        c_bazi_ext, ("69", "34", "57"))
 
     def c_bazi_base(t):
         s = sh(["dev_tools/baselines.py", "--split", "holdout"], cwd=ROOT / "bazi")
