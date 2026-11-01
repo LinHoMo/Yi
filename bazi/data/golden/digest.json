@@ -4,7 +4,7 @@
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化（含 conclusion_sha，任何字段都算），措辞层漂移=narrate 断语变化（两层分列归因）"
   },
   "digest": "b7674a8f6d8d1162",
-  "narrate_digest": "e158d5cb8a92e005",
+  "narrate_digest": "fd1a1b0b60e06104",
   "drift_log": [
     {
       "from": "57dc7e890af222fa",
@@ -74,12 +74,6 @@
     }
   ],
   "narrate_drift_log": [
-    {
-      "from": "df3171a2f7b3e7e6",
-      "to": "ac4623f633fed5f5",
-      "date": "2026-10-10",
-      "reason": "报告面补齐两个计分维度的落点：新增「四柱十神与四柱藏干」小节（ten_gods 16 分 / hidden_stems 8 分一直是计分维度且引擎有值，正文却从不出现——EVAL-PLAN §六 禁止的「算出来了但看不到」，首轮由新门 [15] 抓出）。纯措辞层，机械层零漂移"
-    },
     {
       "from": "ac4623f633fed5f5",
       "to": "c42bd5ee428f0f99",
@@ -193,6 +187,12 @@
       "to": "e158d5cb8a92e005",
       "date": "2026-11-01",
       "reason": "400 批：报告层补十神作用篇提纲书证（shi_shen_actions 各十神 note 直引《千里命稿·六神篇》，带行号出处）。属有意措辞层变更，narrate_sha 由 87ff62c6a49d36ba → e158d5cb8a92e005，机械层 b7674a8f6d8d1162 零漂移。G 桶 43→37（shi_shen_actions 全印，G=0）。"
+    },
+    {
+      "from": "e158d5cb8a92e005",
+      "to": "fd1a1b0b60e06104",
+      "date": "2026-11-02",
+      "reason": "466批：narrate 十神作用提示行的行号提取改用正则，兼容 source 的两种写法（file:NNNN 与 file LNNNN 附近），修复空格格式把整条路径渲染进「（《千里命稿》… 行）」；纯显示修复，机械层零漂移"
     }
   ]
 }

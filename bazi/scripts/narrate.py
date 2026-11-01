@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -432,7 +433,10 @@ def narrate(a: dict) -> str:
             if note2:
                 # 十神作用篇提纲（《千里命稿·六神篇》直引，带行号）：与取象/能力/构成同属
                 # 「算出来了但看不到」的结构化象数旁证，补印闭合 EVAL-PLAN §六。
-                sloc = (act.get("source") or "").split(":")[-1]
+                # 466 批：source 有两种写法（`file:NNNN` 与 `file LNNNN 附近`），
+                # 旧 `split(':')[-1]` 对后者返回整串，渲染成「（《千里命稿》data/sources/… 行）」。
+                m = re.search(r"(?:L|:)(\d+)", act.get("source") or "")
+                sloc = m.group(1) if m else "?"
                 lines.append(f"> 　「{note2}」（《千里命稿》{sloc} 行）")
         lines.append("")
 

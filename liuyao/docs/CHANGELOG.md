@@ -5,6 +5,20 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-02 第四百六十六批（八字·六神取象行号出处）：**共享件为八字 `liushen_image`／`shi_shen_actions` 补 `_src`/`source` 行锚判据；六爻无此册，显式跳过**
+
+**性质**：共享门覆盖扩展（不改判据、不改数据、不改读数）。
+
+- `bazi/data/liushen_image.json` 声明「值只收逐字引文与行号」，实际两条 `取象` 是
+  改写且无 `_src`；narrate 因此渲染出空行号引文（八字侧实抓并同批修正数据）。
+- 共享件新增 `check_liushen_sources()`（仅八字册）：取象字段必须有 `_src`、行号在册、
+  值落在该行；`shi_shen_actions` 每条 `source` 可解析行号、`actions` 落在 ±3 行邻域。
+  下限 16/7，0 条即红。
+- 六爻无 `liushen_image.json`／`shi_shen_actions.json` → 按 `DISC.name == "bazi"` 跳过；
+  两科 selftest 同跑夹具（正例×2＋四类负例）。
+- 详见 `bazi/docs/CHANGELOG.md` 第四百六十六批（三条探针、narrate 修复与金标准措辞变更）。
+
+
 ## 2026-11-02 第四百六十五批（八字·[12] 裁决引文书源回验）：**共享件为八字 `verdicts.json` 的 20 个 locator＋4 条分支总则补回验；六爻同名文件结构不同，显式跳过**
 
 **性质**：共享门覆盖扩展（不改判据、不改数据、不改读数）。

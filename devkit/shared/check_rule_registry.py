@@ -46,6 +46,12 @@ bazi 也没有 tests/ 目录。也就是说 `rule_registry.json` 里每一条
 化格/从格 verse）在 `_meta` 声明了底本。此前 [12] 只回指 `病药引文.thesis` 一个点，
 locator 从未被读取。现按声明核对：行号在册、`quote/full_quote/cond_quote/verse_quote`
 落在该行；分支总则逐行命中声明底本（不跨行拼接）。两科 selftest 都跑夹具。
+
+466 批追加（仅八字册）：**六神取象/十神作用的行号出处**。`liushen_image.json` 声明
+「值只收逐字引文与行号」，但实抓到两条 `取象` 是注释式改写且无 `_src`，`narrate`
+仍按引文渲染出空行号（§六.3）。现核：每个非空 `能力/构成/取象/别名` 必须有
+`<字段>_src`、行号在册、值落在该行；`shi_shen_actions` 每条 `source` 必须能解析
+行号（`L####` 或 `:####`），`actions` 每项落在该行 ±3 行邻域。两科 selftest 都跑夹具。
 """
 from __future__ import annotations
 
@@ -68,6 +74,9 @@ QIANJIN_SRC = DISC / "data" / "sources" / "huangjince_dz.dz.txt"
 DAYUN = DISC / "data" / "rules" / "dayun_quotes.json"
 # 465 批：裁决引文真值源（仅八字有该册；六爻无文件则跳过）。
 VERDICTS = DISC / "data" / "verdicts.json"
+# 466 批：六神取象 / 十神作用（仅八字有该册）。
+LIUSHEN = DISC / "data" / "liushen_image.json"
+SHISHEN = DISC / "data" / "shi_shen_actions.json"
 _VERDICT_LOCATOR = re.compile(r"(data/sources/[^:]+):(\d+)")
 _VERDICT_MARK = re.compile(r"''+|={2,}|\{\{|\}\}|\||\*")
 _VERDICT_FIELDS = ("quote", "full_quote", "cond_quote", "verse_quote")
@@ -527,6 +536,95 @@ def check_verdicts_quotes(doc: dict, problems: list[str], lines_of=None) -> tupl
     return n_loc, n_grp
 
 
+def check_liushen_sources(doc_img: dict, doc_acts: dict, problems: list[str],
+                          lines_of=None) -> tuple[int, int]:
+    """六神取象/十神作用的行号出处回验（466 批）。返回 (取象字段数, 作用条目数)。
+
+    为什么需要它：`liushen_image.json` 的 `_meta` 明写「值只收逐字引文与行号，
+    不做改写（铁律二）」；但 466 批实抓到两条 `取象` 是**注释式改写**且没有
+    `_src`，`narrate` 仍按引文渲染成「（《千里命稿》 行）」——空行号+改写句冒充
+    引文（§六.3）。本函数把声明变成机械判据：
+
+      · 每个非空 `能力/构成/取象/别名` 必须有 `<字段>_src`，形态 `data/sources/<书>:<行>`；
+        行号在册、值落在该行（保标点，与 465 批同口径）；
+      · `shi_shen_actions` 每条 `source` 必须能解析出行号（`L####` 或 `:####`），
+        `actions` 每项须落在该行 ±3 行邻域。
+
+    `lines_of` 供 selftest 注入夹具底本；正式路径现场读。
+    """
+    n_fields = n_acts = 0
+    cache: dict[str, list[str] | None] = {}
+
+    def get_lines(f: str) -> list[str] | None:
+        if lines_of is not None:
+            return lines_of(f)
+        if f not in cache:
+            p = _resolve_any(f)
+            cache[f] = (p.read_text(encoding="utf-8", errors="replace").splitlines()
+                        if p else None)
+        return cache[f]
+
+    img = (doc_img or {}).get("十神取象")
+    if not isinstance(img, dict) or not img:
+        problems.append("六神取象：十神取象缺失或为空——0 结果 ≠ 通过")
+    else:
+        for god, e in img.items():
+            if not isinstance(e, dict):
+                continue
+            for key in ("能力", "构成", "取象", "别名"):
+                q = e.get(key)
+                if not q:
+                    continue
+                n_fields += 1
+                src = str(e.get(key + "_src") or "").strip()
+                m = _VERDICT_LOCATOR.fullmatch(src)
+                if not m:
+                    problems.append(f"六神取象：{god}.{key} 缺行号出处（_meta 声明"
+                                    f"「值只收逐字引文与行号」）→ {str(q)[:24]!r}")
+                    continue
+                f, n = m.group(1), int(m.group(2))
+                L = get_lines(f)
+                if L is None:
+                    problems.append(f"六神取象：{god}.{key} 的底本不存在 {f}")
+                    continue
+                if not (1 <= n <= len(L)):
+                    problems.append(f"六神取象：{god}.{key} 行号 L{n} 超出底本（共 {len(L)} 行）")
+                    continue
+                if _verdict_plain(q) not in _verdict_plain(L[n - 1]):
+                    problems.append(f"六神取象：{god}.{key} 不在所署行 {f}:{n} → "
+                                    f"{str(q)[:24]!r}")
+
+    acts = (doc_acts or {}).get("shi_shen_actions")
+    if not isinstance(acts, dict) or not acts:
+        problems.append("十神作用：shi_shen_actions 缺失或为空——0 结果 ≠ 通过")
+    else:
+        for god, e in acts.items():
+            if not isinstance(e, dict):
+                continue
+            n_acts += 1
+            src = str(e.get("source") or "")
+            fm = re.match(r"(data/sources/[^: \s]+)", src)
+            nm = re.search(r"(?:L|:)(\d+)", src)
+            if not fm or not nm:
+                problems.append(f"十神作用：{god}.source 缺可解析底本/行号 → {src!r}")
+                continue
+            f, n = fm.group(1), int(nm.group(1))
+            L = get_lines(f)
+            if L is None:
+                problems.append(f"十神作用：{god}.source 的底本不存在 {f}")
+                continue
+            if not (1 <= n <= len(L)):
+                problems.append(f"十神作用：{god}.source 行号 L{n} 超出底本（共 {len(L)} 行）")
+                continue
+            window = _verdict_plain("".join(L[max(0, n - 3):n + 2]))
+            missing = [a for a in (e.get("actions") or [])
+                       if _verdict_plain(a) not in window]
+            if missing:
+                problems.append(f"十神作用：{god} 的 actions 不在所署行 L{n} 邻域 → "
+                                f"{missing[:3]}")
+    return n_fields, n_acts
+
+
 def selftest(problems: list[str]) -> None:
     """负例：造一条 verified=true 却指向不存在文件/解不到值的条目，必须判红。"""
     fake = {"schema": "yi-rule-registry-v1", "rules": [
@@ -685,6 +783,44 @@ def selftest(problems: list[str]) -> None:
                _vbad(lambda d: d["病药引文"].__setitem__("thesis", "有病方为贼"))):
         problems.append("负例未抓到：分支总则引文非书源逐字")
 
+    # 466 批：六神取象/十神作用（夹具底本注入，不落盘）
+    _lline = ["", "泄身，生财，敌杀，损官"]
+    limg = {"十神取象": {"伤官": {"能力": "泄身，生财",
+                                  "能力_src": "data/sources/__no_such__l.txt:2"}}}
+    lact = {"shi_shen_actions": {"伤官": {"actions": ["泄身", "生财"],
+                                          "source": "data/sources/__no_such__l.txt:2"}}}
+    p_l: list[str] = []
+    n_l = check_liushen_sources(limg, lact, p_l,
+                                lambda f: _lline if f.endswith("__no_such__l.txt") else None)
+    if p_l or n_l != (1, 1):
+        problems.append(f"六神取象/十神作用正例被误伤：{p_l}（返回 {n_l}）")
+
+    def _lbad(mut_img=None, mut_act=None) -> list[str]:
+        i = json.loads(json.dumps(limg, ensure_ascii=False))
+        a = json.loads(json.dumps(lact, ensure_ascii=False))
+        if mut_img:
+            mut_img(i)
+        if mut_act:
+            mut_act(a)
+        p: list[str] = []
+        check_liushen_sources(i, a, p,
+                              lambda f: _lline if f.endswith("__no_such__l.txt") else None)
+        return p
+
+    if not any("缺行号出处" in x for x in
+               _lbad(mut_img=lambda d: d["十神取象"]["伤官"].pop("能力_src", None))):
+        problems.append("负例未抓到：取象值无 _src")
+    if not any("不在所署行" in x for x in
+               _lbad(mut_img=lambda d: d["十神取象"]["伤官"].__setitem__("能力", "泄身，破财"))):
+        problems.append("负例未抓到：取象值不在所署行")
+    if not any("actions 不在所署行" in x for x in
+               _lbad(mut_act=lambda d: d["shi_shen_actions"]["伤官"]["actions"].append("制杀"))):
+        problems.append("负例未抓到：作用项不在所署行邻域")
+    if not any("缺可解析底本/行号" in x for x in
+               _lbad(mut_act=lambda d: d["shi_shen_actions"]["伤官"].__setitem__(
+                   "source", "data/sources/__no_such__l.txt"))):
+        problems.append("负例未抓到：作用 source 无行号")
+
 
 def main() -> int:
     if not REG.exists():
@@ -722,6 +858,19 @@ def main() -> int:
             problems.append("裁决引文：有一面扫到 0 条——0 结果 ≠ 通过")
         print(f"  裁决引文：{v_loc} 个 locator 字段、{v_grp} 条分支总则引文；"
               f"行锚/文件内逐字已核对")
+    # 466 批：六神取象 / 十神作用（仅八字册）
+    if DISC.name == "bazi":
+        if not LIUSHEN.is_file() or not SHISHEN.is_file():
+            problems.append("六神取象/十神作用：数据文件缺失——0 结果 ≠ 通过")
+        else:
+            limg = json.loads(LIUSHEN.read_text(encoding="utf-8"))
+            lact = json.loads(SHISHEN.read_text(encoding="utf-8"))
+            l_fields, l_acts = check_liushen_sources(limg, lact, problems)
+            if l_fields < 16 or l_acts < 7:
+                problems.append(f"六神取象/十神作用：取象字段 {l_fields}（下限 16）／"
+                                f"作用条目 {l_acts}（下限 7）——先确认字段/路径")
+            print(f"  六神取象/十神作用：{l_fields} 个引文字段、{l_acts} 条作用枚举；"
+                  f"行号出处/邻域已核对")
     _ap = argparse.ArgumentParser(description="check_rule_registry：--selftest 负例自证开关（§三）")
     _ap.add_argument("--selftest", action="store_true", help="负例自证")
     args = _ap.parse_args()
