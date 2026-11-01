@@ -40,6 +40,12 @@ bazi 也没有 tests/ 目录。也就是说 `rule_registry.json` 里每一条
 `corpus_line` 那一行逐字一致」，而本器此前只验 quote_in_data「值在语料某处出现过」，
 不看行号——声明比门宽。现按该声明核对：`_provenance.source_file` 在盘、`corpus_line`
 在册、`quote` 落在该行（[14] 同归一化）。两科 selftest 都跑夹具（六爻无此册则跳过）。
+
+465 批追加（仅八字册）：**裁决引文书源回验**。`data/verdicts.json` 自称「书源引文唯一
+真值源」：20 个字段带 `locator`（`data/sources/<书>:<行>`），4 条分支总则（病药 thesis、
+化格/从格 verse）在 `_meta` 声明了底本。此前 [12] 只回指 `病药引文.thesis` 一个点，
+locator 从未被读取。现按声明核对：行号在册、`quote/full_quote/cond_quote/verse_quote`
+落在该行；分支总则逐行命中声明底本（不跨行拼接）。两科 selftest 都跑夹具。
 """
 from __future__ import annotations
 
@@ -60,6 +66,27 @@ QIANJIN = DISC / "data" / "rules" / "qianjin_fu_map.json"
 QIANJIN_SRC = DISC / "data" / "sources" / "huangjince_dz.dz.txt"
 # 462 批：大运起例引文库（仅八字有该册；六爻无文件则跳过，不判红）。
 DAYUN = DISC / "data" / "rules" / "dayun_quotes.json"
+# 465 批：裁决引文真值源（仅八字有该册；六爻无文件则跳过）。
+VERDICTS = DISC / "data" / "verdicts.json"
+_VERDICT_LOCATOR = re.compile(r"(data/sources/[^:]+):(\d+)")
+_VERDICT_MARK = re.compile(r"''+|={2,}|\{\{|\}\}|\||\*")
+_VERDICT_FIELDS = ("quote", "full_quote", "cond_quote", "verse_quote")
+
+
+def _verdict_plain(s: str) -> str:
+    return re.sub(r"\s+", "", _VERDICT_MARK.sub("", str(s)))
+
+
+def _walk_entries(obj, path: str = "$"):
+    if isinstance(obj, dict):
+        yield path, obj
+        for k, v in obj.items():
+            yield from _walk_entries(v, f"{path}.{k}")
+    elif isinstance(obj, list):
+        for i, v in enumerate(obj):
+            yield from _walk_entries(v, f"{path}[{i}]")
+
+
 _QN_DROP = re.compile(r"[\s，。、；：「」『』“”\"'‘’（）()\[\]【】《》〈〉·．\-—_]+")
 
 _DROP = re.compile(r"[\s，。、；：「」『』“”\"'‘’（）()【】\[\]《》<>·．\-—_/\\|+=:;,.*]+")
@@ -429,6 +456,77 @@ def check_dayun_quotes(doc: dict, problems: list[str],
     return len(entries)
 
 
+def check_verdicts_quotes(doc: dict, problems: list[str], lines_of=None) -> tuple[int, int]:
+    """裁决引文的书源回验（465 批）。返回 (locator 字段数, 分支总则引文数)。
+
+    为什么需要它：`data/verdicts.json` 自称「书源引文唯一真值源」，其中 20 个字段
+    带 `locator`（`data/sources/<书>:<行>`）、4 条分支总则（病药 thesis、化格/从格
+    verse）在 `_meta` 声明了底本——但 [12] 的 quote_in_data 只指向 `病药引文.thesis`
+    一个点，`locator` 从未被任何门读取。本函数按声明核对：
+
+      · 带 locator 的条目：行号在册、quote/full_quote/cond_quote/verse_quote 落在该行；
+      · 三条分支总则：逐行命中 `_meta` 声明的底本（不跨行拼接，避免假阳性）。
+
+    `lines_of` 供 selftest 注入夹具底本；正式路径按 locator/固定路径现场读。
+    """
+    n_loc = n_grp = 0
+    cache: dict[str, list[str] | None] = {}
+
+    def get_lines(f: str) -> list[str] | None:
+        if lines_of is not None:
+            return lines_of(f)
+        if f not in cache:
+            p = _resolve_any(f)
+            cache[f] = (p.read_text(encoding="utf-8", errors="replace").splitlines()
+                        if p else None)
+        return cache[f]
+
+    for path, e in _walk_entries(doc):
+        loc = str(e.get("locator") or "").strip()
+        m = _VERDICT_LOCATOR.fullmatch(loc)
+        if not m:
+            continue
+        f, n = m.group(1), int(m.group(2))
+        L = get_lines(f)
+        if L is None:
+            problems.append(f"verdicts：{path}.locator 指向不存在的底本 {f}")
+            continue
+        if not (1 <= n <= len(L)):
+            problems.append(f"verdicts：{path}.locator 行号 L{n} 超出底本（共 {len(L)} 行）")
+            continue
+        for key in _VERDICT_FIELDS:
+            q = e.get(key)
+            if not q:
+                continue
+            n_loc += 1
+            if _verdict_plain(q) not in _verdict_plain(L[n - 1]):
+                problems.append(f"verdicts：{path}.{key} 不在所署行 {f}:{n} → "
+                                f"{str(q)[:30]!r}")
+
+    for group, field, src in (
+            ("病药引文", "thesis", "data/sources/shen-feng-tong-kao.wikitext.txt"),
+            ("化格引文", "verse", "data/sources/di-tian-sui.wikitext.txt"),
+            ("从格引文", "verse", "data/sources/di-tian-sui.wikitext.txt")):
+        v = (doc.get(group) or {}).get(field)
+        if v is None:
+            continue
+        vals = v if isinstance(v, list) else [v]
+        as_list = isinstance(v, list)
+        L = get_lines(src)
+        if L is None:
+            problems.append(f"verdicts：{group}.{field} 的底本不存在 {src}")
+            continue
+        for i, q in enumerate(vals):
+            if not q:
+                continue
+            n_grp += 1
+            label = f"{group}.{field}[{i}]" if as_list else f"{group}.{field}"
+            if not any(_verdict_plain(q) in _verdict_plain(x) for x in L):
+                problems.append(f"verdicts：{label} 非书源逐字（{src}）→ "
+                                f"{str(q)[:30]!r}")
+    return n_loc, n_grp
+
+
 def selftest(problems: list[str]) -> None:
     """负例：造一条 verified=true 却指向不存在文件/解不到值的条目，必须判红。"""
     fake = {"schema": "yi-rule-registry-v1", "rules": [
@@ -548,6 +646,45 @@ def selftest(problems: list[str]) -> None:
     if not any("source_file 不存在" in x for x in p_m):
         problems.append("负例未抓到：source_file 不存在")
 
+    # 465 批：裁决引文 locator/分支总则（夹具底本注入，不落盘）
+    _vdefault = ["有病方为贵，无伤不是奇；格中如去病，财禄两相随"]
+    _vlines = {
+        "data/sources/__no_such__v.txt": ["", "有病方为贵，无伤不是奇"],
+        "data/sources/shen-feng-tong-kao.wikitext.txt": _vdefault,
+        "data/sources/di-tian-sui.wikitext.txt": _vdefault,
+    }
+    vbase = {
+        "a": {"locator": "data/sources/__no_such__v.txt:2", "quote": "有病方为贵"},
+        "病药引文": {"thesis": "有病方为贵"},
+        "化格引文": {"verse": ["有病方为贵", "无伤不是奇"]},
+        "从格引文": {"verse": "有病方为贵"},
+    }
+    p_v: list[str] = []
+    n_v = check_verdicts_quotes(vbase, p_v, lambda f: _vlines.get(f))
+    if p_v or n_v != (1, 4):
+        problems.append(f"裁决引文正例被误伤：{p_v}（返回 {n_v}）")
+
+    def _vbad(mut) -> list[str]:
+        d = json.loads(json.dumps(vbase, ensure_ascii=False))
+        mut(d)
+        p: list[str] = []
+        check_verdicts_quotes(d, p, lambda f: _vlines.get(f))
+        return p
+
+    if not any("不在所署行" in x for x in
+               _vbad(lambda d: d["a"].__setitem__("locator", "data/sources/__no_such__v.txt:1"))):
+        problems.append("负例未抓到：locator 行号错（引文不在该行）")
+    if not any("行号 L99 超出底本" in x for x in
+               _vbad(lambda d: d["a"].__setitem__("locator", "data/sources/__no_such__v.txt:99"))):
+        problems.append("负例未抓到：locator 行号越界")
+    if not any("指向不存在的底本" in x for x in
+               _vbad(lambda d: d["a"].__setitem__("locator",
+                                                  "data/sources/__no_such__v2.txt:1"))):
+        problems.append("负例未抓到：locator 底本不存在")
+    if not any("病药引文.thesis" in x for x in
+               _vbad(lambda d: d["病药引文"].__setitem__("thesis", "有病方为贼"))):
+        problems.append("负例未抓到：分支总则引文非书源逐字")
+
 
 def main() -> int:
     if not REG.exists():
@@ -574,6 +711,17 @@ def main() -> int:
         ddoc = json.loads(DAYUN.read_text(encoding="utf-8"))
         d_total = check_dayun_quotes(ddoc, problems)
         print(f"  大运起例引文：{d_total} 条 corpus_line+quote；source_file/行号/行内逐字已核对")
+    # 465 批：裁决引文 locator/分支总则（仅八字册；六爻另有同名 data/verdicts.json，结构不同，跳过）
+    if DISC.name == "bazi" and VERDICTS.is_file():
+        vdoc = json.loads(VERDICTS.read_text(encoding="utf-8"))
+        v_loc, v_grp = check_verdicts_quotes(vdoc, problems)
+        if v_loc < 20 or v_grp < 4:
+            problems.append(f"裁决引文：locator 字段 {v_loc}（下限 20）／分支总则 {v_grp}"
+                            f"（下限 4）——先确认字段/路径")
+        if v_loc == 0 or v_grp == 0:
+            problems.append("裁决引文：有一面扫到 0 条——0 结果 ≠ 通过")
+        print(f"  裁决引文：{v_loc} 个 locator 字段、{v_grp} 条分支总则引文；"
+              f"行锚/文件内逐字已核对")
     _ap = argparse.ArgumentParser(description="check_rule_registry：--selftest 负例自证开关（§三）")
     _ap.add_argument("--selftest", action="store_true", help="负例自证")
     args = _ap.parse_args()
