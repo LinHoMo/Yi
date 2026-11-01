@@ -71,6 +71,24 @@ def _expected_unit(label: str) -> str:
     return m.group(2)
 
 
+def _gold_branches(exp: dict, label: str) -> list[str]:
+    """基准应支集合（415 批口径修正）。
+
+    多事件案例与连写日（「未月、酉月」「申酉日」「辰年、酉年、子年」）在数据里以
+    `expected.yingqi_branches` 结构化登记；旧评分只读标签的**第一个**「支+单位」令牌，
+    把其余合法答案静默丢掉（ZD026 引擎年池首答卯，书载「子年、卯年」却判 0）。
+    现优先取结构化列表，缺字段才退回标签首令牌。名次仍在**同单位**候选池里取
+    offered 顺序上的最优名次——任一书载之支出现即算该例命中。
+    """
+    raw = exp.get("yingqi_branches")
+    if isinstance(raw, list):
+        brs = [str(b) for b in raw if str(b) in DAY_CHARS]
+        if brs:
+            return list(dict.fromkeys(brs))
+    m = YQ_UNIT_RE.search(str(label or ""))
+    return [m.group(1)] if m else _branches_in(label)
+
+
 def _unit_pool(eng: dict, unit: str) -> list:
     if unit == "月":
         return eng.get("yingqi_months") or []
@@ -280,8 +298,7 @@ def score_case(eng: dict, exp: dict, model: str, case: dict | None = None) -> di
         # 成员制打分会奖励骑墙：候选铺到 11/12 支就能白拿 15 分（旧口径的 100% 即由此而来）。
         # 名次只在**同单位**的候选池里数：基准是月级答案就去月级池里排名次。
         exp_unit = _expected_unit(x_yq)
-        m_unit = YQ_UNIT_RE.search(x_yq)
-        needed = [m_unit.group(1)] if m_unit else [c for c in DAY_CHARS if c in x_yq]
+        needed = _gold_branches(exp, x_yq)
         offered = _offered_branches(_unit_pool(eng, exp_unit))
         rank = next((i + 1 for i, ch in enumerate(offered) if needed and ch in needed), None)
         if not needed:
@@ -358,8 +375,7 @@ def score_yingqi_loose(eng: dict, exp: dict, case: dict | None = None) -> tuple[
         return (0, 0, "空白基准 → N/A")
 
     exp_unit = _expected_unit(x_yq)
-    m_unit = YQ_UNIT_RE.search(x_yq)
-    needed = [m_unit.group(1)] if m_unit else _branches_in(x_yq)
+    needed = _gold_branches(exp, x_yq)
     if not needed:
         e_yq = str(eng.get("yingqi") or "")
         if x_yq in e_yq:
@@ -480,8 +496,7 @@ def yingqi_discrimination(engine_out: dict, ids: list[str]) -> dict:
         if not e or not b or "error" in e:
             continue
         x_yq = str((b.get("expected") or {}).get("yingqi") or "")
-        m_unit = YQ_UNIT_RE.search(x_yq)
-        needed = [m_unit.group(1)] if m_unit else _branches_in(x_yq)
+        needed = _gold_branches(b.get("expected") or {}, x_yq)
         if not needed:
             continue
         unit = _expected_unit(x_yq)

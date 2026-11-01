@@ -104,6 +104,21 @@ def selftest() -> list[str]:
     #    若将来有人把 `else` 分支改回 (0, w)，负例①立刻抓得到。
     if v and v[0] != 0:
         fails.append(f"负例④失效：N/A 分支的 earned 应为 0，实得 {v}")
+    # ⑤-⑦ 多支基准（415 批口径）：结构化 yingqi_branches 全纳入，任一命中按最优名次。
+    #      旧口径只读标签首个令牌（「子年、卯年」只认子年），引擎年池首答卯会被判 0。
+    multi_exp = {"yingqi": "子年、卯年", "yingqi_branches": ["卯", "子"]}
+    got5 = ev.score_case({"yingqi_years": ["卯年", "酉年"]}, multi_exp, "strict")
+    v5 = got5.get("yingqi")
+    if not v5 or v5[0] != 11 or v5[1] != 11:
+        fails.append(f"负例⑤失效：多支基准任一居首应满分 11/11，实得 {v5}")
+    got6 = ev.score_case({"yingqi_years": ["酉年", "卯年"]}, multi_exp, "strict")
+    v6 = got6.get("yingqi")
+    if not v6 or v6[0] != 8 or v6[1] != 11:
+        fails.append(f"负例⑥失效：多支基准次位命中应 8/11，实得 {v6}")
+    got7 = ev.score_case({"yingqi_years": ["巳年"]}, multi_exp, "strict")
+    v7 = got7.get("yingqi")
+    if not v7 or v7[0] != 0 or v7[1] != 11:
+        fails.append(f"负例⑦失效：多支全不中应 0/11，实得 {v7}")
     return fails
 
 
@@ -128,7 +143,8 @@ def main() -> int:
         for p in st_fail:
             print("  ×", p)
         print(f"  [selftest] 负例{'全部抓到' if not st_fail else '失效'}"
-              f"（4 类：答不进须 N/A／答进须满分／有支基准不误伤／N/A 分支 earned 须为 0）")
+              f"（7 类：答不进须 N/A／答进须满分／有支基准不误伤／N/A 分支 earned 须为 0"
+              f"／多支任一居首满分／多支次位 8 分／多支全不中 0 分）")
 
     if problems or st_fail:
         return 1

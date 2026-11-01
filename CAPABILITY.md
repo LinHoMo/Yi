@@ -36,10 +36,10 @@
 |---|---|---|---|
 | tune / holdout 对齐 | 97.9%（n=20）／90.2%（n=12） | 172 批口径 | `python liuyao/eval/evaluate.py --split tune`（同 `--split holdout`） |
 | 外部·开发集 wikisource 对齐 | **75.8%**（n=50；308 批实测，原登记 62.4）；direction 子集 76.6%（n=31） | README 表 | `python liuyao/eval/evaluate.py --split wikisource_holdout` |
-| 外部·开发集 zengshan_dz 对齐 | **60.3%**（n=29；403 批 dz 扩样，原 61.5 n=21；新旧不可比） | 同上 | `python liuyao/eval/evaluate.py --split zengshan_dz_holdout` |
+| 外部·开发集 zengshan_dz 对齐 | **61.5%**（n=29；415 批多支基准口径修正，原 60.3；403 批 dz 扩样时 60.3 n=29、原 61.5 n=21；新旧不可比） | 同上 | `python liuyao/eval/evaluate.py --split zengshan_dz_holdout` |
 | 外部·开发集 bushi_zhengzong_dz 对齐 | **64.7%**／top-1 **23.7%**（n=38；408 批建、409/410 扩样、412 用神、413 吉凶结果句；用神 5/8、支 3/4、吉凶 22/36；408–412 读数不可比） | 同上 | `python liuyao/eval/evaluate.py --split bushi_zhengzong_holdout` |
-| 主应期 top-1（开发集） | **31.8%**／37.9%（308 批／403 批扩样，原登记 27.3／33.3），CI[20.0, 46.6]／[22.7, 56.0]；k=1 随机 8.3% | 181 批→308 批→403 批 | `python liuyao/dev_tools/window_report.py` |
-| top-3 窗（开发集） | **61.4%**／62.1%（308 批／403 批扩样，原登记 52.3／57.1；信息在窗不在点→193 批 `应期窗口` 键） | 181/192/193 批→308/403 批 | 同上（`window_report.py` 一张表含 k=1..5） |
+| 主应期 top-1（开发集） | **31.8%**／41.4%（308 批／415 批；403 批扩样时为 37.9，415 批多支基准口径修正后 41.4），CI[20.0, 46.6]／[25.5, 59.3]；k=1 随机 8.3% | 181 批→308 批→403 批→415 批 | `python liuyao/dev_tools/window_report.py` |
+| top-3 窗（开发集） | **61.4%**／65.5%（308 批／415 批；403 批扩样时为 62.1，415 批多支基准口径修正后 65.5；原登记 52.3／57.1；信息在窗不在点→193 批 `应期窗口` 键） | 181/192/193 批→308/403/415 批 | 同上（`window_report.py` 一张表含 k=1..5） |
 | 版本冲突上限 | 卦面分歧 0/47、判词分歧 1/37→判词保真天花板 ≈98.6%（等权估计式） | 185 批 | `python liuyao/dev_tools/version_collate.py` |
 | 规则边际 | 33 条全扫：无一单点显著（11 条有影响全 p≥0.375、top-1 零不一致）；信号在择支/日月/阶梯三底座 | 182/186 批 | `python liuyao/dev_tools/ablation.py --sweep`（分钟级） |
 | 名次键 | 四个预声明重排键全部不胜现行序；#33 排序问题按预注册结案 | 190 批 | `python liuyao/dev_tools/rank_experiment.py` |
