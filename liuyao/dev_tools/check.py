@@ -928,7 +928,7 @@ def main() -> int:
     for key, title, script in (
             ("doc_refs", "[11] 文档活引用可达性（指向不存在文件的指针）",
              "dev_tools/check_doc_refs.py"),
-            ("rule_registry", "[12] 规则注册表书源指针回验（verified 不许自说自话）",
+            ("rule_registry", "[12] 规则登记面（verified 指针回验＋千金赋统计块/五态词表/registry 列表自洽；447 批扩）",
              "dev_tools/check_rule_registry.py"),
             ("case_isolation", "[13] 案例库隔离（解读路径不得触达 data/cases）",
              "dev_tools/check_case_isolation.py"),

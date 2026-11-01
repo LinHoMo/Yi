@@ -5,6 +5,37 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-02 第四百四十八批（六爻·登记回改）：**[12] 扩了千金赋核对，`check.py` 标题与治理地图描述同批回改，治理 JSON 重生成**
+
+**性质**：登记同步（§六.2「改实现必须回头改登记」；不改判据、不改数据、不改读数）。
+
+### 一、缺陷
+
+447 批把「千金赋统计块/五态词表/registry 列表自洽」接进了 [12]，但两处登记还停在
+旧口径：`liuyao/dev_tools/check.py` 的 [12] 标题仍写「规则注册表书源指针回验」，
+`docs/GOVERNANCE-MAP.json` 的 `guards` 仍写「注册表 verified/impl 指针回验」。
+登记与实现分家即假事实（§六.2）。
+
+### 二、改法
+
+- check.py [12] 标题改为「规则登记面（verified 指针回验＋千金赋统计块/五态词表/
+  registry 列表自洽；447 批扩）」。
+- `governance_map.py` 的 liuyao CURATED 同步改写同一句 guards；
+  跑生成器重落 `docs/GOVERNANCE-MAP.json`（只有该行 guards 变化，bazi 侧无 diff）。
+- 治理计数不变：liuyao 71 脚本／blocking 33；bazi 48／30；tier 链接违例仍为
+  「bazi 两条存在性引用合法入账」。
+
+### 三、自证
+
+- `git diff --stat`：3 个文件（check.py、governance_map.py、GOVERNANCE-MAP.json），
+  JSON diff 仅 check_rule_registry 的 guards 一行。
+- 读数：tune **97.9%**（n=20）／holdout **90.2%**（n=12）／外部各集逐位不变
+  （只改登记文案，读数不动属预期，§四.7）。
+
+**全门复验**：`liuyao/dev_tools/check.py` 全过（[0]–[43]）；账台 44/44 bad=0；
+`sync_devkit.py --check` 12 件逐字节一致。
+
+
 ## 2026-11-02 第四百四十七批（两科·[12] 千金赋统计自洽＋自证吞错修复）：**100 联统计块/五态词表/registry 12 个 id 首次逐项核对；`--selftest` 失败原被截成 EXIT=0，本批改为判红**
 
 **性质**：共享门登记面补强＋门自身故障修复（不改引擎、不改案例、不改读数）。
