@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """生成问题词典 `data/rules/question_use_gods.json`；带引文的族必须逐字命中原文。
 
-    python tools/build_question_use_gods.py             # 生成 JSON
-    python tools/build_question_use_gods.py --check     # 只复验已生成 JSON 的引文是否仍逐字命中
+    python dev_tools/build_question_use_gods.py             # 生成 JSON
+    python dev_tools/build_question_use_gods.py --check     # 只复验已生成 JSON 的引文是否仍逐字命中
 
 背景（对应 docs/CHANGELOG.md 登记的「还剩词典层」一项）：
   `_QUESTION_USE_GOD_MAP` 的 186 键原先以 Python 字面量埋在 scripts/chain_tables.py 里，

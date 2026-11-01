@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """用神取法来源矩阵：每条问法是靠带引文的法则、覆盖层、词典还是兜底定的用神。
 
-    python tools/use_god_coverage.py                  # 汇总 + 逐条
-    python tools/use_god_coverage.py --only-default   # 只看兜底（三层都未命中的题）
-    python tools/use_god_coverage.py --only-inference # 只看词典·推断族（无出处）
-    python tools/use_god_coverage.py --json           # 机器可读，供门户或报告引用
+    python dev_tools/use_god_coverage.py                  # 汇总 + 逐条
+    python dev_tools/use_god_coverage.py --only-default   # 只看兜底（三层都未命中的题）
+    python dev_tools/use_god_coverage.py --only-inference # 只看词典·推断族（无出处）
+    python dev_tools/use_god_coverage.py --json           # 机器可读，供门户或报告引用
 
 为什么要有这张表：引擎取用神分四层——`data/rules/use_god_relations.json`（关系法则，
 逐条带《增刪卜易》原文引文）、chain_step2 覆盖层（消歧层，7 类带层引文）、

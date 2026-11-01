@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """生成取用神的关系优先表；每条规则的引文必须在原文里逐字找得到。
 
-    python tools/build_use_god_rules.py            # 生成 data/rules/use_god_relations.json
-    python tools/build_use_god_rules.py --check    # 只校验引文是否仍在原文中
+    python dev_tools/build_use_god_rules.py            # 生成 data/rules/use_god_relations.json
+    python dev_tools/build_use_god_rules.py --check    # 只校验引文是否仍在原文中
 
 为什么不直接把这些词塞进 `chain_tables._QUESTION_USE_GOD_MAP`
 （即 `data/rules/question_use_gods.json`，186 条现代问法词典）：

@@ -5,6 +5,37 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-02 第四百四十批（两科·扁平化残留引用清理）：**12 份六爻 provenance 的 `tools/crosscheck_source.py` 活指令与 3 个工具 docstring 改为现行路径/人工对勘；[42] 增 note 守卫（`dev_tools/` 不误伤），探针即红**
+
+**性质**：数据/meta 注记与文档串修正＋共享门扩展（不改引擎、不改案例、不改读数）。
+
+### 一、缺陷（`tools/` 目录已删，活指令还在）
+
+`check_doc_refs` 的路径前缀集不含 `tools`，于是扁平化删除的 `tools/` 活引用长期落在
+门外：12 份六爻 provenance（`bushi_quanshu_dz`…`zhouyi_shangzhan_dz`）的 note 写着
+「引用前须跑 `tools/crosscheck_source.py` 对勘留痕」——照抄命令必然失败；
+另有 3 个工具 docstring 仍写 `python tools/<脚本>.py`
+（`build_question_use_gods`、`build_use_god_rules`、`use_god_coverage`）。
+
+### 二、改法
+
+- 12 份 provenance 改为「须**人工**对勘留痕（原对勘脚本已随扁平化删除；
+  字节/统计由 [42] 核对）」。
+- 3 个 docstring 改为 `python dev_tools/…`。
+- 共享门 [42] 新增 note 守卫：provenance 的 `note` 里出现裸 `tools/`（先剔除
+  `dev_tools/` 再判断）即判红；selftest 14→**15** 件。
+
+### 三、自证（§四.8）
+
+- 全量：16 份 provenance 的 sha/字节/字数/非空行仍与在盘一致；15 件 selftest 全过。
+- **真实探针**：往 `mingli_tanyuan_dz.provenance.json` 的 note 插入 `tools/x.py` →
+  [42] 报「note 仍指向已删除的 tools/ 路径」（EXIT=1）；恢复后转绿（八字侧同批同门）。
+- 读数：tune **97.9%**（n=20）／holdout **90.2%**（n=12）／外部各集逐位不变。
+
+**全门复验**：`liuyao/dev_tools/check.py` 全过；账台全量 bad=0；`golden.py verify`
+机械 3a19／措辞 7960 零漂移；根级四闸全过；`sync_devkit.py --check` 12 件逐字节一致。
+
+
 ## 2026-11-02 第四百三十八批（六爻·案例层源哈希门）：**`wikisource_cases` 的源哈希停在 433 前的 LF 口径且缺 `source_file`——补登记并新增 [43] 核对 5 份案例文件/5 元哈希/123 每例哈希；探针改一例即红**
 
 **性质**：门禁新增＋登记修正（不改引擎、不改评分、不改读数）。

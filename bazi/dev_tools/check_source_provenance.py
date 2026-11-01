@@ -74,6 +74,10 @@ def audit(prov_dir: Path, base: Path) -> tuple[list[str], dict]:
         except Exception as exc:
             problems.append(f"{pv.name}：JSON 解析失败（{exc}）")
             continue
+        note = str(d.get("note") or "")
+        # 只抓已删除的裸 `tools/`；`dev_tools/` 是现行目录，不能误伤。
+        if "tools/" in note.replace("dev_tools/", ""):
+            problems.append(f"{pv.name}：note 仍指向已删除的 tools/ 路径（扁平化后该目录不存在）")
         sf = str(d.get("source_file") or "")
         if not sf:
             problems.append(f"{pv.name}：缺 source_file")
@@ -177,6 +181,8 @@ def _fixture(root: Path, source_text: str = "甲子\n\n乙丑\n", **overrides) -
     }
     if overrides.get("drop_sha"):
         prov.pop("sha256")
+    if "note" in overrides:
+        prov["note"] = overrides["note"]
     (src_dir / "jubu.provenance.json").write_text(
         json.dumps(prov, ensure_ascii=False), encoding="utf-8")
     return src_dir
@@ -241,6 +247,8 @@ def selftest() -> int:
         ("负例：缺 sha256", "缺 sha256", lambda r: _fixture(r, drop_sha=True)),
         ("负例：lines 用含空行口径", "stats.lines", lambda r: _fixture(r, lines=3)),
         ("负例：0 份 provenance", "0 份", empty),
+        ("负例：note 仍指向已删除 tools/", "tools/",
+         lambda r: _fixture(r, note="须跑 tools/crosscheck_source.py 对勘留痕")),
     ]
     ledger_cases = [
         ("台账正例：行值与底本一致", None, lambda r: _ledger_fixture(r)),

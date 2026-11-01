@@ -9,6 +9,48 @@
 > 399/400/401 撞号，按提交顺序归位为 **408/409/410/411**；原提交 `46d8bc1` 的提交信息
 > 保留旧号作历史，不再改。跨文件引用一律按新号。
 
+## 2026-11-02 第四百四十批（两科·扁平化残留引用清理）：**29 份 provenance 的 `tools/crosscheck_source.py` 活指令、3 个六爻工具 docstring、`liushen_image.json` 的 `tools/eval.py` 全改为现行路径/人工对勘；[42] 增 note 守卫（`dev_tools/` 不误伤），探针即红**
+
+**性质**：数据/meta 注记与文档串修正＋共享门扩展（不改引擎、不改案例、不改读数）。
+
+### 一、缺陷（`tools/` 目录已删，活指令还在）
+
+`check_doc_refs` 的路径前缀集只含 `docs|scripts|data|references|dev_tools|core|tests`，
+**不含 `tools`**——于是扁平化删除的 `tools/` 活引用一直落在门的外观测区：
+- **29 份 provenance**（bazi 17＋liuyao 12）的 note 写着「引用前须跑
+  `tools/crosscheck_source.py` 对勘留痕」——该脚本已随扁平化删除，照着跑必然失败；
+- `bazi/data/liushen_image.json` 的「禁入」仍写「不得进 `tools/eval.py` 的计分口径」，
+  评分器现为 `eval/evaluate.py`；
+- 六爻 3 个工具的 docstring 仍写 `python tools/<脚本>.py`（`build_question_use_gods`、
+  `build_use_god_rules`、`use_god_coverage`），照抄命令跑不通。
+
+### 二、改法
+
+- 29 份 provenance 的句子改为「引用前须**人工**对勘留痕（原对勘脚本已随扁平化删除；
+  字节/统计由 [42] 核对）」；`huangji_jingshi_shu_dz` 的长注里另两处
+  `tools/check_source_readings.py` 改 `dev_tools/…`，旧读法文档路径显式标注
+  「该目录已随扁平化删除」。
+- `liushen_image.json`：`tools/eval.py` → `eval/evaluate.py`。
+- 六爻 3 个 docstring：`python tools/…` → `python dev_tools/…`。
+- 共享门 [42] 新增 note 守卫：provenance 的 `note` 里出现裸 `tools/`（先剔除
+  `dev_tools/` 再判断）即判红；selftest 14→**15** 件（新增「note 指向已删除 tools/」）。
+  这样同类残留会当场显形，不再靠人工读。
+
+### 三、自证（§四.8）
+
+- 门首跑真实抓到 `huangji_jingshi_shu_dz.provenance.json` 长注里残留的
+  `tools/check_source_readings.py`（判红），改完转绿；`dev_tools/` 不误伤。
+- **真实探针**：往 `mingli_tanyuan_dz.provenance.json` 的 note 里插入 `tools/x.py` →
+  [42] 报 `note 仍指向已删除的 tools/ 路径`（EXIT=1）；按原字节恢复后转绿。
+- 全量：两科 [42] 15 件自证全过；29 份 provenance 的 sha/字节/字数/非空行仍与在盘一致。
+- 读数：tune 100.0（n=61）、holdout 100.0（n=279）、外部 69 例逐位不变。
+- 插件重建：`liushen_image.json` 随 engine 打包，`build.mjs` 后引擎 151 文件逐字节一致、
+  知识库 14 篇一致、DSH 宿主自检全过。
+
+**全门复验**：两科 `check.py` 全过；账台全量 bad=0；两科 golden 零漂移；
+根级四闸全过；`sync_devkit.py --check` 12 件逐字节一致。
+
+
 ## 2026-11-02 第四百三十九批（八字·四库本构建链）：**raw→dz 重算接进 [43]——meta 与 raw 逐项核对＋builder `--check`；raw 不在盘显式跳过；探针改 raw 即红**
 
 **性质**：门禁新增＋文档口径改正（不改引擎、不改案例、不改读数）。
