@@ -150,15 +150,16 @@ def checks():
     # 说明**盘与金标准一致**，是账台登记值过期，不是回归（308 批定性）。
     add("liuyao.golden(3a19/7960)", "193批→308批改期望；320 批纳入 judgment 判定块；321–324 批判定器 v3–v6 内容变化再重基线（机械指纹变、措辞始终未变）；362 批象层上线：正文增【象上看】段与用神口径提示 → 措辞指纹 405b→7960（机械层未动，评分未改）；364 批用神合日月按动静分计（源L738）：机械指纹 6f70→3a19（288 例中 4 条读数变化、1 例 verdict 翻档），措辞指纹仍未动", lambda t: _golden("liuyao"),
         ("3a192fa993ec7578", "79603215e5863f71"))
-    add("bazi.golden(b7674/081d)", "176批前→308批改期望；362 批象层上线：正文增【象上看】段（宫位/六亲/脏腑）→ 措辞指纹 3512→baa1（机械层未动，评分未改）；"
+    add("bazi.golden(b7674/e158d)", "176批前→308批改期望；362 批象层上线：正文增【象上看】段（宫位/六亲/脏腑）→ 措辞指纹 3512→baa1（机械层未动，评分未改）；"
         "363 批行运成格变格分列读数：narrate 增【行运成格变格】段（只命名结构引动，不覆写本命格局成败、不进评分）→ 措辞指纹 baa1→168c→72b4（末次为裁决行去重），机械层始终未动；"
         "374 批岁运五式（合先于克）与 383／385 批化格字段 → 机械 21a4ff76a5e75662、措辞 872bde611188a5e9；"
         "394 批化格补三条（妒合两两相配／禄旺＋化神不通不化／定义例改日主无根）→ 措辞 872b→085b1b5be0178428（仅 mid_jianlu 一例 假化→不化，机械层零漂移）；"
-        "396 批五行专旺门 → MP066 无→炎上·真从（special_pattern 入 conclusion），机械 21a4→b7674a8f6d8d1162、措辞 085b→081d93e081f54b2b（另 3 例不在 golden 40）。"
+        "396 批五行专旺门 → MP066 无→炎上·真从（special_pattern 入 conclusion），机械 21a4→b7674a8f6d8d1162、措辞 085b→081d93e081f54b2b（另 3 例不在 golden 40）；"
+        "411 批（原 401，批号归位）报告层补十神作用篇提纲 → 措辞 081d→e158d5cb8a92e005（机械层零漂移；capture 见 digest#narrate_drift_log）。"
         "（364 批六爻欠账清理时账台报分家：bazi/dev_tools/golden.py 已 capture 而本账期望值仍停在 baa1，属登记过期不是回归，按 drift_log 归因回补。"
         "注意：本值随 capture 同步；若再分家，先读 drift_log 再改，勿凭记忆填。）",
         lambda t: _golden("bazi"),
-        ("b7674a8f6d8d1162", "081d93e081f54b2b"))
+        ("b7674a8f6d8d1162", "e158d5cb8a92e005"))
     add("governance(67/45, blk 30/27)",
         "194批（312 补 310；315 补 314/315 两门；317 补 judge_shadow；329 补 fetch_zengshan_dz_cases；"
         "331 批 check_docs_index 上提到 devkit/root → 六爻 blk 28→27、脚本仍 63；"
@@ -201,10 +202,11 @@ def checks():
         from collections import Counter
         c = Counter(x.get("split") for x in cc)
         return (str(c["tune"]), str(c["holdout"]), str(len(ex.get("cases") or ex)))
-    add("八字案例分母(61/279/62)", "234批；339 批实跑 53→62（326/329 批语料扩样后外部集 +9 例）；"
+    add("八字案例分母(61/279/65)", "234批；339 批实跑 53→62（326/329 批语料扩样后外部集 +9 例）；"
         "368 批清例后 holdout 278→276（两例同考点双建被清，非引擎回归）；"
-        "395 批《千里命稿》从格 4 例入册（QL001 进 tune、QL002-004 进 holdout）→ 60/276→61/279",
-        c_bazi_denoms, ("61", "279", "62"))
+        "395 批《千里命稿》从格 4 例入册（QL001 进 tune、QL002-004 进 holdout）→ 60/276→61/279；"
+        "411 批（原 401）外部集《消息赋》3 例入册 → 62→65",
+        c_bazi_denoms, ("61", "279", "65"))
 
     # 头牌值在位性（235 批）：现状文档（README×2/CAPABILITY/GOVERNANCE）必须各含每个
     # 主读数**至少一处**——文档被改回旧值（176 批 97.3 事故族）时现值消失即红。
@@ -456,8 +458,9 @@ def checks():
         n = re.search(r"运行 (\d+) 例（external_holdout", s)
         sw = re.search(r"强弱对齐（external_holdout · report-only，不设门槛、非命中率）：(\d+)/(\d+)", s)
         return ((n.group(1), sw.group(1), sw.group(2)) if n and sw else (None,) * 3)
-    add("bazi.external(n62 强弱33/54 report-only)",
-        "bazi README/160批起；339 批实跑 53→62（外部集扩样后同步）", c_bazi_ext, ("62", "33", "54"))
+    add("bazi.external(n65 强弱33/54 report-only)",
+        "bazi README/160批起；339 批实跑 53→62；411 批（原 401）消息赋 3 例 → 65（外集扩样后同步）",
+        c_bazi_ext, ("65", "33", "54"))
 
     def c_bazi_base(t):
         s = sh(["dev_tools/baselines.py", "--split", "holdout"], cwd=ROOT / "bazi")
