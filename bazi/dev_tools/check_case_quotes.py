@@ -11,6 +11,7 @@
      两者都没有且书在 UNROUTABLE_BOOKS → 逐条披露、不判红（有数、可见）；
   C. `case_quote_exempt.json` 登记的「夹注段/跨段摘录不在库内连续子串」逐条豁免；
      若豁免项的引文后来能在底本连续命中 → 判红（豁免过期，必须回接）；
+     每条豁免同时报**最长连续块**（432 批），让「不在库」是实测数而不是一句声明；
   D. 下限守卫：含引文文件数、引文总数、逐字比对数低于登记基线即判红
      （0 结果 ≠ 通过；路径挪动/解析失败必须先显形）。
 
@@ -23,6 +24,7 @@ import argparse
 import json
 import re
 import sys
+from difflib import SequenceMatcher
 from pathlib import Path
 
 if hasattr(sys.stdout, "reconfigure"):
@@ -55,11 +57,20 @@ UNROUTABLE_BOOKS = {
 MARKUP_RE = re.compile(r"''+|={2,}|\{\{[^{}]*\}\}|\{\||\|\}|\|")
 MIN_FILES = 7       # 有 source_quote 的案例文件
 MIN_QUOTES = 464    # 340 classical + 69 external + 12 dayun + 22 hua + 9 cong + 10 zhuan + 2 bing
-MIN_ROUTED = 444    # 464 - 7 不可路由 - 13 夹注段豁免（431 批把 10 条省略号摘录换成连续段落）
+MIN_ROUTED = 445    # 464 - 7 不可路由 - 12 夹注段豁免（431 批 10 条连续化、432 批 ZP025 截短后命中）
 
 
 def norm(text: str) -> str:
     return re.sub(r"\s+", "", MARKUP_RE.sub("", str(text)))
+
+
+def longest_block(text: str, corpus: str) -> int:
+    """归一化引文与底本的最长**连续**公共块长度（豁免项的实测证据）。"""
+    if not text or not corpus:
+        return 0
+    m = SequenceMatcher(None, text, corpus, autojunk=False).find_longest_match(
+        0, len(text), 0, len(corpus))
+    return m.size
 
 
 def book_name(case: dict) -> str:
@@ -131,7 +142,7 @@ def iter_cases():
 def check_all(exempt: dict) -> tuple[list[str], dict]:
     failures: list[str] = []
     stats = {"files": 0, "quotes": 0, "routed": 0, "unrouted": 0, "exempt": 0,
-             "per_file": [], "unrouted_detail": []}
+             "per_file": [], "unrouted_detail": [], "exempt_detail": []}
     corpus: dict = {}
     seen_exempt: set[str] = set()
     for path, cases, err in iter_cases():
@@ -156,6 +167,11 @@ def check_all(exempt: dict) -> tuple[list[str], dict]:
             elif status == "exempt":
                 stats["exempt"] += 1
                 seen_exempt.add(cid)
+                _names, _why = resolve_sources(case)
+                _q = norm(case.get("source_quote") or "")
+                _blk = longest_block(_q, corpus[tuple(_names)])
+                stats["exempt_detail"].append(
+                    f"  {cid}：最长连续 {_blk}/{len(_q)} 字（夹注段不在库，逐条披露）")
             elif status == "unrouted":
                 stats["unrouted"] += 1
                 stats["unrouted_detail"].append(f"  {rel}: {msg}")
@@ -208,10 +224,18 @@ def selftest() -> int:
         if not ok:
             bad += 1
         print(f"  {'√' if ok else '×'} {why}（期望 {want}，实为 {got}）")
+    full = longest_block(norm(needle), qiong)
+    part = longest_block(norm("本书并无此语"), qiong)
+    ok_blk = full == len(norm(needle)) and part < 6
+    print(f"  {'√' if ok_blk else '×'} 最长连续块自证（库内整句 {full}/{len(norm(needle))} 字；"
+          f"库外句 {part} 字）")
+    if not ok_blk:
+        bad += 1
     if bad:
         print(f"  × selftest 失败 {bad} 例——比对逻辑/路由漂移，先修器")
         return 1
-    print(f"  √ selftest：{len(cases)} 件（正例/尾拼/凭空句/豁免/豁免过期/不可路由）全过")
+    print(f"  √ selftest：{len(cases)} 件（正例/尾拼/凭空句/豁免/豁免过期/不可路由）"
+          f"＋最长连续块全过")
     return 0
 
 
@@ -229,6 +253,8 @@ def main() -> int:
         print(line)
     for line in stats["unrouted_detail"]:
         print(f"  （披露·书源不在库）{line}")
+    for line in stats["exempt_detail"]:
+        print(line)
     st_fail = selftest() if args.selftest else 0
     if failures:
         print(f"\n失败 {len(failures)} 项：")
