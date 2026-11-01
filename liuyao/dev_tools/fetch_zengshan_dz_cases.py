@@ -350,12 +350,31 @@ def load_readings() -> dict:
     return d.get("readings") or {}
 
 
-def apply_verdicts(cases: list[dict], old_doc: dict, readings: dict,
-                   source_text: str) -> list[tuple[str, str]]:
-    """吉凶：旧册按源行沿用（本批只修应期归属）；新例默认 N/A（未逐条校勘）；
-    读书册按源行覆盖，引文必须是底本逐字子串（否则判红、不写盘）。
+def case_windows(lines: list[str], cases: list[dict]) -> dict[str, str]:
+    """每条案例的断语段（本案头行 → 下一占例头行）。
 
-    返回引文不在底本的清单（空＝通过）。
+    422 批：书证必须落在**本案**断语段里，只在全库任意处命中不算——421 批
+    L2334（ZDP012）用的「后竟纳之，名败身丧」实际在 L2911（ZDP024）的段里，
+    旧写法 `q in source_text` 对全库都通过，于是把别案的结论记到了本案名下。
+    """
+    out: dict[str, str] = {}
+    for c in cases:
+        m = re.search(r"L(\d+)$", str(c.get("_src") or ""))
+        if not m:
+            continue
+        i = int(m.group(1)) - 1
+        stop = next_case_head(lines, i + 1)
+        out[c["_src"]] = "".join(lines[i:stop if stop is not None else len(lines)])
+    return out
+
+
+def apply_verdicts(cases: list[dict], old_doc: dict, readings: dict,
+                   windows: dict[str, str]) -> list[tuple[str, str]]:
+    """吉凶：旧册按源行沿用；新例默认 N/A（未逐条校勘）；书证册按源行覆盖。
+
+    书证要求（422 批加严）：引文必须是**本案断语段**的逐字子串，非空吉凶必须带引文，
+    取值只准 吉/凶/空（N/A）。任一不满足即判红、不写盘。
+    返回问题清单（空＝通过）。
     """
     old_by_src = {c.get("_src"): c for c in (old_doc.get("cases") or []) if c.get("_src")}
     bad: list[tuple[str, str]] = []
@@ -373,12 +392,23 @@ def apply_verdicts(cases: list[dict], old_doc: dict, readings: dict,
         if not r:
             continue
         q = str(r.get("quote") or "")
-        if q and q not in source_text:
+        v = str(r.get("verdict") or "")
+        if v not in ("", "吉", "凶"):
+            bad.append((str(c.get("_src")), f"未登记取值：{v}"))
+            continue
+        if v and not q:
+            bad.append((str(c.get("_src")), "非空吉凶缺逐字书证"))
+            continue
+        win = windows.get(str(c.get("_src"))) or ""
+        if q and q not in win:
             bad.append((str(c.get("_src")), q))
             continue
-        c["expected"]["verdict"] = str(r.get("verdict") or "")
-        c["provenance"]["verdict_source"] = f"书证逐字：{q}"
-        c["provenance"]["verdict_quote"] = q
+        c["expected"]["verdict"] = v
+        c["provenance"]["verdict_source"] = f"书证逐字：{q}" if q else "书证逐字：N/A"
+        if q:
+            c["provenance"]["verdict_quote"] = q
+        else:
+            c["provenance"].pop("verdict_quote", None)
     return bad
 
 
@@ -465,13 +495,28 @@ def run_selftest() -> int:
                           {"cases": [{"_src": "L1", "expected": {"verdict": "吉"}}]},
                           {"L1": {"verdict": "凶", "quote": "有"},
                            "L9": {"verdict": "", "quote": "不存在的引文"}},
-                          "有结果句")
+                          {"L1": "有结果句", "L9": "有结果句"})
     if cases_demo[0]["expected"]["verdict"] != "凶":
         fails.append("书证册未覆盖旧值（L1 应凶）")
     if badq != [("L9", "不存在的引文")]:
-        fails.append(f"引文不在底本未判红：{badq!r}")
+        fails.append(f"引文不在本案断语段未判红：{badq!r}")
+    # 422 批：引文在**全库**另一案段里命中、但不在本案段 → 必须拒。
+    # 421 批 L2334 的真实形态：ZDP012 记了 L2911（ZDP024）的句子，旧写法放行。
+    cases_demo3 = [{"_src": "L1", "expected": {"verdict": "吉"}, "provenance": {}}]
+    badq3 = apply_verdicts(cases_demo3, {"cases": []},
+                           {"L1": {"verdict": "凶", "quote": "别案的结论"}},
+                           {"L1": "有结果句"})
+    if badq3 != [("L1", "别案的结论")]:
+        fails.append(f"跨案引文未判红：{badq3!r}")
+    # 非空吉凶却没有逐字书证 → 必须拒（N/A 可无引文）
+    cases_demo4 = [{"_src": "L1", "expected": {"verdict": ""}, "provenance": {}}]
+    badq4 = apply_verdicts(cases_demo4, {"cases": []},
+                           {"L1": {"verdict": "吉", "quote": ""}},
+                           {"L1": "有结果句"})
+    if not badq4:
+        fails.append("非空吉凶缺书证未判红")
     cases_demo2 = [{"_src": "L9", "expected": {"verdict": "吉"}, "provenance": {}}]
-    apply_verdicts(cases_demo2, {"cases": []}, {}, "")
+    apply_verdicts(cases_demo2, {"cases": []}, {}, {"L9": "有结果句"})
     if cases_demo2[0]["expected"]["verdict"] != "":
         fails.append("新例吉凶未默认为 N/A")
     for f in fails:
@@ -510,10 +555,9 @@ def main() -> int:
         if c:
             cases.append(c)
     cases = assign_stable_ids(cases, old_doc)
-    badq = apply_verdicts(cases, old_doc, load_readings(),
-                          SRC.read_text(encoding="utf-8", errors="replace"))
+    badq = apply_verdicts(cases, old_doc, load_readings(), case_windows(lines, cases))
     if badq:
-        print("× 吉凶书证引文不在底本，拒绝写盘：")
+        print("× 吉凶书证不合规（须为本案断语段逐字子串／非空吉凶须有引文），拒绝写盘：")
         for src, q in badq:
             print(f"  · {src}：{q!r}")
         return 1

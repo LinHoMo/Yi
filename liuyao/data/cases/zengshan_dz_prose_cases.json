@@ -33,7 +33,8 @@
    },
    "provenance": {
     "day_stem_normalized": false,
-    "verdict_source": "421 批沿用旧册（只修应期归属）"
+    "verdict_source": "书证逐字：果于子年建功卯年得意而归",
+    "verdict_quote": "果于子年建功卯年得意而归"
    },
    "_src": "zengshan_buyi_dz.dz.txt L797",
    "id": "ZDP001"
@@ -55,7 +56,7 @@
     "generation": "三世"
    },
    "expected": {
-    "verdict": "",
+    "verdict": "凶",
     "use_god": "",
     "use_god_branch": "",
     "use_god_position": "",
@@ -65,7 +66,8 @@
    },
    "provenance": {
     "day_stem_normalized": false,
-    "verdict_source": "421 批沿用旧册 N/A"
+    "verdict_source": "书证逐字：后果两月，其子得病，辞师未久而子死矣",
+    "verdict_quote": "后果两月，其子得病，辞师未久而子死矣"
    },
    "_src": "zengshan_buyi_dz.dz.txt L805",
    "id": "ZDP002"
@@ -122,7 +124,8 @@
    },
    "provenance": {
     "day_stem_normalized": false,
-    "verdict_source": "421 批沿用旧册（只修应期归属）"
+    "verdict_source": "书证逐字：四年知父而遇害矣",
+    "verdict_quote": "四年知父而遇害矣"
    },
    "_src": "zengshan_buyi_dz.dz.txt L1686",
    "id": "ZDP004"
@@ -181,7 +184,8 @@
    },
    "provenance": {
     "day_stem_normalized": false,
-    "verdict_source": "421 批沿用旧册（只修应期归属）"
+    "verdict_source": "书证逐字：果于申日文书实收俱到",
+    "verdict_quote": "果于申日文书实收俱到"
    },
    "_src": "zengshan_buyi_dz.dz.txt L1855",
    "id": "ZDP006"
@@ -327,7 +331,8 @@
    },
    "provenance": {
     "day_stem_normalized": false,
-    "verdict_source": "421 批沿用旧册（只修应期归属）"
+    "verdict_source": "书证逐字：后至巳年因开铅矿，连开数穴，富冠一乡",
+    "verdict_quote": "后至巳年因开铅矿，连开数穴，富冠一乡"
    },
    "_src": "zengshan_buyi_dz.dz.txt L2250",
    "id": "ZDP010"
@@ -383,8 +388,8 @@
    },
    "provenance": {
     "day_stem_normalized": false,
-    "verdict_source": "书证逐字：后竟纳之，名败身丧",
-    "verdict_quote": "后竟纳之，名败身丧"
+    "verdict_source": "书证逐字：名不能成，利不能就",
+    "verdict_quote": "名不能成，利不能就"
    },
    "_src": "zengshan_buyi_dz.dz.txt L2334",
    "id": "ZDP012"
@@ -431,7 +436,7 @@
     "generation": "游魂"
    },
    "expected": {
-    "verdict": "",
+    "verdict": "凶",
     "use_god": "",
     "use_god_branch": "",
     "use_god_position": "",
@@ -441,7 +446,8 @@
    },
    "provenance": {
     "day_stem_normalized": false,
-    "verdict_source": "421 批沿用旧册 N/A"
+    "verdict_source": "书证逐字：奔驰于名利之场，皓首无成",
+    "verdict_quote": "奔驰于名利之场，皓首无成"
    },
    "_src": "zengshan_buyi_dz.dz.txt L2379",
    "id": "ZDP014"
@@ -459,7 +465,7 @@
     "generation": "一世"
    },
    "expected": {
-    "verdict": "",
+    "verdict": "凶",
     "use_god": "",
     "use_god_branch": "",
     "use_god_position": "",
@@ -469,7 +475,8 @@
    },
    "provenance": {
     "day_stem_normalized": false,
-    "verdict_source": "421 批沿用旧册 N/A"
+    "verdict_source": "书证逐字：至子年得病，丑年得蛊病而终",
+    "verdict_quote": "至子年得病，丑年得蛊病而终"
    },
    "_src": "zengshan_buyi_dz.dz.txt L2388",
    "id": "ZDP015"
@@ -601,7 +608,7 @@
     "generation": "一世"
    },
    "expected": {
-    "verdict": "",
+    "verdict": "吉",
     "use_god": "",
     "use_god_branch": "",
     "use_god_position": "",
@@ -611,7 +618,8 @@
    },
    "provenance": {
     "day_stem_normalized": false,
-    "verdict_source": "421 批沿用旧册 N/A"
+    "verdict_source": "书证逐字：果于次年六月父子相逢",
+    "verdict_quote": "果于次年六月父子相逢"
    },
    "_src": "zengshan_buyi_dz.dz.txt L2646",
    "id": "ZDP020"
@@ -667,7 +675,8 @@
    },
    "provenance": {
     "day_stem_normalized": false,
-    "verdict_source": "421 批沿用旧册（只修应期归属）"
+    "verdict_source": "书证逐字：许之吉兆，果得成名",
+    "verdict_quote": "许之吉兆，果得成名"
    },
    "_src": "zengshan_buyi_dz.dz.txt L2791",
    "id": "ZDP022"
@@ -717,7 +726,7 @@
     "generation": "一世"
    },
    "expected": {
-    "verdict": "",
+    "verdict": "凶",
     "use_god": "",
     "use_god_branch": "",
     "use_god_position": "",
@@ -727,7 +736,8 @@
    },
    "provenance": {
     "day_stem_normalized": false,
-    "verdict_source": "421 批沿用旧册 N/A"
+    "verdict_source": "书证逐字：后竟纳之，名败身丧",
+    "verdict_quote": "后竟纳之，名败身丧"
    },
    "_src": "zengshan_buyi_dz.dz.txt L2904",
    "id": "ZDP024"
@@ -786,7 +796,8 @@
    },
    "provenance": {
     "day_stem_normalized": false,
-    "verdict_source": "421 批沿用旧册（只修应期归属）"
+    "verdict_source": "书证逐字：果得财，应辰日者，世动逢合之日也",
+    "verdict_quote": "果得财，应辰日者，世动逢合之日也"
    },
    "_src": "zengshan_buyi_dz.dz.txt L3028",
    "id": "ZDP026"
@@ -843,7 +854,8 @@
    },
    "provenance": {
     "day_stem_normalized": false,
-    "verdict_source": "421 批沿用旧册（只修应期归属）"
+    "verdict_source": "书证逐字：果去，不数日，得价出脱",
+    "verdict_quote": "果去，不数日，得价出脱"
    },
    "_src": "zengshan_buyi_dz.dz.txt L3109",
    "id": "ZDP028"
@@ -871,7 +883,8 @@
    },
    "provenance": {
     "day_stem_normalized": false,
-    "verdict_source": "421 批沿用旧册（只修应期归属）"
+    "verdict_source": "书证逐字：幸好到地头上价格上涨，果然得了厚利",
+    "verdict_quote": "幸好到地头上价格上涨，果然得了厚利"
    },
    "_src": "zengshan_buyi_dz.dz.txt L3125",
    "id": "ZDP029"
@@ -889,7 +902,7 @@
     "generation": "一世"
    },
    "expected": {
-    "verdict": "",
+    "verdict": "吉",
     "use_god": "",
     "use_god_branch": "",
     "use_god_position": "",
@@ -899,7 +912,8 @@
    },
    "provenance": {
     "day_stem_normalized": false,
-    "verdict_source": "421 批沿用旧册 N/A"
+    "verdict_source": "书证逐字：后此人买攒香翠毛而归，俱得大利",
+    "verdict_quote": "后此人买攒香翠毛而归，俱得大利"
    },
    "_src": "zengshan_buyi_dz.dz.txt L3135",
    "id": "ZDP030"
@@ -955,7 +969,8 @@
    },
    "provenance": {
     "day_stem_normalized": false,
-    "verdict_source": "421 批沿用旧册（只修应期归属）"
+    "verdict_source": "书证逐字：果于申时到",
+    "verdict_quote": "果于申时到"
    },
    "_src": "zengshan_buyi_dz.dz.txt L3323",
    "id": "ZDP032"
@@ -983,7 +998,8 @@
    },
    "provenance": {
     "day_stem_normalized": false,
-    "verdict_source": "421 批沿用旧册（只修应期归属）"
+    "verdict_source": "书证逐字：果於本日愈",
+    "verdict_quote": "果於本日愈"
    },
    "_src": "zengshan_buyi_dz.dz.txt L3381",
    "id": "ZDP033"
@@ -1001,7 +1017,7 @@
     "generation": "二世"
    },
    "expected": {
-    "verdict": "",
+    "verdict": "吉",
     "use_god": "",
     "use_god_branch": "",
     "use_god_position": "",
@@ -1011,7 +1027,8 @@
    },
    "provenance": {
     "day_stem_normalized": false,
-    "verdict_source": "421 批沿用旧册 N/A"
+    "verdict_source": "书证逐字：后照此行，余目其平安一十七载",
+    "verdict_quote": "后照此行，余目其平安一十七载"
    },
    "_src": "zengshan_buyi_dz.dz.txt L3524",
    "id": "ZDP034"
@@ -1095,7 +1112,8 @@
    },
    "provenance": {
     "day_stem_normalized": false,
-    "verdict_source": "421 批沿用旧册（只修应期归属）"
+    "verdict_source": "书证逐字：果得原钱于红花之下",
+    "verdict_quote": "果得原钱于红花之下"
    },
    "_src": "zengshan_buyi_dz.dz.txt L3664",
    "id": "ZDP036"

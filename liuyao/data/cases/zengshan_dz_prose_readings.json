@@ -1,30 +1,58 @@
 {
   "_meta": {
-    "description": "《增删卜易》dz 散文通道（ZDP*）吉凶逐条书证册（421 批）。只收书上明写的实现句；quote 必须是底本逐字子串（建器写盘前回验，不在底本即拒绝写盘）。verdict 空串＝N/A（吉凶并存、无结果句或结果属同段后卦）。",
+    "description": "《增删卜易》dz 散文通道（ZDP*）吉凶逐条书证册（421 批建，422 批补全）。只收书上明写的实现句；quote 必须是**本案断语段**（本案头行至下一占例头行）的逐字子串——只在全书任意处命中不算（421 批 L2334 曾把 L2911（ZDP024）的句子记在 ZDP012 名下）。verdict 空串＝N/A（吉凶并存、无结果句、结果属同段后卦，或题类不涉吉凶如天候/地形势）。",
     "source": "zengshan_buyi_dz.dz.txt",
-    "rule": "旧册值按源行沿用（本批只修应期归属）；本册只覆盖已逐条读过的案例，未入册者不改；新入册案例默认 N/A。",
-    "batch": 421
+    "rule": "422 批：所有非空吉凶都必须有本案逐字书证；未逐条读过的案例不改，新入册案例默认 N/A。",
+    "batch": 422
   },
   "readings": {
+    "zengshan_buyi_dz.dz.txt L797": {
+      "verdict": "吉",
+      "quote": "果于子年建功卯年得意而归"
+    },
+    "zengshan_buyi_dz.dz.txt L805": {
+      "verdict": "凶",
+      "quote": "后果两月，其子得病，辞师未久而子死矣"
+    },
     "zengshan_buyi_dz.dz.txt L1078": {
       "verdict": "",
       "quote": "父母用神不现，明知巳火父母伏于二爻寅木之下"
+    },
+    "zengshan_buyi_dz.dz.txt L1686": {
+      "verdict": "凶",
+      "quote": "四年知父而遇害矣"
     },
     "zengshan_buyi_dz.dz.txt L1783": {
       "verdict": "",
       "quote": "余曰：今日卦与昨日相同，世爻破而入墓，官星两现，皆空破"
     },
+    "zengshan_buyi_dz.dz.txt L1855": {
+      "verdict": "吉",
+      "quote": "果于申日文书实收俱到"
+    },
     "zengshan_buyi_dz.dz.txt L2241": {
       "verdict": "凶",
       "quote": "此人自二十五岁至五十多岁东奔西走，一事无成"
     },
+    "zengshan_buyi_dz.dz.txt L2250": {
+      "verdict": "吉",
+      "quote": "后至巳年因开铅矿，连开数穴，富冠一乡"
+    },
     "zengshan_buyi_dz.dz.txt L2334": {
       "verdict": "凶",
-      "quote": "后竟纳之，名败身丧"
+      "quote": "名不能成，利不能就"
     },
     "zengshan_buyi_dz.dz.txt L2369": {
       "verdict": "吉",
       "quote": "官至元戎将军"
+    },
+    "zengshan_buyi_dz.dz.txt L2379": {
+      "verdict": "凶",
+      "quote": "奔驰于名利之场，皓首无成"
+    },
+    "zengshan_buyi_dz.dz.txt L2388": {
+      "verdict": "凶",
+      "quote": "至子年得病，丑年得蛊病而终"
     },
     "zengshan_buyi_dz.dz.txt L2398": {
       "verdict": "",
@@ -34,17 +62,61 @@
       "verdict": "凶",
       "quote": "后竟生离"
     },
+    "zengshan_buyi_dz.dz.txt L2646": {
+      "verdict": "吉",
+      "quote": "果于次年六月父子相逢"
+    },
+    "zengshan_buyi_dz.dz.txt L2791": {
+      "verdict": "吉",
+      "quote": "许之吉兆，果得成名"
+    },
     "zengshan_buyi_dz.dz.txt L2843": {
       "verdict": "",
       "quote": "不出三日得差，行至中途而死"
+    },
+    "zengshan_buyi_dz.dz.txt L2904": {
+      "verdict": "凶",
+      "quote": "后竟纳之，名败身丧"
     },
     "zengshan_buyi_dz.dz.txt L3016": {
       "verdict": "",
       "quote": "断曰：卦中财爻不现，亥水兄爻持世，父临月建生助兄爻，如缘木以求鱼也"
     },
+    "zengshan_buyi_dz.dz.txt L3028": {
+      "verdict": "吉",
+      "quote": "果得财，应辰日者，世动逢合之日也"
+    },
     "zengshan_buyi_dz.dz.txt L3088": {
       "verdict": "凶",
       "quote": "后来存货堆积四年，朽坏大半，大亏其本"
+    },
+    "zengshan_buyi_dz.dz.txt L3109": {
+      "verdict": "吉",
+      "quote": "果去，不数日，得价出脱"
+    },
+    "zengshan_buyi_dz.dz.txt L3125": {
+      "verdict": "吉",
+      "quote": "幸好到地头上价格上涨，果然得了厚利"
+    },
+    "zengshan_buyi_dz.dz.txt L3135": {
+      "verdict": "吉",
+      "quote": "后此人买攒香翠毛而归，俱得大利"
+    },
+    "zengshan_buyi_dz.dz.txt L3323": {
+      "verdict": "吉",
+      "quote": "果于申时到"
+    },
+    "zengshan_buyi_dz.dz.txt L3381": {
+      "verdict": "吉",
+      "quote": "果於本日愈"
+    },
+    "zengshan_buyi_dz.dz.txt L3524": {
+      "verdict": "吉",
+      "quote": "后照此行，余目其平安一十七载"
+    },
+    "zengshan_buyi_dz.dz.txt L3664": {
+      "verdict": "吉",
+      "quote": "果得原钱于红花之下"
     }
   }
 }

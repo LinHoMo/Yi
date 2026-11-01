@@ -973,7 +973,10 @@ def main() -> int:
                ("xiang", "[39] 象层门（象目须带出处／类别随题类联动／象层禁倒灌评分；362 批补的能力线）",
                 "dev_tools/check_xiang.py"),
                ("bond_polarity", "[40] 合绊极性门（同一条合在 step4／step5 不得反号；动用神逢合＝合绊不得加分，源L738 动静两式；364 批补）",
-                "dev_tools/check_bond_polarity.py")):
+                "dev_tools/check_bond_polarity.py"),
+               ("prose_readings", "[41] prose 吉凶书证门（非空吉凶须本案断语段逐字书证；册↔案例↔分片三方同源；"
+                                  "421 批跨案引文事故的常驻线；422 批新增）",
+                "dev_tools/check_prose_readings.py")):
         # [36] 文档索引门于 A0-5（第三百三十一批）上提到 `devkit/root/check_docs_index.py`：
         # 它守全仓 DOCS.md，不属六爻一科。编号 36 空出，**不回填**（墓碑口径见 A5-1）。
         if want(key):

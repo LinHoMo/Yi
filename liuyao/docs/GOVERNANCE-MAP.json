@@ -1,11 +1,11 @@
 {
- "count": 68,
+ "count": 69,
  "by_tier": {
   "tool": 3,
   "ondemand": 12,
   "nightly": 12,
   "build": 11,
-  "blocking": 30
+  "blocking": 31
  },
  "unclassified": [],
  "curated_but_missing": [],
@@ -209,6 +209,13 @@
    "guards": "分层契约：四段键白名单＋禁边表（[32]；312 批补登记）",
    "run_by_check_py": true,
    "doc": "分层契约门：四段输出键白名单 + 层间禁边表（CONTRACT.md §三／§四）。"
+  },
+  {
+   "script": "check_prose_readings.py",
+   "tier": "blocking",
+   "guards": "prose 吉凶书证门：非空吉凶须本案断语段逐字书证、册↔案例↔分片同源（[41]；422 批新增）",
+   "run_by_check_py": true,
+   "doc": "prose 通道吉凶书证门（[41]，第四百二十二批新增）。"
   },
   {
    "script": "check_raise_regression.py",

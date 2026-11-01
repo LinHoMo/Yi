@@ -172,7 +172,7 @@ def checks():
         "注意：本值随 capture 同步；若再分家，先读 drift_log 再改，勿凭记忆填。）",
         lambda t: _golden("bazi"),
         ("b7674a8f6d8d1162", "e158d5cb8a92e005"))
-    add("governance(68/46, blk 30/28)",
+    add("governance(69/46, blk 31/28)",
         "194批（312 补 310；315 补 314/315 两门；317 补 judge_shadow；329 补 fetch_zengshan_dz_cases；"
         "331 批 check_docs_index 上提到 devkit/root → 六爻 blk 28→27、脚本仍 63；"
         "339 批 A5-1 按实登记 7 个存量未分类脚本 → 八字 37→43；"
@@ -180,8 +180,9 @@ def checks():
         "362 批两科各新增 check_xiang（blocking）＋xiang_coverage（nightly）→ 六爻 64→66、blk 28→29，八字 43→45、blk 26→27；"
         "364 批六爻新增 check_bond_polarity（门 [40]，blocking）→ 六爻 66→67、blk 29→30，八字不变；"
         "408 批六爻新增 build_bushi_zhengzong_cases → 六爻 67→68；"
-        "420 批八字新增 check_expected_coverage（门 [40]，blocking）→ 八字 45→46、blk 27→28）",
-        lambda t: _gov_counts(), ("68", "46", "30", "28"))
+        "420 批八字新增 check_expected_coverage（门 [40]，blocking）→ 八字 45→46、blk 27→28；"
+        "422 批六爻新增 check_prose_readings（门 [41]，blocking）→ 六爻 68→69、blk 30→31，八字不变）",
+        lambda t: _gov_counts(), ("69", "46", "31", "28"))
 
     # 344 批：expected 书证/机械派生字段的覆盖生存线（门 [38]）。
     # 1592923 的事故证明「聚合分掉 6 分、所有门全绿」可以并存；本项把非空计数
@@ -195,6 +196,27 @@ def checks():
     add("liuyao.expected_coverage(78/55/3/32/3/3/3/58)",
         "344批（恢复 1592923 清空的 292/297/298 批书证标签；门 [38]）",
         c_expected_coverage, ("78", "55", "3", "32", "3", "3", "3", "58"))
+
+    # 422 批：prose 通道吉凶书证（门 [41]）。421 批只校验「引文在全库任意处」，
+    # L2334 把 L2911（ZDP024）的句子记到 ZDP012 名下仍全绿；本项把册/案例/分片
+    # 三组计数与两个分片读数一起钉住，任何清空、错指或分片漂移都在同一行显形。
+    def c_prose(t):
+        cs = json.loads((DISC / "data" / "cases" / "zengshan_dz_prose_cases.json")
+                        .read_text(encoding="utf-8"))["cases"]
+        rd = json.loads((DISC / "data" / "cases" / "zengshan_dz_prose_readings.json")
+                        .read_text(encoding="utf-8"))["readings"]
+        sp = json.loads((DISC / "data" / "cases" / "case_splits.json")
+                        .read_text(encoding="utf-8"))
+        nv = sum(1 for c in cs if (c.get("expected") or {}).get("verdict"))
+        s1 = sh(["scripts/evaluate.py", "--split", "zengshan_dz_prose_holdout"])
+        s2 = sh(["scripts/evaluate.py", "--split", "zengshan_dz_prose_direction"])
+        return (str(len(cs)), str(len(rd)), str(nv),
+                str(len(sp["zengshan_dz_prose_direction"])),
+                grab(s1, r"平均分 = ([0-9.]+)%"), grab(s2, r"平均分 = ([0-9.]+)%"))
+    add("liuyao.prose(38/28/23/19, 89.2/60.6)",
+        "422 批（421 批 L2334 跨案引文修正＋11 例旧册非空吉凶补书证＋7 例书载明确结果入册；"
+        "direction n 12→19，新旧不可比；门 [41]）",
+        c_prose, ("38", "28", "23", "19", "89.2", "60.6"))
 
     # 案例分母（234 批）：账台钉率也钉分母——删/添一例而率恰不动时，分母行会红。
     def c_case_denoms(t):
