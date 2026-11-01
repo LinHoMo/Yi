@@ -176,7 +176,8 @@
       "XF001",
       "XF002",
       "XF003",
-      "MY001"
+      "MY001",
+      "MY002"
     ]
   },
   "cases": [
@@ -1578,6 +1579,31 @@
         "transcription": "逐字转录自 suanzhun.net《命理约言》卷四杂论显示层；Wikisource 无本帖（空红链），本仓 data/sources 未收本书，故 source_file 不指向 data/sources。",
         "not_in_corpus_audit": "data/sources 列 48 件，无 命理约言（mingli_yueyan）任何文件；本书为清初陈素庵《命理约言》四卷，确属未收录之时间检验古籍。",
         "pillar_check": "五虎遁 庚年申月=甲申、五鼠遁 丁日午时=丙午，自洽；丁日主，月申金耗、坐未、时午为根，丙劫帮身 → 身强，与书『身强』合。"
+      }
+    },
+    {
+      "id": "MY002",
+      "split": "external_holdout",
+      "book": "命理约言",
+      "location": "卷四杂论·附张神峰辟五行诸谬（陈素庵，清）",
+      "source_quote": "有一贫命，庚辰甲申癸亥癸亥，亦可以龙入大海论之，何以极贫？缘此八字水多为病，再行北方运，以水济水，正谓背禄逐马，守穷途而凄惶也。",
+      "pillars": {
+        "year": "庚辰",
+        "month": "甲申",
+        "day": "癸亥",
+        "hour": "癸亥"
+      },
+      "gender": "",
+      "expected": {
+        "strength": "偏旺",
+        "strength_book_category": "水多为病（癸水日主极旺）"
+      },
+      "note": "书以谭二华（庚辰甲申丁未丙午，身强煞浅，MY001）与『贫命』（庚辰甲申癸亥癸亥）同列于『龙奔天河』生肖谬论之驳：二造同年月、异日时，一贵一贫，是古典命理经典『同构对比』教材。书明言贫命『水多为病』——癸水日主，申月金生、亥亥为根、庚金印生，水极旺。expected.strength 取『偏旺』（书之『水多』即日主过强；映射表见 evaluate.py:502『身旺→偏旺』；strength_book_category 存书原文『水多为病』）。富贵层次（极贫）与『背禄逐马』取向不入 expected（EVAL-PLAN §2.2 富贵层次/吉凶非评分面）。本例为「新书强弱一致型」：命理约言不在 data/sources（not_in_corpus 已审）。实测引擎算 癸水申月、亥亥为根、庚印生 此造为 **偏旺（score +2.7）**，与书「水多为病（偏旺）」相合——对照 MY001（丁火 偏弱 vs 书 身强，分歧型），本集收口「引擎在明显偏旺造上判读与古书一致、在临界偏弱造上分歧」的真实规律（report-only，永不调参）。",
+      "provenance": {
+        "source_url": "https://www.suanzhun.net/dianji/mingliyueyan/963.html",
+        "transcription": "逐字转录自 suanzhun.net《命理约言》卷四杂论·附张神峰辟五行诸谬显示层；与 MY001 同源同页，Wikisource 无本帖（空红链），本仓 data/sources 未收本书。",
+        "not_in_corpus_audit": "data/sources 列 48 件，无 命理约言（mingli_yueyan）任何文件（同 MY001）；本书为清初陈素庵《命理约言》四卷，确属未收录之时间检验古籍。",
+        "pillar_check": "五虎遁 庚年申月=甲申、五鼠遁 癸日亥时=癸亥，自洽；癸日主，申月金生水、坐亥、时亥，水极旺，与书『水多为病』合。"
       }
     }
   ]
