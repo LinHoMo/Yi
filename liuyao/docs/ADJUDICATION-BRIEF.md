@@ -50,7 +50,7 @@
 ## B2. 已裁 11 条（逐字取证，不再待裁）
 
 - [x] **yiin_dz_dz-L2221**（yiin_dz.dz.txt L2221）→ 取 B：{"original": "谦", "changed": "小过", "yingqi": "卯"}
-      依据：真案为《易隐》YI034 庚寅年己卯月丁亥日·谦之小过，应辛卯日；A 的屯/子月丁卯日 是下一案。YI034 已在 yiin_holdout，expected.yingqi 为空（既有空档）。
+      依据：真案为《易隐》YI034 庚寅年己卯月丁亥日·谦之小过，应辛卯日；A 的屯/子月丁卯日 是下一案。YI034 原 expected.yingqi 为空（既有空档），423 批已按「后至辛卯日…果得财也」补为辛卯日。
 - [x] **zengshan_buyi_dz_dz-L661**（zengshan_buyi_dz.dz.txt L661）→ 取 B：{"original": "艮", "changed": "颐", "yingqi": "辰"}
       依据：真头 L654「寅月丙申日占官之升迁得艮卦变山雷颐」，应三月＝辰月；A 漏变卦。
 - [x] **zengshan_buyi_dz_dz-L755**（zengshan_buyi_dz.dz.txt L755）→ 取 B：{"original": "离", "changed": "旅", "yingqi": "辰"}

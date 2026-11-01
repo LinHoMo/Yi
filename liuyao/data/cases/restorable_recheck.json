@@ -39,7 +39,7 @@
    },
    "verdict": "needs_human:original,changed,yingqi",
    "decision": "B",
-   "decision_basis": "真案为《易隐》YI034 庚寅年己卯月丁亥日·谦之小过，应辛卯日；A 的屯/子月丁卯日 是下一案。YI034 已在 yiin_holdout，expected.yingqi 为空（既有空档）。"
+   "decision_basis": "真案为《易隐》YI034 庚寅年己卯月丁亥日·谦之小过，应辛卯日；A 的屯/子月丁卯日 是下一案。YI034 原 expected.yingqi 为空（既有空档），423 批已按「后至辛卯日…果得财也」补为辛卯日。"
   },
   {
    "id": "VER-yilin_buyi_dz_dz-L227",

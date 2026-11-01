@@ -68,12 +68,8 @@ def _bank(ids_of_tune: set):
     return guard
 
 
-def build_banks():
-    """从 tune 案例的 expected 造基线答案库：多数类/边际众数/月支条件众数。
-    来源锁定 tune（selftest 的泄漏负例验证 _bank 防护本身）。"""
-    tune_ids = set(evaluate.load_ids("tune"))
-    by_id = {c["id"]: c for c in evaluate.load_cases()}
-    rows = [by_id[i] for i in sorted(tune_ids) if i in by_id]
+def _banks_from_rows(rows: list[dict]) -> dict:
+    """从给定案例行造基线答案库（build_banks 与 selftest 共用同一实现）。"""
     pat_cnt, cg_cnt, th_cnt, cond = {}, {}, {}, {}
     for c in rows:
         e = c.get("expected") or {}
@@ -93,6 +89,15 @@ def build_banks():
             "cong_majority": top(cg_cnt),
             "tiaohou_marginal": top(th_cnt) or "",
             "tiaohou_by_month": {k: top(v) for k, v in cond.items()}}
+
+
+def build_banks():
+    """从 tune 案例的 expected 造基线答案库：多数类/边际众数/月支条件众数。
+    来源锁定 tune（selftest 的泄漏负例验证 _bank 防护本身）。"""
+    tune_ids = set(evaluate.load_ids("tune"))
+    by_id = {c["id"]: c for c in evaluate.load_cases()}
+    rows = [by_id[i] for i in sorted(tune_ids) if i in by_id]
+    return _banks_from_rows(rows)
 
 
 def dim_engine_hit(res_case_dims, dim):
@@ -220,10 +225,25 @@ def cmd_selftest() -> int:
         fails.append("非 tune id 混入未抛（泄漏防护失效）")
     except ValueError:
         pass
-    # 3) bank 构建：tune 无 pattern/cong_ge 期望时对应键必须为 None（不造假多数类基线）
+    # 3) bank 构建：**无二元维期望的夹具**不得造假多数类；真实 tune 的
+    #    pattern 仍无期望（None），cong 期望有无必须与基线键一致。
+    #    395 批把 QL001（cong_ge）入 tune 后，旧的「cong 必为 None」断言已过期——
+    #    它把真实数据变化读成了假来源（2026-11-02 器具全体检抓到）。
+    fake = _banks_from_rows([{"expected": {"tiaohou": {"main": "甲"}},
+                              "pillars": {"month": "子"}}])
+    if fake["pattern_majority"] is not None or fake["cong_majority"] is not None:
+        fails.append("无二元维期望却造出了『多数类』假来源：%r" % fake)
     bank = build_banks()
-    if bank["pattern_majority"] is not None or bank["cong_majority"] is not None:
-        fails.append("tune 无二元维期望却造出了『多数类』假来源：%r" % bank)
+    if bank["pattern_majority"] is not None:
+        fails.append("tune 无 pattern 期望却造出了 pattern 多数类：%r"
+                     % bank["pattern_majority"])
+    tune_rows = [c for c in evaluate.load_cases()
+                 if c["id"] in set(evaluate.load_ids("tune"))]
+    has_cong = any(isinstance((c.get("expected") or {}).get("cong_ge"), bool)
+                   for c in tune_rows)
+    if has_cong != (bank["cong_majority"] is not None):
+        fails.append("tune cong 期望存在性与多数类基线不一致（has_cong=%r bank=%r）"
+                     % (has_cong, bank["cong_majority"]))
     if not (bank["tiaohou_marginal"] and bank["tiaohou_by_month"]):
         fails.append("tiaohou bank 不齐：%r" % {k: (v if k != "tiaohou_by_month" else len(v))
                                                 for k, v in bank.items()})

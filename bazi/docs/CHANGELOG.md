@@ -9,6 +9,23 @@
 > 399/400/401 撞号，按提交顺序归位为 **408/409/410/411**；原提交 `46d8bc1` 的提交信息
 > 保留旧号作历史，不再改。跨文件引用一律按新号。
 
+## 2026-11-02 第四百二十四批（八字·自检修复）：**baselines `--selftest` 旧断言过期——395 批 QL001 入 tune 后 cong 已有期望，被误报「假多数类」；改为合成夹具负例＋真实 tune 存在性双向断言**
+
+**性质**：自检修复（不改引擎、不改评分、不改读数）。
+
+- 缺陷：`dev_tools/baselines.py --selftest` 第 3 项断言「tune 无 pattern/cong_ge 期望时
+  两键必须 None」。395 批把 QL001（cong_ge）入 tune 后 `cong_majority=True`，该断言把
+  **真实数据变化**读成「假来源」，器具全体检长期 FAIL（主门不跑 sweep，故未显形）。
+- 改法：真源 `devkit/shared/variants/baselines.bazi.py` 抽出
+  `_banks_from_rows(rows)`（build_banks 与 selftest 共用同一实现），再
+  `sync_devkit.py --write` 分发（`dev_tools/baselines.py` 是产物，不手改）；selftest
+  分两层——①合成的无二元维夹具必须给 None（保留原意）；②真实 tune 的 pattern 必须
+  None、cong 期望存在性必须与键一致。
+- 自证：`--selftest` 全过；`--split tune` 读数不变（61 例，tiaohou 60/60=100%、
+  定答 18/60、月支条件众数 19/60）；器具全体检 **71/71 PASS、0 FAIL**。
+- 全门复验：`bazi/dev_tools/check.py` 全过（引擎/评分零改动）；账台全量 bad=0。
+
+
 ## 2026-11-02 第四百二十批（八字·治理）：**expected 受控字段覆盖生存线（门 [40]）——419 批六爻事故的八字面复刻防护；7 个案例文件逐字段钉下限**
 
 **性质**：门禁补建（不改引擎、不改语料、不改任何读数）。

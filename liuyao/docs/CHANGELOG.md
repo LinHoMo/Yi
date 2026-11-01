@@ -5,6 +5,25 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-02 第四百二十四批（六爻·登记回接）：**423 补 YI034 应期后 basis 仍写「空档」——两处裁决册回接＋重生成 ADJUDICATION-BRIEF（生成物不手改）**
+
+**性质**：登记同步（不改数据、不改引擎、不改读数）。
+
+- 缺陷：423 批把 YI034 的 `expected.yingqi` 补为辛卯日，但
+  `restorable_adjudication.json` 的 `basis` 与 `restorable_recheck.json` 的
+  `decision_basis` 仍写「expected.yingqi 为空（既有空档）」；
+  `docs/ADJUDICATION-BRIEF.md` 是 `adjudication_brief.py` 的生成物，423 提交时没有
+  重生成——登记成了假事实（§六.2）。
+- 改法：两处依据文本补「423 批已按『后至辛卯日…果得财也』补为辛卯日」；跑
+  `adjudication_brief.py` 重生成简报（生成物不手改——手改会在下次生成时被覆盖，
+  本批首版踩到）。
+- 自证：刷新后 B2 依据行含 423 补记；简报 117 事项不变；
+  `liuyao.restorable_adjudication(43=30+3+3+3+0+0+4)` 计数不变；读数为零漂移。
+
+**全门复验**：`liuyao/dev_tools/check.py` 全过；`readout_ledger.py` 全量 bad=0；
+`golden.py verify` 零漂移；根级四闸全过。
+
+
 ## 2026-11-02 第四百二十三批（六爻·易隐应期）：**建器补 `--selftest`（九道门逐门负例＋同盘异题守卫）＋应期实录补「果在日期后」式——YI029/031/034/044 由 claim 改实录，分母 7→11；strict 44.3→44.6、top-1 28.6→18.2（新旧不可比）**
 
 **性质**：抽取规则修正＋数据补登记＋建器负例自证（不改引擎、不改评分权重、不调参）。
@@ -63,10 +82,11 @@
 
 `docs/YIIN-CASE-AUDIT.md`（门 8 判据、实录/预期 11/5、读数 44.6/18.2/2.43、复现含
 `--selftest`）、`references/source_ledger.md`（7→11）、`check.py` [6] 备注、
-`readout_ledger.py` 新增 `liuyao.yiin(44.6/18.2/2.43, n=11)`、
-`docs/ADJUDICATION-BRIEF.md`（YI034 空档已填）；顺带修 `QUICK_SKIP` 三个失效旧 id
-（bazi tiaohou96.2／分维 51/53／external n62 都是改名前的值）——此前 quick 一直在跑
-本该跳过的三项，而 `readout_ledger --selftest` 长期红、主门不跑它，只有器具全体检能看见。
+`docs/ADJUDICATION-BRIEF.md`（YI034 空档回接见 424 批：423 提交时生成物仍写旧状态）、
+`readout_ledger.py` 新增 `liuyao.yiin(44.6/18.2/2.43, n=11)`；顺带修 `QUICK_SKIP`
+三个失效旧 id（bazi tiaohou96.2／分维 51/53／external n62 都是改名前的值）——此前
+quick 一直在跑本该跳过的三项，而 `readout_ledger --selftest` 长期红、主门不跑它，
+只有器具全体检能看见。
 
 **全门复验**：`liuyao/dev_tools/check.py` 全过；`readout_ledger.py` 全量 bad=0；
 `golden.py verify` 零漂移；根级四闸全过。

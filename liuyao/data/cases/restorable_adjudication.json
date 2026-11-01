@@ -58,7 +58,7 @@
    "decision": "B",
    "disposition": "已在册",
    "case_id": "YI034",
-   "basis": "真案为《易隐》YI034 庚寅年己卯月丁亥日·谦之小过，应辛卯日；YI034 在册但 expected.yingqi 空（既有空档）。",
+   "basis": "真案为《易隐》YI034 庚寅年己卯月丁亥日·谦之小过，应辛卯日；YI034 在册，expected.yingqi 原为空档，423 批已按「后至辛卯日…果得财也」补为辛卯日。",
    "next_batch": ""
   },
   {
