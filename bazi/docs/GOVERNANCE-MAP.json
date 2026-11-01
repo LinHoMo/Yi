@@ -13,6 +13,7 @@
   "blocking_not_referenced": [],
   "referenced_not_blocking": [
    "build_siku_dz.py",
+   "build_tiaohou.py",
    "diff_tiaohou_vs_head.py"
   ]
  },
@@ -84,7 +85,7 @@
    "script": "build_tiaohou.py",
    "tier": "build",
    "guards": "调候语料构建",
-   "run_by_check_py": false,
+   "run_by_check_py": true,
    "doc": "《穷通宝鉴》调候用神表构建器（一次性数据构建，产物入库、脚本留档可复跑）。"
   },
   {

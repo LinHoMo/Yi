@@ -42,6 +42,14 @@
   120 格（110 条非空 quote、10 格 N/A）逐格与底本重算一致。
 - 引擎读数：tune 100.0（n=61）、holdout 100.0（n=279）、外部 69 例逐位不变（§四.7）。
 
+### 四、账台连锁（同批）
+
+[9] 开始消费 `build_tiaohou.py` 后，`governance_map.py` 重生成的
+`bazi/docs/GOVERNANCE-MAP.json` 把它从 `run_by_check_py: false` 改为 `true`，
+`referenced_not_blocking` 软引用 2→3；`readout_ledger` 的 `tier一致性` 期望同步
+2→3，并在期望行登记「463 批 build_tiaohou 由 [9] 以 --check 消费」——**改期望必须带批号**，
+禁止静默（§六.2）。
+
 
 ## 2026-11-02 第四百六十二批（两科·[12] 大运起例引文行锚）：**`dayun_quotes` 自称「与 corpus_line 那一行逐字一致」，而 [12] 只验「值在语料某处出现」；补行锚回验，行号错/改字即红**
 
