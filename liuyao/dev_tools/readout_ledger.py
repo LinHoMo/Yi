@@ -99,6 +99,17 @@ def checks():
         "→417用神「为用」简写（6 例 N/A→明示；64.7→65.3，新旧不可比）",
         c_bushi, ("65.3", "23.7"))
 
+    def c_yiin(t):
+        s = sh(["scripts/evaluate.py", "--split", "yiin_holdout"])
+        return (grab(s, r"平均分 = ([0-9.]+)%"),
+                grab(s, r"strict top-1 命中 ([0-9.]+)%"),
+                grab(s, r"平均排在第 ([0-9.]+) 位"),
+                grab(s, r"应期信息量体检（n=([0-9]+)"))
+    add("liuyao.yiin(44.6/18.2/2.43, n=11)",
+        "326批首建→423批补「果在日期后」式：YI029/031/034/044 由 claim 改实录，"
+        "应期分母 7→11；43.9/28.6/2.25→44.6/18.2/2.43（新旧不可比）",
+        c_yiin, ("44.6", "18.2", "2.43", "11"))
+
     def c_window2(t):
         s = sh(["dev_tools/window_report.py"])
         blk = s.split("═ zengshan_dz_holdout")[0]
@@ -715,10 +726,10 @@ def _gov_counts():
 
 
 QUICK_SKIP = {"liuyao.wiki top1/top3(31.8/61.4)", "liuyao.baselines 用神25.0/日辰4.5",
-              "bazi(tiaohou96.2 pattern100.0 常数从100 b42c0)",
+              "bazi(tiaohou100.0 pattern100.0 常数从100 b42c0)",
               "liuyao.collate(卦面0/47 判词1/37)",
-              "bazi.holdout 分维(213/213×3 51/53 36/36 13/15)",
-              "bazi.external(n62 强弱33/54 report-only)"}
+              "bazi.holdout 分维(213/213×3 51/51 36/36 17/18)",
+              "bazi.external(n69 强弱34/57 report-only)"}
 
 
 def _verdict(bad: int, skipped: int) -> str:

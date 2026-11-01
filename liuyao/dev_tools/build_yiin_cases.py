@@ -2,7 +2,9 @@
 """从《易隐》殆知阁转录本（data/sources/yiin_dz.dz.txt）抽取完整占例，
 建成**永不参与调参**的外部验证集 `yiin_holdout`（ID: YI***）。
 
-    python dev_tools/build_yiin_cases.py [--dry-run]
+    python dev_tools/build_yiin_cases.py [--dry-run] [--selftest]
+
+    --selftest：九道门逐门负例＋应期两式正负例（不写盘）；负例不过即 rc=1。
 
 为什么另立这一集（第三百二十六批）：《易隐》（清·曹九锡）是本科在库书源里
 **唯一"有规整六爻卦表、却零条正式案例"**的大部头——底本 151457 字、59 个六爻
@@ -34,8 +36,10 @@ dz 本案例形态（逐字示例，L1037-1046）：
   6. 时点可还原：块上方 2–4 行内有含日柱的行，且能解析出月建＋日柱
      （年、旬、时可缺；缺月建者不收——月建是旺衰判据，缺了不可评）
   7. 占题可解析：日柱行「日」字之后、「得/遇/卜得」之前的主语短语非空
-  8. 应期只取实录：断语段内 `故/果/应/至/于/卒/竟` 之后、且不宽于两支的干支日；
-     预测句、假设句、「X日相合」类解释不计（与《增删卜易》门 6 同口径）
+  8. 应期只取实录，两式：①结果锚词（果/故/竟/卒）在日期前 20 字内，或「X日故」后置；
+     ②「果」在日期后 20 字内，取**最近的在前日期**（「果于X日」则取果后日期，
+     「果于木日」这类符号日不收）。预测句（待/直至/次日/逢/至 之后的日）只记 claim，
+     不进评分分母（与《增删卜易》门 6 同口径）。
   9. 不与在册案例同案：按（本卦, 变卦, 月建, 日柱）与全部 `*_cases.json` 比对
 
 吉凶一律记 null（`N/A 不进分母`）：本书断语是散文（「决难免死」「理宜多寿」
@@ -103,12 +107,43 @@ TOPICS = [
 
 # 应期分两档，口径与《增删卜易》门 6 一致（只把**实录**计入评分）：
 #   VERIFIED＝果/故/竟/卒 之后的干支日，或「干支日故」这类**后置**锚词（书已验）；
-#   CLAIM＝待/直至/次日/逢 之后的干支日（书判预期）
+#             423 批补第二式：「果」在日期之后（「后至辛卯日…果得财也」），
+#             取最近的在前日期；「果于X日」取果后日期（符号日如「木日」不收）。
+#   CLAIM＝待/直至/次日/逢/至 之后的干支日（书判预期，不进评分分母）
 # 两档都不取占测日自重——日辰行在块上方，不在断语段内，天然隔离。
 YQ = r"([%s]?[%s]{1,2})日" % (STEMS, BRANCHES)
 VERIFIED_PRE = re.compile(r"[果故竟卒][^。；;]{0,20}?" + YQ)
 VERIFIED_POST = re.compile(YQ + r"[故竟卒]")
 CLAIM_YQ = re.compile(r"(?:直?待|直至|须待|必待|次日|翌日|逢|至)[^。；;]{0,20}?" + YQ)
+GUO = "果"
+RESULT_AFTER = re.compile(r"果\s*[于於]\s*([%s]?[%s]{1,2})日" % (STEMS, BRANCHES))
+
+
+def verified_of(seg: str) -> tuple[str, str] | None:
+    """单句实录应期 → (干支, 原句)／None。两式见模块 docstring 门 8。
+
+    第二式必须取**最近的**在前日期：同一句里常有机制日期
+    （「长生于亥日，后至辛卯日…果得财」），取首个会把机制日当验期。
+    「果于X日」的结果日期写在果后；X 不是地支（「木日」「火日」）时不可评分。
+    """
+    m = VERIFIED_PRE.search(seg) or VERIFIED_POST.search(seg)
+    if m:
+        return m.group(1), seg.strip()
+    g = seg.find(GUO)
+    if g < 0:
+        return None
+    after = seg[g:]
+    m2 = RESULT_AFTER.match(after)
+    if m2:
+        return m2.group(1), seg.strip()
+    if re.match(r"果\s*[于於]", after):
+        return None
+    best = None
+    for dm in re.finditer(YQ, seg):
+        if dm.end() <= g and g - dm.end() <= 20:
+            best = dm
+    return (best.group(1), seg.strip()) if best else None
+
 
 
 def full_to_short(name: str) -> str | None:
@@ -267,11 +302,12 @@ def parse_block(lines: list[str], a: int, b: int) -> dict:
     speech = body[0] if body else ""
     yq, yq_raw, yq_claim, yq_claim_raw = "", "", "", ""
     for seg in re.split(r"[。；;]", speech):
-        if not yq:
-            m2 = VERIFIED_PRE.search(seg) or VERIFIED_POST.search(seg)
-            if m2:
-                yq, yq_raw = m2.group(1), seg.strip()
-                continue
+        v = verified_of(seg)
+        if v:
+            # 实录优先：同一句的「直待…果到」不再重复记为 claim
+            if not yq:
+                yq, yq_raw = v
+            continue
         if not yq_claim:
             m3 = CLAIM_YQ.search(seg)
             if m3:
@@ -299,10 +335,168 @@ def parse_block(lines: list[str], a: int, b: int) -> dict:
     )
 
 
+def drop_duplicates(parsed: list[dict], seen: dict[tuple, str]) -> tuple[list[tuple], list[dict]]:
+    """门 9：先与在册案例比、再集内互比（都含**占题**）。返回 (剔除清单, 保留)。
+
+    占题必须进键：326 批初版只按「本卦＋变卦＋月建＋日柱」，把《易隐》
+    **同盘异题**的教学式复用（如睽之归妹·丙子月丁卯日分占坟茔/婚姻/求官）
+    一次误杀 7 条。selftest 反向守两件：同盘异题不剔、同盘同题必剔。
+    """
+    dup, keep = [], []
+    for p in parsed:
+        clash = False
+        for k, cid in seen.items():
+            if (k[0] == p["ben"] and k[1] == p["bian"]
+                    and p["mon_gz"] in k[2] and p["day_gz"] in k[2]
+                    and k[3].strip() == p["question"].strip()):
+                dup.append((p["line"], cid))
+                clash = True
+                break
+        if not clash:
+            keep.append(p)
+    inner, uniq = {}, []
+    for p in keep:
+        key = (p["ben"], p["bian"], p["mon_gz"], p["day_gz"], p["question"].strip())
+        if key in inner:
+            dup.append((p["line"], inner[key]))
+            continue
+        inner[key] = f"L{p['line']}"
+        uniq.append(p)
+    return dup, uniq
+
+
+def run_selftest() -> int:
+    """九道门＋应期两式的负例自证（只读底本，不写盘）。"""
+    fails: list[str] = []
+    lines = SRC.read_text(encoding="utf-8", errors="replace").splitlines()
+    blocks = split_blocks(lines)
+    good = None
+    for a, b in blocks:
+        r = parse_block(lines, a, b)
+        if "fail" not in r and r["bian"] and r["moving"]:
+            good = (a, b)
+            break
+    if good is None:
+        print("  × selftest：找不到带变卦与动爻的健康块")
+        return 1
+    a, b = good
+    base = parse_block(lines, a, b)
+    if "fail" in base:
+        fails.append(f"健康块被拒：{base['fail']}")
+
+    def probe(label: str, mutate, expect: str) -> None:
+        tmp = list(lines)
+        mutate(tmp)
+        r = parse_block(tmp, a, b)
+        if "fail" not in r or expect not in r["fail"]:
+            fails.append(f"{label}：未按预期判失败（{r.get('fail') or '通过'}）")
+
+    def date_idx(t: list[str]) -> int:
+        for k in (2, 3, 4):
+            if a - k >= 0 and DAY_LINE.search(t[a - k]) and "▅" not in t[a - k]:
+                return a - k
+        return -1
+
+    # 门 1：块高（5 行不猜补）
+    _, err = parse_yao(lines, a, b - 1)
+    if not err:
+        fails.append("门 1 块高：5 行未被拒")
+
+    def m2(t):
+        for k in (1, 2, 3):
+            if a - k >= 0 and "宫" in t[a - k]:
+                t[a - k] = "表头缺失"
+                return
+    probe("门 2 表头", m2, "无宫位表头")
+
+    def m3(t):
+        for j in range(a, b + 1):
+            mm = LIUQIN.search(t[j])
+            if mm:
+                new = "子" if mm.group(3) != "子" else "丑"
+                t[j] = t[j][:mm.start(3)] + new + t[j][mm.end(3):]
+                return
+    probe("门 3 纳甲", m3, "纳甲不符")
+
+    def m4(t):
+        for j in range(a, b + 1):
+            if "▅▅▅▅▅" in t[j]:
+                t[j] = t[j].replace("▅▅▅▅▅", "▅▅　▅▅", 1)
+                return
+            if "▅▅　▅▅" in t[j]:
+                t[j] = t[j].replace("▅▅　▅▅", "▅▅▅▅▅", 1)
+                return
+    probe("门 4 阴阳", m4, "阴阳不符")
+
+    def m5(t):
+        for j in range(a, b + 1):
+            if "○→" in t[j] or "×→" in t[j]:
+                t[j] = t[j].replace("○→", "   ").replace("×→", "   ")
+                return
+    probe("门 5 动爻", m5, "动爻不符")
+
+    def m6(t):
+        di = date_idx(t)
+        if di >= 0:
+            t[di] = MONTH_LINE.sub("月", t[di], count=1)
+    probe("门 6 月建", m6, "缺月建")
+
+    def m7(t):
+        di = date_idx(t)
+        if di >= 0:
+            d = DAY_LINE.search(t[di])
+            t[di] = t[di][:d.end()]
+    probe("门 7 占题", m7, "占题不可解析")
+
+    # 门 8：实录两式＋不取预测/机制/符号日
+    yq_cases = [
+        ("果于子日建功", "子"),
+        ("后至辛卯日，财值巳辰，果得财也", "辛卯"),
+        ("况投长生于亥日，后至辛卯日，财值巳辰，果得财也", "辛卯"),
+        ("待丁未日冲破丑合，果回家也", "丁未"),
+        ("果于辛卯日死", "辛卯"),
+        ("更加卯日冲破，果于木日死也", None),
+        ("故当日未得，次日甲辰，寅卯兄弟又空，内财帮比而得也", None),
+        ("犹与辰日六合，故未到官者，可散也", None),
+    ]
+    for seg, want in yq_cases:
+        got = verified_of(seg)
+        if (got[0] if got else None) != want:
+            fails.append(f"门 8 应期：{seg[:16]!r} → {got[0] if got else None!r}，应 {want!r}")
+    m = CLAIM_YQ.search("直待癸酉日得")
+    if not m or m.group(1) != "癸酉":
+        fails.append("门 8 预期句未记 claim")
+
+    # 门 9：判定键含占题——同盘异题不剔、同盘同题必剔、集内重复必剔
+    demo = {"ben": "乾", "bian": "坤", "mon_gz": "子", "day_gz": "甲子",
+            "question": "占甲", "line": 1}
+    seen = {("乾", "坤", "子月甲子日", "占乙"): "ZD001"}
+    dup, keep = drop_duplicates([dict(demo)], seen)
+    if dup:
+        fails.append("门 9 同案：同盘异题被误剔")
+    dup2, _ = drop_duplicates([dict(demo, question="占乙", line=2)], seen)
+    if dup2 != [(2, "ZD001")]:
+        fails.append(f"门 9 同案：同盘同题未剔（{dup2!r}）")
+    dup3, uniq3 = drop_duplicates([dict(demo, line=3), dict(demo, line=4)], {})
+    if len(dup3) != 1 or len(uniq3) != 1:
+        fails.append("门 9 同案：集内重复未剔")
+
+    for f in fails:
+        print(f"  × selftest：{f}")
+    if fails:
+        return 1
+    print("  √ selftest：九道门负例全抓；应期取最近在前日期／「果于符号日」不收／"
+          "预测句只记 claim；同盘异题不剔、同盘同题必剔")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="从《易隐》dz 底本抽建 yiin_holdout")
     ap.add_argument("--dry-run", action="store_true", help="只打印门禁结果，不写文件")
+    ap.add_argument("--selftest", action="store_true", help="九道门＋应期负例自证（不写盘）")
     args = ap.parse_args()
+    if args.selftest:
+        return run_selftest()
 
     raw = SRC.read_bytes()
     sha = hashlib.sha256(raw).hexdigest()
@@ -336,27 +530,7 @@ def main() -> int:
                    str(c.get("question") or inp.get("question", "")))
             seen[key] = c.get("id", "?")
 
-    dup, keep = [], []
-    for p in parsed:
-        clash = False
-        for k, cid in seen.items():
-            if (k[0] == p["ben"] and k[1] == p["bian"]
-                    and p["mon_gz"] in k[2] and p["day_gz"] in k[2]
-                    and k[3].strip() == p["question"].strip()):
-                dup.append((p["line"], cid))
-                clash = True
-                break
-        if not clash:
-            keep.append(p)
-    # 集内同案（同样含占题）
-    inner, uniq = {}, []
-    for p in keep:
-        key = (p["ben"], p["bian"], p["mon_gz"], p["day_gz"], p["question"].strip())
-        if key in inner:
-            dup.append((p["line"], inner[key]))
-            continue
-        inner[key] = f"L{p['line']}"
-        uniq.append(p)
+    dup, uniq = drop_duplicates(parsed, seen)
 
     print(f"底本 {SRC.name}  {len(raw)} bytes  sha256={sha[:16]}…")
     print(f"卦表块 {len(blocks)}  过门 {len(parsed)}  排出门 {len(excluded)}  同案剔除 {len(dup)}  入库 {len(uniq)}")

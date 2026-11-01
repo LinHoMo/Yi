@@ -12,7 +12,7 @@
     "excluded": 3,
     "duplicates": 0,
     "n": 56,
-    "with_yingqi": 7,
+    "with_yingqi": 11,
     "verdict_policy": "吉凶一律 null：本书断语为散文，映射吉/凶属解读，越铁律一。本集为应期语料通道。",
     "note": "外部验证集，永不参与调参；与 zengshan_dz_holdout 同定位。"
   },
@@ -1076,9 +1076,11 @@
       "expected": {
         "verdict": null,
         "use_god": "",
-        "yingqi": "",
-        "yingqi_branches": [],
-        "yingqi_claim": "丙辰日",
+        "yingqi": "丙辰日",
+        "yingqi_branches": [
+          "辰"
+        ],
+        "yingqi_claim": "",
         "detail": "但嫌用爻不现，直待酉月丙辰日，官临月建，又待日辰天地合德，其夫果到也"
       },
       "provenance": {
@@ -1153,9 +1155,11 @@
       "expected": {
         "verdict": null,
         "use_god": "",
-        "yingqi": "",
-        "yingqi_branches": [],
-        "yingqi_claim": "丁未日",
+        "yingqi": "丁未日",
+        "yingqi_branches": [
+          "未"
+        ],
+        "yingqi_claim": "",
         "detail": "初爻子孙带龙动，理宜即归，奈月建害之，又绝子巳日，喜五爻申金旺动，生合子孙，所云绝处逢生也，又嫌子化丑土合住用爻，待丁未日冲破丑合，果回家也"
       },
       "provenance": {
@@ -1268,9 +1272,11 @@
       "expected": {
         "verdict": null,
         "use_god": "",
-        "yingqi": "",
-        "yingqi_branches": [],
-        "yingqi_claim": "辛卯日",
+        "yingqi": "辛卯日",
+        "yingqi_branches": [
+          "卯"
+        ],
+        "yingqi_claim": "",
         "detail": "六爻无财，只本宫卯财，伏午火官鬼下，名为耗鬼，岂知午火旬空，透出卯财，况投长生于亥日，后至辛卯日，财值巳辰，果得财也"
       },
       "provenance": {
@@ -1635,9 +1641,11 @@
       "expected": {
         "verdict": null,
         "use_god": "",
-        "yingqi": "",
-        "yingqi_branches": [],
-        "yingqi_claim": "甲申日",
+        "yingqi": "甲申日",
+        "yingqi_branches": [
+          "申"
+        ],
+        "yingqi_claim": "",
         "detail": "只有三传生合官鬼，不过暂时少甦，至甲申日，元神绝而忌神生，果死也"
       },
       "provenance": {
