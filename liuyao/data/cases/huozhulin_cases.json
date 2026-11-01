@@ -1,12 +1,12 @@
 {
   "_meta": {
-    "description": "火珠林（宋·麻衣道者）占验案例；问答体占断；含干支应期可评分",
+    "description": "火珠林（宋·麻衣道者）占验候选；问答体占断；含应期（日/月/年/时）候选，<5 例按 too_weak 挂空集",
     "built_by": "dev_tools/fetch_huozhulin_cases.py",
     "source": "data/sources/huozhulin.wikitext.txt",
     "retrieved": "2026-09-30",
     "sha256": "b3bed441a997370275ab2e5988038ae3a55fcf9986e8f4a344f0083b78c60b64",
     "total_cases": 2,
-    "note": "仅含干支日/月/年级别应期的案例；用于应期评分｜第八十六批重建两案（HZL001 拆回单条占验；HZL002 应期置空，因其原值为爻名误采）。重建前内容由 dev_tools/fetch_huozhulin_cases.py 的一次误跑覆盖过，见 docs/CHANGELOG.md 第八十六批的自纠记录。",
+    "note": "HZL001 验期写到时辰（申时，若入集按日池近似），HZL002 无验期（只评方向/格局）；两例合计 <5，按 too_weak 政策不进入 huozhulin_holdout。第八十六批重建两案（HZL001 拆回单条占验；HZL002 应期置空，因其原值为爻名误采）。重建前内容由 dev_tools/fetch_huozhulin_cases.py 的一次误跑覆盖过，见 docs/CHANGELOG.md 第八十六批的自纠记录。",
     "dropped_stats": {
       "no_hex": 0,
       "validation_fail": 0,
@@ -29,7 +29,8 @@
         "original": "乾",
         "changed": "大壮",
         "moving": [
-          5
+          5,
+          6
         ],
         "palace": "乾",
         "generation": "六世"
@@ -38,7 +39,7 @@
         "verdict": null,
         "yingqi": "申时",
         "detail": "又问：壬癸动雨要言克日定时取验，何如?曰：如六月甲辰日占雨得乾之大壮，当日申时雷雨骤至，此壬癸克日定时，何以知之?乾为天，震为雷，外卦震，内卦乾，岂得无雨?第五爻申亲艾动，日值甲辰，夜半生甲子，脯时壬申透出本宫动爻，故应在申时也。",
-        "reconstruction_note": "第八十六批重建：原案由 源L458「癸亥日占得坎之蒙」的日辰与 源L459「六月甲辰日占雨得乾之大壮，当日申时雷雨骤至」的卦与验期**拼成一条**，被 [16] 案例基准自洽门判红（两条占验不可同案）。现整案只取 源L459 一条，日辰/卦/动爻/验期四项同源。"
+        "reconstruction_note": "第八十六批重建：原案由 源L458「癸亥日占得坎之蒙」的日辰与 源L459「六月甲辰日占雨得乾之大壮，当日申时雷雨骤至」的卦与验期**拼成一条**，被 [16] 案例基准自洽门判红（两条占验不可同案）。现整案只取 源L459 一条，日辰/卦动爻/验期同源。428 批：书题「乾之大壮」按内核卦变差集为 5、6 两爻动；原文只点名第五爻是叙述侧重，`moving` 以命名之卦为准改为 [5,6]（原 [5] 与 changed 不自洽）。"
       },
       "provenance": {
         "page": "火珠林",

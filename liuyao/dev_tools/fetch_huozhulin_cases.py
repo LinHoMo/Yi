@@ -811,13 +811,13 @@ def main() -> int:
     # 输出可评分集
     OUT_JSON.write_text(json.dumps({
         "_meta": {
-            "description": "火珠林（宋·麻衣道者）占验案例；问答体占断；含干支应期可评分",
+            "description": "火珠林（宋·麻衣道者）占验候选；问答体占断；含应期（日/月/年/时）候选，<5 例按 too_weak 挂空集",
             "built_by": "dev_tools/fetch_huozhulin_cases.py",
             "source": "data/sources/huozhulin.wikitext.txt",
             "retrieved": date.today().isoformat(),
             "sha256": sha,
             "total_cases": len(scorable_cases),
-            "note": "仅含干支日/月/年级别应期的案例；用于应期评分",
+            "note": "仅收含应期（日/月/年/时）的候选；候选 <5 例，按 too_weak 政策不进入 huozhulin_holdout；本器会整文件重写，手工校勘须 --force 并重跑 [16]",
             "dropped_stats": drop_stats,
         },
         "cases": scorable_cases,

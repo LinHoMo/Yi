@@ -21,6 +21,8 @@
     卦名不在日柱行里是常态，不记 NOTE（425 批扩围）。
   · YIIN 另跑「断语逐字」：`expected.detail` 必须是本案书文窗口（日柱行→下一卦表块）
     的逐字子串（427 批）；窗口口径与建器 `build_yiin_cases.case_window` 同源。
+  · 卦变自洽（428 批）：本卦 + `moving` 的差集必须等于 `changed`，所有带 `moving`
+    列表的案例都查（classical 用 moving_count，不适用）；手工重建后的盘面由此受控。
   · **判据只用干支，不用整句**：底本多作繁体（大壯／離／粵東帶貨），而片段是抓取时
     把 `<br>` 归一成换行的产物，拿整句回底本找必然假红——本器第一版就是这样
     一口气报出 8 条"片段在底本里找不到"。干支与地支繁简同形，"日辰""应期支"
@@ -130,6 +132,33 @@ def check_detail_verbatim(case: dict, lines: list[str], blocks: list[tuple[int, 
     return []
 
 
+def check_hexagram_transform(case: dict) -> list[str]:
+    """卦变自洽：本卦 + `moving` 的差集必须等于 `changed`（428 批）。
+
+    案例文件里有手工重建的条目（如 HZL001 原 moving=[5] 而 changed=大壮，
+    后者需要 5、6 两爻动），构建器的三方校验管不到手改后的盘面。本判据对所有
+    带 `moving` 列表的案例生效（classical 用 moving_count，不适用）。
+    """
+    cid = str(case.get("id") or "?")
+    hx = case.get("hexagram") or {}
+    orig = str(hx.get("original") or "")
+    chg = str(hx.get("changed") or "")
+    mov = hx.get("moving")
+    if orig not in YB.HEXAGRAM_TRIGRAMS or not isinstance(mov, list):
+        return []
+    mov = sorted(int(x) for x in mov)
+    if not chg:
+        return [f"{cid}：有动爻 {mov} 却无变卦名"] if mov else []
+    if chg not in YB.HEXAGRAM_TRIGRAMS:
+        return [f"{cid}：变卦名「{chg}」不在内核 64 卦表"]
+    ol = YB.BAGUA_LINES[YB.HEXAGRAM_TRIGRAMS[orig][1]] + YB.BAGUA_LINES[YB.HEXAGRAM_TRIGRAMS[orig][0]]
+    cl = YB.BAGUA_LINES[YB.HEXAGRAM_TRIGRAMS[chg][1]] + YB.BAGUA_LINES[YB.HEXAGRAM_TRIGRAMS[chg][0]]
+    diff = [i + 1 for i, (a, b) in enumerate(zip(ol, cl)) if a != b]
+    if mov != diff:
+        return [f"{cid}：动爻 {mov} ≠ 卦变差集 {diff}（{orig} → {chg}）"]
+    return []
+
+
 def load_sets() -> list[tuple[str, dict]]:
     out: list[tuple[str, dict]] = []
     for name in SETS:
@@ -201,9 +230,21 @@ def selftest(problems: list[str], examined: int, yiin_lines, yiin_blocks) -> Non
                 problems.append("负例失效：YIIN detail 为空没被判红")
         else:
             problems.append("YIIN 窗口为空，detail 负例无从构造")
+
+    # 428 批：卦变自洽——本卦+moving 的差集必须等于 changed
+    def hx(orig: str, chg: str, mov: list[int]) -> dict:
+        return {"id": "HX_PROBE", "hexagram": {"original": orig, "changed": chg,
+                                                "moving": mov}}
+
+    if check_hexagram_transform(hx("乾", "大壮", [5, 6])):
+        problems.append("卦变自洽正例被误伤")
+    if not check_hexagram_transform(hx("乾", "大壮", [5])):
+        problems.append("负例失效：乾→大壮 动爻[5] 未判红")
+    if not check_hexagram_transform(hx("乾", "", [5])):
+        problems.append("负例失效：有动无变未判红")
     if examined == 0:
         problems.append("全量 0 条被检视，本门等于没跑")
-    print("  [selftest] 负例已跑（串档 / 一致 / 无书文 / YIIN 日柱片段 / YIIN 断语逐字 五件）")
+    print("  [selftest] 负例已跑（串档 / 一致 / 无书文 / YIIN 日柱片段 / YIIN 断语逐字 / 卦变自洽 六件）")
 
 
 def main() -> int:
@@ -220,6 +261,7 @@ def main() -> int:
         yiin_blocks = YB.split_blocks(yiin_lines)
     for name, c in load_sets():
         n, ps = check_case(c, name)
+        ps = ps + check_hexagram_transform(c)
         if name == "yiin_cases.json" and yiin_lines is not None:
             ps = ps + check_detail_verbatim(c, yiin_lines, yiin_blocks)
         examined += 1 if n else 0
