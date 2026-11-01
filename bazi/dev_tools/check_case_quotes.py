@@ -17,6 +17,9 @@
   C3. 豁免项的四柱/已登记专名一旦在底本出现 → `exempt_bad` 判红
      （436 批四柱、437 批专名）：「不在库」不能只靠自述；泛称（某侍郎/某知府）
      与无专名项不做人名机械判，见 `case_quote_exempt.json` 的 `_case_names_note`；
+  C4. 豁免册自身一致性（446 批）：`case_names` 的 key 必须在 `ids` 内（否则那组专名
+     永远不会被核对）；`ids` 中无专名的项必须在 `_case_names_note` 显式披露；
+     专名值必须是非空字符串列表。
 
   D. 下限守卫：含引文文件数、引文总数、逐字比对数低于登记基线即判红
      （0 结果 ≠ 通过；路径挪动/解析失败必须先显形）。
@@ -171,8 +174,42 @@ def iter_cases():
         yield p, cases, None
 
 
-def check_all(exempt: dict) -> tuple[list[str], dict]:
+def audit_exempt_ledger(exempt: dict) -> list[str]:
+    """豁免册自身一致性（446 批）：专名/说明不得指向册外或不存在的 id。
+
+    为什么需要它：`case_names` 只对 `ids` 里的案例执行核对，可一旦出现
+    「case_names 有、ids 没有」的 key，那组专名**永远不会被比对**（静默死登记）；
+    反过来，`ids` 里既无专名也未在 `_case_names_note` 披露的项，等于「不机械判」
+    没有记录。两者都不会影响既有读数，却会让豁免册的「逐条披露」变成半真声明。
+    """
     failures: list[str] = []
+    ids = {str(x) for x in (exempt.get("ids") or [])}
+    names = exempt.get("case_names") or {}
+    note = str(exempt.get("_case_names_note") or "")
+    for cid, vals in names.items():
+        if cid not in ids:
+            failures.append(f"豁免册：case_names 的 {cid} 不在 ids 中——该组专名永远不会被核对")
+        if not isinstance(vals, list) or not vals:
+            failures.append(f"豁免册：case_names[{cid}] 必须是非空列表")
+        elif not all(isinstance(v, str) and v.strip() for v in vals):
+            failures.append(f"豁免册：case_names[{cid}] 含空值/非字符串")
+    # 披露写法允许简写：`ZP003/004/005/031/032` 要展开成五个 id，不能只认第一个。
+    # 本仓既有注记就是这么写的——判红等于逼人为过门重写人类可读的说明（反向激励）。
+    described: set[str] = set()
+    for m in re.finditer(r"([A-Z]{2,})(\d{3})((?:[/／、]\d{3})*)", note):
+        prefix = m.group(1)
+        described.add(f"{prefix}{m.group(2)}")
+        for extra in re.findall(r"\d{3}", m.group(3)):
+            described.add(f"{prefix}{extra}")
+    undisclosed = sorted(ids - set(names) - described)
+    if undisclosed:
+        failures.append(f"豁免册：{len(undisclosed)} 个豁免 id 既无专名登记、"
+                        f"也未在 _case_names_note 披露：{undisclosed[:6]}")
+    return failures
+
+
+def check_all(exempt: dict) -> tuple[list[str], dict]:
+    failures: list[str] = audit_exempt_ledger(exempt)
     stats = {"files": 0, "quotes": 0, "routed": 0, "unrouted": 0, "exempt": 0,
              "per_file": [], "unrouted_detail": [], "exempt_detail": []}
     corpus: dict = {}
@@ -290,6 +327,28 @@ def selftest() -> int:
         if not ok:
             bad += 1
         print(f"  {'√' if ok else '×'} {why}（期望 {want}，实为 {got}）")
+    ledger_cases = [
+        ({"ids": ["ZP001", "ZP002"], "case_names": {"ZP001": ["龙济光"]},
+          "_case_names_note": "ZP002 为泛称，不做人名机械判"}, 0,
+         "豁免册正例：专名+披露齐全"),
+        ({"ids": ["ZP001"], "case_names": {"ZP099": ["某"]},
+          "_case_names_note": "ZP001 无专名"}, 1,
+         "负例：case_names 的 key 不在 ids（死登记）"),
+        ({"ids": ["ZP001", "ZP002"], "case_names": {},
+          "_case_names_note": "ZP001 无专名"}, 1,
+         "负例：ids 有既无专名也未披露的项"),
+        ({"ids": ["ZP001"], "case_names": {"ZP001": []}, "_case_names_note": ""}, 1,
+         "负例：专名列表为空"),
+        ({"ids": ["ZP003", "ZP004", "ZP005"], "case_names": {},
+          "_case_names_note": "ZP003/004/005 无专名"}, 0,
+         "豁免册正例：披露用斜杠简写也要展开"),
+    ]
+    for ex, want, why in ledger_cases:
+        n = len(audit_exempt_ledger(ex))
+        ok = n == want
+        if not ok:
+            bad += 1
+        print(f"  {'√' if ok else '×'} {why}（期望 {want} 条，实为 {n} 条）")
     full = longest_block(norm(needle), qiong)
     part = longest_block(norm("本书并无此语"), qiong)
     ok_blk = full == len(norm(needle)) and part < 6
@@ -300,8 +359,10 @@ def selftest() -> int:
     if bad:
         print(f"  × selftest 失败 {bad} 例——比对逻辑/路由漂移，先修器")
         return 1
-    print(f"  √ selftest：{len(cases) + len(name_cases)} 件（正例×2/尾拼/凭空句/副底本误挂/"
-          f"豁免×2/豁免四柱回潮/豁免专名×2/豁免过期/不可路由）＋最长连续块全过")
+    print(f"  √ selftest：{len(cases) + len(name_cases) + len(ledger_cases)} 件"
+          f"（正例×2/尾拼/凭空句/副底本误挂/"
+          f"豁免×2/豁免四柱回潮/豁免专名×2/豁免过期/不可路由/豁免册自洽×5）"
+          f"＋最长连续块全过")
     return 0
 
 
