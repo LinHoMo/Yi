@@ -12,6 +12,8 @@
   判红 ＝ 裸内核 list 名直插、或 X = HEAVENLY_STEMS 式无展平别名
   NOTE ＝ 跨文件别名等本器解析不到的形态——显名报告不判红（不冒充完备）
 扫描文件数低于下限即判红（§四.8：扫 0 份≠仓库没问题，先查接线）。
+453 批：该判据抽成 `audit_scan`，**`--selftest` 与主入口共用**——此前 selftest 只扫
+实数据判违规、不判「扫到 0 文件」，`scripts/` 被挪走时全量门可假绿。
 
     python dev_tools/check_regex_lists.py                # 扫本科
     python dev_tools/check_regex_lists.py --selftest     # 负例三件套＋扫描守卫
@@ -36,6 +38,15 @@ def force_utf8_stdio():
 LISTS = {"HEAVENLY_STEMS", "EARTHLY_BRANCHES"}
 CALLS = {"compile", "search", "match", "findall", "finditer", "sub", "subn", "fullmatch", "split"}
 MIN_FILES = 40
+
+
+def audit_scan(bad: list[str], n: int) -> list[str]:
+    """扫描层判据（主入口与 --selftest 共用）：0 结果与违规都在这里判（453 批）。"""
+    problems: list[str] = []
+    if n < MIN_FILES:
+        problems.append("仅扫到 %d 文件（<%d）——遍历接线可疑，不宣布干净" % (n, MIN_FILES))
+    problems.extend(bad)
+    return problems
 
 
 def _assignments(src: str) -> dict:
@@ -151,10 +162,15 @@ def cmd_selftest() -> int:
             if s2 != 0:
                 fails.append("空目录计数错")
     bad_real, note_real, n_real = scan_disc(DISC)
-    if bad_real:
-        print("× 本科现存违规：\n  " + "\n  ".join(bad_real))
+    probs_real = audit_scan(bad_real, n_real)
+    # 453 批：0 文件在 --selftest 路径上也要判红（此前只有主入口判）
+    if not audit_scan([], 0):
+        fails.append("负例未抓到：扫描 0 文件应判红")
+    if probs_real:
+        print("× 本科现存问题：\n  " + "\n  ".join(probs_real))
         return 1
-    print("√ selftest：负例三件套（裸插判红/别名判红/展平放行）全过；本科实扫 %d 文件违规 0%s"
+    print("√ selftest：负例三件套（裸插判红/别名判红/展平放行）＋0 文件守卫全过；"
+          "本科实扫 %d 文件违规 0%s"
           % (n_real, ("；NOTE %d（显名不判红）" % len(note_real)) if note_real else ""))
     return 0
 
@@ -167,15 +183,15 @@ def main() -> int:
     if args.selftest:
         return cmd_selftest()
     bad, note, n = scan_disc(DISC)
-    if n < MIN_FILES:
-        print("× 仅扫到 %d 文件（<%d）——遍历接线可疑，不宣布干净" % (n, MIN_FILES))
-        return 1
-    for b in bad:
-        print("× " + b)
+    probs = audit_scan(bad, n)
     for nt in note:
         print("NOTE " + nt)
-    print("%s：扫 %d 文件，list 直插字符类违规 %d 处" % ("判红" if bad else "√ 通过", n, len(bad)))
-    return 1 if bad else 0
+    if probs:
+        for b in probs:
+            print("× " + b)
+        return 1
+    print("√ 扫 %d 文件，list 直插字符类违规 0 处" % n)
+    return 0
 
 
 if __name__ == "__main__":

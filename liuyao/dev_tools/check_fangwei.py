@@ -9,6 +9,9 @@
      且「子孙属水…北方」作为候选出现但被判衰（书正是以旺衰分别否掉的）；
   ③ 延医三档还出源L3412 自带的两个例子：午火子孙旺→**南**；应爻临申金→**西南**。
 `--selftest` 做负例：改坏方位表／旺衰序／引文，三处必须各自被抓。
+453 批：`--selftest` 路径**同时跑真实数据面**——此前该分支 `selftest(); return 0`，
+而 `check.py` 只用 `--selftest` 调本门，于是书据逐字／WDS014／延医三档在全量门里
+从未执行（零结果守卫与实数据都落在主入口的盲区）。
 """
 from __future__ import annotations
 
@@ -135,8 +138,12 @@ def main() -> int:
     _ap.add_argument("--selftest", action="store_true", help="负例自证")
     args = _ap.parse_args()
     if args.selftest:
-        selftest()
-        return 0
+        try:
+            selftest()
+        except AssertionError as exc:
+            print(f"FAIL SELFTEST：{exc}")
+            return 1
+        # 453 批：负例通过后继续跑真实数据面（不提前 return）
     problems: list[str] = []
     if not SRC.exists():
         print(f"FAIL：底本不存在 {SRC.name}")
