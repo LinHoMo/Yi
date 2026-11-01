@@ -62,7 +62,7 @@ CURATED = {
         "check_rule_registry": ("blocking", "规则注册表书源/impl 指针回验"),
         "check_layer_contract": ("blocking", "分层契约：四段键白名单＋禁边表（[32]；312 批补登记）"),
         "check_source_readings": ("blocking", "书证引文逐字回验（源L行号）"),
-        "check_source_provenance": ("blocking", "底本完整性门：provenance 的 sha256/bytes/chars/lines 须与在盘底本逐项相符（[42]；433 批新增）"),
+        "check_source_provenance": ("blocking", "底本完整性门：sha256/bytes/chars/lines＋扩展统计（ganzhi_pairs/tables/headings）＋元数据（page_count/eol_on_disk/sha256_lf_text）＋已登记双口径行数须与在盘底本逐项相符，台账表（含干支对/标题列）同源（[42]；433 批新增，442–445 批扩）"),
         "corpus_reports": ("blocking", "多盘并集接线闸（[8]；缺件自愈）——207 批更正 tier：实为挂闸门"),
         "corpus_wiring_report": ("blocking", "语料进没进报告的接线读数（挂 [8] 系；207 批更正）"),
         "verdict_audit": ("blocking", "断语外置审计 [16]（207 批更正 tier：实为挂闸门）"),
@@ -117,7 +117,7 @@ CURATED = {
         "xiang_coverage": ("nightly", "象层覆盖读数器（只报有没有出，不报准不准；362 批新增）"),
         "check_bond_polarity": ("blocking", "合绊极性门：同一条合在 step4／step5 不得反号、动用神逢合不得加分（[40]；364 批新增）"),
         "check_prose_readings": ("blocking", "prose 吉凶书证门：非空吉凶须本案断语段逐字书证、册↔案例↔分片同源（[41]；422 批新增）"),
-        "check_source_provenance": ("blocking", "底本完整性门：provenance 的 sha256/bytes/chars/lines 须与在盘底本逐项相符（[42]；433 批新增）"),
+        "check_source_provenance": ("blocking", "底本完整性门：sha256/bytes/chars/lines＋扩展统计（ganzhi_pairs/tables/headings）＋元数据（page_count/eol_on_disk/sha256_lf_text）＋已登记双口径行数须与在盘底本逐项相符，台账表（含干支对/标题列）同源（[42]；433 批新增，442–445 批扩）"),
         "check_case_source_hashes": ("blocking", "案例层源哈希门：案例 JSON 的元哈希/每例哈希须与在盘底本一致（[43]；438 批新增）"),
         # check_docs_index 于 A0-5（331 批）上提到 devkit/root/：不再是六爻 dev_tools 的脚本，
         # 故本表删条目（"表中有序实无"从此不再报它）；门本身仍在 CI 的 root-gates 里跑。

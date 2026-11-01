@@ -978,8 +978,8 @@ def main() -> int:
                ("prose_readings", "[41] prose 吉凶书证门（非空吉凶须本案断语段逐字书证；册↔案例↔分片三方同源；"
                                   "421 批跨案引文事故的常驻线；422 批新增）",
                 "dev_tools/check_prose_readings.py"),
-               ("source_provenance", "[42] 底本完整性（provenance 的 sha256/bytes/chars/lines 须与在盘底本逐项相等；"
-                                     "433 批新增）",
+               ("source_provenance", "[42] 底本完整性（provenance 基础统计＋扩展统计＋元数据＋双口径行数须与在盘底本逐项相等；台账表同源；"
+                                     "433 批新增，442–445 批扩）",
                 "dev_tools/check_source_provenance.py"),
                ("case_source_hashes", "[43] 案例层源哈希（案例 JSON 登记的源文件/元哈希/每例哈希须与在盘底本一致；"
                                       "438 批新增）",

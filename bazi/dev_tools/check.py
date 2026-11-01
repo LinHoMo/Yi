@@ -739,7 +739,7 @@ def main() -> int:
 
     # [42] 底本完整性（第四百三十三批）：所有逐字回验的根是 data/sources/*.txt；
     # provenance 的 sha256/stats 与在盘底本逐项核对，根上漂移会让上面所有门失去意义。
-    print("\n[42] 底本完整性（provenance 的 sha256/bytes/chars/lines 须与在盘底本逐项相等）")
+    print("\n[42] 底本完整性（provenance 基础统计＋扩展统计＋元数据＋双口径行数须与在盘底本逐项相等；台账表同源；433 批新增，442–445 批扩）")
     code, out = run(["dev_tools/check_source_provenance.py", "--selftest"])
     for line in out.splitlines():
         if line.strip():

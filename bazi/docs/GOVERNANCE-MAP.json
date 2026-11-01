@@ -230,7 +230,7 @@
   {
    "script": "check_source_provenance.py",
    "tier": "blocking",
-   "guards": "底本完整性门：provenance 的 sha256/bytes/chars/lines 须与在盘底本逐项相符（[42]；433 批新增）",
+   "guards": "底本完整性门：sha256/bytes/chars/lines＋扩展统计（ganzhi_pairs/tables/headings）＋元数据（page_count/eol_on_disk/sha256_lf_text）＋已登记双口径行数须与在盘底本逐项相符，台账表（含干支对/标题列）同源（[42]；433 批新增，442–445 批扩）",
    "run_by_check_py": true,
    "doc": "底本完整性门（[42]，第四百三十三批）：provenance 登记值必须与在盘底本逐项相等。"
   },
