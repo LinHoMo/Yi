@@ -92,10 +92,11 @@ def checks():
         s = sh(["scripts/evaluate.py", "--split", "bushi_zhengzong_holdout"])
         return (grab(s, r"平均分 = ([0-9.]+)%"), grab(s, r"strict top-1 命中 ([0-9.]+)%"))
     # 413 批：吉凶只取结果句强结果词（22/36 与引擎一致），strict 68.3→64.7（分母新增 verdict 维）。
-    add("liuyao.bushi_zhengzong(64.7/23.7)",
+    add("liuyao.bushi_zhengzong(65.3/23.7)",
         "408批首建→409通用确认句→410相对期→412用神→413吉凶结果句"
-        "→414多单位自答（BZ0462 卯年→卯日；读数不动属预期）",
-        c_bushi, ("64.7", "23.7"))
+        "→414多单位自答（BZ0462 卯年→卯日；读数不动属预期）"
+        "→417用神「为用」简写（6 例 N/A→明示；64.7→65.3，新旧不可比）",
+        c_bushi, ("65.3", "23.7"))
 
     def c_window2(t):
         s = sh(["dev_tools/window_report.py"])

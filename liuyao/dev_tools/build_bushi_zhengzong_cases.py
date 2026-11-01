@@ -107,11 +107,14 @@ RESOLVE_UNIT_RE = re.compile(r"应(?:于|在)?([%s])(日|月|年)时?者" % BRAN
 RESOLVE_UNIT_MAX_GAP = 25
 # 412 批：用神从断语「X为用神」直取（书载明示，不由引擎回填）。简称按 zengshan 同一张
 # REL_SHORTHAND 归一；「卦中土为用神」这类只给五行的形态不可判六亲，留 N/A。
+# 417 批：底本另有大量「X为用」简写（「亥水父爻为用」「以辰爻父母为用」「酉金财爻为用」），
+# 412 的 `为用神` 硬匹配整批漏收。「为用」在断语里即「为用神」之省文，同一书载明示；
+# 放宽为 `为用(?:神)?`，并允许支与六亲之间隔一个「爻」（「辰爻父母」）。
 USE_GOD_BRANCH_RE = re.compile(
-    r"以?([%s]{1,2})[金木水火土]?(官鬼|父母|兄弟|子孙|妻财|财|子|父|兄|官|鬼)[爻]?"
-    r"[^。；\n]{0,10}为用神" % BRANCHES)
+    r"以?([%s]{1,2})(?:[金木水火土]|[爻])?(官鬼|父母|兄弟|子孙|妻财|财|子|父|兄|官|鬼)[爻]?"
+    r"[^。；\n]{0,10}为用(?:神)?" % BRANCHES)
 USE_GOD_RE = re.compile(
-    r"以[【\[]?(官鬼|父母|兄弟|子孙|妻财|财|子|父|兄|官|鬼)[爻】\]]?[^。；\n]{0,6}为用神")
+    r"以[【\[]?(官鬼|父母|兄弟|子孙|妻财|财|子|父|兄|官|鬼)[爻】\]]?[^。；\n]{0,6}为用(?:神)?")
 NEG_HEAD = "非不勿莫无"
 # 413 批：吉凶只从**结果句**的强结果词读，不拿技术词（旺/生/得/起/见）。本书「非吉兆」
 # 这类否定必须不掉进坑，故不单收「吉」；「不死/无碍/不见/不得」按整词登记。同一分句吉凶
@@ -629,16 +632,16 @@ def _case_from_block(lines: list[str], start: int, end: int, cid: str, sha: str)
                 "question_source": "占事行",
                 "yingqi_source": yingqi_src,
                 "generic_marker": gm.group(0) if gm else None,
-                "use_god_source": "断语「为用神」句" if ug_rel else None,
+                "use_god_source": "断语「为用/为用神」句" if ug_rel else None,
                 "use_god_quote": (ug_quote or "")[:80],
                 "verdict_source": "断语结果句" if vd_label else None,
                 "verdict_quote": (vd_quote or "")[:80],
                 "verdict_reason": vd_reason or None,
             },
-            "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/"
+            "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/"
                      "卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、"
                      "通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；"
-                     "用神取断语明示句；吉凶取结果句强结果词"
+                     "用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词"
                      "（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。",
         })
     good = [c for c in cases if "input" in c]
@@ -785,6 +788,19 @@ def selftest() -> int:
         fails.append("否定语境误取用神")
     if _use_god("卦中土为用神")[0] is not None:
         fails.append("五行形态误判六亲")
+    # 417 简写「为用」：正例（支+六亲 / 以X爻六亲 / 无支式），负例（应爻式、以兄弟用、否定）
+    if _use_god("亥水父爻为用，虽值旬空")[:2] != ("父母", "亥"):
+        fails.append("「为用」简写（支+六亲）未取到")
+    if _use_god("以辰爻父母为用")[:2] != ("父母", "辰"):
+        fails.append("「以X爻六亲为用」未取到")
+    if _use_god("以财爻为用")[:2] != ("妻财", ""):
+        fails.append("「以财爻为用」无支式错")
+    if _use_god("当以应爻为用")[0] is not None:
+        fails.append("应爻式（非六亲）误取")
+    if _use_god("以兄弟用")[0] is not None:
+        fails.append("「以兄弟用」无「为用」误取")
+    if _use_god("不可以财爻为用")[0] is not None:
+        fails.append("「为用」否定语境误取")
     # 413 吉凶：三真（死/愈/得财）+ 五假（非吉兆不误取/临危后愈取吉/多主体 N/A/
     # 无强结果词 N/A/结果后的格言不覆盖）
     if _verdict("果于乙酉日卯时而死矣")[0] != "凶":
@@ -826,7 +842,7 @@ def selftest() -> int:
         fails.append("验支负例（无结果标记）误命中")
     print("√ selftest：单/双栏/尾空列日期解码、空串拒绝、卦名别名、动标五字形、"
           "非单点/月序范围/自述月建、通用确认句回溯五负例、相对期换算四负例、"
-          "用神六负例、吉凶三真五假、多单位自答一真四假、验支正负例 全过"
+          "用神简写正负例、吉凶三真五假、多单位自答一真四假、验支正负例 全过"
           if not fails else "× " + "；".join(fails))
     return 0 if not fails else 1
 
@@ -920,7 +936,8 @@ def main() -> int:
         "_meta": {
             "description": "《卜筮正宗》dz 表格式段落抽取的应期/用神/吉凶外部集；八道门＋同案去重；"
                            "409 通用确认句、410 相对期、412 用神、413 吉凶结果句、"
-                           "414 多单位自答（应X者）；排除条目一律带 offset；永不参与调参",
+                           "414 多单位自答（应X者）、417 用神「为用」简写；"
+                           "排除条目一律带 offset；永不参与调参",
             "source": "《卜筮正宗》（殆知阁转录本）",
             "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
             "source_sha256": sha,
@@ -945,7 +962,8 @@ def main() -> int:
         "逐例 provenance.yingqi_source 留痕。detail 为断语原文（供格局维比对）；"
         "用神取断语「X为用神」明示句（412 批；未写明的留空，N/A 不进分母）；"
         "吉凶取结果句强结果词（413 批；无强结果词/多主体并存 → N/A）；"
-        "同支「？年月日」设问序列按书自答「应X者」落档（414 批，BZ0462 卯年→卯日），"
+        "同支「？年月日」设问序列按书自答「应X者」落档（414 批，BZ0462 卯年→卯日）；"
+        "用神另收「X为用」简写（417 批：BZ0462/0491/0792/0812/0862/0981 六例由 N/A 转明示）；"
         "排除条目一律带 offset。" % len(cases))
     write_stable(SPLITS, sp, indent=2)  # 原文件 indent=2：默认 indent=1 会把全文重排（408 实踩）
     print("√ 落盘 %s｜%d 例；case_splits.bushi_zhengzong_holdout=%d"

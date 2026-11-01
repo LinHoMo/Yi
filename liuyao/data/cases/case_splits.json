@@ -175,7 +175,7 @@
     "WSD031"
   ],
   "huozhulin_holdout": [],
-  "note_bushi_zhengzong_holdout": "第408批前本集为空：《卜筮正宗》在 classical_cases.json 的 30 例 ZS* 中占 20 例，而 ZS001-020 正是 tune 集，不能充当外部集。第408批改由 dev_tools/build_bushi_zhengzong_cases.py 从 dz 表格式段落（十八问答附占验等）另抽 38 例（BZ*，书源 data/sources/bushi_zhengzong_dz.dz.txt），与 ZS/ZD/WS 在册案例同案去重后零重叠，故可作永不调参的外部集。应期取书载实录：400 批 YING_PAT、409 批通用确认句回溯（果验/果应 → 最近前置日期令牌，须非占测日/月、非连写日、≤30 字）或 410 批相对期换算（次日/明日 → 占测日 +1 日；本日不换算），逐例 provenance.yingqi_source 留痕。detail 为断语原文（供格局维比对）；用神取断语「X为用神」明示句（412 批；未写明的留空，N/A 不进分母）；吉凶取结果句强结果词（413 批；无强结果词/多主体并存 → N/A）；同支「？年月日」设问序列按书自答「应X者」落档（414 批，BZ0462 卯年→卯日），排除条目一律带 offset。",
+  "note_bushi_zhengzong_holdout": "第408批前本集为空：《卜筮正宗》在 classical_cases.json 的 30 例 ZS* 中占 20 例，而 ZS001-020 正是 tune 集，不能充当外部集。第408批改由 dev_tools/build_bushi_zhengzong_cases.py 从 dz 表格式段落（十八问答附占验等）另抽 38 例（BZ*，书源 data/sources/bushi_zhengzong_dz.dz.txt），与 ZS/ZD/WS 在册案例同案去重后零重叠，故可作永不调参的外部集。应期取书载实录：400 批 YING_PAT、409 批通用确认句回溯（果验/果应 → 最近前置日期令牌，须非占测日/月、非连写日、≤30 字）或 410 批相对期换算（次日/明日 → 占测日 +1 日；本日不换算），逐例 provenance.yingqi_source 留痕。detail 为断语原文（供格局维比对）；用神取断语「X为用神」明示句（412 批；未写明的留空，N/A 不进分母）；吉凶取结果句强结果词（413 批；无强结果词/多主体并存 → N/A）；同支「？年月日」设问序列按书自答「应X者」落档（414 批，BZ0462 卯年→卯日）；用神另收「X为用」简写（417 批：BZ0462/0491/0792/0812/0862/0981 六例由 N/A 转明示）；排除条目一律带 offset。",
   "suigui_holdout": [
     "SG001",
     "SG002"

@@ -1,7 +1,7 @@
 {
   "schema": "yi-liuyao-cases/1",
   "_meta": {
-    "description": "《卜筮正宗》dz 表格式段落抽取的应期/用神/吉凶外部集；八道门＋同案去重；409 通用确认句、410 相对期、412 用神、413 吉凶结果句、414 多单位自答（应X者）；排除条目一律带 offset；永不参与调参",
+    "description": "《卜筮正宗》dz 表格式段落抽取的应期/用神/吉凶外部集；八道门＋同案去重；409 通用确认句、410 相对期、412 用神、413 吉凶结果句、414 多单位自答（应X者）、417 用神「为用」简写；排除条目一律带 offset；永不参与调参",
     "source": "《卜筮正宗》（殆知阁转录本）",
     "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
     "source_sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
@@ -707,7 +707,7 @@
         "verdict_quote": "后至巳年完婚",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0361",
@@ -753,13 +753,13 @@
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
         "generic_marker": null,
-        "use_god_source": "断语「为用神」句",
+        "use_god_source": "断语「为用/为用神」句",
         "use_god_quote": "亥水兄弟为用神",
         "verdict_source": "断语结果句",
         "verdict_quote": "亥日痊愈",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0391",
@@ -812,7 +812,7 @@
         "verdict_quote": "一家数口回禄俱死",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0402",
@@ -864,7 +864,7 @@
         "verdict_quote": "后至未月世值月破回禄伤身而死",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0411",
@@ -910,13 +910,13 @@
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
         "generic_marker": null,
-        "use_god_source": "断语「为用神」句",
+        "use_god_source": "断语「为用/为用神」句",
         "use_god_quote": "亥水父爻为用神",
         "verdict_source": null,
         "verdict_quote": "",
         "verdict_reason": "结果句无强结果词"
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0431",
@@ -969,7 +969,7 @@
         "verdict_quote": "后于午月覆舟而亡",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0451",
@@ -1021,7 +1021,7 @@
         "verdict_quote": "果己巳日全愈也",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0462",
@@ -1041,8 +1041,8 @@
       },
       "expected": {
         "verdict": "凶",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "父母",
+        "use_god_branch": "亥",
         "use_god_position": "",
         "yingqi": "卯日",
         "yingqi_branches": [
@@ -1067,13 +1067,13 @@
         "question_source": "占事行",
         "yingqi_source": "multi_unit_resolve",
         "generic_marker": null,
-        "use_god_source": null,
-        "use_god_quote": "",
+        "use_god_source": "断语「为用/为用神」句",
+        "use_god_quote": "亥水父爻为用",
         "verdict_source": "断语结果句",
         "verdict_quote": "此人果死于卯年",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0472",
@@ -1126,7 +1126,7 @@
         "verdict_quote": "此缺必得",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0482",
@@ -1179,7 +1179,7 @@
         "verdict_quote": "因于未土旬空必待未月定蒙题允即得美缺",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0491",
@@ -1201,8 +1201,8 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "父母",
+        "use_god_branch": "戌",
         "use_god_position": "",
         "yingqi": "辰日",
         "yingqi_branches": [
@@ -1227,13 +1227,13 @@
         "question_source": "占事行",
         "yingqi_source": "generic_verify_backref",
         "generic_marker": "果验",
-        "use_god_source": null,
-        "use_god_quote": "",
+        "use_god_source": "断语「为用/为用神」句",
+        "use_god_quote": "戌土父母为用",
         "verdict_source": "断语结果句",
         "verdict_quote": "必待明日辰日合逄冲而愈也",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0492",
@@ -1280,13 +1280,13 @@
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
         "generic_marker": null,
-        "use_god_source": "断语「为用神」句",
+        "use_god_source": "断语「为用/为用神」句",
         "use_god_quote": "卯木父母爻为用神",
         "verdict_source": "断语结果句",
         "verdict_quote": "果于丑日酉时卒",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0501",
@@ -1339,7 +1339,7 @@
         "verdict_quote": "果于申予日归",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0531",
@@ -1392,7 +1392,7 @@
         "verdict_quote": "盖与官同被害者",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0541",
@@ -1444,7 +1444,7 @@
         "verdict_quote": "此病危于申日",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0602",
@@ -1494,7 +1494,7 @@
         "verdict_quote": "断其辰日得财果验",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0611",
@@ -1546,7 +1546,7 @@
         "verdict_quote": "果于乙酉日卯时而死矣",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0612",
@@ -1596,7 +1596,7 @@
         "verdict_quote": "果死于午日午时",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0621",
@@ -1640,13 +1640,13 @@
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
         "generic_marker": null,
-        "use_god_source": "断语「为用神」句",
+        "use_god_source": "断语「为用/为用神」句",
         "use_god_quote": "以鬼爻为用神",
         "verdict_source": "断语结果句",
         "verdict_quote": "壬申日尸首浮起得见",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0632",
@@ -1696,7 +1696,7 @@
         "verdict_quote": "必待甲辰日到",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0652",
@@ -1749,7 +1749,7 @@
         "verdict_quote": "果于巳年得县缺",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0692",
@@ -1793,13 +1793,13 @@
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
         "generic_marker": null,
-        "use_god_source": "断语「为用神」句",
+        "use_god_source": "断语「为用/为用神」句",
         "use_god_quote": "以财爻为用神",
         "verdict_source": "断语结果句",
         "verdict_quote": "申时拿获",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0722",
@@ -1851,7 +1851,7 @@
         "verdict_quote": "后至寅年卯月妻婢生二子",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0732",
@@ -1905,7 +1905,7 @@
         "verdict_quote": "果于次年二月拿问",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0781",
@@ -1949,13 +1949,13 @@
         "question_source": "占事行",
         "yingqi_source": "generic_verify_backref",
         "generic_marker": "果验",
-        "use_god_source": "断语「为用神」句",
+        "use_god_source": "断语「为用/为用神」句",
         "use_god_quote": "酉金兄弟为用神",
         "verdict_source": "断语结果句",
         "verdict_quote": "即可即愈",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0791",
@@ -2007,7 +2007,7 @@
         "verdict_quote": "何以得财",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0792",
@@ -2027,8 +2027,8 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "妻财",
+        "use_god_branch": "辰",
         "use_god_position": "",
         "yingqi": "辰日",
         "yingqi_branches": [
@@ -2053,13 +2053,13 @@
         "question_source": "占事行",
         "yingqi_source": "generic_verify_backref",
         "generic_marker": "果验",
-        "use_god_source": null,
-        "use_god_quote": "",
+        "use_god_source": "断语「为用/为用神」句",
+        "use_god_quote": "以辰土财爻为用",
         "verdict_source": "断语结果句",
         "verdict_quote": "必待次日辰日冲发世上戌土财爻即愈",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0812",
@@ -2080,8 +2080,8 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "兄弟",
+        "use_god_branch": "子",
         "use_god_position": "",
         "yingqi": "子日",
         "yingqi_branches": [
@@ -2106,13 +2106,13 @@
         "question_source": "占事行",
         "yingqi_source": "generic_verify_backref",
         "generic_marker": "果验",
-        "use_god_source": null,
-        "use_god_quote": "",
+        "use_god_source": "断语「为用/为用神」句",
+        "use_god_quote": "以子水兄弟为用",
         "verdict_source": "断语结果句",
         "verdict_quote": "即愈矣",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0831",
@@ -2158,13 +2158,13 @@
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
         "generic_marker": null,
-        "use_god_source": "断语「为用神」句",
+        "use_god_source": "断语「为用/为用神」句",
         "use_god_quote": "以官鬼爻为用神",
         "verdict_source": "断语结果句",
         "verdict_quote": "后于乙亥日卒",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0832",
@@ -2210,13 +2210,13 @@
         "question_source": "占事行",
         "yingqi_source": "relative_day",
         "generic_marker": "果次日",
-        "use_god_source": "断语「为用神」句",
+        "use_god_source": "断语「为用/为用神」句",
         "use_god_quote": "以财爻为用神",
         "verdict_source": "断语结果句",
         "verdict_quote": "生产后连旧病全愈",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0862",
@@ -2234,8 +2234,8 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "父母",
+        "use_god_branch": "辰",
         "use_god_position": "",
         "yingqi": "辰日",
         "yingqi_branches": [
@@ -2260,13 +2260,13 @@
         "question_source": "占事行",
         "yingqi_source": "generic_verify_backref",
         "generic_marker": "果验",
-        "use_god_source": null,
-        "use_god_quote": "",
+        "use_god_source": "断语「为用/为用神」句",
+        "use_god_quote": "以辰爻父母为用",
         "verdict_source": "断语结果句",
         "verdict_quote": "至甲辰日必到",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0942",
@@ -2318,7 +2318,7 @@
         "verdict_quote": "果于申年八月寻父回家",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0962",
@@ -2374,7 +2374,7 @@
         "verdict_quote": "许之寅日愈",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0981",
@@ -2392,8 +2392,8 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "妻财",
+        "use_god_branch": "酉",
         "use_god_position": "",
         "yingqi": "卯日",
         "yingqi_branches": [
@@ -2418,13 +2418,13 @@
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
         "generic_marker": null,
-        "use_god_source": null,
-        "use_god_quote": "",
+        "use_god_source": "断语「为用/为用神」句",
+        "use_god_quote": "酉金财爻为用",
         "verdict_source": "断语结果句",
         "verdict_quote": "果于辛卯日来家",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0982",
@@ -2474,7 +2474,7 @@
         "verdict_quote": "乙酉日巳时还清一半者",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ1012",
@@ -2529,7 +2529,7 @@
         "verdict_quote": "果于午年午月到家",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ1041",
@@ -2582,7 +2582,7 @@
         "verdict_quote": "",
         "verdict_reason": "多主体吉凶并存"
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     },
     {
       "id": "BZ1051",
@@ -2634,7 +2634,7 @@
         "verdict_quote": "曰：令堂甲辰日危也",
         "verdict_reason": null
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-414 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语明示句；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-417 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯、相对期换算或 414 同支问号枚举按「应X者」自答落档）；用神取断语「为用/为用神」明示句（417 收简写）；吉凶取结果句强结果词（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。"
     }
   ]
 }
