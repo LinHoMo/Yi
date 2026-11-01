@@ -139,9 +139,33 @@ def triage(report_only: bool = False) -> int:
            "_comment": "观察册：分诊不改判——『结案候选』也须人签字后才算 §六.5 诚实结案；"
                        "B 桶异写候选是 TRAD 表增补提案非既成事实。"
                        "399 批：D 8 条采信补 postcheck、E 35 条补 decision_kind/decision_basis；"
-                       "重建本册时按 id 保留这些裁决字段（不再被重算抹掉）。",
+                       "重建本册时按 id 保留这些裁决字段（不再被重算抹掉）。"
+                       "401 批：因 parser 修正而离开 partial 桶的旧裁决，移入 prior_decisions，不静默丢。",
            "input": len(rows), "buckets": {k: len(v) for k, v in buckets.items()},
            "rows": buckets}
+    # 401 批：裁决跟着 id 走。若某条因 parser 修正从 partial 变成 restorable/unrestorable，
+    # 它不再出现在 buckets 里；旧裁决不能就此消失——移入顶层 prior_decisions，并记新状态。
+    grad_status = {r.get("source_id"): r.get("status") for r in grad.get("rows", [])}
+    new_ids = set()
+    for items in buckets.values():
+        for r in items:
+            if r.get("id"):
+                new_ids.add(r["id"])
+    prior = {p.get("id"): p for p in (prev_doc.get("prior_decisions") or [])
+             if isinstance(p, dict) and p.get("id")}
+    for sid, old in prev_by_id.items():
+        if sid in new_ids or not old.get("decision"):
+            continue
+        prior[sid] = {
+            "id": sid,
+            "decision": old.get("decision"),
+            "decision_kind": old.get("decision_kind") or "",
+            "decision_basis": old.get("decision_basis") or "",
+            "postcheck": old.get("postcheck"),
+            "status": grad_status.get(sid) or "left_triage",
+        }
+    if prior:
+        doc["prior_decisions"] = sorted(prior.values(), key=lambda p: p["id"])
     for k in META_KEEP:
         if k in prev_doc:
             doc[k] = prev_doc[k]
@@ -159,11 +183,16 @@ def triage(report_only: bool = False) -> int:
         new_e = {r.get("id") for r in buckets.get("A_无验支结案候选", [])}
         print("  A_有验支 新增 %d：%s" % (len(new_a - old_a), sorted(new_a - old_a)))
         print("  A_无验支 移出 %d：%s" % (len(old_e - new_e), sorted(old_e - new_e)))
+        print("  prior_decisions（离开分诊的旧裁决）%d 条"
+              % len(doc.get("prior_decisions") or []))
         print("  （这是正则盲区复核的实测差；应用差集＝另批重建观察册，本批只报数）")
         return 0
     write_stable(OUT, doc)
     print("√ triage 册落成 %s｜partial %d 条 → %s"
           % (OUT.name, len(rows), doc["buckets"]))
+    if doc.get("prior_decisions"):
+        print("  已归档离开分诊的旧裁决 %d 条（prior_decisions）"
+              % len(doc["prior_decisions"]))
     print("  人可速裁面：A_有候选 %d（一键定夺）＋B_词袋可解 %d（附解析结果待签升级）＋"
           "B_真分歧 %d（A/B 并排裁决）＋旧词袋兜底 %d；结案候选 %d＋%d 待签"
           % (len(buckets["A_有验支候选"]),

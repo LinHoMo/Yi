@@ -90,6 +90,20 @@ def _ying_branch(m: re.Match | None) -> str | None:
     return None
 
 
+def _ying_unit(m: re.Match | None) -> str | None:
+    """取应期单位（日/月/年）。果-支式看捕获的单位组；月序式恒月；
+    应X式从匹配文本判断（「应午年」→年，「应卯日」→日）。"""
+    if not m:
+        return None
+    g = m.groups()
+    if len(g) >= 4 and g[2]:
+        return g[3] or "日"
+    if len(g) >= 5 and g[4]:
+        return "月"
+    s = m.group(0)
+    return "月" if "月" in s else "年" if "年" in s else "日"
+
+
 def resolve_hex(raw: str):
     """异写卦名→内核表短名：表内直配失败则按后缀试（山火贲→贲）。歧义/不在表 → None。"""
     s = norm(raw)
@@ -129,6 +143,7 @@ def classify(rec, lines):
         return "partial_needs_human", "卦名异写不可唯一落表：%r" % (hm.groups(),), {"date": list(date_key)}
     ym = YING_PAT.search(block)
     ybranch = _ying_branch(ym)
+    yunit = _ying_unit(ym)
     if not ybranch:
         return "partial_needs_human", "卦面齐但书载验支不可提（块内无结果标记＋日期令牌）", \
             {"date": list(date_key), "original": o, "changed": ch}
@@ -141,7 +156,7 @@ def classify(rec, lines):
         return "partial_needs_human", "卦面对（%s→%s）但 hex2yao 装配失败——异写或表缺" % (o, ch), \
             {"date": list(date_key), "original": o, "changed": ch}
     return "restorable", "", {"date": "%s月%s日" % date_key, "original": o, "changed": ch,
-                              "yingqi_branch": ybranch}
+                              "yingqi_branch": ybranch, "yingqi_unit": yunit or "日"}
 
 
 def build(report_only: bool = False) -> int:
@@ -256,6 +271,11 @@ def cmd_selftest() -> int:
         got = _ying_branch(YING_PAT.search(text))
         if got != want:
             fails.append("实录式漏取：%r→%r（应 %s）" % (text, got, want))
+    units = {"果于正月亥日": "日", "果于次年三月": "月", "果至卯年": "年"}
+    for text, want in units.items():
+        got = _ying_unit(YING_PAT.search(text))
+        if got != want:
+            fails.append("应期单位错：%r→%r（应 %s）" % (text, got, want))
     for text in ("果于本日酉时", "果于次日大晴", "果得长子.甲戌年", "果得长子．甲戌年"):
         if _ying_branch(YING_PAT.search(text)) is not None:
             fails.append("非验支被误取：%r→%r" % (text, _ying_branch(YING_PAT.search(text))))

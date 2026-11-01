@@ -1,10 +1,63 @@
 {
- "generated_at": "2026-10-30T17:49:10",
+ "generated_at": "2026-11-01T19:34:13",
  "_comment": "双解析器共识复核：consensus 条目人只裁语义；needs_human 标分歧字段。升册永远是人的决定（§三.4），本册不改毕业册状态、不写 expected。",
- "n": 18,
- "consensus": 13,
+ "n": 43,
+ "consensus": 32,
  "needs_human": 0,
  "rows": [
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L1165",
+   "file": "bushi_zhengzong_dz.dz.txt",
+   "line": 1165,
+   "a": {
+    "date": "辰月丙辰日",
+    "original": "旅",
+    "changed": "蛊",
+    "yingqi_branch": "丑"
+   },
+   "b": {
+    "original": "旅",
+    "changed": "蛊",
+    "yingqi": "丑"
+   },
+   "verdict": "consensus"
+  },
+  {
+   "id": "VER-yiin_dz_dz-L2221",
+   "file": "yiin_dz.dz.txt",
+   "line": 2221,
+   "a": {
+    "date": "子月丁卯日",
+    "original": "屯",
+    "changed": null,
+    "yingqi_branch": "子"
+   },
+   "b": {
+    "original": "谦",
+    "changed": "小过",
+    "yingqi": "卯"
+   },
+   "verdict": "needs_human:original,changed,yingqi",
+   "decision": "B",
+   "decision_basis": "真案为《易隐》YI034 庚寅年己卯月丁亥日·谦之小过，应辛卯日；A 的屯/子月丁卯日 是下一案。YI034 已在 yiin_holdout，expected.yingqi 为空（既有空档）。"
+  },
+  {
+   "id": "VER-yilin_buyi_dz_dz-L227",
+   "file": "yilin_buyi_dz.dz.txt",
+   "line": 227,
+   "a": {
+    "date": "戌月丁亥日",
+    "original": "蒙",
+    "changed": null,
+    "yingqi_branch": "酉"
+   },
+   "b": {
+    "original": "蒙",
+    "changed": null,
+    "yingqi": "酉"
+   },
+   "verdict": "consensus"
+  },
   {
    "id": "VER-yilin_buyi_dz_dz-L1279",
    "file": "yilin_buyi_dz.dz.txt",
@@ -13,16 +66,50 @@
     "date": "子月戊午日",
     "original": "观",
     "changed": "益",
-    "yingqi_branch": "子"
+    "yingqi_branch": "亥"
    },
    "b": {
     "original": "观",
     "changed": "益",
     "yingqi": "亥"
    },
-   "verdict": "needs_human:yingqi",
+   "verdict": "consensus",
    "decision": "b",
    "decision_basis": "原文同段（yilin_buyi_dz.dz.txt L1279）：「且如子占父病，五月甲子日，占得观之益卦…后至乙亥日，元神绝而忌神生，果然父丧」→ 应期**亥**，B 对。A 的「子月戊午日/子」是本行**后文另一命例**（父占女久远病「果应在子月戊午日」）的串味。注：该行含 8 个以上命例，行级粒度本身是缺陷。"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L359",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 359,
+   "a": {
+    "date": "卯月壬辰日",
+    "original": "贲",
+    "changed": null,
+    "yingqi_branch": "午"
+   },
+   "b": {
+    "original": "贲",
+    "changed": null,
+    "yingqi": "午"
+   },
+   "verdict": "consensus"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L1032",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 1032,
+   "a": {
+    "date": "丑月壬子日",
+    "original": "困",
+    "changed": "兑",
+    "yingqi_branch": "申"
+   },
+   "b": {
+    "original": "困",
+    "changed": "兑",
+    "yingqi": "申"
+   },
+   "verdict": "consensus"
   },
   {
    "id": "VER-zengshan_buyi_wikitext-L1567",
@@ -38,6 +125,23 @@
     "original": "遁",
     "changed": "姤",
     "yingqi": "亥"
+   },
+   "verdict": "consensus"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L2107",
+   "file": "zengshan_buyi.wikitext.txt",
+   "line": 2107,
+   "a": {
+    "date": "戌月辛亥日",
+    "original": "比",
+    "changed": "观",
+    "yingqi_branch": "卯"
+   },
+   "b": {
+    "original": "比",
+    "changed": "观",
+    "yingqi": "卯"
    },
    "verdict": "consensus"
   },
@@ -93,6 +197,184 @@
    "verdict": "consensus"
   },
   {
+   "id": "VER-zengshan_buyi_dz_dz-L661",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 661,
+   "a": {
+    "date": "寅月丙申日",
+    "original": "艮",
+    "changed": null,
+    "yingqi_branch": "辰"
+   },
+   "b": {
+    "original": "艮",
+    "changed": "颐",
+    "yingqi": "辰"
+   },
+   "verdict": "needs_human:changed",
+   "decision": "B",
+   "decision_basis": "真头 L654「寅月丙申日占官之升迁得艮卦变山雷颐」，应三月＝辰月；A 漏变卦。"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L755",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 755,
+   "a": {
+    "date": "未月丁巳日",
+    "original": "离",
+    "changed": null,
+    "yingqi_branch": "辰"
+   },
+   "b": {
+    "original": "离",
+    "changed": "旅",
+    "yingqi": "辰"
+   },
+   "verdict": "needs_human:changed",
+   "decision": "B",
+   "decision_basis": "真头「未月丁巳日…得离之旅」，应辰月；A 漏变卦。ZD023 已在册。"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L804",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 804,
+   "a": {
+    "date": "酉月乙未日",
+    "original": "坤",
+    "changed": null,
+    "yingqi_branch": "子"
+   },
+   "b": {
+    "original": "坤",
+    "changed": null,
+    "yingqi": "子"
+   },
+   "verdict": "consensus"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L852",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 852,
+   "a": {
+    "date": "丑月丁酉日",
+    "original": "涣",
+    "changed": "坎",
+    "yingqi_branch": "卯"
+   },
+   "b": {
+    "original": "涣",
+    "changed": "坎",
+    "yingqi": "卯"
+   },
+   "verdict": "consensus"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1006",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1006,
+   "a": {
+    "date": "亥月己丑日",
+    "original": "讼",
+    "changed": null,
+    "yingqi_branch": "巳"
+   },
+   "b": {
+    "original": "兑",
+    "changed": "讼",
+    "yingqi": "巳"
+   },
+   "verdict": "needs_human:original,changed",
+   "decision": "另裁",
+   "decision_basis": "A=讼、B=兑之讼都指向第一卦；验支巳年属「命之再占，又得出水地比卦」的第二卦（L999-1006），书未另写日期。两器皆错。"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1068",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1068,
+   "a": {
+    "date": "卯月壬辰日",
+    "original": "贲",
+    "changed": null,
+    "yingqi_branch": "午"
+   },
+   "b": {
+    "original": "贲",
+    "changed": null,
+    "yingqi": "午"
+   },
+   "verdict": "consensus"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1166",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1166,
+   "a": {
+    "date": "戌月癸亥日",
+    "original": "同人",
+    "changed": "革",
+    "yingqi_branch": "丑"
+   },
+   "b": {
+    "original": "需",
+    "changed": null,
+    "yingqi": "丑"
+   },
+   "verdict": "needs_human:original,changed",
+   "decision": "另裁",
+   "decision_basis": "A=同人革、B=需都不对；真头 L1159「戌月癸亥日…水泽节变需卦」，验支丑日。该案已在册 WS003。"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1174",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1174,
+   "a": {
+    "date": "未月丁卯日",
+    "original": "同人",
+    "changed": "革",
+    "yingqi_branch": "辰"
+   },
+   "b": {
+    "original": "同人",
+    "changed": "革",
+    "yingqi": "辰"
+   },
+   "verdict": "consensus"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1412",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1412,
+   "a": {
+    "date": "未月甲午日",
+    "original": "师",
+    "changed": "涣",
+    "yingqi_branch": "辰"
+   },
+   "b": {
+    "original": "师",
+    "changed": "涣",
+    "yingqi": "辰"
+   },
+   "verdict": "consensus"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1515",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1515,
+   "a": {
+    "date": "丑月壬子日",
+    "original": "困",
+    "changed": "兑",
+    "yingqi_branch": "申"
+   },
+   "b": {
+    "original": "困",
+    "changed": "兑",
+    "yingqi": "申"
+   },
+   "verdict": "consensus"
+  },
+  {
    "id": "VER-zengshan_buyi_dz_dz-L1581",
    "file": "zengshan_buyi_dz.dz.txt",
    "line": 1581,
@@ -127,6 +409,25 @@
    "verdict": "consensus"
   },
   {
+   "id": "VER-zengshan_buyi_dz_dz-L1741",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 1741,
+   "a": {
+    "date": "午月庚寅日",
+    "original": "大畜",
+    "changed": "中孚",
+    "yingqi_branch": "申"
+   },
+   "b": {
+    "original": "临",
+    "changed": "节",
+    "yingqi": "申"
+   },
+   "verdict": "needs_human:original,changed",
+   "decision": "B",
+   "decision_basis": "真头 L1734「甲午日又得临之节」，验支申月属第二卦；A=大畜中孚（第一卦）。再占案无独立月建行。"
+  },
+  {
    "id": "VER-zengshan_buyi_dz_dz-L1798",
    "file": "zengshan_buyi_dz.dz.txt",
    "line": 1798,
@@ -142,8 +443,8 @@
     "yingqi": "巳"
    },
    "verdict": "needs_human:original,changed",
-   "decision": "b",
-   "decision_basis": "原文卦例头（zengshan_buyi_dz.dz.txt L1790）：「余曰：今日卦与昨日相同…再占一卦不妨。又得恒之大过」→ 恒之大过，B 对；A 记「晋/无变」并把 date 记成「卯月辛丑日」，均系邻近卦例串味。"
+   "decision": "B",
+   "decision_basis": "377 批已裁：真头 L1790「又得恒之大过」，B 对；A 的晋/卯月辛丑日串味。"
   },
   {
    "id": "VER-zengshan_buyi_dz_dz-L1862",
@@ -166,23 +467,6 @@
    "id": "VER-zengshan_buyi_dz_dz-L1871",
    "file": "zengshan_buyi_dz.dz.txt",
    "line": 1871,
-   "a": {
-    "date": "酉月甲辰日",
-    "original": "遁",
-    "changed": "姤",
-    "yingqi_branch": "亥"
-   },
-   "b": {
-    "original": "遁",
-    "changed": "姤",
-    "yingqi": "亥"
-   },
-   "verdict": "consensus"
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L1887",
-   "file": "zengshan_buyi_dz.dz.txt",
-   "line": 1887,
    "a": {
     "date": "酉月甲辰日",
     "original": "遁",
@@ -229,8 +513,129 @@
     "yingqi": "酉"
    },
    "verdict": "needs_human:original,changed,yingqi",
-   "decision": "b",
-   "decision_basis": "原文卦例头（L2086）：「如戌日丙午日占何日雨。得坎之井卦」；验注（L2093）：「果于酉日天变，戌日而雨」→ 坎之井、应期**酉**，B 三项全对；A 的「离/无变/寅」来自上一例（L2077「得离卦不动」）串味。"
+   "decision": "B",
+   "decision_basis": "377 批已裁：真头 L2086「如戌日丙午日占何日雨。得坎之井卦」，应酉；A 的离/未月丙午日串味。"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2240",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2240,
+   "a": {
+    "date": "戌月辛亥日",
+    "original": "比",
+    "changed": "观",
+    "yingqi_branch": "卯"
+   },
+   "b": {
+    "original": "比",
+    "changed": "观",
+    "yingqi": "卯"
+   },
+   "verdict": "consensus"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2324",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2324,
+   "a": {
+    "date": "酉月壬辰日",
+    "original": "恒",
+    "changed": null,
+    "yingqi_branch": "卯"
+   },
+   "b": {
+    "original": "噬嗑",
+    "changed": "否",
+    "yingqi": "卯"
+   },
+   "verdict": "needs_human:original,changed",
+   "decision": "B",
+   "decision_basis": "真头 L2317「命再占得噬嗑变否」，验支卯/巳/未属第二卦；A=恒（第一卦 ZDP011）串味。再占无独立日期。"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2332",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2332,
+   "a": {
+    "date": "巳月己丑日",
+    "original": "归妹",
+    "changed": "临",
+    "yingqi_branch": "午"
+   },
+   "b": {
+    "original": "归妹",
+    "changed": "临",
+    "yingqi": "午"
+   },
+   "verdict": "consensus"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2431",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2431,
+   "a": {
+    "date": "寅月己酉日",
+    "original": "剥",
+    "changed": "无妄",
+    "yingqi_branch": "卯"
+   },
+   "b": {
+    "original": "剥",
+    "changed": "无妄",
+    "yingqi": "卯"
+   },
+   "verdict": "consensus"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2451",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2451,
+   "a": {
+    "date": "丑月戊子日",
+    "original": "益",
+    "changed": "中孚",
+    "yingqi_branch": "亥"
+   },
+   "b": {
+    "original": "益",
+    "changed": "中孚",
+    "yingqi": "亥"
+   },
+   "verdict": "consensus"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2653",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2653,
+   "a": {
+    "date": "申月辛卯日",
+    "original": "复",
+    "changed": null,
+    "yingqi_branch": "未"
+   },
+   "b": {
+    "original": "复",
+    "changed": null,
+    "yingqi": "未"
+   },
+   "verdict": "consensus"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2900",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 2900,
+   "a": {
+    "date": "未月己巳日",
+    "original": "颐",
+    "changed": "噬嗑",
+    "yingqi_branch": "酉"
+   },
+   "b": {
+    "original": "颐",
+    "changed": "噬嗑",
+    "yingqi": "酉"
+   },
+   "verdict": "consensus"
   },
   {
    "id": "VER-zengshan_buyi_dz_dz-L3035",
@@ -271,19 +676,36 @@
    "file": "zengshan_buyi_dz.dz.txt",
    "line": 3213,
    "a": {
-    "date": "寅月丙午日",
-    "original": "临",
-    "changed": "既济",
-    "yingqi_branch": "巳"
+    "date": "巳月己亥日",
+    "original": "需",
+    "changed": "大过",
+    "yingqi_branch": "寅"
    },
    "b": {
     "original": "需",
     "changed": "大过",
     "yingqi": "寅"
    },
-   "verdict": "needs_human:original,changed,yingqi",
+   "verdict": "consensus",
    "decision": "b",
    "decision_basis": "原文卦例头（L3206）：「如巳月已亥日占夫妻不和将来如好否？得需之大过卦」→ 需之大过，B 对。A 记「临/既济/寅月丙午日」三项皆非本卦例——**此条在 371 批前是「双器共识」，即两器共同错了**。"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3263",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 3263,
+   "a": {
+    "date": "辰月戊辰日",
+    "original": "小过",
+    "changed": "豫",
+    "yingqi_branch": "申"
+   },
+   "b": {
+    "original": "小过",
+    "changed": "豫",
+    "yingqi": "申"
+   },
+   "verdict": "consensus"
   },
   {
    "id": "VER-zengshan_buyi_dz_dz-L3314",
@@ -318,8 +740,27 @@
     "yingqi": "巳"
    },
    "verdict": "needs_human:original,changed",
-   "decision": "b",
-   "decision_basis": "原文卦例头（L3331）：「寅月亥日占主人何时回，以父母为用。得大畜之益」→ 大畜之益，B 对。A 记「履/无变/丑月庚午日」三项皆非本卦例（同属共识掩盖的共同错误）。"
+   "decision": "B",
+   "decision_basis": "377 批已裁：真头 L3331「寅月亥日…得大畜之益」，应巳；A 的履/丑月庚午日串味。日期只有「亥日」无日干。"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3559",
+   "file": "zengshan_buyi_dz.dz.txt",
+   "line": 3559,
+   "a": {
+    "date": "子月丁酉日",
+    "original": "萃",
+    "changed": null,
+    "yingqi_branch": "午"
+   },
+   "b": {
+    "original": "小过",
+    "changed": "剥",
+    "yingqi": "午"
+   },
+   "verdict": "needs_human:original,changed",
+   "decision": "B",
+   "decision_basis": "真头 L3552「又得小过之剥」，验支午年属第三卦；A=萃（第一卦 ZDP034）串味。三占无独立日期。"
   }
  ]
 }

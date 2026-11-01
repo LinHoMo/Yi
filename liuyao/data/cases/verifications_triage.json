@@ -1,13 +1,13 @@
 {
- "generated_at": "2026-11-01T17:37:45",
- "_comment": "观察册：分诊不改判——『结案候选』也须人签字后才算 §六.5 诚实结案；B 桶异写候选是 TRAD 表增补提案非既成事实 376 批：A_有验支候选 15 条按「验支上方最近的卦例头是否等于本条卦例头」机械定夺——同案 8 条采信、异案 7 条否（异案即验支落在下一个卦例里，是串味）。判定用 371 批的GET_PAIR 文法找头，逐条把行号写进 decision_basis，可复核。 377 批：C 类 13 条裁清——B_真分歧需人 8 条按原文真头定夺（合并2/取A3/另裁3，其中 L2393 是 A、B 皆错），B_异写候选 5 条按「断语正文里的卦名提及不是占例头」结案。每条带 decision_basis 与行号。",
- "input": 63,
+ "generated_at": "2026-11-01T19:39:29",
+ "_comment": "观察册：分诊不改判——『结案候选』也须人签字后才算 §六.5 诚实结案；B 桶异写候选是 TRAD 表增补提案非既成事实。399 批：D 8 条采信补 postcheck、E 35 条补 decision_kind/decision_basis；重建本册时按 id 保留这些裁决字段（不再被重算抹掉）。401 批：因 parser 修正而离开 partial 桶的旧裁决，移入 prior_decisions，不静默丢。",
+ "input": 39,
  "buckets": {
-  "A_有验支候选": 15,
-  "A_无验支结案候选": 35,
-  "B_异写候选": 5,
+  "A_有验支候选": 8,
+  "A_无验支结案候选": 18,
+  "B_异写候选": 3,
   "B_词袋可解（建议入 restorable 候选）": 0,
-  "B_真分歧需人": 8,
+  "B_真分歧需人": 10,
   "C_深回溯命中": 0,
   "C_仍缺日期结案候选": 0
  },
@@ -18,6 +18,7 @@
     "line": 1092,
     "file": "zengshan_buyi.wikitext.txt",
     "hits": [
+     "卒於午年",
      "應午年"
     ],
     "context": "<br>用爻入墓,喜得日辰克破,後果得财。以用空入墓许以無财者,非也,殊不知𨿽空而遇沖,沖空則实,𨿽墓而克破,破墓則開。\n<br>\n<br>野鶴曰:此極有理,屢试屢驗,但要用神有力,方可许之,倘若用神休囚無气,𨿽遇沖開之日,亦难發矣。\n<b",
@@ -30,93 +31,23 @@
     }
    },
    {
-    "id": "VER-zengshan_buyi_dz_dz-L804",
-    "line": 804,
+    "id": "VER-zengshan_buyi_dz_dz-L842",
+    "line": 842,
     "file": "zengshan_buyi_dz.dz.txt",
     "hits": [
-     "果于子年"
+     "果于二月"
     ],
-    "context": "世持子孙以临月建,未日生之,虽是六冲之卦,此子必归。果于子年建功卯年得意而归,此应静而逢冲之验也。\n又有巳月甲寅日占严师训子得天地否卦变乾卦\n父母戌土′应              父母戌土′世\n兄弟申金′                兄",
-    "decision": "采信",
-    "decision_basis": "验支「果于子年」在 L804，与本条共卦例头 L797（该头之后到验支之间无第二个卦例头）⇒ 同案，可升候选",
-    "postcheck": {
-     "status": "已在册",
-     "case_id": "ZD026",
-     "basis": "真案为酉月乙未日·坤（子久出不归生死如何），验支「果于子年…卯年」；ZD026 已在 zengshan_dz_holdout（应期子年、卯年），入即重复计数。"
-    }
-   },
-   {
-    "id": "VER-zengshan_buyi_dz_dz-L1068",
-    "line": 1068,
-    "file": "zengshan_buyi_dz.dz.txt",
-    "hits": [
-     "果于午日"
-    ],
-    "context": "  午火父母为用神,空而伏于二爻丑土之下,压住难出,许甲午日出空必得,果得于甲午日。\n又酉月丙辰日占子病。得地风升\n官鬼酉金′′\n父母亥水′′ \n子孙午火/妻财丑土′′世\n官鬼酉金′ \n父母亥水′ \n妻财丑土′′应 \n黄金策曰:空下伏神,易",
+    "context": "酉金子孙,虽则春令休囚,得日辰生之,二爻巳火动而克金,得未日冲动丑土,土动生金,花虽密以全生。彼曰:目下甚危。余曰:不妨,今日未申时有救,果于申时遇明医救治,何当缓也?\n动散章第二十三\n占以日辰而冲动爻,谓之冲散,又以爻动冲爻,亦能冲散,予",
     "decision": "否",
-    "decision_basis": "验支「果于午日」在 L1076，其上方最近的卦例头是 L1069，而本条卦例头是 L1061 ⇒ **验支属下一案**，与本条不同盘，不得采信（串味）"
-   },
-   {
-    "id": "VER-zengshan_buyi_dz_dz-L1166",
-    "line": 1166,
-    "file": "zengshan_buyi_dz.dz.txt",
-    "hits": [
-     "果于辰年"
-    ],
-    "context": "丑土官动化进神许丑日必得,果得于丑日。古以动日月化空破,谓之不进,此卦动非日月而化空破,亦能进也。\n又如未月丁卯日占功名始得出仕否得火天同人变革卦\n子孙戌土′应    动          子孙未土′′   \n妻财申金′          ",
-    "decision": "否",
-    "decision_basis": "验支「果于辰年」在 L1174，其上方最近的卦例头是 L1167，而本条卦例头是 L1159 ⇒ **验支属下一案**，与本条不同盘，不得采信（串味）"
-   },
-   {
-    "id": "VER-zengshan_buyi_dz_dz-L1174",
-    "line": 1174,
-    "file": "zengshan_buyi_dz.dz.txt",
-    "hits": [
-     "果于辰年"
-    ],
-    "context": "余曰:若以古法断者,子孙动克财官,终身而无官也,余许辰年出仕,何也?戌土子孙孙虽动幸化退神,不克官也,辰年冲去戌土,是以许之,果于辰年得选岂可谓之动空化日月而不退也。\n又如申月辛卯日占病得泽天夬卦变大壮\n兄弟未土′′            ",
-    "decision": "采信",
-    "decision_basis": "验支「果于辰年」在 L1174，与本条共卦例头 L1167（该头之后到验支之间无第二个卦例头）⇒ 同案，可升候选",
-    "postcheck": {
-     "status": "已在册",
-     "case_id": "WS004",
-     "basis": "真案为未月丁卯日·同人变革，验支「果于辰年得选」＝辰年；WS004 已在 wikisource_holdout（应期辰年）。"
-    }
-   },
-   {
-    "id": "VER-zengshan_buyi_dz_dz-L1412",
-    "line": 1412,
-    "file": "zengshan_buyi_dz.dz.txt",
-    "hits": [
-     "果于辰年",
-     "应巳年",
-     "应巳年"
-    ],
-    "context": "断曰:世爻极旺,既临日建又得月令作官星而合世,但卦中官星两现,一空一破,至辰年官而出空一定高升,然反吟于外卦,当得验者,去而复来,果于辰年,调于河南,五月因他故,又调回楚,十月而升督府,十年两调一升,皆应实空之年也。\n又如亥月丙午日母占子何",
-    "decision": "采信",
-    "decision_basis": "验支「果于辰年/应巳年/应巳年」在 L1412，与本条共卦例头 L1405（该头之后到验支之间无第二个卦例头）⇒ 同案，可升候选",
-    "postcheck": {
-     "status": "已在册",
-     "case_id": "WS014",
-     "basis": "真案为未月甲午日·师之涣，验支「果于辰年…」＝辰年（另五月/十月为叙述月）；WS014 已在 wikisource_holdout（应期辰年）。"
-    }
-   },
-   {
-    "id": "VER-zengshan_buyi_dz_dz-L1515",
-    "line": 1515,
-    "file": "zengshan_buyi_dz.dz.txt",
-    "hits": [
-     "验丙申日"
-    ],
-    "context": "断曰:世爻寅木化出巳爻,寅能刑巳,三刑少申字,防申日之危,果卒于申日,此乃少一字,得后来之申日补之,岂可谓少一字不成三刑耶。\n如酉月乙巳日占升迁得泽地萃之天地否\n父母未土′′    动          父母戌土′应\n兄弟酉金′应     ",
-    "decision": "否",
-    "decision_basis": "验支「验丙申日」在 L1526，其上方最近的卦例头是 L1516，而本条卦例头是 L1508 ⇒ **验支属下一案**，与本条不同盘，不得采信（串味）"
+    "decision_basis": "命中「果于二月」在下一案（L852 涣之坎）；本条只有「果于申时」，时辰档不可评。",
+    "decision_kind": "串味"
    },
    {
     "id": "VER-zengshan_buyi_dz_dz-L1555",
     "line": 1555,
     "file": "zengshan_buyi_dz.dz.txt",
     "hits": [
+     "卒于午年",
      "应午年"
     ],
     "context": "用爻入墓,喜得日辰克破,后果得财。以用空入墓许以无财者,非也,殊不知虽空而遇冲,冲空则实,虽墓而克破,破墓则开。\n野鹤曰:此极有理,屡试屡验,但要用神有力,方可许之,倘若用神休囚无气,虽遇冲开之日,亦难发矣。\n如未月戊辰日占年运。\n子孙酉金",
@@ -140,64 +71,16 @@
     "decision_basis": "验支「果于卯日」在 L1581，其上方最近的卦例头是 L1574，而本条卦例头是 L1548 ⇒ **验支属下一案**，与本条不同盘，不得采信（串味）"
    },
    {
-    "id": "VER-zengshan_buyi_dz_dz-L2324",
-    "line": 2324,
-    "file": "zengshan_buyi_dz.dz.txt",
-    "hits": [
-     "果于卯年",
-     "果于午年"
-    ],
-    "context": "余曰:世爻未土之财变出申金之官,明明以财而变官。前卦财旺生官者,因世临月建之官,辰日冲动戌土之财,暗动生世。虽可许名,不敢指以年月,后卦世临未土而逢空,实空之年包出仕。果于卯年援例入临,巳年初任兵马即加纳县令,未年再位江南。旧注官鬼持世疾病",
-    "decision": "采信",
-    "decision_basis": "验支「果于卯年/果于午年」在 L2324，与本条共卦例头 L2317（该头之后到验支之间无第二个卦例头）⇒ 同案，可升候选",
-    "postcheck": {
-     "status": "未入册",
-     "case_id": "",
-     "basis": "真案为「命再占得噬嗑变否」（原 L2309-2324 的第二卦），验支「果于卯年…巳年…未年」；该再占案无独立日期行，日期承前案「酉月壬辰日」，建器不承接——缺前置＝独立日期行。"
-    }
-   },
-   {
-    "id": "VER-zengshan_buyi_dz_dz-L2332",
-    "line": 2332,
-    "file": "zengshan_buyi_dz.dz.txt",
-    "hits": [
-     "果于午年"
-    ],
-    "context": "余曰:卦中财福不旺,而官父两旺,如何不问功名?彼曰功名之念已灭。余曰:世临日建月建生身,必主显贵中举,巳午年富贵逼人来也。果于午年保举,虽非科甲,身为科里之官,此岂可谓父母持身辛勤劳碌耶?\n父母临身劳碌贫寒之辈。或曰:黄金策乃卜筮之宗,未有",
-    "decision": "采信",
-    "decision_basis": "验支「果于午年」在 L2332，与本条共卦例头 L2325（该头之后到验支之间无第二个卦例头）⇒ 同案，可升候选",
-    "postcheck": {
-     "status": "已在册",
-     "case_id": "WS031",
-     "basis": "真案为巳月己丑日·归妹之临，验支「果于午年保举」＝午年；WS031 已在 wikisource_holdout（应期午年）。"
-    }
-   },
-   {
     "id": "VER-zengshan_buyi_dz_dz-L3190",
     "line": 3190,
     "file": "zengshan_buyi_dz.dz.txt",
     "hits": [
+     "后果聘定于四月",
      "应巳月"
     ],
     "context": "断曰:酉官持世,戌土财爻动而生世,又得世应相生,戌土虽值旬空,动不为空,明日出空之日,求之必允,果于次日巳时允婚,夫妻白头相守,儿女成行。\n又如寅月丙午日女家代占婚  得临之既济卦\n子孙酉金′′                妻财子水′′应",
     "decision": "否",
     "decision_basis": "验支「应巳月」在 L3198，其上方最近的卦例头是 L3191，而本条卦例头是 L3183 ⇒ **验支属下一案**，与本条不同盘，不得采信（串味）"
-   },
-   {
-    "id": "VER-zengshan_buyi_dz_dz-L3263",
-    "line": 3263,
-    "file": "zengshan_buyi_dz.dz.txt",
-    "hits": [
-     "果于壬申日"
-    ],
-    "context": "余曰:尔之来意,还是问妻孕平安?还是问孕之男女?彼曰:两事俱问。余曰:日后须宜分占,不可同问。幸此卦两事俱现,兄爻虽动,不克变出之财爻,草正坐草无虞,卦中阳动变阴,必然主女。彼曰:小过卦谓之阴包阳,如何生女?余曰:神兆机于动,先重动爻。果于",
-    "decision": "采信",
-    "decision_basis": "验支「果于壬申日」在 L3263，与本条共卦例头 L3256（该头之后到验支之间无第二个卦例头）⇒ 同案，可升候选",
-    "postcheck": {
-     "status": "已在册",
-     "case_id": "WS045",
-     "basis": "真案为辰月戊辰日·小过之豫，验支「果于壬申日生女」＝申日；WS045 已在 wikisource_holdout（应期申日）。"
-    }
    },
    {
     "id": "VER-zengshan_buyi_dz_dz-L3306",
@@ -221,253 +104,146 @@
     "context": "断曰:今日乃是午日,午火父爻克世爻,今日必到。果于申时到。\n寅月亥日占主人何时回,以父母为用。得大畜之益\n官鬼寅木′                官鬼卯木′应\n妻财子水′′应  动          父母巳火′  \n兄弟戌土′′     ",
     "decision": "否",
     "decision_basis": "验支「果于巳日」在 L3338，其上方最近的卦例头是 L3331，而本条卦例头是 L3323 ⇒ **验支属下一案**，与本条不同盘，不得采信（串味）"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L3682",
+    "line": 3682,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "hits": [
+     "果於子年"
+    ],
+    "context": "因窑灶而伤者,命道祭火神设火醮而安之。偷葬及动土相伤,命道设蘸以安土神。因受惊恐而伤者,命道设醮而安坟。或因有竹木蟠根及石块相伤者,须于坟旁挖坑三尺以探之,轻轻去其竹木石块,仍命道安坟则吉。倘因蛇蚁为巢者,多栽苦楝树其蛇蚁自散,勿信人以焚之",
+    "decision": "否",
+    "decision_basis": "命中「果於子年」在下一章「再占修补吉凶章」，不在本条；本条「后果歪者仍归正向」无日期令牌。",
+    "decision_kind": "串味"
    }
   ],
   "A_无验支结案候选": [
    {
-    "id": "VER-bushi_zhengzong_dz_dz-L1165",
-    "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "非单点应期",
-    "decision": "结案",
-    "decision_basis": "本条为「占自己终身成败」（戊辰年辰月丙辰日·旅之蛊）的终身叙述，辛未/甲戌/卯/午/申等为人生事件年，不构成单一应期断言；按 §六.5 以「无单点验支」结案，不入应期集。"
-   },
-   {
-    "id": "VER-yiin_dz_dz-L2221",
-    "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "已在册",
-    "decision": "结案",
-    "decision_basis": "真案为 YI034《易隐》庚寅年己卯月丁亥日·谦之小过（原 L2212-2221），本条「后至辛卯日…果得财也」正是该案验注；YI034 已入 yiin_holdout，其 expected.yingqi 为空、yingqi_claim=辛卯日（属既有应期字段空档，另批处理）——本条不重复入册。"
-   },
-   {
-    "id": "VER-yilin_buyi_dz_dz-L227",
-    "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "不可评",
-    "decision": "结案",
-    "decision_basis": "缺独立日期键：本条在规则段内以「此月此日…亦占蒙卦」发起，日期为相对语，不能独立成案；验支「丁酉日」虽有，但无本案日期可配（缺前置＝独立日期行）。"
-   },
-   {
-    "id": "VER-zengshan_buyi_wikitext-L359",
-    "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "已在册",
-    "decision": "结案",
-    "decision_basis": "真案为卯月壬辰日·山火贲（原 L350-359），验支「果得於甲午日」＝午日；该案已入册为 ZS017／WS002（应期甲午日／午日），本条不重复计数。"
-   },
-   {
-    "id": "VER-zengshan_buyi_wikitext-L1032",
-    "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "未入册",
-    "decision": "未入册",
-    "decision_basis": "复核有验支·未入册：真案为「巳月未日占久病得困之兑」（原 L1023-1032），验支「果卒於申日」＝申日；但日期只有月建＋日支「未日」、无日干，建器门 3（完整日期行）拒收——缺前置＝日柱天干，非无验支。"
-   },
-   {
-    "id": "VER-zengshan_buyi_wikitext-L2107",
-    "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "已在册",
-    "decision": "结案",
-    "decision_basis": "真案为戌月辛亥日·比之观，验支「果至卯年」＝卯年；该案已入册为 ZD107（应期卯年），本条不重复计数。"
-   },
-   {
     "id": "VER-zengshan_buyi_wikitext-L2987",
     "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "素材缺验支",
     "decision": "结案",
-    "decision_basis": "本条「许之吉兆，果得成名」只有吉凶结果，无任何日/月/年令牌；与 L2807（dz 同案）重复，均不构成应期断言。"
+    "decision_basis": "本条「许之吉兆，果得成名」只有吉凶结果，无任何日/月/年令牌；与 L2807（dz 同案）重复，均不构成应期断言。",
+    "decision_kind": "素材缺验支"
    },
    {
     "id": "VER-zengshan_buyi_wikitext-L4464",
     "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "不可评",
     "decision": "结案",
-    "decision_basis": "本条只有「次年开府」「五年之内俱登甲榜」等相对年数，无支名令牌；需外部纪年锚才能落支，按 §六.5 结案。与 L3671 同文重复。"
+    "decision_basis": "本条只有「次年开府」「五年之内俱登甲榜」等相对年数，无支名令牌；需外部纪年锚才能落支，按 §六.5 结案。与 L3671 同文重复。",
+    "decision_kind": "不可评"
    },
    {
     "id": "VER-zengshan_buyi_dz_dz-L583",
     "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "素材缺验支",
     "decision": "结案",
-    "decision_basis": "本条「果至重刑」只有结果，无日/月/年令牌。"
+    "decision_basis": "本条「果至重刑」只有结果，无日/月/年令牌。",
+    "decision_kind": "素材缺验支"
    },
    {
     "id": "VER-zengshan_buyi_dz_dz-L602",
     "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "不可评",
     "decision": "结案",
-    "decision_basis": "首验为「本日酉时」（时辰档，评分无此时档）；末句「至巳亥日以全生」断句/支序不明（巳、亥两支行内并列），不能唯一取支；按 §六.5 结案。"
-   },
-   {
-    "id": "VER-zengshan_buyi_dz_dz-L661",
-    "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "未入册",
-    "decision": "未入册",
-    "decision_basis": "复核有验支·未入册：真案为寅月丙申日·艮之颐（原 L654-661），验支「果于三月升任」＝辰月；建器 CASE_RE 的占题字符类排除「之」，题「官之升迁」整条不被 segment 识别（同批实测：放宽「之」会引入 53 条伪头，不能裸改）——缺前置＝安全的题面文法，非无验支。"
-   },
-   {
-    "id": "VER-zengshan_buyi_dz_dz-L755",
-    "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "已在册",
-    "decision": "结案",
-    "decision_basis": "真案为未月丁巳日·离之旅，验支「果于次年三月仍成婚」＝辰月；该案已入册为 ZD023（应期辰月），本条不重复计数。"
+    "decision_basis": "首验为「本日酉时」（时辰档，评分无此时档）；末句「至巳亥日以全生」断句/支序不明（巳、亥两支行内并列），不能唯一取支；按 §六.5 结案。",
+    "decision_kind": "不可评"
    },
    {
     "id": "VER-zengshan_buyi_dz_dz-L775",
     "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "素材缺验支",
     "decision": "结案",
-    "decision_basis": "本条「后果劝散」只有结果，无日/月/年令牌。"
+    "decision_basis": "本条「后果劝散」只有结果，无日/月/年令牌。",
+    "decision_kind": "素材缺验支"
    },
    {
     "id": "VER-zengshan_buyi_dz_dz-L812",
     "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "不可评",
     "decision": "结案",
-    "decision_basis": "验期为「后果两月」相对月数，无支名；两月后事件无法落支，按 §六.5 结案。"
-   },
-   {
-    "id": "VER-zengshan_buyi_dz_dz-L842",
-    "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "不可评",
-    "decision": "结案",
-    "decision_basis": "实录为「果于申时遇明医救治」，只有时辰档；评分与引擎均无时辰档（381/382 批已结案），不构成可评应期。"
-   },
-   {
-    "id": "VER-zengshan_buyi_dz_dz-L852",
-    "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "已在册",
-    "decision": "结案",
-    "decision_basis": "真案为丑月丁酉日·涣之坎（原 L845-852），验支「果于二月得意而回」＝卯月；该案已入册为 ZD031（应期卯月），本条不重复计数。"
+    "decision_basis": "验期为「后果两月」相对月数，无支名；两月后事件无法落支，按 §六.5 结案。",
+    "decision_kind": "不可评"
    },
    {
     "id": "VER-zengshan_buyi_dz_dz-L880",
     "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "不可评",
     "decision": "结案",
-    "decision_basis": "实录为「果于本月闻报」——本月即占测月建（卯月），属占测日/月自重，不是未来应期；书未另给未来支，按 §六.5 结案。"
+    "decision_basis": "实录为「果于本月闻报」——本月即占测月建（卯月），属占测日/月自重，不是未来应期；书未另给未来支，按 §六.5 结案。",
+    "decision_kind": "不可评"
    },
    {
     "id": "VER-zengshan_buyi_dz_dz-L1182",
     "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "不可评",
     "decision": "结案",
-    "decision_basis": "预测句「明日辰日必遇良医」有支，但实录句只写「果于次日用针而愈」；次日＝相对日，书未在实录里复述支名，按「expected 只抄书载明写」不取（缺前置＝实录支名）。"
+    "decision_basis": "预测句「明日辰日必遇良医」有支，但实录句只写「果于次日用针而愈」；次日＝相对日，书未在实录里复述支名，按「expected 只抄书载明写」不取（缺前置＝实录支名）。",
+    "decision_kind": "不可评"
    },
    {
     "id": "VER-zengshan_buyi_dz_dz-L1693",
     "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "不可评",
     "decision": "结案",
-    "decision_basis": "实录「四年知父而遇害」为相对年数，无支名令牌，不能落支。"
-   },
-   {
-    "id": "VER-zengshan_buyi_dz_dz-L1741",
-    "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "未入册",
-    "decision": "未入册",
-    "decision_basis": "复核有验支·未入册：验支「后果于七月…渴死」＝申月；但该案是「甲午日又得临之节」的再占案（原 L1726-1741），只有日柱、无独立月建行，月建须承前案「午月庚寅日」——建器门 3 不承接再占案日期，缺前置＝独立日期行。"
+    "decision_basis": "实录「四年知父而遇害」为相对年数，无支名令牌，不能落支。",
+    "decision_kind": "不可评"
    },
    {
     "id": "VER-zengshan_buyi_dz_dz-L2068",
     "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "不可评",
     "decision": "结案",
-    "decision_basis": "预测句「明日辰日冲动」有支，实录只写「果于次日常见阴云」；次日为相对日，实录未复述支名，按「只抄书载明写」不取。"
+    "decision_basis": "预测句「明日辰日冲动」有支，实录只写「果于次日常见阴云」；次日为相对日，实录未复述支名，按「只抄书载明写」不取。",
+    "decision_kind": "不可评"
    },
    {
     "id": "VER-zengshan_buyi_dz_dz-L2171",
     "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "不可评",
     "decision": "结案",
-    "decision_basis": "实录「果于中秋夜」为节日名，非支名；中秋＝八月（酉月）须外部映射，书未写酉月，按 §三.4 不臆补。"
+    "decision_basis": "实录「果于中秋夜」为节日名，非支名；中秋＝八月（酉月）须外部映射，书未写酉月，按 §三.4 不臆补。",
+    "decision_kind": "不可评"
    },
    {
     "id": "VER-zengshan_buyi_dz_dz-L2180",
     "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "不可评",
     "decision": "结案",
-    "decision_basis": "两处实录分别为「本日申时雨」「次日大晴」，只有时辰档与相对日，无支名令牌。"
-   },
-   {
-    "id": "VER-zengshan_buyi_dz_dz-L2240",
-    "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "已在册",
-    "decision": "结案",
-    "decision_basis": "与 L2107 同案（戌月辛亥日·比之观），验支「果至卯年」＝卯年；已入册为 ZD107，本条为 dz 底本重复行，不重复计数。"
-   },
-   {
-    "id": "VER-zengshan_buyi_dz_dz-L2431",
-    "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "未入册",
-    "decision": "未入册",
-    "decision_basis": "复核有验支·未入册：真案为寅月己酉日·剥之无妄（原 L2424-2431；书作「已酉」，已/己混淆），验支「果卒于卯年」＝卯年；建器 CASE_RE 单字题「占寿」不识别（最短 2 字），且毕业器 DATE_PAT 不认「已」——缺前置＝题面/日期文法，非无验支。"
-   },
-   {
-    "id": "VER-zengshan_buyi_dz_dz-L2451",
-    "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "已在册",
-    "decision": "结案",
-    "decision_basis": "真案为丑月戊子日·益之中孚（原 L2444-2451），验支「果于正月亥日」取亥日；该案已入册为 WS034（应期亥日），本条不重复计数。"
-   },
-   {
-    "id": "VER-zengshan_buyi_dz_dz-L2653",
-    "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "已在册",
-    "decision": "结案",
-    "decision_basis": "真案为申月辛卯日·复，验支「果于次年六月父子相逢」＝未月；该案已入册为 ZD139（应期未月），本条不重复计数。"
+    "decision_basis": "两处实录分别为「本日申时雨」「次日大晴」，只有时辰档与相对日，无支名令牌。",
+    "decision_kind": "不可评"
    },
    {
     "id": "VER-zengshan_buyi_dz_dz-L2750",
     "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "素材缺验支",
     "decision": "结案",
-    "decision_basis": "本条「后果取超等补禀」只有结果，无日/月/年令牌。"
+    "decision_basis": "本条「后果取超等补禀」只有结果，无日/月/年令牌。",
+    "decision_kind": "素材缺验支"
    },
    {
     "id": "VER-zengshan_buyi_dz_dz-L2807",
     "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "素材缺验支",
     "decision": "结案",
-    "decision_basis": "本条「果得成名」只有结果，无日/月/年令牌；与 L2987 同案重复。"
+    "decision_basis": "本条「果得成名」只有结果，无日/月/年令牌；与 L2987 同案重复。",
+    "decision_kind": "素材缺验支"
    },
    {
-    "id": "VER-zengshan_buyi_dz_dz-L2900",
+    "id": "VER-zengshan_buyi_dz_dz-L2838",
     "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "已在册",
     "decision": "结案",
-    "decision_basis": "真案为寅月壬午日·颐之噬嗑（原 L2893-2900），验支「八九月必见，果于八月丁艰」＝酉月；该案已入册为 ZD151（应期酉月），本条不重复计数。"
+    "decision_kind": "素材缺验支",
+    "decision_basis": "只有结果「后果另选别人」，无日/月/年令牌。"
    },
    {
     "id": "VER-zengshan_buyi_dz_dz-L3132",
     "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "素材缺验支",
     "decision": "结案",
-    "decision_basis": "本条「误了一个月…果然得了厚利」只有相对月数与结果，无支名令牌。"
+    "decision_basis": "本条「误了一个月…果然得了厚利」只有相对月数与结果，无支名令牌。",
+    "decision_kind": "素材缺验支"
    },
    {
     "id": "VER-zengshan_buyi_dz_dz-L3174",
     "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "不可评",
     "decision": "结案",
-    "decision_basis": "实录「果于早胜，午时又大败破财」只有时辰档；无日/月/年支名。"
-   },
-   {
-    "id": "VER-zengshan_buyi_dz_dz-L3559",
-    "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "未入册",
-    "decision": "未入册",
-    "decision_basis": "复核有验支·未入册：验支「果于次年一岁两升，午年又升官至二品」＝午年；该案是「又得小过之剥」的第三次再占（原 L3524-3559），无独立日期行，月建/日柱承前案——建器不承接再占案，缺前置＝独立日期行。"
+    "decision_basis": "实录「果于早胜，午时又大败破财」只有时辰档；无日/月/年支名。",
+    "decision_kind": "不可评"
    },
    {
     "id": "VER-zengshan_buyi_dz_dz-L3671",
     "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "不可评",
     "decision": "结案",
-    "decision_basis": "与 L4464 同文（大壮·占穴），只有「次年开府」「五年之内」相对年数，无支名令牌。"
-   },
-   {
-    "id": "VER-zengshan_buyi_dz_dz-L3682",
-    "why": "宽松式仍无候选——素材缺验支",
-    "decision_kind": "素材缺验支",
-    "decision": "结案",
-    "decision_basis": "本条「后果歪者仍归于正向」只有结果，无日/月/年令牌。"
+    "decision_basis": "与 L4464 同文（大壮·占穴），只有「次年开府」「五年之内」相对年数，无支名令牌。",
+    "decision_kind": "不可评"
    }
   ],
   "B_异写候选": [
@@ -483,40 +259,6 @@
     ],
     "decision": "结案",
     "decision_basis": "结案：token「此凶」出自断语「今又得此凶卦」——「得此凶卦」是口语（得到这个凶卦），不是「得X卦」的占例头；解析器把「此凶」当卦名。非卦名，不可采。"
-   },
-   {
-    "id": "VER-zengshan_buyi_dz_dz-L680",
-    "line": 680,
-    "file": "zengshan_buyi_dz.dz.txt",
-    "near": [
-     {
-      "token": "艮卦",
-      "candidates": []
-     },
-     {
-      "token": "明夷",
-      "candidates": []
-     }
-    ],
-    "decision": "结案",
-    "decision_basis": "结案：token「艮卦」「明夷」出现在**断语正文**（该行在讲六冲与应期），是同段提及而非占例头；且「艮卦」带「卦」后缀无「得/变」动词。按噪声结案。"
-   },
-   {
-    "id": "VER-zengshan_buyi_dz_dz-L708",
-    "line": 708,
-    "file": "zengshan_buyi_dz.dz.txt",
-    "near": [
-     {
-      "token": "夬卦",
-      "candidates": []
-     },
-     {
-      "token": "履",
-      "candidates": []
-     }
-    ],
-    "decision": "结案",
-    "decision_basis": "结案：token「夬卦」「履」同属断语正文里的卦名提及（该行论亥水财爻与月破），无「X月Y日…得…」占例句式，不构成开案头。"
    },
    {
     "id": "VER-zengshan_buyi_dz_dz-L1911",
@@ -557,14 +299,14 @@
     "file": "zengshan_buyi.wikitext.txt",
     "a": {
      "date": [
-      "辰",
-      "乙卯"
+      "寅",
+      "己酉"
      ]
     },
     "b": {
      "original": "否",
      "changed": null,
-     "yingqi": null
+     "yingqi": "卯"
     },
     "decision": "另裁",
     "decision_basis": "A、B 皆错：真头在 L2384 逐字「如寅月已酉日占壽得剝之無妄卦」，断语（L2393）「須防卯歲，果卒於卯年」。故日期＝寅月己酉日（A 记辰月乙卯日）、卦＝剝之無妄（B 记否）、应期＝卯年。两条解析器各取了一头。"
@@ -581,11 +323,47 @@
     },
     "b": {
      "original": "艮",
-     "changed": null,
-     "yingqi": null
+     "changed": "明夷",
+     "yingqi": "申"
     },
     "decision": "取A",
     "decision_basis": "A 的日期对：真头 L662 逐字「午月丁未日占弟被讼吉凶得困卦变雷风恒卦」；B 记「艮」非本卦例（本卦是困之恒）。故取 A 的日期，卦名另裁为「困之恒」。应期书载「果于本年下狱至申年而重刑」＝申年。"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L680",
+    "line": 680,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "a": {
+     "date": [
+      "寅",
+      "丁酉"
+     ]
+    },
+    "b": {
+     "original": "晋",
+     "changed": null,
+     "yingqi": "未"
+    },
+    "decision": "结案",
+    "decision_basis": "结案：token「艮卦」「明夷」出现在**断语正文**（该行在讲六冲与应期），是同段提及而非占例头；且「艮卦」带「卦」后缀无「得/变」动词。按噪声结案。"
+   },
+   {
+    "id": "VER-zengshan_buyi_dz_dz-L708",
+    "line": 708,
+    "file": "zengshan_buyi_dz.dz.txt",
+    "a": {
+     "date": [
+      "申",
+      "戊午"
+     ]
+    },
+    "b": {
+     "original": "剥",
+     "changed": "观",
+     "yingqi": "午"
+    },
+    "decision": "结案",
+    "decision_basis": "结案：token「夬卦」「履」同属断语正文里的卦名提及（该行论亥水财爻与月破），无「X月Y日…得…」占例句式，不构成开案头。"
    },
    {
     "id": "VER-zengshan_buyi_dz_dz-L857",
@@ -599,8 +377,8 @@
     },
     "b": {
      "original": "巽",
-     "changed": null,
-     "yingqi": null
+     "changed": "乾",
+     "yingqi": "申"
     },
     "decision": "合并",
     "decision_basis": "A+B 都对：记录行自身逐字「卯月辛巳日来人不言所事。占得巽卦变乾卦」——日期＝卯月辛巳日（A）、卦＝巽（B，变卦乾）。二者是**互补字段**，不是分歧。"
@@ -617,8 +395,8 @@
     },
     "b": {
      "original": "离",
-     "changed": null,
-     "yingqi": null
+     "changed": "坎",
+     "yingqi": "亥"
     },
     "decision": "合并",
     "decision_basis": "A+B 都对：记录行自身逐字「又如午月丙寅日占主病，得离卦变坎卦」——日期＝午月丙寅日（A）、卦＝离（B，变坎）。"
@@ -670,8 +448,8 @@
      ]
     },
     "b": {
-     "original": "师",
-     "changed": "涣",
+     "original": "小畜",
+     "changed": null,
      "yingqi": "寅"
     },
     "decision": "另裁",
@@ -699,6 +477,232 @@
   "C_深回溯命中": [],
   "C_仍缺日期结案候选": []
  },
+ "prior_decisions": [
+  {
+   "id": "VER-bushi_zhengzong_dz_dz-L1165",
+   "decision": "结案",
+   "decision_kind": "非单点应期",
+   "decision_basis": "本条为「占自己终身成败」（戊辰年辰月丙辰日·旅之蛊）的终身叙述，辛未/甲戌/卯/午/申等为人生事件年，不构成单一应期断言；按 §六.5 以「无单点验支」结案，不入应期集。",
+   "postcheck": null,
+   "status": "restorable"
+  },
+  {
+   "id": "VER-yiin_dz_dz-L2221",
+   "decision": "结案",
+   "decision_kind": "已在册",
+   "decision_basis": "真案为 YI034《易隐》庚寅年己卯月丁亥日·谦之小过（原 L2212-2221），本条「后至辛卯日…果得财也」正是该案验注；YI034 已入 yiin_holdout，其 expected.yingqi 为空、yingqi_claim=辛卯日（属既有应期字段空档，另批处理）——本条不重复入册。",
+   "postcheck": null,
+   "status": "restorable"
+  },
+  {
+   "id": "VER-yilin_buyi_dz_dz-L227",
+   "decision": "结案",
+   "decision_kind": "不可评",
+   "decision_basis": "缺独立日期键：本条在规则段内以「此月此日…亦占蒙卦」发起，日期为相对语，不能独立成案；验支「丁酉日」虽有，但无本案日期可配（缺前置＝独立日期行）。",
+   "postcheck": null,
+   "status": "restorable"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1068",
+   "decision": "否",
+   "decision_kind": "",
+   "decision_basis": "验支「果于午日」在 L1076，其上方最近的卦例头是 L1069，而本条卦例头是 L1061 ⇒ **验支属下一案**，与本条不同盘，不得采信（串味）",
+   "postcheck": null,
+   "status": "restorable"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1166",
+   "decision": "否",
+   "decision_kind": "",
+   "decision_basis": "验支「果于辰年」在 L1174，其上方最近的卦例头是 L1167，而本条卦例头是 L1159 ⇒ **验支属下一案**，与本条不同盘，不得采信（串味）",
+   "postcheck": null,
+   "status": "restorable"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1174",
+   "decision": "采信",
+   "decision_kind": "",
+   "decision_basis": "验支「果于辰年」在 L1174，与本条共卦例头 L1167（该头之后到验支之间无第二个卦例头）⇒ 同案，可升候选",
+   "postcheck": {
+    "status": "已在册",
+    "case_id": "WS004",
+    "basis": "真案为未月丁卯日·同人变革，验支「果于辰年得选」＝辰年；WS004 已在 wikisource_holdout（应期辰年）。"
+   },
+   "status": "restorable"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1412",
+   "decision": "采信",
+   "decision_kind": "",
+   "decision_basis": "验支「果于辰年/应巳年/应巳年」在 L1412，与本条共卦例头 L1405（该头之后到验支之间无第二个卦例头）⇒ 同案，可升候选",
+   "postcheck": {
+    "status": "已在册",
+    "case_id": "WS014",
+    "basis": "真案为未月甲午日·师之涣，验支「果于辰年…」＝辰年（另五月/十月为叙述月）；WS014 已在 wikisource_holdout（应期辰年）。"
+   },
+   "status": "restorable"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1515",
+   "decision": "否",
+   "decision_kind": "",
+   "decision_basis": "验支「验丙申日」在 L1526，其上方最近的卦例头是 L1516，而本条卦例头是 L1508 ⇒ **验支属下一案**，与本条不同盘，不得采信（串味）",
+   "postcheck": null,
+   "status": "restorable"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L1741",
+   "decision": "未入册",
+   "decision_kind": "未入册",
+   "decision_basis": "复核有验支·未入册：验支「后果于七月…渴死」＝申月；但该案是「甲午日又得临之节」的再占案（原 L1726-1741），只有日柱、无独立月建行，月建须承前案「午月庚寅日」——建器门 3 不承接再占案日期，缺前置＝独立日期行。",
+   "postcheck": null,
+   "status": "restorable"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2240",
+   "decision": "结案",
+   "decision_kind": "已在册",
+   "decision_basis": "与 L2107 同案（戌月辛亥日·比之观），验支「果至卯年」＝卯年；已入册为 ZD107，本条为 dz 底本重复行，不重复计数。",
+   "postcheck": null,
+   "status": "restorable"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2324",
+   "decision": "采信",
+   "decision_kind": "",
+   "decision_basis": "验支「果于卯年/果于午年」在 L2324，与本条共卦例头 L2317（该头之后到验支之间无第二个卦例头）⇒ 同案，可升候选",
+   "postcheck": {
+    "status": "未入册",
+    "case_id": "",
+    "basis": "真案为「命再占得噬嗑变否」（原 L2309-2324 的第二卦），验支「果于卯年…巳年…未年」；该再占案无独立日期行，日期承前案「酉月壬辰日」，建器不承接——缺前置＝独立日期行。"
+   },
+   "status": "restorable"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2332",
+   "decision": "采信",
+   "decision_kind": "",
+   "decision_basis": "验支「果于午年」在 L2332，与本条共卦例头 L2325（该头之后到验支之间无第二个卦例头）⇒ 同案，可升候选",
+   "postcheck": {
+    "status": "已在册",
+    "case_id": "WS031",
+    "basis": "真案为巳月己丑日·归妹之临，验支「果于午年保举」＝午年；WS031 已在 wikisource_holdout（应期午年）。"
+   },
+   "status": "restorable"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2431",
+   "decision": "未入册",
+   "decision_kind": "未入册",
+   "decision_basis": "复核有验支·未入册：真案为寅月己酉日·剥之无妄（原 L2424-2431；书作「已酉」，已/己混淆），验支「果卒于卯年」＝卯年；建器 CASE_RE 单字题「占寿」不识别（最短 2 字），且毕业器 DATE_PAT 不认「已」——缺前置＝题面/日期文法，非无验支。",
+   "postcheck": null,
+   "status": "restorable"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2451",
+   "decision": "结案",
+   "decision_kind": "已在册",
+   "decision_basis": "真案为丑月戊子日·益之中孚（原 L2444-2451），验支「果于正月亥日」取亥日；该案已入册为 WS034（应期亥日），本条不重复计数。",
+   "postcheck": null,
+   "status": "restorable"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2653",
+   "decision": "结案",
+   "decision_kind": "已在册",
+   "decision_basis": "真案为申月辛卯日·复，验支「果于次年六月父子相逢」＝未月；该案已入册为 ZD139（应期未月），本条不重复计数。",
+   "postcheck": null,
+   "status": "restorable"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L2900",
+   "decision": "结案",
+   "decision_kind": "已在册",
+   "decision_basis": "真案为寅月壬午日·颐之噬嗑（原 L2893-2900），验支「八九月必见，果于八月丁艰」＝酉月；该案已入册为 ZD151（应期酉月），本条不重复计数。",
+   "postcheck": null,
+   "status": "restorable"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3263",
+   "decision": "采信",
+   "decision_kind": "",
+   "decision_basis": "验支「果于壬申日」在 L3263，与本条共卦例头 L3256（该头之后到验支之间无第二个卦例头）⇒ 同案，可升候选",
+   "postcheck": {
+    "status": "已在册",
+    "case_id": "WS045",
+    "basis": "真案为辰月戊辰日·小过之豫，验支「果于壬申日生女」＝申日；WS045 已在 wikisource_holdout（应期申日）。"
+   },
+   "status": "restorable"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L3559",
+   "decision": "未入册",
+   "decision_kind": "未入册",
+   "decision_basis": "复核有验支·未入册：验支「果于次年一岁两升，午年又升官至二品」＝午年；该案是「又得小过之剥」的第三次再占（原 L3524-3559），无独立日期行，月建/日柱承前案——建器不承接再占案，缺前置＝独立日期行。",
+   "postcheck": null,
+   "status": "restorable"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L661",
+   "decision": "未入册",
+   "decision_kind": "未入册",
+   "decision_basis": "复核有验支·未入册：真案为寅月丙申日·艮之颐（原 L654-661），验支「果于三月升任」＝辰月；建器 CASE_RE 的占题字符类排除「之」，题「官之升迁」整条不被 segment 识别（同批实测：放宽「之」会引入 53 条伪头，不能裸改）——缺前置＝安全的题面文法，非无验支。",
+   "postcheck": null,
+   "status": "restorable"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L755",
+   "decision": "结案",
+   "decision_kind": "已在册",
+   "decision_basis": "真案为未月丁巳日·离之旅，验支「果于次年三月仍成婚」＝辰月；该案已入册为 ZD023（应期辰月），本条不重复计数。",
+   "postcheck": null,
+   "status": "restorable"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L804",
+   "decision": "采信",
+   "decision_kind": "",
+   "decision_basis": "验支「果于子年」在 L804，与本条共卦例头 L797（该头之后到验支之间无第二个卦例头）⇒ 同案，可升候选",
+   "postcheck": {
+    "status": "已在册",
+    "case_id": "ZD026",
+    "basis": "真案为酉月乙未日·坤（子久出不归生死如何），验支「果于子年…卯年」；ZD026 已在 zengshan_dz_holdout（应期子年、卯年），入即重复计数。"
+   },
+   "status": "restorable"
+  },
+  {
+   "id": "VER-zengshan_buyi_dz_dz-L852",
+   "decision": "结案",
+   "decision_kind": "已在册",
+   "decision_basis": "真案为丑月丁酉日·涣之坎（原 L845-852），验支「果于二月得意而回」＝卯月；该案已入册为 ZD031（应期卯月），本条不重复计数。",
+   "postcheck": null,
+   "status": "restorable"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L1032",
+   "decision": "未入册",
+   "decision_kind": "未入册",
+   "decision_basis": "复核有验支·未入册：真案为「巳月未日占久病得困之兑」（原 L1023-1032），验支「果卒於申日」＝申日；但日期只有月建＋日支「未日」、无日干，建器门 3（完整日期行）拒收——缺前置＝日柱天干，非无验支。",
+   "postcheck": null,
+   "status": "restorable"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L2107",
+   "decision": "结案",
+   "decision_kind": "已在册",
+   "decision_basis": "真案为戌月辛亥日·比之观，验支「果至卯年」＝卯年；该案已入册为 ZD107（应期卯年），本条不重复计数。",
+   "postcheck": null,
+   "status": "restorable"
+  },
+  {
+   "id": "VER-zengshan_buyi_wikitext-L359",
+   "decision": "结案",
+   "decision_kind": "已在册",
+   "decision_basis": "真案为卯月壬辰日·山火贲（原 L350-359），验支「果得於甲午日」＝午日；该案已入册为 ZS017／WS002（应期甲午日／午日），本条不重复计数。",
+   "postcheck": null,
+   "status": "restorable"
+  }
+ ],
  "decision_authority": {
   "batch": 399,
   "date": "2026-11-01",

@@ -55,7 +55,29 @@ _TRIGRAM_CH = "乾坤震巽坎离艮兑天泽火雷风水山地"
 GET_PAIR = re.compile(r"(?:得|占得|化|变|變)\s*(?:[" + _TRIGRAM_CH + r"]{2})?(?P<hx>" + _HEX_ALT + r")"
                       r"(?:\s*(?:为[" + _TRIGRAM_CH + r"])?\s*卦?\s*(?:之|化|變|变)\s*"
                       r"(?:[" + _TRIGRAM_CH + r"]{2})?(?P<hx2>" + _HEX_ALT + r")|(?P<hx2b>卦))?")
-YING_B = re.compile(r"[应應验驗果定]于?\s*[" + GAN + r"]?([" + BR + r"])\s*(?:日|月|年)")
+# 401 批：B 器同步补 400 批的实录式（果得於／果卒於／果至／后至／月序）。
+# 两器仍**独立实现**（A 器在 graduate_verifications，B 器在此处），只共享文法形态。
+MONTH_ORDER_BRANCH = {"正": "寅", "一": "寅", "二": "卯", "三": "辰", "四": "巳",
+                      "五": "午", "六": "未", "七": "申", "八": "酉", "九": "戌",
+                      "十": "亥", "冬": "子", "腊": "丑"}
+YING_B = re.compile(
+    r"[应應验驗定](?:于|在)?\s*[" + GAN + r"]?([" + BR + r"])\s*(?:日|月|年)|"
+    r"[果竟卒后][^。；\n．.]{0,12}?([" + BR + r"])(?:日|月|年)|"
+    r"[果竟卒后][^。；\n．.]{0,12}?([正一二三四五六七八九十冬腊])月")
+
+
+def _ying_b(m):
+    """B 器取支：支表直取；月序（三/七/八…）按标准月建映射。"""
+    if not m:
+        return None
+    for g in m.groups():
+        if not g:
+            continue
+        if g in BR:
+            return g
+        if g in MONTH_ORDER_BRANCH:
+            return MONTH_ORDER_BRANCH[g]
+    return None
 
 
 def parse_b(text: str):
@@ -71,8 +93,7 @@ def parse_b(text: str):
                 chg = h2
             break
     m = YING_B.search(t)
-    if m:
-        ying = m.group(1)
+    ying = _ying_b(m)
     return orig, chg, ying
 
 
@@ -184,7 +205,15 @@ def selftest() -> int:
     p3 = parse_b("再占一卦。得离卦不动")
     if (p3[0], p3[1]) != ("离", None):
         fails.append("单卦不动例解析错（得离卦不动）：%r" % (p3,))
-    print("√ selftest：合成共识/假阳性/单卦扩动词/卦宫前缀/宫名变卦/单卦不动 六例全过"
+    # 401 批：B 器实录式（与 A 器同一批盲区）
+    for text, want in {"果得於甲午日": "午", "果卒於申日": "申",
+                       "后至辛卯日": "卯", "果于次年三月": "辰"}.items():
+        got = _ying_b(YING_B.search(text))
+        if got != want:
+            fails.append("B 器实录式漏取：%r→%r（应 %s）" % (text, got, want))
+    if _ying_b(YING_B.search("果得长子.甲戌年")) is not None:
+        fails.append("B 器跨句误取（果得长子.甲戌年）")
+    print("√ selftest：合成共识/假阳性/单卦扩动词/卦宫前缀/宫名变卦/单卦不动/B 器实录式 全过"
           if not fails else "× " + "；".join(fails))
     return 0 if not fails else 1
 

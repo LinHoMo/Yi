@@ -32,6 +32,8 @@ def build() -> int:
     tri = json.loads((DISC / "data" / "cases" / "verifications_triage.json").read_text(encoding="utf-8"))
     rec = json.loads((DISC / "data" / "cases" / "restorable_recheck.json").read_text(encoding="utf-8"))
     cand = json.loads((DISC / "data" / "cases" / "restorable_candidates.json").read_text(encoding="utf-8"))
+    adj_path = DISC / "data" / "cases" / "restorable_adjudication.json"
+    adj = json.loads(adj_path.read_text(encoding="utf-8")) if adj_path.exists() else {"rows": [], "summary": {}}
     parts = []
     parts.append("# 六爻·待裁简报（机械汇编，零新判断）\n")
     parts.append("> 生成器 `dev_tools/adjudication_brief.py`；未勾选项由**后续正式批**执行，"
@@ -64,6 +66,25 @@ def build() -> int:
                 (c["hexagram"] or {}).get("original"),
                 c["enroll_verdict"]))
             parts.append("      依据：%s" % (c.get("enroll_basis") or "")[:200])
+
+    # A3. 401 批：43 条 restorable 的逐条处置（不进评分、不改机读值）
+    _adj = adj.get("rows") or []
+    _s = adj.get("summary") or {}
+    if _adj:
+        parts.append(f"\n## A3. restorable {len(_adj)} 条处置（401 批复核；已在册/不升/待回原文/新候选）\n")
+        parts.append("汇总：已在册 %d／非单点 %d／不升 %d／待回原文 %d／新候选·建器阻塞 %d／"
+                     "新候选·日期阻塞 %d。**新候选是 402 的输入，不是已签案例；"
+                     "A2 是 204 批历史草稿，同一 id 的现状以本表为准。**\n"
+                     % (_s.get("already", 0), _s.get("non_single", 0), _s.get("not_enrolled", 0),
+                        _s.get("reread", 0), _s.get("new_builder_blocked", 0),
+                        _s.get("new_date_blocked", 0)))
+        for r in _adj:
+            if not (r.get("disposition") or "").startswith("新候选"):
+                continue
+            parts.append("- [ ] **%s** → **%s**%s" % (
+                r["id"].replace("VER-", ""), r.get("disposition"),
+                ("（%s）" % r["case_id"]) if r.get("case_id") else ""))
+            parts.append("      依据：%s" % (r.get("basis") or "")[:220])
 
     # B. 双器分歧（读数裁决面）
     # 370 批：已裁的（带 decision）不再进待裁桶——否则「裁过」与「没裁」在简报里长得一样，
@@ -185,15 +206,26 @@ def build() -> int:
                 r.get("decision_kind") or "未分类"))
             parts.append("      依据：%s" % (r.get("decision_basis") or "")[:240])
 
+    prior = tri.get("prior_decisions") or []
+    if prior:
+        parts.append(f"\n## E3. 401 批移出分诊的旧裁决 {len(prior)} 条（不静默丢）\n")
+        parts.append("这些 id 因 parser 修正已从 partial 桶转为 restorable／unrestorable；"
+                     "旧裁决原样保留在 `verifications_triage.json` 的 `prior_decisions`。\n")
+        for p in prior:
+            parts.append("- [x] **%s** → **%s**（%s；新状态 %s）" % (
+                (p.get("id") or "").replace("VER-", ""), p.get("decision") or "?",
+                p.get("decision_kind") or "未分类", p.get("status") or "?"))
+
     text = "\n".join(parts) + "\n"
     changed = OUT.exists() and OUT.read_text(encoding="utf-8") != text
     if changed or not OUT.exists():
         OUT.write_text(text, encoding="utf-8")
-    n = sum(len(v) for k, v in tri["rows"].items()) + len(nb) + len(cs)
-    print("√ 简报%s：%d 事项入册 %s（A%d(已判%d) B%d C%d D%d(已裁%d) E%d(已复核%d)）"
+    n = (sum(len(v) for k, v in tri["rows"].items()) + len(nb) + len(cs)
+         + len(_adj) + len(prior))
+    print("√ 简报%s：%d 事项入册 %s（A%d(已判%d) A3 %d B%d C%d D%d(已裁%d) E%d(已复核%d) E3 %d）"
           % ("已刷新" if changed else "无变化保持", n, OUT.name,
-             len(cs_pend), len(cs_dec), len(nb), len(_c1p) + len(_c2p),
-             len(dz_pend), len(dz_dec), len(e_pend), len(e_dec)))
+             len(cs_pend), len(cs_dec), len(_adj), len(nb), len(_c1p) + len(_c2p),
+             len(dz_pend), len(dz_dec), len(e_pend), len(e_dec), len(prior)))
     return 0
 
 

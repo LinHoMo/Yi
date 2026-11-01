@@ -41,6 +41,16 @@ TOPICS = ("雨", "晴", "天行", "年成", "年景", "病", "疾", "眼", "财"
           "家宅", "胎", "孕", "行旅", "商", "田蚕", "六畜", "谒贵", "葬", "风水", "宅墓", "出征",
           "逃", "钓", "蚕", "衣", "行兵", "国运", "稼穑", "晴雨")
 TOPIC_RE = re.compile(r"占([^\s，。；：、「」『』（）()]{1,3}?)")
+CARRY_KEYS = ("enroll_verdict", "enroll_basis", "question", "question_basis",
+              "disposition", "disposition_basis", "case_id", "blocker")
+
+
+def _yingqi_text(a: dict) -> str | None:
+    """验支显示：支＋单位（日/月/年）；旧册无 unit 的按日（历史默认）。"""
+    b = (a or {}).get("yingqi_branch")
+    if not b:
+        return None
+    return b + ((a or {}).get("yingqi_unit") or "日")
 
 
 def build() -> int:
@@ -52,6 +62,13 @@ def build() -> int:
     cache = {}
     rawtext = {}
     cands = []
+    prev = {}
+    if OUT.exists():
+        try:
+            old = json.loads(OUT.read_text(encoding="utf-8"))
+            prev = {c.get("id"): c for c in (old.get("candidates") or []) if c.get("id")}
+        except (json.JSONDecodeError, OSError):
+            prev = {}
     for r in consensus:
         f = r["file"]
         if f not in cache:
@@ -77,19 +94,28 @@ def build() -> int:
         if not a.get("yingqi_branch"):
             gaps.append("无验支——不可入应期集")
         q = "占" + topic if topic else None
-        cands.append({
+        cand = {
             "id": "RC-" + r["id"],
             "source": {"file": f, "line": r["line"]},
             "status": "draft_pending_human",
             "question": q,
             "input": {"date": a.get("date")},
             "hexagram": {"original": a.get("original"), "changed": a.get("changed")},
-            "expected": {"verdict": None,
-                         "yingqi": (a.get("yingqi_branch") + "日") if a.get("yingqi_branch") else None},
+            "expected": {"verdict": None, "yingqi": _yingqi_text(a)},
             "source_quote": note_line.strip(),
             "quote_verified": bool(note_line.strip()) and note_line.strip() in rawtext[f],
             "gaps": gaps,
-        })
+        }
+        # 401 批：按 id 保留 375/378/380 批的人补字段与裁决，重建不静默抹掉。
+        old = prev.get(cand["id"])
+        if old:
+            for k in CARRY_KEYS:
+                if old.get(k):
+                    cand[k] = old[k]
+            for g in old.get("gaps") or []:
+                if g not in cand["gaps"]:
+                    cand["gaps"].append(g)
+        cands.append(cand)
     doc = {"schema": "yi-liuyao-restorable-candidates/1",
            "built_at": datetime.now().isoformat(timespec="seconds"),
            "_comment": "草稿≠案例：不进 splits、不被 case_runner 读取、不参与评分（第两百零四批）。"
@@ -134,7 +160,14 @@ def selftest() -> int:
     # 负例 3：草稿册若不存在，本器须能指出复核册前置缺失（不静默空跑）
     if not RECHECK.exists():
         fails.append("复核册缺失应报错而非静默")
-    print("√ selftest：话题正负例/不臆造 三件全过" if not fails else "× " + "；".join(fails))
+    # 401 批：验支单位不得一律拼「日」
+    if _yingqi_text({"yingqi_branch": "辰", "yingqi_unit": "月"}) != "辰月":
+        fails.append("验支月单位被错拼成日")
+    if _yingqi_text({"yingqi_branch": "卯", "yingqi_unit": "年"}) != "卯年":
+        fails.append("验支年单位被错拼成日")
+    if _yingqi_text({"yingqi_branch": "寅"}) != "寅日":
+        fails.append("旧册无单位时未按日默认")
+    print("√ selftest：话题正负例/不臆造/验支单位 全过" if not fails else "× " + "；".join(fails))
     return 0 if not fails else 1
 
 

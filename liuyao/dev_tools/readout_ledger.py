@@ -108,18 +108,28 @@ def checks():
 
     # --- 版本对拍/毕业/分诊（JSON 直读 + 现场重生成核对） ---
     add("liuyao.collate(卦面0/47 判词1/37)", "185批", lambda t: _collate_now(), ("0/47", "1/37"))
-    add("liuyao.graduation(18/63/161)", "189批", lambda t: _json_counts(
+    # 401 批改期望 18/63/161 → 43/39/160：400 批 parser 修正后重建毕业册（口径变更，
+    # 新旧不可比：新增 restorable 含已在册/重复/非单点，不是 43 个新案）。
+    add("liuyao.graduation(43/39/160)", "189批→401批改期望（400 parser 重建）", lambda t: _json_counts(
         "data/cases/verifications_graduation.json", "summary",
-        ("restorable", "partial_needs_human", "unrestorable")), ("18", "63", "161"))
-    add("liuyao.triage(15/35/B兜底5/真分歧8)", "199批（202 批 B 路细分，附理由改期望）", lambda t: _json_counts(
+        ("restorable", "partial_needs_human", "unrestorable")), ("43", "39", "160"))
+    # 401 批改期望 15/35/5/8 → 8/18/3/10：随毕业册重建，多数 partial 转 restorable；
+    # B 路 3/10 是 371 批 parse_b 修好后首次重建（旧册 5/8 已登记为过期）。
+    add("liuyao.triage(8/18/3/10)", "199批→401批改期望（随毕业册重建）", lambda t: _json_counts(
         "data/cases/verifications_triage.json", None,
         ("A_有验支候选", "A_无验支结案候选", "B_异写候选", "B_真分歧需人"), key="buckets"),
-        ("15", "35", "5", "8"))
-    # 387 批改期望 10/8 → 13/0：377 批 C 类 13 条裁清（C 待裁 13→0），
-    # 5 条原分歧已带 `decision`（按本册口径「有 decision 即不计 needs_human」），
-    # consensus +3；重放值直读 `restorable_recheck.json` 顶层计数，不是拍值。
-    add("liuyao.restorable_recheck(共识13/分歧0)", "201批→377批改期望", lambda t: _json_counts(
-        "data/cases/restorable_recheck.json", None, ("consensus", "needs_human")), ("13", "0"))
+        ("8", "18", "3", "10"))
+    # 401 批改期望 13/0 → 32/0：43 条 restorable 双器复核；11 条 needs_human 已逐条裁决
+    # （decision 在册，按本册口径不计 needs_human）。
+    add("liuyao.restorable_recheck(共识32/分歧0)", "201批→377批→401批改期望", lambda t: _json_counts(
+        "data/cases/restorable_recheck.json", None, ("consensus", "needs_human")), ("32", "0"))
+    # 401 批新增：43 条 restorable 的逐条处置（已在册 25／非单点 1／不升 3／待回原文 3／
+    # 新候选·建器阻塞 5／新候选·日期阻塞 6）。直接读 summary，不是拍值。
+    add("liuyao.restorable_adjudication(43=25+1+3+3+5+6)", "401批", lambda t: _json_counts(
+        "data/cases/restorable_adjudication.json", "summary",
+        ("total", "already", "non_single", "not_enrolled", "reread",
+         "new_builder_blocked", "new_date_blocked")),
+        ("43", "25", "1", "3", "3", "5", "6"))
     add("liuyao.draft_candidates(10含dup4)", "204批", lambda t: _draft_counts(), ("10", "4"))
 
     # --- 裁决表/治理图/指纹 ---

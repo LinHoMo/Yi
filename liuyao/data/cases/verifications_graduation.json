@@ -1,11 +1,11 @@
 {
  "schema": "yi-liuyao-verifications-graduation/1",
- "built_at": "2026-10-21T16:43:14",
+ "built_at": "2026-11-01T19:33:49",
  "_comment": "观察册：不入 case_splits、不参与评分与调参；restorable 项待人工逐案确认后另批入册（§三.4：expected 只抄书载明写的验支）。179 批「可联盘候选 193」系±3 行线索判据过度承诺，本册按块界重判为准（§六.2 回头改登记）。",
  "summary": {
-  "restorable": 18,
-  "partial_needs_human": 63,
-  "unrestorable": 161
+  "restorable": 43,
+  "partial_needs_human": 39,
+  "unrestorable": 160
  },
  "rows": [
   {
@@ -184,15 +184,14 @@
    "file": "bushi_zhengzong_dz.dz.txt",
    "line": 1165,
    "quote": "刑伤，自然有验．孰知辛未年丧父、得子．是年父爻入墓之年也，五爻为长房持未土子孙，果得长子．甲戌年生次子，予语一友曰奇哉．此卦五爻持未长子属羊，四爻化戌，次子属犬，初爻持辰，必未子属龙矣．友曰：土主五数，该",
-   "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "status": "restorable",
+   "why": "",
    "hex": {
-    "date": [
-     "辰",
-     "丙辰"
-    ],
+    "date": "辰月丙辰日",
     "original": "旅",
-    "changed": "蛊"
+    "changed": "蛊",
+    "yingqi_branch": "丑",
+    "yingqi_unit": "年"
    }
   },
   {
@@ -811,15 +810,14 @@
    "file": "yiin_dz.dz.txt",
    "line": 2221,
    "quote": "官鬼下，名为耗鬼，岂知午火旬空，透出卯财，况投长生于亥日，后至辛卯日，财值巳辰，果得财也。",
-   "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "status": "restorable",
+   "why": "",
    "hex": {
-    "date": [
-     "子",
-     "丁卯"
-    ],
+    "date": "子月丁卯日",
     "original": "屯",
-    "changed": null
+    "changed": null,
+    "yingqi_branch": "子",
+    "yingqi_unit": "日"
    }
   },
   {
@@ -918,15 +916,14 @@
    "file": "yilin_buyi_dz.dz.txt",
    "line": 227,
    "quote": "还怪用爻不透，直待酉时值财当得。又如此月此日问月内何日得财?亦占蒙卦，待后丁酉日果得财也。凡问何日者，须看日辰为主，不可以时辰定之。又如问远路行人，妻占夫本年内何月到，酉年卯月乙酉日卜得旅卦，此卦六位无官",
-   "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "status": "restorable",
+   "why": "",
    "hex": {
-    "date": [
-     "戌",
-     "丁亥"
-    ],
+    "date": "戌月丁亥日",
     "original": "蒙",
-    "changed": null
+    "changed": null,
+    "yingqi_branch": "酉",
+    "yingqi_unit": "日"
    }
   },
   {
@@ -971,7 +968,8 @@
     "date": "子月戊午日",
     "original": "观",
     "changed": "益",
-    "yingqi_branch": "子"
+    "yingqi_branch": "亥",
+    "yingqi_unit": "日"
    }
   },
   {
@@ -1020,15 +1018,14 @@
    "file": "zengshan_buyi.wikitext.txt",
    "line": 359,
    "quote": "<br>午火父母爲用神﹐空而伏於二爻丑土之下﹐壓住難出﹐許甲午日出空必得﹐果得於甲午日。",
-   "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "status": "restorable",
+   "why": "",
    "hex": {
-    "date": [
-     "卯",
-     "壬辰"
-    ],
+    "date": "卯月壬辰日",
     "original": "贲",
-    "changed": null
+    "changed": null,
+    "yingqi_branch": "午",
+    "yingqi_unit": "日"
    }
   },
   {
@@ -1142,15 +1139,14 @@
    "file": "zengshan_buyi.wikitext.txt",
    "line": 1032,
    "quote": "<br>斷曰﹕世爻寅木化出巳爻﹐寅能刑巳﹐三刑少申字﹐防申日之危﹐果卒於申日﹐此乃少一字﹐得後來之申日補之﹐豈可謂少一字不成三刑耶。",
-   "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "status": "restorable",
+   "why": "",
    "hex": {
-    "date": [
-     "丑",
-     "壬子"
-    ],
+    "date": "丑月壬子日",
     "original": "困",
-    "changed": "兑"
+    "changed": "兑",
+    "yingqi_branch": "申",
+    "yingqi_unit": "日"
    }
   },
   {
@@ -1175,7 +1171,7 @@
    "line": 1092,
    "quote": "<br>用爻入墓﹐喜得日辰克破﹐後果得財。以用空入墓許以無財者﹐非也﹐殊不知𨿽空而遇沖﹐沖空則實﹐𨿽墓而克破﹐破墓則開。",
    "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "why": "卦面齐但书载验支不可提（块内无结果标记＋日期令牌）",
    "hex": {
     "date": [
      "辰",
@@ -1197,7 +1193,8 @@
     "date": "酉月甲辰日",
     "original": "遁",
     "changed": "姤",
-    "yingqi_branch": "亥"
+    "yingqi_branch": "亥",
+    "yingqi_unit": "日"
    }
   },
   {
@@ -1236,15 +1233,14 @@
    "file": "zengshan_buyi.wikitext.txt",
    "line": 2107,
    "quote": ">斷曰﹕世爻𨿽空﹐月建合之﹐亥日生之﹐子水財爻動而生世﹐卯年一定成家﹐丑年占卦﹐果至卯年立業成家。彼時定鼎之初﹐雲貴才平﹐此人於川中帶出附子黃蓮桑材數擔﹐勃然家蓄數千餘金﹐從此立業成家﹐連年豐足﹐此豈可謂終身",
-   "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "status": "restorable",
+   "why": "",
    "hex": {
-    "date": [
-     "戌",
-     "辛亥"
-    ],
+    "date": "戌月辛亥日",
     "original": "比",
-    "changed": "观"
+    "changed": "观",
+    "yingqi_branch": "卯",
+    "yingqi_unit": "年"
    }
   },
   {
@@ -1272,8 +1268,8 @@
    "why": "卦名异写不可唯一落表：('剥', '無妄', None)",
    "hex": {
     "date": [
-     "辰",
-     "乙卯"
+     "寅",
+     "己酉"
     ]
    }
   },
@@ -1299,7 +1295,7 @@
    "line": 2987,
    "quote": "<br>此卦官星持世﹐𨿽則不旺﹐初爻官生父旺﹐與前卦相合﹐許之吉兆﹐果得成名。凡得六沖卦﹐官父世爻俱旺者﹐不必再占﹐竟許必得。如父旺者﹐須再占一卦﹐再得吉者﹐以吉斷之﹐後卦凶者﹐卽以凶推。凡得",
    "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "why": "卦面齐但书载验支不可提（块内无结果标记＋日期令牌）",
    "hex": {
     "date": [
      "午",
@@ -1396,7 +1392,8 @@
     "date": "未月丁卯日",
     "original": "晋",
     "changed": null,
-    "yingqi_branch": "辰"
+    "yingqi_branch": "辰",
+    "yingqi_unit": "日"
    }
   },
   {
@@ -1406,7 +1403,7 @@
    "line": 4464,
    "quote": "紅原乳﹐入數百錢內﹐公可設下香案﹐禱告於天﹐得紅原錢者﹐卽其穴也﹐令人徧地灑之﹐果得原錢於紅花之下﹐掘之周圍僅有丈予﹐皆泥土也﹐予皆石塊﹐此公次年開府﹐兩公郎五年之內俱登甲榜。",
    "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "why": "卦面齐但书载验支不可提（块内无结果标记＋日期令牌）",
    "hex": {
     "date": [
      "未",
@@ -1453,7 +1450,8 @@
     "date": "酉月辛亥日",
     "original": "兑",
     "changed": "解",
-    "yingqi_branch": "寅"
+    "yingqi_branch": "寅",
+    "yingqi_unit": "日"
    }
   },
   {
@@ -1468,7 +1466,8 @@
     "date": "巳月乙未日",
     "original": "大过",
     "changed": "鼎",
-    "yingqi_branch": "卯"
+    "yingqi_branch": "卯",
+    "yingqi_unit": "日"
    }
   },
   {
@@ -1478,7 +1477,7 @@
    "line": 583,
    "quote": "外卦未土父母，卯月克之，内卦亥卯未合成木局又相克制，月克日刑全无助，果至重刑。",
    "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "why": "卦面齐但书载验支不可提（块内无结果标记＋日期令牌）",
    "hex": {
     "date": [
      "卯",
@@ -1495,7 +1494,7 @@
    "line": 602,
    "quote": "断日：月建辰土虽克亥水，兄弟赖申日以生之，又得动爻相生，临危有救，果于本日酉时遇名医救活也，至巳亥日以全生。",
    "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "why": "卦面齐但书载验支不可提（块内无结果标记＋日期令牌）",
    "hex": {
     "date": [
      "辰",
@@ -1541,15 +1540,14 @@
    "file": "zengshan_buyi_dz.dz.txt",
    "line": 661,
    "quote": "世临月建而旺相，虽被申日冲克，喜申子辰合成水局，以生官，不独无害，定然三月高迁，果于三月升任云南太守，即升者乃因爻得水局生扶，应三月者辰土出空之月也，应云南者，世与官星皆在六爻之故耳。",
-   "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "status": "restorable",
+   "why": "",
    "hex": {
-    "date": [
-     "寅",
-     "丙申"
-    ],
+    "date": "寅月丙申日",
     "original": "艮",
-    "changed": null
+    "changed": null,
+    "yingqi_branch": "辰",
+    "yingqi_unit": "月"
    }
   },
   {
@@ -1618,15 +1616,14 @@
    "file": "zengshan_buyi_dz.dz.txt",
    "line": 755,
    "quote": "断曰：此卦从来难以吉断，因得屡验六冲变合，散而复聚，离而必合，此婚一定还成，果于次年三月仍成婚。",
-   "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "status": "restorable",
+   "why": "",
    "hex": {
-    "date": [
-     "未",
-     "丁巳"
-    ],
+    "date": "未月丁巳日",
     "original": "离",
-    "changed": null
+    "changed": null,
+    "yingqi_branch": "辰",
+    "yingqi_unit": "月"
    }
   },
   {
@@ -1636,7 +1633,7 @@
    "line": 775,
    "quote": "酉丑合金局来克木，幸衰金不克旺木，不足畏也。况系六冲卦变六冲，有人解散必不成讼，后果劝散。",
    "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "why": "卦面齐但书载验支不可提（块内无结果标记＋日期令牌）",
    "hex": {
     "date": [
      "卯",
@@ -1652,15 +1649,14 @@
    "file": "zengshan_buyi_dz.dz.txt",
    "line": 804,
    "quote": "世持子孙以临月建，未日生之，虽是六冲之卦，此子必归。果于子年建功卯年得意而归，此应静而逢冲之验也。",
-   "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "status": "restorable",
+   "why": "",
    "hex": {
-    "date": [
-     "酉",
-     "乙未"
-    ],
+    "date": "酉月乙未日",
     "original": "坤",
-    "changed": null
+    "changed": null,
+    "yingqi_branch": "子",
+    "yingqi_unit": "年"
    }
   },
   {
@@ -1670,7 +1666,7 @@
    "line": 812,
    "quote": "不久之兆，彼问曰：因何事而不久？余日：子水子孙值旬空，卦中未土父动，防子孙灾变，后果两月，其子得病，辞师未久而子死矣。",
    "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "why": "卦面齐但书载验支不可提（块内无结果标记＋日期令牌）",
    "hex": {
     "date": [
      "巳",
@@ -1687,14 +1683,14 @@
    "line": 842,
    "quote": "日冲动丑土，土动生金，花虽密以全生。彼曰：目下甚危。余曰：不妨，今日未申时有救，果于申时遇明医救治，何当缓也？",
    "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "why": "卦面齐但书载验支不可提（块内无结果标记＋日期令牌）",
    "hex": {
     "date": [
      "寅",
-     "庚申"
+     "己未"
     ],
-    "original": "家人",
-    "changed": "离"
+    "original": "坤",
+    "changed": "师"
    }
   },
   {
@@ -1703,15 +1699,14 @@
    "file": "zengshan_buyi_dz.dz.txt",
    "line": 852,
    "quote": "卯木父爻发动而生世，又化子水回头生许之，在外平安。世空者还至交春即归，果于二月得意而回。此非卯动酉日冲之？何当散也？李我平日：黄金策以空亡为重，冲散为轻。易冒最重冲散，细阅占验多因错课。",
-   "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "status": "restorable",
+   "why": "",
    "hex": {
-    "date": [
-     "丑",
-     "丁酉"
-    ],
+    "date": "丑月丁酉日",
     "original": "涣",
-    "changed": "坎"
+    "changed": "坎",
+    "yingqi_branch": "卯",
+    "yingqi_unit": "月"
    }
   },
   {
@@ -1751,11 +1746,11 @@
    "line": 880,
    "quote": "断曰：世临卯木月建之官，又长生于亥日，世与官星同临旺地，许之即升，果于本月闻报，由江西升任山东，未及一载复任江西，应本月升者卯官而值月令升山东者，官临卯木，复任江西者，外卦反伏，去之而复反也。",
    "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "why": "卦面齐但书载验支不可提（块内无结果标记＋日期令牌）",
    "hex": {
     "date": [
      "卯",
-     "壬申"
+     "己亥"
     ],
     "original": "姤",
     "changed": "恒"
@@ -1797,9 +1792,15 @@
    "file": "zengshan_buyi_dz.dz.txt",
    "line": 1006,
    "quote": "得官临世位，食禄王家终须有日。彼问：应在何年？余曰：前卦官临月破，定于实破之年，果于巳年承袭长房世职，若以月破，百无所用，霄壤之隔也。",
-   "status": "unrestorable",
-   "why": "块内（回溯 40 行）无「X月Y日」日期键",
-   "hex": {}
+   "status": "restorable",
+   "why": "",
+   "hex": {
+    "date": "亥月己丑日",
+    "original": "讼",
+    "changed": null,
+    "yingqi_branch": "巳",
+    "yingqi_unit": "年"
+   }
   },
   {
    "source_id": "VER-zengshan_buyi_dz_dz-L1014",
@@ -1852,15 +1853,14 @@
    "file": "zengshan_buyi_dz.dz.txt",
    "line": 1068,
    "quote": "  午火父母为用神，空而伏于二爻丑土之下，压住难出，许甲午日出空必得，果得于甲午日。",
-   "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "status": "restorable",
+   "why": "",
    "hex": {
-    "date": [
-     "卯",
-     "壬辰"
-    ],
+    "date": "卯月壬辰日",
     "original": "贲",
-    "changed": null
+    "changed": null,
+    "yingqi_branch": "午",
+    "yingqi_unit": "日"
    }
   },
   {
@@ -1944,15 +1944,14 @@
    "file": "zengshan_buyi_dz.dz.txt",
    "line": 1166,
    "quote": "丑土官动化进神许丑日必得，果得于丑日。古以动日月化空破，谓之不进，此卦动非日月而化空破，亦能进也。",
-   "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "status": "restorable",
+   "why": "",
    "hex": {
-    "date": [
-     "戌",
-     "癸亥"
-    ],
+    "date": "戌月癸亥日",
     "original": "同人",
-    "changed": "革"
+    "changed": "革",
+    "yingqi_branch": "丑",
+    "yingqi_unit": "日"
    }
   },
   {
@@ -1961,15 +1960,14 @@
    "file": "zengshan_buyi_dz.dz.txt",
    "line": 1174,
    "quote": "，余许辰年出仕，何也？戌土子孙孙虽动幸化退神，不克官也，辰年冲去戌土，是以许之，果于辰年得选岂可谓之动空化日月而不退也。",
-   "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "status": "restorable",
+   "why": "",
    "hex": {
-    "date": [
-     "未",
-     "丁卯"
-    ],
+    "date": "未月丁卯日",
     "original": "同人",
-    "changed": "革"
+    "changed": "革",
+    "yingqi_branch": "辰",
+    "yingqi_unit": "年"
    }
   },
   {
@@ -1979,7 +1977,7 @@
    "line": 1182,
    "quote": "此公因抱危症。余曰：子孙持世，明日辰日必遇良医，果于次日用针而愈。或曰：子孙化退神，何其用药亦效？余曰：动变皆属秋金，当相得令，占近事岂可曰退？若占久远之事，待休囚之时而退者得",
    "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "why": "卦面齐但书载验支不可提（块内无结果标记＋日期令牌）",
    "hex": {
     "date": [
      "申",
@@ -2015,7 +2013,7 @@
    "hex": {
     "date": [
      "戌",
-     "癸未"
+     "己卯"
     ]
    }
   },
@@ -2145,15 +2143,14 @@
    "file": "zengshan_buyi_dz.dz.txt",
    "line": 1412,
    "quote": "中官星两现，一空一破，至辰年官而出空一定高升，然反吟于外卦，当得验者，去而复来，果于辰年，调于河南，五月因他故，又调回楚，十月而升督府，十年两调一升，皆应实空之年也。",
-   "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "status": "restorable",
+   "why": "",
    "hex": {
-    "date": [
-     "未",
-     "甲午"
-    ],
+    "date": "未月甲午日",
     "original": "师",
-    "changed": "涣"
+    "changed": "涣",
+    "yingqi_branch": "辰",
+    "yingqi_unit": "年"
    }
   },
   {
@@ -2222,15 +2219,14 @@
    "file": "zengshan_buyi_dz.dz.txt",
    "line": 1515,
    "quote": "断曰：世爻寅木化出巳爻，寅能刑巳，三刑少申字，防申日之危，果卒于申日，此乃少一字，得后来之申日补之，岂可谓少一字不成三刑耶。",
-   "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "status": "restorable",
+   "why": "",
    "hex": {
-    "date": [
-     "丑",
-     "壬子"
-    ],
+    "date": "丑月壬子日",
     "original": "困",
-    "changed": "兑"
+    "changed": "兑",
+    "yingqi_branch": "申",
+    "yingqi_unit": "日"
    }
   },
   {
@@ -2255,7 +2251,7 @@
    "line": 1555,
    "quote": "用爻入墓，喜得日辰克破，后果得财。以用空入墓许以无财者，非也，殊不知虽空而遇冲，冲空则实，虽墓而克破，破墓则开。",
    "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "why": "卦面齐但书载验支不可提（块内无结果标记＋日期令牌）",
    "hex": {
     "date": [
      "辰",
@@ -2272,7 +2268,7 @@
    "line": 1573,
    "quote": "此卦亥水子孙独发，克去世爻之鬼，应在明日寅日，寅与亥合，合起子孙之日，尔无忧也，果于次日退灾，不药而愈，亦不独此，又因卯木财空，次日出空而退灾。",
    "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "why": "卦面齐但书载验支不可提（块内无结果标记＋日期令牌）",
    "hex": {
     "date": [
      "午",
@@ -2294,7 +2290,8 @@
     "date": "辰月戊子日",
     "original": "比",
     "changed": "咸",
-    "yingqi_branch": "卯"
+    "yingqi_branch": "卯",
+    "yingqi_unit": "日"
    }
   },
   {
@@ -2324,7 +2321,8 @@
     "date": "午月戊午日",
     "original": "升",
     "changed": "恒",
-    "yingqi_branch": "戌"
+    "yingqi_branch": "戌",
+    "yingqi_unit": "日"
    }
   },
   {
@@ -2334,7 +2332,7 @@
    "line": 1693,
    "quote": "日克音信茫然之兆也。而世爻卯木虽遇日生月合，何益于事。杀生身勿将吉断，此之谓也，后果无音讯，四年知父而遇害矣。",
    "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "why": "卦面齐但书载验支不可提（块内无结果标记＋日期令牌）",
    "hex": {
     "date": [
      "戌",
@@ -2365,15 +2363,14 @@
    "file": "zengshan_buyi_dz.dz.txt",
    "line": 1741,
    "quote": "与前卦，卦名虽殊，其理一也。又是亥水财爻被回头克，不独难以到任，还妨秋令危灾。后果于七月，先得泻疾，略好后，因服补药太过，吃一次药，只能喝一两水，后竟渴死。",
-   "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "status": "restorable",
+   "why": "",
    "hex": {
-    "date": [
-     "午",
-     "庚寅"
-    ],
+    "date": "午月庚寅日",
     "original": "大畜",
-    "changed": "中孚"
+    "changed": "中孚",
+    "yingqi_branch": "申",
+    "yingqi_unit": "月"
    }
   },
   {
@@ -2388,7 +2385,8 @@
     "date": "卯月辛丑日",
     "original": "晋",
     "changed": null,
-    "yingqi_branch": "巳"
+    "yingqi_branch": "巳",
+    "yingqi_unit": "年"
    }
   },
   {
@@ -2403,7 +2401,8 @@
     "date": "未月癸亥日",
     "original": "艮",
     "changed": null,
-    "yingqi_branch": "申"
+    "yingqi_branch": "申",
+    "yingqi_unit": "日"
    }
   },
   {
@@ -2418,7 +2417,8 @@
     "date": "酉月甲辰日",
     "original": "遁",
     "changed": "姤",
-    "yingqi_branch": "亥"
+    "yingqi_branch": "亥",
+    "yingqi_unit": "日"
    }
   },
   {
@@ -2427,13 +2427,13 @@
    "file": "zengshan_buyi_dz.dz.txt",
    "line": 1887,
    "quote": "我问小厮，如何应在功名？余日：神之机常常如此，舍小事而报大凶，公之诸事须宜慎之，果于七月，被论革职，此占他而应我也！",
-   "status": "restorable",
-   "why": "",
+   "status": "unrestorable",
+   "why": "有日期键但块内无「得X卦/得X之Y卦」卦面式",
    "hex": {
-    "date": "酉月甲辰日",
-    "original": "遁",
-    "changed": "姤",
-    "yingqi_branch": "亥"
+    "date": [
+     "巳",
+     "己未"
+    ]
    }
   },
   {
@@ -2476,8 +2476,8 @@
    "why": "有日期键但块内无「得X卦/得X之Y卦」卦面式",
    "hex": {
     "date": [
-     "午",
-     "丁亥"
+     "子",
+     "己亥"
     ]
    }
   },
@@ -2491,8 +2491,8 @@
    "why": "有日期键但块内无「得X卦/得X之Y卦」卦面式",
    "hex": {
     "date": [
-     "午",
-     "丁亥"
+     "辰",
+     "己卯"
     ]
    }
   },
@@ -2548,7 +2548,7 @@
    "line": 2068,
    "quote": "，月建又是父爻，明日辰日冲动，戌父必然有雨。余曰：戌临月破，如何有雨？阴云而已，果于次日常见阴云。",
    "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "why": "卦面齐但书载验支不可提（块内无结果标记＋日期令牌）",
    "hex": {
     "date": [
      "辰",
@@ -2570,7 +2570,8 @@
     "date": "未月丙午日",
     "original": "离",
     "changed": null,
-    "yingqi_branch": "寅"
+    "yingqi_branch": "寅",
+    "yingqi_unit": "日"
    }
   },
   {
@@ -2585,7 +2586,8 @@
     "date": "未月丙午日",
     "original": "离",
     "changed": null,
-    "yingqi_branch": "寅"
+    "yingqi_branch": "寅",
+    "yingqi_unit": "日"
    }
   },
   {
@@ -2610,7 +2612,7 @@
    "line": 2171,
    "quote": "一卦财动，一卦子动，不见父鬼爻动，知其晴，果于中秋夜，月明星稀。",
    "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "why": "卦面齐但书载验支不可提（块内无结果标记＋日期令牌）",
    "hex": {
     "date": [
      "巳",
@@ -2627,7 +2629,7 @@
    "line": 2180,
    "quote": "彼以父动有雨，余曰：应时日看，今日申戌时而无雨者，明日必有雨也。果于本日申时雨。彼：又是如何申时雨？余曰：戌土是长生在申。又问：雨至何时？余曰：父化退神，雨不久。明日必晴。果于次日大晴，野鹤曰",
    "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "why": "卦面齐但书载验支不可提（块内无结果标记＋日期令牌）",
    "hex": {
     "date": [
      "巳",
@@ -2643,15 +2645,14 @@
    "file": "zengshan_buyi_dz.dz.txt",
    "line": 2240,
    "quote": "断曰：世爻虽空，月建合之，亥日生之，子水财爻动而生世，卯年一定成家，丑年占卦，果至卯年立业成家。彼时定鼎之初，云贵才平，此人于川中带出附子黄莲桑材数担，勃然家蓄数千余金，从此立业成家，连年丰足，此岂可谓终身",
-   "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "status": "restorable",
+   "why": "",
    "hex": {
-    "date": [
-     "戌",
-     "辛亥"
-    ],
+    "date": "戌月辛亥日",
     "original": "比",
-    "changed": "观"
+    "changed": "观",
+    "yingqi_branch": "卯",
+    "yingqi_unit": "年"
    }
   },
   {
@@ -2675,15 +2676,14 @@
    "file": "zengshan_buyi_dz.dz.txt",
    "line": 2324,
    "quote": "戌土之财，暗动生世。虽可许名，不敢指以年月，后卦世临未土而逢空，实空之年包出仕。果于卯年援例入临，巳年初任兵马即加纳县令，未年再位江南。旧注官鬼持世疾病缠绵，若是贵人。勿以此断。此人原非贵人。岂谓之疾病缠绵耶",
-   "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "status": "restorable",
+   "why": "",
    "hex": {
-    "date": [
-     "酉",
-     "壬辰"
-    ],
+    "date": "酉月壬辰日",
     "original": "恒",
-    "changed": null
+    "changed": null,
+    "yingqi_branch": "卯",
+    "yingqi_unit": "年"
    }
   },
   {
@@ -2692,15 +2692,14 @@
    "file": "zengshan_buyi_dz.dz.txt",
    "line": 2332,
    "quote": "名？彼曰功名之念已灭。余曰：世临日建月建生身，必主显贵中举，巳午年富贵逼人来也。果于午年保举，虽非科甲，身为科里之官，此岂可谓父母持身辛勤劳碌耶？",
-   "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "status": "restorable",
+   "why": "",
    "hex": {
-    "date": [
-     "酉",
-     "壬辰"
-    ],
-    "original": "恒",
-    "changed": null
+    "date": "巳月己丑日",
+    "original": "归妹",
+    "changed": "临",
+    "yingqi_branch": "午",
+    "yingqi_unit": "年"
    }
   },
   {
@@ -2724,15 +2723,14 @@
    "file": "zengshan_buyi_dz.dz.txt",
    "line": 2431,
    "quote": "断曰：世化申金回头之生，不宜寅月冲破，又嫌戌土未土动而克而无生也，须防卯岁，果卒于卯年，乃应戌土逢合之年而克世也。",
-   "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "status": "restorable",
+   "why": "",
    "hex": {
-    "date": [
-     "辰",
-     "乙卯"
-    ],
+    "date": "寅月己酉日",
     "original": "剥",
-    "changed": "无妄"
+    "changed": "无妄",
+    "yingqi_branch": "卯",
+    "yingqi_unit": "年"
    }
   },
   {
@@ -2741,15 +2739,14 @@
    "file": "zengshan_buyi_dz.dz.txt",
    "line": 2451,
    "quote": "为少女，勿贪幼妇。彼曰：应在何时？余曰：交春可以避之。彼曰：年岁逼如何远去？不意果于正月亥日宿于妾房，被贼明火入室，席卷一空，身受木器所伤，若不宿于少妇之室，或者扒墙而出，未必受其伤。",
-   "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "status": "restorable",
+   "why": "",
    "hex": {
-    "date": [
-     "丑",
-     "戊子"
-    ],
+    "date": "丑月戊子日",
     "original": "益",
-    "changed": "中孚"
+    "changed": "中孚",
+    "yingqi_branch": "亥",
+    "yingqi_unit": "日"
    }
   },
   {
@@ -2803,15 +2800,14 @@
    "file": "zengshan_buyi_dz.dz.txt",
    "line": 2653,
    "quote": "从六爻动来生世，此子见归。彼曰：何时得见？曰：明岁申辰与酉金相合，定然得意而归。果于次年六月父子相逢。",
-   "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "status": "restorable",
+   "why": "",
    "hex": {
-    "date": [
-     "申",
-     "辛卯"
-    ],
+    "date": "申月辛卯日",
     "original": "复",
-    "changed": null
+    "changed": null,
+    "yingqi_branch": "未",
+    "yingqi_unit": "月"
    }
   },
   {
@@ -2836,7 +2832,7 @@
    "line": 2750,
    "quote": "未土财爻虽动，喜其生助酉金，酉官生世，名为接续相生，一定篇篇华锦。财生官旺优等。后果取超等补禀。野鹤曰：大凡卦遇六冲变冲及六爻乱动，父旺世旺，还考平等。倘若父衰受刑克及世爻休囚受克及变凶者，孙山无疑。",
    "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "why": "卦面齐但书载验支不可提（块内无结果标记＋日期令牌）",
    "hex": {
     "date": [
      "申",
@@ -2868,7 +2864,7 @@
    "line": 2807,
    "quote": "此卦官星持世，虽则不旺，初爻官生父旺，与前卦相合，许之吉兆，果得成名。凡得六冲卦，官父世爻俱旺者，不必再占，竟许必得。如父旺者，须再占一卦，再得吉者，以吉断之，后卦凶者，即以凶推。凡得",
    "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "why": "卦面齐但书载验支不可提（块内无结果标记＋日期令牌）",
    "hex": {
     "date": [
      "午",
@@ -2884,9 +2880,16 @@
    "file": "zengshan_buyi_dz.dz.txt",
    "line": 2838,
    "quote": "，不来生世，正所谓出现无情，此缺不得。彼曰：如何不得？余曰：官生应爻，一定不得，后果另选别人。",
-   "status": "unrestorable",
-   "why": "块内（回溯 40 行）无「X月Y日」日期键",
-   "hex": {}
+   "status": "partial_needs_human",
+   "why": "卦面齐但书载验支不可提（块内无结果标记＋日期令牌）",
+   "hex": {
+    "date": [
+     "申",
+     "己亥"
+    ],
+    "original": "井",
+    "changed": "节"
+   }
   },
   {
    "source_id": "VER-zengshan_buyi_dz_dz-L2859",
@@ -2954,15 +2957,14 @@
    "file": "zengshan_buyi_dz.dz.txt",
    "line": 2900,
    "quote": "虎，如何主孝？余曰：迂也，午日冲动子水，父母被戌土财爻克，世化官空，八九月必见，果于八月丁艰。",
-   "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "status": "restorable",
+   "why": "",
    "hex": {
-    "date": [
-     "未",
-     "己巳"
-    ],
+    "date": "未月己巳日",
     "original": "颐",
-    "changed": "噬嗑"
+    "changed": "噬嗑",
+    "yingqi_branch": "酉",
+    "yingqi_unit": "月"
    }
   },
   {
@@ -3022,7 +3024,8 @@
     "date": "未月丁卯日",
     "original": "晋",
     "changed": null,
-    "yingqi_branch": "辰"
+    "yingqi_branch": "辰",
+    "yingqi_unit": "日"
    }
   },
   {
@@ -3077,7 +3080,7 @@
    "line": 3132,
    "quote": "地豆子必贱，子水日建而生世爻，必能得厚利。但闲间爻兄弟月生日合，耗费的钱一定多。后果中间人作弊，告到官府，误了一个月。幸好到地头上价格上涨，果然得了厚利。此乃指其地而占者无不验也。",
    "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "why": "卦面齐但书载验支不可提（块内无结果标记＋日期令牌）",
    "hex": {
     "date": [
      "午",
@@ -3124,7 +3127,7 @@
    "line": 3174,
    "quote": "，虽可制火，今日巳午时切不可斗。彼曰：何也？余曰：巳午时午火父母得令，必克子孙，果于早胜，午时又大败破财。",
    "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "why": "卦面齐但书载验支不可提（块内无结果标记＋日期令牌）",
    "hex": {
     "date": [
      "巳",
@@ -3141,7 +3144,7 @@
    "line": 3190,
    "quote": "戌土财爻动而生世，又得世应相生，戌土虽值旬空，动不为空，明日出空之日，求之必允，果于次日巳时允婚，夫妻白头相守，儿女成行。",
    "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "why": "卦面齐但书载验支不可提（块内无结果标记＋日期令牌）",
    "hex": {
     "date": [
      "子",
@@ -3163,7 +3166,8 @@
     "date": "寅月丙午日",
     "original": "临",
     "changed": "既济",
-    "yingqi_branch": "巳"
+    "yingqi_branch": "巳",
+    "yingqi_unit": "月"
    }
   },
   {
@@ -3175,10 +3179,11 @@
    "status": "restorable",
    "why": "",
    "hex": {
-    "date": "寅月丙午日",
-    "original": "临",
-    "changed": "既济",
-    "yingqi_branch": "巳"
+    "date": "巳月己亥日",
+    "original": "需",
+    "changed": "大过",
+    "yingqi_branch": "寅",
+    "yingqi_unit": "月"
    }
   },
   {
@@ -3187,15 +3192,14 @@
    "file": "zengshan_buyi_dz.dz.txt",
    "line": 3263,
    "quote": "动变阴，必然主女。彼曰：小过卦谓之阴包阳，如何生女？余曰：神兆机于动，先重动爻。果于壬申日生女，产母平安。觉子曰：占妻平安及占男女，原宜分占，彼若闲时而问兼问者，还可同断，若在临产危急时而问者，切不可以男女而断",
-   "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "status": "restorable",
+   "why": "",
    "hex": {
-    "date": [
-     "辰",
-     "戊辰"
-    ],
+    "date": "辰月戊辰日",
     "original": "小过",
-    "changed": "豫"
+    "changed": "豫",
+    "yingqi_branch": "申",
+    "yingqi_unit": "日"
    }
   },
   {
@@ -3205,7 +3209,7 @@
    "line": 3306,
    "quote": "冲克，必不安矣。今问其来否，不以此断，只可断用神伏藏也，克而不来，六合冲亦不来，后果在外平安。",
    "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "why": "卦面齐但书载验支不可提（块内无结果标记＋日期令牌）",
    "hex": {
     "date": [
      "酉",
@@ -3227,7 +3231,8 @@
     "date": "亥月甲子日",
     "original": "革",
     "changed": "夬",
-    "yingqi_branch": "巳"
+    "yingqi_branch": "巳",
+    "yingqi_unit": "日"
    }
   },
   {
@@ -3237,7 +3242,7 @@
    "line": 3330,
    "quote": "断曰：今日乃是午日，午火父爻克世爻，今日必到。果于申时到。",
    "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "why": "卦面齐但书载验支不可提（块内无结果标记＋日期令牌）",
    "hex": {
     "date": [
      "丑",
@@ -3259,7 +3264,8 @@
     "date": "丑月庚午日",
     "original": "履",
     "changed": null,
-    "yingqi_branch": "巳"
+    "yingqi_branch": "巳",
+    "yingqi_unit": "日"
    }
   },
   {
@@ -3283,15 +3289,14 @@
    "file": "zengshan_buyi_dz.dz.txt",
    "line": 3559,
    "quote": "断曰：午火官鬼持世，寅日生之，外卦巳合官局，明年、巳年、午年连升大位，果于次年一岁两升，午年又升官至二品。",
-   "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "status": "restorable",
+   "why": "",
    "hex": {
-    "date": [
-     "子",
-     "丁酉"
-    ],
+    "date": "子月丁酉日",
     "original": "萃",
-    "changed": null
+    "changed": null,
+    "yingqi_branch": "午",
+    "yingqi_unit": "年"
    }
   },
   {
@@ -3301,7 +3306,7 @@
    "line": 3671,
    "quote": "红原乳，入数百钱内，公可设下香案，祷告于天，得红原钱者，即其穴也，令人遍地洒之，果得原钱于红花之下，掘之周围仅有丈余，皆泥土也，余皆石块，此公次年开府，两公郎五年之内俱登甲榜。",
    "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "why": "卦面齐但书载验支不可提（块内无结果标记＋日期令牌）",
    "hex": {
     "date": [
      "未",
@@ -3318,7 +3323,7 @@
    "line": 3682,
    "quote": "地洼终无消水之法，不得不选地而迁也。或因地风吹歪棺木者，前得挖坑二三尺，以探之，后果歪者仍归于正向，命道安坟则吉。",
    "status": "partial_needs_human",
-   "why": "卦面齐但书载验支不可提（块内无应X日/果于X日）",
+   "why": "卦面齐但书载验支不可提（块内无结果标记＋日期令牌）",
    "hex": {
     "date": [
      "未",
