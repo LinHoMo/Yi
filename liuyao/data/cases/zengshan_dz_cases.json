@@ -71,7 +71,11 @@
       {
         "id": "ZD193",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "父近病"
+        "topic": "父近病",
+        "raw_original": "乾为天",
+        "raw_changed": "天小畜",
+        "original": "乾",
+        "changed": "小畜"
       },
       {
         "id": "ZD010",
@@ -265,7 +269,11 @@
       {
         "id": "ZD040",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "父何日归"
+        "topic": "父何日归",
+        "raw_original": "乾",
+        "raw_changed": "夬",
+        "original": "乾",
+        "changed": "夬"
       },
       {
         "id": "ZD041",
@@ -279,7 +287,11 @@
       {
         "id": "ZD042",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "父病"
+        "topic": "父病",
+        "raw_original": "地雷复",
+        "raw_changed": "",
+        "original": "复",
+        "changed": null
       },
       {
         "id": "ZD199",
@@ -302,7 +314,11 @@
       {
         "id": "ZD044",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "本年冬今"
+        "topic": "本年冬今",
+        "raw_original": "关差否水泽节",
+        "raw_changed": "需",
+        "original": "节",
+        "changed": "需"
       },
       {
         "id": "ZD045",
@@ -334,32 +350,56 @@
       {
         "id": "ZD201",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "病"
+        "topic": "病",
+        "raw_original": "乾",
+        "raw_changed": "夬",
+        "original": "乾",
+        "changed": "夬"
       },
       {
         "id": "ZD047",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "母血崩一年有余"
+        "topic": "母血崩一年有余",
+        "raw_original": "同人",
+        "raw_changed": "解",
+        "original": "同人",
+        "changed": "解"
       },
       {
         "id": "ZD048",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "父母近病"
+        "topic": "父母近病",
+        "raw_original": "萃",
+        "raw_changed": "否",
+        "original": "萃",
+        "changed": "否"
       },
       {
         "id": "ZD202",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "病"
+        "topic": "病",
+        "raw_original": "困",
+        "raw_changed": "解",
+        "original": "困",
+        "changed": "解"
       },
       {
         "id": "ZD049",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "妻母病"
+        "topic": "妻母病",
+        "raw_original": "随",
+        "raw_changed": "否",
+        "original": "随",
+        "changed": "否"
       },
       {
         "id": "ZD203",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "出"
+        "topic": "出",
+        "raw_original": "屯",
+        "raw_changed": "节",
+        "original": "屯",
+        "changed": "节"
       },
       {
         "id": "ZD051",
@@ -382,22 +422,38 @@
       {
         "id": "ZD053",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "官府升否"
+        "topic": "官府升否",
+        "raw_original": "解",
+        "raw_changed": "困",
+        "original": "解",
+        "changed": "困"
       },
       {
         "id": "ZD054",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "试中否"
+        "topic": "试中否",
+        "raw_original": "兑",
+        "raw_changed": "讼",
+        "original": "兑",
+        "changed": "讼"
       },
       {
         "id": "ZD055",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "母路隔千里何时来"
+        "topic": "母路隔千里何时来",
+        "raw_original": "火天大有",
+        "raw_changed": "井",
+        "original": "大有",
+        "changed": "井"
       },
       {
         "id": "ZD056",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "开金银器皿店"
+        "topic": "开金银器皿店",
+        "raw_original": "火雷噬嗑",
+        "raw_changed": "屯",
+        "original": "噬嗑",
+        "changed": "屯"
       },
       {
         "id": "ZD057",
@@ -438,12 +494,20 @@
       {
         "id": "ZD062",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "升迁"
+        "topic": "升迁",
+        "raw_original": "师",
+        "raw_changed": "涣",
+        "original": "师",
+        "changed": "涣"
       },
       {
         "id": "ZD063",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "子何日脱厄"
+        "topic": "子何日脱厄",
+        "raw_original": "豫",
+        "raw_changed": "归妹",
+        "original": "豫",
+        "changed": "归妹"
       },
       {
         "id": "ZD204",
@@ -484,12 +548,20 @@
       {
         "id": "ZD068",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "小舟过关恐盘阻"
+        "topic": "小舟过关恐盘阻",
+        "raw_original": "水地比",
+        "raw_changed": "泽山咸",
+        "original": "比",
+        "changed": "咸"
       },
       {
         "id": "ZD069",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "文书"
+        "topic": "文书",
+        "raw_original": "小畜",
+        "raw_changed": "蛊",
+        "original": "小畜",
+        "changed": "蛊"
       },
       {
         "id": "ZD207",
@@ -539,7 +611,11 @@
       {
         "id": "ZD074",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "月令"
+        "topic": "月令",
+        "raw_original": "泰",
+        "raw_changed": "丰",
+        "original": "泰",
+        "changed": "丰"
       },
       {
         "id": "ZD075",
@@ -553,7 +629,11 @@
       {
         "id": "ZD076",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "何日雨"
+        "topic": "何日雨",
+        "raw_original": "地风升",
+        "raw_changed": "恒",
+        "original": "升",
+        "changed": "恒"
       },
       {
         "id": "ZD077",
@@ -576,7 +656,11 @@
       {
         "id": "ZD208",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "病"
+        "topic": "病",
+        "raw_original": "地山谦",
+        "raw_changed": "水山蹇",
+        "original": "谦",
+        "changed": "蹇"
       },
       {
         "id": "ZD079",
@@ -626,12 +710,20 @@
       {
         "id": "ZD083",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "功名"
+        "topic": "功名",
+        "raw_original": "萃",
+        "raw_changed": "遁",
+        "original": "萃",
+        "changed": "遁"
       },
       {
         "id": "ZD084",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "流年"
+        "topic": "流年",
+        "raw_original": "艮",
+        "raw_changed": "",
+        "original": "艮",
+        "changed": null
       },
       {
         "id": "ZD085",
@@ -645,12 +737,20 @@
       {
         "id": "ZD086",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "母病"
+        "topic": "母病",
+        "raw_original": "坤",
+        "raw_changed": "剥",
+        "original": "坤",
+        "changed": "剥"
       },
       {
         "id": "ZD210",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "子病"
+        "topic": "子病",
+        "raw_original": "既济",
+        "raw_changed": "革",
+        "original": "既济",
+        "changed": "革"
       },
       {
         "id": "ZD088",
@@ -673,12 +773,20 @@
       {
         "id": "ZD090",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "本日阴晴"
+        "topic": "本日阴晴",
+        "raw_original": "遁",
+        "raw_changed": "否",
+        "original": "遁",
+        "changed": "否"
       },
       {
         "id": "ZD091",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "何日晴"
+        "topic": "何日晴",
+        "raw_original": "观",
+        "raw_changed": "比",
+        "original": "观",
+        "changed": "比"
       },
       {
         "id": "ZD092",
@@ -692,7 +800,11 @@
       {
         "id": "ZD211",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "何日雨"
+        "topic": "何日雨",
+        "raw_original": "既济",
+        "raw_changed": "蹇",
+        "original": "既济",
+        "changed": "蹇"
       },
       {
         "id": "ZD094",
@@ -733,7 +845,11 @@
       {
         "id": "ZD213",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "何日雨"
+        "topic": "何日雨",
+        "raw_original": "震",
+        "raw_changed": "豫",
+        "original": "震",
+        "changed": "豫"
       },
       {
         "id": "ZD215",
@@ -819,7 +935,11 @@
       {
         "id": "ZD107",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "终身财福"
+        "topic": "终身财福",
+        "raw_original": "比",
+        "raw_changed": "观",
+        "original": "比",
+        "changed": "观"
       },
       {
         "id": "ZD108",
@@ -860,7 +980,11 @@
       {
         "id": "ZD113",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "财福"
+        "topic": "财福",
+        "raw_original": "明夷",
+        "raw_changed": "丰",
+        "original": "明夷",
+        "changed": "丰"
       },
       {
         "id": "ZD114",
@@ -874,7 +998,11 @@
       {
         "id": "ZD218",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "终身财福"
+        "topic": "终身财福",
+        "raw_original": "归妹",
+        "raw_changed": "临",
+        "original": "归妹",
+        "changed": "临"
       },
       {
         "id": "ZD116",
@@ -888,7 +1016,11 @@
       {
         "id": "ZD219",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "终身财福"
+        "topic": "终身财福",
+        "raw_original": "革",
+        "raw_changed": "家人",
+        "original": "革",
+        "changed": "家人"
       },
       {
         "id": "ZD118",
@@ -947,7 +1079,11 @@
       {
         "id": "ZD223",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "梦"
+        "topic": "梦",
+        "raw_original": "益",
+        "raw_changed": "中孚",
+        "original": "益",
+        "changed": "中孚"
       },
       {
         "id": "ZD123",
@@ -1024,7 +1160,11 @@
       {
         "id": "ZD132",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "父寿"
+        "topic": "父寿",
+        "raw_original": "巽",
+        "raw_changed": "姤",
+        "original": "巽",
+        "changed": "姤"
       },
       {
         "id": "ZD133",
@@ -1173,7 +1313,11 @@
       {
         "id": "ZD225",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "升迁"
+        "topic": "升迁",
+        "raw_original": "比",
+        "raw_changed": "观",
+        "original": "比",
+        "changed": "观"
       },
       {
         "id": "ZD150",
@@ -1214,7 +1358,11 @@
       {
         "id": "ZD155",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "父何时起用"
+        "topic": "父何时起用",
+        "raw_original": "风水涣",
+        "raw_changed": "夬",
+        "original": "涣",
+        "changed": "夬"
       },
       {
         "id": "ZD156",
@@ -1291,7 +1439,11 @@
       {
         "id": "ZD164",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "借贷"
+        "topic": "借贷",
+        "raw_original": "兑",
+        "raw_changed": "震",
+        "original": "兑",
+        "changed": "震"
       },
       {
         "id": "ZD165",
@@ -1314,12 +1466,20 @@
       {
         "id": "ZD167",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "婚"
+        "topic": "婚",
+        "raw_original": "临",
+        "raw_changed": "既济",
+        "original": "临",
+        "changed": "既济"
       },
       {
         "id": "ZD168",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "夫妻不和将来如好否？"
+        "topic": "夫妻不和将来如好否？",
+        "raw_original": "需",
+        "raw_changed": "大过",
+        "original": "需",
+        "changed": "大过"
       },
       {
         "id": "ZD169",
@@ -1342,7 +1502,11 @@
       {
         "id": "ZD171",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "孕男女"
+        "topic": "孕男女",
+        "raw_original": "小过",
+        "raw_changed": "豫",
+        "original": "小过",
+        "changed": "豫"
       },
       {
         "id": "ZD172",
@@ -1365,27 +1529,47 @@
       {
         "id": "ZD174",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "仆人何日回"
+        "topic": "仆人何日回",
+        "raw_original": "革",
+        "raw_changed": "夬",
+        "original": "革",
+        "changed": "夬"
       },
       {
         "id": "ZD175",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "伯何日来"
+        "topic": "伯何日来",
+        "raw_original": "屯",
+        "raw_changed": "随",
+        "original": "屯",
+        "changed": "随"
       },
       {
         "id": "ZD176",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "父远去何日回"
+        "topic": "父远去何日回",
+        "raw_original": "履",
+        "raw_changed": "",
+        "original": "履",
+        "changed": null
       },
       {
         "id": "ZD177",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "夫在外还往他省去否"
+        "topic": "夫在外还往他省去否",
+        "raw_original": "大壮",
+        "raw_changed": "大过",
+        "original": "大壮",
+        "changed": "大过"
       },
       {
         "id": "ZD178",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "一路平安否"
+        "topic": "一路平安否",
+        "raw_original": "蛊",
+        "raw_changed": "巽",
+        "original": "蛊",
+        "changed": "巽"
       },
       {
         "id": "ZD179",
@@ -1471,7 +1655,11 @@
       {
         "id": "ZD227",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "地"
+        "topic": "地",
+        "raw_original": "巽",
+        "raw_changed": "升",
+        "original": "巽",
+        "changed": "升"
       },
       {
         "id": "ZD189",
@@ -1503,7 +1691,11 @@
       {
         "id": "ZD192",
         "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-        "topic": "以父柩附葬祖苗"
+        "topic": "以父柩附葬祖苗",
+        "raw_original": "复",
+        "raw_changed": "坤",
+        "original": "复",
+        "changed": "坤"
       }
     ]
   },
@@ -1568,8 +1760,8 @@
       },
       "expected": {
         "verdict": "凶",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "父母",
+        "use_god_branch": "亥",
         "use_god_position": "",
         "yingqi": "卯日",
         "yingqi_branches": [
@@ -1586,7 +1778,9 @@
         "day_stem_normalized": false,
         "hex_name_normalized": null,
         "hex_prefix_note": null,
-        "question_retitled": null
+        "question_retitled": null,
+        "use_god_source": "支式用神·本书原卦列定六亲",
+        "use_god_quote": "亥水为用神"
       },
       "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/锚句归属本案/不与在册同案 七道门；吉凶判不出记 N/A；永不参与调参"
     },
@@ -1607,7 +1801,7 @@
       "expected": {
         "verdict": "吉",
         "use_god": "妻财",
-        "use_god_branch": "",
+        "use_god_branch": "寅",
         "use_god_position": "",
         "yingqi": "寅日",
         "yingqi_branches": [
@@ -1624,7 +1818,9 @@
         "day_stem_normalized": false,
         "hex_name_normalized": null,
         "hex_prefix_note": null,
-        "question_retitled": null
+        "question_retitled": null,
+        "use_god_source": "断语「支+六亲为用」句",
+        "use_god_quote": "寅木财爻为用神"
       },
       "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/锚句归属本案/不与在册同案 七道门；吉凶判不出记 N/A；永不参与调参"
     },
@@ -1646,15 +1842,16 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "官鬼",
+        "use_god_branch": "酉",
         "use_god_position": "",
         "yingqi": "子日",
         "yingqi_branches": [
           "子"
         ],
         "detail": "世临月建之官，定得面见，但被午火回头之克，须待子日冲去午火方得拜谒，果得见于丙子日，故曰逢伤亦伤却有待时之用",
-        "same_as_day_branch": false
+        "same_as_day_branch": false,
+        "use_god_note": "书证：世临月建之官（蛊三爻官鬼酉持世，卦位唯一对得）"
       },
       "provenance": {
         "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
@@ -1729,7 +1926,7 @@
       "expected": {
         "verdict": "凶",
         "use_god": "兄弟",
-        "use_god_branch": "",
+        "use_god_branch": "酉",
         "use_god_position": "",
         "yingqi": "申年",
         "yingqi_branches": [
@@ -1746,7 +1943,9 @@
         "day_stem_normalized": false,
         "hex_name_normalized": null,
         "hex_prefix_note": null,
-        "question_retitled": null
+        "question_retitled": null,
+        "use_god_source": "断语「支+六亲为用」句",
+        "use_god_quote": "酉金兄爻为用神"
       },
       "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/实录句有应期令牌/不宽于三支/锚句归属本案/不与在册同案 七道门；吉凶判不出记 N/A；永不参与调参"
     },
@@ -1769,8 +1968,8 @@
       },
       "expected": {
         "verdict": "凶",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "妻财",
+        "use_god_branch": "子",
         "use_god_position": "",
         "yingqi": "未月、酉月",
         "yingqi_branches": [
@@ -1778,7 +1977,8 @@
           "酉"
         ],
         "detail": "彼曰：我是伙计不同心？或是别有他图？余曰：鬼在身边须防疾病，伙伴从此变心，受其累，果于六月疾至，八月伙计盗尽",
-        "same_as_day_branch": true
+        "same_as_day_branch": true,
+        "use_god_note": "书证：财被盗尽者四爻子财落空亡（题类营谋轨；书吉凶主由世论，note 登记双线）"
       },
       "provenance": {
         "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
@@ -1851,15 +2051,16 @@
       },
       "expected": {
         "verdict": "凶",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "世爻",
+        "use_god_branch": "丑",
         "use_god_position": "",
         "yingqi": "辰日",
         "yingqi_branches": [
           "辰"
         ],
         "detail": "后因病重，此人未去，女死辰日，夫应不去者，世动而逢合也，女死辰日者，卯木子孙变辰土之故也",
-        "same_as_day_branch": false
+        "same_as_day_branch": false,
+        "use_god_note": "书证：夫应不去者世动而逢合也（题面出行世为己身；书另断同行小女病亡=子孙卯线，卦不应题双线，note 记）"
       },
       "provenance": {
         "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
@@ -1935,8 +2136,8 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "子孙",
+        "use_god_branch": "酉",
         "use_god_position": "",
         "yingqi": "子年、卯年",
         "yingqi_branches": [
@@ -1944,7 +2145,8 @@
           "子"
         ],
         "detail": "果于子年建功卯年得意而归，此应静而逢冲之验也",
-        "same_as_day_branch": false
+        "same_as_day_branch": false,
+        "use_god_note": "书证：世持子孙以临月建（坤上爻子孙酉，卦位+月建对得）"
       },
       "provenance": {
         "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
@@ -1977,15 +2179,16 @@
       },
       "expected": {
         "verdict": "",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "子孙",
+        "use_god_branch": "巳",
         "use_god_position": "",
         "yingqi": "寅日",
         "yingqi_branches": [
           "寅"
         ],
         "detail": "断曰：巳火子孙既当春令，子孙旺相许之可治，后死于寅日寅时",
-        "same_as_day_branch": false
+        "same_as_day_branch": false,
+        "use_god_note": "书证：巳火子孙既当春令（dz L831）"
       },
       "provenance": {
         "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
@@ -2017,15 +2220,16 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "父母",
+        "use_god_branch": "卯",
         "use_god_position": "",
         "yingqi": "卯月",
         "yingqi_branches": [
           "卯"
         ],
         "detail": "世空者还至交春即归，果于二月得意而回",
-        "same_as_day_branch": false
+        "same_as_day_branch": false,
+        "use_god_note": "书证：卯木父爻发动而生世（dz L852）"
       },
       "provenance": {
         "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
@@ -2055,15 +2259,16 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "妻财",
+        "use_god_branch": "子",
         "use_god_position": "",
         "yingqi": "卯日、卯月",
         "yingqi_branches": [
           "卯"
         ],
         "detail": "彼曰：去得成否？余曰：甲寅日世爻出空之日，准行无疑，果于乙卯日起程，后到彼地，寅卯月间，诸事顺心，满载而归",
-        "same_as_day_branch": false
+        "same_as_day_branch": false,
+        "use_god_note": "书证：子月亥日俱作财神而生世（大畜两财皆子，支唯一）"
       },
       "provenance": {
         "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
@@ -2095,15 +2300,16 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "兄弟",
+        "use_god_branch": "戌",
         "use_god_position": "",
         "yingqi": "戌月",
         "yingqi_branches": [
           "戌"
         ],
         "detail": "断曰：兄动化退，已有归志，但因戌逢月破，在外诸事未遂，六月可望，后至戌月方回，乃应实破之月也，此乃动破而变日月，岂可谓之退不及也？",
-        "same_as_day_branch": false
+        "same_as_day_branch": false,
+        "use_god_note": "书证：兄动化退…戌逢月破（与裁决表 huaxtui 条目一致）"
       },
       "provenance": {
         "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
@@ -2133,15 +2339,16 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "世爻",
+        "use_god_branch": "酉",
         "use_god_position": "",
         "yingqi": "未日",
         "yingqi_branches": [
           "未"
         ],
         "detail": "此卦日命随鬼入墓，世爻随鬼入墓，世身又落旬空，卦身又临月破，若执古法断之，百无一生，因世爻旺相，许未日愈，果起床于未日者，冲开丑墓之日而出也",
-        "same_as_day_branch": false
+        "same_as_day_branch": false,
+        "use_god_note": "随鬼入墓章特轨 dz L1330「自占看世爻，代占看用神」；断主体世爻旺相许愈，世位官鬼酉（恒三爻）"
       },
       "provenance": {
         "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
@@ -2211,15 +2418,16 @@
       },
       "expected": {
         "verdict": "凶",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "世爻",
+        "use_god_branch": "酉",
         "use_god_position": "",
         "yingqi": "午月",
         "yingqi_branches": [
           "午"
         ],
         "detail": "或曰，幸得世应相生，又变升卦，必相救解，余曰，自占自陈，与应何干，此迂腐之论也，果于五月下狱",
-        "same_as_day_branch": false
+        "same_as_day_branch": false,
+        "use_god_note": "书证：自占自陈与应何干（论世特轨明拒应爻；官鬼酉持世破且空）"
       },
       "provenance": {
         "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
@@ -2251,15 +2459,16 @@
       },
       "expected": {
         "verdict": "",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "父母",
+        "use_god_branch": "申",
         "use_god_position": "",
         "yingqi": "申日",
         "yingqi_branches": [
           "申"
         ],
         "detail": "后卦申金爻动庚申日雨辛酉半阴晴亥时大晴",
-        "same_as_day_branch": false
+        "same_as_day_branch": false,
+        "use_god_note": "天时雨轨：后卦申金爻动庚申日雨（坎之困四爻父母申动；题面书源「占何日」后字脱落，同节前例证为占雨）"
       },
       "provenance": {
         "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
@@ -2333,15 +2542,16 @@
       },
       "expected": {
         "verdict": "",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "父母",
+        "use_god_branch": "巳",
         "use_god_position": "",
         "yingqi": "辰日",
         "yingqi_branches": [
           "辰"
         ],
         "detail": "卦中辰父发动，当许中秋有雨，殊不知应在初九辰日即雨",
-        "same_as_day_branch": false
+        "same_as_day_branch": false,
+        "use_god_note": "天时雨晴并断母子皆动，主断雨线：因巳火父空亥日冲空则雨"
       },
       "provenance": {
         "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
@@ -2371,15 +2581,16 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "妻财",
+        "use_god_branch": "巳",
         "use_god_position": "",
         "yingqi": "巳年",
         "yingqi_branches": [
           "巳"
         ],
         "detail": "此人旺财临世，平素手有余钱，亦因世入戌墓，酷好如痴赌，后至巳年因开铅矿，连开数穴，富冠一乡",
-        "same_as_day_branch": false
+        "same_as_day_branch": false,
+        "use_god_note": "书证：旺财临世…世入戌墓（终身财福以财为断，节卦初爻世位唯一妻财）"
       },
       "provenance": {
         "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
@@ -2501,15 +2712,16 @@
       },
       "expected": {
         "verdict": "",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "世爻",
+        "use_god_branch": "辰",
         "use_god_position": "",
         "yingqi": "申月",
         "yingqi_branches": [
           "申"
         ],
         "detail": "此人竟未出门，捱至七月初七，又得凶梦，初八即往东行二十八里，地震房塌，人口被伤，独伊得免",
-        "same_as_day_branch": false
+        "same_as_day_branch": false,
+        "use_god_note": "书证：寅木化进神克世（流年世体轨，断主体世爻；世位妻财辰从卦位对得）"
       },
       "provenance": {
         "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
@@ -2539,15 +2751,16 @@
       },
       "expected": {
         "verdict": "",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "子孙",
+        "use_god_branch": "酉",
         "use_god_position": "",
         "yingqi": "未月",
         "yingqi_branches": [
           "未"
         ],
         "detail": "果于次年六月父子相逢",
-        "same_as_day_branch": false
+        "same_as_day_branch": false,
+        "use_god_note": "书证：日建冲动上爻子孙而生世，明岁申辰与酉金相合"
       },
       "provenance": {
         "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
@@ -2579,15 +2792,16 @@
       },
       "expected": {
         "verdict": "凶",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "世爻",
+        "use_god_branch": "戌",
         "use_god_position": "",
         "yingqi": "酉月",
         "yingqi_branches": [
           "酉"
         ],
         "detail": "彼曰：财非临虎，如何主孝？余曰：迂也，午日冲动子水，父母被戌土财爻克，世化官空，八九月必见，果于八月丁艰",
-        "same_as_day_branch": false
+        "same_as_day_branch": false,
+        "use_god_note": "书证：财休囚得午火生之自身不妨（在任平安断自身=世；世位妻财戌，卦位唯一）"
       },
       "provenance": {
         "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
@@ -2619,15 +2833,16 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "妻财",
+        "use_god_branch": "卯",
         "use_god_position": "",
         "yingqi": "寅月",
         "yingqi_branches": [
           "寅"
         ],
         "detail": "断曰：卯木财爻子月生之，财有根蒂，目下不得价者，被申金动而克制，待寅月冲去申金，其价必涨，果于正月勃然大长，此乃财爻被克待冲去克神之月",
-        "same_as_day_branch": false
+        "same_as_day_branch": false,
+        "use_god_note": "书证：卯木财爻子月生之…待寅月冲去申金"
       },
       "provenance": {
         "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
@@ -2663,8 +2878,8 @@
       },
       "expected": {
         "verdict": "",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "世爻",
+        "use_god_branch": "戌",
         "use_god_position": "",
         "yingqi": "辰年、酉年、子年",
         "yingqi_branches": [
@@ -2673,7 +2888,9 @@
           "酉"
         ],
         "detail": "余曰：不妨，不可求全责备，卦中日月世与子孙共成三合，死者安而生者乐，子孙昌盛，何愁不发，后竟葬之，辰年下葬，酉年孙中亚魁，及至子年，次孙又登乡榜",
-        "same_as_day_branch": false
+        "same_as_day_branch": false,
+        "use_god_note": "坟茔轨世为穴（同书 L3634「世为穴」）；断辞明书世爻戌土休囚化子孙回头生，子孙午线并列 note",
+        "yingqi_note": "流年后验叙事轨：占占地题（地之好坏），「辰年下葬，酉年孙中亚魁，子年登乡榜」系葬后家运叙事应期（占题本身无应期之问），yingqi 维度对本例的 applicable 性存疑，判 0 属评测语境错位非引擎候选缺失"
       },
       "provenance": {
         "source_file": "data/sources/zengshan_buyi_dz.dz.txt",

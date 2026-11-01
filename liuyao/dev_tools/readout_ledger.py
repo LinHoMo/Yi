@@ -83,10 +83,11 @@ def checks():
     def c_dz(t):
         s = sh(["scripts/evaluate.py", "--split", "zengshan_dz_holdout"])
         return (grab(s, r"平均分 = ([0-9.]+)%"), grab(s, r"strict top-1 命中 ([0-9.]+)%"))
-    add("liuyao.zengshan_dz(61.5/41.4)",
+    add("liuyao.zengshan_dz(61.8/41.4)",
         "README 表→308批→402批改期望（dz 扩样 21→29；priority-anchor＋CASE_RE 之/单字题）；"
-        "415 批多支基准口径修正（yingqi_branches 全纳入，原 60.3/37.9；新旧不可比）",
-        c_dz, ("61.5", "41.4"))
+        "415 批多支基准口径修正（yingqi_branches 全纳入，原 60.3/37.9；新旧不可比）；"
+        "419 批恢复 403 批清空的 18 例用神书证（use_god/branch/note）并补支式抽取，61.5→61.8（新旧不可比）",
+        c_dz, ("61.8", "41.4"))
 
     def c_bushi(t):
         s = sh(["scripts/evaluate.py", "--split", "bushi_zhengzong_holdout"])

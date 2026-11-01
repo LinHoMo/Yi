@@ -154,6 +154,54 @@ YQ_MONTH_ORDER_RE = re.compile(r"([正一二三四五六七八九十十一十二
 REL_SHORTHAND = {"财": "妻财", "子": "子孙", "父": "父母", "兄": "兄弟",
                  "官": "官鬼", "鬼": "官鬼"}
 
+# 用神句的三种**书载**形态（与卜筮正宗建器 412/417 批同一口径；419 批补支）：
+#   ① 支＋六亲：「寅木财爻为用神」「以辰爻父母为用」 → 六亲＋支都取句内
+#   ② 仅六亲：  「以财爻为用神」                     → 只取六亲（支书上未写，留空）
+#   ③ 支式：    「世爻亥水为用神」「以子水为用」     → 支取句内，六亲由**本书原卦列**
+#                 的纳甲六亲定；同支在卦中出现两种六亲时留空（不猜）
+# 「为用(?:神)?」收省文（「亥水父爻为用」）是同一句式，不是新判据；
+# 否定语境（前 3 字含 非/不/勿/莫/无）不取；「卦中土为用神」只有五行、无支无六亲 → 不取。
+USE_GOD_REL_RE = re.compile(
+    r"以?([%s]{1,2})[金木水火土]?[爻]?"
+    r"(官鬼|父母|兄弟|子孙|妻财|财|子|父|兄|官|鬼)[爻]?"
+    r"[^。；\n]{0,10}为用(?:神)?" % BRANCHES)
+USE_GOD_CAT_RE = re.compile(
+    r"以[【\[]?(官鬼|父母|兄弟|子孙|妻财|财|子|父|兄)[爻】\]]?"
+    r"[^。；\n]{0,6}为用(?:神)?")
+USE_GOD_BRANCH_RE = re.compile(r"([%s])[金木水火土]?[爻]?为用(?:神)?" % BRANCHES)
+# 原卦列行：六亲＋支＋五行（每行第一个匹配即原卦列，其后是变卦列）
+ROW_REL_RE = re.compile(r"(官鬼|父母|兄弟|子孙|妻财)([%s])([金木水火土])" % BRANCHES)
+
+
+def _negated_use_god(tail: str, m: re.Match) -> bool:
+    return bool(re.search(r"[非不勿莫无]", tail[max(0, m.start() - 3):m.start()]))
+
+
+def extract_use_god(tail: str, rows: list[str]) -> tuple[str, str, str, str]:
+    """从本案断语段取书载用神；返回 (六亲, 支, 出处, 引文)。
+
+    只认书上明写的形态，不由引擎/旺衰反推；取不到返回四个空串。
+    """
+    m = USE_GOD_REL_RE.search(tail)
+    if m and not _negated_use_god(tail, m):
+        return (REL_SHORTHAND.get(m.group(2), m.group(2)), m.group(1)[-1],
+                "断语「支+六亲为用」句", m.group(0).strip())
+    m2 = USE_GOD_CAT_RE.search(tail)
+    if m2 and not _negated_use_god(tail, m2):
+        return (REL_SHORTHAND.get(m2.group(1), m2.group(1)), "",
+                "断语「以六亲为用」句", m2.group(0).strip())
+    m3 = USE_GOD_BRANCH_RE.search(tail)
+    if m3 and not _negated_use_god(tail, m3):
+        br = m3.group(1)
+        rels = set()
+        for ln in rows:
+            mm = ROW_REL_RE.search(ln)      # 每行第一项＝原卦列
+            if mm and mm.group(2) == br:
+                rels.add(mm.group(1))
+        if len(rels) == 1:
+            return rels.pop(), br, "支式用神·本书原卦列定六亲", m3.group(0).strip()
+    return "", "", "", ""
+
 # ────────────────────────── 卦名解析 ──────────────────────────
 
 TRIGRAM_IMAGE = {"天": "乾", "地": "坤", "雷": "震", "风": "巽",
@@ -552,18 +600,10 @@ def parse_case(block: dict, seq: int) -> tuple[dict | None, dict]:
     if len(branches) > 3:
         return excl(f"应期含 {len(branches)} 支（{','.join(branches)}），过宽，不构成可检验断言")
 
-    # 用神：「亥水财爻为用神」「以子孙爻为用神」「即用辰土为用神」；简称归一为全称。
-    # 地支段 1-2 字（「酉金兄爻」「寅木财爻」都只有一个支——早版写 {2} 全军 N/A）
-    use_rel = ""
-    um = re.search(r"以?[%s]{1,2}[金木水火土]?(官鬼|父母|兄弟|子孙|妻财|财|子|父|兄|官|鬼)[爻]?"
-                    r"[^。；\n]{0,10}为用神" % BRANCHES, tail)
-    if um:
-        use_rel = REL_SHORTHAND.get(um.group(1), um.group(1))
-    else:
-        um2 = re.search(r"以[【\[]?(官鬼|父母|兄弟|子孙|妻财|财|子|父|兄)[爻】\]]?"
-                        r"[^。；\n]{0,6}为用神", tail)
-        if um2:
-            use_rel = REL_SHORTHAND.get(um2.group(1), um2.group(1))
+    # 用神：只取书上明写的三种形态（支+六亲／仅六亲／支式·六亲由本书卦表定），
+    # 详见 extract_use_god()。419 批：此前只收六亲，书里的支被整段丢掉
+    # （ZD014「寅木财爻」、ZD016「酉金兄爻」），支式「世爻亥水为用神」整句漏收（ZD195）。
+    use_rel, use_branch, use_src, use_quote = extract_use_god(tail, rows)
 
     # 吉凶：只从**非假设子句**读（或曰/若曰段是作者否掉的候选，其吉凶词不是本案结果——
     # ZD065「或曰…世应相生，必相救解，余曰…果于五月下狱」实测：读全句会把凶案读成 N/A）。
@@ -585,7 +625,7 @@ def parse_case(block: dict, seq: int) -> tuple[dict | None, dict]:
         "expected": {
             "verdict": verdict,
             "use_god": use_rel,
-            "use_god_branch": "",
+            "use_god_branch": use_branch,
             "use_god_position": "",
             "yingqi": "、".join(f"{b}{u}" for b, u in tokens),
             "yingqi_branches": branches,
@@ -604,7 +644,13 @@ def parse_case(block: dict, seq: int) -> tuple[dict | None, dict]:
         },
         "notes": "dev_tools/build_zengshan_dz_cases.py 抽取，过卦名可解析/卦变自洽/时间可还原/"
                  "实录句有应期令牌/不宽于三支/锚句归属本案/不与在册同案 七道门；吉凶判不出记 N/A；永不参与调参",
+        # 暂存原始卦名，仅供「与在册同案」去重记录带走（写盘前 pop，不进产物）
+        "_raw": {"raw_original": raw_orig, "raw_changed": raw_chg,
+                 "original": orig, "changed": chg},
     }
+    if use_rel:     # 只给书载明示的案例留痕（取不到时不写空键，26 例逐字段不变）
+        case["provenance"]["use_god_source"] = use_src
+        case["provenance"]["use_god_quote"] = use_quote
     return case, None
 
 
@@ -637,6 +683,24 @@ def load_existing_keys() -> tuple[set, set]:
     return k1, k2
 
 
+def merge_old_expected(case: dict, old_case: dict) -> None:
+    """建器不产出的书证字段不得因重建而清空（419 批追认 403 批的静默清空事故）。
+
+    206／208 批逐条做过 dz 用神书证校勘（18 例 `use_god`／`use_god_branch`／
+    `use_god_note`，ZD188 另有 `yingqi_note`）；403 批建器扩样重生成时只写自己
+    抽到的字段，旧册这 18 例被整段置空，而 `check_expected_coverage` 只盯
+    wikisource，没有门发现。本函数按**空位填补**：新建器抽到的值优先（书载
+    「X为用神」句），抽不到则沿用旧册书证值；note 类字段建器从不产出，旧册有则沿用。
+    """
+    e, oe = case["expected"], (old_case.get("expected") or {})
+    if not e.get("use_god") and oe.get("use_god"):
+        e["use_god"] = oe["use_god"]
+        e["use_god_branch"] = oe.get("use_god_branch", "")
+    for k in ("use_god_note", "yingqi_note"):
+        if not e.get(k) and oe.get(k):
+            e[k] = oe[k]
+
+
 def assign_stable_ids(kept: list[dict], excluded: list[dict], old_doc: dict) -> tuple[list[dict], list[dict]]:
     """保留在册 id，新条目取 max+1；不因 parser 扩块而整体重编号（test_seal 依赖旧 id）。
 
@@ -654,6 +718,13 @@ def assign_stable_ids(kept: list[dict], excluded: list[dict], old_doc: dict) -> 
     for e in old_ex:
         key = (e.get("topic"), e.get("raw_original"), e.get("raw_changed"))
         by_ex.setdefault(key, e.get("id"))
+    old_ex_by_id = {str(e.get("id")): e for e in old_ex if e.get("id")}
+    # 旧册「与在册同案」去重记录原本只带占题（无原始卦名），无法按键回指；按**占题＋顺序**
+    # 一批一配对（419 批实测 48 条逐条顺序一致）。新记录开始带 raw_original/raw_changed，
+    # 下一轮起改走键匹配，本表只服务这次一次性迁移。
+    keyless_same = [(str(e.get("id")), str(e.get("topic"))) for e in old_ex
+                    if not e.get("raw_original")
+                    and str(e.get("reason", "")).startswith("与在册案例同案")]
     claimed: set[str] = set()
     pending: list[dict] = []
     for c in kept:
@@ -671,8 +742,25 @@ def assign_stable_ids(kept: list[dict], excluded: list[dict], old_doc: dict) -> 
         if oid and oid not in claimed:
             e["id"] = oid
             claimed.add(oid)
-        else:
-            pending.append(e)
+            continue
+        # 旧册无键的去重记录：按占题取最早一条未认领的旧 id（顺序对齐已由 selftest 守着）
+        if str(e.get("reason", "")).startswith("与在册案例同案"):
+            for j, (oid2, t2) in enumerate(keyless_same):
+                if oid2 not in claimed and t2 == str(e.get("topic")):
+                    e["id"] = oid2
+                    claimed.add(oid2)
+                    keyless_same.pop(j)
+                    break
+            else:
+                pending.append(e)
+            continue
+        # 块序确定时临时 id 就是块号——占题一致即认定同一条，保留旧号；不符才当新条目
+        tid = str(e.get("id") or "")
+        old = old_ex_by_id.get(tid)
+        if tid and old and tid not in claimed and str(old.get("topic")) == str(e.get("topic")):
+            claimed.add(tid)
+            continue
+        pending.append(e)
     nums = []
     for rec in old_cases + old_ex:
         mm = re.search(r"ZD(\d+)", str(rec.get("id") or ""))
@@ -703,6 +791,31 @@ def selftest() -> int:
         fails.append("行文单字题「又」未被挡住")
     if not topic_allowed("寿"):
         fails.append("真实单字题「寿」被误挡")
+    # 用神三形态（419 批）：支+六亲／仅六亲／支式·六亲由原卦列定。
+    # 原卦列样本取自 ZD195 本书渲染（亥水两现均为父母）。
+    rows195 = ["妻财未土″    动          子孙巳火′",
+               "官鬼酉金′    动          妻财未土″应",
+               "父母亥水′世              官鬼酉金′",
+               "官鬼酉金′                官鬼酉金′",
+               "父母亥水′                父母亥水′世",
+               "妻财丑土″应              妻财丑土″"]
+    if extract_use_god("自占病世爻亥水为用神，被未土忌神动而克水", rows195)[:2] != ("父母", "亥"):
+        fails.append("支式用神未按原卦列定为父母亥（ZD195 真例）")
+    if extract_use_god("断曰：寅木财爻为用神，财爻克世", [])[:2] != ("妻财", "寅"):
+        fails.append("支+六亲用神未取全（应妻财·寅）")
+    if extract_use_god("酉金兄爻为用神", [])[:2] != ("兄弟", "酉"):
+        fails.append("支+六亲用神未取全（应兄弟·酉）")
+    if extract_use_god("亥水父爻为用，虽值旬空", [])[:2] != ("父母", "亥"):
+        fails.append("「为用」省文未取（应父母·亥）")
+    if extract_use_god("以财爻为用神", [])[:2] != ("妻财", ""):
+        fails.append("仅六亲用神未取（应妻财、支留空）")
+    # 负例：同支两六亲不猜／只有五行不取／否定语境不取
+    if extract_use_god("世爻子水为用神", ["父母子水″", "妻财子水′"])[:2] != ("", ""):
+        fails.append("同支两种六亲时不应猜（negative）")
+    if extract_use_god("卦中土为用神", [])[:2] != ("", ""):
+        fails.append("只有五行、无支无六亲不应取（negative）")
+    if extract_use_god("不可以财爻为用神", [])[:2] != ("", ""):
+        fails.append("否定语境不应取（negative）")
     old = {"cases": [{"id": "ZD001", "input": {"date": "卯月壬辰日"},
                       "hexagram": {"original": "贲", "changed": None}}], "_meta": {"excluded": []}}
     kept = [{"id": "ZD999", "input": {"date": "卯月壬辰日"},
@@ -718,7 +831,34 @@ def selftest() -> int:
     ids = {e["id"] for e in ex}
     if "ZD100" not in ids or "ZD101" not in ids:
         fails.append("旧 excluded id 未保留/新 id 未取 max+1：%r" % ids)
-    print("√ selftest：之/单字题识别、行文黑名单、稳定 id 三件全过"
+    # 无键去重记录（旧册只带占题）按「临时 id＋占题」回指；占题不符不复用（419 批）
+    old3 = {"cases": [], "_meta": {"excluded": [
+        {"id": "ZD202", "topic": "病", "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补"}]}}
+    ex3 = [{"id": "ZD202", "topic": "病", "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补"}]
+    _, ex3 = assign_stable_ids([], ex3, old3)
+    if ex3[0]["id"] != "ZD202":
+        fails.append("无键去重记录未保留旧 id（重编号会让 --why 指错块）")
+    ex4 = [{"id": "ZD202", "topic": "何日雨", "reason": "x"}]
+    _, ex4 = assign_stable_ids([], ex4, old3)
+    if ex4[0]["id"] == "ZD202":
+        fails.append("占题不符的条目不应复用旧 id（negative）")
+    # 旧册书证字段空位填补（419 批：403 批重建曾整段清空 18 例）
+    newc = {"expected": {"use_god": "", "use_god_branch": "", "verdict": "吉"}}
+    oldc = {"expected": {"use_god": "父母", "use_god_branch": "卯",
+                         "use_god_note": "书证：卯木父爻发动而生世",
+                         "yingqi_note": "流年后验叙事轨"}}
+    merge_old_expected(newc, oldc)
+    if newc["expected"].get("use_god") != "父母" or newc["expected"].get("use_god_branch") != "卯":
+        fails.append("旧册用神书证未按空位填补")
+    if newc["expected"].get("use_god_note") != "书证：卯木父爻发动而生世":
+        fails.append("旧册 use_god_note 未沿用")
+    if newc["expected"].get("yingqi_note") != "流年后验叙事轨":
+        fails.append("旧册 yingqi_note 未沿用")
+    new2 = {"expected": {"use_god": "妻财", "use_god_branch": "寅"}}
+    merge_old_expected(new2, oldc)
+    if new2["expected"].get("use_god") != "妻财" or new2["expected"].get("use_god_branch") != "寅":
+        fails.append("建器抽到的用神被旧值覆盖（negative）")
+    print("√ selftest：之/单字题识别、行文黑名单、用神三形态（真 5 + 负 3）、稳定 id 全过"
           if not fails else "× " + "；".join(fails))
     return 0 if not fails else 1
 
@@ -754,6 +894,7 @@ def main() -> int:
         if case is None:
             excluded.append(rec)
             continue
+        raw = case.pop("_raw", {})      # 去重记录带上原始卦名，下一轮按键回指旧 id
         hx = case["hexagram"]
         d = case["input"]["date"]
         md = re.search(r"([%s])月([%s])([%s])日" % (BRANCHES, STEMS, BRANCHES), d)
@@ -762,11 +903,11 @@ def main() -> int:
                 tuple(case["expected"]["yingqi_branches"]), case["topic"][:6])
         if key1 in k1:
             excluded.append({"id": case["id"], "reason": "与在册案例同案（同卦变＋月建＋日柱），转录差异不补",
-                             "topic": case["topic"]})
+                             "topic": case["topic"], **raw})
             continue
         if key2 in k2:
             excluded.append({"id": case["id"], "reason": "与在册案例同案（同卦变＋应期支＋占题）",
-                             "topic": case["topic"]})
+                             "topic": case["topic"], **raw})
             continue
         kept.append(case)
         k1.add(key1)
@@ -774,6 +915,13 @@ def main() -> int:
 
     # 402 批：parser 扩块会改变临时序号；按旧册键保留 id，新条目取 max+1。
     kept, excluded = assign_stable_ids(kept, excluded, old_doc)
+    # 419 批：建器不产出的书证字段按空位沿用旧册——403 批重建曾把 206/208 批的
+    # 18 例用神书证整段清空（无门拦得住），此处堵死再犯。
+    old_by_id = {c.get("id"): c for c in (old_doc.get("cases") or [])}
+    for c in kept:
+        oc = old_by_id.get(c.get("id"))
+        if oc:
+            merge_old_expected(c, oc)
 
     if args.why:
         _want = set(args.why)

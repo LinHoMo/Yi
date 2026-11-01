@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "batch": 344,
+  "batch": 419,
   "file": "data/cases/wikisource_cases.json",
-  "_comment": "expected 书证/机械派生字段的**覆盖生存线**。案例构建器重生成时必须保留人工 expected 字段：1592923 曾把 292/297/298/282 批的 74 use_god／52 branch／32 note／3 组 wangshuai-muku-six_spirit 与 WS035 verdict 一次性清空，而聚合分只掉 6 分、所有门全绿。min 为单调下限（新增标签只许更高，不许下调）；allowed_blank 逐条列名，出现未登记空值即判红。",
+  "_comment": "expected 书证/机械派生字段的**覆盖生存线**。案例构建器重生成时必须保留人工 expected 字段：1592923 曾把 292/297/298/282 批的 74 use_god／52 branch／32 note／3 组 wangshuai-muku-six_spirit 与 WS035 verdict 一次性清空；403 批又把 dz 建器扩样时 206／208 批的 18 例 use_god／branch／note（ZD188 另有 yingqi_note）整段清空——两次都是聚合分只掉一点、旧门全绿。419 批起本门覆盖所有有建器的案例文件（wikisource／dz／bushi）。min 为单调下限（新增标签只许更高，不许下调）；allowed_blank 逐条列名，出现未登记空值即判红。",
   "cases": {
     "wikisource_cases.json": {
       "case_count": 81,
@@ -33,6 +33,54 @@
         },
         "verdict": {
           "min": 58
+        }
+      }
+    },
+    "zengshan_dz_cases.json": {
+      "label": "dz",
+      "case_count": 29,
+      "meta_sum_required": false,
+      "fields": {
+        "use_god": {
+          "min": 21,
+          "allowed_blank": ["ZD194", "ZD196", "ZD197", "ZD023", "ZD205", "ZD214", "ZD221", "ZD222"],
+          "allowed_values": ["父母", "兄弟", "子孙", "妻财", "官鬼", "世爻", "应爻"]
+        },
+        "use_god_branch": {
+          "min": 21
+        },
+        "use_god_note": {
+          "min": 18
+        },
+        "yingqi_note": {
+          "min": 1
+        },
+        "verdict": {
+          "min": 18
+        },
+        "yingqi_branches": {
+          "min": 29
+        }
+      }
+    },
+    "bushi_zhengzong_cases.json": {
+      "label": "bushi",
+      "case_count": 38,
+      "meta_sum_required": false,
+      "fields": {
+        "use_god": {
+          "min": 14,
+          "allowed_blank": ["BZ035", "BZ0391", "BZ0402", "BZ0431", "BZ0451", "BZ0472", "BZ0482", "BZ0501", "BZ0531", "BZ0541", "BZ0602", "BZ0611", "BZ0612", "BZ0632", "BZ0652", "BZ0722", "BZ0732", "BZ0791", "BZ0942", "BZ0962", "BZ0982", "BZ1012", "BZ1041", "BZ1051"],
+          "allowed_values": ["父母", "兄弟", "子孙", "妻财", "官鬼", "世爻", "应爻"]
+        },
+        "use_god_branch": {
+          "min": 10
+        },
+        "verdict": {
+          "min": 36
+        },
+        "yingqi_branches": {
+          "min": 38
         }
       }
     }
