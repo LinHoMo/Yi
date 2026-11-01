@@ -55,7 +55,7 @@ UNROUTABLE_BOOKS = {
 MARKUP_RE = re.compile(r"''+|={2,}|\{\{[^{}]*\}\}|\{\||\|\}|\|")
 MIN_FILES = 7       # 有 source_quote 的案例文件
 MIN_QUOTES = 464    # 340 classical + 69 external + 12 dayun + 22 hua + 9 cong + 10 zhuan + 2 bing
-MIN_ROUTED = 434    # 464 - 7 不可路由 - 23 夹注段豁免
+MIN_ROUTED = 444    # 464 - 7 不可路由 - 13 夹注段豁免（431 批把 10 条省略号摘录换成连续段落）
 
 
 def norm(text: str) -> str:
