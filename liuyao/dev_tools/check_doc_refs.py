@@ -24,6 +24,12 @@ tools/、docs/source-readings/ 都随仓库扁平化删除了——照着跑必�
     否则会把史料当声明造出假红——反向激励删史料。
   · 找不到 → 判红并点名出处行号。
 
+458 批追加：`tests/` 下的 `.py` 指针单独走**硬判**——HISTORY 豁免按整行生效，会把
+同一行里顺带出现的活指针一起吞掉（`dayun_quotes.json` 的「回验由 tests/…承担」就是
+这样躲过本器的）。现规定：tests 指针必须可达，只有显式病史行（含「从未存在／全仓不存在／
+全历史 0 命中／已随扁平化消失／从未重建」）才豁免。负例：历史词遮罩下的活 tests 指针必须抓到，
+显式病史行不得误杀。
+
     python dev_tools/check_doc_refs.py
     python dev_tools/check_doc_refs.py --selftest
 """
@@ -88,6 +94,12 @@ SKIPPED_HISTORY: list[str] = []
 NEGATIVE = ("__does_not_exist__", "definitely_missing", "nope.py", "_selftest_", "__no_such__")
 # 「step3/4/5.py」这类散文速记：出现纯数字段就不是一个真路径
 SHORTHAND = re.compile(r"(^|/)\d+(?=/|\.|$)")
+# 458 批：`tests/` 下的 `.py` 指针单独走硬判（必须可达）。理由：幽灵测试是两次实抓过的
+# 高发病（166/168 批），而 HISTORY 按**整行**豁免，会把同一行里顺带出现的活指针一起吞掉
+# （dayun_quotes 的「回验由 tests/...承担」就是这样躲过 11 的）。仅显式病史行豁免。
+TEST_PTR = re.compile(r"(^|/)tests/[A-Za-z0-9_\-./\\\u4e00-\u9fff]*\.py$")
+STRONG_HISTORY = re.compile(r"从未存在|全仓不存在|该文件不存在|该测试文件|全历史\s*0\s*命中"
+                            r"|已随扁平化消失|从未重建|现已不存在|已不存在")
 
 
 def _resolves(rel: str) -> bool:
@@ -136,8 +148,13 @@ def scan() -> tuple[list[str], int]:
                 if s not in found:
                     found.append(s)
             for ref in found:
-                if HISTORY.search(line) or HISTORY.search(lines[n - 2] if n >= 2 else ""):
+                hist = bool(HISTORY.search(line) or HISTORY.search(lines[n - 2] if n >= 2 else ""))
+                strict_test = bool(TEST_PTR.search(ref))
+                if hist and not strict_test:
                     SKIPPED_HISTORY.append(f"{rel_to_disc}:{n} → {ref}")
+                    continue
+                if strict_test and STRONG_HISTORY.search(line):
+                    SKIPPED_HISTORY.append(f"{rel_to_disc}:{n} → {ref}（显式病史行）")
                     continue
                 if any(k in ref for k in NEGATIVE):
                     continue
@@ -176,6 +193,8 @@ def selftest(problems: list[str]) -> None:
     tmp.write_text("见 `docs/zz_probe_deadref_a.md` 与 `dev_tools/zz_probe_deadref_b.py`。\n"
                    "裸路径也要抓（docs/zz_probe_deadref_c.md 无反引号）。\n"
                    "tools 目录也要抓（tools/zz_probe_deadref_tool.py）。\n"
+                   "曾记 tests/zz_probe_deadref_t.py 是旧样本（历史词不得吞活 tests 指针）。\n"
+                   "显式病史行不判：该测试文件 tests/test_ghost_hist.py 从未存在。\n"
                    f"真路径不得误报：{ok_a} 与 {ok_b} 都在。\n",
                    encoding="utf-8")
     # 第四式（照八字科第一百六十六批·同步判据不同文字）：**JSON 数据文件里**的死指针
@@ -187,8 +206,11 @@ def selftest(problems: list[str]) -> None:
     try:
         got, n = scan()
         hits = [g for g in got if "_selftest_deadref.md" in g]
-        if len(hits) < 4:
-            problems.append(f"负例自证失效：造的 4 条死引用（含裸路径与已删除 tools/）只抓到 {len(hits)} 条")
+        if len(hits) < 5:
+            problems.append(f"负例自证失效：造的 5 条死引用（含裸路径、已删除 tools/、"
+                            f"历史词遮罩下的活 tests 指针）只抓到 {len(hits)} 条")
+        if any("test_ghost_hist" in g for g in got):
+            problems.append("负例假阳性：显式病史行（从未存在）被误判成活指针")
         jhits = [g for g in got if "_selftest_deadref.json" in g]
         if len(jhits) < 1:
             problems.append("负例自证失效：data/rules/*.json 里的死指针没被抓到（JSON 载体盲区）")
