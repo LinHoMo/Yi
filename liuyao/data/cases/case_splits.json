@@ -175,7 +175,7 @@
     "WSD031"
   ],
   "huozhulin_holdout": [],
-  "note_bushi_zhengzong_holdout": "第408批前本集为空：《卜筮正宗》在 classical_cases.json 的 30 例 ZS* 中占 20 例，而 ZS001-020 正是 tune 集，不能充当外部集。第408批改由 dev_tools/build_bushi_zhengzong_cases.py 从 dz 表格式段落（十八问答附占验等）另抽 26 例（BZ*，书源 data/sources/bushi_zhengzong_dz.dz.txt），与 ZS/ZD/WS 在册案例同案去重后零重叠，故可作永不调参的外部集。本集只从书载验语抽应期（detail 为断语原文，供格局维比对）；用神/吉凶字面未抽（N/A 不进分母）。",
+  "note_bushi_zhengzong_holdout": "第408批前本集为空：《卜筮正宗》在 classical_cases.json 的 30 例 ZS* 中占 20 例，而 ZS001-020 正是 tune 集，不能充当外部集。第408批改由 dev_tools/build_bushi_zhengzong_cases.py 从 dz 表格式段落（十八问答附占验等）另抽 36 例（BZ*，书源 data/sources/bushi_zhengzong_dz.dz.txt），与 ZS/ZD/WS 在册案例同案去重后零重叠，故可作永不调参的外部集。应期取书载实录：400 批 YING_PAT，或 409 批通用确认句回溯（果验/果应 → 最近前置日期令牌，须非占测日/月、非连写日、≤30 字），逐例 provenance.yingqi_source 留痕。detail 为断语原文（供格局维比对）；用神/吉凶字面未抽（N/A 不进分母）。",
   "suigui_holdout": [
     "SG001",
     "SG002"
@@ -189,24 +189,34 @@
     "BZ0431",
     "BZ0451",
     "BZ0462",
+    "BZ0472",
     "BZ0482",
+    "BZ0491",
     "BZ0492",
     "BZ0501",
     "BZ0531",
+    "BZ0541",
+    "BZ0602",
     "BZ0611",
     "BZ0612",
     "BZ0621",
+    "BZ0632",
     "BZ0652",
     "BZ0692",
     "BZ0722",
     "BZ0732",
+    "BZ0781",
+    "BZ0792",
+    "BZ0812",
     "BZ0831",
+    "BZ0862",
     "BZ0942",
+    "BZ0962",
     "BZ0981",
     "BZ0982",
-    "BZ1001",
     "BZ1012",
-    "BZ1041"
+    "BZ1041",
+    "BZ1051"
   ],
   "too_weak": [
     {
