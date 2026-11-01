@@ -1,11 +1,11 @@
 {
- "count": 70,
+ "count": 71,
  "by_tier": {
   "tool": 3,
   "ondemand": 12,
   "nightly": 12,
   "build": 11,
-  "blocking": 32
+  "blocking": 33
  },
  "unclassified": [],
  "curated_but_missing": [],
@@ -153,6 +153,13 @@
    "guards": "案例日辰/应期自引书文自洽",
    "run_by_check_py": true,
    "doc": "案例库自洽门：一条案例的「日辰 / 应期」必须与它**自己引用的那段书文**一致。"
+  },
+  {
+   "script": "check_case_source_hashes.py",
+   "tier": "blocking",
+   "guards": "案例层源哈希门：案例 JSON 的元哈希/每例哈希须与在盘底本一致（[43]；438 批新增）",
+   "run_by_check_py": true,
+   "doc": "案例层源哈希门（[43]，第四百三十八批）：案例 JSON 登记的源文件/哈希须与在盘底本一致。"
   },
   {
    "script": "check_cli_encoding.py",

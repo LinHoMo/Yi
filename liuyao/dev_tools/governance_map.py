@@ -118,6 +118,7 @@ CURATED = {
         "check_bond_polarity": ("blocking", "合绊极性门：同一条合在 step4／step5 不得反号、动用神逢合不得加分（[40]；364 批新增）"),
         "check_prose_readings": ("blocking", "prose 吉凶书证门：非空吉凶须本案断语段逐字书证、册↔案例↔分片同源（[41]；422 批新增）"),
         "check_source_provenance": ("blocking", "底本完整性门：provenance 的 sha256/bytes/chars/lines 须与在盘底本逐项相符（[42]；433 批新增）"),
+        "check_case_source_hashes": ("blocking", "案例层源哈希门：案例 JSON 的元哈希/每例哈希须与在盘底本一致（[43]；438 批新增）"),
         # check_docs_index 于 A0-5（331 批）上提到 devkit/root/：不再是六爻 dev_tools 的脚本，
         # 故本表删条目（"表中有序实无"从此不再报它）；门本身仍在 CI 的 root-gates 里跑。
         "check_test_sentinel": ("blocking", "考卷哨兵：只给红绿／阈值单调／开卷记账（[34]；315 批新增）"),

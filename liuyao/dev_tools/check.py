@@ -980,7 +980,10 @@ def main() -> int:
                 "dev_tools/check_prose_readings.py"),
                ("source_provenance", "[42] 底本完整性（provenance 的 sha256/bytes/chars/lines 须与在盘底本逐项相等；"
                                      "433 批新增）",
-                "dev_tools/check_source_provenance.py")):
+                "dev_tools/check_source_provenance.py"),
+               ("case_source_hashes", "[43] 案例层源哈希（案例 JSON 登记的源文件/元哈希/每例哈希须与在盘底本一致；"
+                                      "438 批新增）",
+                "dev_tools/check_case_source_hashes.py")):
         # [36] 文档索引门于 A0-5（第三百三十一批）上提到 `devkit/root/check_docs_index.py`：
         # 它守全仓 DOCS.md，不属六爻一科。编号 36 空出，**不回填**（墓碑口径见 A5-1）。
         if want(key):

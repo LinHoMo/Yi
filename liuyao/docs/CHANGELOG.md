@@ -5,6 +5,50 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-02 第四百三十八批（六爻·案例层源哈希门）：**`wikisource_cases` 的源哈希停在 433 前的 LF 口径且缺 `source_file`——补登记并新增 [43] 核对 5 份案例文件/5 元哈希/123 每例哈希；探针改一例即红**
+
+**性质**：门禁新增＋登记修正（不改引擎、不改评分、不改读数）。
+
+### 一、缺陷（案例层还有一层源哈希没人核）
+
+案例 JSON 里另有一层源哈希登记，此前从未被门核对：
+- `bushi_zhengzong_cases` 的 `_meta.source_sha256` 与每例 `provenance.sha256`；
+- `yiin_cases` 的 `_meta.sha256` 与每例 `provenance.sha256`；
+- `zengshan_dz_cases` 的每例 `provenance.sha256`；
+- `huozhulin_cases` 的 `_meta.sha256`；
+- `wikisource_cases` 的 `_meta.sha256`——**没写 `source_file`**，且值还是 433 批前的
+  **LF 文本哈希** `897f963b…`；433 批已把 `zengshan_buyi.provenance.json` 的
+  `sha256` 改为在盘字节哈希 `522068be…`，builder 再跑会写新值，案例层却停在旧值。
+
+其余四份实测与在盘底本一致（bushi `853fd818…`、huozhulin `b3bed441…`、
+yiin `a9a8ff45…`、zengshan 每例 `81d73e4a…`）。
+
+### 二、改法
+
+- `wikisource_cases.json` 的 `_meta` 补 `source_file`、`sha256`（在盘字节哈希）、
+  `sha256_lf_text`（旧 LF 哈希）与 `sha256_convention`；正文与案例字段一字未动。
+- `fetch_wikisource_cases.py` 的 `_meta` 同步补这三个字段，避免重建时退回旧形。
+- 新增门 `dev_tools/check_case_source_hashes.py`（**[43]**）：
+  - 按登记表 5 份案例文件逐项核对 `_meta` 元哈希、`sha256_lf_text`、每例
+    `provenance.sha256`；声明了 `source_file`/`source` 的同时核对路径本身。
+  - 下限：5 份文件、5 个元哈希、123 个每例哈希（bushi 38＋yiin 56＋zengshan 29）。
+  - 7 件 selftest（正例／元哈希／每例／LF／缺源／0 例／0 文件）。
+- 治理同步：六爻 scripts 70→71、blocking 32→33（八字不变）；
+  `readout_ledger` governance 期望改为 (71/48, blk 33/30)。
+
+### 三、自证（§四.8）
+
+- 全量：**5 份案例文件／5 个元哈希／123 个每例哈希与在盘底本逐项相符**。
+- **真实探针**：把 `zengshan_dz_cases` 的 ZD194 每例哈希改为全 0 →
+  [43] 报 `zengshan_dz_cases.json：ZD194 provenance.sha256 000000000000… ≠ 在盘 81d73e4aaf29…`
+  （EXIT=1）；恢复后转绿。
+- 读数：tune **97.9%**（n=20）／holdout **90.2%**（n=12）／外部各集逐位不变。
+
+**全门复验**：`liuyao/dev_tools/check.py` 全过（[43] 7 件自证）；账台全量 bad=0；
+`golden.py verify` 机械 3a19／措辞 7960 零漂移；根级四闸全过；
+`sync_devkit.py --check` 12 件逐字节一致。
+
+
 ## 2026-11-02 第四百三十五批（六爻·台账同源门）：**`source_ledger` 表接进 [42]——字节/sha16/非空行/provenance 存在性逐行核对；探针改一行即红，读数零变化**
 
 **性质**：门禁扩展（不改引擎、不改数据、不改读数）。

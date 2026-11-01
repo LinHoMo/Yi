@@ -793,12 +793,16 @@ def main() -> int:
     if args.report:
         return 0
 
+    prov = json.loads(PROV.read_text(encoding="utf-8")) if PROV.exists() else {}
     OUT.write_text(json.dumps({
         "_meta": {
             "description": "《增刪卜易》维基文库原本自动解析的占验案例；通过纳甲/卦变/世应三方校验",
             "built_by": "dev_tools/fetch_wikisource_cases.py",
-            "retrieved": json.loads(PROV.read_text(encoding="utf-8"))["retrieved"] if PROV.exists() else "",
-            "sha256": json.loads(PROV.read_text(encoding="utf-8"))["sha256"] if PROV.exists() else "",
+            "retrieved": prov.get("retrieved", ""),
+            "source_file": "data/sources/zengshan_buyi.wikitext.txt",
+            "sha256": prov.get("sha256", ""),
+            "sha256_lf_text": prov.get("sha256_lf_text", ""),
+            "sha256_convention": "sha256 为在盘字节哈希；sha256_lf_text 为 LF 归一文本哈希（433 批后 provenance 的 sha256 已改为字节哈希）",
             "total_cases": len(kept),
             "direction_only_cases": len(dir_only),
             "usage": "永不参与调参的外部验证集；评分前请先看 expected 是否需人工复核",
