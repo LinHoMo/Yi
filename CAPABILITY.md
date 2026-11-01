@@ -37,7 +37,7 @@
 | tune / holdout 对齐 | 97.9%（n=20）／90.2%（n=12） | 172 批口径 | `python liuyao/eval/evaluate.py --split tune`（同 `--split holdout`） |
 | 外部·开发集 wikisource 对齐 | **75.8%**（n=50；308 批实测，原登记 62.4）；direction 子集 76.6%（n=31） | README 表 | `python liuyao/eval/evaluate.py --split wikisource_holdout` |
 | 外部·开发集 zengshan_dz 对齐 | **60.3%**（n=29；403 批 dz 扩样，原 61.5 n=21；新旧不可比） | 同上 | `python liuyao/eval/evaluate.py --split zengshan_dz_holdout` |
-| 外部·开发集 bushi_zhengzong_dz 对齐 | **68.7%**／top-1 **25.0%**（n=36；408 批建、409 批扩通用确认句回溯；只抽书载应期，用神/吉凶 N/A 不进分母；408 的 70.5/n=26 不可比） | 同上 | `python liuyao/eval/evaluate.py --split bushi_zhengzong_holdout` |
+| 外部·开发集 bushi_zhengzong_dz 对齐 | **68.8%**／top-1 **23.7%**（n=38；408 批建、409 批通用确认句回溯、410 批相对期换算；只抽书载应期，用神/吉凶 N/A 不进分母；408/409 读数不可比） | 同上 | `python liuyao/eval/evaluate.py --split bushi_zhengzong_holdout` |
 | 主应期 top-1（开发集） | **31.8%**／37.9%（308 批／403 批扩样，原登记 27.3／33.3），CI[20.0, 46.6]／[22.7, 56.0]；k=1 随机 8.3% | 181 批→308 批→403 批 | `python liuyao/dev_tools/window_report.py` |
 | top-3 窗（开发集） | **61.4%**／62.1%（308 批／403 批扩样，原登记 52.3／57.1；信息在窗不在点→193 批 `应期窗口` 键） | 181/192/193 批→308/403 批 | 同上（`window_report.py` 一张表含 k=1..5） |
 | 版本冲突上限 | 卦面分歧 0/47、判词分歧 1/37→判词保真天花板 ≈98.6%（等权估计式） | 185 批 | `python liuyao/dev_tools/version_collate.py` |
@@ -118,11 +118,11 @@ L2084→ZD214、L2431→ZD222），并另收 3 条（ZD197/205/221）——dz �
 剩余 **5 个日期阻塞候选**（L1032/L1515 缺日干，L1741/L2324/L3559 再占无独立日期；
 L1515 与 L1032 同案）。triage 重建为 A 8／E 18／B 3+10（399 批移出分诊的 25 条旧裁决
 保留在 `prior_decisions`）。204 批的 10 条标准盘形草稿仍判不升（378/380）。
-**下一大项**已结（408/409 批）：《卜筮正宗》dz 表格式建器落地并扩样，`bushi_zhengzong_holdout`
-由 0 变 **36**（BZ*，与 ZS001-020 tune 集及 ZD/WS 在册零重叠；八道门＋同案去重；
-应期取 YING_PAT 或 409 批通用确认句回溯；用神/吉凶未抽）。排除 127 条逐条在
-`bushi_zhengzong_cases.json._meta.excluded`；相对期（「次日愈」「本月」）换算门见
-`references/source_ledger.md` §5.2。
+**下一大项**已结（408/409/410 批）：《卜筮正宗》dz 表格式建器落地并扩样，`bushi_zhengzong_holdout`
+由 0 变 **38**（BZ*，与 ZS001-020 tune 集及 ZD/WS 在册零重叠；八道门＋同案去重；
+应期取 YING_PAT、409 批通用确认句回溯或 410 批相对期换算；用神/吉凶未抽）。
+排除 125 条逐条在 `bushi_zhengzong_cases.json._meta.excluded`；本月/次年/出旬等仍需
+节气或年柱锚的换算门见 `references/source_ledger.md` §5.2。
 人工动作仍是逐条签字，签署后并入外部集另批走 §四（189/201/202/204/377/399/401/403 批沿革）；
 ② 现实侧永久悬置除非用户重启（机件保留即为此）；
 ③ 版本冲突率仅《增删》两抄本对过，其余底本未测（185 批边界）；

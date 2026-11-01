@@ -90,9 +90,9 @@ def checks():
     def c_bushi(t):
         s = sh(["scripts/evaluate.py", "--split", "bushi_zhengzong_holdout"])
         return (grab(s, r"平均分 = ([0-9.]+)%"), grab(s, r"strict top-1 命中 ([0-9.]+)%"))
-    # 409 批扩样（26→36）：通用确认句回溯取期，读数 70.5/26.9→68.7/25.0，新旧不可比。
-    add("liuyao.bushi_zhengzong(68.7/25.0)", "408批首建→409批扩样（README/CAPABILITY 同批登记）",
-        c_bushi, ("68.7", "25.0"))
+    # 410 批再扩（36→38）：相对期（次日/明日）换算，读数 68.7/25.0→68.8/23.7，新旧不可比。
+    add("liuyao.bushi_zhengzong(68.8/23.7)", "408批首建→409批通用确认句→410批相对期扩样",
+        c_bushi, ("68.8", "23.7"))
 
     def c_window2(t):
         s = sh(["dev_tools/window_report.py"])
@@ -200,9 +200,9 @@ def checks():
                                 len(sp["wikisource_holdout"]), len(sp["wikisource_direction"]),
                                 len(sp["zengshan_dz_holdout"]),
                                 len(sp["bushi_zhengzong_holdout"]))))
-    add("六爻案例分母(44/20/12/50/31/29/36)", "234批（率与分母并钉）；402 批 zengshan_dz 21→29；"
-        "408 批 bushi_zhengzong 0→26；409 批通用确认句回溯扩样 26→36",
-        c_case_denoms, ("44", "20", "12", "50", "31", "29", "36"))
+    add("六爻案例分母(44/20/12/50/31/29/38)", "234批（率与分母并钉）；402 批 zengshan_dz 21→29；"
+        "408 批 bushi_zhengzong 0→26；409 批通用确认句回溯 26→36；410 批相对期 36→38",
+        c_case_denoms, ("44", "20", "12", "50", "31", "29", "38"))
 
     def c_bazi_denoms(t):
         cc = json.loads((ROOT / "bazi" / "data" / "cases" / "bazi_classical_cases.json")

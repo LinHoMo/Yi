@@ -28,8 +28,9 @@
   4. 表内动标 ≡ 本卦⊕变卦差集（动标字形有 Ｏ/Ｘ/ｘ/O/０ 五种，row1=上爻）；
   5. 验语有结果标记＋应期令牌（400 批 YING_PAT 口径）；无直接结果句时按 409 批
      通用确认句回溯（果验/果应/果符/果如 → 最近前置日期令牌，须非占测日/月、
-     非连写日「巳午日」、距确认句 ≤30 字）；单点门：同单位不得出现
-     两个以上已应日期（终身卦/多事件一律剔除），月序范围（「三四月」）不可判；
+     非连写日「巳午日」、距确认句 ≤30 字）；仍无令牌时按 410 批相对期换算
+     （次日/明日/翌日 → 占测日 +1 日；本日/本月/次年/出旬不换算）；单点门：同单位
+     不得出现两个以上已应日期（终身卦/多事件一律剔除），月序范围（「三四月」）不可判；
   6. 锚句归属：验语里又起他卦（「又一人…得…卦」）时锚句只认前半段；
   7. 验语自述「X是月建」与表月冲突 → 底本自相矛盾，剔除；
   8. 不与全库在册案例同案（同日期+卦变，或同卦变+应期支）。
@@ -89,6 +90,13 @@ YIN_MARK = set("XxＸｘ")
 # 只用显式确认词，不拿「果于/果至」当兜底——那是 YING_PAT 自己的句式。
 GENERIC_VERIFY_RE = re.compile(r"果验|果應|果应|后果验|竟验|果符|果如")
 GENERIC_MAX_BACK = 30
+# 410 批：相对期（次日/明日/翌日）→ 绝对日支。底本「许次日愈．果验」「明日必产．果次日产」
+# 这类实录只给相对日，没有支令牌；按占测日 +1 日机械换算（60 甲子环）。只做「日」这一档：
+# 本日/今日/即日＝占测日自重（dz 建器门 6 不计）；本月/来月/次年/明岁/出旬需要节气或
+# 年柱锚，暂不做（见 CHANGELOG 410）。
+REL_DAY_RE = re.compile(r"(次日|明日|翌日|本日|今日|即日)")
+REL_AFTER_RE = re.compile(r"果(?:于)?(次日|明日|翌日|本日|今日|即日)")
+REL_MAX_BACK = 30
 # 转录讹字登记（408 批逐条实测）：底本用「干」代「乾」、个别卦名有讹字/衍字。
 # 每条都由门 4（表动标 ≡ 本卦⊕变卦差集）反证——别名错则装卦差集必不符而剔除。
 NAME_ALIAS = {
@@ -162,6 +170,52 @@ def _generic_yingqi(text: str, date: dict):
         return None, None, gm, "最近令牌距确认句 %d 字（下限 %d）" % (
             gm.start() - m.start(), GENERIC_MAX_BACK)
     return br, unit, gm, ""
+
+
+def _advance_day(day_gz: str, n: int = 1) -> str:
+    """六十甲子环上推进 n 日（机械换算，不许心算）。"""
+    si, bi = STEMS.index(day_gz[0]), BRANCHES.index(day_gz[1])
+    pos = next(i for i in range(60) if i % 10 == si and i % 12 == bi)
+    pos = (pos + n) % 60
+    return STEMS[pos % 10] + BRANCHES[pos % 12]
+
+
+def _relative_yingqi(text: str, date: dict):
+    """相对期（次日/明日/翌日）→ 占测日 +1 的日支（410 批）。
+
+    两种句式：
+      a) `果次日…` / `果于次日…`：确认词在前、相对日直接跟在后面（BZ0832「果次日产」）；
+      b) 通用确认句（果验…）在前文预测里带「次日/明日」（BZ0701「许次日愈．果验」、
+         BZ0791「明日卯日必得…次日…果验」）。
+    拒绝：本日/今日/即日（占测日自重）、相对日距确认句 >30 字、与近旁显式日支冲突
+    （近 60 字内出现另一个非占测日的「X日」且 != 算出的支）。
+    """
+    am = REL_AFTER_RE.search(text)
+    if am:
+        if am.group(1) in ("本日", "今日", "即日"):
+            return None, None, am, "确认句后是当日（占测日自重）"
+        return _advance_day(date["day"])[1], "日", am, ""
+    gm = GENERIC_VERIFY_RE.search(text)
+    if not gm:
+        return None, None, None, "无通用确认句"
+    rels = [m for m in REL_DAY_RE.finditer(text) if m.start() < gm.start()]
+    if not rels:
+        return None, None, gm, "确认句前无相对日令牌"
+    m = rels[-1]
+    if m.group(1) in ("本日", "今日", "即日"):
+        return None, None, gm, "相对日是当日（占测日自重）"
+    if gm.start() - m.start() > REL_MAX_BACK:
+        return None, None, gm, "相对日距确认句 %d 字（下限 %d）" % (
+            gm.start() - m.start(), REL_MAX_BACK)
+    nxt = _advance_day(date["day"])[1]
+    for t in re.finditer(r"([%s])日" % BRANCHES, text[:m.start()]):
+        if m.start() - t.start() > 60:
+            continue
+        if t.group(1) == date["day"][-1]:
+            continue
+        if t.group(1) != nxt:
+            return None, None, gm, "相对日 (次日→%s日) 与近旁显式%s日冲突" % (nxt, t.group(1))
+    return nxt, "日", gm, ""
 
 
 def _tokens(line: str) -> list[str]:
@@ -378,15 +432,22 @@ def _case_from_block(lines: list[str], start: int, end: int, cid: str, sha: str)
         gm = None
         yingqi_src = "ying_pat"
         if not yb:
-            yb, yu, gm, why = _generic_yingqi(text, date)
-            if not yb:
-                reason = "验语无结果标记＋应期令牌"
-                if gm:
-                    reason += "（通用确认句回溯：%s）" % why
-                cases.append({"id": cid if n == 1 else cid + str(side + 1),
-                              "reason": reason})
-                continue
-            yingqi_src = "generic_verify_backref"
+            gb, gu, gm, gwhy = _generic_yingqi(text, date)
+            if gb:
+                yb, yu, yingqi_src = gb, gu, "generic_verify_backref"
+            else:
+                rb, ru, rm, rwhy = _relative_yingqi(text, date)
+                if rb:
+                    yb, yu, gm, yingqi_src = rb, ru, rm, "relative_day"
+                else:
+                    reason = "验语无结果标记＋应期令牌"
+                    if gm:
+                        reason += "（通用确认句回溯：%s）" % gwhy
+                    if rm:
+                        reason += "（相对日回溯：%s）" % rwhy
+                    cases.append({"id": cid if n == 1 else cid + str(side + 1),
+                                  "reason": reason})
+                    continue
         if ym and _month_range_ambiguous(ym, text):
             cases.append({"id": cid if n == 1 else cid + str(side + 1),
                           "reason": "月序范围（如三四月）不可作单点：%r" % ym.group(0)})
@@ -424,9 +485,9 @@ def _case_from_block(lines: list[str], start: int, end: int, cid: str, sha: str)
                 "yingqi_source": yingqi_src,
                 "generic_marker": gm.group(0) if gm else None,
             },
-            "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409 批），过表栏/日期/"
-                     "卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT 或通用"
-                     "确认句回溯）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。",
+            "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/"
+                     "卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、"
+                     "通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。",
         })
     good = [c for c in cases if "input" in c]
     bad = [c for c in cases if "input" not in c]
@@ -541,12 +602,31 @@ def selftest() -> int:
         fails.append("无前置令牌未拒")
     if _generic_yingqi("果至其日而死．", d4)[2] is not None:
         fails.append("果至被误当通用确认词")
+    # 410 相对期换算：次日/明日→占测日+1；本日自重/显式冲突/超距必拒
+    d5 = {"day": "丙辰", "month": "卯", "year": ""}
+    if _advance_day("丙辰") != "丁巳" or _advance_day("癸亥") != "甲子":
+        fails.append("六十甲子推进错：%r/%r" % (_advance_day("丙辰"), _advance_day("癸亥")))
+    if _relative_yingqi("许次日愈．果验．", d5)[:2] != ("巳", "日"):
+        fails.append("次日回溯未取到巳日")
+    if _relative_yingqi("明日卯日必得．次日用静逄冲之日，果验．",
+                        {"day": "戊寅", "month": "巳", "year": ""})[:2] != ("卯", "日"):
+        fails.append("次日与显式卯日一致时未取到卯日")
+    if _relative_yingqi("明日必产．果次日产．", {"day": "乙未", "month": "卯", "year": ""})[:2] != ("申", "日"):
+        fails.append("果次日句未取到申日")
+    if _relative_yingqi("本日即果验．", {"day": "戊戌", "month": "巳", "year": ""})[0] is not None:
+        fails.append("当日自重未拒（相对期）")
+    if _relative_yingqi("明日卯日必得．次日用静逄冲之日，果验．",
+                        {"day": "戊辰", "month": "巳", "year": ""})[0] is not None:
+        fails.append("相对日与显式日支冲突未拒")
+    if _relative_yingqi("次日" + "甲" * 35 + "果验", d5)[0] is not None:
+        fails.append("相对日超距未拒")
     if not YING_PAT.search("果于本日酉时，得名医救活，亥日痊愈"):
         fails.append("验支正例未命中")
     if YING_PAT.search("此卦亥水兄弟为用神，辰月克之，申日生之"):
         fails.append("验支负例（无结果标记）误命中")
     print("√ selftest：单/双栏/尾空列日期解码、空串拒绝、卦名别名、动标五字形、"
-          "非单点/月序范围/自述月建、通用确认句回溯五负例、验支正负例 全过"
+          "非单点/月序范围/自述月建、通用确认句回溯五负例、相对期换算四负例、"
+          "验支正负例 全过"
           if not fails else "× " + "；".join(fails))
     return 0 if not fails else 1
 
@@ -595,7 +675,7 @@ def main() -> int:
         "schema": "yi-liuyao-cases/1",
         "_meta": {
             "description": "《卜筮正宗》dz 表格式段落抽取的应期外部集；八道门＋同案去重；"
-                           "409 批增通用确认句回溯取期；永不参与调参",
+                           "409 批增通用确认句回溯、410 批增相对期换算；永不参与调参",
             "source": "《卜筮正宗》（殆知阁转录本）",
             "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
             "source_sha256": sha,
@@ -614,8 +694,9 @@ def main() -> int:
         "dev_tools/build_bushi_zhengzong_cases.py 从 dz 表格式段落（十八问答附占验等）"
         "另抽 %d 例（BZ*，书源 data/sources/bushi_zhengzong_dz.dz.txt），"
         "与 ZS/ZD/WS 在册案例同案去重后零重叠，故可作永不调参的外部集。"
-        "应期取书载实录：400 批 YING_PAT，或 409 批通用确认句回溯"
-        "（果验/果应 → 最近前置日期令牌，须非占测日/月、非连写日、≤30 字），"
+        "应期取书载实录：400 批 YING_PAT、409 批通用确认句回溯"
+        "（果验/果应 → 最近前置日期令牌，须非占测日/月、非连写日、≤30 字）"
+        "或 410 批相对期换算（次日/明日 → 占测日 +1 日；本日不换算），"
         "逐例 provenance.yingqi_source 留痕。detail 为断语原文（供格局维比对）；"
         "用神/吉凶字面未抽（N/A 不进分母）。" % len(cases))
     write_stable(SPLITS, sp, indent=2)  # 原文件 indent=2：默认 indent=1 会把全文重排（408 实踩）
