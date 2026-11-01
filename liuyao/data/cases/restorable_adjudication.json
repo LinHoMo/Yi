@@ -1,14 +1,14 @@
 {
  "schema": "yi-liuyao-restorable-adjudication/1",
- "built_at": "2026-11-01T19:37:02",
+ "built_at": "2026-11-01T20:16:40",
  "_comment": "401 批：43 条 restorable 逐条处置（不改毕业册/复核册机读值、不入 splits、不写 expected）。new_candidates 是 402 的输入，不是已签案例；已在册/不升/待回原文均写明依据。",
  "summary": {
   "total": 43,
-  "already": 25,
+  "already": 30,
   "non_single": 1,
   "not_enrolled": 3,
   "reread": 3,
-  "new_builder_blocked": 5,
+  "new_builder_blocked": 0,
   "new_date_blocked": 6
  },
  "rows": [
@@ -247,10 +247,11 @@
     "yingqi": "寅"
    },
    "decision": null,
-   "disposition": "新候选·建器阻塞",
-   "case_id": "",
-   "basis": "真案酉月辛亥日·兑之解·寅日（L543-550）；建器锚句只剩占测日/预测假设，不收。",
-   "next_batch": "402"
+   "disposition": "已在册",
+   "case_id": "ZD194",
+   "basis": "真案酉月辛亥日·兑之解·寅日（L543-550）；建器锚句只剩占测日/预测假设，不收。；403 批已入册 ZD194（建器修复后书证完整）",
+   "next_batch": "",
+   "enrolled_batch": 403
   },
   {
    "id": "VER-zengshan_buyi_dz_dz-L561",
@@ -271,10 +272,11 @@
     "yingqi": "卯"
    },
    "decision": null,
-   "disposition": "新候选·建器阻塞",
-   "case_id": "",
-   "basis": "真案巳月乙未日·大过之鼎·卯日；单字题「自占病」不被 CASE_RE 识别。",
-   "next_batch": "402"
+   "disposition": "已在册",
+   "case_id": "ZD195",
+   "basis": "真案巳月乙未日·大过之鼎·卯日；单字题「自占病」不被 CASE_RE 识别。；403 批已入册 ZD195（建器修复后书证完整）",
+   "next_batch": "",
+   "enrolled_batch": 403
   },
   {
    "id": "VER-zengshan_buyi_dz_dz-L661",
@@ -295,10 +297,11 @@
     "yingqi": "辰"
    },
    "decision": "B",
-   "disposition": "新候选·建器阻塞",
-   "case_id": "",
-   "basis": "真案寅月丙申日·艮之颐·辰月；CASE_RE 占题字符类排除「之」，题「官之升迁」不被 segment 识别。",
-   "next_batch": "402"
+   "disposition": "已在册",
+   "case_id": "ZD196",
+   "basis": "真案寅月丙申日·艮之颐·辰月；CASE_RE 占题字符类排除「之」，题「官之升迁」不被 segment 识别。；403 批已入册 ZD196（建器修复后书证完整）",
+   "next_batch": "",
+   "enrolled_batch": 403
   },
   {
    "id": "VER-zengshan_buyi_dz_dz-L755",
@@ -679,10 +682,11 @@
     "yingqi": "寅"
    },
    "decision": null,
-   "disposition": "新候选·建器阻塞",
-   "case_id": "",
-   "basis": "真案未月丙午日·离之旅·寅/卯/辰三支；建器锚句选择失败（多支/时辰句）。",
-   "next_batch": "402"
+   "disposition": "已在册",
+   "case_id": "ZD214",
+   "basis": "真案未月丙午日·离之旅·寅/卯/辰三支；建器锚句选择失败（多支/时辰句）。；403 批已入册 ZD214（建器修复后书证完整）",
+   "next_batch": "",
+   "enrolled_batch": 403
   },
   {
    "id": "VER-zengshan_buyi_dz_dz-L2093",
@@ -799,10 +803,11 @@
     "yingqi": "卯"
    },
    "decision": null,
-   "disposition": "新候选·建器阻塞",
-   "case_id": "",
-   "basis": "真案寅月己酉日·剥之无妄·卯年；CASE_RE 单字题「占寿」不识别，且日期「已酉」转录混淆。",
-   "next_batch": "402"
+   "disposition": "已在册",
+   "case_id": "ZD222",
+   "basis": "真案寅月己酉日·剥之无妄·卯年；CASE_RE 单字题「占寿」不识别，且日期「已酉」转录混淆。；403 批已入册 ZD222（建器修复后书证完整）",
+   "next_batch": "",
+   "enrolled_batch": 403
   },
   {
    "id": "VER-zengshan_buyi_dz_dz-L2451",

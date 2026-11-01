@@ -125,13 +125,14 @@ def checks():
     # （decision 在册，按本册口径不计 needs_human）。
     add("liuyao.restorable_recheck(共识32/分歧0)", "201批→377批→401批改期望", lambda t: _json_counts(
         "data/cases/restorable_recheck.json", None, ("consensus", "needs_human")), ("32", "0"))
-    # 401 批新增：43 条 restorable 的逐条处置（已在册 25／非单点 1／不升 3／待回原文 3／
-    # 新候选·建器阻塞 5／新候选·日期阻塞 6）。直接读 summary，不是拍值。
-    add("liuyao.restorable_adjudication(43=25+1+3+3+5+6)", "401批", lambda t: _json_counts(
-        "data/cases/restorable_adjudication.json", "summary",
-        ("total", "already", "non_single", "not_enrolled", "reread",
-         "new_builder_blocked", "new_date_blocked")),
-        ("43", "25", "1", "3", "3", "5", "6"))
+    # 401 批新增、405 批改期望：43 条 restorable 的逐条处置（已在册 30〔含 403 入册 5〕／
+    # 非单点 1／不升 3／待回原文 3／新候选·建器阻塞 0／新候选·日期阻塞 6）。
+    add("liuyao.restorable_adjudication(43=30+1+3+3+0+6)", "401批→405批改期望（403 入册 5）",
+        lambda t: _json_counts(
+            "data/cases/restorable_adjudication.json", "summary",
+            ("total", "already", "non_single", "not_enrolled", "reread",
+             "new_builder_blocked", "new_date_blocked")),
+        ("43", "30", "1", "3", "3", "0", "6"))
     add("liuyao.draft_candidates(10含dup4)", "204批", lambda t: _draft_counts(), ("10", "4"))
 
     # --- 裁决表/治理图/指纹 ---
