@@ -2,7 +2,7 @@
 """从《卜筮正宗》殆知阁转录本（data/sources/bushi_zhengzong_dz.dz.txt）抽取带
 日期/卦面/验支的占验案例，建 `bushi_zhengzong_holdout`（永不调参的外部集）。
 
-    python dev_tools/build_bushi_zhengzong_cases.py [--dry-run] [--selftest]
+    python dev_tools/build_bushi_zhengzong_cases.py [--dry-run] [--selftest] [--stats]
 
 底本形态（表格式，与增删 dz 的 `′/″` 行不同）：
     占事  自己终身成败
@@ -631,13 +631,52 @@ def selftest() -> int:
     return 0 if not fails else 1
 
 
+def _stats() -> int:
+    """表块/日期/年列可读率（411 批）：为「次年/明岁」换算是否有年柱锚提供读数。"""
+    text = SRC.read_text(encoding="utf-8")
+    lines = text.splitlines()
+    starts = [i for i, l in enumerate(lines) if l.startswith("占事")]
+    n_block = len(starts)
+    n_table = n_side = n_date = n_year = n_fail = 0
+    for bi in range(n_block):
+        s = starts[bi]
+        e = starts[bi + 1] if bi + 1 < n_block else len(lines)
+        block = lines[s:e]
+        rows = [x for x in block
+                if x.split("\t")[0].strip() and x.split("\t")[0].strip()[0] in LIUSHU][:6]
+        if len(rows) < 6:
+            continue
+        n_table += 1
+        halves = [_half_tokens(_tokens(r)) for r in rows]
+        n = len(halves[0])
+        for side in range(n):
+            n_side += 1
+            row1 = halves[0][side] if n == 2 else halves[0][0]
+            row2 = halves[1][side] if n == 2 else halves[1][0]
+            d = _date_from_rows(row1, row2)
+            if not d:
+                n_fail += 1
+                continue
+            n_date += 1
+            n_year += 1 if d["year"] else 0
+    print("《卜筮正宗》表块读数：块 %d（有表 %d／无表 %d）｜侧 %d｜日期可解 %d（失败 %d）｜"
+          "年列可读 %d/%d（%.1f%%）" % (
+              n_block, n_table, n_block - n_table, n_side, n_date, n_fail,
+              n_year, n_date, 100.0 * n_year / n_date if n_date else 0.0))
+    print("  年列＝表尾「太岁」三列；年柱缺则「次年/明岁」无法机械换算（占测年锚不可得）。")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="《卜筮正宗》dz 表格式占验案例抽取器")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--stats", action="store_true", help="只报表块/日期/年列可读率，不写盘")
     args = ap.parse_args()
     if args.selftest:
         return selftest()
+    if args.stats:
+        return _stats()
     text = SRC.read_text(encoding="utf-8")
     lines = text.splitlines()
     sha = hashlib.sha256(text.encode("utf-8")).hexdigest()

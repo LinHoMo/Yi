@@ -1,15 +1,16 @@
 {
  "schema": "yi-liuyao-restorable-adjudication/1",
- "built_at": "2026-11-01T20:16:40",
- "_comment": "401 批：43 条 restorable 逐条处置（不改毕业册/复核册机读值、不入 splits、不写 expected）。new_candidates 是 402 的输入，不是已签案例；已在册/不升/待回原文均写明依据。",
+ "built_at": "2026-11-01T23:00:50",
+ "_comment": "401 批：43 条 restorable 逐条处置（不改毕业册/复核册机读值、不入 splits、不写 expected）。new_candidates 是 402 的输入，不是已签案例；已在册/不升/待回原文均写明依据。 411 批：6 条「日期阻塞」逐条核原文结案——4 条日期不可重建（L1032/L1515 缺日干、L3338 缺日干、L1741 缺月建；按 §六.5 不高置信补数据）、2 条非单点（L2324/L3559）；new_date_blocked=0、new_date_unrecoverable=4。",
  "summary": {
   "total": 43,
   "already": 30,
-  "non_single": 1,
+  "non_single": 3,
   "not_enrolled": 3,
   "reread": 3,
   "new_builder_blocked": 0,
-  "new_date_blocked": 6
+  "new_date_blocked": 0,
+  "new_date_unrecoverable": 4
  },
  "rows": [
   {
@@ -151,10 +152,10 @@
     "yingqi": "申"
    },
    "decision": null,
-   "disposition": "新候选·日期阻塞",
+   "disposition": "新候选·日期不可重建",
    "case_id": "",
-   "basis": "真案为巳月未日·困之兑·申日；日柱只有「未日」无日干，建器门 3 拒收。",
-   "next_batch": "402"
+   "basis": "真案「巳月未日占久病得困之兑」——日柱只有「未日」无日干；底本与上下文均无干，日辰旬空无法机械重建。411 批按 §六.5 结案，不高置信补数据。",
+   "next_batch": "411"
   },
   {
    "id": "VER-zengshan_buyi_wikitext-L1567",
@@ -514,10 +515,10 @@
     "yingqi": "申"
    },
    "decision": null,
-   "disposition": "新候选·日期阻塞",
+   "disposition": "新候选·日期不可重建",
    "case_id": "",
-   "basis": "与 L1032 同案（巳月未日·困之兑·申日）；日柱缺干，重复验注。",
-   "next_batch": "402"
+   "basis": "与 L1032 同案（巳月未日·困之兑·申日）；日柱缺干，重复验注，411 批同日结案。",
+   "next_batch": "411"
   },
   {
    "id": "VER-zengshan_buyi_dz_dz-L1581",
@@ -586,10 +587,10 @@
     "yingqi": "申"
    },
    "decision": "B",
-   "disposition": "新候选·日期阻塞",
+   "disposition": "新候选·日期不可重建",
    "case_id": "",
-   "basis": "真案甲午日又得临之节（再占），申月；无独立月建行，建器不承接再占案日期。",
-   "next_batch": "402"
+   "basis": "真案「甲午日又得临之节」——日柱完整但无月建；承前案午月无原文依据（再占日期不承接），411 批按 §六.5 不补、结案。",
+   "next_batch": "411"
   },
   {
    "id": "VER-zengshan_buyi_dz_dz-L1798",
@@ -755,10 +756,10 @@
     "yingqi": "卯"
    },
    "decision": "B",
-   "disposition": "新候选·日期阻塞",
+   "disposition": "非单点应期",
    "case_id": "",
-   "basis": "真案命再占得噬嗑变否（再占），卯/巳/未；无独立日期行，建器不承接。",
-   "next_batch": "402"
+   "basis": "真案「命再占得噬嗑变否」无独立日期行；验语「卯年…巳年…未年」三结果，本就不属单点应期。411 批改判结案。",
+   "next_batch": "411"
   },
   {
    "id": "VER-zengshan_buyi_dz_dz-L2332",
@@ -1020,10 +1021,10 @@
     "yingqi": "巳"
    },
    "decision": "B",
-   "disposition": "新候选·日期阻塞",
+   "disposition": "新候选·日期不可重建",
    "case_id": "",
-   "basis": "真案寅月亥日·大畜之益·巳；日柱只有「亥日」无干，建器门 3 拒收。",
-   "next_batch": "402"
+   "basis": "真案「寅月亥日占主人何时回得大畜之益」——日柱只有「亥日」无干，无法重建；411 批按 §六.5 结案。",
+   "next_batch": "411"
   },
   {
    "id": "VER-zengshan_buyi_dz_dz-L3559",
@@ -1044,10 +1045,10 @@
     "yingqi": "午"
    },
    "decision": "B",
-   "disposition": "新候选·日期阻塞",
+   "disposition": "非单点应期",
    "case_id": "",
-   "basis": "真案又得小过之剥（三占），午年；无独立日期行，建器不承接。",
-   "next_batch": "402"
+   "basis": "真案「又得小过之剥」（三占）无独立日期行；验语「次年…巳年…午年连升」多结果，非单点。411 批改判结案。",
+   "next_batch": "411"
   }
  ]
 }
