@@ -175,12 +175,39 @@
     "WSD031"
   ],
   "huozhulin_holdout": [],
-  "note_bushi_zhengzong_holdout": "本集**登记为空是有意为之，不是丢数据**（2026-10-12 按 `data/cases/classical_cases.json` 实测）：全书 30 例 ZS* 里 20 例出自《卜筮正宗》（source 计数：『附占验』17、『十八问答』2、『胎孕论』1），而这 20 例中的 ZS001-020 正是 **tune（参与过调参）集**；其余 HO001-012 出自《黄金策》《增删卜易》。『外部验证集』的定义前提是**永不参与调参**（见 note_externals），故卜筮正宗的案例**不能同时充当自己的外部集**——拿调参过的例报「泛化」读数，正是要防的自证。若将来要建这一集，须另取**未进过 tune/holdout** 的卜筮正宗占例并过纳甲/卦变/世应校验，不能从现有 ID 里挪。",
+  "note_bushi_zhengzong_holdout": "第408批前本集为空：《卜筮正宗》在 classical_cases.json 的 30 例 ZS* 中占 20 例，而 ZS001-020 正是 tune 集，不能充当外部集。第408批改由 dev_tools/build_bushi_zhengzong_cases.py 从 dz 表格式段落（十八问答附占验等）另抽 26 例（BZ*，书源 data/sources/bushi_zhengzong_dz.dz.txt），与 ZS/ZD/WS 在册案例同案去重后零重叠，故可作永不调参的外部集。本集只从书载验语抽应期（detail 为断语原文，供格局维比对）；用神/吉凶字面未抽（N/A 不进分母）。",
   "suigui_holdout": [
     "SG001",
     "SG002"
   ],
-  "bushi_zhengzong_holdout": [],
+  "bushi_zhengzong_holdout": [
+    "BZ035",
+    "BZ0361",
+    "BZ0391",
+    "BZ0402",
+    "BZ0411",
+    "BZ0431",
+    "BZ0451",
+    "BZ0462",
+    "BZ0482",
+    "BZ0492",
+    "BZ0501",
+    "BZ0531",
+    "BZ0611",
+    "BZ0612",
+    "BZ0621",
+    "BZ0652",
+    "BZ0692",
+    "BZ0722",
+    "BZ0732",
+    "BZ0831",
+    "BZ0942",
+    "BZ0981",
+    "BZ0982",
+    "BZ1001",
+    "BZ1012",
+    "BZ1041"
+  ],
   "too_weak": [
     {
       "source": "黄金策（维基文库）",

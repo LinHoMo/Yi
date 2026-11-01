@@ -55,6 +55,12 @@
   - 本批曝引擎在真实古书上的**强弱判定分歧**——书言「身强」，引擎实算 丁火申月·未午为根·丙劫甲印 此造为 **偏弱**，`--split external_holdout` 读数 MY001：书源「身强」→ 期望 偏旺 vs 引擎 偏弱。属引擎与古书在 强弱 上的真实分歧（非取数错误：引擎确有输出），external_holdout 收口即为此类分歧照实登记。
 - 门禁安全：外集维度锁 [25] 只锁 bazi_classical_cases.json，不覆盖 external_holdout；[8] 语料接线仅扫 corpus leaf，MY001 在 external_holdout（report-only）不受影响（D 0/F 0/C 0 不变）。
 - 复验：本批后 `python scripts/evaluate.py --split external_holdout` 正常出报（强弱读数含 MY001 → 书源 vs 引擎 偏弱 分歧照登；shensha 仍 0/3 来自 XF001–003）；`python dev_tools/check.py` 全 39 门 EXIT=0（八字科质量门通过）；`[22]` 跨文件 external_holdout 79→**80**、评分 splits 数组 65→**66**。
+- **补记（408 六爻批同提交，§六.2 登记过期）**：`liuyao/dev_tools/readout_ledger.py` 的
+  `bazi.external` 与八字案例分母仍钉 65/54，`bazi/README.md` 仍写「外部 65 例」——MY001 入册后
+  实得 **66 例／强弱 33/55**。已同批改期望为 66/55 与 66 例，并在账台注明来源是 412 批（非静默刷新）。
+  `bazi/docs/GOVERNANCE-MAP.json` 的 `diff_tiaohou_vs_head.py` 亦按生成器既定口径回到
+  `run_by_check_py:true`＋软项 `referenced_not_blocking`（该字段口径见 `governance_map.py`
+  第两百零七批注释：存在性引用合法、清单入账；手改会在下次重生成时被覆盖）。
 
 ## 2026-11-01 第四百一十批（八字）：**报告层补十神作用篇提纲书证（闭合「十神作用算出来了但看不到」）**
 

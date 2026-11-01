@@ -9,10 +9,12 @@
  },
  "unclassified": [],
  "curated_but_missing": [],
-  "tier_link_violations": {
-    "blocking_not_referenced": [],
-    "referenced_not_blocking": []
-  },
+ "tier_link_violations": {
+  "blocking_not_referenced": [],
+  "referenced_not_blocking": [
+   "diff_tiaohou_vs_head.py"
+  ]
+ },
  "rows": [
   {
    "script": "__init__.py",
@@ -246,11 +248,11 @@
    "doc": "《三命通会》两转录渠道内容级对拍：四库本（维基文库逐卷） vs 殆知阁本（dz）。"
   },
   {
-    "script": "diff_tiaohou_vs_head.py",
-    "tier": "ondemand",
-    "guards": "改表前后逐格对拍范式",
-    "run_by_check_py": false,
-    "doc": "改动前后逐格对拍（SKILL.md）：把当前表与 HEAD 版**逐格**比对，只报差异。check.py 仅在「契约文件存在性」校验中列出本脚本，从不执行之，故置 run_by_check_py 为 false。"
+   "script": "diff_tiaohou_vs_head.py",
+   "tier": "ondemand",
+   "guards": "改表前后逐格对拍范式",
+   "run_by_check_py": true,
+   "doc": "改动前后逐格对拍（SKILL.md）：把当前表与 HEAD 版**逐格**比对，只报差异。"
   },
   {
    "script": "eval_selftest.py",

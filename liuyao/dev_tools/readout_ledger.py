@@ -87,6 +87,13 @@ def checks():
         "README 表→308批→402批改期望（dz 扩样 21→29；priority-anchor＋CASE_RE 之/单字题）",
         c_dz, ("60.3", "37.9"))
 
+    def c_bushi(t):
+        s = sh(["scripts/evaluate.py", "--split", "bushi_zhengzong_holdout"])
+        return (grab(s, r"平均分 = ([0-9.]+)%"), grab(s, r"strict top-1 命中 ([0-9.]+)%"))
+    # 408 批首建：dz 表格式段落 26 例（BZ*），只抽书载应期，用神/吉凶 N/A。
+    add("liuyao.bushi_zhengzong(70.5/26.9)", "408批首建（README/CAPABILITY 同批登记）",
+        c_bushi, ("70.5", "26.9"))
+
     def c_window2(t):
         s = sh(["dev_tools/window_report.py"])
         blk = s.split("═ zengshan_dz_holdout")[0]
@@ -160,14 +167,15 @@ def checks():
         "注意：本值随 capture 同步；若再分家，先读 drift_log 再改，勿凭记忆填。）",
         lambda t: _golden("bazi"),
         ("b7674a8f6d8d1162", "e158d5cb8a92e005"))
-    add("governance(67/45, blk 30/27)",
+    add("governance(68/45, blk 30/27)",
         "194批（312 补 310；315 补 314/315 两门；317 补 judge_shadow；329 补 fetch_zengshan_dz_cases；"
         "331 批 check_docs_index 上提到 devkit/root → 六爻 blk 28→27、脚本仍 63；"
         "339 批 A5-1 按实登记 7 个存量未分类脚本 → 八字 37→43；"
         "344 批新增 check_expected_coverage → 六爻 63→64、blk 27→28；"
         "362 批两科各新增 check_xiang（blocking）＋xiang_coverage（nightly）→ 六爻 64→66、blk 28→29，八字 43→45、blk 26→27；"
-        "364 批六爻新增 check_bond_polarity（门 [40]，blocking）→ 六爻 66→67、blk 29→30，八字不变）",
-        lambda t: _gov_counts(), ("67", "45", "30", "27"))
+        "364 批六爻新增 check_bond_polarity（门 [40]，blocking）→ 六爻 66→67、blk 29→30，八字不变；"
+        "408 批六爻新增 build_bushi_zhengzong_cases → 六爻 67→68）",
+        lambda t: _gov_counts(), ("68", "45", "30", "27"))
 
     # 344 批：expected 书证/机械派生字段的覆盖生存线（门 [38]）。
     # 1592923 的事故证明「聚合分掉 6 分、所有门全绿」可以并存；本项把非空计数
@@ -190,9 +198,11 @@ def checks():
         return tuple(map(str, (len(n_cl if n_cl else cl),
                                 len(sp["tune"]), len(sp["holdout"]),
                                 len(sp["wikisource_holdout"]), len(sp["wikisource_direction"]),
-                                len(sp["zengshan_dz_holdout"]))))
-    add("六爻案例分母(44/20/12/50/31/29)", "234批（率与分母并钉）；402 批 zengshan_dz 21→29",
-        c_case_denoms, ("44", "20", "12", "50", "31", "29"))
+                                len(sp["zengshan_dz_holdout"]),
+                                len(sp["bushi_zhengzong_holdout"]))))
+    add("六爻案例分母(44/20/12/50/31/29/26)", "234批（率与分母并钉）；402 批 zengshan_dz 21→29；"
+        "408 批 bushi_zhengzong 0→26",
+        c_case_denoms, ("44", "20", "12", "50", "31", "29", "26"))
 
     def c_bazi_denoms(t):
         cc = json.loads((ROOT / "bazi" / "data" / "cases" / "bazi_classical_cases.json")
@@ -202,11 +212,12 @@ def checks():
         from collections import Counter
         c = Counter(x.get("split") for x in cc)
         return (str(c["tune"]), str(c["holdout"]), str(len(ex.get("cases") or ex)))
-    add("八字案例分母(61/279/65)", "234批；339 批实跑 53→62（326/329 批语料扩样后外部集 +9 例）；"
+    add("八字案例分母(61/279/66)", "234批；339 批实跑 53→62（326/329 批语料扩样后外部集 +9 例）；"
         "368 批清例后 holdout 278→276（两例同考点双建被清，非引擎回归）；"
         "395 批《千里命稿》从格 4 例入册（QL001 进 tune、QL002-004 进 holdout）→ 60/276→61/279；"
-        "411 批（原 401）外部集《消息赋》3 例入册 → 62→65",
-        c_bazi_denoms, ("61", "279", "65"))
+        "411 批（原 401）外部集《消息赋》3 例入册 → 62→65；"
+        "412 批《命理约言》MY001 入册 → 65→66（该批只改语料未回改本账，408 批补登）",
+        c_bazi_denoms, ("61", "279", "66"))
 
     # 头牌值在位性（235 批）：现状文档（README×2/CAPABILITY/GOVERNANCE）必须各含每个
     # 主读数**至少一处**——文档被改回旧值（176 批 97.3 事故族）时现值消失即红。
@@ -458,9 +469,10 @@ def checks():
         n = re.search(r"运行 (\d+) 例（external_holdout", s)
         sw = re.search(r"强弱对齐（external_holdout · report-only，不设门槛、非命中率）：(\d+)/(\d+)", s)
         return ((n.group(1), sw.group(1), sw.group(2)) if n and sw else (None,) * 3)
-    add("bazi.external(n65 强弱33/54 report-only)",
-        "bazi README/160批起；339 批实跑 53→62；411 批（原 401）消息赋 3 例 → 65（外集扩样后同步）",
-        c_bazi_ext, ("65", "33", "54"))
+    add("bazi.external(n66 强弱33/55 report-only)",
+        "bazi README/160批起；339 批实跑 53→62；411 批（原 401）消息赋 3 例 → 65（外集扩样后同步）；"
+        "412 批命理约言 MY001 → 66（强弱读数同批改 33/55；该批未回改本账，408 批补登）",
+        c_bazi_ext, ("66", "33", "55"))
 
     def c_bazi_base(t):
         s = sh(["dev_tools/baselines.py", "--split", "holdout"], cwd=ROOT / "bazi")

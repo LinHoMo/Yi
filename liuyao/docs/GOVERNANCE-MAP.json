@@ -1,10 +1,10 @@
 {
- "count": 67,
+ "count": 68,
  "by_tier": {
   "tool": 3,
   "ondemand": 12,
   "nightly": 12,
-  "build": 10,
+  "build": 11,
   "blocking": 30
  },
  "unclassified": [],
@@ -62,6 +62,13 @@
    "guards": "流派裁决表构建（逐字回验）",
    "run_by_check_py": false,
    "doc": "流派裁决表 v0（第一百八十八批·B2）——四书互驳处，引擎采谁、凭什么、状态如何，一次说清。"
+  },
+  {
+   "script": "build_bushi_zhengzong_cases.py",
+   "tier": "build",
+   "guards": "《卜筮正宗》dz 表格式案例构建（408 批；八道门＋同案去重）",
+   "run_by_check_py": false,
+   "doc": "从《卜筮正宗》殆知阁转录本（data/sources/bushi_zhengzong_dz.dz.txt）抽取带"
   },
   {
    "script": "build_extra_dimensions.py",

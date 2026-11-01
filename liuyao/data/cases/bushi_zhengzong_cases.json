@@ -1,0 +1,1779 @@
+{
+  "schema": "yi-liuyao-cases/1",
+  "_meta": {
+    "description": "《卜筮正宗》dz 表格式段落抽取的应期外部集；八道门＋同案去重；永不参与调参",
+    "source": "《卜筮正宗》（殆知阁转录本）",
+    "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
+    "source_sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
+    "built_by": "dev_tools/build_bushi_zhengzong_cases.py",
+    "n": 26,
+    "excluded": [
+      {
+        "id": "BZ001",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 397
+      },
+      {
+        "id": "BZ002",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 415
+      },
+      {
+        "id": "BZ003",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 434
+      },
+      {
+        "id": "BZ004",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 454
+      },
+      {
+        "id": "BZ005",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 472
+      },
+      {
+        "id": "BZ006",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 490
+      },
+      {
+        "id": "BZ007",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 508
+      },
+      {
+        "id": "BZ008",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 526
+      },
+      {
+        "id": "BZ009",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 546
+      },
+      {
+        "id": "BZ010",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 566
+      },
+      {
+        "id": "BZ011",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 586
+      },
+      {
+        "id": "BZ012",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 605
+      },
+      {
+        "id": "BZ013",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 625
+      },
+      {
+        "id": "BZ014",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 643
+      },
+      {
+        "id": "BZ015",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 664
+      },
+      {
+        "id": "BZ016",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 684
+      },
+      {
+        "id": "BZ017",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 705
+      },
+      {
+        "id": "BZ018",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 724
+      },
+      {
+        "id": "BZ019",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 742
+      },
+      {
+        "id": "BZ020",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 760
+      },
+      {
+        "id": "BZ021",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 779
+      },
+      {
+        "id": "BZ022",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 798
+      },
+      {
+        "id": "BZ023",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 817
+      },
+      {
+        "id": "BZ024",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 836
+      },
+      {
+        "id": "BZ025",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 855
+      },
+      {
+        "id": "BZ026",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 874
+      },
+      {
+        "id": "BZ027",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 893
+      },
+      {
+        "id": "BZ028",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 912
+      },
+      {
+        "id": "BZ029",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 930
+      },
+      {
+        "id": "BZ030",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 948
+      },
+      {
+        "id": "BZ031",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 966
+      },
+      {
+        "id": "BZ032",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 985
+      },
+      {
+        "id": "BZ033",
+        "reason": "终身叙述（多点应验，不可作单点应期）"
+      },
+      {
+        "id": "BZ034",
+        "reason": "锚句属于验语内另起的他卦（又一人申月甲午日父为子择媳，得复之噬…）"
+      },
+      {
+        "id": "BZ0362",
+        "reason": "验语多事件（同单位 ≥2 个已应日期）"
+      },
+      {
+        "id": "BZ0371",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0372",
+        "reason": "与全库在册案例同案",
+        "date": "巳月乙未日"
+      },
+      {
+        "id": "BZ038",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0392",
+        "reason": "验语多事件（同单位 ≥2 个已应日期）"
+      },
+      {
+        "id": "BZ0401",
+        "reason": "与全库在册案例同案",
+        "date": "申月戊午日"
+      },
+      {
+        "id": "BZ0412",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0421",
+        "reason": "验语自述月建亥与表月巳冲突"
+      },
+      {
+        "id": "BZ0422",
+        "reason": "动标不符：表 [(2, 6), (3, 9), (4, 9), (5, 6), (6, 9)] ≠ 卦 [1, 2, 3, 4, 5, 6]"
+      },
+      {
+        "id": "BZ0432",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ044",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0452",
+        "reason": "验语多事件（同单位 ≥2 个已应日期）"
+      },
+      {
+        "id": "BZ0461",
+        "reason": "表末三列读不出日柱/月支：['雀', '应', '', '戌', '孙', '', '', '', '', '戊', '', '', ''] / ['龙', '', 'Ｏ', '申', '财', '未', '孙', '', '', '子', '丑', '', '']"
+      },
+      {
+        "id": "BZ0471",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0472",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0481",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0491",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0502",
+        "reason": "表末三列读不出日柱/月支：['龙', '', '', '寅', '官', '', '', '', '', '丙', '', ''] / ['武', '应', 'Ｘ', '子', '财', '申', '孙', '', '', '申', '', '']"
+      },
+      {
+        "id": "BZ0511",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0512",
+        "reason": "验语多事件（同单位 ≥2 个已应日期）"
+      },
+      {
+        "id": "BZ052",
+        "reason": "数据行不足 6 行（表头模板或缺表）",
+        "offset": 2668
+      },
+      {
+        "id": "BZ0532",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0541",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0542",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ055",
+        "reason": "双栏表块切不出左右半",
+        "offset": 2724
+      },
+      {
+        "id": "BZ0561",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0562",
+        "reason": "验语多事件（同单位 ≥2 个已应日期）"
+      },
+      {
+        "id": "BZ057",
+        "reason": "双栏表块切不出左右半",
+        "offset": 2761
+      },
+      {
+        "id": "BZ0581",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0582",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0591",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0592",
+        "reason": "变卦名前缀与卦体不符：'泽地萃之天地比'（全名前缀 天地 与卦体 ('坎', '坤') 不符）"
+      },
+      {
+        "id": "BZ0601",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0602",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0622",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0631",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0632",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ064",
+        "reason": "动标不符：表 [(1, 6), (5, 6)] ≠ 卦 []"
+      },
+      {
+        "id": "BZ0651",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0661",
+        "reason": "验语多事件（同单位 ≥2 个已应日期）"
+      },
+      {
+        "id": "BZ0662",
+        "reason": "变卦名前缀与卦体不符：'艮为山之山地观．'（全名前缀 山地 与卦体 ('巽', '坤') 不符）"
+      },
+      {
+        "id": "BZ0671",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0672",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ068",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0691",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0701",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0702",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0711",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0712",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0721",
+        "reason": "与全库在册案例同案",
+        "date": "申月癸卯日"
+      },
+      {
+        "id": "BZ0731",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ074",
+        "reason": "与全库在册案例同案",
+        "date": "未月丁卯日"
+      },
+      {
+        "id": "BZ0751",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0752",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0761",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0762",
+        "reason": "与全库在册案例同案",
+        "date": "辰月丁酉日"
+      },
+      {
+        "id": "BZ0771",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0772",
+        "reason": "验语多事件（同单位 ≥2 个已应日期）"
+      },
+      {
+        "id": "BZ0781",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0782",
+        "reason": "与全库在册案例同案",
+        "date": "未月丁巳日"
+      },
+      {
+        "id": "BZ0791",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0792",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0801",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0802",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0811",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0812",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0821",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0822",
+        "reason": "变卦名前缀与卦体不符：'天雷无妄之风雷颐'（全名前缀 风雷 与卦体 ('艮', '震') 不符）"
+      },
+      {
+        "id": "BZ0832",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0841",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0842",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ085",
+        "reason": "验语多事件（同单位 ≥2 个已应日期）"
+      },
+      {
+        "id": "BZ0861",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0862",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0871",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0872",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0881",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0882",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0891",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0892",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0901",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0902",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ091",
+        "reason": "与全库在册案例同案",
+        "date": "巳月甲寅日"
+      },
+      {
+        "id": "BZ0922",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0921",
+        "reason": "与全库在册案例同案",
+        "date": "寅月庚申日"
+      },
+      {
+        "id": "BZ0931",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0932",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0941",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0951",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0952",
+        "reason": "验语多事件（同单位 ≥2 个已应日期）"
+      },
+      {
+        "id": "BZ0961",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0962",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ097",
+        "reason": "验语多事件（同单位 ≥2 个已应日期）"
+      },
+      {
+        "id": "BZ0991",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ0992",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ1002",
+        "reason": "验语多事件（同单位 ≥2 个已应日期）"
+      },
+      {
+        "id": "BZ1011",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ102",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ1031",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ1032",
+        "reason": "与全库在册案例同案",
+        "date": "未月癸亥日"
+      },
+      {
+        "id": "BZ1042",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ1051",
+        "reason": "验语无结果标记＋应期令牌"
+      },
+      {
+        "id": "BZ1052",
+        "reason": "验语无结果标记＋应期令牌"
+      }
+    ]
+  },
+  "cases": [
+    {
+      "id": "BZ035",
+      "source": "《卜筮正宗》（殆知阁转录本）",
+      "topic": "父为子择媳",
+      "question": "父为子择媳",
+      "input": {
+        "date": "申月甲午日",
+        "question": "父为子择媳"
+      },
+      "hexagram": {
+        "original": "复",
+        "changed": "噬嗑",
+        "moving": [
+          4,
+          6
+        ]
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "巳年",
+        "yingqi_branches": [
+          "巳"
+        ],
+        "detail": "应爻合成，子孙局生世，不但嫁资丰厚，更可享其孝顺之褔．后至巳年完婚，果孝顺贤淑，赠嫁不凡．",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
+        "sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
+        "offset": 1198,
+        "line_no": 1199,
+        "text_head": "卦名\t地雷复之火雷噬嗑",
+        "table_date": [
+          "甲午",
+          "申",
+          ""
+        ],
+        "date_source": "table_day_month_columns",
+        "day_stem_normalized": false,
+        "question_source": "占事行"
+      },
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取，过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+    },
+    {
+      "id": "BZ0361",
+      "source": "《卜筮正宗》（殆知阁转录本）",
+      "topic": "弟病业已临危",
+      "question": "弟病业已临危",
+      "input": {
+        "date": "辰月丙申日",
+        "question": "弟病业已临危"
+      },
+      "hexagram": {
+        "original": "既济",
+        "changed": "革",
+        "moving": [
+          4
+        ]
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "亥日",
+        "yingqi_branches": [
+          "亥"
+        ],
+        "detail": "断曰：此卦亥水兄弟为用神，辰月克之，申日生之，又得申金动爻生之，临危有救，\n果于本日酉时，得名医救活，亥日痊愈．",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
+        "sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
+        "offset": 2367,
+        "line_no": 2368,
+        "text_head": "卦名\t水火既济之泽火革\t\t卦名\t泽水困之雷风恒",
+        "table_date": [
+          "丙申",
+          "辰",
+          ""
+        ],
+        "date_source": "table_day_month_columns",
+        "day_stem_normalized": false,
+        "question_source": "占事行"
+      },
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取，过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+    },
+    {
+      "id": "BZ0391",
+      "source": "《卜筮正宗》（殆知阁转录本）",
+      "topic": "家宅人口平安否",
+      "question": "家宅人口平安否",
+      "input": {
+        "date": "卯月癸亥日",
+        "question": "家宅人口平安否"
+      },
+      "hexagram": {
+        "original": "需",
+        "changed": "乾",
+        "moving": [
+          4,
+          6
+        ]
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "午月",
+        "yingqi_branches": [
+          "午"
+        ],
+        "detail": "断曰：申金子孙持世，化午火回头之克，乃自身及子孙皆受克也，子水财爻化戌土回头之克，财为妻妾奴仆，一家受克之卦，后至午月火旺克世，助土克财，财逄月破，一家数口回禄俱死．",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
+        "sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
+        "offset": 2428,
+        "line_no": 2429,
+        "text_head": "卦名\t水天需之干为天\t\t卦名\t艮为山之地火明夷",
+        "table_date": [
+          "癸亥",
+          "卯",
+          ""
+        ],
+        "date_source": "table_day_month_columns",
+        "day_stem_normalized": false,
+        "question_source": "占事行"
+      },
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取，过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+    },
+    {
+      "id": "BZ0402",
+      "source": "《卜筮正宗》（殆知阁转录本）",
+      "topic": "一人占卖货",
+      "question": "一人占卖货",
+      "input": {
+        "date": "卯月乙未日",
+        "question": "一人占卖货"
+      },
+      "hexagram": {
+        "original": "家人",
+        "changed": "小畜",
+        "moving": [
+          2
+        ]
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "未月",
+        "yingqi_branches": [
+          "未"
+        ],
+        "detail": "断曰：丑土财爻持世，卯月克之，未日冲之，谓之散．又化寅木，回头之克，克不独财克而世亦遭伤矣，后至未月世值月破回禄伤身而死．",
+        "same_as_day_branch": true
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
+        "sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
+        "offset": 2447,
+        "line_no": 2448,
+        "text_head": "卦名\t天山遁之天风姤\t\t卦名\t风火家人之风天小畜",
+        "table_date": [
+          "乙未",
+          "卯",
+          ""
+        ],
+        "date_source": "table_day_month_columns",
+        "day_stem_normalized": false,
+        "question_source": "占事行"
+      },
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取，过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+    },
+    {
+      "id": "BZ0411",
+      "source": "《卜筮正宗》（殆知阁转录本）",
+      "topic": "何日雨",
+      "question": "何日雨",
+      "input": {
+        "date": "酉月丙寅日",
+        "question": "何日雨"
+      },
+      "hexagram": {
+        "original": "升",
+        "changed": "师",
+        "moving": [
+          3
+        ]
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "子日",
+        "yingqi_branches": [
+          "子"
+        ],
+        "detail": "断曰：亥水父爻为用神，值旬空；酉金官鬼爻是原神，化午火回头之克，旬内不雨．至子日有几点小雨，应于子日者，冲去午火仇神故也．雨小者，旬空无根也．",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
+        "sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
+        "offset": 2465,
+        "line_no": 2466,
+        "text_head": "卦名\t地风升之地水师\t\t卦名\t泽地萃之天火同人",
+        "table_date": [
+          "丙寅",
+          "酉",
+          ""
+        ],
+        "date_source": "table_day_month_columns",
+        "day_stem_normalized": false,
+        "question_source": "占事行"
+      },
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取，过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+    },
+    {
+      "id": "BZ0431",
+      "source": "《卜筮正宗》（殆知阁转录本）",
+      "topic": "一人占索房价",
+      "question": "一人占索房价",
+      "input": {
+        "date": "卯月乙酉日",
+        "question": "一人占索房价"
+      },
+      "hexagram": {
+        "original": "坎",
+        "changed": "坤",
+        "moving": [
+          2,
+          5
+        ]
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "午月",
+        "yingqi_branches": [
+          "午"
+        ],
+        "detail": "断曰：坎卦变坤亦是卦变回头之克，世爻虽得日生，不宜两重土动来伤．此卦甚凶，不但房价事小，宜防不测之祸．后于午月覆舟而亡．\n应于午月者，辰戌土鬼，出春令遇火增威，世临月冲也．占房价验在其命，乃神之预报其凶．占此应彼，占轻应重也．",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
+        "sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
+        "offset": 2503,
+        "line_no": 2504,
+        "text_head": "卦名\t坎为水之坤为地\t\t卦名\t风泽中孚之山泽损",
+        "table_date": [
+          "乙酉",
+          "卯",
+          ""
+        ],
+        "date_source": "table_day_month_columns",
+        "day_stem_normalized": false,
+        "question_source": "占事行"
+      },
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取，过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+    },
+    {
+      "id": "BZ0451",
+      "source": "《卜筮正宗》（殆知阁转录本）",
+      "topic": "妻占夫近病",
+      "question": "妻占夫近病",
+      "input": {
+        "date": "申月戊辰日",
+        "question": "妻占夫近病"
+      },
+      "hexagram": {
+        "original": "同人",
+        "changed": "离",
+        "moving": [
+          5
+        ]
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "巳日",
+        "yingqi_branches": [
+          "巳"
+        ],
+        "detail": "断曰：世爻亥水夫星墓于辰日，其病若论随鬼入墓，岂不凶乎？幸申金原神动来生用，又化出未土生助原神，又戌土暗动生助原神，是夫星根蒂固深，所嫌亥水旬空不受其生，必待巳日冲起亥水即愈，果己巳日全愈也．",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
+        "sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
+        "offset": 2539,
+        "line_no": 2540,
+        "text_head": "卦名\t天火同人之离为火\t\t卦名\t泽水困之水泽节",
+        "table_date": [
+          "戊辰",
+          "申",
+          ""
+        ],
+        "date_source": "table_day_month_columns",
+        "day_stem_normalized": false,
+        "question_source": "占事行"
+      },
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取，过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+    },
+    {
+      "id": "BZ0462",
+      "source": "《卜筮正宗》（殆知阁转录本）",
+      "topic": "子占父病",
+      "question": "子占父病",
+      "input": {
+        "date": "寅月乙丑日",
+        "question": "子占父病"
+      },
+      "hexagram": {
+        "original": "升",
+        "changed": "师",
+        "moving": [
+          3
+        ]
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "卯年",
+        "yingqi_branches": [
+          "卯"
+        ],
+        "detail": "断曰：亥水父爻为用，虽值旬空，有酉金原神动来生之，可许无碍．但不宜酉金化出午火回头一克，此乃原神被伤，用神无根矣．此人果死于卯年？卯月？卯日卯时，应卯日时者，生助午火克冲原神也．",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
+        "sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
+        "offset": 2557,
+        "line_no": 2558,
+        "text_head": "卦名\t天火同火之火山旅\t\t卦名\t地风升之地水师",
+        "table_date": [
+          "乙丑",
+          "寅",
+          ""
+        ],
+        "date_source": "table_day_month_columns",
+        "day_stem_normalized": false,
+        "question_source": "占事行"
+      },
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取，过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+    },
+    {
+      "id": "BZ0482",
+      "source": "《卜筮正宗》（殆知阁转录本）",
+      "topic": "辨复",
+      "question": "辨复",
+      "input": {
+        "date": "辰月丁亥日",
+        "question": "辨复"
+      },
+      "hexagram": {
+        "original": "萃",
+        "changed": "革",
+        "moving": [
+          1,
+          3
+        ]
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "未月",
+        "yingqi_branches": [
+          "未"
+        ],
+        "detail": "断曰：巳火官星持世，临驿马，暗动．辨复在即．内卦亥卯未合财局，原神生世，因于未土旬空必待未月定蒙题允即得美缺．\n后果验未月者实空之月也．",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
+        "sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
+        "offset": 2595,
+        "line_no": 2596,
+        "text_head": "卦名\t干为天之风天小畜\t\t卦名\t泽地萃之泽火革",
+        "table_date": [
+          "丁亥",
+          "辰",
+          ""
+        ],
+        "date_source": "table_day_month_columns",
+        "day_stem_normalized": false,
+        "question_source": "占事行"
+      },
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取，过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+    },
+    {
+      "id": "BZ0492",
+      "source": "《卜筮正宗》（殆知阁转录本）",
+      "topic": "婶病",
+      "question": "婶病",
+      "input": {
+        "date": "丑月戊午日",
+        "question": "婶病"
+      },
+      "hexagram": {
+        "original": "离",
+        "changed": "明夷",
+        "moving": [
+          4,
+          6
+        ]
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "丑日",
+        "yingqi_branches": [
+          "丑"
+        ],
+        "detail": "断曰：卯木父母爻为用神，外卦巳酉丑合成金局克之．合丑土旬空，旬内无妨，乙丑日防之．果于丑日酉时卒．应于丑日者出旬之日也．",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
+        "sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
+        "offset": 2614,
+        "line_no": 2615,
+        "text_head": "卦名\t干为天之山火贲\t\t卦名\t离为火之地火明夷",
+        "table_date": [
+          "戊午",
+          "丑",
+          ""
+        ],
+        "date_source": "table_day_month_columns",
+        "day_stem_normalized": false,
+        "question_source": "占事行"
+      },
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取，过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+    },
+    {
+      "id": "BZ0501",
+      "source": "《卜筮正宗》（殆知阁转录本）",
+      "topic": "子何日归",
+      "question": "子何日归",
+      "input": {
+        "date": "未月戊申日",
+        "question": "子何日归"
+      },
+      "hexagram": {
+        "original": "睽",
+        "changed": "鼎",
+        "moving": [
+          1,
+          3
+        ]
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "子日",
+        "yingqi_branches": [
+          "子"
+        ],
+        "detail": "断曰：内卦巳酉丑合成金局作用神，丑土系月破，必待立秋后甲子日到家．后果验．此应立秋后者，丑土月破出月则出破矣．果于申予日归，此其破而逄合也．",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
+        "sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
+        "offset": 2632,
+        "line_no": 2633,
+        "text_head": "卦名\t火泽睽之火风鼎\t\t卦名\t艮天大畜之干为天",
+        "table_date": [
+          "戊申",
+          "未",
+          ""
+        ],
+        "date_source": "table_day_month_columns",
+        "day_stem_normalized": false,
+        "question_source": "占事行"
+      },
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取，过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+    },
+    {
+      "id": "BZ0531",
+      "source": "《卜筮正宗》（殆知阁转录本）",
+      "topic": "随官上任如何",
+      "question": "随官上任如何",
+      "input": {
+        "date": "卯月壬申日",
+        "question": "随官上任如何"
+      },
+      "hexagram": {
+        "original": "比",
+        "changed": "井",
+        "moving": [
+          2,
+          3
+        ]
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "申月",
+        "yingqi_branches": [
+          "申"
+        ],
+        "detail": "断曰：世临卯木化酉金克冲内卦，爻之反吟也，此行不吉，不去为上，后因官府掣签得缺，近于贼营辞而不去，及至官府去后又因他事而去，至七月城破与官府一同被害，盖与官同被害者，世上官爻同受酉金之冲克也，不去而又去者，此内卦反吟之故也．",
+        "same_as_day_branch": true
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
+        "sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
+        "offset": 2688,
+        "line_no": 2689,
+        "text_head": "卦名\t水地比之水风井\t\t卦名\t地泽临之风泽中孚",
+        "table_date": [
+          "壬申",
+          "卯",
+          ""
+        ],
+        "date_source": "table_day_month_columns",
+        "day_stem_normalized": false,
+        "question_source": "占事行"
+      },
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取，过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+    },
+    {
+      "id": "BZ0611",
+      "source": "《卜筮正宗》（殆知阁转录本）",
+      "topic": "岳母近病",
+      "question": "岳母近病",
+      "input": {
+        "date": "酉月庚辰日",
+        "question": "岳母近病"
+      },
+      "hexagram": {
+        "original": "师",
+        "changed": "升",
+        "moving": [
+          3
+        ]
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "酉日",
+        "yingqi_branches": [
+          "酉"
+        ],
+        "detail": "断曰：酉金父母旬空，近病逄空即愈，日辰合之，近病逄合即死．但不宜世持忌神克之，此病必危．问曰：危于何日．答曰：午火自化旬空，旬内不能克之，近病逄空不死，旬内不死．乙酉日防之，果于乙酉日卯时而死矣．",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
+        "sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
+        "offset": 2835,
+        "line_no": 2836,
+        "text_head": "卦名\t地水师之地风升\t\t卦名\t泽风大过",
+        "table_date": [
+          "庚辰",
+          "酉",
+          ""
+        ],
+        "date_source": "table_day_month_columns",
+        "day_stem_normalized": false,
+        "question_source": "占事行"
+      },
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取，过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+    },
+    {
+      "id": "BZ0612",
+      "source": "《卜筮正宗》（殆知阁转录本）",
+      "topic": "子病",
+      "question": "子病",
+      "input": {
+        "date": "酉月壬辰日",
+        "question": "子病"
+      },
+      "hexagram": {
+        "original": "大过",
+        "changed": null,
+        "moving": []
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "午日",
+        "yingqi_branches": [
+          "午"
+        ],
+        "detail": "断曰：午火子孙伏世爻亥父之下，月建生助亥水克之，目下用神旬空，不受其克，甲午日难逃矣．果死于午日午时，此谓伏无提拔也．",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
+        "sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
+        "offset": 2835,
+        "line_no": 2836,
+        "text_head": "卦名\t地水师之地风升\t\t卦名\t泽风大过",
+        "table_date": [
+          "壬辰",
+          "酉",
+          ""
+        ],
+        "date_source": "table_day_month_columns",
+        "day_stem_normalized": false,
+        "question_source": "占事行"
+      },
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取，过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+    },
+    {
+      "id": "BZ0621",
+      "source": "《卜筮正宗》（殆知阁转录本）",
+      "topic": "一人占弟死太湖尸首可见否",
+      "question": "一人占弟死太湖尸首可见否",
+      "input": {
+        "date": "子月乙巳日",
+        "question": "一人占弟死太湖尸首可见否"
+      },
+      "hexagram": {
+        "original": "复",
+        "changed": null,
+        "moving": []
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "申日",
+        "yingqi_branches": [
+          "申"
+        ],
+        "detail": "断曰：凡占尸首以鬼爻为用神，今寅木鬼爻旬空，而亥水乃得令之水暗动合之．明明尸首在于大水之中矣．但寅木旬空被合，须待出旬逄冲，庚申可见．后至庚申日不见，直至丑月甲子旬内，壬申日尸首浮起得见．此意何也？总之，寅鬼出旬，而亥水太旺，交丑建丑土制水，甲子旬亥水遇空，水空者，如水退矣．木在水中非冲不起，故验于甲子旬壬申日也．岂非神之奇报，学者不可不深究之．",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
+        "sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
+        "offset": 2853,
+        "line_no": 2854,
+        "text_head": "卦名\t地雷复\t\t卦名\t地雷复之火雷噬嗑",
+        "table_date": [
+          "乙巳",
+          "子",
+          ""
+        ],
+        "date_source": "table_day_month_columns",
+        "day_stem_normalized": false,
+        "question_source": "占事行"
+      },
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取，过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+    },
+    {
+      "id": "BZ0652",
+      "source": "《卜筮正宗》（殆知阁转录本）",
+      "topic": "将来有官否",
+      "question": "将来有官否",
+      "input": {
+        "date": "亥月己丑日",
+        "question": "将来有官否"
+      },
+      "hexagram": {
+        "original": "兑",
+        "changed": "讼",
+        "moving": [
+          1,
+          6
+        ]
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "巳年",
+        "yingqi_branches": [
+          "巳"
+        ],
+        "detail": "断曰：未土父母爻持世，化进神未土，虽是旬空，日辰冲之．曰：不为空矣．巳火官星动而生世，化出寅木长生，显然有官，彼问：应在何年？答曰：巳年必然食禄王家也．果于巳年得县缺．应实破之年也．",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
+        "sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
+        "offset": 2905,
+        "line_no": 2906,
+        "text_head": "卦名\t地天泰\t\t卦名\t兑为金之天水讼．",
+        "table_date": [
+          "己丑",
+          "亥",
+          ""
+        ],
+        "date_source": "table_day_month_columns",
+        "day_stem_normalized": false,
+        "question_source": "占事行"
+      },
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取，过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+    },
+    {
+      "id": "BZ0692",
+      "source": "《卜筮正宗》（殆知阁转录本）",
+      "topic": "逃仆",
+      "question": "逃仆",
+      "input": {
+        "date": "辰月丁巳日",
+        "question": "逃仆"
+      },
+      "hexagram": {
+        "original": "蹇",
+        "changed": null,
+        "moving": []
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "子日",
+        "yingqi_branches": [
+          "子"
+        ],
+        "detail": "断曰：占仆以财爻为用神，取兑卦二爻卯木伏于本卦二爻午火之下，午火为飞神，卯木为伏神．今申金持世克制卯木，终不能逃．但因伏去生飞名为泄气．盗去财物必尽于炉火之家．许甲子日拿获．果于子日得窝赌铁匠之家，申时拿获．应子日者，冲克午火之飞神，生起卯木之伏神也．黄金策云：伏无提挈，终徒尔飞，不推开亦枉然，此卦应验是矣．",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
+        "sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
+        "offset": 2988,
+        "line_no": 2989,
+        "text_head": "卦名\t山火贲\t\t卦名\t水山蹇",
+        "table_date": [
+          "丁巳",
+          "辰",
+          ""
+        ],
+        "date_source": "table_day_month_columns",
+        "day_stem_normalized": false,
+        "question_source": "占事行"
+      },
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取，过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+    },
+    {
+      "id": "BZ0722",
+      "source": "《卜筮正宗》（殆知阁转录本）",
+      "topic": "何年生子",
+      "question": "何年生子",
+      "input": {
+        "date": "酉月庚戌日",
+        "question": "何年生子"
+      },
+      "hexagram": {
+        "original": "屯",
+        "changed": "节",
+        "moving": [
+          2
+        ]
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "寅年",
+        "yingqi_branches": [
+          "寅"
+        ],
+        "detail": "断曰：寅木子孙持世化进神，寅木旬空，卯木空而且破，后至寅年卯月妻婢生二子，此卯木虽为月破，得日辰合补，乃休囚待时而用也．",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
+        "sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
+        "offset": 3051,
+        "line_no": 3052,
+        "text_head": "卦名\t雷风恒之泽风大过．\t\t卦名\t水雷屯之水泽节",
+        "table_date": [
+          "庚戌",
+          "酉",
+          ""
+        ],
+        "date_source": "table_day_month_columns",
+        "day_stem_normalized": false,
+        "question_source": "占事行"
+      },
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取，过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+    },
+    {
+      "id": "BZ0732",
+      "source": "《卜筮正宗》（殆知阁转录本）",
+      "topic": "被论因占自陈如何",
+      "question": "被论因占自陈如何",
+      "input": {
+        "date": "酉月甲辰日",
+        "question": "被论因占自陈如何"
+      },
+      "hexagram": {
+        "original": "师",
+        "changed": "明夷",
+        "moving": [
+          1,
+          2,
+          3
+        ]
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "卯月",
+        "yingqi_branches": [
+          "卯"
+        ],
+        "detail": "断曰：世化回头之克，官星化退，子孙化进，内三爻皆非吉兆．果于次年二月拿问．应卯者，子孙出空填破之月也．",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
+        "sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
+        "offset": 3069,
+        "line_no": 3070,
+        "text_head": "卦名\t火雷噬嗑之水地比\t\t卦名\t地水师之地火明夷",
+        "table_date": [
+          "甲辰",
+          "酉",
+          ""
+        ],
+        "date_source": "table_day_month_columns",
+        "day_stem_normalized": false,
+        "question_source": "占事行"
+      },
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取，过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+    },
+    {
+      "id": "BZ0831",
+      "source": "《卜筮正宗》（殆知阁转录本）",
+      "topic": "姑病",
+      "question": "姑病",
+      "input": {
+        "date": "亥月丙寅日",
+        "question": "姑病"
+      },
+      "hexagram": {
+        "original": "咸",
+        "changed": "蹇",
+        "moving": [
+          4
+        ]
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "亥日",
+        "yingqi_branches": [
+          "亥"
+        ],
+        "detail": "断曰：姑乃夫之姊妹也，以官鬼爻为用神，今午火官爻长生，亥日水克之，不宜亥水自化长生，又动出申金助水来克，此病必死．后于乙亥日卒，应乙亥日者，亥水旬空实空之日也．",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
+        "sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
+        "offset": 3254,
+        "line_no": 3255,
+        "text_head": "卦名\t泽山咸之水山蹇\t\t卦名\t泽水困之坎为水",
+        "table_date": [
+          "丙寅",
+          "亥",
+          ""
+        ],
+        "date_source": "table_day_month_columns",
+        "day_stem_normalized": false,
+        "question_source": "占事行"
+      },
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取，过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+    },
+    {
+      "id": "BZ0942",
+      "source": "《卜筮正宗》（殆知阁转录本）",
+      "topic": "自去寻父回",
+      "question": "自去寻父回",
+      "input": {
+        "date": "午月丙午日",
+        "question": "自去寻父回"
+      },
+      "hexagram": {
+        "original": "革",
+        "changed": "既济",
+        "moving": [
+          4
+        ]
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "申年",
+        "yingqi_branches": [
+          "申"
+        ],
+        "detail": "断曰：此卦正合前卦，前卦应冲开寅木者，申也．此卦世化申金回头生，亦应申也．果于申年八月寻父回家．应于申年者，前卦冲去忌神，后卦化出申金父母用神生世也．",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
+        "sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
+        "offset": 3453,
+        "line_no": 3454,
+        "text_head": "卦名\t火天大有之离为火\t\t卦名\t泽火革之水火既济",
+        "table_date": [
+          "丙午",
+          "午",
+          ""
+        ],
+        "date_source": "table_day_month_columns",
+        "day_stem_normalized": false,
+        "question_source": "占事行"
+      },
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取，过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+    },
+    {
+      "id": "BZ0981",
+      "source": "《卜筮正宗》（殆知阁转录本）",
+      "topic": "仆近出何日回",
+      "question": "仆近出何日回",
+      "input": {
+        "date": "午月庚辰日",
+        "question": "仆近出何日回"
+      },
+      "hexagram": {
+        "original": "离",
+        "changed": null,
+        "moving": []
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "卯日",
+        "yingqi_branches": [
+          "卯"
+        ],
+        "detail": "断曰：酉金财爻为用，月克日生，似可相敌，并无生克．一卦之中，惟酉金用神旬空，日合神机现．此但旬空必待出旬合空，虽有半用，须待冲发，交小暑即辛卯日，则酉金值旬不空，冲发必至．果于辛卯日来家，此应静而逄冲也，合而逄冲也．空待出空也．",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
+        "sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
+        "offset": 3522,
+        "line_no": 3523,
+        "text_head": "卦名\t离为火\t\t卦名\t坤为地",
+        "table_date": [
+          "庚辰",
+          "午",
+          ""
+        ],
+        "date_source": "table_day_month_columns",
+        "day_stem_normalized": false,
+        "question_source": "占事行"
+      },
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取，过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+    },
+    {
+      "id": "BZ0982",
+      "source": "《卜筮正宗》（殆知阁转录本）",
+      "topic": "今日有人还银否",
+      "question": "今日有人还银否",
+      "input": {
+        "date": "辰月己卯日",
+        "question": "今日有人还银否"
+      },
+      "hexagram": {
+        "original": "坤",
+        "changed": null,
+        "moving": []
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "酉日",
+        "yingqi_branches": [
+          "酉"
+        ],
+        "detail": "断曰：酉金原神旬空，日辰冲之，静而逄冲日起．况日辰临应冲世，彼必今日巳时送还也．果于本日巳时还一半，乙酉日巳时还清一半者．静空冲起有一半之力，而财亦有一半者也．乙酉日还清者，巳经冲起之神值日是财之原神，填足矣．子孙喜悦之星还清，岂不喜耶．",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
+        "sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
+        "offset": 3522,
+        "line_no": 3523,
+        "text_head": "卦名\t离为火\t\t卦名\t坤为地",
+        "table_date": [
+          "己卯",
+          "辰",
+          ""
+        ],
+        "date_source": "table_day_month_columns",
+        "day_stem_normalized": false,
+        "question_source": "占事行"
+      },
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取，过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+    },
+    {
+      "id": "BZ1001",
+      "source": "《卜筮正宗》（殆知阁转录本）",
+      "topic": "求财",
+      "question": "求财",
+      "input": {
+        "date": "未月庚子日",
+        "question": "求财"
+      },
+      "hexagram": {
+        "original": "小畜",
+        "changed": null,
+        "moving": []
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "辰日",
+        "yingqi_branches": [
+          "辰"
+        ],
+        "detail": "断曰：未土月建为用，何以辰土旬空，空必关因，竟断月内辰日得财．果甲辰日巳时到手，此应出空之日时也，正是舍其不空而用空者．",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
+        "sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
+        "offset": 3561,
+        "line_no": 3562,
+        "text_head": "卦名\t风天小畜\t\t卦名\t地水师之风水涣",
+        "table_date": [
+          "庚子",
+          "未",
+          ""
+        ],
+        "date_source": "table_day_month_columns",
+        "day_stem_normalized": false,
+        "question_source": "占事行"
+      },
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取，过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+    },
+    {
+      "id": "BZ1012",
+      "source": "《卜筮正宗》（殆知阁转录本）",
+      "topic": "子久出何日冲",
+      "question": "子久出何日冲",
+      "input": {
+        "date": "未月丁丑日",
+        "question": "子久出何日冲"
+      },
+      "hexagram": {
+        "original": "鼎",
+        "changed": "需",
+        "moving": [
+          1,
+          4,
+          5,
+          6
+        ]
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "午年",
+        "yingqi_branches": [
+          "午"
+        ],
+        "detail": "断曰：未土化进神，日辰冲之，丑土化子合住巳火，原神动来生用，化子水回头克制，目下不来．问曰：终须来否？答曰：午年必来．果于午年午月到家．应午年月者未土动而日冲，是动冲逄合之年月也．丑土化子水合，合要冲开之年月也．巳火化子水之克，冲去子水是去煞留恩也．",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
+        "sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
+        "offset": 3579,
+        "line_no": 3580,
+        "text_head": "卦名\t雷地豫之雷泽归妹\t\t卦名\t火风鼎之水天需",
+        "table_date": [
+          "丁丑",
+          "未",
+          ""
+        ],
+        "date_source": "table_day_month_columns",
+        "day_stem_normalized": false,
+        "question_source": "占事行"
+      },
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取，过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+    },
+    {
+      "id": "BZ1041",
+      "source": "《卜筮正宗》（殆知阁转录本）",
+      "topic": "家宅",
+      "question": "家宅",
+      "input": {
+        "date": "申月乙亥日",
+        "question": "家宅"
+      },
+      "hexagram": {
+        "original": "井",
+        "changed": "节",
+        "moving": [
+          1,
+          3
+        ]
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "use_god_branch": "",
+        "use_god_position": "",
+        "yingqi": "酉月",
+        "yingqi_branches": [
+          "酉"
+        ],
+        "detail": "断曰：应居二爻，谓之应飞入宅，临父母必有外姓长者同居．彼曰：从无外人同舍．内卦合成官鬼局，宅内不安．彼曰：无驳杂．　木兄弟月破，伏藏官局克之，或昆仲家不利．彼曰：吾占家宅，即日郄同家业师乡试，实为功名耳．予曰：功名与家宅，天远地隔矣，功名以官鬼为官星，宅以鬼为祸害．既占功名，兄之功名不许，令业师必高中也．彼曰：何以知之．答曰：官局生应不来生世，谓之出现无情与我，无干也．后果至八月酉金实空之月，此人自己头场贴出，其业师中式第四名．",
+        "same_as_day_branch": false
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
+        "sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
+        "offset": 3632,
+        "line_no": 3633,
+        "text_head": "卦名\t水风井之水泽节\t\t卦名\t水天需",
+        "table_date": [
+          "乙亥",
+          "申",
+          ""
+        ],
+        "date_source": "table_day_month_columns",
+        "day_stem_normalized": false,
+        "question_source": "占事行"
+      },
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取，过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+    }
+  ]
+}
