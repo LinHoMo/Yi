@@ -5,6 +5,55 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-02 第四百六十七批（六爻·引文库 quote_kind）：**`quote_database` 自称「古籍出处」，全库实测 49 条只有 1 条逐字可回原文；其余 48 条是今译，先立 `quote_kind` 并挂机械判据**
+
+**性质**：数据声明修正＋[12] 覆盖扩展（不改判读、不改读数）。
+
+### 一、缺陷
+
+`liuyao/data/verdicts.json#quote_database` 的 `_meta` 原写「格局/六亲/旺衰/动变引文库，
+source 字段为古籍出处」；报告层（step5/thinking_chain/narrate/engine_format_report）
+以「【经典引文】• 《卜筮正宗·六合论》：…」的形式呈现。
+
+467 批把 49 条逐条拿去**全库**（`data/sources/*.txt` 16 份）折叠标点搜索：
+
+- **逐字命中 1/49**（第 10 条「卦得游魂，漂泊他方无定迹。」，命中
+  `huangjince_dz.dz.txt`/`bushi_quanshu_dz.dz.txt`）；
+- 其余 48 条是现代今译（「如春木之渐盛」「柳暗花明又一村」「步步登高」…），
+  所署古籍只是**所本篇章**，不是逐字原文。
+
+把释义标成「古籍出处/经典引文」属口径分家（§六.3，同 §一.3 诚实条款）。
+
+### 二、改法
+
+- 给 49 条各加 `quote_kind`：第 10 条 `verbatim`＋`source_ref`＝
+  `data/sources/huangjince_dz.dz.txt`；其余 48 条 `paraphrase`。
+- `_meta.quote_database` 改写为区分口径（verbatim 须 `source_ref` 且可回验；
+  paraphrase 的 source 只是所本篇章）。
+- [12] 新增 `check_quote_database()`（仅六爻册；八字同名文件结构不同，跳过）：
+  - 每条 `quote_kind` ∈ {verbatim, paraphrase}，`quote`/`source` 非空；
+  - `verbatim` 必须带 `source_ref`（`file[:line]`），底本在盘；带行号按该行、
+    不带行号按整文件逐字命中（折叠标点）；
+  - 下限 1/48/49，0 条即红。
+
+### 三、自证（§四.8）
+
+- selftest 增 6 式：正例（1 verbatim＋1 paraphrase）、`quote_kind` 缺失、
+  verbatim 缺 `source_ref`、verbatim 引文不在底本、paraphrase 缺 source、
+  `source_ref` 行号越界，全部按预期。
+- 真实探针三式：第 10 条「漂泊」改「飘泊」→ `× …非书源逐字`；删第 0 条
+  `quote_kind` → `× …缺失/非法`；把第 1 条 paraphrase 谎称 verbatim →
+  `× …缺 source_ref`；三次 EXIT=**1**、逐字节还原。
+- 真盘：49 条（verbatim 1／paraphrase 48）。
+- 引擎读数：tune 97.9（n=20）、holdout 90.2（n=12）逐位不变（§四.7）。
+
+### 四、仍欠（下一批）
+
+报告层仍以「【经典引文】」标题呈现全部条目，5 个渲染点（step5 / thinking_chain /
+narrate / narrate_core / engine_format_report）与 `FREASON.quote_prefix` 需改为
+「引文/今译」分标；会动措辞指纹，故单列第四百六十八批（§六.1 逐批具名）。
+
+
 ## 2026-11-02 第四百六十六批（八字·六神取象行号出处）：**共享件为八字 `liushen_image`／`shi_shen_actions` 补 `_src`/`source` 行锚判据；六爻无此册，显式跳过**
 
 **性质**：共享门覆盖扩展（不改判据、不改数据、不改读数）。

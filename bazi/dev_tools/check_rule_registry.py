@@ -52,6 +52,12 @@ locator 从未被读取。现按声明核对：行号在册、`quote/full_quote/
 仍按引文渲染出空行号（§六.3）。现核：每个非空 `能力/构成/取象/别名` 必须有
 `<字段>_src`、行号在册、值落在该行；`shi_shen_actions` 每条 `source` 必须能解析
 行号（`L####` 或 `:####`），`actions` 每项落在该行 ±3 行邻域。两科 selftest 都跑夹具。
+
+467 批追加（仅六爻册）：**引文库 `quote_kind`**。`liuyao/data/verdicts.json#quote_database`
+旧称「引文库，source 字段为古籍出处」，全库实测 49 条仅 1 条逐字可回原文，其余 48 条
+是今译。现要求每条声明 `quote_kind`：`verbatim` 必须带 `source_ref`（`file[:line]`）
+且逐字命中（折叠标点）；`paraphrase` 只要求非空 `source`（所本篇章）。报告层标题
+沿用「经典引文」的问题登记为下一批（468）。两科 selftest 都跑夹具。
 """
 from __future__ import annotations
 
@@ -77,6 +83,8 @@ VERDICTS = DISC / "data" / "verdicts.json"
 # 466 批：六神取象 / 十神作用（仅八字有该册）。
 LIUSHEN = DISC / "data" / "liushen_image.json"
 SHISHEN = DISC / "data" / "shi_shen_actions.json"
+# 467 批：六爻引文库（仅六爻有该结构；八字同名文件结构不同）。
+LIUYAO_QUOTES = DISC / "data" / "verdicts.json"
 _VERDICT_LOCATOR = re.compile(r"(data/sources/[^:]+):(\d+)")
 _VERDICT_MARK = re.compile(r"''+|={2,}|\{\{|\}\}|\||\*")
 _VERDICT_FIELDS = ("quote", "full_quote", "cond_quote", "verse_quote")
@@ -625,6 +633,78 @@ def check_liushen_sources(doc_img: dict, doc_acts: dict, problems: list[str],
     return n_fields, n_acts
 
 
+def check_quote_database(doc: dict, problems: list[str], text_of=None) -> tuple[int, int]:
+    """六爻引文库 `quote_kind` 自洽与逐字回验（467 批）。返回 (verbatim 数, paraphrase 数)。
+
+    为什么需要它：`liuyao/data/verdicts.json#quote_database` 的 `_meta` 旧写
+    「引文库，source 字段为古籍出处」，但 467 批全库实测 **49 条只有 1 条能逐字回原文**，
+    其余 48 条是现代今译。声明把「释义」说成「古籍引文」，属口径分家（§六.3）。
+    本函数把区分变成机械判据：
+
+      · 每条的 `quote_kind` 必须是 `verbatim` 或 `paraphrase`；
+      · `verbatim` 必须带 `source_ref`（`data/sources/<file>[:<line>]`），
+        文件在盘；带行号时按该行、不带行号时按整文件逐字命中（折叠标点）；
+      · `paraphrase` 只需非空 `source`（所本篇章），不做逐字断言。
+
+    `text_of` 供 selftest 注入夹具底本；正式路径现场读。
+    """
+    qs = (doc or {}).get("quote_database")
+    if not isinstance(qs, list) or not qs:
+        problems.append("引文库：quote_database 缺失或为空——0 结果 ≠ 通过")
+        return 0, 0
+    cache: dict[str, str | None] = {}
+
+    def get_text(f: str) -> str | None:
+        if text_of is not None:
+            return text_of(f)
+        if f not in cache:
+            p = _resolve_any(f)
+            cache[f] = p.read_text(encoding="utf-8", errors="replace") if p else None
+        return cache[f]
+
+    n_v = n_p = 0
+    for i, q in enumerate(qs):
+        if not isinstance(q, dict):
+            problems.append(f"引文库：第 {i} 条不是对象")
+            continue
+        kind = str(q.get("quote_kind") or "")
+        quote = str(q.get("quote") or "")
+        src = str(q.get("source") or "")
+        if kind not in ("verbatim", "paraphrase"):
+            problems.append(f"引文库：第 {i} 条 quote_kind 缺失/非法 → {kind!r}")
+            continue
+        if not quote or not src:
+            problems.append(f"引文库：第 {i} 条 quote/source 为空")
+            continue
+        if kind == "paraphrase":
+            n_p += 1
+            continue
+        n_v += 1
+        ref = str(q.get("source_ref") or "").strip()
+        m = re.fullmatch(r"(data/sources/[^:]+)(?::(\d+))?", ref)
+        if not m:
+            problems.append(f"引文库：第 {i} 条 verbatim 缺 source_ref（file[:line]）→ {ref!r}")
+            continue
+        f, ln = m.group(1), m.group(2)
+        body = get_text(f)
+        if body is None:
+            problems.append(f"引文库：第 {i} 条 source_ref 底本不存在 {f}")
+            continue
+        if ln:
+            lines = body.splitlines()
+            n = int(ln)
+            if not (1 <= n <= len(lines)):
+                problems.append(f"引文库：第 {i} 条 source_ref 行号 L{n} 超出底本")
+                continue
+            ok = _DROP.sub("", quote) in _DROP.sub("", lines[n - 1])
+        else:
+            ok = _DROP.sub("", quote) in _DROP.sub("", body)
+        if not ok:
+            problems.append(f"引文库：第 {i} 条 verbatim 引文非书源逐字（{ref}）→ "
+                            f"{quote[:30]!r}")
+    return n_v, n_p
+
+
 def selftest(problems: list[str]) -> None:
     """负例：造一条 verified=true 却指向不存在文件/解不到值的条目，必须判红。"""
     fake = {"schema": "yi-rule-registry-v1", "rules": [
@@ -821,6 +901,45 @@ def selftest(problems: list[str]) -> None:
                    "source", "data/sources/__no_such__l.txt"))):
         problems.append("负例未抓到：作用 source 无行号")
 
+    # 467 批：六爻引文库 quote_kind（夹具底本注入）
+    _qtext = {"data/sources/__no_such__q.txt": "六合卦者，买卖交通，和合纳财，百事皆吉。"}
+    qdb = {"quote_database": [
+        {"pattern": "六合卦", "source": "《卜筮正宗·六合论》",
+         "quote": "六合卦者，买卖交通，和合纳财，百事皆吉。",
+         "quote_kind": "verbatim", "source_ref": "data/sources/__no_such__q.txt"},
+        {"pattern": "六冲卦", "source": "《卜筮正宗·六冲论》",
+         "quote": "六冲卦者，行人不通。", "quote_kind": "paraphrase"},
+    ]}
+    p_q: list[str] = []
+    n_q = check_quote_database(qdb, p_q, lambda f: _qtext.get(f))
+    if p_q or n_q != (1, 1):
+        problems.append(f"引文库正例被误伤：{p_q}（返回 {n_q}）")
+
+    def _qbad(mut) -> list[str]:
+        d = json.loads(json.dumps(qdb, ensure_ascii=False))
+        mut(d)
+        p: list[str] = []
+        check_quote_database(d, p, lambda f: _qtext.get(f))
+        return p
+
+    if not any("quote_kind 缺失/非法" in x for x in
+               _qbad(lambda d: d["quote_database"][0].pop("quote_kind", None))):
+        problems.append("负例未抓到：quote_kind 缺失")
+    if not any("缺 source_ref" in x for x in
+               _qbad(lambda d: d["quote_database"][0].pop("source_ref", None))):
+        problems.append("负例未抓到：verbatim 缺 source_ref")
+    if not any("非书源逐字" in x for x in
+               _qbad(lambda d: d["quote_database"][0].__setitem__(
+                   "quote", "六合卦者，买卖不通，和合纳财"))):
+        problems.append("负例未抓到：verbatim 引文不在底本")
+    if not any("quote/source 为空" in x for x in
+               _qbad(lambda d: d["quote_database"][1].__setitem__("source", ""))):
+        problems.append("负例未抓到：paraphrase 缺 source")
+    if not any("行号 L99 超出底本" in x for x in
+               _qbad(lambda d: d["quote_database"][0].__setitem__(
+                   "source_ref", "data/sources/__no_such__q.txt:99"))):
+        problems.append("负例未抓到：verbatim source_ref 行号越界")
+
 
 def main() -> int:
     if not REG.exists():
@@ -871,6 +990,15 @@ def main() -> int:
                                 f"作用条目 {l_acts}（下限 7）——先确认字段/路径")
             print(f"  六神取象/十神作用：{l_fields} 个引文字段、{l_acts} 条作用枚举；"
                   f"行号出处/邻域已核对")
+    # 467 批：六爻引文库 quote_kind（仅六爻册；八字同名文件结构不同）
+    if DISC.name == "liuyao" and LIUYAO_QUOTES.is_file():
+        qdoc = json.loads(LIUYAO_QUOTES.read_text(encoding="utf-8"))
+        qv, qp = check_quote_database(qdoc, problems)
+        if qv < 1 or qp < 48 or qv + qp < 49:
+            problems.append(f"引文库：verbatim {qv}／paraphrase {qp}／合计 {qv + qp}"
+                            f"（下限 1/48/49）——先确认字段/路径")
+        print(f"  引文库：{qv + qp} 条（verbatim {qv}／paraphrase {qp}）；"
+              f"quote_kind 与逐字回验已核对")
     _ap = argparse.ArgumentParser(description="check_rule_registry：--selftest 负例自证开关（§三）")
     _ap.add_argument("--selftest", action="store_true", help="负例自证")
     args = _ap.parse_args()
