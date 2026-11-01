@@ -90,9 +90,10 @@ def checks():
     def c_bushi(t):
         s = sh(["scripts/evaluate.py", "--split", "bushi_zhengzong_holdout"])
         return (grab(s, r"平均分 = ([0-9.]+)%"), grab(s, r"strict top-1 命中 ([0-9.]+)%"))
-    # 412 批：用神从断语直取（5/8 类、3/4 支），strict 68.8→68.3（分母新增用神维），新旧不可比。
-    add("liuyao.bushi_zhengzong(68.3/23.7)", "408批首建→409批通用确认句→410批相对期→412批用神直取",
-        c_bushi, ("68.3", "23.7"))
+    # 413 批：吉凶只取结果句强结果词（22/36 与引擎一致），strict 68.3→64.7（分母新增 verdict 维）。
+    add("liuyao.bushi_zhengzong(64.7/23.7)",
+        "408批首建→409通用确认句→410相对期→412用神→413吉凶结果句",
+        c_bushi, ("64.7", "23.7"))
 
     def c_window2(t):
         s = sh(["dev_tools/window_report.py"])

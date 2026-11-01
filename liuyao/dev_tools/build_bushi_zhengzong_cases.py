@@ -105,6 +105,26 @@ USE_GOD_BRANCH_RE = re.compile(
 USE_GOD_RE = re.compile(
     r"以[【\[]?(官鬼|父母|兄弟|子孙|妻财|财|子|父|兄|官|鬼)[爻】\]]?[^。；\n]{0,6}为用神")
 NEG_HEAD = "非不勿莫无"
+# 413 批：吉凶只从**结果句**的强结果词读，不拿技术词（旺/生/得/起/见）。本书「非吉兆」
+# 这类否定必须不掉进坑，故不单收「吉」；「不死/无碍/不见/不得」按整词登记。同一分句吉凶
+# 并存 → N/A；多主体并存（「自己…其业师…」）→ N/A；无强结果词 → N/A。
+VERDICT_GOOD = (
+    "救活", "痊愈", "全愈", "完婚", "得财", "得美缺", "得县缺", "得缺", "得见",
+    "回家", "来家", "到家", "还清", "必得", "必到", "生二子", "平安", "拿获",
+    "不死", "无碍", "无凶", "中式", "愈", "到", "归", "安", "升", "登",
+)
+VERDICT_BAD = (
+    "病故", "拿问", "下狱", "重刑", "被害", "遭害", "受害", "不利", "不吉", "不宜",
+    "不得", "不见", "无救", "贴出", "杖责", "不遂", "不到", "不安", "不成", "不归",
+    "不还", "死", "亡", "卒", "凶", "败", "失", "祸", "危",
+)
+VERDICT_PHRASES = sorted(
+    [(w, "吉") for w in VERDICT_GOOD] + [(w, "凶") for w in VERDICT_BAD],
+    key=lambda x: -len(x[0]))
+CLAUSE_SPLIT_RE = re.compile(r"[，。．；！？\n]")
+SENT_SPLIT_RE = re.compile(r"[。．！？\n]")
+REAL_MARK_RE = re.compile(r"[果后竟卒至方始]")
+SUBJECT_SWITCH = ("其", "自己", "业师", "彼")
 # 转录讹字登记（408 批逐条实测）：底本用「干」代「乾」、个别卦名有讹字/衍字。
 # 每条都由门 4（表动标 ≡ 本卦⊕变卦差集）反证——别名错则装卦差集必不符而剔除。
 NAME_ALIAS = {
@@ -243,6 +263,53 @@ def _use_god(text: str):
             continue
         return REL_SHORTHAND.get(m.group(1), m.group(1)), "", m.group(0)
     return None, "", None
+
+
+def _clause_polarity(clause: str) -> str:
+    """单分句极性：最长词优先；非否定词前两字含 不/未/无/非/莫 → 翻面；同句吉凶并存 → 空。"""
+    found = []
+    i = 0
+    while i < len(clause):
+        for phrase, pol in VERDICT_PHRASES:
+            if clause.startswith(phrase, i):
+                neg = any(ch in NEG_HEAD for ch in clause[max(0, i - 2):i])
+                if phrase[0] not in NEG_HEAD and neg:
+                    pol = "凶" if pol == "吉" else "吉"
+                found.append(pol)
+                i += len(phrase)
+                break
+        else:
+            i += 1
+    if not found:
+        return ""
+    return found[0] if len(set(found)) == 1 else ""
+
+
+def _verdict(text: str):
+    """结果句吉凶（413 批）：只扫**最后一个结果标记所在句 + 前两句**。
+
+    加窗口是为了把结果后的总论/格言排除（BZ0812「吉助忌伤用最凶」在结果「即愈矣」之后）；
+    窗口内取最后一个有强结果词的分句；多主体并存（「自己…其业师…」）→ N/A。
+    返回 (label, quote, reason)；label="" 表示 N/A（不进分母）。
+    """
+    sents = [s for s in SENT_SPLIT_RE.split(text) if s.strip()]
+    if not sents:
+        return "", None, "无句子"
+    marks = [i for i, s in enumerate(sents) if REAL_MARK_RE.search(s)]
+    end = marks[-1] if marks else len(sents) - 1
+    window = "，".join(sents[max(0, end - 2):end + 1])
+    clauses = [c for c in CLAUSE_SPLIT_RE.split(window) if c]
+    labels = []
+    for cl in clauses:
+        pol = _clause_polarity(cl)
+        if pol:
+            labels.append((pol, cl))
+    if not labels:
+        return "", None, "结果句无强结果词"
+    pol, cl = labels[-1]
+    if len(labels) >= 2 and labels[-2][0] != pol and any(k in cl for k in SUBJECT_SWITCH):
+        return "", None, "多主体吉凶并存"
+    return pol, cl, ""
 
 
 def _tokens(line: str) -> list[str]:
@@ -488,6 +555,7 @@ def _case_from_block(lines: list[str], start: int, end: int, cid: str, sha: str)
             continue
         topic = re.sub(r"^占", "", q).strip().strip("？?")
         ug_rel, ug_br, ug_quote = _use_god(text)
+        vd_label, vd_quote, vd_reason = _verdict(text)
         cases.append({
             "id": cid if n == 1 else cid + str(side + 1),
             "source": "《卜筮正宗》（殆知阁转录本）",
@@ -496,8 +564,8 @@ def _case_from_block(lines: list[str], start: int, end: int, cid: str, sha: str)
             "input": {"date": "%s月%s日" % (date["month"], date["day"]), "question": topic},
             "hexagram": {"original": orig, "changed": chg, "moving": moving},
             "expected": {
-                # 412 批：用神从断语「X为用神」直取；未写明的留空（N/A 不进分母）
-                "verdict": None, "use_god": ug_rel or "",
+                # 412 批用神取断语明示；413 批吉凶只取结果句强结果词
+                "verdict": vd_label or None, "use_god": ug_rel or "",
                 "use_god_branch": ug_br,
                 "use_god_position": "", "yingqi": yb + (yu or "日"),
                 "yingqi_branches": [yb], "detail": text[:300],
@@ -515,11 +583,14 @@ def _case_from_block(lines: list[str], start: int, end: int, cid: str, sha: str)
                 "generic_marker": gm.group(0) if gm else None,
                 "use_god_source": "断语「为用神」句" if ug_rel else None,
                 "use_god_quote": (ug_quote or "")[:80],
+                "verdict_source": "断语结果句" if vd_label else None,
+                "verdict_quote": (vd_quote or "")[:80],
+                "verdict_reason": vd_reason or None,
             },
-            "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/"
+            "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-413 批），过表栏/日期/"
                      "卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、"
-                     "通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽"
-                     "（N/A 不进分母）；永不参与调参。",
+                     "通用确认句回溯或相对期换算）；用神取断语明示句；吉凶取结果句强结果词"
+                     "（无强结果词/多主体并存 → N/A，不进分母）；永不参与调参。",
         })
     good = [c for c in cases if "input" in c]
     bad = [c for c in cases if "input" not in c]
@@ -665,13 +736,31 @@ def selftest() -> int:
         fails.append("否定语境误取用神")
     if _use_god("卦中土为用神")[0] is not None:
         fails.append("五行形态误判六亲")
+    # 413 吉凶：三真（死/愈/得财）+ 五假（非吉兆不误取/临危后愈取吉/多主体 N/A/
+    # 无强结果词 N/A/结果后的格言不覆盖）
+    if _verdict("果于乙酉日卯时而死矣")[0] != "凶":
+        fails.append("吉凶真例（死）错")
+    if _verdict("果己巳日全愈也")[0] != "吉":
+        fails.append("吉凶真例（愈）错")
+    if _verdict("断其辰日得财果验")[0] != "吉":
+        fails.append("吉凶真例（得财）错")
+    if _verdict("内三爻皆非吉兆，果于次年二月拿问")[0] != "凶":
+        fails.append("「非吉兆」被误取为吉")
+    if _verdict("临危有救，果己巳日全愈也")[0] != "吉":
+        fails.append("临危后愈未取吉")
+    if _verdict("此人自己头场贴出，其业师中式第四名")[0]:
+        fails.append("多主体吉凶并存未拒")
+    if _verdict("果验此虚一待用也")[0]:
+        fails.append("无强结果词未拒")
+    if _verdict("即愈矣，果验．若以入库必死，螣蛇动主死")[0] != "吉":
+        fails.append("结果后的格言覆盖了结果")
     if not YING_PAT.search("果于本日酉时，得名医救活，亥日痊愈"):
         fails.append("验支正例未命中")
     if YING_PAT.search("此卦亥水兄弟为用神，辰月克之，申日生之"):
         fails.append("验支负例（无结果标记）误命中")
     print("√ selftest：单/双栏/尾空列日期解码、空串拒绝、卦名别名、动标五字形、"
           "非单点/月序范围/自述月建、通用确认句回溯五负例、相对期换算四负例、"
-          "验支正负例 全过"
+          "用神六负例、吉凶三真五假、验支正负例 全过"
           if not fails else "× " + "；".join(fails))
     return 0 if not fails else 1
 
@@ -758,8 +847,8 @@ def main() -> int:
     doc = {
         "schema": "yi-liuyao-cases/1",
         "_meta": {
-            "description": "《卜筮正宗》dz 表格式段落抽取的应期/用神外部集；八道门＋同案去重；"
-                           "409 通用确认句、410 相对期、412 断语用神直取；永不参与调参",
+            "description": "《卜筮正宗》dz 表格式段落抽取的应期/用神/吉凶外部集；八道门＋同案去重；"
+                           "409 通用确认句、410 相对期、412 用神、413 吉凶结果句；永不参与调参",
             "source": "《卜筮正宗》（殆知阁转录本）",
             "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
             "source_sha256": sha,
@@ -783,7 +872,7 @@ def main() -> int:
         "或 410 批相对期换算（次日/明日 → 占测日 +1 日；本日不换算），"
         "逐例 provenance.yingqi_source 留痕。detail 为断语原文（供格局维比对）；"
         "用神取断语「X为用神」明示句（412 批；未写明的留空，N/A 不进分母）；"
-        "吉凶字面未抽。" % len(cases))
+        "吉凶取结果句强结果词（413 批；无强结果词/多主体并存 → N/A）。" % len(cases))
     write_stable(SPLITS, sp, indent=2)  # 原文件 indent=2：默认 indent=1 会把全文重排（408 实踩）
     print("√ 落盘 %s｜%d 例；case_splits.bushi_zhengzong_holdout=%d"
           % (OUT.name, len(cases), len(cases)))
