@@ -727,7 +727,7 @@ def main() -> int:
 
     # [41] 案例引文逐字性（第四百三十批恢复）：扁平化删除了旧 tools/check_case_quotes.py
     # 与 [1k]，464 条 source_quote 从此无门；本门按书源路由 + 豁免册逐条披露。
-    print("\n[41] 案例引文逐字性（source_quote 必须回书源逐字；不可路由/夹注段逐条披露）")
+    print("\n[41] 案例引文逐字性（source_quote 必须回书源逐字；不可路由/夹注段逐条披露；豁免册自洽；446 批扩）")
     code, out = run(["dev_tools/check_case_quotes.py", "--selftest"])
     for line in out.splitlines():
         if line.strip():

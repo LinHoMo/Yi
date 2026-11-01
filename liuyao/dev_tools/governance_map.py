@@ -76,7 +76,7 @@ CURATED = {
         "build_bazili_cases": ("build", "bazili 案例构建"),
         "check_xiang": ("blocking", "象层门：宫位/六亲/脏腑三象齐备且带出处、六亲按性别分野、象层禁倒灌评分（[39]；362 批新增）"),
         "check_expected_coverage": ("blocking", "expected 受控字段覆盖生存线（[40]；419 批六爻事故的八字面复刻防护；420 批新增）"),
-        "check_case_quotes": ("blocking", "案例引文逐字性门（source_quote 回书源逐字；不可路由/夹注段逐条披露；430 批恢复旧 [1k]）"),
+        "check_case_quotes": ("blocking", "案例引文逐字性门（source_quote 回书源逐字；不可路由/夹注段逐条披露；豁免册自洽：case_names⊆ids／未披露 id 判红；430 批恢复旧 [1k]，446 批扩）"),
         "xiang_coverage": ("nightly", "象层覆盖读数器（只报有没有出，不报准不准；362 批新增）"),
         "build_dts_corpus": ("build", "滴天髓语料构建"),
         "build_tiaohou": ("build", "调候语料构建"),

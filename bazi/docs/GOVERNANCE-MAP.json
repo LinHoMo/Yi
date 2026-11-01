@@ -125,7 +125,7 @@
   {
    "script": "check_case_quotes.py",
    "tier": "blocking",
-   "guards": "案例引文逐字性门（source_quote 回书源逐字；不可路由/夹注段逐条披露；430 批恢复旧 [1k]）",
+   "guards": "案例引文逐字性门（source_quote 回书源逐字；不可路由/夹注段逐条披露；豁免册自洽：case_names⊆ids／未披露 id 判红；430 批恢复旧 [1k]，446 批扩）",
    "run_by_check_py": true,
    "doc": "八字科案例引文逐字性门（[41]，第四百三十批恢复；前身是扁平化前已删除的旧案例引文门）。"
   },
