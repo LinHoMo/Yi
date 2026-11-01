@@ -711,6 +711,19 @@ def main() -> int:
     else:
         print("[39] 象层门 √")
 
+    # [40] expected 覆盖生存线（第四百二十批）：419 批在六爻侧抓到 403 批重建
+    # dz 案例册时清空 18 例用神书证、聚合分只掉一点而所有门全绿的事故。八字有
+    # 7 个案例文件与多个构建器，同一类清空在本科此前没有任何门能拦。
+    print("\n[40] expected 覆盖生存线（构建器重生成不得清空书证/机械派生字段）")
+    code, out = run(["dev_tools/check_expected_coverage.py", "--selftest"])
+    for line in out.splitlines():
+        if line.strip():
+            print("  " + line.strip())
+    if code != 0:
+        fails.append("expected 覆盖生存线未过（案例数或受控字段非空数跌破登记下限）")
+    else:
+        print("[40] expected 覆盖生存线 √")
+
     if ENC_WITNESS:
         fails.extend("产物编码退化：" + w for w in ENC_WITNESS)
     if fails:

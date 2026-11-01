@@ -1,10 +1,10 @@
 {
- "count": 45,
+ "count": 46,
  "by_tier": {
   "tool": 2,
   "ondemand": 7,
   "build": 8,
-  "blocking": 27,
+  "blocking": 28,
   "nightly": 1
  },
  "unclassified": [],
@@ -162,6 +162,13 @@
    "guards": "文档活引用可达性（死指针判红）",
    "run_by_check_py": true,
    "doc": "文档/注释里的**活引用**必须指向存在的文件（历史登记散文除外）。"
+  },
+  {
+   "script": "check_expected_coverage.py",
+   "tier": "blocking",
+   "guards": "expected 受控字段覆盖生存线（[40]；419 批六爻事故的八字面复刻防护；420 批新增）",
+   "run_by_check_py": true,
+   "doc": "八字科 expected 书证/机械派生字段的覆盖生存线（门禁 [40]，第四百二十批新增）。"
   },
   {
    "script": "check_feedback.py",

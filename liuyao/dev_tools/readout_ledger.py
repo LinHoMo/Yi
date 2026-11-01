@@ -172,15 +172,16 @@ def checks():
         "注意：本值随 capture 同步；若再分家，先读 drift_log 再改，勿凭记忆填。）",
         lambda t: _golden("bazi"),
         ("b7674a8f6d8d1162", "e158d5cb8a92e005"))
-    add("governance(68/45, blk 30/27)",
+    add("governance(68/46, blk 30/28)",
         "194批（312 补 310；315 补 314/315 两门；317 补 judge_shadow；329 补 fetch_zengshan_dz_cases；"
         "331 批 check_docs_index 上提到 devkit/root → 六爻 blk 28→27、脚本仍 63；"
         "339 批 A5-1 按实登记 7 个存量未分类脚本 → 八字 37→43；"
         "344 批新增 check_expected_coverage → 六爻 63→64、blk 27→28；"
         "362 批两科各新增 check_xiang（blocking）＋xiang_coverage（nightly）→ 六爻 64→66、blk 28→29，八字 43→45、blk 26→27；"
         "364 批六爻新增 check_bond_polarity（门 [40]，blocking）→ 六爻 66→67、blk 29→30，八字不变；"
-        "408 批六爻新增 build_bushi_zhengzong_cases → 六爻 67→68）",
-        lambda t: _gov_counts(), ("68", "45", "30", "27"))
+        "408 批六爻新增 build_bushi_zhengzong_cases → 六爻 67→68；"
+        "420 批八字新增 check_expected_coverage（门 [40]，blocking）→ 八字 45→46、blk 27→28）",
+        lambda t: _gov_counts(), ("68", "46", "30", "28"))
 
     # 344 批：expected 书证/机械派生字段的覆盖生存线（门 [38]）。
     # 1592923 的事故证明「聚合分掉 6 分、所有门全绿」可以并存；本项把非空计数

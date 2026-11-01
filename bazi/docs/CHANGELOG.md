@@ -9,6 +9,46 @@
 > 399/400/401 撞号，按提交顺序归位为 **408/409/410/411**；原提交 `46d8bc1` 的提交信息
 > 保留旧号作历史，不再改。跨文件引用一律按新号。
 
+## 2026-11-02 第四百二十批（八字·治理）：**expected 受控字段覆盖生存线（门 [40]）——419 批六爻事故的八字面复刻防护；7 个案例文件逐字段钉下限**
+
+**性质**：门禁补建（不改引擎、不改语料、不改任何读数）。
+
+### 一、为什么现在补
+
+419 批在六爻侧抓到真实事故：403 批重建 dz 案例册时把 206／208 批逐条书证校勘的
+**18 例** `use_god`／`use_god_branch`／`use_god_note` 整段清空，聚合分只掉一点、所有门全绿，
+直到 419 批人工回溯 git 才发现。八字科有 7 个案例文件与多个构建器（四柱／调候／从格／
+化格／行运／病药／外部集），此前**没有任何门**能在"构建器重生成只写自动解析字段"时报警。
+
+### 二、改动
+
+- 新增 `dev_tools/check_expected_coverage.py`（门 [40]，blocking）：按
+  `data/rules/expected_coverage.json` 逐文件对拍案例数与每个受控字段的非空数；
+  下限只许更高，跌破即红。
+- 新增 `data/rules/expected_coverage.json`：7 个案例文件（classical 340／external 69／
+  dayun 12／hua 22／cong_er 9／zhuan_wang 10／bing_yao 2），受控字段与下限：
+  classical `pillars/ten_gods/hidden_stems` 214、`tiaohou` 111、`cong_ge/from_kind` 19、
+  `from_type` 15、`pattern_cheng_bai` 36、`shensha` 5；external `strength`／
+  `strength_book_category` 57、`ten_gods` 5、`pattern` 2、`tiaohou` 7、`shensha` 4；
+  dayun `dayun` 12、`pillars` 11；hua `hua_type` 22；cong_er／zhuan_wang
+  `cong_ge`＋`from_kind` 9／10；bing_yao `bing_yao` 2。
+- `dev_tools/check.py` 挂 [40]；`liuyao/dev_tools/governance_map.py` 的八字 curated 表
+  登记 `check_expected_coverage = blocking`，重生成 `docs/GOVERNANCE-MAP.json`
+  （46 脚本／blocking 28／未分类 0）。
+
+### 三、负例自证（§四.8）
+
+- 门自带 `--selftest`：7 个文件各 2 类负例（整批清空受控字段／删掉一例）全部判红；
+  完好数据放行。
+- 真实数据探针：把 `ZE001` 的 `expected.strength` 置空，门报
+  `strength 非空 56 < 登记下限 57`（EXIT=1）；恢复后转绿。
+
+### 四、读数
+
+零漂移：`bazi/dev_tools/check.py` 全过；`readout_ledger.py` 42/42 bad=0
+（仅治理会计数随新门更新 68/45→68/46、blk 30/27→30/28）。
+
+
 ## 2026-11-01 第四百一十五批（八字）：**外部集引入第三本未收录书《袁氏命谱》(袁树珊)——YP001(黄兴·强弱分歧型)＋YP002(袁世凯·禄马同乡缺口曝光型)，命理约言深挖结项**
 
 **性质**：评估扩样（external_holdout 引入第三本未收录、经时间检验古籍《袁氏命谱》的真实命例）。本批不入 tune/holdout、永不调参、不参与任何引擎调参；只动 `data/cases/bazi_external_cases.json`。

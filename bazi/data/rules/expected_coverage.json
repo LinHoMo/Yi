@@ -1,0 +1,65 @@
+{
+  "schema": 1,
+  "batch": 420,
+  "_comment": "八字 expected 受控字段的覆盖生存线（门禁 [40]）。419 批在六爻侧实踩：403 批重建 dz 案例册时把 206／208 批的 18 例 use_god／branch／note 整段清空，聚合分只掉一点、旧门全绿。八字有 7 个案例文件与多个构建器（四柱/调候/从格/化格/行运/病药/外部集），同一类事故换到本科没有任何门能拦。min 为单调下限：构建器重生成不得让任何字段非空数掉到下限以下；新增标签只许更高，下调须同批改本文件并说明。",
+  "cases": {
+    "bazi_classical_cases.json": {
+      "case_count": 340,
+      "fields": {
+        "pillars": {"min": 214},
+        "ten_gods": {"min": 214},
+        "hidden_stems": {"min": 214},
+        "tiaohou": {"min": 111},
+        "cong_ge": {"min": 19},
+        "from_kind": {"min": 19},
+        "from_type": {"min": 15},
+        "pattern_cheng_bai": {"min": 36},
+        "shensha": {"min": 5}
+      }
+    },
+    "bazi_external_cases.json": {
+      "case_count": 69,
+      "fields": {
+        "strength": {"min": 57},
+        "strength_book_category": {"min": 57},
+        "ten_gods": {"min": 5},
+        "pattern": {"min": 2},
+        "tiaohou": {"min": 7},
+        "shensha": {"min": 4}
+      }
+    },
+    "bazi_dayun_cases.json": {
+      "case_count": 12,
+      "fields": {
+        "dayun": {"min": 12},
+        "pillars": {"min": 11}
+      }
+    },
+    "bazi_hua_cases.json": {
+      "case_count": 22,
+      "fields": {
+        "hua_type": {"min": 22}
+      }
+    },
+    "bazi_cong_er_cases.json": {
+      "case_count": 9,
+      "fields": {
+        "cong_ge": {"min": 9},
+        "from_kind": {"min": 9}
+      }
+    },
+    "bazi_zhuan_wang_cases.json": {
+      "case_count": 10,
+      "fields": {
+        "cong_ge": {"min": 10},
+        "from_kind": {"min": 10}
+      }
+    },
+    "bazi_bing_yao_cases.json": {
+      "case_count": 2,
+      "fields": {
+        "bing_yao": {"min": 2}
+      }
+    }
+  }
+}
