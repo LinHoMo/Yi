@@ -31,6 +31,11 @@
                  无换行→"none"（3 份登记，实测全符；这是 433 批 CRLF/LF 事故的常设哨）；
   sha256_lf_text —— 把原始字节里的 `\r\n` 折成 `\n` 后取 SHA-256（1 份登记，实测相符）。
 
+445 批补齐台账表：六爻 `source_ledger.md` 的「干支对」「标题」两列是 provenance
+统计的第二份抄本，435 批只核了字节/哈希/行数。现对**数值格**逐格复算（六爻 4 行数值×2
+列＝8 格，实测全符）；「未测」等非数字占位是合法形态（《易冒》《易隐》两行），只跳过；
+数值格少于 8 即判红（防整列被改成占位而门空转）。八字当前无此表，跳过。
+
 435 批追加：`references/` 下的「在库书源」台账表是 provenance 的第二份抄本，
 433 批刚发现它六行里有四行陈旧（字节/哈希/行数）——本门把该表一并核对
 （字节、sha256 前 16 位、非空行、provenance 存在性）。表不存在则跳过（八字当前无此表）。
@@ -71,6 +76,9 @@ LEDGER = DISC / "references" / "source_ledger.md"
 MIN_FILES = {"bazi": 23, "liuyao": 16}
 # 台账表行数下限（表不存在时按 0：八字当前无 ledger）。
 MIN_LEDGER_ROWS = {"bazi": 0, "liuyao": 6}
+# 台账「干支对／标题」数值格下限（445 批）：六爻 6 行里 4 行有数值（另两行「未测」
+# 是合法占位），故 4×2＝8。八字无台账，按 0。
+MIN_LEDGER_STAT_CELLS = {"bazi": 0, "liuyao": 8}
 
 
 # 六十干支的构成元件：只用于「相邻干支组合」统计，不参与任何判读，故不引内核表。
@@ -201,14 +209,18 @@ def _as_int(cell: str) -> int | None:
     return int(s) if s.isdigit() else None
 
 
-def audit_ledger(path: Path, base: Path) -> tuple[list[str], int]:
-    """核对 `references/` 下的「在库书源」台账表（provenance 的第二份抄本）。"""
+def audit_ledger(path: Path, base: Path) -> tuple[list[str], int, int]:
+    """核对 `references/` 下的「在库书源」台账表（provenance 的第二份抄本）。
+
+    返回 (问题, 行数, 已核统计格数)。445 批起把「干支对」「标题」两列一并复算——
+    它们是 provenance 统计的第二份抄本，此前只核字节/哈希/行数。
+    """
     if not path.is_file():
-        return [], 0
+        return [], 0, 0
     text = path.read_text(encoding="utf-8")
     m = re.search(r"## 一、在库书源.*?\n(.*?)(?=\n### |\n## |\Z)", text, re.S)
     if not m:
-        return [f"{path.name}：找不到「## 一、在库书源」表"], 0
+        return [f"{path.name}：找不到「## 一、在库书源」表"], 0, 0
     prov_by_source: dict[str, str] = {}
     for pv in sorted((base / "data" / "sources").glob("*.provenance.json")):
         try:
@@ -220,6 +232,7 @@ def audit_ledger(path: Path, base: Path) -> tuple[list[str], int]:
             prov_by_source[sf] = pv.name
     problems: list[str] = []
     rows = 0
+    stat_cells = 0
     for line in m.group(1).splitlines():
         line = line.strip()
         if not line.startswith("|") or "`" not in line:
@@ -245,11 +258,23 @@ def audit_ledger(path: Path, base: Path) -> tuple[list[str], int]:
             problems.append(f"{path.name}：{name} sha256 {sha_cell}… ≠ 在盘 {got['sha256'][:16]}…")
         if ln is None or ln != got["lines"]:
             problems.append(f"{path.name}：{name} 行 {cells[4]} ≠ 在盘非空行 {got['lines']}")
+        # 445 批：台账的「干支对」「标题」列 = provenance 统计的第二份抄本。
+        # 数值格必须复算相符；「未测」等非数字占位是合法形态（六爻《易冒》《易隐》两行），
+        # 只跳过、不判红（0 结果由 main 里的最小格数上限兜底）。
+        for idx, key, label in ((5, "ganzhi_pairs", "干支对"), (6, "headings", "标题")):
+            if len(cells) <= idx:
+                continue
+            v = _as_int(cells[idx])
+            if v is None:
+                continue
+            stat_cells += 1
+            if v != got[key]:
+                problems.append(f"{path.name}：{name} {label} {cells[idx]} ≠ 在盘 {got[key]}")
         if cells[-1].startswith("有") and rel not in prov_by_source:
             problems.append(f"{path.name}：{name} 声称有 provenance，但无 source_file 指向它")
     if rows == 0:
         problems.append(f"{path.name}：在库书源表 0 行——0 结果 ≠ 通过，先确认表结构没改")
-    return problems, rows
+    return problems, rows, stat_cells
 
 
 def _fixture(root: Path, source_text: str = "甲子\n\n乙丑\n", **overrides) -> Path:
@@ -290,6 +315,7 @@ def _fixture(root: Path, source_text: str = "甲子\n\n乙丑\n", **overrides) -
 
 
 def _ledger_fixture(root: Path, *, bytes_cell=None, lines_cell=None,
+                    ganzhi_cell=None, headings_cell=None,
                     drop_source=False, drop_prov=False, no_rows=False,
                     missing_section=False) -> Path:
     """临时夹具：一份底本＋provenance＋「在库书源」台账表。"""
@@ -297,7 +323,7 @@ def _ledger_fixture(root: Path, *, bytes_cell=None, lines_cell=None,
     src_dir.mkdir(parents=True, exist_ok=True)
     # 夹具名带 `_selftest_`：死链门把该类串登记为负例样本，不会当成仓库真路径。
     src = src_dir / "_selftest_ledger.txt"
-    src.write_text("甲子\n\n乙丑\n", encoding="utf-8")
+    src.write_bytes("甲子\n\n乙丑\n".encode("utf-8"))
     m = measure(src)
     if not drop_prov:
         (src_dir / "_selftest_ledger.provenance.json").write_text(json.dumps({
@@ -317,8 +343,10 @@ def _ledger_fixture(root: Path, *, bytes_cell=None, lines_cell=None,
     if not no_rows:
         b = m["bytes"] if bytes_cell is None else bytes_cell
         ln = m["lines"] if lines_cell is None else lines_cell
+        gz = m["ganzhi_pairs"] if ganzhi_cell is None else ganzhi_cell
+        hd = m["headings"] if headings_cell is None else headings_cell
         body = (f"| 《夹具》 | `_selftest_ledger.txt` | {b:,} | `{m['sha256'][:16]}` | {ln} "
-                f"| 0 | 0 | 有 |\n")
+                f"| {gz} | {hd} | 有 |\n")
     ledger.write_text(
         "# 台账\n\n## 一、在库书源（实测）\n\n"
         "| 书 | 本地文件（`data/sources/`） | 字节 | 本地 sha256（前 16 位） | 行（非空） "
@@ -388,6 +416,11 @@ def selftest() -> int:
          lambda r: _ledger_fixture(r, drop_prov=True)),
         ("台账负例：0 行", "0 行", lambda r: _ledger_fixture(r, no_rows=True)),
         ("台账负例：缺表", "找不到", lambda r: _ledger_fixture(r, missing_section=True)),
+        # 445 批：台账「干支对／标题」列（夹具底本 = 干支 2 / 标题 0）
+        ("台账负例：干支对失配", "干支对", lambda r: _ledger_fixture(r, ganzhi_cell=3)),
+        ("台账负例：标题失配", "标题", lambda r: _ledger_fixture(r, headings_cell=1)),
+        ("台账正例：未测占位跳过不判红", None,
+         lambda r: _ledger_fixture(r, ganzhi_cell="未测", headings_cell="未测")),
     ]
     bad = 0
     for label, expect, setup in cases:
@@ -407,7 +440,7 @@ def selftest() -> int:
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             ledger = setup(root)
-            problems, rows = audit_ledger(ledger, root)
+            problems, rows, _cells = audit_ledger(ledger, root)
             if expect is None:
                 ok = not problems and rows == 1
             else:
@@ -436,7 +469,7 @@ def main() -> int:
     elif stats["files"] < floor:
         problems.append(f"只扫到 {stats['files']} 份 provenance（下限 {floor}）"
                         "——路径挪动/文件被删？")
-    ledger_problems, ledger_rows = audit_ledger(LEDGER, DISC)
+    ledger_problems, ledger_rows, ledger_cells = audit_ledger(LEDGER, DISC)
     problems.extend(ledger_problems)
     ledger_floor = MIN_LEDGER_ROWS.get(DISC.name)
     if ledger_floor is None:
@@ -445,7 +478,13 @@ def main() -> int:
         problems.append(f"台账只核到 {ledger_rows} 行（下限 {ledger_floor}）——表被删/改？")
     elif not LEDGER.is_file() and ledger_floor:
         problems.append(f"references/source_ledger.md 不存在（台账下限 {ledger_floor} 行）")
+    cell_floor = MIN_LEDGER_STAT_CELLS.get(DISC.name, 0)
+    if LEDGER.is_file() and ledger_cells < cell_floor:
+        problems.append(f"台账「干支对／标题」只核到 {ledger_cells} 个数值格（下限 {cell_floor}）"
+                        "——列被删/改成非数字占位？")
     ledger_desc = f"台账 {ledger_rows} 行" if LEDGER.is_file() else "台账 —（无此表）"
+    if LEDGER.is_file():
+        ledger_desc += f"（干支对/标题 {ledger_cells} 格）"
     ext_desc = f"、扩展 {stats['ext']} 项" if stats["ext"] else ""
     meta_desc = f"、元数据 {stats['meta']} 项" if stats["meta"] else ""
     dual_desc = f"、双口径 {stats['dual']} 项" if stats["dual"] else ""
