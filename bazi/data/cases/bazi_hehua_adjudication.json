@@ -78,7 +78,7 @@
  "promotion_path": [
   "①若未来落地：按「真化（月令+独合+根气）/羁绊（合而不化）/争妒（识别标签）」三层通用规则实现，禁 case 分支；数值一律 engineering_mapping",
   "②反事实测量先行（tune/holdout/外集 26/golden 全量 before-after）；外集案例不作落地依据",
-  "③本文件引文逐字回验由 tests/test_bazi_hehua_adjudication.py 锁定；落地时更新 engine_state 快照"
+  "③本文件引文逐字由人工复核（旧 tests 指针从未存在，459 批更正）；落地时更新 engine_state 快照"
  ],
  "assessment_2026_10_05e": {
   "topic": "羁绊语义（合而不化=绊住留连）落地影响面评估——仅评估不落地",

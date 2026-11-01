@@ -9,6 +9,58 @@
 > 399/400/401 撞号，按提交顺序归位为 **408/409/410/411**；原提交 `46d8bc1` 的提交信息
 > 保留旧号作历史，不再改。跨文件引用一律按新号。
 
+## 2026-11-02 第四百五十九批（八字·案例目录幽灵 tests 指针）：**四份案例/裁决文件写着「回验由 tests/…承担」而该测试从不存在；[41] 补扫 `data/cases/*.json` 的 tests 指针，首版锚点写错被负例当场抓到**
+
+**性质**：数据声明修正＋[41] 覆盖扩展（不改判据、不改数据判读、不改读数）。
+
+### 一、缺陷
+
+459 批前的分工是：[11] 文档活引用**整目录跳过 `data/cases/`**（案例正文含书文，
+把它当声明载体扫会造出假红）；[41] 只验 `source_quote` 是否回书源逐字。两边都不看
+案例正文里的路径指针，于是四份文件的幽灵测试指针长期无人抓：
+
+| 文件 | 旧说法 | 实况 |
+|---|---|---|
+| `bazi_bing_yao_observations.json` | 「`tests/test_bazi_bing_yao.py` 会直接判失败」 | bazi/tests 只有 smoke/regression |
+| `bazi_fangju_adjudication.json` | 「`tests/test_bazi_fangju_adjudication.py` 已锁定…」 | 同上 |
+| `bazi_hehua_adjudication.json` | 「回验由 `tests/test_bazi_hehua_adjudication.py` 锁定」 | 同上 |
+| `bazi_external_cases.json` | 「`tests/test_bazi_strength_root_stage.py::…` 持续锁定」 | 同上 |
+
+这正是 458 批在 `dayun_quotes` 抓到的同一类病（幽灵测试指针是 166/168 批两次实抓过的
+高发病），只是这次载体落在 [11] 不扫、[41] 不验的案例目录。
+
+### 二、改法
+
+- [41] `check_case_quotes.py` 新增 E 面：`pointer_problems()` 逐行抓 `tests/*.py`，
+  `_resolves()` 按学科根／仓库根／同名文件解析，不可达即判红；显式病史行
+  （从未存在／全仓不存在／该文件不存在／该测试文件／全历史 0 命中／已随扁平化消失／
+  从未重建／现已不存在／已不存在）豁免——与 [11] 的 458 批口径同源。
+- **首版正则有 bug**：`(?:^|/)tests/…` 在整行 `finditer` 时，`tests/` 前面是空格
+  （「回验由 tests/…」），两个锚点都不成立，**永不命中且无报错**；`--selftest` 的
+  负例自证当场抓到（`× 负例未抓到`），改为 `(?<![A-Za-z0-9_.\\])tests/…`。若不先写
+  负例，这个门会以「全绿」身份静默全盲——与 §四.8「全绿的新门先怀疑、再证明」同因。
+- 四份数据文件的指针改为回指**真实存在的门**或明确的「人工复核」：
+  - `bing_yao_observations`：该错误由人工复核（自动门只守 tests 指针可达性）；
+  - `fangju` / `hehua` adjudication：「本文件 provenance/引文逐字由人工复核
+    （旧 tests 指针从未存在，459 批更正）」；
+  - `external_cases`：外集隔离由 `[13] check_case_isolation` 与 `[12] quote_in_code`
+    持续锁定（这两个门确实存在且在跑）。
+- `check.py` 的 [41] 标题同步写明「案例目录 tests 指针可达」。
+
+### 三、自证（§四.8）
+
+- selftest 增三式：幽灵指针必抓／显式病史行不误杀／**可达指针不误杀**
+  （`tests/regression_test.py` 真在盘）。首版负例名为 `tests/test_ghost_459.py`，
+  被 [11] 当成本文件里的活声明判红——按 §四.8 的约定改名为
+  `tests/__no_such__ghost_459.py`（`__` 双下划线前缀）。
+- 真实探针：往 `bazi_bing_yao_cases.json` 临时塞
+  `回验由 tests/test_ghost_459_probe.py 承担` → `× …:77 tests 指针不可达 → …`，
+  EXIT=**1**；原字节回填，`git diff` 为空（`还原逐字节一致：True`）。
+- 真盘复核：13 份案例 JSON 全部 `all-clear`（0 条不可达指针）。
+- 读数：tune 100.0（n=61）、holdout 100.0（n=279）、外部 69 例逐位不变（§四.7：
+  本轮只动声明文本与门覆盖面，不碰判读）。
+
+
 ## 2026-11-02 第四百五十八批（两科·幽灵 tests 指针）：**`dayun_quotes` 写“回验由 tests/…承担”而该文件从未存在，被同一句历史词遮罩；[11] 给 tests 指针加硬判，真实探针即红**
 
 **性质**：数据声明修正＋共享门覆盖扩展（不改判据、不改数据判读、不改读数）。

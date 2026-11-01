@@ -105,7 +105,7 @@
  "promotion_path": [
   "①若未来落地：改通用规则（strength_and_pattern 增会局入项），禁 case 分支；数值标记 engineering_mapping 并在 details 逐项带 provenance 供审计",
   "②反事实测量先行：tune/holdout（分列出分）/外集 26 例/golden 全量 before-after 翻档统计，任何外集翻转须按 test_bazi_strength_root_stage.py tripwire 范式先登记口径变更",
-  "③tests/test_bazi_fangju_adjudication.py 已锁定本文件 provenance 与 observation-only 纪律；落地时同步改 engine_state_at_adjudication 快照并保留引文血缘"
+  "③本文件 provenance 与 observation-only 纪律由人工复核（旧 tests 指针从未存在，459 批更正）；落地时同步改 engine_state_at_adjudication 快照并保留引文血缘"
  ],
  "promotion_attempt_2026_10_05": {
   "hypothesis": "两支拱局（三合两支/三会两支，生扶侧、无异类冲破）按 JU_BONUS_W 的一半（+1.0）入正常强弱分——序理由：方局章「亦有取二支者，然以旺支为主」表明两支合势有力，且「三支合势，吉凶之力较大」暗示两支<三支。",

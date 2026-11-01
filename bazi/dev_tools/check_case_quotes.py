@@ -24,6 +24,11 @@
   D. 下限守卫：含引文文件数、引文总数、逐字比对数低于登记基线即判红
      （0 结果 ≠ 通过；路径挪动/解析失败必须先显形）。
 
+  E. 案例目录 tests 指针可达（459 批）：`data/cases/*.json` 的正文不受 [11] 扫描
+     （[11] 因案例正文含书文而整目录跳过），于是「回验由 tests/…承担」这类幽灵测试
+     指针在四份案例/裁决文件里长期无人抓。本门逐行抓 `tests/*.py` 并解析（学科根/
+     仓库根/同名文件），不可达即判红；显式病史行（从未存在等）豁免。
+
     python dev_tools/check_case_quotes.py            # 全量对拍
     python dev_tools/check_case_quotes.py --selftest # 正负例自证
 """
@@ -40,9 +45,39 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 DISC = Path(__file__).resolve().parents[1]
+ROOT = DISC.parent
 CASE_DIR = DISC / "data" / "cases"
 SRC_DIR = DISC / "data" / "sources"
 EXEMPT = DISC / "data" / "rules" / "case_quote_exempt.json"
+
+# 459 批：案例目录里的 `tests/` 指针必须可达——[11] 因案例正文含书文而不扫
+# `data/cases/`，四份案例/裁决文件的「回验由 tests/…承担」幽灵指针长期无人抓。
+# 459 批修：原 `(?:^|/)tests/` 在整行 finditer 时，`tests/` 前面是空格（「回验由 tests/…」），
+# 两个锚点都不成立→永不命中（--selftest 的负例自证当场抓到）。改为「前面不是 ASCII 词字符/点/反斜杠」。
+TEST_PTR = re.compile(r"(?<![A-Za-z0-9_.\\])tests/[A-Za-z0-9_\-./\\\u4e00-\u9fff]*\.py")
+STRONG_HISTORY = re.compile(r"从未存在|全仓不存在|该文件不存在|该测试文件|全历史\s*0\s*命中"
+                            r"|已随扁平化消失|从未重建|现已不存在|已不存在")
+
+
+def _resolves(rel: str) -> bool:
+    clean = rel.lstrip("./")
+    for base in (DISC, ROOT):
+        if (base / clean).exists():
+            return True
+    return any(p.name == Path(clean).name for p in DISC.rglob(Path(clean).name) if p.is_file())
+
+
+def pointer_problems(text: str, rel: str) -> list[str]:
+    """案例文件里的 tests 指针：必须可达；显式病史行（标注“不存在”）豁免。"""
+    out: list[str] = []
+    for n, line in enumerate(text.splitlines(), 1):
+        if STRONG_HISTORY.search(line):
+            continue
+        for m in TEST_PTR.finditer(line):
+            ref = m.group(0).lstrip("/")
+            if not _resolves(ref):
+                out.append(f"{rel}:{n} tests 指针不可达 → {ref}")
+    return out
 
 # book → 底本（相对 DISC）。新增引用书源时在此登记；未登记且无 provenance.file 即判红。
 BOOK_SOURCES = {
@@ -210,6 +245,15 @@ def audit_exempt_ledger(exempt: dict) -> list[str]:
 
 def check_all(exempt: dict) -> tuple[list[str], dict]:
     failures: list[str] = audit_exempt_ledger(exempt)
+    # 459 批：案例目录 tests 指针可达性（[11] 不扫 data/cases，本门补上）
+    for p in sorted(CASE_DIR.glob("*.json")):
+        if p.name == "eval_all.json":
+            continue
+        try:
+            txt = p.read_text(encoding="utf-8")
+        except Exception:
+            continue
+        failures.extend(pointer_problems(txt, str(p.relative_to(DISC))))
     stats = {"files": 0, "quotes": 0, "routed": 0, "unrouted": 0, "exempt": 0,
              "per_file": [], "unrouted_detail": [], "exempt_detail": []}
     corpus: dict = {}
@@ -349,6 +393,23 @@ def selftest() -> int:
         if not ok:
             bad += 1
         print(f"  {'√' if ok else '×'} {why}（期望 {want} 条，实为 {n} 条）")
+    # 459 批：案例目录 tests 指针（活指针必抓；显式病史行不误伤）
+    # 负例名按 §四.8 约定走 `__` 双下划线前缀，才不会被 [11] 当成对本仓的活声明。
+    if not pointer_problems("回验由 tests/__no_such__ghost_459.py 承担", "夹具"):
+        bad += 1
+        print("  × 负例未抓到：案例目录里的幽灵 tests 指针")
+    else:
+        print("  √ 负例被抓：案例目录 tests 指针不可达")
+    if pointer_problems("该测试文件 tests/test_ghost_hist.py 从未存在", "夹具"):
+        bad += 1
+        print("  × 正例被误伤：显式病史行")
+    else:
+        print("  √ 正例放行：显式病史行（从未存在）")
+    if pointer_problems("回验由 tests/regression_test.py 承担", "夹具"):
+        bad += 1
+        print("  × 正例被误伤：可达的 tests 指针")
+    else:
+        print("  √ 正例放行：可达 tests 指针")
     full = longest_block(norm(needle), qiong)
     part = longest_block(norm("本书并无此语"), qiong)
     ok_blk = full == len(norm(needle)) and part < 6
@@ -361,8 +422,8 @@ def selftest() -> int:
         return 1
     print(f"  √ selftest：{len(cases) + len(name_cases) + len(ledger_cases)} 件"
           f"（正例×2/尾拼/凭空句/副底本误挂/"
-          f"豁免×2/豁免四柱回潮/豁免专名×2/豁免过期/不可路由/豁免册自洽×5）"
-          f"＋最长连续块全过")
+          f"豁免×2/豁免四柱回潮/豁免专名×2/豁免过期/不可路由/豁免册自洽×5/"
+          f"tests 指针×3）＋最长连续块全过")
     return 0
 
 

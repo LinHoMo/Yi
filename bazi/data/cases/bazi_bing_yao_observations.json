@@ -223,6 +223,6 @@
   "_field_semantics": {
     "known_divergence": "布尔。true = 已登记 engine 与书源不一致（差异记录在 difference）；false = 一致或未比对。**这是状态登记，不是结论断言**——engine 修复后应改为 false，本观察集不阻止修正。",
     "book_support": "书源逐字依据的简短摘引（长引文见 source_quote）。标 known_divergence=true 时必填——分歧必须有书源侧的凭据，不许只凭 engine 输出断言分歧。",
-    "not_a_benchmark": "本文件不得携带任何 alignment / score / holdout 字段。若将来出现，说明有人把它误当评测集——tests/test_bazi_bing_yao.py 会直接判失败。"
+    "not_a_benchmark": "本文件不得携带任何 alignment / score / holdout 字段。若将来出现，说明有人把它误当评测集——该错误由人工复核（自动门只守 tests 指针可达性，459 批）"
   }
 }
