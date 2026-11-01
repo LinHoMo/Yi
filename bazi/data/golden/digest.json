@@ -4,7 +4,7 @@
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化（含 conclusion_sha，任何字段都算），措辞层漂移=narrate 断语变化（两层分列归因）"
   },
   "digest": "b7674a8f6d8d1162",
-  "narrate_digest": "081d93e081f54b2b",
+  "narrate_digest": "e158d5cb8a92e005",
   "drift_log": [
     {
       "from": "57dc7e890af222fa",
@@ -74,30 +74,6 @@
     }
   ],
   "narrate_drift_log": [
-    {
-      "from": "e531f56d263192b2",
-      "to": "28c14deba70f7f88",
-      "date": "2026-10-10",
-      "reason": "报告层修复：命宫/身宫原样印 Python dict（{'branch':'亥','ganzhi':'丁亥','nayin':'屋上土'}）改为「丁亥（纳音屋上土）」；纯措辞层变化，机械层零漂移"
-    },
-    {
-      "from": "28c14deba70f7f88",
-      "to": "d0c04afaf0a86363",
-      "date": "2026-10-10",
-      "reason": "调候原文引文在表示层去掉切片残留的首字符标点（报告不再出现「）：，自有丙火…」）；语料 data/tiaohou_quotes.json 逐字未动（生成器 build_tiaohou.py 有重算比对，须保持字节可复现），纯措辞层漂移，机械层零漂移"
-    },
-    {
-      "from": "d0c04afaf0a86363",
-      "to": "58a9ed2f3c267b9a",
-      "date": "2026-10-10",
-      "reason": "纳音性质名标签修正：data/nayin_quxiang.json 与 NAYIN_XIANGGE 同步剥掉性质名里混入的系词（己巳为近火之木→近火之木、甲申者自生之水→自生之水、癸巳为自绝之水→自绝之水），并补 data 缺的 戊辰/乙卯/庚申/癸亥 四格（引文照录底本 L224/L298/L308/L309，L298 书中作「已卯」形近写、键用正字）。系词是判断句语法不是名字的一部分，性质引文字段逐字未动；机械层零漂移"
-    },
-    {
-      "from": "58a9ed2f3c267b9a",
-      "to": "df3171a2f7b3e7e6",
-      "date": "2026-10-10",
-      "reason": "纳音取象旁证补上底本原句：此前只印裸标签（如「从革之金」），读者无从核证是否书上有此语；现并列原书逐字引句（引文由 [14] 同步门逐字回校验底本）。纯措辞层，机械层零漂移"
-    },
     {
       "from": "df3171a2f7b3e7e6",
       "to": "ac4623f633fed5f5",
@@ -193,6 +169,30 @@
       "to": "081d93e081f54b2b",
       "date": "2026-10-31",
       "reason": "396 批：五行专旺五格（曲直/炎上/稼穑/从革/润下）门落地——MP066（乙未/辛巳/丙午/甲午）由无→炎上·真从（special_pattern 入 conclusion），机械/措辞各 1 条变化；另 MP134/MP266/MT048 三例无→专旺（不在 golden 40）。判据为书定义（每格 2 造 10/10），不进任何评分维度。"
+    },
+    {
+      "from": "081d93e081f54b2b",
+      "to": "c9faa1033d85303c",
+      "date": "2026-11-01",
+      "reason": "八字·接线补G桶：narrate 十神取象块增印能力/构成/注旁证（liushen_image 7/35→19/35，G 61→51）；措辞层有意变更，机械层零漂移"
+    },
+    {
+      "from": "c9faa1033d85303c",
+      "to": "6f08c10ff74f4d05",
+      "date": "2026-11-01",
+      "reason": "八字·接线补G桶·二：①narrate 十神取象块增印能力/构成/注旁证（liushen_image 7/35→19/35）；②xiang 宫位行补印物象/身位（xiang_layer 17/59→25/59）；G 61→43，D=0；措辞层有意变更，机械层零漂移"
+    },
+    {
+      "from": "6f08c10ff74f4d05",
+      "to": "87ff62c6a49d36ba",
+      "date": "2026-11-01",
+      "reason": "399 批：报告层补五行专旺五格书证（_zhuan_wang_block 按 strength.from_kind 取用《千里命稿·外格》引文）。属有意措辞层变更，narrate_sha 由 6f08c10ff74f4d05 → 87ff62c6a49d36ba，机械层 b7674a8f6d8d1162 零漂移。"
+    },
+    {
+      "from": "87ff62c6a49d36ba",
+      "to": "e158d5cb8a92e005",
+      "date": "2026-11-01",
+      "reason": "400 批：报告层补十神作用篇提纲书证（shi_shen_actions 各十神 note 直引《千里命稿·六神篇》，带行号出处）。属有意措辞层变更，narrate_sha 由 87ff62c6a49d36ba → e158d5cb8a92e005，机械层 b7674a8f6d8d1162 零漂移。G 桶 43→37（shi_shen_actions 全印，G=0）。"
     }
   ]
 }

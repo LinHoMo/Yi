@@ -91,6 +91,24 @@ def _cong_hua_block(pattern: str) -> list[str]:
     return [f"**从化所本**（《滴天髓》從化論）：真——「{zhen}」；假——「{jia}」。"]
 
 
+def _zhuan_wang_block(from_kind: str) -> list[str]:
+    """五行专旺五格（《千里命稿》外格）书证：曲直／炎上／稼穑／从革／润下。
+
+    专旺判据在 `strength.from_kind`（396 批单列门），与 `conclusion.pattern`（如月刃格）
+    是两条轴——叙述默认只印 pattern，专旺性质成了「算出来了但看不到」（EVAL-PLAN §六）。
+    本块按 from_kind 补印《千里命稿》外格书证，只出书源句、不批吉凶（铁律三）。
+    """
+    _ZW = {"曲直": "mu", "炎上": "huo", "稼穑": "tu", "从革": "jin", "润下": "shui"}
+    key = _ZW.get(from_kind)
+    if not key:
+        return []
+    cg = _VERDICTS.get("从格引文") or {}
+    q = cg.get(f"zhuan_wang_{key}") or ""
+    if not q:
+        return []
+    return [f"> **{from_kind}格所本**（《千里命稿·外格·{from_kind}格之构成》）：「{q}」"]
+
+
 def _geju_line(pattern: str) -> str:
     """格局名 → 《子平真诠》引文行（查 data/verdicts.json；建禄格走「不适用」口径）。"""
     if not pattern:
@@ -247,6 +265,13 @@ def narrate(a: dict) -> str:
             lines.append(f"> 化格所本（《滴天髓·從化論》）：{_vv}")
     lines += _cong_hua_block(con.get("pattern") or s.get("格局") or "")
     lines.append("")
+    # 五行专旺五格（396 批单列门）：from_kind 在 strength 段、与 conclusion.pattern 不同轴，
+    # 叙述默认只印 pattern（如月刃格），专旺性质「算出来了但看不到」（EVAL-PLAN §六）。
+    # 按 strength.from_kind 补印《千里命稿》外格书证（旁证、非吉凶断语，铁律三）。
+    _zw = (_st or a.get("strength") or {}).get("from_kind") or ""
+    if _zw in ("曲直", "炎上", "稼穑", "从革", "润下"):
+        lines += _zhuan_wang_block(_zw)
+        lines.append("")
     cb = con.get("pattern_cheng_bai") or ""
     if cb:
         cb_basis = con.get("pattern_cheng_bai_basis") or ""
@@ -380,15 +405,35 @@ def narrate(a: dict) -> str:
         # 本书按篇合立（偏正印/偏正财/比劫禄刃），作用表按单星登记 → 合篇取首个单星。
         _HE_PIN = {"偏正印": "正印", "偏正财": "正财", "比劫禄刃": "比劫"}
         for god, e in img.items():
-            q = e.get("取象") or e.get("能力") or ""
-            if not q:
-                continue
-            loc = (e.get("取象_src") or e.get("能力_src") or "").split(":")[-1]
-            lines.append(f"> **{god}**（《千里命稿》{loc} 行）：「{q}」")
-            act = _SHI_SHEN_ACTIONS.get(_HE_PIN.get(god, god))
+            # 取象（定义式取象句）→ 能力（提纲：泄身/生财/…）→ 构成，逐条引文外置
+            # （带行号出处），只作象数旁证、不批吉凶（铁律三）。把此前 G 桶未进报告的
+            # 能力/构成叶子补进正文，闭合「算出来了但看不到」（EVAL-PLAN §六）。
+            q = e.get("取象") or ""
+            if q:
+                loc = (e.get("取象_src") or "").split(":")[-1]
+                lines.append(f"> **{god}·取象**（《千里命稿》{loc} 行）：「{q}」")
+            ab = e.get("能力") or ""
+            if ab and ab != q:
+                loc2 = (e.get("能力_src") or "").split(":")[-1]
+                lines.append(f"> **{god}·能力**（《千里命稿》{loc2} 行）：「{ab}」")
+            cz = e.get("构成") or ""
+            if cz:
+                loc3 = (e.get("构成_src") or "").split(":")[-1]
+                lines.append(f"> **{god}·构成**（《千里命稿》{loc3} 行）：「{cz}」")
+            note = e.get("注") or ""
+            if note:
+                lines.append(f"> 　{note}")
+            pin = _HE_PIN.get(god, god)
+            act = _SHI_SHEN_ACTIONS.get(pin)
             if act and act.get("narrative_hint"):
                 # 整行前缀与正文都取自本表（hint_prefix / narrative_hint），代码不组句
                 lines.append(f"> {act['hint_prefix']}：{act['narrative_hint']}")
+            note2 = (act or {}).get("note") or ""
+            if note2:
+                # 十神作用篇提纲（《千里命稿·六神篇》直引，带行号）：与取象/能力/构成同属
+                # 「算出来了但看不到」的结构化象数旁证，补印闭合 EVAL-PLAN §六。
+                sloc = (act.get("source") or "").split(":")[-1]
+                lines.append(f"> 　「{note2}」（《千里命稿》{sloc} 行）")
         lines.append("")
 
     # 纳音取象旁证（《五行精纪》纳音性质名）：**只作物性标签旁证、不进结构、不评分**。

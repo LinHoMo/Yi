@@ -224,7 +224,11 @@ def format_xiang_text(xiang: dict) -> str:
     for cn in ("年", "月", "日", "时"):
         v = gw.get(cn) or {}
         if v.get("ganzhi"):
-            gw_txt.append(f"{cn}柱{v['ganzhi']}为{v.get('宫位','')}（{v.get('时限','')}）")
+            # 宫位（祖上/父母宫…）＋物象（祖业/出身/早年环境…）＋身位（头颈/上焦…）＋时限，
+            # 把此前 G 桶未进报告的 物象/身位 叶子补进正文，闭合「算出来了但看不到」
+            # （EVAL-PLAN §六）。象层只呈现素材、不进评分（CONTRACT §五-bis）。
+            _desc = "；".join(x for x in (v.get("物象", ""), v.get("身位", ""), v.get("时限", "")) if x)
+            gw_txt.append(f"{cn}柱{v['ganzhi']}为{v.get('宫位', '')}（{_desc}）")
     if gw_txt:
         parts.append("宫位：" + sep.join(gw_txt))
 
