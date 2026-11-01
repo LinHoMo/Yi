@@ -43,15 +43,51 @@ SRC_DIR = DISC / "data" / "sources"
 LEDGER = DISC / "data" / "cases" / "verifications.json"
 OUT = DISC / "data" / "cases" / "verifications_graduation.json"
 
-DATE_PAT = re.compile(r"([子丑寅卯辰巳午未申酉戌亥])月([甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥])日")
+BRANCHES = "子丑寅卯辰巳午未申酉戌亥"
+# dz 转录本把日干「己」写作「已」（与《增删》建器同一混淆）；不认「已」就会
+# 把本案日期回退到上一案（399 批实测：L2424「寅月已酉日」被读成上一案辰月乙卯日）。
+STEMS_SRC = "甲乙丙丁戊己庚辛壬癸已"
+DATE_PAT = re.compile(r"([%s])月([%s])([%s])日" % (BRANCHES, STEMS_SRC, BRANCHES))
 HEX_FORMS = re.compile(
     r"得([\u4e00-\u9fff]{1,4})(?:之|变|變)([\u4e00-\u9fff]{1,4})卦|得([\u4e00-\u9fff]{1,4})卦")
+# 400 批：旧 YING_PAT 只认「应X日/果于X日/至X日应」，漏掉书里大量实录写法
+# （果得於甲午日／果卒於申日／果至卯年／后至辛卯日／果于次年三月／果于七月）。
+# 新式以**结果标记**（果/竟/卒/后）起头，12 字内取支＋日/月/年，或月序（三月→辰）。
+# 只认结果标记，不认纯预测句；跨句以「．」等句读为界（L1165「果得长子．甲戌年」
+# 的甲戌是下一句，不能算本条验支）。
+MONTH_ORDER_BRANCH = {"正": "寅", "一": "寅", "二": "卯", "三": "辰", "四": "巳",
+                      "五": "午", "六": "未", "七": "申", "八": "酉", "九": "戌",
+                      "十": "亥", "冬": "子", "腊": "丑"}
 YING_PAT = re.compile(
-    r"[应應](?:于|在)?([子丑寅卯辰巳午未申酉戌亥])(?:日|月|年)"
-    r"|果于([子丑寅卯辰巳午未申酉戌亥])日"
-    r"|至([子丑寅卯辰巳午未申酉戌亥])日(?:而|方)?[应應]"
-    r"|[应應]在([子丑寅卯辰巳午未申酉戌亥])日")
+    r"[应應](?:于|在)?([%s])(?:日|月|年)"
+    r"|[应應]在([%s])日"
+    r"|[果竟卒后][^。；\n．.]{0,12}?([%s])(日|月|年)"
+    r"|[果竟卒后][^。；\n．.]{0,12}?([正一二三四五六七八九十冬腊])月"
+    r"|至([%s])日(?:而|方)?[应應]" % (BRANCHES, BRANCHES, BRANCHES, BRANCHES))
 MAX_BACK = 40
+
+
+def _norm_day_stem(s: str) -> str:
+    """转录讹字「已」→「己」；其余干原样。"""
+    return "己" if s == "已" else s
+
+
+def _ying_branch(m: re.Match | None) -> str | None:
+    """从 YING_PAT 的任一分组取支；月序组（三/七/八…）按标准月建映射。
+
+    分组顺序：应X／应在X／果-支／果-月序／至X应。单位组（日/月/年）不在支表、
+    也不在月序表，自然跳过。
+    """
+    if not m:
+        return None
+    for g in m.groups():
+        if not g:
+            continue
+        if g in BRANCHES:
+            return g
+        if g in MONTH_ORDER_BRANCH:
+            return MONTH_ORDER_BRANCH[g]
+    return None
 
 
 def resolve_hex(raw: str):
@@ -76,7 +112,8 @@ def classify(rec, lines):
     for j in range(hit, max(-1, hit - MAX_BACK), -1):
         m = DATE_PAT.search(norm(lines[j]))
         if m:
-            block_start, date_key = j, (m.group(1), m.group(2))
+            # DATE_PAT 三段：月支／日干／日支；日干「已」归一为「己」后与日支拼回日柱
+            block_start, date_key = j, (m.group(1), _norm_day_stem(m.group(2)) + m.group(3))
             break
     block = "\n".join(norm(lines[j]) for j in range(block_start, min(len(lines), hit + 2)))
     if not date_key:
@@ -91,9 +128,9 @@ def classify(rec, lines):
     if not o or (hm.group(2) and not ch):
         return "partial_needs_human", "卦名异写不可唯一落表：%r" % (hm.groups(),), {"date": list(date_key)}
     ym = YING_PAT.search(block)
-    ybranch = next((g for g in (ym.groups() if ym else ()) if g), None)
+    ybranch = _ying_branch(ym)
     if not ybranch:
-        return "partial_needs_human", "卦面齐但书载验支不可提（块内无应X日/果于X日）", \
+        return "partial_needs_human", "卦面齐但书载验支不可提（块内无结果标记＋日期令牌）", \
             {"date": list(date_key), "original": o, "changed": ch}
     try:
         yao = case_runner.hex2yao(o, ch)
@@ -107,7 +144,7 @@ def classify(rec, lines):
                               "yingqi_branch": ybranch}
 
 
-def build() -> int:
+def build(report_only: bool = False) -> int:
     if not LEDGER.exists():
         print("× 盘点册不存在——先跑 179 批 harvest")
         return 1
@@ -138,6 +175,28 @@ def build() -> int:
     if bad:
         print("× %d 条引文回验未过——不落盘" % bad)
         return 1
+    if report_only:
+        old = json.loads(OUT.read_text(encoding="utf-8")) if OUT.exists() else {"rows": []}
+        old_status = {r.get("source_id"): r.get("status") for r in old.get("rows", [])}
+        new_status = {r.get("source_id"): r.get("status") for r in rows}
+        old_rest = {sid for sid, st in old_status.items() if st == "restorable"}
+        new_rest = [r for r in rows if r["status"] == "restorable"]
+        new_ids = {r["source_id"] for r in new_rest}
+        added = [r for r in new_rest if r["source_id"] not in old_rest]
+        lost = sorted(old_rest - new_ids)
+        print("√ 报告模式（**未写盘**）：restorable %d｜partial %d｜unrestorable %d｜共 %d"
+              % (cnt["restorable"], cnt["partial_needs_human"], cnt["unrestorable"], len(rows)))
+        print("  旧册 restorable %d → 新 %d｜新增 %d｜减少 %d"
+              % (len(old_rest), len(new_rest), len(added), len(lost)))
+        for r in added:
+            hx = r.get("hex") or {}
+            print("  + %-42s %s｜%s→%s｜应%s"
+                  % (r["source_id"], hx.get("date") or "?", hx.get("original") or "?",
+                     hx.get("changed") or "—", hx.get("yingqi_branch") or "?"))
+        for sid in lost:
+            print("  - %s（旧册 restorable → 新判 %s）" % (sid, new_status.get(sid)))
+        print("  （这是工具盲区复核的实测差；应用差集＝另批重建观察册，本批只报数）")
+        return 0
     doc = {"schema": "yi-liuyao-verifications-graduation/1", "built_at": datetime.now().isoformat(timespec="seconds"),
            "_comment": "观察册：不入 case_splits、不参与评分与调参；restorable 项待人工逐案确认后"
                        "另批入册（§三.4：expected 只抄书载明写的验支）。179 批「可联盘候选 193」系"
@@ -185,10 +244,25 @@ def cmd_selftest() -> int:
     st2, _, _ = classify({"line": 2, "file": "x", "quote": "x"}, ["无日期行。", "得乾卦。", ""])
     if st2 != "unrestorable":
         fails.append("缺日期键未判 unrestorable")
+    # 400 批：已/己 转录混淆与实录式盲区
+    dm = DATE_PAT.search("寅月已酉日")
+    if not dm or _norm_day_stem(dm.group(2)) + dm.group(3) != "己酉":
+        fails.append("「已酉日」未按己酉归一：%r" % (dm.groups() if dm else None))
+    cases = {
+        "果得於甲午日": "午", "果卒於申日": "申", "果至卯年": "卯",
+        "后至辛卯日": "卯", "果于次年三月": "辰", "果于七月": "申",
+    }
+    for text, want in cases.items():
+        got = _ying_branch(YING_PAT.search(text))
+        if got != want:
+            fails.append("实录式漏取：%r→%r（应 %s）" % (text, got, want))
+    for text in ("果于本日酉时", "果于次日大晴", "果得长子.甲戌年", "果得长子．甲戌年"):
+        if _ying_branch(YING_PAT.search(text)) is not None:
+            fails.append("非验支被误取：%r→%r" % (text, _ying_branch(YING_PAT.search(text))))
     if fails:
         print("× selftest：" + "；".join(fails))
         return 1
-    print("√ selftest：异写解析/表外拒绝/合成块三态 全过")
+    print("√ selftest：异写解析/表外拒绝/合成块三态/已己归一/实录式正负例 全过")
     return 0
 
 
@@ -197,12 +271,14 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="自注毕业管道 v0（观察册，不入评分面）")
     ap.add_argument("--verify", action="store_true")
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--report", action="store_true",
+                    help="只按当前分类器重算并打印与在册册的差集，**不写盘**")
     args = ap.parse_args()
     if args.selftest:
         return cmd_selftest()
     if args.verify:
         return cmd_verify()
-    return build()
+    return build(report_only=args.report)
 
 
 if __name__ == "__main__":

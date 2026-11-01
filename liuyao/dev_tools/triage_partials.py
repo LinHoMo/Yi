@@ -39,7 +39,10 @@ OUT = DISC / "data" / "cases" / "verifications_triage.json"
 
 LOOSE_YING = re.compile(r"([" + BR + r"])(?:日|月|年)(?:而|则)?[应應验驗]|"
                         r"[应應验驗]于?[甲乙丙丁戊己庚辛壬癸]?([" + BR + r"])(?:日|月|年)|"
-                        r"果于?[甲乙丙丁戊己庚辛壬癸]?([" + BR + r"])(?:日|月|年)|"
+                        # 400 批：补实录式（果得於／果卒於／果至／后至／果于次年三月）。
+                        # 只认结果标记，且跨句以「．」等句读为界；不认纯预测句。
+                        r"[果竟卒后][^。；\n．.]{0,12}?([" + BR + r"])(日|月|年)|"
+                        r"[果竟卒后][^。；\n．.]{0,12}?([正一二三四五六七八九十冬腊])月|"
                         r"后[一二两三四五六七八九十0-9]+日[而]?[应應验驗]?")
 DATE_PAT = re.compile(r"([子丑寅卯辰巳午未申酉戌亥])月([甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥])日")
 
@@ -60,7 +63,7 @@ def _carry(row: dict, prev: dict | None) -> None:
             row[k] = prev[k]
 
 
-def triage() -> int:
+def triage(report_only: bool = False) -> int:
     grad = json.loads(GRAD.read_text(encoding="utf-8"))
     rows = [r for r in grad["rows"] if r.get("status") == "partial_needs_human"]
     if not rows:
@@ -142,6 +145,22 @@ def triage() -> int:
     for k in META_KEEP:
         if k in prev_doc:
             doc[k] = prev_doc[k]
+    if report_only:
+        old = prev_doc or {}
+        old_b = old.get("buckets") or {}
+        new_b = doc["buckets"]
+        print("√ 报告模式（**未写盘**）：partial %d 条" % len(rows))
+        for k in sorted(set(old_b) | set(new_b)):
+            if old_b.get(k, 0) != new_b.get(k, 0):
+                print("  %-24s 旧 %d → 新 %d" % (k, old_b.get(k, 0), new_b.get(k, 0)))
+        old_a = {r.get("id") for r in (old.get("rows") or {}).get("A_有验支候选", [])}
+        new_a = {r.get("id") for r in buckets.get("A_有验支候选", [])}
+        old_e = {r.get("id") for r in (old.get("rows") or {}).get("A_无验支结案候选", [])}
+        new_e = {r.get("id") for r in buckets.get("A_无验支结案候选", [])}
+        print("  A_有验支 新增 %d：%s" % (len(new_a - old_a), sorted(new_a - old_a)))
+        print("  A_无验支 移出 %d：%s" % (len(old_e - new_e), sorted(old_e - new_e)))
+        print("  （这是正则盲区复核的实测差；应用差集＝另批重建观察册，本批只报数）")
+        return 0
     write_stable(OUT, doc)
     print("√ triage 册落成 %s｜partial %d 条 → %s"
           % (OUT.name, len(rows), doc["buckets"]))
@@ -164,6 +183,15 @@ def selftest() -> int:
         fails.append("日期式正向失效")
     if DATE_PAT.search("明日复占"):
         fails.append("日期式假阳性")
+    # 400 批：实录式正负例（旧式只认果于X日，漏果得於/果卒於/果至/后至/月序）
+    got2 = " ".join(x.group(0) for x in LOOSE_YING.finditer(
+        "果得於甲午日。果卒於申日。后至辛卯日。果于次年三月。果于七月。"))
+    for want in ("果得於甲午日", "果卒於申日", "后至辛卯日", "果于次年三月", "果于七月"):
+        if want not in got2:
+            fails.append("实录式漏取：%r 未命中" % want)
+    for bad in ("果于本日酉时", "果于次日大晴", "果得长子.甲戌年", "果得长子．甲戌年"):
+        if LOOSE_YING.search(bad):
+            fails.append("非验支被误取：%r" % bad)
     # 399 批负例：裁决字段必须按 id 搬运；机械桶字段不搬（桶归属永远重算）
     row = {"id": "X", "why": "机械值"}
     prev = {"id": "X", "decision": "结案", "decision_kind": "已在册",
@@ -180,10 +208,12 @@ def main() -> int:
     force_utf8_stdio()
     ap = argparse.ArgumentParser(description="partial 机械预分诊（观察册，不改判）")
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--report", action="store_true",
+                    help="只按当前分诊逻辑重算并打印与在册册的差集，**不写盘**")
     args = ap.parse_args()
     if args.selftest:
         return selftest()
-    return triage()
+    return triage(report_only=args.report)
 
 
 if __name__ == "__main__":
