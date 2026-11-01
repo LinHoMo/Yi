@@ -19,8 +19,8 @@
     "tables": 0,
     "headings": 0,
     "lines_nonempty": 5358,
-    "lines_physical": 5496
+    "lines_physical": 5495
   },
   "source_file": "data/sources/huangji_jingshi_shu_dz.dz.txt",
-  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须人工对勘留痕（原对勘脚本已随扁平化删除；字节/统计由 [42] 核对）。｜2026-10-07 实测澄清：(1) 原 stats.lines=5358 经核为**非空行计数**，与实测非空行完全一致，并非元数据错误；现补 lines_nonempty=5358 / lines_physical=5496 双口径，后者与 cat -n 行号口径一致，供 dev_tools/check_source_readings.py 逐字核验使用。(2) 旧读法文档 docs/source-readings/huangji_jingshi_shu_dz.md（该目录已随扁平化删除）原登记的「主源全文重影」（L1-2747 与 L2748-5495 重复约 2747 行）经逐行比对**推翻**——两半非空行相同行数为 0，L2749 为「观物内篇」另一篇首，实为不同篇章连续排布，非同一文件被拼两次，故不需截断。书源内容自始至终未改。"
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须人工对勘留痕（原对勘脚本已随扁平化删除；字节/统计由 [42] 核对）。｜2026-10-07 实测澄清：(1) 原 stats.lines=5358 经核为**非空行计数**，与实测非空行完全一致，并非元数据错误；现补 lines_nonempty=5358 / lines_physical=5496 双口径，后者与 cat -n 行号口径一致，供 dev_tools/check_source_readings.py 逐字核验使用。(2) 旧读法文档 docs/source-readings/huangji_jingshi_shu_dz.md（该目录已随扁平化删除）原登记的「主源全文重影」（L1-2747 与 L2748-5495 重复约 2747 行）经逐行比对**推翻**——两半非空行相同行数为 0，L2749 为「观物内篇」另一篇首，实为不同篇章连续排布，非同一文件被拼两次，故不需截断。书源内容自始至终未改。｜2026-11-02（第四百四十二批）：`stats.lines_physical` 原登记 5496，经 [42] 复算更正为 **5495**——5496＝在盘换行符数 5495＋1 的多算一行（底本末尾带换行，`cat -n`／`splitlines()`／文件迭代器三种口径均为 5495）；本条原称「与 cat -n 行号口径一致」，按实改准。`lines_nonempty` 5358 与 `stats.lines` 复算相符，书源字节与 sha256 未动。"
 }

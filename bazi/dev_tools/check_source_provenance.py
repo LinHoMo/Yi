@@ -24,6 +24,16 @@
 433 批刚发现它六行里有四行陈旧（字节/哈希/行数）——本门把该表一并核对
 （字节、sha256 前 16 位、非空行、provenance 存在性）。表不存在则跳过（八字当前无此表）。
 
+442 批追加：**可选双口径行数**。`huangji_jingshi_shu_dz.provenance.json` 在 2026-10-07
+澄清时登记 `lines_nonempty=5358 / lines_physical=5496`，并声明后者「与 cat -n 行号口径
+一致，供 check_source_readings.py 逐字核验使用」——但 433 批的 [42] 只核
+bytes/chars/lines，这两个字段从未被复算。442 批首跑即抓到 `lines_physical` 登记值
+**多一行**：在盘底本换行符 5495 个、末尾带换行，`cat -n`／`splitlines()`／文件迭代器
+三种口径均为 **5495**；5496 是「换行符数 +1」的常见多算（该笔记把该值当作行号口径
+交给人用，错一位就会让「源L」整体错行）。故本门对**已登记**的 `lines_nonempty`
+（非空行，同 `lines` 定义）与 `lines_physical`（`len(text.splitlines())`）一并复算；
+未登记的不强制补（保留历史登记形态，避免为过门批量改数据）。
+
     python dev_tools/check_source_provenance.py
     python dev_tools/check_source_provenance.py --selftest
 """
@@ -60,13 +70,19 @@ def measure(source: Path) -> dict:
         "bytes": len(raw),
         "chars": len(text),
         "lines": sum(1 for ln in text.splitlines() if ln.strip()),
+        # 442 批：双口径行数（仅在 provenance 登记时才核，见 audit）。
+        # lines_nonempty 与 lines 同义（非空行）；lines_physical 是 `cat -n`／
+        # 文件迭代器口径的物理行数 = len(splitlines())，**不是**换行符数 +1
+        # （末尾有换行时 +1 会多算一行，皇极经世书 provenance 原登记即此错）。
+        "lines_nonempty": sum(1 for ln in text.splitlines() if ln.strip()),
+        "lines_physical": len(text.splitlines()),
     }
 
 
 def audit(prov_dir: Path, base: Path) -> tuple[list[str], dict]:
     """逐份核对 provenance ↔ 底本。`base` 是学科根（source_file 相对它解析）。"""
     problems: list[str] = []
-    stats = {"files": 0, "checked": 0, "fields": 0}
+    stats = {"files": 0, "checked": 0, "fields": 0, "dual": 0}
     for pv in sorted(prov_dir.glob("*.provenance.json")):
         stats["files"] += 1
         try:
@@ -101,6 +117,17 @@ def audit(prov_dir: Path, base: Path) -> tuple[list[str], dict]:
                 problems.append(f"{pv.name}：stats.{key} 未登记")
             elif int(reg) != got[key]:
                 problems.append(f"{pv.name}：stats.{key} {reg} ≠ 在盘 {got[key]}")
+        # 442 批：可选双口径行数一旦登记就必须复算相符——它们被逐字回验按行号引用，
+        # 登记值错一位就会把「源L」指向另一行，而 sha/bytes/chars 全绿时无人发现。
+        # 定义见 measure()；未登记的 provenance 不强制补（保留历史登记形态）。
+        for key in ("lines_nonempty", "lines_physical"):
+            if key not in (d.get("stats") or {}):
+                continue
+            stats["dual"] += 1
+            reg = d["stats"][key]
+            if int(reg) != got[key]:
+                problems.append(f"{pv.name}：stats.{key} {reg} ≠ 在盘 {got[key]}"
+                                f"（口径见 check_source_provenance.measure）")
     if stats["files"] == 0:
         problems.append("扫描到 0 份 provenance——0 结果 ≠ 通过，先确认路径没挪动")
     return problems, stats
@@ -183,6 +210,9 @@ def _fixture(root: Path, source_text: str = "甲子\n\n乙丑\n", **overrides) -
         prov.pop("sha256")
     if "note" in overrides:
         prov["note"] = overrides["note"]
+    # 442 批：可选双口径字段（`extra` 里的键直接并入 stats；不传即保持历史形态）
+    for k, v in (overrides.get("extra") or {}).items():
+        prov["stats"][k] = v
     (src_dir / "jubu.provenance.json").write_text(
         json.dumps(prov, ensure_ascii=False), encoding="utf-8")
     return src_dir
@@ -249,6 +279,14 @@ def selftest() -> int:
         ("负例：0 份 provenance", "0 份", empty),
         ("负例：note 仍指向已删除 tools/", "tools/",
          lambda r: _fixture(r, note="须跑 tools/crosscheck_source.py 对勘留痕")),
+        # 442 批：可选双口径（夹具底本 "甲子\n\n乙丑\n" = 非空 2 行 / 物理 3 行）
+        ("正例：双口径登记值与底本一致", None,
+         lambda r: _fixture(r, extra={"lines_nonempty": 2, "lines_physical": 3})),
+        ("负例：lines_physical 按「换行符+1」多算一行", "stats.lines_physical",
+         lambda r: _fixture(r, extra={"lines_nonempty": 2, "lines_physical": 4})),
+        ("负例：lines_nonempty 登记错", "stats.lines_nonempty",
+         lambda r: _fixture(r, extra={"lines_nonempty": 3, "lines_physical": 3})),
+        ("正例：未登记双口径不强制补", None, lambda r: _fixture(r)),
     ]
     ledger_cases = [
         ("台账正例：行值与底本一致", None, lambda r: _ledger_fixture(r)),
@@ -317,8 +355,9 @@ def main() -> int:
     elif not LEDGER.is_file() and ledger_floor:
         problems.append(f"references/source_ledger.md 不存在（台账下限 {ledger_floor} 行）")
     ledger_desc = f"台账 {ledger_rows} 行" if LEDGER.is_file() else "台账 —（无此表）"
+    dual_desc = f"、双口径 {stats['dual']} 项" if stats["dual"] else ""
     print(f"[42] 底本完整性：{stats['files']} 份 provenance（核到 {stats['checked']} 份底本、"
-          f"{stats['fields']} 项统计）；{ledger_desc}")
+          f"{stats['fields']} 项统计{dual_desc}）；{ledger_desc}")
     st_fail = selftest() if args.selftest else 0
     if problems:
         print(f"\n失败 {len(problems)} 项：")
@@ -327,7 +366,7 @@ def main() -> int:
         return 1
     if st_fail:
         return 1
-    print("  √ sha256/bytes/chars/lines 与在盘底本逐项相符（台账表同源）")
+    print("  √ sha256/bytes/chars/lines（含已登记双口径）与在盘底本逐项相符（台账表同源）")
     return 0
 
 

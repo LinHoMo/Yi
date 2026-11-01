@@ -5,6 +5,40 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-02 第四百四十二批（两科·[42] 双口径行数）：**provenance 可选 `lines_nonempty`／`lines_physical` 首次纳入机械复算；八字侧当场抓到一处多算一行，六爻无登记故零影响**
+
+**性质**：共享门覆盖扩展（不改引擎、不改案例、不改读数；六爻数据零改动）。
+
+### 一、缺陷（登记了行号口径字段，门却只核四项）
+
+`bazi/data/sources/huangji_jingshi_shu_dz.provenance.json` 登记了
+`lines_nonempty / lines_physical` 两个双口径行数，并声称后者「与 cat -n 行号口径一致，
+供 check_source_readings.py 逐字核验使用」；[42] 自 433 批起只复算
+`sha256/bytes/chars/lines`，这两个字段落在门外观测区。六爻当前无 provenance 登记
+双口径字段，但门是共享真源，改一次两科同时受判。
+
+### 二、改法
+
+- `measure()` 增算 `lines_nonempty`（非空行，同 `lines`）与 `lines_physical`
+  （`len(text.splitlines())`＝cat -n／迭代器口径，不是换行符数 +1）。
+- `audit()` 仅对**已登记**的双口径字段复算比对；未登记不强制补（保留历史形态，
+  避免为过门批量改数据）。输出行加「双口径 N 项」，0 项不打印。
+- selftest 增 4 件：双口径正确（正例）、`lines_physical` 按换行符+1 多算（负例）、
+  `lines_nonempty` 登记错（负例）、未登记不强制补（正例）；总数 15→**19**。
+- 共享真源改后 `sync_devkit.py --write` 重生成两科副本。
+
+### 三、自证（§四.8）
+
+- 八字首跑精确抓到 `huangji_jingshi_shu_dz.provenance.json：stats.lines_physical
+  5496 ≠ 在盘 5495`，更正登记后 0 条；六爻 [42] 0 条（16 份 provenance、48 项统计）。
+- selftest 19 件全过（provenance 12＋台账 7）。
+- 读数：tune **97.9%**（n=20）／holdout **90.2%**（n=12）／外部各集逐位不变
+  （本批不触判据，读数不动属预期，§四.7）。
+
+**全门复验**：`liuyao/dev_tools/check.py` 全过（[0]–[43]）；`sync_devkit.py --check`
+12 件逐字节一致。
+
+
 ## 2026-11-02 第四百四十一批（两科·死链门补 `tools` 前缀）：**已删除的 `tools/` 路径首次纳入裸路径扫描；历史语境加显式豁免词、负例自证 3→4；顺改 `check_case_isolation` 过时头注**
 
 **性质**：共享门覆盖扩展＋文档串修正（不改引擎、不改案例、不改读数）。
