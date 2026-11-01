@@ -1,0 +1,50 @@
+{
+  "_meta": {
+    "description": "《增删卜易》dz 散文通道（ZDP*）吉凶逐条书证册（421 批）。只收书上明写的实现句；quote 必须是底本逐字子串（建器写盘前回验，不在底本即拒绝写盘）。verdict 空串＝N/A（吉凶并存、无结果句或结果属同段后卦）。",
+    "source": "zengshan_buyi_dz.dz.txt",
+    "rule": "旧册值按源行沿用（本批只修应期归属）；本册只覆盖已逐条读过的案例，未入册者不改；新入册案例默认 N/A。",
+    "batch": 421
+  },
+  "readings": {
+    "zengshan_buyi_dz.dz.txt L1078": {
+      "verdict": "",
+      "quote": "父母用神不现，明知巳火父母伏于二爻寅木之下"
+    },
+    "zengshan_buyi_dz.dz.txt L1783": {
+      "verdict": "",
+      "quote": "余曰：今日卦与昨日相同，世爻破而入墓，官星两现，皆空破"
+    },
+    "zengshan_buyi_dz.dz.txt L2241": {
+      "verdict": "凶",
+      "quote": "此人自二十五岁至五十多岁东奔西走，一事无成"
+    },
+    "zengshan_buyi_dz.dz.txt L2334": {
+      "verdict": "凶",
+      "quote": "后竟纳之，名败身丧"
+    },
+    "zengshan_buyi_dz.dz.txt L2369": {
+      "verdict": "吉",
+      "quote": "官至元戎将军"
+    },
+    "zengshan_buyi_dz.dz.txt L2398": {
+      "verdict": "",
+      "quote": "遂鬼孙期颐之祝，必享长年"
+    },
+    "zengshan_buyi_dz.dz.txt L2614": {
+      "verdict": "凶",
+      "quote": "后竟生离"
+    },
+    "zengshan_buyi_dz.dz.txt L2843": {
+      "verdict": "",
+      "quote": "不出三日得差，行至中途而死"
+    },
+    "zengshan_buyi_dz.dz.txt L3016": {
+      "verdict": "",
+      "quote": "断曰：卦中财爻不现，亥水兄爻持世，父临月建生助兄爻，如缘木以求鱼也"
+    },
+    "zengshan_buyi_dz.dz.txt L3088": {
+      "verdict": "凶",
+      "quote": "后来存货堆积四年，朽坏大半，大亏其本"
+    }
+  }
+}

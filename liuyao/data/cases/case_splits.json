@@ -344,26 +344,21 @@
   "note_yiin_holdout": "《易隐》dz 底本直抽（九道门：纳甲/阴阳/动爻三重自洽＋时点＋占题＋同案去重）。外部验证集，永不参与调参；吉凶记 null，只评应期。",
   "zengshan_dz_prose_holdout": [
     "ZDP001",
-    "ZDP005",
     "ZDP006",
-    "ZDP007",
     "ZDP010",
-    "ZDP011",
-    "ZDP016",
-    "ZDP017",
-    "ZDP018",
-    "ZDP023",
-    "ZDP032"
+    "ZDP026"
   ],
   "zengshan_dz_prose_direction": [
     "ZDP004",
     "ZDP009",
+    "ZDP012",
+    "ZDP013",
+    "ZDP019",
     "ZDP022",
-    "ZDP025",
-    "ZDP026",
     "ZDP027",
     "ZDP028",
     "ZDP029",
+    "ZDP032",
     "ZDP033",
     "ZDP036"
   ]

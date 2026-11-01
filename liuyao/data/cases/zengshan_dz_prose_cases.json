@@ -3,7 +3,7 @@
   "source": "zengshan_buyi_dz.dz.txt",
   "source_kind": "dz 底本散文排印（六亲+地支+′″+世应 两列式）",
   "generated_by": "dev_tools/fetch_zengshan_dz_cases.py",
-  "date": "2026-10-29",
+  "date": "2026-11-02",
   "note": "与 wikisource_cases.json 同结构；三方校验同源，不另造口径"
  },
  "cases": [
@@ -24,9 +24,16 @@
     "use_god": "",
     "use_god_branch": "",
     "use_god_position": "",
-    "yingqi": "子年",
-    "yingqi_branches": [],
-    "detail": "果于子年建功卯年得意而归，此应静而逢冲之验也。又有巳月甲寅日占严师训子得天地否卦变乾卦父母"
+    "yingqi": "子年、卯年",
+    "yingqi_branches": [
+     "子",
+     "卯"
+    ],
+    "detail": "果于子年建功卯年得意而归，此应静而逢冲之验也。"
+   },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "421 批沿用旧册（只修应期归属）"
    },
    "_src": "zengshan_buyi_dz.dz.txt L797",
    "id": "ZDP001"
@@ -56,6 +63,10 @@
     "yingqi_branches": [],
     "detail": "果两月，其子得病，辞师未久而子死矣。凡得六合变六冲者，诸占先合后离、先亲后疏、先浓后淡，始"
    },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "421 批沿用旧册 N/A"
+   },
    "_src": "zengshan_buyi_dz.dz.txt L805",
    "id": "ZDP002"
   },
@@ -79,6 +90,11 @@
     "yingqi": "",
     "yingqi_branches": [],
     "detail": ""
+   },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "书证逐字：父母用神不现，明知巳火父母伏于二爻寅木之下",
+    "verdict_quote": "父母用神不现，明知巳火父母伏于二爻寅木之下"
    },
    "_src": "zengshan_buyi_dz.dz.txt L1078",
    "id": "ZDP003"
@@ -104,6 +120,10 @@
     "yingqi_branches": [],
     "detail": "果无音讯，四年知父而遇害矣。用克世勿作凶看者，乃用为克世也，旧注主事爻动来克世，乃是事来赶"
    },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "421 批沿用旧册（只修应期归属）"
+   },
    "_src": "zengshan_buyi_dz.dz.txt L1686",
    "id": "ZDP004"
   },
@@ -120,13 +140,18 @@
     "generation": "游魂"
    },
    "expected": {
-    "verdict": "吉",
+    "verdict": "",
     "use_god": "",
     "use_god_branch": "",
     "use_god_position": "",
-    "yingqi": "巳年",
+    "yingqi": "",
     "yingqi_branches": [],
-    "detail": "果以原品起用；又本府府尊命下，不准复职，后援刑例果于巳年补陕庆阳府知府。余于彼地三五月，了"
+    "detail": ""
+   },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "书证逐字：余曰：今日卦与昨日相同，世爻破而入墓，官星两现，皆空破",
+    "verdict_quote": "余曰：今日卦与昨日相同，世爻破而入墓，官星两现，皆空破"
    },
    "_src": "zengshan_buyi_dz.dz.txt L1783",
    "id": "ZDP005"
@@ -149,11 +174,45 @@
     "use_god_branch": "",
     "use_god_position": "",
     "yingqi": "申日",
-    "yingqi_branches": [],
+    "yingqi_branches": [
+     "申"
+    ],
     "detail": "果于申日文书实收俱到，应申日者，寅木官星持世，静而逢冲之日也。若以流年作鬼断者，如天远矣。"
+   },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "421 批沿用旧册（只修应期归属）"
    },
    "_src": "zengshan_buyi_dz.dz.txt L1855",
    "id": "ZDP006"
+  },
+  {
+   "input": {
+    "date": "巳月己卯日",
+    "question": "占何日晴"
+   },
+   "hexagram": {
+    "original": "离",
+    "changed": "",
+    "moving": [],
+    "palace": "离",
+    "generation": "六世"
+   },
+   "expected": {
+    "verdict": "",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "",
+    "yingqi_branches": [],
+    "detail": ""
+   },
+   "provenance": {
+    "day_stem_normalized": true,
+    "verdict_source": "421 批沿用旧册 N/A"
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L2042",
+   "id": "ZDP037"
   },
   {
    "input": {
@@ -172,9 +231,13 @@
     "use_god": "",
     "use_god_branch": "",
     "use_god_position": "",
-    "yingqi": "寅日",
+    "yingqi": "",
     "yingqi_branches": [],
-    "detail": "果于寅日云卯"
+    "detail": "果于次日常见阴云。冲则应，填则实，最喜动空。人以为空则无功，殊不知动而空者，占晴占雨若非冲"
+   },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "421 批沿用旧册 N/A"
    },
    "_src": "zengshan_buyi_dz.dz.txt L2061",
    "id": "ZDP007"
@@ -203,6 +266,10 @@
     "yingqi_branches": [],
     "detail": ""
    },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "421 批沿用旧册 N/A"
+   },
    "_src": "zengshan_buyi_dz.dz.txt L2129",
    "id": "ZDP008"
   },
@@ -219,13 +286,18 @@
     "generation": "游魂"
    },
    "expected": {
-    "verdict": "吉",
+    "verdict": "凶",
     "use_god": "",
     "use_god_branch": "",
     "use_god_position": "",
     "yingqi": "",
     "yingqi_branches": [],
     "detail": "果然颠倒昏迷，及逢墓库冲开，如苗逢雨。谚云：福至心灵，爻中再有财福相生，或财福旺相者，陡然"
+   },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "书证逐字：此人自二十五岁至五十多岁东奔西走，一事无成",
+    "verdict_quote": "此人自二十五岁至五十多岁东奔西走，一事无成"
    },
    "_src": "zengshan_buyi_dz.dz.txt L2241",
    "id": "ZDP009"
@@ -247,9 +319,15 @@
     "use_god": "",
     "use_god_branch": "",
     "use_god_position": "",
-    "yingqi": "寅年",
-    "yingqi_branches": [],
-    "detail": "果于寅年医好富翁，厚赠读书。午年一榜，富翁及亲友又赠，援例县令，未几丁艰，及至补缺未几，里"
+    "yingqi": "巳年",
+    "yingqi_branches": [
+     "巳"
+    ],
+    "detail": "后至巳年因开铅矿，连开数穴，富冠一乡。野鹤曰：古法当应冲开戌墓之年，此卦而应冲世之年。卦宫衰"
+   },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "421 批沿用旧册（只修应期归属）"
    },
    "_src": "zengshan_buyi_dz.dz.txt L2250",
    "id": "ZDP010"
@@ -271,9 +349,13 @@
     "use_god": "",
     "use_god_branch": "",
     "use_god_position": "",
-    "yingqi": "卯年",
+    "yingqi": "",
     "yingqi_branches": [],
-    "detail": "果于卯年援例入临，巳年初任兵马即加纳县令，未年再位江南。旧注官鬼持世疾病缠绵，若是贵人。勿"
+    "detail": ""
+   },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "421 批沿用旧册 N/A"
    },
    "_src": "zengshan_buyi_dz.dz.txt L2309",
    "id": "ZDP011"
@@ -291,13 +373,18 @@
     "generation": "六世"
    },
    "expected": {
-    "verdict": "",
+    "verdict": "凶",
     "use_god": "",
     "use_god_branch": "",
     "use_god_position": "",
     "yingqi": "",
     "yingqi_branches": [],
     "detail": ""
+   },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "书证逐字：后竟纳之，名败身丧",
+    "verdict_quote": "后竟纳之，名败身丧"
    },
    "_src": "zengshan_buyi_dz.dz.txt L2334",
    "id": "ZDP012"
@@ -315,13 +402,18 @@
     "generation": "归魂"
    },
    "expected": {
-    "verdict": "",
+    "verdict": "吉",
     "use_god": "",
     "use_god_branch": "",
     "use_god_position": "",
     "yingqi": "",
     "yingqi_branches": [],
     "detail": ""
+   },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "书证逐字：官至元戎将军",
+    "verdict_quote": "官至元戎将军"
    },
    "_src": "zengshan_buyi_dz.dz.txt L2369",
    "id": "ZDP013"
@@ -347,6 +439,10 @@
     "yingqi_branches": [],
     "detail": ""
    },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "421 批沿用旧册 N/A"
+   },
    "_src": "zengshan_buyi_dz.dz.txt L2379",
    "id": "ZDP014"
   },
@@ -371,6 +467,10 @@
     "yingqi_branches": [],
     "detail": ""
    },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "421 批沿用旧册 N/A"
+   },
    "_src": "zengshan_buyi_dz.dz.txt L2388",
    "id": "ZDP015"
   },
@@ -387,13 +487,18 @@
     "generation": "游魂"
    },
    "expected": {
-    "verdict": "吉",
+    "verdict": "",
     "use_god": "",
     "use_god_branch": "",
     "use_god_position": "",
-    "yingqi": "未年",
+    "yingqi": "",
     "yingqi_branches": [],
-    "detail": "果终于未年七月。元神宜于安静。占寿，世为根本，元神为滋生之物，宜旺而静不宜动摇，其故何也？"
+    "detail": ""
+   },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "书证逐字：遂鬼孙期颐之祝，必享长年",
+    "verdict_quote": "遂鬼孙期颐之祝，必享长年"
    },
    "_src": "zengshan_buyi_dz.dz.txt L2398",
    "id": "ZDP016"
@@ -415,9 +520,13 @@
     "use_god": "",
     "use_god_branch": "",
     "use_god_position": "",
-    "yingqi": "寅日",
+    "yingqi": "",
     "yingqi_branches": [],
-    "detail": "果结于甲寅日。克在内，世在外，宜于外避。克神若在内卦，动而克世，宜出外避之，克神若在外卦，"
+    "detail": ""
+   },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "421 批沿用旧册 N/A"
    },
    "_src": "zengshan_buyi_dz.dz.txt L2474",
    "id": "ZDP017"
@@ -439,9 +548,13 @@
     "use_god": "",
     "use_god_branch": "",
     "use_god_position": "",
-    "yingqi": "子年",
+    "yingqi": "",
     "yingqi_branches": [],
-    "detail": "果终于子年。若以古法，阳为父，阴为母，前卦丑戌两现，俱以旺而断者，如天远矣。又如巳月乙酉日"
+    "detail": ""
+   },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "421 批沿用旧册 N/A"
    },
    "_src": "zengshan_buyi_dz.dz.txt L2548",
    "id": "ZDP018"
@@ -459,13 +572,18 @@
     "generation": "三世"
    },
    "expected": {
-    "verdict": "",
+    "verdict": "凶",
     "use_god": "",
     "use_god_branch": "",
     "use_god_position": "",
     "yingqi": "",
     "yingqi_branches": [],
     "detail": ""
+   },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "书证逐字：后竟生离",
+    "verdict_quote": "后竟生离"
    },
    "_src": "zengshan_buyi_dz.dz.txt L2614",
    "id": "ZDP019"
@@ -491,6 +609,10 @@
     "yingqi_branches": [],
     "detail": "果于次年六月父子相逢。财化子，可辨正出庶出。卦有财而无子孙者，须看变出之爻，变爻子孙。庶出"
    },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "421 批沿用旧册 N/A"
+   },
    "_src": "zengshan_buyi_dz.dz.txt L2646",
    "id": "ZDP020"
   },
@@ -515,6 +637,10 @@
     "yingqi_branches": [],
     "detail": ""
    },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "421 批沿用旧册 N/A"
+   },
    "_src": "zengshan_buyi_dz.dz.txt L2753",
    "id": "ZDP021"
   },
@@ -537,7 +663,11 @@
     "use_god_position": "",
     "yingqi": "",
     "yingqi_branches": [],
-    "detail": "果得成名。凡得六冲卦，官父世爻俱旺者，不必再占，竟许必得。如父旺者，须再占一卦，再得吉者，"
+    "detail": ""
+   },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "421 批沿用旧册（只修应期归属）"
    },
    "_src": "zengshan_buyi_dz.dz.txt L2791",
    "id": "ZDP022"
@@ -555,13 +685,18 @@
     "generation": "五世"
    },
    "expected": {
-    "verdict": "吉",
+    "verdict": "",
     "use_god": "",
     "use_god_branch": "",
     "use_god_position": "",
-    "yingqi": "亥月",
+    "yingqi": "",
     "yingqi_branches": [],
-    "detail": "果得升于亥月。    又如戌月辛酉日占何日补官得蹇之需子孙子水″"
+    "detail": ""
+   },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "书证逐字：不出三日得差，行至中途而死",
+    "verdict_quote": "不出三日得差，行至中途而死"
    },
    "_src": "zengshan_buyi_dz.dz.txt L2843",
    "id": "ZDP023"
@@ -590,6 +725,10 @@
     "yingqi_branches": [],
     "detail": ""
    },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "421 批沿用旧册 N/A"
+   },
    "_src": "zengshan_buyi_dz.dz.txt L2904",
    "id": "ZDP024"
   },
@@ -606,13 +745,18 @@
     "generation": "四世"
    },
    "expected": {
-    "verdict": "吉",
+    "verdict": "",
     "use_god": "",
     "use_god_branch": "",
     "use_god_position": "",
     "yingqi": "",
     "yingqi_branches": [],
-    "detail": "果得财，应辰日者，世动逢合之日也。    又如巳月丁巳日占求财得即济变涣卦兄弟子水″应"
+    "detail": ""
+   },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "书证逐字：断曰：卦中财爻不现，亥水兄爻持世，父临月建生助兄爻，如缘木以求鱼也",
+    "verdict_quote": "断曰：卦中财爻不现，亥水兄爻持世，父临月建生助兄爻，如缘木以求鱼也"
    },
    "_src": "zengshan_buyi_dz.dz.txt L3016",
    "id": "ZDP025"
@@ -634,9 +778,15 @@
     "use_god": "",
     "use_god_branch": "",
     "use_god_position": "",
-    "yingqi": "",
-    "yingqi_branches": [],
-    "detail": "果得财，应辰日者，世动逢合之日也。    又如巳月丁巳日占求财得即济变涣卦兄弟子水″应"
+    "yingqi": "辰日",
+    "yingqi_branches": [
+     "辰"
+    ],
+    "detail": "果得财，应辰日者，世动逢合之日也。"
+   },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "421 批沿用旧册（只修应期归属）"
    },
    "_src": "zengshan_buyi_dz.dz.txt L3028",
    "id": "ZDP026"
@@ -654,13 +804,18 @@
     "generation": "游魂"
    },
    "expected": {
-    "verdict": "吉",
+    "verdict": "凶",
     "use_god": "",
     "use_god_branch": "",
     "use_god_position": "",
     "yingqi": "",
     "yingqi_branches": [],
-    "detail": "果于正月勃然大长，此乃财爻被克待冲去克神之月。财逢合而当令。遇合者有应动而逢合之月而得价也"
+    "detail": "后来存货堆积四年，朽坏大半，大亏其本。货有定时，须凭时令，物无定者，指利而占。定时者有贵贱之"
+   },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "书证逐字：后来存货堆积四年，朽坏大半，大亏其本",
+    "verdict_quote": "后来存货堆积四年，朽坏大半，大亏其本"
    },
    "_src": "zengshan_buyi_dz.dz.txt L3088",
    "id": "ZDP027"
@@ -686,6 +841,10 @@
     "yingqi_branches": [],
     "detail": "果去，不数日，得价出脱。此乃爻逢六合，财逢月合，及时脱货也。财逢冲而当起；财旺而静或旺而空"
    },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "421 批沿用旧册（只修应期归属）"
+   },
    "_src": "zengshan_buyi_dz.dz.txt L3109",
    "id": "ZDP028"
   },
@@ -709,6 +868,10 @@
     "yingqi": "",
     "yingqi_branches": [],
     "detail": "果中间人作弊，告到官府，误了一个月。幸好到地头上价格上涨，果然得了厚利。此乃指其地而占者无"
+   },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "421 批沿用旧册（只修应期归属）"
    },
    "_src": "zengshan_buyi_dz.dz.txt L3125",
    "id": "ZDP029"
@@ -734,6 +897,10 @@
     "yingqi_branches": [],
     "detail": ""
    },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "421 批沿用旧册 N/A"
+   },
    "_src": "zengshan_buyi_dz.dz.txt L3135",
    "id": "ZDP030"
   },
@@ -758,6 +925,10 @@
     "yingqi_branches": [],
     "detail": ""
    },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "421 批沿用旧册 N/A"
+   },
    "_src": "zengshan_buyi_dz.dz.txt L3216",
    "id": "ZDP031"
   },
@@ -778,9 +949,13 @@
     "use_god": "",
     "use_god_branch": "",
     "use_god_position": "",
-    "yingqi": "巳日",
+    "yingqi": "",
     "yingqi_branches": [],
-    "detail": "果于巳日到。亥月甲子日占夫在外还往他省去否得大壮之大过兄弟戌土″"
+    "detail": "果于申时到。"
+   },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "421 批沿用旧册（只修应期归属）"
    },
    "_src": "zengshan_buyi_dz.dz.txt L3323",
    "id": "ZDP032"
@@ -806,6 +981,10 @@
     "yingqi_branches": [],
     "detail": "果於本日愈。觉子曰：如占自身及兄弟妻儿者，此法是也，若占父母之灾，官鬼为父母之元神，岂宜子"
    },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "421 批沿用旧册（只修应期归属）"
+   },
    "_src": "zengshan_buyi_dz.dz.txt L3381",
    "id": "ZDP033"
   },
@@ -830,8 +1009,40 @@
     "yingqi_branches": [],
     "detail": ""
    },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "421 批沿用旧册 N/A"
+   },
    "_src": "zengshan_buyi_dz.dz.txt L3524",
    "id": "ZDP034"
+  },
+  {
+   "input": {
+    "date": "戌月己亥日",
+    "question": ""
+   },
+   "hexagram": {
+    "original": "鼎",
+    "changed": "",
+    "moving": [],
+    "palace": "离",
+    "generation": "二世"
+   },
+   "expected": {
+    "verdict": "",
+    "use_god": "",
+    "use_god_branch": "",
+    "use_god_position": "",
+    "yingqi": "",
+    "yingqi_branches": [],
+    "detail": ""
+   },
+   "provenance": {
+    "day_stem_normalized": true,
+    "verdict_source": "421 批沿用旧册 N/A"
+   },
+   "_src": "zengshan_buyi_dz.dz.txt L3587",
+   "id": "ZDP038"
   },
   {
    "input": {
@@ -853,6 +1064,10 @@
     "yingqi": "",
     "yingqi_branches": [],
     "detail": "果一一无错，此地吉否？余曰：此乃占地穴之形势耳，非关吉凶祸福，余笑前贤以一卦而断父子弟兄妻"
+   },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "421 批沿用旧册 N/A"
    },
    "_src": "zengshan_buyi_dz.dz.txt L3640",
    "id": "ZDP035"
@@ -877,6 +1092,10 @@
     "yingqi": "",
     "yingqi_branches": [],
     "detail": "果得原钱于红花之下，掘之周围仅有丈余，皆泥土也，余皆石块，此公次年开府，两公郎五年之内俱登"
+   },
+   "provenance": {
+    "day_stem_normalized": false,
+    "verdict_source": "421 批沿用旧册（只修应期归属）"
    },
    "_src": "zengshan_buyi_dz.dz.txt L3664",
    "id": "ZDP036"

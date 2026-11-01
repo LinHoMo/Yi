@@ -49,8 +49,13 @@ SRC = DISC / "data" / "sources" / "zengshan_buyi_dz.dz.txt"
 # 首版误用了同名文件，把原 21 例覆盖掉了（329 批自曝，哨兵取数失败时才发现）。
 OUT = DISC / "data" / "cases" / "zengshan_dz_prose_cases.json"
 SPLITS = DISC / "data" / "cases" / "case_splits.json"
+# 吉凶逐条书证册（421 批）：只收书上明写的实现句，quote 必须是底本逐字子串。
+READINGS = DISC / "data" / "cases" / "zengshan_dz_prose_readings.json"
 
-HEADER_DATE = re.compile(r"([子丑寅卯辰巳午未申酉戌亥])月\s*([甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥])日?")
+HEADER_DATE = re.compile(r"([子丑寅卯辰巳午未申酉戌亥])月\s*([甲乙丙丁戊己庚辛壬癸已][子丑寅卯辰巳午未申酉戌亥])日?")
+# 弱日期头：只记月建＋日支（「寅月亥日占主人何时回」）。只用于**断语止界**——
+# 这类续占没有日干，进不了 find_blocks，但仍是新一案的开头，不能把它的结果算给前案。
+WEAK_HEAD_DATE = re.compile(r"([子丑寅卯辰巳午未申酉戌亥])月\s*([子丑寅卯辰巳午未申酉戌亥])日")
 # dz 底本的变卦记法是「得X卦变Y」（Y 可不带"卦"字），维基本才是「得X之Y卦」——
 # 只认"之"会把变卦列整列当成静卦，于是每个案例都撞上"无變卦却标动爻"。
 HEX_PAIR = re.compile(r"得([一-龥]{1,4}?)卦?(?:之|变)([一-龥]{1,4}?)卦?(?=[，。；、\s]|$)")
@@ -95,6 +100,12 @@ def find_blocks(lines: list[str]) -> list[dict]:
             i += 1
             continue
         month_branch, day_gz = md.group(1), md.group(2)
+        # 421 批：转录本把「己」写作「已」（dz 表格式通道早已归一并在 provenance 留痕，
+        # prose 通道此前 HEADER_DATE 直接不认已日——17 条占例头被静默漏掉，且前案
+        # 会读到这些漏认头行的下一案结果：ZDP016 的「未年」实为申月已卯日案的结果）。
+        day_stem_normalized = day_gz[0] == "已"
+        if day_stem_normalized:
+            day_gz = "己" + day_gz[1:]
         mp = HEX_PAIR.search(line)
         orig_raw = chg_raw = ""
         if mp:
@@ -125,7 +136,8 @@ def find_blocks(lines: list[str]) -> list[dict]:
         if len(rows) == 6:
             blocks.append({"head": i, "end": j - 1, "rows": rows, "cols": len(rows[0]),
                            "orig_raw": orig_raw, "chg_raw": chg_raw,
-                           "month_branch": month_branch, "day_gz": day_gz, "head_text": line})
+                           "month_branch": month_branch, "day_gz": day_gz,
+                           "day_stem_normalized": day_stem_normalized, "head_text": line})
         i = max(j, i + 1)
     return blocks
 
@@ -135,7 +147,51 @@ def _question(head_text: str) -> str:
     return ("占" + m.group(1)) if m else ""
 
 
-def build(blk: dict, lines: list[str], stats: dict, dropped: list) -> dict | None:
+# 多占标记：同一段里又起一卦（有日期的新案由 next_case_head 切走；无日期的
+# 「命再占得噬嗑」「又得恒之大过」「令再卜之」只能靠词形切）。只认带卦/卜的形态，
+# 「又得财」「又得价」这类结果词不触发。
+RECAST_MARK = re.compile(
+    r"(?:再|又|另)(?:占|卜|筮)(?:一卦|得|之)?|(?:又|再|另)得[^\n。；]{0,8}(?:之|卦)")
+UNIT_CHARS = "年月日"
+
+
+def _same_unit_branches(clause: str, yq: str, text: str) -> list[str]:
+    """同一实现句里**同单位**的全部应支（415 批口径：多事件不丢答案）。
+
+    只展开实现句本身；句中若出现多占标记（本句之前又起他卦），不展开——
+    那一卦的结果属于后卦（ZDP011 实测）。超过三支视为过宽，退回单支。
+    """
+    m = re.search("[" + UNIT_CHARS + "]", yq or "")
+    if not m or not clause:
+        return []
+    unit = m.group(0)
+    pos = text.find(clause)
+    pre = text[:pos] if pos >= 0 else ""
+    if RECAST_MARK.search(pre):
+        return []
+    brs: list[str] = []
+    for mm in re.finditer("([" + BRANCHES + "])" + unit, clause):
+        if mm.group(1) not in brs:
+            brs.append(mm.group(1))
+    return brs if 1 <= len(brs) <= 3 else []
+
+
+def next_case_head(lines: list[str], start: int) -> int | None:
+    """下一**占例头行**的行号（断语段止界）。与 find_blocks 不同：不要求六行爻图、
+    也不要求卦名带「卦」字——「寅月亥日占主人何时回，以父母为用。得大畜之益」
+    这种无「卦」字/无爻图/无日干的续占也是新一案的开头，旧写法把它的结果算到前案
+    （ZDP032 实测：履案的「巳日」是这一案的结果，履案自己是「果于申时到」）。
+    弱日期（只记月建+日支）与「已」日（应为「己」，见 HEADER_DATE 归一）同样认。
+    """
+    for i in range(start, len(lines)):
+        line = lines[i]
+        if (HEADER_DATE.search(line) or WEAK_HEAD_DATE.search(line)) and ("占" in line or "得" in line):
+            return i
+    return None
+
+
+def build(blk: dict, lines: list[str], stats: dict, dropped: list,
+          next_head: int | None = None) -> dict | None:
     orig = W.resolve_hex(blk["orig_raw"])
     changed = W.resolve_hex(blk["chg_raw"]) if blk["chg_raw"] else None
     if not orig:
@@ -222,19 +278,108 @@ def build(blk: dict, lines: list[str], stats: dict, dropped: list) -> dict | Non
         dropped.append((blk["head"], "validate_fail", "；".join(problems)))
         return None
 
-    after = "".join(lines[blk["end"] + 1: blk["end"] + 24])
+    # 断语段止界：**下一占例头行**（含无日干弱日期头与「已」日归一后的头）。
+    # 旧写法固定取后 23 行，会把下一案整段吃进来——ZDP032（履·丑月庚午日占父归）的
+    # 「巳日」其实是下一案（寅月亥日大畜之益）的结果，本案书上是「今日必到。果于申时到」；
+    # ZDP016 的「未年」也是下一案（申月已卯日）的结果。基准错比基准缺更坏（329 批语）。
+    stop = next_head if next_head is not None else blk["end"] + 24
+    after = "".join(lines[blk["end"] + 1: stop])
     after = W._clip(after)
-    verdict, yq, _ig, clause = W.outcome_of(blk["head_text"] + after)
+    # 同段又起一卦（无日期的「命再占得噬嗑」「又得恒之大过」「令再卜之」）：
+    # 后卦的结果不归本案（表格通道同规则：RECAST 守卫，见 403 批）。
+    rc = RECAST_MARK.search(after)
+    outcome_text = after[:rc.start()] if rc else after
+    verdict, yq, _ig, clause = W.outcome_of(blk["head_text"] + outcome_text)
+    # 多事件：实现句里同单位的全部应支（415 口径）。ZDP001 书作「果于子年建功
+    # 卯年得意而归」，旧册只记子年、把卯年这个书载答案丢掉；ZD026 同案（表格通道）
+    # 早就是「子年、卯年」。多占块不展开（结果属后卦）。
+    brs = _same_unit_branches(clause or "", yq or "", outcome_text)
+    label = yq or ""
+    if len(brs) > 1:
+        unit = re.search("[" + UNIT_CHARS + "]", yq).group(0)
+        label = "、".join(b + unit for b in brs)
     stats["with_verdict"] += int(bool(verdict))
-    stats["with_yingqi"] += int(bool(yq))
+    stats["with_yingqi"] += int(bool(label))
     return {"input": {"date": f"{blk['month_branch']}月{blk['day_gz']}日",
                        "question": _question(blk["head_text"])},
             "hexagram": {"original": orig, "changed": changed or "", **info},
             "expected": {"verdict": verdict or "", "use_god": "", "use_god_branch": "",
-                         "use_god_position": "", "yingqi": yq or "",
-                         "yingqi_branches": [], "detail": clause or ""},
+                         "use_god_position": "", "yingqi": label,
+                         "yingqi_branches": brs, "detail": clause or ""},
+            "provenance": {"day_stem_normalized": blk.get("day_stem_normalized", False)},
             "_src": f"zengshan_buyi_dz.dz.txt L{blk['head'] + 1}"}
 
+
+
+def assign_stable_ids(cases: list[dict], old_doc: dict) -> list[dict]:
+    """旧案按 `_src`（源行）保留原 id；新案取 max+1。
+
+    421 批：此前 id 按 kept 顺序重编，新增「已」日案例会把 ZDP001… 全体改号，
+    裁决表（restorable_adjudication.json 引 ZDP001/ZDP006/ZDP020）与文档引用随指错案。
+    源行是稳定的物理坐标（同一底本换行不改），比顺序号可靠。
+    """
+    old_by_src = {c.get("_src"): c for c in (old_doc.get("cases") or []) if c.get("_src")}
+    claimed: set[str] = set()
+    pending: list[dict] = []
+    for c in cases:
+        old = old_by_src.get(c["_src"])
+        if old and old.get("id") and old["id"] not in claimed:
+            c["id"] = old["id"]
+            claimed.add(old["id"])
+        else:
+            pending.append(c)
+    nums = []
+    for c in (old_doc.get("cases") or []):
+        m = re.search(r"ZDP(\d+)", str(c.get("id") or ""))
+        if m:
+            nums.append(int(m.group(1)))
+    nxt = (max(nums) if nums else 0) + 1
+    for c in pending:
+        while f"ZDP{nxt:03d}" in claimed:
+            nxt += 1
+        c["id"] = f"ZDP{nxt:03d}"
+        claimed.add(c["id"])
+        nxt += 1
+    return cases
+
+
+def load_readings() -> dict:
+    if not READINGS.exists():
+        return {}
+    d = json.loads(READINGS.read_text(encoding="utf-8"))
+    return d.get("readings") or {}
+
+
+def apply_verdicts(cases: list[dict], old_doc: dict, readings: dict,
+                   source_text: str) -> list[tuple[str, str]]:
+    """吉凶：旧册按源行沿用（本批只修应期归属）；新例默认 N/A（未逐条校勘）；
+    读书册按源行覆盖，引文必须是底本逐字子串（否则判红、不写盘）。
+
+    返回引文不在底本的清单（空＝通过）。
+    """
+    old_by_src = {c.get("_src"): c for c in (old_doc.get("cases") or []) if c.get("_src")}
+    bad: list[tuple[str, str]] = []
+    for c in cases:
+        old = old_by_src.get(c.get("_src"))
+        if old is not None:
+            ov = str(((old.get("expected") or {}).get("verdict")) or "")
+            c["expected"]["verdict"] = ov
+            c["provenance"]["verdict_source"] = \
+                "421 批沿用旧册（只修应期归属）" if ov else "421 批沿用旧册 N/A"
+        else:
+            c["expected"]["verdict"] = ""
+            c["provenance"]["verdict_source"] = "新例吉凶未逐条校勘 → N/A"
+        r = readings.get(c.get("_src"))
+        if not r:
+            continue
+        q = str(r.get("quote") or "")
+        if q and q not in source_text:
+            bad.append((str(c.get("_src")), q))
+            continue
+        c["expected"]["verdict"] = str(r.get("verdict") or "")
+        c["provenance"]["verdict_source"] = f"书证逐字：{q}"
+        c["provenance"]["verdict_quote"] = q
+    return bad
 
 
 def run_selftest() -> int:
@@ -268,8 +413,9 @@ def run_selftest() -> int:
              "v3_fail": 0, "validate_fail": 0, "bad_hex_name": 0, "no_day": 0, "no_month": 0,
              "few_lines": 0, "with_verdict": 0, "with_yingqi": 0}
     dropped: list = []
-    # ① 健康块应留下
-    got = build(blk_static, lines, stats, dropped)
+    # ① 健康块应留下（走生产路径：断语止界按下一占例头）
+    got = build(blk_static, lines, stats, dropped,
+                next_head=next_case_head(lines, blk_static["end"] + 1))
     if not got:
         fails.append("健康块被拒")
     # ② 卦名换掉 → 纳甲/卦变必不合 → 必须弃
@@ -293,11 +439,47 @@ def run_selftest() -> int:
         bad3["rows"][0] = r0
         if build(bad3, lines, stats, dropped) is not None:
             fails.append("错動爻未被拒")
+    # ⑤ 421 批：弱日期/已日止界、多事件、稳定 id、吉凶书证册四件
+    demo = ["如丑月庚午日占父归得履卦", "……", "断曰：果于申时到。",
+            "寅月亥日占主人何时回，以父母为用。得大畜之益"]
+    if next_case_head(demo, 2) != 3:
+        fails.append("弱日期占例头未被认作止界（ZDP032 型跨案）")
+    demo2 = ["申月已卯日占得山泽损之复卦"]
+    if not HEADER_DATE.search(demo2[0]):
+        fails.append("「已」日占例头未被识别（421 批已→己归一的入口）")
+    if _same_unit_branches("果于子年建功卯年得意而归", "子年",
+                           "果于子年建功卯年得意而归") != ["子", "卯"]:
+        fails.append("多事件同单位应支未展开（ZDP001 型）")
+    if _same_unit_branches("果于卯年援例入临，巳年初任，未年再位", "卯年",
+                           "命再占得噬嗑变否卦…果于卯年援例入临，巳年初任，未年再位"):
+        fails.append("多占块结果被展开到前案（negative）")
+    old_demo = {"cases": [{"_src": "L1", "id": "ZDP005", "expected": {"verdict": "吉"}}]}
+    new_cases = [{"_src": "L1", "expected": {"verdict": "凶"}},
+                 {"_src": "L9", "expected": {"verdict": "吉"}}]
+    assign_stable_ids(new_cases, old_demo)
+    if new_cases[0]["id"] != "ZDP005" or new_cases[1]["id"] != "ZDP006":
+        fails.append(f"稳定 id 未按源行保留/新案 max+1：{[c['id'] for c in new_cases]}")
+    cases_demo = [{"_src": "L1", "expected": {"verdict": "凶"}, "provenance": {}},
+                  {"_src": "L9", "expected": {"verdict": ""}, "provenance": {}}]
+    badq = apply_verdicts(cases_demo,
+                          {"cases": [{"_src": "L1", "expected": {"verdict": "吉"}}]},
+                          {"L1": {"verdict": "凶", "quote": "有"},
+                           "L9": {"verdict": "", "quote": "不存在的引文"}},
+                          "有结果句")
+    if cases_demo[0]["expected"]["verdict"] != "凶":
+        fails.append("书证册未覆盖旧值（L1 应凶）")
+    if badq != [("L9", "不存在的引文")]:
+        fails.append(f"引文不在底本未判红：{badq!r}")
+    cases_demo2 = [{"_src": "L9", "expected": {"verdict": "吉"}, "provenance": {}}]
+    apply_verdicts(cases_demo2, {"cases": []}, {}, "")
+    if cases_demo2[0]["expected"]["verdict"] != "":
+        fails.append("新例吉凶未默认为 N/A")
     for f in fails:
         print(f"  × selftest：{f}")
     if fails:
         return 1
-    print("  √ selftest：健康块留下／错卦名、错变卦名、错動爻都被拒")
+    print("  √ selftest：健康块留下／错卦名、错变卦名、错動爻都被拒；"
+          "弱/已日止界、多事件展开、多占块不展开、稳定 id、吉凶书证册全过")
     return 0
 
 def main() -> int:
@@ -311,17 +493,30 @@ def main() -> int:
 
     lines = SRC.read_text(encoding="utf-8", errors="replace").split("\n")
     blocks = find_blocks(lines)
+    old_doc: dict = {}
+    if OUT.exists():
+        try:
+            old_doc = json.loads(OUT.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            old_doc = {}
     stats = {"blocks": len(blocks), "v1_cmp": 0, "v1_fail": 0, "v2_cmp": 0, "v2_fail": 0,
              "v3_cmp": 0, "v3_fail": 0, "validate_fail": 0, "bad_hex_name": 0,
              "no_day": 0, "no_month": 0, "few_lines": 0, "with_verdict": 0, "with_yingqi": 0}
     dropped: list = []
     cases = []
     for blk in blocks:
-        c = build(blk, lines, stats, dropped)
+        c = build(blk, lines, stats, dropped,
+                  next_head=next_case_head(lines, blk["end"] + 1))
         if c:
             cases.append(c)
-    for i, c in enumerate(cases, 1):
-        c["id"] = f"ZDP{i:03d}"
+    cases = assign_stable_ids(cases, old_doc)
+    badq = apply_verdicts(cases, old_doc, load_readings(),
+                          SRC.read_text(encoding="utf-8", errors="replace"))
+    if badq:
+        print("× 吉凶书证引文不在底本，拒绝写盘：")
+        for src, q in badq:
+            print(f"  · {src}：{q!r}")
+        return 1
     print(f"块 {stats['blocks']}｜成例 {len(cases)}｜有吉凶 {stats['with_verdict']}｜有应期 {stats['with_yingqi']}")
     print(f"校验：V1 纳甲 {stats['v1_fail']}/{stats['v1_cmp']} 不合｜V2 卦变 {stats['v2_fail']}/{stats['v2_cmp']} 不合"
           f"｜V3 世应 {stats['v3_fail']}/{stats['v3_cmp']} 不合｜validate_fail {stats['validate_fail']}")
