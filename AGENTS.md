@@ -95,9 +95,12 @@ Yi/
 **门禁内核真源（第三百三十四批）**：11 个同名门/器已归并——7 个进 `devkit/shared/`
 单一真源，4 个因两科逻辑不同按 kernel 变体范式登记（`devkit/MANIFEST.json` 的
 `variants` ＋ `variant_reasons`）。**第四百三十三批新增第 12 个共享件
-`check_source_provenance`（底本完整性门 [42]）**：provenance 的 sha256/bytes/chars/lines
-须与在盘底本逐项相符（首跑即抓到《火珠林》wikitext 的 CRLF→LF 失配与两份旧册缺
-source_file）。`data/cache/`（337 批）收所有评测/构建生成物，
+`check_source_provenance`（底本完整性门 [42]）**：provenance 的
+sha256/bytes/chars/lines＋扩展统计（`ganzhi_pairs`／`tables`／`headings`）＋登记元数据
+（`page_count`／`eol_on_disk`／`sha256_lf_text`）＋已登记双口径行数（`lines_nonempty`／
+`lines_physical`）须与在盘底本逐项相符，「在库书源」台账表（含干支对／标题两列）同源
+（442–445 批逐轮扩面，定义均由全仓登记值逐格复算反推）；首跑即抓到《火珠林》wikitext
+的 CRLF→LF 失配与两份旧册缺 source_file。`data/cache/`（337 批）收所有评测/构建生成物，
 整目录 gitignore，清掉即由脚本现场重生。
 
 **文档地图（第三百三十批新增）**：根 `DOCS.md` 是全仓 51 份 Markdown 的总索引——
