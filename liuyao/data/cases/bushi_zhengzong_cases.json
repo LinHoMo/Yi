@@ -1,7 +1,7 @@
 {
   "schema": "yi-liuyao-cases/1",
   "_meta": {
-    "description": "《卜筮正宗》dz 表格式段落抽取的应期外部集；八道门＋同案去重；409 批增通用确认句回溯、410 批增相对期换算；永不参与调参",
+    "description": "《卜筮正宗》dz 表格式段落抽取的应期/用神外部集；八道门＋同案去重；409 通用确认句、410 相对期、412 断语用神直取；永不参与调参",
     "source": "《卜筮正宗》（殆知阁转录本）",
     "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
     "source_sha256": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374",
@@ -610,9 +610,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
-        "generic_marker": null
+        "generic_marker": null,
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0361",
@@ -632,8 +634,8 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "兄弟",
+        "use_god_branch": "亥",
         "use_god_position": "",
         "yingqi": "亥日",
         "yingqi_branches": [
@@ -657,9 +659,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
-        "generic_marker": null
+        "generic_marker": null,
+        "use_god_source": "断语「为用神」句",
+        "use_god_quote": "亥水兄弟为用神"
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0391",
@@ -705,9 +709,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
-        "generic_marker": null
+        "generic_marker": null,
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0402",
@@ -752,9 +758,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
-        "generic_marker": null
+        "generic_marker": null,
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0411",
@@ -774,8 +782,8 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "父母",
+        "use_god_branch": "亥",
         "use_god_position": "",
         "yingqi": "子日",
         "yingqi_branches": [
@@ -799,9 +807,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
-        "generic_marker": null
+        "generic_marker": null,
+        "use_god_source": "断语「为用神」句",
+        "use_god_quote": "亥水父爻为用神"
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0431",
@@ -847,9 +857,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
-        "generic_marker": null
+        "generic_marker": null,
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0451",
@@ -894,9 +906,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
-        "generic_marker": null
+        "generic_marker": null,
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0462",
@@ -941,9 +955,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
-        "generic_marker": null
+        "generic_marker": null,
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0472",
@@ -989,9 +1005,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "generic_verify_backref",
-        "generic_marker": "后果验"
+        "generic_marker": "后果验",
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0482",
@@ -1037,9 +1055,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
-        "generic_marker": null
+        "generic_marker": null,
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0491",
@@ -1086,9 +1106,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "generic_verify_backref",
-        "generic_marker": "果验"
+        "generic_marker": "果验",
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0492",
@@ -1109,8 +1131,8 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "父母",
+        "use_god_branch": "卯",
         "use_god_position": "",
         "yingqi": "丑日",
         "yingqi_branches": [
@@ -1134,9 +1156,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
-        "generic_marker": null
+        "generic_marker": null,
+        "use_god_source": "断语「为用神」句",
+        "use_god_quote": "卯木父母爻为用神"
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0501",
@@ -1182,9 +1206,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
-        "generic_marker": null
+        "generic_marker": null,
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0531",
@@ -1230,9 +1256,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
-        "generic_marker": null
+        "generic_marker": null,
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0541",
@@ -1277,9 +1305,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "generic_verify_backref",
-        "generic_marker": "果验"
+        "generic_marker": "果验",
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0602",
@@ -1322,9 +1352,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "generic_verify_backref",
-        "generic_marker": "果验"
+        "generic_marker": "果验",
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0611",
@@ -1369,9 +1401,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
-        "generic_marker": null
+        "generic_marker": null,
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0612",
@@ -1414,9 +1448,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
-        "generic_marker": null
+        "generic_marker": null,
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0621",
@@ -1434,7 +1470,7 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
+        "use_god": "官鬼",
         "use_god_branch": "",
         "use_god_position": "",
         "yingqi": "申日",
@@ -1459,9 +1495,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
-        "generic_marker": null
+        "generic_marker": null,
+        "use_god_source": "断语「为用神」句",
+        "use_god_quote": "以鬼爻为用神"
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0632",
@@ -1504,9 +1542,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "generic_verify_backref",
-        "generic_marker": "果验"
+        "generic_marker": "果验",
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0652",
@@ -1552,9 +1592,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
-        "generic_marker": null
+        "generic_marker": null,
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0692",
@@ -1572,7 +1614,7 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
+        "use_god": "妻财",
         "use_god_branch": "",
         "use_god_position": "",
         "yingqi": "子日",
@@ -1597,9 +1639,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
-        "generic_marker": null
+        "generic_marker": null,
+        "use_god_source": "断语「为用神」句",
+        "use_god_quote": "以财爻为用神"
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0722",
@@ -1644,9 +1688,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
-        "generic_marker": null
+        "generic_marker": null,
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0732",
@@ -1693,9 +1739,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
-        "generic_marker": null
+        "generic_marker": null,
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0781",
@@ -1713,8 +1761,8 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "兄弟",
+        "use_god_branch": "酉",
         "use_god_position": "",
         "yingqi": "卯月",
         "yingqi_branches": [
@@ -1738,9 +1786,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "generic_verify_backref",
-        "generic_marker": "果验"
+        "generic_marker": "果验",
+        "use_god_source": "断语「为用神」句",
+        "use_god_quote": "酉金兄弟为用神"
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0791",
@@ -1785,9 +1835,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "relative_day",
-        "generic_marker": "果验"
+        "generic_marker": "果验",
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0792",
@@ -1832,9 +1884,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "generic_verify_backref",
-        "generic_marker": "果验"
+        "generic_marker": "果验",
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0812",
@@ -1880,9 +1934,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "generic_verify_backref",
-        "generic_marker": "果验"
+        "generic_marker": "果验",
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0831",
@@ -1902,7 +1958,7 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
+        "use_god": "官鬼",
         "use_god_branch": "",
         "use_god_position": "",
         "yingqi": "亥日",
@@ -1927,9 +1983,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
-        "generic_marker": null
+        "generic_marker": null,
+        "use_god_source": "断语「为用神」句",
+        "use_god_quote": "以官鬼爻为用神"
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0832",
@@ -1949,7 +2007,7 @@
       },
       "expected": {
         "verdict": null,
-        "use_god": "",
+        "use_god": "妻财",
         "use_god_branch": "",
         "use_god_position": "",
         "yingqi": "申日",
@@ -1974,9 +2032,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "relative_day",
-        "generic_marker": "果次日"
+        "generic_marker": "果次日",
+        "use_god_source": "断语「为用神」句",
+        "use_god_quote": "以财爻为用神"
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0862",
@@ -2019,9 +2079,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "generic_verify_backref",
-        "generic_marker": "果验"
+        "generic_marker": "果验",
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0942",
@@ -2066,9 +2128,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
-        "generic_marker": null
+        "generic_marker": null,
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0962",
@@ -2117,9 +2181,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "generic_verify_backref",
-        "generic_marker": "果验"
+        "generic_marker": "果验",
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0981",
@@ -2162,9 +2228,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
-        "generic_marker": null
+        "generic_marker": null,
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ0982",
@@ -2207,9 +2275,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
-        "generic_marker": null
+        "generic_marker": null,
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ1012",
@@ -2257,9 +2327,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
-        "generic_marker": null
+        "generic_marker": null,
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ1041",
@@ -2305,9 +2377,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "ying_pat",
-        "generic_marker": null
+        "generic_marker": null,
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     },
     {
       "id": "BZ1051",
@@ -2352,9 +2426,11 @@
         "day_stem_normalized": false,
         "question_source": "占事行",
         "yingqi_source": "generic_verify_backref",
-        "generic_marker": "果验"
+        "generic_marker": "果验",
+        "use_god_source": null,
+        "use_god_quote": ""
       },
-      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。"
+      "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽（N/A 不进分母）；永不参与调参。"
     }
   ]
 }

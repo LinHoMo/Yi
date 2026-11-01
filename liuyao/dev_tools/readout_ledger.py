@@ -90,9 +90,9 @@ def checks():
     def c_bushi(t):
         s = sh(["scripts/evaluate.py", "--split", "bushi_zhengzong_holdout"])
         return (grab(s, r"平均分 = ([0-9.]+)%"), grab(s, r"strict top-1 命中 ([0-9.]+)%"))
-    # 410 批再扩（36→38）：相对期（次日/明日）换算，读数 68.7/25.0→68.8/23.7，新旧不可比。
-    add("liuyao.bushi_zhengzong(68.8/23.7)", "408批首建→409批通用确认句→410批相对期扩样",
-        c_bushi, ("68.8", "23.7"))
+    # 412 批：用神从断语直取（5/8 类、3/4 支），strict 68.8→68.3（分母新增用神维），新旧不可比。
+    add("liuyao.bushi_zhengzong(68.3/23.7)", "408批首建→409批通用确认句→410批相对期→412批用神直取",
+        c_bushi, ("68.3", "23.7"))
 
     def c_window2(t):
         s = sh(["dev_tools/window_report.py"])

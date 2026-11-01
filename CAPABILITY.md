@@ -37,7 +37,7 @@
 | tune / holdout 对齐 | 97.9%（n=20）／90.2%（n=12） | 172 批口径 | `python liuyao/eval/evaluate.py --split tune`（同 `--split holdout`） |
 | 外部·开发集 wikisource 对齐 | **75.8%**（n=50；308 批实测，原登记 62.4）；direction 子集 76.6%（n=31） | README 表 | `python liuyao/eval/evaluate.py --split wikisource_holdout` |
 | 外部·开发集 zengshan_dz 对齐 | **60.3%**（n=29；403 批 dz 扩样，原 61.5 n=21；新旧不可比） | 同上 | `python liuyao/eval/evaluate.py --split zengshan_dz_holdout` |
-| 外部·开发集 bushi_zhengzong_dz 对齐 | **68.8%**／top-1 **23.7%**（n=38；408 批建、409 批通用确认句回溯、410 批相对期换算；只抽书载应期，用神/吉凶 N/A 不进分母；408/409 读数不可比） | 同上 | `python liuyao/eval/evaluate.py --split bushi_zhengzong_holdout` |
+| 外部·开发集 bushi_zhengzong_dz 对齐 | **68.3%**／top-1 **23.7%**（n=38；408 批建、409/410 扩样、412 批用神直取；用神 5/8、用神支 3/4；吉凶 N/A；408–410 读数不可比） | 同上 | `python liuyao/eval/evaluate.py --split bushi_zhengzong_holdout` |
 | 主应期 top-1（开发集） | **31.8%**／37.9%（308 批／403 批扩样，原登记 27.3／33.3），CI[20.0, 46.6]／[22.7, 56.0]；k=1 随机 8.3% | 181 批→308 批→403 批 | `python liuyao/dev_tools/window_report.py` |
 | top-3 窗（开发集） | **61.4%**／62.1%（308 批／403 批扩样，原登记 52.3／57.1；信息在窗不在点→193 批 `应期窗口` 键） | 181/192/193 批→308/403 批 | 同上（`window_report.py` 一张表含 k=1..5） |
 | 版本冲突上限 | 卦面分歧 0/47、判词分歧 1/37→判词保真天花板 ≈98.6%（等权估计式） | 185 批 | `python liuyao/dev_tools/version_collate.py` |
@@ -120,9 +120,10 @@ L3338 缺日干、L1741 缺月建；按 §六.5 不高置信补数据）、2 条
 （L2324 卯/巳/未、L3559 次年/巳/午）；`new_date_blocked=0`、`new_date_unrecoverable=4`。
 triage 重建为 A 8／E 18／B 3+10（399 批移出分诊的 25 条旧裁决
 保留在 `prior_decisions`）。204 批的 10 条标准盘形草稿仍判不升（378/380）。
-**下一大项**已结（408/409/410 批）：《卜筮正宗》dz 表格式建器落地并扩样，`bushi_zhengzong_holdout`
+**下一大项**已结（408–412 批）：《卜筮正宗》dz 表格式建器落地并扩样，`bushi_zhengzong_holdout`
 由 0 变 **38**（BZ*，与 ZS001-020 tune 集及 ZD/WS 在册零重叠；八道门＋同案去重；
-应期取 YING_PAT、409 批通用确认句回溯或 410 批相对期换算；用神/吉凶未抽）。
+应期取 YING_PAT、409 通用确认句回溯或 410 相对期换算；412 用神取断语明示 8/38，
+六亲 5/8、支 3/4 与引擎一致；吉凶未抽——词袋在本书误判率高）。
 排除 125 条逐条在 `bushi_zhengzong_cases.json._meta.excluded`。年列可读仅 **1/127**（0.8%，
 `python liuyao/dev_tools/build_bushi_zhengzong_cases.py --stats` 可复现）→「次年/明岁」换算
 结案为不可行；「本月」是占测月自重、底本无「来月/下月」实例、出旬须写出空支，

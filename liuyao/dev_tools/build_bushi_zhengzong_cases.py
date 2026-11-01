@@ -63,7 +63,7 @@ from graduate_verifications import (  # noqa: E402
     YING_PAT, MONTH_ORDER_BRANCH, _ying_branch, _ying_unit,
 )
 from build_zengshan_dz_cases import (  # noqa: E402
-    BRANCHES, STEMS, STEMS_SRC, resolve_hex_name, strip_tail_gua,
+    BRANCHES, STEMS, STEMS_SRC, REL_SHORTHAND, resolve_hex_name, strip_tail_gua,
 )
 
 SRC = DISC / "data" / "sources" / "bushi_zhengzong_dz.dz.txt"
@@ -97,6 +97,14 @@ GENERIC_MAX_BACK = 30
 REL_DAY_RE = re.compile(r"(次日|明日|翌日|本日|今日|即日)")
 REL_AFTER_RE = re.compile(r"果(?:于)?(次日|明日|翌日|本日|今日|即日)")
 REL_MAX_BACK = 30
+# 412 批：用神从断语「X为用神」直取（书载明示，不由引擎回填）。简称按 zengshan 同一张
+# REL_SHORTHAND 归一；「卦中土为用神」这类只给五行的形态不可判六亲，留 N/A。
+USE_GOD_BRANCH_RE = re.compile(
+    r"以?([%s]{1,2})[金木水火土]?(官鬼|父母|兄弟|子孙|妻财|财|子|父|兄|官|鬼)[爻]?"
+    r"[^。；\n]{0,10}为用神" % BRANCHES)
+USE_GOD_RE = re.compile(
+    r"以[【\[]?(官鬼|父母|兄弟|子孙|妻财|财|子|父|兄|官|鬼)[爻】\]]?[^。；\n]{0,6}为用神")
+NEG_HEAD = "非不勿莫无"
 # 转录讹字登记（408 批逐条实测）：底本用「干」代「乾」、个别卦名有讹字/衍字。
 # 每条都由门 4（表动标 ≡ 本卦⊕变卦差集）反证——别名错则装卦差集必不符而剔除。
 NAME_ALIAS = {
@@ -216,6 +224,25 @@ def _relative_yingqi(text: str, date: dict):
         if t.group(1) != nxt:
             return None, None, gm, "相对日 (次日→%s日) 与近旁显式%s日冲突" % (nxt, t.group(1))
     return nxt, "日", gm, ""
+
+
+def _use_god(text: str):
+    """从断语直取用神（六亲＋支，书载明示；不由引擎回填）。
+
+    返回 (rel, branch, quote)。否定语境（前两字含 非/不/勿/莫/无）一律不取；
+    只给五行不给六亲的形态（「卦中土为用神」）留 N/A。
+    """
+    for m in USE_GOD_BRANCH_RE.finditer(text):
+        if any(ch in NEG_HEAD for ch in text[max(0, m.start() - 2):m.start()]):
+            continue
+        rel = REL_SHORTHAND.get(m.group(2), m.group(2))
+        br = m.group(1) if len(m.group(1)) == 1 else ""
+        return rel, br, m.group(0)
+    for m in USE_GOD_RE.finditer(text):
+        if any(ch in NEG_HEAD for ch in text[max(0, m.start() - 2):m.start()]):
+            continue
+        return REL_SHORTHAND.get(m.group(1), m.group(1)), "", m.group(0)
+    return None, "", None
 
 
 def _tokens(line: str) -> list[str]:
@@ -460,6 +487,7 @@ def _case_from_block(lines: list[str], start: int, end: int, cid: str, sha: str)
                           "reason": "锚句属于验语内另起的他卦（%s…）" % text[other.start():other.start() + 18]})
             continue
         topic = re.sub(r"^占", "", q).strip().strip("？?")
+        ug_rel, ug_br, ug_quote = _use_god(text)
         cases.append({
             "id": cid if n == 1 else cid + str(side + 1),
             "source": "《卜筮正宗》（殆知阁转录本）",
@@ -468,8 +496,9 @@ def _case_from_block(lines: list[str], start: int, end: int, cid: str, sha: str)
             "input": {"date": "%s月%s日" % (date["month"], date["day"]), "question": topic},
             "hexagram": {"original": orig, "changed": chg, "moving": moving},
             "expected": {
-                # 408 批只从书载验语取应期；用神/吉凶字面未抽（不拿引擎输出回填，见 CHANGELOG）
-                "verdict": None, "use_god": "", "use_god_branch": "",
+                # 412 批：用神从断语「X为用神」直取；未写明的留空（N/A 不进分母）
+                "verdict": None, "use_god": ug_rel or "",
+                "use_god_branch": ug_br,
                 "use_god_position": "", "yingqi": yb + (yu or "日"),
                 "yingqi_branches": [yb], "detail": text[:300],
                 "same_as_day_branch": yb == date["day"][1:2],
@@ -484,10 +513,13 @@ def _case_from_block(lines: list[str], start: int, end: int, cid: str, sha: str)
                 "question_source": "占事行",
                 "yingqi_source": yingqi_src,
                 "generic_marker": gm.group(0) if gm else None,
+                "use_god_source": "断语「为用神」句" if ug_rel else None,
+                "use_god_quote": (ug_quote or "")[:80],
             },
-            "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408/409/410 批），过表栏/日期/"
+            "notes": "dev_tools/build_bushi_zhengzong_cases.py 抽取（408-412 批），过表栏/日期/"
                      "卦名/装卦/动标/验支/单点/锚句/同案 门；应期取书载实录（YING_PAT、"
-                     "通用确认句回溯或相对期换算）；用神与吉凶未抽（N/A 不进分母）；永不参与调参。",
+                     "通用确认句回溯或相对期换算）；用神取断语明示句；吉凶未抽"
+                     "（N/A 不进分母）；永不参与调参。",
         })
     good = [c for c in cases if "input" in c]
     bad = [c for c in cases if "input" not in c]
@@ -620,6 +652,19 @@ def selftest() -> int:
         fails.append("相对日与显式日支冲突未拒")
     if _relative_yingqi("次日" + "甲" * 35 + "果验", d5)[0] is not None:
         fails.append("相对日超距未拒")
+    # 412 用神直取：正例（支+六亲、简称归一、无支的「以X爻为用神」）与否定/五行形态负例
+    if _use_god("此卦亥水兄弟为用神，辰月克之")[:2] != ("兄弟", "亥"):
+        fails.append("用神直取（支+六亲）错")
+    if _use_god("亥水父爻为用神")[:2] != ("父母", "亥"):
+        fails.append("用神简称归一错")
+    if _use_god("凡占尸首以鬼爻为用神")[:2] != ("官鬼", ""):
+        fails.append("用神无支式错")
+    if _use_god("以财爻为用神")[:2] != ("妻财", ""):
+        fails.append("用神财爻式错")
+    if _use_god("不可以财爻为用神")[0] is not None:
+        fails.append("否定语境误取用神")
+    if _use_god("卦中土为用神")[0] is not None:
+        fails.append("五行形态误判六亲")
     if not YING_PAT.search("果于本日酉时，得名医救活，亥日痊愈"):
         fails.append("验支正例未命中")
     if YING_PAT.search("此卦亥水兄弟为用神，辰月克之，申日生之"):
@@ -713,8 +758,8 @@ def main() -> int:
     doc = {
         "schema": "yi-liuyao-cases/1",
         "_meta": {
-            "description": "《卜筮正宗》dz 表格式段落抽取的应期外部集；八道门＋同案去重；"
-                           "409 批增通用确认句回溯、410 批增相对期换算；永不参与调参",
+            "description": "《卜筮正宗》dz 表格式段落抽取的应期/用神外部集；八道门＋同案去重；"
+                           "409 通用确认句、410 相对期、412 断语用神直取；永不参与调参",
             "source": "《卜筮正宗》（殆知阁转录本）",
             "source_file": "data/sources/bushi_zhengzong_dz.dz.txt",
             "source_sha256": sha,
@@ -737,7 +782,8 @@ def main() -> int:
         "（果验/果应 → 最近前置日期令牌，须非占测日/月、非连写日、≤30 字）"
         "或 410 批相对期换算（次日/明日 → 占测日 +1 日；本日不换算），"
         "逐例 provenance.yingqi_source 留痕。detail 为断语原文（供格局维比对）；"
-        "用神/吉凶字面未抽（N/A 不进分母）。" % len(cases))
+        "用神取断语「X为用神」明示句（412 批；未写明的留空，N/A 不进分母）；"
+        "吉凶字面未抽。" % len(cases))
     write_stable(SPLITS, sp, indent=2)  # 原文件 indent=2：默认 indent=1 会把全文重排（408 实踩）
     print("√ 落盘 %s｜%d 例；case_splits.bushi_zhengzong_holdout=%d"
           % (OUT.name, len(cases), len(cases)))
