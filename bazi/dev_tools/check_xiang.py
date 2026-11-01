@@ -16,6 +16,8 @@
      `xiang` 不得成为 evaluate.WEIGHTS 的维度。
 
 `--selftest`：挖 basis／抹掉性别分野／评分侧偷读 xiang，三处各须被抓。
+454 批：`--selftest` 通过后**继续跑真实数据面**——此前 `return selftest()` 提前返回，
+而 check.py 只以 `--selftest` 调本门，③ 禁评分与男女两份真实象层在全量流程里未执行。
 """
 from __future__ import annotations
 
@@ -145,7 +147,10 @@ def main() -> int:
     ap.add_argument("--selftest", action="store_true", help="负例自证")
     args = ap.parse_args()
     if args.selftest:
-        return selftest()
+        st = selftest()
+        if st != 0:
+            return st
+        # 454 批：负例通过后继续跑真实数据面（不提前 return；check.py 只以 --selftest 调本门）
 
     male = _xiang_of("男")
     female = _xiang_of("女")

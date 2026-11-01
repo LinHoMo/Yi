@@ -13,6 +13,8 @@ AGENTS.md §三.4 禁止用引擎输出反推 expected ⇒ 只能去书里找**�
   · **表有而书未言** = 只记 NOTE（书散文本非全表，不构成反证）；
   · 逐字命中数与覆盖支数一并报出，**0 支可核即判红**（防本器空跑）。
 `--selftest` 注入一条「寅中癸水」的假书据，必须被抓——否则「书有表无」这一半是空的。
+454 批：`--selftest` 通过负例后**继续跑真实数据面**——此前该分支 `return 0`，而 check.py
+只以 `--selftest` 调本门，真实对账与「0 支可核」守卫在全量流程里从未执行。
 """
 from __future__ import annotations
 
@@ -115,7 +117,7 @@ def main() -> int:
             print("FAIL SELFTEST：负例断言无明细计数")
             return 1
         print(f"SELFTEST OK：假书据被抓出并指名（{[x for x in p2 if '寅' in x][0][:34]}…）")
-        return 0
+        # 454 批：负例通过后继续跑真实数据面（不提前 return；check.py 只以 --selftest 调本门）
 
     found, where = extract()
     total, hit, nbranch = compare(found, problems, notes)
