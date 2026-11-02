@@ -98,6 +98,8 @@ LIUYAO_QUOTES = DISC / "data" / "verdicts.json"
 NARRATIVE_TPL = DISC / "data" / "narrative_templates.json"
 # 471 批：火珠林财官伏藏引文库（仅六爻有该册）。
 FUSHI = DISC / "data" / "rules" / "caiguan_fushi.json"
+# 473 批：易林补遗门类定位映射（仅六爻有该册）。
+YILIN = DISC / "data" / "yilin_buyi_maps.json"
 _VERDICT_LOCATOR = re.compile(r"(data/sources/[^:]+):(\d+)")
 _VERDICT_MARK = re.compile(r"''+|={2,}|\{\{|\}\}|\||\*")
 _VERDICT_FIELDS = ("quote", "full_quote", "cond_quote", "verse_quote")
@@ -890,6 +892,104 @@ def check_fushi_quotes(doc: dict, problems: list[str], lines_of=None) -> int:
     return n
 
 
+def check_yilin_buyi_maps(doc: dict, problems: list[str], lines_of=None) -> tuple[int, int]:
+    """《易林补遗》门类定位映射的行锚回验（473 批）。返回 (引文数, 行锚数)。
+
+    为什么需要它：`yilin_buyi_maps.json` 的 `_meta.定位` 明写「书源大量断语须由
+    narrate 层按 `src` 行号回指原文自取」，`_source` 逐组点名底本与行号、条目用
+    `_src: L###`。但 [14] 只认「《书名》源L」形态，这里的 `data/sources/<书>:<行>`
+    与裸 `L###` 都不在其扫描面；本册唯一的机械门是 `[12]` 的 `quote_in_data`
+    （只验 registry 指针），不读本表。10 条 `_引文`／34 个行锚长期无门（§六.3）。
+
+    判据：
+      · 每个非 `_` 组必须有 `_source`，其中 `data/sources/<书>` 在盘；
+        `:NNN`／`:NNN-LMMM` 行号在册（范围两端都查）；
+      · 条目 `_src`（以及组级 `_src`）必须是裸 `L####`，继承本组底本、行号在册；
+      · 组级/条目 `_引文` 落在所署那一行逐字（`_verdict_plain` 口径）。
+
+    `lines_of` 供 selftest 注入夹具底本；正式路径现场读。
+    """
+    groups = [(k, v) for k, v in (doc or {}).items()
+              if not k.startswith("_") and isinstance(v, dict)]
+    if not groups:
+        problems.append("易林补遗：0 个映射组——0 结果 ≠ 通过")
+        return 0, 0
+    cache: dict[str, list[str] | None] = {}
+
+    def get_lines(f: str) -> list[str] | None:
+        if lines_of is not None:
+            return lines_of(f)
+        if f not in cache:
+            p = _resolve_any(f)
+            cache[f] = (p.read_text(encoding="utf-8", errors="replace").splitlines()
+                        if p else None)
+        return cache[f]
+
+    n_q = n_a = 0
+    for gname, group in groups:
+        src = str(group.get("_source") or "")
+        fm = re.search(r"(data/sources/[A-Za-z0-9_.\-]+)", src)
+        if not fm:
+            problems.append(f"易林补遗：{gname}._source 未点名底本")
+            continue
+        f = fm.group(1)
+        L = get_lines(f)
+        if L is None:
+            problems.append(f"易林补遗：{gname}._source 的底本不存在 {f}")
+            continue
+        for a, b in re.findall(r":(\d+)(?:-L?(\d+))?", src):
+            for n in (a, b):
+                if not n:
+                    continue
+                n_a += 1
+                if not (1 <= int(n) <= len(L)):
+                    problems.append(f"易林补遗：{gname}._source 行号 L{n}"
+                                    f"超出底本（共 {len(L)} 行）")
+
+        def quote_at(q: str, n: int, label: str) -> None:
+            nonlocal n_q
+            n_q += 1
+            if not (1 <= n <= len(L)):
+                problems.append(f"易林补遗：{label} 行号 L{n}超出底本")
+                return
+            if _verdict_plain(q) not in _verdict_plain(L[n - 1]):
+                problems.append(f"易林补遗：{label} 引文不在所署行 {f}:{n} → {q[:26]!r}")
+
+        gq = group.get("_引文")
+        if isinstance(gq, str) and gq:
+            gs = str(group.get("_src") or "")
+            gm = re.fullmatch(r"L(\d+)", gs)
+            if gm:
+                n_a += 1
+                quote_at(gq, int(gm.group(1)), f"{gname}._引文")
+            else:
+                fm2 = re.search(r":(\d+)", src)
+                if fm2:
+                    quote_at(gq, int(fm2.group(1)), f"{gname}._引文")
+                else:
+                    problems.append(f"易林补遗：{gname}._引文 无可解析的行锚")
+
+        for name, e in group.items():
+            if not isinstance(e, dict):
+                continue
+            es = e.get("_src")
+            if not isinstance(es, str) or not es:
+                continue
+            n_a += 1
+            m = re.fullmatch(r"L(\d+)", es)
+            if not m:
+                problems.append(f"易林补遗：{gname}.{name}._src 必须是裸 L#### → {es!r}")
+                continue
+            n = int(m.group(1))
+            if not (1 <= n <= len(L)):
+                problems.append(f"易林补遗：{gname}.{name}._src 行号 L{n}超出底本")
+                continue
+            q = e.get("_引文")
+            if isinstance(q, str) and q:
+                quote_at(q, n, f"{gname}.{name}._引文")
+    return n_q, n_a
+
+
 def selftest(problems: list[str]) -> None:
     """负例：造一条 verified=true 却指向不存在文件/解不到值的条目，必须判红。"""
     fake = {"schema": "yi-rule-registry-v1", "rules": [
@@ -1213,6 +1313,44 @@ def selftest(problems: list[str]) -> None:
     if not any("缺失或为空" in x for x in _fbad(lambda d: d.pop("九宫", None))):
         problems.append("负例未抓到：财官伏藏九宫整块缺失")
 
+    # 473 批：易林补遗门类定位映射的行锚（夹具底本注入）
+    _ylines = {"data/sources/__no_such__y.txt": [
+        "", "初爻为基址、为井、为沟", "单占有月老，当看应爻"]}
+    ybase = {
+        "间爻四角色": {
+            "_source": "data/sources/__no_such__y.txt:2（x）、:3（y）",
+            "媒妁": {"_src": "L3", "_引文": "单占有月老，当看应爻"}},
+        "家宅三层分宫": {
+            "_source": "data/sources/__no_such__y.txt:3",
+            "六爻分宫": {"_src": "L2", "_引文": "初爻为基址、为井、为沟"}},
+    }
+    p_y: list[str] = []
+    y_q, y_a = check_yilin_buyi_maps(ybase, p_y, lambda f: _ylines.get(f))
+    if p_y or (y_q, y_a) != (2, 5):
+        problems.append(f"易林补遗正例被误伤：{p_y}（引文 {y_q}／锚 {y_a}）")
+
+    def _ybad(mut) -> list[str]:
+        d = json.loads(json.dumps(ybase, ensure_ascii=False))
+        mut(d)
+        p: list[str] = []
+        check_yilin_buyi_maps(d, p, lambda f: _ylines.get(f))
+        return p
+
+    if not any("未点名底本" in x for x in
+               _ybad(lambda d: d["间爻四角色"].pop("_source", None))):
+        problems.append("负例未抓到：易林补遗 _source 未点名底本")
+    if not any("必须是裸 L####" in x for x in
+               _ybad(lambda d: d["间爻四角色"]["媒妁"].__setitem__("_src", "3"))):
+        problems.append("负例未抓到：易林补遗 _src 非裸 L####")
+    if not any("引文不在所署行" in x for x in
+               _ybad(lambda d: d["间爻四角色"]["媒妁"].__setitem__("_引文", "单占无月老"))):
+        problems.append("负例未抓到：易林补遗 _引文 不在所署行")
+    if not any("超出底本" in x for x in
+               _ybad(lambda d: d["间爻四角色"]["媒妁"].__setitem__("_src", "L99"))):
+        problems.append("负例未抓到：易林补遗 _src 行号越界")
+    if not any("0 个映射组" in x for x in _ybad(lambda d: d.clear())):
+        problems.append("负例未抓到：易林补遗 0 个映射组")
+
 
 def main() -> int:
     if not REG.exists():
@@ -1294,6 +1432,16 @@ def main() -> int:
             if n_f < 21:
                 problems.append(f"财官伏藏：src/_src 行锚字段只有 {n_f}（下限 21）")
             print(f"  财官伏藏：{n_f} 个 src/_src 行锚；歌诀/注文/总纲行内逐字已核对")
+        # 473 批：易林补遗门类定位映射的行锚（仅六爻册）
+        if not YILIN.is_file():
+            problems.append("易林补遗：yilin_buyi_maps.json 不存在——0 结果 ≠ 通过")
+        else:
+            ydoc = json.loads(YILIN.read_text(encoding="utf-8"))
+            y_q, y_a = check_yilin_buyi_maps(ydoc, problems)
+            if y_q < 10 or y_a < 34:
+                problems.append(f"易林补遗：引文 {y_q}（下限 10）／行锚 {y_a}"
+                                f"（下限 34）——先确认字段/路径")
+            print(f"  易林补遗：{y_q} 条 _引文、{y_a} 个行锚；底本/行号/行内逐字已核对")
     _ap = argparse.ArgumentParser(description="check_rule_registry：--selftest 负例自证开关（§三）")
     _ap.add_argument("--selftest", action="store_true", help="负例自证")
     args = _ap.parse_args()
