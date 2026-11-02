@@ -1719,8 +1719,8 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "妻财",
+        "use_god_branch": "卯",
         "use_god_position": "",
         "yingqi": "寅日",
         "yingqi_branches": [
@@ -1883,9 +1883,9 @@
         ]
       },
       "expected": {
-        "verdict": "",
-        "use_god": "",
-        "use_god_branch": "",
+        "verdict": "吉",
+        "use_god": "官鬼",
+        "use_god_branch": "寅",
         "use_god_position": "",
         "yingqi": "辰月",
         "yingqi_branches": [
@@ -2009,9 +2009,9 @@
         ]
       },
       "expected": {
-        "verdict": "",
-        "use_god": "",
-        "use_god_branch": "",
+        "verdict": "凶",
+        "use_god": "世爻",
+        "use_god_branch": "午",
         "use_god_position": "",
         "yingqi": "亥月",
         "yingqi_branches": [
@@ -2098,8 +2098,8 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "妻财",
+        "use_god_branch": "酉",
         "use_god_position": "",
         "yingqi": "辰月",
         "yingqi_branches": [
@@ -2178,7 +2178,7 @@
         ]
       },
       "expected": {
-        "verdict": "",
+        "verdict": "凶",
         "use_god": "子孙",
         "use_god_branch": "巳",
         "use_god_position": "",
@@ -2378,8 +2378,8 @@
       },
       "expected": {
         "verdict": "吉",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "官鬼",
+        "use_god_branch": "卯",
         "use_god_position": "",
         "yingqi": "卯年",
         "yingqi_branches": [
@@ -2500,8 +2500,8 @@
       },
       "expected": {
         "verdict": "",
-        "use_god": "",
-        "use_god_branch": "",
+        "use_god": "父母",
+        "use_god_branch": "卯",
         "use_god_position": "",
         "yingqi": "卯日、辰日",
         "yingqi_branches": [
@@ -2623,9 +2623,9 @@
         ]
       },
       "expected": {
-        "verdict": "",
-        "use_god": "",
-        "use_god_branch": "",
+        "verdict": "凶",
+        "use_god": "世爻",
+        "use_god_branch": "未",
         "use_god_position": "",
         "yingqi": "戌年",
         "yingqi_branches": [
@@ -2670,9 +2670,9 @@
         ]
       },
       "expected": {
-        "verdict": "",
-        "use_god": "",
-        "use_god_branch": "",
+        "verdict": "凶",
+        "use_god": "世爻",
+        "use_god_branch": "子",
         "use_god_position": "",
         "yingqi": "卯年",
         "yingqi_branches": [
@@ -2712,7 +2712,7 @@
         ]
       },
       "expected": {
-        "verdict": "",
+        "verdict": "凶",
         "use_god": "世爻",
         "use_god_branch": "辰",
         "use_god_position": "",
@@ -2751,7 +2751,7 @@
         "moving": []
       },
       "expected": {
-        "verdict": "",
+        "verdict": "吉",
         "use_god": "子孙",
         "use_god_branch": "酉",
         "use_god_position": "",
@@ -2878,7 +2878,7 @@
         ]
       },
       "expected": {
-        "verdict": "",
+        "verdict": "吉",
         "use_god": "世爻",
         "use_god_branch": "戌",
         "use_god_position": "",

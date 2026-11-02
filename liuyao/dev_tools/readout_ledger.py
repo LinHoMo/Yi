@@ -83,12 +83,13 @@ def checks():
     def c_dz(t):
         s = sh(["scripts/evaluate.py", "--split", "zengshan_dz_holdout"])
         return (grab(s, r"平均分 = ([0-9.]+)%"), grab(s, r"strict top-1 命中 ([0-9.]+)%"))
-    add("liuyao.zengshan_dz(64.3/44.8)",
+    add("liuyao.zengshan_dz(64.5/44.8)",
         "README 表→308批→402批改期望（dz 扩样 21→29；priority-anchor＋CASE_RE 之/单字题）；"
         "415 批多支基准口径修正（yingqi_branches 全纳入，原 60.3/37.9；新旧不可比）；"
         "419 批恢复 403 批清空的 18 例用神书证（use_god/branch/note）并补支式抽取，61.5→61.8（新旧不可比）；"
-        "498 批修 ZD214 expected 错配（建器把相邻坎之井验语酉戌安到离之旅头上，实应卯辰），61.8→64.3/41.4→44.8（新旧不可比）",
-        c_dz, ("64.3", "44.8"))
+        "498 批修 ZD214 expected 错配（建器把相邻坎之井验语酉戌安到离之旅头上，实应卯辰），61.8→64.3/41.4→44.8（新旧不可比）；"
+        "501 批回原文补全 8 例空用神(类别+支)与 8 例空 verdict，N/A 清零（category 15/21→22/29、branch 16/21→24/29；verdict 11/18→14/26 因暴露 5 例引擎判反暂降），64.3→64.5（新旧不可比）",
+        c_dz, ("64.5", "44.8"))
 
     def c_bushi(t):
         s = sh(["scripts/evaluate.py", "--split", "bushi_zhengzong_holdout"])
