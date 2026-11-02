@@ -150,12 +150,16 @@ def checks():
         "data/cases/restorable_recheck.json", None, ("consensus", "needs_human")), ("32", "0"))
     # 411 批改期望：6 条「日期阻塞」逐条核原文后结案——4 条日期不可重建
     # （L1032/L1515/L3338 缺日干、L1741 缺月建）、2 条非单点（L2324/L3559）。
-    add("liuyao.restorable_adjudication(43=30+3+3+3+0+0+4)", "401批→405批改期望（403 入册 5）→411批结案日期阻塞",
+    # 498 批改期望：3 条「待回原文」回原文核毕归位——L1279 观之益串味确证但《易林補遺》
+    # 无建器覆盖面（→新候选·建器阻塞 0→1）、L1006 兑之讼改判为命再占连占卦（→不升）、
+    # L2093 坎之井验出 ZD214 建器串味（→不升，修 ZD214 系改外部集机读值另批）；
+    # 同时清 6 行 next_batch=411 残留字段。reread 3→0、not_enrolled 3→5。
+    add("liuyao.restorable_adjudication(43=30+3+5+0+1+0+4)", "401批→405批→411批→498批核毕待回原文3条",
         lambda t: _json_counts(
             "data/cases/restorable_adjudication.json", "summary",
             ("total", "already", "non_single", "not_enrolled", "reread",
              "new_builder_blocked", "new_date_blocked", "new_date_unrecoverable")),
-        ("43", "30", "3", "3", "3", "0", "0", "4"))
+        ("43", "30", "3", "5", "0", "1", "0", "4"))
     add("liuyao.draft_candidates(10含dup4)", "204批", lambda t: _draft_counts(), ("10", "4"))
 
     # --- 裁决表/治理图/指纹 ---
