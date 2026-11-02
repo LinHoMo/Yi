@@ -122,6 +122,12 @@ class _Ctx:
         return any(k in t for k in ("出行", "出外", "出门", "遠行", "远行", "起程", "起身"))
 
     @property
+    def qtext_has_kaipu(self) -> bool:
+        """问句含「铺/店/门面」开店经营族（开铺面取妻财，官鬼持世不抬吉）。"""
+        t = self.question_text or ""
+        return any(k in t for k in ("铺面", "开铺", "开店", "店面", "门面", "开張", "开张", "合伙", "伙计", "伙伴"))
+
+    @property
     def moving_sheng_world(self) -> bool:
         """存在非世动爻五行生世爻（原神动生世；占寿忌之）。"""
         if not self.we:
@@ -502,6 +508,8 @@ def _eval_predicate(ctx: _Ctx, key: str, want) -> bool:
         return ctx.qtext_has_shou == bool(want)
     if key == "qtext_has_chuxing":
         return ctx.qtext_has_chuxing == bool(want)
+    if key == "qtext_has_kaipu":
+        return ctx.qtext_has_kaipu == bool(want)
     if key == "moving_sheng_world":
         return ctx.moving_sheng_world == bool(want)
     if key == "day_he_world":
