@@ -124,6 +124,15 @@
       "cap": "平凶",
       "detail_tmpl": "用神动而{yongshen_change_type}，{yuan_why_repr}",
       "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:551"}
+    },
+    {
+      "rule_id": "liuyao.liuchong_bian_liuhe",
+      "reason_key": "chong_bian_he",
+      "when": {"original_chong": true, "changed_he": true},
+      "gates": {"qcls_eq": "婚姻"},
+      "cap": "吉",
+      "detail_tmpl": "六冲变合，散而复聚，离而必合（不看用神亦以吉断）",
+      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:25835"}
     }
   ]
 }

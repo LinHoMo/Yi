@@ -89,12 +89,23 @@ def detect_direction_caps(
 
 
 def apply_caps(verdict: str, caps: list[dict]) -> tuple[str, bool]:
-    """按最严的一条 cap 压档；返回 (新 verdict, 是否压动过)。"""
+    """先压凶档、再被救应格局抬档；返回 (新 verdict, 是否动过)。
+
+    第一遍：凶格 cap 把 verdict 往严压（取最严档）。
+    第二遍：救应 cap（如六冲变合）档位高于压完值，则抬档——书所谓「竟以吉断」，
+    救应格局优先于凶格（变合救六冲之散）。
+    """
     cur = RANK.get(verdict, -1)
     fired = False
     for c in caps or []:
         tgt = RANK.get(c.get("cap"), 99)
         if cur >= 0 and tgt < cur:
+            cur = tgt
+            fired = True
+    for c in caps or []:
+        tgt = RANK.get(c.get("cap"), 99)
+        # 救应抬吉：只对正向档（平吉/吉/大吉，RANK>=3）抬；凶档（大凶/凶/平凶）不参与抬
+        if cur >= 0 and tgt > cur and tgt >= RANK["平吉"]:
             cur = tgt
             fired = True
     back = {v: k for k, v in RANK.items()}
