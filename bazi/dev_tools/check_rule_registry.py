@@ -118,7 +118,7 @@ locator 从未被读取。现按声明核对：行号在册、`quote/full_quote/
 
 494 批追加（两科书目解析）：**同书异名归一**。《命理探源》在库底本标题作「命理探源」，
 而八字代码/资料另有写作「命理探原」的（袁树珊书两版题名，学界两写并存）。
-此前 `_corpora_for_book` 只按字面匹配，`《命理探原》源L605` 因此落进「无书名」，
+此前 `_corpora_for_book` 只按字面匹配，`《命理探原》源L605` 因此被当作无书名，
 486/490 的行号检查都跳过了它。现加书目别名表（命理探原→命理探源），
 两个解析函数统一走 `_book_key`；L605 因此归入可解析并受行号检查。
 两科 selftest 都跑夹具。
@@ -139,9 +139,29 @@ locator 从未被读取。现按声明核对：行号在册、`quote/full_quote/
 49 条书名可解析（另 2 条 `dayun.py` 的「同书源L1848／源L922」超出前 9 行书名
 上下文，按无书名只计不判）。代码里的《》也可能是篇名（《顺局》），故不可解析时
 先向上找可解析书名（《滴天髓》），仍无才记无书名，不臆造归属。两科 selftest 都跑夹具。
+
+495 批追加（仅八字册）：**`dev_tools/**` 与 `eval/**` 的书证进同一门**。
+490 只扫 `scripts/`＋`core/`，而 `dev_tools/`（96 锚）与 `eval/`（12 锚）同样在写
+「书云源L####」：`check_dayun_cases.py` 的化格前置、`check_hidden_stems.py` 的藏干
+句型、《千里命稿》起运算例，`evaluate.py` 的行运缺口说明——此前完全无人回验。
+扩面同时改三个口径：① `selftest` 函数体内的锚是负例夹具（`《测试书》L2` 等），
+按 AST 区间跳过；② 引文闭合放宽到整行（真引文超过 40 字时不再被静默跳过），
+整行不闭合才接下一行；③ f-string 模板（`「{stem}…」`）不是逐字引文，按无引文处理。
+扩面首跑判红 10 条：9 条是真实错锚/错归属，1 条是本门自身文档的括号说明被误当引文
+（已改写）。9 条中：`check_hidden_stems.py` 把《三命通会》L283 的「午中丙火用事七日」
+记在《千里命稿》名下（L283 实为「（第四部运）壬戌」）；`check_dayun_cases.py` 的
+《滴天髓·從化論》L5251／L5238 在底本里实为 L5260／L5247（且 從化論章在《滴天髓闡微》
+而非 861 行的《滴天髓》）；`evaluate.py` 的《千里明镜》两处（484 批已确认库中只有
+《千里命稿》）；`evaluate.py` 的「折除三日为一岁」被同行「再加 N 天」顶替、
+「见庚子年」「L917」分别被近指的《神峰通考》/《千里命稿》顶替；
+`dayun.py` 的「纔交乙巳运」被近指的《神峰通考》顶替（实出《渊海子平》）；
+`congrge.py` 的《顺局》诗锚在句后、引文在锚前，旧规则取到了后面的任注。
+另同步修正 3 处未带引文但同属《千里明镜》误名的说明（`evaluate.py` 两处、
+`bazi_dayun_cases.json` 的 note）。两科 selftest 都跑夹具。
 """
 from __future__ import annotations
 
+import ast
 import json
 import re
 import argparse
@@ -2137,21 +2157,77 @@ _CODE_ANCHOR = re.compile(r"源\s*L(\d+)")
 _CODE_QUOTE = re.compile(r"「([^」]{2,300})」")
 
 
+_CODE_QUOTE_OPEN = 40          # `源L####` 之后多少字内算「同行引文」
+_SELFTEST_SKIP = re.compile(r"selftest", re.I)
+
+
+def _selftest_spans(text: str) -> set[int]:
+    """返回模块内 `selftest` 函数（同名含大小写）的 1-based 行号集合。
+
+    495 批为什么需要它：`dev_tools/*.py` 的 `--selftest` 里塞了大量**明知不存在**
+    的假书证（`《测试书》源L2`、`《易冒》源L3 另章判语`），那是负例夹具不是真声明；
+    不跳过就会把夹具当缺陷。函数名是现行约定（两科各门的负例都叫 selftest）。
+    """
+    try:
+        tree = ast.parse(text)
+    except SyntaxError:
+        return set()
+    skip: set[int] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            if _SELFTEST_SKIP.search(node.name):
+                skip.update(range(node.lineno, (node.end_lineno or node.lineno) + 1))
+    return skip
+
+
+def _code_quote(lines: list[str], i: int, end: int) -> str:
+    """取 `源L####` 之后那条引文；行内不闭合才接下一行（495 批）。
+
+    为什么放宽到整行：490 批只看 40 字窗口的**闭合**，超过 40 字的真引文被静默跳过
+    （eval 的《子平真诠评注》/《穷通宝鉴》两条长句因此从未被核）。现改为：窗口内找
+    开引号，闭合在整行里找；整行没有闭合才接下一行，且下一行在第一个 `」` 之前
+    不得再出现新 `「`（否则说明这是下一条引文，不是本条的续行）。
+    含 `{…}` 的是 f-string 模板（如 `「{stem}…长生在{br}」`），不是逐字引文，按无引文处理。
+    """
+    rest = lines[i][end:]
+    j = rest.find("「")
+    if j < 0 or j > _CODE_QUOTE_OPEN:
+        return ""
+    seg = rest[j:]
+    if "」" not in seg:
+        if i + 1 >= len(lines):
+            return ""
+        nxt = lines[i + 1]
+        k = nxt.find("」")
+        if k < 0 or "「" in nxt[:k]:
+            return ""
+        seg += "\n" + nxt
+    m = _CODE_QUOTE.search(seg)
+    if not m:
+        return ""
+    q = m.group(1)
+    return "" if ("{" in q or "}" in q) else q
+
+
 def check_bazi_code_anchors(problems: list[str], files=None, lines_of=None,
                             books_of=None) -> tuple[int, int, int]:
-    """八字代码注释的 `源L` 书证回验（490 批）。返回 (锚数, 带引文锚, 无书名锚)。
+    """八字代码注释的 `源L` 书证回验（490 批；495 批扩到 dev_tools／eval）。返回
+    (锚数, 带引文锚, 无书名锚)。
 
     为什么需要它：`scripts/**/*.py` 与 `core/**/*.py` 有 51 个 `源L` 锚
     （`dayun.py` 的岁运五式、虚拱填实、三合补支…），482 只认
     `<file>.txt:<行>「…」`，八字 [10] 只扫 `references/`——这批书证此前无门。
+    495 批扩面：`dev_tools/**`（96 锚）与 `eval/**`（12 锚）同样在写「书云源L####」，
+    此前完全无人回验；首跑抓到 7 处真错（见 CHANGELOG 第四百九十五批）。
     判据：书名取同行或前 9 行最近的《…》，经 provenance 全收（同名 dz／wikitext），
-    行号须在册；同行 40 字内的 `「…」` 按省略号分段在该行逐字命中。
+    行号须在册；引文取同行（行内不闭合才接下一行）的 `「…」`，按省略号分段在该行逐字命中。
     无书名的裸 `源L` 只计数、不判红（留给上一行书名/版式判断，不臆造归属）。
+    `selftest` 函数体内的锚一律跳过（那是负例夹具，不是声明）。
     `files` / `lines_of` / `books_of` 供 selftest 注入夹具；正式路径现场读。
     """
     if files is None:
         files = []
-        for sub in ("scripts", "core"):
+        for sub in ("scripts", "core", "dev_tools", "eval"):
             for p in sorted((DISC / sub).rglob("*.py")):
                 files.append((str(p.relative_to(DISC)),
                               p.read_text(encoding="utf-8", errors="replace")))
@@ -2169,7 +2245,10 @@ def check_bazi_code_anchors(problems: list[str], files=None, lines_of=None,
     n_ref = n_q = n_nobook = 0
     for rel, text in files:
         lines = text.splitlines()
+        skip_lines = _selftest_spans(text)
         for i, line in enumerate(lines):
+            if i + 1 in skip_lines:
+                continue
             for m in _CODE_ANCHOR.finditer(line):
                 n_ref += 1
                 ln = int(m.group(1))
@@ -2201,8 +2280,7 @@ def check_bazi_code_anchors(problems: list[str], files=None, lines_of=None,
                 if not paths:
                     n_nobook += 1
                     continue
-                qm = _CODE_QUOTE.search(line[m.end():m.end() + 40])
-                q = qm.group(1) if qm else ""
+                q = _code_quote(lines, i, m.end())
                 in_range = quoted_ok = False
                 for key in paths:
                     L = get_lines(key)
@@ -3057,6 +3135,37 @@ def selftest(problems: list[str]) -> None:
     if not any("0 个源L" in x for x in _cfbad("# 无书证")):
         problems.append("负例未抓到：代码源L 0 个锚")
 
+    # 495 批：dev_tools/eval 扩面后的三个新口径（夹具注入）
+    #   ① selftest 函数体内的假书证是负例夹具，必须跳过；
+    #   ② 跨行引文（开引号在本行、闭引号在下一行）须按整句在该行命中；
+    #   ③ f-string 模板（含 {…}）不是逐字引文，按无引文处理。
+    p_skip: list[str] = []
+    n_skip, q_skip, _ = check_bazi_code_anchors(
+        p_skip,
+        [("gate.py", "X = 1  # 《测试书》源L2「甲判」\n"
+                     "def selftest():\n"
+                     "    Y = '# 《测试书》源L99「乙判」'\n")],
+        lines_of=lambda f: _cfl.get(f),
+        books_of=lambda b: ["data/sources/__no_such__c3.txt"] if b == "测试书" else [])
+    if p_skip or (n_skip, q_skip) != (1, 1):
+        problems.append(f"代码源L：selftest 夹具未被跳过：{p_skip}"
+                        f"（锚/引文 {n_skip}/{q_skip}）")
+    p_ml: list[str] = []
+    check_bazi_code_anchors(
+        p_ml, [("gate.py", "# 《测试书》源L3「乙\n判」")],
+        lines_of=lambda f: _cfl.get(f),
+        books_of=lambda b: ["data/sources/__no_such__c3.txt"] if b == "测试书" else [])
+    if p_ml:
+        problems.append(f"代码源L：跨行引文被误判：{p_ml}")
+    p_tpl: list[str] = []
+    n_tpl, q_tpl, _ = check_bazi_code_anchors(
+        p_tpl, [("gate.py", '# 《测试书》源L2「{stem}…甲判」')],
+        lines_of=lambda f: _cfl.get(f),
+        books_of=lambda b: ["data/sources/__no_such__c3.txt"] if b == "测试书" else [])
+    if p_tpl or (n_tpl, q_tpl) != (1, 0):
+        problems.append(f"代码源L：模板引文未按无引文处理：{p_tpl}"
+                        f"（锚/引文 {n_tpl}/{q_tpl}）")
+
     # 477 批：verdict_texts 的文件+L 行锚（夹具底本注入）
     _vtl = {"data/sources/__no_such__v.txt": [
         "", "有病方为贵", "亦是休囚無气始見危"]}
@@ -3439,12 +3548,13 @@ def main() -> int:
         if n_code < 5:
             problems.append(f"代码书证：只有 {n_code} 条（下限 5）")
         print(f"  代码书证：{n_code} 条；底本/行号/行内逐字已核对")
-        # 490 批：代码注释里的《书名》源L「…」
+        # 490 批：代码注释里的《书名》源L「…」；495 批扩到 dev_tools／eval
+        # （下限随扩面实测抬到 115／55——扫不到就说明目录/路径漂了，0 结果 ≠ 通过）
         n_cr, n_cq, n_cnb = check_bazi_code_anchors(problems)
-        if n_cr < 40 or n_cq < 8:
-            problems.append(f"代码源L：锚 {n_cr}（下限 40）／带引文 {n_cq}"
-                            f"（下限 8）——先确认字段/路径")
-        print(f"  代码源L：{n_cr} 个锚（{n_cq} 条带同行引文、{n_cnb} 条无书名）；"
+        if n_cr < 115 or n_cq < 55:
+            problems.append(f"代码源L：锚 {n_cr}（下限 115）／带引文 {n_cq}"
+                            f"（下限 55）——先确认目录/字段/路径")
+        print(f"  代码源L：{n_cr} 个锚（{n_cq} 条带引文、{n_cnb} 条无书名）；"
               f"书名→底本/行号/行内逐字已核对")
         # 484 批：source.book 书名可解析
         n_bk = check_registry_books(doc, problems)
