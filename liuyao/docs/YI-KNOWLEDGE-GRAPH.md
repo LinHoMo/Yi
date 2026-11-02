@@ -120,51 +120,57 @@ yi.<layer>.<domain>.<concept>
 
 ```
 liuyao/
-├── rules/                    # L3 仲裁层（已闭环）
+├── rules/                    # L3 运行时仲裁层（已闭环）
 │   ├── rule_engine.py
 │   ├── registry_v2.json
 │   └── ...
 ├── data/
-│   ├── ontology/            # 【新】易学图谱本体
-│   │   ├── l0_metaphysics.json    # L0 阴阳五行八卦演化
-│   │   ├── l1_xiangshu.json       # L1 象数模型（锚内核数据）
+│   ├── ontology/            # 易学图谱本体（只读知识层，不参与评分）
+│   │   ├── l0_metaphysics.json    # L0 太极→两仪→四象→八卦→五行
+│   │   ├── l1_xiangshu.json       # L1 象数模型（锚 symbols.py 真实数据）
 │   │   ├── l2_concepts.json       # L2 术数术语
-│   │   ├── l3_rules.json          # L3 判法（kid 化 registry）
+│   │   ├── l3_rules.json          # L3 判法（kid 化 registry_v2）
 │   │   ├── l4_evidence.json       # L4 逐字断语索引
-│   │   └── _index.json           # 全图节点索引（kid → 位置/层/parents）
+│   │   └── _index.json           # 全图索引 + 演示链
 │   ├── rules/               # 现有术数数据（question_classes/use_god_relations…）
 │   └── sources/             # 古籍逐字原文（已有）
+├── dev_tools/
+│   ├── check_ontology.py     # 图谱看门狗：孤儿/幽灵 parent/engine_impl 回验
+│   └── render_ontology.py    # 人读概念卡片生成器
 └── docs/
-    └── YI-KNOWLEDGE-GRAPH.md   # 本文档
+    ├── YI-KNOWLEDGE-GRAPH.md   # 本文档（设计手册，单一信息源）
+    └── ONTOLOGY-CARDS.md       # 【自动生成，勿手改】概念卡片视图
 ```
 
 **原则**：ontology/ 是**只读知识层**，不参与评分；rules/ 是**运行时仲裁层**。两者通过 kid 互相引用，不互相 import 代码。
+`docs/ONTOLOGY-CARDS.md` 由 `render_ontology.py` 从 ontology JSON 生成，**改 ontology 后重跑生成器即可，不要手改卡片**。
 
 ---
 
 ## 七、执行路线（分阶段，每阶段可独立交付）
 
-### 阶段 A：骨架（本轮起）
-- [ ] 建 `data/ontology/` 目录与 `_index.json` 格式约定
-- [ ] 从 `symbols.py` 导出 L1 象数节点（天干地支五行生冲合）
-- [ ] 用"回头克→待时吉"一条完整链跑通 kid schema（第四章示例落 JSON）
+### 阶段 A：骨架 ✅ 已完成
+- [x] 建 `data/ontology/` 目录与 `_index.json` 格式约定
+- [x] 从 `symbols.py` 导出 L1 象数节点（五行生克/六冲/六合/纳甲）
+- [x] 用"回头克→待时吉"一条完整链跑通 kid schema
 
-### 阶段 B：L0 哲学层
-- [ ] 阴阳、五行、八卦的演化树（太极→两仪→四象→八卦）
-- [ ] 每条 L0 公理挂"它派生出哪些 L1 模型"
+### 阶段 B：L0 哲学层 ✅ 已完成
+- [x] 太极→两仪→四象→八卦演化树
+- [x] 每条 L0 公理挂"它派生出哪些 L1 模型"
 
-### 阶段 C：L2 概念层 kid 化
-- [ ] use_god_relations / question_classes / caiguan_fushi 全部转 kid
+### 阶段 C：L2 概念层 kid 化（部分）
+- [x] 回头克/世旺/冲解 三个核心概念
+- [ ] use_god_relations / question_classes / caiguan_fushi 全部转 kid（待做）
 - [ ] 每个概念补 `parents`（哲学依据）
 
-### 阶段 D：L3 规则层 kid 化
-- [ ] registry_v2 14 条 + rule_registry 关键条 补 kid + parents
-- [ ] 跑一条"哲学→规则"反链检查：每条规则必须能追溯到 L0，否则标 `orphan: true`
+### 阶段 D：L3 规则层 kid 化 ✅ 已完成
+- [x] registry_v2 全部 13 条补 kid + parents
+- [x] 孤儿检查 `dev_tools/check_ontology.py`：每条规则沿 parents 必须追溯到 L0
 
-### 阶段 E：L4 书证挂接 + 学习视图
-- [ ] domain_citations / verdict_texts 按 kid 索引
-- [ ] 生成人可读的"概念卡片"（每个 kid 一页：定义/公理/规则/书证）
-- [ ] AI 检索视图：按 kid 出 subgraph（parents + children + evidence）
+### 阶段 E：L4 书证挂接 + 学习视图（部分）
+- [x] verdict_texts 7 条按 kid 索引（L4 书证层）
+- [x] 人读概念卡片 `dev_tools/render_ontology.py` → `docs/ONTOLOGY-CARDS.md`
+- [ ] AI 检索视图：按 kid 出 subgraph（parents + children + evidence）（待做）
 
 ---
 
