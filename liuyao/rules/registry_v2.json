@@ -141,6 +141,20 @@
       "cap": "吉",
       "detail_tmpl": "世临月建之旺，动变回头克只主延迟待时，不害其吉（逢伤亦伤却有待时之用）",
       "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:谒贵章"}
+    },
+    {
+      "rule_id": "liuyao.yongshen_ke_yougen_chongjie",
+      "reason_key": "yongshen_ke_yougen_chongjie",
+      "when": {
+        "yongshen_quiet": true,
+        "yongshen_not_broken": true,
+        "moving_ke_yongshen_exists": true,
+        "yongshen_rooted": true
+      },
+      "gates": {"qcls_eq": "求财"},
+      "cap": "吉",
+      "detail_tmpl": "用神{ug_branch}（{ug_cat}）月生日扶有根，虽被动爻忌神克，待冲去克神之月日应",
+      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:128050"}
     }
   ]
 }

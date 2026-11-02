@@ -259,6 +259,97 @@ class _Ctx:
         return ("月破" if self.world_broken else "") + ("日克" if self.day_ke_world else "") \
              + ("动克" if self.moving_other_ke_world else "") + ("休囚" if weak else "")
 
+    # ── 救应格局派生（A1/A2）：动克有根待冲解 / 财生官生世连续相生链 ──
+    @property
+    def ug_line(self) -> dict | None:
+        """用神首爻（六亲匹配）。"""
+        for y in self.lines:
+            if y.get("six_relation") == self.ug_cat:
+                return y
+        return None
+
+    @property
+    def ug_el_resolved(self) -> str:
+        """用神五行：优先 step2.use_god_element，缺则按用神支反查。"""
+        if self.ug_el:
+            return self.ug_el
+        y = self.ug_line
+        if y:
+            return BRANCH_ELEMENTS.get(y.get("earthly_branch", ""), "")
+        return ""
+
+    @property
+    def ug_branch(self) -> str:
+        y = self.ug_line
+        return (y or {}).get("earthly_branch", "")
+
+    @property
+    def yongshen_quiet(self) -> bool:
+        """用神安静（不动）。"""
+        y = self.ug_line
+        return bool(y) and not bool(y.get("is_moving"))
+
+    @property
+    def yongshen_not_broken(self) -> bool:
+        """用神不旬空、不月破。"""
+        br = self.ug_branch
+        if not br:
+            return False
+        return (br not in self.empty) and not _chong(br, self.month_branch)
+
+    @property
+    def moving_ke_yongshen_exists(self) -> bool:
+        """存在动爻（非世、非用神）五行克用神。"""
+        uge = self.ug_el_resolved
+        if not uge:
+            return False
+        for y in self.lines:
+            if not y.get("is_moving"):
+                continue
+            if y.get("position") == self.wpos:
+                continue
+            if y.get("six_relation") == self.ug_cat:
+                continue
+            ye = y.get("element") or BRANCH_ELEMENTS.get(y.get("earthly_branch", ""), "")
+            if ye and KE_CYCLE.get(ye) == uge:
+                return True
+        return False
+
+    @property
+    def yongshen_rooted(self) -> bool:
+        """用神有根：月建旺相，或日辰生扶/临日。"""
+        uge = self.ug_el_resolved
+        if not uge:
+            return False
+        if _month_state(uge, self.me) in ("旺", "相"):
+            return True
+        if self.de and (SHENG_CYCLE.get(self.de) == uge or self.de == uge):
+            return True
+        return False
+
+    @property
+    def yongshen_guan_sheng_world_chain(self) -> bool:
+        """用神→官鬼→世爻连续相生链（A2 救应）。
+
+        结构：存在官鬼动爻 g，使得
+            SHENG_CYCLE[用神五行] == g五行  且  SHENG_CYCLE[g五行] == 世爻五行。
+        即"财生官、官生世"——动官为通关之桥。
+        """
+        uge = self.ug_el_resolved
+        if not uge or not self.we:
+            return False
+        for y in self.lines:
+            if y.get("six_relation") != "官鬼":
+                continue
+            if not y.get("is_moving"):
+                continue
+            ge = y.get("element") or BRANCH_ELEMENTS.get(y.get("earthly_branch", ""), "")
+            if not ge:
+                continue
+            if SHENG_CYCLE.get(uge) == ge and SHENG_CYCLE.get(ge) == self.we:
+                return True
+        return False
+
     def yongshen_moving_lines(self) -> list[dict]:
         return [y for y in self.lines
                 if y.get("six_relation") == self.ug_cat and y.get("is_moving")]
@@ -364,6 +455,17 @@ def _eval_predicate(ctx: _Ctx, key: str, want) -> bool:
                    for y in ctx.yongshen_moving_lines())
     if key == "shihua_branch2_active":
         return ctx.shihua_branch2_active == bool(want)
+    # ── 救应格局谓词（A1/A2）──
+    if key == "yongshen_quiet":
+        return ctx.yongshen_quiet == bool(want)
+    if key == "yongshen_not_broken":
+        return ctx.yongshen_not_broken == bool(want)
+    if key == "moving_ke_yongshen_exists":
+        return ctx.moving_ke_yongshen_exists == bool(want)
+    if key == "yongshen_rooted":
+        return ctx.yongshen_rooted == bool(want)
+    if key == "yongshen_guan_sheng_world_chain":
+        return ctx.yongshen_guan_sheng_world_chain == bool(want)
     # 未知谓词＝规则写错，按"不命中"安全处理（宁可漏压不误压）
     return False
 
@@ -412,12 +514,13 @@ def _detail(rule: dict, ctx: _Ctx) -> str:
         "world_month_state": mstate,
         "world_change_type": ctx.world_ct,
         "world_chg_branch": ctx.world_chg_branch,
-        "ug_cat": ctx.ug_cat,
         "world_moving_phrase": "且发动" if (ctx.world and ctx.world.get("is_moving")) else "安静",
         "guanfu_set_repr": ctx.guanfu_set_repr,
         "yuan_why_repr": ctx.yuan_why_repr,
         "yongshen_change_type": ctx.yongshen_first_change_type,
         "world_gui_tag_prefix": ctx.world_gui_tag_prefix,
+        "ug_branch": ctx.ug_branch,
+        "ug_cat": ctx.ug_cat or "用神",
     }
     try:
         return tmpl.format(**ctx_vars)
