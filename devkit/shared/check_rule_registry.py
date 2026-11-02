@@ -116,6 +116,13 @@ locator 从未被读取。现按声明核对：行号在册、`quote/full_quote/
 `key_count == Σentries`、`description` 里的「N 条现代问法」== 实际键数。
 首跑即抓到 195≠275。两科 selftest 都跑夹具。
 
+494 批追加（两科书目解析）：**同书异名归一**。《命理探源》在库底本标题作「命理探源」，
+而八字代码/资料另有写作「命理探原」的（袁树珊书两版题名，学界两写并存）。
+此前 `_corpora_for_book` 只按字面匹配，`《命理探原》源L605` 因此落进「无书名」，
+486/490 的行号检查都跳过了它。现加书目别名表（命理探原→命理探源），
+两个解析函数统一走 `_book_key`；L605 因此归入可解析并受行号检查。
+两科 selftest 都跑夹具。
+
 492 批追加（仅八字册）：**注册表「语料行 NNNN」声明**。
 `bazi/data/rules/rule_registry.json` 有 3 处不以 `L####` 写的行号声明：
 `ming.dayun.locator` 的「语料行 2608/2612」与 `_uncovered[1].locator` 的
@@ -223,6 +230,17 @@ VARIANT = str.maketrans({"剋": "克", "裏": "里", "羣": "群", "徧": "遍",
 
 def norm(s: str) -> str:
     return _DROP.sub("", str(s)).translate(VARIANT)
+
+
+# 同书异名（仅列已实见、可确认同书的异写；不做模糊近音匹配）。
+_TITLE_ALIAS = (("命理探原", "命理探源"),)
+
+
+def _book_key(s: str) -> str:
+    b = norm(s)
+    for alias, canonical in _TITLE_ALIAS:
+        b = b.replace(alias, canonical)
+    return b
 
 
 def _resolve_any(rel: str) -> Path | None:
@@ -1120,7 +1138,7 @@ def _corpus_for_book(book: str) -> Path | None:
     指 dz 本（wikitext 的 L387 是另一段）。与 [14] 的 load_corpora 同理：
     同名多本一律 `_dz` 优先，否则会把正确引用判成漂移（479 批实踩）。
     """
-    base = norm(book)
+    base = _book_key(book)
     if not base:
         return None
     cands: list[tuple[int, Path]] = []
@@ -1129,7 +1147,7 @@ def _corpus_for_book(book: str) -> Path | None:
             meta = json.loads(pv.read_text(encoding="utf-8"))
         except Exception:
             continue
-        title = norm(meta.get("title") or "")
+        title = _book_key(meta.get("title") or "")
         if not title or not (base in title or title in base):
             continue
         key = pv.name.split(".")[0]
@@ -1148,7 +1166,7 @@ def _corpora_for_book(book: str) -> list[Path]:
     内联书证常不写版本（同一《神峰通考》有的行号指 dz、有的指 wikitext），
     只取 `_dz` 会把正确引用判成漂移；候选取全，任一命中即过并记 NOTE。
     """
-    base = norm(book)
+    base = _book_key(book)
     if not base:
         return []
     out: list[Path] = []
@@ -1157,7 +1175,7 @@ def _corpora_for_book(book: str) -> list[Path]:
             meta = json.loads(pv.read_text(encoding="utf-8"))
         except Exception:
             continue
-        title = norm(meta.get("title") or "")
+        title = _book_key(meta.get("title") or "")
         if not title or not (base in title or title in base):
             continue
         key = pv.name.split(".")[0]
@@ -3002,6 +3020,10 @@ def selftest(problems: list[str]) -> None:
         problems.append("负例未抓到：裁决散文路径不存在")
     if not any("0 条可解析锚" in x for x in _ppbad(lambda d: d.clear())):
         problems.append("负例未抓到：裁决散文 0 条锚")
+
+    # 494 批：同书异名归一（命理探原→命理探源）
+    if _book_key("《命理探原》") != _book_key("《命理探源》"):
+        problems.append("负例自证失效：书目异名未归一到同一键")
 
     # 490 批：代码注释里的《书名》源L「…」（夹具注入）
     _cfl = {"data/sources/__no_such__c3.txt": ["", "甲判", "乙判"]}
