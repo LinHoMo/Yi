@@ -1623,6 +1623,54 @@ def check_verdict_inline_quotes(doc: dict, problems: list[str],
     return n
 
 
+def check_code_anchors(problems: list[str], files=None, lines_of=None) -> int:
+    """`core/`、`scripts/` 注释里的「<file>.txt:<行>「…」」逐字回验（482 批）。
+
+    为什么需要它：内核注释把书证写成 `file:242「亥卯未亡神在寅…」` 形态，
+    既无「源L」前缀，也不在数据表里；[14]/[10] 只扫 references 与「源L」，
+    这些代码级引文此前无门。先实测：八字 5 处命中。六爻副本同一份
+    `shensha.py` 引的是《兰台妙选》《命理探源》等**八字专有底本**（六爻
+    `data/sources/` 无此三书），按「各科独立可跑、不跨科读底本」口径不在
+    六爻侧挂门（已在 CHANGELOG 登记为跨科注释遗留，不在本批裁定）。
+    判据：底本 `data/sources/<file>` 在盘、行号在册、引文按省略号分段落位；
+    `files` / `lines_of` 供 selftest 注入夹具。
+    """
+    cache: dict[str, list[str] | None] = {}
+
+    def get_lines(key: str) -> list[str] | None:
+        if lines_of is not None:
+            return lines_of(key)
+        if key not in cache:
+            p = _resolve_any(key)
+            cache[key] = (p.read_text(encoding="utf-8", errors="replace").splitlines()
+                          if p else None)
+        return cache[key]
+
+    PAT = re.compile(r"([A-Za-z0-9_.\-]+\.txt)(?:\s+|:)(\d+)"
+                     r"[^「]{0,30}「([^」]{4,200})」")
+    n = 0
+    sources = files if files is not None else [
+        (str(p.relative_to(DISC)), p.read_text(encoding="utf-8", errors="replace"))
+        for root in (DISC / "core", DISC / "scripts")
+        for p in sorted(root.glob("**/*.py"))]
+    for label, text in sources:
+        for m in PAT.finditer(text):
+            n += 1
+            f, ln, q = m.group(1), int(m.group(2)), m.group(3)
+            L = get_lines(f"data/sources/{f}")
+            if L is None:
+                problems.append(f"代码书证：{label} 底本不存在 {f}")
+                continue
+            if not (1 <= ln <= len(L)):
+                problems.append(f"代码书证：{label} {f}:{ln} 超出底本（共 {len(L)} 行）")
+                continue
+            if not _seg_hit(q, L[ln - 1]):
+                problems.append(f"代码书证：{label} 「{q[:24]}」不在 {f}:{ln}")
+    if n == 0:
+        problems.append("代码书证：0 条——0 结果 ≠ 通过")
+    return n
+
+
 def selftest(problems: list[str]) -> None:
     """负例：造一条 verified=true 却指向不存在文件/解不到值的条目，必须判红。"""
     fake = {"schema": "yi-rule-registry-v1", "rules": [
@@ -2245,6 +2293,32 @@ def selftest(problems: list[str]) -> None:
     if not any("0 条" in x for x in _vdbad(lambda d: d.clear())):
         problems.append("负例未抓到：裁决内联 0 条")
 
+    # 482 批：core/scripts 注释里的 <file>.txt:<行>「…」（夹具注入）
+    _cl = {"data/sources/__no_such__c.txt": ["", "贵在折衷，归於中道"]}
+    cfiles = [("sample.py", "# __no_such__c.txt:2「贵在折衷，归於中道」")]
+    p_c: list[str] = []
+    n_c = check_code_anchors(p_c, cfiles, lambda k: _cl.get(k))
+    if p_c or n_c != 1:
+        problems.append(f"代码书证正例被误伤：{p_c}（条 {n_c}）")
+
+    def _cbad(text, lines=None) -> list[str]:
+        p: list[str] = []
+        check_code_anchors(p, [("sample.py", text)],
+                           lambda k: (lines or _cl).get(k))
+        return p
+
+    if not any("不在 __no_such__c.txt:2" in x for x in
+               _cbad("# __no_such__c.txt:2「贵在折衷，归於中道也」")):
+        problems.append("负例未抓到：代码书证引文不符")
+    if not any("超出底本" in x for x in
+               _cbad("# __no_such__c.txt:99「贵在折衷，归於中道」")):
+        problems.append("负例未抓到：代码书证行号越界")
+    if not any("底本不存在" in x for x in
+               _cbad("# __no_such__c2.txt:2「贵在折衷，归於中道」")):
+        problems.append("负例未抓到：代码书证底本不存在")
+    if not any("0 条" in x for x in _cbad("# 无书证")):
+        problems.append("负例未抓到：代码书证 0 条")
+
 
 def main() -> int:
     if not REG.exists():
@@ -2287,6 +2361,13 @@ def main() -> int:
         if n_vi < 3:
             problems.append(f"裁决内联书证：只有 {n_vi} 条（下限 3）")
         print(f"  裁决内联书证：{n_vi} 条；路径/书名归属与行内逐字已核对")
+    # 482 批：core/scripts 注释里的 <file>.txt:<行>「…」（仅八字册；
+    # 六爻 shensha 副本引八字专有底本，按独立科口径不跨科读取，见 docstring）
+    if DISC.name == "bazi":
+        n_code = check_code_anchors(problems)
+        if n_code < 5:
+            problems.append(f"代码书证：只有 {n_code} 条（下限 5）")
+        print(f"  代码书证：{n_code} 条；底本/行号/行内逐字已核对")
     # 466 批：六神取象 / 十神作用（仅八字册）
     if DISC.name == "bazi":
         if not LIUSHEN.is_file() or not SHISHEN.is_file():
