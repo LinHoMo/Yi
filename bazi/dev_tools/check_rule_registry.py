@@ -1305,6 +1305,16 @@ def check_narrative_anchors(doc: dict, problems: list[str], lines_of=None) -> in
         for k, v in (ph.get(sec) or {}).items():
             if isinstance(v, dict) and v.get("quote") and v.get("src"):
                 targets.append((f"{sec}.{k}", v))
+    # 481 批：家宅取象 `_出处` 的内联 `L####「…」`（L2533 夹注是改写，不按逐字）
+    jz = (doc or {}).get("jiazhai_take_image") or {}
+    jz_src = str(jz.get("_出处") or "")
+    jz_file = re.search(r"(data/sources/[A-Za-z0-9_.\-]+)", jz_src)
+    if jz_file:
+        for mm in re.finditer(r"L(\d+)\s*「([^」]{4,200})」", jz_src):
+            targets.append((
+                f"jiazhai_take_image._出处:L{mm.group(1)}",
+                {"quote": mm.group(2),
+                 "src": f"{jz_file.group(1)}:L{mm.group(1)}"}))
     if not targets:
         problems.append("叙述层引文：0 条 quote/src——0 结果 ≠ 通过")
         return 0
@@ -2078,10 +2088,12 @@ def selftest(problems: list[str]) -> None:
         "yigua_yishi": {"恍惚": {
             "quote": "恍惚可再占",
             "src": "data/sources/__no_such__s.txt:L3"}},
-    }}
+    },
+        "jiazhai_take_image": {
+            "_出处": "data/sources/__no_such__s.txt L2「青龙空亡家虚喜」"}}
     p_ns: list[str] = []
     n_ns = check_narrative_anchors(nsdoc, p_ns, lambda f: _nsl.get(f))
-    if p_ns or n_ns != 2:
+    if p_ns or n_ns != 3:
         problems.append(f"叙述层引文正例被误伤：{p_ns}（字段 {n_ns}）")
 
     def _nsbad(mut) -> list[str]:
@@ -2104,8 +2116,13 @@ def selftest(problems: list[str]) -> None:
                       .__setitem__("src", "data/sources/__no_such__s.txt:L99"))):
         problems.append("负例未抓到：叙述层 src 行号越界")
     if not any("0 条 quote/src" in x for x in
-               _nsbad(lambda d: d["pattern_hints"].clear())):
+               _nsbad(lambda d: (d["pattern_hints"].clear(),
+                                 d.pop("jiazhai_take_image", None)))):
         problems.append("负例未抓到：叙述层 0 条 quote/src")
+    if not any("不在所署行" in x for x in
+               _nsbad(lambda d: d["jiazhai_take_image"].__setitem__(
+                   "_出处", "data/sources/__no_such__s.txt L3「青龙空亡家虚喜」"))):
+        problems.append("负例未抓到：家宅取象 _出处 内联引文不在所署行")
 
     # 477 批：verdict_texts 的文件+L 行锚（夹具底本注入）
     _vtl = {"data/sources/__no_such__v.txt": [
@@ -2321,8 +2338,8 @@ def main() -> int:
             print(f"  文王持世：{n_w} 个 quote/补 字段；src/补_src 行内逐字已核对")
             # 476 批：叙述层六神空亡/六神持世/一卦一事 quote/src 行锚
             n_na = check_narrative_anchors(tpl, problems)
-            if n_na < 10:
-                problems.append(f"叙述层引文：只有 {n_na} 条 quote/src（下限 10）")
+            if n_na < 11:
+                problems.append(f"叙述层引文：只有 {n_na} 条 quote/src（下限 11）")
             print(f"  叙述层引文：{n_na} 条 quote/src；src 行号与行内逐字已核对")
             # 477 批：裁决表文案里的文件+L 行锚
             if not VERDICT_TEXTS.is_file():
