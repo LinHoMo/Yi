@@ -5,6 +5,36 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-02 第四百七十二批（六爻·裁决表书证接线）：**`build_adjudications --verify` 自称「27 项书证全部可回指原书行」，却只列 nightly、全门从不执行；接入 [12] 并登记软引用**
+
+**性质**：门覆盖面接线（不改判据、不改数据、不改读数）。
+
+### 一、缺陷
+
+`liuyao/dev_tools/build_adjudications.py` 的 `--verify` 会逐条回验在册
+`adjudications.json` 的 27 项书证（行号＋逐字），但 `check.py` 的 `[12]` 只显式
+接了两份规则数据构建器；`governance_map` 把 `build_adjudications` 标为 nightly。
+「逐字回验」在治理地图上存在，实际全门从不执行（§六.3）。
+
+### 二、改法
+
+- `[12]` 的「规则数据引文复验」循环改为 `(script, label, flag)` 三元组，追加
+  `build_adjudications.py --verify`（标签「裁决表」）。
+- `GOVERNANCE-MAP.json` 重生成：`build_adjudications.py` 进入
+  `referenced_not_blocking` 软清单；账台 `tier一致性` 期望 liuyao 软引用 2→3，
+  带批号登记。
+
+### 三、自证（§四.8）
+
+- `build_adjudications --selftest`：正验全过／篡改拒／行号挪移拒／id 唯一／
+  未决项保留，全过（既有）。
+- 真实探针：`liuyao.xunkong_variants` 的 `quote`「太烦」改「太繁」→
+  `× [12] 规则数据引文复验（裁决表）未通过`、明细点名 `L893`；EXIT=**1**、
+  逐字节还原（`git diff` 零）。
+- 真盘：[12] 三份构建器复验 69/69、15/15、27/27；读数 tune 97.9（n=20）／
+  holdout 90.2（n=12）逐位不变（§四.7，本批不触引擎）。
+
+
 ## 2026-11-02 第四百七十一批（六爻·火珠林财官伏藏行锚）：**`caiguan_fushi` 自称「歌诀/注文只作逐字引文登记、按 `*_src` 回指」，21 个字段此前无门；实测全符后接入 [12]**
 
 **性质**：门覆盖面扩展（不改判据、不改数据、不改读数）。

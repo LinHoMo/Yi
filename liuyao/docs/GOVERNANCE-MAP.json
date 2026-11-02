@@ -12,6 +12,7 @@
  "tier_link_violations": {
   "blocking_not_referenced": [],
   "referenced_not_blocking": [
+   "build_adjudications.py",
    "build_question_use_gods.py",
    "build_use_god_rules.py"
   ]
@@ -63,7 +64,7 @@
    "script": "build_adjudications.py",
    "tier": "nightly",
    "guards": "流派裁决表构建（逐字回验）",
-   "run_by_check_py": false,
+   "run_by_check_py": true,
    "doc": "流派裁决表 v0（第一百八十八批·B2）——四书互驳处，引擎采谁、凭什么、状态如何，一次说清。"
   },
   {

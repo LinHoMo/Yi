@@ -997,11 +997,15 @@ def main() -> int:
 
     # 464 批：两份规则数据构建器自带「引文逐字命中原文」复验，此前从未接线。
     # 声明见各自 docstring：「引文逐字对不上原文就不出表」——不跑等于没声明。
+    # 472 批：裁决表构建器同病——`build_adjudications.py --verify` 自称「27 项书证
+    # 全部可回指原书行」，此前只列在 governance_map 的 nightly，全门从不执行。
     if want("rule_registry"):
-        for script, label in (("dev_tools/build_question_use_gods.py", "问题词典"),
-                              ("dev_tools/build_use_god_rules.py", "用神法则表")):
+        for script, label, flag in (
+                ("dev_tools/build_question_use_gods.py", "问题词典", "--check"),
+                ("dev_tools/build_use_god_rules.py", "用神法则表", "--check"),
+                ("dev_tools/build_adjudications.py", "裁决表", "--verify")):
             print(f"\n[12] 规则数据引文复验（{label}）")
-            rc, out = run([sys.executable, script, "--check"])
+            rc, out = run([sys.executable, script, flag])
             for line in out.splitlines():
                 if line.strip():
                     print("  " + line.strip())
