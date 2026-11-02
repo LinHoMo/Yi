@@ -67,6 +67,14 @@ locator 从未被读取。现按声明核对：行号在册、`quote/full_quote/
 `pattern_hints._wenwang_chishi._meta` 明写「每条 quote 为底本逐字子串，src 为主源行号」，
 但 14 个 quote/补 字段此前无门（[14] 认「源L」形态，这里的 `file:NNNN` 不在扫描面）。
 现核 `src`/`补_src` 行号在册、值落在该行；字段数下限 14。两科 selftest 都跑夹具。
+
+485 批追加（仅六爻册）：**分占域判据引文库的章界回验**。`domain_citations.json` 的
+`_extension_note` 自称「N 域逐字引文（一行一锚一逐字，行号均可回指底本）」，但该册
+`consumed_by_engine=false`、全仓无代码读取，132 个 L 引用从未被任何门回验。现核：
+每域 `章节` 的「L#### 起」必须正落在该章标题行，`引文` 的「源L#### 逐字「…」」须在
+本章行界内且逐字命中；`_source_lines` 若带行号须与 `章节` 同锚；`_extension_note`
+声明的域数须等于实际域数。首跑抓到「神听」锚在 L1262（用人章注文行）、引文取 L1263
+的用人章六神句——整个域错章。两科 selftest 都跑夹具。
 """
 from __future__ import annotations
 
@@ -106,6 +114,9 @@ NAYIN = DISC / "data" / "nayin_quxiang.json"
 VERDICT_TEXTS = DISC / "data" / "rules" / "verdict_texts.json"
 # 483 批：六爻问题词典（仅六爻有该册）。
 QUESTION_USE_GODS = DISC / "data" / "rules" / "question_use_gods.json"
+# 485 批：六爻分占域判据引文库（仅六爻有该册）。
+DOMAIN_CITES = DISC / "data" / "rules" / "domain_citations.json"
+DOMAIN_CITES_SRC = DISC / "data" / "sources" / "yimao_dz.dz.txt"
 _VERDICT_LOCATOR = re.compile(r"(data/sources/[^:]+):(\d+)")
 _VERDICT_MARK = re.compile(r"''+|={2,}|\{\{|\}\}|\||\*")
 _VERDICT_FIELDS = ("quote", "full_quote", "cond_quote", "verse_quote")
@@ -1775,6 +1786,96 @@ def check_registry_books(doc: dict, problems: list[str], books_of=None) -> int:
     return n
 
 
+_DC_CHAPTER = re.compile(r"^《易冒》(\S+?)（(?:底本 )?L(\d+) 起）$")
+_DC_QUOTE = re.compile(r"^《易冒》源L(\d+) 逐字「(.*)」$")
+_DC_HEADING = re.compile(r"[\u4e00-\u9fff]+章(第[\u4e00-\u9fff]+)?")
+
+
+def check_domain_citations(doc: dict, problems: list[str],
+                           lines: list[str] | None = None) -> tuple[int, int]:
+    """分占域判据引文库的章界＋行内逐字回验（485 批）。返回 (域数, 引文数)。
+
+    为什么需要它：`domain_citations.json` 自称「一行一锚一逐字，行号均可回指底本」，
+    但 `consumed_by_engine=false`，全仓无代码读取——132 个 L 引用此前没有一道门。
+    只看「引文是否在该行」仍不够：**行对而章错**同样是把引用挂到别的篇章。故按
+    `章节` 里的「L#### 起」定位章标题行，再以该章到下一章标题为行界，要求：
+      · `章节` 的锚点必须落在标题行（章名按标题前缀匹配，允许数据只写「X章」）；
+      · `引文` 必须在本章行界内，且 `_fold` 后逐字命中所署行；
+      · `_source_lines` 非空；若带行号，须与 `章节` 同锚；
+      · `_extension_note` 的「N 域」须等于实际域数（声明数自洽）。
+    `lines` 供 selftest 注入夹具底本；正式路径读 `data/sources/yimao_dz.dz.txt`。
+    """
+    domains = doc.get("domains") or {}
+    entries = [(k, v) for k, v in domains.items() if isinstance(v, dict)]
+    if not entries:
+        problems.append("占域引文：0 个域条目——0 结果 ≠ 通过")
+        return 0, 0
+    # 在盘数据把总注记放在 domains 里（字符串键），也接受根级写法。
+    note = str(doc.get("_extension_note") or domains.get("_extension_note") or "")
+    m_note = re.search(r"本表现收\s*(\d+)\s*域", note)
+    if not m_note:
+        problems.append("占域引文：_extension_note 未声明「本表现收 N 域」——域数无法核对")
+    elif int(m_note.group(1)) != len(entries):
+        problems.append(f"占域引文：_extension_note 声明 {m_note.group(1)} 域，"
+                        f"实际 {len(entries)} 域")
+    if lines is None:
+        if not DOMAIN_CITES_SRC.is_file():
+            problems.append(f"占域引文：底本不存在 → {DOMAIN_CITES_SRC.name}")
+            return len(entries), 0
+        lines = DOMAIN_CITES_SRC.read_text(encoding="utf-8",
+                                           errors="replace").splitlines()
+    heads = [(i, re.sub(r"\s+", "", ln)) for i, ln in enumerate(lines, 1)
+             if _DC_HEADING.fullmatch(re.sub(r"\s+", "", ln))]
+    if not heads:
+        problems.append("占域引文：底本未扫到任何章标题行——0 结果 ≠ 通过")
+        return len(entries), 0
+    n_q = 0
+    for name, item in entries:
+        ch = str(item.get("章节") or "").strip()
+        m_ch = _DC_CHAPTER.match(ch)
+        if not m_ch:
+            problems.append(f"占域引文：{name} 的章节格式无法解析 → {ch!r}")
+            continue
+        token, start = m_ch.group(1), int(m_ch.group(2))
+        if not (1 <= start <= len(lines)):
+            problems.append(f"占域引文：{name} 的章节锚 L{start} 超出底本（共 {len(lines)} 行）")
+            continue
+        idx = next((j for j, (i, _h) in enumerate(heads) if i == start), None)
+        if idx is None or not heads[idx][1].startswith(token):
+            got = heads[idx][1] if idx is not None else lines[start - 1].strip()[:30]
+            problems.append(f"占域引文：{name} 的章节锚 L{start} 不在章标题行"
+                            f"（该行为 {got!r}，声明 {token}）")
+            continue
+        end = heads[idx + 1][0] - 1 if idx + 1 < len(heads) else len(lines)
+        src_lines = str(item.get("_source_lines") or "").strip()
+        if not src_lines:
+            problems.append(f"占域引文：{name} 缺 _source_lines")
+        else:
+            m_sl = re.search(r"L(\d+)", src_lines)
+            if m_sl and int(m_sl.group(1)) != start:
+                problems.append(f"占域引文：{name} 的 _source_lines 锚 L{m_sl.group(1)} "
+                                f"与章节锚 L{start} 不一致")
+        quotes = item.get("引文")
+        if not isinstance(quotes, list) or not quotes:
+            problems.append(f"占域引文：{name} 缺引文")
+            continue
+        for q in quotes:
+            n_q += 1
+            m_q = _DC_QUOTE.match(str(q).strip())
+            if not m_q:
+                problems.append(f"占域引文：{name} 的引文格式无法解析 → {str(q)[:40]!r}")
+                continue
+            ql, quote = int(m_q.group(1)), m_q.group(2)
+            if not (1 <= ql <= len(lines)):
+                problems.append(f"占域引文：{name} 的引文行 L{ql} 超出底本")
+            elif not (start <= ql <= end):
+                problems.append(f"占域引文：{name} 的引文行 L{ql} 越出本章 "
+                                f"[L{start}–L{end}]")
+            elif _fold(quote) not in _fold(lines[ql - 1]):
+                problems.append(f"占域引文：{name} 的引文不在所署行 L{ql} → {quote[:30]!r}")
+    return len(entries), n_q
+
+
 def selftest(problems: list[str]) -> None:
     """负例：造一条 verified=true 却指向不存在文件/解不到值的条目，必须判红。"""
     fake = {"schema": "yi-rule-registry-v1", "rules": [
@@ -2472,6 +2573,52 @@ def selftest(problems: list[str]) -> None:
     if not any("0 个书名" in x for x in p_bk0):
         problems.append("负例未抓到：注册表书目 0 个")
 
+    # 485 批：分占域判据引文库章界（夹具注入）
+    _dc = ["易冒卷之一", "甲子章第一", "    以世应分内外，动静别吉凶。",
+           "", "附录章第二", "    另章判语在此。"]
+    dcbase = {"domains": {
+        "_extension_note": "本表现收 2 域逐字引文（一行一锚一逐字）",
+        "甲子": {"_source_lines": "《易冒》甲子章第一（底本 L2 起）",
+                 "章节": "《易冒》甲子章第一（底本 L2 起）",
+                 "引文": ["《易冒》源L3 逐字「以世应分内外」"]},
+        "附录": {"_source_lines": "《易冒》附录章第二（底本 L5 起）",
+                 "章节": "《易冒》附录章第二（底本 L5 起）",
+                 "引文": ["《易冒》源L6 逐字「另章判语在此」"]}}}
+    p_dc: list[str] = []
+    n_dc = check_domain_citations(dcbase, p_dc, _dc)
+    if p_dc or n_dc != (2, 2):
+        problems.append(f"占域引文正例被误伤：{p_dc}（域/引文 {n_dc}）")
+
+    def _dcbad(mut) -> list[str]:
+        d = json.loads(json.dumps(dcbase, ensure_ascii=False))
+        mut(d)
+        p: list[str] = []
+        check_domain_citations(d, p, _dc)
+        return p
+
+    if not any("不在所署行 L3" in x for x in
+               _dcbad(lambda d: d["domains"]["甲子"]["引文"].__setitem__(
+                   0, "《易冒》源L3 逐字「以世应分外内」"))):
+        problems.append("负例未抓到：占域引文不在所署行")
+    if not any("不在章标题行" in x for x in
+               _dcbad(lambda d: d["domains"]["甲子"].__setitem__(
+                   "章节", "《易冒》甲子章第一（底本 L1 起）"))):
+        problems.append("负例未抓到：占域章节锚不在标题行")
+    if not any("越出本章" in x for x in
+               _dcbad(lambda d: d["domains"]["甲子"]["引文"].__setitem__(
+                   0, "《易冒》源L6 逐字「另章判语在此」"))):
+        problems.append("负例未抓到：占域引文越章")
+    if not any("不一致" in x for x in
+               _dcbad(lambda d: d["domains"]["甲子"].__setitem__(
+                   "_source_lines", "《易冒》甲子章第一（底本 L3 起）"))):
+        problems.append("负例未抓到：占域 _source_lines 与章节锚不一致")
+    if not any("实际 2 域" in x for x in
+               _dcbad(lambda d: d["domains"].__setitem__(
+                   "_extension_note", "本表现收 3 域"))):
+        problems.append("负例未抓到：占域声明域数与实际不符")
+    if not any("0 个域条目" in x for x in _dcbad(lambda d: d["domains"].clear())):
+        problems.append("负例未抓到：占域 0 个域条目")
+
 
 def main() -> int:
     if not REG.exists():
@@ -2623,6 +2770,16 @@ def main() -> int:
         if n_loc < 6:
             problems.append(f"裸 locator：只有 {n_loc} 条（下限 6）——先确认字段/路径")
         print(f"  裸 locator：{n_loc} 条行锚；书名→底本/行号/引文落位已核对")
+        # 485 批：分占域判据引文库的章界＋行内逐字（仅六爻册）
+        if not DOMAIN_CITES.is_file():
+            problems.append("占域引文：domain_citations.json 不存在——0 结果 ≠ 通过")
+        else:
+            dcdoc = json.loads(DOMAIN_CITES.read_text(encoding="utf-8"))
+            dc_n, dc_q = check_domain_citations(dcdoc, problems)
+            if dc_n < 40 or dc_q < 56:
+                problems.append(f"占域引文：域 {dc_n}（下限 40）／引文 {dc_q}"
+                                f"（下限 56）——先确认字段/路径")
+            print(f"  占域引文：{dc_n} 域、{dc_q} 条引文；章节锚/章界/行内逐字已核对")
     _ap = argparse.ArgumentParser(description="check_rule_registry：--selftest 负例自证开关（§三）")
     _ap.add_argument("--selftest", action="store_true", help="负例自证")
     args = _ap.parse_args()
