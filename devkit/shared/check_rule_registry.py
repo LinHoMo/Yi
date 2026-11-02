@@ -101,6 +101,16 @@ locator 从未被读取。现按声明核对：行号在册、`quote/full_quote/
 此前无门。现核：带 `data/sources/<书>` 的按路径、带《书名》的按 provenance、
 裸 `源L` 按同条目 `locator` 底本，行号在册；紧邻 `「` 的锚已由 479/480 覆盖，
 本门不重复判。首跑 12/12 在册（0 处越界）。两科 selftest 都跑夹具。
+
+490 批追加（仅八字册）：**代码注释里的 `《书名》源L####「…」`**。
+`bazi/scripts/**/*.py` 与 `bazi/core/**/*.py` 有 51 个 `源L` 锚（`dayun.py` 的
+岁运五式、虚拱填实、三合补支等），482 只认 `<file>.txt:<行>「…」` 形态、
+八字 [10] 只扫 `references/`，这批 `源L` 书证此前无门。现核：书名取同行
+或前 9 行最近的《…》（同名多本全收），行号在册；同行 40 字内的 `「…」`
+须在该行逐字命中（省略号分段）。首跑 51 锚中 31 条带同行引文全符、
+49 条书名可解析（另 2 条 `dayun.py` 的「同书源L1848／源L922」超出前 9 行书名
+上下文，按无书名只计不判）。代码里的《》也可能是篇名（《顺局》），故不可解析时
+先向上找可解析书名（《滴天髓》），仍无才记无书名，不臆造归属。两科 selftest 都跑夹具。
 """
 from __future__ import annotations
 
@@ -2022,6 +2032,100 @@ def check_verdicts_prose_anchors(doc: dict, problems: list[str],
     return n
 
 
+_CODE_BOOK = re.compile(r"《([^》]{2,24})》")
+_CODE_ANCHOR = re.compile(r"源\s*L(\d+)")
+_CODE_QUOTE = re.compile(r"「([^」]{2,300})」")
+
+
+def check_bazi_code_anchors(problems: list[str], files=None, lines_of=None,
+                            books_of=None) -> tuple[int, int, int]:
+    """八字代码注释的 `源L` 书证回验（490 批）。返回 (锚数, 带引文锚, 无书名锚)。
+
+    为什么需要它：`scripts/**/*.py` 与 `core/**/*.py` 有 51 个 `源L` 锚
+    （`dayun.py` 的岁运五式、虚拱填实、三合补支…），482 只认
+    `<file>.txt:<行>「…」`，八字 [10] 只扫 `references/`——这批书证此前无门。
+    判据：书名取同行或前 9 行最近的《…》，经 provenance 全收（同名 dz／wikitext），
+    行号须在册；同行 40 字内的 `「…」` 按省略号分段在该行逐字命中。
+    无书名的裸 `源L` 只计数、不判红（留给上一行书名/版式判断，不臆造归属）。
+    `files` / `lines_of` / `books_of` 供 selftest 注入夹具；正式路径现场读。
+    """
+    if files is None:
+        files = []
+        for sub in ("scripts", "core"):
+            for p in sorted((DISC / sub).rglob("*.py")):
+                files.append((str(p.relative_to(DISC)),
+                              p.read_text(encoding="utf-8", errors="replace")))
+    cache: dict[str, list[str] | None] = {}
+
+    def get_lines(key: str) -> list[str] | None:
+        if lines_of is not None:
+            return lines_of(key)
+        if key not in cache:
+            p = _resolve_any(key)
+            cache[key] = (p.read_text(encoding="utf-8", errors="replace").splitlines()
+                          if p and p.is_file() else None)
+        return cache[key]
+
+    n_ref = n_q = n_nobook = 0
+    for rel, text in files:
+        lines = text.splitlines()
+        for i, line in enumerate(lines):
+            for m in _CODE_ANCHOR.finditer(line):
+                n_ref += 1
+                ln = int(m.group(1))
+                pre = _CODE_BOOK.findall(line[:m.start()])
+                book = pre[-1] if pre else ""
+                if not book:
+                    for j in range(i - 1, max(-1, i - 9), -1):
+                        bs = _CODE_BOOK.findall(lines[j])
+                        if bs:
+                            book = bs[-1]
+                            break
+                if not book:
+                    n_nobook += 1
+                    continue
+                paths = (books_of(book) if books_of is not None
+                         else [str(p) for p in _corpora_for_book(book)])
+                if not paths:
+                    # 《》在代码注释里也可能是篇名（如《顺局》），不能当书判红；
+                    # 先向上找更早一个可解析书名（《滴天髓》→ 滴天髓两底本）。
+                    for j in range(i - 1, max(-1, i - 9), -1):
+                        for b in _CODE_BOOK.findall(lines[j]):
+                            cand = (books_of(b) if books_of is not None
+                                    else [str(p) for p in _corpora_for_book(b)])
+                            if cand:
+                                paths = cand
+                                break
+                        if paths:
+                            break
+                if not paths:
+                    n_nobook += 1
+                    continue
+                qm = _CODE_QUOTE.search(line[m.end():m.end() + 40])
+                q = qm.group(1) if qm else ""
+                in_range = quoted_ok = False
+                for key in paths:
+                    L = get_lines(key)
+                    if L is None:
+                        continue
+                    if 1 <= ln <= len(L):
+                        in_range = True
+                        if not q or _seg_hit(q, L[ln - 1]):
+                            quoted_ok = bool(q)
+                            break
+                if not in_range:
+                    problems.append(f"代码源L：{rel}:{i + 1} 的《{book}》源L{ln} "
+                                    "超出底本")
+                elif q:
+                    n_q += 1
+                    if not quoted_ok:
+                        problems.append(f"代码源L：{rel}:{i + 1} 的《{book}》源L{ln} "
+                                        f"引文不在该行 → {q[:26]!r}")
+    if n_ref == 0:
+        problems.append("代码源L：0 个源L 锚——0 结果 ≠ 通过")
+    return n_ref, n_q, n_nobook
+
+
 def check_registry_books(doc: dict, problems: list[str], books_of=None) -> int:
     """注册表 `source.book` 里的每个《书名》都必须有在盘底本（484 批）。
 
@@ -2739,6 +2843,38 @@ def selftest(problems: list[str]) -> None:
     if not any("0 条可解析锚" in x for x in _ppbad(lambda d: d.clear())):
         problems.append("负例未抓到：裁决散文 0 条锚")
 
+    # 490 批：代码注释里的《书名》源L「…」（夹具注入）
+    _cfl = {"data/sources/__no_such__c3.txt": ["", "甲判", "乙判"]}
+    cfiles = [("sample.py", "# 《测试书》源L2「甲判」\n# 《测试书》源L3 无引文\n")]
+    p_cf: list[str] = []
+    n_cf, q_cf, nb_cf = check_bazi_code_anchors(
+        p_cf, cfiles, lines_of=lambda f: _cfl.get(f),
+        books_of=lambda b: ["data/sources/__no_such__c3.txt"] if b == "测试书" else [])
+    if p_cf or (n_cf, q_cf, nb_cf) != (2, 1, 0):
+        problems.append(f"代码源L正例被误伤：{p_cf}（锚/引文/无书名 {n_cf}/{q_cf}/{nb_cf}）")
+
+    def _cfbad(text) -> list[str]:
+        p: list[str] = []
+        check_bazi_code_anchors(
+            p, [("sample.py", text)], lines_of=lambda f: _cfl.get(f),
+            books_of=lambda b: ["data/sources/__no_such__c3.txt"] if b == "测试书" else [])
+        return p
+
+    if not any("引文不在该行" in x for x in
+               _cfbad("# 《测试书》源L2「乙判」")):
+        problems.append("负例未抓到：代码源L引文不在该行")
+    if not any("超出底本" in x for x in
+               _cfbad("# 《测试书》源L99 无引文")):
+        problems.append("负例未抓到：代码源L行号越界")
+    p_un: list[str] = []
+    _, _, nb_un = check_bazi_code_anchors(
+        p_un, [("sample.py", "# 《无此书》源L2「甲判」")],
+        lines_of=lambda f: _cfl.get(f), books_of=lambda b: [])
+    if p_un or nb_un != 1:
+        problems.append(f"代码源L篇名式书名处理失效：{p_un}（无书名 {nb_un}）")
+    if not any("0 个源L" in x for x in _cfbad("# 无书证")):
+        problems.append("负例未抓到：代码源L 0 个锚")
+
     # 477 批：verdict_texts 的文件+L 行锚（夹具底本注入）
     _vtl = {"data/sources/__no_such__v.txt": [
         "", "有病方为贵", "亦是休囚無气始見危"]}
@@ -3035,6 +3171,13 @@ def main() -> int:
         if n_code < 5:
             problems.append(f"代码书证：只有 {n_code} 条（下限 5）")
         print(f"  代码书证：{n_code} 条；底本/行号/行内逐字已核对")
+        # 490 批：代码注释里的《书名》源L「…」
+        n_cr, n_cq, n_cnb = check_bazi_code_anchors(problems)
+        if n_cr < 40 or n_cq < 8:
+            problems.append(f"代码源L：锚 {n_cr}（下限 40）／带引文 {n_cq}"
+                            f"（下限 8）——先确认字段/路径")
+        print(f"  代码源L：{n_cr} 个锚（{n_cq} 条带同行引文、{n_cnb} 条无书名）；"
+              f"书名→底本/行号/行内逐字已核对")
         # 484 批：source.book 书名可解析
         n_bk = check_registry_books(doc, problems)
         if n_bk < 18:
