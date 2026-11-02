@@ -5,10 +5,10 @@
 由本引擎对盘面求值。目标——**纯重构、零输出漂移**：引擎产出的 cap dict 结构与原来完全一致
 （rule_id/cap/src/reason_key/detail），step5 无感知。
 
-依赖方向（无循环）：
-    rule_engine ──import──> classical_enhancements_direction 的纯函数(_world_line/_month_state/_chong...)
-    detect_direction_caps ──import──> rule_engine.evaluate_caps
-    classical_enhancements_direction 不 import rule_engine。
+依赖方向（无循环，规则层物理独立于 rules/）：
+    rule_engine ──import──> predicates（共享纯函数库，同目录）
+    detect_direction_caps(scripts) ──延迟 import──> rule_engine.evaluate_caps
+    classical_enhancements_direction 不被 rule_engine import。
 
 v2 条目 schema（见 docs/RULE-ENGINE-REFACTOR-PLAN.md）：
     {rule_id, when{...}, gates{qcls_not/ug_cat_not/qcls_eq}, rescue_any[...],

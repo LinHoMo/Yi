@@ -184,3 +184,32 @@ dev_tools 改读新路径；旧路径留 1 个版本的转发或在 CHANGELOG �
 ### 7.5 验收
 每批同 §四保护网全绿才进下一批；物理挪动不改任何判据输出，golden 双指纹必须一字不动。
 
+---
+
+## 八、D1 落地执行记录（514 批）
+
+**结果：rules/ 物理独立成树，全保护网零漂移（regression 19/19、golden 双指纹、zengshan strict 74.4%）。**
+
+实际落位：
+```
+liuyao/rules/
+├── __init__.py
+├── rule_engine.py     # 仲裁器（原 scripts/rule_engine.py）
+├── predicates.py      # 共享纯函数库（新建，破环抽出）
+└── registry_v2.json   # 11 条规则数据（原 data/rules/rule_engine_v2.json）
+```
+
+**破环先行（66c6470）**：旧环 `rule_engine ──import──> classical_enhancements_direction(纯函数)`
+与 `classical_enhancements_direction ──延迟 import──> rule_engine.evaluate_caps` 互相引用。
+先抽 `predicates.py`（RANK/_world_line/_month_state/_chong/_broken/_he/HUA_XIONG），
+两者都单向依赖 predicates，环断后 engine.py 才能干净挪目录。
+
+**踩坑记录**：`scripts/` 下本就存在原生 `engine.py`（其他模块）。若把仲裁器平铺命名为
+`engine.py`，`from engine import` 会优先解析到 scripts/engine.py 而非 rules/，
+报 `cannot import name 'evaluate_caps'`。故仲裁器保留 `rule_engine.py` 原名，不改名。
+
+**sys.path 现实**：运行时是平铺架构（core/、scripts/ 在 sys.path，liuyao/ 根不在）。
+rules/ 下模块自加 scripts/ 找 kernel_path；classical_enhancements_direction 自加 rules/ 找
+rule_engine/predicates。未改包导入机制（避免牵动 step 链），分层靠物理目录 + 各自 sys.path 前置。
+
+
