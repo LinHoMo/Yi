@@ -145,7 +145,8 @@ _QN_DROP = re.compile(r"[\s，。、；：「」『』“”\"'‘’（）()\[\
 _DROP = re.compile(r"[\s，。、；：「」『』“”\"'‘’（）()【】\[\]《》<>·．\-—_/\\|+=:;,.*]+")
 VARIANT = str.maketrans({"剋": "克", "裏": "里", "羣": "群", "徧": "遍", "啓": "启",
                          "蔵": "藏", "峯": "峰", "梟": "枭", "煙": "烟",
-                         "刪": "删", "黃": "黄"})
+                         "刪": "删", "黃": "黄", "淵": "渊", "闡": "阐",
+                         "寧": "宁", "逹": "达", "爲": "为", "與": "与"})
 
 
 def norm(s: str) -> str:
@@ -1040,10 +1041,45 @@ def check_yilin_buyi_maps(doc: dict, problems: list[str], lines_of=None) -> tupl
 
 
 def _corpus_for_book(book: str) -> Path | None:
-    """书名 → 底本文件（优先 `_dz`）。供裸 `locator: L###` 回验用。"""
+    """书名 → 底本文件（**全仓同名多本时优先 `_dz`**）。供裸 `locator`/内联书证用。
+
+    为何不能「先命中先返回」：`渊海子平` 有 `yuan-hai-zi-ping.wikitext.txt` 与
+    `yuanhai_ziping_dz.dz.txt`，前者按文件名排序在前；内联书证的源L387 实际
+    指 dz 本（wikitext 的 L387 是另一段）。与 [14] 的 load_corpora 同理：
+    同名多本一律 `_dz` 优先，否则会把正确引用判成漂移（479 批实踩）。
+    """
     base = norm(book)
     if not base:
         return None
+    cands: list[tuple[int, Path]] = []
+    for pv in sorted((DISC / "data" / "sources").glob("*.provenance.json")):
+        try:
+            meta = json.loads(pv.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        title = norm(meta.get("title") or "")
+        if not title or not (base in title or title in base):
+            continue
+        key = pv.name.split(".")[0]
+        dz = DISC / "data" / "sources" / f"{key}.dz.txt"
+        wt = DISC / "data" / "sources" / f"{key}.wikitext.txt"
+        if dz.exists():
+            cands.append((0, dz))
+        elif wt.exists():
+            cands.append((1, wt))
+    return min(cands, key=lambda t: t[0])[1] if cands else None
+
+
+def _corpora_for_book(book: str) -> list[Path]:
+    """书名 → **全部**候选底本（同名 dz／wikitext 都收；479 批内联书证用）。
+
+    内联书证常不写版本（同一《神峰通考》有的行号指 dz、有的指 wikitext），
+    只取 `_dz` 会把正确引用判成漂移；候选取全，任一命中即过并记 NOTE。
+    """
+    base = norm(book)
+    if not base:
+        return []
+    out: list[Path] = []
     for pv in sorted((DISC / "data" / "sources").glob("*.provenance.json")):
         try:
             meta = json.loads(pv.read_text(encoding="utf-8"))
@@ -1055,9 +1091,9 @@ def _corpus_for_book(book: str) -> Path | None:
         key = pv.name.split(".")[0]
         for cand in (DISC / "data" / "sources" / f"{key}.dz.txt",
                      DISC / "data" / "sources" / f"{key}.wikitext.txt"):
-            if cand.exists():
-                return cand
-    return None
+            if cand.exists() and cand not in out:
+                out.append(cand)
+    return out
 
 
 def check_bare_locators(doc: dict, problems: list[str], notes: list[str] | None = None,
@@ -1380,6 +1416,106 @@ def check_verdict_text_anchors(doc: dict, problems: list[str], lines_of=None) ->
             if _fold(q) not in _fold(L[ln - 1]):
                 problems.append(f"裁决引文：step5_classical_notes.{k}.text 引文不在"
                                 f"所署行 {f}:{ln} → {q[:26]!r}")
+    return n
+
+
+def check_registry_inline_quotes(doc: dict, problems: list[str],
+                                 notes: list[str] | None = None,
+                                 lines_of=None, books_of=None) -> int:
+    """注册表散文里的「《书名》源L####「…」」内联书证回验（479 批）。
+
+    为什么需要它：`bazi/data/rules/rule_registry.json` 的 `locator` /
+    `provenance_note_*` / `applicability` 等字段把书证写成散文：
+    「《五行精纪》源L1999 逐字「甲戊庚牛羊…」」。八字 [10] 只扫 `references/`，
+    [12] 只验 `quote_in_source`／`quote_in_data` 的**结构化值**，这些内联引文
+    此前无人回验。先实测 22 条，逐条按所署行核。
+
+    书名归属：散文里的裸 `源L` 常省略书名（同一段先写《神峰通考》再连引数条），
+    故候选书名 = 引文前最近的《…》 ＋ 本条 `source.book` 里的全部书名；候选
+    底本 = 同名 dz／wikitext **全收**（同一书不同引文可能分别指两版）。任一
+    候选命中即过；若命中的书不是最近书名，记 NOTE（书名歧义，不判红）。
+    引文前无任何书名、或全部候选都解析不到、或行号越界、或引文不符 → 判红。
+
+    `lines_of` / `books_of` 供 selftest 注入夹具；正式路径现场解析。
+    """
+    cache: dict[str, list[str] | None] = {}
+
+    def get_lines(key: str) -> list[str] | None:
+        if lines_of is not None:
+            return lines_of(key)
+        if key not in cache:
+            p = Path(key)
+            cache[key] = (p.read_text(encoding="utf-8", errors="replace").splitlines()
+                          if p.exists() else None)
+        return cache[key]
+
+    def paths_for(book: str) -> list[str]:
+        if books_of is not None:
+            return books_of(book)
+        return [str(p) for p in _corpora_for_book(book)]
+
+    BOOK_RE = re.compile(r"《([^》]{2,24})》")
+    PAT = re.compile(r"源L(\d+)[^「]{0,20}「([^」]{4,200})」")
+    n = 0
+
+    for _bucket, item in _iter_entries(doc):
+        rid = item.get("rule_id") or item.get("id") or "?"
+        src = item.get("source") or {}
+        src_books = BOOK_RE.findall(str(src.get("book") or ""))
+
+        def walk(o, path: str) -> None:
+            nonlocal n
+            if isinstance(o, dict):
+                for k, v in o.items():
+                    walk(v, f"{path}.{k}")
+            elif isinstance(o, list):
+                for i, v in enumerate(o):
+                    walk(v, f"{path}[{i}]")
+            elif isinstance(o, str):
+                for m in PAT.finditer(o):
+                    n += 1
+                    bms = list(BOOK_RE.finditer(o[:m.start()]))
+                    nearest = bms[-1].group(1) if bms else ""
+                    cands: list[str] = []
+                    for b in ([nearest] if nearest else []) + src_books:
+                        if b and b not in cands:
+                            cands.append(b)
+                    if not cands:
+                        problems.append(f"注册表内联书证：{rid}{path} 的"
+                                        f"源L{m.group(1)} 前无《书名》→ {m.group(2)[:24]!r}")
+                        continue
+                    ln = int(m.group(1))
+                    q = m.group(2)
+                    resolved = max_len = 0
+                    hit = ""
+                    for b in cands:
+                        for key in paths_for(b):
+                            L = get_lines(key)
+                            if L is None:
+                                continue
+                            resolved += 1
+                            max_len = max(max_len, len(L))
+                            if 1 <= ln <= len(L) and _seg_hit(q, L[ln - 1]):
+                                hit = b
+                                break
+                        if hit:
+                            break
+                    if not resolved:
+                        problems.append(f"注册表内联书证：{rid}{path} 书名全部不可解析 → "
+                                        f"{cands}")
+                    elif not hit:
+                        if ln > max_len:
+                            problems.append(f"注册表内联书证：{rid}{path} 源L{ln} 超出底本"
+                                            f"（最长 {max_len} 行）")
+                        else:
+                            problems.append(f"注册表内联书证：{rid}{path} 「{q[:24]}」"
+                                            f" 不在所署源L{ln}（候选 {cands}）")
+                    elif nearest and hit != nearest and notes is not None:
+                        notes.append(f"注册表内联书证：{rid} 源L{ln} 书名歧义"
+                                     f"（近指《{nearest}》），按《{hit}》命中，不判红")
+        walk(item, "")
+    if n == 0:
+        problems.append("注册表内联书证：0 条——0 结果 ≠ 通过")
     return n
 
 
@@ -1916,6 +2052,49 @@ def selftest(problems: list[str]) -> None:
                    "text", "无引文的重档减免说明"))):
         problems.append("负例未抓到：verdict_texts 行锚但无引文")
 
+    # 479 批：注册表散文内联「《书名》源L####「…」」（夹具注入）
+    _rl = {"data/sources/__no_such__r.txt": ["", "甲戊庚牛羊，乙庚鼠猴乡"]}
+    _rbooks = lambda b: ["data/sources/__no_such__r.txt"] if b == "测试书" else []
+    rdoc = {"rules": [{"rule_id": "t.inline", "source": {
+        "book": "《测试书》",
+        "locator": "《测试书》源L2「甲戊庚牛羊，乙庚鼠猴乡」"}}, ],
+        "_uncovered": []}
+    p_r: list[str] = []
+    n_r_notes: list[str] = []
+    n_r = check_registry_inline_quotes(rdoc, p_r, n_r_notes,
+                                       lambda k: _rl.get(k), _rbooks)
+    if p_r or n_r != 1:
+        problems.append(f"注册表内联书证正例被误伤：{p_r}（条 {n_r}）")
+
+    def _rbad(mut) -> list[str]:
+        d = json.loads(json.dumps(rdoc, ensure_ascii=False))
+        mut(d)
+        p: list[str] = []
+        check_registry_inline_quotes(d, p, [], lambda k: _rl.get(k), _rbooks)
+        return p
+
+    if not any("不在所署源L2" in x for x in
+               _rbad(lambda d: d["rules"][0]["source"].__setitem__(
+                   "locator", "《测试书》源L2「甲戊庚牛羊，乙己鼠猴乡」"))):
+        problems.append("负例未抓到：注册表内联引文不符")
+    if not any("超出底本" in x for x in
+               _rbad(lambda d: d["rules"][0]["source"].__setitem__(
+                   "locator", "《测试书》源L99「甲戊庚牛羊，乙庚鼠猴乡」"))):
+        problems.append("负例未抓到：注册表内联行号越界")
+    if not any("前无《书名》" in x for x in
+               _rbad(lambda d: (d["rules"][0]["source"].pop("book", None),
+                                d["rules"][0]["source"].__setitem__(
+                                    "locator", "源L2「甲戊庚牛羊，乙庚鼠猴乡」")))):
+        problems.append("负例未抓到：注册表内联无书名")
+    if not any("书名全部不可解析" in x for x in
+               _rbad(lambda d: (d["rules"][0]["source"].pop("book", None),
+                                d["rules"][0]["source"].__setitem__(
+                                    "locator",
+                                    "《无此书》源L2「甲戊庚牛羊，乙庚鼠猴乡」")))):
+        problems.append("负例未抓到：注册表内联书名不可解析")
+    if not any("0 条" in x for x in _rbad(lambda d: d["rules"].clear())):
+        problems.append("负例未抓到：注册表内联 0 条")
+
 
 def main() -> int:
     if not REG.exists():
@@ -1975,6 +2154,11 @@ def main() -> int:
             if n_n < 60:
                 problems.append(f"纳音取象：只有 {n_n} 格（下限 60）——先确认字段/路径")
             print(f"  纳音取象：{n_n} 格；性质行/性质引文/性质名/_meta 内联已逐条核对")
+        # 479 批：注册表散文内联「《书名》源L####「…」」
+        n_in = check_registry_inline_quotes(doc, problems, notes)
+        if n_in < 25:
+            problems.append(f"注册表内联书证：只有 {n_in} 条（下限 25）——先确认字段/路径")
+        print(f"  注册表内联书证：{n_in} 条；书名候选/行号/行内逐字已核对")
     # 467 批：六爻引文库 quote_kind（仅六爻册；八字同名文件结构不同）
     if DISC.name == "liuyao" and LIUYAO_QUOTES.is_file():
         qdoc = json.loads(LIUYAO_QUOTES.read_text(encoding="utf-8"))
