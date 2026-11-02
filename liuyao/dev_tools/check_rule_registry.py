@@ -1183,6 +1183,66 @@ def check_nayin_quxiang(doc: dict, problems: list[str], lines_of=None) -> int:
     return n_ok
 
 
+def check_narrative_anchors(doc: dict, problems: list[str], lines_of=None) -> int:
+    """叙述层其余 `quote/src` 行锚回验（476 批）。返回字段数。
+
+    为什么需要它：`narrative_templates.json` 的 `pattern_hints.liu_shen_kongwang`、
+    `liu_shen_chishi`、`yigua_yishi` 三组 `_meta` 都写「每条 `quote` 为底本逐字
+    子串，`src` 为主源行号」，但它们的 `src` 是 `data/sources/<书>:L###`（冒号后
+    带 `L`），不在 470 批 `file:NNNN` 的扫描面；[14] 只认「《书名》源L」。10 条
+    `quote/src` 因此长期无门（§六.3）。
+
+    判据：`src` 必须是 `data/sources/<书>:L####`，行号在册，`quote` 落在该行逐字。
+    `lines_of` 供 selftest 注入夹具底本；正式路径现场读。
+    """
+    ph = (doc or {}).get("pattern_hints") or {}
+    targets: list[tuple[str, dict]] = []
+    ks = ph.get("liu_shen_kongwang") or {}
+    if isinstance(ks, dict) and isinstance(ks.get("歌源"), dict):
+        targets.append(("liu_shen_kongwang.歌源", ks["歌源"]))
+    for sec in ("liu_shen_chishi", "yigua_yishi"):
+        for k, v in (ph.get(sec) or {}).items():
+            if isinstance(v, dict) and v.get("quote") and v.get("src"):
+                targets.append((f"{sec}.{k}", v))
+    if not targets:
+        problems.append("叙述层引文：0 条 quote/src——0 结果 ≠ 通过")
+        return 0
+    cache: dict[str, list[str] | None] = {}
+
+    def get_lines(f: str) -> list[str] | None:
+        if lines_of is not None:
+            return lines_of(f)
+        if f not in cache:
+            p = _resolve_any(f)
+            cache[f] = (p.read_text(encoding="utf-8", errors="replace").splitlines()
+                        if p else None)
+        return cache[f]
+
+    n = 0
+    for label, e in targets:
+        q = e.get("quote")
+        if not q:
+            continue
+        n += 1
+        src = str(e.get("src") or "").strip()
+        m = re.fullmatch(r"(data/sources/[^:]+):L(\d+)", src)
+        if not m:
+            problems.append(f"叙述层引文：{label}.src 缺行号出处 → {src!r}")
+            continue
+        f, ln = m.group(1), int(m.group(2))
+        L = get_lines(f)
+        if L is None:
+            problems.append(f"叙述层引文：{label}.src 的底本不存在 {f}")
+            continue
+        if not (1 <= ln <= len(L)):
+            problems.append(f"叙述层引文：{label}.src 行号 L{ln} 超出底本（共 {len(L)} 行）")
+            continue
+        if _verdict_plain(q) not in _verdict_plain(L[ln - 1]):
+            problems.append(f"叙述层引文：{label}.quote 不在所署行 {f}:{ln} → "
+                            f"{str(q)[:26]!r}")
+    return n
+
+
 def selftest(problems: list[str]) -> None:
     """负例：造一条 verified=true 却指向不存在文件/解不到值的条目，必须判红。"""
     fake = {"schema": "yi-rule-registry-v1", "rules": [
@@ -1626,6 +1686,45 @@ def selftest(problems: list[str]) -> None:
                _nbad(lambda d: d.pop("纳音性质", None))):
         problems.append("负例未抓到：纳音性质整块缺失")
 
+    # 476 批：叙述层其余 quote/src 行锚（夹具底本注入）
+    _nsl = {"data/sources/__no_such__s.txt": [
+        "", "青龙空亡家虚喜", "恍惚可再占"]}
+    nsdoc = {"pattern_hints": {
+        "liu_shen_kongwang": {"歌源": {
+            "quote": "青龙空亡家虚喜",
+            "src": "data/sources/__no_such__s.txt:L2"}},
+        "yigua_yishi": {"恍惚": {
+            "quote": "恍惚可再占",
+            "src": "data/sources/__no_such__s.txt:L3"}},
+    }}
+    p_ns: list[str] = []
+    n_ns = check_narrative_anchors(nsdoc, p_ns, lambda f: _nsl.get(f))
+    if p_ns or n_ns != 2:
+        problems.append(f"叙述层引文正例被误伤：{p_ns}（字段 {n_ns}）")
+
+    def _nsbad(mut) -> list[str]:
+        d = json.loads(json.dumps(nsdoc, ensure_ascii=False))
+        mut(d)
+        p: list[str] = []
+        check_narrative_anchors(d, p, lambda f: _nsl.get(f))
+        return p
+
+    if not any("缺行号出处" in x for x in
+               _nsbad(lambda d: d["pattern_hints"]["yigua_yishi"]["恍惚"]
+                      .__setitem__("src", "L3"))):
+        problems.append("负例未抓到：叙述层 src 缺行号出处")
+    if not any("不在所署行" in x for x in
+               _nsbad(lambda d: d["pattern_hints"]["yigua_yishi"]["恍惚"]
+                      .__setitem__("quote", "恍惚不可再占"))):
+        problems.append("负例未抓到：叙述层 quote 不在所署行")
+    if not any("超出底本" in x for x in
+               _nsbad(lambda d: d["pattern_hints"]["yigua_yishi"]["恍惚"]
+                      .__setitem__("src", "data/sources/__no_such__s.txt:L99"))):
+        problems.append("负例未抓到：叙述层 src 行号越界")
+    if not any("0 条 quote/src" in x for x in
+               _nsbad(lambda d: d["pattern_hints"].clear())):
+        problems.append("负例未抓到：叙述层 0 条 quote/src")
+
 
 def main() -> int:
     if not REG.exists():
@@ -1707,6 +1806,11 @@ def main() -> int:
             if n_w < 14:
                 problems.append(f"文王持世：行锚字段只有 {n_w}（下限 14）")
             print(f"  文王持世：{n_w} 个 quote/补 字段；src/补_src 行内逐字已核对")
+            # 476 批：叙述层六神空亡/六神持世/一卦一事 quote/src 行锚
+            n_na = check_narrative_anchors(tpl, problems)
+            if n_na < 10:
+                problems.append(f"叙述层引文：只有 {n_na} 条 quote/src（下限 10）")
+            print(f"  叙述层引文：{n_na} 条 quote/src；src 行号与行内逐字已核对")
         # 471 批：火珠林财官伏藏引文行锚（仅六爻册）
         if not FUSHI.is_file():
             problems.append("财官伏藏：caiguan_fushi.json 不存在——0 结果 ≠ 通过")

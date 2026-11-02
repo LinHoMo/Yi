@@ -928,7 +928,7 @@ def main() -> int:
     for key, title, script in (
             ("doc_refs", "[11] 文档活引用可达性（指向不存在文件的指针）",
              "dev_tools/check_doc_refs.py"),
-            ("rule_registry", "[12] 规则登记面（verified 指针回验＋千金赋统计块/五态词表/registry 列表/逐联书源回指＋大运起例行锚（本科无此册跳过）＋裁决引文（本科同名文件结构不同，跳过）＋六神取象（本科无册，跳过）＋纳音取象（本科无册，跳过）＋引文库 quote_kind＋六亲持世括注＋文王持世行锚＋火珠林财官伏藏行锚＋易林补遗门类映射行锚＋裸 locator 行锚；447/457/462/465–475 批扩）",
+            ("rule_registry", "[12] 规则登记面（verified 指针回验＋千金赋统计块/五态词表/registry 列表/逐联书源回指＋大运起例行锚（本科无此册跳过）＋裁决引文（本科同名文件结构不同，跳过）＋六神取象（本科无册，跳过）＋纳音取象（本科无册，跳过）＋引文库 quote_kind＋六亲持世括注＋文王持世行锚＋叙述层引文（六神空亡/持世/一卦一事）＋火珠林财官伏藏行锚＋易林补遗门类映射行锚＋裸 locator 行锚；447/457/462/465–476 批扩）",
              "dev_tools/check_rule_registry.py"),
             ("case_isolation", "[13] 案例库隔离（解读路径不得触达 data/cases）",
              "dev_tools/check_case_isolation.py"),
