@@ -113,6 +113,23 @@ def _verdict_plain(s: str) -> str:
     return re.sub(r"\s+", "", _VERDICT_MARK.sub("", str(s)))
 
 
+# 478 批：内联引文的折叠口径（去全部标点/空白，兼容底本全角 ﹕﹐）。省略号
+# 「……」表示省略，不能整串比对；按省略号切段，逐段命中。
+_FOLD = re.compile(r"[\s\W_]+")
+
+
+def _fold(s) -> str:
+    return _FOLD.sub("", str(s))
+
+
+def _segments(q) -> list[str]:
+    return [x for x in re.split(r"…+|\.{3,}", str(q)) if x]
+
+
+def _seg_hit(q, text) -> bool:
+    return all(_fold(x) in _fold(text) for x in _segments(q))
+
+
 def _walk_entries(obj, path: str = "$"):
     if isinstance(obj, dict):
         yield path, obj
@@ -910,7 +927,9 @@ def check_yilin_buyi_maps(doc: dict, problems: list[str], lines_of=None) -> tupl
       · 每个非 `_` 组必须有 `_source`，其中 `data/sources/<书>` 在盘；
         `:NNN`／`:NNN-LMMM` 行号在册（范围两端都查）；
       · 条目 `_src`（以及组级 `_src`）必须是裸 `L####`，继承本组底本、行号在册；
-      · 组级/条目 `_引文` 落在所署那一行逐字（`_verdict_plain` 口径）。
+      · 组级/条目 `_引文` 落在所署那一行逐字（`_verdict_plain` 口径）；
+      · 【478 批】组级/条目字符串里的内联 `L####「…」` 也按所署行核，
+        省略号按段拆分（底本夹注常以「……」省略中间文）。
 
     `lines_of` 供 selftest 注入夹具底本；正式路径现场读。
     """
@@ -992,6 +1011,31 @@ def check_yilin_buyi_maps(doc: dict, problems: list[str], lines_of=None) -> tupl
             q = e.get("_引文")
             if isinstance(q, str) and q:
                 quote_at(q, n, f"{gname}.{name}._引文")
+
+        # 478 批：组级/条目字符串里的内联 `L####「…」`（省略号分段比对）
+        inline_pat = re.compile(r"L(\d+)[^「]{0,30}「([^」]{4,200})」")
+
+        def scan_inline(obj, owner: str) -> None:
+            nonlocal n_q
+            if not isinstance(obj, dict):
+                return
+            for kk, vv in obj.items():
+                if not isinstance(vv, str):
+                    continue
+                for mm in inline_pat.finditer(vv):
+                    n_q += 1
+                    ln2, q2 = int(mm.group(1)), mm.group(2)
+                    if not (1 <= ln2 <= len(L)):
+                        problems.append(f"易林补遗：{gname}.{owner}{kk} 内联行号 "
+                                        f"L{ln2} 超出底本")
+                    elif not _seg_hit(q2, L[ln2 - 1]):
+                        problems.append(f"易林补遗：{gname}.{owner}{kk} 内联引文不在"
+                                        f"所署行 L{ln2} → {q2[:24]!r}")
+
+        scan_inline(group, "")
+        for name, e in group.items():
+            if isinstance(e, dict):
+                scan_inline(e, f"{name}.")
     return n_q, n_a
 
 
@@ -1127,7 +1171,9 @@ def check_nayin_quxiang(doc: dict, problems: list[str], lines_of=None) -> int:
       · `_meta.书源` 必须点名 `data/sources/<书>`，文件在盘；`L179-L309` 若出现，两端在册；
       · 每格 `性质行` 为裸 `L####`、行号在册；`性质引文` 落在该行逐字；
       · `性质名` 必须能在 `性质引文` 中命中（名称是引文去掉干支前缀/系词的产物）；
-      · 键与 `ganzhi` 必须一致。
+      · 键与 `ganzhi` 必须一致；
+      · 【478 批】`_meta` 里的内联 `L####「…」`（如 L298「已卯自死之水」）也按
+        所署行核，省略号按段拆分。
 
     `lines_of` 供 selftest 注入夹具底本；正式路径现场读。
     """
@@ -1182,6 +1228,23 @@ def check_nayin_quxiang(doc: dict, problems: list[str], lines_of=None) -> int:
             continue
         if _verdict_plain(name) not in _verdict_plain(quote):
             problems.append(f"纳音取象：{gz}.性质名 不在性质引文中 → {name!r}")
+
+    # 478 批：_meta 里的内联 `L####「…」`（如 L298「已卯自死之水」）
+    inline_pat = re.compile(r"L(\d+)[^「]{0,30}「([^」]{4,200})」")
+    inline_n = 0
+    for k, v in meta.items():
+        if not isinstance(v, str):
+            continue
+        for mm in inline_pat.finditer(v):
+            inline_n += 1
+            ln, q = int(mm.group(1)), mm.group(2)
+            if not (1 <= ln <= len(L)):
+                problems.append(f"纳音取象：_meta.{k} 内联行号 L{ln} 超出底本")
+            elif not _seg_hit(q, L[ln - 1]):
+                problems.append(f"纳音取象：_meta.{k} 内联引文不在所署行 L{ln} → "
+                                f"{q[:24]!r}")
+    if inline_n == 0:
+        problems.append("纳音取象：_meta 0 条内联书源引文——0 结果 ≠ 通过")
     return n_ok
 
 
@@ -1261,7 +1324,6 @@ def check_verdict_text_anchors(doc: dict, problems: list[str], lines_of=None) ->
     `lines_of` 供 selftest 注入夹具底本；正式路径现场读。
     """
     cache: dict[str, list[str] | None] = {}
-    plain = lambda s: re.sub(r"[\s\W_]+", "", str(s))
 
     def get_lines(f: str) -> list[str] | None:
         if lines_of is not None:
@@ -1291,7 +1353,7 @@ def check_verdict_text_anchors(doc: dict, problems: list[str], lines_of=None) ->
         if not (1 <= ln <= len(L)):
             problems.append(f"裁决引文：direction_cap_quotes.{k} 行号 L{ln} 超出底本")
             continue
-        if plain(q) not in plain(L[ln - 1]):
+        if _fold(q) not in _fold(L[ln - 1]):
             problems.append(f"裁决引文：direction_cap_quotes.{k}.quote 不在所署行 "
                             f"{f}:{ln} → {str(q)[:26]!r}")
     for k, e in ((doc or {}).get("step5_classical_notes") or {}).items():
@@ -1315,7 +1377,7 @@ def check_verdict_text_anchors(doc: dict, problems: list[str], lines_of=None) ->
             problems.append(f"裁决引文：step5_classical_notes.{k} 有行锚但 text 无「」引文")
             continue
         for q in qs:
-            if plain(q) not in plain(L[ln - 1]):
+            if _fold(q) not in _fold(L[ln - 1]):
                 problems.append(f"裁决引文：step5_classical_notes.{k}.text 引文不在"
                                 f"所署行 {f}:{ln} → {q[:26]!r}")
     return n
@@ -1650,6 +1712,7 @@ def selftest(problems: list[str]) -> None:
     ybase = {
         "间爻四角色": {
             "_source": "data/sources/__no_such__y.txt:2（x）、:3（y）",
+            "_口径": "如 L3「单占有月老，当看应爻」",
             "媒妁": {"_src": "L3", "_引文": "单占有月老，当看应爻"}},
         "家宅三层分宫": {
             "_source": "data/sources/__no_such__y.txt:3",
@@ -1657,7 +1720,7 @@ def selftest(problems: list[str]) -> None:
     }
     p_y: list[str] = []
     y_q, y_a = check_yilin_buyi_maps(ybase, p_y, lambda f: _ylines.get(f))
-    if p_y or (y_q, y_a) != (2, 5):
+    if p_y or (y_q, y_a) != (3, 5):
         problems.append(f"易林补遗正例被误伤：{p_y}（引文 {y_q}／锚 {y_a}）")
 
     def _ybad(mut) -> list[str]:
@@ -1681,6 +1744,10 @@ def selftest(problems: list[str]) -> None:
         problems.append("负例未抓到：易林补遗 _src 行号越界")
     if not any("0 个映射组" in x for x in _ybad(lambda d: d.clear())):
         problems.append("负例未抓到：易林补遗 0 个映射组")
+    if not any("内联引文不在" in x for x in
+               _ybad(lambda d: d["间爻四角色"].__setitem__(
+                   "_口径", "如 L3「单占无月老，当看应爻」"))):
+        problems.append("负例未抓到：易林补遗组级内联引文不在所署行")
 
     # 474 批：注册表裸 locator 行锚（夹具底本/数据注入）
     _bl = {"《测试书》": ["", "有病方为贵", "无伤不是奇"]}
@@ -1729,7 +1796,8 @@ def selftest(problems: list[str]) -> None:
     _nl = {"data/sources/__no_such__n.txt": [
         "", "甲子从革之金", "乙丑自库之金"]}
     ndoc = {
-        "_meta": {"书源": "《测试纳音》data/sources/__no_such__n.txt L1-L2"},
+        "_meta": {"书源": "《测试纳音》data/sources/__no_such__n.txt L1-L2",
+                  "口径": "含 L2「甲子从革之金」"},
         "纳音性质": {
             "甲子": {"ganzhi": "甲子", "性质名": "从革之金",
                      "性质行": "L2", "性质引文": "甲子从革之金"},
@@ -1763,6 +1831,12 @@ def selftest(problems: list[str]) -> None:
     if not any("缺失或为空" in x for x in
                _nbad(lambda d: d.pop("纳音性质", None))):
         problems.append("负例未抓到：纳音性质整块缺失")
+    if not any("内联引文不在" in x for x in
+               _nbad(lambda d: d["_meta"].__setitem__("口径", "含 L2「乙丑自库之金」"))):
+        problems.append("负例未抓到：纳音 _meta 内联引文不在所署行")
+    if not any("0 条内联书源引文" in x for x in
+               _nbad(lambda d: d["_meta"].pop("口径", None))):
+        problems.append("负例未抓到：纳音 _meta 0 条内联引文")
 
     # 476 批：叙述层其余 quote/src 行锚（夹具底本注入）
     _nsl = {"data/sources/__no_such__s.txt": [
@@ -1900,7 +1974,7 @@ def main() -> int:
             n_n = check_nayin_quxiang(ndoc, problems)
             if n_n < 60:
                 problems.append(f"纳音取象：只有 {n_n} 格（下限 60）——先确认字段/路径")
-            print(f"  纳音取象：{n_n} 格；性质行/性质引文/性质名已逐格核对")
+            print(f"  纳音取象：{n_n} 格；性质行/性质引文/性质名/_meta 内联已逐条核对")
     # 467 批：六爻引文库 quote_kind（仅六爻册；八字同名文件结构不同）
     if DISC.name == "liuyao" and LIUYAO_QUOTES.is_file():
         qdoc = json.loads(LIUYAO_QUOTES.read_text(encoding="utf-8"))
@@ -1952,10 +2026,11 @@ def main() -> int:
         else:
             ydoc = json.loads(YILIN.read_text(encoding="utf-8"))
             y_q, y_a = check_yilin_buyi_maps(ydoc, problems)
-            if y_q < 10 or y_a < 34:
-                problems.append(f"易林补遗：引文 {y_q}（下限 10）／行锚 {y_a}"
+            if y_q < 16 or y_a < 34:
+                problems.append(f"易林补遗：引文 {y_q}（下限 16）／行锚 {y_a}"
                                 f"（下限 34）——先确认字段/路径")
-            print(f"  易林补遗：{y_q} 条 _引文、{y_a} 个行锚；底本/行号/行内逐字已核对")
+            print(f"  易林补遗：{y_q} 条引文（含内联）、{y_a} 个行锚；"
+                  f"底本/行号/行内逐字已核对")
         # 474 批：注册表裸 locator 行锚（仅六爻册；八字 locator 走 verdicts 的 465 面）
         n_loc = check_bare_locators(doc, problems, notes)
         if n_loc < 6:
