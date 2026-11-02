@@ -1,0 +1,74 @@
+{
+  "schema": "yi-ontology/l4-evidence/1",
+  "_comment": "L4 书证层：每条规则挂古籍逐字断语（书名+行号+原文）。证据来自 data/rules/verdict_texts.json 的 step5_classical_notes。人可从规则一键跳到古籍原文。",
+  "nodes": [
+    {
+      "kid": "yi.l4.evidence.chuxian_wuqing",
+      "name": "出现无情（书证）",
+      "def": "官鬼父母虽则出现，既不持世、又不生合世爻，与我无益。",
+      "parents": ["yi.l3.rule.chuxian_wuqing"],
+      "book": "增删卜易·仕宦",
+      "locator": "L2786",
+      "text": "出现无情，难遂青云之志",
+      "also": ["卜筮全书 L7692", "黄金策 L2180"]
+    },
+    {
+      "kid": "yi.l4.evidence.shi_hua_gui",
+      "name": "变鬼（书证）",
+      "def": "世爻休囚受克而动变出官星，是名变鬼。",
+      "parents": ["yi.l3.rule.shi_hua_gui_huitouke"],
+      "book": "增删卜易",
+      "locator": "L1643",
+      "text": "化克化鬼，弟兄妻子休逢",
+      "also": ["增删卜易 L3625"]
+    },
+    {
+      "kid": "yi.l4.evidence.yuan_shen_wu_li",
+      "name": "元神无力（书证）",
+      "def": "元神休囚静而不动，或空破、或动而化凶，不能生用神，虽有如无。",
+      "parents": ["yi.l3.rule.yuan_shen_wu_li"],
+      "book": "增删卜易",
+      "locator": "L551",
+      "text": "元神虽现又有不能生用神者有六",
+      "also": ["增删卜易 L948 用神化凶"]
+    },
+    {
+      "kid": "yi.l4.evidence.chong_bian_he",
+      "name": "六冲变合（书证）",
+      "def": "卦逢六冲本主散，变卦六合则散而复聚。",
+      "parents": ["yi.l3.rule.liuchong_bian_liuhe"],
+      "book": "增删卜易",
+      "locator": "L25835",
+      "text": "六冲变合，散而复聚，离而必合，此婚一定还成"
+    },
+    {
+      "kid": "yi.l4.evidence.shi_hua_ke_wang",
+      "name": "世旺回头克待时（书证）",
+      "def": "世临月建之官，被回头克，待冲去克神之日方得见。",
+      "parents": ["yi.l3.rule.shi_hua_ke_wang"],
+      "book": "增删卜易·谒贵章",
+      "locator": "酉月丙寅日",
+      "text": "世临月建之官定得面见，被午火回头之克，须待子日冲去午火方得拜谒"
+    },
+    {
+      "kid": "yi.l4.evidence.xiong_chi_shi_ke_cai",
+      "name": "兄弟持世克财（书证）",
+      "def": "兄弟持世为耗财克妻之神。",
+      "parents": ["yi.l3.rule.xiong_chi_shi_ke_cai"],
+      "book": "增删卜易",
+      "locator": "L2613",
+      "text": "兄爻持世财化退神者，亦同此意，非反目即生离",
+      "also": ["增删卜易 L2612", "L419"]
+    },
+    {
+      "kid": "yi.l4.evidence.qiu_cai_xiong_shi",
+      "name": "求财兄弟持世（书证）",
+      "def": "兄弟是劫财之神，持世则财难入手。",
+      "parents": ["yi.l3.rule.qiu_cai_xiong_chi_shi"],
+      "book": "增删卜易",
+      "locator": "L419",
+      "text": "占求财妻财持世者必得，兄弟持世者难求",
+      "also": ["卜筮正宗 L1102/L327", "黄金策 L2416"]
+    }
+  ]
+}

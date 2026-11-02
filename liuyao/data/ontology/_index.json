@@ -5,17 +5,22 @@
     "L0": {"file": "l0_metaphysics.json", "name": "元理层（哲学公理）"},
     "L1": {"file": "l1_xiangshu.json", "name": "象数层（模型）"},
     "L2": {"file": "l2_concepts.json", "name": "概念层（术语）"},
-    "L3": {"file": "l3_rules.json", "name": "规则层（判法）"}
+    "L3": {"file": "l3_rules.json", "name": "规则层（判法）"},
+    "L4": {"file": "l4_evidence.json", "name": "书证层（古籍断语）"}
   },
   "chain_demo": {
     "name": "回头克→待时吉 完整演化链",
     "path": [
+      "yi.l0.taiji",
+      "yi.l0.liangyi",
+      "yi.l0.wuxing",
       "yi.l0.wuxing.ke",
       "yi.l1.wuxing.ke_cycle",
       "yi.l2.concept.huitouke",
       "yi.l2.concept.shi_wang",
       "yi.l3.rule.shi_hua_ke",
-      "yi.l3.rule.shi_hua_ke_wang"
+      "yi.l3.rule.shi_hua_ke_wang",
+      "yi.l4.evidence.shi_hua_ke_wang"
     ]
   }
 }

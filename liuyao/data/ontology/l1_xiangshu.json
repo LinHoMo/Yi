@@ -30,7 +30,7 @@
       "kid": "yi.l1.branch.he",
       "name": "六合（地支相合）",
       "def": "子丑合、寅亥合、卯戌合、辰酉合、巳申合、午未合。合者，聚也、亲也、绊也。",
-      "parents": ["yi.l0.yinyang"],
+      "parents": ["yi.l0.liangyi"],
       "engine_impl": "yishu_core/symbols.py:HE_PAIRS"
     },
     {
@@ -39,6 +39,29 @@
       "def": "八卦各纳天干、地支，六亲（父母兄弟妻财官鬼子孙）由宫五行与爻五行的生克关系定出。",
       "parents": ["yi.l0.bagua", "yi.l1.wuxing.ke_cycle"],
       "engine_impl": "yishu_core/symbols.py:NAJIA_BRANCHES"
+    },
+    {
+      "kid": "yi.l1.shier_changsheng",
+      "name": "十二长生",
+      "def": "五行在十二地支上的生死进程：长生→沐浴→冠带→临官→帝旺→衰→病→死→墓→绝→胎→养。爻临长生帝旺为旺，临死墓绝为衰。",
+      "parents": ["yi.l0.wuxing.sheng"],
+      "engine_impl": "yishu_core/symbols.py:TWELVE_GROWTH_STAGES",
+      "data": ["长生", "沐浴", "冠带", "临官", "帝旺", "衰", "病", "死", "墓", "绝", "胎", "养"]
+    },
+    {
+      "kid": "yi.l1.sanhe",
+      "name": "三合局",
+      "def": "三支合成一局（生旺墓）：申子辰合水、寅午戌合火、巳酉丑合金、亥卯未合木。合则气聚。",
+      "parents": ["yi.l0.wuxing.sheng"],
+      "engine_impl": "yishu_core/symbols.py:SAN_HE_GROUPS"
+    },
+    {
+      "kid": "yi.l1.sanxing",
+      "name": "三刑",
+      "def": "地支相刑：无恩（寅巳申）、恃势（丑戌未）、无礼（子卯）、自刑（辰午酉亥）。刑主伤、主是非。",
+      "parents": ["yi.l0.wuxing.ke"],
+      "engine_impl": "yishu_core/symbols.py:THREE_PUNISHMENTS",
+      "data": {"无恩之刑": ["寅", "巳", "申"], "恃势之刑": ["丑", "戌", "未"], "无礼之刑": ["子", "卯"], "自刑": ["辰", "午", "酉", "亥"]}
     }
   ]
 }

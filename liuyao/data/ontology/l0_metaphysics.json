@@ -1,19 +1,35 @@
 {
   "schema": "yi-ontology/l0-metaphysics/1",
-  "_comment": "L0 元理层（哲学公理）：易学图谱的最底层。每条公理是后续一切象数、术语、规则的哲学依据。只读知识层，不参与评分。",
+  "_comment": "L0 元理层（哲学公理）：易学图谱最底层。从太极演化到五行八卦，是后续一切象数、术语、规则的哲学依据。只读知识层，不参与评分。",
   "nodes": [
     {
-      "kid": "yi.l0.yinyang",
-      "name": "阴阳",
-      "def": "万物一分为二，动静、刚柔、进退、消长。阳主动、主刚、主显；阴主静、主柔、主隐。",
-      "children": ["yi.l0.wuxing", "yi.l0.bagua"],
+      "kid": "yi.l0.taiji",
+      "name": "太极",
+      "def": "无极而太极，天地未分之混沌元气，万物之始。",
+      "children": ["yi.l0.liangyi"],
+      "relations": []
+    },
+    {
+      "kid": "yi.l0.liangyi",
+      "name": "两仪（阴阳）",
+      "def": "太极动而生阳、静而生阴，一分为二。阳主动、主刚、主显；阴主静、主柔、主隐。",
+      "parents": ["yi.l0.taiji"],
+      "children": ["yi.l0.sixiang", "yi.l0.wuxing", "yi.l0.bagua"],
+      "relations": []
+    },
+    {
+      "kid": "yi.l0.sixiang",
+      "name": "四象",
+      "def": "两仪生四象：太阳、少阴、少阳、太阴。阴阳之上各分阴阳，成老少之别。",
+      "parents": ["yi.l0.liangyi"],
+      "children": ["yi.l0.bagua"],
       "relations": []
     },
     {
       "kid": "yi.l0.wuxing",
       "name": "五行",
       "def": "金木水火土五种动能。相生以互济，相克以制约——无生则无发育，无克则无节制。",
-      "parents": ["yi.l0.yinyang"],
+      "parents": ["yi.l0.liangyi"],
       "children": ["yi.l0.wuxing.sheng", "yi.l0.wuxing.ke"],
       "relations": []
     },
@@ -36,8 +52,8 @@
     {
       "kid": "yi.l0.bagua",
       "name": "八卦",
-      "def": "乾兑离震巽坎艮坤，阴阳爻三叠而成，象天地雷风水火山泽。",
-      "parents": ["yi.l0.yinyang"],
+      "def": "乾兑离震巽坎艮坤，阴阳三爻叠而成，象天地雷风水火山泽。由四象重卦而生。",
+      "parents": ["yi.l0.sixiang"],
       "children": ["yi.l1.najia"],
       "relations": []
     }

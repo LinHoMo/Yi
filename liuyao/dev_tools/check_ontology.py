@@ -21,7 +21,7 @@ _ROOT = Path(__file__).resolve().parents[1]  # liuyao/
 _ONTO = _ROOT / "data" / "ontology"
 _REG = _ROOT / "rules" / "registry_v2.json"
 
-LAYER_FILES = ["l0_metaphysics.json", "l1_xiangshu.json", "l2_concepts.json", "l3_rules.json"]
+LAYER_FILES = ["l0_metaphysics.json", "l1_xiangshu.json", "l2_concepts.json", "l3_rules.json", "l4_evidence.json"]
 
 
 def _load_json(p: Path) -> dict:
