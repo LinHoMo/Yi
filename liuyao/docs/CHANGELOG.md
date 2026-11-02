@@ -5,6 +5,34 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-02 第四百九十三批（六爻·用神词典元数据）：**`description` 仍写「195 条现代问法」，而 `key_count=275`、落盘 entries 合计 275；同一份元数据自相矛盾**
+
+**性质**：数据/构建器元数据修正＋门覆盖面扩展（不改判据、不改读数）。
+
+### 一、缺陷
+
+`question_use_gods.json` 的 `_meta.description` 写「六爻问题词典（195 条现代问法→六亲…）」，
+同块 `family_count=74`、`key_count=275`，落盘 `families[*].entries` 合计 **275**；
+构建器 `build_question_use_gods.py` 也照抄 195 写入。195 是早期版本遗留数，
+从未随 249→275 的扩表更新（§六.3：同一份数据两处事实不同）。
+
+### 二、改法
+
+- 构建器与落盘 `_meta.description` 同步改为「275 条现代问法」。
+- `[12]` 新增 `check_usegod_meta()`（仅六爻册）：`family_count == len(families)`、
+  `key_count == Σentries`、`description` 里的「N 条现代问法」== 实际键数；
+  任一项不符判红，缺声明也判红。
+- selftest 加 5 式（正例＋description 条数/族数/键数不符/缺条数声明）。
+
+### 三、自证（§四.8）
+
+- **门先于修正挂上**：未改数据前跑 `check_rule_registry` 即
+  `× 用神词典元数据：description 声明 195 条 ≠ 实际 275 键`；改 275 后全绿。
+- 真实探针：改回 195 → 再判红；逐字节还原（sha256 相同）后全绿。
+- `build_question_use_gods.py --check` 仍 69/69；读数 tune 97.9（n=20）／
+  holdout 90.2（n=12）不变。
+
+
 ## 2026-11-02 第四百九十二批（八字·注册表「语料行」）：**共享件为 `bazi/rule_registry.json` 的「语料行 NNNN」补回验；六爻无此形态**
 
 **性质**：共享门覆盖面扩展（本科不改数据、不改判据、不改读数）。

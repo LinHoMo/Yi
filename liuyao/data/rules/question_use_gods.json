@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "description": "六爻问题词典（195 条现代问法→六亲，2026-10-01 天气占增补后），按事项族分组；每族给 label + 取舍依据（citation＝《增刪卜易》逐字引文与偏移，inference＝诚实标注的无据推断）",
+    "description": "六爻问题词典（275 条现代问法→六亲，2026-10-01 天气占增补后），按事项族分组；每族给 label + 取舍依据（citation＝《增刪卜易》逐字引文与偏移，inference＝诚实标注的无据推断）",
     "built_by": "dev_tools/build_question_use_gods.py",
     "source": "data\\sources\\zengshan_buyi.wikitext.txt",
     "order_warning": "entries 顺序＝打分层 tie-break 依赖的插入顺序，禁止重排/增删；改词典必须重跑 tune/holdout/wikisource 三集（SKILL.md）",

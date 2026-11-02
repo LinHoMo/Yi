@@ -560,7 +560,7 @@ def main() -> int:
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps({
         "_meta": {
-            "description": "六爻问题词典（195 条现代问法→六亲，2026-10-01 天气占增补后），按事项族分组；"
+            "description": "六爻问题词典（275 条现代问法→六亲，2026-10-01 天气占增补后），按事项族分组；"
                            "每族给 label + 取舍依据（citation＝《增刪卜易》逐字引文与偏移，"
                            "inference＝诚实标注的无据推断）",
             "built_by": "dev_tools/build_question_use_gods.py",

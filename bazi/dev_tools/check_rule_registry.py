@@ -109,6 +109,13 @@ locator 从未被读取。现按声明核对：行号在册、`quote/full_quote/
 《增刪卜易》dz＋wikitext 任一底本中逐字出现（省略号分段）；首跑 7/7 命中。
 两科 selftest 都跑夹具。
 
+493 批追加（仅六爻册）：**用神词典 `_meta` 声明数**。`question_use_gods.json`
+的 `_meta.description` 仍写「195 条现代问法」，而 `family_count=74`、
+`key_count=275`、落盘 entries 合计 275——同一份元数据里两个数自相矛盾，
+构建器也照抄 195 写入。现核：`family_count == len(families)`、
+`key_count == Σentries`、`description` 里的「N 条现代问法」== 实际键数。
+首跑即抓到 195≠275。两科 selftest 都跑夹具。
+
 492 批追加（仅八字册）：**注册表「语料行 NNNN」声明**。
 `bazi/data/rules/rule_registry.json` 有 3 处不以 `L####` 写的行号声明：
 `ming.dayun.locator` 的「语料行 2608/2612」与 `_uncovered[1].locator` 的
@@ -1910,6 +1917,32 @@ def check_usegod_family_notes(doc: dict, problems: list[str],
     return n
 
 
+def check_usegod_meta(doc: dict, problems: list[str]) -> tuple[int, int]:
+    """用神词典 `_meta` 声明数自洽（493 批）。返回 (族数, 键数)。
+
+    为什么需要它：`question_use_gods.json` 的 `_meta.description` 写「195 条
+    现代问法」，而 `family_count=74`、`key_count=275`、落盘 entries 合计 275；
+    同一份元数据两个数自相矛盾，构建器也照抄 195 写入。判据：族数、键数、
+    description 里的「N 条现代问法」三项都须等于实际值。
+    """
+    meta = doc.get("_meta") or {}
+    fams = doc.get("families") or []
+    actual_f = len(fams)
+    actual_k = sum(len(f.get("entries") or []) for f in fams if isinstance(f, dict))
+    fc, kc = meta.get("family_count"), meta.get("key_count")
+    if fc != actual_f:
+        problems.append(f"用神词典元数据：family_count {fc} ≠ 实际 {actual_f} 族")
+    if kc != actual_k:
+        problems.append(f"用神词典元数据：key_count {kc} ≠ 实际 {actual_k} 键")
+    m = re.search(r"(\d+)\s*条现代问法", str(meta.get("description") or ""))
+    if not m:
+        problems.append("用神词典元数据：description 未声明「N 条现代问法」")
+    elif int(m.group(1)) != actual_k:
+        problems.append(f"用神词典元数据：description 声明 {m.group(1)} 条 ≠ "
+                        f"实际 {actual_k} 键")
+    return actual_f, actual_k
+
+
 def check_question_classes_notes(doc: dict, problems: list[str],
                                  lines_of=None) -> tuple[int, int]:
     """问题题类表注记的书源回验（488 批）。返回 (行锚数, 引文数)。
@@ -3204,6 +3237,37 @@ def selftest(problems: list[str]) -> None:
     if not any("0 段「…」引文" in x for x in p_fnq):
         problems.append("负例未抓到：用神词典族注 0 段引文")
 
+    # 493 批：用神词典 _meta 声明数（夹具注入）
+    mdoc = {"_meta": {"description": "3 条现代问法→六亲", "family_count": 2,
+                      "key_count": 3},
+            "families": [{"entries": [{"k": "a"}]},
+                         {"entries": [{"k": "b"}, {"k": "c"}]}]}
+    p_md: list[str] = []
+    n_md = check_usegod_meta(mdoc, p_md)
+    if p_md or n_md != (2, 3):
+        problems.append(f"用神词典元数据正例被误伤：{p_md}（族/键 {n_md}）")
+
+    def _mdbad(mut) -> list[str]:
+        d = json.loads(json.dumps(mdoc, ensure_ascii=False))
+        mut(d)
+        p: list[str] = []
+        check_usegod_meta(d, p)
+        return p
+
+    if not any("description 声明 195" in x for x in
+               _mdbad(lambda d: d["_meta"].__setitem__(
+                   "description", "195 条现代问法→六亲"))):
+        problems.append("负例未抓到：用神词典 description 条数不符")
+    if not any("family_count 3" in x for x in
+               _mdbad(lambda d: d["_meta"].__setitem__("family_count", 3))):
+        problems.append("负例未抓到：用神词典 family_count 不符")
+    if not any("key_count 4" in x for x in
+               _mdbad(lambda d: d["_meta"].__setitem__("key_count", 4))):
+        problems.append("负例未抓到：用神词典 key_count 不符")
+    if not any("未声明「N 条现代问法」" in x for x in
+               _mdbad(lambda d: d["_meta"].__setitem__("description", "无条数"))):
+        problems.append("负例未抓到：用神词典 description 缺条数")
+
     # 492 批：注册表「语料行 NNNN」（夹具注入）
     _ll = {"data/sources/__no_such__l.txt": ["", "甲", "乙", "丙"]}
     ldoc = {"rules": [
@@ -3448,6 +3512,10 @@ def main() -> int:
             if n_fn < 6:
                 problems.append(f"用神词典族注：只有 {n_fn} 段「…」引文（下限 6）")
             print(f"  用神词典族注：{n_fn} 段「…」引文；《增刪卜易》底本逐字已核对")
+            # 493 批：_meta 声明数（description/族数/键数）
+            n_mf, n_mk = check_usegod_meta(ugdoc, problems)
+            print(f"  用神词典元数据：{n_mf} 族／{n_mk} 键；"
+                  f"description/family_count/key_count 自洽已核对")
         # 488 批：问题题类注记的书源引用（仅六爻册）
         if not QUESTION_CLASSES.is_file():
             problems.append("问题题类：question_classes.json 不存在——0 结果 ≠ 通过")
