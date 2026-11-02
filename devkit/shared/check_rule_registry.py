@@ -92,6 +92,15 @@ locator 从未被读取。现按声明核对：行号在册、`quote/full_quote/
 经 provenance 解析（同名多本 `_dz` 优先）、行号在册；锚后到下一锚之间的首个
 `「…」` 须在该行逐字命中。首跑 4/4 行锚、3/3 引文全符（0 处漂移）。
 两科 selftest 都跑夹具。
+
+489 批追加（仅八字册）：**裁决表散文里的裸行号**。`bazi/data/verdicts.json`
+除 465 的 `locator` 字段与 480 的内联`源L「…」`外，还有 12 处只写行号、
+不带引文的散文锚（`_zhuan_wang_meta` 五格 L1657…、`_meta` L5265、
+`cong_sha/cong_cai.note` L1668/L1704、`看命口诀` L5115/L5137、
+杂气格 L1734、渊海子平 L179）。这些是「哪一段是哪一格的书源」的定位声明，
+此前无门。现核：带 `data/sources/<书>` 的按路径、带《书名》的按 provenance、
+裸 `源L` 按同条目 `locator` 底本，行号在册；紧邻 `「` 的锚已由 479/480 覆盖，
+本门不重复判。首跑 12/12 在册（0 处越界）。两科 selftest 都跑夹具。
 """
 from __future__ import annotations
 
@@ -1909,6 +1918,110 @@ def check_question_classes_notes(doc: dict, problems: list[str],
     return n_ref, n_q
 
 
+_PROSE_PATH = re.compile(r"data/sources/[A-Za-z0-9_.\-]+")
+_PROSE_BOOK = re.compile(r"《([^》]{2,24})》")
+_PROSE_ANCHOR = re.compile(r"(?:源\s*)?(?<![A-Za-z0-9_])L(\d{1,5})")
+_PROSE_LOC = re.compile(r"(data/sources/[^:]+):(\d+)")
+
+
+def _first_locator_path(o) -> str:
+    if isinstance(o, dict):
+        for k, v in o.items():
+            if k == "locator" and isinstance(v, str):
+                m = _PROSE_LOC.fullmatch(v.strip())
+                if m:
+                    return m.group(1)
+            got = _first_locator_path(v)
+            if got:
+                return got
+    elif isinstance(o, list):
+        for v in o:
+            got = _first_locator_path(v)
+            if got:
+                return got
+    return ""
+
+
+def check_verdicts_prose_anchors(doc: dict, problems: list[str],
+                                 lines_of=None, books_of=None) -> int:
+    """八字裁决表散文裸行号的在册回验（489 批）。返回解析到的锚数。
+
+    为什么需要它：`bazi/data/verdicts.json` 除 465 的 `locator` 字段与 480 的
+    `源L「…」` 内联书证外，还有一批**只写行号、不带引文**的定位声明
+    （`_zhuan_wang_meta` 五格 L1657…、`从格._meta` L5265、`cong_sha/cong_cai.note`
+    L1668/L1704、`看命口诀.verification_note` L5115/L5137、杂气格 L1734、
+    渊海子平 L179）。它们说明「哪一段是哪一格的书源」，此前没有任何门。
+    判据：带 `data/sources/<书>` 的按路径；带《书名》的按 provenance
+    （`_corpus_for_book`，同名多本 `_dz` 优先）；裸 `源L` 按同条目最近的
+    `locator` 底本；行号须在册。紧邻 `「` 的锚由 479/480 覆盖，本门跳过。
+    `lines_of` / `books_of` 供 selftest 注入夹具；正式路径现场解析。
+    """
+    cache: dict[str, list[str] | None] = {}
+
+    def get_lines(f: str) -> list[str] | None:
+        if lines_of is not None:
+            return lines_of(f)
+        if f not in cache:
+            p = _resolve_any(f) if f.startswith("data/sources/") else Path(f)
+            cache[f] = (p.read_text(encoding="utf-8", errors="replace").splitlines()
+                        if p and p.is_file() else None)
+        return cache[f]
+
+    def path_for_book(b: str) -> str:
+        if books_of is not None:
+            paths = books_of(b)
+            return paths[0] if paths else ""
+        p = _corpus_for_book(b)
+        return str(p) if p else ""
+
+    n = 0
+
+    def walk(o, where: str, parent) -> None:
+        nonlocal n
+        if isinstance(o, dict):
+            for k, v in o.items():
+                walk(v, f"{where}.{k}", o)
+        elif isinstance(o, list):
+            for i, v in enumerate(o):
+                walk(v, f"{where}[{i}]", parent)
+        elif isinstance(o, str):
+            if not _PROSE_ANCHOR.search(o):
+                return
+            paths = [(m.start(), m.group(0)) for m in _PROSE_PATH.finditer(o)]
+            books = [(m.start(), m.group(1)) for m in _PROSE_BOOK.finditer(o)]
+            for m in _PROSE_ANCHOR.finditer(o):
+                if "「" in o[m.start():m.start() + 24]:
+                    continue
+                ln = int(m.group(1))
+                before_p = [p for s, p in paths if s <= m.start()]
+                f = before_p[-1] if before_p else ""
+                if not f:
+                    before_b = [b for s, b in books if s <= m.start()]
+                    if before_b:
+                        f = path_for_book(before_b[-1])
+                        if not f:
+                            problems.append(f"裁决散文行号：{where} 的《{before_b[-1]}》"
+                                            f" 无可解析底本（源L{ln}）")
+                            continue
+                if not f and parent is not None:
+                    f = _first_locator_path(parent)
+                if not f:
+                    continue
+                L = get_lines(f)
+                if L is None:
+                    problems.append(f"裁决散文行号：{where} 的底本不存在 {f}")
+                    continue
+                n += 1
+                if not (1 <= ln <= len(L)):
+                    problems.append(f"裁决散文行号：{where} 的 L{ln} 超出底本 "
+                                    f"{f}（共 {len(L)} 行）")
+
+    walk(doc, "$", None)
+    if n == 0:
+        problems.append("裁决散文行号：0 条可解析锚——0 结果 ≠ 通过")
+    return n
+
+
 def check_registry_books(doc: dict, problems: list[str], books_of=None) -> int:
     """注册表 `source.book` 里的每个《书名》都必须有在盘底本（484 批）。
 
@@ -2589,6 +2702,43 @@ def selftest(problems: list[str]) -> None:
     if not any("0 个 classes" in x for x in _ccbad(lambda d: d["classes"].clear())):
         problems.append("负例未抓到：问题题类 0 个 classes")
 
+    # 489 批：裁决表散文裸行号（夹具注入）
+    _ppl = {"data/sources/__no_such__p.txt": ["", "甲判", "乙判", "丙判"]}
+    ppdoc = {
+        "a": {"_text": "data/sources/__no_such__p.txt 篇（甲L2／乙L3）"},
+        "b": {"note": "《测试书》源L3"},
+        "c": {"locator": "data/sources/__no_such__p.txt:2", "note": "源L2"},
+    }
+    p_pp: list[str] = []
+    n_pp = check_verdicts_prose_anchors(
+        ppdoc, p_pp, lines_of=lambda f: _ppl.get(f),
+        books_of=lambda b: ["data/sources/__no_such__p.txt"] if b == "测试书" else [])
+    if p_pp or n_pp != 4:
+        problems.append(f"裁决散文行号正例被误伤：{p_pp}（锚 {n_pp}）")
+
+    def _ppbad(mut) -> list[str]:
+        d = json.loads(json.dumps(ppdoc, ensure_ascii=False))
+        mut(d)
+        p: list[str] = []
+        check_verdicts_prose_anchors(
+            d, p, lines_of=lambda f: _ppl.get(f),
+            books_of=lambda b: ["data/sources/__no_such__p.txt"] if b == "测试书" else [])
+        return p
+
+    if not any("超出底本" in x for x in
+               _ppbad(lambda d: d["a"].__setitem__(
+                   "_text", "data/sources/__no_such__p.txt 篇（甲L99）"))):
+        problems.append("负例未抓到：裁决散文行号越界")
+    if not any("无可解析底本" in x for x in
+               _ppbad(lambda d: d["b"].__setitem__("note", "《无此书》源L3"))):
+        problems.append("负例未抓到：裁决散文书名无底本")
+    if not any("底本不存在" in x for x in
+               _ppbad(lambda d: d["a"].__setitem__(
+                   "_text", "data/sources/__no_such__q.txt 篇（甲L2）"))):
+        problems.append("负例未抓到：裁决散文路径不存在")
+    if not any("0 条可解析锚" in x for x in _ppbad(lambda d: d.clear())):
+        problems.append("负例未抓到：裁决散文 0 条锚")
+
     # 477 批：verdict_texts 的文件+L 行锚（夹具底本注入）
     _vtl = {"data/sources/__no_such__v.txt": [
         "", "有病方为贵", "亦是休囚無气始見危"]}
@@ -2873,6 +3023,11 @@ def main() -> int:
         if n_vi < 3:
             problems.append(f"裁决内联书证：只有 {n_vi} 条（下限 3）")
         print(f"  裁决内联书证：{n_vi} 条；路径/书名归属与行内逐字已核对")
+        # 489 批：verdicts 散文裸行号（无引文的定位声明）
+        n_pp = check_verdicts_prose_anchors(vdoc, problems)
+        if n_pp < 10:
+            problems.append(f"裁决散文行号：只有 {n_pp} 条可解析锚（下限 10）")
+        print(f"  裁决散文行号：{n_pp} 条；路径/书名/同条 locator→底本行号已核对")
     # 482 批：core/scripts 注释里的 <file>.txt:<行>「…」（仅八字册；
     # 六爻 shensha 副本引八字专有底本，按独立科口径不跨科读取，见 docstring）
     if DISC.name == "bazi":
