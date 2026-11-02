@@ -132,6 +132,21 @@
       "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:96654"}
     },
     {
+      "rule_id": "liuyao.chuxing_shi_dong_fenghe",
+      "reason_key": "chuxing_shi_dong_fenghe",
+      "when": {
+        "qtext_has_chuxing": true,
+        "world_moving": true,
+        "any_of": [
+          {"day_he_world": true},
+          {"month_he_world": true}
+        ]
+      },
+      "cap": "凶",
+      "detail_tmpl": "占出行而世爻{world_branch}发动，被日辰/月建合住（世动逢合），行期被绊，欲行不行",
+      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:25459"}
+    },
+    {
       "rule_id": "liuyao.yuan_shen_wu_li",
       "reason_key": "yuan_shen_wu_li",
       "when": {
