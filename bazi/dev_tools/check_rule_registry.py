@@ -109,6 +109,13 @@ locator 从未被读取。现按声明核对：行号在册、`quote/full_quote/
 《增刪卜易》dz＋wikitext 任一底本中逐字出现（省略号分段）；首跑 7/7 命中。
 两科 selftest 都跑夹具。
 
+492 批追加（仅八字册）：**注册表「语料行 NNNN」声明**。
+`bazi/data/rules/rule_registry.json` 有 3 处不以 `L####` 写的行号声明：
+`ming.dayun.locator` 的「语料行 2608/2612」与 `_uncovered[1].locator` 的
+「语料行 2452」。465 只看 verdicts、474 只跑六爻，这些声明此前无门。
+现核：底本取同串 `data/sources/<书>` 路径、否则 `source.corpus_files`、
+否则 `source.book` 经 provenance，行号须在册；首跑 3/3 在册。两科 selftest 都跑夹具。
+
 490 批追加（仅八字册）：**代码注释里的 `《书名》源L####「…」`**。
 `bazi/scripts/**/*.py` 与 `bazi/core/**/*.py` 有 51 个 `源L` 锚（`dayun.py` 的
 岁运五式、虚拱填实、三合补支等），482 只认 `<file>.txt:<行>「…」` 形态、
@@ -2168,6 +2175,84 @@ def check_bazi_code_anchors(problems: list[str], files=None, lines_of=None,
     return n_ref, n_q, n_nobook
 
 
+_LINE_CLAIM = re.compile(r"语料行\s*(\d+(?:\s*/\s*\d+)*)")
+_CLAIM_PATH = re.compile(r"data/sources/[A-Za-z0-9_.\-]+")
+
+
+def check_registry_line_claims(doc: dict, problems: list[str],
+                               lines_of=None, books_of=None) -> int:
+    """注册表「语料行 NNNN」声明的在册回验（492 批）。返回行号数。
+
+    为什么需要它：`rule_registry.json` 有 3 处不以 `L####` 写的声明——
+    `ming.dayun.locator` 的「语料行 2608/2612」与 `_uncovered[1].locator` 的
+    「语料行 2452」。465 只看 verdicts、474 只跑六爻，这类声明此前无门。
+    判据：底本优先取同串 `data/sources/<书>` 路径；否则 `source.corpus_files`；
+    否则 `source.book` 经 provenance（同名多本全收）；每个行号须在任一底本在册。
+    `lines_of` / `books_of` 供 selftest 注入夹具；正式路径现场读。
+    """
+    cache: dict[str, list[str] | None] = {}
+
+    def get_lines(key: str) -> list[str] | None:
+        if lines_of is not None:
+            return lines_of(key)
+        if key not in cache:
+            p = _resolve_any(key)
+            cache[key] = (p.read_text(encoding="utf-8", errors="replace").splitlines()
+                          if p and p.is_file() else None)
+        return cache[key]
+
+    n = 0
+    for _bucket, item in _iter_entries(doc):
+        src = item.get("source") or {}
+        if not isinstance(src, dict):
+            continue
+        rid = item.get("rule_id") or item.get("id") or "?"
+
+        def walk(o, where: str) -> None:
+            nonlocal n
+            if isinstance(o, dict):
+                for k, v in o.items():
+                    walk(v, f"{where}.{k}")
+            elif isinstance(o, list):
+                for i, v in enumerate(o):
+                    walk(v, f"{where}[{i}]")
+            elif isinstance(o, str):
+                for m in _LINE_CLAIM.finditer(o):
+                    nums = [int(x) for x in re.findall(r"\d+", m.group(1))]
+                    paths = _CLAIM_PATH.findall(o)
+                    if not paths:
+                        cf = src.get("corpus_files") or []
+                        paths = [str(p) for p in (cf if isinstance(cf, list) else [cf]) if p]
+                    if not paths:
+                        book = ""
+                        for b in re.findall(r"《([^》]{2,24})》", str(src.get("book") or "")):
+                            book = b
+                            break
+                        if book:
+                            paths = (books_of(book) if books_of is not None
+                                     else [str(p) for p in _corpora_for_book(book)])
+                    if not paths:
+                        problems.append(f"注册表语料行：{rid}{where} 的「语料行 "
+                                        f"{m.group(1)}」无可解析底本")
+                        continue
+                    for ln in nums:
+                        n += 1
+                        ok = False
+                        for key in paths:
+                            L = get_lines(key)
+                            if L and 1 <= ln <= len(L):
+                                ok = True
+                                break
+                        if not ok:
+                            problems.append(f"注册表语料行：{rid}{where} 的语料行 "
+                                            f"{ln} 超出底本（{paths[0]}）")
+
+        walk(item, "")
+    if n == 0:
+        problems.append("注册表语料行：0 个行号声明——0 结果 ≠ 通过")
+    return n
+
+
 def check_registry_books(doc: dict, problems: list[str], books_of=None) -> int:
     """注册表 `source.book` 里的每个《书名》都必须有在盘底本（484 批）。
 
@@ -3119,6 +3204,38 @@ def selftest(problems: list[str]) -> None:
     if not any("0 段「…」引文" in x for x in p_fnq):
         problems.append("负例未抓到：用神词典族注 0 段引文")
 
+    # 492 批：注册表「语料行 NNNN」（夹具注入）
+    _ll = {"data/sources/__no_such__l.txt": ["", "甲", "乙", "丙"]}
+    ldoc = {"rules": [
+        {"rule_id": "t.line", "source": {
+            "corpus_files": ["data/sources/__no_such__l.txt"],
+            "locator": "语料行 2/3 在库"}},
+        {"rule_id": "t.line2", "source": {
+            "locator": "data/sources/__no_such__l.txt（语料行 4）"}}]}
+    p_ll: list[str] = []
+    n_ll = check_registry_line_claims(ldoc, p_ll, lines_of=lambda k: _ll.get(k))
+    if p_ll or n_ll != 3:
+        problems.append(f"注册表语料行正例被误伤：{p_ll}（行号 {n_ll}）")
+
+    def _llbad(mut) -> list[str]:
+        d = json.loads(json.dumps(ldoc, ensure_ascii=False))
+        mut(d)
+        p: list[str] = []
+        check_registry_line_claims(d, p, lines_of=lambda k: _ll.get(k))
+        return p
+
+    if not any("超出底本" in x for x in
+               _llbad(lambda d: d["rules"][0]["source"].__setitem__(
+                   "locator", "语料行 99 在库"))):
+        problems.append("负例未抓到：注册表语料行越界")
+    if not any("无可解析底本" in x for x in
+               _llbad(lambda d: (d["rules"][0]["source"].pop("corpus_files", None),
+                                 d["rules"][1]["source"].__setitem__(
+                                     "locator", "语料行 4")))):
+        problems.append("负例未抓到：注册表语料行无可解析底本")
+    if not any("0 个行号声明" in x for x in _llbad(lambda d: d["rules"].clear())):
+        problems.append("负例未抓到：注册表语料行 0 个声明")
+
     # 484 批：注册表 source.book 书名可解析（夹具注入）
     _bks = lambda b: ["x"] if b == "测试书" else []
     bkdoc = {"rules": [{"rule_id": "t.book", "source": {"book": "《测试书》"}}]}
@@ -3248,6 +3365,11 @@ def main() -> int:
         if n_bk < 18:
             problems.append(f"注册表书目：只有 {n_bk} 个书名（下限 18）")
         print(f"  注册表书目：{n_bk} 个书名；provenance 解析已核对")
+        # 492 批：「语料行 NNNN」声明（不写 L 的行号）
+        n_lc = check_registry_line_claims(doc, problems)
+        if n_lc < 2:
+            problems.append(f"注册表语料行：只有 {n_lc} 个行号声明（下限 2）")
+        print(f"  注册表语料行：{n_lc} 个行号声明；底本→行号在册已核对")
     # 466 批：六神取象 / 十神作用（仅八字册）
     if DISC.name == "bazi":
         if not LIUSHEN.is_file() or not SHISHEN.is_file():
