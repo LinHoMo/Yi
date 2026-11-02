@@ -155,6 +155,15 @@
       "cap": "吉",
       "detail_tmpl": "用神{ug_branch}（{ug_cat}）月生日扶有根，虽被动爻忌神克，待冲去克神之月日应",
       "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:128050"}
+    },
+    {
+      "rule_id": "liuyao.yongshen_guan_sheng_world_chain",
+      "reason_key": "yongshen_guan_sheng_world_chain",
+      "when": {"yongshen_guan_sheng_world_chain": true},
+      "gates": {"qcls_eq": "求财", "ug_cat_eq": "妻财"},
+      "cap": "吉",
+      "detail_tmpl": "用神{ug_branch}（{ug_cat}）生官鬼、官鬼动而生世，连续相生，财气通门户",
+      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:16685"}
     }
   ]
 }
