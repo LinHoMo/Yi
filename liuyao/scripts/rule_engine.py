@@ -27,7 +27,7 @@ from kernel_path import ensure_kernel_on_path as _ensure_kernel  # noqa: E402
 _ensure_kernel(__file__)
 
 from yishu_core.symbols import BRANCH_ELEMENTS, SHENG_CYCLE, KE_CYCLE  # noqa: E402
-from classical_enhancements_direction import (  # noqa: E402  纯函数复用，无循环
+from predicates import (  # noqa: E402  纯函数共享库，无反向依赖
     _world_line, _month_state, _chong, _broken, _he, RANK, HUA_XIONG,
 )
 

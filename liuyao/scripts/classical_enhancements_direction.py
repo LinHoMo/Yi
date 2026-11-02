@@ -61,69 +61,8 @@ from kernel_path import ensure_kernel_on_path as _ensure_kernel  # noqa: E402
 
 _ensure_kernel(__file__)
 
-from yishu_core.symbols import (  # noqa: E402
-    BRANCH_ELEMENTS,
-    CHONG_PAIRS,
-    HE_PAIRS,
-    KE_CYCLE,
-    SHENG_CYCLE,
-)
 
-# 判定上限的档位序（与 step5 的 verdict 枚举一致）
-RANK = {"大凶": 0, "凶": 1, "平凶": 2, "平吉": 3, "吉": 4, "大吉": 5}
-
-_HE_SET = {frozenset(p) for p in HE_PAIRS}
-_CHONG_SET = {frozenset(p) for p in CHONG_PAIRS}
-
-# 化凶之七（《增删卜易》源L948「凡用神原神动化回头克、化绝、化墓、化空、化鬼、化退神皆为化凶」的枚举，只列引擎已能结构化识别的形态）
-HUA_XIONG = ("化退神", "化绝", "化墓", "化空", "回头克", "化鬼")
-
-
-def _he(a: str, b: str) -> bool:
-    return frozenset((a, b)) in _HE_SET
-
-
-def _chong(a: str, b: str) -> bool:
-    return frozenset((a, b)) in _CHONG_SET
-
-
-def _month_state(element: str, month_element: str) -> str:
-    """月令下的旺/相/休/囚/死（五行同法：同我旺、我生相、生我休、克我囚、我克死）。
-
-    这里只用于**无力判定**，取《增删卜易》源L551「以上元神无力生用神，无用之元神也，虽有如无」的"休囚"口径，不引入新的量纲。
-    """
-    if not month_element or not element:
-        return ""
-    if element == month_element:
-        return "旺"
-    if SHENG_CYCLE.get(month_element) == element:
-        return "相"
-    if SHENG_CYCLE.get(element) == month_element:
-        return "休"
-    if KE_CYCLE.get(month_element) == element:
-        return "囚"
-    if KE_CYCLE.get(element) == month_element:
-        return "死"
-    return ""
-
-
-def _world_line(lines: list[dict]) -> dict | None:
-    return next((y for y in lines if isinstance(y, dict) and y.get("is_world")), None)
-
-
-def _sheng_or_he_world(y: dict, world_branch: str, world_element: str) -> bool:
-    """该爻与世爻「相生」或「六合」——書《增删卜易》源 L2786「若不生合世爻，或不持世，或世爻空破，亦属无益」 的"生合世爻"。"""
-    if y.get("is_world"):
-        return True
-    e = y.get("element") or BRANCH_ELEMENTS.get(y.get("earthly_branch", ""), "")
-    if SHENG_CYCLE.get(e) == world_element:
-        return True
-    return _he(y.get("earthly_branch", ""), world_branch)
-
-
-def _broken(branch: str, month_branch: str, empty_branches: list[str]) -> bool:
-    return branch in (empty_branches or []) or _chong(branch, month_branch)
-
+from predicates import RANK  # apply_caps 档位序；纯函数(_world_line/_month_state/_chong/_broken/_he/HUA_XIONG)已抽至 predicates.py
 
 def detect_direction_caps(
     lines: list[dict],
