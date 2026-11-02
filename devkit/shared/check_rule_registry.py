@@ -75,6 +75,15 @@ locator 从未被读取。现按声明核对：行号在册、`quote/full_quote/
 本章行界内且逐字命中；`_source_lines` 若带行号须与 `章节` 同锚；`_extension_note`
 声明的域数须等于实际域数。首跑抓到「神听」锚在 L1262（用人章注文行）、引文取 L1263
 的用人章六神句——整个域错章。两科 selftest 都跑夹具。
+
+487 批追加（仅六爻册）：**叙述层自由文本字段的内联引用**。
+`pattern_hints.liu_shen_chishi.歌源` 是一条摘要字符串（`L465-L470`＋六神各一段
+`'…'`），`pattern_hints.yigua_yishi.口径` 是散文（`源L31「…」`／裸 `源L1802`），
+两者都不是 476 的 `quote/src` 结构，此前无门。现核：歌源的范围端点、六个
+`名＝'…'` 片段逐行对应且逐字命中；口径的每个 `源L####（「…」）` 行号在册、
+带引文者逐字命中（书别取同组 `src` 的底本）。首跑 13/13 全符、0 处漂移
+（L31 的长句含「但有一卦爻逢六冲或卦变六冲」，此前只核过同组的 6 个
+`src`，摘要句本身从未对拍）。两科 selftest 都跑夹具。
 """
 from __future__ import annotations
 
@@ -1364,6 +1373,68 @@ def check_narrative_anchors(doc: dict, problems: list[str], lines_of=None) -> in
         if _verdict_plain(q) not in _verdict_plain(L[ln - 1]):
             problems.append(f"叙述层引文：{label}.quote 不在所署行 {f}:{ln} → "
                             f"{str(q)[:26]!r}")
+
+    # 487 批：自由文本字段的内联引用（歌源摘要 / 口径散文）
+    gs = (ph.get("liu_shen_chishi") or {}).get("歌源")
+    if isinstance(gs, str) and gs:
+        n += 1
+        mg = re.search(r"(data/sources/[A-Za-z0-9_.\-]+):L(\d+)-L(\d+)", gs)
+        if not mg:
+            problems.append("叙述层引文：liu_shen_chishi.歌源 缺 L###-L### 范围 → "
+                            f"{gs[:30]!r}")
+        else:
+            f, a, b = mg.group(1), int(mg.group(2)), int(mg.group(3))
+            L = get_lines(f)
+            if L is None:
+                problems.append(f"叙述层引文：liu_shen_chishi.歌源 的底本不存在 {f}")
+            elif not (1 <= a <= b <= len(L)):
+                problems.append(f"叙述层引文：liu_shen_chishi.歌源 的范围 L{a}-L{b} "
+                                f"超出底本（共 {len(L)} 行）")
+            else:
+                pairs = re.findall(r"(青龙|朱雀|勾陈|螣蛇|鰧蛇|白虎|玄武)＝'([^']+)'", gs)
+                if len(pairs) != b - a + 1:
+                    problems.append(f"叙述层引文：liu_shen_chishi.歌源 有 {len(pairs)} 段，"
+                                    f"但范围 L{a}-L{b} 是 {b - a + 1} 行")
+                for i, (name, q) in enumerate(pairs):
+                    ln = a + i
+                    if ln > b:
+                        break
+                    line = L[ln - 1]
+                    # 底本作「鰧蛇」、数据写「螣蛇」，两种写法都认（同字异形）
+                    name_ok = any(v in line for v in
+                                  (name, name.replace("螣", "鰧"), name.replace("鰧", "螣")))
+                    if not name_ok:
+                        problems.append(f"叙述层引文：liu_shen_chishi.歌源 第 {i + 1} 段"
+                                        f"「{name}」不在所署行 L{ln}")
+                    if _fold(q) not in _fold(line):
+                        problems.append(f"叙述层引文：liu_shen_chishi.歌源 「{name}」的"
+                                        f"引文不在所署行 L{ln} → {q[:24]!r}")
+    kj = (ph.get("yigua_yishi") or {}).get("口径")
+    if isinstance(kj, str) and kj:
+        n += 1
+        f = None
+        for v in (ph.get("yigua_yishi") or {}).values():
+            if isinstance(v, dict):
+                mm = re.search(r"(data/sources/[A-Za-z0-9_.\-]+):", str(v.get("src") or ""))
+                if mm:
+                    f = mm.group(1)
+                    break
+        if not f:
+            problems.append("叙述层引文：yigua_yishi.口径 缺可解析的底本（同组 src 为空）")
+        else:
+            L = get_lines(f)
+            if L is None:
+                problems.append(f"叙述层引文：yigua_yishi.口径 的底本不存在 {f}")
+            else:
+                for mm in re.finditer(r"源L(\d+)(?:「([^」]{2,200})」)?", kj):
+                    ln = int(mm.group(1))
+                    q = mm.group(2)
+                    if not (1 <= ln <= len(L)):
+                        problems.append(f"叙述层引文：yigua_yishi.口径 的源L{ln} 超出底本"
+                                        f"（共 {len(L)} 行）")
+                    elif q and _fold(q) not in _fold(L[ln - 1]):
+                        problems.append(f"叙述层引文：yigua_yishi.口径 的内联引文不在 "
+                                        f"L{ln} → {q[:24]!r}")
     return n
 
 
@@ -2332,21 +2403,29 @@ def selftest(problems: list[str]) -> None:
         problems.append("负例未抓到：纳音 _meta 0 条内联引文")
 
     # 476 批：叙述层其余 quote/src 行锚（夹具底本注入）
+    # 487 批：加歌源摘要（L2-L7 六段）与口径散文（源L8「…」/裸 源L8）
     _nsl = {"data/sources/__no_such__s.txt": [
-        "", "青龙空亡家虚喜", "恍惚可再占"]}
+        "", "青龙空亡家虚喜", "朱雀空亡口舌临", "勾陈空亡田土荒",
+        "螣蛇空亡惊怪至", "白虎空亡疾病侵", "玄武空亡盗贼来", "恍惚可再占"]}
     nsdoc = {"pattern_hints": {
         "liu_shen_kongwang": {"歌源": {
             "quote": "青龙空亡家虚喜",
             "src": "data/sources/__no_such__s.txt:L2"}},
+        "liu_shen_chishi": {"歌源":
+            "六段持世歌词（逐字 data/sources/__no_such__s.txt:L2-L7）："
+            "青龙＝'青龙空亡家虚喜'；朱雀＝'朱雀空亡口舌临'；"
+            "勾陈＝'勾陈空亡田土荒'；螣蛇＝'螣蛇空亡惊怪至'；"
+            "白虎＝'白虎空亡疾病侵'；玄武＝'玄武空亡盗贼来'"},
         "yigua_yishi": {"恍惚": {
             "quote": "恍惚可再占",
-            "src": "data/sources/__no_such__s.txt:L3"}},
+            "src": "data/sources/__no_such__s.txt:L8"},
+            "口径": "恍惚时可再占（源L8「恍惚可再占」）；代占另看（源L8）"},
     },
         "jiazhai_take_image": {
             "_出处": "data/sources/__no_such__s.txt L2「青龙空亡家虚喜」"}}
     p_ns: list[str] = []
     n_ns = check_narrative_anchors(nsdoc, p_ns, lambda f: _nsl.get(f))
-    if p_ns or n_ns != 3:
+    if p_ns or n_ns != 5:
         problems.append(f"叙述层引文正例被误伤：{p_ns}（字段 {n_ns}）")
 
     def _nsbad(mut) -> list[str]:
@@ -2376,6 +2455,27 @@ def selftest(problems: list[str]) -> None:
                _nsbad(lambda d: d["jiazhai_take_image"].__setitem__(
                    "_出处", "data/sources/__no_such__s.txt L3「青龙空亡家虚喜」"))):
         problems.append("负例未抓到：家宅取象 _出处 内联引文不在所署行")
+    # 487 批：歌源摘要/口径散文的负例
+    if not any("「青龙」的引文不在所署行 L2" in x for x in
+               _nsbad(lambda d: d["pattern_hints"]["liu_shen_chishi"].__setitem__(
+                   "歌源", d["pattern_hints"]["liu_shen_chishi"]["歌源"].replace(
+                       "青龙空亡家虚喜", "青龙空亡家虚忧")))):
+        problems.append("负例未抓到：歌源片段不在所署行")
+    if not any("歌源 的范围 L2-L9" in x for x in
+               _nsbad(lambda d: d["pattern_hints"]["liu_shen_chishi"].__setitem__(
+                   "歌源", d["pattern_hints"]["liu_shen_chishi"]["歌源"].replace(
+                       "L2-L7", "L2-L9")))):
+        problems.append("负例未抓到：歌源范围越界")
+    if not any("口径 的内联引文不在 L3" in x for x in
+               _nsbad(lambda d: d["pattern_hints"]["yigua_yishi"].__setitem__(
+                   "口径", "恍惚时可再占（源L3「恍惚可再占」）"))):
+        problems.append("负例未抓到：口径内联引文不在所署行")
+    if not any("0 条 quote/src" in x for x in
+               _nsbad(lambda d: (d["pattern_hints"].pop("liu_shen_chishi", None),
+                                 d["pattern_hints"].pop("yigua_yishi", None),
+                                 d["pattern_hints"].pop("liu_shen_kongwang", None),
+                                 d.pop("jiazhai_take_image", None)))):
+        problems.append("负例未抓到：叙述层整块缺失仍须 0 条判红")
 
     # 477 批：verdict_texts 的文件+L 行锚（夹具底本注入）
     _vtl = {"data/sources/__no_such__v.txt": [
@@ -2724,9 +2824,10 @@ def main() -> int:
             print(f"  文王持世：{n_w} 个 quote/补 字段；src/补_src 行内逐字已核对")
             # 476 批：叙述层六神空亡/六神持世/一卦一事 quote/src 行锚
             n_na = check_narrative_anchors(tpl, problems)
-            if n_na < 11:
-                problems.append(f"叙述层引文：只有 {n_na} 条 quote/src（下限 11）")
-            print(f"  叙述层引文：{n_na} 条 quote/src；src 行号与行内逐字已核对")
+            if n_na < 13:
+                problems.append(f"叙述层引文：只有 {n_na} 条 quote/src（下限 13）")
+            print(f"  叙述层引文：{n_na} 条（含歌源摘要/口径散文）；"
+                  f"src 行号与行内逐字已核对")
             # 477 批：裁决表文案里的文件+L 行锚
             if not VERDICT_TEXTS.is_file():
                 problems.append("裁决引文：verdict_texts.json 不存在——0 结果 ≠ 通过")
