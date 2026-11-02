@@ -96,6 +96,8 @@ SHISHEN = DISC / "data" / "shi_shen_actions.json"
 LIUYAO_QUOTES = DISC / "data" / "verdicts.json"
 # 470 批：叙述层模板（仅六爻有该册）。
 NARRATIVE_TPL = DISC / "data" / "narrative_templates.json"
+# 471 批：火珠林财官伏藏引文库（仅六爻有该册）。
+FUSHI = DISC / "data" / "rules" / "caiguan_fushi.json"
 _VERDICT_LOCATOR = re.compile(r"(data/sources/[^:]+):(\d+)")
 _VERDICT_MARK = re.compile(r"''+|={2,}|\{\{|\}\}|\||\*")
 _VERDICT_FIELDS = ("quote", "full_quote", "cond_quote", "verse_quote")
@@ -793,6 +795,101 @@ def check_wenwang_chishi(doc: dict, problems: list[str], lines_of=None) -> int:
     return n
 
 
+def check_fushi_quotes(doc: dict, problems: list[str], lines_of=None) -> int:
+    """《火珠林》财官伏藏引文库的行锚回验（471 批）。返回 src/_src 字段数。
+
+    为什么需要它：`caiguan_fushi.json`（六爻，`data/rules/`）的 `_meta.铁律` 明写
+    「九章歌诀与注文**只作逐字引文登记**，由 narrate 按 `*_src` 回指原文自取」，
+    `classical_enhancements_fushi.py` 的 docstring 也自称「已 Read 逐字核验」。
+    但 [14] 只认「《书名》源L」形态，本册用的是 `data/sources/<书>:<行>`，
+    21 个 `歌诀/歌诀续/取法条件/注文` 字段长期无门（§六.3）。本函数按声明核对：
+
+      · `总纲` 与 `九宫` 的每个 `*_src` / `src` 必须是 `data/sources/<书>:<行>`；
+      · 行号在册；`歌诀/歌诀续/取法条件` 须落在**所署那一行**，`注文`（段落常跨
+        两条物理行）给 ±1 行邻域；
+      · `_src` 必须有配对的同名字段（`src` 配对 `歌诀`）。
+
+    `lines_of` 供 selftest 注入夹具底本；正式路径现场读。
+    """
+    root = doc or {}
+    dg = root.get("九宫")
+    if not isinstance(dg, dict) or not dg:
+        problems.append("财官伏藏：九宫 缺失或为空——0 结果 ≠ 通过")
+        return 0
+    cache: dict[str, list[str] | None] = {}
+
+    def get_lines(f: str) -> list[str] | None:
+        if lines_of is not None:
+            return lines_of(f)
+        if f not in cache:
+            p = _resolve_any(f)
+            cache[f] = (p.read_text(encoding="utf-8", errors="replace").splitlines()
+                        if p else None)
+        return cache[f]
+
+    n = 0
+    # `总纲` 是**单条**（字段直接在它下面）；`九宫` 才是「条目名 → 条目」的集合。
+    entries: list[tuple[str, str, dict]] = []
+    zz = root.get("总纲")
+    if isinstance(zz, dict):
+        entries.append(("总纲", "", zz))
+    for name, e in dg.items():
+        if isinstance(e, dict):
+            entries.append(("九宫", str(name), e))
+    for block, name, e in entries:
+        label = f"{block}.{name}" if name else block
+        pairs: list[tuple[str, str]] = []
+        for base in ("歌诀", "歌诀续", "取法条件", "注文"):
+            if not (isinstance(e.get(base), str) and e.get(base).strip()):
+                continue
+            if base + "_src" in e:
+                pairs.append((base, base + "_src"))
+            elif base == "歌诀" and "src" in e:
+                pairs.append((base, "src"))
+            else:
+                pairs.append((base, base + "_src"))   # 缺 _src → 进分母并判红
+        if "src" in e and not any(sk == "src" for _b, sk in pairs):
+            pairs.append(("歌诀", "src"))
+        # 有 `_src` 却找不到配对引文的孤儿，也要进分母并判红
+        for key in e:
+            if key == "src" or key.endswith("_src"):
+                if not any(sk == key for _b, sk in pairs):
+                    pairs.append((key[:-4] if key.endswith("_src") else "歌诀", key))
+        for base, skey in pairs:
+            n += 1
+            q = e.get(base)
+            if not isinstance(q, str) or not q.strip():
+                problems.append(f"财官伏藏：{label}.{skey} 无配对引文 {base}")
+                continue
+            src = e.get(skey)
+            if not src:
+                problems.append(f"财官伏藏：{label}.{base} 缺行号出处 {skey}")
+                continue
+            m = _VERDICT_LOCATOR.fullmatch(str(src).strip())
+            if not m:
+                problems.append(f"财官伏藏：{label}.{skey} 缺行号出处 → {src!r}")
+                continue
+            f, ln = m.group(1), int(m.group(2))
+            L = get_lines(f)
+            if L is None:
+                problems.append(f"财官伏藏：{label}.{skey} 的底本不存在 {f}")
+                continue
+            if not (1 <= ln <= len(L)):
+                problems.append(f"财官伏藏：{label}.{skey} 行号 L{ln}"
+                                f"超出底本（共 {len(L)} 行）")
+                continue
+            # 歌诀/总纲都是单行句，按**所署那一行**逐字核；注文是段落，底本常把
+            # 同一段排成两条物理行（如 L68 末句接 L69），给 ±1 行邻域。
+            if base == "注文":
+                window = _verdict_plain("".join(L[max(0, ln - 2):ln + 1]))
+            else:
+                window = _verdict_plain(L[ln - 1])
+            if _verdict_plain(q) not in window:
+                problems.append(f"财官伏藏：{label}.{base} 不在所署行 {f}:{ln} → "
+                                f"{q[:28]!r}")
+    return n
+
+
 def selftest(problems: list[str]) -> None:
     """负例：造一条 verified=true 却指向不存在文件/解不到值的条目，必须判红。"""
     fake = {"schema": "yi-rule-registry-v1", "rules": [
@@ -1075,6 +1172,47 @@ def selftest(problems: list[str]) -> None:
                    "src", "data/sources/__no_such__w.txt:99"))):
         problems.append("负例未抓到：文王持世行号越界")
 
+    # 471 批：火珠林财官伏藏行锚（夹具底本注入）
+    _flines = {"data/sources/__no_such__f.txt": [
+        "", "出现旺相，为久为远；", "财伏鬼乡，买卖遭伤；",
+        "财爻伏官鬼之下，乃财爻泄鬼无气"]}
+    fbase = {
+        "总纲": {"歌诀": "出现旺相，为久为远；",
+                 "歌诀_src": "data/sources/__no_such__f.txt:2"},
+        "九宫": {"妻财伏官鬼": {
+            "歌诀": "财伏鬼乡，买卖遭伤；",
+            "src": "data/sources/__no_such__f.txt:3",
+            "注文": "财爻伏官鬼之下，乃财爻泄鬼无气",
+            "注文_src": "data/sources/__no_such__f.txt:4"}},
+    }
+    p_f: list[str] = []
+    n_f = check_fushi_quotes(fbase, p_f, lambda f: _flines.get(f))
+    if p_f or n_f != 3:
+        problems.append(f"财官伏藏正例被误伤：{p_f}（字段 {n_f}）")
+
+    def _fbad(mut) -> list[str]:
+        d = json.loads(json.dumps(fbase, ensure_ascii=False))
+        mut(d)
+        p: list[str] = []
+        check_fushi_quotes(d, p, lambda f: _flines.get(f))
+        return p
+
+    if not any("缺行号出处" in x for x in
+               _fbad(lambda d: d["总纲"].pop("歌诀_src", None))):
+        problems.append("负例未抓到：财官伏藏缺 _src")
+    if not any("无配对引文" in x for x in
+               _fbad(lambda d: d["总纲"].pop("歌诀", None))):
+        problems.append("负例未抓到：财官伏藏 _src 无配对引文")
+    if not any("不在所署行" in x for x in
+               _fbad(lambda d: d["九宫"]["妻财伏官鬼"].__setitem__("歌诀", "财伏鬼乡，买卖兴隆"))):
+        problems.append("负例未抓到：财官伏藏引文不在所署行")
+    if not any("超出底本" in x for x in
+               _fbad(lambda d: d["九宫"]["妻财伏官鬼"].__setitem__(
+                   "src", "data/sources/__no_such__f.txt:99"))):
+        problems.append("负例未抓到：财官伏藏行号越界")
+    if not any("缺失或为空" in x for x in _fbad(lambda d: d.pop("九宫", None))):
+        problems.append("负例未抓到：财官伏藏九宫整块缺失")
+
 
 def main() -> int:
     if not REG.exists():
@@ -1147,6 +1285,15 @@ def main() -> int:
             if n_w < 14:
                 problems.append(f"文王持世：行锚字段只有 {n_w}（下限 14）")
             print(f"  文王持世：{n_w} 个 quote/补 字段；src/补_src 行内逐字已核对")
+        # 471 批：火珠林财官伏藏引文行锚（仅六爻册）
+        if not FUSHI.is_file():
+            problems.append("财官伏藏：caiguan_fushi.json 不存在——0 结果 ≠ 通过")
+        else:
+            fdoc = json.loads(FUSHI.read_text(encoding="utf-8"))
+            n_f = check_fushi_quotes(fdoc, problems)
+            if n_f < 21:
+                problems.append(f"财官伏藏：src/_src 行锚字段只有 {n_f}（下限 21）")
+            print(f"  财官伏藏：{n_f} 个 src/_src 行锚；歌诀/注文/总纲行内逐字已核对")
     _ap = argparse.ArgumentParser(description="check_rule_registry：--selftest 负例自证开关（§三）")
     _ap.add_argument("--selftest", action="store_true", help="负例自证")
     args = _ap.parse_args()
