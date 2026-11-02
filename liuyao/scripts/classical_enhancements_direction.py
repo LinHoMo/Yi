@@ -53,16 +53,18 @@ _DIR = _labels.load("direction")
 
 import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
 
-_ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
-if _ks_d not in _ks_sys.path:
-    _ks_sys.path.insert(0, _ks_d)
+_ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))  # liuyao/scripts/
+_rules_d = _ks_os.path.join(_ks_os.path.dirname(_ks_d), "rules")  # liuyao/rules/（L2 规则层）
+for _p in (_ks_d, _rules_d):
+    if _p not in _ks_sys.path:
+        _ks_sys.path.insert(0, _p)
 
 from kernel_path import ensure_kernel_on_path as _ensure_kernel  # noqa: E402
 
 _ensure_kernel(__file__)
 
 
-from predicates import RANK  # apply_caps 档位序；纯函数(_world_line/_month_state/_chong/_broken/_he/HUA_XIONG)已抽至 predicates.py
+from predicates import RANK  # apply_caps 档位序；纯函数库已独立至 rules/predicates.py
 
 def detect_direction_caps(
     lines: list[dict],

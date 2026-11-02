@@ -19,9 +19,11 @@ when 只表达卦象静态事实；gates 表达适用情境域；rescue_any 表�
 from __future__ import annotations
 import os as _ks_os, sys as _ks_os2, json as _json
 
-_ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
-if _ks_d not in _ks_os2.path:
-    _ks_os2.path.insert(0, _ks_d)
+_ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))  # liuyao/rules/
+_scripts_d = _ks_os.path.join(_ks_os.path.dirname(_ks_d), "scripts")  # kernel_path 所在
+for _p in (_ks_d, _scripts_d):
+    if _p not in _ks_os2.path:
+        _ks_os2.path.insert(0, _p)
 
 from kernel_path import ensure_kernel_on_path as _ensure_kernel  # noqa: E402
 _ensure_kernel(__file__)
@@ -33,8 +35,7 @@ from predicates import (  # noqa: E402  纯函数共享库，无反向依赖
 
 
 # ── v2 规则库加载（带缓存）──────────────────────────────────────
-_RULES_PATH = _ks_os.path.join(
-    _ks_os.path.dirname(_ks_d), "data", "rules", "rule_engine_v2.json")
+_RULES_PATH = _ks_os.path.join(_ks_d, "registry_v2.json")
 _cache = {"rules": None, "mtime": None}
 
 

@@ -15,9 +15,11 @@
 from __future__ import annotations
 import os as _ks_os, sys as _ks_sys
 
-_ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
-if _ks_d not in _ks_sys.path:
-    _ks_sys.path.insert(0, _ks_d)
+_ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))  # liuyao/rules/
+_scripts_d = _ks_os.path.join(_ks_os.path.dirname(_ks_d), "scripts")  # liuyao/scripts/（kernel_path 所在）
+for _p in (_ks_d, _scripts_d):
+    if _p not in _ks_sys.path:
+        _ks_sys.path.insert(0, _p)
 
 from kernel_path import ensure_kernel_on_path as _ensure_kernel  # noqa: E402
 _ensure_kernel(__file__)
