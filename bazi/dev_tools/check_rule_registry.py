@@ -102,6 +102,8 @@ FUSHI = DISC / "data" / "rules" / "caiguan_fushi.json"
 YILIN = DISC / "data" / "yilin_buyi_maps.json"
 # 475 批：纳音取象表（仅八字有该册）。
 NAYIN = DISC / "data" / "nayin_quxiang.json"
+# 477 批：六爻判词文案表（仅六爻有该册）。
+VERDICT_TEXTS = DISC / "data" / "rules" / "verdict_texts.json"
 _VERDICT_LOCATOR = re.compile(r"(data/sources/[^:]+):(\d+)")
 _VERDICT_MARK = re.compile(r"''+|={2,}|\{\{|\}\}|\||\*")
 _VERDICT_FIELDS = ("quote", "full_quote", "cond_quote", "verse_quote")
@@ -1243,6 +1245,82 @@ def check_narrative_anchors(doc: dict, problems: list[str], lines_of=None) -> in
     return n
 
 
+def check_verdict_text_anchors(doc: dict, problems: list[str], lines_of=None) -> int:
+    """六爻 `verdict_texts` 的「文件+L」行锚回验（477 批）。返回字段数。
+
+    为什么需要它：
+      · `direction_cap_quotes.*` 的 `locator` 写成 `<file>.txt L####`，5 条 quote
+        只被 474 批间接覆盖（经 registry 的 L####）；locator 自身若漂移无人拦。
+      · `step5_classical_notes.officer_tomb_wang_you_jiu.basis` 写
+        「随鬼入墓章覺子总论（zengshan_buyi.wikitext.txt L685）」——实测该引文
+        在 **L687**（覺子曰段），L685 是「古有日墓…」另一行。477 批首跑即抓到。
+      · 其余 `step5_classical_notes` 用「源L」或章名，归 [14]/NOTE 面，不在此列。
+
+    判据：`<file> L<line>` 行号在册；`direction_cap_quotes.quote` 与
+    `step5_classical_notes.text` 里的 `「…」` 引文须落在该行逐字。
+    `lines_of` 供 selftest 注入夹具底本；正式路径现场读。
+    """
+    cache: dict[str, list[str] | None] = {}
+    plain = lambda s: re.sub(r"[\s\W_]+", "", str(s))
+
+    def get_lines(f: str) -> list[str] | None:
+        if lines_of is not None:
+            return lines_of("data/sources/" + f)
+        key = "data/sources/" + f
+        if key not in cache:
+            p = _resolve_any(key)
+            cache[key] = (p.read_text(encoding="utf-8", errors="replace").splitlines()
+                          if p else None)
+        return cache[key]
+
+    n = 0
+    for k, e in ((doc or {}).get("direction_cap_quotes") or {}).items():
+        if not isinstance(e, dict):
+            continue
+        loc = str(e.get("locator") or "").strip()
+        m = re.fullmatch(r"([A-Za-z0-9_.\-]+\.txt) L(\d+)", loc)
+        q = e.get("quote")
+        if not m or not q:
+            continue
+        n += 1
+        f, ln = m.group(1), int(m.group(2))
+        L = get_lines(f)
+        if L is None:
+            problems.append(f"裁决引文：direction_cap_quotes.{k} 底本不存在 {f}")
+            continue
+        if not (1 <= ln <= len(L)):
+            problems.append(f"裁决引文：direction_cap_quotes.{k} 行号 L{ln} 超出底本")
+            continue
+        if plain(q) not in plain(L[ln - 1]):
+            problems.append(f"裁决引文：direction_cap_quotes.{k}.quote 不在所署行 "
+                            f"{f}:{ln} → {str(q)[:26]!r}")
+    for k, e in ((doc or {}).get("step5_classical_notes") or {}).items():
+        if not isinstance(e, dict):
+            continue
+        basis = str(e.get("basis") or "")
+        m = re.search(r"([A-Za-z0-9_.\-]+\.txt) L(\d+)", basis)
+        if not m:
+            continue
+        n += 1
+        f, ln = m.group(1), int(m.group(2))
+        L = get_lines(f)
+        if L is None:
+            problems.append(f"裁决引文：step5_classical_notes.{k} 底本不存在 {f}")
+            continue
+        if not (1 <= ln <= len(L)):
+            problems.append(f"裁决引文：step5_classical_notes.{k} 行号 L{ln} 超出底本")
+            continue
+        qs = re.findall(r"「([^」]{4,400})」", str(e.get("text") or ""))
+        if not qs:
+            problems.append(f"裁决引文：step5_classical_notes.{k} 有行锚但 text 无「」引文")
+            continue
+        for q in qs:
+            if plain(q) not in plain(L[ln - 1]):
+                problems.append(f"裁决引文：step5_classical_notes.{k}.text 引文不在"
+                                f"所署行 {f}:{ln} → {q[:26]!r}")
+    return n
+
+
 def selftest(problems: list[str]) -> None:
     """负例：造一条 verified=true 却指向不存在文件/解不到值的条目，必须判红。"""
     fake = {"schema": "yi-rule-registry-v1", "rules": [
@@ -1725,6 +1803,45 @@ def selftest(problems: list[str]) -> None:
                _nsbad(lambda d: d["pattern_hints"].clear())):
         problems.append("负例未抓到：叙述层 0 条 quote/src")
 
+    # 477 批：verdict_texts 的文件+L 行锚（夹具底本注入）
+    _vtl = {"data/sources/__no_such__v.txt": [
+        "", "有病方为贵", "亦是休囚無气始見危"]}
+    vtdoc = {
+        "direction_cap_quotes": {"x": {
+            "locator": "__no_such__v.txt L2", "quote": "有病方为贵"}},
+        "step5_classical_notes": {"y": {
+            "basis": "（__no_such__v.txt L3）",
+            "text": "「亦是休囚無气始見危」重档减免"}},
+    }
+    p_vt: list[str] = []
+    n_vt = check_verdict_text_anchors(vtdoc, p_vt, lambda f: _vtl.get(f))
+    if p_vt or n_vt != 2:
+        problems.append(f"裁决引文行锚正例被误伤：{p_vt}（字段 {n_vt}）")
+
+    def _vtbad(mut) -> list[str]:
+        d = json.loads(json.dumps(vtdoc, ensure_ascii=False))
+        mut(d)
+        p: list[str] = []
+        check_verdict_text_anchors(d, p, lambda f: _vtl.get(f))
+        return p
+
+    if not any("不在所署行" in x for x in
+               _vtbad(lambda d: d["direction_cap_quotes"]["x"].__setitem__(
+                   "locator", "__no_such__v.txt L1"))):
+        problems.append("负例未抓到：direction_cap_quotes 行号错")
+    if not any("不在所署行" in x for x in
+               _vtbad(lambda d: d["step5_classical_notes"]["y"].__setitem__(
+                   "basis", "（__no_such__v.txt L2）"))):
+        problems.append("负例未抓到：step5_classical_notes 行号错")
+    if not any("底本不存在" in x for x in
+               _vtbad(lambda d: d["direction_cap_quotes"]["x"].__setitem__(
+                   "locator", "__no_such__v2.txt L2"))):
+        problems.append("负例未抓到：verdict_texts 底本不存在")
+    if not any("text 无「」引文" in x for x in
+               _vtbad(lambda d: d["step5_classical_notes"]["y"].__setitem__(
+                   "text", "无引文的重档减免说明"))):
+        problems.append("负例未抓到：verdict_texts 行锚但无引文")
+
 
 def main() -> int:
     if not REG.exists():
@@ -1811,6 +1928,15 @@ def main() -> int:
             if n_na < 10:
                 problems.append(f"叙述层引文：只有 {n_na} 条 quote/src（下限 10）")
             print(f"  叙述层引文：{n_na} 条 quote/src；src 行号与行内逐字已核对")
+            # 477 批：裁决表文案里的文件+L 行锚
+            if not VERDICT_TEXTS.is_file():
+                problems.append("裁决引文：verdict_texts.json 不存在——0 结果 ≠ 通过")
+            else:
+                vtdoc = json.loads(VERDICT_TEXTS.read_text(encoding="utf-8"))
+                n_vt = check_verdict_text_anchors(vtdoc, problems)
+                if n_vt < 6:
+                    problems.append(f"裁决引文：文件+L 行锚只有 {n_vt} 条（下限 6）")
+                print(f"  裁决引文：{n_vt} 条文件+L 行锚；行号/引文落位已核对")
         # 471 批：火珠林财官伏藏引文行锚（仅六爻册）
         if not FUSHI.is_file():
             problems.append("财官伏藏：caiguan_fushi.json 不存在——0 结果 ≠ 通过")

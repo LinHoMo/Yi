@@ -5,6 +5,43 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-02 第四百七十七批（六爻·裁决文案「文件+L」行锚）：**首跑抓到随鬼入墓章 L685 实为 L687；5 条 direction_cap_quotes locator 此前无门；修正数据并接入 [12]**
+
+**性质**：门覆盖面扩展＋数据行锚修正（不改判读、不改读数）。
+
+### 一、缺陷
+
+`liuyao/data/rules/verdict_texts.json` 两处 `<file> L####` 行锚不在任何门
+扫描面（[14] 只认「源L」，474 批只读 registry）：
+
+- `direction_cap_quotes.*.locator` 5 条（L2786/L2613/L419/L1643/L551），
+  `quote` 此前只经 registry 的 `L####` 间接覆盖，locator 自身漂移无人拦；
+- `step5_classical_notes.officer_tomb_wang_you_jiu.basis` 写
+  「（zengshan_buyi.wikitext.txt L685）」——**新门首跑即判红**：该引文
+  「亦是休囚無气始見危，若旺而有扶亦有求解」在 **L687**（覺子曰段），
+  L685 是「古有日墓…」另一行。
+
+### 二、改法
+
+- [12] 新增 `check_verdict_text_anchors()`（仅六爻册）：`direction_cap_quotes`
+  的 `<file> L####` 与 `step5_classical_notes` basis 的 `<file> L####` 行号
+  在册；quote/text 内「」引文落在该行（折叠标点口径，兼容底本全角 `﹕﹐`）。
+  下限 6。
+- 数据修正：officer_tomb `basis` L685→L687，并注明「原记 L685 是
+  『古有日墓…』另一行」。
+- 两科 selftest 都跑夹具（正例＋行号错两类／底本缺失／有锚无引文四负例）。
+
+### 三、自证（§四.8）
+
+- **门先于修正挂上**：未改数据前跑 `check_rule_registry` 即
+  `× 裁决引文：step5_classical_notes.officer_tomb_wang_you_jiu.text 引文不在
+  所署行 …:685`，EXIT=**1**；改 L687 后 6/6 全符（真实缺陷，不是合成探针）。
+- 第二探针：`direction_cap_quotes.chuxian_wuqing.locator` L2786→L2785 →
+  `× …不在所署行 …:2785`；逐字节还原（`git diff` 零）。
+- selftest 5 式全过；读数 tune 97.9（n=20）／holdout 90.2（n=12）逐位不变
+  （§四.7，本批不触引擎）。
+
+
 ## 2026-11-02 第四百七十六批（六爻·叙述层其余引文行锚）：**三组自称「每条 quote 为底本逐字、src 为主源行号」，10 条 `file:L###` 不在 470/14 扫描面；实测全符后接入 [12]**
 
 **性质**：门覆盖面扩展（不改判据、不改数据、不改读数）。
