@@ -1519,6 +1519,100 @@ def check_registry_inline_quotes(doc: dict, problems: list[str],
     return n
 
 
+def check_verdict_inline_quotes(doc: dict, problems: list[str],
+                                notes: list[str] | None = None,
+                                lines_of=None, books_of=None) -> int:
+    """八字 `verdicts.json` 散文里的「源L####「…」」内联书证（480 批）。
+
+    为什么需要它：`从格引文._meta` 写「data/sources/<书> 源L5265（…作
+    「从儿不管身强弱，只要吾儿又得儿」）」；`cong_cai_sanming.note`
+    写「源L1704。…「若逢根气命损无猜」…」。465 批只验带 `locator` 的结构化条目，
+    [10] 只扫 references，这两条内联引文此前无门（§六.3）。
+
+    书名归属：优先同一串里 `data/sources/<file>` 路径；其次引文前最近《书名》
+    （同名 dz/wikitext 全收）；再次条目键后缀 `_sanming`＝《三命通会》（本表既有
+    命名约定，`zheng_guan_chun_yi_sanming` 等均同）。仍无归属 → 判红。
+    `lines_of` / `books_of` 供 selftest 注入夹具；正式路径现场解析。
+    """
+    cache: dict[str, list[str] | None] = {}
+
+    def get_lines(key: str) -> list[str] | None:
+        if lines_of is not None:
+            return lines_of(key)
+        if key not in cache:
+            p = _resolve_any(key)
+            cache[key] = (p.read_text(encoding="utf-8", errors="replace").splitlines()
+                          if p else None)
+        return cache[key]
+
+    def paths_for(book: str) -> list[str]:
+        if books_of is not None:
+            return books_of(book)
+        return [str(p) for p in _corpora_for_book(book)]
+
+    BOOK_RE = re.compile(r"《([^》]{2,24})》")
+    PATH_RE = re.compile(r"(data/sources/[A-Za-z0-9_.\-]+)")
+    PAT = re.compile(r"源L(\d+)[^「]{0,120}「([^」]{4,200})」")
+    n = 0
+
+    def walk(o, entry: str) -> None:
+        nonlocal n
+        if isinstance(o, dict):
+            for k, v in o.items():
+                if isinstance(v, dict):
+                    walk(v, str(k))
+                else:
+                    walk(v, entry)
+        elif isinstance(o, list):
+            for v in o:
+                walk(v, entry)
+        elif isinstance(o, str):
+            for m in PAT.finditer(o):
+                n += 1
+                before = o[:m.start()]
+                pm = list(PATH_RE.finditer(before))
+                bms = list(BOOK_RE.finditer(before))
+                cand_paths: list[str] = []
+                book = ""
+                if pm:
+                    cand_paths = [pm[-1].group(1)]
+                elif bms:
+                    book = bms[-1].group(1)
+                elif entry.endswith("_sanming"):
+                    book = "三命通会"
+                if not cand_paths and book:
+                    cand_paths = paths_for(book)
+                if not cand_paths:
+                    problems.append(f"裁决内联书证：{entry or '?'} 源L{m.group(1)}"
+                                    f" 无底本归属 → {m.group(2)[:24]!r}")
+                    continue
+                ln, q = int(m.group(1)), m.group(2)
+                resolved = max_len = 0
+                hit = False
+                for key in cand_paths:
+                    L = get_lines(key)
+                    if L is None:
+                        continue
+                    resolved += 1
+                    max_len = max(max_len, len(L))
+                    if 1 <= ln <= len(L) and _seg_hit(q, L[ln - 1]):
+                        hit = True
+                        break
+                if not resolved:
+                    problems.append(f"裁决内联书证：{entry or '?'} 底本不存在 {cand_paths}")
+                elif not hit:
+                    if ln > max_len:
+                        problems.append(f"裁决内联书证：{entry or '?'} 源L{ln} 超出底本"
+                                        f"（最长 {max_len} 行）")
+                    else:
+                        problems.append(f"裁决内联书证：{entry or '?'} 「{q[:24]}」"
+                                        f" 不在所署源L{ln}（候选 {book or cand_paths}）")
+    walk(doc or {}, "")
+    if n == 0:
+        problems.append("裁决内联书证：0 条——0 结果 ≠ 通过")
+    return n
+
+
 def selftest(problems: list[str]) -> None:
     """负例：造一条 verified=true 却指向不存在文件/解不到值的条目，必须判红。"""
     fake = {"schema": "yi-rule-registry-v1", "rules": [
@@ -2095,6 +2189,45 @@ def selftest(problems: list[str]) -> None:
     if not any("0 条" in x for x in _rbad(lambda d: d["rules"].clear())):
         problems.append("负例未抓到：注册表内联 0 条")
 
+    # 480 批：八字 verdicts 散文内联书证（夹具注入）
+    _vd = {"data/sources/__no_such__vd.txt": [
+        "", "从儿不管身强弱，只要吾儿又得儿", "若逢根气命损无猜"]}
+    _vbooks = lambda b: ["data/sources/__no_such__vd.txt"] if b == "三命通会" else []
+    vddoc = {"从格引文": {
+        "_meta": "原文见 data/sources/__no_such__vd.txt 源L2"
+                 "（该本作「从儿不管身强弱，只要吾儿又得儿」）",
+        "cong_cai_sanming": {
+            "note": "源L3。条件：日干无气；「若逢根气命损无猜」为反面限定"}}}
+    p_vd: list[str] = []
+    n_vd = check_verdict_inline_quotes(vddoc, p_vd, [],
+                                       lambda k: _vd.get(k), _vbooks)
+    if p_vd or n_vd != 2:
+        problems.append(f"裁决内联书证正例被误伤：{p_vd}（条 {n_vd}）")
+
+    def _vdbad(mut) -> list[str]:
+        d = json.loads(json.dumps(vddoc, ensure_ascii=False))
+        mut(d)
+        p: list[str] = []
+        check_verdict_inline_quotes(d, p, [], lambda k: _vd.get(k), _vbooks)
+        return p
+
+    if not any("不在所署源L2" in x for x in
+               _vdbad(lambda d: d["从格引文"].__setitem__(
+                   "_meta", "原文见 data/sources/__no_such__vd.txt 源L2"
+                            "（该本作「从儿不管身强弱，只要吾儿又得妻」）"))):
+        problems.append("负例未抓到：裁决内联引文不符")
+    if not any("超出底本" in x for x in
+               _vdbad(lambda d: d["从格引文"].__setitem__(
+                   "_meta", "原文见 data/sources/__no_such__vd.txt 源L99"
+                            "（该本作「从儿不管身强弱，只要吾儿又得儿」）"))):
+        problems.append("负例未抓到：裁决内联行号越界")
+    if not any("无底本归属" in x for x in
+               _vdbad(lambda d: d["从格引文"].__setitem__(
+                   "other", "源L2「从儿不管身强弱，只要吾儿又得儿」"))):
+        problems.append("负例未抓到：裁决内联无底本归属")
+    if not any("0 条" in x for x in _vdbad(lambda d: d.clear())):
+        problems.append("负例未抓到：裁决内联 0 条")
+
 
 def main() -> int:
     if not REG.exists():
@@ -2132,6 +2265,11 @@ def main() -> int:
             problems.append("裁决引文：有一面扫到 0 条——0 结果 ≠ 通过")
         print(f"  裁决引文：{v_loc} 个 locator 字段、{v_grp} 条分支总则引文；"
               f"行锚/文件内逐字已核对")
+        # 480 批：verdicts 散文内联「源L####「…」」
+        n_vi = check_verdict_inline_quotes(vdoc, problems, notes)
+        if n_vi < 3:
+            problems.append(f"裁决内联书证：只有 {n_vi} 条（下限 3）")
+        print(f"  裁决内联书证：{n_vi} 条；路径/书名归属与行内逐字已核对")
     # 466 批：六神取象 / 十神作用（仅八字册）
     if DISC.name == "bazi":
         if not LIUSHEN.is_file() or not SHISHEN.is_file():
