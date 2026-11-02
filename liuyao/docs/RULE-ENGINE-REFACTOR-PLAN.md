@@ -137,3 +137,50 @@ L3 推理编排  step5 瘦身成调度器：只调 L2 仲裁，不再硬编码�
 - **T26a（schema 攻坚）**：v2 when 增加 `any_of:[{...},{...}]`（OR 组，组内仍 AND）；detail 增加 `tag_any`（按命中条件拼"月破/日克/动克/休囚"词）。
 - **T26b（迁移）**：变鬼拆 2 条互斥 v2 规则（分支2/分支3；分支1"变官不压"写成 gates 排除）；元神无力用 any_of 表达。迁完 detect_caps 瘦成纯调度。
 
+---
+
+## 七、目录分层蓝图（511 批落档）
+
+### 7.1 现状盘点
+- `scripts/` 54 个 .py 平铺：step5.py 110KB（上帝模块）、classical_enhancements.py 88KB、
+  classical_enhancements_direction.py 8.4KB（已瘦成调度壳）、rule_engine.py 18.3KB（新仲裁器）。
+- `data/rules/` 17 个 JSON 平铺：旧 `rule_registry.json` 89KB（dev_tools 链重度引用，**不能物理删**）、
+  `verdict_texts.json` 91KB（文案外置）、新 `rule_engine_v2.json` 5.7KB（11 条）。
+
+### 7.2 目标目录树（按职责分层，物理挪动分批做）
+```
+liuyao/
+├── rules/                     # L2 规则仲裁层（新架构核心，先独立成树）
+│   ├── engine.py              #   谓词求值仲裁器（现 scripts/rule_engine.py）
+│   ├── registry_v2.json      #   规则数据化（现 data/rules/rule_engine_v2.json）
+│   └── predicates.py          #   谓词集（后续从 engine.py 拆出，纯函数）
+├── engine/                    # L3 推理编排
+│   ├── pipeline/              #   step1~step5 五步（现 scripts/step*.py）
+│   ├── classical/              #   古典增强族（现 classical_enhancements*.py 8 个）
+│   ├── narrative/              #   chain_*/narrate*/thinking_chain
+│   └── format/                 #   engine_format*/engine_chart/render/chart*
+├── knowledge/                 # L1 知识图谱（T30 建）
+│   └── kids.json              #   文献断语结构化条目
+├── data/
+│   ├── sources/               # L0 文献原文（已有，保持）
+│   ├── rules/                 # 旧台账+文案（见 7.4 处置）
+│   └── ...
+```
+
+### 7.3 迁移批次（低风险→高风险，每批跑全保护网）
+| 批 | 动作 | 风险 |
+|---|---|---|
+| D1 | 建 `rules/` 目录，rule_engine.py + v2 JSON 挪入；改 detect_caps/step5 的 import | 中（2 处 import） |
+| D2 | `data/rules/` 内部分区：`legacy/`（rule_registry/verdict_texts 旧台账）、`domain/`（question_use_gods 等领域表） | 高（dev_tools 硬编码路径，须同步改） |
+| D3 | `engine/pipeline/` 收 step1~5 | 高（step 链互引） |
+| D4 | `engine/classical/` 收 classical_enhancements 族 | 中 |
+| D5 | step5.py 110KB 按职责拆模块（T31） | 最高 |
+
+### 7.4 旧 rule_registry.json 处置（硬约束）
+被 `dev_tools/check_rule_registry.py / readout_ledger.py / ablation.py / build_adjudications.py`
+硬编码引用，**不物理删除、不直接挪路径**。做法：D2 批在 `data/rules/legacy/` 保留实体，
+dev_tools 改读新路径；旧路径留 1 个版本的转发或在 CHANGELOG 登记弃用期。
+
+### 7.5 验收
+每批同 §四保护网全绿才进下一批；物理挪动不改任何判据输出，golden 双指纹必须一字不动。
+
