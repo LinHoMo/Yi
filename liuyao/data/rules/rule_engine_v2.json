@@ -74,6 +74,56 @@
       "cap": "凶",
       "detail_tmpl": "官鬼父母{guanfu_set_repr}出现，而不持世、不生不合世爻{world_branch}",
       "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:2786"}
+    },
+    {
+      "rule_id": "liuyao.shi_hua_gui.tihuo",
+      "reason_key": "shi_hua_gui",
+      "when": {
+        "world_moving": true,
+        "world_changed_relation": "官鬼",
+        "all_of": [
+          {"any_of": [{"world_month_state_in": ["囚", "死"]}, {"world_broken": true}]},
+          {"any_of": [{"day_ke_world": true}, {"moving_other_ke_world": true}]}
+        ]
+      },
+      "cap": "凶",
+      "detail_tmpl": "世爻{world_branch}{world_gui_tag_prefix}而动化出官鬼（名变鬼）",
+      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:1643"}
+    },
+    {
+      "rule_id": "liuyao.shi_hua_gui.huitouke",
+      "reason_key": "shi_hua_gui",
+      "when": {
+        "world_moving": true,
+        "world_changed_relation": "官鬼",
+        "world_change_type": "回头克",
+        "shihua_branch2_active": false
+      },
+      "rescue_any": [
+        {"line_exists": {"six_relation": "子孙", "is_moving": true}},
+        {"day_sheng_world": true}
+      ],
+      "cap": "凶",
+      "detail_tmpl": "世爻{world_branch}（{world_month_state}）动化出官鬼，又化回头之克（世旺而不救：三合亦不宜变鬼）",
+      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:3625"}
+    },
+    {
+      "rule_id": "liuyao.yuan_shen_wu_li",
+      "reason_key": "yuan_shen_wu_li",
+      "when": {
+        "yongshen_moving": true,
+        "yongshen_moving_change_type_in": ["化退神", "化绝", "化墓", "化空", "回头克", "化鬼"],
+        "yuan_lines_exist": true,
+        "any_of": [
+          {"yuan_weak_and_quiet_or_ke": true},
+          {"yuan_all_broken": true},
+          {"yuan_moved_bad": true}
+        ]
+      },
+      "gates": {"qcls_eq": "疾病·久病"},
+      "cap": "平凶",
+      "detail_tmpl": "用神动而{yongshen_change_type}，{yuan_why_repr}",
+      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:551"}
     }
   ]
 }

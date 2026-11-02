@@ -28,7 +28,7 @@ _ensure_kernel(__file__)
 
 from yishu_core.symbols import BRANCH_ELEMENTS, SHENG_CYCLE, KE_CYCLE  # noqa: E402
 from classical_enhancements_direction import (  # noqa: E402  纯函数复用，无循环
-    _world_line, _month_state, _chong, _broken, _he, RANK,
+    _world_line, _month_state, _chong, _broken, _he, RANK, HUA_XIONG,
 )
 
 
@@ -71,7 +71,10 @@ class _Ctx:
         self.we = BRANCH_ELEMENTS.get(self.wb, "")
         # ── 扩展派生量（阶段1）──
         self.world_six_rel = (self.world or {}).get("six_relation") or ""
-        self.world_changed_rel = (self.world or {}).get("changed_six_relation") or ""
+        # 与原硬编码一致：changed_six_relation 为空时 fallback 到 changes 里的 changed_relation
+        self.world_changed_rel = (
+            (self.world or {}).get("changed_six_relation")
+            or (self.changes.get(self.wpos, {}) or {}).get("changed_relation") or "")
         self.moving_rels = {str(y.get("six_relation") or "") for y in self.lines if y.get("is_moving")}
         self.changed_rels = {str(y.get("changed_six_relation") or "") for y in self.lines if y.get("is_moving")}
         self.all_rels = {str(y.get("six_relation") or "") for y in self.lines}
@@ -142,6 +145,104 @@ class _Ctx:
         rels = {str(y.get("six_relation") or "") for y in self._guanfu_lines()}
         return str(sorted(rels))
 
+    @property
+    def moving_other_ke_world(self) -> bool:
+        """其他动爻（非世爻）克世爻五行。"""
+        if not self.we:
+            return False
+        for y in self.lines:
+            if y.get("is_moving") and y.get("position") != self.wpos:
+                ye = BRANCH_ELEMENTS.get(y.get("earthly_branch", ""), "")
+                if ye and KE_CYCLE.get(ye) == self.we:
+                    return True
+        return False
+
+    # ── 元神无力（疾病久病·源绝）派生 ──
+    @property
+    def yuan_el(self) -> str:
+        """元神五行＝生用神者（SHENG_CYCLE 反查）。"""
+        if not self.ug_el:
+            return ""
+        for e, t in SHENG_CYCLE.items():
+            if t == self.ug_el:
+                return e
+        return ""
+
+    def _yuan_calc(self) -> dict:
+        if getattr(self, "_yuan_cache", None) is not None:
+            return self._yuan_cache
+        res = {"exist": False, "weak_q_or_ke": False, "all_broken": False,
+               "moved_bad": False, "why": ""}
+        el = self.yuan_el
+        ylines = [y for y in self.lines
+                  if BRANCH_ELEMENTS.get(y.get("earthly_branch", ""), "") == el] if el else []
+        if el and ylines:
+            weak = _month_state(el, self.me) in ("休", "囚", "死")
+            quiet = not any(y.get("is_moving") for y in ylines)
+            all_broken = all(_broken(y.get("earthly_branch", ""), self.month_branch, self.empty)
+                             for y in ylines)
+            moved_bad = any(
+                (self.changes.get(int(y.get("position", -1)), {}) or {}).get("change_type") in HUA_XIONG
+                for y in ylines if y.get("is_moving"))
+            ke_month = bool(self.me) and KE_CYCLE.get(self.me, "") == el
+            ke_day = bool(self.de) and KE_CYCLE.get(self.de, "") == el
+            ypos = {y.get("position") for y in ylines}
+            ke_dong = any(
+                y.get("is_moving")
+                and KE_CYCLE.get(BRANCH_ELEMENTS.get(y.get("earthly_branch", ""), ""), "") == el
+                and y.get("position") not in ypos for y in self.lines)
+            res = {"exist": True,
+                   "weak_q_or_ke": weak and (quiet or ke_month or ke_day or ke_dong),
+                   "all_broken": all_broken, "moved_bad": moved_bad, "why": ""}
+            tags = [t for t, on in (("休囚", weak), ("静而不动", quiet),
+                                    ("被日月克", ke_month or ke_day), ("被动爻克", ke_dong),
+                                    ("空破", all_broken), ("动而化凶", moved_bad)) if on]
+            res["why"] = "元神" + el + "、".join(tags)
+        self._yuan_cache = res
+        return res
+
+    @property
+    def yuan_lines_exist(self) -> bool:
+        return self._yuan_calc()["exist"]
+
+    @property
+    def yuan_weak_and_quiet_or_ke(self) -> bool:
+        return self._yuan_calc()["weak_q_or_ke"]
+
+    @property
+    def yuan_all_broken(self) -> bool:
+        return self._yuan_calc()["all_broken"]
+
+    @property
+    def yuan_moved_bad(self) -> bool:
+        return self._yuan_calc()["moved_bad"]
+
+    @property
+    def yuan_why_repr(self) -> str:
+        return self._yuan_calc()["why"]
+
+    @property
+    def yongshen_first_change_type(self) -> str:
+        yms = self.yongshen_moving_lines()
+        if not yms:
+            return ""
+        return (self.changes.get(int(yms[0].get("position", -1)), {}) or {}).get("change_type", "")
+
+    # ── 变鬼三分支互斥派生 ──
+    @property
+    def shihua_branch2_active(self) -> bool:
+        """分支2：休囚/月破 且 日克/动克（与分支3互斥，原代码 elif）。"""
+        weak = self.world_month_state in ("囚", "死")
+        return ((weak or self.world_broken)
+                and (self.day_ke_world or self.moving_other_ke_world))
+
+    @property
+    def world_gui_tag_prefix(self) -> str:
+        """分支2 detail 动态前缀：月破/日克/动克/休囚 按原顺序拼。"""
+        weak = self.world_month_state in ("囚", "死")
+        return ("月破" if self.world_broken else "") + ("日克" if self.day_ke_world else "") \
+             + ("动克" if self.moving_other_ke_world else "") + ("休囚" if weak else "")
+
     def yongshen_moving_lines(self) -> list[dict]:
         return [y for y in self.lines
                 if y.get("six_relation") == self.ug_cat and y.get("is_moving")]
@@ -158,91 +259,93 @@ class _Ctx:
         return True
 
 
-# ── when 谓词求值 ──────────────────────────────────────────────
+# ── when 谓词求值（平铺键 AND / all_of AND / any_of OR，可任意嵌套组合）──
 def _eval_when(ctx: _Ctx, when: dict) -> bool:
-    for key, want in (when or {}).items():
-        if key == "world_moving":
-            if not (ctx.world and ctx.world.get("is_moving")):
-                return False
-        elif key == "world_change_type":
-            if ctx.world_ct != want:
-                return False
-        elif key == "changed_branch_chongs_month":
-            cb = ctx.world_chg_branch
-            if not (cb and ctx.month_branch and _chong(cb, ctx.month_branch)):
-                return False
-        elif key == "yongshen_moving":
-            if not ctx.yongshen_moving_lines():
-                return False
-        elif key == "yongshen_change_type_contains":
-            hit = False
-            for y in ctx.yongshen_moving_lines():
-                ct = (ctx.changes.get(int(y.get("position", -1)), {}) or {}).get("change_type") or ""
-                if want in ct:
-                    hit = True
-                    break
-            if not hit:
-                return False
-        # ── 阶段1新增谓词 ──
-        elif key == "world_six_relation":
-            if ctx.world_six_rel != want:
-                return False
-        elif key == "world_changed_relation":
-            if ctx.world_changed_rel != want:
-                return False
-        elif key == "world_month_state_in":
-            if ctx.world_month_state not in (want or []):
-                return False
-        elif key == "world_broken":
-            if ctx.world_broken != bool(want):
-                return False
-        elif key == "day_ke_world":
-            if ctx.day_ke_world != bool(want):
-                return False
-        elif key == "day_sheng_world":
-            if ctx.day_sheng_world != bool(want):
-                return False
-        elif key == "moving_relation":
-            # want 为 str（存在）或 {"not": str}（不存在）
-            if isinstance(want, dict):
-                if want.get("not") in ctx.moving_rels:
-                    return False
-            elif want not in ctx.moving_rels:
-                return False
-        elif key == "moving_or_changed_relation":
-            # 动爻或变爻出现该六亲：want=str(存在) / {"not": str}(都不存在)
-            present = want in ctx.moving_rels or want in ctx.changed_rels
-            if isinstance(want, dict):
-                rel = want.get("not")
-                if rel in ctx.moving_rels or rel in ctx.changed_rels:
-                    return False
-            elif not present:
-                return False
-        elif key == "any_relation":
-            if want not in ctx.all_rels:
-                return False
-        elif key == "day_element_eq":
-            if ctx.de != want:
-                return False
-        elif key == "month_element_eq":
-            if ctx.me != want:
-                return False
-        elif key == "day_is_world_cai":
-            if ctx.day_is_world_cai != bool(want):
-                return False
-        elif key == "month_is_world_cai":
-            if ctx.month_is_world_cai != bool(want):
-                return False
-        elif key == "guanfu_exists":
-            if ctx.guanfu_exists != bool(want):
-                return False
-        elif key == "guanfu_sheng_he_exists":
-            if ctx.guanfu_sheng_he_exists != bool(want):
-                return False
-        else:
-            # 未知谓词＝规则写错，按"不命中"安全处理（宁可漏压不误压）
+    if not when:
+        return True
+    # 显式容器节点：与平铺键**并存按 AND 合并**（旧实现遇到 all_of/any_of 就
+    # 直接 return，会把同 dict 里的平铺门键漏掉——reg_07 变鬼误压即此 bug）。
+    result = True
+    if "all_of" in when:
+        result = result and all(_eval_when(ctx, n) for n in when["all_of"])
+    if "any_of" in when:
+        result = result and any(_eval_when(ctx, n) for n in when["any_of"])
+    # 平铺谓词键（容器键除外）= AND
+    for key, want in when.items():
+        if key in ("all_of", "any_of"):
+            continue
+        if not _eval_predicate(ctx, key, want):
             return False
-    return True
+    return result
+
+
+def _eval_predicate(ctx: _Ctx, key: str, want) -> bool:
+    if key == "world_moving":
+        return bool(ctx.world and ctx.world.get("is_moving")) == bool(want)
+    if key == "world_change_type":
+        return ctx.world_ct == want
+    if key == "changed_branch_chongs_month":
+        cb = ctx.world_chg_branch
+        return bool(cb and ctx.month_branch and _chong(cb, ctx.month_branch))
+    if key == "yongshen_moving":
+        return bool(ctx.yongshen_moving_lines())
+    if key == "yongshen_change_type_contains":
+        return any(want in (ctx.changes.get(int(y.get("position", -1)), {}) or {}).get("change_type", "")
+                   for y in ctx.yongshen_moving_lines())
+    if key == "world_six_relation":
+        return ctx.world_six_rel == want
+    if key == "world_changed_relation":
+        return ctx.world_changed_rel == want
+    if key == "world_month_state_in":
+        return ctx.world_month_state in (want or [])
+    if key == "world_broken":
+        return ctx.world_broken == bool(want)
+    if key == "day_ke_world":
+        return ctx.day_ke_world == bool(want)
+    if key == "day_sheng_world":
+        return ctx.day_sheng_world == bool(want)
+    if key == "moving_other_ke_world":
+        # 其他动爻（非世爻）克世爻
+        return ctx.moving_other_ke_world == bool(want)
+    if key == "moving_relation":
+        if isinstance(want, dict):
+            return want.get("not") not in ctx.moving_rels
+        return want in ctx.moving_rels
+    if key == "moving_or_changed_relation":
+        if isinstance(want, dict):
+            rel = want.get("not")
+            return rel not in ctx.moving_rels and rel not in ctx.changed_rels
+        return want in ctx.moving_rels or want in ctx.changed_rels
+    if key == "any_relation":
+        return want in ctx.all_rels
+    if key == "day_element_eq":
+        return ctx.de == want
+    if key == "month_element_eq":
+        return ctx.me == want
+    if key == "day_is_world_cai":
+        return ctx.day_is_world_cai == bool(want)
+    if key == "month_is_world_cai":
+        return ctx.month_is_world_cai == bool(want)
+    if key == "guanfu_exists":
+        return ctx.guanfu_exists == bool(want)
+    if key == "guanfu_sheng_he_exists":
+        return ctx.guanfu_sheng_he_exists == bool(want)
+    # 元神无力专用谓词（见 _Ctx 派生）
+    if key == "yuan_lines_exist":
+        return ctx.yuan_lines_exist == bool(want)
+    if key == "yuan_weak_and_quiet_or_ke":
+        return ctx.yuan_weak_and_quiet_or_ke == bool(want)
+    if key == "yuan_all_broken":
+        return ctx.yuan_all_broken == bool(want)
+    if key == "yuan_moved_bad":
+        return ctx.yuan_moved_bad == bool(want)
+    if key == "yongshen_moving_change_type_in":
+        return any((ctx.changes.get(int(y.get("position", -1)), {}) or {}).get("change_type") in (want or [])
+                   for y in ctx.yongshen_moving_lines())
+    if key == "shihua_branch2_active":
+        return ctx.shihua_branch2_active == bool(want)
+    # 未知谓词＝规则写错，按"不命中"安全处理（宁可漏压不误压）
+    return False
 
 
 def _eval_gates(ctx: _Ctx, gates: dict) -> bool:
@@ -292,6 +395,9 @@ def _detail(rule: dict, ctx: _Ctx) -> str:
         "ug_cat": ctx.ug_cat,
         "world_moving_phrase": "且发动" if (ctx.world and ctx.world.get("is_moving")) else "安静",
         "guanfu_set_repr": ctx.guanfu_set_repr,
+        "yuan_why_repr": ctx.yuan_why_repr,
+        "yongshen_change_type": ctx.yongshen_first_change_type,
+        "world_gui_tag_prefix": ctx.world_gui_tag_prefix,
     }
     try:
         return tmpl.format(**ctx_vars)
