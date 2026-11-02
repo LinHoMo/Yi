@@ -13,6 +13,11 @@
 口径纪律：繁简/异体归一取内核表唯一真值源；提取正则命中 0 时必须自证路径与字表
 （§四.8「扫 0 份≠仓库没文档」同族），selftest 锁死。
 
+499 批实测六爻其余多抄本底本**不满足案例对拍前提**，不硬跑：火珠林 dz/wikitext
+各仅 1 个「X月X日」键（歌诀体，非占案例集）、黄金策 0 键（赋论体无案例）、卜筮正宗
+wikitext 仅 2.7KB 片段。故六爻侧跨版本对拍只《增删卜易》一本有案例体材料；八字侧
+其余四本书对见 `bazi/dev_tools/cross_version_collate.py`。
+
     python dev_tools/version_collate.py                 # 增删两本全量对拍
     python dev_tools/version_collate.py --selftest
 """
