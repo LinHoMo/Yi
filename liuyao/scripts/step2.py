@@ -580,9 +580,11 @@ def _decide_use_god(question_category: str, question_text: str) -> tuple[str, di
     # "见贵求财"：主体是"见贵"（求官）而非"求财" → 官鬼
     if "见贵" in combined and "求财" in combined:
         return _layer("见贵求财→官鬼", "官鬼", "见贵")
-    # "占子病"/"子病"系列：直接取子孙为用神
-    if "占子病" in combined or ("子病" in combined):
-        return _layer("占子病→子孙", "子孙", "占子")
+    # "占子病"/"子病"/"痘症"系列：直接取子孙为用神
+    # （痘疹=儿科传染病，占痘即占孩子病——ZD029「子痘症」expected 子孙巳火；
+    #   全库仅此一例含「痘」，痘是儿科专属词，无地支/卦名歧义）
+    if "占子病" in combined or ("子病" in combined) or "痘" in combined:
+        return _layer("占子病/痘症→子孙", "子孙", "占子")
     # 胎孕：以子孙为胎息，优先于句中「妻」
     if any(k in combined for k in ("怀孕", "胎", "孕", "产", "怀")):
         return _layer("胎孕→子孙", "子孙", "胎孕")
