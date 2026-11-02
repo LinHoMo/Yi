@@ -36,7 +36,7 @@ jobs:
           python devkit/root/check_batch_num.py --selftest
           # 治理图：--selftest 内含真实仓 strict 扫描（361 批起真实 rc 会外传）＋负例自证
           python liuyao/dev_tools/governance_map.py --selftest
-  # 361 批：对外声明 Python 3.10+（README/yan/codex），但核心门此前只跑 3.14，
+  # 361 批：对外声明 Python 3.10+，但核心门此前只跑 3.14，
   # 最低版本回归无处显形。本 job 用声明的最低版跑两科冒烟＋八字回归＋六神单测；
   # 六爻古籍回归当前 17/19（reg_02/reg_09 在册待裁）不在此层拦，避免把待裁项当版本不兼容。
   min-python-smoke:
@@ -94,7 +94,6 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest, ubuntu-latest]
-        host: [dsh, claude, codex, gemini, yan]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     steps:
@@ -105,15 +104,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - name: build once, distribute to all adapters
+      - name: build once, distribute to DSH
         run: node plugins/scripts/build.mjs
       - name: shared runtime selftest
         run: node plugins/scripts/selftest.mjs
       - name: dsh full check (build + selftest + verify-in-dsh)
-        if: matrix.host == 'dsh'
         run: npm --prefix dsh-plugin run check
-      - name: host manifest assertion
-        env:
-          HOST: ${{ matrix.host }}
+      - name: dsh manifest assertion
         run: |
-          node -e "const fs=require('fs');const H=process.env.HOST;const must={dsh:['package.json','src/index.mjs','SKILL.md'],claude:['.claude-plugin/plugin.json','.mcp.json','src/server.mjs'],codex:['.codex-plugin/plugin.json','.mcp.json','src/server.mjs'],gemini:['gemini-extension.json','GEMINI.md','src/server.mjs'],yan:['yan-plugin.json','INSTRUCTIONS.md','src/server.mjs','skills/yi-divination/SKILL.md']};const dir={dsh:'dsh-plugin',claude:'claude-plugin',codex:'codex-plugin',gemini:'gemini-plugin',yan:'yan-plugin'}[H];const miss=must[H].filter(p=>!fs.existsSync(dir+'/'+p));if(miss.length){console.error(H+' missing: '+miss.join(', '));process.exit(1)}console.log(H+' manifest ok')"
+          node -e "const fs=require('fs');const must=['package.json','src/index.mjs','SKILL.md','engine','skills/yi-divination/SKILL.md'];const miss=must.filter(p=>!fs.existsSync('dsh-plugin/'+p));if(miss.length){console.error('dsh missing: '+miss.join(', '));process.exit(1)}console.log('dsh manifest ok')"

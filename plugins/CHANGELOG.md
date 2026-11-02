@@ -3,6 +3,27 @@
 > 本卷登记**共享打包层**（`plugins/`）的批次；批次号沿用全仓流水。
 > 305 批起，各宿主适配器（`dsh-plugin/`、`yan-plugin/`）自身只留宿主专属文件，
 > 共享的运行时、技能正文、构建与自检都归本目录，各宿主卷只记「宿主侧那点事」。
+> **497 批起只保留 DSH 一个宿主**：claude/codex/gemini/yan 四家适配器目录、
+> `publish.mjs`（git 发行树）及其在 build/selftest/ci/文档里的登记一并删除。
+
+## 2026-11-02 第四百九十七批（共享打包层）：**宿主收敛至仅 DSH——删除 claude/codex/gemini/yan 四家适配器与 git 发行树**
+
+**性质**：分发面裁剪（不改引擎、不改四工具 1.0 冻结契约、不改读数）。
+
+- 删除目录：`claude-plugin/`、`codex-plugin/`、`gemini-plugin/`、`yan-plugin/`（含其 README/CHANGELOG）。
+- 删除 `plugins/scripts/publish.mjs`：它唯一服务四家 git 远程通道（独立发行树 `plugins/dist/`），
+  DSH 本就走 GitHub Release npm tgz，不依赖发行树。
+- `build.mjs`：`ADAPTERS` 只余 `{ id:'dsh', rootSkill:true }`，删去四家的技能附加段与 `--only` 多宿主用法。
+- `selftest.mjs`：`ADAPTERS` 只余 dsh；[6] 段删去仅服务非 DSH 宿主的清单规则（claude/codex/gemini/yan
+  的 MANIFEST_RULES、MCP 变量断言、Yan resources 双向对账），只留包体预算（≤4000 文件/≤64MB/无符号链接）；
+  随之删去不再使用的 `resourceIdFor` import 与 [7] 段 `INSTRUCTIONS.md` 目标。
+- `.gitignore`：删四家的 `engine/skills/src/node_modules` 忽略行，保留 dsh 与共享层规则。
+- `.github/workflows/ci.yml`：`plugin-gates` 去掉 `host` 矩阵（五家×2OS→仅 DSH×2OS），
+  manifest 断言内联简化为 dsh 必备文件。
+- 文档同批改口径：根 `README.md`（删「五份清单」宿主表与 Yan 安装节）、`AGENTS.md` §二
+  （多宿主契约与硬约束表收敛为 DSH 单行）、`DOCS.md` 第五节（删 10 行宿主文档登记）、
+  `plugins/README.md`（重写为单宿主）。
+- 读数：tune/holdout/外部集逐位不变（本批不动 `core/`、`scripts/`、`data/`）。
 
 ## 2026-10-30 第三百六十二批（共享打包层）：**象层进工具输出面（两科）＋ 补上爻辞**
 

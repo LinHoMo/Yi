@@ -2,24 +2,20 @@
 /**
  * 一次构建，分发到所有宿主适配器。
  *
- * 305 批前的形态是「每个宿主一套 build」：`dsh-plugin/scripts/build-engine.mjs`
- * ＋ `build-skills.mjs`、`yan-plugin/scripts/build.mjs`，各自从两科收集一遍，
- * 各自产一份 `engine/` 与 `skills/`。那意味着 N 个宿主 = N 份产物 + N 条漂移面，
- * 而它们的白名单、排除表、登记表**本该是同一份**。
+ * 497 批起只服务 DSH 一个宿主：claude/codex/gemini/yan 四家适配器已删除，
+ * 本脚本不再做多宿主分发，只把唯一产物分发给 `dsh-plugin/`。
  *
- * 现在：
  *   1. 在 `plugins/` 下**只构建一次** `engine/` 与 `skills/`；
- *   2. 把 `plugins/mcp/*.mjs`（共享运行时，唯一真源）与产物**分发**到每个适配器目录。
+ *   2. 把 `plugins/mcp/*.mjs`（共享运行时，唯一真源）与产物**分发**到 `dsh-plugin/`。
  *
- * 适配器目录里剩下的都是**宿主专属文件**（`yan-plugin.json`、DSH 的 `src/index.mjs`、
- * `presets/`、各自的 README/CHANGELOG），不再是第二份引擎副本。
+ * 适配器目录里剩下的都是**宿主专属文件**（DSH 的 `src/index.mjs`、
+ * `presets/`、README/CHANGELOG），不再是第二份引擎副本。
  *
  * 收录规则仍是白名单而非黑名单：新增目录不会因为「忘了排除」被悄悄打进包，
  * 只会因为「忘了收录」在自检里报红——后者是安全的失效方向。
  *
  * 用法：
- *   node plugins/scripts/build.mjs            # 全部分发
- *   node plugins/scripts/build.mjs --only yan # 只分发一个适配器（便于单宿主调试）
+ *   node plugins/scripts/build.mjs
  */
 import { cp, mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
@@ -62,83 +58,6 @@ const JUNK = /(__pycache__|\.pyc$|\.pyo$|\.pytest_cache|\.mypy_cache)/
  */
 const ADAPTERS = [
   { id: 'dsh', dir: 'dsh-plugin', skill: null, rootSkill: true },
-  {
-    id: 'claude',
-    dir: 'claude-plugin',
-    rootSkill: false,
-    skill: `
-
-## Claude Code 侧读法（构建期附加，非真源）
-
-本插件装在 Claude Code 的插件目录里（不在你的工作区）。按下面的方式用：
-
-1. 技能正文即本文件；判据文档在同级 \`references/\` 下，
-   先用 \`yi_kb\` 定位（返回 \`文件:行\` + 节标题 + 摘录），再用 Read 读具体那一节；
-2. \`yi_kb\` 给的是相对路径，完整位置是插件目录下的
-   \`skills/yi-divination/references/<文件>\`，可用 Glob 定位后 Read；
-3. 工具名在本宿主下保持原名 \`yi_liuyao\` / \`yi_bazi\` / \`yi_kb\` / \`yi_report\`
-   （会以 \`mcp__yi__\` 前缀出现），按名调用即可；
-4. 引擎是 Python：需要本机有 Python 3.10+。找不到时工具会如实报错并列出尝试过的路径，
-   可在本插件的 \`.mcp.json\` 里把 \`YI_PYTHON\` 填成 python 的绝对路径。
-
-其余一切（铁律、工作流、边界、口径）各宿主同文，以真源 \`plugins/SKILL.md\` 为准。
-`,
-  },
-  {
-    id: 'codex',
-    dir: 'codex-plugin',
-    rootSkill: false,
-    skill: `
-
-## Codex 侧读法（构建期附加，非真源）
-
-1. 判据文档在同级 \`references/\` 下；先用 \`yi_kb\` 定位（返回 \`文件:行\` + 节标题 + 摘录），
-   再读具体那一节，不要整篇读；\`references/INDEX.md\` 是总路由表。
-2. 工具名在本宿主下带 \`mcp__yi__\` 前缀，原名仍是
-   \`yi_liuyao\` / \`yi_bazi\` / \`yi_kb\` / \`yi_report\`，按名调用即可。
-3. 引擎是 Python：需要本机 Python 3.10+。找不到时工具如实报错并列出尝试过的路径，
-   可在 \`.mcp.json\` 的 \`env.YI_PYTHON\` 填 python 的绝对路径。
-
-其余一切（铁律、工作流、边界、口径）各宿主同文，以真源 \`plugins/SKILL.md\` 为准。
-`,
-  },
-  {
-    id: 'gemini',
-    dir: 'gemini-plugin',
-    rootSkill: false,
-    skill: `
-
-## Gemini CLI 侧读法（构建期附加，非真源）
-
-本扩展没有技能目录机制，入口说明在包根的 \`GEMINI.md\`。判据文档仍在
-同级 \`references/\` 下：先用 \`yi_kb\` 定位（返回 \`文件:行\` + 节标题 + 摘录），
-再读具体那一节；\`references/INDEX.md\` 是总路由表。
-
-引擎是 Python：需要本机 Python 3.10+ 与 node。找不到时工具如实报错。
-
-其余一切（铁律、工作流、边界、口径）各宿主同文，以真源 \`plugins/SKILL.md\` 为准。
-`,
-  },
-  {
-    id: 'yan',
-    dir: 'yan-plugin',
-    rootSkill: false,
-    skill: `
-
-## Yan 侧读法（构建期附加，非真源）
-
-本技能在 Yan 里是**插件资源**，不在你的工作区里，\`read\` 读不到。按下面的句柄读：
-
-1. \`yi_kb\` 检索后，每条结果都带 \`resource\` 句柄（如 \`resource:kb-liuyao-najia-rules\`）；
-2. 用 \`plugins_read_resource\` 读该句柄，再按返回的 \`line\` 只读那一节；
-3. 总路由表是 \`resource:kb-index\`（即 \`references/INDEX.md\`）。
-
-工具名在 Yan 里会被宿主改写成 \`t_<hash>\`，但**原名不变**：描述里写着的
-\`yi_liuyao\` / \`yi_bazi\` / \`yi_kb\` / \`yi_report\` 就是它们，按名调用即可。
-
-其余一切（铁律、工作流、边界、口径）各宿主同文，以真源 \`plugins/SKILL.md\` 为准。
-`,
-  },
 ]
 
 /** 由构建分发、因此**不属于**任何适配器源码的共享文件名（清理旧副本用）。 */

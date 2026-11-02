@@ -109,45 +109,23 @@ node dsh-plugin/scripts/install-preset.mjs <你的profile>
   一次构建后分发到各宿主适配器；共享运行时真源在 `plugins/mcp/`）
 - 自检：`npm --prefix dsh-plugin run check`（包级 13 段 + DSH 内验证，含负例自证）
 
-## 宿主插件一览（一次构建，五份清单）
+## 打包与自检（一次构建，分发到 DSH）
 
 同一套四工具（`yi_liuyao` / `yi_bazi` / `yi_kb` / `yi_report`）与同一份技能正文，
-已适配五个宿主。共享层在 `plugins/`（唯一真源），各适配器目录只放**宿主专属文件**：
-
-| 宿主 | 目录 | 宿主专属文件 | 安装 |
-|---|---|---|---|
-| DeepSeek Harness | `dsh-plugin/` | `package.json`、`src/index.mjs`、`presets/` | `dsh plugin add` / npm 包 |
-| Claude Code | `claude-plugin/` | `.claude-plugin/plugin.json`、`.mcp.json` | `claude --plugin-dir ./claude-plugin` |
-| OpenAI Codex | `codex-plugin/` | `.codex-plugin/plugin.json`、`.mcp.json` | `codex plugins install ./codex-plugin` |
-| Gemini CLI | `gemini-plugin/` | `gemini-extension.json`、`GEMINI.md` | `gemini extensions install ./gemini-plugin` |
-| Yan Agent | `yan-plugin/` | `yan-plugin.json`、`INSTRUCTIONS.md` | Yan 插件页选文件夹 |
+只适配 **DeepSeek Harness** 一个宿主。共享层在 `plugins/`（唯一真源），
+`dsh-plugin/` 只放宿主专属文件（`package.json`、`src/index.mjs`、`presets/`）。
+497 批起 claude/codex/gemini/yan 四家适配器已删除。
 
 ```bash
-node plugins/scripts/build.mjs       # 一次构建，分发到上表全部宿主
-node plugins/scripts/selftest.mjs    # 共享层 7 段自检（判红即 exit≠0）
+node plugins/scripts/build.mjs       # 一次构建，分发到 dsh-plugin/
+node plugins/scripts/selftest.mjs    # 共享层自检（判红即 exit≠0）
 ```
 
-> **远程分发**：`engine/`、`skills/`、`src/` 不入库，而远程通道都要已提交文件，
-> 所以远程走一棵独立的**发行树**——`node plugins/scripts/publish.mjs` 生成 `plugins/dist/`
-> （五家各自的完整可安装目录），推成独立发行仓或同仓发行分支即可被各家远程拉取。
-> 详见 [`plugins/README.md`](plugins/README.md) 的「发布」节。
-> 发行仓：**https://github.com/LinHoMo/yi-plugins**（v1.0.0 已发布）。
+> `engine/`、`skills/`、`src/` 不入库（根 `.gitignore`），由构建产物再生；
+> 发布走 GitHub Release 的 npm tgz（见上节），不再有独立发行树。
+> 详见 [`plugins/README.md`](plugins/README.md)。
 
-## 作为 Yan Agent 插件安装
-
-同一套四工具也打成了 **Yan Agent**（`ViaTumLab/Yan-Agent`，Windows 桌面 AI 工程工作区）插件：
-
-```bash
-# 1) 构建 engine/ 与 skills/（两者都是产物，不在 git 里）
-node plugins/scripts/build.mjs             # 或 npm --prefix yan-plugin run check（含自检）
-
-# 2) Yan → 插件页 → 添加插件 → 选择本目录 <本仓库>/yan-plugin
-```
-
-> `engine/` 与 `skills/` 不入库（根 `.gitignore`），所以远程市场通道（Yan 走 git 稀疏克隆）
-> 暂时用不了——远程只能拿到已提交文件。详见 [`yan-plugin/README.md`](yan-plugin/README.md)。
-
-口径与边界同上一节：一切分数是**古籍案例对齐分**，不是现实命中率；
-需要本机 **Python 3.10+**（Yan 不像 DSH 桌面那样自带 Python 运行时），找不到时工具如实报错。
+口径与边界同上：一切分数是**古籍案例对齐分**，不是现实命中率；
+DSH 桌面自带 Python 运行时，找不到时工具如实报错。
 
 

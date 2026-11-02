@@ -130,63 +130,48 @@ sha256/bytes/chars/lines＋扩展统计（`ganzhi_pairs`／`tables`／`headings`
  ② 改内核一律改 `kernel/`，**直接改 `<科>/core/` 会被 [35] 判红**；
  ③ 两科不再"各自演进"同一份代码——变体只有 4 个，且理由写在 `kernel/MANIFEST.json`。
 
-### plugins 共享打包层契约（2026-10-27 第三百零五批起；取代 269 批的 dsh 契约与 304 批的 yan 契约）
+### plugins 共享打包层契约（2026-10-27 第三百零五批起；497 批起仅保留 DSH 宿主）
 
-`plugins/` 是两科对外分发的**唯一共享层**；`dsh-plugin/`、`yan-plugin/` 等适配器目录
-只保留**宿主专属文件**（清单、宿主入口、README/CHANGELOG）。305 批前的形态是
-「每个宿主一套 build + 一份 `src/*.mjs` 副本 + 一份 `KB_DOC`」，再接三家就是五份产物、
-五条漂移面——本条即为此而立。
+`plugins/` 是两科对外分发的**唯一共享层**；`dsh-plugin/` 只保留**宿主专属文件**
+（`package.json`、`src/index.mjs`、`presets/`、README/CHANGELOG）。
+497 批起 claude/codex/gemini/yan 四家适配器已删除——不再有多份产物、多条漂移面。
 
 ```
 plugins/
 ├── SKILL.md             # 技能正文唯一真源（入库）
 ├── mcp/                 # 共享运行时唯一真源（入库）：server/schema/tools/engine/kb/report/python + 同义词表
-├── scripts/             # kb-docs.mjs（登记表真源）、build.mjs（一次构建 + 分发）、selftest.mjs（7 段）
+├── scripts/             # kb-docs.mjs（登记表真源）、build.mjs（一次构建 + 分发）、selftest.mjs
 ├── engine/  skills/     # 构建产物（不入库）
 └── CHANGELOG.md
 ```
 
-- **一次构建、N 份分发**：`node plugins/scripts/build.mjs` 从两科收集 `plugins/engine/`
-  与 `plugins/skills/`，再按 `scripts/build.mjs` 的 `ADAPTERS` 登记表分发到每个适配器。
-  **新增宿主只加一条登记表条目**，其余全自动。
+- **一次构建、分发到 DSH**：`node plugins/scripts/build.mjs` 从两科收集 `plugins/engine/`
+  与 `plugins/skills/`，再按 `scripts/build.mjs` 的 `ADAPTERS` 登记表分发到 `dsh-plugin/`。
 - **适配器的 `src/*.mjs` 是产物**：手工改即被自检 [1] 段（逐字节同源门）判红。
-  宿主专属入口（如 dsh 的 `src/index.mjs`）例外，仍为源码并已显式 negated 入库。
-- **`engine/`、`skills/` 不入库**（各适配器与共享层皆然）。后果：远程分发不能直接用源仓，
-  要走**发行树**——`node plugins/scripts/publish.mjs` 生成 `plugins/dist/`（同样不入库），
-  推成独立发行仓或同仓发行分支后再被各家拉取（307 批落地，详见 `plugins/CHANGELOG.md`）。
-  脚本只生成文件，**不 commit / 不 push**；发布是外部动作。
-  `publish.mjs --check` 盯发布树的可安装性（五家入口齐备 + 零案例库 + 知识库篇数 + 负例自证）。
-- **1.0 API 冻结（277 批起，1.0.0 生效，305 批确认对全部宿主一体适用）**：对外契约冻结为
+  宿主专属入口（dsh 的 `src/index.mjs`）例外，仍为源码并已显式 negated 入库。
+- **`engine/`、`skills/` 不入库**。发布走 GitHub Release 的 npm tgz（`npm pack`），
+  不再有独立发行树（`publish.mjs` 随四家 git 通道宿主一并删除）。
+- **1.0 API 冻结（277 批起，1.0.0 生效）**：对外契约冻结为
   四工具 `yi_liuyao` / `yi_bazi` / `yi_kb` / `yi_report` 的**工具名、参数 schema、输出
   value 结构**（含文本块形状）与技能条目 `yi-divination`。1.0 后：新增可选参数/
   新增输出字段 = minor+1；改名、删字段、改字段语义 = 破坏性，跨 1.0.0 并在 CHANGELOG
   单独声明旧读数不可比。自检 [5] 段是冻结面的机械面——动它必须先动本条。
-- **口径**：面向会话交付，分数口径同 §一.3，任何宿主都**不得**出现"预测准确率"类表述
+- **口径**：面向会话交付，分数口径同 §一.3，不得出现"预测准确率"类表述
   （自检 [7] 段逐行扫描，含否定语境豁免与负例自证）。
-- **月巡挂钩（305 批重写）**：对两科 `references/`、`core/`、`scripts/` 的任何例行巡查
+- **月巡挂钩**：对两科 `references/`、`core/`、`scripts/` 的任何例行巡查
   （含月巡），末尾跑一次 `node plugins/scripts/build.mjs && node plugins/scripts/selftest.mjs`，
-  再补跑 `npm --prefix dsh-plugin run selftest`（宿主侧 QA）。**只跑共享层会漏掉宿主面，
-  只跑 dsh 会漏掉其余宿主面**——两条都要。GOVERNANCE 的月巡名册若建立须登记本条。
-- **批次登记**：共享层进 `plugins/CHANGELOG.md`；宿主侧那点事进各自的
-  `dsh-plugin/CHANGELOG.md` / `yan-plugin/CHANGELOG.md`。批次号沿用全仓流水。
+  再补跑 `npm --prefix dsh-plugin run check`（宿主侧 QA）——共享层与宿主面两条都要。
+- **批次登记**：共享层进 `plugins/CHANGELOG.md`；宿主侧那点事进 `dsh-plugin/CHANGELOG.md`。
+  批次号沿用全仓流水。
 - **版本号纪律（275 批起）**：`package.json` 的 semver 只是粗粒度坐标，**批次号是唯一真源**。
   功能批 minor+1、修复/文档批 patch+1、破坏性跨 1.0.0 并单独说明；映射表逐批补记在
   `dsh-plugin/CHANGELOG.md`。
 
-#### 各宿主的硬约束（新增宿主时按此逐项核实，不要凭印象）
+#### DSH 宿主硬约束
 
-| 宿主 | 清单 | 能力声明面 | 本地 MCP 命令 | 已知硬约束 |
-|---|---|---|---|---|
-| DSH | npm `package.json` + `src/index.mjs`（Cordis `ctx`） | `ctx.tools.register` / `skills.registerProvider` / `systemPrompt.section` | 宿主注入 | `inject` 必须声明 `tools`/`systemPrompt`；skill `invocation` 必须是**对象**、`rank` 必须是有穷数字，漏则整轮会话 error 结束 |
-| Yan Agent | `yan-plugin.json`（`schemaVersion: 1`） | `skills[]` / `resources[]` / `mcpServers[]` | `$node` + `${pluginRoot}` | 包内**跳过 `node_modules`** → 服务必须零依赖；≤4000 文件 / ≤64MB / 无符号链接；`inputSchema.type` 必须是 `object`；工具名会被改写成 `t_<sha20>` |
-| Claude Code（`claude-plugin/`，306 批接入） | `.claude-plugin/plugin.json` | `skills/` / `.mcp.json` / `commands` / `hooks` | `node` + `${CLAUDE_PLUGIN_ROOT}` | 只有 `plugin.json` 能放 `.claude-plugin/` 里；分发走 git 仓库 + `marketplace.json` |
-| Codex（`codex-plugin/`，306 批接入） | `.codex-plugin/plugin.json` | `skills` / `mcpServers`(`.mcp.json`) / `apps` | `node` + `${CODEX_PLUGIN_ROOT}` | 第三方公开目录未开放；可用 repo 级 `$REPO_ROOT/.agents/plugins/marketplace.json` |
-| Gemini CLI（`gemini-plugin/`，306 批接入） | `gemini-extension.json` | `mcpServers` / `contextFileName` | `node` + `${extensionPath}` | 无 `skills/` 目录机制，知识库只能靠工具返回 + context 文件 |
-
-> 互通证据：Yan 的 `lib/plugins/marketplaces.js` 的 `adaptPackage()` 直接按
-> `.claude-plugin/plugin.json` / `.codex-plugin/plugin.json` 适配，并把
-> `${CLAUDE_PLUGIN_ROOT}` / `${CODEX_PLUGIN_ROOT}` 改写成 `${pluginRoot}`——
-> 这几家的包格式是互通的，故共享层只需一份运行时。
+| 清单 | 能力声明面 | 本地 MCP 命令 | 已知硬约束 |
+|---|---|---|---|
+| npm `package.json` + `src/index.mjs`（Cordis `ctx`） | `ctx.tools.register` / `skills.registerProvider` / `systemPrompt.section` | 宿主注入 | `inject` 必须声明 `tools`/`systemPrompt`；skill `invocation` 必须是**对象**、`rank` 必须是有穷数字，漏则整轮会话 error 结束 |
 
 ### 内核唯一真值源（科内口径）
 

@@ -87,26 +87,17 @@
 | `bazi/references/bazi_nayin_shiyi.md` | 纳音释义 | 活文档 |
 | `bazi/references/api_spec.md` | 八字科 API 说明 | 活文档 |
 
-## 五、共享层与宿主（`plugins/` 与五个适配器）
+## 五、共享层与 DSH 适配器（`plugins/` 与 `dsh-plugin/`）
 
 | 文件 | 一句话 | 状态 |
 |---|---|---|
 | `plugins/SKILL.md` | 共享技能正文唯一真源 | 活文档 |
-| `plugins/README.md` | 共享打包层说明（一次构建、N 份分发） | 活文档 |
+| `plugins/README.md` | 共享打包层说明（一次构建、分发到 DSH） | 活文档 |
 | `plugins/CHANGELOG.md` | 共享层批次流水 | 活文档 |
 | `dsh-plugin/README.md` | DSH 宿主说明 | 活文档 |
 | `dsh-plugin/CHANGELOG.md` | DSH 宿主批次流水 | 活文档 |
-| `yan-plugin/README.md` | Yan Agent 说明 | 活文档 |
-| `yan-plugin/INSTRUCTIONS.md` | Yan 插件使用说明 | 活文档 |
-| `yan-plugin/CHANGELOG.md` | Yan 批次流水 | 活文档 |
-| `claude-plugin/README.md` | Claude Code 适配说明 | 活文档 |
-| `claude-plugin/CHANGELOG.md` | Claude Code 批次流水 | 活文档 |
-| `codex-plugin/README.md` | Codex 适配说明 | 活文档 |
-| `codex-plugin/CHANGELOG.md` | Codex 批次流水 | 活文档 |
-| `gemini-plugin/README.md` | Gemini CLI 适配说明 | 活文档 |
-| `gemini-plugin/GEMINI.md` | Gemini 扩展说明 | 活文档 |
-| `gemini-plugin/CHANGELOG.md` | Gemini 批次流水 | 活文档 |
 
+> 497 批起只保留 DSH 一个宿主（claude/codex/gemini/yan 已删除）。
 > 宿主侧的 `engine/`、`skills/`、`src/` 是**构建产物**（不入库），由
 > `node plugins/scripts/build.mjs` 生成、`node plugins/scripts/selftest.mjs` 自检——**不在本表内**。
 
