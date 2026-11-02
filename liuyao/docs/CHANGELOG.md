@@ -5,6 +5,50 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-02 第四百七十四批（六爻·注册表裸 locator 行锚）：**6 条 `source.locator: L####` 的 `verified:true` 从未被解析；5 条 quote_in_data 实测全符后接入 [12]，27 条章名式 locator 显式入 NOTE**
+
+**性质**：门覆盖面扩展（不改判据、不改数据、不改读数）。
+
+### 一、缺陷
+
+`liuyao/data/rules/rule_registry.json` 有 6 条 `source.locator` 写成裸 `L####`
+（书别在 `source.book`），其中 5 条还通过 `quote_in_data` 指向
+`verdict_texts.json#direction_cap_quotes.*.quote`。本器此前只认 `quote_in_source`
+（`<底本>:<行>`）与 `quote_in_data` 的路径可达性：裸 `L####` 从未被解析成
+「哪本书哪一行」，引文是否真在那一行也从未对拍；6 条 `verified: true` 等于
+自说自话（§六.3）。
+
+### 二、先实测再挂门
+
+- 5 条可解析引文按 `source.book`（《增删卜易》→ `zengshan_buyi_dz.dz.txt`）所署行
+  逐字核对：**5/5 全符**。
+- 第 6 条（`liuyao.xie_yong_zhi_shen`，L1662）无 `quote_in_data`，只验行号在册；
+  其内容由 `cross_refs` 的 `源L1662` 书证与 `quote_in_code` 承担。
+- 其余 27 条 `locator` 是章名/说明（如「月破章第二十七」「三会方局」），不是行锚：
+  显式计入 NOTE，不冒充逐字承诺。
+
+### 三、改法
+
+- [12] 新增 `check_bare_locators()`（仅六爻册）：非空 `locator` 只认两种行锚
+  形态——裸 `L####`（`source.book` 经 provenance 书名→底本）与 `<底本>:<行>`；
+  行号在册、`quote_in_data` 可解析时引文须落在所署行；其余形态显式 NOTE。
+  行锚下限 6，0 条即红。
+- `VARIANT` 补 `刪→删`、`黃→黄`（底本题名用繁体，否则《增删卜易》永远解析不到
+  `zengshan_buyi_dz`）。
+- 两科 selftest 都跑夹具（正例＋描述式 locator 入 NOTE＋缺书／越界／引文不符／
+  colon 底本缺失四负例）。
+
+### 四、自证（§四.8）
+
+- selftest 增 6 式，全部按预期。
+- 真实探针两式：`chuxian_wuqing.locator` L2786→L2785 →
+  `× liuyao.chuxian_wuqing.locator=L2785：quote_in_data 的引文不在所署行`；
+  `verdict_texts` 的 quote「难遂」改「难成」→ 同一判红；两次 EXIT=**1**、
+  逐字节还原（`git diff` 零）。
+- 真盘：6 条行锚、27 条 NOTE；读数 tune 97.9（n=20）／holdout 90.2（n=12）
+  逐位不变（§四.7，本批不触引擎）。
+
+
 ## 2026-11-02 第四百七十三批（六爻·易林补遗映射行锚）：**`yilin_buyi_maps` 自称「书源断语须由 narrate 按 src 行号回指」，10 条 `_引文`／34 个行锚此前无门；实测全符后接入 [12]**
 
 **性质**：门覆盖面扩展（不改判据、不改数据、不改读数）。

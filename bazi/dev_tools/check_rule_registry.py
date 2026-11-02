@@ -123,7 +123,8 @@ _QN_DROP = re.compile(r"[\s，。、；：「」『』“”\"'‘’（）()\[\
 
 _DROP = re.compile(r"[\s，。、；：「」『』“”\"'‘’（）()【】\[\]《》<>·．\-—_/\\|+=:;,.*]+")
 VARIANT = str.maketrans({"剋": "克", "裏": "里", "羣": "群", "徧": "遍", "啓": "启",
-                         "蔵": "藏", "峯": "峰", "梟": "枭", "煙": "烟"})
+                         "蔵": "藏", "峯": "峰", "梟": "枭", "煙": "烟",
+                         "刪": "删", "黃": "黄"})
 
 
 def norm(s: str) -> str:
@@ -990,6 +991,125 @@ def check_yilin_buyi_maps(doc: dict, problems: list[str], lines_of=None) -> tupl
     return n_q, n_a
 
 
+def _corpus_for_book(book: str) -> Path | None:
+    """书名 → 底本文件（优先 `_dz`）。供裸 `locator: L###` 回验用。"""
+    base = norm(book)
+    if not base:
+        return None
+    for pv in sorted((DISC / "data" / "sources").glob("*.provenance.json")):
+        try:
+            meta = json.loads(pv.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        title = norm(meta.get("title") or "")
+        if not title or not (base in title or title in base):
+            continue
+        key = pv.name.split(".")[0]
+        for cand in (DISC / "data" / "sources" / f"{key}.dz.txt",
+                     DISC / "data" / "sources" / f"{key}.wikitext.txt"):
+            if cand.exists():
+                return cand
+    return None
+
+
+def check_bare_locators(doc: dict, problems: list[str], notes: list[str] | None = None,
+                        lines_of=None, data_of=None) -> int:
+    """注册表裸 `locator` 的行锚回验（474 批）。返回**行锚形态**的 locator 数。
+
+    为什么需要它：`liuyao/data/rules/rule_registry.json` 有 6 条 `source.locator`
+    写成裸 `L####`（书别在 `source.book`），其中 5 条另有 `quote_in_data` 指向
+    `verdict_texts.json` 的引文。但本器此前只认 `quote_in_source`（`<底本>:<行>`）
+    与 `quote_in_data` 的**路径可达性**——裸 `L####` 的行号从未被解析，引文是否
+    真在那一行也从未对拍（§六.3；这些条目的 `verified: true` 等于自说自话）。
+
+    判据：
+      · 裸 `L####`：`source.book` 必须能解析到底本，行号在册；
+      · 若 `quote_in_data` 可解析出字符串，该值须落在所署行逐字；
+      · `<底本>:<行>` 形态同样回验（行号在册＋引文落位）；
+      · 其余 locator 是**章名／说明**（如「月破章第二十七」），不是行锚，
+        计入 NOTE、不判红——口径与「裸指针必须能解析」区分开。
+
+    `lines_of` / `data_of` 供 selftest 注入夹具；正式路径现场读。
+    """
+    cache: dict[str, list[str] | None] = {}
+
+    def get_lines(book: str) -> list[str] | None:
+        if lines_of is not None:
+            return lines_of(book)
+        if book not in cache:
+            p = _corpus_for_book(book)
+            cache[book] = (p.read_text(encoding="utf-8", errors="replace").splitlines()
+                           if p else None)
+        return cache[book]
+
+    def get_quote(ref: str):
+        target, _, ptr = str(ref).partition("#")
+        if not target or not ptr:
+            return None
+        if data_of is not None:
+            return _dig(data_of(target), ptr)[0]
+        tp = _resolve_any(target)
+        if tp is None:
+            return None
+        try:
+            return _dig(json.loads(tp.read_text(encoding="utf-8")), ptr)[0]
+        except Exception:
+            return None
+
+    n = 0
+    descriptive = 0
+    for _bucket, item in _iter_entries(doc):
+        src = item.get("source") or {}
+        loc = str(src.get("locator") or "").strip()
+        if not loc:
+            continue
+        rid = item.get("rule_id") or item.get("id") or "?"
+        q = get_quote(src.get("quote_in_data"))
+        m = re.fullmatch(r"L(\d+)", loc)
+        if m:
+            n += 1
+            book = str(src.get("book") or "")
+            if not book:
+                problems.append(f"{rid}.locator={loc}：裸行号缺 source.book，无法定书")
+                continue
+            L = get_lines(book)
+            if L is None:
+                problems.append(f"{rid}.locator={loc}：书名不可解析 → {book}")
+                continue
+            ln = int(m.group(1))
+            if not (1 <= ln <= len(L)):
+                problems.append(f"{rid}.locator={loc}：超出底本 {book}（共 {len(L)} 行）")
+                continue
+            if isinstance(q, str) and q and _verdict_plain(q) not in _verdict_plain(L[ln - 1]):
+                problems.append(f"{rid}.locator={loc}：quote_in_data 的引文不在所署行 → "
+                                f"{q[:26]!r}")
+            continue
+        m2 = _VERDICT_LOCATOR.fullmatch(loc)
+        if m2:
+            n += 1
+            f, ln = m2.group(1), int(m2.group(2))
+            if lines_of is not None:
+                L = lines_of(f)
+            else:
+                p = _resolve_any(f)
+                L = (p.read_text(encoding="utf-8", errors="replace").splitlines()
+                     if p else None)
+            if L is None:
+                problems.append(f"{rid}.locator：底本不存在 {f}")
+                continue
+            if not (1 <= ln <= len(L)):
+                problems.append(f"{rid}.locator={loc}：行号超出底本（共 {len(L)} 行）")
+                continue
+            if isinstance(q, str) and q and _verdict_plain(q) not in _verdict_plain(L[ln - 1]):
+                problems.append(f"{rid}.locator={loc}：quote_in_data 的引文不在所署行 → "
+                                f"{q[:26]!r}")
+            continue
+        descriptive += 1
+    if descriptive and notes is not None:
+        notes.append(f"裸 locator：{descriptive} 条 locator 为章名/说明（非行锚），不判红")
+    return n
+
+
 def selftest(problems: list[str]) -> None:
     """负例：造一条 verified=true 却指向不存在文件/解不到值的条目，必须判红。"""
     fake = {"schema": "yi-rule-registry-v1", "rules": [
@@ -1351,6 +1471,49 @@ def selftest(problems: list[str]) -> None:
     if not any("0 个映射组" in x for x in _ybad(lambda d: d.clear())):
         problems.append("负例未抓到：易林补遗 0 个映射组")
 
+    # 474 批：注册表裸 locator 行锚（夹具底本/数据注入）
+    _bl = {"《测试书》": ["", "有病方为贵", "无伤不是奇"]}
+    _bd = lambda _target: {"x": {"q": "有病方为贵", "q2": "无伤不是奇"}}
+    bbase = {"rules": [
+        {"rule_id": "t.a", "source": {
+            "book": "《测试书》", "locator": "L2",
+            "quote_in_data": "data/rules/rule_registry.json#x.q"}},
+        {"rule_id": "t.b", "source": {
+            "book": "《测试书》", "locator": "L1",
+            "quote_in_code": "scripts/chart.py#x"}},
+        {"rule_id": "t.c", "source": {
+            "book": "《测试书》", "locator": "独发章第三十一"}},
+    ], "_uncovered": []}
+    p_b: list[str] = []
+    n_b_notes: list[str] = []
+    n_b = check_bare_locators(bbase, p_b, n_b_notes, lambda b: _bl.get(b), _bd)
+    if p_b or n_b != 2:
+        problems.append(f"裸 locator 正例被误伤：{p_b}（字段 {n_b}）")
+    if not any("章名/说明" in x for x in n_b_notes):
+        problems.append("裸 locator 正例：描述式 locator 未进 NOTE（不许静默跳过）")
+
+    def _bbad(mut) -> list[str]:
+        d = json.loads(json.dumps(bbase, ensure_ascii=False))
+        mut(d)
+        p: list[str] = []
+        check_bare_locators(d, p, [], lambda b: _bl.get(b), _bd)
+        return p
+
+    if not any("缺 source.book" in x for x in
+               _bbad(lambda d: d["rules"][0]["source"].pop("book", None))):
+        problems.append("负例未抓到：裸 locator 缺书名")
+    if not any("超出底本" in x for x in
+               _bbad(lambda d: d["rules"][0]["source"].__setitem__("locator", "L99"))):
+        problems.append("负例未抓到：裸 locator 行号越界")
+    if not any("引文不在所署行" in x for x in
+               _bbad(lambda d: d["rules"][0]["source"].__setitem__(
+                   "quote_in_data", "data/rules/rule_registry.json#x.q2"))):
+        problems.append("负例未抓到：裸 locator 引文不在所署行")
+    if not any("底本不存在" in x for x in
+               _bbad(lambda d: d["rules"][0]["source"].__setitem__(
+                   "locator", "data/sources/__no_such__z.txt:2"))):
+        problems.append("负例未抓到：colon locator 底本不存在")
+
 
 def main() -> int:
     if not REG.exists():
@@ -1442,6 +1605,11 @@ def main() -> int:
                 problems.append(f"易林补遗：引文 {y_q}（下限 10）／行锚 {y_a}"
                                 f"（下限 34）——先确认字段/路径")
             print(f"  易林补遗：{y_q} 条 _引文、{y_a} 个行锚；底本/行号/行内逐字已核对")
+        # 474 批：注册表裸 locator 行锚（仅六爻册；八字 locator 走 verdicts 的 465 面）
+        n_loc = check_bare_locators(doc, problems, notes)
+        if n_loc < 6:
+            problems.append(f"裸 locator：只有 {n_loc} 条（下限 6）——先确认字段/路径")
+        print(f"  裸 locator：{n_loc} 条行锚；书名→底本/行号/引文落位已核对")
     _ap = argparse.ArgumentParser(description="check_rule_registry：--selftest 负例自证开关（§三）")
     _ap.add_argument("--selftest", action="store_true", help="负例自证")
     args = _ap.parse_args()
