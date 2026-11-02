@@ -1,11 +1,11 @@
 {
   "_meta": {
-    "description": "取用神的『关系优先于事项』规则表，出自《增刪卜易》原文，每条带逐字引文与偏移量",
+    "description": "取用神的『关系优先于事项』规则表，主体出自《增刪卜易》原文；两条名分链出自《卜筮正宗》。每条带逐字引文与偏移量",
     "built_by": "dev_tools/build_use_god_rules.py",
-    "source": "data\\sources\\zengshan_buyi.wikitext.txt",
+    "source": "data\\sources\\zengshan_buyi.wikitext.txt（主体）；data/sources/bushi_zhengzong_dz.dz.txt（两条名分链）",
     "usage": "chain_step2 取用神时先过本表（先命中先停），未命中再依次过覆盖层与问题词典",
     "order": "priority 小的先判；同优先级里触发词长的先判（更具体）",
-    "rule_count": 15
+    "rule_count": 17
   },
   "rules": [
     {
@@ -55,6 +55,35 @@
       "priority": 10,
       "citation": "男家占女﹐不拘父母親朋而代占者﹐無不以財為用",
       "offset": 80320
+    },
+    {
+      "trigger": [
+        "夫之兄弟",
+        "夫之姊妹",
+        "夫之同辈"
+      ],
+      "context": [],
+      "use_god": "官鬼",
+      "priority": 12,
+      "citation": "占夫之兄弟以官爻为用",
+      "offset": 29141,
+      "source": "data/sources/bushi_zhengzong_dz.dz.txt",
+      "label": "夫之同辈→官鬼（链式名分）",
+      "note": "《卜筮正宗》源L1016 逐字「占夫之兄弟以官爻为用」，同条理据逐字「夫之兄弟，与夫同辈人也」；《卜筮正宗》源L1009 逐字「夫之兄弟同辈」并列官鬼爻所占。"
+    },
+    {
+      "trigger": [
+        "兄弟之妻",
+        "妻之姊妹"
+      ],
+      "context": [],
+      "use_god": "妻财",
+      "priority": 12,
+      "citation": "占兄弟之妻、妻之姊妹，以财爻为用",
+      "offset": 29124,
+      "source": "data/sources/bushi_zhengzong_dz.dz.txt",
+      "label": "妻房同辈→妻财（链式名分）",
+      "note": "《卜筮正宗》源L1016 逐字「占兄弟之妻、妻之姊妹，以财爻为用」；「妻之兄弟」书上另判兄弟（《卜筮正宗》源L1010 逐字「妻之兄弟」），故本条不收入该词，两处口径不并吞。"
     },
     {
       "trigger": [
@@ -234,31 +263,6 @@
       "priority": 40,
       "citation": "自占病﹐世為用神",
       "offset": 88484
-    },
-    {
-      "use_god": "官鬼",
-      "priority": 12,
-      "trigger": [
-        "夫之兄弟",
-        "夫之姊妹",
-        "夫之同辈"
-      ],
-      "context": [],
-      "citation": "占夫之兄弟以官爻为用",
-      "label": "夫之同辈→官鬼（链式名分）",
-      "note": "《卜筮正宗》源L1016 逐字「占夫之兄弟以官爻为用」，同条理据逐字「夫之兄弟，与夫同辈人也」；《卜筮正宗》源L1009 逐字「夫之兄弟同辈」并列官鬼爻所占。"
-    },
-    {
-      "use_god": "妻财",
-      "priority": 12,
-      "trigger": [
-        "兄弟之妻",
-        "妻之姊妹"
-      ],
-      "context": [],
-      "citation": "占兄弟之妻、妻之姊妹，以财爻为用",
-      "label": "妻房同辈→妻财（链式名分）",
-      "note": "《卜筮正宗》源L1016 逐字「占兄弟之妻、妻之姊妹，以财爻为用」；「妻之兄弟」书上另判兄弟（《卜筮正宗》源L1010 逐字「妻之兄弟」），故本条不收入该词，两处口径不并吞。"
     }
   ]
 }

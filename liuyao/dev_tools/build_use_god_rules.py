@@ -13,8 +13,10 @@
   占夫取了世爻。扁平表缺的不是词，是**关系优先于事项**这一层，以及每条规则的出处。
   所以规则单列成本表，且**引文逐字对不上原文就不出表**——写错出处比没出处更坏。
 
-引文取自 `data/sources/zengshan_buyi.wikitext.txt`（维基文库《增刪卜易》原本，
-dev_tools/fetch_wikisource_cases.py 拉取并记 sha256）。本工具只做"引文→偏移量"的定位。
+引文主体取自 `data/sources/zengshan_buyi.wikitext.txt`（维基文库《增刪卜易》原本，
+dev_tools/fetch_wikisource_cases.py 拉取并记 sha256）；第八十八批补的两条名分链
+（夫之同辈→官鬼、妻房同辈→妻财）出自 `data/sources/bushi_zhengzong_dz.dz.txt`，
+单列 `EXTRA_RULES` 并逐条回验。本工具只做"引文→偏移量"的定位与在册表同源核对。
 """
 from __future__ import annotations
 
@@ -45,7 +47,7 @@ RULES = [
      "寅月亥日占主人何時回，以父母為用"),
     (["兄", "弟", "姐", "妹", "朋友", "同辈", "姊妹"], [], "兄弟", 20,
      "占父母弟兄取用神者皆在用神章內詳之"),
-    (["儿子", "女儿", "子女", "孩子", "侄", "晚輩", "孙子", "孙女", "子孙"], [], "子孙", 20,
+    (["占子", "儿子", "女儿", "子女", "孩子", "侄", "晚輩", "孙子", "孙女", "子孙"], [], "子孙", 20,
      "如占子孫，取子孫為用神"),
     (["夫", "婿"], [], "官鬼", 20,
      "妻占夫官為用神"),
@@ -71,8 +73,38 @@ RULES = [
      "自占病，世為用神"),
 ]
 
+# 第八十八批补的两条「名分链」规则：引文出自《卜筮正宗》dz 底本，不属上表主源。
+# 486 批接入构建器前，它们只存在于落盘 JSON 里——重跑本工具会把两条静默丢掉，
+# 且 `_meta.rule_count` 仍写 15（实际 17），`占子` 触发词也只在落盘侧存在（§六.3）。
+EXTRA_RULES = [
+    {"trigger": ["夫之兄弟", "夫之姊妹", "夫之同辈"],
+     "use_god": "官鬼", "priority": 12,
+     "source": "data/sources/bushi_zhengzong_dz.dz.txt",
+     "quote": "占夫之兄弟以官爻为用",
+     "label": "夫之同辈→官鬼（链式名分）",
+     "note": "《卜筮正宗》源L1016 逐字「占夫之兄弟以官爻为用」，同条理据逐字"
+             "「夫之兄弟，与夫同辈人也」；《卜筮正宗》源L1009 逐字「夫之兄弟同辈」"
+             "并列官鬼爻所占。",
+     "note_checks": [("data/sources/bushi_zhengzong_dz.dz.txt", 1016,
+                      "夫之兄弟，与夫同辈人也"),
+                     ("data/sources/bushi_zhengzong_dz.dz.txt", 1009,
+                      "夫之兄弟同辈")]},
+    {"trigger": ["兄弟之妻", "妻之姊妹"],
+     "use_god": "妻财", "priority": 12,
+     "source": "data/sources/bushi_zhengzong_dz.dz.txt",
+     "quote": "占兄弟之妻、妻之姊妹，以财爻为用",
+     "label": "妻房同辈→妻财（链式名分）",
+     "note": "《卜筮正宗》源L1016 逐字「占兄弟之妻、妻之姊妹，以财爻为用」；"
+             "「妻之兄弟」书上另判兄弟（《卜筮正宗》源L1010 逐字「妻之兄弟」），"
+             "故本条不收入该词，两处口径不并吞。",
+     "note_checks": [("data/sources/bushi_zhengzong_dz.dz.txt", 1010,
+                      "妻之兄弟")]},
+]
+
 
 PUNCT = "，,﹐、；;：:.。．！!？?「」『』“”‘’()（）《》〈〉"
+# 《卜筮正宗》dz 底本是简体；locate() 会把引文转成繁体再找，故底本侧也要同表转换。
+TRAD = str.maketrans("为占归来财医药当会实际个于", "為占歸來財醫藥當會實際個於")
 
 
 def strip_with_map(text: str) -> tuple[str, list[int]]:
@@ -90,24 +122,31 @@ def strip_with_map(text: str) -> tuple[str, list[int]]:
     return "".join(chars), idx
 
 
-def locate(text: str, quote: str) -> tuple[int, str]:
+def locate(text: str, quote: str, variant: bool = False) -> tuple[int, str]:
     """返回 (下标, 原文逐字片段)；找不到返回 (-1, "")。
 
     下标与片段都取自"去掉 <br> 之后"的同一份文本——两边口径必须一致，
     早先一处按去标签的下标定序、另一处回原串切片，结果引文全错位。
+    `variant=True` 供简体底本（《卜筮正宗》dz）用：底本侧同表转繁后再匹配，
+    返回片段仍切原串（保留底本字形）；转换逐字等长，下标不变。
     """
-    body = re.sub(r"<br>", "", text)
+    raw = re.sub(r"<br>", "", text)
+    body = raw.translate(TRAD) if variant else raw
     flat_s, idx = strip_with_map(body)
     q, _ = strip_with_map(quote)
-    q = q.translate(str.maketrans("为占归来财医药当会实际个于", "為占歸來財醫藥當會實際個於"))
+    q = q.translate(TRAD)
     p = flat_s.find(q)
     if p < 0 or not q:
         return -1, ""
-    return idx[p], body[idx[p]:idx[p + len(q) - 1] + 1]
+    return idx[p], raw[idx[p]:idx[p + len(q) - 1] + 1]
 
 
 def flat() -> str:
     return RAW.read_text(encoding="utf-8").translate(str.maketrans({"爲": "為"}))
+
+
+def flat_of(rel: str) -> str:
+    return (DISC / rel).read_text(encoding="utf-8")
 
 
 def main() -> int:
@@ -133,23 +172,82 @@ def main() -> int:
         rows.append({"trigger": trig, "context": ctx, "use_god": god, "priority": prio,
                      "citation": re.sub(r"<br>|\s+", "", verbatim), "offset": off})
 
-    print(f"引文核对：{len(rows)}/{len(RULES)} 条逐字命中原文")
+    fold = lambda s: re.sub(r"[\s\W_]+", "", str(s))
+    n_note = 0
+    for e in EXTRA_RULES:
+        if not (DISC / e["source"]).is_file():
+            missing.append(f"{e['source']}（底本不存在）")
+            continue
+        et = flat_of(e["source"])
+        off, verbatim = locate(et, e["quote"], variant=True)
+        if off < 0:
+            missing.append(e["quote"])
+            continue
+        lines = et.splitlines()
+        note_bad = False
+        for f, ln, q in e.get("note_checks") or []:
+            n_note += 1
+            if not (1 <= ln <= len(lines)) or fold(q) not in fold(lines[ln - 1]):
+                print(f"  × note 书证不在 {f}:L{ln}：{q}")
+                note_bad = True
+        if note_bad:
+            missing.append(e["quote"])
+            continue
+        rows.append({"trigger": e["trigger"], "context": [],
+                     "use_god": e["use_god"], "priority": e["priority"],
+                     "citation": re.sub(r"<br>|\s+", "", verbatim), "offset": off,
+                     "source": e["source"], "label": e["label"], "note": e["note"]})
+
+    print(f"引文核对：{len(rows)}/{len(RULES) + len(EXTRA_RULES)} 条逐字命中原文；"
+          f"note 内联书证 {n_note} 条已回验")
     for q in missing:
         print(f"  × 原文找不到，已拒收：{q}")
     if missing:
         print("没有出处的规则不进表——请改引文或删该条。")
         return 1
-    if args.check:
-        return 0
 
     rows.sort(key=lambda r: (r["priority"], -max(len(t) for t in r["trigger"])))
+
+    if args.check:
+        if not OUT.is_file():
+            print(f"× 落盘表不存在：{OUT.relative_to(DISC)}——0 结果 ≠ 通过")
+            return 1
+        disk = json.loads(OUT.read_text(encoding="utf-8"))
+        dr = disk.get("rules") or []
+        bad = []
+        if (disk.get("_meta") or {}).get("rule_count") != len(rows):
+            bad.append(f"_meta.rule_count {(disk.get('_meta') or {}).get('rule_count')}"
+                       f" ≠ 实际 {len(rows)} 条")
+        if len(dr) != len(rows):
+            bad.append(f"落盘 {len(dr)} 条 ≠ 构建器 {len(rows)} 条")
+        key = lambda r: (tuple(r.get("trigger") or []), r.get("use_god"), r.get("priority"))
+        exp = {key(r): r for r in rows}
+        got = {key(r): r for r in dr}
+        for k in sorted(set(exp) - set(got), key=str):
+            bad.append(f"落盘缺规则 {k}")
+        for k in sorted(set(got) - set(exp), key=str):
+            bad.append(f"落盘多规则 {k}")
+        for k, r in exp.items():
+            if k in got:
+                for field in ("citation", "offset"):
+                    if got[k].get(field) != r[field]:
+                        bad.append(f"{k} 的 {field} 与构建器不一致")
+        if bad:
+            for x in bad:
+                print(f"  × {x}")
+            print("落盘表与构建器不同源——按生成器重出，勿手改（§四.6/§六.3）。")
+            return 1
+        print(f"在册表核对：{len(rows)} 条与构建器一致（rule_count/条目/引文/偏移）")
+        return 0
+
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps({
         "_meta": {
-            "description": "取用神的『关系优先于事项』规则表，出自《增刪卜易》原文，"
-                           "每条带逐字引文与偏移量",
+            "description": "取用神的『关系优先于事项』规则表，主体出自《增刪卜易》原文；"
+                           "两条名分链出自《卜筮正宗》。每条带逐字引文与偏移量",
             "built_by": "dev_tools/build_use_god_rules.py",
-            "source": str(RAW.relative_to(DISC)),
+            "source": f"{RAW.relative_to(DISC)}（主体）；"
+                      "data/sources/bushi_zhengzong_dz.dz.txt（两条名分链）",
             "usage": "chain_step2 取用神时先过本表（先命中先停），未命中再依次过覆盖层与问题词典",
             "order": "priority 小的先判；同优先级里触发词长的先判（更具体）",
             "rule_count": len(rows),
