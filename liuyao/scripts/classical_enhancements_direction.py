@@ -263,6 +263,25 @@ def detect_direction_caps(
                               f"原神生世无源",
                 })
 
+    # ── 3c 用神动化退神（用神退散）─────────────────────────────────
+    # ZD016：占弟被讼，用神兄弟酉金五爻独动化申金(退神)，书判「酉金兄爻化退神…
+    #   退至申年而无路」大凶。引擎旧只把「化退神」当格局结构、未转 verdict 凶，
+    #   又因忌神午火被未土合绊(午未合)判吉。《增删卜易》源L948「用神…动化退神皆为化凶」。
+    #   只压**用神**动化退神；忌神/仇神化退神是吉(忌神自退)，不压。
+    for y in lines:
+        if (y.get("six_relation") == ug_cat and y.get("is_moving")
+                and qcls not in ("行人",) and ug_cat != "子孙"):
+            _upos = int(y.get("position", -1))
+            _uct = (changes.get(_upos, {}) or {}).get("change_type") or ""
+            if "退" in _uct:
+                caps.append({
+                    "rule_id": "liuyao.yongshen_hua_tui",
+                    "cap": "凶",
+                    "src": "zengshan_buyi_dz.dz.txt:948",
+                    "reason_key": "shi_hua_gui",
+                    "detail": f"用神{ug_cat}{y.get('earthly_branch','')}动化{_uct}（用神退散）",
+                })
+
     # ── 3 世爻休囚受克而动变出官鬼（变鬼）─────────────────────────
     wchg = ""
     if world:
