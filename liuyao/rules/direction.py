@@ -73,15 +73,19 @@ def detect_direction_caps(
     month_branch: str,
     day_branch: str,
     empty_branches: list[str] | None,
+    original_hexagram_name: str = "",
+    changed_hexagram_name: str = "",
 ) -> list[dict]:
     """返回命中的凶格列表：每项 {rule_id, cap, src, reason_key, detail}。
 
     调用方（step5）按 `cap` 把 verdict 压档；一条都不命中时原样返回。
+    original/changed hexagram name 供"六冲变合"类救应格局判定（T29）。
     """
     lines = [y for y in (lines or []) if isinstance(y, dict)]
     empties = list(empty_branches or [])
     from rule_engine import evaluate_caps as _re_eval
-    return _re_eval(lines, step2, step4, month_branch, day_branch, empties)
+    return _re_eval(lines, step2, step4, month_branch, day_branch, empties,
+                    original_hexagram_name, changed_hexagram_name)
 
 
 def apply_caps(verdict: str, caps: list[dict]) -> tuple[str, bool]:

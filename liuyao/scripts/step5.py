@@ -319,6 +319,8 @@ def step5_synthesize(r: dict) -> dict:
         _mt_sb[1:] if len(_mt_sb) >= 2 else "",
         day_branch,
         list(r.get("empty_branches") or []),
+        safe_get(r, "original_hexagram", "name", default=""),
+        safe_get(r, "changed_hexagram", "name", default=""),
     )
     # ---------- 5.7c: 主象随自占／代占换位（第九十二批，只压档不加和）----------
     # 《卜筮全书》源L7034 逐字「又自占，以世为主；代占，以应为主」；

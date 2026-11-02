@@ -29,6 +29,7 @@ from kernel_path import ensure_kernel_on_path as _ensure_kernel  # noqa: E402
 _ensure_kernel(__file__)
 
 from yishu_core.symbols import BRANCH_ELEMENTS, SHENG_CYCLE, KE_CYCLE  # noqa: E402
+from chain_tables import HEXAGRAM_LIUCHONG, HEXAGRAM_LIUHE  # noqa: E402  六冲/六合卦表（T29 救应格局）
 from predicates import (  # noqa: E402  纯函数共享库，无反向依赖
     _world_line, _month_state, _chong, _broken, _he, RANK, HUA_XIONG,
 )
@@ -52,12 +53,15 @@ def _load_rules() -> list[dict]:
 class _Ctx:
     """盘面上下文：预计算派生量，供谓词求值。"""
 
-    def __init__(self, lines, step2, step4, month_branch, day_branch, empty_branches):
+    def __init__(self, lines, step2, step4, month_branch, day_branch, empty_branches,
+                 original_hx="", changed_hx=""):
         self.lines = [y for y in (lines or []) if isinstance(y, dict)]
         self.step2 = step2 or {}
         self.month_branch = month_branch or ""
         self.day_branch = day_branch or ""
         self.empty = list(empty_branches or [])
+        self.original_hx = original_hx or ""
+        self.changed_hx = changed_hx or ""
         self.me = BRANCH_ELEMENTS.get(self.month_branch, "")
         self.de = BRANCH_ELEMENTS.get(self.day_branch, "")
         self.qcls = str(self.step2.get("question_class") or "")
@@ -96,6 +100,17 @@ class _Ctx:
     @property
     def world_broken(self) -> bool:
         return bool(self.wb) and _broken(self.wb, self.month_branch, self.empty)
+
+    # ── T29 六冲/六合救应格局 ──
+    @property
+    def original_chong(self) -> bool:
+        """原卦为六冲卦（主散）。"""
+        return self.original_hx in HEXAGRAM_LIUCHONG
+
+    @property
+    def changed_he(self) -> bool:
+        """变卦为六合卦（主聚，救应）。"""
+        return self.changed_hx in HEXAGRAM_LIUHE
 
     @property
     def day_ke_world(self) -> bool:
@@ -301,6 +316,10 @@ def _eval_predicate(ctx: _Ctx, key: str, want) -> bool:
         return ctx.world_month_state in (want or [])
     if key == "world_broken":
         return ctx.world_broken == bool(want)
+    if key == "original_chong":
+        return ctx.original_chong == bool(want)
+    if key == "changed_he":
+        return ctx.changed_he == bool(want)
     if key == "day_ke_world":
         return ctx.day_ke_world == bool(want)
     if key == "day_sheng_world":
@@ -406,9 +425,11 @@ def _detail(rule: dict, ctx: _Ctx) -> str:
         return tmpl
 
 
-def evaluate_caps(lines, step2, step4, month_branch, day_branch, empty_branches) -> list[dict]:
+def evaluate_caps(lines, step2, step4, month_branch, day_branch, empty_branches,
+                  original_hx="", changed_hx="") -> list[dict]:
     """对盘面求值所有 v2 规则，返回命中的 cap dict 列表（结构与旧 detect 一致）。"""
-    ctx = _Ctx(lines, step2, step4, month_branch, day_branch, empty_branches)
+    ctx = _Ctx(lines, step2, step4, month_branch, day_branch, empty_branches,
+               original_hx, changed_hx)
     caps = []
     for rule in _load_rules():
         if not _eval_gates(ctx, rule.get("gates")):
