@@ -137,71 +137,10 @@ def detect_direction_caps(
 
     调用方（step5）按 `cap` 把 verdict 压档；一条都不命中时原样返回。
     """
-    caps: list[dict] = []
     lines = [y for y in (lines or []) if isinstance(y, dict)]
-    world = _world_line(lines)
-    # 世爻缺失（异常盘面/单元构造输入）只关掉三条以世爻为主语的格，
-    # 不能整函数早退——第 4 格的主语是用神与元神，与世爻无关。
-    wb = (world or {}).get("earthly_branch", "")
-    we = BRANCH_ELEMENTS.get(wb, "")
-    qcls = str((step2 or {}).get("question_class") or "")
-    ug_cat = str((step2 or {}).get("use_god_category") or "")
-    ug_el = str((step2 or {}).get("use_god_element") or "")
-    me = BRANCH_ELEMENTS.get(month_branch, "")
-    de = BRANCH_ELEMENTS.get(day_branch, "")
     empties = list(empty_branches or [])
-    changes = {int(d.get("position", -1)): d
-               for d in ((step4 or {}).get("details") or []) if isinstance(d, dict)}
-
-
-    # ── 1 出现无情（功名类）── 已迁 registry v2（rule_engine_v2.json chuxian_wuqing）
-    # 《增删卜易》源L2786「若不生合世爻，或不持世，亦属无益」——官鬼/父母出现却不生不合世。
-
-    # ── 2 兄弟持世克财（婚姻章）── 已迁 registry v2（rule_engine）
-    # 原门控注释（qcls=婚姻、世=兄弟、卦有妻财）见 rule_engine_v2.json 该条 gates/when。
-
-    # ── 5 兄弟持世·求财（本条补齐第 2 条当时"宁缺不假"另开的求财半边）──
-    # 书上四条独立表述同指一事（逐字见 verdict_texts.json 该 key 的 basis）：
-    #   《增删卜易》源L419「占求财妻财持世者必得，兄弟持世者难求」、
-    #   源L1592「占财兄爻为忌神，兄爻持世，求财不获」、
-    #   《卜筮正宗》源L1102「求财见财爻持世则有，兄弟持世则无」、
-    #   源L327「兄弟持世莫求财，官兴须虑祸将来」。
-    # 量级差取《黄金策》源L2416「若临兄弟，虽或安静，亦主难得，发动尤甚」：
-    #   安静→压到平凶（难得而不称心）；发动→压到凶。
-    # **不外推到失物/寻物**：上一批"硬并入会压坏自有基准"的顾虑，实测来自把失物与求财
-    # 混为一谈——自有基准里 世爻=兄弟 而 基准=吉 的三例（ZS011/ZS019/ZS028）全是失物·寻物，
-    # 而《增删卜易》全书检索"失物/脱空/遗失"与"兄弟"同句者为 0 条，书上没说这条禁忌，
-    # 就不给加。求财类里 世爻=兄弟 的只有 ZS015（基准=下跌，与压凶同向）与回归 fixture
-    # reg_18，因此本条**不压任何一条判吉的自有基准**——这是跑出来的，不是推测的。
-    # 兄弟持世·求财（含「日月作财」例外）已迁 registry v2——
-    # 《增删卜易》源L3035「虽则兄爻持世无财，但喜卯日即是财星」、源L2342「得日月作财而合世」；
-    # rule_engine_v2.json: qiu_cai_xiong_chi_shi（rescue: day/month_is_world_cai；cap 动静分档 凶/平凶）。
-
-    # ── 3a/3b/3c 已迁 registry v2（rule_engine 仲裁）────────────────
-    # 阶段0最小闭环：回头克(3a)/回头生月破(3b)/用神化退(3c) 三条判据从硬编码 if
-    # 迁到 data/rules/rule_engine_v2.json（when/gates/rescue_any 三分离），由 rule_engine
-    # 对盘面求值。cap 档位与 rule_id 与原硬编码严格一致——本条只是调度，判据本体在 v2 JSON。
-    # 函数内延迟 import，避免与本模块的纯函数复用形成循环依赖。
     from rule_engine import evaluate_caps as _re_eval
-    caps.extend(_re_eval(lines, step2, step4, month_branch, day_branch, empties))
-
-    # ── 变鬼（三分支互斥）＋元神无力（源绝）── 已迁 registry v2（rule_engine）
-    # 变鬼：旺相回头生=变官不压；休囚/月破 且(日克/动克)=压凶；回头克且无子孙动/日辰生世救应=压凶。
-    # 元神无力：用神动化凶 + 疾病久病 + 元神(生用神者)上卦而(休囚静/被日月动克 或 全空破 或 动化凶)。
-    # 判据本体见 rule_engine_v2.json：shi_hua_gui.tihuo / shi_hua_gui.huitouke / yuan_shen_wu_li。
-
-    # 【本层只做"上限"，装不下"正向"——第七十五批实测到的架构事实，见 CHANGELOG 同批】
-    # 书上占雨的吉例是《黄金策》源L300 逐字「卦中父动主有雨」，需要的是**抬升**判定；本模块的 caps 只会往下压，
-    # 因此 WSD014（占何日雨·父母动·书判吉／引擎凶）这类盘**不在本层能修的范围**，留给 step5 的天气加分支（#23 未完部分）。
-    # 6) 天气占（占雨／占晴）：父动主雨、财动主晴——按门类门控，不按问句关键词加判
-    #    （书据见 `verdict_texts.json` 的 tianqi_yun_cai_dong / tianqi_qing_fu_dong 两条 basis，
-   #    《黄金策》源L300 逐字「卦中父动主有雨，财动主晴。卦无父母，财爻又空，必然无雨；卦无妻财，父爻又空，必然不晴」；
-   #    《卜筮全书》源L5770 逐字「五类中，唯父母为雨。此爻空亡，或休囚不动，雨未可望」；
-   #    《卜筮全书》源L5721 逐字「妻财则父母忌爻，动则克制雨神，所以主晴」——
-   #    结构事实取自第七十三批同一套判据）
-    # 天气占雨/占晴已迁 registry v2（rule_engine_v2.json tianqi_zhan_yu / tianqi_zhan_qing）。
-
-    return caps
+    return _re_eval(lines, step2, step4, month_branch, day_branch, empties)
 
 
 def apply_caps(verdict: str, caps: list[dict]) -> tuple[str, bool]:
