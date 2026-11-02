@@ -1750,6 +1750,31 @@ def check_usegod_notes(doc: dict, problems: list[str], lines_of=None) -> int:
     return n
 
 
+def check_registry_books(doc: dict, problems: list[str], books_of=None) -> int:
+    """注册表 `source.book` 里的每个《书名》都必须有在盘底本（484 批）。
+
+    为什么需要它：`ming.dayun_yindong` 的 `source.book` 列了《千里明镜》，
+    `data/sources/` 并无此书（provenance 只有《千里命稿》）；其 locator 的
+    「《千里明镜》源L308／L329 两条自足算例」实测两行正在 `qianli_minggao_dz`
+    L308/L329——书名误写，gates 只验行号/引文，从未检查书名本身。
+    判据：`source.book` 的每个《…》经 provenance 解析，无底本即判红。
+    `books_of` 供 selftest 注入；正式路径 `_corpora_for_book` 现场解析。
+    """
+    BOOK_RE = re.compile(r"《([^》]{2,24})》")
+    n = 0
+    for _bucket, item in _iter_entries(doc):
+        rid = item.get("rule_id") or item.get("id") or "?"
+        src = item.get("source") or {}
+        for b in BOOK_RE.findall(str(src.get("book") or "")):
+            n += 1
+            paths = books_of(b) if books_of is not None else _corpora_for_book(b)
+            if not paths:
+                problems.append(f"注册表书目：{rid} 的《{b}》无在盘底本")
+    if n == 0:
+        problems.append("注册表书目：0 个书名——0 结果 ≠ 通过")
+    return n
+
+
 def selftest(problems: list[str]) -> None:
     """负例：造一条 verified=true 却指向不存在文件/解不到值的条目，必须判红。"""
     fake = {"schema": "yi-rule-registry-v1", "rules": [
@@ -2430,6 +2455,23 @@ def selftest(problems: list[str]) -> None:
                _ugbad(lambda d: d["families"].clear())):
         problems.append("负例未抓到：用神词典注记 families 为空")
 
+    # 484 批：注册表 source.book 书名可解析（夹具注入）
+    _bks = lambda b: ["x"] if b == "测试书" else []
+    bkdoc = {"rules": [{"rule_id": "t.book", "source": {"book": "《测试书》"}}]}
+    p_bk: list[str] = []
+    n_bk = check_registry_books(bkdoc, p_bk, _bks)
+    if p_bk or n_bk != 1:
+        problems.append(f"注册表书目正例被误伤：{p_bk}（书名 {n_bk}）")
+    p_bkb: list[str] = []
+    check_registry_books({"rules": [{"rule_id": "t.book",
+                                     "source": {"book": "《无此书》"}}]}, p_bkb, _bks)
+    if not any("无在盘底本" in x for x in p_bkb):
+        problems.append("负例未抓到：注册表书目无底本")
+    p_bk0: list[str] = []
+    check_registry_books({"rules": []}, p_bk0, _bks)
+    if not any("0 个书名" in x for x in p_bk0):
+        problems.append("负例未抓到：注册表书目 0 个")
+
 
 def main() -> int:
     if not REG.exists():
@@ -2479,6 +2521,11 @@ def main() -> int:
         if n_code < 5:
             problems.append(f"代码书证：只有 {n_code} 条（下限 5）")
         print(f"  代码书证：{n_code} 条；底本/行号/行内逐字已核对")
+        # 484 批：source.book 书名可解析
+        n_bk = check_registry_books(doc, problems)
+        if n_bk < 18:
+            problems.append(f"注册表书目：只有 {n_bk} 个书名（下限 18）")
+        print(f"  注册表书目：{n_bk} 个书名；provenance 解析已核对")
     # 466 批：六神取象 / 十神作用（仅八字册）
     if DISC.name == "bazi":
         if not LIUSHEN.is_file() or not SHISHEN.is_file():
