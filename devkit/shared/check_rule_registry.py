@@ -84,6 +84,14 @@ locator 从未被读取。现按声明核对：行号在册、`quote/full_quote/
 带引文者逐字命中（书别取同组 `src` 的底本）。首跑 13/13 全符、0 处漂移
 （L31 的长句含「但有一卦爻逢六冲或卦变六冲」，此前只核过同组的 6 个
 `src`，摘要句本身从未对拍）。两科 selftest 都跑夹具。
+
+488 批追加（仅六爻册）：**问题题类表注记里的书源引用**。
+`question_classes.json` 的 `classes[*].source_gates`／`note` 有 4 个 `源L####`
+（L2219/L2221、L1953、L1541），其中 3 处带 `「…」` 引文，此前无门——题类析出
+与天气分轨的「书据」全靠人读。现核：每个 `源L` 的书名取同串最近《…》、
+经 provenance 解析（同名多本 `_dz` 优先）、行号在册；锚后到下一锚之间的首个
+`「…」` 须在该行逐字命中。首跑 4/4 行锚、3/3 引文全符（0 处漂移）。
+两科 selftest 都跑夹具。
 """
 from __future__ import annotations
 
@@ -125,6 +133,8 @@ VERDICT_TEXTS = DISC / "data" / "rules" / "verdict_texts.json"
 QUESTION_USE_GODS = DISC / "data" / "rules" / "question_use_gods.json"
 # 485 批：六爻分占域判据引文库（仅六爻有该册）。
 DOMAIN_CITES = DISC / "data" / "rules" / "domain_citations.json"
+# 488 批：六爻问题题类表（仅六爻有该册）。
+QUESTION_CLASSES = DISC / "data" / "rules" / "question_classes.json"
 DOMAIN_CITES_SRC = DISC / "data" / "sources" / "yimao_dz.dz.txt"
 _VERDICT_LOCATOR = re.compile(r"(data/sources/[^:]+):(\d+)")
 _VERDICT_MARK = re.compile(r"''+|={2,}|\{\{|\}\}|\||\*")
@@ -1832,6 +1842,73 @@ def check_usegod_notes(doc: dict, problems: list[str], lines_of=None) -> int:
     return n
 
 
+def check_question_classes_notes(doc: dict, problems: list[str],
+                                 lines_of=None) -> tuple[int, int]:
+    """问题题类表注记的书源回验（488 批）。返回 (行锚数, 引文数)。
+
+    为什么需要它：`question_classes.json` 的 `classes[*].source_gates`／`note`
+    有 4 个 `源L####`（题类析出与天气分轨的「书据」），其中 3 处带 `「…」`，
+    此前没有任何门读取。现核：书名取同串最近的《…》，经 provenance 解析
+    （`_corpus_for_book`，同名多本 `_dz` 优先），行号在册；锚后到下一锚之间的
+    首个 `「…」` 须在该行逐字命中。
+    `lines_of` 供 selftest 注入底本；正式路径现场读。
+    """
+    classes = doc.get("classes") or []
+    entries = [c for c in classes if isinstance(c, dict)]
+    if not entries:
+        problems.append("问题题类：0 个 classes 条目——0 结果 ≠ 通过")
+        return 0, 0
+    cache: dict[str, list[str] | None] = {}
+
+    def get_lines(book: str) -> list[str] | None:
+        if lines_of is not None:
+            return lines_of(book)
+        if book not in cache:
+            p = _corpus_for_book(book)
+            cache[book] = (p.read_text(encoding="utf-8", errors="replace").splitlines()
+                           if p else None)
+        return cache[book]
+
+    A = re.compile(r"源L(\d+)")
+    B = re.compile(r"《([^》]{2,24})》")
+    Q = re.compile(r"「([^」]{2,200})」")
+    n_ref = n_q = 0
+    for i, c in enumerate(entries):
+        for field, val in c.items():
+            vals = val if isinstance(val, list) else [val]
+            for si, s in enumerate(vals):
+                if not isinstance(s, str) or "源L" not in s:
+                    continue
+                where = f"classes[{i}].{field}" + (f"[{si}]" if isinstance(val, list) else "")
+                anchors = list(A.finditer(s))
+                for j, m in enumerate(anchors):
+                    n_ref += 1
+                    ln = int(m.group(1))
+                    books = B.findall(s[:m.start()])
+                    book = books[-1] if books else ""
+                    if not book:
+                        problems.append(f"问题题类：{where} 的源L{ln} "
+                                        "缺《书名》，无法定书")
+                        continue
+                    L = get_lines(book)
+                    if L is None:
+                        problems.append(f"问题题类：{where} 的书名不可解析 → "
+                                        f"《{book}》")
+                        continue
+                    if not (1 <= ln <= len(L)):
+                        problems.append(f"问题题类：{where} 的源L{ln} "
+                                        f"超出底本《{book}》（共 {len(L)} 行）")
+                        continue
+                    end = anchors[j + 1].start() if j + 1 < len(anchors) else len(s)
+                    qm = Q.search(s[m.end():end])
+                    if qm:
+                        n_q += 1
+                        if _fold(qm.group(1)) not in _fold(L[ln - 1]):
+                            problems.append(f"问题题类：{where} 的引文不在 "
+                                            f"《{book}》源L{ln} → {qm.group(1)[:24]!r}")
+    return n_ref, n_q
+
+
 def check_registry_books(doc: dict, problems: list[str], books_of=None) -> int:
     """注册表 `source.book` 里的每个《书名》都必须有在盘底本（484 批）。
 
@@ -2477,6 +2554,41 @@ def selftest(problems: list[str]) -> None:
                                  d.pop("jiazhai_take_image", None)))):
         problems.append("负例未抓到：叙述层整块缺失仍须 0 条判红")
 
+    # 488 批：问题题类注记的书源引用（夹具注入）
+    _ccl = {"测试书": ["", "旺兄持世，克妻耶？耗财耶？",
+                       "凡占终身财福，定是家殷户足",
+                       "占雨用父爻，占晴用子孙爻、财爻"]}
+    ccdoc = {"classes": [
+        {"source_gates": "《测试书》源L2 野鹤驳『旺兄』，"
+                         "源L3「凡占终身财福，定是家殷户足」"},
+        {"note": "《测试书》源L4 逐字「占雨用父爻，占晴用子孙爻、财爻」"}]}
+    p_cc: list[str] = []
+    n_cc = check_question_classes_notes(ccdoc, p_cc, lambda b: _ccl.get(b))
+    if p_cc or n_cc != (3, 2):
+        problems.append(f"问题题类正例被误伤：{p_cc}（锚/引文 {n_cc}）")
+
+    def _ccbad(mut) -> list[str]:
+        d = json.loads(json.dumps(ccdoc, ensure_ascii=False))
+        mut(d)
+        p: list[str] = []
+        check_question_classes_notes(d, p, lambda b: _ccl.get(b))
+        return p
+
+    if not any("引文不在" in x for x in
+               _ccbad(lambda d: d["classes"][0].__setitem__(
+                   "source_gates", "《测试书》源L3「凡占终身财福，定是家殷户绝」"))):
+        problems.append("负例未抓到：问题题类引文不在所署行")
+    if not any("超出底本" in x for x in
+               _ccbad(lambda d: d["classes"][1].__setitem__(
+                   "note", "《测试书》源L99 逐字「占雨用父爻」"))):
+        problems.append("负例未抓到：问题题类行号越界")
+    if not any("缺《书名》" in x for x in
+               _ccbad(lambda d: d["classes"][1].__setitem__(
+                   "note", "源L4 逐字「占雨用父爻，占晴用子孙爻、财爻」"))):
+        problems.append("负例未抓到：问题题类缺书名")
+    if not any("0 个 classes" in x for x in _ccbad(lambda d: d["classes"].clear())):
+        problems.append("负例未抓到：问题题类 0 个 classes")
+
     # 477 批：verdict_texts 的文件+L 行锚（夹具底本注入）
     _vtl = {"data/sources/__no_such__v.txt": [
         "", "有病方为贵", "亦是休囚無气始見危"]}
@@ -2846,6 +2958,17 @@ def main() -> int:
             if n_ug < 2:
                 problems.append(f"用神词典注记：只有 {n_ug} 条带锚引文（下限 2）")
             print(f"  用神词典注记：{n_ug} 条带锚引文；底本/行号/行内逐字已核对")
+        # 488 批：问题题类注记的书源引用（仅六爻册）
+        if not QUESTION_CLASSES.is_file():
+            problems.append("问题题类：question_classes.json 不存在——0 结果 ≠ 通过")
+        else:
+            qcdoc = json.loads(QUESTION_CLASSES.read_text(encoding="utf-8"))
+            qc_n, qc_q = check_question_classes_notes(qcdoc, problems)
+            if qc_n < 4 or qc_q < 3:
+                problems.append(f"问题题类：源L 行锚 {qc_n}（下限 4）／引文 {qc_q}"
+                                f"（下限 3）——先确认字段/路径")
+            print(f"  问题题类注记：{qc_n} 个源L、{qc_q} 条引文；"
+                  f"书名/行号/行内逐字已核对")
         # 471 批：火珠林财官伏藏引文行锚（仅六爻册）
         if not FUSHI.is_file():
             problems.append("财官伏藏：caiguan_fushi.json 不存在——0 结果 ≠ 通过")
