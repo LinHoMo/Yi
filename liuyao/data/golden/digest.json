@@ -3,15 +3,9 @@
     "what": "金标准指纹基线（排盘+思维链+分析层逐字段；抽样含 narrate 文案哈希）",
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
-  "digest": "e761fe9dcda5d108",
-  "narrate_digest": "7014d01b3a1fc1c7",
+  "digest": "cccd9920647a1138",
+  "narrate_digest": "8168eff9e560d6c2",
   "drift_log": [
-    {
-      "from": "c757994709dec67e",
-      "to": "027fb1d49d49368b",
-      "date": "2026-10-25",
-      "reason": "第两百八十批：月破救法集条件化（新增临日建1.0/日辰生扶0.5，例外=忌神类动爻伤用不给救）。通则书证 L990-991，例外书证 L692/L1911；WS035 案卷 verdict 校勘吉→凶（书源 zengshan_buyi.wikitext.txt L2598 逐字）。分割集读数零退化，wikisource_holdout 65.4→66.9。金标准 5 例漂移归因：2026-09-22 丙子日占病/占妻胎安否用神月破得日辰生扶，新救法 0.3→0.5 合规生效（无忌神动）。"
-    },
     {
       "from": "027fb1d49d49368b",
       "to": "51dca3a500be69e6",
@@ -125,6 +119,12 @@
       "to": "e761fe9dcda5d108",
       "date": "2026-11-02",
       "reason": "469批：六亲持世 19 条断语的括注由「（《火珠林·X章》）」改为「（据《火珠林·X章》今译）」；conclusion 含断语文本故「机械」digest 同步变化，但 tune 97.9/holdout 90.2 分数逐位未动——纯口径措辞修正"
+    },
+    {
+      "from": "e761fe9dcda5d108",
+      "to": "cccd9920647a1138",
+      "date": "2026-11-02",
+      "reason": "502批评分精修：六亲持世按情境计分(原恒0)+原神得局生用判别(god_month_score>=4改+1.5)，机械层与narrate断语文本相应漂移；regression19/19+思维链12/12全绿"
     }
   ],
   "narrate_drift_log": [
@@ -205,6 +205,12 @@
       "to": "7014d01b3a1fc1c7",
       "date": "2026-11-02",
       "reason": "469批：六亲持世 19 条断语的括注由「（《火珠林·X章》）」改为「（据《火珠林·X章》今译）」；conclusion 含断语文本故「机械」digest 同步变化，但 tune 97.9/holdout 90.2 分数逐位未动——纯口径措辞修正"
+    },
+    {
+      "from": "7014d01b3a1fc1c7",
+      "to": "8168eff9e560d6c2",
+      "date": "2026-11-02",
+      "reason": "502批评分精修：六亲持世按情境计分(原恒0)+原神得局生用判别(god_month_score>=4改+1.5)，机械层与narrate断语文本相应漂移；regression19/19+思维链12/12全绿"
     }
   ]
 }

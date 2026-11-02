@@ -773,19 +773,40 @@ def compute_advanced_adjustments(r: dict, step2_data: dict, step3_data: dict, di
                         )
                         _active = _all_yuan_in_combo
                     if _active:
-                        # 原神贪合忘生 — 用神失源 (-2.0推至凶)
+                        # 第502批精修：原神同类成局触发「贪合忘生-2.0」。但若用神本身临
+                        # 月令旺相（god_month_score>=4，得月建生扶），原神成局非但不绊，
+                        # 反成「原神得局生用」的吉象——《增删卜易》ZD196原文「喜水局生官」
+                        # 即此（用神官鬼木在寅月，god_month_score=5）。用神月处死地
+                        # （god_month_score<=2，如reg_19妻财午火在亥月，god_month_score=1）
+                        # 则保持-2.0。此判别使ZD196升吉而不破reg_19。
+                        _gms = 0.0
+                        if isinstance(step3_data, dict):
+                            try:
+                                _gms = float(step3_data.get("god_month_score", 0) or 0)
+                            except (TypeError, ValueError):
+                                _gms = 0.0
                         if yuan_shen_bond_adjustment == 0.0:
-                            yuan_shen_bond_adjustment = -2.0
+                            if _gms >= 4.0:
+                                yuan_shen_bond_adjustment = 1.5
+                            else:
+                                yuan_shen_bond_adjustment = -2.0
                         _combo_branches_str = "".join(_combo_branches)
                         _day_info = ""
                         if _day_b in _combo_branches:
                             _day_info = f"(日{_day_b}引动)"
                         elif _month_b in _combo_branches:
                             _day_info = f"(月{_month_b}引动)"
-                        yuan_shen_bond_reason = (
-                            f"原神{_yuan_elem}参与{_combo_branches_str}"
-                            f"三合{_yuan_elem}局{_day_info}，贪合忘生，用神失源"
-                        )
+                        if _gms >= 4.0:
+                            yuan_shen_bond_reason = (
+                                f"原神{_yuan_elem}参与{_combo_branches_str}"
+                                f"三合{_yuan_elem}局{_day_info}，用神临月建（旺），"
+                                f"原神得局生用，吉"
+                            )
+                        else:
+                            yuan_shen_bond_reason = (
+                                f"原神{_yuan_elem}参与{_combo_branches_str}"
+                                f"三合{_yuan_elem}局{_day_info}，贪合忘生，用神失源"
+                            )
                         break
 
     return {
@@ -1726,10 +1747,22 @@ def build_factor_contributions(adj: dict, r: dict) -> list:
         _sh_reason = adv_shi["classical_rule"]
         if adv_shi.get("scenario_interpretation"):
             _sh_reason = adv_shi["scenario_interpretation"]
+        # 第502批：原恒 0.0（只展示不计分）。reason 已明判吉凶（如「官鬼持世且旺——
+        # 功名有望求官必得」）却不计分，是净分漏算。先只对卦理最无歧义的组合计分，
+        # 其余保持 0 保守；占寿/占病以世爻为用的情形不按六亲断吉凶，不在此表。
+        _sh_relation = adv_shi.get("relation", "")
+        _sh_scenario = adv_shi.get("scenario", "")
+        _SHI_SCORE = {
+            ("官鬼", "career"): 1.0,    # 官鬼持世且旺占功名：功名有望求官必得
+            ("父母", "exam"): 1.0,      # 父母持世且旺占文书：考试必中
+            ("子孙", "career"): -0.8,   # 子孙持世占求官：子克官，官运受阻
+            ("兄弟", "wealth"): -0.8,   # 兄弟持世占财：兄劫财
+        }
+        _sh_score = _SHI_SCORE.get((_sh_relation, _sh_scenario), 0.0)
         factor_contributions.append({
             "name": "六亲持世",
             "factor": "shi_yao",
-            "score": 0.0,
+            "score": _sh_score,
             "reason": _sh_reason,
             "classical_rule": adv_shi.get("classical_rule", ""),
             "scenario": adv_shi.get("scenario", ""),
