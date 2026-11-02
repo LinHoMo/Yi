@@ -9,6 +9,41 @@
 > 399/400/401 撞号，按提交顺序归位为 **408/409/410/411**；原提交 `46d8bc1` 的提交信息
 > 保留旧号作历史，不再改。跨文件引用一律按新号。
 
+## 2026-11-02 第四百九十六批（六爻·裸文件名死引用）：**`rule_registry.json` 的「见 HANDOFF」是活引用而 HANDOFF 已随扁平化删除；`check_doc_refs` 此前整段跳过裸文件名**
+
+**性质**：共享门补裸文件名判据＋六爻数据说明修正（本科不改数据、不改判据、不改读数）。
+
+### 一、缺陷
+
+`liuyao/data/rules/rule_registry.json` 的 `yingqi` 维度 note 写
+「…另 wikisource top-1 ~20% n=35 为泛化读数——见 HANDOFF，非调参对象」。
+HANDOFF.md 已随仓库扁平化删除，这是**活引用指向已删文件**（§六.3）；
+而同句的「~20% n=35」与 `liuyao/README.md` 现行外部集表（wikisource_holdout
+top-1 **31.8%**、n=**50**，308 批）也不一致——两处都是旧快照。
+`check_doc_refs.py` 第 165 行原文「裸文件名（如 SKILL.md）不构成本器的路径声明」，
+于是这种**不带 `/` 前缀**的死引用一路无门（AGENTS.md 头注已登记该口径缺口）。
+
+### 二、改法
+
+- 共享件 `check_doc_refs.py` 新增 `LEGACY`：只对**已知已删旧件**的裸文件名补判
+  （`HANDOFF`／`TECH-DEBT`／`test_ming_rule_registry.py`／`test_bazi_rule_registry.py`）；
+  不做任意裸文件名的存在性反查（同名文件跨科，按 basename 查会把历史散文判红）。
+- 豁免口径：整行或上一行含病史词才跳过；为此新增 `LEGACY_HISTORY`（在 `HISTORY` 上加「已删」），
+  **不改动路径用的 HISTORY**，免得「旧文件已删，改见 docs/NEW.md」把同句活路径一起豁免。
+- `check_house_conventions.py` 的 `VER_RE` 正则字面量与病症说明按 `LEGACY_SELF` 排除。
+- selftest 加两式：活 `见 HANDOFF` 必抓、病史行「原 TECH-DEBT 已删」不得误判。
+- 数据修正：note 改为「实时读数见 README 外部集表与 references/source_ledger.md」，
+  删去 HANDOFF 与「~20% n=35」旧快照（不保留无法回指的旧数）。
+
+### 三、自证（§四.8）
+
+- 真实探针：把 note 改回「见 HANDOFF」→ `× data/rules/rule_registry.json:223
+  引用已随扁平化删除的旧件（裸文件名，无路径前缀）→ HANDOFF`（EXIT=1）；
+  逐字节还原（sha256 `844AC5DC…` 与字节数 91255 相同）后再跑全绿。
+- 两科全门通过；读数 tune 97.9（n=20）／holdout 90.2（n=12）与八字
+  100.0／100.0 均不变（本批只改门与说明，不进评分面，读数不动属预期，§四.7）。
+
+
 ## 2026-11-02 第四百九十五批（八字·代码书证扩面）：**`dev_tools/`（96 锚）与 `eval/`（12 锚）的 `源L` 书证此前无门；扩面首跑判红 10 条（9 条真错）并逐条改正**
 
 **性质**：门覆盖面扩展＋书证错锚修正（不改判据、不改读数）。

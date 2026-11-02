@@ -30,6 +30,14 @@ tools/、docs/source-readings/ 都随仓库扁平化删除了——照着跑必�
 全历史 0 命中／已随扁平化消失／从未重建」）才豁免。负例：历史词遮罩下的活 tests 指针必须抓到，
 显式病史行不得误杀。
 
+496 批追加：**已随扁平化删除的根级旧件，裸文件名也要判**。本器第 165 行原文
+「裸文件名（如 SKILL.md）不构成本器的路径声明」——于是 `data/rules/rule_registry.json`
+里「见 HANDOFF」这种**没有 `/` 前缀**的活引用一路无门（AGENTS.md 头注已登记这个口径缺口）。
+现只对**已知已删旧件**（HANDOFF／TECH-DEBT／两个幽灵测试文件名）补判：整行或上一行有
+病史词（本词表另加「已删」，不改动路径用的 HISTORY 以免误吞同行的活路径）才豁免；
+`check_house_conventions.py` 里 `VER_RE` 的正则字面量与病症说明按本器自身样本排除。
+负例：活 `见 HANDOFF` 必须抓到，病史行「原 TECH-DEBT 已删」不得误判。
+
     python dev_tools/check_doc_refs.py
     python dev_tools/check_doc_refs.py --selftest
 """
@@ -100,6 +108,16 @@ SHORTHAND = re.compile(r"(^|/)\d+(?=/|\.|$)")
 TEST_PTR = re.compile(r"(^|/)tests/[A-Za-z0-9_\-./\\\u4e00-\u9fff]*\.py$")
 STRONG_HISTORY = re.compile(r"从未存在|全仓不存在|该文件不存在|该测试文件|全历史\s*0\s*命中"
                             r"|已随扁平化消失|从未重建|现已不存在|已不存在")
+# 496 批：已随扁平化删除的根级旧件。裸文件名（无 `/`）此前被整段跳过，现按**已知名单**补判。
+# 只收「确实删了、且曾在正文里被当活指针引用」的旧件；不做任意裸文件名的存在性检查
+# （同名文件在多个科都有，按 basename 反查会把历史散文判红——宁可少判）。
+LEGACY = re.compile(r"(?<![\w/.-])(HANDOFF(?:\.md)?|TECH-DEBT(?:\.md)?"
+                    r"|test_ming_rule_registry\.py|test_bazi_rule_registry\.py)(?![\w])")
+# 本器自身样本（负例/正则字面量）与同型门：不参加 LEGACY 自查
+LEGACY_SELF = ("dev_tools/check_house_conventions.py",)
+# 只给 LEGACY 用的病史词表：在 HISTORY 上加「已删」，不动 HISTORY 本身，
+# 免得「旧文件已删，改见 docs/NEW.md」这类同句活路径被一起豁免。
+LEGACY_HISTORY = re.compile(HISTORY.pattern + r"|已删")
 
 
 def _resolves(rel: str) -> bool:
@@ -177,6 +195,17 @@ def scan() -> tuple[list[str], int]:
                 examined += 1
                 if not _resolves(ref):
                     problems.append(f"{rel_to_disc}:{n} 指向不存在的文件 → {ref}")
+            # 496 批：裸文件名的已知已删旧件（没有 `/`，上文的路径检查整段跳过）
+            if rel_to_disc not in LEGACY_SELF:
+                for m in LEGACY.finditer(line):
+                    token = m.group(1)
+                    hist = bool(LEGACY_HISTORY.search(line)
+                                or LEGACY_HISTORY.search(lines[n - 2] if n >= 2 else ""))
+                    if hist:
+                        SKIPPED_HISTORY.append(f"{rel_to_disc}:{n} → {token}（病史行）")
+                        continue
+                    problems.append(f"{rel_to_disc}:{n} 引用已随扁平化删除的旧件"
+                                    f"（裸文件名，无路径前缀）→ {token}")
     return problems, examined
 
 
@@ -195,6 +224,8 @@ def selftest(problems: list[str]) -> None:
                    "tools 目录也要抓（tools/zz_probe_deadref_tool.py）。\n"
                    "曾记 tests/zz_probe_deadref_t.py 是旧样本（历史词不得吞活 tests 指针）。\n"
                    "显式病史行不判：该测试文件 tests/test_ghost_hist.py 从未存在。\n"
+                   "裸文件名旧件也要抓：见 HANDOFF 的旧表。\n"
+                   "病史行不判：原 TECH-DEBT 已删，改见现行 CHANGELOG。\n"
                    f"真路径不得误报：{ok_a} 与 {ok_b} 都在。\n",
                    encoding="utf-8")
     # 第四式（照八字科第一百六十六批·同步判据不同文字）：**JSON 数据文件里**的死指针
@@ -216,6 +247,11 @@ def selftest(problems: list[str]) -> None:
             problems.append("负例自证失效：data/rules/*.json 里的死指针没被抓到（JSON 载体盲区）")
         if any("_selftest_deadref" in g and ok_a in g for g in got):
             problems.append("负例假阳性：真实存在的裸路径被判成死引用，本器不足以当硬门")
+        # 496 批：裸文件名旧件的正负例
+        if not any("_selftest_deadref.md" in g and "HANDOFF" in g for g in got):
+            problems.append("负例自证失效：活的裸文件名 HANDOFF 没被抓到")
+        if any("_selftest_deadref.md" in g and "TECH-DEBT" in g for g in got):
+            problems.append("负例假阳性：病史行「原 TECH-DEBT 已删」被误判成活引用")
     finally:
         tmp.unlink(missing_ok=True)
         tmp_json.unlink(missing_ok=True)

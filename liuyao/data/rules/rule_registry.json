@@ -220,7 +220,7 @@
           "yingqi_holdout"
         ],
         "dim": "yingqi",
-        "note": "yingqi 维度(11)；yingqi_holdout 为外部候选集（n=2，另 wikisource top-1 ~20% n=35 为泛化读数——见 HANDOFF，非调参对象）"
+        "note": "yingqi 维度(11)；yingqi_holdout 为外部候选集（n=2，只作参照——实时读数见 README 外部集表与 references/source_ledger.md；非调参对象）"
       }
     },
     {

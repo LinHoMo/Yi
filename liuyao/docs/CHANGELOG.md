@@ -5,6 +5,35 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-02 第四百九十六批（六爻·裸文件名死引用）：**`rule_registry.json` 的「见 HANDOFF」是活引用而 HANDOFF 已随扁平化删除；`check_doc_refs` 此前整段跳过裸文件名**
+
+**性质**：共享门补裸文件名判据＋本科数据说明修正（不改判据、不改读数）。
+
+### 一、缺陷
+
+`data/rules/rule_registry.json` 的 `yingqi` 维度 note 写「…另 wikisource top-1
+~20% n=35 为泛化读数——见 HANDOFF，非调参对象」。HANDOFF.md 已随仓库扁平化删除，
+这是活引用指向已删文件（§六.3）；「~20% n=35」与 `README.md` 现行外部集表
+（wikisource_holdout top-1 31.8%、n=50，308 批）也不一致，属旧快照。
+`check_doc_refs.py` 原口径明文规定「裸文件名不构成本器的路径声明」，故一直无门。
+
+### 二、改法
+
+- 共享件新增 `LEGACY`：只对已知已删旧件的裸文件名（HANDOFF／TECH-DEBT／
+  两个幽灵测试文件名）补判；病史行（整行或上一行含病史词，`LEGACY_HISTORY`
+  另收「已删」）豁免；`check_house_conventions.py` 的正则字面量按 `LEGACY_SELF` 排除。
+- selftest 加两式：活 `见 HANDOFF` 必抓、病史行「原 TECH-DEBT 已删」不得误判。
+- 数据修正：note 改为「实时读数见 README 外部集表与 references/source_ledger.md」，
+  删去 HANDOFF 与旧快照数字。
+
+### 三、自证（§四.8）
+
+- **门先于修正**：把 note 改回「见 HANDOFF」→
+  `× data/rules/rule_registry.json:223 引用已随扁平化删除的旧件（裸文件名，无路径前缀）→ HANDOFF`；
+  逐字节还原（sha256 `844AC5DC…`、91255 字节相同）后全绿。
+- 两科全门通过；读数 tune 97.9（n=20）／holdout 90.2（n=12）不变（只改说明与门，§四.7）。
+
+
 ## 2026-11-02 第四百九十五批（八字·代码书证扩面）：**共享件把代码书证门从 `scripts/core` 扩到 `dev_tools/eval`；本科无该册变更，全门与读数不变**
 
 **性质**：共享门覆盖面扩展（本科不改数据、不改判据、不改读数）。
