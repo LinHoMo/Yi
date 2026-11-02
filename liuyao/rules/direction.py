@@ -53,9 +53,9 @@ _DIR = _labels.load("direction")
 
 import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
 
-_ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))  # liuyao/scripts/
-_rules_d = _ks_os.path.join(_ks_os.path.dirname(_ks_d), "rules")  # liuyao/rules/（L2 规则层）
-for _p in (_ks_d, _rules_d):
+_ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))  # liuyao/rules/
+_scripts_d = _ks_os.path.join(_ks_os.path.dirname(_ks_d), "scripts")  # kernel_path/labels_loader 所在
+for _p in (_ks_d, _scripts_d):
     if _p not in _ks_sys.path:
         _ks_sys.path.insert(0, _p)
 

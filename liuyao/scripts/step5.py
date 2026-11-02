@@ -11,9 +11,11 @@ from __future__ import annotations
 import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
 
 _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
+_rules_d = _ks_os.path.join(_ks_os.path.dirname(_ks_d), "rules")  # L2 规则层（direction/rule_engine/predicates）
 
-if _ks_d not in _ks_sys.path:
-    _ks_sys.path.insert(0, _ks_d)
+for _p in (_ks_d, _rules_d):
+    if _p not in _ks_sys.path:
+        _ks_sys.path.insert(0, _p)
 
 from kernel_path import ensure_kernel_on_path as _ks_ensure
 
@@ -77,7 +79,7 @@ _USE_GOD_RULES: list[dict] | None = None
 
 from step4 import _detect_special_pattern, _user_reason  # 跨文件引用
 from step3 import _real_hidden_can_emerge  # 伏神真实 can_emerge 判据（缺陷 C）
-from classical_enhancements_direction import (  # 古籍方向凶格上限（原 TECH-DEBT §2.11 D1，该台账已删；现行登记＝docs/CHANGELOG.md 第二十一批＋本模块 docstring）
+from direction import (  # 古籍方向凶格上限（rules/direction.py，已瘦成 detect_caps 调度壳 + apply_caps）
     apply_caps as apply_direction_caps,
     detect_direction_caps,
 )
