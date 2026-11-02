@@ -103,6 +103,12 @@ class _Ctx:
     def world_broken(self) -> bool:
         return bool(self.wb) and _broken(self.wb, self.month_branch, self.empty)
 
+    @property
+    def world_chg_branch_empty(self) -> bool:
+        """世爻动变之变爻支旬空（世化官空 / 世化退空等组合判据）。"""
+        cb = self.world_chg_branch
+        return bool(cb) and cb in self.empty
+
     # ── T29 六冲/六合救应格局 ──
     @property
     def original_chong(self) -> bool:
@@ -453,6 +459,8 @@ def _eval_predicate(ctx: _Ctx, key: str, want) -> bool:
         return ctx.world_month_state in (want or [])
     if key == "world_broken":
         return ctx.world_broken == bool(want)
+    if key == "world_chg_branch_empty":
+        return ctx.world_chg_branch_empty == bool(want)
     if key == "original_chong":
         return ctx.original_chong == bool(want)
     if key == "original_he":

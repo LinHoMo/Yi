@@ -108,6 +108,19 @@
       "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:3625"}
     },
     {
+      "rule_id": "liuyao.shi_hua_gui.kong",
+      "reason_key": "shi_hua_gui_kong",
+      "when": {
+        "world_moving": true,
+        "world_changed_relation": "官鬼",
+        "world_chg_branch_empty": true
+      },
+      "gates": {"ug_cat_eq": "世爻"},
+      "cap": "凶",
+      "detail_tmpl": "世爻{world_branch}动化出官鬼{world_chg_branch}，而变爻官鬼落空亡（世化官空，非病即灾，八九月见）",
+      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:117987"}
+    },
+    {
       "rule_id": "liuyao.yuan_shen_wu_li",
       "reason_key": "yuan_shen_wu_li",
       "when": {
