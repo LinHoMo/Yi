@@ -69,6 +69,12 @@ class _Ctx:
         self.wpos = int(self.world.get("position", -1)) if self.world else -1
         self.wb = (self.world or {}).get("earthly_branch", "")
         self.we = BRANCH_ELEMENTS.get(self.wb, "")
+        # ── 扩展派生量（阶段1）──
+        self.world_six_rel = (self.world or {}).get("six_relation") or ""
+        self.world_changed_rel = (self.world or {}).get("changed_six_relation") or ""
+        self.moving_rels = {str(y.get("six_relation") or "") for y in self.lines if y.get("is_moving")}
+        self.changed_rels = {str(y.get("changed_six_relation") or "") for y in self.lines if y.get("is_moving")}
+        self.all_rels = {str(y.get("six_relation") or "") for y in self.lines}
 
     # ── 派生量 ──
     @property
@@ -78,6 +84,22 @@ class _Ctx:
     @property
     def world_chg_branch(self) -> str:
         return (self.changes.get(self.wpos, {}) or {}).get("changed_branch") or ""
+
+    @property
+    def world_month_state(self) -> str:
+        return _month_state(self.we, self.me)
+
+    @property
+    def world_broken(self) -> bool:
+        return bool(self.wb) and _broken(self.wb, self.month_branch, self.empty)
+
+    @property
+    def day_ke_world(self) -> bool:
+        return bool(self.de) and bool(self.we) and KE_CYCLE.get(self.de) == self.we
+
+    @property
+    def day_sheng_world(self) -> bool:
+        return bool(self.de) and bool(self.we) and SHENG_CYCLE.get(self.de) == self.we
 
     def yongshen_moving_lines(self) -> list[dict]:
         return [y for y in self.lines
@@ -119,6 +141,50 @@ def _eval_when(ctx: _Ctx, when: dict) -> bool:
                     hit = True
                     break
             if not hit:
+                return False
+        # ── 阶段1新增谓词 ──
+        elif key == "world_six_relation":
+            if ctx.world_six_rel != want:
+                return False
+        elif key == "world_changed_relation":
+            if ctx.world_changed_rel != want:
+                return False
+        elif key == "world_month_state_in":
+            if ctx.world_month_state not in (want or []):
+                return False
+        elif key == "world_broken":
+            if ctx.world_broken != bool(want):
+                return False
+        elif key == "day_ke_world":
+            if ctx.day_ke_world != bool(want):
+                return False
+        elif key == "day_sheng_world":
+            if ctx.day_sheng_world != bool(want):
+                return False
+        elif key == "moving_relation":
+            # want 为 str（存在）或 {"not": str}（不存在）
+            if isinstance(want, dict):
+                if want.get("not") in ctx.moving_rels:
+                    return False
+            elif want not in ctx.moving_rels:
+                return False
+        elif key == "moving_or_changed_relation":
+            # 动爻或变爻出现该六亲：want=str(存在) / {"not": str}(都不存在)
+            present = want in ctx.moving_rels or want in ctx.changed_rels
+            if isinstance(want, dict):
+                rel = want.get("not")
+                if rel in ctx.moving_rels or rel in ctx.changed_rels:
+                    return False
+            elif not present:
+                return False
+        elif key == "any_relation":
+            if want not in ctx.all_rels:
+                return False
+        elif key == "day_element_eq":
+            if ctx.de != want:
+                return False
+        elif key == "month_element_eq":
+            if ctx.me != want:
                 return False
         else:
             # 未知谓词＝规则写错，按"不命中"安全处理（宁可漏压不误压）

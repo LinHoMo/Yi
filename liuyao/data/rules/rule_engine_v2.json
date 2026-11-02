@@ -28,6 +28,33 @@
       "cap": "凶",
       "detail_tmpl": "用神{ug_cat}动化退神（用神退散）",
       "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:948"}
+    },
+    {
+      "rule_id": "liuyao.xiong_chi_shi_ke_cai",
+      "reason_key": "xiong_chi_shi_ke_cai",
+      "when": {"world_six_relation": "兄弟", "any_relation": "妻财"},
+      "gates": {"qcls_eq": "婚姻"},
+      "cap": "凶",
+      "detail_tmpl": "兄弟{world_branch}持世，卦有妻财（克妻财之神临身）",
+      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:2613"}
+    },
+    {
+      "rule_id": "liuyao.tianqi_zhan_yu",
+      "reason_key": "tianqi_yun_cai_dong",
+      "when": {"moving_relation": "妻财", "moving_or_changed_relation": {"not": "父母"}},
+      "gates": {"qcls_eq": "天气·占雨"},
+      "cap": "凶",
+      "detail_tmpl": "占雨而财动父静（财动主晴）",
+      "source": {"book": "黄金策", "locator": "huangjince_dz.dz.txt:300"}
+    },
+    {
+      "rule_id": "liuyao.tianqi_zhan_qing",
+      "reason_key": "tianqi_qing_fu_dong",
+      "when": {"moving_or_changed_relation": "父母"},
+      "gates": {"qcls_eq": "天气·占晴"},
+      "cap": "凶",
+      "detail_tmpl": "占晴而父母发动或化出父母（父动主雨）",
+      "source": {"book": "卜筮全书", "locator": "bushi_quanshu_dz.dz.txt:5721"}
     }
   ]
 }

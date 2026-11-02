@@ -167,23 +167,8 @@ def detect_direction_caps(
                           f"出现，而不持世、不生不合世爻{wb}",
             })
 
-    # ── 2 兄弟持世克财（只取婚姻章）───────────────────────────────
-    # L2612/L2613 的原文主语是「问妻问妾」，本条就只按婚姻开放。
-    # 旧注曾写「求财半边未取证，硬并入会把自有基准里 4 例判吉的失物·求财案压成凶」——
-    # 那句**归因错了一半**：逐例实算后，自有基准里 世爻=兄弟 而 基准=吉 的三例
-    # （ZS011/ZS019/ZS028）**全是失物·寻物**，没有一例是求财；求财类里 世爻=兄弟 的
-    # 只有 ZS015（基准=下跌，与压凶同向）。也就是说当年拦路的是「失物与求财混为一谈」，
-    # 不是求财章本身有冲突。求财半边已在下面第 5 条按书上四条独立表述补上，
-    # 失物侧仍不开放（《增删卜易》全书「失物/脱空/遗失」与「兄弟」同句者为 0 条）。
-    if (world and qcls == "婚姻" and world.get("six_relation") == "兄弟"
-            and any(y.get("six_relation") == "妻财" for y in lines)):
-        caps.append({
-            "rule_id": "liuyao.xiong_chi_shi_ke_cai",
-            "cap": "凶",
-            "src": "zengshan_buyi_dz.dz.txt:2613",
-            "reason_key": "xiong_chi_shi_ke_cai",
-            "detail": f"兄弟{wb}持世，卦有妻财（克妻财之神临身）",
-        })
+    # ── 2 兄弟持世克财（婚姻章）── 已迁 registry v2（rule_engine）
+    # 原门控注释（qcls=婚姻、世=兄弟、卦有妻财）见 rule_engine_v2.json 该条 gates/when。
 
     # ── 5 兄弟持世·求财（本条补齐第 2 条当时"宁缺不假"另开的求财半边）──
     # 书上四条独立表述同指一事（逐字见 verdict_texts.json 该 key 的 basis）：
@@ -346,25 +331,7 @@ def detect_direction_caps(
    #    《卜筮全书》源L5770 逐字「五类中，唯父母为雨。此爻空亡，或休囚不动，雨未可望」；
    #    《卜筮全书》源L5721 逐字「妻财则父母忌爻，动则克制雨神，所以主晴」——
    #    结构事实取自第七十三批同一套判据）
-    if qcls in ("天气·占雨", "天气·占晴"):
-        moving_rels = {str(y.get("six_relation") or "") for y in lines
-                       if isinstance(y, dict) and y.get("is_moving")}
-        changed_rels = {str(y.get("changed_six_relation") or "") for y in lines
-                        if isinstance(y, dict) and y.get("is_moving")}
-        father_move = "父母" in moving_rels or "父母" in changed_rels
-        wealth_move = "妻财" in moving_rels
-        if qcls == "天气·占雨" and wealth_move and not father_move:
-            caps.append({
-                "rule_id": "liuyao.tianqi_zhan_yu", "cap": "凶",
-                "src": "huangjince_dz.dz.txt:300", "reason_key": "tianqi_yun_cai_dong",
-                "detail": "占雨而财动父静（财动主晴）",
-            })
-        elif qcls == "天气·占晴" and father_move:
-            caps.append({
-                "rule_id": "liuyao.tianqi_zhan_qing", "cap": "凶",
-                "src": "bushi_quanshu_dz.dz.txt:5721", "reason_key": "tianqi_qing_fu_dong",
-                "detail": "占晴而父母发动或化出父母（父动主雨）",
-            })
+    # 天气占雨/占晴已迁 registry v2（rule_engine_v2.json tianqi_zhan_yu / tianqi_zhan_qing）。
 
     return caps
 
