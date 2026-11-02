@@ -104,6 +104,8 @@ YILIN = DISC / "data" / "yilin_buyi_maps.json"
 NAYIN = DISC / "data" / "nayin_quxiang.json"
 # 477 批：六爻判词文案表（仅六爻有该册）。
 VERDICT_TEXTS = DISC / "data" / "rules" / "verdict_texts.json"
+# 483 批：六爻问题词典（仅六爻有该册）。
+QUESTION_USE_GODS = DISC / "data" / "rules" / "question_use_gods.json"
 _VERDICT_LOCATOR = re.compile(r"(data/sources/[^:]+):(\d+)")
 _VERDICT_MARK = re.compile(r"''+|={2,}|\{\{|\}\}|\||\*")
 _VERDICT_FIELDS = ("quote", "full_quote", "cond_quote", "verse_quote")
@@ -1671,6 +1673,83 @@ def check_code_anchors(problems: list[str], files=None, lines_of=None) -> int:
     return n
 
 
+def check_usegod_notes(doc: dict, problems: list[str], lines_of=None) -> int:
+    """`question_use_gods` 各族的 note 内「file L####『…』」回验（483 批）。
+
+    为什么需要它：`build_question_use_gods.py` 明写「note 不参与核验」，
+    但 families[71] 的 note 把案例起句与断辞都挂在 `zengshan_buyi.wikitext.txt
+    L1120` 上——实测起句在 L1120，断辞「世爻之鬼，乃滿腹憂疑之象」在 **L1129**。
+    这类 note 行锚此前无门（§六.3）。
+
+    判据：note 内 `<file> L####` 后 **30 字内**的 `『…』` 按所署行逐字核
+    （30 字外的是标签/泛指，不冒充书证）；无锚引文不计数。
+    `lines_of` 供 selftest 注入夹具；正式路径现场读。
+    """
+    fams = (doc or {}).get("families")
+    if not isinstance(fams, list) or not fams:
+        problems.append("用神词典注记：families 缺失或为空——0 结果 ≠ 通过")
+        return 0
+    cache: dict[str, list[str] | None] = {}
+
+    def get_lines(f: str) -> list[str] | None:
+        if lines_of is not None:
+            return lines_of("data/sources/" + f)
+        key = "data/sources/" + f
+        if key not in cache:
+            p = _resolve_any(key)
+            cache[key] = (p.read_text(encoding="utf-8", errors="replace").splitlines()
+                          if p else None)
+        return cache[key]
+
+    A = re.compile(r"([A-Za-z0-9_.\-]+\.txt)\s*L(\d+)")
+    Q = re.compile(r"『([^』]{4,200})』")
+    n = 0
+    for i, fam in enumerate(fams):
+        if not isinstance(fam, dict):
+            continue
+        note = str(fam.get("note") or "")
+        anchors = [(m.start(), m.end(), m.group(1), int(m.group(2)))
+                   for m in A.finditer(note)]
+        for qm in Q.finditer(note):
+            before = [a for a in anchors
+                      if 0 <= qm.start() - a[1] <= 30]
+            after = [a for a in anchors
+                     if 0 <= a[0] - qm.end() <= 30]
+            if before:
+                _, _, f, ln = max(before, key=lambda a: a[1])
+            elif after:
+                _, _, f, ln = min(after, key=lambda a: a[0])
+            else:
+                continue
+            n += 1
+            L = get_lines(f)
+            if L is None:
+                problems.append(f"用神词典注记：families[{i}] 底本不存在 {f}")
+                continue
+            if not (1 <= ln <= len(L)):
+                problems.append(f"用神词典注记：families[{i}] {f}:L{ln} 超出底本")
+                continue
+            if _seg_hit(qm.group(1), L[ln - 1]):
+                continue
+            # 同一 note 里若另有邻近锚能命中，按「锚点次序错」处理（不判红）
+            alt = [(a[2], a[3]) for a in anchors
+                   if 0 <= qm.start() - a[0] <= 120 and (a[2], a[3]) != (f, ln)]
+            hit = False
+            for af, aln in alt:
+                AL = get_lines(af)
+                if AL and 1 <= aln <= len(AL) and _seg_hit(qm.group(1), AL[aln - 1]):
+                    problems.append(f"用神词典注记：families[{i}] 引文不在 {f}:L{ln}，"
+                                    f"实应挂 {af}:L{aln}（同 note 另锚命中）")
+                    hit = True
+                    break
+            if not hit:
+                problems.append(f"用神词典注记：families[{i}] 「{qm.group(1)[:24]}」"
+                                f" 不在 {f}:L{ln}")
+    if n == 0:
+        problems.append("用神词典注记：0 条带锚引文——0 结果 ≠ 通过")
+    return n
+
+
 def selftest(problems: list[str]) -> None:
     """负例：造一条 verified=true 却指向不存在文件/解不到值的条目，必须判红。"""
     fake = {"schema": "yi-rule-registry-v1", "rules": [
@@ -2319,6 +2398,38 @@ def selftest(problems: list[str]) -> None:
     if not any("0 条" in x for x in _cbad("# 无书证")):
         problems.append("负例未抓到：代码书证 0 条")
 
+    # 483 批：用神词典 note 的 file+L『…』（夹具注入）
+    _ug = {"data/sources/__no_such__ug.txt": [
+        "", "辰月戊子日占小舟過關恐盤阻", "世爻之鬼，乃滿腹憂疑之象"]}
+    ugdoc = {"families": [
+        {"label": "ok", "note": "实案『辰月戊子日占小舟過關恐盤阻』"
+                                "（__no_such__ug.txt L2）"},
+        {"label": "ok2", "note": "断辞（__no_such__ug.txt L3）"
+                                 "『世爻之鬼，乃滿腹憂疑之象』"}]}
+    p_ug: list[str] = []
+    n_ug = check_usegod_notes(ugdoc, p_ug, lambda f: _ug.get(f))
+    if p_ug or n_ug != 2:
+        problems.append(f"用神词典注记正例被误伤：{p_ug}（条 {n_ug}）")
+
+    def _ugbad(mut) -> list[str]:
+        d = json.loads(json.dumps(ugdoc, ensure_ascii=False))
+        mut(d)
+        p: list[str] = []
+        check_usegod_notes(d, p, lambda f: _ug.get(f))
+        return p
+
+    if not any("不在 __no_such__ug.txt:L2" in x for x in
+               _ugbad(lambda d: d["families"][1].__setitem__(
+                   "note", "断辞（__no_such__ug.txt L2）『世爻之鬼，乃滿腹憂疑之象』"))):
+        problems.append("负例未抓到：用神词典注记引文不在所署行")
+    if not any("超出底本" in x for x in
+               _ugbad(lambda d: d["families"][1].__setitem__(
+                   "note", "断辞（__no_such__ug.txt L99）『世爻之鬼，乃滿腹憂疑之象』"))):
+        problems.append("负例未抓到：用神词典注记行号越界")
+    if not any("缺失或为空" in x for x in
+               _ugbad(lambda d: d["families"].clear())):
+        problems.append("负例未抓到：用神词典注记 families 为空")
+
 
 def main() -> int:
     if not REG.exists():
@@ -2431,6 +2542,15 @@ def main() -> int:
                 if n_vt < 6:
                     problems.append(f"裁决引文：文件+L 行锚只有 {n_vt} 条（下限 6）")
                 print(f"  裁决引文：{n_vt} 条文件+L 行锚；行号/引文落位已核对")
+        # 483 批：用神词典 note 的 file+L『…』
+        if not QUESTION_USE_GODS.is_file():
+            problems.append("用神词典注记：question_use_gods.json 不存在——0 结果 ≠ 通过")
+        else:
+            ugdoc = json.loads(QUESTION_USE_GODS.read_text(encoding="utf-8"))
+            n_ug = check_usegod_notes(ugdoc, problems)
+            if n_ug < 2:
+                problems.append(f"用神词典注记：只有 {n_ug} 条带锚引文（下限 2）")
+            print(f"  用神词典注记：{n_ug} 条带锚引文；底本/行号/行内逐字已核对")
         # 471 批：火珠林财官伏藏引文行锚（仅六爻册）
         if not FUSHI.is_file():
             problems.append("财官伏藏：caiguan_fushi.json 不存在——0 结果 ≠ 通过")
