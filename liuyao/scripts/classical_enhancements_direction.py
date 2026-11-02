@@ -215,6 +215,32 @@ def detect_direction_caps(
                           f"（占财兄爻为忌神）",
             })
 
+    # ── 3a 世爻独发动化回头克（L3625 通则，旺世也压）──────────────
+    # 关键辨析：变爻六亲按卦宫五行定，而「回头克」是「变爻五行克世爻五行」，
+    #   二者不是一回事。ZD197 世爻官鬼午火独发，变亥水——亥在乾宫为
+    #   「金生水=子孙」，wchg≠官鬼，于是下面的「变鬼」块（只认 wchg==官鬼）
+    #   整体漏压了这一型（尽管 step4 已标「格局-回头克·变出亥」）。
+    #   《增删卜易》源L3625「化回头克，但逢一者皆非吉地」——世旺也压。
+    # 解救只认「子孙动」（子孙制鬼解克）；日辰扶世不救回头克：
+    #   ZD197 原文「世爻午火临日辰本主旺相，不宜申金生亥水回头克世，卒于亥月」。
+    if world and world.get("is_moving"):
+        _wpos = int(world.get("position", -1))
+        _ct = (changes.get(_wpos, {}) or {}).get("change_type") or ""
+        if _ct == "回头克":
+            _mstate = _month_state(we, me)
+            _has_zisun_dong = any(
+                y.get("six_relation") == "子孙" and y.get("is_moving") for y in lines
+            )
+            if not _has_zisun_dong:
+                caps.append({
+                    "rule_id": "liuyao.shi_hua_ke",
+                    "cap": "凶",
+                    "src": "zengshan_buyi_dz.dz.txt:3625",
+                    "reason_key": "shi_hua_gui",
+                    "detail": f"世爻{wb}（{_mstate}）独发动化回头克世（无子孙动解救），"
+                              + _DIR["frag_shi_hua_gui"],
+                })
+
     # ── 3 世爻休囚受克而动变出官鬼（变鬼）─────────────────────────
     wchg = ""
     if world:
