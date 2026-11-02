@@ -55,6 +55,16 @@
       "cap": "凶",
       "detail_tmpl": "占晴而父母发动或化出父母（父动主雨）",
       "source": {"book": "卜筮全书", "locator": "bushi_quanshu_dz.dz.txt:5721"}
+    },
+    {
+      "rule_id": "liuyao.qiu_cai_xiong_chi_shi",
+      "reason_key": "qiu_cai_xiong_shi",
+      "when": {"world_six_relation": "兄弟"},
+      "gates": {"qcls_eq": "求财"},
+      "rescue_any": [{"day_is_world_cai": true}, {"month_is_world_cai": true}],
+      "cap": {"moving": "凶", "still": "平凶"},
+      "detail_tmpl": "兄弟{world_branch}持世{world_moving_phrase}（占财兄爻为忌神）",
+      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:419"}
     }
   ]
 }

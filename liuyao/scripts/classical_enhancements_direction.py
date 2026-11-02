@@ -183,23 +183,9 @@ def detect_direction_caps(
     # 而《增删卜易》全书检索"失物/脱空/遗失"与"兄弟"同句者为 0 条，书上没说这条禁忌，
     # 就不给加。求财类里 世爻=兄弟 的只有 ZS015（基准=下跌，与压凶同向）与回归 fixture
     # reg_18，因此本条**不压任何一条判吉的自有基准**——这是跑出来的，不是推测的。
-    if world and qcls == "求财" and world.get("six_relation") == "兄弟":
-        # 但本书自己给了一条例外，而且带真例：《增删卜易》源L3035 逐字「虽则兄爻持世无财，但喜卯日即是财星」
-        # （立盘见《增删卜易》源L3028 逐字「如未月丁卯日借贷得晋卦」：乾宫金、兄弟酉金持世
-        #  且六爻安静，日辰卯木正是宫金所克之妻财，断曰果得财）；
-        # 同书又把这条例外写成通则：源L2342 逐字「得日月作财而合世，富而骄」。
-        # 故日辰或月建本身即本宫之财（我克者）时，不压本条禁忌——
-        # 这不是给案例开的分支，是书上的明文例外，凡"日月作财"皆同此判。
-        cai_elem = KE_CYCLE.get(we, "")
-        if not ((de and de == cai_elem) or (me and me == cai_elem)):
-            caps.append({
-                "rule_id": "liuyao.qiu_cai_xiong_chi_shi",
-                "cap": "凶" if world.get("is_moving") else "平凶",
-                "src": "zengshan_buyi_dz.dz.txt:419",
-                "reason_key": "qiu_cai_xiong_shi",
-                "detail": f"兄弟{wb}持世{'且发动' if world.get('is_moving') else '安静'}"
-                          f"（占财兄爻为忌神）",
-            })
+    # 兄弟持世·求财（含「日月作财」例外）已迁 registry v2——
+    # 《增删卜易》源L3035「虽则兄爻持世无财，但喜卯日即是财星」、源L2342「得日月作财而合世」；
+    # rule_engine_v2.json: qiu_cai_xiong_chi_shi（rescue: day/month_is_world_cai；cap 动静分档 凶/平凶）。
 
     # ── 3a/3b/3c 已迁 registry v2（rule_engine 仲裁）────────────────
     # 阶段0最小闭环：回头克(3a)/回头生月破(3b)/用神化退(3c) 三条判据从硬编码 if

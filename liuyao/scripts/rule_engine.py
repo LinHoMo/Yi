@@ -101,6 +101,20 @@ class _Ctx:
     def day_sheng_world(self) -> bool:
         return bool(self.de) and bool(self.we) and SHENG_CYCLE.get(self.de) == self.we
 
+    @property
+    def world_cai_element(self) -> str:
+        """本宫之财＝世爻五行所克者（我克者为财）。"""
+        return KE_CYCLE.get(self.we, "") if self.we else ""
+
+    @property
+    def day_is_world_cai(self) -> bool:
+        """日辰即本宫之财（《增删卜易》L2342「得日月作财而合世」例外）。"""
+        return bool(self.de) and bool(self.world_cai_element) and self.de == self.world_cai_element
+
+    @property
+    def month_is_world_cai(self) -> bool:
+        return bool(self.me) and bool(self.world_cai_element) and self.me == self.world_cai_element
+
     def yongshen_moving_lines(self) -> list[dict]:
         return [y for y in self.lines
                 if y.get("six_relation") == self.ug_cat and y.get("is_moving")]
@@ -186,6 +200,12 @@ def _eval_when(ctx: _Ctx, when: dict) -> bool:
         elif key == "month_element_eq":
             if ctx.me != want:
                 return False
+        elif key == "day_is_world_cai":
+            if ctx.day_is_world_cai != bool(want):
+                return False
+        elif key == "month_is_world_cai":
+            if ctx.month_is_world_cai != bool(want):
+                return False
         else:
             # 未知谓词＝规则写错，按"不命中"安全处理（宁可漏压不误压）
             return False
@@ -208,7 +228,7 @@ def _eval_gates(ctx: _Ctx, gates: dict) -> bool:
 def _eval_rescue(ctx: _Ctx, rescue_any: list) -> bool:
     """任一救应条件满足＝规则被解除（不压）。"""
     for pred in (rescue_any or []):
-        # 形式：{"line_exists": {six_relation, is_moving}}
+        # 形式A：{"line_exists": {six_relation, is_moving}} —— 某爻存在
         if "line_exists" in pred:
             need = pred["line_exists"]
             for y in ctx.lines:
@@ -220,6 +240,10 @@ def _eval_rescue(ctx: _Ctx, rescue_any: list) -> bool:
                         ok = False; break
                 if ok:
                     return True
+        else:
+            # 形式B：直接复用 when 谓词（如 day_is_world_cai）——满足则解救
+            if _eval_when(ctx, pred):
+                return True
     return False
 
 
@@ -233,6 +257,7 @@ def _detail(rule: dict, ctx: _Ctx) -> str:
         "world_change_type": ctx.world_ct,
         "world_chg_branch": ctx.world_chg_branch,
         "ug_cat": ctx.ug_cat,
+        "world_moving_phrase": "且发动" if (ctx.world and ctx.world.get("is_moving")) else "安静",
     }
     try:
         return tmpl.format(**ctx_vars)
@@ -251,9 +276,15 @@ def evaluate_caps(lines, step2, step4, month_branch, day_branch, empty_branches)
             continue
         if _eval_rescue(ctx, rule.get("rescue_any")):
             continue
+        # cap 可为字符串（固定档）或 {"moving":..,"still":..}（按世爻动静分档）
+        cap_field = rule["cap"]
+        if isinstance(cap_field, dict):
+            cap_val = cap_field.get("moving") if (ctx.world and ctx.world.get("is_moving")) else cap_field.get("still")
+        else:
+            cap_val = cap_field
         caps.append({
             "rule_id": rule["rule_id"],
-            "cap": rule["cap"],
+            "cap": cap_val,
             "src": (rule.get("source") or {}).get("locator", ""),
             "reason_key": rule.get("reason_key", "shi_hua_gui"),
             "detail": _detail(rule, ctx),
