@@ -1,0 +1,45 @@
+{
+  "schema": "yi-ontology/l0-metaphysics/1",
+  "_comment": "L0 元理层（哲学公理）：易学图谱的最底层。每条公理是后续一切象数、术语、规则的哲学依据。只读知识层，不参与评分。",
+  "nodes": [
+    {
+      "kid": "yi.l0.yinyang",
+      "name": "阴阳",
+      "def": "万物一分为二，动静、刚柔、进退、消长。阳主动、主刚、主显；阴主静、主柔、主隐。",
+      "children": ["yi.l0.wuxing", "yi.l0.bagua"],
+      "relations": []
+    },
+    {
+      "kid": "yi.l0.wuxing",
+      "name": "五行",
+      "def": "金木水火土五种动能。相生以互济，相克以制约——无生则无发育，无克则无节制。",
+      "parents": ["yi.l0.yinyang"],
+      "children": ["yi.l0.wuxing.sheng", "yi.l0.wuxing.ke"],
+      "relations": []
+    },
+    {
+      "kid": "yi.l0.wuxing.sheng",
+      "name": "五行相生",
+      "def": "木生火、火生土、土生金、金生水、水生木。生者，助也、育也。",
+      "parents": ["yi.l0.wuxing"],
+      "children": ["yi.l1.wuxing.sheng_cycle"],
+      "relations": []
+    },
+    {
+      "kid": "yi.l0.wuxing.ke",
+      "name": "五行相克",
+      "def": "金克木、木克土、土克水、水克火、火克金。克者，制也、约也。过克则伤，反克则侮。",
+      "parents": ["yi.l0.wuxing"],
+      "children": ["yi.l1.wuxing.ke_cycle"],
+      "relations": []
+    },
+    {
+      "kid": "yi.l0.bagua",
+      "name": "八卦",
+      "def": "乾兑离震巽坎艮坤，阴阳爻三叠而成，象天地雷风水火山泽。",
+      "parents": ["yi.l0.yinyang"],
+      "children": ["yi.l1.najia"],
+      "relations": []
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "schema": "yi-ontology/l2-concepts/1",
+  "_comment": "L2 概念层（术数术语）：看盘时认的东西。每个术语挂 parents（它从哪条象数公理来）。",
+  "nodes": [
+    {
+      "kid": "yi.l2.concept.huitouke",
+      "name": "回头克",
+      "def": "动爻所变出之爻，其五行反克本爻之五行（如酉金动变午火，火克金）。属《增删卜易》七化凶之一。",
+      "parents": ["yi.l1.wuxing.ke_cycle"],
+      "children": ["yi.l3.rule.shi_hua_ke", "yi.l3.rule.shi_hua_ke_wang"],
+      "engine_impl": "rules/predicates.py:HUA_XIONG",
+      "evidence": [{"book": "增删卜易", "text": "凡用神原神动化回头克、化绝、化墓、化空、化鬼、化退神，皆为化凶"}]
+    },
+    {
+      "kid": "yi.l2.concept.shi_wang",
+      "name": "世爻临月建/日建旺",
+      "def": "世爻五行与月建（或日辰）五行同气为旺。世旺则能胜任吉凶之任，凶来亦可待时而解。",
+      "parents": ["yi.l1.wuxing.sheng_cycle", "yi.l0.wuxing"],
+      "children": ["yi.l3.rule.shi_hua_ke_wang"],
+      "engine_impl": "rules/predicates.py:_month_state"
+    },
+    {
+      "kid": "yi.l2.concept.huitouke_chongjie",
+      "name": "冲解回头克",
+      "def": "回头克之凶，待冲去克神之年月日时而解（如午火克酉金，待子日冲午火）。",
+      "parents": ["yi.l1.branch.chong", "yi.l2.concept.huitouke"],
+      "children": ["yi.l3.rule.shi_hua_ke_wang"]
+    }
+  ]
+}

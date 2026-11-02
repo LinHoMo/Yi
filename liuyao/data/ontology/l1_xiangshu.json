@@ -1,0 +1,44 @@
+{
+  "schema": "yi-ontology/l1-xiangshu/1",
+  "_comment": "L1 象数层（模型怎么搭）：锚定 core/yishu_core/symbols.py 的真实数据表，每条节点 engine_impl 指到具体符号。知识层只读，不参与评分。",
+  "nodes": [
+    {
+      "kid": "yi.l1.wuxing.sheng_cycle",
+      "name": "五行相生表",
+      "def": "木→火→土→金→水→木 循环相生。",
+      "parents": ["yi.l0.wuxing.sheng"],
+      "engine_impl": "yishu_core/symbols.py:SHENG_CYCLE",
+      "data": {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}
+    },
+    {
+      "kid": "yi.l1.wuxing.ke_cycle",
+      "name": "五行相克表",
+      "def": "木→土→水→火→金→木 循环相克。过克伤身，反克为侮。",
+      "parents": ["yi.l0.wuxing.ke"],
+      "engine_impl": "yishu_core/symbols.py:KE_CYCLE",
+      "data": {"木": "土", "土": "水", "水": "火", "火": "金", "金": "木"}
+    },
+    {
+      "kid": "yi.l1.branch.chong",
+      "name": "六冲（地支对冲）",
+      "def": "子午冲、丑未冲、寅申冲、卯酉冲、辰戌冲、巳亥冲。冲者，散也、动也、解也。",
+      "parents": ["yi.l0.wuxing.ke"],
+      "engine_impl": "yishu_core/symbols.py:CHONG_PAIRS",
+      "children": ["yi.l2.concept.huitouke_chongjie"]
+    },
+    {
+      "kid": "yi.l1.branch.he",
+      "name": "六合（地支相合）",
+      "def": "子丑合、寅亥合、卯戌合、辰酉合、巳申合、午未合。合者，聚也、亲也、绊也。",
+      "parents": ["yi.l0.yinyang"],
+      "engine_impl": "yishu_core/symbols.py:HE_PAIRS"
+    },
+    {
+      "kid": "yi.l1.najia",
+      "name": "纳甲装卦",
+      "def": "八卦各纳天干、地支，六亲（父母兄弟妻财官鬼子孙）由宫五行与爻五行的生克关系定出。",
+      "parents": ["yi.l0.bagua", "yi.l1.wuxing.ke_cycle"],
+      "engine_impl": "yishu_core/symbols.py:NAJIA_BRANCHES"
+    }
+  ]
+}
