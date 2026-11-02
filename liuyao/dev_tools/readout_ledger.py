@@ -83,11 +83,12 @@ def checks():
     def c_dz(t):
         s = sh(["scripts/evaluate.py", "--split", "zengshan_dz_holdout"])
         return (grab(s, r"平均分 = ([0-9.]+)%"), grab(s, r"strict top-1 命中 ([0-9.]+)%"))
-    add("liuyao.zengshan_dz(61.8/41.4)",
+    add("liuyao.zengshan_dz(64.3/44.8)",
         "README 表→308批→402批改期望（dz 扩样 21→29；priority-anchor＋CASE_RE 之/单字题）；"
         "415 批多支基准口径修正（yingqi_branches 全纳入，原 60.3/37.9；新旧不可比）；"
-        "419 批恢复 403 批清空的 18 例用神书证（use_god/branch/note）并补支式抽取，61.5→61.8（新旧不可比）",
-        c_dz, ("61.8", "41.4"))
+        "419 批恢复 403 批清空的 18 例用神书证（use_god/branch/note）并补支式抽取，61.5→61.8（新旧不可比）；"
+        "498 批修 ZD214 expected 错配（建器把相邻坎之井验语酉戌安到离之旅头上，实应卯辰），61.8→64.3/41.4→44.8（新旧不可比）",
+        c_dz, ("64.3", "44.8"))
 
     def c_bushi(t):
         s = sh(["scripts/evaluate.py", "--split", "bushi_zhengzong_holdout"])
@@ -201,8 +202,9 @@ def checks():
         "430 批八字恢复 check_case_quotes（门 [41]，blocking）→ 八字 46→47、blk 28→29，六爻不变；"
         "433 批两科各新增 check_source_provenance（门 [42]，blocking）→ 六爻 69→70、blk 31→32，"
         "八字 47→48、blk 29→30；438 批六爻新增 check_case_source_hashes（门 [43]，blocking）"
-        "→ 六爻 70→71、blk 32→33，八字不变）",
-        lambda t: _gov_counts(), ("71", "48", "33", "30"))
+        "→ 六爻 70→71、blk 32→33，八字不变；499 批八字新增 cross_version_collate.py"
+        "（跨版本窗口对拍，观测非 blocking 门）→ 八字 48→49，blk 不变）",
+        lambda t: _gov_counts(), ("71", "49", "33", "30"))
 
     # 344 批：expected 书证/机械派生字段的覆盖生存线（门 [38]）。
     # 1592923 的事故证明「聚合分掉 6 分、所有门全绿」可以并存；本项把非空计数

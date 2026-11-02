@@ -1,13 +1,16 @@
 {
- "count": 48,
+ "count": 49,
  "by_tier": {
   "tool": 2,
   "ondemand": 7,
   "build": 8,
   "blocking": 30,
+  "UNCLASSIFIED": 1,
   "nightly": 1
  },
- "unclassified": [],
+ "unclassified": [
+  "cross_version_collate.py"
+ ],
  "curated_but_missing": [],
  "tier_link_violations": {
   "blocking_not_referenced": [],
@@ -263,6 +266,13 @@
    "guards": "语料进没进报告的接线读数（挂 [8] 系；207 批更正）",
    "run_by_check_py": true,
    "doc": "语料接线残差的**归类器**：把 `[8]` 报出的「未进并集」逐条分成四类，防止一个悲观计数被当成结论。"
+  },
+  {
+   "script": "cross_version_collate.py",
+   "tier": "UNCLASSIFIED",
+   "guards": "",
+   "run_by_check_py": false,
+   "doc": "跨版本窗口对拍（499批）——八字各书 dz(殆知阁) vs wikitext(维基文库) 两转录链一致性。"
   },
   {
    "script": "diff_siku_sanming.py",

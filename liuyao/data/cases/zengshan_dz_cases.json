@@ -2503,13 +2503,14 @@
         "use_god": "",
         "use_god_branch": "",
         "use_god_position": "",
-        "yingqi": "酉日、戌日",
+        "yingqi": "卯日、辰日",
         "yingqi_branches": [
-          "戌",
-          "酉"
+          "卯",
+          "辰"
         ],
-        "detail": "果于酉日天变，戌日而雨，午火财爻墓于戌也",
-        "same_as_day_branch": false
+        "detail": "果于寅日阴云卯日大雨辰日大晴（连占：离之旅→离→艮之谦；前卦卯木父动化辰土子孙，卯日雨辰日晴）",
+        "same_as_day_branch": false,
+        "use_god_note": "498批核原文L2070-2084修正：原验语\"酉日天变戌日雨·午火财墓戌\"属相邻案例L2086坎之井，建器锚句归属错配；案例A离之旅应期为卯日雨辰日晴。案例B因\"戌日丙午日\"干支一日两号（底本讹字）被时间可还原门拦截，不另立。"
       },
       "provenance": {
         "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
