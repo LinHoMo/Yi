@@ -25,6 +25,36 @@
       "def": "回头克之凶，待冲去克神之年月日时而解（如午火克酉金，待子日冲午火）。",
       "parents": ["yi.l1.branch.chong", "yi.l2.concept.huitouke"],
       "children": ["yi.l3.rule.shi_hua_ke_wang"]
+    },
+    {
+      "kid": "yi.l2.concept.yongshen",
+      "name": "用神（占断核心）",
+      "def": "所占之事对应的六亲爻：占财看妻财、占官看官鬼、占文书看父母、占解忧看子孙、占兄弟同辈看兄弟。用神为一卦之主。",
+      "parents": ["yi.l1.najia", "yi.l0.wuxing"],
+      "children": ["yi.l2.concept.yongshen_liuqin", "yi.l2.concept.yuan_shen"],
+      "engine_impl": "data/rules/use_god_relations.json"
+    },
+    {
+      "kid": "yi.l2.concept.yongshen_liuqin",
+      "name": "六亲取用规则",
+      "def": "按问类定用神：男家占女以财为用、女家占男以官为用、自占病以世爻为用、子占母孕以兄弟为用等（《增删卜易》17 条逐字规则）。",
+      "parents": ["yi.l2.concept.yongshen", "yi.l1.wuxing.ke_cycle"],
+      "engine_impl": "data/rules/use_god_relations.json:rules"
+    },
+    {
+      "kid": "yi.l2.concept.yuan_shen",
+      "name": "原神/忌神/仇神",
+      "def": "生用神者为原神，克用神者为忌神，克原神者为仇神。原神有力则事易成，忌神动则事受阻。",
+      "parents": ["yi.l2.concept.yongshen", "yi.l0.wuxing.sheng"],
+      "children": ["yi.l3.rule.yuan_shen_wu_li"]
+    },
+    {
+      "kid": "yi.l2.concept.wenlei",
+      "name": "问类（分占域）",
+      "def": "按问事分域：婚姻、求财、功名科举、官非词讼、疾病（久病/近病）、天气、失物、逃亡等 12 类。不同问类有不同取用与判法。",
+      "parents": ["yi.l0.bagua"],
+      "children": ["yi.l3.rule.liuchong_bian_liuhe", "yi.l3.rule.tianqi_zhan_yu", "yi.l3.rule.tianqi_zhan_qing"],
+      "engine_impl": "data/rules/question_classes.json:classes"
     }
   ]
 }

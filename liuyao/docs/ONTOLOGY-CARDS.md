@@ -123,6 +123,32 @@
 - **依据**：yi.l1.wuxing.sheng_cycle、yi.l0.wuxing
 - **代码锚点**：`rules/predicates.py:_month_state`
 
+### 问类（分占域）  `yi.l2.concept.wenlei`
+- **定义**：按问事分域：婚姻、求财、功名科举、官非词讼、疾病（久病/近病）、天气、失物、逃亡等 12 类。不同问类有不同取用与判法。
+- **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.sixiang → yi.l0.bagua → yi.l2.concept.wenlei
+- **派生**：yi.l3.rule.liuchong_bian_liuhe、yi.l3.rule.tianqi_zhan_yu、yi.l3.rule.tianqi_zhan_qing
+- **依据**：yi.l0.bagua
+- **代码锚点**：`data/rules/question_classes.json:classes`
+
+### 用神（占断核心）  `yi.l2.concept.yongshen`
+- **定义**：所占之事对应的六亲爻：占财看妻财、占官看官鬼、占文书看父母、占解忧看子孙、占兄弟同辈看兄弟。用神为一卦之主。
+- **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.sixiang → yi.l0.bagua → yi.l1.najia → yi.l2.concept.yongshen
+- **派生**：yi.l2.concept.yongshen_liuqin、yi.l2.concept.yuan_shen
+- **依据**：yi.l1.najia、yi.l0.wuxing
+- **代码锚点**：`data/rules/use_god_relations.json`
+
+### 六亲取用规则  `yi.l2.concept.yongshen_liuqin`
+- **定义**：按问类定用神：男家占女以财为用、女家占男以官为用、自占病以世爻为用、子占母孕以兄弟为用等（《增删卜易》17 条逐字规则）。
+- **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.sixiang → yi.l0.bagua → yi.l1.najia → yi.l2.concept.yongshen → yi.l2.concept.yongshen_liuqin
+- **依据**：yi.l2.concept.yongshen、yi.l1.wuxing.ke_cycle
+- **代码锚点**：`data/rules/use_god_relations.json:rules`
+
+### 原神/忌神/仇神  `yi.l2.concept.yuan_shen`
+- **定义**：生用神者为原神，克用神者为忌神，克原神者为仇神。原神有力则事易成，忌神动则事受阻。
+- **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.sixiang → yi.l0.bagua → yi.l1.najia → yi.l2.concept.yongshen → yi.l2.concept.yuan_shen
+- **派生**：yi.l3.rule.yuan_shen_wu_li
+- **依据**：yi.l2.concept.yongshen、yi.l0.wuxing.sheng
+
 
 ## L3 · 规则层（判法）
 
