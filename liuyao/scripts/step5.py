@@ -122,26 +122,30 @@ def step5_synthesize(r: dict) -> dict:
     hex_name = safe_get(step1_data, "hexagram_name", default="")
     palace = safe_get(step1_data, "palace", default="")
 
-    hex_adjustment = 0.0
+    # dir_caps 提前至此：卦体调候 score_delta（六合+0.5/六冲-0.5）由 rule_engine 求值。
+    # cap 压档仍在 5.7b 复用同一份 dir_caps。
+    _mt_sb = safe_get(div_time, "month_stem_branch", default="")
+    _qclass_w = str((step2_data or {}).get("question_class") or "")
+    _weather_override = _qclass_w in ("天气·占雨", "天气·占晴")
+    dir_caps = [] if _weather_override else detect_direction_caps(
+        safe_get(r, "original_hexagram", "yao_lines", default=[]),
+        step2_data, step4_data,
+        _mt_sb[1:] if len(_mt_sb) >= 2 else "",
+        day_branch,
+        list(r.get("empty_branches") or []),
+        safe_get(r, "original_hexagram", "name", default=""),
+        safe_get(r, "changed_hexagram", "name", default=""),
+        str(safe_get(r, "question", default="") or ""),
+    )
+    hex_adjustment = round(sum(c.get("score_delta", 0.0) for c in dir_caps), 2)
     hex_adjustment_reason = ""
-
-    # 六合卦检查（上下卦各爻对应六合）
     if hex_name in HEXAGRAM_LIUHE:
-        hex_adjustment += 0.5
         hex_adjustment_reason = FREASON["hex_liuhe_reason"]["text"]
-
-    # 六冲卦检查（用神旺衰门，第两百九十八批）：第两百八十七批已将 step4 六冲
-    # 主散计价加用神旺衰门；本层卦体调候的六冲 −0.5 同属冲散之害，门同构。
-    # 书证《增删卜易》源L780 逐字「必兼用神而言，用神旺虽冲不破」。
-    # 又《增删卜易》源L844 逐字「予屡试之，旺相者冲之不散」——用神月令旺相时减免，
-    # 失陷维持旧计。
-    _ug_el5 = str(safe_get(step3_data, "use_god_element", default="") or "")
     _ug_ms5 = str(safe_get(step3_data, "god_month_strength", default="") or "")
     if hex_name in HEXAGRAM_LIUCHONG:
-        if _ug_el5 and _ug_ms5 in ("旺", "相"):
+        if _ug_ms5 in ("旺", "相"):
             hex_adjustment_reason = FREASON["hex_liuchong_wang_reason"]["text"]
         else:
-            hex_adjustment -= 0.5
             hex_adjustment_reason = FREASON["hex_liuchong_reason"]["text"]
 
     # ---------- 5.4: 六神辅助调整（协纪辨方书—六兽分阴阳日）----------
@@ -244,8 +248,6 @@ def step5_synthesize(r: dict) -> dict:
     # 财动主晴"为唯一主判。故天气门类直接以 _weather_verdict_score 的古籍档位为 final_score，
     # 短路通用评分，并屏蔽下游覆写链（强凶／主象换位／方向 cap），保证 verdict 由书定。
     # 天气案例均落在外部集 [6]，不进 [4] 回归集与金标准看门狗，本短路不改变金标准指纹。
-    _qclass_w = str((step2_data or {}).get("question_class") or "")
-    _weather_override = _qclass_w in ("天气·占雨", "天气·占晴")
     if _weather_override:
         _yl_w = safe_get(r, "original_hexagram", "yao_lines", default=[]) or []
         _ug_cat_w = (step2_data or {}).get("use_god_category") or ""
@@ -313,42 +315,14 @@ def step5_synthesize(r: dict) -> dict:
     # 展示句全部取自 verdict_texts.json，代码内无断语字面量（SKILL.md）。
     _mt_sb = safe_get(div_time, "month_stem_branch", default="")
     # 天气占已短路，方向 / 主象 cap 对天气无效，跳过。
-    dir_caps = [] if _weather_override else detect_direction_caps(
-        safe_get(r, "original_hexagram", "yao_lines", default=[]),
-        step2_data, step4_data,
-        _mt_sb[1:] if len(_mt_sb) >= 2 else "",
-        day_branch,
-        list(r.get("empty_branches") or []),
-        safe_get(r, "original_hexagram", "name", default=""),
-        safe_get(r, "changed_hexagram", "name", default=""),
-    )
-    # ---------- 5.7c: 主象随自占／代占换位（第九十二批，只压档不加和）----------
-    # 《卜筮全书》源L7034 逐字「又自占，以世为主；代占，以应为主」；
-    # 《卜筮全书》源L5437 逐字「应受伤，不利代占，盖代占以应为主也；世受伤，不利自占，盖自占以世为主也」；
-    # 《易林补遗》源L965 逐字「倘若他人代卜，反将应象为尊」；《卜筮全书》源L9589 逐字「代占，以应爻论之」。
-    # 书上「不利」不等于「必凶」⇒ 上限取 平吉（不锁死），只压档不进加和。
-    # 名分不明时不猜主象、不压档——《卜筮正宗》源L1095 逐字「必先明说是何名分，方可就其亲疏、上下分别用神以为占验」。
-    _role = _divination_role(str(safe_get(r, "question", default="") or ""))
-    _zhu_kind = {"自占": "is_world", "代占": "is_response"}.get(_role, "")
-    _yl57 = safe_get(r, "original_hexagram", "yao_lines", default=[]) or []
-    if _zhu_kind and not _weather_override:
-        _zhu = next((y for y in _yl57 if isinstance(y, dict) and y.get(_zhu_kind)), None)
-        _ze = BRANCH_ELEMENTS.get((_zhu or {}).get("earthly_branch") or "", "")
-        _me57 = _mt_sb[1:] if len(_mt_sb) >= 2 else ""
-        _atk57 = {BRANCH_ELEMENTS.get(x or "", "") for x in (day_branch, _me57)}
-        _atk57 |= {BRANCH_ELEMENTS.get(y.get("earthly_branch") or "")
-                   for y in _yl57 if isinstance(y, dict) and y.get("is_moving")}
-        if _ze and any(KE_CYCLE.get(a) == _ze for a in _atk57 if a):
-            dir_caps.append({
-                "rule_id": "liuyao.zhu_xiang_shou_shang",
-                "cap": "平吉",
-                "src": "《卜筮全书》主象世应之说（逐字书据见上注与 verdict_texts 该键 basis）",
-                "reason_key": "zhu_xiang_hurt_cap",
-                "detail": f"{_role}·主象在{'世' if _role == '自占' else '应'}"
-                          f"爻 {(_zhu or {}).get('earthly_branch')} 受日月动爻之克"})
+    # 主象随自占/代占换位 cap（第九十二批）已迁 rules/registry_v2.json
+    # (liuyao.zhu_xiang_shou_shang)，由 rule_engine 统一求值。
+    # dir_caps 已在 5.3 提前算出，此处直接复用。
     _capped, _cap_fired = apply_direction_caps(verdict, dir_caps)
     if dir_caps and not _weather_override:
         for _c in dir_caps:
+            if "cap" not in _c:
+                continue  # score_delta 规则不进 cap note 链
             _cap_note = f"{note_text(_c['reason_key'])}（{_c.get('src', '')}；{_c.get('detail', '')}）"
             classical_notes.append(_cap_note)
             # 第九十二批：cap 注此前只进 classical_notes，而该表在 5.5h 之后不再并回产出

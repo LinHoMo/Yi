@@ -78,3 +78,26 @@ def _world_line(lines: list[dict]) -> dict | None:
 
 def _broken(branch: str, month_branch: str, empty_branches: list[str]) -> bool:
     return branch in (empty_branches or []) or _chong(branch, month_branch)
+
+
+# ── 自占/代占名分三态（主象换位 cap 用，纯文本嗅探）────────────────────
+_ROLE_WORDS = "父母子夫妻兄弟妻女儿孙侄伯叔舅姑姨仆奴婢主师姊妹"
+
+
+def divination_role(text: str) -> str:
+    """名分三态：自占 | 代占 | 名分不明（第八十九批）。
+
+    判据只认问句里**写出来的**名分，不做推测：《卜筮正宗》源L1095 逐字
+    「又如与人代占，必先明说是何名分，方可就其亲疏、上下分别用神以为占验」。
+    """
+    t = str(text or "")
+    if any(k in t for k in ("自占", "占自身", "自身占", "我自己占", "我占自身")):
+        return "自占"
+    if any(k in t for k in ("代占", "代卜", "代人占", "代占婚", "为代人")):
+        return "代占"
+    _i = t.find("占")
+    if _i > 0 and t[_i - 1] in _ROLE_WORDS:
+        return "代占"
+    if _i > 0 and t[_i - 1] == "自":
+        return "自占"
+    return "名分不明"

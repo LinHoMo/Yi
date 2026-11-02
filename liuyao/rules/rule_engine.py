@@ -32,6 +32,7 @@ from yishu_core.symbols import BRANCH_ELEMENTS, SHENG_CYCLE, KE_CYCLE  # noqa: E
 from chain_tables import HEXAGRAM_LIUCHONG, HEXAGRAM_LIUHE  # noqa: E402  六冲/六合卦表（T29 救应格局）
 from predicates import (  # noqa: E402  纯函数共享库，无反向依赖
     _world_line, _month_state, _chong, _broken, _he, RANK, HUA_XIONG,
+    divination_role,
 )
 
 
@@ -54,7 +55,7 @@ class _Ctx:
     """盘面上下文：预计算派生量，供谓词求值。"""
 
     def __init__(self, lines, step2, step4, month_branch, day_branch, empty_branches,
-                 original_hx="", changed_hx=""):
+                 original_hx="", changed_hx="", question_text=""):
         self.lines = [y for y in (lines or []) if isinstance(y, dict)]
         self.step2 = step2 or {}
         self.month_branch = month_branch or ""
@@ -62,6 +63,7 @@ class _Ctx:
         self.empty = list(empty_branches or [])
         self.original_hx = original_hx or ""
         self.changed_hx = changed_hx or ""
+        self.question_text = question_text or ""
         self.me = BRANCH_ELEMENTS.get(self.month_branch, "")
         self.de = BRANCH_ELEMENTS.get(self.day_branch, "")
         self.qcls = str(self.step2.get("question_class") or "")
@@ -106,6 +108,11 @@ class _Ctx:
     def original_chong(self) -> bool:
         """原卦为六冲卦（主散）。"""
         return self.original_hx in HEXAGRAM_LIUCHONG
+
+    @property
+    def original_he(self) -> bool:
+        """原卦为六合卦（主合）。"""
+        return self.original_hx in HEXAGRAM_LIUHE
 
     @property
     def changed_he(self) -> bool:
@@ -279,6 +286,11 @@ class _Ctx:
         return ""
 
     @property
+    def ug_month_state(self) -> str:
+        """用神月令旺衰（旺/相/休/囚/死）。"""
+        return _month_state(self.ug_el_resolved, self.me)
+
+    @property
     def ug_branch(self) -> str:
         y = self.ug_line
         return (y or {}).get("earthly_branch", "")
@@ -354,6 +366,40 @@ class _Ctx:
         return [y for y in self.lines
                 if y.get("six_relation") == self.ug_cat and y.get("is_moving")]
 
+    # ── 主象随自占/代占换位（第九十二批 cap）────────────────────────
+    @property
+    def role(self) -> str:
+        return divination_role(self.question_text)
+
+    @property
+    def zhu_line(self) -> dict | None:
+        """自占→世爻；代占→应爻；名分不明→None。"""
+        flag = {"自占": "is_world", "代占": "is_response"}.get(self.role, "")
+        if not flag:
+            return None
+        return next((y for y in self.lines if y.get(flag)), None)
+
+    @property
+    def zhu_xiang_hurt(self) -> bool:
+        """主象（世/应）受日月或动爻之克。"""
+        zhu = self.zhu_line
+        if not zhu:
+            return False
+        ze = BRANCH_ELEMENTS.get(zhu.get("earthly_branch") or "", "")
+        if not ze:
+            return False
+        attackers = {x for x in (self.de, self.me) if x}
+        for y in self.lines:
+            if y.get("is_moving"):
+                ye = BRANCH_ELEMENTS.get(y.get("earthly_branch") or "", "")
+                if ye:
+                    attackers.add(ye)
+        return any(KE_CYCLE.get(a) == ze for a in attackers)
+
+    @property
+    def zhu_branch(self) -> str:
+        return (self.zhu_line or {}).get("earthly_branch") or ""
+
     def line_matches(self, pred: dict) -> bool:
         """某爻是否满足 {six_relation?, is_moving?, earthly_branch?} 谓词。"""
         for k, want in pred.items():
@@ -409,8 +455,12 @@ def _eval_predicate(ctx: _Ctx, key: str, want) -> bool:
         return ctx.world_broken == bool(want)
     if key == "original_chong":
         return ctx.original_chong == bool(want)
+    if key == "original_he":
+        return ctx.original_he == bool(want)
     if key == "changed_he":
         return ctx.changed_he == bool(want)
+    if key == "ug_month_state_in":
+        return ctx.ug_month_state in (want or [])
     if key == "day_ke_world":
         return ctx.day_ke_world == bool(want)
     if key == "day_sheng_world":
@@ -466,6 +516,8 @@ def _eval_predicate(ctx: _Ctx, key: str, want) -> bool:
         return ctx.yongshen_rooted == bool(want)
     if key == "yongshen_guan_sheng_world_chain":
         return ctx.yongshen_guan_sheng_world_chain == bool(want)
+    if key == "zhu_xiang_hurt":
+        return ctx.zhu_xiang_hurt == bool(want)
     # 未知谓词＝规则写错，按"不命中"安全处理（宁可漏压不误压）
     return False
 
@@ -521,6 +573,9 @@ def _detail(rule: dict, ctx: _Ctx) -> str:
         "world_gui_tag_prefix": ctx.world_gui_tag_prefix,
         "ug_branch": ctx.ug_branch,
         "ug_cat": ctx.ug_cat or "用神",
+        "zhu_branch": ctx.zhu_branch,
+        "zhu_role": ctx.role,
+        "zhu_branch_pos": "世" if ctx.role == "自占" else "应",
     }
     try:
         return tmpl.format(**ctx_vars)
@@ -529,10 +584,10 @@ def _detail(rule: dict, ctx: _Ctx) -> str:
 
 
 def evaluate_caps(lines, step2, step4, month_branch, day_branch, empty_branches,
-                  original_hx="", changed_hx="") -> list[dict]:
+                  original_hx="", changed_hx="", question_text="") -> list[dict]:
     """对盘面求值所有 v2 规则，返回命中的 cap dict 列表（结构与旧 detect 一致）。"""
     ctx = _Ctx(lines, step2, step4, month_branch, day_branch, empty_branches,
-               original_hx, changed_hx)
+               original_hx, changed_hx, question_text)
     caps = []
     for rule in _load_rules():
         if not _eval_gates(ctx, rule.get("gates")):
@@ -541,17 +596,23 @@ def evaluate_caps(lines, step2, step4, month_branch, day_branch, empty_branches,
             continue
         if _eval_rescue(ctx, rule.get("rescue_any")):
             continue
-        # cap 可为字符串（固定档）或 {"moving":..,"still":..}（按世爻动静分档）
-        cap_field = rule["cap"]
-        if isinstance(cap_field, dict):
-            cap_val = cap_field.get("moving") if (ctx.world and ctx.world.get("is_moving")) else cap_field.get("still")
-        else:
-            cap_val = cap_field
-        caps.append({
+        entry = {
             "rule_id": rule["rule_id"],
-            "cap": cap_val,
             "src": (rule.get("source") or {}).get("locator", ""),
             "reason_key": rule.get("reason_key", "shi_hua_gui"),
             "detail": _detail(rule, ctx),
-        })
+        }
+        # cap 档（压 verdict）——可为字符串或 {"moving":..,"still":..}
+        if "cap" in rule:
+            cap_field = rule["cap"]
+            if isinstance(cap_field, dict):
+                entry["cap"] = (cap_field.get("moving")
+                                if (ctx.world and ctx.world.get("is_moving"))
+                                else cap_field.get("still"))
+            else:
+                entry["cap"] = cap_field
+        # score_delta（加进 final_score）——与 cap 互斥或并存
+        if "score_delta" in rule:
+            entry["score_delta"] = rule["score_delta"]
+        caps.append(entry)
     return caps

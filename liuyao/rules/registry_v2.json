@@ -164,6 +164,31 @@
       "cap": "吉",
       "detail_tmpl": "用神{ug_branch}（{ug_cat}）生官鬼、官鬼动而生世，连续相生，财气通门户",
       "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:16685"}
+    },
+    {
+      "rule_id": "liuyao.zhu_xiang_shou_shang",
+      "reason_key": "zhu_xiang_hurt_cap",
+      "when": {"zhu_xiang_hurt": true},
+      "cap": "平吉",
+      "detail_tmpl": "{zhu_role}·主象在{zhu_branch_pos}爻 {zhu_branch} 受日月动爻之克",
+      "source": {"book": "卜筮全书", "locator": "bushi_quanshu_dz.dz.txt:7034"}
+    },
+    {
+      "rule_id": "liuyao.hex_liuhe",
+      "reason_key": "hex_liuhe_reason",
+      "when": {"original_he": true},
+      "score_delta": 0.5,
+      "detail_tmpl": "卦得六合，主合和聚气",
+      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:780"}
+    },
+    {
+      "rule_id": "liuyao.hex_liuchong",
+      "reason_key": "hex_liuchong_reason",
+      "when": {"original_chong": true},
+      "rescue_any": [{"ug_month_state_in": ["旺", "相"]}],
+      "score_delta": -0.5,
+      "detail_tmpl": "卦逢六冲，主散；用神旺相则冲之不散",
+      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:780"}
     }
   ]
 }
