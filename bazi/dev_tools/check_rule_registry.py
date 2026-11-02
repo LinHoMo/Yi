@@ -102,6 +102,13 @@ locator 从未被读取。现按声明核对：行号在册、`quote/full_quote/
 裸 `源L` 按同条目 `locator` 底本，行号在册；紧邻 `「` 的锚已由 479/480 覆盖，
 本门不重复判。首跑 12/12 在册（0 处越界）。两科 selftest 都跑夹具。
 
+491 批追加（仅六爻册）：**用神词典族注里的「…」引文**。
+`question_use_gods.json` 的构建器明写「note 不参与核验」，family 64–69 的
+`note` 有 7 段 `「…」`（占雨/借贷/讨债/六畜/坟墓），都称「章内逐字」却无行号
+锚（`[14]` 只认 `源L` 形态，只核到 1 条）。现核：每段 `「…」` 须在
+《增刪卜易》dz＋wikitext 任一底本中逐字出现（省略号分段）；首跑 7/7 命中。
+两科 selftest 都跑夹具。
+
 490 批追加（仅八字册）：**代码注释里的 `《书名》源L####「…」`**。
 `bazi/scripts/**/*.py` 与 `bazi/core/**/*.py` 有 51 个 `源L` 锚（`dayun.py` 的
 岁运五式、虚拱填实、三合补支等），482 只认 `<file>.txt:<行>「…」` 形态、
@@ -1861,6 +1868,41 @@ def check_usegod_notes(doc: dict, problems: list[str], lines_of=None) -> int:
     return n
 
 
+def check_usegod_family_notes(doc: dict, problems: list[str],
+                              lines: list[str] | None = None) -> int:
+    """用神词典族注里 `「…」` 的书源回验（491 批）。返回引文段数。
+
+    为什么需要它：`build_question_use_gods.py` 明写「note 不参与核验」，
+    family 64–69 的 `note` 有 7 段 `「…」`（占雨/借贷/讨债/六畜/坟墓），
+    都称「章内逐字」却无行号锚——[14] 只认 `源L` 形态，此前只核到 1 条。
+    判据：每段 `「…」` 须在《增刪卜易》dz＋wikitext 任一底本中逐字出现
+    （省略号分段、折叠标点）；`lines` 供 selftest 注入夹具。
+    """
+    fams = doc.get("families") or []
+    if not fams:
+        problems.append("用神词典族注：0 个 families——0 结果 ≠ 通过")
+        return 0
+    if lines is None:
+        lines = []
+        # 《增刪卜易》在库两版：dz 与 wikitext。wikitext 的 provenance 无 title，
+        # `_corpora_for_book` 只认得到 dz；族注引文实测在 wikitext 版，故两版全收。
+        for p in sorted((DISC / "data" / "sources").glob("zengshan_buyi*.txt")):
+            lines += p.read_text(encoding="utf-8", errors="replace").splitlines()
+    n = 0
+    for i, fam in enumerate(fams):
+        if not isinstance(fam, dict):
+            continue
+        note = str(fam.get("note") or "")
+        for q in re.findall(r"「([^」]{2,200})」", note):
+            n += 1
+            if not any(_seg_hit(q, line) for line in lines):
+                problems.append(f"用神词典族注：families[{i}].note 的引文不在"
+                                f"《增刪卜易》底本 → {q[:26]!r}")
+    if n == 0:
+        problems.append("用神词典族注：0 段「…」引文——0 结果 ≠ 通过")
+    return n
+
+
 def check_question_classes_notes(doc: dict, problems: list[str],
                                  lines_of=None) -> tuple[int, int]:
     """问题题类表注记的书源回验（488 批）。返回 (行锚数, 引文数)。
@@ -3054,6 +3096,29 @@ def selftest(problems: list[str]) -> None:
                _ugbad(lambda d: d["families"].clear())):
         problems.append("负例未抓到：用神词典注记 families 为空")
 
+    # 491 批：用神词典族注「…」引文（夹具注入）
+    _fnl = ["", "占雨用父爻，占晴用子孫爻", "索財不予"]
+    fndoc = {"families": [
+        {"note": "占雨章「占雨用父爻」逐字"},
+        {"note": "讨债章「索財不予」逐字"}]}
+    p_fn: list[str] = []
+    n_fn = check_usegod_family_notes(fndoc, p_fn, _fnl)
+    if p_fn or n_fn != 2:
+        problems.append(f"用神词典族注正例被误伤：{p_fn}（段 {n_fn}）")
+    p_fnb: list[str] = []
+    check_usegod_family_notes(
+        {"families": [{"note": "占雨章「占雨用母爻」逐字"}]}, p_fnb, _fnl)
+    if not any("不在《增刪卜易》底本" in x for x in p_fnb):
+        problems.append("负例未抓到：用神词典族注引文不在底本")
+    p_fn0: list[str] = []
+    check_usegod_family_notes({"families": []}, p_fn0, _fnl)
+    if not any("0 个 families" in x for x in p_fn0):
+        problems.append("负例未抓到：用神词典族注 0 个 families")
+    p_fnq: list[str] = []
+    check_usegod_family_notes({"families": [{"note": "无引文"}]}, p_fnq, _fnl)
+    if not any("0 段「…」引文" in x for x in p_fnq):
+        problems.append("负例未抓到：用神词典族注 0 段引文")
+
     # 484 批：注册表 source.book 书名可解析（夹具注入）
     _bks = lambda b: ["x"] if b == "测试书" else []
     bkdoc = {"rules": [{"rule_id": "t.book", "source": {"book": "《测试书》"}}]}
@@ -3256,6 +3321,11 @@ def main() -> int:
             if n_ug < 2:
                 problems.append(f"用神词典注记：只有 {n_ug} 条带锚引文（下限 2）")
             print(f"  用神词典注记：{n_ug} 条带锚引文；底本/行号/行内逐字已核对")
+            # 491 批：族注「…」引文（构建器明写 note 不参与核验）
+            n_fn = check_usegod_family_notes(ugdoc, problems)
+            if n_fn < 6:
+                problems.append(f"用神词典族注：只有 {n_fn} 段「…」引文（下限 6）")
+            print(f"  用神词典族注：{n_fn} 段「…」引文；《增刪卜易》底本逐字已核对")
         # 488 批：问题题类注记的书源引用（仅六爻册）
         if not QUESTION_CLASSES.is_file():
             problems.append("问题题类：question_classes.json 不存在——0 结果 ≠ 通过")
