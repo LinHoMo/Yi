@@ -100,6 +100,8 @@ NARRATIVE_TPL = DISC / "data" / "narrative_templates.json"
 FUSHI = DISC / "data" / "rules" / "caiguan_fushi.json"
 # 473 批：易林补遗门类定位映射（仅六爻有该册）。
 YILIN = DISC / "data" / "yilin_buyi_maps.json"
+# 475 批：纳音取象表（仅八字有该册）。
+NAYIN = DISC / "data" / "nayin_quxiang.json"
 _VERDICT_LOCATOR = re.compile(r"(data/sources/[^:]+):(\d+)")
 _VERDICT_MARK = re.compile(r"''+|={2,}|\{\{|\}\}|\||\*")
 _VERDICT_FIELDS = ("quote", "full_quote", "cond_quote", "verse_quote")
@@ -1110,6 +1112,77 @@ def check_bare_locators(doc: dict, problems: list[str], notes: list[str] | None 
     return n
 
 
+def check_nayin_quxiang(doc: dict, problems: list[str], lines_of=None) -> int:
+    """纳音取象 60 格的底本行锚回验（475 批）。返回格数。
+
+    为什么需要它：`nayin_quxiang.json` 的 `_meta.性质名口径` 自称「引文字段一律照录
+    底本原字」。八字 [14] 是「纳音取象表 data↔内核同步」（`sync_nayin_engine`），
+    只核 data↔core 的干支/性质名/行号三点，**不碰底本原文**；真正扫「源L」的
+    `check_source_readings.py` 只扫 `references/`，对本表 `--doc` 运行得 **0 条可验**。
+    60 条 `性质行 + 性质引文` 的底本逐字长期没有机械回验（§六.3）。
+
+    判据：
+      · `_meta.书源` 必须点名 `data/sources/<书>`，文件在盘；`L179-L309` 若出现，两端在册；
+      · 每格 `性质行` 为裸 `L####`、行号在册；`性质引文` 落在该行逐字；
+      · `性质名` 必须能在 `性质引文` 中命中（名称是引文去掉干支前缀/系词的产物）；
+      · 键与 `ganzhi` 必须一致。
+
+    `lines_of` 供 selftest 注入夹具底本；正式路径现场读。
+    """
+    e = (doc or {}).get("纳音性质")
+    if not isinstance(e, dict) or not e:
+        problems.append("纳音取象：纳音性质缺失或为空——0 结果 ≠ 通过")
+        return 0
+    meta = (doc or {}).get("_meta") or {}
+    src = str(meta.get("书源") or "")
+    fm = re.search(r"(data/sources/[A-Za-z0-9_.\-]+)", src)
+    if not fm:
+        problems.append("纳音取象：_meta.书源 未点名底本")
+        return 0
+    f = fm.group(1)
+    if lines_of is not None:
+        L = lines_of(f)
+    else:
+        p = _resolve_any(f)
+        L = (p.read_text(encoding="utf-8", errors="replace").splitlines()
+             if p else None)
+    if L is None:
+        problems.append(f"纳音取象：底本不存在 {f}")
+        return len(e)
+    for a, b in re.findall(r"L(\d+)(?:-L?(\d+))?", src):
+        for n in (a, b):
+            if n and not (1 <= int(n) <= len(L)):
+                problems.append(f"纳音取象：_meta.书源 行号 L{n} 超出底本（共 {len(L)} 行）")
+    n_ok = 0
+    for gz, item in e.items():
+        if not isinstance(item, dict):
+            problems.append(f"纳音取象：{gz} 不是对象")
+            continue
+        n_ok += 1
+        if str(item.get("ganzhi") or "") != gz:
+            problems.append(f"纳音取象：{gz}.ganzhi 与键不符 → {item.get('ganzhi')!r}")
+        lref = str(item.get("性质行") or "").strip()
+        m = re.fullmatch(r"L(\d+)", lref)
+        if not m:
+            problems.append(f"纳音取象：{gz}.性质行 必须是裸 L#### → {lref!r}")
+            continue
+        ln = int(m.group(1))
+        if not (1 <= ln <= len(L)):
+            problems.append(f"纳音取象：{gz}.性质行 L{ln} 超出底本")
+            continue
+        quote = str(item.get("性质引文") or "")
+        name = str(item.get("性质名") or "")
+        if not quote or not name:
+            problems.append(f"纳音取象：{gz} 缺性质引文/性质名")
+            continue
+        if _verdict_plain(quote) not in _verdict_plain(L[ln - 1]):
+            problems.append(f"纳音取象：{gz}.性质引文 不在所署行 {f}:{ln} → {quote[:24]!r}")
+            continue
+        if _verdict_plain(name) not in _verdict_plain(quote):
+            problems.append(f"纳音取象：{gz}.性质名 不在性质引文中 → {name!r}")
+    return n_ok
+
+
 def selftest(problems: list[str]) -> None:
     """负例：造一条 verified=true 却指向不存在文件/解不到值的条目，必须判红。"""
     fake = {"schema": "yi-rule-registry-v1", "rules": [
@@ -1514,6 +1587,45 @@ def selftest(problems: list[str]) -> None:
                    "locator", "data/sources/__no_such__z.txt:2"))):
         problems.append("负例未抓到：colon locator 底本不存在")
 
+    # 475 批：纳音取象 60 格（夹具底本注入）
+    _nl = {"data/sources/__no_such__n.txt": [
+        "", "甲子从革之金", "乙丑自库之金"]}
+    ndoc = {
+        "_meta": {"书源": "《测试纳音》data/sources/__no_such__n.txt L1-L2"},
+        "纳音性质": {
+            "甲子": {"ganzhi": "甲子", "性质名": "从革之金",
+                     "性质行": "L2", "性质引文": "甲子从革之金"},
+            "乙丑": {"ganzhi": "乙丑", "性质名": "自库之金",
+                     "性质行": "L3", "性质引文": "乙丑自库之金"},
+        }}
+    p_n: list[str] = []
+    n_n = check_nayin_quxiang(ndoc, p_n, lambda f: _nl.get(f))
+    if p_n or n_n != 2:
+        problems.append(f"纳音取象正例被误伤：{p_n}（格 {n_n}）")
+
+    def _nbad(mut) -> list[str]:
+        d = json.loads(json.dumps(ndoc, ensure_ascii=False))
+        mut(d)
+        p: list[str] = []
+        check_nayin_quxiang(d, p, lambda f: _nl.get(f))
+        return p
+
+    if not any("不在所署行" in x for x in
+               _nbad(lambda d: d["纳音性质"]["乙丑"].__setitem__("性质行", "L2"))):
+        problems.append("负例未抓到：纳音性质引文不在所署行")
+    if not any("性质名 不在性质引文" in x for x in
+               _nbad(lambda d: d["纳音性质"]["甲子"].__setitem__("性质名", "从革之火"))):
+        problems.append("负例未抓到：纳音性质名不在引文")
+    if not any("必须是裸 L####" in x for x in
+               _nbad(lambda d: d["纳音性质"]["甲子"].__setitem__("性质行", "2"))):
+        problems.append("负例未抓到：纳音性质行非裸 L####")
+    if not any("未点名底本" in x for x in
+               _nbad(lambda d: d["_meta"].pop("书源", None))):
+        problems.append("负例未抓到：纳音书源未点名底本")
+    if not any("缺失或为空" in x for x in
+               _nbad(lambda d: d.pop("纳音性质", None))):
+        problems.append("负例未抓到：纳音性质整块缺失")
+
 
 def main() -> int:
     if not REG.exists():
@@ -1564,6 +1676,15 @@ def main() -> int:
                                 f"作用条目 {l_acts}（下限 7）——先确认字段/路径")
             print(f"  六神取象/十神作用：{l_fields} 个引文字段、{l_acts} 条作用枚举；"
                   f"行号出处/邻域已核对")
+        # 475 批：纳音取象 60 格的底本行锚（仅八字册）
+        if not NAYIN.is_file():
+            problems.append("纳音取象：nayin_quxiang.json 不存在——0 结果 ≠ 通过")
+        else:
+            ndoc = json.loads(NAYIN.read_text(encoding="utf-8"))
+            n_n = check_nayin_quxiang(ndoc, problems)
+            if n_n < 60:
+                problems.append(f"纳音取象：只有 {n_n} 格（下限 60）——先确认字段/路径")
+            print(f"  纳音取象：{n_n} 格；性质行/性质引文/性质名已逐格核对")
     # 467 批：六爻引文库 quote_kind（仅六爻册；八字同名文件结构不同）
     if DISC.name == "liuyao" and LIUYAO_QUOTES.is_file():
         qdoc = json.loads(LIUYAO_QUOTES.read_text(encoding="utf-8"))
