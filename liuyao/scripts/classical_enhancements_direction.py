@@ -216,71 +216,13 @@ def detect_direction_caps(
                           f"（占财兄爻为忌神）",
             })
 
-    # ── 3a 世爻独发动化回头克（L3625 通则，旺世也压）──────────────
-    # 关键辨析：变爻六亲按卦宫五行定，而「回头克」是「变爻五行克世爻五行」，
-    #   二者不是一回事。ZD197 世爻官鬼午火独发，变亥水——亥在乾宫为
-    #   「金生水=子孙」，wchg≠官鬼，于是下面的「变鬼」块（只认 wchg==官鬼）
-    #   整体漏压了这一型（尽管 step4 已标「格局-回头克·变出亥」）。
-    #   《增删卜易》源L3625「化回头克，但逢一者皆非吉地」——世旺也压。
-    # 解救只认「子孙动」（子孙制鬼解克）；日辰扶世不救回头克：
-    #   ZD197 原文「世爻午火临日辰本主旺相，不宜申金生亥水回头克世，卒于亥月」。
-    if world and world.get("is_moving"):
-        _wpos = int(world.get("position", -1))
-        _ct = (changes.get(_wpos, {}) or {}).get("change_type") or ""
-        if _ct == "回头克":
-            _mstate = _month_state(we, me)
-            _has_zisun_dong = any(
-                y.get("six_relation") == "子孙" and y.get("is_moving") for y in lines
-            )
-            if not _has_zisun_dong:
-                caps.append({
-                    "rule_id": "liuyao.shi_hua_ke",
-                    "cap": "凶",
-                    "src": "zengshan_buyi_dz.dz.txt:3625",
-                    "reason_key": "shi_hua_gui",
-                    "detail": f"世爻{wb}（{_mstate}）独发动化回头克世（无子孙动解救），"
-                              + _DIR["frag_shi_hua_gui"],
-                })
-
-    # ── 3b 世爻独发动化回头生，但变爻(原神)被月建冲破——生世无源 ──
-    # ZD222：占寿，世爻子孙子水动化申金回头生本吉，然申金在寅月被寅冲破(月破)，
-    #   原神无源、生世落空——原文「世化申金回头生，不宜寅月冲破，卒卯年」。
-    # 门控：只压疾病·寿类死兆。排除行人（wikisource 实测：占行人世爻未土动化巳火
-    #   回头生、巳火亥月破，被本支按死兆压凶→误判，占行人看归期不看生死）与
-    #   功名科举（占功名回头生本是吉，变爻月破不致死）；本例 ZD222 qcls=『其他』(占寿)保留。
-    if world and world.get("is_moving") and qcls not in ("功名科举", "行人"):
-        _wpos2 = int(world.get("position", -1))
-        _wc2 = changes.get(_wpos2, {}) or {}
-        if _wc2.get("change_type") == "回头生":
-            _chgbr = _wc2.get("changed_branch", "")
-            if _chgbr and month_branch and _chong(_chgbr, month_branch):
-                caps.append({
-                    "rule_id": "liuyao.shi_huitou_sheng_yuepo",
-                    "cap": "凶",
-                    "src": "zengshan_buyi_dz.dz.txt:222",
-                    "reason_key": "shi_hua_gui",
-                    "detail": f"世爻{wb}动化{_chgbr}回头生，然{_chgbr}被月建{month_branch}冲破(月破)，"
-                              f"原神生世无源",
-                })
-
-    # ── 3c 用神动化退神（用神退散）─────────────────────────────────
-    # ZD016：占弟被讼，用神兄弟酉金五爻独动化申金(退神)，书判「酉金兄爻化退神…
-    #   退至申年而无路」大凶。引擎旧只把「化退神」当格局结构、未转 verdict 凶，
-    #   又因忌神午火被未土合绊(午未合)判吉。《增删卜易》源L948「用神…动化退神皆为化凶」。
-    #   只压**用神**动化退神；忌神/仇神化退神是吉(忌神自退)，不压。
-    for y in lines:
-        if (y.get("six_relation") == ug_cat and y.get("is_moving")
-                and qcls not in ("行人",) and ug_cat != "子孙"):
-            _upos = int(y.get("position", -1))
-            _uct = (changes.get(_upos, {}) or {}).get("change_type") or ""
-            if "退" in _uct:
-                caps.append({
-                    "rule_id": "liuyao.yongshen_hua_tui",
-                    "cap": "凶",
-                    "src": "zengshan_buyi_dz.dz.txt:948",
-                    "reason_key": "shi_hua_gui",
-                    "detail": f"用神{ug_cat}{y.get('earthly_branch','')}动化{_uct}（用神退散）",
-                })
+    # ── 3a/3b/3c 已迁 registry v2（rule_engine 仲裁）────────────────
+    # 阶段0最小闭环：回头克(3a)/回头生月破(3b)/用神化退(3c) 三条判据从硬编码 if
+    # 迁到 data/rules/rule_engine_v2.json（when/gates/rescue_any 三分离），由 rule_engine
+    # 对盘面求值。cap 档位与 rule_id 与原硬编码严格一致——本条只是调度，判据本体在 v2 JSON。
+    # 函数内延迟 import，避免与本模块的纯函数复用形成循环依赖。
+    from rule_engine import evaluate_caps as _re_eval
+    caps.extend(_re_eval(lines, step2, step4, month_branch, day_branch, empties))
 
     # ── 3 世爻休囚受克而动变出官鬼（变鬼）─────────────────────────
     wchg = ""

@@ -1,0 +1,33 @@
+{
+  "schema": "yi-rule-engine-v2",
+  "_comment": "阶段0最小闭环：从 detect_direction_caps 迁来的三条 v2 规则。when=卦象静态事实；gates=适用域；rescue_any=满足则解除。cap 档位/rule_id 与旧硬编码严格一致，保证 verdict 零漂移。",
+  "rules": [
+    {
+      "rule_id": "liuyao.shi_hua_ke",
+      "reason_key": "shi_hua_gui",
+      "when": {"world_moving": true, "world_change_type": "回头克"},
+      "rescue_any": [{"line_exists": {"six_relation": "子孙", "is_moving": true}}],
+      "cap": "凶",
+      "detail_tmpl": "世爻{world_branch}（{world_month_state}）独发动化回头克世（无子孙动解救），又化回头之克（世旺而不救：三合亦不宜变鬼）",
+      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:3625"}
+    },
+    {
+      "rule_id": "liuyao.shi_huitou_sheng_yuepo",
+      "reason_key": "shi_hua_gui",
+      "when": {"world_moving": true, "world_change_type": "回头生", "changed_branch_chongs_month": true},
+      "gates": {"qcls_not": ["行人", "功名科举"]},
+      "cap": "凶",
+      "detail_tmpl": "世爻{world_branch}动化{world_chg_branch}回头生，然{world_chg_branch}被月建冲破(月破)，原神生世无源",
+      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:222"}
+    },
+    {
+      "rule_id": "liuyao.yongshen_hua_tui",
+      "reason_key": "shi_hua_gui",
+      "when": {"yongshen_moving": true, "yongshen_change_type_contains": "退"},
+      "gates": {"qcls_not": ["行人"], "ug_cat_not": ["子孙"]},
+      "cap": "凶",
+      "detail_tmpl": "用神{ug_cat}动化退神（用神退散）",
+      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:948"}
+    }
+  ]
+}
