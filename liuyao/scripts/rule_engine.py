@@ -28,7 +28,7 @@ _ensure_kernel(__file__)
 
 from yishu_core.symbols import BRANCH_ELEMENTS, SHENG_CYCLE, KE_CYCLE  # noqa: E402
 from classical_enhancements_direction import (  # noqa: E402  纯函数复用，无循环
-    _world_line, _month_state, _chong, _broken, RANK,
+    _world_line, _month_state, _chong, _broken, _he, RANK,
 )
 
 
@@ -114,6 +114,33 @@ class _Ctx:
     @property
     def month_is_world_cai(self) -> bool:
         return bool(self.me) and bool(self.world_cai_element) and self.me == self.world_cai_element
+
+    # ── 出现无情（功名）派生 ──
+    def _guanfu_lines(self) -> list[dict]:
+        return [y for y in self.lines if y.get("six_relation") in ("官鬼", "父母")]
+
+    @property
+    def guanfu_exists(self) -> bool:
+        return bool(self._guanfu_lines())
+
+    @property
+    def guanfu_sheng_he_exists(self) -> bool:
+        """是否有官鬼/父母爻持世、或生世、或与世爻六合。"""
+        for y in self._guanfu_lines():
+            if y.get("is_world"):
+                return True
+            e = y.get("element") or BRANCH_ELEMENTS.get(y.get("earthly_branch", ""), "")
+            if e and SHENG_CYCLE.get(e) == self.we:
+                return True
+            if _he(y.get("earthly_branch", ""), self.wb):
+                return True
+        return False
+
+    @property
+    def guanfu_set_repr(self) -> str:
+        """复现原 detail 的 sorted({...}) 字符串表示。"""
+        rels = {str(y.get("six_relation") or "") for y in self._guanfu_lines()}
+        return str(sorted(rels))
 
     def yongshen_moving_lines(self) -> list[dict]:
         return [y for y in self.lines
@@ -206,6 +233,12 @@ def _eval_when(ctx: _Ctx, when: dict) -> bool:
         elif key == "month_is_world_cai":
             if ctx.month_is_world_cai != bool(want):
                 return False
+        elif key == "guanfu_exists":
+            if ctx.guanfu_exists != bool(want):
+                return False
+        elif key == "guanfu_sheng_he_exists":
+            if ctx.guanfu_sheng_he_exists != bool(want):
+                return False
         else:
             # 未知谓词＝规则写错，按"不命中"安全处理（宁可漏压不误压）
             return False
@@ -258,6 +291,7 @@ def _detail(rule: dict, ctx: _Ctx) -> str:
         "world_chg_branch": ctx.world_chg_branch,
         "ug_cat": ctx.ug_cat,
         "world_moving_phrase": "且发动" if (ctx.world and ctx.world.get("is_moving")) else "安静",
+        "guanfu_set_repr": ctx.guanfu_set_repr,
     }
     try:
         return tmpl.format(**ctx_vars)

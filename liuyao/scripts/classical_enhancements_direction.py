@@ -154,18 +154,8 @@ def detect_direction_caps(
                for d in ((step4 or {}).get("details") or []) if isinstance(d, dict)}
 
 
-    # ── 1 出现无情（功名类）────────────────────────────────────────
-    if world and qcls == "功名科举":
-        guan_fu = [y for y in lines if y.get("six_relation") in ("官鬼", "父母")]
-        if guan_fu and not any(_sheng_or_he_world(y, wb, we) for y in guan_fu):
-            caps.append({
-                "rule_id": "liuyao.chuxian_wuqing",
-                "cap": "凶",
-                "src": "zengshan_buyi_dz.dz.txt:2786",
-                "reason_key": "chuxian_wuqing",
-                "detail": f"官鬼父母{sorted({y.get('six_relation', '') for y in guan_fu})}"
-                          f"出现，而不持世、不生不合世爻{wb}",
-            })
+    # ── 1 出现无情（功名类）── 已迁 registry v2（rule_engine_v2.json chuxian_wuqing）
+    # 《增删卜易》源L2786「若不生合世爻，或不持世，亦属无益」——官鬼/父母出现却不生不合世。
 
     # ── 2 兄弟持世克财（婚姻章）── 已迁 registry v2（rule_engine）
     # 原门控注释（qcls=婚姻、世=兄弟、卦有妻财）见 rule_engine_v2.json 该条 gates/when。

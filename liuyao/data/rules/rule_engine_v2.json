@@ -65,6 +65,15 @@
       "cap": {"moving": "凶", "still": "平凶"},
       "detail_tmpl": "兄弟{world_branch}持世{world_moving_phrase}（占财兄爻为忌神）",
       "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:419"}
+    },
+    {
+      "rule_id": "liuyao.chuxian_wuqing",
+      "reason_key": "chuxian_wuqing",
+      "when": {"guanfu_exists": true, "guanfu_sheng_he_exists": false},
+      "gates": {"qcls_eq": "功名科举"},
+      "cap": "凶",
+      "detail_tmpl": "官鬼父母{guanfu_set_repr}出现，而不持世、不生不合世爻{world_branch}",
+      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:2786"}
     }
   ]
 }
