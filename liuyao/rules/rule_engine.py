@@ -109,6 +109,43 @@ class _Ctx:
         cb = self.world_chg_branch
         return bool(cb) and cb in self.empty
 
+    # ── 问语文本嗅探（qcls 枚举覆盖不到的问类，如占寿/出行/开店）──
+    @property
+    def qtext_has_shou(self) -> bool:
+        """问句含「寿」字（占寿专属；qcls 枚举无此类，须文本嗅探）。"""
+        return "寿" in (self.question_text or "")
+
+    @property
+    def qtext_has_chuxing(self) -> bool:
+        """问句含「出/行/門门」出行族（占出行专属；qcls 行人侧重归期）。"""
+        t = self.question_text or ""
+        return any(k in t for k in ("出行", "出外", "出门", "遠行", "远行", "起程", "起身"))
+
+    @property
+    def moving_sheng_world(self) -> bool:
+        """存在非世动爻五行生世爻（原神动生世；占寿忌之）。"""
+        if not self.we:
+            return False
+        for y in self.lines:
+            if not y.get("is_moving"):
+                continue
+            if y.get("position") == self.wpos:
+                continue
+            ye = y.get("element") or BRANCH_ELEMENTS.get(y.get("earthly_branch", ""), "")
+            if ye and SHENG_CYCLE.get(ye) == self.we:
+                return True
+        return False
+
+    @property
+    def day_he_world(self) -> bool:
+        """日辰与世爻地支六合（世动逢合之一：日合世）。"""
+        return bool(self.day_branch) and bool(self.wb) and _he(self.day_branch, self.wb)
+
+    @property
+    def month_he_world(self) -> bool:
+        """月建与世爻地支六合。"""
+        return bool(self.month_branch) and bool(self.wb) and _he(self.month_branch, self.wb)
+
     # ── T29 六冲/六合救应格局 ──
     @property
     def original_chong(self) -> bool:
@@ -461,6 +498,16 @@ def _eval_predicate(ctx: _Ctx, key: str, want) -> bool:
         return ctx.world_broken == bool(want)
     if key == "world_chg_branch_empty":
         return ctx.world_chg_branch_empty == bool(want)
+    if key == "qtext_has_shou":
+        return ctx.qtext_has_shou == bool(want)
+    if key == "qtext_has_chuxing":
+        return ctx.qtext_has_chuxing == bool(want)
+    if key == "moving_sheng_world":
+        return ctx.moving_sheng_world == bool(want)
+    if key == "day_he_world":
+        return ctx.day_he_world == bool(want)
+    if key == "month_he_world":
+        return ctx.month_he_world == bool(want)
     if key == "original_chong":
         return ctx.original_chong == bool(want)
     if key == "original_he":

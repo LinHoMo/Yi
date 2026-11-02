@@ -121,6 +121,17 @@
       "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:117987"}
     },
     {
+      "rule_id": "liuyao.shou_dong_sheng_shi",
+      "reason_key": "shou_dong_sheng_shi",
+      "when": {
+        "qtext_has_shou": true,
+        "moving_sheng_world": true
+      },
+      "cap": "凶",
+      "detail_tmpl": "占寿而原神/动爻动来生世（占寿忌动爻生世，生之反成催寿，气数被引动）",
+      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:96654"}
+    },
+    {
       "rule_id": "liuyao.yuan_shen_wu_li",
       "reason_key": "yuan_shen_wu_li",
       "when": {
