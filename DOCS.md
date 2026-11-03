@@ -55,7 +55,7 @@
 | `liuyao/docs/YIIN-CASE-AUDIT.md` | 《易隐》案例集审计（`yiin_holdout`） | 活文档 |
 | `liuyao/docs/ADJUDICATION-BRIEF.md` | 待裁简报（**生成物**：`dev_tools/adjudication_brief.py` 重生成） | 生成物 |
 | `liuyao/docs/TIANHOU.md` | 占天候试验台协议（读数规则、换源即改口径） | 活文档 |
-| `liuyao/docs/ONTOLOGY-CARDS.md` | 易学知识图谱本体卡片（L0–L4 概念人读版） | 活文档 |
+| `liuyao/docs/ONTOLOGY-CARDS.md` | 易学知识图谱本体卡片（L0–L4 概念人读版；`dev_tools/render_ontology.py` 重生成，改 ontology 后须重跑） | 生成物 |
 | `liuyao/docs/YI-KNOWLEDGE-GRAPH.md` | 易学知识图谱手册（演化树、象数层、书证层、AI 检索视图） | 活文档 |
 | `liuyao/docs/RULE-ENGINE-REFACTOR-PLAN.md` | 规则仲裁层改造：当前架构（rules/ 独立树、21 cap+7 verdict_overrides）与剩余待办（T28/T29/T30/T31） | 活文档 |
 
