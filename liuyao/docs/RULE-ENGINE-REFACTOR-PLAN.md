@@ -115,7 +115,7 @@ L3 推理编排  step5 瘦身成调度器：只调 L2 仲裁，不再硬编码�
 
 ---
 
-## 六、执行进展（507→510 批，纯重构零漂移）
+## 六、执行进展（507→514 批，纯重构零漂移）
 
 | 批 | commit | 内容 | 保护网 |
 |---|---|---|---|
@@ -123,19 +123,38 @@ L3 推理编排  step5 瘦身成调度器：只调 L2 仲裁，不再硬编码�
 | 508 | 087557c | 迁兄弟持世婚姻/天气占雨/占晴；扩谓词集 world_six_relation/moving_or_changed_relation | 全绿 |
 | 509 | 3ca6459 | 迁兄弟持世求财；cap 支持动静分档(凶/平凶)、rescue 支持盘面谓词(日月作财例外) | 全绿 |
 | 510 | 65e76d1 | 迁出现无情(功名)；加官鬼/父母生世合世谓词 + detail sorted-set 复现 | 全绿 |
+| 514 | 66c6470→961528c | D1破环抽 predicates.py → D4 迁变鬼三分支+元神无力+出行/占寿/铺面用神（T26a/b 完成） | 全绿 |
 
-**已迁 8/9 条硬编码判据**。detect_direction_caps 从满屏 if 瘦身到只剩 2 块：
-变鬼三分支（shi_hua_gui）、元神无力（yuan_shen_wu_li）。
-全程 zengshan 74.4/19-26、bushi 68.1、wikisource 75.8、golden 8f60/8168、regression 19、思维链 12 **一字未变**。
+### 阶段 0 ✅ 完成
+T24（rule_engine.py + 谓词求值）、T25（迁 3a/3b/3c 三条）均在 507 批落地。
 
-### 阶段1攻坚修订（T26 重新定义）
-剩两块判据暴露出当前 v2 when 只支持**平铺 AND** 的天花板：
-- **变鬼三分支互斥**：旺相回头生=变官不压 / 休囚·月破 且(日克·动克)=压 / 回头克且无救应=压。
-- **元神无力**：`休囚 且 (静·月克·日克·动克 任一)` 或 `全空破` 或 `动化凶`——when 里需要 OR 组。
+### 阶段 1 ✅ 完成（T26a/T26b/T27 已收口）
+**T26a（schema 攻坚）✅**：v2 when 已支持 `any_of:[{...},{...}]`（OR 组，组内仍 AND）。
+registry.json 中 `liuyao.yuan_shen_wu_li`、`liuyao.chuxing_shi_dong_fenghe` 均使用 any_of。
 
-故 T26 拆为两步：
-- **T26a（schema 攻坚）**：v2 when 增加 `any_of:[{...},{...}]`（OR 组，组内仍 AND）；detail 增加 `tag_any`（按命中条件拼"月破/日克/动克/休囚"词）。
-- **T26b（迁移）**：变鬼拆 2 条互斥 v2 规则（分支2/分支3；分支1"变官不压"写成 gates 排除）；元神无力用 any_of 表达。迁完 detect_caps 瘦成纯调度。
+**T26b（迁移）✅**：变鬼三分支拆为 3 条互斥 v2 规则——
+`liuyao.shi_hua_gui.tihuo`（休囚受克压）、`.huitouke`（回头克无救救压）、`.kong`（空亡压）；
+分支1"变官不压"写成 gates 排除（world_change_type 不含"回头克"时规则不触发）。
+元神无力用 any_of 表达。迁完 detect_direction_caps 瘦成纯调度（118 行，零硬编码 if）。
+
+**T27 ✅**：迁出现无情(功名)、兄弟持世求财/婚姻、天气占、出行世动逢合、占寿动爻生世、
+铺面用神取妻财、鬼持世不抬吉——共 21 条规则在 registry.json。
+
+**registry.json 现状**：21 条 cap 规则（凶/吉/平凶/平吉 分档 + any_of + all_of + 救应抬吉）。
+旧 `rule_registry.json`（33 条）保留为台账——12 条 v1-only 规则是非 cap 结构/分值规则
+（yingqi/sanxing/fanyin_fuyin/fangwei/muku/heban 等），**v2 迁移范围仅限 cap 规则**，
+结构规则不在 v2 scope 内，属刻意保留。
+
+### T28（apply_caps priority 仲裁）⬜ 未做
+当前 `apply_caps`（rules/direction.py:93）用两遍扫描：先压凶档（取最严）、再救应抬吉。
+未实现 `priority` 字段仲裁。21 条规则均无 `priority` 字段。
+这是已知待办——当前 first-pass/worst-cap 逻辑在全部回归用例上零漂移，priority 仲裁
+留给后续需要细粒度冲突解决的场景时再加。
+
+### 阶段 2/3/4 ⬜ 未启动
+- **T29**（verdict 拆 present/rescue_chain/timing）：未启动。需改 evaluate verdict strict 口径。
+- **T30**（知识图谱 kids.json）：未启动。
+- **T31**（step5.py 110KB 瘦身）：未启动。step5.py 已在文件头注登记为既定技术债。
 
 ---
 

@@ -6,6 +6,11 @@
 三档的前件**一律取既有单一真值源**，不另起口径：独发判据取自 `advanced_analysis.du_fa_du_jing`
 （`type == "独发"`，其 `branch` 即独发之爻），用神取自 `_step2_data.selected_use_god.earthly_branch`，
 五行生关系由 `fangwei_rules.du_fa_sheng_yong` 判（《增刪卜易》源L3412 逐字「如卦中有一爻独发而生用神者又以此方而延医」）。本模块须在 advanced_analysis 建好之后再挂 fangwei 键。
+
+**为什么不迁 rules/ 目录**：rules/registry.json 的 v2 scope 是 cap 规则（压档/抬档）。
+fangwei 是**非 cap 结构层**——只挂候选方位到 advanced_analysis，不改 verdict、不改分、
+不作吉凶判词。它不参与 direction.py 的 detect_direction_caps → apply_caps 链路，
+所以不属于 rules/ 仲裁层，留在 scripts/ 与 classical_enhancements 族平铺。
 """
 from __future__ import annotations
 

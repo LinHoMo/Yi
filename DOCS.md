@@ -90,7 +90,7 @@
 | `bazi/references/bazi_nayin_shiyi.md` | 纳音释义 | 活文档 |
 | `bazi/references/api_spec.md` | 八字科 API 说明 | 活文档 |
 
-## 五、共享层与 DSH 适配器（`plugins/` 与 `dsh-plugin/`）
+## 五、共享层与 DSH 适配器（`plugins/` 与 `dsh-plugin/`，5 份）
 
 | 文件 | 一句话 | 状态 |
 |---|---|---|

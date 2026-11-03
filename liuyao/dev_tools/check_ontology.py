@@ -78,8 +78,10 @@ def check(nodes: dict, registry_ids: set, selftest: bool = False) -> list[str]:
         if not reaches_root(kid):
             problems.append(f"orphan：{kid} 沿 parents 追溯不到任何 L0 根")
 
-    # 3) engine_impl 锚 registry 规则存在性
+    # 3) engine_impl 锚 registry 规则存在性（跳过 read_only+legacy 旧台账锚点）
     for kid, n in nodes.items():
+        if n.get("read_only") and n.get("legacy"):
+            continue  # 旧 rule_registry.json 知识锚点，不在 v2 执行面
         impl = n.get("engine_impl", "")
         if "registry.json:" in impl:
             rid = impl.split("registry.json:", 1)[1].strip()
