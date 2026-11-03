@@ -69,9 +69,28 @@ liuyao/rules/
 | 项 | 状态 | 说明 |
 |---|---|---|
 | **T28 apply_caps priority 仲裁** | ⬜ 有意暂缓 | 当前 first-pass/worst-cap 在全部回归用例零漂移；21 条均无 priority 字段。等需要细粒度冲突解决时再加。 |
-| **T29 verdict 拆段** | ⬜ 未启动 | verdict 拆 present(即时)/rescue_chain(救应)/timing(应期)。改 evaluate strict 口径，新旧读数不可比，须专门批次。 |
-| **T30 知识图谱 kids.json** | 🔶 部分进行中 | L2 概念 kid 化（回头克/世旺/冲解）与 AI subgraph 视图（`dev_tools/ontology_subgraph.py`）已上线；`use_god_relations/question_classes/caiguan_fushi` 批量转 kid、全量 parents 补全仍待做。 |
-| **T31 step5.py 瘦身** | ⬜ 未启动 | step5.py 110KB 上帝模块，按职责拆模块为最高风险批次，须单批走保护网。 |
+| **T29 verdict 拆段** | 🔶 设计中 | 渐进式：先加 `present_verdict`/`rescue_verdict`/`timing_speed` 三个新字段（旧 `verdict` 不变），等 narrate/render 层消费新字段稳定后再切换。详见下文 §五.1。 |
+| **T30 知识图谱 kids.json** | ✅ 已完成 | L2 概念 kid 化（回头克/世旺/冲解/用神/六亲取用/原神/问类/伏藏）+ AI subgraph 视图已上线；ontology 门绿（71 节点无幽灵）。 |
+| **T31 step5.py 瘦身** | 🔶 进行中 | 第一步：`_step5_dates.py`（日期函数，3 个）✅；第二步：`_step5_timing.py`（calculate_yingqi，258 行）✅。下一步：提取 `_weather_verdict_score`、`build_factor_contributions` 等领域函数。 |
+
+### 五.1 T29 verdict 拆段设计
+
+**问题**：单一 `verdict`（大吉/吉/平吉/凶/大凶）同时回答即时卦象、最终结局、应期迟速三段，导致
+"救应卦"无解——原神动变出忌神但最终原神旺时能解，verdict 该怎么判？
+
+**渐进式迁移（不改旧读数，只加新字段）**：
+
+1. **第一批（零风险）**：在 `step5_synthesize` 输出 dict 里加三个新字段：
+   - `present_verdict`：即时卦象吉凶（= 当前 verdict）
+   - `rescue_verdict`：救应链吉凶（原神/动变能否化解，初始 = present_verdict）
+   - `timing_speed`：应期迟速（fast/medium/slow，从 calculate_yingqi 的 speed 字段读）
+   旧 `verdict` 字段保持不变，golden 零漂移。
+
+2. **第二批（narrate 层消费）**：narrate 层开始读 `present_verdict`/`rescue_verdict` 分段叙述
+   （"当下凶，但原神旺时可解"），旧 `verdict` 作为 fallback。
+
+3. **第三批（口径切换）**：evaluate strict 口径改为三段判定，旧 `verdict` 废弃或保留为
+   `present_verdict` 的别名。此时新旧读数不可比，CHANGELOG 登记。
 
 ## 六、目录分层蓝图（后续物理收编批次）
 
