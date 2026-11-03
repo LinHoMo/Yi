@@ -1380,49 +1380,35 @@ def apply_verdict_overrides(
     _sp = special_pattern if isinstance(special_pattern, dict) else {}
     _sp_pat = str(_sp.get("pattern") or "") + str(_sp.get("description") or "")
 
-    # ── 古籍强凶格局强制覆写（pattern-based overrides）──
-    _fired = False
-    # 行人/出行占+六冲主散/合处逢冲：行人被冲散 → 凶
-    if any(k in _qtext for k in ("行人", "出行", "回来", "归")) and ("六冲" in _sp_pat or "合处逢冲" in _sp_pat):
-        if verdict in ("吉", "大吉", "平吉"):
-            verdict = "凶"
-            verdict_desc = vdesc("travel_scattered")
-            _fired = True
-    # 合伙+六冲主散/合处逢冲：合伙看世应，应冲世则散 → 凶
-    if "合伙" in _qtext and ("六冲" in _sp_pat or "合处逢冲" in _sp_pat):
-        if verdict in ("吉", "大吉", "平吉"):
-            verdict = "凶"
-            verdict_desc = vdesc("partner_scattered")
-            _fired = True
-    # 用神衰弱+净动变负 → 凶
-    if verdict == "平吉" and final_score < 0.0:
-        _net_eff = 0.0
-        if step4_data and isinstance(step4_data, dict):
-            _net_eff = step4_data.get("net_effect") or 0.0
-        if _net_eff < -0.2:
-            verdict = "凶"
-            verdict_desc = vdesc("weak_use_net_negative")
-            _fired = True
-    # 三刑+六合吉凶相战覆写：2+成刑/催刑 + 六合卦 → 上限不超过平凶
-    # 偏向中带凶：六合主合而三刑主损，合中带损，吉凶相战，凶多吉少。
-    # 依古籍合中带损之旨，伏下仍有六合之余气，故 score 保底在 0.5 (偏向下界)。
-    if xing_he_conflict_override and verdict in ("吉", "大吉", "平吉"):
-        verdict = "平凶"
-        verdict_desc = vdesc("xing_he_conflict")
-        if final_score < 0.5:
-            final_score = 0.5
-            final_score = round(final_score, 2)
-        _fired = True
-
-    if "合处逢冲" in _sp_pat and verdict in ("凶", "大凶", "平吉"):
-        if any(k in _qtext for k in ("婚", "合", "成否", "聚")):
-            verdict = "平/不利"
-            verdict_desc = vdesc("he_then_chong")
-        elif verdict == "大凶":
-            verdict = "凶"
-    if any(k in _qtext for k in ("价", "贵贱", "桑叶", "涨跌")) and verdict in ("凶", "大凶"):
-        verdict = "下跌"
-        verdict_desc = vdesc("price_down")
+    # ── 古籍强凶格局强制覆写（数据化：rules/registry.json#verdict_overrides）──
+    # 旧硬编码 if 链已整体迁为规则数据，由 rule_engine.evaluate_verdict_overrides
+    # 按数组顺序求值（复刻「自上而下、后读前写」语义）。本处只组装覆写期上下文 cv
+    # 并回收 verdict/desc/score；reason_key 非空才换判词文案，空串（he_then_chong_daxiong）
+    # 只改 verdict 不动 desc。_fired 仅对旧代码里显式置 True 的四档生效。
+    from rule_engine import evaluate_verdict_overrides as _eval_ovr
+    _net_eff = (step4_data.get("net_effect") if isinstance(step4_data, dict) else 0.0) or 0.0
+    _cv = {
+        "verdict": verdict,
+        "final_score": final_score,
+        "qtext": _qtext,
+        "q_l": _q_l,
+        "sp_pat": _sp_pat,
+        "net_effect": _net_eff,
+        "pattern_flags": pattern_flags,
+        "world_relation": world_relation,
+        "is_wealth": _is_wealth,
+        "is_travel_return": _is_travel_return,
+        "xhe": xing_he_conflict_override,
+    }
+    _ovr_actions = _eval_ovr(_cv)
+    verdict = _cv["verdict"]
+    final_score = _cv["final_score"]
+    for _a in _ovr_actions:
+        if _a.get("reason_key"):
+            verdict_desc = vdesc(_a["reason_key"])
+    _fired_reasons = {"travel_scattered", "partner_scattered",
+                      "weak_use_net_negative", "xing_he_conflict"}
+    _fired = any(_a.get("reason_key") in _fired_reasons for _a in _ovr_actions)
 
     # 古籍通用口径：行人「用神生世/克世」主能归；兄弟持世求财主耗
     if classical_notes:

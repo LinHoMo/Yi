@@ -4,7 +4,7 @@
   "batch": 329,
   "status": "accepted",
   "sealed": null,
-  "_comment": "A3 判定表的机器判据（唯一真值源）。本文件只声明，不接引擎：改成 accepted 并接进 step5 前，必须先由人签 adjudications 四条。改本文件须同批改 docs/JUDGMENT-TABLE.md 与 docs/CHANGELOG.md。",
+  "_comment": "A3 判定表的机器判据（唯一真值源）。本文件只声明，不接引擎：改成 accepted 并接进 step5 前，必须先由人签 adjudications 四条。改本文件须同批改 docs/JUDGMENT-TABLE.md 与 docs/CHANGELOG.md。 规则引擎重构D系列收尾：原 OV01–OV07 古籍强凶格局覆写（行人/合伙散、用神衰弱净动负、三刑六合相战、合处逢冲两档、财价跌）已从 step5 硬编码迁为 rules/registry.json#verdict_overrides 数据化规则，由 rule_engine.evaluate_verdict_overrides 统一求值，golden 288例双指纹零漂移，故不再计入 step5 AST 覆写清单。",
   "source_doc": "docs/JUDGMENT-TABLE.md",
   "axes": {
     "direction": [
@@ -49,7 +49,7 @@
       "direction": "不成",
       "confidence": "低",
       "legacy": true,
-      "note": "财类专用词（OV07 产出），义为价跌不是事败，不得直接映射"
+      "note": "财类专用词（已迁 rules/registry.json#verdict_overrides 数据层 price_down），义为价跌不是事败，不得直接映射"
     },
     "凶": {
       "direction": "不成",
@@ -70,7 +70,7 @@
       "direction": "不成",
       "confidence": "低",
       "legacy": true,
-      "note": "非标准值（OV04 产出），三态化时并入不成"
+      "note": "非标准值（已迁 rules/registry.json#verdict_overrides 数据层 xing_he_conflict），三态化时并入不成"
     }
   },
   "citations": [
@@ -492,100 +492,8 @@
   ],
   "overrides": [
     {
-      "id": "OV01",
-      "line": 1387,
-      "cond": "verdict in (\"吉\", \"大吉\", \"平吉\")",
-      "assigns": [
-        "verdict = \"凶\""
-      ],
-      "kind": "domain_overlay",
-      "domain": "行人",
-      "layer": "domain",
-      "status": "mapped",
-      "classified_by": "agent-314"
-    },
-    {
-      "id": "OV02",
-      "line": 1393,
-      "cond": "verdict in (\"吉\", \"大吉\", \"平吉\")",
-      "assigns": [
-        "verdict = \"凶\""
-      ],
-      "kind": "domain_overlay",
-      "domain": "合伙",
-      "layer": "domain",
-      "status": "mapped",
-      "classified_by": "agent-314"
-    },
-    {
-      "id": "OV03",
-      "line": 1398,
-      "cond": "verdict == \"平吉\" and final_score < 0.0",
-      "assigns": [
-        "verdict = \"凶\""
-      ],
-      "kind": "priority",
-      "domain": null,
-      "layer": "judge",
-      "status": "mapped",
-      "classified_by": "agent-314"
-    },
-    {
-      "id": "OV04",
-      "line": 1409,
-      "cond": "xing_he_conflict_override and verdict in (\"吉\", \"大吉\", \"平吉\")",
-      "assigns": [
-        "verdict = \"平凶\""
-      ],
-      "kind": "exception",
-      "domain": null,
-      "layer": "judge",
-      "status": "mapped",
-      "classified_by": "agent-314"
-    },
-    {
-      "id": "OV05",
-      "line": 1417,
-      "cond": "\"合处逢冲\" in _sp_pat and verdict in (\"凶\", \"大凶\", \"平吉\")",
-      "assigns": [
-        "verdict = \"平/不利\"",
-        "verdict = \"凶\""
-      ],
-      "kind": "exception",
-      "domain": null,
-      "layer": "judge",
-      "status": "mapped",
-      "classified_by": "agent-314"
-    },
-    {
-      "id": "OV06",
-      "line": 1421,
-      "cond": "verdict == \"大凶\"",
-      "assigns": [
-        "verdict = \"凶\""
-      ],
-      "kind": "exception",
-      "domain": null,
-      "layer": "judge",
-      "status": "mapped",
-      "classified_by": "agent-314"
-    },
-    {
-      "id": "OV07",
-      "line": 1423,
-      "cond": "any(k in _qtext for k in (\"价\", \"贵贱\", \"桑叶\", \"涨跌\")) and verdict in (\"凶\", \"大凶\")",
-      "assigns": [
-        "verdict = \"下跌\""
-      ],
-      "kind": "domain_overlay",
-      "domain": "财货",
-      "layer": "domain",
-      "status": "mapped",
-      "classified_by": "agent-314"
-    },
-    {
       "id": "OV08",
-      "line": 1430,
+      "line": 1416,
       "cond": "verdict in (\"大吉\",)",
       "assigns": [
         "verdict = \"吉\""
@@ -598,7 +506,7 @@
     },
     {
       "id": "OV09",
-      "line": 1440,
+      "line": 1426,
       "cond": "\"no_source_wording\" in pattern_flags and verdict in (\"吉\", \"大吉\", \"平吉\")",
       "assigns": [
         "verdict = \"凶\"",
@@ -612,7 +520,7 @@
     },
     {
       "id": "OV10",
-      "line": 1447,
+      "line": 1433,
       "cond": "verdict == \"吉\" and final_score < 2.0",
       "assigns": [
         "verdict = \"平吉\""
@@ -625,7 +533,7 @@
     },
     {
       "id": "OV11",
-      "line": 1451,
+      "line": 1437,
       "cond": "verdict in (\"大吉\", \"吉\")",
       "assigns": [
         "verdict = \"凶\"",
@@ -639,7 +547,7 @@
     },
     {
       "id": "OV12",
-      "line": 1454,
+      "line": 1440,
       "cond": "verdict == \"平吉\"",
       "assigns": [
         "verdict = \"凶\""
@@ -652,7 +560,7 @@
     },
     {
       "id": "OV13",
-      "line": 1457,
+      "line": 1443,
       "cond": "\"brother_hold_exam\" in pattern_flags and verdict in (\"吉\", \"大凶\", \"凶\")",
       "assigns": [
         "verdict = \"平吉\"",
@@ -666,7 +574,7 @@
     },
     {
       "id": "OV14",
-      "line": 1458,
+      "line": 1444,
       "cond": "verdict in (\"凶\", \"大凶\")",
       "assigns": [
         "verdict = \"平吉\"",
@@ -680,7 +588,7 @@
     },
     {
       "id": "OV15",
-      "line": 1465,
+      "line": 1451,
       "cond": "verdict in (\"大吉\", \"吉\")",
       "assigns": [
         "verdict = \"平吉\" if verdict == \"吉\" else \"凶\""
@@ -693,7 +601,7 @@
     },
     {
       "id": "OV16",
-      "line": 1469,
+      "line": 1455,
       "cond": "verdict == \"平吉\" and any(k in _q_l for k in (\"久病\", \"半年\"))",
       "assigns": [
         "verdict = \"凶\""
@@ -706,7 +614,7 @@
     },
     {
       "id": "OV17",
-      "line": 1472,
+      "line": 1458,
       "cond": "\"brother_hold_exam\" in pattern_flags and verdict in (\"吉\", \"大吉\")",
       "assigns": [
         "verdict = \"平吉\""
@@ -719,7 +627,7 @@
     },
     {
       "id": "OV18",
-      "line": 1480,
+      "line": 1466,
       "cond": "verdict in (\"凶\", \"大凶\")",
       "assigns": [
         "verdict = \"平吉\""
@@ -732,7 +640,7 @@
     },
     {
       "id": "OV19",
-      "line": 1483,
+      "line": 1469,
       "cond": "\"travel_use_sheng_world\" in pattern_flags and verdict in (\"平吉\", \"凶\", \"大凶\")",
       "assigns": [
         "verdict = \"吉\"",
@@ -746,7 +654,7 @@
     },
     {
       "id": "OV20",
-      "line": 1486,
+      "line": 1472,
       "cond": "verdict == \"平吉\" and \"travel_use_ke_world\" in pattern_flags",
       "assigns": [
         "verdict = \"吉\""
@@ -759,7 +667,7 @@
     },
     {
       "id": "OV21",
-      "line": 1492,
+      "line": 1478,
       "cond": "verdict in (\"凶\", \"大凶\") and final_score >= 0",
       "assigns": [
         "verdict = \"吉\"",
@@ -773,7 +681,7 @@
     },
     {
       "id": "OV22",
-      "line": 1495,
+      "line": 1481,
       "cond": "verdict == \"平吉\" and final_score >= 0",
       "assigns": [
         "verdict = \"吉\""
@@ -786,7 +694,7 @@
     },
     {
       "id": "OV23",
-      "line": 1499,
+      "line": 1485,
       "cond": "verdict in (\"大吉\",)",
       "assigns": [
         "verdict = \"吉\"",
@@ -800,7 +708,7 @@
     },
     {
       "id": "OV24",
-      "line": 1502,
+      "line": 1488,
       "cond": "verdict == \"吉\" and final_score < 2.5",
       "assigns": [
         "verdict = \"平吉\"",
@@ -814,7 +722,7 @@
     },
     {
       "id": "OV25",
-      "line": 1505,
+      "line": 1491,
       "cond": "verdict in (\"平吉\",) and final_score <= 0.2",
       "assigns": [
         "verdict = \"平/不利\""
@@ -827,7 +735,7 @@
     },
     {
       "id": "OV26",
-      "line": 1508,
+      "line": 1494,
       "cond": "_is_travel_return and verdict in (\"凶\", \"大凶\")",
       "assigns": [
         "verdict = \"平吉\""
@@ -840,7 +748,7 @@
     },
     {
       "id": "OV27",
-      "line": 1520,
+      "line": 1506,
       "cond": "officer_tomb_verdict_override",
       "assigns": [
         "verdict = officer_tomb_verdict_override"
@@ -924,11 +832,11 @@
   "stats": {
     "citations": 42,
     "cells": 9,
-    "overrides": 27,
+    "overrides": 20,
     "by_kind": {
-      "priority": 3,
-      "exception": 5,
-      "domain_overlay": 19
+      "priority": 2,
+      "exception": 2,
+      "domain_overlay": 16
     },
     "overlays": 13
   },

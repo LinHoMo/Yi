@@ -192,11 +192,22 @@ def check(table_path: Path = TABLE) -> list[str]:
         problems.append(f"stats.by_kind 与实算不符：表 {stats} vs 实 {by_kind}")
 
     # 6. 值面覆盖
+    # 判词字面量来自两面：step5 直接赋值 + 规则引擎数据层 verdict_overrides 的 target
+    # （规则引擎重构 D 系列：古籍强凶格局覆写已迁 rules/registry.json#verdict_overrides，
+    # 由 rule_engine 统一求值——数据层 target 同样是链路实产出，须同登记，防新判词漏登）。
     lits = _verdict_literals(src)
+    try:
+        _reg = json.loads((DISC / "rules" / "registry.json").read_text(encoding="utf-8"))
+    except Exception:
+        _reg = {}
+    for _ov in _reg.get("verdict_overrides", []):
+        _t = _ov.get("target")
+        if isinstance(_t, str) and _t.strip():
+            lits.add(_t)
     vmap = table.get("verdict_map", {})
     missing = sorted(x for x in lits if x not in vmap)
     if missing:
-        problems.append(f"step5 会产出但 verdict_map 未登记的判词：{missing}")
+        problems.append(f"判词产出面未登记 verdict_map：{missing}")
 
     # 状态机
     status = table.get("status")

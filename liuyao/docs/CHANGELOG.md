@@ -5,6 +5,40 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-03 第五百零四批（六爻·规则引擎重构 D 系列收尾）：**`step5.apply_verdict_overrides` 的 7 条古籍强凶格局硬编码 if 链整体迁为 `rules/registry.json#verdict_overrides` 数据规则，由 `rule_engine.evaluate_verdict_overrides` 统一求值——纯重构零漂移**
+
+**性质**：规则仲裁层数据化（D 系列最后一块硬编码）；不改判据、不改读数。
+
+### 一、改法
+
+1. **接线**：`step5.apply_verdict_overrides` 内原 1383–1425 行的 7 条 `if` 覆写链
+   （行人散、合伙散、用神衰弱净动负、三刑六合相战、合处逢冲婚姻档、合处逢冲大凶档、财价跌）
+   整体替换为：组装覆写期上下文 `cv`（verdict/final_score/qtext/q_l/sp_pat/net_effect/
+   pattern_flags/world_relation/is_wealth/is_travel_return/xhe）→ 局部 `from rule_engine import
+   evaluate_verdict_overrides` → 回收 verdict/final_score → 按 `reason_key` 非空逐个换判词文案。
+   数组顺序复刻原 if/elif 语义（合处逢冲婚姻档在前、大凶档在后，后读前写）；
+   `_fired` 仅对旧代码显式置 True 的四档（行人/合伙/用神弱/三刑六合）生效，与 `[1.8]` 同档收口一致。
+2. **判定表对齐**：`judgment_table.json` 的 `overrides` 由 27 条对齐到 **20 条**——
+   删去已迁走的 OV01–OV07（不再以 step5 AST 代码块形态存在），剩余 20 条 line/cond/assigns
+   用 `_inventory` 重算逐字对齐；`stats.by_kind` 重算为 priority 2·exception 2·domain_overlay 16。
+   verdict_map 两条悬空 note（「下跌」「平凶」）改指数据层 reason_key。
+3. **值面覆盖扩面**：`check_judgment_table.py` 第 6 步除 step5 字面量外，纳入
+   `registry.json#verdict_overrides` 的 target——数据层新判词同样要求 verdict_map 登记，
+   消除「数据层加 target 而门看不见」的盲区（selftest 负例随之恢复有效）。
+
+### 二、自证（§四.8）
+
+- `golden.py`：288 例｜机械 `96c7f5d168ca6140`｜措辞 `8168eff9e560d6c2`｜异常 0——**与基线逐位一致**
+- `check_judgment_table.py`：主检查 rc=0；`--selftest` 8 类负例全抓、健康副本放行
+- 全量 `python dev_tools/check.py --fast` **rc=0**（各节全绿；tune/holdout 评测随下次完整跑）
+
+### 三、口径
+
+- 本批为纯重构：7 条覆写的 when 条件与旧 if 逐字核对等价（含 score_floor=0.5、空 reason_key
+  不动 desc 等边角），golden 双指纹零漂移即其机器证明。
+- 历史残留清理：调试探针 `probe_caps.py`/`probe_overrides.py` 与门禁快照 txt 此前已清；
+  `scratch/` 下临时脚本按 gitignore 不入库。
+
 ## 2026-11-02 第四百九十六批（六爻·裸文件名死引用）：**`rule_registry.json` 的「见 HANDOFF」是活引用而 HANDOFF 已随扁平化删除；`check_doc_refs` 此前整段跳过裸文件名**
 
 **性质**：共享门补裸文件名判据＋本科数据说明修正（不改判据、不改读数）。
