@@ -280,7 +280,7 @@ async function mcpSmoke() {
     else if ((v?.matches ?? []).length && String(v.matches[0].resource ?? '').startsWith('resource:kb-')) ok(`yi_kb 命中 ${v.matches.length} 条，首条 resource=${v.matches[0].resource}`)
     else bad(`yi_kb 返回异常：${JSON.stringify(v).slice(0, 200)}`)
 
-    const py = process.env.DSH_PYTHON || process.env.YI_PYTHON || findPythonOnPath()
+    const py = process.env.DSH_PYTHON || findPythonOnPath()
     if (!py) note('未找到 Python，跳过 yi_liuyao 引擎冒烟（插件在用户机器上同样会如实报错）')
     else {
       const cast = await request('tools/call', { name: 'yi_liuyao', arguments: { question: '自检冒烟：某事如何', mode: 'coin', seed: 42 } })
