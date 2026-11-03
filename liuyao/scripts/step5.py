@@ -450,6 +450,10 @@ def step5_synthesize(r: dict) -> dict:
         "final_score": final_score,
         # 最终锁定：若强凶格局已触发，不再允许 verdict 被后续逻辑回退到 吉/平吉
         "verdict": verdict if not (_verdict_locked and "凶" not in verdict) else "凶",
+        # T29 第一批：三段 verdict 新字段（旧 verdict 不变，新字段为附加；见 REFACTOR-PLAN §五.1）
+        "present_verdict": verdict if not (_verdict_locked and "凶" not in verdict) else "凶",
+        "rescue_verdict": verdict if not (_verdict_locked and "凶" not in verdict) else "凶",
+        "timing_speed": yingqi_dates.get("speed", "") if isinstance(yingqi_dates, dict) else "",
         "verdict_description": verdict_desc,
         # 古籍方向凶格上限的结构事实（供 narrate 与回归断言读取；判定见该模块）
         "direction_caps": dir_caps,
