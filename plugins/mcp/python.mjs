@@ -1,17 +1,15 @@
 /**
- * 定位用于执行术数引擎的 Python 解释器（**全宿主唯一一份**）。
+ * 定位用于执行术数引擎的 Python 解释器（**DSH 宿主唯一一份**）。
  *
- * 305 批前，`dsh-plugin/src/python.mjs` 与 `yan-plugin/src/python.mjs` 是两份只差
- * 第一档的副本——正是 AGENTS.md §二 警告过的「同表多存」形态。现在合成一份，
- * 每个宿主只走自己那一档，其余同序。
+ * 497 批起只保留 DSH 一个宿主（claude/codex/gemini/yan 已删除），
+ * 此文件是全宿主唯一一份 Python 定位器。
  *
  * 优先级（每一档都为「已实测存在」而设计，而不是「大概在某处」）：
  *  1. `DSH_PYTHON` 显式覆盖（DSH 宿主；运维/调试用，也便于 CI 钉死版本）。
- *  2. `YI_PYTHON` 显式覆盖（Yan 宿主：由插件配置项 pythonPath 注入）。
- *  3. DSH 桌面自带运行时：`$DSH_HOME/dsh-runtimes/*\/dependencies/python/python.exe`。
+ *  2. DSH 桌面自带运行时：`$DSH_HOME/dsh-runtimes/*\/dependencies/python/python.exe`。
  *     实测本机为 3.12.14。这是**DSH 侧的首选**：用户装了 DSH 就有，不需另装 Python。
- *  4. 环境变量里的 `python` / `python3`（PATH 解析）。
- *  5. Windows 的 `py` 启动器。
+ *  3. 环境变量里的 `python` / `python3`（PATH 解析）。
+ *  4. Windows 的 `py` 启动器。
  *
  * 找不到就抛错并**把已尝试的路径逐条列出**——静默回退到「系统随便哪个 python」
  * 会让不同机器跑出不同结果，而本仓全部口径都建立在「同一份确定性引擎」上。
@@ -115,16 +113,15 @@ async function findBundledPython(dshHome, attempted) {
  */
 export async function resolvePython(options = {}) {
   const dshHome = options.dshHome ?? process.env.DSH_HOME ?? null
-  const cacheKey = `${process.env.DSH_PYTHON ?? ''}\u0000${process.env.YI_PYTHON ?? ''}\u0000${dshHome ?? ''}`
+  const cacheKey = `${process.env.DSH_PYTHON ?? ''}\u0000${dshHome ?? ''}`
   if (cached && cached.key === cacheKey) return cached.value
 
   const attempted = []
   const rejected = []
 
-  // 1) + 2) 宿主各自的显式覆盖变量：指了就必须能用，否则直接报错（不悄悄回退）
+  // 1) DSH 宿主的显式覆盖变量：指了就必须能用，否则直接报错（不悄悄回退）
   for (const [name, source] of [
     ['DSH_PYTHON', 'DSH_PYTHON'],
-    ['YI_PYTHON', 'YI_PYTHON'],
   ]) {
     const override = process.env[name]
     if (!override) continue
@@ -177,7 +174,7 @@ export async function resolvePython(options = {}) {
       '请任选其一：\n' +
       '  · 安装 DeepSeek Harness 桌面版（自带 Python 运行时，插件会自动发现）\n' +
       '  · 安装 Python 3.10+ 并确保在 PATH 中（Windows 官方安装器勾选 Add python.exe to PATH）\n' +
-      '  · 设置 DSH_PYTHON（DSH）或 YI_PYTHON（Yan，插件配置「Python 解释器路径」）指向 python 可执行文件\n' +
+      '  · 设置 DSH_PYTHON 环境变量指向 python 可执行文件\n' +
       `已尝试的路径：\n  ${attempted.length ? attempted.join('\n  ') : '（无）'}` +
       (rejected.length ? `\n已跳过（存在但跑不起来）：\n  ${rejected.join('\n  ')}` : ''),
   )

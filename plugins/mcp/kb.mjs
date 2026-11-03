@@ -29,13 +29,13 @@ import { fileURLToPath } from 'node:url'
 const NEVER_SHIP = new Set(['case_library.md'])
 
 /**
- * 知识库文件 → Yan 资源句柄（`resource:<id>`）。
+ * 知识库文件 → DSH 资源句柄（`resource:<id>`）。
  *
- * 为什么要有这一层：Yan 的插件资源装在包目录里，**不在模型的工作区内**，
+ * 为什么要有这一层：DSH 插件资源装在包目录里，**不在模型的工作区内**，
  * 模型的 `read` 读不到（workspace 沙箱）。所以 `yi_kb` 不只返回 `file:line`，
  * 还要把「该去 plugins_read_resource 读哪一个 resource」一并交出去。
- * id 生成规则与 `yan-plugin.json` 的 `resources[].id` **必须同式**
- * （`scripts/build.mjs` 有双向闸门逐条对账，见 yan-plugin/CHANGELOG.md 304 批）。
+ * id 生成规则与 DSH 插件清单的 `resources[].id` **必须同式**
+ * （`scripts/build.mjs` 有双向闸门逐条对账）。
  */
 export function resourceIdFor(rel) {
   const slug = String(rel)

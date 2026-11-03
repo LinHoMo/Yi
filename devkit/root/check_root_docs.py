@@ -36,7 +36,7 @@ ROOT = Path(__file__).resolve().parents[2]
 REF = re.compile(r"`([A-Za-z0-9_\-./\u4e00-\u9fff]+\.(?:md|py|json|txt|css|html|yml|yaml))(?![A-Za-z])`")
 # 裸路径：只认以真实顶层目录开头的串（与两科门同口径，另加根级目录）
 TOP = ("docs|scripts|data|references|dev_tools|core|tests|kernel|plugins|devkit"
-       "|liuyao|bazi|dsh-plugin|yan-plugin|claude-plugin|codex-plugin|gemini-plugin"
+       "|liuyao|bazi|dsh-plugin"
        "|.github|.worktrees")
 BARE = re.compile(r"(?<![\w/.-])((?:%s)/[A-Za-z0-9_\-./\u4e00-\u9fff]*"
                   r"\.(?:md|py|json|txt|css|html|yml|yaml)(?![A-Za-z]))" % TOP)
@@ -79,12 +79,12 @@ def resolves(root: Path, rel: str, line: str, doc: str) -> bool:
         if doc == "DOCS.md" or DISC_WORD.search(line):
             return any((root / d / clean).exists() for d in ("liuyao", "bazi"))
         return False
-    # 宿主清单的库内写法：`.claude-plugin/plugin.json` 实际在 `claude-plugin/.claude-plugin/`
+    # DSH 宿主清单的特殊路径写法：`dsh-plugin/package.json` 等在 `dsh-plugin/` 下。
     if clean.startswith(".") and "/" in clean:
         host = clean.split("/")[0].lstrip(".")
         if (root / host / clean).exists():
             return True
-    # 行内点名了某个目录（如 `.mcp.json` 与 `claude-plugin/` 同现于一行）：按该目录解析。
+    # 行内点名了某个目录（如 `.mcp.json` 与 `dsh-plugin/` 同现于一行）：按该目录解析。
     # 这是**上下文**解析，不是全仓 basename 兜底。
     for m in DIR_ON_LINE.finditer(line):
         if (root / m.group(1) / clean).exists():
