@@ -54,6 +54,12 @@ from chain_assembly import (_get_hexagram_body_summary_note, find_classical_quot
 
 from timing import predict_timing_core as _predict_timing
 
+from _step5_dates import (  # T31：纯日期函数提取到独立模块
+    _day_branch_for_date,
+    _next_date_with_day_branch,
+    _dates_overlap,
+)
+
 from chain_verdicts import strength_reason, strength_polarity
 
 from util import (  # noqa: E402  311批拆分：纯工具归 util（CONTRACT §六-6）
@@ -1855,34 +1861,8 @@ def _compose_synthesis_summary(**kw) -> str:
 
 
 # ═══ chain_step5_dates.py ═══
-
-
-def _day_branch_for_date(d: datetime) -> str:
-    """Gregory 日期 → 日地支（2024-01-01 = 甲子日）。"""
-    delta = (d - _60_CYCLE_BASE).days
-    branch_idx = delta % 12
-    if branch_idx < 0:
-        branch_idx += 12
-    return BRANCHES[branch_idx]
-
-
-def _next_date_with_day_branch(start_date: datetime, target_branch: str, max_days: int = 366) -> datetime | None:
-    """下一日-branch = target_branch 的日期（前向扫描 max_days）。"""
-    if not target_branch or target_branch not in set(BRANCHES):
-        return None
-    d = start_date + timedelta(days=1)  # start FROM tomorrow
-    for _ in range(max_days):
-        if _day_branch_for_date(d) == target_branch:
-            return d
-        d += timedelta(days=1)
-    return None
-
-
-def _dates_overlap(dt1: datetime | None, dt2: datetime | None, tol_days: int = 2) -> bool:
-    """Check if two dates are within tol_days of each other (same event)."""
-    if dt1 is None or dt2 is None:
-        return False
-    return abs((dt1 - dt2).days) <= tol_days
+# （_day_branch_for_date / _next_date_with_day_branch / _dates_overlap
+#   已提取到 scripts/_step5_dates.py，本模块顶部 import 回收）
 
 
 # ═══ chain_step5_timing.py ═══
