@@ -310,7 +310,8 @@ def checks():
     def c_tracked_integrity(t):
         import subprocess as sp
         # 312 批修：本项原判据"全库可 UTF-8 解码"把二进制资产当破损件
-        # （实抓 claude-plugin/assets/icon.png 恒计 1，导致该项长期 × 而被当噪声）——
+        # （实抓旧 claude-plugin/assets/icon.png 恒计 1，导致该项长期 × 而被当噪声；
+        #  该目录已于 497 批删除）——
         # 二进制按扩展名豁免；文本仍全量解码，JSON 仍全量解析。
         BINARY_SUFFIX = {".png", ".jpg", ".jpeg", ".gif", ".ico", ".webp", ".bmp",
                          ".woff", ".woff2", ".ttf", ".otf", ".tgz", ".zip", ".gz", ".pdf"}

@@ -14,7 +14,7 @@ plugins/
 │   ├── schema.mjs       # dsh 简写参数 → MCP JSON Schema（唯一一处方言转译）
 │   ├── tools.mjs        # 四工具定义与 run（1.0 冻结契约）
 │   ├── engine.mjs       # 引擎调用层：子进程跑打包的 Python 引擎
-│   ├── python.mjs       # 解释器定位（DSH_PYTHON → YI_PYTHON → DSH 自带 → PATH → py）
+│   ├── python.mjs       # 解释器定位（DSH_PYTHON → DSH 自带 → PATH → py）
 │   ├── kb.mjs           # 判据检索（输出 resource 句柄）
 │   ├── report.mjs       # 报告落盘
 │   └── kb-synonyms.json
