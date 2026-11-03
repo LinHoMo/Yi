@@ -493,7 +493,7 @@
   "overrides": [
     {
       "id": "OV08",
-      "line": 1422,
+      "line": 1423,
       "cond": "verdict in (\"大吉\",)",
       "assigns": [
         "verdict = \"吉\""
@@ -506,7 +506,7 @@
     },
     {
       "id": "OV09",
-      "line": 1432,
+      "line": 1433,
       "cond": "\"no_source_wording\" in pattern_flags and verdict in (\"吉\", \"大吉\", \"平吉\")",
       "assigns": [
         "verdict = \"凶\"",
@@ -520,7 +520,7 @@
     },
     {
       "id": "OV10",
-      "line": 1439,
+      "line": 1440,
       "cond": "verdict == \"吉\" and final_score < 2.0",
       "assigns": [
         "verdict = \"平吉\""
@@ -533,7 +533,7 @@
     },
     {
       "id": "OV11",
-      "line": 1443,
+      "line": 1444,
       "cond": "verdict in (\"大吉\", \"吉\")",
       "assigns": [
         "verdict = \"凶\"",
@@ -547,7 +547,7 @@
     },
     {
       "id": "OV12",
-      "line": 1446,
+      "line": 1447,
       "cond": "verdict == \"平吉\"",
       "assigns": [
         "verdict = \"凶\""
@@ -560,7 +560,7 @@
     },
     {
       "id": "OV13",
-      "line": 1449,
+      "line": 1450,
       "cond": "\"brother_hold_exam\" in pattern_flags and verdict in (\"吉\", \"大凶\", \"凶\")",
       "assigns": [
         "verdict = \"平吉\"",
@@ -574,7 +574,7 @@
     },
     {
       "id": "OV14",
-      "line": 1450,
+      "line": 1451,
       "cond": "verdict in (\"凶\", \"大凶\")",
       "assigns": [
         "verdict = \"平吉\"",
@@ -588,7 +588,7 @@
     },
     {
       "id": "OV15",
-      "line": 1457,
+      "line": 1458,
       "cond": "verdict in (\"大吉\", \"吉\")",
       "assigns": [
         "verdict = \"平吉\" if verdict == \"吉\" else \"凶\""
@@ -601,7 +601,7 @@
     },
     {
       "id": "OV16",
-      "line": 1461,
+      "line": 1462,
       "cond": "verdict == \"平吉\" and any(k in _q_l for k in (\"久病\", \"半年\"))",
       "assigns": [
         "verdict = \"凶\""
@@ -614,7 +614,7 @@
     },
     {
       "id": "OV17",
-      "line": 1464,
+      "line": 1465,
       "cond": "\"brother_hold_exam\" in pattern_flags and verdict in (\"吉\", \"大吉\")",
       "assigns": [
         "verdict = \"平吉\""
@@ -627,7 +627,7 @@
     },
     {
       "id": "OV18",
-      "line": 1472,
+      "line": 1473,
       "cond": "verdict in (\"凶\", \"大凶\")",
       "assigns": [
         "verdict = \"平吉\""
@@ -640,7 +640,7 @@
     },
     {
       "id": "OV19",
-      "line": 1475,
+      "line": 1476,
       "cond": "\"travel_use_sheng_world\" in pattern_flags and verdict in (\"平吉\", \"凶\", \"大凶\")",
       "assigns": [
         "verdict = \"吉\"",
@@ -654,7 +654,7 @@
     },
     {
       "id": "OV20",
-      "line": 1478,
+      "line": 1479,
       "cond": "verdict == \"平吉\" and \"travel_use_ke_world\" in pattern_flags",
       "assigns": [
         "verdict = \"吉\""
@@ -667,7 +667,7 @@
     },
     {
       "id": "OV21",
-      "line": 1484,
+      "line": 1485,
       "cond": "verdict in (\"凶\", \"大凶\") and final_score >= 0",
       "assigns": [
         "verdict = \"吉\"",
@@ -681,7 +681,7 @@
     },
     {
       "id": "OV22",
-      "line": 1487,
+      "line": 1488,
       "cond": "verdict == \"平吉\" and final_score >= 0",
       "assigns": [
         "verdict = \"吉\""
@@ -694,7 +694,7 @@
     },
     {
       "id": "OV23",
-      "line": 1491,
+      "line": 1492,
       "cond": "verdict in (\"大吉\",)",
       "assigns": [
         "verdict = \"吉\"",
@@ -708,7 +708,7 @@
     },
     {
       "id": "OV24",
-      "line": 1494,
+      "line": 1495,
       "cond": "verdict == \"吉\" and final_score < 2.5",
       "assigns": [
         "verdict = \"平吉\"",
@@ -722,7 +722,7 @@
     },
     {
       "id": "OV25",
-      "line": 1497,
+      "line": 1498,
       "cond": "verdict in (\"平吉\",) and final_score <= 0.2",
       "assigns": [
         "verdict = \"平/不利\""
@@ -735,7 +735,7 @@
     },
     {
       "id": "OV26",
-      "line": 1500,
+      "line": 1501,
       "cond": "_is_travel_return and verdict in (\"凶\", \"大凶\")",
       "assigns": [
         "verdict = \"平吉\""
@@ -748,7 +748,7 @@
     },
     {
       "id": "OV27",
-      "line": 1512,
+      "line": 1513,
       "cond": "officer_tomb_verdict_override",
       "assigns": [
         "verdict = officer_tomb_verdict_override"
