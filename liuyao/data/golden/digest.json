@@ -3,15 +3,9 @@
     "what": "金标准指纹基线（排盘+思维链+分析层逐字段；抽样含 narrate 文案哈希）",
     "how": "改动引擎行为后跑 python dev_tools/golden.py capture \"理由\"；机械层漂移=行为变化，措辞层漂移=narrate 断语变化（两层分列归因）"
   },
-  "digest": "7f055df08b446f5c",
+  "digest": "96c7f5d168ca6140",
   "narrate_digest": "8168eff9e560d6c2",
   "drift_log": [
-    {
-      "from": "0f316c3aa5125f72",
-      "to": "956c9531d498fcfa",
-      "date": "2026-10-25",
-      "reason": "第两百八十四批：忌神合日月按动静分计——动忌被合=合绊不成凶记+0.3（《增删卜易》源L1480「旧注忌神动逢日月相合则不成凶」+L738 动逢合谓之合绊+L3152 实案），静忌被合=合起扶忌维持-0.3/-0.25；10条漂移全部为动忌合日/月案例的score微调（无verdict翻档、措辞零漂移），方向与书证一致"
-    },
     {
       "from": "956c9531d498fcfa",
       "to": "a098f250f4b23fe6",
@@ -125,6 +119,12 @@
       "to": "7f055df08b446f5c",
       "date": "2026-11-02",
       "reason": "T29救应规则: 六冲变合婚姻占吉断(书Z16), 1条占婚姻卦verdict正确抬吉, 措辞指纹未变"
+    },
+    {
+      "from": "7f055df08b446f5c",
+      "to": "96c7f5d168ca6140",
+      "date": "2026-11-03",
+      "reason": "D-series rules added direction caps"
     }
   ],
   "narrate_drift_log": [

@@ -33,7 +33,7 @@ const SKILL_SOURCE = join(PLUGINS_ROOT, 'SKILL.md')
 
 /** 每科要收进 engine 的相对路径（相对该科根目录）。 */
 const RUNTIME_INCLUDE = {
-  liuyao: ['core', 'scripts', 'data/rules', 'references', 'assets'],
+  liuyao: ['core', 'scripts', 'rules', 'data/rules', 'references', 'assets'],
   bazi: ['core', 'scripts', 'data/rules', 'references'],
 }
 

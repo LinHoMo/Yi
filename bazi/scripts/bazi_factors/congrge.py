@@ -11,7 +11,6 @@ from ._common import (
     _role,
     _role_of_elem,
     PATTERN_CB_RULES,
-    SHANGGUAN_CHENG_WITH_GUANSHA,
     BRANCH_ELEMENTS,
     CHONG_PAIRS,
     HE_PAIRS,

@@ -10,7 +10,7 @@
 
 ## 一、为什么要这张图谱
 
-现有引擎把"术数怎么判"做得很扎实（registry_v2 14 条规则、use_god_relations 取用神、domain_citations 分占域），但存在三个断层：
+现有引擎把"术数怎么判"做得很扎实（registry 14 条规则、use_god_relations 取用神、domain_citations 分占域），但存在三个断层：
 
 1. **哲学断层**：一条规则（如"回头克主凶"）直接给出判词，却说不清它从五行生克、从"反吟覆吟"的哪条公理推出来。
 2. **溯源断层**：断语有逐字书源，但书源之间没有"这几条说的是同一回事的不同侧面"的关系。
@@ -34,7 +34,7 @@
 | **L0** | 元理层（哲学） | 世界为什么是这样 | 阴阳、五行（金木水火土）、太极→两仪→四象→八卦、体用 | **待建** |
 | **L1** | 象数层（模型） | 卦盘是怎么搭出来的 | 天干、地支、纳甲装卦、五行生克（SHENG/KE）、六冲（CHONG）、六合（HE）、三合、十二长生、卦气 | **已有内核数据**（yishu_core/symbols.py），待知识化 |
 | **L2** | 概念层（术语） | 看盘时认哪些东西 | 用神/原神/忌神/仇神、世应、动静变爻、月建日辰、旬空、月破、回头克、化退、伏飞、六神 | **已有**（use_god_relations/question_classes），待挂哲学依据 |
-| **L3** | 规则层（判法） | 凭什么定吉凶 | 持世类、出现无情、变鬼、元神无力、救应时间窗、六冲变合… | **已有**（registry_v2 + rule_registry），待挂哲学依据和 kid |
+| **L3** | 规则层（判法） | 凭什么定吉凶 | 持世类、出现无情、变鬼、元神无力、救应时间窗、六冲变合… | **已有**（registry + rule_registry），待挂哲学依据和 kid |
 | **L4** | 书证层（断语） | 古籍怎么说 | 增删卜易、卜筮正宗、易冒、火珠林、易林补遗、断易天机、易隐 的逐字断语 | **已有**（domain_citations/verdict_texts/caiguan_fushi），待挂节点 |
 
 **层间方向是"演化"，不是"包含"**：L0 的五行生克公理 → L1 的 KE_CYCLE 数据表 → L2 的"回头克"术语（动爻变出克自己的五行）→ L3 的 shi_hua_ke 规则（世动回头克压凶）→ L4 的《增删卜易》逐字断语。一条链贯穿到底。
@@ -107,7 +107,7 @@ yi.<layer>.<domain>.<concept>
 | L2 取用神 | `data/rules/use_god_relations.json` | 每条规则转成 L2/L3 节点 + kid |
 | L2 问类 | `data/rules/question_classes.json` | classes 转成 L2 节点 |
 | L2 伏神 | `data/rules/caiguan_fushi.json` | 九宫转成 L2 节点 |
-| L3 仲裁规则 | `rules/registry_v2.json`（14 条） | 每条加 kid + parents 哲学依据 |
+| L3 仲裁规则 | `rules/registry.json`（14 条） | 每条加 kid + parents 哲学依据 |
 | L3 旧规则登记 | `data/rules/rule_registry.json`（91KB） | 逐条补 kid，不删（blocking 看门狗仍用） |
 | L4 分占域断语 | `data/rules/domain_citations.json` | 挂到所属 L3 节点 |
 | L4 断语文案 | `data/rules/verdict_texts.json` | step5_classical_notes 挂 kid |
@@ -122,14 +122,14 @@ yi.<layer>.<domain>.<concept>
 liuyao/
 ├── rules/                    # L3 运行时仲裁层（已闭环）
 │   ├── rule_engine.py
-│   ├── registry_v2.json
+│   ├── registry.json
 │   └── ...
 ├── data/
 │   ├── ontology/            # 易学图谱本体（只读知识层，不参与评分）
 │   │   ├── l0_metaphysics.json    # L0 太极→两仪→四象→八卦→五行
 │   │   ├── l1_xiangshu.json       # L1 象数模型（锚 symbols.py 真实数据）
 │   │   ├── l2_concepts.json       # L2 术数术语
-│   │   ├── l3_rules.json          # L3 判法（kid 化 registry_v2）
+│   │   ├── l3_rules.json          # L3 判法（kid 化 registry）
 │   │   ├── l4_evidence.json       # L4 逐字断语索引
 │   │   └── _index.json           # 全图索引 + 演示链
 │   ├── rules/               # 现有术数数据（question_classes/use_god_relations…）
@@ -164,7 +164,7 @@ liuyao/
 - [ ] 每个概念补 `parents`（哲学依据）
 
 ### 阶段 D：L3 规则层 kid 化 ✅ 已完成
-- [x] registry_v2 全部 13 条补 kid + parents
+- [x] registry 全部 13 条补 kid + parents
 - [x] 孤儿检查 `dev_tools/check_ontology.py`：每条规则沿 parents 必须追溯到 L0
 
 ### 阶段 E：L4 书证挂接 + 学习视图（部分）
@@ -178,5 +178,5 @@ liuyao/
 
 1. **每个节点必须有 parents**——孤儿节点（追溯不到哲学依据）要么补依据，要么显式标 `orphan` 待补，不许静默悬空。
 2. **engine_impl 必须真实**——知识层声称"这条由某代码实现"，看门狗要能回验符号存在；否则就是"知识撒谎"。
-3. **ontology 只读、rules 运行时**——图谱不改判分，只做索引和学习；判分仍走 rules/registry_v2。
+3. **ontology 只读、rules 运行时**——图谱不改判分，只做索引和学习；判分仍走 rules/registry。
 4. **kid 永不重用**——废弃节点标 `deprecated`，不删 id，防历史引用断链。

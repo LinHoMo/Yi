@@ -348,7 +348,7 @@
         "quote_in_code": "liuyao/scripts/classical_enhancements.py#《增删卜易·飛伏神章》「伏神有用者有六」",
         "verified": true,
         "quote_in_source": "data/sources/yiin_dz.dz.txt:224",
-        "verification_note": "2026-10-07 补《易隐》原词与出处（OPT-yiin_dz-02）：实测四态语义引擎**早已全部落地**（effects.py:656-664 定五态 relation；narrative_utils.py 五档权重），仅缺《易隐》原词标签与行号挂靠；本轮只补注记与出处，**判定值与权重零变更**。"
+        "verification_note": "2026-10-07 补《易隐》原词与出处（OPT-yiin_dz-02）：实测四态语义引擎**早已全部落地**（effects.py:656-664 定五态 relation；chain_verdicts.py 五档权重（narrative_utils 已于 311 批撤编，拆入 chain_verdicts + util）），仅缺《易隐》原词标签与行号挂靠；本轮只补注记与出处，**判定值与权重零变更**。"
       },
       "applicability": "用神不现→本宫首卦寻伏神伏于飞神之下；得出判据六条（得日月生/旺相/飞神生/动爻生/冲克飞神/飞神空破休囚墓绝）——引擎九条评分与六条逐项对应（can_emerge=emerge_score>0）；方向聚合对「伏而不得出」给 −1.0（2026-10-02s，有界）",
       "evaluation": {
@@ -676,7 +676,7 @@
         "quote3_in_source": "data/sources/huozhulin_dz.dz.txt:25",
         "quote3": "独发易取，乱动难寻；",
         "verified": true,
-        "verification_note_2026_10": "2026-10-07 落实 OPT-huozhulin_dz-03 的**对拍与注记部分**（判定值改动未实施，见 gap）。逐格对拍实测（工具 tools/scratch/_audit_luandong.py（scratch 一次性脚本，已随扁平化不在仓内），读取各 data/cases/*.json 的 hexagram.moving 字段）：\n\n【输入类】动爻数>2（＝书源所谓「乱动」）在全仓 135 条用例中的分布：\n  · classical_cases（tune20＋holdout12＋excluded10，共 44 条）：**0 条**（该文件不逐爻存明细，另计）\n  · huozhulin_holdout（火珠林原本 n=2）：**0 条**\n  · huozhulin_qualitative（n=5）：0 条（含 1 条独发）\n  · wikisource_holdout/direction（n=82）：**11 条**——WS012(动3) WS024(动4) WS031(动3) WS032(动4) WS034(动4) WS037(动3) WSD002(动5) WSD004(动4) WSD006(动3) WSD015(动3) WSD023(动3)\n  · yingqi_holdout（n=2）：**1 条**——YQ003(动6，六爻皆动)\n  合计乱动 12 条，**全部落在外部验证集，tune/holdout 两集内 0 条**。\n\n【结论（逐格对拍报告，AGENTS.md §四.5 三态）】\n  · 新增 N 格：0（未改任何判定，无新增格）\n  · 变空 N 格：0\n  · 改值 N 格：0\n  · 换言之：**在现有 tune/holdout 上「乱动卦」输入类样本量为 0**，即便实现了《火珠林》源L33 逐字「乱动之卦只取旺爻，旺爻即用神也。生克吉凶皆在此爻。若伏藏安静要旺相，若发动，却要生世之爻为用神，又不专泥旺相爻也」「乱动之卦只取旺爻，旺爻即用神也」，对 tune/holdout 读数预期为 **0 格变动**（读数不动属预期，非「修对了」的证据——§四.7）。\n\n【为何本轮不实施「三看何爻最旺为用神」】\n  1. **改判定值**：《火珠林》源L33「乱动之卦只取旺爻，旺爻即用神也」会改变取用结果，进而改断语与主分，属 AGENTS.md §四 门槛范围（须 tune/holdout 分列出分、tune≥95、逐格对拍解释改值）。\n  2. **口径未裁**：《火珠林》L33 自身带两个限定——「若伏藏安静要旺相，若发动，却要生世之爻为用神，又不专泥旺相爻也」，即旺爻优先但非绝对；源L27 更是四看并列（①旁爻生财旺相忌应爻克世 ②世下亲爻财官喜静 ③最旺爻为用神 ④独发之爻旺相最急）。要落地须先定「旺」的量化口径（本书无量化）与四看的取舍序，属**口径裁定**而非补注记。\n  3. **与增删口径冲突**：《增删卜易》用神章以「三看何爻最旺为用神，而注云发动要生世」与「世应」为主轴，不设乱动专用取用法；本书为**另一家专论**。按 OPT-yimao_dz-04／zengshan_buyi_dz-04 的同类处置范式，**登记分歧、暂不合并**。\n  4. **样本空档**：tune/holdout 内乱动卦 0 条，即使实现也**无回归护栏**可依（改对改错都测不出），贸然改取用逻辑风险不可控。\n\n【本轮实际改动】只补出处与缺口登记（本书签名字段），**引擎判定值零变更**。",
+        "verification_note_2026_10": "2026-10-07 落实 OPT-huozhulin_dz-03 的**对拍与注记部分**（判定值改动未实施，见 gap）。逐格对拍实测（一次性 scratch 脚本（已随扁平化不在仓内，不存路径），读取各 data/cases/*.json 的 hexagram.moving 字段）：\n\n【输入类】动爻数>2（＝书源所谓「乱动」）在全仓 135 条用例中的分布：\n  · classical_cases（tune20＋holdout12＋excluded10，共 44 条）：**0 条**（该文件不逐爻存明细，另计）\n  · huozhulin_holdout（火珠林原本 n=2）：**0 条**\n  · huozhulin_qualitative（n=5）：0 条（含 1 条独发）\n  · wikisource_holdout/direction（n=82）：**11 条**——WS012(动3) WS024(动4) WS031(动3) WS032(动4) WS034(动4) WS037(动3) WSD002(动5) WSD004(动4) WSD006(动3) WSD015(动3) WSD023(动3)\n  · yingqi_holdout（n=2）：**1 条**——YQ003(动6，六爻皆动)\n  合计乱动 12 条，**全部落在外部验证集，tune/holdout 两集内 0 条**。\n\n【结论（逐格对拍报告，AGENTS.md §四.5 三态）】\n  · 新增 N 格：0（未改任何判定，无新增格）\n  · 变空 N 格：0\n  · 改值 N 格：0\n  · 换言之：**在现有 tune/holdout 上「乱动卦」输入类样本量为 0**，即便实现了《火珠林》源L33 逐字「乱动之卦只取旺爻，旺爻即用神也。生克吉凶皆在此爻。若伏藏安静要旺相，若发动，却要生世之爻为用神，又不专泥旺相爻也」「乱动之卦只取旺爻，旺爻即用神也」，对 tune/holdout 读数预期为 **0 格变动**（读数不动属预期，非「修对了」的证据——§四.7）。\n\n【为何本轮不实施「三看何爻最旺为用神」】\n  1. **改判定值**：《火珠林》源L33「乱动之卦只取旺爻，旺爻即用神也」会改变取用结果，进而改断语与主分，属 AGENTS.md §四 门槛范围（须 tune/holdout 分列出分、tune≥95、逐格对拍解释改值）。\n  2. **口径未裁**：《火珠林》L33 自身带两个限定——「若伏藏安静要旺相，若发动，却要生世之爻为用神，又不专泥旺相爻也」，即旺爻优先但非绝对；源L27 更是四看并列（①旁爻生财旺相忌应爻克世 ②世下亲爻财官喜静 ③最旺爻为用神 ④独发之爻旺相最急）。要落地须先定「旺」的量化口径（本书无量化）与四看的取舍序，属**口径裁定**而非补注记。\n  3. **与增删口径冲突**：《增删卜易》用神章以「三看何爻最旺为用神，而注云发动要生世」与「世应」为主轴，不设乱动专用取用法；本书为**另一家专论**。按 OPT-yimao_dz-04／zengshan_buyi_dz-04 的同类处置范式，**登记分歧、暂不合并**。\n  4. **样本空档**：tune/holdout 内乱动卦 0 条，即使实现也**无回归护栏**可依（改对改错都测不出），贸然改取用逻辑风险不可控。\n\n【本轮实际改动】只补出处与缺口登记（本书签名字段），**引擎判定值零变更**。",
         "gap_registered": true,
         "gap_detail": {
           "已裁定_四看口诀_20261013": "【第一百七十批】源L27 逐字「一看世上旁爻生财旺相，忌应爻克世；二看世下亲爻财官喜静；三看何爻最旺为用神，如发动，动要生世；四看独发之爻，旺相最急，休囚事慢」四看逐条定性：①**落地为纯结构标签** look1（旁爻中六亲为用神之原神且旺相者；应爻五行克世爻五行）——只标象不打分；②**落地为纯结构标签** look2（世下一位之爻若为妻财/官鬼，报其静/动）——只标象不打分；③**裁定同向、不另立**（同『已裁定_取旺爻_同向不另立_20261013』）；④**本已落地**（liuyao.dufa_dujing 独发/独静标签，同源 L27 末句「四看独发之爻，旺相最急，休囚事慢」）。落点与判据见『已落地_四看一二_20261013』。",
@@ -810,7 +810,7 @@
     {
       "rule_id": "liuyao.chuxian_wuqing",
       "domain": "方向凶格·出现无情（功名类）",
-      "impl": "scripts/classical_enhancements_direction.py:detect_direction_caps 第1条 → scripts/step5.py 5.7b 上限压档",
+      "impl": "rules/direction.py:detect_direction_caps 第1条 → rules/registry.json#liuyao.chuxian_wuqing（rule_engine.evaluate_caps 求值；step5 5.7b 压档）",
       "source": {
         "book": "《增删卜易》",
         "locator": "L2786",
@@ -834,7 +834,7 @@
     {
       "rule_id": "liuyao.xiong_chi_shi_ke_cai",
       "domain": "方向凶格·兄弟持世克财（婚姻）",
-      "impl": "scripts/classical_enhancements_direction.py:detect_direction_caps 第2条",
+      "impl": "rules/direction.py:detect_direction_caps 第2条 → rules/registry.json#liuyao.xiong_chi_shi_ke_cai（rule_engine.evaluate_caps 求值）",
       "source": {
         "book": "《增删卜易》",
         "locator": "L2613",
@@ -858,7 +858,7 @@
     {
       "rule_id": "liuyao.shi_hua_gui",
       "domain": "方向凶格·世爻变鬼",
-      "impl": "scripts/classical_enhancements_direction.py:detect_direction_caps 第3条",
+      "impl": "rules/direction.py:detect_direction_caps 第3条 → rules/registry.json#liuyao.shi_hua_ke/shi_hua_gui.tihuo/shi_hua_gui.huitouke/yongshen_hua_tui（rule_engine.evaluate_caps 求值）",
       "source": {
         "book": "《增删卜易》",
         "locator": "L1643",
@@ -885,7 +885,7 @@
     {
       "rule_id": "liuyao.yuan_shen_wu_li",
       "domain": "方向凶格·用神化凶而元神无力（源绝）",
-      "impl": "scripts/classical_enhancements_direction.py:detect_direction_caps 第4条",
+      "impl": "rules/direction.py:detect_direction_caps 第4条 → rules/registry.json#liuyao.yuan_shen_wu_li（rule_engine.evaluate_caps 求值）",
       "source": {
         "book": "《增删卜易》",
         "locator": "L551",
@@ -937,7 +937,7 @@
     {
       "rule_id": "liuyao.qiu_cai_xiong_chi_shi",
       "domain": "方向凶格·兄弟持世占求财（压档，不加和）",
-      "impl": "scripts/classical_enhancements_direction.py:detect_direction_caps 第5条（reason_key=qiu_cai_xiong_shi）",
+      "impl": "rules/direction.py:detect_direction_caps 第5条 → rules/registry.json#liuyao.qiu_cai_xiong_chi_shi（rule_engine.evaluate_caps 求值）",
       "source": {
         "book": "《增删卜易》",
         "locator": "L419",
@@ -950,7 +950,7 @@
         ],
         "verified": true,
         "quote_in_data": "liuyao/data/rules/verdict_texts.json#direction_cap_quotes.qiu_cai_xiong_shi.quote",
-        "quote_in_code": "scripts/classical_enhancements_direction.py#qiu_cai_xiong_shi"
+        "quote_in_code": "rules/direction.py#detect_direction_caps"
       },
       "applicability": "限 question_class==求财 且 世爻六亲==兄弟：安静压至平凶、发动压至凶（只压档不加和，与第 1-4 条同一机制）。**不外推**：①失物·寻物——《增删卜易》全书「失物/脱空/遗失」与「兄弟」同句者为 0 条，书上没写这条禁忌（自有基准里 世爻=兄弟而基准=吉 的 ZS011/ZS019/ZS028 三例全是失物·寻物，实测本条对它们零影响）；②婚姻侧另有第 2 条按其本章原文独立处理；③终身财福·百工——已于第二十三批从求财类析出（question_classes.json 新增 终身财福 类，优先级置于求财之前），不在本格适用面内；书据《增删卜易》源L2219「倘值旺兄持世，克妻耶？耗财耶？手足外伤耶？」与《增删卜易》源L2221「凡占终身财福，世爻财爻子孙爻三者无一失陷，定是家殷户足、福禄绵长」",
       "evaluation": {

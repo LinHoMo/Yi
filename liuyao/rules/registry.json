@@ -118,7 +118,7 @@
       "gates": {"ug_cat_eq": "世爻"},
       "cap": "凶",
       "detail_tmpl": "世爻{world_branch}动化出官鬼{world_chg_branch}，而变爻官鬼落空亡（世化官空，非病即灾，八九月见）",
-      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:117987"}
+      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:2900"}
     },
     {
       "rule_id": "liuyao.shou_dong_sheng_shi",
@@ -129,7 +129,7 @@
       },
       "cap": "凶",
       "detail_tmpl": "占寿而原神/动爻动来生世（占寿忌动爻生世，生之反成催寿，气数被引动）",
-      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:96654"}
+      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:2422"}
     },
     {
       "rule_id": "liuyao.chuxing_shi_dong_fenghe",
@@ -142,9 +142,10 @@
           {"month_he_world": true}
         ]
       },
+      "gates": {"ug_cat_not": ["妻财"]},
       "cap": "凶",
       "detail_tmpl": "占出行而世爻{world_branch}发动，被日辰/月建合住（世动逢合），行期被绊，欲行不行",
-      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:25459"}
+      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:747"}
     },
     {
       "rule_id": "liuyao.yuan_shen_wu_li",
@@ -171,7 +172,7 @@
       "gates": {"qcls_eq": "婚姻"},
       "cap": "吉",
       "detail_tmpl": "六冲变合，散而复聚，离而必合（不看用神亦以吉断）",
-      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:25835"}
+      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:755"}
     },
     {
       "rule_id": "liuyao.shi_hua_ke_wang",
@@ -194,7 +195,7 @@
       "gates": {"qcls_eq": "求财"},
       "cap": "吉",
       "detail_tmpl": "用神{ug_branch}（{ug_cat}）月生日扶有根，虽被动爻忌神克，待冲去克神之月日应",
-      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:128050"}
+      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:3107"}
     },
     {
       "rule_id": "liuyao.yongshen_guan_sheng_world_chain",
@@ -203,7 +204,7 @@
       "gates": {"qcls_eq": "求财", "ug_cat_eq": "妻财"},
       "cap": "吉",
       "detail_tmpl": "用神{ug_branch}（{ug_cat}）生官鬼、官鬼动而生世，连续相生，财气通门户",
-      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:16685"}
+      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:550"}
     },
     {
       "rule_id": "liuyao.zhu_xiang_shou_shang",
@@ -229,6 +230,59 @@
       "score_delta": -0.5,
       "detail_tmpl": "卦逢六冲，主散；用神旺相则冲之不散",
       "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:780"}
+    }
+  ],
+  "_ovr_comment": "verdict-stage 覆写规则：apply_verdict_overrides 专用，按数组顺序自上而下求值，逐条更新当前 verdict（复刻旧 if 链语义）。when 全部 AND；target 可为非 RANK 串（下跌/平/不利）；reason_key 为空串表示只改 verdict 不动 desc。文案均在 verdict_texts.json#step5_verdict_descs。",
+  "verdict_overrides": [
+    {
+      "rule_id": "liuyao.ovr.travel_scattered",
+      "reason_key": "travel_scattered",
+      "when": {"qtext_any": ["行人", "出行", "回来", "归"], "sp_any": ["六冲", "合处逢冲"], "verdict_in": ["吉", "大吉", "平吉"]},
+      "target": "凶",
+      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:占出行"}
+    },
+    {
+      "rule_id": "liuyao.ovr.partner_scattered",
+      "reason_key": "partner_scattered",
+      "when": {"qtext_any": ["合伙"], "sp_any": ["六冲", "合处逢冲"], "verdict_in": ["吉", "大吉", "平吉"]},
+      "target": "凶",
+      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:占合伙"}
+    },
+    {
+      "rule_id": "liuyao.ovr.weak_use_net_negative",
+      "reason_key": "weak_use_net_negative",
+      "when": {"verdict_eq": "平吉", "score_lt": 0.0, "net_effect_lt": -0.2},
+      "target": "凶",
+      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:用神净动变负"}
+    },
+    {
+      "rule_id": "liuyao.ovr.xing_he_conflict",
+      "reason_key": "xing_he_conflict",
+      "when": {"xhe": true, "verdict_in": ["吉", "大吉", "平吉"]},
+      "target": "平凶",
+      "score_floor": 0.5,
+      "source": {"book": "卜筮全书", "locator": "三刑六合相战"}
+    },
+    {
+      "rule_id": "liuyao.ovr.he_then_chong_marriage",
+      "reason_key": "he_then_chong",
+      "when": {"sp_any": ["合处逢冲"], "verdict_in": ["凶", "大凶", "平吉"], "qtext_any": ["婚", "合", "成否", "聚"]},
+      "target": "平/不利",
+      "source": {"book": "卜筮正宗", "locator": "合处逢冲论第十五"}
+    },
+    {
+      "rule_id": "liuyao.ovr.he_then_chong_daxiong",
+      "reason_key": "",
+      "when": {"sp_any": ["合处逢冲"], "verdict_eq": "大凶"},
+      "target": "凶",
+      "source": {"book": "卜筮正宗", "locator": "合处逢冲论第十五"}
+    },
+    {
+      "rule_id": "liuyao.ovr.price_down",
+      "reason_key": "price_down",
+      "when": {"qtext_any": ["价", "贵贱", "桑叶", "涨跌"], "verdict_in": ["凶", "大凶"]},
+      "target": "下跌",
+      "source": {"book": "增删卜易", "locator": "zengshan_buyi_dz.dz.txt:占价"}
     }
   ]
 }

@@ -35,7 +35,7 @@
 | `DOCS.md` | 本表：全仓文档索引 | 活文档 |
 | `ARCHITECTURE-PLAN.md` | **架构整改完成记录**（原总方案 340 批压缩）：D1–D3 决策、完成台账、V1–V15 收口实测、偏差与欠账 | 归档留证 |
 
-## 三、六爻（`liuyao/`，16 份）
+## 三、六爻（`liuyao/`，19 份）
 
 ### 主入口
 
@@ -55,6 +55,9 @@
 | `liuyao/docs/YIIN-CASE-AUDIT.md` | 《易隐》案例集审计（`yiin_holdout`） | 活文档 |
 | `liuyao/docs/ADJUDICATION-BRIEF.md` | 待裁简报（**生成物**：`dev_tools/adjudication_brief.py` 重生成） | 生成物 |
 | `liuyao/docs/TIANHOU.md` | 占天候试验台协议（读数规则、换源即改口径） | 活文档 |
+| `liuyao/docs/ONTOLOGY-CARDS.md` | 易学知识图谱本体卡片（L0–L4 概念人读版） | 活文档 |
+| `liuyao/docs/YI-KNOWLEDGE-GRAPH.md` | 易学知识图谱手册（演化树、象数层、书证层、AI 检索视图） | 活文档 |
+| `liuyao/docs/RULE-ENGINE-REFACTOR-PLAN.md` | 规则仲裁层改造计划（registry v2 四层架构、阶段划分、D1 落地记录） | 活文档 |
 
 ### 参考（`liuyao/references/`）
 

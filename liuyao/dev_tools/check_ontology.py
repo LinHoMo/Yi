@@ -5,7 +5,7 @@
 1. 每个节点必须有 parents（L0 元理节点除外，它们是根）。
 2. 任意非 L0 节点沿 parents 向上必须能走到某个 yi.l0.* 根节点——走不到就是 orphan。
 3. parents 引用的 kid 必须真实存在（不能指向幽灵）。
-4. engine_impl 声称锚定的 registry_v2 规则必须存在。
+4. engine_impl 声称锚定的 registry 规则必须存在。
 
 用法：
     python dev_tools/check_ontology.py
@@ -17,9 +17,14 @@ import os
 import sys
 from pathlib import Path
 
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
+
 _ROOT = Path(__file__).resolve().parents[1]  # liuyao/
 _ONTO = _ROOT / "data" / "ontology"
-_REG = _ROOT / "rules" / "registry_v2.json"
+_REG = _ROOT / "rules" / "registry.json"
 
 LAYER_FILES = ["l0_metaphysics.json", "l1_xiangshu.json", "l2_concepts.json", "l3_rules.json", "l4_evidence.json"]
 
@@ -73,11 +78,11 @@ def check(nodes: dict, registry_ids: set, selftest: bool = False) -> list[str]:
         if not reaches_root(kid):
             problems.append(f"orphan：{kid} 沿 parents 追溯不到任何 L0 根")
 
-    # 3) engine_impl 锚 registry_v2 规则存在性
+    # 3) engine_impl 锚 registry 规则存在性
     for kid, n in nodes.items():
         impl = n.get("engine_impl", "")
-        if "registry_v2.json:" in impl:
-            rid = impl.split("registry_v2.json:", 1)[1].strip()
+        if "registry.json:" in impl:
+            rid = impl.split("registry.json:", 1)[1].strip()
             if rid not in registry_ids:
                 problems.append(f"engine_impl 悬空：{kid} 锚定不存在的规则 '{rid}'")
 

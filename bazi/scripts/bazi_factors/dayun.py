@@ -17,7 +17,6 @@ from ._common import (
     MONTHS_PER_DAY,
     PILLAR_LABEL,
     PILLAR_ORDER,
-    _REL_BASIS,
     SAN_HE_GROUPS,
     SHENG_CYCLE,
     KE_CYCLE,
@@ -29,7 +28,6 @@ from ._common import (
     stems_wuhe,
     ten_god,
     STEM_ELEMENTS,
-    CHONG_PAIRS as _CHONG_PAIRS,
 )
 from yishu_core.ganzhi_calendar import next_jie_after, prev_jie_before
 from yishu_core.symbols import xunkong_of

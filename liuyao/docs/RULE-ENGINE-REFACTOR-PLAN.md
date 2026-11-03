@@ -15,7 +15,7 @@
 |---|---|---|
 | `data/sources/*.txt` | 16 部经典原文 + provenance，干净 | 断语是纯文本，知识未抽成结构化条目 |
 | `data/rules/rule_registry.json` | 33 条规则，schema=`yi-rule-registry-v1`，每条带 source.verified | **是台账不是执行体**：`impl` 指向 `step4.py:1058` 这种代码行号；`applicability` 是自然语言备注，引擎不能仲裁 |
-| `scripts/classical_enhancements_direction.py` | 9 类硬编码 cap（L157-427） | 判据真身在这里；`apply_caps` 先到先得取最严档，无优先级、无救应解除语义 |
+| `rules/direction.py` | 9 类硬编码 cap（detect_direction_caps） | 判据真身曾在这里；`apply_caps` 先到先得取最严档，无优先级、无救应解除语义 |
 
 ### 1.2 两个根本错配
 - **标量压多段**：`final_score` 一个数想同时回答"即时卦象吉凶"和"最终结局"。
@@ -143,16 +143,16 @@ L3 推理编排  step5 瘦身成调度器：只调 L2 仲裁，不再硬编码�
 
 ### 7.1 现状盘点
 - `scripts/` 54 个 .py 平铺：step5.py 110KB（上帝模块）、classical_enhancements.py 88KB、
-  classical_enhancements_direction.py 8.4KB（已瘦成调度壳）、rule_engine.py 18.3KB（新仲裁器）。
+  `rules/direction.py` 8.4KB（已瘦成调度壳）、`rules/rule_engine.py` 18.3KB（新仲裁器）。
 - `data/rules/` 17 个 JSON 平铺：旧 `rule_registry.json` 89KB（dev_tools 链重度引用，**不能物理删**）、
-  `verdict_texts.json` 91KB（文案外置）、新 `rule_engine_v2.json` 5.7KB（11 条）。
+  `verdict_texts.json` 91KB（文案外置）、规则数据 `registry.json`（rules 目录，11 条）。
 
 ### 7.2 目标目录树（按职责分层，物理挪动分批做）
 ```
 liuyao/
 ├── rules/                     # L2 规则仲裁层（新架构核心，先独立成树）
-│   ├── engine.py              #   谓词求值仲裁器（现 scripts/rule_engine.py）
-│   ├── registry_v2.json      #   规则数据化（现 data/rules/rule_engine_v2.json）
+│   ├── engine.py              #   谓词求值仲裁器（现 `rules/rule_engine.py`）
+│   ├── registry.json         #   规则数据化（现 rules/registry.json）
 │   └── predicates.py          #   谓词集（后续从 engine.py 拆出，纯函数）
 ├── engine/                    # L3 推理编排
 │   ├── pipeline/              #   step1~step5 五步（现 scripts/step*.py）
@@ -194,13 +194,13 @@ dev_tools 改读新路径；旧路径留 1 个版本的转发或在 CHANGELOG �
 ```
 liuyao/rules/
 ├── __init__.py
-├── rule_engine.py     # 仲裁器（原 scripts/rule_engine.py）
+├── rule_engine.py     # 仲裁器（原 `rules/rule_engine.py`）
 ├── predicates.py      # 共享纯函数库（新建，破环抽出）
-└── registry_v2.json   # 11 条规则数据（原 data/rules/rule_engine_v2.json）
+└── registry.json      # 规则数据（现 rules/registry.json）
 ```
 
-**破环先行（66c6470）**：旧环 `rule_engine ──import──> classical_enhancements_direction(纯函数)`
-与 `classical_enhancements_direction ──延迟 import──> rule_engine.evaluate_caps` 互相引用。
+**破环先行（66c6470）**：旧环 `rule_engine ──import──> direction(纯函数)`
+与 `direction ──延迟 import──> rule_engine.evaluate_caps` 互相引用。
 先抽 `predicates.py`（RANK/_world_line/_month_state/_chong/_broken/_he/HUA_XIONG），
 两者都单向依赖 predicates，环断后 engine.py 才能干净挪目录。
 
@@ -209,7 +209,7 @@ liuyao/rules/
 报 `cannot import name 'evaluate_caps'`。故仲裁器保留 `rule_engine.py` 原名，不改名。
 
 **sys.path 现实**：运行时是平铺架构（core/、scripts/ 在 sys.path，liuyao/ 根不在）。
-rules/ 下模块自加 scripts/ 找 kernel_path；classical_enhancements_direction 自加 rules/ 找
+rules/ 下模块自加 scripts/ 找 kernel_path；direction 自加 rules/ 找
 rule_engine/predicates。未改包导入机制（避免牵动 step 链），分层靠物理目录 + 各自 sys.path 前置。
 
 

@@ -73,9 +73,6 @@ dsh-plugin/package-lock.json
 # npm pack 产物（发布工件走 GitHub Release，不入库）
 dsh-plugin/*.tgz
 
-# 发布树（plugins/scripts/publish.mjs 产出，供各家 git 通道消费；不入库）
-plugins/dist/
-
 # plugins/：共享层（SKILL.md + mcp/ + scripts/）入库，engine/ 与 skills/ 是构建产物
 plugins/engine/
 plugins/skills/

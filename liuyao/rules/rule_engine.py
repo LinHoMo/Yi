@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
-"""规则仲裁层（registry v2 执行体）。
+"""规则仲裁层（registry 执行体）。
 
-阶段0最小闭环：把 detect_direction_caps 里的硬编码 if 判据，迁成 registry v2 JSON 条目，
+阶段0最小闭环：把 detect_direction_caps 里的硬编码 if 判据，迁成 registry JSON 条目，
 由本引擎对盘面求值。目标——**纯重构、零输出漂移**：引擎产出的 cap dict 结构与原来完全一致
 （rule_id/cap/src/reason_key/detail），step5 无感知。
 
 依赖方向（无循环，规则层物理独立于 rules/）：
     rule_engine ──import──> predicates（共享纯函数库，同目录）
     detect_direction_caps(scripts) ──延迟 import──> rule_engine.evaluate_caps
-    classical_enhancements_direction 不被 rule_engine import。
+    direction 不被 rule_engine import（单向依赖 predicates）。
 
 v2 条目 schema（见 docs/RULE-ENGINE-REFACTOR-PLAN.md）：
     {rule_id, when{...}, gates{qcls_not/ug_cat_not/qcls_eq}, rescue_any[...],
@@ -36,8 +36,8 @@ from predicates import (  # noqa: E402  纯函数共享库，无反向依赖
 )
 
 
-# ── v2 规则库加载（带缓存）──────────────────────────────────────
-_RULES_PATH = _ks_os.path.join(_ks_d, "registry_v2.json")
+# ── 规则库加载（带缓存）──────────────────────────────────────
+_RULES_PATH = _ks_os.path.join(_ks_d, "registry.json")
 _cache = {"rules": None, "mtime": None}
 
 
@@ -679,3 +679,113 @@ def evaluate_caps(lines, step2, step4, month_branch, day_branch, empty_branches,
             entry["score_delta"] = rule["score_delta"]
         caps.append(entry)
     return caps
+
+
+# ════════════════════════════════════════════════════════════════════════════
+# verdict-stage 覆写规则（apply_verdict_overrides 专用）
+# ════════════════════════════════════════════════════════════════════════════
+# 与 evaluate_caps 的 board-fact 规则不同：这些规则在「verdict 已定档」之后、
+# 依据**当前 verdict / final_score / 问语文本 / special_pattern 文案 / pattern_flags**
+# 等覆写期上下文做定向覆写（含非 RANK 目标如「下跌」「平/不利」）。
+# 数据同存 registry.json 的 `verdict_overrides` 数组，按数组顺序逐条求值，
+# 每条命中即更新当前 verdict——忠实复刻旧 if 链的「自上而下、后读前写」语义。
+
+def _load_verdict_overrides() -> list[dict]:
+    mt = _ks_os.path.getmtime(_RULES_PATH)
+    if _cache["rules"] is None or _cache["mtime"] != mt:
+        with open(_RULES_PATH, encoding="utf-8") as f:
+            _doc = _json.load(f)
+        _cache["rules"] = _doc.get("rules", []) if isinstance(_doc, dict) else _doc
+        _cache["mtime"] = mt
+        _cache["ovr"] = (_doc.get("verdict_overrides", [])
+                         if isinstance(_doc, dict) else [])
+    elif "ovr" not in _cache:
+        with open(_RULES_PATH, encoding="utf-8") as f:
+            _doc = _json.load(f)
+        _cache["ovr"] = _doc.get("verdict_overrides", [])
+    return _cache["ovr"]
+
+
+def _ovr_match(v: str, when: dict, cv: dict) -> bool:
+    """单条覆写规则的 when 条件求值（全部 AND）。cv 为覆写期上下文视图。"""
+    if not when:
+        return True
+    def _has(sub: str, text: str) -> bool:
+        return bool(sub) and bool(text) and sub in text
+    for key, want in when.items():
+        if key == "verdict_eq":
+            if v != want:
+                return False
+        elif key == "verdict_in":
+            if v not in (want or []):
+                return False
+        elif key == "qtext_any":
+            if not any(_has(k, cv.get("qtext", "")) for k in (want or [])):
+                return False
+        elif key == "q_l_any":
+            if not any(_has(k, cv.get("q_l", "")) for k in (want or [])):
+                return False
+        elif key == "sp_any":
+            if not any(_has(k, cv.get("sp_pat", "")) for k in (want or [])):
+                return False
+        elif key == "sp_not_any":
+            if any(_has(k, cv.get("sp_pat", "")) for k in (want or [])):
+                return False
+        elif key == "score_lt":
+            if not (cv.get("final_score", 0.0) < want):
+                return False
+        elif key == "score_ge":
+            if not (cv.get("final_score", 0.0) >= want):
+                return False
+        elif key == "net_effect_lt":
+            if not ((cv.get("net_effect", 0.0) or 0.0) < want):
+                return False
+        elif key == "flag_any":
+            if not any(f in (cv.get("pattern_flags") or []) for f in (want or [])):
+                return False
+        elif key == "flag_not":
+            if want in (cv.get("pattern_flags") or []):
+                return False
+        elif key == "world_relation_eq":
+            if cv.get("world_relation", "") != want:
+                return False
+        elif key == "is_wealth":
+            if bool(cv.get("is_wealth")) != bool(want):
+                return False
+        elif key == "is_travel_return":
+            if bool(cv.get("is_travel_return")) != bool(want):
+                return False
+        elif key == "xhe":
+            if bool(cv.get("xhe")) != bool(want):
+                return False
+        else:
+            # 未知条件＝规则写错，按不命中安全处理（宁缺毋滥）
+            return False
+    return True
+
+
+def evaluate_verdict_overrides(cv: dict) -> list[dict]:
+    """按数组顺序求值覆写期规则，返回命中动作列表（含逐条更新后的 verdict）。
+
+    cv 必须含可变键 verdict / final_score；本函数会就地更新它们，忠实复刻
+    旧 if 链的「后条读前条已覆写的 verdict」语义。动作项：
+        {rule_id, target, reason_key, score_floor}
+    """
+    actions = []
+    for rule in _load_verdict_overrides():
+        v = cv.get("verdict", "")
+        if not _ovr_match(v, rule.get("when", {}), cv):
+            continue
+        target = rule.get("target")
+        reason = rule.get("reason_key")
+        floor = rule.get("score_floor")
+        if target is not None:
+            cv["verdict"] = target
+        if floor is not None and (cv.get("final_score", 0.0) or 0.0) < floor:
+            cv["final_score"] = round(floor, 2)
+        actions.append({
+            "rule_id": rule["rule_id"],
+            "target": target,
+            "reason_key": reason,
+        })
+    return actions

@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """六爻古典判定纯函数库（L2 规则仲裁层共享谓词原语）。
 
-从 `classical_enhancements_direction` 抽出，供 `rule_engine`（仲裁器）与
-`classical_enhancements_direction`（apply_caps 用 RANK）共同复用，打破旧环：
-    旧：rule_engine ──import──> classical_enhancements_direction（纯函数）
-        classical_enhancements_direction ──延迟 import──> rule_engine.evaluate_caps
+从 `classical_enhancements_direction`（旧名，现 `rules/direction.py`）抽出，供
+`rule_engine`（仲裁器）与 `direction`（apply_caps 用 RANK）共同复用，打破旧环：
+    旧：rule_engine ──import──> direction（纯函数）
+        direction ──延迟 import──> rule_engine.evaluate_caps
     新：rule_engine ──import──> predicates（本库）
-        classical_enhancements_direction ──import──> predicates（RANK）
+        direction ──import──> predicates（RANK）
         两者不再互相 import，环断开。
 
 本库只放**无状态、无盘面 IO 的纯函数**：卦爻查找、月建旺衰、六合六冲、

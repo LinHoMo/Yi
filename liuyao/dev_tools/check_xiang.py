@@ -34,7 +34,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 SCORING_MODULES = (
     "step1.py", "step2.py", "step3.py", "step4.py", "step5.py",
     "timing.py", "judge.py", "classical_analysis.py",
-    "classical_enhancements.py", "classical_enhancements_direction.py",
+    "classical_enhancements.py",
     "classical_enhancements_dufa.py", "classical_enhancements_fangwei.py",
     "classical_enhancements_fushi.py", "classical_enhancements_menlei.py",
     "classical_enhancements_shen_yao.py", "classical_enhancements_yimao_zhugui.py",

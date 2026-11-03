@@ -1,13 +1,13 @@
 {
   "schema": "yi-ontology/l3-rules/1",
-  "_comment": "L3 规则层（判法）：与 rules/registry_v2.json 一一对应。registry_v2 是运行时判分入口，本文件是知识视图——每条规则挂 parents 哲学依据，可向上追溯到 L0。后半段为 rule_registry.json 中尚未迁入 registry_v2 的旧规则只读 kid 视图（read_only+legacy）：运行时不读本文件，仅作知识锚点与可追溯性，不物理迁移 rule_registry.json。",
+  "_comment": "L3 规则层（判法）：与 rules/registry.json 一一对应。registry 是运行时判分入口，本文件是知识视图——每条规则挂 parents 哲学依据，可向上追溯到 L0。后半段为 rule_registry.json 中尚未迁入 registry 的旧规则只读 kid 视图（read_only+legacy）：运行时不读本文件，仅作知识锚点与可追溯性，不物理迁移 rule_registry.json。",
   "nodes": [
     {
       "kid": "yi.l3.rule.shi_hua_ke",
       "name": "世动回头克（即时压凶）",
       "def": "世爻动而变回头克，即时 cap=凶，压 verdict 档。",
       "parents": ["yi.l2.concept.huitouke"],
-      "engine_impl": "rules/registry_v2.json:liuyao.shi_hua_ke",
+      "engine_impl": "rules/registry.json:liuyao.shi_hua_ke",
       "cap": "凶"
     },
     {
@@ -15,7 +15,7 @@
       "name": "世临月建旺回头克（待时救应）",
       "def": "世动回头克，但世临月建旺，cap=吉——回头克只延迟应期，不害其吉。由 apply_caps 第二遍救应抬吉。",
       "parents": ["yi.l2.concept.shi_wang", "yi.l2.concept.huitouke_chongjie"],
-      "engine_impl": "rules/registry_v2.json:liuyao.shi_hua_ke_wang",
+      "engine_impl": "rules/registry.json:liuyao.shi_hua_ke_wang",
       "cap": "吉",
       "evidence": [{"book": "增删卜易", "text": "世临月建之官定得面见，被午火回头之克，须待子日冲去午火方得拜谒"}]
     },
@@ -24,7 +24,7 @@
       "name": "六冲变合（婚姻占吉断）",
       "def": "原卦六冲主散，变卦六合主聚，婚姻占散而复聚，竟以吉断。",
       "parents": ["yi.l1.branch.chong", "yi.l1.branch.he"],
-      "engine_impl": "rules/registry_v2.json:liuyao.liuchong_bian_liuhe",
+      "engine_impl": "rules/registry.json:liuyao.liuchong_bian_liuhe",
       "cap": "吉",
       "evidence": [{"book": "增删卜易", "text": "六冲变合，散而复聚，离而必合，此婚一定还成"}]
     },
@@ -33,7 +33,7 @@
       "name": "世动回头生逢月破",
       "def": "世动本化回头生（吉），但所变之爻逢月破，生而无力，cap=凶。",
       "parents": ["yi.l1.branch.chong", "yi.l0.wuxing.sheng"],
-      "engine_impl": "rules/registry_v2.json:liuyao.shi_huitou_sheng_yuepo",
+      "engine_impl": "rules/registry.json:liuyao.shi_huitou_sheng_yuepo",
       "cap": "凶"
     },
     {
@@ -41,7 +41,7 @@
       "name": "用神化退神",
       "def": "用神动而化退神（气退减），cap=凶。",
       "parents": ["yi.l0.wuxing", "yi.l2.concept.huitouke"],
-      "engine_impl": "rules/registry_v2.json:liuyao.yongshen_hua_tui",
+      "engine_impl": "rules/registry.json:liuyao.yongshen_hua_tui",
       "cap": "凶"
     },
     {
@@ -49,7 +49,7 @@
       "name": "凶爻持世克财",
       "def": "忌神/凶爻持世而克妻财，求财占 cap=凶。",
       "parents": ["yi.l1.wuxing.ke_cycle"],
-      "engine_impl": "rules/registry_v2.json:liuyao.xiong_chi_shi_ke_cai",
+      "engine_impl": "rules/registry.json:liuyao.xiong_chi_shi_ke_cai",
       "cap": "凶"
     },
     {
@@ -57,7 +57,7 @@
       "name": "天气占雨（结构判）",
       "def": "天气占以父母/财爻动静定雨晴，cap=凶（主雨不成晴）。",
       "parents": ["yi.l0.bagua"],
-      "engine_impl": "rules/registry_v2.json:liuyao.tianqi_zhan_yu",
+      "engine_impl": "rules/registry.json:liuyao.tianqi_zhan_yu",
       "cap": "凶"
     },
     {
@@ -65,7 +65,7 @@
       "name": "天气占晴（结构判）",
       "def": "天气占晴之结构判，cap=凶。",
       "parents": ["yi.l0.bagua"],
-      "engine_impl": "rules/registry_v2.json:liuyao.tianqi_zhan_qing",
+      "engine_impl": "rules/registry.json:liuyao.tianqi_zhan_qing",
       "cap": "凶"
     },
     {
@@ -73,7 +73,7 @@
       "name": "求财凶爻持世",
       "def": "求财占凶爻持世，动则凶、静则平凶。",
       "parents": ["yi.l1.wuxing.ke_cycle"],
-      "engine_impl": "rules/registry_v2.json:liuyao.qiu_cai_xiong_chi_shi",
+      "engine_impl": "rules/registry.json:liuyao.qiu_cai_xiong_chi_shi",
       "cap": "凶/平凶"
     },
     {
@@ -81,7 +81,7 @@
       "name": "出现无情",
       "def": "用神出现但与日月动爻无生克关系（无情），cap=凶。",
       "parents": ["yi.l0.wuxing.sheng", "yi.l1.wuxing.ke_cycle"],
-      "engine_impl": "rules/registry_v2.json:liuyao.chuxian_wuqing",
+      "engine_impl": "rules/registry.json:liuyao.chuxian_wuqing",
       "cap": "凶"
     },
     {
@@ -89,7 +89,7 @@
       "name": "世动化鬼（提火格）",
       "def": "世动化出官鬼（提火之局），cap=凶。",
       "parents": ["yi.l2.concept.huitouke"],
-      "engine_impl": "rules/registry_v2.json:liuyao.shi_hua_gui.tihuo",
+      "engine_impl": "rules/registry.json:liuyao.shi_hua_gui.tihuo",
       "cap": "凶"
     },
     {
@@ -97,7 +97,7 @@
       "name": "世动化鬼（回头克格）",
       "def": "世动化官鬼回头克世，cap=凶。",
       "parents": ["yi.l2.concept.huitouke"],
-      "engine_impl": "rules/registry_v2.json:liuyao.shi_hua_gui.huitouke",
+      "engine_impl": "rules/registry.json:liuyao.shi_hua_gui.huitouke",
       "cap": "凶"
     },
     {
@@ -105,7 +105,7 @@
       "name": "元神无力",
       "def": "原神（生用神者）休囚空破不动，无力生用，cap=平凶。",
       "parents": ["yi.l0.wuxing.sheng"],
-      "engine_impl": "rules/registry_v2.json:liuyao.yuan_shen_wu_li",
+      "engine_impl": "rules/registry.json:liuyao.yuan_shen_wu_li",
       "cap": "平凶"
     },
     {

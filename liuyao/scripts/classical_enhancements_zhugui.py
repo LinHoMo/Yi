@@ -11,7 +11,7 @@
   · **不改吉凶主判、不进主分**——书源同段的话（「其凶愈甚」「必主身有灾殃」等）
     是吉凶断语，按 SKILL.md 铁律一不得进结构层，一概不入本模块；
   · 断语素材（引文/标签句）一律取自 `data/rules/verdict_texts.json`
-    的 `pattern_verdict_labels["助鬼伤身"]`（经 narrative_utils 加载），代码内不写字面量。
+    的 `pattern_verdict_labels["助鬼伤身"]`（经 chain_verdicts 加载），代码内不写字面量。
 
 **applicability（解救条件）——本条最容易被实现错的地方**：
 《断易天机》源 L132 说「若有子孙发动，解神来救，庶可反凶成吉」，但 **L137 逐字限定**：

@@ -156,81 +156,81 @@
 - **定义**：用神出现但与日月动爻无生克关系（无情），cap=凶。
 - **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.wuxing → yi.l0.wuxing.sheng → yi.l3.rule.chuxian_wuqing
 - **依据**：yi.l0.wuxing.sheng、yi.l1.wuxing.ke_cycle
-- **代码锚点**：`rules/registry_v2.json:liuyao.chuxian_wuqing`
+- **代码锚点**：`rules/registry.json:liuyao.chuxian_wuqing`
 
 ### 六冲变合（婚姻占吉断）  `yi.l3.rule.liuchong_bian_liuhe`
 - **定义**：原卦六冲主散，变卦六合主聚，婚姻占散而复聚，竟以吉断。
 - **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.wuxing → yi.l0.wuxing.ke → yi.l1.branch.chong → yi.l3.rule.liuchong_bian_liuhe
 - **依据**：yi.l1.branch.chong、yi.l1.branch.he
 - **书证**：《增删卜易》六冲变合，散而复聚，离而必合，此婚一定还成
-- **代码锚点**：`rules/registry_v2.json:liuyao.liuchong_bian_liuhe`
+- **代码锚点**：`rules/registry.json:liuyao.liuchong_bian_liuhe`
 
 ### 求财凶爻持世  `yi.l3.rule.qiu_cai_xiong_chi_shi`
 - **定义**：求财占凶爻持世，动则凶、静则平凶。
 - **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.wuxing → yi.l0.wuxing.ke → yi.l1.wuxing.ke_cycle → yi.l3.rule.qiu_cai_xiong_chi_shi
 - **依据**：yi.l1.wuxing.ke_cycle
-- **代码锚点**：`rules/registry_v2.json:liuyao.qiu_cai_xiong_chi_shi`
+- **代码锚点**：`rules/registry.json:liuyao.qiu_cai_xiong_chi_shi`
 
 ### 世动化鬼（回头克格）  `yi.l3.rule.shi_hua_gui_huitouke`
 - **定义**：世动化官鬼回头克世，cap=凶。
 - **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.wuxing → yi.l0.wuxing.ke → yi.l1.wuxing.ke_cycle → yi.l2.concept.huitouke → yi.l3.rule.shi_hua_gui_huitouke
 - **依据**：yi.l2.concept.huitouke
-- **代码锚点**：`rules/registry_v2.json:liuyao.shi_hua_gui.huitouke`
+- **代码锚点**：`rules/registry.json:liuyao.shi_hua_gui.huitouke`
 
 ### 世动化鬼（提火格）  `yi.l3.rule.shi_hua_gui_tihuo`
 - **定义**：世动化出官鬼（提火之局），cap=凶。
 - **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.wuxing → yi.l0.wuxing.ke → yi.l1.wuxing.ke_cycle → yi.l2.concept.huitouke → yi.l3.rule.shi_hua_gui_tihuo
 - **依据**：yi.l2.concept.huitouke
-- **代码锚点**：`rules/registry_v2.json:liuyao.shi_hua_gui.tihuo`
+- **代码锚点**：`rules/registry.json:liuyao.shi_hua_gui.tihuo`
 
 ### 世动回头克（即时压凶）  `yi.l3.rule.shi_hua_ke`
 - **定义**：世爻动而变回头克，即时 cap=凶，压 verdict 档。
 - **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.wuxing → yi.l0.wuxing.ke → yi.l1.wuxing.ke_cycle → yi.l2.concept.huitouke → yi.l3.rule.shi_hua_ke
 - **依据**：yi.l2.concept.huitouke
-- **代码锚点**：`rules/registry_v2.json:liuyao.shi_hua_ke`
+- **代码锚点**：`rules/registry.json:liuyao.shi_hua_ke`
 
 ### 世临月建旺回头克（待时救应）  `yi.l3.rule.shi_hua_ke_wang`
 - **定义**：世动回头克，但世临月建旺，cap=吉——回头克只延迟应期，不害其吉。由 apply_caps 第二遍救应抬吉。
 - **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.wuxing → yi.l0.wuxing.sheng → yi.l1.wuxing.sheng_cycle → yi.l2.concept.shi_wang → yi.l3.rule.shi_hua_ke_wang
 - **依据**：yi.l2.concept.shi_wang、yi.l2.concept.huitouke_chongjie
 - **书证**：《增删卜易》世临月建之官定得面见，被午火回头之克，须待子日冲去午火方得拜谒
-- **代码锚点**：`rules/registry_v2.json:liuyao.shi_hua_ke_wang`
+- **代码锚点**：`rules/registry.json:liuyao.shi_hua_ke_wang`
 
 ### 世动回头生逢月破  `yi.l3.rule.shi_huitou_sheng_yuepo`
 - **定义**：世动本化回头生（吉），但所变之爻逢月破，生而无力，cap=凶。
 - **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.wuxing → yi.l0.wuxing.ke → yi.l1.branch.chong → yi.l3.rule.shi_huitou_sheng_yuepo
 - **依据**：yi.l1.branch.chong、yi.l0.wuxing.sheng
-- **代码锚点**：`rules/registry_v2.json:liuyao.shi_huitou_sheng_yuepo`
+- **代码锚点**：`rules/registry.json:liuyao.shi_huitou_sheng_yuepo`
 
 ### 天气占晴（结构判）  `yi.l3.rule.tianqi_zhan_qing`
 - **定义**：天气占晴之结构判，cap=凶。
 - **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.sixiang → yi.l0.bagua → yi.l3.rule.tianqi_zhan_qing
 - **依据**：yi.l0.bagua
-- **代码锚点**：`rules/registry_v2.json:liuyao.tianqi_zhan_qing`
+- **代码锚点**：`rules/registry.json:liuyao.tianqi_zhan_qing`
 
 ### 天气占雨（结构判）  `yi.l3.rule.tianqi_zhan_yu`
 - **定义**：天气占以父母/财爻动静定雨晴，cap=凶（主雨不成晴）。
 - **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.sixiang → yi.l0.bagua → yi.l3.rule.tianqi_zhan_yu
 - **依据**：yi.l0.bagua
-- **代码锚点**：`rules/registry_v2.json:liuyao.tianqi_zhan_yu`
+- **代码锚点**：`rules/registry.json:liuyao.tianqi_zhan_yu`
 
 ### 凶爻持世克财  `yi.l3.rule.xiong_chi_shi_ke_cai`
 - **定义**：忌神/凶爻持世而克妻财，求财占 cap=凶。
 - **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.wuxing → yi.l0.wuxing.ke → yi.l1.wuxing.ke_cycle → yi.l3.rule.xiong_chi_shi_ke_cai
 - **依据**：yi.l1.wuxing.ke_cycle
-- **代码锚点**：`rules/registry_v2.json:liuyao.xiong_chi_shi_ke_cai`
+- **代码锚点**：`rules/registry.json:liuyao.xiong_chi_shi_ke_cai`
 
 ### 用神化退神  `yi.l3.rule.yongshen_hua_tui`
 - **定义**：用神动而化退神（气退减），cap=凶。
 - **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.wuxing → yi.l3.rule.yongshen_hua_tui
 - **依据**：yi.l0.wuxing、yi.l2.concept.huitouke
-- **代码锚点**：`rules/registry_v2.json:liuyao.yongshen_hua_tui`
+- **代码锚点**：`rules/registry.json:liuyao.yongshen_hua_tui`
 
 ### 元神无力  `yi.l3.rule.yuan_shen_wu_li`
 - **定义**：原神（生用神者）休囚空破不动，无力生用，cap=平凶。
 - **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.wuxing → yi.l0.wuxing.sheng → yi.l3.rule.yuan_shen_wu_li
 - **依据**：yi.l0.wuxing.sheng
-- **代码锚点**：`rules/registry_v2.json:liuyao.yuan_shen_wu_li`
+- **代码锚点**：`rules/registry.json:liuyao.yuan_shen_wu_li`
 
 
 ## L4 · 书证层（古籍断语）

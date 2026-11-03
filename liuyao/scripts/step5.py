@@ -311,13 +311,14 @@ def step5_synthesize(r: dict) -> dict:
     # 引擎判吉」（原 TECH-DEBT §2.11 D1，该台账已删；现行登记＝docs/CHANGELOG.md 第二十一批）。
     # 做法是**只压档、不加和**：命中即把 verdict
     # 压到该书规定的档位，避免任何"再叠一个正项"把它平均回去。
-    # 判据与逐字出处见 classical_enhancements_direction 模块头注与 data/rules/rule_registry.json；
+    # 判据与逐字出处见 rules/direction.py 模块头注与 data/rules/rule_registry.json；
     # 展示句全部取自 verdict_texts.json，代码内无断语字面量（SKILL.md）。
     _mt_sb = safe_get(div_time, "month_stem_branch", default="")
     # 天气占已短路，方向 / 主象 cap 对天气无效，跳过。
-    # 主象随自占/代占换位 cap（第九十二批）已迁 rules/registry_v2.json
+    # 主象随自占/代占换位 cap（第九十二批）已迁 rules/registry.json
     # (liuyao.zhu_xiang_shou_shang)，由 rule_engine 统一求值。
     # dir_caps 已在 5.3 提前算出，此处直接复用。
+    _pre_cap_verdict = verdict
     _capped, _cap_fired = apply_direction_caps(verdict, dir_caps)
     if dir_caps and not _weather_override:
         for _c in dir_caps:
@@ -337,6 +338,16 @@ def step5_synthesize(r: dict) -> dict:
                    "平凶": "score_ping_xiong"}.get(verdict)
             if _dk:
                 verdict_desc = vdesc(_dk)
+            # 抬档带分（[1.8] 同档收口补洞）：若 5.7b 的 cap 把 verdict 从较低档抬到较高档
+            # （救应抬吉，如六冲变合「竟以吉断」），final_score 须至少抬到新档下界；
+            # 压档（凶格压严）分数本就在下方，不动。只上抬不下压——
+            # 与 apply_verdict_overrides 末尾 `_floor` 及 check_verdict_coherence.band_of 同源。
+            # 局部取 RANK（pure 函数库，step5 顶部未直接 import）。
+            from predicates import RANK as _RANK
+            if _RANK.get(_capped, -1) > _RANK.get(_pre_cap_verdict, -1):
+                _lift_floor = {"大吉": 4.0, "吉": 1.0, "平吉": -0.5, "凶": -2.0}.get(_capped)
+                if _lift_floor is not None and final_score < _lift_floor:
+                    final_score = round(_lift_floor, 2)
 
     # ---------- 5.8: 信号强度评估 ----------
     signal = _assess_signal_strength(step3_data, step4_data, final_score, strength_level)
@@ -1004,29 +1015,9 @@ def compute_fu_shen_adjustment(step2_data: dict, step3_data: dict, r: dict) -> t
 
 
 # ---------------------------------------------------------------- 5.5h 古籍通用格局加减
-_ROLE_WORDS = "父母子夫妻兄弟妻女儿孙侄伯叔舅姑姨仆奴婢主师姊妹"
-
-
-def _divination_role(text: str) -> str:
-    """名分三态：自占 | 代占 | 名分不明（第八十九批，供主象改判用，本身不打分）。
-
-    判据只认问句里**写出来的**名分，不做推测：《卜筮正宗》源L1095 逐字
-    「又如与人代占，必先明说是何名分，方可就其亲疏、上下分别用神以为占验」——
-    书上把"没说名分"当作无从取用，故说不清就归第三态，不猜。
-    「X占…」里 X 是亲属/身份称谓 ⇒ 为 X 之外的人所占（如母占子＝母为子占），
-    这与第八十八批的名分链是同一句的两半：名分定用神，自／代定主象。
-    """
-    t = str(text or "")
-    if any(k in t for k in ("自占", "占自身", "自身占", "我自己占", "我占自身")):
-        return "自占"
-    if any(k in t for k in ("代占", "代卜", "代人占", "代占婚", "为代人")):
-        return "代占"
-    _i = t.find("占")
-    if _i > 0 and t[_i - 1] in _ROLE_WORDS:
-        return "代占"
-    if _i > 0 and t[_i - 1] == "自":
-        return "自占"
-    return "名分不明"
+# _divination_role 与 _ROLE_WORDS 原在 step5 本地重复定义，现复用 rules/predicates.py
+# 的 canonical 实现（step5 已通过 rules/ 加入 sys.path，见 L14）。
+from predicates import divination_role as _divination_role  # noqa: E402
 
 
 def _weather_verdict_score(qclass: str, lines: list, ug_cat: str):
@@ -1229,7 +1220,7 @@ def compute_classical_adjustment(
     # 5b) 天气占主判已移至 5.6a 短路（#23 第2步）：_weather_verdict_score 以
     #     《黄金策》"父动主雨、财动主晴"为唯一主判并直接覆盖 final_score，通用旺衰/
     #     生克路径对天气无效，故此处旧 +0.8 抬升一支已失效（被短路覆盖），删除以免重复计分。
-    #     下行方向 cap（classical_enhancements_direction 第 6 条）亦随短路失效，详见 5.6a。
+    #     下行方向 cap（rules/direction.py 第 6 条）亦随短路失效，详见 5.6a。
 
     # 6) 久病逢冲为凶（对「近病逢冲即愈」）
     if _qclass == "疾病·久病":

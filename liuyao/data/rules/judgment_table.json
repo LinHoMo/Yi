@@ -493,7 +493,7 @@
   "overrides": [
     {
       "id": "OV01",
-      "line": 1397,
+      "line": 1387,
       "cond": "verdict in (\"吉\", \"大吉\", \"平吉\")",
       "assigns": [
         "verdict = \"凶\""
@@ -506,7 +506,7 @@
     },
     {
       "id": "OV02",
-      "line": 1403,
+      "line": 1393,
       "cond": "verdict in (\"吉\", \"大吉\", \"平吉\")",
       "assigns": [
         "verdict = \"凶\""
@@ -519,7 +519,7 @@
     },
     {
       "id": "OV03",
-      "line": 1408,
+      "line": 1398,
       "cond": "verdict == \"平吉\" and final_score < 0.0",
       "assigns": [
         "verdict = \"凶\""
@@ -532,7 +532,7 @@
     },
     {
       "id": "OV04",
-      "line": 1419,
+      "line": 1409,
       "cond": "xing_he_conflict_override and verdict in (\"吉\", \"大吉\", \"平吉\")",
       "assigns": [
         "verdict = \"平凶\""
@@ -545,7 +545,7 @@
     },
     {
       "id": "OV05",
-      "line": 1427,
+      "line": 1417,
       "cond": "\"合处逢冲\" in _sp_pat and verdict in (\"凶\", \"大凶\", \"平吉\")",
       "assigns": [
         "verdict = \"平/不利\"",
@@ -559,7 +559,7 @@
     },
     {
       "id": "OV06",
-      "line": 1431,
+      "line": 1421,
       "cond": "verdict == \"大凶\"",
       "assigns": [
         "verdict = \"凶\""
@@ -572,7 +572,7 @@
     },
     {
       "id": "OV07",
-      "line": 1433,
+      "line": 1423,
       "cond": "any(k in _qtext for k in (\"价\", \"贵贱\", \"桑叶\", \"涨跌\")) and verdict in (\"凶\", \"大凶\")",
       "assigns": [
         "verdict = \"下跌\""
@@ -585,7 +585,7 @@
     },
     {
       "id": "OV08",
-      "line": 1440,
+      "line": 1430,
       "cond": "verdict in (\"大吉\",)",
       "assigns": [
         "verdict = \"吉\""
@@ -598,7 +598,7 @@
     },
     {
       "id": "OV09",
-      "line": 1450,
+      "line": 1440,
       "cond": "\"no_source_wording\" in pattern_flags and verdict in (\"吉\", \"大吉\", \"平吉\")",
       "assigns": [
         "verdict = \"凶\"",
@@ -612,7 +612,7 @@
     },
     {
       "id": "OV10",
-      "line": 1457,
+      "line": 1447,
       "cond": "verdict == \"吉\" and final_score < 2.0",
       "assigns": [
         "verdict = \"平吉\""
@@ -625,7 +625,7 @@
     },
     {
       "id": "OV11",
-      "line": 1461,
+      "line": 1451,
       "cond": "verdict in (\"大吉\", \"吉\")",
       "assigns": [
         "verdict = \"凶\"",
@@ -639,7 +639,7 @@
     },
     {
       "id": "OV12",
-      "line": 1464,
+      "line": 1454,
       "cond": "verdict == \"平吉\"",
       "assigns": [
         "verdict = \"凶\""
@@ -652,7 +652,7 @@
     },
     {
       "id": "OV13",
-      "line": 1467,
+      "line": 1457,
       "cond": "\"brother_hold_exam\" in pattern_flags and verdict in (\"吉\", \"大凶\", \"凶\")",
       "assigns": [
         "verdict = \"平吉\"",
@@ -666,7 +666,7 @@
     },
     {
       "id": "OV14",
-      "line": 1468,
+      "line": 1458,
       "cond": "verdict in (\"凶\", \"大凶\")",
       "assigns": [
         "verdict = \"平吉\"",
@@ -680,7 +680,7 @@
     },
     {
       "id": "OV15",
-      "line": 1475,
+      "line": 1465,
       "cond": "verdict in (\"大吉\", \"吉\")",
       "assigns": [
         "verdict = \"平吉\" if verdict == \"吉\" else \"凶\""
@@ -693,7 +693,7 @@
     },
     {
       "id": "OV16",
-      "line": 1479,
+      "line": 1469,
       "cond": "verdict == \"平吉\" and any(k in _q_l for k in (\"久病\", \"半年\"))",
       "assigns": [
         "verdict = \"凶\""
@@ -706,7 +706,7 @@
     },
     {
       "id": "OV17",
-      "line": 1482,
+      "line": 1472,
       "cond": "\"brother_hold_exam\" in pattern_flags and verdict in (\"吉\", \"大吉\")",
       "assigns": [
         "verdict = \"平吉\""
@@ -719,7 +719,7 @@
     },
     {
       "id": "OV18",
-      "line": 1490,
+      "line": 1480,
       "cond": "verdict in (\"凶\", \"大凶\")",
       "assigns": [
         "verdict = \"平吉\""
@@ -732,7 +732,7 @@
     },
     {
       "id": "OV19",
-      "line": 1493,
+      "line": 1483,
       "cond": "\"travel_use_sheng_world\" in pattern_flags and verdict in (\"平吉\", \"凶\", \"大凶\")",
       "assigns": [
         "verdict = \"吉\"",
@@ -746,7 +746,7 @@
     },
     {
       "id": "OV20",
-      "line": 1496,
+      "line": 1486,
       "cond": "verdict == \"平吉\" and \"travel_use_ke_world\" in pattern_flags",
       "assigns": [
         "verdict = \"吉\""
@@ -759,7 +759,7 @@
     },
     {
       "id": "OV21",
-      "line": 1502,
+      "line": 1492,
       "cond": "verdict in (\"凶\", \"大凶\") and final_score >= 0",
       "assigns": [
         "verdict = \"吉\"",
@@ -773,7 +773,7 @@
     },
     {
       "id": "OV22",
-      "line": 1505,
+      "line": 1495,
       "cond": "verdict == \"平吉\" and final_score >= 0",
       "assigns": [
         "verdict = \"吉\""
@@ -786,7 +786,7 @@
     },
     {
       "id": "OV23",
-      "line": 1509,
+      "line": 1499,
       "cond": "verdict in (\"大吉\",)",
       "assigns": [
         "verdict = \"吉\"",
@@ -800,7 +800,7 @@
     },
     {
       "id": "OV24",
-      "line": 1512,
+      "line": 1502,
       "cond": "verdict == \"吉\" and final_score < 2.5",
       "assigns": [
         "verdict = \"平吉\"",
@@ -814,7 +814,7 @@
     },
     {
       "id": "OV25",
-      "line": 1515,
+      "line": 1505,
       "cond": "verdict in (\"平吉\",) and final_score <= 0.2",
       "assigns": [
         "verdict = \"平/不利\""
@@ -827,7 +827,7 @@
     },
     {
       "id": "OV26",
-      "line": 1518,
+      "line": 1508,
       "cond": "_is_travel_return and verdict in (\"凶\", \"大凶\")",
       "assigns": [
         "verdict = \"平吉\""
@@ -840,7 +840,7 @@
     },
     {
       "id": "OV27",
-      "line": 1530,
+      "line": 1520,
       "cond": "officer_tomb_verdict_override",
       "assigns": [
         "verdict = officer_tomb_verdict_override"
