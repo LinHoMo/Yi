@@ -879,6 +879,10 @@ def build_human_narrative(result: dict) -> dict:
     empty = result.get("empty_branches") or []
 
     verdict = s5.get("verdict") or "未知"
+    # T29 第二批：读三段 verdict 新字段（旧 verdict 作为 fallback）
+    present_verdict = s5.get("present_verdict") or verdict
+    rescue_verdict = s5.get("rescue_verdict") or verdict
+    timing_speed = s5.get("timing_speed") or ""
     score = s5.get("final_score")
     conf = s5.get("signal_strength", s5.get("confidence"))
     use_cat = s2.get("use_god_category") or "用神"
@@ -945,6 +949,11 @@ def build_human_narrative(result: dict) -> dict:
         scene += f"，{empty_desc}"
     p1 += scene + "。"
 
+    # T29 第二批：三段 verdict 分段叙述（当下 vs 最终）
+    p_rescue = ""
+    if rescue_verdict != present_verdict:
+        p_rescue = f"当下{present_verdict}，但最终{rescue_verdict}（救应链分段）。"
+
     p2 = (
         f"事情的关键看{use_cat}"
         + (f"（五行属{use_el}）" if use_el else "")
@@ -962,7 +971,7 @@ def build_human_narrative(result: dict) -> dict:
     p_jiazhai = _jiazhai_paragraph(result)
     p_shen = _shensha_paragraph(result, use_pos=use_pos)
 
-    body = [x for x in (p1, p2, p_bing, p_jiazhai, p_shen, p3, p4, p5) if x]
+    body = [x for x in (p1, p_rescue, p2, p_bing, p_jiazhai, p_shen, p3, p4, p5) if x]
     lead = p1
 
     timing_plain = _timing_sentence(timing, special, s3, s5)
