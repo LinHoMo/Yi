@@ -153,7 +153,9 @@ registry.json 中 `liuyao.yuan_shen_wu_li`、`liuyao.chuxing_shi_dong_fenghe` �
 
 ### 阶段 2/3/4 ⬜ 未启动
 - **T29**（verdict 拆 present/rescue_chain/timing）：未启动。需改 evaluate verdict strict 口径。
-- **T30**（知识图谱 kids.json）：未启动。
+- **T30**（知识图谱 kids.json）：部分进行中。C 阶段 L2 概念 kid 化（回头克/世旺/冲解）
+  与 E 阶段 AI subgraph 检索视图（`dev_tools/ontology_subgraph.py`，b503078）已落地；
+  `use_god_relations/question_classes/caiguan_fushi` 批量转 kid 与全量 parents 补全仍待做。
 - **T31**（step5.py 110KB 瘦身）：未启动。step5.py 已在文件头注登记为既定技术债。
 
 ---

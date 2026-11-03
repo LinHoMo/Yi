@@ -167,10 +167,10 @@ liuyao/
 - [x] registry 全部 13 条补 kid + parents
 - [x] 孤儿检查 `dev_tools/check_ontology.py`：每条规则沿 parents 必须追溯到 L0
 
-### 阶段 E：L4 书证挂接 + 学习视图（部分）
+### 阶段 E：L4 书证挂接 + 学习视图 ✅ 已完成
 - [x] verdict_texts 7 条按 kid 索引（L4 书证层）
 - [x] 人读概念卡片 `dev_tools/render_ontology.py` → `docs/ONTOLOGY-CARDS.md`
-- [ ] AI 检索视图：按 kid 出 subgraph（parents + children + evidence）（待做）
+- [x] AI 检索视图：按 kid 出 subgraph（parents + children + evidence）——`dev_tools/ontology_subgraph.py`（b503078 落地；实跑 `yi.l2.concept.huitouke` 输出定义/哲学链/派生/书证/代码锚点）
 
 ---
 
