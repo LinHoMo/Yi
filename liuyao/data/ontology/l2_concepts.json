@@ -55,6 +55,14 @@
       "parents": ["yi.l0.bagua"],
       "children": ["yi.l3.rule.liuchong_bian_liuhe", "yi.l3.rule.tianqi_zhan_yu", "yi.l3.rule.tianqi_zhan_qing"],
       "engine_impl": "data/rules/question_classes.json:classes"
+    },
+    {
+      "kid": "yi.l2.concept.fushi",
+      "name": "伏藏（用神不上卦）",
+      "def": "用神不上卦时，伏于本宫某爻之下。伏藏有气则只利暂时，出现旺相则为久为远。《火珠林》「出现伏藏」章分九宫论伏藏关系（财伏鬼、官伏财、父伏子等）。",
+      "parents": ["yi.l1.najia", "yi.l0.wuxing"],
+      "engine_impl": "data/rules/caiguan_fushi.json",
+      "evidence": [{"book": "火珠林", "text": "出现旺相，为久为远；伏藏有气，只利暂时。"}]
     }
   ]
 }

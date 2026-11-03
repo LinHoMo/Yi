@@ -158,10 +158,10 @@ liuyao/
 - [x] 太极→两仪→四象→八卦演化树
 - [x] 每条 L0 公理挂"它派生出哪些 L1 模型"
 
-### 阶段 C：L2 概念层 kid 化（部分）
+### 阶段 C：L2 概念层 kid 化 ✅ 已完成
 - [x] 回头克/世旺/冲解 三个核心概念
-- [ ] use_god_relations / question_classes / caiguan_fushi 全部转 kid（待做）
-- [ ] 每个概念补 `parents`（哲学依据）
+- [x] use_god_relations（→ `yi.l2.concept.yongshen_liuqin`）/ question_classes（→ `yi.l2.concept.wenlei`）/ caiguan_fushi（→ `yi.l2.concept.fushi`）全部转 kid
+- [x] 每个概念补 `parents`（哲学依据）；孤儿检查门绿（70 节点，无幽灵 parent）
 
 ### 阶段 D：L3 规则层 kid 化 ✅ 已完成
 - [x] registry 全部 13 条补 kid + parents

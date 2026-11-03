@@ -102,6 +102,13 @@
 
 ## L2 · 概念层（术语）
 
+### 伏藏（用神不上卦）  `yi.l2.concept.fushi`
+- **定义**：用神不上卦时，伏于本宫某爻之下。伏藏有气则只利暂时，出现旺相则为久为远。《火珠林》「出现伏藏」章分九宫论伏藏关系（财伏鬼、官伏财、父伏子等）。
+- **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.sixiang → yi.l0.bagua → yi.l1.najia → yi.l2.concept.fushi
+- **依据**：yi.l1.najia、yi.l0.wuxing
+- **书证**：《火珠林》出现旺相，为久为远；伏藏有气，只利暂时。
+- **代码锚点**：`data/rules/caiguan_fushi.json`
+
 ### 回头克  `yi.l2.concept.huitouke`
 - **定义**：动爻所变出之爻，其五行反克本爻之五行（如酉金动变午火，火克金）。属《增删卜易》七化凶之一。
 - **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.wuxing → yi.l0.wuxing.ke → yi.l1.wuxing.ke_cycle → yi.l2.concept.huitouke
