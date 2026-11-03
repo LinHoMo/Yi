@@ -233,7 +233,9 @@ def score_case(eng: dict, exp: dict, model: str, case: dict | None = None) -> di
 
     # 吉凶方向
     w = WEIGHTS["verdict"]
-    ed, xd = verdict_direction(eng.get("verdict")), verdict_direction(exp.get("verdict"))
+    # T29 第三批：口径切换——优先读 present_verdict（三段 verdict 的即时段），fallback 到 verdict
+    eng_verdict = eng.get("present_verdict") or eng.get("verdict")
+    ed, xd = verdict_direction(eng_verdict), verdict_direction(exp.get("verdict"))
     if _na(exp.get("verdict")):
         # 基准只记了验期、没记吉凶（外部集里过半是这种）→ 该维无从对照，记 N/A。
         # 否则 40 分会凭空判给"引擎说了不算"，把分数压成假低。
