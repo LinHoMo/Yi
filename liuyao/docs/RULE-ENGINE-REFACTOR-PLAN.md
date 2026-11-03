@@ -68,7 +68,7 @@ liuyao/rules/
 
 | 项 | 状态 | 说明 |
 |---|---|---|
-| **T28 apply_caps priority 仲裁** | ⬜ 有意暂缓 | 当前 first-pass/worst-cap 在全部回归用例零漂移；21 条均无 priority 字段。等需要细粒度冲突解决时再加。 |
+| **T28 apply_caps priority 仲裁** | ✅ 已完成 | 基础设施已就绪：entry 加 priority 字段，apply_caps 按 priority 排序。当前 21 条均 priority=0，golden 零漂移。后续需细粒度冲突解决时给特定规则加 priority 即可。 |
 | **T29 verdict 拆段** | ✅ 已完成 | 第一批（加 present_verdict/rescue_verdict/timing_speed）✅；第二批（narrate 分段叙述 p_rescue）✅；第三批（evaluate 口径切换为 present_verdict）✅。当前三段值相同，新旧读数可比；待救应链逻辑完善后 rescue_verdict 会与 present_verdict 分化。 |
 | **T30 知识图谱 kids.json** | ✅ 已完成 | L2 概念 kid 化（回头克/世旺/冲解/用神/六亲取用/原神/问类/伏藏）+ AI subgraph 视图已上线；ontology 门绿（71 节点无幽灵）。 |
 | **T31 step5.py 瘦身** | ✅ 已完成 | 第一步：`_step5_dates.py`（日期函数）✅；第二步：`_step5_timing.py`（calculate_yingqi，258 行）✅；第三步：`_step5_weather.py`（_weather_verdict_score，38 行）✅；第四步：`_step5_factors.py`（build_factor_contributions，190 行）✅。累计净删约 510 行。 |
