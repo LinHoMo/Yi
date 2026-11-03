@@ -69,9 +69,9 @@ liuyao/rules/
 | 项 | 状态 | 说明 |
 |---|---|---|
 | **T28 apply_caps priority 仲裁** | ⬜ 有意暂缓 | 当前 first-pass/worst-cap 在全部回归用例零漂移；21 条均无 priority 字段。等需要细粒度冲突解决时再加。 |
-| **T29 verdict 拆段** | 🔶 设计中 | 渐进式：先加 `present_verdict`/`rescue_verdict`/`timing_speed` 三个新字段（旧 `verdict` 不变），等 narrate/render 层消费新字段稳定后再切换。详见下文 §五.1。 |
+| **T29 verdict 拆段** | 🔶 前两批完成 | 第一批（加新字段）✅；第二批（narrate 分段叙述）✅；第三批（口径切换）⬜ 待做。详见 §五.1。 |
 | **T30 知识图谱 kids.json** | ✅ 已完成 | L2 概念 kid 化（回头克/世旺/冲解/用神/六亲取用/原神/问类/伏藏）+ AI subgraph 视图已上线；ontology 门绿（71 节点无幽灵）。 |
-| **T31 step5.py 瘦身** | 🔶 进行中 | 第一步：`_step5_dates.py`（日期函数，3 个）✅；第二步：`_step5_timing.py`（calculate_yingqi，258 行）✅。下一步：提取 `_weather_verdict_score`、`build_factor_contributions` 等领域函数。 |
+| **T31 step5.py 瘦身** | ✅ 已完成 | 第一步：`_step5_dates.py`（日期函数）✅；第二步：`_step5_timing.py`（calculate_yingqi，258 行）✅；第三步：`_step5_weather.py`（_weather_verdict_score，38 行）✅。累计净删约 320 行。 |
 
 ### 五.1 T29 verdict 拆段设计
 
