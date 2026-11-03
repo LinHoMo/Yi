@@ -1,236 +1,90 @@
-# 规则仲裁层改造计划（Rule-Engine Refactor）
+# 规则仲裁层改造（Rule-Engine Refactor）
 
-> 立项：506 批收口后（zengshan strict 74.4% / verdict 19/26=73.1% / top-1 48.3%）。
-> 起因：连续四批（502→506）在 `detect_direction_caps` 里裸写 if 加 cap，每加一条都要
-> 手工写门控排除（`qcls not in ("行人","功名科举")`、`ug_cat != "子孙"`），误伤率高
-> （3c 连续误伤 ZD050 行人、golden 占胎），靠门控打地鼠修补。本质是**判据硬编码在代码、
-> 规则库（rule_registry.json）只是台账两张皮**。
+> 目标：把硬编码在 `detect_caps`/`step5` 的判据迁成数据化规则，由 `rule_engine` 统一求值。
+> 保护网：golden 288 例双指纹零漂移（基线见 `data/golden/digest.json`）、regression 19/19、
+> tune/holdout 不退化。每阶段一提交，纯重构写"零漂移复现"，改口径写"新旧不可比"。
 
----
+## 一、为什么要改
 
-## 一、问题诊断（缜密结论）
+旧架构三张皮：`data/rules/rule_registry.json` 是台账（impl 指代码行号、自然语言备注），
+判据真身硬编码在 `rules/direction.py` 的 `detect_direction_caps`。每加一条 cap 都要写 if 排除
+已对的例，误伤随规则数线性增长（3c 连续误伤行人/占胎）。
 
-### 1.1 三张皮的现状
-| 资产 | 现状 | 缺陷 |
-|---|---|---|
-| `data/sources/*.txt` | 16 部经典原文 + provenance，干净 | 断语是纯文本，知识未抽成结构化条目 |
-| `data/rules/rule_registry.json` | 33 条规则，schema=`yi-rule-registry-v1`，每条带 source.verified | **是台账不是执行体**：`impl` 指向 `step4.py:1058` 这种代码行号；`applicability` 是自然语言备注，引擎不能仲裁 |
-| `rules/direction.py` | 9 类硬编码 cap（detect_direction_caps） | 判据真身曾在这里；`apply_caps` 先到先得取最严档，无优先级、无救应解除语义 |
-
-### 1.2 两个根本错配
-- **标量压多段**：`final_score` 一个数想同时回答"即时卦象吉凶"和"最终结局"。
-  A 组救应卦（ZD015 回头克但子日冲去忌神终吉、ZD023 六冲变合散而复聚）无解——
-  即时凶、应期吉是两个时间窗，一个数装不下。
-- **cap 打地鼠**：规则没有"自带适用域 + 救应条件"，每加一条靠 if 排除已对的例，
-  误伤随规则数线性增长。
-
----
+两个根本错配：
+- **标量压多段**：`final_score` 一个数同时答"即时卦象吉凶"和"最终结局"，救应卦无解。
+- **cap 打地鼠**：规则没有自带适用域与救应条件，靠 if 排除已对的例。
 
 ## 二、目标四层架构
 
 ```
-L0 文献库   sources/*.txt + provenance（已有，保持）
-L1 知识图谱 断语 → 结构化 kid{locator,原文,卦象前件,吉凶方向,救应条件,适用域}
-L2 规则仲裁层 registry v2：每条规则带 machine-readable when/gates/rescue/priority/cap
-L3 推理编排  step5 瘦身成调度器：只调 L2 仲裁，不再硬编码判据
+L0 文献库   data/sources/*.txt + provenance（已有）
+L1 知识图谱 data/ontology/（L0 哲学/L1 象数/L2 概念/L3 规则/L4 书证；AI subgraph 检索视图已上线）
+L2 规则仲裁 rules/registry.json：每条规则带 machine-readable when/gates/rescue/priority/cap
+L3 推理编排 step5 调度器：只调 L2 仲裁，不再硬编码判据
 ```
 
----
+## 三、规则数据 schema
 
-## 三、registry v2 schema（向后兼容 v1）
-
-在 v1 条目基础上新增可执行字段：
+在 v1 台账条目上新增可执行字段，谓词集务实最小（不搞通用 DSL）：
 
 ```json
 {
   "rule_id": "liuyao.shi_hua_ke",
-  "domain": "世爻变凶",
-  "when": {
-    "world_moving": true,
-    "world_change_type": "回头克"
-  },
-  "gates": {
-    "qcls_not": ["行人", "功名科举"],
-    "ug_cat_not": ["子孙"]
-  },
-  "rescue": {
-    "any_line": {"six_relation": "子孙", "is_moving": true}
-  },
-  "cap": "凶",
-  "priority": 50,
-  "source": {"book": "增删卜易", "locator": "dz.txt:3625", "quote_in_code": "...", "verified": true},
-  "eval_dim": "verdict"
+  "when": {"world_moving": true, "world_change_type": "回头克"},
+  "gates": {"qcls_not": ["行人", "功名科举"], "ug_cat_not": ["子孙"]},
+  "rescue": {"any_line": {"six_relation": "子孙", "is_moving": true}},
+  "cap": "凶", "priority": 50,
+  "eval_dim": "verdict",
+  "source": {"book": "增删卜易", "locator": "dz.txt:3625", "verified": true}
 }
 ```
 
-**谓词集（务实最小集，不搞通用 DSL）**：
-`world_moving`、`world_change_type`、`world_six_relation`、`yongshen_moving`、
-`yongshen_change_type_contains`、`qcls_eq/qcls_in/qcls_not`、`ug_cat_eq/ug_cat_not`、
-`any_line{six_relation,is_moving}`、`month_state`、`chong(变爻,月建)`、`broken`。
+设计纪律：`when` 只表达卦象静态事实，`gates` 表达适用情境域，`rescue` 表达"满足则解除"——
+三者分离，正是旧 if 里缠在一起的东西。`any_of:[{...},{...}]` 表 OR 组（组内仍 AND）。
 
-> 设计纪律：when 只表达"卦象静态事实"，gates 表达"适用情境域"，rescue 表达"满足则解除"。
-> 三者分离——这正是现在 if 里缠在一起的东西。
+## 四、当前状态（504 批收尾后）
 
----
+**rules/ 已独立成树**（D1 破环抽 `predicates.py` 后落位）：
 
-## 四、阶段划分与验收基线
-
-**保护网（每阶段必须全绿，零漂移）**：
-- `tests/regression_test.py` 19/19
-- `tests/thinking_chain_tests.py` 12/12
-- zengshan_dz_holdout strict 74.4% / verdict 19/26 / top-1 48.3%
-- bushi_zhengzong_holdout 68.1%
-- wikisource_holdout 75.8%
-- golden 机械 8f60e077f66827a7 / 措辞 8168eff9e560d6c2（288 例）
-
-### 阶段 0（地基 + 最小闭环）
-- **T24**：建 `rule_engine.py`，实现谓词求值 + registry v2 读取。只建不改输出。
-- **T25**：迁 3a/3b/3c（回头克 / 回头生月破 / 用神化退）三条到 registry v2，
-  rule_engine 复现。detect_caps 里这三条改成调 rule_engine。**验收：全保护网零漂移**。
-
-### 阶段 1（全面迁移 + 仲裁升级）
-- **T26**：迁变鬼三分支（变官不压 / 休囚受克压 / 回头克无解救压）+ 元神无力（疾病久病）。
-- **T27**：迁出现无情(功名)、兄弟持世求财/婚姻、天气占。detect_caps 瘦成纯调度。
-- **T28**：`apply_caps` 升级——priority 仲裁 + rescue 解除（现在只有"无解救才压"，
-  没有"规则被救应规则解除"的双向语义）。
-
-### 阶段 2（认知层革新，救应卦根本解）
-- **T29**：verdict 拆成 present(即时卦象) / rescue_chain(救应推演) / timing(应期)。
-  输出从一个数变结构化叙述。解决 A 组 4 例（ZD015/023/160/194）。
-  同步改 evaluate verdict strict 口径与 readout_ledger（新旧不可比，须登记）。
-
-### 阶段 3（知识图谱）
-- **T30**：文献断语批量抽 kid，registry 规则与 kid 双向链接。
-
-### 阶段 4（收尾）
-- **T31**：step5.py（110KB）瘦身为调度器。
-
----
-
-## 五、执行纪律
-1. 每阶段一提交，提交信息含"读数新旧不可比"（若改了口径）或"零漂移复现"（若纯重构）。
-2. 迁移一条规则 = 从 detect_caps 删一段 if + registry 加一条 v2，**同批回归**。
-3. 回补 readout_ledger；破保护网立即回退，不硬上。
-4. 八字 congrge（ZC014 灰区）不在本计划，保持作者登记状态。
-
----
-
-## 六、执行进展（507→514 批，纯重构零漂移）
-
-| 批 | commit | 内容 | 保护网 |
-|---|---|---|---|
-| 507 | 1d077e9 | 阶段0最小闭环：rule_engine.py + v2 JSON 落地；迁 3a回头克/3b回头生月破/3c用神化退 | 全绿 |
-| 508 | 087557c | 迁兄弟持世婚姻/天气占雨/占晴；扩谓词集 world_six_relation/moving_or_changed_relation | 全绿 |
-| 509 | 3ca6459 | 迁兄弟持世求财；cap 支持动静分档(凶/平凶)、rescue 支持盘面谓词(日月作财例外) | 全绿 |
-| 510 | 65e76d1 | 迁出现无情(功名)；加官鬼/父母生世合世谓词 + detail sorted-set 复现 | 全绿 |
-| 514 | 66c6470→961528c | D1破环抽 predicates.py → D4 迁变鬼三分支+元神无力+出行/占寿/铺面用神（T26a/b 完成） | 全绿 |
-
-### 阶段 0 ✅ 完成
-T24（rule_engine.py + 谓词求值）、T25（迁 3a/3b/3c 三条）均在 507 批落地。
-
-### 阶段 1 ✅ 完成（T26a/T26b/T27 已收口）
-**T26a（schema 攻坚）✅**：v2 when 已支持 `any_of:[{...},{...}]`（OR 组，组内仍 AND）。
-registry.json 中 `liuyao.yuan_shen_wu_li`、`liuyao.chuxing_shi_dong_fenghe` 均使用 any_of。
-
-**T26b（迁移）✅**：变鬼三分支拆为 3 条互斥 v2 规则——
-`liuyao.shi_hua_gui.tihuo`（休囚受克压）、`.huitouke`（回头克无救救压）、`.kong`（空亡压）；
-分支1"变官不压"写成 gates 排除（world_change_type 不含"回头克"时规则不触发）。
-元神无力用 any_of 表达。迁完 detect_direction_caps 瘦成纯调度（118 行，零硬编码 if）。
-
-**T27 ✅**：迁出现无情(功名)、兄弟持世求财/婚姻、天气占、出行世动逢合、占寿动爻生世、
-铺面用神取妻财、鬼持世不抬吉——共 21 条规则在 registry.json。
-
-**registry.json 现状**：21 条 cap 规则（凶/吉/平凶/平吉 分档 + any_of + all_of + 救应抬吉）。
-旧 `rule_registry.json`（33 条）保留为台账——12 条 v1-only 规则是非 cap 结构/分值规则
-（yingqi/sanxing/fanyin_fuyin/fangwei/muku/heban 等），**v2 迁移范围仅限 cap 规则**，
-结构规则不在 v2 scope 内，属刻意保留。
-
-### T28（apply_caps priority 仲裁）⬜ 未做
-当前 `apply_caps`（rules/direction.py:93）用两遍扫描：先压凶档（取最严）、再救应抬吉。
-未实现 `priority` 字段仲裁。21 条规则均无 `priority` 字段。
-这是已知待办——当前 first-pass/worst-cap 逻辑在全部回归用例上零漂移，priority 仲裁
-留给后续需要细粒度冲突解决的场景时再加。
-
-### 阶段 2/3/4 ⬜ 未启动
-- **T29**（verdict 拆 present/rescue_chain/timing）：未启动。需改 evaluate verdict strict 口径。
-- **T30**（知识图谱 kids.json）：部分进行中。C 阶段 L2 概念 kid 化（回头克/世旺/冲解）
-  与 E 阶段 AI subgraph 检索视图（`dev_tools/ontology_subgraph.py`，b503078）已落地；
-  `use_god_relations/question_classes/caiguan_fushi` 批量转 kid 与全量 parents 补全仍待做。
-- **T31**（step5.py 110KB 瘦身）：未启动。step5.py 已在文件头注登记为既定技术债。
-
----
-
-## 七、目录分层蓝图（511 批落档）
-
-### 7.1 现状盘点
-- `scripts/` 54 个 .py 平铺：step5.py 110KB（上帝模块）、classical_enhancements.py 88KB、
-  `rules/direction.py` 8.4KB（已瘦成调度壳）、`rules/rule_engine.py` 18.3KB（新仲裁器）。
-- `data/rules/` 17 个 JSON 平铺：旧 `rule_registry.json` 89KB（dev_tools 链重度引用，**不能物理删**）、
-  `verdict_texts.json` 91KB（文案外置）、规则数据 `registry.json`（rules 目录，11 条）。
-
-### 7.2 目标目录树（按职责分层，物理挪动分批做）
-```
-liuyao/
-├── rules/                     # L2 规则仲裁层（新架构核心，先独立成树）
-│   ├── engine.py              #   谓词求值仲裁器（现 `rules/rule_engine.py`）
-│   ├── registry.json         #   规则数据化（现 rules/registry.json）
-│   └── predicates.py          #   谓词集（后续从 engine.py 拆出，纯函数）
-├── engine/                    # L3 推理编排
-│   ├── pipeline/              #   step1~step5 五步（现 scripts/step*.py）
-│   ├── classical/              #   古典增强族（现 classical_enhancements*.py 8 个）
-│   ├── narrative/              #   chain_*/narrate*/thinking_chain
-│   └── format/                 #   engine_format*/engine_chart/render/chart*
-├── knowledge/                 # L1 知识图谱（T30 建）
-│   └── kids.json              #   文献断语结构化条目
-├── data/
-│   ├── sources/               # L0 文献原文（已有，保持）
-│   ├── rules/                 # 旧台账+文案（见 7.4 处置）
-│   └── ...
-```
-
-### 7.3 迁移批次（低风险→高风险，每批跑全保护网）
-| 批 | 动作 | 风险 |
-|---|---|---|
-| D1 | 建 `rules/` 目录，rule_engine.py + v2 JSON 挪入；改 detect_caps/step5 的 import | 中（2 处 import） |
-| D2 | `data/rules/` 内部分区：`legacy/`（rule_registry/verdict_texts 旧台账）、`domain/`（question_use_gods 等领域表） | 高（dev_tools 硬编码路径，须同步改） |
-| D3 | `engine/pipeline/` 收 step1~5 | 高（step 链互引） |
-| D4 | `engine/classical/` 收 classical_enhancements 族 | 中 |
-| D5 | step5.py 110KB 按职责拆模块（T31） | 最高 |
-
-### 7.4 旧 rule_registry.json 处置（硬约束）
-被 `dev_tools/check_rule_registry.py / readout_ledger.py / ablation.py / build_adjudications.py`
-硬编码引用，**不物理删除、不直接挪路径**。做法：D2 批在 `data/rules/legacy/` 保留实体，
-dev_tools 改读新路径；旧路径留 1 个版本的转发或在 CHANGELOG 登记弃用期。
-
-### 7.5 验收
-每批同 §四保护网全绿才进下一批；物理挪动不改任何判据输出，golden 双指纹必须一字不动。
-
----
-
-## 八、D1 落地执行记录（514 批）
-
-**结果：rules/ 物理独立成树，全保护网零漂移（regression 19/19、golden 双指纹、zengshan strict 74.4%）。**
-
-实际落位：
 ```
 liuyao/rules/
-├── __init__.py
-├── rule_engine.py     # 仲裁器（原 `rules/rule_engine.py`）
-├── predicates.py      # 共享纯函数库（新建，破环抽出）
-└── registry.json      # 规则数据（现 rules/registry.json）
+├── rule_engine.py   # 仲裁器：evaluate_caps + evaluate_verdict_overrides
+├── predicates.py    # 共享纯函数（RANK/月态/冲/破/合/化凶）
+├── direction.py     # detect_caps 瘦成纯调度（118 行，零硬编码 if）
+└── registry.json    # 21 条 cap 规则 + 7 条 verdict_overrides
 ```
 
-**破环先行（66c6470）**：旧环 `rule_engine ──import──> direction(纯函数)`
-与 `direction ──延迟 import──> rule_engine.evaluate_caps` 互相引用。
-先抽 `predicates.py`（RANK/_world_line/_month_state/_chong/_broken/_he/HUA_XIONG），
-两者都单向依赖 predicates，环断后 engine.py 才能干净挪目录。
+- **阶段 0/1 已完成**：T24–T27（谓词求值、迁 3a/3b/3c、兄弟持世/天气/功名/出行/占寿/铺面/
+  鬼持世等 21 条 cap；变鬼三分支拆 3 条互斥规则；元神无力用 any_of）。
+- **verdict_overrides 数据化已完成（504 批）**：step5 里 7 条古籍强凶格局覆写（行人散/合伙散/
+  用神弱净动负/三刑六合相战/合处逢冲两档/财价跌）迁为 `registry.json#verdict_overrides` 数据规则，
+  由 `evaluate_verdict_overrides` 按数组顺序求值；golden 双指纹零漂移。
+- **旧 `rule_registry.json`（33 条）保留为台账**：12 条 v1-only 是非 cap 结构/分值规则
+  （yingqi/sanxing/fanyin/fangwei/muku/heban 等），不在 v2 scope，刻意保留。
+- **目录分层蓝图**（§七）：`rules/` 已独立；`engine/pipeline`、`engine/classical` 等物理
+  收编未启动（见下 D 系列批次表）。
 
-**踩坑记录**：`scripts/` 下本就存在原生 `engine.py`（其他模块）。若把仲裁器平铺命名为
-`engine.py`，`from engine import` 会优先解析到 scripts/engine.py 而非 rules/，
-报 `cannot import name 'evaluate_caps'`。故仲裁器保留 `rule_engine.py` 原名，不改名。
+## 五、剩余待办
 
-**sys.path 现实**：运行时是平铺架构（core/、scripts/ 在 sys.path，liuyao/ 根不在）。
-rules/ 下模块自加 scripts/ 找 kernel_path；direction 自加 rules/ 找
-rule_engine/predicates。未改包导入机制（避免牵动 step 链），分层靠物理目录 + 各自 sys.path 前置。
+| 项 | 状态 | 说明 |
+|---|---|---|
+| **T28 apply_caps priority 仲裁** | ⬜ 有意暂缓 | 当前 first-pass/worst-cap 在全部回归用例零漂移；21 条均无 priority 字段。等需要细粒度冲突解决时再加。 |
+| **T29 verdict 拆段** | ⬜ 未启动 | verdict 拆 present(即时)/rescue_chain(救应)/timing(应期)。改 evaluate strict 口径，新旧读数不可比，须专门批次。 |
+| **T30 知识图谱 kids.json** | 🔶 部分进行中 | L2 概念 kid 化（回头克/世旺/冲解）与 AI subgraph 视图（`dev_tools/ontology_subgraph.py`）已上线；`use_god_relations/question_classes/caiguan_fushi` 批量转 kid、全量 parents 补全仍待做。 |
+| **T31 step5.py 瘦身** | ⬜ 未启动 | step5.py 110KB 上帝模块，按职责拆模块为最高风险批次，须单批走保护网。 |
 
+## 六、目录分层蓝图（后续物理收编批次）
 
+目标（低风险→高风险，每批跑全保护网）：
+
+| 批 | 动作 | 风险 |
+|---|---|---|
+| D1 | rules/ 独立成树 ✅ | 已完成 |
+| D2 | data/rules/ 内部分区（legacy/ 旧台账、domain/ 领域表） | 高（dev_tools 硬编码路径须同步） |
+| D3 | engine/pipeline/ 收 step1~5 | 高（step 链互引） |
+| D4 | engine/classical/ 收 classical_enhancements 族 | 中 |
+| D5 | step5.py 按职责拆模块（=T31） | 最高 |
+
+旧 `rule_registry.json` 被 `check_rule_registry.py / readout_ledger.py / ablation.py /
+build_adjudications.py` 硬编码引用，**不物理删除、不直接挪路径**——D2 批在 `data/rules/legacy/`
+留实体，dev_tools 改读新路径，旧路径留一版转发或 CHANGELOG 登记弃用期。

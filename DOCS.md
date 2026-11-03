@@ -50,14 +50,14 @@
 |---|---|---|
 | `liuyao/docs/CHANGELOG.md` | 批次流水，**只保留最近窗口**（2026-10-29 起；更早见索引） | 活文档 |
 | `liuyao/docs/CHANGELOG-HISTORY-INDEX.md` | **逐批一句话索引**（342 批精简：原 154 批事实标题＋更早 49–156 批一句话；全文归档已删） | 历史索引 |
-| `liuyao/docs/JUDGMENT-TABLE.md` | 判定表：书证底稿、9 格、13 条题类覆盖、27 处覆写清单，**含"不换判词"的结论** | 活文档 |
+| `liuyao/docs/JUDGMENT-TABLE.md` | 判定表：书证底稿、9 格、13 条题类覆盖、20 处代码覆写清单（另 7 条已迁规则数据层 verdict_overrides），含"不换判词"的结论 | 活文档 |
 | `liuyao/docs/CASE-LIBRARY-AUDIT.md` | 案例库应期抽取审计（dz 底本通道） | 活文档 |
 | `liuyao/docs/YIIN-CASE-AUDIT.md` | 《易隐》案例集审计（`yiin_holdout`） | 活文档 |
 | `liuyao/docs/ADJUDICATION-BRIEF.md` | 待裁简报（**生成物**：`dev_tools/adjudication_brief.py` 重生成） | 生成物 |
 | `liuyao/docs/TIANHOU.md` | 占天候试验台协议（读数规则、换源即改口径） | 活文档 |
 | `liuyao/docs/ONTOLOGY-CARDS.md` | 易学知识图谱本体卡片（L0–L4 概念人读版） | 活文档 |
 | `liuyao/docs/YI-KNOWLEDGE-GRAPH.md` | 易学知识图谱手册（演化树、象数层、书证层、AI 检索视图） | 活文档 |
-| `liuyao/docs/RULE-ENGINE-REFACTOR-PLAN.md` | 规则仲裁层改造计划（registry v2 四层架构、阶段划分、D1 落地记录） | 活文档 |
+| `liuyao/docs/RULE-ENGINE-REFACTOR-PLAN.md` | 规则仲裁层改造：当前架构（rules/ 独立树、21 cap+7 verdict_overrides）与剩余待办（T28/T29/T30/T31） | 活文档 |
 
 ### 参考（`liuyao/references/`）
 
