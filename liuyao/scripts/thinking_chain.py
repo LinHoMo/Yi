@@ -14,6 +14,11 @@ _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
+# D4 收编：classical_enhancements 族迁入 scripts/classical/，需把该子目录也加进 sys.path。
+_ks_classical = _ks_os.path.join(_ks_d, "classical")
+if _ks_classical not in _ks_sys.path:
+    _ks_sys.path.insert(0, _ks_classical)
+
 from kernel_path import ensure_kernel_on_path as _ensure_kernel
 
 _ensure_kernel(__file__)

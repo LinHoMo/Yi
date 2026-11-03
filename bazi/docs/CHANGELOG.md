@@ -9,6 +9,14 @@
 > 399/400/401 撞号，按提交顺序归位为 **408/409/410/411**；原提交 `46d8bc1` 的提交信息
 > 保留旧号作历史，不再改。跨文件引用一律按新号。
 
+## 2026-11-03 第五百零五批（六爻·目录分层蓝图 D2＋D4）：**共享件加 data/rules 分区与 scripts/classical 收编两级转发；本科产物随 sync 重分发，判据、读数均不变**
+
+**性质**：共享门适配六爻目录分区（本科不改数据、不改判据、不改读数）。
+
+- `devkit/shared/` 三个共享件（`check_rule_registry`／`check_layer_contract`／`check_doc_refs`）为六爻 D2/D4 分区加**按在盘自适应**的转发：`_partition_remap` 只在目标实体存在时转发（死指针照判）；`CONTRACT_PATH` 在八字仍回落扁平 `data/rules/layer_contract.json`；禁边扫描名单改 `scripts/**/*.py`（八字 `scripts/bazi_factors/` 包相对 import，不触禁边表，实跑不新增红）。
+- `sync_devkit.py --write` 重分发后 `python bazi/dev_tools/check.py` 全绿；holdout 100.0（n=279）／tune 61/61 哨兵读数不动属预期（§四.7）。六爻侧详见 `liuyao/docs/CHANGELOG.md` 同批。
+
+
 ## 2026-11-02 第四百九十六批（六爻·裸文件名死引用）：**`rule_registry.json` 的「见 HANDOFF」是活引用而 HANDOFF 已随扁平化删除；`check_doc_refs` 此前整段跳过裸文件名**
 
 **性质**：共享门补裸文件名判据＋六爻数据说明修正（本科不改数据、不改判据、不改读数）。

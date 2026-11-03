@@ -35,7 +35,7 @@ from pathlib import Path
 # ── 断语/引文库：外置 data/verdicts.json 与 data/rules/verdict_texts.json（SKILL.md），代码只留算法与加载 ──
 _DATA_DIR = Path(__file__).resolve().parents[1] / "data"
 _VERDICTS_PATH = _DATA_DIR / "verdicts.json"
-_VERDICT_TEXTS_PATH = _DATA_DIR / "rules" / "verdict_texts.json"
+_VERDICT_TEXTS_PATH = _DATA_DIR / "rules" / "domain" / "verdict_texts.json"
 
 
 def _load_json(path: Path) -> dict:

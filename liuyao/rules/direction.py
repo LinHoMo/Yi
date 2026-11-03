@@ -43,7 +43,7 @@
    《黄金策》源L2416「若临兄弟，虽或安静，亦主难得，发动尤甚」（两档量级差取此）。
 
 **与铁律一的关系**：本模块只输出「结构事实 + 上限档位」，一切吉凶措辞都取自
-`data/rules/verdict_texts.json` 的 `step5_classical_notes` / `step5_verdict_descs`，
+`data/rules/domain/verdict_texts.json` 的 `step5_classical_notes` / `step5_verdict_descs`，
 代码里没有一条断语字面量；上限档位的档位名（吉/凶）是评分契约要求的枚举值，
 不是文案。applicability 一律按书源自带限定实现，见各条 `_reason_key` 与注册表。
 """

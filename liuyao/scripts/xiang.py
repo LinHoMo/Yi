@@ -53,7 +53,7 @@ from trigram_symbolism import (  # noqa: E402
     interpret_trigram_combination,
 )
 
-_XIANG_RULES_PATH = Path(__file__).resolve().parents[1] / "data" / "rules" / "xiang_layer.json"
+_XIANG_RULES_PATH = Path(__file__).resolve().parents[1] / "data" / "rules" / "domain" / "xiang_layer.json"
 
 _VALID_CATEGORIES = ("general", "career", "health", "relationship", "travel", "loss")
 

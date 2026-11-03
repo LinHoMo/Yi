@@ -230,7 +230,12 @@ def selftest(problems: list[str]) -> None:
                    encoding="utf-8")
     # 第四式（照八字科第一百六十六批·同步判据不同文字）：**JSON 数据文件里**的死指针
     # 同样必抓——本器旧版只走 .md/.py，rule_registry.json 的 HANDOFF 幽灵指针就是这么漏的。
-    tmp_json = DISC / "data" / "rules" / "_selftest_deadref.json"
+    # D2 分区：六爻 data/rules/ 下已分 domain/legacy；自检临时文件落在 domain/（若存在），
+    # 否则落扁平根（八字）。两科同一份代码（AGENTS.md §二 复制分发）。
+    _rules_dir = (DISC / "data" / "rules" / "domain"
+                  if (DISC / "data" / "rules" / "domain").exists()
+                  else DISC / "data" / "rules")
+    tmp_json = _rules_dir / "_selftest_deadref.json"
     tmp_json.write_text(json.dumps(
         {"coverage": "见 `docs/zz_probe_deadref_d.md`；真路径不误报 " + ok_a},
         ensure_ascii=False) + "\n", encoding="utf-8")

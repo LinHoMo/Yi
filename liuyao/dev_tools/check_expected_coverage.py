@@ -52,7 +52,7 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 DISC = Path(__file__).resolve().parents[1]
-REG = DISC / "data" / "rules" / "expected_coverage.json"
+REG = DISC / "data" / "rules" / "domain" / "expected_coverage.json"
 
 
 def _nonempty(value) -> bool:

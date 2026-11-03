@@ -41,7 +41,7 @@ SRC_DIR = DISC / "data" / "sources"
 # 检视范围：会被人照着执行的活文本。data/cases/* 是案例转写（有自己的三方对账），
 # docs/CHANGELOG.md 是登记时点原文（文件头承诺老条目一字未改），都不进硬门。
 GLOBS = ("scripts/**/*.py", "core/**/*.py", "references/**/*.md",
-         "docs/**/*.md", "data/rules/*.json", "data/*.json",
+         "docs/**/*.md", "data/rules/**/*.json", "data/*.json",
          # tests/ 里同样写满 `源L<n>＋「逐字」` 书证（回归 fixture 的校勘注就是），
          # 原先不扫这一层，等于**测试文件里写的书证没有任何东西会拦**——
          # 第二十/二十一给 fixture 补的引文当时是自证过的假象：门根本没读到它们。

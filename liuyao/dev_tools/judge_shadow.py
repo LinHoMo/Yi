@@ -32,8 +32,8 @@ from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 import case_runner  # noqa: E402
 from judge import judge_with_overlay as judge  # noqa: E402  九格 + 题类覆盖
 
-TABLE = DISC / "data" / "rules" / "judgment_table.json"
-SEAL = DISC / "data" / "rules" / "test_seal.json"
+TABLE = DISC / "data" / "rules" / "domain" / "judgment_table.json"
+SEAL = DISC / "data" / "rules" / "domain" / "test_seal.json"
 # 分片 → 封存册里的集名（只有这两集有考卷；其余集本身就是开发/回归集）
 SEAL_CORPUS = {"wikisource_holdout": "wikisource", "zengshan_dz_holdout": "zengshan_dz",
                "wikisource_direction": "wikisource_direction",

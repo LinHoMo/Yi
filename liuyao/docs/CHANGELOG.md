@@ -5,6 +5,47 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-03 第五百零五批（六爻·目录分层蓝图 D2＋D4）：**D2 `data/rules/` 物理分区（legacy/ 旧台账、domain/ 领域表）接续收口；D4 classical_enhancements 族 8 文件收进 `scripts/classical/`——两批同册提交，纯搬迁零漂移**
+
+**性质**：目录分层物理收编（§六 D2/D4）；不改判据、不改读数。接续上一会话的半成品（16 个文件已 git-mv、20 个文件路径串已改，但门禁未收口）。
+
+### 一、D2 收口（data/rules/ 分区）
+
+1. 上一会话遗留：`liuyao/data/rules/*.json` 已 git-mv 为 `domain/` 15 份＋`legacy/rule_registry.json` 1 份，但四处判据仍按旧扁平路径写，[37] 门禁同源×5、[12] 死指针×24 判红。
+2. **legacy 台账内容不回改**（§二「旧 `rule_registry.json` 不物理删除、旧路径留转发」条的在册口径：转发在**判据侧**，不在台账侧）：
+   - `devkit/shared/check_rule_registry.py` 新增 `_rules_file(name, legacy=)` 与 `_partition_remap(base, rel)`——旧扁平指针 `data/rules/<f>` 按名转发 `domain/<f>`（`rule_registry.json` 进 `legacy/`），**只在目标实体真在盘上时生效**，不掩盖真被删的文件。
+   - `devkit/shared/check_layer_contract.py:42` 改自适应 `_RULES_FLAT/_RULES_DOMAIN`（六爻取 `domain/layer_contract.json`、八字扁平回落，两科同一份代码）。
+   - `devkit/shared/check_doc_refs.py` 的 selftest 临时件按 domain/ 在盘自适应落位。
+   - `devkit/shared/variants/check_source_readings.liuyao.py` GLOBS `data/rules/*.json` → `data/rules/**/*.json`（分区后递归，覆盖面只增不减）。
+3. 改共享件后 `python devkit/sync_devkit.py --write` 重分发（上一会话手改两科产物副本造成的 [37]×5 漂移由同一次 sync 归正——产物手改即判红，真源只有 `devkit/shared/`）。
+
+### 二、D4 收编（classical_enhancements 族 → scripts/classical/）
+
+1. **落点修正（登记时点决策）**：蓝图 §六 写 `engine/classical/`，但 `engine/` 树是 D3 的前置（step 链未收编，单建 `engine/` 会出现「古典族在 engine/、主管道在 scripts/」的倒挂）。本批先落 **`scripts/classical/`**，D3 收编 step 链时两目录一并升 `engine/`。8 个文件 git-mv，**模块名不变、import 名不变**，靠 sys.path 转发（`scripts/classical/__init__.py` 写明此约定）。
+2. **运行时转发**：7 个被搬文件（`_fangwei.py` 自身无 sys.path 代码、靠 importer 兜底）在各自 `_ks_d` 块后插父目录（scripts/）转发；7 个外部引用方（`scripts/classical_analysis.py`／`scripts/effects.py`／`scripts/thinking_chain.py`／`dev_tools/ablation.py`／`dev_tools/build_extra_dimensions.py`／`tests/six_god_wang_shuai_test.py`／`eval/case_runner.py`）把 `scripts/classical/` 加进 sys.path。注释一律标「D4 收编」。
+3. **判据面同步（本批的真风险——静态名单会静默缩水）**：
+   - `check_rule_registry.py` 的 `_partition_remap` 加 scripts/ 收编转发（`scripts/classical_enhancements*.py` → `scripts/classical/<f>`，同样**只在实体在盘时生效**）。台账 24 条旧扁平 impl/quote_in_code 指针不回改（D2 同策）。
+   - `liuyao/dev_tools/check_xiang.py` 的 `SCORING_MODULES` 静态名单：8 个族文件名改带 `classical/` 前缀，且**「文件不在盘」由静默 `continue` 改为判红**——静默跳过＝「评分侧禁读象」覆盖面悄悄缩水（象层门 [39] 的牙被搬目录磨掉）。
+   - `devkit/shared/check_layer_contract.py` 禁边 AST 扫描名单 `scripts/*.py` → `scripts/**/*.py`（同理：单层 glob 会让 `scripts/classical/` 下 9 个文件整体退出 import 图扫描面）。八字 `scripts/bazi_factors/` 包（相对 import，不触禁边表）与六爻族模块（无 narrate_core/chart 禁边目标 import）经实跑确认不因此新增红。
+   - `build_adjudications.py` 两条 `engine_anchor` 散文指针与产物 `domain/adjudications.json` 同步重建（builder→data 同源，--verify 77 条书证全回验）。
+4. **负例自证（§四.8）**：转发落地后逐探针复跑——`scripts/classical_enhancements.py:analyze_shen_yao_activation`（符号搬进 `_shen_yao` 子模块）仍判「符号不在该文件内」√；`scripts/classical_enhancements_nothere.py:foo` 仍判「文件不存在」√（[12] 门 selftest 在册负例同判）。**转发只搬路径，不磨判据的牙。**
+
+### 三、自证
+
+- 六爻全门：`python liuyao/dev_tools/check.py` → 质量门全部通过；八字全门：`python bazi/dev_tools/check.py` → 通过（共享件双科分发后各自全绿）。
+- `golden.py verify`：288 例｜机械 `96c7f5d168ca6140`｜措辞 `8168eff9e560d6c2`｜异常 0——**与基线逐位一致，零漂移**（搬目录不进语义面，此为机器证明）。
+- `tests/regression_test.py` 总通过 19/19；`smoke_test.py` 产出率 100%；`six_god_wang_shuai_test.py` 6/6；`thinking_chain_tests.py` 12/12。
+- plugins 链：`node plugins/scripts/build.mjs`（`scripts/classical/` 随 RUNTIME_INCLUDE 的 scripts 递归进包，dsh-plugin/engine/liuyao/scripts/classical/ 9 文件在位）→ `selftest.mjs` 全绿（含 **yi_liuyao 引擎冒烟：以构建产物树跑通装卦出「贲」**——打包侧唯一端到端证据）→ `npm --prefix dsh-plugin run check` 通过。
+- `python kernel/sync_kernel.py --check`：内核 17/15 文件逐字节同源（本批未碰 kernel）。
+- `devkit/sync_devkit.py --check`：12 共享件与两科产物逐字节一致。
+
+### 四、口径
+
+- 纯搬迁批：不改任何判据语义与断语字面量；golden 双指纹与 tune 97.9（n=20）／holdout 90.2（n=12）读数不动属预期（§四.7），不动即正确。
+- 台账旧指针（legacy/rule_registry.json 24 条扁平 impl、domain/adjudications.json 的 prose anchor 除本批同步重建的两条外）保留登记时点写法，由判据侧转发回验——**历史台账不回改**与**活引用必须可回指**同时成立。
+- D 系列余下：D3（engine/pipeline/ 收 step 链，届时 scripts/classical/ 一并升格）、D5（=T31 已完成拆法外的进一步瘦身）。
+
+
 ## 2026-11-03 第五百零四批（六爻·规则引擎重构 D 系列收尾）：**`step5.apply_verdict_overrides` 的 7 条古籍强凶格局硬编码 if 链整体迁为 `rules/registry.json#verdict_overrides` 数据规则，由 `rule_engine.evaluate_verdict_overrides` 统一求值——纯重构零漂移**
 
 **性质**：规则仲裁层数据化（D 系列最后一块硬编码）；不改判据、不改读数。

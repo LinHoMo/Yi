@@ -39,7 +39,13 @@ from yishu_core.gate_kit import (  # noqa: E402
     rel_files,
 )
 
-CONTRACT_PATH = DISC / "data" / "rules" / "layer_contract.json"
+# D2 分区：六爻 data/rules 分 domain/（在用领域表）与 legacy/（v1 旧台账）；八字仍扁平。
+# 按在盘实际位置自适应，两科同一份代码（AGENTS.md §二 复制分发，不用 import）。
+_RULES_FLAT = DISC / "data" / "rules"
+_RULES_DOMAIN = _RULES_FLAT / "domain"
+CONTRACT_PATH = (_RULES_DOMAIN / "layer_contract.json"
+                  if (_RULES_DOMAIN / "layer_contract.json").exists()
+                  else _RULES_FLAT / "layer_contract.json")
 # 353 批：跨科共用信封 schema（root 单一真源；两科 dev_tools 副本按 parents[2] 定位）
 SCHEMA_PATH = Path(__file__).resolve().parents[2] / "devkit" / "layer_contract.schema.json"
 
@@ -105,7 +111,8 @@ def stage_problems(schema: dict) -> tuple[list[str], list[str]]:
 def edge_problems(schema: dict) -> tuple[list[str], list[str]]:
     """扫 import 图判禁边；返回 (problems, notes)。"""
     edges: dict[str, set[str]] = {}
-    for rel in rel_files(DISC, "scripts/*.py") + rel_files(DISC, "core/**/*.py"):
+    # D4 收编后 scripts/ 下有子目录（classical/）——名单必须递归，否则收编文件悄悄退出禁边扫描面
+    for rel in rel_files(DISC, "scripts/**/*.py") + rel_files(DISC, "core/**/*.py"):
         edges[rel] = py_imports(DISC / rel)
     rules = (schema.get("edges") or {}).get("forbidden") or []
     problems, notes = contract_edge_problems(edges, rules)

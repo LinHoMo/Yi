@@ -35,7 +35,7 @@ sys.path.insert(0, str(HERE))
 from stable_write import write_stable  # noqa: E402  203 批：幂等写，时间戳=内容最后变化
 
 SRC = DISC / "data" / "sources" / "zengshan_buyi_dz.dz.txt"
-OUT = DISC / "data" / "rules" / "adjudications.json"
+OUT = DISC / "data" / "rules" / "domain" / "adjudications.json"
 
 Z = "《增刪卜易》（zengshan_buyi_dz.dz.txt）"
 
@@ -70,7 +70,7 @@ ENTRIES = [
             {"who": "《增删》", "quote": "三合局中若有一空破者，待填满之日月成之", "source": Z, "line": 767},
         ],
         "engine_position": "三合/三会成立不以空破即废（待填/待冲结构标签在册；三会成立不再按三合破局论——第一百六十九批 registry 注）",
-        "engine_anchor": "rule_registry: liuyao.sanhe → scripts/classical_enhancements.py:analyze_triple_combo；liuyao.sanhui impl 注",
+        "engine_anchor": "rule_registry: liuyao.sanhe → scripts/classical/classical_enhancements.py:analyze_triple_combo；liuyao.sanhui impl 注",
         "status": "settled_by_source",
     },
     {
@@ -83,7 +83,7 @@ ENTRIES = [
             {"who": "《增删》实案例外", "quote": "卯木子孙，临月破，又动出申金伤克，虽值日辰，难过酉月卯日", "source": Z, "line": 1911},
         ],
         "engine_position": "月破层存在且救法集条件化（第两百八十批）：临日建1.0/日合0.5/日辰生扶0.5，例外＝卦中忌神类动爻克伤用神时救法不给（L692 寡不敌众；L1911 临日辰仍凶）；第一百五十九批唤醒 is_month_break 死键后外部 top-1 22.7→27.3 为该立场的读数侧写",
-        "engine_anchor": "rule_registry: liuyao.yuepo → scripts/classical_enhancements.py:analyze_monthly_break；step3.compute_month_break_modifier（280 批条件化）",
+        "engine_anchor": "rule_registry: liuyao.yuepo → scripts/classical/classical_enhancements.py:analyze_monthly_break；step3.compute_month_break_modifier（280 批条件化）",
         "status": "settled_by_source",
     },
     {

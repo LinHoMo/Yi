@@ -558,7 +558,7 @@ def checks():
         g1 = re.search(r"用例 (\d+) 条", sh(["dev_tools/golden.py", "verify"]))
         g2 = re.search(r"用例 (\d+) 条", sh(["dev_tools/" + "golden.py", "verify"], cwd=ROOT / "bazi"))
         hx = re.search(r"爻序断言：(\d+) 项通过", sh(["dev_tools/" + "hexagram_check.py"]))
-        reg = str(len(json.loads((ROOT / "liuyao" / "data" / "rules" / "rule_registry.json")
+        reg = str(len(json.loads((ROOT / "liuyao" / "data" / "rules" / "legacy" / "rule_registry.json")
                                 .read_text(encoding="utf-8"))["rules"]))
         # 跨科调用一律拼接（206 批规矩；本行首版又写全名被 [11] 当场逮——同名单双也拼，断侥幸）
         rg = re.search(r"机械回归通过 (\d+) 例", sh(["dev_tools/" + "regression.py"], cwd=ROOT / "bazi"))
@@ -701,7 +701,7 @@ def _adjud_counts():
     （304 批实测：账台只打印「取数异常 'settled'」，既不判红也不推动任何人）。
     改成 `dict.get` 计数，未知状态另由一个独立账台项盯（见下 `_adjud_unknown`）。
     """
-    d = json.loads((DISC / "data" / "rules" / "adjudications.json").read_text(encoding="utf-8"))
+    d = json.loads((DISC / "data" / "rules" / "domain" / "adjudications.json").read_text(encoding="utf-8"))
     c = {"settled_by_source": 0, "frozen_by_user": 0, "open_conflict": 0}
     for e in d["entries"]:
         c[e["status"]] = c.get(e["status"], 0) + 1
@@ -720,7 +720,7 @@ def _adjud_unknown():
     再冒出新状态名时本项立即判红。
     """
     VOCAB = {"settled_by_source", "frozen_by_user", "open_conflict"}
-    d = json.loads((DISC / "data" / "rules" / "adjudications.json").read_text(encoding="utf-8"))
+    d = json.loads((DISC / "data" / "rules" / "domain" / "adjudications.json").read_text(encoding="utf-8"))
     unknown = sorted({str(e.get("status")) for e in d["entries"]} - VOCAB)
     return (",".join(unknown),)
 

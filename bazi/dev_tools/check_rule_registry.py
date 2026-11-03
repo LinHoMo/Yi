@@ -173,12 +173,25 @@ if hasattr(sys.stdout, "reconfigure"):
 
 DISC = Path(__file__).resolve().parents[1]
 ROOT = DISC.parent
-REG = DISC / "data" / "rules" / "rule_registry.json"
+# D2 分区（六爻）：data/rules 分 legacy/（v1 旧台账）与 domain/（在用领域表）；八字仍扁平。
+# 路径按在盘实际位置自适应，两科同一份代码（AGENTS.md §二 复制分发，不用 import）。
+RULES_FLAT = DISC / "data" / "rules"
+RULES_DOMAIN = RULES_FLAT / "domain"
+RULES_LEGACY = RULES_FLAT / "legacy"
+
+
+def _rules_file(name: str, *, legacy: bool = False) -> Path:
+    """分区树取 domain/legacy，扁平树（八字）取 data/rules 根；缺册返回扁平路径（调用方按存在性跳过）。"""
+    p = (RULES_LEGACY if legacy else RULES_DOMAIN) / name
+    return p if p.exists() else RULES_FLAT / name
+
+
+REG = _rules_file("rule_registry.json", legacy=True)
 # 447 批：千金赋联句映射（仅六爻有该册；八字无文件则跳过，不判红）。
-QIANJIN = DISC / "data" / "rules" / "qianjin_fu_map.json"
+QIANJIN = _rules_file("qianjin_fu_map.json")
 QIANJIN_SRC = DISC / "data" / "sources" / "huangjince_dz.dz.txt"
 # 462 批：大运起例引文库（仅八字有该册；六爻无文件则跳过，不判红）。
-DAYUN = DISC / "data" / "rules" / "dayun_quotes.json"
+DAYUN = _rules_file("dayun_quotes.json")
 # 465 批：裁决引文真值源（仅八字有该册；六爻无文件则跳过）。
 VERDICTS = DISC / "data" / "verdicts.json"
 # 466 批：六神取象 / 十神作用（仅八字有该册）。
@@ -189,19 +202,19 @@ LIUYAO_QUOTES = DISC / "data" / "verdicts.json"
 # 470 批：叙述层模板（仅六爻有该册）。
 NARRATIVE_TPL = DISC / "data" / "narrative_templates.json"
 # 471 批：火珠林财官伏藏引文库（仅六爻有该册）。
-FUSHI = DISC / "data" / "rules" / "caiguan_fushi.json"
+FUSHI = _rules_file("caiguan_fushi.json")
 # 473 批：易林补遗门类定位映射（仅六爻有该册）。
 YILIN = DISC / "data" / "yilin_buyi_maps.json"
 # 475 批：纳音取象表（仅八字有该册）。
 NAYIN = DISC / "data" / "nayin_quxiang.json"
 # 477 批：六爻判词文案表（仅六爻有该册）。
-VERDICT_TEXTS = DISC / "data" / "rules" / "verdict_texts.json"
+VERDICT_TEXTS = _rules_file("verdict_texts.json")
 # 483 批：六爻问题词典（仅六爻有该册）。
-QUESTION_USE_GODS = DISC / "data" / "rules" / "question_use_gods.json"
+QUESTION_USE_GODS = _rules_file("question_use_gods.json")
 # 485 批：六爻分占域判据引文库（仅六爻有该册）。
-DOMAIN_CITES = DISC / "data" / "rules" / "domain_citations.json"
+DOMAIN_CITES = _rules_file("domain_citations.json")
 # 488 批：六爻问题题类表（仅六爻有该册）。
-QUESTION_CLASSES = DISC / "data" / "rules" / "question_classes.json"
+QUESTION_CLASSES = _rules_file("question_classes.json")
 DOMAIN_CITES_SRC = DISC / "data" / "sources" / "yimao_dz.dz.txt"
 _VERDICT_LOCATOR = re.compile(r"(data/sources/[^:]+):(\d+)")
 _VERDICT_MARK = re.compile(r"''+|={2,}|\{\{|\}\}|\||\*")
@@ -263,6 +276,37 @@ def _book_key(s: str) -> str:
     return b
 
 
+def _partition_remap(base: Path, rel: str) -> Path | None:
+    """分区/收编转发：D2 `data/rules/<f>` → `data/rules/domain/<f>`（rule_registry 进 legacy/）；
+    D4 `scripts/classical_enhancements*.py` → `scripts/classical/<f>`。
+
+    legacy 台账（v1）内容保持原样，其按旧扁平路径写的指针由这里转发到分区后的实体；
+    非 data/rules 路径或无文件名时返回 None。容忍带学科前缀（`liuyao/data/…`）与不带前缀两种写法。
+    D4 的收编转发**只在目标实体真在盘上时生效**：文件被删了仍判「文件不存在」，
+    符号搬家（父模块无该符号）仍判「符号不在该文件内」——转发不改判据的牙。
+    """
+    norm = rel.replace("\\", "/")
+    marker = "data/rules/"
+    idx = norm.find(marker)
+    if idx < 0:
+        # D4 收编：classical_enhancements 族整体迁入 scripts/classical/，旧扁平指针按名转发。
+        head = "scripts/"
+        i4 = norm.find(head)
+        if i4 >= 0:
+            tail = norm[i4 + len(head):]
+            if "/" not in tail and tail.startswith("classical_enhancements"):
+                sub = base / "scripts" / "classical" / tail if i4 == 0 \
+                    else base / Path(*norm[:i4].split("/")) / "scripts" / "classical" / tail
+                return sub if sub.exists() else None
+        return None
+    after = norm[idx + len(marker):]
+    if not after:
+        return None
+    sub = "legacy" if after.split("/")[0] == "rule_registry.json" else "domain"
+    remapped = norm[:idx] + marker + sub + "/" + after
+    return base / Path(*remapped.split("/"))
+
+
 def _resolve_any(rel: str) -> Path | None:
     """指针按仓库根写（`bazi/data/…`），也容忍相对学科根的写法。"""
     rel = rel.split("#", 1)[0].strip().lstrip("./")
@@ -270,6 +314,9 @@ def _resolve_any(rel: str) -> Path | None:
         p = base / rel
         if p.exists():
             return p
+        q = _partition_remap(base, rel)
+        if q is not None and q.exists():
+            return q
     return None
 
 

@@ -1,7 +1,7 @@
 {
  "schema": "yi-liuyao-adjudications/1",
  "discipline": "liuyao",
- "built_at": "2026-10-27T09:56:10",
+ "built_at": "2026-11-03T21:52:41",
  "_comment": "流派裁决表：「与古书吻合」的展开定义。引用任何吻合率须能指回本表行。不改引擎不进评分面不挂门（§176 冻结声明）。状态三值见 builder docstring。",
  "count": 27,
  "entries": [
@@ -65,7 +65,7 @@
     }
    ],
    "engine_position": "三合/三会成立不以空破即废（待填/待冲结构标签在册；三会成立不再按三合破局论——第一百六十九批 registry 注）",
-   "engine_anchor": "rule_registry: liuyao.sanhe → scripts/classical_enhancements.py:analyze_triple_combo；liuyao.sanhui impl 注",
+   "engine_anchor": "rule_registry: liuyao.sanhe → scripts/classical/classical_enhancements.py:analyze_triple_combo；liuyao.sanhui impl 注",
    "status": "settled_by_source"
   },
   {
@@ -98,7 +98,7 @@
     }
    ],
    "engine_position": "月破层存在且救法集条件化（第两百八十批）：临日建1.0/日合0.5/日辰生扶0.5，例外＝卦中忌神类动爻克伤用神时救法不给（L692 寡不敌众；L1911 临日辰仍凶）；第一百五十九批唤醒 is_month_break 死键后外部 top-1 22.7→27.3 为该立场的读数侧写",
-   "engine_anchor": "rule_registry: liuyao.yuepo → scripts/classical_enhancements.py:analyze_monthly_break；step3.compute_month_break_modifier（280 批条件化）",
+   "engine_anchor": "rule_registry: liuyao.yuepo → scripts/classical/classical_enhancements.py:analyze_monthly_break；step3.compute_month_break_modifier（280 批条件化）",
    "status": "settled_by_source"
   },
   {

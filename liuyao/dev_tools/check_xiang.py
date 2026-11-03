@@ -31,14 +31,17 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 # 评分侧：象层一旦被这里读到，象就变成了分数——CONTRACT §五-bis 禁边
+# D4 收编：classical_enhancements 族迁 scripts/classical/——名单改带子目录前缀，
+# 否则下方 ROOT/"scripts"/name 解析不到会静默跳过（== 评分侧禁读象覆盖面悄悄缩水）。
 SCORING_MODULES = (
     "step1.py", "step2.py", "step3.py", "step4.py", "step5.py",
     "timing.py", "judge.py", "classical_analysis.py",
-    "classical_enhancements.py",
-    "classical_enhancements_dufa.py", "classical_enhancements_fangwei.py",
-    "classical_enhancements_fushi.py", "classical_enhancements_menlei.py",
-    "classical_enhancements_shen_yao.py", "classical_enhancements_yimao_zhugui.py",
-    "classical_enhancements_zhugui.py", "effects.py",
+    "classical/classical_enhancements.py",
+    "classical/classical_enhancements_dufa.py", "classical/classical_enhancements_fangwei.py",
+    "classical/classical_enhancements_fushi.py", "classical/classical_enhancements_menlei.py",
+    "classical/classical_enhancements_shen_yao.py",
+    "classical/classical_enhancements_yimao_zhugui.py",
+    "classical/classical_enhancements_zhugui.py", "effects.py",
 )
 # 允许读象的层：装配、呈现、输出——象的合法去向
 XIANG_CONSUMERS = ("xiang.py", "analyze.py", "narrate.py", "render.py", "output.py",
@@ -126,6 +129,8 @@ def no_scoring_problems() -> list[str]:
     for name in SCORING_MODULES:
         p = ROOT / "scripts" / name
         if not p.exists():
+            problems.append(f"评分侧名单失效：scripts/{name} 不在盘上——"
+                            "静默跳过＝禁读象覆盖面缩水（D4 收编后名单须带子目录前缀）")
             continue
         text = p.read_text(encoding="utf-8")
         if "xiang" in text and "xiang" not in ("",):

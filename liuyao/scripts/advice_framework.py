@@ -9,7 +9,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-_RULES_PATH = Path(__file__).resolve().parents[1] / "data" / "rules" / "advice_rules.json"
+_RULES_PATH = Path(__file__).resolve().parents[1] / "data" / "rules" / "domain" / "advice_rules.json"
 
 
 def _load() -> dict:

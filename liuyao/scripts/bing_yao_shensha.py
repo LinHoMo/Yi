@@ -32,7 +32,7 @@ if str(_CORE) not in sys.path:
 from yishu_core.shensha import shensha_at_branches  # noqa: E402
 from pathlib import Path as _P
 import json as _json
-_VT = _P(__file__).resolve().parents[1] / 'data' / 'rules' / 'verdict_texts.json'
+_VT = _P(__file__).resolve().parents[1] / 'data' / 'rules' / 'domain' / 'verdict_texts.json'
 BING_YAO_LABELS = _json.loads(_VT.read_text(encoding='utf-8')).get('bing_yao_labels', {})
 
 

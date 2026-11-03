@@ -350,7 +350,7 @@ def _use_god_rules() -> list[dict]:
     """装载规则表；读不到就返回空表（宁可退回词典，也不硬编一份"假装有出处"的规则）。"""
     global _USE_GOD_RULES
     if _USE_GOD_RULES is None:
-        path = Path(__file__).resolve().parents[1] / "data" / "rules" / "use_god_relations.json"
+        path = Path(__file__).resolve().parents[1] / "data" / "rules" / "domain" / "use_god_relations.json"
         try:
             _USE_GOD_RULES = json.loads(path.read_text(encoding="utf-8")).get("rules") or []
         except (OSError, ValueError):

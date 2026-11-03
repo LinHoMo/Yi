@@ -34,7 +34,7 @@ DISC = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(DISC / "core"))
 from yishu_core.runtime import force_utf8_stdio, utf8_subprocess_env  # noqa: E402
 
-SEAL = DISC / "data" / "rules" / "test_seal.json"
+SEAL = DISC / "data" / "rules" / "domain" / "test_seal.json"
 SPLITS = DISC / "data" / "cases" / "case_splits.json"
 EVAL = DISC / "eval" / "evaluate.py"
 

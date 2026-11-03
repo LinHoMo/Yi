@@ -35,6 +35,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 DISC = HERE.parent
 sys.path.insert(0, str(DISC / "scripts"))
+# D4 收编：classical_enhancements 族迁入 scripts/classical/
+sys.path.insert(0, str(DISC / "scripts" / "classical"))
 sys.path.insert(0, str(HERE))
 from kernel_path import ensure_kernel_on_path  # noqa: E402
 ensure_kernel_on_path(__file__)
@@ -181,7 +183,7 @@ def parse_impl(impl: str):
 
 def sweep(splits, limit=None, out_path=None) -> dict:
     import importlib
-    reg = json.loads((DISC / "data" / "rules" / "rule_registry.json").read_text(encoding="utf-8"))
+    reg = json.loads((DISC / "data" / "rules" / "legacy" / "rule_registry.json").read_text(encoding="utf-8"))
     rules = reg.get("rules") or []
     if not rules:
         print("× rule_registry 空——先查路径，33 条失踪不会静默")

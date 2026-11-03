@@ -32,7 +32,7 @@ HERE = Path(__file__).resolve().parent
 DISC = HERE.parent
 # 扁平化后 DISC=liuyao（学科根），源文在 <学科根>/data/sources；DISC.parent.parent 会越过学科根落到 Desktop。
 RAW = DISC / "data" / "sources" / "zengshan_buyi.wikitext.txt"
-OUT = DISC / "data" / "rules" / "question_use_gods.json"
+OUT = DISC / "data" / "rules" / "domain" / "question_use_gods.json"
 
 sys.path.insert(0, str(HERE))
 from build_use_god_rules import flat, locate  # noqa: E402  同一口径的引文定位

@@ -21,6 +21,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
+# D4 收编：classical_enhancements 族迁入 scripts/classical/
+sys.path.insert(0, str(ROOT / "scripts" / "classical"))
 from kernel_path import kernel_dir  # noqa: E402  scripts/ 先上 path，eval/ 才能自定位
 
 for _p in (str(ROOT / "scripts"), str(kernel_dir(__file__))):

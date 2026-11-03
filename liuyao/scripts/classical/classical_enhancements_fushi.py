@@ -39,13 +39,19 @@ _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
+# D4 收编：本文件从 scripts/ 迁入 scripts/classical/，需把父目录 scripts/ 也加进
+# sys.path，以便 flat import 继续找到 kernel_path / chain_tables / fangwei_rules 等。
+_ks_parent = _ks_os.path.dirname(_ks_d)
+if _ks_parent not in _ks_sys.path:
+    _ks_sys.path.insert(0, _ks_parent)
+
 from kernel_path import ensure_kernel_on_path as _ensure_kernel  # noqa: E402
 
 _ensure_kernel(__file__)
 
 __all__ = ["huozhulin_fushi_tags", "FU_SHI_PAIRS"]
 
-_DATA = Path(__file__).resolve().parents[1] / "data" / "rules" / "caiguan_fushi.json"
+_DATA = Path(__file__).resolve().parents[1] / "data" / "rules" / "domain" / "caiguan_fushi.json"
 _TABLE: dict | None = None
 
 

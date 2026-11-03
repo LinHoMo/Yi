@@ -41,7 +41,7 @@ from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 
 import check_source_readings as _csr  # noqa: E402  底本表与归一化只认它一份
 
-TABLE = DISC / "data" / "rules" / "judgment_table.json"
+TABLE = DISC / "data" / "rules" / "domain" / "judgment_table.json"
 STEP5 = DISC / "scripts" / "step5.py"
 KINDS = ("priority", "exception", "domain_overlay")
 

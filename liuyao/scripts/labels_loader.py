@@ -10,7 +10,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-_PATH = Path(__file__).resolve().parents[1] / "data" / "rules" / "scripts_labels.json"
+_PATH = Path(__file__).resolve().parents[1] / "data" / "rules" / "domain" / "scripts_labels.json"
 _CACHE: dict | None = None
 
 

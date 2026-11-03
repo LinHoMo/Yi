@@ -113,7 +113,7 @@ HEXAGRAM_LIUCHONG = ["乾", "坤", "坎", "离", "艮", "震", "巽", "兑",
                      "遁", "同人", "履", "小畜"]
 
 
-_USE_GOD_DICT_PATH = Path(__file__).resolve().parents[1] / "data" / "rules" / "question_use_gods.json"
+_USE_GOD_DICT_PATH = Path(__file__).resolve().parents[1] / "data" / "rules" / "domain" / "question_use_gods.json"
 
 
 def _load_question_use_gods() -> tuple[dict, dict, dict]:
@@ -154,7 +154,7 @@ _QUESTION_USE_GOD_MAP, _QUESTION_USE_GOD_BASIS, _USE_GOD_LAYER_CITATIONS = _load
 # 分岔，改写措辞/换简繁即静默变向。现收敛为单一结构枚举 question_class，由
 # step2 单点产出；关键词族与取类优先级全部在 data/rules/question_classes.json
 # （§三：判类关键词不写进 .py）。
-_QUESTION_CLASSES_PATH = Path(__file__).resolve().parents[1] / "data" / "rules" / "question_classes.json"
+_QUESTION_CLASSES_PATH = Path(__file__).resolve().parents[1] / "data" / "rules" / "domain" / "question_classes.json"
 
 
 def _load_question_classes() -> tuple[list, dict, str]:

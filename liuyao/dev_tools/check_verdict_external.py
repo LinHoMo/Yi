@@ -47,7 +47,7 @@ EXEMPT_FILES = ("narrate",)
 LOCK = 0
 MIN_FILES = 40
 # 452 批：外置目录本身也要守——断语搬进 JSON 后，若某条被清空，报告会静默缺句。
-LABEL_FILES = ("data/rules/verdict_texts.json", "data/rules/scripts_labels.json")
+LABEL_FILES = ("data/rules/domain/verdict_texts.json", "data/rules/domain/scripts_labels.json")
 META_KEYS = ("_meta", "schema", "_comment", "discipline")
 
 

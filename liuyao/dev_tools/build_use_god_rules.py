@@ -30,7 +30,7 @@ HERE = Path(__file__).resolve().parent
 DISC = HERE.parent
 # 扁平化后 DISC=bazi/liuyao（学科根），源文在 <学科根>/data/sources；DISC.parent.parent 会越过学科根落到 Desktop。
 RAW = DISC / "data" / "sources" / "zengshan_buyi.wikitext.txt"
-OUT = DISC / "data" / "rules" / "use_god_relations.json"
+OUT = DISC / "data" / "rules" / "domain" / "use_god_relations.json"
 
 # (触发词, 需要的上下文词(可空), 用神, 优先级, 逐字引文)
 # 顺序即优先级：命中即止，所以"关系+性别"要排在泛化的"婚→财"之前。
