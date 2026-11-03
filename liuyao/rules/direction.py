@@ -99,14 +99,16 @@ def apply_caps(verdict: str, caps: list[dict]) -> tuple[str, bool]:
     """
     cur = RANK.get(verdict, -1)
     fired = False
-    for c in caps or []:
+    # T28：按 priority 排序（当前全 0，零漂移；后续高 priority 规则优先仲裁）
+    caps_sorted = sorted(caps or [], key=lambda c: c.get("priority", 0), reverse=True)
+    for c in caps_sorted:
         if "cap" not in c:
             continue  # score_delta 规则不参与 cap 压/抬档
         tgt = RANK.get(c["cap"], 99)
         if cur >= 0 and tgt < cur:
             cur = tgt
             fired = True
-    for c in caps or []:
+    for c in caps_sorted:
         if "cap" not in c:
             continue
         tgt = RANK.get(c["cap"], 99)

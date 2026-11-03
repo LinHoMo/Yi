@@ -664,6 +664,7 @@ def evaluate_caps(lines, step2, step4, month_branch, day_branch, empty_branches,
             "src": (rule.get("source") or {}).get("locator", ""),
             "reason_key": rule.get("reason_key", "shi_hua_gui"),
             "detail": _detail(rule, ctx),
+            "priority": rule.get("priority", 0),  # T28：priority 仲裁字段（当前全 0，零漂移）
         }
         # cap 档（压 verdict）——可为字符串或 {"moving":..,"still":..}
         if "cap" in rule:
