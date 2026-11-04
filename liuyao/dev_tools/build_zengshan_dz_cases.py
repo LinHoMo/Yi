@@ -696,9 +696,15 @@ def merge_old_expected(case: dict, old_case: dict) -> None:
     if not e.get("use_god") and oe.get("use_god"):
         e["use_god"] = oe["use_god"]
         e["use_god_branch"] = oe.get("use_god_branch", "")
-    for k in ("use_god_note", "yingqi_note"):
+    for k in ("use_god_note", "yingqi_note", "verdict_note"):
         if not e.get(k) and oe.get(k):
             e[k] = oe[k]
+    # 512 批：verdict 也有建器推不出的部分。词表读不到结论的六例（ZD029 治+死同现、
+    # ZD221/222「卒」不在词表、ZD125 险厄而人免、ZD139「相逢」、ZD188 登科中魁），
+    # 是历批按书载实录句校勘定下的；旧版重建会把它们静默清成 N/A（同 419 批 18 例用神
+    # 书证被清空的病）。此处同样按空位沿用，且只沿用它——建器读出的值优先，不被旧值覆盖。
+    if not e.get("verdict") and oe.get("verdict"):
+        e["verdict"] = oe["verdict"]
 
 
 def assign_stable_ids(kept: list[dict], excluded: list[dict], old_doc: dict) -> tuple[list[dict], list[dict]]:
@@ -858,7 +864,17 @@ def selftest() -> int:
     merge_old_expected(new2, oldc)
     if new2["expected"].get("use_god") != "妻财" or new2["expected"].get("use_god_branch") != "寅":
         fails.append("建器抽到的用神被旧值覆盖（negative）")
-    print("√ selftest：之/单字题识别、行文黑名单、用神三形态（真 5 + 负 3）、稳定 id 全过"
+    # 512 批：verdict 空位沿用（建器读不出结论的六例不得被重建清成 N/A）
+    new3 = {"expected": {"verdict": ""}}
+    merge_old_expected(new3, {"expected": {"verdict": "凶",
+                                           "verdict_note": "书证：果卒于卯年"}})
+    if new3["expected"].get("verdict") != "凶" or new3["expected"].get("verdict_note") != "书证：果卒于卯年":
+        fails.append("旧册 verdict／verdict_note 未按空位填补")
+    new4 = {"expected": {"verdict": "吉"}}
+    merge_old_expected(new4, {"expected": {"verdict": "凶"}})
+    if new4["expected"].get("verdict") != "吉":
+        fails.append("建器读出的 verdict 被旧值覆盖（negative）")
+    print("√ selftest：之/单字题识别、行文黑名单、用神三形态（真 5 + 负 3）、稳定 id、verdict 空位沿用全过"
           if not fails else "× " + "；".join(fails))
     return 0 if not fails else 1
 

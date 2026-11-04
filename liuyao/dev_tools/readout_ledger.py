@@ -205,7 +205,7 @@ def checks():
         "注意：本值随 capture 同步；若再分家，先读 drift_log 再改，勿凭记忆填。）",
         lambda t: _golden("bazi"),
         ("b7674a8f6d8d1162", "fd1a1b0b60e06104"))
-    add("governance(74/49, blk 33/30)",
+    add("governance(74/49, blk 34/30)",
         "194批（312 补 310；315 补 314/315 两门；317 补 judge_shadow；329 补 fetch_zengshan_dz_cases；"
         "331 批 check_docs_index 上提到 devkit/root → 六爻 blk 28→27、脚本仍 63；"
         "339 批 A5-1 按实登记 7 个存量未分类脚本 → 八字 37→43；"
@@ -222,8 +222,10 @@ def checks():
         "（跨版本窗口对拍，观测非 blocking 门）→ 八字 48→49，blk 不变）"
         "；**511 批：六爻 71→74 是 ontology 三件（check_ontology／ontology_subgraph／render_ontology）"
         "自建图起就未入治理表、也未挂 check.py，地图一直报「未分类」而无人回改**——同批已补登记（tier 见 governance_map.py），"
-        "并记下缺口：check_ontology 仍只是手工门，未接线",
-        lambda t: _gov_counts(), ("74", "49", "33", "30"))
+        "并记下缺口：check_ontology 仍只是手工门，未接线"
+        "；**512 批已接线**：`check_ontology` 升 blocking 并进 `check.py` [44]（孤儿/父链/幽灵引用/impl 锚定四条），"
+        "六爻 blocking 33→34，脚本总数 74 不变",
+        lambda t: _gov_counts(), ("74", "49", "34", "30"))
 
     # 344 批：expected 书证/机械派生字段的覆盖生存线（门 [38]）。
     # 1592923 的事故证明「聚合分掉 6 分、所有门全绿」可以并存；本项把非空计数

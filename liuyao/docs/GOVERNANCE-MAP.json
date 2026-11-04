@@ -2,10 +2,10 @@
  "count": 74,
  "by_tier": {
   "tool": 4,
-  "ondemand": 13,
+  "ondemand": 12,
   "nightly": 12,
   "build": 12,
-  "blocking": 33
+  "blocking": 34
  },
  "unclassified": [],
  "curated_but_missing": [],
@@ -223,9 +223,9 @@
   },
   {
    "script": "check_ontology.py",
-   "tier": "ondemand",
-   "guards": "易学图谱本体看门狗：孤儿／父链到根／幽灵引用／engine_impl 锚定（511 批登记；**未挂 check.py，属待接线门**）",
-   "run_by_check_py": false,
+   "tier": "blocking",
+   "guards": "易学图谱本体看门狗：孤儿／父链到根／幽灵引用／engine_impl 锚定（511 批登记，512 批接线进 check.py [44]）",
+   "run_by_check_py": true,
    "doc": "易学图谱本体看门狗：孤儿检查 + 引用完整性。"
   },
   {

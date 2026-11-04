@@ -108,6 +108,14 @@ def main() -> int:
             print("× 负例未抓到：幽灵 parent 没被检出")
             return 1
         print("√ 负例自证通过：幽灵 parent/orphan 均被抓")
+        # 512 批：负例过了不等于真实图干净。旧版此处直接 return 0，把上面刚算出的
+        # problems（真实数据）整个丢弃——门挂在 check.py 里就永远绿。负例之后仍须报真账。
+        if problems:
+            print(f"× 真实图谱发现 {len(problems)} 个问题：")
+            for p in problems:
+                print("  -", p)
+            return 1
+        print(f"√ 真实图谱引用完整（{len(nodes)} 节点）：无孤儿、无幽灵 parent、engine_impl 锚定真实")
         return 0
 
     print(f"图谱节点 {len(nodes)} 个")

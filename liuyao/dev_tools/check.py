@@ -983,7 +983,13 @@ def main() -> int:
                 "dev_tools/check_source_provenance.py"),
                ("case_source_hashes", "[43] 案例层源哈希（案例 JSON 登记的源文件/元哈希/每例哈希须与在盘底本一致；"
                                       "438 批新增）",
-                "dev_tools/check_case_source_hashes.py")):
+                "dev_tools/check_case_source_hashes.py"),
+               # 512 批：check_ontology 自建图起就在库，却只挂在 governance_map 的 ondemand、
+               # 从未进 check.py——「图上节点错了没人拦」正是 511 批记下的那条缺口。本批接线。
+               ("ontology", "[44] 图谱本体门（每节点须有 parents／非 L0 须沿父链走到 yi.l0.* 根／"
+                            "parents 引用须真实存在／engine_impl 声明的 registry 规则须存在；"
+                            "511 批登记、512 批接线）",
+                "dev_tools/check_ontology.py")):
         # [36] 文档索引门于 A0-5（第三百三十一批）上提到 `devkit/root/check_docs_index.py`：
         # 它守全仓 DOCS.md，不属六爻一科。编号 36 空出，**不回填**（墓碑口径见 A5-1）。
         if want(key):

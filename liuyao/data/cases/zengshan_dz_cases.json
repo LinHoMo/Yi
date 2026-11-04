@@ -2188,7 +2188,8 @@
         ],
         "detail": "断曰：巳火子孙既当春令，子孙旺相许之可治，后死于寅日寅时",
         "same_as_day_branch": false,
-        "use_god_note": "书证：巳火子孙既当春令（dz L831）"
+        "use_god_note": "书证：巳火子孙既当春令（dz L831）",
+        "verdict_note": "书证校勘（512 批）：断曰巳火子孙既当春令…后死于寅日寅时——词表见「治」吉与「死」凶同现即判 N/A，按书断记凶"
       },
       "provenance": {
         "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
@@ -2632,7 +2633,8 @@
           "戌"
         ],
         "detail": "余曰：世爻未土，月拱日克，可以敌之，反不宜巳火动而生世，今岁太岁在申，余恐亥年不利，后卒于戌年",
-        "same_as_day_branch": false
+        "same_as_day_branch": false,
+        "verdict_note": "书证校勘（512 批）：余恐亥年不利，后卒于戌年——「卒」不在凶词表，按书断记凶"
       },
       "provenance": {
         "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
@@ -2679,7 +2681,8 @@
           "卯"
         ],
         "detail": "断曰：世化申金回头之生，不宜寅月冲破，又嫌戌土未土动而克而无生也，须防卯岁，果卒于卯年，乃应戌土逢合之年而克世也",
-        "same_as_day_branch": false
+        "same_as_day_branch": false,
+        "verdict_note": "书证校勘（512 批）：须防卯岁，果卒于卯年——「卒」不在凶词表，按书断记凶"
       },
       "provenance": {
         "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
@@ -2722,7 +2725,8 @@
         ],
         "detail": "此人竟未出门，捱至七月初七，又得凶梦，初八即往东行二十八里，地震房塌，人口被伤，独伊得免",
         "same_as_day_branch": false,
-        "use_god_note": "书证：寅木化进神克世（流年世体轨，断主体世爻；世位妻财辰从卦位对得）"
+        "use_god_note": "书证：寅木化进神克世（流年世体轨，断主体世爻；世位妻财辰从卦位对得）",
+        "verdict_note": "书证校勘（512 批）：今秋必有险厄…地震房塌，人口被伤，独伊得免——凶指流年险厄，本人得免不改此断"
       },
       "provenance": {
         "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
@@ -2761,7 +2765,8 @@
         ],
         "detail": "果于次年六月父子相逢",
         "same_as_day_branch": false,
-        "use_god_note": "书证：日建冲动上爻子孙而生世，明岁申辰与酉金相合"
+        "use_god_note": "书证：日建冲动上爻子孙而生世，明岁申辰与酉金相合",
+        "verdict_note": "书证校勘（512 批）：此子见归…果于次年六月父子相逢——「相逢」不在吉词表，按书断记吉"
       },
       "provenance": {
         "source_file": "data/sources/zengshan_buyi_dz.dz.txt",
@@ -2891,7 +2896,8 @@
         "detail": "余曰：不妨，不可求全责备，卦中日月世与子孙共成三合，死者安而生者乐，子孙昌盛，何愁不发，后竟葬之，辰年下葬，酉年孙中亚魁，及至子年，次孙又登乡榜",
         "same_as_day_branch": false,
         "use_god_note": "坟茔轨世为穴（同书 L3634「世为穴」）；断辞明书世爻戌土休囚化子孙回头生，子孙午线并列 note",
-        "yingqi_note": "流年后验叙事轨：占占地题（地之好坏），「辰年下葬，酉年孙中亚魁，子年登乡榜」系葬后家运叙事应期（占题本身无应期之问），yingqi 维度对本例的 applicable 性存疑，判 0 属评测语境错位非引擎候选缺失"
+        "yingqi_note": "流年后验叙事轨：占占地题（地之好坏），「辰年下葬，酉年孙中亚魁，子年登乡榜」系葬后家运叙事应期（占题本身无应期之问），yingqi 维度对本例的 applicable 性存疑，判 0 属评测语境错位非引擎候选缺失",
+        "verdict_note": "书证校勘（512 批）：辰年下葬，酉年孙中亚魁，及至子年次孙又登乡榜——「中魁／登榜」不在吉词表，按书断记吉"
       },
       "provenance": {
         "source_file": "data/sources/zengshan_buyi_dz.dz.txt",

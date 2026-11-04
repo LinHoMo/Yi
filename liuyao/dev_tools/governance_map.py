@@ -168,7 +168,7 @@ CURATED = {
         "batchnum_audit": ("ondemand", "批次号标题级体检（230 批常设化：唯一+单调，锚与字符类教训铸成 fixture；审计非门）"),
         # 511 批：ontology 三件自建图起就在库，却从未入表——地图连续多批报「未分类」，无人回改。
         # 按实登记（不接线、不删并）：check_ontology 是看门狗但没挂进 check.py，只能手工跑。
-        "check_ontology": ("ondemand", "易学图谱本体看门狗：孤儿／父链到根／幽灵引用／engine_impl 锚定（511 批登记；**未挂 check.py，属待接线门**）"),
+        "check_ontology": ("blocking", "易学图谱本体看门狗：孤儿／父链到根／幽灵引用／engine_impl 锚定（511 批登记，512 批接线进 check.py [44]）"),
         "ontology_subgraph": ("tool", "图谱 AI subgraph 检索出口（按 kid 取概念上下文；511 批登记）"),
         "render_ontology": ("build", "图谱人读卡片生成器（docs/ONTOLOGY-CARDS.md；511 批登记）"),
         "__init__": ("tool", "包标记"),
