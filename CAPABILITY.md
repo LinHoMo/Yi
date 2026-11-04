@@ -43,7 +43,7 @@
 | 版本冲突上限 | 卦面分歧 0/47、判词分歧 1/37→判词保真天花板 ≈98.6%（等权估计式） | 185 批 | `python liuyao/dev_tools/version_collate.py` |
 | 规则边际 | 33 条全扫：无一单点显著（11 条有影响全 p≥0.375、top-1 零不一致）；信号在择支/日月/阶梯三底座 | 182/186 批 | `python liuyao/dev_tools/ablation.py --sweep`（分钟级） |
 | 名次键 | 四个预声明重排键全部不胜现行序；#33 排序问题按预注册结案 | 190 批 | `python liuyao/dev_tools/rank_experiment.py` |
-| 流派裁决 | **27 项**分歧点：**6 项 settled_by_source**（照所据书文执行，含 309 批把词汇表外的 `settled` 归位的一条）／1 项 frozen_by_user／**20 项 open_conflict**——分歧表自 248 批起扩容，308 批更正计数（原登记「7 项／1 open_conflict」少报一个数量级），309 批裁定**不增设第四态**、`settled` 归位为 `settled_by_source`（311 批按现状回改本行） | 188 批→309 批 `liuyao/data/rules/adjudications.json` | `python liuyao/dev_tools/build_adjudications.py --selftest` |
+| 流派裁决 | **27 项**分歧点：**6 项 settled_by_source**（照所据书文执行，含 309 批把词汇表外的 `settled` 归位的一条）／1 项 frozen_by_user／**20 项 open_conflict**——分歧表自 248 批起扩容，308 批更正计数（原登记「7 项／1 open_conflict」少报一个数量级），309 批裁定**不增设第四态**、`settled` 归位为 `settled_by_source`（311 批按现状回改本行） | 188 批→309 批 `liuyao/data/rules/domain/adjudications.json` | `python liuyao/dev_tools/build_adjudications.py --selftest` |
 
 > **356 批起**六爻评测实现物理位于 `liuyao/eval/`（`case_runner.py`／`evaluate.py`／
 > `build_portal_assets.py`），`scripts/` 下同名文件只是纯 re-export 兼容入口。

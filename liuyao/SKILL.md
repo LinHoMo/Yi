@@ -142,10 +142,10 @@ analyze 输出的 `conclusion`（方向/应期/所本）与 `chart_summary`（�
 
 **用神的所本（禁止由 LLM 另判一遍）：** 思维链的 `step2_use_god_identification` 同时给出
 `use_god_category` 与 `use_god_basis`。basis 有四种前缀，各说实话，如实转述即可：
-- 「《增刪卜易》：…」——原书明写的取用法则（关系优先层，`data/rules/use_god_relations.json`，
+- 「《增刪卜易》：…」——原书明写的取用法则（关系优先层，`data/rules/domain/use_god_relations.json`，
   每条带逐字引文与偏移量可回查），或问题词典中**有引文族**的条目（会带「（问题词典·族名）」）；
 - 「覆盖规则「…」·《增刪卜易》：…」——代码消歧层的命中且该层有逐字层引文
-  （`data/rules/question_use_gods.json` 的 `layer_citations`，7 类）；
+  （`data/rules/domain/question_use_gods.json` 的 `layer_citations`，7 类）；
 - 「覆盖规则「…」（消歧层，无逐字引文）」或「问题词典推断（族名·无古籍逐条出处）」——
   **没有古籍逐条出处的推断**，正文里要如实说明这是推断/消歧取法，不要伪装成古籍定论；
 - 「问题词典默认（…）」——三层都未命中的兜底（默认取世爻），同样如实说明。

@@ -104,13 +104,13 @@ yi.<layer>.<domain>.<concept>
 | 图谱节点 | 现有文件 | 要做的 |
 |---|---|---|
 | L1 象数 | `core/yishu_core/symbols.py`（BRANCH_ELEMENTS/SHENG/KE/CHONG/HE_PAIRS） | 导出为 L1 节点 JSON，挂哲学释义 |
-| L2 取用神 | `data/rules/use_god_relations.json` | 每条规则转成 L2/L3 节点 + kid |
-| L2 问类 | `data/rules/question_classes.json` | classes 转成 L2 节点 |
-| L2 伏神 | `data/rules/caiguan_fushi.json` | 九宫转成 L2 节点 |
+| L2 取用神 | `data/rules/domain/use_god_relations.json` | 每条规则转成 L2/L3 节点 + kid |
+| L2 问类 | `data/rules/domain/question_classes.json` | classes 转成 L2 节点 |
+| L2 伏神 | `data/rules/domain/caiguan_fushi.json` | 九宫转成 L2 节点 |
 | L3 仲裁规则 | `rules/registry.json`（14 条） | 每条加 kid + parents 哲学依据 |
-| L3 旧规则登记 | `data/rules/rule_registry.json`（91KB） | 逐条补 kid，不删（blocking 看门狗仍用） |
-| L4 分占域断语 | `data/rules/domain_citations.json` | 挂到所属 L3 节点 |
-| L4 断语文案 | `data/rules/verdict_texts.json` | step5_classical_notes 挂 kid |
+| L3 旧规则登记 | `data/rules/legacy/rule_registry.json`（91KB） | 逐条补 kid，不删（blocking 看门狗仍用） |
+| L4 分占域断语 | `data/rules/domain/domain_citations.json` | 挂到所属 L3 节点 |
+| L4 断语文案 | `data/rules/domain/verdict_texts.json` | step5_classical_notes 挂 kid |
 | **L0 哲学** | **无** | **新建 `data/ontology/l0_metaphysics.json`** |
 | **L1 知识化** | **内核数据散在 symbols.py** | **新建 `data/ontology/l1_xiangshu.json`** |
 

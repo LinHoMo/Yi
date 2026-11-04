@@ -107,7 +107,7 @@
 - **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.sixiang → yi.l0.bagua → yi.l1.najia → yi.l2.concept.fushi
 - **依据**：yi.l1.najia、yi.l0.wuxing
 - **书证**：《火珠林》出现旺相，为久为远；伏藏有气，只利暂时。
-- **代码锚点**：`data/rules/caiguan_fushi.json`
+- **代码锚点**：`data/rules/domain/caiguan_fushi.json`
 
 ### 回头克  `yi.l2.concept.huitouke`
 - **定义**：动爻所变出之爻，其五行反克本爻之五行（如酉金动变午火，火克金）。属《增删卜易》七化凶之一。
@@ -135,20 +135,20 @@
 - **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.sixiang → yi.l0.bagua → yi.l2.concept.wenlei
 - **派生**：yi.l3.rule.liuchong_bian_liuhe、yi.l3.rule.tianqi_zhan_yu、yi.l3.rule.tianqi_zhan_qing
 - **依据**：yi.l0.bagua
-- **代码锚点**：`data/rules/question_classes.json:classes`
+- **代码锚点**：`data/rules/domain/question_classes.json:classes`
 
 ### 用神（占断核心）  `yi.l2.concept.yongshen`
 - **定义**：所占之事对应的六亲爻：占财看妻财、占官看官鬼、占文书看父母、占解忧看子孙、占兄弟同辈看兄弟。用神为一卦之主。
 - **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.sixiang → yi.l0.bagua → yi.l1.najia → yi.l2.concept.yongshen
 - **派生**：yi.l2.concept.yongshen_liuqin、yi.l2.concept.yuan_shen
 - **依据**：yi.l1.najia、yi.l0.wuxing
-- **代码锚点**：`data/rules/use_god_relations.json`
+- **代码锚点**：`data/rules/domain/use_god_relations.json`
 
 ### 六亲取用规则  `yi.l2.concept.yongshen_liuqin`
 - **定义**：按问类定用神：男家占女以财为用、女家占男以官为用、自占病以世爻为用、子占母孕以兄弟为用等（《增删卜易》17 条逐字规则）。
 - **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.sixiang → yi.l0.bagua → yi.l1.najia → yi.l2.concept.yongshen → yi.l2.concept.yongshen_liuqin
 - **依据**：yi.l2.concept.yongshen、yi.l1.wuxing.ke_cycle
-- **代码锚点**：`data/rules/use_god_relations.json:rules`
+- **代码锚点**：`data/rules/domain/use_god_relations.json:rules`
 
 ### 原神/忌神/仇神  `yi.l2.concept.yuan_shen`
 - **定义**：生用神者为原神，克用神者为忌神，克原神者为仇神。原神有力则事易成，忌神动则事受阻。

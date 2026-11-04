@@ -10,7 +10,7 @@
 - **底本**：`data/sources/zengshan_buyi_dz.dz.txt`（主底本，占梦／鬼神／再占皆出此）
 - **附底本**：`data/sources/yiin_dz.dz.txt`、`data/sources/yimao_dz.dz.txt`
 - **回验**：本篇 `源L` 逐字回验（`--doc references/odd_questions.md`）。
-- **取用神不归本文管**：用神由引擎按 `data/rules/question_use_gods.json`（74 族／275 键）
+- **取用神不归本文管**：用神由引擎按 `data/rules/domain/question_use_gods.json`（74 族／275 键）
   与关系法则层判定，命中与否都会在 `use_god_basis` 里标明。**本文只讲"取到之后怎么读"，
   不另判一遍用神**（铁律一）。
 

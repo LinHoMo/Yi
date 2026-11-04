@@ -6,7 +6,7 @@
 
 ## 一、为什么要改
 
-旧架构三张皮：`data/rules/rule_registry.json` 是台账（impl 指代码行号、自然语言备注），
+旧架构三张皮：`data/rules/legacy/rule_registry.json` 是台账（impl 指代码行号、自然语言备注），
 判据真身硬编码在 `rules/direction.py` 的 `detect_direction_caps`。每加一条 cap 都要写 if 排除
 已对的例，误伤随规则数线性增长（3c 连续误伤行人/占胎）。
 

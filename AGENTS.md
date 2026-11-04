@@ -112,7 +112,7 @@ sha256/bytes/chars/lines＋扩展统计（`ganzhi_pairs`／`tables`／`headings`
 
 **四段契约的判据是根 `CONTRACT.md`**（第三百一十批重建；此前 5 个模块 docstring 引它
 而文件已随扁平化丢失）。`chart → analyze → narrate → render` 的职责、四条不许越的界、
-层间调用矩阵与各段输出键白名单都在那里；机器判据是同目录 `data/rules/layer_contract.json`，
+层间调用矩阵与各段输出键白名单都在那里；机器判据是各科 `data/rules/domain/layer_contract.json`，
 门是各科 `dev_tools/check_layer_contract.py`（六爻 `[32]`、八字 `[28]`，第三百一十批同时挂上）。
 **改层界 = 同批改 CONTRACT.md + JSON + CHANGELOG**，三者不同步即算缺陷（§六.3）。
 引用它时写节号，不写裸编号（同 §一 沿革条的口径）。

@@ -6,7 +6,7 @@
 >
 > **三件套分工**：
 > - 本文件解释「**为什么**要这样切」；
-> - `<科>/data/rules/layer_contract.json` 声明「**是什么**」（机器可读的键白名单与禁边表）；
+> - `<科>/data/rules/domain/layer_contract.json` 声明「**是什么**」（机器可读的键白名单与禁边表）；
 > - `dev_tools/check_layer_contract.py` 守「**守不守得住**」（实跑 + AST + 负例自证）。
 >
 > **效力**：与 `AGENTS.md` 冲突时以 `AGENTS.md` 为准（AGENTS.md §二 明文）；与任何单个学科
@@ -90,7 +90,7 @@ core/yishu_core   ←（唯一允许方向）—  scripts/*
 
 ## §四 输出键白名单
 
-真值源是 `<科>/data/rules/layer_contract.json`（两科各一份，**根目录没有**此文件），本表只是摘要（键数随批更新，**以 JSON 为准**）：
+真值源是 `<科>/data/rules/domain/layer_contract.json`（两科各一份，**根目录没有**此文件），本表只是摘要（键数随批更新，**以 JSON 为准**）：
 
 | 科 | chart 顶层键 | analyze 顶层键 | 嵌套白名单 |
 |---|---|---|---|
@@ -107,7 +107,7 @@ forbidden 条目字段。**各科 stage 键名仍以各自 JSON 的 `allowed`/`r
 （`direction` 成/滞/不成 × `confidence` 高/中/低，附 `why`／`cites`／`support`／`dissent`／`base_cell`／`overlay`）。
 **为什么属于这一段**：它由推演事实（用神旺衰、动变净效、空破、原神忌神、题类）判定，不是文案；
 `verdict` 仍是现行引擎的档位，**两者并列对照**——接线期判定器尚未取代判词
-（`liuyao/data/rules/judgment_table.json` 的 `implementation.verdict` 在册；八字侧无判定表）。
+（`liuyao/data/rules/domain/judgment_table.json` 的 `implementation.verdict` 在册；八字侧无判定表）。
 `judgment_enabled=False`（CLI `--no-judgment`）时**该键整个不出现**，故它不在 `required` 里。
 
 **新增一个键 = 改契约**。同批必须做三件事：改 JSON、改本表、在 `<科>/docs/CHANGELOG.md` 写一句
@@ -116,7 +116,7 @@ forbidden 条目字段。**各科 stage 键名仍以各自 JSON 的 `allowed`/`r
 
 ## §五 结构层与断语的分界
 
-沿用 AGENTS.md §一.1：结构层只出**标签与数值**；判语字面量进 `<科>/data/rules/*.json`
+沿用 AGENTS.md §一.1：结构层只出**标签与数值**；判语字面量进 `<科>/data/rules/domain/*.json`
 （现状：`verdict_texts.json` 92K、`scripts_labels.json`）。机械门 `[30]`
 （`check_verdict_external.py`），LOCK=0。
 
@@ -147,7 +147,7 @@ forbidden 条目字段。**各科 stage 键名仍以各自 JSON 的 `allowed`/`r
    登记「象上看」小节的不评分理由（§六 要求「看到的没在评」必须说明）。
 
 两科象层的范围（逐科登记，不互相套用）：
-- 六爻：`category`（题类→象类别，映射表 `data/rules/xiang_layer.json`）／
+- 六爻：`category`（题类→象类别，映射表 `data/rules/domain/xiang_layer.json`）／
   `trigram`／`ti_yong`（体用）／`guaci`（卦辞）／`yaoci`（爻辞）／`hu_gua`（互体，
   京房二三四为下互、三四五为上互）／`spirit`（六神象义）／`fangwei`（方位）／`class_image`。
 - 八字：`gongwei`（宫位，年为根／月为苗／日为花／时为果）／`liugin`（六亲，

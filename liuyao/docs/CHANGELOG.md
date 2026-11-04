@@ -5,6 +5,31 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-04 第五百零六批（六爻·D3 收编补登记＋D2 分区后文档路径收口）：**`scripts/engine/` 收 step1~5（提交 6101072 补登记）；`data/rules/` 分区后 22 处文档路径同步到 `domain/`／`legacy/`——纯文档与路径，零读数变化**
+
+**性质**：登记补齐＋D2 收口遗漏（§六.1／§六.3）；不改判据、不改读数。
+
+### 一、D3 收编补登记（提交 6101072）
+
+1. 事实（该提交的内容，本批不再改动代码）：`scripts/step1~5.py` 与 `_step5_{dates,timing,weather,factors}.py` 迁入 `liuyao/scripts/engine/pipeline/`；`scripts/engine.py` 折叠为 `scripts/engine/_core.py`；`scripts/engine/__init__.py`、`__main__.py` 承接入口；外部引用方加 `scripts/engine` 的 `sys.path` 转发（`scripts/analysis_steps.py`、`eval/case_runner.py`、`dev_tools/` 若干），包导入语义不变。
+2. 该提交**未写批号、未在 CHANGELOG 登记**——违反 §六.1「一切登记进 `<科>/docs/CHANGELOG.md`，逐批具名」。本批补登记，批号依蓝图 §六 D3 行取 506（与 `RULE-ENGINE-REFACTOR-PLAN.md` §六 表述一致）。
+3. 落点现状如实登记：蓝图原写 `engine/`，实际收在 `liuyao/scripts/engine/`（与 D4 的 `scripts/classical/` 同层）；`scripts/engine/`＋`scripts/classical/` 升格为 `liuyao/engine/` 仍属**未启动**项，不在本批冒充完成。
+
+### 二、D2 文档路径收口（22 处／9 份）
+
+1. 根级文档门 `devkit/root/check_root_docs.py` 在干净 HEAD 判红 1 条：`CONTRACT.md:150` 指向分区前的 `data/rules/xiang_layer.json`。逐条排查后同类残留共 22 处：
+   - 根：`AGENTS.md`（§二 四段契约段的「同目录」表述同时改为「各科」，因根目录本无此文件）、`CAPABILITY.md`、`CONTRACT.md`（5 处：三件套分工、§四真值源、`judgment_table` 出处、§五 `*.json` 通配、§六 象层映射表）；
+   - 六爻：`README.md`、`SKILL.md`（2 处 basis 出处）、`docs/ONTOLOGY-CARDS.md`（4 处代码锚点）、`docs/RULE-ENGINE-REFACTOR-PLAN.md`（§一 旧台账指称）、`docs/YI-KNOWLEDGE-GRAPH.md`（6 处现有文件列）、`references/odd_questions.md`。
+2. 改法（逐字替换，不重排段落）：`data/rules/<f>.json` → `data/rules/domain/<f>.json`；`rule_registry.json` → `data/rules/legacy/rule_registry.json`；`<科>/data/rules/*.json` → `<科>/data/rules/domain/*.json`。**只改路径串，不改论断、引文、批号**；CHANGELOG 历史条目一字未动（§二 照录条）。
+3. 与 505 批决策不冲突：legacy 台账**内部**旧指针仍不回改（转发在判据侧 `_partition_remap`），本批只收口**文档**侧，台账刻意保留登记时点原文。
+
+### 三、自证
+
+- `python liuyao/dev_tools/check.py` → 质量门全部通过；`python bazi/dev_tools/check.py` → 通过。
+- `python liuyao/dev_tools/golden.py` → 288 例｜机械 `96c7f5d168ca6140`｜措辞 `8168eff9e560d6c2`｜异常 0，与基线逐位一致（文档不进语义面）。
+- 根级三门：`check_root_docs.py`（此前 1 条红 → 本次转绿）、`check_docs_index.py`、`check_batch_num.py` 全绿；`devkit/sync_devkit.py --check` 12 件同源。
+- 分发面：`node plugins/scripts/build.mjs`＋`node plugins/scripts/selftest.mjs` 全绿（README/SKILL/references 的路径改动随构建进包体）。
+
 ## 2026-11-03 第五百零五批（六爻·目录分层蓝图 D2＋D4）：**D2 `data/rules/` 物理分区（legacy/ 旧台账、domain/ 领域表）接续收口；D4 classical_enhancements 族 8 文件收进 `scripts/classical/`——两批同册提交，纯搬迁零漂移**
 
 **性质**：目录分层物理收编（§六 D2/D4）；不改判据、不改读数。接续上一会话的半成品（16 个文件已 git-mv、20 个文件路径串已改，但门禁未收口）。
