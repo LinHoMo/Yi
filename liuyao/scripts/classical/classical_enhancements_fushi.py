@@ -24,7 +24,7 @@
      断语，**全部只作 data 侧逐字引文登记**，由 narrate 按 `src` 回指自取。
      本函数只输出 `{pair, label, src}` 这样的**结构事实**。
 
-**九条组合的源行（已 Read 逐字核验）**：见 data 侧 `data/rules/caiguan_fushi.json`
+**九条组合的源行（已 Read 逐字核验）**：见 data 侧 `data/rules/domain/caiguan_fushi.json`
 的 `九宫` 字段——L55 财伏鬼｜L60 财伏兄｜L65 财伏父（该章题「财伏父子」含财伏子，
 见 L67「财伏子孙，有气必满」）｜L71 鬼伏兄｜L76 鬼伏财｜L82 鬼伏父｜L87 鬼伏子｜
 L93 官鬼伏官；另 L49「出现伏藏」为总纲（出现旺相/伏藏有气/本宫财官伏世下方可取）。
@@ -46,27 +46,33 @@ if _ks_parent not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_parent)
 
 from kernel_path import ensure_kernel_on_path as _ensure_kernel  # noqa: E402
+from kernel_path import repo_root as _repo_root  # noqa: E402
 
 _ensure_kernel(__file__)
 
 __all__ = ["huozhulin_fushi_tags", "FU_SHI_PAIRS"]
 
-_DATA = Path(__file__).resolve().parents[1] / "data" / "rules" / "domain" / "caiguan_fushi.json"
+# D2＋D4 后本文件在 scripts/classical/，表在 <学科根>/data/rules/domain/。
+# 用 kernel_path.repo_root 定位而非 parents[N] 硬算层数：目录再搬（升格 engine/）时不必改这里，
+# 也避免 2026-11-04 实测到的静默缺陷——按 parents[1] 会落到不存在的 scripts/data/，
+# 被下面的 fail-fast 取代——表缺失一律报错，不再吞成空表让九宫标签静默消失。
+_DATA = Path(_repo_root(__file__)) / "data" / "rules" / "domain" / "caiguan_fushi.json"
 _TABLE: dict | None = None
 
 
 def _table() -> dict:
     global _TABLE
     if _TABLE is None:
-        try:
-            _TABLE = json.loads(_DATA.read_text(encoding="utf-8"))
-        except OSError:
-            _TABLE = {}
+        if not _DATA.is_file():
+            raise RuntimeError(
+                f"财官伏五乡表缺失：{_DATA}（D2 分区后在 <学科根>/data/rules/domain/；"
+                "路径须走 kernel_path.repo_root，不按层数硬算）")
+        _TABLE = json.loads(_DATA.read_text(encoding="utf-8"))
     return _TABLE
 
 
 def FU_SHI_PAIRS() -> dict:
-    """(伏神六亲, 飞神六亲) → 结构标签名；缺表返回 {}。"""
+    """(伏神六亲, 飞神六亲) → 结构标签名；表缺失即报错（不再静默返回 {}）。"""
     return (_table().get("九宫") or {})
 
 

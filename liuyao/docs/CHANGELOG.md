@@ -5,6 +5,48 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-04 第五百零七批（六爻·D2/D4 数据路径静默缺陷）：**`classical_enhancements_fushi` 按层数硬算表路径，迁入 `scripts/classical/` 后落到不存在的 `scripts/data/`，被 `except OSError` 吞成空表——九宫伏藏标签整族静默消失且所有门全绿**
+
+**性质**：缺陷修复（判据不变；读数不动属预期，见 §三）。
+
+### 一、缺陷与取证
+
+1. `scripts/classical/classical_enhancements_fushi.py` 的 `_DATA` 原写
+   `Path(__file__).resolve().parents[1] / "data" / "rules" / "domain" / "caiguan_fushi.json"`。
+   D2 把表迁进 `domain/`、D4 把本文件从 `scripts/` 迁进 `scripts/classical/` 之后，
+   `parents[1]` 由「学科根」变成「`scripts/`」，于是路径落到
+   `liuyao/scripts/data/rules/domain/caiguan_fushi.json`（不存在）；`_table()` 里
+   `except OSError: _TABLE = {}` 把它吞成空表 → `FU_SHI_PAIRS()` 返回 `{}` →
+   `huozhulin_fushi_tags()` 第一行就 `return []`。**九条财官伏五乡标签整族消失，且无任何报错。**
+   实测取证：`len(FU_SHI_PAIRS()) == 0`（在盘表实际 9 条：妻财伏官鬼／妻财伏兄弟／妻财伏父母／
+   妻财伏子孙／官鬼伏兄弟／官鬼伏妻财／官鬼伏父母／官鬼伏子孙／官鬼伏官鬼）。
+2. 为什么既有门全绿：`golden` 只封 chart 段排盘指纹（288 例不漂移属预期）；计分维度不消费该标签；
+   `check_*` 各门只查书证、结构、契约，**没有一条判「数据表是否真被读进来」**。
+   这与本仓 2026-10-13 的 `build_yingqi_set` 正则静默全盲同类：路径/提取器错了，门照样全绿。
+
+### 二、修法
+
+1. 路径改走仓库唯一路径规则 `kernel_path.repo_root(__file__)`：
+   `_DATA = Path(_repo_root(__file__)) / "data" / "rules" / "domain" / "caiguan_fushi.json"`。
+   **不再按层数硬算**——本轮同时把 `scripts/engine/`＋`scripts/classical/` 升格到 `liuyao/engine/`
+   （见第五百零八批），该行在两种布局下都必须解析到同一个 `<学科根>/data/rules/domain/`，
+   只有 repo_root 这一种写法成立。
+2. `_table()` 改 fail-fast：表文件不在盘即 `RuntimeError`，消息里写明期望位置与
+   「路径须走 kernel_path.repo_root，不按层数硬算」；删掉 `except OSError: _TABLE = {}`。
+   `FU_SHI_PAIRS()` docstring 的「缺表返回 `{}`」改为「表缺失即报错」——同批把
+   「静默退化成空表」这条路彻底关掉，避免下一次搬迁再复现。
+3. 文件头 docstring 里 `data/rules/caiguan_fushi.json` 的指称同步为 `data/rules/domain/...`（D2 分区后事实）。
+
+### 三、验证
+
+- 行为级自证（`scratch/` 一次性探针，不入库）：合成 `flying_hidden_interaction` 三组飞伏 →
+  `妻财伏官鬼` 出「财伏鬼乡」`src=huozhulin_dz.dz.txt:56`；`官鬼伏兄弟` 出「用鬼伏兄」`:72`；
+  `父母伏子孙` 不在九宫九组内 → 正确跳过。修复前同一探针 `标签数= 0`。
+- `python liuyao/dev_tools/check.py` → 质量门全部通过；`python dev_tools/golden.py` →
+  288 例｜机械 `96c7f5d168ca6140`｜措辞 `8168eff9e560d6c2`｜异常 0，与基线逐位一致。
+- **读数不动属预期**（§四.7）：该标签不在任何计分维度内，修复前也没有案例因它失分，
+  故 tune／holdout 与哨兵读数本就不该动；本批恢复的是 analyze 输出的结构标签本身。
+
 ## 2026-11-04 第五百零六批（六爻·D3 收编补登记＋D2 分区后文档路径收口）：**`scripts/engine/` 收 step1~5（提交 6101072 补登记）；`data/rules/` 分区后 22 处文档路径同步到 `domain/`／`legacy/`——纯文档与路径，零读数变化**
 
 **性质**：登记补齐＋D2 收口遗漏（§六.1／§六.3）；不改判据、不改读数。
