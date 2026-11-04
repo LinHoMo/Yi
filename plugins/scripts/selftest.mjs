@@ -1,19 +1,16 @@
 #!/usr/bin/env node
 /**
- * 共享层 + 各宿主适配器的包级自检。
+ * 共享层 + 宿主适配器包级自检。判红即 exit≠0，每条门须负例自证（AGENTS.md §四.8）。
  *
- * 用法：`node plugins/scripts/build.mjs && node plugins/scripts/selftest.mjs`。
- * 判红即 exit≠0。**每条新门都必须负例自证**（AGENTS.md §四.8）。
- *
- * 段号：
- *   [1]   分发一致性：适配器 src/*.mjs 与 `plugins/mcp/` 真源**逐字节同源**（含负例自证）
- *   [1.5] 铁律二：任何产物与适配器目录里都没有 case_library.md（含负例自证）
- *   [2]   两科 engine 入口脚本与内核副本齐备（plugins/ 与各适配器）
- *   [3]   skills：正文以 `plugins/SKILL.md` 为前缀 + 篇数对账 + INDEX 在位
- *   [4]   MCP 冒烟：**直接跑真源** plugins/mcp/server.mjs（initialize/list/call）
- *   [5]   工具契约：四工具在列、inputSchema.type=object、参数集与 1.0 冻结面一致
- *   [6]   适配器包体：文件数 ≤4000、≤64MB、无符号链接（497 批起唯一宿主为 DSH）
- *   [7]   口径诚实：对外文本无「预测准确率」一类禁语（逐行 + 否定语境豁免）
+ *   [1]    src/*.mjs 与 plugins/mcp/ 真源逐字节同源
+ *   [1.6]  engine/ 与 skills/ 产物在 plugins/ 与宿主侧全量同源
+ *   [1.5]  产物内无 case_library.md
+ *   [2]    两科入口齐备、评测 shim 未随包
+ *   [3]    skills 正文同源 + 知识库篇数对账
+ *   [4]    MCP 冒烟（直跑真源 server.mjs）
+ *   [5]    1.0 冻结工具契约
+ *   [6]    包体上限
+ *   [7]    口径诚实：禁语 + 口径声明覆盖
  */
 import { spawn } from 'node:child_process'
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
@@ -81,6 +78,26 @@ function walk(dir, base = '', out = []) {
 }
 const findCaseLibrary = (files) => files.filter((f) => f.rel.split('/').pop() === 'case_library.md').map((f) => f.rel)
 
+function treeSnapshot(dir, exempt = new Set()) {
+  const out = new Map()
+  for (const f of walk(dir)) {
+    if (f.symlink || exempt.has(f.rel)) continue
+    out.set(f.rel, readFileSync(join(dir, ...f.rel.split('/'))))
+  }
+  return out
+}
+
+function treeDrift(truth, copy) {
+  const problems = []
+  if (!truth.size || !copy.size) problems.push(`扫到 0 个文件（真源 ${truth.size}／副本 ${copy.size}）`)
+  for (const [rel, buf] of truth) {
+    if (!copy.has(rel)) problems.push(`副本缺 ${rel}`)
+    else if (!buf.equals(copy.get(rel))) problems.push(`字节不同源 ${rel}`)
+  }
+  for (const rel of copy.keys()) if (!truth.has(rel)) problems.push(`副本多出 ${rel}`)
+  return problems
+}
+
 // ── [1] 分发一致性（本批新建的核心门） ────────────────────────────────────────
 head(1)
 {
@@ -116,6 +133,41 @@ head(1)
   rmSync(probe, { recursive: true, force: true })
   if (caught) ok('负例自证：改一个字节即判定不同源（门不是瞎的）')
   else bad('负例自证失败：篡改一个字节后仍判定同源')
+}
+
+// ── [1.6] 产物全量同源 ──────────────────────────────────────────────────────
+head(1.6)
+{
+  const host = join(REPO_ROOT, 'dsh-plugin')
+  for (const [rel, exempt] of [
+    ['engine', new Set()],
+    ['skills', new Set(['yi-divination/SKILL.md'])],
+  ]) {
+    const truth = treeSnapshot(join(PLUGINS_ROOT, rel), exempt)
+    const copy = treeSnapshot(join(host, rel), exempt)
+    const drift = treeDrift(truth, copy)
+    if (drift.length) for (const d of drift.slice(0, 8)) bad(`${rel}/ 产物漂移：${d}`)
+    else ok(`${rel}/ 全量同源（${truth.size} 文件逐字节一致）`)
+  }
+  const probe = mkdtempSync(join(tmpdir(), 'yi-tree-probe-'))
+  try {
+    mkdirSync(join(probe, 'a'))
+    mkdirSync(join(probe, 'b'))
+    mkdirSync(join(probe, 'empty'))
+    writeFileSync(join(probe, 'a', 'x.py'), 'a')
+    writeFileSync(join(probe, 'b', 'x.py'), 'b')
+    const snapA = () => treeSnapshot(join(probe, 'a'))
+    const snapB = () => treeSnapshot(join(probe, 'b'))
+    if (!treeDrift(snapA(), snapB()).length) bad('负例自证失败：改一个字节未判红')
+    writeFileSync(join(probe, 'b', 'x.py'), 'a')
+    if (treeDrift(snapA(), snapB()).length) bad('负例自证失败：同源被误判')
+    rmSync(join(probe, 'b', 'x.py'))
+    if (!treeDrift(snapA(), snapB()).length) bad('负例自证失败：副本缺文件未判红')
+    if (!treeDrift(snapA(), treeSnapshot(join(probe, 'empty'))).length) bad('负例自证失败：扫到 0 文件未判红')
+    else ok('负例自证：篡改／缺文件／0 文件均判红')
+  } finally {
+    rmSync(probe, { recursive: true, force: true })
+  }
 }
 
 // ── [1.5] 铁律二 ────────────────────────────────────────────────────────────
@@ -324,37 +376,40 @@ head(5)
   if (toolDefs.length === FROZEN_TOOLS.length && toolDefs.every((t) => t?.inputSchema?.type === 'object')) {
     ok(`四工具 inputSchema 均为 object，且数量恰为冻结面 ${FROZEN_TOOLS.length}`)
   }
-  const liuyao = byName.get('yi_liuyao')
-  const keys = Object.keys(liuyao?.inputSchema?.properties ?? {}).sort().join(',')
-  if (keys === 'datetime,gender,mode,numbers,question,seed,yao') ok('yi_liuyao 参数集与 1.0 冻结面一致')
+  const FROZEN_PARAMS = 'datetime,gender,mode,numbers,question,seed,yao'
+  const keysOf = (props) => Object.keys(props ?? {}).sort().join(',')
+  const keys = keysOf(byName.get('yi_liuyao')?.inputSchema?.properties)
+  if (keys === FROZEN_PARAMS) ok('yi_liuyao 参数集与 1.0 冻结面一致')
   else bad(`yi_liuyao 参数集变了：${keys}（改冻结面必须同时改 AGENTS.md §二）`)
+  if (keysOf({ ...(byName.get('yi_liuyao')?.inputSchema?.properties ?? {}), extra: {} }) === FROZEN_PARAMS) {
+    bad('负例自证失败：多一个参数仍判绿')
+  } else ok('负例自证：新增参数即破坏冻结面')
 }
 
 // ── [6] 适配器包体 ──────────────────────────────────────────────────────────
 head(6)
 {
+  const bundleOk = (files) => files.length > 0
+    && files.length <= 4000
+    && files.reduce((s, f) => s + f.bytes, 0) <= 64 * 1024 * 1024
+    && !files.some((f) => f.symlink)
   for (const a of ADAPTERS) {
-    const root = join(REPO_ROOT, a.dir)
-    const files = walk(root)
+    const files = walk(join(REPO_ROOT, a.dir))
     const bytes = files.reduce((s, f) => s + f.bytes, 0)
-    if (files.length > 4000) bad(`${a.dir} 文件数 ${files.length} 超上限 4000`)
-    if (bytes > 64 * 1024 * 1024) bad(`${a.dir} 包体 ${(bytes / 1048576).toFixed(2)}MB 超上限 64MB`)
-    if (files.some((f) => f.symlink)) bad(`${a.dir} 含符号链接（宿主拒收）`)
-    if (files.length && files.length <= 4000 && bytes <= 64 * 1024 * 1024 && !files.some((f) => f.symlink)) {
-      ok(`${a.dir} 包体 ${files.length} 文件 / ${(bytes / 1048576).toFixed(2)}MB，无符号链接`)
-    }
+    if (!bundleOk(files)) {
+      bad(`${a.dir} 包体不合格：${files.length} 文件 / ${(bytes / 1048576).toFixed(2)}MB`
+        + `${files.some((f) => f.symlink) ? '／含符号链接' : ''}`)
+    } else ok(`${a.dir} 包体 ${files.length} 文件 / ${(bytes / 1048576).toFixed(2)}MB，无符号链接`)
   }
+  if (bundleOk([]) || bundleOk([{ bytes: 65 * 1024 * 1024, symlink: false }])) {
+    bad('负例自证失败：0 文件或超限包体仍判绿')
+  } else ok('负例自证：0 文件与超限包体均判红')
 }
 
 // ── [7] 口径诚实 ────────────────────────────────────────────────────────────
 head(7)
 {
   const FORBIDDEN = [/预测准确率/u, /预测率/u, /断事如神/u, /命中率\s*\d/u]
-  /**
-   * 逐行扫描 + **否定语境豁免**。本仓对外文书里「预测准确率」几乎只出现在自己禁令
-   * 的那句话里（「不得说预测准确率 X%」），整文件匹配会把立规矩的那只手判成违规
-   * （304 批首跑即误伤）。豁免面刻意做窄：同一行有明确否定标记才算禁止语境。
-   */
   const NEGATION = /(不得|禁止|不许|不可|切勿|❌|不是|并非|而非|杜绝|避免)/u
   const scan = (text) => {
     const hits = []
@@ -363,13 +418,18 @@ head(7)
     })
     return hits
   }
-  const targets = [
+  const declared = [
     join(PLUGINS_ROOT, 'SKILL.md'),
     ...ADAPTERS.flatMap((a) => [join(REPO_ROOT, a.dir, 'README.md')]),
     join(REPO_ROOT, 'README.md'),
     join(REPO_ROOT, 'CAPABILITY.md'),
     join(MCP_DIR, 'tools.mjs'),
-  ].filter((p) => existsSync(p))
+  ]
+  for (const p of declared.filter((f) => !existsSync(f))) {
+    bad(`对外文书缺失：${p.replace(REPO_ROOT, '')}`)
+  }
+  const targets = declared.filter((f) => existsSync(f))
+  if (!targets.length) bad('对外文本扫描目标为 0 份——不能当通过')
   let clean = true
   for (const p of targets) {
     for (const hit of scan(readFileSync(p, 'utf8'))) {
@@ -390,12 +450,15 @@ head(7)
   // 「诚实徽章反向失真」——一句本该示弱的话因数字过期变成了失真，而它所在的那份
   // 文档当时根本没写口径。声明到人、到文档，比只写在仓库铁律里更不容易漏。
   const CALIBER = /(古籍案例对齐分|不是现实命中率|不代表现实预测命中率|不是现实预测命中率)/u
-  // 只盯**文档**：`targets` 里混着 `plugins/mcp/tools.mjs`（它是源码模块，禁语该扫、
-  // 口径声明不该要求——308 批首跑就是这么误伤的，两个目标面必须分开）。
   const docTargets = targets.filter((f) => !f.endsWith('.mjs'))
+  const caliberOk = (files) => files.length > 0
+    && files.every((f) => CALIBER.test(readFileSync(f, 'utf8')))
   const bare = docTargets.filter((f) => !CALIBER.test(readFileSync(f, 'utf8')))
   if (bare.length) for (const f of bare) bad(`缺口径声明：${f.replace(REPO_ROOT, '')}`)
-  else ok(`对外文书口径声明全覆盖（${docTargets.length} 份文档）`)
+  else if (caliberOk(docTargets)) ok(`对外文书口径声明全覆盖（${docTargets.length} 份文档）`)
+  else bad('口径声明门扫了 0 份文档——不能当通过')
+  if (caliberOk([])) bad('负例自证失败：0 份文档仍判绿')
+  else ok('负例自证：0 份文档不会判绿')
   const probeDir2 = mkdtempSync(join(tmpdir(), 'yi-caliber-probe-'))
   const probeFile2 = join(probeDir2, '_probe.md')
   writeFileSync(probeFile2, '# 某插件\n\n装了即用。')

@@ -2,7 +2,7 @@
 
 > **2026-10-29（第三百三十批·文档整理）新增**：本仓 Markdown 文档此前没有一张地图，
 > 新人只能靠文件名猜、靠搜索碰。本表是**唯一入口**——每份文档一句话职责 ＋ 状态
-> （活文档／生成物／归档留证／历史索引），并给出三条阅读路径。
+> （活文档／生成物／归档留证／历史索引），并给出阅读路径。
 >
 > 状态口径：
 > - **活文档**：会随批次持续更新，是当前口径的出处；
@@ -12,14 +12,14 @@
 
 ---
 
-## 一、三条阅读路径
+## 一、阅读路径
 
 | 你是 | 先读 | 再读 | 收尾 |
 |---|---|---|---|
 | **第一次接触本仓** | `README.md`（做什么、现在什么水平） | `CAPABILITY.md`（对外口径与读数） | `AGENTS.md`（改代码前必读的三条铁律） |
 | **要改代码的贡献者** | `AGENTS.md` | `CONTRACT.md`（四段契约：chart→analyze→narrate→render） | 本表 → 对应学科的 `SKILL.md` |
 | **要查本次架构整改结果的人** | `ARCHITECTURE-PLAN.md`（完成台账 + V1–V15 收口实测 + 偏差/欠账） | `GOVERNANCE.md`（工具台账与档位门槛） | 本表 → 对应批次 |
-| **要引用对外数字的人** | `CAPABILITY.md` | `liuyao/README.md`／`bazi/README.md` | `docs/CHANGELOG.md`（最近窗口）＋ `docs/CHANGELOG-HISTORY-INDEX.md`（逐批一句话） |
+| **要引用对外数字的人** | `CAPABILITY.md` | `liuyao/README.md`／`bazi/README.md` | 各科 `liuyao/docs/CHANGELOG.md`／`bazi/docs/CHANGELOG.md`（最近窗口）＋ 对应 `CHANGELOG-HISTORY-INDEX.md`（逐批一句话） |
 
 ---
 
@@ -29,11 +29,11 @@
 |---|---|---|
 | `README.md` | 仓库总览：两科做什么、现在的真实水平（含"不是预测率"的口径提醒） | 活文档 |
 | `AGENTS.md` | **项目级铁律**：三条不可动摇的规则、目录与依赖契约、共享打包层契约 | 活文档 |
-| `CONTRACT.md` | 四段契约的判据本体（chart→analyze→narrate→render 的键白名单与禁边） | 活文档 |
+| `CONTRACT.md` | 四段契约的判据本体（键白名单与层间禁边；§四 键数表由契约门逐项核对） | 活文档 |
 | `CAPABILITY.md` | 对外能力声明与全部读数（每行带 n 与出处，**口径不许省**） | 活文档 |
-| `GOVERNANCE.md` | 治理地图：工具台账、批次在册、待人面事项 | 活文档 |
+| `GOVERNANCE.md` | 治理地图：五档定义与判绿口径、待人面事项（**分布读数现取，514 批起不再在文内抄表**） | 活文档 |
 | `DOCS.md` | 本表：全仓文档索引 | 活文档 |
-| `ARCHITECTURE-PLAN.md` | **架构整改完成记录**（原总方案 340 批压缩）：D1–D3 决策、完成台账、V1–V15 收口实测、偏差与欠账 | 归档留证 |
+| `ARCHITECTURE-PLAN.md` | **架构整改完成记录**（原总方案 340 批压缩）：D1–D3 决策、完成台账、V1–V15 收口实测、偏差与欠账；**文首有 514 批勘误块**（正文按登记时点保留，五处现值以勘误为准） | 归档留证 |
 
 ## 三、六爻（`liuyao/`，19 份）
 
@@ -50,7 +50,7 @@
 |---|---|---|
 | `liuyao/docs/CHANGELOG.md` | 批次流水，**只保留最近窗口**（2026-10-29 起；更早见索引） | 活文档 |
 | `liuyao/docs/CHANGELOG-HISTORY-INDEX.md` | **逐批一句话索引**（342 批精简：原 154 批事实标题＋更早 49–156 批一句话；全文归档已删） | 历史索引 |
-| `liuyao/docs/JUDGMENT-TABLE.md` | 判定表：书证底稿、9 格、13 条题类覆盖、20 处代码覆写清单（另 7 条已迁规则数据层 verdict_overrides），含"不换判词"的结论 | 活文档 |
+| `liuyao/docs/JUDGMENT-TABLE.md` | 判定表：书证底稿、9 格、题类覆盖与代码覆写清单，含"不换判词"结论；未签条目只作设计输入、不得进代码 | 活文档 |
 | `liuyao/docs/CASE-LIBRARY-AUDIT.md` | 案例库应期抽取审计（dz 底本通道） | 活文档 |
 | `liuyao/docs/YIIN-CASE-AUDIT.md` | 《易隐》案例集审计（`yiin_holdout`） | 活文档 |
 | `liuyao/docs/ADJUDICATION-BRIEF.md` | 待裁简报（**生成物**：`dev_tools/adjudication_brief.py` 重生成） | 生成物 |
@@ -77,7 +77,7 @@
 |---|---|---|
 | `bazi/SKILL.md` | 八字科宿主模型操作合同 | 活文档 |
 | `bazi/README.md` | 八字科说明与读数表 | 活文档 |
-| `bazi/docs/CHANGELOG.md` | 八字批次流水，**只保留最近 15 批**（第五百一十批起与六爻同口径；更早见索引） | 活文档 |
+| `bazi/docs/CHANGELOG.md` | 八字批次流水，只保留最近窗口（"15 批"为政策值，非当前节数；更早见索引） | 活文档 |
 | `bazi/docs/CHANGELOG-HISTORY-INDEX.md` | **逐批一句话索引**（342 批删全文；510 批去重并补录 10-29～11-02 的 110 节标题） | 历史索引 |
 | `bazi/docs/EVAL-PLAN.md` | 八字案例评测方案（分维与门槛的出处） | 活文档 |
 | `bazi/docs/SANMING-SIKU-COLLATION.md` | 《三命通会》两转录渠道对拍报告 | 归档留证 |
@@ -101,7 +101,7 @@
 | `dsh-plugin/CHANGELOG.md` | DSH 宿主批次流水 | 活文档 |
 
 > 497 批起只保留 DSH 一个宿主（claude/codex/gemini/yan 已删除）。
-> 宿主侧的 `engine/`、`skills/`、`src/` 是**构建产物**（不入库），由
+> 宿主侧的 `engine/`、`skills/`、`src/`、`SKILL.md` 是**构建产物**（不入库），由
 > `node plugins/scripts/build.mjs` 生成、`node plugins/scripts/selftest.mjs` 自检——**不在本表内**。
 
 ---

@@ -5,6 +5,145 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-04 第五百一十四批（全仓·文档治理、门禁补齿与结构收敛）：**四组「现在时钉数」集体过期而无一门能拦（真探针塞「999 份」两门照绿）→ 数字改指真值源并上提为 AGENTS §六.6；后半按用户令并批修完门禁假绿、契约三件套同步、静默空表、产物同源与 CI 回归五组结构性欠账；不改判据口径、不改数据、不改读数**
+
+**性质（前半）**：文档治理＋盘上清理（清掉 170 个 gitignore 垃圾，含 `devkit/handoff/` 27 份）。
+
+### 〇、本批后半并入：门禁补齿与结构收敛（并批登记，不另立 515）
+
+**性质（后半）**：门禁/结构修复；引擎行为唯一变化是数据表缺失由「静默降级为空表」改为**显式抛错**。
+
+1. **假绿三处**：`plugins/scripts/selftest.mjs` [7b] 把不存在的目标 `.filter(existsSync)` 静默丢掉，
+   0 份文档也判绿 → 改为缺失即红 + `caliberOk([])` 负例；`devkit/root/check_root_docs.py` 的
+   `PLAN_DOCS` 整份跳过 `ARCHITECTURE-PLAN.md`（纳入扫描实测 0 死链）→ 删除跳过并补归档件负例；
+   两科 `check.py --fast` 汇总补「分数门未生效、不代表合入门槛」。
+   同批给 selftest [5]/[6] 补负例，新增 [1.6] `engine/` 165 文件、`skills/` 15 文件
+   全量逐字节同源门（篡改／缺文件／0 文件三类负例）。
+2. **契约三件套**：`CONTRACT.md` §四 曾写八字路径带 `domain/`（实为扁平）与 analyze 14／
+   trigram 22 键（实为 15／35）。`devkit/shared/check_layer_contract.py` 新增
+   `doc_sync_problems()`，§四 表格的顶层与嵌套键数逐项对两科 JSON 重放，缺段／0 行／
+   漏登记均判红并带负例自证；`sync_devkit.py --write` 分发两科（[37] 字节门同源）。
+3. **静默空表**：`trigram_symbolism.py`／`xiang.py`／`narrate_core.py` 的
+   `except OSError: return {}` 改为读不到即抛错 + 必需表校验，数据路径统一走
+   `kernel_path.repo_root(__file__)`，收敛 507 批同型的 `parents[N]` 事故面。
+4. **口径落地**：六爻 [5] 分数行补 `n=` 与 tune/holdout 调参标记；八字医疗／法律／投资
+   免责提示语落在 `render.py` 报告层，避开 narrate 措辞指纹漂移。
+5. **docs 统一与精简**：知识库篇数 13/14/15/9 四套 → 一律以 `INDEX.md`／`KB_DOC` 为准；
+   `dsh-plugin/README.md` 312 → 84 行（删体积实测快照表、历史踩坑叙事、三工具 vs 四工具冲突）；
+   `DOCS.md` 阅读路径 3→4、`docs/CHANGELOG.md` 二义路径改指两科、JUDGMENT-TABLE 一句话校正；
+   `plugins/CHANGELOG.md` 第三百零七批重复节去重并加 497 批勘误；
+   `bazi/docs/CHANGELOG.md` 3948→294/296 矛盾统一为 296；
+   `dsh-plugin/CHANGELOG.md` 补 497／508 批宿主侧登记；AGENTS／CAPABILITY／GOVERNANCE
+   卷首沿革段压缩，`plugins/scripts/selftest.mjs` 与三个数据模块删除冗余注释。
+6. **CI**：`min-python-smoke` 补 `liuyao/tests/regression_test.py`（实跑 19/19）与
+   `thinking_chain_tests.py`（12/12），删过期的「17/19 待裁」排除注释；CI 注释精简。
+
+**收口实跑（全部 rc=0）**：两科 `check.py` 全量与 `--fast`、根级三门（含 `--selftest`）、
+`sync_kernel.py --check`／`sync_devkit.py --check`、`readout_ledger.py` full、
+`governance_map.py --selftest`、`build.mjs`、`selftest.mjs`、`npm --prefix dsh-plugin run check`、
+两科回归与思维链测试。`plugins/engine` 165／`dsh-plugin/engine` 165 文件全量同源。
+
+### 一、起点：工作区停在半成品的一批
+
+接手时工作区有两个未提交文件：本科 `CHANGELOG.md` 把 488–496 批压成一句话，
+`CHANGELOG-HISTORY-INDEX.md` 收下这些标题、按批号倒序重排，头注自称「514 批按实重写」——
+而主文件没有 514 的登记条目，按 §六.1 属未登记改动。旧索引头注另写「只保留最近 30 批标题」，
+逐号实测：那 30 节收的是 **210–372**（373 之后一节没有，「最近」为假），且 **314–325 插在 246 与
+213 之间**属倒序违例。本批按用户令**并批登记**：压缩面与本轮治理面合为本批，不再另立 515。
+
+### 二、缺陷：文档抄走的数没有第二块表来验
+
+机器面当时是全绿的（`check_docs_index` 44 份可达、两科 `check_doc_refs` 952＋816 条 0 死链、
+`readout_ledger --quick` bad=0）。烂的只是给人读的散文——**所有文档门只判「路径是否可达」，
+不判句子里的数**，于是同一组数字在账台里有齿、在正文里无齿：
+
+1. `AGENTS.md` §二：「DOCS.md 是全仓 **51 份** Markdown 的总索引」。tracked `.md` 现 45，
+   门口径 44（减 `DOCS.md` 自身）；51 是 330 批的值，510 批减量后没人回改（§六.2）。
+2. `AGENTS.md` §二 目录树：`devkit/` 写「12 共享件 + **variants/** 4 变体」，真路径是
+   `devkit/shared/variants/`；项数本身也落后过（见 5）。
+3. `GOVERNANCE.md` 第一行「两科 dev_tools 已 **106** 个脚本（六爻 63／八字 43）」与
+   §当前分布 整表（六爻 64／blk 28／nightly 11…、八字 43／blk 26…）——`governance_map.py`
+   514 批实跑是**六爻 74／blk 34、八字 49／blk 30**。该节第一句自称「读数取自本次实跑，
+   不抄旧快照」，而表就是上一批的快照：正文与自家表格互相打脸。
+4. `GOVERNANCE.md` 墓碑行「新门从 `[37]` 续」——实跑 `check.py` 六爻尾号 `[44]`、八字 `[43]`。
+5. `ARCHITECTURE-PLAN.md` 四处：§二 树与依赖图「**5 个宿主**适配器／5 宿主 src/」、V9
+   「plugin-gates（五宿主 × 2 OS）」（497 批已删四家，只剩 `dsh-plugin/`）；V4「**51 份**全部
+   登记可达」；§五.2「`files.shared` **仍为 11 项**」而 MANIFEST 是 12（同一文件 §一 D2 行
+   写的也是 12——**自己和自己打架**）；§六.4「不回填 **9 个**空号」（实为 8）。
+
+`ARCHITECTURE-PLAN.md` 在 DOCS.md 标「归档留证」，§六 维护口径又写「归档不改写正文」，
+故该件按仓内先例（本文件 §顺带更正：「本行即更正，不改写历史条目原文」）处理：
+**文首加五段勘误块点名五处、正文历史值一律保留**；V4／V14 行只在原值后追加现值口径，不抹旧数。
+
+### 三、改法：不刷数字，改成指向真值源
+
+- `AGENTS.md` §二：份数与共享件项数都不再写死，改指 `devkit/root/check_docs_index.py` 实跑首行
+  与 `devkit/MANIFEST.json`，并把「variants/」路径写正。
+- `GOVERNANCE.md` §当前分布：**删掉手抄分布表**，改为「现取命令 + `*/docs/GOVERNANCE-MAP.json`
+  五个字段 + 判绿口径（`unclassified`／`curated_but_missing`／`blocking_not_referenced` 必须空，
+  `referenced_not_blocking` 由账台 `tier一致性` 核账）」；历史增补事实（344／499／511／512 各加了什么）
+  作为登记保留。墓碑行同改为「取实跑尾号 +1，不在文档钉」。
+- `ARCHITECTURE-PLAN.md`：文首勘误①–⑤ ＋ §二/§三/V4/V14 的活引用与死路径标注（路径可达属
+  §六 许可的唯一例外）。
+- `DOCS.md`：`GOVERNANCE.md`／`ARCHITECTURE-PLAN.md` 两行的一句话职责同步（不写份数）。
+- **规程上提**：AGENTS.md 新增 §六.6「现在时文案不钉会变数」，把 GOVERNANCE §精神条款 里只对
+  该文件生效的规矩升成全仓口径，并把本批五例作为反例存档。沿用 README.md 既有范式
+  （「小节号会随门禁增补变化，故此处不写死区间」）。
+
+### 四、盘上清理（按用户令「全清，含 devkit/handoff」）
+
+删 6 个目录共 **170 文件 ≈10.5 MB**，全部 gitignore、tracked 数为 0（删前逐个 `git ls-files` 核实，
+`git status` 删后仍只有那两个本轮要写的文档）：根 `scratch/` 60、`bazi/scratch/` 13（含
+`corpus_reports.txt` 5.1 MB）、`liuyao/scratch/` 69（含 `golden_before.json` 4.0 MB）、
+`devkit/handoff/` 27、`liuyao/logs/` 1、`liuyao/outputs/` 0。
+
+- **不可恢复且已知**：`devkit/handoff/` 从未进过 git，27 份交接报告原文就此消失——逐卡结论改由
+  `ARCHITECTURE-PLAN.md` §三 的「批次 × 提交哈希」表加各科 CHANGELOG 331–339 批承载。
+  这是清理时接受的代价，不是待补欠账，已在勘误③与 V14 写明。
+- **未删（刻意）**：`devkit/pending/` 里 `.gitkeep` 是 **tracked**，删它要动入库面；
+  `*/data/cache/`、`*/data/collation/` 与 `bazi/data/sources/*.wikitext.txt` 是底本/中间产物，
+  其中 wikisource 系需联网重抓，删了会把 `check_source_provenance` 逼成红；
+  `plugins/engine|skills`、`dsh-plugin/{src,engine,skills,SKILL.md}` 是 `build.mjs` 产物不是垃圾；
+  `__pycache__` 不在批准范围内，未动。
+- **同批修的活引用**：`ARCHITECTURE-PLAN.md` 有 5 处指向 `devkit/handoff/`（文首、§二 树、§三 标题、
+  V13、V14）。`check_root_docs.py` 把 `devkit/handoff/` 列在 `RUNTIME_DIRS` 豁免里，**门不会红**，
+  但按 §六.3 它仍是文档与事实不符——与 496 批「`rule_registry.json` 的『见 HANDOFF』」同一型。
+
+### 五、自证（§四.8）与读数
+
+- **真探针**：`AGENTS.md` 插「全仓 **999 份** Markdown」→ `check_docs_index` 仍报
+  「44 份文档全部登记且可达」rc=0、`check_root_docs` 仍「126 条引用 0 死链」rc=0。
+  即**这一类病确实没有门**，不是我没找到门。撤探针后逐字节还原（sha256 `562abd8a…` 与插探针前一致）。
+- 本轮用的门自带 selftest 全过：`check_root_docs --selftest`（死链必抓／同名不兜底／真路径不误伤／0 份判红）、
+  `check_docs_index --selftest`（漏登记与死链都抓到）。
+- 收口读数：`check_docs_index` 44 份可达；`check_root_docs` 126 条（本轮由 122 增）0 死链；
+  `check_doc_refs` 六爻 952／八字 816 条 0 死链；`check_house_conventions` 六爻 266／八字 174 tracked
+  0 违规；`sync_devkit --check` 12 共享件逐字节一致；`governance_map` 两科未分类与幽灵均为空；
+  `readout_ledger --quick` bad=0。
+- **零引擎、零数据、零判据变更 → 读数不动属预期**（§四.7），且**不引用记忆**：改动**之后**重跑
+  `readout_ledger --quick`，`liuyao.tune(97.9/64.7/1.53)`、`liuyao.holdout(90.2/50.0/1.6)`、
+  `头牌值在位(9/9)`、`governance(74/49, blk 34/30)` 四项均 √（bad=0）。
+  其中 `头牌值在位` 正是专门断言 README×2／CAPABILITY／**GOVERNANCE** 各含每个头牌数字的门——
+  本批删掉过 GOVERNANCE.md 一节里的表，所以这项必须改后重跑，不能拿改前那次绿当数
+  （改前那次是另一份字节）。不得拿「门全绿」当成果：本批的成果只是文档不再说谎。
+
+### 六、立案（本批不做）
+
+**「文档现在时钉数」无门**是本批查出的真缺口，但本批**不新增门**：GOVERNANCE.md 载明 176 批冻结
+「守台账类新增」，新增须先证明属「让现实为预测判卷」方向，而文案 lint 属反向。若后续解冻，
+候选形态是扩 `check_docs_index`（已有门，覆盖面扩展有 490/492/495 批先例）扫根级活文档的
+「现在是 N 份／N 个脚本／从 [N] 续」句式，并沿用 `check_doc_refs` 的病史行豁免——
+否则 331–339 批这类**归因用的历史数**会被集体误判红（2026-10-06 的假绿教训：豁免别把负例一起吞）。
+
+**36 个批号「有提交而无登记」**（本批逐号核出，本批不修）：`check_batch_num` 只判
+「CHANGELOG 登记 → 提交信息」这一向（防写了没提交），反向「提交 → CHANGELOG」只出 NOTE 不判红。
+于是 375–382、387、398–407、417–419、421–423、425–429、438、448、452、455–456、472 这 36 号
+在提交信息里出现过，而两科 `CHANGELOG.md` 与两份索引**都没有对应节**（同段 373–487 的其余 79 号
+确实登记在八字侧，属正常分工，不是漏）。按 §六.1「一切登记逐批具名」这是存量欠账；补法二选一：
+逐条 `git show` 核实后回溯建 36 条一句话（**不许拿提交标题当正文铸死**），或按 §六.5 结案说明
+为何不补。本批**只立案不动手**——那 36 条多数属 375–406 区间的行为批，补登记会牵出读数归因，
+超出「纯文档」范围，混进来反而违反 §四.7。
+
 ## 2026-11-04 第五百一十三批（六爻·建器分块越界）：**所谓「dry-run 与数据一处不同步」查成两处真问题——ZD214 的应期读到下一案（坎之井酉／戌），ZD102 的 expected 整段取自下一案（小过之丰「应在初九辰日即雨」）；前者靠「句号式占例头只作切块止界」修掉，后者按本卦临之蒙实文改回亥日，strict 87.4→86.5**
 
 **性质**：构建器分块修复＋一条 expected 书证更正（**引擎零改动**；读数下调系去污染，不是回归）。
@@ -587,178 +726,40 @@ ZD194 连续相生链、ZD160 待冲解、ZD015 回头克待时）。**这 10 �
 - 历史残留清理：调试探针 `probe_caps.py`/`probe_overrides.py` 与门禁快照 txt 此前已清；
   `scratch/` 下临时脚本按 gitignore 不入库。
 
-## 2026-11-02 第四百九十六批（六爻·裸文件名死引用）：**`rule_registry.json` 的「见 HANDOFF」是活引用而 HANDOFF 已随扁平化删除；`check_doc_refs` 此前整段跳过裸文件名**
+## 2026-11-02 第四百九十六批（六爻·裸文件名死引用）
+`rule_registry.json` 的 note 写「见 HANDOFF」（该件已随扁平化删除）＋「wikisource top-1 ~20% n=35」旧快照；
+`check_doc_refs` 原口径明文不判裸文件名，故一直无门。共享件补 `LEGACY`（只对已知已删旧件的裸文件名，病史行豁免），
+note 改指 README 外部集表；门先于修正自证（改回 `见 HANDOFF` 即红，逐字节还原后全绿）。读数不变。
 
-**性质**：共享门补裸文件名判据＋本科数据说明修正（不改判据、不改读数）。
+## 2026-11-02 第四百九十五批（八字·代码书证扩面）
+共享件把代码书证门从 `scripts/core` 扩到 `dev_tools/eval`（八字 96+12 锚，首跑判红 10 条、9 条真错）；
+六爻 [12] 描述同步为「core/scripts/dev_tools/eval（本科副本属跨科，不挂）」，本科零改动、读数不变。
 
-### 一、缺陷
+## 2026-11-02 第四百九十四批（两科·书目异名）
+《命理探原》/《命理探源》同书异写：共享件加 `_book_key` 别名表，L605 锚归入可解析；真探针（L605→L9999）判红并逐字节还原。
 
-`data/rules/rule_registry.json` 的 `yingqi` 维度 note 写「…另 wikisource top-1
-~20% n=35 为泛化读数——见 HANDOFF，非调参对象」。HANDOFF.md 已随仓库扁平化删除，
-这是活引用指向已删文件（§六.3）；「~20% n=35」与 `README.md` 现行外部集表
-（wikisource_holdout top-1 31.8%、n=50，308 批）也不一致，属旧快照。
-`check_doc_refs.py` 原口径明文规定「裸文件名不构成本器的路径声明」，故一直无门。
+## 2026-11-02 第四百九十三批（六爻·用神词典元数据）
+`question_use_gods.json` 的 `description` 写「195 条现代问法」，而 `key_count=275`、落盘 entries 合计 275（同一份数据两处事实不同）；
+改 275，[12] 新增 `check_usegod_meta`（族数/键数/条数三查，缺声明也判红），selftest 五式。门先于修正自证。
 
-### 二、改法
+## 2026-11-02 第四百九十二批（八字·注册表「语料行」）
+`bazi/rule_registry.json` 3 处「语料行 2608/2612/2452」不以 L 写行号，此前无门；扩 `check_registry_line_claims` 三级解析，首跑 3/3 在册；六爻无此形态。
 
-- 共享件新增 `LEGACY`：只对已知已删旧件的裸文件名（HANDOFF／TECH-DEBT／
-  两个幽灵测试文件名）补判；病史行（整行或上一行含病史词，`LEGACY_HISTORY`
-  另收「已删」）豁免；`check_house_conventions.py` 的正则字面量按 `LEGACY_SELF` 排除。
-- selftest 加两式：活 `见 HANDOFF` 必抓、病史行「原 TECH-DEBT 已删」不得误判。
-- 数据修正：note 改为「实时读数见 README 外部集表与 references/source_ledger.md」，
-  删去 HANDOFF 与旧快照数字。
+## 2026-11-02 第四百九十一批（六爻·用神词典族注）
+`build_question_use_gods.py` 明写「note 不参与核验」，families 64–69 的 7 段「…」引文（占雨/借贷/讨债/六畜/坟墓）无门；
+新增 `check_usegod_family_notes`（dz＋wikitext 两版全收）首跑 7/7——这 7 段只在 wikitext 版成立，只认 dz 会 0 命中。
 
-### 三、自证（§四.8）
+## 2026-11-02 第四百九十批（八字·代码注释源L）
+八字 `scripts`／`core` 51 个 `源L` 锚（`dayun.py` 49 个）此前不扫；扩 `check_bazi_code_anchors` 后首跑 51 锚、31 引文全符；六爻由本科 [14] 扫，不重复挂。
 
-- **门先于修正**：把 note 改回「见 HANDOFF」→
-  `× data/rules/rule_registry.json:223 引用已随扁平化删除的旧件（裸文件名，无路径前缀）→ HANDOFF`；
-  逐字节还原（sha256 `844AC5DC…`、91255 字节相同）后全绿。
-- 两科全门通过；读数 tune 97.9（n=20）／holdout 90.2（n=12）不变（只改说明与门，§四.7）。
+## 2026-11-02 第四百八十九批（八字·裁决散文裸行号）
+`bazi/verdicts.json` 12 个底本行（14 处写法）只写行号不带引文；扩 `check_verdicts_prose_anchors`，首跑 14/14 在册，真探针（L1657→L9999）判红。
 
+## 2026-11-02 第四百八十八批（六爻·问题题类注记）
+`question_classes.json` 的 4 个源L（终身财福 L2219/L2221、天气 L1953、易隐 L1541）与 3 条「…」引文无门；
+新增 `check_question_classes_notes` 后 4/4 行锚、3/3 引文全符。
 
-## 2026-11-02 第四百九十五批（八字·代码书证扩面）：**共享件把代码书证门从 `scripts/core` 扩到 `dev_tools/eval`；本科无该册变更，全门与读数不变**
-
-**性质**：共享门覆盖面扩展（本科不改数据、不改判据、不改读数）。
-
-- 八字 `dev_tools/`（96 锚）与 `eval/`（12 锚）的「《书名》源L####「…」」此前无门；
-  共享件 `check_bazi_code_anchors` 扩面并按 AST 跳过 `selftest` 夹具、支持跨行引文与
-  忽略 f-string 模板；八字侧扩面首跑判红 10 条（9 条真错）并逐条修正
-（详见八字 CHANGELOG 第四百九十五批）。
-- 六爻 [12] 的描述同步改为「core/scripts/dev_tools/eval 代码书证（本科副本属跨科，不挂）」；
-  本科仍不挂该扫（共享件逻辑未在本科触发），但 selftest 跑同一套夹具。
-- 真实探针在八字侧执行并逐字节还原；六爻全门通过，读数 tune 97.9（n=20）／
-  holdout 90.2（n=12）不变。
-
-
-## 2026-11-02 第四百九十四批（两科·书目异名）：**共享件为《命理探原》/《命理探源》加同书别名归一；L605 锚归入可解析**
-
-**性质**：书目解析归一（本科无该册变更，不改数据、不改判据、不改读数）。
-
-- 八字 `symbols.py` 的 `《命理探原》源L605` 与库内底本标题《命理探源》按字面不匹配；
-  共享件加 `_book_key` 别名表（仅已实见同书异写），两个解析函数统一走它。
-- 真实探针（L605→L9999）判红并逐字节还原；六爻全门与读数（97.9/90.2）不变。
-
-
-## 2026-11-02 第四百九十三批（六爻·用神词典元数据）：**`description` 仍写「195 条现代问法」，而 `key_count=275`、落盘 entries 合计 275；同一份元数据自相矛盾**
-
-**性质**：数据/构建器元数据修正＋门覆盖面扩展（不改判据、不改读数）。
-
-### 一、缺陷
-
-`question_use_gods.json` 的 `_meta.description` 写「六爻问题词典（195 条现代问法→六亲…）」，
-同块 `family_count=74`、`key_count=275`，落盘 `families[*].entries` 合计 **275**；
-构建器 `build_question_use_gods.py` 也照抄 195 写入。195 是早期版本遗留数，
-从未随 249→275 的扩表更新（§六.3：同一份数据两处事实不同）。
-
-### 二、改法
-
-- 构建器与落盘 `_meta.description` 同步改为「275 条现代问法」。
-- `[12]` 新增 `check_usegod_meta()`（仅六爻册）：`family_count == len(families)`、
-  `key_count == Σentries`、`description` 里的「N 条现代问法」== 实际键数；
-  任一项不符判红，缺声明也判红。
-- selftest 加 5 式（正例＋description 条数/族数/键数不符/缺条数声明）。
-
-### 三、自证（§四.8）
-
-- **门先于修正挂上**：未改数据前跑 `check_rule_registry` 即
-  `× 用神词典元数据：description 声明 195 条 ≠ 实际 275 键`；改 275 后全绿。
-- 真实探针：改回 195 → 再判红；逐字节还原（sha256 相同）后全绿。
-- `build_question_use_gods.py --check` 仍 69/69；读数 tune 97.9（n=20）／
-  holdout 90.2（n=12）不变。
-
-
-## 2026-11-02 第四百九十二批（八字·注册表「语料行」）：**共享件为 `bazi/rule_registry.json` 的「语料行 NNNN」补回验；六爻无此形态**
-
-**性质**：共享门覆盖面扩展（本科不改数据、不改判据、不改读数）。
-
-- 八字注册表 3 处「语料行 2608/2612」「语料行 2452」不以 L 写行号，465/474 都不覆盖；
-  本批扩 `check_registry_line_claims`（同串路径／`corpus_files`／`source.book` 三级解析），
-  首跑 3/3 在册；真实探针（2452→99999）判红并逐字节还原。
-- 六爻无此形态，跳过；全门与读数（97.9/90.2）不变。
-
-
-## 2026-11-02 第四百九十一批（六爻·用神词典族注）：**构建器明写「note 不参与核验」，families 64–69 的 7 段「…」引文（占雨/借贷/讨债/六畜/坟墓）无门；补门后 7/7 命中**
-
-**性质**：共享门覆盖面扩展（不改数据、不改判据、不改读数）。
-
-### 一、缺陷
-
-`build_question_use_gods.py` 的族定义注释写着「label 与 note 是给人看的取舍依据
-（note 不参与核验）」。实测 family 64–69 的 `note` 有 7 段 `「…」`：
-占雨/占晴（`占雨用父爻…`、`占晴用子孫爻…`）、借贷、讨债两句、六畜、坟墓，
-都称「章内逐字」却无行号锚；`[14]` 只认 `源L` 形态、只核到 1 条，483 又只覆盖
-`families[71]` 的 file+L 注。这批族注的书据因此长期无人回验（§六.3）。
-
-### 二、改法
-
-- `[12]` 新增 `check_usegod_family_notes()`（仅六爻册）：
-  · 扫 `families[*].note` 的每段 `「…」`，按省略号分段、折叠标点；
-  · 须在《增刪卜易》**dz＋wikitext 两版**任一底本中逐字出现
-    （wikitext 的 provenance 无 title，`_corpora_for_book` 只认 dz，
-    本函数按 `zengshan_buyi*.txt` 两版全收）；
-  · 下限 6 段，0 段判红。
-- selftest 加 4 式（正例＋引文错/0 families/0 段）。
-
-### 三、自证（§四.8）
-
-- 首跑 **7/7 命中**：关键是 wikitext 版才是这 7 段的所在（dz 版为另一底本，
-  实测 0 命中）；两版全收后全符，不改数据。
-- 真实探针：families[64]「占雨用父爻」→「占雨用母爻」→ 判红
-  `families[64].note 的引文不在《增刪卜易》底本`；逐字节还原（sha256 相同）后全绿。
-- 读数 tune 97.9（n=20）／holdout 90.2（n=12）不变。
-
-
-## 2026-11-02 第四百九十批（八字·代码注释源L）：**共享件为八字 `scripts`／`core` 的 51 个 `源L` 书证补回验；六爻无此形态**
-
-**性质**：共享门覆盖面扩展（本科不改数据、不改判据、不改读数）。
-
-- 八字 `scripts`／`core` 有 51 个 `源L` 锚（`dayun.py` 49 个），482 与 [10] 都不扫；
-  本批扩 `check_bazi_code_anchors`（同行/前 9 行书名、provenance 全收、行号在册、
-  同行 `「…」` 逐字；篇名式《》先向前找可解析书名），首跑 51 锚、31 引文全符。
-- 六爻代码由本科自己的 [14] 扫 `源L`，不重复挂；全门与读数（97.9/90.2）不变。
-
-
-## 2026-11-02 第四百八十九批（八字·裁决散文裸行号）：**共享件为 `bazi/verdicts.json` 的散文行锚补回验；六爻无该册跳过**
-
-**性质**：共享门覆盖面扩展（本科不改数据、不改判据、不改读数）。
-
-- 八字 `verdicts.json` 12 个底本行（14 处写法）只写行号不带引文的定位声明
-  （五格 L1657…、L5265、L1668、L1704、L5115、L5137、L1734、L179）此前无门；
-  本批扩 `check_verdicts_prose_anchors`（路径/书名/同条 locator→底本），
-  首跑 14/14 在册；真实探针（L1657→L9999）判红并逐字节还原。
-- 六爻无该册，跳过；全门与读数（97.9/90.2）不变。
-
-
-## 2026-11-02 第四百八十八批（六爻·问题题类注记）：**`question_classes.json` 的 4 个源L（题类析出/天气分轨「书据」）与 3 条「…」引文无门；补门后 4/4、3/3 全符**
-
-**性质**：共享门覆盖面扩展（不改数据、不改判据、不改读数）。
-
-### 一、缺陷
-
-`question_classes.json` 的 `classes[*].source_gates`／`note` 里有 4 个
-`源L####`：终身财福类 **L2219/L2221**、天气类 **L1953**、易隐 L1541，
-其中 3 处带 `「…」` 引文。这些正是「题类如何析出」「占雨为何不并进行人」的
-书据，但此前没有任何门读取——`[12]` 的 `source_gates` 扫描面从未包含本题类表。
-
-### 二、改法
-
-- `[12]` 新增 `check_question_classes_notes()`（仅六爻册）：
-  · 每个 `源L####` 的《书名》取同串最近《…》，经 provenance 解析
-    （`_corpus_for_book`，同名多本 `_dz` 优先），行号在册；
-  · 锚后到下一锚之间的首个 `「…」` 须在该行逐字命中；
-  · `classes` 的字符串与**字符串列表**两种承载都扫（`source_gates` 是列表）。
-- 下限 4 个源L／3 条引文；selftest 加 5 式（正例＋引文错/越界/缺书名/0 类）。
-
-### 三、自证（§四.8）
-
-- 首跑 **4/4 行锚、3/3 引文全符、0 处漂移**：L2221 的「凡占终身财福…」、
-  L1953 的「占雨用父爻…」、L1541 的「占晴以子孙为用…」均在所署行逐字成立。
-- 真实探针：L1953「占雨用父爻」→「占雨用母爻」→ 判红
-  `classes[8].source_gates[0] 的引文不在 《增删卜易》源L1953`；
-  逐字节还原（sha256 相同）后再跑全绿。
-- 读数 tune 97.9（n=20）／holdout 90.2（n=12）不变。
-
-
-
-> **精简**：更早的批次已归档到 [CHANGELOG-HISTORY-INDEX.md](CHANGELOG-HISTORY-INDEX.md)，需要时查 git log。
-
+> **精简口径**：主文件保留最近 **15 批**全文（政策值，不是当前节数——514 批实收 504–514 共 11 节全文
+> ＋488–496 共 9 节一句话；旧版本行把政策值写成「15 批（504–513）」是把两件事钉在了一处）；
+> 488–496 及更早的批次压成上面的一句话，完整标题与日期见
+> [CHANGELOG-HISTORY-INDEX.md](CHANGELOG-HISTORY-INDEX.md)，需要正文时查 git log。

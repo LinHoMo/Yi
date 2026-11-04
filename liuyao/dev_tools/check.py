@@ -837,16 +837,18 @@ def main() -> int:
         print("\n[5] 古籍案例对齐分 —— × 本次带 --fast：未跑，tune/holdout 分数下限不生效"
               "（合入前必须重跑不带 --fast 的本门）")
     if want("eval") and not args.fast:
-        print("\n[5] 古籍案例对齐分与应期判别力（非现实预测命中率）")
+        print("\n[5] 古籍案例对齐分与应期判别力（tune 参与调参／holdout 未参与调参；均非现实预测命中率）")
         for split in ("tune", "holdout"):
             m = eval_metrics(split)
             if m.get("error"):
                 failures.append(f"{split} 评测未跑成")
                 print(f"  × {split} 评测失败：{m['error'][:300]}")
                 continue
-            gate(split, m.get("avg"), minimum=baseline[split], label=f"{split} 对齐分 %")
+            n = m.get("n")
+            suffix = f"（n={n}）" if n is not None else ""
+            gate(split, m.get("avg"), minimum=baseline[split], label=f"{split} 对齐分 %{suffix}")
             gate(f"{split}_top1", m.get("top1"), minimum=baseline.get(f"{split}_top1", 0.0),
-                 label=f"{split} 主应期命中 %")
+                 label=f"{split} 主应期命中 %{suffix}")
             if m.get("rank") is not None:
                 gate(f"{split}_rank", m.get("rank"), maximum=BASELINE_MAX.get(f"{split}_rank", 99),
                      label=f"{split} 应支平均名次")
@@ -1057,6 +1059,8 @@ def main() -> int:
         print(json.dumps(new, ensure_ascii=False))
         return 0
 
+    if args.fast:
+        print("注意：本次为 --fast，[5] 对齐分下限未生效；此结论不代表合入门槛。")
     print("质量门全部通过（或不低于基线）。")
     print("分数含义：与古籍案例要点的一致性，不代表现实预测命中率。")
     return 0

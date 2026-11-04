@@ -6,6 +6,15 @@
 > **497 批起只保留 DSH 一个宿主**：claude/codex/gemini/yan 四家适配器目录、
 > `publish.mjs`（git 发行树）及其在 build/selftest/ci/文档里的登记一并删除。
 
+## 2026-11-04 第五百一十四批（共享层·并批）：**自检补齿与产物全量同源**
+
+- `scripts/selftest.mjs`：新增 [1.6] `engine/` 165 文件、`skills/` 15 文件全量逐字节
+  同源门（篡改／缺文件／0 文件三类负例）；[5]/[6] 补负例自证；
+  [7] 修 `.filter(existsSync)` 造成的「0 份文档也判绿」。
+- `SKILL.md` 知识库篇数去钉数，改指 `references/INDEX.md`；本卷第三百零七批
+  重复节去重并加 497 批勘误；卷首段号表压缩。
+- `build.mjs` 未改；`build.mjs && selftest.mjs` rc=0。主登记见六爻 CHANGELOG 514 批。
+
 ## 2026-11-04 第五百零八批（共享打包层）：**六爻 `engine/` 升格后 `RUNTIME_INCLUDE.liuyao` 补收 `engine`——漏收则包能装、`yi_liuyao` 调用即 ImportError**
 
 **性质**：打包白名单补漏（不改四工具 1.0 冻结契约、不改读数）。
@@ -281,6 +290,8 @@ Yan 资源表双向一致（15 条），负例自证（抽掉一篇即红、多�
 - 当前覆盖 9 份文档（根 README、CAPABILITY、SKILL.md、五宿主 README/INSTRUCTIONS/GEMINI.md 等），全 √。
 
 ## 2026-10-27 第三百零七批（plugins）：发布树建成——远程分发的结构性解法落地
+> 勘误：同批初稿的重复节已去重；发行树、publish.mjs 与四家适配器于 497 批删除，本节所述发布方式不再适用。
+
 
 **问题不是"没写安装文档"，是结构上互斥**：`engine/`、`skills/`、`src/` 按仓库纪律
 不入库，而 Claude Code / Codex / Gemini CLI / Yan 的远程分发**全部走 git**（只拿已提交
@@ -329,46 +340,6 @@ Yan 资源表双向一致（15 条），负例自证（抽掉一篇即红、多�
 - **其余四条通道仍未真机验证**：Claude 的 `marketplace.json`、Codex 的
   `.agents/plugins/marketplace.json`、Gemini 的根扩展、DSH 的 npm 包——
   本机一家宿主都没有，只做了 Yan 那条通道的拉取级验证。
-：脚本不 push，本批也未建发行仓/分支——那是你的外部动作。
-- **Claude 的 marketplace.json 未真机验证**：官方示例是「市场仓 → 独立插件仓」，
-  这里改指**同仓子目录**，能否被 Claude 接受未测。文件里写了 `_note` 提示，
-  README 也标了；未跑通前请用 `claude --plugin-dir ./claude-plugin` 本地试装。
-- Codex 第三方公开目录仍未开放，即便有发行树也进不了官方目录（只能 repo/用户级市场）。
-- 五家宿主**全部未做真机安装验证**（本机无任何一家宿主）。
-
-## 2026-10-27 第三百零七批（plugins）：发布树建成——远程分发的结构性解法落地
-
-**问题不是"没写安装文档"，是结构上互斥**：`engine/`、`skills/`、`src/` 按仓库纪律
-不入库，而 Claude Code / Codex / Gemini CLI / Yan 的远程分发**全部走 git**（只拿已提交
-文件）。于是 304～306 批四家都只能本地安装。改文档解决不了，得改结构。
-
-**解法：源与发行分离。** 新增 `plugins/scripts/publish.mjs`，产出一棵只含可安装产物的
-发行树 `plugins/dist/`（不入库），由它单独成为 git 仓/分支被各家拉取；
-源仓继续维持"产物不入库"的纪律，两不相犯。
-
-- `publish.mjs`（默认）：把五家适配器的**完整目录**（清单 + `engine/` + `skills/` +
-  `src/` + README/CHANGELOG/LICENSE）复制到 `dist/`，并生成三份宿主入口文件：
-  - `.claude-plugin/marketplace.json`（Claude 市场目录）
-  - `.agents/plugins/marketplace.json`（Codex 仓库级市场，`source: local`）
-  - 仓库根 `gemini-extension.json` + `GEMINI.md`——**Gemini 一个仓库 = 一个扩展**，
-    没法像 Claude/Codex 那样用市场目录，故把仓库根本身做成扩展、入口指进
-    `gemini-plugin/`。这是四家里唯一的结构性差异，已在文件与 README 写明。
-  - Yan 不需要目录文件（它遍历树找 `yan-plugin.json`），DSH 不走 git。
-- `publish.mjs --check`：发布树**可安装性**检查——五家各自"清单 + MCP 入口 +
-  `engine/MANIFEST.json` + `skills/yi-divination/SKILL.md` + 引擎入口脚本"齐备、
-  零 `case_library.md`、知识库篇数与登记表一致，**含负例自证**（多塞一个缺失入口即被抓到）。
-- 脚本**只生成文件，不 commit、不 push、不建远程**——外部动作留给用户，
-  末尾打印两条确切命令（独立发行仓 / 同仓发行分支）。
-- `.gitignore` 加 `plugins/dist/`；根 README 与各宿主 README 的"只能本地安装"表述
-  改为指向发布流程。
-
-**实跑**：`build` rc=0 → `publish` rc=0 → 内置 `--check` 全绿（5 家自包含 + 负例自证 +
-零案例库 + 知识库 9 篇）；`selftest` rc=0。产物 ≈15MB（五份引擎副本，
-但相同内容在 git 里只存一份 blob，进仓远小于此）。
-
-### 未做的事（如实）
-
-- **没有真的发布**：脚本不 push，本批也未建发行仓/分支——那是你的外部动作。
 - **Claude 的 marketplace.json 未真机验证**：官方示例是「市场仓 → 独立插件仓」，
   这里改指**同仓子目录**，能否被 Claude 接受未测。文件里写了 `_note` 提示，
   README 也标了；未跑通前请用 `claude --plugin-dir ./claude-plugin` 本地试装。

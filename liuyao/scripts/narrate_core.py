@@ -1,31 +1,22 @@
 # -*- coding: utf-8 -*-
-"""六爻叙述层：解读正文生成 / 段落素材——唯一正文出口（CONTRACT §一）。
-
-铁律一合规：机械运算在主线引擎完成，本层只把结构化结论翻译成人话并装配成交付对象。
-
-第三百一十一批：五步链组装 / 格局标签 / 引文选取 / 持世深化搬往 chain_assembly.py
-（CONTRACT §二：那是 analyze 段内部实现）；本层只剩正文装配，输入是 analyze JSON，
-不 import 任何 analyze/step 模块、不重算象数。
+"""六爻叙述层：唯一正文出口（CONTRACT §一）。输入 analyze JSON，只做正文装配，
+不 import analyze/step 模块、不重算象数；文案表读不到即抛错。
 """
-
 from __future__ import annotations
 
-import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
+import os as _ks_os, sys as _ks_sys
 
 _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
-
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
-from kernel_path import ensure_kernel_on_path as _ensure_kernel
+from kernel_path import ensure_kernel_on_path as _ensure_kernel, repo_root as _repo_root
 
 _ensure_kernel(__file__)
 
 import json
 
 import re
-
-from pathlib import Path
 
 from chain_verdicts import NARRATIVE_HINTS, PATTERN_RELATED, pattern_label, select_timing_base  # noqa: E402
 from chain_tables import _BRANCH_CLASH_MAP, _HE_MAP  # noqa: E402
@@ -37,19 +28,19 @@ except ImportError:
 
 from narrative_assembly import build_reasoning_chain, build_summary  # noqa: E402  355 批 fact builder
 
-_NARRATIVE_TEMPLATES_PATH = Path(__file__).resolve().parents[1] / "data" / "narrative_templates.json"
+_NARRATIVE_TEMPLATES_PATH = _repo_root(__file__) / "data" / "narrative_templates.json"
 
 
 def _load_narrative_templates() -> dict:
-    try:
-        return json.loads(_NARRATIVE_TEMPLATES_PATH.read_text(encoding="utf-8"))
-    except OSError:
-        return {}
+    data = json.loads(_NARRATIVE_TEMPLATES_PATH.read_text(encoding="utf-8"))
+    if not isinstance(data.get("advice_soft"), dict) or not data["advice_soft"]:
+        raise RuntimeError(f"{_NARRATIVE_TEMPLATES_PATH.name} 缺 advice_soft 表")
+    return data
 
 
 _NARRATIVE_TPL = _load_narrative_templates()
 
-_ADVICE_SOFT = _NARRATIVE_TPL.get("advice_soft") or {}
+_ADVICE_SOFT = _NARRATIVE_TPL["advice_soft"]
 
 _PATTERN_QUOTE_RELEVANCE = PATTERN_RELATED
 

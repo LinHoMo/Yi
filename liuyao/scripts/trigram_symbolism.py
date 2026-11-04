@@ -1,35 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""八卦万物类象：上下卦组合的象数解读（上卦为用、下卦为体）。
+
+三张文案表外置在 data/trigram_symbolism.json，代码只留算法（AGENTS.md §三）。
+数据缺表或读不到即抛错，绝不静默降级为空表。
 """
-八卦万物类象数字化解读系统 (Trigram Symbolism Digital Interpretation)
-=============================================================
-基于易经八卦万物类象体系，提供上下卦组合象数解读。
-
-核心思想：
-- 上卦主外、主动、主空间（天/表/远）
-- 下卦主内、主静、主地/里/近
-- 体用关系：下卦为"体"（本体），上卦为"用"（作用）
-- 象数复合：将两卦的象征意义叠加，产生更丰富的解读
-
-参考经典：《周易·说卦传》《黄金策》《卜筮正宗》
-"""
-
-# =============================================================================
-# 数据加载（SKILL.md：断语/象征文案进 data/*.json，代码只留算法）
-#
-# 下面三张表原先内嵌在本文件共约 230 行，是纯文案例项，不属于算法，已整体外提：
-#   trigram_symbolism —— 八卦万物类象（自然/五行/方位/身体/六亲/象征物/性情…）
-#   trigram_directions —— 八卦方位
-#   hexagram_names    —— 六十四卦复合卦名，键为 "上卦/下卦"
-# =============================================================================
-# 内核定位规则只在 kernel_path.py 一份实现，不得在此另写路径拼接
-import labels_loader as _labels  # noqa: E402  210批 §一.1 断语外置
+import labels_loader as _labels  # noqa: E402
 _TRIG = _labels.load("trigram")
-_TRIGA = _labels.load("advice")  # 215批：advisory 语族另节（本节键名不与 career_ke 混用）
+_TRIGA = _labels.load("advice")
 import json
 import sys
 
-# 控制台编码守卫：须在 import sys 之后——早于 sys 导入时 NameError 会被 except 咽掉、静默失效
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     sys.stderr.reconfigure(encoding="utf-8", errors="replace")
@@ -40,33 +21,31 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from kernel_path import ensure_kernel_on_path as _ensure_kernel  # noqa: E402
+from kernel_path import ensure_kernel_on_path as _ensure_kernel, repo_root as _repo_root  # noqa: E402
 
 _ensure_kernel(__file__)
 
 from yishu_core.symbols import KE_CYCLE, SHENG_CYCLE  # noqa: E402
 
-_TRIGRAM_DATA_PATH = Path(__file__).resolve().parents[1] / "data" / "trigram_symbolism.json"
+_TRIGRAM_DATA_PATH = _repo_root(__file__) / "data" / "trigram_symbolism.json"
 
 
 def _load_trigram_data() -> dict:
-    try:
-        return json.loads(_TRIGRAM_DATA_PATH.read_text(encoding="utf-8"))
-    except OSError:
-        return {}
+    data = json.loads(_TRIGRAM_DATA_PATH.read_text(encoding="utf-8"))
+    missing = [k for k in ("trigram_symbolism", "trigram_directions", "hexagram_names")
+               if not isinstance(data.get(k), dict) or not data[k]]
+    if missing:
+        raise RuntimeError(f"{_TRIGRAM_DATA_PATH.name} 缺表或表为空：{', '.join(missing)}")
+    return data
 
 
 _TRIGRAM_DATA = _load_trigram_data()
 
-TRIGRAM_SYMBOLISM = _TRIGRAM_DATA.get("trigram_symbolism") or {}
+TRIGRAM_SYMBOLISM = _TRIGRAM_DATA["trigram_symbolism"]
+TRIGRAM_DIRECTIONS = _TRIGRAM_DATA["trigram_directions"]
 
-TRIGRAM_DIRECTIONS = _TRIGRAM_DATA.get("trigram_directions") or {}
-
-# 复合卦名：JSON 无法表达 tuple 键，故序列化为 "上卦/下卦"；此处还原成 tuple，
-# 使下游 HEXAGRAM_NAMES.get((上, 下)) 的调用方式与外提前完全一致（零行为漂移）。
-HEXAGRAM_NAMES = {
-    tuple(_k.split("/")): _v for _k, _v in (_TRIGRAM_DATA.get("hexagram_names") or {}).items()
-}
+# JSON 无法表达 tuple 键，复合卦名序列化为 "上卦/下卦"，此处还原
+HEXAGRAM_NAMES = {tuple(k.split("/")): v for k, v in _TRIGRAM_DATA["hexagram_names"].items()}
 
 
 

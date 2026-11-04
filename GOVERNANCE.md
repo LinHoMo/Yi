@@ -1,12 +1,9 @@
 # 治理地图（GOVERNANCE.md · 第一百九十四批）
 
-> 存在理由：两科 dev_tools 已 106 个脚本（六爻 63／八字 43，第 339 批实跑），「门禁守门禁」的膨胀与
-> 「哪些门还在干活」的不可见同时发生。本文件＋机器图 `*/docs/GOVERNANCE-MAP.json`
-> （由 `liuyao/dev_tools/governance_map.py` 生成，`--strict` 可挂 CI）把每个脚本
-> 的档位与守护对象显名化。**本批只出地图，一删一并不做**；降档/删除逐批走 §四 验收。
-> 生成器历史课三条：①初版 selftest 无条件打 √ 再按 fails 返 rc——**自测会说谎**；②`run_by_check`
-> 关联把 `p.name` 再拼 `.py`，整列假阴性——**0/False 成片的读数先怀疑接线**（§四.8）；③夹具注释里
-> 写全路径字面量被 [11] 判红——夹具与产品同规矩。
+> 存在理由：两科 dev_tools 脚本上百，「门禁守门禁」的膨胀与「哪些门还在干活」的
+> 不可见同时发生。本文件＋机器图 `*/docs/GOVERNANCE-MAP.json`
+> （`liuyao/dev_tools/governance_map.py` 生成）把每个脚本的档位与守护对象显名化。
+> 本批只出地图，不删并不；降档/删除逐批走 §四 验收。
 
 ## 档位定义（与生成器 docstring 同步，两处同改）
 
@@ -18,18 +15,26 @@
 | **build** | 语料/案例构建管道（产物进 data/，重建可复现） | 不设降档；改管道＝改数据口径，按 §四.4 登记 |
 | **tool** | 开发辅助（无守护对象） | —— |
 
-## 当前分布（第三百四十四批实跑重放；首扫见 194 批）
+## 当前分布（第五百一十四批改口径：本节原为手抄快照表，表已删）
 
-| 科 | 脚本 | blocking | nightly | ondemand | build | tool | 未分类/幽灵 |
-|---|---|---|---|---|---|---|---|
-| 六爻 | 64 | 28 | 11 | 12 | 10 | 3 | 0 |
-| 八字 | 43 | 26 | 0 | 7 | 8 | 2 | 0 |
+**读数一律现取，不在本文抄录**：`python liuyao/dev_tools/governance_map.py` 出两科脚本数与
+五档分布；生成物是 `liuyao/docs/GOVERNANCE-MAP.json` 与 `bazi/docs/GOVERNANCE-MAP.json`
+（`count`／`by_tier`／`unclassified`／`curated_but_missing`／`tier_link_violations` 五块）。
+判绿口径：两科 `unclassified`、`curated_but_missing`、`blocking_not_referenced` 必须为空；
+`referenced_not_blocking` 非空是合法的「存在性引用」，由 `readout_ledger` 的 `tier一致性`
+项按清单核账（冒出未见条目即红）。
 
-读数取自 `python liuyao/dev_tools/governance_map.py` 的本次实跑（两科 `未分类 []`、
-`表中有序实无 []`），不抄旧快照。344 批新增六爻 `check_expected_coverage`（blocking；
-门 [38]，守案例构建器不得静默清空 expected 书证字段），六爻 63→64／blocking 27→28。
-八字 43 已含 `build_siku_dz.py`（327–329 批，345 批补交入库）；clean clone 现为 43，
-不再有「工作区未提交 → 42」的依赖，账台按实跑登记。
+**为什么把表删掉**：344 批起本节第一句写着「读数取自本次实跑，不抄旧快照」，可表一旦落笔
+就成了**上一批的快照**——514 批实跑已到六爻 74／八字 49，而表里还是 344 批的 64／43，
+正文与自家表格互相打脸（§六.3 的「文档说的和代码做的不一致」）。同一组数字 `readout_ledger`
+已按 `governance(总数, blocking)` 钉死并随 HEAD 重放，**正文再抄一份＝装了两块表而只有一块有齿**。
+范式沿用 README.md「小节号不写死区间」与本文件 §精神条款「现在时文案不钉会变数」。
+
+历史增补事实保留（这些是登记，不随批次变）：344 批新增六爻 `check_expected_coverage`
+（blocking，门 [38]，守案例构建器不得静默清空 expected 书证字段）；八字侧含
+`build_siku_dz.py`（327–329 批，345 批补交入库）；499 批新增八字 `cross_version_collate.py`
+（跨版本窗口对拍，观测非门）；511 批补登六爻 ontology 三件（此前自建图起就一直报「未分类」而无人
+回改），512 批把 `check_ontology` 升 blocking 并进 `check.py` [44]。
 
 **A5-1 存量过档结论（第 339 批）：本批无降档、无删除。** 判据逐条对照 §一 门槛：
 blocking → nightly 须「连续一季 0 判红＋负例自证仍可跑＋CHANGELOG 具名」，本仓没有
@@ -40,9 +45,12 @@ blocking → nightly 须「连续一季 0 判红＋负例自证仍可跑＋CHANG
 `build_yiin_cases` 归 build）；②删掉 `check_docs_index` 的旧条目（门已上提到
 `devkit/root/`，不再属于六爻 dev_tools）。**降档 ≠ 删除**：本批两者都没动。
 
-账台计数由 `readout_ledger` 首尾行自报（本表为快照）。SKILL 合同路径审计 20/20 亦在账（232 批）。
-墓碑：六爻 `[8][9][10][21]–[25]` 是已下线门的编号，不回填；新门从 `[37]` 续（同文见
-`liuyao/docs/CHANGELOG.md` 第 331–334 批登记）。
+账台计数由 `readout_ledger` 首尾行自报（不在本文抄录，同 §当前分布 口径）。SKILL 合同路径审计
+20/20 亦在账（232 批）。
+墓碑：六爻 `[8][9][10][21]–[25]` 是已下线门的编号，不回填；**新门编号不在本文钉**——
+两科各自独立计数，取 `python <科>/dev_tools/check.py` 实跑尾号 +1，机器侧真值看
+`devkit/MANIFEST.json` 的 `gate_ids`（514 批改本行时它写「从 [37] 续」，而六爻实跑已挂到
+[44]、八字到 [43]，又是一块没人对的死表）。
 
 > 207 批更正六项 tier 误标（首版人工初判未对照实引用）：bazi 的 corpus×2／verdict_audit／
 > sync×2 实为挂闸执行却标 nightly/ondemand；eval_unique_keys 标 blocking 却从未挂闸；

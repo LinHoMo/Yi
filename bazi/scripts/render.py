@@ -26,6 +26,8 @@ def render(analyze_out: dict) -> str:
     for k in ("year", "month", "day", "hour"):
         p = pillars.get(k) or {}
         lines.append(f"| {k} | {p.get('ganzhi') or '—'} | {p.get('nayin') or '—'} |")
+    lines += ["", "本报告为象征推演与方向参考，非现实预测；"
+              "医疗、法律、投资等重大决策请以专业意见为准。"]
     return "\n".join(lines) + "\n"
 
 

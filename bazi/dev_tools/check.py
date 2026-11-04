@@ -826,6 +826,8 @@ def main() -> int:
             print("× 本次未取到任何对齐分，拒绝登记基线")
             return 1
 
+    if args.fast:
+        print("注意：本次为 --fast，[7] 对齐分下限未生效；此结论不代表合入门槛。")
     print("八字科质量门通过。")
     print("分数含义：与古籍案例要点的一致性，不代表现实预测命中率（SKILL.md 铁律三）。")
     return 0

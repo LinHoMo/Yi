@@ -16,6 +16,26 @@
 > 无插件自身代码改动）、281→**1.0.3**（随包引擎同步六爻 281 批占差事词典+WS003
 > 校勘）。
 
+## 2026-11-04 第五百一十四批（dsh-plugin·并批）：**README 精简与宿主侧口径**
+
+- `README.md` 312 → 84 行：删体积实测快照表、过期项数与历史踩坑叙事，
+  三工具表改四工具，构建命令改指 `plugins/scripts/build.mjs`，保留口径边界声明。
+- 本卷补 497／508 批宿主侧登记；产物同源由共享层 `selftest.mjs` [1.6] 守。
+- `npm --prefix dsh-plugin run check` rc=0。主登记见六爻 CHANGELOG 514 批。
+
+## 2026-11-04 第五百零八批（dsh-plugin，补登记）：随包引擎白名单补收六爻 `engine/`
+
+- 六爻 `engine/` 升格到学科根后，`plugins/scripts/build.mjs` 的
+  `RUNTIME_INCLUDE.liuyao` 补收 `engine`；漏收时包能装、`yi_liuyao` 一调用即 ImportError。
+- 宿主侧只改构建产物，四工具冻结面与读数不变。原登记在 `plugins/CHANGELOG.md`，
+  此处按 §六.2 补宿主侧一笔。
+
+## 2026-11-02 第四百九十七批（dsh-plugin，补登记）：宿主收敛至 DSH 单宿主
+
+- claude/codex/gemini/yan 四家适配器与 `publish.mjs` git 发行树删除；
+  `build.mjs`／`selftest.mjs`／CI 矩阵／各 README 一并改为单宿主口径。
+- 本卷此前停登记，按 §六.2 补记；此后 `dsh-plugin/` 是唯一宿主包。
+
 ## 2026-10-29 第三百四十一批（全仓文档收口·续）：README 删除已修踩坑清单
 
 - `README.md` 的「开发时踩到的坑」9 行表（全部已修）从正文删除，逐条历史在本卷 CHANGELOG；

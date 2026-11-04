@@ -1,33 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""象层：卦爻象素材的结构化出口（第三百六十二批）。
+"""象层：卦爻象素材的唯一装配点（category/ti_yong/guaci/yaoci/hu_gua/spirit/fangwei/class_image）。
 
-本模块是「象分析」这条能力线的**唯一装配点**——把散落在盘面各处、
-此前从未进入交付面的象素材，收成一处带出处的结构化块：
-
-    category   事类 → 象类别（career/health/relationship/travel/loss/general）
-    ti_yong    体用（下卦为体、上卦为用）与五行生克
-    guaci      本卦/变卦卦辞
-    yaoci      动爻爻辞（并附世爻爻辞）
-    hu_gua     互体（京房：二三四爻为下互、三四五爻为上互）
-    spirit     世/应/用神/动爻的六神象义
-    fangwei    体用方位
-    class_image 题类专属类象（事业/疾病/姻亲/出行/失物……）
-
-三条纪律（CONTRACT §五-bis，违反即门红）：
-  1. 象层**只呈现素材**——不做吉凶判定、不写 verdict、不进 WEIGHTS、
-     不参与任何评分。象与断分流，象不许倒灌断。
-  2. 每个象目必须带 `basis`（出处）；无出处的象目不得产出。
-  3. 失败即整块不产（graceful degradation），绝不塞空壳冒充覆盖。
-
-素材来源全部外置（AGENTS §三：文案进 data/*.json，代码只留算法）：
-  类别映射与 basis 登记 → data/rules/xiang_layer.json
-  八卦万物类象/方位/复合卦名 → data/trigram_symbolism.json
-  六神属性 → data/classical_patterns_data.json#six_spirit_properties
-  卦辞爻辞 → kernel/yishu_core/hexagram_texts.py（唯一真值源）
+三条纪律（CONTRACT §五-bis）：只呈现素材不做吉凶判定；每个象目带 `basis`；
+规则表缺失即抛错，绝不塞空壳冒充覆盖。素材外置在 data/rules/domain/xiang_layer.json。
 """
-
-# 控制台编码守卫：须在 import sys 之后——早于 sys 导入时 NameError 会被 except 咽掉、静默失效
 import sys
 
 try:
@@ -41,7 +18,7 @@ from pathlib import Path  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from kernel_path import ensure_kernel_on_path  # noqa: E402
+from kernel_path import ensure_kernel_on_path, repo_root  # noqa: E402
 
 ensure_kernel_on_path(__file__)
 
@@ -53,23 +30,25 @@ from trigram_symbolism import (  # noqa: E402
     interpret_trigram_combination,
 )
 
-_XIANG_RULES_PATH = Path(__file__).resolve().parents[1] / "data" / "rules" / "domain" / "xiang_layer.json"
+_XIANG_RULES_PATH = repo_root(__file__) / "data" / "rules" / "domain" / "xiang_layer.json"
 
 _VALID_CATEGORIES = ("general", "career", "health", "relationship", "travel", "loss")
 
 
 def _load_rules() -> dict:
-    try:
-        return json.loads(_XIANG_RULES_PATH.read_text(encoding="utf-8"))
-    except OSError:
-        return {}
+    data = json.loads(_XIANG_RULES_PATH.read_text(encoding="utf-8"))
+    missing = [k for k in ("basis", "category_by_class", "render")
+               if not isinstance(data.get(k), dict) or not data[k]]
+    if missing:
+        raise RuntimeError(f"{_XIANG_RULES_PATH.name} 缺表或表为空：{', '.join(missing)}")
+    return data
 
 
 _RULES = _load_rules()
-_BASIS = _RULES.get("basis") or {}
-_CATEGORY_BY_CLASS = _RULES.get("category_by_class") or {}
+_BASIS = _RULES["basis"]
+_CATEGORY_BY_CLASS = _RULES["category_by_class"]
 _CATEGORY_KEYWORDS = _RULES.get("category_fallback_keywords") or {}
-_RENDER = _RULES.get("render") or {}
+_RENDER = _RULES["render"]
 
 
 # =============================================================================

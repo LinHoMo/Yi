@@ -1,16 +1,9 @@
-# 质量门 CI（第一百八十四批·E1；第二百七十七批增 plugin-gates job）
-# 设计要点：
-# - fresh checkout 本身就是「干净树」：gitignored 生成物（scratch/、eval_*.json、
-#   data/feedback/、logs/）在 CI 上不存在——两科门禁须靠门内自足夹具跑通
-#   （liuyao 第一百七十六批、bazi 第一百八十四批的修复路径）。
-# - windows-latest：本项目「cp936 行为面」编码红线（[20]/[24]）的开发与验证环境
-#   就是 Windows 控制台；在 Linux runner 上这些门测不到它们的原始靶。
-# - 本地验证状态（如实）：git worktree 全新检出实跑两科 check.py rc=0
-#   （Python 3.14.7 / Windows）。GitHub runner 结果以首次运行定夺；若与本地
-#   结论不一致，按 §六.3 以实跑读数更正本文件与 CHANGELOG，不反向「调 CI 凑绿」。
-# - 277 批：插件三连门（build→selftest→verify-in-dsh）补进 CI。ubuntu 侧是
-#   src/python.mjs 双平台解析的**首次实测**——runner 上无 DSH 自带运行时、
-#   无 DSH_PYTHON，只能落到 PATH 的 python/python3；红则修插件，不跳过不豁免。
+# 质量门 CI（184 批建；277 批补 plugin-gates）。
+# - fresh checkout 即干净树：gitignored 生成物在 CI 上不存在，两科门禁须靠门内自足夹具跑通。
+# - windows-latest 是 cp936 编码红线（[20]/[24]）的验证环境；Linux 侧测不到该靶。
+# - 插件三连：build → selftest（含 [1.6] 产物全量同源）→ verify-in-dsh；
+#   ubuntu 侧无 DSH 运行时，落到 PATH 的 python/python3，红则修插件、不跳过不豁免。
+# - 本地与 runner 读数不一致时按 §六.3 以实跑读数更正文档，不调 CI 凑绿。
 name: quality-gates
 on:
   push:
@@ -32,13 +25,10 @@ jobs:
           python devkit/root/check_root_docs.py --selftest
           python devkit/root/check_docs_index.py
           python devkit/root/check_docs_index.py --selftest
-          # 批号门本体自带 normal + selftest（--selftest 会一并跑真实仓）
           python devkit/root/check_batch_num.py --selftest
-          # 治理图：--selftest 内含真实仓 strict 扫描（361 批起真实 rc 会外传）＋负例自证
           python liuyao/dev_tools/governance_map.py --selftest
-  # 361 批：对外声明 Python 3.10+，但核心门此前只跑 3.14，
-  # 最低版本回归无处显形。本 job 用声明的最低版跑两科冒烟＋八字回归＋六神单测；
-  # 六爻古籍回归当前 17/19（reg_02/reg_09 在册待裁）不在此层拦，避免把待裁项当版本不兼容。
+  # 对外声明 Python 3.10+：本 job 在最低版跑两科冒烟、两科古籍回归与单测。
+  # 六爻回归实跑 19/19、思维链 12/12，旧的「17/19 待裁」排除理由已失效。
   min-python-smoke:
     runs-on: windows-latest
     timeout-minutes: 15
@@ -53,6 +43,8 @@ jobs:
           python bazi/tests/regression_test.py
           python liuyao/tests/smoke_test.py
           python liuyao/tests/six_god_wang_shuai_test.py
+          python liuyao/tests/regression_test.py
+          python liuyao/tests/thinking_chain_tests.py
   gates:
     runs-on: windows-latest
     timeout-minutes: 45
@@ -65,8 +57,7 @@ jobs:
         run: python bazi/dev_tools/check.py
       - name: liuyao quality gate (fresh tree)
         run: python liuyao/dev_tools/check.py
-  # 344 批：full 账台进 CI。此前只有本地 quick（跳过 6 项）被当「全账」，
-  # 实际 full 的 stale 期望（baseline/pattern）长期无人拦；本 job 跑默认 full。
+  # full 账台（quick 会跳过 stale 期望，不作数）
   ledger:
     runs-on: windows-latest
     timeout-minutes: 30
@@ -100,7 +91,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"   # 与 DSH 自带运行时同代（3.12.14）
+          python-version: "3.12"
       - uses: actions/setup-node@v4
         with:
           node-version: "22"

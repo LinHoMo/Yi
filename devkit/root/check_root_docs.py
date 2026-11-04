@@ -1,27 +1,14 @@
 # -*- coding: utf-8 -*-
-"""根级文档活引用门（A0-2·第三百三十一批）：仓库根 `*.md` 里的路径必须指向真实文件。
+"""根级文档活引用门：仓库根 `*.md` 里的路径必须指向真实文件。
 
-为什么需要它（A2 诊断·实测）：两科 `check_doc_refs.py` 都只扫**学科根**
-（`DISC.rglob("*")`），根级八份治理文档不在任何门的扫描域里；而最权威的四份
-（`AGENTS.md`／`CONTRACT.md`／`README.md`／`GOVERNANCE.md`）恰恰是最没人校对路径的四份。
-实测 `AGENTS.md` 三处、`CONTRACT.md` 一处写着 `docs/CHANGELOG.md`，而根**没有** `docs/`。
+两科 `check_doc_refs.py` 只扫学科根，根级治理文档不在其扫描域。两条硬判据：
+  1. 只扫 `ROOT.glob("*.md")`，**所有**根级文档都扫，含归档留证件；
+  2. 禁用 basename 兜底——`docs/CHANGELOG.md` 不认学科级同名文件，
+     除非同一行点名学科或本文件是 `DOCS.md`。
 
-本门与两科门的**根本差异**（不许为"减少误报"改回去）：
+豁免：负例文件名／历史散文／运行时产物目录／散文速记（见下方常量）。
 
-  1. 扫描域是 `ROOT.glob("*.md")`，只扫仓库根，不走 `DISC.rglob`；
-  2. **禁用 basename 兜底**：`docs/CHANGELOG.md` 必须解析到真实路径，同名文件不认——
-     旧门的 `any(p.name == name ...)` 兜底会让它靠 `liuyao/docs/CHANGELOG.md` 蒙混过关，
-     分不清"根级"与"学科级"，等于没有判定力。
-
-豁免口径照抄 `dev_tools/check_doc_refs.py`（不自创）：
-  · 负例文件名 `__` 双下划线前缀；`...`／`<`／`…`／URL；
-  · 历史散文（`HISTORY`：曾/已删除/不存在/负例/selftest/…）；
-  · 运行时产物目录（`outputs/` `scratch/` `logs/` `devkit/handoff/` `devkit/pending/`）；
-  · 散文速记（路径段含纯数字，如 `step3/4/5.py`）；
-  · 本门自身文件。
-
-    python devkit/root/check_root_docs.py
-    python devkit/root/check_root_docs.py --selftest
+    python devkit/root/check_root_docs.py [--selftest]
 """
 from __future__ import annotations
 
@@ -50,10 +37,7 @@ NEGATIVE = ("__does_not_exist__", "definitely_missing", "nope.py", "_selftest_",
             "路径/文件名", "_patch_xxx")
 SHORTHAND = re.compile(r"(^|/)\d+(?=/|\.|$)")
 SUFFIXES = (".md", ".py", ".json", ".txt", ".css", ".html", ".yml", ".yaml")
-# 规划/派发件：正文写的是**未来态路径**（卡还没做，文件当然不在盘上）与模板占位。
-# 它们的价值是排期而不是导航，故不纳入活引用判定；完成后由 A6-INT 在卡上标注实态。
-PLAN_DOCS = ("ARCHITECTURE-PLAN.md", "DISPATCH.md")
-# 学科内部相对路径：根级治理文档常用 `scripts/chart.py` 这种写法指"各科的 scripts/"。
+# 学科内部相对路径：根级治理文档常用 `scripts/chart.py` 指"各科的 scripts/"。
 # 只按这两科解析，不做同名文件兜底；`docs/` 另按"同行是否点名学科"判（见 resolves）。
 DISC_SCOPED = ("scripts/", "data/", "references/", "dev_tools/", "core/", "tests/", "assets/")
 DISC_WORD = re.compile(r"liuyao|bazi|六爻|八字")
@@ -99,8 +83,6 @@ def check(root: Path = ROOT) -> tuple[list[str], int]:
     if not files:
         return ["仓库根扫到 0 份 .md——先查路径解析，不能当通过"], 0
     for p in files:
-        if p.name in PLAN_DOCS:
-            continue
         try:
             text = p.read_text(encoding="utf-8")
         except Exception:
@@ -168,6 +150,12 @@ def selftest() -> int:
         problems3, _ = check(root)
         if any("scripts/chart.py" in p for p in problems3):
             fails.append("学科内部相对路径（scripts/chart.py）被误判")
+        # 归档留证件也必须扫：不能靠文件名整份跳过（PLAN_DOCS 复活即判红）
+        (root / "ARCHITECTURE-PLAN.md").write_text(
+            "见 `docs/_probe_plan_dead.md`。\n", encoding="utf-8")
+        problems5, _ = check(root)
+        if not any("ARCHITECTURE-PLAN.md:1" in p for p in problems5):
+            fails.append("归档留证文档被整份跳过")
         # 0 结果防线：没有根级 md 时必须判红，不能"扫了 0 份 = 没问题"
         empty = root / "empty"
         empty.mkdir()
@@ -178,7 +166,7 @@ def selftest() -> int:
         for f in fails:
             print(f"  × selftest：{f}")
         return 1
-    print("  √ selftest：根级死链必抓／学科同名文件不兜底／真路径不误伤／0 份文档判红")
+    print("  √ selftest：根级死链必抓／学科同名文件不兜底／真路径不误伤／归档件不跳过／0 份文档判红")
     return 0
 
 

@@ -1,35 +1,28 @@
 # -*- coding: utf-8 -*-
-"""分层契约门：四段输出键白名单 + 层间禁边表（CONTRACT.md §三／§四）。
+"""分层契约门（CONTRACT.md §三／§四）：键白名单 + 层间禁边 + 文档摘要同步。
 
-为什么需要它（第三百一十批体检）：
-  段自述与实跑不符的现象在本科真实发生过：`chart` 段自称"纯机械排盘"，却在
-  `trigram_interpretation` 里吐「体生用有所付出，待时收功」这类成句评价（六爻侧实见）；
-  `analyze` 自称"无解读成分"却吐 `verdict="大吉"`。原有的 `[2.2] chart 纯净门` 只查
-  「大凶/凶/吉/宜/忌」五个字，且只跑一个夹具——**判据是措辞黑名单，不是 schema 白名单**，
-  所以门一直是绿的。本门把判据换成键面。
+  · 键面：实跑全部夹具，chart/analyze 顶层键与嵌套子键须落在各科 JSON 白名单内；
+    多一个键即红（越界新增），少一个必填键即红（静默丢字段）。
+  · 禁边：AST 扫 scripts/、core/、engine/ 的 import 图；在册欠账出现不红、
+    欠账消失而条目未删判红（AGENTS.md §六.2）。
+  · 文档同步：CONTRACT.md §四 的键数表须与两科 JSON 逐项相符，防摘要成假事实。
 
-本门换判据：
-  · 键面：实跑四个夹具，chart / analyze 的顶层键与 `trigram_interpretation` /
-    `conclusion` 的子键必须落在 `data/rules/layer_contract.json` 的白名单内；
-    多一个键即红（越界新增），必填键少一个即红（静默丢字段）。
-  · 禁边：AST 扫 `scripts/` 与 `core/` 的 import 图，按契约禁边表判。
-    语义是「只准减不准增」：在册欠账出现＝记一笔不红；在册欠账消失＝条目没删，判红
-    （防台账变假事实，AGENTS.md §六.2）。
+真值源是各科 `layer_contract.json`；改契约 = 改 JSON + CONTRACT.md + CHANGELOG。
 
-    python dev_tools/check_layer_contract.py
-    python dev_tools/check_layer_contract.py --selftest   # 负例：证明本器抓得住
-
-真值源是 `data/rules/layer_contract.json`，不是本文件的常量——改契约只改 JSON + CONTRACT.md。
+    python dev_tools/check_layer_contract.py [--selftest]
 """
 from __future__ import annotations
 
 import argparse
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
 
 DISC = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
+DOC_PATH = ROOT / "CONTRACT.md"
 sys.path.insert(0, str(DISC / "core"))
 from yishu_core.runtime import force_utf8_stdio, utf8_subprocess_env  # noqa: E402
 from yishu_core.gate_kit import (  # noqa: E402
@@ -196,6 +189,53 @@ def validate_contract_envelope(data: dict, schema_def: dict) -> list[str]:
     return problems
 
 
+DOC_ROW = re.compile(r"^\|\s*(六爻|八字)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|(.+)$", re.M)
+DOC_NESTED = re.compile(r"`([a-z_]+)`\s*(\d+)\s*键")
+DISC_BY_LABEL = {"六爻": "liuyao", "八字": "bazi"}
+
+
+def load_contracts(root: Path = ROOT) -> dict:
+    """按在盘位置读两科契约（六爻有 domain/、八字扁平）。"""
+    out = {}
+    for name in ("liuyao", "bazi"):
+        domain = root / name / "data" / "rules" / "domain" / "layer_contract.json"
+        path = domain if domain.is_file() else root / name / "data" / "rules" / "layer_contract.json"
+        out[name] = json.loads(path.read_text(encoding="utf-8"))
+    return out
+
+
+def doc_sync_problems(text: str, contracts: dict) -> list[str]:
+    """CONTRACT.md §四 摘要 vs 两科 JSON；缺段、0 行、漏登记均判红。"""
+    if "## §四" not in text:
+        return ["CONTRACT.md 缺 §四 输出键白名单"]
+    body = text.split("## §四", 1)[1].split("\n## ", 1)[0]
+    rows = DOC_ROW.findall(body)
+    if len(rows) != 2:
+        return [f"§四 应有六爻/八字两行键数表，实得 {len(rows)} 行（0 行不许当通过）"]
+    problems = []
+    for label, chart_n, ana_n, rest in rows:
+        stages = contracts[DISC_BY_LABEL[label]]["stages"]
+        for kind, got in (("chart", int(chart_n)), ("analyze", int(ana_n))):
+            expected = len(stages[kind]["allowed"])
+            if got != expected:
+                problems.append(f"§四 {label} {kind} 键数 {got} ≠ JSON {expected}")
+        nested = {k: len(v["allowed"]) for k, v in stages["analyze"].get("nested", {}).items()}
+        declared = {k: int(v) for k, v in DOC_NESTED.findall(rest)}
+        for name, n in declared.items():
+            if name not in nested or nested[name] != n:
+                problems.append(f"§四 {label} 嵌套表 `{name}` {n} 键 ≠ JSON {nested.get(name, '缺表')}")
+        for name in nested:
+            if name not in declared:
+                problems.append(f"§四 {label} 漏登记嵌套表 `{name}`（JSON {nested[name]} 键）")
+    return problems
+
+
+def doc_problems_now() -> list[str]:
+    if not DOC_PATH.is_file():
+        return [f"缺根级契约文档：{DOC_PATH}"]
+    return doc_sync_problems(DOC_PATH.read_text(encoding="utf-8"), load_contracts())
+
+
 def selftest() -> list[str]:
     """负例自证（AGENTS.md §四.8）：先证明判据抓得住，再谈它是不是绿的。"""
     problems: list[str] = []
@@ -255,6 +295,16 @@ def selftest() -> list[str]:
             broken["edges"]["forbidden"][0]["why"] = ""
             if not validate_contract_envelope(broken, schema_def):
                 problems.append("信封 schema 自证失败：禁边 why 为空没被抓到")
+
+    if doc_problems_now():
+        problems.append("CONTRACT.md §四 与两科 JSON 不同步")
+    if not doc_sync_problems("", load_contracts()):
+        problems.append("文档同步自证失败：缺 §四 没被抓到")
+    if DOC_PATH.is_file():
+        tampered, n = re.subn(r"(\|\s*六爻\s*\|\s*)\d+", r"\g<1>999",
+                              DOC_PATH.read_text(encoding="utf-8"), count=1)
+        if n != 1 or not doc_sync_problems(tampered, load_contracts()):
+            problems.append("文档同步自证失败：键数被改没被抓到")
     return problems
 
 
@@ -287,8 +337,15 @@ def main() -> int:
         for p in own:
             print(f"  × {p}")
         if not own:
-            print("  √ selftest：键面（多键/缺键/嵌套/类型/夹具缺失）＋禁边（在册/已还/新增）＋信封 schema 负例全部抓到")
+            print("  √ selftest：键面／禁边／信封 schema／文档摘要同步负例全部抓到")
         problems.extend(own)
+
+    doc_problems = doc_problems_now()
+    for p in doc_problems:
+        print(f"  × {p}")
+    problems.extend(doc_problems)
+    if not doc_problems:
+        print("  √ CONTRACT.md §四 摘要与两科契约 JSON 逐项同步")
 
     st_problems, st_notes = stage_problems(schema)
     ed_problems, ed_notes = edge_problems(schema)

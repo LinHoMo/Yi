@@ -219,7 +219,7 @@
    "tier": "blocking",
    "guards": "分层契约：四段键白名单＋禁边表（[32]；312 批补登记）",
    "run_by_check_py": true,
-   "doc": "分层契约门：四段输出键白名单 + 层间禁边表（CONTRACT.md §三／§四）。"
+   "doc": "分层契约门（CONTRACT.md §三／§四）：键白名单 + 层间禁边 + 文档摘要同步。"
   },
   {
    "script": "check_ontology.py",

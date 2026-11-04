@@ -94,12 +94,16 @@ core/yishu_core ←（唯一允许方向）— engine/**   推演：_core.py 装
 
 ## §四 输出键白名单
 
-真值源是 `<科>/data/rules/domain/layer_contract.json`（两科各一份，**根目录没有**此文件），本表只是摘要（键数随批更新，**以 JSON 为准**）：
+真值源是各科 `layer_contract.json`：六爻在 `liuyao/data/rules/domain/`，八字在
+`bazi/data/rules/`（**无 `domain/` 子目录**），根目录没有此文件。本表是摘要，
+键数由 `check_layer_contract.py` 的文档同步门逐项核对（改 JSON 必须同批改本表，§六.3）：
 
 | 科 | chart 顶层键 | analyze 顶层键 | 嵌套白名单 |
 |---|---|---|---|
-| 六爻 | 7 | 14 | `trigram_interpretation` 22 键（analyze 段，350 批迁入）／`conclusion` 12 键 |
-| 八字 | 9 | 28 | `conclusion` 27 键（另有 `dayun_cheng_bai` 分列读数层，不计入评判键） |
+| 六爻 | 7 | 15 | `trigram_interpretation` 35 键／`conclusion` 12 键／`xiang` 10 键／`thinking_chain` 7 键 |
+| 八字 | 9 | 28 | `conclusion` 27 键／`xiang` 4 键（另有 `dayun_cheng_bai` 分列读数层，不计入评判键） |
+
+现值以 `python <科>/dev_tools/check_layer_contract.py` 的实跑输出为准。
 
 **信封 schema（353 批）**：跨科共用的顶级结构由 `devkit/layer_contract.schema.json`
 （JSON Schema 2020-12）约束；`check_layer_contract.py` 的
