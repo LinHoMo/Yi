@@ -142,7 +142,7 @@ _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
-from kernel_path import ensure_kernel_on_path as _ensure_kernel
+from kernel_path import ensure_kernel_on_path as _ensure_kernel, load_data_json
 
 _ensure_kernel(__file__)
 
@@ -162,12 +162,10 @@ from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
 from util import safe_get  # noqa: E402  通用工具（原 narrative_utils）
 from chain_verdicts import STEP5_YINGQI as YINGQI_TXT  # noqa: E402  断语装载（原 narrative_utils）
 
-import json as _json  # noqa: E402
-from pathlib import Path as _P  # noqa: E402
 from datetime import datetime  # noqa: E402
 import re  # noqa: E402
 
-_YD = _json.loads((_P(__file__).resolve().parents[1] / 'data' / 'narrative_templates.json').read_text(encoding='utf-8')).get('yingqi_descriptions', {})
+_YD = load_data_json("narrative_templates.json", required=("yingqi_descriptions",))["yingqi_descriptions"]
 
 # 原闭包内本地常量；提升为模块常量供 _push / _rank 复用。
 # 地支序列唯一真值源在 core（此前是第二份手写串）

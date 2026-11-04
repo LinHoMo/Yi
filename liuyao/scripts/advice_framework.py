@@ -2,24 +2,14 @@
 """
 趋避建议 — 从一开始就说人话，分类按问题关键词，不靠默认「事业」。
 
-断语文案在 data/rules/advice_rules.json，此处只加载与组装（SKILL.md）。
+断语文案在 data/rules/domain/advice_rules.json，此处只加载与组装。
 """
 from __future__ import annotations
 
-import json
-from pathlib import Path
+from kernel_path import load_data_json
 
-_RULES_PATH = Path(__file__).resolve().parents[1] / "data" / "rules" / "domain" / "advice_rules.json"
-
-
-def _load() -> dict:
-    try:
-        return json.loads(_RULES_PATH.read_text(encoding="utf-8"))
-    except OSError as exc:
-        raise RuntimeError(f"缺建议库 {_RULES_PATH}：{exc}") from exc
-
-
-_DATA = _load()
+_DATA = load_data_json("rules", "domain", "advice_rules.json",
+                       required=("advice_rules", "category_keywords"))
 ADVICE_RULES = _DATA["advice_rules"]
 _CATEGORY_KEYWORDS = _DATA["category_keywords"]
 _TIMING_EXTRA = _DATA.get("timing_extra") or {}

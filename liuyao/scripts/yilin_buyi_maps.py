@@ -18,8 +18,11 @@
 
 from __future__ import annotations
 
-import json
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from kernel_path import load_data_json  # noqa: E402
 
 __all__ = [
     "yilin_maps",
@@ -36,14 +39,11 @@ _MAPS: dict | None = None
 
 
 def yilin_maps() -> dict:
-    """懒加载 data/yilin_buyi_maps.json；缺文件返回 {}（不硬编一份）。"""
+    """懒加载 data/yilin_buyi_maps.json；缺表即抛错，绝不静默返回空表。"""
     global _MAPS
     if _MAPS is None:
-        p = Path(__file__).resolve().parents[1] / "data" / "yilin_buyi_maps.json"
-        try:
-            _MAPS = json.loads(p.read_text(encoding="utf-8"))
-        except OSError:
-            _MAPS = {}
+        _MAPS = load_data_json("yilin_buyi_maps.json",
+                               required=("家宅三层分宫", "间爻四角色"))
     return _MAPS
 
 

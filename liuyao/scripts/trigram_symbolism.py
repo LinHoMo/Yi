@@ -8,7 +8,6 @@
 import labels_loader as _labels  # noqa: E402
 _TRIG = _labels.load("trigram")
 _TRIGA = _labels.load("advice")
-import json
 import sys
 
 try:
@@ -21,25 +20,15 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from kernel_path import ensure_kernel_on_path as _ensure_kernel, repo_root as _repo_root  # noqa: E402
+from kernel_path import ensure_kernel_on_path as _ensure_kernel, load_data_json  # noqa: E402
 
 _ensure_kernel(__file__)
 
 from yishu_core.symbols import KE_CYCLE, SHENG_CYCLE  # noqa: E402
 
-_TRIGRAM_DATA_PATH = _repo_root(__file__) / "data" / "trigram_symbolism.json"
-
-
-def _load_trigram_data() -> dict:
-    data = json.loads(_TRIGRAM_DATA_PATH.read_text(encoding="utf-8"))
-    missing = [k for k in ("trigram_symbolism", "trigram_directions", "hexagram_names")
-               if not isinstance(data.get(k), dict) or not data[k]]
-    if missing:
-        raise RuntimeError(f"{_TRIGRAM_DATA_PATH.name} 缺表或表为空：{', '.join(missing)}")
-    return data
-
-
-_TRIGRAM_DATA = _load_trigram_data()
+_TRIGRAM_DATA = load_data_json(
+    "trigram_symbolism.json",
+    required=("trigram_symbolism", "trigram_directions", "hexagram_names"))
 
 TRIGRAM_SYMBOLISM = _TRIGRAM_DATA["trigram_symbolism"]
 TRIGRAM_DIRECTIONS = _TRIGRAM_DATA["trigram_directions"]

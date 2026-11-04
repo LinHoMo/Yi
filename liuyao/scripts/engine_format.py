@@ -2,8 +2,6 @@
 """六爻引擎输出格式化：文本输出与报告的拼装编排（报告各段落排版在 engine_format_report），另有分析提示生成与深度裁剪。聚合入口见 engine.py。"""
 
 from __future__ import annotations
-import json
-from pathlib import Path as _P
 
 import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
 
@@ -12,18 +10,9 @@ _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
-from kernel_path import ensure_kernel_on_path as _ensure_kernel
+from kernel_path import ensure_kernel_on_path as _ensure_kernel, load_data_json
 
 _ensure_kernel(__file__)
-
-
-
-
-import json
-
-
-
-
 
 from datetime import datetime
 
@@ -40,7 +29,7 @@ from engine_format_report import (  # noqa: E402  报告各段落排版（本文
 )
 
 
-_FL = json.loads((_P(__file__).resolve().parents[1] / 'data' / 'narrative_templates.json').read_text(encoding='utf-8')).get('engine_format_labels', {})
+_FL = load_data_json("narrative_templates.json", required=("engine_format_labels",))["engine_format_labels"]
 
 
 def generate_analysis_hints(question):

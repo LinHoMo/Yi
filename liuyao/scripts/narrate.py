@@ -1,27 +1,11 @@
 # -*- coding: utf-8 -*-
-"""六爻纳甲·正文叙述（narrate 段）—— 唯一交付正文，师傅口吻（CONTRACT §一）。
+"""六爻纳甲·正文叙述（narrate 段）：唯一交付正文（CONTRACT §一）。
 
-薄适配：读取 analyze JSON 中的排盘、思维链与高级分析数据，在
-`format_reading_output` 的字段报表基础上做"翻译层"处理。
-
-相较于直接透传字段报表，本层额外做四件事（均属适配层职责，不触碰引擎推演逻辑）：
-1. **过滤内部量化暴露**：删除评分明细、综合评分、置信度百分比。
-   这些是引擎内部的推演记账，对齐分≠预测准确率（SKILL.md），
-   对外暴露会把技术口径错念成"预测能力指标"。（口径诚实）
-2. **六神临用融入正文**：`spirit_adjustment_reasons` 已是人话化文本
-   （如"青龙临用，阳日力增，吉上添吉"），提取后嵌入叙述段落，
-   不再只活在评分明细的括号里。
-3. **持世从附录挪入正文**：持世是判断的核心辅助，应在正文叙事中
-   自然呈现，不是末尾的补丁。若 `use_god_basis` 属推断/消歧/兜底
-   类来源，如实标注"无古籍逐条出处"，不伪装成古籍定论。
-4. **凶象措辞自然化**：象判边界声明以自然段落融入末尾，
-   去"附录"感，去读起来像免责声明模板的生硬感。
-
-正文每个象数判断都出自 analyze 输出，不新增结论。
+只把 analyze JSON 翻译成人话：过滤内部量化暴露、融入六神与持世、自然化凶象措辞；
+每个象数判断都出自 analyze 输出，不新增结论。
 """
 from __future__ import annotations
 import json
-from pathlib import Path as _P
 
 import argparse
 import re
@@ -29,11 +13,12 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from kernel_path import load_data_json
 
 # format_reading_output 已弃用：正文主体改由 human_narrative.build_human_narrative 生成
 
 
-_SHELL = json.loads((_P(__file__).resolve().parents[1] / 'data' / 'narrative_templates.json').read_text(encoding='utf-8')).get('narrate_shell', {})
+_SHELL = load_data_json("narrative_templates.json", required=("narrate_shell",))["narrate_shell"]
 _BOUNDARY_TEXT = _SHELL.get("disclaimer") or ""
 
 

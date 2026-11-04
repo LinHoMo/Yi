@@ -10,7 +10,7 @@ _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
-from kernel_path import ensure_kernel_on_path as _ensure_kernel
+from kernel_path import ensure_kernel_on_path as _ensure_kernel, data_path
 
 _ensure_kernel(__file__)
 
@@ -113,17 +113,14 @@ HEXAGRAM_LIUCHONG = ["乾", "坤", "坎", "离", "艮", "震", "巽", "兑",
                      "遁", "同人", "履", "小畜"]
 
 
-_USE_GOD_DICT_PATH = Path(__file__).resolve().parents[1] / "data" / "rules" / "domain" / "question_use_gods.json"
+_USE_GOD_DICT_PATH = data_path("rules", "domain", "question_use_gods.json")
 
 
 def _load_question_use_gods() -> tuple[dict, dict, dict]:
-    """装载问题词典 data/rules/question_use_gods.json → (词典, 按键依据, 覆盖层引文)。
+    """装载问题词典 → (词典, 按键依据, 覆盖层引文)。
 
-    词典本体已按事项族结构化进 data/（dev_tools/build_question_use_gods.py 生成，
-    每族带 label + 引文/推断依据）；这里只做装载与展平。装载失败直接抛错、不降级：
-    词典缺了打分层会把一切静默判成世爻，那是"错得安静"——按铁律一宁可整个排盘
-    报异常。entries 顺序即 JSON 顺序（同分 tie-break 依赖插入序），装载保持原序，
-    与搬移前的字面量零漂移（键序与取值经快照对照 + 金标准 288 例核验）。
+    缺表时取用神会静默退化成一律世爻，故装载失败直接抛错、不降级；
+    entries 顺序即 JSON 顺序（同分 tie-break 依赖插入序），保持原序。
     """
     try:
         data = json.loads(_USE_GOD_DICT_PATH.read_text(encoding="utf-8"))
@@ -154,14 +151,13 @@ _QUESTION_USE_GOD_MAP, _QUESTION_USE_GOD_BASIS, _USE_GOD_LAYER_CITATIONS = _load
 # 分岔，改写措辞/换简繁即静默变向。现收敛为单一结构枚举 question_class，由
 # step2 单点产出；关键词族与取类优先级全部在 data/rules/question_classes.json
 # （§三：判类关键词不写进 .py）。
-_QUESTION_CLASSES_PATH = Path(__file__).resolve().parents[1] / "data" / "rules" / "domain" / "question_classes.json"
+_QUESTION_CLASSES_PATH = data_path("rules", "domain", "question_classes.json")
 
 
 def _load_question_classes() -> tuple[list, dict, str]:
     """装载问事归类映射表 → (优先级, {类目: 关键词表}, 未命中默认值)。
 
-    装载失败直接抛错不降级——判类失效会让 step5/timing 的门控静默全灭，
-    与问题词典同口径（见 _load_question_use_gods 注记）。
+    判类失效会让 step5/timing 门控静默全灭，故装载失败直接抛错。
     """
     try:
         data = json.loads(_QUESTION_CLASSES_PATH.read_text(encoding="utf-8"))

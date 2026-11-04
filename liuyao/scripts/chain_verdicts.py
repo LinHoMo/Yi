@@ -1,14 +1,7 @@
 # -*- coding: utf-8 -*-
-"""断语/引文库装载器（chain_verdicts）——data/verdicts.json 与 data/rules/verdict_texts.json 的唯一取用面。
+"""断语/引文库装载器：data/verdicts.json 与 data/rules/verdict_texts.json 的唯一取用面。
 
-第一百六十七批起 narrative_rules 的 docstring 就写着「依赖单向：narrative_rules →
-chain_verdicts」、narrative_utils 也留有「chain_verdicts 部分」节名——但实现一直落在
-narrative_utils，名实分离。第三百一十一批分层大清账把名实对齐：断语装载与格式化取用
-归本模块；通用机械工具归 util.py；narrative_utils / narrative_rules 两模块撤编
-（CONTRACT §六-6 还账）。
-
-铁律一：本模块只装载数据与格式化取用，不含机械推演、不产结构结论；analyze（规则层
-取断语表）与 narrate（正文装配）都从这里取——它是数据面，不是叙述面。
+只装载数据与格式化取用，不含机械推演、不产结构结论。
 """
 
 from __future__ import annotations
@@ -20,7 +13,7 @@ _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
-from kernel_path import ensure_kernel_on_path as _ensure_kernel
+from kernel_path import ensure_kernel_on_path as _ensure_kernel, data_path
 
 _ensure_kernel(__file__)
 
@@ -33,7 +26,7 @@ from pathlib import Path
 # ══════════════════════════════════════════════════════════════════════════════
 
 # ── 断语/引文库：外置 data/verdicts.json 与 data/rules/verdict_texts.json（SKILL.md），代码只留算法与加载 ──
-_DATA_DIR = Path(__file__).resolve().parents[1] / "data"
+_DATA_DIR = data_path()
 _VERDICTS_PATH = _DATA_DIR / "verdicts.json"
 _VERDICT_TEXTS_PATH = _DATA_DIR / "rules" / "domain" / "verdict_texts.json"
 

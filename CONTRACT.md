@@ -87,10 +87,7 @@ core/yishu_core ←（唯一允许方向）— engine/**   推演：_core.py 装
 | `core/**` | `scripts/**` | 不存在 | 零容忍，任何新增即红 |
 | `chart.py` | `narrate*` / `chain_verdicts` / `advice_framework` | 不存在 | 零容忍（`chain_verdicts` 承接原 `narrative_utils` 的断语面） |
 
-> **349/350 批已还**：原 `engine.py → render` 由 `output.py` 承接；原
-> `engine_chart → trigram_symbolism` 由 analyze 段产卜象解读、CLI 输出层补键。
-> `edges.forbidden` 的 `known` 欠账已归零，余下全是零容忍条目。
-> （349 批注释：CLI 三路输出搬到 `scripts/output.py`，`engine.py` 只调 `output_result`。）
+> `edges.forbidden` 的历史欠账已归零，余下全是零容忍条目。
 
 ## §四 输出键白名单
 

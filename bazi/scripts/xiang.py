@@ -50,10 +50,12 @@ _PILLARS = (("年", "year"), ("月", "month"), ("日", "day"), ("时", "hour"))
 
 
 def _load() -> dict:
-    try:
-        return json.loads(_XIANG_PATH.read_text(encoding="utf-8"))
-    except OSError:
-        return {}
+    data = json.loads(_XIANG_PATH.read_text(encoding="utf-8"))
+    missing = [k for k in ("gongwei", "liugin_by_ten_god", "zangfu_by_element", "basis")
+               if not isinstance(data.get(k), dict) or not data[k]]
+    if missing:
+        raise RuntimeError(f"{_XIANG_PATH.name} 缺表或表为空：{', '.join(missing)}")
+    return data
 
 
 _RULES = _load()

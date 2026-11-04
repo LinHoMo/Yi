@@ -10,11 +10,10 @@ _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
-from kernel_path import ensure_kernel_on_path as _ensure_kernel, repo_root as _repo_root
+from kernel_path import ensure_kernel_on_path as _ensure_kernel, load_data_json
 
 _ensure_kernel(__file__)
 
-import json
 
 import re
 
@@ -28,17 +27,7 @@ except ImportError:
 
 from narrative_assembly import build_reasoning_chain, build_summary  # noqa: E402  355 批 fact builder
 
-_NARRATIVE_TEMPLATES_PATH = _repo_root(__file__) / "data" / "narrative_templates.json"
-
-
-def _load_narrative_templates() -> dict:
-    data = json.loads(_NARRATIVE_TEMPLATES_PATH.read_text(encoding="utf-8"))
-    if not isinstance(data.get("advice_soft"), dict) or not data["advice_soft"]:
-        raise RuntimeError(f"{_NARRATIVE_TEMPLATES_PATH.name} 缺 advice_soft 表")
-    return data
-
-
-_NARRATIVE_TPL = _load_narrative_templates()
+_NARRATIVE_TPL = load_data_json("narrative_templates.json", required=("advice_soft",))
 
 _ADVICE_SOFT = _NARRATIVE_TPL["advice_soft"]
 

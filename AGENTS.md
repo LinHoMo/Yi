@@ -85,9 +85,8 @@ Yi/
 依赖方向单向：`<科>/engine → <科>/scripts(扁平模块) + <科>/rules + <科>/core`；
 `<科>/scripts → <科>/engine + <科>/core`；`<科>/eval → <科>/scripts + <科>/engine + <科>/core`
 （评测层可读 `data/cases`；交付路径不得反向 import `eval/`；门禁侧 `<科>/dev_tools → devkit/shared` 同理）。
-**引擎族各文件只走 `engine/_bootstrap.setup(__file__)` 一处定位**（向上搜 `scripts/kernel_path.py`
-定学科根，再配 本目录／`scripts`／`rules`／学科根 四处 sys.path）——禁止再按 `parents[N]` 硬算层级：
-第五〇七批实踩过一次（`classical_enhancements_fushi` 因此静默读到空表，九宫标签整族消失且门全绿）。
+**引擎族只走 `engine/_bootstrap.setup(__file__)` 定位；数据路径走各科路径真源**
+（六爻 `kernel_path.data_path()`）——禁止按 `parents[N]` 硬算层级（507 批曾因此静默读到空表且门全绿）。
 **两科之间禁止任何相互 import**，也不存在合参层（`synthesis` 已移除且不得复活）。
 两科 `core/` 与 `dev_tools/` 里的共享件都是**生成产物**（316／334 批起）——手改即被
 `[35]`／`[37]` 字节比对判红；改内核改 `kernel/`，改共享门改 `devkit/shared/`，再跑

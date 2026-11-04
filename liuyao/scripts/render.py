@@ -20,33 +20,25 @@ try:  # 实测本 CLI 在 GBK 控制台输出的是 GBK 字节（首字节 `# \x
 except Exception:
     pass
 
-# 内核定位规则只在 kernel_path.py 一份实现（本文件此前只挂了 scripts/，没挂 core/）
 _ks_d = os.path.dirname(os.path.abspath(__file__))
 if _ks_d not in sys.path:
     sys.path.insert(0, _ks_d)
 
-from kernel_path import ensure_kernel_on_path as _ks_ensure  # noqa: E402
+from kernel_path import ensure_kernel_on_path as _ks_ensure, disc_path, load_data_json  # noqa: E402
 
-# `python scripts/render.py xxx.json -f html` 原先直接 ModuleNotFoundError: yishu_core，
-# 而本文件 docstring 自称「报告产物只此一个出口」且含 HTML——md 分支能跑，
-# html 分支只在被别处 import 时才侥幸可用。按仓库同一约定补挂内核。
 _ks_ensure(__file__)
 
 from narrate import narrate  # noqa: E402
 from advice_framework import ensure_section_advice  # noqa: E402  354 批：建议迁呈现层
 
-_CSS_PATH = Path(__file__).resolve().parents[1] / "assets" / "report.css"
-_TPL_PATH = Path(__file__).resolve().parents[1] / "data" / "narrative_templates.json"
+_CSS_PATH = disc_path("assets", "report.css")
 # 章节序号汉字（报告按实际出现的可选节顺延编号）
 _CN = "一二三四五六七八九十"
 
 
 def _grade_note() -> str:
-    """结要里「结论」行的档位注记——措辞归数据层，代码不组句（[1c] 断语外置取证）。"""
-    try:
-        shell = json.loads(_TPL_PATH.read_text(encoding="utf-8")).get("narrate_shell") or {}
-    except (OSError, ValueError):
-        return ""
+    """结要里「结论」行的档位注记（措辞外置，缺表即抛错）。"""
+    shell = load_data_json("narrative_templates.json", required=("narrate_shell",))["narrate_shell"]
     return shell.get("conclusion_grade_note") or ""
 
 

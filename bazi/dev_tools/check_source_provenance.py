@@ -204,6 +204,23 @@ def audit(prov_dir: Path, base: Path) -> tuple[list[str], dict]:
     return problems, stats
 
 
+def coverage_problems(stats: dict) -> list[str]:
+    """防整族退化：可选字段集体消失时，sha/bytes/chars 全绿也不许放行。
+
+    不强制每份 provenance 都登记可选字段（部分旧册本就没有，见 audit 注释）；
+    只要求覆盖量不低于底本份数。双口径 `dual` 在六爻为 0 属合法历史形态，不在此列。
+    """
+    files = stats.get("files", 0)
+    if files <= 0:
+        return ["覆盖判据扫到 0 份底本——0 结果 ≠ 通过"]
+    out = []
+    for key, label in (("ext", "扩展统计"), ("meta", "登记元数据")):
+        got = stats.get(key, 0)
+        if got < files:
+            out.append(f"{label}只核到 {got} 项 / {files} 份底本——登记面整族退化")
+    return out
+
+
 def _as_int(cell: str) -> int | None:
     s = cell.replace(",", "").strip()
     return int(s) if s.isdigit() else None
@@ -449,11 +466,27 @@ def selftest() -> int:
                 bad += 1
             print(f"  {'√' if ok else '×'} {label}"
                   + ("" if ok else f"（未报出「{expect}」：{problems[:2]}）"))
+    cov = [
+        ("覆盖正例：扩展/元数据齐备", True,
+         {"files": 3, "checked": 3, "fields": 9, "ext": 6, "meta": 3, "dual": 0}),
+        ("覆盖负例：扩展统计整族消失", False,
+         {"files": 3, "checked": 3, "fields": 9, "ext": 0, "meta": 3, "dual": 0}),
+        ("覆盖负例：元数据整族消失", False,
+         {"files": 3, "checked": 3, "fields": 9, "ext": 6, "meta": 0, "dual": 0}),
+        ("覆盖负例：0 份底本", False,
+         {"files": 0, "checked": 0, "fields": 0, "ext": 0, "meta": 0, "dual": 0}),
+    ]
+    for label, should_pass, stats in cov:
+        got = coverage_problems(stats)
+        ok = (not got) if should_pass else bool(got)
+        if not ok:
+            bad += 1
+        print(f"  {'√' if ok else '×'} {label}" + ("" if ok else f"（{got[:1]}）"))
     if bad:
         print(f"  × selftest 失败 {bad} 例——测量口径/判据漂移，先修器")
         return 1
-    print(f"  √ selftest：{len(cases) + len(ledger_cases)} 件"
-          f"（provenance {len(cases)}＋台账 {len(ledger_cases)}）全过")
+    print(f"  √ selftest：{len(cases) + len(ledger_cases) + len(cov)} 件"
+          f"（provenance {len(cases)}＋台账 {len(ledger_cases)}＋覆盖 {len(cov)}）全过")
     return 0
 
 
@@ -463,6 +496,7 @@ def main() -> int:
     args = ap.parse_args()
 
     problems, stats = audit(SRC, DISC)
+    problems.extend(coverage_problems(stats))
     floor = MIN_FILES.get(DISC.name)
     if floor is None:
         problems.append(f"未登记的学科 {DISC.name}：先在 MIN_FILES 登记底本份数下限")

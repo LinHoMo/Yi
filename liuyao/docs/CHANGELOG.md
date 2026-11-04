@@ -5,6 +5,35 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-04 第五百一十五批（全仓·路径真源收敛与门盲区补齿）：**六爻 scripts 层数据路径硬算层级收进 `kernel_path` 单一真源，缺表一律抛错；案例隔离门扩到 core/ 与 data/ 并补负例，[42] 加覆盖防退化断言；零读数变更**
+
+1. **路径真源**：`liuyao/scripts/kernel_path.py` 新增 `disc_path()` / `data_path()` /
+   `load_data_json()`，向上搜 `core/yishu_core` 定位，不按 `parents[N]` 硬算。15 个模块的
+   文案表装载统一改走它（advice_framework／labels_loader／trigram_symbolism／xiang／
+   narrate_core／chain_tables／chain_verdicts／engine_format／narrate／render／timing／
+   bing_yao_shensha／yilin_buyi_maps 等）；`load_data_json(required=...)` 同时校验必需表非空，
+   缺文件、非法 JSON、表为空一律抛错。六爻 scripts 层只剩 6 处 `parents[1]`（shim 根定位、
+   sys.path、输出目录），均不读数据表。
+2. **静默空表清零**：新查出 `yilin_buyi_maps.py` 的 `except OSError: _MAPS = {}`、
+   `bazi/scripts/xiang.py` 的 `except OSError: return {}`、`render.py::_grade_note` 的
+   `try/except: return ""` 三处同型降级，一并改为缺表即抛错；顺带删重复 import、
+   冗余空行与各模块长沿革 docstring。
+3. **案例隔离门**：`devkit/shared/check_case_isolation.py` 扫描面由 scripts/＋engine/
+   扩到 scripts/＋engine/＋core/＋data/，FORBIDDEN 补 `case_library`／`source_quote`，
+   内核 `eval.py` 按评测层语义豁免；新增 core/ 探针负例。两科实跑检视 78／31 个模块、0 触达。
+4. **[42] 防退化**：`check_source_provenance.py` 新增 `coverage_problems()`，扩展统计与
+   登记元数据的覆盖量低于底本份数即判红（可选字段仍不强制每份都登记，双口径 0 属合法历史形态），
+   含 4 件负例自证。两科 selftest 34 件全过。两门真源经 `sync_devkit.py --write` 分发，
+   [37] 字节门同源。
+5. **诚实结案**：`diff_jingshi_vs_core.py`／`diff_shangzhan_vs_core.py` 是书源逐格对拍工具
+   （已由 [12]／[42] 覆盖），不是 data↔引擎同步器；挂进 check.py 需同批改账台 tier 期望、
+   治理图与负例自证，收益不抵口径变更成本，本批不挂，也不再列为欠账。
+   4 个 scripts/ 兼容 shim 的反向 import、门编号体系、pytest 框架同属需独立批次的契约级变更，未动。
+
+**收口实跑（全部 rc=0）**：两科 `check.py` 全量、两科隔离门与 [42] `--selftest`、
+根级三门、readout_ledger full、governance_map、两个 sync --check、build/selftest/npm check、
+两科回归与冒烟。
+
 ## 2026-11-04 第五百一十四批（全仓·文档治理、门禁补齿与结构收敛）：**四组「现在时钉数」集体过期而无一门能拦（真探针塞「999 份」两门照绿）→ 数字改指真值源并上提为 AGENTS §六.6；后半按用户令并批修完门禁假绿、契约三件套同步、静默空表、产物同源与 CI 回归五组结构性欠账；不改判据口径、不改数据、不改读数**
 
 **性质（前半）**：文档治理＋盘上清理（清掉 170 个 gitignore 垃圾，含 `devkit/handoff/` 27 份）。

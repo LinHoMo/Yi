@@ -13,12 +13,12 @@ try:
 except Exception:
     pass
 
-import json  # noqa: E402
 from pathlib import Path  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from kernel_path import ensure_kernel_on_path, repo_root  # noqa: E402
+from kernel_path import ensure_kernel_on_path, load_data_json  # noqa: E402
+import json  # noqa: E402
 
 ensure_kernel_on_path(__file__)
 
@@ -30,21 +30,10 @@ from trigram_symbolism import (  # noqa: E402
     interpret_trigram_combination,
 )
 
-_XIANG_RULES_PATH = repo_root(__file__) / "data" / "rules" / "domain" / "xiang_layer.json"
-
 _VALID_CATEGORIES = ("general", "career", "health", "relationship", "travel", "loss")
 
-
-def _load_rules() -> dict:
-    data = json.loads(_XIANG_RULES_PATH.read_text(encoding="utf-8"))
-    missing = [k for k in ("basis", "category_by_class", "render")
-               if not isinstance(data.get(k), dict) or not data[k]]
-    if missing:
-        raise RuntimeError(f"{_XIANG_RULES_PATH.name} 缺表或表为空：{', '.join(missing)}")
-    return data
-
-
-_RULES = _load_rules()
+_RULES = load_data_json("rules", "domain", "xiang_layer.json",
+                        required=("basis", "category_by_class", "render"))
 _BASIS = _RULES["basis"]
 _CATEGORY_BY_CLASS = _RULES["category_by_class"]
 _CATEGORY_KEYWORDS = _RULES.get("category_fallback_keywords") or {}

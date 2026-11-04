@@ -24,16 +24,15 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from kernel_path import disc_path, load_data_json
 
-_CORE = Path(__file__).resolve().parents[1] / "core"
+_CORE = disc_path("core")
 if str(_CORE) not in sys.path:
     sys.path.insert(0, str(_CORE))
 
 from yishu_core.shensha import shensha_at_branches  # noqa: E402
-from pathlib import Path as _P
-import json as _json
-_VT = _P(__file__).resolve().parents[1] / 'data' / 'rules' / 'domain' / 'verdict_texts.json'
-BING_YAO_LABELS = _json.loads(_VT.read_text(encoding='utf-8')).get('bing_yao_labels', {})
+BING_YAO_LABELS = load_data_json('rules', 'domain', 'verdict_texts.json', required=('bing_yao_labels',))['bing_yao_labels']
 
 
 _WEAK_LEVELS = {"极弱", "弱", "偏弱", "休囚", "囚", "死"}
