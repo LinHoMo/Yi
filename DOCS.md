@@ -57,7 +57,7 @@
 | `liuyao/docs/TIANHOU.md` | 占天候试验台协议（读数规则、换源即改口径） | 活文档 |
 | `liuyao/docs/ONTOLOGY-CARDS.md` | 易学知识图谱本体卡片（L0–L4 概念人读版；`dev_tools/render_ontology.py` 重生成，改 ontology 后须重跑） | 生成物 |
 | `liuyao/docs/YI-KNOWLEDGE-GRAPH.md` | 易学知识图谱手册（演化树、象数层、书证层、AI 检索视图） | 活文档 |
-| `liuyao/docs/RULE-ENGINE-REFACTOR-PLAN.md` | 规则仲裁层改造：当前架构（rules/ 独立树、21 cap+7 verdict_overrides）＋目录分层蓝图 D1–D5（508 批全部结案：`engine/` 已与 `scripts/` 平级） | 活文档 |
+| `liuyao/docs/RULE-ENGINE-REFACTOR-PLAN.md` | 规则仲裁层**结案记录**（510 批压成结案态：现行 `rules/`＋`engine/` 结构、D1–D5/T28–T31 完成台账、维持边界；方案正文已删） | 归档留证 |
 
 ### 参考（`liuyao/references/`）
 
@@ -77,8 +77,8 @@
 |---|---|---|
 | `bazi/SKILL.md` | 八字科宿主模型操作合同 | 活文档 |
 | `bazi/README.md` | 八字科说明与读数表 | 活文档 |
-| `bazi/docs/CHANGELOG.md` | 八字批次流水，**只保留最近窗口**（2026-10-29 起；更早见索引） | 活文档 |
-| `bazi/docs/CHANGELOG-HISTORY-INDEX.md` | **逐批一句话索引**（342 批精简：原 81 节标题保留；全文归档已删） | 历史索引 |
+| `bazi/docs/CHANGELOG.md` | 八字批次流水，**只保留最近 15 批**（第五百一十批起与六爻同口径；更早见索引） | 活文档 |
+| `bazi/docs/CHANGELOG-HISTORY-INDEX.md` | **逐批一句话索引**（342 批删全文；510 批去重并补录 10-29～11-02 的 110 节标题） | 历史索引 |
 | `bazi/docs/EVAL-PLAN.md` | 八字案例评测方案（分维与门槛的出处） | 活文档 |
 | `bazi/docs/SANMING-SIKU-COLLATION.md` | 《三命通会》两转录渠道对拍报告 | 归档留证 |
 | `bazi/references/bazi_liuqin_gongwei.md` | 六亲·家宅·家人读法 | 活文档 |
