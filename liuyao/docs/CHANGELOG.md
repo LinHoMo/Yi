@@ -5,6 +5,68 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-04 第五百一十一批（六爻·读数账台五项归因）：**full 账台 bad=5 逐项查到底——golden 是登记过期（drift_log 有据），zengshan 的 87.4 是 501 批 N/A 清零后真实跳升 23.1 点、旧阶梯从未重跑，bushi 的 68.1 在八处提交上均不可复现；另补登记 4 个「从未入治理表」的脚本。账台回到 bad=0**
+
+**性质**：读数登记纠错＋治理表补登记（**零引擎代码、零案例 expected、零评分口径**）。改的是「登记值」与「地图条目」，不是判据。
+
+### 一、取证方法（可复现）
+
+用 `git worktree add --detach` 把八个提交各检出到系统临时目录，逐点在**该提交自己的代码与数据**上跑
+`python liuyao/scripts/evaluate.py --split zengshan_dz_holdout`／`--split bushi_zhengzong_holdout`：
+
+| 检出点 | 时点 | zengshan strict | bushi strict |
+|---|---|---|---|
+| `308f009^` | 501 批父提交 | **64.3%**（use_god N/A=8，verdict 11/18） | 65.3% |
+| `308f009` | 第 501 批 | **87.4%**（N/A=0，verdict 26/26） | 65.3% |
+| `961528c`／`8b37efb`(505)／`41986c7`(506)／`43dfde6`／`356115f`／`9f497de` | 501 之后 | 87.4%（六点全同） | 65.3%（六点全同） |
+| `HEAD`（`0f07ccf`） | 当前 | 87.4% | 65.3% |
+
+- 这条 A/B 把「+13 是 507/508 重构造成的」排除了：**跳变发生在 501，且此后七个提交逐位不动**。
+- 501 的动作是「按原文补全 8 例空用神（六亲+支）与 8 例空 verdict」——N/A 清零后这些维度从「不计分」变成
+  「计分」，strict 分母结构变了，所以 64.3→87.4 是**口径变化＋补全命中**，不是引擎改判。登记当时只写
+  「64.3→64.5」，说明那串 64.5/66.0/67.6/69.4/72.8/74.4 是**照旧阶梯手推的估计，没有一次按 strict 重跑**。
+- bushi 八个点恒为 65.3：502/503 改的 verdict cap 只对 zengshan 生效，对 bushi 没有连带，登记里的
+  「65.3→66.5→68.1」两跳同样查无实据。
+
+### 二、五项逐条处置
+
+| 项 | 旧登记 | 实跑／取证 | 处置 |
+|---|---|---|---|
+| `liuyao.golden` | `8f60`／`8168`（503 批） | `96c7f5d168ca6140`／`8168` | **登记过期**：`digest.json#drift_log` 记 `8f60→7f05`（T29 救应规则）`→96c7`（D 系列 direction caps），捕获后账未跟。按日志回补，**不是回归** |
+| `liuyao.zengshan_dz` | 74.4%（n=29） | **87.4%**（n=29） | **口径变化＋补全**：501 批 N/A 清零所致（见上表）。按可复现实值重挂，并写明「61.8→74.4 旧阶梯不可复核」 |
+| `liuyao.bushi_zhengzong` | 68.1% | **65.3%**（top-1 23.7 未变） | **登记虚增**：八点实跑均 65.3，502/503 的 +2.8 无对应。按实值回归并留证 |
+| `governance` | 71/48 脚本 | **74/49** | **地图漏登记**：ontology 三件（`check_ontology`／`ontology_subgraph`／`render_ontology`）建图起就在库、从未入 `CURATED`，地图连批报「× 未分类」没人改；另八字 `cross_version_collate`（499 批）同样未入表。四个均已按实登记（tier 见下） |
+| `登记×提交在册` | 8 | **2**（221／264） | 孤儿实降：两条都在 `SETTLED_ORPHANS` 有结案依据（221 提交号后无「批」字；264 是 264–268 范围简写）。按 2 重挂，新增孤儿仍判红 |
+
+### 三、改了什么
+
+1. `liuyao/dev_tools/readout_ledger.py`：五项标题与期望值改实值；每条登记理由里写入**为什么旧值不可复核**、
+   取证提交点与「501 批 N/A 清零」这一句——下一个人看到的是可复算的因果，不是新数字。
+2. `liuyao/dev_tools/governance_map.py`：补 4 条 `CURATED`——
+   `check_ontology`（ondemand，**并注明它没挂 `check.py`，是待接线门**）、`ontology_subgraph`（tool）、
+   `render_ontology`（build）、`cross_version_collate`（ondemand，观测非 blocking）。
+3. `CAPABILITY.md`：六爻 T1 指纹改 `96c7/8168` 并写清 344 批旧值到现在的逐次漂移；
+   `zengshan_dz` 行 61.8%→87.4%，写明 +23.1 的来源与「旧两档不可复现」。
+   **至此 CAPABILITY、账台期望、盘上实值三处同值**（510 批 §六 指出的「同一读数三处各异」收口）。
+
+### 四、验证
+
+- `python liuyao/dev_tools/readout_ledger.py`（full）→ **bad=0，44/44，跳 0**（改前 bad=5）。
+- `python liuyao/dev_tools/governance_map.py` → 两科「未分类」均为空；`--selftest` rc=0（负例仍判红）。
+- `python liuyao/dev_tools/check.py`／`python bazi/dev_tools/check.py` → 全绿；
+  `python liuyao/dev_tools/golden.py` → 288 例｜`96c7f5d168ca6140`／`8168eff9e560d6c2`｜异常 0。
+- 根级三门（`check_root_docs`／`check_docs_index`／`check_batch_num`）rc=0。
+
+### 五、边界（转第五百一十二批）
+
+- **`zengshan_dz` verdict 26/26 全中仍存疑**：旧记 19/26，现在每条 expected 都与引擎同向。501 批声称
+  「按原文补全」，但 26/26 的完美一致必须逐例回书，排除 §三.4「由引擎输出反填 expected」。本批**只登记这个疑点，
+  不改任何案例文件**。
+- `check_ontology` 仍是手工门：图孤儿检查没有进 `check.py`，等于图上加的节点错了也没人拦。本批只登记 tier，
+  接线另批（要让图真的守得住，得先给它一个阻断位）。
+- 旧梯度的语义债不再追改：`61.8/74.4` 这类数已在四处文档里流转过多批，本批在账台与 CAPABILITY 留了
+  「不可复核」的明确标注，其余历史 CHANGELOG 按「登记时点事实」豁免，不做全文回改。
+
 ## 2026-11-04 第五百一十批（全仓·文档审计与减量）：**审 45 份在库 Markdown（920 KB），查出三类真实缺陷并当场改掉：八字主 CHANGELOG 占全仓文档 31%、索引 3 处同批重复、`RULE-ENGINE-REFACTOR-PLAN` 仍写「台账不回改」（509 已推翻）；减量 92%（265 KB → 22 KB）**
 
 **性质**：文档审计＋删减（零代码、零判据、零读数；golden 未跑——本批不碰 `liuyao/` 代码面）。

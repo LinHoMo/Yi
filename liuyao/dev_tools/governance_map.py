@@ -88,6 +88,8 @@ CURATED = {
         "fetch_siku_sanming": ("build", "《三命通会》四库本抓取（外部三命通会会话）"),
         "diff_siku_sanming": ("ondemand", "四库本↔dz 本逐章对拍（外部三命通会会话）"),
         "scan_siku_gaps": ("ondemand", "四库本缺口扫描（外部三命通会会话）"),
+        # 511 批：499 批新增的跨版本对拍器从未入表，地图一直报「未分类」（观测器，非 blocking）。
+        "cross_version_collate": ("ondemand", "跨版本窗口对拍（499 批新增；观测非 blocking，只报分歧率不改判）"),
         "__init__": ("tool", "包标记"),
     },
     # ---- liuyao/dev_tools ----
@@ -164,6 +166,11 @@ CURATED = {
         "check_raise_regression": ("nightly", "--raise 回归守卫（244 静态双钉+六爻秒档；246 八字慢档=入口拒绝守卫+失败零副作用——两科病防在不同层）"),
         "adjudication_brief": ("nightly", "待裁简报生成器（226 批：六册汇编一页 81 事项，纯装配零新判断、决策勾选不授权）"),
         "batchnum_audit": ("ondemand", "批次号标题级体检（230 批常设化：唯一+单调，锚与字符类教训铸成 fixture；审计非门）"),
+        # 511 批：ontology 三件自建图起就在库，却从未入表——地图连续多批报「未分类」，无人回改。
+        # 按实登记（不接线、不删并）：check_ontology 是看门狗但没挂进 check.py，只能手工跑。
+        "check_ontology": ("ondemand", "易学图谱本体看门狗：孤儿／父链到根／幽灵引用／engine_impl 锚定（511 批登记；**未挂 check.py，属待接线门**）"),
+        "ontology_subgraph": ("tool", "图谱 AI subgraph 检索出口（按 kid 取概念上下文；511 批登记）"),
+        "render_ontology": ("build", "图谱人读卡片生成器（docs/ONTOLOGY-CARDS.md；511 批登记）"),
         "__init__": ("tool", "包标记"),
     },
 }

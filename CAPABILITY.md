@@ -11,7 +11,9 @@
 ## T1 确定性排盘与推演 —— **已验证**
 
 四柱/纳甲/装卦/世应/六亲/六神/旬空/月破/六十四卦/干支历换算全部由代码完成，LLM 禁止心算（AGENTS.md §一.1）。
-- 六爻：288 例行为指纹（机械层 `6f707fbad75b2a1b`／措辞层 `79603215e5863f71`（344 批实测；308 批原机械
+- 六爻：288 例行为指纹（机械层 `96c7f5d168ca6140`／措辞层 `8168eff9e560d6c2`（511 批实测；344 批曾登记 `6f70…`／`7960…`，
+  之后 362/468/469/502/503 批措辞与判定块逐次改动、504–506 批 T29 救应规则与 D 系列 direction caps 再动机械层，
+  逐次见 `liuyao/data/golden/digest.json` 的 `drift_log`／`narrate_drift_log`；旧值不再可比；308 批原机械
   `4ceef1eed62dafe2`，320–324 批把 judgment 判定块纳入后机械指纹变、措辞始终未变；更早登记 b716/a46f），自第一百九十三批起
   **含 analyze.conclusion 键集与内容哈希**）；确定性证据面＝**分析链零随机**（step\*/思维链/analyze/
   经典层无随机源，账台逐跑核该计数）＋起卦层带种可复现（`--seed`）；爻序 23 断言 P0 看门狗。
@@ -36,7 +38,7 @@
 |---|---|---|---|
 | tune / holdout 对齐 | 97.9%（n=20）／90.2%（n=12） | 172 批口径 | `python liuyao/eval/evaluate.py --split tune`（同 `--split holdout`） |
 | 外部·开发集 wikisource 对齐 | **75.8%**（n=50；308 批实测，原登记 62.4）；direction 子集 76.6%（n=31） | README 表 | `python liuyao/eval/evaluate.py --split wikisource_holdout` |
-| 外部·开发集 zengshan_dz 对齐 | **61.8%**（n=29；419 批恢复 403 批清空的 18 例用神书证并补支式抽取，原 61.5；415 批多支基准口径修正，原 60.3；403 批 dz 扩样时 60.3 n=29、原 61.5 n=21；新旧不可比） | 同上 | `python liuyao/eval/evaluate.py --split zengshan_dz_holdout` |
+| 外部·开发集 zengshan_dz 对齐 | **87.4%**（n=29；511 批实跑复核。501 批按原文补全 8 例空用神与 8 例空 verdict、N/A 清零后，strict 由 64.3 直抬 87.4（+23.1，use_god 24/29、branch 26/29、verdict 26/26）；419 批恢复 403 批清空的 18 例用神书证，415 批多支基准口径修正；**61.8／74.4 两档为旧登记，在 501 之后的任何提交上均不可复现**，新旧不可比） | 同上 | `python liuyao/eval/evaluate.py --split zengshan_dz_holdout` |
 | 外部·开发集 bushi_zhengzong_dz 对齐 | **65.3%**／top-1 **23.7%**（n=38；408 批建、409/410 扩样、412 用神、413 吉凶结果句、417 用神简写；用神 11/14、支 7/10、吉凶 22/36；408–413 读数不可比） | 同上 | `python liuyao/eval/evaluate.py --split bushi_zhengzong_holdout` |
 | 主应期 top-1（开发集） | **31.8%**／41.4%（308 批／415 批；403 批扩样时为 37.9，415 批多支基准口径修正后 41.4），CI[20.0, 46.6]／[25.5, 59.3]；k=1 随机 8.3% | 181 批→308 批→403 批→415 批 | `python liuyao/dev_tools/window_report.py` |
 | top-3 窗（开发集） | **61.4%**／65.5%（308 批／415 批；403 批扩样时为 62.1，415 批多支基准口径修正后 65.5；原登记 52.3／57.1；信息在窗不在点→193 批 `应期窗口` 键） | 181/192/193 批→308/403/415 批 | 同上（`window_report.py` 一张表含 k=1..5） |
