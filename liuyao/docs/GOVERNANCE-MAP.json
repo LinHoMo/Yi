@@ -1,10 +1,10 @@
 {
- "count": 71,
+ "count": 74,
  "by_tier": {
-  "tool": 3,
-  "ondemand": 12,
+  "tool": 4,
+  "ondemand": 13,
   "nightly": 12,
-  "build": 11,
+  "build": 12,
   "blocking": 33
  },
  "unclassified": [],
@@ -222,6 +222,13 @@
    "doc": "分层契约门：四段输出键白名单 + 层间禁边表（CONTRACT.md §三／§四）。"
   },
   {
+   "script": "check_ontology.py",
+   "tier": "ondemand",
+   "guards": "易学图谱本体看门狗：孤儿／父链到根／幽灵引用／engine_impl 锚定（511 批登记；**未挂 check.py，属待接线门**）",
+   "run_by_check_py": false,
+   "doc": "易学图谱本体看门狗：孤儿检查 + 引用完整性。"
+  },
+  {
    "script": "check_prose_readings.py",
    "tier": "blocking",
    "guards": "prose 吉凶书证门：非空吉凶须本案断语段逐字书证、册↔案例↔分片同源（[41]；422 批新增）",
@@ -411,6 +418,13 @@
    "doc": "判定器影子对拍（A3·第三百一十七批）：判定器 vs 现行 verdict vs 书载方向。"
   },
   {
+   "script": "ontology_subgraph.py",
+   "tier": "tool",
+   "guards": "图谱 AI subgraph 检索出口（按 kid 取概念上下文；511 批登记）",
+   "run_by_check_py": false,
+   "doc": "易学图谱 AI subgraph 检索：按 kid 输出该概念的完整子图。"
+  },
+  {
    "script": "outcome.py",
    "tier": "blocking",
    "guards": "现实回填统计出口（Wilson/n<30 拒判；195 批划界：不写封存）",
@@ -451,6 +465,13 @@
    "guards": "零指纹漂移验收器",
    "run_by_check_py": false,
    "doc": "重构看门狗：拆分/搬家前后的「零指纹漂移」验收。"
+  },
+  {
+   "script": "render_ontology.py",
+   "tier": "build",
+   "guards": "图谱人读卡片生成器（docs/ONTOLOGY-CARDS.md；511 批登记）",
+   "run_by_check_py": false,
+   "doc": "易学图谱人读视图生成器：把 data/ontology/ 渲染成 Markdown 概念卡片。"
   },
   {
    "script": "stable_write.py",
