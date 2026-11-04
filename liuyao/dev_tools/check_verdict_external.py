@@ -119,10 +119,11 @@ def audit_label_files() -> tuple[int, list[str]]:
     return n, problems
 
 
-def scan(root: Path):
+def scan(*roots: Path):
     rows = []
-    files = [p for p in sorted(root.rglob("*.py")) if "__pycache__" not in str(p)]
-    for py in files:
+    files = [(root, p) for root in roots
+             for p in sorted(root.rglob("*.py")) if "__pycache__" not in str(p)]
+    for py_root, py in files:
         if any(py.name.startswith(e) for e in EXEMPT_FILES) or py.name == Path(__file__).name:
             continue
         src = py.read_text(encoding="utf-8", errors="replace")
@@ -146,7 +147,7 @@ def scan(root: Path):
                         continue
                     if "《" in v or "源L" in v or "「" in v:
                         continue
-                    rows.append("%s:%s %r" % (py.relative_to(root), node.lineno, v[:40]))
+                    rows.append("%s:%s %r" % (py.relative_to(py_root), node.lineno, v[:40]))
     return rows, len(files)
 
 
@@ -172,7 +173,9 @@ def selftest() -> int:
         for must_absent in ("doc_ok", "quote_ok", "narrate_wrap"):
             if must_absent in joined:
                 fails.append("豁免面误杀：" + must_absent)
-    rows_real, n_real = scan(DISC / "scripts")
+    # 第五百零八批升格：engine/（含 classical/、pipeline/）已移出 scripts/，扫描面必须跟着扩，
+    # 否则升格文件既不在本门判据内，也没人接手——覆盖面缩水，读数照旧 0。
+    rows_real, n_real = scan(DISC / "scripts", DISC / "engine")
     probs = audit_scan(rows_real, n_real)
     # 452 批负例：0 文件/0 判语不得当通过（照 §四.8「0 结果 ≠ 通过」）
     if not audit_scan([], 0):
@@ -203,7 +206,7 @@ def main() -> int:
     args = ap.parse_args()
     if args.selftest:
         return selftest()
-    rows, n = scan(DISC / "scripts")
+    rows, n = scan(DISC / "scripts", DISC / "engine")
     probs = audit_scan(rows, n)
     n_lab, lab_probs = audit_label_files()
     if probs or lab_probs:

@@ -31,18 +31,18 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 # 评分侧：象层一旦被这里读到，象就变成了分数——CONTRACT §五-bis 禁边
-# D4 收编：classical_enhancements 族迁 scripts/classical/——名单改带子目录前缀，
-# 否则下方 ROOT/"scripts"/name 解析不到会静默跳过（== 评分侧禁读象覆盖面悄悄缩水）。
+# 第五百零八批升格：engine 族的相对路径以学科根为基准（ROOT/"engine"/…），
+# 其余仍是 scripts/ 相对；解析处两处都试，名单失效直接判红（不静默跳过）。
 SCORING_MODULES = (
     "engine/pipeline/step1.py", "engine/pipeline/step2.py", "engine/pipeline/step3.py",
     "engine/pipeline/step4.py", "engine/pipeline/step5.py",
     "timing.py", "judge.py", "classical_analysis.py",
-    "classical/classical_enhancements.py",
-    "classical/classical_enhancements_dufa.py", "classical/classical_enhancements_fangwei.py",
-    "classical/classical_enhancements_fushi.py", "classical/classical_enhancements_menlei.py",
-    "classical/classical_enhancements_shen_yao.py",
-    "classical/classical_enhancements_yimao_zhugui.py",
-    "classical/classical_enhancements_zhugui.py", "effects.py",
+    "engine/classical/classical_enhancements.py",
+    "engine/classical/classical_enhancements_dufa.py", "engine/classical/classical_enhancements_fangwei.py",
+    "engine/classical/classical_enhancements_fushi.py", "engine/classical/classical_enhancements_menlei.py",
+    "engine/classical/classical_enhancements_shen_yao.py",
+    "engine/classical/classical_enhancements_yimao_zhugui.py",
+    "engine/classical/classical_enhancements_zhugui.py", "effects.py",
 )
 # 允许读象的层：装配、呈现、输出——象的合法去向
 XIANG_CONSUMERS = ("xiang.py", "analyze.py", "narrate.py", "render.py", "output.py",
@@ -128,10 +128,14 @@ def no_scoring_problems() -> list[str]:
     """③ 禁评分：评分侧不得读 xiang；xiang 不得成为评分维度。"""
     problems: list[str] = []
     for name in SCORING_MODULES:
+        # 第五百零八批升格：engine 族在 <学科根>/engine/ 下，其余评分侧模块仍在 scripts/。
+        # 两处都试，两处都没有才判红——名单失效即覆盖面缩水，不许静默跳过。
         p = ROOT / "scripts" / name
         if not p.exists():
-            problems.append(f"评分侧名单失效：scripts/{name} 不在盘上——"
-                            "静默跳过＝禁读象覆盖面缩水（D4 收编后名单须带子目录前缀）")
+            p = ROOT / name
+        if not p.exists():
+            problems.append(f"评分侧名单失效：scripts/{name} 与 {name} 都不在盘上——"
+                            "静默跳过＝禁读象覆盖面缩水（收编/升格后名单须同步）")
             continue
         text = p.read_text(encoding="utf-8")
         if "xiang" in text and "xiang" not in ("",):

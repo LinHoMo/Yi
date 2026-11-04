@@ -1,36 +1,30 @@
 from __future__ import annotations
-import labels_loader as _labels  # noqa: E402  210批 §一.1 断语外置
-_S3 = _labels.load("step3")
 
-import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
+# 第五百零八批升格：本文件在 <学科根>/engine/ 下，已不在 scripts/。
+# 定位只走 _bootstrap 一份实现（向上搜 scripts/kernel_path.py，不按层数硬算），
+# 依次配好 本目录／scripts／学科根 三处 sys.path，再交给 kernel_path 定位内核。
+import os as _ks_os, sys as _ks_sys
 
 _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
-
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
-# D3 收编：本文件已迁入 scripts/engine/pipeline/，同目录兄弟 step* 由 _ks_d 覆盖，
-# 但 direction/chain_tables/util/chain_verdicts/labels_loader 等仍在 scripts/，需把 scripts/ 也加入。
-_ks_parent = _ks_os.path.dirname(_ks_os.path.dirname(_ks_d))
-_ks_grandparent = _ks_os.path.dirname(_ks_parent)
-if _ks_parent not in _ks_sys.path:
-    _ks_sys.path.insert(0, _ks_parent)
-if _ks_grandparent not in _ks_sys.path:
-    _ks_sys.path.insert(0, _ks_grandparent)
+# _bootstrap 在 engine/ 根（本文件的上层）：先入该目录，本文件才不依赖调用方替它配路径。
+_ks_engine = _ks_os.path.dirname(_ks_d)
+if _ks_engine not in _ks_sys.path:
+    _ks_sys.path.insert(0, _ks_engine)
 
-from kernel_path import ensure_kernel_on_path as _ks_ensure
+from _bootstrap import setup as _ks_setup  # noqa: E402
 
-_ks_ensure(__file__)
+_ks_setup(__file__)
+import labels_loader as _labels  # noqa: E402  210批 §一.1 断语外置
+_S3 = _labels.load("step3")
+
 
 from yishu_core.symbols import BRANCH_ELEMENTS, KE_CYCLE, SHENG_CYCLE  # noqa: E402  象数基元唯一真值源
 
 
-
-
-
 from chain_tables import _BRANCH_CLASHES
-
-
 
 
 from util import (  # noqa: E402  311批拆分：纯工具归 util（CONTRACT §六-6）
@@ -1006,7 +1000,6 @@ def build_strength_modifiers(m: dict) -> tuple:
         desperate_relief_description = dr_reason
 
     return modifiers, desperate_relief_description
-
 
 
 __all__ = [

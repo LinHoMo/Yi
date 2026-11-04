@@ -41,7 +41,8 @@ except Exception:
 from pathlib import Path
 
 DISC = Path(__file__).resolve().parents[1]
-for _p in (str(DISC / "scripts" / "classical"), str(DISC / "scripts"), str(DISC / "core")):
+# 第五百零八批升格：classical 族在 <学科根>/engine/classical/；学科根本身供 `import engine` 解析
+for _p in (str(DISC / "engine" / "classical"), str(DISC / "scripts"), str(DISC / "core"), str(DISC)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 

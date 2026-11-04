@@ -29,11 +29,13 @@ import traceback
 from typing import Any, Callable, NamedTuple, Optional
 
 # ---------------------------------------------------------------------------
-# 引擎与古典分析模块在 ../scripts。
-# 本文件已从 scripts/ 迁出到 tests/（SKILL.md：生产目录不混测试），故显式指回 scripts/。
+# 引擎与古典分析模块在 ../scripts；engine/ 与 engine/classical/ 在学科根下（第五百零八批升格）。
+# 本文件已从 scripts/ 迁出到 tests/（SKILL.md：生产目录不混测试），故显式指回。
 # ---------------------------------------------------------------------------
 _TEST_DIR = os.path.dirname(os.path.abspath(__file__))              # liuyao/tests
 _SCRIPT_DIR = os.path.join(os.path.dirname(_TEST_DIR), "scripts")   # liuyao/scripts
+_DISC_DIR = os.path.dirname(_TEST_DIR)                              # liuyao（供 import engine）
+sys.path.insert(0, _DISC_DIR)
 sys.path.insert(0, _SCRIPT_DIR)
 
 from engine import build_hexagram_result  # noqa: E402

@@ -9,6 +9,18 @@
 > 399/400/401 撞号，按提交顺序归位为 **408/409/410/411**；原提交 `46d8bc1` 的提交信息
 > 保留旧号作历史，不再改。跨文件引用一律按新号。
 
+## 2026-11-04 第五百零八批（六爻·engine 升格）：**六个共享门把 `engine/` 纳入扫描面（六爻侧落点变更）；本科零代码改动，共享件随 sync 重分发后门全绿**
+
+**性质**：共享门扫描面扩面（本科不改代码、不改数据、不改读数）。
+
+- 六爻侧搬迁与自证见 `liuyao/docs/CHANGELOG.md` 同批（`scripts/engine`＋`scripts/classical` → `liuyao/engine/`）。
+- 本科受影响的只有共享件的**扫描面**：`check_layer_contract`（禁边 import 图加 `engine/**/*.py`）、
+  `check_case_isolation`（交付路径扫描加 `engine/`）、`check_cli_encoding`（`ROOTS` 加 `engine`）、
+  `check_doc_refs`（BARE 正则前端集加 `engine`）、`check_rule_registry`（转发扩四类、`_PATH_RE` 加 `engine`、
+  两处扫描根加 `engine`）；本科无 `engine/` 目录，故这些扩面在本科是**空集**——不新增判据，也不放宽判据。
+- `python devkit/sync_devkit.py --write` 后两科共享件逐字节同源；`python bazi/dev_tools/check.py` 全绿；
+  读数不动属预期（§四.7）。
+
 ## 2026-11-04 第五百零六批（六爻·D3 收编补登记＋D2 分区后文档路径收口）：**六爻 `scripts/engine/` 收 step1~5 的补登记；六爻 9 份文档的 `data/rules` 路径同步；本科产物随 sync 重分发，判据、读数不变**
 
 **性质**：六爻侧登记补齐＋文档路径收口（本科不改数据、不改判据、不改读数）。

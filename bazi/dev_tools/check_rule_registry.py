@@ -277,32 +277,37 @@ def _book_key(s: str) -> str:
 
 
 def _partition_remap(base: Path, rel: str) -> Path | None:
-    """分区/收编转发：D2 `data/rules/<f>` → `data/rules/domain/<f>`（rule_registry 进 legacy/）；
-    D4 `scripts/classical_enhancements*.py` → `scripts/classical/<f>`。
+    """分区/收编/升格转发：D2 `data/rules/<f>` → `data/rules/domain/<f>`（rule_registry 进 legacy/）；
+    D4/D3+508 的 `scripts/classical*`／`scripts/step*`／`scripts/engine/**` → `<学科根>/engine/**`。
 
     legacy 台账（v1）内容保持原样，其按旧扁平路径写的指针由这里转发到分区后的实体；
     非 data/rules 路径或无文件名时返回 None。容忍带学科前缀（`liuyao/data/…`）与不带前缀两种写法。
-    D4 的收编转发**只在目标实体真在盘上时生效**：文件被删了仍判「文件不存在」，
+    收编/升格的转发**只在目标实体真在盘上时生效**：文件被删了仍判「文件不存在」，
     符号搬家（父模块无该符号）仍判「符号不在该文件内」——转发不改判据的牙。
     """
     norm = rel.replace("\\", "/")
     marker = "data/rules/"
     idx = norm.find(marker)
     if idx < 0:
-        # D4 收编：classical_enhancements 族整体迁入 scripts/classical/，旧扁平指针按名转发。
+        # 第五百零八批升格：engine/ 与 engine/classical/ 已在 <学科根> 下（不再在 scripts/ 下）。
+        # 旧指针（scripts/engine/…、scripts/classical/…、scripts/classical_enhancements*.py、
+        # D3 之前的 scripts/step*.py）逐类按名转发到新落点，只在实体在盘时生效。
         head = "scripts/"
         i4 = norm.find(head)
         if i4 >= 0:
             tail = norm[i4 + len(head):]
+            prefix = base / Path(*norm[:i4].split("/")) if i4 else base
+            target = None
             if "/" not in tail and tail.startswith("classical_enhancements"):
-                sub = base / "scripts" / "classical" / tail if i4 == 0 \
-                    else base / Path(*norm[:i4].split("/")) / "scripts" / "classical" / tail
-                return sub if sub.exists() else None
-            # D3 收编：step1~5 迁入 scripts/engine/pipeline/（仅实体在盘时生效）。
-            if "/" not in tail and tail.startswith("step") and tail.endswith(".py"):
-                sub = base / "scripts" / "engine" / "pipeline" / tail if i4 == 0 \
-                    else base / Path(*norm[:i4].split("/")) / "scripts" / "engine" / "pipeline" / tail
-                return sub if sub.exists() else None
+                target = prefix / "engine" / "classical" / tail      # D4 前扁平 → 收编目录
+            elif tail.startswith("classical/"):
+                target = prefix / "engine" / tail                    # scripts/classical/ → engine/classical/
+            elif "/" not in tail and tail.startswith("step") and tail.endswith(".py"):
+                target = prefix / "engine" / "pipeline" / tail       # D3 前扁平 step → 收编目录
+            elif tail.startswith("engine/"):
+                target = prefix / tail                               # scripts/engine/ → engine/
+            if target is not None:
+                return target if target.exists() else None
         return None
     after = norm[idx + len(marker):]
     if not after:
@@ -367,7 +372,7 @@ def _iter_entries(doc: dict):
 # `path.py:symbol`，本器一样判红（本批实踩——更正死指针时在注里写了旧写法，当场被抓）。
 # 这是**特性不是误伤**：说明文字里的死指针同样是死指针。登记旧值时**只写文件、不拼符号**。
 # A1-1 归并：路径前缀两科都认（原八字版只认 bazi/，六爻版只认 liuyao/）
-_PATH_RE = re.compile(r"(?<![\w/])((?:(?:liuyao|bazi)/)?(?:scripts|core|dev_tools)/[\w/]+\.py)")
+_PATH_RE = re.compile(r"(?<![\w/])((?:(?:liuyao|bazi)/)?(?:scripts|core|dev_tools|engine)/[\w/]+\.py)")
 _SYM_RE = re.compile(r":([A-Za-z_][A-Za-z0-9_]*)")
 # 薄 re-export 壳（职责拆走后只留 `from X import *` 的模块）：
 # 符号**在壳里不落字面**但运行时可达——照字面判会造 4 条假红（实测踩到）。
@@ -1875,7 +1880,7 @@ def check_code_anchors(problems: list[str], files=None, lines_of=None) -> int:
     n = 0
     sources = files if files is not None else [
         (str(p.relative_to(DISC)), p.read_text(encoding="utf-8", errors="replace"))
-        for root in (DISC / "core", DISC / "scripts")
+        for root in (DISC / "core", DISC / "scripts", DISC / "engine")
         for p in sorted(root.glob("**/*.py"))]
     for label, text in sources:
         for m in PAT.finditer(text):
@@ -2279,7 +2284,7 @@ def check_bazi_code_anchors(problems: list[str], files=None, lines_of=None,
     """
     if files is None:
         files = []
-        for sub in ("scripts", "core", "dev_tools", "eval"):
+        for sub in ("scripts", "core", "dev_tools", "eval", "engine"):
             for p in sorted((DISC / sub).rglob("*.py")):
                 files.append((str(p.relative_to(DISC)),
                               p.read_text(encoding="utf-8", errors="replace")))

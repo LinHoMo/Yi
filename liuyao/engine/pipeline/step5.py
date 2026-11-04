@@ -8,38 +8,24 @@
 """
 from __future__ import annotations
 
-import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
+# 第五百零八批升格：本文件在 <学科根>/engine/ 下，已不在 scripts/。
+# 定位只走 _bootstrap 一份实现（向上搜 scripts/kernel_path.py，不按层数硬算），
+# 依次配好 本目录／scripts／学科根 三处 sys.path，再交给 kernel_path 定位内核。
+import os as _ks_os, sys as _ks_sys
 
 _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
-# D3 收编：本文件已迁入 scripts/engine/pipeline/，同目录兄弟 step* 由 _ks_d 覆盖，
-# 但 direction/chain_tables/util/chain_verdicts/labels_loader 等仍在 scripts/，需把 scripts/ 也加入。
-_ks_parent = _ks_os.path.dirname(_ks_os.path.dirname(_ks_d))
-_ks_grandparent = _ks_os.path.dirname(_ks_parent)
-if _ks_parent not in _ks_sys.path:
-    _ks_sys.path.insert(0, _ks_parent)
-if _ks_grandparent not in _ks_sys.path:
-    _ks_sys.path.insert(0, _ks_grandparent)
-# L2 规则层（direction/rule_engine/predicates）在 liuyao/rules/：从本文件所在目录向上搜第一个名为 rules 的目录，
-# 避免 dirname 层数算式在搬目录后静默失效（D3 收编后 step5 下移两级，原式 dirname(_ks_d)/"rules" 会错指 scripts/engine/rules）。
-_rules_d = _ks_d
-while True:
-    _rules_cand = _ks_os.path.join(_rules_d, "rules")
-    if _ks_os.path.isdir(_rules_cand):
-        if _rules_cand not in _ks_sys.path:
-            _ks_sys.path.insert(0, _rules_cand)
-        break
-    _rules_up = _ks_os.path.dirname(_rules_d)
-    if _rules_up == _rules_d:  # 到盘根仍未找到，静默放弃
-        break
-    _rules_d = _rules_up
+if _ks_d not in _ks_sys.path:
+    _ks_sys.path.insert(0, _ks_d)
 
-for _p in (_ks_d, _ks_parent, _ks_grandparent):
-    if _p not in _ks_sys.path:
-        _ks_sys.path.insert(0, _p)
+# _bootstrap 在 engine/ 根（本文件的上层）：先入该目录，本文件才不依赖调用方替它配路径。
+_ks_engine = _ks_os.path.dirname(_ks_d)
+if _ks_engine not in _ks_sys.path:
+    _ks_sys.path.insert(0, _ks_engine)
 
-from kernel_path import ensure_kernel_on_path as _ks_ensure
+from _bootstrap import setup as _ks_setup  # noqa: E402
 
-_ks_ensure(__file__)
+_ks_setup(__file__)
+
 
 from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     BRANCH_ELEMENTS,
@@ -1677,7 +1663,6 @@ def _compose_synthesis_summary(**kw) -> str:
 
 # calculate_yingqi 已提取到 scripts/_step5_timing.py
 # 本模块顶部 from _step5_timing import calculate_yingqi 回收
-
 
 
 __all__ = [

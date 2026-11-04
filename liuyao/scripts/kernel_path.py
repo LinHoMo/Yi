@@ -10,6 +10,15 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+# 第五百零八批（engine/ 升格）：`engine/` 与 `engine/classical/` 已从 scripts/ 移到学科根下，
+# 于是 `from engine import …` 现在需要**学科根**在 sys.path 上（不再是 scripts/）。
+# 本模块是两科路径规则唯一实现，且被全仓最先导入，故在导入时就把学科根加入路径：
+# 调用方只要 `import kernel_path`（或下面的 ensure_kernel_on_path）即可解析到 <学科根>/engine。
+# 不按层数硬算——本文件恒在 <学科根>/scripts/ 下。
+_DISCIPLINE_ROOT = Path(__file__).resolve().parents[1]
+if str(_DISCIPLINE_ROOT) not in sys.path:
+    sys.path.insert(0, str(_DISCIPLINE_ROOT))
+
 
 def _search(start, marker_parts):
     """向上找第一个含 `marker_parts` 相对路径的目录，返回**该相对路径本身**。"""
@@ -35,10 +44,17 @@ def kernel_dir(start_file: str | Path) -> Path:
 
 
 def ensure_kernel_on_path(start_file: str | Path) -> Path:
-    """把内核目录加入 sys.path 并返回它。"""
+    """把内核目录加入 sys.path 并返回它。
+
+    第五百零八批起同时保证**学科根**在路径上（`import engine` 需要它；
+    见模块头 `_DISCIPLINE_ROOT` 的说明）。
+    """
     core = kernel_dir(start_file)
     if str(core) not in sys.path:
         sys.path.insert(0, str(core))
+    disc = core.parent
+    if str(disc) not in sys.path:
+        sys.path.insert(0, str(disc))
     return core
 
 

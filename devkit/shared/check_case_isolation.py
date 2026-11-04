@@ -58,16 +58,21 @@ def scan() -> list[str]:
         for name in required:
             if not (EVAL / name).is_file():
                 problems.append(f"评测实现不在 eval/{name}——物理搬迁缺失，scripts/ 里的 shim 不能当实现")
-    for p in sorted(SCRIPTS.rglob("*.py")):
-        if p.name in ALLOWED or "__pycache__" in p.parts:
+    # 第五百零八批升格：engine/ 与 engine/classical/ 已移出 scripts/；交付路径扫描面必须跟着扩，
+    # 否则搬出去的文件既不在本门判据内，也没人接手——隔离门就成了「扫了剩下的那部分」。
+    for root in (SCRIPTS, DISC / "engine"):
+        if not root.exists():
             continue
-        body = p.read_text(encoding="utf-8", errors="replace")
-        for n, line in enumerate(body.splitlines(), 1):
-            stripped = line.strip()
-            if stripped.startswith("#"):
-                continue          # 注释里讨论案例库不算触达
-            if FORBIDDEN.search(stripped):
-                problems.append(f"{p.relative_to(DISC)}:{n} 解读路径触达案例库 → {stripped[:80]}")
+        for p in sorted(root.rglob("*.py")):
+            if p.name in ALLOWED or "__pycache__" in p.parts:
+                continue
+            body = p.read_text(encoding="utf-8", errors="replace")
+            for n, line in enumerate(body.splitlines(), 1):
+                stripped = line.strip()
+                if stripped.startswith("#"):
+                    continue          # 注释里讨论案例库不算触达
+                if FORBIDDEN.search(stripped):
+                    problems.append(f"{p.relative_to(DISC)}:{n} 解读路径触达案例库 → {stripped[:80]}")
     return problems
 
 

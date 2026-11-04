@@ -212,13 +212,13 @@
         "why": "零容忍（312 批由欠账转硬）：装配函数已搬回 chain_assembly，推演段不得再触叙述层；回潮即红"
       },
       {
-        "from": "scripts/engine/pipeline/step5.py",
+        "from": "engine/pipeline/step5.py",
         "to": "narrate_core",
         "known": false,
         "why": "零容忍（312 批由欠账转硬）：综合步改用 chain_assembly；回潮即红"
       },
       {
-        "from": "scripts/engine/pipeline/step*.py",
+        "from": "engine/pipeline/step*.py",
         "to": "narrate_core",
         "known": false,
         "why": "零容忍（312 批由欠账转硬）：narrative_utils 撤编后 step1-4 只许依赖 util / chain_verdicts"

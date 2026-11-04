@@ -18,6 +18,9 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+# 第五百零八批升格：engine/ 在学科根下（不在 scripts/），故学科根也须入路径，
+# `import engine` 才解析到 <学科根>/engine。
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import engine as engine  # noqa: E402

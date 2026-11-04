@@ -40,7 +40,9 @@ SRC_DIR = DISC / "data" / "sources"
 
 # 检视范围：会被人照着执行的活文本。data/cases/* 是案例转写（有自己的三方对账），
 # docs/CHANGELOG.md 是登记时点原文（文件头承诺老条目一字未改），都不进硬门。
-GLOBS = ("scripts/**/*.py", "core/**/*.py", "references/**/*.md",
+# 第五百零八批升格：`engine/`（含 engine/classical/）已移出 scripts/，必须同列本表——
+# 否则这两族的书证块悄悄退出逐字回验面（覆盖面缩水，门照旧全绿）。
+GLOBS = ("scripts/**/*.py", "core/**/*.py", "engine/**/*.py", "references/**/*.md",
          "docs/**/*.md", "data/rules/**/*.json", "data/*.json",
          # tests/ 里同样写满 `源L<n>＋「逐字」` 书证（回归 fixture 的校勘注就是），
          # 原先不扫这一层，等于**测试文件里写的书证没有任何东西会拦**——

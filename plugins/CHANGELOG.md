@@ -6,6 +6,17 @@
 > **497 批起只保留 DSH 一个宿主**：claude/codex/gemini/yan 四家适配器目录、
 > `publish.mjs`（git 发行树）及其在 build/selftest/ci/文档里的登记一并删除。
 
+## 2026-11-04 第五百零八批（共享打包层）：**六爻 `engine/` 升格后 `RUNTIME_INCLUDE.liuyao` 补收 `engine`——漏收则包能装、`yi_liuyao` 调用即 ImportError**
+
+**性质**：打包白名单补漏（不改四工具 1.0 冻结契约、不改读数）。
+
+- `plugins/scripts/build.mjs`：`RUNTIME_INCLUDE.liuyao` 由 `['core','scripts','rules','data/rules','references','assets']`
+  改为同表加 `'engine'`。六爻第五百零八批把 `scripts/engine`＋`scripts/classical` 升格到 `liuyao/engine/`，
+  原白名单只收 `scripts`（递归），升格后**整条推演链不再进包**——这类漏收不会让构建报错，只在首次调用时炸。
+- `node plugins/scripts/build.mjs` → `selftest.mjs` 全绿：包体 **201 文件／2.93MB**、无符号链接；
+  `[2]` 段 engine 布局校验通过；**`yi_liuyao` 引擎冒烟以构建产物树跑通出「贲」**（打包侧唯一端到端证据）。
+- 六爻侧搬迁与判据面见 `liuyao/docs/CHANGELOG.md` 同批；八字侧登记见 `bazi/docs/CHANGELOG.md` 同批。
+
 ## 2026-11-02 第四百九十七批（共享打包层）：**宿主收敛至仅 DSH——删除 claude/codex/gemini/yan 四家适配器与 git 发行树**
 
 **性质**：分发面裁剪（不改引擎、不改四工具 1.0 冻结契约、不改读数）。

@@ -5,6 +5,77 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-04 第五百零八批（六爻·engine 升格）：**`scripts/engine/`＋`scripts/classical/` 升格为 `liuyao/engine/`（与 `scripts/` 平级），16 处调用侧与 6 个共享门同步扩面——纯搬迁，golden 双指纹零漂移**
+
+**性质**：目录升格（判据不变、读数不变；`engine/` 是 505 批蓝图的最终落点，D3/D4 至此合流）。
+
+### 一、搬迁与落点
+
+1. `git mv liuyao/scripts/engine liuyao/engine`、`git mv liuyao/scripts/classical liuyao/engine/classical`；
+   `scripts/` 下已无子目录。`engine/` 现状：`__init__.py`／`__main__.py`／`_core.py`／`_bootstrap.py`／
+   `pipeline/`（step1~5＋`_step5_{dates,factors,timing,weather}`）／`classical/`（8 个 `classical_enhancements*`）。
+   **模块名、import 名一律不变**，`from engine import …` 仍是全仓统一公开入口。
+2. 新建 `engine/_bootstrap.py`：`setup(start_file)` 在盘上**向上搜 `scripts/kernel_path.py`** 定学科根
+   （不按层数硬算），把「本目录／`scripts`／`rules`／学科根」入 `sys.path`，再交给
+   `kernel_path.ensure_kernel_on_path`。17 个 engine 文件的路径块统一改为调它一份实现。
+3. `scripts/kernel_path.py`：导入时即把学科根入 `sys.path`；`ensure_kernel_on_path` 同步加学科根
+   （调用方只要 `import kernel_path` 就能解析到 `<学科根>/engine`）。
+4. 调用侧 16 处逐点改基准（均按「学科根在路径上」或「engine 子目录在路径上」两种手段）：
+   `scripts/{chart,analysis_steps,effects,thinking_chain,classical_analysis}.py`、
+   `eval/case_runner.py`、`dev_tools/{ablation,use_god_coverage,build_extra_dimensions,build_usegod_position,check_bing_yao,check_judgment_table,check_xiang,prospective,readout_ledger,check_bond_polarity}.py`、
+   `tests/{smoke_test,regression_test,thinking_chain_tests,six_god_wang_shuai_test}.py`。
+
+### 二、判据与扫描面（升格最容易被"悄悄退出扫描"的一面，逐处点名）
+
+- `devkit/shared/check_rule_registry.py`：`_partition_remap` 的旧指针转发扩为四类
+  （`scripts/classical_enhancements*.py`→`engine/classical/`、`scripts/classical/**`→`engine/classical/**`、
+  `scripts/step*.py`→`engine/pipeline/`、`scripts/engine/**`→`engine/**`），**仍只在实体在盘时生效**；
+  `_PATH_RE` 前缀集加 `engine`；「源L 锚」与「逐字引文回验」两处扫描根各加 `DISC/"engine"`。
+- `devkit/shared/check_layer_contract.py`：禁边 import 图加入 `engine/**/*.py`（原只扫 scripts＋core）。
+- `devkit/shared/check_case_isolation.py`：交付路径扫描面由 `scripts/` 扩为 `scripts/`＋`engine/`。
+- `devkit/shared/check_cli_encoding.py`：`ROOTS` 加 `engine`（随之抓到 `engine/__main__.py` 缺 UTF-8 守卫，已补）。
+- `devkit/shared/check_doc_refs.py`：BARE 路径正则前端集加 `engine`（文档里写 `engine/...` 的死指针同判红）。
+- `devkit/shared/variants/check_source_readings.liuyao.py`：`GLOBS` 加 `engine/**/*.py`（书证逐字回验面）。
+- 六爻自有机门：`check_verdict_external.py` 扫描改 `scan(scripts, engine)`；
+  `check_xiang.py` 评分侧名单改 `engine/pipeline|classical/...` 且解析处「scripts/ 与学科根两处都试、
+  都没有才判红」；`readout_ledger.py` 零随机 glob 换 `engine/pipeline/*.py`＋`engine/classical/*.py`＋
+  `scripts/classical_analysis.py`（原 `scripts/classical*.py` 会整族漏扫）。
+- 判据数据两份随落点动：`data/rules/domain/layer_contract.json` 两条 `edges.forbidden` 的 `from`
+  改 `engine/pipeline/step5.py` / `engine/pipeline/step*.py`；`data/rules/domain/judgment_table.json`
+  的 20 处 `overrides.line` 按 step5 新行号重算（**按 AST 清单顺序配对**，不按固定 delta 加减），
+  `dev_tools/build_adjudications.py` 的 15 处散文 `engine_anchor` 改 `engine/...` 并重跑该构建器
+  （产物 `adjudications.json` 仅 `built_at` 与 15 条锚点变化）。
+- 分发面：`plugins/scripts/build.mjs` 的 `RUNTIME_INCLUDE.liuyao` 加 `'engine'`——漏收则包能装、调用即 ImportError。
+
+### 三、实踩的四个坑（都已修，均属"门全绿但功能断了"类）
+
+1. 路径块重写把 `step5.py` 里「向上搜 `rules/`」那段一并删掉 → `from direction import …`
+   `ModuleNotFoundError`。修法：该步收进 `_bootstrap.setup`（`<学科根>/rules` 入路径），不再逐文件写。
+2. `pipeline/*.py`、`classical/*.py` 只把自身目录入路径，`from _bootstrap import` 直接失败
+   （`scripts/analyze.py`、`check_bing_yao.py`、六神单测三处实测）。修法：各文件先把**上层**（`engine/`）
+   入路径，再导入 `_bootstrap`。
+3. `step3.py` 的 `import labels_loader` 落在路径块之前 → `scripts/` 还没上路径就炸。修法：路径块整段上移
+   到 `from __future__ import annotations` 之后（17 个文件统一）。
+4. 承 507 批：`classical_enhancements_fushi` 的 `from kernel_path import repo_root as _repo_root`
+   随块替换被抹掉 → `_repo_root` NameError。修法：导入行显式补回 `_ks_setup` 之后。
+
+### 四、验证（全绿，读数零漂移）
+
+- `python liuyao/dev_tools/golden.py` → 288 例｜机械 `96c7f5d168ca6140`｜措辞 `8168eff9e560d6c2`｜异常 0，**与基线逐位一致**。
+- `python liuyao/dev_tools/check.py` → 质量门全部通过（含 [20] 89 个中文 CLI 入口、[27]/[30]/[32]/[33]/[39]/[40]）。
+- `python bazi/dev_tools/check.py` → 通过；`python devkit/sync_devkit.py --check` → 12 共享件逐字节一致。
+- 根级三门：`check_root_docs.py`（7 份文档、119 条引用、0 死链）／`check_docs_index.py`（44 份全登记）／
+  `check_batch_num.py`（未结案孤儿 0）。
+- 分发：`node plugins/scripts/build.mjs` → `selftest.mjs` 全绿（包体 201 文件／2.93MB、**yi_liuyao 引擎冒烟
+  以构建产物跑通出「贲」**——打包侧唯一端到端证据）。
+
+### 五、边界（未做与已知）
+
+- 旧路径**不留 `scripts/` 桩**：转发走判据侧 `_partition_remap`（四类，实体在盘才生效），
+  台账（`legacy/rule_registry.json`）34 处旧指针按 505 批决策**不回改**。
+- `scripts/chart.py` 的 `import engine as engine` 保留（同名变量沿用，导出语义未变）。
+- 本批只动落点与扫描面，**不动任何推演判据**：读数不动属预期（§四.7）。
+
 ## 2026-11-04 第五百零七批（六爻·D2/D4 数据路径静默缺陷）：**`classical_enhancements_fushi` 按层数硬算表路径，迁入 `scripts/classical/` 后落到不存在的 `scripts/data/`，被 `except OSError` 吞成空表——九宫伏藏标签整族静默消失且所有门全绿**
 
 **性质**：缺陷修复（判据不变；读数不动属预期，见 §三）。

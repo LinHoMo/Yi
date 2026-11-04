@@ -52,9 +52,11 @@ from typing import Callable, NamedTuple, Optional
 # ---------------------------------------------------------------------------
 _TEST_DIR = os.path.dirname(os.path.abspath(__file__))              # liuyao/tests
 _SCRIPT_DIR = os.path.join(os.path.dirname(_TEST_DIR), "scripts")   # liuyao/scripts
+_DISC_DIR = os.path.dirname(_TEST_DIR)                              # liuyao（第五百零八批：engine/ 在学科根下）
+sys.path.insert(0, _DISC_DIR)
 sys.path.insert(0, _SCRIPT_DIR)
-# D3 收编：step1~5 整体迁入 scripts/engine/pipeline/
-sys.path.insert(0, os.path.join(_SCRIPT_DIR, "engine", "pipeline"))
+# 第五百零八批升格：step1~5 在 <学科根>/engine/pipeline/
+sys.path.insert(0, os.path.join(_DISC_DIR, "engine", "pipeline"))
 
 from engine import build_hexagram_result  # noqa: E402
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402

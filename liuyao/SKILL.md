@@ -87,20 +87,20 @@ description: 六爻占卜预测。使用中国传统易经六爻纳甲法进行�
 
 ### 第二步：起卦
 
-使用 `python -m engine`（在 scripts/ 目录内运行）排盘：
+使用 `python -m engine`（在学科根目录内运行；508 批升格后 `engine/` 与 `scripts/` 平级）排盘：
 
 ```bash
 # 自动铜钱摇卦（推荐）
-cd <skill-path>/scripts && python -m engine --mode coin --question "用户的问题"
+cd <skill-path> && python -m engine --mode coin --question "用户的问题"
 
 # 时间起卦
-cd <skill-path>/scripts && python -m engine --mode time --datetime "2026-09-18 14:30"
+cd <skill-path> && python -m engine --mode time --datetime "2026-09-18 14:30"
 
 # 数字起卦（用户指定三数）
-cd <skill-path>/scripts && python -m engine --mode number --numbers "3,5,7"
+cd <skill-path> && python -m engine --mode number --numbers "3,5,7"
 
 # 手动指定六次摇卦结果（7=少阳 8=少阴 9=老阳(动) 6=老阴(动)，从下往上）
-cd <skill-path>/scripts && python -m engine --mode manual --yao "7,8,9,7,6,8"
+cd <skill-path> && python -m engine --mode manual --yao "7,8,9,7,6,8"
 ```
 
 **验证脚本输出**：必须确认返回有效 JSON，且 `original_hexagram`、`divination_time`、`advanced_analysis` 三个核心字段存在。脚本失败时重试一次；仍失败则告知用户排盘异常，**不得手动替代排盘**。

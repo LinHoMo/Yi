@@ -30,7 +30,8 @@ import subprocess
 import sys
 
 DISC = pathlib.Path(__file__).resolve().parents[1]
-ROOTS = ("scripts", "dev_tools", "tests")
+# 第五百零八批升格：engine/ 也在交付路径上（含 engine/classical/），中文 CLI 守卫同判。
+ROOTS = ("scripts", "dev_tools", "tests", "engine")
 CJK_RE = re.compile(r"[\u4e00-\u9fff]")
 
 # 具名豁免（照 [20] 的纪律）：命中即 NOTE 而非判红；**若该文件不再漏，必须删除本条**（反向判红）。

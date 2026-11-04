@@ -63,7 +63,7 @@ REF = re.compile(r"`([A-Za-z0-9_\-./\u4e00-\u9fff]+\.(?:md|py|json|txt|css|html)
 # 于是 `scripts/timing.py` 头部「【甲】《易隐》应期四诀（docs/source-readings/yiin_dz.md …）」
 # 这条指向扁平化时已删除目录的指针，一路以「84 条全可达」的身份躲过了门。
 # 只认以真实顶层目录开头的串，避免把散文里的 `a/b.md` 之类速记当声明。
-BARE = re.compile(r"(?<![\w/.-])((?:docs|scripts|data|references|dev_tools|core|tests"
+BARE = re.compile(r"(?<![\w/.-])((?:docs|scripts|data|references|dev_tools|core|tests|engine"
                   r"|bazi|liuyao|tools)/[A-Za-z0-9_\-./\u4e00-\u9fff]*"
                   r"\.(?:md|py|json|txt|css|html)(?![A-Za-z]))")
 SKIP_MARK = ("<", "…", "...", "http://", "https://")

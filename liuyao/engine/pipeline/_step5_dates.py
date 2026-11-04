@@ -6,19 +6,24 @@ calculate_yingqi 等调用方从本模块 import（函数名保持原下划线�
 """
 from __future__ import annotations
 
-import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
+# 第五百零八批升格：本文件在 <学科根>/engine/ 下，已不在 scripts/。
+# 定位只走 _bootstrap 一份实现（向上搜 scripts/kernel_path.py，不按层数硬算），
+# 依次配好 本目录／scripts／学科根 三处 sys.path，再交给 kernel_path 定位内核。
+import os as _ks_os, sys as _ks_sys
+
 _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
-# D3 收编：同目录兄弟 step* 由 _ks_d 覆盖，scripts/ 兄弟由 _ks_parent 覆盖
-_ks_parent = _ks_os.path.dirname(_ks_os.path.dirname(_ks_d))
-_ks_grandparent = _ks_os.path.dirname(_ks_parent)
-if _ks_parent not in _ks_sys.path:
-    _ks_sys.path.insert(0, _ks_parent)
-if _ks_grandparent not in _ks_sys.path:
-    _ks_sys.path.insert(0, _ks_grandparent)
-from kernel_path import ensure_kernel_on_path as _ks_ensure
-_ks_ensure(__file__)
+
+# _bootstrap 在 engine/ 根（本文件的上层）：先入该目录，本文件才不依赖调用方替它配路径。
+_ks_engine = _ks_os.path.dirname(_ks_d)
+if _ks_engine not in _ks_sys.path:
+    _ks_sys.path.insert(0, _ks_engine)
+
+from _bootstrap import setup as _ks_setup  # noqa: E402
+
+_ks_setup(__file__)
+
 
 from datetime import datetime, timedelta
 

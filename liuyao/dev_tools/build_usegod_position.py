@@ -24,7 +24,8 @@ except Exception:
 from pathlib import Path
 
 DISC = Path(__file__).resolve().parents[1]
-for _p in (str(DISC / "scripts"), str(DISC / "core")):
+# 第五百零八批升格：学科根入路径，`import engine` 才解析到 <学科根>/engine
+for _p in (str(DISC / "scripts"), str(DISC / "core"), str(DISC)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 

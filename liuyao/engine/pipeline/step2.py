@@ -1,24 +1,23 @@
 from __future__ import annotations
 
-import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
+# 第五百零八批升格：本文件在 <学科根>/engine/ 下，已不在 scripts/。
+# 定位只走 _bootstrap 一份实现（向上搜 scripts/kernel_path.py，不按层数硬算），
+# 依次配好 本目录／scripts／学科根 三处 sys.path，再交给 kernel_path 定位内核。
+import os as _ks_os, sys as _ks_sys
 
 _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
-
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
-# D3 收编：本文件已迁入 scripts/engine/pipeline/，同目录兄弟 step* 由 _ks_d 覆盖，
-# 但 direction/chain_tables/util/chain_verdicts/labels_loader 等仍在 scripts/，需把 scripts/ 也加入。
-_ks_parent = _ks_os.path.dirname(_ks_os.path.dirname(_ks_d))
-_ks_grandparent = _ks_os.path.dirname(_ks_parent)
-if _ks_parent not in _ks_sys.path:
-    _ks_sys.path.insert(0, _ks_parent)
-if _ks_grandparent not in _ks_sys.path:
-    _ks_sys.path.insert(0, _ks_grandparent)
+# _bootstrap 在 engine/ 根（本文件的上层）：先入该目录，本文件才不依赖调用方替它配路径。
+_ks_engine = _ks_os.path.dirname(_ks_d)
+if _ks_engine not in _ks_sys.path:
+    _ks_sys.path.insert(0, _ks_engine)
 
-from kernel_path import ensure_kernel_on_path as _ks_ensure
+from _bootstrap import setup as _ks_setup  # noqa: E402
 
-_ks_ensure(__file__)
+_ks_setup(__file__)
+
 
 from yishu_core.symbols import (  # noqa: E402  象数基元唯一真值源
     BRANCH_ELEMENTS,
@@ -43,8 +42,6 @@ from chain_tables import (
     USE_GOD_RELATIONSHIPS,
     classify_question,
 )
-
-
 
 
 from util import (  # noqa: E402  通用工具（原 narrative_utils，311 批拆分）
@@ -359,8 +356,8 @@ def _use_god_rules() -> list[dict]:
     """装载规则表；读不到就返回空表（宁可退回词典，也不硬编一份"假装有出处"的规则）。"""
     global _USE_GOD_RULES
     if _USE_GOD_RULES is None:
-        # 不假定脚本深度：从本文件向上找到含 data/rules/domain 的仓库根（liuyao/），
-        # 兼容 scripts/step2.py 与 scripts/engine/pipeline/step2.py（D3 收编后落地更深）。
+        # 不假定脚本深度：从本文件向上找到含 data/rules/domain 的学科根（liuyao/）——
+        # 508 批升格后本文件在 <学科根>/engine/pipeline/，仍在学科根之下，故此搜索式不必改算式。
         _root = Path(__file__).resolve().parent
         while not (_root / "data" / "rules" / "domain").is_dir():
             _up = _root.parent
@@ -859,7 +856,6 @@ def _check_fu_cang(
         "palace_first_hexagram": first_hex_name,
         "results": results,
     }
-
 
 
 def _detect_wild_crane_reverse(use_god_positions, empty_branches):

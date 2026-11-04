@@ -31,31 +31,35 @@ L93 官鬼伏官；另 L49「出现伏藏」为总纲（出现旺相/伏藏有�
 """
 from __future__ import annotations
 
-import json
+# 第五百零八批升格：本文件在 <学科根>/engine/ 下，已不在 scripts/。
+# 定位只走 _bootstrap 一份实现（向上搜 scripts/kernel_path.py，不按层数硬算），
+# 依次配好 本目录／scripts／学科根 三处 sys.path，再交给 kernel_path 定位内核。
 import os as _ks_os, sys as _ks_sys
-from pathlib import Path
 
 _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
-# D4 收编：本文件从 scripts/ 迁入 scripts/classical/，需把父目录 scripts/ 也加进
-# sys.path，以便 flat import 继续找到 kernel_path / chain_tables / fangwei_rules 等。
-_ks_parent = _ks_os.path.dirname(_ks_d)
-if _ks_parent not in _ks_sys.path:
-    _ks_sys.path.insert(0, _ks_parent)
+# _bootstrap 在 engine/ 根（本文件的上层）：先入该目录，本文件才不依赖调用方替它配路径。
+_ks_engine = _ks_os.path.dirname(_ks_d)
+if _ks_engine not in _ks_sys.path:
+    _ks_sys.path.insert(0, _ks_engine)
 
-from kernel_path import ensure_kernel_on_path as _ensure_kernel  # noqa: E402
-from kernel_path import repo_root as _repo_root  # noqa: E402
+from _bootstrap import setup as _ks_setup  # noqa: E402
 
-_ensure_kernel(__file__)
+_ks_setup(__file__)
+
+import json
+from pathlib import Path
+
 
 __all__ = ["huozhulin_fushi_tags", "FU_SHI_PAIRS"]
 
-# D2＋D4 后本文件在 scripts/classical/，表在 <学科根>/data/rules/domain/。
-# 用 kernel_path.repo_root 定位而非 parents[N] 硬算层数：目录再搬（升格 engine/）时不必改这里，
-# 也避免 2026-11-04 实测到的静默缺陷——按 parents[1] 会落到不存在的 scripts/data/，
-# 被下面的 fail-fast 取代——表缺失一律报错，不再吞成空表让九宫标签静默消失。
+from kernel_path import repo_root as _repo_root  # noqa: E402  _ks_setup 已把 scripts/ 入路径
+
+# 表在 <学科根>/data/rules/domain/，路径走 kernel_path.repo_root 而非 parents[N]：
+# 2026-11-04 实测到按 parents[1] 硬算层数会让本表静默变空——D2 分区＋D4 收编两次搬目录后
+# 它落到不存在的 scripts/data/，被 `except OSError` 吞成 {}，九宫标签整族消失且所有门全绿。
 _DATA = Path(_repo_root(__file__)) / "data" / "rules" / "domain" / "caiguan_fushi.json"
 _TABLE: dict | None = None
 

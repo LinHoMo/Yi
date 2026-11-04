@@ -24,22 +24,24 @@
 
 from __future__ import annotations
 
-import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
+# 第五百零八批升格：本文件在 <学科根>/engine/ 下，已不在 scripts/。
+# 定位只走 _bootstrap 一份实现（向上搜 scripts/kernel_path.py，不按层数硬算），
+# 依次配好 本目录／scripts／学科根 三处 sys.path，再交给 kernel_path 定位内核。
+import os as _ks_os, sys as _ks_sys
 
 _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
-
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
-# D4 收编：本文件从 scripts/ 迁入 scripts/classical/，需把父目录 scripts/ 也加进
-# sys.path，以便 flat import 继续找到 kernel_path / chain_tables / fangwei_rules 等。
-_ks_parent = _ks_os.path.dirname(_ks_d)
-if _ks_parent not in _ks_sys.path:
-    _ks_sys.path.insert(0, _ks_parent)
+# _bootstrap 在 engine/ 根（本文件的上层）：先入该目录，本文件才不依赖调用方替它配路径。
+_ks_engine = _ks_os.path.dirname(_ks_d)
+if _ks_engine not in _ks_sys.path:
+    _ks_sys.path.insert(0, _ks_engine)
 
-from kernel_path import ensure_kernel_on_path as _ensure_kernel
+from _bootstrap import setup as _ks_setup  # noqa: E402
 
-_ensure_kernel(__file__)
+_ks_setup(__file__)
+
 
 from yishu_core.symbols import CHONG_PAIRS, KE_CYCLE  # noqa: E402
 

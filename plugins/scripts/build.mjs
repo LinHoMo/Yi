@@ -31,9 +31,11 @@ const SKILL_DIR = join(PLUGINS_ROOT, 'skills', 'yi-divination')
 const MCP_DIR = join(PLUGINS_ROOT, 'mcp')
 const SKILL_SOURCE = join(PLUGINS_ROOT, 'SKILL.md')
 
-/** 每科要收进 engine 的相对路径（相对该科根目录）。 */
+/** 每科要收进 engine 的相对路径（相对该科根目录）。
+ *  `engine`（含 engine/classical/、engine/pipeline/）是第五百零八批升格后的落点：
+ *  漏收即整条推演链缺模块——包能装上、`yi_liuyao` 一调用就 ImportError。 */
 const RUNTIME_INCLUDE = {
-  liuyao: ['core', 'scripts', 'rules', 'data/rules', 'references', 'assets'],
+  liuyao: ['core', 'scripts', 'rules', 'data/rules', 'references', 'assets', 'engine'],
   bazi: ['core', 'scripts', 'data/rules', 'references'],
 }
 

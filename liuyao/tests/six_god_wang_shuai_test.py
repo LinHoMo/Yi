@@ -23,8 +23,8 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
-# D4 收编：classical_enhancements 族迁入 scripts/classical/
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts" / "classical"))
+# 第五百零八批升格：classical_enhancements 族在 <学科根>/engine/classical/
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "engine" / "classical"))
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "core"))
 
 from classical_enhancements_shen_yao import (  # noqa: E402

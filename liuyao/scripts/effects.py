@@ -17,8 +17,8 @@ _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
-# D4 收编：classical_enhancements 族迁入 scripts/classical/，需把该子目录也加进 sys.path。
-_ks_classical = _ks_os.path.join(_ks_d, "classical")
+# 第五百零八批升格：classical_enhancements 族在 <学科根>/engine/classical/，需把该子目录入 sys.path。
+_ks_classical = _ks_os.path.join(_ks_os.path.dirname(_ks_d), "engine", "classical")
 if _ks_classical not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_classical)
 

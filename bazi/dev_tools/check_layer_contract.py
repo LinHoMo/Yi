@@ -112,7 +112,9 @@ def edge_problems(schema: dict) -> tuple[list[str], list[str]]:
     """扫 import 图判禁边；返回 (problems, notes)。"""
     edges: dict[str, set[str]] = {}
     # D4 收编后 scripts/ 下有子目录（classical/）——名单必须递归，否则收编文件悄悄退出禁边扫描面
-    for rel in rel_files(DISC, "scripts/**/*.py") + rel_files(DISC, "core/**/*.py"):
+    # 第五百零八批升格：engine/ 与 engine/classical/ 已在 <学科根> 下，同样必须入扫描面。
+    for rel in (rel_files(DISC, "scripts/**/*.py") + rel_files(DISC, "core/**/*.py")
+                + rel_files(DISC, "engine/**/*.py")):
         edges[rel] = py_imports(DISC / rel)
     rules = (schema.get("edges") or {}).get("forbidden") or []
     problems, notes = contract_edge_problems(edges, rules)

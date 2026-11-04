@@ -1,14 +1,17 @@
 # 本文件为聚合入口：子模块见 engine_*/chain_*/classical_*。
-import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
+
+# 第五百零八批升格：本文件在 <学科根>/engine/ 下，已不在 scripts/。
+# 定位只走 _bootstrap 一份实现（向上搜 scripts/kernel_path.py，不按层数硬算），
+# 依次配好 本目录／scripts／学科根 三处 sys.path，再交给 kernel_path 定位内核。
+import os as _ks_os, sys as _ks_sys
 
 _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
-
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
-from kernel_path import ensure_kernel_on_path as _ensure_kernel
+from _bootstrap import setup as _ks_setup  # noqa: E402
 
-_ensure_kernel(__file__)
+_ks_setup(__file__)
 
 
 

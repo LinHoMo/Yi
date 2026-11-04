@@ -11,8 +11,8 @@ import os as _ks_os, sys as _ks_sys
 _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
-# D3 收编：step1~5 整体迁入 scripts/engine/pipeline/，同目录兄弟模块需该路径在 sys.path
-_ks_pipe = _ks_os.path.join(_ks_d, "engine", "pipeline")
+# 第五百零八批升格：step1~5 在 <学科根>/engine/pipeline/，同族兄弟模块需该路径在 sys.path
+_ks_pipe = _ks_os.path.join(_ks_os.path.dirname(_ks_d), "engine", "pipeline")
 if _ks_pipe not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_pipe)
 

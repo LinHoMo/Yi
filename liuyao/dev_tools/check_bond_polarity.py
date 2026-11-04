@@ -34,7 +34,9 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 DISC = Path(__file__).resolve().parents[1]
-sys.path[:0] = [str(DISC / "scripts"), str(DISC / "dev_tools"), str(DISC / "core")]
+# 第五百零八批升格：engine/ 在学科根下（不在 scripts/），`import engine` 需学科根入路径。
+sys.path[:0] = [str(DISC / "engine" / "pipeline"), str(DISC), str(DISC / "scripts"),
+                str(DISC / "dev_tools"), str(DISC / "core")]
 
 # 探针集：64 卦 ×（静卦／双动）× 1 个时刻。双动那一路专门制造"用神自己也动"的盘面，
 # 静卦那一路制造"用神静而逢日月合"的盘面——两式都要跑到，门才有意义。

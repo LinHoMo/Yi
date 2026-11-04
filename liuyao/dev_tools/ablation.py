@@ -35,10 +35,9 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 DISC = HERE.parent
 sys.path.insert(0, str(DISC / "scripts"))
-# D4 收编：classical_enhancements 族迁入 scripts/classical/
-sys.path.insert(0, str(DISC / "scripts" / "classical"))
-# D3 收编：step1~5 整体迁入 scripts/engine/pipeline/
-sys.path.insert(0, str(DISC / "scripts" / "engine" / "pipeline"))
+# 第五百零八批升格：classical_enhancements 族与 step1~5 在 <学科根>/engine/ 下
+sys.path.insert(0, str(DISC / "engine" / "classical"))
+sys.path.insert(0, str(DISC / "engine" / "pipeline"))
 sys.path.insert(0, str(HERE))
 from kernel_path import ensure_kernel_on_path  # noqa: E402
 ensure_kernel_on_path(__file__)

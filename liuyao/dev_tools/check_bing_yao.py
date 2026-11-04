@@ -25,7 +25,8 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 DISC = Path(__file__).resolve().parents[1]
-for p in (str(DISC / "scripts"), str(DISC / "core"), str(DISC / "scripts" / "engine" / "pipeline")):
+# 第五百零八批升格：step 链在 <学科根>/engine/pipeline/
+for p in (str(DISC / "scripts"), str(DISC / "core"), str(DISC / "engine" / "pipeline")):
     if p not in sys.path:
         sys.path.insert(0, p)
 
