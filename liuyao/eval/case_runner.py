@@ -23,9 +23,11 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 # D4 收编：classical_enhancements 族迁入 scripts/classical/
 sys.path.insert(0, str(ROOT / "scripts" / "classical"))
+# D3 收编：step1~5 整体迁入 scripts/engine/pipeline/
+sys.path.insert(0, str(ROOT / "scripts" / "engine" / "pipeline"))
 from kernel_path import kernel_dir  # noqa: E402  scripts/ 先上 path，eval/ 才能自定位
 
-for _p in (str(ROOT / "scripts"), str(kernel_dir(__file__))):
+for _p in (str(ROOT / "scripts"), str(ROOT / "scripts" / "engine" / "pipeline"), str(kernel_dir(__file__))):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 from narrative_assembly import build_reasoning_chain  # noqa: E402  355 批 fact builder

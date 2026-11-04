@@ -100,9 +100,9 @@ liuyao/rules/
 |---|---|---|
 | D1 | rules/ 独立成树 ✅ | 已完成 |
 | D2 | data/rules/ 内部分区（legacy/ 旧台账、domain/ 领域表）✅ | 已完成（505 批；台账旧指针不回改，判据侧 `_partition_remap` 转发） |
-| D3 | engine/pipeline/ 收 step1~5 | 高（step 链互引） |
+| D3 | engine/pipeline/ 收 step1~5 ✅ | 高风险（step 链互引）；已完成（506 批；sys.path 转发收编，不动包导入语义） |
 | D4 | scripts/classical/ 收 classical_enhancements 族 ✅ | 已完成（505 批；落点由蓝图 engine/classical/ 修正为 scripts/classical/，engine/ 待 D3 统一升格） |
-| D5 | step5.py 按职责拆模块（=T31） | 最高 |
+| D5 | step5.py 按职责拆模块（=T31） ✅ | 最高；实质已完成（T31 抽出 _step5_dates/factors/timing/weather 四件随 step5 一并迁入 engine/pipeline/）；结案（506 批） |
 
 旧 `rule_registry.json` 被 `check_rule_registry.py / readout_ledger.py / ablation.py /
 build_adjudications.py` 硬编码引用，**不物理删除、不直接挪路径**——D2 批在 `data/rules/legacy/`

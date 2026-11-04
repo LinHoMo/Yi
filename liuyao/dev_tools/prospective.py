@@ -81,7 +81,7 @@ def _now() -> str:
 
 def _strategy_version() -> str:
     parts = []
-    for rel in ("data/rules/rule_registry.json", "scripts/timing.py", "scripts/step5.py"):
+    for rel in ("data/rules/rule_registry.json", "scripts/timing.py", "scripts/engine/pipeline/step5.py"):
         p = DISC / rel
         parts.append(p.read_bytes() if p.exists() else rel.encode("utf-8"))
     return "v0.0.1+" + hashlib.sha1(b"|".join(parts)).hexdigest()[:8]

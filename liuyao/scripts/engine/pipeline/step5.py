@@ -11,9 +11,29 @@ from __future__ import annotations
 import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
 
 _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
-_rules_d = _ks_os.path.join(_ks_os.path.dirname(_ks_d), "rules")  # L2 规则层（direction/rule_engine/predicates）
+# D3 收编：本文件已迁入 scripts/engine/pipeline/，同目录兄弟 step* 由 _ks_d 覆盖，
+# 但 direction/chain_tables/util/chain_verdicts/labels_loader 等仍在 scripts/，需把 scripts/ 也加入。
+_ks_parent = _ks_os.path.dirname(_ks_os.path.dirname(_ks_d))
+_ks_grandparent = _ks_os.path.dirname(_ks_parent)
+if _ks_parent not in _ks_sys.path:
+    _ks_sys.path.insert(0, _ks_parent)
+if _ks_grandparent not in _ks_sys.path:
+    _ks_sys.path.insert(0, _ks_grandparent)
+# L2 规则层（direction/rule_engine/predicates）在 liuyao/rules/：从本文件所在目录向上搜第一个名为 rules 的目录，
+# 避免 dirname 层数算式在搬目录后静默失效（D3 收编后 step5 下移两级，原式 dirname(_ks_d)/"rules" 会错指 scripts/engine/rules）。
+_rules_d = _ks_d
+while True:
+    _rules_cand = _ks_os.path.join(_rules_d, "rules")
+    if _ks_os.path.isdir(_rules_cand):
+        if _rules_cand not in _ks_sys.path:
+            _ks_sys.path.insert(0, _rules_cand)
+        break
+    _rules_up = _ks_os.path.dirname(_rules_d)
+    if _rules_up == _rules_d:  # 到盘根仍未找到，静默放弃
+        break
+    _rules_d = _rules_up
 
-for _p in (_ks_d, _rules_d):
+for _p in (_ks_d, _ks_parent, _ks_grandparent):
     if _p not in _ks_sys.path:
         _ks_sys.path.insert(0, _p)
 

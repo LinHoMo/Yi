@@ -671,7 +671,7 @@ def checks():
     def c_liuyao_no_random(t):
         import glob as _glob
         n = 0
-        for pat in ("scripts/step*.py", "scripts/thinking_chain.py", "scripts/analyze.py",
+        for pat in ("scripts/engine/pipeline/step*.py", "scripts/thinking_chain.py", "scripts/analyze.py",
                     "scripts/classical*.py", "scripts/narrate_core.py"):
             for f in _glob.glob(str(DISC / pat)):
                 if "random" in Path(f).read_text(encoding="utf-8", errors="replace"):

@@ -1,7 +1,7 @@
 {
  "schema": "yi-liuyao-adjudications/1",
  "discipline": "liuyao",
- "built_at": "2026-11-03T21:52:41",
+ "built_at": "2026-11-03T23:49:07",
  "_comment": "流派裁决表：「与古书吻合」的展开定义。引用任何吻合率须能指回本表行。不改引擎不进评分面不挂门（§176 冻结声明）。状态三值见 builder docstring。",
  "count": 27,
  "entries": [
@@ -23,7 +23,7 @@
     }
    ],
    "engine_position": "采《增删》简化：真空/假空互斥判定（宁缺勿滥），不采十一类名目",
-   "engine_anchor": "rule_registry: liuyao.xunkong_zhenjia → scripts/step3.py:583",
+   "engine_anchor": "rule_registry: liuyao.xunkong_zhenjia → scripts/engine/pipeline/step3.py:583",
    "status": "settled_by_source"
   },
   {
@@ -183,7 +183,7 @@
     }
    ],
    "engine_position": "引擎忠于用神旺衰框架（判凶与古法结论一致，wikisource WS001 verdict 维度按古法立场计分）；象法断（六神临身象＋出空应期归）属灵机应变，未机械化为通用判据（单一实案＋六神象不可量化），登记不修（第两百八十八批）",
-   "engine_anchor": "scripts/step3.py（用神旺衰框架）；案例 liuyao/data/cases/wikisource_cases.json WS001",
+   "engine_anchor": "scripts/engine/pipeline/step3.py（用神旺衰框架）；案例 liuyao/data/cases/wikisource_cases.json WS001",
    "status": "open_conflict"
   },
   {
@@ -204,7 +204,7 @@
     }
    ],
    "engine_position": "引擎取用神伏藏评估（妻财午伏于亥水下飞克伏，WS040 判凶）；「变出之爻作用神」「日月冲世作财来」属灵机应变，未入用神候选规则（变爻不作用神是引擎既有通则，翻转须多实案＋总论书证，现仅单例），登记不修（第两百八十八批）",
-   "engine_anchor": "scripts/step3.py resolve_fu_cang_result（伏藏评估）；案例 liuyao/data/cases/wikisource_cases.json WS040",
+   "engine_anchor": "scripts/engine/pipeline/step3.py resolve_fu_cang_result（伏藏评估）；案例 liuyao/data/cases/wikisource_cases.json WS040",
    "status": "open_conflict"
   },
   {
@@ -225,7 +225,7 @@
     }
    ],
    "engine_position": "保留六破计价（effects.analyze_six_breaks，step5 5.5e 消费）：外部读数实证其方向正确（第两百八十九批 A/B：撤除计价 tune strict 97.9→96.0、wikisource_holdout 70.5→69.0、holdout/direction/zengshan 持平——净退化）；书证缺口如实登记——若后批找到《卜筮正宗》正文或他源六破逐字书证，按书证重估幅度与条件（如旺衰门/久远占适用性）；在此之前不作书证洁癖式撤除，也不虚构出处",
-   "engine_anchor": "scripts/effects.py:analyze_six_breaks；scripts/step5.py:615-619（5.5e 六破损伤消费）",
+   "engine_anchor": "scripts/effects.py:analyze_six_breaks；scripts/engine/pipeline/step5.py:615-619（5.5e 六破损伤消费）",
    "status": "open_conflict",
    "note": "《增删卜易》三底本全文检索记录与 A/B 实验数据原文见两科 CHANGELOG 第两百八十九批（检索类记录无逐字行号，不入 parties 回验面）。"
   },
@@ -259,7 +259,7 @@
     }
    ],
    "engine_position": "引擎按通则句默认世爻为用（第两百九十四批自占病层：无六亲主体的纯占病→世爻，置于疾病→官鬼词典之前）；问愈期重子孙医药的变体未机械化（单一实案不可作通用判据）；E 类应期基准 WS005 na→hit 随本口径更新（check_yingqi_scoring.E_CLASS_EXPECTED，本批登记）",
-   "engine_anchor": "scripts/step2.py 自占病覆盖层；dev_tools/check_yingqi_scoring.py E_CLASS_EXPECTED；案例 wikisource WS005/WS008/WS020",
+   "engine_anchor": "scripts/engine/pipeline/step2.py 自占病覆盖层；dev_tools/check_yingqi_scoring.py E_CLASS_EXPECTED；案例 wikisource WS005/WS008/WS020",
    "status": "open_conflict",
    "note": "wikitext 底本对应句（行号见两科 CHANGELOG 第两百九十四批）：「自占者，宜世爻旺相……占他人以應爻爲用」「自占看世爻，旺相者非眞，代占看用神」「自占病亥水克世」（繁体原文，出处背景）。dz 底本行号：宜世爻旺相句=L1468、入墓自占看世爻句=L1330、自占病亥水克世句=L1100。"
   },
@@ -293,7 +293,7 @@
     }
    ],
    "engine_position": "引擎实现通用轨（第两百八十七批占雨用父母/占晴用子孙财，verdict_texts 收总纲句）；反断轨未实现（单一实案不可机械化，登记不修）。wikisource 评测 WS019/WS025/WS027/WS028 四例 category 失分系书内两轨显形的诚实代价：基准按断辞落（WS019 子孙=反断轨、其余通用轨），引擎恒走通用轨",
-   "engine_anchor": "scripts/step2.py 占天时通用轨（第八十七批背景天气剥离）；verdict_texts.json 占雨占晴总纲句；案例 wikisource WS019/WS025/WS027/WS028",
+   "engine_anchor": "scripts/engine/pipeline/step2.py 占天时通用轨（第八十七批背景天气剥离）；verdict_texts.json 占雨占晴总纲句；案例 wikisource WS019/WS025/WS027/WS028",
    "status": "open_conflict",
    "note": "wikitext 对应行：总纲句=L1686、WS025 实案=L1744、WS019 实案=L1281（繁体原文，出处背景）。另 WS028 占何日晴书取妻财（占晴通用轨内「子孙、财爻」两用并许，L1750），引擎取子孙——同轨内两用，亦不判引擎错。"
   },
@@ -339,7 +339,7 @@
     }
    ],
    "engine_position": "引擎无天时状态判读通道（verdict 架构为吉凶计价分数，状态域雨/晴/云/阴需要第二判读输出）。天时题当前走通用六亲轨判类（step2 天气剥离）；动空冲空/填实应期轨已由通用应期轨覆盖（L2069 与通用轨同）。第两百八十批占天时框架待办以本条目正式化：实装=第二判读通道（状态输出），非计价修正，框架级另批",
-   "engine_anchor": "scripts/step2.py question_classes 天气剥离（第八十七批背景）；verdict 架构 step5",
+   "engine_anchor": "scripts/engine/pipeline/step2.py question_classes 天气剥离（第八十七批背景）；verdict 架构 step5",
    "status": "open_conflict",
    "note": "第两百一十三批登记。黄金策「四时五行论雨大小」（L1963 父临金水雨大、临火土雨小）被觉子批驳删（「古法之错，何以不删」）——天时实装时不得引入季节五行权重；冬天以子孙为霜雪（L1963/L1971）同为被删旧注。"
   },
@@ -385,7 +385,7 @@
     }
    ],
    "engine_position": "引擎占病 verdict 走通用计价（六冲卦性计价有 287/298 批用神旺衰门）；题面带「久/新」字时 qclass 已分 疾病·久病/近病 两类（timing 空亡层已按此分轨）。WS006 题面纯「占病」无病龄信号，书按久病诀断——评测侧不可知的语境信息，双轨方向依赖病龄，不机械化。WS006 verdict（凶/吉）与 yingqi（丑月）双 miss 归因落此条目",
-   "engine_anchor": "scripts/step2.py question_classes 疾病分轨；scripts/timing.py 疾病空亡双轨；案例 wikisource WS006",
+   "engine_anchor": "scripts/engine/pipeline/step2.py question_classes 疾病分轨；scripts/timing.py 疾病空亡双轨；案例 wikisource WS006",
    "status": "open_conflict",
    "note": "第两百一十四批登记。近病应期轨（L539「冲去未土而午火无合」=冲去绊神/合住生用之爻）与已实装的冲去忌神（第二八五/二八六批）同构但对象不同（绊神），框架批候选。久病应期（L1198 冲破化出退神=无路）依赖 verdict 凶侧，随本条目框架批。"
   },
@@ -413,7 +413,7 @@
     }
    ],
    "engine_position": "第二八六批忌神生元神接续相生链（未→酉→亥）计价无「用神无根」折扣；本条目登记后，实装需书证给出幅度（「难生」未量化），暂不硬编码系数。应期侧「冲去元神=凶应」与已实装冲去忌神/绊神（吉应）轨向相反，凶应期联动框架批候选",
-   "engine_anchor": "scripts/step4.py 原神计价；scripts/step5.py 5.5 段",
+   "engine_anchor": "scripts/engine/pipeline/step4.py 原神计价；scripts/engine/pipeline/step5.py 5.5 段",
    "status": "open_conflict",
    "note": "第两百一十六批登记。L561 实案未入任何评测 split（zengshan 21 例外），实装无外部验证点，按 §四.3/§四.7 登记待书证扩充。"
   },
@@ -463,7 +463,7 @@
     }
    ],
    "engine_position": "第二八四批忌神合绊轨（动忌被合=绊而不克，+0.3）与本题世用被合（自身被绊=阻）主体互补但引擎无世用合绊减分轨；「有事绊」未量化幅度，暂不硬编码——出行/动身题类域限与通则句的边界待书证扩充",
-   "engine_anchor": "scripts/step4.py 合绊计价；scripts/step5.py 5.5 段",
+   "engine_anchor": "scripts/engine/pipeline/step4.py 合绊计价；scripts/engine/pipeline/step5.py 5.5 段",
    "status": "open_conflict",
    "note": "第两百三十八批登记。ZD022 verdict 凶/引擎吉 即本轨显形（合绊在出行题=阻）。应期侧合绊族两向通用化均证伪（第两百四十七批：合支值日 wiki −0.7/zengshan −1.9 回退；冲去解绊 319 批 −0.1 回退）——两实案应期（WS039/041 辰日）系「次日辰合住动爻」近应语境，不通用。"
   },
@@ -525,7 +525,7 @@
     }
    ],
    "engine_position": "双轨均已实装：应期侧=第二八五批应期第3法③支（动忌化退克用+用神静→冲去忌神本支，书证即 parties 反用轨同源）；verdict 侧=第三百批行人归占化退归志层（+1.0 抵回用神化退衰价，检测 step4 details[].change_type，书证即 parties 归期歌诀）。zengshan 50.5→53.4 全额回补（ZD050 凶→吉复位）",
-   "engine_anchor": "liuyao/scripts/step5.py 行人区 1a 支（travel_huatui_guizhi）；timing.py 应期第3法③支；案例 zengshan ZD050",
+   "engine_anchor": "liuyao/scripts/engine/pipeline/step5.py 行人区 1a 支（travel_huatui_guizhi）；timing.py 应期第3法③支；案例 zengshan ZD050",
    "status": "settled_by_source",
    "note": "dz L1246 全句：「断曰：兄动化退，已有归志，但因戌逢月破，在外诸事未遂，六月可望，后至戌月方回，乃应实破之月也，此乃动破而变日月，岂可谓之退不及也？」wikitext 对应=L612。"
   },
@@ -593,7 +593,7 @@
     }
    ],
    "engine_position": "引擎 verdict 按用神旺衰+吉凶化轨（第两百六十四批体系）；「应验即吉」「问来否不按平安断」「归期用神克世反吉」三支时间题口径未机械化（条件组合属框架批：须先识别时间题类+书内应验句式，单一实案族不足以定通用判据）。wikisource WSD003 verdict 失分=口径双轨显形的诚实代价；WSD024/025 引擎读数与书答同向（基准吉、引擎吉侧）不受影响；WSD008 题面母病轨吉（六冲即愈）与现卦子灾轨凶并现，verdict 反向为一卦两事双轨显形",
-   "engine_anchor": "scripts/step5.py verdict 化轨；案例 wikisource WSD003/WSD024/WSD025",
+   "engine_anchor": "scripts/engine/pipeline/step5.py verdict 化轨；案例 wikisource WSD003/WSD024/WSD025",
    "status": "open_conflict",
    "note": "WS001 案（dz L1014）已有专条 xiangfa_duan_guiqi 登记，本条引其反例面：并非所有归期题都记应验吉，书自认不能归者仍以凶断——双轨边界在书内自述。"
   },
@@ -653,7 +653,7 @@
     }
    ],
    "engine_position": "引擎占病走用神旺衰轨（占子孙病取子孙），官鬼持世记忌神持世凶侧→WSD027 verdict 反向；不机械化：忧神轨须先识别「忧象断」与「病象断」的题面分歧，库内单实案不足定通用判据；觉子边界注（占父母/妻夫不宜）本身即书内自认的适用域限制",
-   "engine_anchor": "scripts/step5.py verdict 化轨；案例 wikisource WSD027",
+   "engine_anchor": "scripts/engine/pipeline/step5.py verdict 化轨；案例 wikisource WSD027",
    "status": "open_conflict",
    "note": "应期轨同例：子日冲去忧心=冲去持世官鬼应愈（冲忌神应吉，与第二八五批应期③支同源但断对象是忧非病）。"
   },
@@ -675,7 +675,7 @@
     }
    ],
    "engine_position": "引擎六冲主散按用神旺衰门计价（第二八七/二九八批），变六合化散为聚的例外轨未入判据（卦变六合形态识别缺载）——ZD023 verdict 引擎侧无从命中；不机械化：例外轨书证为通则自注+单实案，须先补「六冲变合」卦形识别与散聚语义层框架批",
-   "engine_anchor": "scripts/step4.py _detect_hexagram_harmony_clash_pattern（六冲主散）；scripts/step5.py hex_adjustment（六冲卦性门）",
+   "engine_anchor": "scripts/engine/pipeline/step4.py _detect_hexagram_harmony_clash_pattern（六冲主散）；scripts/engine/pipeline/step5.py hex_adjustment（六冲卦性门）",
    "status": "open_conflict",
    "note": "ZD023（占婚悔而复成）use_god 基准因此留空——书断不取用神（dz L756），引擎 use_god 维度对该例不评属预期。"
   },
@@ -725,7 +725,7 @@
     }
    ],
    "engine_position": "引擎流年轨按世爻旺衰断自身（平吉），父母受克辅断孝服并升格整体凶定性未入判据——ZD151 verdict 平吉/书凶方向相反；不机械化：孝服轨需「流年定性=世爻自身+诸亲受克事件加权」的框架批，库内单实案",
-   "engine_anchor": "scripts/step5.py verdict 化轨（流年世体）；案例 zengshan ZD151",
+   "engine_anchor": "scripts/engine/pipeline/step5.py verdict 化轨（流年世体）；案例 zengshan ZD151",
    "status": "open_conflict",
    "note": "与 youshen_guan_track 同族：流年/忧问的凶定性常不在世爻自身而在六亲事件（孝服/忧去），verdict 维度对这类案例的 miss 属框架显形。"
   }

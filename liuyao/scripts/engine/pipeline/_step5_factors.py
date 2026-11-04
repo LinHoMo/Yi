@@ -2,6 +2,20 @@
 """可解释性因子贡献构建（T31 第四步提取）。"""
 from __future__ import annotations
 
+import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
+_ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
+if _ks_d not in _ks_sys.path:
+    _ks_sys.path.insert(0, _ks_d)
+# D3 收编：同目录兄弟 step* 由 _ks_d 覆盖，scripts/ 兄弟由 _ks_parent 覆盖
+_ks_parent = _ks_os.path.dirname(_ks_os.path.dirname(_ks_d))
+_ks_grandparent = _ks_os.path.dirname(_ks_parent)
+if _ks_parent not in _ks_sys.path:
+    _ks_sys.path.insert(0, _ks_parent)
+if _ks_grandparent not in _ks_sys.path:
+    _ks_sys.path.insert(0, _ks_grandparent)
+from kernel_path import ensure_kernel_on_path as _ks_ensure
+_ks_ensure(__file__)
+
 from chain_verdicts import strength_reason, strength_polarity, STEP5_FACTOR_REASONS as FREASON
 from step4 import _user_reason
 

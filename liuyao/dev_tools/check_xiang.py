@@ -34,7 +34,8 @@ sys.path.insert(0, str(ROOT / "scripts"))
 # D4 收编：classical_enhancements 族迁 scripts/classical/——名单改带子目录前缀，
 # 否则下方 ROOT/"scripts"/name 解析不到会静默跳过（== 评分侧禁读象覆盖面悄悄缩水）。
 SCORING_MODULES = (
-    "step1.py", "step2.py", "step3.py", "step4.py", "step5.py",
+    "engine/pipeline/step1.py", "engine/pipeline/step2.py", "engine/pipeline/step3.py",
+    "engine/pipeline/step4.py", "engine/pipeline/step5.py",
     "timing.py", "judge.py", "classical_analysis.py",
     "classical/classical_enhancements.py",
     "classical/classical_enhancements_dufa.py", "classical/classical_enhancements_fangwei.py",

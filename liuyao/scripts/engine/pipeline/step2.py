@@ -7,6 +7,15 @@ _ks_d = _ks_os.path.dirname(_ks_os.path.abspath(__file__))
 if _ks_d not in _ks_sys.path:
     _ks_sys.path.insert(0, _ks_d)
 
+# D3 收编：本文件已迁入 scripts/engine/pipeline/，同目录兄弟 step* 由 _ks_d 覆盖，
+# 但 direction/chain_tables/util/chain_verdicts/labels_loader 等仍在 scripts/，需把 scripts/ 也加入。
+_ks_parent = _ks_os.path.dirname(_ks_os.path.dirname(_ks_d))
+_ks_grandparent = _ks_os.path.dirname(_ks_parent)
+if _ks_parent not in _ks_sys.path:
+    _ks_sys.path.insert(0, _ks_parent)
+if _ks_grandparent not in _ks_sys.path:
+    _ks_sys.path.insert(0, _ks_grandparent)
+
 from kernel_path import ensure_kernel_on_path as _ks_ensure
 
 _ks_ensure(__file__)
@@ -350,7 +359,15 @@ def _use_god_rules() -> list[dict]:
     """装载规则表；读不到就返回空表（宁可退回词典，也不硬编一份"假装有出处"的规则）。"""
     global _USE_GOD_RULES
     if _USE_GOD_RULES is None:
-        path = Path(__file__).resolve().parents[1] / "data" / "rules" / "domain" / "use_god_relations.json"
+        # 不假定脚本深度：从本文件向上找到含 data/rules/domain 的仓库根（liuyao/），
+        # 兼容 scripts/step2.py 与 scripts/engine/pipeline/step2.py（D3 收编后落地更深）。
+        _root = Path(__file__).resolve().parent
+        while not (_root / "data" / "rules" / "domain").is_dir():
+            _up = _root.parent
+            if _up == _root:
+                break
+            _root = _up
+        path = _root / "data" / "rules" / "domain" / "use_god_relations.json"
         try:
             _USE_GOD_RULES = json.loads(path.read_text(encoding="utf-8")).get("rules") or []
         except (OSError, ValueError):

@@ -298,6 +298,11 @@ def _partition_remap(base: Path, rel: str) -> Path | None:
                 sub = base / "scripts" / "classical" / tail if i4 == 0 \
                     else base / Path(*norm[:i4].split("/")) / "scripts" / "classical" / tail
                 return sub if sub.exists() else None
+            # D3 收编：step1~5 迁入 scripts/engine/pipeline/（仅实体在盘时生效）。
+            if "/" not in tail and tail.startswith("step") and tail.endswith(".py"):
+                sub = base / "scripts" / "engine" / "pipeline" / tail if i4 == 0 \
+                    else base / Path(*norm[:i4].split("/")) / "scripts" / "engine" / "pipeline" / tail
+                return sub if sub.exists() else None
         return None
     after = norm[idx + len(marker):]
     if not after:

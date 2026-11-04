@@ -25,6 +25,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 DISC = HERE.parent
 sys.path.insert(0, str(DISC / "scripts"))
+# D3 收编：step1~5 整体迁入 scripts/engine/pipeline/
+sys.path.insert(0, str(DISC / "scripts" / "engine" / "pipeline"))
 from kernel_path import ensure_kernel_on_path  # noqa: E402
 
 ensure_kernel_on_path(__file__)

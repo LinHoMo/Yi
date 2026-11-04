@@ -102,10 +102,10 @@ L2084→ZD214、L2431→ZD222）／非单点 3／不升 3／待回原文 3／新
 | 路径 | 内容 |
 |---|---|
 | `core/yishu_core/` | 学科私有内核副本：干支历法、纳甲、六十四卦表、旺衰等（与八字科各自独立、互不 import） |
-| `scripts/engine.py` | 装卦排盘聚合入口：纳甲、世应、六亲、六神、旬空、变卦 |
+| `scripts/engine/_core.py` | 装卦排盘聚合入口（包入口，CLI 用 `python -m engine`）：纳甲、世应、六亲、六神、旬空、变卦 |
 | `scripts/chart.py`·`analyze.py`·`narrate.py`·`render.py` | 四段契约薄适配层（包装既有引擎） |
 | `scripts/thinking_chain.py` | 五步思维链聚合入口 |
-| `scripts/step1.py`…`step5.py`·`analysis_steps.py` | 五步思维链实现：现状 → 取用神 → 旺衰 → 动变 → 综合 |
+| `scripts/engine/pipeline/step1.py`…`step5.py`·`analysis_steps.py` | 五步思维链实现：现状 → 取用神 → 旺衰 → 动变 → 综合 |
 | `scripts/classical_analysis.py` | 31 段经典深度分析（`advanced_analysis`）：伏藏、暗动、月破、三合、进退、反吟伏吟、独发独静、方位、纳音……（实跑枚举为准，`enhance_reading` 产出键即真值） |
 | `scripts/analyze.py` | 结论层含 `应期窗口` 结构键（第一百九十二批，纯派生；正文给窗不升格必应） |
 | `eval/` | 评测层（356 批起物理隔离）：`case_runner.py`（案例装载/时刻还原）、`evaluate.py`（唯一评分器）、`build_portal_assets.py`（门户/样例报告）；`scripts/` 下同名文件是纯 re-export 兼容入口 |
