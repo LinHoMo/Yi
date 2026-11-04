@@ -23,7 +23,7 @@
   · 基线取**实测值**，只准前进不准后退：低于 BASELINE 即判红（范式照六爻
     `liuyao/dev_tools/check.py`）。抬基线走 `--raise`，且必须在
     `docs/CHANGELOG.md` 登记理由；**下调**基线只能改本文件里的字面量（进 git diff、
-    进评审），本地 `check_baseline.json` 覆盖文件一律**不得放宽**（见 `_effective_baseline`）。
+    进评审），本地覆盖文件一律**不得放宽**（见 `_effective_baseline`）。
   · §四.2「tune 均分无故跌破 95 即视为回归」落在**加权均分**口径上（当前 tune 100.0 /
     holdout 100.0（368 批实测，原登记 97.6／99.5），均 ≥95，AGENTS_TUNE_FLOOR 有机械断言兜着）。
   · **均分只在分母不变时可比（369 批 `BASELINE_N`）**：`BASELINE_N` 锁住登记时的 n，

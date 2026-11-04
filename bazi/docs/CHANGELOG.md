@@ -11,6 +11,16 @@
 > 399/400/401 撞号，按提交顺序归位为 **408/409/410/411**；原提交 `46d8bc1` 的提交信息
 > 保留旧号作历史，不再改。跨文件引用一律按新号。
 
+## 2026-11-04 第五百一十六批（全仓·并批，八字侧）：**死链门裸名判定**
+
+- `devkit/shared/check_doc_refs.py` 经 `sync_devkit.py --write` 分发到本科：
+  裸文件名现按全仓在盘集合判存在性（病史行豁免）。本科实跑抓出 3 处
+  （core 两处 `classical_tables.py`、`dev_tools/check.py` 的 `check_baseline.json`），
+  已按历史注记/说明性写法改正；`check_doc_refs.py` 811 条引用 0 死链、`--selftest` 通过。
+- 内核变体 `ming_tables.bazi.py`／`shensha.bazi.py` 的同一处历史名同步修正，
+  经 `sync_kernel.py --write` 分发（[35] 同源）。
+- 主登记见 `liuyao/docs/CHANGELOG.md` 第五百一十六批；本科全套门 rc=0，零读数变更。
+
 ## 2026-11-04 第五百一十五批（全仓·并批，八字侧）：**静默空表与门盲区**
 
 - `scripts/xiang.py` 的 `except OSError: return {}` 改为缺表即抛错（含 gongwei／liugin／

@@ -451,7 +451,7 @@ def checks():
             # 不该判红（254 上线首跑即抓到自己诞生瞬间的"条目已写、提交未在册"，
             # 该误红暴露了口径须钉 HEAD——已按 §六.2 分诊归正）。
             # 批号在册口径（342 批精简后）：主 CHANGELOG **与历史索引**都算数——
-            # 342 批删除了 `CHANGELOG-ARCHIVE.md` 全文，把 154 批（六爻）／81 节（八字）
+            # 342 批删除了 CHANGELOG-ARCHIVE 全文，把 154 批（六爻）／81 节（八字）
             # 的 `## 日期 第N批` 标题保留进 `CHANGELOG-HISTORY-INDEX.md`；批号一个没少，
             # 只是换了文件。只读主文件会把它们全判成孤儿。
             for fn in ("docs/CHANGELOG.md", "docs/CHANGELOG-HISTORY-INDEX.md"):

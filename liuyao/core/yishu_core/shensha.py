@@ -7,7 +7,7 @@
   两科共用，故单独成模块；**吉凶解读不在此处**，只给机械安星结果。
 
 拆分由来：这些表原先住在 `ming_tables.py`，而该模块头声称「唯一消费方：命科，卜科不用」，
-与六爻实际取用的事实矛盾（`bing_yao_shensha.py` / `chain_tables.py` / `classical_tables.py`），
+与六爻实际取用的事实矛盾（`bing_yao_shensha.py` / `chain_tables.py` / 旧 classical_tables 模块），
 即审计 B3「内核领域命名泄漏」——该审计文档已随扁平化不在库，判据按 AGENTS.md §二 内核唯一真值源执行。
 驿马/桃花/华盖按三合局取，故依赖 `symbols.sanhe_group`。
 出处诚实：均为通行起例，本环境无法逐字核对原文，被 analyze 引用为判据者 `verified=false`。

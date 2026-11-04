@@ -1,15 +1,7 @@
 # -*- coding: utf-8 -*-
-"""CLI 输出层（第三百四十九批）：HTML／JSON／Text 三路输出从 engine.py 搬出。
+"""CLI 输出层：HTML／JSON／Text 三路输出（呈现可以依赖推演，推演不得依赖呈现）。
 
-为什么搬：`CONTRACT.md §三` 的禁边 `engine.py → render` 是 310 批登记的两条既存
-欠账之一——引擎门面在 `--html` 分支里直接 import 呈现层。349 批把整段输出逻辑
-（含 HTML 的 `render_html` 调用）移到本模块：`engine.py` 只调 `output_result`，
-不再直接触达 `render`；呈现层由本模块承担，符合“呈现可以依赖推演、推演不得依赖
-呈现”的方向。
-
-行为不变：三路分支的文案、缩进、`--save-html` 路径处理与 ImportError 回退
-逐行照搬；`golden` 指纹不得变。`_apply_depth_to_result` 与 `format_*` 仍是
-`engine_format` 的唯一真源，本模块只做装配。
+装卦入口在 `engine/_core.py`；本模块只做装配，三路文案与 `golden` 指纹不得变。
 """
 from __future__ import annotations
 
@@ -27,15 +19,10 @@ from narrative_assembly import attach_narrative
 
 
 def attach_trigram(result: dict) -> dict:
-    """第三百五十批：chart 段不再产卜象解读；CLI 输出层在此补出。
+    """CLI 输出层补出卜象解读键（analyze 段走四段管道时自行产出，二者不重复计算）。
 
-    `engine.py` 直接消费 `build_hexagram_result`（chart），不再触达
-    `trigram_symbolism`；为保持 engine 的 JSON/Text/HTML 输出面不变，本模块
-    在输出前补键。    `analyze.py` 走四段管道时自行产出同一键，二者不重复计算。
-
-    362 批：category 不再恒 `general`，与 analyze 段同一口径——由 step2 的
-    `question_class` 经 xiang.resolve_xiang_category 推导，避免同一问句在
-    两条路径上取到不同的象类别。
+    category 由 step2 的 `question_class` 经 xiang.resolve_xiang_category 推导，
+    与 analyze 段同口径，避免同一问句在两条路径上取到不同象类别。
     """
     if not isinstance(result, dict) or "trigram_interpretation" in result:
         return result
@@ -66,8 +53,7 @@ def append_advice(text: str, result: dict, sep: str, title: str) -> str:
 def output_result(result: dict, chain, output_format: str, depth: str, args) -> None:
     """输出三路分支：HTML 委托 render.py / JSON 原始 / Text 委托 engine_format。
 
-    349 批：本模块是 CLI 呈现层，`engine.py` 不再直接 import `render`；
-    `render` 的 import 仍留在函数内，保持“未安装时回退 JSON”的旧行为。
+    `render` 的 import 仍在函数内，保持「未安装时回退 JSON」的旧行为。
     """
     result = attach_trigram(result)
     result = attach_narrative(result)

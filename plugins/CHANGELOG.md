@@ -6,6 +6,14 @@
 > **497 批起只保留 DSH 一个宿主**：claude/codex/gemini/yan 四家适配器目录、
 > `publish.mjs`（git 发行树）及其在 build/selftest/ci/文档里的登记一并删除。
 
+## 2026-11-04 第五百一十六批（共享层）：**冻结面自检与报告口径覆盖**
+
+- `scripts/selftest.mjs` [5] 由「只查 `yi_liuyao` 参数名」扩为四工具参数 schema 与
+  required 的逐项比对（真值取 MCP `tools/list`），含改 `required` 的负例自证；
+  [7] 新增三份报告模板（`mcp/report.mjs`、两科 `scripts/render.py`）的禁语与
+  「专业意见为准」提示语扫描，含 0 目标与缺提示语负例。
+- 段号表与卷首说明同步；`build.mjs` 未改。主登记见六爻 CHANGELOG 516 批。
+
 ## 2026-11-04 第五百一十五批（共享层·并批）：**产物重建与同源**
 
 - 六爻 `kernel_path.py` 与 14 个 scripts 模块、两科共享门真源有改动；

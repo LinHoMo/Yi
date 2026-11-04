@@ -10,7 +10,7 @@ relations.py（十神↔六亲同一张表），本模块只借它给藏干逐�
 
 **纳音、三合局分组、神煞原本也住在这里**，但卜科（六爻）同样在取——
 `bing_yao_shensha.py` 取 `shensha_at_branches`、`chain_tables.py` 取 `SAN_HE_GROUPS`、
-`classical_tables.py` 取 `NAYIN`/`NAYIN_TO_ELEMENT`——与本模块「唯一消费方：命科」
+旧 classical_tables 模块 取 `NAYIN`/`NAYIN_TO_ELEMENT`——与本模块「唯一消费方：命科」
 的声明自相矛盾，即审计 B3「内核领域命名泄漏」。2026-09-29 按归属拆出，**取值零变化**：
   - 纳音 + 三合局分组 → `symbols.py`（干支五行关系；其章程本就写着「六合六冲三合三刑六破」，
     三合却一直不在里面，顺带补齐章程）

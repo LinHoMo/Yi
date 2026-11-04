@@ -8,9 +8,9 @@
  *   [2]    两科入口齐备、评测 shim 未随包
  *   [3]    skills 正文同源 + 知识库篇数对账
  *   [4]    MCP 冒烟（直跑真源 server.mjs）
- *   [5]    1.0 冻结工具契约
+ *   [5]    1.0 冻结工具契约（四工具参数 schema 与 required）
  *   [6]    包体上限
- *   [7]    口径诚实：禁语 + 口径声明覆盖
+ *   [7]    口径诚实：禁语 + 口径声明 + 报告模板提示语
  */
 import { spawn } from 'node:child_process'
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
@@ -376,14 +376,37 @@ head(5)
   if (toolDefs.length === FROZEN_TOOLS.length && toolDefs.every((t) => t?.inputSchema?.type === 'object')) {
     ok(`四工具 inputSchema 均为 object，且数量恰为冻结面 ${FROZEN_TOOLS.length}`)
   }
-  const FROZEN_PARAMS = 'datetime,gender,mode,numbers,question,seed,yao'
-  const keysOf = (props) => Object.keys(props ?? {}).sort().join(',')
-  const keys = keysOf(byName.get('yi_liuyao')?.inputSchema?.properties)
-  if (keys === FROZEN_PARAMS) ok('yi_liuyao 参数集与 1.0 冻结面一致')
-  else bad(`yi_liuyao 参数集变了：${keys}（改冻结面必须同时改 AGENTS.md §二）`)
-  if (keysOf({ ...(byName.get('yi_liuyao')?.inputSchema?.properties ?? {}), extra: {} }) === FROZEN_PARAMS) {
-    bad('负例自证失败：多一个参数仍判绿')
-  } else ok('负例自证：新增参数即破坏冻结面')
+  // 冻结面 = 工具名 + 参数 schema（属性集与 required）。输出 value 结构与文本块形状
+  // 由 verify-in-dsh 真跑 execute()/render() 覆盖，不在此重复。
+  const FROZEN_SCHEMA = {
+    yi_bazi: { props: 'datetime,gender,longitude', required: 'datetime,gender' },
+    yi_kb: { props: 'discipline,limit,query', required: 'query' },
+    yi_liuyao: { props: 'datetime,gender,mode,numbers,question,seed,yao', required: 'question' },
+    yi_report: {
+      props: 'datetime,discipline,format,gender,longitude,mode,numbers,question,seed,yao',
+      required: 'discipline',
+    },
+  }
+  const shapeOf = (t) => ({
+    props: Object.keys(t?.inputSchema?.properties ?? {}).sort().join(','),
+    required: [...(t?.inputSchema?.required ?? [])].sort().join(','),
+  })
+  const drift = (defs) => Object.entries(FROZEN_SCHEMA).flatMap(([name, want]) => {
+    const got = shapeOf(defs.get(name))
+    return [
+      ...(got.props === want.props ? [] : [`${name} 参数集变了：${got.props} ≠ ${want.props}`]),
+      ...(got.required === want.required ? [] : [`${name} required 变了：${got.required} ≠ ${want.required}`]),
+    ]
+  })
+  const bad5 = drift(byName)
+  if (bad5.length) for (const d of bad5) bad(d)
+  else ok('四工具参数 schema 与 required 均与 1.0 冻结面一致')
+  const probe = new Map(byName)
+  const kb = byName.get('yi_kb')
+  probe.set('yi_kb', { ...kb, inputSchema: { ...kb?.inputSchema, required: [] } })
+  if (!drift(probe).some((d) => d.startsWith('yi_kb required'))) {
+    bad('负例自证失败：required 被改仍判绿')
+  } else ok('负例自证：改 required 即破坏冻结面')
 }
 
 // ── [6] 适配器包体 ──────────────────────────────────────────────────────────
@@ -466,6 +489,36 @@ head(7)
   rmSync(probeDir2, { recursive: true, force: true })
   if (missed) ok('负例自证：缺口径声明的文档会被抓到')
   else bad('负例自证失败：口径声明扫描器抓不到明知缺失的文档')
+
+  // 报告模板是源码，不要求口径声明；但禁语与免责提示语必须逐份在位。
+  const REPORT_SOURCES = [
+    join(MCP_DIR, 'report.mjs'),
+    join(REPO_ROOT, 'liuyao', 'scripts', 'render.py'),
+    join(REPO_ROOT, 'bazi', 'scripts', 'render.py'),
+  ]
+  const DISCLAIMER = /专业意见为准/u
+  for (const f of REPORT_SOURCES.filter((p) => !existsSync(p))) {
+    bad(`报告模板缺失：${f.replace(REPO_ROOT, '')}`)
+  }
+  const reportFiles = REPORT_SOURCES.filter((p) => existsSync(p))
+  if (!reportFiles.length) bad('报告模板扫描目标为 0 份——不能当通过')
+  for (const f of reportFiles) {
+    const text = readFileSync(f, 'utf8')
+    for (const hit of scan(text)) bad(`${f.replace(REPO_ROOT, '')} ${hit}`)
+    if (!DISCLAIMER.test(text)) bad(`报告模板缺免责提示语：${f.replace(REPO_ROOT, '')}`)
+  }
+  if (reportFiles.length === REPORT_SOURCES.length) {
+    ok(`报告模板禁语与免责提示语全覆盖（${reportFiles.length} 份）`)
+  }
+  const probe3 = mkdtempSync(join(tmpdir(), 'yi-report-probe-'))
+  try {
+    const bare = join(probe3, '_probe.mjs')
+    writeFileSync(bare, 'const x = 1\n')
+    if (DISCLAIMER.test(readFileSync(bare, 'utf8'))) bad('负例自证失败：提示语扫描器恒真')
+    else ok('负例自证：缺免责提示语的模板会被抓到')
+  } finally {
+    rmSync(probe3, { recursive: true, force: true })
+  }
 }
 
 console.log('\n' + '─'.repeat(60))

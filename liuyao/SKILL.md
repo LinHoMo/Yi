@@ -15,7 +15,7 @@ description: 六爻占卜预测。使用中国传统易经六爻纳甲法进行�
 > - ❌ 手动定卦宫、排地支纳甲、定世应、推六亲、配六神、算旬空、判变卦
 > - ❌ 任何"心算"排盘或"推算"替代脚本功能
 >
-> 上述操作**必须且只能**由 `engine.py` 和 `classical_analysis.py` 完成。
+> 上述操作**必须且只能**由 `engine/_core.py` 和 `classical_analysis.py` 完成。
 
 ### 另两条铁律（操作版；全文见仓库根 `AGENTS.md` §一）
 

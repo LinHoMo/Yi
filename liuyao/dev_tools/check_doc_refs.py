@@ -130,6 +130,19 @@ def _resolves(rel: str) -> bool:
     return any(p.name == name for p in DISC.rglob(f"*{name}") if p.is_file())
 
 
+_BARE_NAMES: set[str] | None = None
+
+
+def bare_names() -> set[str]:
+    """全仓在盘文件名集合：裸文件名引用按此判存在性（缓存一次）。"""
+    global _BARE_NAMES
+    if _BARE_NAMES is None:
+        _BARE_NAMES = {p.name for p in ROOT.rglob("*")
+                       if p.is_file() and ".git" not in p.parts
+                       and "__pycache__" not in p.parts}
+    return _BARE_NAMES
+
+
 def scan() -> tuple[list[str], int]:
     problems: list[str] = []
     examined = 0
@@ -181,7 +194,11 @@ def scan() -> tuple[list[str], int]:
                 if not ref.endswith(SUFFIXES):
                     continue
                 if "/" not in ref and not ref.startswith("."):
-                    continue      # 裸文件名（如 SKILL.md）不构成本器的路径声明
+                    # 裸文件名不算路径声明，但活引用指向已删文件必须判红
+                    # （508 批后 engine.py 已不在盘，SKILL.md 却仍写「必须且只能由它完成」）。
+                    if ref not in bare_names():
+                        problems.append(f"{rel_to_disc}:{n} 裸文件名在盘上不存在 → {ref}")
+                    continue
                 if ref.startswith(RUNTIME_DIRS):
                     continue
                 if GENERATED_ARTIFACT.match(ref):
@@ -226,6 +243,8 @@ def selftest(problems: list[str]) -> None:
                    "显式病史行不判：该测试文件 tests/test_ghost_hist.py 从未存在。\n"
                    "裸文件名旧件也要抓：见 HANDOFF 的旧表。\n"
                    "病史行不判：原 TECH-DEBT 已删，改见现行 CHANGELOG。\n"
+                   "裸文件名靶子：见 `zz_probe_bare_ghost.py`。\n"
+                   f"真裸名不误报：`{real_py[0].name}` 在盘。\n"
                    f"真路径不得误报：{ok_a} 与 {ok_b} 都在。\n",
                    encoding="utf-8")
     # 第四式（照八字科第一百六十六批·同步判据不同文字）：**JSON 数据文件里**的死指针
@@ -242,9 +261,13 @@ def selftest(problems: list[str]) -> None:
     try:
         got, n = scan()
         hits = [g for g in got if "_selftest_deadref.md" in g]
-        if len(hits) < 5:
-            problems.append(f"负例自证失效：造的 5 条死引用（含裸路径、已删除 tools/、"
+        if len(hits) < 6:
+            problems.append(f"负例自证失效：造的 6 条死引用（含裸路径、裸文件名、已删除 tools/、"
                             f"历史词遮罩下的活 tests 指针）只抓到 {len(hits)} 条")
+        if not any("_selftest_deadref.md" in g and "zz_probe_bare_ghost.py" in g for g in got):
+            problems.append("负例自证失效：裸文件名指向不存在文件没被抓到")
+        if any("_selftest_deadref.md" in g and real_py[0].name in g for g in got):
+            problems.append("负例假阳性：真实存在的裸文件名被误判")
         if any("test_ghost_hist" in g for g in got):
             problems.append("负例假阳性：显式病史行（从未存在）被误判成活指针")
         jhits = [g for g in got if "_selftest_deadref.json" in g]

@@ -86,7 +86,7 @@ def chart(mode: str, question: str, *, datetime_str: str | None = None,
           distinguish_zi_hour: bool = False, zi_hour_type: str | None = None) -> dict:
     """四段契约 chart：起卦 → 排盘 JSON。
 
-    参数与 `engine.py` 对齐：mode ∈ coin|time|number|manual。
+    参数与 `engine/_core.py` 对齐：mode ∈ coin|time|number|manual。
     """
     # 子时口径：--zi-hour-type 是唯一能改日柱的旗标（late=23点换日、early=00点换日）；
     # --distinguish-zi-hour 只记录夜子/晨子，不改口径（旧代码把它映射成 "late"，

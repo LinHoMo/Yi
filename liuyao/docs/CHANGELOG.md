@@ -5,6 +5,31 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-04 第五百一十六批（全仓·冻结面与死链门补齿）：**共享层 [5] 扩到四工具参数 schema 与 required、[7] 补报告模板禁语与免责提示语；两科死链门新加裸文件名存在性判定，实跑抓出 15 处悬空裸引用（含 SKILL.md 铁律仍指向 508 批已删的 engine.py）并逐条按实况改正**
+
+1. **冻结面**：`plugins/scripts/selftest.mjs` [5] 新增 `FROZEN_SCHEMA`（四工具 props 键集与
+   required），逐项比对 MCP `tools/list` 实返；输出 value 结构与文本块形状仍由
+   `verify-in-dsh` 真跑 `execute()`／`render()` 覆盖，不重复。负例：改 `yi_kb.required` 即判红。
+2. **报告口径**：[7] 新增 `REPORT_SOURCES`（`plugins/mcp/report.mjs`、两科 `scripts/render.py`），
+   逐份扫禁语并要求含「专业意见为准」；0 目标判红，含缺提示语负例。三份实跑全覆盖。
+3. **死链门裸名**：`devkit/shared/check_doc_refs.py` 原来对不含 `/` 的裸文件名一律放行，
+   现按全仓在盘文件名集合判存在性（病史行仍按 HISTORY／LEGACY_HISTORY 豁免），
+   含裸名负例与真裸名不误报两条自证。实跑两科共抓 15 处：`engine.py` ×6（508 批升格后
+   已迁入 `engine/_core.py`）、两科 core 的 `classical_tables.py` ×4、
+   `CHANGELOG-ARCHIVE.md`、`fangwei.py`、`provenance.json`、`断易鬼灵经.txt`、
+   `check_baseline.json`。逐条改为现行路径、去掉文件名后缀或补病史，其中
+   `liuyao/SKILL.md` 铁律「必须且只能由 `engine.py` 完成」是**活规程指向已删文件**，
+   已改指 `engine/_core.py`。四个 kernel 变体经 `sync_kernel.py --write` 同步（[35] 同源）。
+4. **精简**：`liuyao/scripts/output.py` 三段批次沿革 docstring 压成各 2–4 行；
+   `chart.py`、`engine/__init__.py`、`source_ledger.md` 等同步去掉过期文件名。
+5. **诚实结案**：`_resolves()` 的 basename 兜底有 124 处依赖，实测全是「省略 `domain/`
+   前缀」的正当写法，收紧会把真引用判红，本批不动；案例隔离门的动态 import 痕迹检测
+   亦未加（无实际案例，静态扫描面已扩到 core/ 与 data/）。
+
+**收口实跑（全部 rc=0）**：两科 `check.py` 全量、两科 `check_doc_refs.py` 与 `--selftest`
+（947／811 条引用、0 死链）、根级三门、readout_ledger full、两个 sync --check、
+build/selftest/npm check、两科回归与冒烟。
+
 ## 2026-11-04 第五百一十五批（全仓·路径真源收敛与门盲区补齿）：**六爻 scripts 层数据路径硬算层级收进 `kernel_path` 单一真源，缺表一律抛错；案例隔离门扩到 core/ 与 data/ 并补负例，[42] 加覆盖防退化断言；零读数变更**
 
 1. **路径真源**：`liuyao/scripts/kernel_path.py` 新增 `disc_path()` / `data_path()` /
