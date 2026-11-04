@@ -6,6 +6,8 @@
 > **497 批起只保留 DSH 一个宿主**：claude/codex/gemini/yan 四家适配器目录、
 > `publish.mjs`（git 发行树）及其在 build/selftest/ci/文档里的登记一并删除。
 
+## 2026-11-05 第五百一十七批（共享层·随包登记）：**DOCS.md 钉数消除（随 517 全仓批）；本层无改动，仅随包登记**
+
 ## 2026-11-04 第五百一十六批（共享层）：**冻结面自检与报告口径覆盖**
 
 - `scripts/selftest.mjs` [5] 由「只查 `yi_liuyao` 参数名」扩为四工具参数 schema 与
