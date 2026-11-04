@@ -48,7 +48,7 @@ ENTRIES = [
             {"who": "野鹤/觉子", "quote": "非比休囚之真空到底而为空也", "source": Z, "line": 643},
         ],
         "engine_position": "采《增删》简化：真空/假空互斥判定（宁缺勿滥），不采十一类名目",
-        "engine_anchor": "rule_registry: liuyao.xunkong_zhenjia → engine/pipeline/step3.py:583",
+        "engine_anchor": "rule_registry: liuyao.xunkong_zhenjia → engine/pipeline/step3.py:750",
         "status": "settled_by_source",
     },
     {
@@ -150,7 +150,7 @@ ENTRIES = [
             {"who": "卜筮正宗", "quote": "合局\t六冲\t六破\t六穿\t六刑", "source": "《卜筮正宗》（bushi_zhengzong_dz.dz.txt）绪论名词目录行（原文制表符分隔）", "line": 120},
         ],
         "engine_position": "保留六破计价（effects.analyze_six_breaks，step5 5.5e 消费）：外部读数实证其方向正确（第两百八十九批 A/B：撤除计价 tune strict 97.9→96.0、wikisource_holdout 70.5→69.0、holdout/direction/zengshan 持平——净退化）；书证缺口如实登记——若后批找到《卜筮正宗》正文或他源六破逐字书证，按书证重估幅度与条件（如旺衰门/久远占适用性）；在此之前不作书证洁癖式撤除，也不虚构出处",
-        "engine_anchor": "scripts/effects.py:analyze_six_breaks；engine/pipeline/step5.py:615-619（5.5e 六破损伤消费）",
+        "engine_anchor": "scripts/effects.py:analyze_six_breaks；engine/pipeline/step5.py:621-640（5.5e 六破损伤消费）",
         "status": "open_conflict",
         "note": "《增删卜易》三底本全文检索记录与 A/B 实验数据原文见两科 CHANGELOG 第两百八十九批（检索类记录无逐字行号，不入 parties 回验面）。",
     },

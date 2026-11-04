@@ -5,6 +5,86 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-04 第五百零九批（六爻·台账指针回改）：**判据台账 42 处旧代码路径指针改回真实落点，行号随盘重算 25 处；`chart.py` 去冗余别名，`CONTRACT.md` 改按目录记段——纯指针与文档，golden 双指纹零漂移**
+
+**性质**：指针口径修正（判据值一律不变；读数不动属预期，见 §四.7）。
+
+### 一、决定反转（505 → 509，写明理由）
+
+- 第五百零五批的在册决策是「**台账不回改、转发在判据侧**」，故 508 升格后台账里
+  `scripts/engine/**`、`scripts/classical/**` 一类旧指针仍由 `check_rule_registry._partition_remap`
+  四类转发兜住。本批经**用户裁定**改为回改：升格已定稿、落点不再动，指针与磁盘一致比
+  靠转发兜底更可查；台账里「写的是哪一行」从此可直接 `git blame` 回验。
+- **转发逻辑不删**：`_partition_remap` 与 `_PATH_RE` 的 `engine` 前缀保留作双保险
+  （旧指针若被再引入或被外部工具带入，仍能回指，不会当场判红掩盖真错）。
+- 台账不再是「冻结物」：本批起它与代码同步维护，改落点即同批改指针。
+
+### 二、回改范围（42 处路径前缀，一处一类可核）
+
+| 文件 | 处数 | 形如 |
+|---|---|---|
+| `data/rules/legacy/rule_registry.json` | 41 | `scripts/stepN.py` → `engine/pipeline/stepN.py`；`scripts/classical_enhancements*.py` → `engine/classical/classical_enhancements*.py`；`liuyao/scripts/…` 同规则带前缀 |
+| `data/rules/domain/qianjin_fu_map.json` | 1 | 同上（`scripts/step3.py::compute_day_modifier`） |
+
+- **只动路径前缀**：行号、符号名、引文、`verified`、`gap_detail` 等判据内容一字未改。
+- **扁平模块不碰**：`scripts/effects.py`、`scripts/classical_analysis.py`、`scripts/timing.py`、
+  `scripts/narrate_core.py` 仍在 `scripts/` 下，保持原样（这是升格后的正确落点，不是漏改）。
+- 改写用一次性脚本 `scratch/repoint_ledger_to_engine.py`（JSON 树内逐字符串替换，幂等，
+  重跑报「0 处」）；产物 diff 逐行核过：38 行路径 + 4 行含行号，无其他字段变化。
+
+### 三、行号随盘重算（25 处，全部逐条报「登记值 → 实际值」）
+
+1. **符号锚 17 处**（`符号(数字)` 形态，用 AST 取定义行，仅当符号确实存在于目标文件才改）：
+   `effects.py:analyze_repetition 786→880`、`analyze_repetition_deep 914→1008`、
+   `analyze_clash_harmony 697→791`、`analyze_officer_tomb 264→317`、`analyze_three_punishments 1215→1309`、
+   `analyze_six_breaks 168→221`；`classical_enhancements.py:analyze_advance_retreat 1298→1390`、
+   `analyze_triple_combo 1508→1597`、`find_hexagram_body 466→518`、`analyze_monthly_break 1185→1276`、
+   `analyze_hidden_movement 986→1072`、`analyze_desperate_relief 1813→1902`、
+   `analyze_hidden_spirit_emergence 763→895`、`analyze_twelve_growth 1707→1790`；
+   `step2.py:step2_identify_use_god 57→64`、`_find_use_god_positions 556→696`；
+   `timing.py:predict_timing_core 733→1152`。
+   **其中 `effects.py`／`timing.py` 那 7 条是 508 之前的旧漂移**（这两个文件本轮没搬过），
+   一并修正，不留「同册两种精度」。
+2. **纯行号锚 6 处**（无符号名，按相邻描述在盘上定位后改）：
+   `step3.py:196-198 极旺／旺两档` → `engine/pipeline/step3.py:241-246`；
+   `step3.py:199-201『相』位上调（_xiang_bump）` → `:239`；
+   `step3.py:653-660 月破修正` → `:764-800`；
+   `step3.py:583 真空/假空` → `:750`；`step4.py:1058 check 3b 三会` → `:1174`；
+   `timing Rule 8(615)/Rule 9(672)` → `Rule 8(1015)/Rule 9(1080)`。
+3. **生成器内锚 2 处**：`dev_tools/build_adjudications.py` 的
+   `xunkong_zhenjia → step3.py:583` 改 `:750`、`six_breaks → step5.py:615-619` 改 `:621-640`
+   （后者原指腾蛇文案行，实为 5.5e 六破段），并重跑该构建器；产物
+   `data/rules/domain/adjudications.json` 变化仅 `built_at` 与这两条锚。
+- **刻意不改**：`verification_note_zengshan_2026_10`（L136）与 `effects.py:656-664` 里的行号
+  属 **2026-10-07 的核查记录**（登记时点事实，不是当前指针），按 §六 台账纪律保留原值；
+  纯行号锚无门可判，其准确性靠本批这次的逐条人工定位维持。
+
+### 四、另两项（本轮一并清掉）
+
+1. `scripts/chart.py`：`import engine as engine` → `import engine`。别名冗余（模块名本来就叫
+   `engine`），去掉后属性访问（`engine.random` / `engine.handle_zi_hour` /
+   `time_based_hexagram` / `number_based_hexagram`）语义不变，已由 chart 冒烟用例覆盖。
+2. 根 `CONTRACT.md` 由**模块名前缀**改**按目录**记段：
+   - §二-bis 六爻行：`step1.py`–`step5.py` → `engine/pipeline/step1.py`–`step5.py`，装配写 `scripts/chain_assembly.py`；
+   - §三 层间矩阵 ASCII 图改为「`core ← engine/**`（推演）＋ `core ← scripts/**`（机械/数据/叙述/呈现）」，
+     并加一段「目录口径（508 升格后，509 写入本节）」说明模块名与 import 名未变；
+   - 允许表新增四条：`engine/** → core`、`engine/** → scripts/**(扁平模块)`、`scripts/** → engine/**`；
+   - §二 通用边界「`core/**` 不得 import」补 `engine/**`；禁边表首行改 `engine/pipeline/step1..5`。
+
+### 五、验证
+
+- `python liuyao/dev_tools/check.py` → 质量门全部通过（含 [12] 规则台账指针回验：全部 `impl`
+  文件在盘、符号可达；`[33]` 判定表；`[20]` 中文 CLI；`[1]` chart 冒烟）。
+- `python dev_tools/golden.py` → 288 例｜机械 `96c7f5d168ca6140`｜措辞 `8168eff9e560d6c2`｜异常 0，**与基线逐位一致**。
+- `python bazi/dev_tools/check.py` → 通过（本科数据未动）；`devkit/sync_devkit.py --check` → 12 共享件一致。
+- 根级三门：`check_root_docs.py`（`CONTRACT.md` 改动后 0 死链）／`check_docs_index.py`／`check_batch_num.py`。
+- 交付面重跑：`node plugins/scripts/build.mjs` → `selftest.mjs`（`data/rules` 随包，指针不参与运行，包体不变）。
+
+### 六、边界
+
+- 台账从此**与代码同批维护**；若再搬落点，改指针是本批之后的标准动作，不再依赖转发。
+- `_partition_remap` 保留（双保险），注释口径写明「509 起为兜底，非唯一通道」不另改。
+
 ## 2026-11-04 第五百零八批（六爻·engine 升格）：**`scripts/engine/`＋`scripts/classical/` 升格为 `liuyao/engine/`（与 `scripts/` 平级），16 处调用侧与 6 个共享门同步扩面——纯搬迁，golden 双指纹零漂移**
 
 **性质**：目录升格（判据不变、读数不变；`engine/` 是 505 批蓝图的最终落点，D3/D4 至此合流）。

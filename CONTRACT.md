@@ -42,7 +42,7 @@
 
 共同遵守的边界（机器判据见各科 `layer_contract.json` 的 `edges.forbidden`）：
 
-- `core/**` 不得 import `scripts/**`（AGENTS.md §二 单向依赖）；
+- `core/**` 不得 import `scripts/**` 与 `engine/**`（AGENTS.md §二 单向依赖）；
 - `chart` 不得 import `analyze` / `narrate`（起盘段不依赖推演/正文）；
 - `analyze` 不得 import `render`（推演段不依赖呈现段）；
 - 叙述层不得 import 推演实现内部模块（要数据请走 analyze JSON）。
@@ -51,24 +51,28 @@
 
 | 科 | analyze 段的内部实现 | 对外键 | 说明 |
 |---|---|---|---|
-| 六爻 | `step1.py`–`step5.py` 五步链（现状 → 取用神 → 旺衰 → 动变 → 综合），装配在 `chain_assembly` | `thinking_chain` | `step*` 可互相 import（现状 `step3 → step2`、`step4 → step2`、`step5 → step3/step4`）；`step*` 不得 import 叙述层（`narrate_core` / `narrate` / `advice_framework`）；`chain_verdicts` 是数据装载面（断语表），推演段取断语走它不算越界 |
+| 六爻 | `liuyao/engine/pipeline/step1.py`–`step5.py` 五步链（现状 → 取用神 → 旺衰 → 动变 → 综合），装配在 `liuyao/scripts/chain_assembly.py` | `thinking_chain` | `pipeline/step*` 可互相 import（现状 `step3 → step2`、`step4 → step2`、`step5 → step3/step4`）；`engine/**` 不得 import 叙述层（`narrate_core` / `narrate` / `advice_framework`）；`chain_verdicts` 是数据装载面（断语表），推演段取断语走它不算越界 |
 | 八字 | 单体 `analyze.py`：`bazi_factors.strength_and_pattern` → `dayun_table` / `liunian_table` → `conclusion`（`scripts/pattern.py` 提供格局判定，属同一 analyze 段） | `conclusion` 等 26 键 | 八字**无** `step1`–`step5` 的对应物；不存在可照搬的推演链，也不为对称而克隆（ARCHITECTURE-PLAN.md §六.3） |
 
 ## §三 层间调用矩阵
 
 ```
-core/yishu_core   ←（唯一允许方向）—  scripts/*
-                                        ├─ engine_* / chart      机械
-                                        ├─ step* / classical_*   推演（chain_assembly 属此段）
-                                        ├─ chain_verdicts        数据装载（断语表，非叙述）
-                                        ├─ narrate*              叙述
-                                        └─ render / visualization 呈现
+core/yishu_core ←（唯一允许方向）— engine/**   推演：_core.py 装卦、pipeline/step1~5、classical/ 古籍增强
+                ←（唯一允许方向）— scripts/**  机械：engine_* 排盘、chart；数据：chain_verdicts；叙述：narrate*；呈现：render/visualization
 ```
+
+> **目录口径（第五百零八批升格后，第五百零九批写入本节）**：六爻推演实现已从
+> `scripts/engine/`＋`scripts/classical/` 升到 `<学科根>/engine/`，与 `scripts/` 平级；
+> 本表按**目录**记段归属，不再按模块名前缀。模块名与 import 名未变（仍是
+> `from engine import …` / `step3` / `classical_enhancements*`），故别名改动为零。
 
 | 允许 | 说明 |
 |---|---|
-| `scripts → core` | AGENTS.md §二 的唯一依赖方向 |
-| `analyze → step* / 规则层` | 推演段内部装配 |
+| `scripts/** → core` | AGENTS.md §二 的唯一依赖方向 |
+| `engine/** → core` | 同上（推演段读内核表） |
+| `engine/** → scripts/**`（扁平模块） | 推演段读机械层（`chart_tables`、`effects`、`timing`、`labels_loader`）与数据装载层 `chain_verdicts` |
+| `scripts/** → engine/**` | 交付路径调用推演引擎（`analyze.py`、`thinking_chain.py`、`classical_analysis.py`、`chart.py`） |
+| `analyze → engine/pipeline/step* / 规则层` | 推演段内部装配 |
 | `analyze → narrate?` **否** | 推演段不得为了取文案去 import 叙述层 |
 | `narrate → analyze 输出` | 只能读 JSON，不 import analyze 模块 |
 | `render → narrate` | 呈现层可以调用正文生成（现状如此） |
@@ -79,7 +83,7 @@ core/yishu_core   ←（唯一允许方向）—  scripts/*
 
 | 起点 | 终点 | 现状 | 判定 |
 |---|---|---|---|
-| `thinking_chain.py` / `step5.py` / `step1..4` | `narrate_core` | 不存在（312 批已还） | **零容忍**：装配函数已搬回 `chain_assembly`，回潮即红 |
+| `thinking_chain.py` / `engine/pipeline/step1..5` | `narrate_core` | 不存在（312 批已还） | **零容忍**：装配函数已搬回 `chain_assembly`，回潮即红 |
 | `core/**` | `scripts/**` | 不存在 | 零容忍，任何新增即红 |
 | `chart.py` | `narrate*` / `chain_verdicts` / `advice_framework` | 不存在 | 零容忍（`chain_verdicts` 承接原 `narrative_utils` 的断语面） |
 

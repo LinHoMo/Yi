@@ -23,7 +23,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-import engine as engine  # noqa: E402
+import engine  # noqa: E402  （第五百零九批：去掉 `as engine` 冗余别名，模块名即 engine）
 from engine import build_hexagram_result, coin_toss  # noqa: E402
 from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 
