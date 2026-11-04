@@ -2547,13 +2547,14 @@
         "use_god": "父母",
         "use_god_branch": "巳",
         "use_god_position": "",
-        "yingqi": "辰日",
+        "yingqi": "亥日",
         "yingqi_branches": [
-          "辰"
+          "亥"
         ],
-        "detail": "卦中辰父发动，当许中秋有雨，殊不知应在初九辰日即雨",
+        "detail": "因巳火父空，亥日冲空则雨。亥日而雨，即于亥日酉时晴，应酉时者，上爻动出酉金子孙之故耳",
         "same_as_day_branch": false,
-        "use_god_note": "天时雨晴并断母子皆动，主断雨线：因巳火父空亥日冲空则雨"
+        "use_god_note": "天时雨晴并断母子皆动，主断雨线：因巳火父空亥日冲空则雨",
+        "yingqi_note": "513 批更正：本例原 expected 取自下一案（酉月初五戊子日占中秋雨·小过之丰）「卦中辰父发动…应在初九辰日即雨」——是建器分块越界抓错案。本卦临之蒙实文为「亥日冲空则雨。亥日而雨，即于亥日酉时晴」，故应期由辰日改回亥日；酉时属时辰档，引擎与评分均不设该档，只记不评。"
       },
       "provenance": {
         "source_file": "data/sources/zengshan_buyi_dz.dz.txt",

@@ -83,7 +83,7 @@ def checks():
     def c_dz(t):
         s = sh(["scripts/evaluate.py", "--split", "zengshan_dz_holdout"])
         return (grab(s, r"平均分 = ([0-9.]+)%"), grab(s, r"strict top-1 命中 ([0-9.]+)%"))
-    add("liuyao.zengshan_dz(87.4/48.3)",
+    add("liuyao.zengshan_dz(86.5/48.3)",
         "README 表→308批→402批改期望（dz 扩样 21→29；priority-anchor＋CASE_RE 之/单字题）；"
         "415 批多支基准口径修正（yingqi_branches 全纳入，原 60.3/37.9；新旧不可比）；"
         "419 批恢复 403 批清空的 18 例用神书证（use_god/branch/note）并补支式抽取，61.5→61.8（新旧不可比）；"
@@ -99,8 +99,12 @@ def checks():
         " 961528c／8b37efb／41986c7／43dfde6／356115f／9f497de 各点实跑恒为 87.4%（use_god N/A=0、verdict 26/26）——"
         "**501 批把 8 例 expected 按原文补全后 N/A 清零，strict 从 64.3 直跳 87.4（+23.1），登记只记 64.3→64.5**。"
         "故旧登记值不是「跑出来的」，是未重跑的估计；本项按可复现实值 87.4 重挂，并声明旧序列不可比。"
-        "**仍存疑**：verdict 26/26 全中（旧记 19/26）意味 expected 与引擎全同，512 批须逐例核书证来源，排除 §三.4 自证",
-        c_dz, ("87.4", "48.3"))
+        "**512 批**：verdict 26/26 已逐例回底本取证（26 条非空 verdict 均有书载结果句，对照全表在 CHANGELOG 512 §一），"
+        "并查明 26/26 的成因是**开发集被逐例修到全对**（10 例按书断调优），只能按「外部·开发集」讲；"
+        "**513 批**：建器分块越界抓到 ZD102 的 expected 取自下一案（小过之丰「应在初九辰日即雨」），"
+        "按本卦临之蒙实文改回亥日——该案原是对着污染值「白给」的一分，去掉后 strict 87.4→86.5、legacy 96.3→96.2"
+        "（top-1 48.3 不变；**新旧不可比**，且此降为去污染所致，不是回归）",
+        c_dz, ("86.5", "48.3"))
 
     def c_bushi(t):
         s = sh(["scripts/evaluate.py", "--split", "bushi_zhengzong_holdout"])

@@ -90,6 +90,11 @@ HEX = r"[^\n。；：，、变之\s]{1,6}"
 # 三类真实占例头此前整条不被 segment 识别。1 字题由 ONE_CHAR_BLOCK 挡行文（「占又得…」）。
 CASE_RE = re.compile(
     r"占([^\n。；：，、变卦得]{1,24}?)[，,]?得(%s)(?:(?:变(%s))|之(%s))?" % (HEX, HEX, HEX))
+# 513 批：句号式占例头（「如戌日丙午日占何日雨。得坎之井卦」）CASE_RE 认不出，整段并进前一案，
+# 使 ZD214 的应期读到下一案（酉日天变／戌日而雨）。此式**只作切块止界**，不新建案例：
+# 全局放宽 CASE_RE 会连带 ZD102 消失、多出 ZD230／ZD233（实测），动的是集身份，不做。
+STOP_HEAD_RE = re.compile(
+    r"(?m)^\s*(?:如|又|例|即如|又如)?[^\n]{0,12}占[^\n。；：，、变卦得]{1,24}?[。；]得[^\n。；：，、变之\s]{1,6}")
 # 单字题黑名单：这些是行文连接词，不是占题（「占又得大有之大壮」实测假头）。
 ONE_CHAR_BLOCK = set("又此其之者事卦得问曰也而即")
 
@@ -131,7 +136,9 @@ MONTH_ORDER_BRANCH = {"正": "寅", "一": "寅", "二": "卯", "三": "辰", "�
                       "五": "午", "六": "未", "七": "申", "八": "酉", "九": "戌",
                       "十": "亥", "十一": "子", "十二": "丑", "冬": "子", "腊": "丑"}
 # 结果标记（已实现）：占验实录句的起句词
-REALIZED_RE = re.compile(r"[果竟卒后应]")
+# 513 批补「而雨／而晴」：ZD102（临之蒙）实录句写作「亥日而雨，即于亥日酉时晴」，
+# 无 果/竟/卒/后/应 起句词，该案因此被整案剔除；二字短语只在天时占里出现，窄口径。
+REALIZED_RE = re.compile(r"[果竟卒后应]|而[雨晴]")
 # 强实现标记：占测日自重令牌的豁免只认这三个弱不行——
 # ZD018「**应**卯时者，酉金与辰日相合」、ZD027「**应**临戌父，巳月生之」、
 # ZD088「**应**辰时者，戌日冲辰父」都是"解释为何应某时辰"的句式，
@@ -374,17 +381,21 @@ def segment(text: str) -> list[dict]:
         events.append((m.start(), "date", m))
     for m in CASE_RE.finditer(text):
         events.append((m.start(), "case", m))
+    for m in STOP_HEAD_RE.finditer(text):
+        events.append((m.start(), "stop", m))
     events.sort(key=lambda e: e[0])
 
     blocks: list[dict] = []
     for i, (pos, kind, m) in enumerate(events):
         if kind != "case":
             continue
-        # 向前找最近日期行，中途遇案例标题即弃
+        # 向前找最近日期行，中途遇案例标题即弃（句号式占例头不是本案日期，跳过不取）
         the_date = None
         for j in range(i - 1, -1, -1):
             if events[j][1] == "case":
                 break
+            if events[j][1] == "stop":
+                continue
             the_date = events[j][2]
             break
         nxt = events[i + 1][0] if i + 1 < len(events) else len(text)
