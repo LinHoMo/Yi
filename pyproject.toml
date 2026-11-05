@@ -1,0 +1,15 @@
+# pytest 配置（第五百一十九批续·引入 pytest 测试框架）。
+# 本仓库两科测试混用两种风格：
+#   · 原生 pytest：liuyao/tests/six_god_wang_shuai_test.py（def test_* + assert）
+#   · main() 式（沿用 `python xxx_test.py` 习惯，errs 累积 + return 1）：
+#       liuyao/tests/{smoke,regression,thinking_chain}_test.py、
+#       bazi/tests/{smoke,regression}_test.py
+# 后者由各 tests/ 目录下的 conftest.py 用 runpy 桥接成 pytest 用例，保持
+# `python xxx_test.py` 直接跑的旧路径不被破坏。
+[tool.pytest.ini_options]
+# 根 conftest（含 main() 式桥接用例）需在 testpaths 内才被收集；"."
+# 让 pytest 扫描整仓 *_test.py，collect_ignore 已排除 main() 式文件避免 tests.* 同名冲突。
+testpaths = ["."]
+python_files = ["*_test.py"]
+pythonpath = ["liuyao/scripts", "liuyao/core", "bazi/scripts", "bazi/core"]
+addopts = "-q"
