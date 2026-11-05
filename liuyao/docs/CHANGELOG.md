@@ -5,6 +5,8 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-05 第五百一十八批（门编号规范化·跨仓重排）：**liuyao 10 个小数门号并入连续整数——[1.5]→[7]、[1.6]→[8]、[1.7]→[9]、[1.8]→[10]、[2.2]→[21]、[2.3]→[22]、[2.4]→[23]、[2.5]→[24]、[2.7]→[25]、[4.6]→[45]；其余 35 个整数号（含 [36] 文档索引门迁出后的墓碑空位）保持不变，故广泛引用的整数号（[18]/[28]/[38]/[42] 等）引用零改动。八字无小数号、其 [29]–[36] 预留空位为跨科对表保留，本批不动。内核真源 `kernel/yishu_core/common/yingqi.py` 的 `[1.7]`→`[9]` 经 `sync_kernel --write` 分发到两科 core 与 dsh-plugin/engine 副本；`plugins/engine` 与 `dsh-plugin/engine` 经 `node plugins/scripts/build.mjs` 重建逐字节一致。Node selftest 体系（[1.5]/[1.6]/[2.4]）为独立编号，非 liuyao 门，保持不动。门禁与同步门全绿：liuyao/bazi check EXIT=0、`sync_kernel --check`/`sync_devkit --check` 通过、两处 selftest RC=0**
+
 ## 2026-11-05 第五百一十七批（全仓·文档治理收口与剩余欠账定性）：**DOCS.md 四节硬编码份数（根级7／六爻19／八字14／共享层5）去除，顶部加「份数不钉死、以 `git ls-files '*.md'` 为准」声明——消除「数字无门」在索引文档自身的最后死角（AGENTS.md §六明令份数不写死，此前 DOCS.md 违反且无门守护）。同期探查确证：八字 [7] 已带 n=、六爻 render 免责语已被 516 [7] 门覆盖、dev_tools 的 parents[N] 全为根目录定位（无读数据表风险，507 批同型事故的真风险点在 scripts/ 层、515 批已根除）、check_rule_registry 三份字节同源（sync_devkit 守护）、门编号体系为非阻断可读性；门编号重排／静态表外置／scripts 兼容 shim 反向 import eval／引入 pytest 四项列为已知非阻断待办，需独立批次逐格对拍，本批不动**
 
 ## 2026-11-04 第五百一十六批（全仓·冻结面与死链门补齿）：**共享层 [5] 扩到四工具参数 schema 与 required、[7] 补报告模板禁语与免责提示语；两科死链门新加裸文件名存在性判定，实跑抓出 15 处悬空裸引用（含 SKILL.md 铁律仍指向 508 批已删的 engine.py）并逐条按实况改正**
@@ -760,7 +762,7 @@ ZD194 连续相生链、ZD160 待冲解、ZD015 回头克待时）。**这 10 �
    pattern_flags/world_relation/is_wealth/is_travel_return/xhe）→ 局部 `from rule_engine import
    evaluate_verdict_overrides` → 回收 verdict/final_score → 按 `reason_key` 非空逐个换判词文案。
    数组顺序复刻原 if/elif 语义（合处逢冲婚姻档在前、大凶档在后，后读前写）；
-   `_fired` 仅对旧代码显式置 True 的四档（行人/合伙/用神弱/三刑六合）生效，与 `[1.8]` 同档收口一致。
+   `_fired` 仅对旧代码显式置 True 的四档（行人/合伙/用神弱/三刑六合）生效，与 `[10]` 同档收口一致。
 2. **判定表对齐**：`judgment_table.json` 的 `overrides` 由 27 条对齐到 **20 条**——
    删去已迁走的 OV01–OV07（不再以 step5 AST 代码块形态存在），剩余 20 条 line/cond/assigns
    用 `_inventory` 重算逐字对齐；`stats.by_kind` 重算为 priority 2·exception 2·domain_overlay 16。

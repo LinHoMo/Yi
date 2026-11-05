@@ -67,7 +67,7 @@ BASELINE = {
     "calendar": 16,        # 历法自检通过项数（共 16）
     "ordering": 23,        # 爻序断言通过项数（共 23）——P0 事故看门狗
     "smoke": 36,           # 有产出的分析段（361 批：s5_10 改为走 narrative_assembly 重建推理链、
-                           # 恒真断言改成目标键/非空后 36/36，基线抬到全量；渲染面由 [2.7] 守）
+                           # 恒真断言改成目标键/非空后 36/36，基线抬到全量；渲染面由 [25] 守）
     "chain_tests": 12,     # /12（361 批：case_07 与 reg_07 oracle 统一后 12/12，基线抬到全量）
     "regression": 19,      # /19（364 批抬到全量 19：reg_02 由红转绿，且是**引擎侧**修好的，
                            # 不是改考卷——用神官鬼亥水动而逢日辰寅合，旧码在 step4 判
@@ -590,7 +590,7 @@ def main() -> int:
             failures.append("历法自检退出码非 0")
 
     if want("ordering"):
-        print("\n[1.5] 爻序断言（自下而上唯一约定，P0 看门狗）")
+        print("\n[7] 爻序断言（自下而上唯一约定，P0 看门狗）")
         rc, out = run([sys.executable, "dev_tools/hexagram_check.py"])
         m = re.search(r"(\d+) 项通过，(\d+) 项失败", out)
         if m:
@@ -603,7 +603,7 @@ def main() -> int:
         # 金标准指纹：64 卦 × 3 爻型 × 时间的排盘＋思维链＋分析层逐字段快照。
         # 基线是 data/golden/digest.json（入库），所以换机器也拦得住行为漂移——
         # 以前它只活在 gitignore 的 scratch/ 里，等于只有我这台机器有看门狗。
-        print("\n[1.6] 金标准指纹（行为漂移看门狗）")
+        print("\n[8] 金标准指纹（行为漂移看门狗）")
         rc, out = run([sys.executable, "dev_tools/golden.py"])
 
         def _shape(s):
@@ -645,7 +645,7 @@ def main() -> int:
     if want("feedback"):
         # 反馈闭环假例自检（架构评审 A2）：此前本通道「有实现、无测试、无数据」，
         # 任一处改坏（应期抽取、口径、读数、口径句接线）都不会有任何门发现。
-        print("\n[1.7] 反馈闭环假例自检（落盘走临时目录，铁律二）")
+        print("\n[9] 反馈闭环假例自检（落盘走临时目录，铁律二）")
         fproblems = feedback_selftest()
         for f in fproblems:
             print(f"  × {f}")
@@ -669,7 +669,7 @@ def main() -> int:
 
     if want("coherence"):
         # 判词与自家分数同档（覆写链抬判词却不抬分数，曾产出「平吉 @ −5.33」15 例）
-        print("\n[1.8] 判词↔分数同档（覆写抬档必须把分数也带进档）")
+        print("\n[10] 判词↔分数同档（覆写抬档必须把分数也带进档）")
         rc, out = run([sys.executable, "dev_tools/check_verdict_coherence.py", "--selftest"])
         for line in out.splitlines():
             if line.strip():
@@ -737,7 +737,7 @@ def main() -> int:
 
     if want("chart_purity"):
         # 缺陷 A 回归看门狗（2026-10-09）：chart 段禁吉凶断语 + 扫描器负例自证。
-        print("\n[2.2] chart 段纯净（无断语级文本；负例先自证）")
+        print("\n[21] chart 段纯净（无断语级文本；负例先自证）")
         cp = chart_purity_problems()
         for c in cp:
             print(f"  × {c}")
@@ -748,7 +748,7 @@ def main() -> int:
     if want("coin"):
         # 起卦有效性（2026-10-25）：coin 分支的嵌套 bug 让六爻恒阴、恒成坤、永无动爻，
         # 退出码 0、JSON 完整、指纹不动——只有"连摇多次得不同卦"能抓。
-        print("\n[2.3] 铜钱起卦有效性（12 次固定种子须摇出多卦且有动爻；负例先自证）")
+        print("\n[22] 铜钱起卦有效性（12 次固定种子须摇出多卦且有动爻；负例先自证）")
         coinp = coin_cast_problems()
         for c in coinp:
             print(f"  × {c}")
@@ -760,7 +760,7 @@ def main() -> int:
     if want("time_mode"):
         # 时间起卦确定性（361 批）：mode=time 曾缺分支落到 coin 兜底，同参两次不同卦
         # 而退出码 0、JSON 完整、盘面仍标 time——只有"同参两次必须同盘 + 与登记爻值对拍"能抓。
-        print("\n[2.4] 时间起卦确定性（同参两次同盘、与登记爻值一致、seed 须报错）")
+        print("\n[23] 时间起卦确定性（同参两次同盘、与登记爻值一致、seed 须报错）")
         tp = time_mode_problems()
         for t in tp:
             print(f"  × {t}")
@@ -771,7 +771,7 @@ def main() -> int:
     if want("style"):
         # 报告外观：用到的类名必须有定义。评分与金标准指纹看不见"内容对、外观散架"这一类回归。
         # （两套 CSS 合并时就散过一次：排盘报告的 .container/.cell-* 等 29 个类没了定义。）
-        print("\n[2.5] 报告样式层覆盖（类名必须有定义）")
+        print("\n[24] 报告样式层覆盖（类名必须有定义）")
         rc, out = run([sys.executable, "dev_tools/style_check.py"])
         for line in out.splitlines():
             if line.strip():
@@ -782,7 +782,7 @@ def main() -> int:
     if want("report_parity"):
         # 「算出来了但看不到」：HTML 是主交付面，某一节整节缺失时指纹与对齐分都不报警
         # （趋避建议就这么丢过一次：CSS 里 .advice-list 定义好了，无人引用）。
-        print("\n[2.7] 报告面一致性（analyze 产出的节必须在 HTML 出现；负例先自证）")
+        print("\n[25] 报告面一致性（analyze 产出的节必须在 HTML 出现；负例先自证）")
         rp = report_parity_problems()
         for r in rp:
             print(f"  × {r}")
@@ -820,12 +820,12 @@ def main() -> int:
         if rc != 0 and _m is None:
             failures.append(f"古籍回归脚本崩溃（rc={rc} 且汇总行未产出）")
 
-    # [4.6] 六神旺衰试点单测（第两百二十批挂闸）：此器曾因拆分事故 import 即炸、
+    # [45] 六神旺衰试点单测（第两百二十批挂闸；原 [4.6]，[36] 留空为文档索引门迁出墓碑故不回填）：此器曾因拆分事故 import 即炸、
     # 无门跑两周无人知；孤儿引用全库扫描（156 文件唯此一域）修复后从此入闸——
     # 它不产 X/Y 汇总行，走硬 rc 判定（6 项断言全过才 0）。
     if want("six_god"):
         rc, out = run([sys.executable, "tests/six_god_wang_shuai_test.py"])
-        print("\n[4.6] 六神旺衰试点单测（硬 rc 判定，220 批挂闸）")
+        print("\n[45] 六神旺衰试点单测（硬 rc 判定，220 批挂闸；原 [4.6]）")
         for line in out.splitlines()[-3:]:
             print("  " + line.strip())
         if rc != 0:

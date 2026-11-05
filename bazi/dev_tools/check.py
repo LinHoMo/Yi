@@ -681,7 +681,7 @@ def main() -> int:
         print("[27] §三 house 规矩核对 √")
 
     # [28] 分层契约（第三百一十批）：四段输出键白名单 + 层间禁边表。
-    # 判据是 schema，不是措辞黑名单（旧 [2.2] 式只查五个字，成句评价照样漏）；
+    # 判据是 schema，不是措辞黑名单（旧 [21] 式（原 [2.2]）只查五个字，成句评价照样漏）；
     # 真值源 data/rules/layer_contract.json，驱动与六爻逐字节同源。
     code, out = run(["dev_tools/check_layer_contract.py", "--selftest"])
     for line in out.splitlines():

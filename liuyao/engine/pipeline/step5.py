@@ -353,7 +353,7 @@ def step5_synthesize(r: dict) -> dict:
                    "平凶": "score_ping_xiong"}.get(verdict)
             if _dk:
                 verdict_desc = vdesc(_dk)
-            # 抬档带分（[1.8] 同档收口补洞）：若 5.7b 的 cap 把 verdict 从较低档抬到较高档
+            # 抬档带分（[10] 同档收口补洞）：若 5.7b 的 cap 把 verdict 从较低档抬到较高档
             # （救应抬吉，如六冲变合「竟以吉断」），final_score 须至少抬到新档下界；
             # 压档（凶格压严）分数本就在下方，不动。只上抬不下压——
             # 与 apply_verdict_overrides 末尾 `_floor` 及 check_verdict_coherence.band_of 同源。
