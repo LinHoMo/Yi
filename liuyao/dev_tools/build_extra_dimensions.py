@@ -27,6 +27,7 @@ build_hexagram_result 排出，与引擎跑同一案例同源——故本批为*
 """
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 
@@ -56,6 +57,68 @@ import case_runner as cr  # noqa: E402
 CASES = DISC / "data" / "cases" / "classical_cases.json"
 
 
+def _derive(case: dict) -> dict:
+    """由案例重派生六维度（与落盘填充同一派生链），返回各字段规范值。
+
+    无基准（无用神地支/爻位、装卦失败、时点不可还原）时返回空值，调用方据此跳过。
+    """
+    out = {"wang": None, "wang_basis": "", "muku_label": None, "muku_basis": "",
+           "six": None, "six_basis": "", "gsb": None, "gsb_basis": "",
+           "sanhe_full": None, "sanhe_god": None,
+           "sanhe_full_basis": "机械判定：本卦纳甲支集合",
+           "sanhe_god_basis": ""}
+    exp = case.get("expected") or {}
+    branch = exp.get("use_god_branch")
+    position = exp.get("use_god_position")
+    if not branch and not position:
+        return out
+    hx = case.get("hexagram") or {}
+    yao_vals = cr.hex2yao(hx.get("original"), hx.get("changed"))
+    if yao_vals is None:
+        return out
+    try:
+        resolved = cr.resolve_case_time(case)
+        dt = resolved["dt"]
+        h = build_hexagram_result(yao_vals, case.get("question", ""), "manual",
+                                  dt.year, dt.month, dt.day, dt.hour)
+    except Exception:
+        return out
+    dtime = h.get("divination_time") or {}
+    month_sb, day_sb = dtime.get("month_stem_branch", ""), dtime.get("day_stem_branch", "")
+    month_br, day_br, day_stem = month_sb[1:], day_sb[1:], day_sb[:1]
+    ug_elem = BRANCH_ELEMENTS.get(branch or "", "")
+    if branch and ug_elem and month_br:
+        month_elem = BRANCH_ELEMENTS.get(month_br, "")
+        if month_elem:
+            out["wang"] = element_strength_in_month(ug_elem, month_elem)
+            out["wang_basis"] = f"机械派生：用神{branch}({ug_elem})临{month_br}({month_elem})月"
+            muku = use_god_tomb_tags(
+                h["original_hexagram"]["yao_lines"], branch, position, day_br, month_br)
+            out["muku_label"] = muku["label"]
+            out["muku_basis"] = (f"机械判定：{ug_elem}墓在{muku['tomb_branch']}，"
+                                 f"日{day_br}/月{month_br}，动墓/化墓另核动爻")
+    if position and day_stem:
+        out["six"] = get_six_spirit(day_stem, int(position))
+        out["six_basis"] = f"机械派生：{day_stem}日{position}爻按六神起例"
+    body = analyze_hexagram_body(h)
+    out["gsb"] = body.get("body_branch")
+    if out["gsb"]:
+        out["gsb_basis"] = (f"机械派生：{h['original_hexagram'].get('generation', '')}"
+                            f"→卦身{out['gsb']}支")
+    hex_branches = {y.get("earthly_branch") for y in h["original_hexagram"]["yao_lines"]}
+    full_combo = god_combo = ""
+    for _elem, grp in SAN_HE_GROUPS.items():
+        if set(grp) <= hex_branches:
+            full_combo = "".join(grp)
+            if branch in grp:
+                god_combo = "".join(grp)
+            break
+    out["sanhe_full"] = full_combo or "无"
+    out["sanhe_god"] = god_combo or "无"
+    out["sanhe_god_basis"] = f"机械判定：书面用神{branch or '?'}是否入三合"
+    return out
+
+
 def _build_file(path: Path, counters: list, indent: int, self_consistent: bool = False) -> bool:
     store = json.loads(path.read_text(encoding="utf-8"))
     changed = False
@@ -66,85 +129,43 @@ def _build_file(path: Path, counters: list, indent: int, self_consistent: bool =
         if not branch and not position:
             counters[3] += 1
             continue
-
-        hx = case.get("hexagram") or {}
-        yao_vals = cr.hex2yao(hx.get("original"), hx.get("changed"))
-        if yao_vals is None:
-            counters[3] += 1
-            continue
-        resolved = cr.resolve_case_time(case)
-        dt = resolved["dt"]
-        h = build_hexagram_result(yao_vals, case.get("question", ""), "manual",
-                                  dt.year, dt.month, dt.day, dt.hour)
-        dtime = h.get("divination_time") or {}
-        month_sb, day_sb = dtime.get("month_stem_branch", ""), dtime.get("day_stem_branch", "")
-        month_br, day_br, day_stem = month_sb[1:], day_sb[1:], day_sb[:1]
-
-        # 月令旺衰 + 墓库：依赖书面用神地支
-        ug_elem = BRANCH_ELEMENTS.get(branch or "", "")
-        if branch and ug_elem and month_br:
-            month_elem = BRANCH_ELEMENTS.get(month_br, "")
-            if month_elem and not exp.get("use_god_wangshuai"):
-                exp["use_god_wangshuai"] = element_strength_in_month(ug_elem, month_elem)
-                exp.setdefault("use_god_wangshuai_basis",
-                               f"机械派生：用神{branch}({ug_elem})临{month_br}({month_elem})月")
-                counters[0] += 1
-                changed = True
-            # 墓库：日墓/月墓/动墓/化墓四类，判据唯一实现在 classical_enhancements。
-            # 每次重建（规则升级后旧值须刷新），故不用 setdefault。
-            if month_elem:
-                muku = use_god_tomb_tags(
-                    h["original_hexagram"]["yao_lines"], branch, position,
-                    day_br, month_br)
-                basis = (f"机械判定：{ug_elem}墓在{muku['tomb_branch']}，"
-                         f"日{day_br}/月{month_br}，动墓/化墓另核动爻")
-                if exp.get("use_god_muku") != muku["label"] \
-                        or exp.get("use_god_muku_basis") != basis:
-                    exp["use_god_muku"] = muku["label"]
-                    exp["use_god_muku_basis"] = basis
-                    counters[1] += 1
-                    changed = True
-
+        d = _derive(case)
+        # 月令旺衰
+        if d["wang"] and not exp.get("use_god_wangshuai"):
+            exp["use_god_wangshuai"] = d["wang"]
+            exp.setdefault("use_god_wangshuai_basis", d["wang_basis"])
+            counters[0] += 1
+            changed = True
+        # 墓库：日墓/月墓/动墓/化墓四类，判据唯一实现在 classical_enhancements。
+        # 每次重建（规则升级后旧值须刷新），故不用 setdefault。
+        if d["muku_label"] is not None and (
+                exp.get("use_god_muku") != d["muku_label"]
+                or exp.get("use_god_muku_basis") != d["muku_basis"]):
+            exp["use_god_muku"] = d["muku_label"]
+            exp["use_god_muku_basis"] = d["muku_basis"]
+            counters[1] += 1
+            changed = True
         # 六神临用：依赖纳甲唯一爻位 + 日干
-        if position and day_stem and not exp.get("use_god_six_spirit"):
-            exp["use_god_six_spirit"] = get_six_spirit(day_stem, int(position))
-            exp.setdefault("use_god_six_spirit_basis",
-                           f"机械派生：{day_stem}日{position}爻按六神起例")
+        if d["six"] and not exp.get("use_god_six_spirit"):
+            exp["use_god_six_spirit"] = d["six"]
+            exp.setdefault("use_god_six_spirit_basis", d["six_basis"])
             counters[2] += 1
             changed = True
-
-        # ── 卦身/三合：仅主案例集（无古籍案例锚点，对通则对表；外部集不填防口径膨胀）──
+        # 卦身/三合：仅主案例集（无古籍案例锚点，对通则对表；外部集不填防口径膨胀）
         if self_consistent:
-            if not exp.get("gua_shen_branch"):
-                body = analyze_hexagram_body(h)
-                gsb = body.get("body_branch")
-                if gsb:
-                    exp["gua_shen_branch"] = gsb
-                    exp.setdefault(
-                        "gua_shen_branch_basis",
-                        f"机械派生：{h['original_hexagram'].get('generation','')}"
-                        f"→卦身{gsb}支")
-                    counters[4] += 1
-                    changed = True
-            if not exp.get("sanhe_full_combo"):
-                hex_branches = {y.get("earthly_branch")
-                                for y in h["original_hexagram"]["yao_lines"]}
-                full_combo = god_combo = ""
-                for _elem, grp in SAN_HE_GROUPS.items():
-                    if set(grp) <= hex_branches:
-                        full_combo = "".join(grp)
-                        if branch in grp:
-                            god_combo = "".join(grp)
-                        break
-                exp["sanhe_full_combo"] = full_combo or "无"
-                exp.setdefault("sanhe_full_combo_basis", "机械判定：本卦纳甲支集合")
-                exp["use_god_in_sanhe"] = god_combo or "无"
-                exp.setdefault("use_god_in_sanhe_basis",
-                               f"机械判定：书面用神{branch or '?'}是否入三合")
+            if d["gsb"] and not exp.get("gua_shen_branch"):
+                exp["gua_shen_branch"] = d["gsb"]
+                exp.setdefault("gua_shen_branch_basis", d["gsb_basis"])
+                counters[4] += 1
+                changed = True
+            if d["sanhe_full"] is not None and not exp.get("sanhe_full_combo"):
+                exp["sanhe_full_combo"] = d["sanhe_full"]
+                exp.setdefault("sanhe_full_combo_basis", d["sanhe_full_basis"])
+                exp["use_god_in_sanhe"] = d["sanhe_god"]
+                exp.setdefault("use_god_in_sanhe_basis", d["sanhe_god_basis"])
                 counters[5] += 1
                 counters[6] += 1
                 changed = True
-
     # 保留各文件原有缩进（主案例集 indent=1，外部集 indent=2）与末尾换行；无改动不写回
     if changed:
         path.write_text(json.dumps(store, ensure_ascii=False, indent=indent) + "\n",
@@ -152,7 +173,56 @@ def _build_file(path: Path, counters: list, indent: int, self_consistent: bool =
     return changed
 
 
+def _verify_file(path: Path) -> list:
+    """逐案例重派生六维度，与已落盘字段比对；只标「有值但不一致」（引擎升版致陈旧），
+    空字段（尚未填充）不计为失效。"""
+    if not path.exists():
+        return []
+    store = json.loads(path.read_text(encoding="utf-8"))
+    mm = []
+    for case in store.get("cases", []):
+        exp = case.get("expected") or {}
+        if not exp.get("use_god_branch") and not exp.get("use_god_position"):
+            continue
+        d = _derive(case)
+        cid = case.get("id", path.name)
+        if d["wang"] is not None and exp.get("use_god_wangshuai") not in (None, ""):
+            if exp.get("use_god_wangshuai") != d["wang"]:
+                mm.append(f"{cid}: use_god_wangshuai={exp.get('use_god_wangshuai')} ≠ 引擎派生 {d['wang']}")
+        if d["muku_label"] is not None and exp.get("use_god_muku") not in (None, ""):
+            if exp.get("use_god_muku") != d["muku_label"] or exp.get("use_god_muku_basis") != d["muku_basis"]:
+                mm.append(f"{cid}: use_god_muku 与引擎派生不一致")
+        if d["six"] and exp.get("use_god_six_spirit") not in (None, ""):
+            if exp.get("use_god_six_spirit") != d["six"]:
+                mm.append(f"{cid}: use_god_six_spirit={exp.get('use_god_six_spirit')} ≠ 引擎派生 {d['six']}")
+        if d["gsb"] and exp.get("gua_shen_branch") not in (None, ""):
+            if exp.get("gua_shen_branch") != d["gsb"]:
+                mm.append(f"{cid}: gua_shen_branch={exp.get('gua_shen_branch')} ≠ 引擎派生 {d['gsb']}")
+        if d["sanhe_full"] is not None and exp.get("sanhe_full_combo") not in (None, ""):
+            if exp.get("sanhe_full_combo") != d["sanhe_full"] or exp.get("use_god_in_sanhe") != d["sanhe_god"]:
+                mm.append(f"{cid}: 三合维度与引擎派生不一致")
+    return mm
+
+
+def _check_sync() -> int:
+    """同源复验：派生维度（旺衰/墓库/六神/卦身/三合）须与引擎当前派生一致。"""
+    others = [p for p in sorted(CASES.parent.glob("*_cases.json")) if p.name != CASES.name]
+    mm = []
+    for path in [CASES] + others:
+        mm.extend(_verify_file(path))
+    print("派生维度同源复验：%d 处字段与引擎不一致" % len(mm))
+    for m in mm:
+        print("  ×", m)
+    return 1 if mm else 0
+
+
 def main() -> int:
+    ap = argparse.ArgumentParser(description="附加评测维度基准补全器")
+    ap.add_argument("--check", action="store_true",
+                    help="只复验已生成的派生维度与引擎一致，不写文件（[46] 同步门挂此）")
+    args = ap.parse_args()
+    if args.check:
+        return _check_sync()
     # 主案例集 + 全部外部集（外部 split 永不调参，补入后即外部对表检验）
     others = [p for p in sorted(CASES.parent.glob("*_cases.json")) if p.name != CASES.name]
     counters = [0, 0, 0, 0, 0, 0, 0]  # 旺衰/墓库/六神/无基准/卦身/三合/用神入三合

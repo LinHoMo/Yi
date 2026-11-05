@@ -1020,6 +1020,27 @@ def main() -> int:
             if rc != 0:
                 failures.append(f"[12] 规则数据引文复验（{label}）未通过")
 
+    # 第五百一十九批：六爻 6 个案例/维度构建器此前只落盘、从不挂同源复验——与 [12] 同病
+    # （[12] 已于 464/472 批接了 3 个规则表构建器）。本批补「落盘集 ↔ 源文/引擎」同步门：
+    # 每个构建器自带 --check（读已生成 JSON，回验书证仍逐字命中源文、派生维度仍与当前
+    # 引擎一致；不写盘，任一处失效即非 0）。不同源必有挂线同步门，不靠自觉。编号取 [46]
+    # （[0]–[45] 已占满，[36] 为文档索引门迁出墓碑故留空，[46] 为下一连续空闲号）。
+    if want("build_sync"):
+        for script, label in (
+                ("dev_tools/build_zengshan_dz_cases.py", "增删dz案例集"),
+                ("dev_tools/build_bushi_zhengzong_cases.py", "卜筮正宗案例集"),
+                ("dev_tools/build_yiin_cases.py", "易隐案例集"),
+                ("dev_tools/build_yingqi_set.py", "应期案例集"),
+                ("dev_tools/build_usegod_position.py", "用神爻位"),
+                ("dev_tools/build_extra_dimensions.py", "派生维度")):
+            print(f"\n[46] 构建器同源复验（{label}）")
+            rc, out = run([sys.executable, script, "--check"])
+            for line in out.splitlines():
+                if line.strip():
+                    print("  " + line.strip())
+            if rc != 0:
+                failures.append(f"[46] 构建器同源复验（{label}）未通过")
+
     print("\n" + "=" * 62)
     if failures:
         print("质量门未通过：")

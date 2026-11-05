@@ -16,6 +16,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import sys
@@ -287,10 +288,42 @@ def parse_case(block: str, num: str, title: str) -> tuple[dict | None, dict | No
     }, None
 
 
+def _check_sync() -> int:
+    """同源复验：落盘集须由当前文献逐字可复现（sha 不变且每条应验句仍在原处）。"""
+    if not OUT.exists():
+        print("× 落盘集不存在：%s" % OUT.relative_to(HERE.parent))
+        return 1
+    doc = json.loads(OUT.read_text(encoding="utf-8"))
+    meta = doc.get("_meta") or {}
+    text = LIB.read_text(encoding="utf-8")
+    fails = []
+    if meta.get("source_sha256") != hashlib.sha256(LIB.read_bytes()).hexdigest():
+        fails.append("案例库 sha256 已变——须重跑本脚本重建 %s" % OUT.name)
+    cases = doc.get("cases") or []
+    if meta.get("total_cases") != len(cases):
+        fails.append("total_cases=%s ≠ 实际 %d 条" % (meta.get("total_cases"), len(cases)))
+    checked = 0
+    for c in cases:
+        detail = (c.get("expected") or {}).get("detail") or ""
+        if detail and detail not in text:
+            fails.append("%s 的 expected.detail 已不在案例库（%s…）" % (c.get("id"), detail[:24]))
+            continue
+        checked += 1
+    ok = "全部一致" if not fails else "%d 处失效" % len(fails)
+    print("同源复验：%d/%d 条应验句仍逐字命中文献；%s" % (checked, len(cases), ok))
+    for f in fails:
+        print("  ×", f)
+    return 1 if fails else 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="抽取带明确应期的古籍案例作外部验证集")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--check", action="store_true",
+                    help="只复验已生成 JSON 的应验句仍逐字命中文献，不写文件（[46] 同步门挂此）")
     args = ap.parse_args()
+    if args.check:
+        return _check_sync()
 
     text = LIB.read_text(encoding="utf-8")
     marks = list(CASE.finditer(text))
@@ -344,6 +377,8 @@ def main() -> int:
     OUT.write_text(json.dumps({"_meta": {
         "description": "应期外部验证集：从 case_library.md 抽取、通过四道自洽校验、永不参与调参",
         "built_by": "dev_tools/build_yingqi_set.py",
+        "source_file": "references/case_library.md",
+        "source_sha256": hashlib.sha256(LIB.read_bytes()).hexdigest(),
         "total_cases": len(unique),
         "excluded": excluded,
     }, "cases": unique}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

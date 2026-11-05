@@ -2,6 +2,8 @@
   "_meta": {
     "description": "应期外部验证集：从 case_library.md 抽取、通过四道自洽校验、永不参与调参",
     "built_by": "dev_tools/build_yingqi_set.py",
+    "source_file": "references/case_library.md",
+    "source_sha256": "a0f8ebe72f1e1827d704a5962d3422e821fc788afc22500ef987049fced6333e",
     "total_cases": 2,
     "excluded": [
       {

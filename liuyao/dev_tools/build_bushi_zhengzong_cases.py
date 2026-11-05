@@ -883,16 +883,48 @@ def _stats() -> int:
     return 0
 
 
+def _check_sync() -> int:
+    """同源复验：落盘集须由当前底本逐字可复现（sha 不变且每条锚句仍在原处）。"""
+    if not OUT.exists():
+        print("× 落盘集不存在：%s" % OUT.relative_to(DISC))
+        return 1
+    doc = json.loads(OUT.read_text(encoding="utf-8"))
+    meta = doc.get("_meta") or {}
+    text = SRC.read_text(encoding="utf-8")
+    fails = []
+    if meta.get("source_sha256") != hashlib.sha256(SRC.read_bytes()).hexdigest():
+        fails.append("底本 sha256 已变——须重跑本脚本重建 %s" % OUT.name)
+    cases = doc.get("cases") or []
+    if meta.get("n") != len(cases):
+        fails.append("n=%s ≠ 实际 %d 条" % (meta.get("n"), len(cases)))
+    checked = 0
+    for c in cases:
+        detail = (c.get("expected") or {}).get("detail") or ""
+        if detail and detail not in text:
+            fails.append("%s 的 expected.detail 已不在底本（%s…）" % (c.get("id"), detail[:24]))
+            continue
+        checked += 1
+    ok = "全部一致" if not fails else "%d 处失效" % len(fails)
+    print("同源复验：%d/%d 条锚句仍逐字命中底本；%s" % (checked, len(cases), ok))
+    for f in fails:
+        print("  ×", f)
+    return 1 if fails else 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="《卜筮正宗》dz 表格式占验案例抽取器")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--stats", action="store_true", help="只报表块/日期/年列可读率，不写盘")
+    ap.add_argument("--check", action="store_true",
+                    help="只复验已生成 JSON 的锚句仍逐字命中底本，不写文件（[46] 同步门挂此）")
     args = ap.parse_args()
     if args.selftest:
         return selftest()
     if args.stats:
         return _stats()
+    if args.check:
+        return _check_sync()
     text = SRC.read_text(encoding="utf-8")
     lines = text.splitlines()
     sha = hashlib.sha256(text.encode("utf-8")).hexdigest()

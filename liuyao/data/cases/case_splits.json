@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "tune=ZS001-020 调参集；holdout=未参与词典调参的古籍真例；excluded=残缺或与 tune 重复，不计入均分；外部验证集见 note_externals",
+  "note": "tune=ZS001-020 调参集；holdout=未参与词典调参的古籍真例；excluded=残缺或与 tune 重复，不计入均分；外部验证集见 note_externals；yingqi_holdout=应期外部验证集，永不参与调参",
   "tune": [
     "ZS001",
     "ZS002",
