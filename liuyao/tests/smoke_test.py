@@ -6,7 +6,7 @@
 **都有产出且不抛异常**，即"接线是否通"。
 
 这不是代码覆盖率，也不是正确性测试：段落返回了内容就算过。
-   内容对不对由 `scripts/evaluate.py`（古籍对齐）与 `tests/regression_test.py` 负责。
+   内容对不对由 `eval/evaluate.py`（古籍对齐）与 `tests/regression_test.py` 负责。
 
 Usage:
     py -3.12 tests/smoke_test.py                # Run all coverage tests

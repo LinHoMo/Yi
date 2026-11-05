@@ -50,7 +50,7 @@ def measure(name: str, out: str, patterns: dict) -> float | None:
 
 def eval_metrics(split: str, *, eval_file, cwd,
                  model_key: str | None = None) -> dict:
-    """跑 `scripts/evaluate.py --split <split> --save`，返回 {avg, n, rc, top1, rank}。
+    """跑 `eval/evaluate.py --split <split> --save`，返回 {avg, n, rc, top1, rank}。
 
     `eval_file` 必须由调用方传入：内核不得知道评测落盘目录（铁律二
     「解读路径不得触达案例库」由 `dev_tools/check_case_isolation.py` 机械守，
@@ -67,7 +67,7 @@ def eval_metrics(split: str, *, eval_file, cwd,
     started = time.time()
     if path.exists():
         path.unlink()
-    rc, out = run_step(["scripts/evaluate.py", "--split", split, "--save"],
+    rc, out = run_step(["eval/evaluate.py", "--split", split, "--save"],
                        cwd=cwd, python=True)
     if rc != 0:
         return {"error": "evaluate.py 退出码 %d：%s" % (rc, " ".join(out.split())[-400:])}

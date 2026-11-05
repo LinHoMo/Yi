@@ -6,7 +6,7 @@
     python eval/evaluate.py --split all --save
     python eval/evaluate.py --split external_holdout   # 外部独立集（永不调参，强弱 report-only）
 
-（`python scripts/evaluate.py ...` 仍可用：`scripts/` 下是纯 re-export 兼容入口，见 359 批。）
+（`scripts/` 下的兼容 shim 已于 521 批删除；请改用 `python bazi/eval/evaluate.py ...`，见 359 批。）
 
 口径（务必连同分数一起阅读，SKILL.md 铁律三；方法学见 bazi/docs/EVAL-PLAN.md）：
   本脚本衡量的是**引擎输出与古籍案例要点的一致性**，不是现实世界预言命中率。

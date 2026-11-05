@@ -4,12 +4,18 @@
     python eval/build_portal_assets.py            # 用已有评测结果重建门户
     python eval/build_portal_assets.py --run-eval # 先跑 evaluate 再重建
 
-（`python scripts/build_portal_assets.py` 仍可用：scripts/ 下是纯 re-export 兼容入口，见 356 批。）
+（`scripts/` 下的兼容 shim 已于 521 批删除；请改用 `python liuyao/eval/build_portal_assets.py`，见 356 批。）
 
 分数一律取自 `eval/evaluate.py --save` 落盘的 data/cache/eval_{tune,holdout}.json，
 **不再手写常量**：上一版把 v8 的 100.0 硬编在脚本里，引擎改了、门户照旧显示满分。
 """
 from __future__ import annotations
+# 批量注入：eval/ 上 path（替换 scripts/ 兼容 shim）
+import sys as _sys
+from pathlib import Path as _P
+_ed = 'C:\\Users\\31103\\Desktop\\Yi\\liuyao\\eval'
+if _ed not in _sys.path:
+    _sys.path.insert(0, _ed)
 
 import argparse
 import json
@@ -156,7 +162,7 @@ def build_samples() -> list[dict]:
 
 
 def embed_into_index(payload: dict) -> None:
-    # 第八十六批：`dev_tools/check.py` 的提示语让用户「跑 scripts/build_portal_assets.py 重建」，
+    # 第八十六批：`dev_tools/check.py` 的提示语让用户「跑 eval/build_portal_assets.py 重建」，
     # 而本函数在 index.html 不在仓内时直接 FileNotFoundError 崩——一条门里写着的命令跑不起来，
     # 就是文档失守。缺壳层只是不能内嵌，不该带走 portal_data.json 与样例报告的产出。
     index = ROOT / "index.html"

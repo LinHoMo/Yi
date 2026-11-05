@@ -102,7 +102,7 @@ case 形态（逐字，L1037–L1046）：
 ## 五、读数与口径
 
 `python eval/evaluate.py --split yiin_holdout`（第四百二十三批实测；356 批起实现位于
-`eval/`，旧 `scripts/evaluate.py` 入口为兼容 shim）：
+`eval/`（`scripts/` 兼容 shim 已于 521 批删除）：
 
 - strict 对齐分 **44.6%**（n=56；423 批 4 例 N/A→实录，应期分母 7→11，新旧不可比）
 - 应期 strict top-1 **18.2%**、loose **72.7%**（n=11）

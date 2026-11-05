@@ -5,6 +5,8 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-05 第五百二十一批（全仓·消除 scripts/ 兼容 shim 反向 import eval/）：**删 356/359 批遗留的 4 个纯 re-export 兼容入口——liuyao/scripts/{evaluate,case_runner,build_portal_assets}.py、bazi/scripts/evaluate.py（仅 `from eval.X import *` 反向导入，无自有逻辑）。35 处真调用方 + 3 处 devkit 变体源改为把对应科 `eval/` 直挂 sys.path，裸 `import evaluate`/`case_runner`/`build_portal_assets` 直接命中 eval/ 真模块（单一模块身份，消除双模块陷阱）；`core/yishu_core/gate_kit.py`（liuyao/bazi/kernel 三处）与 `dev_tools/readout_ledger.py` 的子进程调用由 `scripts/evaluate.py` 改写为 `eval/evaluate.py`。`devkit/shared` 的 check_doc_refs.py（运行时读 eval/evaluate.py --engine-file 注释）、check_case_isolation.py（隔离档口径去掉「scripts/ 同名只准 shim」旧规）经 `sync_devkit.py --write` 分发两科；CAPABILITY／bazi README／两科 eval 文档／CHANGELOG／YIIN-CASE-AUDIT 等处「scripts/ 旧入口仍可用」表述改「已于 521 批删除、请走 eval/」。数据文件内 baseline_note/_comment prose 不动（改之击穿 519 批数据同步门）。门禁与同步门全绿：liuyao/bazi check EXIT=0（[37] 同源、[46] 构建器同步均过）、sync_kernel/sync_devkit --check 通过、plugins/dsh-plugin selftest RC=0（先 `build.mjs` 重建引擎产物再验）**
+
 ## 2026-11-05 第五百二十批（引入 pytest 测试框架）：**两科 tests/ 既有单测接入 pytest 运行器。six_god_wang_shuai_test.py 本即原生 pytest（def test_* + assert），直接收集；其余 main() 式（liuyao smoke/regression/thinking_chain、bazi smoke/regression，沿用 `python xxx_test.py` 习惯、errs 累积 + return 1）由根 conftest 的 collect_ignore 排除出自动收集，改由 bridge_test.py 以独立子进程 `python <file>` 桥接成 pytest 用例（进程间零 import 污染、与 CI 既有调用一致）。新增 pyproject.toml（[tool.pytest.ini_options]：testpaths/python_files=`*_test.py`/pythonpath）、根 conftest.py（collect_ignore）、bridge_test.py（subprocess 桥接）、requirements-dev.txt（pytest>=7）；CI 新增 pytest job。旧 `python tests/xxx_test.py` 直接跑路径保持不变。实跑 `python -m pytest`：11 passed（6 原生 + 5 桥接）**
 
 ## 2026-11-05 第五百一十九批（六爻构建器同步门·[46] 接入）：**6 个此前只落盘、从不挂同源复验的构建器补齐 `--check`：转译型案例集（zengshan_dz / bushi_zhengzong / yiin / yingqi）逐条回验 `expected.detail` 仍逐字命中底本/文献；用神爻位（usegod_position）与派生维度（extra_dimensions）逐字段回验与引擎当前派生一致；均不写文件、命中缺失即非零退出。六爻 `check.py` 新增 `[46]` 构建器同源复验门，把 6 个 `--check` 收口成一道同步门（[0]–[45] 已占满，[36] 为文档索引门迁出墓碑空位不复用，故取 [46]）。同步门实跑抓出并修复三处真问题：① ZD214 `detail`/`yingqi` 被手改漂移（阴云/缺寅日），已按底本 L2084 逐字改回「果于寅日云卯日大雨辰日大晴」、应期 寅日/卯日/辰日；② yingqi_cases.json `_meta` 缺 `source_sha256` 锚，已重建补齐（案例库文献逐字未变）；③ build_usegod_position 的 `compute_position` 只处理六亲+地支、漏判 `世爻` 案例（SG001/SG002），已补 `is_world`/`is_ying` 派生。实跑全绿：6 个 `--check` 全 rc=0、liuyao/bazi check EXIT=0、`sync_kernel --check`/`sync_devkit --check` 通过、两处 selftest RC=0**
@@ -360,7 +362,7 @@ ZD194 连续相生链、ZD160 待冲解、ZD015 回头克待时）。**这 10 �
 ### 一、取证方法（可复现）
 
 用 `git worktree add --detach` 把八个提交各检出到系统临时目录，逐点在**该提交自己的代码与数据**上跑
-`python liuyao/scripts/evaluate.py --split zengshan_dz_holdout`／`--split bushi_zhengzong_holdout`：
+`python liuyao/eval/evaluate.py --split zengshan_dz_holdout`／`--split bushi_zhengzong_holdout`：
 
 | 检出点 | 时点 | zengshan strict | bushi strict |
 |---|---|---|---|

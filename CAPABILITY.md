@@ -45,8 +45,8 @@
 | 流派裁决 | **27 项**分歧点：**6 项 settled_by_source**（照所据书文执行，含 309 批把词汇表外的 `settled` 归位的一条）／1 项 frozen_by_user／**20 项 open_conflict**——分歧表自 248 批起扩容，308 批更正计数（原登记「7 项／1 open_conflict」少报一个数量级），309 批裁定**不增设第四态**、`settled` 归位为 `settled_by_source`（311 批按现状回改本行） | 188 批→309 批 `liuyao/data/rules/domain/adjudications.json` | `python liuyao/dev_tools/build_adjudications.py --selftest` |
 
 > **356 批起**六爻评测实现物理位于 `liuyao/eval/`（`case_runner.py`／`evaluate.py`／
-> `build_portal_assets.py`），`scripts/` 下同名文件只是纯 re-export 兼容入口。
-> 上表已按 `eval/` 路径书写；旧 `python liuyao/scripts/evaluate.py ...` 仍可用。
+> `build_portal_assets.py`）。**521 批起 `scripts/` 下的兼容 shim 已删除**，入口统一为
+> `python liuyao/eval/evaluate.py ...` 等，下游请勿再引用 `scripts/` 旧路径。上表已按 `eval/` 路径书写。
 
 **八字**：holdout **100.0%**（n=**279**，368 批实测、395 批扩 4 例；打印值＝**99.99x** 四舍五入，**仍有 1 例不满分**）
 **由历法与定义维抬起**，判断维单列——
@@ -69,7 +69,7 @@ ZC015，13/15→14/15；395 批《千里命稿》从格 3 造入 holdout，14/15
 395 批的 4 例是**新增满分例**（扩样），不是引擎提升。
 复现：`python bazi/eval/evaluate.py --split holdout`、`python bazi/dev_tools/baselines.py --split holdout`、
 `python bazi/eval/evaluate.py --split external_holdout`、`python bazi/dev_tools/check_dim_lock.py`。
-（359 批起八字评测实现位于 `eval/`；旧 `python bazi/scripts/evaluate.py ...` 仍可用，为兼容 shim。）
+（359 批起八字评测实现位于 `eval/`；`scripts/` 下的兼容 shim 已于 521 批删除，入口统一为 `python bazi/eval/evaluate.py ...`。）
 
 ## T3 现实预测能力 —— **不可测，不声称**
 

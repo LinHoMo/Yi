@@ -13,6 +13,12 @@
 两种都必须立案，不许静默刷新基线。
 """
 from __future__ import annotations
+# 批量注入：eval/ 上 path（替换 scripts/ 兼容 shim）
+import sys as _sys
+from pathlib import Path as _P
+_ed = 'C:\\Users\\31103\\Desktop\\Yi\\liuyao\\eval'
+if _ed not in _sys.path:
+    _sys.path.insert(0, _ed)
 
 import argparse
 import json
@@ -53,7 +59,7 @@ def checks():
 
     # --- 六爻内部集 ---
     def c_tune(t):
-        s = sh(["scripts/evaluate.py", "--split", "tune"])
+        s = sh(["eval/evaluate.py", "--split", "tune"])
         return (grab(s, r"平均分 = ([0-9.]+)%.*n=20"),
                 grab(s, r"strict top-1 命中 ([0-9.]+)%"),
                 grab(s, r"平均排在第 ([0-9.]+) 位"))
@@ -61,7 +67,7 @@ def checks():
         ("97.9", "64.7", "1.53"))
 
     def c_holdout(t):
-        s = sh(["scripts/evaluate.py", "--split", "holdout"])
+        s = sh(["eval/evaluate.py", "--split", "holdout"])
         return (grab(s, r"平均分 = ([0-9.]+)%"),
                 grab(s, r"strict top-1 命中 ([0-9.]+)%"),
                 grab(s, r"平均排在第 ([0-9.]+) 位"))
@@ -70,7 +76,7 @@ def checks():
 
     # --- 外部集 ---
     def c_wiki(t):
-        s = sh(["scripts/evaluate.py", "--split", "wikisource_holdout"])
+        s = sh(["eval/evaluate.py", "--split", "wikisource_holdout"])
         return (grab(s, r"平均分 = ([0-9.]+)%"), grab(s, r"strict top-1 命中 ([0-9.]+)%"),
                 grab(s, r"平均排在第 ([0-9.]+) 位"))
     # 339 批曾按 69.8/29.5/2.16 登记，理由是「315 封存后口径变了」——344 批查实该归因错误：
@@ -81,7 +87,7 @@ def checks():
         ("75.8", "31.8", "2.03"))
 
     def c_dz(t):
-        s = sh(["scripts/evaluate.py", "--split", "zengshan_dz_holdout"])
+        s = sh(["eval/evaluate.py", "--split", "zengshan_dz_holdout"])
         return (grab(s, r"平均分 = ([0-9.]+)%"), grab(s, r"strict top-1 命中 ([0-9.]+)%"))
     add("liuyao.zengshan_dz(86.5/48.3)",
         "README 表→308批→402批改期望（dz 扩样 21→29；priority-anchor＋CASE_RE 之/单字题）；"
@@ -107,7 +113,7 @@ def checks():
         c_dz, ("86.5", "48.3"))
 
     def c_bushi(t):
-        s = sh(["scripts/evaluate.py", "--split", "bushi_zhengzong_holdout"])
+        s = sh(["eval/evaluate.py", "--split", "bushi_zhengzong_holdout"])
         return (grab(s, r"平均分 = ([0-9.]+)%"), grab(s, r"strict top-1 命中 ([0-9.]+)%"))
     # 413 批：吉凶只取结果句强结果词（22/36 与引擎一致），strict 68.3→64.7（分母新增 verdict 维）。
     add("liuyao.bushi_zhengzong(65.3/23.7)",
@@ -121,7 +127,7 @@ def checks():
         c_bushi, ("65.3", "23.7"))
 
     def c_yiin(t):
-        s = sh(["scripts/evaluate.py", "--split", "yiin_holdout"])
+        s = sh(["eval/evaluate.py", "--split", "yiin_holdout"])
         return (grab(s, r"平均分 = ([0-9.]+)%"),
                 grab(s, r"strict top-1 命中 ([0-9.]+)%"),
                 grab(s, r"平均排在第 ([0-9.]+) 位"),
@@ -255,8 +261,8 @@ def checks():
         sp = json.loads((DISC / "data" / "cases" / "case_splits.json")
                         .read_text(encoding="utf-8"))
         nv = sum(1 for c in cs if (c.get("expected") or {}).get("verdict"))
-        s1 = sh(["scripts/evaluate.py", "--split", "zengshan_dz_prose_holdout"])
-        s2 = sh(["scripts/evaluate.py", "--split", "zengshan_dz_prose_direction"])
+        s1 = sh(["eval/evaluate.py", "--split", "zengshan_dz_prose_holdout"])
+        s2 = sh(["eval/evaluate.py", "--split", "zengshan_dz_prose_direction"])
         return (str(len(cs)), str(len(rd)), str(nv),
                 str(len(sp["zengshan_dz_prose_direction"])),
                 grab(s1, r"平均分 = ([0-9.]+)%"), grab(s2, r"平均分 = ([0-9.]+)%"))
@@ -519,14 +525,14 @@ def checks():
 
     # --- 八字侧 ---
     def c_bazi_holdout(t):
-        s = sh(["scripts/evaluate.py", "--split", "holdout"], cwd=ROOT / "bazi")
+        s = sh(["eval/evaluate.py", "--split", "holdout"], cwd=ROOT / "bazi")
         return grab(s, r"平均分 = ([0-9.]+)%")
     # 308 批改期望：holdout 均分 97.6 → 99.5（pattern 由 29/36 抬到 36/36 为主因）；
     # 368 批清例后再 → 100.0（n=276，满分 275/276、仍有 1 例不满分；打印值 99.99x 四舍五入）。
     add("bazi.holdout(100.0)", "bazi README→308批→368批改期望", c_bazi_holdout, ("100.0",))
 
     def c_bazi_dims(t):
-        s = sh(["scripts/evaluate.py", "--split", "holdout"], cwd=ROOT / "bazi")
+        s = sh(["eval/evaluate.py", "--split", "holdout"], cwd=ROOT / "bazi")
         out = []
         for name in ("pillars", "ten_gods", "hidden_stems", "tiaohou", "pattern", "cong_ge"):
             m = re.search(r"^\s*%s\s+(\d+)/(\d+)\s+\d+\s+[\d.]+%%" % name, s, re.M)
@@ -544,7 +550,7 @@ def checks():
         ("0", "0", "5", "5", "0", "0", "0", "0"))
 
     def c_bazi_ext(t):
-        s = sh(["scripts/evaluate.py", "--split", "external_holdout"], cwd=ROOT / "bazi")
+        s = sh(["eval/evaluate.py", "--split", "external_holdout"], cwd=ROOT / "bazi")
         n = re.search(r"运行 (\d+) 例（external_holdout", s)
         sw = re.search(r"强弱对齐（external_holdout · report-only，不设门槛、非命中率）：(\d+)/(\d+)", s)
         return ((n.group(1), sw.group(1), sw.group(2)) if n and sw else (None,) * 3)

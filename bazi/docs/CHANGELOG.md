@@ -11,6 +11,8 @@
 > 399/400/401 撞号，按提交顺序归位为 **408/409/410/411**；原提交 `46d8bc1` 的提交信息
 > 保留旧号作历史，不再改。跨文件引用一律按新号。
 
+## 2026-11-05 第五百二十一批（全仓·随包登记）：**消除 scripts/ 兼容 shim 反向 import eval/（521 全仓批）：本科删除 bazi/scripts/evaluate.py 纯 re-export shim，真调用方改挂 eval/ 到 sys.path；devkit 共享件 check_doc_refs/check_case_isolation 经 sync_devkit --write 分发到本科；文档「scripts/ 旧入口仍可用」表述改为「已于 521 批删除」。本科 check EXIT=0**
+
 ## 2026-11-05 第五百二十批（全仓·随包登记）：**引入 pytest 测试框架（520 全仓批）：八字侧 smoke/regression 由 bridge_test.py 子进程桥接，本层无源码改动，仅随包登记**
 
 ## 2026-11-05 第五百一十九批（全仓·随包登记）：**六爻构建器同步门 [46]（519 全仓批）：八字侧无对应案例/维度构建器，本层无改动，仅随包登记；八字 check EXIT=0**

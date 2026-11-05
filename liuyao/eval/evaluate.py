@@ -7,7 +7,7 @@
     python eval/evaluate.py --stage score --engine-file data/cache/eval_all.json
     python eval/evaluate.py --split wikisource_holdout --yingqi-mode both
 
-（`python scripts/evaluate.py ...` 仍可用：scripts/ 下是纯 re-export 兼容入口，见 356 批。）
+（`scripts/` 下的兼容 shim 已于 521 批删除；请改用 `python liuyao/eval/evaluate.py ...`，见 356 批。）
 
 口径说明（务必连同分数一起阅读）：
   本脚本衡量的是**引擎输出与古籍案例要点的一致性**，不是现实世界预言命中率。
@@ -28,6 +28,12 @@
   吉凶方向 35 / 格局覆盖 12 / 应期 11
 """
 from __future__ import annotations
+# 批量注入：eval/ 上 path（替换 scripts/ 兼容 shim）
+import sys as _sys
+from pathlib import Path as _P
+_ed = 'C:\\Users\\31103\\Desktop\\Yi\\liuyao\\eval'
+if _ed not in _sys.path:
+    _sys.path.insert(0, _ed)
 
 import argparse
 import json

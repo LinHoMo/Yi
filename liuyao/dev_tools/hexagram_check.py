@@ -11,6 +11,12 @@
 这里用《周易》卦象常识与古籍案例做锚，断言的是**位次**而不只是卦名。
 """
 from __future__ import annotations
+# 批量注入：eval/ 上 path（替换 scripts/ 兼容 shim）
+import sys as _sys
+from pathlib import Path as _P
+_ed = 'C:\\Users\\31103\\Desktop\\Yi\\liuyao\\eval'
+if _ed not in _sys.path:
+    _sys.path.insert(0, _ed)
 
 import sys
 from pathlib import Path

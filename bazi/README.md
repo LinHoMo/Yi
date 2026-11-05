@@ -29,7 +29,7 @@ python eval/evaluate.py --split tune      # 参与过调参的 60 例
 python eval/evaluate.py --split holdout   # 未参与调参的 278 例
 ```
 
-（359 批起评测实现位于 `eval/`；`python scripts/evaluate.py ...` 仍可用，是纯 re-export 兼容入口。）
+（359 批起评测实现位于 `eval/`；`scripts/` 下的兼容 shim 已于 521 批删除，请改用 `python bazi/eval/evaluate.py ...`。）
 
 2026-10-13 实测（`python dev_tools/check.py` ＋ `eval/evaluate.py` 逐字可回指）：
 

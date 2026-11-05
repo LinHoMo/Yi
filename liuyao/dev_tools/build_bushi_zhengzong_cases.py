@@ -37,6 +37,12 @@
 本集只抽书载应期与断语原文；用神/吉凶字面未抽（评测时 N/A 不进分母，见 CHANGELOG）。
 """
 from __future__ import annotations
+# 批量注入：eval/ 上 path（替换 scripts/ 兼容 shim）
+import sys as _sys
+from pathlib import Path as _P
+_ed = 'C:\\Users\\31103\\Desktop\\Yi\\liuyao\\eval'
+if _ed not in _sys.path:
+    _sys.path.insert(0, _ed)
 
 import argparse
 import hashlib

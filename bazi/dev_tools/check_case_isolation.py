@@ -2,8 +2,8 @@
 """案例库隔离门：解读/推演路径不得触达 `data/cases/`（评测层专用）。
 
 一旦解读层读到 expected，对齐分就可被动 inflate 而门全绿，故为 P0 禁边。
-按科分两档：`<科>/eval/` 已建走物理隔离档（scripts/ 同名文件只准纯 re-export shim，
-且 eval/ 必须有实现）；未建走白名单档。判据是静态扫案例库字面路径或 expected 取数。
+按科分两档：`<科>/eval/` 已建走物理隔离档（eval/ 必须有实现，原 scripts/ 同名兼容 shim 已于 521 批删除）；
+未建走白名单档。判据是静态扫案例库字面路径或 expected 取数。
 
 扫描面：scripts/、engine/、core/、data/ 下的 .py；eval/ 与 dev_tools/ 允许读案例库故不扫，
 内核 eval.py 同语义豁免。含 scripts/ 与 core/ 两处负例自证。

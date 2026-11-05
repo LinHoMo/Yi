@@ -12,6 +12,12 @@
 两数若相同，说明重复组同判同分、只是行数虚胖；若不同，差值就是"重复计数的杠杆"实测值。
 """
 from __future__ import annotations
+# 批量注入：eval/ 上 path（替换 scripts/ 兼容 shim）
+import sys as _sys
+from pathlib import Path as _P
+_ed = 'C:\\Users\\31103\\Desktop\\Yi\\bazi\\eval'
+if _ed not in _sys.path:
+    _sys.path.insert(0, _ed)
 
 import pathlib
 import sys

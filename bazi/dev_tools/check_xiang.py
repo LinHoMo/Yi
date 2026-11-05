@@ -20,6 +20,12 @@
 而 check.py 只以 `--selftest` 调本门，③ 禁评分与男女两份真实象层在全量流程里未执行。
 """
 from __future__ import annotations
+# 批量注入：eval/ 上 path（替换 scripts/ 兼容 shim）
+import sys as _sys
+from pathlib import Path as _P
+_ed = 'C:\\Users\\31103\\Desktop\\Yi\\bazi\\eval'
+if _ed not in _sys.path:
+    _sys.path.insert(0, _ed)
 
 import argparse
 import sys

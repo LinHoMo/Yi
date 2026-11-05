@@ -16,6 +16,8 @@
 > 无插件自身代码改动）、281→**1.0.3**（随包引擎同步六爻 281 批占差事词典+WS003
 > 校勘）。
 
+## 2026-11-05 第五百二十一批（DSH 插件·随包登记）：**消除 scripts/ 兼容 shim 反向 import eval/（521 全仓批）：本卷无源码改动，仅随包登记；`npm --prefix dsh-plugin run check` rc=0**
+
 ## 2026-11-05 第五百二十批（DSH 插件·随包登记）：**引入 pytest 测试框架（520 全仓批）：本卷无源码改动，仅随包登记；`npm --prefix dsh-plugin run check` rc=0**
 
 ## 2026-11-05 第五百一十九批（DSH 插件·随包登记）：**六爻构建器同步门 [46]（519 全仓批）：本卷无源码改动，仅随包登记；`npm --prefix dsh-plugin run check` rc=0**

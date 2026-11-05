@@ -7,6 +7,12 @@
 覆盖：64 卦在三个干支时刻（含立春边界内外、夜子时）下，静卦 + 单动 + 双动三种爻型。
 """
 from __future__ import annotations
+# 批量注入：eval/ 上 path（替换 scripts/ 兼容 shim）
+import sys as _sys
+from pathlib import Path as _P
+_ed = 'C:\\Users\\31103\\Desktop\\Yi\\liuyao\\eval'
+if _ed not in _sys.path:
+    _sys.path.insert(0, _ed)
 
 import hashlib
 import json
