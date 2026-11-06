@@ -24,6 +24,7 @@
 | **要改代码的贡献者** | `AGENTS.md` | `CONTRACT.md`（四段契约：chart→analyze→narrate→render） | 本表 → 对应学科的 `SKILL.md` |
 | **要查本次架构整改结果的人** | `ARCHITECTURE-PLAN.md`（完成台账 + V1–V15 收口实测 + 偏差/欠账） | `GOVERNANCE.md`（工具台账与档位门槛） | 本表 → 对应批次 |
 | **要引用对外数字的人** | `CAPABILITY.md` | `liuyao/README.md`／`bazi/README.md` | 各科 `liuyao/docs/CHANGELOG.md`／`bazi/docs/CHANGELOG.md`（最近窗口）＋ 对应 `CHANGELOG-HISTORY-INDEX.md`（逐批一句话） |
+| **要按缺口继续迭代的人** | `GOVERNANCE.md`「当前真缺口」（523 批逐条核实，历史待办现状以此为准） | `CAPABILITY.md`「已知欠账」 | 对应批次的 git 提交（主 CHANGELOG 只留一行摘要） |
 
 ---
 
@@ -52,7 +53,7 @@
 
 | 文件 | 一句话 | 状态 |
 |---|---|---|
-| `liuyao/docs/CHANGELOG.md` | 批次流水，**只保留最近窗口**（2026-10-29 起；更早见索引） | 活文档 |
+| `liuyao/docs/CHANGELOG.md` | 批次流水（523 批压缩）：**最近 15 批、每批一行结论摘要**；窗口／单批长度由 `devkit/root/check_docs_index.py` 现场判，更早见索引 | 活文档 |
 | `liuyao/docs/CHANGELOG-HISTORY-INDEX.md` | **逐批一句话索引**（342 批精简：原 154 批事实标题＋更早 49–156 批一句话；全文归档已删） | 历史索引 |
 | `liuyao/docs/JUDGMENT-TABLE.md` | 判定表：书证底稿、9 格、题类覆盖与代码覆写清单，含"不换判词"结论；未签条目只作设计输入、不得进代码 | 活文档 |
 | `liuyao/docs/CASE-LIBRARY-AUDIT.md` | 案例库应期抽取审计（dz 底本通道） | 活文档 |
@@ -82,7 +83,7 @@
 |---|---|---|
 | `bazi/SKILL.md` | 八字科宿主模型操作合同 | 活文档 |
 | `bazi/README.md` | 八字科说明与读数表 | 活文档 |
-| `bazi/docs/CHANGELOG.md` | 八字批次流水，只保留最近窗口（"15 批"为政策值，非当前节数；更早见索引） | 活文档 |
+| `bazi/docs/CHANGELOG.md` | 八字批次流水（523 批压缩）：**最近 15 批、每批一行结论摘要**；更早见索引 | 活文档 |
 | `bazi/docs/CHANGELOG-HISTORY-INDEX.md` | **逐批一句话索引**（342 批删全文；510 批去重并补录 10-29～11-02 的 110 节标题） | 历史索引 |
 | `bazi/docs/EVAL-PLAN.md` | 八字案例评测方案（分维与门槛的出处） | 活文档 |
 | `bazi/docs/SANMING-SIKU-COLLATION.md` | 《三命通会》两转录渠道对拍报告 | 归档留证 |
@@ -119,3 +120,6 @@
 - 文档成为生成物时，在表里写明"由哪个脚本重生成"，并把该脚本登记进
   `liuyao/dev_tools/governance_map.py` 的台账。
 - 本表与实际文件不一致时，以**实际文件**为准并同批修正本表——本表是索引，不是真值源。
+- 两科主 CHANGELOG 的**窗口与单批长度**由 `devkit/root/check_docs_index.py` 现场判（523 批扩面）：
+  退出窗口的批号＋日期只准搬进历史索引，不准删；每批只留一行自足的结论摘要，
+  过程叙述与收口明细交 git 历史。历史待办现状以 `GOVERNANCE.md`「当前真缺口」为准。

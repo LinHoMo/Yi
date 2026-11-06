@@ -6,6 +6,8 @@
 > **497 批起只保留 DSH 一个宿主**：claude/codex/gemini/yan 四家适配器目录、
 > `publish.mjs`（git 发行树）及其在 build/selftest/ci/文档里的登记一并删除。
 
+## 2026-11-06 第五百二十三批（共享层·随包登记）：**文档历史减量、窗口上门与缺口收口（523 全仓批）：本层无源码改动；305 批「未做的事」四条按现状加勘误块（均非现行待办），其余仅随包登记**
+
 ## 2026-11-06 第五百二十二批（共享层·随包登记）：**pytest 桥接清单单一真源与覆盖门（522 全仓批）：本层无源码改动，仅随包登记；`node scripts/build.mjs` 已重跑、`scripts/selftest.mjs` RC=0**
 
 ## 2026-11-05 第五百二十一批（共享层·随包登记）：**消除 scripts/ 兼容 shim 反向 import eval/（521 全仓批）：本层无源码改动，仅随包登记；`node scripts/build.mjs` 已重跑、`scripts/selftest.mjs` RC=0**
@@ -475,3 +477,10 @@ Yan 资源表双向一致（15 条），负例自证（抽掉一篇即红、多�
 - 未重跑 `npm --prefix dsh-plugin run verify-in-dsh`（需 DSH 宿主）。
 - 分发方案（`plugins-dist` 分支 / Release tarball）仍未定，各宿主"远程市场装不上"
   的限制依然存在。
+
+> **第五百二十三批现状勘误**（上文「未做的事」按登记时点保留原文，不改写）：
+> ① 497 批起只保留 DSH 一家宿主，「接入 Claude／Codex／Gemini」的对象已删除；
+> ② 已无第二家宿主可「合并」，宿主侧 QA 由 522 批 `npm --prefix dsh-plugin run check`
+> 全链跑通（含 `selftest` 与 `verify-in-dsh`），③ 同批跑通，不再依赖手工重跑；
+> ④ 分发方案按 AGENTS.md §二已定为 GitHub Release 的 npm tgz，不再有独立发行树。
+> 四条均非现行待办，逐条依据见 `GOVERNANCE.md`「当前真缺口」G4。

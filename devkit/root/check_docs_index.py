@@ -17,6 +17,11 @@ A0-5 把它搬到 `devkit/root/`——因为它守的是**全仓** `DOCS.md`，�
 
     python devkit/root/check_docs_index.py
     python devkit/root/check_docs_index.py --selftest
+
+**523 批扩面**（按用户令对 176 批「守台账类新增」冻结作一次限定解冻，采用 514 批
+写下的候选形态——扩本门而不新建门）：除上面两条，再守两科主 CHANGELOG 的
+「最近 15 批」窗口、单批 ≤12 行、以及滑窗口时与 HEAD 对拍不丢批号。批号＋日期
+仍是 342 批的底线，退出窗口的只准搬进历史索引，不准删。
 """
 from __future__ import annotations
 
@@ -55,7 +60,70 @@ def registered_paths(txt: str) -> set[str]:
     return out
 
 
-def check(index_text: str | None = None) -> list[str]:
+# ── 523 批扩面：CHANGELOG 窗口／单批长度／滑窗口不丢批号 ──────────────────
+# 510 批把两科主 CHANGELOG 收紧为「最近 15 批」并写明「再往后让窗口滑动时，同批
+# 把退出窗口的标题补进索引即可」——但**没有任何门看着它**：522 批实盘六爻 28 批／
+# 八字 26 批，超窗口 24 条，全仓门禁一直全绿。这里把 510 批的政策变成机器判据。
+# 与 HEAD 那一条守的是「滑窗口只允许搬，不许丢批号」（批号＋日期是 342 批的底线）。
+CHANGELOG_PAIRS = (
+    ("liuyao/docs/CHANGELOG.md", "liuyao/docs/CHANGELOG-HISTORY-INDEX.md"),
+    ("bazi/docs/CHANGELOG.md", "bazi/docs/CHANGELOG-HISTORY-INDEX.md"),
+)
+CHANGELOG_WINDOW = 15
+CHANGELOG_MAX_LINES = 12
+BATCH_HEAD_RE = re.compile(
+    r"^## (\d{4}-\d{2}-\d{2}) 第([零〇一二两三四五六七八九十百千]+)批")
+
+
+def _batch_keys(txt: str) -> set[str]:
+    return {f"{m.group(1)}#{m.group(2)}" for line in txt.splitlines()
+            if (m := BATCH_HEAD_RE.match(line))}
+
+
+def _head_batch_keys(rel: str) -> set[str] | None:
+    r = subprocess.run(["git", "-C", str(ROOT), "show", f"HEAD:{rel}"],
+                       capture_output=True, text=True, encoding="utf-8", errors="replace")
+    return _batch_keys(r.stdout) if r.returncode == 0 else None
+
+
+def _probe_read(rel: str, probe: dict[str, str] | None) -> str:
+    if probe is not None and rel in probe:
+        return probe[rel]
+    p = ROOT / rel
+    return p.read_text(encoding="utf-8") if p.is_file() else ""
+
+
+def changelog_problems(probe: dict[str, str] | None = None) -> list[str]:
+    """probe 只覆盖盘上四份 CHANGELOG 文本；HEAD 始终取真仓，负例才抓得到丢批号。"""
+    problems: list[str] = []
+    for main, idx in CHANGELOG_PAIRS:
+        txt = _probe_read(main, probe)
+        lines = txt.splitlines()
+        marks = [(i, m.group(2)) for i, line in enumerate(lines)
+                 if (m := BATCH_HEAD_RE.match(line))]
+        if not marks:
+            problems.append(f"{main} 扫到 0 个批次标题（路径解析失败不许报绿）")
+            continue
+        if len(marks) > CHANGELOG_WINDOW:
+            problems.append(f"{main} 有 {len(marks)} 批，超出 {CHANGELOG_WINDOW} 批窗口 "
+                            f"（超 {len(marks) - CHANGELOG_WINDOW} 条须按 510 批移入 {idx}）")
+        for k, (i, b) in enumerate(marks):
+            end = marks[k + 1][0] if k + 1 < len(marks) else len(lines)
+            n = end - i
+            if n > CHANGELOG_MAX_LINES:
+                problems.append(f"{main} 第{b}批 占 {n} 行 > {CHANGELOG_MAX_LINES} 行上限"
+                                f"（过程叙述压成一行摘要＋结论要点）")
+        head = _head_batch_keys(main)
+        if head:
+            cur = _batch_keys(txt) | _batch_keys(_probe_read(idx, probe))
+            missing = sorted(head - cur)
+            if missing:
+                problems.append(f"{main} 滑窗口丢了 {len(missing)} 个批号：{missing[:4]}"
+                                f"（退出窗口的批号必须按 510 批补进 {idx}）")
+    return problems
+
+
+def check(index_text: str | None = None, *, probe: dict[str, str] | None = None) -> list[str]:
     problems: list[str] = []
     txt = INDEX.read_text(encoding="utf-8") if index_text is None else index_text
     files = tracked_md()
@@ -72,6 +140,7 @@ def check(index_text: str | None = None) -> list[str]:
         if (ROOT / p).exists():
             continue
         problems.append(f"指向不存在的文件：`{p}`")
+    problems += changelog_problems(probe)
     return problems
 
 
@@ -86,14 +155,47 @@ def selftest() -> int:
     t = base + "\n| `docs/NO-SUCH-FILE.md` | 不存在的文件 | 活文档 |\n"
     if not check(t):
         fails.append("死链未被抓到")
-    # ③ 现行副本必须放行
+    # ③ 现行副本必须放行（扩面后同时覆盖 CHANGELOG 窗口）
     if check():
-        fails.append("现行索引被误判")
+        fails.append("现行文档面被误判")
+    # ── 523 批扩面负例：只注入 CHANGELOG 文本，DOCS 面保持真盘，判红须来自目标分支 ──
+    real = {rel: (ROOT / rel).read_text(encoding="utf-8")
+            for pair in CHANGELOG_PAIRS for rel in pair}
+    ly = real["liuyao/docs/CHANGELOG.md"]
+    ls = ly.splitlines()
+    # ④ 超窗口：末尾再挂一条现有批标题
+    first_head = next(l for l in ls if BATCH_HEAD_RE.match(l))
+    p4 = {**real, "liuyao/docs/CHANGELOG.md": ly + "\n" + first_head + "\n"}
+    if not any("批窗口" in x for x in check(probe=p4)):
+        fails.append("超窗口未被抓到")
+    # ⑤ 单批超长：在**第一条与第二标题之间**塞 13 行过程叙述
+    #    （插到第一条标题之前只会落在文件头里，不属于任何批次，抓不到东西）
+    head_pos = [i for i, l in enumerate(ls) if BATCH_HEAD_RE.match(l)]
+    nxt = head_pos[1]
+    p5 = {**real, "liuyao/docs/CHANGELOG.md":
+          "\n".join(ls[:nxt] + ["- 过程叙述"] * 13 + ls[nxt:]) + "\n"}
+    if not any("行上限" in x for x in check(probe=p5)):
+        fails.append("单批超长未被抓到")
+    # ⑥ 滑窗口丢批号：主文件删掉最后一批，且索引里对应批号也一并抹掉
+    #    （只删主文件不够——那正是「已经补进索引」的合法形态，不该判红）
+    last = max(i for i, l in enumerate(ls) if BATCH_HEAD_RE.match(l))
+    dropped = BATCH_HEAD_RE.match(ls[last]).group(1, 2)
+    idx_rel = "liuyao/docs/CHANGELOG-HISTORY-INDEX.md"
+    idx_wo = [l for l in real[idx_rel].splitlines()
+              if not (BATCH_HEAD_RE.match(l) and BATCH_HEAD_RE.match(l).group(1, 2) == dropped)]
+    p6 = {**real, "liuyao/docs/CHANGELOG.md": "\n".join(ls[:last]) + "\n",
+          idx_rel: "\n".join(idx_wo) + "\n"}
+    if not any("滑窗口丢了" in x for x in check(probe=p6)):
+        fails.append("滑窗口丢批号未被抓到")
+    # ⑦ 0 批次标题（路径解析失败不许报绿）
+    if not any("0 个批次标题" in x for x in check(
+            probe={**real, "liuyao/docs/CHANGELOG.md": "# 空\n"})):
+        fails.append("0 批次未判红")
     for f in fails:
         print(f"  × selftest：{f}")
     if fails:
         return 1
-    print("  √ selftest：漏登记与死链都被抓到；现行索引放行")
+    print("  √ selftest：漏登记／死链／超窗口／单批超长／丢批号／0 批次都抓到；现行文档面放行")
     return 0
 
 
@@ -112,6 +214,10 @@ def main() -> int:
         return 1
     n = len([f for f in tracked_md() if f != "DOCS.md"])
     print(f"  √ 文档索引完整：{n} 份文档全部登记且可达")
+    for main, _ in CHANGELOG_PAIRS:
+        txt = (ROOT / main).read_text(encoding="utf-8")
+        k = len([l for l in txt.splitlines() if BATCH_HEAD_RE.match(l)])
+        print(f"  √ CHANGELOG 窗口：{main} {k}/{CHANGELOG_WINDOW} 批，单批 ≤{CHANGELOG_MAX_LINES} 行")
     return 0
 
 
