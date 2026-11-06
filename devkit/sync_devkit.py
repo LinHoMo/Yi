@@ -9,7 +9,13 @@
 
     python devkit/sync_devkit.py --check    # 只比对（两科 check.py 的 [37] 调它）
     python devkit/sync_devkit.py --write    # 重生成两科 dev_tools/ 里的共享件
-    python devkit/sync_devkit.py --selftest # 负例：改产物／缺产物／塞野文件都抓得住
+    python devkit/sync_devkit.py --selftest # 负例：改产物／缺产物／塞野文件／改门号都抓得住
+
+528 批扩面：`--check` 与 `--selftest` 同时对拍 MANIFEST `gate_ids` 与两科 check.py 的
+实际门号。此前这两份清单靠手工同步（518 批重排门号即手工改），改了 check.py 忘了改
+MANIFEST 全仓照样全绿。两科门表结构不同——六爻是规整三元组、八字多数是
+「`# [N]` 注释 + run([...])」顺序块，故用 AST 双路解析，不靠正则在附近抓编号
+（528 批首轮正则探查即因此误报 9 处）。
 
 **这不是跨科写**：AGENTS §二 禁的是"某一科的脚本往另一科目录里写"。本器在 `devkit/`
 下，不属于任何一科，且产物本来就分属两科——它是构建器，不是学科脚本。
@@ -17,7 +23,9 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import json
+import re
 import shutil
 import sys
 import tempfile
@@ -147,6 +155,98 @@ def write_target(manifest: dict, devkit: Path, disc: str, target_dir: Path) -> l
     return actions
 
 
+def gate_id_map(src: str) -> dict[str, int]:
+    """从 check.py 门表字面量抽 `{脚本名: [N] 编号}`。
+
+    两科结构不同（六爻 `(key, title, script)` 三元组、八字 `(title, script)` 二元组），
+    且 title 里常引用别的门号（「本科由 [14] 覆盖」之类），**只能用 AST 按元组配对**，
+    正则在附近几行抓 `[N]` 会串到相邻门——528 批首轮探查就是这样误报了 9 处。
+    """
+    out: dict[str, int] = {}
+    lines = src.splitlines()
+    tree = ast.parse(src)
+    # A) 规整门表：六爻 (key, title, script) 三元组／八字 (title, script) 二元组
+    for node in ast.walk(tree):
+        if not isinstance(node, (ast.Tuple, ast.List)):
+            continue
+        for elt in node.elts:
+            if not isinstance(elt, ast.Tuple):
+                continue
+            strs = [e.value for e in elt.elts
+                    if isinstance(e, ast.Constant) and isinstance(e.value, str)]
+            gate, script = None, None
+            for s in strs:
+                m = re.match(r"^\[(\d+)\]", s)
+                if m and gate is None:
+                    gate = int(m.group(1))
+                if s.endswith(".py") and "/" in s:
+                    script = Path(s).name
+            if gate is not None and script:
+                out[script] = gate
+    # B) 顺序式门块（八字多数门）：门号在 `# [N]` 注释或 `print("\n[N] …")` 行，
+    #    脚本在紧随其后的 run([...]) 里。向上回溯，遇上一个 run 即止，避免串到别的门。
+    for node in ast.walk(tree):
+        if not (isinstance(node, ast.Call) and isinstance(node.func, ast.Name)
+                and node.func.id == "run" and node.args):
+            continue
+        arg0 = node.args[0]
+        if not isinstance(arg0, (ast.List, ast.Tuple)):
+            continue
+        scripts = [Path(e.value).name for e in arg0.elts
+                   if isinstance(e, ast.Constant) and isinstance(e.value, str)
+                   and e.value.endswith(".py") and "/" in e.value]
+        if not scripts:
+            continue
+        gate = None
+        for i in range(node.lineno - 2, max(-1, node.lineno - 16), -1):
+            line = lines[i]
+            if "run([" in line:
+                break
+            m = (re.match(r"^\s*#\s*\[(\d+)\]", line)
+                 or re.match(r'^\s*print\("[^"]*?\[(\d+)\]', line))
+            if m:
+                gate = int(m.group(1))
+                break
+        if gate is not None:
+            for s in scripts:
+                out.setdefault(s, gate)   # A) 的规整门表优先
+    return out
+
+
+def gate_id_problems(manifest: dict, root: Path = ROOT,
+                     texts: dict[str, str] | None = None) -> list[str]:
+    """MANIFEST `gate_ids`（登记值）↔ 两科 check.py 门表（实盘）逐项对拍。
+
+    528 批此前这两份清单靠手工同步（518 批重排门号即手工改），没有门看着；
+    改了 check.py 编号忘了改 MANIFEST，全仓门禁照样全绿。texts 只用于负例注入。
+    """
+    problems: list[str] = []
+    ids = manifest.get("gate_ids") or {}
+    maps: dict[str, dict[str, int]] = {}
+    discs = {d for per in ids.values() for d in per}
+    for disc in sorted(discs):
+        rel = (manifest.get("targets") or {}).get(disc)
+        if not rel:
+            problems.append(f"gate_ids 登记了科 {disc}，targets 里却没有")
+            continue
+        p = root / rel / "check.py"
+        try:
+            src = texts[disc] if texts and disc in texts else p.read_text(encoding="utf-8")
+            maps[disc] = gate_id_map(src)
+        except (OSError, SyntaxError, UnicodeError) as e:
+            problems.append(f"{disc} 的 {rel}/check.py 读不动／解析失败：{e}")
+    for name, per_disc in ids.items():
+        for disc, want in per_disc.items():
+            got = maps.get(disc, {}).get(name)
+            if got is None:
+                problems.append(f"{disc}/{name}：MANIFEST 登记 [{want}]，"
+                                f"但 check.py 门表里找不到该脚本（漏挂线或改了名）")
+            elif got != want:
+                problems.append(f"{disc}/{name} 门号分家：MANIFEST 登记 [{want}]，"
+                                f"check.py 实为 [{got}]（改门号须同批改 MANIFEST）")
+    return problems
+
+
 def selftest() -> int:
     """负例走临时目录（AGENTS.md §四.8）：干净副本放行、改产物／缺产物／野文件都判红。"""
     manifest = {
@@ -206,12 +306,23 @@ def selftest() -> int:
         if not drift(manifest, dk, "alpha", alpha):
             fails.append("共享件第二份拷贝没抓到")
         (alpha / "probe_copy.py").unlink()
+    # 528 批：门号登记同源负例（内存注入，不碰仓库）。真仓先证干净，再改一个门号看是否判红。
+    real_manifest = load_manifest()
+    if gate_id_problems(real_manifest, ROOT):
+        fails.append("真仓门号登记本就分家（负例前提失效，先修真仓）")
+    ly_src = (ROOT / "liuyao" / "dev_tools" / "check.py").read_text(encoding="utf-8")
+    anchor = '"[11] 文档活引用可达性'
+    if anchor not in ly_src:
+        fails.append("门号负例锚失效（[11] 标题串找不到）")
+    elif not any("门号分家" in x for x in gate_id_problems(
+            real_manifest, ROOT, {"liuyao": ly_src.replace(anchor, '"[99] 文档活引用可达性', 1)})):
+        fails.append("check.py 门号被改没抓到")
     if fails:
         for f in fails:
             print(f"  × selftest：{f}")
         return 1
     print("  √ selftest：改产物／缺产物／真源野文件／真源缺文件／dev_tools 野文件／"
-          "第二份拷贝六类负例全部抓到；干净副本放行")
+          "第二份拷贝／门号被改，七类负例全部抓到；干净副本与真仓门号登记放行")
     return 0
 
 
@@ -235,6 +346,7 @@ def main() -> int:
         problems = source_hygiene(manifest, DEVKIT)
         for disc, rel in manifest["targets"].items():
             problems += drift(manifest, DEVKIT, disc, ROOT / rel)
+        problems += gate_id_problems(manifest, ROOT)
         if problems:
             for p in problems:
                 print(f"  × {p}")
@@ -254,6 +366,7 @@ def main() -> int:
     problems = source_hygiene(manifest, DEVKIT)
     for disc, rel in manifest["targets"].items():
         problems += drift(manifest, DEVKIT, disc, ROOT / rel)
+    problems += gate_id_problems(manifest, ROOT)
     if problems:
         for p in problems:
             print(f"  × {p}")
@@ -262,7 +375,8 @@ def main() -> int:
         return 1
     n = len(manifest["files"]["shared"])
     print(f"  √ 门禁同源：{n} 个共享件与 devkit/shared/ 逐字节一致"
-          f"（分发目标 {len(manifest['targets'])} 科；根级门 {len(manifest['files']['root'])} 个在册）")
+          f"（分发目标 {len(manifest['targets'])} 科；根级门 {len(manifest['files']['root'])} 个在册）"
+          f"；gate_ids 门号登记与两科 check.py 逐项同源")
     return 0
 
 
