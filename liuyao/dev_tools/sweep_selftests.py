@@ -7,6 +7,14 @@
 每个器具真跑 `--selftest`，四类归档：PASS／FAIL／NOTIMPL（文档提及但 argparse 不认——
 注意 check.py 系**编排器提及子门旗标**，属提及非声明，按名豁免并具名注记）／TIMEOUT。
 
+**526 批补声明面**：此前只扫两科 `dev_tools/`，`devkit/root/` 四个根级门、
+`devkit/sync_devkit.py`、`kernel/sync_kernel.py` 全部漏网——docstring 自称「全部声明器具」
+却漏了一整层，522 批新增的覆盖门就在其中。现把三处纳入；`devkit/shared/` 与两科
+`dev_tools/` 是 [37] 字节同源产物，跑第二遍无信息量，刻意排除。声明数由本器现算，
+不在文内钉死（§六.6）。同批修掉注入夹具的字节副作用：保存/复原改 `read_bytes/write_bytes`
+并加「复原后逐字节一致」自证——旧写法在 `core.autocrlf=input` 下会把 LF 文件复原成
+CRLF，`git diff` 看不到而 `git status` 报 M，等于自检动作改了仓库字节。
+
 负例即体检本身：本器的 wired 负例＝临时损坏一器具再扫（见 --selftest 内实现）——
 扫不出损坏的扫描器没有存在资格。
 
@@ -33,18 +41,26 @@ except Exception:
 
 # 编排器豁免：check.py 的 docstring/循环里出现 "--selftest" 是给子门传的旗，不是自身声明。
 ORCHESTRATORS = {"bazi/dev_tools/check.py", "liuyao/dev_tools/check.py"}
+# 526 批：根级门 / sync 器此前不在声明面。`devkit/shared/`（含 variants/）是两科
+# dev_tools/ 的字节同源真源，[37] 已守同源，逐真跑第二遍没有信息量，故不纳入。
+SCAN_DIRS = ("bazi/dev_tools", "liuyao/dev_tools", "devkit/root", "kernel")
+EXTRA_FILES = ("devkit/sync_devkit.py",)
 
 
 def declared_files():
-    out = []
+    out, seen = [], set()
     mine = str(HERE / "sweep_selftests.py").replace("\\", "/")
-    for d in ("bazi/dev_tools", "liuyao/dev_tools"):
-        for p in sorted((ROOT / d).glob("*.py")):
-            rel = str(p.relative_to(ROOT)).replace("\\", "/")
-            if rel in ORCHESTRATORS or rel == mine or p.name == "sweep_selftests.py":
-                continue  # 扫描器自身排除：跑自身 --selftest＝注入损坏的递归套娃（213 批实踩）
-            if '"--selftest"' in p.read_text(encoding="utf-8", errors="replace"):
-                out.append((rel, p))
+    candidates = [p for d in SCAN_DIRS for p in sorted((ROOT / d).glob("*.py"))]
+    candidates += [ROOT / rel for rel in EXTRA_FILES]
+    for p in candidates:
+        rel = str(p.relative_to(ROOT)).replace("\\", "/")
+        if rel in seen or rel in ORCHESTRATORS or rel == mine or p.name == "sweep_selftests.py":
+            continue  # 扫描器自身排除：跑自身 --selftest＝注入损坏的递归套娃（213 批实踩）
+        seen.add(rel)
+        if not p.is_file():
+            continue
+        if '"--selftest"' in p.read_text(encoding="utf-8", errors="replace"):
+            out.append((rel, p))
     return out
 
 
@@ -109,27 +125,54 @@ def selftest() -> int:
     # （count 判 1，文案区分"缺失/多命中"）；②注入后该器 --selftest 必返非零，
     # 且不写任何入库文件（不选 strict 路径——那会污染 map json；选 selftest 开头
     # 的 fails 行：强制追加一条失败项是最小致红面）。
-    victim = DISC / "dev_tools" / "governance_map.py"
-    bak = victim.read_text(encoding="utf-8")
-    anchor = "def selftest() -> int:\n    fails = []\n"
-    c = bak.count(anchor)
-    if c != 1:
-        print("× 注入锚在 victim %d 命中（应为 1）——负例前提失效，判红（不许静默假绿）" % c)
-        return 1
-    try:
-        victim.write_text(bak.replace(anchor, anchor + '    fails.append("注入损坏")  # noqa\n', 1),
-                          encoding="utf-8")
-        n, p, f, nt, bad = sweep()
-        if f < 1 or not any("governance_map" in str(b) for b in bad):
-            print("× 注入损坏未被扫出——扫描器无牙，判红")
+    # 526 批：两个 victim 同批注入、只跑一次 sweep——既有学科门，也有新增的根级门，
+    # 证明扩展后的声明面真能把根级门的损坏扫出来（不是只把文件名列进表里）。
+    victims = [
+        (DISC / "dev_tools" / "governance_map.py",
+         "def selftest() -> int:\n    fails = []\n", "governance_map"),
+        (ROOT / "devkit" / "root" / "check_docs_index.py",
+         'def selftest() -> int:\n    base = INDEX.read_text(encoding="utf-8")\n    fails = []\n',
+         "check_docs_index"),
+    ]
+    checks = []
+    for path, anchor_s, tag in victims:
+        # 526 批：bytes 级保存/复原。旧夹具用 read_text/write_text，在 Windows 上
+        # （core.autocrlf=input）会把 LF 文件复原成 CRLF——git diff 看不到、status 却报 M，
+        # 等于自检动作改了仓库字节。锚按实际行尾挑，两种行尾都兼容。
+        bak = path.read_bytes()
+        picked = None
+        for nl in ("\n", "\r\n"):
+            a = anchor_s.replace("\n", nl).encode("utf-8")
+            if bak.count(a) == 1:
+                inj = ('    fails.append("注入损坏")  # noqa' + nl).encode("utf-8")
+                picked = (a, inj)
+                break
+        if picked is None:
+            print("× 注入锚在 %s 未唯一命中（两种行尾都试过）——负例前提失效，判红" % path.name)
             return 1
+        checks.append((path, picked[0], picked[1], tag, bak))
+    try:
+        for path, anchor, inj, _tag, bak in checks:
+            path.write_bytes(bak.replace(anchor, anchor + inj, 1))
+        n, p, f, nt, bad = sweep()
+        for _path, _anchor, _inj, tag, _bak in checks:
+            if not any(tag in str(b) for b in bad):
+                print("× 注入损坏未被扫出（%s）——扫描器无牙，判红" % tag)
+                return 1
     finally:
-        victim.write_text(bak, encoding="utf-8")
+        for path, _anchor, _inj, _tag, bak in checks:
+            path.write_bytes(bak)
+    # 复原自证：字节级一致才算「夹具没碰仓库」（这次副作用本身也变成判据）
+    for path, _anchor, _inj, _tag, bak in checks:
+        if path.read_bytes() != bak:
+            print("× 注入夹具复原后 %s 字节不一致（行尾被改写？）" % path.name)
+            return 1
     n, p, f, nt, bad = sweep()
     if f or nt:
         print("× 恢复后仍有 FAIL/NOTIMPL：%r" % (bad,))
         return 1
-    print("√ selftest：注入损坏被扫出→恢复归零；声明面 %d 器具 PASS %d（负例即体检）" % (n, p))
+    print("√ selftest：学科门＋根级门两处注入损坏均被扫出→恢复归零；"
+          "声明面 %d 器具 PASS %d（负例即体检）" % (n, p))
     return 0
 
 

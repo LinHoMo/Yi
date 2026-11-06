@@ -9,6 +9,8 @@
 > 过程叙述、分点论证与收口实跑明细一律交 git 历史／对应提交，不在主文件留存。
 > 窗口与单批长度由 `devkit/root/check_docs_index.py` 现场判，**不在本文钉数**。
 
+## 2026-11-06 第五百二十六批（全仓·器具全体检声明面收口）：**按上批留的候选做 512 同型系统遍历：全体检基线声明 77｜PASS 77｜FAIL 0｜NOTIMPL 0，静态 AST 扫「selftest 硬编码 return 0 且无真实结果传播」仅命中 `corpus_wiring_report.py` 的纯单元夹具（测 `classify_leaf`，本身不是门），未发现第二处假绿。遍历却查出另一处真盲区：`sweep_selftests.py` 自称「全部声明器具逐真跑」，`declared_files()` 只扫两科 `dev_tools/`，`devkit/root/` 四门、`devkit/sync_devkit.py`、`kernel/sync_kernel.py` 全漏（522 批新增覆盖门在内）。本批扩声明面到 83（`devkit/shared/` 为 [37] 字节同源产物、刻意排除），并把 `--selftest` 的 wired 负例从单 victim 扩成「学科门＋根级门」两处同批注入、只跑一次 sweep 证明覆盖有牙。同批修掉注入夹具在 `core.autocrlf=input` 下把 LF 文件复原成 CRLF 的字节副作用（改 bytes 级保存/复原＋逐字节自证）。扩展后实跑声明 83｜PASS 83｜FAIL 0｜NOTIMPL 0；不改判据、不改数据、不改读数**
+
 ## 2026-11-06 第五百二十五批（全仓·生成物同源复验补齐）：**实证巡检续查剩余生成物：`CASE-LIBRARY-AUDIT-YINGQI.md` 报告头用 `date.today()`、每重生成必改且无法逐字对拍，而 [46] 的 `--check` 只回验落盘 JSON、报告无人守；`adjudication_brief.py --selftest` 自建库起从未挂线（tier=nightly、check.py／CI 都无调用）且会调用 `build()` 写真产物。本批把应期抽取拆出 `extract()`／`report_text()` 纯函数，报告头改数据源 sha256 前 8 位（幂等、可回指），`--check` 扩到报告逐字对拍（[46] 自动覆盖，零连锁）；简报拆出只读 `--check`（临时目录重算）＋负例 `--selftest` 并挂进 CI root-gates，探针不碰仓库，挂 CI 而非 check.py 是为不制造治理图／账台连锁。首跑判红、重生成转绿、手改负例判红、重生成两次逐字节不变均有实跑。不改引擎、不改数据、不改读数**
 
 ## 2026-11-06 第五百二十四批（六爻·ontology 锚定门假绿根治与产物同源）：**真探针重生成 `ONTOLOGY-CARDS.md` 抓出 4 行锚点漂移，追出 [44] 自 512 批上线只校验 `registry.json:ID` 一种形态——全量核查 55 条锚点里 12 条路径形态（8 条少 `core/`、4 条少 `domain/`）全部指向不存在文件，且 `l1_xiangshu.json` 的 `_comment` 自己写着 `core/yishu_core/symbols.py` 与字段打架；产物 4 条 JSON 锚点被手改成正确路径，按源重生成反而写回死引用。本批扩 `check_ontology.py` [44] 守 registry ID／`*.json` 路径／`*.py:SYMBOL` 三形态（未知形态判红）＋人读产物与 `render_ontology.render(当前图谱)` 逐字同源，补 6 类负例；按真源修 12 条 `engine_impl` 并重生成产物（8 行变化）。取 HEAD(523) 旧数据实跑扩面判据报 12 条死引用，修后 0 条。不改引擎、不改评分、不改读数**
@@ -36,5 +38,3 @@
 ## 2026-11-04 第五百一十三批（六爻·建器分块越界）：**所谓「dry-run 与数据一处不同步」查成两处真问题——ZD214 的应期读到下一案（坎之井酉／戌），ZD102 的 expected 整段取自下一案（小过之丰「应在初九辰日即雨」）；前者靠「句号式占例头只作切块止界」修掉，后者按本卦临之蒙实文改回亥日，strict 87.4→86.5**
 
 ## 2026-11-04 第五百一十二批（六爻·zengshan 书证复核＋本体门接线）：**26 条 expected verdict 逐例回到「断曰／果／卒」句，无一例由引擎回填；同时查出六例建器词表读不出的结论会在重建时被静默清成 N/A，已堵死；`check_ontology` 自带上「只跑负例、真实结果丢弃」的假绿缺陷，修好后正式进 `check.py` [44]**
-
-## 2026-11-04 第五百一十一批（六爻·读数账台五项归因）：**full 账台 bad=5 逐项查到底——golden 是登记过期（drift_log 有据），zengshan 的 87.4 是 501 批 N/A 清零后真实跳升 23.1 点、旧阶梯从未重跑，bushi 的 68.1 在八处提交上均不可复现；另补登记 4 个「从未入治理表」的脚本。账台回到 bad=0**
