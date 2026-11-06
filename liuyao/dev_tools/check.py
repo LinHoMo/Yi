@@ -1014,17 +1014,18 @@ def main() -> int:
     # 472 批：裁决表构建器同病——`build_adjudications.py --verify` 自称「27 项书证
     # 全部可回指原书行」，此前只列在 governance_map 的 nightly，全门从不执行。
     if want("rule_registry"):
-        for script, label, flag in (
-                ("dev_tools/build_question_use_gods.py", "问题词典", "--check"),
-                ("dev_tools/build_use_god_rules.py", "用神法则表", "--check"),
-                ("dev_tools/build_adjudications.py", "裁决表", "--verify")):
-            print(f"\n[12] 规则数据引文复验（{label}）")
-            rc, out = run([sys.executable, script, flag])
-            for line in out.splitlines():
-                if line.strip():
-                    print("  " + line.strip())
-            if rc != 0:
-                failures.append(f"[12] 规则数据引文复验（{label}）未通过")
+        for script, label, flags in (
+                ("dev_tools/build_question_use_gods.py", "问题词典", ("--check",)),
+                ("dev_tools/build_use_god_rules.py", "用神法则表", ("--check",)),
+                ("dev_tools/build_adjudications.py", "裁决表", ("--verify", "--selftest", "--reconcile"))):
+            for flag in flags:
+                print(f"\n[12] 规则数据引文复验（{label} {flag}）")
+                rc, out = run([sys.executable, script, flag])
+                for line in out.splitlines():
+                    if line.strip():
+                        print("  " + line.strip())
+                if rc != 0:
+                    failures.append(f"[12] 规则数据引文复验（{label} {flag}）未通过")
 
     # 第五百一十九批：六爻 6 个案例/维度构建器此前只落盘、从不挂同源复验——与 [12] 同病
     # （[12] 已于 464/472 批接了 3 个规则表构建器）。本批补「落盘集 ↔ 源文/引擎」同步门：

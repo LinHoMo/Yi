@@ -14,7 +14,8 @@
 
     python dev_tools/build_adjudications.py            # 构建＋落盘（先逐字回验）
     python dev_tools/build_adjudications.py --verify   # 复核在册文件每条书证
-    python dev_tools/build_adjudications.py --selftest # 负例：篡改书证必须拒写
+    python dev_tools/build_adjudications.py --selftest # 负例：篡改书证必须拒写＋分解钉死 27/6/1/20
+    python dev_tools/build_adjudications.py --reconcile # 只读：CAPABILITY 行 45 计数↔ adjudications.json 实际对账
 """
 from __future__ import annotations
 
@@ -36,6 +37,19 @@ from stable_write import write_stable  # noqa: E402  203 批：幂等写，时�
 
 SRC = DISC / "data" / "sources" / "zengshan_buyi_dz.dz.txt"
 OUT = DISC / "data" / "rules" / "domain" / "adjudications.json"
+
+# 第五百三十二批：裁决表计数钉死——本表是 CAPABILITY.md 行 45「27 项＝6 settled／1 frozen／
+# 20 open」的可回指展开定义。此前主门只跑 --verify（仅验书证可追溯），精确分解不被主门断言，
+# ENTRIES 一改即静默漂移（G12 型「声明↔数据」缺口）。本批：selftest 断言数据==EXPECTED、
+# reconcile 断言 CAPABILITY==数据，闭环。EXPECTED 为单一真源，ENTRIES／CAPABILITY 任一改动都须同步。
+EXPECTED_BREAKDOWN = {"total": 27, "settled_by_source": 6, "frozen_by_user": 1, "open_conflict": 20}
+
+
+def breakdown(entries) -> dict:
+    return {"total": len(entries),
+            "settled_by_source": sum(1 for e in entries if e["status"] == "settled_by_source"),
+            "frozen_by_user": sum(1 for e in entries if e["status"] == "frozen_by_user"),
+            "open_conflict": sum(1 for e in entries if e["status"] == "open_conflict")}
 
 Z = "《增刪卜易》（zengshan_buyi_dz.dz.txt）"
 
@@ -459,8 +473,40 @@ def cmd_selftest() -> int:
         fails.append("裁决项 id 重复")
     if not any(e["status"] == "open_conflict" for e in ENTRIES):
         fails.append("open_conflict 被清零——不许把未决粉饰为已裁")
-    print("√ selftest：正验全过/篡改拒/行号挪移拒/id 唯一/未决项保留 全过" if not fails else "× " + "；".join(fails))
+    actual = breakdown(ENTRIES)
+    if actual != EXPECTED_BREAKDOWN:
+        fails.append("裁决表分解 %s 与钉死值 %s 不符——ENTRIES 改动须同步 EXPECTED 与 CAPABILITY" % (actual, EXPECTED_BREAKDOWN))
+    print("√ selftest：正验全过/篡改拒/行号挪移拒/id 唯一/未决项保留/分解钉死 全过" if not fails else "× " + "；".join(fails))
     return 0 if not fails else 1
+
+
+def cmd_reconcile() -> int:
+    """只读对账：CAPABILITY.md 行 45 声称的裁决表计数，须与 adjudications.json 实际一致。
+
+    直接闭环 G12「声明↔数据」缺口——不写任何文件，任一处失效即非零。
+    """
+    cap = (DISC.parent / "CAPABILITY.md").read_text(encoding="utf-8")
+    doc = json.loads(OUT.read_text(encoding="utf-8"))
+    actual = breakdown(doc["entries"])
+    def grab(pat):
+        m = re.search(pat, cap)
+        return int(m.group(1)) if m else None
+    claimed = {
+        "total": grab(r"(\d+)\s*项\**\s*分歧点"),
+        "settled_by_source": grab(r"(\d+)\s*项\s*settled_by_source"),
+        "frozen_by_user": grab(r"(\d+)\s*项\s*frozen_by_user"),
+        "open_conflict": grab(r"(\d+)\s*项\s*open_conflict"),
+    }
+    fails = []
+    for k in actual:
+        if claimed.get(k) != actual[k]:
+            fails.append("%s: CAPABILITY 声称 %s vs 数据实际 %s" % (k, claimed.get(k), actual[k]))
+    if fails:
+        print("× 裁决表「声明↔数据」对账失败：" + "；".join(fails))
+        return 1
+    print("√ 裁决表声明↔数据一致：%d 项（settled %d／frozen %d／open %d）" %
+          (actual["total"], actual["settled_by_source"], actual["frozen_by_user"], actual["open_conflict"]))
+    return 0
 
 
 def main() -> int:
@@ -468,9 +514,12 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="流派裁决表构建器（B2，逐字书证回验后落盘）")
     ap.add_argument("--verify", action="store_true")
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--reconcile", action="store_true")
     args = ap.parse_args()
     if args.selftest:
         return cmd_selftest()
+    if args.reconcile:
+        return cmd_reconcile()
     if args.verify:
         return cmd_verify()
     return cmd_build()

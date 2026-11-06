@@ -9,6 +9,7 @@
 > 过程叙述、分点论证与收口实跑明细一律交 git 历史／对应提交，不在主文件留存。
 > 窗口与单批长度由 `devkit/root/check_docs_index.py` 现场判，**不在本文钉数**。
 
+## 2026-11-06 第五百三十二批（实证巡检·G12 轻门落地·流派裁决声明↔数据对账）：**把 `build_adjudications.py` 的 `--selftest` 接进主门 `check.py[12]`（与 `--verify` 并行），并在 selftest 钉死分解 27/6/1/20（EXPECTED 单一真源）；新增只读 `--reconcile`：CAPABILITY 行 45 声称的 27/6/1/20 与 `adjudications.json` 实际比对。两道变异探针实证有牙（改 EXPECTED→28 判红、改 CAPABILITY 27→28 判红、还原转绿）。闭环 G12「声明↔数据」缺口，不新增门号——仅扩既有 [12]。本科 check EXIT=0**
 ## 2026-11-06 第五百三十一批（实证巡检·CAPABILITY ① 过期登记更正）：**六爻 restorable 处置分布更正——实证复核 ①：43 条 restorable 双器复核 32 共识＋11 裁决（0 待裁）仍可复现（`restorable_recheck.json` 证 32/11/43）；但处置分布「411 批现状」登记过期——`restorable_adjudication.json` 已建于 2026-11-02，原 3 条「待回原文」已裁决分流为 2 不升＋1 建器阻塞，故不升 3→5、待回原文 3→0、建器阻塞 0→1（已在册 30／非单点应期 3／新候选·日期不可重建 4 不变）。该文件 `summary` 无门守护、曾漂移，复核以文件为权威；CAPABILITY ① 更正。余见 bazi 同批。**
 ## 2026-11-06 第五百三十批（实证巡检·CAPABILITY ④ 从儿格结案复核）：**八字侧从儿格「不评分、见证集即归宿」结案复核（530 批）：⑨ 从儿命例门仍 9/9 绿且有牙、CE 系列 ID 零泄漏进评分集、cong_ge 维评其它从*类型而從儿只停见证集；结案确认可验证，推进须 §四.9 所述「未参与设计的新从儿案例」（仓内无）。八字侧完整证据见 bazi/docs/CHANGELOG.md 同批；CAPABILITY ④ 补复核注。**
 
@@ -36,5 +37,4 @@
 
 ## 2026-11-05 第五百一十八批（门编号规范化·跨仓重排）：**liuyao 10 个小数门号并入连续整数——[1.5]→[7]、[1.6]→[8]、[1.7]→[9]、[1.8]→[10]、[2.2]→[21]、[2.3]→[22]、[2.4]→[23]、[2.5]→[24]、[2.7]→[25]、[4.6]→[45]；其余 35 个整数号（含 [36] 文档索引门迁出后的墓碑空位）保持不变，故广泛引用的整数号（[18]/[28]/[38]/[42] 等）引用零改动。八字无小数号、其 [29]–[36] 预留空位为跨科对表保留，本批不动。内核真源 `kernel/yishu_core/common/yingqi.py` 的 `[1.7]`→`[9]` 经 `sync_kernel --write` 分发到两科 core 与 dsh-plugin/engine 副本；`plugins/engine` 与 `dsh-plugin/engine` 经 `node plugins/scripts/build.mjs` 重建逐字节一致。Node selftest 体系（[1.5]/[1.6]/[2.4]）为独立编号，非 liuyao 门，保持不动。门禁与同步门全绿：liuyao/bazi check EXIT=0、`sync_kernel --check`/`sync_devkit --check` 通过、两处 selftest RC=0**
 
-## 2026-11-05 第五百一十七批（全仓·文档治理收口与剩余欠账定性）：**DOCS.md 四节硬编码份数（根级7／六爻19／八字14／共享层5）去除，顶部加「份数不钉死、以 `git ls-files '*.md'` 为准」声明——消除「数字无门」在索引文档自身的最后死角（AGENTS.md §六明令份数不写死，此前 DOCS.md 违反且无门守护）。同期探查确证：八字 [7] 已带 n=、六爻 render 免责语已被 516 [7] 门覆盖、dev_tools 的 parents[N] 全为根目录定位（无读数据表风险，507 批同型事故的真风险点在 scripts/ 层、515 批已根除）、check_rule_registry 三份字节同源（sync_devkit 守护）、门编号体系为非阻断可读性；门编号重排／静态表外置／scripts 兼容 shim 反向 import eval／引入 pytest 四项列为已知非阻断待办，需独立批次逐格对拍，本批不动**
 
