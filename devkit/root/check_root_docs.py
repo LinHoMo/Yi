@@ -13,6 +13,8 @@
 from __future__ import annotations
 
 import argparse
+import contextlib
+import io
 import re
 import sys
 import tempfile
@@ -117,8 +119,11 @@ def check(root: Path = ROOT) -> tuple[list[str], int]:
     return problems, examined
 
 
-def selftest() -> int:
-    """负例走临时目录（AGENTS.md §四.8）：死链必抓、基线兜底不得放行、真路径不误伤。"""
+def selftest(probe: tuple[list[str], int] | None = None) -> int:
+    """负例走临时目录（AGENTS.md §四.8）；末尾仍须报真仓的真账。
+
+    probe 只用于 main 里的纯内存负例自证，注入「真仓有死链」时不碰任何文件。
+    """
     fails: list[str] = []
     with tempfile.TemporaryDirectory(prefix="rootdocs_") as td:
         root = Path(td)
@@ -162,6 +167,14 @@ def selftest() -> int:
         problems4, examined4 = check(empty)
         if examined4 != 0 or not problems4:
             fails.append("根级 0 份文档时未判红（路径解析错了会被当成全绿）")
+    # 527 批：512/361 批同型——负例过了不等于真仓干净。旧版此处直接 return 0，
+    # 从不对真实根级文档调用 check()；526 批把本门纳入全体检声明面（只跑 --selftest）
+    # 后，「PASS」实际只证明负例有效，真仓死链一条也看不见。真探针实证：往
+    # GOVERNANCE.md 塞一条死引用时裸门 rc=1 而 --selftest rc=0。
+    real_problems, real_examined = probe if probe is not None else check()
+    if real_examined == 0:
+        fails.append("真仓扫到 0 条路径引用（解析失败不许报绿）")
+    fails += ["真仓死链：" + p for p in real_problems]
     if fails:
         for f in fails:
             print(f"  × selftest：{f}")
@@ -177,7 +190,17 @@ def main() -> int:
     ap.add_argument("--selftest", action="store_true")
     args = ap.parse_args()
     if args.selftest:
-        return selftest()
+        rc = selftest()
+        if rc:
+            return rc
+        # 527 批负例自证：注入「真仓有死链」，确认 selftest 会传播（纯内存，不碰仓库）
+        with contextlib.redirect_stdout(io.StringIO()):
+            neg_rc = selftest(probe=(["docs/_probe_dead.md"], 137))
+        if neg_rc == 0:
+            print("  × selftest 负例：真仓死链未被传播（512 同型假绿复活）")
+            return 1
+        print("  √ selftest 负例：真仓死链必被抓")
+        return 0
     files = root_docs(ROOT)
     if not files:
         print("  × 仓库根扫到 0 份 .md——先查路径解析，不能当通过")

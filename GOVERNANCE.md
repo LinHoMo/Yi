@@ -122,18 +122,21 @@ SCORING_RULE sha、跨科串号、账台手打计数、虚构完成等）均已�
 | G4 | 305 批 `plugins/CHANGELOG.md`「未做的事」四条 | 497 批起只剩 DSH 一家宿主，登记表与「接入其它适配器」的对象已删；宿主侧 `selftest.mjs`／`verify-in-dsh` 已由 522 批 `npm --prefix dsh-plugin run check` 全链跑通；分发方案按 AGENTS.md §二已定为 GitHub Release 的 npm tgz。四条均非现行待办，该节末已加 523 批现状勘误 | **已关闭** |
 | G5 | 514 批「文档窗口／现在时钉数无门」 | 真缺口：510 批定「最近 15 批」却无门看着，522 批实盘六爻 28 批／八字 26 批而全仓全绿。523 批扩 `devkit/root/check_docs_index.py` 守窗口、单批长度、与 HEAD 对拍防滑窗口丢批号，首跑真抓 22 条违规并补 4 类负例 | **本批补掉** |
 | G6 | 归档留证三份 | 510 批 §五写明「结论在 CHANGELOG、正文留证，删掉会把可追溯性交给 git 单点」；523 批按用户选定的档位保留 | **不修（有据）** |
+| G10 | 527 批实证：`check_root_docs.py --selftest` 是 512 同型第二处假绿 | 真探针：往 `GOVERNANCE.md` 塞 `docs/_probe_dead_527.md` 死引用 → 裸门 rc=1、`--selftest` rc=0。根因是 `selftest()` 只在临时目录跑 `check(root)` 负例就 `return 0`，从不对真仓 `check()`。527 批在末尾补真仓检查并传播 rc（含 0 引用判红），`main()` 加纯内存负例自证；修复后真探针两者同步判红、恢复后全绿。另以变异探针实证 `check_docs_index.py`（删 DOCS.md 一行）／`check_pytest_bridge.py`（清单塞悬空路径）的 `--selftest` 各判红 rc=1，`check_batch_num.py`／`governance_map.py`／`check_ontology.py`／`adjudication_brief.py` 源码逐个核过均有真账传播 | **本批补掉** |
 | G9 | 526 批实证巡检新查出：器具全体检的「全部」是假全称 | `sweep_selftests.py` docstring 自称「全部 `--selftest` 声明器具逐真跑」，但 `declared_files()` 只扫两科 `dev_tools/`；`devkit/root/` 四个根级门、`devkit/sync_devkit.py`、`kernel/sync_kernel.py` 从未进过全体检（522 批新增的 `check_pytest_bridge.py` 即在其中）。CI root-gates 虽单独跑它们，「全体检」仍不是全称。基线实跑声明 77｜PASS 77。526 批把三处纳入（声明 **77→83**；`devkit/shared/` 是 [37] 字节同源产物，跑第二遍无信息量，刻意排除），并把 `--selftest` 的 wired 负例从单个 victim 扩成「学科门＋根级门」两处同批注入、只跑一次 sweep，证明新增覆盖真能扫出根级门损坏；扩展后实跑声明 83｜PASS 83｜FAIL 0｜NOTIMPL 0。首轮实跑还抓出注入夹具把 LF 文件复原成 CRLF 的字节副作用（`git diff` 看不到而 status 报 M），同批改 bytes 级保存/复原＋逐字节自证 | **本批补掉** |
 | G8 | 525 批实证巡检新查出：人读审计/简报两份生成物缺同源复验，简报自检从未挂线 | 真探针重生成抓出 `CASE-LIBRARY-AUDIT-YINGQI.md` 报告头用 `date.today()`（每次重生成都改、无法逐字对拍），而 [46] 的 `--check` 只回验落盘 JSON、报告无人看；`adjudication_brief.py --selftest` 会调用 `build()` 写真产物，且 tier=nightly、`check.py`／CI 均无调用，等于自建库起没执行过。525 批：报告头改数据源 sha256 前 8 位（幂等、可回指），`--check` 扩到报告逐字对拍；简报拆出纯只读 `--check`（临时目录重算）＋负例 `--selftest`，挂进 CI root-gates。挂 CI 而非 `check.py` 是刻意的：不改 `run_by_check_py` 口径，不制造治理图／账台连锁。首跑判红、重生成转绿、手改负例判红、重生成两次逐字节不变均有实跑 | **本批补掉** |
 | G7 | 524 批实证巡检新查出：ontology `engine_impl` 锚定门只守一种形态 | 真探针重生成 `ONTOLOGY-CARDS.md` 抓出 4 行锚点漂移；全量核查 55 条锚点，其中 12 条路径形态（8 条少 `core/`、4 条少 `domain/`）全部指向不存在文件，而 [44] 自 512 批上线只校验 `registry.json:ID`（41 条），从未判红；产物里 4 条 JSON 锚点被手改成正确路径掩盖了源数据错误，按源重生成反而写回死引用。取 HEAD(523) 旧数据喂扩面判据，实报 12 条。524 批扩 [44] 守三种形态＋产物逐字同源、修 12 条源数据并重生成，负例覆盖四种形态与产物漂移 | **本批补掉** |
 
-**526 批附带的正面结论（按「精神条款」不登记为欠账）**：以 512 批判据
-「`--selftest` 是否仍报真实检查结果、而非负例过了就 `return 0`」系统遍历一遍：
-器具全体检实跑 **声明 77｜PASS 77｜FAIL 0｜NOTIMPL 0**；静态 AST 扫「selftest 分支
-硬编码 `return 0` 且无真实结果传播」只命中 `bazi/dev_tools/corpus_wiring_report.py` 的
-`selftest()`，回源码核实它是 `classify_leaf` 的**纯单元夹具**（测分类函数，本身不是门），
-属误报。**未发现第二处 512 式假绿**。此结论以实跑为准，不固化为常设静态判据——
-各门措辞与结构各异，静态判据的误报成本高于收益；`sweep_selftests.py` 的 `RC-LIE`
-四态归类继续守「退 0 却只报 ×」那一类。
+**526 批结论的更正（527 批，按 §六.2 与「精神条款」）**：526 批据静态 AST 写下
+「未发现第二处 512 式假绿」——**该结论是错的，作废**。当时判据把「分支内出现
+`fails`／`problems` 变量名」当作「传播了真实结果」，而 `devkit/root/check_root_docs.py`
+的 `selftest()` 里这些变量只累积临时目录负例，从未对真仓调用 `check()`；526 批把它纳入
+全体检声明面（只跑 `--selftest`）后，那个 PASS 只证明负例有效。527 批真探针实证：
+往 `GOVERNANCE.md` 塞一条死引用时裸门 rc=1、`--selftest` rc=0。**教训**：`sweep_selftests.py`
+的 `RC-LIE` 只看输出与 rc，「只跑负例、丢弃真账」的门会输出全 √ 并退 0，输出侧判据
+看不见，变量名启发式同样会漏；可回指的只有**变异探针**（往真仓目标塞一个已知错误，
+看 `--selftest` 是否同步判红）。本批对根级门逐个做这种探针并登记结果，不固化成常设静态门
+（各门措辞与结构各异、误报成本高于收益）。526 批其余读数（声明 77→83、PASS 全绿）不受影响。
 
 **G7 的一处边界（524 批核实，避免误读为「图与代码分家」）**：产物同源复验是
 `check_ontology.py` 以 `importlib` 复用 `render_ontology.render()` 纯函数，**不新增 CLI 挂闸**；
