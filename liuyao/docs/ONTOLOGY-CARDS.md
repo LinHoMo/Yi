@@ -55,49 +55,49 @@
 - **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.wuxing → yi.l0.wuxing.ke → yi.l1.branch.chong
 - **派生**：yi.l2.concept.huitouke_chongjie
 - **依据**：yi.l0.wuxing.ke
-- **代码锚点**：`yishu_core/symbols.py:CHONG_PAIRS`
+- **代码锚点**：`core/yishu_core/symbols.py:CHONG_PAIRS`
 
 ### 六合（地支相合）  `yi.l1.branch.he`
 - **定义**：子丑合、寅亥合、卯戌合、辰酉合、巳申合、午未合。合者，聚也、亲也、绊也。
 - **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l1.branch.he
 - **依据**：yi.l0.liangyi
-- **代码锚点**：`yishu_core/symbols.py:HE_PAIRS`
+- **代码锚点**：`core/yishu_core/symbols.py:HE_PAIRS`
 
 ### 纳甲装卦  `yi.l1.najia`
 - **定义**：八卦各纳天干、地支，六亲（父母兄弟妻财官鬼子孙）由宫五行与爻五行的生克关系定出。
 - **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.sixiang → yi.l0.bagua → yi.l1.najia
 - **依据**：yi.l0.bagua、yi.l1.wuxing.ke_cycle
-- **代码锚点**：`yishu_core/symbols.py:NAJIA_BRANCHES`
+- **代码锚点**：`core/yishu_core/symbols.py:NAJIA_BRANCHES`
 
 ### 三合局  `yi.l1.sanhe`
 - **定义**：三支合成一局（生旺墓）：申子辰合水、寅午戌合火、巳酉丑合金、亥卯未合木。合则气聚。
 - **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.wuxing → yi.l0.wuxing.sheng → yi.l1.sanhe
 - **依据**：yi.l0.wuxing.sheng
-- **代码锚点**：`yishu_core/symbols.py:SAN_HE_GROUPS`
+- **代码锚点**：`core/yishu_core/symbols.py:SAN_HE_GROUPS`
 
 ### 三刑  `yi.l1.sanxing`
 - **定义**：地支相刑：无恩（寅巳申）、恃势（丑戌未）、无礼（子卯）、自刑（辰午酉亥）。刑主伤、主是非。
 - **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.wuxing → yi.l0.wuxing.ke → yi.l1.sanxing
 - **依据**：yi.l0.wuxing.ke
-- **代码锚点**：`yishu_core/symbols.py:THREE_PUNISHMENTS`
+- **代码锚点**：`core/yishu_core/symbols.py:THREE_PUNISHMENTS`
 
 ### 十二长生  `yi.l1.shier_changsheng`
 - **定义**：五行在十二地支上的生死进程：长生→沐浴→冠带→临官→帝旺→衰→病→死→墓→绝→胎→养。爻临长生帝旺为旺，临死墓绝为衰。
 - **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.wuxing → yi.l0.wuxing.sheng → yi.l1.shier_changsheng
 - **依据**：yi.l0.wuxing.sheng
-- **代码锚点**：`yishu_core/symbols.py:TWELVE_GROWTH_STAGES`
+- **代码锚点**：`core/yishu_core/symbols.py:TWELVE_GROWTH_STAGES`
 
 ### 五行相克表  `yi.l1.wuxing.ke_cycle`
 - **定义**：木→土→水→火→金→木 循环相克。过克伤身，反克为侮。
 - **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.wuxing → yi.l0.wuxing.ke → yi.l1.wuxing.ke_cycle
 - **依据**：yi.l0.wuxing.ke
-- **代码锚点**：`yishu_core/symbols.py:KE_CYCLE`
+- **代码锚点**：`core/yishu_core/symbols.py:KE_CYCLE`
 
 ### 五行相生表  `yi.l1.wuxing.sheng_cycle`
 - **定义**：木→火→土→金→水→木 循环相生。
 - **向上推演**：yi.l0.taiji → yi.l0.liangyi → yi.l0.wuxing → yi.l0.wuxing.sheng → yi.l1.wuxing.sheng_cycle
 - **依据**：yi.l0.wuxing.sheng
-- **代码锚点**：`yishu_core/symbols.py:SHENG_CYCLE`
+- **代码锚点**：`core/yishu_core/symbols.py:SHENG_CYCLE`
 
 
 ## L2 · 概念层（术语）

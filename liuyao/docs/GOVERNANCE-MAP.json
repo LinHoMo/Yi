@@ -232,7 +232,7 @@
    "tier": "blocking",
    "guards": "易学图谱本体看门狗：孤儿／父链到根／幽灵引用／engine_impl 锚定（511 批登记，512 批接线进 check.py [44]）",
    "run_by_check_py": true,
-   "doc": "易学图谱本体看门狗：孤儿检查 + 引用完整性。"
+   "doc": "易学图谱本体看门狗：引用完整性 + 机器锚点可达 + 人读产物同源。"
   },
   {
    "script": "check_prose_readings.py",
