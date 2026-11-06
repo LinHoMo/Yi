@@ -6,13 +6,22 @@
 生成物 `docs/ADJUDICATION-BRIEF.md` 随观察册变化重生成即可（write_stable 幂等）。
 
     python dev_tools/adjudication_brief.py            # 生成/刷新简报
-    python dev_tools/adjudication_brief.py --selftest
+    python dev_tools/adjudication_brief.py --check    # 只读同源复验（CI 挂此）
+    python dev_tools/adjudication_brief.py --selftest # 负例自证 + 同源复验
+
+525 批：此前 `--selftest` 会调用 build() 写真产物，且**从未挂进 check.py 或 CI**
+（治理图 tier=nightly、run_by_check_py=False），等于这道自检自建库起就没执行过。
+现拆出纯只读 `--check`，挂进 CI root-gates；`--selftest` 改为「负例 + 只读复验」，
+探针一律走临时目录（§四.8）。挂 CI 而非 check.py 是为不制造治理图/账台连锁。
 """
 from __future__ import annotations
 
 import argparse
+import contextlib
+import io
 import json
 import sys
+import tempfile
 from collections import Counter
 from pathlib import Path
 
@@ -28,7 +37,8 @@ from stable_write import write_stable  # noqa: E402
 OUT = DISC / "docs" / "ADJUDICATION-BRIEF.md"
 
 
-def build() -> int:
+def build(out: Path | None = None) -> int:
+    """out 仅供只读复验把产物写到临时目录；默认写真产物（幂等）。"""
     tri = json.loads((DISC / "data" / "cases" / "verifications_triage.json").read_text(encoding="utf-8"))
     rec = json.loads((DISC / "data" / "cases" / "restorable_recheck.json").read_text(encoding="utf-8"))
     cand = json.loads((DISC / "data" / "cases" / "restorable_candidates.json").read_text(encoding="utf-8"))
@@ -217,9 +227,10 @@ def build() -> int:
                 p.get("decision_kind") or "未分类", p.get("status") or "?"))
 
     text = "\n".join(parts) + "\n"
-    changed = OUT.exists() and OUT.read_text(encoding="utf-8") != text
-    if changed or not OUT.exists():
-        OUT.write_text(text, encoding="utf-8")
+    target = out if out is not None else OUT
+    changed = target.exists() and target.read_text(encoding="utf-8") != text
+    if changed or not target.exists():
+        target.write_text(text, encoding="utf-8")
     n = (sum(len(v) for k, v in tri["rows"].items()) + len(nb) + len(cs)
          + len(_adj) + len(prior))
     print("√ 简报%s：%d 事项入册 %s（A%d(已判%d) A3 %d B%d C%d D%d(已裁%d) E%d(已复核%d) E3 %d）"
@@ -229,30 +240,70 @@ def build() -> int:
     return 0
 
 
+def check() -> int:
+    """只读同源复验：产物须与当前观察册重算结果逐字一致，且不混入猜测措辞。"""
+    with tempfile.TemporaryDirectory(prefix="yi_brief_check_") as td:
+        tmp = Path(td) / "ADJUDICATION-BRIEF.md"
+        with contextlib.redirect_stdout(io.StringIO()):
+            build(out=tmp)           # 只写临时目录，不碰仓库（§四.8）；统计输出不外泄
+        expected = tmp.read_text(encoding="utf-8")
+    if not OUT.is_file():
+        print("× 简报缺失：%s（须重跑生成器）" % OUT.name)
+        return 1
+    actual = OUT.read_text(encoding="utf-8")
+    if actual != expected:
+        a, e = actual.splitlines(), expected.splitlines()
+        head = next((i + 1 for i in range(min(len(a), len(e))) if a[i] != e[i]),
+                    min(len(a), len(e)) + 1)
+        print("× 简报与观察册分家：%s 首处第 %d 行不一致（行数 %d vs %d）；"
+              "改观察册后须重跑生成器" % (OUT.name, head, len(a), len(e)))
+        return 1
+    for w in ("可能", "大概", "或许"):
+        if w in actual:
+            print("× 简报混入猜测措辞「%s」（装配器不许判断）" % w)
+            return 1
+    print("√ 简报同源复验：逐字一致、无猜测措辞（只读，未写盘）")
+    return 0
+
+
 def selftest() -> int:
     fails = []
     for rel in ("data/cases/verifications_triage.json", "data/cases/restorable_recheck.json",
                 "data/cases/restorable_candidates.json"):
         if not (DISC / rel).exists():
             fails.append("前置观察册缺失：" + rel)
-    # 负例：观察册齐但生成物缺 → build 必须落文件且非空
-    if not fails:
-        build()
-        t = OUT.read_text(encoding="utf-8") if OUT.exists() else ""
-        # 399 批：A/B/C/D/E 全部裁清后简报不再有「决策：□」行；改用稳定标记「依据」＋E2。
-        if "待裁简报" not in t or "依据" not in t or "## E2." not in t:
-            fails.append("简报未产出或缺已裁依据/E2 段")
-        if "可能" in t or "大概" in t or "或许" in t:
-            fails.append("简报混入猜测措辞（装配器不许判断）")
-    print("√ selftest：三前置册在、产物非空、无猜测措辞" if not fails else "× " + "；".join(fails))
-    return 0 if not fails else 1
+    if fails:
+        print("× " + "；".join(fails))
+        return 1
+    # 负例：产物被手改必须判红；探针走临时目录，真仓库一字不动。
+    global OUT
+    saved = OUT
+    try:
+        with tempfile.TemporaryDirectory(prefix="yi_brief_st_") as td:
+            fake = Path(td) / "ADJUDICATION-BRIEF.md"
+            fake.write_text("<!-- 手改污染 -->\n", encoding="utf-8")
+            OUT = fake
+            with contextlib.redirect_stdout(io.StringIO()):
+                neg_rc = check()
+            if neg_rc == 0:
+                fails.append("手改产物未被抓到")
+    finally:
+        OUT = saved
+    if fails:
+        print("× selftest：" + "；".join(fails))
+        return 1
+    print("√ selftest：三前置册在、手改产物必判红；以下报真账")
+    return check()  # 512 批教训：负例过了仍须报真实结果，不许直接 return 0
 
 
 def main() -> int:
     force_utf8_stdio()
     ap = argparse.ArgumentParser(description="待裁事项一页简报（纯装配零新判断）")
-    ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--check", action="store_true", help="只读同源复验，不写仓库")
+    ap.add_argument("--selftest", action="store_true", help="负例自证 + 只读同源复验")
     args = ap.parse_args()
+    if args.check:
+        return check()
     if args.selftest:
         return selftest()
     return build()

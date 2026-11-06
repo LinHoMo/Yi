@@ -29,6 +29,8 @@ jobs:
           python devkit/root/check_pytest_bridge.py
           python devkit/root/check_pytest_bridge.py --selftest
           python liuyao/dev_tools/governance_map.py --selftest
+          # 525 批：简报同源复验此前从未挂线（tier=nightly、check.py/CI 都没有），补在根级门侧
+          python liuyao/dev_tools/adjudication_brief.py --selftest
   # 对外声明 Python 3.10+：本 job 在最低版跑两科冒烟、两科古籍回归与单测。
   # 六爻回归实跑 19/19、思维链 12/12，旧的「17/19 待裁」排除理由已失效。
   min-python-smoke:

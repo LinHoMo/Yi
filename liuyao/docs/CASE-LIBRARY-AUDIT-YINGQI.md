@@ -1,6 +1,6 @@
 # 案例库应期抽取审计
 
-抽取器：`dev_tools/build_yingqi_set.py`｜扫描 29 例 → 可评分 2 例｜生成于 2026-11-05
+抽取器：`dev_tools/build_yingqi_set.py`｜扫描 29 例 → 可评分 2 例｜数据源 `case_library.md` sha256 `a0f8ebe7`
 
 四道门：本卦名可解析、卦变自洽（本卦＋动爻⇒变卦）、时间可还原、应期有明确干支。
 **任一道不过即 excluded，不放宽收录。**

@@ -29,7 +29,6 @@ try:
 except Exception:
     pass
 
-from datetime import date
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -288,8 +287,52 @@ def parse_case(block: str, num: str, title: str) -> tuple[dict | None, dict | No
     }, None
 
 
+def extract(text: str):
+    """纯抽取：案例库文本 → (标题匹配, 可评分案例, 剔除清单)。不写盘。"""
+    marks = list(CASE.finditer(text))
+    kept, excluded = [], []
+    for i, m in enumerate(marks):
+        end = marks[i + 1].start() if i + 1 < len(marks) else len(text)
+        block = text[m.end():end]
+        case, ex = parse_case(block, m.group(1), m.group(2).strip())
+        (kept if case else excluded).append(case or ex)
+    seen, unique = set(), []
+    for c in kept:
+        if c["id"] in seen:
+            excluded.append({"id": c["id"] + "-dup", "reason": "与已收录案例编号重复",
+                             "title": c["topic"]})
+            continue
+        seen.add(c["id"])
+        unique.append(c)
+    return marks, unique, excluded
+
+
+def report_text(marks, unique: list, excluded: list) -> str:
+    """人读审计报告的纯函数重算（525 批：与落盘集同由当前文献派生，供 --check 逐字对拍）。
+
+    头部改用**数据源 sha256 前 8 位**而不是 `date.today()`：旧写法每重生成一次就改
+    一行日期戳，产物永远不幂等，也没法做逐字同源复验；指纹随底本变化，可回指且不制造噪声。
+    """
+    digest = hashlib.sha256(LIB.read_bytes()).hexdigest()[:8]
+    report = ["# 案例库应期抽取审计", "",
+              f"抽取器：`dev_tools/build_yingqi_set.py`｜扫描 {len(marks)} 例 → "
+              f"可评分 {len(unique)} 例｜数据源 `{LIB.name}` sha256 `{digest}`", "",
+              "四道门：本卦名可解析、卦变自洽（本卦＋动爻⇒变卦）、时间可还原、应期有明确干支。",
+              "**任一道不过即 excluded，不放宽收录。**", "", "## 可收录（未参与调参的外部验证集）", ""]
+    report += ([f"- `{c['id']}` {c['source']}｜{c['topic']}｜应期 `{'、'.join(c['expected']['yingqi_branches'])}`"
+                for c in unique] or ["（无）"])
+    report += ["", "## 剔除清单与原因", "", "| 案例 | 原因 | 本卦 | 变卦 | 文记动爻 |", "|---|---|---|---|---|"]
+    report += [f"| {e['id']} {e.get('title','')} | {e['reason']} | {e.get('original') or '—'} "
+               f"| {e.get('changed') or '—'} | {e.get('moving') or '—'} |" for e in excluded]
+    report += ["", "## 结论", "",
+               "卦变不自洽者为多数时，说明该库内容不可直接用于评分："
+               "须先按《京房》卦变与纳甲逐例校勘（人工或对照可靠整理本），修好后重跑本工具。",
+               "在校勘完成前，**不设置 yingqi_holdout 外部集**，以免用一个错数据集得出好看的假指标。", ""]
+    return "\n".join(report)
+
+
 def _check_sync() -> int:
-    """同源复验：落盘集须由当前文献逐字可复现（sha 不变且每条应验句仍在原处）。"""
+    """同源复验：落盘集与审计报告都须由当前文献逐字可复现（不写盘）。"""
     if not OUT.exists():
         print("× 落盘集不存在：%s" % OUT.relative_to(HERE.parent))
         return 1
@@ -309,8 +352,24 @@ def _check_sync() -> int:
             fails.append("%s 的 expected.detail 已不在案例库（%s…）" % (c.get("id"), detail[:24]))
             continue
         checked += 1
+    # 525 批：[46] 此前只回验落盘 JSON，人读报告没有任何门看着——手改报告、
+    # 或改了抽取器却忘了重生成，门禁照样全绿。这里与落盘集同由当前文献重算一遍。
+    marks, unique, excluded = extract(text)
+    expected = report_text(marks, unique, excluded)
+    if not REPORT.is_file():
+        fails.append("审计报告缺失：%s（须重跑本脚本）" % REPORT.name)
+    else:
+        actual = REPORT.read_text(encoding="utf-8")
+        if actual != expected:
+            a, e = actual.splitlines(), expected.splitlines()
+            head = next((i + 1 for i in range(min(len(a), len(e))) if a[i] != e[i]),
+                        min(len(a), len(e)) + 1)
+            fails.append("审计报告与当前抽取结果分家：%s 首处第 %d 行不一致"
+                         "（行数 %d vs %d；改案例库或抽取器后须重跑本脚本）"
+                         % (REPORT.name, head, len(a), len(e)))
     ok = "全部一致" if not fails else "%d 处失效" % len(fails)
-    print("同源复验：%d/%d 条应验句仍逐字命中文献；%s" % (checked, len(cases), ok))
+    print("同源复验：%d/%d 条应验句仍逐字命中文献；审计报告%s；%s"
+          % (checked, len(cases), "逐字同源" if not any("审计报告" in f for f in fails) else "已分家", ok))
     for f in fails:
         print("  ×", f)
     return 1 if fails else 0
@@ -320,29 +379,13 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="抽取带明确应期的古籍案例作外部验证集")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--check", action="store_true",
-                    help="只复验已生成 JSON 的应验句仍逐字命中文献，不写文件（[46] 同步门挂此）")
+                    help="复验落盘 JSON 与审计报告仍由当前文献逐字可复现，不写文件（[46] 挂此）")
     args = ap.parse_args()
     if args.check:
         return _check_sync()
 
     text = LIB.read_text(encoding="utf-8")
-    marks = list(CASE.finditer(text))
-    kept, excluded = [], []
-    for i, m in enumerate(marks):
-        end = marks[i + 1].start() if i + 1 < len(marks) else len(text)
-        block = text[m.end():end]
-        case, ex = parse_case(block, m.group(1), m.group(2).strip())
-        (kept if case else excluded).append(case or ex)
-
-    # 编号去重（同名案例可能重复出现）
-    seen, unique = set(), []
-    for c in kept:
-        if c["id"] in seen:
-            excluded.append({"id": c["id"] + "-dup", "reason": "与已收录案例编号重复",
-                             "title": c["topic"]})
-            continue
-        seen.add(c["id"])
-        unique.append(c)
+    marks, unique, excluded = extract(text)
 
     print(f"扫描 {len(marks)} 例 → 可评分 {len(unique)} 例，剔除 {len(excluded)} 例")
     for e in excluded[:14]:
@@ -350,26 +393,13 @@ def main() -> int:
     if len(excluded) > 14:
         print(f"  …另 {len(excluded) - 14} 例")
 
-    report = ["# 案例库应期抽取审计", "",
-              f"抽取器：`dev_tools/build_yingqi_set.py`｜扫描 {len(marks)} 例 → "
-              f"可评分 {len(unique)} 例｜生成于 {date.today().isoformat()}", "",
-              "四道门：本卦名可解析、卦变自洽（本卦＋动爻⇒变卦）、时间可还原、应期有明确干支。",
-              "**任一道不过即 excluded，不放宽收录。**", "", "## 可收录（未参与调参的外部验证集）", ""]
-    report += ([f"- `{c['id']}` {c['source']}｜{c['topic']}｜应期 `{'、'.join(c['expected']['yingqi_branches'])}`"
-                for c in unique] or ["（无）"])
-    report += ["", "## 剔除清单与原因", "", "| 案例 | 原因 | 本卦 | 变卦 | 文记动爻 |", "|---|---|---|---|---|"]
-    report += [f"| {e['id']} {e.get('title','')} | {e['reason']} | {e.get('original') or '—'} "
-               f"| {e.get('changed') or '—'} | {e.get('moving') or '—'} |" for e in excluded]
-    report += ["", "## 结论", "",
-               "卦变不自洽者为多数时，说明该库内容不可直接用于评分："
-               "须先按《京房》卦变与纳甲逐例校勘（人工或对照可靠整理本），修好后重跑本工具。",
-               "在校勘完成前，**不设置 yingqi_holdout 外部集**，以免用一个错数据集得出好看的假指标。", ""]
+    report = report_text(marks, unique, excluded)
     # 379 批：dry-run 此前**先写盘再判**——校勘清单会落进 docs/，探测动作改了仓库。
     # 与 build_zengshan_dz_cases.py 同病（那处的后果是审计文档日期戳被改）。
     if args.dry_run:
         print("（--dry-run：校勘清单未写盘；去掉该参数才落 %s）" % REPORT.relative_to(HERE.parent))
         return 0
-    REPORT.write_text(chr(10).join(report), encoding="utf-8")
+    REPORT.write_text(report, encoding="utf-8")
     print("校勘清单 →", REPORT.relative_to(HERE.parent))
     if not unique:
         return 0

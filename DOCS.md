@@ -57,9 +57,9 @@
 | `liuyao/docs/CHANGELOG-HISTORY-INDEX.md` | **逐批一句话索引**（342 批精简：原 154 批事实标题＋更早 49–156 批一句话；全文归档已删） | 历史索引 |
 | `liuyao/docs/JUDGMENT-TABLE.md` | 判定表：书证底稿、9 格、题类覆盖与代码覆写清单，含"不换判词"结论；未签条目只作设计输入、不得进代码 | 活文档 |
 | `liuyao/docs/CASE-LIBRARY-AUDIT.md` | 案例库应期抽取审计（dz 底本通道） | 活文档 |
-| `liuyao/docs/CASE-LIBRARY-AUDIT-YINGQI.md` | 案例库**应期**抽取审计（519 批由 `dev_tools/build_yingqi_set.py` 生成，四道门与 excluded 清单） | 生成物 |
+| `liuyao/docs/CASE-LIBRARY-AUDIT-YINGQI.md` | 案例库**应期**抽取审计（519 批由 `dev_tools/build_yingqi_set.py` 生成；525 批起报告头改数据源 sha256 指纹＝幂等，与落盘集同由 [46] `--check` 逐字复验） | 生成物 |
 | `liuyao/docs/YIIN-CASE-AUDIT.md` | 《易隐》案例集审计（`yiin_holdout`） | 活文档 |
-| `liuyao/docs/ADJUDICATION-BRIEF.md` | 待裁简报（**生成物**：`dev_tools/adjudication_brief.py` 重生成） | 生成物 |
+| `liuyao/docs/ADJUDICATION-BRIEF.md` | 待裁简报（**生成物**：`dev_tools/adjudication_brief.py` 重生成；525 批起只读 `--check` 同源复验挂 CI，探针走临时目录） | 生成物 |
 | `liuyao/docs/TIANHOU.md` | 占天候试验台协议（读数规则、换源即改口径） | 活文档 |
 | `liuyao/docs/ONTOLOGY-CARDS.md` | 易学知识图谱本体卡片（L0–L4 概念人读版；`dev_tools/render_ontology.py` 重生成，与图谱逐字同源由 [44] 门守，524 批起） | 生成物 |
 | `liuyao/docs/YI-KNOWLEDGE-GRAPH.md` | 易学知识图谱手册（演化树、象数层、书证层、AI 检索视图） | 活文档 |
