@@ -9,6 +9,7 @@
 > 过程叙述、分点论证与收口实跑明细一律交 git 历史／对应提交，不在主文件留存。
 > 窗口与单批长度由 `devkit/root/check_docs_index.py` 现场判，**不在本文钉数**。
 
+## 2026-11-06 第五百三十三批（实证巡检·G12 轻门克隆·restorable 声明↔数据对账）：**把 532 批 G14 的只读 `--reconcile` 轻门样板克隆到 G12（六爻 `restorable_adjudication.json` summary）：`liuyao/dev_tools/adjudication_brief.py` 新增 `--reconcile`——CAPABILITY ① 处置分布（已在册30/非单点应期3/不升5/待回原文0/建器阻塞1/日期不可重建4）与 JSON 的 `summary` 现场对拍、并复核 rows→summary 内部一致性；接进 CI root-gates（守 528 批「不新增 check.py 门号」约定，仿 G8 挂 CI 而非 check.py）。变异探针实证有牙（改 CAPABILITY 已在册 30→31 判红 rc=1，还原转绿）。G13（八字版本识别）同款轻门见 bazi 同批；本科 check EXIT=0**
 ## 2026-11-06 第五百三十二批（实证巡检·G12 轻门落地·流派裁决声明↔数据对账）：**把 `build_adjudications.py` 的 `--selftest` 接进主门 `check.py[12]`（与 `--verify` 并行），并在 selftest 钉死分解 27/6/1/20（EXPECTED 单一真源）；新增只读 `--reconcile`：CAPABILITY 行 45 声称的 27/6/1/20 与 `adjudications.json` 实际比对。两道变异探针实证有牙（改 EXPECTED→28 判红、改 CAPABILITY 27→28 判红、还原转绿）。闭环 G12「声明↔数据」缺口，不新增门号——仅扩既有 [12]。本科 check EXIT=0**
 ## 2026-11-06 第五百三十一批（实证巡检·CAPABILITY ① 过期登记更正）：**六爻 restorable 处置分布更正——实证复核 ①：43 条 restorable 双器复核 32 共识＋11 裁决（0 待裁）仍可复现（`restorable_recheck.json` 证 32/11/43）；但处置分布「411 批现状」登记过期——`restorable_adjudication.json` 已建于 2026-11-02，原 3 条「待回原文」已裁决分流为 2 不升＋1 建器阻塞，故不升 3→5、待回原文 3→0、建器阻塞 0→1（已在册 30／非单点应期 3／新候选·日期不可重建 4 不变）。该文件 `summary` 无门守护、曾漂移，复核以文件为权威；CAPABILITY ① 更正。余见 bazi 同批。**
 ## 2026-11-06 第五百三十批（实证巡检·CAPABILITY ④ 从儿格结案复核）：**八字侧从儿格「不评分、见证集即归宿」结案复核（530 批）：⑨ 从儿命例门仍 9/9 绿且有牙、CE 系列 ID 零泄漏进评分集、cong_ge 维评其它从*类型而從儿只停见证集；结案确认可验证，推进须 §四.9 所述「未参与设计的新从儿案例」（仓内无）。八字侧完整证据见 bazi/docs/CHANGELOG.md 同批；CAPABILITY ④ 补复核注。**
@@ -35,6 +36,5 @@
 
 ## 2026-11-05 第五百一十九批（六爻构建器同步门·[46] 接入）：**6 个此前只落盘、从不挂同源复验的构建器补齐 `--check`：转译型案例集（zengshan_dz / bushi_zhengzong / yiin / yingqi）逐条回验 `expected.detail` 仍逐字命中底本/文献；用神爻位（usegod_position）与派生维度（extra_dimensions）逐字段回验与引擎当前派生一致；均不写文件、命中缺失即非零退出。六爻 `check.py` 新增 `[46]` 构建器同源复验门，把 6 个 `--check` 收口成一道同步门（[0]–[45] 已占满，[36] 为文档索引门迁出墓碑空位不复用，故取 [46]）。同步门实跑抓出并修复三处真问题：① ZD214 `detail`/`yingqi` 被手改漂移（阴云/缺寅日），已按底本 L2084 逐字改回「果于寅日云卯日大雨辰日大晴」、应期 寅日/卯日/辰日；② yingqi_cases.json `_meta` 缺 `source_sha256` 锚，已重建补齐（案例库文献逐字未变）；③ build_usegod_position 的 `compute_position` 只处理六亲+地支、漏判 `世爻` 案例（SG001/SG002），已补 `is_world`/`is_ying` 派生。实跑全绿：6 个 `--check` 全 rc=0、liuyao/bazi check EXIT=0、`sync_kernel --check`/`sync_devkit --check` 通过、两处 selftest RC=0**
 
-## 2026-11-05 第五百一十八批（门编号规范化·跨仓重排）：**liuyao 10 个小数门号并入连续整数——[1.5]→[7]、[1.6]→[8]、[1.7]→[9]、[1.8]→[10]、[2.2]→[21]、[2.3]→[22]、[2.4]→[23]、[2.5]→[24]、[2.7]→[25]、[4.6]→[45]；其余 35 个整数号（含 [36] 文档索引门迁出后的墓碑空位）保持不变，故广泛引用的整数号（[18]/[28]/[38]/[42] 等）引用零改动。八字无小数号、其 [29]–[36] 预留空位为跨科对表保留，本批不动。内核真源 `kernel/yishu_core/common/yingqi.py` 的 `[1.7]`→`[9]` 经 `sync_kernel --write` 分发到两科 core 与 dsh-plugin/engine 副本；`plugins/engine` 与 `dsh-plugin/engine` 经 `node plugins/scripts/build.mjs` 重建逐字节一致。Node selftest 体系（[1.5]/[1.6]/[2.4]）为独立编号，非 liuyao 门，保持不动。门禁与同步门全绿：liuyao/bazi check EXIT=0、`sync_kernel --check`/`sync_devkit --check` 通过、两处 selftest RC=0**
 
 

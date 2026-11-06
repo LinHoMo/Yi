@@ -8,6 +8,7 @@
     python dev_tools/adjudication_brief.py            # 生成/刷新简报
     python dev_tools/adjudication_brief.py --check    # 只读同源复验（CI 挂此）
     python dev_tools/adjudication_brief.py --selftest # 负例自证 + 同源复验
+    python dev_tools/adjudication_brief.py --reconcile # 只读：CAPABILITY① 处置分布 ↔ restorable JSON（闭环 G12）
 
 525 批：此前 `--selftest` 会调用 build() 写真产物，且**从未挂进 check.py 或 CI**
 （治理图 tier=nightly、run_by_check_py=False），等于这道自检自建库起就没执行过。
@@ -20,6 +21,7 @@ import argparse
 import contextlib
 import io
 import json
+import re
 import sys
 import tempfile
 from collections import Counter
@@ -296,12 +298,86 @@ def selftest() -> int:
     return check()  # 512 批教训：负例过了仍须报真实结果，不许直接 return 0
 
 
+def reconcile() -> int:
+    """只读对账：CAPABILITY ① 声称的 restorable 处置分布，须与 restorable_adjudication.json
+    实际一致（直接闭环 G12「声明↔数据」缺口），并附带 rows→summary 内部一致性。不写任何文件。
+
+    533 批克隆 532 的 --reconcile 轻门模式：此前该 summary 只有 readout_ledger 锁「JSON↔基线」，
+    CAPABILITY ① 文本一旦被手改即静默漂移（531 批已发生过）。本对账把 CAPABILITY 文本也纳入
+    闭环。守 528 约定：不新增 check.py 门号，挂 CI root-gates（与 --selftest 同批）。
+    """
+    cap = (DISC.parent / "CAPABILITY.md").read_text(encoding="utf-8")
+    m = re.search(r"①(.*?)(?:\n②|$)", cap, re.S)
+    block = m.group(1) if m else cap
+    # 权威处置分布被 **…** 包裹在 restorable_adjudication.json 之后；单独抽出避免误抓
+    # 「不升 3→5」之类历史修订叙述里的数字。
+    sm = re.search(r"restorable_adjudication\.json\*\*\s*：\s*\*\*(.*?)\*\*", block)
+    sblock = sm.group(1) if sm else block
+
+    def grab(pat, text):
+        mm = re.search(pat, text)
+        return int(mm.group(1)) if mm else None
+
+    claimed = {
+        "already": grab(r"已在册\s*(\d+)", sblock),
+        "non_single": grab(r"非单点应期\s*(\d+)", sblock),
+        "not_enrolled": grab(r"不升\s*(\d+)", sblock),
+        "reread": grab(r"待回原文\s*(\d+)", sblock),
+        "new_builder_blocked": grab(r"建器阻塞\s*(\d+)", sblock),
+        "new_date_unrecoverable": grab(r"日期不可重建\s*(\d+)", sblock),
+    }
+    adj_path = DISC / "data" / "cases" / "restorable_adjudication.json"
+    if not adj_path.exists():
+        print("× restorable 观察册缺失：%s" % adj_path.name)
+        return 1
+    adj = json.loads(adj_path.read_text(encoding="utf-8"))
+    summary = adj.get("summary") or {}
+    # rows→summary 内部一致性（防止 summary 与 rows 脱节；readout_ledger 只锁 JSON↔基线）
+    rows = adj.get("rows") or []
+    rec = {"already": 0, "non_single": 0, "not_enrolled": 0, "reread": 0,
+           "new_builder_blocked": 0, "new_date_blocked": 0, "new_date_unrecoverable": 0}
+    disp_map = {"已在册": "already", "非单点应期": "non_single", "不升": "not_enrolled",
+                "新候选·建器阻塞": "new_builder_blocked",
+                "新候选·日期不可重建": "new_date_unrecoverable",
+                "新候选·日期阻塞": "new_date_blocked"}
+    for r in rows:
+        d = (r.get("disposition") or "").strip()
+        if d in disp_map:
+            rec[disp_map[d]] += 1
+        elif d == "待回原文":
+            rec["reread"] += 1
+    fails = []
+    for k, cv in claimed.items():
+        sv = summary.get(k)
+        if cv != sv:
+            fails.append("CAPABILITY① %s=%s vs 数据 summary=%s" % (k, cv, sv))
+    for k, rv in rec.items():
+        sv = summary.get(k)
+        if rv != sv:
+            fails.append("rows→summary %s: 实算 %s vs summary %s" % (k, rv, sv))
+    if sum(rec.values()) != len(rows):
+        fails.append("rows 处置统计 %d 与行数 %d 不符（映射不全）" % (sum(rec.values()), len(rows)))
+    if fails:
+        print("× restorable 处置「声明↔数据」对账失败：" + "；".join(fails))
+        return 1
+    print("√ restorable 声明↔数据一致：已在册 %d／非单点 %d／不升 %d／待回原文 %d／"
+          "建器阻塞 %d／日期不可重建 %d（rows→summary 亦一致）"
+          % (summary.get("already"), summary.get("non_single"), summary.get("not_enrolled"),
+             summary.get("reread"), summary.get("new_builder_blocked"),
+             summary.get("new_date_unrecoverable")))
+    return 0
+
+
 def main() -> int:
     force_utf8_stdio()
     ap = argparse.ArgumentParser(description="待裁事项一页简报（纯装配零新判断）")
     ap.add_argument("--check", action="store_true", help="只读同源复验，不写仓库")
     ap.add_argument("--selftest", action="store_true", help="负例自证 + 只读同源复验")
+    ap.add_argument("--reconcile", action="store_true",
+                    help="只读对账：CAPABILITY① 处置分布 ↔ restorable JSON（闭环 G12）")
     args = ap.parse_args()
+    if args.reconcile:
+        return reconcile()
     if args.check:
         return check()
     if args.selftest:

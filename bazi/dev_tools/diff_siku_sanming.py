@@ -114,10 +114,88 @@ def norm_map(raw: str, tbl: dict) -> tuple[str, list[int]]:
     return "".join(out), lines
 
 
+def reconcile() -> int:
+    """只读对账：CAPABILITY ③ 声称的三命通会 dz↔四库 内容级 diff 结论，须与现场复算一致
+    （闭环 G13 缺口）。现场从已入库底本复算章节分类（仅正向，足够得出 identical/partial/missing），
+    不依赖被 gitignore 的 diff 产物，fresh-tree CI 可跑。守 528 约定：不新增 check.py 门号，
+    挂 CI root-gates。
+    """
+    cap = (DISC.parent / "CAPABILITY.md").read_text(encoding="utf-8")
+    m = re.search(r"③(.*?)(?:\n④|$)", cap, re.S)
+    block = m.group(1) if m else cap
+
+    def grab(pat):
+        mm = re.search(pat, block)
+        return float(mm.group(1)) if mm else None
+
+    claimed_sections = None
+    mm = re.search(r"(\d+)\s*章", block)
+    if mm:
+        claimed_sections = int(mm.group(1))
+    claimed_identical = grab(r"([\d.]+)\s*%\s*逐字一致")
+    claimed_partial = grab(r"([\d.]+)\s*%\s*局部差异")
+    claimed_missing = grab(r"缺段\s*(\d+)")
+
+    # 现场复算：四库本逐章窗口命中分类（仅正向，与落盘 JSON 同一口径，足够得出三分类）
+    tbl = json.loads(T2S.read_text(encoding="utf-8"))
+    siku_raw = SIKU.read_text(encoding="utf-8")
+    dz_raw = DZ.read_text(encoding="utf-8")
+    siku_norm, _ = norm_map(siku_raw, tbl)
+    dz_norm, _ = norm_map(dz_raw, tbl)
+    slines = siku_raw.splitlines()
+    heads = [(i, ln.strip()) for i, ln in enumerate(slines)
+             if ln.strip() and not ln.startswith("\u3000")]
+    n_id = n_pa = n_mi = 0
+    count = 0
+    for hi, (idx, _t) in enumerate(heads):
+        end = heads[hi + 1][0] if hi + 1 < len(heads) else len(slines)
+        body = "\n".join(slines[idx + 1:end])
+        nb, _ = norm_map(body, tbl)
+        if len(nb) < WIN:
+            continue
+        wins = [nb[k:k + WIN] for k in range(0, len(nb) - WIN + 1, STEP)]
+        miss = [w for w in wins if w not in dz_norm]
+        ratio = 1.0 - len(miss) / len(wins) if wins else 0.0
+        cls = "identical" if ratio == 1.0 else "partial" if miss else "missing"
+        count += 1
+        if cls == "identical":
+            n_id += 1
+        elif cls == "partial":
+            n_pa += 1
+        else:
+            n_mi += 1
+
+    fails = []
+    if claimed_sections is not None and claimed_sections != count:
+        fails.append("章节数 CAPABILITY %d vs 现场 %d" % (claimed_sections, count))
+    if claimed_identical is not None:
+        id_pct = round(n_id / count * 100, 1) if count else 0.0
+        if abs(id_pct - claimed_identical) > 0.15:
+            fails.append("逐字一致 CAPABILITY %.1f%% vs 现场 %.1f%%" % (claimed_identical, id_pct))
+    if claimed_partial is not None:
+        pa_pct = round(n_pa / count * 100, 1) if count else 0.0
+        if abs(pa_pct - claimed_partial) > 0.15:
+            fails.append("局部差异 CAPABILITY %.1f%% vs 现场 %.1f%%" % (claimed_partial, pa_pct))
+    if claimed_missing is not None and int(claimed_missing) != n_mi:
+        fails.append("缺段 CAPABILITY %d vs 现场 %d" % (int(claimed_missing), n_mi))
+    if fails:
+        print("× 三命通会 diff「声明↔数据」对账失败：" + "；".join(fails))
+        return 1
+    print("√ 三命通会 diff 声明↔数据一致：%d 章／逐字一致 %.1f%%（%d）／局部差异 %.1f%%（%d）／缺段 %d"
+          % (count, n_id / count * 100 if count else 0, n_id,
+             n_pa / count * 100 if count else 0, n_pa, n_mi))
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="《三命通会》两转录渠道内容级对拍")
     ap.add_argument("--dry-run", action="store_true", help="只打印汇总，不写文件")
+    ap.add_argument("--reconcile", action="store_true",
+                    help="只读对账：CAPABILITY③ diff 结论 ↔ 现场复算（闭环 G13）")
     args = ap.parse_args()
+
+    if args.reconcile:
+        return reconcile()
 
     tbl = json.loads(T2S.read_text(encoding="utf-8"))
     siku_raw = SIKU.read_text(encoding="utf-8")

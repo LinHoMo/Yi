@@ -31,6 +31,10 @@ jobs:
           python liuyao/dev_tools/governance_map.py --selftest
           # 525 批：简报同源复验此前从未挂线（tier=nightly、check.py/CI 都没有），补在根级门侧
           python liuyao/dev_tools/adjudication_brief.py --selftest
+          # 533 批：G12/G13「声明↔数据」只读对账，闭环曾漂移缺口（守 528 约定，不新增 check.py 门号）
+          python liuyao/dev_tools/adjudication_brief.py --reconcile
+          python bazi/dev_tools/cross_version_collate.py --reconcile
+          python bazi/dev_tools/diff_siku_sanming.py --reconcile
   # 对外声明 Python 3.10+：本 job 在最低版跑两科冒烟、两科古籍回归与单测。
   # 六爻回归实跑 19/19、思维链 12/12，旧的「17/19 待裁」排除理由已失效。
   min-python-smoke:
