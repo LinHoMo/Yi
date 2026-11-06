@@ -20,6 +20,7 @@ if _ed not in _sys.path:
     _sys.path.insert(0, _ed)
 
 import argparse
+import re
 import sys
 from pathlib import Path
 
@@ -77,11 +78,59 @@ def measure(split: str):
     return disc
 
 
+def reconcile() -> int:
+    """只读对账（534 批，C1）：CAPABILITY「主应期 top-1 / top-3 窗」bold 当前值，须与
+    `window_report` 实跑的 wikisource_holdout 覆盖率一致。闭环「声明↔数据」漂移——415 批多支
+    基准修正曾把 top-1 抬到 41.4%，后回退至 308 口径 31.8%，但 CAPABILITY 文本未回流、仍把 415
+    峰值当进展终点。本对账专守 bold 当前值（与 G12/G13 同形态，守 528 约定不新增 check.py 门号，
+    挂 CI root-gates）。不写任何文件。"""
+    cap = (DISC.parent / "CAPABILITY.md").read_text(encoding="utf-8")
+
+    def bold_in(row_keyword):
+        for line in cap.splitlines():
+            if row_keyword in line and line.strip().startswith("|"):
+                m = re.search(r"\*\*([\d.]+)%\*\*", line)
+                if m:
+                    return float(m.group(1))
+        return None
+
+    claimed_top1 = bold_in("主应期 top-1")
+    claimed_top3 = bold_in("top-3 窗")
+    if claimed_top1 is None or claimed_top3 is None:
+        print("× 主应期行解析失败：CAPABILITY 未找到 bold 当前值")
+        return 1
+    disc = measure("wikisource_holdout")
+    if not disc:
+        print("× window_report 实跑失败，无法对账")
+        return 1
+    cov = disc.get("coverage_by_k") or {}
+    if not cov.get("top1") or not cov.get("top3"):
+        print("× wikisource_holdout 缺 top1/top3 覆盖率")
+        return 1
+    meas_top1 = round(cov["top1"]["rate"], 1)
+    meas_top3 = round(cov["top3"]["rate"], 1)
+    fails = []
+    if abs(claimed_top1 - meas_top1) > 0.15:
+        fails.append("CAPABILITY 主应期 top-1 bold=%s vs 实跑 %s" % (claimed_top1, meas_top1))
+    if abs(claimed_top3 - meas_top3) > 0.15:
+        fails.append("CAPABILITY 主应期 top-3 bold=%s vs 实跑 %s" % (claimed_top3, meas_top3))
+    if fails:
+        print("× 主应期「声明↔数据」对账失败：" + "；".join(fails))
+        return 1
+    print("√ 主应期声明↔数据一致：top-1 %s%%／top-3 %s%%（wikisource_holdout 实跑）"
+          % (meas_top1, meas_top3))
+    return 0
+
+
 def main() -> int:
     force_utf8_stdio()
     ap = argparse.ArgumentParser(description="主应期窗化读数（top-k 覆盖 vs k/12 随机）")
     ap.add_argument("--splits", nargs="*", default=list(DEFAULT_SPLITS))
+    ap.add_argument("--reconcile", action="store_true",
+                    help="只读对账：CAPABILITY 主应期 bold 值 ↔ window_report 实跑（闭环 C1）")
     args = ap.parse_args()
+    if args.reconcile:
+        return reconcile()
     got = 0
     for s in args.splits:
         if measure(s) is not None:

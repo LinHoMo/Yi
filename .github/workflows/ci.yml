@@ -35,6 +35,8 @@ jobs:
           python liuyao/dev_tools/adjudication_brief.py --reconcile
           python bazi/dev_tools/cross_version_collate.py --reconcile
           python bazi/dev_tools/diff_siku_sanming.py --reconcile
+          # 534 批：C1 轻门——主应期 top-k 声明↔数据对账（闭环主应期文本漂移缺口，守 528 约定）
+          python liuyao/dev_tools/window_report.py --reconcile
   # 对外声明 Python 3.10+：本 job 在最低版跑两科冒烟、两科古籍回归与单测。
   # 六爻回归实跑 19/19、思维链 12/12，旧的「17/19 待裁」排除理由已失效。
   min-python-smoke:
