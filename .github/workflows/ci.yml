@@ -26,6 +26,8 @@ jobs:
           python devkit/root/check_docs_index.py
           python devkit/root/check_docs_index.py --selftest
           python devkit/root/check_batch_num.py --selftest
+          python devkit/root/check_pytest_bridge.py
+          python devkit/root/check_pytest_bridge.py --selftest
           python liuyao/dev_tools/governance_map.py --selftest
   # 对外声明 Python 3.10+：本 job 在最低版跑两科冒烟、两科古籍回归与单测。
   # 六爻回归实跑 19/19、思维链 12/12，旧的「17/19 待裁」排除理由已失效。
@@ -57,7 +59,8 @@ jobs:
         run: python bazi/dev_tools/check.py
       - name: liuyao quality gate (fresh tree)
         run: python liuyao/dev_tools/check.py
-  # 第五百一十九批续：pytest 运行器（conftest 桥接 main() 式测试 + 原生 six_god）
+  # 第五百二十批建、第五百二十二批收敛清单真源：pytest 运行器
+  # （根 conftest 的 collect_ignore + 根 bridge_test.py 子进程桥接 + 原生 six_god 直接收集）
   pytest:
     runs-on: windows-latest
     timeout-minutes: 15

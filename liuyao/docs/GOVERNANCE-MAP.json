@@ -13,8 +13,14 @@
   "blocking_not_referenced": [],
   "referenced_not_blocking": [
    "build_adjudications.py",
+   "build_bushi_zhengzong_cases.py",
+   "build_extra_dimensions.py",
    "build_question_use_gods.py",
-   "build_use_god_rules.py"
+   "build_use_god_rules.py",
+   "build_usegod_position.py",
+   "build_yiin_cases.py",
+   "build_yingqi_set.py",
+   "build_zengshan_dz_cases.py"
   ]
  },
  "rows": [
@@ -71,14 +77,14 @@
    "script": "build_bushi_zhengzong_cases.py",
    "tier": "build",
    "guards": "《卜筮正宗》dz 表格式案例构建（408 批；八道门＋同案去重）",
-   "run_by_check_py": false,
+   "run_by_check_py": true,
    "doc": "从《卜筮正宗》殆知阁转录本（data/sources/bushi_zhengzong_dz.dz.txt）抽取带"
   },
   {
    "script": "build_extra_dimensions.py",
    "tier": "build",
    "guards": "额外评分维构建",
-   "run_by_check_py": false,
+   "run_by_check_py": true,
    "doc": "附加评测维度基准补全器（一次性数据构建，产物入库、脚本留档可复跑）。"
   },
   {
@@ -99,28 +105,28 @@
    "script": "build_usegod_position.py",
    "tier": "build",
    "guards": "用神位置表构建",
-   "run_by_check_py": false,
+   "run_by_check_py": true,
    "doc": "use_god_position 基准例补全器（一次性数据构建，产物入库、脚本留档可复跑）。"
   },
   {
    "script": "build_yiin_cases.py",
    "tier": "build",
    "guards": "《易隐》dz 底本案例构建（337 批 A5-1 按实登记）",
-   "run_by_check_py": false,
+   "run_by_check_py": true,
    "doc": "从《易隐》殆知阁转录本（data/sources/yiin_dz.dz.txt）抽取完整占例，"
   },
   {
    "script": "build_yingqi_set.py",
    "tier": "build",
    "guards": "应期基准集构建",
-   "run_by_check_py": false,
+   "run_by_check_py": true,
    "doc": "从 references/case_library.md 抽取**带明确应期**的古籍案例，建成永不参与调参的外部集。"
   },
   {
    "script": "build_zengshan_dz_cases.py",
    "tier": "build",
    "guards": "dz 底本案例构建（八道门）",
-   "run_by_check_py": false,
+   "run_by_check_py": true,
    "doc": "从《增删卜易》殆知阁转录本（data/sources/zengshan_buyi_dz.dz.txt）抽取带明确应期的占验案例，"
   },
   {

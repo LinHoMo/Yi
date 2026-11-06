@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-"""main() 式测试桥接（第五百一十九批续·引入 pytest 测试框架）。
+"""main() 式测试桥接（第五百二十批建，第五百二十二批收敛清单真源）。
 
 两科测试混用两种风格（见 pyproject.toml 注释）：six_god_wang_shuai_test.py 是原生
 pytest（由 pytest 直接收集）；其余是沿用 `python xxx_test.py` 习惯的 main() 式
 （errs 累积 + return 1）。本文件把每个 main() 式测试作为独立子进程 `python <file>`
 跑一遍（与 CI 既有调用完全一致、且进程间零 import 污染），以 pytest 用例形式报告其
-退出码。被桥接文件见下 _MAIN_STYLE；这些文件已由根 conftest 的 collect_ignore 排除出
-自动收集，避免两科 tests/ 同名包 `tests.*` 冲突。six_god 不在列、由 pytest 直接收集。
+退出码。被桥接文件不再在本文件另抄一份，统一取自 `pytest_manifest.py` 单一真源；
+这些文件已由根 conftest 的 collect_ignore 排除出自动收集，避免两科 tests/ 同名包
+`tests.*` 冲突。six_god 不在列、由 pytest 直接收集。
 """
 from __future__ import annotations
 
@@ -16,18 +17,12 @@ from pathlib import Path
 
 import pytest
 
+from pytest_manifest import MAIN_STYLE_TESTS
+
 _ROOT = Path(__file__).resolve().parent
 
-_MAIN_STYLE = [
-    "liuyao/tests/smoke_test.py",
-    "liuyao/tests/regression_test.py",
-    "liuyao/tests/thinking_chain_tests.py",
-    "bazi/tests/smoke_test.py",
-    "bazi/tests/regression_test.py",
-]
 
-
-@pytest.mark.parametrize("rel", _MAIN_STYLE)
+@pytest.mark.parametrize("rel", MAIN_STYLE_TESTS)
 def test_main_style_module(rel: str) -> None:
     path = _ROOT / rel
     proc = subprocess.run(

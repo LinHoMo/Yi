@@ -520,8 +520,8 @@ def checks():
         sv = [len(ml["tier_link_violations"]["referenced_not_blocking"]),
               len(mb["tier_link_violations"]["referenced_not_blocking"])]
         return tuple(map(str, hv + sv))
-    add("tier一致性(硬0/0软3/4)", "207批（软 bazi=diff_tiaohou_vs_head 的 required 存在性引用，合法在账；冒出未见条目即红）；439 批 build_siku_dz 由 [43] 以 --check 消费，软引用 1→2；463 批 build_tiaohou 由 [9] 以 --check 消费，软引用 2→3；464 批 build_dts_corpus 由八字 [9]、build_question_use_gods／build_use_god_rules 由六爻 [12] 消费（bazi 3→4、liuyao 0→2，同属合法存在性引用）；472 批 build_adjudications 由六爻 [12] 以 --verify 消费（liuyao 2→3）",
-        c_tier_consistency, ("0", "0", "3", "4"))
+    add("tier一致性(硬0/0软9/4)", "207批（软 bazi=diff_tiaohou_vs_head 的 required 存在性引用，合法在账；冒出未见条目即红）；439 批 build_siku_dz 由 [43] 以 --check 消费，软引用 1→2；463 批 build_tiaohou 由 [9] 以 --check 消费，软引用 2→3；464 批 build_dts_corpus 由八字 [9]、build_question_use_gods／build_use_god_rules 由六爻 [12] 消费（bazi 3→4、liuyao 0→2，同属合法存在性引用）；472 批 build_adjudications 由六爻 [12] 以 --verify 消费（liuyao 2→3）；**519 批 [46] 构建器同步门接入，六爻新增 6 条 --check 存在性引用**：build_zengshan_dz_cases／build_bushi_zhengzong_cases／build_yiin_cases／build_yingqi_set／build_usegod_position／build_extra_dimensions（liuyao 3→9，逐条见 519 批 check.py 的 build_sync 表；**519 批接线后 `GOVERNANCE-MAP.json` 产物未同步，6 个脚本的 run_by_check_py 仍为 false，522 批重生成产物使图与代码一致**，并同步回改本账期望、逐条归因）。硬引用两科仍 0／0、八字软引用仍 4，计数口径未变，纯属合法条目增加，非引擎回归",
+        c_tier_consistency, ("0", "0", "9", "4"))
 
     # --- 八字侧 ---
     def c_bazi_holdout(t):

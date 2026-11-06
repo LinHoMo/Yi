@@ -6,6 +6,8 @@
 > **497 批起只保留 DSH 一个宿主**：claude/codex/gemini/yan 四家适配器目录、
 > `publish.mjs`（git 发行树）及其在 build/selftest/ci/文档里的登记一并删除。
 
+## 2026-11-06 第五百二十二批（共享层·随包登记）：**pytest 桥接清单单一真源与覆盖门（522 全仓批）：本层无源码改动，仅随包登记；`node scripts/build.mjs` 已重跑、`scripts/selftest.mjs` RC=0**
+
 ## 2026-11-05 第五百二十一批（共享层·随包登记）：**消除 scripts/ 兼容 shim 反向 import eval/（521 全仓批）：本层无源码改动，仅随包登记；`node scripts/build.mjs` 已重跑、`scripts/selftest.mjs` RC=0**
 
 ## 2026-11-05 第五百二十批（共享层·随包登记）：**引入 pytest 测试框架（520 全仓批）：本层无改动，仅随包登记**

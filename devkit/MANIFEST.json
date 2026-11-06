@@ -21,7 +21,8 @@
     "root": [
       "check_root_docs.py",
       "check_docs_index.py",
-      "check_batch_num.py"
+      "check_batch_num.py",
+      "check_pytest_bridge.py"
     ]
   },
   "variants": {

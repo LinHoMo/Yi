@@ -11,6 +11,8 @@
 > 399/400/401 撞号，按提交顺序归位为 **408/409/410/411**；原提交 `46d8bc1` 的提交信息
 > 保留旧号作历史，不再改。跨文件引用一律按新号。
 
+## 2026-11-06 第五百二十二批（全仓·随包登记）：**pytest 桥接清单单一真源与覆盖门（522 全仓批）：本科 smoke/regression 两份 main() 式测试改由根 `pytest_manifest.py` 单一真源供 conftest／bridge 消费；新增根级 `devkit/root/check_pytest_bridge.py` 把清单、盘上两科 tests/ 与 CI 直跑命令逐格对拍（含 10 类负例与临时盘真探针），防「新增测试无人跑而全绿」；520 批四处批号／runpy 措辞错登记同批订正。本层无引擎改动、无读数变更；`python -m pytest` 仍 11 passed，本科 check EXIT=0**
+
 ## 2026-11-05 第五百二十一批（全仓·随包登记）：**消除 scripts/ 兼容 shim 反向 import eval/（521 全仓批）：本科删除 bazi/scripts/evaluate.py 纯 re-export shim，真调用方改挂 eval/ 到 sys.path；devkit 共享件 check_doc_refs/check_case_isolation 经 sync_devkit --write 分发到本科；文档「scripts/ 旧入口仍可用」表述改为「已于 521 批删除」。本科 check EXIT=0**
 
 ## 2026-11-05 第五百二十批（全仓·随包登记）：**引入 pytest 测试框架（520 全仓批）：八字侧 smoke/regression 由 bridge_test.py 子进程桥接，本层无源码改动，仅随包登记**

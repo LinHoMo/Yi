@@ -5,6 +5,57 @@
 > ARCHIVE／P0-INVENTORY，按索引读（不再保留全文）。
 > **第三百四十三批**：主文件只留 2026-10-29 的条目；10-27 及更早的 51 节标题已并入索引。
 
+## 2026-11-06 第五百二十二批（全仓·pytest 桥接清单单一真源与覆盖门）：**520 批留下的三份手工清单（`conftest.py:collect_ignore`、`bridge_test.py:_MAIN_STYLE`、CI `min-python-smoke` 的 6 条直跑命令）彼此独立、无任何门守护，新增测试文件会同时「不被收集、不被桥接、不被 CI 直跑」而全绿；`thinking_chain_tests.py` 不匹配 `python_files = *_test.py` 更让这条盲区隐形。本批把清单收进根 `pytest_manifest.py` 单一真源（两种消费方只 import），新增根级 `devkit/root/check_pytest_bridge.py` 对拍「清单 × 盘上文件 × CI 直跑」，并订正 520 批四处错登记；收口实跑另抓出并清掉 519 批两处存量分家（DOCS.md 漏登记一篇审计文档；[46] 接线后治理图产物与账台期望双双滞后）。不改判据、不改数据、不改评分读数，`python -m pytest` 仍 11 passed**
+
+1. **单一真源**：新建根 `pytest_manifest.py`，`MAIN_STYLE_TESTS` 5 条路径为唯一允许写清单处。
+   `conftest.py` 的 `collect_ignore` 与 `bridge_test.py` 的 parametrize 均从它派生（conftest 在
+   收集早期显式补一次 rootdir 到 `sys.path`，保证真源可导入；不 import pytest，根级门可在未装
+   dev deps 的 job 里跑）。`thinking_chain_tests.py` 不匹配 `*_test.py` 的现状保持不变——它
+   本来就只该由桥接覆盖，现由覆盖门的「命名盲区」断言守。
+2. **覆盖门**（`devkit/root/check_pytest_bridge.py`，登记进 `devkit/MANIFEST.json` 的 `root`
+   列表、挂进 CI `root-gates`）：AST 抽真源清单、按顶层 `def test_*` 现场分类盘上两科
+   `tests/*.py`，逐格对拍四类问题——漏登记／悬空路径／原生 pytest 误入清单／不匹配
+   `python_files` 又无人桥接；再加「两消费方不得复辟 `_MAIN_STYLE = [...]` 本地清单、
+   且必须 import 真源」「`testpaths` 必须含仓库根（否则根 bridge 不收集）」「CI 直跑集合
+   必须恰好等于盘上全部测试文件」「扫到 0 个测试文件即判红（§四.8）」。
+   首跑读数：测试文件 6 个（原生 1／main() 式 5）、CI 直跑 6 条、0 问题。
+   `--selftest` 做 10 类负例（含把负例改到真删一行、确保判红来自「漏登记」分支本身，
+   不被路径格式断言顺手挡下）＋临时盘同形副本判绿／真加一个未登记测试文件判红各 1 项；
+   自检只走内存注入与 `TemporaryDirectory`，不碰仓库文件。
+3. **登记订正（520 批遗留）**：`conftest.py`／`bridge_test.py`／`pyproject.toml`／`ci.yml`
+   四处写「第五百一十九批续」，实为 **520 批**（519 是六爻构建器同步门 [46]）；
+   `conftest.py` 与 `pyproject.toml` 注释写「各 `tests/` 目录下的 conftest 用 **runpy** 桥接」，
+   实为仓库根 `bridge_test.py` 用 **subprocess 独立子进程**——按 AGENTS.md §六.3
+   「文档说的和代码做的不一致等同代码缺陷」逐句改正。`pyproject.toml` 注释不再罗列
+   会过期的文件名，改指真源与覆盖门（§六.6 现在时不钉数）。
+4. **并批补一处存量漏登记**：收口实跑 `devkit/root/check_docs_index.py` 判红
+   「`liuyao/docs/CASE-LIBRARY-AUDIT-YINGQI.md` 未在 DOCS.md 登记」——该文档是 519 批
+   由 `dev_tools/build_yingqi_set.py` 生成的应期抽取审计，519 批未同步登记索引
+   （AGENTS.md §二「新增文档必须同批在 DOCS.md 登记一行」）。本批按文件头如实
+   补登记为**生成物**，不改文档内容、不改任何判据。
+5. **并批清第二处存量分家（519 批 [46] 的产物/账台双滞后）**：`readout_ledger.py`
+   full 报 `tier一致性` 实得 `(0,0,9,4)` ≠ 期望 `(0,0,3,4)`。逐条核对
+   `GOVERNANCE-MAP.json` 的 9 条 `referenced_not_blocking`：账台只具名解释了
+   472 批前的 3 条，其余 6 条正是 519 批 [46] 构建器同步门以 `--check` 消费的
+   build_zengshan_dz_cases／build_bushi_zhengzong_cases／build_yiin_cases／
+   build_yingqi_set／build_usegod_position／build_extra_dimensions（逐条对回 519 批
+   `check.py` 的 `build_sync` 表）。**根因是 519 批接线后治理图产物未同步**：
+   这 6 个脚本在 tracked 的 `liuyao/docs/GOVERNANCE-MAP.json` 里
+   `run_by_check_py` 仍为 `false`，图与代码分家；账台期望也停在接线前的 3。
+   本批按 511 批「治理地图产物同步」先例重生成产物（6 格 false→true、
+   软引用 3→9），再按 §六.2 逐条具名后把账台期望 3→9 重挂；硬引用 0／0、
+   八字软引用 4 与计数口径均未变。**定性：合法存在性引用增加 + 产物滞后，
+   不是引擎回归，也不是静默改期望值**。
+6. **边界（诚实结案）**：本批只收敛 pytest 桥接清单，与 517 批登记的「静态表外置」待办
+   不是同一对象，不认领、不销账；CI `min-python-smoke` 的 6 条命令仍是硬编码，但已由
+   新门逐条对拍，漏一条即判红，不再需要第三份真源。根级门在册数由
+   `python devkit/sync_devkit.py --check` 首行实报为准（本批 4 个）。
+
+**收口实跑（全部 rc=0）**：两科 `check.py` 全量、根级门全套（含 `--selftest`）、
+`python -m pytest`（11 passed）、`sync_kernel --check`／`sync_devkit --check`、
+`readout_ledger full`、`governance_map`、两科 `check_doc_refs --selftest`、
+`node plugins/scripts/build.mjs`＋两处 selftest／`npm --prefix dsh-plugin run check`。
+
 ## 2026-11-05 第五百二十一批（全仓·消除 scripts/ 兼容 shim 反向 import eval/）：**删 356/359 批遗留的 4 个纯 re-export 兼容入口——liuyao/scripts/{evaluate,case_runner,build_portal_assets}.py、bazi/scripts/evaluate.py（仅 `from eval.X import *` 反向导入，无自有逻辑）。35 处真调用方 + 3 处 devkit 变体源改为把对应科 `eval/` 直挂 sys.path，裸 `import evaluate`/`case_runner`/`build_portal_assets` 直接命中 eval/ 真模块（单一模块身份，消除双模块陷阱）；`core/yishu_core/gate_kit.py`（liuyao/bazi/kernel 三处）与 `dev_tools/readout_ledger.py` 的子进程调用由 `scripts/evaluate.py` 改写为 `eval/evaluate.py`。`devkit/shared` 的 check_doc_refs.py（运行时读 eval/evaluate.py --engine-file 注释）、check_case_isolation.py（隔离档口径去掉「scripts/ 同名只准 shim」旧规）经 `sync_devkit.py --write` 分发两科；CAPABILITY／bazi README／两科 eval 文档／CHANGELOG／YIIN-CASE-AUDIT 等处「scripts/ 旧入口仍可用」表述改「已于 521 批删除、请走 eval/」。数据文件内 baseline_note/_comment prose 不动（改之击穿 519 批数据同步门）。门禁与同步门全绿：liuyao/bazi check EXIT=0（[37] 同源、[46] 构建器同步均过）、sync_kernel/sync_devkit --check 通过、plugins/dsh-plugin selftest RC=0（先 `build.mjs` 重建引擎产物再验）**
 
 ## 2026-11-05 第五百二十批（引入 pytest 测试框架）：**两科 tests/ 既有单测接入 pytest 运行器。six_god_wang_shuai_test.py 本即原生 pytest（def test_* + assert），直接收集；其余 main() 式（liuyao smoke/regression/thinking_chain、bazi smoke/regression，沿用 `python xxx_test.py` 习惯、errs 累积 + return 1）由根 conftest 的 collect_ignore 排除出自动收集，改由 bridge_test.py 以独立子进程 `python <file>` 桥接成 pytest 用例（进程间零 import 污染、与 CI 既有调用一致）。新增 pyproject.toml（[tool.pytest.ini_options]：testpaths/python_files=`*_test.py`/pythonpath）、根 conftest.py（collect_ignore）、bridge_test.py（subprocess 桥接）、requirements-dev.txt（pytest>=7）；CI 新增 pytest job。旧 `python tests/xxx_test.py` 直接跑路径保持不变。实跑 `python -m pytest`：11 passed（6 原生 + 5 桥接）**
