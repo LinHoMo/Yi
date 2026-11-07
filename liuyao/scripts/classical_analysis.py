@@ -1,4 +1,5 @@
 # 本文件为聚合入口：子模块见 engine_*/chain_*/classical_*。
+import logging
 import os as _ks_os, sys as _ks_sys   # 内核定位规则只在 kernel_path.py 一份实现
 
 try:  # 实测本 CLI 的演示分支在 GBK 控制台输出 GBK 字节（首字节 `\xa1\xbe`＝「【」），UTF-8 消费方必乱码
@@ -105,11 +106,17 @@ def enhance_reading(result_dict):
     if not isinstance(result_dict, dict):
         raise TypeError("result_dict 应是由 build_hexagram_result() 返回的字典")
 
-    # 检查必要字段
-    if "original_hexagram" not in result_dict:
-        raise ValueError("输入缺少 'original_hexagram' 字段")
+    # 必要字段缺失：部分案例的 hex_result 本就无完整本卦/占时（如仅存卦名字符串的
+    # 增删卜易类案例），经典增强段（伏藏/暗动/月破/三合等）无数据可算——显式告警后
+    # 原样返回，**不抛异常**交由上层静默吞（缺陷 F 同类反模式：曾让整段增强被静默跳过）。
+    if "original_hexagram" not in result_dict or not isinstance(result_dict.get("original_hexagram"), dict):
+        logging.getLogger(__name__).warning(
+            "enhance_reading 跳过：输入缺有效 'original_hexagram'，经典增强段不计算")
+        return result_dict
     if "divination_time" not in result_dict:
-        raise ValueError("输入缺少 'divination_time' 字段")
+        logging.getLogger(__name__).warning(
+            "enhance_reading 跳过：输入缺 'divination_time'，经典增强段不计算")
+        return result_dict
 
     # 执行各段分析
     result_dict["advanced_analysis"] = {

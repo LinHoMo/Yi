@@ -879,9 +879,17 @@ def analyze_clash_harmony(result):
 
 def analyze_repetition(result):
     """反吟伏吟：本卦逐位比对变卦地支。反吟=六冲；伏吟=不变。"""
-    hex_info = result.get("original_hexagram", {})
+    # 防御：部分案例的 hex_result 里 original_hexagram 缺失/为 None、changed_hexagram
+    # 为非 dict（如仅存卦名字符串）——这些案例本就无本卦/无变卦，按「无」处理而非崩。
+    # 旧写法直接用 .get 会触发 'NoneType'/'str' object has no attribute 'get'，被上层
+    # thinking_chain 静默吞掉并跳过经典增强段（缺陷 F 同类静默降级反模式）。
+    hex_info = result.get("original_hexagram") or {}
+    if not isinstance(hex_info, dict):
+        hex_info = {}
     yao_lines = hex_info.get("yao_lines", [])
-    changed = result.get("changed_hexagram") or {}
+    changed = result.get("changed_hexagram")
+    if not isinstance(changed, dict):
+        changed = {}
     changed_name = changed.get("name")
     changed_lines = changed.get("changed_lines", [])
 
@@ -1009,6 +1017,11 @@ def analyze_repetition_deep(result):
     """反吟伏吟深层析义（《卜筮正宗》）：五行旺衰综合的精细化评分，非统一扣减。"""
     # 先调用基础分析获取类型信息
     basic = analyze_repetition(result)
+    if basic is None:
+        # 防御：基础分析异常时不应让深层析义崩在 .get 上（上层 thinking_chain 会静默吞掉，
+        # 导致经典增强段整体跳过）——降级为「无」与基础分析的缺数据分支保持一致。
+        basic = {"repetition_type": "无", "chong_pairs": [], "fuyin_trigram": None,
+                 "hexagram_level": None}
     rep_type = basic.get("repetition_type", "无")
 
     if rep_type == "无":
