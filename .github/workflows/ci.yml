@@ -37,6 +37,9 @@ jobs:
           python bazi/dev_tools/diff_siku_sanming.py --reconcile
           # 534 批：C1 轻门——主应期 top-k 声明↔数据对账（闭环主应期文本漂移缺口，守 528 约定）
           python liuyao/dev_tools/window_report.py --reconcile
+          # 535 批：B 轻门——两份学科 README 关键数字（对齐分/top-1/n/维度）↔ readout_ledger 真值对账
+          # （闭环 README 漏回流缺口，守 528 约定不新增 check.py 门号，仿 C1/G12/G13 挂 CI root-gates）
+          python liuyao/dev_tools/readme_reconcile.py
   # 对外声明 Python 3.10+：本 job 在最低版跑两科冒烟、两科古籍回归与单测。
   # 六爻回归实跑 19/19、思维链 12/12，旧的「17/19 待裁」排除理由已失效。
   min-python-smoke:

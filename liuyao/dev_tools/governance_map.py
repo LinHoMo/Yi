@@ -160,6 +160,9 @@ CURATED = {
         "draft_candidates": ("nightly", "共识→入册候选草稿器（204 批：10 候选含 dup 点名/question 开口，不进册不评分）"),
         "version_collate": ("ondemand", "两抄本源级对拍（185 批冲突率）"),
         "window_report": ("ondemand", "top-k 覆盖曲线读数器"),
+        # 535 批：B 轻门 reconcile 器——README 关键数字↔readout_ledger 真值对账（21 项），挂 CI root-gates；
+        # 与 window_report 同属「声明↔数据」对账家族，故 tier 同为 ondemand（非 check.py blocking、非 nightly）。
+        "readme_reconcile": ("ondemand", "README 关键数字↔readout_ledger 真值对账（535 批 B 轻门，挂 CI root-gates；21 项）"),
         "governance_map": ("tool", "本器：治理地图生成"),
         "stable_write": ("tool", "观察册幂等写共享模块（203 批：时间戳=内容最后变化，杜绝空转脏文件）"),
         "sweep_selftests": ("nightly", "器具全体检扫描器（213 批：声明面 53 器具逐真跑，注入损坏负例即体检；自身与编排器豁免；242 批增 rc×输出互验与 classify 五态）"),

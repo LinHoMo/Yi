@@ -25,8 +25,8 @@
 ## 评测
 
 ```bash
-python eval/evaluate.py --split tune      # 参与过调参的 60 例
-python eval/evaluate.py --split holdout   # 未参与调参的 278 例
+python eval/evaluate.py --split tune      # 参与过调参的 61 例
+python eval/evaluate.py --split holdout   # 未参与调参的 279 例
 ```
 
 （359 批起评测实现位于 `eval/`；`scripts/` 下的兼容 shim 已于 521 批删除，请改用 `python bazi/eval/evaluate.py ...`。）

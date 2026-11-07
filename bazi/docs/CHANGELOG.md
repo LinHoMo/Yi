@@ -14,6 +14,7 @@
 > 一行自足的结论摘要；退出窗口的批号＋日期补进历史索引，过程叙述交 git 历史。
 > 窗口与单批长度由 `devkit/root/check_docs_index.py` 现场判，不在本文钉数。
 
+## 2026-11-07 第五百三十五批（全仓·随包登记·README 声明↔数据漂移缺口闭环）：**六爻 `readme_reconcile.py` 新增只读对账门（535 全仓批，详见 liuyao 同批）：本科 README 命令注释 tune/holdout 60/278→61/279 已按 ledger 真值更正；本科 check EXIT=0**
 ## 2026-11-06 第五百三十四批（全仓·随包登记·C1 轻门落地）：**六爻 `window_report.py` 新增 `--reconcile` 主应期声明↔数据对账门（534 全仓批，详见 liuyao 同批）：本科无主应期读数，随包登记，无引擎改动、无读数变更；本科 check EXIT=0**
 ## 2026-11-06 第五百三十三批（实证巡检·G13 轻门克隆·八字版本识别声明↔数据对账）：**把 532 批 G14 的只读 `--reconcile` 轻门样板克隆到 G13（八字版本识别观测）：`bazi/dev_tools/cross_version_collate.py` 与 `diff_siku_sanming.py` 各加 `--reconcile`——CAPABILITY ③ 声称（滴天髓阐微54.0%/穷通宝鉴21.6%/渊海子平83.6%/神峰通考100%；三命通会765章42.9%逐字一致/57%局部差异/缺段0）现场从入库底本复算对拍（两 summary JSON 被 gitignore 不入库，故不读 JSON、改现场重算，保证 fresh-tree CI 可重现）；两处接进 CI root-gates（守 528 批「不新增 check.py 门号」约定）。变异探针实证有牙（改 CAPABILITY 54.0%→55.0%、42.9%→43.9% 各判红 rc=1，还原转绿）。G12（六爻 restorable）同款轻门见 liuyao 同批；本科 check EXIT=0**
 ## 2026-11-06 第五百三十二批（全仓·随包登记·G12 轻门落地）：**六爻 `build_adjudications.py` 的 `--selftest` 接进主门 `check.py[12]` 并钉死分解 27/6/1/20、新增只读 `--reconcile`（CAPABILITY↔adjudications.json 对账），闭环 G12「声明↔数据」缺口（531 批登记）；本科无同名裁决表，随包登记，无引擎改动、无读数变更，本科 check EXIT=0**
@@ -38,7 +39,6 @@
 
 ## 2026-11-05 第五百二十一批（全仓·随包登记）：**消除 scripts/ 兼容 shim 反向 import eval/（521 全仓批）：本科删除 bazi/scripts/evaluate.py 纯 re-export shim，真调用方改挂 eval/ 到 sys.path；devkit 共享件 check_doc_refs/check_case_isolation 经 sync_devkit --write 分发到本科；文档「scripts/ 旧入口仍可用」表述改为「已于 521 批删除」。本科 check EXIT=0**
 
-## 2026-11-05 第五百二十批（全仓·随包登记）：**引入 pytest 测试框架（520 全仓批）：八字侧 smoke/regression 由 bridge_test.py 子进程桥接，本层无源码改动，仅随包登记**
 
 
 
