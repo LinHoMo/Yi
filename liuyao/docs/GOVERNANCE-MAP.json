@@ -1,8 +1,8 @@
 {
- "count": 75,
+ "count": 76,
  "by_tier": {
   "tool": 4,
-  "ondemand": 13,
+  "ondemand": 14,
   "nightly": 12,
   "build": 12,
   "blocking": 34
@@ -492,6 +492,13 @@
    "guards": "观察册幂等写共享模块（203 批：时间戳=内容最后变化，杜绝空转脏文件）",
    "run_by_check_py": false,
    "doc": "观察册幂等写（第两百零三批）——内容不变则文件一字不动，时间戳＝内容最后变化时刻。"
+  },
+  {
+   "script": "static_enhancement_guard.py",
+   "tier": "ondemand",
+   "guards": "静卦增强回归守卫（537 批：逐静卦 advanced_analysis 经典增强签名键在场，536 缺陷态即缺失；--selftest 注入空增强判红有齿）",
+   "run_by_check_py": false,
+   "doc": "537 回归守卫（六爻）：536 根治的「静卦（无动爻）advanced_analysis 被 except 静默吞成 {}」"
   },
   {
    "script": "style_check.py",

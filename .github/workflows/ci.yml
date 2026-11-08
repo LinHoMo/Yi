@@ -40,6 +40,9 @@ jobs:
           # 535 批：B 轻门——两份学科 README 关键数字（对齐分/top-1/n/维度）↔ readout_ledger 真值对账
           # （闭环 README 漏回流缺口，守 528 约定不新增 check.py 门号，仿 C1/G12/G13 挂 CI root-gates）
           python liuyao/dev_tools/readme_reconcile.py
+          # 537 批：静卦增强回归守卫（536 缺陷态＝enhance_reading 静默缺失致增强段全空）挂 CI root-gates，守 528 约定
+          python liuyao/dev_tools/static_enhancement_guard.py --selftest
+          python liuyao/dev_tools/static_enhancement_guard.py
   # 对外声明 Python 3.10+：本 job 在最低版跑两科冒烟、两科古籍回归与单测。
   # 六爻回归实跑 19/19、思维链 12/12，旧的「17/19 待裁」排除理由已失效。
   min-python-smoke:

@@ -19,6 +19,7 @@
 > 超出纯文档范围（514 批原文明载此理由），且不得拿提交标题当正文铸死；立案原文随 514 批
 > 正文移入 git 历史。逐条依据见 `GOVERNANCE.md`「当前真缺口」G3。
 
+## 2026-11-06 第五百二十二批（全仓·pytest 桥接清单单一真源与覆盖门）：520 批三份手工清单（conftest collect_ignore／bridge_test._MAIN_STYLE／CI 6 条直跑）彼此独立无门守护，新增 devkit/root/check_pytest_bridge.py 对拍「清单×盘上文件×CI 直跑」、收进根 pytest_manifest.py 单一真源；订正 520 四处错登记并清 519 两处存量分家；不改判据/数据/评分读数，python -m pytest 仍 11 passed
 ## 2026-11-05 第五百二十一批（全仓·消除 scripts/ 兼容 shim 反向 import eval/）：删 356/359 批遗留 4 个纯 re-export 兼容入口，35 处调用方改走 eval/ 真模块消除双模块陷阱；数据文件 prose 不动；门禁与同步门全绿
 ## 2026-11-02 第四百九十六批（六爻·裸文件名死引用）：`rule_registry.json` 的「见 HANDOFF」是活引用而该件已删；共享门补裸文件名判据
 ## 2026-11-02 第四百九十五批（八字·代码书证扩面）：代码书证门扩到 `dev_tools`／`eval`；六爻零改动
