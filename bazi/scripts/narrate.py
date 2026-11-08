@@ -16,6 +16,12 @@ from yishu_core.runtime import force_utf8_stdio  # noqa: E402
 from yishu_core.symbols import EARTHLY_BRANCHES  # noqa: E402
 
 _DATA = Path(__file__).resolve().parent.parent / "data"
+# 第五百三十九批：交付边界声明外置到 data/*.json（AGENTS.md §一.1 / §三），
+# 与六爻 narrative_templates.json#narrate_shell 同一形状。**逐字照搬，不改措辞**——
+# 本批是「字面量归位」不是「文案改写」，故 narrate 输出与 golden 措辞指纹不变。
+_NARRATIVE_TEMPLATES = json.loads(
+    (_DATA / "narrative_templates.json").read_text(encoding="utf-8"))
+_BOUNDARY_LINES = _NARRATIVE_TEMPLATES["narrate_shell"]["boundary_lines"]
 _VERDICTS = json.loads((_DATA / "verdicts.json").read_text(encoding="utf-8"))
 _TIAO_HOU_QUOTES = json.loads((_DATA / "tiaohou_quotes.json").read_text(encoding="utf-8"))
 _DTS = json.loads((_DATA / "ditian_sui.json").read_text(encoding="utf-8"))
@@ -511,13 +517,7 @@ def narrate(a: dict) -> str:
         head = "、".join(f"{x.get('age')}岁{x.get('ganzhi')}" for x in xy[:6])
         lines.append(f"**小运**（自生时起，机械对照；通行起法，流派有别）：{head}…")
         lines.append("")
-    lines += [
-        "以上为机械排盘与扶抑口径推演，**不是命运断言**。",
-        "格局取月令本气十神定正格名；从格按《滴天髓·从化论/从象/假从》分级"
-        "（真从/假从/从旺/从强/从气/从势），灰区例另以 tentative 标注保留复核位——"
-        "都是机械结构结论，不是命运断言。重大决策以专业意见为准。",
-        "本模块不宣称现实预测命中率（`SKILL.md` 铁律三）。",
-    ]
+    lines += list(_BOUNDARY_LINES)  # data/narrative_templates.json#narrate_shell（539 批外置）
     return "\n".join(lines) + "\n"
 
 

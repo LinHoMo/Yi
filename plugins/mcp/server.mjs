@@ -1,17 +1,23 @@
 /**
- * Yan 插件侧的 MCP 服务（stdio，换行分隔 JSON-RPC，协议 2025-03-26）。
+ * 1.0 契约的 stdio 自检夹具（headless MCP harness；539 批重新定性）。
  *
- * 为什么自己写而不是引 `@modelcontextprotocol/sdk`：Yan 的插件包在 `inventory()`
- * 里**跳过 `node_modules`**（`lib/plugins/manifest.js`），随包能力必须是零依赖的。
- * 本服务只用到 Node 内建模块，因此打包后可直接被 Yan 以 `$node` 拉起。
+ * 出身：本文件原是 Yan 插件侧的 MCP 服务（stdio，换行分隔 JSON-RPC，协议 2025-03-26），
+ * 靠零依赖（只用 Node 内建模块）被 Yan 以 `$node` 拉起。497 批删除 Yan 等四家宿主后，
+ * 唯一宿主只剩 DSH（`dsh-plugin/src/index.mjs` 用 `ctx.tools.register`），
+ * **本文件不再服务任何宿主**。
  *
- * 三条与仓库铁律对齐的硬约定（插件不得放宽）：
+ * 为什么保留而不删：`plugins/scripts/selftest.mjs` 的 [4] 段直跑本文件真源，实测
+ * `initialize`／`tools/list`／`yi_kb` 检索／`yi_liuyao` 引擎冒烟；[5] 段又吃 [4] 的
+ * `tools/list` 结果逐项断言 1.0 冻结契约。删掉本文件＝砍掉两道有牙的门，把冻结面
+ * 降级成纯静态文本比对。故现定位为**契约自检夹具**：随包分发、不由宿主加载。
+ *
+ * 三条与仓库铁律对齐的硬约定（夹具不得放宽）：
  *  1. **机械运算归代码**：这里没有任何象数算法，全部委托 `engine.mjs` → Python 引擎。
  *  2. **不降级**：引擎失败即如实报错（`isError` + stderr 摘要），绝不返回半成品。
  *  3. **案例库隔离**：`yi_kb` 的扫描层硬排除 `case_library.md`（铁律二），包里也没有它。
  *
  * stdout 只允许出现 JSON-RPC 报文——任何诊断信息一律走 stderr，
- * 否则会污染 Yan 的 MCP 客户端解析（它会按行 JSON.parse，脏行直接被丢弃/关闭连接）。
+ * 否则会污染按行 JSON.parse 的 MCP 客户端解析（脏行直接被丢弃/关闭连接）。
  */
 import { selftest } from './engine.mjs'
 import { runKb } from './kb.mjs'
@@ -27,11 +33,11 @@ import {
 } from './tools.mjs'
 
 const PROTOCOL = '2025-03-26'
-const SERVER_INFO = { name: 'yan-yi-divination', version: '1.0.0' }
+const SERVER_INFO = { name: 'yi-contract-harness', version: '1.0.0' }
 
 /**
  * 工具表。**与 dsh-plugin 1.0 冻结契约逐字同源**：工具名、参数集、输出 value 结构
- * 都取自 `tools.mjs` 的同一份定义，本文件只做宿主适配（schema 方言 + 调用协议）。
+ * 都取自 `tools.mjs` 的同一份定义，本文件只做夹具适配（JSON Schema 方言 + stdio 协议）。
  */
 const TOOLS = [
   { spec: createLiuyaoTool(null), run: runLiuyao },

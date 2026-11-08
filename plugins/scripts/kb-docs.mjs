@@ -6,11 +6,17 @@
  *
  * 每一篇必须登记「什么时候读」：构建时生成 `references/INDEX.md`，
  * 自检时双向对账（漏登记 / 登记了不存在的文件 → 判红）。
+ *
+ * 539 批两条口径：① 描述里的**篇目规模/格局数等会变的数字不得手钉**
+ * （`najia_rules.md` 的 KB 数、`pattern_reference.md` 的格局数都曾与正文分家；
+ * INDEX.md 的文件大小由 `build.mjs` 现场算，是真值源）；本表原写「十二大」
+ * 而正文标题是「六爻十五大经典格局参考」、DOCS.md 也写十五大，本批按正文更正。
+ * ② 改描述＝改随包知识库的导览口径，同批跑 build + selftest 并登记 CHANGELOG。
  */
 export const KB_DOC = new Map([
   ['liuyao/najia_rules.md', '需要核对纳甲装卦规则：八宫次序、纳支口诀、世应定位、六亲六神推演、旬空'],
   ['liuyao/interpretation_guide.md', '需要查用神取法、旺衰体系、动变规则、应期推断'],
-  ['liuyao/pattern_reference.md', '判断十二大经典格局（先查这篇，短且直接可用）'],
+  ['liuyao/pattern_reference.md', '判断十五大经典格局（先查这篇，短且直接可用）'],
   ['liuyao/classical_synthesis.md', '需要理论深度：四经典综合、虚空月破墓绝刑冲'],
   ['liuyao/source_ledger.md', '需要确认某条判据的书源出处'],
   ['liuyao/odd_questions.md', '奇问杂占（失联寻宠、怪梦、异象"有没有东西"、越界提问）：取到用神之后怎么读、什么不该答'],

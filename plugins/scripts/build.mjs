@@ -22,6 +22,7 @@ import { existsSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { KB_DOC } from './kb-docs.mjs'
+import { DEV_ONLY } from './dev-only.mjs'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 const PLUGINS_ROOT = resolve(HERE, '..')
@@ -42,12 +43,9 @@ const RUNTIME_INCLUDE = {
 /** ⛔ 铁律二：案例库永不随包（按文件名排除，三层闸之一）。 */
 const NEVER_SHIP = new Set(['case_library.md'])
 
-/** 交付包不收开发/评测入口：356/359 批两科评测实现迁 `eval/`，
- *  `scripts/` 下的同名文件只是开发期兼容 shim，随包会 import 不到 `eval`。 */
-const DEV_ONLY = {
-  liuyao: new Set(['evaluate.py', 'case_runner.py', 'build_portal_assets.py']),
-  bazi: new Set(['evaluate.py']),
-}
+/** 交付包不收开发/评测入口。单一真源见 `./dev-only.mjs`（539 批起）。
+ *  521 批已删光 `scripts/` 下的兼容 shim，这份名单现在是**防复活哨兵**，
+ *  不是「排除现存文件」；语义与 356/359 批的旧注释不同，勿回改。 */
 
 /** 语言运行时不需要、且会让包变大的东西。 */
 const JUNK = /(__pycache__|\.pyc$|\.pyo$|\.pytest_cache|\.mypy_cache)/
@@ -104,7 +102,7 @@ async function buildEngine() {
       await copyTree(join(srcRoot, rel), join(destRoot, rel), {
         excludeNames: rel === 'references'
           ? NEVER_SHIP
-          : (rel === 'scripts' ? DEV_ONLY[discipline] : null),
+          : (rel === 'scripts' ? new Set(DEV_ONLY[discipline] ?? []) : null),
       })
     }
 

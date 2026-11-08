@@ -2,7 +2,7 @@
   "schema": "yi-devkit-manifest/1",
   "batch": 331,
   "source": "devkit",
-  "_comment": "门禁内核的单一真源。shared/ 下的文件由 sync_devkit.py 分发到两科 dev_tools/（产物，手改即被 [37] 判红）；root/ 下的根级门只在本目录运行，不分发。gate_ids 记录共享门在各科 check.py 里的现行编号（同一文件两科编号可以不同；共享件在 check.py 里不另设统一编号，[37] 只守字节同源）。墓碑：六爻 [8][9][10][21]–[25] 是已下线门的编号，**不回填**；新门从 [37] 续。",
+  "_comment": "门禁内核的单一真源。shared/ 下的文件由 sync_devkit.py 分发到两科 dev_tools/（产物，手改即被 [37] 判红）；root/ 下的根级门只在本目录运行，不分发。gate_ids 记录共享门在各科 check.py 里的现行编号（同一文件两科编号可以不同；共享件在 check.py 里不另设统一编号，[37] 只守字节同源）。墓碑：六爻 [8][9][10][21]–[25] 是已下线门的编号，**不回填**。新门编号**不在本文件钉**（539 批更正：原文写「从 [37] 续」是 334 批快照，实盘尾号早已越过）——取 `python <科>/dev_tools/check.py` 实跑尾号 +1，两科各自独立计数，口径见 GOVERNANCE.md §当前分布。",
   "files": {
     "shared": [
       "check_case_isolation.py",

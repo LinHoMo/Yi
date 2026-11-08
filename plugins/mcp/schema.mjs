@@ -5,7 +5,9 @@
  * 冻结的是**工具名、参数集与输出 value 结构**，不是某一家的 schema 方言。
  * dsh 侧用 `{type, required, description, enum}` 简写，MCP 要的是标准 JSON Schema
  * `{type:'object', properties, required}`。本模块做**唯一一处**转译，
- * 让 `tools.mjs` 里的工具定义在两个宿主上保持逐字同源（不复制第二份定义）。
+ * 让 `tools.mjs` 里的工具定义在宿主（DSH）与 stdio 自检夹具（`server.mjs`，539 批
+ * 定性）两侧保持逐字同源（不复制第二份定义）。497 批删四家宿主后，这里的「两侧」
+ * 不再是「两家插件宿主」——语义已变，勿按旧注释理解。
  *
  * 约定（转译规则显式，便于自检逐条断言）：
  *  · 属性上的 `required: true` **不进** properties（它不是 JSON Schema 关键字），

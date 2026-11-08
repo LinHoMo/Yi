@@ -215,6 +215,19 @@ def checks():
         "注意：本值随 capture 同步；若再分家，先读 drift_log 再改，勿凭记忆填。）",
         lambda t: _golden("bazi"),
         ("b7674a8f6d8d1162", "fd1a1b0b60e06104"))
+
+    def _cap_expect():
+        """期望值直接取两科 digest.json 实值，不在账台再抄一份指纹清单。"""
+        out = []
+        for d in ("liuyao", "bazi"):
+            j = json.loads((ROOT / d / "data" / "golden" / "digest.json").read_text(encoding="utf-8"))
+            out += [j["digest"], j["narrate_digest"]]
+        return tuple(out)
+
+    add("capability.golden 文本↔digest(4)",
+        "539 批新增：CAPABILITY T1 双科双指纹声明 ↔ golden/digest.json 实值（466 批正文未回流）；"
+        "期望值现场取 digest 真源，不新增 check.py 门号、不新增门文件（守 528 约定）",
+        lambda t: _capability_golden(), _cap_expect())
     add("governance(76/49, blk 34/30)",
         "194批（312 补 310；315 补 314/315 两门；317 补 judge_shadow；329 补 fetch_zengshan_dz_cases；"
         "331 批 check_docs_index 上提到 devkit/root → 六爻 blk 28→27、脚本仍 63；"
@@ -769,6 +782,24 @@ def _golden(disc):
     s = sh(["dev_tools/golden.py", "verify"], cwd=ROOT / disc)
     m = re.search(r"机械 ([0-9a-f]{16})｜措辞 ([0-9a-f]{16})", s)
     return (m.group(1), m.group(2)) if m else (None, None)
+
+
+def _capability_golden():
+    """539 批：CAPABILITY.md 主文的双科双指纹，与 digest.json 实值对账。
+
+    466 批八字措辞指纹已 capture 为 fd1a…，账台 bazi.golden 项同步钉死，但 CAPABILITY
+    正文仍停在 411 批的 e158…——门守住了盘、文本没回流，是 G12–G16 同族第 5 处漂移。
+    期望值由 checks() 现场读 digest.json 取回（不抄第三份清单），于是闭环为：
+    ① `*.golden` 两项守「盘 ↔ 账台期望」；② 本项守「对外文本 ↔ 同一份盘」。
+    """
+    text = (ROOT / "CAPABILITY.md").read_text(encoding="utf-8")
+    out = []
+    # 注：六爻行写「机械层／措辞层」、八字行写「机械／措辞」，两科措辞不统一——
+    # 539 批首跑即因这个「层」字失配判红，故用 `层?` 兼容两种形状（不回改历史文案）。
+    for anchor in ("六爻：", "八字："):
+        m = re.search(r"- " + anchor + r".*?机械层? `([0-9a-f]{16})`／措辞层? `([0-9a-f]{16})`", text)
+        out += list(m.groups()) if m else ["<缺指纹>", "<缺指纹>"]
+    return tuple(out)
 
 
 def _gov_counts():

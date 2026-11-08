@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "_meta": {
+    "what": "八字 narrate 段的外壳文案：交付边界声明与口径注。py 只组装，字面量归本文件。",
+    "batch": 539,
+    "why_here": "AGENTS.md §一.1 要求吉凶断语与交付面文案进 data/*.json。539 批前这三条边界声明硬编码在 scripts/narrate.py 的 narrate() 尾部，与六爻 data/narrative_templates.json#narrate_shell 形状不对称；八字侧话术散在 py + 多份 JSON，无单一外壳真源。",
+    "口径": "本批只搬字面量、**不改一个字**，故 narrate 输出逐字节不变（措辞 golden 指纹不动）。凶象只用「偏向／有…信号／结构上」，不写「注定／一定」；一切分数是古籍案例对齐分，不是现实预测命中率；医疗、法律、投资等重大决策以专业意见为准。",
+    "boundary": "与 scripts/render.py 报告尾的免责句各守一段：本文件管 Markdown 正文尾的三行边界声明，render.py 管报告表格尾的单行提示（后者由 plugins/scripts/selftest.mjs [7] 逐份扫「专业意见为准」，不得移出源码）。",
+    "consumers": [
+      "scripts/narrate.py —— narrate() 尾段 boundary_lines"
+    ]
+  },
+  "narrate_shell": {
+    "title": "八字四柱解读（narrate 段）",
+    "boundary_lines": [
+      "以上为机械排盘与扶抑口径推演，**不是命运断言**。",
+      "格局取月令本气十神定正格名；从格按《滴天髓·从化论/从象/假从》分级（真从/假从/从旺/从强/从气/从势），灰区例另以 tentative 标注保留复核位——都是机械结构结论，不是命运断言。重大决策以专业意见为准。",
+      "本模块不宣称现实预测命中率（`SKILL.md` 铁律三）。"
+    ]
+  }
+}

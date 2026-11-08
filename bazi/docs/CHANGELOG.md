@@ -14,6 +14,8 @@
 > 一行自足的结论摘要；退出窗口的批号＋日期补进历史索引，过程叙述交 git 历史。
 > 窗口与单批长度由 `devkit/root/check_docs_index.py` 现场判，不在本文钉数。
 
+## 2026-11-08 第五百三十九批（全仓·随包登记＋八字叙述层真源）：**新建 `bazi/data/narrative_templates.json`，把 `narrate.py` 尾部三条交付边界声明逐字外置（`AGENTS.md` §一.1；输出 16061 B 逐字节不变，`golden.py verify` 机械 `b767…`／措辞 `fd1a…` 均零漂移）；`bazi/references/api_spec.md` 补命令示例、四段职责、数据真源与口径声明。随全仓批：CAPABILITY 八字措辞指纹按 466 批实值回流、账台新增文本↔digest 对账项、`kernel` 子包真源收敛与 `--standalone` 修复（本科 core 同源 17 文件）。滑窗：539 入主文件、521 滚入历史索引（15/15 批）。本科 check EXIT=0、doc_refs 822 条零死链**
+
 ## 2026-11-07 第五百三十五批（全仓·随包登记·README 声明↔数据漂移缺口闭环）：**六爻 `readme_reconcile.py` 新增只读对账门（535 全仓批，详见 liuyao 同批）：本科 README 命令注释 tune/holdout 60/278→61/279 已按 ledger 真值更正；本科 check EXIT=0**
 ## 2026-11-06 第五百三十四批（全仓·随包登记·C1 轻门落地）：**六爻 `window_report.py` 新增 `--reconcile` 主应期声明↔数据对账门（534 全仓批，详见 liuyao 同批）：本科无主应期读数，随包登记，无引擎改动、无读数变更；本科 check EXIT=0**
 ## 2026-11-06 第五百三十三批（实证巡检·G13 轻门克隆·八字版本识别声明↔数据对账）：**把 532 批 G14 的只读 `--reconcile` 轻门样板克隆到 G13（八字版本识别观测）：`bazi/dev_tools/cross_version_collate.py` 与 `diff_siku_sanming.py` 各加 `--reconcile`——CAPABILITY ③ 声称（滴天髓阐微54.0%/穷通宝鉴21.6%/渊海子平83.6%/神峰通考100%；三命通会765章42.9%逐字一致/57%局部差异/缺段0）现场从入库底本复算对拍（两 summary JSON 被 gitignore 不入库，故不读 JSON、改现场重算，保证 fresh-tree CI 可重现）；两处接进 CI root-gates（守 528 批「不新增 check.py 门号」约定）。变异探针实证有牙（改 CAPABILITY 54.0%→55.0%、42.9%→43.9% 各判红 rc=1，还原转绿）。G12（六爻 restorable）同款轻门见 liuyao 同批；本科 check EXIT=0**
@@ -36,10 +38,3 @@
 ## 2026-11-06 第五百二十三批（全仓·随包登记）：**文档历史减量与窗口上门（523 全仓批）：本科主 CHANGELOG 随两科同口径复滑至最近 15 批、每批一行结论摘要，退出窗口的批号＋日期补进 `bazi/docs/CHANGELOG-HISTORY-INDEX.md`；当前真缺口总账见 `GOVERNANCE.md`。本层无引擎改动、无读数变更，本科 check EXIT=0**
 
 ## 2026-11-06 第五百二十二批（全仓·随包登记）：**pytest 桥接清单单一真源与覆盖门（522 全仓批）：本科 smoke/regression 两份 main() 式测试改由根 `pytest_manifest.py` 单一真源供 conftest／bridge 消费；新增根级 `devkit/root/check_pytest_bridge.py` 把清单、盘上两科 tests/ 与 CI 直跑命令逐格对拍（含 10 类负例与临时盘真探针），防「新增测试无人跑而全绿」；520 批四处批号／runpy 措辞错登记同批订正。本层无引擎改动、无读数变更；`python -m pytest` 仍 11 passed，本科 check EXIT=0**
-
-## 2026-11-05 第五百二十一批（全仓·随包登记）：**消除 scripts/ 兼容 shim 反向 import eval/（521 全仓批）：本科删除 bazi/scripts/evaluate.py 纯 re-export shim，真调用方改挂 eval/ 到 sys.path；devkit 共享件 check_doc_refs/check_case_isolation 经 sync_devkit --write 分发到本科；文档「scripts/ 旧入口仍可用」表述改为「已于 521 批删除」。本科 check EXIT=0**
-
-
-
-
-

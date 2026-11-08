@@ -1,8 +1,11 @@
 {
   "schema": "yi-kernel-manifest/1",
   "batch": 316,
-  "_comment": "yishu_core 的单一真源。common/ 两科共用；variants/<名>.<科>.py 是登记在册的分叉；liuyao_only/bazi_only 只发给一科。generate 由 kernel/sync_kernel.py 执行，产物写回 <科>/core/yishu_core/；手改产物会被 [35] 判红（比对字节）。",
+  "_comment": "yishu_core 的单一真源。common/ 两科共用；variants/<名>.<科>.py 是登记在册的分叉；liuyao_only/bazi_only 只发给一科；packages/ 列出 common/ 下需整包递归分发的子包（539 批补 report/——该子包自 316 批起只有产物、无真源，[35] 的 glob('*.py') 也扫不到）。generate 由 kernel/sync_kernel.py 执行，产物写回 <科>/core/yishu_core/；手改产物会被 [35] 判红（比对字节，含子包）。",
   "source": "kernel/yishu_core",
+  "packages": [
+    "report"
+  ],
   "files": {
     "common": [
       "__init__.py",

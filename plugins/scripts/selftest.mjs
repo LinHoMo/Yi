@@ -19,6 +19,7 @@ import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { KB_DOC } from './kb-docs.mjs'
+import { DEV_ONLY } from './dev-only.mjs'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 const PLUGINS_ROOT = resolve(HERE, '..')
@@ -208,12 +209,15 @@ head(2)
   if (missing.length) for (const m of missing) bad(`缺少 ${m}`)
   else ok('共享层与各适配器的两科入口 + 内核副本 + MANIFEST 齐备')
 
-  // 356/359 批：两科评测实现已迁 eval/，scripts/ 同名文件是开发期 shim；
-  // 交付包若带上它们，会 `import eval` 失败（包内没有 eval/）。
-  const DEV_ONLY_SHIMS = {
-    liuyao: ['scripts/evaluate.py', 'scripts/case_runner.py', 'scripts/build_portal_assets.py'],
-    bazi: ['scripts/evaluate.py'],
-  }
+  // 单一真源 `./dev-only.mjs`（539 批）：此前本段与 build.mjs 各存一份手工清单，
+  // 改一边忘另一边构建与自检照样全绿（528 批 G11 同型）。521 批已删光 shim，
+  // 名单转为防复活哨兵；产物若带上这些入口会 `import eval` 失败（包内无 eval/）。
+  const DEV_ONLY_SHIMS = Object.fromEntries(
+    Object.entries(DEV_ONLY).map(([d, names]) => [d, names.map((n) => `scripts/${n}`)]),
+  )
+  // 登记表自身的存在性断言：空表会让 [2] 段变成「什么都不查」的假绿
+  if (!DEV_ONLY_SHIMS.liuyao?.length || !DEV_ONLY_SHIMS.bazi?.length) bad('dev-only.mjs 登记表为空或漏科')
+  else ok(`排除名单与 build.mjs 同源（${Object.entries(DEV_ONLY_SHIMS).map(([d, r]) => `${d}×${r.length}`).join('／')}）`)
   const evalShimsPresent = (root) => Object.entries(DEV_ONLY_SHIMS).flatMap(
     ([d, rels]) => rels
       .filter((rel) => existsSync(join(root, 'engine', d, ...rel.split('/'))))
