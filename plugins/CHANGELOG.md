@@ -6,6 +6,8 @@
 > **497 批起只保留 DSH 一个宿主**：claude/codex/gemini/yan 四家适配器目录、
 > `publish.mjs`（git 发行树）及其在 build/selftest/ci/文档里的登记一并删除。
 
+## 2026-11-09 第五百四十二批（共享层·随包登记）：**本批 `plugins/` 运行时与技能正文零改动；新增的候选池位于 `data/cases/`，本就不在 build 白名单内，不随包发货，selftest `[1.5]` 案例库隔离绿、8 段全绿。CI root-gates 新增一行候选池同源复验（守 528 约定不新增门号）**
+
 ## 2026-11-09 第五百四十一批（共享层·真源去钉数与导览口径）：**`plugins/SKILL.md` 去掉最后一处手钉篇目大小（「8KB，短」→ 回指 `references/INDEX.md`），补齐 539 批遗漏；`kb-docs.mjs` 口径注记第③条明确「技能正文真源同样不得钉会变数」。build 重分发后宿主根 SKILL.md 与两处技能目录 SKILL.md 均与真源逐字节同源，selftest `[3]`／`[1]` 全绿。本卷无运行时源码改动**
 
 ## 2026-11-09 第五百四十批（共享层·随包登记）：**本批 `plugins/` 无源码改动；`build.mjs` 因两科 `data/*.json` 变化（六爻 `xiang_layer.json`、八字 `narrative_templates.json`）重建 `engine/` 产物，`selftest [1.6]` 全量同源通过。CI root-gates 新增一行 `liuyao/dev_tools/xiang_coverage.py --probe`（象层词表常驻判据，守 528 约定不新增门号）**

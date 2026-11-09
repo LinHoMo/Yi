@@ -228,7 +228,7 @@ def checks():
         "539 批新增：CAPABILITY T1 双科双指纹声明 ↔ golden/digest.json 实值（466 批正文未回流）；"
         "期望值现场取 digest 真源，不新增 check.py 门号、不新增门文件（守 528 约定）",
         lambda t: _capability_golden(), _cap_expect())
-    add("governance(76/49, blk 34/30)",
+    add("governance(77/49, blk 34/30)",
         "194批（312 补 310；315 补 314/315 两门；317 补 judge_shadow；329 补 fetch_zengshan_dz_cases；"
         "331 批 check_docs_index 上提到 devkit/root → 六爻 blk 28→27、脚本仍 63；"
         "339 批 A5-1 按实登记 7 个存量未分类脚本 → 八字 37→43；"
@@ -254,8 +254,11 @@ def checks():
         "；**537 批：六爻 75→76** 是新增 `static_enhancement_guard.py`（536 静卦静默降级缺陷的常驻回归守卫："
         "逐静卦断言 advanced_analysis 含 enhance_reading 经典增强签名键，--selftest 注入空增强判红有齿；"
         "挂 CI root-gates，tier=ondemand 非 blocking）——本器自落库即入治理表（CURATED 已挂），属正当 +1，"
-        "期望由 75 回挂 76（blk 不变）",
-        lambda t: _gov_counts(), ("76", "49", "34", "30"))
+        "期望由 75 回挂 76（blk 不变）"
+        "；**542 批：六爻 76→77** 是新增 `verify_yilin_candidates.py`（《易林補遺》L1279 七案候选池的"
+        "只读同源复验器：引文逐字／ID 零泄漏／无反推／预注册未开卷，8 类内存负例；挂 CI root-gates，"
+        "tier=ondemand 非 blocking）——同批入治理表 CURATED，属正当 +1，期望由 76 回挂 77（blk 不变）",
+        lambda t: _gov_counts(), ("77", "49", "34", "30"))
 
     # 344 批：expected 书证/机械派生字段的覆盖生存线（门 [38]）。
     # 1592923 的事故证明「聚合分掉 6 分、所有门全绿」可以并存；本项把非空计数

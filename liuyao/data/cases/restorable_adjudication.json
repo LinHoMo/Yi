@@ -1,1054 +1,1054 @@
 {
- "schema": "yi-liuyao-restorable-adjudication/1",
- "built_at": "2026-11-02T00:00:00",
- "_comment": "401 批：43 条 restorable 逐条处置（不改毕业册/复核册机读值、不入 splits、不写 expected）。new_candidates 是 402 的输入，不是已签案例；已在册/不升/待回原文均写明依据。 411 批：6 条「日期阻塞」逐条核原文结案——4 条日期不可重建（L1032/L1515 缺日干、L3338 缺日干、L1741 缺月建；按 §六.5 不高置信补数据）、2 条非单点（L2324/L3559）；new_date_blocked=0、new_date_unrecoverable=4。",
- "summary": {
-  "total": 43,
-  "already": 30,
-  "non_single": 3,
-  "not_enrolled": 5,
-  "reread": 0,
-  "new_builder_blocked": 1,
-  "new_date_blocked": 0,
-  "new_date_unrecoverable": 4
- },
- "rows": [
-  {
-   "id": "VER-bushi_zhengzong_dz_dz-L1165",
-   "source": {
-    "file": "bushi_zhengzong_dz.dz.txt",
-    "line": 1165,
-    "book": "卜筮正宗(dz)"
-   },
-   "a": {
-    "date": "辰月丙辰日",
-    "original": "旅",
-    "changed": "蛊",
-    "yingqi_branch": "丑"
-   },
-   "b": {
-    "original": "旅",
-    "changed": "蛊",
-    "yingqi": "丑"
-   },
-   "decision": null,
-   "disposition": "非单点应期",
-   "case_id": "",
-   "basis": "终身叙述：辛未/甲戌/丁丑等为人生事件年，不构成单一应期断言。",
-   "next_batch": ""
+  "schema": "yi-liuyao-restorable-adjudication/1",
+  "built_at": "2026-11-02T00:00:00",
+  "_comment": "401 批：43 条 restorable 逐条处置（不改毕业册/复核册机读值、不入 splits、不写 expected）。new_candidates 是 402 的输入，不是已签案例；已在册/不升/待回原文均写明依据。 411 批：6 条「日期阻塞」逐条核原文结案——4 条日期不可重建（L1032/L1515 缺日干、L3338 缺日干、L1741 缺月建；按 §六.5 不高置信补数据）、2 条非单点（L2324/L3559）；new_date_blocked=0、new_date_unrecoverable=4。",
+  "summary": {
+    "total": 43,
+    "already": 30,
+    "non_single": 3,
+    "not_enrolled": 5,
+    "reread": 0,
+    "new_builder_blocked": 1,
+    "new_date_blocked": 0,
+    "new_date_unrecoverable": 4
   },
-  {
-   "id": "VER-yiin_dz_dz-L2221",
-   "source": {
-    "file": "yiin_dz.dz.txt",
-    "line": 2221,
-    "book": "易隱(dz)"
-   },
-   "a": {
-    "date": "子月丁卯日",
-    "original": "屯",
-    "changed": null,
-    "yingqi_branch": "子"
-   },
-   "b": {
-    "original": "谦",
-    "changed": "小过",
-    "yingqi": "卯"
-   },
-   "decision": "B",
-   "disposition": "已在册",
-   "case_id": "YI034",
-   "basis": "真案为《易隐》YI034 庚寅年己卯月丁亥日·谦之小过，应辛卯日；YI034 在册，expected.yingqi 原为空档，423 批已按「后至辛卯日…果得财也」补为辛卯日。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-yilin_buyi_dz_dz-L227",
-   "source": {
-    "file": "yilin_buyi_dz.dz.txt",
-    "line": 227,
-    "book": "易林補遺(dz)"
-   },
-   "a": {
-    "date": "戌月丁亥日",
-    "original": "蒙",
-    "changed": null,
-    "yingqi_branch": "酉"
-   },
-   "b": {
-    "original": "蒙",
-    "changed": null,
-    "yingqi": "酉"
-   },
-   "decision": null,
-   "disposition": "不升",
-   "case_id": "",
-   "basis": "规则段内「此月此日…亦占蒙卦」，日期为相对语，无独立日期键。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-yilin_buyi_dz_dz-L1279",
-   "source": {
-    "file": "yilin_buyi_dz.dz.txt",
-    "line": 1279,
-    "book": "易林補遺(dz)"
-   },
-   "a": {
-    "date": "子月戊午日",
-    "original": "观",
-    "changed": "益",
-    "yingqi_branch": "亥"
-   },
-   "b": {
-    "original": "观",
-    "changed": "益",
-    "yingqi": "亥"
-   },
-   "decision": "b",
-   "disposition": "新候选·建器阻塞",
-   "case_id": "",
-   "basis": "498批回原文核毕：真案\"且如子占父病，五月甲子日，占得观之益卦……后至乙亥日，元神绝而忌神生，果然父丧\"（L1279）；毕业册错记\"子月戊午日\"实出隔数例之后的\"父占女久远病，七月甲寅旬癸亥日卜得艮卦……果应在子月戊午日\"案，串味确证。日期卦象应期三者自洽（五月甲子日·观之益·应亥），唯《易林補遺》底本不在建器覆盖面（现仅增删dz/wikitext/易隱），建器阻塞。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_wikitext-L359",
-   "source": {
-    "file": "zengshan_buyi.wikitext.txt",
-    "line": 359,
-    "book": "增刪卜易"
-   },
-   "a": {
-    "date": "卯月壬辰日",
-    "original": "贲",
-    "changed": null,
-    "yingqi_branch": "午"
-   },
-   "b": {
-    "original": "贲",
-    "changed": null,
-    "yingqi": "午"
-   },
-   "decision": null,
-   "disposition": "已在册",
-   "case_id": "ZS017/WS002",
-   "basis": "卯月壬辰日·山火贲·午日；ZS017／WS002 在册。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_wikitext-L1032",
-   "source": {
-    "file": "zengshan_buyi.wikitext.txt",
-    "line": 1032,
-    "book": "增刪卜易"
-   },
-   "a": {
-    "date": "丑月壬子日",
-    "original": "困",
-    "changed": "兑",
-    "yingqi_branch": "申"
-   },
-   "b": {
-    "original": "困",
-    "changed": "兑",
-    "yingqi": "申"
-   },
-   "decision": null,
-   "disposition": "新候选·日期不可重建",
-   "case_id": "",
-   "basis": "真案「巳月未日占久病得困之兑」——日柱只有「未日」无日干；底本与上下文均无干，日辰旬空无法机械重建。411 批按 §六.5 结案，不高置信补数据。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_wikitext-L1567",
-   "source": {
-    "file": "zengshan_buyi.wikitext.txt",
-    "line": 1567,
-    "book": "增刪卜易"
-   },
-   "a": {
-    "date": "酉月甲辰日",
-    "original": "遁",
-    "changed": "姤",
-    "yingqi_branch": "亥"
-   },
-   "b": {
-    "original": "遁",
-    "changed": "姤",
-    "yingqi": "亥"
-   },
-   "decision": null,
-   "disposition": "不升",
-   "case_id": "",
-   "basis": "wikitext 源不在建器覆盖面；应期「亥日」取自同行另一求财案（375/378 批）。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_wikitext-L2107",
-   "source": {
-    "file": "zengshan_buyi.wikitext.txt",
-    "line": 2107,
-    "book": "增刪卜易"
-   },
-   "a": {
-    "date": "戌月辛亥日",
-    "original": "比",
-    "changed": "观",
-    "yingqi_branch": "卯"
-   },
-   "b": {
-    "original": "比",
-    "changed": "观",
-    "yingqi": "卯"
-   },
-   "decision": null,
-   "disposition": "已在册",
-   "case_id": "WS029",
-   "basis": "戌月辛亥日·比之观·卯年；WS029 在册。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_wikitext-L3380",
-   "source": {
-    "file": "zengshan_buyi.wikitext.txt",
-    "line": 3380,
-    "book": "增刪卜易"
-   },
-   "a": {
-    "date": "未月丁卯日",
-    "original": "晋",
-    "changed": null,
-    "yingqi_branch": "辰"
-   },
-   "b": {
-    "original": "晋",
-    "changed": null,
-    "yingqi": "辰"
-   },
-   "decision": null,
-   "disposition": "已在册",
-   "case_id": "WS039/ZDP026",
-   "basis": "未月丁卯日·晋·辰日；WS039／ZDP026 在册。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L550",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 550,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "酉月辛亥日",
-    "original": "兑",
-    "changed": "解",
-    "yingqi_branch": "寅"
-   },
-   "b": {
-    "original": "兑",
-    "changed": "解",
-    "yingqi": "寅"
-   },
-   "decision": null,
-   "disposition": "已在册",
-   "case_id": "ZD194",
-   "basis": "真案酉月辛亥日·兑之解·寅日（L543-550）；建器锚句只剩占测日/预测假设，不收。；403 批已入册 ZD194（建器修复后书证完整）",
-   "next_batch": "",
-   "enrolled_batch": 403
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L561",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 561,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "巳月乙未日",
-    "original": "大过",
-    "changed": "鼎",
-    "yingqi_branch": "卯"
-   },
-   "b": {
-    "original": "大过",
-    "changed": "鼎",
-    "yingqi": "卯"
-   },
-   "decision": null,
-   "disposition": "已在册",
-   "case_id": "ZD195",
-   "basis": "真案巳月乙未日·大过之鼎·卯日；单字题「自占病」不被 CASE_RE 识别。；403 批已入册 ZD195（建器修复后书证完整）",
-   "next_batch": "",
-   "enrolled_batch": 403
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L661",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 661,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "寅月丙申日",
-    "original": "艮",
-    "changed": null,
-    "yingqi_branch": "辰"
-   },
-   "b": {
-    "original": "艮",
-    "changed": "颐",
-    "yingqi": "辰"
-   },
-   "decision": "B",
-   "disposition": "已在册",
-   "case_id": "ZD196",
-   "basis": "真案寅月丙申日·艮之颐·辰月；CASE_RE 占题字符类排除「之」，题「官之升迁」不被 segment 识别。；403 批已入册 ZD196（建器修复后书证完整）",
-   "next_batch": "",
-   "enrolled_batch": 403
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L755",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 755,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "未月丁巳日",
-    "original": "离",
-    "changed": null,
-    "yingqi_branch": "辰"
-   },
-   "b": {
-    "original": "离",
-    "changed": "旅",
-    "yingqi": "辰"
-   },
-   "decision": "B",
-   "disposition": "已在册",
-   "case_id": "ZD023",
-   "basis": "未月丁巳日·离之旅·辰月；ZD023 在册。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L804",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 804,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "酉月乙未日",
-    "original": "坤",
-    "changed": null,
-    "yingqi_branch": "子"
-   },
-   "b": {
-    "original": "坤",
-    "changed": null,
-    "yingqi": "子"
-   },
-   "decision": null,
-   "disposition": "已在册",
-   "case_id": "ZD026/ZDP001",
-   "basis": "酉月乙未日·坤·子年/卯年；ZD026／ZDP001 在册。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L852",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 852,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "丑月丁酉日",
-    "original": "涣",
-    "changed": "坎",
-    "yingqi_branch": "卯"
-   },
-   "b": {
-    "original": "涣",
-    "changed": "坎",
-    "yingqi": "卯"
-   },
-   "decision": null,
-   "disposition": "已在册",
-   "case_id": "ZD031",
-   "basis": "丑月丁酉日·涣之坎·卯月；ZD031 在册。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L1006",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 1006,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "亥月己丑日",
-    "original": "讼",
-    "changed": null,
-    "yingqi_branch": "巳"
-   },
-   "b": {
-    "original": "兑",
-    "changed": "讼",
-    "yingqi": "巳"
-   },
-   "decision": "另裁",
-   "disposition": "不升",
-   "case_id": "",
-   "basis": "498批回原文核毕（改判）：L992\"亥月己丑日占将来有官，得兑化讼卦\"官鬼巳火动逢亥月破；L999\"命之再占，又得水地比卦\"；L1006断语明言\"前卦官临月破，定于实破之年，果于巳年承袭长房世职\"——验支巳年归前卦兑之讼，非原裁决所写\"属第二卦\"。然此为命再占连占复合案，验语跨两卦、第二卦无独立日期行，建器七道门\"锚句归属本案\"不过，不升。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L1068",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 1068,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "卯月壬辰日",
-    "original": "贲",
-    "changed": null,
-    "yingqi_branch": "午"
-   },
-   "b": {
-    "original": "贲",
-    "changed": null,
-    "yingqi": "午"
-   },
-   "decision": null,
-   "disposition": "已在册",
-   "case_id": "ZS017/WS002",
-   "basis": "卯月壬辰日·贲·午日；与 L359 同案（重复验注）。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L1166",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 1166,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "戌月癸亥日",
-    "original": "同人",
-    "changed": "革",
-    "yingqi_branch": "丑"
-   },
-   "b": {
-    "original": "需",
-    "changed": null,
-    "yingqi": "丑"
-   },
-   "decision": "另裁",
-   "disposition": "已在册",
-   "case_id": "WS003",
-   "basis": "真案戌月癸亥日·水泽节变需·丑日；WS003 在册。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L1174",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 1174,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "未月丁卯日",
-    "original": "同人",
-    "changed": "革",
-    "yingqi_branch": "辰"
-   },
-   "b": {
-    "original": "同人",
-    "changed": "革",
-    "yingqi": "辰"
-   },
-   "decision": null,
-   "disposition": "已在册",
-   "case_id": "WS004",
-   "basis": "未月丁卯日·同人变革·辰年；WS004 在册。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L1412",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 1412,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "未月甲午日",
-    "original": "师",
-    "changed": "涣",
-    "yingqi_branch": "辰"
-   },
-   "b": {
-    "original": "师",
-    "changed": "涣",
-    "yingqi": "辰"
-   },
-   "decision": null,
-   "disposition": "已在册",
-   "case_id": "WS014",
-   "basis": "未月甲午日·师之涣·辰年；WS014 在册。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L1515",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 1515,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "丑月壬子日",
-    "original": "困",
-    "changed": "兑",
-    "yingqi_branch": "申"
-   },
-   "b": {
-    "original": "困",
-    "changed": "兑",
-    "yingqi": "申"
-   },
-   "decision": null,
-   "disposition": "新候选·日期不可重建",
-   "case_id": "",
-   "basis": "与 L1032 同案（巳月未日·困之兑·申日）；日柱缺干，重复验注，411 批同日结案。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L1581",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 1581,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "辰月戊子日",
-    "original": "比",
-    "changed": "咸",
-    "yingqi_branch": "卯"
-   },
-   "b": {
-    "original": "比",
-    "changed": "咸",
-    "yingqi": "卯"
-   },
-   "decision": null,
-   "disposition": "已在册",
-   "case_id": "WS017",
-   "basis": "辰月戊子日·比之咸·卯日；WS017 在册。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L1680",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 1680,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "午月戊午日",
-    "original": "升",
-    "changed": "恒",
-    "yingqi_branch": "戌"
-   },
-   "b": {
-    "original": "升",
-    "changed": "恒",
-    "yingqi": "戌"
-   },
-   "decision": null,
-   "disposition": "已在册",
-   "case_id": "WS019",
-   "basis": "午月戊午日·升之恒·戌日；WS019 在册。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L1741",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 1741,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "午月庚寅日",
-    "original": "大畜",
-    "changed": "中孚",
-    "yingqi_branch": "申"
-   },
-   "b": {
-    "original": "临",
-    "changed": "节",
-    "yingqi": "申"
-   },
-   "decision": "B",
-   "disposition": "新候选·日期不可重建",
-   "case_id": "",
-   "basis": "真案「甲午日又得临之节」——日柱完整但无月建；承前案午月无原文依据（再占日期不承接），411 批按 §六.5 不补、结案。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L1798",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 1798,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "卯月辛丑日",
-    "original": "晋",
-    "changed": null,
-    "yingqi_branch": "巳"
-   },
-   "b": {
-    "original": "恒",
-    "changed": "大过",
-    "yingqi": "巳"
-   },
-   "decision": "B",
-   "disposition": "已在册",
-   "case_id": "WSD001",
-   "basis": "恒之大过已在方向集 WSD001（无应期）；本册应期巳未进方向集，不重复计数。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L1862",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 1862,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "未月癸亥日",
-    "original": "艮",
-    "changed": null,
-    "yingqi_branch": "申"
-   },
-   "b": {
-    "original": "艮",
-    "changed": null,
-    "yingqi": "申"
-   },
-   "decision": null,
-   "disposition": "已在册",
-   "case_id": "WS021/ZDP006",
-   "basis": "未月癸亥日·艮·申日；WS021／ZDP006 在册。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L1871",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 1871,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "酉月甲辰日",
-    "original": "遁",
-    "changed": "姤",
-    "yingqi_branch": "亥"
-   },
-   "b": {
-    "original": "遁",
-    "changed": "姤",
-    "yingqi": "亥"
-   },
-   "decision": null,
-   "disposition": "不升",
-   "case_id": "",
-   "basis": "与 L1567 同盘异注（dup）；应期取自同行另一案。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L2084",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 2084,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "未月丙午日",
-    "original": "离",
-    "changed": null,
-    "yingqi_branch": "寅"
-   },
-   "b": {
-    "original": "离",
-    "changed": null,
-    "yingqi": "寅"
-   },
-   "decision": null,
-   "disposition": "已在册",
-   "case_id": "ZD214",
-   "basis": "真案未月丙午日·离之旅·寅/卯/辰三支；建器锚句选择失败（多支/时辰句）。；403 批已入册 ZD214（建器修复后书证完整）",
-   "next_batch": "",
-   "enrolled_batch": 403
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L2093",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 2093,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "未月丙午日",
-    "original": "离",
-    "changed": null,
-    "yingqi_branch": "寅"
-   },
-   "b": {
-    "original": "坎",
-    "changed": "井",
-    "yingqi": "酉"
-   },
-   "decision": "B",
-   "disposition": "不升",
-   "case_id": "",
-   "basis": "498批回原文核毕：L2086\"戌日丙午日占何日雨，得坎之井卦\"妻财午火应动化父母酉金；L2093验语\"果于酉日天变，戌日而雨，午火财爻墓于戌也\"。毕业册ZD214错配为\"离之旅·未月丙午日\"（卦名/月建串自上一例），属建器串味；修ZD214系改外部集机读值，本批不动读数，另批处理。本条不升。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L2240",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 2240,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "戌月辛亥日",
-    "original": "比",
-    "changed": "观",
-    "yingqi_branch": "卯"
-   },
-   "b": {
-    "original": "比",
-    "changed": "观",
-    "yingqi": "卯"
-   },
-   "decision": null,
-   "disposition": "已在册",
-   "case_id": "WS029",
-   "basis": "与 L2107 同案（戌月辛亥日·比之观·卯年）；dz 底本重复行。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L2324",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 2324,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "酉月壬辰日",
-    "original": "恒",
-    "changed": null,
-    "yingqi_branch": "卯"
-   },
-   "b": {
-    "original": "噬嗑",
-    "changed": "否",
-    "yingqi": "卯"
-   },
-   "decision": "B",
-   "disposition": "非单点应期",
-   "case_id": "",
-   "basis": "真案「命再占得噬嗑变否」无独立日期行；验语「卯年…巳年…未年」三结果，本就不属单点应期。411 批改判结案。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L2332",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 2332,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "巳月己丑日",
-    "original": "归妹",
-    "changed": "临",
-    "yingqi_branch": "午"
-   },
-   "b": {
-    "original": "归妹",
-    "changed": "临",
-    "yingqi": "午"
-   },
-   "decision": null,
-   "disposition": "已在册",
-   "case_id": "WS031",
-   "basis": "巳月己丑日·归妹之临·午年；WS031 在册。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L2431",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 2431,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "寅月己酉日",
-    "original": "剥",
-    "changed": "无妄",
-    "yingqi_branch": "卯"
-   },
-   "b": {
-    "original": "剥",
-    "changed": "无妄",
-    "yingqi": "卯"
-   },
-   "decision": null,
-   "disposition": "已在册",
-   "case_id": "ZD222",
-   "basis": "真案寅月己酉日·剥之无妄·卯年；CASE_RE 单字题「占寿」不识别，且日期「已酉」转录混淆。；403 批已入册 ZD222（建器修复后书证完整）",
-   "next_batch": "",
-   "enrolled_batch": 403
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L2451",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 2451,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "丑月戊子日",
-    "original": "益",
-    "changed": "中孚",
-    "yingqi_branch": "亥"
-   },
-   "b": {
-    "original": "益",
-    "changed": "中孚",
-    "yingqi": "亥"
-   },
-   "decision": null,
-   "disposition": "已在册",
-   "case_id": "WS034",
-   "basis": "丑月戊子日·益之中孚·亥日；WS034 在册。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L2653",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 2653,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "申月辛卯日",
-    "original": "复",
-    "changed": null,
-    "yingqi_branch": "未"
-   },
-   "b": {
-    "original": "复",
-    "changed": null,
-    "yingqi": "未"
-   },
-   "decision": null,
-   "disposition": "已在册",
-   "case_id": "ZD139/ZDP020",
-   "basis": "申月辛卯日·复·未月；ZD139／ZDP020 在册。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L2900",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 2900,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "未月己巳日",
-    "original": "颐",
-    "changed": "噬嗑",
-    "yingqi_branch": "酉"
-   },
-   "b": {
-    "original": "颐",
-    "changed": "噬嗑",
-    "yingqi": "酉"
-   },
-   "decision": null,
-   "disposition": "已在册",
-   "case_id": "ZD151",
-   "basis": "真案寅月壬午日·颐之噬嗑·酉月；毕业册未月己巳日为串味，真案 ZD151 在册。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L3035",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 3035,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "未月丁卯日",
-    "original": "晋",
-    "changed": null,
-    "yingqi_branch": "辰"
-   },
-   "b": {
-    "original": "晋",
-    "changed": null,
-    "yingqi": "辰"
-   },
-   "decision": null,
-   "disposition": "已在册",
-   "case_id": "WS039/ZDP026",
-   "basis": "未月丁卯日·晋·辰日；与 L3380 同案（重复验注）。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L3198",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 3198,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "寅月丙午日",
-    "original": "临",
-    "changed": "既济",
-    "yingqi_branch": "巳"
-   },
-   "b": {
-    "original": "临",
-    "changed": "既济",
-    "yingqi": "巳"
-   },
-   "decision": null,
-   "disposition": "已在册",
-   "case_id": "WS043",
-   "basis": "寅月丙午日·临之既济·巳月；WS043 在册。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L3213",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 3213,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "巳月己亥日",
-    "original": "需",
-    "changed": "大过",
-    "yingqi_branch": "寅"
-   },
-   "b": {
-    "original": "需",
-    "changed": "大过",
-    "yingqi": "寅"
-   },
-   "decision": "b",
-   "disposition": "已在册",
-   "case_id": "WS044",
-   "basis": "巳月己亥日·需之大过·寅；WS044 在册。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L3263",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 3263,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "辰月戊辰日",
-    "original": "小过",
-    "changed": "豫",
-    "yingqi_branch": "申"
-   },
-   "b": {
-    "original": "小过",
-    "changed": "豫",
-    "yingqi": "申"
-   },
-   "decision": null,
-   "disposition": "已在册",
-   "case_id": "WS045",
-   "basis": "辰月戊辰日·小过之豫·申日；WS045 在册。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L3314",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 3314,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "亥月甲子日",
-    "original": "革",
-    "changed": "夬",
-    "yingqi_branch": "巳"
-   },
-   "b": {
-    "original": "革",
-    "changed": "夬",
-    "yingqi": "巳"
-   },
-   "decision": null,
-   "disposition": "已在册",
-   "case_id": "WS046",
-   "basis": "亥月甲子日·革之夬·巳日；WS046 在册。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L3338",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 3338,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "丑月庚午日",
-    "original": "履",
-    "changed": null,
-    "yingqi_branch": "巳"
-   },
-   "b": {
-    "original": "大畜",
-    "changed": "益",
-    "yingqi": "巳"
-   },
-   "decision": "B",
-   "disposition": "新候选·日期不可重建",
-   "case_id": "",
-   "basis": "真案「寅月亥日占主人何时回得大畜之益」——日柱只有「亥日」无干，无法重建；411 批按 §六.5 结案。",
-   "next_batch": ""
-  },
-  {
-   "id": "VER-zengshan_buyi_dz_dz-L3559",
-   "source": {
-    "file": "zengshan_buyi_dz.dz.txt",
-    "line": 3559,
-    "book": "增刪卜易(dz)"
-   },
-   "a": {
-    "date": "子月丁酉日",
-    "original": "萃",
-    "changed": null,
-    "yingqi_branch": "午"
-   },
-   "b": {
-    "original": "小过",
-    "changed": "剥",
-    "yingqi": "午"
-   },
-   "decision": "B",
-   "disposition": "非单点应期",
-   "case_id": "",
-   "basis": "真案「又得小过之剥」（三占）无独立日期行；验语「次年…巳年…午年连升」多结果，非单点。411 批改判结案。",
-   "next_batch": ""
-  }
- ]
+  "rows": [
+    {
+      "id": "VER-bushi_zhengzong_dz_dz-L1165",
+      "source": {
+        "file": "bushi_zhengzong_dz.dz.txt",
+        "line": 1165,
+        "book": "卜筮正宗(dz)"
+      },
+      "a": {
+        "date": "辰月丙辰日",
+        "original": "旅",
+        "changed": "蛊",
+        "yingqi_branch": "丑"
+      },
+      "b": {
+        "original": "旅",
+        "changed": "蛊",
+        "yingqi": "丑"
+      },
+      "decision": null,
+      "disposition": "非单点应期",
+      "case_id": "",
+      "basis": "终身叙述：辛未/甲戌/丁丑等为人生事件年，不构成单一应期断言。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-yiin_dz_dz-L2221",
+      "source": {
+        "file": "yiin_dz.dz.txt",
+        "line": 2221,
+        "book": "易隱(dz)"
+      },
+      "a": {
+        "date": "子月丁卯日",
+        "original": "屯",
+        "changed": null,
+        "yingqi_branch": "子"
+      },
+      "b": {
+        "original": "谦",
+        "changed": "小过",
+        "yingqi": "卯"
+      },
+      "decision": "B",
+      "disposition": "已在册",
+      "case_id": "YI034",
+      "basis": "真案为《易隐》YI034 庚寅年己卯月丁亥日·谦之小过，应辛卯日；YI034 在册，expected.yingqi 原为空档，423 批已按「后至辛卯日…果得财也」补为辛卯日。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-yilin_buyi_dz_dz-L227",
+      "source": {
+        "file": "yilin_buyi_dz.dz.txt",
+        "line": 227,
+        "book": "易林補遺(dz)"
+      },
+      "a": {
+        "date": "戌月丁亥日",
+        "original": "蒙",
+        "changed": null,
+        "yingqi_branch": "酉"
+      },
+      "b": {
+        "original": "蒙",
+        "changed": null,
+        "yingqi": "酉"
+      },
+      "decision": null,
+      "disposition": "不升",
+      "case_id": "",
+      "basis": "规则段内「此月此日…亦占蒙卦」，日期为相对语，无独立日期键。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-yilin_buyi_dz_dz-L1279",
+      "source": {
+        "file": "yilin_buyi_dz.dz.txt",
+        "line": 1279,
+        "book": "易林補遺(dz)"
+      },
+      "a": {
+        "date": "子月戊午日",
+        "original": "观",
+        "changed": "益",
+        "yingqi_branch": "亥"
+      },
+      "b": {
+        "original": "观",
+        "changed": "益",
+        "yingqi": "亥"
+      },
+      "decision": "b",
+      "disposition": "新候选·建器阻塞",
+      "case_id": "YLB001",
+      "basis": "498批回原文核毕：真案\"且如子占父病，五月甲子日，占得观之益卦……后至乙亥日，元神绝而忌神生，果然父丧\"（L1279）；毕业册错记\"子月戊午日\"实出隔数例之后的\"父占女久远病，七月甲寅旬癸亥日卜得艮卦……果应在子月戊午日\"案，串味确证。日期卦象应期三者自洽（五月甲子日·观之益·应亥），唯《易林補遺》底本不在建器覆盖面（现仅增删dz/wikitext/易隱），建器阻塞。 542 批（用户授权重启书证签字）回底本逐字核毕：本行「占病何日见凶」段实含 7 个真案（此前只登记第 1 案），已切分签字为 yilin_buyi_candidates.json 的 YLB001–YLB007（逐字引文／月日卦／书载应期与结果句／同案去重／阻塞标注），串味的「子月戊午日」按原文归位为第 6 案应期。候选池不进 case_splits、不参与评分、不出对齐分；由 verify_yilin_candidates.py 只读复验。仍归 new_builder_blocked：建器覆盖面未扩到《易林補遺》，入册开卷须另批走 §四，故 summary 分布不变。",
+      "next_batch": "542"
+    },
+    {
+      "id": "VER-zengshan_buyi_wikitext-L359",
+      "source": {
+        "file": "zengshan_buyi.wikitext.txt",
+        "line": 359,
+        "book": "增刪卜易"
+      },
+      "a": {
+        "date": "卯月壬辰日",
+        "original": "贲",
+        "changed": null,
+        "yingqi_branch": "午"
+      },
+      "b": {
+        "original": "贲",
+        "changed": null,
+        "yingqi": "午"
+      },
+      "decision": null,
+      "disposition": "已在册",
+      "case_id": "ZS017/WS002",
+      "basis": "卯月壬辰日·山火贲·午日；ZS017／WS002 在册。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_wikitext-L1032",
+      "source": {
+        "file": "zengshan_buyi.wikitext.txt",
+        "line": 1032,
+        "book": "增刪卜易"
+      },
+      "a": {
+        "date": "丑月壬子日",
+        "original": "困",
+        "changed": "兑",
+        "yingqi_branch": "申"
+      },
+      "b": {
+        "original": "困",
+        "changed": "兑",
+        "yingqi": "申"
+      },
+      "decision": null,
+      "disposition": "新候选·日期不可重建",
+      "case_id": "",
+      "basis": "真案「巳月未日占久病得困之兑」——日柱只有「未日」无日干；底本与上下文均无干，日辰旬空无法机械重建。411 批按 §六.5 结案，不高置信补数据。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_wikitext-L1567",
+      "source": {
+        "file": "zengshan_buyi.wikitext.txt",
+        "line": 1567,
+        "book": "增刪卜易"
+      },
+      "a": {
+        "date": "酉月甲辰日",
+        "original": "遁",
+        "changed": "姤",
+        "yingqi_branch": "亥"
+      },
+      "b": {
+        "original": "遁",
+        "changed": "姤",
+        "yingqi": "亥"
+      },
+      "decision": null,
+      "disposition": "不升",
+      "case_id": "",
+      "basis": "wikitext 源不在建器覆盖面；应期「亥日」取自同行另一求财案（375/378 批）。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_wikitext-L2107",
+      "source": {
+        "file": "zengshan_buyi.wikitext.txt",
+        "line": 2107,
+        "book": "增刪卜易"
+      },
+      "a": {
+        "date": "戌月辛亥日",
+        "original": "比",
+        "changed": "观",
+        "yingqi_branch": "卯"
+      },
+      "b": {
+        "original": "比",
+        "changed": "观",
+        "yingqi": "卯"
+      },
+      "decision": null,
+      "disposition": "已在册",
+      "case_id": "WS029",
+      "basis": "戌月辛亥日·比之观·卯年；WS029 在册。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_wikitext-L3380",
+      "source": {
+        "file": "zengshan_buyi.wikitext.txt",
+        "line": 3380,
+        "book": "增刪卜易"
+      },
+      "a": {
+        "date": "未月丁卯日",
+        "original": "晋",
+        "changed": null,
+        "yingqi_branch": "辰"
+      },
+      "b": {
+        "original": "晋",
+        "changed": null,
+        "yingqi": "辰"
+      },
+      "decision": null,
+      "disposition": "已在册",
+      "case_id": "WS039/ZDP026",
+      "basis": "未月丁卯日·晋·辰日；WS039／ZDP026 在册。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L550",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 550,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "酉月辛亥日",
+        "original": "兑",
+        "changed": "解",
+        "yingqi_branch": "寅"
+      },
+      "b": {
+        "original": "兑",
+        "changed": "解",
+        "yingqi": "寅"
+      },
+      "decision": null,
+      "disposition": "已在册",
+      "case_id": "ZD194",
+      "basis": "真案酉月辛亥日·兑之解·寅日（L543-550）；建器锚句只剩占测日/预测假设，不收。；403 批已入册 ZD194（建器修复后书证完整）",
+      "next_batch": "",
+      "enrolled_batch": 403
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L561",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 561,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "巳月乙未日",
+        "original": "大过",
+        "changed": "鼎",
+        "yingqi_branch": "卯"
+      },
+      "b": {
+        "original": "大过",
+        "changed": "鼎",
+        "yingqi": "卯"
+      },
+      "decision": null,
+      "disposition": "已在册",
+      "case_id": "ZD195",
+      "basis": "真案巳月乙未日·大过之鼎·卯日；单字题「自占病」不被 CASE_RE 识别。；403 批已入册 ZD195（建器修复后书证完整）",
+      "next_batch": "",
+      "enrolled_batch": 403
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L661",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 661,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "寅月丙申日",
+        "original": "艮",
+        "changed": null,
+        "yingqi_branch": "辰"
+      },
+      "b": {
+        "original": "艮",
+        "changed": "颐",
+        "yingqi": "辰"
+      },
+      "decision": "B",
+      "disposition": "已在册",
+      "case_id": "ZD196",
+      "basis": "真案寅月丙申日·艮之颐·辰月；CASE_RE 占题字符类排除「之」，题「官之升迁」不被 segment 识别。；403 批已入册 ZD196（建器修复后书证完整）",
+      "next_batch": "",
+      "enrolled_batch": 403
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L755",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 755,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "未月丁巳日",
+        "original": "离",
+        "changed": null,
+        "yingqi_branch": "辰"
+      },
+      "b": {
+        "original": "离",
+        "changed": "旅",
+        "yingqi": "辰"
+      },
+      "decision": "B",
+      "disposition": "已在册",
+      "case_id": "ZD023",
+      "basis": "未月丁巳日·离之旅·辰月；ZD023 在册。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L804",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 804,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "酉月乙未日",
+        "original": "坤",
+        "changed": null,
+        "yingqi_branch": "子"
+      },
+      "b": {
+        "original": "坤",
+        "changed": null,
+        "yingqi": "子"
+      },
+      "decision": null,
+      "disposition": "已在册",
+      "case_id": "ZD026/ZDP001",
+      "basis": "酉月乙未日·坤·子年/卯年；ZD026／ZDP001 在册。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L852",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 852,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "丑月丁酉日",
+        "original": "涣",
+        "changed": "坎",
+        "yingqi_branch": "卯"
+      },
+      "b": {
+        "original": "涣",
+        "changed": "坎",
+        "yingqi": "卯"
+      },
+      "decision": null,
+      "disposition": "已在册",
+      "case_id": "ZD031",
+      "basis": "丑月丁酉日·涣之坎·卯月；ZD031 在册。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L1006",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 1006,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "亥月己丑日",
+        "original": "讼",
+        "changed": null,
+        "yingqi_branch": "巳"
+      },
+      "b": {
+        "original": "兑",
+        "changed": "讼",
+        "yingqi": "巳"
+      },
+      "decision": "另裁",
+      "disposition": "不升",
+      "case_id": "",
+      "basis": "498批回原文核毕（改判）：L992\"亥月己丑日占将来有官，得兑化讼卦\"官鬼巳火动逢亥月破；L999\"命之再占，又得水地比卦\"；L1006断语明言\"前卦官临月破，定于实破之年，果于巳年承袭长房世职\"——验支巳年归前卦兑之讼，非原裁决所写\"属第二卦\"。然此为命再占连占复合案，验语跨两卦、第二卦无独立日期行，建器七道门\"锚句归属本案\"不过，不升。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L1068",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 1068,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "卯月壬辰日",
+        "original": "贲",
+        "changed": null,
+        "yingqi_branch": "午"
+      },
+      "b": {
+        "original": "贲",
+        "changed": null,
+        "yingqi": "午"
+      },
+      "decision": null,
+      "disposition": "已在册",
+      "case_id": "ZS017/WS002",
+      "basis": "卯月壬辰日·贲·午日；与 L359 同案（重复验注）。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L1166",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 1166,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "戌月癸亥日",
+        "original": "同人",
+        "changed": "革",
+        "yingqi_branch": "丑"
+      },
+      "b": {
+        "original": "需",
+        "changed": null,
+        "yingqi": "丑"
+      },
+      "decision": "另裁",
+      "disposition": "已在册",
+      "case_id": "WS003",
+      "basis": "真案戌月癸亥日·水泽节变需·丑日；WS003 在册。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L1174",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 1174,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "未月丁卯日",
+        "original": "同人",
+        "changed": "革",
+        "yingqi_branch": "辰"
+      },
+      "b": {
+        "original": "同人",
+        "changed": "革",
+        "yingqi": "辰"
+      },
+      "decision": null,
+      "disposition": "已在册",
+      "case_id": "WS004",
+      "basis": "未月丁卯日·同人变革·辰年；WS004 在册。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L1412",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 1412,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "未月甲午日",
+        "original": "师",
+        "changed": "涣",
+        "yingqi_branch": "辰"
+      },
+      "b": {
+        "original": "师",
+        "changed": "涣",
+        "yingqi": "辰"
+      },
+      "decision": null,
+      "disposition": "已在册",
+      "case_id": "WS014",
+      "basis": "未月甲午日·师之涣·辰年；WS014 在册。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L1515",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 1515,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "丑月壬子日",
+        "original": "困",
+        "changed": "兑",
+        "yingqi_branch": "申"
+      },
+      "b": {
+        "original": "困",
+        "changed": "兑",
+        "yingqi": "申"
+      },
+      "decision": null,
+      "disposition": "新候选·日期不可重建",
+      "case_id": "",
+      "basis": "与 L1032 同案（巳月未日·困之兑·申日）；日柱缺干，重复验注，411 批同日结案。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L1581",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 1581,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "辰月戊子日",
+        "original": "比",
+        "changed": "咸",
+        "yingqi_branch": "卯"
+      },
+      "b": {
+        "original": "比",
+        "changed": "咸",
+        "yingqi": "卯"
+      },
+      "decision": null,
+      "disposition": "已在册",
+      "case_id": "WS017",
+      "basis": "辰月戊子日·比之咸·卯日；WS017 在册。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L1680",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 1680,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "午月戊午日",
+        "original": "升",
+        "changed": "恒",
+        "yingqi_branch": "戌"
+      },
+      "b": {
+        "original": "升",
+        "changed": "恒",
+        "yingqi": "戌"
+      },
+      "decision": null,
+      "disposition": "已在册",
+      "case_id": "WS019",
+      "basis": "午月戊午日·升之恒·戌日；WS019 在册。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L1741",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 1741,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "午月庚寅日",
+        "original": "大畜",
+        "changed": "中孚",
+        "yingqi_branch": "申"
+      },
+      "b": {
+        "original": "临",
+        "changed": "节",
+        "yingqi": "申"
+      },
+      "decision": "B",
+      "disposition": "新候选·日期不可重建",
+      "case_id": "",
+      "basis": "真案「甲午日又得临之节」——日柱完整但无月建；承前案午月无原文依据（再占日期不承接），411 批按 §六.5 不补、结案。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L1798",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 1798,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "卯月辛丑日",
+        "original": "晋",
+        "changed": null,
+        "yingqi_branch": "巳"
+      },
+      "b": {
+        "original": "恒",
+        "changed": "大过",
+        "yingqi": "巳"
+      },
+      "decision": "B",
+      "disposition": "已在册",
+      "case_id": "WSD001",
+      "basis": "恒之大过已在方向集 WSD001（无应期）；本册应期巳未进方向集，不重复计数。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L1862",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 1862,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "未月癸亥日",
+        "original": "艮",
+        "changed": null,
+        "yingqi_branch": "申"
+      },
+      "b": {
+        "original": "艮",
+        "changed": null,
+        "yingqi": "申"
+      },
+      "decision": null,
+      "disposition": "已在册",
+      "case_id": "WS021/ZDP006",
+      "basis": "未月癸亥日·艮·申日；WS021／ZDP006 在册。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L1871",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 1871,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "酉月甲辰日",
+        "original": "遁",
+        "changed": "姤",
+        "yingqi_branch": "亥"
+      },
+      "b": {
+        "original": "遁",
+        "changed": "姤",
+        "yingqi": "亥"
+      },
+      "decision": null,
+      "disposition": "不升",
+      "case_id": "",
+      "basis": "与 L1567 同盘异注（dup）；应期取自同行另一案。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L2084",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 2084,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "未月丙午日",
+        "original": "离",
+        "changed": null,
+        "yingqi_branch": "寅"
+      },
+      "b": {
+        "original": "离",
+        "changed": null,
+        "yingqi": "寅"
+      },
+      "decision": null,
+      "disposition": "已在册",
+      "case_id": "ZD214",
+      "basis": "真案未月丙午日·离之旅·寅/卯/辰三支；建器锚句选择失败（多支/时辰句）。；403 批已入册 ZD214（建器修复后书证完整）",
+      "next_batch": "",
+      "enrolled_batch": 403
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L2093",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 2093,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "未月丙午日",
+        "original": "离",
+        "changed": null,
+        "yingqi_branch": "寅"
+      },
+      "b": {
+        "original": "坎",
+        "changed": "井",
+        "yingqi": "酉"
+      },
+      "decision": "B",
+      "disposition": "不升",
+      "case_id": "",
+      "basis": "498批回原文核毕：L2086\"戌日丙午日占何日雨，得坎之井卦\"妻财午火应动化父母酉金；L2093验语\"果于酉日天变，戌日而雨，午火财爻墓于戌也\"。毕业册ZD214错配为\"离之旅·未月丙午日\"（卦名/月建串自上一例），属建器串味；修ZD214系改外部集机读值，本批不动读数，另批处理。本条不升。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L2240",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 2240,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "戌月辛亥日",
+        "original": "比",
+        "changed": "观",
+        "yingqi_branch": "卯"
+      },
+      "b": {
+        "original": "比",
+        "changed": "观",
+        "yingqi": "卯"
+      },
+      "decision": null,
+      "disposition": "已在册",
+      "case_id": "WS029",
+      "basis": "与 L2107 同案（戌月辛亥日·比之观·卯年）；dz 底本重复行。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L2324",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 2324,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "酉月壬辰日",
+        "original": "恒",
+        "changed": null,
+        "yingqi_branch": "卯"
+      },
+      "b": {
+        "original": "噬嗑",
+        "changed": "否",
+        "yingqi": "卯"
+      },
+      "decision": "B",
+      "disposition": "非单点应期",
+      "case_id": "",
+      "basis": "真案「命再占得噬嗑变否」无独立日期行；验语「卯年…巳年…未年」三结果，本就不属单点应期。411 批改判结案。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L2332",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 2332,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "巳月己丑日",
+        "original": "归妹",
+        "changed": "临",
+        "yingqi_branch": "午"
+      },
+      "b": {
+        "original": "归妹",
+        "changed": "临",
+        "yingqi": "午"
+      },
+      "decision": null,
+      "disposition": "已在册",
+      "case_id": "WS031",
+      "basis": "巳月己丑日·归妹之临·午年；WS031 在册。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L2431",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 2431,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "寅月己酉日",
+        "original": "剥",
+        "changed": "无妄",
+        "yingqi_branch": "卯"
+      },
+      "b": {
+        "original": "剥",
+        "changed": "无妄",
+        "yingqi": "卯"
+      },
+      "decision": null,
+      "disposition": "已在册",
+      "case_id": "ZD222",
+      "basis": "真案寅月己酉日·剥之无妄·卯年；CASE_RE 单字题「占寿」不识别，且日期「已酉」转录混淆。；403 批已入册 ZD222（建器修复后书证完整）",
+      "next_batch": "",
+      "enrolled_batch": 403
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L2451",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 2451,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "丑月戊子日",
+        "original": "益",
+        "changed": "中孚",
+        "yingqi_branch": "亥"
+      },
+      "b": {
+        "original": "益",
+        "changed": "中孚",
+        "yingqi": "亥"
+      },
+      "decision": null,
+      "disposition": "已在册",
+      "case_id": "WS034",
+      "basis": "丑月戊子日·益之中孚·亥日；WS034 在册。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L2653",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 2653,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "申月辛卯日",
+        "original": "复",
+        "changed": null,
+        "yingqi_branch": "未"
+      },
+      "b": {
+        "original": "复",
+        "changed": null,
+        "yingqi": "未"
+      },
+      "decision": null,
+      "disposition": "已在册",
+      "case_id": "ZD139/ZDP020",
+      "basis": "申月辛卯日·复·未月；ZD139／ZDP020 在册。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L2900",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 2900,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "未月己巳日",
+        "original": "颐",
+        "changed": "噬嗑",
+        "yingqi_branch": "酉"
+      },
+      "b": {
+        "original": "颐",
+        "changed": "噬嗑",
+        "yingqi": "酉"
+      },
+      "decision": null,
+      "disposition": "已在册",
+      "case_id": "ZD151",
+      "basis": "真案寅月壬午日·颐之噬嗑·酉月；毕业册未月己巳日为串味，真案 ZD151 在册。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L3035",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 3035,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "未月丁卯日",
+        "original": "晋",
+        "changed": null,
+        "yingqi_branch": "辰"
+      },
+      "b": {
+        "original": "晋",
+        "changed": null,
+        "yingqi": "辰"
+      },
+      "decision": null,
+      "disposition": "已在册",
+      "case_id": "WS039/ZDP026",
+      "basis": "未月丁卯日·晋·辰日；与 L3380 同案（重复验注）。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L3198",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 3198,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "寅月丙午日",
+        "original": "临",
+        "changed": "既济",
+        "yingqi_branch": "巳"
+      },
+      "b": {
+        "original": "临",
+        "changed": "既济",
+        "yingqi": "巳"
+      },
+      "decision": null,
+      "disposition": "已在册",
+      "case_id": "WS043",
+      "basis": "寅月丙午日·临之既济·巳月；WS043 在册。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L3213",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 3213,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "巳月己亥日",
+        "original": "需",
+        "changed": "大过",
+        "yingqi_branch": "寅"
+      },
+      "b": {
+        "original": "需",
+        "changed": "大过",
+        "yingqi": "寅"
+      },
+      "decision": "b",
+      "disposition": "已在册",
+      "case_id": "WS044",
+      "basis": "巳月己亥日·需之大过·寅；WS044 在册。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L3263",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 3263,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "辰月戊辰日",
+        "original": "小过",
+        "changed": "豫",
+        "yingqi_branch": "申"
+      },
+      "b": {
+        "original": "小过",
+        "changed": "豫",
+        "yingqi": "申"
+      },
+      "decision": null,
+      "disposition": "已在册",
+      "case_id": "WS045",
+      "basis": "辰月戊辰日·小过之豫·申日；WS045 在册。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L3314",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 3314,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "亥月甲子日",
+        "original": "革",
+        "changed": "夬",
+        "yingqi_branch": "巳"
+      },
+      "b": {
+        "original": "革",
+        "changed": "夬",
+        "yingqi": "巳"
+      },
+      "decision": null,
+      "disposition": "已在册",
+      "case_id": "WS046",
+      "basis": "亥月甲子日·革之夬·巳日；WS046 在册。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L3338",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 3338,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "丑月庚午日",
+        "original": "履",
+        "changed": null,
+        "yingqi_branch": "巳"
+      },
+      "b": {
+        "original": "大畜",
+        "changed": "益",
+        "yingqi": "巳"
+      },
+      "decision": "B",
+      "disposition": "新候选·日期不可重建",
+      "case_id": "",
+      "basis": "真案「寅月亥日占主人何时回得大畜之益」——日柱只有「亥日」无干，无法重建；411 批按 §六.5 结案。",
+      "next_batch": ""
+    },
+    {
+      "id": "VER-zengshan_buyi_dz_dz-L3559",
+      "source": {
+        "file": "zengshan_buyi_dz.dz.txt",
+        "line": 3559,
+        "book": "增刪卜易(dz)"
+      },
+      "a": {
+        "date": "子月丁酉日",
+        "original": "萃",
+        "changed": null,
+        "yingqi_branch": "午"
+      },
+      "b": {
+        "original": "小过",
+        "changed": "剥",
+        "yingqi": "午"
+      },
+      "decision": "B",
+      "disposition": "非单点应期",
+      "case_id": "",
+      "basis": "真案「又得小过之剥」（三占）无独立日期行；验语「次年…巳年…午年连升」多结果，非单点。411 批改判结案。",
+      "next_batch": ""
+    }
+  ]
 }

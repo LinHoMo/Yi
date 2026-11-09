@@ -166,6 +166,9 @@ CURATED = {
         # 537 批：静卦增强回归守卫——逐静卦断言 advanced_analysis 含 enhance_reading 经典增强签名键，
         # 536 类「静默吞异常→增强段缺失」缺陷的常驻齿，挂 CI root-gates（守 528 约定不新增 check.py 门号）。
         "static_enhancement_guard": ("ondemand", "静卦增强回归守卫（537 批：逐静卦 advanced_analysis 经典增强签名键在场，536 缺陷态即缺失；--selftest 注入空增强判红有齿）"),
+        # 542 批：新器自落库即入表（511 批「未分类」教训）。挂 CI root-gates、不进 check.py，
+        # 与 535/537 批同型故 tier=ondemand 非 blocking；守 528 约定不新增门号。
+        "verify_yilin_candidates": ("ondemand", "《易林補遺》L1279 候选池同源复验（542 批：7 案引文逐字回底本＋ID 零泄漏进评分集＋无 expected 反推＋预注册未开卷；8 类内存负例，真盘零写入）"),
         "governance_map": ("tool", "本器：治理地图生成"),
         "stable_write": ("tool", "观察册幂等写共享模块（203 批：时间戳=内容最后变化，杜绝空转脏文件）"),
         "sweep_selftests": ("nightly", "器具全体检扫描器（213 批：声明面 53 器具逐真跑，注入损坏负例即体检；自身与编排器豁免；242 批增 rc×输出互验与 classify 五态）"),

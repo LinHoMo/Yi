@@ -16,6 +16,8 @@
 > 无插件自身代码改动）、281→**1.0.3**（随包引擎同步六爻 281 批占差事词典+WS003
 > 校勘）。
 
+## 2026-11-09 第五百四十二批（宿主侧·随包登记）：**宿主源码零改动，无引擎／技能产物变化；`npm --prefix dsh-plugin run check` 全绿**
+
 ## 2026-11-09 第五百四十一批（宿主侧·随包登记）：**宿主源码零改动；`SKILL.md` 随共享层真源去钉数重分发，`engine/` 与 `skills/` 随 build 重建。`npm --prefix dsh-plugin run check` 全绿**
 
 ## 2026-11-09 第五百四十批（宿主侧·随包登记）：**宿主源码零改动；`engine/` 随两科 data 变化重建，`skills/` 不变。`npm --prefix dsh-plugin run check` 全绿**

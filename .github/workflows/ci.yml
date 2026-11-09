@@ -45,6 +45,8 @@ jobs:
           python liuyao/dev_tools/static_enhancement_guard.py
           # 540 批：象层现代白话问法词表常驻判据（词表被删时评分门全绿，属静默退化面；守 528 约定挂 CI 不新增 check.py 门号）
           python liuyao/dev_tools/xiang_coverage.py --probe
+          # 542 批：易林補遺 L1279 七案候选池同源复验（逐字书证／零泄漏进评分集／无反推／未开卷；不新增 check.py 门号）
+          python liuyao/dev_tools/verify_yilin_candidates.py
   # 对外声明 Python 3.10+：本 job 在最低版跑两科冒烟、两科古籍回归与单测。
   # 六爻回归实跑 19/19、思维链 12/12，旧的「17/19 待裁」排除理由已失效。
   min-python-smoke:
