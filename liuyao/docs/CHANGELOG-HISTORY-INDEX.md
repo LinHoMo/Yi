@@ -80,3 +80,4 @@
 ## 2026-11-05 第五百二十批（引入 pytest 测试框架）：**两科 tests/ 既有单测接入 pytest 运行器。six_god_wang_shuai_test.py 本即原生 pytest（def test_* + assert），直接收集；其余 main() 式（liuyao smoke/regression/thinking_chain、bazi smoke/regression，沿用 `python xxx_test.py` 习惯、errs 累积 + return 1）由根 conftest 的 collect_ignore 排除出自动收集，改由 bridge_test.py 以独立子进程 `python <file>` 桥接成 pytest 用例（进程间零 import 污染、与 CI 既有调用一致）。新增 pyproject.toml（[tool.pytest.ini_options]：testpaths/python_files=`*_test.py`/pythonpath）、根 conftest.py（collect_ignore）、bridge_test.py（subprocess 桥接）、requirements-dev.txt（pytest>=7）；CI 新增 pytest job。旧 `python tests/xxx_test.py` 直接跑路径保持不变。实跑 `python -m pytest`：11 passed（6 原生 + 5 桥接）**
 ## 2026-11-06 第五百二十四批（六爻·ontology 锚定门假绿根治与产物同源）：**[44] 扩守三形态锚点＋产物逐字同源，按真源修 12 条死引用；正文见 git 提交**
 ## 2026-11-06 第五百二十五批（全仓·生成物同源复验补齐）：**应期审计报告头改幂等 sha、简报拆只读 --check 挂 CI；正文见 git 提交**
+## 2026-11-06 第五百二十六批（全仓·器具全体检声明面收口）：**声明面纳入根级门与 sync 器（77→83），修注入夹具 CRLF 字节副作用；正文见 git 提交**

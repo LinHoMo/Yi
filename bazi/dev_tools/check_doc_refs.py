@@ -227,7 +227,15 @@ def scan() -> tuple[list[str], int]:
 
 
 def selftest(problems: list[str]) -> None:
-    """负例自证：造一个含死引用的临时文件，本器必须抓到。"""
+    """负例自证：造一个含死引用的临时文件，本器必须抓到。
+
+    541 批补「历史残留自清」：本器把夹具写进**学科目录**（scan 只认学科目录，
+    不能用系统临时目录），靠 finally 清理。若上一轮进程被中断／超时，残留留在盘上，
+    下一次**真盘扫描**会把它读成死引用并判红——541 批实证：预埋残留时
+    `--selftest` rc=1，报的正是夹具自己的死指针；跑完 finally 又把它清掉，
+    于是表现为「偶发一次 FAIL、复跑即绿」，极易被当成抖动放过。此处在造夹具前
+    先删同名残留，让门对历史中断免疫；末尾原有的复扫仍守「本次清理干净」。
+    """
     tmp = DISC / "references" / "_selftest_deadref.md"
     real_md = sorted((DISC / "references").glob("*.md"))
     real_py = sorted((DISC / "scripts").glob("*.py"))
@@ -236,6 +244,16 @@ def selftest(problems: list[str]) -> None:
         return
     ok_a = "references/" + real_md[0].name
     ok_b = "scripts/" + real_py[0].name
+    # 第四式（照八字科第一百六十六批·同步判据不同文字）：**JSON 数据文件里**的死指针
+    # 同样必抓——本器旧版只走 .md/.py，rule_registry.json 的 HANDOFF 幽灵指针就是这么漏的。
+    # D2 分区：六爻 data/rules/ 下已分 domain/legacy；自检临时文件落在 domain/（若存在），
+    # 否则落扁平根（八字）。两科同一份代码（AGENTS.md §二 复制分发）。
+    _rules_dir = (DISC / "data" / "rules" / "domain"
+                  if (DISC / "data" / "rules" / "domain").exists()
+                  else DISC / "data" / "rules")
+    tmp_json = _rules_dir / "_selftest_deadref.json"
+    for stale in (tmp, tmp_json):
+        stale.unlink(missing_ok=True)
     tmp.write_text("见 `docs/zz_probe_deadref_a.md` 与 `dev_tools/zz_probe_deadref_b.py`。\n"
                    "裸路径也要抓（docs/zz_probe_deadref_c.md 无反引号）。\n"
                    "tools 目录也要抓（tools/zz_probe_deadref_tool.py）。\n"
@@ -247,14 +265,6 @@ def selftest(problems: list[str]) -> None:
                    f"真裸名不误报：`{real_py[0].name}` 在盘。\n"
                    f"真路径不得误报：{ok_a} 与 {ok_b} 都在。\n",
                    encoding="utf-8")
-    # 第四式（照八字科第一百六十六批·同步判据不同文字）：**JSON 数据文件里**的死指针
-    # 同样必抓——本器旧版只走 .md/.py，rule_registry.json 的 HANDOFF 幽灵指针就是这么漏的。
-    # D2 分区：六爻 data/rules/ 下已分 domain/legacy；自检临时文件落在 domain/（若存在），
-    # 否则落扁平根（八字）。两科同一份代码（AGENTS.md §二 复制分发）。
-    _rules_dir = (DISC / "data" / "rules" / "domain"
-                  if (DISC / "data" / "rules" / "domain").exists()
-                  else DISC / "data" / "rules")
-    tmp_json = _rules_dir / "_selftest_deadref.json"
     tmp_json.write_text(json.dumps(
         {"coverage": "见 `docs/zz_probe_deadref_d.md`；真路径不误报 " + ok_a},
         ensure_ascii=False) + "\n", encoding="utf-8")
@@ -331,8 +341,26 @@ def range_selftest(problems: list[str]) -> None:
         problems.append("负例自证假阳性：逐条列号的合法写法被误判")
 
 
+def _purge_stale_selftest_artifacts() -> None:
+    """541 批：仅在 `--selftest` 模式下、真盘扫描**之前**清掉历史残留夹具。
+
+    夹具必须落在学科目录（scan 只认学科目录），靠 finally 清理；上一轮进程被
+    中断／超时就会留下同名文件，下一次 `main()` 第 346 行的真盘 scan 会把它读成
+    死引用并判红。自检模式本来就写这两个文件，提前自清是同一生命周期的一部分；
+    **裸门不清**（只读门不产生副作用，残留该被如实报出来交人工定性）。
+    """
+    rules = (DISC / "data" / "rules" / "domain"
+             if (DISC / "data" / "rules" / "domain").exists()
+             else DISC / "data" / "rules")
+    for p in (DISC / "references" / "_selftest_deadref.md",
+              rules / "_selftest_deadref.json"):
+        p.unlink(missing_ok=True)
+
+
 def main() -> int:
     ap = argparse_flags()
+    if ap:
+        _purge_stale_selftest_artifacts()
     problems, examined = scan()
     for x in range_claims():
         problems.append("门禁区间写死（会随增补变假话）：" + x)

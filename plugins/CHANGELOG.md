@@ -6,6 +6,8 @@
 > **497 批起只保留 DSH 一个宿主**：claude/codex/gemini/yan 四家适配器目录、
 > `publish.mjs`（git 发行树）及其在 build/selftest/ci/文档里的登记一并删除。
 
+## 2026-11-09 第五百四十一批（共享层·真源去钉数与导览口径）：**`plugins/SKILL.md` 去掉最后一处手钉篇目大小（「8KB，短」→ 回指 `references/INDEX.md`），补齐 539 批遗漏；`kb-docs.mjs` 口径注记第③条明确「技能正文真源同样不得钉会变数」。build 重分发后宿主根 SKILL.md 与两处技能目录 SKILL.md 均与真源逐字节同源，selftest `[3]`／`[1]` 全绿。本卷无运行时源码改动**
+
 ## 2026-11-09 第五百四十批（共享层·随包登记）：**本批 `plugins/` 无源码改动；`build.mjs` 因两科 `data/*.json` 变化（六爻 `xiang_layer.json`、八字 `narrative_templates.json`）重建 `engine/` 产物，`selftest [1.6]` 全量同源通过。CI root-gates 新增一行 `liuyao/dev_tools/xiang_coverage.py --probe`（象层词表常驻判据，守 528 约定不新增门号）**
 
 ## 2026-11-08 第五百三十九批（共享层·单一真源与夹具定性）：**新增 `plugins/scripts/dev-only.mjs`，把 `build.mjs` 的 DEV_ONLY 与 `selftest.mjs [2]` 的 DEV_ONLY_SHIMS 收成一份登记表（528 批 G11 同型的双份手工清单）；521 批已删 shim，名单定性为防复活哨兵，`[2]` 加空表假绿断言。`plugins/mcp/server.mjs`／`schema.mjs` 由「Yan 插件侧 MCP 服务」重定性为「1.0 契约 stdio 自检夹具」——497 批删宿主后不再服务任何宿主，但 `[4]` 真跑 initialize／tools/list／yi_kb／yi_liuyao、`[5]` 吃其 tools/list 断言冻结面，删它等于砍两道有牙的门，故保留并改 SERVER_INFO。`plugins/SKILL.md` 去掉手钉「47KB」、`kb-docs.mjs` 格局数按正文「十二大→十五大」更正并立「描述不得钉会变数」口径。实跑：build 完成、selftest 8 段全绿（知识库 14 篇、包体 201 文件／2.92MB）、`[1]` 逐字节同源**

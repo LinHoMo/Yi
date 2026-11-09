@@ -14,6 +14,9 @@
 **540 批新增 `--probe`**：现代白话问法词表的常驻判据（只读）。象不进评分、golden 案例
 又是古籍体问句，词表被删/改不会有任何评分门发现——属静默退化面。探针逐条对拍
 `data/rules/domain/xiang_layer.json#modern_question_probe`，并做纯内存负例自证。
+**541 批补 `--selftest` 同名入口**：全体检 `sweep_selftests.py` 只扫 `--selftest` 字面量，
+540 批新增的判据只有 `--probe`，故没进声明面（G9「全部」假全称同族）。别名让声明面
+现算时把它收进来；两个旗标跑的是同一个 `probe()`，不产生第二份判据。
 
 **本器不产任何命中率、对齐分或质量结论**——象是素材，素材的「出没出」和
 「准不准」是两件事，混着报就是把覆盖当成绩（SKILL.md 铁律三同款口径纪律）。
@@ -191,8 +194,12 @@ def main() -> int:
     ap.add_argument("--json", action="store_true", help="输出机器可读 JSON")
     ap.add_argument("--probe", action="store_true",
                     help="540 批：现代白话问法词表常驻判据（只读 + 负例自证）")
+    ap.add_argument("--selftest", action="store_true",
+                    help="同 --probe。541 批：让本器进入 sweep_selftests 的声明面——"
+                         "全体检只扫 `--selftest` 字面量，540 批新增的常驻判据只有 --probe，"
+                         "于是「全部声明器具逐真跑」又一次名不副实（G9 同族）")
     args = ap.parse_args()
-    if args.probe:
+    if args.probe or args.selftest:
         return probe()
     data = scan()
     if args.json:

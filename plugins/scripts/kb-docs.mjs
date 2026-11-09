@@ -12,6 +12,9 @@
  * INDEX.md 的文件大小由 `build.mjs` 现场算，是真值源）；本表原写「十二大」
  * 而正文标题是「六爻十五大经典格局参考」、DOCS.md 也写十五大，本批按正文更正。
  * ② 改描述＝改随包知识库的导览口径，同批跑 build + selftest 并登记 CHANGELOG。
+ * ③ 541 批补：同一条规矩也适用于技能正文真源 `plugins/SKILL.md`——539 批清掉了
+ *    手钉的「47KB」，却漏掉相邻一行「8KB，短」（当时实盘确为 8KB，但仍是会变的数）。
+ *    541 批把该行也改为回指 `references/INDEX.md`，至此真源与登记表都不再钉篇目大小。
  */
 export const KB_DOC = new Map([
   ['liuyao/najia_rules.md', '需要核对纳甲装卦规则：八宫次序、纳支口诀、世应定位、六亲六神推演、旬空'],

@@ -13,7 +13,7 @@ description: 六爻纳甲与八字四柱的确定性排盘与解读。当用户�
 判据文档在 `references/` 下，篇数以 `references/INDEX.md` 为准（随批更新）：
 
 - 先读 **`references/INDEX.md`** —— 它是一张「什么问题读哪一篇」的表，只有几十行。
-- 常见用法：判断经典格局查 `liuyao/pattern_reference.md`（8KB，短）；
+- 常见用法：判断经典格局查 `liuyao/pattern_reference.md`（短篇；大小见 `references/INDEX.md` 现场登记，不在此钉数——539 批清掉 47KB 时漏了这一处，541 批补齐）；
   核对纳甲规则查 `liuyao/najia_rules.md`（只在确实需要时读；篇目大小以 `references/INDEX.md` 现场登记为准，不在此钉数——539 批前的「47KB」与实盘 46KB 分家）；
   十神/纳音术语查 `bazi/` 下同名文件。
 - **不要**为了「显得充分」把大部头通读一遍——读错一篇就白占一大块上下文。
