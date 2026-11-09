@@ -168,7 +168,9 @@ CURATED = {
         "static_enhancement_guard": ("ondemand", "静卦增强回归守卫（537 批：逐静卦 advanced_analysis 经典增强签名键在场，536 缺陷态即缺失；--selftest 注入空增强判红有齿）"),
         # 542 批：新器自落库即入表（511 批「未分类」教训）。挂 CI root-gates、不进 check.py，
         # 与 535/537 批同型故 tier=ondemand 非 blocking；守 528 约定不新增门号。
-        "verify_yilin_candidates": ("ondemand", "《易林補遺》L1279 候选池同源复验（542 批：7 案引文逐字回底本＋ID 零泄漏进评分集＋无 expected 反推＋预注册未开卷；8 类内存负例，真盘零写入）"),
+        "verify_yilin_candidates": ("ondemand", "《易林補遺》L1279 候选池同源复验（542 批：7 案引文逐字回底本＋ID 零泄漏进评分集＋无 expected 反推＋开卷状态合法；10 类内存负例，真盘零写入）"),
+        # 543 批：一次性开卷器，同批入表（511 批教训）。--verify 只读挂 CI，--open 只许一次。
+        "open_yilin_candidates": ("ondemand", "易林候选池机读重建＋一次性开卷（543 批：卦名归一化／月序转月支／动爻反推变卦全归代码；top-1 逐例红绿、n<30 不出率值、7 类负例）"),
         "governance_map": ("tool", "本器：治理地图生成"),
         "stable_write": ("tool", "观察册幂等写共享模块（203 批：时间戳=内容最后变化，杜绝空转脏文件）"),
         "sweep_selftests": ("nightly", "器具全体检扫描器（213 批：声明面 53 器具逐真跑，注入损坏负例即体检；自身与编排器豁免；242 批增 rc×输出互验与 classify 五态）"),

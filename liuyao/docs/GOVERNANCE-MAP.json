@@ -1,8 +1,8 @@
 {
- "count": 77,
+ "count": 78,
  "by_tier": {
   "tool": 4,
-  "ondemand": 15,
+  "ondemand": 16,
   "nightly": 12,
   "build": 12,
   "blocking": 34
@@ -431,6 +431,13 @@
    "doc": "易学图谱 AI subgraph 检索：按 kid 输出该概念的完整子图。"
   },
   {
+   "script": "open_yilin_candidates.py",
+   "tier": "ondemand",
+   "guards": "易林候选池机读重建＋一次性开卷（543 批：卦名归一化／月序转月支／动爻反推变卦全归代码；top-1 逐例红绿、n<30 不出率值、7 类负例）",
+   "run_by_check_py": false,
+   "doc": "《易林補遺》L1279 候选池：机读重建 + 第 542 批冻结假设的一次性开卷（第 543 批）。"
+  },
+  {
    "script": "outcome.py",
    "tier": "blocking",
    "guards": "现实回填统计出口（Wilson/n<30 拒判；195 批划界：不写封存）",
@@ -538,7 +545,7 @@
   {
    "script": "verify_yilin_candidates.py",
    "tier": "ondemand",
-   "guards": "《易林補遺》L1279 候选池同源复验（542 批：7 案引文逐字回底本＋ID 零泄漏进评分集＋无 expected 反推＋预注册未开卷；8 类内存负例，真盘零写入）",
+   "guards": "《易林補遺》L1279 候选池同源复验（542 批：7 案引文逐字回底本＋ID 零泄漏进评分集＋无 expected 反推＋开卷状态合法；10 类内存负例，真盘零写入）",
    "run_by_check_py": false,
    "doc": "《易林補遺》L1279 候选池同源复验（第 542 批，只读）。"
   },

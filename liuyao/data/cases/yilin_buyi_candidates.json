@@ -24,7 +24,7 @@
   "preregistration": {
     "registered_at": "2026-11-09",
     "batch": 542,
-    "status": "未开卷·不入册·不出分",
+    "status": "已开卷一次·逐例红绿·无率值",
     "hypothesis": "若将来把这批候选按 §四 入册并开卷，主指标为「引擎应期候选支与书载应期支的 top-1 一致率」；方向为观察性，不预设引擎优于或劣于现行外部集。",
     "primary_metric": "top-1 应期支一致率（集合名＝易林補遺候选集，n 以实际入册且日期可重建者为准，须标是否参与过调参）",
     "decision_rule": "n≥30 才许出率值且必带 Wilson 95%CI，并与全池随机零模型对照；与现行外部集比较须配对检验（190 批 rank_experiment.py 五条协议为模板）。n<30 只报逐例红绿，不作任何率值或命中率声称。开封只此一次，无论结果如何。",
@@ -144,5 +144,156 @@
       "dedup": "三元组零命中（归妹卦安静全库无）",
       "notes": "互体段逐字照录；「无中生有」是底本断语，不作象数结论。"
     }
-  ]
+  ],
+  "open_result": {
+    "opened_at": "2026-11-09T15:14:18+08:00",
+    "commit_at_open": "0f91f91",
+    "open_count": 1,
+    "scoring_rule_sha": "7867316a7303",
+    "metric_frozen": "top-1 应期支一致（542 批 preregistration 冻结；开卷后不得改指标）",
+    "aggregate": null,
+    "_comment": "可判 n=3 < 30，按 542 批冻结的 decision_rule 只报逐例红绿：aggregate 恒 null、结构里不许出现率值字段、不作任何能力声称。判卷只追加、开封只此一次；in_candidate_pool 仅作排序归因线索，不是主指标，不得据此改冻结指标。",
+    "cases": [
+      {
+        "id": "YLB001",
+        "enroll_status": "单点应期·可回指",
+        "book_branch": "亥",
+        "engine_top1": "子",
+        "engine_candidates": [
+          "子",
+          "未",
+          "午",
+          "戌",
+          "亥"
+        ],
+        "rebuilt": {
+          "date": "午月甲子日",
+          "original": "观",
+          "changed": "益"
+        },
+        "in_candidate_pool": true,
+        "result": "未命中"
+      },
+      {
+        "id": "YLB002",
+        "enroll_status": "单点应期·可回指",
+        "book_branch": "亥",
+        "engine_top1": "巳",
+        "engine_candidates": [
+          "巳",
+          "亥",
+          "酉",
+          "戌",
+          "卯"
+        ],
+        "rebuilt": {
+          "date": "辰月丁卯日",
+          "original": "涣",
+          "changed": "姤"
+        },
+        "in_candidate_pool": true,
+        "result": "未命中"
+      },
+      {
+        "id": "YLB003",
+        "enroll_status": "非单点应期·不升",
+        "book_branch": null,
+        "engine_top1": "戌",
+        "engine_candidates": [
+          "戌",
+          "子",
+          "午",
+          "亥",
+          "辰"
+        ],
+        "rebuilt": {
+          "date": "亥月戊辰日",
+          "original": "剥",
+          "changed": "大畜"
+        },
+        "in_candidate_pool": null,
+        "result": "不适用·非单点应期·不升"
+      },
+      {
+        "id": "YLB004",
+        "enroll_status": "单点应期·可回指",
+        "book_branch": "午",
+        "engine_top1": "巳",
+        "engine_candidates": [
+          "巳",
+          "辰",
+          "亥",
+          "戌",
+          "未"
+        ],
+        "rebuilt": {
+          "date": "午月癸卯日",
+          "original": "萃",
+          "changed": "否"
+        },
+        "in_candidate_pool": false,
+        "result": "未命中"
+      },
+      {
+        "id": "YLB005",
+        "enroll_status": "跨月应期·不换算",
+        "book_branch": null,
+        "engine_top1": "辰",
+        "engine_candidates": [
+          "辰",
+          "午",
+          "子",
+          "巳",
+          "申"
+        ],
+        "rebuilt": {
+          "date": "辰月庚辰日",
+          "original": "师",
+          "changed": "剥"
+        },
+        "in_candidate_pool": null,
+        "result": "不适用·跨月应期·不换算"
+      },
+      {
+        "id": "YLB006",
+        "enroll_status": "跨月应期·不换算",
+        "book_branch": null,
+        "engine_top1": "巳",
+        "engine_candidates": [
+          "巳",
+          "寅",
+          "申",
+          "子",
+          "丑"
+        ],
+        "rebuilt": {
+          "date": "申月癸亥日",
+          "original": "艮",
+          "changed": null
+        },
+        "in_candidate_pool": null,
+        "result": "不适用·跨月应期·不换算"
+      },
+      {
+        "id": "YLB007",
+        "enroll_status": "跨月应期·不换算",
+        "book_branch": null,
+        "engine_top1": "丑",
+        "engine_candidates": [
+          "丑",
+          "未",
+          "戌",
+          "亥"
+        ],
+        "rebuilt": {
+          "date": "戌月辛未日",
+          "original": "归妹",
+          "changed": null
+        },
+        "in_candidate_pool": null,
+        "result": "不适用·跨月应期·不换算"
+      }
+    ],
+    "result_sha": "c48b3afb48f7b436"
+  }
 }

@@ -116,8 +116,18 @@ def verify(pool: dict, line: str, splits: set[str],
     pre = pool.get("preregistration") or {}
     if not pre.get("hypothesis") or not pre.get("decision_rule"):
         bad.append("预注册缺假设或判卷规则（§四）")
-    if pre.get("status") != "未开卷·不入册·不出分":
-        bad.append("预注册状态不是未开卷——本池不得出分")
+    # 543 批：允许「已开卷一次」，但状态与开卷记录必须成对出现。
+    allowed_status = ("未开卷·不入册·不出分", "已开卷一次·逐例红绿·无率值")
+    if pre.get("status") not in allowed_status:
+        bad.append("预注册状态非法（只允许未开卷，或已开卷一次·逐例红绿·无率值）")
+    if pre.get("status") == allowed_status[1]:
+        op = pool.get("open_result") or {}
+        if not op:
+            bad.append("状态为已开卷却缺 open_result")
+        elif op.get("aggregate") is not None or op.get("open_count") != 1:
+            bad.append("开卷记录含率值或不止一次开封（n<30 只报逐例红绿）")
+    elif pool.get("open_result"):
+        bad.append("未开卷状态却带 open_result")
     return bad
 
 
@@ -175,8 +185,16 @@ def selftest() -> int:
     probes.append(("底本哈希漂移被抓", bool(v(p, sha_override="0" * 64)), ""))
 
     p = copy.deepcopy(pool)
-    p["preregistration"]["status"] = "已开卷"
-    probes.append(("未开卷状态被改被抓", bool(v(p)), ""))
+    p["preregistration"]["status"] = "已开卷·已出分"
+    probes.append(("预注册状态被改被抓", bool(v(p)), ""))
+
+    p = copy.deepcopy(pool)
+    p.pop("open_result", None)
+    probes.append(("已开卷却缺判卷记录被抓", bool(v(p)), ""))
+
+    p = copy.deepcopy(pool)
+    p["open_result"]["aggregate"] = 66.7
+    probes.append(("开卷出率值被抓", bool(v(p)), ""))
 
     fails = [f"{name}{'：' + str(detail) if detail else ''}"
              for name, caught, detail in probes if not caught]
@@ -201,14 +219,16 @@ def main() -> int:
             print("  × " + b)
         if bad:
             return 1
-        print("  √ 真盘候选池同源：7 案逐字、零泄漏、无反推、预注册在册")
+        print("  √ 真盘候选池同源：7 案逐字、零泄漏、无反推、开卷状态合法")
         return 0
     bad = run_real()
     for b in bad:
         print("  × " + b)
     if bad:
         return 1
-    print("  √ 候选池同源：7 案引文逐字命中 L1279，ID 零泄漏进评分集，预注册未开卷")
+    state = (json.loads(POOL.read_text(encoding="utf-8"))
+             .get("preregistration", {}).get("status", "?"))
+    print(f"  √ 候选池同源：7 案引文逐字命中 L1279，ID 零泄漏进评分集，预注册状态＝{state}")
     return 0
 
 
