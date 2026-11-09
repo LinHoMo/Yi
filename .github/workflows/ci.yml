@@ -47,6 +47,8 @@ jobs:
           python liuyao/dev_tools/xiang_coverage.py --probe
           # 542 批：易林補遺 L1279 七案候选池同源复验（逐字书证／零泄漏进评分集／无反推／未开卷；不新增 check.py 门号）
           python liuyao/dev_tools/verify_yilin_candidates.py
+          # 546 批：卜筮全书候选池同源复验（逐字书证／零泄漏进评分集／无反推／excluded 承袭同案证据；不新增 check.py 门号）
+          python liuyao/dev_tools/verify_bushi_candidates.py
           # 543 批：一次性开卷记录校验（只此一次开封／逐例红绿／无率值／判卷未改写／指标未偷换；只读）
           python liuyao/dev_tools/open_yilin_candidates.py --verify
   # 对外声明 Python 3.10+：本 job 在最低版跑两科冒烟、两科古籍回归与单测。

@@ -1,8 +1,8 @@
 {
- "count": 78,
+ "count": 79,
  "by_tier": {
   "tool": 4,
-  "ondemand": 16,
+  "ondemand": 17,
   "nightly": 12,
   "build": 12,
   "blocking": 34
@@ -541,6 +541,13 @@
    "guards": "用神来源矩阵",
    "run_by_check_py": false,
    "doc": "用神取法来源矩阵：每条问法是靠带引文的法则、覆盖层、词典还是兜底定的用神。"
+  },
+  {
+   "script": "verify_bushi_candidates.py",
+   "tier": "ondemand",
+   "guards": "《卜筮全书》候选池同源复验（546 批：8 案引文逐字回底本对应行＋ID 零泄漏进评分集＋无 expected 反推＋5 项 excluded 带《黄金策》承袭同案证据；11 类内存负例，真盘零写入）",
+   "run_by_check_py": false,
+   "doc": "《卜筮全书》候选池同源复验（第 546 批，只读）。"
   },
   {
    "script": "verify_yilin_candidates.py",
