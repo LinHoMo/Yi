@@ -21,5 +21,7 @@
   "source_file": "data/sources/huozhulin.wikitext.txt",
   "provenance_backfilled_at": "2026-10-01",
   "provenance_refreshed_at": "2026-11-02",
-  "note": "公版古籍原文的字符级转存，未做任何改写或模型转写。**补写说明**：正文的抓取时刻与子页清单当时未留痕，故 fetched/page_count 标为未知，不编造。**433 批复核**：在盘为 LF 版；2026-10-01 登记的 sha256 `2cc29b1e…`、67945 字节、25835 字对应的是 CRLF 版，差 1279 字节/字恰为 1279 个换行各少一个 \\r，正文未变；sha256/bytes/chars 按在盘文件重测，非空行 909 与 headings 84 不变。"
+  "note": "公版古籍原文的字符级转存，未做任何改写或模型转写。**补写说明**：正文的抓取时刻与子页清单当时未留痕，故 fetched/page_count 标为未知，不编造。**433 批复核**：在盘为 LF 版；2026-10-01 登记的 sha256 `2cc29b1e…`、67945 字节、25835 字对应的是 CRLF 版，差 1279 字节/字恰为 1279 个换行各少一个 \\r，正文未变；sha256/bytes/chars 按在盘文件重测，非空行 909 与 headings 84 不变。",
+  "eol_on_disk": "LF",
+  "sha256_lf_text": "b3bed441a997370275ab2e5988038ae3a55fcf9986e8f4a344f0083b78c60b64"
 }

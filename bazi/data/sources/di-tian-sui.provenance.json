@@ -61,5 +61,7 @@
     "headings": 53
   },
   "source_file": "data/sources/di-tian-sui.wikitext.txt",
-  "note": "公版古籍原文的字符级转存，未做任何改写或模型转写；子页以 <!-- ==== 标题 ==== --> 分隔。"
+  "note": "公版古籍原文的字符级转存，未做任何改写或模型转写；子页以 <!-- ==== 标题 ==== --> 分隔。",
+  "eol_on_disk": "LF",
+  "sha256_lf_text": "465c279ad43866ba7509073a0b1896aa94c1e7aa10d1f9cb9efc90fd5a8c8171"
 }

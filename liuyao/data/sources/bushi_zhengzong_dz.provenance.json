@@ -39,5 +39,7 @@
       "quote_rule": "引用这些占类章时**不可一律取首现行号**：遇上述两版本句（圆神/圆通神）须双行号并列标注，其余章按首现取。",
       "registered": "2026-10-07 / OPT-bushi_zhengzong_dz-03"
     }
-  ]
+  ],
+  "eol_on_disk": "LF",
+  "sha256_lf_text": "853fd81875ac01e472e2817b65420aa1d11093380ffe3883e4d6d1041ede0374"
 }

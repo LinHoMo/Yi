@@ -25,11 +25,13 @@
             三项均由 443 批对全仓 36 份**登记了该字段**的 provenance 逐格重算验证：
             0 处改值、0 处变空，定义由「36/36 命中」反推并固定下来，不是猜的。
 
-444 批补核三项**登记元数据**（同样只在登记时才核）：
-  page_count  —— 必须等于 `pages` 列表长度（36 份登记，实测 36/36 相符）；
-  eol_on_disk —— 在盘换行形态：全 LF→"LF"、全 CRLF→"CRLF"、两者兼有→"mixed"、
-                 无换行→"none"（3 份登记，实测全符；这是 433 批 CRLF/LF 事故的常设哨）；
-  sha256_lf_text —— 把原始字节里的 `\r\n` 折成 `\n` 后取 SHA-256（1 份登记，实测相符）。
+444 批补核三项**登记元数据**：
+  page_count  —— 必须等于 `pages` 列表长度（有登记才核，旧册本就可能没有）；
+  eol_on_disk / sha256_lf_text —— **545 批起逐份强制登记**。此前二者「有登记才核」，
+    两科 39 份里仅 3 份登记 eol、1 份登记 LF 哈希，其余底本换行被改不会有任何门发现，
+    正是 433 批《火珠林》CRLF→LF 事故留下的静默面。口径：eol_on_disk 为
+    全 LF→"LF"、全 CRLF→"CRLF"、两者兼有→"mixed"、无换行→"none"；
+    sha256_lf_text 为原始字节把 `\r\n` 折成 `\n` 后取 SHA-256（见 measure/_eol）。
 
 445 批补齐台账表：六爻 `source_ledger.md` 的「干支对」「标题」两列是 provenance
 统计的第二份抄本，435 批只核了字节/哈希/行数。现对**数值格**逐格复算（六爻 6 行×2
@@ -177,12 +179,18 @@ def audit(prov_dir: Path, base: Path) -> tuple[list[str], dict]:
             stats["meta"] += 1
             if pc != len(pages):
                 problems.append(f"{pv.name}：page_count {pc} ≠ pages 长度 {len(pages)}")
-        if "eol_on_disk" in d:
+        # 545 批：换行形态与 LF 折行哈希升为**逐份强制**（此前「有登记才核」，
+        # 39 份里仅 3/1 份登记 → CRLF→LF 漂移无人发现，433 批事故的静默面）。
+        if "eol_on_disk" not in d:
+            problems.append(f"{pv.name}：缺 eol_on_disk 登记（底本换行形态常设哨）")
+        else:
             stats["meta"] += 1
             if str(d["eol_on_disk"]) != got["eol"]:
                 problems.append(f"{pv.name}：eol_on_disk 登记 {d['eol_on_disk']} ≠ "
                                 f"在盘 {got['eol']}（口径见 check_source_provenance._eol）")
-        if "sha256_lf_text" in d:
+        if "sha256_lf_text" not in d:
+            problems.append(f"{pv.name}：缺 sha256_lf_text 登记（CRLF→LF 折行哈希）")
+        else:
             stats["meta"] += 1
             reg_lf = str(d["sha256_lf_text"] or "")
             if reg_lf != got["sha256_lf_text"]:
@@ -207,8 +215,9 @@ def audit(prov_dir: Path, base: Path) -> tuple[list[str], dict]:
 def coverage_problems(stats: dict) -> list[str]:
     """防整族退化：可选字段集体消失时，sha/bytes/chars 全绿也不许放行。
 
-    不强制每份 provenance 都登记可选字段（部分旧册本就没有，见 audit 注释）；
-    只要求覆盖量不低于底本份数。双口径 `dual` 在六爻为 0 属合法历史形态，不在此列。
+    `eol_on_disk`／`sha256_lf_text` 自 545 批起在 audit 里逐份强制（不再靠覆盖量兜底）；
+    其余可选字段仍不强制每份登记，只要求覆盖量不低于底本份数（部分旧册本就没有）。
+    双口径 `dual` 在六爻为 0 属合法历史形态，不在此列。
     """
     files = stats.get("files", 0)
     if files <= 0:
@@ -312,6 +321,10 @@ def _fixture(root: Path, source_text: str = "甲子\n\n乙丑\n", **overrides) -
             "lines": overrides.get("lines", m["lines"]),
         },
         "source_file": overrides.get("source_file", "jubu.txt"),
+        # 545 批：eol/sha256_lf_text 已升为逐份强制，默认夹具必须自带；
+        # 夹具底本由 write_bytes 写成，恒为 LF（444 批实踩的 CRLF 陷阱不复发）。
+        "eol_on_disk": "LF",
+        "sha256_lf_text": m["sha256_lf_text"],
     }
     if overrides.get("drop_sha"):
         prov.pop("sha256")
@@ -323,6 +336,9 @@ def _fixture(root: Path, source_text: str = "甲子\n\n乙丑\n", **overrides) -
     # 444 批：登记元数据（page_count/pages/eol_on_disk/sha256_lf_text）；
     # 哨兵 "__LF__" 让正例不必在夹具外重算 LF 折行哈希。
     for k, v in (overrides.get("top") or {}).items():
+        if v is None:
+            prov.pop(k, None)   # 545 批：显式删键，用于「缺强制字段」负例
+            continue
         if v == "__LF__":
             v = m["sha256_lf_text"]
         prov[k] = v
@@ -419,6 +435,11 @@ def selftest() -> int:
                                     "eol_on_disk": "LF", "sha256_lf_text": "__LF__"})),
         ("负例：page_count 与 pages 长度不符", "page_count",
          lambda r: _fixture(r, top={"pages": ["p1"], "page_count": 2})),
+        # 545 批：两项升为强制后的「缺登记」负例
+        ("负例：缺 eol_on_disk", "缺 eol_on_disk",
+         lambda r: _fixture(r, top={"eol_on_disk": None})),
+        ("负例：缺 sha256_lf_text", "缺 sha256_lf_text",
+         lambda r: _fixture(r, top={"sha256_lf_text": None})),
         ("负例：eol_on_disk 登记 CRLF 但在盘为 LF", "eol_on_disk",
          lambda r: _fixture(r, top={"eol_on_disk": "CRLF"})),
         ("负例：sha256_lf_text 失配", "sha256_lf_text",

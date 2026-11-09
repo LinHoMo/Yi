@@ -20,5 +20,7 @@
     "headings": 0
   },
   "source_file": "data/sources/ziping_zhenquan_pingzhu_dz.dz.txt",
-  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须人工对勘留痕（原对勘脚本已随扁平化删除；字节/统计由 [42] 核对）。"
+  "note": "殆知阁古代文献 v2.0 志愿转录本（简体、带句读），未经专业校勘；与维基文库同书者引用前须人工对勘留痕（原对勘脚本已随扁平化删除；字节/统计由 [42] 核对）。",
+  "eol_on_disk": "LF",
+  "sha256_lf_text": "7eeaa403724dde4f11f13aa4b7ff45d6e04ee92aaba2b1ac40d9c11396f95db2"
 }

@@ -19,5 +19,7 @@
     "headings": 0
   },
   "source_file": "data/sources/shen-feng-tong-kao.wikitext.txt",
-  "note": "公版古籍原文的字符级转存，未做任何改写或模型转写；子页以 <!-- ==== 标题 ==== --> 分隔。"
+  "note": "公版古籍原文的字符级转存，未做任何改写或模型转写；子页以 <!-- ==== 标题 ==== --> 分隔。",
+  "eol_on_disk": "LF",
+  "sha256_lf_text": "17cb86e9fc27b6175330b2bcae90f0e61af7dd5542c5c06daf32e3f8e23191b5"
 }

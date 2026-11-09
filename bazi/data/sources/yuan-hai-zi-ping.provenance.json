@@ -19,5 +19,7 @@
     "headings": 73
   },
   "source_file": "data/sources/yuan-hai-zi-ping.wikitext.txt",
-  "note": "公版古籍原文的字符级转存，未做任何改写或模型转写；子页以 <!-- ==== 标题 ==== --> 分隔。"
+  "note": "公版古籍原文的字符级转存，未做任何改写或模型转写；子页以 <!-- ==== 标题 ==== --> 分隔。",
+  "eol_on_disk": "LF",
+  "sha256_lf_text": "ba05f95b26f21ce03ea43402815fb8dafc3debab7451abc7ea3e9fae2eda1587"
 }

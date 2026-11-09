@@ -19,5 +19,7 @@
     "headings": 56
   },
   "source_file": "data/sources/qiong-tong-bao-jian.wikitext.txt",
-  "note": "公版古籍原文的字符级转存，未做任何改写或模型转写；子页以 <!-- ==== 标题 ==== --> 分隔。"
+  "note": "公版古籍原文的字符级转存，未做任何改写或模型转写；子页以 <!-- ==== 标题 ==== --> 分隔。",
+  "eol_on_disk": "LF",
+  "sha256_lf_text": "08e2a1ec95eeda3b0d6f9d14853554ca6cd37d2d4010fb91cc8fae6fc2bb9cf4"
 }
