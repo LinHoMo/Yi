@@ -87,3 +87,5 @@
 ## 2026-11-06 第五百三十批（全仓·并批）：**实证巡检收口；正文见 git 提交**
 
 ## 2026-11-06 第五百三十一批（实证巡检·CAPABILITY ① 过期登记更正）：**六爻 restorable 处置分布更正——实证复核 ①：43 条 restorable 双器复核 32 共识＋11 裁决（0 待裁）仍可复现（`restorable_recheck.json` 证 32/11/43）；但处置分布「411 批现状」登记过期——`restorable_adjudication.json` 已建于 2026-11-02，原 3 条「待回原文」已裁决分流为 2 不升＋1 建器阻塞，故不升 3→5、待回原文 3→0、建器阻塞 0→1（已在册 30／非单点应期 3／新候选·日期不可重建 4 不变）。该文件 `summary` 无门守护、曾漂移，复核以文件为权威；CAPABILITY ① 更正。余见 bazi 同批。**
+
+## 2026-11-06 第五百三十二批（实证巡检·G12 轻门落地·流派裁决声明↔数据对账）：**把 `build_adjudications.py` 的 `--selftest` 接进主门 `check.py[12]`（与 `--verify` 并行），并在 selftest 钉死分解 27/6/1/20（EXPECTED 单一真源）；新增只读 `--reconcile`：CAPABILITY 行 45 声称的 27/6/1/20 与 `adjudications.json` 实际比对。两道变异探针实证有牙（改 EXPECTED→28 判红、改 CAPABILITY 27→28 判红、还原转绿）。闭环 G12「声明↔数据」缺口，不新增门号——仅扩既有 [12]。本科 check EXIT=0**

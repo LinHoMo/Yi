@@ -24,7 +24,7 @@
   "preregistration": {
     "registered_at": "2026-11-09",
     "batch": 546,
-    "status": "未开卷·不入册·不出分",
+    "status": "已开卷一次·逐例红绿·无率值",
     "hypothesis": "若将来把这批候选按 §四 入册并开卷，主指标为「引擎应期候选支与书载应期支的 top-1 一致率」；方向为观察性，不预设引擎优于或劣于现行外部集。",
     "primary_metric": "top-1 应期支一致率（集合名＝卜筮全书候选集，n 以实际入册且日期可重建者为准，须标是否参与过调参）",
     "decision_rule": "n≥30 才许出率值且必带 Wilson 95%CI，并与全池随机零模型对照；与现行外部集比较须配对检验（190 批 rank_experiment.py 五条协议为模板）。n<30 只报逐例红绿，不作任何率值或命中率声称。开封只此一次，无论结果如何。",
@@ -210,5 +210,141 @@
       "date_text": "丙子日",
       "reason": "日期＋卦「丙子日·噬嗑」在 wikisource_cases / yiin_cases / zengshan_dz_cases / zengshan_dz_prose_cases 全中，判为承袭同案，按 542 去重口径排除。"
     }
-  ]
+  ],
+  "open_result": {
+    "opened_at": "2026-11-09T18:50:32+08:00",
+    "commit_at_open": "301f28d",
+    "open_count": 1,
+    "scoring_rule_sha": "7867316a7303",
+    "metric_frozen": "top-1 应期支一致（546 批 preregistration 冻结；开卷后不得改指标）",
+    "aggregate": null,
+    "_comment": "可判 n=2 < 30，按 546 批冻结的 decision_rule 只报逐例红绿：aggregate 恒 null、结构里不许出现率值字段、不作任何能力声称。判卷只追加、开封只此一次；in_candidate_pool 仅作排序归因线索，不是主指标，不得据此改冻结指标。",
+    "cases": [
+      {
+        "id": "BQS001",
+        "enroll_status": "结果句无单点应期",
+        "book_branch": null,
+        "engine_top1": "亥",
+        "engine_candidates": [
+          "亥",
+          "巳",
+          "辰",
+          "未"
+        ],
+        "rebuilt": {
+          "date": "申月乙未日",
+          "original": "同人",
+          "changed": null
+        },
+        "in_candidate_pool": null,
+        "result": "不适用·结果句无单点应期"
+      },
+      {
+        "id": "BQS002",
+        "enroll_status": "结果句无单点应期",
+        "book_branch": null,
+        "engine_top1": null,
+        "engine_candidates": [],
+        "in_candidate_pool": null,
+        "result": "不适用·缺月支无单点应期"
+      },
+      {
+        "id": "BQS003",
+        "enroll_status": "单点应期·可回指",
+        "book_branch": "子",
+        "engine_top1": "子",
+        "engine_candidates": [
+          "子",
+          "午",
+          "寅",
+          "卯",
+          "酉"
+        ],
+        "rebuilt": {
+          "date": "戌月己酉日",
+          "original": "小畜",
+          "changed": null
+        },
+        "in_candidate_pool": true,
+        "result": "命中"
+      },
+      {
+        "id": "BQS004",
+        "enroll_status": "单点应期·可回指",
+        "book_branch": "子",
+        "engine_top1": "丑",
+        "engine_candidates": [
+          "丑",
+          "未",
+          "戌",
+          "亥",
+          "申"
+        ],
+        "rebuilt": {
+          "date": "未月壬申日",
+          "original": "姤",
+          "changed": null
+        },
+        "in_candidate_pool": false,
+        "result": "未命中"
+      },
+      {
+        "id": "BQS005",
+        "enroll_status": "结果句无单点应期",
+        "book_branch": null,
+        "engine_top1": "丑",
+        "engine_candidates": [
+          "丑",
+          "未",
+          "辰",
+          "巳"
+        ],
+        "rebuilt": {
+          "date": "申月乙未日",
+          "original": "损",
+          "changed": null
+        },
+        "in_candidate_pool": null,
+        "result": "不适用·结果句无单点应期"
+      },
+      {
+        "id": "BQS006",
+        "enroll_status": "结果句无单点应期",
+        "book_branch": null,
+        "engine_top1": "亥",
+        "engine_candidates": [
+          "亥",
+          "巳",
+          "辰",
+          "未"
+        ],
+        "rebuilt": {
+          "date": "午月乙未日",
+          "original": "泰",
+          "changed": null
+        },
+        "in_candidate_pool": null,
+        "result": "不适用·结果句无单点应期"
+      },
+      {
+        "id": "BQS007",
+        "enroll_status": "结果句无单点应期",
+        "book_branch": null,
+        "engine_top1": null,
+        "engine_candidates": [],
+        "in_candidate_pool": null,
+        "result": "不适用·缺月支无单点应期"
+      },
+      {
+        "id": "BQS008",
+        "enroll_status": "结果句无单点应期",
+        "book_branch": null,
+        "engine_top1": null,
+        "engine_candidates": [],
+        "in_candidate_pool": null,
+        "result": "不适用·缺月支无单点应期"
+      }
+    ],
+    "result_sha": "953fa14598a05f13"
+  }
 }

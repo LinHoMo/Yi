@@ -1,8 +1,8 @@
 {
- "count": 79,
+ "count": 80,
  "by_tier": {
   "tool": 4,
-  "ondemand": 17,
+  "ondemand": 18,
   "nightly": 12,
   "build": 12,
   "blocking": 34
@@ -429,6 +429,13 @@
    "guards": "图谱 AI subgraph 检索出口（按 kid 取概念上下文；511 批登记）",
    "run_by_check_py": false,
    "doc": "易学图谱 AI subgraph 检索：按 kid 输出该概念的完整子图。"
+  },
+  {
+   "script": "open_bushi_candidates.py",
+   "tier": "ondemand",
+   "guards": "卜筮全书候选池机读重建＋一次性开卷（547 批：卦名归一化／月序转月支／动爻反推变卦全归代码；top-1 逐例红绿、n=2<30 不出率值、7 类负例）",
+   "run_by_check_py": false,
+   "doc": "《卜筮全书》候选池：机读重建 + 第 546 批冻结假设的一次性开卷（第 547 批）。"
   },
   {
    "script": "open_yilin_candidates.py",

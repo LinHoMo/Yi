@@ -51,6 +51,8 @@ jobs:
           python liuyao/dev_tools/verify_bushi_candidates.py
           # 543 批：一次性开卷记录校验（只此一次开封／逐例红绿／无率值／判卷未改写／指标未偷换；只读）
           python liuyao/dev_tools/open_yilin_candidates.py --verify
+          # 547 批：卜筮全书候选池一次性开卷记录校验（同 543 范式：只此一次开封／逐例红绿／无率值／判卷未改写／指标未偷换；只读）
+          python liuyao/dev_tools/open_bushi_candidates.py --verify
   # 对外声明 Python 3.10+：本 job 在最低版跑两科冒烟、两科古籍回归与单测。
   # 六爻回归实跑 19/19、思维链 12/12，旧的「17/19 待裁」排除理由已失效。
   min-python-smoke:

@@ -9,7 +9,8 @@ AGENTS.md §二 引文条的硬要求）；② 候选池被误并进评分集，
 
 本器仿 519 批构建器 `--check` 只读复验范式，逐条对拍：底本 sha256 三方一致、每条引文是
 对应底本行的逐字子串、ID 零泄漏进 case_splits、整池无 expected／verdict 映射（防反推）、
-8 案顺序与覆盖完整、excluded 五项均带承袭同案证据、预注册在册且未开卷。
+8 案顺序与覆盖完整、excluded 五项均带承袭同案证据、预注册在册（547 批已按 §四 一次性开卷：
+状态＝已开卷一次·逐例红绿·无率值，与 open_result 成对出现，n<30 不出率值）。
 **不写任何文件**；`--selftest` 全部在内存里注入负例，不写真盘（526 批教训）。
 
     python dev_tools/verify_bushi_candidates.py
@@ -36,7 +37,7 @@ SPLITS = DISC / "data" / "cases" / "case_splits.json"
 EXPECTED_N = 8
 EXPECTED_EXCLUDED = 5
 ID_PREFIX = "BQS"
-ALLOWED_STATUS = ("未开卷·不入册·不出分",)
+ALLOWED_STATUS = ("未开卷·不入册·不出分", "已开卷一次·逐例红绿·无率值")
 
 
 def load_pool() -> dict:
@@ -127,9 +128,16 @@ def verify(pool: dict, lines: list[str], splits: set[str],
     pre = pool.get("preregistration") or {}
     if not pre.get("hypothesis") or not pre.get("decision_rule"):
         bad.append("预注册缺假设或判卷规则（§四）")
+    # 547 批：允许「已开卷一次」，但状态与开卷记录必须成对出现。
     if pre.get("status") not in ALLOWED_STATUS:
-        bad.append("预注册状态非法（只允许未开卷·不入册·不出分）")
-    if pool.get("open_result"):
+        bad.append("预注册状态非法（只允许未开卷，或已开卷一次·逐例红绿·无率值）")
+    if pre.get("status") == ALLOWED_STATUS[1]:
+        op = pool.get("open_result") or {}
+        if not op:
+            bad.append("状态为已开卷却缺 open_result")
+        elif op.get("aggregate") is not None or op.get("open_count") != 1:
+            bad.append("开卷记录含率值或不止一次开封（n<30 只报逐例红绿）")
+    elif pool.get("open_result"):
         bad.append("未开卷状态却带 open_result")
     return bad
 
@@ -192,6 +200,14 @@ def selftest() -> int:
     probes.append(("预注册状态被改被抓", bool(v(p)), ""))
 
     p = copy.deepcopy(pool)
+    p.pop("open_result", None)
+    probes.append(("已开卷却缺判卷记录被抓", bool(v(p)), ""))
+
+    p = copy.deepcopy(pool)
+    p["open_result"]["aggregate"] = 66.7
+    probes.append(("开卷出率值被抓", bool(v(p)), ""))
+
+    p = copy.deepcopy(pool)
     p["preregistration"]["hypothesis"] = ""
     probes.append(("预注册缺假设被抓", bool(v(p)), ""))
 
@@ -225,7 +241,7 @@ def main() -> int:
             print("  × " + b)
         if bad:
             return 1
-        print("  √ 真盘候选池同源：8 案逐字、5 项 excluded 带承袭证据、零泄漏、无反推、未开卷")
+        print("  √ 真盘候选池同源：8 案逐字、5 项 excluded 带承袭证据、零泄漏、无反推、已开卷一次·逐例红绿·无率值")
         return 0
     bad = run_real()
     for b in bad:

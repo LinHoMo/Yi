@@ -174,6 +174,9 @@ CURATED = {
         "verify_bushi_candidates": ("ondemand", "《卜筮全书》候选池同源复验（546 批：8 案引文逐字回底本对应行＋ID 零泄漏进评分集＋无 expected 反推＋5 项 excluded 带《黄金策》承袭同案证据；11 类内存负例，真盘零写入）"),
         # 543 批：一次性开卷器，同批入表（511 批教训）。--verify 只读挂 CI，--open 只许一次。
         "open_yilin_candidates": ("ondemand", "易林候选池机读重建＋一次性开卷（543 批：卦名归一化／月序转月支／动爻反推变卦全归代码；top-1 逐例红绿、n<30 不出率值、7 类负例）"),
+        # 547 批：一次性开卷器，同批入表（511 批教训）。--verify 只读挂 CI，--open 只许一次；
+        # 与 open_yilin_candidates 同构（546 批 bushi 候选池机械重建＋top-1 逐例判卷）。
+        "open_bushi_candidates": ("ondemand", "卜筮全书候选池机读重建＋一次性开卷（547 批：卦名归一化／月序转月支／动爻反推变卦全归代码；top-1 逐例红绿、n=2<30 不出率值、7 类负例）"),
         "governance_map": ("tool", "本器：治理地图生成"),
         "stable_write": ("tool", "观察册幂等写共享模块（203 批：时间戳=内容最后变化，杜绝空转脏文件）"),
         "sweep_selftests": ("nightly", "器具全体检扫描器（213 批：声明面 53 器具逐真跑，注入损坏负例即体检；自身与编排器豁免；242 批增 rc×输出互验与 classify 五态）"),
