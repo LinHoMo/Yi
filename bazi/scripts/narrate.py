@@ -22,6 +22,7 @@ _DATA = Path(__file__).resolve().parent.parent / "data"
 _NARRATIVE_TEMPLATES = json.loads(
     (_DATA / "narrative_templates.json").read_text(encoding="utf-8"))
 _BOUNDARY_LINES = _NARRATIVE_TEMPLATES["narrate_shell"]["boundary_lines"]
+_SECTION_LABELS = _NARRATIVE_TEMPLATES["section_labels"]  # 540 批：纯静态段落标签外置
 _VERDICTS = json.loads((_DATA / "verdicts.json").read_text(encoding="utf-8"))
 _TIAO_HOU_QUOTES = json.loads((_DATA / "tiaohou_quotes.json").read_text(encoding="utf-8"))
 _DTS = json.loads((_DATA / "ditian_sui.json").read_text(encoding="utf-8"))
@@ -328,7 +329,7 @@ def narrate(a: dict) -> str:
     if ffz:
         fu = ffz.get("夫星") or []
         zi = ffz.get("子星") or []
-        lines.append("**女命夫子星**（《渊海子平·女命论》，机械标注，不批吉凶）：")
+        lines.append(_SECTION_LABELS["female_stars"])
         lines.append("- 夫星（官杀）：" + (
             "；".join(f"{h['柱']}{h['位']}{h['十神']}" for h in fu) or "局中不见"))
         lines.append("- 子星（食伤）：" + (
@@ -338,7 +339,7 @@ def narrate(a: dict) -> str:
         lines.append(f"**空亡**：{'、'.join(xunkong)}（日柱旬空）。")
         lines.append("")
     if dayun:
-        lines.append("**大运**（起运岁为近似）：")
+        lines.append(_SECTION_LABELS["dayun"])
         for d in dayun:
             lines.append(
                 f"- {d.get('start_age')}–{d.get('end_age')} 岁　{d.get('ganzhi')}"
@@ -350,7 +351,7 @@ def narrate(a: dict) -> str:
         lines.append("")
     xs = con.get("dayun_liunian") or []
     if xs:
-        lines.append("**大运×流年对照**（机械关系，不批吉凶）：")
+        lines.append(_SECTION_LABELS["dayun_liunian"])
         for x in xs[:4]:
             rel = "；".join(r.get("text", "") for r in (x.get("relations") or [])[:2])
             lines.append(f"- {x.get('year')}（{x.get('liunian')}）× 运{x.get('dayun')}：{rel or '—'}")
@@ -366,7 +367,7 @@ def narrate(a: dict) -> str:
     combos = a.get("ten_god_combos") or []
     tkdc = a.get("tian_ke_di_chong") or []
     if ty or sh or combos or tkdc:
-        lines.append("**四柱结构与组合**（机械标签，不批吉凶）：")
+        lines.append(_SECTION_LABELS["structure"])
         if ty:
             lines.append(f"- 胎元：{ty.get('ganzhi')}（{ty.get('basis')}）。")
         if sh:
@@ -384,9 +385,9 @@ def narrate(a: dict) -> str:
     cheng = a.get("dayun_cheng_bai") or []
     yin_map = {h.get("dayun"): h for h in yin}
     if yin or sui or cheng:
-        lines.append("**行运引动**（运与岁对本命四柱的结构标签，独立成列、不覆写本命结论，不批吉凶）：")
+        lines.append(_SECTION_LABELS["yun_induce"])
         if cheng:
-            lines.append("**行运成格变格（分列读数：运层结构命名，不覆写本命格局成败、不批吉凶）**：")
+            lines.append(_SECTION_LABELS["yun_pattern"])
             for c in cheng:
                 gz = c.get("dayun")
                 verdict = "、".join(c.get("verdict") or [])
@@ -408,7 +409,7 @@ def narrate(a: dict) -> str:
     # 措辞守铁律三：用「结构上/有…信号」，且逐字引文自带定位，便于回指原文。
     img = _LIUSHEN_IMAGE.get("十神取象") or {}
     if img:
-        lines.append("**十神取象**（《千里命稿·六神篇》引文，结构上旁证、非吉凶断语）：")
+        lines.append(_SECTION_LABELS["shishen_image"])
         # 本书按篇合立（偏正印/偏正财/比劫禄刃），作用表按单星登记 → 合篇取首个单星。
         _HE_PIN = {"偏正印": "正印", "偏正财": "正财", "比劫禄刃": "比劫"}
         for god, e in img.items():
@@ -473,7 +474,7 @@ def narrate(a: dict) -> str:
                             + (f"——原书作「{yw}」" if yw else "")
                             + f"（{loc}）")
         if nq_items:
-            lines.append("**纳音取象**（《五行精纪》纳音性质名，物性标签旁证、非吉凶断语）：")
+            lines.append(_SECTION_LABELS["nayin_image"])
             for it in nq_items:
                 lines.append(f"- {it}")
             lines.append("")
@@ -486,7 +487,7 @@ def narrate(a: dict) -> str:
         lines.append("")
     tg = a.get("tong_guan") or []
     if tg:
-        lines.append("**通关／关隔**（《滴天髓·通隔論》机械判据，不批吉凶）：")
+        lines.append(_SECTION_LABELS["tongguan"])
         for t in tg:
             lines.append(f"- {t.get('label')}。")
         ds_tg = _dts_block("通隔論", "所本")
@@ -495,7 +496,7 @@ def narrate(a: dict) -> str:
     by = a.get("bing_yao") or {}
     if by.get("bing"):
         _bb = by["bing"]
-        lines.append("**病药**（《神峰通考·病药说类》机械判据，不批吉凶）：")
+        lines.append(_SECTION_LABELS["bingyao"])
         lines.append(f"- 病：{_bb.get('病')}（四柱最重五行{_bb.get('病之五行')}，"
                      f"原文「从重者论」）；药：{_bb.get('药')}"
                      f"（{'在局中' if _bb.get('药在局中') else '局中未见'}）。")

@@ -11,6 +11,10 @@
      在各类问法下的产出率是多少？缺的到底缺在哪一类？
   ② 题类分布：题类→象类别的映射实际生效情况（有没有整类落 general 的退化）。
 
+**540 批新增 `--probe`**：现代白话问法词表的常驻判据（只读）。象不进评分、golden 案例
+又是古籍体问句，词表被删/改不会有任何评分门发现——属静默退化面。探针逐条对拍
+`data/rules/domain/xiang_layer.json#modern_question_probe`，并做纯内存负例自证。
+
 **本器不产任何命中率、对齐分或质量结论**——象是素材，素材的「出没出」和
 「准不准」是两件事，混着报就是把覆盖当成绩（SKILL.md 铁律三同款口径纪律）。
 
@@ -20,6 +24,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
@@ -120,13 +125,77 @@ def report(data: dict) -> int:
     return 0
 
 
+def _probe_cases(cases: list, resolve) -> tuple[int, list[str]]:
+    """纯判据：逐条对拍，空表一律判红（0 条不许伪装成全绿）。"""
+    if not cases:
+        return 1, ["探针表为空或路径解析失败——不许报绿"]
+    bad = []
+    for c in cases:
+        got = resolve("", c["question"])
+        if got != c["expect"]:
+            bad.append(f"{c['question']}：期望 {c['expect']}，实得 {got}")
+    return (1, bad) if bad else (0, [])
+
+
+def probe() -> int:
+    """540 批：现代白话问法词表的常驻判据 + 负例自证（纯内存，不写真盘）。
+
+    为什么需要：象不进评分（CONTRACT §五-bis），golden 288 例又是古籍体问句，
+    词表被删/改时 `check.py` 与账台都会照常全绿。这里把「启发式有没有生效」
+    做成可重放断言，逐条读 `xiang_layer.json#modern_question_probe`（词表与判据同源）。
+    """
+    rules_path = ROOT / "data" / "rules" / "domain" / "xiang_layer.json"
+    rules = json.loads(rules_path.read_text(encoding="utf-8"))
+    cases = (rules.get("modern_question_probe") or {}).get("cases") or []
+    import xiang
+    resolve = xiang.resolve_xiang_category
+
+    rc, bad = _probe_cases(cases, resolve)
+    if rc:
+        for b in bad:
+            print(f"  × 现代问法探针：{b}")
+        return 1
+    print(f"  √ 现代问法探针：{len(cases)}/{len(cases)} 条与预声明一致（含 general 对照）")
+
+    # 负例 1：内存里删掉一个新增词，该问句必须退化——证明词表漂移会被抓到。
+    # 不写真盘、不动模块级字典本体，finally 复原（526 批的字节副作用教训）。
+    orig = xiang._CATEGORY_KEYWORDS
+    victim_case = next((c for c in cases if c["expect"] == "career"), None)
+    if not victim_case:
+        print("  × 负例缺 career 样本，无从自证")
+        return 1
+    try:
+        xiang._CATEGORY_KEYWORDS = {
+            k: [w for w in v if w != "考公"] for k, v in orig.items()
+        }
+        rc_shrunk, _ = _probe_cases(cases, resolve)
+        degraded = resolve("", victim_case["question"])
+        if rc_shrunk == 0 or degraded == victim_case["expect"]:
+            print("  × 负例自证失效：删掉「考公」后仍判绿（门是瞎的）")
+            return 1
+        print(f"  √ 负例自证：删掉「考公」后该问句退为 {degraded}、整组判红（词表退化抓得到）")
+    finally:
+        xiang._CATEGORY_KEYWORDS = orig
+
+    # 负例 2：真调用同一个纯判据喂空表，必须判红（不是写死一句「会判红」）
+    rc_empty, _ = _probe_cases([], resolve)
+    if rc_empty == 0:
+        print("  × 负例自证失效：0 条探针仍判绿")
+        return 1
+    print("  √ 负例自证：0 条探针判红；真盘逐字节未改")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="象层覆盖读数器（只报覆盖，不报命中率）")
     ap.add_argument("--json", action="store_true", help="输出机器可读 JSON")
+    ap.add_argument("--probe", action="store_true",
+                    help="540 批：现代白话问法词表常驻判据（只读 + 负例自证）")
     args = ap.parse_args()
+    if args.probe:
+        return probe()
     data = scan()
     if args.json:
-        import json
         print(json.dumps(data, ensure_ascii=False, indent=1))
         return 0
     return report(data)

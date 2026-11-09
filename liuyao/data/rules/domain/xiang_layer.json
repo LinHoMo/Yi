@@ -13,6 +13,9 @@
       "scripts/xiang.py —— build_xiang()",
       "scripts/analyze.py —— analyze 段挂载 xiang 键",
       "scripts/narrate.py —— 正文【象】段"
+    ],
+    "amendments": [
+      "540 批：扩 category_fallback_keywords 的现代白话问法词表（五类各补 10 余条），并新增 modern_question_probe 常驻判据（xiang_coverage.py --probe 逐条对拍）。只改启发式词表，不动 category_by_class／basis／render，不进 WEIGHTS／verdict／conclusion（CONTRACT §五-bis）。golden 案例是古籍体问句、不命中现代词，故措辞指纹零漂移，本批无需 capture；扩面收益落在真实用户白话提问（question_class 判为「其他」或缺失时）。"
     ]
   },
   "category_by_class": {
@@ -31,12 +34,118 @@
     "其他": "general"
   },
   "category_fallback_keywords": {
-    "why": "question_class 缺失或判为『其他』时，用问句直判；逐类顺序扫描，先中先得，都不中落 general",
-    "career": ["工作", "事业", "升职", "升迁", "面试", "offer", "跳槽", "创业", "项目", "生意", "投资", "财运", "薪资"],
-    "health": ["病", "身体", "健康", "手术", "住院", "体检", "康复", "吃药", "疼"],
-    "relationship": ["感情", "婚姻", "恋爱", "分手", "复合", "相亲", "配偶", "对象", "结婚"],
-    "travel": ["出行", "旅行", "旅游", "出差", "归期", "回家", "回不来"],
-    "loss": ["丢", "失物", "找不", "遗失", "不见了", "落哪"]
+    "why": "question_class 缺失或判为『其他』时，用问句直判；逐类顺序扫描，先中先得，都不中落 general；540 批扩面只增白话问法词，不改变扫描顺序（career→health→relationship→travel→loss，先中先得），新增词经逐条查重避免跨类抢命中；词表是启发式、不是古籍定式，也不产生任何评分结论",
+    "career": [
+      "工作",
+      "事业",
+      "升职",
+      "升迁",
+      "面试",
+      "offer",
+      "跳槽",
+      "创业",
+      "项目",
+      "生意",
+      "投资",
+      "财运",
+      "薪资",
+      "考公",
+      "考编",
+      "考研",
+      "求职",
+      "简历",
+      "裁员",
+      "离职",
+      "晋升",
+      "绩效",
+      "奖金",
+      "投标",
+      "开店",
+      "副业",
+      "年终奖",
+      "谈薪"
+    ],
+    "health": [
+      "病",
+      "身体",
+      "健康",
+      "手术",
+      "住院",
+      "体检",
+      "康复",
+      "吃药",
+      "疼",
+      "症状",
+      "复查",
+      "术后",
+      "过敏",
+      "失眠",
+      "发烧",
+      "咳嗽",
+      "诊断",
+      "用药",
+      "疫苗",
+      "挂号",
+      "理疗"
+    ],
+    "relationship": [
+      "感情",
+      "婚姻",
+      "恋爱",
+      "分手",
+      "复合",
+      "相亲",
+      "配偶",
+      "对象",
+      "结婚",
+      "暧昧",
+      "表白",
+      "异地",
+      "订婚",
+      "离婚",
+      "彩礼",
+      "同居",
+      "前任",
+      "催婚",
+      "冷暴力",
+      "领证"
+    ],
+    "travel": [
+      "出行",
+      "旅行",
+      "旅游",
+      "出差",
+      "归期",
+      "回家",
+      "回不来",
+      "签证",
+      "机票",
+      "高铁",
+      "航班",
+      "自驾",
+      "返程",
+      "护照",
+      "留学",
+      "通勤",
+      "转机"
+    ],
+    "loss": [
+      "丢",
+      "失物",
+      "找不",
+      "遗失",
+      "不见了",
+      "落哪",
+      "钱包",
+      "钥匙",
+      "走失",
+      "失联",
+      "找不到",
+      "遗落",
+      "快递丢",
+      "手机丢",
+      "证件丢"
+    ]
   },
   "basis": {
     "trigram": "liuyao/data/trigram_symbolism.json（八卦万物类象/方位/复合卦名）",
@@ -52,5 +161,50 @@
     "separator": "；",
     "hu_gua_none": "本卦无互体可析",
     "spirit_none": "六神象义未出（盘面缺六神）"
+  },
+  "modern_question_probe": {
+    "why": "540 批：现代白话问法词表的**常驻判据**。词表若被删/改，没有任何评分门会发现（golden 288 例是古籍体问句，不命中这些词；象又不进评分），属静默退化面。xiang_coverage.py --probe 逐条对拍 resolve_xiang_category(\"\", question)；每条只用本批新增词，故扩面前会落 general——探针同时证明扩面确有收益。只验「启发式有没有生效」，不验「象准不准」（本卷不为象提供任何命中率声称）。",
+    "cases": [
+      {
+        "question": "考公上岸有戏吗",
+        "expect": "career"
+      },
+      {
+        "question": "被裁员后怎么办",
+        "expect": "career"
+      },
+      {
+        "question": "术后复查要不要紧",
+        "expect": "health"
+      },
+      {
+        "question": "最近老是失眠",
+        "expect": "health"
+      },
+      {
+        "question": "要不要和前任再联系",
+        "expect": "relationship"
+      },
+      {
+        "question": "订婚的日子定不下来",
+        "expect": "relationship"
+      },
+      {
+        "question": "签证什么时候能下来",
+        "expect": "travel"
+      },
+      {
+        "question": "航班会不会延误",
+        "expect": "travel"
+      },
+      {
+        "question": "钥匙找不到了",
+        "expect": "loss"
+      },
+      {
+        "question": "今天天气不错吧",
+        "expect": "general"
+      }
+    ]
   }
 }
