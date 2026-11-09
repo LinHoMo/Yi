@@ -52,7 +52,7 @@
 | 科 | analyze 段的内部实现 | 对外键 | 说明 |
 |---|---|---|---|
 | 六爻 | `liuyao/engine/pipeline/step1.py`–`step5.py` 五步链（现状 → 取用神 → 旺衰 → 动变 → 综合），装配在 `liuyao/scripts/chain_assembly.py` | `thinking_chain` | `pipeline/step*` 可互相 import（现状 `step3 → step2`、`step4 → step2`、`step5 → step3/step4`）；`engine/**` 不得 import 叙述层（`narrate_core` / `narrate` / `advice_framework`）；`chain_verdicts` 是数据装载面（断语表），推演段取断语走它不算越界 |
-| 八字 | 单体 `analyze.py`：`bazi_factors.strength_and_pattern` → `dayun_table` / `liunian_table` → `conclusion`（`scripts/pattern.py` 提供格局判定，属同一 analyze 段） | `conclusion` 等 26 键 | 八字**无** `step1`–`step5` 的对应物；不存在可照搬的推演链，也不为对称而克隆（ARCHITECTURE-PLAN.md §六.3） |
+| 八字 | 单体 `analyze.py`：`bazi_factors.strength_and_pattern` → `dayun_table` / `liunian_table` → `conclusion`（格局判定在 `bazi/scripts/bazi_factors/strength.py`，`scripts/pattern.py` 为薄壳转发，属同一 analyze 段） | `conclusion` 等 26 键 | 八字**无** `step1`–`step5` 的对应物；不存在可照搬的推演链，也不为对称而克隆（ARCHITECTURE-PLAN.md §六.3） |
 
 ## §三 层间调用矩阵
 

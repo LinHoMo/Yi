@@ -18,6 +18,11 @@
 540 批新增的判据只有 `--probe`，故没进声明面（G9「全部」假全称同族）。别名让声明面
 现算时把它收进来；两个旗标跑的是同一个 `probe()`，不产生第二份判据。
 
+**544 批扩判据面**：象层另有两份素材表（六十四卦／八卦类象 `trigram_symbolism.json`、
+动变格局与六神象义 `classical_patterns_data.json`）被消费却无任何门守着——象不进评分、
+golden 又不覆盖，整块被清空全仓照绿。本批在同一 `--probe` 里加结构下限与六神枚举
+断言（只守定义式不变量、不钉内容哈希），并加删键负例；不新增门号、不新增门文件。
+
 **本器不产任何命中率、对齐分或质量结论**——象是素材，素材的「出没出」和
 「准不准」是两件事，混着报就是把覆盖当成绩（SKILL.md 铁律三同款口径纪律）。
 
@@ -140,6 +145,42 @@ def _probe_cases(cases: list, resolve) -> tuple[int, list[str]]:
     return (1, bad) if bad else (0, [])
 
 
+# 544 批：象层另有两份素材表被 chart_tables.py / trigram_symbolism.py / xiang.py
+# 消费，却没有任何门守着——象不进评分（CONTRACT §五-bis）、golden 288 例又不命中
+# 现代词，整块被清空时全仓门禁照样全绿。这里只守**定义式不变量**（六十四卦／八卦／
+# 六神是枚举，不是会变的统计数），不钉内容哈希，词表增补不误报、删键即判红。
+AUX_TABLES = {
+    "data/trigram_symbolism.json": {
+        "hexagram_names": 64, "trigram_directions": 8, "trigram_symbolism": 8,
+    },
+    "data/classical_patterns_data.json": {
+        "transformation_patterns": 7, "six_spirit_properties": 6,
+    },
+}
+SIX_SPIRITS = ("青龙", "朱雀", "勾陈", "螣蛇", "白虎", "玄武")
+
+
+def _probe_aux_tables(tables: dict) -> list[str]:
+    """纯判据：不读盘，便于内存负例自证。"""
+    bad = []
+    for rel, spec in AUX_TABLES.items():
+        doc = tables.get(rel)
+        if not isinstance(doc, dict):
+            bad.append(f"{rel}：缺失或不是对象")
+            continue
+        for key, floor in spec.items():
+            val = doc.get(key)
+            size = len(val) if isinstance(val, dict) else -1
+            if size < floor:
+                bad.append(f"{rel}#{key}：应 ≥{floor} 项，实得 {size}")
+        if rel.endswith("classical_patterns_data.json"):
+            spirits = doc.get("six_spirit_properties") or {}
+            miss = [s for s in SIX_SPIRITS if s not in spirits]
+            if miss:
+                bad.append(f"六神象义缺：{'、'.join(miss)}")
+    return bad
+
+
 def probe() -> int:
     """540 批：现代白话问法词表的常驻判据 + 负例自证（纯内存，不写真盘）。
 
@@ -186,6 +227,24 @@ def probe() -> int:
         print("  × 负例自证失效：0 条探针仍判绿")
         return 1
     print("  √ 负例自证：0 条探针判红；真盘逐字节未改")
+
+    # 544 批：两份象层素材表的常驻判据（结构下限 + 六神枚举）
+    aux = {rel: json.loads((ROOT / rel).read_text(encoding="utf-8"))
+           for rel in AUX_TABLES}
+    aux_bad = _probe_aux_tables(aux)
+    if aux_bad:
+        for b in aux_bad:
+            print(f"  × 象层素材表：{b}")
+        return 1
+    print(f"  √ 象层素材表：{len(AUX_TABLES)} 份结构下限与六神枚举齐备（不钉内容哈希）")
+
+    # 负例 3：内存删掉一张表的一个键，纯判据必须判红（不写真盘）
+    shrunk = {rel: dict(doc) for rel, doc in aux.items()}
+    shrunk["data/trigram_symbolism.json"].pop("hexagram_names", None)
+    if not _probe_aux_tables(shrunk):
+        print("  × 负例自证失效：素材表被删键仍判绿（门是瞎的）")
+        return 1
+    print("  √ 负例自证：素材表删键判红；真盘逐字节未改")
     return 0
 
 

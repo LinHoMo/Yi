@@ -35,7 +35,7 @@
   "杂气格": "《三命通会》立「杂气」为独立格（源L1734），本项目 engine 不单建、归四库藏干层处理——四库（辰戌丑未）月令以藏干取用神而非单独立「杂气格」。所本：data/sources/sanming_tonghui_dz.dz.txt L1734。（OPT-sanming_tonghui_dz-07，2026-10-08 登记不扩格）"
  },
  "格局成败引文": {
-  "_meta": "格局成败救应 basis 的引文唯一真值源（AGENTS.md §三：断语/引文进 data，代码只留算法）。键=pattern.py 判定分支；值=书源句逐字。判据逻辑（透干十神有无、判定顺序）在 scripts/pattern.py。",
+  "_meta": "格局成败救应 basis 的引文唯一真值源（AGENTS.md §三：断语/引文进 data，代码只留算法）。键=pattern.py 判定分支；值=书源句逐字。判据逻辑（透干十神有无、判定顺序）在 bazi/scripts/bazi_factors/strength.py；scripts/pattern.py 为薄壳转发。",
   "sha_ren_yin_po": "煞刃格需要七煞抑刃，则偏印为破格（《子平真诠·论用神因成得败因败得成》）",
   "shang_pei_sha_yin": "伤官带煞而透印，格之成也（《子平真诠·论用神成败救应》）",
   "shang_jin_shui_yao_jian_guan": "火土伤官宜伤尽；金水伤官要见官（《渊海子平》七言诀，源L179）",

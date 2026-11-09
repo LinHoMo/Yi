@@ -40,31 +40,45 @@ for p in ("eval", "scripts", "core", "engine", "rules", ""):
 
 POOL = DISC / "data" / "cases" / "yilin_buyi_candidates.json"
 
-import case_runner as C  # noqa: E402
-import prospective as P  # noqa: E402
-from yishu_core.symbols import (  # noqa: E402
-    HEXAGRAM_TRIGRAMS, BAGUA_LINES, EARTHLY_BRANCHES,
-)
+import prospective as P  # noqa: E402  轻量：只读校验只需 rule_sha()
 
-BRANCH_FROM_YIN = EARTHLY_BRANCHES[2:] + EARTHLY_BRANCHES[:2]
-SEQ = {s: BRANCH_FROM_YIN[i - 1] for i, s in enumerate(
-    ['正', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二'], 1)}
 ALIAS = {'垢': '姤'}          # 底本原字 → 内核卦表规范名（引文仍照录「垢」）
+
+# 544 批性能修正：`import case_runner` 会连带拉起 thinking_chain／
+# classical_enhancements／narrate_core／yishu_core.symbols 等 9 个重型模块，
+# 而 `--verify`／`--selftest` 根本不碰引擎（实测顶层 import 使只读校验 0.568s，
+# 纯基线 0.266s）。改为按需加载并缓存：只读路径不再付这笔开销，
+# 只有 --dry-run／--open 的机读重建才加载。判据与输出键一律未动。
+_ENGINE = None
+
+
+def engine():
+    global _ENGINE
+    if _ENGINE is None:
+        import case_runner as C
+        from yishu_core.symbols import HEXAGRAM_TRIGRAMS, BAGUA_LINES, EARTHLY_BRANCHES
+        branch_from_yin = EARTHLY_BRANCHES[2:] + EARTHLY_BRANCHES[:2]
+        seq = {s: branch_from_yin[i - 1] for i, s in enumerate(
+            ['正', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二'], 1)}
+        _ENGINE = {"C": C, "H": HEXAGRAM_TRIGRAMS, "B": BAGUA_LINES,
+                   "E": EARTHLY_BRANCHES, "SEQ": seq}
+    return _ENGINE
 STATUS_OPEN = "已开卷一次·逐例红绿·无率值"
 FORBIDDEN_RATE_KEYS = {"rate", "accuracy", "percent", "percentage", "hit_rate",
                        "命中率", "准确率", "对齐分", "aggregate_value", "mean"}
 
 
 def lines_of(name):
-    tri = HEXAGRAM_TRIGRAMS.get(name)
+    e = engine()
+    tri = e["H"].get(name)
     if not tri:
         return None
     upper, lower = tri
-    return BAGUA_LINES[lower] + BAGUA_LINES[upper]
+    return e["B"][lower] + e["B"][upper]
 
 
 def name_of(lines):
-    for n in HEXAGRAM_TRIGRAMS:
+    for n in engine()["H"]:
         if lines_of(n) == lines:
             return n
     return None
@@ -78,7 +92,8 @@ def parse_case(c: dict) -> dict | None:
         orig, chg = m.group(1), ALIAS.get(m.group(2), m.group(2))
         rest = ""
     else:
-        orig = max((n for n in HEXAGRAM_TRIGRAMS if t.startswith(n)), key=len, default=None)
+        e = engine()
+        orig = max((n for n in e["H"] if t.startswith(n)), key=len, default=None)
         if not orig:
             return None
         rest = t[len(orig):]
@@ -93,15 +108,16 @@ def parse_case(c: dict) -> dict | None:
         base = lines_of(orig)
         if base:
             chg = name_of([1 - b if (i + 1) in moving else b for i, b in enumerate(base)])
-    if orig not in HEXAGRAM_TRIGRAMS:
+    e = engine()
+    if orig not in e["H"]:
         return None
-    if C.hex2yao(orig, chg if chg != orig else None) is None:
+    if e["C"].hex2yao(orig, chg if chg != orig else None) is None:
         return None
 
     d = c["date_text"]
     mm = re.search(r'([正二三四五六七八九十]+)月', d)
-    branch = SEQ.get(mm.group(1)) if mm else None
-    _, day_gz = C.parse_ganzhi_hint(d)
+    branch = e["SEQ"].get(mm.group(1)) if mm else None
+    _, day_gz = e["C"].parse_ganzhi_hint(d)
     date_str = f'{branch}月{day_gz}日' if branch and day_gz else d
     return {
         "id": c["id"],
@@ -118,7 +134,7 @@ def book_branch(c: dict) -> str | None:
     """只从「单点应期·可回指」案的书载应期句机械取地支；跨月／非单点一律不取。"""
     if c["enroll_status"] != "单点应期·可回指":
         return None
-    hits = [b for b in EARTHLY_BRANCHES if b + "日" in c["yingqi_text"]]
+    hits = [b for b in engine()["E"] if b + "日" in c["yingqi_text"]]
     return hits[-1] if hits else None
 
 
@@ -133,7 +149,7 @@ def judge(pool: dict) -> list[dict]:
                         "in_candidate_pool": None, "result": "不适用·机读重建失败"})
             rows.append(rec)
             continue
-        r = C.run_case(built, full=False)
+        r = engine()["C"].run_case(built, full=False)
         cands = [re.sub(r'日$', '', str(x)) for x in (r.get("yingqi_branches") or [])]
         top1 = cands[0] if cands else None
         rec["engine_top1"] = top1
