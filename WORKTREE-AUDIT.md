@@ -78,7 +78,7 @@
 ② 工作区干净；③ 内容能在主线点名归宿（迁移/改写均可）。三条同时满足 → 标「可安全删」，
 仍由人执行删除（本仓不自动删历史工作树）。
 
-本次 8 个 worktree 三条全满足，可按下面命令清理（**本文不代为执行**）：
+本次 8 个 worktree 三条全满足，**已于 2026-11-12 执行删除**：逐个 `git worktree remove`，无一需要 `--force`；`git worktree prune` 后 `git worktree list` 只剩 `main`，释放约 168 MB。8 个提交仍可用 `git cat-file -t <rev>` 解析（均为 `main` 祖先，删工作树不丢历史）；三条备份分支按 §三.C 保留未动。命令留档：
 
 ```bash
 # 公共父目录按 `git worktree list` 实取（本次 8 个都在系统临时目录下）
@@ -89,4 +89,4 @@ done
 git worktree prune
 ```
 
-删除前如需留证：`git show <rev> > /tmp/<rev>.patch` 或 `git tag archive/<rev> <rev>`。
+以后再清同类工作树：先按上面三条判据复核，再执行；删除前如需留证，`git show <rev> > /tmp/<rev>.patch` 或 `git tag archive/<rev> <rev>`。
