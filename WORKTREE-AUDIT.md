@@ -67,9 +67,11 @@
   四科布局）、`docs/samples/*.html` 与旧 `core/yishu_core/`。
 - **裁决：不回流。** 166 批重建后本仓只保留两科，梅花已正式移除且不预留目录；
   这个分支是**另一种架构形态**，不是「同一形态下的改进」。
-- **建议**：打 tag 归档后删除分支，或直接依赖已有的 `history/pre-squash-2026-10-09`。
-  另两条 `backup/scope-reduction-9a61b25`／`history/pre-squash-2026-10-09` 均 ahead 226、
-  behind 534，属 squash 前历史备份，保持现状即可。
+- **已执行（2026-11-12）**：实测 `git merge-base --is-ancestor` 表明它的 75 个提交**已是**
+  `history/pre-squash-2026-10-09` 与 `backup/scope-reduction-9a61b25` 的祖先，删除分支不减少
+  任何可达对象，故直接 `git branch -D`（未打额外 tag：两条备份分支已是副本）。
+  另两条 `backup/scope-reduction-9a61b25`／`history/pre-squash-2026-10-09` 均 ahead 226，
+  是 squash 前历史的**唯一副本**，删除会让这 226 个提交不可达——保留，不删。
 
 ## 四、回流到主线的**唯一**改动：删除判据
 

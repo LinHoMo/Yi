@@ -20,9 +20,10 @@
 | 想做什么 | 读哪份 |
 |---|---|
 | 直接回答六爻／八字的术语、规则、边界与常见问题 | [`KNOWLEDGE.md`](https://raw.githubusercontent.com/LinHoMo/Yi/main/KNOWLEDGE.md)（自包含知识速读＋术语表＋FAQ） |
-| 看**引擎跑出来的完整结论**（不是模板、不是手写） | [`examples/liuyao-example.md`](https://raw.githubusercontent.com/LinHoMo/Yi/main/examples/liuyao-example.md)、[`examples/bazi-example.md`](https://raw.githubusercontent.com/LinHoMo/Yi/main/examples/bazi-example.md) |
+| 看**引擎跑出来的完整结论**（不是模板、不是手写） | [`examples/liuyao-example.md`](https://raw.githubusercontent.com/LinHoMo/Yi/main/examples/liuyao-example.md)、[`examples/liuyao-time-example.md`](https://raw.githubusercontent.com/LinHoMo/Yi/main/examples/liuyao-time-example.md)、[`examples/bazi-example.md`](https://raw.githubusercontent.com/LinHoMo/Yi/main/examples/bazi-example.md) |
 | 机器可读的全部入口清单 | [`llms.txt`](https://raw.githubusercontent.com/LinHoMo/Yi/main/llms.txt) |
 | 判据篇目路由（按需读，勿整本读） | [`kb/INDEX.md`](https://raw.githubusercontent.com/LinHoMo/Yi/main/kb/INDEX.md) |
+| 判据篇目**离线**索引（断网也能逐篇读全） | [Pages 可点版](https://linhomo.github.io/Yi/kb/INDEX.html) · [Markdown 版](https://linhomo.github.io/Yi/kb/INDEX.md) |
 | 能力读数与边界（带集合名、n 与出处） | [`CAPABILITY.md`](https://raw.githubusercontent.com/LinHoMo/Yi/main/CAPABILITY.md) |
 | 无需登录的静态知识镜像 | <https://linhomo.github.io/Yi/> |
 
