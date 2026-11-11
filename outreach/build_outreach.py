@@ -405,7 +405,8 @@ def _site_index_md(rows: list[tuple[str, str]], mirrors: dict[str, str]) -> str:
         "",
         "## 其它入口",
         "",
-        "- [首页](../index.html) · [知识速读全文](../KNOWLEDGE.md) · [llms.txt](../llms.txt)",
+        "- [首页](../index.html) · [知识速读全文](../KNOWLEDGE.html) · [网页版 AI 提示词模板](../WEB-AI-PROMPT.html)",
+        "- [llms.txt](../llms.txt) · [KNOWLEDGE.md 原文](../KNOWLEDGE.md)",
         "",
         "## ⛔ 不在本站的内容",
         "",
@@ -468,8 +469,9 @@ def _site_index_html(rows: list[tuple[str, str]], mirrors: dict[str, str]) -> st
         '<li><a href="../examples/bazi-example.html">八字命局因子说明</a></li>\n'
         "</ul>\n"
         "<h2>其它入口</h2>\n<ul>\n"
-        '<li><a href="../index.html">首页</a> · <a href="../KNOWLEDGE.md">知识速读全文</a> · '
-        '<a href="../llms.txt">llms.txt</a> · <a href="INDEX.md">本页 Markdown 版</a></li>\n'
+        '<li><a href="../index.html">首页</a> · <a href="../KNOWLEDGE.html">知识速读全文</a> · '
+        '<a href="../WEB-AI-PROMPT.html">网页版 AI 提示词模板</a></li>\n'
+        '<li><a href="../llms.txt">llms.txt</a> · <a href="INDEX.md">本页 Markdown 版</a></li>\n'
         "</ul>\n"
         "<h2>⛔ 不在本站的内容</h2>\n"
         "<p>古籍案例库 <code>case_library.md</code> 刻意不进入对外层与发布包（AGENTS.md §一.2）："
@@ -883,7 +885,8 @@ def check_artifact_coverage(
     if sindex_html.count('href="../knowledge/') != len(rows):
         problems.append("site/kb/INDEX.html 的离线副本行数与登记表不符")
     # 首页与每篇可读版同样只放相对链接：镜像命名一变就 404 而构建照样绿（549/551 两次踩过）
-    for rel in ("site/index.html", "site/index.md", "site/kb/INDEX.md", "site/kb/INDEX.html", "site/KNOWLEDGE.html"):
+    for rel in ("site/index.html", "site/index.md", "site/kb/INDEX.md", "site/kb/INDEX.html",
+                "site/KNOWLEDGE.html", "site/WEB-AI-PROMPT.html"):
         problems += check_site_links(site, rel)
     for key, _ in rows:
         problems += check_site_links(site, f"site/knowledge/{key.replace('/', '__')[:-3]}.html")
@@ -931,6 +934,7 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
         "",
         f"- [README 安装节]({RAW}/README.md)：clone 即用、装 skills、装 DSH 插件",
         f"- [plugins/SKILL.md]({RAW}/plugins/SKILL.md)：技能正文（含 frontmatter，可放进通用 skills 目录）",
+        f"- [网页版 AI 提示词模板]({RAW}/outreach/WEB-AI-PROMPT.md)：可粘贴到网页版大模型的口径约束、输出格式与 10 条验收清单",
         f"- [MCP stdio 服务]({BLOB}/plugins/mcp/server.mjs)：零依赖，可直接暴露四工具",
         "",
         "## 不用于解读",
@@ -1106,6 +1110,16 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
     )
     anchor_problems += check_anchors(knowledge, page) + check_internal_anchors(page)
     pages["KNOWLEDGE.html"] = page
+
+    prompt_md = _read(OUTREACH / "WEB-AI-PROMPT.md")
+    page = _page_html(
+        "网页版 AI 提示词模板 · 易（Yi）",
+        md_to_html(prompt_md, _resolver("outreach", ".", repo_map)),
+        ".",
+        "WEB-AI-PROMPT.md",
+    )
+    anchor_problems += check_anchors(prompt_md, page) + check_internal_anchors(page)
+    pages["WEB-AI-PROMPT.html"] = page
     if anchor_problems:
         raise ValueError("文内锚点无法落到标题：" + "；".join(anchor_problems[:5]))
 
@@ -1134,6 +1148,8 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
         '<li><a href="kb/INDEX.md">同一索引的 Markdown 版</a> · '
         '<a href="KNOWLEDGE.html">知识速读（可读版）</a> · <a href="KNOWLEDGE.md">Markdown 原文</a> · '
         '<a href="llms.txt">llms.txt</a></li>\n'
+        '<li><a href="WEB-AI-PROMPT.html">网页版 AI 提示词模板</a> — 粘进网页版模型的口径约束、'
+        '输出格式与 10 条验收清单</li>\n'
         "</ul>\n"
         "<h2>给 AI 读者的入口（绝对 raw 直链）</h2>\n<ul>\n"
         f'<li><a href="{RAW}/llms.txt">llms.txt</a> — 机器可读的全部入口清单</li>\n'
@@ -1141,6 +1157,7 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
         f'<li><a href="{RAW}/kb/INDEX.md">kb/INDEX.md</a> — 判据篇目路由表</li>\n'
         f'<li><a href="{RAW}/CAPABILITY.md">CAPABILITY.md</a> — 能力读数与边界</li>\n'
         f'<li><a href="{RAW}/README.md">README.md</a> — 安装与 clone／skills／插件使用</li>\n'
+        f'<li><a href="{RAW}/outreach/WEB-AI-PROMPT.md">网页版 AI 提示词模板</a> — 给 ChatGPT／Claude 等网页版模型的口径与边界</li>\n'
         "</ul>\n"
         "<h2>代码产出的实际结论</h2>\n<ul>\n"
         f'<li><a href="{RAW}/examples/liuyao-example.md">六爻纳甲占报告（引擎实跑）</a></li>\n'
@@ -1176,6 +1193,7 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
             "---\n\n" + knowledge
         ),
         "site/llms.txt": "\n".join(llms),
+        "site/WEB-AI-PROMPT.md": prompt_md,
         "site/examples/liuyao-example.md": tracked["examples/liuyao-example.md"],
         "site/examples/liuyao-time-example.md": tracked["examples/liuyao-time-example.md"],
         "site/examples/bazi-example.md": tracked["examples/bazi-example.md"],

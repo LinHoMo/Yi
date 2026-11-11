@@ -40,6 +40,7 @@
 
 - [README 安装节](https://raw.githubusercontent.com/LinHoMo/Yi/main/README.md)：clone 即用、装 skills、装 DSH 插件
 - [plugins/SKILL.md](https://raw.githubusercontent.com/LinHoMo/Yi/main/plugins/SKILL.md)：技能正文（含 frontmatter，可放进通用 skills 目录）
+- [网页版 AI 提示词模板](https://raw.githubusercontent.com/LinHoMo/Yi/main/outreach/WEB-AI-PROMPT.md)：可粘贴到网页版大模型的口径约束、输出格式与 10 条验收清单
 - [MCP stdio 服务](https://github.com/LinHoMo/Yi/blob/main/plugins/mcp/server.mjs)：零依赖，可直接暴露四工具
 
 ## 不用于解读

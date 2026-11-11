@@ -14,6 +14,7 @@
 | 真源（引擎） | 两科 `scripts/`、`engine/`、`core/` | 示例结论由四段流水线现场实跑 |
 | 构建器 | `outreach/build_outreach.py` | `--write` / `--check` / `--registry` / `--selftest` |
 | 工具 | `outreach/install-skill.mjs` | 把技能装进通用 `skills/` 目录 |
+| 真源（提示词） | `outreach/WEB-AI-PROMPT.md` | 面向网页版 AI 的可粘贴提示词、验收清单与纠正话术 |
 | 入库产物 | `llms.txt`、`KNOWLEDGE.md`、`kb/INDEX.md`、`examples/*.md` | **由构建器生成、入库**，供 GitHub / raw / 联网检索直接读 |
 | 不入库产物 | `site/`（gitignore） | GitHub Pages Actions 现场生成后部署；含判据索引离线镜像与逐篇全文副本 |
 

@@ -147,6 +147,7 @@
 | `outreach/README.md` | 对外层的真源／产物／铁律／命令说明 | 活文档 |
 | `outreach/KNOWLEDGE-BODY.md` | 知识正文的人写真源（构建器把它拼进 `KNOWLEDGE.md`） | 活文档 |
 | `outreach/RELEASE-NOTES.md` | 自动发布 Release 的正文真源（口径声明随包，不用 `--generate-notes`） | 活文档 |
+| `outreach/WEB-AI-PROMPT.md` | **网页版 AI 提示词模板**（553 批）：可粘贴的最短版／完整版、三种输入形态、10 条验收清单与越界纠正话术；构建器转成 Pages 可读版并登记进 `llms.txt` | 活文档 |
 
 > 非 Markdown 的入口 `llms.txt`、`site/`（gitignore，Pages Actions 生成）、
 > `.github/workflows/pages.yml` 与 `release.yml` 不在本表统计范围内。
