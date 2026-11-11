@@ -15,9 +15,11 @@ DeepSeek Harness（DSH）插件：**六爻纳甲与八字四柱的确定性排�
   `yi_kb`（判据知识库检索）、`yi_report`（单文件 HTML/MD 排盘报告）。
 - **机械排盘归代码**：起局、装卦、判旺衰、算应期全部由 Python 引擎完成，模型只做解读——同一输入永远同一输出。
 - **判据随包可查**：知识库文档内置，检索即可回指书源。
-- **代码产出的结论样例**：仓库 [`examples/`](https://github.com/LinHoMo/Yi/tree/main/examples) 下两份
-  固定输入实跑生成的完整报告；网页端 AI 可读 [`llms.txt`](https://raw.githubusercontent.com/LinHoMo/Yi/main/llms.txt)
-  与 [`KNOWLEDGE.md`](https://raw.githubusercontent.com/LinHoMo/Yi/main/KNOWLEDGE.md)。
+- **代码产出的结论样例**：仓库 [`examples/`](https://github.com/LinHoMo/Yi/tree/main/examples) 下三份
+  固定输入实跑生成的完整报告（六爻纳甲、六爻时间起卦、八字命局）；网页端 AI 可读
+  [`llms.txt`](https://raw.githubusercontent.com/LinHoMo/Yi/main/llms.txt)、
+  [`KNOWLEDGE.md`](https://raw.githubusercontent.com/LinHoMo/Yi/main/KNOWLEDGE.md)
+  与[判据索引离线镜像](https://linhomo.github.io/Yi/kb/INDEX.html)。
 
 ## 安装 / 卸载
 

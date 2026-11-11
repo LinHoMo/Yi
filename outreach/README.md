@@ -12,10 +12,10 @@
 | 真源（登记） | `plugins/scripts/kb-docs.mjs` | 判据篇目登记表，与随包知识库构建器共用**同一份**，不新增第二登记表 |
 | 真源（判据） | `liuyao/references/`、`bazi/references/` | 判据全文（案例库 `case_library.md` 永不进对外层） |
 | 真源（引擎） | 两科 `scripts/`、`engine/`、`core/` | 示例结论由四段流水线现场实跑 |
-| 构建器 | `outreach/build_outreach.py` | `--write` / `--check` / `--selftest` |
+| 构建器 | `outreach/build_outreach.py` | `--write` / `--check` / `--registry` / `--selftest` |
 | 工具 | `outreach/install-skill.mjs` | 把技能装进通用 `skills/` 目录 |
 | 入库产物 | `llms.txt`、`KNOWLEDGE.md`、`kb/INDEX.md`、`examples/*.md` | **由构建器生成、入库**，供 GitHub / raw / 联网检索直接读 |
-| 不入库产物 | `site/`（gitignore） | GitHub Pages Actions 现场生成后部署，见 `.github/workflows/pages.yml` |
+| 不入库产物 | `site/`（gitignore） | GitHub Pages Actions 现场生成后部署；含判据索引离线镜像与逐篇全文副本 |
 
 ## 三条铁律怎么守
 
@@ -32,8 +32,9 @@
 
 ```bash
 python outreach/build_outreach.py --selftest   # 内存负例，真盘零写入
-python outreach/build_outreach.py --write      # 重生成 5 份入库产物 + site/
-python outreach/build_outreach.py --check      # CI 常驻同源复验（默认动作）
+python outreach/build_outreach.py --write      # 重生成 6 份入库产物 + site/
+python outreach/build_outreach.py --check      # CI 常驻同源复验（默认动作，含双登记表对账）
+python outreach/build_outreach.py --registry   # 只跑双登记表对账（不跑引擎，秒级）
 
 node outreach/install-skill.mjs --target ~/.claude/skills/yi-divination
 ```
@@ -42,8 +43,35 @@ node outreach/install-skill.mjs --target ~/.claude/skills/yi-divination
 先跑 `--check` 再 `--write` 并部署 `site/`。新增/改动判据篇目须同步 `plugins/scripts/kb-docs.mjs`
 与 `KNOWLEDGE-BODY.md`，随后重跑 `--write` 并把产物一起提交。
 
+## 双登记表怎么对账（552 批加固）
+
+`kb/INDEX.md`（对外导览，入库）与随包 `skills/yi-divination/references/INDEX.md`
+（构建产物）是同一份登记表的两个渲染结果。此前只有「登记了就得在盘」的单向检查，
+解析用宽松正则——认不出的行会被**静默跳过**，磁盘新增篇目没登记也不会红。现在四向对账：
+
+| 方向 | 判据 | 失守后果 |
+|---|---|---|
+| ① 解析 ↔ JS | `--check` 直接 `import` `kb-docs.mjs` 的 `KB_DOC`，与 Python 解析逐条比 keys／描述／顺序（node 不在 PATH 时跳过并打印原因） | 两侧读到不同份数，读者看到残表 |
+| ② 登记 ↔ 磁盘 | 两科 `references/*.md`（排除 `case_library.md` 与 `INDEX.md`）必须全部在登记表内 | 新增判据对外层静默缺席 |
+| ③ 登记 ↔ 随包索引 | 已构建时比篇目集合与描述原文 | 插件内检索缺篇／描述分家 |
+| ④ 每篇 ↔ 产物 | `llms.txt`／`KNOWLEDGE.md`／`kb/INDEX.md`／`site` 索引逐篇恰好可见，站内相对链接全部可解析 | 分节渲染漏一篇仍全绿（新增第三个科时最易踩） |
+
+解析侧另改为 fail-closed：块内每一非空非注释行必须是单行 `['<科>/<篇>.md', '<描述>']`
+字面量，否则带行号判红；描述含 `|` 或换行也判红（会撑坏 Markdown 表格）。
+`--selftest` 为上述每条规则各留一条负例（21 类全过才绿）。
+
+
 ## 与既有 `plugins/skills/` 的关系
 
 `plugins/scripts/build.mjs` 生成的 `skills/yi-divination/references/INDEX.md` 是**随包产物**（不入库），
 服务 `yi_kb` 检索；`kb/INDEX.md` 是**对外导览**（入库），服务 GitHub 读者与联网 AI。
 两者篇目同源于 `kb-docs.mjs`，但用途不同、不互为真源——不要合并，也不要手改任一份。
+552 批起两个构建器互为对账：`--check` 会把随包索引与登记表逐篇比，任一侧改漏即红。
+
+## Pages 镜像（site/）
+
+`site/` 不入库，由 `--write` 现场生成、`pages.yml` 部署。除首页与逐篇全文副本外，552 批新增
+判据索引的离线镜像：Markdown 版可直接读、HTML 版可点，链接全部是站内相对路径，
+**断网/离线下载后也能从索引点进每一篇**。镜像落在 `kb/` 子目录——Windows 文件系统
+大小写不敏感，`site/INDEX.md` 与 `site/index.md` 是同一个文件，写在根上会互相覆盖
+（实测 `.resolve()` 指回 `index.md`），并会把 Pages 首页顶掉，故不能放根。

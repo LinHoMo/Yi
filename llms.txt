@@ -10,6 +10,7 @@
 - [CAPABILITY.md](https://raw.githubusercontent.com/LinHoMo/Yi/main/CAPABILITY.md)：能力边界与全部读数（每行带集合名、n 与出处）
 - [README.md](https://raw.githubusercontent.com/LinHoMo/Yi/main/README.md)：安装、clone、插件与构建
 - [知识库导览](https://raw.githubusercontent.com/LinHoMo/Yi/main/kb/INDEX.md)：判据篇目路由表与 raw 直链
+- [判据索引离线镜像](https://linhomo.github.io/Yi/kb/INDEX.md)：同一批篇目的站内全文副本，断网也能逐篇读完
 - [GitHub Pages 站点](https://linhomo.github.io/Yi/)：无需登录的静态知识镜像
 
 ## 代码产出的实际结论（引擎实跑示例报告）

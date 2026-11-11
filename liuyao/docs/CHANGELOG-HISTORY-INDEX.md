@@ -96,3 +96,5 @@
 ## 2026-11-07 第五百三十五批（实证巡检·README 声明↔数据漂移缺口闭环·B 轻门）：**两份学科 README 关键数字按 ledger 真值回流；新增 `readme_reconcile.py` 只读对账门（21 项）挂 CI root-gates，变异探针实证有牙；正文见 git 提交**
 
 ## 2026-11-07 第五百三十六批（六爻·thinking_chain 静卦静默降级缺陷根治）：**`effects.analyze_repetition` 对静卦 changed=None 抛 AttributeError 被静默吞成 advanced_analysis={}，86 静卦长期零经典增强；降级为 {} 兜底＋defense-in-depth，ablation --selftest FAIL→PASS；细粒度 verdict/score 确有修正（向金标准收敛），聚合读数零漂移；不新增门号**
+
+## 2026-11-08 第五百三十七批（六爻·静卦增强静默缺失缺陷常驻回归守卫＋536 声明按 §六.2 更正）：**承接 536：为静卦增强静默缺失加常驻回归守卫 `static_enhancement_guard.py`；并实测证伪 536 条目「不改动任何评测分数与叙述指纹」的声明，按 §六.2 更正。正文见 git 提交 `c5e4a2d` 同批**

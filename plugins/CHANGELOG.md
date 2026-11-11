@@ -6,6 +6,8 @@
 > **497 批起只保留 DSH 一个宿主**：claude/codex/gemini/yan 四家适配器目录、
 > `publish.mjs`（git 发行树）及其在 build/selftest/ci/文档里的登记一并删除。
 
+## 2026-11-11 第五百五十二批（共享层·登记表解析契约）：**`plugins/` 运行时、技能正文、构建与自检判据零改动；`plugins/scripts/kb-docs.mjs` 只加注释（新增条目必须是单行单引号字面量、描述不得含竖线或换行、两科不得同名），登记表 14 条与 `KB_DOC` 本身未动。本批另一侧改动在 `outreach/build_outreach.py`（不入包）：解析改 fail-closed、四向对账，`--check` 现会把随包 `references/INDEX.md` 与登记表逐篇比对（塞 `ghost.md` 实测 rc=1）。build 重建后随包知识库 14 篇 + INDEX.md、selftest 8 段全绿、`[1.6]` 产物同源、`[7]` 禁语门绿**
+
 ## 2026-11-11 第五百五十一批（共享层·随包登记）：**`plugins/` 运行时、技能正文、构建与自检判据零改动；本批是全仓架构与内容迭代优化，新增的第三份示例与判据脚注均不在随包白名单内。build 重建后 selftest 8 段全绿、`[1.6]` 产物同源、`[7]` 禁语门绿**
 
 ## 2026-11-11 第五百五十批（共享层·随包登记）：**`plugins/` 运行时、技能正文、构建与自检判据零改动；本批是全仓仓库整治，新增的 `REPO-HYGIENE.md` 与 `devkit/root/check_repo_hygiene.py` 均不在随包白名单内。build 重建后 selftest 8 段全绿、`[1.6]` 产物同源、`[7]` 口径门绿**

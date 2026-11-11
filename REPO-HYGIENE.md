@@ -48,7 +48,7 @@
 git clone https://github.com/LinHoMo/Yi && cd Yi
 node plugins/scripts/build.mjs            # engine/ + skills/ + src 8 个共享运行时
 node plugins/scripts/selftest.mjs         # 共享层自检
-python outreach/build_outreach.py --write # 5 份入库对外产物 + site/
+python outreach/build_outreach.py --write # 6 份入库对外产物 + site/（含离线索引镜像）
 python outreach/build_outreach.py --check # 逐字节同源复验
 npm --prefix dsh-plugin run check        # 宿主侧全检
 python liuyao/dev_tools/check.py && python bazi/dev_tools/check.py
@@ -79,9 +79,12 @@ rm -rf plugins/engine plugins/skills dsh-plugin/engine dsh-plugin/skills site
 
 - ⛔ `.workbuddy/`（项目数据，非缓存）、`data/cases/`、`data/sources/*.dz.txt`、
   `*.provenance.json`、`liuyao/references/case_library.md`（案例库虽不随包，但在库且受门守护）。
-- ⚠️ **历史 worktree 与备份分支**：`git worktree list` 里的历史对拍工作树、
-  `backup/*`／`feat/*`／`history/*` 分支可能含未合并工作，删除不可逆，**由人决定**后再执行
+- ⚠️ **历史 worktree 与备份分支**：删除不可逆，**由人决定**后再执行
   `git worktree remove --force <path>` / `git branch -D <name>`。
+  判定「可安全删」的三条（552 批实测 8 个历史工作树全满足，过程见 `WORKTREE-AUDIT.md`）：
+  ① `git rev-list --count main..<rev>` 为 0；② `git status --porcelain` 为空；
+  ③ 快照内容能在主线点名归宿（被迁移、被改写都算，不必逐字相同）。
+  三条不齐即按「可能含未合并工作」保留，不猜、不批量删。
 - ⚠️ **CHANGELOG 里的登记时点事实**：历史条目按登记时点保留、不改写；
   发现过期用「文首勘误块 / 现状表」更正，禁止静默改旧读数（§六.2）。
 
@@ -122,5 +125,5 @@ rm -rf plugins/engine plugins/skills dsh-plugin/engine dsh-plugin/skills site
 | `check_root_docs.py` | 根级文档活引用零死链 | 同上 |
 | `check_batch_num.py` | CHANGELOG 批号必须在提交信息里 | 同上 |
 | `sync_devkit.py --check` / `sync_kernel.py --check` | 真源↔产物逐字节同源 | 仓库根 |
-| `build_outreach.py --check` / `--selftest` | 对外产物同源 + 三条铁律 | `outreach/` |
+| `build_outreach.py --check` / `--registry` / `--selftest` | 对外产物同源 + 双登记表四向对账 + 三条铁律 | `outreach/` |
 | `plugins/scripts/selftest.mjs` [1]/[1.5]/[7] | 共享运行时同源、案例库不随包、禁语与口径 | `plugins/` |

@@ -4,6 +4,8 @@
 > 随 DSH 插件发布的 `skills/yi-divination/references/INDEX.md` 是构建产物，
 > 由 `plugins/scripts/build.mjs` 按 `plugins/scripts/kb-docs.mjs` 生成，两者判据篇目同源但用途不同。
 
+- 离线镜像（Pages，可点）：https://linhomo.github.io/Yi/kb/INDEX.html · Markdown 版 https://linhomo.github.io/Yi/kb/INDEX.md
+
 按需读取：先看这张表挑篇，再按 raw 直链读全文；**不要整本读**。
 
 ## 六爻

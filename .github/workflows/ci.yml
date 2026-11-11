@@ -56,6 +56,8 @@ jobs:
           # 547 批：卜筮全书候选池一次性开卷记录校验（同 543 范式：只此一次开封／逐例红绿／无率值／判卷未改写／指标未偷换；只读）
           python liuyao/dev_tools/open_bushi_candidates.py --verify
           # 549 批：对外知识层同源复验（示例结论由两科四段流水线实跑生成，手改即判红）＋负例自证
+          # 552 批：--check 现含双登记表四向对账（Python↔JS KB_DOC／磁盘 references／随包 INDEX／逐篇覆盖），
+          #         另备 --registry 只跑对账（秒级、不跑引擎），本地改动登记表时先跑它
           python outreach/build_outreach.py --check
           python outreach/build_outreach.py --selftest
           # 550 批：仓库卫生门（生成物零入库／零硬编码绝对路径／活文档零过期钉数）＋负例自证
