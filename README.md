@@ -6,6 +6,8 @@
 > **架构整改完成记录**（25 张卡全部执行完毕；完成台账、V1–V15 实测与剩余欠账）见
 > [`ARCHITECTURE-PLAN.md`](ARCHITECTURE-PLAN.md)；
 > **门禁内核与根级门**见 `devkit/`（331–334 批归并，`sync_devkit.py --check` 守同源）。
+> **要整理仓库**：六类边界速查、目录真源／产物契约、生成物再生与垃圾清理，见
+> [`REPO-HYGIENE.md`](REPO-HYGIENE.md)（由 `devkit/root/check_repo_hygiene.py` 常驻复验）。
 
 ---
 

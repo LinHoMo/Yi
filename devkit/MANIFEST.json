@@ -22,7 +22,8 @@
       "check_root_docs.py",
       "check_docs_index.py",
       "check_batch_num.py",
-      "check_pytest_bridge.py"
+      "check_pytest_bridge.py",
+      "check_repo_hygiene.py"
     ]
   },
   "variants": {

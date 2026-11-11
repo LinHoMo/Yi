@@ -1,6 +1,7 @@
 # 发布流水线（第五百四十九批）：此前 CI 只有质量门，tgz 全靠人工在已 build 的机器上打，
-# 导致 README 固定指向 v1.0.0 而 package.json 已到 1.0.24、且无对应 tag / 资产。
+# 导致 README 钉死某个历史 Release 版本、而 package.json 持续前进且无对应 tag / 资产。
 # 本流程把「版本真源 = dsh-plugin/package.json」变成机器判据：tag 与版本不一致即判红。
+# 注释刻意不写具体版本号（会漂移，由 devkit/root/check_repo_hygiene.py 常驻看守）。
 name: release-plugin
 
 on:
