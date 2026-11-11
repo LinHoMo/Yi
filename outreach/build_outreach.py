@@ -130,7 +130,9 @@ def _engine_report(script_dir: Path, code: str) -> str:
     if proc.returncode != 0:
         err = proc.stderr.decode("utf-8", errors="replace")[-1200:]
         raise RuntimeError(f"引擎实跑失败（rc={proc.returncode}）：{err}")
-    text = proc.stdout.decode("utf-8", errors="replace")
+    # Windows 的 print 会把 \n 转成 \r\n；若不在源头归一，rstrip("\n") 遇到 \r 会提前
+    # 停止，报告末尾比 Linux 多留一个换行——549 批首轮 Pages 门实测正好差 1 字节。
+    text = proc.stdout.decode("utf-8", errors="replace").replace("\r\n", "\n").replace("\r", "\n")
     if not text.strip():
         raise RuntimeError("引擎 stdout 为空，示例报告不得为空")
     return text.rstrip("\n") + "\n"

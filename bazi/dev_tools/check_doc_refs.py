@@ -196,6 +196,11 @@ def scan() -> tuple[list[str], int]:
                 if "/" not in ref and not ref.startswith("."):
                     # 裸文件名不算路径声明，但活引用指向已删文件必须判红
                     # （508 批后 engine.py 已不在盘，SKILL.md 却仍写「必须且只能由它完成」）。
+                    # 例外与下方路径分支同口径：抓取/校对原始件与衍生比对件本就 gitignore
+                    # 不入库，fresh checkout 上必不在盘；549 批前这条豁免只写在路径分支里，
+                    # 导致 `fetch_siku_sanming.py` 的裸文件名在 CI 假红、本地却绿。
+                    if ref.endswith((".wikitext.txt", ".meta.json", "_diff.json")):
+                        continue
                     if ref not in bare_names():
                         problems.append(f"{rel_to_disc}:{n} 裸文件名在盘上不存在 → {ref}")
                     continue

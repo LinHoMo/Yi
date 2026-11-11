@@ -19,10 +19,10 @@
 `--selftest` 做负例：挖空 basis／恒 general／评分侧偷读 xiang，三处各须被抓。
 """
 from __future__ import annotations
-# 批量注入：eval/ 上 path（替换 scripts/ 兼容 shim）
+# eval/ 上 path（相对 __file__ 定位；禁止硬编码本机绝对路径）
 import sys as _sys
 from pathlib import Path as _P
-_ed = 'C:\\Users\\31103\\Desktop\\Yi\\liuyao\\eval'
+_ed = str(_P(__file__).resolve().parents[1] / "eval")
 if _ed not in _sys.path:
     _sys.path.insert(0, _ed)
 
