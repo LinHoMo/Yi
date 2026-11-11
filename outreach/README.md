@@ -58,7 +58,7 @@ node outreach/install-skill.mjs --target ~/.claude/skills/yi-divination
 
 解析侧另改为 fail-closed：块内每一非空非注释行必须是单行 `['<科>/<篇>.md', '<描述>']`
 字面量，否则带行号判红；描述含 `|` 或换行也判红（会撑坏 Markdown 表格）。
-`--selftest` 为上述每条规则各留一条负例（21 类全过才绿）。
+`--selftest` 为上述每条规则各留一条负例（22 类全过才绿，含首页与两份 INDEX 的站内链接门）。
 
 
 ## 与既有 `plugins/skills/` 的关系
