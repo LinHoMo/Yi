@@ -21,7 +21,7 @@
 
 | 书 | 本地文件（`data/sources/`） | 字节 | 本地 sha256（前 16 位） | 行（非空） | 干支对 | 标题 | provenance |
 |---|---|---|---|---|---|---|---|
-| 《增刪卜易》 | `zengshan_buyi.wikitext.txt` | 330,663 | `522068be9311bafe` | 4475 | 352 | 54 | 有 |
+| 《增刪卜易》 | `zengshan_buyi.wikitext.txt` | 326,152 | `897f963b938ec458` | 4475 | 352 | 54 | 有 |
 | 《黄金策》 | `huangjin_ce.wikitext.txt` | 65,909 | `51843f473b7a7a7a` | 898 | 0 | 33 | 有 |
 | 《火珠林》 | `huozhulin.wikitext.txt` | 66,666 | `b3bed441a9973702` | 909 | 65 | 84 | 有（2026-10-01 补写） |
 | 《卜筮正宗》 | `bushi_zhengzong.wikitext.txt` | 2,741 | `9bbfabacf3a61307` | 43 | 3 | 2 | 有（2026-10-01 重抓 + `probe`） |

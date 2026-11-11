@@ -199,7 +199,7 @@ def scan() -> tuple[list[str], int]:
                     # 例外与下方路径分支同口径：抓取/校对原始件与衍生比对件本就 gitignore
                     # 不入库，fresh checkout 上必不在盘；549 批前这条豁免只写在路径分支里，
                     # 导致 `fetch_siku_sanming.py` 的裸文件名在 CI 假红、本地却绿。
-                    if ref.endswith((".wikitext.txt", ".meta.json", "_diff.json")):
+                    if ref.endswith((".wikitext.txt", ".meta.json", "_diff.json", "check_baseline.json")):
                         continue
                     if ref not in bare_names():
                         problems.append(f"{rel_to_disc}:{n} 裸文件名在盘上不存在 → {ref}")
