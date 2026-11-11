@@ -753,6 +753,11 @@ PAGE_CSS = (
     "pre code{background:none;padding:0}"
     "blockquote{margin:1rem 0;padding:.4rem 1rem;border-left:3px solid #d0d7de;color:#57606a}"
     "hr{border:0;border-top:1px solid #d8dee4;margin:2rem 0}"
+    "details.toc{border:1px solid #d8dee4;border-radius:6px;padding:.5rem .9rem;margin:0 0 1.2rem;"
+    "background:#fafbfc;font-size:.94rem}"
+    "details.toc summary{cursor:pointer;font-weight:600}"
+    "details.toc ol{margin:.5rem 0 0;padding-left:1.4rem}"
+    "details.toc li{margin:.15rem 0}"
     "footer{margin-top:3rem;padding-top:1rem;border-top:1px solid #d8dee4;"
     "font-size:.85rem;color:#57606a}"
 )
@@ -768,16 +773,53 @@ def check_anchors(md: str, page_html: str) -> list[str]:
     return [f"锚点无对应标题：#{a}" for a in sorted(set(ANCHOR_REF_RE.findall(md))) if a not in ids]
 
 
+TOC_ITEM_RE = re.compile(r'<h2 id="([^"]+)">(.*?)</h2>')
+TEXT_TAG_RE = re.compile(r"<[^>]+>")
+
+
+def check_internal_anchors(page_html: str) -> list[str]:
+    """页内 `href="#…"` 必须有对应 id（自动目录与手写目录都走这条）。"""
+    ids = set(ANCHOR_ID_RE.findall(page_html))
+    refs = set(re.findall(r'href="#([^"]+)"', page_html))
+    return [f"页内锚点无目标：#{a}" for a in sorted(refs) if a not in ids]
+
+
+def _toc_html(body: str) -> str:
+    """长页自动目录：只列 h2，节数 ≥8 才出，`<details>` 折叠、零 JS。"""
+    items = TOC_ITEM_RE.findall(body)
+    if len(items) < 8:
+        return ""
+    lis = "".join(f'<li><a href="#{i}">{t}</a></li>' for i, t in items)
+    return (
+        f'<details class="toc"><summary>本页目录（{len(items)} 节）</summary>'
+        f"<ol>{lis}</ol></details>"
+    )
+
+
+def _description(body: str) -> str:
+    m = re.search(r"<p>(.*?)</p>", body, re.S)
+    text = html.unescape(TEXT_TAG_RE.sub("", m.group(1))) if m else ""
+    return re.sub(r"\s+", " ", text).strip()[:120]
+
+
 def _page_html(title: str, body: str, page_dir: str, md_mirror: str) -> str:
     """单篇离线页外壳：顶部回索引、右上给 Markdown 原文，底部带口径脚注。"""
     back = posixpath.relpath("kb/INDEX.html", page_dir or ".")
     md_rel = posixpath.relpath(md_mirror, page_dir or ".")
+    desc = html.escape(_description(body), quote=True)
+    toc = _toc_html(body)
     return (
         "<!doctype html>\n<html lang=\"zh-CN\">\n<head>\n<meta charset=\"utf-8\">\n"
         "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
-        f"<title>{html.escape(title)}</title>\n<style>\n{PAGE_CSS}\n</style>\n</head>\n<body>\n"
+        f"<title>{html.escape(title)}</title>\n"
+        f'<meta name="description" content="{desc}">\n'
+        f'<meta property="og:type" content="article">\n'
+        f'<meta property="og:site_name" content="易（Yi）">\n'
+        f'<meta property="og:title" content="{html.escape(title, quote=True)}">\n'
+        f'<meta property="og:description" content="{desc}">\n'
+        f"<style>\n{PAGE_CSS}\n</style>\n</head>\n<body>\n"
         f'<nav><a href="{back}">← 判据索引</a> · <a href="{md_rel}">Markdown 原文</a></nav>\n'
-        f"<main>\n{body}\n</main>\n"
+        f"<main>\n{toc}\n{body}\n</main>\n"
         "<footer>本页是仓库判据/示例的离线镜像，由 <code>outreach/build_outreach.py</code> 生成。"
         "仓库内一切分数都是<strong>古籍案例对齐分</strong>（回归审计用），<strong>不是现实命中率</strong>；"
         "现实侧样本为零。本工具不是预言；医疗、法律、投资、重大决策请以专业意见为准。</footer>\n"
@@ -1045,7 +1087,7 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
             "knowledge",
             f"knowledge/{stem}.md",
         )
-        anchor_problems += check_anchors(src_md, page)
+        anchor_problems += check_anchors(src_md, page) + check_internal_anchors(page)
         pages[f"knowledge/{stem}.html"] = page
     for rel in [r for r in tracked if r.startswith("examples/")]:
         page = _page_html(
@@ -1054,7 +1096,7 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
             "examples",
             rel,
         )
-        anchor_problems += check_anchors(tracked[rel], page)
+        anchor_problems += check_anchors(tracked[rel], page) + check_internal_anchors(page)
         pages[rel[:-3] + ".html"] = page
     page = _page_html(
         "知识速读 · 易（Yi）",
@@ -1062,7 +1104,7 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
         ".",
         "KNOWLEDGE.md",
     )
-    anchor_problems += check_anchors(knowledge, page)
+    anchor_problems += check_anchors(knowledge, page) + check_internal_anchors(page)
     pages["KNOWLEDGE.html"] = page
     if anchor_problems:
         raise ValueError("文内锚点无法落到标题：" + "；".join(anchor_problems[:5]))
@@ -1287,6 +1329,9 @@ def selftest() -> int:
         "<p>|" not in md_to_html("| a | b |\n|---|---|\n| 1 | 2 |\n", lambda h: h)
         and md_to_html("| a | b |\n|---|---|\n| 1 | 2 |\n", lambda h: h).count("<tr>") == 2
     ))
+    check("页内 href 无 id → 锚点门判红", lambda: bool(check_internal_anchors(
+        '<a href="#nope">x</a><h2 id="ok">ok</h2>'
+    )))
     check("文内锚点指空 → 构建判红", lambda: bool(check_anchors(
         "[跳](#不存在)\n\n# 标题\n", md_to_html("# 标题\n", lambda h: h)
     )))
