@@ -30,13 +30,17 @@
 | 两科 `scripts/`、`engine/`、`rules/`、`data/`、`references/` | 学科真源 | 自身 | — | ✅ |
 | `plugins/mcp/`、`plugins/scripts/`、`plugins/SKILL.md` | 共享运行时真源 | 自身 | — | ✅ |
 | `plugins/engine/`、`plugins/skills/` | 构建产物 | 两科 + `plugins/mcp/` | `node plugins/scripts/build.mjs` | ❌ |
-| `dsh-plugin/engine/`、`dsh-plugin/skills/`、`dsh-plugin/SKILL.md`、`dsh-plugin/src/*.mjs`（除 `src/index.mjs`） | 分发产物 | 同上 | 同上（含 `prepack` 自动跑） | ❌ |
+| `dsh-plugin/engine/`、`dsh-plugin/skills/`、包根技能正文（构建生成）、`dsh-plugin/src/*.mjs`（除 `dsh-plugin/src/index.mjs`） | 分发产物 | 同上 | 同上（含 `prepack` 自动跑） | ❌ |
 | `llms.txt`、`KNOWLEDGE.md`、`kb/INDEX.md`、`examples/*.md` | **对外层产物（入库）** | `outreach/KNOWLEDGE-BODY.md` + 登记表 + 两科引擎 | `python outreach/build_outreach.py --write` | ✅（必须提交，否则外部读不到） |
 | `site/` | Pages 产物 | 同上 | 同上 + `.github/workflows/pages.yml` 现场部署 | ❌ |
 | `**/data/cache/`、`**/data/collation/`、`**/scratch/`、`**/outputs/`、`**/logs/` | 评测/比对/临时产物 | 脚本现场生成 | 清掉即由对应脚本重生 | ❌ |
 
 > **唯一例外**：`dsh-plugin/src/index.mjs` 是宿主专属源码，虽在 `src/` 下仍入库
 > （`.gitignore` 显式 negated）。`dsh-plugin/presets/` 同理。
+>
+> **写文档的纪律**：凡「不入库产物」一律写成目录名或文字描述，**不要写成带扩展名的
+> 文件路径**——本地 build 过文件在盘、活引用门绿，fresh checkout 上文件不存在就判死链
+> （550 批首次 fresh 复验实证）。这也正是 §六 第 6 步必须做干净树复验的原因。
 
 ## 三、一条命令再生全部产物
 
