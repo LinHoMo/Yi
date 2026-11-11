@@ -528,8 +528,9 @@ def check_artifact_coverage(
         problems.append("site/kb/INDEX.md 的离线副本行数与登记表不符")
     if sindex_html.count('href="../knowledge/') != len(rows):
         problems.append("site/kb/INDEX.html 的离线副本行数与登记表不符")
-    problems += check_site_links(site, "site/kb/INDEX.md")
-    problems += check_site_links(site, "site/kb/INDEX.html")
+    # 首页同样只放相对链接：镜像命名规则一变，首页就会 404 而构建照样绿（549/551 两次踩过）
+    for rel in ("site/index.html", "site/index.md", "site/kb/INDEX.md", "site/kb/INDEX.html"):
+        problems += check_site_links(site, rel)
     return problems
 
 def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
@@ -913,6 +914,11 @@ def selftest() -> int:
     )))
     check("site/ 缺判据镜像 → 覆盖判红", lambda: bool(check_artifact_coverage(
         rows, tracked, {k: v for k, v in site.items() if not k.endswith("najia_rules.md")}
+    )))
+    check("首页站内链接指空 → 链接门判红", lambda: bool(check_site_links(
+        {**site, "site/index.html": site["site/index.html"].replace(
+            'href="kb/INDEX.html"', 'href="kb/NOPE.html"')},
+        "site/index.html",
     )))
     check("INDEX 站内链接指空 → 链接门判红", lambda: bool(check_site_links(
         {**site, "site/kb/INDEX.md": site["site/kb/INDEX.md"].replace(
