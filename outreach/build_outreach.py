@@ -327,7 +327,48 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
     }
 
     # 4) site/ —— 不入库，Pages Actions 现场生成
+    # Pages 首页必须是 index.html：upload-pages-artifact 不做 Jekyll 渲染，
+    # 只放 index.md 时 `/` 会落到 GitHub 错误页（549 批首轮实测），而 `/llms.txt` 正常。
+    # 纯静态、无 JS，链接一律给绝对 raw 直链，方便联网检索的 AI 直接跟进。
+    nav_rows = "\n".join(
+        f'<li><a href="{raw_link(key)}">{key}</a> — {desc}</li>' for key, desc in rows
+    )
+    index_html = (
+        "<!doctype html>\n<html lang=\"zh-CN\">\n<head>\n<meta charset=\"utf-8\">\n"
+        "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
+        "<title>易（Yi）· 术数知识与引擎示例</title>\n"
+        "<meta name=\"description\" content=\"六爻纳甲与八字四柱的确定性排盘引擎："
+        "判据知识库、代码实跑产出的完整结论报告、能力边界与安装入口。\">\n"
+        "</head>\n<body>\n"
+        "<h1>易（Yi）· 术数知识与引擎示例</h1>\n"
+        "<p>本仓库同时提供<strong>代码</strong>与<strong>代码实跑产出的术数结论</strong>。"
+        "机械运算归 Python 代码，象数解读归语言模型。</p>\n"
+        "<blockquote><p>仓库内一切分数都是<strong>古籍案例对齐分</strong>（回归审计用），"
+        "<strong>不是现实命中率</strong>；现实侧样本为零。本工具不是预言；"
+        "医疗、法律、投资、重大决策请以专业意见为准。</p></blockquote>\n"
+        "<h2>给 AI 读者的入口（绝对 raw 直链）</h2>\n<ul>\n"
+        f'<li><a href="{RAW}/llms.txt">llms.txt</a> — 机器可读的全部入口清单</li>\n'
+        f'<li><a href="{RAW}/KNOWLEDGE.md">KNOWLEDGE.md</a> — 自包含知识速读、术语表、铁律与 FAQ</li>\n'
+        f'<li><a href="{RAW}/kb/INDEX.md">kb/INDEX.md</a> — 判据篇目路由表</li>\n'
+        f'<li><a href="{RAW}/CAPABILITY.md">CAPABILITY.md</a> — 能力读数与边界</li>\n'
+        f'<li><a href="{RAW}/README.md">README.md</a> — 安装与 clone／skills／插件使用</li>\n'
+        "</ul>\n"
+        "<h2>代码产出的实际结论</h2>\n<ul>\n"
+        f'<li><a href="{RAW}/examples/liuyao-example.md">六爻纳甲占报告（引擎实跑）</a></li>\n'
+        f'<li><a href="{RAW}/examples/bazi-example.md">八字命局因子说明（引擎实跑）</a></li>\n'
+        "</ul>\n"
+        "<p>两份报告由固定输入下的四段流水线 <code>chart → analyze → narrate → render</code> "
+        "现场生成，逐字节同源复验；静态示例不能代替现场起卦。</p>\n"
+        "<h2>判据知识库（按需读，勿整本读）</h2>\n<ul>\n" + nav_rows + "\n</ul>\n"
+        "<h2>不用于解读</h2>\n"
+        "<p><code>case_library.md</code> 虽在仓库公开，按 AGENTS.md §一.2 与解读物理隔离："
+        "断卦时不得打开、不得提及案例名、不得以案例类比佐证。</p>\n"
+        "<hr>\n<p>源码：<a href=\"" + REPO + "\">github.com/LinHoMo/Yi</a> · MIT License</p>\n"
+        "</body>\n</html>\n"
+    )
     site: dict[str, str] = {
+        "site/index.html": index_html,
+        "site/KNOWLEDGE.md": knowledge,
         "site/index.md": (
             "# Yi · 术数知识与引擎示例（静态镜像）\n\n"
             f"> 本页是 [{PAGES}]({PAGES}) 的入口；仓库真源见 "
