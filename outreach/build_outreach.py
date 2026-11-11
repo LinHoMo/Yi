@@ -9,6 +9,9 @@
   2. `examples/liuyao-example.md` / `examples/bazi-example.md` —— **由两科四段流水线实跑生成**
      的完整术数结论（固定输入、逐字节可复现，非手写）；
   3. `site/**` —— 不入库（gitignore），供 GitHub Pages Actions 现场生成后部署。
+     每篇判据/示例除 `.md` 原文外另出**HTML 可读版**：Pages 对 `.md` 给 `text/markdown`，
+     浏览器不保证内联渲染，且标题/表格都是原始标记；HTML 版由内置转换器生成（零第三方依赖），
+     转换不完整即判红（代码块未闭合）或按普通段落兜底（绝不丢内容）。
 
 真源：`outreach/KNOWLEDGE-BODY.md`（人写知识正文）、`plugins/scripts/kb-docs.mjs`
 （判据篇目登记表，与 `plugins/scripts/build.mjs` 同一份，不新增第二登记表）、
@@ -378,7 +381,8 @@ def _site_index_md(rows: list[tuple[str, str]], mirrors: dict[str, str]) -> str:
         "## 怎么离线读",
         "",
         "- 整站是纯静态文件：离线解压后直接打开本页或同目录的 `INDEX.html`（无 JS、无外链、无 CDN）。",
-        "- 每篇判据在 `../knowledge/`（相对本页）有全文副本，示例报告在 `../examples/`；点开即全文。",
+        "- 每篇判据在 `../knowledge/`（相对本页）有**可读 HTML 全文**，示例在 `../examples/`；点开即网页。",
+        "- 每篇另有同名 `.md` 原文（同目录），适合直接抓取、diff 或喂给工具；内容与 HTML 逐字同源。",
         "- 需要确认真源时再用仓库 `kb/INDEX.md` 的 raw 直链（需联网）。",
         "",
     ]
@@ -387,17 +391,17 @@ def _site_index_md(rows: list[tuple[str, str]], mirrors: dict[str, str]) -> str:
         for key, desc in rows:
             if not key.startswith(disc + "/"):
                 continue
-            mirror = key.replace('/', '__')
-            rel = f"../knowledge/{mirror}"
-            size = len(mirrors[f"knowledge/{mirror}"].encode("utf-8"))
-            lines.append(f"| `{key.split('/')[1]}` | {desc} | [{mirror}]({rel}) | {size} |")
+            mirror = key.replace('/', '__')[:-3]
+            rel = f"../knowledge/{mirror}.html"
+            size = len(mirrors[f"knowledge/{key.replace('/', '__')}"].encode("utf-8"))
+            lines.append(f"| `{key.split('/')[1]}` | {desc} | [{mirror}.html]({rel}) | {size} |")
         lines.append("")
     lines += [
         "## 示例结论（引擎实跑）",
         "",
-        "- [六爻纳甲占报告](../examples/liuyao-example.md)",
-        "- [六爻时间起卦报告](../examples/liuyao-time-example.md)",
-        "- [八字命局因子说明](../examples/bazi-example.md)",
+        "- [六爻纳甲占报告](../examples/liuyao-example.html)",
+        "- [六爻时间起卦报告](../examples/liuyao-time-example.html)",
+        "- [八字命局因子说明](../examples/bazi-example.html)",
         "",
         "## 其它入口",
         "",
@@ -427,7 +431,8 @@ def _site_index_html(rows: list[tuple[str, str]], mirrors: dict[str, str]) -> st
             if not key.startswith(disc + "/"):
                 continue
             name = key.split("/")[1]
-            rel = f"../knowledge/{key.replace('/', '__')}"
+            mirror = key.replace("/", "__")[:-3]
+            rel = f"../knowledge/{mirror}.html"
             size = len(mirrors[f"knowledge/{key.replace('/', '__')}"].encode("utf-8"))
             out.append(
                 f'<tr><td><code>{esc(name)}</code></td><td>{esc(desc)}</td>'
@@ -458,9 +463,9 @@ def _site_index_html(rows: list[tuple[str, str]], mirrors: dict[str, str]) -> st
         "<h2>六爻</h2>\n" + table("liuyao") + "\n"
         "<h2>八字</h2>\n" + table("bazi") + "\n"
         "<h2>示例结论（引擎实跑）</h2>\n<ul>\n"
-        '<li><a href="../examples/liuyao-example.md">六爻纳甲占报告</a></li>\n'
-        '<li><a href="../examples/liuyao-time-example.md">六爻时间起卦报告</a></li>\n'
-        '<li><a href="../examples/bazi-example.md">八字命局因子说明</a></li>\n'
+        '<li><a href="../examples/liuyao-example.html">六爻纳甲占报告</a></li>\n'
+        '<li><a href="../examples/liuyao-time-example.html">六爻时间起卦报告</a></li>\n'
+        '<li><a href="../examples/bazi-example.html">八字命局因子说明</a></li>\n'
         "</ul>\n"
         "<h2>其它入口</h2>\n<ul>\n"
         '<li><a href="../index.html">首页</a> · <a href="../KNOWLEDGE.md">知识速读全文</a> · '
@@ -486,6 +491,8 @@ def check_site_links(site: dict[str, str], from_key: str) -> list[str]:
     552 批把 INDEX 放在 `site/kb/` 下，链接写成 `../knowledge/…`；一旦镜像命名规则
     变了而链接没跟，Pages 上就是一串 404 而构建照样绿（549/551 两次踩过示例 404）。
     """
+    if from_key not in site:
+        return [f"{from_key} 不在 site 产物中（覆盖检查应同时报出）"]
     problems: list[str] = []
     base = PurePosixPath(from_key).parent
     for tgt in _relative_links(site[from_key]):
@@ -493,6 +500,273 @@ def check_site_links(site: dict[str, str], from_key: str) -> list[str]:
         if resolved not in site:
             problems.append(f"{from_key} 的相对链接指向不存在的站内文件：{tgt}")
     return problems
+
+
+# 552 批：Pages 离线可读版——保守的 Markdown→HTML 转换器（零第三方依赖）
+LIST_RE = re.compile(r"^(\s*)([-*+]|\d+\.)\s+(.*)$")
+HEAD_RE = re.compile(r"^(#{1,6})\s+(.+?)\s*#*\s*$")
+HR_RE = re.compile(r"^(-{3,}|\*{3,}|_{3,})$")
+FENCE_RE = re.compile(r"^```(\w*)\s*$")
+SEP_RE = re.compile(r"^[|]?[\s:|-]+[|]?$")
+
+
+def _is_cjk(ch: str) -> bool:
+    return ("\u4e00" <= ch <= "\u9fff") or ch in "，。！？；：、（）《》“”‘’…—"
+
+
+def _join_lines(lines: list[str]) -> str:
+    """段内换行折叠：中文之间不插空格（硬折行的中文文档否则会满屏空格）。"""
+    out = ""
+    for ln in lines:
+        ln = ln.strip()
+        if not ln:
+            continue
+        if not out:
+            out = ln
+        elif _is_cjk(out[-1]) and _is_cjk(ln[0]):
+            out += ln
+        else:
+            out += " " + ln
+    return out
+
+
+def _inline(text: str, resolve) -> str:
+    """行内语法：优先切出行内代码（其中 ** 与 [] 不得被继续处理），其余先转义再加标记。"""
+    out = []
+    for part in re.split(r"(`[^`]+`)", text):
+        if len(part) >= 2 and part.startswith("`") and part.endswith("`"):
+            out.append("<code>" + html.escape(part[1:-1], quote=False) + "</code>")
+            continue
+        seg = html.escape(part, quote=False)
+        seg = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", seg)
+        seg = re.sub(
+            r"\[([^\]]+)\]\(([^)\s]+)\)",
+            lambda m: _anchor(m.group(1), m.group(2), resolve),
+            seg,
+        )
+        out.append(seg)
+    return "".join(out)
+
+
+def _anchor(label: str, href: str, resolve) -> str:
+    target = resolve(href)
+    if target is None:  # 案例库等按 §一.2 不得出现在对外层：只留文字，不做链接
+        return label
+    return f'<a href="{html.escape(target, quote=True)}">{label}</a>'
+
+
+def _split_cells(row: str) -> list[str]:
+    row = row.strip()
+    if row.startswith("|"):
+        row = row[1:]
+    if row.endswith("|"):
+        row = row[:-1]
+    cells, cur, in_code = [], "", False
+    for ch in row:
+        if ch == "`":
+            in_code = not in_code
+        if ch == "|" and not in_code:
+            cells.append(cur)
+            cur = ""
+        else:
+            cur += ch
+    cells.append(cur)
+    return [c.strip() for c in cells]
+
+
+def _aligns(sep: str) -> list[str]:
+    out = []
+    for c in _split_cells(sep):
+        left, right = c.startswith(":"), c.endswith(":")
+        out.append("center" if left and right else "right" if right else "")
+    return out
+
+
+def _table_html(header: list[str], aligns: list[str], rows: list[list[str]], resolve) -> str:
+    def cell(tag: str, text: str, i: int) -> str:
+        style = f' style="text-align:{aligns[i]}"' if i < len(aligns) and aligns[i] else ""
+        return f"<{tag}{style}>{_inline(text, resolve)}</{tag}>"
+
+    out = ["<table>", "<thead><tr>"]
+    out += [cell("th", h, i) for i, h in enumerate(header)]
+    out += ["</tr></thead>", "<tbody>"]
+    for row in rows:
+        row = (row + [""] * len(header))[: len(header)]
+        out.append("<tr>" + "".join(cell("td", c, i) for i, c in enumerate(row)) + "</tr>")
+    out += ["</tbody>", "</table>"]
+    return "\n".join(out)
+
+
+def _render_list(lines: list[str], resolve) -> str:
+    items = []
+    for ln in lines:
+        m = LIST_RE.match(ln)
+        items.append((len(m.group(1)), m.group(2)[0].isdigit(), m.group(3)))
+
+    def build(seq):
+        tag = "ol" if seq[0][1] else "ul"
+        out, i = [f"<{tag}>"], 0
+        while i < len(seq):
+            indent, _ordered, text = seq[i]
+            j = i + 1
+            while j < len(seq) and seq[j][0] > indent:
+                j += 1
+            li = "<li>" + _inline(text, resolve)
+            if j > i + 1:
+                li += build(seq[i + 1:j])
+            out.append(li + "</li>")
+            i = j
+        out.append(f"</{tag}>")
+        return "\n".join(out)
+
+    return build(items)
+
+
+def _starts_block(lines: list[str], i: int) -> bool:
+    line = lines[i]
+    if FENCE_RE.match(line) or HEAD_RE.match(line) or HR_RE.match(line.strip()):
+        return True
+    if line.startswith(">") or LIST_RE.match(line):
+        return True
+    return (
+        line.lstrip().startswith("|")
+        and i + 1 < len(lines)
+        and SEP_RE.match(lines[i + 1].strip()) is not None
+        and "-" in lines[i + 1]
+    )
+
+
+def md_to_html(md: str, resolve) -> str:
+    """把判据/示例的 Markdown 转成可读 HTML。只覆盖仓内实际用到的语法；
+    认不出的行按普通段落输出（**绝不丢内容**），代码块未闭合则直接判红。"""
+    lines = md.replace("\r\n", "\n").replace("\r", "\n").split("\n")
+    # 生成器注释（`<!-- … -->`）是给 diff/构建看的，不该出现在读者页上
+    lines = ["" if re.match(r"^\s*<!--.*-->\s*$", ln) else ln for ln in lines]
+    blocks: list[str] = []
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        if not line.strip():
+            i += 1
+            continue
+        m = FENCE_RE.match(line)
+        if m:
+            lang = m.group(1)
+            i += 1
+            buf = []
+            while i < len(lines) and not re.match(r"^```\s*$", lines[i]):
+                buf.append(lines[i])
+                i += 1
+            if i >= len(lines):
+                raise ValueError("Markdown 代码块未闭合（渲染会截断后文）")
+            i += 1
+            cls = f' class="language-{lang}"' if lang else ""
+            blocks.append(f"<pre><code{cls}>{html.escape(chr(10).join(buf), quote=False)}</code></pre>")
+            continue
+        m = HEAD_RE.match(line)
+        if m:
+            n = len(m.group(1))
+            blocks.append(f"<h{n}>{_inline(m.group(2), resolve)}</h{n}>")
+            i += 1
+            continue
+        if HR_RE.match(line.strip()):
+            blocks.append("<hr>")
+            i += 1
+            continue
+        if line.lstrip().startswith("|") and i + 1 < len(lines) and SEP_RE.match(lines[i + 1].strip()) and "-" in lines[i + 1]:
+            header = _split_cells(line)
+            aligns = _aligns(lines[i + 1])
+            i += 2
+            rows = []
+            while i < len(lines) and lines[i].lstrip().startswith("|"):
+                rows.append(_split_cells(lines[i]))
+                i += 1
+            blocks.append(_table_html(header, aligns, rows, resolve))
+            continue
+        if line.startswith(">"):
+            buf = []
+            while i < len(lines) and lines[i].startswith(">"):
+                buf.append(re.sub(r"^>\s?", "", lines[i]))
+                i += 1
+            blocks.append("<blockquote><p>" + "<br>".join(_inline(b, resolve) for b in buf) + "</p></blockquote>")
+            continue
+        if LIST_RE.match(line):
+            buf = []
+            while i < len(lines):
+                if LIST_RE.match(lines[i]):
+                    buf.append(lines[i])
+                    i += 1
+                elif not lines[i].strip() and i + 1 < len(lines) and LIST_RE.match(lines[i + 1]):
+                    i += 1
+                else:
+                    break
+            blocks.append(_render_list(buf, resolve))
+            continue
+        buf = []
+        while i < len(lines) and lines[i].strip() and not _starts_block(lines, i):
+            buf.append(lines[i])
+            i += 1
+        blocks.append("<p>" + _inline(_join_lines(buf), resolve) + "</p>")
+    return "\n".join(blocks)
+
+
+
+PAGE_CSS = (
+    "body{max-width:52rem;margin:0 auto;padding:1.5rem 1rem 3rem;"
+    "font:17px/1.85 -apple-system,\"Segoe UI\",\"Noto Sans CJK SC\",sans-serif;"
+    "color:#1f2328;background:#fff}"
+    "nav{font-size:.9rem;padding:.4rem 0 1rem;border-bottom:1px solid #d8dee4;margin-bottom:1.2rem}"
+    "nav a{color:#0969da;text-decoration:none;margin-right:.4rem}"
+    "h1,h2,h3,h4{line-height:1.4;margin:1.6em 0 .6em}h1{font-size:1.55rem}"
+    "h2{font-size:1.3rem;border-bottom:1px solid #eaeef2;padding-bottom:.25rem}h3{font-size:1.12rem}"
+    "table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.93rem;display:block;overflow-x:auto}"
+    "th,td{border:1px solid #d8dee4;padding:.4rem .55rem;vertical-align:top}"
+    "th{background:#f6f8fa;white-space:nowrap}"
+    "code{background:#f6f8fa;padding:.1rem .3rem;border-radius:3px;font-size:.92em}"
+    "pre{background:#f6f8fa;padding:.8rem 1rem;border-radius:6px;overflow-x:auto;line-height:1.55}"
+    "pre code{background:none;padding:0}"
+    "blockquote{margin:1rem 0;padding:.4rem 1rem;border-left:3px solid #d0d7de;color:#57606a}"
+    "hr{border:0;border-top:1px solid #d8dee4;margin:2rem 0}"
+    "footer{margin-top:3rem;padding-top:1rem;border-top:1px solid #d8dee4;"
+    "font-size:.85rem;color:#57606a}"
+)
+
+
+def _page_html(title: str, body: str, page_dir: str, md_mirror: str) -> str:
+    """单篇离线页外壳：顶部回索引、右上给 Markdown 原文，底部带口径脚注。"""
+    back = posixpath.relpath("kb/INDEX.html", page_dir or ".")
+    md_rel = posixpath.relpath(md_mirror, page_dir or ".")
+    return (
+        "<!doctype html>\n<html lang=\"zh-CN\">\n<head>\n<meta charset=\"utf-8\">\n"
+        "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
+        f"<title>{html.escape(title)}</title>\n<style>\n{PAGE_CSS}\n</style>\n</head>\n<body>\n"
+        f'<nav><a href="{back}">← 判据索引</a> · <a href="{md_rel}">Markdown 原文</a></nav>\n'
+        f"<main>\n{body}\n</main>\n"
+        "<footer>本页是仓库判据/示例的离线镜像，由 <code>outreach/build_outreach.py</code> 生成。"
+        "仓库内一切分数都是<strong>古籍案例对齐分</strong>（回归审计用），<strong>不是现实命中率</strong>；"
+        "现实侧样本为零。本工具不是预言；医疗、法律、投资、重大决策请以专业意见为准。</footer>\n"
+        "</body>\n</html>\n"
+    )
+
+
+def _resolver(base_dir: str, page_dir: str, repo_map: dict[str, str]):
+    """把文档里的链接解析成站内相对路径：镜像内的跳镜像、未镜像的仓内文件跳 GitHub、外链原样。"""
+
+    def resolve(href: str):
+        if href.startswith(("http://", "https://", "mailto:", "#")):
+            return href
+        path, _, frag = href.partition("#")
+        tail = ("#" + frag) if frag else ""
+        repo = posixpath.normpath(posixpath.join(base_dir, path) if base_dir else path)
+        if "case_library" in repo:
+            return None  # §一.2：案例库不得以链接形式出现在对外层
+        if repo in repo_map:
+            return posixpath.relpath(repo_map[repo], page_dir or ".") + tail
+        if (ROOT / repo).exists():
+            return f"{BLOB}/{repo}{tail}"
+        return href + tail
+
+    return resolve
 
 
 def check_artifact_coverage(
@@ -524,13 +798,20 @@ def check_artifact_coverage(
             problems.append(f"KNOWLEDGE.md 未列出：{key}")
         if f"site/knowledge/{key.replace('/', '__')}" not in site:
             problems.append(f"site/ 缺判据镜像：{key}")
+        if f"site/knowledge/{key.replace('/', '__')[:-3]}.html" not in site:
+            problems.append(f"site/ 缺判据可读版：{key}")
     if sindex_md.count("](../knowledge/") != len(rows):
         problems.append("site/kb/INDEX.md 的离线副本行数与登记表不符")
     if sindex_html.count('href="../knowledge/') != len(rows):
         problems.append("site/kb/INDEX.html 的离线副本行数与登记表不符")
-    # 首页同样只放相对链接：镜像命名规则一变，首页就会 404 而构建照样绿（549/551 两次踩过）
-    for rel in ("site/index.html", "site/index.md", "site/kb/INDEX.md", "site/kb/INDEX.html"):
+    # 首页与每篇可读版同样只放相对链接：镜像命名一变就 404 而构建照样绿（549/551 两次踩过）
+    for rel in ("site/index.html", "site/index.md", "site/kb/INDEX.md", "site/kb/INDEX.html", "site/KNOWLEDGE.html"):
         problems += check_site_links(site, rel)
+    for key, _ in rows:
+        problems += check_site_links(site, f"site/knowledge/{key.replace('/', '__')[:-3]}.html")
+    for rel in ("examples/liuyao-example.html", "examples/liuyao-time-example.html", "examples/bazi-example.html"):
+        if f"site/{rel}" in site:
+            problems += check_site_links(site, f"site/{rel}")
     return problems
 
 def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
@@ -707,11 +988,45 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
             f"<!-- 判据全文镜像，真源：{blob_link(key)} -->\n\n"
             + _read(ROOT / disc / "references" / name)
         )
+    # 判据/示例的离线可读版：Pages 对 .md 给 text/markdown，浏览器不一定内联，
+    # 且表格/标题都是原始标记；同一内容再出一份 HTML，断网也能当网页读。
+    repo_map: dict[str, str] = {"kb/INDEX.md": "kb/INDEX.html", "KNOWLEDGE.md": "KNOWLEDGE.html"}
+    for key, _ in rows:
+        disc, name = key.split("/")
+        repo_map[f"{disc}/references/{name}"] = f"knowledge/{key.replace('/', '__')[:-3]}.html"
+    for rel in tracked:
+        if rel.startswith("examples/"):
+            repo_map[rel] = rel[:-3] + ".html"
+    pages: dict[str, str] = {}
+    for key, _ in rows:
+        disc, name = key.split("/")
+        stem = key.replace("/", "__")[:-3]
+        pages[f"knowledge/{stem}.html"] = _page_html(
+            f"{name} · 易（Yi）",
+            md_to_html(_read(ROOT / disc / "references" / name), _resolver(f"{disc}/references", "knowledge", repo_map)),
+            "knowledge",
+            f"knowledge/{stem}.md",
+        )
+    for rel in [r for r in tracked if r.startswith("examples/")]:
+        pages[rel[:-3] + ".html"] = _page_html(
+            f"{Path(rel).stem} · 易（Yi）",
+            md_to_html(tracked[rel], _resolver("examples", "examples", repo_map)),
+            "examples",
+            rel,
+        )
+    pages["KNOWLEDGE.html"] = _page_html(
+        "知识速读 · 易（Yi）",
+        md_to_html(knowledge, _resolver("", ".", repo_map)),
+        ".",
+        "KNOWLEDGE.md",
+    )
+
     index_md = _site_index_md(rows, mirrors)
     index_html_offline = _site_index_html(rows, mirrors)
 
     nav_rows = "\n".join(
-        f'<li><a href="{raw_link(key)}">{key}</a> — {desc}</li>' for key, desc in rows
+        f'<li><a href="knowledge/{key.replace("/", "__")[:-3]}.html">{key}</a> — {desc}</li>'
+        for key, desc in rows
     )
     index_html = (
         "<!doctype html>\n<html lang=\"zh-CN\">\n<head>\n<meta charset=\"utf-8\">\n"
@@ -729,7 +1044,8 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
         "<h2>离线也能读全（站内镜像，不依赖网络）</h2>\n<ul>\n"
         '<li><a href="kb/INDEX.html">判据知识库总索引</a> — 每篇的用途与站内全文副本，可点</li>\n'
         '<li><a href="kb/INDEX.md">同一索引的 Markdown 版</a> · '
-        '<a href="KNOWLEDGE.md">知识速读全文</a> · <a href="llms.txt">llms.txt</a></li>\n'
+        '<a href="KNOWLEDGE.html">知识速读（可读版）</a> · <a href="KNOWLEDGE.md">Markdown 原文</a> · '
+        '<a href="llms.txt">llms.txt</a></li>\n'
         "</ul>\n"
         "<h2>给 AI 读者的入口（绝对 raw 直链）</h2>\n<ul>\n"
         f'<li><a href="{RAW}/llms.txt">llms.txt</a> — 机器可读的全部入口清单</li>\n'
@@ -745,7 +1061,7 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
         "</ul>\n"
         "<p>三份示例均由固定输入下的四段流水线 <code>chart → analyze → narrate → render</code> "
         "现场生成，逐字节同源复验；静态示例不能代替现场起卦。</p>\n"
-        "<h2>判据知识库（按需读，勿整本读）</h2>\n<ul>\n" + nav_rows + "\n</ul>\n"
+        "<h2>判据知识库（站内可读版，按需读、勿整本读）</h2>\n<ul>\n" + nav_rows + "\n</ul>\n"
         "<h2>不用于解读</h2>\n"
         "<p><code>case_library.md</code> 虽在仓库公开，按 AGENTS.md §一.2 与解读物理隔离："
         "断卦时不得打开、不得提及案例名、不得以案例类比佐证。</p>\n"
@@ -764,9 +1080,10 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
             "- [判据总索引（离线可读）](kb/INDEX.html) · [Markdown 版](kb/INDEX.md)\n"
             "- [知识速读（本页全文）](#) ← 下方正文\n"
             "- [llms.txt](llms.txt)（机器可读索引）\n"
-            "- 判据全文：" + "、".join(
-                f"[{key.split('/')[1]}](knowledge/{key.replace('/', '__')})" for key, _ in rows
+            "- 判据全文（可读版）：" + "、".join(
+                f"[{key.split('/')[1]}](knowledge/{key.replace('/', '__')[:-3]}.html)" for key, _ in rows
             ) + "\n"
+            "- 同名 `.md` 原文仍在同目录，供抓取与 diff。\n"
             "- 示例结论：[六爻报告](examples/liuyao-example.md)、[六爻时间起卦](examples/liuyao-time-example.md)、[八字报告](examples/bazi-example.md)\n\n"
             "---\n\n" + knowledge
         ),
@@ -776,6 +1093,8 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
         "site/examples/bazi-example.md": tracked["examples/bazi-example.md"],
     }
     for rel, text in mirrors.items():
+        site[f"site/{rel}"] = text
+    for rel, text in pages.items():
         site[f"site/{rel}"] = text
     # 守卫：每个入库示例必须在 site/ 有镜像，否则 Pages 会 404（549/551 两次踩过）
     for rel in tracked:
@@ -915,6 +1234,22 @@ def selftest() -> int:
     check("site/ 缺判据镜像 → 覆盖判红", lambda: bool(check_artifact_coverage(
         rows, tracked, {k: v for k, v in site.items() if not k.endswith("najia_rules.md")}
     )))
+    check("Markdown 代码块未闭合 → 转换判红（不静默截断后文）", lambda: rejects(
+        lambda: md_to_html("前文\n```\n乾纳甲壬\n", lambda h: h)
+    ))
+    check("表格行不被当成普通段落（渲染完整）", lambda: (
+        "<p>|" not in md_to_html("| a | b |\n|---|---|\n| 1 | 2 |\n", lambda h: h)
+        and md_to_html("| a | b |\n|---|---|\n| 1 | 2 |\n", lambda h: h).count("<tr>") == 2
+    ))
+    check("生成器注释不进读者页", lambda: "<!--" not in md_to_html(
+        "<!-- 由构建器生成 -->\n# 标题\n", lambda h: h
+    ))
+    check("案例库链接只留文字、不生成 <a>（§一.2）", lambda: "<a" not in md_to_html(
+        "见 [案例库](../../liuyao/references/case_library.md)。", lambda h: None
+    ))
+    check("缺判据可读版 → 覆盖判红", lambda: bool(check_artifact_coverage(
+        rows, tracked, {k: v for k, v in site.items() if not k.endswith("najia_rules.html")}
+    )))
     check("首页站内链接指空 → 链接门判红", lambda: bool(check_site_links(
         {**site, "site/index.html": site["site/index.html"].replace(
             'href="kb/INDEX.html"', 'href="kb/NOPE.html"')},
@@ -922,7 +1257,7 @@ def selftest() -> int:
     )))
     check("INDEX 站内链接指空 → 链接门判红", lambda: bool(check_site_links(
         {**site, "site/kb/INDEX.md": site["site/kb/INDEX.md"].replace(
-            "../examples/liuyao-example.md", "../examples/nope.md")},
+            "../examples/liuyao-example.html", "../examples/nope.html")},
         "site/kb/INDEX.md",
     )))
     check("site/kb/INDEX.md 漏一篇 → 覆盖判红", lambda: bool(check_artifact_coverage(

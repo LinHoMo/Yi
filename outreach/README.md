@@ -58,7 +58,7 @@ node outreach/install-skill.mjs --target ~/.claude/skills/yi-divination
 
 解析侧另改为 fail-closed：块内每一非空非注释行必须是单行 `['<科>/<篇>.md', '<描述>']`
 字面量，否则带行号判红；描述含 `|` 或换行也判红（会撑坏 Markdown 表格）。
-`--selftest` 为上述每条规则各留一条负例（22 类全过才绿，含首页与两份 INDEX 的站内链接门）。
+`--selftest` 为上述每条规则各留一条负例（27 类全过才绿，含首页与全部可读版的站内链接门）。
 
 
 ## 与既有 `plugins/skills/` 的关系
@@ -70,8 +70,17 @@ node outreach/install-skill.mjs --target ~/.claude/skills/yi-divination
 
 ## Pages 镜像（site/）
 
-`site/` 不入库，由 `--write` 现场生成、`pages.yml` 部署。除首页与逐篇全文副本外，552 批新增
-判据索引的离线镜像：Markdown 版可直接读、HTML 版可点，链接全部是站内相对路径，
-**断网/离线下载后也能从索引点进每一篇**。镜像落在 `kb/` 子目录——Windows 文件系统
-大小写不敏感，`site/INDEX.md` 与 `site/index.md` 是同一个文件，写在根上会互相覆盖
-（实测 `.resolve()` 指回 `index.md`），并会把 Pages 首页顶掉，故不能放根。
+`site/` 不入库，由 `--write` 现场生成、`pages.yml` 部署。552 批把离线阅读做成两层：
+
+- **判据索引镜像**：`kb/INDEX.md` 与可点的 `kb/INDEX.html`，链接全为站内相对路径，
+  断网/离线下载后也能一页点进每一篇。落在 `kb/` 子目录而非根——Windows 大小写不敏感，
+  `site/INDEX.md` 与 `site/index.md` 实测是同一个文件（`.resolve()` 指回 `index.md`），
+  写根会互相覆盖并顶掉 Pages 首页。
+- **每篇 HTML 可读版**：Pages 对 `.md` 返回 `text/markdown`，浏览器不保证内联，标题/表格
+  都是原始标记；故每篇判据、三份示例与 `KNOWLEDGE.md` 另外生成 HTML（内置转换器、零依赖），
+  同时保留同名 `.md` 原文供抓取与 diff。转换器只覆盖仓内实际用到的语法，认不出的行按段落
+  兜底、**绝不丢内容**；代码块未闭合直接判红。页内链接在构建期解析成站内 `.html`，
+  未镜像的仓内文件指回 GitHub，案例库按 §一.2 **只留文字、不生成链接**。
+
+构建期还守两条：每篇必须有 `.md`＋`.html` 两份产物（少一份判红），以及全站相对链接必须可解析
+（首页、两份索引、14 篇判据与 3 份示例共 20 个 HTML 页逐页扫，死链 0）。
