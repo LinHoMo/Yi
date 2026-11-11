@@ -1461,3 +1461,17 @@
 ---
 
 *文档完 — 六爻四大经典文献综合参考 v1.1 — 含格局速查总表 + 断卦决策指南 + 经典断语精选*
+
+---
+
+## 相关文档
+
+- 本篇在知识库中的位置与「什么时候读」见 [知识库导览](../../kb/INDEX.md)。
+- 同科其他判据：
+  - [najia_rules](najia_rules.md)
+  - [interpretation_guide](interpretation_guide.md)
+  - [pattern_reference](pattern_reference.md)
+  - [source_ledger](source_ledger.md)
+  - [odd_questions](odd_questions.md)
+
+> 本文为**古籍规则参考**，非现实预测依据。本仓库一切分数均为「古籍案例对齐分」（回归审计用），**不是现实命中率**（铁律三）；判据口径以 [知识库导览](../../kb/INDEX.md) 登记为准。

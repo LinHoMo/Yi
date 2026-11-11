@@ -16,6 +16,8 @@
 > 无插件自身代码改动）、281→**1.0.3**（随包引擎同步六爻 281 批占差事词典+WS003
 > 校勘）。
 
+## 2026-11-11 第五百五十一批（宿主侧·架构与内容迭代随包登记；版本 1.0.25 不变）：**本批改动在 `outreach/`（第三份示例、KNOWLEDGE-BODY FAQ、判据脚注），`plugins/scripts/kb-docs.mjs` 登记表与 `package.json`／四工具 schema／1.0 API 冻结面零改动，故仅登记批次、不动 semver**
+
 ## 2026-11-11 第五百五十批（宿主侧·仓库整治随包登记；版本 1.0.25 不变）：**`.github/workflows/release.yml` 注释去掉钉死的版本快照（改由 `check_repo_hygiene.py` 常驻看守），`ci.yml` 挂上仓库卫生门；`package.json`／四工具 schema／1.0 API 冻结面零改动，故仅登记批次、不动 semver**
 
 ## 2026-11-11 第五百四十九批（宿主侧·安装与发布闭环；semver 1.0.24→1.0.25，patch+1 文档/修复批）：**`package.json` 加 `prepack`（npm pack 前自动 build，fresh clone 不再打出缺件包；实测 197 文件、零缺件、case_library 不在包内）；README 补「源码安装第 0 步必先 build」、修 inputSchema→`parameters` 与真源路径、去掉钉死的 v1.0.0；`src/index.mjs` 修 `build-skills.mjs` 幽灵注释；新增 `release.yml`（tag↔version 对账后自动 build→selftest→check→pack→上传资产，正文取 `outreach/RELEASE-NOTES.md` 保证铁律三口径随 Release）。1.0 API 冻结面与四工具 schema 未动，故仅 patch+1；批次号仍是唯一真源**

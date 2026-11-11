@@ -183,3 +183,17 @@
 | 13 | 真空 / 假空 | 真空不成；假空出空应 | 出空值日 |
 | 14 | 随官入墓 | 世鬼同墓为凶；用神入墓待冲 | 冲墓日 |
 | 15 | 冲飞露伏 | 飞来生伏/日冲飞为得出 | 冲飞露伏日 |
+
+---
+
+## 相关文档
+
+- 本篇在知识库中的位置与「什么时候读」见 [知识库导览](../../kb/INDEX.md)。
+- 同科其他判据：
+  - [najia_rules](najia_rules.md)
+  - [interpretation_guide](interpretation_guide.md)
+  - [classical_synthesis](classical_synthesis.md)
+  - [source_ledger](source_ledger.md)
+  - [odd_questions](odd_questions.md)
+
+> 本文为**古籍规则参考**，非现实预测依据。本仓库一切分数均为「古籍案例对齐分」（回归审计用），**不是现实命中率**（铁律三）；判据口径以 [知识库导览](../../kb/INDEX.md) 登记为准。

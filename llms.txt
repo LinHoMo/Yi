@@ -15,6 +15,7 @@
 ## 代码产出的实际结论（引擎实跑示例报告）
 
 - [六爻纳甲占报告示例](https://raw.githubusercontent.com/LinHoMo/Yi/main/examples/liuyao-example.md)：固定输入下的完整六爻结论与应期窗口
+- [六爻时间起卦报告示例](https://raw.githubusercontent.com/LinHoMo/Yi/main/examples/liuyao-time-example.md)：time 模式确定性起卦、同一时刻必得同卦
 - [八字命局因子说明示例](https://raw.githubusercontent.com/LinHoMo/Yi/main/examples/bazi-example.md)：固定输入下的四柱、强弱、格局、喜用、大运流年
 
 ## 判据知识库（按需读，勿整本读）

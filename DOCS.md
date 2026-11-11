@@ -141,6 +141,7 @@
 | `KNOWLEDGE.md` | 面向 AI 的自包含术数知识速读（术语表、四段契约、三条铁律、FAQ）；由构建器拼装 | 生成物 |
 | `kb/INDEX.md` | 面向 GitHub 读者与联网 AI 的判据篇目导览＋raw 直链（与随包 INDEX 用途不同） | 生成物 |
 | `examples/liuyao-example.md` | 固定输入下由四段流水线实跑生成的六爻完整结论报告 | 生成物 |
+| `examples/liuyao-time-example.md` | 固定输入下由四段流水线实跑生成的六爻「时间起卦」结论报告（确定性起卦，演示 time 模式） | 生成物 |
 | `examples/bazi-example.md` | 固定输入下由四段流水线实跑生成的八字完整结论报告 | 生成物 |
 | `outreach/README.md` | 对外层的真源／产物／铁律／命令说明 | 活文档 |
 | `outreach/KNOWLEDGE-BODY.md` | 知识正文的人写真源（构建器把它拼进 `KNOWLEDGE.md`） | 活文档 |

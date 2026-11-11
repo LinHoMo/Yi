@@ -33,6 +33,7 @@
 ## 示例结论
 
 - [六爻报告示例](https://raw.githubusercontent.com/LinHoMo/Yi/main/examples/liuyao-example.md)
+- [六爻时间起卦示例](https://raw.githubusercontent.com/LinHoMo/Yi/main/examples/liuyao-time-example.md)
 - [八字报告示例](https://raw.githubusercontent.com/LinHoMo/Yi/main/examples/bazi-example.md)
 
 ## ⛔ 不在此目录的内容

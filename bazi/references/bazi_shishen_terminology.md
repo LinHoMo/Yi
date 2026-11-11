@@ -82,3 +82,19 @@
   `dev_tools/check_source_readings.py --doc references/bazi_shishen_terminology.md` 回验
   （原一次性脚本 dev_tools/scratch/_verify_refs.py 已随仓库扁平化删除，行号另经 `grep -n` 实测核准）
 - 行号由 `grep -n` 实测后逐条 `Read` 核准，未凭 OPT 原文的估值。
+
+---
+
+## 相关文档
+
+- 本篇在知识库中的位置与「什么时候读」见 [知识库导览](../../kb/INDEX.md)。
+- 同科其他判据：
+  - [bazi_nayin_shiyi](bazi_nayin_shiyi.md)
+  - [bazi_yue_shi_ge](bazi_yue_shi_ge.md)
+  - [bazi_tiaohou](bazi_tiaohou.md)
+  - [bazi_liuqin_gongwei](bazi_liuqin_gongwei.md)
+  - [bazi_jibing_tizhi](bazi_jibing_tizhi.md)
+  - [bazi_qianshi_yanpan](bazi_qianshi_yanpan.md)
+  - [api_spec](api_spec.md)
+
+> 本文为**古籍规则参考**，非现实预测依据。本仓库一切分数均为「古籍案例对齐分」（回归审计用），**不是现实命中率**（铁律三）；判据口径以 [知识库导览](../../kb/INDEX.md) 登记为准。

@@ -6,6 +6,8 @@
 > **497 批起只保留 DSH 一个宿主**：claude/codex/gemini/yan 四家适配器目录、
 > `publish.mjs`（git 发行树）及其在 build/selftest/ci/文档里的登记一并删除。
 
+## 2026-11-11 第五百五十一批（共享层·随包登记）：**`plugins/` 运行时、技能正文、构建与自检判据零改动；本批是全仓架构与内容迭代优化，新增的第三份示例与判据脚注均不在随包白名单内。build 重建后 selftest 8 段全绿、`[1.6]` 产物同源、`[7]` 禁语门绿**
+
 ## 2026-11-11 第五百五十批（共享层·随包登记）：**`plugins/` 运行时、技能正文、构建与自检判据零改动；本批是全仓仓库整治，新增的 `REPO-HYGIENE.md` 与 `devkit/root/check_repo_hygiene.py` 均不在随包白名单内。build 重建后 selftest 8 段全绿、`[1.6]` 产物同源、`[7]` 口径门绿**
 
 ## 2026-11-11 第五百四十九批（共享层·随包登记）：**`plugins/` 运行时、技能正文与 build/selftest 判据零改动；本批新增的 `outreach/` 对外层把 `plugins/scripts/kb-docs.mjs` 的 14 篇登记表当唯一真源读取（不新增第二登记表），`plugins/README.md` 补登记 `dev-only.mjs` 与 prepack 口径。build 重建后 selftest 8 段全绿、[1.6] 产物同源、[7] 禁语门（含否定语境豁免）绿**

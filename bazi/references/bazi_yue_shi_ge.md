@@ -101,3 +101,19 @@
 - 歌诀句**照录不改字**；源L269 括注「（行夏之时，寅为岁首）」为原书自注，一并照录。
 - 引文可逐字回验：`python dev_tools/check_source_readings.py`（旧写法指向的
   `tools/check_source_readings.py` 已随扁平化删除，照抄必然跑不通）。
+
+---
+
+## 相关文档
+
+- 本篇在知识库中的位置与「什么时候读」见 [知识库导览](../../kb/INDEX.md)。
+- 同科其他判据：
+  - [bazi_shishen_terminology](bazi_shishen_terminology.md)
+  - [bazi_nayin_shiyi](bazi_nayin_shiyi.md)
+  - [bazi_tiaohou](bazi_tiaohou.md)
+  - [bazi_liuqin_gongwei](bazi_liuqin_gongwei.md)
+  - [bazi_jibing_tizhi](bazi_jibing_tizhi.md)
+  - [bazi_qianshi_yanpan](bazi_qianshi_yanpan.md)
+  - [api_spec](api_spec.md)
+
+> 本文为**古籍规则参考**，非现实预测依据。本仓库一切分数均为「古籍案例对齐分」（回归审计用），**不是现实命中率**（铁律三）；判据口径以 [知识库导览](../../kb/INDEX.md) 登记为准。

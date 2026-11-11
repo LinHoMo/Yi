@@ -1408,3 +1408,17 @@
 | 十七、用神多现 | 《增删卜易》 | 弃原作旺、弃世取动、取发动之爻 |
 | 十八、卦身法 | 《黄金策》 | 阳世从子上、阴世午上寻 |
 | 十九、六亲持世断 | 《黄金策》 | 父母辛苦、官鬼忧患、兄弟破财、妻财富裕、子孙无忧 |
+
+---
+
+## 相关文档
+
+- 本篇在知识库中的位置与「什么时候读」见 [知识库导览](../../kb/INDEX.md)。
+- 同科其他判据：
+  - [interpretation_guide](interpretation_guide.md)
+  - [pattern_reference](pattern_reference.md)
+  - [classical_synthesis](classical_synthesis.md)
+  - [source_ledger](source_ledger.md)
+  - [odd_questions](odd_questions.md)
+
+> 本文为**古籍规则参考**，非现实预测依据。本仓库一切分数均为「古籍案例对齐分」（回归审计用），**不是现实命中率**（铁律三）；判据口径以 [知识库导览](../../kb/INDEX.md) 登记为准。

@@ -211,3 +211,19 @@
   那需要医学资质，不是命理能承担的。
 - **同盘不同病**：同一结构可以落在完全不同的器官上，古法没有解释力，本篇也不假装有。
 - **先天体质 vs 后天习惯**：命盘说不清吸烟、职业、饮食的影响，读的时候必须给后天留位置。
+
+---
+
+## 相关文档
+
+- 本篇在知识库中的位置与「什么时候读」见 [知识库导览](../../kb/INDEX.md)。
+- 同科其他判据：
+  - [bazi_shishen_terminology](bazi_shishen_terminology.md)
+  - [bazi_nayin_shiyi](bazi_nayin_shiyi.md)
+  - [bazi_yue_shi_ge](bazi_yue_shi_ge.md)
+  - [bazi_tiaohou](bazi_tiaohou.md)
+  - [bazi_liuqin_gongwei](bazi_liuqin_gongwei.md)
+  - [bazi_qianshi_yanpan](bazi_qianshi_yanpan.md)
+  - [api_spec](api_spec.md)
+
+> 本文为**古籍规则参考**，非现实预测依据。本仓库一切分数均为「古籍案例对齐分」（回归审计用），**不是现实命中率**（铁律三）；判据口径以 [知识库导览](../../kb/INDEX.md) 登记为准。

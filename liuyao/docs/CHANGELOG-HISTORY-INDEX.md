@@ -94,3 +94,5 @@
 ## 2026-11-06 第五百三十四批（实证巡检·C1 轻门落地·主应期声明↔数据对账）：**window_report.py 新增只读 --reconcile 对账 CAPABILITY 主应期 top-1/top-3 与实跑覆盖率，挂 CI root-gates；变异探针实证有牙；415 批多支基准修正峰值标「未保持」；正文见 git 提交**
 
 ## 2026-11-07 第五百三十五批（实证巡检·README 声明↔数据漂移缺口闭环·B 轻门）：**两份学科 README 关键数字按 ledger 真值回流；新增 `readme_reconcile.py` 只读对账门（21 项）挂 CI root-gates，变异探针实证有牙；正文见 git 提交**
+
+## 2026-11-07 第五百三十六批（六爻·thinking_chain 静卦静默降级缺陷根治）：**`effects.analyze_repetition` 对静卦 changed=None 抛 AttributeError 被静默吞成 advanced_analysis={}，86 静卦长期零经典增强；降级为 {} 兜底＋defense-in-depth，ablation --selftest FAIL→PASS；细粒度 verdict/score 确有修正（向金标准收敛），聚合读数零漂移；不新增门号**

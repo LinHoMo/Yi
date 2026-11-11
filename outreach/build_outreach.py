@@ -50,6 +50,7 @@ TRACKED = (
     "KNOWLEDGE.md",
     "kb/INDEX.md",
     "examples/liuyao-example.md",
+    "examples/liuyao-time-example.md",
     "examples/bazi-example.md",
 )
 
@@ -63,6 +64,8 @@ NEGATION = ("不是", "不得", "禁止", "不可", "不许", "严禁", "不能"
 LY_QUESTION = "示例：某合作项目下月能否顺利推进"
 LY_DATETIME = "2026-01-15 10:30"
 LY_SEED = 42
+LY_TIME_QUESTION = "示例：某岗位竞聘在本季度是否值得投入"
+LY_TIME_DATETIME = "2026-03-18 14:00"
 BZ_DATETIME = "1990-05-20 10:30"
 BZ_GENDER = "男"
 BZ_QUESTION = "示例：命局结构说明"
@@ -159,8 +162,18 @@ from render import render
 a = analyze(chart({BZ_QUESTION!r}, datetime_str={BZ_DATETIME!r}, gender={BZ_GENDER!r}))
 print(render(a), end="")
 """
+    ly_time_code = f"""
+import sys
+sys.path.insert(0, {str(ly)!r})
+from chart import chart
+from analyze import analyze
+from render import render
+a = analyze(chart("time", {LY_TIME_QUESTION!r}, datetime_str={LY_TIME_DATETIME!r}))
+print(render(a, fmt="md"), end="")
+"""
     return {
         "liuyao": _engine_report(ly, ly_code),
+        "liuyao_time": _engine_report(ly, ly_time_code),
         "bazi": _engine_report(bz, bz_code),
     }
 
@@ -206,6 +219,7 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
         "## 代码产出的实际结论（引擎实跑示例报告）",
         "",
         f"- [六爻纳甲占报告示例]({RAW}/examples/liuyao-example.md)：固定输入下的完整六爻结论与应期窗口",
+        f"- [六爻时间起卦报告示例]({RAW}/examples/liuyao-time-example.md)：time 模式确定性起卦、同一时刻必得同卦",
         f"- [八字命局因子说明示例]({RAW}/examples/bazi-example.md)：固定输入下的四柱、强弱、格局、喜用、大运流年",
         "",
         "## 判据知识库（按需读，勿整本读）",
@@ -247,6 +261,7 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
         "## 九、代码产出的示例结论",
         "",
         f"- 六爻：[examples/liuyao-example.md]({RAW}/examples/liuyao-example.md)（{PAGES} 同步镜像）",
+        f"- 六爻·时间起卦：[examples/liuyao-time-example.md]({RAW}/examples/liuyao-time-example.md)",
         f"- 八字：[examples/bazi-example.md]({RAW}/examples/bazi-example.md)",
         "",
         "两份报告均由固定输入下的四段流水线实跑生成，含完整结论、应期窗口、旺衰动变、",
@@ -288,6 +303,7 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
         "## 示例结论",
         "",
         f"- [六爻报告示例]({RAW}/examples/liuyao-example.md)",
+        f"- [六爻时间起卦示例]({RAW}/examples/liuyao-time-example.md)",
         f"- [八字报告示例]({RAW}/examples/bazi-example.md)",
         "",
         "## ⛔ 不在此目录的内容",
@@ -303,10 +319,18 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
     bz_input = (
         f"question=「{BZ_QUESTION}」, datetime={BZ_DATETIME}, gender={BZ_GENDER}"
     )
+    ly_time_input = (
+        f"mode=time, question=「{LY_TIME_QUESTION}」, datetime={LY_TIME_DATETIME}（确定性起卦，不接 seed）"
+    )
     ly_repro = (
         "python -c \"import sys;sys.path.insert(0,'liuyao/scripts');"
         "from chart import chart;from analyze import analyze;from render import render;"
         f"print(render(analyze(chart('coin','{LY_QUESTION}',datetime_str='{LY_DATETIME}',seed={LY_SEED})),fmt='md'))\""
+    )
+    ly_time_repro = (
+        "python -c \"import sys;sys.path.insert(0,'liuyao/scripts');"
+        "from chart import chart;from analyze import analyze;from render import render;"
+        f"print(render(analyze(chart('time','{LY_TIME_QUESTION}',datetime_str='{LY_TIME_DATETIME}')),fmt='md'))\""
     )
     bz_repro = (
         "python -c \"import sys;sys.path.insert(0,'bazi/scripts');"
@@ -320,6 +344,9 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
         "kb/INDEX.md": "\n".join(idx),
         "examples/liuyao-example.md": _example(
             "示例报告 · 六爻纳甲（引擎实跑）", ly_repro, ly_input, reports["liuyao"]
+        ),
+        "examples/liuyao-time-example.md": _example(
+            "示例报告 · 六爻时间起卦（引擎实跑）", ly_time_repro, ly_time_input, reports["liuyao_time"]
         ),
         "examples/bazi-example.md": _example(
             "示例报告 · 八字四柱（引擎实跑）", bz_repro, bz_input, reports["bazi"]
@@ -355,6 +382,7 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
         "</ul>\n"
         "<h2>代码产出的实际结论</h2>\n<ul>\n"
         f'<li><a href="{RAW}/examples/liuyao-example.md">六爻纳甲占报告（引擎实跑）</a></li>\n'
+        f'<li><a href="{RAW}/examples/liuyao-time-example.md">六爻时间起卦报告（引擎实跑）</a></li>\n'
         f'<li><a href="{RAW}/examples/bazi-example.md">八字命局因子说明（引擎实跑）</a></li>\n'
         "</ul>\n"
         "<p>两份报告由固定输入下的四段流水线 <code>chart → analyze → narrate → render</code> "
@@ -378,11 +406,12 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
             "- 判据全文：" + "、".join(
                 f"[{key.split('/')[1]}](knowledge/{key.replace('/', '__')})" for key, _ in rows
             ) + "\n"
-            "- 示例结论：[六爻报告](examples/liuyao-example.md)、[八字报告](examples/bazi-example.md)\n\n"
+            "- 示例结论：[六爻报告](examples/liuyao-example.md)、[六爻时间起卦](examples/liuyao-time-example.md)、[八字报告](examples/bazi-example.md)\n\n"
             "---\n\n" + knowledge
         ),
         "site/llms.txt": "\n".join(llms),
         "site/examples/liuyao-example.md": tracked["examples/liuyao-example.md"],
+        "site/examples/liuyao-time-example.md": tracked["examples/liuyao-time-example.md"],
         "site/examples/bazi-example.md": tracked["examples/bazi-example.md"],
     }
     for key, _ in rows:
@@ -391,6 +420,10 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
             f"<!-- 判据全文镜像，真源：{blob_link(key)} -->\n\n"
             + _read(ROOT / disc / "references" / name)
         )
+    # 守卫：每个入库示例必须在 site/ 有镜像，否则 Pages 会 404（549/551 两次踩过）
+    for rel in tracked:
+        if rel.startswith("examples/"):
+            assert f"site/{rel}" in site, f"site/ 缺少示例镜像：{rel}"
     return tracked, site
 
 
@@ -406,7 +439,7 @@ def validate(tracked: dict[str, str]) -> None:
             for bad in FORBIDDEN:
                 if bad in line:
                     raise ValueError(f"对外文本出现禁句「{bad}」：{rel}")
-    for rel in ("examples/liuyao-example.md", "examples/bazi-example.md"):
+    for rel in (k for k in tracked if k.startswith("examples/")):
         text = tracked[rel]
         for must in ("古籍案例对齐分", "专业意见", "引擎报告原文", "不是现实命中率"):
             if must not in text:

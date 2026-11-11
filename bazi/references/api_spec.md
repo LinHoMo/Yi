@@ -66,5 +66,18 @@
 仓内一切分数都是**古籍案例对齐分**（引擎输出与古籍案例要点的吻合度，回归审计用），
 不是现实命中率；现实侧样本为零。医疗、法律、投资与重大决策请以专业意见为准。
 
+---
 
+## 相关文档
 
+- 本篇在知识库中的位置与「什么时候读」见 [知识库导览](../../kb/INDEX.md)。
+- 同科其他判据：
+  - [bazi_shishen_terminology](bazi_shishen_terminology.md)
+  - [bazi_nayin_shiyi](bazi_nayin_shiyi.md)
+  - [bazi_yue_shi_ge](bazi_yue_shi_ge.md)
+  - [bazi_tiaohou](bazi_tiaohou.md)
+  - [bazi_liuqin_gongwei](bazi_liuqin_gongwei.md)
+  - [bazi_jibing_tizhi](bazi_jibing_tizhi.md)
+  - [bazi_qianshi_yanpan](bazi_qianshi_yanpan.md)
+
+> 本文为八字模块接口速查，非预测内容；能力读数与口径以 `CAPABILITY.md` 为准，引用时连同 commit 一起引用。
