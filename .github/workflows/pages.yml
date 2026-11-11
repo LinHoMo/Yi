@@ -1,0 +1,55 @@
+# 对外静态知识站（第五百四十九批）：把项目级 Pages 从「孤儿旧站」收编进版本控制。
+# 仓库 Pages 的 build_type 已是 workflow，本流程产物直接覆盖 https://linhomo.github.io/Yi/。
+# 站点内容全部由 outreach/build_outreach.py 现场生成，main 上不存 site/（gitignore）。
+name: deploy-knowledge-pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'outreach/**'
+      - 'plugins/scripts/kb-docs.mjs'
+      - 'liuyao/references/**'
+      - 'bazi/references/**'
+      - 'examples/**'
+      - 'KNOWLEDGE.md'
+      - 'kb/**'
+      - 'llms.txt'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: verify checked-in outreach artifacts
+        run: python outreach/build_outreach.py --check
+      - name: generate static site
+        run: python outreach/build_outreach.py --write
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

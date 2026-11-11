@@ -19,8 +19,9 @@ plugins/
 │   ├── report.mjs       # 报告落盘
 │   └── kb-synonyms.json
 ├── scripts/
-│   ├── kb-docs.mjs      # 知识库登记表唯一真源
+│   ├── kb-docs.mjs      # 知识库登记表唯一真源（对外层也读它，见 outreach/README.md）
 │   ├── build.mjs        # 一次构建 + 分发到 dsh-plugin/
+│   ├── dev-only.mjs     # 防复活哨兵：不该随包的评测脚本名单
 │   └── selftest.mjs     # 共享层自检（判红即 exit≠0）
 ├── engine/  skills/     # 构建产物（不入库）
 └── CHANGELOG.md
@@ -37,8 +38,11 @@ plugins/
 ```bash
 node plugins/scripts/build.mjs       # 一次构建 + 分发到 dsh-plugin/
 node plugins/scripts/selftest.mjs     # 共享层自检
-npm --prefix dsh-plugin run check     # 宿主侧：build → dsh 内验证 → verify-in-dsh
+npm --prefix dsh-plugin run check     # 宿主侧：build → selftest → verify-in-dsh
 ```
+
+`dsh-plugin/package.json` 的 `prepack` 会在 `npm pack` 前自动跑 `build.mjs`，
+因此 fresh clone 上打包不会漏掉 `engine/`、`skills/`、包根 `SKILL.md`。
 
 改两科（`*/core`、`*/scripts`、`*/references`）之后**必须**重跑构建与自检：
 `engine/` 与 `skills/` 会静默过期，这是唯一能在提交前抓到漂移的门。

@@ -16,6 +16,8 @@
 > 无插件自身代码改动）、281→**1.0.3**（随包引擎同步六爻 281 批占差事词典+WS003
 > 校勘）。
 
+## 2026-11-11 第五百四十九批（宿主侧·安装与发布闭环；semver 1.0.24→1.0.25，patch+1 文档/修复批）：**`package.json` 加 `prepack`（npm pack 前自动 build，fresh clone 不再打出缺件包；实测 197 文件、零缺件、case_library 不在包内）；README 补「源码安装第 0 步必先 build」、修 inputSchema→`parameters` 与真源路径、去掉钉死的 v1.0.0；`src/index.mjs` 修 `build-skills.mjs` 幽灵注释；新增 `release.yml`（tag↔version 对账后自动 build→selftest→check→pack→上传资产，正文取 `outreach/RELEASE-NOTES.md` 保证铁律三口径随 Release）。1.0 API 冻结面与四工具 schema 未动，故仅 patch+1；批次号仍是唯一真源**
+
 ## 2026-11-09 第五百四十五批（宿主侧·随包登记）：**宿主源码零改动；`npm --prefix dsh-plugin run check` 全绿**
 
 ## 2026-11-09 第五百四十四批（宿主侧·随包登记）：**宿主源码零改动；`npm --prefix dsh-plugin run check` 全绿**

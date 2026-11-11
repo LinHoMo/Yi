@@ -5,12 +5,17 @@
 
 ## 安装
 
-发布版：从 GitHub Release 下载 tgz 后安装——<https://github.com/LinHoMo/Yi/releases/tag/v1.0.0>
+发布版：从 GitHub Release 下载 tgz 后安装——<https://github.com/LinHoMo/Yi/releases>。
+版本号以本目录 `package.json` 的 `version` 为准（**不在本文钉死**；`release.yml` 会在 tag 与版本
+不一致时判红）。源码安装**必须先构建**：`engine/`、`skills/`、包根 `SKILL.md` 与 `src/*.mjs`
+都是 `.gitignore` 排除的构建产物，clone 后不存在，跳过 build 装到的是缺件空壳。
 
 ```sh
-dsh plugin --profile <profile> install ./dsh-yi-divination-1.0.0.tgz   # 发布版
-dsh plugin --profile <profile> add "link:<本目录绝对路径>"                # 开发版
-node scripts/install-preset.mjs <profile>                                # 可选，幂等
+node ../plugins/scripts/build.mjs                                       # 源码安装第 0 步
+node ../plugins/scripts/selftest.mjs
+dsh plugin --profile <profile> install ./dsh-yi-divination-<版本>.tgz  # 发布版
+dsh plugin --profile <profile> add "link:<本目录绝对路径>"              # 开发版（须先 build）
+node scripts/install-preset.mjs <profile>                               # 可选，幂等；仅 clone 可用，tgz 不含 scripts/
 ```
 
 `<profile>` 是 `$DSH_HOME/profiles/` 下的目录名（桌面版 `desktop`）。卸载：
@@ -25,13 +30,15 @@ node scripts/install-preset.mjs <profile>                                # 可�
 | `yi_kb` | 判据知识库检索（`query` 必填；`discipline`／`limit` 可选） |
 | `yi_report` | 单文件报告（`discipline` 必填；`format` = html／md，其余参数同对应排盘工具） |
 
-参数与返回结构以 `src/tools.mjs` 的 inputSchema 为准（1.0 冻结面，AGENTS.md §二）。
-六爻 html 与两科 md 走引擎 render 段；八字 html 由 `src/report.mjs` 排版，文字全部来自引擎字段。
+参数与返回结构以仓库真源 `plugins/mcp/tools.mjs` 的 `parameters` 为准（MCP 侧经
+`plugins/mcp/schema.mjs` 转成 `inputSchema`；1.0 冻结面，AGENTS.md §二）。
+六爻 html 与两科 md 走引擎 render 段；八字 html 由 `plugins/mcp/report.mjs` 排版，文字全部来自引擎字段。
 
 ### 知识库
 
-`skills/yi-divination/references/` 下的判据文档篇数以 `INDEX.md` 与
-`plugins/scripts/kb-docs.mjs` 登记表为准；先用 `yi_kb` 按关键词定位，再按 `文件:行` 读节段。
+`skills/yi-divination/references/` 下的判据文档篇数以随包 `INDEX.md` 与
+`../plugins/scripts/kb-docs.mjs` 登记表为准；先用 `yi_kb` 按关键词定位，再按 `文件:行` 读节段。
+GitHub 上可读的等价导览是仓库根 `kb/INDEX.md`（对外层产物，含 raw 直链）。
 
 > ⛔ 古籍案例库 `case_library.md` 刻意不随包（AGENTS.md §一.2）：打包层排除、
 > 自检 [1.5] 断言、`yi_kb` 扫描层排除，三道闸。
@@ -49,8 +56,10 @@ node ../plugins/scripts/selftest.mjs  # 共享层包级自检（含负例自证�
 npm run check                         # build + selftest + verify-in-dsh
 ```
 
-`engine/`、`skills/`、`src/*.mjs` 是构建产物，不入库、不要手改（selftest [1]／[1.6]
-逐字节同源门会判红）。`verify-in-dsh` 构造 Cordis 上下文、真跑 `execute()` 并断言
+`engine/`、`skills/`、`src/*.mjs`（除 `src/index.mjs`）是构建产物，不入库、不要手改
+（selftest [1]／[1.6] 逐字节同源门会判红）。`package.json` 的 `prepack` 会在 `npm pack`
+前自动跑构建，故 fresh clone 打包不会缺件；`release.yml` 用 tag↔version 对账后自动发布。
+`verify-in-dsh` 构造 Cordis 上下文、真跑 `execute()` 并断言
 技能条目形状（invocation 为对象、rank 为有穷数）与 render 文本块。
 包体实测值以 `npm pack --dry-run --json` 与自检实跑输出为准，不在本文抄快照。
 

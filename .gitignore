@@ -85,3 +85,7 @@ dsh-plugin/src/*.json
 !dsh-plugin/src/index.mjs
 dsh-plugin/SKILL.md
 
+# 549 批：对外静态站由 outreach/build_outreach.py 现场生成、Pages Actions 部署，不入库；
+# 入库产物（llms.txt / KNOWLEDGE.md / kb/ / examples/）才需要提交。
+site/
+

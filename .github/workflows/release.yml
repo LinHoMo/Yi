@@ -1,0 +1,65 @@
+# 发布流水线（第五百四十九批）：此前 CI 只有质量门，tgz 全靠人工在已 build 的机器上打，
+# 导致 README 固定指向 v1.0.0 而 package.json 已到 1.0.24、且无对应 tag / 资产。
+# 本流程把「版本真源 = dsh-plugin/package.json」变成机器判据：tag 与版本不一致即判红。
+name: release-plugin
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: '要发布的 tag（须等于 package.json 的 version 前缀 v）'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: resolve tag
+        id: tag
+        run: |
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          V=$(node -p "require('./dsh-plugin/package.json').version")
+          if [ "v$V" != "$TAG" ]; then
+            echo "tag/version 漂移：tag=$TAG 但 package.json=$V（版本真源是 package.json）" >&2
+            exit 1
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+      - name: build shipped engine and skills
+        run: node plugins/scripts/build.mjs
+      - name: shared runtime selftest
+        run: node plugins/scripts/selftest.mjs
+      - name: dsh host check
+        run: npm --prefix dsh-plugin run check
+      - name: pack (prepack rebuilds artifacts)
+        working-directory: dsh-plugin
+        run: npm pack --pack-destination ..
+      - name: publish release asset
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ steps.tag.outputs.tag }}"
+          ASSET="dsh-yi-divination-${{ steps.tag.outputs.version }}.tgz"
+          test -f "$ASSET" || { echo "缺打包产物 $ASSET" >&2; exit 1; }
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            # 口径正文是仓库真源，不用 --generate-notes（自动生成的 PR 列表不带铁律三声明）
+            gh release edit "$TAG" --notes-file outreach/RELEASE-NOTES.md
+            gh release upload "$TAG" "$ASSET" --clobber
+          else
+            gh release create "$TAG" "$ASSET" --title "Yi DSH 插件 $TAG" \
+              --notes-file outreach/RELEASE-NOTES.md
+          fi

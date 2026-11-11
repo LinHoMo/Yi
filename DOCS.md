@@ -25,6 +25,7 @@
 | **要查本次架构整改结果的人** | `ARCHITECTURE-PLAN.md`（完成台账 + V1–V15 收口实测 + 偏差/欠账） | `GOVERNANCE.md`（工具台账与档位门槛） | 本表 → 对应批次 |
 | **要引用对外数字的人** | `CAPABILITY.md` | `liuyao/README.md`／`bazi/README.md` | 各科 `liuyao/docs/CHANGELOG.md`／`bazi/docs/CHANGELOG.md`（最近窗口）＋ 对应 `CHANGELOG-HISTORY-INDEX.md`（逐批一句话） |
 | **要按缺口继续迭代的人** | `GOVERNANCE.md`「当前真缺口」（523 批逐条核实，历史待办现状以此为准） | `CAPABILITY.md`「已知欠账」 | 对应批次的 git 提交（主 CHANGELOG 只留一行摘要） |
+| **联网检索的网页端 AI／只想读知识的人** | `llms.txt`（机器可读入口与 raw 直链） | `KNOWLEDGE.md`（自包含知识速读） | `examples/` 两份引擎实跑结论 |
 
 ---
 
@@ -124,3 +125,26 @@
 - 两科主 CHANGELOG 的**窗口与单批长度**由 `devkit/root/check_docs_index.py` 现场判（523 批扩面）：
   退出窗口的批号＋日期只准搬进历史索引，不准删；每批只留一行自足的结论摘要，
   过程叙述与收口明细交 git 历史。历史待办现状以 `GOVERNANCE.md`「当前真缺口」为准。
+
+---
+
+## 七、对外可发现层（第五百四十九批新建）
+
+> 这一层解决「网页端大模型只能读静态文本、不会执行 Python」的缺口：
+> 把代码产出的结论与判据知识变成 GitHub / raw / Pages 上可直接抓取的入库产物。
+> 构建器与铁律说明见 `outreach/README.md`。
+
+| 文件 | 一句话 | 状态 |
+|---|---|---|
+| `KNOWLEDGE.md` | 面向 AI 的自包含术数知识速读（术语表、四段契约、三条铁律、FAQ）；由构建器拼装 | 生成物 |
+| `kb/INDEX.md` | 面向 GitHub 读者与联网 AI 的判据篇目导览＋raw 直链（与随包 INDEX 用途不同） | 生成物 |
+| `examples/liuyao-example.md` | 固定输入下由四段流水线实跑生成的六爻完整结论报告 | 生成物 |
+| `examples/bazi-example.md` | 固定输入下由四段流水线实跑生成的八字完整结论报告 | 生成物 |
+| `outreach/README.md` | 对外层的真源／产物／铁律／命令说明 | 活文档 |
+| `outreach/KNOWLEDGE-BODY.md` | 知识正文的人写真源（构建器把它拼进 `KNOWLEDGE.md`） | 活文档 |
+| `outreach/RELEASE-NOTES.md` | 自动发布 Release 的正文真源（口径声明随包，不用 `--generate-notes`） | 活文档 |
+
+> 非 Markdown 的入口 `llms.txt`、`site/`（gitignore，Pages Actions 生成）、
+> `.github/workflows/pages.yml` 与 `release.yml` 不在本表统计范围内。
+> 入库产物一律由 `python outreach/build_outreach.py --write` 生成、`--check` 逐字节复验，
+> **不要手改**；改动真源后须同批重跑 `--write` 并一起提交。

@@ -96,7 +96,7 @@ Python 代码完成，你不得自己心算或推算任何卦象、干支、纳�
  *
  * 两个位置的关系（刻意如此）：`skills/` 是**官方 skill-filesystem 的发现格式**，
  * 供 `bundledSkillDir` 扫描；插件根的 `SKILL.md` 是打包前的唯一真源，
- * `build-skills.mjs` 从它生成 `skills/`。providers 优先读前者，保证随包技能
+ * `plugins/scripts/build.mjs` 从它生成 `skills/`。providers 优先读前者，保证随包技能
  * 与文件系统发现看到的是**同一份内容**。
  */
 function resolveSkillPath() {

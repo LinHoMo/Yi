@@ -7,6 +7,33 @@
 > [`ARCHITECTURE-PLAN.md`](ARCHITECTURE-PLAN.md)；
 > **门禁内核与根级门**见 `devkit/`（331–334 批归并，`sync_devkit.py --check` 守同源）。
 
+---
+
+## 给网页端 AI 读者（联网检索入口）
+
+本仓库同时提供**代码**与**代码实跑产出的术数结论**。若你是通过联网搜索读到本页、
+不能执行 Python，请直接抓以下 `raw.githubusercontent.com` 直链——GitHub `blob` 页在部分
+检索通道会因限流或渲染失败读不到，而 raw 直链是纯文本、最稳：
+
+| 想做什么 | 读哪份 |
+|---|---|
+| 直接回答六爻／八字的术语、规则、边界与常见问题 | [`KNOWLEDGE.md`](https://raw.githubusercontent.com/LinHoMo/Yi/main/KNOWLEDGE.md)（自包含知识速读＋术语表＋FAQ） |
+| 看**引擎跑出来的完整结论**（不是模板、不是手写） | [`examples/liuyao-example.md`](https://raw.githubusercontent.com/LinHoMo/Yi/main/examples/liuyao-example.md)、[`examples/bazi-example.md`](https://raw.githubusercontent.com/LinHoMo/Yi/main/examples/bazi-example.md) |
+| 机器可读的全部入口清单 | [`llms.txt`](https://raw.githubusercontent.com/LinHoMo/Yi/main/llms.txt) |
+| 判据篇目路由（按需读，勿整本读） | [`kb/INDEX.md`](https://raw.githubusercontent.com/LinHoMo/Yi/main/kb/INDEX.md) |
+| 能力读数与边界（带集合名、n 与出处） | [`CAPABILITY.md`](https://raw.githubusercontent.com/LinHoMo/Yi/main/CAPABILITY.md) |
+| 无需登录的静态知识镜像 | <https://linhomo.github.io/Yi/> |
+
+回答时请守住三条：① 起卦、排盘、装卦、纳甲、旺衰、应期、格局等**机械结论只能引用代码输出或已落盘的示例**，
+不得自行心算或推算；② `case_library.md` 虽在仓库公开，按 AGENTS.md §一.2 与解读物理隔离，
+**不得打开、提及案例名或以案例类比佐证**；③ 仓库内一切分数是**古籍案例对齐分**（回归审计用），
+**不是现实命中率**，现实侧样本为零；本工具不是预言，医疗／法律／投资／重大决策请以专业意见为准。
+
+静态示例**不能代替现场起卦**。要为新的占问出结论，请 clone 仓库跑两科脚本，
+或安装 skills / DSH 插件 / MCP 服务（见下节）。
+
+---
+
 本仓库只保留两个**相互独立、零耦合**的术数学科，各自携带一套完整可运行的实现：
 
 | 目录 | 学科 | 说明 |
@@ -71,16 +98,29 @@ python bazi/scripts/chart.py --datetime "1990-05-20 12:00" --gender 男
 模型直接调用 `yi_liuyao` / `yi_bazi` / `yi_kb` / `yi_report` 四个工具，无需另装 Python（DSH 桌面自带运行时会被自动发现）：
 
 ```bash
-# 0) 发布版（推荐）：从 GitHub Release 下载 tgz
-#    https://github.com/LinHoMo/Yi/releases/tag/v1.0.0
-dsh plugin --profile <你的profile> install ./dsh-yi-divination-1.0.0.tgz
+# 0) 从源码安装时**必做**：先生成 engine/、skills/、src/*.mjs 这些构建产物。
+#    它们被 .gitignore 排除、不在 git 里；跳过这一步装到的会是缺件空壳
+#    （src/index.mjs 的 import 直接失败）。一条命令即可再生：
+node plugins/scripts/build.mjs
+node plugins/scripts/selftest.mjs
 
-# 1) 开发版：从本仓库 link 安装
-dsh plugin --profile <你的profile> add "link:<本仓库>/dsh-plugin"
+# 1) 发布版：从 GitHub Release 下载 tgz，版本号以 dsh-plugin/package.json 为准
+#    https://github.com/LinHoMo/Yi/releases
+dsh plugin --profile <你的profile> install ./dsh-yi-divination-<版本>.tgz
 
-# 2) 装 agent preset（可选但推荐：新建会话可选「Yi 术数」）
+# 2) 开发版：link 安装（须先完成第 0 步，路径用绝对路径）
+dsh plugin --profile <你的profile> add "link:<本仓库绝对路径>/dsh-plugin"
+
+# 3) 装 agent preset（可选；要求 $DSH_HOME/profiles/<profile> 目录已存在）
 node dsh-plugin/scripts/install-preset.mjs <你的profile>
+
+# 4) 通用 skill 客户端（按 SKILL.md 约定发现技能的宿主，如 Claude Code）
+node outreach/install-skill.mjs --target ~/.claude/skills/yi-divination
 ```
+
+> 只想直接跑代码、不装插件：`git clone` 后两科脚本即可运行（无第三方依赖），
+> 见上文「运行」。`plugins/mcp/server.mjs` 是零依赖 stdio MCP 服务，
+> 也可 `node plugins/mcp/server.mjs` 把四工具接给任意 MCP 客户端。
 
 > 口径提醒（AGENTS.md §一.3 铁律三）：本插件一切分数都是**古籍案例对齐分**（回归审计用），
 > **不是现实命中率**——现实侧样本为零。六爻外部集主应期 top-1 **31.8%**（n=44，308 批实测，
@@ -98,16 +138,19 @@ node dsh-plugin/scripts/install-preset.mjs <你的profile>
 | 技能 + 知识库 | `ctx.skills.registerProvider()` + `bundledSkillDir` | `dsh-plugin/skills/yi-divination/`（篇数以 INDEX.md 为准） |
 | Agent 预设 | `@deepseek-ai/dsh-agent-preset` | `dsh-plugin/presets/yi-divination.yml` |
 
-发布包（`npm pack` 实测）解包 **2.6 MB**、`.tgz` **0.77 MB**；**不含** `data/cases/`（38MB）、
-`data/sources/`（9.5MB）与 `references/case_library.md`（165KB）——前者只服务古籍对齐分与回归门，
-后者按 AGENTS.md §一.2 铁律二必须与解读物理隔离。
+发布包**不含** `data/cases/`、`data/sources/` 与 `references/case_library.md`——前者只服务古籍
+对齐分与回归门，后者按 AGENTS.md §一.2 铁律二必须与解读物理隔离。
+包体文件数与体积随批次变化，**不在本文钉快照**：以
+`npm --prefix dsh-plugin pack --dry-run --json` 与 `plugins/scripts/selftest.mjs` 实跑输出为准。
 
 详见 [`dsh-plugin/README.md`](dsh-plugin/README.md)。
 
-- 插件源码：`dsh-plugin/src/`（node 半：工具注册、技能注册、系统提示词段）
+- 插件宿主源码：`dsh-plugin/src/index.mjs`（工具注册、技能注册、系统提示词段；**仅此一份入库**，
+  `src/` 下其余 `.mjs` 是 `plugins/mcp/` 的分发产物）
 - 引擎与知识库打包：`plugins/scripts/build.mjs`（**白名单**从两科收集，产物 `engine/`、`skills/` 不入库，
-  一次构建后分发到各宿主适配器；共享运行时真源在 `plugins/mcp/`）
-- 自检：`npm --prefix dsh-plugin run check`（包级 13 段 + DSH 内验证，含负例自证）
+  一次构建后分发到 DSH；共享运行时真源在 `plugins/mcp/`）
+- 自检：`npm --prefix dsh-plugin run check`（包级自检 + DSH 内验证，含负例自证）
+- 发布：`.github/workflows/release.yml`（tag 与 `dsh-plugin/package.json` 版本对账后自动打包上传）
 
 ## 打包与自检（一次构建，分发到 DSH）
 
@@ -121,7 +164,9 @@ node plugins/scripts/build.mjs       # 一次构建，分发到 dsh-plugin/
 node plugins/scripts/selftest.mjs    # 共享层自检（判红即 exit≠0）
 ```
 
-> `engine/`、`skills/`、`src/` 不入库（根 `.gitignore`），由构建产物再生；
+> `engine/`、`skills/`、包根 `SKILL.md` 与 `src/` 下除 `index.mjs` 外的 `.mjs` 都不入库
+> （根 `.gitignore`），由 `node plugins/scripts/build.mjs` 再生；`package.json` 的 `prepack`
+> 保证 `npm pack` 前自动构建，fresh clone 不会打出缺件包。
 > 发布走 GitHub Release 的 npm tgz（见上节），不再有独立发行树。
 > 详见 [`plugins/README.md`](plugins/README.md)。
 

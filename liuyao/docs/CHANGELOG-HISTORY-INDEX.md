@@ -90,3 +90,5 @@
 
 ## 2026-11-06 第五百三十二批（实证巡检·G12 轻门落地·流派裁决声明↔数据对账）：**把 `build_adjudications.py` 的 `--selftest` 接进主门 `check.py[12]`（与 `--verify` 并行），并在 selftest 钉死分解 27/6/1/20（EXPECTED 单一真源）；新增只读 `--reconcile`：CAPABILITY 行 45 声称的 27/6/1/20 与 `adjudications.json` 实际比对。两道变异探针实证有牙（改 EXPECTED→28 判红、改 CAPABILITY 27→28 判红、还原转绿）。闭环 G12「声明↔数据」缺口，不新增门号——仅扩既有 [12]。本科 check EXIT=0**
 ## 2026-11-06 第五百三十三批（实证巡检·G12 轻门克隆·restorable 声明↔数据对账）：**把 532 批 G14 的只读 `--reconcile` 轻门样板克隆到 G12（六爻 `restorable_adjudication.json` summary）：`liuyao/dev_tools/adjudication_brief.py` 新增 `--reconcile`——CAPABILITY ① 处置分布（已在册30/非单点应期3/不升5/待回原文0/建器阻塞1/日期不可重建4）与 JSON 的 `summary` 现场对拍、并复核 rows→summary 内部一致性；接进 CI root-gates（守 528 批「不新增 check.py 门号」约定，仿 G8 挂 CI 而非 check.py）。变异探针实证有牙（改 CAPABILITY 已在册 30→31 判红 rc=1，还原转绿）。G13（八字版本识别）同款轻门见 bazi 同批；本科 check EXIT=0**
+
+## 2026-11-06 第五百三十四批（实证巡检·C1 轻门落地·主应期声明↔数据对账）：**window_report.py 新增只读 --reconcile 对账 CAPABILITY 主应期 top-1/top-3 与实跑覆盖率，挂 CI root-gates；变异探针实证有牙；415 批多支基准修正峰值标「未保持」；正文见 git 提交**
