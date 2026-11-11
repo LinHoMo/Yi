@@ -1037,6 +1037,8 @@ def main() -> int:
                 ("dev_tools/build_zengshan_dz_cases.py", "增删dz案例集"),
                 ("dev_tools/build_bushi_zhengzong_cases.py", "卜筮正宗案例集"),
                 ("dev_tools/build_yiin_cases.py", "易隐案例集"),
+                ("dev_tools/build_yilin_buyi_cases.py", "易林補遺案例集"),
+                ("dev_tools/build_bushi_quanshu_cases.py", "卜筮全书案例集"),
                 ("dev_tools/build_yingqi_set.py", "应期案例集"),
                 ("dev_tools/build_usegod_position.py", "用神爻位"),
                 ("dev_tools/build_extra_dimensions.py", "派生维度")):

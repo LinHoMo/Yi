@@ -64,6 +64,9 @@ def engine():
                    "E": EARTHLY_BRANCHES, "SEQ": seq}
     return _ENGINE
 STATUS_OPEN = "已开卷一次·逐例红绿·无率值"
+# 548 批 §四 入册授权：候选池转建为 yilin_buyi_holdout 后进入「已入册」终态；
+# 开卷记录（open_result）依然在册、无率值、判卷未改，故 check_open 视其为合法的「开卷后」状态。
+STATUS_ENROLLED = "已入册·yilin_buyi_holdout"
 FORBIDDEN_RATE_KEYS = {"rate", "accuracy", "percent", "percentage", "hit_rate",
                        "命中率", "准确率", "对齐分", "aggregate_value", "mean"}
 
@@ -196,7 +199,7 @@ def check_open(pool: dict) -> list[str]:
     bad: list[str] = []
     pre = pool.get("preregistration") or {}
     op = pool.get("open_result")
-    if pre.get("status") == STATUS_OPEN:
+    if pre.get("status") in (STATUS_OPEN, STATUS_ENROLLED):
         if not op:
             bad.append("状态为已开卷但缺 open_result")
             return bad

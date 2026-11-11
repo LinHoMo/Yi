@@ -228,7 +228,7 @@ def checks():
         "539 批新增：CAPABILITY T1 双科双指纹声明 ↔ golden/digest.json 实值（466 批正文未回流）；"
         "期望值现场取 digest 真源，不新增 check.py 门号、不新增门文件（守 528 约定）",
         lambda t: _capability_golden(), _cap_expect())
-    add("governance(80/49, blk 34/30)",
+    add("governance(82/49, blk 34/30)",
         "194批（312 补 310；315 补 314/315 两门；317 补 judge_shadow；329 补 fetch_zengshan_dz_cases；"
         "331 批 check_docs_index 上提到 devkit/root → 六爻 blk 28→27、脚本仍 63；"
         "339 批 A5-1 按实登记 7 个存量未分类脚本 → 八字 37→43；"
@@ -269,8 +269,12 @@ def checks():
         "；**547 批：六爻 79→80** 是新增 `open_bushi_candidates.py`（用户授权后《卜筮全书》候选池的一次性开卷器："
         "机读重建八案盘面、按 546 批冻结的 top-1 指标逐例判卷、只此一次开封、n=2<30 只报红绿；"
         "`--verify` 只读挂 CI root-gates，tier=ondemand 非 blocking）——同批入治理表 CURATED，"
-        "属正当 +1，期望由 79 回挂 80（blk 不变）",
-        lambda t: _gov_counts(), ("80", "49", "34", "30"))
+        "属正当 +1，期望由 79 回挂 80（blk 不变）"
+        "；**548 批：六爻 80→82** 是新增 `build_yilin_buyi_cases.py`／`build_bushi_quanshu_cases.py`"
+        "（§四 入册授权把《易林補遺》候选池 7 案、《卜筮全书》候选池 8 案中 5 案转建为评分集"
+        " yilin_buyi_holdout／bushi_quanshu_holdout；两器同批入治理表 CURATED，带 --selftest＋--check、"
+        "接进 check.py [46] 同步门，属正当 +2，期望由 80 回挂 82（blk 不变）",
+        lambda t: _gov_counts(), ("82", "49", "34", "30"))
 
     # 344 批：expected 书证/机械派生字段的覆盖生存线（门 [38]）。
     # 1592923 的事故证明「聚合分掉 6 分、所有门全绿」可以并存；本项把非空计数
@@ -555,8 +559,8 @@ def checks():
         sv = [len(ml["tier_link_violations"]["referenced_not_blocking"]),
               len(mb["tier_link_violations"]["referenced_not_blocking"])]
         return tuple(map(str, hv + sv))
-    add("tier一致性(硬0/0软9/4)", "207批（软 bazi=diff_tiaohou_vs_head 的 required 存在性引用，合法在账；冒出未见条目即红）；439 批 build_siku_dz 由 [43] 以 --check 消费，软引用 1→2；463 批 build_tiaohou 由 [9] 以 --check 消费，软引用 2→3；464 批 build_dts_corpus 由八字 [9]、build_question_use_gods／build_use_god_rules 由六爻 [12] 消费（bazi 3→4、liuyao 0→2，同属合法存在性引用）；472 批 build_adjudications 由六爻 [12] 以 --verify 消费（liuyao 2→3）；**519 批 [46] 构建器同步门接入，六爻新增 6 条 --check 存在性引用**：build_zengshan_dz_cases／build_bushi_zhengzong_cases／build_yiin_cases／build_yingqi_set／build_usegod_position／build_extra_dimensions（liuyao 3→9，逐条见 519 批 check.py 的 build_sync 表；**519 批接线后 `GOVERNANCE-MAP.json` 产物未同步，6 个脚本的 run_by_check_py 仍为 false，522 批重生成产物使图与代码一致**，并同步回改本账期望、逐条归因）。硬引用两科仍 0／0、八字软引用仍 4，计数口径未变，纯属合法条目增加，非引擎回归",
-        c_tier_consistency, ("0", "0", "9", "4"))
+    add("tier一致性(硬0/0软11/4)", "207批（软 bazi=diff_tiaohou_vs_head 的 required 存在性引用，合法在账；冒出未见条目即红）；439 批 build_siku_dz 由 [43] 以 --check 消费，软引用 1→2；463 批 build_tiaohou 由 [9] 以 --check 消费，软引用 2→3；464 批 build_dts_corpus 由八字 [9]、build_question_use_gods／build_use_god_rules 由六爻 [12] 消费（bazi 3→4、liuyao 0→2，同属合法存在性引用）；472 批 build_adjudications 由六爻 [12] 以 --verify 消费（liuyao 2→3）；**519 批 [46] 构建器同步门接入，六爻新增 6 条 --check 存在性引用**：build_zengshan_dz_cases／build_bushi_zhengzong_cases／build_yiin_cases／build_yingqi_set／build_usegod_position／build_extra_dimensions（liuyao 3→9，逐条见 519 批 check.py 的 build_sync 表；**519 批接线后 `GOVERNANCE-MAP.json` 产物未同步，6 个脚本的 run_by_check_py 仍为 false，522 批重生成产物使图与代码一致**，并同步回改本账期望、逐条归因）。硬引用两科仍 0／0、八字软引用仍 4，计数口径未变，纯属合法条目增加，非引擎回归；**548 批 [46] 构建器同步门再接入 2 条 --check 存在性引用**：build_yilin_buyi_cases／build_bushi_quanshu_cases（六爻软引用 9→11，与治理表 80→82 同源、同属合法条目增加，非引擎回归）",
+        c_tier_consistency, ("0", "0", "11", "4"))
 
     # --- 八字侧 ---
     def c_bazi_holdout(t):

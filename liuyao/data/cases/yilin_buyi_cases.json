@@ -1,0 +1,260 @@
+{
+  "_meta": {
+    "book": "易林補遺",
+    "source": "dz 转录本",
+    "source_file": "data/sources/yilin_buyi_dz.dz.txt",
+    "sha256": "54b2f91975d2a8f5e23c2b8c6785b9394d2357a04f6039177824b3c24a45f23a",
+    "built_by": "dev_tools/build_yilin_buyi_cases.py",
+    "split": "yilin_buyi_holdout",
+    "n": 7,
+    "with_yingqi": 3,
+    "verdict_policy": "吉凶一律 null：书载断语为散文，映射吉/凶属解读，越铁律一；本集为应期语料通道。",
+    "note": "外部验证集，永不参与调参；按 548 批 §四 入册授权由 yilin_buyi_candidates.json 转建。"
+  },
+  "cases": [
+    {
+      "id": "YLB001",
+      "source": "《易林補遺》（dz 转录本）",
+      "topic": "占病",
+      "question": "子占父病",
+      "input": {
+        "date": "午月甲子日",
+        "question": "子占父病"
+      },
+      "hexagram": {
+        "original": "观",
+        "changed": "益",
+        "moving": [
+          1
+        ],
+        "note": "观之益卦"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "后至乙亥日",
+        "yingqi_branches": [
+          "亥"
+        ],
+        "detail": "后至乙亥日"
+      },
+      "provenance": {
+        "source_file": "data/sources/yilin_buyi_dz.dz.txt",
+        "sha256": "54b2f91975d2a8f5e23c2b8c6785b9394d2357a04f6039177824b3c24a45f23a",
+        "line": 1279,
+        "day_line": 1279,
+        "table_line": 1279,
+        "quote": "且如子占父病，五月甲子日，占得观之益卦，此卦父爻化居旺地，又带青龙贵人，本为吉象，岂知父临月破，后至乙亥日，元神绝而忌神生，果然父丧。",
+        "speech_head": "且如子占父病，五月甲子日，占得观之益卦，此卦父爻化居旺地，又带青龙贵人，本为吉象"
+      }
+    },
+    {
+      "id": "YLB002",
+      "source": "《易林補遺》（dz 转录本）",
+      "topic": "占病",
+      "question": "妻占夫病",
+      "input": {
+        "date": "辰月丁卯日",
+        "question": "妻占夫病"
+      },
+      "hexagram": {
+        "original": "涣",
+        "changed": "姤",
+        "moving": [
+          3,
+          4
+        ],
+        "note": "涣之垢卦"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "挨至乙亥日",
+        "yingqi_branches": [
+          "亥"
+        ],
+        "detail": "挨至乙亥日"
+      },
+      "provenance": {
+        "source_file": "data/sources/yilin_buyi_dz.dz.txt",
+        "sha256": "54b2f91975d2a8f5e23c2b8c6785b9394d2357a04f6039177824b3c24a45f23a",
+        "line": 1279,
+        "day_line": 1279,
+        "table_line": 1279,
+        "quote": "又如妻占夫病，三月甲子旬丁卯日，卜得涣之垢卦，所嫌仇神忌神皆动，独无用爻，又鬼伏仇爻之下，又值旬空，毫无救。挨至乙亥日用爻透出，免受忌神来伤，夫果死也。",
+        "speech_head": "又如妻占夫病，三月甲子旬丁卯日，卜得涣之垢卦，所嫌仇神忌神皆动，独无用爻，又鬼伏"
+      }
+    },
+    {
+      "id": "YLB003",
+      "source": "《易林補遺》（dz 转录本）",
+      "topic": "占病",
+      "question": "弟占兄病",
+      "input": {
+        "date": "亥月戊辰日",
+        "question": "弟占兄病"
+      },
+      "hexagram": {
+        "original": "剥",
+        "changed": "大畜",
+        "moving": [
+          1,
+          2,
+          3
+        ],
+        "note": "剥初二三爻皆动"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "果应病痊"
+      },
+      "provenance": {
+        "source_file": "data/sources/yilin_buyi_dz.dz.txt",
+        "sha256": "54b2f91975d2a8f5e23c2b8c6785b9394d2357a04f6039177824b3c24a45f23a",
+        "line": 1279,
+        "day_line": 1279,
+        "table_line": 1279,
+        "quote": "假令弟占兄病，十月戊辰日，卜得剥初二三爻皆动，却本卦无兄弟，所喜申金兄弟伏在世爻用爻透出果应病痊。",
+        "speech_head": "假令弟占兄病，十月戊辰日，卜得剥初二三爻皆动，却本卦无兄弟，所喜申金兄弟伏在世爻"
+      }
+    },
+    {
+      "id": "YLB004",
+      "source": "《易林補遺》（dz 转录本）",
+      "topic": "占病",
+      "question": "父占子病",
+      "input": {
+        "date": "午月癸卯日",
+        "question": "父占子病"
+      },
+      "hexagram": {
+        "original": "萃",
+        "changed": "否",
+        "moving": [
+          6
+        ],
+        "note": "萃卦上六爻动"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "后至丙午日",
+        "yingqi_branches": [
+          "午"
+        ],
+        "detail": "后至丙午日"
+      },
+      "provenance": {
+        "source_file": "data/sources/yilin_buyi_dz.dz.txt",
+        "sha256": "54b2f91975d2a8f5e23c2b8c6785b9394d2357a04f6039177824b3c24a45f23a",
+        "line": 1279,
+        "day_line": 1279,
+        "table_line": 1279,
+        "quote": "又如父占子病，五月甲午旬癸卯日，占得萃卦上六爻动，此卦子孙太弱，父母相而又动，虽受卯日相伤，又逢月建扶起，父又化为进气能克用爻，虽有元神暗动又值立时空不能相救，后至丙午日忌象叨生，此男果死。",
+        "speech_head": "又如父占子病，五月甲午旬癸卯日，占得萃卦上六爻动，此卦子孙太弱，父母相而又动，虽"
+      }
+    },
+    {
+      "id": "YLB005",
+      "source": "《易林補遺》（dz 转录本）",
+      "topic": "占病",
+      "question": "夫占妻病",
+      "input": {
+        "date": "辰月庚辰日",
+        "question": "夫占妻病"
+      },
+      "hexagram": {
+        "original": "师",
+        "changed": "剥",
+        "moving": [
+          2,
+          6
+        ],
+        "note": "师卦九二上六爻动"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "此鬼太刚死而可验"
+      },
+      "provenance": {
+        "source_file": "data/sources/yilin_buyi_dz.dz.txt",
+        "sha256": "54b2f91975d2a8f5e23c2b8c6785b9394d2357a04f6039177824b3c24a45f23a",
+        "line": 1279,
+        "day_line": 1279,
+        "table_line": 1279,
+        "quote": "又如夫占妻病，三月甲戌旬庚辰日，卜得师卦九二上六爻动，此卦青龙财爻持世，兄弟又不交重，鬼又化出财来，本为佳兆，岂知土官发动，书云更论土爻临鬼动，多凶少吉祸难让，果应五月庚申日，官遇长生月建又扶土鬼，此鬼太刚死而可验。",
+        "speech_head": "又如夫占妻病，三月甲戌旬庚辰日，卜得师卦九二上六爻动，此卦青龙财爻持世，兄弟又不"
+      }
+    },
+    {
+      "id": "YLB006",
+      "source": "《易林補遺》（dz 转录本）",
+      "topic": "占病",
+      "question": "父占女久远病",
+      "input": {
+        "date": "申月癸亥日",
+        "question": "父占女久远病"
+      },
+      "hexagram": {
+        "original": "艮",
+        "changed": null,
+        "moving": [],
+        "note": "艮卦安静"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "其女死也"
+      },
+      "provenance": {
+        "source_file": "data/sources/yilin_buyi_dz.dz.txt",
+        "sha256": "54b2f91975d2a8f5e23c2b8c6785b9394d2357a04f6039177824b3c24a45f23a",
+        "line": 1279,
+        "day_line": 1279,
+        "table_line": 1279,
+        "quote": "又如父占女久远病，七月甲寅旬癸亥日，卜得艮卦安静，此卦用爻临月建，忌神又不兴似无凶兆，岂知卦犯六冲，经云初灾遇此当瘵瘥，久病逢之命必伤，果应在子月戊午日，用象死于月建，败于日辰，其女死也。",
+        "speech_head": "又如父占女久远病，七月甲寅旬癸亥日，卜得艮卦安静，此卦用爻临月建，忌神又不兴似无"
+      }
+    },
+    {
+      "id": "YLB007",
+      "source": "《易林補遺》（dz 转录本）",
+      "topic": "占病",
+      "question": "母占子病",
+      "input": {
+        "date": "戌月辛未日",
+        "question": "母占子病"
+      },
+      "hexagram": {
+        "original": "归妹",
+        "changed": null,
+        "moving": [],
+        "note": "归妹卦安静"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "病全脱体"
+      },
+      "provenance": {
+        "source_file": "data/sources/yilin_buyi_dz.dz.txt",
+        "sha256": "54b2f91975d2a8f5e23c2b8c6785b9394d2357a04f6039177824b3c24a45f23a",
+        "line": 1279,
+        "day_line": 1279,
+        "table_line": 1279,
+        "quote": "又母占子病，九月甲子旬辛未日，卜得归妹卦安静，此卦六爻无子，虽伏出亥水子孙在四爻之下，又落空亡，世上父母又被日辰冲动本绝卦也，岂知互出水火既济取互体坎水配成兑卦，子孙此乃无中生有也。惟互出之爻，再不受日月并动爻伤克，此子果应亥月戊子日，用值旺乡，病全脱体。",
+        "speech_head": "又母占子病，九月甲子旬辛未日，卜得归妹卦安静，此卦六爻无子，虽伏出亥水子孙在四爻"
+      }
+    }
+  ]
+}

@@ -2,7 +2,7 @@
   "schema": "yi-candidate-pool/1",
   "batch": 542,
   "discipline": "liuyao",
-  "_comment": "《易林補遺》L1279「占病何日见凶」段的逐字书证候选池。**不参与评分**：不进 case_splits.json、不被任何 eval 分片引用、不出对齐分、不作任何能力声称。用途是给后续扩样留一份可逐字回指、已签字、已去重、已标注阻塞的起点。原有 adjudication 的 VER-yilin_buyi_dz_dz-L1279 只登记了本段第 1 案且 a.date 串味（498 批 basis 已确证），本池按原文把 7 案一并归位。",
+  "_comment": "《易林補遺》L1279「占病何日见凶」段的逐字书证候选池。**548 批 §四 授权已转建为评分集 yilin_buyi_holdout（Form C 单独授权，打破 1.0 冻结面）**：候选 ID 经授权 holdout 键进 case_splits.json 是入册结果，verify_yilin_candidates.py 仍守住「只准进授权 holdout、泄漏进其他分片判红」；仍被保留为可逐字回指、已签字、已去重、已标注阻塞的起点。原有 adjudication 的 VER-yilin_buyi_dz_dz-L1279 只登记了本段第 1 案且 a.date 串味（498 批 basis 已确证），本池按原文把 7 案一并归位。",
   "source": {
     "file": "data/sources/yilin_buyi_dz.dz.txt",
     "provenance": "data/sources/yilin_buyi_dz.provenance.json",
@@ -18,13 +18,15 @@
     "应期": "只登记书载应期句的逐字文本 yingqi_text，不抽取地支数值、不做跨月机械换算；跨月（子月／亥月／五月庚申）与非单点（果应病痊）在 enroll_status 如实标注（411 批口径）。",
     "日期": "只记原文日期字符串；年不可重建，按 AGENTS.md §六.5 不高置信补。",
     "去重": "542 批按「原文日期＋卦名」三元组对现有 8 个在册案例文件实跑：7 案零重复；案 4／5 仅有「应期支＋卦名」松散命中而日期全不中，判为不同案。",
-    "评分": "零泄漏进 case_splits.json；verify_yilin_candidates.py 逐条对拍并做负例自证，挂 CI root-gates。",
+    "评分": "548 批 §四 授权已转建为 case_splits.json 的 yilin_buyi_holdout（Form C 单独授权）：候选 ID 经授权 holdout 键进分片是入册结果，verify_yilin_candidates.py 仍逐条对拍、只准进授权 holdout、泄漏进其他分片判红，并做负例自证，挂 CI root-gates。",
     "永不参与调参": "入册前须另批走 AGENTS.md §四：先扩构建器覆盖面到《易林補遺》、逐例签字、同案去重复核、预注册开卷；本批不入册、不开卷、不出分。"
   },
   "preregistration": {
     "registered_at": "2026-11-09",
     "batch": 542,
-    "status": "已开卷一次·逐例红绿·无率值",
+    "status": "已入册·yilin_buyi_holdout",
+    "enrolled_into": "yilin_buyi_holdout",
+    "enrolled_batch": 548,
     "hypothesis": "若将来把这批候选按 §四 入册并开卷，主指标为「引擎应期候选支与书载应期支的 top-1 一致率」；方向为观察性，不预设引擎优于或劣于现行外部集。",
     "primary_metric": "top-1 应期支一致率（集合名＝易林補遺候选集，n 以实际入册且日期可重建者为准，须标是否参与过调参）",
     "decision_rule": "n≥30 才许出率值且必带 Wilson 95%CI，并与全池随机零模型对照；与现行外部集比较须配对检验（190 批 rank_experiment.py 五条协议为模板）。n<30 只报逐例红绿，不作任何率值或命中率声称。开封只此一次，无论结果如何。",

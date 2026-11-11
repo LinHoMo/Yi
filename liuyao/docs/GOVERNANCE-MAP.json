@@ -1,10 +1,10 @@
 {
- "count": 80,
+ "count": 82,
  "by_tier": {
   "tool": 4,
   "ondemand": 18,
   "nightly": 12,
-  "build": 12,
+  "build": 14,
   "blocking": 34
  },
  "unclassified": [],
@@ -13,12 +13,14 @@
   "blocking_not_referenced": [],
   "referenced_not_blocking": [
    "build_adjudications.py",
+   "build_bushi_quanshu_cases.py",
    "build_bushi_zhengzong_cases.py",
    "build_extra_dimensions.py",
    "build_question_use_gods.py",
    "build_use_god_rules.py",
    "build_usegod_position.py",
    "build_yiin_cases.py",
+   "build_yilin_buyi_cases.py",
    "build_yingqi_set.py",
    "build_zengshan_dz_cases.py"
   ]
@@ -74,6 +76,13 @@
    "doc": "流派裁决表 v0（第一百八十八批·B2）——四书互驳处，引擎采谁、凭什么、状态如何，一次说清。"
   },
   {
+   "script": "build_bushi_quanshu_cases.py",
+   "tier": "build",
+   "guards": "卜筮全书候选池→可评分案例构建（548 批：八案中五案转建 bushi_quanshu_holdout，缺月支三案不入册；--selftest＋--check）",
+   "run_by_check_py": true,
+   "doc": "从《卜筮全书》候选池 (data/cases/bushi_quanshu_candidates.json) 抽取可评分案例，"
+  },
+  {
    "script": "build_bushi_zhengzong_cases.py",
    "tier": "build",
    "guards": "《卜筮正宗》dz 表格式案例构建（408 批；八道门＋同案去重）",
@@ -114,6 +123,13 @@
    "guards": "《易隐》dz 底本案例构建（337 批 A5-1 按实登记）",
    "run_by_check_py": true,
    "doc": "从《易隐》殆知阁转录本（data/sources/yiin_dz.dz.txt）抽取完整占例，"
+  },
+  {
+   "script": "build_yilin_buyi_cases.py",
+   "tier": "build",
+   "guards": "易林補遺候选池→可评分案例构建（548 批：七案转建 yilin_buyi_holdout；月序转月支／动爻派生／垢→姤归一；--selftest＋--check）",
+   "run_by_check_py": true,
+   "doc": "从《易林補遺》候选池 (data/cases/yilin_buyi_candidates.json) 抽取可评分案例，"
   },
   {
    "script": "build_yingqi_set.py",

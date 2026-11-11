@@ -148,6 +148,11 @@ CURATED = {
         "build_yiin_cases": ("build", "《易隐》dz 底本案例构建（337 批 A5-1 按实登记）"),
         "build_zengshan_dz_cases": ("build", "dz 底本案例构建（八道门）"),
         "build_bushi_zhengzong_cases": ("build", "《卜筮正宗》dz 表格式案例构建（408 批；八道门＋同案去重）"),
+        # 548 批：§四 入册授权把两候选池转建为评分集，建器同批入表（511 批「未分类」教训）。
+        # tier=build 与 build_yiin_cases 同档；带 --selftest（确定性变换自证）／--check（同源复验，
+        # 接进 check.py [46] 同步门），与 build_yiin_cases 同构。
+        "build_yilin_buyi_cases": ("build", "易林補遺候选池→可评分案例构建（548 批：七案转建 yilin_buyi_holdout；月序转月支／动爻派生／垢→姤归一；--selftest＋--check）"),
+        "build_bushi_quanshu_cases": ("build", "卜筮全书候选池→可评分案例构建（548 批：八案中五案转建 bushi_quanshu_holdout，缺月支三案不入册；--selftest＋--check）"),
         "ablation": ("ondemand", "规则消融台架（182 批/186 扫掠，配对 McNemar）"),
         "abstain_report": ("ondemand", "弃权分型读数（191 批结案器）"),
         "baselines": ("ondemand", "一行规则基线×引擎对照（读数器）"),

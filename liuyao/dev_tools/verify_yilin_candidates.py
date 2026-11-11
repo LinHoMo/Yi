@@ -7,8 +7,10 @@
 于是「永不参与调参」变成一句空话，而现有 [38]/[43] 门都是白名单制、扫不到它。
 
 本器仿 519 批构建器 `--check` 的只读复验范式，逐条对拍：底本 sha256 三方一致、
-每条引文是 L1279 行的逐字子串、ID 零泄漏进 case_splits、整池无 expected／
-verdict 映射（防反推）、7 案顺序与覆盖完整、预注册在册且未开卷。
+每条引文是 L1279 行的逐字子串、候选 ID 只进授权 holdout（yilin_buyi_holdout，
+泄漏进其他分片判红）、整池无 expected／verdict 映射（防反推）、7 案顺序与覆盖完整、
+预注册在册。548 批起本池已按 §四 入册授权正式转建为 `yilin_buyi_holdout`，
+故「ID 只进授权 holdout」替代原「零泄漏」语义（防二次误用仍守住）。
 **不写任何文件**；`--selftest` 全部在内存里注入负例，不写真盘（526 批教训）。
 
     python dev_tools/verify_yilin_candidates.py
@@ -34,6 +36,11 @@ SPLITS = DISC / "data" / "cases" / "case_splits.json"
 
 SOURCE_LINE = 1279
 EXPECTED_N = 7
+# 548 批 §四 入册授权：本候选池已正式转建为评分集 `yilin_buyi_holdout`（Form C 单独授权）。
+# 「永不参与调参」的语义由「池本身零 expected／verdict」守住；候选 ID 经授权的 holdout 键
+# 进 case_splits 是入册的必然结果，不再算泄漏——但泄漏进**其他**分片（tune/holdout 等）
+# 仍须判红（防二次误用）。
+ENROLLED_SPLIT = "yilin_buyi_holdout"
 # 617 是 L1279 行「且如子占父病」到「凡占父母及家主尊长之类」之间的案例段字数，
 # 由 542 批切分实测；七案 quote 长度合计须与之相等（防漏案／防重复切）。
 EXPECTED_QUOTE_CHARS = 617
@@ -51,17 +58,26 @@ def line_text(source_rel: str) -> str:
     return lines[SOURCE_LINE - 1]
 
 
-def split_ids(splits: dict) -> set[str]:
-    out: set[str] = set()
-    for v in splits.values():
-        if isinstance(v, list):
-            out |= {x if isinstance(x, str) else str(x.get("id") or "") for x in v}
-    return {x for x in out if x}
+def split_membership(splits: dict) -> dict[str, set[str]]:
+    """id → 它出现的分片键集合（用于「只准进授权 holdout」判定）。"""
+    out: dict[str, set[str]] = {}
+    for key, val in splits.items():
+        if isinstance(val, list):
+            for x in val:
+                cid = x if isinstance(x, str) else str((x.get("id") if isinstance(x, dict) else x) or "")
+                if cid:
+                    out.setdefault(cid, set()).add(key)
+    return out
 
 
-def verify(pool: dict, line: str, splits: set[str],
+def verify(pool: dict, line: str, membership: dict[str, set[str]],
+           enrolled_split: str | None = None,
            source_sha: str | None = None, provenance_sha: str | None = None) -> list[str]:
-    """纯判据：不读盘、不写盘。返回问题列表（空＝同源）。"""
+    """纯判据：不读盘、不写盘。返回问题列表（空＝同源）。
+
+    `membership` 为 id→出现分片键集合；`enrolled_split` 为授权入册的 holdout 键。
+    候选 ID 出现在 enrolled_split 不算泄漏，出现在其他分片才算泄漏。
+    """
     bad: list[str] = []
     src = pool.get("source") or {}
     if src.get("line") != SOURCE_LINE:
@@ -109,21 +125,26 @@ def verify(pool: dict, line: str, splits: set[str],
     if total_chars != EXPECTED_QUOTE_CHARS:
         bad.append(f"七案引文合计 {total_chars} 字，应为 {EXPECTED_QUOTE_CHARS} 字（覆盖不完整）")
 
-    leaked = sorted(set(ids) & splits)
+    leaked = []
+    for cid in ids:
+        hit = (membership.get(cid, set()) - {enrolled_split}) if enrolled_split else membership.get(cid, set())
+        if hit:
+            leaked.append(cid)
     if leaked:
-        bad.append(f"候选 ID 泄漏进 case_splits：{leaked}（永不参与调参被破坏）")
+        bad.append(f"候选 ID 泄漏进 case_splits 非授权分片 {sorted(hit)}：{sorted(leaked)}（永不参与调参被破坏）")
 
     pre = pool.get("preregistration") or {}
     if not pre.get("hypothesis") or not pre.get("decision_rule"):
         bad.append("预注册缺假设或判卷规则（§四）")
-    # 543 批：允许「已开卷一次」，但状态与开卷记录必须成对出现。
-    allowed_status = ("未开卷·不入册·不出分", "已开卷一次·逐例红绿·无率值")
+    # 543 批：允许「已开卷一次」；548 批：允许「已入册」——状态与开卷记录须成对出现。
+    allowed_status = ("未开卷·不入册·不出分", "已开卷一次·逐例红绿·无率值",
+                     "已入册·yilin_buyi_holdout")
     if pre.get("status") not in allowed_status:
-        bad.append("预注册状态非法（只允许未开卷，或已开卷一次·逐例红绿·无率值）")
-    if pre.get("status") == allowed_status[1]:
+        bad.append("预注册状态非法（只允许未开卷／已开卷一次／已入册·yilin_buyi_holdout）")
+    if pre.get("status") in (allowed_status[1], allowed_status[2]):
         op = pool.get("open_result") or {}
         if not op:
-            bad.append("状态为已开卷却缺 open_result")
+            bad.append("状态为已开卷/已入册却缺 open_result")
         elif op.get("aggregate") is not None or op.get("open_count") != 1:
             bad.append("开卷记录含率值或不止一次开封（n<30 只报逐例红绿）")
     elif pool.get("open_result"):
@@ -138,7 +159,8 @@ def run_real() -> list[str]:
     source_sha = hashlib.sha256(raw_bytes).hexdigest()
     prov = json.loads((DISC / pool["source"]["provenance"]).read_text(encoding="utf-8"))
     splits = json.loads(SPLITS.read_text(encoding="utf-8"))
-    return verify(pool, line_text(src_rel), split_ids(splits),
+    return verify(pool, line_text(src_rel), split_membership(splits),
+                  enrolled_split=ENROLLED_SPLIT,
                   source_sha=source_sha, provenance_sha=prov.get("sha256"))
 
 
@@ -150,10 +172,11 @@ def selftest() -> int:
     raw_bytes = (DISC / src_rel).read_bytes()
     sha = hashlib.sha256(raw_bytes).hexdigest()
     prov = json.loads((DISC / pool["source"]["provenance"]).read_text(encoding="utf-8"))
-    splits = split_ids(json.loads(SPLITS.read_text(encoding="utf-8")))
+    membership = split_membership(json.loads(SPLITS.read_text(encoding="utf-8")))
 
-    def v(p, s=None, sha_override=None):
-        return verify(p, line, splits if s is None else s,
+    def v(p, m=None, sha_override=None):
+        return verify(p, line, membership if m is None else m,
+                      enrolled_split=ENROLLED_SPLIT,
                       source_sha=sha_override or sha, provenance_sha=prov.get("sha256"))
 
     import copy
@@ -177,8 +200,12 @@ def selftest() -> int:
     p["cases"] = p["cases"][:6]
     probes.append(("漏案被抓", bool(v(p)), ""))
 
+    # 泄漏只准进授权 holdout；把候选 ID 塞进非授权分片（tune）必须判红
     p = copy.deepcopy(pool)
-    probes.append(("ID 泄漏进分片被抓", bool(v(p, s=splits | {"YLB001"})), ""))
+    leaky = {cid: set(v) for cid, v in membership.items()}
+    # 把 YLB001 额外塞进 tune（非授权分片）
+    leaky["YLB001"] = (leaky.get("YLB001", set()) | {"tune"})
+    probes.append(("ID 泄漏进非授权分片被抓", bool(v(p, m=leaky)), ""))
 
     p = copy.deepcopy(pool)
     p["source"]["sha256"] = "0" * 64
@@ -228,7 +255,7 @@ def main() -> int:
         return 1
     state = (json.loads(POOL.read_text(encoding="utf-8"))
              .get("preregistration", {}).get("status", "?"))
-    print(f"  √ 候选池同源：7 案引文逐字命中 L1279，ID 零泄漏进评分集，预注册状态＝{state}")
+    print(f"  √ 候选池同源：7 案引文逐字命中 L1279，ID 只进授权 holdout（yilin_buyi_holdout），预注册状态＝{state}")
     return 0
 
 

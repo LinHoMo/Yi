@@ -55,7 +55,8 @@ from timing import REL_RULES  # noqa: E402  相对窗词表单一真源（不在
 CASE_DIR = DISC / "data" / "cases"
 YIIN_SRC = DISC / "data" / "sources" / "yiin_dz.dz.txt"
 SETS = ("wikisource_cases.json", "huozhulin_cases.json", "yingqi_cases.json",
-        "classical_cases.json", "yiin_cases.json")
+        "classical_cases.json", "yiin_cases.json",
+        "yilin_buyi_cases.json", "bushi_quanshu_cases.json")
 # 该集的 provenance.quote 只是日柱行（不是整段书文）：①日辰、②应期照判，
 # ③卦名不在日柱行里是常态，跳过。
 DATE_LINE_SETS = {"yiin_cases.json"}

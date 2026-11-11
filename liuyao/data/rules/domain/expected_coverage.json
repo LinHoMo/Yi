@@ -107,6 +107,50 @@
         }
       }
     },
+    "yilin_buyi_cases.json": {
+      "label": "yilin_buyi",
+      "case_count": 7,
+      "meta_sum_required": false,
+      "fields": {
+        "yingqi": {
+          "min": 3,
+          "allowed_blank": ["YLB003", "YLB005", "YLB006", "YLB007"]
+        },
+        "yingqi_branches": {
+          "min": 3,
+          "allowed_blank": ["YLB003", "YLB005", "YLB006", "YLB007"]
+        },
+        "detail": {
+          "min": 7
+        },
+        "verdict": {
+          "min": 0,
+          "allowed_values": []
+        }
+      }
+    },
+    "bushi_quanshu_cases.json": {
+      "label": "bushi_quanshu",
+      "case_count": 5,
+      "meta_sum_required": false,
+      "fields": {
+        "yingqi": {
+          "min": 2,
+          "allowed_blank": ["BQS001", "BQS005", "BQS006"]
+        },
+        "yingqi_branches": {
+          "min": 2,
+          "allowed_blank": ["BQS001", "BQS005", "BQS006"]
+        },
+        "detail": {
+          "min": 5
+        },
+        "verdict": {
+          "min": 0,
+          "allowed_values": []
+        }
+      }
+    },
     "zengshan_dz_prose_cases.json": {
       "label": "prose",
       "case_count": 38,

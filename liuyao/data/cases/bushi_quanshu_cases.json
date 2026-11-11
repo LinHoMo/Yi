@@ -1,0 +1,192 @@
+{
+  "_meta": {
+    "book": "卜筮全书",
+    "source": "dz 转录本",
+    "source_file": "data/sources/bushi_quanshu_dz.dz.txt",
+    "sha256": "ef0c0a169477ad33d2bc2f96b9ba38e0109616476aef07145d591200cfcec2cb",
+    "built_by": "dev_tools/build_bushi_quanshu_cases.py",
+    "split": "bushi_quanshu_holdout",
+    "n": 5,
+    "with_yingqi": 2,
+    "verdict_policy": "吉凶一律 null：书载断语为散文，映射吉/凶属解读，越铁律一；本集为应期语料通道。",
+    "note": "外部验证集，永不参与调参；按 548 批 §四 入册授权由 bushi_quanshu_candidates.json 转建。"
+  },
+  "cases": [
+    {
+      "id": "BQS001",
+      "source": "《卜筮全书》（dz 转录本）",
+      "topic": "占病",
+      "question": "占兄弟病",
+      "input": {
+        "date": "申月乙未日",
+        "question": "占兄弟病"
+      },
+      "hexagram": {
+        "original": "同人",
+        "changed": "无妄",
+        "moving": [
+          3
+        ],
+        "note": "同人之无妄"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "后果应无事"
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_quanshu_dz.dz.txt",
+        "sha256": "ef0c0a169477ad33d2bc2f96b9ba38e0109616476aef07145d591200cfcec2cb",
+        "line": 5408,
+        "day_line": 5408,
+        "table_line": 5408,
+        "quote": "假如七月乙未日，占兄弟病，得同人之无妄卦。卦中鬼爻动克主象，绝爻又动，其凶可知矣。幸得日辰未土，克坏官爻，合起主象，所谓灭项以安刘也，后果应无事。",
+        "speech_head": "假如七月乙未日，占兄弟病，得同人之无妄卦。卦中鬼爻动克主象，绝爻又动，其凶可知矣"
+      }
+    },
+    {
+      "id": "BQS003",
+      "source": "《卜筮全书》（dz 转录本）",
+      "topic": "文书",
+      "question": "占文书",
+      "input": {
+        "date": "戌月己酉日",
+        "question": "占文书"
+      },
+      "hexagram": {
+        "original": "小畜",
+        "changed": "蛊",
+        "moving": [
+          1,
+          5
+        ],
+        "note": "小畜之蛊"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "果应在戊子日",
+        "yingqi_branches": [
+          "子"
+        ],
+        "detail": "果应在戊子日"
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_quanshu_dz.dz.txt",
+        "sha256": "ef0c0a169477ad33d2bc2f96b9ba38e0109616476aef07145d591200cfcec2cb",
+        "line": 5552,
+        "day_line": 5552,
+        "table_line": 5552,
+        "quote": "如九月己酉日，占文书，得小畜之蛊卦。五爻动出丙子文书，与世上辛丑作合；此正天地合其德也。果应在戊子日成了文书。",
+        "speech_head": "如九月己酉日，占文书，得小畜之蛊卦。五爻动出丙子文书，与世上辛丑作合；此正天地合"
+      }
+    },
+    {
+      "id": "BQS004",
+      "source": "《卜筮全书》（dz 转录本）",
+      "topic": "占病",
+      "question": "占子病",
+      "input": {
+        "date": "未月壬申日",
+        "question": "占子病"
+      },
+      "hexagram": {
+        "original": "姤",
+        "changed": "大过",
+        "moving": [
+          6
+        ],
+        "note": "姤之大过"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "果至丙子日",
+        "yingqi_branches": [
+          "子"
+        ],
+        "detail": "果至丙子日"
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_quanshu_dz.dz.txt",
+        "sha256": "ef0c0a169477ad33d2bc2f96b9ba38e0109616476aef07145d591200cfcec2cb",
+        "line": 5561,
+        "day_line": 5561,
+        "table_line": 5561,
+        "quote": "如六月壬申日，占子病，得姤之大过卦。父母旺动，用爻无气，本为凶兆；喜得用爻在空避之，果至丙子日愈。盖至丙子，则前面已过，又遇用爻帝旺之地，故也。",
+        "speech_head": "如六月壬申日，占子病，得姤之大过卦。父母旺动，用爻无气，本为凶兆；喜得用爻在空避"
+      }
+    },
+    {
+      "id": "BQS005",
+      "source": "《卜筮全书》（dz 转录本）",
+      "topic": "脱役",
+      "question": "脱役事",
+      "input": {
+        "date": "申月乙未日",
+        "question": "脱役事"
+      },
+      "hexagram": {
+        "original": "损",
+        "changed": "节",
+        "moving": [
+          5,
+          6
+        ],
+        "note": "损之节"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "果应无事"
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_quanshu_dz.dz.txt",
+        "sha256": "ef0c0a169477ad33d2bc2f96b9ba38e0109616476aef07145d591200cfcec2cb",
+        "line": 5566,
+        "day_line": 5566,
+        "table_line": 5566,
+        "quote": "又如七月乙未日，为脱役事，占得损之节卦。官鬼发动，财爻助鬼伤身，本不可脱；喜得日辰未土，六五又变戌土，扶助世上丑土，有气敌之，鬼不能伤。果应无事。",
+        "speech_head": "又如七月乙未日，为脱役事，占得损之节卦。官鬼发动，财爻助鬼伤身，本不可脱；喜得日"
+      }
+    },
+    {
+      "id": "BQS006",
+      "source": "《卜筮全书》（dz 转录本）",
+      "topic": "求财",
+      "question": "占财",
+      "input": {
+        "date": "午月乙未日",
+        "question": "占财"
+      },
+      "hexagram": {
+        "original": "泰",
+        "changed": "大畜",
+        "moving": [
+          6
+        ],
+        "note": "泰之大畜"
+      },
+      "expected": {
+        "verdict": null,
+        "use_god": "",
+        "yingqi": "",
+        "yingqi_branches": [],
+        "detail": "果无望"
+      },
+      "provenance": {
+        "source_file": "data/sources/bushi_quanshu_dz.dz.txt",
+        "sha256": "ef0c0a169477ad33d2bc2f96b9ba38e0109616476aef07145d591200cfcec2cb",
+        "line": 5569,
+        "day_line": 5569,
+        "table_line": 5569,
+        "quote": "如五月乙未日，占财，得泰之大畜卦。用爻无气，又被日辰克害，果无望。",
+        "speech_head": "如五月乙未日，占财，得泰之大畜卦。用爻无气，又被日辰克害，果无望。"
+      }
+    }
+  ]
+}

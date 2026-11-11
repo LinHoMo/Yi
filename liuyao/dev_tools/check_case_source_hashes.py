@@ -42,10 +42,14 @@ SPECS = {
         "data/sources/yiin_dz.dz.txt", "sha256", "sha256", None, 56),
     "zengshan_dz_cases.json": (
         "data/sources/zengshan_buyi_dz.dz.txt", None, "sha256", None, 29),
+    "yilin_buyi_cases.json": (
+        "data/sources/yilin_buyi_dz.dz.txt", "sha256", "sha256", None, 7),
+    "bushi_quanshu_cases.json": (
+        "data/sources/bushi_quanshu_dz.dz.txt", "sha256", "sha256", None, 5),
 }
-MIN_FILES = 5
-MIN_META = 5   # bushi 1 + huozhulin 1 + wikisource 1 + yiin 1 + wikisource LF 1
-MIN_CASE = 123  # bushi 38 + yiin 56 + zengshan 29
+MIN_FILES = 7
+MIN_META = 7   # bushi 1 + huozhulin 1 + wikisource 1 + yiin 1 + wikisource LF 1 + yilin 1 + bushi_quanshu 1
+MIN_CASE = 135  # bushi 38 + yiin 56 + zengshan 29 + yilin 7 + bushi_quanshu 5
 
 
 def hashes(source: Path) -> tuple[str, str]:
