@@ -161,6 +161,11 @@ jobs:
         run: node plugins/scripts/build.mjs
       - name: shared runtime selftest
         run: node plugins/scripts/selftest.mjs
+      # 552 批：四向对账的第③方（随包 references/INDEX.md）只有 build 后才存在。
+      # root-gates 跑 --check 时没有 build，这一方在 CI 里恒被跳过；本作业已 build，
+      # 在此补 --registry，让「Python↔JS KB_DOC／磁盘 references／随包 INDEX」四向真的都在 CI 上跑。
+      - name: kb registry four-way reconciliation
+        run: python outreach/build_outreach.py --registry
       - name: dsh full check (build + selftest + verify-in-dsh)
         run: npm --prefix dsh-plugin run check
       - name: dsh manifest assertion
