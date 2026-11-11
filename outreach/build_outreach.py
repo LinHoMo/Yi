@@ -582,6 +582,22 @@ def _aligns(sep: str) -> list[str]:
     return out
 
 
+def _slug(text: str) -> str:
+    """GitHub 风格锚点：去行内标记与标点、空格转连字符、保留中英文与数字。
+    仓内 TOC 的锚点就是按这套规则手写的（如「第一部：《火珠林》——纳甲法之源」→
+    `第一部火珠林纳甲法之源`），生成 id 必须与之一致，否则目录点不动。"""
+    plain = re.sub(r"`([^`]+)`", r"\1", text)
+    plain = re.sub(r"\*\*([^*]+)\*\*", r"\1", plain)
+    plain = re.sub(r"\[([^\]]+)\]\([^)]*\)", r"\1", plain)
+    out = []
+    for ch in plain.strip().lower():
+        if ch.isalnum() or ch in "-_":
+            out.append(ch)
+        elif ch in " \t":
+            out.append("-")
+    return re.sub(r"-{2,}", "-", "".join(out)).strip("-")
+
+
 def _table_html(header: list[str], aligns: list[str], rows: list[list[str]], resolve) -> str:
     def cell(tag: str, text: str, i: int) -> str:
         style = f' style="text-align:{aligns[i]}"' if i < len(aligns) and aligns[i] else ""
@@ -597,12 +613,7 @@ def _table_html(header: list[str], aligns: list[str], rows: list[list[str]], res
     return "\n".join(out)
 
 
-def _render_list(lines: list[str], resolve) -> str:
-    items = []
-    for ln in lines:
-        m = LIST_RE.match(ln)
-        items.append((len(m.group(1)), m.group(2)[0].isdigit(), m.group(3)))
-
+def _render_list(items: list[list], resolve) -> str:
     def build(seq):
         tag = "ol" if seq[0][1] else "ul"
         out, i = [f"<{tag}>"], 0
@@ -643,6 +654,7 @@ def md_to_html(md: str, resolve) -> str:
     # 生成器注释（`<!-- … -->`）是给 diff/构建看的，不该出现在读者页上
     lines = ["" if re.match(r"^\s*<!--.*-->\s*$", ln) else ln for ln in lines]
     blocks: list[str] = []
+    seen: dict[str, int] = {}
     i = 0
     while i < len(lines):
         line = lines[i]
@@ -666,7 +678,12 @@ def md_to_html(md: str, resolve) -> str:
         m = HEAD_RE.match(line)
         if m:
             n = len(m.group(1))
-            blocks.append(f"<h{n}>{_inline(m.group(2), resolve)}</h{n}>")
+            title = m.group(2)
+            slug = _slug(title)
+            seen[slug] = seen.get(slug, 0) + 1
+            if seen[slug] > 1:
+                slug = f"{slug}-{seen[slug] - 1}"
+            blocks.append(f'<h{n} id="{slug}">{_inline(title, resolve)}</h{n}>')
             i += 1
             continue
         if HR_RE.match(line.strip()):
@@ -691,16 +708,25 @@ def md_to_html(md: str, resolve) -> str:
             blocks.append("<blockquote><p>" + "<br>".join(_inline(b, resolve) for b in buf) + "</p></blockquote>")
             continue
         if LIST_RE.match(line):
-            buf = []
+            items: list[list] = []
             while i < len(lines):
-                if LIST_RE.match(lines[i]):
-                    buf.append(lines[i])
+                ln = lines[i]
+                m = LIST_RE.match(ln)
+                if m:
+                    items.append([len(m.group(1)), m.group(2)[0].isdigit(), m.group(3)])
                     i += 1
-                elif not lines[i].strip() and i + 1 < len(lines) and LIST_RE.match(lines[i + 1]):
+                elif not ln.strip():
+                    if i + 1 < len(lines) and LIST_RE.match(lines[i + 1]):
+                        i += 1
+                    else:
+                        break
+                elif items and not _starts_block(lines, i):
+                    # 惰性续行（CommonMark 归上一条目）：不并进去就会被甩成列表外的段落
+                    items[-1][2] = _join_lines([items[-1][2], ln])
                     i += 1
                 else:
                     break
-            blocks.append(_render_list(buf, resolve))
+            blocks.append(_render_list(items, resolve))
             continue
         buf = []
         while i < len(lines) and lines[i].strip() and not _starts_block(lines, i):
@@ -730,6 +756,16 @@ PAGE_CSS = (
     "footer{margin-top:3rem;padding-top:1rem;border-top:1px solid #d8dee4;"
     "font-size:.85rem;color:#57606a}"
 )
+
+
+ANCHOR_REF_RE = re.compile(r"\]\(#([^)]+)\)")
+ANCHOR_ID_RE = re.compile(r'id="([^"]+)"')
+
+
+def check_anchors(md: str, page_html: str) -> list[str]:
+    """文内目录锚点必须落到真实标题 id——否则页面能打开、目录却点不动（不会报错）。"""
+    ids = set(ANCHOR_ID_RE.findall(page_html))
+    return [f"锚点无对应标题：#{a}" for a in sorted(set(ANCHOR_REF_RE.findall(md))) if a not in ids]
 
 
 def _page_html(title: str, body: str, page_dir: str, md_mirror: str) -> str:
@@ -998,28 +1034,38 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
         if rel.startswith("examples/"):
             repo_map[rel] = rel[:-3] + ".html"
     pages: dict[str, str] = {}
+    anchor_problems: list[str] = []
     for key, _ in rows:
         disc, name = key.split("/")
         stem = key.replace("/", "__")[:-3]
-        pages[f"knowledge/{stem}.html"] = _page_html(
-            f"{name} · 易（Yi）",
-            md_to_html(_read(ROOT / disc / "references" / name), _resolver(f"{disc}/references", "knowledge", repo_map)),
+        src_md = _read(ROOT / disc / "references" / name)
+        page = _page_html(
+            f"{name[:-3]} · 易（Yi）",
+            md_to_html(src_md, _resolver(f"{disc}/references", "knowledge", repo_map)),
             "knowledge",
             f"knowledge/{stem}.md",
         )
+        anchor_problems += check_anchors(src_md, page)
+        pages[f"knowledge/{stem}.html"] = page
     for rel in [r for r in tracked if r.startswith("examples/")]:
-        pages[rel[:-3] + ".html"] = _page_html(
+        page = _page_html(
             f"{Path(rel).stem} · 易（Yi）",
             md_to_html(tracked[rel], _resolver("examples", "examples", repo_map)),
             "examples",
             rel,
         )
-    pages["KNOWLEDGE.html"] = _page_html(
+        anchor_problems += check_anchors(tracked[rel], page)
+        pages[rel[:-3] + ".html"] = page
+    page = _page_html(
         "知识速读 · 易（Yi）",
         md_to_html(knowledge, _resolver("", ".", repo_map)),
         ".",
         "KNOWLEDGE.md",
     )
+    anchor_problems += check_anchors(knowledge, page)
+    pages["KNOWLEDGE.html"] = page
+    if anchor_problems:
+        raise ValueError("文内锚点无法落到标题：" + "；".join(anchor_problems[:5]))
 
     index_md = _site_index_md(rows, mirrors)
     index_html_offline = _site_index_html(rows, mirrors)
@@ -1241,6 +1287,9 @@ def selftest() -> int:
         "<p>|" not in md_to_html("| a | b |\n|---|---|\n| 1 | 2 |\n", lambda h: h)
         and md_to_html("| a | b |\n|---|---|\n| 1 | 2 |\n", lambda h: h).count("<tr>") == 2
     ))
+    check("文内锚点指空 → 构建判红", lambda: bool(check_anchors(
+        "[跳](#不存在)\n\n# 标题\n", md_to_html("# 标题\n", lambda h: h)
+    )))
     check("生成器注释不进读者页", lambda: "<!--" not in md_to_html(
         "<!-- 由构建器生成 -->\n# 标题\n", lambda h: h
     ))
