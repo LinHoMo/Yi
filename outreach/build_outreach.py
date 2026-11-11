@@ -234,8 +234,12 @@ def registry_rows_from_node() -> list[tuple[str, str]] | None:
     return [(str(k), str(v)) for k, v in json.loads(raw)]
 
 
-def check_registry_consistency(rows: list[tuple[str, str]]) -> list[str]:
-    """双登记表四向核对的 ①③：JS 真值 ↔ Python 解析、登记表 ↔ 随包 INDEX.md。"""
+def check_registry_consistency(rows: list[tuple[str, str]]) -> tuple[list[str], bool]:
+    """双登记表四向核对的 ①③：JS 真值 ↔ Python 解析、登记表 ↔ 随包 INDEX.md。
+
+    返回 (问题列表, 随包索引是否实际参与核对)——成功文案按**实际核对过的方数**措辞，
+    干净树上包里没有 `references/INDEX.md` 时不许自称「四方一致」（那是假全称）。
+    """
     problems: list[str] = []
 
     node_rows = registry_rows_from_node()
@@ -260,7 +264,7 @@ def check_registry_consistency(rows: list[tuple[str, str]]) -> list[str]:
 
     if not PKG_INDEX.is_file():
         print("  · 随包 INDEX.md 未构建：跳过包内对账（node plugins/scripts/build.mjs 后自动启用）")
-        return problems
+        return problems, False
     txt = _read(PKG_INDEX)
     listed = PKG_ROW_RE.findall(txt)
     want = [key.split("/")[1] for key, _ in rows]
@@ -274,7 +278,7 @@ def check_registry_consistency(rows: list[tuple[str, str]]) -> list[str]:
     for key, desc in rows:
         if desc not in txt:
             problems.append(f"随包 INDEX.md 的描述与登记表不同源：{key}")
-    return problems
+    return problems, True
 
 
 def _engine_report(script_dir: Path, code: str) -> str:
@@ -950,13 +954,15 @@ def main() -> int:
             print(f"  × {exc}")
             print("[outreach] 双登记表对账判红：两侧条目不一致或有遗漏")
             return 1
-        problems = check_registry_consistency(rows)
+        problems, pkg_checked = check_registry_consistency(rows)
         if problems:
             for p in problems:
                 print("  × " + p)
             print("[outreach] 双登记表对账判红：两侧条目不一致或有遗漏")
             return 1
-        print(f"[outreach] 双登记表对账全绿：{len(rows)} 篇——Python 解析／JS KB_DOC／磁盘 references／随包 INDEX 四方一致")
+        ways = ("Python 解析／JS KB_DOC／磁盘 references／随包 INDEX 四方一致" if pkg_checked
+                else "Python 解析／JS KB_DOC／磁盘 references 三方一致（随包 INDEX 未构建，已跳过）")
+        print(f"[outreach] 双登记表对账全绿：{len(rows)} 篇——{ways}")
         return 0
     try:
         rows = kb_rows()
@@ -970,7 +976,7 @@ def main() -> int:
         write_all(tracked, site)
         print(f"[outreach] 已写入 {len(tracked)} 份入库产物 + {len(site)} 份 site/ 产物")
         return 0
-    problems = check_registry_consistency(rows) + compare(tracked)
+    problems = check_registry_consistency(rows)[0] + compare(tracked)
     if problems:
         for p in problems:
             print("  × " + p)
