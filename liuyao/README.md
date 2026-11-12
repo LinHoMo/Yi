@@ -127,4 +127,5 @@ L2084→ZD214、L2431→ZD222）／非单点 3／不升 3／待回原文 3／新
 | `references/pattern_reference.md` | 十二大经典格局速查 |
 | `references/classical_synthesis.md` | 六爻四大经典综合 |
 | `references/source_ledger.md` | 在库书源实测状态（可得性 / 哈希 / 行数） |
+| `references/liuyao_yingqi_rules.md` | **应期取舍判据表**（576 批）：《增删卜易》应期总注章 18 条逐字＋与引擎规则族对照（缺 3 条）＋远近错位机制的否证 |
 | `docs/CASE-LIBRARY-AUDIT.md` | 案例库应期抽取审计 |
