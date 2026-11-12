@@ -35,6 +35,7 @@ jobs:
           python bazi/dev_tools/open_candidate_pools.py --verify
           python bazi/dev_tools/build_dts_manual_candidates.py --check
           python bazi/dev_tools/verify_dts_manual_candidates.py
+          python bazi/dev_tools/book_strength_probe.py --selftest
       - name: pytest
         run: |
           python -m pip install -q pytest

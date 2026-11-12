@@ -1,8 +1,8 @@
 {
- "count": 56,
+ "count": 57,
  "by_tier": {
   "tool": 2,
-  "ondemand": 15,
+  "ondemand": 16,
   "build": 8,
   "blocking": 30,
   "nightly": 1
@@ -46,6 +46,13 @@
    "guards": "八字判断维×常数基线配对对照（187 批 A3 读数器）",
    "run_by_check_py": false,
    "doc": "八字基线库（第一百八十七批·A3）——一行规则丈量八字判断维，配对 McNemar 与六爻侧同构。"
+  },
+  {
+   "script": "book_strength_probe.py",
+   "tier": "ondemand",
+   "guards": "原书档诊断器（571 批：按《滴天髓阐微》根元/印护/忌神克泄/从格重算日主旺衰，只读；实测 12 案命中 5/12 弱于引擎档 7/12，故不接线；5 类自检，真盘零写入）",
+   "run_by_check_py": false,
+   "doc": "book_strength_probe —— **原书档诊断器**（只读，不进引擎输出；571 批）。"
   },
   {
    "script": "build_bazili_cases.py",
