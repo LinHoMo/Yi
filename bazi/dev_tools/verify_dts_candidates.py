@@ -95,9 +95,18 @@ def verify(pool: dict | None = None) -> list[str]:
             phrase = case.get("phrase") or ""
             if not phrase or phrase not in block["speech"]:
                 problems.append(f"{cid} 原话片段不在判语中")
-            expect_cat = next((cat for kw, cat in M_.ANCHORS if kw == phrase), None)
-            if expect_cat is None or expect_cat != case.get("category"):
+            # 归类口径（568 批更正）：主语明确的锚才自动归类；主语不明的词只入 labels，category 须为 null
+            expect_cat = next((cat for kw, cat in M_.SUBJECT_ANCHORS if kw == phrase), None)
+            if expect_cat is None:
+                if case.get("category") is not None:
+                    problems.append(f"{cid} 主语不明的词（{phrase}）却写了 category：{case.get('category')}")
+                if phrase not in M_.IMPLICIT_ANCHORS:
+                    problems.append(f"{cid} 原话片段既非主语明确锚也非主语不明锚：{phrase}")
+            elif expect_cat != case.get("category"):
                 problems.append(f"{cid} 归类与关键词机械映射不符：{case.get('category')}")
+            expect_labels = [w for w in M_.IMPLICIT_ANCHORS if w in block["speech"]]
+            if case.get("labels") != expect_labels:
+                problems.append(f"{cid} labels 与主语不明锚命中结果不符")
             day_ref, month_ref = B_.DAY_REF.search(block["speech"]), B_.MON_REF.search(block["speech"])
             pl = list(block["pillars"])
             if day_ref and day_ref.group(1) != pl[2][0]:

@@ -35,10 +35,14 @@
       },
       "real_datetime": "2049-07-06 09:30",
       "phrase": "旺极矣",
-      "category": "偏旺",
+      "category": null,
+      "labels": [
+        "旺极矣",
+        "衰极"
+      ],
       "verdict": null,
       "case_kind": "机器认定（关键词锚定＋四柱机械校验）",
-      "enroll_status": "未开卷·不入册·不出分",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
       "block": "未授权入册；归类只是强度档，不含吉凶方向与用神判定",
       "dedup": "已与在册案例按四柱去重（无同四柱）",
       "notes": "引文为底本判语行逐字截取；四柱由程序化解析所得，非手抄"
@@ -56,10 +60,14 @@
       },
       "real_datetime": "2009-12-08 00:30",
       "phrase": "旺极矣",
-      "category": "偏旺",
+      "category": null,
+      "labels": [
+        "旺极矣",
+        "衰极"
+      ],
       "verdict": null,
       "case_kind": "机器认定（关键词锚定＋四柱机械校验）",
-      "enroll_status": "未开卷·不入册·不出分",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
       "block": "未授权入册；归类只是强度档，不含吉凶方向与用神判定",
       "dedup": "已与在册案例按四柱去重（无同四柱）",
       "notes": "引文为底本判语行逐字截取；四柱由程序化解析所得，非手抄"
@@ -77,10 +85,13 @@
       },
       "real_datetime": "2044-02-20 13:30",
       "phrase": "太旺",
-      "category": "偏旺",
+      "category": null,
+      "labels": [
+        "太旺"
+      ],
       "verdict": null,
       "case_kind": "机器认定（关键词锚定＋四柱机械校验）",
-      "enroll_status": "未开卷·不入册·不出分",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
       "block": "未授权入册；归类只是强度档，不含吉凶方向与用神判定",
       "dedup": "已与在册案例按四柱去重（无同四柱）",
       "notes": "引文为底本判语行逐字截取；四柱由程序化解析所得，非手抄"
@@ -98,10 +109,13 @@
       },
       "real_datetime": "2013-06-09 03:30",
       "phrase": "太旺",
-      "category": "偏旺",
+      "category": null,
+      "labels": [
+        "太旺"
+      ],
       "verdict": null,
       "case_kind": "机器认定（关键词锚定＋四柱机械校验）",
-      "enroll_status": "未开卷·不入册·不出分",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
       "block": "未授权入册；归类只是强度档，不含吉凶方向与用神判定",
       "dedup": "已与在册案例按四柱去重（无同四柱）",
       "notes": "引文为底本判语行逐字截取；四柱由程序化解析所得，非手抄"
@@ -119,10 +133,13 @@
       },
       "real_datetime": "1992-06-16 11:30",
       "phrase": "太旺",
-      "category": "偏旺",
+      "category": null,
+      "labels": [
+        "太旺"
+      ],
       "verdict": null,
       "case_kind": "机器认定（关键词锚定＋四柱机械校验）",
-      "enroll_status": "未开卷·不入册·不出分",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
       "block": "未授权入册；归类只是强度档，不含吉凶方向与用神判定",
       "dedup": "已与在册案例按四柱去重（无同四柱）",
       "notes": "引文为底本判语行逐字截取；四柱由程序化解析所得，非手抄"
@@ -141,9 +158,10 @@
       "real_datetime": "2053-05-10 07:30",
       "phrase": "身旺",
       "category": "偏旺",
+      "labels": [],
       "verdict": null,
       "case_kind": "机器认定（关键词锚定＋四柱机械校验）",
-      "enroll_status": "未开卷·不入册·不出分",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
       "block": "未授权入册；归类只是强度档，不含吉凶方向与用神判定",
       "dedup": "已与在册案例按四柱去重（无同四柱）",
       "notes": "引文为底本判语行逐字截取；四柱由程序化解析所得，非手抄"
@@ -162,9 +180,10 @@
       "real_datetime": "1973-10-18 03:30",
       "phrase": "身旺",
       "category": "偏旺",
+      "labels": [],
       "verdict": null,
       "case_kind": "机器认定（关键词锚定＋四柱机械校验）",
-      "enroll_status": "未开卷·不入册·不出分",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
       "block": "未授权入册；归类只是强度档，不含吉凶方向与用神判定",
       "dedup": "已与在册案例按四柱去重（无同四柱）",
       "notes": "引文为底本判语行逐字截取；四柱由程序化解析所得，非手抄"
@@ -182,10 +201,13 @@
       },
       "real_datetime": "1986-12-21 19:30",
       "phrase": "太旺",
-      "category": "偏旺",
+      "category": null,
+      "labels": [
+        "太旺"
+      ],
       "verdict": null,
       "case_kind": "机器认定（关键词锚定＋四柱机械校验）",
-      "enroll_status": "未开卷·不入册·不出分",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
       "block": "未授权入册；归类只是强度档，不含吉凶方向与用神判定",
       "dedup": "已与在册案例按四柱去重（无同四柱）",
       "notes": "引文为底本判语行逐字截取；四柱由程序化解析所得，非手抄"
@@ -203,10 +225,13 @@
       },
       "real_datetime": "2012-12-19 07:30",
       "phrase": "太旺",
-      "category": "偏旺",
+      "category": null,
+      "labels": [
+        "太旺"
+      ],
       "verdict": null,
       "case_kind": "机器认定（关键词锚定＋四柱机械校验）",
-      "enroll_status": "未开卷·不入册·不出分",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
       "block": "未授权入册；归类只是强度档，不含吉凶方向与用神判定",
       "dedup": "已与在册案例按四柱去重（无同四柱）",
       "notes": "引文为底本判语行逐字截取；四柱由程序化解析所得，非手抄"
@@ -224,10 +249,13 @@
       },
       "real_datetime": "2043-12-21 01:30",
       "phrase": "太旺",
-      "category": "偏旺",
+      "category": null,
+      "labels": [
+        "太旺"
+      ],
       "verdict": null,
       "case_kind": "机器认定（关键词锚定＋四柱机械校验）",
-      "enroll_status": "未开卷·不入册·不出分",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
       "block": "未授权入册；归类只是强度档，不含吉凶方向与用神判定",
       "dedup": "已与在册案例按四柱去重（无同四柱）",
       "notes": "引文为底本判语行逐字截取；四柱由程序化解析所得，非手抄"
@@ -245,10 +273,13 @@
       },
       "real_datetime": "2055-03-09 00:30",
       "phrase": "衰极",
-      "category": "偏弱",
+      "category": null,
+      "labels": [
+        "衰极"
+      ],
       "verdict": null,
       "case_kind": "机器认定（关键词锚定＋四柱机械校验）",
-      "enroll_status": "未开卷·不入册·不出分",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
       "block": "未授权入册；归类只是强度档，不含吉凶方向与用神判定",
       "dedup": "已与在册案例按四柱去重（无同四柱）",
       "notes": "引文为底本判语行逐字截取；四柱由程序化解析所得，非手抄"
@@ -267,9 +298,12 @@
       "real_datetime": "2054-12-25 19:30",
       "phrase": "身旺",
       "category": "偏旺",
+      "labels": [
+        "衰弱"
+      ],
       "verdict": null,
       "case_kind": "机器认定（关键词锚定＋四柱机械校验）",
-      "enroll_status": "未开卷·不入册·不出分",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
       "block": "未授权入册；归类只是强度档，不含吉凶方向与用神判定",
       "dedup": "已与在册案例按四柱去重（无同四柱）",
       "notes": "引文为底本判语行逐字截取；四柱由程序化解析所得，非手抄"
@@ -287,10 +321,13 @@
       },
       "real_datetime": "2067-12-17 09:30",
       "phrase": "太旺",
-      "category": "偏旺",
+      "category": null,
+      "labels": [
+        "太旺"
+      ],
       "verdict": null,
       "case_kind": "机器认定（关键词锚定＋四柱机械校验）",
-      "enroll_status": "未开卷·不入册·不出分",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
       "block": "未授权入册；归类只是强度档，不含吉凶方向与用神判定",
       "dedup": "已与在册案例按四柱去重（无同四柱）",
       "notes": "引文为底本判语行逐字截取；四柱由程序化解析所得，非手抄"
@@ -308,10 +345,13 @@
       },
       "real_datetime": "2079-09-17 15:30",
       "phrase": "太旺",
-      "category": "偏旺",
+      "category": null,
+      "labels": [
+        "太旺"
+      ],
       "verdict": null,
       "case_kind": "机器认定（关键词锚定＋四柱机械校验）",
-      "enroll_status": "未开卷·不入册·不出分",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
       "block": "未授权入册；归类只是强度档，不含吉凶方向与用神判定",
       "dedup": "已与在册案例按四柱去重（无同四柱）",
       "notes": "引文为底本判语行逐字截取；四柱由程序化解析所得，非手抄"
@@ -329,10 +369,13 @@
       },
       "real_datetime": "2069-06-17 21:30",
       "phrase": "太旺",
-      "category": "偏旺",
+      "category": null,
+      "labels": [
+        "太旺"
+      ],
       "verdict": null,
       "case_kind": "机器认定（关键词锚定＋四柱机械校验）",
-      "enroll_status": "未开卷·不入册·不出分",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
       "block": "未授权入册；归类只是强度档，不含吉凶方向与用神判定",
       "dedup": "已与在册案例按四柱去重（无同四柱）",
       "notes": "引文为底本判语行逐字截取；四柱由程序化解析所得，非手抄"
@@ -524,5 +567,120 @@
       "reason": "与在册案例同四柱（同源书承袭同案，545 批口径）"
     }
   ],
-  "open_result": null
+  "open_result": {
+    "opened_at": "2026-11-12T18:50:53+08:00",
+    "commit_at_open": "c5a0789",
+    "open_count": 1,
+    "metric_frozen": "引擎 strength.strength（偏弱／偏旺／中和）↔ 书载强度档一致（书载档＝池内机械映射）",
+    "aggregate": null,
+    "_comment": "开卷只此一次；aggregate 仅在可判 n≥30 时给出（n<30 恒 null、结构内无率值字段）。判准缺失与四柱不可还原者记「不适用」，不硬判、不充数。本池开卷结果**不入评分分片**（入册评分集须另获授权）。",
+    "cases": [
+      {
+        "id": "DTC001",
+        "book_strength": null,
+        "real_datetime": "2049-07-06 09:30",
+        "engine_strength": "偏弱",
+        "result": "不适用·书载无强弱判准"
+      },
+      {
+        "id": "DTC002",
+        "book_strength": null,
+        "real_datetime": "2009-12-08 00:30",
+        "engine_strength": "偏弱",
+        "result": "不适用·书载无强弱判准"
+      },
+      {
+        "id": "DTC003",
+        "book_strength": null,
+        "real_datetime": "2044-02-20 13:30",
+        "engine_strength": "偏弱",
+        "result": "不适用·书载无强弱判准"
+      },
+      {
+        "id": "DTC004",
+        "book_strength": null,
+        "real_datetime": "2013-06-09 03:30",
+        "engine_strength": "偏旺",
+        "result": "不适用·书载无强弱判准"
+      },
+      {
+        "id": "DTC005",
+        "book_strength": null,
+        "real_datetime": "1992-06-16 11:30",
+        "engine_strength": "偏弱",
+        "result": "不适用·书载无强弱判准"
+      },
+      {
+        "id": "DTC006",
+        "book_strength": "偏旺",
+        "real_datetime": "2053-05-10 07:30",
+        "engine_strength": "中和",
+        "result": "未命中"
+      },
+      {
+        "id": "DTC007",
+        "book_strength": "偏旺",
+        "real_datetime": "1973-10-18 03:30",
+        "engine_strength": "偏弱",
+        "result": "未命中"
+      },
+      {
+        "id": "DTC008",
+        "book_strength": null,
+        "real_datetime": "1986-12-21 19:30",
+        "engine_strength": "偏弱",
+        "result": "不适用·书载无强弱判准"
+      },
+      {
+        "id": "DTC009",
+        "book_strength": null,
+        "real_datetime": "2012-12-19 07:30",
+        "engine_strength": "中和",
+        "result": "不适用·书载无强弱判准"
+      },
+      {
+        "id": "DTC010",
+        "book_strength": null,
+        "real_datetime": "2043-12-21 01:30",
+        "engine_strength": "偏弱",
+        "result": "不适用·书载无强弱判准"
+      },
+      {
+        "id": "DTC011",
+        "book_strength": null,
+        "real_datetime": "2055-03-09 00:30",
+        "engine_strength": "偏旺",
+        "result": "不适用·书载无强弱判准"
+      },
+      {
+        "id": "DTC012",
+        "book_strength": "偏旺",
+        "real_datetime": "2054-12-25 19:30",
+        "engine_strength": "中和",
+        "result": "未命中"
+      },
+      {
+        "id": "DTC013",
+        "book_strength": null,
+        "real_datetime": "2067-12-17 09:30",
+        "engine_strength": "偏弱",
+        "result": "不适用·书载无强弱判准"
+      },
+      {
+        "id": "DTC014",
+        "book_strength": null,
+        "real_datetime": "2079-09-17 15:30",
+        "engine_strength": "偏旺",
+        "result": "不适用·书载无强弱判准"
+      },
+      {
+        "id": "DTC015",
+        "book_strength": null,
+        "real_datetime": "2069-06-17 21:30",
+        "engine_strength": "中和",
+        "result": "不适用·书载无强弱判准"
+      }
+    ],
+    "result_sha": "b56191d0bed5f842"
+  }
 }

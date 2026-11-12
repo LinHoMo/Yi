@@ -228,7 +228,7 @@ def checks():
         "539 批新增：CAPABILITY T1 双科双指纹声明 ↔ golden/digest.json 实值（466 批正文未回流）；"
         "期望值现场取 digest 真源，不新增 check.py 门号、不新增门文件（守 528 约定）",
         lambda t: _capability_golden(), _cap_expect())
-    add("governance(83/53, blk 34/30)",
+    add("governance(83/54, blk 34/30)",
         "194批（312 补 310；315 补 314/315 两门；317 补 judge_shadow；329 补 fetch_zengshan_dz_cases；"
         "331 批 check_docs_index 上提到 devkit/root → 六爻 blk 28→27、脚本仍 63；"
         "339 批 A5-1 按实登记 7 个存量未分类脚本 → 八字 37→43；"
@@ -270,6 +270,7 @@ def checks():
         "机读重建八案盘面、按 546 批冻结的 top-1 指标逐例判卷、只此一次开封、n=2<30 只报红绿；"
         "`--verify` 只读挂 CI root-gates，tier=ondemand 非 blocking）——同批入治理表 CURATED，"
         "属正当 +1，期望由 79 回挂 80（blk 不变）"
+        "；**568 批：八字 53→54** 是新增 `open_candidate_pools.py`（两个八字候选池的一次性开卷器：主指标为引擎 `strength.strength`（偏弱／偏旺／中和）↔ 书载强度档一致；n<30 只报逐例红绿、aggregate 恒 null；开封只此一次，判卷痕迹＋result_sha 双指纹可验；5 类内存负例，真盘零写入）"
         "；**566 批：八字 51→53** 是新增 `mine_shenfeng_candidates.py`／`verify_shenfeng_candidates.py`（《神峰通考》行首四柱＋断语体例的命例机器提取 161 案与只读复验：四柱／标签（格局后缀、性别、词表命中）全可复算，未开卷、不写 expected，与在册案例及滴天髓池三方零同四柱；13 类内存负例，真盘零写入）"
         "；**565 批：八字 49→51** 是新增 `mine_dts_candidates.py`／`verify_dts_candidates.py`（《滴天髓阐微》513 个命造块的机器认定与只读复验：按关键词锚定＋四柱/原话/日主/月支四道机械校验认 15 案（未开卷、只登记书证与强度档），与在册案例同四柱者剔除；13 类内存负例，真盘零写入）——同批入治理表 CURATED，tier=ondemand、blk 不变）"
         "；**564 批：六爻 82→83** 是新增 `verify_bushi_paiyan_candidates.py`（《卜筮全书》占验段新候选池的只读复验器：8 案引文逐字回底本、无 expected 反推、未开卷、预注册必备、零泄漏进分片、与在册案例零同案；12 类内存负例，真盘零写入；同批入治理表 CURATED，tier=ondemand、blk 不变）"

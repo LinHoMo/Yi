@@ -47,13 +47,16 @@ ID_PREFIX = "DTC"
 
 # 机器认定的关键词锚：只收**自指日主**的表述。
 # 不收「君／君杀／臣盛」等需上下文判断的词（人工表里那类由人认定，见 build_dts_cases.APPROVED）。
-ANCHORS: tuple[tuple[str, str], ...] = (
+# **主语明确的锚**（自动归类）：句中明写"身／日主"或为该书固定类别词，可机械判强弱档。
+SUBJECT_ANCHORS: tuple[tuple[str, str], ...] = (
     ("日主本衰", "偏弱"), ("此衰极从弱之理", "偏弱"), ("财多身弱", "偏弱"),
     ("中和纯粹", "中和"), ("中和之象", "中和"), ("中和之气", "中和"),
-    ("强旺极矣", "偏旺"), ("旺极矣", "偏旺"), ("太旺", "偏旺"), ("身旺", "偏旺"),
-    ("身弱", "偏弱"), ("身衰", "偏弱"), ("衰弱", "偏弱"), ("衰极", "偏弱"),
-    ("从弱", "偏弱"),
+    ("身旺", "偏旺"), ("身弱", "偏弱"), ("身衰", "偏弱"),
 )
+# **主语不明的锚**（只作标签，不自动归类）：命例里的"旺／衰"常指忌神、官杀或某一五行，
+# 不必然指日主——568 批实测：若按固定优先级匹配，一句"身弱而财旺极矣"会被"旺极矣"抢先命中，
+# 15 案里 13 案被错标为"偏旺"。故此类词只登记为 `labels`，`category` 留 null（待人工认定）。
+IMPLICIT_ANCHORS: tuple[str, ...] = ("强旺极矣", "旺极矣", "太旺", "衰弱", "衰极", "从弱")
 
 
 def enrolled_pillars() -> set[tuple]:
@@ -88,8 +91,9 @@ def mine() -> dict:
             rejected.append({"source_line": head, "reason": "已由人工认定并入评分集（build_dts_cases.APPROVED），不再重复入池"})
             continue
         speech = block["speech"]
-        hit = next(((kw, cat) for kw, cat in ANCHORS if kw in speech), None)
-        if not hit:
+        hit = next(((kw, cat) for kw, cat in SUBJECT_ANCHORS if kw in speech), None)
+        implicit = [w for w in IMPLICIT_ANCHORS if w in speech]
+        if not hit and not implicit:
             continue
         pillars = block["pillars"]
         day_ref, month_ref = B_.DAY_REF.search(speech), B_.MON_REF.search(speech)
@@ -104,7 +108,10 @@ def mine() -> dict:
             rejected.append({"source_line": head, "reason": "与在册案例同四柱（同源书承袭同案，545 批口径）"})
             continue
         used.add(key)
-        picked.append(dict(block, phrase=hit[0], category=hit[1]))
+        picked.append(dict(block,
+                           phrase=(hit[0] if hit else (implicit[0] if implicit else "")),
+                           category=(hit[1] if hit else None),
+                           labels=implicit))
 
     # 真实时刻重建：穷举 1900–2100 逐日反查四柱全同者（确定性，非猜）
     dt_index = B_.build_datetime_index({tuple(b["pillars"]) for b in picked})
@@ -131,6 +138,7 @@ def mine() -> dict:
             "real_datetime": dt_index.get(key),
             "phrase": block["phrase"],
             "category": block["category"],
+            "labels": block["labels"],
             "verdict": None,
             "case_kind": "机器认定（关键词锚定＋四柱机械校验）",
             "enroll_status": "未开卷·不入册·不出分",
