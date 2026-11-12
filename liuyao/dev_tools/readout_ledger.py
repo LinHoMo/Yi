@@ -228,7 +228,7 @@ def checks():
         "539 批新增：CAPABILITY T1 双科双指纹声明 ↔ golden/digest.json 实值（466 批正文未回流）；"
         "期望值现场取 digest 真源，不新增 check.py 门号、不新增门文件（守 528 约定）",
         lambda t: _capability_golden(), _cap_expect())
-    add("governance(86/57, blk 34/30)",
+    add("governance(87/57, blk 34/30)",
         "194批（312 补 310；315 补 314/315 两门；317 补 judge_shadow；329 补 fetch_zengshan_dz_cases；"
         "331 批 check_docs_index 上提到 devkit/root → 六爻 blk 28→27、脚本仍 63；"
         "339 批 A5-1 按实登记 7 个存量未分类脚本 → 八字 37→43；"
@@ -270,6 +270,7 @@ def checks():
         "机读重建八案盘面、按 546 批冻结的 top-1 指标逐例判卷、只此一次开封、n=2<30 只报红绿；"
         "`--verify` 只读挂 CI root-gates，tier=ondemand 非 blocking）——同批入治理表 CURATED，"
         "属正当 +1，期望由 79 回挂 80（blk 不变）"
+        "；**575 批：六爻 86→87** 是新增 `yingqi_order_probe.py`（应期**排序口径**离线试验：七口径×16 案，最高 4/16、候选覆盖 9/16、推导层三层覆盖 10/16；n=16 太小不构成结论，**不接线**、不改引擎不动读数；4 类自检）"
         "；**574 批：六爻 83→86** 是新增 `build_bushi_yingqi_candidates.py`／`verify_bushi_yingqi_candidates.py`／`open_bushi_yingqi_candidates.py`（《易冒》《易林補遺》16 案带单点应期的占例：建池（引文程序化切句、零手抄）＋复验（4 类内存负例）＋一次性开卷；开卷结果顶-1 应期支命中 1/16、书载应期支落在引擎候选集内 9/16（归因线索非指标）；n<30 aggregate 恒 null）"
         "；**571 批：八字 56→57** 是新增 `book_strength_probe.py`（原书档**只读诊断器**：按《滴天髓阐微》根元／印护／忌神克泄／从格重算日主旺衰；实测 12 案命中 5/12 **弱于引擎档 7/12**，故**不接线**、不改任何读数；5 类自检，真盘零写入）"
         "；**569 批：八字 54→56** 是新增 `build_dts_manual_candidates.py`／`verify_dts_manual_candidates.py`（《滴天髓闡微》12 条主语不明旺衰的**人工认定版**候选池与其复验：档位＋逐字原话＋理由，池内容须与「源池 + 人工表」逐字节一致；8 类内存负例，真盘零写入）"
