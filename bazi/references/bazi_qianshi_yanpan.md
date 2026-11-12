@@ -189,7 +189,6 @@
 
 ## 相关文档
 
-- 本篇在知识库中的位置与「什么时候读」见 [知识库导览](../../kb/INDEX.md)。
 - 同科其他判据：
   - [bazi_shishen_terminology](bazi_shishen_terminology.md)
   - [bazi_nayin_shiyi](bazi_nayin_shiyi.md)
@@ -199,4 +198,4 @@
   - [bazi_jibing_tizhi](bazi_jibing_tizhi.md)
   - [api_spec](api_spec.md)
 
-> 本文为**古籍规则参考**，非现实预测依据。本仓库一切分数均为「古籍案例对齐分」（回归审计用），**不是现实命中率**（铁律三）；判据口径以 [知识库导览](../../kb/INDEX.md) 登记为准。
+> 本文为**古籍规则参考**，非现实预测依据。本仓库一切分数均为「古籍案例对齐分」（回归审计用），**不是现实命中率**（铁律三）；判据口径以根 `CAPABILITY.md` 与 `AGENTS.md` 为准。

@@ -70,7 +70,6 @@
 
 ## 相关文档
 
-- 本篇在知识库中的位置与「什么时候读」见 [知识库导览](../../kb/INDEX.md)。
 - 同科其他判据：
   - [bazi_shishen_terminology](bazi_shishen_terminology.md)
   - [bazi_nayin_shiyi](bazi_nayin_shiyi.md)
