@@ -159,6 +159,12 @@ cd liuyao && python -m engine --mode coin --question "…" --seed 42 --output js
 `day_branch`／`strength_description`）、`advance_retreat`（化进退）、`monthly_break`（月破）、
 `clash_harmony`（冲合）、`three_punishments`（三刑）、`six_breaks`、`officer_tomb`、
 `hidden_movement`、`shi_yao_relation` 等。**以实际输出的键为准**，上面只是常见项。
+
+**应期不在 `advanced_analysis` 里**——它在 `thinking_chain.step5_synthesis.timing`，子键为
+`speed`／`timing_rules`／`yingqi_days`／`yingqi_months`／`yingqi_years`／`candidates_all`／
+`summary_text`／`plain_text`／`timing_factors`（实测 `yingqi_days` 形如 `["午日","子日",…]`，
+`timing_rules` 每项含 `token`／`rule`／`unit`）。候选用神在 `analysis_hints.possible_use_gods`。
+模型若说"没有应期字段"，先让它去这个路径找，再判断。
 若模型说"请分别提供 chart 与 analyze 两段"，按这条纠正。
 
 ## 七、维护约定
