@@ -39,6 +39,7 @@
 | `references/bazi_qianshi_yanpan.md` | 前事·验盘：时刻切法、定时辰流程、已过往运反推 | 问「我以前」或校出生时辰 |
 | `references/bazi_shishen_terminology.md` | 十神术语释义 | 术语对不上时 |
 | `references/bazi_yue_shi_ge.md` | 五虎遁/五鼠遁与月支格局 | 排盘口径有疑时 |
+| `references/bazi_ditian_sui.md` | 滴天髓要义：体用、衰旺、八格取法、病药（引擎未实现结构化格局） | 问格局取法、体用扶抑、病药 |
 | `references/bazi_nayin_shiyi.md` | 纳音释义 | 用到纳音取象时 |
 
 ## 另两条铁律（操作版；全文见仓库根 `AGENTS.md` §一）

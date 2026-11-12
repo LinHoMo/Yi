@@ -21,6 +21,7 @@
 | `references/bazi_yue_shi_ge.md` | 五虎遁 / 五鼠遁歌诀与引擎表对源 |
 | `references/bazi_shishen_terminology.md` | 十神术语古今映射（古籍用字 ↔ 引擎用字） |
 | `references/bazi_nayin_shiyi.md` | 纳音释义逐句（书源《命理探源》） |
+| `references/bazi_ditian_sui.md` | 滴天髓要义补遗：体用、衰旺、八格取法、病药（逐字书源《滴天髓闡微》） |
 
 ## 评测
 
