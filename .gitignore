@@ -62,30 +62,3 @@ guard/
 **/scripts/coverage_report.md
 **/assets/portal_data.json
 
-# DSH 插件：engine/ 与 skills/ 都是构建产物（由 scripts/build-*.mjs 按白名单从两科收集），
-# 一条命令即可再生，故不入库——入库等于给「引擎/知识库 vs 两科真源」多存一份副本，
-# 正是 AGENTS.md §二 警告过的「同表多存、取值不一致」事故土壤。
-dsh-plugin/engine/
-dsh-plugin/skills/
-dsh-plugin/node_modules/
-dsh-plugin/pnpm-lock.yaml
-dsh-plugin/package-lock.json
-# npm pack 产物（发布工件走 GitHub Release，不入库）
-dsh-plugin/*.tgz
-
-# plugins/：共享层（SKILL.md + mcp/ + scripts/）入库，engine/ 与 skills/ 是构建产物
-plugins/engine/
-plugins/skills/
-
-# 各适配器里的共享运行时由 plugins/scripts/build.mjs 分发，属产物：
-# 手工改它们会被 plugins/scripts/selftest.mjs [1] 段（逐字节同源门）判红。
-# 497 批起唯一宿主为 DSH（claude/codex/gemini/yan 已删除）。
-dsh-plugin/src/*.mjs
-dsh-plugin/src/*.json
-!dsh-plugin/src/index.mjs
-dsh-plugin/SKILL.md
-
-# 549 批：对外静态站由 outreach/build_outreach.py 现场生成、Pages Actions 部署，不入库；
-# 入库产物（llms.txt / KNOWLEDGE.md / kb/ / examples/）才需要提交。
-site/
-

@@ -1,152 +1,15 @@
-# 质量门 CI（184 批建；277 批补 plugin-gates）。
-# - fresh checkout 即干净树：gitignored 生成物在 CI 上不存在，两科门禁须靠门内自足夹具跑通。
+# 质量门 CI（184 批建；557 批瘦身为纯备份仓库：只跑两科门 + pytest）。
 # - windows-latest 是 cp936 编码红线（[20]/[24]）的验证环境；Linux 侧测不到该靶。
-# - 插件三连：build → selftest（含 [1.6] 产物全量同源）→ verify-in-dsh；
-#   ubuntu 侧无 DSH 运行时，落到 PATH 的 python/python3，红则修插件、不跳过不豁免。
-# - 本地与 runner 读数不一致时按 §六.3 以实跑读数更正文档，不调 CI 凑绿。
-name: quality-gates
+# - fresh checkout 即干净树：gitignored 生成物在 CI 上不存在，两科门禁须靠门内自足夹具跑通。
+name: checks
 on:
   push:
   pull_request:
   workflow_dispatch:
 jobs:
-  root-gates:
+  checks:
     runs-on: windows-latest
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.14"
-      - name: root gates
-        run: |
-          python devkit/sync_devkit.py --check
-          python devkit/root/check_root_docs.py
-          python devkit/root/check_root_docs.py --selftest
-          python devkit/root/check_docs_index.py
-          python devkit/root/check_docs_index.py --selftest
-          python devkit/root/check_batch_num.py --selftest
-          python devkit/root/check_pytest_bridge.py
-          python devkit/root/check_pytest_bridge.py --selftest
-          python liuyao/dev_tools/governance_map.py --selftest
-          # 525 批：简报同源复验此前从未挂线（tier=nightly、check.py/CI 都没有），补在根级门侧
-          python liuyao/dev_tools/adjudication_brief.py --selftest
-          # 533 批：G12/G13「声明↔数据」只读对账，闭环曾漂移缺口（守 528 约定，不新增 check.py 门号）
-          python liuyao/dev_tools/adjudication_brief.py --reconcile
-          python bazi/dev_tools/cross_version_collate.py --reconcile
-          python bazi/dev_tools/diff_siku_sanming.py --reconcile
-          # 534 批：C1 轻门——主应期 top-k 声明↔数据对账（闭环主应期文本漂移缺口，守 528 约定）
-          python liuyao/dev_tools/window_report.py --reconcile
-          # 535 批：B 轻门——两份学科 README 关键数字（对齐分/top-1/n/维度）↔ readout_ledger 真值对账
-          # （闭环 README 漏回流缺口，守 528 约定不新增 check.py 门号，仿 C1/G12/G13 挂 CI root-gates）
-          python liuyao/dev_tools/readme_reconcile.py
-          # 537 批：静卦增强回归守卫（536 缺陷态＝enhance_reading 静默缺失致增强段全空）挂 CI root-gates，守 528 约定
-          python liuyao/dev_tools/static_enhancement_guard.py --selftest
-          python liuyao/dev_tools/static_enhancement_guard.py
-          # 540 批：象层现代白话问法词表常驻判据（词表被删时评分门全绿，属静默退化面；守 528 约定挂 CI 不新增 check.py 门号）
-          python liuyao/dev_tools/xiang_coverage.py --probe
-          # 542 批：易林補遺 L1279 七案候选池同源复验（逐字书证／零泄漏进评分集／无反推／未开卷；不新增 check.py 门号）
-          python liuyao/dev_tools/verify_yilin_candidates.py
-          # 546 批：卜筮全书候选池同源复验（逐字书证／零泄漏进评分集／无反推／excluded 承袭同案证据；不新增 check.py 门号）
-          python liuyao/dev_tools/verify_bushi_candidates.py
-          # 543 批：一次性开卷记录校验（只此一次开封／逐例红绿／无率值／判卷未改写／指标未偷换；只读）
-          python liuyao/dev_tools/open_yilin_candidates.py --verify
-          # 547 批：卜筮全书候选池一次性开卷记录校验（同 543 范式：只此一次开封／逐例红绿／无率值／判卷未改写／指标未偷换；只读）
-          python liuyao/dev_tools/open_bushi_candidates.py --verify
-          # 549 批：对外知识层同源复验（示例结论由两科四段流水线实跑生成，手改即判红）＋负例自证
-          # 552 批：--check 现含双登记表四向对账（Python↔JS KB_DOC／磁盘 references／随包 INDEX／逐篇覆盖），
-          #         另备 --registry 只跑对账（秒级、不跑引擎），本地改动登记表时先跑它
-          python outreach/build_outreach.py --check
-          python outreach/build_outreach.py --selftest
-          # 550 批：仓库卫生门（生成物零入库／零硬编码绝对路径／活文档零过期钉数）＋负例自证
-          python devkit/root/check_repo_hygiene.py
-          python devkit/root/check_repo_hygiene.py --selftest
-  # 对外声明 Python 3.10+：本 job 在最低版跑两科冒烟、两科古籍回归与单测。
-  # 六爻回归实跑 19/19、思维链 12/12，旧的「17/19 待裁」排除理由已失效。
-  min-python-smoke:
-    runs-on: windows-latest
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
-      - name: declared minimum python smoke
-        run: |
-          python bazi/tests/smoke_test.py
-          python bazi/tests/regression_test.py
-          python liuyao/tests/smoke_test.py
-          python liuyao/tests/six_god_wang_shuai_test.py
-          python liuyao/tests/regression_test.py
-          python liuyao/tests/thinking_chain_tests.py
-  gates:
-    runs-on: windows-latest
-    timeout-minutes: 45
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.14"
-      - name: bazi quality gate (fresh tree)
-        run: python bazi/dev_tools/check.py
-      - name: liuyao quality gate (fresh tree)
-        run: python liuyao/dev_tools/check.py
-  # 第五百二十批建、第五百二十二批收敛清单真源：pytest 运行器
-  # （根 conftest 的 collect_ignore + 根 bridge_test.py 子进程桥接 + 原生 six_god 直接收集）
-  pytest:
-    runs-on: windows-latest
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.14"
-      - name: install dev deps
-        run: python -m pip install -r requirements-dev.txt
-      - name: pytest
-        run: python -m pytest
-  # full 账台（quick 会跳过 stale 期望，不作数）
-  ledger:
-    runs-on: windows-latest
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.14"
-      - name: readout ledger (full)
-        run: python liuyao/dev_tools/readout_ledger.py
-  kernel-sync:
-    runs-on: windows-latest
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.14"
-      - name: kernel single source
-        run: |
-          python kernel/sync_kernel.py --check
-          python devkit/sync_devkit.py --check
-  plugin-gates:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [windows-latest, ubuntu-latest]
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 30
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:
@@ -154,20 +17,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-      - name: build once, distribute to DSH
-        run: node plugins/scripts/build.mjs
-      - name: shared runtime selftest
-        run: node plugins/scripts/selftest.mjs
-      # 552 批：四向对账的第③方（随包 references/INDEX.md）只有 build 后才存在。
-      # root-gates 跑 --check 时没有 build，这一方在 CI 里恒被跳过；本作业已 build，
-      # 在此补 --registry，让「Python↔JS KB_DOC／磁盘 references／随包 INDEX」四向真的都在 CI 上跑。
-      - name: kb registry four-way reconciliation
-        run: python outreach/build_outreach.py --registry
-      - name: dsh full check (build + selftest + verify-in-dsh)
-        run: npm --prefix dsh-plugin run check
-      - name: dsh manifest assertion
+      - name: 六爻质量门
+        run: python liuyao/dev_tools/check.py
+      - name: 八字质量门
+        run: python bazi/dev_tools/check.py
+      - name: pytest
         run: |
-          node -e "const fs=require('fs');const must=['package.json','src/index.mjs','SKILL.md','engine','skills/yi-divination/SKILL.md'];const miss=must.filter(p=>!fs.existsSync('dsh-plugin/'+p));if(miss.length){console.error('dsh missing: '+miss.join(', '));process.exit(1)}console.log('dsh manifest ok')"
+          python -m pip install -q -r requirements-dev.txt
+          python -m pytest -q

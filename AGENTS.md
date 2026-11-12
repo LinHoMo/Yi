@@ -79,8 +79,6 @@ Yi/
 │   ├── eval/            # 评测层（359 批起）：评测器实现；scripts/ 同名文件为兼容 shim
 │   ├── scripts/ data/ references/ dev_tools/ docs/ tests/   # tests/ 335 批补建（smoke+regression）
 │   └── README.md  SKILL.md
-├── conclusions/         # 结论库（554 批）：固定输入的引擎结论快照 + 索引，供人审查与网页版 AI 查表
-└── dsh-plugin/          # DSH 插件（Node 半，独立于两科；契约见下）
 ```
 
 依赖方向单向：`<科>/engine → <科>/scripts(扁平模块) + <科>/rules + <科>/core`；
@@ -104,17 +102,6 @@ sha256/bytes/chars/lines＋扩展统计（`ganzhi_pairs`／`tables`／`headings`
 的 CRLF→LF 失配与两份旧册缺 source_file。`data/cache/`（337 批）收所有评测/构建生成物，
 整目录 gitignore，清掉即由脚本现场重生。
 
-**文档地图（第三百三十批新增；第五百一十四批去钉数）**：根 `DOCS.md` 是全仓 Markdown 的总索引——
-每份文档一句话职责 ＋ 状态（活文档／生成物／归档留证／历史索引）＋ 三条阅读路径。
-**份数不在本文写死**（330 批立文时钉「51 份」，510 批减量后该行即成假事实，而索引门只查
-「每份是否登记＋登记的路径是否可达」，不查句子里的总数，故没有任何门能拦到它）——
-以 `python devkit/root/check_docs_index.py` 的实跑首行为准（该门计数口径是「tracked `.md` 减
-`DOCS.md` 自身」）。
-**新增文档必须同批在 `DOCS.md` 登记一行**，不登记等于没有。历史记录（CHANGELOG 归档）
-自 342 批起**以逐批一句话索引为主，不再保留全文**：索引只压缩、不改事实，**批号与日期
-必须保留**（`readout_ledger` 的「登记×提交」扫它）；索引里指向当年临时文件的旧路径按
-「登记时点事实」豁免（`check_doc_refs` 的 EXEMPT 已同步）。
-
 **四段契约的判据是根 `CONTRACT.md`**（第三百一十批重建；此前 5 个模块 docstring 引它
 而文件已随扁平化丢失）。`chart → analyze → narrate → render` 的职责、四条不许越的界、
 层间调用矩阵与各段输出键白名单都在那里；机器判据是各科 `data/rules/domain/layer_contract.json`，
@@ -134,49 +121,6 @@ sha256/bytes/chars/lines＋扩展统计（`ganzhi_pairs`／`tables`／`headings`
  ① "零耦合"仍指**运行时**不跨科 import、不跨科写，与源码是否同源无关；
  ② 改内核一律改 `kernel/`，**直接改 `<科>/core/` 会被 [35] 判红**；
  ③ 两科不再"各自演进"同一份代码——变体只有 4 个，且理由写在 `kernel/MANIFEST.json`。
-
-### plugins 共享打包层契约（2026-10-27 第三百零五批起；497 批起仅保留 DSH 宿主）
-
-`plugins/` 是两科对外分发的**唯一共享层**；`dsh-plugin/` 只保留**宿主专属文件**
-（`package.json`、`src/index.mjs`、`presets/`、README/CHANGELOG）。
-497 批起 claude/codex/gemini/yan 四家适配器已删除——不再有多份产物、多条漂移面。
-
-```
-plugins/
-├── SKILL.md             # 技能正文唯一真源（入库）
-├── mcp/                 # 共享运行时唯一真源（入库）：server/schema/tools/engine/kb/report/python + 同义词表
-├── scripts/             # kb-docs.mjs（登记表真源）、build.mjs（一次构建 + 分发）、selftest.mjs
-├── engine/  skills/     # 构建产物（不入库）
-└── CHANGELOG.md
-```
-
-- **一次构建、分发到 DSH**：`node plugins/scripts/build.mjs` 从两科收集 `plugins/engine/`
-  与 `plugins/skills/`，再按 `scripts/build.mjs` 的 `ADAPTERS` 登记表分发到 `dsh-plugin/`。
-- **适配器的 `src/*.mjs` 是产物**：手工改即被自检 [1] 段（逐字节同源门）判红。
-  宿主专属入口（dsh 的 `src/index.mjs`）例外，仍为源码并已显式 negated 入库。
-- **`engine/`、`skills/` 不入库**。发布走 GitHub Release 的 npm tgz（`npm pack`），
-  不再有独立发行树（`publish.mjs` 随四家 git 通道宿主一并删除）。
-- **1.0 API 冻结（277 批起，1.0.0 生效）**：对外契约冻结为
-  四工具 `yi_liuyao` / `yi_bazi` / `yi_kb` / `yi_report` 的**工具名、参数 schema、输出
-  value 结构**（含文本块形状）与技能条目 `yi-divination`。1.0 后：新增可选参数/
-  新增输出字段 = minor+1；改名、删字段、改字段语义 = 破坏性，跨 1.0.0 并在 CHANGELOG
-  单独声明旧读数不可比。自检 [5] 段是冻结面的机械面——动它必须先动本条。
-- **口径**：面向会话交付，分数口径同 §一.3，不得出现"预测准确率"类表述
-  （自检 [7] 段逐行扫描，含否定语境豁免与负例自证）。
-- **月巡挂钩**：对两科 `references/`、`core/`、`scripts/` 的任何例行巡查
-  （含月巡），末尾跑一次 `node plugins/scripts/build.mjs && node plugins/scripts/selftest.mjs`，
-  再补跑 `npm --prefix dsh-plugin run check`（宿主侧 QA）——共享层与宿主面两条都要。
-- **批次登记**：共享层进 `plugins/CHANGELOG.md`；宿主侧那点事进 `dsh-plugin/CHANGELOG.md`。
-  批次号沿用全仓流水。
-- **版本号纪律（275 批起）**：`package.json` 的 semver 只是粗粒度坐标，**批次号是唯一真源**。
-  功能批 minor+1、修复/文档批 patch+1、破坏性跨 1.0.0 并单独说明；映射表逐批补记在
-  `dsh-plugin/CHANGELOG.md`。
-
-#### DSH 宿主硬约束
-
-| 清单 | 能力声明面 | 本地 MCP 命令 | 已知硬约束 |
-|---|---|---|---|
-| npm `package.json` + `src/index.mjs`（Cordis `ctx`） | `ctx.tools.register` / `skills.registerProvider` / `systemPrompt.section` | 宿主注入 | `inject` 必须声明 `tools`/`systemPrompt`；skill `invocation` 必须是**对象**、`rank` 必须是有穷数字，漏则整轮会话 error 结束 |
 
 ### 内核唯一真值源（科内口径）
 
@@ -287,12 +231,12 @@ plugins/
 5. **诚实结案**：方向能由书确定的即解决；实证证明不可改进的不强改，
    把"为什么不实现、缺什么前置"写清后结案登记——不留说不清的读数，
    不留半接的代码，也不拿私有规则去凑外部集。
-6. **现在时文案不钉会变数**（第五百一十四批把 GOVERNANCE.md §精神条款 上提为全仓规程）：
+6. **现在时文案不钉会变数**（第五百一十四批上提为全仓规程）：
    文档里「现在有 N 份／N 个脚本／新门从 `[N]` 续」这类现在时数字，一律改写**取数命令或真值源**，
    不抄快照——抄一次就多一块没人对的表，因为所有文档门只判「路径是否可达」，不判句子里的数。
-   514 批实见的四例同源病：330 批钉「DOCS.md 索引 51 份」在 510 批减量后成假事实；
-   GOVERNANCE.md 的治理分布表停在 344 批（64／43）而实跑 74／49，同节第一句却写「不抄旧快照」；
-   ARCHITECTURE-PLAN.md §五.2「`files.shared` 仍为 11 项」与该文件 §一 D2 行的 12 项互相打脸；
+   514 批实见的四例同源病：330 批钉「文档索引 51 份」在 510 批减量后成假事实；
+   治理分布表停在 344 批（64／43）而实跑 74／49，同节第一句却写「不抄旧快照」；
+   旧架构记录 §五.2「`files.shared` 仍为 11 项」与同文 §一 D2 行的 12 项互相打脸；
    同文 §六.4「新门从 `[37]` 续」挂着时，六爻实跑尾号已是 `[44]`。
    机器侧已有断言的数（如 `readout_ledger` 的 `governance(总数, blocking)`、`devkit/MANIFEST.json`
    的 `files.shared`）更该指过去而不是复述。
