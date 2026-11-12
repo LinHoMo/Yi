@@ -49,6 +49,10 @@ CURATED = {
         # 565 批：新器自落库即入表（511 批「未分类」教训）。只读工具、不进 check.py、不新增门号。
         "mine_dts_candidates": ("ondemand", "《滴天髓阐微》命造块机器认定→未开卷候选池（565 批：513 个四柱块中按关键词锚定＋四柱/原话/日主/月支四道机械校验认 15 案，与在册案例同四柱者剔除；只登记书证与强度档，不写 expected）"),
         "verify_dts_candidates": ("ondemand", "《滴天髓阐微》候选池同源复验（565 批：15 案引文逐字回底本＋四柱可复算＋归类可复算＋无 expected/verdict 反推＋未开卷（open_result 须 null）＋预注册必备＋与在册案例零同四柱；13 类内存负例，真盘零写入）"),
+
+        # 566 批：新器自落库即入表（511 批「未分类」教训）。只读工具、不进 check.py、不新增门号。
+        "mine_shenfeng_candidates": ("ondemand", "《神峰通考》命例→未开卷候选池（566 批：行首四柱＋断语体例，程序化提取 157 案（不可还原四柱与同断语重复者剔除）；四柱可复算、标签（格局后缀／性别／词表命中）机械抽取、不写 expected；与在册及滴天髓池三方去重）"),
+        "verify_shenfeng_candidates": ("ondemand", "《神峰通考》候选池同源复验（566 批：157 案引文逐字回底本＋四柱/标签可复算＋无 expected/verdict 反推＋未开卷＋预注册必备＋三方零同四柱；13 类内存负例，真盘零写入）"),
         "check_case_isolation": ("blocking", "铁律二：解读路径不得触案例库"),
         "check_regex_lists": ("blocking", "正则字符类 list 展平审计（209 批：§二 静默全盲规矩的核对版）"),
         "check_case_pillars": ("blocking", "命例基准自洽（expected 四柱可反算）"),

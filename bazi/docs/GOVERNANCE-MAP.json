@@ -1,8 +1,8 @@
 {
- "count": 51,
+ "count": 53,
  "by_tier": {
   "tool": 2,
-  "ondemand": 10,
+  "ondemand": 12,
   "build": 8,
   "blocking": 30,
   "nightly": 1
@@ -328,6 +328,13 @@
    "doc": "《滴天髓闡微》命造块机器认定 → 未开卷候选池（565 批）。"
   },
   {
+   "script": "mine_shenfeng_candidates.py",
+   "tier": "ondemand",
+   "guards": "《神峰通考》命例→未开卷候选池（566 批：行首四柱＋断语体例，程序化提取 161 案；四柱可复算、标签（格局后缀／性别／词表命中）机械抽取、不写 expected；与在册及滴天髓池三方去重）",
+   "run_by_check_py": false,
+   "doc": "《神峰通考》命例 → 未开卷候选池（566 批）。"
+  },
+  {
    "script": "regression.py",
    "tier": "blocking",
    "guards": "5 例手写出生时刻机械断言",
@@ -368,6 +375,13 @@
    "guards": "《滴天髓阐微》候选池同源复验（565 批：15 案引文逐字回底本＋四柱可复算＋归类可复算＋无 expected/verdict 反推＋未开卷（open_result 须 null）＋预注册必备＋与在册案例零同四柱；13 类内存负例，真盘零写入）",
    "run_by_check_py": false,
    "doc": "《滴天髓闡微》机器认定候选池同源复验（第 565 批，只读）。"
+  },
+  {
+   "script": "verify_shenfeng_candidates.py",
+   "tier": "ondemand",
+   "guards": "《神峰通考》候选池同源复验（566 批：161 案引文逐字回底本＋四柱/标签可复算＋无 expected/verdict 反推＋未开卷＋预注册必备＋三方零同四柱；13 类内存负例，真盘零写入）",
+   "run_by_check_py": false,
+   "doc": "《神峰通考》命例候选池同源复验（第 566 批，只读）。"
   },
   {
    "script": "xiang_coverage.py",

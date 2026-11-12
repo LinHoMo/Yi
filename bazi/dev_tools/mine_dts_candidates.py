@@ -60,7 +60,8 @@ def enrolled_pillars() -> set[tuple]:
     """在册案例的四柱集合（去重门）。"""
     used: set[tuple] = set()
     for path in sorted(SPLITS_DIR.glob("*.json")):
-        if path.name == OUT.name:
+        # 候选池不是「在册」：未开卷的池不得反过来把自己算成已收案例
+        if path.name == OUT.name or path.name.endswith("_candidates.json"):
             continue
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
@@ -107,6 +108,15 @@ def mine() -> dict:
 
     # 真实时刻重建：穷举 1900–2100 逐日反查四柱全同者（确定性，非猜）
     dt_index = B_.build_datetime_index({tuple(b["pillars"]) for b in picked})
+    keep = []
+    for block in picked:
+        key = tuple(block["pillars"])
+        if key not in dt_index:
+            rejected.append({"source_line": block["head_line"],
+                             "reason": "四柱穷举 1900–2100 找不出真实时刻（五虎遁／五鼠遁违律，疑底本讹字）"})
+            continue
+        keep.append(block)
+    picked = keep
 
     cases = []
     for block in picked:

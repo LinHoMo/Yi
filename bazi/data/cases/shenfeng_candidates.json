@@ -1,0 +1,3438 @@
+{
+  "schema": "yi-case-pool/2",
+  "batch": 566,
+  "discipline": "bazi",
+  "_comment": "《神峰通考》命例候选池（566 批新建，未开卷）。行首四柱＋断语的紧凑体例，机械可提取；只登记书证、四柱、断语、标签与真实时刻重建值，不写 expected／吉凶／用神。",
+  "source": {
+    "file": "data/sources/shenfeng_tongkao_dz.dz.txt",
+    "sha256": "bf6bed21ec56768a4e353904754cdf8cb33ad577847f5b92b3753b29a2048abc",
+    "segment": "行首四柱的命例行"
+  },
+  "policy": {
+    "照录": "source_quote 必须是底本该行余文的逐字子串（程序化截取，不手抄）；四柱由行首正则解析。",
+    "expected": "整池不写 expected／吉凶方向／用神——反推属重罪（AGENTS.md §三.4）。",
+    "标签": "只从固定词表机械抽取格局／强弱形态词，不表达吉凶，也不作引擎侧判定。",
+    "去重": "与在册案例、《滴天髓》候选池按四柱去重（三方互斥）。",
+    "开卷": "一次性：须用户显式授权；开卷前状态与哈希须与登记一致；n<30 不出率值。"
+  },
+  "preregistration": {
+    "frozen_at": "566 批（未开卷）",
+    "判卷规则": "逐例判红绿：引擎对每案给出强弱与格局标签，与本案书载标签比对；只出逐例红绿，n<30 不出率值。",
+    "禁止": "不得事后改判；改判须登记新记录（§六.3）。不得把本池内容反推为 expected。",
+    "开卷条件": "用户显式授权；开卷前状态与哈希须与本记录一致。"
+  },
+  "cases": [
+    {
+      "id": "SFC001",
+      "source_quote": "宜黄县刘景八公富命生生活巳格",
+      "source_line": 66,
+      "pillars": {
+        "year": "甲午",
+        "month": "丁丑",
+        "day": "壬辰",
+        "hour": "乙巳"
+      },
+      "real_datetime": "2015-01-16 09:30",
+      "labels": [],
+      "pattern_suffix": "八公富命生生活巳格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC002",
+      "source_quote": "富夫女克制克星格",
+      "source_line": 69,
+      "pillars": {
+        "year": "癸卯",
+        "month": "甲子",
+        "day": "乙巳",
+        "hour": "癸未"
+      },
+      "real_datetime": "2023-12-13 13:30",
+      "labels": [],
+      "pattern_suffix": "富夫女克制克星格",
+      "gender": "女",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC003",
+      "source_quote": "贫夭女见夫受制格",
+      "source_line": 72,
+      "pillars": {
+        "year": "辛丑",
+        "month": "乙未",
+        "day": "戊戌",
+        "hour": "庚申"
+      },
+      "real_datetime": "2081-08-03 15:30",
+      "labels": [],
+      "pattern_suffix": "贫夭女见夫受制格",
+      "gender": "女",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC004",
+      "source_quote": "贵而早寡金轻火重",
+      "source_line": 75,
+      "pillars": {
+        "year": "壬戌",
+        "month": "辛亥",
+        "day": "甲子",
+        "hour": "丙寅"
+      },
+      "real_datetime": "2042-11-22 03:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC005",
+      "source_quote": "夭女官轻制重",
+      "source_line": 78,
+      "pillars": {
+        "year": "丁巳",
+        "month": "戊申",
+        "day": "丁巳",
+        "hour": "乙巳"
+      },
+      "real_datetime": "2037-08-13 09:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "女",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC006",
+      "source_quote": "贵女命去留官格",
+      "source_line": 81,
+      "pillars": {
+        "year": "丁酉",
+        "month": "壬寅",
+        "day": "辛巳",
+        "hour": "丙申"
+      },
+      "real_datetime": "2077-02-08 15:30",
+      "labels": [],
+      "pattern_suffix": "贵女命去留官格",
+      "gender": "女",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC007",
+      "source_quote": "孤夭女土重木轻格",
+      "source_line": 84,
+      "pillars": {
+        "year": "甲辰",
+        "month": "甲戌",
+        "day": "癸未",
+        "hour": "壬戌"
+      },
+      "real_datetime": "2084-10-31 19:30",
+      "labels": [],
+      "pattern_suffix": "孤夭女土重木轻格",
+      "gender": "女",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC008",
+      "source_quote": "贫夭女命未轻制重",
+      "source_line": 90,
+      "pillars": {
+        "year": "癸丑",
+        "month": "己未",
+        "day": "戊辰",
+        "hour": "庚申"
+      },
+      "real_datetime": "2033-07-16 15:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "女",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC009",
+      "source_quote": "先富后孤贫夫弱被制格",
+      "source_line": 93,
+      "pillars": {
+        "year": "庚午",
+        "month": "戊寅",
+        "day": "己酉",
+        "hour": "甲子"
+      },
+      "real_datetime": "1990-02-13 00:30",
+      "labels": [],
+      "pattern_suffix": "富后孤贫夫弱被制格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC010",
+      "source_quote": "布政妻命火重金轻",
+      "source_line": 96,
+      "pillars": {
+        "year": "丁巳",
+        "month": "丁未",
+        "day": "乙未",
+        "hour": "庚辰"
+      },
+      "real_datetime": "2097-07-07 07:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC011",
+      "source_quote": "进贤朱逢升尚书 贵命土厚埋金格",
+      "source_line": 161,
+      "pillars": {
+        "year": "丙戌",
+        "month": "戊戌",
+        "day": "辛未",
+        "hour": "壬辰"
+      },
+      "real_datetime": "2006-10-09 07:30",
+      "labels": [],
+      "pattern_suffix": "贵命土厚埋金格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC012",
+      "source_quote": "严介溪阁老贵命去食存杀格",
+      "source_line": 164,
+      "pillars": {
+        "year": "庚子",
+        "month": "己卯",
+        "day": "癸酉",
+        "hour": "辛酉"
+      },
+      "real_datetime": "2080-03-16 17:30",
+      "labels": [],
+      "pattern_suffix": "阁老贵命去食存杀格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC013",
+      "source_quote": "盱江格溪刘翰十六公水重土轻格",
+      "source_line": 167,
+      "pillars": {
+        "year": "丙子",
+        "month": "庚子",
+        "day": "丁丑",
+        "hour": "辛亥"
+      },
+      "real_datetime": "1936-12-21 21:30",
+      "labels": [],
+      "pattern_suffix": "翰十六公水重土轻格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC014",
+      "source_quote": "书坊杨员四公富命制杀太过",
+      "source_line": 170,
+      "pillars": {
+        "year": "丁丑",
+        "month": "壬寅",
+        "day": "庚子",
+        "hour": "乙酉"
+      },
+      "real_datetime": "2057-02-12 17:30",
+      "labels": [
+        "制杀太过",
+        "太过"
+      ],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC015",
+      "source_quote": "临川饶舜臣春元贵命制杀太过格",
+      "source_line": 173,
+      "pillars": {
+        "year": "癸巳",
+        "month": "己未",
+        "day": "庚子",
+        "hour": "甲申"
+      },
+      "real_datetime": "2073-07-18 15:30",
+      "labels": [
+        "制杀太过",
+        "太过"
+      ],
+      "pattern_suffix": "春元贵命制杀太过格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC016",
+      "source_quote": "吾都王仁王公制杀过富命",
+      "source_line": 176,
+      "pillars": {
+        "year": "丙戌",
+        "month": "庚子",
+        "day": "丁卯",
+        "hour": "丙午"
+      },
+      "real_datetime": "1946-12-19 11:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC017",
+      "source_quote": "盱江格溪傅佑十五公富命杀多生印格",
+      "source_line": 179,
+      "pillars": {
+        "year": "己酉",
+        "month": "戊辰",
+        "day": "癸酉",
+        "hour": "丙辰"
+      },
+      "real_datetime": "2029-04-13 07:30",
+      "labels": [],
+      "pattern_suffix": "五公富命杀多生印格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC018",
+      "source_quote": "抚城过桓文生员土重水轻格",
+      "source_line": 182,
+      "pillars": {
+        "year": "庚午",
+        "month": "己丑",
+        "day": "壬辰",
+        "hour": "甲辰"
+      },
+      "real_datetime": "2051-01-07 07:30",
+      "labels": [],
+      "pattern_suffix": "桓文生员土重水轻格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC019",
+      "source_quote": "宜黄县住禀牵猪牯贫命杀重身轻",
+      "source_line": 185,
+      "pillars": {
+        "year": "甲午",
+        "month": "丁丑",
+        "day": "壬辰",
+        "hour": "甲辰"
+      },
+      "real_datetime": "2015-01-16 07:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC020",
+      "source_quote": "临川刘觉吾贵命火重水轻格",
+      "source_line": 188,
+      "pillars": {
+        "year": "壬辰",
+        "month": "丁未",
+        "day": "辛丑",
+        "hour": "甲午"
+      },
+      "real_datetime": "2072-07-24 11:30",
+      "labels": [],
+      "pattern_suffix": "觉吾贵命火重水轻格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC021",
+      "source_quote": "水重火轻之格",
+      "source_line": 191,
+      "pillars": {
+        "year": "壬辰",
+        "month": "丁未",
+        "day": "辛丑",
+        "hour": "壬辰"
+      },
+      "real_datetime": "2072-07-24 07:30",
+      "labels": [],
+      "pattern_suffix": "水重火轻之格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC022",
+      "source_quote": "临川周半峰火多为病格",
+      "source_line": 194,
+      "pillars": {
+        "year": "甲寅",
+        "month": "辛未",
+        "day": "辛未",
+        "hour": "丁酉"
+      },
+      "real_datetime": "2034-07-14 17:30",
+      "labels": [],
+      "pattern_suffix": "川周半峰火多为病格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC023",
+      "source_quote": "建宁李默阁老制杀太过贵命火不足格",
+      "source_line": 197,
+      "pillars": {
+        "year": "己未",
+        "month": "己巳",
+        "day": "庚子",
+        "hour": "甲申"
+      },
+      "real_datetime": "2039-05-18 15:30",
+      "labels": [
+        "制杀太过",
+        "太过"
+      ],
+      "pattern_suffix": "杀太过贵命火不足格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC024",
+      "source_quote": "临川帅谦斋贵命制杀太过格",
+      "source_line": 200,
+      "pillars": {
+        "year": "丁酉",
+        "month": "丙午",
+        "day": "戊寅",
+        "hour": "丁巳"
+      },
+      "real_datetime": "2077-06-05 09:30",
+      "labels": [
+        "制杀太过",
+        "太过"
+      ],
+      "pattern_suffix": "谦斋贵命制杀太过格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC025",
+      "source_quote": "先伯瑛四公制杀太过格",
+      "source_line": 203,
+      "pillars": {
+        "year": "乙酉",
+        "month": "丁亥",
+        "day": "丙午",
+        "hour": "己丑"
+      },
+      "real_datetime": "2005-11-18 01:30",
+      "labels": [
+        "制杀太过",
+        "太过"
+      ],
+      "pattern_suffix": "伯瑛四公制杀太过格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC026",
+      "source_quote": "先兄西庵 制杀太过",
+      "source_line": 206,
+      "pillars": {
+        "year": "丁未",
+        "month": "己酉",
+        "day": "乙巳",
+        "hour": "丁亥"
+      },
+      "real_datetime": "2087-09-08 21:30",
+      "labels": [
+        "制杀太过",
+        "太过"
+      ],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC027",
+      "source_quote": "本府杨太爷贵命身强杀浅格",
+      "source_line": 212,
+      "pillars": {
+        "year": "乙酉",
+        "month": "辛巳",
+        "day": "己酉",
+        "hour": "乙亥"
+      },
+      "real_datetime": "2065-05-10 21:30",
+      "labels": [],
+      "pattern_suffix": "太爷贵命身强杀浅格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC028",
+      "source_quote": "一丐者命杀重无制",
+      "source_line": 218,
+      "pillars": {
+        "year": "丁卯",
+        "month": "甲辰",
+        "day": "戊午",
+        "hour": "癸亥"
+      },
+      "real_datetime": "2047-04-24 21:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC029",
+      "source_quote": "女命贫淫夫星犯重",
+      "source_line": 221,
+      "pillars": {
+        "year": "丙子",
+        "month": "甲午",
+        "day": "己亥",
+        "hour": "乙亥"
+      },
+      "real_datetime": "2056-06-16 21:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "女",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC030",
+      "source_quote": "尚书妻火少金多格",
+      "source_line": 224,
+      "pillars": {
+        "year": "壬辰",
+        "month": "己酉",
+        "day": "乙未",
+        "hour": "辛巳"
+      },
+      "real_datetime": "2072-09-16 09:30",
+      "labels": [],
+      "pattern_suffix": "尚书妻火少金多格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC031",
+      "source_quote": "女贵命多有余财不足格",
+      "source_line": 227,
+      "pillars": {
+        "year": "丙申",
+        "month": "癸巳",
+        "day": "己亥",
+        "hour": "乙亥"
+      },
+      "real_datetime": "2016-05-17 21:30",
+      "labels": [],
+      "pattern_suffix": "贵命多有余财不足格",
+      "gender": "女",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC032",
+      "source_quote": "克损七夫金有余财不足之格",
+      "source_line": 230,
+      "pillars": {
+        "year": "庚寅",
+        "month": "甲申",
+        "day": "戊辰",
+        "hour": "丁巳"
+      },
+      "real_datetime": "2070-08-31 09:30",
+      "labels": [],
+      "pattern_suffix": "夫金有余财不足之格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC033",
+      "source_quote": "逸叟妻命火重而金颇轻",
+      "source_line": 233,
+      "pillars": {
+        "year": "辛巳",
+        "month": "乙未",
+        "day": "乙酉",
+        "hour": "壬午"
+      },
+      "real_datetime": "2061-07-06 11:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC034",
+      "source_quote": "旺举夫子命火重水轻格",
+      "source_line": 236,
+      "pillars": {
+        "year": "乙卯",
+        "month": "癸未",
+        "day": "辛未",
+        "hour": "甲午"
+      },
+      "real_datetime": "2035-07-09 11:30",
+      "labels": [],
+      "pattern_suffix": "举夫子命火重水轻格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC035",
+      "source_quote": "贫夭命夫太过格",
+      "source_line": 239,
+      "pillars": {
+        "year": "庚午",
+        "month": "甲申",
+        "day": "戊申",
+        "hour": "戊午"
+      },
+      "real_datetime": "1990-08-11 11:30",
+      "labels": [
+        "太过"
+      ],
+      "pattern_suffix": "贫夭命夫太过格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC036",
+      "source_quote": "先贫后富金多火少",
+      "source_line": 245,
+      "pillars": {
+        "year": "辛丑",
+        "month": "辛丑",
+        "day": "乙亥",
+        "hour": "丙戌"
+      },
+      "real_datetime": "2082-01-07 19:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC037",
+      "source_quote": "娼贱命杀多无制格",
+      "source_line": 251,
+      "pillars": {
+        "year": "戊申",
+        "month": "甲子",
+        "day": "乙丑",
+        "hour": "乙酉"
+      },
+      "real_datetime": "2028-12-06 17:30",
+      "labels": [],
+      "pattern_suffix": "娼贱命杀多无制格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC038",
+      "source_quote": "贱婢夫轻制过",
+      "source_line": 254,
+      "pillars": {
+        "year": "丙子",
+        "month": "壬辰",
+        "day": "庚子",
+        "hour": "庚辰"
+      },
+      "real_datetime": "2056-04-18 07:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC039",
+      "source_quote": "尚书夫人水进气夫透天干格",
+      "source_line": 257,
+      "pillars": {
+        "year": "丙子",
+        "month": "戊戌",
+        "day": "壬午",
+        "hour": "戊申"
+      },
+      "real_datetime": "1996-10-12 15:30",
+      "labels": [],
+      "pattern_suffix": "人水进气夫透天干格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC040",
+      "source_quote": "富夭女命制过夫星",
+      "source_line": 260,
+      "pillars": {
+        "year": "癸巳",
+        "month": "己未",
+        "day": "己亥",
+        "hour": "己巳"
+      },
+      "real_datetime": "2073-07-17 09:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "女",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC041",
+      "source_quote": "状元妻衰夫行夫旺运格",
+      "source_line": 263,
+      "pillars": {
+        "year": "辛亥",
+        "month": "庚子",
+        "day": "戊戌",
+        "hour": "己未"
+      },
+      "real_datetime": "2091-12-09 13:30",
+      "labels": [],
+      "pattern_suffix": "元妻衰夫行夫旺运格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC042",
+      "source_quote": "东乡徐少初贵命金火相停金重火轻格",
+      "source_line": 289,
+      "pillars": {
+        "year": "乙丑",
+        "month": "乙酉",
+        "day": "辛巳",
+        "hour": "甲午"
+      },
+      "real_datetime": "2045-09-24 11:30",
+      "labels": [],
+      "pattern_suffix": "金火相停金重火轻格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC043",
+      "source_quote": "临舒尚书贵命金白水清水制火过格",
+      "source_line": 292,
+      "pillars": {
+        "year": "丁亥",
+        "month": "壬子",
+        "day": "辛巳",
+        "hour": "丁酉"
+      },
+      "real_datetime": "2007-12-13 17:30",
+      "labels": [],
+      "pattern_suffix": "金白水清水制火过格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC044",
+      "source_quote": "吾郡李志富公富命身旺任财",
+      "source_line": 321,
+      "pillars": {
+        "year": "辛巳",
+        "month": "丁酉",
+        "day": "丙寅",
+        "hour": "己丑"
+      },
+      "real_datetime": "1941-09-15 01:30",
+      "labels": [
+        "身旺任财",
+        "身旺"
+      ],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC045",
+      "source_quote": "盖云南一省富命身旺用财格",
+      "source_line": 324,
+      "pillars": {
+        "year": "戊寅",
+        "month": "乙丑",
+        "day": "丙申",
+        "hour": "庚寅"
+      },
+      "real_datetime": "2059-01-29 03:30",
+      "labels": [
+        "身旺用财",
+        "身旺"
+      ],
+      "pattern_suffix": "一省富命身旺用财格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC046",
+      "source_quote": "新坪吴楚四公富命火长夏天金叠叠格",
+      "source_line": 327,
+      "pillars": {
+        "year": "丙寅",
+        "month": "甲午",
+        "day": "丁酉",
+        "hour": "乙巳"
+      },
+      "real_datetime": "2046-06-07 09:30",
+      "labels": [],
+      "pattern_suffix": "命火长夏天金叠叠格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC047",
+      "source_quote": "临忠所贵命土重木轻格",
+      "source_line": 330,
+      "pillars": {
+        "year": "甲辰",
+        "month": "丙子",
+        "day": "己未",
+        "hour": "戊辰"
+      },
+      "real_datetime": "2084-12-06 07:30",
+      "labels": [],
+      "pattern_suffix": "忠所贵命土重木轻格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC048",
+      "source_quote": "夫人贵命火长夏天金叠叠格",
+      "source_line": 333,
+      "pillars": {
+        "year": "丁卯",
+        "month": "乙巳",
+        "day": "丙寅",
+        "hour": "丁酉"
+      },
+      "real_datetime": "1987-05-17 17:30",
+      "labels": [],
+      "pattern_suffix": "命火长夏天金叠叠格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC049",
+      "source_quote": "参政妻财旺生格",
+      "source_line": 336,
+      "pillars": {
+        "year": "壬辰",
+        "month": "戊申",
+        "day": "癸卯",
+        "hour": "丙辰"
+      },
+      "real_datetime": "2012-08-10 07:30",
+      "labels": [],
+      "pattern_suffix": "参政妻财旺生格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC050",
+      "source_quote": "富女命夫轻行夫旺运格",
+      "source_line": 339,
+      "pillars": {
+        "year": "辛酉",
+        "month": "庚子",
+        "day": "戊子",
+        "hour": "癸亥"
+      },
+      "real_datetime": "2041-12-21 21:30",
+      "labels": [],
+      "pattern_suffix": "女命夫轻行夫旺运格",
+      "gender": "女",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC051",
+      "source_quote": "希文自造时月 偏财类聚之格",
+      "source_line": 349,
+      "pillars": {
+        "year": "己酉",
+        "month": "丙子",
+        "day": "壬寅",
+        "hour": "乙巳"
+      },
+      "real_datetime": "2089-12-23 09:30",
+      "labels": [],
+      "pattern_suffix": "偏财类聚之格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC052",
+      "source_quote": "李廉使之命",
+      "source_line": 352,
+      "pillars": {
+        "year": "庚寅",
+        "month": "乙酉",
+        "day": "甲子",
+        "hour": "戊辰"
+      },
+      "real_datetime": "2010-09-11 07:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC053",
+      "source_quote": "张府尹之命",
+      "source_line": 353,
+      "pillars": {
+        "year": "癸亥",
+        "month": "乙卯",
+        "day": "乙未",
+        "hour": "壬午"
+      },
+      "real_datetime": "1983-03-08 11:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC054",
+      "source_quote": "曾参政之命",
+      "source_line": 354,
+      "pillars": {
+        "year": "己未",
+        "month": "壬申",
+        "day": "丙申",
+        "hour": "庚寅"
+      },
+      "real_datetime": "2099-08-27 03:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC055",
+      "source_quote": "陈尚书之命",
+      "source_line": 355,
+      "pillars": {
+        "year": "戊子",
+        "month": "辛酉",
+        "day": "戊申",
+        "hour": "壬子"
+      },
+      "real_datetime": "1948-09-20 00:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC056",
+      "source_quote": "邢知府之命",
+      "source_line": 356,
+      "pillars": {
+        "year": "甲午",
+        "month": "丁丑",
+        "day": "己未",
+        "hour": "癸酉"
+      },
+      "real_datetime": "2075-01-28 17:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC057",
+      "source_quote": "刑司令之命",
+      "source_line": 357,
+      "pillars": {
+        "year": "壬午",
+        "month": "壬寅",
+        "day": "庚子",
+        "hour": "戊寅"
+      },
+      "real_datetime": "1942-02-16 03:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC058",
+      "source_quote": "侯知阁之命",
+      "source_line": 359,
+      "pillars": {
+        "year": "丁亥",
+        "month": "戊申",
+        "day": "壬申",
+        "hour": "丙午"
+      },
+      "real_datetime": "1947-08-21 11:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC059",
+      "source_quote": "王少师之命",
+      "source_line": 361,
+      "pillars": {
+        "year": "癸卯",
+        "month": "戊午",
+        "day": "丁丑",
+        "hour": "辛丑"
+      },
+      "real_datetime": "2083-07-03 01:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC060",
+      "source_quote": "金鸡陈秀二公富命木火伤官庚金为病",
+      "source_line": 386,
+      "pillars": {
+        "year": "丁丑",
+        "month": "庚戌",
+        "day": "乙巳",
+        "hour": "壬午"
+      },
+      "real_datetime": "2057-10-15 11:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC061",
+      "source_quote": "营山吴精三公庚辛金为病神丙丁火为福神",
+      "source_line": 389,
+      "pillars": {
+        "year": "己巳",
+        "month": "辛未",
+        "day": "乙亥",
+        "hour": "丁丑"
+      },
+      "real_datetime": "1989-07-14 01:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC062",
+      "source_quote": "临川饶惠徽廿六公富命土金伤官用神",
+      "source_line": 392,
+      "pillars": {
+        "year": "己巳",
+        "month": "癸酉",
+        "day": "戊辰",
+        "hour": "丙辰"
+      },
+      "real_datetime": "1929-09-20 07:30",
+      "labels": [
+        "用神"
+      ],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC063",
+      "source_quote": "逸叟自命真伤官庚金官星为病",
+      "source_line": 395,
+      "pillars": {
+        "year": "甲戌",
+        "month": "庚午",
+        "day": "乙亥",
+        "hour": "丁丑"
+      },
+      "real_datetime": "1994-06-18 01:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC064",
+      "source_quote": "逸叟弟真伤官用劫",
+      "source_line": 398,
+      "pillars": {
+        "year": "乙酉",
+        "month": "己丑",
+        "day": "庚子",
+        "hour": "壬午"
+      },
+      "real_datetime": "2006-01-11 11:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC065",
+      "source_quote": "叔祖仲器公火土伤官用印各",
+      "source_line": 401,
+      "pillars": {
+        "year": "戊午",
+        "month": "己未",
+        "day": "丙戌",
+        "hour": "己亥"
+      },
+      "real_datetime": "2038-07-08 21:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC066",
+      "source_quote": "盱江夏良胜吏部郎中水木假伤官",
+      "source_line": 407,
+      "pillars": {
+        "year": "庚子",
+        "month": "己丑",
+        "day": "壬寅",
+        "hour": "辛亥"
+      },
+      "real_datetime": "1961-01-09 21:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC067",
+      "source_quote": "盱江张思布政贵命木火通明之格。",
+      "source_line": 410,
+      "pillars": {
+        "year": "甲午",
+        "month": "丙寅",
+        "day": "乙丑",
+        "hour": "癸未"
+      },
+      "real_datetime": "2074-02-08 13:30",
+      "labels": [],
+      "pattern_suffix": "政贵命木火通明之格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC068",
+      "source_quote": "盱江姚弘十公制过伤官之格",
+      "source_line": 413,
+      "pillars": {
+        "year": "壬子",
+        "month": "丙午",
+        "day": "乙亥",
+        "hour": "丁亥"
+      },
+      "real_datetime": "1972-06-13 21:30",
+      "labels": [],
+      "pattern_suffix": "弘十公制过伤官之格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC069",
+      "source_quote": "福建裴应章尚书取建禄之格",
+      "source_line": 416,
+      "pillars": {
+        "year": "丁酉",
+        "month": "丙午",
+        "day": "丁丑",
+        "hour": "辛亥"
+      },
+      "real_datetime": "2017-06-19 21:30",
+      "labels": [],
+      "pattern_suffix": "应章尚书取建禄之格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC070",
+      "source_quote": "书林场环五公富贵假伤官格",
+      "source_line": 419,
+      "pillars": {
+        "year": "丙寅",
+        "month": "庚子",
+        "day": "壬子",
+        "hour": "辛亥"
+      },
+      "real_datetime": "2046-12-19 21:30",
+      "labels": [],
+      "pattern_suffix": "环五公富贵假伤官格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC071",
+      "source_quote": "盱江枧溪胡锡三公富命假伤官格",
+      "source_line": 422,
+      "pillars": {
+        "year": "乙巳",
+        "month": "癸未",
+        "day": "戊子",
+        "hour": "癸丑"
+      },
+      "real_datetime": "2025-07-18 01:30",
+      "labels": [],
+      "pattern_suffix": "锡三公富命假伤官格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC072",
+      "source_quote": "盱江羽旺变为弱格",
+      "source_line": 425,
+      "pillars": {
+        "year": "乙巳",
+        "month": "丁亥",
+        "day": "壬午",
+        "hour": "庚戌"
+      },
+      "real_datetime": "2025-11-09 19:30",
+      "labels": [],
+      "pattern_suffix": "盱江羽旺变为弱格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC073",
+      "source_quote": "盱江刘庆二道人木衰金旺格",
+      "source_line": 428,
+      "pillars": {
+        "year": "己酉",
+        "month": "丙寅",
+        "day": "甲子",
+        "hour": "乙丑"
+      },
+      "real_datetime": "2029-02-03 01:30",
+      "labels": [],
+      "pattern_suffix": "庆二道人木衰金旺格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC074",
+      "source_quote": "盱江刘翰十一公金木相停格",
+      "source_line": 431,
+      "pillars": {
+        "year": "己巳",
+        "month": "丙寅",
+        "day": "甲寅",
+        "hour": "乙亥"
+      },
+      "real_datetime": "2049-02-08 21:30",
+      "labels": [],
+      "pattern_suffix": "翰十一公金木相停格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC075",
+      "source_quote": "盱江夏贷岱二公印制食神太过",
+      "source_line": 434,
+      "pillars": {
+        "year": "辛卯",
+        "month": "辛丑",
+        "day": "丁卯",
+        "hour": "癸卯"
+      },
+      "real_datetime": "2012-01-07 05:30",
+      "labels": [
+        "太过"
+      ],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC076",
+      "source_quote": "抚城李元六公土轻木重之格",
+      "source_line": 437,
+      "pillars": {
+        "year": "乙卯",
+        "month": "己丑",
+        "day": "丁亥",
+        "hour": "壬寅"
+      },
+      "real_datetime": "2096-01-06 03:30",
+      "labels": [],
+      "pattern_suffix": "元六公土轻木重之格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC077",
+      "source_quote": "临川吴开六公富命假伤官格",
+      "source_line": 440,
+      "pillars": {
+        "year": "壬辰",
+        "month": "辛亥",
+        "day": "甲戌",
+        "hour": "丙寅"
+      },
+      "real_datetime": "2012-11-09 03:30",
+      "labels": [],
+      "pattern_suffix": "开六公富命假伤官格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC078",
+      "source_quote": "休杭叶畅二贫假伤官嫌印",
+      "source_line": 443,
+      "pillars": {
+        "year": "丁丑",
+        "month": "辛亥",
+        "day": "壬子",
+        "hour": "癸卯"
+      },
+      "real_datetime": "1937-11-21 05:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC079",
+      "source_quote": "陈都爷贵命时上假食神水清金白之格",
+      "source_line": 446,
+      "pillars": {
+        "year": "丙子",
+        "month": "丁酉",
+        "day": "壬申",
+        "hour": "辛亥"
+      },
+      "real_datetime": "2056-09-17 21:30",
+      "labels": [],
+      "pattern_suffix": "假食神水清金白之格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC080",
+      "source_quote": "吾都何廿八公假伤官富命金轻火重格",
+      "source_line": 449,
+      "pillars": {
+        "year": "甲戌",
+        "month": "辛未",
+        "day": "己酉",
+        "hour": "己巳"
+      },
+      "real_datetime": "2054-07-07 09:30",
+      "labels": [],
+      "pattern_suffix": "伤官富命金轻火重格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC081",
+      "source_quote": "抚城周怀鲁科贵命土见金格",
+      "source_line": 452,
+      "pillars": {
+        "year": "戊申",
+        "month": "己未",
+        "day": "戊午",
+        "hour": "辛酉"
+      },
+      "real_datetime": "2088-07-17 17:30",
+      "labels": [],
+      "pattern_suffix": "怀鲁科贵命土见金格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC082",
+      "source_quote": "临川袁应龙元贵假伤官土轻木重",
+      "source_line": 455,
+      "pillars": {
+        "year": "癸卯",
+        "month": "甲寅",
+        "day": "丙午",
+        "hour": "戊戌"
+      },
+      "real_datetime": "2023-02-17 19:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC083",
+      "source_quote": "吾都傅后庵公木火假伤官木全寅卯辰互看",
+      "source_line": 458,
+      "pillars": {
+        "year": "丙寅",
+        "month": "壬辰",
+        "day": "甲辰",
+        "hour": "丁卯"
+      },
+      "real_datetime": "2046-04-15 05:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC084",
+      "source_quote": "吾父启完公假伤官用地劫",
+      "source_line": 461,
+      "pillars": {
+        "year": "丙申",
+        "month": "癸巳",
+        "day": "辛卯",
+        "hour": "壬辰"
+      },
+      "real_datetime": "2016-05-09 07:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC085",
+      "source_quote": "予兄希禹木火伤官官不足格",
+      "source_line": 464,
+      "pillars": {
+        "year": "丁未",
+        "month": "壬寅",
+        "day": "乙丑",
+        "hour": "丁亥"
+      },
+      "real_datetime": "2027-02-15 21:30",
+      "labels": [],
+      "pattern_suffix": "禹木火伤官官不足格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC086",
+      "source_quote": "贵女命作真伤官用印格",
+      "source_line": 467,
+      "pillars": {
+        "year": "戊寅",
+        "month": "己未",
+        "day": "丙戌",
+        "hour": "乙未"
+      },
+      "real_datetime": "2058-07-23 13:30",
+      "labels": [],
+      "pattern_suffix": "女命作真伤官用印格",
+      "gender": "女",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC087",
+      "source_quote": "逸叟母命金多用火",
+      "source_line": 470,
+      "pillars": {
+        "year": "辛丑",
+        "month": "丙申",
+        "day": "己丑",
+        "hour": "庚午"
+      },
+      "real_datetime": "2021-08-09 11:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC088",
+      "source_quote": "极贫淫贱夫星轻而制夫旺星",
+      "source_line": 473,
+      "pillars": {
+        "year": "丙寅",
+        "month": "甲午",
+        "day": "甲戌",
+        "hour": "丁卯"
+      },
+      "real_datetime": "1926-06-14 05:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC089",
+      "source_quote": "孤贫女命土有余木火不中足格",
+      "source_line": 476,
+      "pillars": {
+        "year": "己丑",
+        "month": "己巳",
+        "day": "丁丑",
+        "hour": "己酉"
+      },
+      "real_datetime": "2069-05-17 17:30",
+      "labels": [],
+      "pattern_suffix": "土有余木火不中足格",
+      "gender": "女",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC090",
+      "source_quote": "孤寡木少金多之格",
+      "source_line": 479,
+      "pillars": {
+        "year": "丙子",
+        "month": "辛丑",
+        "day": "己卯",
+        "hour": "庚午"
+      },
+      "real_datetime": "2057-01-22 11:30",
+      "labels": [],
+      "pattern_suffix": "孤寡木少金多之格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC091",
+      "source_quote": "临川黄良三公富命水重轻",
+      "source_line": 513,
+      "pillars": {
+        "year": "己亥",
+        "month": "乙亥",
+        "day": "乙丑",
+        "hour": "丁亥"
+      },
+      "real_datetime": "2079-11-09 21:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC092",
+      "source_quote": "盱江刘三三公水多漂木之格",
+      "source_line": 516,
+      "pillars": {
+        "year": "丁亥",
+        "month": "辛亥",
+        "day": "乙亥",
+        "hour": "丁亥"
+      },
+      "real_datetime": "2067-11-22 21:30",
+      "labels": [],
+      "pattern_suffix": "三三公水多漂木之格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC093",
+      "source_quote": "盱江刘瑛千九公富命衰印畏财格",
+      "source_line": 519,
+      "pillars": {
+        "year": "壬寅",
+        "month": "辛亥",
+        "day": "丁巳",
+        "hour": "辛亥"
+      },
+      "real_datetime": "1962-11-15 21:30",
+      "labels": [],
+      "pattern_suffix": "九公富命衰印畏财格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC094",
+      "source_quote": "丰城孙世佑布政贵命旺变为弱用印格",
+      "source_line": 522,
+      "pillars": {
+        "year": "乙丑",
+        "month": "辛巳",
+        "day": "己巳",
+        "hour": "庚午"
+      },
+      "real_datetime": "2045-05-15 11:30",
+      "labels": [],
+      "pattern_suffix": "贵命旺变为弱用印格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC095",
+      "source_quote": "崇仁方武十凌迟死贪财坏印",
+      "source_line": 525,
+      "pillars": {
+        "year": "壬戌",
+        "month": "壬寅",
+        "day": "丁卯",
+        "hour": "戊申"
+      },
+      "real_datetime": "1982-02-13 15:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC096",
+      "source_quote": "抚城过桓九公木无金之格",
+      "source_line": 528,
+      "pillars": {
+        "year": "乙亥",
+        "month": "癸未",
+        "day": "丁卯",
+        "hour": "甲辰"
+      },
+      "real_datetime": "2055-07-20 07:30",
+      "labels": [],
+      "pattern_suffix": "过桓九公木无金之格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC097",
+      "source_quote": "与夫子命去官留杀同印",
+      "source_line": 531,
+      "pillars": {
+        "year": "辛卯",
+        "month": "辛卯",
+        "day": "戊寅",
+        "hour": "壬子"
+      },
+      "real_datetime": "2071-03-09 00:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC098",
+      "source_quote": "富女命无夫星入格。",
+      "source_line": 534,
+      "pillars": {
+        "year": "乙卯",
+        "month": "戊寅",
+        "day": "丙戌",
+        "hour": "乙未"
+      },
+      "real_datetime": "1975-02-09 13:30",
+      "labels": [],
+      "pattern_suffix": "富女命无夫星入格",
+      "gender": "女",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC099",
+      "source_quote": "古韩侍郎造",
+      "source_line": 581,
+      "pillars": {
+        "year": "庚子",
+        "month": "戊子",
+        "day": "癸丑",
+        "hour": "庚申"
+      },
+      "real_datetime": "2080-12-21 15:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC100",
+      "source_quote": "赵丞相之造",
+      "source_line": 582,
+      "pillars": {
+        "year": "壬申",
+        "month": "丙午",
+        "day": "己亥",
+        "hour": "庚午"
+      },
+      "real_datetime": "1932-06-07 11:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC101",
+      "source_quote": "施洪富命之格",
+      "source_line": 587,
+      "pillars": {
+        "year": "辛丑",
+        "month": "辛卯",
+        "day": "乙丑",
+        "hour": "庚辰"
+      },
+      "real_datetime": "2021-03-18 07:30",
+      "labels": [],
+      "pattern_suffix": "施洪富命之格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC102",
+      "source_quote": "夏阁老贵命火有余水不足格",
+      "source_line": 589,
+      "pillars": {
+        "year": "壬寅",
+        "month": "丁未",
+        "day": "丙寅",
+        "hour": "壬辰"
+      },
+      "real_datetime": "2022-07-12 07:30",
+      "labels": [],
+      "pattern_suffix": "贵命火有余水不足格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC103",
+      "source_quote": "吾都何泳一火少金水多",
+      "source_line": 595,
+      "pillars": {
+        "year": "庚午",
+        "month": "辛巳",
+        "day": "丙申",
+        "hour": "壬辰"
+      },
+      "real_datetime": "2050-05-16 07:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC104",
+      "source_quote": "金溪徐龙冈命专禄格以官杀为病格",
+      "source_line": 601,
+      "pillars": {
+        "year": "壬辰",
+        "month": "庚戌",
+        "day": "辛酉",
+        "hour": "辛卯"
+      },
+      "real_datetime": "2072-10-12 05:30",
+      "labels": [],
+      "pattern_suffix": "专禄格以官杀为病格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC105",
+      "source_quote": "金溪高谷南少卿己日金神土金假伤官",
+      "source_line": 652,
+      "pillars": {
+        "year": "丁亥",
+        "month": "癸丑",
+        "day": "己未",
+        "hour": "癸酉"
+      },
+      "real_datetime": "2068-01-05 17:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC106",
+      "source_quote": "亦三子暗冲午财官出，则以三子冲填实为祸。",
+      "source_line": 661,
+      "pillars": {
+        "year": "壬子",
+        "month": "壬子",
+        "day": "壬子",
+        "hour": "丙午"
+      },
+      "real_datetime": "2092-12-17 11:30",
+      "labels": [
+        "财官"
+      ],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC107",
+      "source_quote": "古钱丞相造",
+      "source_line": 683,
+      "pillars": {
+        "year": "己亥",
+        "month": "乙亥",
+        "day": "甲子",
+        "hour": "甲子"
+      },
+      "real_datetime": "2079-11-08 00:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC108",
+      "source_quote": "古赵知府造",
+      "source_line": 685,
+      "pillars": {
+        "year": "丙寅",
+        "month": "壬辰",
+        "day": "甲子",
+        "hour": "甲子"
+      },
+      "real_datetime": "1926-04-05 00:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC109",
+      "source_quote": "古张知院造",
+      "source_line": 732,
+      "pillars": {
+        "year": "戊辰",
+        "month": "辛酉",
+        "day": "辛酉",
+        "hour": "戊子"
+      },
+      "real_datetime": "1928-09-18 00:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC110",
+      "source_quote": "古西王大尉造",
+      "source_line": 733,
+      "pillars": {
+        "year": "戊辰",
+        "month": "辛酉",
+        "day": "辛丑",
+        "hour": "戊子"
+      },
+      "real_datetime": "2048-09-28 00:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC111",
+      "source_quote": "古陈侍郎之造。则午戌不能绊寅也，明矣。非若遥巳禄马之忌绊神也。",
+      "source_line": 749,
+      "pillars": {
+        "year": "甲戌",
+        "month": "甲戌",
+        "day": "癸酉",
+        "hour": "甲寅"
+      },
+      "real_datetime": "1994-10-14 03:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC112",
+      "source_quote": "郑知府之命",
+      "source_line": 759,
+      "pillars": {
+        "year": "壬申",
+        "month": "辛亥",
+        "day": "戊寅",
+        "hour": "庚申"
+      },
+      "real_datetime": "1932-11-13 15:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC113",
+      "source_quote": "吴知县之命",
+      "source_line": 760,
+      "pillars": {
+        "year": "丙申",
+        "month": "庚子",
+        "day": "戊申",
+        "hour": "庚申"
+      },
+      "real_datetime": "1956-12-07 15:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC114",
+      "source_quote": "和同知之命",
+      "source_line": 761,
+      "pillars": {
+        "year": "癸酉",
+        "month": "乙丑",
+        "day": "癸丑",
+        "hour": "庚申"
+      },
+      "real_datetime": "2054-01-12 15:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC115",
+      "source_quote": "临川机桥丘普一公木全类相",
+      "source_line": 768,
+      "pillars": {
+        "year": "壬寅",
+        "month": "癸卯",
+        "day": "甲子",
+        "hour": "戊辰"
+      },
+      "real_datetime": "2022-03-12 07:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC116",
+      "source_quote": "抚城张华二公富命土全稼穑",
+      "source_line": 778,
+      "pillars": {
+        "year": "壬午",
+        "month": "癸丑",
+        "day": "己丑",
+        "hour": "戊辰"
+      },
+      "real_datetime": "2003-01-16 07:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC117",
+      "source_quote": "大源杨洪六公富命金火相停时上官星之格",
+      "source_line": 803,
+      "pillars": {
+        "year": "乙巳",
+        "month": "乙酉",
+        "day": "庚午",
+        "hour": "丁亥"
+      },
+      "real_datetime": "1965-09-13 21:30",
+      "labels": [],
+      "pattern_suffix": "火相停时上官星之格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC118",
+      "source_quote": "金溪黄希宪贵命年上虚官格",
+      "source_line": 806,
+      "pillars": {
+        "year": "丁丑",
+        "month": "己酉",
+        "day": "庚申",
+        "hour": "辛巳"
+      },
+      "real_datetime": "1997-09-15 09:30",
+      "labels": [],
+      "pattern_suffix": "希宪贵命年上虚官格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC119",
+      "source_quote": "盱江傅弼王公富命乙庚化金之格",
+      "source_line": 830,
+      "pillars": {
+        "year": "丁巳",
+        "month": "癸丑",
+        "day": "乙酉",
+        "hour": "庚辰"
+      },
+      "real_datetime": "2038-01-08 07:30",
+      "labels": [],
+      "pattern_suffix": "公富命乙庚化金之格",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC120",
+      "source_quote": "张尚书之命",
+      "source_line": 839,
+      "pillars": {
+        "year": "丙辰",
+        "month": "辛卯",
+        "day": "癸酉",
+        "hour": "癸亥"
+      },
+      "real_datetime": "2036-03-07 21:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC121",
+      "source_quote": "柳总管之命",
+      "source_line": 841,
+      "pillars": {
+        "year": "甲子",
+        "month": "癸酉",
+        "day": "癸酉",
+        "hour": "癸亥"
+      },
+      "real_datetime": "2044-09-21 21:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC122",
+      "source_quote": "老彭之命",
+      "source_line": 2058,
+      "pillars": {
+        "year": "癸亥",
+        "month": "甲子",
+        "day": "癸亥",
+        "hour": "壬子"
+      },
+      "real_datetime": "1923-12-16 00:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC123",
+      "source_quote": "此卯破午也，巳合真格，八十而卒。",
+      "source_line": 2495,
+      "pillars": {
+        "year": "癸亥",
+        "month": "乙卯",
+        "day": "乙卯",
+        "hour": "戊寅"
+      },
+      "real_datetime": "2043-03-13 03:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC124",
+      "source_quote": "此造已木生于午月，甲禄寅，丙禄巳，己禄午，乙禄卯，虽不富贵，却一生温饱享福，年八十余岁，康健精神。",
+      "source_line": 2498,
+      "pillars": {
+        "year": "丙寅",
+        "month": "甲午",
+        "day": "己巳",
+        "hour": "丙寅"
+      },
+      "real_datetime": "1926-06-09 03:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC125",
+      "source_quote": "此乃福建建宁府建安县林寿官八字，讳钊号石庵，其人积德行善，秉忠尽孝，克勤克俭，已成巨万之家。敦仁敦义，允叨无疆之寿。生子七人，长子官拜令尹，四子职至省察，其他登庠序者，蔼蔼吉土，间有侍庭闱者，造造良民。生女五人，各配宦门，阶前孙枝二十四条，条条挺秀。堂下曾兰一十九叶，叶叶争芳。更有五代之孩提，又遂两眼之快睹。即今万历十七年算起，寿数九十七，耳目尚精神，齿发更伶俐，饮食如常，动履健顺，言语无颠倒，施为未改体。躬逢朝廷恩例，钦赐冠带荣身，续承都府，赠以金，赠以衣，继蒙按院贲以布并银。昔年杨郡守，请与乡饮，客岁张府尊重礼高年。长子七十已上，见居林下，鹤发童颜对椿树，余子七九将近，各在庭前，戏彩斑衣娱华阳。蓝袍孙子，泮苑有声。伫看对对登廊庙。白衣曾玄，书香可赖，行将个个拜丹墀，盛矣。目前之美景如斯，彰彰莫掩，必也后代之繁祉定见，生生无穷。",
+      "source_line": 2499,
+      "pillars": {
+        "year": "癸丑",
+        "month": "癸亥",
+        "day": "丁卯",
+        "hour": "丁未"
+      },
+      "real_datetime": "2033-11-12 13:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "女",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC126",
+      "source_quote": "此命火土相停，癸巳运丁亥年，不禄。",
+      "source_line": 2502,
+      "pillars": {
+        "year": "丁巳",
+        "month": "壬寅",
+        "day": "戊辰",
+        "hour": "丙辰"
+      },
+      "real_datetime": "2097-02-10 07:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC127",
+      "source_quote": "此女命丙日生，逢午戌火局，四柱土神太重，以掩其光，乃愚蠢人，终为灶下之婢妾。",
+      "source_line": 2505,
+      "pillars": {
+        "year": "戊戌",
+        "month": "戊午",
+        "day": "丙午",
+        "hour": "己丑"
+      },
+      "real_datetime": "2078-06-28 01:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "女",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC128",
+      "source_quote": "此甲午生于申月，乃偏官格也。年时寅午戌会火局，制伏七煞太过，又会失垣，乃一俗人，行寅运丙戌年不禄。",
+      "source_line": 2508,
+      "pillars": {
+        "year": "丙戌",
+        "month": "丙申",
+        "day": "甲午",
+        "hour": "丙寅"
+      },
+      "real_datetime": "2066-08-18 03:30",
+      "labels": [
+        "太过"
+      ],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC129",
+      "source_quote": "此李状元命，木火通明，杀生印，火明木秀。",
+      "source_line": 2511,
+      "pillars": {
+        "year": "戊戌",
+        "month": "乙卯",
+        "day": "丙午",
+        "hour": "己亥"
+      },
+      "real_datetime": "2018-03-15 21:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC130",
+      "source_quote": "此造金生七月，地支纯金，类成顽金，而无水火锻炼，又行西方金乡，乃金实无声也。",
+      "source_line": 2514,
+      "pillars": {
+        "year": "戊申",
+        "month": "庚申",
+        "day": "庚申",
+        "hour": "甲申"
+      },
+      "real_datetime": "1968-08-18 15:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC131",
+      "source_quote": "此女命以庚金为夫，喜透归禄，夫星得地，年杀又生于予而得垣。以格论之，为官杀混杂，以理推之，则又不然，取甲木配辛，日主乙与庚合。甲乙互相配合也。行卯运合局。身旺为福。一交甲辰运，申子辰三合水局，又遇丁亥年，壬水太旺，八字运岁，全是水象，庚金沉水，乙木死绝，乃水泛木浮也。如活木无土以培其根，被壬水浸淹摇荡其根矣，果患面肿浮面之病，而不禄矣。",
+      "source_line": 2517,
+      "pillars": {
+        "year": "辛亥",
+        "month": "庚子",
+        "day": "乙未",
+        "hour": "甲申"
+      },
+      "real_datetime": "2031-12-21 15:30",
+      "labels": [
+        "身旺"
+      ],
+      "pattern_suffix": "",
+      "gender": "女",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC132",
+      "source_quote": "此造庚金生逢五月，乃正官格也。惜乎无一点财星，官无生意地支纯土，又透出枭神掩火，而金遭埋没，行西北方财官运，皆名利俱无也。",
+      "source_line": 2520,
+      "pillars": {
+        "year": "戊辰",
+        "month": "戊午",
+        "day": "庚辰",
+        "hour": "丁丑"
+      },
+      "real_datetime": "1928-06-09 01:30",
+      "labels": [
+        "财官"
+      ],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC133",
+      "source_quote": "此女命泛滥而无土止，更兼羊刃伤官，又行西北运，而流走无定，淫乱太盛，乃下贱也。",
+      "source_line": 2523,
+      "pillars": {
+        "year": "壬子",
+        "month": "癸卯",
+        "day": "壬子",
+        "hour": "庚子"
+      },
+      "real_datetime": "2032-03-07 00:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "女",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC134",
+      "source_quote": "此造庚金，日坐火库，得煅成器，再行丁巳运火乡再段，反为太过之患矣。盖以物理推之，庚申归禄，乃从革而成气之象也。复行火乡，又见损而不成物也。果在此运，事物变革，受其劳禄，再行卯运，及岁支财神会局，受职州判，大发财利。",
+      "source_line": 2528,
+      "pillars": {
+        "year": "癸卯",
+        "month": "庚申",
+        "day": "庚戌",
+        "hour": "甲申"
+      },
+      "real_datetime": "2023-08-20 15:30",
+      "labels": [
+        "太过"
+      ],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC135",
+      "source_quote": "此造乙日坐卯，虽禄得坦，奈生于寅月，阳木得令，阴木反弱，累年未遇。古云木向春生，作生旺论。却乙在二月得令，甲在正月。若失其时，反为身弱。直运至辛亥，亥卯合局印授扶身，戊子年中举，会试下第，授长山县知县。",
+      "source_line": 2531,
+      "pillars": {
+        "year": "癸丑",
+        "month": "甲寅",
+        "day": "乙卯",
+        "hour": "己卯"
+      },
+      "real_datetime": "2093-02-18 05:30",
+      "labels": [
+        "身弱"
+      ],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC136",
+      "source_quote": "此八字丙日主，干支俱系土象，无木成其火，故掩火无光。",
+      "source_line": 2534,
+      "pillars": {
+        "year": "癸未",
+        "month": "己未",
+        "day": "丙戌",
+        "hour": "己丑"
+      },
+      "real_datetime": "2003-07-12 01:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC137",
+      "source_quote": "此造甲日，身坐败地，生亥水失土所止，此人虽智巧，能说能为，特虚名一生，功名无成。",
+      "source_line": 2537,
+      "pillars": {
+        "year": "甲寅",
+        "month": "乙亥",
+        "day": "甲子",
+        "hour": "甲子"
+      },
+      "real_datetime": "1974-11-19 00:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC138",
+      "source_quote": "此造壬生子月，水局太旺，丑申金壬俱金水象，而无土止，行亥运，十六岁而死。",
+      "source_line": 2544,
+      "pillars": {
+        "year": "丁丑",
+        "month": "壬子",
+        "day": "壬申",
+        "hour": "辛丑"
+      },
+      "real_datetime": "1937-12-11 01:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC139",
+      "source_quote": "此造寅卯辰全，化像得令，作伤官用财格，乃王佥事命。",
+      "source_line": 2547,
+      "pillars": {
+        "year": "甲戌",
+        "month": "丁卯",
+        "day": "壬寅",
+        "hour": "甲辰"
+      },
+      "real_datetime": "1994-03-17 07:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC140",
+      "source_quote": "此造是赵子昂命，即赵孟兆。",
+      "source_line": 2550,
+      "pillars": {
+        "year": "甲寅",
+        "month": "甲戌",
+        "day": "己酉",
+        "hour": "己巳"
+      },
+      "real_datetime": "2034-10-20 09:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC141",
+      "source_quote": "此造是刘宦官命，即刘瑾。",
+      "source_line": 2551,
+      "pillars": {
+        "year": "己巳",
+        "month": "壬申",
+        "day": "己酉",
+        "hour": "甲戌"
+      },
+      "real_datetime": "1989-08-17 19:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC142",
+      "source_quote": "此阴木从金也。见前。",
+      "source_line": 2571,
+      "pillars": {
+        "year": "己巳",
+        "month": "癸酉",
+        "day": "乙丑",
+        "hour": "甲申"
+      },
+      "real_datetime": "1929-09-17 15:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC143",
+      "source_quote": "此造天干丙辛相合，不合地支子卯刑之，行乙卯运，因贪色病膀胱而亡。",
+      "source_line": 2599,
+      "pillars": {
+        "year": "壬辰",
+        "month": "壬子",
+        "day": "丙子",
+        "hour": "辛卯"
+      },
+      "real_datetime": "2072-12-26 05:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC144",
+      "source_quote": "此造生于秋令，而煞旺，坐卯而身强敌杀，柱中无食神以制杀，更透枭神，卯酉丑未相冲，为性不仁，凶恶好杀，贫乏终身。",
+      "source_line": 2604,
+      "pillars": {
+        "year": "癸丑",
+        "month": "辛酉",
+        "day": "乙卯",
+        "hour": "癸未"
+      },
+      "real_datetime": "1973-09-16 13:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC145",
+      "source_quote": "此造自坐枭神夺食，有贪食之病。行戊午运，戊子年，丁食午中己土，发杀禄于子，与日时卯宫无礼相刑，故初年食耗而退。",
+      "source_line": 2611,
+      "pillars": {
+        "year": "癸未",
+        "month": "丁巳",
+        "day": "丁卯",
+        "hour": "癸卯"
+      },
+      "real_datetime": "1943-05-09 05:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC146",
+      "source_quote": "此造乙与辛战斗，而卯日酉月相冲，始生之日，主迁移不定。又主所生之处，左有树木，右有金铺，前有道路。",
+      "source_line": 2614,
+      "pillars": {
+        "year": "癸丑",
+        "month": "辛酉",
+        "day": "乙卯",
+        "hour": "壬午"
+      },
+      "real_datetime": "1973-09-16 11:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC147",
+      "source_quote": "此命身坐戊戌，一生敬信神祗。",
+      "source_line": 2617,
+      "pillars": {
+        "year": "己酉",
+        "month": "丙子",
+        "day": "戊戌",
+        "hour": "癸亥"
+      },
+      "real_datetime": "2089-12-19 21:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC148",
+      "source_quote": "此造癸用戊土为官，柱中太多，反为不吉。行壬戌运，官多化煞而逝。",
+      "source_line": 2620,
+      "pillars": {
+        "year": "戊子",
+        "month": "丙辰",
+        "day": "癸巳",
+        "hour": "丙辰"
+      },
+      "real_datetime": "2068-04-08 07:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC149",
+      "source_quote": "此造乙木身弱，喜得四柱无一倚靠之神，地支三重酉，只作得从煞看，故富贵也，位至三公太保。",
+      "source_line": 2623,
+      "pillars": {
+        "year": "甲寅",
+        "month": "癸酉",
+        "day": "乙酉",
+        "hour": "乙酉"
+      },
+      "real_datetime": "2094-09-11 17:30",
+      "labels": [
+        "身弱"
+      ],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC150",
+      "source_quote": "此造木生春月，四柱纯全旺，又非死绝乡，故官至御史。",
+      "source_line": 2640,
+      "pillars": {
+        "year": "癸卯",
+        "month": "甲寅",
+        "day": "甲辰",
+        "hour": "乙亥"
+      },
+      "real_datetime": "2023-02-15 21:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC151",
+      "source_quote": "此造壬生庚为偏印，寅为财食，故壬子生寅木，而为庚之财也，却赖庚金生身，故为富家掌财也。",
+      "source_line": 2643,
+      "pillars": {
+        "year": "庚子",
+        "month": "戊寅",
+        "day": "壬子",
+        "hour": "壬寅"
+      },
+      "real_datetime": "2080-02-24 03:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC152",
+      "source_quote": "此造癸用戊官丙财，得禄于己，运行方受赦令，行酉运不禄。",
+      "source_line": 2646,
+      "pillars": {
+        "year": "戊子",
+        "month": "丙辰",
+        "day": "癸巳",
+        "hour": "庚申"
+      },
+      "real_datetime": "2068-04-08 15:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC153",
+      "source_quote": "此造甲木食神得禄，造化可取，不合身坐刃地，会水局。夺了丙火财星，行庚午运，食神被伤，而一贫彻骨。",
+      "source_line": 2649,
+      "pillars": {
+        "year": "甲辰",
+        "month": "丙寅",
+        "day": "壬子",
+        "hour": "辛亥"
+      },
+      "real_datetime": "2024-02-18 21:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC154",
+      "source_quote": "此命无财可倚，而金水太旺，运行西方，卖尽田园而贫。",
+      "source_line": 2655,
+      "pillars": {
+        "year": "辛丑",
+        "month": "庚子",
+        "day": "壬申",
+        "hour": "辛亥"
+      },
+      "real_datetime": "2082-01-04 21:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC155",
+      "source_quote": "此造源远命，拜将封王，一位贵格也。",
+      "source_line": 2665,
+      "pillars": {
+        "year": "甲申",
+        "month": "丙寅",
+        "day": "乙卯",
+        "hour": "辛巳"
+      },
+      "real_datetime": "2004-02-06 09:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC156",
+      "source_quote": "此造丁化壬木，二月得令，惜乎壬水自坐长生持势，巳申类金局以克木，化木不成，又支元刑冲，乃下造也。辛亥 辛丑 丙子 己亥 此造地支亥子丑，类成水局而化，有所贵，故贵。此翰林方状元命。",
+      "source_line": 2668,
+      "pillars": {
+        "year": "甲午",
+        "month": "丁卯",
+        "day": "壬申",
+        "hour": "乙巳"
+      },
+      "real_datetime": "1954-03-17 09:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    },
+    {
+      "id": "SFC157",
+      "source_quote": "此造先贵后贱，盖丙前逢官，后归败地，又子卯相刑，失其官显，故先贵后贱，而子癸生乙木，盗官之气也。",
+      "source_line": 2681,
+      "pillars": {
+        "year": "己酉",
+        "month": "丙子",
+        "day": "丙寅",
+        "hour": "辛卯"
+      },
+      "real_datetime": "1969-12-17 05:30",
+      "labels": [],
+      "pattern_suffix": "",
+      "gender": "",
+      "verdict": null,
+      "case_kind": "命例（行首四柱＋断语，程序化提取）",
+      "enroll_status": "未开卷·不入册·不出分",
+      "block": "未授权入册；标签只是格局／强弱形态词，不含吉凶方向与用神判定",
+      "dedup": "已与在册案例及《滴天髓》候选池按四柱去重",
+      "notes": "断语为该行余文逐字截取；四柱由行首正则解析，非手抄"
+    }
+  ],
+  "excluded": [
+    {
+      "source_line": 209,
+      "reason": "与在册案例同四柱（同源书承袭同案，545 批口径）"
+    },
+    {
+      "source_line": 215,
+      "reason": "与在册案例同四柱（同源书承袭同案，545 批口径）"
+    },
+    {
+      "source_line": 248,
+      "reason": "断语与本池前案逐字相同（同一考点不重复计入）"
+    },
+    {
+      "source_line": 360,
+      "reason": "与在册案例同四柱（同源书承袭同案，545 批口径）"
+    },
+    {
+      "source_line": 404,
+      "reason": "与在册案例同四柱（同源书承袭同案，545 批口径）"
+    },
+    {
+      "source_line": 584,
+      "reason": "与在册案例同四柱（同源书承袭同案，545 批口径）"
+    },
+    {
+      "source_line": 592,
+      "reason": "与在册案例同四柱（同源书承袭同案，545 批口径）"
+    },
+    {
+      "source_line": 659,
+      "reason": "与在册案例同四柱（同源书承袭同案，545 批口径）"
+    },
+    {
+      "source_line": 671,
+      "reason": "与在册案例同四柱（同源书承袭同案，545 批口径）"
+    },
+    {
+      "source_line": 758,
+      "reason": "与在册案例同四柱（同源书承袭同案，545 批口径）"
+    },
+    {
+      "source_line": 800,
+      "reason": "与在册案例同四柱（同源书承袭同案，545 批口径）"
+    },
+    {
+      "source_line": 827,
+      "reason": "与在册案例同四柱（同源书承袭同案，545 批口径）"
+    },
+    {
+      "source_line": 840,
+      "reason": "与在册案例同四柱（同源书承袭同案，545 批口径）"
+    },
+    {
+      "source_line": 2662,
+      "reason": "与在册案例同四柱（同源书承袭同案，545 批口径）"
+    },
+    {
+      "source_line": 358,
+      "reason": "四柱穷举 1900–2100 找不出真实时刻（五虎遁／五鼠遁违律，疑底本讹字）"
+    },
+    {
+      "source_line": 2540,
+      "reason": "四柱穷举 1900–2100 找不出真实时刻（五虎遁／五鼠遁违律，疑底本讹字）"
+    },
+    {
+      "source_line": 2578,
+      "reason": "四柱穷举 1900–2100 找不出真实时刻（五虎遁／五鼠遁违律，疑底本讹字）"
+    }
+  ],
+  "open_result": null
+}
