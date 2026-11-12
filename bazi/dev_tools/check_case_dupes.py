@@ -46,6 +46,11 @@ def load_cases(cases_dir: pathlib.Path) -> list[dict]:
     for p in sorted(cases_dir.glob("*.json")):
         if p.name == LEDGER.name:
             continue
+        if p.name.endswith("_candidates.json"):
+            # 候选池**未入册**（不在任何分片），其"考点"不参与考卷分母；
+            # 池内重复由建器去重＋各池自己的复验器（条数固定、逐格对拍）负责。
+            # 一旦某池获授权入册，案例会写进在册文件，本门即刻覆盖它们。
+            continue
         try:
             d = json.loads(p.read_text(encoding="utf-8"))
         except Exception as exc:

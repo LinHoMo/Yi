@@ -46,6 +46,7 @@ for _p in (str(DISC / "scripts"), str(DISC / "core")):
 POOLS = (
     (DISC / "data" / "cases" / "dts_candidates.json", "滴天髓闡微·机器认定池"),
     (DISC / "data" / "cases" / "shenfeng_candidates.json", "神峰通考·命例池"),
+    (DISC / "data" / "cases" / "dts_manual_candidates.json", "滴天髓闡微·人工认定池"),
 )
 STATUS_OPEN = "已开卷一次·逐例红绿·无率值"
 STRENGTH_WORDS = {
@@ -58,6 +59,9 @@ METRIC_FROZEN = "引擎 strength.strength（偏弱／偏旺／中和）↔ 书�
 
 def book_strength(pool_path: Path, case: dict) -> str | None:
     """书载强度档：只从**机械映射**取，取不到即无判准（记不适用）。"""
+    manual = case.get("manual_strength")
+    if manual in ("偏弱", "偏旺", "中和"):
+        return manual
     if pool_path.name.startswith("dts_"):
         cat = case.get("category")
         return cat if cat in ("偏弱", "偏旺", "中和") else None
@@ -246,6 +250,7 @@ def main() -> int:
     ap.add_argument("--open", action="store_true")
     ap.add_argument("--verify", action="store_true")
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--only", default="", help="只处理指定池文件名（如 dts_manual_candidates.json）")
     args = ap.parse_args()
     if args.selftest:
         return selftest()
@@ -253,6 +258,11 @@ def main() -> int:
         return verify()
     rc = 0
     for pool_path, _label in POOLS:
+        if args.only and args.only not in pool_path.name:
+            continue
+        if args.open and json.loads(pool_path.read_text(encoding="utf-8")).get("open_result") is not None:
+            print(f"  · {pool_path.name}：已开卷（跳过，不重开）")
+            continue
         rc |= open_pool(pool_path, dry=not args.open)
     return rc
 

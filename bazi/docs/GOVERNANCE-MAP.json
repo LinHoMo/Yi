@@ -1,8 +1,8 @@
 {
- "count": 54,
+ "count": 56,
  "by_tier": {
   "tool": 2,
-  "ondemand": 13,
+  "ondemand": 15,
   "build": 8,
   "blocking": 30,
   "nightly": 1
@@ -67,6 +67,13 @@
    "guards": "滴天髓语料构建",
    "run_by_check_py": true,
    "doc": "从《滴天髓》书源机械提取引擎所引章节 → bazi/data/ditian_sui.json（引文层）。"
+  },
+  {
+   "script": "build_dts_manual_candidates.py",
+   "tier": "ondemand",
+   "guards": "《滴天髓阐微》人工认定版候选池构建器（569 批：12 条主语不明的旺衰逐条人工认定，档位＋逐字原话＋理由；池内容须与「源池 + 人工表」逐字节一致，片段逐字在构建时即断言）",
+   "run_by_check_py": false,
+   "doc": "《滴天髓闡微》人工认定版候选池（569 批）——12 案逐条签判准。"
   },
   {
    "script": "build_siku_dz.py",
@@ -382,6 +389,13 @@
    "guards": "《滴天髓阐微》候选池同源复验（565 批：15 案引文逐字回底本＋四柱可复算＋归类可复算＋无 expected/verdict 反推＋未开卷（open_result 须 null）＋预注册必备＋与在册案例零同四柱；13 类内存负例，真盘零写入）",
    "run_by_check_py": false,
    "doc": "《滴天髓闡微》机器认定候选池同源复验（第 565 批，只读）。"
+  },
+  {
+   "script": "verify_dts_manual_candidates.py",
+   "tier": "ondemand",
+   "guards": "《滴天髓阐微》人工认定池同源复验（569 批：与「源池 + 人工表」一致、原话逐字、理由齐备、无 expected/verdict 反推、开卷记录结构与只许一次、三方零同四柱；8 类内存负例，真盘零写入）",
+   "run_by_check_py": false,
+   "doc": "《滴天髓闡微》人工认定候选池同源复验（第 569 批，只读）。"
   },
   {
    "script": "verify_shenfeng_candidates.py",

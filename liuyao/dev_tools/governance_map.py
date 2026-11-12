@@ -56,6 +56,10 @@ CURATED = {
 
         # 568 批：一次性开卷器，同批入表（511 批「未分类」教训）。--open 只许一次，--verify 挂 CI。
         "open_candidate_pools": ("ondemand", "八字候选池一次性开卷（568 批：主指标＝引擎 strength.strength ↔ 书载强度档；n<30 只报逐例红绿、aggregate 恒 null；开封只此一次、判卷痕迹与 result_sha 双指纹可验；5 类内存负例，真盘零写入）"),
+
+        # 569 批：新器自落库即入表（511 批「未分类」教训）。只读/构建器、不进 check.py、不新增门号。
+        "build_dts_manual_candidates": ("ondemand", "《滴天髓阐微》人工认定版候选池构建器（569 批：12 条主语不明的旺衰逐条人工认定，档位＋逐字原话＋理由；池内容须与「源池 + 人工表」逐字节一致，片段逐字在构建时即断言）"),
+        "verify_dts_manual_candidates": ("ondemand", "《滴天髓阐微》人工认定池同源复验（569 批：与「源池 + 人工表」一致、原话逐字、理由齐备、无 expected/verdict 反推、开卷记录结构与只许一次、三方零同四柱；8 类内存负例，真盘零写入）"),
         "check_case_isolation": ("blocking", "铁律二：解读路径不得触案例库"),
         "check_regex_lists": ("blocking", "正则字符类 list 展平审计（209 批：§二 静默全盲规矩的核对版）"),
         "check_case_pillars": ("blocking", "命例基准自洽（expected 四柱可反算）"),
