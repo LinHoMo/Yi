@@ -23,6 +23,7 @@
 | `references/bazi_nayin_shiyi.md` | 纳音释义逐句（书源《命理探源》） |
 | `references/bazi_ditian_sui.md` | 滴天髓要义补遗：体用、衰旺、八格取法、病药（逐字书源《滴天髓闡微》） |
 | `references/sanming_tonghui.md` | 《三命通会》要义补遗：55 条「论…」条目导览＋纳音／神煞逐字断语（体例为整段散文，命例需人工读） |
+| `references/judge_comparability.md` | **判准可比性矩阵**（570 批）：书载断语↔引擎字段逐类可比性判定（强弱档可比但量纲不同／吉凶断语与复合格名不可比）＋人工认定勘误 |
 
 ## 评测
 

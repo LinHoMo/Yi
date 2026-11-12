@@ -1,0 +1,19 @@
+{
+  "schema": "yi-case-corrections/1",
+  "batch": 570,
+  "discipline": "bazi",
+  "_comment": "人工认定勘误登记：569 批人工认定池已一次性开卷，判卷痕迹只追加、不改写，故更正登记于此，供下一批另立池时采用（570 批 §二.1 与 §五）。",
+  "corrections": [
+    {
+      "case_id": "DTM003",
+      "pool": "dts_manual_candidates.json",
+      "field": "manual_strength",
+      "was": "中和",
+      "should_be": "偏旺",
+      "reason": "原话「日主之气不薄」只说明日主不弱（「不薄」≠「中和」），按 §二 量纲差异与「得地／根元」一路，应判偏旺。",
+      "source_quote": "春土坐亥  财官太旺，最喜独印逢生。财藏生官，财印绶之元神愈旺；气贯生时 ，而日主之气不薄；更妙连珠生化，尤羡运途不悖。所以恩分雕绵，宠锡金莲，地近清楚，职居津要。",
+      "quote_anchor": "日主之气不薄",
+      "apply_when": "下一批另立人工池（不得改写已开卷池）"
+    }
+  ]
+}

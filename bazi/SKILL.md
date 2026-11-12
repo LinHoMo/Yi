@@ -41,6 +41,7 @@
 | `references/bazi_yue_shi_ge.md` | 五虎遁/五鼠遁与月支格局 | 排盘口径有疑时 |
 | `references/bazi_ditian_sui.md` | 滴天髓要义：体用、衰旺、八格取法、病药（引擎未实现结构化格局） | 问格局取法、体用扶抑、病药 |
 | `references/sanming_tonghui.md` | 《三命通会》条目导览与纳音／神煞断语（引擎未实现条目级判定） | 问《三命通会》怎么说、纳音总断 |
+| `references/judge_comparability.md` | 判准可比性矩阵：书载断语与引擎字段哪些能比、哪些不能 | 拿古籍断语对引擎输出前先查 |
 | `references/bazi_nayin_shiyi.md` | 纳音释义 | 用到纳音取象时 |
 
 ## 另两条铁律（操作版；全文见仓库根 `AGENTS.md` §一）
