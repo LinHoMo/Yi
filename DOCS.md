@@ -26,7 +26,7 @@
 | **要引用对外数字的人** | `CAPABILITY.md` | `liuyao/README.md`／`bazi/README.md` | 各科 `liuyao/docs/CHANGELOG.md`／`bazi/docs/CHANGELOG.md`（最近窗口）＋ 对应 `CHANGELOG-HISTORY-INDEX.md`（逐批一句话） |
 | **要按缺口继续迭代的人** | `GOVERNANCE.md`「当前真缺口」（523 批逐条核实，历史待办现状以此为准） | `CAPABILITY.md`「已知欠账」 | 对应批次的 git 提交（主 CHANGELOG 只留一行摘要） |
 | **要整理仓库／清垃圾的人** | `REPO-HYGIENE.md`（六类边界、目录契约、生成物再生、清理清单） | `devkit/root/check_repo_hygiene.py` 实跑 | `AGENTS.md` §一／§二（铁律与依赖契约） |
-| **联网检索的网页端 AI／只想读知识的人** | `llms.txt`（机器可读入口与 raw 直链） | `KNOWLEDGE.md`（自包含知识速读） | `examples/` 两份引擎实跑结论 |
+| **联网检索的网页端 AI／只想读知识的人** | `llms.txt`（机器可读入口与 raw 直链） | `KNOWLEDGE.md`（自包含知识速读） | `conclusions/INDEX.md` 引擎实跑结论（查表用） |
 
 ---
 
@@ -141,9 +141,6 @@
 |---|---|---|
 | `KNOWLEDGE.md` | 面向 AI 的自包含术数知识速读（术语表、四段契约、三条铁律、FAQ）；由构建器拼装 | 生成物 |
 | `kb/INDEX.md` | 面向 GitHub 读者与联网 AI 的判据篇目导览＋raw 直链（与随包 INDEX 用途不同） | 生成物 |
-| `examples/liuyao-example.md` | 固定输入下由四段流水线实跑生成的六爻完整结论报告 | 生成物 |
-| `examples/liuyao-time-example.md` | 固定输入下由四段流水线实跑生成的六爻「时间起卦」结论报告（确定性起卦，演示 time 模式） | 生成物 |
-| `examples/bazi-example.md` | 固定输入下由四段流水线实跑生成的八字完整结论报告 | 生成物 |
 | `outreach/README.md` | 对外层的真源／产物／铁律／命令说明 | 活文档 |
 | `outreach/KNOWLEDGE-BODY.md` | 知识正文的人写真源（构建器把它拼进 `KNOWLEDGE.md`） | 活文档 |
 | `outreach/RELEASE-NOTES.md` | 自动发布 Release 的正文真源（口径声明随包，不用 `--generate-notes`） | 活文档 |
@@ -153,7 +150,7 @@
 
 | 文件 | 一句话 | 状态 |
 |---|---|---|
-| `conclusions/README.md` | **结论库说明**（554 批）：这一层是什么、与 `examples/` 的区别、覆盖范围、三条铁律怎么守、网页版 AI 的查表协议 | 活文档 |
+| `conclusions/README.md` | **结论产物层说明**（554 批建，555 批并掉原示例目录）：覆盖范围、三条铁律怎么守、网页版 AI 的查表协议 | 活文档 |
 | `conclusions/INDEX.md` | **结论库索引**：固定输入 → 报告／JSON／sha256 的映射；AI 与人都从这里进 | 生成物 |
 | `conclusions/liuyao/ly-coin-2026-01-15.md` | 六爻结论快照：coin 模式、2026-01-15 10:30、seed 42（中性示例问句） | 生成物 |
 | `conclusions/liuyao/ly-time-2026-03-18.md` | 六爻结论快照：time 模式、2026-03-18 14:00（确定性起卦） | 生成物 |

@@ -6,7 +6,7 @@
 外部 AI 即使搜到仓库也读不到任何成品。本器把三样东西从真源**现场生成**并入库：
 
   1. `llms.txt` / `KNOWLEDGE.md` / `kb/INDEX.md` —— 面向 AI 读者的自包含导览与 raw 直链；
-  2. `examples/liuyao-example.md` / `examples/bazi-example.md` —— **由两科四段流水线实跑生成**
+  2. `llms.txt` / `KNOWLEDGE.md` / `kb/INDEX.md` —— 结论部分统一指向 `conclusions/`（固定输入快照）
      的完整术数结论（固定输入、逐字节可复现，非手写）；
   3. `site/**` —— 不入库（gitignore），供 GitHub Pages Actions 现场生成后部署。
      每篇判据/示例除 `.md` 原文外另出**HTML 可读版**：Pages 对 `.md` 给 `text/markdown`，
@@ -67,9 +67,6 @@ TRACKED = (
     "llms.txt",
     "KNOWLEDGE.md",
     "kb/INDEX.md",
-    "examples/liuyao-example.md",
-    "examples/liuyao-time-example.md",
-    "examples/bazi-example.md",
 )
 
 ROW_LINE_RE = re.compile(r"^\['([^']+\.md)',\s*'([^']*)'\],?$")
@@ -93,12 +90,6 @@ BZ_DATETIME = "1990-05-20 10:30"
 BZ_GENDER = "男"
 BZ_QUESTION = "示例：命局结构说明"
 
-CALIBER = (
-    "> **口径说明**：本报告全部由 Python 引擎按四段契约 `chart → analyze → narrate → render`\n"
-    "> 机械生成，未由语言模型改写任何排盘或判定结论。仓库内一切分数都是**古籍案例对齐分**\n"
-    "> （回归审计用），**不是现实命中率**；现实侧样本为零。本内容是条件化倾向陈述，不是预言；\n"
-    "> 医疗、法律、投资及重大决策请以专业意见为准。示例问句为演示用中性问句，不引用任何古籍案例。\n"
-)
 
 
 def _read(path: Path) -> str:
@@ -341,23 +332,6 @@ print(render(a, fmt="md"), end="")
     }
 
 
-def _example(title: str, repro_cmd: str, input_desc: str, body: str) -> str:
-    return (
-        "<!-- 由 outreach/build_outreach.py --write 生成；结论由引擎实跑，请勿手改 -->\n"
-        f"# {title}\n\n"
-        "> 这是一份**代码产出的实际术数结论**：下方「引擎报告原文」逐字来自两科\n"
-        "> `chart → analyze → narrate → render` 四段流水线的 `render` 输出，未作任何人工改写。\n\n"
-        f"- 输入：{input_desc}\n"
-        f"- 复现（仓库根）：`{repro_cmd}`\n"
-        "- 同源复验：`python outreach/build_outreach.py --check`（逐字节比对，漂移即判红）\n"
-        "- 用途：供网页端大模型读取并据此解释术语、示范解读骨架；**不是对新占问的现场起卦**。\n\n"
-        "---\n\n"
-        "## 引擎报告原文\n\n"
-        + body + "\n---\n\n"
-        + CALIBER
-    )
-
-
 def _site_index_md(rows: list[tuple[str, str]], mirrors: dict[str, str]) -> str:
     """`kb/INDEX.md` 的 Pages 镜像：篇目/顺序/「什么时候读」同源，链接改站内相对路径。
 
@@ -381,7 +355,7 @@ def _site_index_md(rows: list[tuple[str, str]], mirrors: dict[str, str]) -> str:
         "## 怎么离线读",
         "",
         "- 整站是纯静态文件：离线解压后直接打开本页或同目录的 `INDEX.html`（无 JS、无外链、无 CDN）。",
-        "- 每篇判据在 `../knowledge/`（相对本页）有**可读 HTML 全文**，示例在 `../examples/`；点开即网页。",
+        "- 每篇判据在 `../knowledge/`（相对本页）有**可读 HTML 全文**；结论快照在仓库 `conclusions/`（见下）。",
         "- 每篇另有同名 `.md` 原文（同目录），适合直接抓取、diff 或喂给工具；内容与 HTML 逐字同源。",
         "- 需要确认真源时再用仓库 `kb/INDEX.md` 的 raw 直链（需联网）。",
         "",
@@ -399,9 +373,9 @@ def _site_index_md(rows: list[tuple[str, str]], mirrors: dict[str, str]) -> str:
     lines += [
         "## 示例结论（引擎实跑）",
         "",
-        "- [六爻纳甲占报告](../examples/liuyao-example.html)",
-        "- [六爻时间起卦报告](../examples/liuyao-time-example.html)",
-        "- [八字命局因子说明](../examples/bazi-example.html)",
+        f"- [结论库索引]({RAW}/conclusions/INDEX.md)（固定输入快照：命中即引用，未命中说未收录）",
+        f"- [六爻 · coin 示例]({RAW}/conclusions/liuyao/ly-coin-2026-01-15.md)",
+        f"- [八字 · 男命示例]({RAW}/conclusions/bazi/bz-1990-05-20-male.md)",
         "",
         "## 其它入口",
         "",
@@ -464,9 +438,9 @@ def _site_index_html(rows: list[tuple[str, str]], mirrors: dict[str, str]) -> st
         "<h2>六爻</h2>\n" + table("liuyao") + "\n"
         "<h2>八字</h2>\n" + table("bazi") + "\n"
         "<h2>示例结论（引擎实跑）</h2>\n<ul>\n"
-        '<li><a href="../examples/liuyao-example.html">六爻纳甲占报告</a></li>\n'
-        '<li><a href="../examples/liuyao-time-example.html">六爻时间起卦报告</a></li>\n'
-        '<li><a href="../examples/bazi-example.html">八字命局因子说明</a></li>\n'
+        f'<li><a href="{RAW}/conclusions/INDEX.md">结论库索引</a>（固定输入快照）</li>\n'
+        f'<li><a href="{RAW}/conclusions/liuyao/ly-coin-2026-01-15.md">六爻 · coin 示例</a> · '
+        f'<a href="{RAW}/conclusions/bazi/bz-1990-05-20-male.md">八字 · 男命示例</a></li>\n'
         "</ul>\n"
         "<h2>其它入口</h2>\n<ul>\n"
         '<li><a href="../index.html">首页</a> · <a href="../KNOWLEDGE.html">知识速读全文</a> · '
@@ -998,15 +972,11 @@ def check_artifact_coverage(
         problems += check_site_links(site, rel)
     for key, _ in rows:
         problems += check_site_links(site, f"site/knowledge/{key.replace('/', '__')[:-3]}.html")
-    for rel in ("examples/liuyao-example.html", "examples/liuyao-time-example.html", "examples/bazi-example.html"):
-        if f"site/{rel}" in site:
-            problems += check_site_links(site, f"site/{rel}")
     return problems
 
 def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
     """返回 (入库产物, site 产物)，值统一为 LF 文本。"""
     validate_rows(rows)
-    reports = engine_reports()
 
     # 1) llms.txt —— 机器可读索引，全部给 raw 直链（网页端 AI 读 blob 常失败）
     llms = [
@@ -1025,11 +995,12 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
         f"- [判据索引离线镜像]({PAGES}kb/INDEX.md)：同一批篇目的站内全文副本，断网也能逐篇读完",
         f"- [GitHub Pages 站点]({PAGES})：无需登录的静态知识镜像",
         "",
-        "## 代码产出的实际结论（引擎实跑示例报告）",
+        "## 结论库（固定输入的引擎快照：先查表，再回答）",
         "",
-        f"- [六爻纳甲占报告示例]({RAW}/examples/liuyao-example.md)：固定输入下的完整六爻结论与应期窗口",
-        f"- [六爻时间起卦报告示例]({RAW}/examples/liuyao-time-example.md)：time 模式确定性起卦、同一时刻必得同卦",
-        f"- [八字命局因子说明示例]({RAW}/examples/bazi-example.md)：固定输入下的四柱、强弱、格局、喜用、大运流年",
+        f"- [结论库索引]({RAW}/conclusions/INDEX.md)：输入 → 报告 → JSON → sha256；命中即引用，未命中必须说「未收录」",
+        f"- [六爻 · coin 示例]({RAW}/conclusions/liuyao/ly-coin-2026-01-15.md)：同一 seed 必得同卦，可逐字节复算",
+        f"- [六爻 · time 示例]({RAW}/conclusions/liuyao/ly-time-2026-03-18.md)：时间起卦，确定性",
+        f"- [八字 · 男命示例]({RAW}/conclusions/bazi/bz-1990-05-20-male.md)：四柱、强弱、格局、喜用、大运流年",
         "",
         "## 判据知识库（按需读，勿整本读）",
         "",
@@ -1070,9 +1041,9 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
         "",
         "## 九、代码产出的示例结论",
         "",
-        f"- 六爻：[examples/liuyao-example.md]({RAW}/examples/liuyao-example.md)（{PAGES} 同步镜像）",
-        f"- 六爻·时间起卦：[examples/liuyao-time-example.md]({RAW}/examples/liuyao-time-example.md)",
-        f"- 八字：[examples/bazi-example.md]({RAW}/examples/bazi-example.md)",
+        f"- 结论库索引：[conclusions/INDEX.md]({RAW}/conclusions/INDEX.md)（输入 → 报告 → JSON → sha256）",
+        f"- 六爻 · coin：[conclusions/liuyao/ly-coin-2026-01-15.md]({RAW}/conclusions/liuyao/ly-coin-2026-01-15.md)",
+        f"- 八字 · 男命：[conclusions/bazi/bz-1990-05-20-male.md]({RAW}/conclusions/bazi/bz-1990-05-20-male.md)",
         "",
         "两份报告均由固定输入下的四段流水线实跑生成，含完整结论、应期窗口、旺衰动变、",
         "格局喜用与判据所本，可用作解读范式。**静态示例不能代替现场起卦**：要为新占问出结论，",
@@ -1114,9 +1085,9 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
         "",
         "## 示例结论",
         "",
-        f"- [六爻报告示例]({RAW}/examples/liuyao-example.md)",
-        f"- [六爻时间起卦示例]({RAW}/examples/liuyao-time-example.md)",
-        f"- [八字报告示例]({RAW}/examples/bazi-example.md)",
+        f"- [结论库索引]({RAW}/conclusions/INDEX.md)（固定输入快照：命中即引用，未命中说未收录）",
+        f"- [六爻 · coin 示例]({RAW}/conclusions/liuyao/ly-coin-2026-01-15.md)",
+        f"- [八字 · 男命示例]({RAW}/conclusions/bazi/bz-1990-05-20-male.md)",
         "",
         "## ⛔ 不在此目录的内容",
         "",
@@ -1154,15 +1125,6 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
         "llms.txt": "\n".join(llms),
         "KNOWLEDGE.md": knowledge,
         "kb/INDEX.md": "\n".join(idx),
-        "examples/liuyao-example.md": _example(
-            "示例报告 · 六爻纳甲（引擎实跑）", ly_repro, ly_input, reports["liuyao"]
-        ),
-        "examples/liuyao-time-example.md": _example(
-            "示例报告 · 六爻时间起卦（引擎实跑）", ly_time_repro, ly_time_input, reports["liuyao_time"]
-        ),
-        "examples/bazi-example.md": _example(
-            "示例报告 · 八字四柱（引擎实跑）", bz_repro, bz_input, reports["bazi"]
-        ),
     }
 
     # 4) site/ —— 不入库，Pages Actions 现场生成
@@ -1184,9 +1146,6 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
     for key, _ in rows:
         disc, name = key.split("/")
         repo_map[f"{disc}/references/{name}"] = f"knowledge/{key.replace('/', '__')[:-3]}.html"
-    for rel in tracked:
-        if rel.startswith("examples/"):
-            repo_map[rel] = rel[:-3] + ".html"
     pages: dict[str, str] = {}
     anchor_problems: list[str] = []
     for key, _ in rows:
@@ -1201,15 +1160,6 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
         )
         anchor_problems += check_anchors(src_md, page) + check_internal_anchors(page)
         pages[f"knowledge/{stem}.html"] = page
-    for rel in [r for r in tracked if r.startswith("examples/")]:
-        page = _page_html(
-            f"{Path(rel).stem} · 易（Yi）",
-            md_to_html(tracked[rel], _resolver("examples", "examples", repo_map)),
-            "examples",
-            rel,
-        )
-        anchor_problems += check_anchors(tracked[rel], page) + check_internal_anchors(page)
-        pages[rel[:-3] + ".html"] = page
     page = _page_html(
         "知识速读 · 易（Yi）",
         md_to_html(knowledge, _resolver("", ".", repo_map)),
@@ -1272,13 +1222,13 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
         f'<li><a href="{RAW}/README.md">README.md</a> — 安装与 clone／skills／插件使用</li>\n'
         f'<li><a href="{RAW}/outreach/WEB-AI-PROMPT.md">网页版 AI 提示词模板</a> — 给 ChatGPT／Claude 等网页版模型的口径与边界</li>\n'
         "</ul>\n"
-        "<h2>代码产出的实际结论</h2>\n<ul>\n"
-        f'<li><a href="{RAW}/examples/liuyao-example.md">六爻纳甲占报告（引擎实跑）</a></li>\n'
-        f'<li><a href="{RAW}/examples/liuyao-time-example.md">六爻时间起卦报告（引擎实跑）</a></li>\n'
-        f'<li><a href="{RAW}/examples/bazi-example.md">八字命局因子说明（引擎实跑）</a></li>\n'
+        "<h2>结论库（固定输入的引擎快照）</h2>\n<ul>\n"
+        f'<li><a href="{RAW}/conclusions/INDEX.md">结论库索引</a> — 输入 → 报告 → JSON → sha256</li>\n'
+        f'<li><a href="{RAW}/conclusions/liuyao/ly-coin-2026-01-15.md">六爻 · coin 示例</a> · '
+        f'<a href="{RAW}/conclusions/bazi/bz-1990-05-20-male.md">八字 · 男命示例</a></li>\n'
         "</ul>\n"
-        "<p>三份示例均由固定输入下的四段流水线 <code>chart → analyze → narrate → render</code> "
-        "现场生成，逐字节同源复验；静态示例不能代替现场起卦。</p>\n"
+        "<p>结论由固定输入下的四段流水线现场生成、逐字节同源复验；库只覆盖索引里列出的输入，"
+        "未收录的请本地跑引擎——静态快照不能代替现场起卦。</p>\n"
         "<h2>判据知识库（站内可读版，按需读、勿整本读）</h2>\n<ul>\n" + nav_rows + "\n</ul>\n"
         "<h2>不用于解读</h2>\n"
         "<p><code>case_library.md</code> 虽在仓库公开，按 AGENTS.md §一.2 与解读物理隔离："
@@ -1302,24 +1252,18 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
                 f"[{key.split('/')[1]}](knowledge/{key.replace('/', '__')[:-3]}.html)" for key, _ in rows
             ) + "\n"
             "- 同名 `.md` 原文仍在同目录，供抓取与 diff。\n"
-            "- 示例结论：[六爻报告](examples/liuyao-example.md)、[六爻时间起卦](examples/liuyao-time-example.md)、[八字报告](examples/bazi-example.md)\n\n"
+            "- 结论库：[索引](https://github.com/LinHoMo/Yi/blob/main/conclusions/INDEX.md)"
+            "（固定输入快照，命中即引用、未命中说未收录）\n\n"
             "---\n\n" + knowledge
         ),
         "site/llms.txt": "\n".join(llms),
         "site/WEB-AI-PROMPT.md": prompt_md,
         "site/web-ai-test-message.txt": _test_message(sample),
-        "site/examples/liuyao-example.md": tracked["examples/liuyao-example.md"],
-        "site/examples/liuyao-time-example.md": tracked["examples/liuyao-time-example.md"],
-        "site/examples/bazi-example.md": tracked["examples/bazi-example.md"],
     }
     for rel, text in mirrors.items():
         site[f"site/{rel}"] = text
     for rel, text in pages.items():
         site[f"site/{rel}"] = text
-    # 守卫：每个入库示例必须在 site/ 有镜像，否则 Pages 会 404（549/551 两次踩过）
-    for rel in tracked:
-        if rel.startswith("examples/"):
-            assert f"site/{rel}" in site, f"site/ 缺少示例镜像：{rel}"
     # 守卫：双登记表的每一篇在四份对外产物＋站内镜像里都要恰好出现一次
     problems = check_artifact_coverage(rows, tracked, site)
     if problems:
@@ -1339,13 +1283,6 @@ def validate(tracked: dict[str, str]) -> None:
             for bad in FORBIDDEN:
                 if bad in line:
                     raise ValueError(f"对外文本出现禁句「{bad}」：{rel}")
-    for rel in (k for k in tracked if k.startswith("examples/")):
-        text = tracked[rel]
-        for must in ("古籍案例对齐分", "专业意见", "引擎报告原文", "不是现实命中率"):
-            if must not in text:
-                raise ValueError(f"示例缺口径/结构标记「{must}」：{rel}")
-        if "case_library" in text:
-            raise ValueError(f"示例不得引用案例库：{rel}")
     if "三条铁律" not in tracked["KNOWLEDGE.md"]:
         raise ValueError("KNOWLEDGE.md 缺铁律章节")
     if "raw.githubusercontent.com" not in tracked["llms.txt"]:
@@ -1406,11 +1343,8 @@ def selftest() -> int:
     check("删掉一个产物 → 同源复验判红", lambda: any(
         "缺产物" in p for p in compare({k: v for k, v in tracked.items() if k != "kb/INDEX.md"})
     ))
-    check("示例删口径脚注 → 校验判红", lambda: rejects(lambda: validate({
-        **tracked, "examples/liuyao-example.md": tracked["examples/liuyao-example.md"].replace("古籍案例对齐分", "")
-    })))
-    check("示例出现禁句 → 校验判红", lambda: rejects(lambda: validate({
-        **tracked, "examples/bazi-example.md": tracked["examples/bazi-example.md"] + "预测准确率 99%"
+    check("产物出现禁句 → 校验判红", lambda: rejects(lambda: validate({
+        **tracked, "KNOWLEDGE.md": tracked["KNOWLEDGE.md"] + "预测准确率 99%"
     })))
     check("登记表注入案例库 → 校验判红", lambda: rejects(
         lambda: validate_rows(rows + [("liuyao/case_library.md", "x")])
@@ -1492,7 +1426,7 @@ def selftest() -> int:
     )))
     check("INDEX 站内链接指空 → 链接门判红", lambda: bool(check_site_links(
         {**site, "site/kb/INDEX.md": site["site/kb/INDEX.md"].replace(
-            "../examples/liuyao-example.html", "../examples/nope.html")},
+            "../index.html", "../nope.html")},
         "site/kb/INDEX.md",
     )))
     check("site/kb/INDEX.md 漏一篇 → 覆盖判红", lambda: bool(check_artifact_coverage(

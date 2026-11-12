@@ -1,5 +1,7 @@
 # 易（Yi）
 
+> **给网页端 AI 的第一入口**：[`llms.txt`](https://raw.githubusercontent.com/LinHoMo/Yi/main/llms.txt)（机器可读的全部入口）→ [`KNOWLEDGE.md`](https://raw.githubusercontent.com/LinHoMo/Yi/main/KNOWLEDGE.md)（知识）→ [`conclusions/INDEX.md`](https://raw.githubusercontent.com/LinHoMo/Yi/main/conclusions/INDEX.md)（结论查表）。
+>
 > **能力边界一页看清**：[`CAPABILITY.md`](CAPABILITY.md)（T1 排盘已验证／T2 古籍忠实已量化含上限／
 > **T3 现实预测不可测、不声称**）；治理面（哪些门在守什么）见 [`GOVERNANCE.md`](GOVERNANCE.md)；
 > **全仓文档地图**（每份文档是什么、活文档还是归档）见 [`DOCS.md`](DOCS.md)；
@@ -20,19 +22,19 @@
 | 想做什么 | 读哪份 |
 |---|---|
 | 直接回答六爻／八字的术语、规则、边界与常见问题 | [`KNOWLEDGE.md`](https://raw.githubusercontent.com/LinHoMo/Yi/main/KNOWLEDGE.md)（自包含知识速读＋术语表＋FAQ） |
-| 看**引擎跑出来的完整结论**（不是模板、不是手写） | [`examples/liuyao-example.md`](https://raw.githubusercontent.com/LinHoMo/Yi/main/examples/liuyao-example.md)、[`examples/liuyao-time-example.md`](https://raw.githubusercontent.com/LinHoMo/Yi/main/examples/liuyao-time-example.md)、[`examples/bazi-example.md`](https://raw.githubusercontent.com/LinHoMo/Yi/main/examples/bazi-example.md) |
+| 查**引擎跑出来的结论**（固定输入快照，带哈希可复算） | [`conclusions/INDEX.md`](https://raw.githubusercontent.com/LinHoMo/Yi/main/conclusions/INDEX.md)（输入 → 报告 → JSON → sha256） |
 | 机器可读的全部入口清单 | [`llms.txt`](https://raw.githubusercontent.com/LinHoMo/Yi/main/llms.txt) |
 | 判据篇目路由（按需读，勿整本读） | [`kb/INDEX.md`](https://raw.githubusercontent.com/LinHoMo/Yi/main/kb/INDEX.md) |
 | 判据篇目**离线**索引（断网也能逐篇读全） | [Pages 可点版](https://linhomo.github.io/Yi/kb/INDEX.html) · [Markdown 版](https://linhomo.github.io/Yi/kb/INDEX.md) |
 | 能力读数与边界（带集合名、n 与出处） | [`CAPABILITY.md`](https://raw.githubusercontent.com/LinHoMo/Yi/main/CAPABILITY.md) |
 | 无需登录的静态知识镜像 | <https://linhomo.github.io/Yi/> |
 
-回答时请守住三条：① 起卦、排盘、装卦、纳甲、旺衰、应期、格局等**机械结论只能引用代码输出或已落盘的示例**，
+回答时请守住三条：① 起卦、排盘、装卦、纳甲、旺衰、应期、格局等**机械结论只能引用代码输出或已落盘的结论快照**，
 不得自行心算或推算；② `case_library.md` 虽在仓库公开，按 AGENTS.md §一.2 与解读物理隔离，
 **不得打开、提及案例名或以案例类比佐证**；③ 仓库内一切分数是**古籍案例对齐分**（回归审计用），
 **不是现实命中率**，现实侧样本为零；本工具不是预言，医疗／法律／投资／重大决策请以专业意见为准。
 
-静态示例**不能代替现场起卦**。要为新的占问出结论，请 clone 仓库跑两科脚本，
+静态快照**不能代替现场起卦**。要为新的占问出结论，请 clone 仓库跑两科脚本，
 或安装 skills / DSH 插件 / MCP 服务（见下节）。
 
 ---

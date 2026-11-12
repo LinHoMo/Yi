@@ -31,7 +31,7 @@
 | `plugins/mcp/`、`plugins/scripts/`、`plugins/SKILL.md` | 共享运行时真源 | 自身 | — | ✅ |
 | `plugins/engine/`、`plugins/skills/` | 构建产物 | 两科 + `plugins/mcp/` | `node plugins/scripts/build.mjs` | ❌ |
 | `dsh-plugin/engine/`、`dsh-plugin/skills/`、包根技能正文（构建生成）、`dsh-plugin/src/*.mjs`（除 `dsh-plugin/src/index.mjs`） | 分发产物 | 同上 | 同上（含 `prepack` 自动跑） | ❌ |
-| `llms.txt`、`KNOWLEDGE.md`、`kb/INDEX.md`、`examples/*.md` | **对外层产物（入库）** | `outreach/KNOWLEDGE-BODY.md` + 登记表 + 两科引擎 | `python outreach/build_outreach.py --write` | ✅（必须提交，否则外部读不到） |
+| `llms.txt`、`KNOWLEDGE.md`、`kb/INDEX.md`、`conclusions/**` | **对外层与结论产物（入库）** | `outreach/KNOWLEDGE-BODY.md` + 登记表 + 两科引擎 | `python outreach/build_outreach.py --write` | ✅（必须提交，否则外部读不到） |
 | `site/` | Pages 产物 | 同上 | 同上 + `.github/workflows/pages.yml` 现场部署 | ❌ |
 | `**/data/cache/`、`**/data/collation/`、`**/scratch/`、`**/outputs/`、`**/logs/` | 评测/比对/临时产物 | 脚本现场生成 | 清掉即由对应脚本重生 | ❌ |
 
@@ -94,7 +94,7 @@ rm -rf plugins/engine plugins/skills dsh-plugin/engine dsh-plugin/skills site
    517 批清过 DOCS.md 的四节硬编码份数，539 批清过技能正文手钉的 KB 数，549 批清过 README 的包体快照。
 2. **不硬编码本机绝对路径**：549 批实证 33 个 `.py` 被批量注入本机路径，导致 fresh checkout 全红；
    一律按 `__file__` 相对定位或走 `kernel_path`／`engine/_bootstrap`。
-3. **不手写代码产出的结论**：`examples/` 两份报告由四段流水线实跑生成；
+3. **不手写代码产出的结论**：`conclusions/` 的快照由引擎实跑、`--check` 逐字节复验；
    `KNOWLEDGE.md`、`kb/INDEX.md`、`llms.txt` 由构建器拼装。改内容改真源，再 `--write`。
 4. **不手改生成物**：两科 `core/`、`dev_tools/` 共享件、随包 `INDEX.md`、对外产物、Pages 产物。
 5. **口径脚注不可省**：一切对外文本带「古籍案例对齐分 ≠ 现实命中率／非预言／重大决策以专业意见为准」；

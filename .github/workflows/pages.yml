@@ -11,7 +11,7 @@ on:
       - 'plugins/scripts/kb-docs.mjs'
       - 'liuyao/references/**'
       - 'bazi/references/**'
-      - 'examples/**'
+      - 'conclusions/**'
       - 'KNOWLEDGE.md'
       - 'kb/**'
       - 'llms.txt'

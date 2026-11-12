@@ -155,12 +155,12 @@ chart（起卦·纯排盘 JSON） → analyze（结构化定性结论 JSON）
 是结构范围提示，不是「窗口内必应」。
 
 **Q：没有装插件，网页版 AI 能用什么？** 可读本仓库的 `KNOWLEDGE.md`、`llms.txt`、
-知识库判据全文与 `examples/` 里的引擎实跑示例报告；但不能现场执行 Python，
+知识库判据全文与 `conclusions/` 里的引擎实跑结论快照；但不能现场执行 Python，
 所以只能引用**已经落盘的静态结论**，不能凭空生成新盘。要现场起卦需 clone 本体或安装插件。
 
-**Q：代码产出的结论在哪看？** `examples/liuyao-example.md` 与 `examples/bazi-example.md`
+**Q：代码产出的结论在哪看？** `conclusions/INDEX.md` 是唯一入口（输入 → 报告 → JSON → sha256）；`conclusions/liuyao/ly-coin-2026-01-15.md` 与 `conclusions/bazi/bz-1990-05-20-male.md`
 是固定输入下由四段流水线实跑生成的完整报告，含输入参数与复现命令，可用作解读范式。
-另有 `examples/liuyao-time-example.md` 演示「时间起卦」这一确定性起卦方式。
+另有 `conclusions/liuyao/ly-time-2026-03-18.md` 演示「时间起卦」这一确定性起卦方式。
 
 **Q：六爻和八字能合着看吗？** 不能，且刻意不做。两科**相互独立、零耦合、没有合参层**：
 六爻是卦象体系（六十四卦／八宫／世应），八字是干支体系（四柱／十神／大运），
@@ -197,9 +197,9 @@ chart（起卦·纯排盘 JSON） → analyze（结构化定性结论 JSON）
 
 ## 九、代码产出的示例结论
 
-- 六爻：[examples/liuyao-example.md](https://raw.githubusercontent.com/LinHoMo/Yi/main/examples/liuyao-example.md)（https://linhomo.github.io/Yi/ 同步镜像）
-- 六爻·时间起卦：[examples/liuyao-time-example.md](https://raw.githubusercontent.com/LinHoMo/Yi/main/examples/liuyao-time-example.md)
-- 八字：[examples/bazi-example.md](https://raw.githubusercontent.com/LinHoMo/Yi/main/examples/bazi-example.md)
+- 结论库索引：[conclusions/INDEX.md](https://raw.githubusercontent.com/LinHoMo/Yi/main/conclusions/INDEX.md)（输入 → 报告 → JSON → sha256）
+- 六爻 · coin：[conclusions/liuyao/ly-coin-2026-01-15.md](https://raw.githubusercontent.com/LinHoMo/Yi/main/conclusions/liuyao/ly-coin-2026-01-15.md)
+- 八字 · 男命：[conclusions/bazi/bz-1990-05-20-male.md](https://raw.githubusercontent.com/LinHoMo/Yi/main/conclusions/bazi/bz-1990-05-20-male.md)
 
 两份报告均由固定输入下的四段流水线实跑生成，含完整结论、应期窗口、旺衰动变、
 格局喜用与判据所本，可用作解读范式。**静态示例不能代替现场起卦**：要为新占问出结论，

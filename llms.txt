@@ -13,11 +13,12 @@
 - [判据索引离线镜像](https://linhomo.github.io/Yi/kb/INDEX.md)：同一批篇目的站内全文副本，断网也能逐篇读完
 - [GitHub Pages 站点](https://linhomo.github.io/Yi/)：无需登录的静态知识镜像
 
-## 代码产出的实际结论（引擎实跑示例报告）
+## 结论库（固定输入的引擎快照：先查表，再回答）
 
-- [六爻纳甲占报告示例](https://raw.githubusercontent.com/LinHoMo/Yi/main/examples/liuyao-example.md)：固定输入下的完整六爻结论与应期窗口
-- [六爻时间起卦报告示例](https://raw.githubusercontent.com/LinHoMo/Yi/main/examples/liuyao-time-example.md)：time 模式确定性起卦、同一时刻必得同卦
-- [八字命局因子说明示例](https://raw.githubusercontent.com/LinHoMo/Yi/main/examples/bazi-example.md)：固定输入下的四柱、强弱、格局、喜用、大运流年
+- [结论库索引](https://raw.githubusercontent.com/LinHoMo/Yi/main/conclusions/INDEX.md)：输入 → 报告 → JSON → sha256；命中即引用，未命中必须说「未收录」
+- [六爻 · coin 示例](https://raw.githubusercontent.com/LinHoMo/Yi/main/conclusions/liuyao/ly-coin-2026-01-15.md)：同一 seed 必得同卦，可逐字节复算
+- [六爻 · time 示例](https://raw.githubusercontent.com/LinHoMo/Yi/main/conclusions/liuyao/ly-time-2026-03-18.md)：时间起卦，确定性
+- [八字 · 男命示例](https://raw.githubusercontent.com/LinHoMo/Yi/main/conclusions/bazi/bz-1990-05-20-male.md)：四柱、强弱、格局、喜用、大运流年
 
 ## 判据知识库（按需读，勿整本读）
 

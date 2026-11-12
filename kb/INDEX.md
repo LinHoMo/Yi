@@ -34,9 +34,9 @@
 
 ## 示例结论
 
-- [六爻报告示例](https://raw.githubusercontent.com/LinHoMo/Yi/main/examples/liuyao-example.md)
-- [六爻时间起卦示例](https://raw.githubusercontent.com/LinHoMo/Yi/main/examples/liuyao-time-example.md)
-- [八字报告示例](https://raw.githubusercontent.com/LinHoMo/Yi/main/examples/bazi-example.md)
+- [结论库索引](https://raw.githubusercontent.com/LinHoMo/Yi/main/conclusions/INDEX.md)（固定输入快照：命中即引用，未命中说未收录）
+- [六爻 · coin 示例](https://raw.githubusercontent.com/LinHoMo/Yi/main/conclusions/liuyao/ly-coin-2026-01-15.md)
+- [八字 · 男命示例](https://raw.githubusercontent.com/LinHoMo/Yi/main/conclusions/bazi/bz-1990-05-20-male.md)
 
 ## ⛔ 不在此目录的内容
 
