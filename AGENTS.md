@@ -66,7 +66,6 @@ Yi/
 ├── kernel/              # 引擎内核单一真源（316 批起）：common/ 两科共用 + variants/<名>.<科>.py 在册分叉
 ├── devkit/              # **门禁内核**单一真源（331–334 批）：shared/ 单一真源 +
 │                        #   shared/variants/<名>.<科>.py 在册变体（项数以 MANIFEST.json 为准，
-│                        #   433 批曾把 11 改 12 而本行落后过）；root/ 根级门（不分发）；
 │                        #   sync_devkit.py --write/--check；handoff/ 不入库（514 批已清理）
 ├── liuyao/              # 六爻（独立）
 │   ├── core/yishu_core/ # **产物**：由 kernel/sync_kernel.py 生成，勿手改

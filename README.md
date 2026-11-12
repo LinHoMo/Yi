@@ -11,7 +11,7 @@
 | `liuyao/` | 六爻纳甲：`engine/` 推演、`rules/` 规则、`data/` 数据、`references/` 判据、`eval/` 评测、`dev_tools/` 门、`tests/` |
 | `bazi/` | 八字四柱：同上结构 |
 | `kernel/` | 两科共用内核的**唯一真源**（同步生成各科 `core/yishu_core/`） |
-| `devkit/` | 门禁内核：`shared/` 共享门真源（分发到各科 `dev_tools/`）、`root/` 根级门 |
+| `devkit/` | 门禁内核：`shared/` 共享门真源（分发到各科 `dev_tools/`） |
 | `AGENTS.md` | 三条铁律与目录/依赖契约（改代码前必读） |
 | `CONTRACT.md` | 四段契约 `chart → analyze → narrate → render` 的判据本体 |
 | `CAPABILITY.md` | 能力边界与全部读数（每行带集合名、n 与出处） |

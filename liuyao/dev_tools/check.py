@@ -998,7 +998,7 @@ def main() -> int:
                             "parents 引用须真实存在／engine_impl 三种形态全可达／"
                             "人读产物与图谱逐字同源；511 批登记、512 批接线、524 批扩面）",
                 "dev_tools/check_ontology.py")):
-        # [36] 文档索引门于 A0-5（第三百三十一批）上提到 `devkit/root/check_docs_index.py`：
+        # [36] 文档索引门于 A0-5（第三百三十一批）上提到根级门（557 批已随瘦身删除）：
         # 它守全仓 DOCS.md，不属六爻一科。编号 36 空出，**不回填**（墓碑口径见 A5-1）。
         if want(key):
             print(f"\n{title}")

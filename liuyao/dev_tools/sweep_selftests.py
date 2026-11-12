@@ -7,7 +7,7 @@
 每个器具真跑 `--selftest`，四类归档：PASS／FAIL／NOTIMPL（文档提及但 argparse 不认——
 注意 check.py 系**编排器提及子门旗标**，属提及非声明，按名豁免并具名注记）／TIMEOUT。
 
-**526 批补声明面**：此前只扫两科 `dev_tools/`，`devkit/root/` 四个根级门、
+**526 批补声明面**（557 批瘦身：`devkit/root/` 已删，下列描述保留作历史）：此前只扫两科 `dev_tools/`，四个根级门、
 `devkit/sync_devkit.py`、`kernel/sync_kernel.py` 全部漏网——docstring 自称「全部声明器具」
 却漏了一整层，522 批新增的覆盖门就在其中。现把三处纳入；`devkit/shared/` 与两科
 `dev_tools/` 是 [37] 字节同源产物，跑第二遍无信息量，刻意排除。声明数由本器现算，
@@ -43,7 +43,7 @@ except Exception:
 ORCHESTRATORS = {"bazi/dev_tools/check.py", "liuyao/dev_tools/check.py"}
 # 526 批：根级门 / sync 器此前不在声明面。`devkit/shared/`（含 variants/）是两科
 # dev_tools/ 的字节同源真源，[37] 已守同源，逐真跑第二遍没有信息量，故不纳入。
-SCAN_DIRS = ("bazi/dev_tools", "liuyao/dev_tools", "devkit/root", "kernel")
+SCAN_DIRS = ("bazi/dev_tools", "liuyao/dev_tools", "kernel")
 EXTRA_FILES = ("devkit/sync_devkit.py",)
 
 
@@ -125,14 +125,11 @@ def selftest() -> int:
     # （count 判 1，文案区分"缺失/多命中"）；②注入后该器 --selftest 必返非零，
     # 且不写任何入库文件（不选 strict 路径——那会污染 map json；选 selftest 开头
     # 的 fails 行：强制追加一条失败项是最小致红面）。
-    # 526 批：两个 victim 同批注入、只跑一次 sweep——既有学科门，也有新增的根级门，
-    # 证明扩展后的声明面真能把根级门的损坏扫出来（不是只把文件名列进表里）。
+    # 526 批：两个 victim 同批注入、只跑一次 sweep，证明声明面真有牙；
+    # 557 批瘦身删掉 devkit/root 后，只剩学科门一个 victim。
     victims = [
         (DISC / "dev_tools" / "governance_map.py",
          "def selftest() -> int:\n    fails = []\n", "governance_map"),
-        (ROOT / "devkit" / "root" / "check_docs_index.py",
-         'def selftest() -> int:\n    base = INDEX.read_text(encoding="utf-8")\n    fails = []\n',
-         "check_docs_index"),
     ]
     checks = []
     for path, anchor_s, tag in victims:
@@ -171,7 +168,7 @@ def selftest() -> int:
     if f or nt:
         print("× 恢复后仍有 FAIL/NOTIMPL：%r" % (bad,))
         return 1
-    print("√ selftest：学科门＋根级门两处注入损坏均被扫出→恢复归零；"
+    print("√ selftest：学科门注入损坏被扫出→恢复归零；"
           "声明面 %d 器具 PASS %d（负例即体检）" % (n, p))
     return 0
 

@@ -9,7 +9,7 @@ pytest 在 prepend 模式下会把两科同名测试文件都命名为 `tests.sm
 桥接由仓库根的 `bridge_test.py` 以**独立子进程** `python <file>` 完成
 （进程间零 import 污染、与 CI 既有调用一致）——不是 runpy，也不在各 tests/ 目录下。
 six_god_wang_shuai_test.py 是原生 pytest，正常自动收集。
-增删测试文件只改 `pytest_manifest.py`，覆盖由 `devkit/root/check_pytest_bridge.py` 守。
+增删测试文件只改 `pytest_manifest.py`，覆盖由 `pytest_manifest.py` 与本文件保持一致（557 批后无单独桥接门）。
 """
 from __future__ import annotations
 

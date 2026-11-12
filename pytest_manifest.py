@@ -10,7 +10,7 @@
     子进程 `python <file>` 桥接成 pytest 用例。
 
 本表是这三种消费方（conftest / bridge / 根级覆盖门）**唯一**允许写清单的地方。
-增删测试文件只改这一处；`devkit/root/check_pytest_bridge.py` 会把本表与盘上
+增删测试文件只改这一处；557 批瘦身后不再有桥接门；本表与盘上
 各 tests/ 目录、CI 的直跑命令逐格对拍，漏一项即判红。
 
 路径一律相对仓库根、用 `/` 分隔（Windows 下也按此写法，由 Path 解析）。

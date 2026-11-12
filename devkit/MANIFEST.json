@@ -2,7 +2,7 @@
   "schema": "yi-devkit-manifest/1",
   "batch": 331,
   "source": "devkit",
-  "_comment": "门禁内核的单一真源。shared/ 下的文件由 sync_devkit.py 分发到两科 dev_tools/（产物，手改即被 [37] 判红）；root/ 下的根级门只在本目录运行，不分发。gate_ids 记录共享门在各科 check.py 里的现行编号（同一文件两科编号可以不同；共享件在 check.py 里不另设统一编号，[37] 只守字节同源）。墓碑：六爻 [8][9][10][21]–[25] 是已下线门的编号，**不回填**。新门编号**不在本文件钉**（539 批更正：原文写「从 [37] 续」是 334 批快照，实盘尾号早已越过）——取 `python <科>/dev_tools/check.py` 实跑尾号 +1，两科各自独立计数，口径见 GOVERNANCE.md §当前分布。",
+  "_comment": "门禁内核的单一真源。shared/ 下的文件由 sync_devkit.py 分发到两科 dev_tools/（产物，手改即被 [37] 判红）。557 批瘦身后根级门（root/）已删除，本文件只登记共享件；gate_ids 记录共享门在各科 check.py 里的现行编号（同一文件两科编号可以不同）。墓碑：六爻 [8][9][10][21]–[25] 是已下线门的编号，**不回填**；新门编号取实跑尾号 +1。",
   "files": {
     "shared": [
       "check_case_isolation.py",
@@ -18,19 +18,25 @@
       "check_source_readings.py",
       "check_source_provenance.py"
     ],
-    "root": [
-      "check_root_docs.py",
-      "check_docs_index.py",
-      "check_batch_num.py",
-      "check_pytest_bridge.py",
-      "check_repo_hygiene.py"
-    ]
+    "root": []
   },
   "variants": {
-    "check_source_readings.py": ["liuyao", "bazi"],
-    "golden.py": ["liuyao", "bazi"],
-    "baselines.py": ["liuyao", "bazi"],
-    "feedback_store.py": ["liuyao", "bazi"]
+    "check_source_readings.py": [
+      "liuyao",
+      "bazi"
+    ],
+    "golden.py": [
+      "liuyao",
+      "bazi"
+    ],
+    "baselines.py": [
+      "liuyao",
+      "bazi"
+    ],
+    "feedback_store.py": [
+      "liuyao",
+      "bazi"
+    ]
   },
   "variant_reasons": {
     "check_source_readings.py": "两科书证体例不同：六爻扫 scripts/core/references/docs/data/tests 的源L+引文，八字扫 references 文档的底本行号；判定层不同（六爻有 WRONG_BOOK/裸指针硬判），照 kernel 变体范式保留两份实现",
@@ -39,15 +45,42 @@
     "feedback_store.py": "存储 schema 与 CLI 不同：六爻是 FeedbackStore 库（被 feedback_report import），八字是 reading_events.jsonl 命令行通道；API 面不重合"
   },
   "gate_ids": {
-    "check_case_isolation.py": {"liuyao": 13, "bazi": 13},
-    "check_house_conventions.py": {"liuyao": 31, "bazi": 27},
-    "check_layer_contract.py": {"liuyao": 32, "bazi": 28},
-    "check_cli_encoding.py": {"liuyao": 20, "bazi": 24},
-    "check_doc_refs.py": {"liuyao": 11, "bazi": 11},
-    "check_regex_lists.py": {"liuyao": 29, "bazi": 26},
-    "check_rule_registry.py": {"liuyao": 12, "bazi": 12},
-    "check_source_readings.py": {"liuyao": 14, "bazi": 10},
-    "check_source_provenance.py": {"liuyao": 42, "bazi": 42}
+    "check_case_isolation.py": {
+      "liuyao": 13,
+      "bazi": 13
+    },
+    "check_house_conventions.py": {
+      "liuyao": 31,
+      "bazi": 27
+    },
+    "check_layer_contract.py": {
+      "liuyao": 32,
+      "bazi": 28
+    },
+    "check_cli_encoding.py": {
+      "liuyao": 20,
+      "bazi": 24
+    },
+    "check_doc_refs.py": {
+      "liuyao": 11,
+      "bazi": 11
+    },
+    "check_regex_lists.py": {
+      "liuyao": 29,
+      "bazi": 26
+    },
+    "check_rule_registry.py": {
+      "liuyao": 12,
+      "bazi": 12
+    },
+    "check_source_readings.py": {
+      "liuyao": 14,
+      "bazi": 10
+    },
+    "check_source_provenance.py": {
+      "liuyao": 42,
+      "bazi": 42
+    }
   },
   "targets": {
     "liuyao": "liuyao/dev_tools",

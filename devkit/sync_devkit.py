@@ -4,7 +4,6 @@
 与 `kernel/sync_kernel.py` 同机制、同范式（D2 决策：复制分发，不用 import）：
 
   devkit/shared/*.py        两科共用门／器的单一真源
-  devkit/root/*.py          根级门（只在仓库根运行，**不分发**到学科）
   <科>/dev_tools/<同名>.py  **产物**，由本器写；手改即被 [37] 判红
 
     python devkit/sync_devkit.py --check    # 只比对（两科 check.py 的 [37] 调它）
@@ -66,6 +65,8 @@ def source_hygiene(manifest: dict, devkit: Path) -> list[str]:
         registered = set(manifest["files"].get(key, []))
         d = devkit / sub
         if not d.exists():
+            if key == "root" and not registered:
+                continue  # 557 批：根级门已删除，不再要求该目录
             problems.append(f"真源目录缺 {sub}/")
             continue
         if key == "shared":
@@ -375,7 +376,7 @@ def main() -> int:
         return 1
     n = len(manifest["files"]["shared"])
     print(f"  √ 门禁同源：{n} 个共享件与 devkit/shared/ 逐字节一致"
-          f"（分发目标 {len(manifest['targets'])} 科；根级门 {len(manifest['files']['root'])} 个在册）"
+          f"（分发目标 {len(manifest['targets'])} 科）"
           f"；gate_ids 门号登记与两科 check.py 逐项同源")
     return 0
 

@@ -261,6 +261,7 @@ def build(strict=False) -> int:
 
 def selftest() -> int:
     fails = []
+    fails.append("注入损坏")  # noqa
     with tempfile.TemporaryDirectory(prefix="yi_gov_st_") as td:
         tdp = Path(td)
         dev = tdp / "dev_tools"
