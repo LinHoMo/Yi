@@ -38,6 +38,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import html
 import json
 import os
@@ -46,6 +47,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path, PurePosixPath
 
 try:
@@ -67,6 +69,11 @@ TRACKED = (
     "llms.txt",
     "KNOWLEDGE.md",
     "kb/INDEX.md",
+    "conclusions/INDEX.md",
+    "conclusions/liuyao/ly-coin-2026-01-15.md",
+    "conclusions/liuyao/ly-time-2026-03-18.md",
+    "conclusions/bazi/bz-1990-05-20-male.md",
+    "conclusions/bazi/bz-1985-11-03-female.md",
 )
 
 ROW_LINE_RE = re.compile(r"^\['([^']+\.md)',\s*'([^']*)'\],?$")
@@ -82,6 +89,13 @@ NEGATION = ("不是", "不得", "禁止", "不可", "不许", "严禁", "不能"
 
 # 示例输入：新造中性问句，不来自任何古籍案例集（§一.2）
 LY_QUESTION = "示例：某合作项目下月能否顺利推进"
+
+CALIBER_CONCL = (
+    "> **口径**：本结论由 Python 引擎实跑生成，未由语言模型改写任何排盘或判定。仓库内分数是"
+    "**古籍案例对齐分**（回归审计用），**不是现实命中率**；现实侧样本为 0。属条件化倾向陈述，"
+    "不是预言；医疗、法律、投资、重大决策请以专业意见为准。\n"
+)
+
 LY_DATETIME = "2026-01-15 10:30"
 LY_SEED = 42
 LY_TIME_QUESTION = "示例：某岗位竞聘在本季度是否值得投入"
@@ -865,6 +879,125 @@ def has_path(obj, path: str) -> bool:
     return True
 
 
+
+CONCL_CASES: list[dict] = [
+    dict(id="ly-coin-2026-01-15", disc="liuyao", mode="coin",
+         question="示例：某合作项目下月能否顺利推进",
+         datetime="2026-01-15 10:30", seed=42),
+    dict(id="ly-time-2026-03-18", disc="liuyao", mode="time",
+         question="示例：某岗位竞聘在本季度是否值得投入",
+         datetime="2026-03-18 14:00"),
+    dict(id="bz-1990-05-20-male", disc="bazi", question="示例：命局结构说明",
+         datetime="1990-05-20 10:30", gender="男"),
+    dict(id="bz-1985-11-03-female", disc="bazi", question="示例：命局结构说明",
+         datetime="1985-11-03 08:15", gender="女"),
+]
+LY_RENDER = ("import sys,json;sys.path.insert(0,'scripts');from render import render;"
+             "a=json.load(open(sys.argv[1],encoding='utf-8'));print(render(a,fmt='md'),end='')")
+BZ_RENDER = ("import sys,json;sys.path.insert(0,'scripts');from analyze import analyze;from render import render;"
+             "a=analyze(json.load(open(sys.argv[1],encoding='utf-8')));print(render(a),end='')")
+
+
+def _case_json(case: dict) -> str:
+    """跑引擎拿 JSON 文本（LF）；只用于渲染与哈希，**不落盘**。"""
+    if case["disc"] == "liuyao":
+        cmd = [sys.executable, "-m", "engine", "--mode", case["mode"], "--question", case["question"],
+               "--datetime", case["datetime"], "--output", "json"]
+        if case.get("seed") is not None:
+            cmd += ["--seed", str(case["seed"])]
+        text = _subprocess_text(cmd, ROOT / "liuyao")
+    else:
+        text = _subprocess_text([sys.executable, "scripts/chart.py", "--datetime", case["datetime"],
+                                 "--gender", case["gender"], "--question", case["question"]], ROOT / "bazi")
+    text = text.strip() + "\n"
+    json.loads(text)
+    return text
+
+
+def _subprocess_text(cmd: list[str], cwd: Path) -> str:
+    env = os.environ.copy()
+    env["PYTHONIOENCODING"] = "utf-8"
+    env["PYTHONUTF8"] = "1"
+    proc = subprocess.run(cmd, cwd=str(cwd), capture_output=True, env=env, timeout=180)
+    if proc.returncode != 0:
+        raise RuntimeError("引擎实跑失败：" + proc.stderr.decode("utf-8", "replace")[-800:])
+    return proc.stdout.decode("utf-8", "replace").replace("\r\n", "\n").replace("\r", "\n")
+
+
+def _case_input_desc(case: dict) -> str:
+    if case["disc"] == "liuyao":
+        seed = f"，seed={case['seed']}" if case.get("seed") is not None else ""
+        return f"mode={case['mode']}，question=「{case['question']}」，datetime={case['datetime']}{seed}"
+    return f"question=「{case['question']}」，datetime={case['datetime']}，gender={case['gender']}"
+
+
+def _case_repro(case: dict) -> str:
+    if case["disc"] == "liuyao":
+        seed = f" --seed {case['seed']}" if case.get("seed") is not None else ""
+        return (f"cd liuyao && python -m engine --mode {case['mode']} --question \"{case['question']}\" "
+                f"--datetime \"{case['datetime']}\" --output json{seed}")
+    return (f"cd bazi && python scripts/chart.py --datetime \"{case['datetime']}\" --gender {case['gender']}")
+
+
+def conclusion_artifacts() -> dict[str, str]:
+    """4 份结论报告 + 索引。只存渲染好的 md（AI 可读、人可审），JSON 由命令随时重跑。"""
+    files: dict[str, str] = {}
+    rows = []
+    with tempfile.TemporaryDirectory() as td:
+        for case in CONCL_CASES:
+            json_text = _case_json(case)
+            digest = hashlib.sha256(json_text.encode("utf-8")).hexdigest()
+            tmp = Path(td) / "case.json"
+            tmp.write_bytes(json_text.encode("utf-8"))
+            code, cwd = ((LY_RENDER, ROOT / "liuyao") if case["disc"] == "liuyao"
+                         else (BZ_RENDER, ROOT / "bazi"))
+            body = _subprocess_text([sys.executable, "-c", code, str(tmp)], cwd).strip() + "\n"
+            title = "六爻纳甲占报告" if case["disc"] == "liuyao" else "八字命局因子说明"
+            rel = f"conclusions/{case['disc']}/{case['id']}.md"
+            files[rel] = (
+                "<!-- 由 outreach/build_outreach.py --write 生成；结论由引擎实跑，请勿手改 -->\n"
+                f"# {title} · {case['id']}\n\n"
+                f"- 学科：{'六爻纳甲' if case['disc'] == 'liuyao' else '八字四柱'}\n"
+                f"- 输入：{_case_input_desc(case)}\n"
+                f"- 复现（仓库根）：`{_case_repro(case)}`\n"
+                f"- 引擎输出 sha256：`{digest}`（JSON 不随仓，按上条命令可逐字节重跑）\n"
+                "- 同源复验：`python outreach/build_outreach.py --check`\n\n"
+                + CALIBER_CONCL + "\n---\n\n" + body
+            )
+            rows.append((case, rel, digest))
+
+    lines = [
+        "# 结论库索引（易 / Yi）",
+        "",
+        "> 固定输入的引擎结论快照：**只存渲染报告，不存 JSON**（体积小、diff 可读；JSON 按各条命令随时重跑）。",
+        "> 服务两类读者：人审查（输入／命令／哈希齐全）与语言模型取用（命中即引用，未命中不得套用）。",
+        f"> 共 {len(rows)} 条；未收录的输入请本地跑引擎，或按 [`outreach/WEB-AI-PROMPT.md`](../outreach/WEB-AI-PROMPT.md) 的三条路径处理。",
+        "",
+        "| ID | 学科 | 输入 | 结论报告 | sha256（引擎输出） |",
+        "|---|---|---|---|---|",
+    ]
+    for case, rel, digest in rows:
+        lines.append(
+            f"| `{case['id']}` | {'六爻' if case['disc'] == 'liuyao' else '八字'} | "
+            f"{_case_input_desc(case).replace('|', '／')} | [`{case['id']}.md`]({case['id']}.md) | `{digest[:16]}` |"
+        )
+    lines += [
+        "",
+        "## 覆盖范围（重要）",
+        "",
+        f"- 只覆盖上表 {len(rows)} 条**固定输入**，不是「任意时间、任意问题都能查」。",
+        "- 新增一条：在 `outreach/build_outreach.py` 的 `CONCL_CASES` 加一行，跑 `--write`，同批登记 `CHANGELOG`。",
+        "- 产物由 `--check` 逐字节复验；引擎或输入漂移即判红。",
+        "",
+        "## 口径",
+        "",
+        "所有结论都是引擎输出的原文快照；分数是**古籍案例对齐分**，不是现实命中率，现实侧样本为 0。",
+        "",
+    ]
+    files["conclusions/INDEX.md"] = "\n".join(lines)
+    return files
+
+
 def check_prompt_contract(md: str, sample: dict) -> list[str]:
     """提示词不许与真实引擎脱节：URL 必在、字段路径必须存在、短版必须无占位符。
 
@@ -1126,6 +1259,7 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
         "KNOWLEDGE.md": knowledge,
         "kb/INDEX.md": "\n".join(idx),
     }
+    tracked.update(conclusion_artifacts())
 
     # 4) site/ —— 不入库，Pages Actions 现场生成
     # Pages 首页必须是 index.html：upload-pages-artifact 不做 Jekyll 渲染，
@@ -1287,6 +1421,11 @@ def validate(tracked: dict[str, str]) -> None:
         raise ValueError("KNOWLEDGE.md 缺铁律章节")
     if "raw.githubusercontent.com" not in tracked["llms.txt"]:
         raise ValueError("llms.txt 必须给 raw 直链")
+    for rel, text in tracked.items():
+        if rel.startswith("conclusions/") and rel.endswith(".md") and rel != "conclusions/INDEX.md":
+            for must in ("复现（仓库根）", "sha256", "古籍案例对齐分", "不是现实命中率"):
+                if must not in text:
+                    raise ValueError(f"结论报告缺「{must}」：{rel}")
 
 
 def compare(tracked: dict[str, str]) -> list[str]:
@@ -1416,6 +1555,13 @@ def selftest() -> int:
     check("案例库链接只留文字、不生成 <a>（§一.2）", lambda: "<a" not in md_to_html(
         "见 [案例库](../../liuyao/references/case_library.md)。", lambda h: None
     ))
+    check("结论库 4 条 + 索引齐全", lambda: all(
+        f"conclusions/{c['disc']}/{c['id']}.md" in tracked for c in CONCL_CASES
+    ) and "conclusions/INDEX.md" in tracked)
+    check("结论报告缺口径脚注 → 校验判红", lambda: rejects(lambda: validate({
+        **tracked, "conclusions/liuyao/ly-coin-2026-01-15.md":
+        tracked["conclusions/liuyao/ly-coin-2026-01-15.md"].replace("古籍案例对齐分", "")
+    })))
     check("缺判据可读版 → 覆盖判红", lambda: bool(check_artifact_coverage(
         rows, tracked, {k: v for k, v in site.items() if not k.endswith("najia_rules.html")}
     )))

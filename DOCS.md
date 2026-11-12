@@ -150,15 +150,15 @@
 
 | 文件 | 一句话 | 状态 |
 |---|---|---|
-| `conclusions/README.md` | **结论产物层说明**（554 批建，555 批并掉原示例目录）：覆盖范围、三条铁律怎么守、网页版 AI 的查表协议 | 活文档 |
-| `conclusions/INDEX.md` | **结论库索引**：固定输入 → 报告／JSON／sha256 的映射；AI 与人都从这里进 | 生成物 |
+| `conclusions/README.md` | **结论产物层说明**（556 批瘦身）：只存渲染报告、不存 JSON；覆盖范围、铁律、AI 查表协议 | 活文档 |
+| `conclusions/INDEX.md` | **结论库索引**：固定输入 → 报告／复现命令／引擎输出 sha256；AI 与人都从这里进 | 生成物 |
 | `conclusions/liuyao/ly-coin-2026-01-15.md` | 六爻结论快照：coin 模式、2026-01-15 10:30、seed 42（中性示例问句） | 生成物 |
 | `conclusions/liuyao/ly-time-2026-03-18.md` | 六爻结论快照：time 模式、2026-03-18 14:00（确定性起卦） | 生成物 |
 | `conclusions/bazi/bz-1990-05-20-male.md` | 八字结论快照：1990-05-20 10:30、男 | 生成物 |
 | `conclusions/bazi/bz-1985-11-03-female.md` | 八字结论快照：1985-11-03 08:15、女 | 生成物 |
 
-> 产物（`liuyao/*.json|md`、`bazi/*.json|md`）由 `python conclusions/build_conclusions.py --write`
-> 现场生成、`--check` 逐字节复验，**不要手改**；新增条目只改构建器的 `CASES` 再重跑。
+> 报告由 `python outreach/build_outreach.py --write` 现场生成、`--check` 逐字节复验，
+> **不要手改**；新增条目只改构建器的 `CONCL_CASES` 再重跑。
 
 > 非 Markdown 的入口 `llms.txt`、`site/`（gitignore，Pages Actions 生成）、
 > `.github/workflows/pages.yml` 与 `release.yml` 不在本表统计范围内。
