@@ -20,6 +20,8 @@
 下面两段提示词都把这几个地址写在里面了。若某个模型抓不到 raw，让它改抓 Pages 的 `.html`；
 **抓不到就必须明说"未读到"**，不许编造篇目名或链接——这条也写进了提示词。
 
+- 一键测试消息（提示 + 真实引擎 JSON 已填好，打开全选复制）：<https://linhomo.github.io/Yi/web-ai-test-message.txt>
+
 注意：单篇判据最大 50KB 以上（如 `najia_rules.md`），网页版抓取常被**截断**。HTML 版页首有折叠目录，
 让它按节抓，或你直接把某一节复制给它；**"抓取截断"不等于"篇目没写"**。
 
@@ -153,18 +155,28 @@ cd bazi && python scripts/chart.py --datetime "1990-05-20 10:30" --gender 男
 cd liuyao && python -m engine --mode coin --question "…" --seed 42 --output json | python -c "import json,sys;d=json.load(sys.stdin);print(list(d));print(list(d['advanced_analysis']))"
 ```
 
-实际输出顶层为 `question`／`divination_time`／`method`／`empty_branches`／`original_hexagram`／
+顶层键为 `question`／`divination_time`／`method`／`empty_branches`／`original_hexagram`／
 `changed_hexagram`／`analysis_hints`／`advanced_analysis`／`thinking_chain`／`section_advice`／
-`trigram_interpretation`；`advanced_analysis` 下常见 `element_strength`（含 `month_branch`／
-`day_branch`／`strength_description`）、`advance_retreat`（化进退）、`monthly_break`（月破）、
-`clash_harmony`（冲合）、`three_punishments`（三刑）、`six_breaks`、`officer_tomb`、
-`hidden_movement`、`shi_yao_relation` 等。**以实际输出的键为准**，上面只是常见项。
+`trigram_interpretation`。**字段路径以这条实测输出为准**（写全路径，避免缩略语对不上）：
 
-**应期不在 `advanced_analysis` 里**——它在 `thinking_chain.step5_synthesis.timing`，子键为
-`speed`／`timing_rules`／`yingqi_days`／`yingqi_months`／`yingqi_years`／`candidates_all`／
-`summary_text`／`plain_text`／`timing_factors`（实测 `yingqi_days` 形如 `["午日","子日",…]`，
-`timing_rules` 每项含 `token`／`rule`／`unit`）。候选用神在 `analysis_hints.possible_use_gods`。
-模型若说"没有应期字段"，先让它去这个路径找，再判断。
+| 内容 | 完整路径 |
+|---|---|
+| 起卦时刻（四柱） | `divination_time` |
+| 旬空 | `empty_branches` |
+| 本卦 / 变卦 | `original_hexagram` / `changed_hexagram` |
+| 候选用神 | `analysis_hints.possible_use_gods` |
+| 旺衰 | `advanced_analysis.element_strength` |
+| 旺衰总述 | `advanced_analysis.element_strength.summary` |
+| 应期 | `thinking_chain.step5_synthesis.timing` |
+| 应期速度 | `thinking_chain.step5_synthesis.timing.speed` |
+| 应期日 | `thinking_chain.step5_synthesis.timing.yingqi_days` |
+| 应期依据 | `thinking_chain.step5_synthesis.timing.timing_rules` |
+| 应期总述 | `thinking_chain.step5_synthesis.timing.summary_text` |
+
+其余 `advanced_analysis` 常见键：`advance_retreat`（化进退）、`monthly_break`（月破）、
+`clash_harmony`（冲合）、`three_punishments`（三刑）、`six_breaks`、`officer_tomb`、
+`hidden_movement`、`shi_yao_relation`。**应期不在 `advanced_analysis` 下**，别去那里找；
+模型若说「没有应期字段」，先让它按上表路径找，再判断。
 若模型说"请分别提供 chart 与 analyze 两段"，按这条纠正。
 
 ## 七、维护约定

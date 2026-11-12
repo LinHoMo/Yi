@@ -849,6 +849,114 @@ def _resolver(base_dir: str, page_dir: str, repo_map: dict[str, str]):
     return resolve
 
 
+
+PROMPT_FIELD_PATHS = (
+    "question", "divination_time", "method", "empty_branches",
+    "original_hexagram", "changed_hexagram",
+    "analysis_hints.possible_use_gods",
+    "advanced_analysis.element_strength",
+    "advanced_analysis.element_strength.summary",
+    "thinking_chain.step5_synthesis.timing",
+    "thinking_chain.step5_synthesis.timing.speed",
+    "thinking_chain.step5_synthesis.timing.yingqi_days",
+    "thinking_chain.step5_synthesis.timing.timing_rules",
+    "thinking_chain.step5_synthesis.timing.summary_text",
+)
+PROMPT_HOSTS = ("https://github.com/LinHoMo/Yi", "https://raw.githubusercontent.com/LinHoMo/Yi/main",
+                "https://linhomo.github.io/Yi/")
+
+
+def engine_json() -> dict:
+    """跑一次引擎拿真实 JSON——提示词里写的字段路径必须能在它里面找到。"""
+    env = os.environ.copy()
+    env["PYTHONIOENCODING"] = "utf-8"
+    env["PYTHONUTF8"] = "1"
+    proc = subprocess.run(
+        [sys.executable, "-m", "engine", "--mode", "coin", "--question", LY_QUESTION,
+         "--seed", str(LY_SEED), "--output", "json"],
+        cwd=str(ROOT / "liuyao"), capture_output=True, env=env, timeout=180,
+    )
+    if proc.returncode != 0:
+        raise RuntimeError("引擎 JSON 实跑失败：" + proc.stderr.decode("utf-8", "replace")[-800:])
+    return json.loads(proc.stdout.decode("utf-8", "replace"))
+
+
+def has_path(obj, path: str) -> bool:
+    cur = obj
+    for part in path.split("."):
+        if isinstance(cur, dict) and part in cur:
+            cur = cur[part]
+        else:
+            return False
+    return True
+
+
+def check_prompt_contract(md: str, sample: dict) -> list[str]:
+    """提示词不许与真实引擎脱节：URL 必在、字段路径必须存在、短版必须无占位符。
+
+    552 批之前这些全靠人手核——模型说「没有应期字段」时，我们只能人工去翻 JSON。
+    现在写成门：模板里点名的每个路径都要能在真实输出里走通；写错即构建红。
+    """
+    problems: list[str] = []
+    for url in PROMPT_HOSTS:
+        if url not in md:
+            problems.append(f"提示词缺入口地址：{url}")
+    for path in PROMPT_FIELD_PATHS:
+        if path not in md:
+            problems.append(f"提示词未写明字段路径：{path}（模板与引擎脱节）")
+        elif not has_path(sample, path):
+            problems.append(f"提示词引用的字段在真实引擎输出里不存在：{path}")
+    if "timing" in (sample.get("advanced_analysis") or {}):
+        problems.append("引擎已在 advanced_analysis 下给出 timing，提示词「应期不在此处」的说法需更新")
+    blocks = re.findall(r"```text\n(.*?)```", md, re.S)
+    if not blocks:
+        problems.append("提示词缺可复制的 text 代码块")
+    elif "{{" in blocks[0]:
+        problems.append("最短版含未替换占位符（应可直接粘贴）")
+    for url in re.findall(r"https?://[^\s)]+", md):
+        if not any(url.startswith(h) for h in PROMPT_HOSTS):
+            problems.append(f"提示词出现非本项目地址：{url}")
+    return problems
+
+
+def _test_message(sample: dict) -> str:
+    """一键测试消息：提示 + 真实 JSON 内联，打开即全选复制，无需替换任何占位符。"""
+    t = sample["thinking_chain"]["step5_synthesis"]["timing"]
+    oh = sample["original_hexagram"]
+    mini = {
+        "_excerpt": "真实引擎输出节选，未列字段视为未提供",
+        "question": sample["question"],
+        "divination_time": {"datetime": sample["divination_time"]["datetime"],
+                            "day_stem_branch": sample["divination_time"]["day_stem_branch"]},
+        "method": sample["method"],
+        "empty_branches": sample["empty_branches"],
+        "original_hexagram": {"name": oh["name"], "palace": oh["palace"],
+                              "yao_lines": [{k: line[k] for k in
+                                             ("position", "name", "earthly_branch", "six_relation",
+                                              "is_moving", "is_world")}
+                                            for line in oh["yao_lines"][:2]]},
+        "analysis_hints": {"possible_use_gods": sample["analysis_hints"]["possible_use_gods"]},
+        "advanced_analysis": {"element_strength": {
+            "summary": sample["advanced_analysis"]["element_strength"]["summary"]}},
+        "timing": {"speed": t["speed"], "yingqi_days": t["yingqi_days"],
+                   "timing_rules": t["timing_rules"][:1],
+                   "summary_text": t["summary_text"][:80]},
+    }
+    payload = json.dumps(mini, ensure_ascii=False, separators=(",", ":"))
+    return (
+        "下面是「易（Yi）」项目的真实引擎输出：单个 JSON 对象，不是手写；_excerpt 表示节选，"
+        "未列出的字段视为未提供。\n"
+        "注意：没有 chart / analyze 两个文件，四段是内部流水线，对外只有这一份 JSON。\n\n"
+        + payload + "\n\n"
+        "请做三件事：\n"
+        "1. 列出你实际读到的顶层键（只列真实存在的，不补、不猜）。\n"
+        "2. 指出应期字段的确切路径，并给出其中两个具体值。\n"
+        "3. 按五段格式解读，只用 JSON 里出现过的字段；缺失的一律写「引擎未提供」。\n\n"
+        "红线：出现 JSON 里没有的干支、日期、格局名或数字即算答错；\n"
+        "不给「会成／不成」的绝对结论；不引用案例库；不把对齐分说成命中率。\n"
+    )
+
+
 def check_artifact_coverage(
     rows: list[tuple[str, str]],
     tracked: dict[str, str],
@@ -1111,7 +1219,11 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
     anchor_problems += check_anchors(knowledge, page) + check_internal_anchors(page)
     pages["KNOWLEDGE.html"] = page
 
+    sample = engine_json()
     prompt_md = _read(OUTREACH / "WEB-AI-PROMPT.md")
+    prompt_problems = check_prompt_contract(prompt_md, sample)
+    if prompt_problems:
+        raise ValueError("提示词与引擎/地址脱节：" + "；".join(prompt_problems[:5]))
     page = _page_html(
         "网页版 AI 提示词模板 · 易（Yi）",
         md_to_html(prompt_md, _resolver("outreach", ".", repo_map)),
@@ -1150,6 +1262,7 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
         '<a href="llms.txt">llms.txt</a></li>\n'
         '<li><a href="WEB-AI-PROMPT.html">网页版 AI 提示词模板</a> — 粘进网页版模型的口径约束、'
         '输出格式与 10 条验收清单</li>\n'
+        '<li><a href="web-ai-test-message.txt">一键测试消息</a> — 提示＋真实引擎 JSON 内联，打开全选复制即可测</li>\n'
         "</ul>\n"
         "<h2>给 AI 读者的入口（绝对 raw 直链）</h2>\n<ul>\n"
         f'<li><a href="{RAW}/llms.txt">llms.txt</a> — 机器可读的全部入口清单</li>\n'
@@ -1194,6 +1307,7 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
         ),
         "site/llms.txt": "\n".join(llms),
         "site/WEB-AI-PROMPT.md": prompt_md,
+        "site/web-ai-test-message.txt": _test_message(sample),
         "site/examples/liuyao-example.md": tracked["examples/liuyao-example.md"],
         "site/examples/liuyao-time-example.md": tracked["examples/liuyao-time-example.md"],
         "site/examples/bazi-example.md": tracked["examples/bazi-example.md"],
@@ -1340,6 +1454,15 @@ def selftest() -> int:
     check("site/ 缺判据镜像 → 覆盖判红", lambda: bool(check_artifact_coverage(
         rows, tracked, {k: v for k, v in site.items() if not k.endswith("najia_rules.md")}
     )))
+    sample = engine_json()
+    prompt_md = _read(OUTREACH / "WEB-AI-PROMPT.md")
+    check("正例：提示词字段路径与地址全部可核对", lambda: check_prompt_contract(prompt_md, sample) == [])
+    check("提示词丢仓库地址 → 契约门判红", lambda: bool(check_prompt_contract(
+        prompt_md.replace("https://github.com/LinHoMo/Yi", "https://example.com"), sample)))
+    check("提示词字段路径与引擎不符 → 契约门判红", lambda: bool(check_prompt_contract(
+        prompt_md.replace("thinking_chain.step5_synthesis.timing", "advanced_analysis.timing"), sample)))
+    check("一键测试消息含可解析 JSON", lambda: bool(json.loads(
+        re.search(r"\n(\{.*\})\n", _test_message(sample), re.S).group(1))))
     check("Markdown 代码块未闭合 → 转换判红（不静默截断后文）", lambda: rejects(
         lambda: md_to_html("前文\n```\n乾纳甲壬\n", lambda h: h)
     ))
