@@ -46,6 +46,9 @@ CURATED = {
         "eval_selftest": ("blocking", "评分器九场景校准"),
         "eval_unique_keys": ("ondemand", "考点折叠量尺（207 批更正：从未挂闸，194 批误标 blocking——一致性断言自抓）"),
         "check_case_dupes": ("blocking", "案例考点查重（#39 冗余防线）"),
+        # 565 批：新器自落库即入表（511 批「未分类」教训）。只读工具、不进 check.py、不新增门号。
+        "mine_dts_candidates": ("ondemand", "《滴天髓阐微》命造块机器认定→未开卷候选池（565 批：513 个四柱块中按关键词锚定＋四柱/原话/日主/月支四道机械校验认 15 案，与在册案例同四柱者剔除；只登记书证与强度档，不写 expected）"),
+        "verify_dts_candidates": ("ondemand", "《滴天髓阐微》候选池同源复验（565 批：15 案引文逐字回底本＋四柱可复算＋归类可复算＋无 expected/verdict 反推＋未开卷（open_result 须 null）＋预注册必备＋与在册案例零同四柱；13 类内存负例，真盘零写入）"),
         "check_case_isolation": ("blocking", "铁律二：解读路径不得触案例库"),
         "check_regex_lists": ("blocking", "正则字符类 list 展平审计（209 批：§二 静默全盲规矩的核对版）"),
         "check_case_pillars": ("blocking", "命例基准自洽（expected 四柱可反算）"),
