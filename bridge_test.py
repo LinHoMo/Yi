@@ -24,6 +24,7 @@ MAIN_STYLE_TESTS: tuple[str, ...] = (
     "liuyao/tests/thinking_chain_tests.py",
     "bazi/tests/smoke_test.py",
     "bazi/tests/regression_test.py",
+    "bazi/tests/ganzhi_song_test.py",
 )
 
 _ROOT = Path(__file__).resolve().parent
