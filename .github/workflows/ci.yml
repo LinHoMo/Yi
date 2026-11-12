@@ -36,6 +36,9 @@ jobs:
           python bazi/dev_tools/build_dts_manual_candidates.py --check
           python bazi/dev_tools/verify_dts_manual_candidates.py
           python bazi/dev_tools/book_strength_probe.py --selftest
+          python liuyao/dev_tools/build_bushi_yingqi_candidates.py --check
+          python liuyao/dev_tools/verify_bushi_yingqi_candidates.py
+          python liuyao/dev_tools/open_bushi_yingqi_candidates.py --verify
       - name: pytest
         run: |
           python -m pip install -q pytest

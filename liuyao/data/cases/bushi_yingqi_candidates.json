@@ -1,0 +1,782 @@
+{
+  "schema": "yi-case-pool/2",
+  "batch": 573,
+  "discipline": "liuyao",
+  "_comment": "六爻「带单点应期书证」候选池（573 批新建，未开卷）。语料来自《易冒》「X建Y日占…得A之B卦…应Z日」体例（该书此前零案例被提取）与《易林補遺》一条。主指标沿用 546 批冻结的「顶-1 应期支一致」；n<30 只报逐例红绿。",
+  "source": {
+    "yimao": {
+      "file": "data/sources/yimao_dz.dz.txt",
+      "sha256": "644999682f836f55bc2b73b582890229545cbb20ed084f06b9cff0109547f7e7"
+    },
+    "yilin_buyi": {
+      "file": "data/sources/yilin_buyi_dz.dz.txt",
+      "sha256": "54b2f91975d2a8f5e23c2b8c6785b9394d2357a04f6039177824b3c24a45f23a"
+    }
+  },
+  "policy": {
+    "照录": "source_quote 为底本该行句段的逐字截取（程序化切句定位，不手抄）。",
+    "expected": "整池不写 expected／吉凶方向／用神——反推属重罪（AGENTS.md §三.4）。",
+    "应期": "book_yingqi_branch 必须是书载**单点**应期支，逐字出现在引文中；含月限定者在 note 注明。",
+    "去重": "起卦日＋卦名与在册案例、其余候选池互斥。",
+    "开卷": "一次性：须用户显式授权；主指标沿用 546 批冻结的「顶-1 应期支一致」；n<30 不出率值。"
+  },
+  "preregistration": {
+    "frozen_at": "573 批（未开卷）",
+    "判卷规则": "逐例判红绿：引擎对该案给出应期支候选，判顶-1 是否命中书载单点应期支；只出逐例红绿，n<30 不出率值。",
+    "禁止": "不得事后改判；改判须登记新记录（§六.3）。不得把本池内容反推为 expected。",
+    "开卷条件": "用户显式授权；开卷前状态与哈希须与本记录一致。"
+  },
+  "cases": [
+    {
+      "id": "BYQ001",
+      "book": "《易冒》",
+      "source_quote": "如寅建辛亥日占丁巳摇会，得节之中孚，巳财绝于亥日，兄动夺之，理不应得，然丁巳财当以丁巳日求之，而甲寅旬子兄值空，是日果应得会，可见遇时为卜筮之要。",
+      "source_line": 427,
+      "month_branch": "寅",
+      "month_order": "正",
+      "day_ganzhi": "辛亥",
+      "hexagram_text": "节",
+      "changed_text": "中孚",
+      "book_yingqi_ganzhi": "丁巳",
+      "book_yingqi_branch": "巳",
+      "book_yingqi_text": "丁巳日",
+      "note": "摇会，应丁巳日得会",
+      "verdict": null,
+      "case_kind": "占验实例（带单点应期书证）",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
+      "block": "未授权入册；本池只登记书载起卦四要素与书载应期支，不含吉凶方向",
+      "dedup": "与在册案例及其余候选池按「起卦日＋卦名」去重",
+      "notes": "引文为底本该行句段的逐字截取（程序化，不手抄）"
+    },
+    {
+      "id": "BYQ002",
+      "book": "《易冒》",
+      "source_quote": "午建己巳日卜妻病，得大畜之小畜，月破妻爻化绝，应在当日即亡，后待丙子日而死。",
+      "source_line": 435,
+      "month_branch": "午",
+      "month_order": "五",
+      "day_ganzhi": "己巳",
+      "hexagram_text": "大畜",
+      "changed_text": "小畜",
+      "book_yingqi_ganzhi": "丙子",
+      "book_yingqi_branch": "子",
+      "book_yingqi_text": "丙子日",
+      "note": "占妻病，应在当日即亡，后待丙子日而死",
+      "verdict": null,
+      "case_kind": "占验实例（带单点应期书证）",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
+      "block": "未授权入册；本池只登记书载起卦四要素与书载应期支，不含吉凶方向",
+      "dedup": "与在册案例及其余候选池按「起卦日＋卦名」去重",
+      "notes": "引文为底本该行句段的逐字截取（程序化，不手抄）"
+    },
+    {
+      "id": "BYQ003",
+      "book": "《易冒》",
+      "source_quote": "未建戊午日占家宅，得乾之小畜，本应火灾，庚午壬午不应，至甲午日而回禄，以夏至后先壬而后甲也明。",
+      "source_line": 435,
+      "month_branch": "未",
+      "month_order": "六",
+      "day_ganzhi": "戊午",
+      "hexagram_text": "乾",
+      "changed_text": "小畜",
+      "book_yingqi_ganzhi": "甲午",
+      "book_yingqi_branch": "午",
+      "book_yingqi_text": "甲午日",
+      "note": "占家宅，至甲午日而回禄",
+      "verdict": null,
+      "case_kind": "占验实例（带单点应期书证）",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
+      "block": "未授权入册；本池只登记书载起卦四要素与书载应期支，不含吉凶方向",
+      "dedup": "与在册案例及其余候选池按「起卦日＋卦名」去重",
+      "notes": "引文为底本该行句段的逐字截取（程序化，不手抄）"
+    },
+    {
+      "id": "BYQ004",
+      "book": "《易冒》",
+      "source_quote": "（酉建甲子日卜子归期，得夬之大过，月建子孙，是月应至，卯冲酉子，宜在丁卯日到，而当日甲子即归。",
+      "source_line": 435,
+      "month_branch": "酉",
+      "month_order": "八",
+      "day_ganzhi": "甲子",
+      "hexagram_text": "夬",
+      "changed_text": "大过",
+      "book_yingqi_ganzhi": "丁卯",
+      "book_yingqi_branch": "卯",
+      "book_yingqi_text": "丁卯日",
+      "note": "卜子归期，宜在丁卯日到",
+      "verdict": null,
+      "case_kind": "占验实例（带单点应期书证）",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
+      "block": "未授权入册；本池只登记书载起卦四要素与书载应期支，不含吉凶方向",
+      "dedup": "与在册案例及其余候选池按「起卦日＋卦名」去重",
+      "notes": "引文为底本该行句段的逐字截取（程序化，不手抄）"
+    },
+    {
+      "id": "BYQ005",
+      "book": "《易冒》",
+      "source_quote": "（如寅建己亥日占求财，得否之临，卯财长生，兄破不克妻爻，主应有财，不得于癸卯而得于乙卯者，日值干支财也；未建丙午日占访友，得遁之节，应爻在壬申，是以壬申日遇；巳建乙丑日占子归，得睽之咸，而应丁卯日至。",
+      "source_line": 437,
+      "month_branch": "未",
+      "month_order": "六",
+      "day_ganzhi": "丙午",
+      "hexagram_text": "遁",
+      "changed_text": "节",
+      "book_yingqi_ganzhi": "壬申",
+      "book_yingqi_branch": "申",
+      "book_yingqi_text": "壬申日",
+      "note": "占访友，应爻在壬申，是以壬申日遇",
+      "verdict": null,
+      "case_kind": "占验实例（带单点应期书证）",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
+      "block": "未授权入册；本池只登记书载起卦四要素与书载应期支，不含吉凶方向",
+      "dedup": "与在册案例及其余候选池按「起卦日＋卦名」去重",
+      "notes": "引文为底本该行句段的逐字截取（程序化，不手抄）"
+    },
+    {
+      "id": "BYQ006",
+      "book": "《易冒》",
+      "source_quote": "（如寅建己亥日占求财，得否之临，卯财长生，兄破不克妻爻，主应有财，不得于癸卯而得于乙卯者，日值干支财也；未建丙午日占访友，得遁之节，应爻在壬申，是以壬申日遇；巳建乙丑日占子归，得睽之咸，而应丁卯日至。",
+      "source_line": 437,
+      "month_branch": "巳",
+      "month_order": "四",
+      "day_ganzhi": "乙丑",
+      "hexagram_text": "睽",
+      "changed_text": "咸",
+      "book_yingqi_ganzhi": "丁卯",
+      "book_yingqi_branch": "卯",
+      "book_yingqi_text": "丁卯日",
+      "note": "占子归，应丁卯日至",
+      "verdict": null,
+      "case_kind": "占验实例（带单点应期书证）",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
+      "block": "未授权入册；本池只登记书载起卦四要素与书载应期支，不含吉凶方向",
+      "dedup": "与在册案例及其余候选池按「起卦日＋卦名」去重",
+      "notes": "引文为底本该行句段的逐字截取（程序化，不手抄）"
+    },
+    {
+      "id": "BYQ007",
+      "book": "《易冒》",
+      "source_quote": "如午建辛卯日占晴，得睽之未济，雨至己酉日方霁，则可法矣。",
+      "source_line": 769,
+      "month_branch": "午",
+      "month_order": "五",
+      "day_ganzhi": "辛卯",
+      "hexagram_text": "睽",
+      "changed_text": "未济",
+      "book_yingqi_ganzhi": "己酉",
+      "book_yingqi_branch": "酉",
+      "book_yingqi_text": "己酉日",
+      "note": "占晴，雨至己酉日方霁",
+      "verdict": null,
+      "case_kind": "占验实例（带单点应期书证）",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
+      "block": "未授权入册；本池只登记书载起卦四要素与书载应期支，不含吉凶方向",
+      "dedup": "与在册案例及其余候选池按「起卦日＋卦名」去重",
+      "notes": "引文为底本该行句段的逐字截取（程序化，不手抄）"
+    },
+    {
+      "id": "BYQ008",
+      "book": "《易冒》",
+      "source_quote": "如庚辰年，瞽初游武林，霉雨不止，午建甲申日，顾观察忧民禾，命占晴，得渐之涣，申动子孙，当日不霁，及丙申日子孙当见，而后大晴。",
+      "source_line": 779,
+      "month_branch": "午",
+      "month_order": "五",
+      "day_ganzhi": "甲申",
+      "hexagram_text": "渐",
+      "changed_text": "涣",
+      "book_yingqi_ganzhi": "丙申",
+      "book_yingqi_branch": "申",
+      "book_yingqi_text": "丙申日",
+      "note": "占晴，及丙申日子孙当见而后大晴",
+      "verdict": null,
+      "case_kind": "占验实例（带单点应期书证）",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
+      "block": "未授权入册；本池只登记书载起卦四要素与书载应期支，不含吉凶方向",
+      "dedup": "与在册案例及其余候选池按「起卦日＋卦名」去重",
+      "notes": "引文为底本该行句段的逐字截取（程序化，不手抄）"
+    },
+    {
+      "id": "BYQ009",
+      "book": "《易冒》",
+      "source_quote": "唯产母自占，则以子孙为重，如午建甲寅日，自筮身孕得大过，后庚午日产，应子孙值日，此以子孙为法也。",
+      "source_line": 982,
+      "month_branch": "午",
+      "month_order": "五",
+      "day_ganzhi": "甲寅",
+      "hexagram_text": "大过",
+      "changed_text": "",
+      "book_yingqi_ganzhi": "庚午",
+      "book_yingqi_branch": "午",
+      "book_yingqi_text": "庚午日",
+      "note": "自筮身孕，后庚午日产",
+      "verdict": null,
+      "case_kind": "占验实例（带单点应期书证）",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
+      "block": "未授权入册；本池只登记书载起卦四要素与书载应期支，不含吉凶方向",
+      "dedup": "与在册案例及其余候选池按「起卦日＋卦名」去重",
+      "notes": "引文为底本该行句段的逐字截取（程序化，不手抄）"
+    },
+    {
+      "id": "BYQ010",
+      "book": "《易冒》",
+      "source_quote": "然痘症多变，设遇用象破空，或值何鬼发动，则变此症而丧，如未建甲辰日，占子痘得屯之革，于戊申日乃变脾病而不治，余仿此。",
+      "source_line": 1021,
+      "month_branch": "未",
+      "month_order": "六",
+      "day_ganzhi": "甲辰",
+      "hexagram_text": "屯",
+      "changed_text": "革",
+      "book_yingqi_ganzhi": "戊申",
+      "book_yingqi_branch": "申",
+      "book_yingqi_text": "戊申日",
+      "note": "占子痘，于戊申日乃变脾病而不治",
+      "verdict": null,
+      "case_kind": "占验实例（带单点应期书证）",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
+      "block": "未授权入册；本池只登记书载起卦四要素与书载应期支，不含吉凶方向",
+      "dedup": "与在册案例及其余候选池按「起卦日＋卦名」去重",
+      "notes": "引文为底本该行句段的逐字截取（程序化，不手抄）"
+    },
+    {
+      "id": "BYQ011",
+      "book": "《易冒》",
+      "source_quote": "（如酉建戊申日，占妻身得睽之损，卦无用爻，本非吉兆，喜得子孙发动，及冬病愈，是谓趋生也；如亥建甲申日，亦占妻身，得姤之升，忌神发动，本是凶兆，喜用神不现，伏于月建之下，后交子月壬辰日，病势渐解。",
+      "source_line": 1049,
+      "month_branch": "亥",
+      "month_order": "十",
+      "day_ganzhi": "甲申",
+      "hexagram_text": "姤",
+      "changed_text": "升",
+      "book_yingqi_ganzhi": "壬辰",
+      "book_yingqi_branch": "辰",
+      "book_yingqi_text": "壬辰日",
+      "note": "占妻身，后交子月壬辰日病势渐解（含月限定）",
+      "verdict": null,
+      "case_kind": "占验实例（带单点应期书证）",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
+      "block": "未授权入册；本池只登记书载起卦四要素与书载应期支，不含吉凶方向",
+      "dedup": "与在册案例及其余候选池按「起卦日＋卦名」去重",
+      "notes": "引文为底本该行句段的逐字截取（程序化，不手抄）"
+    },
+    {
+      "id": "BYQ012",
+      "book": "《易冒》",
+      "source_quote": "如寅建庚子日，占子病得夬之革，酉金绝寅死子，其疾不疗，后壬寅日症变，甲寅日乃绝，谓值独发甲寅鬼也。",
+      "source_line": 1051,
+      "month_branch": "寅",
+      "month_order": "正",
+      "day_ganzhi": "庚子",
+      "hexagram_text": "夬",
+      "changed_text": "革",
+      "book_yingqi_ganzhi": "壬寅",
+      "book_yingqi_branch": "寅",
+      "book_yingqi_text": "壬寅日",
+      "note": "占子病，后壬寅日症变",
+      "verdict": null,
+      "case_kind": "占验实例（带单点应期书证）",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
+      "block": "未授权入册；本池只登记书载起卦四要素与书载应期支，不含吉凶方向",
+      "dedup": "与在册案例及其余候选池按「起卦日＋卦名」去重",
+      "notes": "引文为底本该行句段的逐字截取（程序化，不手抄）"
+    },
+    {
+      "id": "BYQ013",
+      "book": "《易冒》",
+      "source_quote": "（财当日月，如酉建丁酉日，占庚子日摇会，得水地比，果获之是也。",
+      "source_line": 1304,
+      "month_branch": "酉",
+      "month_order": "八",
+      "day_ganzhi": "丁酉",
+      "hexagram_text": "比",
+      "changed_text": "",
+      "book_yingqi_ganzhi": "庚子",
+      "book_yingqi_branch": "子",
+      "book_yingqi_text": "庚子日",
+      "note": "占庚子日摇会，果获之",
+      "verdict": null,
+      "case_kind": "占验实例（带单点应期书证）",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
+      "block": "未授权入册；本池只登记书载起卦四要素与书载应期支，不含吉凶方向",
+      "dedup": "与在册案例及其余候选池按「起卦日＋卦名」去重",
+      "notes": "引文为底本该行句段的逐字截取（程序化，不手抄）"
+    },
+    {
+      "id": "BYQ014",
+      "book": "《易冒》",
+      "source_quote": "辰建甲辰日，占弟兄得大有，世生用主来迟，后应乙卯日到，乃静以冲来也。",
+      "source_line": 1459,
+      "month_branch": "辰",
+      "month_order": "三",
+      "day_ganzhi": "甲辰",
+      "hexagram_text": "大有",
+      "changed_text": "",
+      "book_yingqi_ganzhi": "乙卯",
+      "book_yingqi_branch": "卯",
+      "book_yingqi_text": "乙卯日",
+      "note": "占弟兄，后应乙卯日到",
+      "verdict": null,
+      "case_kind": "占验实例（带单点应期书证）",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
+      "block": "未授权入册；本池只登记书载起卦四要素与书载应期支，不含吉凶方向",
+      "dedup": "与在册案例及其余候选池按「起卦日＋卦名」去重",
+      "notes": "引文为底本该行句段的逐字截取（程序化，不手抄）"
+    },
+    {
+      "id": "BYQ015",
+      "book": "《易冒》",
+      "source_quote": "（巳建己酉日，概占仆来何辰，得剥之旅，世生用不能即到，卯财发动，寅财旬空，后及甲寅日乃至，是空以实来也。",
+      "source_line": 1459,
+      "month_branch": "巳",
+      "month_order": "四",
+      "day_ganzhi": "己酉",
+      "hexagram_text": "剥",
+      "changed_text": "旅",
+      "book_yingqi_ganzhi": "甲寅",
+      "book_yingqi_branch": "寅",
+      "book_yingqi_text": "甲寅日",
+      "note": "占仆来，后及甲寅日乃至",
+      "verdict": null,
+      "case_kind": "占验实例（带单点应期书证）",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
+      "block": "未授权入册；本池只登记书载起卦四要素与书载应期支，不含吉凶方向",
+      "dedup": "与在册案例及其余候选池按「起卦日＋卦名」去重",
+      "notes": "引文为底本该行句段的逐字截取（程序化，不手抄）"
+    },
+    {
+      "id": "BYQ016",
+      "book": "《易林補遺》",
+      "source_quote": "凡占事体，各有用爻，若卦内仇神忌神不动，元神已得司权，独无用爻者，未可便言不吉，待后用爻值日，无不佳矣！且如问行人，妇占夫到，十月甲辰日卜得家人之益，此卦忌神不动而仇神又空，元神正临身世，独嫌卦内无官，伏出辛酉金在三爻亥水之下，又怪伏生飞名为泄气，目下未来，待后申酉用爻值日便得相逢，果应己酉日到也。",
+      "source_line": 217,
+      "month_branch": "亥",
+      "month_order": "十",
+      "day_ganzhi": "甲辰",
+      "hexagram_text": "家人",
+      "changed_text": "益",
+      "book_yingqi_ganzhi": "己酉",
+      "book_yingqi_branch": "酉",
+      "book_yingqi_text": "己酉日",
+      "note": "十月甲辰日卜得家人之益，果应己酉日到",
+      "verdict": null,
+      "case_kind": "占验实例（带单点应期书证）",
+      "enroll_status": "已开卷一次·逐例红绿·无率值",
+      "block": "未授权入册；本池只登记书载起卦四要素与书载应期支，不含吉凶方向",
+      "dedup": "与在册案例及其余候选池按「起卦日＋卦名」去重",
+      "notes": "引文为底本该行句段的逐字截取（程序化，不手抄）"
+    }
+  ],
+  "excluded": [],
+  "open_result": {
+    "opened_at": "2026-11-12T20:24:51+08:00",
+    "commit_at_open": "359df22",
+    "open_count": 1,
+    "metric_frozen": "顶-1 应期支一致（546 批冻结口径沿用；开卷后不得改指标）",
+    "aggregate": null,
+    "_comment": "n<30 时 aggregate 恒 null、结构内不出现率值字段（沿用 546 批 decision_rule）；开封只此一次，判卷痕迹与 result_sha 双指纹可验。",
+    "cases": [
+      {
+        "id": "BYQ001",
+        "book": "《易冒》",
+        "book_yingqi_branch": "巳",
+        "book_yingqi_ganzhi": "丁巳",
+        "engine_top1": "卯",
+        "engine_candidates": [
+          "卯",
+          "巳",
+          "亥",
+          "寅",
+          "子"
+        ],
+        "in_candidate_pool": true,
+        "result": "未命中",
+        "rebuilt": {
+          "date": "寅月辛亥日",
+          "original": "节",
+          "changed": "中孚",
+          "moving": [
+            6,
+            7,
+            8
+          ]
+        }
+      },
+      {
+        "id": "BYQ002",
+        "book": "《易冒》",
+        "book_yingqi_branch": "子",
+        "book_yingqi_ganzhi": "丙子",
+        "engine_top1": "子",
+        "engine_candidates": [
+          "子",
+          "丑",
+          "巳",
+          "亥",
+          "戌"
+        ],
+        "in_candidate_pool": true,
+        "result": "命中",
+        "rebuilt": {
+          "date": "午月己巳日",
+          "original": "大畜",
+          "changed": "小畜",
+          "moving": [
+            6,
+            7,
+            8
+          ]
+        }
+      },
+      {
+        "id": "BYQ003",
+        "book": "《易冒》",
+        "book_yingqi_branch": "午",
+        "book_yingqi_ganzhi": "甲午",
+        "engine_top1": "辰",
+        "engine_candidates": [
+          "辰",
+          "戌",
+          "未",
+          "丑",
+          "子"
+        ],
+        "in_candidate_pool": false,
+        "result": "未命中",
+        "rebuilt": {
+          "date": "未月戊午日",
+          "original": "乾",
+          "changed": "小畜",
+          "moving": [
+            7,
+            9
+          ]
+        }
+      },
+      {
+        "id": "BYQ004",
+        "book": "《易冒》",
+        "book_yingqi_branch": "卯",
+        "book_yingqi_ganzhi": "丁卯",
+        "engine_top1": "酉",
+        "engine_candidates": [
+          "酉",
+          "卯",
+          "丑",
+          "戌",
+          "亥"
+        ],
+        "in_candidate_pool": true,
+        "result": "未命中",
+        "rebuilt": {
+          "date": "酉月甲子日",
+          "original": "夬",
+          "changed": "大过",
+          "moving": [
+            7,
+            8,
+            9
+          ]
+        }
+      },
+      {
+        "id": "BYQ005",
+        "book": "《易冒》",
+        "book_yingqi_branch": "申",
+        "book_yingqi_ganzhi": "壬申",
+        "engine_top1": "卯",
+        "engine_candidates": [
+          "卯",
+          "丑",
+          "午",
+          "未",
+          "寅"
+        ],
+        "in_candidate_pool": false,
+        "result": "未命中",
+        "rebuilt": {
+          "date": "未月丙午日",
+          "original": "遁",
+          "changed": "节",
+          "moving": [
+            6,
+            7,
+            9
+          ]
+        }
+      },
+      {
+        "id": "BYQ006",
+        "book": "《易冒》",
+        "book_yingqi_branch": "卯",
+        "book_yingqi_ganzhi": "丁卯",
+        "engine_top1": "未",
+        "engine_candidates": [
+          "未",
+          "酉",
+          "卯",
+          "辰",
+          "戌"
+        ],
+        "in_candidate_pool": true,
+        "result": "未命中",
+        "rebuilt": {
+          "date": "巳月乙丑日",
+          "original": "睽",
+          "changed": "咸",
+          "moving": [
+            6,
+            7,
+            9
+          ]
+        }
+      },
+      {
+        "id": "BYQ007",
+        "book": "《易冒》",
+        "book_yingqi_branch": "酉",
+        "book_yingqi_ganzhi": "己酉",
+        "engine_top1": "申",
+        "engine_candidates": [
+          "申",
+          "酉",
+          "卯",
+          "寅",
+          "午"
+        ],
+        "in_candidate_pool": true,
+        "result": "未命中",
+        "rebuilt": {
+          "date": "午月辛卯日",
+          "original": "睽",
+          "changed": "未济",
+          "moving": [
+            7,
+            8,
+            9
+          ]
+        }
+      },
+      {
+        "id": "BYQ008",
+        "book": "《易冒》",
+        "book_yingqi_branch": "申",
+        "book_yingqi_ganzhi": "丙申",
+        "engine_top1": "午",
+        "engine_candidates": [
+          "午",
+          "申",
+          "巳",
+          "未",
+          "子"
+        ],
+        "in_candidate_pool": true,
+        "result": "未命中",
+        "rebuilt": {
+          "date": "午月甲申日",
+          "original": "渐",
+          "changed": "涣",
+          "moving": [
+            6,
+            7,
+            8,
+            9
+          ]
+        }
+      },
+      {
+        "id": "BYQ009",
+        "book": "《易冒》",
+        "book_yingqi_branch": "午",
+        "book_yingqi_ganzhi": "庚午",
+        "engine_top1": "巳",
+        "engine_candidates": [
+          "巳",
+          "午",
+          "子",
+          "丑",
+          "寅"
+        ],
+        "in_candidate_pool": true,
+        "result": "未命中",
+        "rebuilt": {
+          "date": "午月甲寅日",
+          "original": "大过",
+          "changed": null,
+          "moving": []
+        }
+      },
+      {
+        "id": "BYQ010",
+        "book": "《易冒》",
+        "book_yingqi_branch": "申",
+        "book_yingqi_ganzhi": "戊申",
+        "engine_top1": "亥",
+        "engine_candidates": [
+          "亥",
+          "丑",
+          "卯",
+          "寅",
+          "辰"
+        ],
+        "in_candidate_pool": false,
+        "result": "未命中",
+        "rebuilt": {
+          "date": "未月甲辰日",
+          "original": "屯",
+          "changed": "革",
+          "moving": [
+            6,
+            7,
+            8
+          ]
+        }
+      },
+      {
+        "id": "BYQ011",
+        "book": "《易冒》",
+        "book_yingqi_branch": "辰",
+        "book_yingqi_ganzhi": "壬辰",
+        "engine_top1": "寅",
+        "engine_candidates": [
+          "寅",
+          "巳",
+          "申",
+          "丑",
+          "午"
+        ],
+        "in_candidate_pool": false,
+        "result": "未命中",
+        "rebuilt": {
+          "date": "亥月甲申日",
+          "original": "姤",
+          "changed": "升",
+          "moving": [
+            7,
+            8,
+            9
+          ]
+        }
+      },
+      {
+        "id": "BYQ012",
+        "book": "《易冒》",
+        "book_yingqi_branch": "寅",
+        "book_yingqi_ganzhi": "壬寅",
+        "engine_top1": "酉",
+        "engine_candidates": [
+          "酉",
+          "卯",
+          "丑",
+          "辰",
+          "巳"
+        ],
+        "in_candidate_pool": false,
+        "result": "未命中",
+        "rebuilt": {
+          "date": "寅月庚子日",
+          "original": "夬",
+          "changed": "革",
+          "moving": [
+            7,
+            8,
+            9
+          ]
+        }
+      },
+      {
+        "id": "BYQ013",
+        "book": "《易冒》",
+        "book_yingqi_branch": "子",
+        "book_yingqi_ganzhi": "庚子",
+        "engine_top1": "卯",
+        "engine_candidates": [
+          "卯",
+          "酉",
+          "辰",
+          "巳",
+          "寅"
+        ],
+        "in_candidate_pool": false,
+        "result": "未命中",
+        "rebuilt": {
+          "date": "酉月丁酉日",
+          "original": "比",
+          "changed": null,
+          "moving": []
+        }
+      },
+      {
+        "id": "BYQ014",
+        "book": "《易冒》",
+        "book_yingqi_branch": "卯",
+        "book_yingqi_ganzhi": "乙卯",
+        "engine_top1": "戌",
+        "engine_candidates": [
+          "戌",
+          "辰",
+          "酉",
+          "卯",
+          "寅"
+        ],
+        "in_candidate_pool": true,
+        "result": "未命中",
+        "rebuilt": {
+          "date": "辰月甲辰日",
+          "original": "大有",
+          "changed": null,
+          "moving": []
+        }
+      },
+      {
+        "id": "BYQ015",
+        "book": "《易冒》",
+        "book_yingqi_branch": "寅",
+        "book_yingqi_ganzhi": "甲寅",
+        "engine_top1": "酉",
+        "engine_candidates": [
+          "酉",
+          "寅",
+          "申",
+          "卯"
+        ],
+        "in_candidate_pool": true,
+        "result": "未命中",
+        "rebuilt": {
+          "date": "巳月己酉日",
+          "original": "剥",
+          "changed": "旅",
+          "moving": [
+            6,
+            7,
+            8
+          ]
+        }
+      },
+      {
+        "id": "BYQ016",
+        "book": "《易林補遺》",
+        "book_yingqi_branch": "酉",
+        "book_yingqi_ganzhi": "己酉",
+        "engine_top1": "戌",
+        "engine_candidates": [
+          "戌",
+          "亥",
+          "寅",
+          "辰",
+          "卯"
+        ],
+        "in_candidate_pool": false,
+        "result": "未命中",
+        "rebuilt": {
+          "date": "亥月甲辰日",
+          "original": "家人",
+          "changed": "益",
+          "moving": [
+            7,
+            8,
+            9
+          ]
+        }
+      }
+    ],
+    "result_sha": "196bd18e835640fd"
+  }
+}

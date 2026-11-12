@@ -57,6 +57,11 @@ CURATED = {
         # 568 批：一次性开卷器，同批入表（511 批「未分类」教训）。--open 只许一次，--verify 挂 CI。
         "open_candidate_pools": ("ondemand", "八字候选池一次性开卷（568 批：主指标＝引擎 strength.strength ↔ 书载强度档；n<30 只报逐例红绿、aggregate 恒 null；开封只此一次、判卷痕迹与 result_sha 双指纹可验；5 类内存负例，真盘零写入）"),
 
+        # 574 批：新器自落库即入表（511 批「未分类」教训）。只读/构建器、不进 check.py、不新增门号。
+        "build_bushi_yingqi_candidates": ("ondemand", "六爻单点应期候选池构建器（574 批：从《易冒》《易林補遺》逐条读出 16 案带单点应期书证的占例；引文程序化切句截取、零手抄；应期支须逐字在引文内）"),
+        "verify_bushi_yingqi_candidates": ("ondemand", "六爻单点应期候选池复验（574 批：与「底本＋人工表」一致、书证要素逐字在引文内、无 expected/verdict、开卷记录与现场重算一致、n<30 无率值；4 类内存负例）"),
+        "open_bushi_yingqi_candidates": ("ondemand", "六爻单点应期池一次性开卷（574 批：机读重建＋顶-1 应期支一致（546 批冻结口径）；开卷结果顶-1 命中 1/16、书载应期支落在引擎候选集内 9/16（归因线索非指标）；n<30 aggregate 恒 null）"),
+
         # 569 批：新器自落库即入表（511 批「未分类」教训）。只读/构建器、不进 check.py、不新增门号。
         "build_dts_manual_candidates": ("ondemand", "《滴天髓阐微》人工认定版候选池构建器（569 批：12 条主语不明的旺衰逐条人工认定，档位＋逐字原话＋理由；池内容须与「源池 + 人工表」逐字节一致，片段逐字在构建时即断言）"),
         "verify_dts_manual_candidates": ("ondemand", "《滴天髓阐微》人工认定池同源复验（569 批：与「源池 + 人工表」一致、原话逐字、理由齐备、无 expected/verdict 反推、开卷记录结构与只许一次、三方零同四柱；8 类内存负例，真盘零写入）"),
