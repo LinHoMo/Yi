@@ -1,0 +1,195 @@
+{
+  "question": "示例：命局结构说明",
+  "discipline": "bazi",
+  "birth": {
+    "datetime": "1990-05-20 10:30",
+    "gender": "男",
+    "longitude": null,
+    "datetime_source": "datetime"
+  },
+  "pillars": {
+    "year": {
+      "ganzhi": "庚午",
+      "stem": "庚",
+      "branch": "午",
+      "nayin": "路旁土",
+      "ten_god": "正官"
+    },
+    "month": {
+      "ganzhi": "辛巳",
+      "stem": "辛",
+      "branch": "巳",
+      "nayin": "白蜡金",
+      "ten_god": "七杀"
+    },
+    "day": {
+      "ganzhi": "乙酉",
+      "stem": "乙",
+      "branch": "酉",
+      "nayin": "泉中水",
+      "ten_god": "比肩"
+    },
+    "hour": {
+      "ganzhi": "辛巳",
+      "stem": "辛",
+      "branch": "巳",
+      "nayin": "白蜡金",
+      "ten_god": "七杀"
+    }
+  },
+  "factors": {
+    "year": {
+      "hidden_stems": [
+        "丁",
+        "己"
+      ],
+      "ten_gods": [
+        {
+          "stem": "丁",
+          "ten_god": "食神",
+          "layer": "本气"
+        },
+        {
+          "stem": "己",
+          "ten_god": "偏财",
+          "layer": "中气"
+        }
+      ],
+      "stem_ten_god": "正官"
+    },
+    "month": {
+      "hidden_stems": [
+        "丙",
+        "庚",
+        "戊"
+      ],
+      "ten_gods": [
+        {
+          "stem": "丙",
+          "ten_god": "伤官",
+          "layer": "本气"
+        },
+        {
+          "stem": "庚",
+          "ten_god": "正官",
+          "layer": "中气"
+        },
+        {
+          "stem": "戊",
+          "ten_god": "正财",
+          "layer": "余气"
+        }
+      ],
+      "stem_ten_god": "七杀"
+    },
+    "day": {
+      "hidden_stems": [
+        "辛"
+      ],
+      "ten_gods": [
+        {
+          "stem": "辛",
+          "ten_god": "七杀",
+          "layer": "本气"
+        }
+      ],
+      "stem_ten_god": "比肩"
+    },
+    "hour": {
+      "hidden_stems": [
+        "丙",
+        "庚",
+        "戊"
+      ],
+      "ten_gods": [
+        {
+          "stem": "丙",
+          "ten_god": "伤官",
+          "layer": "本气"
+        },
+        {
+          "stem": "庚",
+          "ten_god": "正官",
+          "layer": "中气"
+        },
+        {
+          "stem": "戊",
+          "ten_god": "正财",
+          "layer": "余气"
+        }
+      ],
+      "stem_ten_god": "七杀"
+    }
+  },
+  "shensha": [
+    {
+      "name": "文昌贵人",
+      "at": [
+        "午"
+      ],
+      "basis": "日干"
+    },
+    {
+      "name": "金舆",
+      "at": [
+        "巳"
+      ],
+      "basis": "日干"
+    },
+    {
+      "name": "将星(年支)",
+      "at": [
+        "午"
+      ],
+      "basis": "年支"
+    },
+    {
+      "name": "亡神(年支)",
+      "at": [
+        "巳"
+      ],
+      "basis": "年支"
+    },
+    {
+      "name": "桃花(日支)",
+      "at": [
+        "午"
+      ],
+      "basis": "日支"
+    },
+    {
+      "name": "将星(日支)",
+      "at": [
+        "酉"
+      ],
+      "basis": "日支"
+    },
+    {
+      "name": "童子煞",
+      "at": [
+        "巳"
+      ],
+      "basis": "民间通胜口诀『春秋寅子贵，冬夏卯未辰；金木马卯合，水火鸡犬多；土命逢辰巳，童子定不错』；非《渊海子平》等子平经典原文（verified=false）；只安星不批吉凶"
+    }
+  ],
+  "ming_shen_gong": {
+    "ming_gong": {
+      "branch": "子",
+      "ganzhi": "戊子",
+      "nayin": "霹雳火"
+    },
+    "shen_gong": {
+      "branch": "戌",
+      "ganzhi": "丙戌",
+      "nayin": "屋上土"
+    }
+  },
+  "xunkong": [
+    "午",
+    "未"
+  ],
+  "calendar_policy": {
+    "boundary": "day",
+    "zi_hour": "same-day"
+  }
+}

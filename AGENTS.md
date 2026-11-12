@@ -79,6 +79,7 @@ Yi/
 │   ├── eval/            # 评测层（359 批起）：评测器实现；scripts/ 同名文件为兼容 shim
 │   ├── scripts/ data/ references/ dev_tools/ docs/ tests/   # tests/ 335 批补建（smoke+regression）
 │   └── README.md  SKILL.md
+├── conclusions/         # 结论库（554 批）：固定输入的引擎结论快照 + 索引，供人审查与网页版 AI 查表
 └── dsh-plugin/          # DSH 插件（Node 半，独立于两科；契约见下）
 ```
 

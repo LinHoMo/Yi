@@ -60,6 +60,8 @@ jobs:
           #         另备 --registry 只跑对账（秒级、不跑引擎），本地改动登记表时先跑它
           python outreach/build_outreach.py --check
           python outreach/build_outreach.py --selftest
+          # 554 批：结论库逐字节复验（固定输入 → 引擎输出快照，漂移即红）
+          python conclusions/build_conclusions.py --check
           # 550 批：仓库卫生门（生成物零入库／零硬编码绝对路径／活文档零过期钉数）＋负例自证
           python devkit/root/check_repo_hygiene.py
           python devkit/root/check_repo_hygiene.py --selftest

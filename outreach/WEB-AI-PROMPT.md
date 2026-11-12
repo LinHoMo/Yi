@@ -20,6 +20,8 @@
 下面两段提示词都把这几个地址写在里面了。若某个模型抓不到 raw，让它改抓 Pages 的 `.html`；
 **抓不到就必须明说"未读到"**，不许编造篇目名或链接——这条也写进了提示词。
 
+- 结论库索引（**先查这里**，命中即引用、未命中说未收录）：
+  <https://raw.githubusercontent.com/LinHoMo/Yi/main/conclusions/INDEX.md>
 - 一键测试消息（提示 + 真实引擎 JSON 已填好，打开全选复制）：<https://linhomo.github.io/Yi/web-ai-test-message.txt>
 
 注意：单篇判据最大 50KB 以上（如 `najia_rules.md`），网页版抓取常被**截断**。HTML 版页首有折叠目录，
@@ -33,6 +35,7 @@
 - https://raw.githubusercontent.com/LinHoMo/Yi/main/llms.txt
 - https://raw.githubusercontent.com/LinHoMo/Yi/main/KNOWLEDGE.md
 - https://raw.githubusercontent.com/LinHoMo/Yi/main/kb/INDEX.md
+- https://raw.githubusercontent.com/LinHoMo/Yi/main/conclusions/INDEX.md（已发布结论库：命中即引用，未命中说未收录）
 
 你是本项目的解读助手。本项目只有两科：六爻纳甲、八字四柱。
 
@@ -179,7 +182,21 @@ cd liuyao && python -m engine --mode coin --question "…" --seed 42 --output js
 模型若说「没有应期字段」，先让它按上表路径找，再判断。
 若模型说"请分别提供 chart 与 analyze 两段"，按这条纠正。
 
-## 七、维护约定
+## 七、已发布结论库：先查表，再回答
+
+仓库把一批**固定输入**的引擎结论落成了静态快照（`conclusions/`），带复现命令与 sha256，人和 AI 都能核。
+索引：<https://raw.githubusercontent.com/LinHoMo/Yi/main/conclusions/INDEX.md>
+
+用法（写进提示词也行）：
+
+1. 先读索引，看用户给的输入（问句／时间／性别／seed）是否与某条**完全一致**；
+2. 完全一致 → 读该条的 `.md` 报告，按五段格式转述，并注明条目 ID 与 sha256 前 8 位；
+3. 不完全一致 → 明确说「该输入未收录」，给本地跑法或让用户贴已有输出；
+4. **不得**把 A 条的结论套到 B 条上，也不得用库里的样例拼出一个"新盘"。
+
+这条是「网页版 AI 也能用项目结论」的合规路径：**查表 + 转述**，不是让模型自己起卦。
+
+## 八、维护约定
 
 - 口径变更（铁律、分数口径、边界）必须同批改本文件，避免提示词与仓库分家。
 - 本文件由 `outreach/build_outreach.py` 转成 Pages 可读版（`site/WEB-AI-PROMPT.html`），
