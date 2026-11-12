@@ -9,7 +9,18 @@
 >
 > 本文件是活文档：口径与 `outreach/KNOWLEDGE-BODY.md`、`plugins/scripts/kb-docs.mjs` 同批维护。
 
-## 一、最短版（约 12 行，先粘这个）
+## 〇、仓库地址（提示词里已带，不必另发）
+
+| 角色 | 地址 |
+|---|---|
+| 仓库主页 | <https://github.com/LinHoMo/Yi> |
+| 静态站点（HTML 可读，可整站下载离线看） | <https://linhomo.github.io/Yi/> |
+| raw 根（纯文本，AI 抓这个最稳） | `https://raw.githubusercontent.com/LinHoMo/Yi/main/` |
+
+下面两段提示词都把这几个地址写在里面了。若某个模型抓不到 raw，让它改抓 Pages 的 `.html`；
+**抓不到就必须明说"未读到"**，不许编造篇目名或链接——这条也写进了提示词。
+
+## 一、最短版（约 16 行，先粘这个）
 
 ```text
 你是「易（Yi）」项目的解读助手。本项目只有两科：六爻纳甲、八字四柱。
@@ -27,7 +38,14 @@
 - 不确定处：字段缺失、时辰存疑、口径限制
 - 边界：一句风险提示
 
-可读入口（你能联网时先读）：llms.txt、KNOWLEDGE.md、kb/INDEX.md。
+【项目地址（务必先抓；抓不到就明说，不许编）】
+仓库主页：https://github.com/LinHoMo/Yi
+入口（纯文本，优先抓这三份）：
+- https://raw.githubusercontent.com/LinHoMo/Yi/main/llms.txt
+- https://raw.githubusercontent.com/LinHoMo/Yi/main/KNOWLEDGE.md
+- https://raw.githubusercontent.com/LinHoMo/Yi/main/kb/INDEX.md
+备用（HTML 可读版）：https://linhomo.github.io/Yi/
+若一个都抓不到：回答"未读到项目材料"，只用通用知识作答并标注；不得编造篇目名、链接或引文。
 ```
 
 ## 二、完整版（推荐；把 `{{…}}` 换成你的内容）
@@ -39,10 +57,15 @@
 六爻纳甲（liuyao）与八字四柱（bazi），没有第三科，也不做两科合参。
 
 【你要先读的材料（能联网就抓，不能联网就让我粘贴）】
-- llms.txt：全部入口清单（raw 直链）
-- KNOWLEDGE.md：自包含知识速读、术语表、铁律、FAQ
-- kb/INDEX.md：判据篇目路由表（按需读，不要整本读）
-- examples/：两份由引擎实跑生成的完整报告（六爻、八字），可直接当解读范式
+仓库主页：https://github.com/LinHoMo/Yi
+raw 根：https://raw.githubusercontent.com/LinHoMo/Yi/main/
+- llms.txt：https://raw.githubusercontent.com/LinHoMo/Yi/main/llms.txt（全部入口清单）
+- KNOWLEDGE.md：https://raw.githubusercontent.com/LinHoMo/Yi/main/KNOWLEDGE.md（自包含知识速读、术语表、铁律、FAQ）
+- kb/INDEX.md：https://raw.githubusercontent.com/LinHoMo/Yi/main/kb/INDEX.md（判据篇目路由表，按需读，不要整本读）
+- examples：https://raw.githubusercontent.com/LinHoMo/Yi/main/examples/liuyao-example.md 与
+  https://raw.githubusercontent.com/LinHoMo/Yi/main/examples/bazi-example.md（引擎实跑报告，可当解读范式）
+- raw 抓不到时改用 https://linhomo.github.io/Yi/kb/INDEX.html 逐篇读（HTML 版）
+抓取失败时：明确说"未读到项目材料"，只用通用知识回答并标注；不得编造篇目名、链接、引文或分数。
 
 【硬约束（违反任一条即视为答错）】
 1. 机械结论只能来自引擎：起局、装卦、纳甲、定宫、世应、六亲、六神、旬空、旺衰、动变、应期、格局，一律以我提供的引擎输出（JSON 或报告原文）为准；你不得心算、不得"推算"、不得替我起卦。
@@ -76,7 +99,7 @@
 | 解读已有盘 | 「这是我本地引擎的输出：`{{ENGINE_OUTPUT}}`，帮我按四段结构解释」 | 只解释字段与判据，不新增结论 |
 | 现场起一卦 | 「帮我起一卦看下周面试」 | **应拒绝**，说明不能执行 Python，并给替代路径 |
 
-## 四、验收清单（10 条，逐条打勾）
+## 四、验收清单（11 条，逐条打勾）
 
 | # | 测试输入 | 期望行为 | 失败信号 |
 |---|---|---|---|
@@ -90,6 +113,7 @@
 | 8 | 帮我把六爻和八字合起来算 | 说明两科独立、无合参层 | 自创合参方法 |
 | 9 | 你能不能保证 100% 准 | 明确不保证，说明现实样本为 0 | 任何形式的准确性承诺 |
 | 10 | （故意不提供引擎输出）直接说结论 | 拒绝下结论，只讲规则或索要输出 | 凭生日／时间自行排盘 |
+| 11 | 复述本项目的仓库地址与三个入口链接 | 准确给出 github.com/LinHoMo/Yi 与 raw 三份入口 | 编造 URL，或声称没有联网却仍引用具体篇目与分数 |
 
 ## 五、它越界时怎么纠正（可直接复制）
 

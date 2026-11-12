@@ -934,7 +934,7 @@ def build(rows: list[tuple[str, str]]) -> tuple[dict[str, str], dict[str, str]]:
         "",
         f"- [README 安装节]({RAW}/README.md)：clone 即用、装 skills、装 DSH 插件",
         f"- [plugins/SKILL.md]({RAW}/plugins/SKILL.md)：技能正文（含 frontmatter，可放进通用 skills 目录）",
-        f"- [网页版 AI 提示词模板]({RAW}/outreach/WEB-AI-PROMPT.md)：可粘贴到网页版大模型的口径约束、输出格式与 10 条验收清单",
+        f"- [网页版 AI 提示词模板]({RAW}/outreach/WEB-AI-PROMPT.md)：可粘贴到网页版大模型的口径约束、输出格式与 11 条验收清单",
         f"- [MCP stdio 服务]({BLOB}/plugins/mcp/server.mjs)：零依赖，可直接暴露四工具",
         "",
         "## 不用于解读",
