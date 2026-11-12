@@ -1,3 +1,0 @@
-# 开发/测试依赖（第五百一十九批续·引入 pytest 测试框架）
-# CI 与各开发机跑 `python -m pytest` 前先 `python -m pip install -r requirements-dev.txt`
-pytest>=7

@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
-"""main() 式测试桥接（第五百二十批建，第五百二十二批收敛清单真源）。
+"""main() 式测试桥接 + 清单真源（第五百二十批建；第五百五十九批与 `pytest_manifest.py` 合并）。
 
-两科测试混用两种风格（见 pyproject.toml 注释）：six_god_wang_shuai_test.py 是原生
-pytest（由 pytest 直接收集）；其余是沿用 `python xxx_test.py` 习惯的 main() 式
-（errs 累积 + return 1）。本文件把每个 main() 式测试作为独立子进程 `python <file>`
-跑一遍（与 CI 既有调用完全一致、且进程间零 import 污染），以 pytest 用例形式报告其
-退出码。被桥接文件不再在本文件另抄一份，统一取自 `pytest_manifest.py` 单一真源；
-这些文件已由根 conftest 的 collect_ignore 排除出自动收集，避免两科 tests/ 同名包
-`tests.*` 冲突。six_god 不在列、由 pytest 直接收集。
+两科 `tests/` 混用两种风格：
+  · 原生 pytest（`def test_*` + `assert`）：由 pytest 直接收集，不入本表；
+  · main() 式（沿用 `python xxx_test.py` 习惯，errs 累积 + return 1）：不能进自动收集
+    （两科 `tests` 同名包会撞 `tests.smoke_test`），由根 `conftest.py` 的 `collect_ignore`
+    排除，再由本文件以独立子进程 `python <file>` 桥接成 pytest 用例。
+
+`MAIN_STYLE_TESTS` 是本表**唯一**真源：conftest 的 collect_ignore 与下面的桥接用例都从它派生。
+增删测试文件只改这一处；路径一律相对仓库根、用 `/` 分隔（Windows 下同）。
 """
 from __future__ import annotations
 
@@ -17,7 +18,13 @@ from pathlib import Path
 
 import pytest
 
-from pytest_manifest import MAIN_STYLE_TESTS
+MAIN_STYLE_TESTS: tuple[str, ...] = (
+    "liuyao/tests/smoke_test.py",
+    "liuyao/tests/regression_test.py",
+    "liuyao/tests/thinking_chain_tests.py",
+    "bazi/tests/smoke_test.py",
+    "bazi/tests/regression_test.py",
+)
 
 _ROOT = Path(__file__).resolve().parent
 

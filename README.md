@@ -22,6 +22,7 @@
 ## 快速校验
 
 ```bash
+python -m pip install pytest        # 仅 pytest 一个开发依赖
 python liuyao/dev_tools/check.py     # 六爻质量门
 python bazi/dev_tools/check.py       # 八字质量门
 python -m pytest -q                  # 全仓测试

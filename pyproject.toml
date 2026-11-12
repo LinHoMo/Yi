@@ -2,11 +2,11 @@
 # 两科测试混用两种风格：
 #   · 原生 pytest（def test_* + assert）：由本配置直接收集；
 #   · main() 式（沿用 `python xxx_test.py` 习惯，errs 累积 + return 1）：
-#     清单见根 `pytest_manifest.py` 单一真源——根 conftest 的 collect_ignore 由它派生，
-#     根 `bridge_test.py` 以**独立子进程** `python <file>` 桥接成 pytest 用例（不是 runpy），
+#     清单见根 `bridge_test.py` 的 MAIN_STYLE_TESTS（559 批把清单并进桥接文件）——conftest 由此派生，
+#     同一文件的 `test_main_style_module` 以**独立子进程** `python <file>` 桥接成 pytest 用例（不是 runpy），
 #     旧路径 `python <科>/tests/xxx_test.py` 直接跑不受影响。
 #     注意有文件名为 `*_tests.py`（复数），不匹配下面的 python_files，只能由桥接覆盖；
-#     增删一律改真源，由 `devkit/root/check_pytest_bridge.py` 逐格对拍，漏项即判红。
+#     增删一律改真源；559 批后无单独桥接门，靠 conftest 与桥接共用同一元组保证不漏项。
 [tool.pytest.ini_options]
 # 根 conftest 与根 bridge_test.py 需在 testpaths 内才被收集；"."
 # 让 pytest 扫描整仓 *_test.py，collect_ignore 已排除 main() 式文件避免 tests.* 同名冲突。
