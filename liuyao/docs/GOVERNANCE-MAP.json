@@ -1,8 +1,8 @@
 {
- "count": 82,
+ "count": 83,
  "by_tier": {
   "tool": 4,
-  "ondemand": 18,
+  "ondemand": 19,
   "nightly": 12,
   "build": 14,
   "blocking": 34
@@ -571,6 +571,13 @@
    "guards": "《卜筮全书》候选池同源复验（546 批：8 案引文逐字回底本对应行＋ID 零泄漏进评分集＋无 expected 反推＋5 项 excluded 带《黄金策》承袭同案证据；11 类内存负例，真盘零写入）",
    "run_by_check_py": false,
    "doc": "《卜筮全书》候选池同源复验（第 546 批，只读）。"
+  },
+  {
+   "script": "verify_bushi_paiyan_candidates.py",
+   "tier": "ondemand",
+   "guards": "《卜筮全书》占验段候选池同源复验（564 批：8 案引文逐字回底本对应行＋行锚可达＋无 expected／verdict／yingqi 反推＋未开卷（open_result 须 null）＋预注册必备＋ID 零泄漏进分片＋与在册案例按「干支日＋卦名」零同案；12 类内存负例，真盘零写入）",
+   "run_by_check_py": false,
+   "doc": "《卜筮全书》占验段候选池同源复验（第 564 批，只读）。"
   },
   {
    "script": "verify_yilin_candidates.py",

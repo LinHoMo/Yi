@@ -182,6 +182,9 @@ CURATED = {
         # 547 批：一次性开卷器，同批入表（511 批教训）。--verify 只读挂 CI，--open 只许一次；
         # 与 open_yilin_candidates 同构（546 批 bushi 候选池机械重建＋top-1 逐例判卷）。
         "open_bushi_candidates": ("ondemand", "卜筮全书候选池机读重建＋一次性开卷（547 批：卦名归一化／月序转月支／动爻反推变卦全归代码；top-1 逐例红绿、n=2<30 不出率值、7 类负例）"),
+        # 564 批：新器自落库即入表（511 批「未分类」教训）。挂 CI（558 批 root-gates 已下线，
+        # 改由 CI 工作流直呼，只读、不进 check.py，不新增门号）。
+        "verify_bushi_paiyan_candidates": ("ondemand", "《卜筮全书》占验段候选池同源复验（564 批：8 案引文逐字回底本对应行＋行锚可达＋无 expected／verdict／yingqi 反推＋未开卷（open_result 须 null）＋预注册必备＋ID 零泄漏进分片＋与在册案例按「干支日＋卦名」零同案；12 类内存负例，真盘零写入）"),
         "governance_map": ("tool", "本器：治理地图生成"),
         "stable_write": ("tool", "观察册幂等写共享模块（203 批：时间戳=内容最后变化，杜绝空转脏文件）"),
         "sweep_selftests": ("nightly", "器具全体检扫描器（213 批：声明面 53 器具逐真跑，注入损坏负例即体检；自身与编排器豁免；242 批增 rc×输出互验与 classify 五态）"),

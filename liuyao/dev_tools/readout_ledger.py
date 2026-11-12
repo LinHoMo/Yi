@@ -228,7 +228,7 @@ def checks():
         "539 批新增：CAPABILITY T1 双科双指纹声明 ↔ golden/digest.json 实值（466 批正文未回流）；"
         "期望值现场取 digest 真源，不新增 check.py 门号、不新增门文件（守 528 约定）",
         lambda t: _capability_golden(), _cap_expect())
-    add("governance(82/49, blk 34/30)",
+    add("governance(83/49, blk 34/30)",
         "194批（312 补 310；315 补 314/315 两门；317 补 judge_shadow；329 补 fetch_zengshan_dz_cases；"
         "331 批 check_docs_index 上提到 devkit/root → 六爻 blk 28→27、脚本仍 63；"
         "339 批 A5-1 按实登记 7 个存量未分类脚本 → 八字 37→43；"
@@ -270,6 +270,7 @@ def checks():
         "机读重建八案盘面、按 546 批冻结的 top-1 指标逐例判卷、只此一次开封、n=2<30 只报红绿；"
         "`--verify` 只读挂 CI root-gates，tier=ondemand 非 blocking）——同批入治理表 CURATED，"
         "属正当 +1，期望由 79 回挂 80（blk 不变）"
+        "；**564 批：六爻 82→83** 是新增 `verify_bushi_paiyan_candidates.py`（《卜筮全书》占验段新候选池的只读复验器：8 案引文逐字回底本、无 expected 反推、未开卷、预注册必备、零泄漏进分片、与在册案例零同案；12 类内存负例，真盘零写入；同批入治理表 CURATED，tier=ondemand、blk 不变）"
         "；**548 批：六爻 80→82** 是新增 `build_yilin_buyi_cases.py`／`build_bushi_quanshu_cases.py`"
         "（§四 入册授权把《易林補遺》候选池 7 案、《卜筮全书》候选池 8 案中 5 案转建为评分集"
         " yilin_buyi_holdout／bushi_quanshu_holdout；两器同批入治理表 CURATED，带 --selftest＋--check、"
